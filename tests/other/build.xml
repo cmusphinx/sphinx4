@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="none" name="Runs the miscellaneous tests.">
+
+<description>
+This file is used to run the miscellaneous tests.
+
+NOTE:  Before running the tests, you must have already built 
+       the sphinx-4 sources by typing "ant" in the top level 
+       sphinx4 directory.
+
+</description>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Properties common to all tests                         * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <property name="top_dir"		value="../.."/>
+    <property name="classes_dir"	value="${top_dir}/classes"/>
+    <property name="live_demo"          value="tests.live.Live"/>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Compile all the test code.                             * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="all"
+            description="Compiles all the tests.">
+	    <mkdir dir="${classes_dir}/tests/other"/>
+	    <javac debug="true"
+	           source="1.4"
+		   deprecation="true"
+		   destdir="${classes_dir}"
+		   classpath="${classes_dir}"
+		   srcdir="."/>
+            <antcall target="MathTests"/>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs the int/float/double performance comparison test. * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="runMathTest"
+	    description="Runs the int/float/double performance test."
+	    depends="all">
+	    <antcall target="server"/>
+            <exec executable="MathTest"/>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs the instanceof performance comparison test. * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="runInstanceOf"
+	    description="Runs the instanceof performance test."
+	    depends="all">
+	    <java classname="tests.other.InstanceOfTest"
+	          classpath="${classes_dir}"
+		  fork="true">
+                  <jvmarg value="-server"/>
+	    </java>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs the int/float/double performance comparison test  * -->
+    <!-- * with client VM.                                        * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="client"
+	    description="Runs the math test with client VM."
+	    depends="all">
+	    <java classname="tests.other.MathTest"
+	          classpath="${classes_dir}"
+		  fork="true">
+	    </java>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs the int/float/double performance comparison test  * -->
+    <!-- * with the server VM.                                    * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="server"
+	    description="Runs the int/float/double performance test."
+	    depends="all">
+	    <java classname="tests.other.MathTest"
+	          classpath="${classes_dir}"
+		  fork="true">
+                  <jvmarg value="-server"/>
+	    </java>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Compiles the C version of the MathTest.                * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="MathTests"
+	    description="Compiles the C version of the MathTest.">
+	    <exec executable="gcc">
+                  <arg line="-O3 MathTest.c"/>
+            </exec>
+            <exec executable="cp">
+                  <arg line="a.out MathTest"/>
+            </exec>
+            <exec executable="chmod">
+                  <arg line="a+x MathTest"/>
+            </exec>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Deletes all the .out files.                            * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="clean"
+	    description="Deletes all the .out files.">
+	    <exec executable="rm">
+                  <arg line="*.out"/>
+            </exec>
+    </target>
+
+
+
+</project>
