@@ -50,7 +50,7 @@
     <component name="searchManager" 
         type="edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager">
         <property name="logMath" value="logMath"/>
-        <property name="linguist" value="flatLinguist"/>
+        <property name="linguist" value="lexTreeLinguist"/>
         <property name="pruner" value="trivialPruner"/>
         <property name="scorer" value="threadedScorer"/>
         <property name="activeListFactory" value="activeList"/>
@@ -83,14 +83,13 @@
     <component name="lexTreeLinguist" 
                 type="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist">
         <property name="logMath" value="logMath"/>
-        <property name="acousticModel" value="rm1"/>
+        <property name="acousticModel" value="wsj"/>
         <property name="languageModel" value="ngramLanguageModel"/>
-        <property name="dictionary" value="dictionary"/>
-        
+        <property name="dictionary" value="dictionary"/>        
         <property name="wordInsertionProbability" 
-                value="${wordInsertionProbability}"/>
+                  value="${wordInsertionProbability}"/>
         <property name="silenceInsertionProbability" 
-                value="${silenceInsertionProbability}"/>
+                  value="${silenceInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
         <property name="cacheSize" value="20000"/>
     </component>
@@ -101,8 +100,9 @@
     <!-- ******************************************************** -->
 
     <component name="ngramLanguageModel" 
-                type="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel">
-        <property name="location" value="rm1.flat_unigram.lm"/>
+               type="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel">
+        <property name="location"
+	          value="resource:/demo.sphinx.hellongram.HelloNGram!/demo/sphinx/hellongram/hellongram.trigram.lm"/>
         <property name="logMath" value="logMath"/>
         <property name="dictionary" value="dictionary"/>
         <property name="maxDepth" value="1"/>
@@ -119,20 +119,18 @@
                 value="file:./models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
         <property name="dictionaryPath" value= "dict/cmudict.0.6d"/>
         <property name="fillerPath" value="dict/fillerdict"/>
-        <property name="addSilEndingPronunciation" value="false"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
-        <property name="allowMissingWords" value="true"/>
+        <property name="allowMissingWords" value="false"/>
     </component>
 
     <!-- ******************************************************** -->
     <!-- The acoustic model configuration                         -->
     <!-- ******************************************************** -->
-    <component name="tidigits" 
+    <component name="wsj" 
       type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
         <property name="loader" value="sphinx3Loader"/>
     </component>
-    
-    
+
     <component name="sphinx3Loader" 
            type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
         <property name="logMath" value="logMath"/>
@@ -141,29 +139,10 @@
             value="file:./models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
         <property name="definition_file"
             value="etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef"/>
-        <property name="data_location" 
-            value="cd_continuous_8gau"/>
-        <property name="properties_file" value="am.props"/>
+        <property name="data_location" value="cd_continuous_8gau"/>
     </component>
     
-    
-    <!-- ******************************************************** -->
-    <!-- The frontend configuration                               -->
-    <!-- ******************************************************** -->
-    
-    <component name="frontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
-        <propertylist name="pipeline">
-            <item>microphone </item>
-            <item>premphasizer </item>
-            <item>windower </item>
-            <item>fft </item>
-            <item>melFilterBank </item>
-            <item>dct </item>
-            <item>liveCMN </item>
-            <item>featureExtraction </item>
-        </propertylist>
-    </component>
-    
+
     <!-- ******************************************************** -->
     <!-- The live frontend configuration                          -->
     <!-- ******************************************************** -->
