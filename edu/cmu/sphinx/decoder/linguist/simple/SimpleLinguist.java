@@ -235,6 +235,11 @@ public class SimpleLinguist implements  Linguist {
     protected void setAcousticModels(AcousticModel[] models) {
         assert models.length == 1;
         this.acousticModel = models[0];
+
+        // this linguist requires that 
+        assert    this.acousticModel.getLeftContextSize() == 1
+               && this.acousticModel.getRightContextSize() == 1 :
+               "SimpleLinguist requires left and right AM context size of 1";
     }
 
 
@@ -1238,7 +1243,9 @@ public class SimpleLinguist implements  Linguist {
             for (int i = 0; i < leftUnits.length - 1; i++) {
                 leftUnits[i] = prevUnits[i + 1];
             }
-            leftUnits[leftUnits.length -1] = unit;
+            if (leftUnits.length > 0) {
+                leftUnits[leftUnits.length -1] = unit;
+            }
             return UnitContext.get(leftUnits);
         }
 
