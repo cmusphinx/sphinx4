@@ -23,7 +23,7 @@ import java.util.List;
 public class WordSequence {
     private String[] words;
     private transient int hashCode = -1;
-    private final static WordSequence EMPTY = new WordSequence(1);
+    private final static WordSequence EMPTY = new WordSequence();
 
     /**
      * Constructs a word sequence with the given depth
@@ -32,10 +32,6 @@ public class WordSequence {
      */
     private WordSequence(int size) {
         words = new String[size];
-        if (size == 0) {
-            System.out.println("Size is 0");
-            assert size != 0;
-        }
     }
 
     /**
@@ -55,6 +51,7 @@ public class WordSequence {
     public WordSequence(String word1) {
         this(1);
         words[0] = word1;
+        check();
     }
 
     /**
@@ -67,6 +64,7 @@ public class WordSequence {
         this(2);
         words[0] = word1;
         words[1] = word2;
+        check();
     }
 
     /**
@@ -81,6 +79,7 @@ public class WordSequence {
         words[0] = word1;
         words[1] = word2;
         words[2] = word3;
+        check();
     }
 
     /**
@@ -92,6 +91,18 @@ public class WordSequence {
         this(list.size());
         for (int i = 0; i < list.size(); i++) {
             words[i] = (String) list.get(i);
+        }
+        check();
+    }
+
+
+    /**
+     * checks to make sure that the WordSequence is properly
+     * constructed
+     */
+    private void check() {
+        for (int i = 0; i < words.length; i++) {
+            assert words[i] != null;
         }
     }
 
@@ -198,8 +209,9 @@ public class WordSequence {
     public String toString() {
 	StringBuffer sb = new StringBuffer();
         for (int i = 0; i < words.length; i++) {
+            sb.append("[");
             sb.append(words[i]);
-            sb.append(" ");
+            sb.append("]");
 	}
 	return sb.toString();
     }
