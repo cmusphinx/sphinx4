@@ -279,6 +279,36 @@ an4_plus_trigram_quick:
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
+an4_plus_trigram_quick_bin:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=50\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=an4_plus.trigram.lm \
+        -Dedu.cmu.sphinx.search.ExternalLinguist.path=an4_plus.hmm.bin\
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
+        edu.cmu.sphinx.decoder.BatchDecoder ./an4.bin.props ./an4_full.batch
+
+# Tests the 105 words and letters from AN4, using a trigram LM
+# created from full AN4 plus the 100 most common words
+# in English.
+
+an4_plus_trigram_super_quick:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=500\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=an4_plus.trigram.lm \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
+        edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
+
+
 
 # Tests the 105 words and letters from AN4, using an FST created from
 # a trigram LM using the full AN4 plus the 100 most common words
@@ -335,6 +365,18 @@ an4_words_unigram_quick:
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
+
+an4_words_unigram_quick_bin:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=25\
+    -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
+    -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.TreeActiveList \
+    -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+    -Dedu.cmu.sphinx.search.ExternalLinguist.path=an4_words_unigram.hmm.bin\
+    -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
+    -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
+	edu.cmu.sphinx.decoder.BatchDecoder ./an4.bin.props ./an4_words.batch
 
 #################################################
 # Quick  ... Uses the simple active list

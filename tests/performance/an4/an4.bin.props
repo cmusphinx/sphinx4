@@ -46,7 +46,7 @@ edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
 edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
 edu.cmu.sphinx.frontend.windowShiftInMs = 10
 edu.cmu.sphinx.frontend.windower.alpha = 0.46
-edu.cmu.sphinx.frontend.useAcousticModelProperties = true
+edu.cmu.sphinx.frontend.useAcousticModelProperties = false
 
 # the following properties are effective only if 'useAcousticModelProperties'
 # is false
@@ -59,6 +59,7 @@ edu.cmu.sphinx.frontend.cmn.live.initialCepstralMean = 12
 edu.cmu.sphinx.frontend.cmn.live.windowSize = 500
 edu.cmu.sphinx.frontend.cmn.live.shiftWindow = 800
 edu.cmu.sphinx.frontend.sampleRate = 16000
+
 
 
 ############################################################
@@ -81,10 +82,9 @@ edu.cmu.sphinx.search.validateResults=false
 #
 ############################################################
 
-edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist
+edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.ExternalLinguist
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar
 edu.cmu.sphinx.search.Recognizer.dumpMemoryInfo=false
-edu.cmu.sphinx.search.Recognizer.dumpSentenceHMM=true
 
 
 ############################################################
@@ -144,7 +144,8 @@ edu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true
 edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-26
 edu.cmu.sphinx.search.Linguist.autoLoopSilence=false
-edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false
+
+edu.cmu.sphinx.search.ExternalLinguist.path="an4.hmm.bin"
 
 edu.cmu.sphinx.search.validateResults=false
 edu.cmu.sphinx.search.Linguist.showCompilationProgress=false
