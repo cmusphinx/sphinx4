@@ -123,7 +123,10 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
                     cepstraList.add(input);
 
                 } else if (input.hasUtteranceEndSignal()) {
+                    cepstraList.add(input);
                     break;
+                } else { // UTTERANCE_START
+                    cepstraList.add(input);
                 }
             }
         } while (input != null);
@@ -147,11 +150,13 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
         for (Iterator iterator = cepstraList.iterator();
              iterator.hasNext();) {
             Cepstrum cepstrumObject = (Cepstrum) iterator.next();
-            
-            float[] cepstrum = cepstrumObject.getCepstrumData();
-            for (int j = 0; j < cepstrum.length; j++) {
-                cepstrum[j] -= sums[j]; // sums[] is now the means[]
-            }
+
+            if (cepstrumObject.hasContent()) {
+                float[] cepstrum = cepstrumObject.getCepstrumData();
+                for (int j = 0; j < cepstrum.length; j++) {
+                    cepstrum[j] -= sums[j]; // sums[] is now the means[]
+                }
+            }   
 
             if (getDump()) {
                 System.out.println("CMN_CEPSTRUM " + 
