@@ -26,6 +26,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Pre-processes the audio into Features. The SimpleFrontEnd consists
  * of a series of processors. The SimpleFrontEnd connects all the processors
@@ -70,6 +73,12 @@ import java.util.Map;
  * @see Windower
  */
 public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
+
+    /**
+     * The logger for this class
+     */
+    private static Logger logger =
+            Logger.getLogger("edu.cmu.sphinx.frontend.SimpleFrontEnd");
 
     private static Map frontends = new HashMap();
 
@@ -361,8 +370,10 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 	CepstrumSource cmn = null;
 	if (cmnClass.equals("edu.cmu.sphinx.frontend.LiveCMN")) {
 	    cmn = new LiveCMN("LiveCMN", getContext(), props, predecessor);
+	    logger.info("Live CMN enabled");
 	} else if (cmnClass.equals("edu.cmu.sphinx.frontend.BatchCMN")) {
 	    cmn = new BatchCMN("BatchCMN", getContext(), props, predecessor);
+	    logger.info("Batch CMN enabled");
 	}
 	return cmn;
     }
