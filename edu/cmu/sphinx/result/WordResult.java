@@ -23,41 +23,43 @@ import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
  * 
  * All scores are maintained in LogMath log base
  */
-public abstract class WordResult {
-
-
-    /**
-     * No constructor defined yet
-     */
-    private  WordResult() {}
+public interface WordResult {
 
     /**
      * Gets the total score for this word. 
      *
      * @return the score for the word (in LogMath log base)
      */
-    public abstract float getScore();
+    public double getScore();
+
+    /**
+     * Returns a confidence score between 0.0 and 1.0 (inclusive)
+     * for this word.
+     *
+     * @return a confidence score between 0.0 and 1.0 (inclusive)
+     */
+    public double getConfidence();
 
     /**
      * Gets the pronunciation for this word.
      *
      * @return the pronunciation for the word
      */
-    public abstract Pronunciation getPronunciation();
+    public Pronunciation getPronunciation();
 
     /**
      * Gets the starting frame number for the word
      *
      * @return the starting frame number for the word
      */
-    public abstract int getStartFrame();
+    public int getStartFrame();
 
     /**
      * Gets the ending frame number for the word
      *
      * @return the ending frame number for the word
      */
-    public abstract int getEndFrame();
+    public int getEndFrame();
 
 
     /**
@@ -66,12 +68,12 @@ public abstract class WordResult {
      * @return the set of feature frames associated with this word, or null if
      * the frames are not available.
      */
-    public abstract Data[] getDataFrames();
+    public Data[] getDataFrames();
 
 
     /**
      * Returns a string representation of this object
      */
-    public abstract String toString();
+    public String toString();
 }
 

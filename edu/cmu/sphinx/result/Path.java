@@ -21,39 +21,41 @@ import edu.cmu.sphinx.result.WordResult;
  * 
  * All scores are maintained in the logMath log domain
  */
-public abstract class Path {
+public interface Path {
 
-
-    /**
-     * No constructor defined yet
-     */
-    private  Path() {}
     /**
      * Gets the total score for this path. Scores are in the LogMath
      * log domain
      *
      * @return the score for the path in the LogMath log domaain.
      */
-    public abstract float getScore();
+    public double getScore();
+
+    /**
+     * Returns a confidence score between 0.0 and 1.0 (inclusive) 
+     * for this path.
+     *
+     * @return a confidence score between 0.0 and 1.0 (inclusive)
+     */
+    public double getConfidence();
 
     /**
      * Gets the ordered set of words for this path
      *
      * @return an array containing zero or more words 
      */
-    public abstract WordResult[] getWords();
-
+    public WordResult[] getWords();
 
     /**
      * Gets the transcription of the path. 
      *
      * @return the transcription of the path.
      */
-    public abstract String getTranscription();
+    public String getTranscription();
 
     /**
      * Returns a string representation of this object
      */
-    public abstract String toString();
+    public String toString();
 }
 
