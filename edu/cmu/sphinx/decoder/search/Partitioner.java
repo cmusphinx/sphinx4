@@ -87,28 +87,46 @@ public class Partitioner {
 
     /**
      * Partitions the given array of tokens in place, so that the highest
-     * score n token will be at the beginning of the array, not in any order.
+     * scoring n token will be at the beginning of the array, not in any order.
      *
      * @param tokens the array of tokens to partition
      * @param n the number of tokens to partition
      *
-     * @return the actual number of tokens in the resulting partition
+     * @return the index of the last element in the partition
      */
     public int partition(Token[] tokens, int n) {
         bestTokenScore = -Float.MAX_VALUE;
         bestToken = null;
-        int r = tokens.length;
+        int r = tokens.length - 1;
         if (tokens.length > n) {
             r = randomSelect(tokens, 0, tokens.length - 1, n);
         }
         if (bestToken == null) {
+            float lowestScore = Float.MAX_VALUE;
             for (int i = 0; i < tokens.length; i++) {
                 Token current = tokens[i];
-                if (current.getScore() >= bestTokenScore) {
+                float currentScore = current.getScore();
+                if (currentScore >= bestTokenScore) {
                     bestToken = current;
-                    bestTokenScore = current.getScore();
+                    bestTokenScore = currentScore;
+                }
+                if (currentScore <= lowestScore) {
+                    lowestScore = currentScore;
+                    r = i; // "r" is the returned index
                 }
             }
+
+            // exchange tokens[r] <=> last token,
+            // where tokens[r] has the lowest score
+            int last = tokens.length - 1;
+            if (last >= 0) {
+                Token lastToken = tokens[last];
+                tokens[last] = tokens[r];
+                tokens[r] = lastToken;
+            }
+
+            // return the last index
+            r = last;
         }
 
         return r;
