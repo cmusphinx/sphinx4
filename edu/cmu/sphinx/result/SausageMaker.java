@@ -14,6 +14,9 @@
 package edu.cmu.sphinx.result;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +31,36 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+
+class ClusterComparator implements Comparator {
+    
+    /**
+     * Compares to clusters according to their topological relationship. Relies
+     * on strong assumptions about the possible constituents of clusters which
+     * will only be valid during the sausage creation process.
+     * 
+     * @param o1 the first cluster (must be a List)
+     * @param o2 the second cluster (must be a List)
+     */
+    public int compare(Object o1, Object o2) {
+        List cluster1 = (List) o1;
+        List cluster2 = (List) o2;
+        Iterator i = cluster1.iterator();
+        while (i.hasNext()) {
+            Node n1 = (Node)i.next();
+            Iterator i2 = cluster2.iterator();
+            while (i2.hasNext()) {
+                Node n2 = (Node)i2.next();
+                if (n1.isAncestorOf(n2)) {
+                    return -1;
+                } else if (n2.isAncestorOf(n1)) {
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+}
 
 /**
  * The SausageMaker takes word lattices as input and turns them into sausages 
@@ -135,8 +168,6 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         if (toBeMerged1 != null) {
             clusters.remove(toBeMerged2);
             toBeMerged1.addAll(toBeMerged2);
-	    System.out.println("interWordClusterStep");
-	    printClusters(clusters);
             return true;
         }
         return false;
@@ -423,8 +454,6 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         if (toBeMerged1 != null) {
             clusters.remove(toBeMerged2);
             toBeMerged1.addAll(toBeMerged2);
-	    System.out.println("intraWordClusterStep");
-	    printClusters(clusters);
             return true;
         }
         return false;
@@ -443,8 +472,8 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
             ((Node)n.next()).calculateBeginTime();
         }
         Vector clusters = new Vector(lattice.getNodes().size());
-        List sortedNodes = lattice.sortNodes();
-        Iterator i = sortedNodes.iterator();
+        Collection nodes = lattice.nodes.values();
+        Iterator i = nodes.iterator();
         while(i.hasNext()) {
             Vector bucket = new Vector(1);
             bucket.add(i.next());
@@ -452,6 +481,7 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         }
         intraWordCluster(clusters);
         interWordCluster(clusters);
+        Collections.sort(clusters,new ClusterComparator());
         Sausage sausage = new Sausage(clusters.size());
         ListIterator c1 = clusters.listIterator();
         while (c1.hasNext()) {
