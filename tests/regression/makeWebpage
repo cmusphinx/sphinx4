@@ -292,7 +292,29 @@ function getRunStatus(testName, count) {
 }
 
 
+####
+# return the status of gap insertion rate
+#
 function getGapInsertionRateStatus(testName, testCount) {
+    thisGapRate = getGapInsertionRate(testName, testCount);
+    prevGapRate = getGapInsertionRate(testName, testCount - 1);
+
+    if (thisGapRate == "N/A") {
+	return "<td bgcolor=#ffcccc>N/A</td>";
+    }
+    if (prevGapRate == "N/A") {
+	return "<td>" thisGapRate "</td>";
+    }
+    if (thisGapRate < prevGapRate) {
+	return "<td bgcolor=#99ff99>" thisGapRate "</td>";
+    }
+    if (thisGapRate > prevGapRate) {
+	return "<td bgcolor=#ffcccc>" thisGapRate "</td>";
+    }
+    return "<td>" thisGapRate "</td>";
+}
+
+function getGapInsertionRate(testName, testCount) {
     gapInsertion = "N/A";
     updateData(testName, testCount);
     gapInsertion = data[F_GAP_INSERTIONS];
@@ -302,11 +324,37 @@ function getGapInsertionRateStatus(testName, testCount) {
     } else if (totalWords > 0) {
 	gapInsertion = (gapInsertion / totalWords) * 100;
     }
-    return "<td>" gapInsertion "</td>";
+    return gapInsertion;
 }
 
 
+####
+# return the status of utterance ratio
+#
 function getUtteranceRatioStatus(testName, testCount) {
+    thisRatio = getUtteranceRatio(testName, testCount);
+    prevRatio = getUtteranceRatio(testName, testCount - 1);
+
+    if (thisRatio == "N/A") {
+	return "<td bgcolor=#ffcccc>" thisRatio "</td>";
+    }
+    if (prevRatio == "N/A") {
+	return "<td>" thisRatio "</td>";
+    }
+    
+    thisDistFromOne = distFromOne(thisRatio);
+    prevDistFromOne = distFromOne(prevRatio);
+
+    if (thisDistFromOne > prevDistFromOne) {
+	return "<td bgcolor=#ffcccc>" thisRatio "</td>";
+    }
+    if (thisDistFromOne < prevDistFromOne) {
+	return "<td bgcolor=#99ff99>" thisRatio "</td>";
+    }
+    return "<td>" thisRatio "</td>";
+}
+
+function getUtteranceRatio(testName, testCount) {
     ratio = "N/A";
     updateData(testName, testCount);
     actualUtterances = data[F_ACTUAL_UTTERANCES];
@@ -314,39 +362,68 @@ function getUtteranceRatioStatus(testName, testCount) {
     if (actualUtterances > 0) {
         ratio = foundUtterances / actualUtterances;
     }
-    return "<td>" ratio "</td>";
+    return ratio;
 }
 
-
-function getAvgResponseTimeStatus(testName, testCount) {
-    avgResponseTime = "N/A";
-    updateData(testName, testCount);
-    avgResponseTime = data[F_AVG_RESPONSE_TIME];
-    if (avgResponseTime == "") {
-	avgResponseTime = "N/A";
+function distFromOne(x) {
+    dist = x - 1.0;
+    if (dist >= 0) {
+	return dist;
+    } else if (dist < 0) {
+	return -dist;
     }
-    return "<td>" avgResponseTime "</td>";
+}
+	
+
+####
+# return the status of average response time
+#
+function getAvgResponseTimeStatus(testName, testCount) {
+    thisAvgTime = getResponseTime(testName, testCount, F_AVG_RESPONSE_TIME);
+    prevAvgTime = getResponseTime(testName, testCount-1, F_AVG_RESPONSE_TIME);
+    return getResponseTimeStatus(thisAvgTime, prevAvgTime);
 }
 
 
 function getMaxResponseTimeStatus(testName, testCount) {
-    updateData(testName, testCount);
-    maxResponseTime = data[F_MAX_RESPONSE_TIME];
-    if (maxResponseTime == "") {
-	maxResponseTime = "N/A";
-    }
-    return "<td>" maxResponseTime "</td>";
+    thisMaxTime = getResponseTime(testName, testCount, F_MAX_RESPONSE_TIME);
+    prevMaxTime = getResponseTime(testName, testCount-1, F_MAX_RESPONSE_TIME);
+    return getResponseTimeStatus(thisMaxTime, prevMaxTime);
 }
 
 
 function getMinResponseTimeStatus(testName, testCount) {
-    updateData(testName, testCount);
-    minResponseTime = data[F_MIN_RESPONSE_TIME];
-    if (minResponseTime == "") {
-	minResponseTime = "N/A";
-    }
-    return "<td>" minResponseTime "</td>";
+    thisMinTime = getResponseTime(testName, testCount, F_MIN_RESPONSE_TIME);
+    prevMinTime = getResponseTime(testName, testCount-1, F_MIN_RESPONSE_TIME);
+    return getResponseTimeStatus(thisMinTime, prevMinTime);
 }
+
+function getResponseTime(testName, testCount, INDEX) {
+    responseTime = "N/A";
+    updateData(testName, testCount);
+    responseTime = data[INDEX];
+    if (responseTime == "") {
+	responseTime = "N/A";
+    }
+    return responseTime;
+}
+
+function getResponseTimeStatus(thisResponseTime, prevResponseTime) {
+    if (thisResponseTime == "N/A") {
+	return "<td bgcolor=#ffcccc>" "N/A" "</td>";
+    }
+    if (prevResponseTime == "N/A") {
+	return "<td>" thisResponseTime"</td>";
+    }
+    if (thisResponseTime > prevResponseTime) {
+	return "<td bgcolor=#ffcccc>" thisResponseTime "</td>";
+    }
+    if (thisResponseTime < prevResponseTime) {
+	return "<td bgolor=#99ff99>" thisResponseTime "</td>";
+    }
+    return "<td>" thisResponseTime "</td>";
+}
+
 
 
 function printSingleTest(testName, testCount) {
@@ -841,6 +918,9 @@ function printTOC() {
     print("<li>Detailed Test Results</li>");
     print("<ul>");
     for (i in testCount) {
+	print("<li><a href=#" i ">"  i "</a></li>") | "sort";
+    }
+    for (i in liveTestCount) {
 	print("<li><a href=#" i ">"  i "</a></li>") | "sort";
     }
     close("sort");
