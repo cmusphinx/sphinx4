@@ -175,6 +175,22 @@ public class Timer {
 	startTime = System.currentTimeMillis();
     }
 
+    /**
+     * Starts the timer at the given time.
+     *
+     * @param startTime the starting time
+     */
+    public void start(long startTime) {
+        if (startTime != 0L) {
+	    notReliable = true; // start called while timer already running
+            // throw new IllegalStateException("timer stutter start " + name);
+	}
+        if (startTime > System.currentTimeMillis()) {
+            throw new IllegalStateException
+                ("Start time is later than current time");
+        }
+	this.startTime = startTime;
+    }
 
     /**
      * Stops the timer.
