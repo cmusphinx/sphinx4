@@ -77,7 +77,7 @@ all:: ${CLASSES} ${STUBS}
 ti46:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
-	tests.decoder.BatchDecoder ti46.props ./ti46.batch
+	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
 
 
@@ -86,9 +86,9 @@ ti46:
 #
 ti46_quick:
 	$(JAVA_CMD) \
-	-Dtests.decoder.BatchDecoder.skip=40\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=40\
 	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
-	tests.decoder.BatchDecoder ti46.props ./ti46.batch
+	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
 
 
@@ -98,7 +98,7 @@ ti46_quick:
 ti46_multi:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true \
-	tests.decoder.BatchDecoder ti46.props ./ti46.batch
+	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
 
 
@@ -108,6 +108,6 @@ ti46_multi:
 #
 ti46_multi_quick:
 	$(JAVA_CMD) \
-	-Dtests.decoder.BatchDecoder.skip=40\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=40\
 	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true \
-	tests.decoder.BatchDecoder ti46.props ./ti46.batch
+	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch

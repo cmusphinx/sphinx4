@@ -73,6 +73,6 @@ rm1:
 	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d-b.txt \
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-30\
-	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.TreeLinguist \
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist \
 	-Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
-	tests.decoder.BatchDecoder ./rm1.props ./rm1.batch
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch

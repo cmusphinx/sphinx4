@@ -120,6 +120,12 @@ edu.cmu.sphinx.search.WordListGrammar.path = ./digits.gram
 #
 ############################################################
 
-edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.FlatLinguist
+edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist
+edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=true
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ForcedAlignerGrammar
 
+edu.cmu.sphinx.model.acoustic.useComposites=false
+edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
+edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-100
+edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
+edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0

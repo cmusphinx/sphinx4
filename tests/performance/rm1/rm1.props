@@ -124,3 +124,8 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 
 edu.cmu.sphinx.search.WordListGrammar.isLooping = true
 
+edu.cmu.sphinx.model.acoustic.useComposites=false
+edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
+edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-100
+edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
+edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
