@@ -25,6 +25,7 @@ import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
+import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.BatchItem;
 import edu.cmu.sphinx.util.BatchManager;
@@ -37,6 +38,8 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.CommandInterpreter;
+import edu.cmu.sphinx.util.CommandInterface;
 
 /**
  * Decodes a batch file containing a list of files to decode. The files can be
@@ -141,6 +144,9 @@ public class BatchModeRecognizer implements Configurable {
     private Recognizer recognizer;
     private Logger logger;
 
+    private BatchItem curBatchItem;
+    private ConfigurationManager cm;
+
     /*
      * (non-Javadoc)
      * 
@@ -167,6 +173,7 @@ public class BatchModeRecognizer implements Configurable {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
+        cm = ps.getPropertyManager();
         skip = ps.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
         totalCount = ps.getInt(PROP_COUNT, PROP_COUNT_DEFAULT);
         if (totalCount <= 0) {
@@ -265,6 +272,174 @@ public class BatchModeRecognizer implements Configurable {
         }
     }
 
+
+    /**
+     * Add commands to the given interpreter to support shell mode
+     *
+     *
+     * @param ci the interpreter
+     */
+    private void addCommands(CommandInterpreter ci) {
+	ci.add("ls", new CommandInterface() {
+	     public String execute(CommandInterpreter ci, String[] args) {
+                 if (args.length != 1) {
+                    ci.putResponse("Usage: ls");
+                 } else {
+                     String[] names = cm.getInstanceNames(Configurable.class);
+                     for (int i = 0; i < names.length; i++) {
+                         ci.putResponse(names[i]);
+                     }
+                }
+                return "";
+           }
+            public String getHelp() {
+                return "list active components";
+            }
+        });
+	ci.add("show", new CommandInterface() {
+	     public String execute(CommandInterpreter ci, String[] args) {
+                 if (args.length < 2) {
+                    cm.showConfig();
+                 } else {
+                     for (int i = 1; i < args.length; i++) {
+                        String name = args[i];
+                        cm.showConfig(name);
+                     }
+                }
+                return "";
+           }
+            public String getHelp() {
+                return "show component configuration";
+            }
+        });
+	ci.add("set", new CommandInterface() {
+	     public String execute(CommandInterpreter ci, String[] args) {
+                 if (args.length != 4) {
+                    ci.putResponse("Usage: set component property value");
+                 } else {
+                    try {
+                        cm.setProperty(args[1], args[2], args[3]);
+                    } catch (PropertyException pe) {
+                        ci.putResponse(pe.toString());
+                    }
+                }
+                return "";
+           }
+            public String getHelp() {
+                return "set component property to a given value";
+            }
+        });
+	ci.add("recognize", new CommandInterface() {
+	     public String execute(CommandInterpreter ci, String[] args) {
+                 if (args.length < 2) {
+                    ci.putResponse("Usage: recognize audio [transcript]");
+                 } else {
+                    String audioFile = args[1];
+                    String transcript = null;
+                    if (args.length > 2)  {
+                        transcript = args[2];
+                    }
+                    try {
+                        setInputStream(audioFile);
+                        Result result = recognizer.recognize(transcript);
+                    } catch (IOException io) {
+                        ci.putResponse("I/O error during decoding: " +
+                            io.getMessage());
+                    }
+                }
+                return "";
+           }
+            public String getHelp() {
+                return "perform recognition on the given audio";
+            }
+        });
+        ci.addAlias("recognize", "rec");
+
+	ci.add("batchRecognize", new CommandInterface() {
+	     public String execute(CommandInterpreter ci, String[] args) {
+                 if (args.length != 1) {
+                    ci.putResponse("Usage: batchRecognize");
+                 } else {
+                    try {
+                        if (curBatchItem == null) {
+                            batchManager.start();
+                            curBatchItem = batchManager.getNextItem();
+                        }
+                        String audioFile = curBatchItem.getFilename();
+                        String transcript = curBatchItem.getTranscript();
+                        setInputStream(audioFile);
+                        Result result = recognizer.recognize(transcript);
+                    } catch (IOException io) {
+                        ci.putResponse("I/O error during decoding: " +
+                            io.getMessage());
+                    }
+                }
+                return "";
+           }
+            public String getHelp() {
+                return "perform recognition on the current batch item";
+            }
+        });
+        ci.addAlias("batchRecognize", "br");
+
+	ci.add("batchNext", new CommandInterface() {
+	     public String execute(CommandInterpreter ci, String[] args) {
+                 if (args.length != 1) {
+                    ci.putResponse("Usage: batchNext");
+                 } else {
+                    try {
+
+                        // if we don't have a batch item, start (or
+                        // start over)
+
+                        if (curBatchItem == null) {
+                            batchManager.start();
+                        }
+                        curBatchItem = batchManager.getNextItem();
+
+                        // if we reach the end, just loop back and
+                        // start over.
+
+                        if (curBatchItem == null) {
+                            batchManager.start();
+                            curBatchItem = batchManager.getNextItem();
+                        }
+
+                        String audioFile = curBatchItem.getFilename();
+                        String transcript = curBatchItem.getTranscript();
+                        setInputStream(audioFile);
+                        Result result = recognizer.recognize(transcript);
+                    } catch (IOException io) {
+                        ci.putResponse("I/O error during decoding: " +
+                            io.getMessage());
+                    }
+                }
+                return "";
+           }
+            public String getHelp() {
+                return "advance the batch and perform recognition";
+            }
+        });
+        ci.addAlias("batchNext", "bn");
+    }
+
+    public void shell(String batchfile) {
+        try {
+            CommandInterpreter ci = new CommandInterpreter();
+            ci.setPrompt("s4> "); 
+            addCommands(ci);
+            setBatchFile(batchfile);
+            recognizer.allocate();
+            ci.run();
+            batchManager.stop();
+            if (recognizer.getState() == RecognizerState.READY) {
+                recognizer.deallocate();
+            }
+        } catch (IOException io) {
+            logger.severe("I/O error during decoding: " + io.getMessage());
+        }
+    }
+
     /**
      * Main method of this BatchDecoder.
      * 
@@ -274,7 +449,8 @@ public class BatchModeRecognizer implements Configurable {
      */
     public static void main(String[] argv) {
         if (argv.length < 2) {
-            System.out.println("Usage: BatchDecoder propertiesFile batchFile");
+            System.out.println(
+                    "Usage: BatchDecoder propertiesFile batchFile [-shell]");
             System.exit(1);
         }
         String cmFile = argv[0];
@@ -303,6 +479,11 @@ public class BatchModeRecognizer implements Configurable {
             return;
         }
 
-        bmr.decode(batchFile);
+        if (argv.length >= 3 && argv[2].equals("-shell")) {
+            bmr.shell(batchFile);
+
+        } else {
+            bmr.decode(batchFile);
+        }
     }
 }
