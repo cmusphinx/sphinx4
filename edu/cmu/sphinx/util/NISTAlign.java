@@ -56,31 +56,31 @@ public class NISTAlign {
      * Totals over the life of this class.  These can be reset to 0
      * with a call to resetTotals.
      */
-    static int totalSentences;
-    static int totalSentencesWithErrors;
-    static int totalSentencesWithSubtitutions;
-    static int totalSentencesWithInsertions;
-    static int totalSentencesWithDeletions;
-    static int totalReferenceWords;
-    static int totalHypothesisWords;
-    static int totalAlignedWords;
-    static int totalWordsCorrect;
-    static int totalSubstitutions;
-    static int totalInsertions;
-    static int totalDeletions;
+    private int totalSentences;
+    private int totalSentencesWithErrors;
+    private int totalSentencesWithSubtitutions;
+    private int totalSentencesWithInsertions;
+    private int totalSentencesWithDeletions;
+    private int totalReferenceWords;
+    private int totalHypothesisWords;
+    private int totalAlignedWords;
+    private int totalWordsCorrect;
+    private int totalSubstitutions;
+    private int totalInsertions;
+    private int totalDeletions;
     
     /**
      * Error values for one call to 'align'
      */
-    int substitutions;
-    int insertions;
-    int deletions;
-    int correct;
+    private int substitutions;
+    private int insertions;
+    private int deletions;
+    private int correct;
 
     /**
      * The raw reference string.  Updated with each call to 'align'.
      */
-    String rawReference;
+    private String rawReference;
 
     /**
      * The reference annotation; typically the name of the
@@ -89,42 +89,42 @@ public class NISTAlign {
      * is appended to the end of the string in parentheses.
      * Updated with each call to 'align'.
      */
-    String referenceAnnotation;
+    private String referenceAnnotation;
     
     /**
      * Ordered list of words from rawReference after the annotation
      * has been removed.  Updated with each call to 'align'.
      */
-    LinkedList referenceWords;
+    private LinkedList referenceWords;
 
     /**
      * Aligned list of words from rawReference.  Created in
      * alignWords.  Updated with each call to 'align'.
      */
-    LinkedList alignedReferenceWords;
+    private LinkedList alignedReferenceWords;
 
     /**
      * The raw hypothesis string.  Updated with each call to
      * 'align'.
      */
-    String rawHypothesis;
+    private String rawHypothesis;
 
     /**
      * Ordered list of words from rawHypothesis after the annotation
      * has been removed.  Updated with each call to 'align'.
      */
-    LinkedList hypothesisWords;
+    private LinkedList hypothesisWords;
 
     /**
      * Aligned list of words from rawHypothesis.  Created in
      * alignWords.  Updated with each call to 'align'.
      */
-    LinkedList alignedHypothesisWords;
+    private LinkedList alignedHypothesisWords;
 
     /**
      * Helpers to create percentage strings.
      */
-    DecimalFormat percentageFormat = new DecimalFormat("##0.0%");
+    static DecimalFormat percentageFormat = new DecimalFormat("##0.0%");
     
     
     private boolean showResults;
@@ -143,7 +143,7 @@ public class NISTAlign {
      * Reset the total insertions, deletions, and substitutions
      * counts for this class.
      */
-    static public void resetTotals() {
+     public void resetTotals() {
         totalSentences = 0;
         totalSentencesWithErrors = 0;
         totalSentencesWithSubtitutions = 0;
