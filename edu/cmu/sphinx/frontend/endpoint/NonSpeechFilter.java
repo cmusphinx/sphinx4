@@ -116,6 +116,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
      */
     private boolean mergeSpeechSegments;
     private boolean discardMode;
+    private boolean inSpeech;
 
     private CepstrumSource predecessor;
     private List inputBuffer;
@@ -138,6 +139,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
 	this.mergeSpeechSegments = getSphinxProperties().getBoolean
 	    (PROP_MERGE_SPEECH_SEGMENTS, PROP_MERGE_SPEECH_SEGMENTS_DEFAULT);
         this.discardMode = true;
+        this.inSpeech = false;
         this.predecessor = predecessor;
         this.inputBuffer = new LinkedList();
     }
@@ -241,15 +243,45 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
         Cepstrum next = cepstrum;
         if (cepstrum != null) {
             if (cepstrum.hasSignal(Signal.SPEECH_START)) {
-                // if we hit a SPEECH_START, we will stop discarding
-                // Cepstrum, and return an UTTERANCE_START instead
-                discardMode = false;
-                next = new Cepstrum(Signal.UTTERANCE_START);
+                if (inSpeech) {
+                    // Normally, we should not be encounter a SPEECH_START
+                    // if we are inSpeech. This is error-handling code.
+                    System.out.println("ALERT: getting a SPEECH_START while "+
+                                       "in speech, removing it.");
+                    do {
+                        next = readCepstrum();
+                    } while (next != null &&
+                             next.hasSignal(Signal.SPEECH_START));
+                    if (next != null) {
+                        next = handleNonMergingCepstrum(next);
+                    }
+                } else {
+                    // if we hit a SPEECH_START, we will stop discarding
+                    // Cepstrum, and return an UTTERANCE_START instead
+                    inSpeech = true;
+                    discardMode = false;
+                    next = new Cepstrum(Signal.UTTERANCE_START);
+                }
             } else if (cepstrum.hasSignal(Signal.SPEECH_END)) {
-                // if we hit a SPEECH_END, we will start
-                // discarding Cepstrum, and return an UTTERANCE_END instead
-                discardMode = true;
-                next = new Cepstrum(Signal.UTTERANCE_END);
+                if (!inSpeech) {
+                    // Normally, we should not get a SPEECH_END
+                    // if we are not inSpeech. This is error-handling code.
+                    System.out.println("ALERT: getting a SPEECH_END while "+
+                                       "not in speech, removing it.");
+                    do {
+                        next = readCepstrum();
+                    } while (next != null &&
+                             next.hasSignal(Signal.SPEECH_END));
+                    if (next != null) {
+                        next = handleNonMergingCepstrum(next);
+                    }
+                } else {
+                    // if we hit a SPEECH_END, we will start
+                    // discarding Cepstrum, and return an UTTERANCE_END instead
+                    inSpeech = false;
+                    discardMode = true;
+                    next = new Cepstrum(Signal.UTTERANCE_END);
+                }
             } else if (discardMode) {
                 while (next != null && 
                        next.getSignal() != Signal.SPEECH_START &&
