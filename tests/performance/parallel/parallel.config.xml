@@ -152,7 +152,7 @@
     <component name="dictionary" 
         type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
         <property name="location" 
-                  value="/lab/speech/sphinx4/data/aurora2_model"/>
+                  value="file:/lab/speech/sphinx4/data/aurora2_8gau_13dCep_8k_32mel_130Hz_3600Hz.bin.zip"/>
         <property name="dictionaryPath" value= "dictionary"/>
         <property name="fillerPath" value="fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
@@ -174,7 +174,7 @@
         <property name="isBinary"         value="true"/>
 	<property name="sparseForm"       value="false"/>
         <property name="location" 
-                  value="/lab/speech/sphinx4/data/aurora2_model"/>
+                  value="file:/lab/speech/sphinx4/data/aurora2_8gau_13dCep_8k_32mel_130Hz_3600Hz.bin.zip"/>
         <property name="definition_file"  value="mfc.500.mdef"/>
         <property name="data_location"    value="mfc.cd_continuous_8gau"/>
         <property name="properties_file"  value="mfc.am.props"/>
@@ -191,7 +191,7 @@
         <property name="isBinary"         value="true"/>
 	<property name="sparseForm"       value="false"/>
         <property name="location" 
-                  value="/lab/speech/sphinx4/data/aurora2_model"/>
+                  value="file:/lab/speech/sphinx4/data/aurora2_8gau_13dCep_8k_32mel_130Hz_3600Hz.bin.zip"/>
         <property name="definition_file"  value="plp.500.mdef"/>
         <property name="data_location"    value="plp.cd_continuous_8gau"/>
         <property name="properties_file"  value="plp.am.props"/>
