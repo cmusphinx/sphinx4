@@ -381,7 +381,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                     if (newBestToken.isWord()) {
                         // Move predecessors of bestToken to precede newBestToken
                         // bestToken is going to be garbage collected.
-                        loserManager.movePredecessors(newBestToken,bestToken);
+                        loserManager.changeSuccessor(newBestToken,bestToken);
                         loserManager.addAlternatePredecessor(newBestToken,bestToken.getPredecessor());
                     }
                 }
