@@ -22,6 +22,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
 import java.io.Serializable;
+import java.io.PrintWriter;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 
 
 /**
@@ -87,6 +92,37 @@ public class GrammarNode implements Serializable {
      */
     public Word[][] getAlternatives() {
         return alternatives;
+    }
+
+
+    /**
+     * Optimize this grammar node.
+     */
+    void optimize() {
+        for (int i = 0; i < arcList.size(); i++) {
+            GrammarArc arc = (GrammarArc) arcList.get(i);
+            arcList.set(i, optimizeArc(arc));
+        }
+    }
+
+    /**
+     * Optimize the given arc. If an arc branches to an empty node
+     * that has only one exit, the node can be bypassed by making a
+     * new arc that skips the nodes. This can happen multiple times.
+     *
+     * @param arc the arc to optimize
+     *
+     * @return the optimized arc
+     */
+    GrammarArc optimizeArc(GrammarArc arc) {
+        GrammarNode nextNode = arc.getGrammarNode();
+        while (nextNode.isEmpty() && nextNode.arcList.size() == 1) {
+            GrammarArc nextArc = (GrammarArc) nextNode.arcList.get(0);
+            arc = new GrammarArc(nextArc.getGrammarNode(),
+                arc.getProbability() + nextArc.getProbability());
+            nextNode = arc.getGrammarNode();
+        }
+        return arc;
     }
 
     /**
@@ -240,9 +276,102 @@ public class GrammarNode implements Serializable {
     }
 
     /**
+     * Traverse the grammar and dump out the nodes and arcs in GDL
+     *
+     * @param out print the gdl to this file
+     * @param visitedNodes the set of visited nodes
+     *
+     * @throws IOException if an error occurs while writing the file
+     */
+    private void traverseGDL(PrintWriter out, Set visitedNodes) 
+	    throws IOException {
+        
+        // Visit the children nodes if this node has never been visited.
+        
+        if (!(visitedNodes.contains(this))) {
+            visitedNodes.add(this);
+	    out.println("   node: { title: "  + getGDLID(this) +  
+			" label: "+ getGDLLabel(this) + 
+			" color: " + getGDLColor(this) + "}");
+            GrammarArc[] arcs = getSuccessors();
+            for (int i = 0; i < arcs.length; i++) {
+                GrammarNode child = arcs[i].getGrammarNode();
+		float prob = arcs[i].getProbability();
+	        out.println("   edge: { source: " 
+				+ getGDLID(this) +
+				" target: " + getGDLID(child) + 
+				 " label: \"" + prob + "\"}");
+                child.traverseGDL(out, visitedNodes);
+            }
+        } 
+    }
+
+    /**
+     * Gvien a node, return a GDL ID for the node
+     *
+     * @param node the node
+     *
+     * @return the GDL id
+     */
+    String getGDLID(GrammarNode node) {
+        return "\"" + node.getID() + "\"";
+    }
+
+    /**
+     * Given a node, returns a GDL Label for the node
+     *
+     * @param node the node 
+     *
+     * @return a gdl label for the node
+     */
+    String getGDLLabel(GrammarNode node) {
+	String label = node.isEmpty() ? "" : node.getWord().getSpelling();
+        return "\"" + label + "\"";
+    }
+
+
+    /**
+     * Gets the color for the grammar node
+     *
+     * @param node the node of interest
+     *
+     * @return the gdl label for the color
+     */
+    String getGDLColor(GrammarNode node) {
+	String color = "lightgrey";
+	if (node.isFinalNode()) {
+	    color = "red";
+	} else if (!node.isEmpty()) {
+	    color = "lightgreen";
+	}
+	return color;
+    }
+
+    /**
+     * Dumps the grammar in GDL form
+     *
+     * @param path the path to write the gdl file to
+     */
+    public void dumpGDL(String path) {
+	try  {
+	    PrintWriter out = new PrintWriter(new FileOutputStream(path));
+	    out.println("graph: {");
+	    out.println("    orientation: left_to_right");
+	    out.println("    layout_algorithm: dfs");
+	    traverseGDL(out, new HashSet());
+	    out.println("}");
+	    out.close();
+	} catch (FileNotFoundException fnfe) {
+	    System.out.println("Can't write to " + path + " " + fnfe);
+	} catch (IOException ioe) {
+	    System.out.println("Trouble writing to " + path + " " + ioe);
+	}
+    }
+
+    /**
      * Dumps the grammar
      */
     public void dump() {
-	System.out.println(traverse(0, new HashSet(), 1.0f));
+	 System.out.println(traverse(0, new HashSet(), 1.0f));
     }
 }

@@ -31,13 +31,41 @@ import java.util.HashSet;
  * domain.
  */
 public abstract class  Grammar {
+    /**
+     * Prefix for search.Linguist SphinxProperties.
+     */
+    public final static String PROP_PREFIX =
+	"edu.cmu.sphinx.decoder.linguist.Grammar.";
+
+    /**
+     * Property to control the the dumping of the grammar
+     */
+    public final static String PROP_SHOW_GRAMMAR 
+        = PROP_PREFIX + "showGrammar";
+    /**
+     * The default value for PROP_SHOW_GRAMMAR.
+     */
+    public final static boolean PROP_SHOW_GRAMMAR_DEFAULT = false;
+
+    /**
+     * Property to control whether grammars are optimized or not
+     */
+    public final static String PROP_OPTIMIZE_GRAMMAR 
+        = PROP_PREFIX + "optimizeGrammar";
+
+    /**
+     * The default value for PROP_OPTIMIZE_GRAMMAR
+     */
+    public final static boolean PROP_OPTIMIZE_GRAMMAR_DEFAULT = true;
+
     private GrammarNode initialNode;
     private Set grammarNodes;
     private Dictionary dictionary;
     private LanguageModel languageModel;
     private LogMath logMath;
     protected SphinxProperties props;
-    private boolean dumpGrammar = false; 	// should be a property
+    private boolean showGrammar; 	
+    private boolean optimizeGrammar = true; 	
     private final static Word[][] EMPTY_ALTERNATIVE = new Word[0][0];
 
 
@@ -64,12 +92,23 @@ public abstract class  Grammar {
 	this.props = SphinxProperties.getSphinxProperties(context);
 	this.dictionary = dictionary;
         this.logMath = LogMath.getLogMath(context);
-
+	this.showGrammar = props.getBoolean(PROP_SHOW_GRAMMAR, 
+			PROP_SHOW_GRAMMAR_DEFAULT);
+	this.optimizeGrammar = props.getBoolean(PROP_OPTIMIZE_GRAMMAR, 
+			PROP_OPTIMIZE_GRAMMAR_DEFAULT);
 	grammarNodes = new HashSet();
 	initialNode = createGrammar();
-	if (dumpGrammar) {
-	    dump();
+	if (showGrammar) {
+	    dumpGrammar("grammar.gdl");
 	}
+
+        if (optimizeGrammar) {
+            optimizeGrammar();
+            if (showGrammar) {
+                dumpGrammar("optimized.gdl");
+            }
+        }
+
 	this.dictionary = null;
     }
 
@@ -107,12 +146,22 @@ public abstract class  Grammar {
             throw new Error("Dictionary is null!");
 	}
 	this.props = SphinxProperties.getSphinxProperties(context);
+	this.showGrammar = props.getBoolean(PROP_SHOW_GRAMMAR, 
+			PROP_SHOW_GRAMMAR_DEFAULT);
+	this.optimizeGrammar = props.getBoolean(PROP_OPTIMIZE_GRAMMAR, 
+			PROP_OPTIMIZE_GRAMMAR_DEFAULT);
 	this.dictionary = dictionary;
 	grammarNodes = new HashSet();
 	initialNode = createGrammar(referenceText);
-	if (dumpGrammar) {
-	    dump();
+	if (showGrammar) {
+	    dumpGrammar("grammar.gdl");
 	}
+        if (optimizeGrammar) {
+            optimizeGrammar();
+            if (showGrammar) {
+                dumpGrammar("optimized.gdl");
+            }
+        }
 	this.dictionary = null;
     }
 
@@ -173,8 +222,8 @@ public abstract class  Grammar {
     /**
      * Dumps the grammar
      */
-    public void dump() {
-	initialNode.dump();
+    public void dumpGrammar(String name) {
+	initialNode.dumpGDL(name);
     }
 
     /**
@@ -305,5 +354,19 @@ public abstract class  Grammar {
      */
     private void add(GrammarNode node) {
 	grammarNodes.add(node);
+    }
+
+    /**
+     * Eliminate unnecessary nodes from the grammar.  This method goes
+     * through the grammar and looks for branches to nodes that have
+     * no words and have only a single exit and bypasses these nodes.
+     *
+     */
+    private void optimizeGrammar() {
+        Set nodes = getGrammarNodes();
+        for (Iterator i = nodes.iterator(); i.hasNext(); ) {
+            GrammarNode g = (GrammarNode) i.next();
+            g.optimize();
+        }
     }
 }
