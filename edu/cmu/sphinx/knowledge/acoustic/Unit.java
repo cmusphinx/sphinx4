@@ -271,7 +271,11 @@ public class  Unit implements Serializable {
      */
     public String toString() {
 	if (key == null) {
-	    key =  (filler ? "*" :"") + name + "[" + context + "]";
+            if (context == Context.EMPTY_CONTEXT) {
+                key =  (filler ? "*" :"") + name;
+            } else {
+                key =  (filler ? "*" :"") + name + "[" + context + "]";
+            }
 	}
 	return key;
     }
