@@ -29,6 +29,7 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 PROFILE_FLAGS= -Xprof 
 LOG_GC_FLAGS=  -Xloggc:gc.txt
 GC_FLAGS = -ms128m -mx512m
+GC_FLAGS = -ms128m -mx1g
 #GC_FLAGS = -ms128m -mx3048m
 
 
@@ -109,3 +110,10 @@ run_batch:
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
         $(PARSED_EXTRA_OPTIONS) \
         edu.cmu.sphinx.decoder.BatchDecoder $(PROPS) $(BATCH_FILE) 
+
+flat_test:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props \
+        test.batch
