@@ -2,7 +2,7 @@
  * JSGF Grammar for CardMatch example
  */
 
-grammar cardMatch;
+grammar cardmatch.cardmatch;
 
 public <turn_card> = card <cardNumbers> ;
 
