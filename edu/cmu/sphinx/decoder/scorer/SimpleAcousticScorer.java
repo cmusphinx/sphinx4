@@ -88,8 +88,12 @@ public class SimpleAcousticScorer implements AcousticScorer {
      *         false if there was no more Feature available to score
      */
     public Scoreable calculateScores(List scoreableList) {
-        Scoreable best = null;
 
+        if (scoreableList.size() <= 0) {
+            return null;
+        }
+
+        Scoreable best = null;
 	FeatureFrame ff;
 
 	try {
@@ -118,7 +122,8 @@ public class SimpleAcousticScorer implements AcousticScorer {
                 throw new Error("trying to score non-content feature");
             }
 
-            float logMaxScore = - Float.MAX_VALUE;
+            best = (Scoreable) scoreableList.get(0);
+
 	    for (Iterator i = scoreableList.iterator(); i.hasNext(); ) {
                 Scoreable scoreable = (Scoreable) i.next();
 		if (scoreable.getFrameNumber() != feature.getID()) {
@@ -127,9 +132,7 @@ public class SimpleAcousticScorer implements AcousticScorer {
 			 scoreable.getFrameNumber() +
 			 "  Feature: " + feature.getID());
 		}
-                float logScore =  scoreable.calculateScore(feature);
-                if (logScore > logMaxScore) {
-                    logMaxScore = logScore;
+                if (scoreable.calculateScore(feature) > best.getScore()) {
                     best = scoreable;
                 }
 	    }
@@ -137,7 +140,7 @@ public class SimpleAcousticScorer implements AcousticScorer {
             if (normalizeScores) {
                 for (Iterator i = scoreableList.iterator(); i.hasNext(); ) {
                     Scoreable scoreable = (Scoreable) i.next();
-                    scoreable.normalizeScore(logMaxScore);
+                    scoreable.normalizeScore(best.getScore());
                 }
 	    }
 	} catch (IOException ioe) {
