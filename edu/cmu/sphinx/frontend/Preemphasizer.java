@@ -24,13 +24,9 @@ import java.io.IOException;
  * processing. The Preemphasizer takes a Audio as input
  * and outputs the same Audio, but with preemphasis applied.
  *
- * The SphinxProperties of this Preemphasizer are: <pre>
- * edu.cmu.sphinx.frontend.preemphasis.dump
- * edu.cmu.sphinx.frontend.preemphasis.factor
+ * The SphinxProperty of this Preemphasizer is: <pre>
+ * edu.cmu.sphinx.frontend.Preemphasizer.factor
  * </pre>
- * This Preemphasizer also processes the PreemphasisPriorSignal signal.
- * This type of signal contain the value of the previous sample, which
- * is used in applying preemphasis.
  *
  * Other Data objects are passed along unchanged through this Preemphasizer.
  *
