@@ -145,7 +145,7 @@ edu.cmu.sphinx.decoder.search.ActiveListManager.absoluteWordBeamWidth=22
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.growSkipInterval=0
 edu.cmu.sphinx.decoder.linguist.Linguist.unigramSmearWeight=1
 
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.acousticLookaheadFrames=1.7
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.acousticLookaheadFrames=1.9
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.keepAllTokens=true
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.cclextree.LexTreeLinguist 
