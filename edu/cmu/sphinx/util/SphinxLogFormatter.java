@@ -37,8 +37,7 @@ public class SphinxLogFormatter extends Formatter {
     /**
      * Sets the level of output
      * 
-     * @param level
-     *                the output level
+     * @param terse if true, the output level should be terse
      */
     public void setTerse(boolean terse) {
         this.terse = terse;
