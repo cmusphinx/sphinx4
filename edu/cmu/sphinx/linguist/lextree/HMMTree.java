@@ -598,6 +598,39 @@ class HMMTree {
 
 
         /**
+         * An alternate version of createEntryPointMap that compresses
+         * common hmms across all entry points, not just those shaing
+         * the same left context.  This really doesn't speed things
+         * up in the least bit, so it is not worth the effort.
+         *
+         */
+	void createEntryPointMap_alternateVersion() {
+            HashMap map  = new HashMap();
+	    for (Iterator i = exitPoints.iterator(); i.hasNext(); ) {
+		Unit lc = (Unit) i.next();
+		Node epNode = new Node(LogMath.getLogZero());
+		for (Iterator j = getEntryPointRC().iterator(); j.hasNext(); ) {
+		    Unit rc = (Unit) j.next();
+		    HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.BEGIN);
+                    Node addedNode;
+
+                    if ((addedNode = (Node) map.get(hmm)) == null) {
+		        addedNode = epNode.addSuccessor(hmm, getProbability());
+                        map.put(hmm, addedNode);
+                    } else {
+                        epNode.putSuccessor(hmm, addedNode);
+                    }
+
+		    nodeCount++;
+		    connectEntryPointNode(addedNode, rc);
+		}
+		connectSingleUnitWords(lc, epNode);
+	        unitToEntryPointMap.put(lc, epNode);
+	    }
+	}
+
+
+        /**
          * Connects the single unit words associated with this entry
          * point.   The singleUnitWords list contains all single unit
          * pronunciations that have as their sole unit, the unit
@@ -759,7 +792,7 @@ class Node {
      * @param key the object key
      * @param child the child to add
      */
-    private void putSuccessor(Object key, Node child) {
+    void putSuccessor(Object key, Node child) {
         Map successors = getSuccessorMap();
         successors.put(key, child);
     }
@@ -912,7 +945,7 @@ class Node {
      *
      */
     UnitNode addSuccessor(UnitNode child) {
-        HMMNode matchingChild = (HMMNode) getSuccessor(child.getKey());
+        UnitNode matchingChild = (UnitNode) getSuccessor(child.getKey());
         if (matchingChild == null) {
             putSuccessor(child.getKey(), child);
         } else {
