@@ -16,6 +16,7 @@
     <property name="lib_dir"            value="${build_dir}/lib"/>
     <property name="javadoc_dir"	value="${build_dir}/javadoc"/>
     <property name="javadoc_zip"	value="javadoc.zip"/>
+    <property name="access"        value="public"/>
 
     <!-- Load the environment -->
     <property environment="env"/>
@@ -182,7 +183,7 @@ jsapi.exe from the lib directory.
 
     <target name="javadoc" 	    
 	    depends="handle_jsapi"
-	    description="Generate javadoc">
+	    description="Generate javadoc, optionally with '-Daccess=private'">
         <mkdir dir="${javadoc_dir}"/>
         <javadoc sourcepath="${src_dir}"
 	         source="1.4"
@@ -192,7 +193,7 @@ jsapi.exe from the lib directory.
 		 overview="${src_dir}/overview.html"
 		 windowtitle="${javadoc_desc}"
                  doctitle="${javadoc_desc}"
-                 access="public">
+                 access="${access}">
             <link href="http://java.sun.com/products/java-media/speech/forDevelopers/jsapi-doc"
                   offline="true"
                   packagelistLoc="lib/jsapi" />
