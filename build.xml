@@ -43,8 +43,7 @@
                 includes="edu/**"
 	        excludes="com/**,
                           edu/cmu/sphinx/research/parallel/**,
-                          edu/cmu/sphinx/jsapi/**,
-                          edu/cmu/sphinx/decoder/linguist/JSGFGrammar.java"/>
+                          edu/cmu/sphinx/jsapi/**"/>
              
     <target name="set_patternset_to_compile">
         <condition property="patternset_to_compile"

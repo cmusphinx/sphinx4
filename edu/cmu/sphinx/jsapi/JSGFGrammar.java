@@ -53,7 +53,7 @@ import edu.cmu.sphinx.util.LogMath;
 public class JSGFGrammar extends Grammar {
 
     private final static String PROP_PREFIX 
-        = "edu.cmu.sphinx.decoder.linguist.JSGFGrammar.";
+        = "edu.cmu.sphinx.jsapi.JSGFGrammar.";
 
     /**
      * Sphinx property that defines the location of the JSGF

@@ -79,7 +79,7 @@ edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=13
 
 demo.jsapi.cardmatch.numberOfCards = 6
 demo.jsapi.cardmatch.imageFiles = ./willie.gif ./paul.gif ./philip.gif
-edu.cmu.sphinx.decoder.linguist.JSGFGrammar.grammarName=cardmatch
+edu.cmu.sphinx.jsapi.JSGFGrammar.grammarName=cardmatch
 
 
 ############################################################
@@ -88,7 +88,7 @@ edu.cmu.sphinx.decoder.linguist.JSGFGrammar.grammarName=cardmatch
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.JSGFGrammar
+edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.jsapi.JSGFGrammar
 
 
 ############################################################
