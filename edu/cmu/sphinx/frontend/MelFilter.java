@@ -5,7 +5,6 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
 
@@ -37,12 +36,14 @@ public class MelFilter {
      *               frequency bins
      * @param samplingRate sampling frequency
      *
+     * @throw IllegalArgumentException
+     *
      */
     public MelFilter(double leftEdge, 
 		     double centerFreq, 
 		     double rightEdge, 
 		     double initialFreq, 
-		     double deltaFreq) {
+		     double deltaFreq) throws IllegalArgumentException {
 
 	double filterHeight;
 	double leftSlope;
@@ -51,6 +52,18 @@ public class MelFilter {
 	int indexFilterWeight;
 	int numberElementsWeightField;
 
+	if (deltaFreq == 0) {
+	    throw new IllegalArgumentException("deltaFreq has zero value");
+	}
+	/**
+	 * Check if the left and right boundaries of the filter are
+	 * too close.
+	 */
+	if ((Math.round(rightEdge - leftEdge) == 0)
+	    || (Math.round(centerFreq - leftEdge) == 0) 
+	    || (Math.round(rightEdge - centerFreq) == 0)){
+	    throw new IllegalArgumentException("Filter boundaries too close");
+	}
 	/**
 	 * Let's compute the number of elements we need in the
 	 * <code>weight</code> field by computing how many frequency
@@ -61,6 +74,10 @@ public class MelFilter {
 	/**
 	 * Initialize the <code>weight</code> field.
 	 */
+	if (numberElementsWeightField == 0) {
+	    throw new IllegalArgumentException("Number of elements in mel"
+					       + " is zero.");
+	}
 	weight = new double[numberElementsWeightField];
 
 	/**

@@ -15,5 +15,5 @@ frontend.cmn.shiftWindow = 800
 frontend.featureExtractor.featureLength = 39
 frontend.featureExtractor.windowSize = 3
 frontend.preemphasis.factor = 0.97
-frontend.fft.NPoint = 256
+frontend.fft.numberDftPoints = 256
 frontend.windower.alpha = 0.46

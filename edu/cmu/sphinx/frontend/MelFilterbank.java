@@ -24,8 +24,8 @@ public class MelFilterbank extends DataProcessor {
      * The name of the SphinxProperty for the number of points
      * in the Fourier Transform, which is 512 by default.
      */
-    public static final String PROP_NPOINT =
-	"edu.cmu.sphinx.frontend.fft.NPoint";
+    public static final String PROP_NUMBER_DFT_POINTS =
+	"edu.cmu.sphinx.frontend.fft.numberDftPoints";
 
     /**
      * The name of the Sphinx Property for the number of filters in
@@ -50,7 +50,7 @@ public class MelFilterbank extends DataProcessor {
 
     private int sampleRate;
 
-    private int NPoint;
+    private int numberDftPoints;
 
     private int numberFilters;
 
@@ -71,7 +71,7 @@ public class MelFilterbank extends DataProcessor {
      */
     public MelFilterbank(String context) {
 	initSphinxProperties(context);
-	buildFilterbank(NPoint, numberFilters, minFreq, maxFreq);
+	buildFilterbank(numberDftPoints, numberFilters, minFreq, maxFreq);
         setTimer(Timer.getTimer(context, "MelFilterbank"));
     }
 
@@ -87,7 +87,7 @@ public class MelFilterbank extends DataProcessor {
 
         sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);
 
-	NPoint = properties.getInt(PROP_NPOINT, 512);
+	numberDftPoints = properties.getInt(PROP_NUMBER_DFT_POINTS, 512);
 
 	numberFilters = properties.getInt(PROP_NUMBER_FILTERS, 31);
 
@@ -140,8 +140,14 @@ public class MelFilterbank extends DataProcessor {
      * @param stepFreq the distance between frequency bins
      *
      * @return the closest frequency bin
+     *
+     * @throw IllegalArgumentException
      */
-    private double setToNearestFrequencyBin(double inFreq, double stepFreq) {
+    private double setToNearestFrequencyBin(double inFreq, double stepFreq)
+	throws IllegalArgumentException {
+	if (stepFreq == 0) {
+	    throw new IllegalArgumentException("stepFreq is zero");
+	}
 	return stepFreq * Math.round (inFreq / stepFreq);
     }
 
@@ -152,16 +158,18 @@ public class MelFilterbank extends DataProcessor {
      * of a given triangle will be by default at the center of the 
      * neighboring triangles.
      *
-     * @param NPoint number of points in the power spectrum
+     * @param numberDftPoints number of points in the power spectrum
      * @param numberFilters number of filters in the filterbank
      * @param minFreq lowest frequency in the range of interest
      * @param maxFreq highest frequency in the range of interest
      *
+     * @throw IllegalArgumentException
      */
-    private void buildFilterbank(int NPoint, 
+    private void buildFilterbank(int numberDftPoints, 
 				 int numberFilters, 
 				 double minFreq, 
-				 double maxFreq) {
+				 double maxFreq) 
+	throws IllegalArgumentException {
 	double minFreqMel;
 	double maxFreqMel;
 	double deltaFreqMel;
@@ -177,14 +185,17 @@ public class MelFilterbank extends DataProcessor {
 
 	/**
 	 * In fact, the ratio should be between <code>sampleRate /
-	 * 2</code> and <code>NPoint / 2</code> since the number of
+	 * 2</code> and <code>numberDftPoints / 2</code> since the number of
 	 * points in the power spectrum is half of the number of FFT
 	 * points - the other half would be symmetrical for a real
 	 * sequence -, and these points cover up to the Nyquist
 	 * frequency, which is half of the sampling rate. The two
 	 * "divide by 2" get canceled out.
 	 */
-	deltaFreq = (double)sampleRate / NPoint;
+	if (numberDftPoints == 0) {
+	    throw new IllegalArgumentException("Number of DFT points is zero");
+	}
+	deltaFreq = (double)sampleRate / numberDftPoints;
 	/**
 	 * Initialize edges and center freq. These variables will be
 	 * updated so that the center frequency of a filter is the
@@ -192,6 +203,10 @@ public class MelFilterbank extends DataProcessor {
 	 * the filter to its right.
 	 */
 
+	if (numberFilters < 1) {
+	    throw new IllegalArgumentException("Number of filters illegal: "
+					       + numberFilters);
+	}
 	minFreqMel = linToMelFreq(minFreq);
 	maxFreqMel = linToMelFreq(maxFreq);
 	deltaFreqMel = (maxFreqMel - minFreqMel) / (numberFilters + 1);
@@ -245,10 +260,10 @@ public class MelFilterbank extends DataProcessor {
 
 	double[] in = input.getSpectrumData();
 
-	if (in.length != (NPoint >> 1)) {
+	if (in.length != (numberDftPoints >> 1)) {
 	    throw new IllegalArgumentException
                ("Window size is incorrect: in.length == " + in.length +
-                 ", NPoint == " + NPoint);
+                 ", numberDftPoints == " + numberDftPoints);
 	}
 
 	double[] outputMelFilterbank = new double[numberFilters];

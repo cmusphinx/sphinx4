@@ -119,6 +119,9 @@ public class MelCepstrumProducer extends DataProcessor {
             if (melspectrum[i] > 0) {
                 melspectrum[i] = Math.log(melspectrum[i]);
             } else {
+		// in case melspectrum[i] isn;t greater than 0
+		// instead of trying to compute a log we just
+		// assign a very small number
                 melspectrum[i] = -1.0e+5;
             }
         }

@@ -14,6 +14,8 @@ public class MelSpectrum implements Data {
 
     /**
      * Constructs a Spectrum with the given spectra data.
+     *
+     * @params melSpectralData a vector containing a frame's mel spectrum
      */
     public MelSpectrum(double[] melSpectralData) {
 	this.melSpectralData = melSpectralData;
