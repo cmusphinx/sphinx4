@@ -154,9 +154,7 @@ public class GDLDumper extends LinguistDumper {
         } else {
             String color = getColor(state);
             String shape = "box";
-            if (state.isFinal()) {
-                shape = "circle";
-            }
+
             out.println("    node: {" + "title: " + qs(getUniqueName(state))
                     + " label: " + qs(state.toPrettyString()) + " color: "
                     + color + " shape: " + shape + " vertical_order: " + level
