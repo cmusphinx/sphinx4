@@ -15,6 +15,7 @@ package edu.cmu.sphinx.research.bushderby;
 
 import java.util.List;
 import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Collection;
@@ -163,6 +164,8 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      */
     protected void growBranches() {
 	getGrowTimer().start();
+
+        setBestTokenMap(new HashMap(getActiveList().size() * 10));
 	
 	int pass = 0;
 	boolean moreTokensToExpand = true;
