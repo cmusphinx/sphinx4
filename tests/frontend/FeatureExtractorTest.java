@@ -64,11 +64,14 @@ public class FeatureExtractorTest {
             DeltasFeatureExtractor extractor = new DeltasFeatureExtractor
                 ("FeatureExtractor", testName, props, cmn);
 
-            extractor.setDump(fet.getDump());
+            // extractor.setDump(fet.getDump());
 
             Feature feature = null;
             do {
                 feature = extractor.getFeature();
+                if (feature != null) {
+                    System.out.println("FEATURE " + feature.toString());
+                }
             } while (feature != null);
 
 	} catch (Exception e) {
