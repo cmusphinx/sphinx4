@@ -83,8 +83,8 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
 
     /**
-     * A sphinx property that defines the size of the word beam. i.e.
-     * that maximum number of words propagated per frame. Note that a
+     * A sphinx property that defines the size of the word beam, that
+     * is, the maximum number of words propagated per frame. Note that a
      * zero value indicates that all words should be propagated.
      */
     public final static String PROP_MAX_WORDS_PER_FRAME =
