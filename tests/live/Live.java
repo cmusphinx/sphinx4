@@ -419,7 +419,7 @@ public class Live {
                 liveFrame.setDecoderComboBoxEnabled(true);
             } else {
                 liveFrame.setNextButtonEnabled(true);
-                while (decoder.getMicrophone().getRecording()) {
+                while (decoder.getMicrophone().hasMoreData()) {
                     try {
                         System.out.println("Live: decoding ...");
                         lastResult = decoder.decode();
@@ -432,6 +432,8 @@ public class Live {
                         npe.printStackTrace();
                     }
                 }
+                liveFrame.setButtonsEnabled(true);
+                liveFrame.setDecoderComboBoxEnabled(true);
             }
             System.out.println("DecodingThread completed.");
         }
