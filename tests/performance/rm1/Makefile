@@ -143,6 +143,9 @@ RM1_UNIGRAM_QUICK_BIN_CMD = $(JAVA_CMD) \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
+rm1_unigram:
+	$(RM1_UNIGRAM_CMD)
+
 rm1_unigram_quick_bin:
 	$(RM1_UNIGRAM_QUICK_BIN_CMD)
 
@@ -187,7 +190,7 @@ RM1_TRIGRAM_CMD = $(JAVA_CMD) \
 	-Dedu.cmu.sphinx.model.language.location=RM.2880.trigram.arpa \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
-	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
