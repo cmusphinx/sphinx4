@@ -1,0 +1,16 @@
+
+############################################################
+# 
+# Search properties
+#
+############################################################
+edu.cmu.sphinx.knowledge.acoustic.location = /lab/speech/sphinx4/data/wsj
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation = true
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dict/cmudict.0.6d+rm1.txt
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = dict/fillerdict
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=true
+edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel
+edu.cmu.sphinx.knowledge.language.LanguageModel.format=arpa
+edu.cmu.sphinx.knowledge.language.LanguageModel.location=./RM.unigram.arpa
+
+edu.cmu.sphinx.util.LogMath.logBase=1.0003
