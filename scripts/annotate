@@ -5,7 +5,7 @@
 # cat s4.out | annotate
 #
 # This script will go though all the given s4 output
-# data and annotate the REF and HYP entries with the 
+# data and annotate the REF, HYP and RAW entries with the 
 # associated audio file
 #
 

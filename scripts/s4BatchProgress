@@ -17,7 +17,8 @@ BEGIN {
     percentComplete = completed / sum * 100;
     printf("\n");
     printf("\n");
-    printf(" ========================= Progress =========================\n");
-    printf(" Total Tests: %d   Remaining: %d ", sum, toRun);
-    printf(" Complete: %4d  (%d%%) \n\n",  completed, percentComplete);
+    printf(" ============================= Progress =============================\n");
+    printf(" Total Tests: %d   In Process: %d  Remaining: %d ", \
+        sum, inProcess, toRun);
+    printf(" Complete: %d  (%d%%) \n\n",  completed, percentComplete);
 }
