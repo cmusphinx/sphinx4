@@ -30,7 +30,7 @@ public class SphinxLogFormatter extends Formatter {
     /**
      * Formats the given log record and return the formatted string.
      *
-     * @record the record to format
+     * @param the record to format
      * 
      * @return the formatted string
      */
