@@ -20,7 +20,7 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 #
 ############################################################
 
-edu.cmu.sphinx.model.acoustic.names = wsj_mfc
+edu.cmu.sphinx.model.acoustic.names = wsj_plp
 
 edu.cmu.sphinx.model.acoustic.wsj_mfc.format = sphinx3.ascii
 edu.cmu.sphinx.model.acoustic.wsj_mfc.location = /lab/speech/sphinx4/data/wsj
@@ -45,17 +45,13 @@ edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 #
 ############################################################
 
-edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
-edu.cmu.sphinx.frontend.cepstrumSize = 13
+edu.cmu.sphinx.frontend.featureExtractor = edu.cmu.sphinx.frontend.DeltasFeatureExtractor
 edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
 edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
 edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
 edu.cmu.sphinx.frontend.keepAudioReference = true
-edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
-edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
-edu.cmu.sphinx.frontend.windowShiftInMs = 10
-edu.cmu.sphinx.frontend.windower.alpha = 0.46
 
+edu.cmu.sphinx.frontend.cmn = edu.cmu.sphinx.frontend.BatchCMN
 
 
 ############################################################
@@ -89,8 +85,8 @@ edu.cmu.sphinx.search.validateResults=false
 ############################################################
 
 edu.cmu.sphinx.search.Dictionary.useAcousticModelLocation = false
-edu.cmu.sphinx.search.Dictionary.dictionaryPath = /lab/speech/sphinx4/data/wsj/dict/digits.dict
-edu.cmu.sphinx.search.Dictionary.fillerPath = /lab/speech/sphinx4/data/wsj/dict/fillerdict
+edu.cmu.sphinx.search.Dictionary.dictionaryPath = /lab/speech/sphinx4/data/wsj_plp/dict/digits.dict
+edu.cmu.sphinx.search.Dictionary.fillerPath = /lab/speech/sphinx4/data/wsj_plp/dict/fillerdict
 edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false
 
 
