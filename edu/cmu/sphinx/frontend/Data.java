@@ -27,7 +27,18 @@ import java.io.Serializable;
  */
 public class Data implements Serializable {
 
-    private Signal signal = Signal.CONTENT;
+    private Signal signal;
+
+    /**
+     * Constructs a default Data object. Calling <code>getSignal()</code>
+     * on this Data will return <code>Signal.CONTENT</code>.
+     *
+     * @param signal the Signal of this Data object
+     */
+    protected Data() {
+        signal = Signal.CONTENT;
+    }
+    
 
     /**
      * Constructs a Data object with the given Signal.

@@ -184,28 +184,31 @@ FeatureSource {
     public Feature getFeature() throws IOException {
 
         if (outputQueue.size() == 0) {
-            Cepstrum input = (Cepstrum) peekableQueue.peekNext();
 
-            if (input == null) {
-                return null;
+            if (segmentEnd) {
+                segmentEnd = false;
+                outputQueue.add(new Feature(Signal.SEGMENT_END,
+                                            getNextFeatureID()));
             } else {
-                if (segmentEnd) {
-                    
-                    segmentEnd = false;
-                    outputQueue.add(new Feature(Signal.SEGMENT_END,
-                                                getNextFeatureID()));
-                } else if (input.hasContent()) {
-                    
-                    int numberFeatures = readCepstra(featureBlockSize);
-                    if (numberFeatures > 0) {
-                        computeFeatures(numberFeatures);
+
+                Cepstrum input = (Cepstrum) peekableQueue.peekNext();
+                
+                if (input == null) {
+                    return null;
+                } else {
+                    if (input.hasContent()) {
+                        
+                        int numberFeatures = readCepstra(featureBlockSize);
+                        if (numberFeatures > 0) {
+                            computeFeatures(numberFeatures);
+                        }
+                    } else if (input.getSignal().equals(Signal.SEGMENT_START)) {
+                        
+                        input = (Cepstrum) peekableQueue.removeNext();
+                        segmentStart = true;
+                        outputQueue.add(new Feature(input.getSignal(),
+                                                    getNextFeatureID()));
                     }
-                } else if (input.getSignal().equals(Signal.SEGMENT_START)) {
-                    
-                    input = (Cepstrum) peekableQueue.removeNext();
-                    segmentStart = true;
-                    outputQueue.add(new Feature(input.getSignal(),
-                                                getNextFeatureID()));
                 }
             }
         }
