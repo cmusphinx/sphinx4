@@ -56,15 +56,6 @@ public class SimplePruner implements Pruner {
 
 
     /**
-     * Initializes this Pruner with the given context.
-     *
-     * @param context the context to use
-     */
-    public void initialize(String context) {
-    }
-
-
-    /**
      * prunes the given set of states
      *
      * @param activeList a activeList of tokens

@@ -53,13 +53,7 @@ public class NullPruner implements Pruner {
     public NullPruner() {
     }
 
-    /**
-     * Initializes this Pruner with the given context.
-     *
-     * @param context the context to use
-     */
-    public void initialize(String context) {
-    }
+
 
     /**
      * starts the pruner

@@ -28,16 +28,6 @@ public interface Pruner extends Configurable {
      */
     public void startRecognition();
 
-
-    /**
-     * Initializes this Pruner with the given context.
-     *
-     * @param context the context to use
-     */
-    public void initialize(String context);
-
-
-
     /**
      * prunes the given set of states
      *
