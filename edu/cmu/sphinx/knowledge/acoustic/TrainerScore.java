@@ -20,8 +20,15 @@ import edu.cmu.sphinx.frontend.Feature;
  */
 public class TrainerScore {
     private Feature feature;
-    private float probability;
+    private float logOutputProbability;
     private int senoneID;
+    private HMMState hmmState;
+    private Senone senone;
+    private float logAlpha;
+    private float logBeta;
+    private float logGamma;
+    private float[] logComponentGamma;
+    private float[] logComponentProb;
 
     /**
      * Creates a new buffer
@@ -32,8 +39,104 @@ public class TrainerScore {
      */
     public TrainerScore(Feature feature, float probability, int senone) {
 	this.feature = feature;
-	this.probability = probability;
+	this.logOutputProbability = probability;
 	this.senoneID = senone;
+    }
+
+    /**
+     * Creates a new buffer
+     *
+     * @param feature the current feature
+     * @param probability the score for the current frame
+     * @param state the HMMState for this score object
+     * @param logAlpha the forward probability
+     * @param logBeta the backward probability
+     * @param logComponentProb the mixture component a posteriori
+     * probabilities
+     */
+    public TrainerScore(Feature feature, 
+			float probability, 
+			HMMState state,
+			float logAlpha,
+			float logBeta,
+			float[] logComponentProb) {
+
+	this.feature = feature;
+
+	hmmState = state;
+	// get the index and the HMM for this HMMState
+	int stateIndex = hmmState.getState();
+	HMM hmm = hmmState.getHMM();
+	// Get the senone sequence associated with this HMM
+	SenoneSequence ss = hmm.getSenoneSequence();
+	// Get the senone associated with this HMMState, located in
+	// the stateIndex-th position in the senone sequence
+	senone = ss.getSenones()[stateIndex];
+	// After this, we need to the senone pool to find out the
+	// senone id... Or maybe we can operate directly on the senone
+
+	// Now, the probabilities
+	this.logOutputProbability = probability;
+	this.logAlpha = logAlpha;
+	this.logBeta = logBeta;
+	// gamma = alpha * beta;
+	this.logGamma = logAlpha + logBeta;
+	// Compute the gammas for each component in the mixture
+	this.logComponentProb = logComponentProb;
+	if (logComponentProb != null) {
+	    this.logComponentGamma = new float[logComponentProb.length];
+	    for (int i = 0; i < logComponentProb.length; i++) {
+		this.logComponentGamma[i] = 
+		    logComponentProb[i] + this.logGamma;
+	    }
+	}
+    }
+
+    /**
+     * Creates a new buffer
+     *
+     * @param feature the current feature
+     * @param probability the score for the current frame
+     * @param state the HMMState for this score object
+     * @param logAlpha the forward probability
+     * @param logComponentProb the mixture component a posteriori
+     * probabilities
+     */
+    public TrainerScore(Feature feature, 
+			float probability, 
+			HMMState state,
+			float logAlpha,
+			float[] logComponentProb) {
+	this(feature, probability, state, logAlpha, 0.0f, logComponentProb);
+    }
+
+    /**
+     * Creates a new buffer
+     *
+     * @param feature the current feature
+     * @param probability the score for the current frame
+     * @param state the HMMState for this score object
+     * @param logComponentProb the mixture component a posteriori
+     * probabilities
+     */
+    public TrainerScore(Feature feature, 
+			float probability, 
+			HMMState state,
+			float[] logComponentProb) {
+	this(feature, probability, state, 0.0f, 0.0f, logComponentProb);
+    }
+
+    /**
+     * Creates a new buffer
+     *
+     * @param feature the current feature
+     * @param probability the score for the current frame
+     * @param state the HMMState for this score object
+     */
+    public TrainerScore(Feature feature, 
+			float probability, 
+			HMMState state) {
+	this(feature, probability, state, 0.0f, 0.0f, null);
     }
 
     /**
@@ -51,7 +154,79 @@ public class TrainerScore {
      * @return the probability
      */
     public float getScore() {
-	return probability;
+	return logOutputProbability;
+    }
+
+    /**
+     * Retrieves the forward probability.
+     *
+     * @return the forward log probability
+     */
+    public float getAlpha() {
+	return logAlpha;
+    }
+
+    /**
+     * Retrieves the backward probability.
+     *
+     * @return the backward log probability
+     */
+    public float getBeta() {
+	return logBeta;
+    }
+
+    /**
+     * Retrieves the a posteriori probability.
+     *
+     * @return the a posteriori log probability
+     */
+    public float getGamma() {
+	return logGamma;
+    }
+
+    /**
+     * Retrieves the mixture component a posteriori probability.
+     *
+     * @return the a posteriori log probabilities
+     */
+    public float[] getComponentGamma() {
+	return logComponentGamma;
+    }
+
+    /**
+     * Sets the forward probability.
+     *
+     * @param the forward log probability
+     */
+    public void setAlpha(float logAlpha) {
+	this.logAlpha = logAlpha;
+    }
+
+    /**
+     * Sets the backward probability.
+     *
+     * @param the backward log probability
+     */
+    public void setBeta(float logBeta) {
+	this.logBeta = logBeta;
+    }
+
+    /**
+     * Computes the a posteriori probability. This is the product of
+     * the current alpha and beta, or the summation of the current
+     * logAlpha and logBeta. The current beta is updated in the
+     * object, and the current alpha and beta are used.
+     *
+     * @param the backward log probability
+     */
+    public void setGamma() {
+	logGamma = logAlpha + this.logBeta;
+	// Compute the gammas for each component in the mixture
+	if (logComponentGamma != null) {
+	    for (int i = 0; i < logComponentGamma.length; i++) {
+		logComponentGamma[i] += logComponentProb[i] + logGamma;
+	    }
+	}
     }
 
     /**
@@ -61,6 +236,24 @@ public class TrainerScore {
      */
     public int getSenoneID() {
 	return senoneID;
+    }
+
+    /**
+     * Retrieves the senone.
+     *
+     * @return the senone
+     */
+    public Senone getSenone() {
+	return senone;
+    }
+
+    /**
+     * Retrieves the HMM state.
+     *
+     * @return the HMM state
+     */
+    public HMMState getState() {
+	return hmmState;
     }
 }
 
