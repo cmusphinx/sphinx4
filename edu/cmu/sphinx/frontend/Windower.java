@@ -17,8 +17,12 @@ import edu.cmu.sphinx.frontend.util.Util;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.IOException;
-import java.util.Vector;
+
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 
 /**
@@ -99,7 +103,7 @@ public class Windower extends DataProcessor implements AudioSource {
     private double[] hammingWindow;      // Hamming window
     private int windowSize;              // size of each window
     private int windowShift;             // the window size
-    private Vector outputQueue;          // cache for output windows
+    private List outputQueue;            // cache for output windows
     private DoubleBuffer overflowBuffer; // cache for overlapped audio regions
     private Utterance currentUtterance;  // the current Utterance
 
@@ -117,7 +121,7 @@ public class Windower extends DataProcessor implements AudioSource {
 	setProperties();
         this.predecessor = predecessor;
 	createWindow();
-        outputQueue = new Vector();
+        outputQueue = new LinkedList();
         overflowBuffer = new DoubleBuffer(windowSize);
     }
 
@@ -174,51 +178,38 @@ public class Windower extends DataProcessor implements AudioSource {
      * @see Audio
      */
     public Audio getAudio() throws IOException {
-
-        Audio output = getWindow();
         
-        if (output == null) {
+        if (outputQueue.size() == 0) {
             Audio input = predecessor.getAudio();
-
+            
             getTimer().start();
 
             if (input != null) {
                 if (input.hasContent()) {
                     // process the Audio, and output the windows
-                    process(input);
-                    output = getWindow();
-
+                    process(input);                    
                 } else if (input.hasSignal(Signal.UTTERANCE_END)) {
                     // end of utterance handling
                     processUtteranceEnd();
-                    output = getWindow();
                     outputQueue.add(input);
                 } else {
-                    output = input;
+                    outputQueue.add(input);
                 }
             }
 
             getTimer().stop();
         }
 
-        return output;
-    }
-
-
-    /**
-     * Returns the next produced window in the output queue.
-     *
-     * @return the next window in the output queue, or null if none
-     *    available
-     */
-    private Audio getWindow() {
         if (outputQueue.size() > 0) {
-            return (Audio) outputQueue.remove(0);
+            Audio output = (Audio) outputQueue.remove(0);
+            if (output.hasContent()) {
+                assert output.getSamples().length == windowSize;
+            }
+            return output;
         } else {
             return null;
         }
     }
-
 
     /**
      * Applies the Windowing to the given Audio. The resulting windows
@@ -226,28 +217,51 @@ public class Windower extends DataProcessor implements AudioSource {
      *
      * @param input the input Audio object
      */
-    private void process(Audio input) {
+    private void process(Audio input) throws IOException {
 
         currentUtterance = input.getUtterance();
 
 	double[] in = input.getSamples();
-        int length = in.length;
+        int length = overflowBuffer.getOccupancy() + in.length;
+
+        List audioList = new LinkedList();
+        audioList.add(input);
+
+        Audio utteranceEnd = null;
+        
+        // read in more Audio if we have under one window's length of data
+        while (length < windowSize) {
+            Audio next = predecessor.getAudio();
+            if (next.hasContent()) {
+                audioList.add(next);
+                length += next.getSamples().length;
+            } else if (next.hasSignal(Signal.UTTERANCE_END)) {
+                utteranceEnd = next;
+                break;
+            }
+        }
 
 	double[] allSamples = in;
 
         // prepend overflow samples
-        if (overflowBuffer.getOccupancy() > 0) {
-            allSamples = new double[overflowBuffer.getOccupancy() + length];
+        if (length != in.length) {
+
+            allSamples = new double[length];
+            int start = 0;
 	    
 	    // copy overflow samples to allSamples buffer
 	    System.arraycopy(overflowBuffer.getBuffer(), 0,
-			     allSamples, 0, overflowBuffer.getOccupancy());
-	    
-	    // copy input samples to allSamples buffer
-	    System.arraycopy(in, 0, allSamples, overflowBuffer.getOccupancy(),
-			     in.length);
+			     allSamples, start, overflowBuffer.getOccupancy());
+            start = overflowBuffer.getOccupancy();
 
-	    length += overflowBuffer.getOccupancy();
+	    // copy input samples to allSamples buffer
+            for (Iterator i = audioList.iterator(); i.hasNext(); ) {
+                Audio next = (Audio) i.next();
+                double[] samples = next.getSamples();
+                System.arraycopy(samples, 0, allSamples, start, 
+                                 samples.length);
+                start += samples.length;
+            }
 	}
 
         // apply Hamming window
@@ -258,6 +272,11 @@ public class Windower extends DataProcessor implements AudioSource {
 	if (length - residual > 0) {
 	    overflowBuffer.append(allSamples, residual, length - residual);
 	}
+        if (utteranceEnd != null) {
+            // end of utterance handling
+            processUtteranceEnd();
+            outputQueue.add(utteranceEnd);
+        }
     }
 
 
