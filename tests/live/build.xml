@@ -21,6 +21,11 @@ NOTE:  Before running the tests, you must have already built
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="live_demo"          value="tests.live.Live"/>
 
+    <path id="classpath">
+        <pathelement path="${classes_dir}"/>
+        <fileset dir="${top_dir}/lib" includes="**/*.jar"/>
+    </path>
+
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -71,13 +76,13 @@ NOTE:  Before running the tests, you must have already built
 	    description="Runs the live demo without endpointing."
 	    depends="all">
 	    <java classname="${live_demo}"
-	          classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
 		  fork="true"
 		  maxmemory="312m">
+		  <classpath refid="classpath"/>
 		  <sysproperty key="showPartialResults" value="true"/>
 		  <sysproperty key="frontend" value="mfcFrontEnd"/>
 		  <arg value="decoders.list"/>
-                  <jvmarg value="-server"/>   
+                  <jvmarg value="-server"/>
 	    </java>
     </target>
 
@@ -94,10 +99,10 @@ NOTE:  Before running the tests, you must have already built
 	    description="Runs the live demo with endpointing."
 	    depends="all">
 	    <java classname="${live_demo}"
-	          classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
 		  fork="true"
 		  maxmemory="312m">
-                 <jvmarg value="-server"/>   
+		  <classpath refid="classpath"/>
+                  <jvmarg value="-server"/>   
 		  <sysproperty key="epMode" value="true"/>
 		  <sysproperty key="showPartialResults" value="true"/>
 		  <sysproperty key="frontend" value="epFrontEnd"/>
@@ -122,13 +127,13 @@ NOTE:  Before running the tests, you must have already built
 	    description="Runs the live demo in hands-free mode."
 	    depends="all">
 	    <java classname="${live_demo}"
-	          classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
 		  fork="true"
 		  maxmemory="312m">
+		  <classpath refid="classpath"/>
                   <jvmarg value="-server"/>   
 		  <sysproperty key="handsFree" value="true"/>
-                 <sysproperty key="java.util.logging.config.file"
-                              value="tidigits.props"/>
+                  <sysproperty key="java.util.logging.config.file"
+                               value="tidigits.props"/>
 		  <sysproperty key="frontend" value="epFrontEnd"/>
 		  <sysproperty key="showPartialResults" value="true"/>
 		  <sysproperty key="microphone[keepLastAudio]" value="false"/>

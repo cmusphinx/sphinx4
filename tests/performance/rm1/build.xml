@@ -22,7 +22,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     </path>
     <property name="build_dir"		value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
-    <property name="lib_dir"            value="${build_dir}/lib"/>
+    <property name="classpath"          value="${classes_dir}:/lab/speech/sphinx4/data/RM1_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
 
     <property name="skip"               value="0"/>
     <property name="logger_props"       value=""/>  
@@ -47,7 +47,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="rm1_bigram"
             description="rm1 bigram">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -78,7 +78,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <target name="rm1_bigram_fst"
             description="FST version of rm1 bigram">
 
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -104,7 +104,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="rm1_flat_unigram"  description="flat unigram decode of rm1">
 
- 	    <java classpath="${classes_dir}" classname="${batch_main}" fork="true">
+ 	    <java classpath="${classpath}" classname="${batch_main}" fork="true">
             <jvmarg value="-ea"/>
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
@@ -134,7 +134,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="rm1_flat_unigram_fst"
             description="flat unigram fst version of the rm1 decode">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -160,7 +160,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="rm1_trigram_sbfsm"
             description="trigram decode of rm1">
- 	    <java classpath="${classes_dir}" classname="${batch_main}" fork="true">
+ 	    <java classpath="${classpath}" classname="${batch_main}" fork="true">
             <jvmarg value="-ea"/>
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
@@ -190,7 +190,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="rm1_unigram"
             description="unigram decode of rm1">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -218,7 +218,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="rm1_unigram_fst"
             description="unigram fst decode of rm1">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -244,7 +244,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="rm1_flat_unigram_simple"
             description="flat unigram decode of rm1 using the simple linguist">
-         <java classpath="${classes_dir}"
+         <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -270,7 +270,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="rm1_unigram_simple"
             description="unigram decode of rm1 using the simple linguist">
-         <java classpath="${classes_dir}"
+         <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -296,7 +296,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="rm1_bigram_simple"
             description="bigram decode of rm1 using the simple linguist">
-         <java classpath="${classes_dir}"
+         <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -321,7 +321,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="rm1_bigram_beamfinder"
             description="beamfinder for rm1 bigram">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -353,7 +353,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="rm1_trigram_beamfinder"
             description="beam finder for rm1 trigram">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -385,7 +385,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="rm1_trigram"
             description="trigram decode of rm1 using the word pruning breadth first search manager ">
-       <java classpath="${classes_dir}"
+       <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>

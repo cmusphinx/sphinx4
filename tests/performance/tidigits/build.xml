@@ -23,7 +23,8 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
     </path>
     <property name="build_dir"		value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
-    <property name="lib_dir"            value="${build_dir}/lib"/>
+    <property name="classpath"
+        value="${classes_dir}:${top_dir}/lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
 
     <property name="skip"               value="0"/>
     <property name="count"               value="0"/>
@@ -46,7 +47,7 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
     <!-- ********************************************************** -->
     <target name="tidigits_wordlist"
 	    description="TIDIGITS test set with a word list language model">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -91,7 +92,7 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
     <!-- ********************************************************** -->
     <target name="tidigits_flat_unigram"
 	    description="TIDIGITS test set with a flat unigram language model">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -113,7 +114,7 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
     <!-- ********************************************************** -->
     <target name="tidigits_flat_unigram_fst"
 	    description="TIDIGITS test set with a flat unigram fst language model">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -135,7 +136,7 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
     <!-- ********************************************************** -->
     <target name="tidigits_flat_unigram_lex"
 	    description="TIDIGITS test set with a flat unigram language model and the lex tree linguist">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -157,7 +158,7 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
     <!-- ********************************************************** -->
     <target name="tidigits_bigram_lex"
 	    description="TIDIGITS test set with a bigram language model and the lex tree linguist">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -181,7 +182,7 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
     <!-- ********************************************************** -->
     <target name="tidigits_bigram"
 	    description="TIDIGITS test set with a bigram language model">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -205,7 +206,7 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
     <!-- ********************************************************** -->
     <target name="tidigits_trigram_lex"
 	    description="TIDIGITS test set with a trigram language model and the lex tree linguist">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -232,7 +233,7 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
         <exec executable="rm"> 
             <arg line="-f reference.txt hypothesis.txt transcript.txt"/>
         </exec>
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${live_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -258,7 +259,7 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
         <exec executable="rm"> 
             <arg line="-f reference.txt hypothesis.txt transcript.txt"/>
         </exec>
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${live_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -283,7 +284,7 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
     <!-- ********************************************************** -->
     <target name="tidigits_simple"
 	    description="TIDIGITS with the simplest config file">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>

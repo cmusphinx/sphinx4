@@ -113,10 +113,11 @@
     <!-- ******************************************************** -->
     
     <component name="dictionary" 
-        type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
-        <property name="location" 
-                value="file:./../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
-        <property name="dictionaryPath" value= "dict/cmudict.0.6d"/>
+               type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
+        <property name="dictionaryPath"
+	          value="resource:/edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/dict/cmudict.0.6d"/>
+	<property name="fillerPath"
+		  value="resource:/edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/dict/fillerdict"/>
         <property name="fillerPath" value="dict/fillerdict"/>
         <property name="addSilEndingPronunciation" value="true"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
@@ -128,23 +129,13 @@
     <!-- The acoustic model configuration                         -->
     <!-- ******************************************************** -->
     <component name="wsj" 
-      type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
+               type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz">
         <property name="loader" value="sphinx3Loader"/>
     </component>
-    
-    
+        
     <component name="sphinx3Loader" 
-           type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
+               type="edu.cmu.sphinx.model.acoustic.WSJLoader"/>
         <property name="logMath" value="logMath"/>
-        <property name="isBinary" value="true"/>
-        <property name="location" 
-                value="file:./../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
-        <property name="definition_file" 
-                value="etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef"/>
-        <property name="data_location" 
-                value="cd_continuous_8gau"/>
-        <property name="properties_file" value="am.props"/>
-        <property name="FeatureVectorLength" value="39"/>
     </component>
     
     

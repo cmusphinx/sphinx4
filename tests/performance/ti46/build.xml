@@ -22,7 +22,8 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     </path>
     <property name="build_dir"		value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
-    <property name="lib_dir"            value="${build_dir}/lib"/>
+
+    <property name="classpath" value="${classes_dir}:${top_dir}/lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
 
     <property name="skip"               value="0"/>
     <property name="logger_props"       value=""/>  
@@ -44,7 +45,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** -->
     <target name="ti46_wordlist"
 	    description="TI46 test set with a word list language model">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -66,7 +67,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** -->
     <target name="ti46_flat_unigram"
 	    description="TI46 test set with a flat unigram language model">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -87,7 +88,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** -->
     <target name="ti46_flat_unigram_fst"
 	    description="TI46 test set with a flat unigram fst language model">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>

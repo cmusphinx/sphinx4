@@ -129,7 +129,7 @@
     <!-- ************************************************** -->
 
     <component name="hub4"
-          type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
+        type="edu.cmu.sphinx.model.acoustic.HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz">
         <property name="loader" value="sphinx3Loader"/>
     </component>
 
@@ -138,16 +138,8 @@
     <!-- ************************************************** -->
 
     <component name="sphinx3Loader"
-          type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
-        <property name="FeatureVectorLength" value="39"/>
-        <property name="data_location"
-         value="6000senones/hub4opensrc.cd_continuous_8gau"/>
+               type="edu.cmu.sphinx.model.acoustic.HUB4Loader">
         <property name="logMath" value="logMath"/>
-        <property name="isBinary" value="true"/>
-        <property name="definition_file" value="hub4opensrc.6000.mdef"/>
-        <property name="properties_file" value="am.props"/>
-        <property name="location"
-         value="/lab/speech/sphinx4/data/hub4_model"/>
     </component>
 
     <!-- ************************************************** -->
@@ -161,7 +153,7 @@
         <property name="logMath" value="logMath"/>
         <property name="dictionary" value="dictionary"/>
         <property name="location"
-         value="/lab/speech/sphinx4/data/hub4_model/language_model.arpaformat.DMP"/>
+                  value="file:/lab/speech/sphinx4/data/hub4_model/language_model.arpaformat.DMP"/>
     </component>
 
     <!-- ************************************************** -->
@@ -183,12 +175,10 @@
 
     <component name="dictionary"
           type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
-        <property name="dictionaryPath" value="cmudict.06d"/>
+        <property name="dictionaryPath" value="resource:/edu.cmu.sphinx.model.acoustic.HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz!/edu/cmu/sphinx/model/acoustic/cmudict.06d"/>
+        <property name="fillerPath" value="resource:/edu.cmu.sphinx.model.acoustic.HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz!/edu/cmu/sphinx/model/acoustic/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="allowMissingWords" value="false"/>
-        <property name="fillerPath" value="fillerdict"/>
-        <property name="location"
-         value="/lab/speech/sphinx4/data/hub4_model"/>
     </component>
 
     <!-- ************************************************** -->

@@ -183,10 +183,8 @@
     
     <component name="dictionary" 
         type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
-        <property name="location" 
-                value="file:/lab/speech/sphinx4/data/rm1_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
-        <property name="dictionaryPath" value= "dict/RM.dictionary"/>
-        <property name="fillerPath" value="dict/fillerdict"/>
+        <property name="dictionaryPath" value="resource:/edu.cmu.sphinx.model.acoustic.RM1_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/dict/RM.dictionary"/>
+        <property name="fillerPath" value="resource:/edu.cmu.sphinx.model.acoustic.RM1_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/dict/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="allowMissingWords" value="true"/>
     </component>
@@ -207,22 +205,13 @@
     <!-- The acoustic model configuration                         -->
     <!-- ******************************************************** -->
     <component name="rm1" 
-      type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
+        type="edu.cmu.sphinx.model.acoustic.RM1_13dCep_16k_40mel_130Hz_6800Hz">
         <property name="loader" value="sphinx3Loader"/>
     </component>
     
-    <component name="sphinx3Loader" 
-           type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
+    <component name="sphinx3Loader"
+               type="edu.cmu.sphinx.model.acoustic.RM1Loader">
         <property name="logMath" value="logMath"/>
-        <property name="isBinary" value="true"/>
-        <property name="location" 
-                value="file:/lab/speech/sphinx4/data/rm1_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
-        <property name="definition_file" 
-                value="etc/RM1_clean_13dCep_16k_40mel_130Hz_6800Hz.1800.mdef"/>
-        <property name="data_location" 
-                value="cd_continuous_8gau"/>
-        <property name="properties_file" value="am.props"/>
-        <property name="FeatureVectorLength" value="39"/>
     </component>
     
     
