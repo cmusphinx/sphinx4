@@ -18,6 +18,7 @@ public class Cepstrum extends Data {
      * @param cepstrumData the cepstrum data
      */
     public Cepstrum(float[] cepstrumData) {
+        super(Signal.CONTENT);
 	this.cepstrumData = cepstrumData;
     }
 
@@ -41,6 +42,7 @@ public class Cepstrum extends Data {
      */
     public Cepstrum(Signal signal) {
         super(signal);
+        cepstrumData = null;
     }
 
 
@@ -51,6 +53,21 @@ public class Cepstrum extends Data {
      */
     public float[] getCepstrumData() {
 	return cepstrumData;
+    }
+
+
+    /**
+     * Returns the energy value of this Cepstrum.
+     *
+     * @return the energy value of this Cepstrum or zero if
+     *    this Cepstrum has no data
+     */
+    public float getEnergy() {
+        if (cepstrumData != null && cepstrumData.length > 0) {
+            return cepstrumData[0];
+        } else {
+            return 0.0f;
+        }
     }
 
 
