@@ -61,10 +61,13 @@ live: all
 	$(JAVA_CMD) -cp ../../classes \
 	tests.frontend.MicrophoneTest
 
-# endpointing for the tidigits data set
+# Endpointing for the tidigits data set, current configured such that
+# you can only see the speech regions. If you want to see the non-speech
+# regions as well, set the system property "removeNonSpeech" to "false".
 ep-tidigits: all
 	$(JAVA_CMD) \
 	-Dtests.frontend.energyEndpointer.batchMode=true \
+	-DremoveNonSpeech=true \
 	tests.frontend.EnergyEndpointerTest \
 	energyEndpointer ../decoder/tiDigits.props ../decoder/tidigits.batch
 
