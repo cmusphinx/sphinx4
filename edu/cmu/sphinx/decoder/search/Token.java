@@ -234,20 +234,15 @@ public class Token implements Scoreable {
      * @return the score for the feature
      */
     public float calculateScore(Feature feature) {
-        if (searchState instanceof HMMSearchState) {
-            HMMSearchState hmmSearchState = (HMMSearchState) searchState;
-            HMMState hmmState = hmmSearchState.getHMMState();
-            float logScore = hmmState.getScore(feature);
-            this.logTotalScore += logScore;
-            this.logAcousticScore = logScore;
-	    // this.feature = feature;
-            return logScore;
-        } else {
-            System.out.println("SS: " + searchState);
-            throw new Error("Attempting to score non-scoreable token");
-        }
+        assert searchState.isEmitting() : "Attempting to score non-scoreable token: " + searchState;
+        HMMSearchState hmmSearchState = (HMMSearchState) searchState;
+        HMMState hmmState = hmmSearchState.getHMMState();
+        float logScore = hmmState.getScore(feature);
+        this.logTotalScore += logScore;
+        this.logAcousticScore = logScore;
+        // this.feature = feature;
+        return logScore;
     }
-
 
     /**
      * Normalizes a previously calculated score
