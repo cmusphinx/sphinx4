@@ -18,7 +18,7 @@ SUBDIRS = edu tests
 JSAPI_DIRS = com demo/jsapi
 GTAR=/bin/tar
 
-EXTERNAL_JSAPI_LOCATION = /lab/speech/sphinx4/jsapi.jar
+EXTERNAL_JSAPI_LOCATION = /lab/speech/sphinx4/lib/jsapi.jar
 JSAPI_DEST= ${TOP}/lib/jsapi.jar
 
 ##########################################################################
