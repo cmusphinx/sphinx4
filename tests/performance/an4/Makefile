@@ -147,8 +147,8 @@ an4_spelling_fst:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
         -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
-    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false\
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-65\
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-36\
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_spelling.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
@@ -225,7 +225,7 @@ an4_full_fst:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-65\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-36\
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_full.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 # -Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
