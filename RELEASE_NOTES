@@ -5,6 +5,12 @@ Version:       XXXX
 Release Date:  XXXX
 
 -------------------------------------------------------------------
+
+PPK - 9/13/04
+    Completed confidence scores based on posterior probabilities.
+    The MAPConfidenceScorer returns the confidence scores of best path
+    and each word in the best path.
+
 WDW - 9/10/04
     Added ECMAScript Action Tags support and demos.
 
