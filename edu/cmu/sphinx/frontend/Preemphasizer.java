@@ -11,7 +11,7 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * Filters out the attenuation of audio data. Speech signals have an
  * attenuation of 20 dB/dec. Preemphasis flatten the signal to make it
  * less susceptible to finite precision effects later in the signal
- * processing. The Preemphasizer takes as input an ShortAudioFrame
+ * processing. The Preemphasizer takes a ShortAudioFrame as input
  * and outputs a DoubleAudioFrame.
  *
  */
@@ -27,8 +27,7 @@ public class Preemphasizer implements Processor {
 
 
     /**
-     * Constructs a default Preemphasizer with the given Pre-emphasis Factor
-     * value.
+     * Constructs a default Preemphasizer.
      */
     public Preemphasizer() {}
 
@@ -42,17 +41,18 @@ public class Preemphasizer implements Processor {
 
 	preemphasisFactor = properties.getDouble
 	    (PROP_PREEMPHASIS_FACTOR, 0.97);
-	// TODO : specify the prior value
-	// preemphasisFactor = properties.getDouble(PROP_PREEMPHASIS_PRIOR);
+	preemphasisFactor = properties.getDouble(PROP_PREEMPHASIS_PRIOR, 0);
     }
 
 
     /**
-     * Applies pre-emphasis filter to the given DataFrame.
+     * Applies pre-emphasis filter to the given ShortAudioFrame.
+     * If the preemphasis factor is zero, then the short input samples will
+     * just be converted to double samples.
      *
-     * @param dataFrame the ShortAudioFrame to apply pre-emphasis filter.
+     * @param input a ShortAudioFrame of audio data
      *
-     * @return the audio data with pre-emphasis filter applied
+     * @return a DoubleAudioFrame of data with pre-emphasis filter applied
      */
     public Data process(Data input) {
 

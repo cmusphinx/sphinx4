@@ -5,7 +5,7 @@
 package edu.cmu.sphinx.frontend;
 
 /**
- * Represents an audio data frame.
+ * Represents an audio data frame of type double.
  */
 public class DoubleAudioFrame implements Data {
 

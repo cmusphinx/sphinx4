@@ -39,8 +39,7 @@ public class CepstrumProducer implements Processor {
 
 
     /**
-     * Constructs a default CepstrumProducer with the given Pre-emphasis Factor
-     * value.
+     * Constructs a default CepstrumProducer.
      */
     public CepstrumProducer() {
 
@@ -68,7 +67,7 @@ public class CepstrumProducer implements Processor {
     /**
      * Converts the given input DoubleAudioFrame into a CepstrumFrame.
      *
-     * @param input the input DoubleAudioFrame
+     * @param input a DoubleAudioFrame of audio data
      *
      * @return a CepstrumFrame
      */
