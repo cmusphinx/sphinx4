@@ -1,0 +1,2000 @@
+#FSTBasic MinPlus
+I 2
+F 0 1.77483
+T 0 1 <unknown> <unknown> 8.52417
+T 0 46 a a 8.52417
+T 0 48 april april 8.52417
+T 0 50 area area 8.52417
+T 0 52 august august 6.6524
+T 0 55 code code 8.52417
+T 0 57 december december 8.52417
+T 0 59 eight eight 3.15961
+T 0 79 eighteen eighteen 8.52417
+T 0 81 eighteenth eighteenth 8.52417
+T 0 83 eighth eighth 8.52417
+T 0 85 eighty eighty 6.6524
+T 0 89 eleven eleven 6.6524
+T 0 94 eleventh eleventh 8.52417
+T 0 96 enter enter 3.49256
+T 0 117 february february 7.48271
+T 0 120 fifteen fifteen 6.6524
+T 0 124 fifteenth fifteenth 7.48271
+T 0 126 fifth fifth 8.52417
+T 0 128 fifty fifty 4.67747
+T 0 139 first first 6.98374
+T 0 141 five five 2.84577
+T 0 157 forty forty 5.17414
+T 0 166 four four 3.08523
+T 0 184 fourteen fourteen 6.03922
+T 0 189 fourth fourth 8.52417
+T 0 191 go go 5.66183
+T 0 193 help help 5.47163
+T 0 195 hundred hundred 7.48271
+T 0 198 january january 7.48271
+T 0 201 july july 6.98374
+T 0 205 june june 7.48271
+T 0 208 march march 6.98374
+T 0 212 may may 6.98374
+T 0 216 nine nine 3.69058
+T 0 238 nineteen nineteen 4.53218
+T 0 244 ninety ninety 6.6524
+T 0 249 ninth ninth 7.48271
+T 0 252 no no 5.17414
+T 0 254 october october 6.98374
+T 0 258 of of 7.48271
+T 0 261 oh oh 3.90081
+T 0 273 one one 2.43936
+T 0 298 repeat repeat 5.11197
+T 0 300 second second 7.48271
+T 0 302 september september 6.40395
+T 0 308 seven seven 3.30743
+T 0 330 seventeen seventeen 6.98374
+T 0 333 seventh seventh 8.52417
+T 0 335 seventy seventy 5.47163
+T 0 340 six six 3.06175
+T 0 359 sixteen sixteen 6.98374
+T 0 362 sixteenth sixteenth 8.52417
+T 0 364 sixth sixth 8.52417
+T 0 366 sixty sixty 3.84831
+T 0 378 start start 5.56235
+T 0 380 stop stop 5.17414
+T 0 382 ten ten 5.56235
+T 0 390 third third 6.98374
+T 0 392 thirtieth thirtieth 6.98374
+T 0 394 thirty thirty 5.05325
+T 0 404 thousand thousand 6.98374
+T 0 407 three three 3.24941
+T 0 428 twelfth twelfth 7.48271
+T 0 430 twelve twelve 5.89715
+T 0 438 twentieth twentieth 8.52417
+T 0 440 twenty twenty 4.53218
+T 0 456 two two 2.51742
+T 0 473 yes yes 4.8953
+T 0 475 zero zero 4.67747
+F 1 1.77483
+T 1 0
+F 2 3.84669
+T 2 0 , , 2.07186
+T 2 3 april april 6.9842
+T 2 4 area area 6.9842
+T 2 5 august august 4.91303
+T 2 6 december december 6.9842
+T 2 7 eight eight 4.14051
+T 2 8 eighteen eighteen 6.9842
+T 2 9 eleven eleven 5.78686
+T 2 10 enter enter 1.72233
+T 2 11 february february 6.9842
+T 2 12 fifty fifty 4.28488
+T 2 13 five five 3.54874
+T 2 14 forty forty 6.9842
+T 2 15 four four 2.73087
+T 2 16 fourteen fourteen 6.9842
+T 2 17 go go 3.90219
+T 2 18 help help 3.70992
+T 2 19 january january 5.78686
+T 2 20 july july 5.25726
+T 2 21 june june 5.78686
+T 2 22 march march 5.25726
+T 2 23 may may 5.78686
+T 2 24 nine nine 4.45389
+T 2 25 ninth ninth 6.9842
+T 2 26 no no 3.4099
+T 2 27 october october 5.25726
+T 2 28 oh oh 5.25726
+T 2 29 one one 1.64174
+T 2 30 repeat repeat 3.34704
+T 2 31 september september 4.91303
+T 2 32 seven seven 3.80134
+T 2 33 six six 3.17941
+T 2 34 sixty sixty 5.92017
+T 2 35 start start 3.80134
+T 2 36 stop stop 3.4099
+T 2 37 ten ten 4.65744
+T 2 38 thirty thirty 5.25726
+T 2 39 three three 3.4099
+T 2 40 twelve twelve 4.45389
+T 2 41 twenty twenty 6.60403
+T 2 42 two two 2.99221
+T 2 43 yes yes 3.12921
+F 3 2.34062
+T 3 48 , , -9.32337e-10
+F 4 2.34135
+T 4 50 , , -9.32337e-10
+F 5 3.02367
+T 5 52 , , 8.80572e-10
+F 6 2.34135
+T 6 57 , , -9.32337e-10
+F 7 1.48095
+T 7 59 , , 0.257819
+T 7 61 eight eight 1.802
+T 7 63 forty forty 3.21924
+T 7 65 fourteen fourteen 3.21924
+T 7 68 oh oh 3.21924
+F 8 2.34098
+T 8 79 , , -9.32337e-10
+F 9 2.26044
+T 9 89 , , 0.141649
+T 9 91 nine nine 1.83309
+T 9 92 seventeen seventeen 1.83309
+F 10 3.01204
+T 10 96 , , -4.85851e-10
+F 11 2.47222
+T 11 117 , , 0.141635
+T 11 118 eighth eighth 1.14001
+F 12 3.02508
+T 12 128 , , 0.412559
+T 12 133 one one 1.66845
+T 12 134 seven seven 3.08592
+T 12 135 six six 1.10432
+T 12 137 three three 3.08592
+F 13 1.8666
+T 13 141 , , 0.270683
+T 13 148 one one 2.36153
+T 13 150 six six 1.79763
+T 13 151 sixteen sixteen 3.779
+T 13 152 ten ten 3.779
+T 13 154 twenty twenty 3.779
+F 14 2.71995
+T 14 157 , , 0.220453
+T 14 164 three three 1.14001
+F 15 2.39396
+T 15 166 , , 0.973267
+T 15 168 eight eight 3.15638
+T 15 172 four four 1.97078
+T 15 174 oh oh 3.15638
+T 15 175 one one 1.00738
+T 15 176 seven seven 3.15638
+T 15 181 twenty twenty 4.57385
+T 15 182 two two 1.76263
+F 16 1.90808
+T 16 184 , , 0.321598
+T 16 187 fourteen fourteen 1.14001
+F 17 0.0584857
+T 17 191 , , -3.84176e-10
+F 18 0.0483543
+T 18 193 , , -3.11548e-10
+F 19 2.34047
+T 19 198 , , -1.41507e-09
+F 20 2.32926
+T 20 201 , , -2.13813e-09
+F 21 2.33058
+T 21 205 , , -1.41507e-09
+F 22 2.32963
+T 22 208 , , -2.13813e-09
+F 23 2.36441
+T 23 212 , , 0.0451524
+T 23 214 ninth ninth 1.83309
+T 23 215 twenty twenty 1.83309
+F 24 1.12085
+T 24 216 , , 0.16136
+T 24 223 four four 2.93165
+T 24 228 one one 2.93165
+T 24 233 thirty thirty 2.93165
+T 24 235 twenty twenty 2.93165
+F 25 2.46111
+T 25 249 , , 0.141635
+T 25 250 of of 1.14001
+F 26 0.0361506
+T 26 252 , , -1.62835e-10
+F 27 2.32889
+T 27 254 , , -2.13813e-09
+F 28 3.04272
+T 28 261 , , 0.506418
+T 28 269 seven seven 2.23857
+T 28 270 six six 0.821102
+F 29 2.96373
+T 29 273 , , 1.0786
+T 29 276 eleven eleven 5.65077
+T 29 279 five five 0.411242
+T 29 281 four four 4.2333
+T 29 282 hundred hundred 5.65077
+T 29 283 nine nine 4.2333
+T 29 285 oh oh 3.31089
+T 29 289 sixteen sixteen 5.65077
+T 29 291 ten ten 4.2333
+T 29 292 thirty thirty 5.65077
+T 29 293 thousand thousand 4.2333
+T 29 295 twenty twenty 4.2333
+T 29 296 two two 3.0477
+T 29 297 zero zero 4.2333
+F 30 0.033848
+T 30 298 , , -1.74348e-10
+F 31 2.31802
+T 31 302 , , 3.19338e-11
+F 32 1.05331
+T 32 308 , , 0.338819
+T 32 311 fifteen fifteen 3.53769
+T 32 312 fifty fifty 3.53769
+T 32 315 four four 3.53769
+T 32 316 fourteen fourteen 3.53769
+T 32 317 may may 3.53769
+T 32 322 seventeen seventeen 3.53769
+T 32 326 thirty thirty 3.53769
+T 32 327 three three 2.12045
+T 32 328 twenty twenty 3.53769
+F 33 1.73219
+T 33 340 , , 0.439975
+T 33 342 eight eight 1.5326
+T 33 350 seventeen seventeen 4.13567
+T 33 351 six six 1.79579
+T 33 352 sixteen sixteen 4.13567
+T 33 354 thirty thirty 4.13567
+T 33 355 three three 2.1543
+T 33 356 twenty twenty 4.13567
+T 33 358 zero zero 4.13567
+F 34 2.5962
+T 34 366 , , 0.211179
+T 34 374 seven seven 1.14001
+F 35 0.0529595
+T 35 378 , , -1.9168e-10
+F 36 0.0361506
+T 36 380 , , -1.62835e-10
+F 37 1.06892
+T 37 382 , , 0.160085
+T 37 384 one one 2.74929
+T 37 385 seventy seventy 2.74929
+T 37 387 thirty thirty 2.74929
+T 37 388 twelve twelve 2.74929
+T 37 389 twenty twenty 2.74929
+F 38 2.08928
+T 38 394 , , 0.0878753
+T 38 402 three three 2.23857
+F 39 1.67545
+T 39 407 , , 0.481786
+T 39 411 eleven eleven 3.91255
+T 39 414 four four 2.49508
+T 39 415 fourteen fourteen 3.91255
+T 39 417 oh oh 1.93118
+T 39 420 seventy seventy 3.91255
+T 39 421 six six 2.49508
+T 39 424 twelve twelve 3.91255
+T 39 425 twenty twenty 2.49508
+T 39 426 two two 2.49508
+F 40 2.40428
+T 40 430 , , 0.0646657
+T 40 432 four four 2.93165
+T 40 433 nine nine 2.93165
+T 40 434 nineteen nineteen 2.93165
+T 40 436 ten ten 2.93165
+T 40 437 twenty twenty 1.51418
+F 41 2.80032
+T 41 440 , , 0.336461
+T 41 455 two two 1.14001
+F 42 2.36452
+T 42 456 , , 0.58439
+T 42 459 fifteen fifteen 4.31804
+T 42 461 four four 2.90057
+T 42 463 oh oh 2.90057
+T 42 465 seven seven 2.90057
+T 42 466 six six 0.945902
+T 42 467 ten ten 4.31804
+T 42 470 twenty twenty 4.31804
+F 43 0.0274008
+T 43 473 , , 1.84117e-11
+F 44 8.35607
+T 44 0 , , 6.58123
+F 45 3.84723
+T 45 2 , , 0.000546648
+T 45 10 enter enter 1.72141
+T 45 29 one one 1.64082
+F 46 0.837911
+T 46 0 , , 0.380973
+F 47 8.35607
+T 47 44 , , -3.07056e-08
+F 48 2.34062
+T 48 0 , , 0.565787
+T 48 49 thirtieth thirtieth 0.837911
+F 49 3.42982
+T 49 392 , , -4.5563e-10
+F 50 2.34135
+T 50 0 , , 0.566516
+T 50 51 code code 0.837911
+F 51 2.29475
+T 51 55 , , -9.32337e-10
+F 52 3.02367
+T 52 0 , , 1.24883
+T 52 53 sixteenth sixteenth 2.22407
+T 52 54 twenty twenty 0.497358
+F 53 2.33073
+T 53 362 , , -9.32337e-10
+F 54 3.19055
+T 54 440 , , 0.726695
+T 54 446 fourth fourth 2.23857
+T 54 449 second second 0.821102
+F 55 2.29475
+T 55 0 , , 0.519917
+T 55 56 four four 0.837911
+F 56 1.62913
+T 56 166 , , 0.208439
+T 56 175 one one 1.14001
+F 57 2.34135
+T 57 0 , , 0.566516
+T 57 58 eighteenth eighteenth 0.837911
+F 58 2.33073
+T 58 81 , , -9.32337e-10
+F 59 1.22313
+T 59 0 , , 1.14107
+T 59 61 eight eight 3.06981
+T 59 62 five five 2.9008
+T 59 63 forty forty 5.60012
+T 59 64 four four 2.2418
+T 59 65 fourteen fourteen 5.60012
+T 59 66 hundred hundred 5.60012
+T 59 67 nine nine 3.52894
+T 59 68 oh oh 3.87318
+T 59 69 one one 3.27312
+T 59 70 seven seven 3.06981
+T 59 71 seventy seventy 4.40277
+T 59 72 six six 3.52894
+T 59 73 sixty sixty 3.87318
+T 59 74 thirty thirty 5.60012
+T 59 75 three three 2.41725
+T 59 76 twenty twenty 4.40277
+T 59 77 two two 2.75619
+T 59 78 zero zero 3.52894
+F 60 8.35607
+T 60 44 , , -9.29202e-10
+F 61 1.73231
+T 61 59 , , 0.509181
+T 61 64 four four 1.51418
+T 61 67 nine nine 1.51418
+T 61 70 seven seven 2.93165
+T 61 77 two two 2.93165
+F 62 1.68415
+T 62 141 , , 0.0882279
+T 62 144 five five 3.08592
+T 62 145 four four 3.08592
+T 62 146 nine nine 3.08592
+T 62 147 oh oh 3.08592
+T 62 150 six six 3.08592
+F 63 2.79109
+T 63 157 , , 0.29159
+T 63 162 one one 1.14001
+F 64 1.36497
+T 64 166 , , 0.30819
+T 64 172 four four 2.28739
+T 64 177 six six 1.72348
+T 64 182 two two 2.28739
+F 65 1.58648
+T 65 184 , , -7.63337e-10
+F 66 1.67262
+T 66 195 , , 0.141635
+T 66 197 eighty eighty 1.14001
+F 67 1.03884
+T 67 216 , , 0.0793497
+T 67 224 nine nine 2.52617
+T 67 231 six six 2.52617
+F 68 2.23857
+T 68 261 , , 0.0884612
+T 68 271 three three 2.23857
+F 69 2.05319
+T 69 273 , , 0.168069
+T 69 283 nine nine 2.74929
+T 69 285 oh oh 2.74929
+T 69 286 one one 2.74929
+T 69 288 six six 2.74929
+F 70 0.785016
+T 70 308 , , 0.0705234
+T 70 310 eight eight 2.93165
+T 70 313 five five 2.93165
+T 70 318 nine nine 2.93165
+T 70 320 one one 2.93165
+F 71 2.0718
+T 71 335 , , 0.475875
+T 71 338 one one 0.415617
+F 72 1.36999
+T 72 340 , , 0.0777806
+T 72 346 nine nine 2.52617
+T 72 355 three three 2.52617
+F 73 2.44185
+T 73 366 , , 0.0568281
+T 73 370 five five 2.23857
+T 73 373 one one 2.23857
+F 74 2.24161
+T 74 394 , , 0.240198
+T 74 403 two two 1.14001
+F 75 1.39169
+T 75 407 , , 0.198032
+T 75 418 one one 2.12045
+T 75 427 zero zero 2.12045
+F 76 2.63176
+T 76 440 , , 0.167898
+T 76 442 eight eight 1.83309
+T 76 450 seven seven 1.83309
+F 77 2.56361
+T 77 456 , , 0.783486
+T 77 458 eight eight 1.802
+T 77 461 four four 1.802
+T 77 466 six six 1.23787
+T 77 469 three three 3.21924
+F 78 1.04049
+T 78 475 , , 0.0266609
+T 78 483 two two 2.52617
+F 79 2.34098
+T 79 0 , , 0.566152
+T 79 80 february february 0.837911
+F 80 2.47222
+T 80 117 , , 0.141635
+T 80 119 nineteen nineteen 1.14001
+F 81 2.33073
+T 81 0 , , 0.555899
+T 81 82 nineteen nineteen 0.837911
+F 82 4.41805
+T 82 238 , , 0.336461
+T 82 240 forty forty 1.14001
+F 83 2.33073
+T 83 0 , , 0.555899
+T 83 84 nineteen nineteen 0.837911
+F 84 4.41805
+T 84 238 , , 0.336461
+T 84 239 fifty fifty 1.14001
+F 85 2.5122
+T 85 0 , , 0.737363
+T 85 86 nine nine 1.02672
+T 85 87 six six 2.22407
+T 85 88 three three 2.22407
+F 86 1.12745
+T 86 216 , , 0.167967
+T 86 222 forty forty 1.83309
+F 87 1.14001
+T 87 340 , , 0.064273
+F 88 1.14001
+T 88 407 , , 0.0242643
+F 89 2.11879
+T 89 0 , , 0.343959
+T 89 91 nine nine 2.22407
+T 89 92 seventeen seventeen 2.22407
+T 89 93 sixty sixty 2.22407
+F 90 8.35607
+T 90 44 , , -3.07056e-08
+F 91 1.33474
+T 91 216 , , 0.37525
+T 91 232 sixty sixty 1.14001
+F 92 2.73119
+T 92 330 , , 6.27071e-10
+F 93 2.5962
+T 93 366 , , 0.211179
+T 93 374 seven seven 1.14001
+F 94 2.33073
+T 94 0 , , 0.555899
+T 94 95 nineteen nineteen 0.837911
+F 95 4.08159
+T 95 238 , , 7.84811e-10
+F 96 3.01204
+T 96 0 , , 1.23721
+T 96 97 eight eight 2.42485
+T 96 98 eighty eighty 5.26877
+T 96 99 fifteen fifteen 5.26877
+T 96 100 fifty fifty 2.94178
+T 96 101 five five 2.73846
+T 96 102 forty forty 3.54184
+T 96 103 four four 2.73846
+T 96 104 fourteen fourteen 5.26877
+T 96 105 nine nine 3.1976
+T 96 106 ninety ninety 3.54184
+T 96 107 one one 3.1976
+T 96 108 seven seven 2.29867
+T 96 109 seventy seventy 3.1976
+T 96 110 six six 2.42485
+T 96 111 sixty sixty 2.42485
+T 96 112 thirty thirty 3.54184
+T 96 113 three three 4.0712
+T 96 114 twenty twenty 5.26877
+T 96 115 two two 2.73846
+T 96 116 zero zero 5.26877
+F 97 1.34591
+T 97 59 , , 0.12278
+T 97 69 one one 3.21924
+T 97 71 seventy seventy 3.21924
+T 97 74 thirty thirty 3.21924
+T 97 76 twenty twenty 3.21924
+T 97 78 zero zero 3.21924
+F 98 2.5122
+T 98 85 , , 3.3584e-10
+F 99 1.02672
+T 99 120 , , 3.3584e-10
+F 100 2.93552
+T 100 128 , , 0.323006
+T 100 132 four four 1.33182
+T 100 136 sixty sixty 2.74929
+F 101 0.950277
+T 101 141 , , 0.389547
+T 101 153 three three 2.93165
+T 101 156 zero zero 2.93165
+F 102 2.51843
+T 102 157 , , 0.0189312
+T 102 162 one one 2.23857
+F 103 1.51418
+T 103 166 , , 0.479375
+T 103 169 fifty fifty 1.51418
+T 103 179 thousand thousand 2.93165
+T 103 181 twenty twenty 2.93165
+F 104 1.14001
+T 104 184 , , 0.156426
+F 105 1.18481
+T 105 216 , , 0.225325
+T 105 218 eight eight 2.52617
+T 105 219 eighty eighty 2.52617
+T 105 230 seventy seventy 2.52617
+F 106 2.12715
+T 106 244 , , 1.00432e-10
+F 107 2.2292
+T 107 273 , , 0.344071
+T 107 280 forty forty 2.52617
+T 107 283 nine nine 2.52617
+T 107 284 ninety ninety 2.52617
+T 107 292 thirty thirty 2.52617
+F 108 0.734064
+T 108 308 , , 0.0807635
+T 108 319 oh oh 3.33714
+T 108 321 seven seven 3.33714
+T 108 326 thirty thirty 3.33714
+F 109 1.64255
+T 109 335 , , 0.0466282
+T 109 337 eight eight 2.52617
+F 110 1.23787
+T 110 340 , , 0.0419665
+T 110 349 seven seven 3.21924
+F 111 1.23787
+T 111 366 , , 0.487509
+T 111 371 four four 3.21924
+T 111 373 one one 1.802
+T 111 375 six six 3.21924
+T 111 377 two two 3.21924
+F 112 2.23555
+T 112 394 , , 0.234139
+T 112 396 eight eight 2.23857
+T 112 397 five five 2.23857
+T 112 399 seven seven 2.23857
+F 113 1.36387
+T 113 407 , , 0.170206
+T 113 410 eighty eighty 1.83309
+F 114 2.76468
+T 114 440 , , 0.300818
+T 114 447 nine nine 1.14001
+F 115 1.51418
+T 115 456 , , 0.37519
+T 115 460 five five 2.93165
+T 115 463 oh oh 1.51418
+F 116 1.01383
+T 116 475 , , 1.8836e-09
+F 117 2.33058
+T 117 0 , , 0.555751
+T 117 118 eighth eighth 1.53099
+T 117 119 nineteen nineteen 1.53099
+F 118 2.33073
+T 118 83 , , -9.32337e-10
+F 119 4.38241
+T 119 238 , , 0.300818
+T 119 241 seventy seventy 1.14001
+F 120 1.02672
+T 120 0 , , 0.6294
+T 120 122 nineteen nineteen 2.22407
+T 120 123 sixty sixty 2.22407
+F 121 8.35607
+T 121 44 , , -9.7226e-10
+F 122 4.38241
+T 122 238 , , 0.300818
+T 122 241 seventy seventy 1.14001
+F 123 2.72831
+T 123 366 , , 0.343289
+T 123 377 two two 1.14001
+F 124 3.02388
+T 124 0 , , 1.24905
+T 124 125 nineteen nineteen 0.333645
+F 125 4.08159
+T 125 238 , , 6.73007e-10
+F 126 2.33073
+T 126 0 , , 0.555899
+T 126 127 nineteen nineteen 0.837911
+F 127 4.08159
+T 127 238 , , 7.84811e-10
+F 128 2.61252
+T 128 0 , , 0.837685
+T 128 130 eight eight 2.02466
+T 128 131 five five 2.36913
+T 128 132 four four 2.89849
+T 128 133 one one 1.76908
+T 128 134 seven seven 2.89849
+T 128 135 six six 1.76908
+T 128 136 sixty sixty 4.09607
+T 128 137 three three 4.08709
+T 128 138 two two 2.89849
+F 129 8.35607
+T 129 44 , , -3.07056e-08
+F 130 0.186279
+T 130 59 , , 1.42363
+F 131 0.257199
+T 131 141 , , 1.2572
+F 132 0.415617
+T 132 166 , , 0.80214
+F 133 0.767912
+T 133 273 , , 0.712491
+T 133 277 fifteen fifteen 2.74929
+T 133 278 fifty fifty 2.74929
+F 134 0.874463
+T 134 308 , , 0.159971
+T 134 316 fourteen fourteen 1.83309
+F 135 1.33182
+T 135 340 , , 0.194679
+T 135 347 oh oh 2.74929
+T 135 353 sixty sixty 2.74929
+T 135 354 thirty thirty 2.74929
+F 136 2.69231
+T 136 366 , , 0.307292
+T 136 376 three three 1.14001
+F 137 1.56557
+T 137 407 , , 0.371914
+T 137 413 forty forty 1.14001
+F 138 0.415617
+T 138 456 , , 0.893949
+F 139 3.42982
+T 139 0 , , 1.65499
+T 139 140 nineteen nineteen 0.209535
+F 140 4.31184
+T 140 238 , , 0.23025
+T 140 242 sixty sixty 0.257199
+F 141 1.59592
+T 141 0 , , 1.80798
+T 141 143 eight eight 3.84186
+T 141 144 five five 3.38273
+T 141 145 four four 3.38273
+T 141 146 nine nine 3.84186
+T 141 147 oh oh 3.38273
+T 141 148 one one 2.55495
+T 141 149 seven seven 3.84186
+T 141 150 six six 3.38273
+T 141 151 sixteen sixteen 5.91304
+T 141 152 ten ten 5.91304
+T 141 153 three three 3.38273
+T 141 154 twenty twenty 5.91304
+T 141 155 two two 0.894094
+T 141 156 zero zero 4.1861
+F 142 8.35607
+T 142 44 , , -9.66241e-10
+F 143 1.10869
+T 143 59 , , 0.211027
+T 143 62 five five 2.52617
+T 143 68 oh oh 2.52617
+F 144 1.51418
+T 144 141 , , 0.132469
+T 144 143 eight eight 2.93165
+T 144 144 five five 2.93165
+T 144 153 three three 2.93165
+F 145 1.51418
+T 145 166 , , 0.270774
+T 145 170 five five 2.93165
+T 145 177 six six 1.51418
+F 146 1.07176
+T 146 216 , , 0.112268
+T 146 221 five five 2.52617
+T 146 229 seven seven 2.52617
+T 146 231 six six 2.52617
+T 146 236 two two 2.52617
+F 147 1.51418
+T 147 261 , , 0.454464
+T 147 265 four four 1.51418
+T 147 268 one one 2.93165
+F 148 2.26537
+T 148 273 , , 0.38024
+T 148 275 eight eight 3.70486
+T 148 281 four four 1.72348
+T 148 283 nine nine 3.70486
+T 148 286 one one 2.28739
+T 148 294 three three 2.28739
+F 149 1.15018
+T 149 308 , , 0.435686
+T 149 310 eight eight 1.10869
+T 149 319 oh oh 2.52617
+F 150 1.80085
+T 150 340 , , 0.508638
+T 150 345 four four 1.51418
+T 150 348 one one 1.51418
+T 150 351 six six 2.93165
+T 150 355 three three 2.93165
+F 151 2.71966
+T 151 359 , , 6.27071e-10
+F 152 0.90883
+T 152 382 , , -3.45092e-09
+F 153 1.70822
+T 153 407 , , 0.514562
+T 153 412 five five 2.93165
+T 153 414 four four 1.51418
+T 153 423 three three 1.51418
+F 154 2.76468
+T 154 440 , , 0.300818
+T 154 452 six six 1.14001
+F 155 2.82957
+T 155 456 , , 1.04944
+T 155 461 four four 3.34819
+T 155 463 oh oh 2.98968
+T 155 464 one one 0.683407
+T 155 469 three three 2.34587
+T 155 471 two two 2.07095
+T 155 472 zero zero 3.91209
+F 156 1.1066
+T 156 475 , , 0.0927764
+T 156 479 four four 2.23857
+F 157 2.4995
+T 157 0 , , 0.72467
+T 157 158 eight eight 3.61045
+T 157 159 five five 2.41311
+T 157 160 four four 2.41311
+T 157 161 nine nine 3.61045
+T 157 162 one one 2.41311
+T 157 163 seven seven 1.88351
+T 157 164 three three 1.88351
+T 157 165 two two 2.41311
+F 158 1.14001
+T 158 59 , , 0.0368173
+F 159 0.415617
+T 159 141 , , 0.852062
+F 160 0.415617
+T 160 166 , , 0.80214
+F 161 0.959487
+T 161 216 , , -1.27361e-09
+F 162 0.415617
+T 162 273 , , 0.913963
+F 163 0.812939
+T 163 308 , , 0.098447
+T 163 314 forty forty 2.23857
+F 164 1.39668
+T 164 407 , , 0.203017
+T 164 413 forty forty 2.23857
+T 164 425 twenty twenty 2.23857
+F 165 0.415617
+T 165 456 , , 0.893949
+F 166 1.42069
+T 166 0 , , 1.3383
+T 166 168 eight eight 3.14395
+T 166 169 fifty fifty 4.47669
+T 166 170 five five 3.14395
+T 166 171 forty forty 5.67426
+T 166 172 four four 2.39975
+T 166 173 nine nine 4.47669
+T 166 174 oh oh 3.60285
+T 166 175 one one 1.81904
+T 166 176 seven seven 2.97494
+T 166 177 six six 2.97494
+T 166 178 sixty sixty 4.47669
+T 166 179 thousand thousand 5.67426
+T 166 180 three three 3.34727
+T 166 181 twenty twenty 4.47669
+T 166 182 two two 2.09973
+T 166 183 zero zero 5.67426
+F 167 8.35607
+T 167 44 , , -1.04632e-09
+F 168 1.45762
+T 168 59 , , 0.234482
+T 168 62 five five 2.93165
+T 168 64 four four 1.51418
+T 168 72 six six 2.93165
+T 168 77 two two 2.93165
+T 168 78 zero zero 2.93165
+F 169 2.61252
+T 169 128 , , 1.09584e-10
+F 170 1.90593
+T 170 141 , , 0.310003
+T 170 143 eight eight 2.93165
+T 170 146 nine nine 2.93165
+T 170 148 one one 1.51418
+T 170 153 three three 2.93165
+F 171 2.85748
+T 171 157 , , 0.35798
+T 171 161 nine nine 1.14001
+F 172 1.5187
+T 172 166 , , 0.0980019
+T 172 172 four four 2.20749
+T 172 174 oh oh 3.62473
+T 172 176 seven seven 2.20749
+F 173 1.25607
+T 173 216 , , 0.296581
+T 173 221 five five 1.83309
+T 173 237 zero zero 1.83309
+F 174 2.55922
+T 174 261 , , 0.0229233
+T 174 268 one one 2.52617
+T 174 271 three three 2.52617
+F 175 2.20311
+T 175 273 , , 0.997208
+T 175 275 eight eight 4.18449
+T 175 286 one one 4.18449
+T 175 288 six six 4.18449
+T 175 296 two two 0.533279
+T 175 297 zero zero 4.18449
+F 176 0.953346
+T 176 308 , , 0.238854
+T 176 315 four four 3.08592
+T 176 324 sixty sixty 3.08592
+T 176 329 two two 1.66845
+F 177 1.53931
+T 177 340 , , 0.247096
+T 177 343 five five 3.08592
+T 177 345 four four 3.08592
+T 177 346 nine nine 3.08592
+T 177 347 oh oh 3.08592
+T 177 349 seven seven 1.66845
+F 178 2.50255
+T 178 366 , , 0.117532
+T 178 368 eight eight 1.83309
+T 178 374 seven seven 1.83309
+F 179 0.96879
+T 179 404 , , 0.22966
+T 179 406 eight eight 1.14001
+F 180 1.23043
+T 180 407 , , 0.0367683
+T 180 409 eight eight 2.74929
+T 180 421 six six 2.74929
+T 180 423 three three 2.74929
+F 181 2.63176
+T 181 440 , , 0.167898
+T 181 442 eight eight 1.83309
+T 181 448 one one 1.83309
+F 182 1.93118
+T 182 456 , , 0.712592
+T 182 462 nine nine 3.91255
+T 182 464 one one 1.57267
+T 182 471 two two 0.928863
+F 183 1.01383
+T 183 475 , , 1.8836e-09
+F 184 1.58648
+T 184 0 , , 0.911406
+T 184 186 a a 2.78383
+T 184 187 fourteen fourteen 2.78383
+T 184 188 sixty sixty 1.05689
+F 185 8.35607
+T 185 44 , , -9.7226e-10
+F 186 0.837911
+T 186 46 , , -9.32337e-10
+F 187 1.14001
+T 187 184 , , 0.156426
+F 188 2.46199
+T 188 366 , , 0.0769703
+T 188 371 four four 2.23857
+T 188 373 one one 2.23857
+F 189 2.33073
+T 189 0 , , 0.555899
+T 189 190 nineteen nineteen 0.837911
+F 190 4.41805
+T 190 238 , , 0.336461
+T 190 239 fifty fifty 1.14001
+F 191 0.0584857
+T 191 0 , , 2.68233
+F 192 8.35607
+T 192 44 , , -8.56547e-10
+F 193 0.0483543
+T 193 0 , , 2.86754
+F 194 8.35607
+T 194 44 , , -1.04209e-09
+F 195 1.53099
+T 195 0 , , 0.37947
+T 195 197 eighty eighty 1.53099
+F 196 8.35607
+T 196 44 , , -3.07056e-08
+F 197 2.78311
+T 197 85 , , 0.270914
+T 197 88 three three 1.14001
+F 198 2.34047
+T 198 0 , , 0.565641
+T 198 199 fifteenth fifteenth 1.53099
+T 198 200 twelfth twelfth 1.53099
+F 199 3.02388
+T 199 124 , , -1.86804e-09
+F 200 3.02388
+T 200 428 , , -1.86804e-09
+F 201 2.32926
+T 201 0 , , 0.554429
+T 201 202 thirtieth thirtieth 1.93647
+T 201 203 twelfth twelfth 1.93647
+T 201 204 twenty twenty 1.93647
+F 202 3.42982
+T 202 392 , , -4.5563e-10
+F 203 3.02388
+T 203 428 , , -1.86804e-09
+F 204 2.76468
+T 204 440 , , 0.300818
+T 204 447 nine nine 1.14001
+F 205 2.33058
+T 205 0 , , 0.555751
+T 205 206 eleventh eleventh 1.53099
+T 205 207 twenty twenty 1.53099
+F 206 2.33073
+T 206 94 , , -9.32337e-10
+F 207 2.80032
+T 207 440 , , 0.336461
+T 207 453 third third 1.14001
+F 208 2.32963
+T 208 0 , , 0.554798
+T 208 209 third third 1.93647
+T 208 210 twentieth twentieth 1.93647
+T 208 211 twenty twenty 1.93647
+F 209 3.42982
+T 209 390 , , -4.5563e-10
+F 210 2.33073
+T 210 438 , , -9.32337e-10
+F 211 2.83472
+T 211 440 , , 0.370866
+T 211 443 fifth fifth 1.14001
+F 212 2.31926
+T 212 0 , , 0.544427
+T 212 213 nineteen nineteen 1.93647
+T 212 214 ninth ninth 1.93647
+T 212 215 twenty twenty 1.93647
+F 213 4.41805
+T 213 238 , , 0.336461
+T 213 240 forty forty 1.14001
+F 214 2.46111
+T 214 249 , , 0.141635
+T 214 251 sixty sixty 1.14001
+F 215 2.83472
+T 215 440 , , 0.370866
+T 215 444 first first 1.14001
+F 216 0.959487
+T 216 0 , , 0.747901
+T 216 218 eight eight 3.3452
+T 216 219 eighty eighty 5.0719
+T 216 220 fifty fifty 5.0719
+T 216 221 five five 2.54159
+T 216 222 forty forty 5.0719
+T 216 223 four four 3.83313
+T 216 224 nine nine 4.43848
+T 216 225 nineteen nineteen 5.0719
+T 216 226 of of 5.0719
+T 216 227 oh oh 4.64871
+T 216 228 one one 3.18726
+T 216 229 seven seven 4.05533
+T 216 230 seventy seventy 5.0719
+T 216 231 six six 2.54159
+T 216 232 sixty sixty 4.59621
+T 216 233 thirty thirty 5.0719
+T 216 234 three three 2.74514
+T 216 235 twenty twenty 5.0719
+T 216 236 two two 2.74514
+T 216 237 zero zero 5.0719
+F 217 8.35607
+T 217 44 , , 9.44782e-10
+F 218 1.45854
+T 218 59 , , 0.235407
+T 218 61 eight eight 2.23857
+T 218 67 nine nine 2.23857
+T 218 77 two two 2.23857
+F 219 2.5122
+T 219 85 , , 3.3584e-10
+F 220 2.8563
+T 220 128 , , 0.243784
+T 220 130 eight eight 1.14001
+F 221 1.63834
+T 221 141 , , 0.0424156
+T 221 145 four four 2.93165
+T 221 147 oh oh 2.93165
+F 222 2.71995
+T 222 157 , , 0.220453
+T 222 164 three three 1.14001
+F 223 1.77846
+T 223 166 , , 0.357768
+T 223 174 oh oh 1.14001
+F 224 0.959487
+T 224 216 , , -1.27361e-09
+F 225 4.08159
+T 225 238 , , 7.84811e-10
+F 226 2.46
+T 226 258 , , 0.141635
+T 226 260 sixty sixty 1.14001
+F 227 2.89578
+T 227 261 , , 0.359479
+T 227 267 oh oh 1.14001
+F 228 1.97765
+T 228 273 , , 0.0925229
+T 228 281 four four 2.23857
+T 228 296 two two 2.23857
+F 229 1.04459
+T 229 308 , , 0.330101
+T 229 329 two two 1.14001
+F 230 1.85416
+T 230 335 , , 0.258241
+T 230 339 two two 1.14001
+F 231 0.950277
+T 231 340 , , 0.584495
+T 231 351 six six 1.51418
+T 231 357 two two 2.93165
+F 232 2.69231
+T 232 366 , , 0.307292
+T 232 368 eight eight 1.14001
+F 233 2.36247
+T 233 394 , , 0.361066
+T 233 401 sixty sixty 1.14001
+F 234 1.33182
+T 234 407 , , 0.361982
+T 234 412 five five 1.33182
+T 234 423 three three 2.74929
+F 235 2.80032
+T 235 440 , , 0.336461
+T 235 454 three three 1.14001
+F 236 1.33182
+T 236 456 , , 0.488944
+T 236 469 three three 2.74929
+T 236 471 two two 1.33182
+F 237 1.01383
+T 237 475 , , 1.8836e-09
+F 238 4.08159
+T 238 0 , , 2.30676
+T 238 239 fifty fifty 3.04171
+T 238 240 forty forty 3.04171
+T 238 241 seventy seventy 2.51212
+T 238 242 sixty sixty 0.336177
+T 238 243 twenty twenty 4.23906
+F 239 3.63445
+T 239 128 , , 1.02193
+T 239 138 two two 0.415617
+F 240 3.48431
+T 240 157 , , 0.984812
+T 240 160 four four 0.415617
+F 241 0.257199
+T 241 335 , , 1.2572
+F 242 2.83505
+T 242 366 , , 0.450028
+T 242 370 five five 2.24963
+T 242 372 nine nine 1.10041
+T 242 373 one one 2.81353
+T 242 374 seven seven 1.62793
+F 243 2.68938
+T 243 440 , , 0.225527
+T 243 442 eight eight 1.14001
+F 244 2.12715
+T 244 0 , , 0.352317
+T 244 245 eight eight 2.22407
+T 244 246 five five 2.22407
+T 244 247 four four 2.22407
+T 244 248 six six 2.22407
+F 245 1.59621
+T 245 59 , , 0.373073
+T 245 76 twenty twenty 1.14001
+F 246 1.14001
+T 246 141 , , 0.15884
+F 247 1.14001
+T 247 166 , , 0.108918
+F 248 1.14001
+T 248 340 , , 0.064273
+F 249 2.31948
+T 249 0 , , 0.544646
+T 249 250 of of 1.53099
+T 249 251 sixty sixty 1.53099
+F 250 2.46
+T 250 258 , , 0.141635
+T 250 259 september september 1.14001
+F 251 2.72831
+T 251 366 , , 0.343289
+T 251 377 two two 1.14001
+F 252 0.0361506
+T 252 0 , , 3.15234
+F 253 8.35607
+T 253 44 , , -9.90293e-10
+F 254 2.32889
+T 254 0 , , 0.554061
+T 254 255 first first 1.93647
+T 254 256 thirtieth thirtieth 1.93647
+T 254 257 twenty twenty 1.93647
+F 255 3.42982
+T 255 139 , , -4.5563e-10
+F 256 3.42982
+T 256 392 , , -4.5563e-10
+F 257 2.80032
+T 257 440 , , 0.336461
+T 257 453 third third 1.14001
+F 258 2.31836
+T 258 0 , , 0.543528
+T 258 259 september september 1.53099
+T 258 260 sixty sixty 1.53099
+F 259 2.61292
+T 259 302 , , 0.294902
+T 259 305 nineteen nineteen 1.14001
+F 260 1.14001
+T 260 366 , , 0.288785
+F 261 2.5363
+T 261 0 , , 1.14326
+T 261 263 eight eight 1.78128
+T 261 264 five five 2.5363
+T 261 265 four four 3.13635
+T 261 266 nine nine 4.83384
+T 261 267 oh oh 3.66595
+T 261 268 one one 2.5363
+T 261 269 seven seven 2.79211
+T 261 270 six six 1.68043
+T 261 271 three three 2.79211
+T 261 272 two two 2.33298
+F 262 8.35607
+T 262 44 , , -1.02616e-09
+F 263 1.10271
+T 263 59 , , 0.0904302
+T 263 67 nine nine 3.4426
+T 263 68 oh oh 3.4426
+T 263 72 six six 3.4426
+F 264 0.767912
+T 264 141 , , 0.59773
+T 264 145 four four 2.74929
+T 264 146 nine nine 2.74929
+F 265 2.06788
+T 265 166 , , 0.647186
+T 265 170 five five 2.23857
+T 265 172 four four 0.821102
+F 266 1.26287
+T 266 216 , , 0.303378
+T 266 231 six six 1.14001
+F 267 2.61325
+T 267 261 , , 0.0769559
+T 267 263 eight eight 1.83309
+T 267 272 two two 1.83309
+F 268 1.33182
+T 268 273 , , 0.251695
+T 268 281 four four 2.74929
+T 268 283 nine nine 2.74929
+F 269 0.887914
+T 269 308 , , 0.173422
+T 269 318 nine nine 2.52617
+T 269 319 oh oh 2.52617
+T 269 323 six six 2.52617
+F 270 0.726466
+T 270 340 , , 0.384934
+T 270 343 five five 3.53769
+T 270 346 nine nine 3.53769
+T 270 347 oh oh 3.53769
+T 270 349 seven seven 3.53769
+F 271 1.29158
+T 271 407 , , 0.097924
+T 271 409 eight eight 2.52617
+T 271 419 seven seven 2.52617
+F 272 1.51418
+T 272 456 , , 0.158297
+T 272 458 eight eight 2.93165
+T 272 462 nine nine 2.93165
+T 272 465 seven seven 2.93165
+F 273 1.88513
+T 273 0 , , 1.58291
+T 273 275 eight eight 3.6192
+T 273 276 eleven eleven 6.31852
+T 273 277 fifteen fifteen 6.31852
+T 273 278 fifty fifty 4.24735
+T 273 279 five five 1.2259
+T 273 280 forty forty 6.31852
+T 273 281 four four 3.34842
+T 273 282 hundred hundred 6.31852
+T 273 283 nine nine 3.47483
+T 273 284 ninety ninety 6.31852
+T 273 285 oh oh 3.13566
+T 273 286 one one 3.99176
+T 273 287 seven seven 2.51373
+T 273 288 six six 3.6192
+T 273 289 sixteen sixteen 6.31852
+T 273 290 sixty sixty 4.59158
+T 273 291 ten ten 5.12118
+T 273 292 thirty thirty 5.12118
+T 273 293 thousand thousand 5.12118
+T 273 294 three three 2.88307
+T 273 295 twenty twenty 5.12118
+T 273 296 two two 2.28463
+T 273 297 zero zero 3.99176
+F 274 8.35607
+T 274 44 , , 9.00692e-10
+F 275 1.10432
+T 275 59 , , 0.0874361
+T 275 61 eight eight 3.08592
+T 275 72 six six 3.08592
+F 276 1.14001
+T 276 89 , , 0.257358
+F 277 1.02672
+T 277 120 , , 3.3584e-10
+F 278 2.52617
+T 278 128 , , 0.297654
+T 278 130 eight eight 1.10869
+F 279 2.57418
+T 279 141 , , 0.978263
+T 279 144 five five 3.98508
+T 279 147 oh oh 3.42118
+T 279 148 one one 2.59133
+T 279 150 six six 3.98508
+T 279 153 three three 3.98508
+T 279 155 two two 0.364269
+F 280 2.79109
+T 280 157 , , 0.29159
+T 280 165 two two 1.14001
+F 281 2.18108
+T 281 166 , , 0.76039
+T 281 168 eight eight 1.91967
+T 281 173 nine nine 1.91967
+T 281 176 seven seven 1.91967
+T 281 177 six six 3.33714
+T 281 180 three three 1.91967
+F 282 1.14001
+T 282 195 , , 0.141635
+F 283 1.10855
+T 283 216 , , 0.14906
+T 283 218 eight eight 3.21924
+T 283 227 oh oh 3.21924
+T 283 231 six six 1.802
+F 284 2.39806
+T 284 244 , , 0.270914
+T 284 248 six six 1.14001
+F 285 2.67995
+T 285 261 , , 0.143649
+T 285 267 oh oh 3.53769
+T 285 272 two two 1.55632
+F 286 1.98217
+T 286 273 , , 0.097043
+T 286 275 eight eight 2.74929
+T 286 288 six six 2.74929
+T 286 294 three three 2.74929
+F 287 0.266639
+T 287 308 , , 0.900945
+T 287 314 forty forty 4.13567
+T 287 321 seven seven 4.13567
+T 287 327 three three 4.13567
+F 288 1.10432
+T 288 340 , , 0.150368
+T 288 346 nine nine 3.08592
+T 288 347 oh oh 3.08592
+T 288 348 one one 3.08592
+T 288 357 two two 3.08592
+F 289 2.94932
+T 289 359 , , 0.22966
+T 289 360 forty forty 1.14001
+F 290 2.59895
+T 290 366 , , 0.213928
+T 290 368 eight eight 2.23857
+T 290 369 fifty fifty 2.23857
+T 290 376 three three 2.23857
+F 291 0.415617
+T 291 382 , , 0.562783
+F 292 2.79731
+T 292 394 , , 0.795901
+T 292 398 one one 0.415617
+F 293 0.415617
+T 293 404 , , 0.429427
+F 294 0.305093
+T 294 407 , , 1.39093
+T 294 421 six six 3.779
+T 294 423 three three 2.36153
+F 295 1.83309
+T 295 440 , , 0.242871
+T 295 455 two two 1.83309
+F 296 2.37742
+T 296 456 , , 0.649825
+T 296 458 eight eight 2.94132
+T 296 460 five five 1.54734
+T 296 461 four four 1.75572
+T 296 466 six six 2.37742
+T 296 471 two two 2.01891
+T 296 472 zero zero 4.35879
+F 297 1.18702
+T 297 475 , , 0.173188
+T 297 477 eight eight 2.74929
+T 297 478 five five 2.74929
+T 297 480 one one 2.74929
+T 297 484 zero zero 2.74929
+F 298 0.033848
+T 298 0 , , 3.21701
+F 299 8.35607
+T 299 44 , , -9.32868e-10
+F 300 3.02388
+T 300 0 , , 1.24905
+T 300 301 nineteen nineteen 0.333645
+F 301 4.08159
+T 301 238 , , 6.73007e-10
+F 302 2.31802
+T 302 0 , , 0.543186
+T 302 303 fifteenth fifteenth 2.44742
+T 302 304 first first 2.44742
+T 302 305 nineteen nineteen 2.44742
+T 302 306 sixth sixth 2.44742
+T 302 307 twenty twenty 2.44742
+F 303 3.02388
+T 303 124 , , -1.86804e-09
+F 304 3.42982
+T 304 139 , , -4.5563e-10
+F 305 4.08159
+T 305 238 , , 7.84811e-10
+F 306 2.33073
+T 306 364 , , -9.32337e-10
+F 307 2.83472
+T 307 440 , , 0.370866
+T 307 451 seventh seventh 1.14001
+F 308 0.714492
+T 308 0 , , 0.950869
+T 308 310 eight eight 2.92267
+T 308 311 fifteen fifteen 5.45298
+T 308 312 fifty fifty 5.45298
+T 308 313 five five 3.72604
+T 308 314 forty forty 4.25564
+T 308 315 four four 4.0361
+T 308 316 fourteen fourteen 4.25564
+T 308 317 may may 5.45298
+T 308 318 nine nine 3.12622
+T 308 319 oh oh 3.38181
+T 308 320 one one 3.38181
+T 308 321 seven seven 4.25564
+T 308 322 seventeen seventeen 5.45298
+T 308 323 six six 4.01262
+T 308 324 sixty sixty 4.25564
+T 308 325 ten ten 5.45298
+T 308 326 thirty thirty 4.25564
+T 308 327 three three 3.72604
+T 308 328 twenty twenty 5.45298
+T 308 329 two two 2.92267
+F 309 8.35607
+T 309 44 , , -2.39202e-11
+F 310 1.46358
+T 310 59 , , 0.240448
+T 310 61 eight eight 1.51418
+T 310 78 zero zero 2.93165
+F 311 1.29764
+T 311 120 , , 0.270914
+T 311 122 nineteen nineteen 1.14001
+F 312 2.89968
+T 312 128 , , 0.287159
+T 312 131 five five 1.14001
+F 313 1.79187
+T 313 141 , , 0.195953
+T 313 143 eight eight 2.23857
+T 313 149 seven seven 2.23857
+F 314 3.41318
+T 314 157 , , 0.913674
+T 314 163 seven seven 0.415617
+F 315 1.42069
+T 315 166 , , 4.43549e-09
+F 316 1.69694
+T 316 184 , , 0.110463
+T 316 186 a a 1.83309
+F 317 2.54892
+T 317 212 , , 0.22966
+T 317 213 nineteen nineteen 1.14001
+F 318 1.28245
+T 318 216 , , 0.322966
+T 318 221 five five 2.74929
+T 318 228 one one 2.74929
+T 318 234 three three 2.74929
+T 318 236 two two 1.33182
+F 319 2.81389
+T 319 261 , , 0.277592
+T 319 263 eight eight 1.10869
+T 319 271 three three 2.52617
+T 319 272 two two 2.52617
+F 320 2.08462
+T 320 273 , , 0.199494
+T 320 275 eight eight 2.52617
+T 320 288 six six 2.52617
+T 320 297 zero zero 2.52617
+F 321 0.864366
+T 321 308 , , 0.149874
+T 321 313 five five 1.83309
+F 322 2.73119
+T 322 330 , , 6.27071e-10
+F 323 1.52857
+T 323 340 , , 0.236359
+T 323 351 six six 1.83309
+T 323 355 three three 1.83309
+F 324 2.62737
+T 324 366 , , 0.242349
+T 324 368 eight eight 1.83309
+T 324 371 four four 1.83309
+F 325 0.90883
+T 325 382 , , -3.45092e-09
+F 326 1.83309
+T 326 394 , , 0.14368
+T 326 396 eight eight 1.83309
+F 327 1.44637
+T 327 407 , , 0.252713
+T 327 418 one one 2.23857
+T 327 421 six six 2.23857
+T 327 427 zero zero 2.23857
+F 328 2.76468
+T 328 440 , , 0.300818
+T 328 447 nine nine 1.14001
+F 329 1.83794
+T 329 456 , , 0.0578124
+T 329 462 nine nine 2.93165
+T 329 472 zero zero 2.93165
+F 330 2.73119
+T 330 0 , , 0.95636
+T 330 331 fifty fifty 0.73913
+T 330 332 thirty thirty 1.93647
+F 331 2.74228
+T 331 128 , , 0.129762
+T 331 133 one one 1.83309
+T 331 134 seven seven 1.83309
+F 332 2.35673
+T 332 394 , , 0.355325
+T 332 400 six six 1.14001
+F 333 2.33073
+T 333 0 , , 0.555899
+T 333 334 nineteen nineteen 0.837911
+F 334 4.08159
+T 334 238 , , 7.84811e-10
+F 335 1.59592
+T 335 0 , , 1.18749
+T 335 337 eight eight 3.32286
+T 335 338 one one 0.79255
+T 335 339 two two 2.12529
+F 336 8.35607
+T 336 44 , , -8.24816e-10
+F 337 1.14001
+T 337 59 , , 0.0368173
+F 338 0.120425
+T 338 273 , , 2.01168
+F 339 0.415617
+T 339 456 , , 0.893949
+F 340 1.29221
+T 340 0 , , 1.3105
+T 340 342 eight eight 1.70576
+T 340 343 five five 3.16744
+T 340 344 forty forty 5.69775
+T 340 345 four four 2.85382
+T 340 346 nine nine 3.62657
+T 340 347 oh oh 3.16744
+T 340 348 one one 2.99843
+T 340 349 seven seven 3.62657
+T 340 350 seventeen seventeen 5.69775
+T 340 351 six six 2.61574
+T 340 352 sixteen sixteen 5.69775
+T 340 353 sixty sixty 4.5004
+T 340 354 thirty thirty 4.5004
+T 340 355 three three 2.72764
+T 340 356 twenty twenty 5.69775
+T 340 357 two two 3.16744
+T 340 358 zero zero 5.69775
+F 341 8.35607
+T 341 44 , , 9.97904e-10
+F 342 1.99209
+T 342 59 , , 0.768956
+T 342 62 five five 2.90057
+T 342 64 four four 1.71474
+T 342 69 one one 2.90057
+T 342 70 seven seven 1.97815
+T 342 75 three three 1.33435
+F 343 0.950277
+T 343 141 , , 0.462968
+T 343 143 eight eight 2.93165
+T 343 146 nine nine 2.93165
+T 343 153 three three 2.93165
+F 344 2.79109
+T 344 157 , , 0.29159
+T 344 159 five five 1.14001
+F 345 1.23787
+T 345 166 , , 0.360878
+T 345 170 five five 1.802
+T 345 176 seven seven 3.21924
+T 345 177 six six 3.21924
+T 345 183 zero zero 3.21924
+F 346 0.979463
+T 346 216 , , 0.019976
+T 346 221 five five 2.52617
+T 346 236 two two 2.52617
+F 347 2.60031
+T 347 261 , , 0.0640159
+T 347 263 eight eight 1.51418
+F 348 1.94417
+T 348 273 , , 0.0590482
+T 348 281 four four 3.08592
+T 348 283 nine nine 3.08592
+T 348 297 zero zero 3.08592
+F 349 0.796893
+T 349 308 , , 0.0824006
+T 349 310 eight eight 2.52617
+T 349 319 oh oh 2.52617
+F 350 2.96085
+T 350 330 , , 0.22966
+T 350 332 thirty thirty 1.14001
+F 351 1.65231
+T 351 340 , , 0.360097
+T 351 343 five five 2.02512
+T 351 348 one one 2.02512
+T 351 357 two two 2.02512
+F 352 2.71966
+T 352 359 , , 6.27071e-10
+F 353 2.48117
+T 353 366 , , 0.0961573
+T 353 376 three three 1.83309
+F 354 1.83309
+T 354 394 , , 0.0703161
+T 354 403 two two 1.83309
+F 355 1.34838
+T 355 407 , , 0.15472
+T 355 416 nine nine 3.33714
+T 355 417 oh oh 3.33714
+T 355 418 one one 1.91967
+T 355 422 sixty sixty 3.33714
+F 356 2.76468
+T 356 440 , , 0.300818
+T 356 452 six six 1.14001
+F 357 1.51418
+T 357 456 , , 0.10896
+T 357 458 eight eight 2.93165
+T 357 460 five five 2.93165
+F 358 1.34254
+T 358 475 , , 0.328709
+T 358 480 one one 1.14001
+F 359 2.71966
+T 359 0 , , 0.944828
+T 359 360 forty forty 1.93647
+T 359 361 sixty sixty 0.73913
+F 360 2.85748
+T 360 157 , , 0.35798
+T 360 158 eight eight 1.14001
+F 361 1.83309
+T 361 366 , , 0.0776498
+F 362 2.33073
+T 362 0 , , 0.555899
+T 362 363 nineteen nineteen 0.837911
+F 363 4.08159
+T 363 238 , , 7.84811e-10
+F 364 2.33073
+T 364 0 , , 0.555899
+T 364 365 nineteen nineteen 0.837911
+F 365 4.08159
+T 365 238 , , 7.84811e-10
+F 366 2.38502
+T 366 0 , , 1.22464
+T 366 368 eight eight 2.58857
+T 366 369 fifty fifty 4.91533
+T 366 370 five five 2.58857
+T 366 371 four four 2.84415
+T 366 372 nine nine 1.64105
+T 366 373 one one 2.38502
+T 366 374 seven seven 1.83332
+T 366 375 six six 3.71798
+T 366 376 three three 2.58857
+T 366 377 two two 3.18862
+F 367 8.35607
+T 367 44 , , -9.95138e-10
+F 368 0.146214
+T 368 59 , , 1.64632
+F 369 2.89968
+T 369 128 , , 0.287159
+T 369 131 five five 1.14001
+F 370 0.146214
+T 370 141 , , 1.76835
+F 371 0.186279
+T 371 166 , , 1.49573
+F 372 0.0582554
+T 372 216 , , 2.38887
+F 373 0.120425
+T 373 273 , , 2.01168
+F 374 0.183977
+T 374 308 , , 1.31396
+T 374 325 ten ten 3.4426
+F 375 0.415617
+T 375 340 , , 0.757495
+F 376 0.146214
+T 376 407 , , 1.63377
+F 377 0.821102
+T 377 456 , , 0.598429
+T 377 468 thirty thirty 2.23857
+F 378 0.0529595
+T 378 0 , , 2.77885
+F 379 8.35607
+T 379 44 , , -8.39854e-10
+F 380 0.0361506
+T 380 0 , , 3.15234
+F 381 8.35607
+T 381 44 , , -9.90293e-10
+F 382 0.90883
+T 382 0 , , 0.673401
+T 382 384 one one 3.11276
+T 382 385 seventy seventy 3.23582
+T 382 386 sixty sixty 3.23582
+T 382 387 thirty thirty 3.23582
+T 382 388 twelve twelve 3.23582
+T 382 389 twenty twenty 3.23582
+F 383 8.35607
+T 383 44 , , -1.02616e-09
+F 384 2.26033
+T 384 273 , , 0.375203
+T 384 290 sixty sixty 1.14001
+F 385 1.59592
+T 385 335 , , -1.4111e-09
+F 386 2.55502
+T 386 366 , , 0.169998
+T 386 372 nine nine 1.14001
+F 387 2.10409
+T 387 394 , , 0.102679
+T 387 398 one one 1.14001
+F 388 2.66941
+T 388 430 , , 0.329799
+T 388 435 sixty sixty 1.14001
+F 389 2.68938
+T 389 440 , , 0.225527
+T 389 442 eight eight 1.14001
+F 390 3.42982
+T 390 0 , , 1.65499
+T 390 391 nineteen nineteen 0.209535
+F 391 4.1798
+T 391 238 , , 0.0982065
+T 391 243 twenty twenty 2.23857
+F 392 3.42982
+T 392 0 , , 1.65499
+T 392 393 nineteen nineteen 0.209535
+F 393 4.31184
+T 393 238 , , 0.23025
+T 393 242 sixty sixty 0.257199
+F 394 2.00141
+T 394 0 , , 0.457598
+T 394 396 eight eight 2.53077
+T 394 397 five five 3.30336
+T 394 398 one one 1.40135
+T 394 399 seven seven 3.72835
+T 394 400 six six 3.51934
+T 394 401 sixty sixty 3.72835
+T 394 402 three three 3.70701
+T 394 403 two two 2.00141
+F 395 8.35607
+T 395 44 , , -8.24816e-10
+F 396 1.37638
+T 396 59 , , 0.153246
+T 396 73 sixty sixty 1.83309
+F 397 1.14001
+T 397 141 , , 0.15884
+F 398 0.767912
+T 398 273 , , 0.702424
+T 398 278 fifty fifty 2.74929
+T 398 290 sixty sixty 2.74929
+F 399 0.714492
+T 399 308 , , 1.46441e-09
+F 400 1.14001
+T 400 340 , , 0.064273
+F 401 2.69231
+T 401 366 , , 0.307292
+T 401 370 five five 1.14001
+F 402 1.14001
+T 402 407 , , 0.0242643
+F 403 0.821102
+T 403 456 , , 0.598429
+T 403 468 thirty thirty 2.23857
+F 404 0.73913
+T 404 0 , , 0.733976
+T 404 406 eight eight 1.93647
+F 405 8.35607
+T 405 44 , , -9.7226e-10
+F 406 1.60482
+T 406 59 , , 0.381687
+T 406 66 hundred hundred 1.14001
+F 407 1.19366
+T 407 0 , , 1.00596
+T 407 409 eight eight 2.98047
+T 407 410 eighty eighty 5.51078
+T 407 411 eleven eleven 5.51078
+T 407 412 five five 2.98047
+T 407 413 forty forty 4.31343
+T 407 414 four four 3.18378
+T 407 415 fourteen fourteen 5.51078
+T 407 416 nine nine 3.78384
+T 407 417 oh oh 3.18378
+T 407 418 one one 2.98047
+T 407 419 seven seven 3.78384
+T 407 420 seventy seventy 5.51078
+T 407 421 six six 2.98047
+T 407 422 sixty sixty 4.31343
+T 407 423 three three 2.81146
+T 407 424 twelve twelve 5.51078
+T 407 425 twenty twenty 3.78384
+T 407 426 two two 2.23627
+T 407 427 zero zero 3.78384
+F 408 8.35607
+T 408 44 , , -9.66241e-10
+F 409 0.591764
+T 409 59 , , 0.546311
+T 409 75 three three 2.93165
+T 409 78 zero zero 2.93165
+F 410 2.78311
+T 410 85 , , 0.270914
+T 410 87 six six 1.14001
+F 411 2.38971
+T 411 89 , , 0.270914
+T 411 93 sixty sixty 1.14001
+F 412 1.51418
+T 412 141 , , 0.200648
+T 412 145 four four 2.93165
+T 412 147 oh oh 2.93165
+T 412 149 seven seven 2.93165
+T 412 156 zero zero 2.93165
+F 413 2.68761
+T 413 157 , , 0.188103
+T 413 159 five five 1.83309
+T 413 165 two two 1.83309
+F 414 1.50436
+T 414 166 , , 0.0836638
+T 414 168 eight eight 2.74929
+T 414 170 five five 2.74929
+T 414 180 three three 2.74929
+F 415 1.58648
+T 415 184 , , -7.63337e-10
+F 416 0.821102
+T 416 216 , , 0.171305
+T 416 221 five five 2.23857
+F 417 2.59442
+T 417 261 , , 0.0581237
+T 417 266 nine nine 2.74929
+F 418 2.11657
+T 418 273 , , 0.231439
+T 418 283 nine nine 2.93165
+T 418 286 one one 2.93165
+T 418 296 two two 1.51418
+F 419 0.981277
+T 419 308 , , 0.266785
+T 419 310 eight eight 2.23857
+T 419 313 five five 2.23857
+T 419 320 one one 2.23857
+F 420 1.59592
+T 420 335 , , -1.4111e-09
+F 421 1.49785
+T 421 340 , , 0.205641
+T 421 345 four four 2.93165
+T 421 348 one one 2.93165
+T 421 355 three three 1.51418
+F 422 2.60762
+T 422 366 , , 0.222605
+T 422 368 eight eight 1.83309
+T 422 376 three three 1.83309
+F 423 1.43737
+T 423 407 , , 0.243715
+T 423 409 eight eight 3.08592
+T 423 412 five five 3.08592
+T 423 416 nine nine 3.08592
+T 423 419 seven seven 1.66845
+T 423 421 six six 3.08592
+F 424 2.66941
+T 424 430 , , 0.329799
+T 424 431 fifty fifty 1.14001
+F 425 2.60329
+T 425 440 , , 0.139428
+T 425 450 seven seven 2.23857
+T 425 454 three three 2.23857
+F 426 0.813503
+T 426 456 , , 0.819796
+T 426 458 eight eight 3.62473
+T 426 465 seven seven 2.20749
+T 426 469 three three 2.20749
+F 427 1.06988
+T 427 475 , , 0.05605
+T 427 483 two two 2.23857
+F 428 3.02388
+T 428 0 , , 1.24905
+T 428 429 nineteen nineteen 0.333645
+F 429 4.08159
+T 429 238 , , 6.73007e-10
+F 430 2.33961
+T 430 0 , , 0.56478
+T 430 431 fifty fifty 2.91738
+T 430 432 four four 2.91738
+T 430 433 nine nine 2.91738
+T 430 434 nineteen nineteen 2.91738
+T 430 435 sixty sixty 2.91738
+T 430 436 ten ten 2.91738
+T 430 437 twenty twenty 1.72003
+F 431 2.8563
+T 431 128 , , 0.243784
+T 431 130 eight eight 1.14001
+F 432 1.79465
+T 432 166 , , 0.373956
+T 432 178 sixty sixty 1.14001
+F 433 1.33859
+T 433 216 , , 0.379102
+T 433 226 of of 1.14001
+F 434 4.08159
+T 434 238 , , 7.84811e-10
+F 435 2.5962
+T 435 366 , , 0.211179
+T 435 374 seven seven 1.14001
+F 436 1.2541
+T 436 382 , , 0.34527
+T 436 386 sixty sixty 1.14001
+F 437 2.7489
+T 437 440 , , 0.285045
+T 437 445 four four 1.83309
+T 437 448 one one 1.83309
+F 438 2.33073
+T 438 0 , , 0.555899
+T 438 439 nineteen nineteen 0.837911
+F 439 4.38241
+T 439 238 , , 0.300818
+T 439 241 seventy seventy 1.14001
+F 440 2.46386
+T 440 0 , , 0.689024
+T 440 442 eight eight 1.9123
+T 440 443 fifth fifth 4.23906
+T 440 444 first first 4.23906
+T 440 445 four four 3.04171
+T 440 446 fourth fourth 4.23906
+T 440 447 nine nine 2.51212
+T 440 448 one one 3.04171
+T 440 449 second second 3.04171
+T 440 450 seven seven 3.04171
+T 440 451 seventh seventh 4.23906
+T 440 452 six six 2.51212
+T 440 453 third third 3.04171
+T 440 454 three three 3.04171
+T 440 455 two two 3.04171
+F 441 8.35607
+T 441 44 , , -3.07056e-08
+F 442 1.33182
+T 442 59 , , 0.499893
+T 442 71 seventy seventy 2.74929
+T 442 73 sixty sixty 1.33182
+F 443 2.33073
+T 443 126 , , -9.32337e-10
+F 444 3.42982
+T 444 139 , , -4.5563e-10
+F 445 1.7912
+T 445 166 , , 0.370509
+T 445 171 forty forty 1.83309
+T 445 178 sixty sixty 1.83309
+F 446 2.33073
+T 446 189 , , -9.32337e-10
+F 447 1.18667
+T 447 216 , , 0.227188
+T 447 220 fifty fifty 2.23857
+T 447 225 nineteen nineteen 2.23857
+F 448 1.83309
+T 448 273 , , 0.203768
+T 448 278 fifty fifty 1.83309
+F 449 3.02388
+T 449 300 , , -1.97914e-09
+F 450 0.874463
+T 450 308 , , 0.159971
+T 450 324 sixty sixty 1.83309
+F 451 2.33073
+T 451 333 , , -9.32337e-10
+F 452 1.51746
+T 452 340 , , 0.225244
+T 452 344 forty forty 2.23857
+T 452 353 sixty sixty 2.23857
+F 453 3.42982
+T 453 390 , , 5.10414e-09
+F 454 1.35444
+T 454 407 , , 0.160779
+T 454 422 sixty sixty 1.83309
+F 455 1.83309
+T 455 456 , , 0.192967
+T 455 470 twenty twenty 1.83309
+F 456 1.78013
+T 456 0 , , 2.04844
+T 456 458 eight eight 3.39677
+T 456 459 fifteen fifteen 6.24047
+T 456 460 five five 3.05783
+T 456 461 four four 2.66616
+T 456 462 nine nine 3.54138
+T 456 463 oh oh 3.05783
+T 456 464 one one 1.54342
+T 456 465 seven seven 3.15846
+T 456 466 six six 2.29222
+T 456 467 ten ten 6.24047
+T 456 468 thirty thirty 5.04312
+T 456 469 three three 2.96619
+T 456 470 twenty twenty 5.04312
+T 456 471 two two 2.16673
+T 456 472 zero zero 3.71016
+F 457 8.35607
+T 457 44 , , 1.04598e-09
+F 458 1.23787
+T 458 59 , , 0.136031
+T 458 69 one one 3.21924
+T 458 75 three three 1.802
+F 459 1.29764
+T 459 120 , , 0.270914
+T 459 123 sixty sixty 1.14001
+F 460 1.60375
+T 460 141 , , 0.00782453
+T 460 149 seven seven 3.53769
+F 461 1.1011
+T 461 166 , , 0.947726
+T 461 175 one one 2.49508
+T 461 180 three three 3.91255
+T 461 182 two two 0.928863
+F 462 1.13614
+T 462 216 , , 0.176657
+T 462 218 eight eight 3.08592
+T 462 228 one one 3.08592
+T 462 234 three three 1.66845
+F 463 2.6296
+T 463 261 , , 0.0933034
+T 463 264 five five 2.12045
+T 463 270 six six 1.55632
+F 464 2.19966
+T 464 273 , , 1.04948
+T 464 275 eight eight 3.02974
+T 464 285 oh oh 2.67123
+T 464 287 seven seven 1.14208
+T 464 288 six six 3.59364
+T 464 290 sixty sixty 5.01112
+T 464 294 three three 1.63898
+T 464 296 two two 3.02974
+F 465 0.840093
+T 465 308 , , 0.125601
+T 465 320 one one 2.02512
+T 465 323 six six 3.4426
+F 466 1.67237
+T 466 340 , , 1.33307
+T 466 342 eight eight 0.406406
+T 466 347 oh oh 4.27544
+F 467 0.90883
+T 467 382 , , -3.45092e-09
+F 468 2.79731
+T 468 394 , , 0.795901
+T 468 398 one one 0.415617
+F 469 1.6925
+T 469 407 , , 0.49884
+T 469 414 four four 3.62473
+T 469 416 nine nine 3.62473
+T 469 426 two two 0.813503
+F 470 2.71134
+T 470 440 , , 0.247484
+T 470 445 four four 1.83309
+T 470 452 six six 1.83309
+F 471 2.07951
+T 471 456 , , 0.299384
+T 471 462 nine nine 2.41656
+T 471 463 oh oh 2.41656
+T 471 464 one one 1.41448
+T 471 465 seven seven 2.98047
+T 471 472 zero zero 2.98047
+F 472 0.950277
+T 472 475 , , 0.391815
+T 472 481 seven seven 1.51418
+F 473 0.0274008
+T 473 0 , , 3.42511
+F 474 8.35607
+T 474 44 , , -1.00502e-09
+F 475 1.01383
+T 475 0 , , 0.838939
+T 475 477 eight eight 3.99855
+T 475 478 five five 3.6847
+T 475 479 four four 3.92417
+T 475 480 one one 2.89849
+T 475 481 seven seven 2.89849
+T 475 482 six six 1.56576
+T 475 483 two two 2.89849
+T 475 484 zero zero 4.09607
+F 476 8.35607
+T 476 44 , , -8.56547e-10
+F 477 1.54288
+T 477 59 , , 0.319751
+T 477 77 two two 1.14001
+F 478 1.95963
+T 478 141 , , 0.363705
+T 478 149 seven seven 1.14001
+F 479 1.62913
+T 479 166 , , 0.208439
+T 479 175 one one 1.14001
+F 480 2.61632
+T 480 273 , , 0.731189
+T 480 279 five five 0.415617
+F 481 0.843874
+T 481 308 , , 0.129382
+T 481 318 nine nine 1.83309
+F 482 0.950277
+T 482 340 , , 0.2107
+T 482 343 five five 2.93165
+T 482 345 four four 2.93165
+F 483 1.83309
+T 483 456 , , 0.148299
+T 483 465 seven seven 1.83309
+F 484 1.16485
+T 484 475 , , 0.151023
+T 484 482 six six 1.14001
