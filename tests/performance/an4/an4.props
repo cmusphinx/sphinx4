@@ -69,7 +69,7 @@ edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.Simple
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.FastActiveList
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.PartitionActiveList
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=800
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-150
 
