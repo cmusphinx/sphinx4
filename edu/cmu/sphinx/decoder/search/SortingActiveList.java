@@ -237,12 +237,30 @@ public class SortingActiveList implements ActiveList  {
                 Token bestToken = (Token) tokenList.get(0);
                 highestScore = bestToken.getScore();
                 pruneScore = highestScore + relativeBeamWidth;
+                float lastScore = 0.0f;
 
-                for (Iterator i = tokenList.iterator();
-                        i.hasNext() && count < absoluteBeamWidth; count++) {
+                Iterator i = tokenList.iterator();
+                for (; i.hasNext() && count < absoluteBeamWidth; count++) {
                     Token token = (Token) i.next();
-                    if (token.getScore() <= pruneScore) {
+                    lastScore = token.getScore();
+                    if (lastScore <= pruneScore) {
                         break;
+                    }
+                }
+                // checks how many tokens have the same score as the last token
+                if (false && count >= absoluteBeamWidth) {
+                    int lastCount = count;
+                    while (true) {
+                        Token token = (Token) i.next();
+                        if (lastScore == token.getScore()) {
+                            count++;
+                        } else {
+                            break;
+                        }
+                    }
+                    if (count > lastCount) {
+                        System.out.println
+                            ("Same score token: " + (count - lastCount));
                     }
                 }
                 pruned = tokenList.size() - count;
