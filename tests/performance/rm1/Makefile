@@ -203,11 +203,11 @@ rm1_flat_unigram_clex:
 rm1_unigram_clex:
 	$(JAVA_CMD) \
   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.flat_unigram.lm \
-        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10 \
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=15 \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-   -Dedu.cmu.sphinx.util.BeamFinder.enable=false\
-	-Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1600\
-	-Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-110\
+   -Dedu.cmu.sphinx.util.BeamFinder.enable=true\
+	-Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2600\
+	-Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-210\
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
 
 rm1_bigram_clex:
