@@ -148,8 +148,8 @@ public class Feature extends Data {
      */
     public String toString() {
         if (featureData != null) {
-            return ("Feature: " + ID + ", " + 
-		    Util.floatArrayToString(featureData));
+            return ("Feature: " + ID + ", data ");
+	    // + Util.floatArrayToString(featureData));
         } else {
             return ("Feature: " + getSignal().toString());
         }
