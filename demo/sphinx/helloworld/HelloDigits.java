@@ -13,6 +13,7 @@
 package demo.sphinx.helloworld;
 
 import edu.cmu.sphinx.frontend.util.Microphone;
+import edu.cmu.sphinx.jsapi.JSGFGrammar;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
@@ -39,19 +40,26 @@ public class HelloDigits {
             if (args.length > 0) {
                 url = new File(args[0]).toURI().toURL();
             } else {
-                url = HelloDigits.class.getResource("helloworld.config.xml");
+                url = HelloDigits.class.getResource("hellodigits.config.xml");
             }
 
             ConfigurationManager cm = new ConfigurationManager(url);
+
+            /*
+             * Sets the base URL of the JSGF grammar files to the 
+             * directory where the HelloWorld class is.
+             */
+            JSGFGrammar grammar = (JSGFGrammar) cm.lookup("jsgfGrammar");
+            grammar.setBaseURL(HelloWorld.class.getResource(""));
 
 	    Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
 	    Microphone microphone = (Microphone) cm.lookup("microphone");
 
 
-            // allocate the resource necessary for the recognizer
+            /* allocate the resource necessary for the recognizer */
             recognizer.allocate();
 
-            // the microphone will keep recording until the program exits
+            /* the microphone will keep recording until the program exits */
 	    if (microphone.startRecording()) {
 
 		System.out.println
@@ -62,11 +70,11 @@ public class HelloDigits {
 		    System.out.println
 			("Start speaking. Press Ctrl-C to quit.");
 
-                    //
-                    // This method will return when the end of speech
-                    // is reached. Note that the endpointer will determine
-                    // the end of speech.
-                    // 
+                    /*
+                     * This method will return when the end of speech
+                     * is reached. Note that the endpointer will determine
+                     * the end of speech.
+                     */ 
 		    Result result = recognizer.recognize();
 		    
 		    if (result != null) {

@@ -21,7 +21,7 @@
     <property name="wordInsertionProbability" value="1E-36"/>
     <property name="languageWeight"     value="8"/>
     
-    <property name="frontend" value="frontEnd"/>
+    <property name="frontend" value="epFrontEnd"/>
     <property name="recognizer" value="recognizer"/>
     <property name="showCreations" value="false"/>
     
@@ -140,24 +140,7 @@
         <property name="properties_file" value="am.props"/>
     </component>
     
-    
-    <!-- ******************************************************** -->
-    <!-- The frontend configuration                               -->
-    <!-- ******************************************************** -->
-    
-    <component name="frontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
-        <propertylist name="pipeline">
-            <item>microphone </item>
-            <item>premphasizer </item>
-            <item>windower </item>
-            <item>fft </item>
-            <item>melFilterBank </item>
-            <item>dct </item>
-            <item>liveCMN </item>
-            <item>featureExtraction </item>
-        </propertylist>
-    </component>
-    
+        
     <!-- ******************************************************** -->
     <!-- The live frontend configuration                          -->
     <!-- ******************************************************** -->

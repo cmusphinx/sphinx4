@@ -1,0 +1,2 @@
+Main-Class: demo.sphinx.helloworld.HelloWorld
+Class-Path: ../lib/sphinx4.jar ../../lib/jsapi.jar

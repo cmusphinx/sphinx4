@@ -13,6 +13,7 @@
 package demo.sphinx.helloworld;
 
 import edu.cmu.sphinx.frontend.util.Microphone;
+import edu.cmu.sphinx.jsapi.JSGFGrammar;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
@@ -43,18 +44,25 @@ public class HelloWorld {
 
             ConfigurationManager cm = new ConfigurationManager(url);
 
+            /*
+             * Sets the base URL of the JSGF grammar files to the 
+             * directory where the HelloWorld class is.
+             */
+            JSGFGrammar grammar = (JSGFGrammar) cm.lookup("jsgfGrammar");
+            grammar.setBaseURL(HelloWorld.class.getResource(""));
+
 	    Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
 	    final Microphone microphone = 
                 (Microphone) cm.lookup("microphone");
 
 
-            // allocate the resource necessary for the recognizer
+            /* allocate the resource necessary for the recognizer */
             recognizer.allocate();
 
-            //
-            // This thread is used to listen for the ENTER key,
-            // which when pressed will stop the microphone.
-            //
+            /*
+             * This thread is used to listen for the ENTER key,
+             * which when pressed will stop the microphone.
+             */
 	    Thread t = new Thread() {
 		    public void run() {
 			try {
@@ -75,20 +83,20 @@ public class HelloWorld {
 		("Say any digit(s): e.g. \"two oh oh four\", " +
 		 "\"three six five\".");
 
-	    //
-            // The program now enters a loop to keep listening for audio,
-            // and decodes the recorded audio.
-            //
+	    /*
+             * The program now enters a loop to keep listening for audio,
+             * and decodes the recorded audio.
+             */
             while (true) {
 		if (microphone.startRecording()) {
                     System.out.println
 			("Start speaking. " +
 			 "Press ENTER when you finish speaking.");
                     
-                    // 
-                    // this method returns when the ENTER key is pressed,
-                    // which stops the microphone
-                    //
+                    /* 
+                     * this method returns when the ENTER key is pressed,
+                     * which stops the microphone
+                     */
 		    Result result = recognizer.recognize();
                     
                     if (result != null) {
