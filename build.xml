@@ -180,7 +180,9 @@ jsapi.exe from the lib directory.
     <!-- ********************************************************** -->
     <property name="javadoc_desc" value="Sphinx-4"/>
 
-    <target name="javadoc" description="Generate javadoc">
+    <target name="javadoc" 	    
+	    depends="handle_jsapi"
+	    description="Generate javadoc">
         <mkdir dir="${javadoc_dir}"/>
         <javadoc sourcepath="${src_dir}"
 	         source="1.4"
