@@ -76,10 +76,11 @@ WARRANTIES.
       <h3>Installation</h3>
       <ul>
         <li><a href="#download_and_install">Required software</a></li>
-        <li><a href="#source">Sphinx-4 source</a></li>
-	<li><a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">Acoustic Models</a></li>
-	<li><a href="#language_models">Language Models</a></li>
+        <li><a href="#source">Downloading Sphinx-4</a></li>
+        <li><a href="#how_build">Building Sphinx-4</a></li>
 	<li><a href="#create_javadocs">Creating Javadocs</a></li>
+	<li><a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">Downloading Acoustic Models</a></li>
+	<li><a href="#faq">Troubleshooting</a></li>
       </ul>
 
       <h3>Demos</h3>
@@ -87,23 +88,24 @@ WARRANTIES.
 	<li><a href="#demos">Demos</a></li>
       </ul>
 
-      <h3>Sphinx-4 for Users</h3>
+      <h3>Sphinx-4 in Detail</h3>
       <ul>
-	<li><a href="#configuration">Configuration (Sphinx Properties)</a></li>
+	<li><a href="#sphinx_properties">Understanding Sphinx Properties</a></li>
 	<li><a href="doc/FrontEnd.html">Front End</a></li>
-	<li><a href="#faq">Troubleshooting section</a></li>
-      </ul>
-
-      <h3>Sphinx-4 for Application Developers</h3>
-      <ul>
+	    <ul>
+	        <li><a href="javadoc/edu/cmu/sphinx/frontend/doc-files/FrontEndProperties.html">Configuration</a></li>
+		<li><a href="doc/FrontEnd.html#create_cepstra">Creating spectrum/cepstrum</a></li>
+		<li><a href="doc/FrontEnd.html#decode_cepstra">Decoding cepstra</a></li>
+		<li><a href="doc/FrontEnd.html#enable_endpointer">Enabling the endpointer</a></li>
+	    </ul>
+	<li><a href="#batch_tests">Running the Batch Tests</a></li>
+	    <ul>
+	    	<li><a href="#batch_files">Batch Files</a></li>
+		<li><a href="#input_files">Input Audio/Cepstral Files</a></li>
+	    </ul>
+	</li>
+	<li><a href="#language_models">Creating Language Models</a></li>
         <li><a href="#architecture_and_api1">Architecture and API</a></li>
-      </ul>
-
-      <h3>Sphinx-4 for Speech Engine Developers</h3>
-      <ul>
-        <li><a href="#architecture_and_api2">Architecture and API</a></li>
-        <li><a href="#how_build">Building Sphinx-4</a></li>
-	<li><a href="#batch_tests">Running the Batch Tests</a>
       </ul>
 
       <p>
@@ -133,7 +135,7 @@ WARRANTIES.
 	 programming language.
          It was created via a joint collaboration between the Sphinx group
 	 at Carnegie Mellon University, Sun Microsystems Laboratories,
-	 Mitsubishi Electric Research Lab (MERL), and Hewlett Packard (HP),
+	 Mitsubishi Electric Research Labs (MERL), and Hewlett Packard (HP),
 	 with contributions from the University of California at Santa
          Cruz (UCSC) and the Massachusetts Institute of Technology
          (MIT).
@@ -146,8 +148,8 @@ WARRANTIES.
   <br>&nbsp;
   <li><a name="capabilities"><b>Capabilities</b></a>
 
-      <p>Discrete and continous speech recognition. Includes ready-to-use
-         batch and live mode recognizers.
+      <p>Live mode and batch mode speech recognizers, capable of recognizing
+         discrete and continous speech.
 
       <p>Generalized pluggable <a href="./javadoc/edu/cmu/sphinx/frontend/package-summary.html"><b>front end</b></a> 
          architecture.
@@ -166,7 +168,7 @@ WARRANTIES.
 	 <a href="./javadoc/edu/cmu/sphinx/linguist/language/ngram/SimpleNGramModel.html">ASCII</a> and 
 	 <a href="./javadoc/edu/cmu/sphinx/linguist/language/ngram/large/LargeTrigramModel.html">binary</a>
 	 versions of unigram, bigram, trigram, 
-	 Java Speech API <a href="./javadoc/edu/cmu/sphinx/jsapi/JSGFGrammar.html">JSGF</a>, and 
+	 <a href="./javadoc/edu/cmu/sphinx/jsapi/JSGFGrammar.html">Java Speech API Grammar Format (JSGF)</a>, and 
 	 <a href="./javadoc/edu/cmu/sphinx/linguist/language/grammar/FSTGrammar.html">FST grammars</a>.  
 
       <p>Generalized <a href="./javadoc/edu/cmu/sphinx/linguist/acoustic/package-summary.html"><b>acoustic model</b></a> 
@@ -250,8 +252,7 @@ WARRANTIES.
 <ul>
   <li><b>Java 2 SDK, Standard Edition, v1.4</b> or better. 
       Go to <a href="http://java.sun.com">java.sun.com</a>,
-      and select "J2SE". Download the latest version. At the time of writing,
-      the latest release version is 1.4.2.
+      and select "J2SE". Download the latest version.
       </li>
 
   <br>
@@ -279,24 +280,29 @@ WARRANTIES.
   machines, this location is usually "c:\ant". On Unix/linux, this
   location is usually "/usr/local/ant".
   </li>
-  <li> Define variables to support ant. This will depend on your platform:
+  <li> Define variables to support ant and Java.
+       This will depend on your platform (assuming that your Java version
+       is 1.4.2):
   <ul>
   <li> Windows
   <pre>
 set ANT_HOME=c:\ant
 set PATH=%PATH%;%ANT_HOME%\bin
+set JAVA_HOME=c:\j2sdk1.4.2
 </pre>
   </li>
   <li> Unix (bash)
   <pre>
 export ANT_HOME=/usr/local/ant
 export PATH=${PATH}:${ANT_HOME}/bin
+export JAVA_HOME=/usr/java/j2sdk1.4.2
 </pre>
   </li>
   <li> Unix (csh)
   <pre>
 setenv ANT_HOME /usr/local/ant
-set path=( $path $ANT_HOME/bin )
+setenv PATH ${PATH}:/${ANT_HOME}/bin
+setenv JAVA_HOME /usr/java/j2sdk1.4.2
 </pre>
   </li>
   </ul>
@@ -333,8 +339,12 @@ set path=( $path $ANT_HOME/bin )
 	      </li>
 
 	      <li>Get the code from sourceforge.net. If you are a
-	      developer in the cmusphinx project, then do:
-		<pre>% cvs -d:ext:cvs.sourceforge.net:/cvsroot/cmusphinx co sphinx4</pre>
+	      developer in the cmusphinx project, then do 
+	      (assuming you use bash shell):
+		<pre>
+% export CVS_RSH=ssh
+% cvs -z3 -d:ext:cvs.sourceforge.net:/cvsroot/cmusphinx co sphinx4
+</pre>
 	      </li>
 	  <li>If you are not a developer, you have to get the code
 	  anonymously. When prompted for a password, simply hit
@@ -342,8 +352,7 @@ set path=( $path $ANT_HOME/bin )
 
 	    <pre>
 % cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx login
-% cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx \
-co sphinx4
+% cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx co sphinx4
 </pre>
       </li>
     </ul>
@@ -354,45 +363,24 @@ co sphinx4
     </ul>
     </li>
 <br>
-<li><a name="language_models"><b>Language Models</b></a>
 
-<p>The language model used by Sphinx-4 follows the ARPA
-format. Language models provided with the acoustic model packages were
-created with the Carnegie Mellon University Statistical Language
-Modeling toolkit (CMU SLM toolkit), available <a
-href="http://www.speech.cs.cmu.edu/SLM_info.html">at CMU</a>. A manual
-is available there.</p>
+  <li><a name="how_build"><b>Building Sphinx-4</b></a>
+      <p>The sofware required for building Sphinx-4 are listed in the <a href="#download_and_install">Required software</a> section.
+      <p>To build Sphinx-4, from a command prompt, make sure you have changed to the directory where you installed Sphinx-4 (usually, a simple "cd sphinx4" will do), and merely type the following:</p>
+      <ul>
+         <p><code>ant</code>
+      </ul>
+    <p>This executes the <a href="http://ant.apache.org/">Apache Ant</a>
+       command to build the Sphinx-4 classes, demos, and jar files.
+       The output will be placed under the <code>bld</code> directory.
 
-<p>The language model is created from a list of transcriptions. Given
-a file with training transcription, the following script
-creates a list of words that appear in the transcriptions, then
-creates a bigram and a trigram LM files in the ARPA format. The file with extension ccs contains the context cues, and it is usually a list of words used as markers - beginning or end of speech etc.</p>
+    <p>To delete all the output from the build to give you a fresh start:
+       <ul>
+          <p><code>ant clean</code>
+       </ul>
+  </li>
 
-<pre>
-set task = RM
-
-# Location of the CMU SLM toolkit
-set bindir = ~/src/CMU-SLM_Toolkit_v2/bin
-
-cat $task.transcript | $bindir/text2wfreq | $bindir/wfreq2vocab > $task.vocab
-
-set mode = "-absolute"
-
-# Create bigram
-cat $task.transcript | $bindir/text2idngram -n 2 -vocab $task.vocab | \
-   $bindir/idngram2lm $mode -context $task.ccs -n 2 -vocab $task.vocab \
-   -idngram - -arpa $task.bigram.arpa
-
-# Create trigram
-cat $task.transcript | $bindir/text2idngram -n 3 -vocab $task.vocab | \
-   $bindir/idngram2lm $mode -context $task.ccs -n 3 -vocab $task.vocab \
-   -idngram - -arpa $task.trigram.arpa
-</pre>
-
-</li>
-
-
-<br>&nbsp;
+  <br>
 
 <li><a name="create_javadocs"><b>Creating Javadocs</b></a>
 
@@ -406,6 +394,135 @@ and type:
 <pre>ant -Daccess=private javadoc</pre>
 
 </li>
+
+<br>&nbsp;
+
+<li><a name="faq"><b>Troublehooting/FAQ</b></a><br>&nbsp;
+<ol>
+  <li>How can I specify the location of the Java JDK?
+    <ul>
+
+      <li>Using the JAVA_HOME environment variable. For the different
+      versions of OS, do:
+        <ul>
+          <li>
+            Unix (t)csh: <code>setenv JAVA_HOME /lab/speech/java/j2sdk1.4.0</code>
+          </li>
+          <li>
+            Unix (ba)sh: <code>export JAVA_HOME='/lab/speech/java/jdk1.4.1_01'</code>
+          </li>
+
+          <li>
+            Windows/cygwin: <code>export JAVA_HOME='c:/Progra~1/J2SDK_Forte/jdk1.4.0'</code>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+
+  <br>  
+
+  <li>How can I update the code in the the current working copy that I
+  have?
+    <ul>
+
+      <li>If you are using CVS, you can do a "cvs update -d". The
+      switch "-d" will also get new directories or files that have
+      been added to the cvs module since the last time you
+      downloaded.</li>
+    </ul>
+  </li>
+
+  <br>
+
+  <li>I always get a "timeout" message when I try to download/update
+  the cvs tree.
+    <ul>
+      <li>Make sure you defined the CVS_RSH environment variable as
+      'ssh'. If ssh is not on your path, make sure you specify the
+      full path. For the different versions of OS, do:
+        <ul>
+          <li>
+            Unix (t)csh: <code>setenv CVS_RSH ssh</code>
+
+          </li>
+          <li>
+            Unix (ba)sh: <code>export CVS_RSH='/usr/local/bin/ssh'</code>
+          </li>
+          <li>
+            Windows/cygwin: <code>export CVS_RSH='ssh'</code>
+          </li>
+        </ul>
+
+      </li>
+    </ul>
+  </li>
+
+  <br>
+
+  <li><a name="cygwin">What are the limitations/hacks if I am using
+  cygwin?</a></li>
+  <ul>
+    <li>Make sure that you install "ssh" and "cvs" when you install
+    cygwin. If you do not want to go through the list of packages
+    trying to decide what you need, installing everything is a good
+    solution.
+    </li>
+    <li>Cygwin does not define a home directory, which is used by
+    cvs. You have to explicitly define it. You are better off creating
+    an environment variable HOME, which will be used by every cygwin
+    window that you open. Follow the instructions below to create this
+    variable on Windows 2000.
+    <ul>
+
+	<li>Assume your userid is "johndoe", and you created a
+	directory named "/home/johndoe" in the cygwin environment
+        </li>
+        <li>Right click on the "My Computer" icon
+	</li>
+	<li>On the menu, click on "Properties"
+	</li>
+	<li>Click the "Advanced" tab
+	</li>
+	<li>Select "Environment Variables"
+	</li>
+	<li>Click "New" on the "User variables for johndoe" box
+	</li>
+
+	<li>On "Variable Name", type "HOME"
+	</li>
+	<li>On "Variable Value", type "c:\cygwin\home\johndoe"
+	</li>
+    </ul>
+    When you start a new cygwin window, if you type "echo $HOME", you
+    should get "/home/johndoe".
+    </li>
+    <li>Handling absolute paths: Cygwin interprets directory paths in
+    a unix-like way, relative to its own "root" directory (which
+    cygwin sees as "/" but Windows sees as "c:\cygwin"). However, the
+    Java platform interprets directory paths via the operating
+    system. Therefore, absolute paths, such as "/lab/speech", will be
+    interpreted differently by cygwin and by the Java platform. One
+    workaround is to keep the absolute path in Windows (e.g.
+    "c:\lab\") and create a link, in cygwin, from that location (such
+    as "ln -s /cygdrive/c/lab /lab"). If you use absolute paths to
+    identify data location and the directories are not setup this way,
+    you may encounter error messages such as:
+    </li>
+    <pre>
+d:\work\sphinx4&gt;ant clean 
+/c: Can't open /c: No such file or directory 
+</pre>
+    <li>Handling DOS 8.3 filename format: Since cygwin deals with unix
+    and DOS filename formats at the same time, filenames in different
+    files (e.g., build.xml, .props file) have different
+    requirements. Paths interpreted directly by cygwin can be as long
+    as you want. Paths passed to the program, though, conform to the
+    8.3 convention of DOS filenames. Therefore you have to define the
+    path to, say, junit as something like
+    /lab/speech/ThirdP~1/junit3.7, since this string is passed from
+    the environment to the Java code to the OS. </li>
+  </ul>
 
 </ul>
 
@@ -422,11 +539,11 @@ and type:
 
 <hr>
 
-<h2>Sphinx-4 for Users</h2>
+<h2>Sphinx-4 in Detail</h2>
 
 <ul>
 
-  <li><a name="configuration"><b>Configuration (Sphinx Properties)</b></a>
+  <li><a name="sphinx_properties"><b>Understanding Sphinx Properties</b></a>
 
   <p>The system behavior is determined by SphinxProperties, which is similar
      in nature to the Java Platform Properties class. The SphinxProperties
@@ -491,213 +608,12 @@ and type:
   </p>
 
   </li>
-<li><a name="faq"><b>Troublehooting/FAQ</b></a><br>&nbsp;
-<ol>
-  <li>How can I specify the location of the Java JDK?
-    <ul>
 
-      <li>Using the JAVA_HOME environment variable. For the different
-      versions of OS, do:
-        <ul>
-          <li>
-            Unix (t)csh: <code>setenv JAVA_HOME /lab/speech/java/j2sdk1.4.0</code>
-          </li>
-          <li>
-            Unix (ba)sh: <code>export JAVA_HOME='/lab/speech/java/jdk1.4.1_01'</code>
-          </li>
-
-          <li>
-            Windows/cygwin: <code>export JAVA_HOME='c:/Progra~1/J2SDK_Forte/jdk1.4.0'</code>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-
-  <br>  
-
-  <li>How can I update the code in the the current working copy that I
-  have?
-    <ul>
-
-      <li>If you are using CVS, you can do a "cvs update -d". The
-      switch "-d" will also get new directories or files that have
-      been added to the cvs module since the last time you
-      downloaded.</li>
-    </ul>
-  </li>
-
-  <br>
-
-  <li>I always get a "timeout" message when I try to download/update
-  the cvs tree.
-    <ul>
-      <li>Make sure you defined the CVS_RSH environment variable as
-      'ssh'. If ssh is not on your path, make sure you specify the
-      full path. For the different versions of OS, do:
-        <ul>
-          <li>
-            Unix (t)csh: <code>setenv CVS_RSH ssh</code>
-
-          </li>
-          <li>
-            Unix (ba)sh: <code>export CVS_RSH='/usr/local/bin/ssh'</code>
-          </li>
-          <li>
-            Windows/cygwin: <code>export CVS_RSH='ssh'</code>
-          </li>
-        </ul>
-
-      </li>
-    </ul>
-  </li>
-
-  <br>
-
-  <li><a name="cygwin">What are the limitations/hacks if one's using
-  cygwin?</a></li>
-  <ul>
-    <li>Make sure that you install "ssh" and "cvs" when you install
-    cygwin. If you do not want to go through the list of packages
-    trying to decide what you need, installing everything is a good
-    solution.
-    </li>
-    <li>Cygwin does not define a home directory, which is used by
-    cvs. You have to explicitly define it. You are better off creating
-    an environment variable HOME, which will be used by every cygwin
-    window that you open. Follow the instructions below to create this
-    variable on Windows 2000.
-    <ul>
-
-	<li>Assume your userid is "johndoe", and you created a
-	directory named "/home/johndoe" in the cygwin environment
-        </li>
-        <li>Right click on the "My Computer" icon
-	</li>
-	<li>On the menu, click on "Properties"
-	</li>
-	<li>Click the "Advanced" tab
-	</li>
-	<li>Select "Environment Variables"
-	</li>
-	<li>Click "New" on the "User variables for johndoe" box
-	</li>
-
-	<li>On "Variable Name", type "HOME"
-	</li>
-	<li>On "Variable Value", type "c:\cygwin\home\johndoe"
-	</li>
-    </ul>
-    When you start a new cygwin window, if you type "echo $HOME", you
-    should get "/home/johndoe".
-    </li>
-    <li>Handling absolute paths: Cygwin interprets directory paths in
-    a unix-like way, relative to its own "root" directory (which
-    cygwin sees as "/" but Windows sees as "c:\cygwin"). However, the
-    Java platform interprets directory paths via the operating
-    system. Therefore, absolute paths, such as "/lab/speech", will be
-    interpreted differently by cygwin and by the Java platform. One
-    workaround is to keep the absolute path in Windows (e.g.
-    "c:\lab\") and create a link, in cygwin, from that location (such
-    as "ln -s /cygdrive/c/lab /lab"). If you use absolute paths to
-    identify data location and the directories are not setup this way,
-    you may encounter error messages such as:
-    </li>
-    <pre>
-d:\work\sphinx4&gt;ant clean 
-/c: Can't open /c: No such file or directory 
-</pre>
-    <li>Handling DOS 8.3 filename format: Since cygwin deals with unix
-    and DOS filename formats at the same time, filenames in different
-    files (e.g., build.xml, .props file) have different
-    requirements. Paths interpreted directly by cygwin can be as long
-    as you want. Paths passed to the program, though, conform to the
-    8.3 convention of DOS filenames. Therefore you have to define the
-    path to, say, junit as something like
-    /lab/speech/ThirdP~1/junit3.7, since this string is passed from
-    the environment to the Java code to the OS. </li>
-  </ul>
 </ol>
 
-</ul>
+<br>&nbsp;
 
-
-<hr>
-
-<h2>Sphinx-4 for Application Developers</h2>
-<ul>
-  <li>
-     <a name="architecture_and_api1"><b>Architecture and API</b></a>
-     <p>The architecture and API can be found in the 
-        <a href="javadoc/index.html">javadoc documentation</a>.</p>
-     <p>If the previous is broken, please build the javadocs using the
-        instructions in <a href="#create_javadocs">Creating Javadocs</a>.
-  </li>
-  <br>&nbsp;
-
-</ul>
-
-<hr>
-
-<h2>Sphinx-4 for Speech Engine Developers</h2>
-
-<p>All the source is available under a <a href="license.terms">BSD Style</a>
-   license.  You can download it, build it, and modify it to your 
-   heart's content.
-
-<ul>
-  <li><a name="architecture_and_api2"><b>Architecture and API</b></a>
-      <p>The architecture and API can be found in the 
-         <a href="javadoc/index.html">javadoc documentation</a>.
-      <p>If the previous link is broken, please build the javadocs using
-         the instructions in the <a href="#create_javadocs">
-	 Creating Javadocs</a>. In fact, rebuilding javadocs
-	 is something you should do every time there is a major change
-	 in your code.
-  </li>
-
-  <br>&nbsp;
-
-  <li><a name="how_build"><b>Building Sphinx-4</b></a>
-      <p>The prerequisites for building Sphinx-4 are as follows. See section <a href="#download_and_install">Required software</a> for instructions on how to obtain the software listed below.</p>
-      <ul>
-         <li><b>Sphinx-4 Source Distribution</b>. We recommend that you
-	     download the cvs source tree from SourceForge. 
-         </li>
-         <li><b>Java<sup><font size="-1">TM</font></sup> 2 SDK, Standard
-             Edition, v1.4</b> available at 
-             <a href="http://java.sun.com/j2se/1.4/">
-             http://java.sun.com/j2se/1.4/</a> (all platforms).  After you
-             have downloaded and installed the SDK, remember to set your
-             <code><b>JAVA_HOME</b></code> environment variable to point to
-             where you installed the SDK.
-         </li><br>
-         <li><b>Apache Ant 1.5.3</b> or
-             better.  After you install ant, make sure the "ant" command is in
-             your path.  Visit the <a href="http://ant.apache.org/">Apache
-             Ant site</a> to get ant.
-         </li><br>
-      </ul>
-    <p>To build Sphinx-4, from a command prompt, make sure you have changed to the directory where you installed Sphinx-4 (usually, a simple "cd sphinx4" will do), and merely type the following:</p>
-      <ul>
-         <p><code>ant</code>
-      </ul>
-    <p>This executes the <a href="http://ant.apache.org/">Apache Ant</a>
-       command to build the Sphinx-4 classes, demos, and jar files.
-       The output will be placed under the <code>bld</code> directory.
-
-    <p>We have also provided a number of ant targets for convenience:
-    <ul>
-       <p><code>ant clean</code>: deletes all the output from the build 
-          to give you a fresh start
-       <br><a href="#create_javadocs"><code>ant javadoc</code></a>: builds the javadoc documentation and
-          places the results in the <code>javadoc</code> directory
-    </ul>
-  </li>
-
-  <br>
-
-  <li><a name="batch_tests"><b>Running the Batch Tests</b></a>
+<li><a name="batch_tests"><b>Running the Batch Tests</b></a>
 
   <p>
   Sphinx-4 contains a number of regression tests using common speech databases.
@@ -716,6 +632,11 @@ d:\work\sphinx4&gt;ant clean
      <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC2000S88">HUB4</a> - large vocabulary connected speech</li>
      </ul>
   
+  <p>
+  First of all, make sure that you have built Sphinx-4 already.
+  To do so, go to the top level and type:
+  <pre>ant all</pre>
+
   <p>
   The Sphinx-4 regression tests have different directories for the
   different tasks. The directory sphinx4/tests/performance contains 
@@ -771,20 +692,98 @@ d:\work\sphinx4&gt;ant clean
   <p>
   All the batch regression tests are driven by properties files (they end
   with ".props") and batch files that list all the files to test (they end
-  with ".batch"). You need to change the directory paths within these
+  with ".batch"). See the <a href="#batch_files">Batch Files</a> section
+  for details. You need to change the directory paths within these
   files to match your environment. Using TIDIGITS (tests/performance/tidigits/)
   as an example, here are the things to change:
   <ul>
     <li>location of the acoustic model (in tidigits.props)</li>
     <li>location of the dictionary (in tidigits.props)</li>
     <li>the batch file (tidigits.batch) - We recommend that you create
-    your own batch file based on your test database. Each line in the
-    batch file simply lists the fully qualified path of the test file,
-    and the transcript of the test file.</li>
+    your own batch file based on your test database. See the 
+    <a href="#batch_files">Batch File</a> section for details.</li>
   </ul>
   <p>
 
   </li>
+
+
+<p><a name="batch_files"><b>Batch Files</b></a>
+
+<p>Batch files are used in batch mode regressions tests. 
+It is a text file listing the fully qualified path of
+the test file, and the transcript of the test file, for example:
+    <pre>
+/lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.24z982za.raw two four zero nine eight two zero
+/lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.25896o4a.raw two five eight nine six oh four
+</pre>
+
+<p>An example batch file is
+<a href="tests/performance/tidigits/tidigits.batch">tidigits.batch</a>.
+
+<br>&nbsp;
+
+<p><a name="input_files"><b>Input Audio/Cepstral Files</b></a>
+
+
+
+</li>
+
+<br>&nbsp;
+
+
+<li><a name="language_models"><b>Language Models</b></a>
+
+<p>The language model used by Sphinx-4 follows the ARPA
+format. Language models provided with the acoustic model packages were
+created with the Carnegie Mellon University Statistical Language
+Modeling toolkit (CMU SLM toolkit), available <a
+href="http://www.speech.cs.cmu.edu/SLM_info.html">at CMU</a>. A manual
+is available there.</p>
+
+<p>The language model is created from a list of transcriptions. Given
+a file with training transcription, the following script
+creates a list of words that appear in the transcriptions, then
+creates a bigram and a trigram LM files in the ARPA format. The file with extension ccs contains the context cues, and it is usually a list of words used as markers - beginning or end of speech etc.</p>
+
+<pre>
+set task = RM
+
+# Location of the CMU SLM toolkit
+set bindir = ~/src/CMU-SLM_Toolkit_v2/bin
+
+cat $task.transcript | $bindir/text2wfreq | $bindir/wfreq2vocab > $task.vocab
+
+set mode = "-absolute"
+
+# Create bigram
+cat $task.transcript | $bindir/text2idngram -n 2 -vocab $task.vocab | \
+   $bindir/idngram2lm $mode -context $task.ccs -n 2 -vocab $task.vocab \
+   -idngram - -arpa $task.bigram.arpa
+
+# Create trigram
+cat $task.transcript | $bindir/text2idngram -n 3 -vocab $task.vocab | \
+   $bindir/idngram2lm $mode -context $task.ccs -n 3 -vocab $task.vocab \
+   -idngram - -arpa $task.trigram.arpa
+</pre>
+
+</li>
+
+
+<br>&nbsp;
+
+  <li>
+     <a name="architecture_and_api1"><b>Architecture and API</b></a>
+     <p>The architecture and API can be found in the 
+        <a href="javadoc/index.html">javadoc documentation</a>.</p>
+     <p>If the previous is broken, please build the javadocs using the
+        instructions in <a href="#create_javadocs">Creating Javadocs</a>.
+	In fact, rebuilding javadocs is something you should do every time
+	you change code in Sphinx-4.
+  </li>
+  <br>&nbsp;
+
+
 </ul>
 
 
