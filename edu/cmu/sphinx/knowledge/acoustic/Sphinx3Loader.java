@@ -44,8 +44,8 @@ import java.util.zip.ZipException;
 /**
  * an acoustic model loader that loads sphinx3 ascii data
  *
- * Mixture weights are maintained in logMath log base, transition
- * probabilities are in linear base.
+ * Mixture weights and transition probabilities are maintained in logMath 
+ * log base, 
  */
 class Sphinx3Loader implements Loader {
 
@@ -685,6 +685,11 @@ class Sphinx3Loader implements Loader {
      *
      * @param data the data to normalize
      */
+    // note that this conversion to log math stores the result in a
+    // float array and not a double array, since logZero is
+    // represented as -Double.MAX_VALUE, which doesn't fit into a
+    // float, this ultimately gets represented as -Infinity ... which
+    // is OK 
     private void convertToLogMath(float[] data) {
         for (int i = 0; i < data.length; i++) {
             data[i] = (float) logMath.linearToLog(data[i]);
@@ -782,7 +787,7 @@ class Sphinx3Loader implements Loader {
 	    String attribute  = est.getString();
 	    int  tmat  = est.getInt("tmat");
 
-	    for (int j=0; j<numStatePerHMM-1; j++) {
+	    for (int j=0; j < numStatePerHMM-1; j++) {
                 stid[j] = est.getInt("j");
 		assert stid[j] >= 0 && stid[j] < numContextIndependentTiedState;
 	    }
@@ -1054,6 +1059,8 @@ class Sphinx3Loader implements Loader {
 			tmat[j][k] = est.getFloat("tmat value");
 		    }
 
+                    tmat[j][k] = (float) logMath.linearToLog(tmat[j][k]);
+
 		    if (logger.isLoggable(Level.FINE)) {
 			logger.fine("tmat j " + j  + " k " 
 			    + k + " tm "+ tmat[j][k]);
@@ -1116,11 +1123,13 @@ class Sphinx3Loader implements Loader {
 	    float[][] tmat = new float[numStates][];
             // last row should be zeros
             tmat[numStates -1] = new float[numStates];
+            convertToLogMath(tmat[numStates-1]);
 
 	    for (int j = 0; j < numRows; j++) {
                 tmat[j] = readFloatArray(dis, numStates);
                 nonZeroFloor(tmat[j], 0f);
                 normalize(tmat[j]);
+                convertToLogMath(tmat[j]);
 	    }
 	    pool.put(i, tmat);
 	}
