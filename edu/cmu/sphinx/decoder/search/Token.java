@@ -364,7 +364,9 @@ public class Token implements Scoreable {
         return
                 numFmt.format(getFrameNumber()) + " " +
                 scoreFmt.format(getScore()) + " " +
-                scoreFmt.format(getAcousticScore())
+                scoreFmt.format(getAcousticScore()) + " " +
+                scoreFmt.format(getLanguageScore()) + " " +
+                scoreFmt.format(getInsertionProbability())
                 + " " + getSearchState();
     }
 
