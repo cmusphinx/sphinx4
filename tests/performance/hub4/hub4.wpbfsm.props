@@ -1,4 +1,4 @@
-false
+############################################################
 #
 # Global logging properties
 #
@@ -97,7 +97,7 @@ edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = .2
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = .1
 edu.cmu.sphinx.decoder.linguist.Linguist.addFillerWords=true
 edu.cmu.sphinx.decoder.linguist.Linguist.fillerInsertionProbability=.1
-edu.cmu.sphinx.decoder.linguist.Linguist.generateUnitStates=true
+edu.cmu.sphinx.decoder.linguist.Linguist.generateUnitStates=false
 
 ############################################################
 # 
