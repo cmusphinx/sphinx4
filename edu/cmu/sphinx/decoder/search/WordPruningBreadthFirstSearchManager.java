@@ -151,6 +151,10 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      */
     public final static boolean PROP_KEEP_ALL_TOKENS_DEFAULT = false;
 
+    // TODO: since the token stacks are permanently disabled,
+    // we may want to just remove all of the supporting code
+    private final static boolean wantTokenStacks = false;
+
     
 
     private Linguist linguist;		// Provides grammar/language info
@@ -183,7 +187,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     private Class[] stateOrder;
 
 
-    private boolean wantTokenStacks = false;
+
     private int maxTokenHeapSize = 3;
     private TokenTracker tokenTracker;
     private int growSkipInterval = 0;
