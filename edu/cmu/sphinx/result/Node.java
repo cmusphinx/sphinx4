@@ -182,21 +182,31 @@ public class Node {
     }
 
     /**
-     * Get the Edges from this Node
+     * Get the Edges to this Node
      *
-     * @return Edges from this Node
+     * @return Edges to this Node
      */
     public Collection getEnteringEdges() {
         return enteringEdges;
     }
 
     /**
-     * Get the Edges to this Node
+     * Get the Edges from this Node
      *
-     * @return Edges to this Node
+     * @return Edges from this Node
      */
     public Collection getLeavingEdges() {
         return leavingEdges;
+    }
+
+    /**
+     * Returns a copy of the Edges from this Node, so that the underlying
+     * data structure will not be modified.
+     *
+     * @return a copy of the edges from this node
+     */
+    public Collection getCopyOfLeavingEdges() {
+        return new Vector(leavingEdges);
     }
 
     /**
@@ -441,5 +451,42 @@ public class Node {
      */
     public boolean hasAncestralRelationship(Node node) {
         return this.isAncestorOf(node) || node.isAncestorOf(this);
+    }
+
+    /**
+     * Returns true if the given node is equivalent to this node.
+     * Two nodes are equivalent only if they have the same word,
+     * the same number of entering and leaving edges,
+     * and that their begin and end times are the same.
+     *
+     * @param other the Node we're comparing to
+     *
+     * @return true if the Node is equivalent; false otherwise
+     */
+    public boolean isEquivalent(Node other) {
+        return
+            ((word.equals(other.getWord()) &&
+              (getEnteringEdges().size() == other.getEnteringEdges().size() &&
+               getLeavingEdges().size() == other.getLeavingEdges().size())) &&
+             (beginTime == other.getBeginTime() &&
+              endTime == other.getEndTime()));
+    }
+
+    /**
+     * Returns a leaving edge that is equivalent to the given edge.
+     * Two edges are eqivalent if Edge.isEquivalent() returns true.
+     *
+     * @param edge the Edge to compare the leaving edges of this node against
+     *
+     * @return an equivalent edge, if any; or null if no equivalent edge
+     */
+    public Edge findEquivalentLeavingEdge(Edge edge) {
+        for (Iterator i = leavingEdges.iterator(); i.hasNext(); ) {
+            Edge e = (Edge) i.next();
+            if (e.isEquivalent(edge)) {
+                return e;
+            }
+        }
+        return null;
     }
 }

@@ -239,8 +239,8 @@ public class Lattice {
              * edge from the Node to the parentWordNode
              */
             Node fromNode = getNode(token);
-            edges.add(new Edge(fromNode, parentWordNode,
-                               (double)acousticScore, (double)languageScore));
+            addEdge(fromNode, parentWordNode,
+                    (double)acousticScore, (double)languageScore);
 
             if (token.getPredecessor() != null) {
                 /* Collapse the token sequence ending in this token. */
@@ -854,6 +854,76 @@ public class Lattice {
                     - normalizationFactor);
         }
     }
+
+
+    /**
+     * Returns true if the given Lattice is equivalent to this Lattice.
+     * Two lattices are equivalent if all their nodes and edges are
+     * equivalent.
+     *
+     * @param other the Lattice to compare this Lattice against
+     *
+     * @return true if the Lattices are equivalent; false otherwise
+     */
+    public boolean isEquivalent(Lattice other) {
+        return checkNodesEquivalent(initialNode, other.getInitialNode());
+    }
+
+    
+    /**
+     * Returns true if the two lattices starting at the given two nodes
+     * are equivalent. It recursively checks all the child nodes until
+     * these two nodes until there are no more child nodes.
+     *
+     * @param n1 starting node of the first lattice
+     * @param n2 starting node of the second lattice
+     *
+     * @return true if the two lattices are equivalent
+     */
+    private boolean checkNodesEquivalent(Node n1, Node n2) {
+        assert n1 != null && n2 != null;
+
+        boolean equivalent = n1.isEquivalent(n2);
+        if (equivalent) {
+            Collection leavingEdges = n1.getCopyOfLeavingEdges();
+            Collection leavingEdges2 = n2.getCopyOfLeavingEdges();
+
+            System.out.println(leavingEdges.size() + " " + leavingEdges2.size());
+
+            for (Iterator i = leavingEdges.iterator(); i.hasNext(); ) {
+                
+                Edge edge = (Edge) i.next();
+                
+                /* find an equivalent edge from n2 for this edge */
+                Edge e2 = n2.findEquivalentLeavingEdge(edge);
+                
+                if (e2 == null) {
+                    /* equivalent edge not found, lattices not equivalent */
+                    return false;
+                } else {
+                    if (!leavingEdges2.remove(e2)) {
+                        /*
+                         * if it cannot be removed, then the leaving edges
+                         * are not the same
+                         */
+                        return false;
+                    } else {
+                        /* recursively check the two child nodes */
+                        equivalent &= checkNodesEquivalent
+                            (edge.getToNode(), e2.getToNode());
+                        if (equivalent == false) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            if (leavingEdges2.size() != 0) {
+                return false;
+            }
+        }
+        return equivalent;
+    }
+
      
     /**
      * Self test for Lattices.  Test loading, saving, dynamically creating

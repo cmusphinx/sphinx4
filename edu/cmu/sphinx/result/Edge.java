@@ -144,4 +144,22 @@ public class Edge {
         lmScore = v;
     }
 
+    /**
+     * Returns true if the given edge is equivalent to this edge.
+     * Two edges are equivalent only if they have their 'fromNode'
+     * and 'toNode' are equivalent, and that their acoustic and language
+     * scores are the same.
+     *
+     * @param other the Edge to compare this Edge against
+     *
+     * @return true if the Edges are equivalent; false otherwise
+     */
+    public boolean isEquivalent(Edge other) {
+        /*
+        return ((acousticScore == other.getAcousticScore() &&
+                 lmScore == other.getLMScore()) &&
+        */
+        return ((fromNode.isEquivalent(other.getFromNode()) &&
+                 toNode.isEquivalent(other.getToNode())));
+    }
 }
