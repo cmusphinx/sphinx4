@@ -230,6 +230,7 @@ public class PartitionActiveList implements ActiveList  {
                 Token[] tokens = (Token[]) 
                     tokenList.toArray(new Token[tokenList.size()]);
 
+                // "r" is the index of the last element in the partition
                 int r = partitioner.partition(tokens, absoluteBeamWidth);
 
                 highestScore = partitioner.getBestToken().getScore();
@@ -237,7 +238,7 @@ public class PartitionActiveList implements ActiveList  {
 
                 tokenList = new ArrayList(absoluteBeamWidth);
 
-                for (int i = 0; i < r; i++) {
+                for (int i = 0; i <= r; i++) {
                     Token token = tokens[i];
                     if (token.getScore() > pruneScore) {
                         tokenList.add(token);
