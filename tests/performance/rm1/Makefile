@@ -138,16 +138,16 @@ q_rm1_flatunigram:
 	rm rm1.flatunigram.csh
 
 rm1onrm1_flatunigram:
-	$(RM1_FLATUNIGRAM_CMD) ./rm1.props ./rm1.batch
+	$(RM1_FLATUNIGRAM_CMD) ./rm1onrm1.props ./rm1.batch
 
 rm1onrm1_flatunigram_quick_bin:
-	$(RM1_FLATUNIGRAM_QUICK_BIN_CMD) ./rm1.props ./rm1.batch
+	$(RM1_FLATUNIGRAM_QUICK_BIN_CMD) ./rm1onrm1.props ./rm1.batch
 
 q_rm1onrm1_flatunigram:
-	echo "$(RM1_FLATUNIGRAM_CMD) ./rm1.props ./rm1.batch" > rm1.flatunigram.csh
-	chmod a+x rm1.flatunigram.csh
-	$(QSUB) -j oe -o rm1.flatunigram.log rm1.flatunigram.csh
-	rm rm1.flatunigram.csh
+	echo "$(RM1_FLATUNIGRAM_CMD) ./rm1onrm1.props ./rm1.batch" > rm1onrm1.flatunigram.csh
+	chmod a+x rm1onrm1.flatunigram.csh
+	$(QSUB) -j oe -o rm1onrm1.flatunigram.log rm1onrm1.flatunigram.csh
+	rm rm1onrm1.flatunigram.csh
 
 #
 # RM1 unigram test
