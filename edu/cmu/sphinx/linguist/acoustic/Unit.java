@@ -33,9 +33,6 @@ public class  Unit {
     private static int nextID ;
 
     static {
-        nextID = 1;
-        ciMap = new HashMap();
-        SILENCE = createCIUnit(SILENCE_NAME, true);
     }
 
     private String name;
@@ -46,6 +43,14 @@ public class  Unit {
 
     private volatile String key = null;
 
+    /**
+     * Clears out this unit.
+     */
+    public static void reset() {
+        nextID = 1;
+        ciMap = new HashMap();
+        SILENCE = createCIUnit(SILENCE_NAME, true);
+    }
 
     /**
      * Gets or creates a unit from the unit pool
