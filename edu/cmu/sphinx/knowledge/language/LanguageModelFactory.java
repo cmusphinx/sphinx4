@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.knowledge.language;
 
 import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
 import java.io.IOException;
 
 
@@ -39,6 +40,7 @@ public class LanguageModelFactory {
 	String path =  "";
 	try {
 
+           Timer.start("createLanguageModel");
 	   LanguageModel lm = null;
 	   SphinxProperties props = 
 	       	SphinxProperties.getSphinxProperties(context);
@@ -48,6 +50,7 @@ public class LanguageModelFactory {
 	       lm = (LanguageModel) Class.forName(path).newInstance();
 	       lm.initialize(context);
 	   }
+           Timer.stop("createLanguageModel");
 	   return lm;
 	} catch (ClassNotFoundException fe) {
 	    throw new Error("CNFE:Can't create language model " + path, fe);
