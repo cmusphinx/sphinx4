@@ -115,22 +115,19 @@ public class Lattice {
 
     protected Node initialNode;
     protected Node terminalNode;
-    protected double logBase;
     protected Set edges;
     protected Map nodes;
+    protected double logBase;
     protected LogMath logMath;
-    
-    AlternateHypothesisManager loserManager;
-
-    {
-        edges = new HashSet();
-        nodes = new HashMap();
-    }
+    private Set visitedWordTokens;
+    private AlternateHypothesisManager loserManager;
 
     /**
      * Create an empty Lattice.
      */
     public Lattice() {
+        edges = new HashSet();
+        nodes = new HashMap();
     }
 
     /**
@@ -142,109 +139,151 @@ public class Lattice {
      * @param result the result to convert into a lattice
      */
     public Lattice(Result result) {
-        this.logMath = result.getLogMath();
-        
-        terminalNode = addNode("-1",Dictionary.SENTENCE_END_SPELLING, -1, -1);
-
+        this();
+	this.logMath = result.getLogMath();
+	visitedWordTokens = new HashSet();
         loserManager = result.getAlternateHypothesisManager();
-
         if (loserManager != null) {
             loserManager.purge();
         }
 
+        terminalNode = new Node(getNodeID(result.getBestToken()),
+				Dictionary.SENTENCE_END_SPELLING, -1, -1);
+	addNode(terminalNode);
+
         for (Iterator i = result.getResultTokens().iterator(); i.hasNext();) {
-            Token token = (Token) (i.next());
+            Token token = (Token) i.next();
             while (token != null && !token.isWord()) {
                 token = token.getPredecessor();
             }
-            if (token == null) {
-                throw new Error("Token chain does not end with </s>.");
-            }
             assert token.getWord().isSentenceEndWord();
-            processToken(terminalNode, token.getPredecessor(), token);
+            collapseWordToken(token);
+        }
+    }
 
-            if (loserManager != null) {
-                List list = loserManager.getAlternatePredecessors(token);
-                if (list != null) {
-                    for (Iterator iter = list.iterator(); iter.hasNext();) {
-                        Token predecessor = (Token) iter.next();
-                        processToken(terminalNode, predecessor, token);
-                    }
+
+    /**
+     * Returns the node corresponding to the given word token.
+     *
+     * @param token the token which we want a node of
+     *
+     * @return the node of the given token
+     */
+    private Node getNode(Token token) {
+        if (token.getWord().isSentenceEndWord()) {
+            return terminalNode;
+        }
+        Node node = (Node) nodes.get(token);
+        if (node == null) {
+	    WordSearchState wordState = 
+		(WordSearchState) token.getSearchState();
+            
+	    int startFrame = -1;
+            int endFrame = -1;
+
+            if (wordState.isWordStart()) {
+                startFrame = token.getFrameNumber();
+            } else {
+                endFrame = token.getFrameNumber();
+            }
+
+            node = new Node(getNodeID(token), token.getWord().getSpelling(),
+			    startFrame, endFrame);
+            addNode(node);
+        }
+        return node;
+    }
+
+    
+    /**
+     * Collapse the given word-ending token. This means collapsing all
+     * the unit and HMM tokens that correspond to the word represented
+     * by this token into an edge of the lattice.
+     *
+     * @param token the word-ending token to collapse
+     */
+    public void collapseWordToken(Token token) {
+        if (visitedWordTokens.contains(token)) {
+            return;
+        }
+        visitedWordTokens.add(token);
+        collapseWordPath(getNode(token), token.getPredecessor(),
+                         token.getAcousticScore(), token.getLanguageScore());
+        if (loserManager != null) {
+            List list = loserManager.getAlternatePredecessors(token);
+            if (list != null) {
+                for (Iterator i = list.iterator(); i.hasNext();) {
+                    Token loser = (Token) i.next();
+                    collapseWordPath(getNode(token), loser,
+                                     token.getAcousticScore(),
+                                     token.getLanguageScore());
                 }
-            }            
-        }
-
-        if (result == null) {
-            throw new Error("result is null");
-        }
-        if (result.getAlternateHypothesisManager() == null) {
-            throw new Error("ahm is null");
+            }
         }
     }
 
     /**
-     * Process the given path token, which contains the acoustic and
-     * language scores between the token refered to by 'thisNode' and the
-     * predecessor of the given path token. The given path token will be
-     * converted to an edge in the lattice, and the word token which is the
-     * predecessor of the path token will be converted to a node in the 
-     * lattice.
-     *
-     * @param node      since we are processing the token tree backwards,
-     *                  node will be the 'toNode' of the Edge created from the
-     *                  given path token
-     * @param pathToken the path token that contains the acoustic and language
-     *                  scores
-     * @param parent    the parent token of pathToken
+     * @param parentWordNode the 'toNode' of the returned edge
+     * @param token the predecessor token of the token represented by
+     *              the parentWordNode
+     * @param acousticScore the acoustic score until and including the
+     *                      parent of token
+     * @param languageScore the language score until and including the
+     *                      parent of token
      */
-    private void processToken(Node node, Token pathToken, Token parent) {
-        
-        assert node != null && hasNode(node.getId());
-        assert parent.isWord() && parent.getAcousticScore() == 0;
+    private void collapseWordPath(Node parentWordNode, Token token,
+                                  float acousticScore, float languageScore) {
+        if (token.isWord()) {
+            /*
+             * If this is a word, create a Node for it, and then create an
+             * edge from the Node to the parentWordNode
+             */
+            Node fromNode = getNode(token);
+            edges.add(new Edge(fromNode, parentWordNode,
+                               (double)acousticScore, (double)languageScore));
 
-        double acousticScore = pathToken.getAcousticScore();
-        double lmScore =
-            parent.getLanguageScore() + pathToken.getLanguageScore();
-
-        Token wordToken = pathToken.getPredecessor();
-
-        // test to see if token is processed via a previous node path
-        if (hasNode(wordToken)) {
-            assert getNode(wordToken).getId().equals
-                (Integer.toString(wordToken.hashCode()));
-            addEdge(getNode(wordToken), node, acousticScore, lmScore);
-        } else {
-            WordSearchState wordState =
-                (WordSearchState) wordToken.getSearchState();
-
-            int startFrame = -1;
-            int endFrame = -1;
-
-            if (wordState.isWordStart()) {
-                startFrame = wordToken.getFrameNumber();
+            if (token.getPredecessor() != null) {
+                /* Collapse the token sequence ending in this token. */
+                collapseWordToken(token);
             } else {
-                endFrame = wordToken.getFrameNumber();
+                /* we've reached the sentence start token */
+                assert token.getWord().isSentenceStartWord();
+                initialNode = fromNode;
             }
-
-            Node newNode = addNode(wordToken, startFrame, endFrame);
-            addEdge(newNode, node, acousticScore, lmScore);
-
+        } else {
+            /*
+             * If a non-word token, just add the acoustic and language
+             * scores to the current totals, and then move on to the
+             * predecessor token.
+             */
+            acousticScore += token.getAcousticScore();
+            languageScore += token.getLanguageScore();
+            collapseWordPath(parentWordNode, token.getPredecessor(),
+                             acousticScore, languageScore);
+            
+            /* Traverse the path(s) for the loser token(s). */
             if (loserManager != null) {
-                List list = loserManager.getAlternatePredecessors(wordToken);
+                List list = loserManager.getAlternatePredecessors(token);
                 if (list != null) {
-                    for (Iterator iter = list.iterator(); iter.hasNext();) {
-                        Token predecessor = (Token) iter.next();
-                        processToken(newNode, predecessor, wordToken);
+                    for (Iterator i = list.iterator(); i.hasNext();) {
+                        Token loser = (Token) i.next();
+                        collapseWordPath(parentWordNode, loser,
+                                         acousticScore, languageScore);
                     }
                 }
             }
-            Token predecessor = wordToken.getPredecessor();
-            if (predecessor != null) {
-                processToken(newNode, predecessor, wordToken);
-            } else {
-                initialNode = newNode;
-            }
         }
+    }
+
+    /**
+     * Returns an ID for the Node associated with the given token.
+     *
+     * @param token the token associated with the Node
+     *
+     * @return an ID for the Node
+     */
+    private String getNodeID(Token token) {
+	return Integer.toString(token.hashCode());
     }
 
     /**
@@ -375,46 +414,16 @@ public class Lattice {
     boolean hasEdge(Edge edge) {
         return edges.contains(edge);
     }
+
     /**
      * Test to see if the Lattice already contains a Node corresponding
      * to a given Token.
      *
-     * @param token
+     * @param ID the ID of the Node to find
      * @return true if yes
      */
-    protected boolean hasNode(Token token) {
-        return hasNode(Integer.toString(token.hashCode()));
-    }
-
-    /**
-     * Test to see if the Lattice already has a Node with a given ID
-     *
-     * @param id
-     * @return true if yes
-     */
-    protected boolean hasNode(String id) {
-        return nodes.containsKey(id);
-    }
-
-
-    /**
-     * Get the Node associated with an ID
-     *
-     * @param id
-     * @return the Node
-     */
-    protected Node getNode(String id) {
-        return (Node) (nodes.get(id));
-    }
-
-    /**
-     * Get the node associated with a Token
-     *
-     * @param token
-     * @return the Node
-     */
-    protected Node getNode(Token token) {
-        return getNode(Integer.toString(token.hashCode()));
+    protected boolean hasNode(String ID) {
+        return nodes.containsKey(ID);
     }
 
     /**
@@ -424,7 +433,6 @@ public class Lattice {
      */
     protected void addNode(Node n) {
         assert !hasNode(n.getId());
-        //System.out.println("Lattice adding node " + n);
         nodes.put(n.getId(), n);
     }
 
@@ -436,6 +444,16 @@ public class Lattice {
     protected void removeNode(Node n) {
         assert hasNode(n.getId());
         nodes.remove(n.getId());
+    }
+
+    /**
+     * Get the Node associated with an ID
+     *
+     * @param id
+     * @return the Node
+     */
+    protected Node getNode(String id) {
+        return (Node) (nodes.get(id));
     }
 
     /**
