@@ -88,19 +88,20 @@ WARRANTIES.
       <ul>
         <li><a href="#download_and_install">Required Software</a></li>
         <li><a href="#source">Downloading Sphinx-4</a></li>
-        <li><a href="#how_build">Building Sphinx-4</a></li>
-	<li><a href="#create_javadocs">Creating Javadocs</a></li>
-	<li><a href="#faq">Troubleshooting</a></li>
+	<li><a href="#demos">Running the demostration programs</a></li>
       </ul>
 
-      <h3>Demos</h3>
+      <h3>Building</h3>
       <ul>
-	<li><a href="#demos">Demos</a></li>
-	<li><a href="#demos_faq">Troubleshooting</a></li>
+        <li><a href="#how_build">Building Sphinx-4</a></li>
+	<li><a href="#create_javadocs">Creating Javadocs</a></li>
+	<li><a href="#troubleshooting">Troubleshooting</a></li>
       </ul>
 
       <h3>Sphinx-4 in Detail</h3>
       <ul>
+          <li><a href="doc/Sphinx4-faq.html">Frequently asked questions about
+  Sphinx-4 (with answers) </a></li>
 	<li><a href="#sphinx_properties">Understanding Sphinx-4
         Configuration Management</a></li>
 	<li><a href="#sphinx_instrumentation">Understanding Sphinx-4
@@ -355,64 +356,15 @@ This data was collected on a dual CPU UltraSPARC-III running at 1015 MHz with 2G
       and select "J2SE". At the time of writing, the latest release
       version is 1.4.2, which is the one we recommend.
       </li>
+</ul>
 
   <br>
+<ul>
   <li><b>Ant 1.6.0</b> or better, available at <a
   href="http://ant.apache.org">ant.apache.org</a>. The site has a manual 
-  with instructions on how to download, install, and use ant. 
-  The gist of it, just to get started:
-  <ul>
-  <li> On <a href="http://ant.apache.org">ant.apache.org</a> click on
-  "binary distributions" under "Download", on the left-hand side.
-  </li>
-
-  <li> Go to the title "Current release of ant", and select the
-  archive file of your preference. The most common formats are
-  "tar.gz" and "zip". Clicking on any of them should start downloading
-  the file to your machine.
-  </li>
-  <li> Save the file locally, and extract the files from the
-  archive. On Windows machines, clicking on the archive file should
-  start "WinZip". On Unix/Linux machines, depending on which file you
-  chose, you'll need to "unzip" or "gunzip" and subsequently "tar xf"
-  the file.
-  </li>
-  <li> After extracting the files from the archive, you'll get a
-  directory named something like "apache-ant-1.6.0". Rename this
-  directory to "ant", and move it to a convenient location. On Windows
-  machines, this location is usually "c:\ant". On Unix/linux, this
-  location is usually "/usr/local/ant".
-  </li>
-  <li> Define variables to support ant and Java.
-       This will depend on your platform (assuming that your Java version
-       is 1.4.2):
-  <ul>
-  <li> Windows
-  <pre>
-set JAVA_HOME=c:\j2sdk1.4.2
-set ANT_HOME=c:\ant
-set PATH=%PATH%;%ANT_HOME%\bin;%JAVA_HOME%\bin
-</pre>
-  </li>
-  <li> Unix (bash)
-  <pre>
-export JAVA_HOME=/usr/java/j2sdk1.4.2
-export ANT_HOME=/usr/local/ant
-export PATH=${PATH}:${ANT_HOME}/bin:${JAVA_HOME}/bin
-</pre>
-  </li>
-  <li> Unix (csh)
-  <pre>
-setenv JAVA_HOME /usr/java/j2sdk1.4.2
-setenv ANT_HOME /usr/local/ant
-setenv PATH ${PATH}:${ANT_HOME}/bin:${JAVA_HOME}/bin
-</pre>
-  </li>
-  </ul>
-  </li>
-  <li> Installation of ant is complete.</li>
-  </ul>
-  </li>
+  with instructions on how to download, install, and use ant.  You
+  will only need ant if you wish to build Sphinx-4 from the source
+  distribution</li>
 
   <br>
   <li> <b>CVS</b> and <b>SSH</b>, but only if you want to interact directly
@@ -451,7 +403,10 @@ setenv PATH ${PATH}:${ANT_HOME}/bin:${JAVA_HOME}/bin
       </ul>
       </p>
       <p>
-      After you have downloaded these files, unjar the ZIP files using the
+      See <a href="#which_dist">this FAQ question</a> to help determine
+      whether you should get the binary or the source distribution.
+      <p>
+      After you have downloaded the distribution, unjar the ZIP files using the
       <code>jar</code> command which is in the <code>bin</code> directory of
       your Java installation:
       <pre>
@@ -563,7 +518,7 @@ javadocs, go to the top level directory ("sphinx4-{version}"), and type:
 
 <br>&nbsp;
 
-<li><a name="faq"><b>Troubleshooting/FAQ</b></a><br>&nbsp;
+<li><a name="troubleshooting"><b>Troubleshooting</b></a><br>&nbsp;
 <ol>
   <li>How can I specify the location of the Java JDK?
     <ul>
@@ -732,47 +687,18 @@ d:\work\sphinx4&gt;ant clean
   </p>
   </li>
 
-<h2><a name="demos_faq">Troubleshooting</a></h2>
-
-<ol>
-<li>Why do the demos not work on my Linux machine?
-   <ul>
-      <li>
-      There seems to be a significant difference in how different
-      versions of the JDK determine which audio resources are
-      available on Linux.  This difference seems to affect different
-      machines in different ways. We are working with the Java Sound
-      folks to get to the root cause of the problem.  In the mean
-      time, if you are having trouble getting the demos to work on
-      your Linux box try the following:
-      <ul>
-        <li> Try a native sound recording application (such as
-        gnome-sound-recorder) to ensure that you can actually capture
-        audio on your system.
-        </li>
-        <li> Try the <a
-        href="javadoc/edu/cmu/sphinx/tools/audio/doc-files/HowToRunAudioTool.html">AudioTool</a>
-        demo to see if you can record audio from a Java application.
-        </li>
-        <li>
-          Check to see if any sound daemons like esd, gstreamer or
-          artsd are running. These daemons may have exclusive access to the
-          sound device. If any of these are running, kill them
-          and try running again.
-        </li>
-        <li>
-         Try switching to another version of the JDK. If JDK 1.4 doesn't
-         work, try 1.5 and vice versa.
-         </li>
-   </ul>
-</li>
-</ol>
-
 <hr>
 
-<h2>Sphinx-4 in Detail</h2>
 
-<ul>
+<h2>Sphinx-4 in Detail</h2>
+  <ul>
+  <li><a name="sphinx_properties"><b>Frequently asked questions about
+  Sphinx-4</b></a></p>
+  The document <a href="doc/Sphinx4-faq.html">Frequently asked questions about
+  Sphinx-4 </a>contains answers to a number of frequently asked
+  questions about Sphinx-4</li>
+
+<br>&nbsp;
 
   <li><a name="sphinx_properties"><b>Understanding Sphinx-4
   Configuration Management </b><p>
