@@ -22,6 +22,14 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     "edu.cmu.sphinx.frontend.energyEndpointer.";
 
     /**
+     * Controls whether to merge multiple speech segments within an
+     * Utterance to one big speech segment, with the boundaries being
+     * the start of the first speech segment, and the end of the
+     * last speech segment. 
+     */
+    private boolean mergeSpeechSegments;
+
+    /**
      * If energy is greater than startHigh for startWindow frames,
      * speech has started.
      */
@@ -68,14 +76,18 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
 
     private CepstrumSource predecessor;
     private List inputBuffer;
+
     private Cepstrum lastFrameBelowStartLow;
     private Cepstrum endOffsetFrame;
+    private Cepstrum lastSpeechEndFrame;
+
     private boolean inSpeech;       // are we in a speech region?
     private float lastEnergy;       // previous energy value
     private int location;           // which part of hill are we at?
     private int startLowFrames;     // # of contiguous frames energy < startLow
     private int startHighFrames;    // # of frames with energy > startHigh
     private int endLowFrames;       // # of frames with energy < endLow
+    private int numSpeechSegments;  // # of speech segments in this utterance
 
 
     /**
@@ -94,6 +106,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
         initSphinxProperties();
         this.predecessor = predecessor;
         this.inputBuffer = Collections.synchronizedList(new LinkedList());
+        reset();
     }
 
 
@@ -102,6 +115,9 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
      */
     private void initSphinxProperties() throws IOException {
         SphinxProperties properties = getSphinxProperties();
+
+        mergeSpeechSegments = properties.getBoolean
+            (PROP_PREFIX + "mergeSpeechSegments", false);
 
         startLow = properties.getFloat(PROP_PREFIX + "startLow", 0.0f);
         startHigh = properties.getFloat(PROP_PREFIX + "startHigh", 0.0f);
@@ -120,9 +136,11 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
 
     private void reset() {
         inSpeech = false;
+        lastEnergy = 0;
         location = BELOW_START_LOW;
         startHighFrames = 0;
         endLowFrames = 0;
+        numSpeechSegments = 0;
     }
 
 
@@ -280,10 +298,8 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
      * What happens when an UTTERANCE_START is encountered.
      */
     private void utteranceStart() {
-        inSpeech = false;
+        reset();
         startLowFrames = 0;
-        startHighFrames = 0;
-        endLowFrames = 0;
         lastFrameBelowStartLow = null;
         endOffsetFrame = null;
     }
@@ -293,10 +309,25 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
      * What happens when speech starts.
      */
     private void speechStart() {
-        insertSpeechStart();
+
+        // insert a SPEECH_START either if this is the first speech
+        // segment or, if we are not merging the speech segments
+        if (numSpeechSegments == 0 || !mergeSpeechSegments) {
+            insertSpeechStart();
+        }
+
+        // if we are merging the speech segments in an utterance
+        // and there are already other speech segments in this utterance,
+        // remove the last SPEECH_END Cepstrum
+        if (mergeSpeechSegments && numSpeechSegments > 0) {
+            removeLastSpeechEnd();
+        }
+
+        lastFrameBelowStartLow = null;
         inSpeech = true;
         endLowFrames = 0;
         endOffsetFrame = null;
+        numSpeechSegments++;
     }
 
 
@@ -335,7 +366,6 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
         if (index >= inputBuffer.size()) {
             index = inputBuffer.size();
         }
-        lastFrameBelowStartLow = null;
         if (index < 0) {
             System.out.println("Cannot find lastFrameBelowStartLow");
             index = 0;
@@ -353,6 +383,17 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
         if (index < 0) {
             index = 0;
         }
-        inputBuffer.add(index, (new Cepstrum(Signal.SPEECH_END)));
+        lastSpeechEndFrame = new Cepstrum(Signal.SPEECH_END);
+        inputBuffer.add(index, lastSpeechEndFrame);
+    }
+
+
+    /**
+     * Removes the previous SPEECH_END Cepstrum.
+     */
+    private void removeLastSpeechEnd() {
+        if (lastSpeechEndFrame != null) {
+            inputBuffer.remove(lastSpeechEndFrame);
+        }
     }
 }
