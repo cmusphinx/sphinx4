@@ -29,12 +29,13 @@ PROFILE_FLAGS= $(GCSPY_FLAGS)
 PROFILE_FLAGS= -Xprof -server
 
 LOG_GC_FLAGS=  -Xloggc:gc.txt
-GC_FLAGS = -ms256m -mx1g
+GC_FLAGS = -ms256m -mx512m
 
 # LOGGER_PROPERTIES=tidigits.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
-DEBUG_FLAGS=
+DEBUG_FLAGS= -XX:+UsePerfData
+DEBUG_FLAGS= 
 
 EXTRA_JAVA_FLAGS=$(PROFILE_FLAGS) $(LOG_GC_FLAGS) $(LOG) $(GC_FLAGS) $(DEBUG_FLAGS)
 
@@ -70,7 +71,7 @@ CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 rm1_flat_unigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7 \
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=8 \
         -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.flat_unigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
@@ -94,8 +95,10 @@ rm1_bigram:
 rm1_flat_unigram_lex:
 	$(JAVA_CMD) \
   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.flat_unigram.lm \
-        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10.0 \
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=9.5 \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	-Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=6000\
+	-Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-160\
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
 rm1_unigram_lex:
@@ -109,7 +112,11 @@ rm1_bigram_lex:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm\
-        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10.0 \
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-160 \
+   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7 \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
 
@@ -117,10 +124,18 @@ rm1_trigram_lex:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.trigram.lm\
-        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=22.0 \
+       -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=18.0 \
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7 \
 	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+        -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80 \
+	-Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.maxWordsPerFrame=70 \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
+
+
+rt:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.trigram.props ./rm1.batch
 
 rm1_flat_unigram_fst:
 	$(JAVA_CMD) \
