@@ -35,6 +35,24 @@ import java.util.ListIterator;
  * Converts a stream of Audio objects, marked as speech and non-speech,
  * into utterances. This is done by inserting SPEECH_START and
  * SPEECH_END signals into the stream.
+ *
+ * <p>The algorithm for inserting the two signals is as follows.
+ *
+ * <p>The algorithm is always in one of two states: 'in-speech' and 
+ * 'out-of-speech'. If 'out-of-speech', it will read in audio until 
+ * we hit audio that is speech. If we have read more than 'startSpeech'
+ * amount of <i>continuous</i> speech, we consider that speech has started, 
+ * and insert a SPEECH_START at 'speechLeader' time before speech 
+ * first started. The state of the algorithm changes to 'in-speech'.
+ *
+ * <p>Now consider the case when the algorithm is in 'in-speech' state.
+ * If it read an audio that is speech, it is outputted. If the audio is
+ * non-speech, we read ahead until we have 'endSilence' amount of 
+ * <i>continuous</i> non-speech. At the point we consider that speech 
+ * has ended. A SPEECH_END signal is inserted at 'speechTrailer' time 
+ * after the first non-speech audio. The algorithm returns to 
+ * 'ou-of-speech' state. If any speech audio is encountered in-between,
+ * the accounting starts all over again.
  */
 public class SpeechMarker extends DataProcessor implements AudioSource {
 

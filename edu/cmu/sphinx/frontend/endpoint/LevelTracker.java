@@ -30,6 +30,27 @@ import java.util.List;
 
 /**
  * Implements a level tracking endpointer invented by Bent Schmidt Nielsen.
+ *
+ * <p>This endpointer is composed of three main steps.
+ * <ol>
+ * <li>classification of audio into speech and non-speech
+ * <li>inserting SPEECH_START and SPEECH_END signals around speech
+ * <li>removing non-speech regions
+ * </ol>
+ *
+ * <p>The first step, classification of audio into speech and non-speech,
+ * uses Bent Schmidt Nielsen's algorithm. Each time audio comes in, 
+ * the average signal level and the background noise level are updated,
+ * using the signal level of the current audio. If the average signal
+ * level is greater than the background noise level by a certain
+ * threshold value (configurable), then the current audio is marked
+ * as speech. Otherwise, it is marked as non-speech.
+ *
+ * <p>The second and third step of this endpointer are documented in the
+ * classes SpeechMarker and AudioFilter.
+ *
+ * @see SpeechMarker
+ * @see AudioFilter
  */
 public class LevelTracker extends DataProcessor implements AudioEndpointer {
 
