@@ -13,10 +13,7 @@
 package edu.cmu.sphinx.frontend.plp;
 
 /**
- * FrequencyWarper.java
  * Defines various frequency warping functions
- *
- * Created: Tue Dec 24 17:56:39 2002
  *
  * @author <a href="mailto:rsingh@cs.cmu.edu">rsingh</a>
  * @version 1.0

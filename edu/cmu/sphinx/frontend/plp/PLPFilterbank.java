@@ -38,27 +38,26 @@ import java.io.IOException;
  */
 public class PLPFilterbank extends DataProcessor implements Filterbank {
 
-    public static final String PROP_PREFIX = "edu.cmu.sphinx.frontend.plp.";
 
     /**
      * The name of the Sphinx Property for the number of filters in
      * the filterbank.
      */
-    public static final String PROP_NUMBER_FILTERS = "numFilters";
+    public static final String PROP_NUMBER_FILTERS = "plp.numFilters";
 
 
     /**
      * The name of the Sphinx Property for the minimum frequency
      * covered by the filterbank.
      */
-    public static final String PROP_MIN_FREQ = "minfreq";
+    public static final String PROP_MIN_FREQ = "plp.minfreq";
 
 
     /**
      * The name of the Sphinx Property for the maximum frequency
      * covered by the filterbank.
      */
-    public static final String PROP_MAX_FREQ = "maxfreq";
+    public static final String PROP_MAX_FREQ = "plp.maxfreq";
 
 
     private int sampleRate;

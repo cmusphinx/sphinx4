@@ -91,7 +91,7 @@ public class Windower extends DataProcessor implements AudioSource {
      * @param the property prefix to use for properties in this
      *    SphinxProperties object
      */
-    public void setProperties() {
+    private void setProperties() {
         int sampleRate = getIntAcousticProperty
 	    (FrontEnd.PROP_SAMPLE_RATE, 16000);
         float windowSizeInMs = getSphinxProperties().getFloat

@@ -83,7 +83,8 @@ public class Data implements Serializable, Cloneable {
     /**
      * Returns the Utterance associated with this Data object.
      *
-     * @return the Utterance associated with this Data object
+     * @return the Utterance associated with this Data object,
+     *     or null if there is no Utterance associated
      */
     public Utterance getUtterance() {
         return utterance;
@@ -110,7 +111,8 @@ public class Data implements Serializable, Cloneable {
     /**
      * Returns true if this Data has the given Signal
      *
-     * @return true if it has a UTTERANCE_END Signal, false otherwise
+     * @return true if this Data object has the given Signal,
+     *    false otherwise
      */
     public boolean hasSignal(Signal signal) {
         if (getSignal() == null) {

@@ -29,18 +29,28 @@ import java.util.Map;
  * of a series of processors. The SimpleFrontEnd connects all the processors
  * by the input and output points.
  * 
- * <p>The input to the SimpleFrontEnd is an audio data. For an audio stream,
+ * <p>The input to the SimpleFrontEnd is a DataSource object.
+ * For an audio stream,
  * the <code>StreamAudioSource</code> should be used. The 
  * input can also be a file containing a list of audio files, in which case
  * the <code>BatchFileAudioSource</code> can be used.
+ * Currently, this SimpleFrontEnd can also take Cepstrum objects as
+ * input using the StreamCepstrumSource implementation of DataSource.
  *
- * <p>The output of the SimpleFrontEnd are Features.
- * To obtain <code>Feature</code>(s) from the SimpleFrontEnd, you would use:
+ * <p>The output of the SimpleFrontEnd are FeatureFrames, which is
+ * an array of Features. This SimpleFrontEnd enforces the condition that
+ * every utterance starts with a Feature that contains the signal 
+ * <code>Signal.UTTERANCE_START</code>, and ends with a Feature that 
+ * contains the signal <code>Signal.UTTERANCE_END</code>.
+ *
+ * <p>To obtain a <code>FeatureFrame</code> with 10 Features from the 
+ * SimpleFrontEnd, you do:
  * <pre>
- * fe.getFeatureFrame(10);
+ * SimpleFrontEnd.getFeatureFrame(10);
  * </pre>
- * which will return a <code>FeatureFrame</code> with 10 <code>Feature</code>s
- * in it. If there are only 5 more features before the end of utterance,
+ * If there are only 5 Features left, it will return a FeatureFrame with
+ * 5 Features, followed by a Feature with a <code>Signal.UTTERANCE_END</code>
+ * Signal.
  *
  * This SimpleFrontEnd contains all the "standard" frontend processors like
  * Preemphasizer, HammingWindower, SpectrumAnalyzer, ..., etc.
@@ -58,17 +68,6 @@ import java.util.Map;
  * @see Windower
  */
 public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
-
-    // Error message displayed when we don't get an UTTERANCE_START initially
-    private static final String NO_UTTERANCE_START_ERROR =
-	"I must receive a Feature with the UTTERANCE_START Signal before " +
-	"I receive any other Features.";
-
-    // Error message displayed when we get too many UTTERANCE_START Signals
-    private static final String TOO_MANY_UTTERANCE_START_ERROR =
-	"I cannot receive a Feature with the UTTERANCE_START Signal in " +
-	"the middle of an utterance, i.e., before I receive an UTTERANCE_END.";
-
 
     private static Map frontends = new HashMap();
 

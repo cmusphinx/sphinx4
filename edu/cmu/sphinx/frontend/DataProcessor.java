@@ -20,9 +20,10 @@ import java.io.IOException;
 
 
 /**
- * DataProcessor provides the common elements of all frontend data
+ * DataProcessor contains the common elements of all frontend data
  * processors, namely the name, context, timers, SphinxProperties,
- * and dumping. 
+ * and dumping. It also contains the acoustic properties object from
+ * which acoustic model properties can be queried.
  */
 public abstract class DataProcessor {
 

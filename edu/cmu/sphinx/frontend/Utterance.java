@@ -103,6 +103,16 @@ public class Utterance {
 
 
     /**
+     * Returns the sample rate of this Utterance.
+     *
+     * @return the sample rate
+     */
+    public int getSampleRate() {
+	return sampleRate;
+    }
+
+
+    /**
      * Returns the next audio frame.
      *
      * @return the next audio frame

@@ -126,7 +126,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    public void setProperties() {
+    private void setProperties() {
 	initialMean = getFloatAcousticProperty(PROP_INITIAL_MEAN, 12.0f);
 	cmnWindow = getIntAcousticProperty(PROP_CMN_WINDOW, 500);
 	cmnShiftWindow = getIntAcousticProperty(PROP_CMN_SHIFT_WINDOW, 800);

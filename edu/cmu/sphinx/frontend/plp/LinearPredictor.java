@@ -1,6 +1,5 @@
 /**
- * LPCfunctions.java
- *
+ * Contains Linear Prediction Coefficent functions.
  *
  * Created: Wed Dec 25 11:06:02 2002
  *
