@@ -7,7 +7,7 @@
 ===============     Statistical Language Modeling Toolkit     ===============
 =============================================================================
 This is a 3-gram language model, based on a vocabulary of 297 words,
-  which begins "'TILL", "</s>", "<s>"...
+  which begins "'TIL", "</s>", "<s>"...
 This is an OPEN-vocabulary model (type 1)
   (OOVs were mapped to UNK, which is treated as any other vocabulary word)
 Good-Turing discounting was applied.
@@ -51,7 +51,7 @@ ngram 3=2642
 
 \1-grams:
 -3.8407 <UNK>	0.0000
--3.8407 'TILL	-0.1745
+-3.8407 'TIL	-0.1745
 -3.8407 </s>	0.0000
 -3.8407 <s>	-0.1748
 -1.5406 A	-1.6021
@@ -350,7 +350,7 @@ ngram 3=2642
 -3.8407 YOUR	-0.1592
 
 \2-grams:
--0.4796 'TILL THEY -0.0964
+-0.4796 'TIL THEY -0.0964
 -0.4796 <s> ELEVEN 0.0538
 -2.7785 A ABOUT -0.0702
 -2.7785 A BIT -0.0931
@@ -1022,7 +1022,7 @@ ngram 3=2642
 -1.1786 ME WHAT -0.0702
 -0.4796 MEAN OK -0.1196
 -0.4796 MEANING OF -0.1200
--2.4141 MIDDLE 'TILL 0.0538
+-2.4141 MIDDLE 'TIL 0.0538
 -2.4141 MIDDLE ALL 0.3312
 -1.5341 MIDDLE AND -0.3419
 -2.4141 MIDDLE AT 0.4810
@@ -1733,7 +1733,7 @@ ngram 3=2642
 -0.4796 YOUR RIGHT -0.0952
 
 \3-grams:
--0.6138 'TILL THEY FORM 
+-0.6138 'TIL THEY FORM 
 -0.6138 <s> ELEVEN LOAD 
 -0.6138 A ABOUT HALF 
 -0.6138 A BIT MORE 
@@ -2931,7 +2931,7 @@ ngram 3=2642
 -0.6138 ME WHAT THE 
 -0.6138 MEAN OK KEEP 
 -0.6138 MEANING OF LIFE 
--0.6138 MIDDLE 'TILL THEY 
+-0.6138 MIDDLE 'TIL THEY 
 -0.6138 MIDDLE ALL THE 
 -0.2045 MIDDLE AND PUT 
 -0.6138 MIDDLE AT THE 
@@ -3977,7 +3977,7 @@ ngram 3=2642
 -1.3128 THE MAGNETS TO 
 -1.3128 THE MAGNETS UPSIDE 
 -0.6138 THE MEANING OF 
--2.3620 THE MIDDLE 'TILL 
+-2.3620 THE MIDDLE 'TIL 
 -2.3620 THE MIDDLE ALL 
 -2.3620 THE MIDDLE AND 
 -2.3620 THE MIDDLE AT 
