@@ -1,0 +1,16 @@
+decoders = isolatedDigits connectedDigits alphaSpelling
+
+# isolatedDigits decoder
+isolatedDigits.name = Isolated Digits
+isolatedDigits.propertiesFile = ./decoder.live.props
+isolatedDigits.testFile = ./isolatedDigits.test
+
+# connectedDigits
+connectedDigits.name = Connected Digits
+connectedDigits.propertiesFile = ./multiDecoder.live.props
+connectedDigits.testFile = ./connectedDigits.test
+
+# alphaSpelling
+alphaSpelling.name = Alpha Spelling
+alphaSpelling.propertiesFile = ./alphaSpelling.live.props
+alphaSpelling.testFile = ../performance/an4/an4_spelled_out.wordlist

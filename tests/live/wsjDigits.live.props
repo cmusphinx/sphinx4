@@ -1,0 +1,133 @@
+###########################################################
+#
+# Global logging properties
+#
+############################################################
+
+handlers= java.util.logging.ConsoleHandler
+
+# This is the overall default logging level
+.level= WARN
+
+# Tracing level for the console
+java.util.logging.ConsoleHandler.level = WARN
+java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
+
+
+############################################################
+#
+# Acoustic model properties
+#
+############################################################
+
+edu.cmu.sphinx.model.acoustic.format = sphinx3.ascii
+edu.cmu.sphinx.model.acoustic.FeatureVectorLength = 39
+edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+
+edu.cmu.sphinx.model.acoustic.location = /lab/speech/sphinx4/data/wsj
+edu.cmu.sphinx.model.acoustic.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
+edu.cmu.sphinx.model.acoustic.data_location = cd_continuous_8gau
+edu.cmu.sphinx.model.acoustic.properties_file = am.props
+edu.cmu.sphinx.model.acoustic.useComposites=false
+
+############################################################
+# 
+# FrontEnd properties
+#
+############################################################
+
+edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
+edu.cmu.sphinx.frontend.cepstrumSize = 13
+edu.cmu.sphinx.frontend.cmn.live = true
+edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
+edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
+edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
+edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
+edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
+edu.cmu.sphinx.frontend.windowShiftInMs = 10
+edu.cmu.sphinx.frontend.windower.alpha = 0.46
+edu.cmu.sphinx.frontend.endpointer = edu.cmu.sphinx.frontend.EnergyEndpointer
+edu.cmu.sphinx.frontend.EnergyEndpointer.startLow = 9
+edu.cmu.sphinx.frontend.EnergyEndpointer.startHigh = 12
+edu.cmu.sphinx.frontend.EnergyEndpointer.endLow = 9
+edu.cmu.sphinx.frontend.EnergyEndpointer.startWindow = 10
+edu.cmu.sphinx.frontend.useAcousticModelProperties = true
+
+# the following properties are effective only if 'useAcousticModelProperties'
+# is false
+
+edu.cmu.sphinx.frontend.mel.numFilters = 40
+edu.cmu.sphinx.frontend.mel.minfreq = 130
+edu.cmu.sphinx.frontend.mel.maxfreq = 6800
+edu.cmu.sphinx.frontend.fft.numberFftPoints = 512
+edu.cmu.sphinx.frontend.cmn.live.initialCepstralMean = 12
+edu.cmu.sphinx.frontend.cmn.live.windowSize = 500
+edu.cmu.sphinx.frontend.cmn.live.shiftWindow = 800
+edu.cmu.sphinx.frontend.sampleRate = 16000
+
+
+############################################################
+# 
+# Search properties
+#
+############################################################
+
+edu.cmu.sphinx.search.ActiveList.targetSize=2000
+edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.TreeActiveList
+edu.cmu.sphinx.search.SimpleDigitLinguist.isConnectedDigitGrammar=true
+edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-56
+#edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-76
+edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1.0
+edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
+edu.cmu.sphinx.search.Linguist.validateSentenceHMM=false
+edu.cmu.sphinx.search.Linguist.compositeThreshold=100
+edu.cmu.sphinx.search.Linguist.joinPronunciations=true
+edu.cmu.sphinx.search.validateResults=false
+
+############################################################
+# 
+# Recognizer properties
+#
+############################################################
+
+edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.TreeLinguist
+edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar
+-Dedu.cmu.sphinx.search.WordListGrammar.path=../an4_spelling.gram
+
+############################################################
+# 
+# Dictionary properties
+#
+############################################################
+
+edu.cmu.sphinx.search.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d-a.txt
+edu.cmu.sphinx.search.Dictionary.fillerPath=/lab/speech/sphinx4/data/wsj/dict/fillerdict
+edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true
+
+
+############################################################
+#
+# ThreadedAcousticScorer properties
+#
+############################################################
+#
+# By setting isCpuRelative to true, num scoring threads is
+#    equal to num_avail_processors + e.c.s.ThreadedAcousticScorernumThreads.
+#
+# By setting isCpuRelative to false, num scoring threads is
+#    equal to edu.cmu.sphinx.ThreadedAcousticScorer.numThreads
+#
+# Use the number of available CPUS for scoring:
+#
+edu.cmu.sphinx.search.ThreadedAcousticScorer.isCpuRelative=true
+edu.cmu.sphinx.search.ThreadedAcousticScorer.numThreads=0
+edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
+
+############################################################
+#
+# WordListGrammar properties
+#
+############################################################
+edu.cmu.sphinx.search.WordListGrammar.isLooping = false
+edu.cmu.sphinx.search.WordListGrammar.path = ../an4_spelling.gram
+
