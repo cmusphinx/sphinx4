@@ -26,7 +26,14 @@ import edu.cmu.sphinx.util.Timer;
 import java.io.IOException;
 
 /**
- * Computes the FFT of an input sequence.
+ * Computes the Fourier Transform (FT) of an input sequence, using 
+ * Fast Fourier Transform (FFT). Fourier Transform is the process
+ * for analyzing an audio signal into its frequency components.
+ * Therefore, the input is audio data, which is usually already multiplied
+ * by a Hamming window function. The output is the power spectrum
+ * of the original audio data.
+ *
+ * @see RaisedCosineWindower
  */
 public class DiscreteFourierTransform extends BaseDataProcessor {
 
