@@ -51,13 +51,21 @@ default: trainer
 
 trainer:
 	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.knowledge.acoustic.location=. \
 	edu.cmu.sphinx.trainer.Trainer trainer.props
 
 init:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.trainer.Trainer.initialStage=_00_INITIALIZATION \
 	-Dedu.cmu.sphinx.trainer.Trainer.finalStage=_00_INITIALIZATION \
-	-Dedu.cmu.sphinx.knowledge.acoustic.location=c:\\cygwin\\home\\egouvea\\sphinx\\SourceForge\\sphinx4\\tests\\trainer \
+	-Dedu.cmu.sphinx.knowledge.acoustic.location=. \
+	edu.cmu.sphinx.trainer.Trainer trainer.props
+
+ci:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.trainer.Trainer.initialStage=_10_CI_TRAIN \
+	-Dedu.cmu.sphinx.trainer.Trainer.finalStage=_10_CI_TRAIN \
+	-Dedu.cmu.sphinx.knowledge.acoustic.location=\\lab\\speech\\sphinx4\\data\\save \
 	edu.cmu.sphinx.trainer.Trainer trainer.props
 
 copy:
