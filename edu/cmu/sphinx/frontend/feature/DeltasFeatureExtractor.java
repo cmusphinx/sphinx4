@@ -29,30 +29,36 @@ import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**
- * Computes the delta and double delta of input cepstrum.
- * The output data is a FloatData object with a float array
- * of size three times the original cepstrum. They are
- * usually called features. Figure 1 shows the arrangement
- * of the output feature data array:
+ * Computes the delta and double delta of input cepstrum (or plp or
+ * ...). The delta is the first order derivative and the double delta
+ * (a.k.a. delta delta) is the second order derivative of the original
+ * cepstrum.  They help model the speech signal dynamics.  The output
+ * data is a FloatData object with a float array of size three times
+ * the original cepstrum, formed by the concantenation of cepstra,
+ * delta cepstra, and double delta cepstra. The output is the feature
+ * vector used by the decoder. Figure 1 shows the arrangement of the
+ * output feature data array:
  * <p>
  * <img src="doc-files/feature.jpg">
  * <br><b>Figure 1: Layout of the returned features.</b>
  * <p>Suppose that the original cepstrum has a length of N,
- * the first N elements of the feature is just the original
- * cepstrum, the second N elements is the delta of the cepstrum,
- * and the last N elements is the double delta of the cepstrum.
+ * the first N elements of the feature are just the original
+ * cepstrum, the second N elements are the delta of the cepstrum,
+ * and the last N elements are the double delta of the cepstrum.
  * <p>
  * Figure 2 below shows pictorially the computation of the
- * delta and double delta of a cepstrum, using
+ * delta and double delta of a cepstrum vector, using
  * the last 3 cepstra and the next 3 cepstra.
  * <img src="doc-files/deltas.jpg">
  * <br><b>Figure 2: Delta and double delta vector computation.</b>
  * <p>Refering to Figure 2, the delta is computed by subtracting
- * the cepstrum that is two behind of the current cepstrum, from the
- * cepstrum that is two ahead of the current cepstrum.
- * The computation of the double delta is more complex, involving
- * the cepstra that are one and three behind and after the current
- * cepstrum.
+ * the cepstrum that is two frames behind of the current cepstrum
+ * from the cepstrum that is two frames ahead of the current cepstrum.
+ * The computation of the double delta is similar. It is computed by
+ * subtracting the delta cepstrum one time frame behind from the
+ * cepstrum one time frame ahead. Replacing delta cepstra with
+ * cepstra, this works out to a formula involving the cepstra that are
+ * one and three behind and after the current cepstrum.
  */
 public class DeltasFeatureExtractor extends BaseDataProcessor {
 

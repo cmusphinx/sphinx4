@@ -27,30 +27,32 @@ import java.util.List;
 
 
 /**
- * Applies cepstral mean normalization (CMN) to incoming cepstral data,
- * to reduce the distortion caused by the transmission channel.
- * The output is mean normalized cepstral data.
+ * Applies cepstral mean normalization (CMN), sometimes called channel
+ * mean normalization, to incoming cepstral data. Its goal is to
+ * reduce the distortion caused by the transmission channel.  The
+ * output is mean normalized cepstral data.
  * <p>
- * This CMN subtracts the mean from all the Data objects between a
- * DataStartSignal and a DataEndSignal.
- * It will read in all the Data objects, calculate the mean, 
- * and subtract this mean from all the Data objects. As a result,
- * this process can introduce a significant processing delay because
- * all the Data objects have to be read in before the mean can
- * be calculated. This is fine in batch mode, but in live mode,
- * in which fast response times are needed, one should use the LiveCMN.
+ * The CMN processing subtracts the mean from all the Data objects
+ * between a DataStartSignal and a DataEndSignal.  BatchCMN will read
+ * in all the Data objects, calculate the mean, and subtract this mean
+ * from all the Data objects. For a given utterance, it will only
+ * produce an output after reading all the incoming data for the
+ * utterance. As a result, this process can introduce a significant
+ * processing delay, which is acceptable for batch processing, but not
+ * for live mode. In the latter case, one should use the LiveCMN.
  * <p>
  * CMN is a technique used to reduce distortions that are introduced
  * by the transfer function of the transmission channel (e.g., the
- * microphone). Using a transmission channel to transmit
- * input speech translates to multiplying the spectrum of the
- * input speech with the transfer function of the channel (the distortion).
- * Since the cepstrum is the Fourier Transform of the log 
- * of the spectrum, the logarithm of the multiplication becomes an addition,
- * which can be conveniently removed from the cepstrum by subtracting
- * the mean cepstral vector. Intuitively,
- * the mean cepstral vector approximately describes the
- * spectral characteristics of the transmission channel (e.g., microphone).
+ * microphone). Using a transmission channel to transmit the input
+ * speech translates to multiplying the spectrum of the input speech
+ * with the transfer function of the channel (the distortion).  Since
+ * the cepstrum is the Fourier Transform of the log spectrum, the
+ * logarithm turns the multiplication into a summation. Averaging over
+ * time, the mean is an estimate of the channel, which remains roughly
+ * constant. The channel is thus removed from the cepstrum by
+ * subtracting the mean cepstral vector. Intuitively, the mean
+ * cepstral vector approximately describes the spectral
+ * characteristics of the transmission channel (e.g., microphone).
  *
  * @see LiveCMN
  */
