@@ -26,7 +26,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.URL;
 
-
+/**
+ * A server version of the decoder. After it is being started,
+ * it waits for a socket connection from a client. Once it receives
+ * a socket connection request, it spawns a new thread to handle
+ * that request. The client will then send it features, which the
+ * server then decodes and returns a result.
+ */
 public class ServerDecoder extends BaseServer {
 
     private Decoder decoder;
@@ -36,6 +42,8 @@ public class ServerDecoder extends BaseServer {
      * Constructs a default ServerDecoder.
      *
      * @param context the context of this ServerDecoder
+     *
+     * @throws IOException if an I/O error occurs
      */
     public ServerDecoder(String context) throws IOException {
         initDecoder(context);
@@ -46,6 +54,8 @@ public class ServerDecoder extends BaseServer {
      * Initialize the decoder with the given context.
      *
      * @param context the context to use
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initDecoder(String context) throws IOException {
         // using null as the DataSource will still initialize the decoder

@@ -47,6 +47,8 @@ public class SocketCepstrumSource implements CepstrumSource {
      * Constructs a default SocketCepstrumSource from a Socket.
      *
      * @param socket the Socket from which cepstra data is read
+     *
+     * @throws IOException if an I/O error occurs
      */
     public SocketCepstrumSource(Socket socket) throws IOException {
         inUtterance = false;

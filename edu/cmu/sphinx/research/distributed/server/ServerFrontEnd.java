@@ -52,8 +52,9 @@ import java.util.logging.Logger;
  * Audio or Cepstrum
  * ...
  * Signal.UTTERANCE_END
- *
- * <p>Any other sequence will cause this ServerFrontEnd to throw errors.
+ * </code>
+ * <p>
+ * Any other sequence will cause this ServerFrontEnd to throw errors.
  *
  * <p>If the front end gets a null frame OUTSIDE an utterance, 
  * it just returns a null frame. If the front end gets a null frame
@@ -100,6 +101,8 @@ public class ServerFrontEnd extends DataProcessor implements FrontEnd {
      * @param name the name of this SimpleFrontEnd
      * @param context the context of this SimpleFrontEnd
      * @param dataSource the place to pull data from
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String context, DataSource dataSource)
         throws IOException {
@@ -119,6 +122,8 @@ public class ServerFrontEnd extends DataProcessor implements FrontEnd {
      * @param amName the name of the acoustic model
      * @param dataSource the source of data; can be null, in which
      *    case the setDataSource() method must be called later
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String context, 
                            SphinxProperties props,
@@ -145,6 +150,8 @@ public class ServerFrontEnd extends DataProcessor implements FrontEnd {
      * as specified in the SphinxProperties, with the given predecessor.
      *
      * @param predecessor the predecessor of the CMN step
+     *
+     * @throws IOException if an I/O error occurs
      */
     private CepstrumSource getCMN(CepstrumSource predecessor) throws 
 	IOException {
@@ -168,6 +175,8 @@ public class ServerFrontEnd extends DataProcessor implements FrontEnd {
      *    from which Features are extracted
      *
      * @return the FeatureExtractor
+     *
+     * @throws IOException if an I/O error occurs
      */
     private FeatureExtractor getFeatureExtractor(CepstrumSource predecessor) 
 	throws IOException {
@@ -204,9 +213,13 @@ public class ServerFrontEnd extends DataProcessor implements FrontEnd {
      * Consequently, the size of the FeatureFrame will be less than N.
      *
      * @param numberFeatures the number of Features to return
+     * @param acousticModelName the acoustic model that is relevant to the
+     *                          features are returned
      *
      * @return the next N number of Features in a FeatureFrame, or null
      *    if no more FeatureFrames available
+     *
+     * @throws IOException if an I/O error occurs
      *
      * @see FeatureFrame
      */
