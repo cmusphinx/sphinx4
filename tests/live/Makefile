@@ -70,8 +70,8 @@ live-ep: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=8 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=11 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=8 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=3 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=true \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager \
 	tests.live.Live decoders.list
@@ -92,8 +92,8 @@ live-ep-voice: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=3 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=4 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=3 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=8 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=true \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager \
 	tests.live.Live decoders.list
@@ -118,9 +118,9 @@ live-free: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=9 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=12 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=9 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=8 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow=40 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=true \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
@@ -136,14 +136,14 @@ live-free-voice: all
 	-DhandsFree=true \
 	-Dedu.cmu.sphinx.frontend.keepAudioReference=false \
 	-Dedu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments=false \
-	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
+	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN\
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=3 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=4 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=3 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=8 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow=40 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=true \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
