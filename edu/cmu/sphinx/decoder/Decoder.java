@@ -26,6 +26,8 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Iterator;
 import java.text.DecimalFormat;
 
 
@@ -71,6 +73,14 @@ public class Decoder {
     public final static String PROP_SHOW_PARTIAL_RESULTS =
 	PROP_PREFIX + "showPartialResults";
 
+    /**
+     * A SphinxProperty name for a boolean property, that when set to
+     * true will cause the decoder to show intermediate token results
+     * for the reference text
+     */
+    public final static String PROP_SHOW_PARTIAL_ACTUAL_RESULTS =
+	PROP_PREFIX + "showPartialActualResults";
+
     private static DecimalFormat memFormat = new DecimalFormat("0.00 Mb");
     private static DecimalFormat timeFormat = new DecimalFormat("0.00");
 
@@ -90,8 +100,11 @@ public class Decoder {
     private boolean showBestToken = false;
     private boolean showErrorToken = false;
     private boolean showActualToken = false;
+    private boolean showPartialActualResults;;
 
     private boolean findResult = true;
+
+    private String currentReferenceText;
 
 
     /**
@@ -142,6 +155,8 @@ public class Decoder {
 
 	showPartialResults =
 	    props.getBoolean(PROP_SHOW_PARTIAL_RESULTS, false);
+	showPartialActualResults =
+	    props.getBoolean(PROP_SHOW_PARTIAL_ACTUAL_RESULTS, false);
 	showErrorToken =
 	    props.getBoolean(PROP_SHOW_ERROR_TOKEN, false);
 	showBestToken =
@@ -175,6 +190,10 @@ public class Decoder {
 		    if (showPartialResults) {
 			showPartialResult(result);
 		    }
+
+                    if (showPartialActualResults) {
+                        showPartialActualResults(result);
+                    }
 		}
 	    });
         }
@@ -205,6 +224,7 @@ public class Decoder {
      */
     public Result decode(String ref) {
         Result result;
+        currentReferenceText = ref;
 
 	Timer timer = Timer.getTimer(context, "Decode");
         timer.start();  // start the timer
@@ -213,7 +233,7 @@ public class Decoder {
 
         timer.stop();  // stop the timer
 
-	showFinalResult(ref, result, timer);
+	showFinalResult(result, timer);
 
         return result;
     }
@@ -261,6 +281,7 @@ public class Decoder {
     public Result align(String ref) throws IOException {
 	Result result;
 	Timer timer = Timer.getTimer(context, "Decode");
+        currentReferenceText = ref;
 
         timer.start();  // start the timer
 
@@ -269,7 +290,7 @@ public class Decoder {
 
         timer.stop();  // stop the timer
 
-	showFinalResult(ref, result, timer);
+	showFinalResult(result, timer);
 
 
         return result;
@@ -294,19 +315,53 @@ public class Decoder {
              "Active branches: " + result.getActiveTokens().size());
     }
 
+    /**
+     * Shows the given partial Result.
+     *
+     * @param result the partial Result to show
+     */
+    protected void showPartialActualResults(Result result) {
+        System.out.println("========= Partial Actual Results "
+                    + " for frame " + result.getFrameNumber() + 
+                    " ===========================");
+        System.out.println("  Reference string: ["
+                    + currentReferenceText + "]");
+        Token bestToken = result.getBestActiveToken();
+        Token bestMatching = 
+            result.getBestActiveParitalMatchingToken(currentReferenceText);
+
+        if (bestToken != null && bestMatching == bestToken) {
+            System.out.println("  --- Best active/matching: " +
+                        bestToken.getWordPath());
+            bestToken.dumpTokenPath(true);
+        } else {
+            if (bestToken != null) {
+                System.out.println("  --- Best active: " +
+                        bestToken.getWordPath());
+                bestToken.dumpTokenPath(true);
+            }
+            if (bestMatching != null) {
+                System.out.println(" --- Best matching: " +
+                        bestMatching.getWordPath());
+                bestMatching.dumpTokenPath(true);
+            } else {
+                System.out.println(" --- NO MATCH");
+            }
+        }
+    }
+
 
     /**
      * Shows the final result
      *
-     * @param ref the expected result or null
      * @param result the recognition result
      */
-    protected void showFinalResult(String ref, Result result, Timer timer) {
+    protected void showFinalResult(Result result, Timer timer) {
 	boolean match = true;
 	Token bestToken = result.getBestToken();
 
-	if (ref != null) {
-	    match = aligner.align(ref, result.toString());
+	if (currentReferenceText != null) {
+	    match = aligner.align(currentReferenceText, result.toString());
             aligner.printSentenceSummary();
             aligner.printTotalSummary();
 	} else {
@@ -328,7 +383,7 @@ public class Decoder {
 			+ result.getBestToken().getScore());
 	}
 	if (!match) {
-	    Token  matchingToken = result.findToken(ref);
+	    Token  matchingToken = result.findToken(currentReferenceText);
 	    if (matchingToken != null) {
 		System.out.print(
 			"  ActScore: " + matchingToken.getScore());
