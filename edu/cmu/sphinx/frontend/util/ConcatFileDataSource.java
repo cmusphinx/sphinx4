@@ -38,18 +38,20 @@ import java.util.Random;
 
 
 /**
- * Concatenates a list of audio files as one continuous
- * audio InputStream. An UTTERANCE_START will be placed before
- * the start of the first file, and an UTTERANCE_END after the last file.
- * No UTTERANCE_STARTs or UTTERANCE_ENDs will be placed between them. 
+ * Concatenates a list of audio files as one continuous audio stream.
+ * A {@link edu.cmu.sphinx.frontend.DataStartSignal DataStartSignal}
+ * will be placed before the start of the first file, and a
+ * {@link edu.cmu.sphinx.frontend.DataEndSignal DataEndSignal}
+ * after the last file.
+ * No DataStartSignal or DataEndSignal will be placed between them. 
  * Optionally, silence can be added in-between the audio files by setting
  * the property:
  * <pre>edu.cmu.sphinx.frontend.util.ConcatFileDataSource.silenceFile</pre>
  * to a audio file for silence. By default, no silence is added.
  * Moreover, one can also specify how many files to skip for every file read.
  * <p>
- * The constructor of ConcatFileDataSource takes the name of a transcript
- * file, in HUB-4 style. This is the file to write the transcription to.
+ * You can also specify the name of a transcript file to write
+ * the transcription to. The transcription will be written in HUB-4 style.
  * A sample HUB-4 transcript looks like:
  * <pre>
  * bn99en_1 1 peter_jennings 0.806084 7.079850 <o,f4,male> Tonight this 
@@ -62,28 +64,30 @@ import java.util.Random;
  * ...
  * </pre>
  * The format of each line is:
+ * <pre>
  * test_set_name category speaker_name start_time_in_seconds
  * end_time_in_seconds <category,hub4_focus_conditions,speaker_sex> transcript
- * <p>
+ * </pre>
  * In our example above,
- * <br>test_set_name is "bn99en_1"
- * <br>category is "1"
- * <br>speaker_name is "peter_jennings"
- * <br>start_time_in_seconds is "0.806084"
- * <br>end_time_in_seconds is "7.079850"
- * <br>category is "o" for "Overall"
- * <br>hub4_focus_conditions is:
- * <br>    "f0" for "Baseline//Broadcast//Speech"
- * <br>    "f1" for "Spontaneous//Broadcast//Speech"
- * <br>    "f2" for "Speech Over//Telephone//Channels"
- * <br>    "f3" for "Speech in the//Presence of//Background Music"
- * <br>    "f4" for "Speech Under//Degraded//Acoustic Conditions"
- * <br>    "f5" for "Speech from//Non-Native//Speakers"
- * <br>    "fx" for "All other speech"
- * <br>speaker_sex is "male"
- * <br>transcript is "Tonight this Thursday big pressure on the Clinton 
+ * <pre>
+ * test_set_name is "bn99en_1"
+ * category is "1"
+ * speaker_name is "peter_jennings"
+ * start_time_in_seconds is "0.806084"
+ * end_time_in_seconds is "7.079850"
+ * category is "o" for "Overall"
+ * hub4_focus_conditions is:
+ *     "f0" for "Baseline//Broadcast//Speech"
+ *     "f1" for "Spontaneous//Broadcast//Speech"
+ *     "f2" for "Speech Over//Telephone//Channels"
+ *     "f3" for "Speech in the//Presence of//Background Music"
+ *     "f4" for "Speech Under//Degraded//Acoustic Conditions"
+ *     "f5" for "Speech from//Non-Native//Speakers"
+ *     "fx" for "All other speech"
+ * speaker_sex is "male"
+ * transcript is "Tonight this Thursday big pressure on the Clinton 
  * administration to do something about the latest killing in Yugoslavia
- * <p>
+ * </pre>
  * The ConcatFileDataSource will produce such a transcript if the name
  * of the file to write to is supplied in the constructor. This transcript
  * file will be used in detected gap insertion errors, because it accurately
