@@ -39,8 +39,7 @@ import java.util.StringTokenizer;
 /**
  * Decodes a batch file containing a list of files to decode.
  * The files can be either audio files or cepstral files, but defaults
- * to audio files. To decode cepstral files, set the Sphinx property
- * <code> edu.cmu.sphinx.decoder.BatchDecoder.inputDataType = cepstrum </code>
+ * to audio files.
  */
 public class BatchDecoder {
 
@@ -93,17 +92,6 @@ public class BatchDecoder {
      */
     public final static int PROP_TOTAL_BATCHES_DEFAULT = 1;
 
-    /**
-     * The SphinxProperty name for the input data type.
-     */
-    public final static String PROP_INPUT_TYPE = PROP_PREFIX+"inputDataType";
-
-
-    /**
-     * The default value for the property PROP_INPUT_TYPE.
-     */
-    public final static String PROP_INPUT_TYPE_DEFAULT = "audio";
-
 
     /**
      * The SphinxProperty name for the input data type.
@@ -133,7 +121,6 @@ public class BatchDecoder {
     private StreamDataSource dataSource;
     private Decoder decoder;
     private String context;
-    private String inputDataType;
     private int skip;
     private int whichBatch;
     private int totalBatches;
@@ -157,9 +144,6 @@ public class BatchDecoder {
     public BatchDecoder(String context, String batchFile) throws IOException {
         props = SphinxProperties.getSphinxProperties(context);
         context = props.getContext();
-        
-	inputDataType = props.getString(PROP_INPUT_TYPE, 
-                                        PROP_INPUT_TYPE_DEFAULT);
         skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
         whichBatch = props.getInt(PROP_WHICH_BATCH, PROP_WHICH_BATCH_DEFAULT);
         totalBatches = props.getInt(PROP_TOTAL_BATCHES, 

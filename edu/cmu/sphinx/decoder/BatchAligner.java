@@ -12,7 +12,7 @@
 
 package edu.cmu.sphinx.decoder;
 
-import edu.cmu.sphinx.frontend.util.StreamAudioSource;
+import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
@@ -45,7 +45,7 @@ public class BatchAligner {
     public final static int PROP_SKIP_DEFAULT = 0;
 
 
-    private StreamAudioSource audioSource;
+    private StreamDataSource audioSource;
     private Decoder decoder;
     private String batchFile;
     private String context;
@@ -62,9 +62,11 @@ public class BatchAligner {
 	this.context = context;
 	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 	skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
-        audioSource = new StreamAudioSource("batchAudioSource", context, 
-					    null, null);
-        decoder = new Decoder(context, audioSource);
+        audioSource = new StreamDataSource();
+        audioSource.initialize("batchAudioSource", null, props, null);
+        decoder = new Decoder(context);
+        decoder.initialize();
+        decoder.getRecognizer().getFrontEnd().setDataSource(audioSource);
         this.batchFile = batchFile;
     }
 
