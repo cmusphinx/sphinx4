@@ -93,7 +93,10 @@ edu.cmu.sphinx.search.validateResults=false
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.SimpleLinguist
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.StaticLinguist
+edu.cmu.sphinx.decoder.linguist.StaticLinguist.isFlatSentenceHMM=false
+edu.cmu.sphinx.decoder.linguist.Linguist.expandInterNodeContexts=true
+
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.WordListGrammar
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
 

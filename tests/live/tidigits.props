@@ -122,7 +122,7 @@ edu.cmu.sphinx.decoder.linguist.WordListGrammar.path = ../performance/tidigits/d
 ############################################################
 
 edu.cmu.sphinx.decoder.Recognizer.dumpFrontEnd = true
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.SimpleLinguist
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.StaticLinguist
 edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.WordListGrammar
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
