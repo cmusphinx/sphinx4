@@ -32,7 +32,6 @@ import java.util.Vector;
 import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.linguist.WordSearchState;
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
@@ -150,7 +149,7 @@ public class Lattice {
     /**
      * Create an empty Lattice.
      */
-    protected Lattice(LogMath logMath) {
+    public Lattice(LogMath logMath) {
 	this();
 	this.logMath = logMath;
     }
@@ -883,6 +882,7 @@ public class Lattice {
                                       boolean useAcousticScoresOnly) {      
         //forward
         initialNode.setForwardScore(LogMath.getLogOne());
+        initialNode.setViterbiScore(LogMath.getLogOne());
         List sortedNodes = sortNodes();
         assert sortedNodes.get(0) == initialNode;
         ListIterator n = sortedNodes.listIterator();
@@ -892,12 +892,20 @@ public class Lattice {
             for (Iterator i = currentEdges.iterator();i.hasNext();) {
                 Edge edge = (Edge)i.next();
                 double forwardProb = edge.getFromNode().getForwardScore();
-                forwardProb += computeEdgeScore
+                double edgeScore = computeEdgeScore
                     (edge, languageModelWeight, useAcousticScoresOnly);
+                forwardProb += edgeScore;
                 edge.getToNode().setForwardScore
                     (logMath.addAsLinear
                      ((float)forwardProb,
                       (float)edge.getToNode().getForwardScore()));
+                double vs = edge.getFromNode().getViterbiScore() +
+                    edgeScore;
+                if (edge.getToNode().getBestPredecessor() == null ||
+                    vs > edge.getToNode().getViterbiScore()) {
+                    edge.getToNode().setBestPredecessor(currentNode);
+                    edge.getToNode().setViterbiScore(forwardProb);
+                }
             }
         }
         
@@ -905,7 +913,7 @@ public class Lattice {
         terminalNode.setBackwardScore(LogMath.getLogOne());
         assert sortedNodes.get(sortedNodes.size()-1) == terminalNode;
         n = sortedNodes.listIterator(sortedNodes.size()-1);
-        while (n.hasPrevious()) {            
+        while (n.hasPrevious()) {
             Node currentNode = (Node)n.previous();
             Collection currentEdges = currentNode.getLeavingEdges();
             for (Iterator i = currentEdges.iterator();i.hasNext();) {
@@ -928,7 +936,23 @@ public class Lattice {
         }
     }
 
-
+    /**
+     * Retrieves the MAP path from this lattice. Only works once 
+	 * computeNodePosteriors has been called.
+     * 
+     * @return a list of nodes representing the MAP path.
+     */
+    public List getViterbiPath() {
+        LinkedList path = new LinkedList();
+        Node n = terminalNode;
+        while (n != initialNode) {
+            path.addFirst(n);
+            n = n.getBestPredecessor();
+        }
+        path.addFirst(initialNode);
+        return path;
+    }
+    
     /**
      * Computes the score of an edge.
      *
