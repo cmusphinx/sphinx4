@@ -77,6 +77,13 @@ import java.util.Arrays;
  */
 public class EnergyPlotter {
 
+    public static final String PROP_MAX_ENERGY =
+    "edu.cmu.sphinx.frontend.util.EnergyPlotter.maxEnergy";
+
+    public static final int PROP_MAX_ENERGY_DEFAULT = 20;
+
+
+    private int maxEnergy;
     private String[] plots;
 
 
@@ -85,7 +92,8 @@ public class EnergyPlotter {
      *
      * @param maxEnergy the maximum energy value
      */
-    public EnergyPlotter(int maxEnergy) {
+    public EnergyPlotter(SphinxProperties props) {
+        maxEnergy = props.getInt(PROP_MAX_ENERGY, PROP_MAX_ENERGY_DEFAULT);
         buildPlots(maxEnergy);
     }
 
@@ -98,18 +106,28 @@ public class EnergyPlotter {
     private void buildPlots(int maxEnergy) {
         plots = new String[maxEnergy+1];
         for (int i = 0; i < maxEnergy+1; i++) {
-            char[] plot = new char[i];
-            Arrays.fill(plot, '.');
-            if (i > 0) {
-                if (i < 10) {
-                    plot[plot.length - 1] = (char) ('0' + i);
-                } else {
-                    plot[plot.length - 2] = '1';
-                    plot[plot.length - 1] = (char) ('0' + (i - 10));
-                }
-            }
-            plots[i] = new String(plot);
+            plots[i] = getPlotString(i);
         }
+    }
+
+
+    /**
+     * Returns the plot string for the given energy.
+     *
+     * @param energy the energy level
+     */
+    private String getPlotString(int energy) {
+        char[] plot = new char[energy];
+        Arrays.fill(plot, '.');
+        if (energy > 0) {
+            if (energy < 10) {
+                plot[plot.length - 1] = (char) ('0' + energy);
+            } else {
+                plot[plot.length - 2] = '1';
+                plot[plot.length - 1] = (char) ('0' + (energy - 10));
+            }
+        }
+        return (new String(plot));
     }
 
     
@@ -137,6 +155,10 @@ public class EnergyPlotter {
      * @return energy the energy value
      */
     private String getPlot(int energy) {
-        return plots[energy];
+        if (energy <= maxEnergy) {
+            return plots[energy];
+        } else {
+            return getPlotString(energy);
+        }
     }
 }
