@@ -152,4 +152,4 @@ edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.acousticLookaheadFrames=
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.keepAllTokens=true
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.cclextree.LexTreeLinguist 
-edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10
+edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=9.5

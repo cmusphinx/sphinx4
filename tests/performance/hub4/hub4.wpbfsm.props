@@ -92,11 +92,11 @@ edu.cmu.sphinx.util.BeamFinder.enable=false
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10
+edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10.5
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = .2
-edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = .5
+edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = .1
 edu.cmu.sphinx.decoder.linguist.Linguist.addFillerWords=true
-edu.cmu.sphinx.decoder.linguist.Linguist.fillerInsertionProbability=.5
+edu.cmu.sphinx.decoder.linguist.Linguist.fillerInsertionProbability=.05
 edu.cmu.sphinx.decoder.linguist.Linguist.generateUnitStates=false
 
 ############################################################
