@@ -139,7 +139,7 @@ public class FrontEndFactory {
 
         if (frontend == null) {
             int nStages = props.getInt
-                (frontEndName + ";" + PROP_PREFIX + "nStages", 0);
+                (frontEndName, PROP_PREFIX + "nStages", 0);
             debugMessage
                 ("Loading " + frontEndName + " with " + nStages +" stages...");
 
@@ -217,6 +217,8 @@ public class FrontEndFactory {
      * @param message the message to print
      */
     private static void debugMessage(String message) {
-        System.out.println("FrontEndFactory.getFrontEnd(): " + message);
+        if (false) {
+            System.out.println("FrontEndFactory.getFrontEnd(): " + message);
+        }
     }
 }
