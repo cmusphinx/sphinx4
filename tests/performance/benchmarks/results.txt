@@ -4348,3 +4348,71 @@ Decode          288     9.7550s   3.7770s   23.7100s  9.6881s   2790.1660s
 - SENTENCE ACCURACY    22.2% (  64)
 - note filterSuccessors set to false
 
+# ==================================================
+SystemName:     debris
+Program:        sphinx4
+Date:           10/24/2002
+Test:           an4_words_unigram
+Who:            plamere
+# ----------------------------- batch-----------------------------------------
+# Name          Count   CurTime   MinTime   MaxTime   AvgTime   TotTime   
+batchAudioSourc 8757    0.0000s   0.0000s   0.3440s   0.0011s   9.9130s   
+FrontEnd        95877   0.0000s   0.0000s   0.4490s   0.0005s   47.2670s  
+Preemphasizer   8757    0.0000s   0.0000s   0.0020s   0.0000s   0.2230s   
+HammingWindow   8757    0.0000s   0.0000s   0.2080s   0.0004s   3.1360s   
+AM_Load         1       20.5760s  20.5760s  20.5760s  20.5760s  20.5760s  
+FFT             95877   0.0000s   0.0000s   0.0130s   0.0003s   24.8720s  
+MelFilter       95877   0.0000s   0.0000s   0.0010s   0.0000s   1.4430s   
+MelCepstrum     95877   0.0000s   0.0000s   0.0030s   0.0000s   3.1510s   
+FeatureExtracto 4207    0.0010s   0.0000s   0.0010s   0.0001s   0.5870s   
+DictionaryLoad  1       3.1350s   3.1350s   3.1350s   3.1350s   3.1350s   
+compileGrammar  1       58.6210s  58.6210s  58.6210s  58.6210s  58.6210s  
+expandGrammar   10743   0.0000s   0.0000s   4.5670s   0.0054s   58.3250s  
+Score           95877   0.0000s   0.0000s   1.3240s   0.0045s   427.0470s 
+Prune           95410   0.0000s   0.0000s   0.0030s   0.0000s   2.5580s   
+Grow            95877   0.0120s   0.0000s   6.8670s   0.0171s   1637.6450s
+Decode          467     4.7730s   1.8550s   13.5720s  4.9526s   2312.8660s
+# ------------- Summary statistics ----------- 
+   Accuracy: %92.8    Errors: 150  (Rec: 118  Ins: 17  Del: 15)
+   Words: 1846   Matches: 1713
+   Sentences: 467   Matches: 358   SentenceAcc: %76.7
+   Total Time Audio: 1908.24s  Proc: 2312.87s  Speed: 1.21 X real time
+   Mem Total: 1014.00 Mb Free: 677.02 Mb Used: 336.98 Mb
+
+- a2a test
+- WORD ACCURACY=  92.904% ( 1715/ 1846)  ERRORS=  8.072% (  149/ 1846)
+
+# ==================================================
+SystemName:     debris
+Program:        sphinx4
+Date:           10/24/2002
+Test:           an4_words_trigram
+Who:            plamere
+# ----------------------------- batch-----------------------------------------
+# Name          Count   CurTime   MinTime   MaxTime   AvgTime   TotTime   
+batchAudioSourc 8757    0.0000s   0.0000s   1.0460s   0.0008s   7.0880s   
+FrontEnd        95877   0.0000s   0.0000s   1.1370s   0.0005s   45.4960s  
+Preemphasizer   8757    0.0000s   0.0000s   0.0020s   0.0000s   0.2450s   
+HammingWindow   8757    0.0000s   0.0000s   0.0840s   0.0004s   3.0930s   
+AM_Load         1       20.7520s  20.7520s  20.7520s  20.7520s  20.7520s  
+FFT             95877   0.0000s   0.0000s   0.0130s   0.0003s   24.9410s  
+MelFilter       95877   0.0000s   0.0000s   0.0010s   0.0000s   1.4850s   
+MelCepstrum     95877   0.0000s   0.0000s   0.0030s   0.0000s   3.1360s   
+FeatureExtracto 4207    0.0010s   0.0000s   0.0010s   0.0002s   0.6350s   
+DictionaryLoad  1       3.2320s   3.2320s   3.2320s   3.2320s   3.2320s   
+compileGrammar  1       58.4060s  58.4060s  58.4060s  58.4060s  58.4060s  
+expandGrammar   10743   0.0000s   0.0000s   4.5640s   0.0054s   58.0840s  
+Score           95877   0.0000s   0.0000s   1.5130s   0.0044s   421.8600s 
+Prune           95410   0.0000s   0.0000s   0.0030s   0.0000s   2.2980s   
+Grow            95877   0.0170s   0.0000s   7.2870s   0.0188s   1804.0980s
+Decode          467     6.3880s   2.0180s   19.0950s  5.2710s   2461.5480s
+# ------------- Summary statistics ----------- 
+   Accuracy: %96.0    Errors: 77  (Rec: 49  Ins: 4  Del: 24)
+   Words: 1846   Matches: 1773
+   Sentences: 467   Matches: 417   SentenceAcc: %89.3
+   Total Time Audio: 1908.24s  Proc: 2461.55s  Speed: 1.29 X real time
+   Mem Total: 1014.00 Mb Free: 728.47 Mb Used: 285.53 Mb
+
+- a2a test
+- WORD ACCURACY=  96.262% ( 1777/ 1846)  ERRORS=  3.954% (   73/ 1846)
+
