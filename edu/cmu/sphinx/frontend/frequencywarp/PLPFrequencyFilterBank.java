@@ -19,7 +19,6 @@ import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FrontEndFactory;
-import edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 
@@ -118,8 +117,6 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
         super.initialize((name == null ? "PLPFrequencyFilterBank" : name),
                          frontEnd, props, predecessor);
 	setProperties(props);
-	buildCriticalBandFilterbank();
-	buildEqualLoudnessScalingFactors();
     }
 
 
@@ -143,11 +140,6 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
 
         numberFilters = props.getInt
             (getName(), PROP_NUMBER_FILTERS, PROP_NUMBER_FILTERS_DEFAULT);
-
-        numberFftPoints = props.getInt
-	    (getName(),
-             DiscreteFourierTransform.PROP_NUMBER_FFT_POINTS,
-             DiscreteFourierTransform.PROP_NUMBER_FFT_POINTS_DEFAULT);
     }
 
 
@@ -264,8 +256,13 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
         IllegalArgumentException {
 
 	double[] in = input.getValues();
+        
+        if (criticalBandFilter == null) {
+            numberFftPoints = (in.length - 1) * 2;
+            buildCriticalBandFilterbank();
+            buildEqualLoudnessScalingFactors();
 
-	if (in.length != ((numberFftPoints >> 1) + 1)) {
+        } else if (in.length != ((numberFftPoints >> 1) + 1)) {
 	    throw new IllegalArgumentException
                ("Window size is incorrect: in.length == " + in.length +
                  ", numberFftPoints == " + ((numberFftPoints >> 1) + 1));
