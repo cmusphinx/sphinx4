@@ -87,12 +87,13 @@ an4_words_unigram:
 
 # Tests the 79 whole words from AN4, using a trigram LM based on 
 # the spoken words of AN4.
+#-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-4\
 
 an4_words_trigram:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-5\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-4 \
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=15.0 \
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
