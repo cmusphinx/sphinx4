@@ -107,7 +107,7 @@ $1 == "metrics"   {
 }
 
 function dateAnchor(date) {
-    return "<a href=\"" date ".html\">" date "</a>";
+    return "<a href=\"./cgi-bin/whatsNew?"date"\">" date "</a>";
 }
 
 #####

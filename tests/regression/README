@@ -24,6 +24,11 @@ Requirements:
  - To add or remove people from the email notification list edit the
    'mailReport' script.
 
+ - whatsNew is a perl script used from the cgi-bin directory on the 
+   cmusphinx project shell space. It makes use of a history file, 
+   generated automatically. The file creation occurs at sf.net via a cron
+   job. The crontab and the script that creates the history file are also
+   located in the cgi-bin directory.
 
  - To setup a nightly regression test, run the script 'regressionTest' 
    from a crontab job. Make sure that paths are setup properly.  Here

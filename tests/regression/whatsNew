@@ -18,42 +18,51 @@ sub getPreviousVersion {
 $queryDate = $ARGV[0];
 $viewCVS = "http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/cmusphinx/";
 
+print "Content-Type: text/html\n\n";
 print "<html>\n";
-print "<head>";
-print "<title>Sphinx 4 Source Changes on $queryDate </title>";
-print "</head>";
-print "<body>";
+print "<head>\n";
+print "<title>Sphinx 4 Source Changes on $queryDate </title>\n";
+print "</head>\n";
+print "<body>\n";
 
-print "<table cellpadding=0 cellspacing=0 border=0 width=100%";
-print "    align=center bgcolor=#ccccff>";
-print "<tbody>";
-print "<tr>";
-print "<td valign=top align=center><br>";
-print "<big><big><b>Sphinx 4 Source Changes for $queryDate";
-print "</b></big></big><br>";
-print "<br>";
-print "</td>";
-print "</tr>";
-print "</tbody>";
-print "</table>";
-print "<br>";
-print "</div>";
-print "<br>";
+print "<table cellpadding=0 cellspacing=0 border=0 width=100%\n";
+print "    align=center bgcolor=#ccccff>\n";
+print "<tbody>\n";
+print "<tr>\n";
+print "<td valign=top align=center><br>\n";
+print "<big><big><b>Sphinx 4 Source Changes for $queryDate\n";
+print "</b></big></big><br>\n";
+print "<br>\n";
+print "</td>\n";
+print "</tr>\n";
+print "</tbody>\n";
+print "</table>\n";
+print "<br>\n";
+print "</div>\n";
+print "<br>\n";
 
 
-print "<br>";
-open(HIST, "cvs_history $queryDate | ");
+print "<br>\n";
+
+#$cvs_history = "/usr/bin/cvs -d:pserver:anonymous\@cvs1:/cvsroot/cmusphinx history -ac";
+
+$cvs_history_file = "cvs_history.gz";
+$cvs_history = "gunzip -c $cvs_history_file";
+
+open(HIST, "$cvs_history | ") or print "<p>Can't open cvs history.</p>";
 
 # print start_table({-border=>''});
 print "<table align=center cellpadding=2 cellspacing=2 border=1 width=80%>\n";
 
-print "<tr align=CENTER,valign=TOP, bgcolor=#ccccff>";
-print "<th> Path </th>";
-print "<th> File </th>";
-print "<th> Version </th>";
-print "<th> Who </th>";
+print "<tr align=CENTER,valign=TOP, bgcolor=#ccccff>\n";
+print "<th> Path </th>\n";
+print "<th> File </th>\n";
+print "<th> Version </th>\n";
+print "<th> Who </th>\n";
 
 while (<HIST>) {
+    next unless /sphinx4/;
+    next unless /$queryDate/;
     ($op, $date, $time, $lines, $who, $version, $file, $path, $foo,
     $bar) = split(/\s+/, $_);
     $fullPath = $path . "/" . $file;
@@ -64,21 +73,34 @@ while (<HIST>) {
         . "&r2=" . getPreviousVersion($version);
 
     if ($file ne "regression.log") {
-	print "<tr align=left valign=top>";
-	print "<td> $path </td>";
-	print "<td> <a href=$versionURL>" . $file . "</a></td>"; 
-	print "<td> <a href=$diffURL> $version</a> </td>";
-	print "<td> $who </td>";
-	print "</tr>";
+	print "<tr align=left valign=top>\n";
+	print "<td> $path </td>\n";
+	print "<td> <a href=$versionURL>" . $file . "</a></td>\n"; 
+	print "<td> <a href=$diffURL> $version</a> </td>\n";
+	print "<td> $who </td>\n";
+	print "</tr>\n";
     }
 }
+
+close(HIST);
+unlink $passfile;
+
 print "</table>\n";
 
-print "<UL>" ;
-print  "<li> Click File to show source code</li>" ;
-print  "<li> Click Version to show changes made since last version</li>";
-print "</UL>" ;
+print "<UL>\n";
+
+$date_string = (stat($cvs_history_file))[9];
+print  "<li> Includes checkins up to " . localtime($date_string);
+if ((localtime($date_string))[8]) {
+   print " PDT</li>\n";
+} else {
+   print " PST</li>\n";
+}
+
+print  "<li> Click File to show source code</li>\n";
+print  "<li> Click Version to show changes made since last version</li>\n";
+print "</UL>\n";
 
 
-print "</body";
+print "</body\n";
 print "</html>\n";

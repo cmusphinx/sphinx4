@@ -69,7 +69,8 @@ echo $time > .startTimeOfDay
 # Generate the regression test web page
 #################################A
 $regressionDir/pushReport
-$regressionDir/pushChanges
+# Changes is now generates from a perl script
+# $regressionDir/pushChanges
 
 ###############################
 # Generate the test results

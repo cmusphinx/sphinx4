@@ -170,7 +170,8 @@ $regressionDir/mailReport
 # Generate the regression test web page
 #################################A
 $regressionDir/pushReport
-$regressionDir/pushChanges
+# Changes now generated from a perl script
+# $regressionDir/pushChanges
 
 ###############################
 # Generate the test results
