@@ -209,6 +209,7 @@ public class Sphinx3Loader implements Loader {
     // --------------------------------------
     private String name;
     private boolean binary;
+    private boolean sparseForm;
     private int vectorLength;
     private String location;
     private String model;
@@ -229,6 +230,7 @@ public class Sphinx3Loader implements Loader {
         this.name = name;
         registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
         registry.register(PROP_IS_BINARY, PropertyType.BOOLEAN);
+	registry.register(PROP_SPARSE_FORM, PropertyType.BOOLEAN);
         registry.register(PROP_VECTOR_LENGTH, PropertyType.INT);
         registry.register(PROP_LOCATION, PropertyType.STRING);
         registry.register(PROP_MODEL, PropertyType.STRING);
@@ -247,6 +249,7 @@ public class Sphinx3Loader implements Loader {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
         binary = ps.getBoolean(PROP_IS_BINARY, PROP_IS_BINARY_DEFAULT);
+	sparseForm = ps.getBoolean(PROP_SPARSE_FORM, PROP_SPARSE_FORM_DEFAULT);
         vectorLength = ps
                 .getInt(PROP_VECTOR_LENGTH, PROP_VECTOR_LENGTH_DEFAULT);
         location = ps.getString(PROP_LOCATION, PROP_LOCATION_DEFAULT);
@@ -1187,9 +1190,7 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
     protected Pool loadTransitionMatricesAscii(String path)
             throws FileNotFoundException, IOException {
         InputStream inputStream = StreamFactory.getInputStream(location, path);
-        boolean sparseForm = acousticProperties.getBoolean(PROP_SPARSE_FORM,
-                PROP_SPARSE_FORM_DEFAULT);
-        logger.info("Loading transition matrices from: ");
+	logger.info("Loading transition matrices from: ");
         logger.info(path);
         int numMatrices;
         int numStates;
@@ -1199,6 +1200,11 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
         est.expectString("tmat");
         numMatrices = est.getInt("numMatrices");
         numStates = est.getInt("numStates");
+	logger.info("with " + numMatrices + " and " + numStates + 
+		    " states, in " + (sparseForm ? "sparse" : "dense") +
+		    " form");
+	
+	// read in the matrices
         for (int i = 0; i < numMatrices; i++) {
             est.expectString("tmat");
             est.expectString("[" + i + "]");
@@ -1242,17 +1248,13 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
      *                 if an error occurs while loading the data
      */
     protected Pool loadTransitionMatricesBinary(String path)
-        throws FileNotFoundException, IOException {
-        boolean sparseForm = acousticProperties.getBoolean
-	    (PROP_SPARSE_FORM, 
-	     PROP_SPARSE_FORM_DEFAULT);
+        throws FileNotFoundException, IOException {        
 	logger.info("Loading transition matrices from: ");
 	logger.info( path);
 	int numMatrices;
 	int numStates;
         int numRows;
         int numValues;
-
 
         Properties props = new Properties();
         DataInputStream dis = readS3BinaryHeader(location, path, props);
