@@ -275,7 +275,7 @@
                 type="edu.cmu.sphinx.instrumentation.SpeedTracker">
         <property name="recognizer" value="${recognizer}"/>
         <property name="frontend" value="${frontend}"/>
-	<property name="showSummary" value="false"/>
+	<property name="showSummary" value="true"/>
 	<property name="showDetails" value="false"/>
     </component>
     
