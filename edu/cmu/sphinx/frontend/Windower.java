@@ -213,7 +213,9 @@ public class Windower extends DataProcessor implements AudioSource {
 
         // save elements that also belong to the next window
         overflowBuffer.reset();
-        overflowBuffer.append(allSamples, residual, length - residual);
+	if (length - residual > 0) {
+	    overflowBuffer.append(allSamples, residual, length - residual);
+	}
     }
 
 
