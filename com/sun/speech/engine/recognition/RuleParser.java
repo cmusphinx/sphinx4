@@ -365,7 +365,7 @@ public class RuleParser {
             if (rcount != RuleCount.ONCE_OR_MORE) {
                 p.addElement(empty);
             }
-            if (rcount == rc.OPTIONAL) {
+            if (rcount == RuleCount.OPTIONAL) {
                 return p;
             }
             for (int m=2; m<=input.length-iPos; m++) {
