@@ -11,7 +11,7 @@
  */
 
 
-package tests.frontend;
+package tests.live;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
