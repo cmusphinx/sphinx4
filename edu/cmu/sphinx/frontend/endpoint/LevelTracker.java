@@ -55,7 +55,7 @@ public class LevelTracker extends DataProcessor implements AudioSource {
     /**
      * The default value of PROP_THRESHOLD.
      */
-    public static final double PROP_THRESHOLD_DEFAULT = 10;
+    public static final double PROP_THRESHOLD_DEFAULT = 15;
 
     /**
      * The SphinxProperty specifying the adjustment.
@@ -67,17 +67,33 @@ public class LevelTracker extends DataProcessor implements AudioSource {
      */
     public static final double PROP_ADJUSTMENT_DEFAULT = 0.003;
 
+    /**
+     * The SphinxProperty specifying whether to print debug messages.
+     */
+    public static final String PROP_DEBUG = PROP_PREFIX + "debug";
 
-    private double averageNumber;
+    /**
+     * The default value of PROP_DEBUG.
+     */
+    public static final boolean PROP_DEBUG_DEFAULT = false;
+    
+
+    private boolean debug;
+    private double averageNumber = 1;
     private double adjustment;
     private double level;
     private double background;
     private double threshold;
     private int frameLength;
-    private int lastAudioStart;
-    private Audio lastAudio;
     private AudioSource predecessor;
+    private SpeechMarker speechMarker;
+    private AudioFilter filter;
+    
 
+    /**
+     * Constructs an un-initialized LevelTracker.
+     */
+    public LevelTracker() {}
 
     /**
      * Initializes an Endpointer with the given name, context,
@@ -99,6 +115,13 @@ public class LevelTracker extends DataProcessor implements AudioSource {
         this.predecessor = predecessor;
         reset();
         setProperties();
+        speechMarker = new SpeechMarker();
+        speechMarker.initialize
+            ("SpeechMarker", getContext(), getSphinxProperties(), 
+             new SpeechClassifier());
+        filter = new AudioFilter
+            ("AudioFilter", getContext(), getSphinxProperties(),
+             speechMarker);
     }
 
     /**
@@ -106,9 +129,12 @@ public class LevelTracker extends DataProcessor implements AudioSource {
      */
     private void setProperties() {
         SphinxProperties props = getSphinxProperties();
+        frameLength = props.getInt
+            (PROP_FRAME_LENGTH, PROP_FRAME_LENGTH_DEFAULT);
         adjustment = props.getDouble(PROP_ADJUSTMENT, PROP_ADJUSTMENT_DEFAULT);
         threshold = props.getDouble(PROP_THRESHOLD, PROP_THRESHOLD_DEFAULT);
-    }        
+        debug = props.getBoolean(PROP_DEBUG, PROP_DEBUG_DEFAULT);
+    }
 
     /**
      * Resets this LevelTracker to a starting state.
@@ -116,47 +142,6 @@ public class LevelTracker extends DataProcessor implements AudioSource {
     private void reset() {
         level = 0;
         background = 100;
-        lastAudio = null;
-        lastAudioStart = 0;
-    }
-
-    /**
-     * Returns the logarithm base 10 of the root mean square of the
-     * given samples.
-     *
-     * @param sample the samples
-     *
-     * @return the calculated log root mean square in log 10
-     */
-    private static double logRootMeanSquare(double[] samples) {
-        double sumOfSquares = 0.0f;
-        for (int i = 0; i < samples.length; i++) {
-            double sample = samples[i];
-            sumOfSquares += sample * sample;
-        }
-        double rootMeanSquare = Math.sqrt((double)sumOfSquares/samples.length);
-        return (LogMath.log10((float)rootMeanSquare) * 20);
-    }
-
-    /**
-     * Classifies the given audio frame as speech or not, and updates
-     * the endpointing parameters.
-     *
-     * @param audio the audio frame
-     */
-    private void classify(Audio audio) {
-        double current = logRootMeanSquare(audio.getSamples());
-        level = ((level * averageNumber) + current)/(averageNumber + 1);
-        if (current < background) {
-            background = current;
-        } else {
-            background += (current - background) * adjustment;
-        }
-        if (level < background) {
-            level = background;
-        }
-        boolean isSpeech = (level - background > threshold);
-        audio.setSpeech(isSpeech);
     }
 
     /**
@@ -169,108 +154,95 @@ public class LevelTracker extends DataProcessor implements AudioSource {
      * @see Audio
      */
     public Audio getAudio() throws IOException {
-        Audio audio = predecessor.getAudio();
-        if (audio != null) {
-            if (audio.hasContent()) {
-                processIncomingAudio(audio);
-            }
-        }
-        return audio;
+        return filter.getAudio();            
     }
 
     /**
-     * Perform endpointing on the given Audio object.
-     *
-     * @param audio the Audio object to endpoint
+     * Classifies Audio into either speech or non-speech.
      */
-    private void processIncomingAudio(Audio audio) throws IOException {
+    class SpeechClassifier implements AudioSource {
 
-        int dataLength = 0;
+        List outputQueue = new LinkedList();
         
-        // include any residual samples from the last Audio object
-        boolean hasResidualAudio =
-            (lastAudio != null && 
-             lastAudioStart < lastAudio.getSamples().length);
-
-        if (hasResidualAudio) {
-            dataLength += (lastAudio.getSamples().length - lastAudioStart);
+        /**
+         * Returns the logarithm base 10 of the root mean square of the
+         * given samples.
+         *
+         * @param sample the samples
+         *
+         * @return the calculated log root mean square in log 10
+         */
+        private double logRootMeanSquare(double[] samples) {
+            assert samples.length > 0;
+            double sumOfSquares = 0.0f;
+            for (int i = 0; i < samples.length; i++) {
+                double sample = samples[i];
+                sumOfSquares += sample * sample;
+            }
+            double rootMeanSquare = Math.sqrt
+                ((double)sumOfSquares/samples.length);
+            return (LogMath.log10((float)rootMeanSquare) * 20);
         }
-
-        List audioList = new LinkedList();
-        double[] data = audio.getSamples();
-        dataLength += data.length;
-        audioList.add(audio);
-
-        Audio signalFrame = null;
-
-        if (dataLength < frameLength) {
-            // make sure we at least have one frame's worth of data
-            while (dataLength < frameLength) {
-                Audio nextAudio = predecessor.getAudio();
-                if (nextAudio != null) {
+        
+        /**
+         * Classifies the given audio frame as speech or not, and updates
+         * the endpointing parameters.
+         *
+         * @param audio the audio frame
+         */
+        private void classify(Audio audio) {
+            double current = logRootMeanSquare(audio.getSamples());
+            // System.out.println("current: " + current);
+            level = ((level * averageNumber) + current)/(averageNumber + 1);
+            if (current < background) {
+                background = current;
+            } else {
+                background += (current - background) * adjustment;
+            }
+            if (level < background) {
+                level = background;
+            }
+            boolean isSpeech = (level - background > threshold);
+            audio.setSpeech(isSpeech);
+            if (debug) {
+                String speech = "";
+                if (audio.isSpeech()) {
+                    speech = "*";
+                }
+                System.out.println("Bkg: " + background + ", level: " + level +
+                                   ", current: " + current + " " + speech);
+            }
+            outputQueue.add(audio);
+        }
+        
+        /**
+         * Returns the next Audio object.
+         *
+         * @return the next Audio object, or null if none available
+         *
+         * @throws java.io.IOException if an error occurred
+         *
+         * @see Audio
+         */
+        public Audio getAudio() throws IOException {
+            if (outputQueue.size() == 0) {
+                Audio audio = predecessor.getAudio();
+                if (audio != null) {
+                    audio.setSpeech(false);
                     if (audio.hasContent()) {
-                        audioList.add(nextAudio);
-                        dataLength += audio.getSamples().length;
+                        assert audio.getSamples().length == frameLength;
+                        classify(audio);
                     } else {
-                        signalFrame = nextAudio;
-                        break;
+                        outputQueue.add(audio);
                     }
                 }
-            }            
-        }
-
-        // allocate for the next frame
-        if (dataLength >= frameLength) {
-            data = new double[frameLength];
-        } else {
-            data = new double[dataLength];
-        }
-        
-        int start = 0;
-        // copy residual data from last Audio
-        if (hasResidualAudio) {
-            int residualLength =
-                (lastAudio.getSamples().length - lastAudioStart);
-            System.arraycopy(lastAudio.getSamples(), lastAudioStart,
-                             data, start, residualLength);
-            start += residualLength;                             
-        }
-
-        // copy Audio data
-        Audio thisAudio = null;
-        int length = 0;
-
-        for (Iterator i = audioList.iterator(); 
-             i.hasNext() && start < data.length; ) {
-            thisAudio = (Audio) i.next();
-            i.remove();
-            length = thisAudio.getSamples().length;
-            int capacity = (data.length - start);
-            if (length > capacity) {
-                length = capacity;
             }
-            System.arraycopy(thisAudio.getSamples(), 0,
-                             data, start, length);
-            start += length;
+            if (outputQueue.size() > 0) {
+                Audio audio = (Audio) outputQueue.remove(0);
+                return audio;
+            } else {
+                return null;
+            }
         }
-
-        // the first audio frame
-        Audio newAudio = new Audio(data);
-        classify(newAudio);
-
-        assert (audioList.size() == 0);
-
-        start = length;
-        while ((start + frameLength) < thisAudio.getSamples().length) {
-            data = new double[frameLength];
-            System.arraycopy(thisAudio.getSamples(), start,
-                             data, 0, data.length);
-            start += frameLength;
-            newAudio = new Audio(data);
-            classify(newAudio);
-        }
-
-        lastAudio = thisAudio;
-        lastAudioStart = start;
     }
 }
