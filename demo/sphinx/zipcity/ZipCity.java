@@ -12,7 +12,6 @@
 
 package demo.sphinx.zipcity;
 
-import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
@@ -74,15 +73,16 @@ public class ZipCity extends JFrame {
     private ZipInfo currentInfo;
     private ZipRecognizer zipRecognizer;
     private ZipDatabase zipDB;
+    private boolean continuousMode = false;
 
     /**
      * Constructs a ZipCity with the given title.
      *
-     * @param title the title of this JFrame
-     * @param live the Live instance that this GUI controls
+     * @param continuousMode if true recognition is continuous
      */
-    public ZipCity() {
+    public ZipCity(boolean continuousMode) {
         super("ZipCity - a Sphinx-4 WebStart Demo");
+        this.continuousMode = continuousMode;
         setSize(900, 520);
         setDefaultLookAndFeelDecorated(true);
         imagePanel = createImagePanel();
@@ -108,12 +108,7 @@ public class ZipCity extends JFrame {
             public void actionPerformed(ActionEvent ae) {
                 if (speakButton.isEnabled()) {
                     speakButton.setEnabled(false);
-                    if (zipRecognizer.microphoneOn()) {
-                        setMessage("Speak a zip code ...");
-                    } else {
-                        setMessage(
-                        "Sorry, can't find the microphone on your computer.");
-                    }
+                    startListening();
                 }
             }
         });
@@ -137,6 +132,18 @@ public class ZipCity extends JFrame {
     }
 
     /**
+     * Starts listening for zipcodes
+     */
+    private void startListening() {
+        if (zipRecognizer.microphoneOn()) {
+            setMessage("Speak a zip code ...");
+        } else {
+            setMessage(
+            "Sorry, can't find the microphone on your computer.");
+        }
+    }
+
+    /**
      * Perform any needed initializations and then enable the 'speak'
      * button, allowing recognition to proceed
      */
@@ -154,11 +161,18 @@ public class ZipCity extends JFrame {
             zipRecognizer.addZipListener(new ZipListener() {
                 public void notify(String zip) {
                     updateMap(zip);
+                    if (continuousMode) {
+                        zipRecognizer.microphoneOn();
+                    }
                 }
             });
 
             displayMap();
-            setMessage("ZipCity Version 2.0 - Ready");
+            if (continuousMode) {
+                startListening();
+            } else {
+                setMessage("ZipCity Version 2.0 - Ready");
+            }
         } catch (Throwable e) {
             setMessage("Error: " + e.getMessage());
         }
@@ -263,7 +277,11 @@ public class ZipCity extends JFrame {
         speakButton = new JButton("Speak");
         speakButton.setEnabled(false);
         speakButton.setMnemonic('s');
-        mainPanel.add(speakButton);
+        // if this is continuous mode, don't add the speak button
+        // since it is not necessary
+        if (!continuousMode) {
+            mainPanel.add(speakButton);
+        }
         mainPanel.add(createMessagePanel());
         return mainPanel;
     }
@@ -480,16 +498,36 @@ public class ZipCity extends JFrame {
         }
     }
 
+    /**
+     * Displays the usage message
+     */
+    private static void usage() {
+        System.out.println("Usage:  ZipCity [-continuous] [-help]");
+    }
 
     /**
      * The main program for zip city.  Creates the ZipCity frame,
      * displays it, and  runs it.
      *
-     * @param args program arguments (none necessary or required for
-     * zipcity)
+     * Usage:
+     *
+     *   java -mx200m ZipCity [-continuous]
+     *
+     * @param args program arguments 
      */
     public static void main(String[] args) {
-        ZipCity zipCity = new ZipCity();
+        boolean continuous = false;
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-continuous")) {
+                continuous = true;
+            } else {
+                usage();
+                System.exit(0);
+            }
+        }
+
+        ZipCity zipCity = new ZipCity(continuous);
         zipCity.setVisible(true);
         zipCity.go();
     }
