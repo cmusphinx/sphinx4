@@ -42,13 +42,17 @@ BEGIN {
 
 # Here is a sample of what we are parsing
 #
+# ------------- Summary Statistics -------------
+#   Accuracy: 60.227%    Errors: 45  (Sub: 31  Ins: 10  Del: 4)
+#   Words: 88   Matches: 53    WER: 51.136%
+#   Sentences: 1   Matches: 0   SentenceAcc: 0.000%
+#   Total Time Audio: 44.56s  Proc: 31.73s  Speed: 0.71 X real time
+#   Response Time:  Avg: 0.021125s  Max: 0.285s  Min: 0.0020s
+#   Mem  Total: 126.62 Mb  Free: 107.87 Mb
+#   Used: This: 18.75 Mb  Avg: 13.46 Mb  Max: 18.75 Mb
+#   Utterances:  Actual: 24  Found: 24
+#   Gap Insertions: 10
 
-# Accuracy: 100.000%    Errors: 0  (Sub: 0  Ins: 0  Del: 0)
-# Words: 126   Matches: 126    WER: 0.000%
-# Sentences: 44   Matches: 44   SentenceAcc: 100.000%
-# Total Time Audio: 149.03s  Proc: 30.86s  Speed: 0.21 X real time
-# Mem Total: 126.75 Mb Free: 106.42 Mb 
-# Used: This: 37.60 Mb  Avg: 57.59 Mb  Max: 94.92 Mb
 
 
     while (getline x < ARGV[1] > 0) {
@@ -59,27 +63,7 @@ BEGIN {
 	if (summaryFound == 0) {
 	    if (arry[3] == "Summary") {
 		summaryFound = 1;
-	    } else {
-		if (liveSummaryFound == 0) {
-		    if (arry[3] == "LiveSummary") {
-			liveSummaryFound = 1;
-		    }
-		} else {
-		    if (arry[1] == "Utterances:") {
-			actualUtterances = arry[3];
-			foundUtterances = arry[5];
-		    } else if (arry[1] == "Gap" && arry[2] == "Insertions:") {
-			gapInsertions = arry[3];
-		    } else if (arry[1] == "Response") {
-			avgResponseTime = arry[4];
-			maxResponseTime = arry[6];
-			minResponseTime = arry[8];
-			gsub(/s/, "", avgResponseTime);
-			gsub(/s/, "", maxResponseTime);
-			gsub(/s/, "", minResponseTime);
-		    }
-		}
-	    }
+	    } 
 	} else {
 	    if (arry[3] == "Audio:") {
 	        audioTime = arry[4];
@@ -97,7 +81,19 @@ BEGIN {
 	    } else if (arry[1] == "Sentences:") {
 	        sentences = arry[2];
 	        correctSentences = arry[4];
-	    } 
+	    } else if (arry[1] == "Utterances:") {
+                actualUtterances = arry[3];
+                foundUtterances = arry[5];
+            } else if (arry[1] == "Gap" && arry[2] == "Insertions:") {
+                gapInsertions = arry[3];
+            } else if (arry[1] == "Response") {
+                avgResponseTime = arry[4];
+                maxResponseTime = arry[6];
+                minResponseTime = arry[8];
+                gsub(/s/, "", avgResponseTime);
+                gsub(/s/, "", maxResponseTime);
+                gsub(/s/, "", minResponseTime);
+            }
 	}
     }
     close(ARGV[1]);
