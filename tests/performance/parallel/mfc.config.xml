@@ -196,9 +196,9 @@
     
     <component name="melFilterBank" 
         type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank">
-        <property name="numFilters" value="32"/>
-	<property name="minfreq" value="130"/>
-	<property name="maxfreq" value="3600"/>
+        <property name="numberFilters" value="32"/>
+	<property name="minimumFrequency" value="130"/>
+	<property name="maximumFrequency" value="3600"/>
     </component>
     
     <component name="dct" 
