@@ -36,8 +36,9 @@ import edu.cmu.sphinx.decoder.scorer.Scoreable;
  * Note that all scores are maintained in the LogMath log base.
  */
 public class FastActiveList implements ActiveList  {
+
     private SphinxProperties props = null;
-    private int absoluteBeamWidth = 2000;
+    private int absoluteBeamWidth;
     private float relativeBeamWidth;
 
     // when the list is changed these things should be
@@ -63,6 +64,24 @@ public class FastActiveList implements ActiveList  {
 	setProperties(props);
     }
 
+
+    /**
+     * Creates a FastActiveList with the given properties,
+     * absolute beam and relative beam.
+     *
+     * @param props the properties of the FastActiveList
+     * @param absoluteBeamWidth the absolute beam width
+     * @param relativeBeamWidth the relative beam width
+     */
+    public FastActiveList(SphinxProperties props, int absoluteBeamWidth,
+                          float relativeBeamWidth) {
+        this.props = props;
+        this.absoluteBeamWidth = absoluteBeamWidth;
+        this.relativeBeamWidth = 
+            LogMath.getLogMath(props.getContext()).linearToLog
+            (relativeBeamWidth);
+    }
+
     
     /**
      * Returns the SphinxProperties of this list.
@@ -81,8 +100,10 @@ public class FastActiveList implements ActiveList  {
      */
     public void setProperties(SphinxProperties props) {
 	this.props = props;
-	this.absoluteBeamWidth = props.getInt(PROP_ABSOLUTE_BEAM_WIDTH, 
-				      PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT);
+	this.absoluteBeamWidth = props.getInt
+            (PROP_ABSOLUTE_BEAM_WIDTH, 
+             PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT);
+
 	double linearRelativeBeamWidth  
 	    = props.getDouble(PROP_RELATIVE_BEAM_WIDTH, 
 			      PROP_RELATIVE_BEAM_WIDTH_DEFAULT);
