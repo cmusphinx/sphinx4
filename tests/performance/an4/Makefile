@@ -29,7 +29,7 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 PROFILE_FLAGS= -Xprof 
 LOG_GC_FLAGS=  -Xloggc:gc.txt
  GC_FLAGS=  -XX:+PrintGCDetails
-GC_FLAGS = -ms128m -mx256m
+GC_FLAGS = -ms128m -mx512m
 # GC_FLAGS=  -XX:+UseConcMarkSweepGC
 #GC_FLAGS=  -XX:+UseParallelGC
 #GC_FLAGS= -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+PrintGCDetails
@@ -85,10 +85,46 @@ an4_words_unigram:
 
 an4_words_unigram_quick:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=100\
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=25\
     -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.TreeActiveList \
     -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+    -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
+    -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
+	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
+
+an4_words_unigram_quick_simple:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=25\
+    -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
+    -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.SimpleActiveList \
+    -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+    -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
+    -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
+	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
+
+an4_words_unigram_simple:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+    -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
+    -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.SimpleActiveList \
+    -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+    -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
+    -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
+	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
+
+
+an4_words_unigram_quick_sp:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+    -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
+    -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.TreeActiveList \
+    -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+    -Dedu.cmu.sphinx.search.ActiveList.strictPruning=true \
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
@@ -100,7 +136,23 @@ bush_test:
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
     -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushderby=true \
+    -Dedu.cmu.sphinx.search.ActiveList.strictPruning=true \
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.bushderbyEta=10000 \
+-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.TreeActiveList \
+    -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
+    -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
+	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
+
+bush_test2:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+    -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
+    -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushderby=true \
+    -Dedu.cmu.sphinx.search.ActiveList.strictPruning=true \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.bushderbyEta=1 \
+-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.SimpleActiveList \
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
@@ -155,6 +207,7 @@ an4_spelling_trigram:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-26\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false\
+-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.TreeActiveList \
     -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.model.language.format=arpa \
     -Dedu.cmu.sphinx.model.language.location=./an4_spelling.trigram.lm \
