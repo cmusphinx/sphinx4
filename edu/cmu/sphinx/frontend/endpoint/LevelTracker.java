@@ -16,6 +16,7 @@ package edu.cmu.sphinx.frontend.endpoint;
 import edu.cmu.sphinx.frontend.Audio;
 import edu.cmu.sphinx.frontend.AudioSource;
 import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Signal;
 
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -184,7 +185,7 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
     }
 
     /**
-     * Returns the next Audio object, which are already classified
+     * Returns the next Audio object, which are already class[Aified
      * as speech or non-speech.
      *
      * @return the next Audio object, or null if none available
@@ -278,7 +279,14 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
                     */
                     audio.setSpeech(false);
                     if (audio.hasContent()) {
-                        assert audio.getSamples().length <= frameLength;
+                        if (audio.getSamples().length > frameLength) {
+                            throw new Error
+                                ("Size of each audio frame should be <= " +
+                                 frameLength + ". If you have 2 bytes per " +
+                                 "sample, the property " + 
+                                 FrontEnd.PROP_BYTES_PER_AUDIO_FRAME + 
+                                 "should be set to " + frameLength*2);
+                        }
                         classify(audio);
                     } else {
                         outputQueue.add(audio);
