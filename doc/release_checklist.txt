@@ -4,6 +4,7 @@
     - check all web docs by building javadocs and running linklint
      (linklint.org)
     - check in all changes
+    - check latest regression test outputs for no regressions
 
 2) Create the binary and source distribution:
     - Download fresh copy of Sphinx-4 from sourceforge
@@ -25,8 +26,13 @@
     - java -mx312m -jar bin/HelloNGram.jar
     - java -jar bin/ZipCity.jar
     - java -jar bin/AudioTool.jar
+    - check libs for proper output:
+        - cd lib
+        - java -jar TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
+        - java -jar WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
+        - java -jar sphinx4.jar
     - Go through index.html, click through the links to make sure they are
-      not broken.
+      not broken. (or use 'linklint /@')
 
 4) Test the Source Distribution:
     - jar xvf sphinx4-src-0.1alpha.zip
@@ -40,6 +46,11 @@
     - java -mx312m -jar bin/HelloNGram.jar
     - java -jar bin/ZipCity.jar
     - java -jar bin/AudioTool.jar
+    - check libs for proper output:
+        - cd lib
+        - java -jar TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
+        - java -jar WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
+        - java -jar sphinx4.jar
     - cd tests/live
        be sure to test the playback for live and live-ep
     - ant live
@@ -49,5 +60,5 @@
     - ant run
     - ant run-ep
     - Go through index.html, click through the links to make sure they are
-      not broken.
+      not broken. (or use 'linklint /@')
 
