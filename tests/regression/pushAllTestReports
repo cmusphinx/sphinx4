@@ -16,6 +16,7 @@
 ./makeTestReports ConnectedDigitsResults
 ./makeTestReports SmallVocabResults
 ./makeTestReports MediumVocabResults
+./makeTestReports LargeVocabResults
 
 tar cf testreports.tar AutoGen*.html
 sscp testreports.tar
