@@ -1,0 +1,73 @@
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+
+# Relative path to the top of the source tree
+TOP = ../../../..
+PACKAGE_PATH = tests/knowledge/language/large
+
+# By default, build all of the .java files. 
+FILES = $(shell echo *.java)
+
+# List any sub directories that need to be built
+SUBDIRS = 
+
+# PROFILE_FLAGS= -Xprof
+EXTRA_JAVA_FLAGS = $(PROFILE_FLAGS) -ms1g -mx2g 
+
+##########################################################################
+
+include ${TOP}/build/Makefile.config
+
+CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
+
+
+all:: ${CLASSES} ${STUBS} ${DATA}
+
+
+clean::
+	@$(RM) $(CLASSES)
+
+
+# compares the current output of the binary LM with the "correct" output
+alltests:
+	rm -f ngrams.out
+	rm -f backoff.out
+	$(MAKE) all
+	$(JAVA_CMD) tests.knowledge.language.large.LargeTrigramModelTest file:./binary.props /lab/speech/sphinx4/data/hub4_model/random_ngrams.txt ngrams.out
+	$(JAVA_CMD) tests.knowledge.language.large.LargeTrigramModelTest file:./binary.props /lab/speech/sphinx4/data/hub4_model/random_trigrams.txt backoff.out
+	chmod a+x ./compareOutput.sh
+	./compareOutput.sh ngrams.out s4.hub4.ngram.scores.out backoff.out s4.hub4.ngram.backoff.out
+
+
+# compares the current output of the binary LM with the s3.3 output
+s3tests:
+	rm -f ngrams.out
+	rm -f ngrams.diff
+	rm -f backoff.out
+	rm -f backoff.diff
+	$(MAKE) all
+	$(JAVA_CMD) tests.knowledge.language.large.LargeTrigramModelTest file:./binary.props /lab/speech/sphinx4/data/hub4_model/random_ngrams.txt ngrams.out
+	$(JAVA_CMD) tests.knowledge.language.large.LargeTrigramModelTest file:./binary.props /lab/speech/sphinx4/data/hub4_model/random_trigrams.txt backoff.out
+	$(JAVA_CMD) tests.knowledge.language.large.OutputDiffTest 20 s3.3.hub4.ngram.scores.out ngrams.out > ngrams.diff
+	$(JAVA_CMD) tests.knowledge.language.large.OutputDiffTest 30 s3.3.hub4.ngram.backoff.out backoff.out > backoff.diff
+	chmod a+x ./outputDiff.sh
+	./outputDiff.sh ngrams.diff
+	./outputDiff.sh backoff.diff
+
+
+# tests the scoring of ngrams
+ngram-test:
+	$(MAKE) all
+	$(JAVA_CMD) tests.knowledge.language.large.LargeTrigramModelTest file:./binary.props /lab/speech/sphinx4/data/hub4_model/random_ngrams.txt
+
+
+# tests the calculation of backoff probabilities
+backoff-test:
+	$(MAKE) all
+	$(JAVA_CMD) tests.knowledge.language.large.LargeTrigramModelTest file:./binary.props /lab/speech/sphinx4/data/hub4_model/random_trigrams.txt
