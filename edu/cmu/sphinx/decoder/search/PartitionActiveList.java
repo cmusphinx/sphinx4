@@ -161,6 +161,10 @@ public class PartitionActiveList implements ActiveList  {
             doubleCapacity();
             add(token);
         }
+
+        if (bestToken == null || token.getScore() > bestToken.getScore()) {
+            bestToken = token;
+        }
     }
 
 
@@ -198,6 +202,10 @@ public class PartitionActiveList implements ActiveList  {
             }
 	    tokenList[location] = newToken;
 	    newToken.setLocation(location);
+            if (bestToken == null || 
+		    newToken.getScore() > bestToken.getScore()) {
+                bestToken = newToken;
+            }
 	} else {
 	    add(newToken);
 	}

@@ -145,6 +145,9 @@ public class SortingActiveList implements ActiveList  {
     public void add(Token token) {
 	token.setLocation(tokenList.size());
 	tokenList.add(token);
+        if (bestToken == null || token.getScore() > bestToken.getScore()) {
+            bestToken = token;
+        }
     }
 
 
@@ -171,6 +174,10 @@ public class SortingActiveList implements ActiveList  {
             }
 	    tokenList.set(location, newToken);
 	    newToken.setLocation(location);
+            if (bestToken == null || 
+                        newToken.getScore() > bestToken.getScore()) {
+                bestToken = newToken;
+            }
 	} else {
 	    add(newToken);
 	}

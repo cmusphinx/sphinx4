@@ -143,6 +143,9 @@ public class SimpleActiveList implements ActiveList  {
      */
     public void add(Token token) {
 	tokenList.add(token);
+        if (bestToken == null || token.getScore() > bestToken.getScore()) {
+            bestToken = token;
+        }
     }
 
 
@@ -156,7 +159,7 @@ public class SimpleActiveList implements ActiveList  {
      *
      */
     public void replace(Token oldToken, Token newToken) {
-	tokenList.add(newToken);
+        add(newToken);
 	if (oldToken != null) {
 	    if (!tokenList.remove(oldToken)) {
                 // Some optional debugging code here to dump out the paths
