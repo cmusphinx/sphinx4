@@ -57,6 +57,7 @@ import java.util.Random;
 import java.util.Comparator;
 
 /**
+ * A linguist that organizes the search space in a lex tree
  */
 public class LexTreeLinguist implements  Linguist {
 
@@ -158,6 +159,7 @@ public class LexTreeLinguist implements  Linguist {
      *
      * @param context the context to associate this linguist with
      * @param languageModel the language model
+     * @param dictionary the dictionary for this linguist
      * @param grammar the grammar for this linguist
      * @param models the acoustic model used by this linguist
      */
@@ -1054,6 +1056,9 @@ public class LexTreeLinguist implements  Linguist {
          }
     }
 
+    /**
+     * Represents  non-emitting hmm state in the lex tree
+     */
     public class LexTreeNonEmittingHMMState extends LexTreeHMMState {
         
         /**

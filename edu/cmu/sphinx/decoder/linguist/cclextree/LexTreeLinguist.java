@@ -73,6 +73,7 @@ import java.util.Comparator;
  * search space
  * <li> <b> HMMSearchState</b> represents an HMM state in the search
  * space
+ * </ul>
  *
  * A linguist has a great deal of latitude about the order in which it
  * returns states. For instance a 'flat' linguist may return a
@@ -300,6 +301,7 @@ public class LexTreeLinguist implements  Linguist {
      *
      * @param context the context to associate this linguist with
      * @param languageModel the language model
+     * @param dictionary the dictionary to use
      * @param grammar the grammar for this linguist
      * @param models the acoustic model used by this linguist
      */
@@ -1211,6 +1213,9 @@ public class LexTreeLinguist implements  Linguist {
          }
     }
 
+    /**
+     * Represents a non emitting hmm state
+     */
     public class LexTreeNonEmittingHMMState extends LexTreeHMMState {
         
         /**
@@ -1366,6 +1371,9 @@ public class LexTreeLinguist implements  Linguist {
          }
     }
 
+    /**
+     * Represents the final end of utterance word
+     */
     public class LexTreeEndWordState extends LexTreeWordState 
         implements WordSearchState {
 
