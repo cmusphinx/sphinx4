@@ -191,7 +191,6 @@ tidigits_trigram_lex:
 tidigits_wordlist_live:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer=50 \
-	-Dedu.cmu.sphinx.frontend.util.ConcatFileAudioSource.transcriptFile=transcript.txt\
 	-Dedu.cmu.sphinx.frontend.util.ConcatFileAudioSource.skip=$(SKIP)\
 	-Dedu.cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile=/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw \
 	-Dedu.cmu.sphinx.frontend.keepAudioReference=false \
@@ -201,7 +200,6 @@ tidigits_wordlist_live:
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.LevelTracker \
 	-Dedu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=16 \
 	-Dedu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature=true \
-	-Dedu.cmu.sphinx.decoder.LivePretendDecoder.hypothesisTranscript=hypothesis.txt \
 	-Dedu.cmu.sphinx.decoder.LivePretendDecoder.alignInterval=870 \
 	edu.cmu.sphinx.decoder.LivePretendDecoder tidigits.props tidigits.batch
 
@@ -209,7 +207,6 @@ tidigits_wordlist_live:
 tidigits_an4_words_rejection_live:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer=50 \
-	-Dedu.cmu.sphinx.frontend.util.ConcatFileAudioSource.transcriptFile=transcript.txt\
 	-Dedu.cmu.sphinx.frontend.util.ConcatFileAudioSource.skip=$(SKIP)\
 	-Dedu.cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile=/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw \
 	-Dedu.cmu.sphinx.frontend.keepAudioReference=false \
@@ -219,6 +216,5 @@ tidigits_an4_words_rejection_live:
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.LevelTracker \
 	-Dedu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=16 \
 	-Dedu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature=true \
-	-Dedu.cmu.sphinx.decoder.LivePretendDecoder.hypothesisTranscript=hypothesis.txt \
 	-Dedu.cmu.sphinx.decoder.LivePretendDecoder.alignInterval=870 \
 	edu.cmu.sphinx.decoder.LivePretendDecoder tidigits.props ../an4/an4_words.batch
