@@ -163,8 +163,6 @@ public class BatchDecoder {
 		whichBatch = totalBatches - 1;
 	    }
 	    int startLine = whichBatch * linesPerBatch;
-	    System.out.print("Startline " + startLine + " " );
-	    //
 	    // last batch needs to get all remaining lines
 	    if (whichBatch == (totalBatches - 1)) {
 		list = list.subList(startLine, list.size());
@@ -173,7 +171,6 @@ public class BatchDecoder {
 			linesPerBatch);
 	    }
 	}
-	    System.out.println(" size " + list.size());
 	return list;
     }
 
