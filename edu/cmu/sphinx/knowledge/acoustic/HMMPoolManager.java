@@ -84,13 +84,15 @@ class HMMPoolManager {
 			   AcousticModel.PROP_VARIANCE_FLOOR_DEFAULT);
 
 	createBuffers();
-	logLikelihood = LogMath.getLogZero();
+	logLikelihood = 0.0f;
     }
 
     /**
      * Create buffers for all pools used by the trainer in this pool manager.
      */
     protected void createBuffers() {
+	// the option false or true refers to whether the buffer is in
+	// log scale or not, true if it is.
 	meansBufferPool = create1DPoolBuffer(meansPool, false);
 	varianceBufferPool = create1DPoolBuffer(variancePool, false);
 	matrixBufferPool = create2DPoolBuffer(matrixPool, true);
@@ -133,34 +135,52 @@ class HMMPoolManager {
     /**
      * Accumulate the TrainerScore into the buffers.
      *
+     * @param index the current index into the TrainerScore vector
      * @param score the TrainerScore
      */
-    protected void accumulate(TrainerScore score) {
-	accumulate(score, null);
+    protected void accumulate(int index, TrainerScore[] score) {
+	accumulate(index, score, null);
     }
 
     /**
      * Accumulate the TrainerScore into the buffers.
      *
-     * @param score the TrainerScore
+     * @param index the current index into the TrainerScore vector
+     * @param score the TrainerScore for the current frame
      * @param nextScore the TrainerScore for the next time frame
      */
-    protected void accumulate(TrainerScore score, TrainerScore[] nextScore) {
+    protected void accumulate(int index, 
+			      TrainerScore[] score, 
+			      TrainerScore[] nextScore) {
 	int senoneID;
-	HMMState state = score.getState();
-	if (state == null) {
-	    senoneID = score.getSenoneID();
-	} else {
-	    senoneID = senonePool.indexOf(state.getSenone());
-	}
-	Feature feature = score.getFeature();
+	TrainerScore thisScore = score[index];
+
+	Feature feature = thisScore.getFeature();
 	// We should be doing this just once per utterance...
-	currentLogLikelihood = score.getLogLikelihood();
-	float prob = score.getScore();
-	accumulateMean(senoneID, score);
-	accumulateVariance(senoneID, score);
-	accumulateMixture(senoneID, score);
-	accumulateTransition(senoneID, score, nextScore);
+	currentLogLikelihood = thisScore.getLogLikelihood();
+
+	HMMState state = thisScore.getState();
+	if (state == null) {
+	    // We only care about the case "all models"
+	    senoneID = thisScore.getSenoneID();
+	    if (senoneID == TrainerAcousticModel.ALL_MODELS) {
+		accumulateMean(senoneID, score[index]);
+		accumulateVariance(senoneID, score[index]);
+		accumulateMixture(senoneID, score[index]);
+		accumulateTransition(senoneID, index, score, nextScore);
+	    }
+	} else {
+	    // If state is non-emitting, we presume there's only one
+	    // transition out of it. Therefore, we only accumulate
+	    // data for emitting states.
+	    if (state.isEmitting()) {
+		senoneID = senonePool.indexOf(state.getSenone());
+		accumulateMean(senoneID, score[index]);
+		accumulateVariance(senoneID, score[index]);
+		accumulateMixture(senoneID, score[index]);
+		accumulateTransition(senoneID, index, score, nextScore);
+	    }
+	}
     }
 
     /**
@@ -249,36 +269,50 @@ class HMMPoolManager {
     /**
      * Accumulate transitions from a given state.
      *
-     * @param indexState the state index
+     * @param indexScore the current index into the TrainerScore
      * @param score the score information
+     * @param nextScore the score information for the next frame
      */
-    private void accumulateStateTransition(int indexState, TrainerScore score, 
+    private void accumulateStateTransition(int indexScore,
+					   TrainerScore[] score, 
 					   TrainerScore[] nextScore) {
-	HMMState state = score.getState();
+	HMMState state = score[indexScore].getState();
+	if (state == null) {
+	    // Non-emitting state
+	    return;
+	}
+	int indexState = state.getState();
 	HMM hmm = state.getHMM();
 	float[][] matrix = hmm.getTransitionMatrix();
+	// Find the index for current matrix in the transition matrix pool
 	int indexMatrix = matrixPool.indexOf(matrix);
+	// Find the corresponding buffer
 	Buffer[] bufferArray = 
 	    (Buffer []) matrixBufferPool.get(indexMatrix);
-	for (int i = 0; i < nextScore.length; i++) {
-	    HMMState nextState = nextScore[i].getState();
-	    int indexNextState = nextState.getState();
-	    HMM nextHmm = nextState.getHMM();
-	    if (hmm != nextHmm) {
-		continue;
-	    }
-	    if (matrix[indexState][indexNextState] != 
-		logMath.getLogZero()) {
-		float alpha = score.getAlpha();
-		float beta = nextScore[i].getBeta();
-		float transitionProb = 
-		    hmm.getTransitionProbability(indexState, 
-						 indexNextState);
-		float outputProb = nextScore[i].getScore();
+	// Let's concentrate on the transitions *from* the current state
+	float[] vector = matrix[indexState];
+
+	for (int i = 0; i < vector.length; i++) {
+	    // Make sure this is a valid transition
+	    if (vector[i] != LogMath.getLogZero()) {
+		// We're assuming that if the states have position "a"
+		// and "b" in the HMM, they'll have positions "k+a"
+		// and "k+b" in the graph, that is, their relative
+		// position is the same.
+		int dist = indexState - i;
+		int indexNextScore = indexScore + dist;
+		// Make sure the state is non-emitting (the last in
+		// the HMM, or in the same HMM.
+		assert ((nextScore[indexNextScore].getState() == null) || 
+		     (nextScore[indexNextScore].getState().getHMM() == hmm));
+		float alpha = score[indexScore].getAlpha();
+		float beta = nextScore[indexNextScore].getBeta();
+		float transitionProb = vector[i];
+		float outputProb = nextScore[indexNextScore].getScore();
 		float prob = alpha + beta + transitionProb + outputProb;
 		prob -= currentLogLikelihood;
-		bufferArray[indexState].
-		    logAccumulate(prob, indexNextState, logMath);
+		// i is the index into the next state.
+		bufferArray[indexState].logAccumulate(prob, i, logMath);
 	    }
 	}
     }
@@ -292,12 +326,21 @@ class HMMPoolManager {
      */
     private void accumulateStateTransition(int indexState, HMM hmm, 
 					   float value) {
+	// Find the transition matrix in this hmm
 	float[][] matrix = hmm.getTransitionMatrix();
+	// Find the vector with transitions from the current state to
+	// other states.
 	float[] stateVector = matrix[indexState];
+	// Find the index of the current transition matrix in the
+	// transition matrix pool.
 	int indexMatrix = matrixPool.indexOf(matrix);
+	// Find the buffer for the transition matrix.
 	Buffer[] bufferArray = 
 	    (Buffer []) matrixBufferPool.get(indexMatrix);
+	// Accumulate for the transitions from current state
 	for (int i = 0; i < stateVector.length; i++) {
+	    // Make sure we're not trying to accumulate in an invalid
+	    // transition.
 	    if (stateVector[i] != logMath.getLogZero()) {
 		bufferArray[indexState].logAccumulate(value, i, logMath);
 	    }
@@ -307,7 +350,8 @@ class HMMPoolManager {
     /**
      * Accumulate the transition probabilities.
      */
-    private void accumulateTransition(int indexHmm, TrainerScore score,
+    private void accumulateTransition(int indexHmm, int indexScore,
+				      TrainerScore[] score,
 				      TrainerScore[] nextScore) {
 	if (indexHmm == TrainerAcousticModel.ALL_MODELS) {
 	    // Well, special case... we want to add an amount to all
@@ -316,13 +360,26 @@ class HMMPoolManager {
 		 i.hasNext(); ) {
 		HMM hmm = (HMM) i.next();
 		for (int j = 0; j < hmm.getOrder(); j++) {
-		    accumulateStateTransition(j, hmm, score.getScore());
+		    accumulateStateTransition(j, hmm, 
+				      score[indexScore].getScore());
 		}
 	    }
 	} else {
-	    HMMState state = score.getState();
-	    accumulateStateTransition(state.getState(), score, nextScore);
+	    // For transition accumulation, we don't consider the last
+	    // time frame, since there's no transition from there to
+	    // anywhere...
+	    if (nextScore != null) {
+		accumulateStateTransition(indexScore, score, nextScore);
+	    }
 	}
+    }
+
+    /**
+     * Update the log likelihood. This method should be called for
+     * every utterance.
+     */
+    protected void updateLogLikelihood() {
+	logLikelihood += currentLogLikelihood;
     }
 
     /** 
@@ -347,7 +404,9 @@ class HMMPoolManager {
 	assert pool != null;
 	for (int i = 0; i < pool.size(); i++) {
 	    Buffer buffer = (Buffer)pool.get(i);
-	    buffer.normalize();
+	    if (buffer.wasUsed()) {
+		buffer.normalize();
+	    }
 	}
     }
 
@@ -360,7 +419,9 @@ class HMMPoolManager {
 	assert pool != null;
 	for (int i = 0; i < pool.size(); i++) {
 	    Buffer buffer = (Buffer)pool.get(i);
-	    buffer.logNormalize();
+	    if (buffer.wasUsed()) {
+		buffer.logNormalize();
+	    }
 	}
     }
 
@@ -374,7 +435,9 @@ class HMMPoolManager {
 	for (int i = 0; i < pool.size(); i++) {
 	    Buffer[] bufferArray = (Buffer []) pool.get(i);
 	    for (int j = 0; j < bufferArray.length; j++) {
-		bufferArray[j].logNormalizeNonZero();
+		if (bufferArray[j].wasUsed()) {
+		    bufferArray[j].logNormalizeNonZero();
+		}
 	    }
 	}
     }
@@ -385,6 +448,7 @@ class HMMPoolManager {
     protected void update() {
 	updateMeans();
 	updateVariances();
+	recomputeMixtureComponents();
 	updateMixtureWeights();
 	updateTransitionMatrices();
     }
@@ -410,8 +474,11 @@ class HMMPoolManager {
 	for (int i = 0; i < meansPool.size(); i++) {
 	    float[] means = (float [])meansPool.get(i);
 	    Buffer buffer = (Buffer) meansBufferPool.get(i);
-	    float[] meansBuffer = (float [])buffer.getValues();
-	    copyVector(meansBuffer, means);
+	    if (buffer.wasUsed()) {
+		float[] meansBuffer = (float [])buffer.getValues();
+		copyVector(meansBuffer, means);
+		means = (float [])meansPool.get(i);
+	    }
 	}
     }
 
@@ -424,15 +491,30 @@ class HMMPoolManager {
 	    float[] means = (float [])meansPool.get(i);
 	    float[] variance = (float [])variancePool.get(i);
 	    Buffer buffer = (Buffer) varianceBufferPool.get(i);
-	    float[] varianceBuffer = (float [])buffer.getValues();
-	    assert means.length == varianceBuffer.length;
-	    for (int j = 0; j < means.length; j++) {
-		varianceBuffer[j] -= means[j] * means[j];
-		if (varianceBuffer[j] < varianceFloor) {
-		    varianceBuffer[j] = varianceFloor;
+	    if (buffer.wasUsed()) {
+		float[] varianceBuffer = (float [])buffer.getValues();
+		assert means.length == varianceBuffer.length;
+		for (int j = 0; j < means.length; j++) {
+		    varianceBuffer[j] -= means[j] * means[j];
+		    if (varianceBuffer[j] < varianceFloor) {
+			varianceBuffer[j] = varianceFloor;
+		    }
 		}
+		copyVector(varianceBuffer, variance);
 	    }
-	    copyVector(varianceBuffer, variance);
+	}
+    }
+
+    /**
+     * Recompute the precomputed values in all mixture components.
+     */
+    private void recomputeMixtureComponents() {
+	for (int i = 0; i < senonePool.size(); i++) {
+	    GaussianMixture gMix = (GaussianMixture) senonePool.get(i);
+	    MixtureComponent[] mixComponent = gMix.getMixtureComponents();
+	    for (int j = 0; j < mixComponent.length; j++) {
+		mixComponent[j].precomputeDistance();
+	    }
 	}
     }
 
@@ -444,11 +526,13 @@ class HMMPoolManager {
 	for (int i = 0; i < mixtureWeightsPool.size(); i++) {
 	    float[] mixtureWeights = (float [])mixtureWeightsPool.get(i);
 	    Buffer buffer = (Buffer) mixtureWeightsBufferPool.get(i);
-	    if (buffer.logFloor(logMixtureWeightFloor)) {
-		buffer.logNormalizeToSum(logMath);
+	    if (buffer.wasUsed()) {
+		if (buffer.logFloor(logMixtureWeightFloor)) {
+		    buffer.logNormalizeToSum(logMath);
+		}
+		float[] mixtureWeightsBuffer = (float [])buffer.getValues();
+		copyVector(mixtureWeightsBuffer, mixtureWeights);
 	    }
-	    float[] mixtureWeightsBuffer = (float [])buffer.getValues();
-	    copyVector(mixtureWeightsBuffer, mixtureWeights);
 	}
     }
 
@@ -462,15 +546,19 @@ class HMMPoolManager {
 	    Buffer[] bufferArray = (Buffer []) matrixBufferPool.get(i);
 	    for (int j = 0; j < matrix.length; j++) {
 		Buffer buffer = bufferArray[j];
-		for (int k = 0; k < matrix[j].length; k++) {
-		    float bufferValue = buffer.getValue(k);
-		    if (bufferValue != logMath.getLogZero()) {
-			if (bufferValue < logTransitionProbabilityFloor) {
-			    buffer.setValue(k, logTransitionProbabilityFloor);
+		if (buffer.wasUsed()) {
+		    for (int k = 0; k < matrix[j].length; k++) {
+			float bufferValue = buffer.getValue(k);
+			if (bufferValue != logMath.getLogZero()) {
+			    assert matrix[j][k] != LogMath.getLogZero();
+			    if (bufferValue < logTransitionProbabilityFloor) {
+				buffer.setValue(k, 
+					logTransitionProbabilityFloor);
+			    }
 			}
 		    }
+		    copyVector(buffer.getValues(), matrix[j]);
 		}
-		copyVector(buffer.getValues(), matrix[j]);
 	    }
 	}
     }
