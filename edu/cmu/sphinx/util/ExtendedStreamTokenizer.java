@@ -57,8 +57,9 @@ public class ExtendedStreamTokenizer {
      *
      * @param inputStream the source of the data
      */
-    public ExtendedStreamTokenizer(InputStream inputStream) {
-        this(new InputStreamReader(inputStream), false);
+    public ExtendedStreamTokenizer(InputStream inputStream, 
+                                   boolean eolIsSignificant) {
+        this(new InputStreamReader(inputStream), eolIsSignificant);
     }
 
 
