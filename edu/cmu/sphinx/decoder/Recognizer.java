@@ -428,7 +428,7 @@ public class Recognizer {
     /**
      * Initialize and return the AcousticModel(s) used by this Recognizer.
      *
-     * @param context the context of interest
+     * @param props the sphinx properties
      *
      * @return the AcousticModel(s) used by this Recognizer
      */

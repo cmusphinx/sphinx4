@@ -51,7 +51,7 @@ public class AcousticModelFactory {
     /**
      * Return the names of all acoustic models in the given context.
      *
-     * @param context the context of interest
+     * @param props the  sphinxproperties
      *
      * @return a list of all names of acoustic models in the given context;
      *    if there are no names, it will return a list with no elements.
@@ -119,7 +119,7 @@ public class AcousticModelFactory {
      * loads the class map. The class map is map that relates acoustic
      * model names to classnames
      *
-     * @props the sphinx properties
+     * @param props the sphinx properties
      */
     private static void loadClassMap(SphinxProperties props) {
         if (classMap == null) {
