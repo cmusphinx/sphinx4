@@ -99,8 +99,9 @@ edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar
 #
 ############################################################
 
-edu.cmu.sphinx.search.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d-a.txt
-edu.cmu.sphinx.search.Dictionary.fillerPath=/lab/speech/sphinx4/data/wsj/dict/fillerdict
+edu.cmu.sphinx.search.Dictionary.useAcousticModelLocation = true
+edu.cmu.sphinx.search.Dictionary.dictionaryPath = dict/cmudict.0.6d-a.txt
+edu.cmu.sphinx.search.Dictionary.fillerPath = dict/fillerdict
 edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true
 
 

@@ -86,8 +86,10 @@ edu.cmu.sphinx.search.validateResults=false
 # Dictionary properties
 #
 ############################################################
-edu.cmu.sphinx.search.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/tidigits_model/dictionary
-edu.cmu.sphinx.search.Dictionary.fillerPath=/lab/speech/sphinx4/data/tidigits_model/fillerdict
+
+edu.cmu.sphinx.search.Dictionary.useAcousticModelLocation = true
+edu.cmu.sphinx.search.Dictionary.dictionaryPath = dictionary
+edu.cmu.sphinx.search.Dictionary.fillerPath = fillerdict
 edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false
 
 
