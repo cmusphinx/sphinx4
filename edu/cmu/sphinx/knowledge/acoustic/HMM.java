@@ -28,6 +28,7 @@ import java.util.ArrayList;
  */
 public class HMM implements Serializable {
     private Unit unit;
+    private Unit baseUnit;
     private SenoneSequence senoneSequence;
     private float[][] transitionMatrix;
     private HMMPosition position;
@@ -55,6 +56,7 @@ public class HMM implements Serializable {
 	for (int i = 0; i < hmmStates.length; i++) {
 	    hmmStates[i] = new HMMState(this, i);
 	}
+        baseUnit = Unit.getCIUnit(unit.getName());
     }
 
     /**
@@ -72,7 +74,7 @@ public class HMM implements Serializable {
      * @return the unit associated with this HMM
      */
     public Unit getBaseUnit() {
-	return Unit.getCIUnit(unit.getName());
+	return baseUnit;
     }
 
 
