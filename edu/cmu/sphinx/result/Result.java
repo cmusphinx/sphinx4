@@ -365,15 +365,17 @@ public class Result {
      * @return the string of words
      */
     public String getTimedBestResult(boolean wantFiller,
-                                     boolean wordTokenFirst) {
+                                     boolean wordTokenFirst,
+                                     int sampleRate) {
         Token token = getBestToken();
         if (token == null) {
             return "";
         } else {
             if (wordTokenFirst) {
-                return getTimedWordPath(token, wantFiller);
+                return getTimedWordPath(token, wantFiller, sampleRate);
             } else {
-                return getTimedWordTokenLastPath(token, wantFiller);
+                return getTimedWordTokenLastPath(token, wantFiller, 
+                                                 sampleRate);
             }
         }
     }
@@ -387,7 +389,8 @@ public class Result {
      *
      * @return the string of words
      */
-    private String getTimedWordPath(Token token, boolean wantFiller) {
+    private String getTimedWordPath(Token token, boolean wantFiller,
+                                    int sampleRate) {
         StringBuffer sb = new StringBuffer();
 
         // get to the first emitting token
@@ -404,7 +407,8 @@ public class Result {
                 if (token.isWord()) {
                     Word word = token.getWord();
                     if (wantFiller || !word.isFiller()) {
-                        addWord(sb, word, lastFeature, lastWordFirstFeature);
+                        addWord(sb, word, lastFeature, lastWordFirstFeature,
+                                sampleRate);
                     }
                     lastWordFirstFeature = lastFeature;
                 }
@@ -426,7 +430,8 @@ public class Result {
      *
      * @return the string of words, each with the starting sample number
      */
-    private String getTimedWordTokenLastPath(Token token, boolean wantFiller) {
+    private String getTimedWordTokenLastPath(Token token, boolean wantFiller,
+                                             int sampleRate) {
         StringBuffer sb = new StringBuffer();
         Word word = null;
         Feature lastFeature = null;
@@ -436,7 +441,8 @@ public class Result {
             if (token.isWord()) {
                 if (word != null) {
                     if (wantFiller || !word.isFiller()) {
-                        addWord(sb, word, lastFeature, lastWordFirstFeature);
+                        addWord(sb, word, lastFeature, lastWordFirstFeature,
+                                sampleRate);
                     }
                     word = token.getWord();
                     lastWordFirstFeature = lastFeature;
@@ -463,16 +469,20 @@ public class Result {
      * @param word the word to add
      * @param startFeature the starting feature
      * @param endFeature tne ending feature
+     * @param sampleRate the sample rate of the data
      */
     private void addWord(StringBuffer sb, Word word,
-                         Feature startFeature, Feature endFeature) {
-        long startTime = startFeature.getFirstSampleNumber();
-        long endTime = endFeature.getFirstSampleNumber();
+                         Feature startFeature, Feature endFeature,
+                         int sampleRate) {
+        float startTime = 
+            ((float) startFeature.getFirstSampleNumber()/sampleRate);
+        float endTime =
+            ((float) endFeature.getFirstSampleNumber()/sampleRate);
         if (sb.length() > 0) {
             sb.insert(0, " ");
         }
-        sb.insert(0, (word.getSpelling() + "(" + startTime +
-                      "," + endTime + ")"));
+        sb.insert(0, (word.getSpelling() + "(" + startTime + "," + 
+                      endTime + ")"));
     }
 
 
