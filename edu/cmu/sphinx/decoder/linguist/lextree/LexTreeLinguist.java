@@ -130,6 +130,9 @@ public class LexTreeLinguist implements  Linguist {
     private LexTree lexTree;
     private Dictionary dictionary;
     private final static SearchStateArc[] EMPTY_ARC = new SearchStateArc[0];
+    private final static int[] sentenceStartID 
+        = {Dictionary.SENTENCE_START_ID};
+
     private float logOne;
     private int silenceID;
     private LexTree.WordLexNode finalNode;
@@ -157,8 +160,11 @@ public class LexTreeLinguist implements  Linguist {
      * @param grammar the grammar for this linguist
      * @param models the acoustic model used by this linguist
      */
-    public void initialize(String context, LanguageModel languageModel,
-                        Grammar grammar, AcousticModel[] models) {
+    public void initialize(String context, 
+                           LanguageModel languageModel,
+                           Dictionary dictionary,
+                           Grammar grammar, 
+                           AcousticModel[] models) {
         assert models.length == 1;
 
         this.props = SphinxProperties.getSphinxProperties(context);
@@ -176,12 +182,7 @@ public class LexTreeLinguist implements  Linguist {
 
         // System.out.println("LM Max depth is " + languageModel.getMaxDepth());
 
-
-        try {
-            this.dictionary = new FullDictionary(context);
-        } catch (IOException ioe) {
-            throw new Error("LexTreeLinguist: Can't load dictionary", ioe);
-        }
+        this.dictionary = dictionary;
 
         logOne = logMath.getLogOne();
 
@@ -578,15 +579,14 @@ public class LexTreeLinguist implements  Linguist {
     public class LexTreeInitialState extends LexTreeState {
         private LexTree.NonLeafLexNode node;
 
-
         /**
          * Creates a LexTreeInitialState object
          */
         LexTreeInitialState(LexTree.NonLeafLexNode node) {
             super(silenceID, null, null, 
-                (new WordSequence(Dictionary.SENTENCE_START_SPELLING))
-                .trim(languageModel.getMaxDepth() -1),
-                logOne, logOne, logOne);
+                  (WordSequence.getWordSequence
+                   (sentenceStartID).trim(languageModel.getMaxDepth()-1)),
+                  logOne, logOne, logOne);
             this.node = node;
         }
 
@@ -1271,9 +1271,9 @@ public class LexTreeLinguist implements  Linguist {
         WordSequence wordSequence = curState.getWordSequence();
         float logProbability = logOne;
         if (!nextWord.isSilence()) {
-            wordSequence = wordSequence.addWord(
-                    nextWord.getPronunciation().getWord(),
-                    languageModel.getMaxDepth());
+            wordSequence = wordSequence.addWord
+                (nextWord.getPronunciation().getWordID(),
+                 languageModel.getMaxDepth());
             logProbability = languageModel.getProbability(wordSequence);
 
             if (false) {
@@ -1317,7 +1317,7 @@ public class LexTreeLinguist implements  Linguist {
          * Constructs a default LexTreeEndWordState.
          */
         public LexTreeEndWordState() {
-            super(0, null, null, new WordSequence(), finalNode, 0.0f);
+            super(0, null, null, WordSequence.EMPTY, finalNode, 0.0f);
         }
     }
 }
