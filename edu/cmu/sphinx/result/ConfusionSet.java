@@ -104,4 +104,23 @@ public class ConfusionSet extends TreeMap {
         }
         return null;
     }
+
+    /**
+     * Dumps out the contents of this ConfusionSet.
+     *
+     * @param name the name of the confusion set
+     */
+    public void dump(String name) {
+        System.out.print(name + " :");
+        for (Iterator i = values().iterator(); i.hasNext(); ) {
+            Set wordSet = (Set) i.next();
+            for (Iterator r = wordSet.iterator(); r.hasNext();) {
+                WordResult wordResult = (WordResult) r.next();
+                System.out.print
+                    (" " + 
+                     wordResult.getPronunciation().getWord().getSpelling());
+            }
+        }
+        System.out.println();
+    }
 }
