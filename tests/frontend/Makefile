@@ -130,5 +130,16 @@ dump_binary_cepstra: all
 	$(JAVA_CMD) \
 	tests.frontend.CepstrumFileDumper \
 	cepstra_dump.props \
-	/lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.111a.wav.raw\
-	./cepstra.out
+	$(INPUT_FILE) \
+	$(OUTPUT_FILE) \
+	binary
+
+dump_ascii_cepstra: all
+        $(JAVA_CMD) \
+        tests.frontend.CepstrumFileDumper \
+        cepstra_dump.props \
+	$(INPUT_FILE) \
+	$(OUTPUT_FILE) \
+        binary
+
+

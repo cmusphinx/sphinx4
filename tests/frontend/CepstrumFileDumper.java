@@ -169,11 +169,18 @@ public class CepstrumFileDumper {
 	String propsFile = argv[0];
 	String inputFile = argv[1];
 	String outputFile = argv[2];
-
+	String format = argv[3];
+	
 	try {
 	    CepstrumFileDumper dumper = new CepstrumFileDumper
 		(propsFile, inputFile);
-	    dumper.dumpBinary(outputFile);
+	    if (format.equals("binary")) {
+		dumper.dumpBinary(outputFile);
+	    } else if (format.equals("ascii")) {
+		dumper.dumpAscii(outputFile);
+	    } else {
+		System.out.println("ERROR: unknown output format: " + format);
+	    }
 	} catch (IOException ioe) {
 	    ioe.printStackTrace();
 	}
