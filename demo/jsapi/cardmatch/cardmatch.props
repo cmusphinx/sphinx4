@@ -68,7 +68,7 @@ mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.fron
 mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveCMN
 mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.8.class=edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor
 
-mfc_ep;edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=13
+edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=13
 
 
 ############################################################
