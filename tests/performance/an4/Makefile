@@ -29,7 +29,7 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 PROFILE_FLAGS= -Xprof -server
 LOG_GC_FLAGS=  -Xloggc:gc.txt
  GC_FLAGS=  -XX:+PrintGCDetails
-GC_FLAGS = -ms1g -mx1g
+GC_FLAGS = -ms800m -mx900m
 # GC_FLAGS=  -XX:+UseConcMarkSweepGC
 #GC_FLAGS=  -XX:+UseParallelGC
 #GC_FLAGS= -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+PrintGCDetails
