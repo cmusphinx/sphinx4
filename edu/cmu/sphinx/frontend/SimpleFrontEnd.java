@@ -157,7 +157,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      *
      * @return the properties of the relevant acoustic model
      *
-     * @throw java.io.IOException if an I/O error occurred
+     * @throws java.io.IOException if an I/O error occurred
      */
     public SphinxProperties getAcousticProperties() throws IOException {
 	AcousticModel am;

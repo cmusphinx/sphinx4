@@ -31,7 +31,7 @@ clean::
 # a quick and dirty implementation
 
 javadocs:
-	$(JAVADOC) -d $(DOC_DEST) -quiet -subpackages edu -source 1.4
+	$(JAVADOC) -d $(DOC_DEST) -quiet -subpackages edu -exclude edu.cmu.sphinx.jsapi -source 1.4
 
 
 # another quick and dirty implementation, with private methods/fields

@@ -93,7 +93,7 @@ public class Lattice {
 
 
     /**
-     * Create a Lattice from a .LAT file.  .LAT files are created by
+     * Create a Lattice from a LAT file.  LAT files are created by
      * the method Lattice.dump()
      *
      * @param fileName
@@ -320,7 +320,7 @@ public class Lattice {
     /**
      * Get the set of all Edges.
      *
-     * @return
+     * @return the set of all edges
      */
     public Collection getEdges() {
         return edges;

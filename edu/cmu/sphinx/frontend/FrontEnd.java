@@ -117,9 +117,7 @@ public interface FrontEnd {
 
 
     /**
-     * Returns the prefix for acoustic model properties.
-     *
-     * @return the prefix for acoustic model properties
+     * The prefix for acoustic model properties.
      */
     public static final String ACOUSTIC_PROP_PREFIX = AcousticModel.PROP_PREFIX;
 
@@ -137,7 +135,7 @@ public interface FrontEnd {
      *
      * @see FeatureFrame
      *
-     * @throw java.io.IOException if an I/O error occurred
+     * @throws java.io.IOException if an I/O error occurred
      */
     public FeatureFrame getFeatureFrame(int numberFeatures, 
 					String acousticModelName) 

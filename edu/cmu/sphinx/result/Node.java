@@ -72,7 +72,7 @@ public class Node {
      * Get a unique ID for a new Node.
      * Used when creating a Lattice from a .LAT file
      *
-     * @return
+     * @return the unique ID for a new node
      */
     protected static String getNextNodeId() {
         return Integer.toString(nodeCount);
