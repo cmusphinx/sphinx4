@@ -141,7 +141,6 @@ public class FullDictionary implements Dictionary {
     public void allocate() throws IOException {
         
         if (!allocated ) {
-            //TODO fix timers ...
             loadTimer = Timer.getTimer("DictionaryLoad");
             loadTimer.start();
             // NOTE: "location" can be null here, in which case the

@@ -15,9 +15,7 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.FloatData;
-
 import edu.cmu.sphinx.util.LogMath;
-import java.io.Serializable;
 
 /**
  * Defines the set of shared elements for a GaussianMixture. Since
@@ -35,7 +33,7 @@ import java.io.Serializable;
  // senones by sharing intermediate results for these subcomponents?
  //  ]]]
 
-public class MixtureComponent implements Serializable {
+public class MixtureComponent  {
     private float[]   mean;
     /**
      * Mean after transformed by the adaptation parameters.
@@ -52,7 +50,7 @@ public class MixtureComponent implements Serializable {
     private float[][] varianceTransformationMatrix;
     private float[]   varianceTransformationVector;
 
-    private float distFloor = -Float.MAX_VALUE; // TODO: config me
+    private float distFloor = -Float.MAX_VALUE;  
     private float logPreComputedGaussianFactor;
     private LogMath logMath;
 

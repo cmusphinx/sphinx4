@@ -47,7 +47,7 @@ class HMMTree {
 
     private LanguageModel lm;
     private boolean addFillerWords = false;
-    private boolean addSilenceWord = true; // TODO: Property for this?
+    private boolean addSilenceWord = true;
     private Set entryPoints = new HashSet();
     private Set exitPoints = new HashSet();
     private Set allWords = null;

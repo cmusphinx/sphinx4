@@ -202,9 +202,6 @@ public class LiveModeRecognizer implements Configurable {
         if (resultList.size() > 0 || section.size() > 0) {
             alignResults(resultList, section);
         }
-
-
-        Timer.dumpAll();
         System.out.println("# ------------- Summary Statistics -------------");
         aligner.printTotalSummary();
 

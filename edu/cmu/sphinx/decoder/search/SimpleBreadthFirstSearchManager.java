@@ -577,7 +577,6 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         pruner.allocate();
         scorer.allocate();
 
-        // TODO sort out the timing stuff
         scoreTimer = Timer.getTimer("scoring"); 
         pruneTimer = Timer.getTimer("pruning");
         growTimer = Timer.getTimer("growing");

@@ -178,7 +178,6 @@ public class FastDictionary implements Dictionary {
 
             loadTimer.stop();
         }
-        // TODO Auto-generated method stub
 
     }
 

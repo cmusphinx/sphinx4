@@ -317,7 +317,6 @@ public class FlatLinguist implements Linguist, Configurable {
         Timer.stop("compile");
         // Now that we are all done, dump out some interesting
         // information about the process
-        Timer.dumpAll();
         if (dumpGStates) {
             for (Iterator i = grammar.getGrammarNodes().iterator(); i.hasNext();) {
                 GState gstate = getGState((GrammarNode) i.next());

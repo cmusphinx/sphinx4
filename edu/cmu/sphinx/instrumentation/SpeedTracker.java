@@ -24,6 +24,7 @@ import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
+import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -76,7 +77,19 @@ public class SpeedTracker
      */
     public final static boolean PROP_SHOW_RESPONSE_TIME_DEFAULT = false;
     
+    /**
+     * A sphinx property that define whether detailed timer information is
+     * displayed
+     */
+    public final static String PROP_SHOW_TIMERS = "showTimers";
+    /**
+     * The default setting of PROP_SHOW_DETAILS
+     */
+    public final static boolean PROP_SHOW_TIMERS_DEFAULT = false;
+    
     private static DecimalFormat timeFormat = new DecimalFormat("0.00");
+    
+    
     // ------------------------------
     // Configuration data
     // ------------------------------
@@ -85,6 +98,7 @@ public class SpeedTracker
     private FrontEnd frontEnd;
     private boolean showSummary;
     private boolean showDetails;
+    private boolean showTimers;
     private long startTime;
     private float audioTime;
     private float processingTime;
@@ -110,6 +124,7 @@ public class SpeedTracker
         registry.register(PROP_FRONTEND, PropertyType.COMPONENT);
         registry.register(PROP_SHOW_SUMMARY, PropertyType.BOOLEAN);
         registry.register(PROP_SHOW_DETAILS, PropertyType.BOOLEAN);
+        registry.register(PROP_SHOW_TIMERS, PropertyType.BOOLEAN);
         registry.register(PROP_SHOW_RESPONSE_TIME, PropertyType.BOOLEAN);
     }
 
@@ -145,6 +160,7 @@ public class SpeedTracker
                 PROP_SHOW_DETAILS_DEFAULT);
         showResponseTime = ps.getBoolean(PROP_SHOW_RESPONSE_TIME,
                 PROP_SHOW_RESPONSE_TIME_DEFAULT);
+        showTimers = ps.getBoolean(PROP_SHOW_TIMERS, PROP_SHOW_TIMERS_DEFAULT);
     }
 
     /*
@@ -276,10 +292,23 @@ public class SpeedTracker
      * @see edu.cmu.sphinx.recognizer.StateListener#statusChanged(edu.cmu.sphinx.recognizer.RecognizerState)
      */
     public void statusChanged(RecognizerState status) {
+        if (status == RecognizerState.ALLOCATED) {
+            if (showTimers) {
+                Timer.dumpAll();
+            }
+        }
+        
+        if (status == RecognizerState.DEALLOCATING) {
+            if (showTimers) {
+                Timer.dumpAll();
+            } 
+        }
+        
         if (status == RecognizerState.DEALLOCATED) {
             if (showSummary) {
                 showAudioSummary();
             }
+
         }
     }
 }

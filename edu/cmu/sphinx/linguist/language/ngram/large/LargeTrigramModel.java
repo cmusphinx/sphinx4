@@ -263,7 +263,6 @@ public class LargeTrigramModel implements LanguageModel {
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#allocate()
      */
     public void allocate() throws IOException {
-        // TODO Auto-generated method stub
         Timer.start("LM Load");
         // create the log file if specified
         if (ngramLogFile != null) {
@@ -305,7 +304,7 @@ public class LargeTrigramModel implements LanguageModel {
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
      */
     public void deallocate() {
-        // TODO Auto-generated method stub
+        // TODO write me
 
     }
 

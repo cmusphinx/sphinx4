@@ -146,7 +146,7 @@ public class SortingActiveListFactory implements ActiveListFactory {
         public void replace(Token oldToken, Token newToken) {
             if (oldToken != null) {
                 int location = oldToken.getLocation();
-                // BUG:CHeck:
+                // just a sanity check:
                 if (tokenList.get(location) != oldToken) {
                     System.out.println("SortingActiveList: replace " + oldToken
                             + " not where it should have been.  New "

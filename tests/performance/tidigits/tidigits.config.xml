@@ -334,6 +334,7 @@
                 type="edu.cmu.sphinx.instrumentation.SpeedTracker">
         <property name="recognizer" value="connectedDigitsRecognizer"/>
         <property name="frontend" value="${frontend}"/>
+        <property name="showTimers" value="true"/>
     </component>
     
     <component name="recognizerMonitor" 

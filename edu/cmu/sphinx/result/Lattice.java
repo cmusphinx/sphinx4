@@ -73,9 +73,10 @@ public class Lattice {
      * The Lattice is created from the Token tree referenced by the Result.
      * The Lattice is then optimized to all collapse equivalent paths.
      *
-     * @param result
+     * @param result the result to convert into a lattice
+     * @param logBase the logbase for the probabilities
      */
-    public Lattice(Result result) {
+    public Lattice(Result result, double logBase) {
         initialNode = addNode("0",Dictionary.SENTENCE_START_SPELLING, 0, 0);
         terminalNode = addNode("-1",Dictionary.SENTENCE_END_SPELLING, 0, 0);
 
@@ -97,8 +98,7 @@ public class Lattice {
             throw new Error("ahm is null");
         }
 
-        // TODO need to get the real logBase
-        logBase = 1.0001; // BUG:
+        this.logBase = logBase;
     }
 
     protected void processToken(Node thisNode, Token token) {

@@ -441,8 +441,6 @@ public class LexTreeLinguist implements Linguist {
         // information about the process
 
         searchGraph = new LexTreeSearchGraph(getInitialSearchState());
-
-        Timer.dumpAll();
     }
 
     /**

@@ -29,8 +29,6 @@ public interface Linguist extends Configurable {
     // should the all be here at this level?
     
     
-    // TODO check all classes for PREFIX and eliminate
-
     /**
       * Word insertion probability property
       */

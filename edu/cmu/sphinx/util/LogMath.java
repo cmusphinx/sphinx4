@@ -143,8 +143,8 @@ public final class LogMath implements Configurable {
             // topIndex = - log(logBase^(0.5) - 1)
             //
             // where log is the log in the appropriate base.
-            // TODO: PBL changed this to get it to compile, also
-            // added -Math.rint(...) to round to nearest
+            //
+            // Added -Math.rint(...) to round to nearest
             // integer. Added the negation to match the preceeding
             // documentation
             entriesInTheAddTable = (int) -Math

@@ -206,7 +206,6 @@ public class TrivialAcousticModel implements AcousticModel {
      * @see edu.cmu.sphinx.linguist.acoustic.AcousticModel#allocate()
      */
     public void allocate() throws IOException {
-        // TODO Auto-generated method stub
         
     }
 
@@ -214,7 +213,6 @@ public class TrivialAcousticModel implements AcousticModel {
      * @see edu.cmu.sphinx.linguist.acoustic.AcousticModel#deallocate()
      */
     public void deallocate() {
-        // TODO Auto-generated method stub
         
     }
 }
