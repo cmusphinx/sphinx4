@@ -24,8 +24,8 @@
 
 ./getTime >.startTime
 
-./runTest ../performance/rm1 rm1_bigram_quick     MODE=quick rm1_bigram_lex
-./runTest ../performance/rm1 rm1_trigram_quick     MODE=quick rm1_trigram_lex
+./runTest ../performance/rm1 rm1_bigram_quick     MODE=quick rm1_bigram
+./runTest ../performance/rm1 rm1_trigram_quick     MODE=quick rm1_trigram
 ./runTest ../performance/rm1 rm1_bigram_fst_quick MODE=quick rm1_bigram_fst
 
 touch ./.testDone

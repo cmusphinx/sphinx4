@@ -23,6 +23,6 @@
 
 ./getTime >.startTime
 
-./runTest ../performance/rm1 rm1_flat_unigram   rm1_flat_unigram_lex
+./runTest ../performance/rm1 rm1_flat_unigram   rm1_flat_unigram
 
 touch ./.testDone
