@@ -1,0 +1,246 @@
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This script parses the regression log and outputs an HTML summary
+#
+# Field definitions: 
+#   1) "test"
+#   2) date
+#   3) time
+#   4) machine
+#   5) System
+#   6) testName 
+#   7) who 
+#   8) status
+#   9) audioTime 
+#  10) procTime 
+#  11) words 
+#  12) insertions 
+#  13) deletions 
+#  14) substitutions 
+#  15) sentences 
+#  16) correctSentences 
+#  17) heapSize 
+#  18) loadAverage 
+
+gawk '
+
+BEGIN {
+    FS = "|"
+    F_TEST = 1;
+    F_DATE = 2;
+    F_TIME = 3;
+    F_MACHINE = 4;
+    F_SYSTEM = 5;
+    F_TEST_NAME = 6;
+    F_WHO = 7;
+    F_STATUS = 8;
+    F_AUDIO_TIME = 9;
+    F_PROC_TIME = 10;
+    F_WORDS = 11;
+    F_INSERTIONS = 12;
+    F_DELETIONS = 13;
+    F_SUBSTITUTIONS = 14;
+    F_SENTENCES = 15;
+    F_CORRECT_SENTENCES = 16;
+    F_HEAP_SIZE = 17;
+    F_LOAD_AVERAGE = 18;
+
+    NOT_AVAILABLE = "n/a";
+
+    testList = ARGV[2];
+    machine = ARGV[3];
+    mode = ARGV[4];
+    title = ARGV[5];
+
+    if (machine == "this") {
+	"hostname" | getline hostname;
+	machine = hostname
+    }
+
+
+    ARGV[5] = "";
+    ARGV[4] = "";
+    ARGV[3] = "";
+    ARGV[2] = "";
+
+    systemName[0] = "s3";
+    systemName[1] = "s3.3";
+    systemName[2] = "s4";
+
+    systemTitle["s3"] = "Sphinx 3";
+    systemTitle["s3.3"] = "Sphinx 3.3";
+    systemTitle["s4"] = "Sphinx 4";
+    systemCount = 3;
+
+
+    modeTitle["latest"] =  "Latest results for ";
+    modeTitle["fastest"] = "Fastest results for ";
+    modeTitle["best"] =    "Most accurate results for ";
+
+    # read in the test list
+
+    # parse the s4 align summary output
+    totalTestCount = 0;
+    while (getline x < testList > 0) {
+        tests[x] = 1;
+	testOrder[totalTestCount++] = x;
+    }
+    close(testList);
+}
+
+$F_TEST == "test"  && ($F_MACHINE == machine || machine == "any") \
+	&& ($F_TEST_NAME in tests || testList == "any") {
+    tag = $F_TEST_NAME "-" $F_SYSTEM;
+    if (mode == "latest") {
+        testData[tag] = $0;
+    } else if (mode == "fastest") {
+        speed = getSpeedFromLine($0);
+	if (speed != NOT_AVAILABLE) {
+	    if (!(tag in bestSpeed) || speed < bestSpeed[tag]) {
+	        bestSpeed[tag] = speed;
+		testData[tag] = $0;
+	    }
+	}
+    } else if (mode == "best") {
+        accuracy = getAccuracyFromLine($0);
+	if (accuracy != NOT_AVAILABLE) {
+	    if (!(tag in bestAccuracy) || accuracy < bestAccuracy[tag]) {
+	        bestAccuracy[tag] = accuracy;
+		testData[tag] = $0;
+	    }
+	}
+    }
+
+    if (testList == "any") {
+        tests[$F_TEST_NAME] = 1;
+    }
+}
+
+
+#####
+# updates the data array with info for the given test
+#
+function updateData(testName, testCount) {
+    split(testData[testName testCount], data);
+}
+
+
+####
+# returns the speed for the given test/system
+#
+function getSpeedFromLine(line) {
+     split(line, data);
+    _audioTime = data[F_AUDIO_TIME];
+    _procTime = data[F_PROC_TIME];
+
+    if (_audioTime == "" || _procTime == "") {
+         return NOT_AVAILABLE;
+    } else {
+	return _procTime / _audioTime;
+    }
+}
+
+function getSpeed(testName, systemName) {
+     return getSpeedFromLine(testData[testName "-" systemName]);
+}
+
+####
+# returns the accuracy for the given test/system
+#
+function getAccuracyFromLine(line) {
+     split(line, data);
+    _errors = data[F_INSERTIONS] + data[F_DELETIONS] + data[F_SUBSTITUTIONS];
+    _words = data[F_WORDS];
+
+    if (_words == 0) {
+        return NOT_AVAILABLE;
+    } else {
+	return _errors / _words * 100;
+    }
+}
+
+function getAccuracy(testName, systemName) {
+     return getAccuracyFromLine(testData[testName "-" systemName]);
+}
+
+
+
+####
+# Dumps data for a single test
+#
+
+function dumpTest(testName,  _j) {
+   printf("|<font color=#018888> %s </font>", testName);
+   for (_j = 0; _j < systemCount; _j++) {
+       speed = getSpeed(testName, systemName[_j]);
+       printf("| %s ", speed);
+   }
+   for (_j = 0; _j < systemCount; _j++) {
+       accuracy = getAccuracy(testName, systemName[_j]);
+       printf("| %s ", accuracy);
+   }
+   printf("|\n");
+}
+
+
+#######
+# Dumps the title
+# 
+function dumpTitle(  i) {
+
+    if (machine == "any") {
+        machineName = "all systems";
+    } else {
+        machineName = machine;
+    }
+
+    printf("|   *%s %s on %s*  |||||||\n", modeTitle[mode], title, machineName);
+    printf("| *_* | *Speed (RT)*  ||| *WER (%)* |||\n");
+
+
+    printf("| *%s* ", "Test");
+    for (i = 0; i < systemCount; i++) {
+        printf("| *%s* ", systemTitle[systemName[i]]);
+    }
+
+    for (i = 0; i < systemCount; i++) {
+        printf("| *%s* ", systemTitle[systemName[i]]);
+    }
+    printf("|\n");
+}
+
+END {
+    # If test list is any then we synthesize the test order
+
+    if (testList == "any") {
+	totalTestCount = 0;
+        for (i in tests) {
+	    testOrder[totalTestCount++] = i;
+	}
+    }
+
+    dumpTitle();
+    for (i = 0; i < totalTestCount; i++) {
+        dumpTest(testOrder[i]);
+    }
+
+# Make the page read-only so people do not try to edit these pages
+
+    print "<small>"
+    print "_This table is automatically generated. Do not edit this by hand._";
+    print "</small>"
+    print "<!--";
+    print "Set DENYTOPICCHANGE=Main.SphinxGroup SphinxGroup";
+    print "  -->";
+
+}
+
+'  $*
+
