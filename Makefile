@@ -37,7 +37,7 @@ javadocs:
 # another quick and dirty implementation, with private methods/fields
 
 javadocs_private:
-	$(JAVADOC) -d $(DOC_DEST) -private -quiet -subpackages edu -source 1.4
+	$(JAVADOC) -d $(DOC_DEST) -private -quiet -subpackages edu -exclude edu.cmu.sphinx.jsapi -source 1.4
 
 
 push_javadocs:

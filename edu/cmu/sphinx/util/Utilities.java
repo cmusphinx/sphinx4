@@ -94,13 +94,13 @@ public class Utilities {
         }
     }
 
+    static long maxUsed = 0L;
+
     /**
      * Dumps  out memory information
      *
      * @param msg addditional text for the dump
      */
-
-    static long maxUsed = 0L;
 
     public static void dumpMemoryInfo(String msg) {
         Runtime rt = Runtime.getRuntime();

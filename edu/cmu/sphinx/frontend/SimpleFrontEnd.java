@@ -137,7 +137,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      *
      * @return the appropriate SphinxProperties
      *
-     * @throw java.io.IOException if an I/O error occurred
+     * @throws java.io.IOException if an I/O error occurred
      */
     private SphinxProperties getCorrectProperties() throws IOException {
 	SphinxProperties props = null;
