@@ -281,7 +281,8 @@ public class Result {
     }
 
     /**
-     * Gets the starting frame number for the result
+     * Gets the starting frame number for the result. Note that this
+     * method is currently not implemented, and always returns zero.
      *
      * @return the starting frame number for the result
      */
@@ -290,7 +291,8 @@ public class Result {
     }
 
     /**
-     * Gets the ending frame number for the result
+     * Gets the ending frame number for the result. Note that this
+     * method is currently not implemented, and always returns zero.
      *
      * @return the ending frame number for the result
      */
