@@ -72,7 +72,7 @@ public class HelloWorld {
 		    Result result = recognizer.recognize();
 		    
 		    if (result != null) {
-			String resultText = result.getBestResultNoFiller();
+			String resultText = result.getBestFinalResultNoFiller();
 			System.out.println("You said: " + resultText + "\n");
 		    } else {
 			System.out.println("I can't hear what you said.\n");

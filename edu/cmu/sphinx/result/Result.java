@@ -150,11 +150,13 @@ public class Result {
     }
 
     /**
-     * Returns the best scoring token in the result
+     * Returns the best scoring final token in the result. A final
+     * token is a token that has reached a final state in the current
+     * frame.
      *
-     * @return the best scoring token or null
+     * @return the best scoring final token or null
      */
-    public Token getBestToken() {
+    public Token getBestFinalToken() {
         Token bestToken = null;
         for (Iterator i = resultList.iterator(); i.hasNext();) {
             Token token = (Token) i.next();
@@ -162,6 +164,18 @@ public class Result {
                 bestToken = token;
             }
         }
+        return bestToken;
+    }
+
+    /**
+     * Returns the best scoring token in the result. First, the best
+     * final token is retrieved. If no final tokens can be found, then
+     * the best, non-final token is returned.
+     *
+     * @return the best scoring token or null
+     */
+    public Token getBestToken() {
+        Token bestToken = getBestFinalToken();
 
         if (bestToken == null) {
             bestToken = getBestActiveToken();
@@ -318,6 +332,21 @@ public class Result {
      */
     public String getBestResultNoFiller() {
         Token token = getBestToken();
+        if (token == null) {
+            return "";
+        } else {
+            return token.getWordPathNoFiller();
+        }
+    }
+
+    /**
+     * Returns the string of the best final result, removing any filler words.
+     *
+     * @return the string of the best result, removing any filler
+     * words
+     */
+    public String getBestFinalResultNoFiller() {
+        Token token = getBestFinalToken();
         if (token == null) {
             return "";
         } else {
