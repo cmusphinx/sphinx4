@@ -603,7 +603,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         /**
          * Places the set of successor arcs in the cache
          *
-         * @param the set of arcs to be cached for this state
+         * @param successors the set of arcs to be cached for this state
          */
         void cacheSuccessors(SearchStateArc[] successors) {
             successorCache.put(this, successors);
