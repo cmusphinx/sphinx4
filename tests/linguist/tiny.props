@@ -22,7 +22,9 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 
 edu.cmu.sphinx.knowledge.acoustic.format = sphinx3.ascii
 edu.cmu.sphinx.knowledge.acoustic.FeatureVectorLength = 39
-edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+#edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+edu.cmu.sphinx.util.LogMath.logBase = 10
+edu.cmu.sphinx.util.LogMath.useAddTable = false
 
 edu.cmu.sphinx.knowledge.acoustic.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.ascii.zip
 edu.cmu.sphinx.knowledge.acoustic.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
