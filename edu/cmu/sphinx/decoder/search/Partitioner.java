@@ -40,7 +40,7 @@ public class Partitioner {
      * @return the index (after partitioning) of the element 
      *     around which the array is partitioned
      */
-    private int partition(Token[] tokens, int p, int r) {
+    private int partitions(Token[] tokens, int p, int r) {
 
         Token pivot = tokens[r];
         int i = p - 1;
@@ -79,7 +79,7 @@ public class Partitioner {
         Token temp = tokens[r];
         tokens[r] = tokens[i];
         tokens[i] = temp;
-        return partition(tokens, p, r);
+        return partitions(tokens, p, r);
     }
 
 
@@ -88,16 +88,17 @@ public class Partitioner {
      * scoring n token will be at the beginning of the array, not in any order.
      *
      * @param tokens the array of tokens to partition
-     * @param n the number of tokens to partition
+     * @param size the number of tokens to partition
+     * @param n the number of tokens in the final partition
      *
      * @return the index of the last element in the partition
      */
-    public int partition(Token[] tokens, int n) {
+    public int partition(Token[] tokens, int size, int n) {
         bestTokenScore = -Float.MAX_VALUE;
         bestToken = null;
-        int r = tokens.length - 1;
+        int r = size - 1;
         if (tokens.length > n) {
-            r = midPointSelect(tokens, 0, tokens.length - 1, n);
+            r = midPointSelect(tokens, 0, size - 1, n);
         }
         if (bestToken == null) {
             float lowestScore = Float.MAX_VALUE;
@@ -116,7 +117,7 @@ public class Partitioner {
 
             // exchange tokens[r] <=> last token,
             // where tokens[r] has the lowest score
-            int last = tokens.length - 1;
+            int last = size - 1;
             if (last >= 0) {
                 Token lastToken = tokens[last];
                 tokens[last] = tokens[r];
