@@ -1,0 +1,32 @@
+#!/usr/dist/local/exe/bash
+
+case $# in
+	8) echo Running tests;;
+
+	*) echo "usage: nBatch start count skip props batch outdir name";
+            exit 1;;
+esac
+
+
+
+nBatch=$1
+start=$2
+count=$3
+skip=$4
+props=$5
+batch=$6
+outdir=$7
+name=$8
+
+mkdir -p $outdir
+cp $props $outdir
+
+
+index=0
+while [ $index -lt $count ]; do
+    let which=$start+$index;
+    fullName="$name.$which.$nBatch.out"
+    gmake WHICH_BATCH=$which TOTAL_BATCHES=$nBatch SKIP=$skip \
+    PROPS=$props BATCH_FILE=$batch run_batch > $outdir/$fullName &
+    let index=$index+1
+done;
