@@ -13,8 +13,9 @@ TOP = .
 # List any sub directories that need to be built.  Start with generic
 # packages going toward specialized.  That is, if one package depends
 # on another, put the dependent package later in the list.
-SUBDIRS = edu tests  
+SUBDIRS = edu tests 
 
+JSAPI_DIRS = com demo/jsapi
 GTAR=/pkg/gnu/bin/tar
 
 ##########################################################################
@@ -49,3 +50,11 @@ push_javadocs:
 stest:
 	$(GTAR) cfC /tmp/sphinx4docs.tar $(DOC_DEST) .
 	$(GTAR) xfC /tmp/sphinx4docs.tar /home/plamere/stest
+
+
+# the jsapi stuff is kept separate since it requires the jsapi.jar
+# which is not available by default (due to licensing issues)
+jsapi:
+	@for subdir in $(JSAPI_DIRS)  ; do \
+	    (echo "Building in $$subdir" ; cd $$subdir && $(MAKE) $(MAKEDEFS) ) || (echo "Skipping $$subdir");\
+	done
