@@ -1,0 +1,48 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for the JSGF Demo
+ */
+
+grammar movies;
+
+
+import <commands.standard_commands>;
+
+
+
+/** 
+ * A "watch a movie" gramamr
+ */
+
+public <movies> =     watch lord of the rings  | 
+                      watch the magnificent seven  |
+                      watch two thousand one a space odyssey  |
+                      watch the matrix      |
+                      watch finding nemo    |
+                      watch spider man      |
+                      watch mystic river |
+                      watch the italian job |
+                      watch chicago |
+                      watch a beautiful mind |
+                      watch gladiator   |
+                      watch american beauty     |
+                      watch shakespeare in love |
+                      watch titanic     |
+                      watch the english patient |
+                      watch brave heart         |
+                      watch unforgiven  |
+                      watch the silence of the lambs    |
+                      watch dances with wolves  |
+                      watch driving miss daisy  |
+                      watch rain man    |
+                      watch the last emperor    |
+                      watch platoon     |
+                      watch out of africa       |
+                      watch terms of endearment |
+                      watch chariots of fire    |
+                      watch the empire strikes back |
+                      watch star wars   |
+                      watch ordinary people     ;
+
+public <commands> = <standard_commands> ;
