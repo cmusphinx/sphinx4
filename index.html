@@ -354,7 +354,39 @@ set path=( $path $ANT_HOME/bin )
 <br>
 <li><a name="language_models"><b>Language Models</b></a>
 
-<p>The language model used by Sphinx-4 follows the format 
+<p>The language model used by Sphinx-4 follows the ARPA
+format. Language models provided with the acoustic model packages were
+created with the Carnegie Mellon University Statistical Language
+Modeling toolkit (CMU SLM toolkit), available <a
+href="http://www.speech.cs.cmu.edu/SLM_info.html">at CMU</a>.A manual
+is available there.</p>
+
+<p>The language model is created from a list of transcriptions. Given
+a file with training transcription, the following script
+creates a list of words that appear in the transcriptions, then
+creates a bigram and a trigram LM files in the ARPA format. The file with extension ccs contains the context cues, and it is usually a list of words used as markers - beginning or end of speech etc.</p>
+
+<pre style="background: #CCCCCC; padding: 2mm; border-style: ridge">
+set task = RM
+
+# Location of the CMU SLM toolkit
+set bindir = ~/src/CMU-SLM_Toolkit_v2/bin
+
+cat $task.transcript | $bindir/text2wfreq | $bindir/wfreq2vocab > $task.vocab
+
+set mode = "-absolute"
+
+# Create bigram
+cat $task.transcript | $bindir/text2idngram -n 2 -vocab $task.vocab | \
+   $bindir/idngram2lm $mode -context $task.ccs -n 2 -vocab $task.vocab \
+   -idngram - -arpa $task.bigram.arpa
+
+# Create trigram
+cat $task.transcript | $bindir/text2idngram -n 3 -vocab $task.vocab | \
+   $bindir/idngram2lm $mode -context $task.ccs -n 3 -vocab $task.vocab \
+   -idngram - -arpa $task.trigram.arpa
+</pre>
+
 </li>
 
 
