@@ -72,7 +72,20 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
     public static final int PROP_FRAME_LENGTH_DEFAULT = 160;
 
     /**
-     * The SphinxProperty specifying the threshold
+     * The SphinxProperty specifying the minimum signal level used
+     * to update the background signal level.
+     */
+    public static final String PROP_MIN_SIGNAL = PROP_PREFIX + "minSignal";
+
+    /**
+     * The default value of PROP_MIN_SIGNAL.
+     */
+    public static final double PROP_MIN_SIGNAL_DEFAULT = 0;
+
+    /**
+     * The SphinxProperty specifying the threshold. If the current signal
+     * level is greater than the background level by this threshold,
+     * then the current signal is marked as speech.
      */
     public static final String PROP_THRESHOLD = PROP_PREFIX + "threshold";
 
@@ -105,8 +118,9 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
     private boolean debug;
     private double averageNumber = 1;
     private double adjustment;
-    private double level;
-    private double background;
+    private double level;               // average signal level
+    private double background;          // background signal level
+    private double minSignal;           // minimum valid signal level
     private double threshold;
     private int frameLength;
     private AudioSource predecessor;
@@ -157,6 +171,7 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
             (PROP_FRAME_LENGTH, PROP_FRAME_LENGTH_DEFAULT);
         adjustment = props.getDouble(PROP_ADJUSTMENT, PROP_ADJUSTMENT_DEFAULT);
         threshold = props.getDouble(PROP_THRESHOLD, PROP_THRESHOLD_DEFAULT);
+        minSignal = props.getDouble(PROP_MIN_SIGNAL, PROP_MIN_SIGNAL_DEFAULT);
         debug = props.getBoolean(PROP_DEBUG, PROP_DEBUG_DEFAULT);
     }
 
@@ -219,16 +234,19 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
         private void classify(Audio audio) {
             double current = logRootMeanSquare(audio.getSamples());
             // System.out.println("current: " + current);
-            level = ((level * averageNumber) + current)/(averageNumber + 1);
-            if (current < background) {
-                background = current;
-            } else {
-                background += (current - background) * adjustment;
+            boolean isSpeech = false;
+            if (current >= minSignal) {
+                level = ((level*averageNumber) + current)/(averageNumber + 1);
+                if (current < background) {
+                    background = current;
+                } else {
+                    background += (current - background) * adjustment;
+                }
+                if (level < background) {
+                    level = background;
+                }
+                isSpeech = (level - background > threshold);
             }
-            if (level < background) {
-                level = background;
-            }
-            boolean isSpeech = (level - background > threshold);
             audio.setSpeech(isSpeech);
             if (debug) {
                 String speech = "";
