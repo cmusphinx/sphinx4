@@ -33,15 +33,18 @@ CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 all:: ${CLASSES} ${STUBS}
 	@gcc -O3 MathTest.c -o MathTest
 
-run: 
-	$(JAVA_CMD) -server tests.perf.MathTest
+runMathTest: 
+	$(JAVA_CMD) -server tests.other.MathTest
 	MathTest
 
+runInstanceOf: 
+	$(JAVA_CMD) -server tests.other.InstanceOfTest
+
 client:
-	$(JAVA_CMD) tests.perf.MathTest
+	$(JAVA_CMD) tests.other.MathTest
 
 server:
-	$(JAVA_CMD) -server tests.perf.MathTest
+	$(JAVA_CMD) -server tests.other.MathTest
 
 
 MathTests: ${CLASSES}
