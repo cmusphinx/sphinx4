@@ -95,8 +95,7 @@ public interface FrontEnd {
     /**
      * The SphinxProperty name that specifies the CepstrumProducer class.
      */
-    public static final String PROP_CEPSTRUM_PRODUCER = PROP_PREFIX +
-	"cepstrumProducer";
+    public static final String PROP_CEPSTRUM_PRODUCER = "cepstrumProducer";
 
 
     /**
