@@ -44,6 +44,7 @@
 	       deprecation="true"
 	       srcdir="${src_dir}"
 	       includes="edu/**,com/**"
+	       excludes="edu/cmu/sphinx/research/parallel/**"
 	       destdir="${classes_dir}">
 	    <classpath refid="extra_libs"/>
 	</javac>
