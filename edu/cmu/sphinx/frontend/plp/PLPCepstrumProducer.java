@@ -95,11 +95,11 @@ CepstrumProducer {
      * Compute the Cosine values for IDCT.
      */
     private void computeCosine() {
-        cosine = new double[LPCOrder][numberPLPFilters];
+        cosine = new double[LPCOrder+1][numberPLPFilters];
 
         double period = (double) 2 * numberPLPFilters;
 
-        for (int i = 0; i < LPCOrder; i++) {
+        for (int i = 0; i <= LPCOrder; i++) {
             double frequency = 2 * ((double) Math.PI) * (double) i/period; 
             
             for (int j = 0; j < numberPLPFilters; j++) {
@@ -214,12 +214,12 @@ CepstrumProducer {
      */
     private double[] applyCosine(double[] plpspectrum) {
 
-        double[] autocor = new double[LPCOrder];
+        double[] autocor = new double[LPCOrder+1];
         double period = (double) numberPLPFilters;
         double beta = 0.5f;
         
         // apply the idct
-        for (int i = 0; i < LPCOrder; i++) {
+        for (int i = 0; i <= LPCOrder; i++) {
 
             if (numberPLPFilters > 0) {
                 double[] cosine_i = cosine[i];

@@ -171,12 +171,12 @@ public class PLPFilterbank extends DataProcessor implements Filterbank {
 
 	minBarkFreq = bark.hertzToBark(minFreq);
 	maxBarkFreq = bark.hertzToBark(maxFreq);
-	if (numberFilters > 1){
-	    deltaBarkFreq = (maxBarkFreq - minBarkFreq)/(numberFilters-1);
+
+        if (numberFilters < 1) {
+            throw new IllegalArgumentException("Number of filters illegal: "
+		                                               + numberFilters);
 	}
-	else {
-	    deltaBarkFreq = 0;
-	}
+	deltaBarkFreq = (maxBarkFreq - minBarkFreq)/(numberFilters+1);
 
 	for (int i = 0; i < numberFilters; i++) {
 	    centerFreq = bark.barkToHertz(minBarkFreq + i*deltaBarkFreq);
@@ -235,10 +235,10 @@ public class PLPFilterbank extends DataProcessor implements Filterbank {
 
 	double[] in = input.getSpectrumData();
 
-	if (in.length != (numberFftPoints >> 1)) {
+	if (in.length != (numberFftPoints/2+1)) {
 	    throw new IllegalArgumentException
                ("Window size is incorrect: in.length == " + in.length +
-                 ", numberFftPoints == " + numberFftPoints);
+                 ", numberFftPoints == " + numberFftPoints/2+1);
 	}
 
 	double[] outputPLPSpectralArray = new double[numberFilters];

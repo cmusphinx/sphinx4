@@ -118,7 +118,7 @@ public class PLPFilter {
 	throws IllegalArgumentException {
 
 	if (spectrum.length != numDFTPoints){
-	    throw new IllegalArgumentException("Mismatch in no. of DFT points in spectrum and filter");
+	    throw new IllegalArgumentException("Mismatch in no. of DFT points "+spectrum.length+" in spectrum and in filter "+numDFTPoints);
 	}
 
 	double output = 0.0;
