@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.knowledge.language;
 
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
 
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -497,7 +498,6 @@ public class SimpleNGramModel implements LanguageModel {
      * A test routine
      *
      */
-    /*
     public static void main(String[] args) throws Exception {
         String propsPath; 
         if (args.length == 0) {
@@ -505,15 +505,17 @@ public class SimpleNGramModel implements LanguageModel {
         } else {
             propsPath = args[0];
         }
+        String context = "LMTest";
 
         Timer.start("LM Load");
-        SphinxProperties.initContext("test", new URL(propsPath));
-        SimpleNGramModel sm = new SimpleNGramModel("test");
+        SphinxProperties.initContext(context, new URL(propsPath));
+        Dictionary dictionary = new FullDictionary(context);
+        SimpleNGramModel sm = new SimpleNGramModel(context, dictionary);
         Timer.stop("LM Load");
 
         Timer.dumpAll();
 
-        LogMath logMath = LogMath.getLogMath("test");
+        LogMath logMath = LogMath.getLogMath(context);
         
         BufferedReader reader = new BufferedReader
             (new InputStreamReader(System.in));
@@ -527,21 +529,32 @@ public class SimpleNGramModel implements LanguageModel {
             List list = new ArrayList();
             while (st.hasMoreTokens()) {
                 String tok = (String) st.nextToken();
-                list.add(tok);
+                Integer wordID = new Integer(dictionary.getWordID(tok));
+                list.add(wordID);
             }
-            WordSequence wordSequence = new WordSequence(list);
-            System.out.println("Probability of " + wordSequence + " is: " +
-               sm.getProbability(wordSequence) + "(" 
-               + logMath.logToLn(sm.getProbability(wordSequence)) + ")");
+            WordSequence wordSequence = WordSequence.getWordSequence(list);
+            System.out.println
+                ("Probability of " + wordSequence + " is: " 
+                 + sm.getProbability(wordSequence) + "(log(" 
+                 + logMath.getLogBase() + ")), " +
+                 + logMath.logToLog(sm.getProbability(wordSequence),
+                                    logMath.getLogBase(), 10.f) + "(log10)");
             System.out.print("Enter words: ");
         }
         
         
-        Timer timer = Timer.getTimer("test", "lookup trigram");
+        Timer timer = Timer.getTimer(context, "lookup trigram");
         
         List list1 = new ArrayList();
-        WordSequence ws1 = new WordSequence("t", "h", "e");
-        WordSequence ws2 = new WordSequence("a", "l", "q");
+        int[] wordID1 = { dictionary.getWordID("t"), 
+                          dictionary.getWordID("h"), 
+                          dictionary.getWordID("e") };
+        WordSequence ws1 = WordSequence.getWordSequence(wordID1);
+
+        int[] wordID2 = { dictionary.getWordID("a"),
+                          dictionary.getWordID("l"), 
+                          dictionary.getWordID("q") };
+        WordSequence ws2 = WordSequence.getWordSequence(wordID2);
         
         for (int i = 0; i < 1000000; i++) {
             timer.start();
@@ -554,7 +567,6 @@ public class SimpleNGramModel implements LanguageModel {
         
         Timer.dumpAll("test");
     }
-    */
 }
 
 /**
