@@ -340,7 +340,7 @@ function getLessIsBetterMetricStatus(thisMetric, prevMetric) {
 	return "<td bgcolor=#ffcccc>" thisMetric "</td>";
     }
     if (thisMetric < prevMetric) {
-	return "<td bgolor=#99ff99>" thisMetric "</td>";
+	return "<td bgcolor=#99ff99>" thisMetric "</td>";
     }
     return "<td>" thisMetric "</td>";
 }
