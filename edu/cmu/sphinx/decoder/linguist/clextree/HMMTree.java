@@ -69,11 +69,11 @@ class HMMTree {
         this.lm = lm;
         this.addFillerWords = addFillerWords;
 
-        Utilities.dumpMemoryInfo("lextree before");
+        // Utilities.dumpMemoryInfo("lextree before");
         Timer.start("Create HMMTree");
         compile();
         Timer.stop("Create HMMTree");
-        Utilities.dumpMemoryInfo("lextree after");
+        // Utilities.dumpMemoryInfo("lextree after");
         // dumpTree();
     }
 
@@ -164,6 +164,7 @@ class HMMTree {
      */
     private void freeze() {
         entryPointTable.freeze();
+        Node.freezeAllNodes();
         hmmPool = null;
         dictionary = null;
         lm = null;
@@ -572,15 +573,86 @@ class HMMTree {
 
 class Node {
     private static int nodeCount = 0;
-    private Map successors; // the set of successors
+    // private Map successors; // the set of successors
+    private static Map successorsPerNode = new HashMap();
+    private Collection frozenSuccessors = null;
 
     /**
      * Creates a node
      */
     Node() {
-        successors = new HashMap();
+        nodeCount++;
+        if (false) {
+            if ((nodeCount % 10000) == 0) {
+                System.out.println("NC " + nodeCount);
+            }
+        }
     }
 
+
+    static void freezeAllNodes() {
+        // Utilities.dumpMemoryInfo("Before Freeze");
+        System.out.println("Freezing " +
+                successorsPerNode.keySet().size() + " nodes");
+        for (Iterator i = successorsPerNode.keySet().iterator(); i.hasNext();) {
+            Node node = (Node) i.next();
+            node.freeze();
+        }
+        successorsPerNode = null;
+        // Utilities.dumpMemoryInfo("After Freeze");
+    }
+
+
+
+    /**
+     * Given an object get the set of successors for this object
+     *
+     * @param key the object key
+     *
+     * @return the node containing the successors
+     */
+    private Node getSuccessor(Object key) {
+        Map successors = getSuccessorMap();
+        return (Node) successors.get(key);
+    }
+
+    /**
+     * Add the child to the set of successors
+     *
+     * @param key the object key
+     * @param child the child to add
+     */
+    private void putSuccessor(Object key, Node child) {
+        Map successors = getSuccessorMap();
+        successors.put(key, child);
+    }
+
+
+    /**
+     * Gets the successor map for this node
+     *
+     * @return the successor map
+     */
+    private Map getSuccessorMap() {
+        Map successorMap = (Map) successorsPerNode.get(this);
+        if (successorMap == null) {
+            successorMap = new HashMap();
+            successorsPerNode.put(this, successorMap);
+        }
+        return successorMap;
+    }
+
+
+    /**
+     * Freeze the node. Convert the successor map into an array list
+     */
+    private void freeze() {
+        frozenSuccessors = new ArrayList();
+        for (Iterator i = getSuccessorMap().values().iterator();
+                i.hasNext(); ) {
+            frozenSuccessors.add(i.next());
+        }
+    }
 
     /**
      * Adds a child node holding an hmm to the successor.  If a node similar to
@@ -593,13 +665,14 @@ class Node {
      */
     Node addSuccessor(HMM hmm) {
         Node child = null;
-        Node matchingChild = (Node) successors.get(hmm);
+        Node matchingChild = getSuccessor(hmm);
         if (matchingChild == null) {
             child = new HMMNode(hmm);
-            successors.put(hmm, child);
+            putSuccessor(hmm, child);
         } else {
             child = matchingChild;
         }
+        assert frozenSuccessors == null;
         return child;
     }
 
@@ -616,13 +689,14 @@ class Node {
      */
     WordNode addSuccessor(Pronunciation pronunciation) {
         WordNode child = null;
-        WordNode matchingChild = (WordNode) successors.get(pronunciation);
+        WordNode matchingChild = (WordNode) getSuccessor(pronunciation);
         if (matchingChild == null) {
             child = new WordNode(pronunciation, (HMMNode) this);
-            successors.put(pronunciation, child);
+            putSuccessor(pronunciation, child);
         } else {
             child = matchingChild;
         }
+        assert frozenSuccessors == null;
         return child;
     }
 
@@ -639,21 +713,17 @@ class Node {
      *
      */
     HMMNode addSuccessor(HMMNode child) {
-        HMMNode matchingChild = (HMMNode) successors.get(child.getHMM());
+        HMMNode matchingChild = (HMMNode) getSuccessor(child.getHMM());
         if (matchingChild == null) {
-            successors.put(child.getHMM(), child);
+            putSuccessor(child.getHMM(), child);
         } else {
             child = matchingChild;
         }
+
+        assert frozenSuccessors == null;
         return child;
     }
 
-
-    /**
-     * Freezes this node (not implemented yet).
-     */
-    void freeze() {
-    }
 
     /**
      * Returns the successors for this node
@@ -661,8 +731,13 @@ class Node {
      * @return the set of successor nodes
      */
     Collection getSuccessors() {
-        return successors.values();
+        if (frozenSuccessors != null) {
+            return frozenSuccessors;
+        } else {
+            return getSuccessorMap().values();
+        }
     }
+
 
     /**
      * Returns the string representation fo this object
