@@ -34,7 +34,7 @@ wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.location 
 wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
 wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.data_location = cd_continuous_8gau
 wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
-wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.useComposites=true
+wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.useComposites=false
 
 edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
