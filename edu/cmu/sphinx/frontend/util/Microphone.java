@@ -57,10 +57,7 @@ import javax.sound.sampled.TargetDataLine;
  * in between calls to <code>startRecording()</code> and
  * <code>stopRecording()</code>.
  * Calling <code>getAudio()</code> returns the captured audio
- * data as Audio objects. If the SphinxProperty: <pre>
- * edu.cmu.sphinx.frontend.keepAudioReference </pre>
- * is set to true, then the Audio objects returned will contain
- * a reference to the (entire) Utterance object.
+ * data as Audio objects.
  */
 public class Microphone extends DataProcessor implements AudioSource {
 
@@ -101,7 +98,6 @@ public class Microphone extends DataProcessor implements AudioSource {
     private volatile boolean started = false;
     private volatile boolean recording = false;
     private volatile boolean closed = false;
-    private boolean keepAudioReference = true;
     private boolean tracing = false;
     private boolean closeAudioBetweenUtterances = true;
 
@@ -150,10 +146,6 @@ public class Microphone extends DataProcessor implements AudioSource {
         sampleSizeInBits = getSphinxProperties().getInt
             (FrontEnd.PROP_BITS_PER_SAMPLE, 
              FrontEnd.PROP_BITS_PER_SAMPLE_DEFAULT);
-
-        keepAudioReference = properties.getBoolean
-            (FrontEnd.PROP_KEEP_AUDIO_REFERENCE,
-             FrontEnd.PROP_KEEP_AUDIO_REFERENCE_DEFAULT);
     }
 
 
@@ -364,11 +356,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      * All audio data captured in-between <code>startRecording()</code>
      * and <code>stopRecording()</code> is cached in an Utterance
      * object. Calling this method basically returns the next
-     * chunk of audio data cached in this Utterance. If the
-     * SphinxProperty <pre>
-     * edu.cmu.sphinx.frontend.keepAudioReference </pre> is true,
-     * then the return Audio object will contain a reference to
-     * the original Utterance object.
+     * chunk of audio data cached in this Utterance.
      *
      * @return the next Audio or <code>null</code> if none is
      *     available
