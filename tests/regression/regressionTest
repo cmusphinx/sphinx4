@@ -39,7 +39,7 @@ chmod +x executeRegressionTest
 
 # run the tests
 
-./executeRegressionTest
+./executeRegressionTest $*
 
 # clean up 
 
