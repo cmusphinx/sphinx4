@@ -9,6 +9,7 @@ import java.io.PrintWriter;
  * Provides a set of generic utilities
  */
 public class Utilities {
+    private final static boolean TRACKING_OBJECTS = false;
 
     // Unconstructable.
     private Utilities() {}
@@ -67,6 +68,21 @@ public class Utilities {
     public static void dump(PrintWriter pw, int padding, String string) {
 	pw.print(pad(padding));
 	pw.println(string);
+    }
+
+
+    /**
+     * utility method for tracking object counts
+     *
+     * @param name the name of the object
+     * @param count the count of objects
+     */
+    public static void objectTracker(String name, int count) {
+	if (TRACKING_OBJECTS) {
+	    if (count % 1000 == 0) {
+		System.out.println("OT: " + name + " " + count);
+	    }
+	}
     }
 }
 
