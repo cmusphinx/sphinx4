@@ -48,6 +48,7 @@ edu.cmu.sphinx.frontend.featureExtractor = edu.cmu.sphinx.frontend.LiveFeatureEx
 #
 ############################################################
 
+edu.cmu.sphinx.decoder.Recognizer.linguistProcessors = edu.cmu.sphinx.decoder.linguist.util.GDLDumper
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist
 edu.cmu.sphinx.decoder.Recognizer.dumpMemoryInfo=false
 edu.cmu.sphinx.decoder.Recognizer.dumpSentenceHMM=false
