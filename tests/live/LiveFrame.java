@@ -262,12 +262,66 @@ public class LiveFrame extends JFrame {
 
 
     /**
+     * Enables or disables the "Next" button.
+     *
+     * @param enable boolean to enable or disable
+     */
+    public void setNextButtonEnabled(final boolean enabled) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                nextButton.setEnabled(enabled);
+            }
+        });
+    }
+
+
+    /**
      * Returns the (endpointer) CesptraPanel.
      *
      * @return the CepstraPanel
      */
     public CepstraPanel getCepstraPanel() {
         return endpointerPanel;
+    }
+
+
+    /**
+     * Enters speaking (i.e., recording) mode, sets the various GUI objects
+     * to the correct state.
+     */
+    public void enterSpeakingMode() {
+        setMessage("Wait...");
+        
+        // update GUI states
+        setGUISpeakingState(true);
+        setRecognitionLabel("");
+        
+        // start recording
+        live.getDecoder().getMicrophone().clear();
+        if (live.getDecoder().getMicrophone().startRecording()) {
+            setMessage("OK, start speaking...");
+            live.decode();
+        } else {
+            setMessage("Error opening the audio device");
+        }
+    }
+
+
+    /**
+     * Exits speaking (i.e., recording) mode, sets the various GUI objects
+     * to the correct state.
+     */
+    public void exitSpeakingMode() {
+        setMessage("Stop speaking");
+        
+        // update GUI states
+        setGUISpeakingState(false);
+        // setRecognitionLabel("");
+        
+        // stop recording, now decode
+        String reference = textToSayArea.getText();
+        LiveDecoder decoder = live.getDecoder();
+        decoder.getMicrophone().stopRecording();
     }
 
 
@@ -573,45 +627,6 @@ public class LiveFrame extends JFrame {
         return areaScrollPane;
     }
 
-
-    /**
-     * Enters speaking (i.e., recording) mode, sets the various GUI objects
-     * to the correct state.
-     */
-    public void enterSpeakingMode() {
-        setMessage("Wait...");
-        
-        // update GUI states
-        setGUISpeakingState(true);
-        setRecognitionLabel("");
-        
-        // start recording
-        live.getDecoder().getMicrophone().clear();
-        if (live.getDecoder().getMicrophone().startRecording()) {
-            setMessage("OK, start speaking...");
-            live.decode();
-        } else {
-            setMessage("Error opening the audio device");
-        }
-    }
-
-
-    /**
-     * Exits speaking (i.e., recording) mode, sets the various GUI objects
-     * to the correct state.
-     */
-    public void exitSpeakingMode() {
-        setMessage("Stop speaking");
-        
-        // update GUI states
-        setGUISpeakingState(false);
-        // setRecognitionLabel("");
-        
-        // stop recording, now decode
-        String reference = textToSayArea.getText();
-        LiveDecoder decoder = live.getDecoder();
-        decoder.getMicrophone().stopRecording();
-    }
 
     /**
      * Create the Panel where all the buttons are.
