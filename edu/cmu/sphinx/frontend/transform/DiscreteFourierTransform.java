@@ -67,7 +67,7 @@ import edu.cmu.sphinx.util.SphinxProperties;
 public class DiscreteFourierTransform extends BaseDataProcessor {
 
     private static final String PROP_PREFIX
-        = "edu.cmu.sphinx.frontend.transforms.DiscreteFourierTransform.";
+        = "edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.";
 
     /**
      * The name of the SphinxProperty for the number of points
