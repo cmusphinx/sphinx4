@@ -16,6 +16,7 @@ package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
+import edu.cmu.sphinx.util.LogMath;
 
 
 /**
@@ -39,6 +40,13 @@ public interface WordResult {
      * @return a confidence score between 0.0 and 1.0 (inclusive)
      */
     public double getConfidence();
+
+    /**
+     * Returns the log math of the scores.
+     *
+     * @return the log math of the scores
+     */
+    public LogMath getLogMath();
 
     /**
      * Gets the pronunciation for this word.
