@@ -15,7 +15,10 @@ package edu.cmu.sphinx.decoder.scorer;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+
 import java.io.IOException;
+
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.Feature;
@@ -215,24 +218,23 @@ public class ThreadedAcousticScorer implements AcousticScorer {
                 throw new Error("Can't score non-content feature");
             }
 
-	    Scoreable[] scoreables = (Scoreable[]) scoreableList.toArray(new
-                    Scoreable[scoreableList.size()]);
-
 	    if (numThreads > 1) {
 		int nThreads = numThreads;
-		int scoreablesPerThread = (scoreables.length
-			+ (numThreads - 1)) / numThreads;
+		int scoreablesPerThread = 
+                    (scoreableList.size() + (numThreads - 1)) / numThreads;
 		if (scoreablesPerThread < minScoreablesPerThread) {
 		    scoreablesPerThread = minScoreablesPerThread;
-		    nThreads = (scoreables.length + (scoreablesPerThread - 1))
-			/ scoreablesPerThread;
+		    nThreads = (scoreableList.size() + 
+                                (scoreablesPerThread - 1)) 
+                        / scoreablesPerThread;
 		}
 
 		semaphore.reset(nThreads);
 
 		for (int i = 0; i < nThreads; i++) {
-		    ScoreableJob job = new ScoreableJob(scoreables,
-			    i * scoreablesPerThread, scoreablesPerThread);
+		    ScoreableJob job = new ScoreableJob
+                        (scoreableList, i * scoreablesPerThread, 
+                         scoreablesPerThread);
                     if (i < (nThreads - 1)) {
                         mailbox.post(job);
                     } else {
@@ -244,8 +246,8 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 		best = semaphore.pend();
 
 	    } else {
-		ScoreableJob job = new ScoreableJob(scoreables, 0,
-                        scoreables.length);
+		ScoreableJob job = new ScoreableJob
+                    (scoreableList, 0, scoreableList.size());
 		best = scoreScoreables(job);
 	    }
 	} catch (IOException ioe) {
@@ -272,12 +274,13 @@ public class ThreadedAcousticScorer implements AcousticScorer {
         if (job.getSize() <= 0) {
             return null;
         }
-	Scoreable[] scoreables = job.getScoreables();
-        Scoreable best = scoreables[0];
-	int end = job.getStart() + job.getSize();
-        
-	for (int i = job.getStart(); i < end && i < scoreables.length; i++) {
-            Scoreable scoreable = scoreables[i];
+
+        Scoreable best = job.getFirst();
+        int i = 0;
+
+	for (ListIterator iterator = job.getListIterator();
+             i < job.getSize(); i++) {
+            Scoreable scoreable = (Scoreable) iterator.next();
 	    if (scoreable.getFrameNumber() != curFeature.getID()) {
 		throw new Error
 		    ("Frame number mismatch: Token: " + 
@@ -420,7 +423,7 @@ class Semaphore {
  */
 class ScoreableJob {
 
-    private Scoreable[] scoreables;
+    private List scoreables;
     private int start;
     private int size;
 
@@ -431,10 +434,14 @@ class ScoreableJob {
      * @param start the starting point for this job
      * @param size the number of scoreables in this job
      */
-    ScoreableJob(Scoreable[] scoreables, int start, int size) {
+    ScoreableJob(List scoreables, int start, int size) {
 	this.scoreables = scoreables;
 	this.start = start;
-	this.size = size;
+        if ((start + size) > scoreables.size()) {
+            this.size = scoreables.size() - start;
+        } else {
+            this.size = size;
+        }
     }
 
     /**
@@ -460,17 +467,26 @@ class ScoreableJob {
      *
      * @return the list of scoreables
      */
-    Scoreable[] getScoreables() {
-	return scoreables;
+    ListIterator getListIterator() {
+	return scoreables.listIterator(start);
     }
 
+    /**
+     * Returns the first scoreable in this job.
+     *
+     * @return the first scoreable in this job
+     */
+    Scoreable getFirst() {
+        return (Scoreable) scoreables.get(start);
+    }
+    
     /**
      * Returns a string representation of this object
      *
      * @return the string representation
      */
     public String toString() {
-	return "List size " + scoreables.length + " start " 
+	return "List size " + scoreables.size() + " start " 
 	    + start + " size " + size;
     }
 }
