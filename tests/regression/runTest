@@ -11,7 +11,7 @@
 # This script runs a particular test in the given directory
 #
 
-base=$PWD
+base=`pwd`
 log=$base/regression.log
 
 directory=$1
