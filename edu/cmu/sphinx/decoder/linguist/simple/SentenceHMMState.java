@@ -173,11 +173,19 @@ public class  SentenceHMMState implements Serializable, SearchState  {
      * Determines if this state is a fan-in state. The search may
      * need to adjust the pruning for states that fan in since they
      * are shared by multiple paths
+     *
+     * @return <code>true</code> if the state is a fan in state
+     *
      */
     public boolean isFanIn() {
 	return (fields & MASK_FAN_IN) == MASK_FAN_IN;
     }
 
+    /**
+     * Sets the fan in state
+     *
+     * @param fanIn if true its a fan in state
+     */
     public void setFanIn(boolean fanIn) {
 	if (fanIn) {
 	    this.fields |= MASK_FAN_IN;
@@ -358,6 +366,11 @@ public class  SentenceHMMState implements Serializable, SearchState  {
 	}
     }
 
+    /**
+     * Determines if this state is a unit state
+     *
+     * @return <code>true</code> if the state is a unit state.
+     */
     public boolean isUnit() {
 	return false;
     }

@@ -1,3 +1,15 @@
+/*
+ * Copyright 1999-2002 Carnegie Mellon University.  
+ * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ * 
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * WARRANTIES.
+ *
+ */
+
 package edu.cmu.sphinx.decoder.linguist.simple;
 
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
@@ -18,6 +30,15 @@ import edu.cmu.sphinx.knowledge.acoustic.Unit;
  *
  */
 public class ExtendedUnitState extends UnitState {
+
+    /**
+     * Creates a UnitState. Gets the left and right contexts from the
+     * unit itself.
+     *
+     * @param parent the parent state
+     * @param which the index of the given state
+     * @param unit the unit associated with this state
+     */
     public ExtendedUnitState(PronunciationState parent, int which,  Unit unit) {
         super(parent, which, unit);
     }
