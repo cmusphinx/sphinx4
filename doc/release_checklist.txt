@@ -15,6 +15,9 @@
     - make sure that JAVA_HOME points to a 1.4.X compiler
     - ant deploy
 
+2a) Deploy ZipCity webstart
+    - build deploy with 'ant -find demo.xml release_zipcity'
+    - release it to sourceforge with  'scripts/deployZipCity.sh'
 
 3) Test the Binary Distribution:
     - jar xvf sphinx4-bin-0.1alpha.zip
@@ -61,4 +64,10 @@
     - ant run-ep
     - Go through index.html, click through the links to make sure they are
       not broken. (or use 'linklint /@')
+
+5) Test WebStart app
+    - clear webstart cache
+    - go to cmusphinx.sourceforge.net/sphinx4
+    - click on zipcity
+    - test app
 
