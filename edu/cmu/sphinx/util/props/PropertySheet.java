@@ -14,6 +14,7 @@ package edu.cmu.sphinx.util.props;
 import java.util.List;
 import java.util.logging.Logger;
 import java.io.PrintStream;
+import java.net.URL;
 /**
  * A property sheet defines a collection of properties for a single component
  * in the system.
@@ -117,8 +118,21 @@ public interface PropertySheet {
      */
     boolean getBoolean(String name, boolean defaultValue)
             throws PropertyException;
+
+
     /**
-     * Gets a comopnent associated with the given paramenter name
+     * Gets a resource associated with the given parameter name
+     *
+     * @param name the parameter name
+     * @return the resource associated with the name or NULL if it
+     * doesn't exist.
+     * @throws PropertyException
+     *             if the resource cannot be found
+     */
+    URL getResource(String name) throws PropertyException;
+
+    /**
+     * Gets a component associated with the given parameter name
      * 
      * @param name
      *            the parameter name
@@ -131,7 +145,7 @@ public interface PropertySheet {
      */
     Configurable getComponent(String name, Class type) throws PropertyException;
     /**
-     * Gets a list of components associated with the given paramenter name
+     * Gets a list of components associated with the given parameter name
      * 
      * @param name
      *            the parameter name

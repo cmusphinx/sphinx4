@@ -13,6 +13,8 @@
 package edu.cmu.sphinx.util.props;
 
 import java.util.List;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 /**
  * an enum-style type that defines the possible property types.
@@ -160,6 +162,52 @@ public abstract class PropertyType {
             return obj instanceof String;
         }
     };
+    /**
+     * A Resource type. Resources are in one of the following forms:
+     *
+     * <ul>
+     * <li> a URL such as http://www.cmu.edu/foo.zip
+     * <li> a simple file location (e.g.  /lab/speech/data/wsj.jar)
+     * <li> a resource in a jar file in the form:
+     * FromJarWithClass://FullyQualifiedClassName/resourceName
+     * </ul>
+     */
+    public static PropertyType RESOURCE = new PropertyType("Resource") {
+        /**
+         * Determines if this is a valid string
+         * 
+         * @param obj
+         *            the object to check
+         * @return true if the object is a valid string
+         */
+        boolean isValid(Object obj) {
+            if (obj instanceof String) {
+                String loc = (String) obj;
+
+                // First see if it is a FromJarWithClass resource
+
+                if (loc.toLowerCase().startsWith("resource:/")) {
+                    return true;
+                }
+
+                // if it doesn't have a protocol spec
+                // add a "file:" to it, to make it a URL
+
+                if (loc.indexOf(":") == -1) {
+                    loc = "file:" + loc;
+                }
+                // Check to see if it is a URL
+                try {
+                    new URL(loc);
+                    return true;
+                } catch (MalformedURLException e) {
+                    return false;
+                }
+            } 
+            return false;
+        }
+    };
+
     /**
      * An array of strings
      */

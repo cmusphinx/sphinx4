@@ -19,8 +19,12 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.logging.Logger;
 import java.io.PrintStream;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 /**
  * An implementation of the property sheet that validates the properties
@@ -306,6 +310,81 @@ class ValidatingPropertySheet implements PropertySheet {
         } else {
             return Boolean.valueOf((String) getRaw(name)).booleanValue();
         }
+    }
+
+
+    /**
+     * a regular expression that matches our own resource 'protocol'.
+     *
+     * This matches urls of the form:   resource:/package.a.class!/resource/location
+     */
+    private static Pattern jarPattern =
+            Pattern.compile("resource:/([.\\w]+?)!(.*)",
+                    Pattern.CASE_INSENSITIVE);
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.util.props.PropertySheet#getResource(java.lang.String)
+     */
+    public URL getResource(String name) throws PropertyException {
+        URL url = null;
+        checkType(name, PropertyType.RESOURCE);
+        String location = (String) getRaw(name);
+        if (location == null) {
+            throw new PropertyException(registry.getOwner(), name, 
+              "Required resource property '" + name + "' not set");
+        }
+
+        Matcher jarMatcher = jarPattern.matcher(location);
+        if (jarMatcher.matches()) {
+            String className = jarMatcher.group(1);
+            String resourceName = jarMatcher.group(2);
+
+            try {
+                Class cls = Class.forName(className);
+                url = cls.getResource(resourceName);
+                if (url == null) {
+                    // getResource doesn't usually find directories 
+                    // If the resource is a directory and we
+                    // can't find it, we will instead try to  find the class 
+                    // anchor and backup to the top level and try again
+                    String classPath = className.replaceAll("\\.", "/") + ".class";
+                    url = cls.getClassLoader().getResource(classPath);
+                    if (url != null) {
+                        // we should have something like this, so replace everything
+                        // jar:file:/foo.jar!/a/b/c/HelloWorld.class
+                        // after the ! with the resource name
+                        String urlString = url.toString();
+                        urlString = urlString.replace("/" + classPath, resourceName);
+                        try {
+                            url = new URL(urlString);
+                        } catch (MalformedURLException mfe) {
+                            throw new PropertyException(registry.getOwner(), 
+                                    name, "Bad URL " + urlString + mfe.getMessage());
+                        }
+                    }
+                }
+                if (url == null) {
+                    throw new PropertyException(registry.getOwner(),
+                            name, "Can't locate resource " + resourceName);
+                } else {
+                    // System.out.println("URL FOUND " + url);
+                }
+            } catch (ClassNotFoundException cnfe) {
+                throw new PropertyException(registry.getOwner(),
+                    name, "Can't locate FromJarWithClass:/" + className);
+            }
+        } else {
+            if (location.indexOf(":") == -1) {
+                location = "file:" + location;
+            }
+
+            try {
+                url = new URL(location);
+            } catch (MalformedURLException e) {
+                throw new PropertyException(registry.getOwner(), 
+                        name, "Bad URL " + location + e.getMessage());
+            }
+        } 
+        return url;
     }
     
     /* (non-Javadoc)
