@@ -29,7 +29,7 @@ PROFILE_FLAGS= $(GCSPY_FLAGS)
 PROFILE_FLAGS= -Xprof -server
 
 LOG_GC_FLAGS=  -Xloggc:gc.txt
-GC_FLAGS = -ms256m -mx512m -XX:NewSize=100m  -XX:MaxNewSize=100m 
+GC_FLAGS = -ms256m -mx1512m -XX:NewSize=100m  -XX:MaxNewSize=100m 
 
 # LOGGER_PROPERTIES=tidigits.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
@@ -81,6 +81,7 @@ rm1_unigram_simple:
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
         -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7 \
         -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=1 \
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.unigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
@@ -237,21 +238,82 @@ rm1_trigram_flat_test:
         -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist \
        -Dedu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true \
 	-Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-160\
+	-Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=12000\
 	-Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-120 \
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.trigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
-rm1_unigram_flat_test:
+rm1_unigram_flat_dynamic_test:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
         -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=13 \
-	-Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-120\
-	-Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-60 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-120 \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.2\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=-1 \
+   -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-60 \
         -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.unigram.lm \
         -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=1 \
         -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist \
        -Dedu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
+
+rm1_unigram_lex_dynamic_test:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=13 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-120 \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.2\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000 \
+   -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-60 \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.unigram.lm \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=1 \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
+
+rm1_unigram_flat_static_test:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=13 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-120 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000 \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.2\
+   -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-60 \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.unigram.lm \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=1 \
+       -Dedu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
+
+
+
+rm1_bigram_flat_dynamic_test:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=17 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-140 \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.2\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=-1 \
+    -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.absoluteWordBeamWidth=-1 \
+   -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-100 \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=2 \
+        -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist \
+       -Dedu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
+
+rm1_bigram_flat_static_test:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=17 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-140 \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.2\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=-1 \
+   -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-100 \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=2 \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
 
