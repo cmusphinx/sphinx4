@@ -16,10 +16,12 @@ package edu.cmu.sphinx.result;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -62,7 +64,7 @@ public class Sausage {
             for (Iterator j=set.keySet().iterator();j.hasNext();) {
                 sum = logMath.addAsLinear(sum,((Double)j.next()).floatValue());
             }
-            if (sum < LogMath.getLogOne() - 4) {
+            if (sum < LogMath.getLogOne() - 10) {
                 float remainder = logMath.subtractAsLinear(LogMath.getLogOne(),sum);
                 addWordHypothesis(index,"<noop>",remainder);
             } else {
@@ -86,7 +88,13 @@ public class Sausage {
      */
     public void addWordHypothesis(int position, String word, double prob) {
         //System.out.println("adding " + word + " " + prob + " at " + position);
-        ((Map)confusionSets.get(position)).put(new Double(prob),word);        
+        Double key = new Double(prob);
+        Set wordSet = (Set)((Map)confusionSets.get(position)).get(key);
+        if (wordSet == null) {
+            wordSet = new HashSet();
+            ((Map)confusionSets.get(position)).put(key,wordSet);
+        }
+        wordSet.add(word);
     }
     
     /**
@@ -98,8 +106,15 @@ public class Sausage {
         String s = "";
         Iterator i = confusionSets.iterator();
         while (i.hasNext()) {
-            SortedMap set = (SortedMap)i.next(); 
-            s += set.get(set.lastKey());
+            SortedMap set = (SortedMap)i.next();             
+            Set wordSet = (Set)set.get(set.lastKey());
+            Iterator j = wordSet.iterator();
+            while (j.hasNext()) {
+                s += j.next();
+                if (j.hasNext()) {
+                    s += "/";
+                }
+            }
             if (i.hasNext()) {
                 s += " ";
             }
@@ -113,9 +128,9 @@ public class Sausage {
      * @param pos the word slot to look at
      * @return the word with the highest posterior in the slot
      */
-    public String getBestWordHypothesis(int pos) {
+    public Set getBestWordHypothesis(int pos) {
         SortedMap set = (SortedMap)confusionSets.get(pos);
-        return (String)set.get(set.lastKey());
+        return (Set)set.get(set.lastKey());
     }
 
     /**
@@ -134,7 +149,8 @@ public class Sausage {
      * Get the confusion set stored in a given word slot.
      * 
      * @param pos the word slot to look at.
-     * @return a map from Double posteriors to String words, sorted from lowest to highest.
+     * @return a map from Double posteriors to Sets of String words,
+     *         sorted from lowest to highest.
      */
     public SortedMap getConfusionSet(int pos) {
         return (SortedMap)confusionSets.get(pos);
@@ -185,7 +201,14 @@ public class Sausage {
                 f.write("node: { title: \"" + index + "\" label: \"" + index + "\"}\n");
                 while (j.hasNext()) {
                     Double prob = (Double)j.next();
-                    String word = (String)set.get(prob);
+                    String word = "";
+                    Set wordSet = (Set)set.get(prob);
+                    for (Iterator w = wordSet.iterator();w.hasNext();) {
+                        word += w.next();
+                        if (w.hasNext()) {
+                            word += "/";
+                        }
+                    }
                     f.write("edge: { sourcename: \"" + index
                             + "\" targetname: \"" + (index + 1)
                             + "\" label: \"" + word + ":" + prob + "\" }\n");
