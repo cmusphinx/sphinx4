@@ -8,10 +8,11 @@ package edu.cmu.sphinx.util;
  */
 public class Complex {
 
-     /**
+    /**
      * The real part of a complex number.
      */
     private double real;
+
      /**
      * The imaginary part of a complex number.
      */
@@ -139,4 +140,10 @@ public class Complex {
 	return squaredMag;
     }
 
+    /**
+     * Returns this complex number as a string in the format (real, imaginary).
+     */
+    public String toString() {
+        return ("(" + this.real + ", " + this.imaginary + ")");
+    }
 }
