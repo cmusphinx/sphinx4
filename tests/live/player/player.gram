@@ -21,7 +21,7 @@ grammar player.player;
 
 <stop> = stop {stop};
 
-<mute> = (shut up | mute | let me hear you | speak to me | unmute) {mute};
+<mute> = (shut up | mute | let me hear you | speak to me ) {mute};
 
 <quieter> = (quieter | turn it down) {quieter};
 
