@@ -118,6 +118,7 @@ public class Microphone extends BaseDataProcessor {
      * Parameters for audioFormat
      */
     private AudioFormat audioFormat;
+    private AudioFormat finalAudioFormat;
     private int sampleRate;
     private int sampleSizeInBytes;
     private int channels;
@@ -138,6 +139,7 @@ public class Microphone extends BaseDataProcessor {
     private AudioInputStream audioStream = null;
     private DataList audioList;
     private Utterance currentUtterance;
+    private int audioBufferSize = 160000;
 
     private long totalSamplesRead;
     private int frameSizeInBytes;
@@ -150,7 +152,7 @@ public class Microphone extends BaseDataProcessor {
     private boolean closeBetweenUtterances = true;
     private boolean keepDataReference = true;
 
-    private  Logger logger;
+    private Logger logger;
     
     /*
      * (non-Javadoc)
@@ -221,17 +223,19 @@ public class Microphone extends BaseDataProcessor {
         audioFormat = new AudioFormat
             ((float) sampleRate, sampleSizeInBytes * 8, 
              channels, signed, bigEndian);
+	finalAudioFormat = audioFormat;
         audioList = new DataList();
     }
 
 
     /**
-     * Returns the current AudioFormat used by this Microphone.
+     * Returns the format of the audio recorded by this Microphone.
+     * Note that this might be different from the configured format.
      *
      * @return the current AudioFormat
      */
     public AudioFormat getAudioFormat() {
-        return audioFormat;
+        return finalAudioFormat;
     }
 
 
@@ -275,8 +279,8 @@ public class Microphone extends BaseDataProcessor {
      */
     public synchronized void stopRecording() {
         if (audioLine != null) {
-            recording = false;
 	    audioLine.stop();
+            recording = false;
         }
     }
 
@@ -299,7 +303,8 @@ public class Microphone extends BaseDataProcessor {
 	    logger.info("started recording");
 	    
 	    if (keepDataReference) {
-		currentUtterance = new Utterance("Microphone", audioFormat);
+		currentUtterance = new Utterance
+		    ("Microphone", finalAudioFormat);
 	    }
 	    
 	    audioList.add(new DataStartSignal());
@@ -324,27 +329,27 @@ public class Microphone extends BaseDataProcessor {
 	    
 	    audioList.add(new DataEndSignal(duration));
 	    logger.info("DataEndSignal ended");
-	    
-	    closeAudioLine();
+
+	    if (closeBetweenUtterances) {
+		closeAudioLine();
+	    }
 	    logger.info("stopped recording");	    
 	}
 
 	private void closeAudioLine() {
-	    if (closeBetweenUtterances) {
-		audioLine.close();
-		logger.info("Audio line closed.");
-		try {
-		    audioStream.close();
+	    audioLine.close();
+	    logger.info("Audio line closed.");
+	    try {
+		audioStream.close();
 		    logger.info("Audio stream closed.");
 		    if (doConversion) {
 			nativelySupportedStream.close();
 			logger.info("Native stream closed.");
 		    }                        
-		} catch(IOException e) {
-		    logger.warning("IOException closing audio streams");
-		}
-		audioLine = null;
+	    } catch(IOException e) {
+		logger.warning("IOException closing audio streams");
 	    }
+	    audioLine = null;
 	}
     }
 
@@ -507,7 +512,8 @@ public class Microphone extends BaseDataProcessor {
             logger.info("Frame size: " + frameSizeInBytes + " bytes");
 
             /* open the audio line */
-            audioLine.open(info.getFormats()[0], 160000);
+	    finalAudioFormat = info.getFormats()[0];
+            audioLine.open(finalAudioFormat, audioBufferSize);
 
             return true;
         } catch (LineUnavailableException ex) {
