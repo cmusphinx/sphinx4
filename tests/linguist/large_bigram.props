@@ -86,7 +86,7 @@ edu.cmu.sphinx.search.validateResults=false
 ############################################################
 
 edu.cmu.sphinx.search.Dictionary.useAcousticModelLocation = true
-edu.cmu.sphinx.search.Dictionary.dictionaryPath = dict/cmudict.0.6d+rm1.txt
+edu.cmu.sphinx.search.Dictionary.dictionaryPath = dict/RM.dictionary
 edu.cmu.sphinx.search.Dictionary.fillerPath = dict/fillerdict
 edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false
 
@@ -115,7 +115,7 @@ edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1E-25
 edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250
 edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
-edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=11
+edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=4
 
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar
 edu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel

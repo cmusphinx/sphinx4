@@ -1,3 +1,5 @@
+
+
 ##########################################################
 #
 # Global logging properties
@@ -86,6 +88,7 @@ edu.cmu.sphinx.search.validateResults=false
 ############################################################
 
 edu.cmu.sphinx.search.Dictionary.useAcousticModelLocation = true
+#edu.cmu.sphinx.search.Dictionary.dictionaryPath = dict/cmudict.0.6d+rm1.txt.fixed
 edu.cmu.sphinx.search.Dictionary.dictionaryPath = dict/RM.dictionary
 edu.cmu.sphinx.search.Dictionary.fillerPath = dict/fillerdict
 edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false
@@ -111,18 +114,25 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 
 
 
-edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-25
+edu.cmu.sphinx.search.Linguist.wordInsertionProbability = .1
 edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250
 edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
-edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=4.0
+edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7
 
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar
 edu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel
 edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist
 edu.cmu.sphinx.model.language.format=arpa
-edu.cmu.sphinx.model.language.location=large.unigram
+edu.cmu.sphinx.model.language.location=single.unigram
 edu.cmu.sphinx.decoder.Decoder.showErrorToken=false
-edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
+edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=true
 edu.cmu.sphinx.search.Recognizer.featureBlockSize=5
-# edu.cmu.sphinx.search.Recognizer.acousticScorer=edu.cmu.sphinx.search.SimpleAcousticScorer
+edu.cmu.sphinx.search.Recognizer.acousticScorer=edu.cmu.sphinx.search.SimpleAcousticScorer
+
+edu.cmu.sphinx.search.Recognizer.linguistProcessors=edu.cmu.sphinx.util.GDLDumper 
+edu.cmu.sphinx.util.LinguistDumper.filename=single.gdl
+edu.cmu.sphinx.util.SphinxProperties.warnIfPropertyNotDefined=false
+edu.cmu.sphinx.util.GDLDumper.skipHMMs=true
+edu.cmu.sphinx.util.GDLDumper.verticalLayout=true
+edu.cmu.sphinx.util.GDLDumper.dumpArcLabels=true
