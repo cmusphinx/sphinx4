@@ -90,20 +90,37 @@ rm1_bigram:
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
-rm1_bigram_lex:
+
+rm1_flat_unigram_lex:
 	$(JAVA_CMD) \
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.flat_unigram.lm \
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10.0 \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.bigram.props ./rm1.batch
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
 rm1_unigram_lex:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.unigram.props ./rm1.batch
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.unigram.lm\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7 \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
+
+rm1_bigram_lex:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10.0 \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
+
 
 rm1_trigram_lex:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.trigram.props ./rm1.batch
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.trigram.lm\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=22.0 \
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7 \
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
 rm1_flat_unigram_fst:
 	$(JAVA_CMD) \
