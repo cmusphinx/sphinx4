@@ -361,7 +361,7 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <!-- * an4_words_bigram_fst                                   * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <target name="an4_words_flat_bigram_fst"
+    <target name="an4_words_bigram_fst"
 	    description="AN4 words test set with a bigram FST language model">
         <java classpath="${classes_dir}"
 	      classname="${batch_main}"
@@ -392,7 +392,7 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <!-- * an4_words_trigram_fst                                  * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <target name="an4_words_flat_trigram_fst"
+    <target name="an4_words_trigram_fst"
 	    description="AN4 words test set with a trigram FST language model">
         <java classpath="${classes_dir}"
 	      classname="${batch_main}"
