@@ -116,4 +116,5 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=true
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=0
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
-
+edu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7
+#edu.cmu.sphinx.decoder.Recognizer.acousticScorer=edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer
