@@ -63,6 +63,18 @@
             <item>recognizerMonitor </item>
         </propertylist>
     </component>
+
+    <component name="rejectionRecognizer" 
+               type="edu.cmu.sphinx.recognizer.Recognizer">
+        <property name="decoder" value="digitsDecoder"/>
+        <propertylist name="monitors">
+            <item>accuracyTracker </item>
+	    <item>rejectionTracker </item>
+            <item>speedTracker </item>
+            <item>memoryTracker </item>
+            <item>recognizerMonitor </item>
+        </propertylist>
+    </component>
     
     <!-- ******************************************************** -->
     <!-- The Decoder   configuration                              -->
@@ -116,6 +128,16 @@
                 value="${silenceInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
         <property name="unitManager" value="unitManager"/>
+        <property name="addOutOfGrammarBranch" value="false"/>
+	<property name="outOfGrammarLinguist" value="phoneLoopLinguist"/>
+	<property name="outOfGrammarProbability" value="1E-20"/>
+    </component>
+
+    <component name="phoneLoopLinguist"
+               type="edu.cmu.sphinx.linguist.flat.CIPhoneLoopLinguist">
+	<property name="acousticModel" value="wsj"/>
+	<property name="logMath" value="logMath"/>
+	<property name="phoneInsertionProbability" value="1E-10"/>
     </component>
 
     <component name="dflatLinguist" 
@@ -219,6 +241,18 @@
 	<property name="logMath" value="logMath"/>
         <property name="unitManager" value="unitManager"/>
     </component>
+
+    <component name="wsj"
+               type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model">
+        <property name="loader" value="wsjLoader"/>
+        <property name="unitManager" value="wsjUnitManager"/>
+    </component>
+        
+    <component name="wsjLoader"
+               type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.ModelLoader">
+        <property name="logMath" value="logMath"/>
+        <property name="unitManager" value="wsjUnitManager"/>
+    </component>
     
     
     <!-- ******************************************************** -->
@@ -226,6 +260,9 @@
     <!-- ******************************************************** -->
 
     <component name="unitManager" 
+        type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
+
+    <component name="wsjUnitManager" 
         type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
 
     <!-- ******************************************************** -->
@@ -339,6 +376,13 @@
         <property name="recognizer" value="connectedDigitsRecognizer"/>
         <property name="showAlignedResults" value="false"/>
         <property name="showRawResults" value="false"/>
+    </component>
+
+    <component name="rejectionTracker" 
+                type="edu.cmu.sphinx.instrumentation.RejectionTracker">
+        <property name="recognizer" value="rejectionRecognizer"/>
+        <property name="showSummary" value="true"/>
+        <property name="showDetails" value="true"/>
     </component>
     
     <component name="memoryTracker" 
