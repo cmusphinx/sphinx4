@@ -62,11 +62,11 @@
           type="edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager">
         <property name="scorer" value="threadedScorer"/>
         <property name="pruner" value="trivialPruner"/>
-        <property name="acousticLookaheadFrames" value="2"/>
+        <property name="acousticLookaheadFrames" value="2.2"/>
         <property name="logMath" value="logMath"/>
         <property name="activeListManager" value="activeListManager"/>
         <property name="buildWordLattice" value="false"/>
-        <property name="relativeBeamWidth" value="1E-80"/>
+        <property name="relativeBeamWidth" value="1E-77"/>
         <property name="growSkipInterval" value="6"/>
         <property name="linguist" value="lexTreeLinguist"/>
         <property name="checkStateOrder" value="false"/>
@@ -133,7 +133,7 @@
 
     <component name="ngramLanguageModel"
           type="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel">
-        <property name="unigramWeight" value=".7"/>
+        <property name="unigramWeight" value=".3"/>
         <property name="maxDepth" value="3"/>
         <property name="logMath" value="logMath"/>
         <property name="dictionary" value="dictionary"/>
@@ -174,6 +174,7 @@
         <property name="isCpuRelative" value="true"/>
         <property name="minScoreablesPerThread" value="10"/>
     </component>
+
 
     <!-- ************************************************** -->
     <!-- mfcFrontEnd                                        -->
@@ -280,9 +281,9 @@
 
     <component name="unitExitActiveList"
           type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
-        <property name="absoluteBeamWidth" value="8000"/>
+        <property name="absoluteBeamWidth" value="-1"/>
         <property name="logMath" value="logMath"/>
-        <property name="relativeBeamWidth" value="1E-200"/>
+        <property name="relativeBeamWidth" value="1E-80"/>
     </component>
 
     <!-- ************************************************** -->
@@ -291,9 +292,9 @@
 
     <component name="wordActiveList"
           type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
-        <property name="absoluteBeamWidth" value="22"/>
+        <property name="absoluteBeamWidth" value="19"/>
         <property name="logMath" value="logMath"/>
-        <property name="relativeBeamWidth" value="1E-70"/>
+        <property name="relativeBeamWidth" value="1E-30"/>
     </component>
 
     <!-- ************************************************** -->

@@ -392,7 +392,6 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="batch[skip]" 	value="${skip}"/> 
             <arg value="rm1_trigram_fast.config.xml"/> 
             <arg value="${batch}"/> 
