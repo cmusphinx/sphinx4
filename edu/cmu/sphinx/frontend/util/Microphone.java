@@ -537,7 +537,7 @@ public class Microphone extends BaseDataProcessor {
      *
      * @return a suitable native audio format
      */
-    public static AudioFormat getNativeAudioFormat(AudioFormat format) {
+    private static AudioFormat getNativeAudioFormat(AudioFormat format) {
         // try to do sample rate conversion
         Line.Info[] lineInfos = AudioSystem.getTargetLineInfo
             (new Line.Info(TargetDataLine.class));
