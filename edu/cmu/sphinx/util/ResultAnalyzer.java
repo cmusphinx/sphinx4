@@ -112,8 +112,17 @@ public class ResultAnalyzer {
 	return sb.toString();
     }
 
-
-
+    /**
+     * Returns the list of hypothesized words only (that is, without
+     * words like <SIL>) to a space separated string.
+     */
+    public String getHypothesis() {
+        if (hypOutput == null) {
+            return null;
+        } else {
+            return hypOutput.toString().trim();
+        }
+    }    
 
     /**
      * Add an insertion error corresponding to the first item
