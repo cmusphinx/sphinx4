@@ -1,0 +1,64 @@
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+
+The directories here contain various models trained from
+the WSJ data
+
+Features used to train the models were computed from
+broadband 16 bit sampled data sampled at 16Khz.
+The features were 13 dimensional cepstra computed
+from 40 mel filters covering the frequency range
+130Hz to 6800Hz.
+The feature type used was 1s_c_d_dd
+
+
+Contents of this directory:
+
+am.props
+--------
+
+Properties file containing the parameters used to train the acoustic model.
+
+alpha.dict
+----------
+
+Dictionary containing only the alphabet and their phoneme mapping(s).
+
+cd_continuous_1gau/
+-------------------
+
+Contains 1 gau/state acoustic models.
+
+cd_continuous_2gau/
+-------------------
+
+Contains 2 gaus/state acoustic models.
+
+cd_continuous_4gau/
+-------------------
+
+Contains 4 gaus/state acoustic models.
+
+cd_continuous_8gau/
+-------------------
+
+Contains 8 gaus/state acoustic models.
+
+ci_continuous/
+--------------
+
+Contains context-independent acoustic models.
+
+etc/
+----
+
+Contains the various associated files, such as the mdef files,
+dictionary, fillerdict and a stripped down version
+of the variable settings used to train the models.
+
