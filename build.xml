@@ -187,11 +187,13 @@ jsapi.exe from the lib directory.
 		 additionalparam="-breakiterator"
 		 destdir="${javadoc_dir}" 
 		 packagenames="edu.*"
-	         excludepackagenames="edu.cmu.sphinx.jsapi"
 		 overview="${src_dir}/overview.html"
 		 windowtitle="${javadoc_desc}"
                  doctitle="${javadoc_desc}"
                  access="private">
+            <link href="http://java.sun.com/products/java-media/speech/forDevelopers/jsapi-doc"
+                  offline="true"
+                  packagelistLoc="lib/jsapi" />
 	    <classpath refid="libs"/>
         </javadoc>
     </target>
