@@ -1,0 +1,13 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for dialog manager demo
+ */
+
+grammar email;
+
+public <command> =      read next message       { read } |
+                        delete message          { delete } |
+                        reply to message        { reply } |
+                        compose new message     { new } |
+                        [go to] main menu       { dialog_menu } ;

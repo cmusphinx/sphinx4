@@ -1,0 +1,14 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for dialog manager example
+ */
+
+grammar games;
+
+public <command> =      play doom { doom } |
+                        play quake { quake } |
+                        play chess { chess  } |
+                        play monopoly { monopoly } |
+                        play go fish  {fish  } |
+                        [go to] main menu       { dialog_menu } ;

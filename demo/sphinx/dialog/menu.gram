@@ -1,0 +1,13 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for dialog manager example
+ */
+
+grammar menu;
+
+public <command> =      read email      { dialog_email } |
+                        play games      { dialog_games } |
+                        read news       { dialog_news } |
+                        listen to music { dialog_music } |
+                        watch movies    { dialog_movies } ;

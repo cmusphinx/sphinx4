@@ -1,0 +1,14 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for dialog manager example
+ */
+
+grammar news;
+
+public <command> =      read the boston globe { globe } |
+                        read  the wall street journal  { wsj } |
+                        read the nashua telegraph { nashua  } |
+                        read the mercury news { merculry } |
+                        read the new york times {nyt  } |
+                        [go to] main menu       { dialog_menu } ;
