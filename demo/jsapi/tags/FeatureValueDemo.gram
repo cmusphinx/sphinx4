@@ -1,0 +1,52 @@
+#JSGF V1.0;
+
+grammar demo.jsapi.tags.FeatureValueDemo;
+
+// Pizza toppings and command.
+//
+<pizzaTopping> = cheese 
+	       | pepperoni 
+	       | mushrooms 
+	       | mushroom
+               | onions 
+               | onion
+               | sausage;
+
+<pizza> = <NULL> { this.toppings = new Array(); }
+	  ([and] <pizzaTopping> { 
+              this.toppings = this.toppings.concat($.$value); 
+          })*
+          (pizza | pie) { this.itemType = "pizza"; }
+	  [with] ([and] <pizzaTopping> { 
+              this.toppings = this.toppings.concat($.$value); 
+          })*;
+
+// Burger toppings and command.
+//
+<burgerTopping> = onions 
+                | pickles 
+                | tomatoes 
+                | lettuce 
+                | cheese;
+
+<burgerCondiment> = mayo 
+		  | relish 
+		  | ketchup 
+		  | mustard 
+		  | special sauce;
+
+<burger> = <NULL> { this.toppings = new Array(); } 
+           ((burger | hamburger) { this.itemType = "burger"; }
+            | cheeseburger { this.itemType = "burger";
+                             this.toppings = this.toppings.concat("cheese"); }
+           )
+ 	   [with] 
+	   ([and] (<burgerTopping> | <burgerCondiment>) {
+                       this.toppings = this.toppings.concat($.$value); }
+           )*;
+
+public <order> = [I (want | would like) a] 
+		 ( <pizza>  { this.command = "buyPizza"; }
+                 | <burger> { this.command = "buyBurger"; }
+                 ) { this.item = $; };
+

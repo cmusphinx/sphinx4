@@ -1,0 +1,56 @@
+#JSGF V1.0;
+
+grammar demo.jsapi.tags.LiveConnectDemo;
+
+<pizzaTopping> = cheese 
+	       | pepperoni 
+	       | mushrooms 
+	       | mushroom
+               | onions 
+               | onion
+               | sausage;
+
+// Note the use of LiveScript to create a new Pizza object instance from
+// within the grammar.  Also note the method calls to addTopping on this
+// new instance.
+//
+<pizza> = <NULL> { this.$value = new Packages.demo.jsapi.tags.Pizza(); }
+	  ([and] <pizzaTopping> { this.$value.addTopping($); })*
+          (pizza | pie) 
+	  [with] ([and] <pizzaTopping> { this.$value.addTopping($); })*;
+
+// Burger toppings and command.
+//
+<burgerTopping> = onions 
+                | pickles 
+                | tomatoes 
+                | lettuce 
+                | cheese;
+
+<burgerCondiment> = mayo 
+		  | relish 
+		  | ketchup 
+		  | mustard 
+		  | special sauce;
+
+// Note the use of LiveScript to create a new Burger object instance from
+// within the grammar.  Also note the method calls to addTopping and
+// addCondiment on this new instance.
+//
+<burger> = ((burger | hamburger) { this.$value 
+				    = new Packages.demo.jsapi.tags.Burger(); }
+            | cheeseburger { this.$value 
+			      = new Packages.demo.jsapi.tags.Burger();
+			     this.$value.addTopping("cheese")})
+	  [with] 
+	  ( [and] ( <burgerTopping> { this.$value.addTopping($); }
+		  | <burgerCondiment> { this.$value.addCondiment($); }
+                  )
+	  )*;
+
+// Note the reference to "appObj."  This string is used as an identifier
+// for the application and was registered in the tags parser in the
+// "getObjectParser" method in the LiveConnectDemo.java source code.
+//
+public <order> = [I (want | would like) a] 
+		 (<pizza> | <burger>) { appObj.submitOrder($.$value); };

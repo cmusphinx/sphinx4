@@ -5,6 +5,9 @@ Version:       XXXX
 Release Date:  XXXX
 
 -------------------------------------------------------------------
+WDW - 9/10/04
+    Added ECMAScript Action Tags support and demos.
+
 PBL - 9/8/04
     Fixed bug 1003820 - Sphinx4 cannot handle non-ASCII characters in dictionaries
     Fixed bug 995124 - jsgf right hand recursion is now properly supported

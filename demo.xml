@@ -30,6 +30,7 @@
         <pathelement path="${classes_dir}"/>
 	<pathelement location="${lib_dir}/sphinx4.jar"/>
 	<pathelement location="${lib_dir}/jsapi.jar"/>
+	<pathelement location="${lib_dir}/js.jar"/>
     </path>
 
 
@@ -82,7 +83,8 @@ your environment to use JSAPI.
 	             compile_sphinx_jsgf,
 	             compile_zipcity,
                      compile_sphinx_wavfile,
-                     compile_sphinx_transcriber"
+                     compile_sphinx_transcriber,
+	             compile_tags"
 	    description="Compiles Sphinx-4 demos"/>
 
     <target name="compile_sphinx_helloworld">
@@ -274,6 +276,41 @@ your environment to use JSAPI.
     <target name="keystore" unless="keystore.exists">
         <genkey alias="unknown" storepass="public" keystore="tempKeystore"
             dname="CN=Anonymous Signature, OU=unknown, o=unknown, c=unknown" />
+    </target>
+
+    <target name="compile_tags" if="jsapi_jar.isPresent">
+    	<mkdir dir="${classes_dir}/demo/jsapi/tags"/>
+	<javac debug="true"
+	       source="1.4"
+	       listfiles="true"
+	       deprecation="true"
+	       srcdir="${src_dir}"
+	       includes="demo/jsapi/tags/**"
+	       destdir="${classes_dir}">
+	    <classpath refid="libs"/>
+	</javac>
+
+	<copy todir="${classes_dir}/demo/jsapi/tags">
+         <fileset dir="${src_dir}/demo/jsapi/tags">
+            <include name="**/*.gram"/>
+         </fileset>
+        </copy>
+
+        <jar destfile="${bin_dir}/FeatureValueDemo.jar" 
+	     manifest="${src_dir}/demo/jsapi/tags/fvd.Manifest"
+	     basedir="${classes_dir}"
+	     includes="demo/jsapi/tags/**"
+             excludes="demo/jsapi/tags/LiveConnectDemo**"
+	     filesonly="true"
+	     compress="true"/>
+
+        <jar destfile="${bin_dir}/LiveConnectDemo.jar" 
+	     manifest="${src_dir}/demo/jsapi/tags/lcd.Manifest"
+	     basedir="${classes_dir}"
+	     includes="demo/jsapi/tags/**"
+             excludes="demo/jsapi/tags/FeatureValueDemo**"
+	     filesonly="true"
+	     compress="true"/>
     </target>
 
     <target name="compile_zipcity" depends="init,keystore">

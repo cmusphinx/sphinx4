@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+
+<!--
+
+/**
+ * Copyright 2004 Sun Microsystems, Inc.
+ * All Rights Reserved.  Use is subject to license terms.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ *
+ */
+
+-->
+
+<html>
+  <head><title>JSGF Action Tags Demos</title></head>
+  <style TYPE="text/css">
+  pre { font-size: medium; background: #f0f8ff; padding: 2mm; 
+        border-style: ridge ; color: teal }
+  code { font-size: medium; color: teal }
+  </style></head>
+  <body>
+    <font face="Times New Roman">
+     <center>
+     <table bgcolor="#99CCFF" width="100%">
+	<tr>
+	  <td align=center width="100%">
+	    <h1>JSGF Action Tags Demos</h1>
+	  </td>
+	</tr>
+      </table>
+    </center>
+    </font>
+
+    <font face="Arial" size="2">      
+      <p>
+      These demos provide examples of using the
+      edu.cmu.sphinx.tools.tags package to do post-processing
+      of RuleParse objects obtained from JSGF grammars.
+      </p>
+      <p> 
+      NOTE that neither one of these demos actually performs
+      recognition - they merely show you how to use the action tags
+      parsers once you get a recognition result.
+      </p>
+      <p>
+      The first demo, FeatureValueDemo, provides an example of how
+      to embed feature/value pair logic into a JSGF grammar using ECMAScript
+      and then use the edu.cmu.sphinx.tools.tags.ActionTagsParser
+      class to post-process a JSGF RuleParse to get the feature/value
+      pairs from a recognition result.
+      </p>
+      <p>
+      The second demo, LiveConnectDemo, provides an example of how
+      to embed ECMAScript logic into JSGF grammars that will cause
+      objects in your application to be activated when a JSGF
+      RuleParse is processed by the
+      edu.cmu.sphinx.tools.tags.ObjectTagsParser.
+      </p>
+ 
+      <p>
+      An example of running the LiveConnectDemo is as follows:
+      </p>
+
+      <pre>
+sphinx4>java bin/LiveConnectDemo.jar
+
+Utterance: I want a pizza with mushrooms and onions
+    Order: pizza with mushrooms and onions.
+
+Utterance: Mushroom pizza
+    Order: pizza with mushroom.
+
+Utterance: Sausage and pepperoni pizza
+    Order: pizza with sausage and pepperoni.
+
+Utterance: I would like a pizza
+    Order: plain pizza.
+
+Utterance: I want a cheese and mushroom pizza with onions
+    Order: pizza with cheese, mushroom and onions.
+
+Utterance: I would like a burger
+    Order: plain burger.
+
+Utterance: I would like a burger with pickles onions lettuce and cheese
+    Order: burger with pickles, onions, lettuce and cheese.
+
+Utterance: I would like a burger with special sauce lettuce and cheese
+    Order: burger with lettuce, cheese and special sauce.
+
+Utterance: I want a pizza with pepperoni and cheese
+    Order: pizza with pepperoni and cheese.
+
+Utterance: Cheeseburger with onions
+    Order: burger with cheese and onions.
+      </pre>
+
+      </pre>
+      <h3>Building</h3>
+      <p>
+      Check if the <code>bin</code> directory already has the
+      <code>LiveConnectDemo.jar</code> and
+      <code>FeatureValueDemo.jar</code> files. If not, type the
+      following in the top level directory:
+      </p>
+      <code>ant -find demo.xml</code>
+      <h3>Running</h3>
+      <p>
+      First make sure that you have
+      <a href="../../../doc/jsapi_setup.html">JSAPI setup</a> correctly.
+      Then, to run the demo, type:
+      </p>
+      <code>sphinx4> java -jar bin/FeatureValueDemo.jar</code>
+      <p>or</p>
+      <code>sphinx4> java -jar bin/LiveConnectDemo.jar</code>
+      <p>
+      <font color="FF0000"><b>NOTE:</b></font>
+      <ol>
+      <li>
+      Make sure that you are using Java<sup>TM</sup> 2 SDK, Standard Edition, 
+      v1.4 or higher.
+      </li>
+      <li>
+      If you have the source distribution, make sure that the JAR file
+      <code>lib/sphinx4.jar</code> is built. If not, go to the top level 
+      directory and type: <code>ant</code>
+      </li>
+      </ol>
+      </p>
+    </font>
+    <hr>
+Copyright 1999,2004 Sun Microsystems, Inc.
+<br>
+All Rights Reserved. Usage is subject to <a href="../../../license.terms">license terms</a>.
+  </body>
+</html>

@@ -1,0 +1,2 @@
+Main-Class: demo.jsapi.tags.FeatureValueDemo
+Class-Path: ../lib/sphinx4.jar ../lib/jsapi.jar ../lib/tags.jar

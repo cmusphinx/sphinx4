@@ -10,7 +10,7 @@
     <property name="version"            value="0.1alpha"/>
 
     <path id="libs">
-        <fileset dir="lib" includes="**/jsapi.jar"/>
+        <fileset dir="lib" includes="**/jsapi.jar,**/js.jar"/>
     </path>
     <property name="src_dir"		value="."/>
     <property name="build_dir"		value="bld"/>
@@ -113,6 +113,7 @@
                 edu/cmu/sphinx/research/**,
                 edu/cmu/sphinx/trainer/**,
                 edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**,
+                edu/cmu/sphinx/tools/tags/**,
                 edu/cmu/sphinx/jsapi/**"/>
              
     <target name="set_patternset_to_compile">
@@ -272,7 +273,7 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="jars"
-	    depends="sphinx4_jar,audiotool_jar"
+	    depends="sphinx4_jar,tags_jar,audiotool_jar"
 	    description="Builds all the jar files"/>
 
 
@@ -288,6 +289,20 @@ jsapi.exe from the lib directory.
 	     compress="true"
 	     includes="edu/**,com/**"
              excludes="edu/cmu/sphinx/tools/**,com/sun/taglet/**"
+	     basedir="${classes_dir}"/>
+    </target>
+
+    <!-- tags.jar -->
+    <property name="tags_jar" value="${lib_dir}/tags.jar"/>
+
+    <target name="tags_jar" 
+	    depends="compile_src"
+	    description="Create ${lib_dir}/tags.jar">
+        <mkdir dir="${lib_dir}"/>
+        <jar destfile="${tags_jar}" 
+	     manifest="${src_dir}/edu/cmu/sphinx/tools/tags/Manifest"
+	     compress="true"
+	     includes="edu/cmu/sphinx/tools/tags/**"
 	     basedir="${classes_dir}"/>
     </target>
 
@@ -546,6 +561,7 @@ jsapi.exe from the lib directory.
 	<delete dir="${bin_dir}"/>
 	<delete file="${lib_dir}/sphinx4.jar"/>
 	<delete file="${lib_dir}/${wsj_name}.jar"/>
+	<delete file="${lib_dir}/${wsj_8kHz_name}.jar"/>
 	<delete file="${lib_dir}/${tidigits_name}.jar"/>
 	<delete file="tempKeystore"/>
 	<antcall target="delete_all_model_classes"/>

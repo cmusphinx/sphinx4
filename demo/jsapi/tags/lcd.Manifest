@@ -1,0 +1,2 @@
+Main-Class: demo.jsapi.tags.LiveConnectDemo
+Class-Path: ../lib/sphinx4.jar ../lib/jsapi.jar ../lib/tags.jar

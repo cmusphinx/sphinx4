@@ -1,0 +1,457 @@
+<!DOCTYPE html public "-//w3c//dtd html 4.0 transitional//en">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<META name="GENERATOR" content="Mozilla/4.51 [en] (X11; U; SunOS 5.7 sun4u) [Netscape]">
+<STYLE type="text/css">P, TABLE, TD, H1, H2, H3, H4, H5, UL, LI {font-family: Arial,sans-serif;}
+   .comment {color: red}</STYLE>
+</HEAD>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+
+<H2>ECMAScript Action Tags for JSGF</H2>
+
+<H3>2 September 1999</H3>
+
+<P>
+Bruce Lucas (IBM)<br>
+Will Walker (Sun Microsystems)<br>
+Andrew Hunt (Sun Microsystems)<br>
+</P>
+
+<H3>Abstract</H3>
+
+<P>This document describes a proposed mechanism that allows grammars
+written in the 
+<A href="http://java.sun.com/products/java-media/speech/forDevelopers/JSGF/index.html">
+Java<SUP>TM</SUP> Speech API&nbsp;Grammar Format (JSGF)</A> to use the
+JSGF tagging mechanism together with <A
+href="http://www.ecma.ch/stand/ecma-262.htm">ECMAScript</A>
+(standardized version of Netscape's JavaScript) to specify a
+transformation from an utterance to information that is meaningful to
+the application. The information is returned in the form of ECMAScript
+values, such as strings and sets of attribute-value pairs (ECMAScript
+objects).</p>
+
+<P>By embedding semantic interpretation into the syntactic definition
+of grammars, this proposal is intended to address the following
+technical challenges in developing and using speech recognition
+applications.</p>
+
+<UL>
+	<LI>Simplify the paraphrase problem:&nbsp;When a grammar
+allows many forms of an utterance to have the same meaning to the application,
+the action tags provided to the application should be the same.</LI>
+	<LI>Internationalization:&nbsp;Whenever possible, action
+tags can be language-neutral so that the application is less sensitive
+to the spoken language and so that new grammars can be developed for new
+languages with minimal changes to the application.</LI>
+	<LI>Enhance documentation and maintainability:&nbsp;Because
+syntax and semantics are jointly defined, modifications can be made simultaneously
+and documentation can be co-located.</LI>
+</UL>
+
+<H3>Introduction</H3>
+
+<P>"Rule-based" or "phrase-structure" grammars in general, and JSGF in particular,
+by themselves only allow an application developer to specify the legal
+utterances - sequences of words - that the user may say.&nbsp; However,
+typically the sequence of words in is not by itself very useful to an application.&nbsp;
+Consider the following examples:</P>
+
+<TABLE border cellspacing="0" cellpadding="3">
+	<TR>
+		<TD><B>Utterance</b>
+		</TD>
+		<TD><B>Application needs</b></TD>
+	</TR>
+	<TR>
+		<TD>five<B> </b>thousand three hundred and six&nbsp;</TD>
+		<TD>5306&nbsp;</TD>
+	</TR>
+	<TR>
+		<TD>December 24th, 1998<BR>the day before Christmas, last year></TD>
+		<TD valign="top">"1998/12/24" <I>or</I> {year:1998, month:12, day:24}
+		</TD>
+	</TR>
+	<TR>
+		<TD>I want to fly from Boston to Chicago.&nbsp;<BR>
+			Hikoki-de, Boston-kara, Chicago-made ikitai
+		</TD>
+		<TD valign="top">{action:"fly", from:"Boston", to:"Chicago"}&nbsp;</TD>
+	</TR>
+</TABLE>
+
+<P>Note that this table illustrates two kinds of values that are useful
+to applications: simple values such as numbers or strings, and sets of
+attribute-value pairs.&nbsp; Simple values are useful for example in grammars
+for basic types such as numbers, dates, and times.&nbsp;
+Simple values are also useful in simple command &amp;&nbsp;control applications
+and in directed-dialog applications in which the user is asked a
+question and is then expected to supply a single piece of information.
+Sets of attribute-value pairs are useful in more
+complex command &amp;&nbsp;control applications and in more sophisticated
+dialog applications, in which any utterance my simultaneously provide several
+pieces of information to the application.</P>
+
+<P>The remainder of this document discusses a proposed method for embedding ECMAScript in JSGF
+tags that transforms utterances into information meaningful to an application.  ECMAScript is
+a relatively powerful and flexible object-oriented programming language.  It provides, for example,
+means to construct arrays, fill multiple optional slots, construct objects within objects within
+objects, perform trivial and complex numerical operations, manipulate dates/strings and other
+standard object types and much more.  The ECMAScript specification is also thorough, which helps
+to eliminate different behavior between implementations.  Finally, because ECMAScript is becoming
+more commonly used in web page development, the learning curve for developing JSGF grammars with
+ECMAScript Action Tags can be greatly reduced. </P>
+
+<H3>Parse trees</H3>
+
+<P>The ECMAScript action tag mechanism will be described with reference to
+the parse tree corresponding to an utterance. A grammar together with an
+utterance define a parse tree (assuming no ambiguity).&nbsp;
+A parse tree can be viewed as a reduced version of the grammar which preserves
+only the non-terminals, terminals, tags, and sequences from the original
+grammar that correspond to the content of the utterance, and in which a
+separate copy of each non-terminal has been made for each use of the non-terminal.
+For the purposes of this document, parse trees will be represented in outline
+form. For example, consider the following grammar:</P>
+
+<PRE>&nbsp;&nbsp;&nbsp; &lt;city> = New York {this.$value="NYC"} | Boston {this.$value="BOS"};
+
+&nbsp;&nbsp;&nbsp; public &lt;top> = I want to (fly {this.action="fly"} | drive {this.action="drive"})
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; from &lt;city> {this.from=$}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to&nbsp;&nbsp; &lt;city> {this.to=$city};</PRE>
+<P>The utterance "I want to fly from New York to Boston", when parsed against
+this grammar, produces the following parse tree:
+<PRE>&nbsp;&nbsp;&nbsp; &lt;top>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; I
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; want
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fly
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.action="fly"}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; from
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;city>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; New
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; York
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.$value="NYC"}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.from=$}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;city>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Boston
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.$value="BOS"}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.to=$city}</PRE>
+
+<P>As we will see below, when evaluated this parse tree will produce the ECMAScript
+value {action:"fly", from:"NYC", to:"BOS"} for the application to use.</P>
+
+<P>All JSGF parse-tree structure in our parse trees, except non-terminal
+references, will be flattened.&nbsp; In particular, parenthesized expressions,
+optional items, repeated items, and tagged items will be flattened to a
+single level in the tree.</P>
+
+<H3>Parse tree evaluation</H3>
+
+<P>The purpose of parse tree evaluation is to recursively compute a value
+for each non-terminal in the tree.&nbsp; The value for each parent non-terminal
+is computed by the action tags contained in the parent non-terminal, possibly
+using the values computed for its child non-terminals in the tree.</P>
+
+<P>Thus, for a well-written grammar we should define
+action tags so that each non-terminal will return a value that is a computer-understandable
+transformation of the spoken tokens that match the non-terminal.</P>
+
+<P>For each non-terminal in a tree the action tag mechanism allocates a
+new object that represents the value of the non-terminal.&nbsp; The purpose
+of action tags is to construct the non-terminal value object in which they
+are directly contained by assigning values to fields of the object.&nbsp;
+The set of action tags for a non-terminal taken together act something
+like the body of a constructor for the object associated with the non-terminal:</P>
+
+<UL>
+	<LI>References to fields of the non-terminal value object are qualified using
+<B>this</b>.</LI>
+	<LI>Variables local to the scope of the action tags for a given non-terminal
+must be declared using <B>var</b>.</LI>
+	<LI>References to variables not declared in the local scope of the action tags
+for a given non-terminal are interpreted in the nearest enclosing scope
+that declares the variable (specifically in the scope
+of a parent non-terminal), or in the global scope if no enclosing
+scope declares the variable.</LI>
+</UL>
+
+<P>The object constructed by the action tags for a child non-terminal may
+then be used in the enclosing parent non-terminal to construct its value
+object by referring to the child non-terminal in one of two ways:</P>
+
+<UL>
+	<LI>The variable $<I>name</I> refers to the value object of the most recent
+preceding instance of the non-terminal &lt;<I>name</I>> in the current
+scope, as in this.to=$city in the example above.</LI>
+	<LI>The variable $ refers to the value object of the most recent preceding
+non-terminal in the current scope, as in this.from=$ in the example above.</LI>
+</UL>
+
+<P>While the value of each non-terminal is an object, it is also useful in
+some cases for a non-terminal to be treated as a simple value such as a
+number or string.&nbsp; The standard ECMAScript toString and valueOf object
+methods allow this to be accomplished.&nbsp; To provide a simple value
+for a non-terminal its action tags may assign to a special field, this.$value,
+in the non-terminal's value object.&nbsp; The action tag mechanism supplies
+for each non-terminal's value object a toString and toValue method that
+return this.$value.&nbsp; The ECMAScript interpreter automatically calls
+the toString and valueOf methods when a reference is made to the non-terminal
+value in a context where a simple value such as a number or string is required.</P>
+
+<P>The default value for this.$value (and therefore for the non-terminal
+value object when used in a context where a simple value is needed) is
+a string which is the concatenation of the string values of all the items
+in the non-terminal, separated by spaces.</P>
+
+<P>In addition, the action tag mechanism computes for each non-terminal
+object a special field, this.$tokens, that contains an array of strings
+containing the words (terminals) used by the non-terminal and any non-terminals
+that it directly or indirectly references.&nbsp;&nbsp; In summary each
+object has the following special fields:</P>
+
+<UL>
+	<LI>The field $value may be assigned to by the action tags to supply a value
+that will be used when the non-terminal object is referrred to in a context
+where a simple (non-object) value is required.</LI>
+	<LI>The field $tokens is an array containing the words for that non-terminal.</LI>
+</UL>
+
+<H3>Examples</H3>
+
+<H4>Hello World</H4>
+
+<P>The following grammar:</P>
+
+<PRE>&nbsp;&nbsp;&nbsp; &lt;hi> = yo {this.$value="hello"} | hello;
+&nbsp;&nbsp;&nbsp; &lt;who> = world | fred;
+&nbsp;&nbsp;&nbsp; public &lt;helloworld> = &lt;hi> &lt;who> {this.greeting=$hi; this.recipient=$who};</PRE>
+<P>when used to parse the utterance
+<PRE>&nbsp;&nbsp;&nbsp; yo world</PRE>
+
+<P>produces the following parse tree:</P>
+
+<PRE>&nbsp;&nbsp;&nbsp; &lt;helloworld>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;hi>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; yo
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.$value="hello"}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;who>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; world
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.greeting=$hi; this.recipient=$who}</PRE>
+
+<P>which when evaluated produces the ECMAScript value</P>
+
+<PRE>&nbsp;&nbsp;&nbsp; {greeting:"hello", recipient:"world"}</PRE>
+
+<P>This illustrates three points concerning action tags:</P>
+
+<UL>
+	<LI>The default value for the &lt;who> non-terminal is in this case just the
+word in the utterance that matches the non-terminal.&nbsp; (More generally
+it is the ordered concatenation of the values of all the items immediately
+below the non-terminal in the parse tree, separated by spaces.)</LI>
+	<LI>The &lt;hi> non-terminal uses an action tag to override the default value
+to return "hello" if the utterance contains "yo".</LI>
+	<LI>The final action tag retrieves the value of the &lt;hi> non-terminal ($hi)
+and assigns it to the "greeting" field of the result (this.greeting), and
+retrieves the value of the &lt;who> non-terminal ($who) and assigns it
+to the "recipient" field of the result (this.recipient).</LI>
+</UL>
+
+<H4>Numbers</H4>
+
+<P>The following simple number grammar accepts spoken number phrases less
+than one million and returns a string containing the number in numeric
+form.&nbsp; (A portion of the &lt;10to99> rule has been omitted from the
+version shown here for the sake of brevity.)</P>
+
+<PRE>&nbsp;&nbsp;&nbsp; &lt;1to9> = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 ;
+
+&nbsp;&nbsp;&nbsp; &lt;0to9> = oh {this.$value="0"} | 0 | &lt;1to9>;
+
+&nbsp;&nbsp;&nbsp; &lt;10to99> = 10 | 11 | 12 | ... | 99 ;
+
+&nbsp;&nbsp;&nbsp; &lt;1to99> = &lt;1to9> | &lt;10to99>;
+
+&nbsp;&nbsp;&nbsp; &lt;00to99> = [oh] &lt;0to9> {this.$value="0"+$0to9} | &lt;10to99>;
+
+&nbsp;&nbsp;&nbsp; &lt;1to999>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = &lt;1to9> [hundred [and]] &lt;00to99> {this.$value = $1to9 + $00to99}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;1to9> hundred&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.$value = $1to9 + "00"}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;1to99>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.$value = $1to99}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ;
+
+&nbsp;&nbsp;&nbsp; &lt;000to999>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = &lt;0to9> [hundred [and]] &lt;00to99> {this.$value = $0to9 + $00to99}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;0to9> hundred&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.$value = $0to9 + "00"}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;00to99>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.$value = "0" + $00to99}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ;
+
+&nbsp;&nbsp;&nbsp; &lt;1to999999>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = &lt;1to999> thousand &lt;000to999>&nbsp;&nbsp;&nbsp; {this.$value = $1to999 + $000to999}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;1to999> thousand and &lt;00to99>&nbsp; {this.$value = $1to999 + "0" + $00to99}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;1to999> thousand&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.$value = $1to999 + "000"}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;1to99> hundred [and] &lt;00to99>&nbsp; {this.$value = $1to99 + $00to99}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;1to99> &lt;10to99>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.$value = $1to99 + $10to99}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;1to99> hundred&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.$value = $1to99 + "00"}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;1to99>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {this.$value = $1to99}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ;
+
+&nbsp;&nbsp;&nbsp; public &lt;number> = oh {this.$value="0"} | 0 | &lt;1to999999>;</PRE>
+
+<P>This grammar illustrates:</P>
+
+<UL>
+	<LI>Reference to the value of a non-terminal &lt;<I>name</I>> using $<I>name</I>.</LI>
+	<LI>Construction of a string value using the ECMAScript + string concatenation
+		operator.</LI>
+	<LI>Supplying a string value for a non-terminal by assigning a string to this.$value.</LI>
+</UL>
+
+<H4>Calendar</H4>
+
+<P>The following grammar illustrates the use of action tags for a simple mixed-initiative
+form-filling dialog system for making appointments.</P>
+
+<PRE>&nbsp;&nbsp;&nbsp; &lt;ondate> = [on] &lt;test.date> {date=$};
+&nbsp;&nbsp;&nbsp; &lt;attime> = [at] &lt;test.time> {time=$};
+&nbsp;&nbsp;&nbsp; &lt;gorp>&nbsp;&nbsp; = [(I'd|I) (like|want) to] (make|schedule) (an appointment|a meeting);
+
+&nbsp;&nbsp;&nbsp; &lt;appt> = &lt;gorp> [&lt;ondate> [&lt;attime>]]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;gorp> &lt;attime> [&lt;ondate>]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;ondate> [&lt;gorp> [&lt;attime>]]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;ondate> &lt;attime> [&lt;gorp>]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;attime> [&lt;gorp> [&lt;ondate>]]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &lt;attime> &lt;ondate> [&lt;gorp>]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ;
+
+&nbsp;&nbsp;&nbsp; public &lt;appointment> =
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;NULL> {var date, time} &lt;appt> {this.date=date; this.time=time};</PRE>
+
+<P>This grammar allows the user to take the initiative (by making a complete
+or partial request) or to respond when the computer takes the initiative
+(by prompting the user for missing information) as illustrated by the following
+table:</P>
+
+<TABLE border cellspacing="0" cellpadding="3">
+	<TR>
+		<TD><B>Utterance</b>
+		</TD>
+		<TD><B>Returned value</b>
+		</TD>
+	</TR>
+	<TR>
+		<TD>I'd like to make an appointment on January third at two o'clock&nbsp;
+		</TD>
+		<TD>{date:"1/3", time:"2:00"}&nbsp;
+		</TD>
+	</TR>
+	<TR>
+		<TD>schedule an appointment on the fourth of February&nbsp;
+		</TD>
+		<TD>{date:"2/4"}&nbsp;
+		</TD>
+	</TR>
+	<TR>
+		<TD>at five thirty&nbsp;
+		</TD>
+		<TD>{time:"5:30"}&nbsp;
+		</TD>
+	</TR>
+</TABLE>
+
+<P>This grammar illustrates:</P>
+
+<UL>
+	<LI>
+		Declaring the variables date and time in the &lt;appointment> scope.&nbsp;
+		(The declarations are in a tag attached to &lt;NULL> because this tag must
+		be executed before tags in &lt;appt> are executed.)
+	</LI>
+	<LI>
+		Using $ to refer to the value of the item immediately to the left of the
+		tag.
+	</LI>
+		Optionally supplying values for date and time in nested scopes &lt;ondate>
+		and &lt;attime>.&nbsp; (The	optional values are actually defined, but are
+		set to the "undefined" value of ECMAScript.)
+	<LI>
+		Using the supplied values to fill in the this.date and this.time attributes
+		in the value returned by &lt;appointment>.
+	</LI>
+</UL>
+
+<H4>Airline reservation</H4>
+
+<P>The following grammar (the airline reservation grammar that was presented above):</P>
+
+<PRE>    &lt;city> = New York {this.$value="NYC"} | Boston {this.$value="BOS"};
+
+    public &lt;top> = I want to (fly {this.action="fly"} | drive {this.action="drive"})
+                   from &lt;city> {this.from=$}
+                   to   &lt;city> {this.to=$city};</PRE>
+
+<P>illustrates a few points concerning action tags:</P>
+
+<UL>
+	<LI>Action tags contained within parenthesized expressions.</LI>
+	<LI>Assignment to this.$value to return a simple string value for a rule.</LI>
+	<LI>Reference to a preceding non-terminal using $ and using $<I>name</I>.</LI>
+</UL>
+
+<h4>Pizza toppings</h4>
+
+<p>The following grammar for ordering pizza:</p>
+
+<pre>     &lt;topping> = mushrooms | pepperoni | onions | anchovies;
+     &lt;toppings> = &lt;NULL>           {this.toppings = new Array()}
+                  &lt;topping>        {this.toppings=this.toppings.concat($topping)}
+                  ([and] &lt;topping> {this.toppings=this.toppings.concat($topping)})*;
+
+     public &lt;ask> = I would like a pizza with &lt;toppings>
+                    {this.item="pizza"; this.toppings=$toppings.toppings};
+</pre>
+
+<p>when used to parse the utterance</p>
+
+<pre>     I would like a pizza with onions, mushrooms and pepperoni</pre>
+
+<p>produces the following parse tree:</p>
+
+<pre>     &lt;ask>
+         I
+         would
+         like
+         a
+         pizza
+         with
+         &lt;toppings>
+             &lt;NULL>
+             {this.toppings = new Array()}
+             &lt;topping>
+                 onions
+             {this.toppings = this.toppings.concat($topping)}
+             &lt;topping>
+                 mushrooms
+             {this.toppings = this.toppings.concat($topping)}
+             and
+             &lt;topping>
+                 pepperoni
+             {this.toppings = this.toppings.concat($topping)}
+         {this.item="pizza"; this.toppings=$toppings.toppings}</pre>
+
+<p>The values for each successive instance of &lt;topping>
+will be the word spoken in that instance (e.g., "onions", "mushrooms", "pepperoni"). 
+The &lt;toppings> non-terminal gets a value of an ECMAScript indexed array:
+
+<pre>     ["onions", "mushrooms", "pepperoni"]</pre>
+
+<p>Finally, the &lt;ask> non-terminal
+returns a compound ECMAScript object with two named attributes:
+
+<pre>     {item: "pizza",  toppings: ["onions", "mushrooms", "pepperoni"]}</pre>
+
+</body>
+</HTML>
