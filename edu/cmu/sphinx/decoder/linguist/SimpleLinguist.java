@@ -267,7 +267,7 @@ public class SimpleLinguist implements  Linguist {
 
         Timer.start("  createGStates");
         for (Iterator i = grammar.getGrammarNodes().iterator(); i.hasNext();) {
-            GState gstate = new GState((GrammarNode) i.next());
+            GState gstate = createGState((GrammarNode) i.next());
             gstateList.add(gstate);
         }
         Timer.stop("  createGStates");
@@ -328,6 +328,16 @@ public class SimpleLinguist implements  Linguist {
             }
         }
         return SentenceHMMState.collectStates(initialSentenceHMMState);
+    }
+
+
+    /**
+     * Returns a new GState for the given GrammarNode.
+     *
+     * @return a new GState for the given GrammarNode
+     */
+    protected GState createGState(GrammarNode grammarNode) {
+        return (new GState(grammarNode));
     }
 
 
@@ -1169,7 +1179,7 @@ public class SimpleLinguist implements  Linguist {
          *
          * @return the head of the hmm tree
          */
-        private SentenceHMMState expandUnit(UnitState unit) {
+        protected SentenceHMMState expandUnit(UnitState unit) {
             SentenceHMMState tail =  getHMMStates(unit);
 
             // if the unit is a silence unit add a loop back from the
