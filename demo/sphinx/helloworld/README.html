@@ -64,14 +64,18 @@ Start speaking. Press Ctrl-C to quit.
 
       </pre>
       <h3>Building</h3>
-      <p>To build this demo, merely type the following in a shell from
-         any directory in the Sphinx-4 hierarchy:
-	 <ul>
+      <p>
+      Check if the <code>bin</code> directory already has the
+      <code>HelloWorld.jar</code> file. If not, you need to build the demo
+      to create that JAR.   
+      To build this demo, merely type the following in a shell from
+      any directory in the Sphinx-4 hierarchy:
+      <ul>
 	 <code>ant -find demo.xml</code>
-	 </ul>
+      </ul>
       </p>
       <p>
-      Doing so will create <code>bld/bin/HelloWorld.jar</code> under the
+      Doing so will create <code>bin/HelloWorld.jar</code> under the
       top level directory.  You can run the demo using <code>java -jar</code> 
       (see "Running" below).
       </p>
@@ -88,7 +92,7 @@ Start speaking. Press Ctrl-C to quit.
       <p>
       To run the demo, type:
       </p>
-      <code>sphinx4> java -mx256m -jar bld/bin/HelloWorld.jar</code>
+      <code>sphinx4> java -mx256m -jar bin/HelloWorld.jar</code>
       <p>
       Make sure that you give it a large enough heap by putting in "-mx256m".
       <br><font color="FF0000"><b>NOTE:</b></font> Make sure that you are using
