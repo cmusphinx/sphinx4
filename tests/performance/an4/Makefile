@@ -122,7 +122,7 @@ an4_words_flat_unigram_fst:
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=10.0 \
     -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
-    -Dedu.cmu.sphinx.decoder.FSTGrammar.path=./an4_words.flat_unigram.fst\
+    -Dedu.cmu.sphinx.decoder.linguist.FSTGrammar.path=./an4_words.flat_unigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
 # Tests the 79 whole words from AN4, using an FST created from
