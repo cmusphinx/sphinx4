@@ -27,9 +27,6 @@ NOTE:  Before running the tests, you must have already built
 	<pathelement location="${top_dir}/lib/jsapi.jar"/>
 	<pathelement
 	 location="${top_dir}/lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
-        <fileset dir="${freetts_dir}/lib">
-	    <include name="**/*.jar"/>
-	</fileset>
     </path>
 
 
