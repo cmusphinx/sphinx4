@@ -1,6 +1,13 @@
-
 #
-# [[[copyright]]]
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
 #
 # A program that processes a sphinx3/sphinx4 results.txt file
 # and generates summary information in a web table.
