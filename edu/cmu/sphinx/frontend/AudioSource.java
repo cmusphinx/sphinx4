@@ -8,7 +8,7 @@ import java.io.IOException;
 
 
 /**
- * A AudioSource produces Audio objects to be read by other objects.
+ * An AudioSource produces Audio objects.
  */
 public interface AudioSource {
 

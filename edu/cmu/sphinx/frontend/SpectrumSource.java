@@ -8,7 +8,7 @@ import java.io.IOException;
 
 
 /**
- * A SpectrumSource produces Spectrum objects to be read by other objects.
+ * A SpectrumSource produces Spectrum(a).
  */
 public interface SpectrumSource {
 

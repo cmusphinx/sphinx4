@@ -8,7 +8,7 @@ import java.io.IOException;
 
 
 /**
- * A FeatureFrameSource produces FeatureFrame objects to be read by other objects.
+ * A FeatureFrameSource produces FeatureFrames.
  */
 public interface FeatureFrameSource {
 

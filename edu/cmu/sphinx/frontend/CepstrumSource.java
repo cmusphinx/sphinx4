@@ -8,7 +8,7 @@ import java.io.IOException;
 
 
 /**
- * A CepstrumSource produces Cepstrum objects to be read by other objects.
+ * A CepstrumSource produces Cepstrum(a).
  */
 public interface CepstrumSource {
 
