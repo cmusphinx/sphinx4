@@ -599,6 +599,7 @@ jsapi.exe from the lib directory.
 	<delete dir="${deploy_dir}/sphinx4-${version}/tests/other"/>
 	<delete dir="${deploy_dir}/sphinx4-${version}/tests/search"/>
 	<delete dir="${deploy_dir}/sphinx4-${version}/tests/trainer"/>
+	<delete file="${deploy_dir}/sphinx4-${version}/lib/jsapi.jar"/>
 
 	<jar destfile="${deploy_dir}/sphinx4-src-${version}.zip"
 	     basedir="${deploy_dir}"
