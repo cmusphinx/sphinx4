@@ -301,7 +301,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      *
      * @return true if recording, false if not recording
      */ 
-    private synchronized boolean getRecording() {
+    public synchronized boolean getRecording() {
         return recording;
     }
 
