@@ -118,6 +118,16 @@ small:
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
         edu.cmu.sphinx.decoder.BatchDecoder small.props small.batch
 
+orig:
+	$(JAVA_CMD)  \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
+        edu.cmu.sphinx.decoder.BatchDecoder orig.props small.batch
+
+orig_full:
+	$(JAVA_CMD)  \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+        edu.cmu.sphinx.decoder.BatchDecoder orig.props small.batch
+
 
 tune:
 	$(JAVA_CMD)  \

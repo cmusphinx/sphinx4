@@ -36,3 +36,4 @@ while [ $index -lt $count ]; do
 done;
 
 wait
+s4BatchSummary $outdir/*.out

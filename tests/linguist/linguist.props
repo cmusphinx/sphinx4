@@ -110,8 +110,8 @@ edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar
 
 edu.cmu.sphinx.model.acoustic.useComposites=false
 edu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true
-edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=true
 edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
+edu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.SimpleBreadthFirstSearchManager
 
 
 ############################################################

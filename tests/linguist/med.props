@@ -114,8 +114,8 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 
 edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=200
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-200
-edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
+edu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.SimpleBreadthFirstSearchManager
 edu.cmu.sphinx.search.Linguist.compositeThreshold=10
 
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar
