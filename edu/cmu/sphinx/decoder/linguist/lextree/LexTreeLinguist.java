@@ -348,7 +348,7 @@ public class LexTreeLinguist implements  Linguist {
             HMM hmm = hmmPool.getHMM(unitID, position);
 
             list.add(new LexTreeHMMState(getLeft(), getCentral(),
-                    getRight(), hmm.getInitialState()));
+                    getRight(), hmm.getInitialState(), (float) logOne));
             return null;
         }
     }
@@ -358,8 +358,9 @@ public class LexTreeLinguist implements  Linguist {
 
         LexTreeHMMState( LexTree.UnitLexNode left,
                LexTree.UnitLexNode central, 
-               LexTree.UnitLexNode right, HMMState hmmState) {
-            super(left, central, right, 0.0f);
+               LexTree.UnitLexNode right, HMMState hmmState, 
+               float probability) {
+            super(left, central, right, probability);
             this.hmmState = hmmState;
         }
 
@@ -369,8 +370,54 @@ public class LexTreeLinguist implements  Linguist {
         }
 
         public List getSuccessors() {
-            return null;
+            List list = null;
+            if (hmmState.isExitState()) {
+
+                // if we are the last unit of a word
+                // add a word state
+
+                list = new ArrayList();
+
+                LexTree.UnitLexNode nextCentral = getRight();
+
+                LexTree.LexNode[] nodes = nextCentral.getNextNodes();
+
+                for (int i = 0; i < nodes.length; i++) {
+                    LexTree.LexNode node = nodes[i];
+
+                    if (! (node instanceof LexTree.UnitLexNode)) {
+                        throw new Error("Corrupt lex tree");
+                    }
+
+                    LexTree.UnitLexNode leftNode = getCentral();
+                    LexTree.UnitLexNode central = (LexTree.UnitLexNode) node;
+                    LexTree.LexNode[] rightNodes = getNextUnits(central);
+
+                    for (int j = 0; j < rightNodes.length; j++) {
+                        list.add(new LexTreeUnitState(leftNode, central, 
+                                    (LexTree.UnitLexNode) rightNodes[j]));
+                    }
+                }
+            } else {
+                HMMStateArc[] arcs = hmmState.getSuccessors();
+                list = new ArrayList(arcs.length);
+                for (int i = 0; i < arcs.length; i++) {
+                    HMMStateArc arc = arcs[i];
+                    list.add(new LexTreeHMMState(getLeft(),
+                                getCentral(), getRight(),
+                                arc.getHMMState(),
+                                arc.getProbability()));
+                }
+            }
+            return list;
         }
+
+         /**
+          * Determines if this is an emitting state
+          */
+         public boolean isEmitting() {
+             return hmmState.isEmitting();
+         }
     }
 
     /**
