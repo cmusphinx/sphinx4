@@ -112,6 +112,7 @@
 	<property name="addOutOfGrammarBranch" value="true"/>
 	<property name="outOfGrammarProbability" value="1E-60"/>
 	<property name="phoneInsertionProbability" value="1E-10"/>
+	<property name="phoneLoopAcousticModel" value="wsj"/>
     </component>
     
     <!-- ******************************************************** -->
