@@ -83,15 +83,15 @@ import edu.cmu.sphinx.util.LogMath;
  * A collapsed token tree can look like:
  * </p>
  * <pre>
- *                         "cat" - P - &lt;/s&gt;
- *                        / 
- *                       P
- *                      /
- * &lt;s&gt; - "a" - P - "big"
- *                      \
- *                       P
- *                        \
- *                         "dog" - P - &lt;/s&gt;
+ *                             "cat" - P - &lt;/s&gt;
+ *                            / 
+ *                           P
+ *                          /
+ * &lt;s&gt; - P - "a" - P - "big"
+ *                          \
+ *                           P
+ *                            \
+ *                             "dog" - P - &lt;/s&gt;
  * </pre>
  * <p>
  * When a Lattice is constructed from a Result, the above collapsed token tree 
