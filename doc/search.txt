@@ -1,0 +1,346 @@
+Sphinx 3J Search:
+----------------
+
+This document contains the requirements and design of the overall
+search for Sphinx 3J.  Please refer to the Architecture.{sdw,pdf}
+document for drawings of the overall architecture.  Contained in this
+document are the following:
+
+    - Requirements
+    - SearchManager
+    - Result/LatticeToken
+    - Linguist
+    - Lexicon
+    - AcousticScorer
+    - SentenceHMM
+      - EmittingState
+      - NonemittingState
+    - Bhiksha notes on dynamic HMMs
+    - Bhiksha notes on breadth vs. depth first search
+
+This document is definitely in rough form and needs to be updated as
+we further flesh out the design.
+
+
+Requirements:
+------------
+
+o The architecture will permit both breadth first and depth first
+  searches.
+
+o The architecture will support both statically built and dynamically
+  built sentence HMMs.
+
+o The architecture will keep the language model, acoustic model, and
+  search logic separate.
+
+o Search results will allow n-Besting and access to a lattice.
+
+o Rescoring using an existing lattice will be possible.
+
+o The architecture will permit, but not require, threading.
+
+o The architecture will allow for the plug-n-play of the front end,
+  the language model, and the acoustic model.
+
+o The search will be able to fall behind (e.g., drop feature frames)
+  and recover gracefully.
+
+o All services (e.g., Linguist, SearchManager, etc.) will be defined
+  as interfaces to allow for better plug-n-play.
+
+
+SearchManager:
+-------------
+
+The SearchManager conducts the overall search.  It draws from the
+data in the AcousticModel and the Linguist.  It can either work from
+an existing static SentenceHMM, or it can create its own on the fly.
+
+The SearchManager is the main "entry point" into the recognizer, and
+provides the following interfaces:
+
+    void initialize(...):	Provides various methods for
+				initializing the SearchManager for
+				recognition of an utterance.  Examples
+				include simple initialization (implies
+				use of dynamic SentenceHMMs),
+				initialization given a static
+				SentenceHMM, initialization given an
+				existing Lattice, etc.  If initialized
+				from a Lattice, options will be given
+				to instruct the SearchManager to use
+				or overwrite the previously calculated
+				fields in each Lattice token (e.g.,
+				use or overwrite word scores).    
+
+    Result recognize(int frames):  Recognize "frames" FeatureFrames
+				and return a Result.  If the Result is
+				not a final result (see definition of
+				Result), the Result object will be
+				for reference only (e.g., it may be
+				immutable or just a copy).
+
+    void terminate():		Cleans up after recognition of an
+				utterance.
+
+We discussed the following as part of the SearchManager, but did not
+really fleshed them out:
+
+    o Need to allow end pointing to be part of FrontEnd and the 
+      Recognizer.
+
+    o Provide three options for end pointing:
+
+      1) Tell the recognizer when speech has started/ended
+
+      2) Tell the recognizer when speech has started, let the
+         recognizer figure out the end.
+
+      3) Tell the recognizer nothing and let it figure out both
+         the start and the end.
+
+Another option to consider for the future is to be able to give the
+SearchManager a transcript of an utterance and have the SearchManager
+return a Lattice (including alternate pronunciations).  This will help
+for providing alignment as well as segmenting speech.
+
+
+Result/Lattice/Token:
+--------------------
+
+A Result represents a Lattice, and provides overall information about
+the Lattice.  This information includes the following:
+
+    void isFinal():	       True if this represents a completed 
+			       recognition.  In addition, if true,
+			       this object is mutable.  If false, 
+			       this object is immutable.
+
+    FrameStatistician getFrameStatistician():  Returns an object that
+			       returns per FeatureFrame statistics of
+			       all kinds.
+
+    xxxx getFeatureFrames(int start, int end): Returns an order list
+			       of FeatureFrames.
+
+    xxxx getAudio(int start, int end): Returns the audio associated
+			       with the given FeatureFrames.
+		         
+
+    xxxx getBestPaths(int numPaths):  Returns the numPaths best paths
+			       through the Lattice.
+
+    xxxx getDAG(int compressionLevel?):  Compresses the Lattice into a
+			       DAG (see LatticeNode notes below).
+
+We were not quite sure whether intermediate Results should be
+represented by Tokens or LatticeNodes, so we defined both for now:
+
+Token: Represents a word, updated every frame/state until we get to
+the end of a word, and then it is frozen (at such point, current == end).  
+The Token maintains the following information ([] indicate optional
+fields whose collection can be turned on/off based on property
+settings):
+
+    [Frame info]:		begin, current, [all]
+    Total score:		enter, current, [per frame]
+    Penalites:			enter, current
+    Language score:		enter, current
+    Units:			list (current is last in list)
+    Unit boundaries:		end frame per Unit (current is last in list)
+    Unit scores: 		exit scores
+    Word:			word this token represents
+    Grammar node:		node from the grammar
+    Predecessor:		previous Token (this is a tree)
+
+Lattice Node: Upon exit from a Word/Token, a LatticeNode is created
+that contains the salient Token information.  The LatticeNode differs
+from the Token in that the Lattice has Successors and it can be a DAG
+node instead of a tree node.  Compression of a Token structure to a
+DAG requires the maintenance of a Predecessor/Score list where the
+Score entry represents unique language and acoustic scores.  The
+compression schemes can be user defined, and can be lossy or lossless.
+The lossy compression schemes will normally keep the best scores.  In
+addition, the Lattice node may be missing the penalty information.
+
+    [Frame info]:		begin, end, [all]
+    Total score:		enter, exit, [per frame]
+    [Penalites]:		enter, exit
+    Language score:		enter, exit
+    Units:			list
+    Unit boundaries:		end frame per Unit
+    Unit scores: 		exit scores
+    Word:			word this token represents
+    Grammar node:		Node from the grammar (see Linguist)
+    Predecessors/Scores:	List
+    Successors:			List
+
+We made the design choice to not allow a Result to be modified until
+it is final.  That is, an application can not alter a search in
+progress by making changes to the Result structure.
+
+
+Linguist:
+--------
+
+The Linguist provides an interpretation of the language model for the
+SearchManager.  It's main purpose is to return language scores and
+successors for a given Node.  It is a basic representation of a state
+machine, and provides the following interfaces:
+
+    void initialize(Grammar g):  Prepares a Linguist for a search.
+
+    List getSuccessors(Node n):  For a given Node n, returns a list of
+				 successor Nodes and transition
+				 probabilities to those Nodes.  A Node
+				 may consist of groups of words to
+				 support methods such as class-based
+				 searches.
+					     
+    void terminate():		 Cleans up.
+
+Each Node contains the following information:
+
+    Grammar:	   The Grammar the Node comes from.
+    Predecessors:  The language model predecessors for the Node.
+    Successors:	   The language model successors for the Node, along
+		   with transition probabilities
+    Words:	   Each node can contain a list of words to support
+		   search schemes such as class-based searches.
+
+NOTE:  Node is to be defined.
+
+
+Lexicon:
+-------
+
+The Lexicon is used by both the SearchManager and the Linguist.  For
+the SearchManager, it provides a list of units for each word.  For the
+Linguist, it provides optional word classification information (e.g.,
+noun, verb, etc.).  The Lexicon also supports a global option to
+provide parallel or compressed representations of word pronunciation
+graphs.
+
+
+AcousticScorer:
+---------------
+
+The AcousticScorer takes a list of HMM states and time stamps and
+returns a list of scores.  The time stamps provide a mapping to a
+FeatureFrame.  It is expected that implementations of AcousticScorer
+will support algorithms such as sub-vector quantization.  The
+interface to the AcousticScorer is a simple "score" method:
+
+    void score(set of states):	Scores a set of states.  Each state
+				contains a Unit, the active HMM state
+				in the Unit, the ID of the frame to
+				score against, and a score field to be
+				filled in.
+
+Since the time stamps provide a mapping to a FeatureFrame, the
+AcousticScorer is typically the portion of the decoder that reads data
+from the FrontEnd.  Since the AcousticScorer may go forward and back
+in time, it is also expected that it have access to all the
+FeatureFrames for an Utterance.  Whether the list of FeatureFrames is
+stored in the FrontEnd or some intermediary between the FrontEnd and
+the AcousticScorer is to be determined.
+
+
+SentenceHMM:
+-----------
+
+The SentenceHMM is the HMM that integrates the Unit HMM's and the
+language model, and serves as the trellis for the search.  The
+SentenceHMM contains interphone, interword, and end of word
+boundaries.  At end of word boundaries, it also provides a reference
+to the word.  A summary of the classes involved in the SentenceHMM are
+as follows:
+
+SentenceHMMState: Provides successors with acoustic/language
+transition probabilities for each successor.  Optionally provides
+predecessors with acoustic/language probabilities for each
+predecessor.
+
+EmittingState: Extends SentenceHMMState to provide a Unit reference
+and a reference to the active HMM state of the Unit's HMM.
+
+NonemittingState: Extends SentenceHMMState to provide phone and/or
+word boundary (tag begin or end).  For end of word boundaries,
+provides dictionary and grammar entry.  Also includes optional word 
+and unit insertion penalties.
+
+
+Notes on building recognition HMMs dynamically (from Bhiksha):
+-------------------------------------------------------------
+
+Some thoughts on building recognition HMMs dynamically:
+
+1. It may be better to build the HMM for any word up to, but not
+including the last phone in the word. We would then fetch the next set
+of words when we get to the final state of this penultimate
+phone. This way, we could attach the appropriate triphone at the end
+of the word, according to the successor words.
+
+This would, however, complicate matters a little in that we would nowt
+have to maintain word id etc in the non-emitting final state of the
+*penultimate* phone of each word, and pass this info on to the word
+ending non-emitting state that is built for that word during the
+extension of the HMM.
+
+2. We need to maintain a secondary list of currently active
+Grammar nodes (i.e. grammar node/words for which HMMs currently
+exist). Then, whenever we are required to extend the HMM, we would
+first check if the HMMs for the extension words already exist, and if
+they do determine their location in order to construct proper
+links. Determining this info may require the maintenance of a
+hashtable of current nodes.  Entries would have to be removed from the
+hash when their HMMs are released.  We may have to define the nature
+of the elements in this structure as well (unless you folks can think
+of smart ways of obtaining information about current nodes without
+maintaining auxiliary tables or hashes).
+
+-Bhiksha
+
+
+Notes on breadth first vs. depth first (from Bhiksha):
+-----------------------------------------------------
+
+Folks,
+
+I've been doing some additional thinking about the depth first
+vs. breadth first issue. Some thoughts:
+
+a) Rita pointed out some problems with depth first search in
+her slides. They *only* happen if senone scores can be greater than
+1.0.  If one could assure that all senone scores are no greater than
+1.0 (by putting a ceiling on the scores, for instance), then one could
+perform breadth first search very simply indeed, without any
+replication of states of any sort. One only needs to worry a bit about
+termination logic (i.e. keep expanding all current paths *even* after
+one of the paths has hit the terminating state for the final frame,
+until none of the current paths score higher than the final path).
+
+b) Thresholding senone scores at 1.0 is not at all a bad thing. Only
+very very very rarely do they go above 1.0 in any case, anyway.
+
+c) Depth first search can require at most order(T*N^2) operations
+where T is the number of data vectors, and N is the number of states
+in the big HMM constructed from the recognition grammar. In practice,
+one would expect depth first search to require much lesser than
+order(T*N^2) operations. In contrast, breadth first search will always
+require (T*N^2) operations. (All this without considering pruning).
+However, breadth first search will require maintainance of no more
+than N active states at any time instant. Depth first search, on the
+other hand, can require maintainance of T*N active states (upper
+bound).
+
+d) Depth first search for the case where senone scores can be
+greater than 1.0 will require replication of states. This still has
+all the computational advantages of depth first search, but would
+require impolite amounts of memory.
+
+e) Appropriate pruning may reduce the computational difference between
+breadth first and depth first search.
+
+-Bhiksha

@@ -6,7 +6,7 @@
       <task id="55" name="Kickoff" start="20020221T000000" end="20020223T000000" percent-complete="100" note="Feb2002-F2F.html">
         <predecessors/>
       </task>
-      <task id="57" name="Search" start="20020418T000000" end="20020420T000000" percent-complete="0" note="">
+      <task id="57" name="Search" start="20020418T000000" end="20020420T000000" percent-complete="0" note="Apr2002-F2F.html">
         <predecessors/>
       </task>
     </task>
@@ -38,7 +38,7 @@
         <predecessors/>
       </task>
     </task>
-    <task id="36" name="C vs. Java Floating Point" start="20020415T000000" end="20020424T000000" percent-complete="0" note="">
+    <task id="36" name="C vs. Java Floating Point" start="20020415T000000" end="20020424T000000" percent-complete="0" note="floatingpoint.txt">
       <predecessors/>
     </task>
     <task id="2" name="Front End" start="20020226T000000" end="20020424T000000" percent-complete="0" note="frontend.txt">
@@ -200,7 +200,7 @@
         <predecessors/>
       </task>
     </task>
-    <task id="50" name="Search" start="20020315T000000" end="20020406T000000" percent-complete="0" note="">
+    <task id="50" name="Search" start="20020315T000000" end="20020406T000000" percent-complete="0" note="search.txt">
       <predecessors/>
       <task id="51" name="Requirements" start="20020315T000000" end="20020323T000000" percent-complete="0" note="">
         <predecessors/>
