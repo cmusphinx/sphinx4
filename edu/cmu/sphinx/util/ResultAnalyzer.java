@@ -47,12 +47,15 @@ public class ResultAnalyzer {
      *
      * @param ref the reference string
      * @param hyp the hypothesis string
+     *
+     * @return true if the reference and  hypothesis match
      */
-    public void analyze(String ref, String hyp) {
+    public boolean analyze(String ref, String hyp) {
 	List refList = stringToList(ref);
 	List hypList = stringToList(hyp);
 	String filteredRef = toString(refList);
 	String filteredHyp = toString(hypList);
+	boolean match = false;
 
 	hypOutput = new StringBuffer();
 	refOutput = new StringBuffer();
@@ -76,6 +79,7 @@ public class ResultAnalyzer {
 
 	if (filteredHyp.equals(filteredRef)) {
 	    numMatchingSentences++;
+	    match = true;
 	}
 	if (verbose) {
 	    System.out.println();
@@ -86,6 +90,8 @@ public class ResultAnalyzer {
 	    System.out.println();
 	    showResults();
 	}
+
+	return match;
     }
 
     /**
