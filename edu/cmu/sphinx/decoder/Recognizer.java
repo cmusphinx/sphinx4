@@ -28,7 +28,6 @@ import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.decoder.search.Pruner;
-import edu.cmu.sphinx.util.BeamFinder;
 import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
