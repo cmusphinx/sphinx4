@@ -119,36 +119,44 @@ public class Util {
 
 
     /**
-     * Converts a byte array into a double array. Each two consecutive
-     * bytes in the byte array are converted into a double, and
-     * becomes the next element in the double
-     * array. As a result, the returned double array will be half in
-     * length than the byte array. If the length of the byte array is odd,
-     * the length of the double array will be
-     * <code>(byteArray.length - 1)/2</code>, i.e., the last byte is
-     * discarded.
+     * Converts a byte array into an array of samples (a bouble). 
+     * Each consecutive bytes in the byte array are converted into a double, 
+     * and becomes the next element in the double array. The size of the
+     * returned array is (length/bytesPerDouble).
      *
      * @param byteArray a byte array
      * @param offset which byte to start from
      * @param length how many bytes to convert
+     * @param bytesPerSample the number of bytes per sample
+     * @param signedData whether the data is signed
      *
      * @return a double array, or <code>null</code> if byteArray is of zero
      *    length
      *
      * @throws java.lang.ArrayIndexOutOfBoundsException
      */
-    public static double[] byteToDoubleArray(byte[] byteArray, int offset,
-                                             int length)
+    public static final double[] bytesToSamples(byte[] byteArray, 
+                                                int offset,
+                                                int length, 
+                                                int bytesPerSample,
+                                                boolean signedData)
         throws ArrayIndexOutOfBoundsException {
+
+        assert (bytesPerSample > 0 && bytesPerSample < 5);
+        if (signedData) {
+            throw new Error("Signed big-endian data not yet supported");
+        }
         
         if (0 < length && (offset + length) <= byteArray.length) {
-            int doubleLength = length / 2;
+            int doubleLength = length/bytesPerSample;
             double[] doubleArray = new double[doubleLength];
-            int temp;
-            for (int i = offset, j = 0; j < doubleLength ; 
-                 j++, temp = 0x00000000) {
-                temp = (int) (byteArray[i++] << 8);
-                temp |= (int) (0x000000FF & byteArray[i++]);
+            
+            for (int i = offset, j = 0; j < doubleLength; j++) {
+                int temp = (int) byteArray[i++];
+                for (int b = 1; b < bytesPerSample; b++) {
+                    temp = (temp << 8);
+                    temp |= (int) (0x000000FF & byteArray[i++]);
+                }
                 doubleArray[j] = (double) temp;
             }
             return doubleArray;
@@ -157,6 +165,63 @@ public class Util {
 		("offset: " + offset + ", length: " + length
 		 + ", array length: " + byteArray.length);
 	}
+    }
+
+
+    /**
+     * Converts a little-endian byte array into an array of samples (double). 
+     * Each consecutive bytes of a float are converted into a double, and
+     * becomes the next element in the double array. The number of bytes
+     * in the double is specified as an argument. The size of
+     * the returned array is (data.length/bytesPerSample).
+     * 
+     * @param byteArray a byte array
+     * @param offset which byte to start from
+     * @param length how many bytes to convert
+     * @param bytesPerSample the number of bytes per sample
+     * @param signedData whether the data is signed
+     *
+     * @return a double array, or <code>null</code> if byteArray is of zero
+     *    length
+     *
+     * @throws java.lang.ArrayIndexOutOfBoundsException
+     */
+    public static final double[] littleEndianBytesToSamples(byte[] data, 
+                                                            int offset, 
+                                                            int length, 
+                                                            int bytesPerSample,
+                                                            boolean signed)
+        throws ArrayIndexOutOfBoundsException {
+        assert (bytesPerSample > 0 && bytesPerSample < 5);
+
+        if (0 < length && (offset + length) <= data.length) {
+            double[] doubleArray = new double[length/bytesPerSample];
+            if (bytesPerSample == 2 && signed) {
+                littleEndianSigned16BitToDouble(data, offset, length,
+                                                doubleArray);
+            } else {
+                throw new Error
+                    ("Unsupported bytesPerSample: " + bytesPerSample +
+                     "and signed data: " + signed);
+            }
+            return doubleArray;
+        } else {
+	    throw new ArrayIndexOutOfBoundsException
+		("offset: " + offset + ", length: " + length
+		 + ", array length: " + data.length);
+	}
+    }
+
+
+    private static final void littleEndianSigned16BitToDouble
+        (byte[] data, 
+         int offset,
+         int length,
+         double[] doubleArray) {
+         for (int i = offset, j = 0; j < doubleArray.length; j++) {
+            short temp = (short) ((0x000000FF & data[i++]) | (data[i++] << 8));
+            doubleArray[j] = (double) temp;
+        }
     }
 
 
