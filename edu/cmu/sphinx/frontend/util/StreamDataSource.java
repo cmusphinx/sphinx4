@@ -109,11 +109,16 @@ public class StreamDataSource extends BaseDataProcessor {
         super.newProperties(ps);
         sampleRate = ps.getInt(PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
         bytesPerRead = ps.getInt(PROP_BYTES_PER_READ,
-                PROP_BYTES_PER_READ_DEFAULT);
-        bytesPerValue = ps.getInt(PROP_BITS_PER_SAMPLE,
-                PROP_BITS_PER_SAMPLE_DEFAULT) / 8;
+                                 PROP_BYTES_PER_READ_DEFAULT);
+        int bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE,
+                                      PROP_BITS_PER_SAMPLE_DEFAULT);
+        if (bitsPerSample % 8 != 0) {
+            throw new Error("StreamDataSource: bits per sample must be a " +
+                            "multiple of 8.");
+        }
+        bytesPerValue = bitsPerSample / 8;
         bigEndian = ps.getBoolean(PROP_BIG_ENDIAN_DATA,
-                PROP_BIG_ENDIAN_DATA_DEFAULT);
+                                  PROP_BIG_ENDIAN_DATA_DEFAULT);
         signedData = ps.getBoolean(PROP_SIGNED_DATA, PROP_SIGNED_DATA_DEFAULT);
         if (bytesPerRead % 2 == 1) {
             bytesPerRead++;
