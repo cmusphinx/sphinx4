@@ -66,14 +66,12 @@ edu.cmu.sphinx.frontend.sampleRate = 16000
 #
 ############################################################
 
-edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400
 edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.FastActiveList
 edu.cmu.sphinx.search.SimpleDigitLinguist.isConnectedDigitGrammar=true
 edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-56
 edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.search.Linguist.validateSentenceHMM=false
-edu.cmu.sphinx.search.Linguist.compositeThreshold=100
 edu.cmu.sphinx.search.validateResults=false
 
 
@@ -125,8 +123,8 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 
 edu.cmu.sphinx.search.WordListGrammar.isLooping = true
 
-edu.cmu.sphinx.model.acoustic.useComposites=false
-edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
-edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-100
+edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=1200
+edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250
 edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
+edu.cmu.sphinx.search.Linguist.compositeThreshold=10

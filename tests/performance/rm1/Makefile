@@ -191,7 +191,8 @@ RM1_TRIGRAM_CMD = $(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-5\
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
