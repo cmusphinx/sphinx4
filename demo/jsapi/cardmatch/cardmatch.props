@@ -23,10 +23,8 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
 edu.cmu.sphinx.knowledge.acoustic.FeatureVectorLength = 39
-
 edu.cmu.sphinx.knowledge.acoustic.format = sphinx3.binary
-edu.cmu.sphinx.knowledge.acoustic.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
-
+edu.cmu.sphinx.knowledge.acoustic.location = file:/net/labeast.east/export/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 edu.cmu.sphinx.knowledge.acoustic.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
 edu.cmu.sphinx.knowledge.acoustic.data_location = cd_continuous_8gau
 edu.cmu.sphinx.knowledge.acoustic.properties_file = am.props
@@ -60,9 +58,8 @@ edu.cmu.sphinx.frontend.util.Microphone.closeAudioBetweenUtterances=true
 ############################################################
 
 demo.jsapi.cardmatch.numberOfCards = 6
-demo.jsapi.cardmatch.useVoice = true
 demo.jsapi.cardmatch.imageFiles = ./willie.gif ./paul.gif ./philip.gif
-demo.jsapi.cardmatch.JSGFGrammar.path=./CardMatch.gram
+edu.cmu.sphinx.decoder.linguist.JSGFGrammar.grammarName=cardmatch
 
 
 ############################################################
@@ -71,7 +68,7 @@ demo.jsapi.cardmatch.JSGFGrammar.path=./CardMatch.gram
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.grammar=demo.jsapi.cardmatch.JSGFGrammar
+edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.JSGFGrammar
 
 
 ############################################################
