@@ -155,22 +155,20 @@ public class Microphone extends BaseDataProcessor {
     private TargetDataLine audioLine = null;
     private DataList audioList;
     private Utterance currentUtterance;
+    private boolean doConversion = false;
     private int audioBufferSize = 160000;
     private volatile boolean recording = false;
     private volatile boolean utteranceEndReached = true;
 
     // Configuration data
 
+    private AudioFormat desiredFormat;
     private Logger logger;
-    private boolean bigEndian;
     private boolean closeBetweenUtterances;
     private boolean keepDataReference;
     private boolean signed;
-    private int channels;
     private int frameSizeInBytes;
     private int msecPerRead;
-    private int sampleRate;
-    private int sampleSizeInBytes;
 
     
     /*
@@ -201,23 +199,27 @@ public class Microphone extends BaseDataProcessor {
         super.newProperties(ps);
         logger = ps.getLogger();
 
-        sampleRate = ps.getInt(PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
+        int sampleRate = ps.getInt(PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
+
+        int sampleSizeInBits = ps.getInt
+            (PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT);
+
+        int channels = ps.getInt(PROP_CHANNELS, PROP_CHANNELS_DEFAULT);
+
+        boolean bigEndian = 
+            ps.getBoolean(PROP_BIG_ENDIAN, PROP_BIG_ENDIAN_DEFAULT);
+
+        signed = ps.getBoolean(PROP_SIGNED, PROP_SIGNED_DEFAULT);
+
+        desiredFormat = new AudioFormat
+            ((float)sampleRate, sampleSizeInBits, channels, signed, bigEndian);
         
 	closeBetweenUtterances = ps.getBoolean
             (PROP_CLOSE_BETWEEN_UTTERANCES,
              PROP_CLOSE_BETWEEN_UTTERANCES_DEFAULT);
         
-        sampleSizeInBytes = ps.getInt
-            (PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT)/8;
-
         msecPerRead = ps.getInt(PROP_MSEC_PER_READ, 
                                 PROP_MSEC_PER_READ_DEFAULT);
-
-        channels = ps.getInt(PROP_CHANNELS, PROP_CHANNELS_DEFAULT);
-
-        bigEndian = ps.getBoolean(PROP_BIG_ENDIAN, PROP_BIG_ENDIAN_DEFAULT);
-
-        signed = ps.getBoolean(PROP_SIGNED, PROP_SIGNED_DEFAULT);
 
         keepDataReference = ps.getBoolean
             (PROP_KEEP_LAST_AUDIO, PROP_KEEP_LAST_AUDIO_DEFAULT);
@@ -232,25 +234,39 @@ public class Microphone extends BaseDataProcessor {
         super.initialize();
         audioList = new DataList();
 
-        AudioFormat desiredFormat = new AudioFormat((float) sampleRate, 
-                sampleSizeInBytes * 8, channels, signed, bigEndian);
-        
         DataLine.Info  info 
                 = new DataLine.Info(TargetDataLine.class, desiredFormat);
        
         if (!AudioSystem.isLineSupported(info)) {
             logger.info(desiredFormat + " not supported");
-            finalFormat = getNativeAudioFormat(desiredFormat);
-            if (finalFormat == null) {
+            AudioFormat nativeFormat = getNativeAudioFormat(desiredFormat);
+            if (nativeFormat == null) {
                 logger.severe("couldn't find suitable target audio format");
                 return;
-            } 
+            } else {
+                finalFormat = nativeFormat;
+                
+                /* convert from native to the desired format if supported */
+                doConversion = AudioSystem.isConversionSupported
+                    (desiredFormat, nativeFormat);
+                
+                if (doConversion) {
+                    logger.info
+                        ("Converting from " + finalFormat.getSampleRate()
+                         + "Hz to " + desiredFormat.getSampleRate() + "Hz");
+                } else {
+                    logger.info
+                        ("Using native format: Cannot convert from " +
+                         finalFormat.getSampleRate() + "Hz to " +
+                         desiredFormat.getSampleRate() + "Hz");
+                }
+            }
         } else {
             logger.info("Desired format: " + desiredFormat + " supported.");
             finalFormat = desiredFormat;
         }
 
-        // Obtain and open the line and stream.
+        /* Obtain and open the line and stream. */
         try {
             logger.info("Final format: " + finalFormat);
             info = new DataLine.Info(TargetDataLine.class, finalFormat);
@@ -271,6 +287,7 @@ public class Microphone extends BaseDataProcessor {
     private boolean open() {
         if (audioLine != null) {
             if (!audioLine.isOpen()) {
+
                 /* open the audio line */
                 logger.info("open");
                 try {
@@ -281,17 +298,18 @@ public class Microphone extends BaseDataProcessor {
                 }
 
                 audioStream = new AudioInputStream(audioLine);
+                if (doConversion) {
+                    audioStream = AudioSystem.getAudioInputStream
+                        (desiredFormat, audioStream);
+                    assert (audioStream != null);
+                }
 
                 /* Set the frame size depending on the sample rate. */
-                float msec = ((float) msecPerRead) / 1000.f;
-                logger.info("MsecPerRead: " + msec + ", Rate: " + 
-                            audioStream.getFormat().getSampleRate()); 
-                
-                frameSizeInBytes = sampleSizeInBytes *
-                    (int) (msec * audioStream.getFormat().getSampleRate());
-                if (frameSizeInBytes % 2 == 1) {
-                    frameSizeInBytes++;
-                }
+                float sec = ((float) msecPerRead) / 1000.f;
+                frameSizeInBytes =
+                    (audioStream.getFormat().getSampleSizeInBits() / 8) *
+                    (int) (sec * audioStream.getFormat().getSampleRate());
+
                 logger.info("Frame size: " + frameSizeInBytes + " bytes");
             } 
             return true;
@@ -484,6 +502,8 @@ public class Microphone extends BaseDataProcessor {
                 endOfStream = true;
                 return null;
             }
+            int sampleSizeInBytes = 
+                audioStream.getFormat().getSampleSizeInBits() / 8;
             totalSamplesRead += (numBytesRead / sampleSizeInBytes);
             
             if (numBytesRead != frameSizeInBytes) {
@@ -513,8 +533,7 @@ public class Microphone extends BaseDataProcessor {
     /**
      * Returns a native audio format that has the same encoding, number
      * of channels, endianness and sample size as the given format,
-     * and a sample rate that is larger than the given sample rate
-     * (which is given by desiredFormat.getSampleRate()).
+     * and a sample rate that is larger than the given sample rate.
      *
      * @return a suitable native audio format
      */
