@@ -143,4 +143,15 @@ dump_ascii_cepstra: all
 	ascii
 
 
+##########################################################################
+#
+# Parallel Frontend Tests
+#
+##########################################################################
 
+parallel_frontend: all
+	$(JAVA_CMD) \
+	tests.frontend.ParallelFrontEndTest \
+	ParallelFrontEnd \
+	parallel-tidigits.props \
+	19990601-114739-0000001.raw

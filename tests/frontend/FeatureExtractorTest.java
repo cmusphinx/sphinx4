@@ -62,7 +62,7 @@ public class FeatureExtractorTest {
 	    LiveCMN cmn = new LiveCMN
                 ("CMN", testName, props, melCepstrum);
             DeltasFeatureExtractor extractor = new DeltasFeatureExtractor
-                ("FeatureExtractor", testName, props, cmn);
+                ("FeatureExtractor", testName, cmn);
 
             extractor.setDump(fet.getDump());
 
