@@ -203,6 +203,7 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
     private int numUttEnds;
 
     private void sendToQueue(Audio audio) {
+        // now add the audio
         outputQueue.add(audio);
         if (audio.hasSignal(Signal.UTTERANCE_START)) {
             numUttEnds = 0;
@@ -235,6 +236,10 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
      * Read the starting frames until the utterance has started.
      */
     private void readInitialFrames() throws IOException {
+        int nonSpeechTime = 0;
+        int minSpeechTime = (startSpeechTime > speechLeader) ?
+            startSpeechTime : speechLeader;
+
         while (!inSpeech) {
             Audio audio = readAudio();
             if (audio == null) {
@@ -242,6 +247,7 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
             } else {
                 sendToQueue(audio);
                 if (audio.hasContent()) {
+                    nonSpeechTime += getAudioTime(audio);
                     if (audio.isSpeech()) {
                         boolean speechStarted = handleFirstSpeech(audio);
                         if (speechStarted) {
@@ -252,6 +258,24 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
                         }
                     }
                 }
+            }
+            int i = 0;
+            // prune any excessive non-speech
+            while (nonSpeechTime > minSpeechTime) {
+                Audio next = (Audio) outputQueue.get(i);
+                if (next.hasContent()) {
+                    int audioTime = getAudioTime(next);
+                    if (nonSpeechTime - audioTime >= minSpeechTime) {
+                        next = (Audio) outputQueue.remove(i);
+                        nonSpeechTime -= audioTime;
+                    }
+                } else {
+                    /*
+                    System.out.println
+                        ("Not removed ("+i+"): "+next.getSignal());
+                    */
+                }
+                i++;
             }
         }
     }
