@@ -7,6 +7,8 @@ package edu.cmu.sphinx.frontend;
 import edu.cmu.sphinx.util.SphinxProperties;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.Vector;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -91,13 +93,19 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
     }
 
 
+    private void printMessage(String message) {
+        System.out.println("Microphone: " + message);
+    }
+
+
     /**
      * Terminates this Microphone, effectively terminates this
      * thread of execution. Calling <code>startRecording()</code>
      * will not work after call this method.
      */
-    public void terminate() {
+    public synchronized void terminate() {
         setClosed(true);
+        notify();
     }
 
 
@@ -114,8 +122,11 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
     public void run() {
         while (!getClosed()) {
             waitToRecord();
-            record();
+            if (!getClosed()) {
+                record();
+            }
         }
+        printMessage("finished running");
     }
 
 
@@ -124,15 +135,15 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
      */
     private synchronized void waitToRecord() {
         synchronized(this) {
-            while (!getRecording()) {
+            while (!getClosed() && !getRecording()) {
                 try {
-                    System.out.println("waiting to record");
+                    printMessage("waiting to record");
                     wait();
                 } catch (InterruptedException ie) {
                     ie.printStackTrace();
                 }
             }
-            System.out.println("finished waiting");
+            printMessage("finished waiting");
         }
     }
 
@@ -144,11 +155,11 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
 
         if (audioLine != null && audioLine.isOpen()) {
 
-            System.out.println("started recording");
+            printMessage("started recording");
 
             audioLine.start();
 
-            while (getRecording()) {
+            while (getRecording() && !getClosed()) {
                 // Read the next chunk of data from the TargetDataLine.
                 byte[] data = new byte[frameSizeInBytes];
                 int numBytesRead =  audioLine.read(data, 0, data.length);
@@ -164,17 +175,16 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
                     currentUtterance.add(shrinked);
                 }
 
-                System.out.println("recorded 1 frame (" + 
-                                   numBytesRead + ") bytes");
+                printMessage("recorded 1 frame (" + numBytesRead + ") bytes");
             }
 
             audioLine.stop();
             audioLine.close();
 
-            System.out.println("stopped recording");
+            printMessage("stopped recording");
 
         } else {
-            System.out.println("Unable to open line");
+            printMessage("Unable to open line");
         }
     }
 
@@ -191,7 +201,7 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
             (TargetDataLine.class, audioFormat);
         
         if (!AudioSystem.isLineSupported(info)) {
-            System.out.println(audioFormat + " not supported");
+            printMessage(audioFormat + " not supported");
             return false;
         }
 
@@ -202,7 +212,7 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
             return true;
         } catch (LineUnavailableException ex) {
             audioLine = null;
-            System.out.println("Line unavailable");
+            printMessage("Line unavailable");
             return false;
         }        
     }
