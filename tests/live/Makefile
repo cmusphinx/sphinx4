@@ -61,13 +61,14 @@ live: all
 
 live-ep: all
 	$(JAVA_CMD) \
+	-DshowEnergyPanel=false \
 	-DshowPartialResults=true \
 	-Dedu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments=false \
 	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=9 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=12 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=9 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=8 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=11 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=8 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=3 \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	tests.live.Live decoders.list

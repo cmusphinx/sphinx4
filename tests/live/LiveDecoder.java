@@ -100,23 +100,27 @@ public class LiveDecoder extends Decoder {
         CepstrumSource predecessor = (CepstrumSource) frontend.getProcessor
             ("Endpointer");
 
-        // create the viewer
-        CepstrumSource monitor = new CepstrumMonitor
-            ("CepstrumMonitor", getContext(), predecessor) {
-
-            // Implements the abstract cepstrumMonitor()
-            // of CepstrumMonitor. Here, it updates the 
-            // CepstraPanel of the LiveFrame with the cepstrum.
-            public void cepstrumMonitored(Cepstrum cepstrum) {
-                CepstraPanel panel =
-                    live.getLiveFrame().getCepstraPanel();
-                if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
-                    panel.clearCepstra();
-                }
-                panel.addCepstrum(cepstrum);
-            }
-        };
-
+        if (Boolean.getBoolean("showEnergyPanel")) {
+            // create the viewer
+            CepstrumSource monitor = new CepstrumMonitor
+                ("CepstrumMonitor", getContext(), predecessor) {
+                    
+                    // Implements the abstract cepstrumMonitor()
+                    // of CepstrumMonitor. Here, it updates the 
+                    // CepstraPanel of the LiveFrame with the cepstrum.
+                    public void cepstrumMonitored(Cepstrum cepstrum) {
+                        CepstraPanel panel =
+                            live.getLiveFrame().getCepstraPanel();
+                        if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
+                            panel.clearCepstra();
+                        }
+                        panel.addCepstrum(cepstrum);
+                    }
+                };
+            
+            predecessor = monitor;
+        }
+        
         // are we filtering out the non-speech regions?
         boolean filterNonSpeech = SphinxProperties.getSphinxProperties
             (getContext()).getBoolean(FrontEnd.PROP_FILTER_NON_SPEECH, true);
@@ -124,7 +128,7 @@ public class LiveDecoder extends Decoder {
         if (filterNonSpeech) {
             NonSpeechFilter filter = (NonSpeechFilter) frontend.getProcessor
                 ("NonSpeechFilter");
-            filter.setPredecessor(monitor);
+            filter.setPredecessor(predecessor);
         }
     }
 

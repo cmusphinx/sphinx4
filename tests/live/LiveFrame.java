@@ -110,10 +110,10 @@ public class LiveFrame extends JFrame {
      * @param title the title of this JFrame
      * @param liveDecoder the LiveDecoder that this GUI controls
      */
-    public LiveFrame(String title, Live live, boolean showEndpointerPanel) {
+    public LiveFrame(String title, Live live) {
         super(title);
         this.live = live;
-        this.showEndpointerPanel = showEndpointerPanel;
+        this.showEndpointerPanel = Boolean.getBoolean("showEnergyPanel");
 
         setSize(dimension);
         setDefaultLookAndFeelDecorated(true);

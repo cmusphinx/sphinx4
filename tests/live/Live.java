@@ -109,7 +109,7 @@ public class Live {
         parseDecoderListFile(decoderListFile);
 
         // initialize the Swing GUI JFrame
-        liveFrame = new LiveFrame("Live Decoder!", this, hasEndpointer);
+        liveFrame = new LiveFrame("Live Decoder!", this);
         liveFrame.show();
 
         initializeFirstDecoder();
@@ -397,6 +397,10 @@ public class Live {
      */
     class DecodingThread extends Thread {
 
+        public DecodingThread() {
+            super("Decoding");
+        }
+
         public void run() {
             if (!handsFree) {
                 lastResult = decoder.decode(liveFrame.getReference());
@@ -429,6 +433,10 @@ public class Live {
      * components in the MVC model.
      */
     class PlaybackThread extends Thread {
+
+        public PlaybackThread() {
+            super("Playback");
+        }
         
         public void run() {
             if (lastResult != null) {
