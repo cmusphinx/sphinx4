@@ -5,6 +5,8 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
+
 import java.io.IOException;
 
 
@@ -49,6 +51,7 @@ public class Preemphasizer extends PullingProcessor {
      */
     public Preemphasizer() {
 	getSphinxProperties();
+        setTimer(Timer.getTimer("", "Preemphasizer"));
     }
 
 
@@ -76,20 +79,25 @@ public class Preemphasizer extends PullingProcessor {
     public Data read() throws IOException {
 
 	Data input = getSource().read();
+        Data output = input;
+
+        getTimer().start();
 
 	if (input instanceof SegmentEndPointSignal) {
 	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
 	    signal.setData(process(signal.getData()));
-	    return signal;
+	    output = signal;
 	} else if (input instanceof PreemphasisPriorSignal) {
 	    PreemphasisPriorSignal signal = (PreemphasisPriorSignal) input;
 	    prior = (double) signal.getPrior();
-	    return read();
+	    output = read();
 	} else if (input instanceof ShortAudioFrame) {
-	    return process(input);
-	} else {
-	  return input;
+	    output = process(input);
 	}
+
+        getTimer().stop();
+
+        return output;
     }	
 
 

@@ -44,7 +44,7 @@ public class CepstrumProducer extends PullingProcessor {
 	getSphinxProperties();
 	window = new DoubleAudioFrame(windowSize);
 
-	hammingWindower = new HammingWindower();
+	hammingWindower = new Windower();
 	// fastFourierTransformer = new FastFourierTransformer();
     }
 

@@ -5,6 +5,8 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.ListIterator;
@@ -16,7 +18,6 @@ import java.util.ListIterator;
  * This FeatureExtractor takes in a CepstrumFrame and outputs a FeatureFrame.
  */
 public class FeatureExtractor extends PullingProcessor {
-
 
     /**
      * The name of the SphinxProperty for the length of a Feature.
@@ -48,6 +49,7 @@ public class FeatureExtractor extends PullingProcessor {
     public FeatureExtractor() {
 	getSphinxProperties();
 	cepstraBuffer = new float[LIVEBUFBLOCKSIZE][];
+        setTimer(Timer.getTimer("", "FeatureExtractor"));
     }
 
 
@@ -73,12 +75,18 @@ public class FeatureExtractor extends PullingProcessor {
      */
     public Data read() throws IOException {
 	Data input = getSource().read();
+        Data output = input;
+
+        getTimer().start();
+
 	if (input instanceof SegmentEndPointSignal ||
 	    input instanceof CepstrumFrame) {
-	    return process(input);
-	} else {
-	    return input;
+	    output = process(input);
 	}
+
+        getTimer().stop();
+
+        return output;
     }	
 
 
@@ -226,10 +234,4 @@ public class FeatureExtractor extends PullingProcessor {
 
 	return (new Feature(feature));
     }
-
-
-    /**
-     * Test program for this FeatureExtractor. Reads in a file of
-     * CepstrumFrames, and test the process() method on each Frame.
-     */
 }

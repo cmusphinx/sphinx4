@@ -4,6 +4,8 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.util.Timer;
+
 
 /**
  * A PullingProcessor reads a Data object from a DataSource, and processes
@@ -22,6 +24,12 @@ public abstract class PullingProcessor implements DataSource {
      * the predecessor DataSource to pull Data objects from
      */
     private DataSource predecessorDataSource;
+
+
+    /**
+     * A Timer for timing processing.
+     */
+    private Timer timer;
 
     
     /**
@@ -47,6 +55,26 @@ public abstract class PullingProcessor implements DataSource {
      */
     public void setSource(DataSource whereToPullFrom) {
 	predecessorDataSource = whereToPullFrom;
+    }
+
+
+    /**
+     * Returns the Timer.
+     *
+     * @return the Timer
+     */
+    public Timer getTimer() {
+        return timer;
+    }
+
+
+    /**
+     * Sets the Timer.
+     *
+     * @param timer the Timer
+     */
+    public void setTimer(Timer timer) {
+        this.timer = timer;
     }
 
 

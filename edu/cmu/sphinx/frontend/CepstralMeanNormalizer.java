@@ -5,6 +5,8 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.ListIterator;
@@ -54,14 +56,15 @@ public class CepstralMeanNormalizer extends PullingProcessor {
      */
     public CepstralMeanNormalizer() {
 	getSphinxProperties();
-	init();
+	initMeansSums();
+        setTimer(Timer.getTimer("", "CMN"));
     }
 
 
     /**
      * Initializes the currentMean and sum arrays.
      */
-    private void init() {
+    private void initMeansSums() {
 	currentMean = new float[cepstrumLength];
 	currentMean[0] = initialMean;
 	sum = new float[cepstrumLength];
@@ -90,13 +93,20 @@ public class CepstralMeanNormalizer extends PullingProcessor {
      *     Data object is available
      */
     public Data read() throws IOException {
-	Data input = getSource().read();
+	
+        Data input = getSource().read();
+        Data output = input;
+
+        getTimer().start();
+
 	if (input instanceof SegmentEndPointSignal ||
 	    input instanceof CepstrumFrame) {
-	    return process(input);
-	} else {
-	    return input;
+	    output = process(input);
 	}
+
+        getTimer().stop();
+
+        return output;
     }	
 
 
