@@ -76,16 +76,10 @@ edu.cmu.sphinx.frontend.useAcousticModelProperties = true
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth = 2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth = 1E-150
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.decoder.search.FastActiveList
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=7.0
-edu.cmu.sphinx.decoder.linguist.Linguist.autoLoopSilence=false
-edu.cmu.sphinx.decoder.linguist.Linguist.compositeThreshold=10000
-edu.cmu.sphinx.decoder.linguist.Linguist.expandInterNodeContexts=true
-edu.cmu.sphinx.decoder.linguist.Linguist.joinPronunciations=true
-edu.cmu.sphinx.decoder.linguist.Linguist.showSentenceHMM=false
-edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
-edu.cmu.sphinx.decoder.linguist.Linguist.validateSentenceHMM=false
-edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-56
+edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7.0
+edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-26
 edu.cmu.sphinx.search.validateResults=false
+
 
 ############################################################
 # 
@@ -93,12 +87,7 @@ edu.cmu.sphinx.search.validateResults=false
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.SimpleLinguist
-edu.cmu.sphinx.decoder.linguist.StaticLinguist.isFlatSentenceHMM=false
-edu.cmu.sphinx.decoder.linguist.Linguist.expandInterNodeContexts=true
 
-edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar
-edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
 
 
 ############################################################
@@ -140,6 +129,6 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.WordListGrammar.isLooping = false
-edu.cmu.sphinx.decoder.linguist.WordListGrammar.path = ../performance/an4/an4_spelled_out.wordlist
+edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.isLooping = false
+edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path = ../performance/an4/an4_spelled_out.wordlist
 

@@ -67,7 +67,6 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=200
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-200
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.FastActiveList
-edu.cmu.sphinx.search.SimpleDigitLinguist.isConnectedDigitGrammar=true
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-36
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.decoder.linguist.Linguist.showSentenceHMM=false
@@ -102,6 +101,7 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=true
 #
 # Use the number of available CPUS for scoring:
 #
+
 edu.cmu.sphinx.search.ThreadedAcousticScorer.isCpuRelative=true
 edu.cmu.sphinx.search.ThreadedAcousticScorer.numThreads=0
 edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
@@ -111,8 +111,9 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 # WordListGrammar properties
 #
 ############################################################
-edu.cmu.sphinx.decoder.linguist.WordListGrammar.isLooping = true
-edu.cmu.sphinx.decoder.linguist.WordListGrammar.path = ../performance/tidigits/digits.wordlist
+
+edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.isLooping = true
+edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path = ../performance/tidigits/tidigits.wordlist
 
 
 ############################################################
@@ -122,10 +123,6 @@ edu.cmu.sphinx.decoder.linguist.WordListGrammar.path = ../performance/tidigits/d
 ############################################################
 
 edu.cmu.sphinx.decoder.Recognizer.dumpFrontEnd = true
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.SimpleLinguist
-edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false
-edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar
-edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
 
 edu.cmu.sphinx.knowledge.acoustic.useComposites=false
 edu.cmu.sphinx.decoder.linguist.Linguist.expandInterNodeContexts=true
