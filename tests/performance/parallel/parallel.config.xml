@@ -71,7 +71,7 @@
     </component>
         
     <component name="activeList" 
-        type="edu.cmu.sphinx.decoder.search.SortingActiveListFactory">
+        type="edu.cmu.sphinx.decoder.search.SimpleActiveListFactory">
         <property name="logMath" value="logMath"/>
         <property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
         <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
@@ -133,10 +133,9 @@
     <!-- ******************************************************** -->
     <component name="wordListGrammar" 
         type="edu.cmu.sphinx.linguist.language.grammar.SimpleWordListGrammar">
-        <property name="path" value="./digits.wordlist"/>
+        <property name="path" value="./one.wordlist"/>
         <property name="isLooping" value="true"/>
         <property name="dictionary" value="dictionary"/>
-        <property name="optimizeGrammar" value="true"/>
         <property name="logMath" value="logMath"/>
     </component>
     
@@ -148,7 +147,7 @@
     <component name="dictionary" 
         type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
         <property name="location" 
-                  value="file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
+                  value="/lab/speech/sphinx4/data/aurora2_model"/>
         <property name="dictionaryPath" value= "dictionary"/>
         <property name="fillerPath" value="fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
@@ -167,7 +166,8 @@
     <component name="mfcSphinx3Loader" 
            type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
         <property name="logMath"          value="logMath"/>
-        <property name="isBinary"         value="false"/>
+        <property name="isBinary"         value="true"/>
+	<property name="sparseForm"       value="false"/>
         <property name="location" 
                   value="/lab/speech/sphinx4/data/aurora2_model"/>
         <property name="definition_file"  value="mfc.500.mdef"/>
@@ -183,7 +183,8 @@
     <component name="plpSphinx3Loader" 
            type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
         <property name="logMath"          value="logMath"/>
-        <property name="isBinary"         value="false"/>
+        <property name="isBinary"         value="true"/>
+	<property name="sparseForm"       value="false"/>
         <property name="location" 
                   value="/lab/speech/sphinx4/data/aurora2_model"/>
         <property name="definition_file"  value="plp.500.mdef"/>
@@ -210,7 +211,9 @@
     </component>
 
     <component name="mfcStreamDataSource" 
-               type="edu.cmu.sphinx.frontend.util.StreamDataSource"/>
+               type="edu.cmu.sphinx.frontend.util.StreamDataSource">
+	<property name="sampleRate" value="8000"/>
+    </component>
 
     <component name="mfcPremphasizer" 
                type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
@@ -222,7 +225,11 @@
         type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"/>
     
     <component name="melFilterBank" 
-        type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank"/>
+        type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank">
+        <property name="numFilters" value="32"/>
+	<property name="minfreq" value="130"/>
+	<property name="maxfreq" value="3600"/>
+    </component>
         
     <component name="dct" 
         type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/>
@@ -251,8 +258,10 @@
         </propertylist>
     </component>
 
-    <component name="plpStreamDataSource" 
-               type="edu.cmu.sphinx.frontend.util.StreamDataSource"/>
+    <component name="plpStreamDataSource"
+               type="edu.cmu.sphinx.frontend.util.StreamDataSource">
+	<property name="sampleRate" value="8000"/>
+    </component>
 
     <component name="plpPremphasizer" 
                type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
@@ -264,7 +273,11 @@
         type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"/>
     
     <component name="plpFilterBank"
-        type="edu.cmu.sphinx.frontend.frequencywarp.PLPFrequencyFilterBank"/>
+        type="edu.cmu.sphinx.frontend.frequencywarp.PLPFrequencyFilterBank">
+        <property name="numFilters" value="32"/>
+	<property name="minfreq" value="130"/>
+	<property name="maxfreq" value="3600"/>
+    </component>
 
     <component name="plpCepstrumProducer"
         type="edu.cmu.sphinx.frontend.frequencywarp.PLPCepstrumProducer"/>
@@ -302,8 +315,8 @@
                 type="edu.cmu.sphinx.instrumentation.RecognizerMonitor">
         <property name="recognizer" value="parallelRecognizer"/>
         <propertylist name="allocatedMonitors">
-            <item>linguistStats
-            </item>
+            <item>linguistStats</item>
+	    <item>gdlDumper</item>
         </propertylist>
     </component>
     
@@ -312,6 +325,12 @@
         <property name="linguist" value="parallelLinguist"/>
     </component>
 
+    <component name="gdlDumper"
+               type="edu.cmu.sphinx.linguist.util.GDLDumper">
+       <property name="linguist" value="parallelLinguist"/>
+       <property name="logMath" value="logMath"/>
+       <property name="skipHMMs" value="false"/>
+    </component>
     
     <!-- ******************************************************* -->
     <!--  Miscellaneous components                               -->
