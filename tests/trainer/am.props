@@ -1,6 +1,5 @@
 ##### Used properties #####
 edu.cmu.sphinx.knowledge.acoustic.sparseForm=true
-edu.cmu.sphinx.util.SphinxProperties.warnIfPropertyNotDefined=false
 ##### Unused properties #####
  edu.cmu.sphinx.knowledge.acoustic.cmn.enabled=true
  edu.cmu.sphinx.knowledge.acoustic.cmn.live.initialCepstralMean=12
