@@ -59,14 +59,16 @@ Start speaking. Press Ctrl-C to quit.
       </p>
 
       <h3>Building</h3>
-      <p>To build this demo, merely type the following in a shell from
+      <p>Check the <code>bin</code> directory to see if it has the file
+         <code>HelloNGram.jar</code>. If not, you need to build the demo.
+         To build this demo, merely type the following in a shell from
          any directory in the Sphinx-4 hierarchy:
 	 <ul>
 	 <code>ant -find demo.xml</code>
 	 </ul>
       </p>
       <p>
-      Doing so will create <code>bld/bin/HelloNGram.jar</code> under the 
+      Doing so will create <code>bin/HelloNGram.jar</code> under the 
       top level directory.  You can run the demo using <code>java -jar</code> 
       (see "Running" below).
       </p>
@@ -83,7 +85,7 @@ Start speaking. Press Ctrl-C to quit.
       Use the sentences in the <a href="hellongram.test">test file</a>
       to test the demo. To run the demo, type:
       </p>
-      <code>sphinx4> java -mx312m -jar bld/bin/HelloNGram.jar</code>
+      <code>sphinx4> java -mx312m -jar bin/HelloNGram.jar</code>
       <p>
       Make sure that you give it a large enough heap by putting in "-mx312m".
       <br><font color="FF0000"><b>NOTE:</b></font> Make sure that you are using
