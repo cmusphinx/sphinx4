@@ -111,6 +111,28 @@ tiny:
 	-Dedu.cmu.sphinx.knowledge.language.location=tiny.unigram \
 	edu.cmu.sphinx.decoder.BatchDecoder ./tiny.props ./tiny.batch
 
+tiny_flat:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7 \
+        -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist \
+       -Dedu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=1 \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.knowledge.language.location=tiny.unigram \
+	edu.cmu.sphinx.decoder.BatchDecoder ./tiny.props ./small.batch
+
+tiny2_flat:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7 \
+        -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist \
+       -Dedu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=2 \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.knowledge.language.location=tiny.unigram \
+	edu.cmu.sphinx.decoder.BatchDecoder ./tiny.props ./tiny.batch
+
 tidigits:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
