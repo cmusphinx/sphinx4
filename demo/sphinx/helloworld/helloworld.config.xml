@@ -27,16 +27,6 @@
     <property name="showCreations" value="false"/>
     
     
-    <!-- ******************************************************** -->
-    <!-- helloworld  configuration                                 -->
-    <!-- ******************************************************** -->   
-    
-    <component name="helloworld" 
-                type="demo.sphinx.helloworld.HelloWorld">
-        <property name="recognizer" value="${recognizer}"/>
-        <property name="microphone" value="microphone"/>
-    </component>
-  
     
     <!-- ******************************************************** -->
     <!-- word recognizer configuration                            -->
