@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -776,8 +777,6 @@ class Sphinx3Loader implements Loader {
 	assert numTiedState == mixtureWeightsPool.getFeature(NUM_SENONES, 0);
 	assert numTiedTransitionMatrices == matrixPool.size();
 
-	int[] stid = new int[numStatePerHMM-1];
-
 	// Load the base phones
 	for (int i = 0; i < numBase; i++) {
 	    String name = est.getString();
@@ -786,6 +785,8 @@ class Sphinx3Loader implements Loader {
 	    String position = est.getString();
 	    String attribute  = est.getString();
 	    int  tmat  = est.getInt("tmat");
+
+            int[] stid = new int[numStatePerHMM-1];
 
 	    for (int j=0; j < numStatePerHMM-1; j++) {
                 stid[j] = est.getInt("j");
@@ -825,6 +826,8 @@ class Sphinx3Loader implements Loader {
 
         String lastUnitName = "";
         Unit lastUnit = null;
+        int[] lastStid = null;
+        SenoneSequence lastSenoneSequence = null;
 
 	for (int i = 0; i < numTri; i++) {
 	    String name = est.getString();
@@ -833,6 +836,8 @@ class Sphinx3Loader implements Loader {
 	    String position = est.getString();
 	    String attribute  = est.getString();
 	    int  tmat  = est.getInt("tmat");
+
+            int[] stid = new int[numStatePerHMM-1];
 
 	    for (int j = 0; j < numStatePerHMM-1; j++) {
                 stid[j] = est.getInt("j");
@@ -863,18 +868,23 @@ class Sphinx3Loader implements Loader {
                     Context context = LeftRightContext.get(leftContext,
                                                            rightContext);
                     unit = Unit.createCDUnit(name, false, context);
-                    lastUnit = unit;
                 }
-
                 lastUnitName = unitName;
+                lastUnit = unit;
 
                 if (logger.isLoggable(Level.FINE)) {
                     logger.fine("Loaded " + unit);
                 }
 
                 float[][] transitionMatrix = (float[][]) matrixPool.get(tmat);
-                SenoneSequence ss = getSenoneSequence(stid);
 
+                SenoneSequence ss = lastSenoneSequence;
+                if (ss == null || !sameSenoneSequence(stid, lastStid)) {
+                    ss = getSenoneSequence(stid);
+                }
+                lastSenoneSequence = ss;
+                lastStid = stid;
+        
                 HMM hmm = new HMM(unit,
                                   ss, 
                                   transitionMatrix,
@@ -882,10 +892,29 @@ class Sphinx3Loader implements Loader {
                 hmmManager.put(hmm);
             }
 	}
+
 	est.close();
 	return pool;
     }
 
+    /**
+     * Returns true if the given senone sequence IDs are the same.
+     *
+     * @return true if the given senone sequence IDs are the same,
+     *         false otherwise
+     */
+    private boolean sameSenoneSequence(int[] ssid1, int[] ssid2) {
+        if (ssid1.length == ssid2.length) {
+            for (int i = 0; i < ssid1.length; i++) {
+                if (ssid1[i] != ssid2[i]) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Gets the senone sequence representing the given senones
@@ -894,16 +923,14 @@ class Sphinx3Loader implements Loader {
      *
      * @return the senone sequence associated with the states
      */
-
     private SenoneSequence getSenoneSequence(int[] stateid) {
-	Senone[] senones = new Senone[stateid.length];
-
-	for (int i=0; i<stateid.length; i++){
+        Senone[] senones = new Senone[stateid.length];
+        
+        for (int i=0; i<stateid.length; i++){
             senones[i] = (Senone) senonePool.get(stateid[i]);
         }
-
-	// TODO: Is there any advantage in trying to pool these?
-	return new SenoneSequence(senones);
+        
+        return new SenoneSequence(senones);
     }
 
     /**
