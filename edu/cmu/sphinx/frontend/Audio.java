@@ -82,10 +82,13 @@ public class Audio extends Data implements Cloneable {
      */
     public Object clone() {
 	if (hasContent()) {
+	    Audio audio = (Audio) super.clone();
 	    double[] newSamples = (double[]) audioSamples.clone();
-	    return (new Audio(newSamples, getUtterance()));
+	    audio.audioSamples = newSamples;
+	    return audio;
 	} else {
-	    return (new Audio(getSignal()));
+	    Audio audio = (Audio) super.clone();
+	    return audio;
 	}
     }
 }

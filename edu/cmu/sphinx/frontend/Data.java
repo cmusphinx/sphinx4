@@ -34,7 +34,7 @@ import java.io.Serializable;
  *
  * @see Signal
  */
-public class Data implements Serializable {
+public class Data implements Serializable, Cloneable {
 
     private Signal signal = null;
     private Utterance utterance = null;
@@ -118,5 +118,14 @@ public class Data implements Serializable {
         } else {
             return (getSignal().equals(signal));
         }
+    }
+
+    public Object clone() {
+	try {
+	    Data data = (Data) super.clone();
+	    return data;
+	} catch (CloneNotSupportedException e) {
+	    throw new InternalError(e.toString());
+	}
     }
 }
