@@ -22,6 +22,7 @@ import edu.cmu.sphinx.frontend.LiveCMN;
 import edu.cmu.sphinx.frontend.Microphone;
 import edu.cmu.sphinx.frontend.NonSpeechFilter;
 import edu.cmu.sphinx.frontend.Signal;
+import edu.cmu.sphinx.frontend.SimpleFrontEnd;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.result.Result;
@@ -92,7 +93,8 @@ public class LiveDecoder extends Decoder {
      * to the CepstraPanel of the LiveFrame for plotting. 
      */
     private void insertEnergyEndpointViewer() {
-        FrontEnd frontend = getRecognizer().getFrontEnd();
+        SimpleFrontEnd frontend = (SimpleFrontEnd) 
+	    getRecognizer().getFrontEnd();
 
         CepstrumSource predecessor = (CepstrumSource) frontend.getProcessor
             ("EnergyEndpointer");
