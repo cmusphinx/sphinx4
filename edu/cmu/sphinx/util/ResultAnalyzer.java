@@ -29,6 +29,7 @@ public class ResultAnalyzer {
     private StringBuffer hypOutput;
     private StringBuffer refOutput;
 
+    private List mismatchedUtterances;
 
     /**
      * Creates a result analyzer
@@ -37,6 +38,7 @@ public class ResultAnalyzer {
      */
     public ResultAnalyzer(boolean verbose) {
         this.verbose = verbose;
+        this.mismatchedUtterances = new LinkedList();
     }
 
 
@@ -80,7 +82,10 @@ public class ResultAnalyzer {
 	if (filteredHyp.equals(filteredRef)) {
 	    numMatchingSentences++;
 	    match = true;
-	}
+	} else {
+            mismatchedUtterances.add(new Misrecognition(ref, hyp));
+        }
+            
 	if (verbose) {
 	    System.out.println();
 	    System.out.println("REF:       " + filteredRef);
@@ -143,7 +148,8 @@ public class ResultAnalyzer {
         numMatchingSentences = 0;
         recognitionErrors = 0;
         insertionErrors = 0;
-        deletionErrors = 0;        
+        deletionErrors = 0;
+        mismatchedUtterances.clear();
     }
     
     /**
@@ -330,6 +336,19 @@ public class ResultAnalyzer {
 
 
     /**
+     * Shows the misrecognized utterances.
+     */
+    public void showMisrecognitions() {
+        System.out.println
+            (mismatchedUtterances.size() + " sentence errors");
+        for (Iterator i = mismatchedUtterances.iterator(); i.hasNext();) {
+            Misrecognition misrecognition = (Misrecognition) i.next();
+            System.out.println(misrecognition.toString());
+        }
+    }
+
+
+    /**
      * Shows the results for this analyzer
      */
     public void showResults() {
@@ -378,3 +397,32 @@ public class ResultAnalyzer {
     }
 }
 
+/**
+ * Represents the reference and hypothesis of a misrecognized utterance.
+ */
+class Misrecognition {
+
+    private String reference;
+    private String hypothesis;
+
+    /**
+     * Constructs a Misrecognition.
+     *
+     * @param reference the reference utterance
+     * @param hypothesis the hypothesis utterance
+     */
+    public Misrecognition(String reference, String hypothesis) {
+        this.reference = reference;
+        this.hypothesis = hypothesis;
+    }
+
+    /**
+     * Returns a string representation of the reference and hypothesis.
+     *
+     * returns a string representation of the reference and hypothesis
+     */
+    public String toString() {
+        return "REF: " + reference + 
+            "   HYP: " + hypothesis;
+    }
+}
