@@ -186,11 +186,8 @@
     
     <component name="microphone" 
                 type="edu.cmu.sphinx.frontend.util.Microphone">
-        <property name="bytesPerRead" value="320"/>
-        <property name="closeBetweenUtterances" value="true"/>
         <property name="keepLastAudio" value="true"/>
     </component>
-
     
     <component name="speechClassifier" 
                 type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier">
