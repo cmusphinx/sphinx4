@@ -52,7 +52,6 @@ public class CepstralMeanNormalizer extends PullingProcessor {
     private int cmnWindow;
 
     private Timer normTimer;
-    private Timer updateTimer;
     
 
     /**
@@ -62,8 +61,7 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	getSphinxProperties();
 	initMeansSums();
         setTimer(Timer.getTimer("", "CMN"));
-        normTimer = Timer.getTimer("", "normTimer");
-        updateTimer = Timer.getTimer("", "updateTimer");
+        normTimer = Timer.getTimer("", "CMN.norm");
     }
 
 
@@ -168,9 +166,10 @@ public class CepstralMeanNormalizer extends PullingProcessor {
      */
     private void normalize(Cepstrum[] cepstra) {
 	// do the mean normalization
-	for (int i = 0; i < cepstra.length; i++) {
+        int cepstraLength = cepstra.length;
+	for (int i = 0; i < cepstraLength; i++) {
             normalizeCepstrum(cepstra[i].getData());
-	}
+        }
         numberFrame += cepstra.length;
     }
 
@@ -180,7 +179,8 @@ public class CepstralMeanNormalizer extends PullingProcessor {
      * the sum and currentMean arrays.
      */
     private void normalizeCepstrum(float[] cepstrum) {
-        for (int j = 0; j < cepstrum.length; j++) {
+        int cepstrumLength = cepstrum.length;
+        for (int j = 0; j < cepstrumLength; j++) {
             sum[j] += cepstrum[j];
             cepstrum[j] -= currentMean[j];
         }
@@ -218,7 +218,8 @@ public class CepstralMeanNormalizer extends PullingProcessor {
      * @param multipler the amount to multiply by
      */
     private static final void multiplyArray(float[] array, float multiplier) {
-        for (int i = 0; i < array.length; i++) {
+        int arrayLength = array.length;
+        for (int i = 0; i < arrayLength; i++) {
             array[i] *= multiplier;
         }
     }

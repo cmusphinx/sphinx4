@@ -31,9 +31,10 @@ import java.util.StringTokenizer;
  */
 public class CmnFeatureExtractorTest implements DataSource {
 
-    private static final String CEPSTRUM_FRAME = "CEPSTRUM_PRODUCER";
+    private static final String CEPSTRUM_PRODUCER = "CEPSTRUM_PRODUCER";
     private static final String CEPSTRUM = "CEPSTRUM";
 
+    private BufferedReader controlFileReader;
     private BufferedReader reader;
     private CepstralMeanNormalizer cmn;
     private FeatureExtractor featureExtractor;
@@ -50,8 +51,9 @@ public class CmnFeatureExtractorTest implements DataSource {
      *
      * @param cepstrumFile a cepstra input file
      */
-    public CmnFeatureExtractorTest(String cepstrumFile) throws IOException {
-	this.reader = new BufferedReader(new FileReader(cepstrumFile));
+    public CmnFeatureExtractorTest(String controlFile) throws IOException {
+        this.controlFileReader = new BufferedReader
+            (new FileReader(controlFile));
 	
         dumpValues = Boolean.getBoolean
             ("tests.frontend.CmnFeatureExtractorTest.dumpValues");
@@ -63,7 +65,12 @@ public class CmnFeatureExtractorTest implements DataSource {
 	featureExtractor = new FeatureExtractor();
 	featureExtractor.setSource(cmn);
 	featureExtractor.setDump(dumpValues);
+    }
+
+
+    private void reset() {
         start = true;
+        ended = false;
     }
 
 
@@ -74,10 +81,20 @@ public class CmnFeatureExtractorTest implements DataSource {
 	Data result = null;
 	FeatureFrame featureFrame = null;
 
-        // produce as many FeatureFrames as possible
-	do {
-	    result = featureExtractor.read();
-        } while (result != null);
+        String cepstrumFile = null;
+
+        while ((cepstrumFile = controlFileReader.readLine()) != null) {
+
+            this.reader = new BufferedReader(new FileReader(cepstrumFile));
+            reset();
+
+            // produce as many FeatureFrames as possible
+            do {
+                result = featureExtractor.read();
+            } while (result != null);
+            
+            this.reader.close();
+        }
 
         if (dumpTimes) {
             Timer.dumpAll("");
@@ -106,7 +123,7 @@ public class CmnFeatureExtractorTest implements DataSource {
 	
         line = reader.readLine();
 
-	if (line != null && line.startsWith(CEPSTRUM_FRAME)) {
+	if (line != null && line.startsWith(CEPSTRUM_PRODUCER)) {
 	    int numberCepstrum = Integer.parseInt
 		(line.substring(line.lastIndexOf(' ') + 1));
 	    

@@ -82,10 +82,6 @@ public abstract class PullingProcessor implements DataSource {
     private boolean dump;
 
 
-    // make this un-instantiable from outside
-    private PullingProcessor() {}
-
-
     /**
      * Returns the DataSource to pull Data objects from
      *
