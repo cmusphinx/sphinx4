@@ -17,7 +17,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <property name="top_dir"		value="../.."/>
-    <property name="build_dir"          value="bld"/>
+    <property name="build_dir"          value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="live_demo"          value="tests.live.Live"/>
 
