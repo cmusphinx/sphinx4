@@ -37,6 +37,7 @@ public class LinguistDumper implements LinguistProcessor  {
     public final static String PROP_FILENAME 
     		= "edu.cmu.sphinx.util.LinguistDumper.filename";
 
+    protected SphinxProperties properties;
     private boolean depthFirst = true;
 
     /**
@@ -49,16 +50,27 @@ public class LinguistDumper implements LinguistProcessor  {
      */
     public void process(SphinxProperties props, Linguist linguist) {
         String fileName = props.getString(PROP_FILENAME, getDefaultName());
+        properties = props;
 
 	try {
 	    FileOutputStream fos = new FileOutputStream(fileName);
 	    PrintStream out = new PrintStream(fos);
-	    dumpSentenceHMM(out, linguist.getInitialState(), props);
+	    dumpSentenceHMM(out, linguist.getInitialState());
 	    out.close();
 	} catch (FileNotFoundException fnfe) {
 	    System.out.println("Can't dump to file " 
 		    + fileName + " " + fnfe);
 	}
+    }
+
+
+    /**
+     * Returns the sphinx properties for this processor
+     * 
+     * @return the sphinx properties associated with this dumper
+     */
+    protected SphinxProperties getProperties() {
+        return properties;
     }
 
     /**
@@ -106,8 +118,7 @@ public class LinguistDumper implements LinguistProcessor  {
      * @param level the level of the state
      */
     protected void startDumpNode(PrintStream out, 
-                                 SentenceHMMState state, int level,
-                                 SphinxProperties props) {
+                                 SentenceHMMState state, int level) {
     }
 
     /**
@@ -130,8 +141,7 @@ public class LinguistDumper implements LinguistProcessor  {
      * @param level the level of the state
      */
     protected void dumpArc(PrintStream out, SentenceHMMState from, 
-                           SentenceHMMStateArc arc, int level,
-                           SphinxProperties props) {
+                           SentenceHMMStateArc arc, int level) {
     }
 
 
@@ -140,11 +150,9 @@ public class LinguistDumper implements LinguistProcessor  {
      *
      * @param name out place to dump the output
      * @param state the initial state of the SentenceHMM
-     * @param props the SphinxProperties to use
      */
     private void dumpSentenceHMM(PrintStream out, 
-                                 SentenceHMMState startingState,
-                                 SphinxProperties props) {
+                                 SentenceHMMState startingState) {
 	List queue = new LinkedList();
 	Set visitedStates = new HashSet();
 
@@ -160,13 +168,13 @@ public class LinguistDumper implements LinguistProcessor  {
 	    if (!visitedStates.contains(state)) {
 		visitedStates.add(state);
 
-		startDumpNode(out, state, level, props);
+		startDumpNode(out, state, level);
 		SentenceHMMStateArc[] arcs = state.getSuccessorArray(); 
 
 
 		for (int i = arcs.length - 1; i >= 0; i--) {
 		    SentenceHMMState nextState = arcs[i].getNextState();
-		    dumpArc(out, state, arcs[i], level, props);
+		    dumpArc(out, state, arcs[i], level);
 		    if (depthFirst) {
 			// if depth first, its a stack
 			queue.add(0, new StateLevel(nextState, level + 1));
