@@ -24,6 +24,7 @@ import java.io.Serializable;
 public class Pronunciation implements Serializable {
 
     private String word; 	// the spelling of the word
+    private int wordID;
     private WordClassification wordClassification;
     private Unit[] units;
     private String tag;
@@ -40,11 +41,13 @@ public class Pronunciation implements Serializable {
      * occurring
      */
     Pronunciation(String word,
+                  int wordID,
                   Unit[] units,
                   String tag,
                   WordClassification wordClassification,
                   float probability) {
 	this.word = word;
+        this.wordID = wordID;
 	this.wordClassification = wordClassification;
 	this.units = units;
 	this.tag = tag;
@@ -59,6 +62,15 @@ public class Pronunciation implements Serializable {
      */
     public String getWord() {
 	return word;
+    }
+
+    /**
+     * Returns the word ID of this Pronunciation.
+     *
+     * @return the word ID
+     */
+    public int getWordID() {
+        return wordID;
     }
 
     /**
