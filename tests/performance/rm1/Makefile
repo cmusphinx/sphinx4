@@ -23,7 +23,7 @@ FILES = $(shell echo *.java)
 # List any sub directories that need to be built
 SUBDIRS =
 
-# LOGGER_PROPERTIES=ti46.props
+LOGGER_PROPERTIES=rm1.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
 
@@ -31,7 +31,7 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 PROFILE_FLAGS= -Xprof -server
 LOG_GC_FLAGS=  -Xloggc:gc.txt
 # GC_FLAGS=  -XX:+PrintGCDetails
-GC_FLAGS = -ms256m -mx256m
+GC_FLAGS = -ms256m -mx768m
 # GC_FLAGS=  -XX:+UseConcMarkSweepGC
 #GC_FLAGS=  -XX:+UseParallelGC
 #GC_FLAGS= -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+PrintGCDetails
@@ -156,18 +156,19 @@ q_rm1onrm1_flatunigram:
 RM1_UNIGRAM_CMD = $(JAVA_CMD) \
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
-	-Dedu.cmu.sphinx.model.language.location=RM.2845.bigram.arpa \
+	-Dedu.cmu.sphinx.model.language.location=RM.2845.unigram.arpa \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
+	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=true \
 	edu.cmu.sphinx.decoder.BatchDecoder
 
 RM1_UNIGRAM_QUICK_CMD = $(JAVA_CMD) \
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=50\
-	-Dedu.cmu.sphinx.model.language.location=RM.2845.bigram.arpa \
+	-Dedu.cmu.sphinx.model.language.location=RM.2845.unigram.arpa \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
@@ -180,7 +181,7 @@ RM1_UNIGRAM_QUICK_BIN_CMD = $(JAVA_CMD) \
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=50\
-	-Dedu.cmu.sphinx.model.language.location=RM.2845.bigram.arpa \
+	-Dedu.cmu.sphinx.model.language.location=RM.2845.unigram.arpa \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
 	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.ExternalLinguist \
