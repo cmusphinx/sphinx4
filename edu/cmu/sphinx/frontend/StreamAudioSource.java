@@ -158,6 +158,9 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
 
         if (totalRead < bytesToRead) {
             totalRead = (totalRead % 2 == 0) ? totalRead + 2 : totalRead + 3;
+            byte[] shrinkedBuffer = new byte[totalRead];
+            System.arraycopy(samplesBuffer, 0, shrinkedBuffer, 0, totalRead);
+            samplesBuffer = shrinkedBuffer;
             streamEndReached = true;
             audioStream.close();
         }

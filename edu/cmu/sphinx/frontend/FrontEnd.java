@@ -51,6 +51,14 @@ public class FrontEnd extends DataProcessor {
      */
     public static final String PROP_PREFIX = "edu.cmu.sphinx.frontend.";
 
+    
+    /**
+     * The name of the SphinxProperty for the number of bits per
+     * sample.
+     */
+    public static final String PROP_BITS_PER_SAMPLE = PROP_PREFIX +
+    "bitsPerSample";
+
 
     /**
      * The name of the SphinxProperty for sample rate in Hertz (i.e.,

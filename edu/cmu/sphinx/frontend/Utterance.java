@@ -22,6 +22,7 @@ public class Utterance {
     private int next = 0;
     private int totalBytes = 0;
 
+    private int bitsPerSample;
     private int sampleRate;
     private int windowShiftInBytes;
     private int windowSizeInBytes;
@@ -38,6 +39,8 @@ public class Utterance {
         // get the Sphinx properties
         SphinxProperties properties = 
             SphinxProperties.getSphinxProperties(context);
+
+        bitsPerSample = properties.getInt(FrontEnd.PROP_BITS_PER_SAMPLE, 16);
         sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);
         
         float windowSizeInMs = properties.getFloat
@@ -170,6 +173,23 @@ public class Utterance {
     }
 
 
+    /**
+     * Returns the amount of time (in seconds) this Utterance lasts
+     *
+     * @return how long is this utterance
+     */
+    public float getAudioTime() {
+        byte[] audio = getAudio();
+        return ((float) audio.length)/((float) sampleRate * (bitsPerSample/8));
+    }
+
+
+    /**
+     * Returns true if all the audio data is flattened to one flat
+     * audio array.
+     *
+     * @return true if all the audio data is flattened to one array
+     */
     private synchronized boolean isFlattened() {
         return flattened;
     }
