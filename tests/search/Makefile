@@ -20,3 +20,6 @@ all:: ${CLASSES} ${STUBS}
 
 dict: all
 	$(JAVA_CMD) tests.search.SimpleDictionaryTest simple_search.props
+
+grammar: all
+	$(JAVA_CMD) tests.search.SimpleLinguistTest simple_search.props
