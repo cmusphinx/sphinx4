@@ -31,6 +31,7 @@ Sphinx-4 1.0 Release Steps
     - check latest regression test outputs for no regressions
     - make sure the numbers in the performance table in index.html 
       are up to date
+    - Add any new documents to the scripts/doclist.txt file
 
 5) Create the binary and source distribution:
     - Download fresh copy of Sphinx-4 from sourceforge

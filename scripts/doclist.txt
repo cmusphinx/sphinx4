@@ -17,6 +17,7 @@ doc/ProgrammersGuide.html
 doc/Sphinx4-faq.html
 doc/UsingSphinxTrainModels.html
 doc/jsapi_setup.html
+doc/Sphinx4Whitepaper.pdf
 index.html
 license.terms
 tests/live/README.html
