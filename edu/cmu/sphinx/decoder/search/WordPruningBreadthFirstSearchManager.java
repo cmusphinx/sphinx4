@@ -91,6 +91,17 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      */
     public final static boolean PROP_CHECK_STATE_ORDER_DEFAULT = false;
 
+    /**
+     * Sphinx property that specifies whether to build a word lattice.
+     */
+    public final static String PROP_BUILD_WORD_LATTICE =
+        PROP_PREFIX + "buildWordLattice";
+
+    /**
+     * The default value of the PROP_BUILD_WORD_LATTICE property.
+     */
+    public final static boolean PROP_BUILD_WORD_LATTICE_DEFAULT = true;
+    
 
     private Linguist linguist;		// Provides grammar/language info
     private Pruner pruner;		// used to prune the active list
@@ -113,6 +124,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
     private boolean showTokenCount;
     private boolean checkStateOrder;
+    private boolean buildWordLattice;
     private Map bestTokenMap;
     private AlternateHypothesisManager loserManager;
     private Class[] stateOrder;
@@ -151,6 +163,8 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                                           PROP_SHOW_TOKEN_COUNT_DEFAULT);
         checkStateOrder = props.getBoolean(PROP_CHECK_STATE_ORDER,
                                            PROP_CHECK_STATE_ORDER_DEFAULT);
+        buildWordLattice = props.getBoolean(PROP_BUILD_WORD_LATTICE,
+                                            PROP_BUILD_WORD_LATTICE_DEFAULT);
     }
 
 
@@ -228,7 +242,9 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         try {
             stateOrder = linguist.getSearchStateOrder();
             activeBucket = new SimpleActiveListManager(props, stateOrder);
-            loserManager = new AlternateHypothesisManager(props);
+            if (buildWordLattice) {
+                loserManager = new AlternateHypothesisManager(props);
+            }
 
             SearchState state = linguist.getInitialSearchState();
             
@@ -273,7 +289,9 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         float relativeBeamThreshold = activeList.getBeamThreshold();
         while (iterator.hasNext()) {
             Token token = (Token) iterator.next();
-            collectSuccessorTokens(token, relativeBeamThreshold);
+            if (token.getScore() >= relativeBeamThreshold) {
+                collectSuccessorTokens(token, relativeBeamThreshold);
+            }
         }
         growTimer.stop();
     }
@@ -416,9 +434,6 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             resultList.add(getWordPredecessor(token));
             return;
         }
-        if (token.getScore() < threshold) {
-            return;
-        }
 
         SearchState state = token.getSearchState();
         SearchStateArc[] arcs = state.getSuccessors();
@@ -466,17 +481,18 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 		    activeBucket.add(newBestToken);
                 } else {
 		    activeBucket.replace(bestToken, newBestToken);
-		    if (newBestToken.isWord()) {
-                        // Move predecessors of bestToken to precede newBestToken
-                        // bestToken is going to be garbage collected.
+		    if (buildWordLattice && newBestToken.isWord()) {
+                        
+                        // Move predecessors of bestToken to precede 
+                        // newBestToken, bestToken will be garbage collected.
                         loserManager.changeSuccessor(newBestToken,bestToken);
                         loserManager.addAlternatePredecessor
                             (newBestToken,bestToken.getPredecessor());
                     }
                 }
             } else {
-                if (nextState instanceof WordSearchState)  {
-                    // Token wordPredecessor = getWordPredecessor(token);
+                if (buildWordLattice && 
+                    nextState instanceof WordSearchState)  {
                     if (wordPredecessor != null) {
                         loserManager.addAlternatePredecessor
                             (bestToken, wordPredecessor);
