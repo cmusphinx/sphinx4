@@ -14,7 +14,6 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.util.LogMath;
-import java.io.Serializable;
 
 /**
  * 
@@ -24,7 +23,7 @@ import java.io.Serializable;
  * <p>
  * All scores and weights are maintained in LogMath log base.
  */
-public class GaussianMixture implements Senone, Serializable {
+public class GaussianMixture implements Senone {
     // these data element in a senone may be shared with other senones
     // and therefore should not be written to.
     private float[] logMixtureWeights;			

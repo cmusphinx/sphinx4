@@ -33,27 +33,27 @@ public class HMMPosition implements Serializable {
     /**
      * HMM is at the beginning position of the word
      */
-    public static HMMPosition BEGIN = new HMMPosition("b", 0);
+    public final static HMMPosition BEGIN = new HMMPosition("b", 0);
 
     /**
      * HMM is at the end position of the word
      */
-    public static HMMPosition END = new HMMPosition("e", 1);
+    public final static HMMPosition END = new HMMPosition("e", 1);
 
     /**
      * HMM is at the beginning and the end of the word
      */
-    public static HMMPosition SINGLE = new HMMPosition("s", 2);
+    public final static HMMPosition SINGLE = new HMMPosition("s", 2);
 
     /**
      * HMM is completely internal to the word
      */
-    public static HMMPosition INTERNAL  = new HMMPosition("i", 3);
+    public final static HMMPosition INTERNAL  = new HMMPosition("i", 3);
 
     /**
      * HMM is at an undefined position n the word
      */
-    public static HMMPosition UNDEFINED  = new HMMPosition("-", 4);
+    public final static HMMPosition UNDEFINED  = new HMMPosition("-", 4);
 
     /**
      * The maximum number of HMM positions

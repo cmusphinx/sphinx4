@@ -20,7 +20,7 @@ public class  Context implements Serializable {
     /**
      * Represents an empty context
      */
-    public static Context EMPTY_CONTEXT = new Context();
+    public final static Context EMPTY_CONTEXT = new Context();
 
     /**
      * No instantiations allowed

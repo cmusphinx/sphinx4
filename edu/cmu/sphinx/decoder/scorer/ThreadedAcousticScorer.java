@@ -40,7 +40,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * Property the defines the frontend to retrieve features from for scoring
      *  
      */
-    public static String PROP_FRONTEND = "frontend";
+    public final static String PROP_FRONTEND = "frontend";
 
     /**
      * A SphinxProperty name that controls the number of threads that are used

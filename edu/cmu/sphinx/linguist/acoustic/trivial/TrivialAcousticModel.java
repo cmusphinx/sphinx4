@@ -35,29 +35,29 @@ import edu.cmu.sphinx.util.SphinxProperties;
  */
 public class TrivialAcousticModel implements AcousticModel {
 
-    private static String PREFIX = 
+    private final static String PREFIX = 
         "edu.cmu.sphinx.linguist.acoustic.trivial.TrivialAcousticModel";
 
     /**
      * Sphinx property that defines the left context size
      */
-    public static String PROP_LEFT_CONTEXT_SIZE = PREFIX + ".leftContextSize";
+    public final static String PROP_LEFT_CONTEXT_SIZE = PREFIX + ".leftContextSize";
     
     /**
      * The default value for PROP_LEFT_CONTEXT_SIZE
      */
-    public static int PROP_LEFT_CONTEXT_SIZE_DEFAULT = 1;
+    public final static int PROP_LEFT_CONTEXT_SIZE_DEFAULT = 1;
 
 
     /**
      * Sphinx property that defines the right context size
      */
-    public static String PROP_RIGHT_CONTEXT_SIZE = PREFIX + ".rightContextSize";
+    public final static String PROP_RIGHT_CONTEXT_SIZE = PREFIX + ".rightContextSize";
     
     /**
      * The default value for PROP_RIGHT_CONTEXT_SIZE
      */
-    public static int PROP_RIGHT_CONTEXT_SIZE_DEFAULT = 1;
+    public final static int PROP_RIGHT_CONTEXT_SIZE_DEFAULT = 1;
 
 
     private String name;

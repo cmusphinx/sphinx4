@@ -42,20 +42,20 @@ public class SimpleAcousticScorer implements AcousticScorer {
      * 
      */
     
-    public static String PROP_FRONTEND = "frontend";
+    public final static String PROP_FRONTEND = "frontend";
     
     
     /**
      * Propertry that defines whether scores are normalized or not
      */
     
-    public static String PROP_NORMALIZE_SCORES = "normalizeScores";
+    public final static String PROP_NORMALIZE_SCORES = "normalizeScores";
     
     /**
      * Default value for PROP_NORMALIZE_SCORES
      */
 
-    public static boolean PROP_NORMALIZE_SCORES_DEFAULT = false;
+    public final static boolean PROP_NORMALIZE_SCORES_DEFAULT = false;
     
     // ------------------------------
     // configuration data

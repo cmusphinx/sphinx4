@@ -15,13 +15,12 @@ package edu.cmu.sphinx.linguist.dictionary;
 
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 
-import java.io.Serializable;
 
 /**
  *  Provides pronunciation information for a word.
  *
  */
-public class Pronunciation implements Serializable {
+public class Pronunciation {
 
     public static final Pronunciation UNKNOWN
         = new Pronunciation(new Unit[0], null, null, 1.0f);

@@ -23,7 +23,7 @@ public abstract class PropertyType {
     /**
      * An integer type
      */
-    public static PropertyType INT = new PropertyType("int") {
+    public final static PropertyType INT = new PropertyType("int") {
         /**
          * Determines if this is a valid integer
          * 
@@ -48,7 +48,7 @@ public abstract class PropertyType {
     /**
      * An integer type
      */
-    public static PropertyType BOOLEAN = new PropertyType("boolean") {
+    public final static PropertyType BOOLEAN = new PropertyType("boolean") {
         /**
          * Determines if this is a valid integer
          * 
@@ -68,7 +68,7 @@ public abstract class PropertyType {
     /**
      * A floating point type
      */
-    public static PropertyType FLOAT = new PropertyType("float") {
+    public final static PropertyType FLOAT = new PropertyType("float") {
         /**
          * Determines if this is a valid float
          * 
@@ -93,7 +93,7 @@ public abstract class PropertyType {
     /**
      * A floating point type
      */
-    public static PropertyType DOUBLE = new PropertyType("double") {
+    public final static PropertyType DOUBLE = new PropertyType("double") {
         /**
          * Determines if this is a valid double
          * 
@@ -118,7 +118,7 @@ public abstract class PropertyType {
     /**
      * A String type
      */
-    public static PropertyType COMPONENT = new PropertyType("Component") {
+    public final static PropertyType COMPONENT = new PropertyType("Component") {
         /**
          * Determines if this is a valid component name. Currently, all strings
          * are considered to be valid components.
@@ -135,7 +135,7 @@ public abstract class PropertyType {
     /**
      * An array of components
      */
-    public static PropertyType COMPONENT_LIST = new PropertyType("ComponentList") {
+    public final static PropertyType COMPONENT_LIST = new PropertyType("ComponentList") {
         /**
          * Determines if this is a valid component list
          * 
@@ -150,7 +150,7 @@ public abstract class PropertyType {
     /**
      * A String type
      */
-    public static PropertyType STRING = new PropertyType("String") {
+    public final static PropertyType STRING = new PropertyType("String") {
         /**
          * Determines if this is a valid string
          * 
@@ -172,7 +172,7 @@ public abstract class PropertyType {
      * resource:/FullyQualifiedClassName!resourceName
      * </ul>
      */
-    public static PropertyType RESOURCE = new PropertyType("Resource") {
+    public final static PropertyType RESOURCE = new PropertyType("Resource") {
         /**
          * Determines if this is a valid string
          * 
@@ -211,7 +211,7 @@ public abstract class PropertyType {
     /**
      * An array of strings
      */
-    public static PropertyType STRING_LIST = new PropertyType("StringList") {
+    public final static PropertyType STRING_LIST = new PropertyType("StringList") {
         /**
          * Determines if this is a valid string array
          * 

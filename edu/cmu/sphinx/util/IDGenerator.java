@@ -22,7 +22,7 @@ public class IDGenerator {
     /**
      * Indicates a non-ID value, which is -1.
      */
-    public static int NON_ID = -1;
+    public final static int NON_ID = -1;
 
     private int id = 0;
     

@@ -162,7 +162,7 @@ public class FrontEnd extends BaseDataProcessor  {
      * the name of the property list of all the components of
      * the frontend pipe line
      */
-    public static String PROP_PIPELINE = "pipeline";
+    public final static String PROP_PIPELINE = "pipeline";
     
     
     // ----------------------------

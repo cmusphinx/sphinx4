@@ -12,13 +12,12 @@
 
 package edu.cmu.sphinx.linguist.acoustic;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 /**
  * Represents  the context for a unit
  */
-public class  LeftRightContext extends Context implements Serializable {
+public class  LeftRightContext extends Context {
     String stringRepresentation = null;
     Unit[] leftContext = null;
     Unit[] rightContext = null;
