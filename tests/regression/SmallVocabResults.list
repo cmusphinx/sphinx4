@@ -3,6 +3,7 @@ an4_words_wordlist
 an4_words_flat_unigram
 an4_words_unigram
 an4_words_bigram
+an4_words_trigram
 
 an4_words_flat_unigram_fst
 an4_words_unigram_fst
@@ -13,6 +14,7 @@ an4_spelling_wordlist
 an4_spelling_flat_unigram
 an4_spelling_unigram
 an4_spelling_bigram
+an4_spelling_trigram
 
 an4_spelling_flat_unigram_fst
 an4_spelling_unigram_fst
@@ -23,6 +25,7 @@ an4_full_wordlist
 an4_full_flat_unigram
 an4_full_unigram
 an4_full_bigram
+an4_full_trigram
 
 an4_full_flat_unigram_fst
 an4_full_unigram_fst

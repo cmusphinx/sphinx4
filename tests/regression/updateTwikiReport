@@ -63,7 +63,7 @@ rootDir=../../
 date=`date +%Y-%m-%d`
 time=`date +%T`
 echo $date > .startDate
-echo $time > .startTime
+echo $time > .startTimeOfDay
 
 ###############################
 # Generate the regression test web page
