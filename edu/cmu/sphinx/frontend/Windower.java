@@ -80,14 +80,7 @@ public class Windower extends DataProcessor implements AudioSource {
         this.predecessor = predecessor;
 	createWindow();
         outputQueue = new Vector();
-
-        int audioFrameSizeInBytes = getSphinxProperties().getInt
-	    (FrontEnd.PROP_BYTES_PER_AUDIO_FRAME, 4000);
-        if (audioFrameSizeInBytes % 2 == 1) {
-            audioFrameSizeInBytes++;
-        }
-        overflowBuffer = new DoubleBuffer(windowSize + 
-                                          audioFrameSizeInBytes/2);
+        overflowBuffer = new DoubleBuffer(windowSize);
     }
 
 
@@ -111,7 +104,7 @@ public class Windower extends DataProcessor implements AudioSource {
 
 
     /**
-     * Creates the Window.
+     * Creates the Hamming Window.
      */
     private void createWindow() {
         double alpha = getSphinxProperties().getDouble(PROP_ALPHA, 0.46);
@@ -198,18 +191,29 @@ public class Windower extends DataProcessor implements AudioSource {
 	double[] in = input.getSamples();
         int length = in.length;
 
+	double[] allSamples = in;
+
         // prepend overflow samples
         if (overflowBuffer.getOccupancy() > 0) {
-            length = overflowBuffer.appendAll(in);
-            in = overflowBuffer.getBuffer();
-        }
+            allSamples = new double[overflowBuffer.getOccupancy() + length];
+	    
+	    // copy overflow samples to allSamples buffer
+	    System.arraycopy(overflowBuffer.getBuffer(), 0,
+			     allSamples, 0, overflowBuffer.getOccupancy());
+	    
+	    // copy input samples to allSamples buffer
+	    System.arraycopy(in, 0, allSamples, overflowBuffer.getOccupancy(),
+			     in.length);
+
+	    length += overflowBuffer.getOccupancy();
+	}
 
         // apply Hamming window
-        int residual = applyHammingWindow(in, length);
+        int residual = applyHammingWindow(allSamples, length);
 
         // save elements that also belong to the next window
         overflowBuffer.reset();
-        overflowBuffer.append(in, residual, length - residual);
+        overflowBuffer.append(allSamples, residual, length - residual);
     }
 
 
@@ -349,7 +353,9 @@ class DoubleBuffer {
     public int append(double[] src, int srcPos, int length) {
         if (occupancy + length > buffer.length) {
             length = buffer.length - occupancy;
-        }
+	    throw new Error("Windower: overflow-buffer: attempting to fill " +
+			    "buffer beyond its capacity.");
+	}
         System.arraycopy(src, srcPos, buffer, occupancy, length);
         occupancy += length;
         return occupancy;
