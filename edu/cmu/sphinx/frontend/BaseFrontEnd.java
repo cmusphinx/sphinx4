@@ -87,13 +87,10 @@ import java.util.logging.Logger;
  * @see SpectrumAnalyzer
  * @see Windower
  */
-public class BaseFrontEnd extends DataProcessor implements FrontEnd {
+public class BaseFrontEnd extends CepstrumExtractor implements FrontEnd {
 
     private static Map frontends = new HashMap();
 
-    private String amName;                // Acoustic model name
-    private Map processors;               // all frontend modules
-    private DataSource stubDataSource;    // the source of data to decode
     private FeatureSource featureSource;  // the end of the pipeline
 
 
@@ -127,205 +124,10 @@ public class BaseFrontEnd extends DataProcessor implements FrontEnd {
                            SphinxProperties props,
                            String amName,
                            DataSource dataSource) throws IOException {
-	super.initialize(name, context, props);
-
-	this.amName = amName;
-        processors = new HashMap();
-        frontends.put(context, this);
-
-        // add other data types here if necessary
-
-        if (dataSource instanceof AudioSource) {
-            stubDataSource = new StubAudioSource((AudioSource)dataSource);
-            initialize((AudioSource)stubDataSource);
-        } else if (dataSource instanceof CepstrumSource) {
-            stubDataSource = 
-                new StubCepstrumSource((CepstrumSource)dataSource);
-            initialize((CepstrumSource)stubDataSource);
-        } else {
-            throw new IllegalArgumentException
-                ("Unsupported Data type: " + dataSource.getClass().getName());
-        }
-    }
-
-    
-    /**
-     * Initializes this BaseFrontEnd with the given AudioSource.
-     *
-     * @param amName the name of the acoustic model
-     * @param audioSource the source of Audio objects
-     */
-    private void initialize(AudioSource audioSource) throws IOException {
-
-        // initialize all the frontend processors
-
-	SphinxProperties props = getSphinxProperties();
-
-        Preemphasizer preemphasizer = new Preemphasizer
-            ("Preemphasizer", getContext(), props, audioSource);
-
-        Windower windower = new Windower
-            ("HammingWindow", getContext(), props, preemphasizer);
-
-        SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer
-            ("FFT", getContext(), props, windower);
-
-	Filterbank filterbank = getFilterbank(spectrumAnalyzer);
-
-        CepstrumSource cepstrumProducer = getCepstrumProducer(filterbank);
-
-        addProcessor(preemphasizer);
-        addProcessor(windower);
-        addProcessor(spectrumAnalyzer);
-        addProcessor((DataProcessor) filterbank);
-        addProcessor((DataProcessor) cepstrumProducer);
-	initialize(cepstrumProducer);
-    }
-
-
-    /**
-     * Initializes this BaseFrontEnd with the given CepstrumSource.
-     *
-     * @param cepstrumProducer the place where Cepstra comes from
-     */
-    private void initialize(CepstrumSource cepstrumProducer) 
-	throws IOException {
-
-	CepstrumSource lastCepstrumSource = cepstrumProducer;
-	
-	CepstrumSource endpointer = getEndpointer(lastCepstrumSource);
-
-	if (endpointer != null) { // if we're using an endpointer
-            addProcessor((DataProcessor) endpointer);
-	    lastCepstrumSource = endpointer;
-
-            // if we are filtering out the non-speech regions,
-            // initialize a non-speech filter
-            boolean filterNonSpeech = getSphinxProperties().getBoolean
-                (PROP_FILTER_NON_SPEECH, PROP_FILTER_NON_SPEECH_DEFAULT);
-            if (filterNonSpeech) {
-                CepstrumSource nonSpeechFilter = 
-                    getNonSpeechFilter(lastCepstrumSource);
-                addProcessor((DataProcessor) nonSpeechFilter);
-                lastCepstrumSource = nonSpeechFilter;
-            }
-	}
-
-        CepstrumSource cmn = getCMN(lastCepstrumSource);
-	if (cmn != null) { // if we're using a CMN
-	    addProcessor((DataProcessor) cmn);
-	    lastCepstrumSource = cmn;
-	}
-
-        FeatureExtractor extractor = getFeatureExtractor(lastCepstrumSource);
-        setFeatureSource(extractor);
+	super.initialize(name, context, props, amName, dataSource);
+        FeatureExtractor extractor = getFeatureExtractor(this);
+        this.featureSource = extractor;
 	addProcessor((DataProcessor) extractor);
-    }
-
-
-    /**
-     * Returns the appropriate Filterbank and initializes it with
-     * the given predecessor.
-     *
-     * @param predecessor the predecessor of this Filterbank
-     *
-     * @return the appropriate Filterbank
-     */
-    private Filterbank getFilterbank(SpectrumSource predecessor) {
-	try {
-	    Filterbank bank = (Filterbank) 
-		Class.forName(getFilterBankName()).newInstance();
-	    bank.initialize("Filterbank", getContext(), 
-                            getSphinxProperties(), predecessor);
-	    return bank;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    throw new Error("Can't create Filterbank: " + e);
-	}
-    }
-
-
-    /**
-     * Returns the appropriate CepstrumProducer, and initializes it
-     * with the given predecessor.
-     *
-     * @param predecessor the predecessor
-     *
-     * @return the appropriate CepstrumProducer
-     */
-    private CepstrumProducer getCepstrumProducer(SpectrumSource predecessor) {
-	try {
-	    CepstrumProducer producer = (CepstrumProducer)
-		Class.forName(getCepstrumProducerName()).newInstance();
-	    producer.initialize("CepstrumProducer", getContext(), 
-				getSphinxProperties(), predecessor);
-	    return producer;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    throw new Error("Can't create CepstrumProducer: " + e);
-	}
-    }
-
-
-    /**
-     * Returns the appropriate Endpointer, if any, and initializes it
-     * with the given predecessor.
-     *
-     * @param predecessor the predecessor of this Endpointer
-     */
-    private CepstrumSource getEndpointer(CepstrumSource predecessor) 
-	throws IOException {
-        
-        CepstrumSource endpointer = null;
-	String endPointerClass = getEndpointerName();
-        
-        if (endPointerClass != null) {
-            if (endPointerClass.equals
-                ("edu.cmu.sphinx.frontend.EnergyEndpointer")) {
-                endpointer = new EnergyEndpointer
-                    ("EnergyEndpointer", getContext(), 
-                     getSphinxProperties(), predecessor);
-            }
-        }
-
-        return endpointer;
-    }
-
-
-    /**
-     * Returns a filter that filters out regions of an Utterance that
-     * are marked as non-speech.
-     *
-     * @param predecessor the predecessor of this filter
-     *
-     * @return a NonSpeechFilter
-     */
-    private CepstrumSource getNonSpeechFilter(CepstrumSource predecessor)
-        throws IOException {
-        return (new NonSpeechFilter
-                ("NonSpeechFilter", getContext(), getSphinxProperties(), 
-                 predecessor));
-    }
-
-
-    /**
-     * Returns the appropriate Cepstral Mean Normalizer (CMN)
-     * as specified in the SphinxProperties, with the given predecessor.
-     *
-     * @param predecessor the predecessor of the CMN step
-     */
-    private CepstrumSource getCMN(CepstrumSource predecessor) throws 
-	IOException {
-	String cmnClass = getCmnName();
-	CepstrumSource cmn = null;
-	if (cmnClass.equals("edu.cmu.sphinx.frontend.LiveCMN")) {
-	    cmn = new LiveCMN("LiveCMN", getContext(), 
-                              getSphinxProperties(), predecessor);
-	} else if (cmnClass.equals("edu.cmu.sphinx.frontend.BatchCMN")) {
-	    cmn = new BatchCMN("BatchCMN", getContext(), 
-                               getSphinxProperties(), predecessor);
-        }
-	return cmn;
     }
 
 
@@ -348,38 +150,6 @@ public class BaseFrontEnd extends DataProcessor implements FrontEnd {
         } catch (Exception e) {
             e.printStackTrace();
             throw new Error("Can't create FeatureExtractor: " + e);
-        }
-    }
-
-
-    /**
-     * Adds the given DataProcessor into the list of processors,
-     * with the name of the processor as key.
-     *
-     * @param processor the DataProcessor to add
-     *
-     * @return the added DataProcessor
-     */
-    private DataProcessor addProcessor(DataProcessor processor) {
-        processors.put(processor.getName(), processor);
-        return processor;
-    }
-
-
-    /**
-     * Returns the DataProcessor in the BaseFrontEnd with the given name.
-     *
-     * @return the DataProcessor with the given name, or null if no
-     *    such DataProcessor
-     */
-    public DataProcessor getProcessor(String processorName) {
-        Object object = processors.get(processorName);
-        if (object == null) {
-            System.out.println
-                ("WARNING: BaseFrontEnd does not have " + processorName);
-            return null;
-        } else {
-            return (DataProcessor) object;
         }
     }
 
@@ -408,48 +178,7 @@ public class BaseFrontEnd extends DataProcessor implements FrontEnd {
      * @param audioSource the DataSource
      */
     public void setDataSource(DataSource dataSource) {
-        if (dataSource instanceof AudioSource) {
-            if (stubDataSource instanceof StubAudioSource) {
-                ((StubAudioSource)stubDataSource).setAudioSource
-                    ((AudioSource)dataSource);
-            } else {
-                throw new IllegalArgumentException
-                    ("Error: BaseFrontEnd.setDataSource() should not be " +
-                     "called with an AudioSource,");
-            }
-        } else if (dataSource instanceof CepstrumSource) {
-            if (stubDataSource instanceof StubCepstrumSource) {
-                ((StubCepstrumSource)stubDataSource).setCepstrumSource
-                    ((CepstrumSource)dataSource);
-            } else {
-                throw new IllegalArgumentException
-                    ("Error: BaseFrontEnd.setDataSource() should not be " +
-                     "called with an CepstrumSource,");
-            }
-        } else {
-            throw new IllegalArgumentException
-                ("Unsupported Data type: " + dataSource.getClass().getName());
-        }
-    }
-
-
-    /**
-     * Returns the FeatureSource of this BaseFrontEnd.
-     *
-     * @return the FeatureSource of this BaseFrontEnd
-     */
-    private FeatureSource getFeatureSource() {
-        return featureSource;
-    }
-
-
-    /**
-     * Sets the FeatureSource of this BaseFrontEnd.
-     *
-     * @param featureSource the FeatureSource
-     */
-    private void setFeatureSource(FeatureSource featureSource) {
-        this.featureSource = featureSource;
+        super.setDataSource(dataSource);
     }
 
 
@@ -481,8 +210,8 @@ public class BaseFrontEnd extends DataProcessor implements FrontEnd {
         do {
             feature = featureSource.getFeature();
             if (feature != null) {
-		if (amName != null) {
-		    feature.setType(amName);
+		if (getAcousticModelName() != null) {
+		    feature.setType(getAcousticModelName());
 		}
                 features[i++] = feature;
 		signalCheck(feature);
@@ -537,63 +266,10 @@ public class BaseFrontEnd extends DataProcessor implements FrontEnd {
 	// getSphinxProperties().list(System.out);
 	String description = ("FrontEnd: " + getName() + "\n");
 	description += ("------------------\n");
-	description += ("Context          = " + getContext() + "\n");
-	description += ("AM               = " + amName + "\n");
-	description += ("DataSource       = " +
-                        stubDataSource.toString() + "\n");
-	description += ("Preemphasizer    = Preemphasizer\n");
-	description += ("Windower         = Windower\n");
-	description += ("FFT              = SpectrumAnalyzer\n");
-	description += ("Filterbank       = " + getFilterBankName() + "\n");
-	description += ("CepstrumProducer = " + getCepstrumProducerName() + 
-                        "\n");
-	description += ("Endpointer       = " + getEndpointerName() + "\n");
-	description += ("CMN              = " + getCmnName() + "\n");
+	description += super.toString();
 	description += ("FeatureExtractor = " + getFeatureExtractorName() +
                         "\n");
 	return description;
-    }
-
-
-    /**
-     * Returns the name of the FilterBank class.
-     *
-     * @return the name of the FilterBank class
-     */
-    public String getFilterBankName() {
-        return getSphinxProperties().getString
-            (PROP_FILTERBANK, PROP_FILTERBANK_DEFAULT);
-    }
-
-
-    /**
-     * Returns the name of the CepstrumProducer class.
-     *
-     * @return the name of the CepstrumProducer class
-     */
-    public String getCepstrumProducerName() {
-        return getSphinxProperties().getString
-            (PROP_CEPSTRUM_PRODUCER, PROP_CEPSTRUM_PRODUCER_DEFAULT);
-    }
-
-
-    /**
-     * Returns the name of the Endpointer class.
-     *
-     * @return the name of the Endpointer class
-     */
-    public String getEndpointerName() {
-        return getSphinxProperties().getString(PROP_ENDPOINTER, null);
-    }
-
-
-    /**
-     * Returns the name of the CMN class.
-     *
-     * @return the name of the CMN class
-     */
-    public String getCmnName() {
-        return getSphinxProperties().getString(PROP_CMN, PROP_CMN_DEFAULT);
     }
 
 
@@ -608,119 +284,6 @@ public class BaseFrontEnd extends DataProcessor implements FrontEnd {
     }
 }
 
-
-/**
- * An AudioSource object that acts as a stub between the real AudioSource
- * and the first processor in the front end. It is there so that changing
- * the real AudioSource will not require resetting the AudioSource of the
- * first processor.
- *
- * A StubAudioSource is constructed using the real AudioSource, and
- * calling <code>StubAudioSource.getAudio()</code> simply returns
- * <code>realAudioSource.getAudio()</code>.
- * The real AudioSource can be changed by the method 
- * <code>setAudioSource()</code>.
- */
-class StubAudioSource implements AudioSource {
-    
-    private AudioSource realSource;
-    
-    /**
-     * Constructs a StubAudioSource with the given AudioSource.
-     *
-     * @param audioSource the real AudioSource
-     */
-    public StubAudioSource(AudioSource audioSource) {
-        this.realSource = audioSource;
-    }
-    
-    /**
-     * Returns the next Audio object produced by this AudioSource.
-     *
-     * @return the next available Audio object, returns null if no
-     *     Audio object is available
-     *
-     * @throws java.io.IOException
-     */
-    public Audio getAudio() throws IOException {
-        return realSource.getAudio();
-    }
-    
-    /**
-     * Sets the real AudioSource.
-     *
-     * @return the real AudioSource
-     */
-    public void setAudioSource(AudioSource newAudioSource) {
-        this.realSource = newAudioSource;
-    }
-
-    /**
-     * Returns a string of the class name for the real audio source.
-     *
-     * @return a string of the class name for the real audio source.
-     */
-    public String toString() {
-        return "Stub for: " + realSource.getClass().getName();
-    }
-}
-
-
-/**
- * An CepstrumSource object that acts as a stub between the real
- * CepstrumSource and the first processor in the front end. It is 
- * there so that changing the real CepstrumSource will not require
- * resetting the CepstrumSource of the first processor.
- *
- * A StubAudioSource is constructed using the real AudioSource, and
- * calling <code>StubAudioSource.getAudio()</code> simply returns
- * <code>realAudioSource.getAudio()</code>.
- * The real AudioSource can be changed by the method 
- * <code>setAudioSource()</code>.
- */
-class StubCepstrumSource implements CepstrumSource {
-    
-    private CepstrumSource realSource;
-    
-    /**
-     * Constructs a StubCepstrumSource with the given CepstrumSource.
-     *
-     * @param audioSource the real CepstrumSource
-     */
-    public StubCepstrumSource(CepstrumSource audioSource) {
-        this.realSource = audioSource;
-    }
-    
-    /**
-     * Returns the next Cepstrum object produced by this CepstrumSource.
-     *
-     * @return the next available Cepstrum object, returns null if no
-     *     Cepstrum object is available
-     *
-     * @throws java.io.IOException
-     */
-    public Cepstrum getCepstrum() throws IOException {
-        return realSource.getCepstrum();
-    }
-    
-    /**
-     * Sets the real CepstrumSource.
-     *
-     * @return the real CepstrumSource
-     */
-    public void setCepstrumSource(CepstrumSource newCepstrumSource) {
-            this.realSource = newCepstrumSource;
-    }
-
-    /**
-     * Returns a string of the class name for the real cepstrum source.
-     *
-     * @return a string of the class name for the real cepstrum source.
-     */
-    public String toString() {
-        return "Stub for: " + realSource.getClass().getName();
-    }
-}
 
 
 
