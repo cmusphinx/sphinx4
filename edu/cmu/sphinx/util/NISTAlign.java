@@ -12,6 +12,8 @@
 package edu.cmu.sphinx.util;
 
 import java.util.LinkedList;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.ListIterator;
 
 import java.util.StringTokenizer;
@@ -128,6 +130,21 @@ public class NISTAlign {
      */
     DecimalFormat percentageFormat = new DecimalFormat("##0.0%");
     
+
+    /** 
+     * The filtered set contains a set of tokens that should be
+     * filtered out of the align process. We ignore silences, sentence
+     * starts and sentence ends.
+     */
+    private static Set filteredSet;
+
+    static {
+        filteredSet = new HashSet();
+        filteredSet.add("<sil>");
+        filteredSet.add("<s>");
+        filteredSet.add("</s>");
+    }
+
     /**
      * Creates a new NISTAlign object.
      */
@@ -808,7 +825,7 @@ public class NISTAlign {
         StringTokenizer st = new StringTokenizer(s.trim());
         while (st.hasMoreTokens()) {
             String token = st.nextToken().toLowerCase();
-            if (!token.equals("<sil>")) {
+            if (!filteredSet.contains(token)) {
                 list.add(token);
             }
         }
