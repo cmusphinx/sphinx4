@@ -48,8 +48,8 @@ import tests.frontend.AudioPlayer;
 public class Live {
 
     private static DecimalFormat timeFormat = new DecimalFormat("0.00");
-    private DefaultComboBoxModel decoderNameList = new DefaultComboBoxModel();
-    private Map decoders = new HashMap();
+    private DefaultComboBoxModel decoderNameList;
+    private Map decoders;
 
     private AudioPlayer audioPlayer = null; // for play the recording
     private LiveDecoder decoder = null;     // for decoding, obviously
@@ -101,12 +101,16 @@ public class Live {
 
         showPartialResults = Boolean.getBoolean("showPartialResults");
         handsFree = Boolean.getBoolean("handsFree");
+        
+        decoderNameList = new DefaultComboBoxModel();
+        decoders = new HashMap();
 
         // parse the decoder's list
         parseDecoderListFile(decoderListFile);
 
         // initialize the Swing GUI JFrame
         liveFrame = new LiveFrame("Live Decoder!", this, hasEndpointer);
+        liveFrame.show();
 
         // initialize the first decoder
         if (decoderNameList.getSize() > 0) {
@@ -120,8 +124,6 @@ public class Live {
         }
 
         audioPlayer = new AudioPlayer();
-
-        liveFrame.show();
     }
 
 
@@ -204,6 +206,9 @@ public class Live {
             String errorMessage = "Cannot change to " + decoderName;
             liveFrame.setMessage(errorMessage);
             lue.printStackTrace();
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
             return;
         }
 
