@@ -26,7 +26,7 @@ import java.util.Iterator;
 /**
  * This is a dummy implementation of a TrainManager.
  */
-public class SimpleTrainManager implements TrainManager {
+class SimpleTrainManager implements TrainManager {
 
     private Learner learner;
     private ControlFile controlFile;
@@ -54,7 +54,8 @@ public class SimpleTrainManager implements TrainManager {
      * Constructor for the class.
      */
     public SimpleTrainManager(String context) {
-	controlFile = new SimpleControlFile(context);
+	//	controlFile = new SimpleControlFile(context);
+	controlFile = null;
     }
 
     /**
@@ -79,6 +80,7 @@ public class SimpleTrainManager implements TrainManager {
      * Do the train.
      */
     public void train() {
+	assert controlFile != null;
 	for (controlFile.startUtteranceIterator();
 	     controlFile.hasMoreUtterances(); ) {
 	    Utterance utterance = controlFile.nextUtterance();
@@ -102,19 +104,19 @@ public class SimpleTrainManager implements TrainManager {
      *
      * @throws IOException if an error occurs while loading the data
      */
-    protected void copyModels(String context) throws IOException {
+    public void copyModels(String context) throws IOException {
 	loadModels(context);
 	saveModels(context);
     }
 
      /** 
-      * Loads the acoustic models.
+      * Saves the acoustic models.
       *
       * @param context the context of this TrainManager
       *
       * @throws IOException if an error occurs while loading the data
       */
-    protected void saveModels(String context) throws IOException {
+    public void saveModels(String context) throws IOException {
 	if (1 == models.length) {
 	    models[0].save(null);
 	} else {
@@ -170,16 +172,20 @@ public class SimpleTrainManager implements TrainManager {
 	    models[m].initialize();
 
 	    learner = new FlatInitializerLearner(props);
+	    if (controlFile == null) {
+		controlFile = new SimpleControlFile(context);
+	    }
 	    for (controlFile.startUtteranceIterator();
 		 controlFile.hasMoreUtterances(); ) {
 		Utterance utterance = controlFile.nextUtterance();
 		learner.setUtterance(utterance);
 		while ((score = learner.getScore()) != null) {
 		    assert score.length == 1;
-		    models[m].accumulate(score[0]);
+		    models[m].accumulate(0, score);
 		}
 	    }
-	    models[m].normalize();
+	    // normalize() has a return value, but we can ignore it here.
+	    float dummy = models[m].normalize();
 	}
         dumpMemoryInfo("acoustic model");
     }
@@ -202,6 +208,8 @@ public class SimpleTrainManager implements TrainManager {
 	} else {
 	    models = new TrainerAcousticModel[modelNames.size()];
 	    int m = 0;
+	    // We iterate over the model names, but increase the model
+	    // index m in the for statement.
 	    for (Iterator i = modelNames.iterator(); i.hasNext(); m++) {
 		String modelName = (String) i.next();
 		models[m] = 
@@ -220,7 +228,7 @@ public class SimpleTrainManager implements TrainManager {
      *
      * @throws IOException
      */
-    protected void trainContextIndependentModels(String context) 
+    public void trainContextIndependentModels(String context) 
 	throws IOException {
 	UtteranceGraph uttGraph;
 	TranscriptGraph transcriptGraph;
@@ -229,6 +237,8 @@ public class SimpleTrainManager implements TrainManager {
 	float minimumImprovement;
 	int maxIteration;
 
+	// If initialization was performed, then learner should not be
+	// null. Otherwise, we need to load the models.
 	if (learner == null) {
 	    loadModels(context);
 	}
@@ -250,7 +260,9 @@ public class SimpleTrainManager implements TrainManager {
 	    float lastLogLikelihood = Float.MAX_VALUE;
 	    float relativeImprovement = 100.0f;
 	    learner = new BaumWelchLearner(props);
-
+	    if (controlFile == null) {
+		controlFile = new SimpleControlFile(context);
+	    }
 	    for (int iteration = 0; 
 		 (iteration < maxIteration) && 
 		     (relativeImprovement > minimumImprovement);
@@ -266,18 +278,24 @@ public class SimpleTrainManager implements TrainManager {
 		    while ((score = learner.getScore()) != null) {
 			for (int i = 0; i < score.length; i++) {
 			    if (i > 0) {
-				models[m].accumulate(score[i], nextScore);
+				models[m].accumulate(i, score, nextScore);
 			    } else {
-				models[m].accumulate(score[i]);
+				models[m].accumulate(i, score);
 			    }
 			}
 			nextScore = score;
 		    }
+		    models[m].updateLogLikelihood();
 		}
 		logLikelihood = models[m].normalize();
+		System.out.println("Loglikelihood: " + logLikelihood);
+		saveModels(context);
 		if (iteration > 0) {
 		    relativeImprovement = (logLikelihood - lastLogLikelihood) /
 			lastLogLikelihood * 100.0f;
+		    System.out.println("Iteration: " + iteration + 
+				       " - Improvement: " + 
+				       relativeImprovement);
 		}
 		lastLogLikelihood = logLikelihood;
 	    }
