@@ -182,7 +182,6 @@ public class Live {
      * Plays the last recorded utterance.
      */
     public void playUtterance() {
-        // (new PlaybackThread()).start();
         if (lastResult != null) {
             if (lastResult.getUtterance() == null) {
                 System.out.println("Last Result has no Utterance");
@@ -437,29 +436,4 @@ public class Live {
         }
     }
 
-
-    /**
-     * Does audio playback in a separate thread so that it does not
-     * block the calling thread. This is analogous to the "Control"
-     * components in the MVC model.
-     */
-    class PlaybackThread extends Thread {
-
-        public PlaybackThread() {
-            super("Playback");
-        }
-        
-        public void run() {
-            if (lastResult != null) {
-                if (lastResult.getUtterance() == null) {
-                    System.out.println("Last Result has no Utterance");
-                } else {
-                    byte[] audio = lastResult.getUtterance().getAudio();
-                    audioPlayer.play
-                        (audio, decoder.getMicrophone().getAudioFormat());
-                    System.out.println("PlaybackThread completed.");
-                }
-            }
-        }
-    }
 }
