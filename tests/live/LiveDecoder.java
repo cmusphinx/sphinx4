@@ -44,6 +44,7 @@ public class LiveDecoder extends Decoder {
     private ListIterator iterator;
     private long audioStart;       // in milliseconds
     private long audioLength;      // in milliseconds
+    private long audioTime;
 
 
     /**
@@ -76,7 +77,9 @@ public class LiveDecoder extends Decoder {
                             audioStart = signal.getTime();
                         }
                         else if (signal instanceof DataEndSignal) {
-                            audioLength = signal.getTime() - audioStart;
+                            // audioLength = signal.getTime() - audioStart;
+                            DataEndSignal endSignal = (DataEndSignal) signal;
+                            audioTime = endSignal.getDuration();
                         }
                     }
                 });
@@ -162,6 +165,6 @@ public class LiveDecoder extends Decoder {
      * Returns the audio time for the result.
      */
     public float getAudioTime(Result result) {
-        return (audioLength / 1000f);
+        return (audioTime / 1000f);
     }
 }
