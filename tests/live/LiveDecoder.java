@@ -70,7 +70,7 @@ public class LiveDecoder extends Decoder {
         referenceList = new LinkedList();
     }
 
-
+    
     /**
      * Initializes this LiveDecoder.
      */
@@ -171,6 +171,14 @@ public class LiveDecoder extends Decoder {
                 ("edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer"));
     }
     
+    /**
+     * Return the Live instance that spawned this decoder.
+     *
+     * @return the Live instance that spawned this decoder.
+     */
+    public Live getLive() {
+        return live;
+    } 
     
     /**
      * Returns the microphone used by this LiveDecoder.
