@@ -11,6 +11,8 @@
  */
 package edu.cmu.sphinx.result;
 
+import edu.cmu.sphinx.linguist.dictionary.Word;
+
 import edu.cmu.sphinx.result.Lattice;
 import edu.cmu.sphinx.result.Edge;
 import edu.cmu.sphinx.util.LogMath;
@@ -32,7 +34,7 @@ public class Node {
     protected static int nodeCount = 0; // used to generate unique IDs for new Nodes.
 
     protected String id;
-    protected String word;
+    protected Word word;
     protected int beginTime = -1;
     protected int endTime = -1;
     protected Vector enteringEdges;
@@ -50,23 +52,24 @@ public class Node {
     /**
      * Create a new Node
      *
-     * @param word
-     * @param beginTime
-     * @param endTime
+     * @param word the word of this node
+     * @param beginTime the start time of the word
+     * @param endTime the end time of the word
      */
-    protected Node(String word, int beginTime, int endTime) {
+    protected Node(Word word, int beginTime, int endTime) {
         this(getNextNodeId(), word, beginTime, endTime);
     }
 
     /**
-     * Create a new Node with given ID.  Used when creating a Lattice from a .LAT file
+     * Create a new Node with given ID.
+     * Used when creating a Lattice from a .LAT file
      *
      * @param id
      * @param word
      * @param beginTime
      * @param endTime
      */
-    protected Node(String id, String word, int beginTime, int endTime) {
+    protected Node(String id, Word word, int beginTime, int endTime) {
         this.id = id;
         this.word = word;
         this.beginTime = beginTime;
@@ -259,7 +262,7 @@ public class Node {
      *
      * @return the word
      */
-    public String getWord() {
+    public Word getWord() {
         return word;
     }
 
@@ -288,7 +291,8 @@ public class Node {
      * @return a description of this Node
      */
     public String toString() {
-        return "Node(" + word + "," + getBeginTime() + "|" + getEndTime() + ")";
+        return ("Node(" + word.getSpelling() + "," + getBeginTime() + "|" + 
+		getEndTime() + ")");
     }
 
     /**
@@ -313,7 +317,7 @@ public class Node {
      * @throws IOException
      */
     void dump(PrintWriter f) throws IOException {
-        f.println("node: " + id + " " + word + 
+        f.println("node: " + id + " " + word.getSpelling() + 
                 //" a:" + getForwardProb() + " b:" + getBackwardProb()
                 " p:" + getPosterior());
     }
@@ -465,7 +469,7 @@ public class Node {
      */
     public boolean isEquivalent(Node other) {
         return
-            ((word.equals(other.getWord()) &&
+            ((word.getSpelling().equals(other.getWord().getSpelling()) &&
               (getEnteringEdges().size() == other.getEnteringEdges().size() &&
                getLeavingEdges().size() == other.getLeavingEdges().size())) &&
              (beginTime == other.getBeginTime() &&

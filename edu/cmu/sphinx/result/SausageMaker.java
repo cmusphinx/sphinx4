@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
 
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
@@ -36,16 +35,14 @@ import edu.cmu.sphinx.util.LogMath;
  */
 public class SausageMaker {
     protected Lattice lattice;
-    protected Dictionary dictionary;
     
     /**
      * Construct a sausage maker
+     *
      * @param l the lattice to construct a sausage from
-     * @param dict the dictionary to look up word pronunciations in.
      */
-    public SausageMaker(Lattice l, Dictionary dict) {
+    public SausageMaker(Lattice l) {
         lattice = l;
-        dictionary = dict;
     }
 
     /**
@@ -165,8 +162,8 @@ public class SausageMaker {
      * @return the phonetic similarity, between 0 and 1
      */
     protected double computePhoneticSimilarity(Node n1, Node n2) {
-        Pronunciation p1 = getBestPronunciation(dictionary.getWord(n1.getWord()));
-        Pronunciation p2 = getBestPronunciation(dictionary.getWord(n2.getWord()));
+        Pronunciation p1 = getBestPronunciation(n1.getWord());
+        Pronunciation p2 = getBestPronunciation(n2.getWord());
         //System.out.println("comparing pronunciations " + p1 + " " + p2);
         double sim = stringEditDistance(Arrays.asList(p1.getUnits()),
                         Arrays.asList(p2.getUnits()));
@@ -213,7 +210,7 @@ public class SausageMaker {
         Iterator i = cluster.iterator();
         while (i.hasNext()) {
             Node n = (Node)i.next();
-            if (n.getWord().equals(word)) {
+            if (n.getWord().getSpelling().equals(word)) {
                 sub.add(n);
             }
         }
@@ -239,7 +236,7 @@ public class SausageMaker {
         Iterator i1 = cluster1.iterator();
         while (i1.hasNext()) {
             Node node1 = (Node)i1.next();
-            String word1 = node1.getWord();
+            String word1 = node1.getWord().getSpelling();
             if (wordsSeen1.contains(word1)) {
                 continue;
             }
@@ -248,7 +245,7 @@ public class SausageMaker {
             Iterator i2 = cluster2.iterator();
             while (i2.hasNext()) {
                 Node node2 = (Node)i2.next();
-                String word2 = node2.getWord();
+                String word2 = node2.getWord().getSpelling();
                 if (wordsSeen2.contains(word2)) {
                     continue;
                 }
@@ -306,7 +303,7 @@ public class SausageMaker {
             Iterator i2 = cluster2.iterator();
             while (i2.hasNext()) {
                 Node node2 = (Node)i2.next();
-                if (!node1.getWord().equals(node2.getWord())) {
+                if (!node1.getWord().getSpelling().equals(node2.getWord().getSpelling())) {
                     //System.out.println("words don't match!");
                     return Double.NEGATIVE_INFINITY;
                 }
@@ -457,7 +454,7 @@ public class SausageMaker {
             Iterator c2 = cluster.iterator();
             while (c2.hasNext()) {
                 Node node = (Node)c2.next();
-                String word = node.getWord();
+                String word = node.getWord().getSpelling();
                 if (seenWords.contains(word)) {
                     continue;
                 }

@@ -33,6 +33,8 @@ import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.linguist.WordSearchState;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
+import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
 
 /**
@@ -155,16 +157,17 @@ public class Lattice {
             loserManager.purge();
         }
 
-        terminalNode = new Node(getNodeID(result.getBestToken()),
-				Dictionary.SENTENCE_END_SPELLING, -1, -1);
-	addNode(terminalNode);
-
         for (Iterator i = result.getResultTokens().iterator(); i.hasNext();) {
             Token token = (Token) i.next();
             while (token != null && !token.isWord()) {
 		token = token.getPredecessor();
             }
             assert token.getWord().isSentenceEndWord();
+	    if (terminalNode == null) {
+		terminalNode = new Node(getNodeID(result.getBestToken()),
+					token.getWord(), -1, -1);
+		addNode(terminalNode);
+	    }
             collapseWordToken(token);
         }
     }
@@ -195,7 +198,7 @@ public class Lattice {
                 endFrame = token.getFrameNumber();
             }
 
-            node = new Node(getNodeID(token), token.getWord().getSpelling(),
+            node = new Node(getNodeID(token), token.getWord(),
 			    startFrame, endFrame);
             addNode(node);
         }
@@ -362,8 +365,38 @@ public class Lattice {
      * @param endTime
      * @return the new Node
      */
-    public Node addNode(String word, int beginTime, int endTime) {
+    public Node addNode(Word word, int beginTime, int endTime) {
         Node n = new Node(word, beginTime, endTime);
+        addNode(n);
+        return n;
+    }
+
+    /**
+     * Add a Node that represents the theory that a given word was spoken
+     * over a given period of time.
+     *
+     * @param word
+     * @param beginTime
+     * @param endTime
+     * @return the new Node
+     */
+    public Node addNode(String word, int beginTime, int endTime) {
+        Word w = new Word(word, new Pronunciation[0], false);
+	return addNode(w, beginTime, endTime);
+    }
+
+    /**
+     * Add a Node with a given ID that represents the theory that a
+     * given word was spoken over a given period of time.
+     * This method is used when loading Lattices from .LAT files.
+     *
+     * @param word
+     * @param beginTime
+     * @param endTime
+     * @return the new Node
+     */
+    protected Node addNode(String id, Word word, int beginTime, int endTime) {
+        Node n = new Node(id, word, beginTime, endTime);
         addNode(n);
         return n;
     }
@@ -379,9 +412,8 @@ public class Lattice {
      * @return the new Node
      */
     protected Node addNode(String id, String word, int beginTime, int endTime) {
-        Node n = new Node(id, word, beginTime, endTime);
-        addNode(n);
-        return n;
+        Word w = new Word(word, new Pronunciation[0], false);
+	return addNode(id, w, beginTime, endTime);
     }
 
     /**
@@ -392,13 +424,9 @@ public class Lattice {
      * @return the new Node
      */
     protected Node addNode(Token token, int beginTime, int endTime) {
-        String word;
-        if (token.getSearchState() instanceof WordSearchState) {
-            word = ((WordSearchState) (token.getSearchState()))
-                    .getPronunciation().getWord().getSpelling();
-        } else {
-            word = token.getSearchState().toString();
-        }
+	assert (token.getSearchState() instanceof WordSearchState);
+	Word word = ((WordSearchState) (token.getSearchState()))
+	    .getPronunciation().getWord();
         return addNode(Integer.toString(token.hashCode()),
                        word, beginTime, endTime);
     }
@@ -858,8 +886,7 @@ public class Lattice {
         double normalizationFactor = terminalNode.getForwardScore();
         for(Iterator i=nodes.values().iterator();i.hasNext();) {
             Node node = (Node)i.next();
-            node.setPosterior((node.getForwardScore() + node.getBackwardScore())
-                    - normalizationFactor);
+            node.setPosterior((node.getForwardScore() + node.getBackwardScore()) - normalizationFactor);
         }
     }
 
@@ -1005,7 +1032,5 @@ public class Lattice {
         */
 
         lattice.dumpAllPaths();
-
-
     }
 }
