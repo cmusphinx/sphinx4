@@ -174,7 +174,6 @@ FeatureExtractor {
                 segmentEnd = false;
                 outputQueue.add(new Feature(Signal.UTTERANCE_END,
                                             IDGenerator.NON_ID));
-
             } else {
                 Cepstrum input = predecessor.getCepstrum();
                 
@@ -190,18 +189,23 @@ FeatureExtractor {
                         if (numberFeatures > 0) {
                             computeFeatures(numberFeatures);
                         }
-                    } else if (input.getSignal().equals
-                               (Signal.UTTERANCE_START)) {
+                    } else if (input.hasSignal(Signal.UTTERANCE_START)) {
                         segmentStart = true;
-                        outputQueue.add
-                            (new Feature(Signal.UTTERANCE_START,
-                                         IDGenerator.NON_ID));
-                    }
+                        outputQueue.add(new Feature(Signal.UTTERANCE_START,
+						    IDGenerator.NON_ID));
+                    } else if (input.hasSignal(Signal.UTTERANCE_END)) {
+			// when the UTTERANCE_END is right at the boundary
+			segmentEnd = false;
+			outputQueue.add(new Feature(Signal.UTTERANCE_END,
+						    IDGenerator.NON_ID));
+		    }
                 }
             }
         }
         if (outputQueue.size() > 0) {
-            return (Feature) outputQueue.remove(0);
+	    Feature feature = (Feature) outputQueue.remove(0);
+	    // System.out.println(feature);
+            return feature;
         } else {
             return null;
         }
