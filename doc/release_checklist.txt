@@ -1,0 +1,46 @@
+To create the binary and source distribution:
+- Download fresh copy of Sphinx-4 from sourceforge
+- cd lib
+- chmod a+x ./jsapi.sh
+- ./jsapi.sh or ./jsapi.exe
+- cd ..
+- make sure that JAVA_HOME points to a 1.4.X compiler
+- ant deploy
+
+Binary Distribution:
+
+- jar xvf sphinx4-bin-0.1alpha.zip
+- cd lib
+- chmod a+x jsapi.sh, ./jsapi.sh or ./jsapi.exe
+- cd ..
+- java -mx256m -jar bin/HelloWorld.jar
+- java -jar bin/HelloDigits.jar
+- java -jar bin/HelloNGram.jar
+- java -jar bin/ZipCity.jar
+- java -jar bin/AudioTool.jar
+- Go through index.html, click through the links to make sure they are
+  not broken.
+
+Source Distribution:
+
+- jar xvf sphinx4-src-0.1alpha.zip
+- cd lib
+- chmod a+x jsapi.sh, ./jsapi.sh or ./jsapi.exe
+- cd ..
+- ant
+- ant javadoc
+- java -mx256m -jar bin/HelloWorld.jar
+- java -jar bin/HelloDigits.jar
+- java -jar bin/HelloNGram.jar
+- java -jar bin/ZipCity.jar
+- java -jar bin/AudioTool.jar
+- cd tests/live
+- ant live
+- ant live-ep
+- ant live-free
+- cd ../../demo/jsapi/cardmatch
+- ant run
+- ant run-ep
+- Go through index.html, click through the links to make sure they are
+  not broken.
+
