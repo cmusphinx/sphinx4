@@ -18,6 +18,8 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.parallel.ParallelFrontEnd;
 import edu.cmu.sphinx.frontend.SimpleFrontEnd;
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.knowledge.language.LanguageModelFactory;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -200,6 +202,7 @@ public class Recognizer {
     protected SearchManager searchManager;  // drives the search
     protected LanguageModel languageModel;  // the language model
     protected Grammar grammar;              // the grammar
+    protected Dictionary dictionary;        // the dictionary
 
     protected int featureBlockSize = 50;    // the feature blocksize
 
@@ -274,13 +277,16 @@ public class Recognizer {
         AcousticModel[] models = getAcousticModels(context);
         dumpMemoryInfo("acoustic model");
 
-        languageModel = LanguageModelFactory.createLanguageModel(context);
+        dictionary = new FullDictionary(context);
+
+        languageModel = 
+            LanguageModelFactory.createLanguageModel(context, dictionary);
         dumpMemoryInfo("languageModel");
 
-        grammar = getGrammar(languageModel);
+        grammar = getGrammar(languageModel, dictionary);
         dumpMemoryInfo("grammar");
 
-        linguist = getLinguist(languageModel, grammar, models);
+        linguist = getLinguist(languageModel, dictionary, grammar, models);
         dumpMemoryInfo("linguist");
 
         // TODO: Pruner should come from configuration like all of the
@@ -304,14 +310,14 @@ public class Recognizer {
      * @throws java.io.IOException if recognizer has not been initialized
      */
     public void forcedAligner(String context, String referenceText)
-                                        throws IOException {
+        throws IOException {
         props = SphinxProperties.getSphinxProperties(context);
 
         if (frontend == null) {
             throw new IOException("Recognizer has not been initialized");
         }
-        grammar = getGrammar(referenceText);
-        linguist = getLinguist(null, grammar, null);
+        grammar = getGrammar(dictionary, referenceText);
+        linguist = getLinguist(null, dictionary, grammar, null);
 
         searchManager = getSearchManager(linguist, scorer, pruner);
     }
@@ -422,12 +428,14 @@ public class Recognizer {
      *
      * @return the grammar
      */
-    protected Grammar getGrammar(LanguageModel languageModel) {
+    protected Grammar getGrammar(LanguageModel languageModel,
+                                 Dictionary dictionary) {
         String path = null;
         try {
             path = props.getString(PROP_GRAMMAR, PROP_GRAMMAR_DEFAULT);
             Grammar newGrammar = (Grammar)Class.forName(path).newInstance();
-            newGrammar.initialize(props.getContext(), languageModel, null);
+            newGrammar.initialize
+                (props.getContext(), languageModel, dictionary);
             return newGrammar;
         } catch (ClassNotFoundException fe) {
             throw new Error("CNFE:Can't create grammar " + path, fe);
@@ -450,13 +458,14 @@ public class Recognizer {
      *
      * @return the grammar
      */
-    protected Grammar getGrammar(String referenceText) {
+    protected Grammar getGrammar(Dictionary dictionary, String referenceText) {
         String path = null;
         try {
             path = props.getString(PROP_GRAMMAR,
                     "edu.cmu.sphinx.decoder.linguist.ForcedAlignerGrammar");
             Grammar newGrammar = (Grammar)Class.forName(path).newInstance();
-            newGrammar.initialize(props.getContext(), null, referenceText);
+            newGrammar.initialize
+                (props.getContext(), dictionary, referenceText);
             return newGrammar;
         } catch (ClassNotFoundException fe) {
             throw new Error("CNFE:Can't create grammar " + path, fe);
@@ -482,8 +491,9 @@ public class Recognizer {
      * @return the linguist
      */
     protected Linguist getLinguist(LanguageModel languageModel,
-				 Grammar grammar,
-				 AcousticModel[] models) {
+                                   Dictionary dictionary,
+                                   Grammar grammar,
+                                   AcousticModel[] models) {
         try {
 	    String linguistClass = 
 		props.getString(PROP_LINGUIST, PROP_LINGUIST_DEFAULT);
@@ -491,7 +501,7 @@ public class Recognizer {
             Linguist newLinguist = (Linguist)
                 Class.forName(linguistClass).newInstance();
             newLinguist.initialize(props.getContext(), 
-				   languageModel, grammar, models);
+				   languageModel, dictionary, grammar, models);
 
 	    runLinguistProcessors(newLinguist);
             return newLinguist;
