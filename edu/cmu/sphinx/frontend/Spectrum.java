@@ -7,7 +7,7 @@ package edu.cmu.sphinx.frontend;
 /**
  * Represents the power spectrum.
  */
-public class Spectrum implements Data {
+public class Spectrum extends Data {
 
     private double[] spectraData;
 
@@ -18,7 +18,18 @@ public class Spectrum implements Data {
      * @param spectraData a frame's spectral data
      */
     public Spectrum(double[] spectraData) {
+        super(Signal.CONTENT);
 	this.spectraData = spectraData;
+    }
+
+
+    /**
+     * Constructs a Spectrum with the given Signal.
+     *
+     * @param signal the Signal this Spectrum carries
+     */
+    public Spectrum(Signal signal) {
+        super(signal);
     }
 
 

@@ -5,10 +5,10 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 
@@ -27,7 +27,8 @@ import java.util.Vector;
  * @see Feature
  * @see FeatureFrame
  */
-public class FeatureExtractor extends DataProcessor {
+public class FeatureExtractor extends DataProcessor implements
+FeatureSource {
 
     /**
      * The name of the SphinxProperty for the length of a Feature,
@@ -37,8 +38,8 @@ public class FeatureExtractor extends DataProcessor {
 	"edu.cmu.sphinx.frontend.featureExtractor.featureLength";
 
     /**
-     * The name of the SphinxProperty for the window of the FeatureExtractor,
-     * which has a default value of 3.
+     * The name of the SphinxProperty for the window of the
+     * FeatureExtractor, which has a default value of 3.
      */
     public static final String PROP_FEATURE_WINDOW =
 	"edu.cmu.sphinx.frontend.featureExtractor.windowSize";
@@ -51,6 +52,7 @@ public class FeatureExtractor extends DataProcessor {
     "edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize";
 
 
+    private int featureBlockSize = 25;
     private int featureLength;
     private int cepstrumLength;
 
@@ -65,6 +67,10 @@ public class FeatureExtractor extends DataProcessor {
     private PeekableQueue peekableQueue;
     private boolean segmentStart;
     private boolean segmentEnd;
+    private int featureID;
+
+    private CepstrumSource predecessor;
+    private List outputQueue;
 
 
     /**
@@ -87,22 +93,22 @@ public class FeatureExtractor extends DataProcessor {
          * Remove the next element in the queue. If there are no elements
          * in the queue, it will return getSource().read().
          */
-        public Data removeNext() throws IOException {
+        public Cepstrum removeNext() throws IOException {
             if (queue.size() > 0) {
-                return (Data) queue.remove(0);
+                return (Cepstrum) queue.remove(0);
             } else {
-                return getSource().read();
+                return predecessor.getCepstrum();
             }
         }
 
         /**
          * Peek the next element in the queue without actually removing it.
          */
-        public Data peekNext() throws IOException {
+        public Cepstrum peekNext() throws IOException {
             if (queue.size() > 0) {
-                return (Data) queue.get(0);
+                return (Cepstrum) queue.get(0);
             } else {
-                Data next = getSource().read();
+                Cepstrum next = predecessor.getCepstrum();
                 queue.add(next);
                 return next;
             }
@@ -115,11 +121,36 @@ public class FeatureExtractor extends DataProcessor {
      *
      * @param context the context of the SphinxProperties to use
      */
-    public FeatureExtractor(String context) {
-        super("FeatureExtractor", context);
+    public FeatureExtractor(String name, String context,
+                            CepstrumSource predecessor) {
+        super(name, context);
 	initSphinxProperties();
+        this.predecessor = predecessor;
 	cepstraBuffer = new float[cepstraBufferSize][];
         peekableQueue = new PeekableQueue();
+        outputQueue = new Vector();
+        reset();
+    }
+
+
+    /**
+     *
+     */
+    public void reset() {
+        segmentStart = false;
+        segmentEnd = false;
+        featureID = 0;
+    }
+
+
+    /**
+     * Returns the next valid feature ID, incrementing the ID
+     * by one.
+     *
+     * @return the next valid feature ID
+     */
+    private int getNextFeatureID() {
+        return featureID++;
     }
 
 
@@ -137,47 +168,51 @@ public class FeatureExtractor extends DataProcessor {
 
 
     /**
-     * Returns the next Data object, which is a FeatureFrame
+     * Returns the next Feature object, which is a FeatureFrame
      * produced by this FeatureExtractor. It can also be
-     * other Data type objects, such as EndPointSignal.FRAME_START.
+     * other Feature type objects, such as EndPointSignal.FRAME_START.
      *
-     * @return the next available Data object, returns null if no
-     *     Data object is available
+     * @return the next available Feature object, returns null if no
+     *     Feature object is available
      *
      * @throws java.io.IOException if there is an error reading
-     * the Data objects
+     * the Feature objects
      *
      * @see Feature
      * @see FeatureFrame
      */
-    public Data read() throws IOException {
-        Data input = peekableQueue.removeNext();
-        
-        if (input == null) {
+    public Feature getFeature() throws IOException {
 
-            return null;
-            
-        } else {
-            if (input instanceof EndPointSignal) {
-                
-                EndPointSignal signal = (EndPointSignal) input;
+        if (outputQueue.size() == 0) {
+            Cepstrum input = (Cepstrum) peekableQueue.peekNext();
 
-                if (signal.equals(EndPointSignal.FRAME_START)) {
-
-                    Data featureFrame = process(readCepstra());
-                    segmentStart = false;
-                    segmentEnd = false;
-                    return featureFrame;
- 
-                } else if (signal.equals(EndPointSignal.SEGMENT_START)) {
-                    segmentStart = true;
-                    return input;
-                } else {
-                    return input;
-                }
+            if (input == null) {
+                return null;
             } else {
-                return read();
+                if (segmentEnd) {
+                    
+                    segmentEnd = false;
+                    outputQueue.add(new Feature(Signal.SEGMENT_END,
+                                                getNextFeatureID()));
+                } else if (input.hasContent()) {
+                    
+                    int numberFeatures = readCepstra(featureBlockSize);
+                    if (numberFeatures > 0) {
+                        computeFeatures(numberFeatures);
+                    }
+                } else if (input.getSignal().equals(Signal.SEGMENT_START)) {
+                    
+                    input = (Cepstrum) peekableQueue.removeNext();
+                    segmentStart = true;
+                    outputQueue.add(new Feature(input.getSignal(),
+                                                getNextFeatureID()));
+                }
             }
+        }
+        if (outputQueue.size() > 0) {
+            return (Feature) outputQueue.remove(0);
+        } else {
+            return null;
         }
     }	
 
@@ -191,94 +226,68 @@ public class FeatureExtractor extends DataProcessor {
      * the read Cepstra. This method is called after an
      * EndPointSignal.FRAME_START is read.
      *
-     * @returns the number of features that should result from the
-     * read Cepstrum
+     * @returns the number of features that should be computed using
+     *    the Cepstrum read
      *
      * @throws java.io.IOException if there is an error reading Cepstrum
      */
-    private int readCepstra() throws IOException {
+    private int readCepstra(int numberCepstra) throws IOException {
 
-        int totalFeatures = 0;
         int residualVectors = 0;
+        int cepstraRead = 0;
 
-        Data firstFrame = peekableQueue.peekNext();
+        // replicate the first cepstrum if segment start
+        if (segmentStart) {
+            Cepstrum firstCepstrum = (Cepstrum) peekableQueue.removeNext();
+            residualVectors -= setStartCepstrum(firstCepstrum);
+            segmentStart = false;
+            cepstraRead++;
+            featureID = 0;
+        }
 
-        if (firstFrame instanceof Cepstrum) {
+        boolean done = false;
 
-            // replicate the first cepstrum if segment start
-            if (segmentStart) {
-                replicateFirstFrame((Cepstrum) firstFrame);
-                residualVectors -= window;
+        // read the cepstra
+        while (!done && cepstraRead < numberCepstra) {
+            Cepstrum cepstrum = peekableQueue.removeNext();
+            if (cepstrum != null) {
+                if (cepstrum.hasContent()) {
+                    // just a cepstra
+                    addCepstrumData(cepstrum.getCepstrumData());
+                    cepstraRead++;
+                } else if (cepstrum.hasSegmentEndSignal()) {
+                    // end of segment cepstrum
+                    segmentEnd = true;
+                    residualVectors += replicateLastCepstrum();
+                    done = true;
+                    break;
+                }
+            } else {
+                done = true;
+                break;
             }
-
-            // read and copy all the Cepstrum
-            totalFeatures += readMiddleCepstra();
-
-            // is the next frame EndPointSignal.SEGMENT_END ?
-            Data nextFrame = peekableQueue.peekNext();
-
-            if (nextFrame instanceof EndPointSignal) {
-                
-                EndPointSignal signal = (EndPointSignal) nextFrame;
-                
-                if (signal.equals(EndPointSignal.SEGMENT_END)) {
+        }
                     
-                    // if it is, replicate the last cepstrum
-                    replicateLastFrame();
-                    residualVectors += window;
-                }
-            }
-        }
-
-        return totalFeatures + residualVectors;
+        return (cepstraRead + residualVectors);
     }
 
 
     /**
-     * Reads all the cepstra until we hit the next EndPointSignal.
-     * Returns the number of cepstra read. The last EndPointSignal is
-     * removed from the peekableQueue.
-     *
-     * @return the number of cepstra read
-     *
-     * @throws java.io.IOException if error reading the cepstra
-     */
-    private int readMiddleCepstra() throws IOException {
-        
-        int totalCepstra = 0;
-        Data nextFrame = null;
-        
-        while (!((nextFrame = peekableQueue.removeNext())
-                 instanceof EndPointSignal)) {
-            
-            if (nextFrame instanceof Cepstrum) {
-                Cepstrum cepstrum = (Cepstrum) nextFrame;
-                cepstraBuffer[bufferPosition++] = cepstrum.getCepstrumData();
-                totalCepstra++;
-                
-                if (bufferPosition == cepstraBufferSize) {
-                    bufferPosition = 0;
-                }
-            }
-        }
-
-        return totalCepstra;
-    }
-
-
-    /**
-     * Replicate the given cepstrum into the first window
+     * Replicate the given cepstrum into the first window+1
      * number of frames in the cepstraBuffer.
      *
      * @param cepstrum the Cepstrum to replicate
+     *
+     * @return the number extra cepstra replicated
      */
-    private void replicateFirstFrame(Cepstrum cepstrum) {
+    private int setStartCepstrum(Cepstrum cepstrum) {
 
-        Arrays.fill(cepstraBuffer, 0, window, cepstrum.getCepstrumData());
+        Arrays.fill(cepstraBuffer, 0, window+1, cepstrum.getCepstrumData());
         
-        bufferPosition = window;
+        bufferPosition = window + 1;
         bufferPosition %= cepstraBufferSize;
         currentPosition = window;
+        currentPosition %= cepstraBufferSize;
         
         jp1 = currentPosition - 1;
         jp2 = currentPosition - 2;
@@ -295,14 +304,29 @@ public class FeatureExtractor extends DataProcessor {
             jp2 %= cepstraBufferSize;
             jp3 %= cepstraBufferSize;
         }
+
+        return window;
+    }
+
+
+    /**
+     * Adds the given Cepstrum to the cepstraBuffer.
+     */
+    private void addCepstrumData(float[] cepstrumData) {
+        cepstraBuffer[bufferPosition++] = cepstrumData;
+        bufferPosition %= cepstraBufferSize;
     }
 
 
     /**
      * Replicate the last frame into the last window number of frames in
      * the cepstraBuffer.
+     *
+     * @return the number of replicated Cepstrum
      */
-    private void replicateLastFrame() {
+    private int replicateLastCepstrum() {
+
+        int replicated = 0;
 
         if (bufferPosition > 0) {
          
@@ -313,11 +337,13 @@ public class FeatureExtractor extends DataProcessor {
                             bufferPosition + window, last);
             } else {
                 for (int i = 0; i < window; i++) {
-                    this.cepstraBuffer[bufferPosition++] = last;
-                    bufferPosition %= cepstraBufferSize;
+                    addCepstrumData(last);
                 }
             }
+            replicated = window;
         }
+
+        return replicated;
     }
 
 
@@ -328,29 +354,24 @@ public class FeatureExtractor extends DataProcessor {
      *
      * @return a FeatureFrame
      */
-    private FeatureFrame process(int totalFeatures) {
+    private void computeFeatures(int totalFeatures) {
 
         getTimer().start();
 
         assert(0 < totalFeatures && totalFeatures < cepstraBufferSize);
 
 	// create the Features
-
-        Feature[] features = new Feature[totalFeatures];
-
 	for (int i = 0; i < totalFeatures; i++) {
-            features[i] = computeNextFeature();
+            Feature feature = computeNextFeature();
+            if (feature != null) {
+                outputQueue.add(feature);
+                if (getDump()) {
+                    System.out.println("FEATURE " + feature.toString());
+                }
+            }
 	}
 
-        FeatureFrame featureFrame = new FeatureFrame(features);
-
         getTimer().stop();
-        
-        if (getDump()) {
-            System.out.println(featureFrame.toString());
-        }
-        
-        return featureFrame;
     }
 
 
@@ -397,7 +418,7 @@ public class FeatureExtractor extends DataProcessor {
             jp3 %= cepstraBufferSize;
         }
 
-        return (new Feature(feature));
+        return (new Feature(feature, getNextFeatureID()));
     }
 }
 

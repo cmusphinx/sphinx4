@@ -62,7 +62,7 @@ import edu.cmu.sphinx.util.Timer;
  * to implement the <code>read()</code> method of the <code>DataSource</code>
  * interface.
  */
-public abstract class DataProcessor implements DataSource {
+public abstract class DataProcessor {
 
 
     /**
@@ -75,12 +75,6 @@ public abstract class DataProcessor implements DataSource {
      * The context of this DataProcessor.
      */
     private String context;
-
-
-    /**
-     * The predecessor DataSource to pull Data objects from
-     */
-    private DataSource predecessorDataSource = null;
 
 
     /**
@@ -142,26 +136,6 @@ public abstract class DataProcessor implements DataSource {
      */
     public final SphinxProperties getSphinxProperties() {
         return sphinxProperties;
-    }
-
-
-    /**
-     * Returns the DataSource to pull Data objects from
-     *
-     * @return the DataSource to pull Data objects from, or null if no source
-     */
-    public final DataSource getSource() {
-	return predecessorDataSource;
-    }
-
-
-    /**
-     * Sets the DataSource to pull Data objects from.
-     *
-     * @param whereToPullFrom the DataSource to pull Data objects from
-     */
-    public void setSource(DataSource whereToPullFrom) {
-	predecessorDataSource = whereToPullFrom;
     }
 
 

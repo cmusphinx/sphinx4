@@ -5,7 +5,6 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
 
@@ -15,53 +14,42 @@ import java.io.IOException;
  * mimic the critical band, representing different perceptual effect
  * at different frequency bands. 
  */
-public class MelFilterbank extends DataProcessor {
-
-    /* Note to Philip: we already defined this property in
-     * SpectrumAnalyzer.java, do we have to define it again here?
-     */
-    /**
-     * The name of the SphinxProperty for the number of points
-     * in the Fourier Transform, which is 512 by default.
-     */
-    public static final String PROP_NUMBER_FFT_POINTS =
-	"edu.cmu.sphinx.frontend.fft.numberFftPoints";
+public class MelFilterbank extends DataProcessor implements SpectrumSource {
 
     /**
      * The name of the Sphinx Property for the number of filters in
      * the filterbank.
      */
     public static final String PROP_NUMBER_FILTERS =
-	"edu.cmu.sphinx.frontend.mel.numFilters";
-
+    "edu.cmu.sphinx.frontend.mel.numFilters";
+    
     /**
      * The name of the Sphinx Property for the minimum frequency
      * covered by the filterbank.
      */
     public static final String PROP_MIN_FREQ = 
-	"edu.cmu.sphinx.frontend.mel.minfreq";
+    "edu.cmu.sphinx.frontend.mel.minfreq";
 
     /**
      * The name of the Sphinx Property for the maximum frequency
      * covered by the filterbank.
      */
     public static final String PROP_MAX_FREQ = 
-	"edu.cmu.sphinx.frontend.mel.maxfreq";
+    "edu.cmu.sphinx.frontend.mel.maxfreq";
 
     private int sampleRate;
-
     private int numberFftPoints;
-
     private int numberFilters;
 
     /**
      * Should these be float? It's not critical....
      */
     private double minFreq;
-
     private double maxFreq;
 
     private MelFilter[] filter;
+
+    private SpectrumSource predecessor;
 
 
     /**
@@ -70,9 +58,11 @@ public class MelFilterbank extends DataProcessor {
      *
      * @param context the context of the SphinxProperties to use
      */
-    public MelFilterbank(String context) {
+    public MelFilterbank(String name, String context,
+                         SpectrumSource predecessor) {
         super("MelFilterbank", context);
 	initSphinxProperties();
+        this.predecessor = predecessor;
 	buildFilterbank(numberFftPoints, numberFilters, minFreq, maxFreq);
     }
 
@@ -88,13 +78,12 @@ public class MelFilterbank extends DataProcessor {
 
         sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);
 
-	numberFftPoints = properties.getInt(PROP_NUMBER_FFT_POINTS, 512);
-
+	numberFftPoints = properties.getInt
+            (SpectrumAnalyzer.PROP_NUMBER_FFT_POINTS, 512);
 	numberFilters = properties.getInt(PROP_NUMBER_FILTERS, 31);
 
         // Oh, don't we all love legacy code with its inescrutable constants!
 	minFreq = properties.getDouble(PROP_MIN_FREQ, 200);
-
 	maxFreq = properties.getDouble(PROP_MAX_FREQ, 3500);
     }
 
@@ -253,7 +242,7 @@ public class MelFilterbank extends DataProcessor {
      * @throws java.lang.IllegalArgumentException
      *
      */
-    private MelSpectrum process (Spectrum input) throws 
+    private Spectrum process (Spectrum input) throws
         IllegalArgumentException {
 
 	double[] in = input.getSpectrumData();
@@ -273,7 +262,7 @@ public class MelFilterbank extends DataProcessor {
 	    outputMelFilterbank[i] = filter[i].filterOutput(in);
 	}
 
-	MelSpectrum outputMelSpectrum = new MelSpectrum(outputMelFilterbank);
+	Spectrum outputMelSpectrum = new Spectrum(outputMelFilterbank);
 
         if (getDump()) {
             System.out.println("MEL_SPECTRUM   " +
@@ -285,25 +274,26 @@ public class MelFilterbank extends DataProcessor {
 
 
     /**
-     * Reads the next Data object, which is the power spectrum of an
-     * audio input frame. However, it can also be other Data objects
+     * Reads the next MelSpectrum object, which is the power spectrum of an
+     * audio input frame. However, it can also be other MelSpectrum objects
      * like a EndPointSignal.
      *
-     * @return the next available Data object, returns null if no
-     *     Data object is available
+     * @return the next available MelSpectrum object, returns null if no
+     *     MelSpectrum object is available
      *
      * @throws java.io.IOException if there is an error reading
-     * the Data objects
+     * the MelSpectrum objects
      */
-    public Data read() throws IOException {
+    public Spectrum getSpectrum() throws IOException {
 
-	Data input = getSource().read();
+	Spectrum input = predecessor.getSpectrum();
         
         getTimer().start();
 
-        if (input instanceof Spectrum) {
-
-            input = process((Spectrum) input);
+        if (input != null) {
+            if (input.hasContent()) {
+                input = process(input);
+            }
         }
 
         getTimer().stop();

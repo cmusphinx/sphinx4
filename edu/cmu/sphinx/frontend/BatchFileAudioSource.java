@@ -14,7 +14,7 @@ import java.io.IOException;
  * A BatchFileAudioSource takes a file (called batch file onwards)
  * that contains a list of audio files,
  * and converts the audio data in each of the audio files into
- * AudioFrame(s). One would obtain the AudioFrames using
+ * Audio(s). One would obtain the Audios using
  * the <code>read()</code> method. This class uses the StreamAudioSource
  * class. In fact, it converts each audio file in the batch file into
  * an InputStream, and sets it to the InputStream of StreamAudioSource.
@@ -30,7 +30,8 @@ import java.io.IOException;
  *
  * @see StreamAudioSource
  */
-public class BatchFileAudioSource extends DataProcessor {
+public class BatchFileAudioSource extends DataProcessor implements
+AudioSource {
 
     private BufferedReader reader;
     private StreamAudioSource streamAudioSource = null;
@@ -43,10 +44,13 @@ public class BatchFileAudioSource extends DataProcessor {
      *
      * @throws java.io.IOException if error opening the batch file
      */
-    public BatchFileAudioSource(String context, String batchFile) throws IOException {
-        super("BatchFileAudioSource", context);
+    public BatchFileAudioSource(String name, String context,
+                                String batchFile) throws
+    IOException {
+        super(name, context);
         reader = new BufferedReader(new FileReader(batchFile));
-        streamAudioSource = new StreamAudioSource(context, null);
+        streamAudioSource = new StreamAudioSource
+            ("StreamAudioSource", context, null);
 
         String firstFile = reader.readLine();
         if (firstFile != null) {
@@ -70,20 +74,20 @@ public class BatchFileAudioSource extends DataProcessor {
 
     
     /**
-     * Reads and returns the next AudioFrame. 
+     * Reads and returns the next Audio. 
      * Returns null if all the data in all the files have been read.
      *
-     * @return the next AudioFrame or <code>null</code> if no more is
+     * @return the next Audio or <code>null</code> if no more is
      *     available
      *
      * @throws java.io.IOException
      */
-    public Data read() throws IOException {
+    public Audio getAudio() throws IOException {
         if (streamAudioSource == null) {
             return null;
         }
         
-        Data frame = streamAudioSource.read();
+        Audio frame = streamAudioSource.getAudio();
         if (frame != null) {
             return frame;
         } else {
@@ -95,7 +99,7 @@ public class BatchFileAudioSource extends DataProcessor {
                 String nextFile = reader.readLine();
                 if (nextFile != null) {
                     fileSetStream(nextFile);
-                    return read();
+                    return getAudio();
                 } else {
                     reader.close();
                     reader = null;

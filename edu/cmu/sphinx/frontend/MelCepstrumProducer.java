@@ -5,38 +5,35 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
 
 
 /**
- * Applies a melcosine filter bank to the given MelSpectrum.
+ * Applies a melcosine filter bank to the given Spectrum.
  * Outputs a Cepstrum.
  */
-public class MelCepstrumProducer extends DataProcessor {
-
-    /**
-     * The name of the SphinxProperty for the number of mel-filters.
-     */
-    public static final String PROP_NUM_MEL_FILTERS =
-	"edu.cmu.sphinx.frontend.mel.numFilters";
-
+public class MelCepstrumProducer extends DataProcessor implements
+CepstrumSource {
     
-    private int cepstrumSize;
-    private int numberMelFilters;
+    private int cepstrumSize;       // size of a Cepstrum
+    private int numberMelFilters;   // number of mel-filters
     private float[][] melcosine;
+    private SpectrumSource predecessor;
 
 
     /**
      * Constructs a default MelCepstrumProducer with the given
      * SphinxProperties context.
      *
+     * @param name the name of this MelCepstrumProducer
      * @param context the context of the SphinxProperties to use
      */
-    public MelCepstrumProducer(String context) {
-        super("MelCepstrum", context);
+    public MelCepstrumProducer(String name, String context,
+                               SpectrumSource predecessor) {
+        super(name, context);
 	initSphinxProperties();
+        this.predecessor = predecessor;
         computeMelCosine();
     }
 
@@ -49,7 +46,8 @@ public class MelCepstrumProducer extends DataProcessor {
     private void initSphinxProperties() {
 	SphinxProperties properties = getSphinxProperties();
         cepstrumSize = properties.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
-        numberMelFilters = properties.getInt(PROP_NUM_MEL_FILTERS, 31);
+        numberMelFilters = properties.getInt
+            (MelFilterbank.PROP_NUMBER_FILTERS, 31);
     }
 
 
@@ -73,29 +71,34 @@ public class MelCepstrumProducer extends DataProcessor {
 
 
     /**
-     * Returns the next Data object, which is the mel cepstrum of the
-     * input frame. However, it can also be other Data objects
+     * Returns the next Cepstrum object, which is the mel cepstrum of the
+     * input frame. However, it can also be other Cepstrum objects
      * like a EndPointSignal.
      *
-     * @return the next available Data object, returns null if no
-     *     Data object is available
+     * @return the next available Cepstrum object, returns null if no
+     *     Cepstrum object is available
      *
      * @throws java.io.IOException if there is an error reading
-     * the Data objects
+     * the Cepstrum objects
      */
-    public Data read() throws IOException {
+    public Cepstrum getCepstrum() throws IOException {
 
-	Data input = getSource().read();
-        
+	Spectrum input = predecessor.getSpectrum();
+        Cepstrum output = null;
+
         getTimer().start();
 
-        if (input instanceof MelSpectrum) {
-            input = process((MelSpectrum) input);
+        if (input != null) {
+            if (input.hasContent()) {
+                output = process(input);
+            } else {
+                output = new Cepstrum(input.getSignal());
+            }
         }
 
         getTimer().stop();
 
-	return input;
+	return output;
     }
 
 
@@ -107,9 +110,10 @@ public class MelCepstrumProducer extends DataProcessor {
      *
      * @return a mel Cepstrum frame
      */
-    private Cepstrum process(MelSpectrum input) throws IllegalArgumentException {
+    private Cepstrum process(Spectrum input) throws
+    IllegalArgumentException {
 
-        double[] melspectrum = input.getMelSpectrumData();
+        double[] melspectrum = input.getSpectrumData();
 
         if (melspectrum.length != numberMelFilters) {
             throw new IllegalArgumentException
@@ -130,9 +134,9 @@ public class MelCepstrumProducer extends DataProcessor {
         }
 
         // create the cepstrum by apply the melcosine filter
-        float[] cepstrumData = applyMelCosine(melspectrum);
+        float[] cepstrumCepstrum = applyMelCosine(melspectrum);
 
-	Cepstrum cepstrum = new Cepstrum(cepstrumData);
+	Cepstrum cepstrum = new Cepstrum(cepstrumCepstrum);
 
         if (getDump()) {
             System.out.println("MEL_CEPSTRUM   " + cepstrum.toString());
@@ -148,25 +152,25 @@ public class MelCepstrumProducer extends DataProcessor {
     private float[] applyMelCosine(double[] melspectrum) {
 
         // create the cepstrum
-        float[] cepstrumData = new float[cepstrumSize];
+        float[] cepstrum = new float[cepstrumSize];
         float period = (float) numberMelFilters;
         float beta = 0.5f;
         
         // apply the melcosine filter
-        for (int i = 0; i < cepstrumData.length; i++) {
-            
+        for (int i = 0; i < cepstrum.length; i++) {
+
             if (numberMelFilters > 0) {
                 float[] melcosine_i = melcosine[i];
                 int j = 0;
-                cepstrumData[i] += (beta * melspectrum[j] * melcosine_i[j]);
+                cepstrum[i] += (beta * melspectrum[j] * melcosine_i[j]);
 
                 for (j = 1; j < numberMelFilters; j++) {
-                    cepstrumData[i] += (melspectrum[j] * melcosine_i[j]);
+                    cepstrum[i] += (melspectrum[j] * melcosine_i[j]);
                 }
-                cepstrumData[i] /= period;
+                cepstrum[i] /= period;
             }
         }
         
-        return cepstrumData;
+        return cepstrum;
     }
 }

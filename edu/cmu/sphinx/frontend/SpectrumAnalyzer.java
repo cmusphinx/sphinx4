@@ -6,14 +6,14 @@ package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.Complex;
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
 
 /**
  * Computes the FFT of an input sequence.
  */
-public class SpectrumAnalyzer extends DataProcessor {
+public class SpectrumAnalyzer extends DataProcessor implements
+SpectrumSource {
 
     /**
      * The name of the SphinxProperty for the number of points
@@ -21,6 +21,8 @@ public class SpectrumAnalyzer extends DataProcessor {
      */
     public static final String PROP_NUMBER_FFT_POINTS =
 	"edu.cmu.sphinx.frontend.fft.numberFftPoints";
+
+    private AudioSource predecessor;
 
     private int windowSize;
     private int numberFftPoints;
@@ -39,11 +41,15 @@ public class SpectrumAnalyzer extends DataProcessor {
      * Constructs a default Spectrum Analyzer with the given 
      * SphinxProperties context.
      *
+     * @param name the name of this SpectrumAnalyzer
      * @param context the context of the SphinxProperties to use
+     * @param predecessor the predecessor
      */
-    public SpectrumAnalyzer(String context) {
-        super("SpectrumAnalyzer", context);
+    public SpectrumAnalyzer(String name, String context, 
+                            AudioSource predecessor) {
+        super(name, context);
 	initSphinxProperties();
+        this.predecessor = predecessor;
 	computeLogBase2(this.numberFftPoints);
 	createWeightFft(numberFftPoints, false);
         initComplexArrays();
@@ -79,17 +85,16 @@ public class SpectrumAnalyzer extends DataProcessor {
      * @throws java.lang.IllegalArgumentException
      *
      */
-    private Spectrum process (AudioFrame input) 
-	throws IllegalArgumentException {
+    private Spectrum process(Audio input) throws IllegalArgumentException {
 
-	/**
+        /**
 	 * Create complex input sequence equivalent to the real
 	 * input sequence.
 	 * If the number of points is less than the window size,
 	 * we incur in aliasing. If it's greater, we pad the input
 	 * sequence with zeros.
 	 */
-	double[] in = input.getAudioSamples();
+	double[] in = input.getSamples();
 
 	if (in.length != windowSize) {
 	    throw new IllegalArgumentException
@@ -180,13 +185,15 @@ public class SpectrumAnalyzer extends DataProcessor {
     private void computeLogBase2(int numberFftPoints)
 	throws IllegalArgumentException {
 	this.logBase2NumberFftPoints = 0;
-	for (int k = numberFftPoints; k > 1; k >>= 1, this.logBase2NumberFftPoints++) {
+	for (int k = numberFftPoints; k > 1;
+             k >>= 1, this.logBase2NumberFftPoints++) {
 	    if (((k % 2) != 0) || (numberFftPoints < 0)) {
 		throw new IllegalArgumentException("Not a power of 2: "
 						   + numberFftPoints);
 	    }
 	}
     }
+
 
     /**
      * Initializes the <b>weightFft[]</b> vector.
@@ -223,6 +230,41 @@ public class SpectrumAnalyzer extends DataProcessor {
 	}
     }
 
+
+    /**
+     * Reads the next Spectrum object, which is an audio frame from which
+     * we'll compute the power spectrum. However, it can also be other
+     * Spectrum objects that contain a EndPointSignal.
+     *
+     * @return the next available Spectrum object, returns null if no
+     *     Spectrum object is available
+     */
+    public Spectrum getSpectrum() throws IOException {
+
+	Audio input = predecessor.getAudio();
+        Spectrum output = null;
+        
+        getTimer().start();
+
+        if (input != null) {
+            if (input.hasContent()) {
+                output = process(input);
+            } else {
+                output = new Spectrum(input.getSignal());
+            }
+        }
+        
+        // At this point - or in the call immediatelly preceding
+        // this -, we should have created a cepstrum frame with
+        // whatever data came last, even if we had less than
+        // windowSize of data.
+        
+        getTimer().stop();
+	
+	return output;
+    }	
+
+
     /**
      * Establish the recursion. The FFT computation will be 
      * computed by as a recursion. Each stage in the butterfly
@@ -241,12 +283,11 @@ public class SpectrumAnalyzer extends DataProcessor {
      * @param invert whether it's direct (false) or inverse (true) FFT
      *
      */
-
     private void recurseFft(Complex[] input,
-		    double[] output,
-		    int numberFftPoints,
-		    boolean invert) {
-
+                            double[] output,
+                            int numberFftPoints,
+                            boolean invert) {
+        
 	double divisor;
         
 	/**
@@ -257,7 +298,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * <code>createWeightFft</code>.
 	 */
 
-	if (!invert){
+ 	if (!invert) {
 	    divisor = 1.0;
 	} else {
 	    divisor = (double) numberFftPoints;
@@ -309,7 +350,8 @@ public class SpectrumAnalyzer extends DataProcessor {
      * @param from the input sequence at each stage
      * @param to the output sequence
      * @param numberFftPoints the total number of points
-     * @param currentDistance the "distance" between elements in the butterfly
+     * @param currentDistance the "distance" between elements in the
+     *     butterfly
      */
     private void butterflyStage(Complex[] from, 
 				Complex[] to, 
@@ -371,33 +413,4 @@ public class SpectrumAnalyzer extends DataProcessor {
 	}
 	return;
     }
-
-    /**
-     * Reads the next Data object, which is an audio frame from which
-     * we'll compute the power spectrum. However, it can also be other
-     * Data objects like a EndPointSignal.
-     *
-     * @return the next available Data object, returns null if no
-     *     Data object is available
-     */
-    public Data read() throws IOException {
-
-	Data input = getSource().read();
-        
-        getTimer().start();
-
-        if (input instanceof AudioFrame) {
-
-            input = process((AudioFrame) input);
-        }
-        
-        // At this point - or in the call immediatelly preceding
-        // this -, we should have created a cepstrum frame with
-        // whatever data came last, even if we had less than
-        // windowSize of data.
-        
-        getTimer().stop();
-	
-	return input;
-    }	
 }

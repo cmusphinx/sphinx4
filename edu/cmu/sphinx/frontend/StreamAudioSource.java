@@ -7,17 +7,16 @@ package edu.cmu.sphinx.frontend;
 import edu.cmu.sphinx.util.SphinxProperties;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 
 /**
  * A StreamAudioSource converts data from an InputStream into
- * AudioFrame(s). One would obtain the AudioFrames using
+ * Audio(s). One would obtain the Audios using
  * the <code>read()</code> method.
  *
- * The size of each AudioFrame returned is specified by:
+ * The size of each Audio returned is specified by:
  * <pre>
- * edu.cmu.sphinx.frontend.bytesPerAudioFrame
+ * edu.cmu.sphinx.frontend.bytesPerAudio
  * </pre>
  * The maximum size of a segment of speech is given by:
  * <pre>
@@ -26,7 +25,7 @@ import java.util.Arrays;
  *
  * @see BatchFileAudioSource
  */
-public class StreamAudioSource extends DataProcessor {
+public class StreamAudioSource extends DataProcessor implements AudioSource {
 
     private InputStream audioStream;
 
@@ -50,8 +49,9 @@ public class StreamAudioSource extends DataProcessor {
      *
      * @param audioStream the InputStream where audio data comes from
      */
-    public StreamAudioSource(String context, InputStream audioStream) {
-        super("StreamAudioSource", context);
+    public StreamAudioSource(String name, String context,
+                             InputStream audioStream) {
+        super(name, context);
 	initSphinxProperties();
         setInputStream(audioStream);
 	samplesBuffer = new byte[frameSizeInBytes];
@@ -91,37 +91,37 @@ public class StreamAudioSource extends DataProcessor {
 
     
     /**
-     * Reads and returns the next AudioFrame from the InputStream of
+     * Reads and returns the next Audio from the InputStream of
      * StreamAudioSource, return null if no data is read and end of file
      * is reached.
      *
-     * @return the next AudioFrame or <code>null</code> if none is
+     * @return the next Audio or <code>null</code> if none is
      *     available
      *
      * @throws java.io.IOException
      */
-    public Data read() throws IOException {
+    public Audio getAudio() throws IOException {
 
         getTimer().start();
 
-        Data output = null;
+        Audio output = null;
 
         if (streamEndReached) {
      
             if (!segmentEndSent) {
-                output = EndPointSignal.SEGMENT_END;
+                output = new Audio(Signal.SEGMENT_END);
                 segmentEndSent = true;
             }
         } else {
             if (!segmentStarted) {
                 
                 segmentStarted = true;
-                output = EndPointSignal.SEGMENT_START;
+                output = new Audio(Signal.SEGMENT_START);
                 
             } else if (totalBytesRead >= segmentMaxBytes) {
                 
                 segmentStarted = false;
-                output = EndPointSignal.SEGMENT_END;
+                output = new Audio(Signal.SEGMENT_END);
                 segmentEndSent = true;
                 
             } else {
@@ -136,14 +136,14 @@ public class StreamAudioSource extends DataProcessor {
 
 
     /**
-     * Returns the next AudioFrame from the input stream, or null if
+     * Returns the next Audio from the input stream, or null if
      * there is none available
      *
-     * @return a AudioFrame or null
+     * @return a Audio or null
      *
      * @throws java.io.IOException
      */
-    private AudioFrame readNextFrame() throws IOException {
+    private Audio readNextFrame() throws IOException {
 
         // read one frame's worth of bytes
 	int read = 0;
@@ -177,15 +177,15 @@ public class StreamAudioSource extends DataProcessor {
             audioStream.close();
         }
 
-        // turn it into an AudioFrame
-        AudioFrame audioFrame = new AudioFrame
+        // turn it into an Audio
+        Audio audio = new Audio
             (Util.byteToDoubleArray(finalBuffer, 0, finalBuffer.length));
         
         if (getDump()) {
-            System.out.println("FRAME_SOURCE " + audioFrame.toString());
+            System.out.println("FRAME_SOURCE " + audio.toString());
         }
         
-        return audioFrame;
+        return audio;
     }
 }
 

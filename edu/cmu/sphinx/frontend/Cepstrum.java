@@ -7,7 +7,7 @@ package edu.cmu.sphinx.frontend;
 /**
  * Represents a Cepstrum.
  */
-public class Cepstrum implements Data {
+public class Cepstrum extends Data {
 
     private float[] cepstrumData;
 
@@ -16,7 +16,18 @@ public class Cepstrum implements Data {
      * Constructs a Cepstrum with the given cepstrum data.
      */
     public Cepstrum(float[] cepstrumData) {
+        super(Signal.CONTENT);
 	this.cepstrumData = cepstrumData;
+    }
+
+
+    /**
+     * Constructs a Cepstrum with the given Signal.
+     *
+     * @param signal the Signal this Cepstrum carries
+     */
+    public Cepstrum(Signal signal) {
+        super(signal);
     }
 
 

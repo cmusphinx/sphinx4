@@ -7,7 +7,7 @@ package edu.cmu.sphinx.frontend;
 /**
  * Represents an array of Features.
  */
-public class FeatureFrame implements Data {
+public class FeatureFrame {
 
     private Feature[] features = null;
 

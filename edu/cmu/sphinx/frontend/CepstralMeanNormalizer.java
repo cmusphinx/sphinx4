@@ -5,7 +5,6 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
 
@@ -25,13 +24,15 @@ import java.io.IOException;
  * This mean is calculated by dividing the sum of all input cepstrum so
  * far by the number of input cepstrum. After obtaining the mean,
  * the sum is exponentially by multiplying it by the ratio: <pre>
- * cmnWindow/(cmnWindow + number of frames since the last recalculation)</pre>
+ * cmnWindow/(cmnWindow + number of frames since the last recalculation)
+ * </pre>
  *
  * <p>This is a 1-to-1 processor.
  *
  * @see Cepstrum
  */
-public class CepstralMeanNormalizer extends DataProcessor {
+public class CepstralMeanNormalizer extends DataProcessor implements
+CepstrumSource {
 
 
     /**
@@ -61,14 +62,15 @@ public class CepstralMeanNormalizer extends DataProcessor {
 	"edu.cmu.sphinx.frontend.cmn.shiftWindow";
 
 
-    private float initialMean;     // initial mean, magic number
-    private int cepstrumLength;    // length of a Cepstrum
-    private int numberFrame;       // total number of input Cepstrum
     private float[] currentMean;   // array of current means
     private float[] sum;           // array of current sums
+    private float initialMean;     // initial mean, magic number
+    private int numberFrame;       // total number of input Cepstrum
     private int cmnShiftWindow;    // # of Cepstrum to recalculate mean
     private int cmnWindow;
-  
+    private int cepstrumLength;    // length of a Cepstrum
+    private CepstrumSource predecessor;
+
 
     /**
      * Constructs a default CepstralMeanNormalizer with the given
@@ -76,10 +78,12 @@ public class CepstralMeanNormalizer extends DataProcessor {
      *
      * @param context the context of the SphinxProperties to use
      */
-    public CepstralMeanNormalizer(String context) {
-        super("CMN", context);
+    public CepstralMeanNormalizer(String name, String context,
+                                  CepstrumSource predecessor) {
+        super(name, context);
         initSphinxProperties();
 	initMeansSums();
+        this.predecessor = predecessor;
     }
 
 
@@ -106,31 +110,26 @@ public class CepstralMeanNormalizer extends DataProcessor {
 	
 
     /**
-     * Returns the next Data object, which is a normalized Cepstrum
-     * produced by this class. However, it can also be other Data objects
-     * like a EndPointSignal.SEGMENT_START.
+     * Returns the next Cepstrum object, which is a normalized Cepstrum
+     * produced by this class. However, it can also be a Cepstrum object
+     * carrying a Signal.SEGMENT_END signal.
      *
-     * @return the next available Data object, returns null if no
-     *     Data object is available
+     * @return the next available Cepstrum object, returns null if no
+     *     Cepstrum object is available
      *
      * @throws java.io.IOException if there is an error reading
-     * the Data objects
+     * the Cepstrum objects
      */
-    public Data read() throws IOException {
+    public Cepstrum getCepstrum() throws IOException {
 	
-        Data input = getSource().read();
+        Cepstrum input = predecessor.getCepstrum();
 
         getTimer().start();
 
-        if (input instanceof Cepstrum) {
-
-            input = process((Cepstrum) input);
-
-        } else if (input instanceof EndPointSignal) {
-            
-            EndPointSignal signal = (EndPointSignal) input;
-
-            if (signal.equals(EndPointSignal.SEGMENT_END)) {
+        if (input != null) {
+            if (input.hasContent()) {
+                normalize(input);
+            } else if (input.hasSegmentEndSignal()) {
                 updateMeanSumBuffers();
             }
         }
@@ -142,13 +141,12 @@ public class CepstralMeanNormalizer extends DataProcessor {
     
 
     /**
-     * Returns the given Cepstrum, normalized.
+     * Normalizes the given Cepstrum with using the currentMean array.
+     * Updates the sum array with the given Cepstrum.
      *
      * @param input a Cepstrum
-     *
-     * @return a normalized Cepstrum
      */
-    private Data process(Cepstrum cepstrumObject) {
+    private void normalize(Cepstrum cepstrumObject) {
 
         float[] cepstrum = cepstrumObject.getCepstrumData();
         for (int j = 0; j < cepstrum.length; j++) {
@@ -165,8 +163,6 @@ public class CepstralMeanNormalizer extends DataProcessor {
         if (getDump()) {
             System.out.println("CMN_CEPSTRUM " + cepstrumObject.toString());
         }
-
-	return cepstrumObject;
     }
 
 
@@ -201,7 +197,8 @@ public class CepstralMeanNormalizer extends DataProcessor {
      * @param array the array to multiply
      * @param multipler the amount to multiply by
      */
-    private static final void multiplyArray(float[] array, float multiplier) {
+    private static final void multiplyArray(float[] array,
+                                            float multiplier) {
         for (int i = 0; i < array.length; i++) {
             array[i] *= multiplier;
         }

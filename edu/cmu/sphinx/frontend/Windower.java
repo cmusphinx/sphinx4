@@ -4,7 +4,6 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
 import java.util.Vector;
@@ -12,21 +11,17 @@ import java.util.Arrays;
 
 
 /**
- * Slices up a AudioFrame into a number of overlapping
- * windows, and applies a Window function to each of them.
+ * Slices up an Audio into a number of overlapping
+ * windows, and applies a Windowing function to each of them.
  * The number of resulting windows depends on the window
  * size and the window shift (commonly known as frame size and frame
  * shift in speech world). The Window will be applied to each such
  * window. Since the <code>read()</code> method will return a window,
- * and multiple windows are created for each AudioFrame, this
+ * and multiple windows are created for each Audio, this
  * is a 1-to-many processor.
  *
- * <p>For each input AudioFrame, calling
- * <code>Windower.read()</code> will return the following
- * series of <code>Data</code> objects: <pre>
- * EndPointSignal.FRAME_START AudioFrame ... AudioFrame
- * EndPointSignal.FRAME_END </pre>
- * The <code>AudioFrame(s)</code> are the windowed data.
+ * <p>A window (which is an Audio object) is returned each time
+ * <code>Windower.getAudio()</code> is called.
  *
  * <p> The applied Window, <i>W</i> of length <i>N</i> (usually the
  * window size) is given by the following:
@@ -39,9 +34,9 @@ import java.util.Arrays;
  * edu.cmu.sphinx.frontend.windower.alpha
  * </pre>
  *
- * @see AudioFrame
+ * @see Audio
  */
-public class Windower extends DataProcessor {
+public class Windower extends DataProcessor implements AudioSource {
 
     /**
      * The name of the SphinxProperty for the alpha value of the Window,
@@ -52,6 +47,7 @@ public class Windower extends DataProcessor {
 	"edu.cmu.sphinx.frontend.windower.alpha";
 
 
+    private AudioSource predecessor;
     private double[] window;
     private int windowSize;
     private int windowShift;
@@ -66,9 +62,10 @@ public class Windower extends DataProcessor {
      *
      * @param context the context of the SphinxProperties this Windower uses
      */
-    public Windower(String context) {
-        super("Windower", context);
+    public Windower(String name, String context, AudioSource predecessor) {
+        super(name, context);
 	initSphinxProperties();
+        this.predecessor = predecessor;
 	createWindow();
         outputQueue = new Vector();
         overflowBuffer = new DoubleBuffer(windowSize + frameSize);
@@ -123,37 +120,39 @@ public class Windower extends DataProcessor {
 
 
     /**
-     * Returns the next Data object, which is usually a window of the input
-     * AudioFrame, with the Window function applied to it.
+     * Returns the next Audio object, which is usually a window of the input
+     * Audio, with the Window function applied to it.
      *
-     * @return the next available Data object, returns null if no
-     *     Data object is available
+     * @return the next available Audio object, returns null if no
+     *     Audio object is available
      *
      * @throws java.io.IOException if there is an error reading
-     * the Data objects
+     * the Audio objects
      *
-     * @see AudioFrame
+     * @see Audio
      */
-    public Data read() throws IOException {
+    public Audio getAudio() throws IOException {
 
-        Data output = getWindow();
+        Audio output = getWindow();
         
         if (output == null) {
-            output = getSource().read();
+            Audio input = predecessor.getAudio();
 
             getTimer().start();
 
-            if (output != null && output instanceof AudioFrame) { 
-                // process the AudioFrame, and output the data
-                process((AudioFrame) output);
-                output = getWindow();                
-            } else if (output instanceof EndPointSignal) {
-                // the end of segment
-                EndPointSignal signal = (EndPointSignal) output;
-                if (signal.equals(EndPointSignal.SEGMENT_END)) {
+            if (input != null) {
+                if (input.hasContent()) {
+                    // process the Audio, and output the windows
+                    process(input);
+                    output = getWindow();
+
+                } else if (input.hasSegmentEndSignal()) {
+                    // end of segment handling
                     processSegmentEnd();
                     output = getWindow();
-                    outputQueue.add(signal);
+                    outputQueue.add(input);
+                } else {
+                    output = input;
                 }
             }
 
@@ -170,9 +169,9 @@ public class Windower extends DataProcessor {
      * @return the next window in the output queue, or null if none
      *    available
      */
-    private Data getWindow() {
+    private Audio getWindow() {
         if (outputQueue.size() > 0) {
-            return (Data) outputQueue.remove(0);
+            return (Audio) outputQueue.remove(0);
         } else {
             return null;
         }
@@ -180,20 +179,14 @@ public class Windower extends DataProcessor {
 
 
     /**
-     * Applies the Window to the given AudioFrame.
-     * The audio samples are modified in place, and the original
-     * AudioFrame is returned.
+     * Applies the Windowing to the given Audio. The resulting windows
+     * are cached in the outputQueue.
      *
-     * @param input the input Data object
-     *
-     * @return the same AudioFrame but with Window applied
+     * @param input the input Audio object
      */
-    private void process(AudioFrame input) {
+    private void process(Audio input) {
 
-        // send a Signal indicating start of frame
-        outputQueue.add(EndPointSignal.FRAME_START);
-
-	double[] in = input.getAudioSamples();
+	double[] in = input.getSamples();
         int length = in.length;
 
         // prepend overflow samples
@@ -208,15 +201,13 @@ public class Windower extends DataProcessor {
         // save elements that also belong to the next window
         overflowBuffer.reset();
         overflowBuffer.append(in, residual, length - residual);
-
-        // send a Signal indicating end of frame
-        outputQueue.add(EndPointSignal.FRAME_END);
     }
 
 
     /**
      * What happens when an EndPointSignal.SEGMENT_END signal is
-     * received.
+     * received. Basically pads up to a window of the overflow buffer
+     * with zeros, and then apply the Hamming window to it.
      */
     private void processSegmentEnd() {
         overflowBuffer.padWindow(windowSize);
@@ -257,7 +248,7 @@ public class Windower extends DataProcessor {
             }
             
             // add the frame to the output queue
-            outputQueue.add(new AudioFrame(myWindow));
+            outputQueue.add(new Audio(myWindow));
 
             if (getDump()) {
                 System.out.println

@@ -7,10 +7,6 @@ package edu.cmu.sphinx.frontend;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Vector;
 
 
 /**
@@ -38,8 +34,7 @@ import java.util.Vector;
  *
  * @see FeatureFrame 
  */
-public class FrontEnd implements DataSource, Runnable {
-
+public class FrontEnd extends DataProcessor implements Runnable {
 
     /**
      * The name of the SphinxProperty for sample rate in Hertz (i.e.,
@@ -85,110 +80,68 @@ public class FrontEnd implements DataSource, Runnable {
     "edu.cmu.sphinx.frontend.cepstrumSize";
     
 
-    private String context;
-    private List processors = null;
-    private DataSource audioFrameSource;
-    private List queue;
-    private Timer timer;
+    private AudioSource audioSource;
+    private FeatureSource featureSource;
     
 
     /**
      * Constructs a default FrontEnd.
      */
-    public FrontEnd(String context) {
-        this.context = context;
-	processors = new LinkedList();
-        queue = new Vector();
-        timer = Timer.getTimer(context, "FrontEnd");
+    public FrontEnd(String name, String context) {
+        super(name, context);
+    }
+
+
+    public AudioSource getAudioSource() {
+        return audioSource;
+    }
+
+
+    public void setAudioSource(AudioSource audioSource) {
+        this.audioSource = audioSource;
     }
 
 
     /**
-     * Adds the given processor to the list of processors.
+     * Sets the FeatureSource of this FrontEnd.
      *
-     * @param processor the DataProcessor to add
+     * @param featureSource the FeatureSource
      */
-    public void addProcessor(DataProcessor processor) {
-	if (processors == null) {
-	    processors = new LinkedList();
-	}
-	processors.add(processor);
+    public void setFeatureSource(FeatureSource featureSource) {
+        this.featureSource = featureSource;
     }
 
 
     /**
-     * Returns all the processors.
+     * Returns the next N number of Features produced by this FrontEnd
+     * as a single FeatureFrame.
+     * The number of Features return maybe less than N, in which
+     * case the last Feature will contain a Signal.SEGMENT_END signal.
+     * However, the size of the FeatureFrame will still be N.
      *
-     * @return all the processors
-     */
-    public List getProcessors() {
-        return processors;
-    }
-
-
-    /**
-     * Links all the added processors together by calling
-     * <code>setSource()</code> on each processor.
-     */
-    private void linkProcessors() {
-	DataSource predecessor = null;
-	ListIterator iterator = processors.listIterator();
-
-	while (iterator.hasNext()) {
-	    DataProcessor current = (DataProcessor) iterator.next();
-	    current.setSource(predecessor);
-	    predecessor = current;
-	}
-    }
-
-
-    /**
-     * Returns the AudioSource of this FrontEnd.
+     * @param numberFeatures the number of Features to return
      *
-     * @return the AudioSource
-     */
-    public DataSource getAudioSource() {
-        return this.audioFrameSource;
-    }
-
-
-    /**
-     * Sets the source of audio input to this front-end.
-     *
-     * @param audioSource the source of audio data
-     *
-     * @see BatchFileAudioSource
-     * @see StreamAudioSource
-     */
-    public void setAudioSource(DataSource audioSource) {
-	this.audioFrameSource = audioSource;
-    }
-
-
-    /**
-     * Returns the next Data object produced by the FrontEnd, which
-     * can be a FeatureFrame, EndPointSignal.SEGMENT_START, or
-     * EndPointSignal.SEGMENT_END signals produced by this FrontEnd.
-     * Return null if no Data available
-     *
-     * @return a Data object, which is usually a FeatureFrame, or null
-     *    if no Data available
+     * @return the next N number of Features in a FeatureFrame
      *
      * @see FeatureFrame
      */
-    public Data read() {
-        synchronized (queue) {
-            if (queue.size() == 0) {
-                return null;
-            } else {
-                Object data = queue.remove(0);
-                if (data == null) {
-                    return null;
-                } else {
-                    return (Data) data;
-                }
+    public FeatureFrame getFeatureFrame(int numberFeatures) throws
+    IOException {
+
+        Feature[] features = new Feature[numberFeatures];
+        FeatureFrame featureFrame = new FeatureFrame(features);
+        Feature feature = null;
+
+        int i = 0;
+        do {
+            feature = featureSource.getFeature();
+            features[i++] = feature;
+            if (feature.hasSegmentEndSignal()) {
+                break;
             }
-        }
+        } while (i < numberFeatures);
+        
+        return featureFrame;
     }
 
 
@@ -199,44 +152,18 @@ public class FrontEnd implements DataSource, Runnable {
      */
     public void run() {
 
-        linkProcessors();
+        getTimer().start();
 
-	// set the data source of the first processor 
-	DataProcessor first = (DataProcessor) processors.get(0);
-	if (first != null) {
-	    first.setSource(this.audioFrameSource);
-	}
-
-	DataProcessor last =
-	    (DataProcessor) processors.get(processors.size() - 1);
-
-        timer.start();
-
-	if (last != null) {
-            Data output = null;
+        Feature feature = null;
+        
+        try {
             do {
-                try {
-                    output = last.read();
-                    if (output != null) {
-                        handleData(output);
-                    }
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                }                
-            } while (output != null);
+                feature = featureSource.getFeature();
+            } while (feature != null);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
 
-        timer.stop();
-    }
-
-
-    /**
-     * Handles an incoming Data object.
-     */
-    private void handleData(Data input) {
-        if (input instanceof Feature ||
-            input instanceof EndPointSignal) {
-            queue.add(input);
-        }
+        getTimer().stop();
     }
 }

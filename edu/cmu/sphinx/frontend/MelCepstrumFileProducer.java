@@ -13,7 +13,8 @@ import java.io.IOException;
 /**
  * Produces MelCepstrum data from a file.
  */
-public class MelCepstrumFileProducer extends DataProcessor {
+public class MelCepstrumFileProducer extends DataProcessor implements
+CepstrumSource {
 
     public final static String PROP_CEPSTRUM_FILE =
 	"edu.cmu.sphinx.frontend.MelCepstrumFileProducer.file";
@@ -31,9 +32,10 @@ public class MelCepstrumFileProducer extends DataProcessor {
      *
      * @throws IOException if an error occurs while reading the data
      */
-    public MelCepstrumFileProducer(String context) throws IOException {
-	super("MelCepstrumFileProducer", context);
-	initSphinxProperties(context);
+    public MelCepstrumFileProducer(String name, String context) throws
+    IOException {
+	super(name, context);
+	initSphinxProperties();
 	est = new ExtendedStreamTokenizer(path);
 	numFrames = est.getInt("num_frames");
 	est.expectString("frames");
@@ -42,7 +44,7 @@ public class MelCepstrumFileProducer extends DataProcessor {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void initSphinxProperties(String context) {
+    private void initSphinxProperties() {
 	SphinxProperties properties = getSphinxProperties();
 	cepstrumLength = properties.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
 	path = properties.getString(PROP_CEPSTRUM_FILE, "file");
@@ -51,29 +53,29 @@ public class MelCepstrumFileProducer extends DataProcessor {
 
 
     /**
-     * Returns the next Data object, which is the mel cepstrum of the
-     * input frame. However, it can also be other Data objects
+     * Returns the next Cepstrum object, which is the mel cepstrum of the
+     * input frame. However, it can also be other Cepstrum objects
      * like a EndPointSignal.
      *
-     * @return the next available Data object, returns null if no
-     *     Data object is available
+     * @return the next available Cepstrum object, returns null if no
+     *     Cepstrum object is available
      */
-    public Data read() throws IOException {
+    public Cepstrum getCepstrum() throws IOException {
 
-	Data data = null;
+	Cepstrum data = null;
 
 	if (curFrame == 0) {
-	    data = EndPointSignal.SEGMENT_START;
+	    data = new Cepstrum(Signal.SEGMENT_START);
 	} else if (curFrame == numFrames) {
-            data = EndPointSignal.SEGMENT_END;
+            data = new Cepstrum(Signal.SEGMENT_END);
 	} else if (curFrame > numFrames) {
             data = null;
 	} else {
-	    float[] vectorData = new float[cepstrumLength];
+	    float[] vectorCepstrum = new float[cepstrumLength];
 	    for (int i = 0; i < cepstrumLength; i++) {
-		vectorData[i] = est.getFloat("cepstrum data");
+		vectorCepstrum[i] = est.getFloat("cepstrum data");
 	    }
-	    data  = new Cepstrum(vectorData);
+	    data  = new Cepstrum(vectorCepstrum);
 	    System.out.println("CP " + data);
 	}
 	curFrame++;

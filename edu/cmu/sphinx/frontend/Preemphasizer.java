@@ -4,7 +4,6 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
 
@@ -13,8 +12,8 @@ import java.io.IOException;
  * Filters out the attenuation of audio data. Speech signals have an
  * attenuation of 20 dB/dec. Preemphasis flatten the signal to make it
  * less susceptible to finite precision effects later in the signal
- * processing. The Preemphasizer takes a AudioFrame as input
- * and outputs the same AudioFrame, but with preemphasis applied.
+ * processing. The Preemphasizer takes a Audio as input
+ * and outputs the same Audio, but with preemphasis applied.
  *
  * The SphinxProperties of this Preemphasizer are: <pre>
  * edu.cmu.sphinx.frontend.preemphasis.dump
@@ -26,9 +25,9 @@ import java.io.IOException;
  *
  * Other Data objects are passed along unchanged through this Preemphasizer.
  *
- * @see AudioFrame
+ * @see Audio
  */
-public class Preemphasizer extends DataProcessor {
+public class Preemphasizer extends DataProcessor implements AudioSource {
 
 
     /**
@@ -40,6 +39,7 @@ public class Preemphasizer extends DataProcessor {
     
     private float preemphasisFactor;
     private double prior;
+    private AudioSource predecessor;
 
 
     /**
@@ -47,9 +47,11 @@ public class Preemphasizer extends DataProcessor {
      *
      * @param the context of SphinxProperty this Preemphasizer uses
      */
-    public Preemphasizer(String context) {
-        super("Preemphasizer", context);
+    public Preemphasizer(String name, String context,
+                         AudioSource predecessor) {
+        super(name, context);
         initSphinxProperties();
+        this.predecessor = predecessor;
     }
 
 
@@ -63,7 +65,7 @@ public class Preemphasizer extends DataProcessor {
 
 
     /**
-     * Returns the next Data object, which is usually a AudioFrame,
+     * Returns the next Data object, which is usually a Audio,
      * produced by this Preemphasizerm, though it can also be Data objects
      * like EndPoint.SEGMENT_START.
      *
@@ -73,45 +75,46 @@ public class Preemphasizer extends DataProcessor {
      * @throws java.io.IOException if there is an error reading
      * the Data objects
      *
-     * @see AudioFrame
+     * @see Audio
      */
-    public Data read() throws IOException {
+    public Audio getAudio() throws IOException {
 
-	Data input = getSource().read();
+	Audio input = predecessor.getAudio();
+
+        getTimer().start();
         
-        if (input instanceof AudioFrame) {
-            input = process((AudioFrame) input);
+        if (input != null && input.hasContent()) {
+            applyPreemphasis(input);
 	}
+
+        getTimer().stop();
 
         return input;
     }	
 
 
     /**
-     * Applies pre-emphasis filter to the given AudioFrame.
+     * Applies pre-emphasis filter to the given Audio. The preemphasis
+     * is applied in place.
      *
-     * @param input a AudioFrame of audio data
-     *
-     * @return a AudioFrame of data with pre-emphasis filter applied
+     * @param input a Audio of audio data
      */
-    private Data process(AudioFrame input) {
+    private void applyPreemphasis(Audio input) {
 
-        getTimer().start();
-
-	double[] in = input.getAudioSamples();
+	double[] in = input.getSamples();
 	
-        // set the prior value for the next AudioFrame
+        // set the prior value for the next Audio
         double nextPrior = prior;
         if (in.length > 0) {
             nextPrior = in[in.length - 1];
         }
 
 	if (in.length > 1 && preemphasisFactor != 0.0) {
-	    // do preemphasis
+	    
+            // do preemphasis
             double current;
             double previous = in[0];
-            
-	    in[0] = previous - preemphasisFactor * prior;
+            in[0] = previous - preemphasisFactor * prior;
 
 	    for (int i = 1; i < in.length; i++) {
                 current = in[i];
@@ -121,13 +124,9 @@ public class Preemphasizer extends DataProcessor {
 	}
 
         prior = nextPrior;
-        
-        getTimer().stop();
 
 	if (getDump()) {
 	    System.out.println("PREEMPHASIS " + input.toString());
 	}
-
-	return input;
     }
 }
