@@ -7,7 +7,6 @@ Here are some simple instructions.
 Requirements:
 
   - Usual set of gnu/unix tools (gawk/perl/cvs/mailx) must be in your path
-  - NIST align program must be your path.
   - a script called 'scvs' in your path that points to the sourecode
     repository.  A typical implementation of scvs would look like
     this:
@@ -38,3 +37,47 @@ Requirements:
 PATH=$PATH:"$HOME/bin:/lab/speech/bin:/usr/dist/exe:/pkg/gnu/bin:/lab/speech/java/j2sdk1.4.0/bin::/lab/speech/bin:/usr/bin:/usr/ucb:/lab/speech/java/j2sdk1.4.0/bin:."
 export PATH
 
+
+
+There are a number of scripts associated with the regression tests.
+Here is a summary of them and what they do.
+
+
+ConnectedDigitsResults.list - list of make targets for ConnectedDigits tests.
+IsolatedDigitsResults.list - the list of make targets for IsolatedDigits tests.
+README - this file 
+SmallVocabResults.list - the list of make targets for SmallVocab tests
+collectMetrics - collects the source metrics
+cvs_history - collects the cvs history
+dummyTests - a set of dummy tets
+executeRegressionTest - the main test program
+getTime  - gets the time in seconds since the epoch
+installTwikiPage - installs a page in the sourceforge twiki
+mailReport - mails a summary report to the mailing list
+makeReport - creates the test summary report
+makeTwikiDetailReport - creates the detailed twiki test tables
+makeTwikiSummaryReport - creates the summary twiki test tables 
+makeWebpage - creates the regression_report summary web page
+mangueira_weekly_test_schedule.crontab - crontab entries for mangueira
+parseS4Output - generates a regression.log entry from s4 output
+pushAllTwikiReports - publishes all twiki reports to the web
+pushChanges - publishes the 'what has changed' pages to the web
+pushReport - publishes the regression report summary web page
+pushTwikiReports - pushes a set of twiki reports to the web
+regression.log - the test log database
+regressionTest - the toplevel test, performs minimal work then calls
+executeRegressionTest
+runTest - runs a single test
+runTests_an4 - runs a set of tests
+runTests_an4_full - runs a set of tests
+runTests_an4_plus - runs a set of tests
+runTests_an4_spelling - runs a set of tests
+runTests_an4_words - runs a set of tests
+runTests_quick - runs a set of tests
+runTests_rm1 - runs a set of tests
+runTests_standard - runs a set of tests
+runTests_ti46 - runs a set of tests
+runTests_tidigits - runs a set of tests
+updateLog - updates the regression.log in CVS
+debris_weekly_test_schedule.crontab - weekly schedule for debris.
+whatsNew - generates the 'what has changed' web pages

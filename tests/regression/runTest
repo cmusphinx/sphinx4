@@ -30,4 +30,4 @@ fi
 
 cd $base
 
-$base/parseLog $rawOutput $status | $base/updateLog
+$base/parseS4Output $rawOutput $status | $base/updateLog

@@ -9,19 +9,32 @@
 #
 # This script parses the output of S4 and generates a log entry
 #
-# usage: parseLog logfile testStatus
+# usage: parseS4Output logfile [testStatus]
+#
+# if testStatus is not given, we assume that we are running
+# interactively and will generate an OK testStatus and will use the
+# current date and time.
 #
 
 gawk '
 
 BEGIN {
 
-    if (ARGC != 3 ) {
-        print "Usage: parseLog  logfile status"
+    if (ARGC == 3) {
+	status = ARGV[2];
+	ARGV[2] = "";
+	# use date/time that the test was started so we can
+	# more easily track down CVS history
+	getline date < ".startDate";
+	getline time < ".startTime";
+    } else if (ARGC == 2) {
+        status = "OK";
+	"date +%Y-%m-%d" | getline date;
+	 "date +%T" | getline time;
+    } else {
+        print "Usage: parseS4Output  logfile [status]"
 	exit
     }
-    status = ARGV[2];
-    ARGV[2] = "";
 
 # Here is a sample of what we are parsing
 #
@@ -70,11 +83,6 @@ END {
     #"date +%Y-%m-%d" | getline date;
     # "date +%T" | getline time;
 
-    # use date/time that the test was started so we can
-    # more easily track down CVS history
-
-    getline date < ".startDate";
-    getline time < ".startTime";
 
     "hostname" | getline machine;
     "uptime" | getline uptime;
