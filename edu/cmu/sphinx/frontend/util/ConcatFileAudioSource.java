@@ -169,13 +169,12 @@ public class ConcatFileAudioSource implements AudioSource {
      * @param batchFile the file containing a list of audio files to read from
      */
     public ConcatFileAudioSource(String name, String context,
-                                 SphinxProperties props, String batchFile)
+                                 SphinxProperties props,
+                                 String batchFile, String transcriptFile)
         throws IOException {
 
         this.context = context;
 
-        transcriptFile = props.getString
-            (PROP_TRANSCRIPT_FILE, PROP_TRANSCRIPT_FILE_DEFAULT);
         if (transcriptFile != null) {
             transcript = new FileWriter(transcriptFile);
         }
@@ -236,15 +235,6 @@ public class ConcatFileAudioSource implements AudioSource {
         return referenceList;
     }
 
-    /**
-     * Returns the transcript file name.
-     *
-     * @return the transcript file name
-     */
-    public String getTranscriptFile() {
-        return transcriptFile;
-    }
-    
     /**
      * Returns the audio time in seconds represented by the given
      * number of bytes.
