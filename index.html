@@ -365,7 +365,7 @@ setenv JAVA_HOME /usr/java/j2sdk1.4.2
       <li>
       <b>Instructions for retrieving code from a release package.</b>
       <p>
-      Sphinx-4 has two packages available for <a href="">download</a>:
+      Sphinx-4 has two packages available for <a href="http://sourceforge.net/project/showfiles.php?group_id=1904">download</a>:
       <ul>
       <li>
       <b>sphinx4-bin-{version}.zip</b>: 
@@ -392,13 +392,23 @@ jar xvf sphinx4-src-{version}.zip</pre>
       sphinx4-src-{version}.zip, a directory called "sphinx4-src-{version}"
       will be created.
       </p>
+
+      <p>
+      There are also the RM1 acoustic model, and HUB4 acoustic and language
+      models, available for download at the same location on SourceForge.
+      Download them only if you want to run the regression tests for RM1 and 
+      HUB4.
+      </p>
+
       </li>
 
       <li><a name="cvs"><b>Instructions for retrieving code from the cvs trees</b></a>
       <p>If you want to be able to get the latest updates from the CVS source
          tree, you should retrieve the code from the CVS source tree on
 	 SourceForge. The Sphinx-4 code is located at 
-	 <a href="http://sourceforge.net/projects/cmusphinx">sourceforge.net</a> as open source. Please follow the instructions below to retrieve it.</p>
+	 <a href="http://sourceforge.net/projects/cmusphinx">sourceforge.net
+	 </a> as open source. Please follow the instructions below to retrieve
+	 it.</p>
           <ul>
 	  <li>Make sure that you set the environment variable CVS_RSH to
 	      ssh. See the <a href="#faq">troubleshooting</a> section for more
@@ -784,8 +794,9 @@ d:\work\sphinx4&gt;ant clean
   <a name="medium_vocab_test"><br><b>Medium Vocabulary</b></a>
 
   <p>
-  Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary RM1 model</a> file, called
-  <code>RM1_13dCep_16k_40mel_130Hz_6800Hz.jar</code>.
+  Make sure that you have downloaded the binary RM1 model file, called
+  <code>RM1_13dCep_16k_40mel_130Hz_6800Hz.jar</code>, located at the
+  <code>sphinx4</code> package in the <a href="http://sourceforge.net/project/showfiles.php?group_id=1904">downloads page</a>.
   <br>
   Then in the build file for the RM1 tests,
   <code>sphinx4/tests/performance/rm1/build.xml</code>,
@@ -814,18 +825,29 @@ d:\work\sphinx4&gt;ant clean
   <a name="large_vocab_test"><br><b>Large Vocabulary</b></a>
 
   <p>
-  Make sure that you have downloaded the
-  <a href="">binary HUB4 model</a> file, which is called
-  <code>HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.jar</code>. Then, in the build
-  file for the HUB4 tests, <code>sphinx4/tests/performance/hub4/build.xml
-  </code>, changed the <code>classpath</code> property of the build file to 
-  point to the location of your 
-  <code>HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.jar</code>.
+  You must have the HUB4 test data, available from the 
+  <a href="http://wave.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC2000S88">LDC HUB4</a> website.
   </p>
 
   <p>
-  You must have the HUB4 test data, available from the 
-  <a href="http://wave.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC2000S88">LDC HUB4</a> website.
+  You must download the binary HUB4 model file, called 
+  <code>HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.jar</code>, and the
+  binary HUB4 trigram language model, called <code>HUB4_trigram_lm.jar</code>,
+  both located at the <code>sphinx4</code> package in the 
+  <a href="http://sourceforge.net/project/showfiles.php?group_id=1904">
+  downloads page</a>. For the trigram language model file, unpack it by:
+  <pre>jar xvf HUB4_trigram_lm.jar</pre>
+  The trigram model file is called <code>language_model.arpaformat.DMP</code>.
+  Then, in the build file for the HUB4 tests, 
+  <code>sphinx4/tests/performance/hub4/build.xml</code>, 
+  changed the <code>classpath</code> property of the build file to 
+  point to the location of your 
+  <code>HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.jar</code>.
+  In the configuration file, 
+  <code>tests/performance/hub4/hub4.config.xml</code>, change the 'location'
+  of the 'trigramModel' component to where your 
+  <code>language_model.arpaformat.DMP</code>
+  file is located.
   </p>
 
   <p>
