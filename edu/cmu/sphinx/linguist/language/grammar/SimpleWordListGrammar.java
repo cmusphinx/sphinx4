@@ -127,18 +127,17 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
      *  
      */
     protected GrammarNode createGrammar() throws IOException {
-        int identity = 0;
         ExtendedStreamTokenizer tok = new ExtendedStreamTokenizer(path, true);
-        GrammarNode initialNode = createGrammarNode(identity++, "<sil>");
-        GrammarNode branchNode = createGrammarNode(identity++, false);
-        GrammarNode finalNode = createGrammarNode(identity++, "<sil>");
+        GrammarNode initialNode = createGrammarNode("<sil>");
+        GrammarNode branchNode = createGrammarNode(false);
+        GrammarNode finalNode = createGrammarNode("<sil>");
         finalNode.setFinalNode(true);
         List wordGrammarNodes = new LinkedList();
         while (!tok.isEOF()) {
             String word;
             while ((word = tok.getString()) != null) {
                 word = word.toLowerCase();
-                GrammarNode wordNode = createGrammarNode(identity++, word);
+                GrammarNode wordNode = createGrammarNode(word);
                 wordGrammarNodes.add(wordNode);
             }
         }

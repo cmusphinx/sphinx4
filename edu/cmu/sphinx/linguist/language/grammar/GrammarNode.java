@@ -87,6 +87,7 @@ public class GrammarNode implements Serializable {
     }
 
 
+
     /**
      * Retrieves the words associated with this grammar node
      *
@@ -387,5 +388,22 @@ public class GrammarNode implements Serializable {
      */
     public void dump() {
 	 System.out.println(traverse(0, new HashSet(), 1.0f));
+    }
+
+
+    /**
+     * Splits this node into a pair of nodes. The first node in the pair 
+     * retains the word info, and a single branch to the new second node. The
+     * second node retains all of the original successor branches.
+     *
+     * @param id the id of the new node
+     * @return the newly created second node.
+     */
+    GrammarNode splitNode(int id) {
+        GrammarNode branchNode = new GrammarNode(id, false);
+        branchNode.arcList = arcList;
+        this.arcList = new ArrayList();
+        add(branchNode, 0.0f);
+        return branchNode;
     }
 }

@@ -78,13 +78,12 @@ public class LMGrammar extends Grammar {
         if (languageModel.getMaxDepth() > 2) {
             System.out.println("Warning: LMGrammar  limited to bigrams");
         }
-        int identity = 0;
         List nodes = new ArrayList();
         Set words = languageModel.getVocabulary();
         // create all of the word nodes
         for (Iterator i = words.iterator(); i.hasNext();) {
             String word = (String) i.next();
-            GrammarNode node = createGrammarNode(identity++, word);
+            GrammarNode node = createGrammarNode(word);
             if (node != null && !node.isEmpty()) {
                 if (node.getWord().equals(
                         getDictionary().getSentenceStartWord())) {

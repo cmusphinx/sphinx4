@@ -59,6 +59,15 @@ public abstract class Grammar implements Configurable {
      * The default value for PROP_OPTIMIZE_GRAMMAR
      */
     public final static boolean PROP_OPTIMIZE_GRAMMAR_DEFAULT = true;
+
+    /**
+     * Property to control whether silence words are inserted into the graph
+     */
+    public final static String PROP_ADD_SIL_WORDS = "addSilenceWords";
+    /**
+     * The default value for PROP_ADD_SIL_WORDS
+     */
+    public final static boolean PROP_ADD_SIL_WORDS_DEFAULT  = false;
     /**
      * Property that defines the dictionary to use for this grammar
      */
@@ -70,11 +79,14 @@ public abstract class Grammar implements Configurable {
     private Logger logger;
     private boolean showGrammar;
     private boolean optimizeGrammar = true;
+    private boolean addSilenceWords = false;
     private Dictionary dictionary;
     private GrammarNode initialNode;
     private Set grammarNodes;
     private final static Word[][] EMPTY_ALTERNATIVE = new Word[0][0];
     private Random randomizer = new Random();
+    private int identity = 0;
+    private int maxIdentity = 0;
 
     /*
      * (non-Javadoc)
@@ -88,6 +100,7 @@ public abstract class Grammar implements Configurable {
         registry.register(PROP_DICTIONARY, PropertyType.COMPONENT);
         registry.register(PROP_SHOW_GRAMMAR, PropertyType.BOOLEAN);
         registry.register(PROP_OPTIMIZE_GRAMMAR, PropertyType.BOOLEAN);
+        registry.register(PROP_ADD_SIL_WORDS, PropertyType.BOOLEAN);
     }
 
     /*
@@ -101,6 +114,8 @@ public abstract class Grammar implements Configurable {
                 PROP_SHOW_GRAMMAR_DEFAULT);
         optimizeGrammar = ps.getBoolean(PROP_OPTIMIZE_GRAMMAR,
                 PROP_OPTIMIZE_GRAMMAR_DEFAULT);
+        addSilenceWords = ps.getBoolean(PROP_ADD_SIL_WORDS,
+                PROP_ADD_SIL_WORDS_DEFAULT);
         dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY,
                 Dictionary.class);
     }
@@ -121,6 +136,9 @@ public abstract class Grammar implements Configurable {
         dictionary.allocate();
         grammarNodes = new HashSet();
         initialNode = createGrammar();
+        if (addSilenceWords) {
+            addSilenceWords();
+        }
         if (optimizeGrammar) {
             optimizeGrammar();
         }
@@ -322,7 +340,38 @@ public abstract class Grammar implements Configurable {
         }
         node = new GrammarNode(identity, alternatives);
         add(node);
+
+        if (identity > maxIdentity) {
+            maxIdentity = identity;
+        }
         return node;
+    }
+
+    /**
+     * Returns a new GrammarNode with the given single word. If the word is not
+     * in the dictionary, an empty node is created. The grammar id is automatically
+     * assigned
+     * 
+     * @param word
+     *                the word for this grammar node
+     */
+
+    protected GrammarNode createGrammarNode(String word) {
+        GrammarNode node =  createGrammarNode(identity++, word);
+        return node;
+    }
+
+    /**
+     * Creates an empty  grammar node in this grammar. The gramar ID is 
+     * automatically assigned.
+     * 
+     * @param isFinal
+     *                if true, this is a final node
+     * 
+     * @return the grammar node
+     */
+    protected GrammarNode createGrammarNode(boolean isFinal) {
+        return createGrammarNode(identity++, isFinal);
     }
 
     /**
@@ -349,6 +398,9 @@ public abstract class Grammar implements Configurable {
             node = createGrammarNode(identity, false);
             logger.warning("Can't find pronunciation for " + word);
         }
+        if (identity > maxIdentity) {
+            maxIdentity = identity;
+        }
         return node;
     }
 
@@ -366,6 +418,9 @@ public abstract class Grammar implements Configurable {
         GrammarNode node;
         node = new GrammarNode(identity, isFinal);
         add(node);
+        if (identity > maxIdentity) {
+            maxIdentity = identity;
+        }
         return node;
     }
 
@@ -390,6 +445,30 @@ public abstract class Grammar implements Configurable {
         for (Iterator i = nodes.iterator(); i.hasNext();) {
             GrammarNode g = (GrammarNode) i.next();
             g.optimize();
+        }
+    }
+
+
+    /**
+     * Adds an optional silence word after every non-filler word in the
+     * grammar
+     */
+    private void addSilenceWords() {
+        Set nodes =  new HashSet(getGrammarNodes());
+        int nextID = maxIdentity + 1;
+        for (Iterator i = nodes.iterator(); i.hasNext();) {
+            GrammarNode g = (GrammarNode) i.next();
+            if (!g.isEmpty() && !g.getWord().isFiller()) {
+                GrammarNode silNode = createGrammarNode(nextID++,
+                        dictionary.getSilenceWord().getSpelling());
+
+                GrammarNode branchNode = g.splitNode(nextID++);
+                add(branchNode);
+
+                g.add(silNode, 0.00f);
+                silNode.add(branchNode, 0.0f);
+                silNode.add(silNode, 0.0f);
+            }
         }
     }
 }
