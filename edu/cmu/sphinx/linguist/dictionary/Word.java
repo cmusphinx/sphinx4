@@ -16,8 +16,7 @@ package edu.cmu.sphinx.linguist.dictionary;
 import java.io.Serializable;
 
 /**
- *  Provides pronunciation information for a word.
- *
+ * Represents a word, its spelling and its pronunciation.
  */
 public class Word implements Serializable {
 

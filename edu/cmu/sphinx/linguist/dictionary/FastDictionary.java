@@ -36,14 +36,37 @@ import edu.cmu.sphinx.util.Timer;
 
 
 /**
- * This is a simple dictionary that reads in the sphinx3 format
- * dictionary. In this dictionary there is only one possible
- * pronunciation per word. This is called the FastDictionary
+ * Creates a dictionary by quickly reading in an ASCII-based Sphinx-3 format
+ * dictionary. It is called the FastDictionary
  * because the loading is fast. When loaded the dictionary just
  * loads each line of the dictionary into the hash table, assuming
  * that most words are not going to be used. Only when a word is
  * actually used is its pronunciations massaged into an array of
- * pronunciations. 
+ * pronunciations.
+ * <p>
+ * The format of the ASCII dictionary that it explains is the same as 
+ * the {@link FullDictionary FullDictionary}, i.e., the word, followed
+ * by spaces or tab, followed by the pronunciation(s). For example,
+ * a digits dictionary will look like:
+ *
+ * <pre>
+ * ONE                  HH W AH N
+ * ONE(2)               W AH N
+ * TWO                  T UW
+ * THREE                TH R IY
+ * FOUR                 F AO R
+ * FIVE                 F AY V
+ * SIX                  S IH K S
+ * SEVEN                S EH V AH N
+ * EIGHT                EY T
+ * NINE                 N AY N
+ * ZERO                 Z IH R OW
+ * ZERO(2)              Z IY R OW
+ * OH                   OW
+ * </pre>
+ * <p>
+ * In the above example, the words "one" and "zero" have two pronunciations
+ * each.
  */
 public class FastDictionary implements Dictionary {
 

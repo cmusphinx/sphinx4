@@ -34,9 +34,35 @@ import edu.cmu.sphinx.util.Timer;
 
 
 /**
- * This is a simple dictionary that reads in the sphinx3 format
- * dictionary. In this dictionary there is only one possible
- * pronunciation per word.
+ * Creates a dictionary by reading in an ASCII-based Sphinx-3
+ * format dictionary. Each line of the dictionary specifies the
+ * word, followed by spaces or tab, followed by the pronuncation
+ * (by way of the list of phones) of the word. Each word can have
+ * more than one pronunciations.
+ * For example, a digits dictionary will look like:
+ *
+ * <pre>
+ * ONE                  HH W AH N
+ * ONE(2)               W AH N
+ * TWO                  T UW
+ * THREE                TH R IY
+ * FOUR                 F AO R
+ * FIVE                 F AY V
+ * SIX                  S IH K S
+ * SEVEN                S EH V AH N
+ * EIGHT                EY T
+ * NINE                 N AY N
+ * ZERO                 Z IH R OW
+ * ZERO(2)              Z IY R OW
+ * OH                   OW
+ * </pre>
+ * <p>
+ * In the above example, the words "one" and "zero" have two pronunciations
+ * each.
+ * <p>
+ * This dictionary will read in all the words and its pronunciation(s)
+ * at startup. Therefore, if the dictionary is big, it will take longer
+ * to load and will consume more memory.
  */
 public class FullDictionary implements Dictionary {
 
