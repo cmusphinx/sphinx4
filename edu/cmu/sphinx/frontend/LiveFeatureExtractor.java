@@ -330,21 +330,27 @@ public class LiveFeatureExtractor extends DataProcessor
      * @return a FeatureFrame
      */
     private void computeFeatures(int totalFeatures) {
-
         getTimer().start();
-
-	// create the Features
-	for (int i = 0; i < totalFeatures; i++) {
-            Feature feature = computeNextFeature();
-            if (feature != null) {
-                outputQueue.add(feature);
-                if (getDump()) {
-                    System.out.println("FEATURE " + feature.toString());
-                }
+        if (totalFeatures == 1) {
+            computeFeature();
+        } else {
+            // create the Features
+            for (int i = 0; i < totalFeatures; i++) {
+                computeFeature();
             }
-	}
-
+        }
         getTimer().stop();
+    }
+
+    /**
+     * Computes the next Feature.
+     */
+    private void computeFeature() {
+        Feature feature = computeNextFeature();
+        outputQueue.add(feature);
+        if (getDump()) {
+            System.out.println("FEATURE " + feature.toString());
+        }
     }
 
     /**
