@@ -13,7 +13,6 @@ import java.io.IOException;
  * Computes the FFT of an input sequence.
  * This is a code under construction. Lots of things need to
  * be revised. Don't use it as is!!! As yet.
- * <br><b>PI</b> is 3.14159265358979323846
  */
 public class SpectrumAnalyzer extends DataProcessor {
 
@@ -24,7 +23,6 @@ public class SpectrumAnalyzer extends DataProcessor {
     public static final String PROP_NPOINT =
 	"edu.cmu.sphinx.frontend.fastFourierTransform.NPoint";
 
-    private static final double PI = 3.14159265358979323846;
     private int windowSize;
     private int NPoint;
     private int log2N;
@@ -33,14 +31,27 @@ public class SpectrumAnalyzer extends DataProcessor {
     /**
      * Constructs a default Spectrum Analyzer.
      */
-    public SpectrumAnalyzer(float[] input, float[] output) {
+    public void SpectrumAnalyzer() {
+
 	getSphinxProperties();
-	computeLog2N(NPoint);
+	computeLog2N();
 	createWk(NPoint, false);
 
-	/**
-	 * EVERYTHING BEYOND THIS POINT SHOULD ACTUALLY BE "PROCESS"
-	 */
+    }
+
+    /**
+     * Process data, creating the power spectrum from an input
+     * audio frame.
+     *
+     * @param input input audio frame
+     *
+     * @return power spectrum
+     *
+     * @throws java.lang.IllegalArgumentException
+     *
+     */
+    private Spectrum process (DoubleAudioFrame input) 
+	throws IllegalArgumentException {
 
 	/**
 	 * Create complex input sequence equivalent to the real
@@ -49,18 +60,22 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * we incur in aliasing. If it's greater, we pad the input
 	 * sequence with zeros.
 	 */
+	double[] in = input.getData();
+	if (in.length != windowSize) {
+	    throw new IllegalArgumentException("Window size is incorrect");
+	}
 	Complex[] inputSeq = new Complex[NPoint];
 	if (NPoint < windowSize) {
 	    for (int i = 0; i < NPoint; i++) {
-		inputSeq[i]= new Complex((double) input[i]);
+		inputSeq[i]= new Complex((double) in[i]);
 	    }
 	    for (int i = NPoint; i < windowSize; i++) {
 		inputSeq[i % NPoint].addComplex(inputSeq[i % NPoint],
-						  new Complex((double) input[i]));
+						new Complex((double) in[i]));
 	    }
 	} else {
 	    for (int i = 0; i < windowSize; i++) {
-		inputSeq[i] = new Complex((double) input[i]);
+		inputSeq[i] = new Complex((double) in[i]);
 	    }
 	    for (int i = windowSize; i < NPoint; i++) {
 		inputSeq[i] = new Complex();
@@ -76,6 +91,12 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * Start Fast Fourier Transform recursion
 	 */
 	recurseFFT(inputSeq, outputSpectrum, NPoint, false);
+
+	/**
+	 * Return the power spectrum
+	 */
+	Spectrum output = new Spectrum(outputSpectrum);
+	return output;
     }
 
 
@@ -101,13 +122,14 @@ public class SpectrumAnalyzer extends DataProcessor {
      * Make sure the number of points in the FFT is a power
      * of 2 by computing its log base 2 and checking for
      * remainders.
+     *
+     * @throws java.lang.IllegalArgumentException
+     *
      */
-    private void computeLog2N(int N) {
-	for (int k = N, log2N = 0; k > 1; k >>= 1, log2N++) {
-	    if (((k % 2) != 0) || (N < 0)) {
-		/* Break horribly.
-		 * Maybe throw an exception? Which? 
-		 */
+    private void computeLog2N() throws IllegalArgumentException {
+	for (int k = NPoint, log2N = 0; k > 1; k >>= 1, log2N++) {
+	    if (((k % 2) != 0) || (NPoint < 0)) {
+		throw new IllegalArgumentException("Not a power of 2");
 	    }
 	}
     }
@@ -136,7 +158,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * For the inverse FFT,
 	 * w = 2 * PI / N;
 	 */
-	double w = -2 * PI / N;
+	double w = -2 * Math.PI / N;
 	if (invert == true){
 	    w = -w;
 	}
@@ -177,7 +199,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * The direct and inverse FFT are essentially the same
 	 * algorithm, except for two difference: a scaling factor
 	 * of "NPoint" and the signal of the exponent in the Wk
-	 * vectors, defined in the method "createWk".
+	 * vectors, defined in the method <code>createWk</code>.
 	 */
 
 	if (invert == false){
@@ -221,15 +243,20 @@ public class SpectrumAnalyzer extends DataProcessor {
      * and "1" and output "1" comes from input "0" and "1") resembles a
      * butterfly.
      *
+     * We repeat <code>butterflyStage</code> for <b>log_2(NPoint)</b>
+     * stages, by calling the recursion with the argument
+     * <code>currentDistance</code> divided by 2 at each call, and
+     * checking if it's still > 0.
+     *
      * @param from the input sequence at each stage
      * @param to the output sequence
      * @param NPoint the total number of points
-     * @param currentStage the "distance" between elements in the butterfly
+     * @param currentDistance the "distance" between elements in the butterfly
      */
     private void butterflyStage(Complex[] from, 
 			   Complex[] to, 
 			   int NPoint, 
-			   int currentStage)
+			   int currentDistance)
     {
 	int ndx1From;
 	int ndx2From;
@@ -237,15 +264,11 @@ public class SpectrumAnalyzer extends DataProcessor {
 	int ndx2To;
 	int ndxWk = 0;
 	Complex wkTimesF2 = new Complex();
-	/**
-	 * We repeat butterflyStage for log_2(NPoint) stages, by
-	 * calling the recursion with the argument "currentStage"
-	 * divided by 2 at each call, and checking if it's still > 0.
-	 */
-	if (currentStage > 0){
-	    for (int s = 0; s < currentStage; s++) {
+
+	if (currentDistance > 0){
+	    for (int s = 0; s < currentDistance; s++) {
 		ndx1From = s;
-		ndx2From = s + currentStage;
+		ndx2From = s + currentDistance;
 		ndx1To = s;
 		ndx2To = s + (NPoint >> 1);
 		while (ndxWk < (NPoint >> 1)) {
@@ -261,11 +284,11 @@ public class SpectrumAnalyzer extends DataProcessor {
 		     * <b>to[ndx2To] = from[ndx1From] - wkTimesF2</b>
 		     */
 		    to[ndx2To].subtractComplex(from[ndx1From], wkTimesF2);
-		    ndx1From += (2 * currentStage);
-		    ndx2From += (2 * currentStage);
-		    ndx1To += currentStage;
-		    ndx2To += currentStage;
-		    ndxWk += currentStage;
+		    ndx1From += (2 * currentDistance);
+		    ndx2From += (2 * currentDistance);
+		    ndx1To += currentDistance;
+		    ndx2To += currentDistance;
+		    ndxWk += currentDistance;
 		}
 	    }
 
@@ -275,25 +298,36 @@ public class SpectrumAnalyzer extends DataProcessor {
 	     *
 	     * We switch the <i>to</i> and <i>from</i> variables,
 	     * the total number of points remains the same, and
-	     * the <i>currentStage</i> is divided by 2.
+	     * the <i>currentDistance</i> is divided by 2.
 	     */
-	    butterflyStage(to, from, NPoint, currentStage >> 1);
+	    butterflyStage(to, from, NPoint, currentDistance >> 1);
 	}
 	return;
     }
 
     /**
-     * Reads the next Data object, which is a normalized CepstrumFrame
-     * produced by this class. However, it can also be other Data objects
-     * like a SegmentEndPointSignal.
+     * Reads the next Data object, which is the power spectrum of the
+     * input frame. However, it can also be other Data objects
+     * like a EndPointSignal.
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
      */
     public Data read() throws IOException {
-        // EVANDRO: the below is dummy code to get it to compile,
-        // replace it with your code
-        return getSource().read();
+
+	Data input = getSource().read();
+        
+        if (input instanceof DoubleAudioFrame) {
+
+            input = process((DoubleAudioFrame) input);
+
+        } else if (input instanceof EndPointSignal) {
+	    // At this point - or in the call immediatelly preceding
+	    // this -, we should have created a cepstrum frame with
+	    // whatever data came last, even if we had less than
+	    // windowSize of data.
+	}
+	return input;
     }	
 
 
