@@ -41,6 +41,7 @@ class HMMPool {
     private int maxCIUnits = 0;
     private Unit[] unitTable;
     private Map unitMap;
+    private HMM hmmTable[][];
 
     HMMPool(AcousticModel model) {
         this.model = model;
@@ -74,6 +75,23 @@ class HMMPool {
             unitTable[id] = unit;
             // System.out.println("Unit " + unit + " id " + id);
         }
+
+
+        // build up the hmm table to allow quick access to the hmms
+        hmmTable = new
+            HMM[HMMPosition.MAX_POSITIONS][unitTable.length];
+
+        for (Iterator i = HMMPosition.iterator(); i.hasNext(); ) {
+            HMMPosition position = (HMMPosition) i.next();
+            int index = position.getIndex();
+            for (int j = 1 ; j < unitTable.length; j++) {
+                Unit unit = unitTable[j];
+                if (unit != null) {
+                    hmmTable[index][j] = 
+                        model.lookupNearestHMM(unit, position);
+                }
+            }
+        }
     }
 
 
@@ -98,21 +116,8 @@ class HMMPool {
      *
      * @return the hmm associated with the unit/position
      */
-    HMM getHMM(int unitID, HMMPosition position) {
-        Unit unit = getUnit(unitID);
-
-        if (unit == null) {
-            System.out.println("Can't find unit at position " + unitID);
-            int id = getLeftUnitID(unitID);
-            System.out.println("Left " + id + " unit " + getUnit(id));
-            id = getCentralUnitID(unitID);
-            System.out.println("central " + id + " unit " + getUnit(id));
-            id = getRightUnitID(unitID);
-            System.out.println("right " + id + " unit " + getUnit(id));
-
-        }
-        assert unit != null;
-        return model.lookupNearestHMM(unit, position);
+    final HMM getHMM(int unitID, HMMPosition position) {
+       return hmmTable[position.getIndex()][unitID];
     }
 
     /**

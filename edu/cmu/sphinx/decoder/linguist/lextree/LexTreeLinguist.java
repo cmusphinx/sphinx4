@@ -47,6 +47,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashSet;
+import java.util.Random;
+import java.util.Comparator;
 
 /**
  */
@@ -162,7 +164,7 @@ public class LexTreeLinguist implements  Linguist {
 
         StatisticsVariable.dumpAll();
 
-        testLinguist(5000, 2000);
+        testLinguist(5000, 5000);
     }
 
     /**
@@ -364,8 +366,18 @@ public class LexTreeLinguist implements  Linguist {
             String pos = central == null ? "" 
                 : central.getPosition().toString();
             return central + "[" + left +
-                   "," + right +"]@" + pos;
+                   "," + right +"]@" + pos + " " + getProbability();
         }
+
+       /**
+        * Returns a pretty version of the string representation 
+        * for this object
+        *
+        * @return a pretty string
+        */
+       public String toPrettyString() {
+           return toString();
+       }
     }
 
     /**
@@ -380,7 +392,7 @@ public class LexTreeLinguist implements  Linguist {
          * Creates a LexTreeInitialState object
          */
         LexTreeInitialState(LexTree.NonLeafLexNode node) {
-            super(null, null, null, 0.0f);
+            super(null, null, null, 0.0);
             this.node = node;
         }
 
@@ -456,7 +468,7 @@ public class LexTreeLinguist implements  Linguist {
          */
         LexTreeUnitState( LexTree.UnitLexNode left,
                LexTree.UnitLexNode central, LexTree.UnitLexNode right) {
-            super(left, central, right, logUnitInsertionProbability);
+            super(left, central, right, getInsertionProbability(central));
             int leftID;
 
             if (left == null) {
@@ -497,6 +509,7 @@ public class LexTreeLinguist implements  Linguist {
         public LanguageState[] getSuccessors() {
             LanguageState[] nextStates   = new LanguageState[1];
             HMMPosition position = getCentral().getPosition();
+
             HMM hmm = hmmPool.getHMM(unitID, position);
 
             nextStates[0] = new LexTreeHMMState(getLeft(), getCentral(),
@@ -504,30 +517,11 @@ public class LexTreeLinguist implements  Linguist {
             return nextStates;
         }
 
-        /**
-         * Determines the insertion probability for the given unit lex
-         * node
-         *
-         * @param unitNode the unit lex node
-         *
-         * @return the insertion probability
-         */
-        private double getInsertionProbability(LexTree.UnitLexNode unitNode) {
-            double logInsertionProbability = logUnitInsertionProbability;
-            if (unitNode.getUnit().isSilence()) {
-                logUnitInsertionProbability = logSilenceInsertionProbability;
-            } 
-            if (unitNode.isWordBeginning()) {
-                logInsertionProbability += logWordInsertionProbability;
-            }
-            return logInsertionProbability;
-        }
 
         public String toString() {
             return super.toString() + " unit";
         }
     }
-
 
     /**
      * Represents a HMM state in the search space
@@ -600,7 +594,7 @@ public class LexTreeLinguist implements  Linguist {
                 // probabilities into the search yet.
                         nextStates[i] = new LexTreeWordState(getLeft(), 
                                 getCentral(), getRight(), 
-                                (LexTree.WordLexNode) node, 0.0f);
+                                (LexTree.WordLexNode) node, 0.0);
                     }
                 } else {
 
@@ -744,6 +738,10 @@ public class LexTreeLinguist implements  Linguist {
              return super.toString() + " word:" +
                  wordLexNode.getPronunciation();
          }
+
+         public String toPrettyString() {
+             return wordLexNode.getPronunciation().getWord();
+         }
     }
 
     /**
@@ -763,15 +761,40 @@ public class LexTreeLinguist implements  Linguist {
         }
     }
 
+    /**
+     * Determines the insertion probability for the given unit lex
+     * node
+     *
+     * @param unitNode the unit lex node
+     *
+     * @return the insertion probability
+     */
+    private double getInsertionProbability(LexTree.UnitLexNode unitNode) {
+        double logInsertionProbability = logUnitInsertionProbability;
+        if (unitNode.getUnit().isSilence()) {
+            logUnitInsertionProbability = logSilenceInsertionProbability;
+        } 
+        if (unitNode.isWordBeginning()) {
+            logInsertionProbability += logWordInsertionProbability;
+        }
+        return logInsertionProbability;
+    }
+
 
     /**
      *  tests the linguist
      */
+
+    int nonEmittingStates;
+    int maxSuccessors;
+    boolean testTracing = true;
+
     public void testLinguist(int numFrames, int maxBeam) {
         // this test invokes the linguist using access patterns that
         // are similar to a real search. It allows for timing and
         // profiling of the linguist, independent of the search
         // or scoring
+        Random random = new Random(1000);
         Timer frameTimer = Timer.getTimer(props.getContext(),
                 "frameTimer");
         Timer totalTimer = Timer.getTimer(props.getContext(),
@@ -779,6 +802,26 @@ public class LexTreeLinguist implements  Linguist {
         List activeList = new ArrayList();
         int level = 0;
         LanguageState initialState = getInitialLanguageState();
+
+        // Note: this comparator imposes orderings that are
+        // inconsistent with equals.
+
+        Comparator stateComparator = new Comparator() {
+            public int compare(Object o1, Object o2) {
+                LanguageState ls1 = (LanguageState) o1;
+                LanguageState ls2 = (LanguageState) o2;
+
+
+                if (ls1.getProbability() > ls2.getProbability()) {
+                    return 1;
+                } else if (ls1.getProbability() < ls2.getProbability()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        };
+
         activeList.add(initialState);
 
         totalTimer.start();
@@ -787,6 +830,7 @@ public class LexTreeLinguist implements  Linguist {
         for (int i = 0; i < numFrames; i++) {
             List oldList = activeList;
             activeList = new ArrayList(maxBeam * 10);
+            nonEmittingStates = 0;
 
             frameTimer.start();
             for (int j = 0; j < oldList.size(); j++) {
@@ -795,29 +839,43 @@ public class LexTreeLinguist implements  Linguist {
             }
             frameTimer.stop();
 
-            System.out.println(" === frame " + i + " of " 
-                    + numFrames + " ====");
-            System.out.println(" ActiveList size " + activeList.size());
-             Collections.shuffle(activeList);
+            if (testTracing) {
+                System.out.println(" === frame " + i + " of " 
+                        + numFrames + " ====");
+                System.out.println(" Active size   : " + activeList.size());
+                System.out.println(" NonEmitting   : " + nonEmittingStates);
+            }
+
+            Collections.shuffle(activeList, random);
+
+            Collections.sort(activeList, stateComparator);
             if (activeList.size() > maxBeam) {
                 activeList = activeList.subList(0, maxBeam);
             }
         }
         stop();
         totalTimer.stop();
+        System.out.println(" MaxSuccessors : " + maxSuccessors);
         Timer.dumpAll();
     }
 
     private void testExpandState(int level, List activeList, LanguageState ls) {
-        // System.out.println(Utilities.pad(level) + "Expanding  " +ls);
         LanguageState[] newStates = ls.getSuccessors();
+
+        System.out.println(Utilities.pad(level * 2) + ls);
+        if (newStates.length > maxSuccessors) {
+            maxSuccessors = newStates.length;
+        }
 
         for (int i = 0; i < newStates.length; i++) {
             LanguageState ns = newStates[i];
             if (ns.isEmitting()) {
-        // System.out.println(Utilities.pad(level) + "Added emitting " +ns);
                 activeList.add(ns);
             } else {
+                nonEmittingStates ++;
+                if (testTracing && ns.isFinal()) {
+                    System.out.println("result " + ns.toPrettyString());
+                }
                 testExpandState(level + 1, activeList, ns);
             }
         }

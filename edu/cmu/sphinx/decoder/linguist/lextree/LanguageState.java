@@ -47,4 +47,13 @@ public interface  LanguageState {
       * @return the log probability
       */
      double getProbability();
+
+
+     /**
+      * Returns a pretty version of the string representation 
+      * for this object
+      *
+      * @return a pretty string
+      */
+     String toPrettyString();
 }
