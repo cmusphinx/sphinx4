@@ -208,9 +208,6 @@ jsapi.exe from the lib directory.
 	         source="1.4"
 		 additionalparam="-breakiterator"
 		 destdir="${javadoc_dir}" 
-		 packagenames="edu.*"
-                 excludepackagenames="edu.cmu.sphinx.trainer,
-		                      edu.cmu.sphinx.research.parallel"
 		 overview="${src_dir}/overview.html"
 		 windowtitle="${javadoc_desc}"
                  doctitle="${javadoc_desc}"
@@ -218,6 +215,9 @@ jsapi.exe from the lib directory.
             <link href="http://java.sun.com/products/java-media/speech/forDevelopers/jsapi-doc"
                   offline="true"
                   packagelistLoc="lib/jsapi" />
+            <packageset dir="${src_dir}" defaultexcludes="yes">
+                  <patternset refid="${patternset_to_compile}"/>
+            </packageset>
 	    <classpath refid="libs"/>
         </javadoc>
     </target>
