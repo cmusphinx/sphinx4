@@ -427,7 +427,7 @@ function printMachineDescription() {
       print(" <td ><b>Memory </b></td> <td >" data[6] "MB</td>");
     print(" </tr>");
     print(" <tr>");
-      print(" <td ><b>Cache </b></td> <td >" data[4] "KB</td>");
+      print(" <td ><b>Cache </b></td> <td >" data[4] "MB</td>");
     print(" </tr>");
     print(" <tr>");
       print(" <td ><b>OS </b></td> <td >" data[8] "</td>");
