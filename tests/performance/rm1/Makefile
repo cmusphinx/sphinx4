@@ -7,6 +7,8 @@
 # redistribution of this file, and for a DISCLAIMER OF ALL 
 # WARRANTIES.
 
+# Nothing.
+
 #
 # Makefile for all the RM1 tests.
 #
