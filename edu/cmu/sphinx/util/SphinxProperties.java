@@ -354,6 +354,7 @@ public class SphinxProperties {
 	return value;
     }
 
+
     /**
      * Searches for the property with the specified name of a
      * particular instance.  This is a conveniance method, since many 
@@ -370,8 +371,11 @@ public class SphinxProperties {
      */
     public String getString(String instanceName,
 			    String propertyName, String defaultValue) {
-	return getString(instanceName + ";" + propertyName,
-			defaultValue);
+        String value = getString(instanceName + ";" + propertyName);
+        if (value == null) {
+            value = getString(propertyName, defaultValue);
+        }
+	return value;
     }
 
 
@@ -397,6 +401,7 @@ public class SphinxProperties {
 	return value;
     }
 
+
     /**
      * Searches for the property with the specified name of a
      * particular instance.  This is a conveniance method, since many 
@@ -414,10 +419,16 @@ public class SphinxProperties {
      * 	converted to the number format
      */
     public float getFloat(String instanceName, 
-	    		String propertyName, float defaultValue) 
+                          String propertyName, float defaultValue) 
     		throws NumberFormatException {
-	return getFloat(instanceName + ";" + propertyName, defaultValue);
+        String value = getString(instanceName + ";" + propertyName);
+        if (value != null) {
+            return Float.parseFloat(value);
+        } else {
+            return getFloat(propertyName, defaultValue);
+        }
     }
+
 
     /**
      * Searches for the property with the specified name.
@@ -441,6 +452,7 @@ public class SphinxProperties {
 	return value;
     }
 
+
     /**
      * Searches for the property with the specified name of a
      * particular instance.  This is a conveniance method, since many 
@@ -458,10 +470,16 @@ public class SphinxProperties {
      * 	converted to the number format
      */
     public double getDouble(String instanceName, 
-	    		String propertyName, double defaultValue) 
-    		throws NumberFormatException {
-	return getDouble(instanceName + ";" + propertyName, defaultValue);
+                            String propertyName, double defaultValue) 
+        throws NumberFormatException {
+        String value = getString(instanceName + ";" + propertyName);
+        if (value != null) {
+            return Double.parseDouble(value);
+        } else {
+            return getDouble(propertyName, defaultValue);
+        }
     }
+
 
     /**
      * Searches for the property with the specified name.
@@ -476,7 +494,7 @@ public class SphinxProperties {
      * 	converted to the number format
      */
     public int getInt(String propertyName, int defaultValue) 
-    		throws NumberFormatException {
+        throws NumberFormatException {
 	int value = defaultValue;
 	String svalue = getString(propertyName, String.valueOf(defaultValue));
 	if (svalue != null) {
@@ -484,6 +502,7 @@ public class SphinxProperties {
 	}
 	return value;
     }
+
 
     /**
      * Searches for the property with the specified name of a
@@ -502,10 +521,16 @@ public class SphinxProperties {
      * 	converted to the number format
      */
     public int getInt(String instanceName, 
-	    		String propertyName, int defaultValue) 
-    		throws NumberFormatException {
-	return getInt(instanceName + ";" + propertyName, defaultValue);
+                      String propertyName, int defaultValue) 
+        throws NumberFormatException {
+        String value = getString(instanceName + ";" + propertyName);
+        if (value != null) {
+            return Integer.parseInt(value);
+        } else {
+            return getInt(propertyName, defaultValue);
+        }
     }
+
 
     /**
      * Searches for the property with the specified name. The string
@@ -523,13 +548,11 @@ public class SphinxProperties {
 	boolean value = defaultValue;
 	String svalue = getString(propertyName, String.valueOf(defaultValue));
 	if (svalue != null) {
-	    value = 	svalue.equalsIgnoreCase("true") ||
-	     		svalue.equalsIgnoreCase("on") ||
-	     		svalue.equalsIgnoreCase("1") ||
-	     		svalue.equalsIgnoreCase("enabled");
+	    value = isTrue(svalue);
 	}
 	return value;
     }
+
 
     /**
      * Searches for the property with the specified name of a
@@ -549,7 +572,28 @@ public class SphinxProperties {
      */
     public boolean getBoolean(String instanceName, 
 	    		String propertyName, boolean defaultValue)  {
-	return getBoolean(instanceName + ";" + propertyName, defaultValue);
+        String value = getString(instanceName + ";" + propertyName);
+        if (value != null) {
+            return isTrue(value);
+        } else {
+            return getBoolean(propertyName, defaultValue);
+        }
+    }
+
+
+    /**
+     * Returns true if the given string is either "true", "on", "1", or
+     * "enabled" (case ignored).
+     *
+     * @param booleanString the string to inspect
+     *
+     * @return true if the string represents true, false otherwise
+     */
+    private boolean isTrue(String booleanString) {
+        return (booleanString.equalsIgnoreCase("true") ||
+                booleanString.equalsIgnoreCase("on") ||
+                booleanString.equalsIgnoreCase("1") ||
+                booleanString.equalsIgnoreCase("enabled"));
     }
 
 
@@ -569,45 +613,5 @@ public class SphinxProperties {
                     + "         using the default value " 
                     + defaultValue);
 	}
-    }
-
-
-    /**
-     * A test program
-     */
-    public static void main(String[] args) {
-
-	try {
-	    // an empty context
-	    URL emptyURL = null;
-	    SphinxProperties.initContext("sun", emptyURL);
-	    // an populated context
-	    SphinxProperties.initContext("moon", new URL("file:./test.props"));
-    	} catch (IOException ioe) {
-	    System.out.println("ioe " + ioe);
-	}
-
-	SphinxProperties sun = SphinxProperties.getSphinxProperties("sun");
-	SphinxProperties moon = SphinxProperties.getSphinxProperties("moon");
-	SphinxProperties star = SphinxProperties.getSphinxProperties("star");
-
-	System.out.println("sun flare " +sun.getString("flare", "high"));
-	System.out.println("moon flare " + moon.getString("flare", "high"));
-	System.out.println("moon grav " + moon.getFloat("gravity", 9.8f));
-	System.out.println("moon lgrav " + moon.getDouble("lgravity", 19.8));
-	System.out.println("moon int " + moon.getInt("craters", 5000));
-	System.out.println("moon bool " + moon.getBoolean("tracing", false));
-
-	System.out.println("io flare " + moon.getString("io.flare", "high"));
-	System.out.println("io grav " + moon.getFloat("io.gravity", 9.8f));
-	System.out.println("io lgrav " + moon.getDouble("io.lgravity", 19.8));
-	System.out.println("io int " + moon.getInt("io.craters", 5000));
-	System.out.println("io bool " + moon.getBoolean("io.tracing", false));
-
-	System.out.println("p flare " + moon.getString("phobus", "flare", "high"));
-	System.out.println("p grav " + moon.getFloat("phobus", "gravity", 9.8f));
-	System.out.println("p lgrav " + moon.getDouble("phobus", "lgravity", 19.8));
-	System.out.println("p int " + moon.getInt("phobus", "craters", 5000));
-	System.out.println("p bool " + moon.getBoolean("phobus", "tracing", false));
     }
 }
