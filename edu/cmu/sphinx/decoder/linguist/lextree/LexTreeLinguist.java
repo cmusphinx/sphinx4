@@ -539,8 +539,6 @@ public class LexTreeLinguist implements  Linguist {
         /**
          * Gets a successor to this language state
          *
-         * @param leftID the id of the left context
-         *
          * @return a successor
          */
         public SearchStateArc[] getSuccessors(){
