@@ -64,12 +64,35 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
     private static final String PROP_PREFIX = 
         "edu.cmu.sphinx.research.parallel.ParallelSimpleLinguist.";
 
-    private static final String PROP_STACK_CAPACITY = 
+    /**
+     * The sphinx property that specifies the height of the token stacks.
+     */
+    public static final String PROP_STACK_CAPACITY = 
         PROP_PREFIX + "tokenStackCapacity";
+
+    /**
+     * The default value for the property PROP_STACK_CAPACITY, which is 0.
+     */
+    public static final int PROP_STACK_CAPACITY_DEFAULT = 0;
+
+    /**
+     * The sphinx property that specifies the level at which the parallel
+     * states tie. Values can be "unit" or "state".
+     */
+    public static final String PROP_TIE_LEVEL =
+        PROP_PREFIX + "tieLevel";
+
+    /**
+     * The default value for the property PROP_TIE_LEVEL, which is "unit".
+     */
+    public static final String PROP_TIE_LEVEL_DEFAULT = "unit";
+
 
     private AcousticModel[] acousticModels;
 
     private int tokenStackCapacity;
+
+    private String tieLevel;
 
 
     /**
@@ -84,9 +107,15 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
                         Grammar grammar, AcousticModel[] models) {
         
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        this.tokenStackCapacity = props.getInt(PROP_STACK_CAPACITY, 0);
+
+        this.tokenStackCapacity = props.getInt
+            (PROP_STACK_CAPACITY, PROP_STACK_CAPACITY_DEFAULT);
+        this.tieLevel = props.getString
+            (PROP_TIE_LEVEL, PROP_TIE_LEVEL_DEFAULT);
 
         super.initialize(context, languageModel, grammar, models);
+
+        System.out.println("Finished ParallelSimpleLinguist initialize()");
     }
 
 
@@ -165,7 +194,13 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
          * @return the head of the hmm tree
          */
         protected SentenceHMMState expandUnit(UnitState unit) {
-            SentenceHMMState tail =  getParallelHMMStates(unit);
+            SentenceHMMState tail = null;
+
+            if (tieLevel.equals("unit")) {
+                tail = getTiedHMMs(unit);
+            } else if (tieLevel.equals("state")) {
+                tail = getTiedHMMStates(unit);
+            }
 
             // if the unit is a silence unit add a loop back from the
             // tail silence unit
@@ -181,13 +216,13 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
 
         /**
          * Expands the given UnitState into the set of associated
-         * HMMStateStates.
+         * parallel HMMs.
          *
          * @param unitState the UnitState to expand
          *
          * @return the last SentenceHMMState from the expansion
          */
-        private SentenceHMMState getParallelHMMStates(UnitState unitState) {
+        private SentenceHMMState getTiedHMMs(UnitState unitState) {
 
             SentenceHMMState combineState = new CombineState
                 (unitState.getParent(), unitState.getWhich());
@@ -258,8 +293,7 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
                     
                     // this is a self-transition
                     attachState(hmmStateState, hmmStateState,
-                                getLogMath().linearToLog
-                                (arcs[i].getProbability()),
+                                arcs[i].getLogProbability(),
                                 getLogMath().getLogOne(),
                                 getLogMath().getLogOne());
                     
@@ -283,8 +317,7 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
                     nextState.setColor(Color.GREEN);
                     
                     attachState(hmmStateState, nextState, 
-                                getLogMath().linearToLog
-                                (arcs[i].getProbability()),
+                                arcs[i].getLogProbability(),
                                 getLogMath().getLogOne(),
                                 getLogMath().getLogOne());
                     
@@ -294,6 +327,164 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
             }
             
             return lastState;
+        }
+
+        /**
+         * Expands the given UnitState into the set of associated
+         * HMMStateStates that tie at the state level.
+         *
+         * @param unitState the UnitState to expand
+         *
+         * @return the last SentenceHMMState from the expansion
+         */
+        private SentenceHMMState getTiedHMMStates(UnitState unitState) {
+            SentenceHMMState combineState = new CombineState
+                (unitState.getParent(), unitState.getWhich());
+            
+            HMM[] hmms = new HMM[acousticModels.length];
+            
+            SentenceHMMState lastState = unitState;
+            
+            // create an HMM branch for each acoustic model
+            
+            for (int i = 0; i < acousticModels.length; i++) {
+                hmms[i] = acousticModels[i].lookupNearestHMM
+                    (unitState.getUnit(), unitState.getPosition(), false);
+            }
+            
+            lastState = getHMMTiedStates(hmms, unitState);
+            
+            return lastState;
+        }
+        
+        
+        /**
+         * Converts the given HMMs into a network of SentenceHMMStates
+         * tied at the state level.
+         *
+         * @param hmms the HMMs to convert
+         * @param unitState the UnitState that corresponds to these HMMs
+         *
+         * @return the last SentenceHMMState from the expansion
+         */
+        private SentenceHMMState getHMMTiedStates(HMM[] hmms, 
+                                                  UnitState unitState) {
+            
+            SentenceHMMState lastState = new CombineState(unitState, 0);
+            
+            HMMStateArc[] arcs = new HMMStateArc[acousticModels.length];
+            
+            for (int i = 0; i < hmms.length; i++) {
+                HMMState hmmState = hmms[i].getInitialState();
+                
+                ParallelHMMStateState firstHMMState = 
+                    new ParallelHMMStateState(unitState,
+                                              acousticModels[i].getName(),
+                                              hmmState,
+                                              tokenStackCapacity);
+                
+                // Color.GREEN indicates an in-feature-stream state
+                firstHMMState.setColor(Color.GREEN);
+                
+                // connect previous last state to this HMMState
+                attachState(unitState, firstHMMState,
+                            getLogMath().getLogOne(),
+                            getLogMath().getLogOne(),
+                            getLogMath().getLogOne());
+                
+                // connect this HMMState to the next combining state
+                attachState(firstHMMState, lastState,
+                            getLogMath().getLogOne(),
+                            getLogMath().getLogOne(),
+                            getLogMath().getLogOne());
+                
+                HMMStateArc selfTransition = getSelfTransition(hmmState);
+                
+                if (selfTransition != null) {
+                    // connect the next combining state to this HMMState
+                    attachState(lastState, firstHMMState, 
+                                selfTransition.getLogProbability(),        
+                                getLogMath().getLogOne(),
+                                getLogMath().getLogOne());
+                }
+                
+                arcs[i] = getTransitionToNextState(hmmState);
+            }
+            
+            for (int i = 1; i <= hmms[0].getOrder(); i++) {
+                
+                SentenceHMMState combineState = new CombineState(unitState, i);
+                
+                for (int a = 0; a < arcs.length; a++) {
+                    HMMStateArc arc = arcs[a];
+                    HMMState hmmState = arc.getHMMState();
+                    
+                    ParallelHMMStateState hmmStateState = 
+                    new ParallelHMMStateState(unitState,
+                                              acousticModels[a].getName(),
+                                              hmmState,
+                                              tokenStackCapacity);
+                    
+                    // Color.GREEN indicates an in-feature-stream state
+                    hmmStateState.setColor(Color.GREEN);
+                    
+                    // connect lastState and this HMMStateState
+                    attachState(lastState, hmmStateState,
+                                arc.getLogProbability(),
+                                getLogMath().getLogOne(),
+                                getLogMath().getLogOne());
+                    
+                    // connect this HMMStateState and the combineState
+                    attachState(hmmStateState, combineState, 
+                                getLogMath().getLogOne(),
+                                getLogMath().getLogOne(),
+                                getLogMath().getLogOne());
+                    
+                    // connect the self-transition
+                    HMMStateArc selfTransition = getSelfTransition(hmmState);
+                    
+                    if (selfTransition != null) {
+                        // connect the next combining state to this HMMState
+                        attachState(combineState, hmmStateState,
+                                    selfTransition.getLogProbability(),       
+                                    getLogMath().getLogOne(),
+                                    getLogMath().getLogOne());
+                    }
+                    arcs[a] = getTransitionToNextState(hmmState);
+                }
+                
+                lastState = combineState;
+            }
+
+            return lastState;
+        }
+        
+        /**
+         * Returns the self-transitioning HMMStateArc of the given HMMState.
+         */ 
+        private HMMStateArc getSelfTransition(HMMState hmmState) {
+            HMMStateArc[] arcs = hmmState.getSuccessors();
+            for (int i = 0; i < arcs.length; i++) {
+                HMMState nextHmmState = arcs[i].getHMMState();
+                if (nextHmmState == hmmState) {
+                    return arcs[i];
+                }
+            }
+            return null;
+        }
+        
+        /**
+         * Returns the HMMStateArc that transitioin to the next HMMState.
+         */
+        private HMMStateArc getTransitionToNextState(HMMState hmmState) {
+            HMMStateArc[] arcs = hmmState.getSuccessors();
+            for (int i = 0; i < arcs.length; i++) {
+                HMMState nextHmmState = arcs[i].getHMMState();
+                if (nextHmmState != hmmState) {
+                    return arcs[i];
+                }
+            }
+            return null;
         }
     }
 }
