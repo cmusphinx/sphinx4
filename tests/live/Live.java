@@ -73,11 +73,8 @@ public class Live {
             String decoderListFile = argv[0];
             try {
                 live = new Live(decoderListFile);
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-                System.exit(1);
-            } catch (LineUnavailableException lue) {
-                lue.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
                 System.exit(1);
             }
         }
@@ -91,8 +88,8 @@ public class Live {
      *
      * @param decodersFile a file listing all the available decoders
      */
-    public Live(String decoderListFile) throws IOException, 
-                                               LineUnavailableException {
+    public Live(String decoderListFile) throws 
+        InstantiationException, IOException, LineUnavailableException {
         String pwd = System.getProperty("user.dir");
         currentDirectory = new File(pwd);
 
@@ -223,7 +220,7 @@ public class Live {
      * @param name    the name of the decoder to make
      */
     public LiveDecoder makeDecoder(String name)
-        throws IOException, LineUnavailableException {
+        throws InstantiationException, IOException, LineUnavailableException {
         return new LiveDecoder(name, this);
     }
 
@@ -323,7 +320,7 @@ public class Live {
      * @param decoderListFile a file listing all the available decoders
      */
     private void parseDecoderListFile(String decoderListFile) throws 
-        IOException, LineUnavailableException {
+        InstantiationException, IOException, LineUnavailableException {
 
         info("Parsing file " + decoderListFile + " ");
 
@@ -381,7 +378,7 @@ public class Live {
      * @return the requested Decoder
      */
     private LiveDecoder getDecoder(String decoderName) throws 
-        IOException, LineUnavailableException {
+        InstantiationException, IOException, LineUnavailableException {
         
         // obtain the decoder
         LiveDecoder decoder = null;

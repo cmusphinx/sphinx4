@@ -59,7 +59,7 @@ public class LiveDecoder extends Decoder {
      * @param microphone the Microphone used by this LiveDecoder
      */
     public LiveDecoder(String context, Live live) throws
-        IOException, LineUnavailableException {
+        InstantiationException, IOException, LineUnavailableException {
         super(context);
         this.live = live;
         referenceList = new LinkedList();
@@ -68,7 +68,8 @@ public class LiveDecoder extends Decoder {
     /**
      * Initializes this LiveDecoder.
      */
-    public void initialize(Microphone microphone) throws IOException {
+    public void initialize(Microphone microphone) throws 
+        InstantiationException, IOException {
         if (!isInitialized()) {
             this.microphone = microphone;
             super.initialize();
