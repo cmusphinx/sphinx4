@@ -62,6 +62,7 @@ class ClusterComparator implements Comparator {
     }
 }
 
+
 /**
  * The SausageMaker takes word lattices as input and turns them into sausages 
  * (Confusion Networks) according to Mangu, Brill and Stolcke, "Finding 
@@ -242,8 +243,6 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         if (toBeMerged1 != null) {
             clusters.remove(toBeMerged2);
             toBeMerged1.addAll(toBeMerged2);
-            System.out.println("interWordClusterStep");
-            printClusters(clusters);
             return true;
         }
         return false;
@@ -530,8 +529,6 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         if (toBeMerged1 != null) {
             clusters.remove(toBeMerged2);
             toBeMerged1.addAll(toBeMerged2);
-            System.out.println("intraWordClusterStep");
-            printClusters(clusters);
             return true;
         }
         return false;
@@ -543,14 +540,7 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
      * @return the sausage producing by collapsing the lattice.
      */
     public Sausage makeSausage() {
-        //TODO: this first loop should be taken out as soon as node have
-        //proper starting times without it.
-        /*
-        Iterator n = lattice.getNodes().iterator();
-        while (n.hasNext()) {
-            ((Node)n.next()).calculateBeginTime();
-        }
-        */
+
         Vector clusters = new Vector(lattice.getNodes().size());
         Collection nodes = lattice.nodes.values();
         Iterator i = nodes.iterator();
@@ -561,8 +551,9 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         }
         intraWordCluster(clusters);
         interWordCluster(clusters);
-        Collections.sort(clusters,new ClusterComparator());
-        printClusters(clusters);
+
+        clusters = topologicalSort(clusters);
+
         Sausage sausage = new Sausage(clusters.size());
         ListIterator c1 = clusters.listIterator();
         while (c1.hasNext()) {
@@ -597,5 +588,25 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         lop.optimize();
         lattice.computeNodePosteriors(languageWeight);
         return makeSausage();
+    }
+
+    /**
+     * Topologically sort the clusters. Note that this is a brunt force
+     * sort by removing the min cluster from the list of clusters,
+     * since Collections.sort() does not work in all cases.
+     *
+     * @param clusters the list of clusters to be topologically sorted
+     *
+     * @return a topologically sorted list of clusters
+     */
+    private Vector topologicalSort(Vector clusters) {
+        Comparator comparator = new ClusterComparator();
+        Vector sorted = new Vector(clusters.size());
+        while (clusters.size() > 0) {
+            List cluster = (List) Collections.min(clusters, comparator);
+            clusters.remove(cluster);
+            sorted.add(cluster);
+        }
+        return sorted;
     }
 }
