@@ -35,6 +35,7 @@ Source Distribution:
 - java -jar bin/ZipCity.jar
 - java -jar bin/AudioTool.jar
 - cd tests/live
+   be sure to test the playback for live and live-ep
 - ant live
 - ant live-ep
 - ant live-free
