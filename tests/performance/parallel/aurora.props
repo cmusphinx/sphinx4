@@ -100,8 +100,8 @@ edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false
 #
 ############################################################
 
-edu.cmu.sphinx.search.WordListGrammar.isLooping = true
-edu.cmu.sphinx.search.WordListGrammar.path = ./digits.wordlist
+edu.cmu.sphinx.search.SimpleWordListGrammar.isLooping = true
+edu.cmu.sphinx.search.SimpleWordListGrammar.path = ./digits.wordlist
 
 
 ############################################################
@@ -113,10 +113,7 @@ edu.cmu.sphinx.search.WordListGrammar.path = ./digits.wordlist
 edu.cmu.sphinx.search.Recognizer.dumpFrontEnd = true
 
 edu.cmu.sphinx.search.Recognizer.acousticScorer = edu.cmu.sphinx.search.parallel.ParallelAcousticScorer
-edu.cmu.sphinx.search.Recognizer.linguist = edu.cmu.sphinx.search.parallel.ParallelLinguist
-edu.cmu.sphinx.search.Recognizer.grammar = edu.cmu.sphinx.search.WordListGrammar
+edu.cmu.sphinx.search.Recognizer.linguist = edu.cmu.sphinx.search.parallel.ParallelSimpleLinguist
+edu.cmu.sphinx.search.Recognizer.grammar = edu.cmu.sphinx.search.SimpleWordListGrammar
 edu.cmu.sphinx.search.Recognizer.searchManager = edu.cmu.sphinx.search.parallel.ParallelSearchManager
 edu.cmu.sphinx.search.Recognizer.linguistProcessors = edu.cmu.sphinx.util.GDLDumper
-
-# edu.cmu.sphinx.search.Recognizer.acousticScorer = edu.cmu.sphinx.search.ThreadedAcousticScorer
-# edu.cmu.sphinx.search.Recognizer.linguist = edu.cmu.sphinx.search.StaticLinguist

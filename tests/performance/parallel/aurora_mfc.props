@@ -112,8 +112,8 @@ edu.cmu.sphinx.search.SimpleWordListGrammar.path = ./digits.wordlist
 
 edu.cmu.sphinx.search.Recognizer.dumpFrontEnd = true
 
-edu.cmu.sphinx.search.Recognizer.acousticScorer = edu.cmu.sphinx.search.parallel.ThreadedAcousticScorer
+edu.cmu.sphinx.search.Recognizer.acousticScorer = edu.cmu.sphinx.search.ThreadedAcousticScorer
 edu.cmu.sphinx.search.Recognizer.linguist = edu.cmu.sphinx.search.SimpleLinguist
 edu.cmu.sphinx.search.Recognizer.grammar = edu.cmu.sphinx.search.SimpleWordListGrammar
-edu.cmu.sphinx.search.Recognizer.searchManager = edu.cmu.sphinx.search.parallel.SimpleBreadthFirstSearchManager
+edu.cmu.sphinx.search.Recognizer.searchManager = edu.cmu.sphinx.search.SimpleBreadthFirstSearchManager
 edu.cmu.sphinx.search.Recognizer.linguistProcessors = edu.cmu.sphinx.util.GDLDumper
