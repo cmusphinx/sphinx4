@@ -55,6 +55,7 @@ class HMMTree {
     private boolean debug = false;
     private float languageWeight;
     private Map endNodeMap;
+    private WordNode sentenceEndWordNode;
 
     /**
      * Creates the HMMTree
@@ -135,6 +136,17 @@ class HMMTree {
 
         // System.out.println("GHN: " + endNode + " " + results.length);
         return results;
+    }
+
+
+    /**
+     * Returns the word node associated with the sentence end word
+     *
+     * @return the sentence end word node
+     */
+    public WordNode getSentenceEndWordNode() {
+        assert sentenceEndWordNode != null;
+        return sentenceEndWordNode;
     }
 
 
@@ -261,6 +273,7 @@ class HMMTree {
         Unit lc;
         Unit rc;
         Node curNode;
+        WordNode wordNode;
 
         Unit[] units = pronunciation.getUnits();
 	baseUnit = units[0];
@@ -283,7 +296,10 @@ class HMMTree {
             baseUnit = units[units.length - 1];
             EndNode endNode = new EndNode(baseUnit, lc, probability);
             curNode = curNode.addSuccessor(endNode, probability);
-            curNode.addSuccessor(pronunciation, probability);
+            wordNode = curNode.addSuccessor(pronunciation, probability);
+            if (wordNode.getWord() == dictionary.getSentenceEndWord()) {
+                sentenceEndWordNode = wordNode;
+            }
         } else {
 	    ep.addSingleUnitWord(pronunciation);
 	}
@@ -615,6 +631,10 @@ class HMMTree {
                             float prob = getWordUnigramProbability(p.getWord());
                             wordNode = (WordNode)
                                 tailNode.addSuccessor(p, prob);
+                            if (p.getWord() ==
+                                    dictionary.getSentenceEndWord()) {
+                                sentenceEndWordNode = wordNode;
+                            }
                         }
                         nodeCount++;
 		    }

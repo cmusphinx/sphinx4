@@ -246,6 +246,7 @@ public class LexTreeLinguist implements  Linguist {
     private final static Class[] searchStateOrder = {
         LexTreeNonEmittingHMMState.class,
         LexTreeWordState.class,
+        LexTreeEndWordState.class,
         LexTreeEndUnitState.class,
         LexTreeUnitState.class,
         LexTreeHMMState.class
@@ -675,7 +676,7 @@ public class LexTreeLinguist implements  Linguist {
           *
           * @return the search state for the wordNode
           */
-         private SearchStateArc createWordStateArc(WordNode wordNode,
+         protected SearchStateArc createWordStateArc(WordNode wordNode,
                  HMMNode lastUnit, float fixupProb) {
             // System.out.println("CWSA " + wordNode + " fup " +  fixupProb);
             float logProbability = logOne;
@@ -699,9 +700,15 @@ public class LexTreeLinguist implements  Linguist {
                 logProbability -= fixupProb;
             }
 
-            return new LexTreeWordState(wordNode, lastUnit,
-                nextWordSequence.trim(languageModel.getMaxDepth() - 1), 
-                logProbability);
+            if (nextWord == sentenceEndWord) {
+                return new LexTreeEndWordState(wordNode, lastUnit,
+                    nextWordSequence.trim(languageModel.getMaxDepth() - 1), 
+                    logProbability);
+            } else {
+                return new LexTreeWordState(wordNode, lastUnit,
+                    nextWordSequence.trim(languageModel.getMaxDepth() - 1), 
+                    logProbability);
+            }
          }
 
 
@@ -1331,15 +1338,44 @@ public class LexTreeLinguist implements  Linguist {
                      list.addAll(epList);
                  }
 
-                 arcs = new SearchStateArc[list.size()];
+                 // add a link to every possible entry point as well
+                 // as link to the </s> node
+                 arcs = new SearchStateArc[list.size() + 1];
                  for (Iterator i = list.iterator(); i.hasNext(); ) {
                      HMMNode node = (HMMNode) i.next();
                      arcs[index++] = createUnitStateArc(node,
                              LogMath.getLogOne());
                  }
+
+                 // now add the link to the end of sentence arc:
+
+                 arcs[index++] =
+                     createWordStateArc(hmmTree.getSentenceEndWordNode(),
+                             lastNode, logOne);
              }
              return arcs;
          }
+    }
+
+    public class LexTreeEndWordState extends LexTreeWordState 
+        implements WordSearchState {
+
+        /**
+         * Constructs a LexTreeWordState
+         *
+         * @param wordNode the word node
+         *
+         * @param wordSequence the sequence of words
+         * triphone context
+         * 
+         * @param logProbability the probability of this word occuring
+         *
+         */
+        LexTreeEndWordState(WordNode wordNode, HMMNode lastNode,
+               WordSequence wordSequence, float logProability) {
+            super(wordNode, lastNode, wordSequence, logProability);
+        }
+
     }
 
 

@@ -594,8 +594,6 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      * Removes unpromising branches from the active list
      *
      */
-
-
     protected void pruneBranches() {
         pruneTimer.start();
         activeList =  pruner.prune(activeList);
