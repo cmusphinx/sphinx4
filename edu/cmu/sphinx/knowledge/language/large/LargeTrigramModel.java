@@ -23,7 +23,9 @@ import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.net.URL;
 
@@ -51,6 +53,24 @@ import java.util.StringTokenizer;
  * stored in log 10  base. They are converted to the LogMath logbase.
  */
 public class LargeTrigramModel implements LanguageModel {
+
+    private static final String PROP_PREFIX =
+	"edu.cmu.sphinx.knowledge.language.large.LargeTrigramModel.";
+
+
+    /**
+     * Sphinx property for the name of the file that logs all the queried
+     * N-grams. If this property is set to null, it means that
+     * the queried N-grams are not logged.
+     */
+    public static final String PROP_QUERY_LOG_FILE =
+	PROP_PREFIX + "queryLogFile";
+
+    
+    /**
+     * The default value for PROP_QUERY_LOG_FILE.
+     */
+    public static final String PROP_QUERY_LOG_FILE_DEFAULT = null;
 
 
     /**
@@ -92,6 +112,8 @@ public class LargeTrigramModel implements LanguageModel {
     private int bigramMisses;
     private int trigramMisses;
 
+    private PrintWriter logFile;
+
 
     /**
      * Creates a simple ngram model from the data at the URL. The
@@ -129,6 +151,13 @@ public class LargeTrigramModel implements LanguageModel {
             (LanguageModel.PROP_FORMAT, LanguageModel.PROP_FORMAT_DEFAULT);
         String location = props.getString
             (LanguageModel.PROP_LOCATION, LanguageModel.PROP_LOCATION_DEFAULT);
+	String ngramLogFile = props.getString
+	    (PROP_QUERY_LOG_FILE, PROP_QUERY_LOG_FILE_DEFAULT);
+
+	// create the log file if specified
+	if (ngramLogFile != null) {
+	    logFile = new PrintWriter(new FileOutputStream(ngramLogFile));
+	}
 
         unigramIDMap = new HashMap();
 	loadedTrigramBuffer = new HashMap();
@@ -179,6 +208,9 @@ public class LargeTrigramModel implements LanguageModel {
      * Called after a recognition
      */
     public void stop() {
+	if (logFile != null) {
+	    logFile.flush();
+	}
     }
 
     
@@ -193,11 +225,15 @@ public class LargeTrigramModel implements LanguageModel {
      *
      */
     public float getProbability(WordSequence wordSequence) {
-        if (wordSequence.size() == 3) {
+	if (logFile != null) {
+	    logFile.println(wordSequence.toText());
+	}
+	int numberWords = wordSequence.size();
+        if (numberWords == 3) {
             return getTrigramProbability(wordSequence);
-        } else if (wordSequence.size() == 2) {
+        } else if (numberWords == 2) {
             return getBigramProbability(wordSequence);
-	} else if (wordSequence.size() == 1) {
+	} else if (numberWords == 1) {
 	    return getUnigramProbability(wordSequence);
 	} else {
             throw new Error("Unsupported N-gram: " + wordSequence.size());
