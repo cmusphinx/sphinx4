@@ -1,6 +1,6 @@
-edu.cmu.sphinx.knowledge.language.format=arpa
-edu.cmu.sphinx.knowledge.language.location=spell.arpa
+edu.cmu.sphinx.knowledge.language.LanguageModel.location=alphabet.arpaformat
 # edu.cmu.sphinx.knowledge.language.location=an4_spelling.trigram.lm
 edu.cmu.sphinx.knowledge.language.languageWeight=10
 edu.cmu.sphinx.util.LogMath.logBase=10
+edu.cmu.sphinx.util.LogMath.useAddTable=false
 

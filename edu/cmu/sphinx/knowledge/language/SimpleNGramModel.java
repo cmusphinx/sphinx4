@@ -108,22 +108,21 @@ public class SimpleNGramModel implements LanguageModel {
      * Gets the ngram probability of the word sequence represented by
      * the word list 
      *
-     * @param wordList a list of strings representing the word
-     * sequence of interest.
+     * @param wordSequence the word sequence
      *
      * @return the probability of the word sequence.
      * Probability is in logMath log base
      *
      */
-    public double getProbability(List wordList) {
+    public double getProbability(WordSequence wordSequence) {
         double logProbability = 0.0;
 
-        Probability prob = getProb(wordList);
+        Probability prob = getProb(wordSequence);
         if (prob == null) {
-            if (wordList.size() > 1 ) {
+            if (wordSequence.size() > 1 ) {
                  logProbability = 
-		     getBackoff(wordList.subList(0, wordList.size() -1)) 
-		     + getProbability(wordList.subList(1, wordList.size()));
+		     getBackoff(wordSequence.getOldest())
+		     + getProbability(wordSequence.getNewest());
                        
             } else {    // if the single word is not in the model at all
                 // then its zero likelihood that we'll use it   
@@ -133,7 +132,7 @@ public class SimpleNGramModel implements LanguageModel {
             logProbability = prob.logProbability;
         }
         if (false) {
-            System.out.println(listToString(wordList) + " : " +
+            System.out.println(wordSequence + " : " +
                     logProbability
                     + " " + logMath.logToLinear(logProbability));
         }
@@ -142,32 +141,15 @@ public class SimpleNGramModel implements LanguageModel {
 
 
     /**
-     * Gets the ngram probability of the word sequence represented by
-     * the word list 
-     *
-     * @param wordList a list of strings representing the word
-     * sequence of interest.
-     *
-     * @return the probability of the word sequence.
-     * Probability is in a linear base 
-     *
-     */
-    public double getLinearProbability(List wordList) {
-        double logProbability = getProbability(wordList);
-        double linearProb = logMath.logToLinear(logProbability);
-        return  linearProb;
-    }
-    
-    /**
      * Returns the backoff probability for the give sequence of words
      *
      * @param the sequence of words
      *
      * @return the backoff probability in LogMath log base
      */
-    public double getBackoff(List wordList) {
+    public double getBackoff(WordSequence wordSequence) {
         double logBackoff = 0.0;           // log of 1.0
-        Probability prob = getProb(wordList);
+        Probability prob = getProb(wordSequence);
         if (prob != null) {
             logBackoff = prob.logBackoff;
         }
@@ -194,17 +176,15 @@ public class SimpleNGramModel implements LanguageModel {
      }
     
     /**
-     * Gets the probability entry for the given word list or null if
+     * Gets the probability entry for the given word sequence or null if
      * there is no entry
      *
-     * @param wordList a list of strings representing the word
-     * sequence of interest.
+     * @param wordSequence a word sequence
      *
      * @return the probability entry for the wordlist or null
      */
-    private Probability getProb(List wordList) {
-        String rep = getRepresentation(wordList);
-        return (Probability) map.get(rep);
+    private Probability getProb(WordSequence wordSequence) {
+        return (Probability) map.get(wordSequence);
     }
     
     /**
@@ -342,19 +322,16 @@ public class SimpleNGramModel implements LanguageModel {
                 }
                 double log10Prob = Double.parseDouble(tok.nextToken());
                 double log10Backoff = 0.0;
-                StringBuffer wordKey = new StringBuffer();
+                WordSequence wordSequence = new WordSequence();
                 for (int j = 0; j < ngram; j++) {
                     String word = tok.nextToken().toLowerCase();
                     vocabulary.add(word);
-                    wordKey.append(word);
-                    if (j < ngram - 1) {
-                        wordKey.append("+");
-                    }
+                    wordSequence = wordSequence.addWord(word, maxNGram);
                 }
                 if (tok.hasMoreTokens()) {
                     log10Backoff = Double.parseDouble(tok.nextToken());
                 }
-                put(wordKey.toString(), log10Prob, log10Backoff);
+                put(wordSequence, log10Prob, log10Backoff);
             }
             
             if (index < ngramList.size() - 1) {
@@ -371,12 +348,18 @@ public class SimpleNGramModel implements LanguageModel {
     /**
      * Puts the probability into the map
      * 
-     * @param tag the tag for the prob.
+     * @param wordSequence the tag for the prob.
      * @param log10Prob the probability in log base 10
      * @param log10Backoff the backoff probability in log base 10
      */
-    private void put(String tag, double log10Prob, double log10Backoff) {
-        map.put(tag.toLowerCase(), new Probability(
+    private void put(WordSequence wordSequence, 
+            double log10Prob, double log10Backoff) {
+
+        if (false) {
+            System.out.println("Putting " + wordSequence + " p " +
+                    log10Prob + " b " + log10Backoff);
+        }
+        map.put(wordSequence, new Probability(
                   logMath.log10ToLog(log10Prob), 
                   logMath.log10ToLog(log10Backoff)));
     }
@@ -473,15 +456,15 @@ public class SimpleNGramModel implements LanguageModel {
         while ((input = reader.readLine()) != null) {
             StringTokenizer st = new StringTokenizer(input);
             List list = new ArrayList();
+            WordSequence wordSequence = new WordSequence();
             while (st.hasMoreTokens()) {
                 String tok = (String) st.nextToken();
-                list.add(tok.toLowerCase());
+                wordSequence = wordSequence.addWord(
+                        tok.toLowerCase(), sm.getMaxDepth());
             }
-            System.out.println("Probability of " + input + " is: " +
-                           sm.getProbability(list) +
-                           "(" +
-                           logMath.logToLinear(sm.getProbability(list)) +
-                           ")");
+            System.out.println("Probability of " + wordSequence + " is: " +
+               sm.getProbability(wordSequence) + "(" 
+               + logMath.logToLn(sm.getProbability(wordSequence)) + ")");
             System.out.print("Enter words: ");
         }
         
@@ -489,21 +472,15 @@ public class SimpleNGramModel implements LanguageModel {
         Timer timer = Timer.getTimer("test", "lookup trigram");
         
         List list1 = new ArrayList();
-        list1.add("t");
-        list1.add("h");
-        list1.add("e");
-        
-        List list2 = new ArrayList();
-        list2.add("a");
-        list2.add("l");
-        list2.add("q");
+        WordSequence ws1 = new WordSequence("t", "h", "e");
+        WordSequence ws2 = new WordSequence("a", "l", "q");
         
         for (int i = 0; i < 1000000; i++) {
             timer.start();
-            sm.getProbability(list1);
+            sm.getProbability(ws1);
             timer.stop();
             timer.start();
-            sm.getProbability(list2);
+            sm.getProbability(ws2);
             timer.stop();
         }
         

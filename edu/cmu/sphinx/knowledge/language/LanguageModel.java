@@ -63,21 +63,18 @@ public interface LanguageModel {
       * @return the probability of the word sequence in LogMath log
       * base
       */
-     public double getProbability(List wordList);
+     // public double getProbability(List wordList);
 
      /**
       * Gets the ngram probability of the word sequence represented by
       * the word list 
       *
-      * @param wordList a list of strings representing the word
-      * sequence of interest.
+      * @param wordSequence the wordSequence
       *
-      * @return the probability of the word sequence.
-      * Probability is in linear base 
+      * @return the probability of the word sequence in LogMath log
+      * base
       */
-     public double getLinearProbability(List wordList);
-
-
+     public double getProbability(WordSequence wordSequence);
 
 
      /**

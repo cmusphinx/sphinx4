@@ -77,6 +77,14 @@ rm1_flat_unigram:
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.flat_unigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
+rm1_trigram:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7 \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.trigram.lm \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
+
 wsj:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\

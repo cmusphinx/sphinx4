@@ -16,6 +16,7 @@ package edu.cmu.sphinx.decoder.linguist;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
+import edu.cmu.sphinx.knowledge.language.WordSequence;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
 import edu.cmu.sphinx.decoder.linguist.GrammarNode;
 
@@ -103,12 +104,12 @@ public class LMGrammar extends Grammar {
 
             for (Iterator j = nodes.iterator(); j.hasNext(); ) {
                 GrammarNode nextNode = (GrammarNode) j.next();
-                List wordList = new ArrayList(2);
-                wordList.add(prevNode.getWord().getSpelling());
-                wordList.add(nextNode.getWord().getSpelling());
+                WordSequence wordSequence = new WordSequence( 
+                        prevNode.getWord().getSpelling(),
+                        nextNode.getWord().getSpelling());
 
                 double logProbability = 
-                    languageModel.getProbability(wordList);
+                    languageModel.getProbability(wordSequence);
 
                 prevNode.add(nextNode,  logProbability);
 

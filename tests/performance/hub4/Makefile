@@ -28,7 +28,8 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
 PROFILE_FLAGS= -Xprof 
 LOG_GC_FLAGS=  -Xloggc:gc.txt
-GC_FLAGS = -ms128m -mx512m
+#GC_FLAGS = -ms128m -mx512m
+GC_FLAGS = -ms128m -mx2048m
 
 
 DEBUG_FLAGS= 
@@ -84,7 +85,6 @@ all::
 hub4_flat_unigram:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./hub4.flat_unigram.lm\
 	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props \
         $(HUB4_DIR)/f0_hub4.batch
 
@@ -95,3 +95,10 @@ test:
 	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props \
         test.batch
 
+run_batch:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=$(WHICH_BATCH)\
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=$(TOTAL_BATCHES)\
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+        $(PARSED_EXTRA_OPTIONS) \
+        edu.cmu.sphinx.decoder.BatchDecoder $(PROPS) $(BATCH_FILE) 

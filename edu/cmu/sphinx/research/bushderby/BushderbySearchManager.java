@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Collections;
 
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
+import edu.cmu.sphinx.knowledge.language.WordSequence;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
@@ -566,7 +567,8 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		    wordList.add(Dictionary.SENTENCE_START_SPELLING);
 		}
 		Collections.reverse(wordList);
-		logProbability = (float) languageModel.getProbability(wordList);
+		logProbability = (float)
+                    languageModel.getProbability(new WordSequence(wordList));
 	    }
 	}
 	return logProbability;

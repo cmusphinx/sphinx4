@@ -87,7 +87,7 @@ edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation = true
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dict/RM.dictionary
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = dict/fillerdict
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true
 
 
 ############################################################
