@@ -35,7 +35,7 @@ gawk -f extractVocab.awk weather.vocab  weather.txt  > $bn.tmp.closed
 # We generate the 'test' file that can be used by the live decoder
 # as the prompt for the user. We eliminate adjacent duplicate entries
 
-gawk -f genTranscript.awk < $bn.tmp.closed | uniq  > weather.transcript
+gawk -f genTranscript.awk < $bn.tmp.closed > weather.transcript
 
 #
 # Generate the word frequencies

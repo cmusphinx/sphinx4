@@ -1,5 +1,12 @@
 { 
     gsub(/<s>/, "");
     gsub(/<\/s>/, "");
-    print;
+    sentence[$0] = $0;
+}
+
+
+END {
+   for (i in sentence) {
+       print i;
+   }
 }
