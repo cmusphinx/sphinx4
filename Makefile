@@ -16,7 +16,7 @@ TOP = .
 SUBDIRS = edu tests 
 
 JSAPI_DIRS = com demo/jsapi
-GTAR=/usr/bin/tar
+GTAR=/bin/tar
 
 ##########################################################################
 
@@ -42,9 +42,9 @@ javadocs_private:
 
 push_javadocs:
 	$(MAKE) javadocs
-	$(GTAR) cfC /tmp/sphinx4docs.tar $(DOC_DEST) .
+	$(GTAR) cf /tmp/sphinx4docs.tar -C $(DOC_DEST) .
 	sscp /tmp/sphinx4docs.tar
-	sshh tar xfC sphinx4docs.tar $(PUSH_DEST)
+	sshh tar xf sphinx4docs.tar -C $(PUSH_DEST)
 	rm /tmp/sphinx4docs.tar
 
 stest:
