@@ -349,7 +349,6 @@ an4_words_unigram_quick:
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=25\
     -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
-    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.TreeActiveList \
     -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
@@ -360,7 +359,6 @@ an4_words_unigram_quick_bin:
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=25\
     -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
-    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.TreeActiveList \
     -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
     -Dedu.cmu.sphinx.search.ExternalLinguist.path=an4_words_unigram.hmm.bin\
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
@@ -375,7 +373,6 @@ an4_words_unigram_quick_simple:
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=25\
     -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
-    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.SimpleActiveList \
     -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
@@ -404,7 +401,6 @@ an4_words_unigram_quick_sp:
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
     -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
-    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.TreeActiveList \
     -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
     -Dedu.cmu.sphinx.search.ActiveList.strictPruning=true \
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
@@ -423,7 +419,6 @@ bush_test:
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushderby=true \
 	-Dedu.cmu.sphinx.search.ActiveList.strictPruning=true \
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.bushderbyEta=10000 \
-	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.FastActiveList \
 	-Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
@@ -441,7 +436,6 @@ bush_test2:
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushderby=true \
 	-Dedu.cmu.sphinx.search.ActiveList.strictPruning=true \
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.bushderbyEta=.5 \
-	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.FastActiveList \
 	-Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
