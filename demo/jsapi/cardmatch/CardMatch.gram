@@ -1,0 +1,11 @@
+/**
+ * JSGF Grammar for CardMatch example
+ */
+
+grammar cardMatch;
+
+public <turn_card> = card <cardNumbers> ;
+
+<cardNumbers> = one {1} | two {2} | three {3} | four {4} | five {5} | six {6} ;
+
+public <new_game> = start a new game {new_game} ;
