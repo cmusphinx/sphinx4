@@ -4,5 +4,5 @@
 0 22 * * 3 (. $HOME/.profile ; ./regressionTest runTests_an4_spelling)
 0 22 * * 4 (. $HOME/.profile ; ./regressionTest runTests_an4_full)
 0 22 * * 5 (. $HOME/.profile ; ./regressionTest runTests_an4_plus)
-0 22 * * 5 (. $HOME/.profile ; ./regressionTest runTests_rm1)
+0 22 * * 6 (. $HOME/.profile ; ./regressionTest runTests_rm1)
 0 20 * * * (. $HOME/.profile ; ./regressionTest runTests_standard)
