@@ -79,6 +79,7 @@ an4_words_unigram:
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
     -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
+    -Dedu.cmu.sphinx.search.Recognizer.dumpMemoryInfo=false \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
@@ -115,6 +116,7 @@ an4_words_trigram:
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+        -Dedu.cmu.sphinx.search.Recognizer.dumpMemoryInfo=false \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.model.language.location=./an4_words.trigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
@@ -187,6 +189,7 @@ an4_spelling_journey_trigram:
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.model.language.location=./an4_spelling_journey.trigram.lm \
+    	-Dedu.cmu.sphinx.search.Recognizer.dumpMemoryInfo=false \
 	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_spelling.alphalist\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
