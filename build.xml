@@ -63,11 +63,22 @@
 
     <patternset id="edu" 
                 includes="edu/**"
-	        excludes="com/**"/>
+	        excludes="com/**,
+                edu/cmu/sphinx/research/**,
+                edu/cmu/sphinx/trainer/**,
+                edu/cmu/sphinx/tools/audio/**,
+                edu/cmu/sphinx/tools/feature/**,
+                edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**,
+                "/>
 
     <patternset id="no_jsapi" 
                 includes="edu/**"
 	        excludes="com/**,
+                edu/cmu/sphinx/research/**,
+                edu/cmu/sphinx/trainer/**,
+                edu/cmu/sphinx/tools/audio/**,
+                edu/cmu/sphinx/tools/feature/**,
+                edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**,
                           edu/cmu/sphinx/jsapi/**"/>
              
     <target name="set_patternset_to_compile">
