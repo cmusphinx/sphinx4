@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.SearchStateArc;
@@ -23,15 +24,18 @@ import edu.cmu.sphinx.linguist.UnitSearchState;
 import edu.cmu.sphinx.linguist.WordSearchState;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 /**
  * A linguist processor that dumps out the sentence hmm in GDL format.
  */
 public class GDLDumper extends LinguistDumper {
-    private static final String PROP_PREFIX = "edu.cmu.sphinx.linguist.util.GDLDumper.";
     /**
      * The SphinxProperty specifying whether to skip HMMs during dumping.
      */
-    public static final String PROP_SKIP_HMMS = PROP_PREFIX + "skipHMMs";
+    public static final String PROP_SKIP_HMMS = "skipHMMs";
     /**
      * The default value for PROP_SKIP_HMMS.
      */
@@ -39,8 +43,7 @@ public class GDLDumper extends LinguistDumper {
     /**
      * The SphinxProperty to specify whether to use vertical graph layout.
      */
-    public static final String PROP_VERTICAL_LAYOUT = PROP_PREFIX
-            + "verticalLayout";
+    public static final String PROP_VERTICAL_LAYOUT = "verticalLayout";
     /**
      * The default value for PROP_VERTICAL_LAYOUT.
      */
@@ -48,17 +51,55 @@ public class GDLDumper extends LinguistDumper {
     /**
      * The SphinxProperty to specify whether to dump arc labels.
      */
-    public static final String PROP_DUMP_ARC_LABELS = PROP_PREFIX
-            + "dumpArcLabels";
+    public static final String PROP_DUMP_ARC_LABELS = "dumpArcLabels";
     /**
      * The default value for PROP_DUMP_ARC_LABELS.
      */
     public static final boolean PROP_DUMP_ARC_LABELS_DEFAULT = true;
+    
     /**
-     * Creates a GDL dumper
+     * The SphinxProperty to specify the log math
      */
-    public GDLDumper() {
+    
+    public static final String PROP_LOG_MATH = "logMath";
+
+    // -------------------------------
+    // Configuration data
+    // --------------------------------
+    private boolean skipHMMs;
+    private boolean verticalLayout;
+    private boolean dumpArcLabels;
+    private LogMath logMath;
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_SKIP_HMMS, PropertyType.BOOLEAN);
+        registry.register(PROP_VERTICAL_LAYOUT, PropertyType.BOOLEAN);
+        registry.register(PROP_DUMP_ARC_LABELS, PropertyType.BOOLEAN);
+        registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        verticalLayout = ps.getBoolean(
+                PROP_VERTICAL_LAYOUT, PROP_VERTICAL_LAYOUT_DEFAULT);
+        skipHMMs = ps.getBoolean(PROP_SKIP_HMMS,
+                PROP_SKIP_HMMS_DEFAULT);
+        dumpArcLabels = ps.getBoolean(
+                PROP_DUMP_ARC_LABELS, PROP_DUMP_ARC_LABELS_DEFAULT);
         setDepthFirst(false); // breadth first traversal
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
     }
     /**
      * Retreives the default name for the destination dump. This method is
@@ -76,8 +117,6 @@ public class GDLDumper extends LinguistDumper {
      *            the output stream.
      */
     protected void startDump(PrintStream out) {
-        boolean verticalLayout = getProperties().getBoolean(
-                PROP_VERTICAL_LAYOUT, PROP_VERTICAL_LAYOUT_DEFAULT);
         out.println("graph: {");
         out.println("    layout_algorithm: minbackward");
         if (verticalLayout) {
@@ -110,8 +149,7 @@ public class GDLDumper extends LinguistDumper {
      *            the level of the state
      */
     protected void startDumpNode(PrintStream out, SearchState state, int level) {
-        boolean skipHMMs = getProperties().getBoolean(PROP_SKIP_HMMS,
-                PROP_SKIP_HMMS_DEFAULT);
+
         if (skipHMMs && (state instanceof HMMSearchState)) {
         } else {
             String color = getColor(state);
@@ -173,11 +211,7 @@ public class GDLDumper extends LinguistDumper {
     protected void dumpArc(PrintStream out, SearchState from,
             SearchStateArc arc, int level) {
         List arcList = new ArrayList();
-        boolean skipHMMs = getProperties().getBoolean(PROP_SKIP_HMMS,
-                PROP_SKIP_HMMS_DEFAULT);
-        boolean dumpArcLabels = getProperties().getBoolean(
-                PROP_DUMP_ARC_LABELS, PROP_DUMP_ARC_LABELS_DEFAULT);
-        LogMath logMath = LogMath.getLogMath(getProperties().getContext());
+
         if (skipHMMs) {
             if (from instanceof HMMSearchState) {
                 return;

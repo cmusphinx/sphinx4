@@ -24,22 +24,20 @@ import edu.cmu.sphinx.linguist.LinguistProcessor;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.SearchStateArc;
 import edu.cmu.sphinx.linguist.WordSearchState;
-import edu.cmu.sphinx.util.SphinxProperties;
 /**
  * A linguist processor that dumps out stats about the search space
  */
-public class LinguistStats implements LinguistProcessor {
+public class LinguistStats extends LinguistProcessor {
     private Map stateCountByType = new HashMap();
+    private String name;
+    
+    
     /**
      * Dumps the stats of the linguist
      * 
-     * @param props
-     *            the set of SphinxProperties
-     * @param linguist
-     *            the linguist
-     *  
      */
-    public void process(SphinxProperties props, Linguist linguist) {
+    public void run() {
+        Linguist linguist = getLinguist();
         List queue = new LinkedList();
         Set visitedStates = new HashSet();
         int stateCount = 0;
