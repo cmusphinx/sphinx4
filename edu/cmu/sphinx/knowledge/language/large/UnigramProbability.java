@@ -47,20 +47,41 @@ class UnigramProbability {
     }
 
 
+    /**
+     * Returns the log probability of this unigram.
+     *
+     * @return the log probability of this unigram
+     */
     public float getLogProbability() {
         return logProbability;
     }
 
 
+    /**
+     * Returns the log backoff weight of this unigram
+     *
+     * @return the log backoff weight of this unigram
+     */
     public float getLogBackoff() {
         return logBackoff;
     }
 
 
+    /**
+     * Returns the index of the first bigram entry of this unigram.
+     *
+     * @return the index of the first bigram entry of this unigram
+     */
     public int getFirstBigramEntry() {
         return firstBigramEntry;
     }
 
+
+    /**
+     * Sets the log probability of this unigram
+     *
+     * @param probability  the new log probability of this unigram
+     */
     public void setLogProbability(float probability) {
         logProbability = probability;
     }

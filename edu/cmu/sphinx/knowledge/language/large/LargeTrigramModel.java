@@ -117,11 +117,13 @@ public class LargeTrigramModel implements LanguageModel {
 	initialize(context);
     }
     
+
     /**
      * Raw constructor
      */
     public LargeTrigramModel() {
     }
+
     
     /**
      * Initializes this LanguageModel
@@ -263,7 +265,8 @@ public class LargeTrigramModel implements LanguageModel {
         if (numberBigramFollowers > 0) {
             // load all the bigram followers of firstWord
             // and then find the bigram with the secondWord
-            BigramFollowers bigramFollowers = loadBigramFollowers(firstWordID);
+            BigramFollowers bigramFollowers = 
+                loadBigramFollowers(firstWordID, numberBigramFollowers);
             bigram = bigramFollowers.findBigram(secondWordID);
         }
 
@@ -293,6 +296,7 @@ public class LargeTrigramModel implements LanguageModel {
         return logBackoff;
     }
     
+
     /**
      * Returns the maximum depth of the language model
      *
@@ -301,6 +305,7 @@ public class LargeTrigramModel implements LanguageModel {
     public int getMaxDepth() {
         return maxNGram;
     }
+
 
     /**
      * Returns the set of words in the lanaguage model. The set is
@@ -336,10 +341,12 @@ public class LargeTrigramModel implements LanguageModel {
      * disk to memory.
      *
      * @param firstWordID ID of the first word
+     * @param numberFollowers the number of bigram followers this word has
      *
      * @return the bigram followers of the given word
      */
-    private BigramFollowers loadBigramFollowers(int firstWordID) {
+    private BigramFollowers loadBigramFollowers(int firstWordID, 
+                                                int numberFollowers) {
         BigramFollowers followers = null;
 
         if ((followers = isBigramLoaded(firstWordID)) == null) {
@@ -347,29 +354,23 @@ public class LargeTrigramModel implements LanguageModel {
             System.out.println("Loading BigramFollowers from disk");
 
             int firstBigramEntry = unigrams[firstWordID].getFirstBigramEntry();
-            int numberFollowers = 
-                unigrams[firstWordID+1].getFirstBigramEntry() -
-                firstBigramEntry;
-
-            if (numberFollowers > 0) {
-
-                long position = (long) (bigramOffset + 
-                                        (firstBigramEntry * BYTES_PER_BIGRAM));
-                int size = (numberFollowers + 1) * BYTES_PER_BIGRAM;
-
-                try {
-                    assert ((position + size) <= fileChannel.size());
-                    ByteBuffer buffer = loadBigramBuffer(position, size);
-                    if (!bigEndian) {
-                        buffer.order(ByteOrder.LITTLE_ENDIAN);
-                    }
-                    followers = new BigramFollowers(buffer, numberFollowers);
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                    throw new Error("Error loading bigram followers");
+            
+            long position = (long) (bigramOffset + 
+                                    (firstBigramEntry * BYTES_PER_BIGRAM));
+            int size = (numberFollowers + 1) * BYTES_PER_BIGRAM;
+            
+            try {
+                assert ((position + size) <= fileChannel.size());
+                ByteBuffer buffer = loadBigramBuffer(position, size);
+                if (!bigEndian) {
+                    buffer.order(ByteOrder.LITTLE_ENDIAN);
                 }
-                loadedBigramFollowers.put(new Integer(firstWordID), followers);
+                followers = new BigramFollowers(buffer, numberFollowers);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                throw new Error("Error loading bigram followers");
             }
+            loadedBigramFollowers.put(new Integer(firstWordID), followers);
         }
 
         return followers;
@@ -705,6 +706,13 @@ public class LargeTrigramModel implements LanguageModel {
     }
 
 
+    /**
+     * Reads a byte from the given DataInputStream.
+     *
+     * @param stream the DataInputStream to read from
+     *
+     * @return the byte read
+     */
     private final byte readByte(DataInputStream stream) throws IOException {
         bytesRead++;
         return stream.readByte();
@@ -717,6 +725,8 @@ public class LargeTrigramModel implements LanguageModel {
      * @param stream the DataInputStream to read from
      * @param bigEndian true if the DataInputStream is in bigEndian,
      *                  false otherwise
+     *
+     * @return the integer read
      */
     private final int readInt(DataInputStream stream, boolean bigEndian) 
     throws IOException {
@@ -735,6 +745,8 @@ public class LargeTrigramModel implements LanguageModel {
      * @param stream the DataInputStream to read from
      * @param bigEndian true if the DataInputStream is in bigEndian,
      *                  false otherwise
+     *
+     * @return the float read
      */
     private final float readFloat(DataInputStream stream, boolean bigEndian)
     throws IOException {
@@ -814,6 +826,11 @@ public class LargeTrigramModel implements LanguageModel {
                                   logMath.getLogBase(),
                                   10.0f) + 
                  "(log10)");
+
+            long usedMemory = Runtime.getRuntime().totalMemory() - 
+                Runtime.getRuntime().freeMemory();
+            
+            System.out.println("Used memory: " + usedMemory + " bytes");
 
             System.out.print("Enter words: ");
         }

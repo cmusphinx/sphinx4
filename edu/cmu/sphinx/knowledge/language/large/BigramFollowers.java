@@ -43,27 +43,6 @@ public class BigramFollowers {
 
 
     /**
-     * Loads all bigram followers from disk to physical memory.
-     */
-    /*
-    public final void load() {
-        bigramBuffer.load();
-    }
-    */
-
-    /**
-     * Tells whether or not the bigrams are loaded into memory
-     *
-     * @return true if its likely that the bigrams are loaded
-     */
-    /*
-    public final boolean isLoaded() {
-        return bigramBuffer.isLoaded();
-    }
-    */
-
-
-    /**
      * Finds the bigram probabilities for the given second word in a bigram.
      *
      * @param secondWordID the ID of the second word
