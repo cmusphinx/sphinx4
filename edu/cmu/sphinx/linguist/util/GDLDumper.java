@@ -60,7 +60,6 @@ public class GDLDumper extends LinguistDumper {
     /**
      * The SphinxProperty to specify the log math
      */
-    
     public static final String PROP_LOG_MATH = "logMath";
 
     // -------------------------------
@@ -92,7 +91,8 @@ public class GDLDumper extends LinguistDumper {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        verticalLayout = ps.getBoolean(
+	super.newProperties(ps);
+	verticalLayout = ps.getBoolean(
                 PROP_VERTICAL_LAYOUT, PROP_VERTICAL_LAYOUT_DEFAULT);
         skipHMMs = ps.getBoolean(PROP_SKIP_HMMS,
                 PROP_SKIP_HMMS_DEFAULT);

@@ -71,6 +71,7 @@ public class LinguistDumper extends LinguistProcessor {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+	super.newProperties(ps);
         filename = ps.getString(PROP_FILENAME, getDefaultName());
     }
 
@@ -84,7 +85,9 @@ public class LinguistDumper extends LinguistProcessor {
         try {
             FileOutputStream fos = new FileOutputStream(filename);
             PrintStream out = new PrintStream(fos);
-            dumpSearchGraph(out, getLinguist().getSearchGraph().getInitialState());
+	    SearchState firstState = 
+		getLinguist().getSearchGraph().getInitialState();
+            dumpSearchGraph(out, firstState);
             out.close();
         } catch (FileNotFoundException fnfe) {
             System.out.println("Can't dump to file " + filename + " " + fnfe);
