@@ -142,6 +142,22 @@ public class SphinxProperties {
 	shadowProps.list(out);
     }
 
+    
+    /**
+     * Returns true if this SphinxProperties contains the given
+     * property.
+     *
+     * @return true if it has the given property, false otherwise
+     */
+    public boolean contains(String propertyName) {
+	String value = System.getProperty(propertyName);
+	if (value == null) {
+	    return props.contains(propertyName);
+	} else {
+	    return true;
+	}
+    }
+
 
     /**
      * Searches for the property with the specified name.
