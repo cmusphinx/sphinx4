@@ -113,5 +113,5 @@ edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight = 7.0
 edu.cmu.sphinx.decoder.Recognizer.dumpFrontEnd = false
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar
-edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager
+edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
 
