@@ -97,13 +97,18 @@ public class ParallelSearchManager implements SearchManager {
         "combinedScorePruner";
 
     /**
-     * The sphinx property for the list of acoustic models to use.
+     * The sphinx property for scorer used.
      */
-    public static final String PROP_ACOUSTIC_MODELS = "acousticModels";
+    public static final String PROP_SCORER = "scorer";
+
+    /**
+     * The sphinx property for linguist used.
+     */
+    public static final String PROP_LINGUIST = "linguist";
 
 
     private String name;
-    private Linguist linguist;
+    private ParallelSimpleLinguist linguist;
     private AcousticScorer scorer;
     private Pruner featureScorePruner;
     private Pruner combinedScorePruner;
@@ -131,9 +136,13 @@ public class ParallelSearchManager implements SearchManager {
     public void register(String name, Registry registry)
         throws PropertyException {
         this.name = name;
+        registry.register(PROP_LINGUIST, PropertyType.COMPONENT);
+        registry.register(PROP_SCORER, PropertyType.COMPONENT);
         registry.register(PROP_ACTIVE_LIST_FACTORY, PropertyType.COMPONENT);
         registry.register(PROP_DO_FEATURE_PRUNING, PropertyType.BOOLEAN);
         registry.register(PROP_DO_COMBINE_PRUNING, PropertyType.BOOLEAN);
+        registry.register(PROP_FEATURE_SCORE_PRUNER, PropertyType.COMPONENT);
+        registry.register(PROP_COMBINED_SCORE_PRUNER, PropertyType.COMPONENT);
     }
 
 
@@ -143,8 +152,12 @@ public class ParallelSearchManager implements SearchManager {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        this.linguist = linguist;
-	this.scorer = scorer;
+
+        linguist = (ParallelSimpleLinguist) ps.getComponent
+            (PROP_LINGUIST, ParallelSimpleLinguist.class);
+
+        scorer = (AcousticScorer) ps.getComponent
+            (PROP_SCORER, AcousticScorer.class);
 
 	activeListFactory = (ActiveListFactory) ps.getComponent
             (PROP_ACTIVE_LIST_FACTORY, ActiveListFactory.class);
@@ -171,22 +184,6 @@ public class ParallelSearchManager implements SearchManager {
         growTimer = Timer.getTimer("Grow");
         
         bestTokenMap = new HashMap();
-        
-        // initialize the FeatureStreams for the separate models
-        List models = ps.getComponentList
-            (PROP_ACOUSTIC_MODELS, AcousticModel.class);
-
-	float defaultEta = 1.f/models.size();
-
-        for (Iterator i = models.iterator(); i.hasNext();) {
-            String modelName = (String) i.next();
-            float eta = ps.getFloat(modelName + ".eta",
-                                    defaultEta);
-            FeatureStream stream = 
-                FeatureStream.getFeatureStream(modelName);
-            stream.setEta(eta);
-            System.out.println("Eta for " + modelName + " is: " + eta);
-        }
     }
 
 
@@ -263,7 +260,7 @@ public class ParallelSearchManager implements SearchManager {
         
         setBestToken(firstState, firstToken);
         
-        for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
+        for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
             FeatureStream stream = (FeatureStream) i.next();
             stream.setActiveList(activeListFactory.newInstance());
             
@@ -342,7 +339,7 @@ public class ParallelSearchManager implements SearchManager {
 	scoreTimer.start();
 	debugPrint("Scoring");
 	boolean moreFeatures = false;
-	for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
+	for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
             FeatureStream stream = (FeatureStream) i.next();
 	    Scoreable scoreable = 
 		scorer.calculateScores(stream.getActiveList().getTokens());
@@ -364,7 +361,7 @@ public class ParallelSearchManager implements SearchManager {
         debugPrint("Pruning");
 
 	if (doFeaturePruning) {
-	    for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
+	    for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
 		FeatureStream stream = (FeatureStream) i.next();	
 		debugPrint(" ActiveList, " + stream.getName() + ": " +
                            stream.getActiveList().size());
@@ -385,7 +382,7 @@ public class ParallelSearchManager implements SearchManager {
      */
     private void printActiveLists() {
         debugPrint(" CombinedActiveList: " + combinedActiveList.size());
-        for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
+        for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
             FeatureStream stream = (FeatureStream) i.next();	
             debugPrint(" ActiveList, " + stream.getName() + ": " +
                        stream.getActiveList().size());
@@ -410,7 +407,7 @@ public class ParallelSearchManager implements SearchManager {
 	delayedExpansionList = activeListFactory.newInstance();
 
         // grow each ActiveList (we have one ActiveList for each stream)
-	for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
+	for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
             FeatureStream stream = (FeatureStream) i.next();
 
             // create a new ActiveList for the next frame

@@ -15,6 +15,16 @@ package edu.cmu.sphinx.research.parallel;
 
 import edu.cmu.sphinx.decoder.search.ActiveList;
 
+import edu.cmu.sphinx.frontend.FrontEnd;
+
+import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
+
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,51 +34,64 @@ import java.util.Map;
  * Each kind of FeatureStream is a singleton (i.e., there is only 
  * one instance).
  */
-public class FeatureStream {
-
-    private static final Map streams = new HashMap();
+public class FeatureStream implements Configurable {
 
     /**
-     * Name of the FeatureStream.
+     * Property for the acoustic model of this feature stream.
      */
-    private final String name;
+    public static final String PROP_ACOUSTIC_MODEL = "acousticModel";
 
     /**
-     * Eta value assigned to the FeatureStream.
+     * Property for the front end of this feature stream.
      */
+    public static final String PROP_FRONT_END = "frontEnd";
+
+    /**
+     * Property for the eta value of this feature stream.
+     */
+    public static final String PROP_ETA = "eta";
+
+    /**
+     * Default value of PROP_ETA.
+     */
+    public static final float PROP_ETA_DEFAULT = 1.0f;
+
+
+    private String name;
+    private AcousticModel model;
+    private FrontEnd frontEnd;
     private float eta;
-
-    /**
-     * Token ActiveList for this FeatureStream.
-     */
     private ActiveList activeList;
 
-    private FeatureStream(String name) {
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry)
+        throws PropertyException {
         this.name = name;
+        registry.register(PROP_ACOUSTIC_MODEL, PropertyType.COMPONENT);
+        registry.register(PROP_FRONT_END, PropertyType.COMPONENT);
+        registry.register(PROP_ETA, PropertyType.FLOAT);
     }
 
-    /**
-     * Returns a FeatureStream with the given name.
+
+    /*
+     * (non-Javadoc)
      *
-     * @param name the name of the FeatureStream
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
-    public static FeatureStream getFeatureStream(String name) {
-        FeatureStream stream = (FeatureStream)streams.get(name);
-        if (stream == null) {
-            stream = new FeatureStream(name);
-            streams.put(name, stream);
-        }
-        return stream;
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        model = (AcousticModel) ps.getComponent
+            (PROP_ACOUSTIC_MODEL, AcousticModel.class);
+        name = model.getName();
+        frontEnd = (FrontEnd) ps.getComponent(PROP_FRONT_END, FrontEnd.class);
+        eta = ps.getFloat(PROP_ETA, PROP_ETA_DEFAULT);
     }
 
-    /**
-     * Returns an iterator of all FeatureStreams
-     *
-     * @return an iterator
-     */
-    public static Iterator iterator() {
-        return streams.values().iterator();
-    }
 
     /**
      * Returns the name of this FeatureStream.
@@ -77,6 +100,24 @@ public class FeatureStream {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Returns the acoustic model of this feature stream.
+     *
+     * @return the acoustic model of this feature stream
+     */
+    public AcousticModel getAcousticModel() {
+        return model;
+    }
+
+    /**
+     * Returns the front end of this feature stream.
+     *
+     * @return the front end of this feature stream
+     */
+    public FrontEnd getFrontEnd() {
+        return frontEnd;
     }
 
     /**
@@ -95,6 +136,13 @@ public class FeatureStream {
      */
     public ActiveList getActiveList() {
         return activeList;
+    }
+
+    /**
+     * Frees the acoustic model.
+     */
+    public void freeAcousticModel() {
+        model = null;
     }
 
     /**

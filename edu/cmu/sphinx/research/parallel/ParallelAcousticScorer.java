@@ -51,7 +51,6 @@ public class ParallelAcousticScorer implements AcousticScorer {
     public static String PROP_FRONTENDS = "frontends";
 
     private String name;
-    private Map frontEnds;
 
 
     /* (non-Javadoc)
@@ -60,7 +59,6 @@ public class ParallelAcousticScorer implements AcousticScorer {
     public void register(String name, Registry registry)
         throws PropertyException {
         this.name = name;
-        registry.register(PROP_FRONTENDS, PropertyType.COMPONENT_LIST);
     }
 
 
@@ -68,13 +66,6 @@ public class ParallelAcousticScorer implements AcousticScorer {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        frontEnds = new HashMap();
-        List frontEndList = (List) ps.getComponent
-            (PROP_FRONTENDS, FrontEnd.class);
-        for (Iterator i = frontEndList.iterator(); i.hasNext(); ) {
-            FrontEnd fe = (FrontEnd) i.next();
-            frontEnds.put(fe.getName(), fe);
-        }
     }
 
 
@@ -91,16 +82,9 @@ public class ParallelAcousticScorer implements AcousticScorer {
     public Scoreable calculateScores(List scoreableList) {
 
         assert scoreableList.size() > 0;
-        
-        String modelName = getModelName(scoreableList);
-        if (modelName == null) {
-            System.out.println
-                ("ParallelAcousticScorer: modelName is null");
-        }
-        assert modelName != null;
-	
+        	
 	try {
-	    FrontEnd frontEnd = (FrontEnd) frontEnds.get(modelName);
+	    FrontEnd frontEnd = getFrontEnd(scoreableList);
 	    Data data = frontEnd.getData();
 	 
 	    if (data == null) {
@@ -146,16 +130,15 @@ public class ParallelAcousticScorer implements AcousticScorer {
      *
      * @return the acoustic model name of the Tokens
      */
-    private String getModelName(List activeList) {
-	String modelName = null;
+    private FrontEnd getFrontEnd(List activeList) {
 	if (activeList.size() > 0) {
 	    Iterator i = activeList.iterator();
 	    if (i.hasNext()) {
 		ParallelToken token = (ParallelToken) i.next();
-                modelName = token.getModelName();
+                return token.getFeatureStream().getFrontEnd();
 	    }
 	}
-	return modelName;
+	return null;
     }
 
 

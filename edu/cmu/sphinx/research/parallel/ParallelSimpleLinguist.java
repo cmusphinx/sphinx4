@@ -47,6 +47,8 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,12 +99,12 @@ public class ParallelSimpleLinguist extends FlatLinguist {
     public static final String PROP_TIE_LEVEL_DEFAULT = "unit";
 
     /**
-     * Property that specifies the acoustic models used.
+     * Property that specifies the feature streams.
      */
-    public static final String PROP_ACOUSTIC_MODELS = "acousticModels";
+    public static final String PROP_FEATURE_STREAMS = "featureStreams";
 
-
-    private AcousticModel[] acousticModels;
+    
+    private List featureStreams;
 
     private int tokenStackCapacity;
 
@@ -120,7 +122,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
         super.register(name, registry);
         registry.register(PROP_STACK_CAPACITY, PropertyType.INT);
         registry.register(PROP_TIE_LEVEL, PropertyType.STRING);
-        registry.register(PROP_ACOUSTIC_MODELS, PropertyType.COMPONENT_LIST);
+        registry.register(PROP_FEATURE_STREAMS, PropertyType.COMPONENT_LIST);
     }
 
 
@@ -134,20 +136,46 @@ public class ParallelSimpleLinguist extends FlatLinguist {
         tokenStackCapacity = ps.getInt(PROP_STACK_CAPACITY,
                                        PROP_STACK_CAPACITY_DEFAULT);
         tieLevel = ps.getString(PROP_TIE_LEVEL, PROP_TIE_LEVEL_DEFAULT);
-        List modelsList = ps.getComponentList
-            (PROP_ACOUSTIC_MODELS, AcousticModel.class);
-        acousticModels = new AcousticModel[modelsList.size()];
-        modelsList.toArray(acousticModels);
     }
 
+    /**
+     * Sets up the acoustic model.
+     *
+     * @param ps the PropertySheet from which to obtain the acoustic model
+     */
+    protected void setupAcousticModel(PropertySheet ps) 
+        throws PropertyException {
+        featureStreams = ps.getComponentList
+            (PROP_FEATURE_STREAMS, FeatureStream.class);
+    }
 
+    /**
+     * Allocates the acoustic model(s).
+     */
+    protected void allocateAcousticModel() throws IOException {
+        for (Iterator i = featureStreams.iterator(); i.hasNext(); ) {
+            FeatureStream stream = (FeatureStream) i.next();
+            stream.getAcousticModel().allocate();
+        }
+    }
+    
     /**
      * Frees the acoustic model(s) used.
      */
     protected void freeAcousticModels() {
-        for (int i = 0; i < acousticModels.length; i++) {
-            acousticModels[i] = null;
+        for (Iterator i = featureStreams.iterator(); i.hasNext(); ) {
+            ((FeatureStream) i.next()).freeAcousticModel();
         }
+    }
+
+
+    /**
+     * Returns an Iterator of the feature streams.
+     *
+     * @return an iterator of the feature streams
+     */
+    public Iterator getFeatureStreams() {
+        return featureStreams.iterator();
     }
 
 
@@ -185,7 +213,8 @@ public class ParallelSimpleLinguist extends FlatLinguist {
          * @return the size of the left context
          */
         protected int getLeftContextSize() {
-            return acousticModels[0].getLeftContextSize();
+            FeatureStream stream = (FeatureStream) featureStreams.get(0);
+            return stream.getAcousticModel().getLeftContextSize();
         }
         
         /**
@@ -194,7 +223,8 @@ public class ParallelSimpleLinguist extends FlatLinguist {
          * @return the size of the right context
          */
         protected int getRightContextSize() {
-            return acousticModels[0].getRightContextSize();
+            FeatureStream stream = (FeatureStream) featureStreams.get(0);
+            return stream.getAcousticModel().getRightContextSize();
         }
         
         /**
@@ -239,16 +269,15 @@ public class ParallelSimpleLinguist extends FlatLinguist {
             SentenceHMMState combineState = new CombineState
                 (unitState.getParent(), unitState.getWhich());
             
-            // create an HMM branch for each acoustic model
-            
-            for (int i = 0; i < acousticModels.length; i++) {
-                
-                HMM hmm = acousticModels[i].lookupNearestHMM
+            // create an HMM branch for each acoustic model            
+            for (Iterator i = featureStreams.iterator(); i.hasNext(); ) {
+
+                FeatureStream stream = (FeatureStream) i.next();
+                AcousticModel model = stream.getAcousticModel();
+
+                HMM hmm = model.lookupNearestHMM
                     (unitState.getUnit(), unitState.getPosition(), false);
 
-                FeatureStream stream = FeatureStream.getFeatureStream
-                    (acousticModels[i].getName());
-                
                 ParallelHMMStateState firstHMMState = 
                     new ParallelHMMStateState(unitState, stream,
                                               hmm.getInitialState(),
@@ -354,14 +383,15 @@ public class ParallelSimpleLinguist extends FlatLinguist {
             SentenceHMMState combineState = new CombineState
                 (unitState.getParent(), unitState.getWhich());
             
-            HMM[] hmms = new HMM[acousticModels.length];
+            HMM[] hmms = new HMM[featureStreams.size()];
             
             SentenceHMMState lastState = unitState;
             
-            // create an HMM branch for each acoustic model
-            
-            for (int i = 0; i < acousticModels.length; i++) {
-                hmms[i] = acousticModels[i].lookupNearestHMM
+            int s = 0;
+            // create an HMM branch for each feature stream
+            for (Iterator i = featureStreams.iterator(); i.hasNext(); s++) {
+                FeatureStream stream = (FeatureStream) i.next();
+                hmms[s] = stream.getAcousticModel().lookupNearestHMM
                     (unitState.getUnit(), unitState.getPosition(), false);
             }
             
@@ -385,17 +415,23 @@ public class ParallelSimpleLinguist extends FlatLinguist {
             
             SentenceHMMState lastState = new CombineState(unitState, 0);
             
-            HMMStateArc[] arcs = new HMMStateArc[acousticModels.length];
+            HMMStateArc[] arcs = new HMMStateArc[featureStreams.size()];
             
+            //
+            // In this for loop, we connect the unitState to the 
+            // ParallelHMMState created from the first HMMState of each of 
+            // the HMMs. We then connect each of the ParallelHMMStates
+            // to a combining state. Lastly, if the HMMState has a
+            // self-transition, we create a transition from the combining
+            // state to the ParallelHMMState, using the self-transition
+            // probability.
+            //
             for (int i = 0; i < hmms.length; i++) {
                 HMMState hmmState = hmms[i].getInitialState();
-                
+                FeatureStream stream = (FeatureStream) featureStreams.get(i);
+
                 ParallelHMMStateState firstHMMState = new ParallelHMMStateState
-                    (unitState,
-                     FeatureStream.getFeatureStream
-                     (acousticModels[i].getName()),
-                     hmmState,
-                     tokenStackCapacity);
+                    (unitState, stream, hmmState, tokenStackCapacity);
                 
                 // Color.GREEN indicates an in-feature-stream state
                 firstHMMState.setColor(Color.GREEN);
@@ -424,7 +460,15 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                 
                 arcs[i] = getTransitionToNextState(hmmState);
             }
-            
+
+            // 
+            // We then start with the second HMMState of each HMM, and do
+            // the same thing as the previous for loop: connect each
+            // ParallelHMMState (created from the HMMState) to a combining
+            // state, and if that HMMState has a self transition, connect
+            // that combining state to the ParallelHMMState using the
+            // self transition probability
+            // 
             for (int i = 1; i <= hmms[0].getOrder(); i++) {
                 
                 SentenceHMMState combineState = new CombineState(unitState, i);
@@ -432,14 +476,11 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                 for (int a = 0; a < arcs.length; a++) {
                     HMMStateArc arc = arcs[a];
                     HMMState hmmState = arc.getHMMState();
-                    
+                    FeatureStream stream = (FeatureStream)featureStreams.get(a);
+
                     ParallelHMMStateState hmmStateState = 
                     new ParallelHMMStateState
-                        (unitState,
-                         FeatureStream.getFeatureStream
-                         (acousticModels[a].getName()),
-                         hmmState,
-                         tokenStackCapacity);
+                        (unitState, stream, hmmState, tokenStackCapacity);
                     
                     // Color.GREEN indicates an in-feature-stream state
                     hmmStateState.setColor(Color.GREEN);
