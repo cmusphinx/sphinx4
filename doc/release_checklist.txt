@@ -15,7 +15,7 @@ Binary Distribution:
 - cd ..
 - java -mx256m -jar bin/HelloWorld.jar
 - java -jar bin/HelloDigits.jar
-- java -jar bin/HelloNGram.jar
+- java -mx312m -jar bin/HelloNGram.jar
 - java -jar bin/ZipCity.jar
 - java -jar bin/AudioTool.jar
 - Go through index.html, click through the links to make sure they are
@@ -31,7 +31,7 @@ Source Distribution:
 - ant javadoc
 - java -mx256m -jar bin/HelloWorld.jar
 - java -jar bin/HelloDigits.jar
-- java -jar bin/HelloNGram.jar
+- java -mx312m -jar bin/HelloNGram.jar
 - java -jar bin/ZipCity.jar
 - java -jar bin/AudioTool.jar
 - cd tests/live
