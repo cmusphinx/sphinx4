@@ -239,43 +239,20 @@
             type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/>
     
     <component name="batchCMN" 
-                type="edu.cmu.sphinx.frontend.feature.BatchCMN"/>
+               type="edu.cmu.sphinx.frontend.feature.BatchCMN"/>
 
     <component name="liveCMN" 
-                type="edu.cmu.sphinx.frontend.feature.LiveCMN"/>
+               type="edu.cmu.sphinx.frontend.feature.LiveCMN"/>
     
     
     <component name="featureExtraction" 
-                type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/>
+               type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/>
     
-    <component name="streamDataSource" 
-                type="edu.cmu.sphinx.frontend.util.StreamDataSource">
-        <property name="sampleRate" value="16000"/>
-    </component>
-   
     <component name="microphone" 
-                type="edu.cmu.sphinx.frontend.util.Microphone">
-        <property name="bytesPerRead" value="320"/>
+               type="edu.cmu.sphinx.frontend.util.Microphone">
         <property name="closeBetweenUtterances" value="false"/>
     </component>
 
-    <component name="concatDataSource" 
-                type="edu.cmu.sphinx.frontend.util.ConcatFileDataSource">
-        <property name="sampleRate" value="16000"/>
-        <property name="skip" value="${skip}"/>
-        <property name="transcriptFile" value="reference.txt"/>
-        <property name="silenceFile"
-         value="/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw"/>
-        <property name="bytesPerRead" value="320"/>
-        <property name="batchFile" value="an4_words.batch"/>
-        <property name="addRandomSilence" value="true"/>
-    </component>
-    
-    <component name="cepstrumSource" 
-        type="edu.cmu.sphinx.frontend.StreamCepstrumSource">
-        <property name="sampleRate" value="16000"/>
-    </component>
-    
     <component name="dataDumper" 
         type="edu.cmu.sphinx.frontend.util.DataDumper"/>
     
