@@ -190,9 +190,9 @@ public class Lattice {
     protected void processToken(Node node, Token pathToken, Token parent) {
         
         assert node != null && hasNode(node.getId());
+        assert parent.isWord() && parent.getAcousticScore() == 0;
 
-        double acousticScore =
-            parent.getAcousticScore() + pathToken.getAcousticScore();
+        double acousticScore = pathToken.getAcousticScore();
         double lmScore =
             parent.getLanguageScore() + pathToken.getLanguageScore();
 
