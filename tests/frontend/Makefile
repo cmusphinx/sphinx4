@@ -124,3 +124,11 @@ ep-an4-spelling: all
 clean::
 	rm -f *.out *.diff
 
+##########################################################################
+
+dump_binary_cepstra: all
+	$(JAVA_CMD)
+	tests.frontend.CepstrumFileDumper \
+	cepstra_dump.props \
+	$(INPUT_FILE) \
+	$(OUTPUT_FILE)
