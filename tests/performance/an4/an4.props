@@ -67,7 +67,7 @@ edu.cmu.sphinx.frontend.sampleRate = 16000
 #
 ############################################################
 
-edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.HeapActiveList
+edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.FastActiveList
 edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.search.Linguist.validateSentenceHMM=false
 edu.cmu.sphinx.search.Linguist.compositeThreshold=100000
