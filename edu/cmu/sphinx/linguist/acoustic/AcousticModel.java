@@ -12,7 +12,6 @@
 
 package edu.cmu.sphinx.linguist.acoustic;
 
-import edu.cmu.sphinx.util.SphinxProperties;
 import java.util.Iterator;
 import java.io.IOException;
 
@@ -23,15 +22,9 @@ import java.io.IOException;
 public interface AcousticModel {
 
     /**
-     * Prefix for acoustic model SphinxProperties.
-     */
-    public final static String PROP_PREFIX
-	= "edu.cmu.sphinx.linguist.acoustic.";
-
-    /**
      * The directory where the acoustic model data can be found.
      */
-    public final static String PROP_LOCATION = PROP_PREFIX + "location";
+    public final static String PROP_LOCATION = "location";
 
     /**
      * The default value of PROP_LOCATION.
@@ -40,15 +33,21 @@ public interface AcousticModel {
 
 
     /**
-     * Initializes this acoustic model
+     * Gets this acoustic model ready to use, allocating all necessary
+     * resources.
      *
-     * @param name the name of this acoustic model
-     * @param context the context for this acoustic model
      *
      * @throws IOException if the model could not be loaded
      *
      */
-    public void initialize (String name, String context) throws IOException;
+    public void allocate( ) throws IOException;
+    
+    
+    /**
+     * Deallocates previously allcoated resources
+     *
+     */
+    public void deallocate();
 
 
 
@@ -119,12 +118,5 @@ public interface AcousticModel {
      public int getRightContextSize();
 
 
-     /**
-      * Returns the properties that were used to build this model
-      *
-      * @return the properties used to build this model (or null if
-      * they are not available).
-      */
-     public SphinxProperties getProperties();
 }
 
