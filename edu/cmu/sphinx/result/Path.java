@@ -34,10 +34,13 @@ public interface Path {
     public double getScore();
 
     /**
-     * Returns a confidence score between 0.0 and 1.0 (inclusive) 
-     * for this path.
+     * Returns a log confidence score for this path.
+     * Use the getLogMath().logToLinear()
+     * method to convert the log confidence score to linear.
+     * The linear value should be between 0.0 and 1.0 (inclusive).
      *
-     * @return a confidence score between 0.0 and 1.0 (inclusive)
+     * @return a log confidence score which linear value is
+     * between 0.0 and 1.0 (inclusive)
      */
     public double getConfidence();
 
