@@ -242,11 +242,12 @@ class ModelInitializerLoader implements Loader {
      * @param pool the senone pool
      * @param stateID vector with senone ID for an HMM
      * @param distFloor the lowest allowed score 
+     * @param varianceFloor the lowest allowed variance
      *
      * @return the senone pool
      */
     private void addModelToSenonePool(Pool pool, int[] stateID, 
-				      float distFloor) {
+				      float distFloor, float varianceFloor) {
 	assert pool != null;
 
 	int numMixtureWeights = mixtureWeightsPool.size();
@@ -284,7 +285,8 @@ class ModelInitializerLoader implements Loader {
 		    (float[]) variancePool.get(whichGaussian),
 		    (float[][]) varianceTransformationMatrixPool.get(0),
 		    (float[]) varianceTransformationVectorPool.get(0),
-		    distFloor);
+		    distFloor,
+		    varianceFloor);
 	    }
 
 	    Senone senone = new GaussianMixture( 
@@ -539,7 +541,7 @@ class ModelInitializerLoader implements Loader {
 		attribute = "-";
 	    }
 
-	    Unit unit = Unit.getUnit(phone, attribute.equals(FILLER));
+	    Unit unit = Unit.createCIUnit(phone, attribute.equals(FILLER));
 	    contextIndependentUnits.put(unit.getName(), unit);
 
 	    if (logger.isLoggable(Level.FINE)) {
@@ -571,7 +573,7 @@ class ModelInitializerLoader implements Loader {
 					     tmatSkip);
 
 	    // After creating all pools, we create the senone pool.
-	    addModelToSenonePool(senonePool, stid, distFloor);
+	    addModelToSenonePool(senonePool, stid, distFloor, varianceFloor);
 
 	    // With the senone pool in place, we go through all units, and
 	    // create the HMMs.
@@ -668,18 +670,22 @@ class ModelInitializerLoader implements Loader {
      * Adds transition matrix to the transition matrices pool
      *
      * @param pool the pool to add matrix to
-     * @param stid current HMM's id
+     * @param hmmId current HMM's id
      * @param numStates number of states in current HMM
      * @param floor the transition probability floor
      * @param skip if true, states can be skipped
      *
      * @throws IOException if an error occurs while loading the data
      */
-    private void addModelToTransitionMatricesPool(Pool pool, int stid, 
-				 int numStates, float floor, boolean skip)
+    private void addModelToTransitionMatricesPool(Pool pool, int hmmId, 
+				  int numEmittingStates, float floor, 
+				  boolean skip)
         throws IOException {
 
 	assert pool != null;
+
+	// Add one to account for the last, non-emitting, state
+	int numStates = numEmittingStates + 1;
 
 	float[][] tmat = new float[numStates][numStates];
 
@@ -711,7 +717,7 @@ class ModelInitializerLoader implements Loader {
 	    normalize(tmat[j]);
 	    convertToLogMath(tmat[j]);
 	}
-	pool.put(stid, tmat);
+	pool.put(hmmId, tmat);
     }
 
 
