@@ -15,7 +15,10 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import java.io.IOException;
 
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -67,8 +70,10 @@ public class PropertiesDumper {
      */
     public String toString() {
         String result = ((String) props.get("description")) + "\n";
-        for (Enumeration e = props.propertyNames(); e.hasMoreElements(); ) {
-            String key = (String) e.nextElement();
+        List list = Collections.list(props.propertyNames());
+        Collections.sort(list);
+        for (Iterator i = list.iterator(); i.hasNext(); ) {
+            String key = (String) i.next();
             String value = (String) props.get(key);
             result += ("\n\t" + getReadableForm(key) + ": " + value);
         }
