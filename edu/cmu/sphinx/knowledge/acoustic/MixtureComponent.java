@@ -161,15 +161,15 @@ class MixtureComponent implements Serializable {
 
 	 // System.out.println("MC: getscore " + logDval);
 
-	 if (logDval < distFloor) {
-	     logDval = distFloor;
-	 }
-
 	 // TODO: Need to use mean and variance transforms here
 
 	 if (Float.isNaN(logDval)) {
 	     System.out.println("gs is Nan, converting to 0");
 	     logDval = logMath.getLogZero();
+	 }
+
+	 if (logDval < distFloor) {
+	     logDval = distFloor;
 	 }
 
 	 return logDval;
