@@ -22,6 +22,7 @@ import java.text.DecimalFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.Line;
+import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 
 
@@ -468,10 +469,33 @@ public class DataUtil {
      * @return a suitable native audio format
      */
     public static AudioFormat getNativeAudioFormat(AudioFormat format) {
-        // try to do sample rate conversion
-        Line.Info[] lineInfos = AudioSystem.getTargetLineInfo
-            (new Line.Info(TargetDataLine.class));
+        return getNativeAudioFormat(format, null);
+    }
 
+    /**
+     * Returns a native audio format that has the same encoding,
+     * endianness and sample size as the given format,
+     * and a sample rate that is greater than or equal to the
+     * given sample rate.
+     *
+     * @param format the desired format
+     * @param mixer if non-null, use this Mixer; otherwise use
+     * AudioSystem
+     *
+     * @return a suitable native audio format
+     */
+    public static AudioFormat getNativeAudioFormat(AudioFormat format,
+                                                   Mixer mixer) {
+        Line.Info[] lineInfos;
+        
+        if (mixer != null) {
+            lineInfos = mixer.getTargetLineInfo
+                (new Line.Info(TargetDataLine.class));
+        } else {
+            lineInfos = AudioSystem.getTargetLineInfo
+                (new Line.Info(TargetDataLine.class));
+        }
+        
         AudioFormat nativeFormat = null;
 
         // find a usable target line
@@ -490,7 +514,7 @@ public class DataUtil {
                     && thisFormat.isBigEndian() == format.isBigEndian()
                     && thisFormat.getSampleSizeInBits() == 
                     format.getSampleSizeInBits()
-                    && thisFormat.getSampleRate() > format.getSampleRate()) {
+                    && thisFormat.getSampleRate() >= format.getSampleRate()) {
                     nativeFormat = thisFormat;
                     break;
                 }

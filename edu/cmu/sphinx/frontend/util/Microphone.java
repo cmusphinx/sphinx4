@@ -9,8 +9,6 @@
  * WARRANTIES.
  *
  */
-
-
 package edu.cmu.sphinx.frontend.util;
 
 import java.io.IOException;
@@ -28,6 +26,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.Mixer;
 
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
@@ -177,6 +176,26 @@ public class Microphone extends BaseDataProcessor {
      */
     public final static int PROP_SELECT_CHANNEL_DEFAULT = 0;
 
+    /**
+     * The Sphinx property that specifies the mixer to use.  The value
+     * can be "default," (which means let the AudioSystem decide),
+     * "last," (which means select the last Mixer supported by the
+     * AudioSystem), which appears to be what is often used for USB
+     * headsets), or an integer value which represents the index of
+     * the Mixer.Info that is returned by AudioSystem.getMixerInfo().
+     * To get the list of Mixer.Info objects, run the AudioTool
+     * application with a command line argument of "-dumpMixers".
+     *
+     * @see edu.cmu.sphinx.tools.audio.AudioTool
+     */
+    public final static String PROP_SELECT_MIXER = "selectMixer";
+
+    /**
+     * The default value of PROP_SELECT_MIXER.  This means that a
+     * specific Mixer will not be used.  Instead, the AudioSystem
+     * will be used to choose the audio line to use.
+     */
+    public final static String PROP_SELECT_MIXER_DEFAULT = "default";
 
     private AudioFormat finalFormat;
     private AudioInputStream audioStream = null;
@@ -199,6 +218,7 @@ public class Microphone extends BaseDataProcessor {
     private int frameSizeInBytes;
     private int msecPerRead;
     private int selectedChannel;
+    private String selectedMixerIndex;
     private String stereoToMono;
 
     
@@ -221,6 +241,7 @@ public class Microphone extends BaseDataProcessor {
         registry.register(PROP_KEEP_LAST_AUDIO, PropertyType.BOOLEAN);
         registry.register(PROP_STEREO_TO_MONO, PropertyType.STRING);
         registry.register(PROP_SELECT_CHANNEL, PropertyType.INT);
+        registry.register(PROP_SELECT_MIXER, PropertyType.STRING);
     }
 
     /*
@@ -262,6 +283,9 @@ public class Microphone extends BaseDataProcessor {
 
         selectedChannel = ps.getInt
             (PROP_SELECT_CHANNEL, PROP_SELECT_CHANNEL_DEFAULT);
+
+        selectedMixerIndex = ps.getString
+            (PROP_SELECT_MIXER, PROP_SELECT_MIXER_DEFAULT);
     }
 
     /**
@@ -272,14 +296,19 @@ public class Microphone extends BaseDataProcessor {
     public void initialize() {
         super.initialize();
         audioList = new DataList();
-
+        
         DataLine.Info  info 
                 = new DataLine.Info(TargetDataLine.class, desiredFormat);
-       
+
+        /* If we cannot get an audio line that matches the desired
+         * characteristics, shoot for one that matches almost
+         * everything we want, but has a higher sample rate.
+         */
         if (!AudioSystem.isLineSupported(info)) {
             logger.info(desiredFormat + " not supported");
             AudioFormat nativeFormat
-                = DataUtil.getNativeAudioFormat(desiredFormat);
+                = DataUtil.getNativeAudioFormat(desiredFormat,
+                                                getSelectedMixer());
             if (nativeFormat == null) {
                 logger.severe("couldn't find suitable target audio format");
                 return;
@@ -305,15 +334,66 @@ public class Microphone extends BaseDataProcessor {
             logger.info("Desired format: " + desiredFormat + " supported.");
             finalFormat = desiredFormat;
         }
+    }
 
-        /* Obtain and open the line and stream. */
+    /**
+     * Gets the Mixer to use.  Depends upon selectedMixerIndex being
+     * defined.
+     *
+     * @see #newProperties
+     */
+    private Mixer getSelectedMixer() {
+        if (selectedMixerIndex.equals("default")) {
+            return null;
+        } else {
+            Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
+            if (selectedMixerIndex.equals("last")) {
+                return AudioSystem.getMixer(mixerInfo[mixerInfo.length - 1]);
+            } else {
+                int index = Integer.parseInt(selectedMixerIndex);
+                return AudioSystem.getMixer(mixerInfo[index]);
+            }
+        }
+    }    
+    
+    /**
+     * Creates the audioLine if necessary and returns it.
+     */
+    private TargetDataLine getAudioLine() {
+        if (audioLine != null) {
+            return audioLine;
+        }        
+
+        /* Obtain and open the line and stream.
+         */
         try {
+            /* The finalFormat was decided in the initialize() method
+             * and is based upon the capabilities of the underlying
+             * audio system.  The final format will have all the
+             * desired audio characteristics, but may have a sample
+             * rate that is higher than desired.  The idea here is
+             * that we'll let the processors in the front end (e.g.,
+             * the FFT) handle some form of downsampling for us.
+             */
             logger.info("Final format: " + finalFormat);
-            info = new DataLine.Info(TargetDataLine.class, finalFormat);
-            audioLine = (TargetDataLine) AudioSystem.getLine(info);
+            
+            DataLine.Info info = new DataLine.Info(TargetDataLine.class,
+                                                   finalFormat);
 
-            // add a line listener that just traces
-            // the line states
+            /* We either get the audio from the AudioSystem (our
+             * default choice), or use a specific Mixer if the
+             * selectedMixerIndex property has been set.
+             */
+            Mixer selectedMixer = getSelectedMixer();
+            if (selectedMixer == null) {
+                audioLine = (TargetDataLine) AudioSystem.getLine(info);
+            } else {
+                audioLine = (TargetDataLine) selectedMixer.getLine(info);
+            }
+
+            /* Add a line listener that just traces
+             * the line states.
+             */
             audioLine.addLineListener(new LineListener() {
                     public  void update(LineEvent event) {
                         logger.info("line listener " + event);
@@ -322,8 +402,9 @@ public class Microphone extends BaseDataProcessor {
         } catch (LineUnavailableException e) {
             logger.severe("microphone unavailable " + e.getMessage());
         }
-    }
 
+        return audioLine;
+    }
 
     /**
      * Opens the audio capturing device so that it will be ready
@@ -334,10 +415,9 @@ public class Microphone extends BaseDataProcessor {
      *     false otherwise
      */
     private boolean open() {
+        TargetDataLine audioLine = getAudioLine();
         if (audioLine != null) {
             if (!audioLine.isOpen()) {
-
-                /* open the audio line */
                 logger.info("open");
                 try {
                     audioLine.open(finalFormat, audioBufferSize);
@@ -353,7 +433,8 @@ public class Microphone extends BaseDataProcessor {
                     assert (audioStream != null);
                 }
 
-                /* Set the frame size depending on the sample rate. */
+                /* Set the frame size depending on the sample rate.
+                 */
                 float sec = ((float) msecPerRead) / 1000.f;
                 frameSizeInBytes =
                     (audioStream.getFormat().getSampleSizeInBits() / 8) *
@@ -514,7 +595,19 @@ public class Microphone extends BaseDataProcessor {
 		}
                 audioLine.flush();
                 if (closeBetweenUtterances) {
+                    /* Closing the audio stream *should* (we think)
+                     * also close the audio line, but it doesn't
+                     * appear to do this on the Mac.  In addition,
+                     * once the audio line is closed, re-opening it
+                     * on the Mac causes some issues.  The Java sound
+                     * spec is also kind of ambiguous about whether a
+                     * closed line can be re-opened.  So...we'll go
+                     * for the conservative route and never attempt
+                     * to re-open a closed line.
+                     */
                     audioStream.close();
+                    audioLine.close();
+                    audioLine = null;
                 }
 	    } catch (IOException ioe) {
                 logger.warning("IO Exception " + ioe.getMessage());

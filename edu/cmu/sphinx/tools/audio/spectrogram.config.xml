@@ -15,12 +15,10 @@
     <component name="microphone" 
 	       type="edu.cmu.sphinx.frontend.util.Microphone">
         <property name="closeBetweenUtterances" value="true"/>
-
         <!-- Uncomment this on the Mac to get the last Mixer,
              which is typically the USB audio device.
         <property name="selectMixer" value="last"/>
         -->
-
     </component>
 
     <!-- ******************************************************** -->
