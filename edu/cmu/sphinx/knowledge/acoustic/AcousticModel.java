@@ -72,7 +72,23 @@ public class AcousticModel {
     /**
      * The default value of PROP_FORMAT.
      */
-    public final static String PROP_FORMAT_DEFAULT = "sphinx3_binary";
+    public final static String PROP_FORMAT_DEFAULT = "sphinx3.binary";
+
+
+    /**
+     * The save format for the acoustic model data. Current supported
+     * formats are:
+     *
+     *  sphinx3_ascii
+     *  sphinx3_binary
+     */
+    public final static String PROP_FORMAT_SAVE = PROP_PREFIX + "format.save";
+
+
+    /**
+     * The default value of PROP_FORMAT_SAVE.
+     */
+    public final static String PROP_FORMAT_SAVE_DEFAULT = "sphinx3.binary";
 
 
     /**
@@ -768,7 +784,7 @@ public class AcousticModel {
 	if (name != null) {
 	    formatProp = PROP_PREFIX + name + ".format";
 	}
-        String format = props.getString(formatProp, "sphinx4.v1");
+        String format = props.getString(formatProp, PROP_FORMAT_DEFAULT);
 
         if (format.equals("sphinx3.ascii")) {
             loader = new Sphinx3Loader(name, props, false);
@@ -781,6 +797,33 @@ public class AcousticModel {
     }
 
     
+    /**
+     * Saves the acoustic model with a given name and format
+     *
+     * @param name the name of the acoustic model
+     *
+     * @throws IOException if the model could not be loaded
+     * @throws FileNotFoundException if the model does not exist
+     */
+    public void save(String name) throws IOException, FileNotFoundException {
+	Saver saver;
+
+	String formatProp = PROP_FORMAT_SAVE;
+	if (name != null) {
+	    formatProp = PROP_PREFIX + name + ".format.save";
+	}
+	String format = props.getString(formatProp, PROP_FORMAT_SAVE_DEFAULT);
+
+        if (format.equals("sphinx3.ascii")) {
+            saver = new Sphinx3Saver(name, props, false, loader);
+        } else if (format.equals("sphinx3.binary")) {
+            saver = new Sphinx3Saver(name, props, true, loader);
+        }  else { // add new saving code here.
+            saver = null;
+            logger.severe("Unsupported acoustic model format " + format);
+	}
+    }
+
     /**
      * Dumps information about this model to the logger
      */

@@ -17,9 +17,9 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import java.util.Map;
 
 /**
- * Generic interface for a loader of acoustic models
+ * Generic interface for a saver of acoustic models
  */
-interface Loader {
+interface Saver {
     /**
      * Gets the pool of means for this loader
      *
@@ -57,21 +57,6 @@ interface Loader {
      * @return the pool
      */
     public Pool getVarianceTransformationMatrixPool();
-
-
-    /*
-     * Gets the mixture weight pool
-     *
-     * @return the pool
-     */
-    public Pool getMixtureWeightPool();
-
-    /*
-     * Gets the transition matrix pool
-     *
-     * @return the pool
-     */
-    public Pool getTransitionMatrixPool();
 
 
     /*

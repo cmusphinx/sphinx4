@@ -20,11 +20,13 @@ import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Utilities;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 import java.net.URI;
@@ -33,6 +35,7 @@ import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
@@ -42,12 +45,11 @@ import java.util.zip.ZipException;
 
 
 /**
- * an acoustic model loader that loads sphinx3 ascii data
+ * An acoustic model saver that saves sphinx3 ascii data.
  *
- * Mixture weights and transition probabilities are maintained in logMath 
- * log base, 
+ * Mixture weights and transition probabilities are saved in linear scale.
  */
-class Sphinx3Loader implements Loader {
+class Sphinx3Saver implements Saver {
 
     /**
      * The logger for this class
@@ -95,16 +97,17 @@ class Sphinx3Loader implements Loader {
 
 
     /**
-     * Loads the sphinx3 ascii model.
+     * Saves the sphinx3 models.
      *
      * @param modelName  the name of the model as specified in the
      *    props file.
      * @param props  the SphinxProperties object
-     * @param binary  if <code>true</code> the file is in binary
+     * @param binary if <code>true</code> the file is saved in binary
      * format
+     * @param loader this acoustic model's loader
      */
-    public Sphinx3Loader(String modelName, SphinxProperties props, 
-            boolean binary) throws 
+    public Sphinx3Saver(String modelName, SphinxProperties props, 
+            boolean binary, Loader loader) throws 
 	FileNotFoundException, IOException, ZipException {
 
         this.binary = binary;
@@ -119,32 +122,28 @@ class Sphinx3Loader implements Loader {
 	vectorLength = props.getInt
 	    (vectorLengthProp, AcousticModel.PROP_VECTOR_LENGTH_DEFAULT);
 	
-        hmmManager = new HMMManager();
+        hmmManager = loader.getHMMManager();
+	meansPool = loader.getMeansPool();
+	variancePool = loader.getVariancePool();
+	mixtureWeightsPool = loader.getMixtureWeightPool();
+	matrixPool = loader.getTransitionMatrixPool();
+	senonePool = loader.getSenonePool();
         contextIndependentUnits = new LinkedHashMap();
-
-        // dummy pools for these elements
-        meanTransformationMatrixPool
-            = createDummyMatrixPool("meanTransformationMatrix");
-        meanTransformationVectorPool
-            = createDummyVectorPool("meanTransformationMatrix");
-        varianceTransformationMatrixPool
-            = createDummyMatrixPool("varianceTransformationMatrix");
-        varianceTransformationVectorPool
-            = createDummyVectorPool("varianceTransformationMatrix");
+	acousticProperties = loader.getModelProperties();
 
         // do the actual acoustic model loading
-        loadModelFiles(modelName, props);
+        saveModelFiles(modelName, props);
     }
 
 
     /**
-     * Loads the AcousticModel from a directory in the file system.
+     * Saves the AcousticModel from a directory in the file system.
      *
      * @param modelName the name of the acoustic model; if null we just
-     *    load from the default location
+     *    save from the default location
      * @param props the SphinxProperties object to use
      */
-    private void loadModelFiles(String modelName, SphinxProperties props) 
+    private void saveModelFiles(String modelName, SphinxProperties props) 
 	throws FileNotFoundException, IOException, ZipException {
 
 	String prefix, model, dataDir, propsFile;
@@ -157,7 +156,7 @@ class Sphinx3Loader implements Loader {
 	// System.out.println("Using prefix: " + prefix);
 
 	location = props.getString
-	    (prefix + "location", AcousticModel.PROP_LOCATION_DEFAULT);
+	    (prefix + "location.save", AcousticModel.PROP_LOCATION_DEFAULT);
 	model = props.getString
 	    (prefix + "definition_file", AcousticModel.PROP_MODEL_DEFAULT);
 	dataDir = props.getString
@@ -176,12 +175,12 @@ class Sphinx3Loader implements Loader {
 	    props.getFloat(AcousticModel.PROP_VARIANCE_FLOOR, 
 			   AcousticModel.PROP_VARIANCE_FLOOR_DEFAULT);
 
-	logger.info("Loading Sphinx3 acoustic model: " + modelName);
+	logger.info("Saving Sphinx3 acoustic model: " + modelName);
 	logger.info("    Path      : " + location);
 	logger.info("    modellName: " + model);
 	logger.info("    dataDir   : " + dataDir);
 
-        // load the acoustic properties file (am.props), 
+        // save the acoustic properties file (am.props), 
 	// create a different URL depending on the data format
 
         String url = null;
@@ -198,39 +197,37 @@ class Sphinx3Loader implements Loader {
 	} else {
 	    prefix = props.getContext() + ".acoustic." + modelName;
 	}
-	acousticProperties = loadAcousticPropertiesFile(prefix, url);
+	saveAcousticPropertiesFile(acousticProperties, propsFile, false);
 
 
         if (binary) {
-            meansPool = loadDensityFileBinary(dataDir + "means",
-                    -Float.MAX_VALUE);
-            variancePool = loadDensityFileBinary(dataDir + "variances",
-                    varianceFloor);
-            mixtureWeightsPool = loadMixtureWeightsBinary(
-                dataDir + "mixture_weights", mixtureWeightFloor);
-           
-            matrixPool = loadTransitionMatricesBinary(
-                    dataDir + "transition_matrices");
+	    // First, overwrite the previous file
+            saveDensityFileBinary(meansPool, dataDir + "means", true);
+	    // From now on, append to previous file
+            saveDensityFileBinary(variancePool, dataDir + "variances", true);
+	    saveMixtureWeightsBinary(mixtureWeightsPool,
+				     dataDir + "mixture_weights", true);
+            saveTransitionMatricesBinary(matrixPool,
+                    dataDir + "transition_matrices", true);
 
-        } else  {
-            meansPool = loadDensityFileAscii(dataDir + "means.ascii",
-                    -Float.MAX_VALUE);
-            variancePool = loadDensityFileAscii(dataDir + "variances.ascii",
-                    varianceFloor);
-            mixtureWeightsPool = loadMixtureWeightsAscii(
-                    dataDir + "mixture_weights.ascii", mixtureWeightFloor);
-            matrixPool = loadTransitionMatricesAscii(
-                    dataDir + "transition_matrices.ascii");
+        } else {
+	    saveDensityFileAscii(meansPool, dataDir + "means.ascii", true);
+            saveDensityFileAscii(variancePool, dataDir + "variances.ascii", 
+				 true);
+	    saveMixtureWeightsAscii(mixtureWeightsPool, 
+				    dataDir + "mixture_weights.ascii", true);
+	    saveTransitionMatricesAscii(matrixPool,
+		    dataDir + "transition_matrices.ascii", true);
         }
 
-	senonePool = createSenonePool(distFloor);
+	//	senonePool = createSenonePool(distFloor);
 
-        // load the HMM model file
+        // save the HMM model file
 	boolean useCDUnits = props.getBoolean
 	    (AcousticModel.PROP_USE_CD_UNITS, 
 	     AcousticModel.PROP_USE_CD_UNITS_DEFAULT);
-	loadHMMPool(useCDUnits,
-                    StreamFactory.getInputStream(location, model),
+	saveHMMPool(useCDUnits,
+                    StreamFactory.getOutputStream(location, model, true),
                     location + File.separator + model);
     }
 
@@ -307,104 +304,105 @@ class Sphinx3Loader implements Loader {
      *
      * @param props the SphinxProperties object 
      * @param path the path to the acoustic properties file
-     *
-     * @return a SphinxProperty object containing the acoustic properties,
-     *    or null if there are no acoustic model properties
+     * @param append if true, append to the current file, if ZIP file
      *
      * @throws FileNotFoundException if the file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException if an error occurs while saving the data
      */
-    private SphinxProperties loadAcousticPropertiesFile(String context,
-                                                        String url)
+    private void saveAcousticPropertiesFile(SphinxProperties property,
+					    String path, boolean append)
         throws FileNotFoundException, IOException {
-        SphinxProperties.initContext(context, new URL(url));
-        return (SphinxProperties.getSphinxProperties(context));
+	logger.info("Saving acoustic properties file to:");
+	logger.info(path);
+
+        OutputStream outputStream = 
+	    StreamFactory.getOutputStream(location, path, append);
+
+	if (outputStream == null) {
+	    throw new IOException("Error trying to write file "
+				  + path);
+	}
+	PrintStream ps = new PrintStream(outputStream, true);
+	property.list(ps);
+	outputStream.close();
     }
 
 
     /**
-     * Loads the sphinx3 densityfile, a set of density arrays are
+     * Saves the sphinx3 densityfile, a set of density arrays are
      * created and placed in the given pool.
      *
+     * @param pool the pool to be saved
      * @param path the name of the data
-     * @param floor the minimum density allowed
-     *
-     * @return a pool of loaded densities
+     * @param append is true, the file will be appended, useful if
+     * saving to a ZIP or JAR file
      *
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException if an error occurs while saving the data
      */
-    private Pool loadDensityFileAscii(String path, float floor) 
+    private void saveDensityFileAscii(Pool pool, String path, boolean append)
         throws FileNotFoundException, IOException {
 	int token_type;
 	int numStates;
 	int numStreams;
 	int numGaussiansPerState;
 
-        InputStream inputStream = StreamFactory.getInputStream(location, path);
-
-	if (inputStream == null) {
-	    throw new FileNotFoundException("Error trying to read file "
-                                        + location + path);
-	}
-        // 'false' argument refers to EOL is insignificant
-	ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
-            (inputStream, '#', false);
-
-    	Pool pool = new Pool(path);
-
-	logger.info("Loading density file from: ");
+	logger.info("Saving density file to: ");
 	logger.info(path);
 
-	est.expectString("param");
-	numStates = est.getInt("numStates");
-	numStreams = est.getInt("numStreams");
-	numGaussiansPerState = est.getInt("numGaussiansPerState");
+        OutputStream outputStream = 
+	    StreamFactory.getOutputStream(location, path, append);
 
-	pool.setFeature(NUM_SENONES, numStates);
-	pool.setFeature(NUM_STREAMS, numStreams);
-	pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
+	if (outputStream == null) {
+	    throw new IOException("Error trying to write file "
+                                        + location + path);
+	}
+	PrintWriter pw = new PrintWriter(outputStream, true);
+
+	pw.print("param ");
+	numStates = pool.getFeature(NUM_SENONES, -1);
+	pw.print(numStates + " ");
+	numStreams = pool.getFeature(NUM_STREAMS, -1);
+	pw.print(numStreams + " ");
+	numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
+	pw.println(numGaussiansPerState);
+
 
 	for (int i = 0; i < numStates; i++) {
-	    est.expectString("mgau");
-	    est.expectInt("mgau index", i);
-	    est.expectString("feat");
-	    est.expectInt("feat index", 0);
+	    pw.println("mgau " + i);
+	    pw.println("feat " + 0);
 	    for (int j = 0; j < numGaussiansPerState; j++) {
-		est.expectString("density");
-		est.expectInt("densityValue", j);
 
-		float[] density = new float[vectorLength];
+		pw.print("density" + " \t" + j);
+
+		int id = i * numGaussiansPerState + j;
+		float[] density = (float [])pool.get(id);
 		for (int k = 0; k < vectorLength; k++) {
-		    density[k] = est.getFloat("val");
-		    if (density[k] < floor) {
-			density[k] = floor;
-		    }
+		    pw.print(" " + density[k]);
                  //   System.out.println(" " + i + " " + j + " " + k +
                   //          " " + density[k]);
 		}
-		int id = i * numGaussiansPerState + j;
-		pool.put(id, density);
+		pw.println();
 	    }
 	}
-	est.close();
-	return pool;
+	outputStream.close();
     }
 
     /**
-     * Loads the sphinx3 densityfile, a set of density arrays are
+     * Saves the sphinx3 densityfile, a set of density arrays are
      * created and placed in the given pool.
      *
+     * @param pool the pool to be saved
      * @param path the name of the data
-     * @param floor the minimum density allowed
-     *
-     * @return a pool of loaded densities
+     * @param append is true, the file will be appended, useful if
+     * saving to a ZIP or JAR file
      *
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException if an error occurs while saving the data
      */
-    private Pool loadDensityFileBinary(String path, float floor) 
+    private void saveDensityFileBinary(Pool pool, String path, boolean append) 
         throws FileNotFoundException, IOException {
+	/*
 	int token_type;
 	int numStates;
 	int numStreams;
@@ -412,7 +410,11 @@ class Sphinx3Loader implements Loader {
         Properties props = new Properties();
         int blockSize = 0;
 
-        DataInputStream dis = readS3BinaryHeader(location, path, props);
+	logger.info("Saving density file to: " );
+	logger.info(path);
+
+        DataOutputStream dos = readS3BinaryHeader(location, path, props, 
+						  append);
 
         String version = props.getProperty("version");
         boolean doCheckSum;
@@ -424,17 +426,17 @@ class Sphinx3Loader implements Loader {
         String checksum = props.getProperty("chksum0");
         doCheckSum =  (checksum != null && checksum.equals("yes"));
 
-        numStates = readInt(dis);
-        numStreams = readInt(dis);
-        numGaussiansPerState = readInt(dis);
+        numStates = readInt(dos);
+        numStreams = readInt(dos);
+        numGaussiansPerState = readInt(dos);
 
 
         int[] vectorLength = new int[numStreams];
         for (int i = 0; i < numStreams; i++) {
-            vectorLength[i] = readInt(dis);
+            vectorLength[i] = readInt(dos);
         }
 
-        int rawLength = readInt(dis);
+        int rawLength = readInt(dos);
 
         //System.out.println("Nstates " + numStates);
         //System.out.println("Nstreams " + numStreams);
@@ -450,7 +452,6 @@ class Sphinx3Loader implements Loader {
         assert rawLength == numGaussiansPerState * blockSize * numStates;
         assert numStreams == 1;
 
-    	Pool pool = new Pool(path);
 	pool.setFeature(NUM_SENONES, numStates);
 	pool.setFeature(NUM_STREAMS, numStreams);
 	pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
@@ -459,57 +460,58 @@ class Sphinx3Loader implements Loader {
 	for (int i = 0; i < numStates; i++) {
             for (int j = 0; j < numStreams; j++) {
                 for (int k = 0; k < numGaussiansPerState; k++) {
-                    float[] density = readFloatArray(dis, vectorLength[j]);
+                    float[] density = readFloatArray(dos, vectorLength[j]);
                     floorData(density, floor);
                     pool.put(i * numGaussiansPerState + k, density);
 		}
 	    }
 	}
 
-        int checkSum = readInt(dis);
+        int checkSum = readInt(dos);
         // BUG: not checking the check sum yet.
-        dis.close();
-        return pool;
+        dos.close();
+	*/
     }
 
 
     /**
-     * Reads the S3 binary hearder from the given location+path. Adds
-     * header information to the given set of properties.
+     * Writes the S3 binary header to the given location+path.
      *
      * @param location the location of the file
      * @param path the name of the file
      * @param props the properties
+     * @param append is true, the file will be appended, useful if
+     * saving to a ZIP or JAR file
      *
-     * @return the input stream positioned after the header
+     * @return the output stream positioned after the header
      *
      * @throws IOException on error
      */
 
-    private DataInputStream readS3BinaryHeader(String location, String
-            path, Properties props) throws IOException {
-
-        InputStream inputStream = StreamFactory.getInputStream(location, path);
-        DataInputStream dis = new DataInputStream(new
-                BufferedInputStream(inputStream));
-
-        String id = readWord(dis);
+    private DataOutputStream writeS3BinaryHeader(String location, String
+            path, Properties props, boolean append) throws IOException {
+        OutputStream outputStream = 
+	    StreamFactory.getOutputStream(location, path, append);
+        DataOutputStream dos = new DataOutputStream(new
+                BufferedOutputStream(outputStream));
+	/*
+        String id = writeWord(dos);
         if (!id.equals("s3")) {
             throw new IOException("Not proper s3 binary file " +
                     location + path);
         }
 
         String name;
-        while ((name = readWord(dis)) != null) {
+        while ((name = readWord(dos)) != null) {
             if (!name.equals("endhdr")) {
-                String value = readWord(dis);
+                String value = readWord(dos);
                 props.setProperty(name, value);
             } else {
                 break;
             }
         }
 
-        int byteOrderMagic = dis.readInt();
+        int byteOrderMagic = dos.readInt();
 
         if (byteOrderMagic == BYTE_ORDER_MAGIC) {
             // System.out.println("Not swapping " + path);
@@ -521,48 +523,35 @@ class Sphinx3Loader implements Loader {
             throw new IOException("Corrupt S3 file " + location + path);
         }
 
-        return dis;
+	*/
+        return dos;
     }
 
     /**
-     * Reads the next word (text separated by whitespace) from the
-     * given stream
+     * Writes the next word (without surrounding white spaces) to the
+     * given stream.
      *
-     * @param dis the input stream
-     *
-     * @return the next word
+     * @param dos the output stream
+     * @param word the next word
      *
      * @throws IOException on error
      */
-    String readWord(DataInputStream dis) throws IOException {
-        StringBuffer sb = new StringBuffer();
-        char c;
-
-        // skip leading whitespace
-        do {
-            c = readChar(dis);
-        } while(Character.isWhitespace(c));
-
-        // read the word
-
-        do {
-            sb.append(c);
-            c = readChar(dis);
-        } while (!Character.isWhitespace(c));
-        return sb.toString();
+    void writeWord(DataOutputStream dos, String word) throws IOException {
+	    dos.writeBytes(word);
     }
 
 
     /**
-     * Reads a single char from the stream
+     * Writes a single char to the stream
      *
-     * @param dis the stream to read
-     * @return the next character on the stream
+     * @param dos the stream to read
+     * @param character the next character on the stream
      *
      * @throws IOException if an error occurs
      */
-    private char readChar(DataInputStream dis) throws IOException {
-        return (char) dis.readByte();
+    private void writeChar(DataOutputStream dos, char character) 
+	throws IOException {
+        dos.writeByte(character);
     }
 
     /**
@@ -578,42 +567,39 @@ class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Read an integer from the input stream, byte-swapping as
+     * Writes an integer to the output stream, byte-swapping as
      * necessary
      *
-     * @param dis the inputstream
-     *
-     * @return an integer value
+     * @param dos the outputstream
+     * @param val an integer value
      *
      * @throws IOException on error
      */
-    private int readInt(DataInputStream dis) throws IOException {
+    private void writeInt(DataOutputStream dos, int val) throws IOException {
         if (swap) {
-            return Utilities.readLittleEndianInt(dis);
+            dos.writeInt(Utilities.swapInteger(val));
         } else {
-            return dis.readInt();
+            dos.writeInt(val);
         }
     }
 
     /**
-     * Read a float from the input stream, byte-swapping as
+     * Writes a float to the output stream, byte-swapping as
      * necessary
      *
-     * @param dis the inputstream
-     *
-     * @return a floating pint value
+     * @param dos the inputstream
+     * @param val a float value
      *
      * @throws IOException on error
      */
 
-    private float readFloat(DataInputStream dis) throws IOException {
-        float val;
+    private void writeFloat(DataOutputStream dos, float val) 
+	throws IOException {
         if (swap) {
-            val =  Utilities.readLittleEndianFloat(dis);
+            dos.writeFloat(Utilities.swapFloat(val));
         } else {
-            val =  dis.readFloat();
+            dos.writeFloat(val);
         }
-        return val;
     }
 
     // Do we need the method nonZeroFloor??
@@ -694,40 +680,48 @@ class Sphinx3Loader implements Loader {
 
 
     /**
-     * Reads the given number of floats from the stream and returns
-     * them in an array of floats
+     * Convert from log math
      *
-     * @param dis the stream to read data from
-     * @param size the number of floats to read
+     * @param in the data in log scale
+     * @param out the data in linear scale
+     */
+    private void convertFromLogMath(float[] in, float[] out) {
+	assert in.length == out.length;
+        for (int i = 0; i < in.length; i++) {
+            out[i] = (float)logMath.logToLinear(in[i]);
+        }
+    }
+
+
+    /**
+     * Writes the given number of floats from an array of floats to a
+     * stream.
      *
-     * @return an array of size float elements
+     * @param dos the stream to write the data to
+     * @param data the array of floats to write to the stream
      *
      * @throws IOException if an exception occurs
      */
-    private float[] readFloatArray(DataInputStream dis, int size)
+    private void writeFloatArray(DataOutputStream dos, float[] data)
         throws IOException{
-        float[] data = new float[size];
 
-        for (int i = 0; i < size; i++) {
-            data[i] = readFloat(dis);
+        for (int i = 0; i < data.length; i++) {
+            writeFloat(dos, data[i]);
         }
-        return data;
     }
 
     /**
-     * Loads the sphinx3 densityfile, a set of density arrays are
+     * Saves the sphinx3 densityfile, a set of density arrays are
      * created and placed in the given pool.
      *
      * @param path the path to a density file
      * @param name the name of the data
      *
-     * @return a pool of loaded densities
-     *
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException if an error occurs while saving the data
      */
-    private Pool loadHMMPool(boolean useCDUnits,
-                             InputStream inputStream,
+    private void saveHMMPool(boolean useCDUnits,
+                             OutputStream outputStream,
                              String path) 
             throws FileNotFoundException, IOException {
 	int token_type;
@@ -739,134 +733,146 @@ class Sphinx3Loader implements Loader {
 	int numContextIndependentTiedState;
 	int numTiedTransitionMatrices;
 
-	ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
-            (inputStream, '#', false);
-    	Pool pool = new Pool(path);
-
-	logger.info("Loading HMM file from: ");
+	logger.info("Saving HMM file to: ");
 	logger.info(path);
 
-	est.expectString(MODEL_VERSION);
+	if (outputStream == null) {
+	    throw new IOException("Error trying to write file "
+                                        + location + path);
+	}
+	PrintWriter pw = new PrintWriter(outputStream, true);
 
-	numBase = est.getInt("numBase");
-	est.expectString("n_base");
+	/*
+	ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
+            (outputStream, '#', false);
+    	Pool pool = new Pool(path);
+	*/
 
-	numTri = est.getInt("numTri");
-	est.expectString("n_tri");
+	// First, count the HMMs
+	numBase = 0;
+	numTri = 0;
+	numContextIndependentTiedState = 0;
+	numStateMap = 0;
+	for (Iterator i = hmmManager.getIterator(); i.hasNext(); ) {
+	    HMM hmm = (HMM)i.next();
+	    numStateMap += hmm.getOrder() + 1;
+	    if (hmm.isContextDependent()) {
+		numTri++;
+	    } else {
+		numBase++;
+		numContextIndependentTiedState += hmm.getOrder();
+	    }
+	}
+	pw.println(MODEL_VERSION);
+	pw.println(numBase + " n_base");
+	pw.println(numTri + " n_tri");
+	pw.println(numStateMap + " n_state_map");
+	numTiedState = mixtureWeightsPool.getFeature(NUM_SENONES, 0);
+	pw.println(numTiedState + " n_tied_state");
+	pw.println(numContextIndependentTiedState + " n_tied_ci_state");
+	numTiedTransitionMatrices = numBase;
+	assert numTiedTransitionMatrices == matrixPool.size();
+	pw.println(numTiedTransitionMatrices + " n_tied_tmat");
 
-	numStateMap = est.getInt("numStateMap");
-	est.expectString("n_state_map");
-
-	numTiedState = est.getInt("numTiedState");
-	est.expectString("n_tied_state");
-
-	numContextIndependentTiedState = 
-	    est.getInt("numContextIndependentTiedState");
-	est.expectString("n_tied_ci_state");
-
-	numTiedTransitionMatrices = est.getInt("numTiedTransitionMatrices");
-	est.expectString("n_tied_tmat");
+	pw.println("#");
+	pw.println("# Columns definitions");
+	pw.println("#base lft  rt p attrib tmat      ... state id's ...");
 
 	numStatePerHMM = numStateMap/(numTri+numBase);
 
-	assert numTiedState == mixtureWeightsPool.getFeature(NUM_SENONES, 0);
-	assert numTiedTransitionMatrices == matrixPool.size();
-
-	int[] stid = new int[numStatePerHMM-1];
-
-	// Load the base phones
-	for (int i = 0; i < numBase; i++) {
-	    String name = est.getString();
-	    String left = est.getString();
-	    String right = est.getString();
-	    String position = est.getString();
-	    String attribute  = est.getString();
-	    int  tmat  = est.getInt("tmat");
-
-	    for (int j=0; j < numStatePerHMM-1; j++) {
-                stid[j] = est.getInt("j");
-		assert stid[j] >= 0 && stid[j] < numContextIndependentTiedState;
+	// Save the base phones
+	for (Iterator i = hmmManager.getIterator(); i.hasNext(); ) {
+	    HMM hmm = (HMM)i.next();
+	    if (hmm.isContextDependent()) {
+		continue;
 	    }
-	    est.expectString("N");
 
-	    assert left.equals("-");
-	    assert right.equals("-");
-	    assert position.equals("-");
+	    Unit unit = hmm.getUnit();
+
+	    String name = unit.getName();
+	    pw.print(name + "\t");
+	    String left = "-";
+	    pw.print(left + "   ");
+	    String right = "-";
+	    pw.print(right + " ");
+	    String position = hmm.getPosition().toString();
+	    pw.print(position + "\t");
+	    String attribute;
+	    if (unit.isFiller()) {
+		attribute = FILLER;
+	    } else {
+		attribute = "n/a";
+	    }
+	    pw.print(attribute + "\t");
+	    int tmat = matrixPool.indexOf(hmm.getTransitionMatrix());
 	    assert tmat < numTiedTransitionMatrices;
+	    pw.print(tmat + "\t"); 
 
-	    Unit unit = new Unit(name, attribute.equals(FILLER));
-	    contextIndependentUnits.put(unit.getName(), unit);
+	    SenoneSequence ss = hmm.getSenoneSequence();
+	    Senone[] senones = ss.getSenones();
+	    for (int j = 0; j < senones.length; j++) {
+		int index = senonePool.indexOf(senones[j]);
+		assert index >= 0 && index < numContextIndependentTiedState;
+		pw.print(index + "\t");
+	    }
+	    pw.println("N");
 
 	    if (logger.isLoggable(Level.FINE)) {
-		logger.fine("Loaded " + unit);
+		logger.fine("Saved " + unit);
 	    }
 
-
-	    // The first filler
-	    if (unit.isFiller() && unit.getName().equals(SILENCE_CIPHONE)) {
-		unit = Unit.SILENCE;
-	    }
-
-	    float[][] transitionMatrix = (float[][]) matrixPool.get(tmat);
-	    SenoneSequence ss = getSenoneSequence(stid);
-
-	    HMM hmm = new HMM(unit,  ss, 
-		    	transitionMatrix, HMMPosition.lookup(position));
-	    hmmManager.put(hmm);
 	}
 
-	// Load the context dependent phones.  If the useCDUnits
-	// property is false, the CD phones will not be created, but
-        // the values still need to be read in from the file.
+	// Save the context dependent phones.
 
-	for (int i = 0; i < numTri; i++) {
-	    String name = est.getString();
-	    String left = est.getString();
-	    String right = est.getString();
-	    String position = est.getString();
-	    String attribute  = est.getString();
-	    int  tmat  = est.getInt("tmat");
-
-	    for (int j = 0; j < numStatePerHMM-1; j++) {
-                stid[j] = est.getInt("j");
-		assert stid[j] >= numContextIndependentTiedState && 
-                       stid[j] < numTiedState;
+	for (Iterator i = hmmManager.getIterator(); i.hasNext(); ) {
+	    HMM hmm = (HMM)i.next();
+	    if (!hmm.isContextDependent()) {
+		continue;
 	    }
-	    est.expectString("N");
 
-	    assert !left.equals("-");
-	    assert !right.equals("-");
-	    assert !position.equals("-");
+	    Unit unit = hmm.getUnit();
+	    LeftRightContext context = (LeftRightContext)unit.getContext();
+	    Unit[] leftContext = context.getLeftContext();
+	    Unit[] rightContext = context.getRightContext();
+	    assert leftContext.length == 1 && rightContext.length == 1;
+
+	    String name = unit.getName();
+	    pw.print(name + "\t");
+	    String left = leftContext[0].getName();
+	    pw.print(left + "   ");
+	    String right = rightContext[0].getName();
+	    pw.print(right + " ");
+	    String position = hmm.getPosition().toString();
+	    pw.print(position + "\t");
+	    String attribute;
+	    if (unit.isFiller()) {
+		attribute = FILLER;
+	    } else {
+		attribute = "n/a";
+	    }
 	    assert attribute.equals("n/a");
+	    pw.print(attribute + "\t");
+	    int tmat = matrixPool.indexOf(hmm.getTransitionMatrix());
 	    assert tmat < numTiedTransitionMatrices;
+	    pw.print(tmat + "\t"); 
 
-            if (useCDUnits) {
-                Unit[] leftContext = new Unit[1];
-                leftContext[0] = (Unit) contextIndependentUnits.get(left);
-                
-                Unit[] rightContext = new Unit[1];
-                rightContext[0] = (Unit) contextIndependentUnits.get(right);
-                
-                Context context = LeftRightContext.get(leftContext,
-                                                       rightContext);
+	    SenoneSequence ss = hmm.getSenoneSequence();
+	    Senone[] senones = ss.getSenones();
+	    for (int j = 0; j < senones.length; j++) {
+		int index = senonePool.indexOf(senones[j]);
+		assert index >= 0 && index < numTiedState;
+		pw.print(index + "\t");
+	    }
+	    pw.println("N");
 
-                Unit unit = new Unit(name, context);
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Loaded " + unit);
-                }
+	    if (logger.isLoggable(Level.FINE)) {
+		logger.fine("Saved " + unit);
+	    }
 
-                float[][] transitionMatrix = (float[][]) matrixPool.get(tmat);
-                SenoneSequence ss = getSenoneSequence(stid);
-
-                HMM hmm = new HMM(unit,
-                                  ss, 
-                                  transitionMatrix,
-                                  HMMPosition.lookup(position));
-                hmmManager.put(hmm);
-            }
 	}
-	est.close();
-	return pool;
+
+	outputStream.close();
     }
 
 
@@ -890,86 +896,89 @@ class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Loads the mixture weights
+     * Saves the mixture weights
      *
+     * @param pool the mixture weight pool
      * @param path the path to the mixture weight file
-     * @param floor the minimum mixture weight allowed
-     *
-     * @return a pool of mixture weights
+     * @param append is true, the file will be appended, useful if
+     * saving to a ZIP or JAR file
      *
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException if an error occurs while saving the data
      */
-    private Pool loadMixtureWeightsAscii(String path,
-                                    float floor) 
+    private void saveMixtureWeightsAscii(Pool pool, String path,
+					 boolean append) 
         throws FileNotFoundException, IOException {
-	logger.info("Loading mixture weights from: " );
+	logger.info("Saving mixture weights to: " );
 	logger.info(path);
 
 	int numStates;
 	int numStreams;
 	int numGaussiansPerState;
 
-        InputStream inputStream = StreamFactory.getInputStream(location, path);
-    	Pool pool = new Pool(path);
-	ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
-            (inputStream, '#', false);
+        OutputStream outputStream = StreamFactory.getOutputStream(location, 
+							      path, append);
+	if (outputStream == null) {
+	    throw new IOException("Error trying to write file "
+                                        + location + path);
+	}
+	PrintWriter pw = new PrintWriter(outputStream, true);
 
-	est.expectString("mixw");
-	numStates = est.getInt("numStates");
-	numStreams = est.getInt("numStreams");
-	numGaussiansPerState = est.getInt("numGaussiansPerState");
-
-	pool.setFeature(NUM_SENONES, numStates);
-	pool.setFeature(NUM_STREAMS, numStreams);
-	pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
+	pw.print("mixw ");
+	numStates = pool.getFeature(NUM_SENONES, -1);
+	pw.print(numStates + " ");
+	numStreams = pool.getFeature(NUM_STREAMS, -1);
+	pw.print(numStreams + " ");
+	numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1); 
+	pw.println(numGaussiansPerState);
 
 	for (int i = 0; i < numStates; i++) {
-	    est.expectString("mixw");
-	    est.expectString("[" + i);
-	    est.expectString("0]");
-	    float total = est.getFloat("total");
-	    float[] logMixtureWeight = new float[numGaussiansPerState];
+	    pw.print("mixw [" + i + " 0] ");
+	    float[] mixtureWeight = new float[numGaussiansPerState];
+	    float[] logMixtureWeight = (float[]) pool.get(i);
+	    convertFromLogMath(logMixtureWeight, mixtureWeight);
 
+	    float sum = 0.0f;
 	    for (int j = 0; j < numGaussiansPerState; j++) {
-		float val = est.getFloat("mixwVal");
-		if (val < floor) {
-		    val = floor;
-		}
-		logMixtureWeight[j] =  val;
-
+		sum += mixtureWeight[j];
 	    }
-            convertToLogMath(logMixtureWeight);
-	    pool.put(i, logMixtureWeight);
+	    pw.println(sum);
+	    pw.print("\n\t");
+	    for (int j = 0; j < numGaussiansPerState; j++) {
+		pw.print(" " + mixtureWeight[j]);
+	    }
+	    pw.println();
 	}
-	est.close();
-	return pool;
+	outputStream.close();
     }
 
     /**
-     * Loads the mixture weights (Binary)
+     * Saves the mixture weights (Binary)
      *
+     * @param pool the mixture weight pool
      * @param path the path to the mixture weight file
-     * @param floor the minimum mixture weight allowed
+     * @param append is true, the file will be appended, useful if
+     * saving to a ZIP or JAR file
      *
      * @return a pool of mixture weights
      *
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException if an error occurs while saving the data
      */
-    private Pool loadMixtureWeightsBinary(String path,
-                                    float floor) 
+    private void saveMixtureWeightsBinary(Pool pool, String path, 
+					  boolean append) 
         throws FileNotFoundException, IOException {
-	logger.info("Loading mixture weights from: " );
+	logger.info("Saving mixture weights to: " );
 	logger.info(path);
-
+	/*
 	int numStates;
 	int numStreams;
 	int numGaussiansPerState;
         int numValues;
         Properties props = new Properties();
 
-        DataInputStream dis = readS3BinaryHeader(location, path, props);
+        DataOutputStream dos = readS3BinaryHeader(location, path, props, 
+						  append);
 
         String version = props.getProperty("version");
         boolean doCheckSum;
@@ -983,10 +992,10 @@ class Sphinx3Loader implements Loader {
 
     	Pool pool = new Pool(path);
 
-	numStates = readInt(dis);
-	numStreams = readInt(dis);
-	numGaussiansPerState = readInt(dis);
-	numValues = readInt(dis);
+	numStates = readInt(dos);
+	numStreams = readInt(dos);
+	numGaussiansPerState = readInt(dos);
+	numValues = readInt(dos);
 
         assert numValues == numStates * numStreams * numGaussiansPerState;
         assert numStreams == 1;
@@ -997,52 +1006,60 @@ class Sphinx3Loader implements Loader {
 	pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
 
 	for (int i = 0; i < numStates; i++) {
-	    float[] logMixtureWeight = readFloatArray(dis,numGaussiansPerState);
+	    float[] logMixtureWeight = readFloatArray(dos,numGaussiansPerState);
             normalize(logMixtureWeight);
             floorData(logMixtureWeight, floor);
             convertToLogMath(logMixtureWeight);
 	    pool.put(i, logMixtureWeight);
 	}
-        dis.close();
+        dos.close();
 	return pool;
+	*/
     }
 
 
     /**
-     * Loads the transition matrices
+     * Saves the transition matrices
      *
+     * @param pool the transition matrices pool
      * @param path the path to the transitions matrices
-     *
-     * @return a pool of transition matrices
+     * @param append is true, the file will be appended, useful if
+     * saving to a ZIP or JAR file
      *
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException if an error occurs while saving the data
      */
-    private Pool loadTransitionMatricesAscii(String path)
+    private void saveTransitionMatricesAscii(Pool pool, String path, 
+					     boolean append)
         throws FileNotFoundException, IOException {
-        InputStream inputStream = StreamFactory.getInputStream(location, path);
+        OutputStream outputStream = StreamFactory.getOutputStream(location, 
+							      path, append);
+	if (outputStream == null) {
+	    throw new IOException("Error trying to write file "
+                                        + location + path);
+	}
+	PrintWriter pw = new PrintWriter(outputStream, true);
+
         boolean sparseForm = acousticProperties.getBoolean
 	    (AcousticModel.PROP_SPARSE_FORM, 
 	     AcousticModel.PROP_SPARSE_FORM_DEFAULT);
-	logger.info("Loading transition matrices from: ");
+	logger.info("Saving transition matrices to: ");
 	logger.info( path);
-	int numMatrices;
+	int numMatrices = pool.size();
 	int numStates;
+	float[][] tmat;
 
-    	Pool pool = new Pool(path);
-	ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
-            (inputStream, '#', false);
+	assert numMatrices > 0;
+	tmat = (float [][])pool.get(0);
+	numStates = tmat[0].length;
 
-	est.expectString("tmat");
-	numMatrices = est.getInt("numMatrices");
-	numStates = est.getInt("numStates");
+	pw.println("tmat " + numMatrices + " " + numStates);
 
 	for (int i = 0; i < numMatrices; i++) {
-	    est.expectString("tmat");
-	    est.expectString("[" + i + "]");
+	    pw.println("tmat [" + i + "]");
 
-	    float[][] tmat = new float[numStates][numStates];
-
+	    float tmatEntry;
+	    tmat = (float [][])pool.get(i);
 	    for (int j = 0; j < numStates ; j++) {
 		for (int k = 0; k < numStates ; k++) {
 
@@ -1051,15 +1068,23 @@ class Sphinx3Loader implements Loader {
 
 		    if (j < numStates - 1) {
 			if (sparseForm) {
+			    if (k < j) {
+				pw.print("\t");
+			    }
 			    if (k == j  || k  == j + 1) {
-				tmat[j][k] = est.getFloat("tmat value");
+				pw.print((float)
+					 logMath.logToLinear(tmat[j][k]));
 			    }
 			} else {
-			    tmat[j][k] = est.getFloat("tmat value");
+			    pw.print((float)logMath.logToLinear(tmat[j][k]));
 			}
-		    }
+			if (numStates - 1 == k) {
+			    pw.println();
+			} else {
+			    pw.print(" ");
+			}
 
-                    tmat[j][k] = logMath.linearToLog(tmat[j][k]);
+		    }
 
 		    if (logger.isLoggable(Level.FINE)) {
 			logger.fine("tmat j " + j  + " k " 
@@ -1067,30 +1092,33 @@ class Sphinx3Loader implements Loader {
 		    }
 		}
 	    }
-	    pool.put(i, tmat);
 	}
-	est.close();
-	return pool;
+	outputStream.close();
     }
 
 
 
     /**
-     * Loads the transition matrices (Binary)
+     * Saves the transition matrices (Binary)
      *
+     * @param pool the transition matrices pool
      * @param path the path to the transitions matrices
+     * @param append is true, the file will be appended, useful if
+     * saving to a ZIP or JAR file
      *
      * @return a pool of transition matrices
      *
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException if an error occurs while saving the data
      */
-    private Pool loadTransitionMatricesBinary(String path)
+    private void saveTransitionMatricesBinary(Pool pool, String path, 
+					      boolean append)
         throws FileNotFoundException, IOException {
+	/*
         boolean sparseForm = acousticProperties.getBoolean
 	    (AcousticModel.PROP_SPARSE_FORM, 
 	     AcousticModel.PROP_SPARSE_FORM_DEFAULT);
-	logger.info("Loading transition matrices from: ");
+	logger.info("Saving transition matrices to: ");
 	logger.info( path);
 	int numMatrices;
 	int numStates;
@@ -1099,7 +1127,8 @@ class Sphinx3Loader implements Loader {
 
 
         Properties props = new Properties();
-        DataInputStream dis = readS3BinaryHeader(location, path, props);
+        DataOutputStream dos = writeS3BinaryHeader(location, path, props, 
+						   append);
 
         String version = props.getProperty("version");
         boolean doCheckSum;
@@ -1113,10 +1142,10 @@ class Sphinx3Loader implements Loader {
 
     	Pool pool = new Pool(path);
 
-	numMatrices = readInt(dis);
-	numRows = readInt(dis);
-	numStates = readInt(dis);
-	numValues = readInt(dis);
+	numMatrices = readInt(dos);
+	numRows = readInt(dos);
+	numStates = readInt(dos);
+	numValues = readInt(dos);
 
         assert numValues == numStates * numRows * numMatrices;
 
@@ -1127,15 +1156,16 @@ class Sphinx3Loader implements Loader {
             convertToLogMath(tmat[numStates-1]);
 
 	    for (int j = 0; j < numRows; j++) {
-                tmat[j] = readFloatArray(dis, numStates);
+                tmat[j] = readFloatArray(dos, numStates);
                 nonZeroFloor(tmat[j], 0f);
                 normalize(tmat[j]);
                 convertToLogMath(tmat[j]);
 	    }
 	    pool.put(i, tmat);
 	}
-	dis.close();
+	dos.close();
 	return pool;
+	*/
     }
 
 
@@ -1184,11 +1214,10 @@ class Sphinx3Loader implements Loader {
 	return pool;
     }
 
-
     /**
-     * Returns the properties of the loaded AcousticModel.
+     * Returns the properties of the saved AcousticModel.
      *
-     * @return the properties of the loaded AcousticModel, or null if
+     * @return the properties of the saved AcousticModel, or null if
      *   it has no properties
      */
     public SphinxProperties getModelProperties() {
@@ -1197,7 +1226,7 @@ class Sphinx3Loader implements Loader {
 
 
     /**
-     * Gets the pool of means for this loader
+     * Gets the pool of means for this saver
      *
      * @return the pool
      */
@@ -1207,7 +1236,7 @@ class Sphinx3Loader implements Loader {
 
 
     /**
-     * Gets the pool of means transformation matrices for this loader
+     * Gets the pool of means transformation matrices for this saver
      *
      * @return the pool
      */
@@ -1217,7 +1246,7 @@ class Sphinx3Loader implements Loader {
 
 
     /**
-     * Gets the pool of means transformation vectors for this loader
+     * Gets the pool of means transformation vectors for this saver
      *
      * @return the pool
      */
@@ -1245,7 +1274,7 @@ class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Gets the pool of variance transformation vectors for this loader
+     * Gets the pool of variance transformation vectors for this saver
      *
      * @return the pool
      */
@@ -1255,25 +1284,7 @@ class Sphinx3Loader implements Loader {
 
 
     /*
-     * Gets the mixture weight pool
-     *
-     * @return the pool
-     */
-    public Pool getMixtureWeightPool() {
-	return mixtureWeightsPool;
-    }
-
-    /*
-     * Gets the transition matrix pool
-     *
-     * @return the pool
-     */
-    public Pool getTransitionMatrixPool() {
-	return matrixPool;
-    }
-
-    /*
-     * Gets the senone pool for this loader
+     * Gets the senone pool for this saver
      *
      * @return the pool
      */
@@ -1303,7 +1314,7 @@ class Sphinx3Loader implements Loader {
 
 
     /**
-     * Returns the hmm manager associated with this loader
+     * Returns the hmm manager associated with this saver
      *
      * @return the hmm Manager
      */
@@ -1312,10 +1323,10 @@ class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Log info about this loader
+     * Log info about this saver
      */
     public void logInfo() {
-	logger.info("Sphinx3Loader");
+	logger.info("Sphinx3Saver");
 	meansPool.logInfo(logger);
 	variancePool.logInfo(logger);
 	matrixPool.logInfo(logger);
