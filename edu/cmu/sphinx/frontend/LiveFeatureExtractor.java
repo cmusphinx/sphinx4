@@ -174,33 +174,33 @@ public class LiveFeatureExtractor extends DataProcessor
      */
     public Feature getFeature() throws IOException {
 
-        Cepstrum input = predecessor.getCepstrum();
-        
-        if (input != null) {
-            if (input.hasContent()) {
-                addCepstrumData(input.getCepstrumData());
-                computeFeatures(1);
-            } else if (input.hasSignal(Signal.UTTERANCE_START)) {
-                hasUtteranceEnd = false;
-                outputQueue.add(new Feature(Signal.UTTERANCE_START,
-                                            IDGenerator.NON_ID));
-                featureID.reset();
-                Cepstrum start = predecessor.getCepstrum();
-                int n = processFirstCepstrum(start);
-                computeFeatures(n);
-                if (hasUtteranceEnd) {
+        if (outputQueue.size() == 0) {
+            Cepstrum input = predecessor.getCepstrum();
+            if (input != null) {
+                if (input.hasContent()) {
+                    addCepstrumData(input.getCepstrumData());
+                    computeFeatures(1);
+                } else if (input.hasSignal(Signal.UTTERANCE_START)) {
+                    hasUtteranceEnd = false;
+                    outputQueue.add(new Feature(Signal.UTTERANCE_START,
+                                                IDGenerator.NON_ID));
+                    featureID.reset();
+                    Cepstrum start = predecessor.getCepstrum();
+                    int n = processFirstCepstrum(start);
+                    computeFeatures(n);
+                    if (hasUtteranceEnd) {
+                        outputQueue.add(getUtteranceEndFeature());
+                    }
+                } else if (input.hasSignal(Signal.UTTERANCE_END)) {
+                    // when the UTTERANCE_END is right at the boundary
+                    int n = replicateLastCepstrum();
+                    computeFeatures(n);
                     outputQueue.add(getUtteranceEndFeature());
                 }
-            } else if (input.hasSignal(Signal.UTTERANCE_END)) {
-                // when the UTTERANCE_END is right at the boundary
-                int n = replicateLastCepstrum();
-                computeFeatures(n);
-                outputQueue.add(getUtteranceEndFeature());
             }
         }
         if (outputQueue.size() > 0) {
 	    Feature feature = (Feature) outputQueue.remove(0);
-	    // System.out.println(feature);
             return feature;
         } else {
             return null;
@@ -314,14 +314,8 @@ public class LiveFeatureExtractor extends DataProcessor
             throw new Error("BufferPosition < 0");
         }
         
-        if (bufferPosition + window < cepstraBufferSize) {
-            Arrays.fill(cepstraBuffer, bufferPosition, 
-                        bufferPosition + window, last);
-            bufferPosition += window;
-        } else {
-            for (int i = 0; i < window; i++) {
-                addCepstrumData(last);
-            }
+        for (int i = 0; i < window; i++) {
+            addCepstrumData(last);
         }
 
         return window;
