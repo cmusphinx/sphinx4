@@ -32,10 +32,12 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * Dumps the data
  */
 public class DataDumper extends BaseDataProcessor {
+
     private int frameCount;
     private boolean enable;
-    private DecimalFormat formatter = new DecimalFormat(
-            " 0.00000E00;-0.00000E00");
+    private boolean outputSignals;
+
+    private DecimalFormat formatter;
 
     private static Logger logger = Logger.getLogger
         ("edu.cmu.sphinx.frontend.util.DataDumper");
@@ -51,7 +53,31 @@ public class DataDumper extends BaseDataProcessor {
     /**
      * The default value of PROP_ENABLE.
      */
-    public final static boolean PROP_ENABLE_DEFAULT = false;
+    public final static boolean PROP_ENABLE_DEFAULT = true;
+
+    /**
+     * The Sphinx property that specifies the format of the output.
+     */
+    public final static String PROP_OUTPUT_FORMAT = 
+        PROP_PREFIX + "outputFormat";
+
+    /**
+     * The default value of PROP_OUTPUT_FORMAT.
+     */
+    public final static String PROP_OUTPUT_FORMAT_DEFAULT = 
+        "0.00000E00;-0.00000E00";
+
+    /**
+     * The Sphinx property that enables the output of signals.
+     */
+    public final static String PROP_OUTPUT_SIGNALS = 
+        PROP_PREFIX + "outputSignals";
+
+    /**
+     * The default value of PROP_OUTPUT_SIGNALS.
+     */
+    public final static boolean PROP_OUTPUT_SIGNALS_DEFAULT = true;
+
 
     /**
      * Constructs a DataDumper 
@@ -68,8 +94,7 @@ public class DataDumper extends BaseDataProcessor {
                            SphinxProperties props, DataProcessor predecessor) {
         super.initialize((name == null ? "DataDumper" : name),
                          frontEnd, props, predecessor);
-        System.out.println("My name is " + name);
-	setProperties(props);
+        setProperties(props);
     }
 
 
@@ -81,8 +106,12 @@ public class DataDumper extends BaseDataProcessor {
     private void setProperties(SphinxProperties props) {
 	enable = props.getBoolean
             (getName(), PROP_ENABLE, PROP_ENABLE_DEFAULT);
+        String format = props.getString
+            (getName(), PROP_OUTPUT_FORMAT, PROP_OUTPUT_FORMAT_DEFAULT);
+        formatter = new DecimalFormat(format);
+        outputSignals = props.getBoolean
+            (getName(), PROP_OUTPUT_SIGNALS, PROP_OUTPUT_SIGNALS_DEFAULT);
     }
-
 
 
     /**
@@ -109,30 +138,26 @@ public class DataDumper extends BaseDataProcessor {
      */
     private void dumpData(Data input) {
         if (input instanceof Signal) {
-            System.out.println("Signal: " + input);
-            if (input instanceof DataStartSignal) {
-                frameCount = 0;
+            if (outputSignals) {
+                System.out.println("Signal: " + input);
+                if (input instanceof DataStartSignal) {
+                    frameCount = 0;
+                }
             }
         } else if (input instanceof DoubleData) {
-            System.out.println("Frame " + frameCount);
             DoubleData dd = (DoubleData) input;
             double[] values = dd.getValues();
+            System.out.print("Frame " + values.length);
             for (int i = 0; i < values.length; i++) {
-                System.out.print("  " + formatter.format(values[i]));
-                if ((i+1) % 4 == 0) {
-                    System.out.println();
-                }
+                System.out.print(" " + formatter.format(values[i]));
             }
             System.out.println();
         } else if (input instanceof FloatData) {
-            System.out.println("Frame " + frameCount);
             FloatData fd = (FloatData) input;
             float[] values = fd.getValues();
+            System.out.print("Frame " + values.length);
             for (int i = 0; i < values.length; i++) {
-                System.out.print("  " + formatter.format(values[i]));
-                if ((i+1) % 4 == 0) {
-                    System.out.println();
-                }
+                System.out.print(" " + formatter.format(values[i]));
             }
             System.out.println();
         }
