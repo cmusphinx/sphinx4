@@ -185,7 +185,8 @@
     
     <component name="microphone" 
                 type="edu.cmu.sphinx.frontend.util.Microphone">
-        <property name="keepLastAudio" value="true"/>
+        <property name="keepLastAudio" value="false"/>
+        <property name="closeBetweenUtterances" value="false"/>
     </component>
     
     <component name="speechClassifier" 
