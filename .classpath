@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="edu/cmu/sphinx/research/parallel/|tests/|edu/cmu/sphinx/research/|edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/|edu/cmu/sphinx/trainer/" kind="src" path=""/>
+	<classpathentry excluding="edu/cmu/sphinx/research/parallel/|tests/|edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/|edu/cmu/sphinx/trainer/|edu/cmu/sphinx/research/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/home/plamere/work/SourceForge/FreeTTS/lib/jsapi.jar"/>
 	<classpathentry kind="output" path="bld/classes"/>
