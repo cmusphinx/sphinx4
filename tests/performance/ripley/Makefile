@@ -74,3 +74,20 @@ ripley_flat_unigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
 	edu.cmu.sphinx.decoder.BatchDecoder ./ripley.props /lab/speech/sphinx4/data/medialab/mit.batch
+
+
+ripley_trigram:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=/lab/speech/sphinx4/data/medialab/language_models/mit.trigram.lm \
+	edu.cmu.sphinx.decoder.BatchDecoder ./ripley.props /lab/speech/sphinx4/data/medialab/mit.batch
+
+
+ripley_trigram_ep:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=5\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=6\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=5\
+	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true\
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=/lab/speech/sphinx4/data/medialab/language_models/mit.trigram.lm \
+	edu.cmu.sphinx.decoder.BatchDecoder ./ripley.props /lab/speech/sphinx4/data/medialab/mit.batch
