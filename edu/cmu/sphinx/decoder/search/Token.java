@@ -22,6 +22,7 @@ import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
 import edu.cmu.sphinx.decoder.scorer.Scoreable;
 
 import java.util.List;
+import java.util.Comparator;
 import java.text.DecimalFormat;
 import java.util.Set;
 import java.util.HashSet;
@@ -35,6 +36,26 @@ import java.util.ArrayList;
  *
  */
 public class Token implements Scoreable {
+
+    /**
+     * a token comparator that is used to order tokens in
+     * descending order
+     *
+     */
+    public final static Comparator COMPARATOR = new Comparator() {
+	    public int compare(Object o1, Object o2) {
+		Token t1 = (Token) o1;
+		Token t2 = (Token) o2;
+
+		if (t1.getScore() > t2.getScore()) {
+		    return -1;
+		} else if (t1.getScore() ==  t2.getScore()) {
+		    return 0;
+		} else {
+		    return 1;
+		}
+	    }
+	};
 
     private final static boolean COMBINE_BRANCHES = true;
 
@@ -297,6 +318,15 @@ public class Token implements Scoreable {
     }
 
     /**
+     * Determines if this token marks the end of a word
+     *
+     * @return <code>true</code> if this token marks the end of a word
+     */
+    public boolean isWord() {
+	return searchState instanceof WordSearchState;
+    }
+
+    /**
      * Retrieves the string representation of this object
      *
      * @return the string representation of this object
@@ -352,7 +382,7 @@ public class Token implements Scoreable {
 	Token token = this;
 
 	while (token != null) {
-	    if (token.getSearchState() instanceof WordSearchState) {
+	    if (token.isWord()) {
 		WordSearchState wordState  =
 		    (WordSearchState) token.getSearchState();
                 String word = wordState.getPronunciation().getWord();
