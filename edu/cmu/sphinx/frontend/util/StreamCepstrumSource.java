@@ -43,6 +43,7 @@ CepstrumSource {
     private int numPoints;
     private int curPoint;
     private int cepstrumLength;
+    private boolean bigEndian = true;
 
 
     /**
@@ -59,6 +60,7 @@ CepstrumSource {
 	super(name, context);
 	initSphinxProperties();
 	curPoint = -1;
+	bigEndian = true;
     }
 
 
@@ -66,8 +68,12 @@ CepstrumSource {
      * Sets the InputStream to read cepstral data from.
      *
      * @param is the InputStream to read cepstral data from
+     * @param bigEndian true if the InputStream data is in big-endian,
+     *     false otherwise
      */
-    public void setInputStream(InputStream is) throws IOException {	
+    public void setInputStream(InputStream is, boolean bigEndian) 
+	throws IOException {	
+	this.bigEndian = bigEndian;
 	if (binary) {
 	    binaryStream = new DataInputStream(new BufferedInputStream(is));
 	    numPoints = binaryStream.readInt();
@@ -113,14 +119,21 @@ CepstrumSource {
             data = null;
 	} else {
 	    float[] vectorCepstrum = new float[cepstrumLength];
+
 	    for (int i = 0; i < cepstrumLength; i++) {
 		if (binary) {
-		    vectorCepstrum[i] = binaryStream.readFloat();
+		    if (bigEndian) {
+			vectorCepstrum[i] = binaryStream.readFloat();
+		    } else {
+			vectorCepstrum[i] = 
+			    Util.readLittleEndianFloat(binaryStream);
+		    }
 		} else {
 		    vectorCepstrum[i] = est.getFloat("cepstrum data");
 		}
 		curPoint++;
 	    }
+
 	    // System.out.println("Read: " + curPoint);
 	    data  = new Cepstrum(vectorCepstrum);
 	    // System.out.println("CP " + data);
