@@ -76,7 +76,7 @@ public class MelFilter {
 	 * Now let's compute the slopes based on the height.
 	 */
 	leftSlope = filterHeight / (centerFreq - leftEdge);
-	rightSlope = filterHeight / (rightEdge - centerFreq);
+	rightSlope = filterHeight / (centerFreq - rightEdge);
 
 	/** 
 	 * Now let's compute the weight for each frequency bin.  We
@@ -126,7 +126,7 @@ public class MelFilter {
 	for (int i = 0; i < this.weight.length; i++) {
 	    indexSpectrum = this.initialFreqIndex + i;
 	    if (indexSpectrum < spectrum.length) {
-		output += spectrum[this.initialFreqIndex + i] * this.weight[i];
+		output += spectrum[indexSpectrum] * this.weight[i];
 	    }
 	}
 	return output;

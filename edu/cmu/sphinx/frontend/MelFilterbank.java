@@ -89,14 +89,14 @@ public class MelFilterbank extends DataProcessor {
 
 	NPoint = properties.getInt(PROP_NPOINT, 512);
 
-	numberFilters = properties.getInt(PROP_NUMBER_FILTERS, 40);
+	numberFilters = properties.getInt(PROP_NUMBER_FILTERS, 31);
 
 	/**
 	 * Oh, don't we all love legacy code with its inescrutable constants!
 	 */
-	minFreq = properties.getDouble(PROP_MIN_FREQ, 133.33334);
+	minFreq = properties.getDouble(PROP_MIN_FREQ, 200);
 
-	maxFreq = properties.getDouble(PROP_MAX_FREQ, 6855.4976);
+	maxFreq = properties.getDouble(PROP_MAX_FREQ, 3500);
     }
 
     /**
@@ -113,7 +113,7 @@ public class MelFilterbank extends DataProcessor {
 
     private double linToMelFreq(double inputFreq) {
 
-	return (2595.0 + (Math.log(1.0 + inputFreq / 700.0) / Math.log(10.0)));
+	return (2595.0 * (Math.log(1.0 + inputFreq / 700.0) / Math.log(10.0)));
     }
 
     /**
@@ -184,8 +184,7 @@ public class MelFilterbank extends DataProcessor {
 	centerFreqMel = minFreqMel + deltaFreqMel;
 	centerFreq = melToLinFreq(centerFreqMel);
 	for (int i = 0; i < numberFilters; i++) {
-	    initialFreqBin = Math.round
-		((leftEdge / deltaFreq) * (sampleRate / 2));
+	    initialFreqBin = Math.round((leftEdge / deltaFreq)) * deltaFreq;
 	    rightEdgeMel = centerFreqMel + deltaFreqMel;
 	    rightEdge = melToLinFreq(rightEdgeMel);
 	    /**
@@ -198,6 +197,7 @@ public class MelFilterbank extends DataProcessor {
 					   (sampleRate >> 1));
 	    leftEdge = centerFreq;
 	    centerFreq = rightEdge;
+	    centerFreqMel = rightEdgeMel;
 	}
     }
 
@@ -240,7 +240,7 @@ public class MelFilterbank extends DataProcessor {
 	
         if (getDump()) {
             System.out.println(Util.dumpDoubleArray
-                               (outputMelFilterbank, "MEL_SPEC_MAGNITUDE", 20, 10));
+                               (outputMelFilterbank, "MEL_SPECTRUM", 12, 5));
         }
 	outputMelSpectrum = new MelSpectrum(outputMelFilterbank);
         return outputMelSpectrum;
