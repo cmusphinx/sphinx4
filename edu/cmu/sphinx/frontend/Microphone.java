@@ -5,21 +5,19 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
-
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
@@ -39,7 +37,8 @@ import javax.sound.sampled.TargetDataLine;
  * is set to true, then the Audio objects returned will contain
  * a reference to the (entire) Utterance object.
  */
-public class Microphone extends DataProcessor implements AudioSource {
+public class Microphone extends DataProcessor
+implements AudioSource, Runnable {
 
     /**
      * Parameters for audioFormat
@@ -114,54 +113,98 @@ public class Microphone extends DataProcessor implements AudioSource {
 
 
     /**
-     * This Thread records audio, and caches them in an audio buffer.
+     * Terminates this Microphone, effectively terminates this
+     * thread of execution. Calling <code>startRecording()</code>
+     * will not work after call this method.
      */
-    class RecordingThread extends Thread {
-        
-        /**
-         * Implements the run() method of the Thread class.
-         * Records audio, and cache them in the audio buffer.
-         */
-        public void run() {
-            
-            if (audioLine != null && audioLine.isOpen()) {
-                
-                Utterance currentUtterance = new Utterance(getContext());
-                utteranceList.add(currentUtterance);
-                
-                audioLine.start();
-                printMessage("started recording");
-                                
-                while (getRecording() && !getClosed()) {
-                                        
-                    // Read the next chunk of data from the TargetDataLine.
-                    byte[] data = new byte[frameSizeInBytes];
-                    int numBytesRead = audioLine.read(data, 0, data.length);
-                    
-                    if (numBytesRead == frameSizeInBytes) {
-                        currentUtterance.add(data);
-                    } else {
-                        numBytesRead = (numBytesRead % 2 == 0) ?
-                            numBytesRead + 2 : numBytesRead + 3;
-                        
-                        byte[] shrinked = new byte[numBytesRead];
-                        System.arraycopy(data, 0, shrinked, 0, numBytesRead);
-                        currentUtterance.add(shrinked);
-                    }
-                    
-                    printMessage("recorded 1 frame (" + numBytesRead + ") bytes");
-                }
-                
-                audioLine.stop();
-                audioLine.close();
-                
-                printMessage("stopped recording");
-                
-            } else {
-                printMessage("Unable to open line");
+    public synchronized void terminate() {
+        setClosed(true);
+        notify();
+    }
+
+
+    /**
+     * Implements the <code>run()</code> method of Runnable.
+     * It waits for instructions to record audio. The method
+     * <code>startRecording()</code> will cause it to start recording
+     * from the system audio capturing device.
+     * Once it starts recording,
+     * it will keep recording until it receives instruction to stop
+     * recording. The method <code>stopRecording()</code> will cause
+     * it to stop recording.
+     */
+    public void run() {
+        while (!getClosed()) {
+            waitToRecord();
+            if (!getClosed()) {
+                record();
             }
         }
+        printMessage("finished running");
     }
+
+
+    /**
+     * This thread waits until some other thread calls <code>record()</code>
+     */
+    private synchronized void waitToRecord() {
+        synchronized(this) {
+            while (!getClosed() && !getRecording()) {
+                try {
+                    printMessage("waiting to record");
+                    wait();
+                } catch (InterruptedException ie) {
+                    ie.printStackTrace();
+                }
+            }
+            printMessage("finished waiting");
+        }
+    }
+
+
+    /**
+     * Records audio, and cache them in the audio buffer.
+     */
+    private void record() {
+
+        if (audioLine != null && audioLine.isOpen()) {
+
+            Utterance currentUtterance = new Utterance(getContext());
+            utteranceList.add(currentUtterance);
+
+            printMessage("started recording");
+
+            audioLine.start();
+
+            while (getRecording() && !getClosed()) {
+                // Read the next chunk of data from the TargetDataLine.
+                byte[] data = new byte[frameSizeInBytes];
+                int numBytesRead = audioLine.read(data, 0, data.length);
+                
+                if (numBytesRead == frameSizeInBytes) {
+                    currentUtterance.add(data);
+                } else {
+                    numBytesRead = (numBytesRead % 2 == 0) ?
+                        numBytesRead + 2 : numBytesRead + 3;
+
+                    byte[] shrinked = new byte[numBytesRead];
+                    System.arraycopy(data, 0, shrinked, 0, numBytesRead);
+                    currentUtterance.add(shrinked);
+                }
+
+                printMessage("recorded 1 frame (" + numBytesRead + ") bytes");
+            }
+
+            audioLine.stop();
+            audioLine.close();
+
+            printMessage("stopped recording");
+
+        } else {
+            printMessage("Unable to open line");
+        }
+    }
+
 
     /**
      * Opens the audio capturing device so that it will be ready
@@ -193,26 +236,20 @@ public class Microphone extends DataProcessor implements AudioSource {
     }
 
 
-    /**
-     * Clears all cached audio data.
-     */
     public void clear() {
         utteranceList.clear();
     }
 
 
     /**
-     * Starts recording audio. This method will return only
-     * when a START event is received, meaning that this Microphone
-     * has started capturing audio.
+     * Starts recording audio
      *
      * @return true if the recording started successfully; false otherwise
      */
     public synchronized boolean startRecording() {
         if (open()) {
             setRecording(true);
-            RecordingThread recorder = new RecordingThread();
-            recorder.start();
+            notifyAll();
             while (!getStarted()) {
                 try {
                     wait();
@@ -230,7 +267,7 @@ public class Microphone extends DataProcessor implements AudioSource {
     /**
      * Stops recording audio.
      */
-    public synchronized void stopRecording() {
+    public void stopRecording() {
         if (audioLine != null) {
             setRecording(false);
             setStarted(false);
@@ -267,15 +304,28 @@ public class Microphone extends DataProcessor implements AudioSource {
     }
 
 
+    /**
+     * Returns true if the Microphone has started capturing audio
+     * after a <code>startRecording()</code> call, that is,
+     * after a <code>START</code> event is received.
+     *
+     * @return true if the Microphone has started capturing audio
+     */
     private synchronized boolean getStarted() {
         return started;
     }
 
 
+    /**
+     * Set this Microphone to whether it has started capturing
+     * audio.
+     *
+     * @param started true if it has started capturing audio,
+     *    false otherwise
+     */
     private synchronized void setStarted(boolean started) {
         this.started = started;
     }
-
 
     /**
      * Returns true if this Microphone is currently
@@ -367,15 +417,15 @@ public class Microphone extends DataProcessor implements AudioSource {
                 utterances.add(utterance);
             }
         }
-
+        
 
         /**
-         * Remove all the Utterances in this UtteranceList.
+         * Removes all the utterances in this UtteranceList.
          */
         public void clear() {
             utterances.clear();
         }
-        
+
         
         /**
          * Returns the next Audio object from this UtteranceList.

@@ -87,6 +87,7 @@ public class MicrophoneTest extends JFrame {
      */
     private void createModel() {
         microphone = new Microphone("Microphone", testName);
+        (new Thread(microphone)).start();
         frontend = new FrontEnd("FrontEnd", testName, microphone);
     }
 
