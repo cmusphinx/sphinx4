@@ -1,187 +1,185 @@
-Sphinx 3J Task List:
--------------------
+Task and performance targets:
+----------------------------
 
-Note:  You should always write unit tests for your code, usually
-       at the same time (and maybe even before) you write your code.
+We identified 4 types of tasks we would like the resulting system to
+support.  We also identified rough performance targets based on the
+performance of the existing Sphinx system, and categorized the task
+performance in terms of "live" vs. "batch" mode.  The considerations
+for the "live" and "batch" modes are the following:
+
+    Live:  Uses streaming data
+           Has no access to the future and limited access to the past
+	   Needs automatic gain control and end pointing
+	   For testing, can be simulated by streaming data from a file
+
+    Batch: Has access to the entire utterance
+	   Can normalize cepstral data over entire audio span
+	   End pointing is already done
+	       	       
+We chose the tasks to provide a broad spectrum of recognition tasks.
+In order of complexity, the tasks are as follows:
+
+The target system for performance is Solaris 8 on a SunBlade 1000 with
+dual 750MHz UltraSPARC III processors with 8MB cache each, 512MB main
+memory, and 36GB internal disk.
 
 
-EXISTING SPHINX 3 CODEBASE:
+Task 1 (isolated digits):
+------------------------
+
+  Purpose:
+
+    o Test the infrastructure:  front end, batch/live CMN, acoustic
+      model loading and scoring, simple search, etc.
+    o Get some initial understanding of speed and accuracy and gather
+      base line measurements.
+
+  Performance Goals:
+
+    o Speed    < 1X Real Time
+    o Accuracy > 95%
+
+  Environment:
+
+    o Very small vocabulary
+    o Word-based phones for acoustic model
+    o Trivial grammar
+    o Static sentence HMMs
+    o Simple search
+
+  Notes:
+
+    Acoustic model of word-dependent basephones and cross-word
+    triphones and 3-state HMMs (8 Gaussians per HMM state), trained
+    with the clean component of the AURORA2 (a connected-digits task)
+    database.
+
+    Testing data comes from TI46.
+
+       More info:  http://www.ldc.upenn.edu/Catalog/LDC93S9.html
+		   http://www.elda.fr/proj/aurora2.html
+
+
+    Also run forced alignment against test data for both Sphinx 3
+    and Sphinx 3J as a sanity check.
+
+
+Task 2a (connected digits):
 --------------------------
 
-Task			Description		Owner		Deadline
-----			-----------		-----		--------
+  Purpose:
 
-Update to latest.	Update the cmusphinx	Evandro,
-			sphinx3 repository to	Rita
-			contain the 'latest'
-			code.
+    o "Epsilon" step beyond isolated digits.  Our first attempt at
+      continuous speech recognition.  
+    
+  Performance Goals:
 
-Performance and data	As part of the		Evandro,
-gathering.		testing and performance	Rita,
-			gathering for Sphinx	Paul,
-			3J, update Sphinx 3	Philip
-			to give us data/numbers
-			for comparison.
+    o Speed    < 1X Real Time
+    o Accuracy > 95%
 
+  Environment:
 
-FRONT END:
-----------
-
-Task			Description		Owner		Deadline
-----			-----------		-----		--------
-
-Front End Reqts.	Develop a list of	Philip		
-			requirements for the
-			front end.
-
-Design Front End	Design the overall	Philip		
-			layout and interfaces
-			to the front end.
-
-Implement Front End	Implement most of	Philip		
-			the front end 
-			and its processors.
-			This includes gathering
-			metrics.  Leave the 
-			harder math (e.g., FHT) 
-			to Evandro.
-
-Front End Tests		Write unit tests to	Philip
-			check data flow between
-			front end processors.
-
-Front End Math		Implement the math	Evandro		
-			behind the front
-			end.  Include code to
-			gather metrics.
-
-Front End Math Tests	Write unit tests for	Philip,		
-			the math in the various	Evandro
-			front end processors.
-			This will include 
-			comparing at least the
-			cepstral calculations
-			between Sphinx 3/3J.
-
-ACOUSTIC MODEL:
---------------
-
-Task			Description		Owner		Deadline
-----			-----------		-----		--------
-
-Acoustic Model Reqts.	Develop a list of	Paul		
-			requirements for the
-			acoustic model.
-
-Design Acoustic Model	Design the overall
-			layout and interfaces
-			to the acoustic	model.
-
-Implement Acoustic	Implement most of the	Paul		
-Model			acoustic model.  Leave
-			the harder math to
-			Evandro (e.g., the
-			Feature to Senone
-			scores).
-
-Isolated Word Data	Generate Sphinx 3	Rita
-			models for isolated
-			word task.
-
-Connected Digits Data	Generate Sphinx 3	Rita
-			models for connected
-			digits task.
-
-Command and Control	Generate Sphinx 3	Rita
-Data			models for command
-			and control task.
-
-Dictation Data		Generate Sphinx 3	Rita
-			models for large
-			vocabulary dictation
-			task.
-
-Read Sphinx 3 Training	Write utilities to	Paul
-Data			read in Sphinx 3
-			populate a Sphinx 3j
-			acoustic model.
-
-Acoustic Model Tests	Write unit tests for	Paul
-			the acoustic model
-			data structures (e.g.,
-			check parameter typing).
-
-Acoustic Model Data	Write unit tests for	Paul		
-Utility Tests		the utilities that 
-			read in the Sphinx 3
-			training data and
-			populate a Sphinx 3j
-			acoustic model.
-
-Acoustic Model Math	Implement the scoring	Evandro		
-			math behind the 
-			acoustic model.
-
-Acoustic Model Scoring	Write unit tests for	Paul,		
-Tests			the scoring math	Evandro
-			behind the acoustic
-			model.  This will
-			include comparing
-			scores between
-			Sphinx 3/3J.
+    o All of Task 1 environment
+    o Simple "looping" grammar
+    o Introduce word/silence insertion penalties
 
 
-DECODER/SEARCH:
---------------
+Task 2b (connected digits with composite senones):
+-------------------------------------------------
 
-NOTES:  Expectations from the design for this include a definition of
-        the search, the search space, and post processing the search
-	space to produce recognition results.  I suspect the search
-	space and results may pop out as a separate set of subtasks.
+  Purpose:
 
-Task			Description		Owner		Deadline
-----			-----------		-----		--------
+    o Introduce the creation/use of composite senones.
 
-Decoder/Search Reqts	Develop a list of	Bhiksha,
-			requirements for the	Peter
-			decoder/search.		
-						
+  Performance Goals:
 
-Design Decoder/Search	Design the overall	Bhiksha,
-			layout of the decoder/	Peter
-			search.			
-						
-Implement Decode/Search Implement the decoder/	Evandro,
-			search.			Paul,
-						Philip
+    o Speed    < 1X Real Time
+    o Accuracy > 95%
 
-Decoder/Search Tests	Unit tests for the	Evandro,
-			decoder/search.		Paul,
-						Philip
+  Environment:
 
-LANGUAGE MODEL:
---------------
+    o All of task 2a, but also use crossword triphones.
 
-NOTES:  At a minimum, we want to support both context free grammars
-        for command and control and n-gram grammars for dictation.
-        This task may also be highly driven by the Decoder/Search.
 
-Task			Description		Owner		Deadline
-----			-----------		-----		--------
+Task 2c (connected digits with dynamic sentence HMMs):
+-----------------------------------------------------
 
-Language Model Reqts.	Develop a list of	Bhiksha,
-			requirements for the	Peter
-			language model(s).
+  Purpose:
 
-Design Language Model	Design the overall	Bhiksha,
-			layout and interfaces	Peter
-			to the language model.
+    o Investigate creating/modifying sentence HMMs during the search.
+    o Better understand performance/accuracy with dynamic sentence HMMs     
 
-Implement Language	Implement the language	Evandro,
-Model			model(s).		Paul,
-						Philip
+  Performance Goals:
 
-Language Model Tests	Unit tests for the	Evandro,
-			language model.		Paul,
-						Philip
+    o Speed    < 1X Real Time
+    o Accuracy > 95%
 
+  Environment:
+
+    o All of task 2b.
+
+
+Task 3a (command and control with small vocabulary):
+---------------------------------------------------
+
+  Purpose:
+
+    o Permit vocabulary other than just digits (e.g., triphones as 
+      opposed to word based phones).
+    o Permit C&C grammars.
+    o Possibly raise new issued with dynamic sentence HMMs
+
+  Performance Goals:
+  
+    o Speed    <= 1X Real Time
+    o Accuracy > 80%
+
+  Environment:
+
+    o Task 2c environment with following exceptions:
+      o Triphone-based phones for acoustic model.
+      o "Restricted" CFG.
+    o Introduce support for C&C grammar format of some type (e.g., 
+      CFG based on VoiceXML SRGF).
+    o Create FSA (or something) interface to Linguist?
+    o Introduce cross word data.
+
+
+Task 3b (command and control with small-to-medium vocabulary):
+-------------------------------------------------------------
+
+  Purpose:
+
+    o Same as 3a, but introduce a larger vocabulary (1000 - 5000 words).
+    o Better understand performance and accuracy with larger vocabulary
+    o Improve the search through ...
+
+  Performance Goals:
+  
+    o Speed    <= 1X Real Time
+    o Accuracy > 80%
+
+  Notes:
+
+    o Task 3a with larger vocabulary.
+
+
+Task 4 (large vocabulary dictation):
+------------------------------------
+
+  Purpose:
+
+    o Large to very large vocabulary (30K+)
+    o Support n-Gram language models.
+    o Better understand performance and accuracy
+    o Improve search through...
+
+  Performance Goals:
+  
+    o Speed    <= 5.5X Real Time
+    o Accuracy > 75%
+
+  Notes:
+
+    o This will also introduce an FSA (or something) to support n-Gram
+      grammars.
