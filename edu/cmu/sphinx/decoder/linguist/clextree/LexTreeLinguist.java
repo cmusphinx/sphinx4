@@ -79,36 +79,11 @@ public class LexTreeLinguist implements  Linguist {
      */
     public final static boolean PROP_FULL_WORD_HISTORIES_DEFAULT = true;
 
-    /**
-      * A sphinx property that determines whether or not unigram
-      * probabilities are smeared through the lex tree
-      */
-    public final static String PROP_WANT_UNIGRAM_SMEAR
-        = PROP_PREFIX + "wantUnigramSmear";
-
-    /**
-     * The default value for PROP_WANT_UNIGRAM_SMEAR
-     */
-    public final static boolean PROP_WANT_UNIGRAM_SMEAR_DEFAULT = false;
-
 
     /**
      * The default value for PROP_MAINTAIN_SEPARATE_WORD_RC
      */
     public final static boolean PROP_MAINTAIN_SEPARATE_WORD_RC_DEFAULT = true;
-
-
-    /**
-      * A sphinx property that determines the weight of the smear
-      */
-    public final static String PROP_UNIGRAM_SMEAR_WEIGHT
-        = PROP_PREFIX + "unigramSmearWeight";
-
-    /**
-     * The default value for PROP_UNIGRAM_SMEAR_WEIGHT
-     */
-    public final static float PROP_UNIGRAM_SMEAR_WEIGHT_DEFAULT = 1.0f;
-
 
 
     /**

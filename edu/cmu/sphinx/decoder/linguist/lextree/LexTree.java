@@ -653,7 +653,7 @@ class LexTree {
 
 /**
  * Represents a unit in a particular position. This object is designed
- * to server has a hash key, and implements hashCode and equals
+ * to serve has a hash key, and implements hashCode and equals
  * properly for that task.
  */
 class UnitInPosition {

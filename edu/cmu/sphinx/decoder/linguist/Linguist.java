@@ -240,6 +240,31 @@ public interface Linguist {
      */
     public final static boolean PROP_GENERATE_UNIT_STATES_DEFAULT = false;
 
+    /**
+      * A sphinx property that determines whether or not unigram
+      * probabilities are smeared through the lex tree
+      */
+    public final static String PROP_WANT_UNIGRAM_SMEAR
+        = PROP_PREFIX + "wantUnigramSmear";
+
+    /**
+     * The default value for PROP_WANT_UNIGRAM_SMEAR
+     */
+    public final static boolean PROP_WANT_UNIGRAM_SMEAR_DEFAULT = false;
+
+
+    /**
+      * A sphinx property that determines the weight of the smear
+      */
+    public final static String PROP_UNIGRAM_SMEAR_WEIGHT
+        = PROP_PREFIX + "unigramSmearWeight";
+
+    /**
+     * The default value for PROP_UNIGRAM_SMEAR_WEIGHT
+     */
+    public final static float PROP_UNIGRAM_SMEAR_WEIGHT_DEFAULT = 1.0f;
+
+
 
     /**
      * Initializes this linguist
