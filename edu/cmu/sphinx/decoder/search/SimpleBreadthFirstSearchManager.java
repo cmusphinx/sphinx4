@@ -458,7 +458,15 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
                 tokensCreated.value++;
                 setBestToken(newToken, nextState);
                 if (!newToken.isEmitting()) {
-                    collectSuccessorTokens(newToken);
+                    // if not emitting, check to see if we've already visited
+                    // this state during this frame. Expand the token only if we
+                    // haven't visited it already. This prevents the search
+                    // from getting stuck in a loop of states with no
+                    // intervening emitting nodes. This can happen with nasty
+                    // jsgf grammars such as ((foo*)*)*
+                    if (!isVisited(newToken)) {
+                        collectSuccessorTokens(newToken);
+                    }
                 } else {
                     if (firstToken) {
                         activeList.add(newToken);
@@ -471,6 +479,28 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
                 viterbiPruned.value++;
             }
         }
+    }
+
+
+    /**
+     * Determines whether or not we've visited the state associated with this
+     * token since the previous frame.
+     *
+     * @param t the token to check
+     * @return true if we've visted the search state since the last frame
+     */
+    private boolean isVisited(Token t) {
+        SearchState curState = t.getSearchState();
+
+        t = t.getPredecessor();
+
+        while (t != null && !t.isEmitting()) {
+            if (curState.equals(t.getSearchState())) {
+                return true;
+            }
+            t = t.getPredecessor();
+        }
+        return false;
     }
 
     /**

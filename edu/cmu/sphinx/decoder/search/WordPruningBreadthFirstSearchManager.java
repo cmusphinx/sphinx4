@@ -754,6 +754,19 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             return;
         }
 
+        // if this is a non-emitting token and we've already 
+        // visited the same state during this frame, then we
+        // are in a grammar loop, so we don't continue to expand.
+        // This check only works properly if we have kept all of the
+        // tokens (instead of skipping the non-word tokens).
+        // Note that certain linguists will never generate grammar loops
+        // (lextree linguist for example). For these cases, it is perfectly
+        // fine to disable this check by setting keepAllTokens to false
+
+        if (!token.isEmitting() && (keepAllTokens && isVisited(token))) {
+            return;
+        }
+
         SearchState state = token.getSearchState();
         SearchStateArc[] arcs = state.getSuccessors();
         Token predecessor = getWordPredecessor(token);
@@ -817,6 +830,26 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
     }
 
+    /**
+     * Determines whether or not we've visited the state associated with this
+     * token since the previous frame.
+     *
+     * @return true if we've visted the search state since the last frame
+     */
+    private boolean isVisited(Token t) {
+        SearchState curState = t.getSearchState();
+
+        t = t.getPredecessor();
+
+        while (t != null && !t.isEmitting()) {
+            if (curState.equals(t.getSearchState())) {
+                System.out.println("CS " + curState + " match " + t.getSearchState());
+                return true;
+            }
+            t = t.getPredecessor();
+        }
+        return false;
+    }
     protected void activeListAdd(Token token) {
         activeListManager.add(token);
     }
