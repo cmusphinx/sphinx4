@@ -109,8 +109,8 @@ an4_words_bigram_fst:
 	-Dedu.cmu.sphinx.search.Linguist.autoLoopSilences=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0e-30\
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0\
-	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./bigram/an4_words.bigram.fst.prunedloops\
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+	-Dedu.cmu.sphinx.search.FSTGrammar.path=./bigram/an4_words.bigram.fst.prunedloops\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
 
@@ -168,9 +168,9 @@ an4_words_fst:
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false\
 	-Dedu.cmu.sphinx.search.Linguist.autoLoopSilences=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-30\
-	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=25.0\
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_words.trigram.fst \
+	-Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_words.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
 
@@ -213,8 +213,8 @@ an4_spelling_fst:
 	-Dedu.cmu.sphinx.search.Linguist.autoLoopSilences=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-30\
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=25.0\
-	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_spelling.trigram.fst \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+	-Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_spelling.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
 
@@ -245,8 +245,8 @@ an4_spelling_journey_fst:
 	-Dedu.cmu.sphinx.search.Linguist.autoLoopSilences=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-30\
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=5.0\
-	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_spelling_journey.trigram.fst \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+	-Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_spelling_journey.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder an4.props ./an4_spelling.batch
 
 
@@ -290,8 +290,8 @@ an4_full_fst:
 	-Dedu.cmu.sphinx.search.Linguist.autoLoopSilences=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-30\
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0\
-	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_full.trigram.fst \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+	-Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_full.trigram.fst \
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
 
@@ -387,8 +387,8 @@ an4_plus_fst:
 	-Dedu.cmu.sphinx.search.Linguist.autoLoopSilences=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-30\
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0\
-	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_plus.trigram.fst \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+	-Dedu.cmu.sphinx.search.FSTGrammar.path=an4_plus.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
 
