@@ -11,6 +11,7 @@
  */
 
 package edu.cmu.sphinx.decoder.linguist;
+import edu.cmu.sphinx.knowledge.language.WordSequence;
 
 /**
  * Represents a single state in a language search space
@@ -53,4 +54,20 @@ public interface  SearchState {
       * @return the signature for the state
       */
      String getSignature(); 
+
+
+     /**
+      * Gets the word history for this state
+      *
+      * @param the word history
+      */
+     WordSequence getWordHistory();
+
+
+     /**
+      * Returns the lex tree state
+      *
+      * @return the lex tree state
+      */
+     Object getLexState();
 }

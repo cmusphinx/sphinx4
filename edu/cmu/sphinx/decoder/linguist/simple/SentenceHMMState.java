@@ -29,6 +29,7 @@ import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 import edu.cmu.sphinx.decoder.linguist.Color;
 
 import edu.cmu.sphinx.knowledge.dictionary.Word;
+import edu.cmu.sphinx.knowledge.language.WordSequence;
 
 
 /**
@@ -220,6 +221,17 @@ public class  SentenceHMMState implements Serializable, SearchState  {
 	    }
 	}, this, false);
     }
+
+
+    /**
+     * Gets the word history for this state.
+     *
+     * @return the word history.
+     */
+    //TODO Not implemented
+    public WordSequence getWordHistory() {
+        return WordSequence.EMPTY;
+    }
     
     /**
      * Reports an invalid message
@@ -246,6 +258,16 @@ public class  SentenceHMMState implements Serializable, SearchState  {
      */
      public SearchStateArc[]  getSuccessors() {
          return (SearchStateArc[]) getSuccessorArray();
+     }
+
+
+    /**
+     * Returns the lextree state
+     *
+     * @return the lex tree state
+     */
+     public Object getLexState() {
+         return this;
      }
 
 

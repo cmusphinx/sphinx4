@@ -407,6 +407,15 @@ public class LexTreeLinguist implements  Linguist {
         }
 
         /**
+         * Returns the lextree state
+         *
+         * @return the lex tree state
+         */
+         public Object getLexState() {
+             return central;
+         }
+
+        /**
          * Determines if the given object is equal to this object
          * 
          * @param o the object to test
@@ -524,7 +533,7 @@ public class LexTreeLinguist implements  Linguist {
           *
           * @return the word sequence
           */
-         protected WordSequence getWordSequence() {
+         public WordSequence getWordHistory() {
              return wordSequence;
          }
 
@@ -789,7 +798,7 @@ public class LexTreeLinguist implements  Linguist {
             assert hmm != null;
 
             nextStates[0] = new LexTreeHMMState(getLeftID(), getCentral(),
-                getRight(), getWordSequence(), hmm.getInitialState(), logOne);
+                getRight(), getWordHistory(), hmm.getInitialState(), logOne);
             return nextStates;
         }
 
@@ -944,7 +953,7 @@ public class LexTreeLinguist implements  Linguist {
                         nextStates[nextStates.length - 1] = 
                             new LexTreeUnitState(getLeftID(),
                                     getCentral(), getRight(),
-                                    getWordSequence(), logOne);
+                                    getWordHistory(), logOne);
                     } else {
                         nextStates = new SearchStateArc[nodes.length];
                     }
@@ -978,7 +987,7 @@ public class LexTreeLinguist implements  Linguist {
                         nextStates = new SearchStateArc[1];
                         nextStates[0] = new LexTreeUnitState(
                                 nextLeftID, nextCentral,  null,
-                                getWordSequence(), logOne);
+                                getWordHistory(), logOne);
                     } else {
                         LexTree.LexNode[] nodes = getNextUnits(nextCentral);
 
@@ -1000,7 +1009,7 @@ public class LexTreeLinguist implements  Linguist {
                             nextStates[i] = new LexTreeUnitState(
                                     nextLeftID, nextCentral, 
                                     (LexTree.UnitLexNode) nextRight,
-                                    getWordSequence(),
+                                    getWordHistory(),
                                     languageProbability);
                         }
                     }
@@ -1021,13 +1030,13 @@ public class LexTreeLinguist implements  Linguist {
                         } else {
                             nextStates[i] = new LexTreeHMMState
                                 (getLeftID(), getCentral(), getRight(),
-                                 getWordSequence(),
+                                 getWordHistory(),
                                  state, arc.getLogProbability());
                         }
                     } else {
                         nextStates[i] = new LexTreeNonEmittingHMMState
                             (getLeftID(), getCentral(), getRight(),
-                             getWordSequence(), state,
+                             getWordHistory(), state,
                              arc.getLogProbability());
                     }
                 }
@@ -1086,7 +1095,7 @@ public class LexTreeLinguist implements  Linguist {
      */
 
     SearchStateArc[] getArcsToAllWords(LexTreeState state) {
-        WordSequence wordSequence = state.getWordSequence();
+        WordSequence wordSequence = state.getWordHistory();
         int leftID = state.getCentral() == null ?  0 
                         : state.getCentral().getID();
         List list = new ArrayList();
@@ -1276,7 +1285,7 @@ public class LexTreeLinguist implements  Linguist {
                     LexTree.LexNode nextRight = nextNodes[i];
                         nextStates[i] = new LexTreeUnitState(nextLeftID, 
                                 nextCentral, (LexTree.UnitLexNode)
-                                nextRight, getWordSequence(),
+                                nextRight, getWordHistory(),
                                 nextCentral.getProbability());
                 }
                 //nextStates[nextStates.length - 1] = 
@@ -1360,7 +1369,7 @@ public class LexTreeLinguist implements  Linguist {
     private SearchStateArc createNextWordState(LexTreeState
             curState, LexTree.WordLexNode nextWord) {
 
-        WordSequence wordSequence = curState.getWordSequence();
+        WordSequence wordSequence = curState.getWordHistory();
         float logProbability = logOne;
         if (!nextWord.isSilence()) {
             wordSequence = wordSequence.addWord
