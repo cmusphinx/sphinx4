@@ -104,6 +104,7 @@ WARRANTIES.
 		<li><a href="#input_files">Input Audio/Cepstral Files</a></li>
 	    </ul>
 	</li>
+	<li><a href="#acoustic_models">Acoustic Model Package</a></li>
 	<li><a href="#language_models">Creating Language Models</a></li>
         <li><a href="#architecture_and_api1">Architecture and API</a></li>
       </ul>
@@ -621,7 +622,7 @@ d:\work\sphinx4&gt;ant clean
   any or all of the following test data. The links will lead you to an
   outside site where you can acquire them. Data from the <a
   href="http://www.ldc.upenn.edu">Language Data Consortium (LDC)</a>
-  are available from a fee. Data from other sources may be free.
+  are available for a fee. Data from other sources may be free.
   </p>
      <ul>
      <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S9">TI46</a> - isolated speech</li>
@@ -691,7 +692,7 @@ d:\work\sphinx4&gt;ant clean
   <b>Customizing the regression test to your environment</b>
   <p>
   All the batch regression tests are driven by properties files (they end
-  with ".props") and batch files that list all the files to test (they end
+  with ".props") and batch files, which list all the files to test (they end
   with ".batch"). See the <a href="#batch_files">Batch Files</a> section
   for details. You need to change the directory paths within these
   files to match your environment. Using TIDIGITS (tests/performance/tidigits/)
@@ -710,9 +711,20 @@ d:\work\sphinx4&gt;ant clean
 
 <p><a name="batch_files"><b>Batch Files</b></a>
 
-<p>Batch files are used in batch mode regressions tests. 
-It is a text file listing the fully qualified path of
-the test file, and the transcript of the test file, for example:
+<p>Batch files are used in batch mode regressions tests. It is a text
+file that contains the list of files to be processed, with the
+transcription for each file. The format is as shown below: one line
+for each file, where the first element in a line is the file name,
+which can be an absolute or relative path, and includes the file
+extension; after the file name, the words that make up the
+transcription for the audio. Sphinx-4 uses the transcription provided
+here to compute the system's accuracy after each sentence is
+processed. An utterance's processing produces in a hypothesis for what
+was said. This hypothesis is compared with the transcription, i.e.,
+the hypothesis is aligned against the reference transcript, and a
+summary of the results is reported.
+</p>
+
     <pre>
 /lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.24z982za.raw two four zero nine eight two zero
 /lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.25896o4a.raw two five eight nine six oh four
@@ -725,12 +737,121 @@ the test file, and the transcript of the test file, for example:
 
 <p><a name="input_files"><b>Input Audio/Cepstral Files</b></a>
 
+<p>The audio files used by Sphinx-4 can contain raw audio or cepstra,
+which is a form of encoding speech. The Java platform has support for
+other data formats, such as MS WAV or Sun's au, but, provided as is,
+Sphinx-4 can handle only raw data.
+</p>
+<p>
+The audio defaults to 2 bytes/sample, at 16000 samples per second. The
+files are expected to be binaries without header. The Java platform
+assumes big endian order, always. These defaults can be changed. For
+example, the byte order or the sampling rate can be changed.
+</p>
+<p>
+The input can also be cepstra. The cepstral file has a 4 byte integer
+containing the number of floats that follow. The following floats are
+13 dimensional vectors concatenated. Notice that since the first piece
+of information is the number of floats, the total file size can be
+computed. If a comparions with the actual size fails, either the byte
+order has to be reversed, or the file is corrupted. Importantly, the
+byte order can be automatically detected.
+</p>
 
 
 </li>
 
 <br>&nbsp;
 
+<li><a name="acoustic_models"><b>Acoustic Models</b></a>
+
+<p>The model package, as provided in the <a
+href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">download
+page</a>, contains the acoustic model, the language model, and the
+dictionary. Sphinx-4 can handle model packages provided as a directory
+structure or the corresponding compressed archived zip or jar file. A
+jar file is a zip file with some additional rules. For example, it has
+to have a file named MANIFEST in it.
+</p>
+<p>
+The files in the model package can be in binary or ASCII
+format. Additionally, the dictionary and language model files are not
+required to be in the package. You can specify their locations. But
+the files that make up the acoustic model are required. These files
+are named "means", "variances", "transition_matrices",
+"mixture_weights", and model definition. The first four have to be in
+the same directory in the acoustic model packages. For the sake of
+explanation, we will refer to this directory as "continuous" from here
+on. The last one normally end in ".mdef". Therefore, an example of
+directory structure in an acoustic model package is as follows.
+</p>
+<pre>
+acoustic_model
+   |
+   + acoustic_model.mdef
+   |
+   + continuous
+        |
+        + means
+        + variances
+        + mixture_weights
+        + transition_matrices
+</pre>
+<p>
+It is not the goal of this documentation to provide an explanation
+about the concept of HMMs. The explanation below is superficial, and
+provided only in a way that the files in the acoustic model package
+make sense.
+</p>
+<p>
+An HMM models a process using a sequence of states. Associated with
+each state, there is a probability density function. A popular choice
+for this function is a Gaussian mixture, that is, a summation of
+Gaussians. As you may recall, a single Gaussian is defined by a mean
+and a variance, or, in the case of a multidimensional Gaussian, by a
+mean vector and a covariance matrix, or, under some simplifying
+assumptions, a variance vector. The "means" and "variances" files in the
+"continuous" directory contain exactly this: a table in which each line
+contains a mean vector or a variance vector. The dimension of these
+vectors is the same as the incoming data, the encoded speech
+signal. The Gaussian mixture is a summation of Gaussians, with
+different weights for different Gaussians. The "mixture_weights" file
+contains this: each line contains the weights for a combination of
+Gaussians.
+</p>
+<p>
+The HMM is a model with a set of states. The transitions between
+states have an associated probability. These probabilities make up the
+transition matrices stored in the "transition_matrices" file.
+</p>
+<p>
+The files in the "continuous" directory are, therefore, tables, or
+pools, or means, variances, mixture weights, and transition
+probabilities.
+</p>
+<p>
+The dictionary is a file that maps words to their phonetic
+transcriptions, that is, it maps words to sequences of phonemes.
+</p>
+<p>
+The language model contains information about probabilities of words
+in a language. These probabilities could be for individual words or
+for sequences of two or three words.
+</p>
+<p>
+The model definition file in a way ties everything together. If the
+recognition system models phonemes, there is an HMM for each
+phoneme. The model definition file has one line for each phoneme. The
+phoneme could be in a context or context independent. Each line,
+therefore, identifies a unique HMM. This line has the phoneme
+identification, the non-required left or right context, the index of a
+transition matrix, and, for each state, the index of a mean vector, a
+variance vector, and a set of mixture weights.
+</p>
+
+</li>
+
+<br>&nbsp;
 
 <li><a name="language_models"><b>Language Models</b></a>
 
