@@ -111,6 +111,11 @@ public class Sphinx3Loader implements Loader {
      * @param props  the SphinxProperties object
      * @param binary  if <code>true</code> the file is in binary
      * format
+     *
+     * @throws FileNotFoundException if the file could not be found
+     * @throws IOException if the file could not be loaded
+     * @throws ZipException if the file could not be accessed as a zip
+     * file
      */
     public Sphinx3Loader(String modelName, SphinxProperties props, 
             boolean binary) throws 

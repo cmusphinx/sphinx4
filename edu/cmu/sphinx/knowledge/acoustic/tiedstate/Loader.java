@@ -44,7 +44,7 @@ public interface Loader {
     public Pool getMeansTransformationVectorPool();
 
 
-    /*
+    /**
      * Gets the variance pool
      *
      * @return the pool
@@ -59,14 +59,14 @@ public interface Loader {
     public Pool getVarianceTransformationMatrixPool();
 
 
-    /*
+    /**
      * Gets the mixture weight pool
      *
      * @return the pool
      */
     public Pool getMixtureWeightPool();
 
-    /*
+    /**
      * Gets the transition matrix pool
      *
      * @return the pool
@@ -74,7 +74,7 @@ public interface Loader {
     public Pool getTransitionMatrixPool();
 
 
-    /*
+    /**
      * Gets the senone pool for this loader
      *
      * @return the pool
