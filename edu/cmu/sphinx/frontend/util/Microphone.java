@@ -17,14 +17,13 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.Line;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
@@ -151,28 +150,27 @@ public class Microphone extends BaseDataProcessor {
     public final static boolean PROP_KEEP_LAST_AUDIO_DEFAULT = false;
 
 
-    private AudioFormat desiredFormat;
     private AudioFormat finalFormat;
     private AudioInputStream audioStream = null;
-    private DataLine.Info info;
-    private DataList audioList;
-    private Logger logger;
     private TargetDataLine audioLine = null;
+    private DataList audioList;
     private Utterance currentUtterance;
+    private int audioBufferSize = 160000;
+    private volatile boolean recording = false;
+    private volatile boolean utteranceEndReached = true;
+
+    // Configuration data
+
+    private Logger logger;
     private boolean bigEndian;
     private boolean closeBetweenUtterances;
-    private boolean doConversion = false;
     private boolean keepDataReference;
     private boolean signed;
-    private int audioBufferSize = 160000;
     private int channels;
     private int frameSizeInBytes;
     private int msecPerRead;
     private int sampleRate;
     private int sampleSizeInBytes;
-    private volatile boolean recording = false;
-    private volatile boolean utteranceEndReached = true;
-
 
     
     /*
@@ -234,29 +232,22 @@ public class Microphone extends BaseDataProcessor {
         super.initialize();
         audioList = new DataList();
 
-        desiredFormat = new AudioFormat
-            ((float) sampleRate, sampleSizeInBytes * 8, 
-             channels, signed, bigEndian);
-
-	finalFormat = desiredFormat;
+        AudioFormat desiredFormat = new AudioFormat((float) sampleRate, 
+                sampleSizeInBytes * 8, channels, signed, bigEndian);
         
-        info = new DataLine.Info(TargetDataLine.class, desiredFormat);
+        DataLine.Info  info 
+                = new DataLine.Info(TargetDataLine.class, desiredFormat);
        
         if (!AudioSystem.isLineSupported(info)) {
             logger.info(desiredFormat + " not supported");
-            AudioFormat nativeAudioFormat = 
-                getNativeAudioFormat(desiredFormat);
-            
-            if (nativeAudioFormat == null) {
-                logger.severe("couldn't find suitable target audio format " +
-                              "for conversion");
-            } else {
-                finalFormat = nativeAudioFormat;
-                doConversion = true;
-            }
+            finalFormat = getNativeAudioFormat(desiredFormat);
+            if (finalFormat == null) {
+                logger.severe("couldn't find suitable target audio format");
+                return;
+            } 
         } else {
             logger.info("Desired format: " + desiredFormat + " supported.");
-            doConversion = false;
+            finalFormat = desiredFormat;
         }
 
         // Obtain and open the line and stream.
@@ -289,20 +280,7 @@ public class Microphone extends BaseDataProcessor {
                     return false;
                 }
 
-                /* Conversion might not be supported, which will
-                 * result in audioStream being null after this call.
-                 * If that is the case, we'll let the data processors
-                 * down the stream handle the conversion for us.  Note
-                 * that the assumption here is that the conversion is a
-                 * sample rate conversion and nothing else.
-                 */
-                if (doConversion) {
-                    audioStream = getConvertingStream();
-                }
-                
-                if (audioStream == null) {
-                    audioStream = new AudioInputStream(audioLine);
-                }
+                audioStream = new AudioInputStream(audioLine);
 
                 /* Set the frame size depending on the sample rate. */
                 float msec = ((float) msecPerRead) / 1000.f;
@@ -321,28 +299,6 @@ public class Microphone extends BaseDataProcessor {
             logger.severe("Can't find microphone");
             return false;
         }
-    }
-
-    /**
-     * Gets a stream that converts from the natively supprted format
-     * to the desired format
-     *
-     * @return an audio stream of the desired format
-     */
-    private AudioInputStream getConvertingStream() {
-        AudioInputStream convertingStream = null;
-        try {
-            convertingStream  = AudioSystem.getAudioInputStream
-                    (desiredFormat, new AudioInputStream(audioLine));
-            logger.info ("Converting from " + finalFormat.getSampleRate()
-                         + "Hz to " + desiredFormat.getSampleRate() + "Hz");
-        } catch (IllegalArgumentException e) {
-            logger.info
-                ("Using native format: Cannot convert from " +
-                 finalFormat.getSampleRate() + "Hz to " + 
-                 desiredFormat.getSampleRate() + "Hz");
-        }
-        return convertingStream;
     }
 
 
@@ -402,8 +358,6 @@ public class Microphone extends BaseDataProcessor {
     }
 
 
-
-
     /**
      * Stops recording audio.
      */
@@ -424,10 +378,14 @@ public class Microphone extends BaseDataProcessor {
         private volatile boolean started = false;
         private long totalSamplesRead = 0;
 
+        /**
+         * Creates the thread with the given name
+         *
+         * @name the name of the thread
+         */
         public RecordingThread(String name) {
             super(name);
         }
-
 
         /**
          * Starts the thread, and waits for recorder to be ready
@@ -518,7 +476,10 @@ public class Microphone extends BaseDataProcessor {
                 }
             }
 
-            logger.info("Read " + numBytesRead + " bytes from audio stream.");
+            if (logger.isLoggable(Level.INFO)) {
+                logger.info("Read " + numBytesRead 
+                        + " bytes from audio stream.");
+            }
             if (numBytesRead <= 0) {
                 endOfStream = true;
                 return null;
@@ -622,7 +583,7 @@ public class Microphone extends BaseDataProcessor {
         Data output = null;
 
         if (!utteranceEndReached) {
-            output = (Data) audioList.remove(0);
+            output = (Data) audioList.remove();
             if (output instanceof DataEndSignal) {
                 utteranceEndReached = true;
             }
@@ -652,25 +613,46 @@ public class Microphone extends BaseDataProcessor {
     }
 }
 
+
+/**
+ * Manages the data as a FIFO queue
+ */
 class DataList {
 
     private List list;
 
+    /**
+     * Creates a new data list
+     */
     public DataList() {
         list = new LinkedList();
     }
 
-    public synchronized void add(Data audio) {
-        list.add(audio);
-        // System.out.println("Data added...");
+    /**
+     * Adds a data to the queue
+     *
+     * @param data the data to add
+     */
+    public synchronized void add(Data data) {
+        list.add(data);
         notify();
     }
 
+    /**
+     * Returns the current size of the queue
+     *
+     * @return the size of the queue
+     */
     public synchronized int size() {
         return list.size();
     }
 
-    public synchronized Object remove(int index) {
+    /**
+     * Removes the oldest item on the queue
+     *
+     * @return the oldest item
+     */
+    public synchronized Data remove() {
         try {
             while (list.size() == 0) {
                 // System.out.println("Waiting...");
@@ -679,10 +661,10 @@ class DataList {
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
-        Object obj = list.remove(index);
-        if (obj == null) {
+        Data data = (Data) list.remove(0);
+        if (data == null) {
             System.out.println("DataList is returning null.");
         }
-        return obj;
+        return data;
     }
 }
