@@ -91,7 +91,7 @@ public class EnergyPlotter {
     /**
      * Constructs an EnergyPlotter.
      *
-     * @param maxEnergy the maximum energy value
+     * @param props the SphinxProperties for this object.
      */
     public EnergyPlotter(SphinxProperties props) {
         maxEnergy = props.getInt(PROP_MAX_ENERGY, PROP_MAX_ENERGY_DEFAULT);

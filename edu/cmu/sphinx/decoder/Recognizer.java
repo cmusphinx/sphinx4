@@ -703,7 +703,7 @@ public class Recognizer {
     /**
      * Fire all audio listeners
      *
-     * @param result the new result
+     * @param signal the signal to listen to.
      */
     protected void fireSignalListeners(Signal signal) {
         Vector copy = (Vector) signalListeners.clone();
