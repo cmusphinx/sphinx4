@@ -194,6 +194,7 @@ public class Util {
 	for (int i = 0; i < fractionDigits; i++) {
 	    formatter += "#";
 	}
+
 	DecimalFormat format = new DecimalFormat();
 	format.applyPattern(formatter);
 	String formatted = format.format(number);
@@ -214,5 +215,35 @@ public class Util {
 	    result += "0";
 	}
 	return result;
+    }
+
+
+    /**
+     * Dumps to stdout the given float array.
+     *
+     * @param data the float array to dump
+     * @param name name of the array
+     */
+    public static void dumpFloatArray(float[] data, String name) {
+        System.out.print(name + " " + data.length);
+        for (int i = 0; i < data.length; i++) {
+            System.out.print(" " + formatDouble
+			     ((new Float(data[i])).doubleValue(), 9, 5));
+        }
+        System.out.println();
+    }
+
+
+    /**
+     * Dumps to stdout the given FeatureFrame.
+     *
+     * @param featureFrame the FeatureFrame to dump
+     */
+    public static void dumpFeatureFrame(FeatureFrame featureFrame) {
+	Feature[] features = featureFrame.getData();
+	System.out.println("FEATURE_FRAME " + features.length);
+	for (int i = 0; i < features.length; i++) {
+	    dumpFloatArray(features[i].getData(), "FEATURE");
+	}
     }
 }

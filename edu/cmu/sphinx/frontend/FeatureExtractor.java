@@ -58,6 +58,7 @@ public class FeatureExtractor extends PullingProcessor {
 	// TODO : specify the context
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
 	featureLength = properties.getInt(PROP_FEATURE_LENGTH, 39);
+	window = properties.getInt(PROP_FEATURE_WINDOW, 3);
 	cepstrumLength = properties.getInt
 	    (CepstrumProducer.PROP_CEPSTRUM_SIZE, 13);
     }
@@ -103,7 +104,8 @@ public class FeatureExtractor extends PullingProcessor {
 	    cepstrumFrame = (CepstrumFrame) input;
 	}
 
-	Cepstrum[] cepstra = cepstrumFrame.getData();	
+	Cepstrum[] cepstra = cepstrumFrame.getData();
+	assert(cepstra.length < LIVEBUFBLOCKSIZE);
 
 	int residualVectors = 0;
 
@@ -114,19 +116,27 @@ public class FeatureExtractor extends PullingProcessor {
 		this.cepstraBuffer[i] = cepstra[0].getData();
 	    }
 	    bufferPosition = window;
+	    bufferPosition %= LIVEBUFBLOCKSIZE;
 	    currentPosition = bufferPosition;
 	    jp1 = currentPosition - 1;
+	    jp1 %= LIVEBUFBLOCKSIZE;
 	    jp2 = currentPosition - 2;
+	    jp2 %= LIVEBUFBLOCKSIZE;
 	    jp3 = currentPosition - 3;
+	    jp3 %= LIVEBUFBLOCKSIZE;
 	    jf1 = currentPosition + 1;
+	    jf1 %= LIVEBUFBLOCKSIZE;
 	    jf2 = currentPosition + 2;
+	    jf2 %= LIVEBUFBLOCKSIZE;
 	    jf3 = currentPosition + 3;
+	    jf3 %= LIVEBUFBLOCKSIZE;
 	    residualVectors -= window;
 	}
 
 	// copy (the reference of) all the input cepstrum to our cepstraBuffer 
 	for (int i = 0; i < cepstra.length; i++) {
 	    this.cepstraBuffer[bufferPosition++] = cepstra[i].getData();
+	    bufferPosition %= LIVEBUFBLOCKSIZE;
 	}
 
 	if (endSegment) {
@@ -136,12 +146,14 @@ public class FeatureExtractor extends PullingProcessor {
 		for (int i = 0; i < window; i++) {
 		    this.cepstraBuffer[bufferPosition++] =
 			cepstra[cepstra.length-1].getData();
+		    bufferPosition %= LIVEBUFBLOCKSIZE;
 		}
 	    } else {
 		int tPosition = bufferPosition - 1;
 		for (int i = 0; i < window; i++) {
 		    this.cepstraBuffer[bufferPosition++] =
 			this.cepstraBuffer[tPosition];
+		    bufferPosition %= LIVEBUFBLOCKSIZE;
 		}
 	    }
 	    residualVectors += window;
@@ -183,10 +195,10 @@ public class FeatureExtractor extends PullingProcessor {
 	// CEP; copy all the cepstrum data except for the first one
 	int j = cepstrumLength - 1;
 	System.arraycopy
-	    (feature, 0, this.cepstraBuffer[currentPosition], 1, j);
+	    (this.cepstraBuffer[currentPosition], 1, feature, 0, j);
 	
 	// DCEP: mfc[2] - mfc[-2]
-	for (int k = 1; k < cepstrumLength - 1; k++) {
+	for (int k = 1; k < cepstrumLength; k++) {
 	    feature[j++] = (mfc2f[k] - mfc2p[k]);
 	}
 	
@@ -196,11 +208,25 @@ public class FeatureExtractor extends PullingProcessor {
 	feature[j++] = (mfc3f[0] - mfc1p[0]) - (mfc1f[0] - mfc3p[0]);
 	
 	// D2CEP: (mfc[3] - mfc[-1]) - (mfc[1] - mfc[-3])
-	for (int k = 1; k < cepstrumLength - 1; k++) {
+	for (int k = 1; k < cepstrumLength; k++) {
 	    feature[j++] = (mfc3f[k] - mfc1p[k]) - (mfc1f[k] - mfc3p[k]);
 	}
-	
+
+	jf3 %= LIVEBUFBLOCKSIZE;
+	jf2 %= LIVEBUFBLOCKSIZE;
+	jf1 %= LIVEBUFBLOCKSIZE;
+	jp1 %= LIVEBUFBLOCKSIZE;
+	jp2 %= LIVEBUFBLOCKSIZE;
+	jp3 %= LIVEBUFBLOCKSIZE;
 	currentPosition++;
+	currentPosition %= LIVEBUFBLOCKSIZE;
+
 	return (new Feature(feature));
     }
+
+
+    /**
+     * Test program for this FeatureExtractor. Reads in a file of
+     * CepstrumFrames, and test the process() method on each Frame.
+     */
 }
