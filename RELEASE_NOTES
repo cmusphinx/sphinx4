@@ -6,6 +6,32 @@ Release Date:  XXXX
 
 -------------------------------------------------------------------
 
+PPK - 8/25/04
+    Fixed top level build.xml so that the various Java files for each
+    acoustic model will not be recompiled over and over again.
+
+PPK - 8/24/04
+    StreamDataSource now throws an error if the 'bitsPerSample'
+    is not a multiple of 8.
+
+PPK - 8/24/04
+    Fixed the lattice code by incorporating the acoustic and language
+    scores into the lattice. Also modified the lattice creation code
+    so that a lattice can be created from a full token graph, as well
+    as the reduced token graph. Added code to test two lattices for
+    equivalence.
+
+PG  - 8/12/04
+    Added sausage creation code in the result package.
+
+PPK - 8/11/04
+    Added the interface method WordSearchState.isWordStart() to
+    indicate whether the WordSearchState is at the start or the end
+    of a word.
+
+PG  - 8/10/04
+    Added posterior probability computation to the lattice.
+
 WDW - 8/03/04 - 
     Added 8kHz models trained from the WSJ0 channel 1 training data:
     WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.
