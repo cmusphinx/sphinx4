@@ -108,8 +108,8 @@ public class Lattice {
         assert thisNode != null;
         assert token != null;
 
-        double thisAcousticScore = token.getScore();
-        double thisLMScore = 0.0;
+        double thisAcousticScore = token.getAcousticScore();
+        double thisLMScore = token.getLanguageScore();
 
         // test to see if token is processed via a previous node path
         if (hasNode(token)) {
