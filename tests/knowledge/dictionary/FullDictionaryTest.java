@@ -75,8 +75,10 @@ public class FullDictionaryTest {
     }
 
     private void comparePronunciations(String word) {
-	Pronunciation p1[] = fastDictionary.getPronunciations(word, null);
-	Pronunciation p2[] = fullDictionary.getPronunciations(word, null);
+	Pronunciation p1[] = 
+            fastDictionary.getWord(word).getPronunciations(null);
+	Pronunciation p2[] = 
+            fullDictionary.getWord(word).getPronunciations(null);
 
 	if (p1.length != p2.length) {
 	    System.out.println("Different # pronunciations for " + word);

@@ -22,6 +22,7 @@ import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.knowledge.language.WordSequence;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -497,11 +498,11 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	if (languageModel != null && arc.getState() instanceof WordSearchState) {
 	    WordSearchState state = (WordSearchState) arc.getState();
 	    int depth = languageModel.getMaxDepth();
-	    String wordID = state.getPronunciation().getWord().getSpelling();
+	    Word word = state.getPronunciation().getWord();
             
 	    if (isWord(word)) {
 		List wordList = new ArrayList(depth);
-		wordList.add(new Integer(wordID));
+		wordList.add(word);
 		while (token != null && wordList.size() < depth) {
 		    if (token.getSearchState() 
 				    instanceof WordSearchState) {
@@ -509,7 +510,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 			    (WordSearchState) token.getSearchState();
 			Word prevWordObject =
 			    prevWord.getPronunciation().getWord();
-			if (isWord(prevWordObject.getSpelling())) {
+			if (isWord(prevWordObject)) {
 			    wordList.add(prevWordObject);
 			}
 		    }
@@ -517,7 +518,12 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		}
 
 		if (token == null && wordList.size() < depth) {
-		    wordList.add(new Integer(Dictionary.SENTENCE_START_ID));
+                    // bug: should be adding a word instead, but we
+                    // don't have the dictionary, so we can't get the
+                    // sentence start word
+                    wordList.add(null);
+                    // new Word(Dictionary.SENTENCE_START_SPELLING,
+                    // null));
 		}
 		Collections.reverse(wordList);
 		logProbability = languageModel.getProbability
@@ -536,8 +542,8 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      *
      * @return true if the word is a real word.
      */
-    private boolean isWord(String word) {
-	return (word != Dictionary.SILENCE_SPELLING);
+    private boolean isWord(Word word) {
+	return (word.getSpelling() != Dictionary.SILENCE_SPELLING);
     }
 
     /**
