@@ -25,9 +25,6 @@ import java.util.ArrayList;
  * This representation of an HMM is a specialized left-to-right markov
  * model. No backward transitions are allowed.  
  *
- * TODO: Perhaps we should switch over to using HMMState and
- * HMMStateArcs internally to store Senones and the transition matrix.
- *
  */
 public class HMM implements Serializable {
     private Unit unit;
