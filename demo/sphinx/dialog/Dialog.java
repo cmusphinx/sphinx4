@@ -166,11 +166,28 @@ class MyBehavior extends NewGrammarDialogNodeBehavior {
                 Timer.dumpAll();
             } else if (tag.startsWith("goto_")) {
                 return tag.replaceFirst("goto_", "");
-            } 
+            }  else if (tag.startsWith("browse")) {
+                execute(tag);
+            }
         } else {
             System.out.println("\n Oops! didn't hear you.\n");
         }
         return null;
+    }
+
+
+    /**
+     * execute the given command
+     *
+     * @param cmd the command to execute
+     */
+    private void execute(String cmd) {
+        try {
+            Runtime.getRuntime().exec(cmd);
+        } catch (IOException e) {
+            // if we can't run the command, just fall back to
+            // a non-working demo.
+        }
     }
 
     /**

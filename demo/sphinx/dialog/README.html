@@ -76,6 +76,31 @@ games / play adventure " no game will actually played, similarly, when
 you say "make a phone call / call paul" no phone call will be made.<br>
 <br>
 
+
+<p> 
+<b>Note</b> - when browsing newspapers from the 'news' menu, this demo
+will actually attempt to open the news page in your web browser by
+executing the command 'browse web-page-url'.  If you want to enable
+this feature place a browse script in your command path.  The script I
+use with the firefox browser is this:
+
+<pre>
+#!/bin/sh
+
+export FF_HOME="/usr/share/firefox
+
+url="$1"
+if [ "x$url" = "x" ]; then
+  url="about:blank"
+  fi
+
+  if $FF_HOME/mozilla-xremote-client openURL\("$url"\); then
+    exit 0
+    fi
+    exec $FF_HOME/firefox "$url"
+
+</pre>
+
 Here's a sample run:
 <br>
 
