@@ -518,9 +518,9 @@ function printLiveTestResults(testName) {
     print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
     print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
     print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Test Time<br> </b></td>";
-    print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Gap Insertion Rate (%)<br> </b></td>";
-    print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Utterance Ratio<br> </b></td>";
-    print "<td valign=top rowspan=1 colspan=3 bgcolor=#ccffff><b>Response Time (s)<br> </b></td>";
+    print "<td valign=top rowspan=2 bgcolor=#ccffff><a href=#glossary><b>Gap Insertion Rate (%)<br></b></a></td>";
+    print "<td valign=top rowspan=2 bgcolor=#ccffff><a href=#glossary><b>Utterance Ratio<br> </b></a></td>";
+    print "<td valign=top rowspan=1 colspan=3 bgcolor=#ccffff><a href=#glossary><b>Response Time (s)<br></b></a></td>";
     print "</tr>";
     print "<tr>";
     print "<td valign=top bgcolor=#ccffff><b>Avg<br> </b></td>";
@@ -829,9 +829,9 @@ function printLatestLiveTestResults(  _testName, _testCount) {
     print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Gap Insertion Rate (%)<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Utterance Ratio<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Avg Response Time (s)<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><a href=#glossary><b>Gap Insertion Rate (%)<br> </b></a></td>";
+    print "<td valign=top bgcolor=#ccffff><a href=#glossary><b>Utterance Ratio<br> </b></a></td>";
+    print "<td valign=top bgcolor=#ccffff><a href=#glossary><b>Avg Response Time (s)<br> </b></a></td>";
 
     for (i = 0; i < lastLiveTestCount; i++) {
         split(lastLiveTestData[i], thisData);
@@ -885,6 +885,14 @@ function printHeaderTable() {
     print("</table>")
 }
 
+function printGlossary() {
+    print "<a name=glossary><h2>Glossary</h2></a><p>\n"
+    print "<b>Gap Insertion Rate</b> - Gap insertions are words inserted in the non-speech regions of audio. The gap insertion rate is defined the percentage of recognized words that are gap insertions:<br>gap insertion rate = number of gap insertions / total number of words recognized<p>\n";
+    print "<b>Response Time</b> - This is defined the time between audio entering the front end, to the decoder obtaining the first feature with an UTTERANCE_START signal.<p>\n";
+    print "<b>Utterance Ratio</b> - This is defined as the number of utterances detected (by the endpointer) divided by the actual number of utterances.<p>\n";
+}
+
+
 END {
     print("<html>");
     printHeader();
@@ -900,6 +908,7 @@ END {
 	printLiveTestResults(i);
     }
     printBuildHistory();
+    printGlossary();
     printFooter();
 }
 
