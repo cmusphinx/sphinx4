@@ -113,8 +113,8 @@ public class JSGFGrammar extends Grammar {
                     debugPrintln("New Rule: " + ruleName);
                     Rule rule = ruleGrammar.getRule(ruleName);
                     GrammarNode[] newNodes = parseRule(rule);
-                    firstNode.add(newNodes[0], 0.0);
-                    newNodes[1].add(finalNode, 0.0);
+                    firstNode.add(newNodes[0], 0.0f);
+                    newNodes[1].add(finalNode, 0.0f);
                 }
             }
             
@@ -192,14 +192,14 @@ public class JSGFGrammar extends Grammar {
         // expand each alternative, and connect them in parallel
         for (int i = 0; i < rules.length; i++) {
             Rule rule = rules[i];
-            double weight = 0.0;
+            float weight = 0.0f;
             if (weights != null) {
                 weight = weights[i];
             }
             debugPrintln("Alternative: " + rule.toString());
             GrammarNode[] newNodes = parseRule(rule);
             firstNode.add(newNodes[0], weight);
-            newNodes[1].add(lastNode, 0.0);
+            newNodes[1].add(lastNode, 0.0f);
         }
         
         GrammarNode[] nodes = new GrammarNode[2];
@@ -241,7 +241,7 @@ public class JSGFGrammar extends Grammar {
             }
 
             if (i > 0) {
-                lastGrammarNode.add(newNodes[0], 0.0);
+                lastGrammarNode.add(newNodes[0], 0.0f);
             }
             lastGrammarNode = newNodes[0];
         }
