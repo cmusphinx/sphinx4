@@ -15,7 +15,8 @@ Requirements:
 
     Since the regression tests access the repository, you will need to setup 
     your public keys properly so that no password is required to checkin or
-    checkout.
+    checkout. For more details, check
+    http://sourceforge.net/docman/display_doc.php?docid=761&group_id=1
 
  - To add or remove a test from the regression tests, edit the
    'runAllTests' script
