@@ -246,7 +246,7 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-ea"/>
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
-            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-mx512m"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
             <sysproperty key="live[skip]" value="${skip}"/> 
@@ -273,7 +273,7 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-ea"/>
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
-            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-mx256m"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
             <sysproperty key="live[skip]" value="${skip}"/> 
