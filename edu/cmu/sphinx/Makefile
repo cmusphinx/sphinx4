@@ -9,7 +9,7 @@ FILES = $(shell echo *.java)
 # List any sub directories that need to be built.  Start with generic
 # packages going toward specialized.  That is, if one package depends
 # on another, put the dependent package later in the list.
-SUBDIRS = frontend util
+SUBDIRS = util model
 
 ##########################################################################
 
@@ -17,4 +17,4 @@ include ${TOP}/build/Makefile.config
 
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 
-all:: ${CLASSES} ${STUBS}
+# all:: ${CLASSES} ${STUBS}
