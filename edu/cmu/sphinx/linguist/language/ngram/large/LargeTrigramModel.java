@@ -355,9 +355,13 @@ public class LargeTrigramModel implements LanguageModel {
         for (int i = 0; i < words.length; i++) {
             Word word = dictionary.getWord(words[i]);
             if (word == null) {
+                logger.info("Missing word: " + words[i]);
                 missingWords++;
             }
             unigramIDMap.put(word, unigrams[i]);
+            if (logger.isLoggable(Level.FINE)) {
+                logger.fine("Word: " + word);
+            }
         }
 
         if (missingWords > 0) {
