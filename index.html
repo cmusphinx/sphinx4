@@ -99,6 +99,7 @@ WARRANTIES.
       <ul>
         <li><a href="#architecture_and_api2">Architecture and API</a></li>
         <li><a href="#how_build">Building Sphinx-4</a></li>
+	<li><a href="#batch_tests">Running the Batch Tests</a>
       </ul>
 
       <p>
@@ -199,19 +200,21 @@ WARRANTIES.
 
 <li><a name="download_and_install"><b>Downloading and Installing</b></a>
 
-      <p>Include notes on acoustic model and language model files.
-</p>
       <p>Sphinx-4 has been build and tested on the Solaris<sup> <font
       size="-1">TM</font></sup> Operating Environment, Mac OS X, Linux
-      and Win32 operating systems.
-</p>
-      <p>Running, building, and testing Sphinx-4 requires additional
-      software, mainly the Java<sup>TM</sup> 2 SDK, Standard Edition,
-      1.4. Before you start, you will need the following software
-      available on your machine.
-</p>
+      and Win32 operating systems. Running, building, and testing 
+      Sphinx-4 requires additional software. Before you start, 
+      you will need the following software available on your machine.</p>
+
 <ul>
-  <li>Ant 1.6.0 or better, available at <a
+  <li><b>Java 2 SDK, Standard Edition, v1.4</b> or better. 
+      Go to <a href="http://java.sun.com">java.sun.com</a>,
+      and select "J2SE". Download the latest version. At the time of writing,
+      the latest version is 1.4.2.
+      </li>
+
+  <br>
+  <li><b>Ant 1.6.0</b> or better, available at <a
   href="http://ant.apache.org">ant.apache.org</a>. The site has a manual with instructions on how to download, install, and use ant. The gist of it, just to get started:
   <ul>
   <li> On <a href="http://ant.apache.org">ant.apache.org</a> click on
@@ -258,20 +261,15 @@ set path=( $path $ANT_HOME/bin )
   </li>
   </ul>
   </li>
-  <li> Installation of ant is completed.
-  </li>
+  <li> Installation of ant is completed.</li>
   </ul>
   </li>
-  <li>Java JDK 1.4 or better. Go to <a href="http://java.sun.com">java.sun.com</a>,
-and select "J2SE". Download the latest version. At the time of writing,
-the latest version is 1.4.2.
-  </li>
 
-  <li> Additionally, if you want to interact directly with the cvs
-  tree (which we recommend), you'll need cvs and ssh on your
-  machine. The canonical places to get them are <a
-  href="http://www.cvshome.org">www.cvshome.org</a> and <a
-  href="http://openssh.org">openssh.org</a>. If you are using Windows,
+  <br>
+  <li> <b>CVS</b> and <b>SSH</b>, but only if you want to interact directly
+  with the cvs tree (which we recommend). The canonical places to get them 
+  are <a href="http://www.cvshome.org">www.cvshome.org</a> and
+  <a href="http://openssh.org">openssh.org</a>. If you are using Windows,
   your best choice is to install <a
   href="http://cygwin.com">cygwin</a>, which will give you a
   linux-like environment in a command prompt window. Make sure to
@@ -386,16 +384,20 @@ int, only an integer can be used as the value for this property.
 
 <hr>
 
-<h2>Modifying Sphinx-4 (for Speech Engine Developers)</h2>
+<h2>Sphinx-4 for Speech Engine Developers</h2>
+
 <p>All the source is available under a <a href="license.terms">BSD Style</a>
    license.  You can download it, build it, and modify it to your 
    heart's content.
+
 <ul>
   <li><a name="architecture_and_api2"><b>Architecture and API</b></a>
       <p>The architecture and API can be found in the 
          <a href="javadoc/index.html">javadoc documentation</a>.
   </li>
+
   <br>&nbsp;
+
   <li><a name="how_build"><b>Building Sphinx-4</b></a>
       <p>The prerequisites for building Sphinx-4 are as follows:
       <br>&nbsp;
@@ -432,6 +434,74 @@ int, only an integer can be used as the value for this property.
        <br><code>ant javadoc</code>: builds the javadoc documentation and
           places the results in the <code>javadoc</code> directory
     </ul>
+  </li>
+
+  <br>
+
+  <li><a name="batch_tests"><b>Running the Batch Tests</b></a>
+
+  <p>In order to run the batch regression tests, you will need to have
+     any or all of the following test data (unless otherwise noted, 
+     must be acquired from external sources, mostly from the
+     <a href="http://www.ldc.upenn.edu">Language Data Consortium (LDC)</a>:
+     <ul>
+     <li>TI46 - isolated speech</li>
+     <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S10">TIDIGITS</a> - connected digits</li>
+     <li><a href="http://www.speech.cs.cmu.edu/databases/an4/">AN4</a> - 
+         small vocabulary alphanumeric connect speech</li>
+     <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S3B">RM1</a> - medium vocabulary connected speech
+     </ul>
+  
+  <p>
+  The Sphinx-4 regression tests have different directories for the
+  different tasks. The directory sphinx4/tests/performance contains 
+  directories named ti46, tidigits, an4, rm1, and some other tests. 
+  Each of these directories contains a build.xml with targets specific 
+  to the particular task. The build.xml allows you to run a number of 
+  different tests. Type:
+  <font size="+1"><pre>ant -projecthelp</pre></font>
+  to list a help text with the possible targets.
+
+  <p>
+  <b>Isolated Digits</b>
+  <font size="+1">
+  <pre>
+  % cd sphinx4/tests/performance/ti46
+  % ant -projecthelp      # to see a list of possible targets
+  % ant ti46_wordlist
+  </pre>
+  </font>
+
+  <p>
+  <b>Connected Digits</b>
+  <font size="+1">
+  <pre>
+  % cd sphinx4/tests/performance/tidigits
+  % ant -projecthelp      # to see a list of possible targets
+  % ant tidigits_flat_unigram
+  </pre>
+  </font>
+
+  <p>
+  <b>Small Vocabulary</b>
+  <font size="+1">
+  <pre>
+  % cd sphinx4/tests/performance/an4
+  % ant -projecthelp      # to see a list of possible targets
+  % ant an4_words_unigram
+  </pre>
+  </font>
+  
+  <p>
+  <b>Medium Vocabulary</b>
+  <font size="+1">
+  <pre>
+  % cd sphinx4/tests/performance/rm1
+  % ant -projecthelp      # to see a list of possible targets
+  % ant rm1_bigram
+  </pre>
+  </font>
+
   </li>
 </ul>
 
