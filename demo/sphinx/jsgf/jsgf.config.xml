@@ -100,7 +100,7 @@
         <property name="dictionary" value="dictionary"/>
         <property name="grammarLocation" 
              value="resource:/demo.sphinx.jsgf.JSGFDemo!/demo/sphinx/jsgf/"/>
-        <property name="grammarName" value="first"/>
+        <property name="grammarName" value="commands"/>
 	<property name="logMath" value="logMath"/>
     </component>
     
