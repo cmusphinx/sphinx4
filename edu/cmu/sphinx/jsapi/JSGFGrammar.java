@@ -249,6 +249,15 @@ public class JSGFGrammar extends Grammar {
     }
 
     /**
+     * Sets the URL context of the JSGF grammars.
+     *
+     * @param the URL context of the grammars
+     */
+    public void setBaseURL(URL url) {
+        baseURL = url;
+    }
+
+    /**
      * Creates the grammar.
      * 
      * @return the initial node of the Grammar
@@ -259,8 +268,9 @@ public class JSGFGrammar extends Grammar {
         recognizer = new BaseRecognizer();
 
         try {
-            baseURL = new URL(urlString);
-
+            if (baseURL == null) {
+                baseURL = new URL(urlString);
+            }
             recognizer.allocate();
             ruleGrammar = recognizer.loadJSGF(baseURL, grammarName);
             recognizer.commitChanges();
