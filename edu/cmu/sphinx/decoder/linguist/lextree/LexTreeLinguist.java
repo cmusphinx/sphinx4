@@ -1118,9 +1118,9 @@ public class LexTreeLinguist implements  Linguist {
                     nextWord.getPronunciation().getWord(),
                     languageModel.getMaxDepth());
             logProbability = languageModel.getProbability(wordSequence);
+
             if (false) {
-                System.out.println(wordSequence + " " + 
-                        logMath.logToLinear(logProbability));
+                System.out.println(wordSequence + " " + logProbability);
             }
         }
         return new LexTreeWordState(curState.getLeftID(), 
