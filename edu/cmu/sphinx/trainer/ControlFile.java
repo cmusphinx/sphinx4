@@ -66,7 +66,7 @@ public interface ControlFile {
     /**
      * Gets an iterator for utterances.
      */
-    public Iterator getUtteranceIterator();
+    public void startUtteranceIterator();
 
     /**
      * Returns whether there is a next utterance.

@@ -99,17 +99,17 @@ public class SimpleControlFile implements ControlFile {
     /**
      * Gets an iterator for utterances.
      */
-    public Iterator getUtteranceIterator() {
+    public void startUtteranceIterator() {
 	audioFileIterator = audioFileList.iterator();
 	transcriptFileIterator = transcriptFileList.iterator();
-
-	return audioFileIterator;
     }
 
     /**
      * Returns whether there is another utterance.
      */
     public boolean hasMoreUtterances() {
+	// Should throw exception or break if one has next and the
+	// other doesn't.
 	return (audioFileIterator.hasNext() 
 		&& transcriptFileIterator.hasNext());
     }
