@@ -5,3 +5,11 @@ grammar tidigits;
 public <digits> = (one | two | three | four | five | six | seven |
                     eight | nine | oh | zero )+;
 
+
+/**
+ * A nasty grammar rule is included here as a test to ensure that we
+ * can deal with such beasts. 
+ */
+
+public <nasty> = ((one*)*)*;
+
