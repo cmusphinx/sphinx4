@@ -72,6 +72,18 @@ public interface Linguist {
     public final static double PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT 
         = 1.0;
 
+    /**
+      * Filler insertion probability property
+      */
+    public final static String PROP_FILLER_INSERTION_PROBABILITY
+        = PROP_PREFIX + "fillerInsertionProbability";
+
+
+    /**
+     * The default value for PROP_FILLER_INSERTION_PROBABILITY.
+     */
+    public final static double PROP_FILLER_INSERTION_PROBABILITY_DEFAULT = 1.0;
+
 
     /**
      * Sphinx property that defines the language weight for the search
@@ -129,6 +141,19 @@ public interface Linguist {
      */
     public final static boolean 
         PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS_DEFAULT = false;
+
+    /**
+     * Property that controls whether filler words are automatically
+     * added to the vocabulary
+     */
+    public final static String PROP_ADD_FILLER_WORDS =
+            PROP_PREFIX + "addFillerWords";
+
+
+    /**
+     * The default value for PROP_ADD_FILLER_WORDS.
+     */
+    public final static boolean PROP_ADD_FILLER_WORDS_DEFAULT = false;
 
 
     /**
