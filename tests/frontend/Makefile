@@ -86,6 +86,19 @@ ep-one: all
 	tests.frontend.EnergyEndpointerTest \
 	energyEndpointer ../decoder/tiDigits.props ./one.batch
 
+ep-an4-spelling: all
+	$(JAVA_CMD) \
+	-Dtests.frontend.energyEndpointer.batchMode=true \
+	-Dtests.frontend.energyEndpointer.dumpTimes=true \
+	-DremoveNonSpeech=false \
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
+	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=2 \
+	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=6 \
+	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=2 \
+	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endHigh=6 \
+	tests.frontend.EnergyEndpointerTest \
+	energyEndpointer ../decoder/wsjDigits.props ../decoder/an4_spelling.batch
+
 clean::
 	rm -f *.out *.diff
 
