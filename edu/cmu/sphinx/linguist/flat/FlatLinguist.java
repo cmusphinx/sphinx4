@@ -112,6 +112,12 @@ public class FlatLinguist implements Linguist, Configurable {
         = "outOfGrammarProbability";
 
     /**
+     * Sphinx property for the acoustic model used for the CI phone loop.
+     */
+    public static final String PROP_PHONE_LOOP_ACOUSTIC_MODEL
+        = "phoneLoopAcousticModel";
+
+    /**
      * Sphinx property for the probability of inserting a CI phone in
      * the out-of-grammar ci phone loop
      */
@@ -138,6 +144,7 @@ public class FlatLinguist implements Linguist, Configurable {
     // -----------------------------------
     private Grammar grammar;
     private AcousticModel acousticModel;
+    private AcousticModel phoneLoopAcousticModel;
     private LogMath logMath;
     private UnitManager unitManager;
 
@@ -209,6 +216,8 @@ public class FlatLinguist implements Linguist, Configurable {
         registry.register(PROP_OUT_OF_GRAMMAR_PROBABILITY,
                           PropertyType.DOUBLE);
         registry.register(PROP_PHONE_INSERTION_PROBABILITY, PropertyType.DOUBLE);
+        registry.register(PROP_PHONE_LOOP_ACOUSTIC_MODEL,
+                          PropertyType.COMPONENT);
     }
 
     /*
@@ -250,12 +259,18 @@ public class FlatLinguist implements Linguist, Configurable {
         addOutOfGrammarBranch = ps.getBoolean
             (PROP_ADD_OUT_OF_GRAMMAR_BRANCH,
              PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT);
-        logOutOfGrammarBranchProbability = logMath.linearToLog
-            (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY,
-                          PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT));
-        logPhoneInsertionProbability = logMath.linearToLog
-            (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY,
-                          PROP_PHONE_INSERTION_PROBABILITY_DEFAULT));
+
+        if (addOutOfGrammarBranch) {
+            logOutOfGrammarBranchProbability = logMath.linearToLog
+                (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY,
+                              PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT));
+            logPhoneInsertionProbability = logMath.linearToLog
+                (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY,
+                              PROP_PHONE_INSERTION_PROBABILITY_DEFAULT));
+            phoneLoopAcousticModel = (AcousticModel)
+                ps.getComponent(PROP_PHONE_LOOP_ACOUSTIC_MODEL,
+                                AcousticModel.class);
+        }
     }
 
     /**
@@ -305,6 +320,9 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     protected void allocateAcousticModel() throws IOException {
         acousticModel.allocate();
+        if (addOutOfGrammarBranch) {
+            phoneLoopAcousticModel.allocate();
+        }
     }
 
     /*
@@ -396,7 +414,7 @@ public class FlatLinguist implements Linguist, Configurable {
 
         // add an out-of-grammar branch if configured to do so
         if (addOutOfGrammarBranch) {
-            CIPhoneLoop phoneLoop  = new CIPhoneLoop(acousticModel,
+            CIPhoneLoop phoneLoop  = new CIPhoneLoop(phoneLoopAcousticModel,
                     logPhoneInsertionProbability);
             SentenceHMMState firstBranchState = (SentenceHMMState)
                 phoneLoop.getSearchGraph().getInitialState();
