@@ -683,22 +683,6 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
 
     <!-- ********************************************************** --> 
     <!-- *                                                        * --> 
-    <!-- * gap_insertion_detector                                 * -->
-    <!-- *                                                        * --> 
-    <!-- ********************************************************** --> 
-    <target name="gap_insertion_detector"
-            description="detects gap insertion errors">
-        <java classpath="${classpath}"
-              classname="edu.cmu.sphinx.util.GapInsertionDetector"
-              fork="true">
-	      <arg value="an4.props"/>
-	      <arg value="reference.txt"/>
-	      <arg value="hypothesis.txt"/>
-        </java>
-    </target>
-
-    <!-- ********************************************************** --> 
-    <!-- *                                                        * --> 
     <!-- * an4_words_trigram                                      * --> 
     <!-- *                                                        * --> 
     <!-- ********************************************************** --> 
