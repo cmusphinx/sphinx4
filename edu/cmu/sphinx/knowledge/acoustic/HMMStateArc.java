@@ -47,11 +47,11 @@ public class HMMStateArc implements Serializable {
     }
 
     /**
-     * Gets transition probability 
+     * Gets log transition probability 
      *
-     * @return the probability
+     * @return the probability in the LogMath log domain
      */
-    public float getProbability() {
+    public float getLogProbability() {
 	return probability;
     }
 
