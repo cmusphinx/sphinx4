@@ -15,8 +15,6 @@ package tests.other;
 
 import edu.cmu.sphinx.util.Timer;
 
-import java.util.Random;
-
 /**
  * 
  * Performas some math timings. Used to compare different modes of

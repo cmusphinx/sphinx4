@@ -10,15 +10,15 @@
  *
  */
 
-package tests.knowledge.dictionary;
+package tests.linguist.dictionary;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FastDictionary;
-import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
+import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
+import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
+import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.util.Timer;
 
 import java.io.File;

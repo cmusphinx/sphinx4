@@ -78,7 +78,7 @@ NOTE:  Before running the tests, you must have already built
 	    depends="all">
 	    <java classname="${fst_test}"
 	          classpath="${classes_dir}">
-		  <sysproperty key="edu.cmu.sphinx.decoder.linguist.FSTGrammar.path" value="/lab/speech/sphinx4/data/fst/digits.fst"/>
+		  <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path" value="/lab/speech/sphinx4/data/fst/digits.fst"/>
 		  <arg value="FSTGrammarTest.props"/>
 	    </java>
     </target>
@@ -95,8 +95,8 @@ NOTE:  Before running the tests, you must have already built
 	    <java classname="${fst_test}"
 	          classpath="${classes_dir}"
 		  fork="true">
-		  <sysproperty key="edu.cmu.sphinx.decoder.linguist.FSTGrammar.path" value="/lab/speech/sphinx4/data/fst/5721_word_vocab.FST"/>
-		  <sysproperty key="edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath" value="/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d"/>
+		  <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path" value="/lab/speech/sphinx4/data/fst/5721_word_vocab.FST"/>
+		  <sysproperty key="edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath" value="/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d"/>
 		  <arg value="FSTGrammarTest.props"/>
 	    </java>
     </target>
@@ -112,8 +112,8 @@ NOTE:  Before running the tests, you must have already built
 	    depends="all">
 	    <java classname="${fst_test}"
 	          classpath="${classes_dir}">
-		  <sysproperty key="edu.cmu.sphinx.decoder.linguist.FSTGrammar.path" value="/lab/speech/sphinx4/data/fst/language_model.arpaformat.FST.ascii"/>
-		  <sysproperty key="edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath" value="/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d"/>
+		  <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path" value="/lab/speech/sphinx4/data/fst/language_model.arpaformat.FST.ascii"/>
+		  <sysproperty key="edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath" value="/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d"/>
 		  <arg value="FSTGrammarTest.props"/>
 	    </java>
     </target>

@@ -10,22 +10,20 @@
  *
  */
 
-package tests.knowledge.language;
-
-import edu.cmu.sphinx.util.SphinxProperties;
-
-import edu.cmu.sphinx.decoder.linguist.LMGrammar;
-import edu.cmu.sphinx.decoder.linguist.Grammar;
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
-import edu.cmu.sphinx.knowledge.language.LanguageModel;
-import edu.cmu.sphinx.knowledge.language.LanguageModelFactory;
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.Utilities;
+package tests.linguist.language;
 
 import java.io.File;
-
 import java.net.URL;
+
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
+import edu.cmu.sphinx.linguist.language.grammar.Grammar;
+import edu.cmu.sphinx.linguist.language.grammar.LMGrammar;
+import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
+import edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.Utilities;
 
 
 /**
@@ -43,7 +41,7 @@ public class LMGramTest {
     public LMGramTest(String propertiesFile) throws Exception {
         
         LanguageModel languageModel;
-        edu.cmu.sphinx.decoder.linguist.Grammar grammar;
+        Grammar grammar;
 
         String pwd = System.getProperty("user.dir");
         SphinxProperties.initContext
@@ -54,16 +52,15 @@ public class LMGramTest {
         Timer lmTimer = Timer.getTimer("LMGramTest", "LanguageModel");
         Timer gramTimer = Timer.getTimer("LMGramTest", "Grammar");
 
-	Dictionary dictionary = new FullDictionary(context);
+        Dictionary dictionary = new FullDictionary(context);
 
         lmTimer.start();
-        languageModel = LanguageModelFactory.createLanguageModel
-	    (context, dictionary);
+        languageModel = LanguageModelFactory.getModel(props, dictionary);
         lmTimer.stop();
 
         Utilities.dumpMemoryInfo("before grammar load");
         gramTimer.start();
-        grammar = new edu.cmu.sphinx.decoder.linguist.LMGrammar();
+        grammar = new LMGrammar();
         grammar.initialize(props.getContext(), languageModel, dictionary);
         gramTimer.stop();
         Utilities.dumpMemoryInfo("after grammar load");

@@ -19,7 +19,7 @@ edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = ./FSTGrammarTest.dic
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.wordReplacement = pittsburgh
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = ./filler.dic
-edu.cmu.sphinx.decoder.linguist.FSTGrammar.path=./FSTGrammarTest.gram
+edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath = ./FSTGrammarTest.dic
+edu.cmu.sphinx.linguist.dictionary.Dictionary.wordReplacement = pittsburgh
+edu.cmu.sphinx.linguist.dictionary.Dictionary.fillerPath = ./filler.dic
+edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path=./FSTGrammarTest.gram

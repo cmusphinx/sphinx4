@@ -20,14 +20,14 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.acoustic.format = sphinx3.ascii
-edu.cmu.sphinx.knowledge.acoustic.FeatureVectorLength = 39
+edu.cmu.sphinx.linguist.acoustic.format = sphinx3.ascii
+edu.cmu.sphinx.linguist.acoustic.FeatureVectorLength = 39
 edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
-edu.cmu.sphinx.knowledge.acoustic.location = /lab/speech/sphinx4/data/rm1_model
-edu.cmu.sphinx.knowledge.acoustic.definition_file = etc/RM1_clean_13dCep_16k_40mel_130Hz_6800Hz.1800.mdef
-edu.cmu.sphinx.knowledge.acoustic.data_location = cd_continuous_8gau
-edu.cmu.sphinx.knowledge.acoustic.properties_file = am.props
+edu.cmu.sphinx.linguist.acoustic.location = /lab/speech/sphinx4/data/rm1_model
+edu.cmu.sphinx.linguist.acoustic.definition_file = etc/RM1_clean_13dCep_16k_40mel_130Hz_6800Hz.1800.mdef
+edu.cmu.sphinx.linguist.acoustic.data_location = cd_continuous_8gau
+edu.cmu.sphinx.linguist.acoustic.properties_file = am.props
 
 
 ############################################################
@@ -65,9 +65,9 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 ############################################################
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.FastActiveList
-edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
-edu.cmu.sphinx.decoder.linguist.Linguist.showSentenceHMM=false
-edu.cmu.sphinx.decoder.linguist.Linguist.validateSentenceHMM=false
+edu.cmu.sphinx.linguist.Linguist.silenceInsertionProbability = 1.0
+edu.cmu.sphinx.linguist.Linguist.showSentenceHMM=false
+edu.cmu.sphinx.linguist.Linguist.validateSentenceHMM=false
 edu.cmu.sphinx.search.validateResults=false
 
 
@@ -85,10 +85,10 @@ edu.cmu.sphinx.search.validateResults=false
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation = true
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dict/RM.dictionary
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = dict/fillerdict
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
+edu.cmu.sphinx.linguist.dictionary.Dictionary.useAcousticModelLocation = true
+edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath = dict/RM.dictionary
+edu.cmu.sphinx.linguist.dictionary.Dictionary.fillerPath = dict/fillerdict
+edu.cmu.sphinx.linguist.dictionary.Dictionary.addSilEndingPronunciation=false
 
 
 ############################################################
@@ -111,17 +111,17 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 
 
 
-edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-25
+edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability = 1.0E-25
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-250
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=4.0
 
-edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar
-edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel
+edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.linguist.language.grammar.LMGrammar
+edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass=edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist
-edu.cmu.sphinx.knowledge.language.format=arpa
-edu.cmu.sphinx.knowledge.language.location=large.unigram
+edu.cmu.sphinx.linguist.language.format=arpa
+edu.cmu.sphinx.linguist.language.location=large.unigram
 edu.cmu.sphinx.decoder.Decoder.showErrorToken=false
 edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
 edu.cmu.sphinx.decoder.Recognizer.featureBlockSize=5

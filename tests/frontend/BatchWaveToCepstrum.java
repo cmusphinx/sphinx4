@@ -12,22 +12,21 @@
 
 package tests.frontend;
 
-import java.io.*;
-
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URL;
-
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
-import edu.cmu.sphinx.frontend.AudioSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.Feature;
-import edu.cmu.sphinx.frontend.FeatureExtractor;
-import edu.cmu.sphinx.frontend.FeatureFrame;
-import edu.cmu.sphinx.frontend.SimpleFrontEnd;
-import edu.cmu.sphinx.frontend.util.StreamAudioSource;
-
 import edu.cmu.sphinx.util.SphinxProperties;
 
 

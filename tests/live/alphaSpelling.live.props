@@ -21,18 +21,18 @@ edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.models=wsj
-wsj;edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel
+edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory.models=wsj
+wsj;edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel
 
-wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
+wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
 
-wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.format=sphinx3.binary 
-wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.format=sphinx3.binary 
+wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 
-wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
-wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.data_location = cd_continuous_8gau
-wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
-wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.useComposites=false
+wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
+wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.data_location = cd_continuous_8gau
+wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
+wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.useComposites=false
 
 
 ############################################################
@@ -83,8 +83,8 @@ edu.cmu.sphinx.frontend.feature.FrameDropper.replaceNthWithPrevious=true
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth = 2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth = 1E-150
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.decoder.search.SortingActiveList
-edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7.0
-edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-26
+edu.cmu.sphinx.linguist.Linguist.languageWeight=7.0
+edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability = 1.0E-26
 edu.cmu.sphinx.search.validateResults=false
 
 
@@ -103,12 +103,12 @@ edu.cmu.sphinx.search.validateResults=false
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dict/cmudict.0.6d
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = dict/fillerdict
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=true
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.wordReplacement=<sil>
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true
+edu.cmu.sphinx.linguist.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath = dict/cmudict.0.6d
+edu.cmu.sphinx.linguist.dictionary.Dictionary.fillerPath = dict/fillerdict
+edu.cmu.sphinx.linguist.dictionary.Dictionary.addSilEndingPronunciation=true
+edu.cmu.sphinx.linguist.dictionary.Dictionary.wordReplacement=<sil>
+edu.cmu.sphinx.linguist.dictionary.Dictionary.allowMissingWords=true
 
 
 ############################################################
@@ -136,6 +136,6 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.isLooping = true
-edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path = ../performance/an4/an4_spelled_out.wordlist
+edu.cmu.sphinx.linguist.language.grammar.SimpleWordListGrammar.isLooping = true
+edu.cmu.sphinx.linguist.language.grammar.SimpleWordListGrammar.path = ../performance/an4/an4_spelled_out.wordlist
 

@@ -12,32 +12,22 @@
 
 package tests.live;
 
-import edu.cmu.sphinx.decoder.Decoder;
-
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.util.Microphone;
-import edu.cmu.sphinx.frontend.util.DataUtil;
-import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.NISTAlign;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import java.text.DecimalFormat;
-
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.sound.sampled.LineUnavailableException;
-
 import javax.swing.DefaultComboBoxModel;
+
+import edu.cmu.sphinx.frontend.util.Microphone;
+import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.util.NISTAlign;
+import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**

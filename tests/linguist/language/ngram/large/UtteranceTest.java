@@ -10,28 +10,30 @@
  *
  */
 
-package tests.knowledge.language.large;
+package tests.linguist.language.ngram.large;
 
-import edu.cmu.sphinx.knowledge.dictionary.*;
-
-import edu.cmu.sphinx.knowledge.language.*;
-import edu.cmu.sphinx.knowledge.language.large.*;
-
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Utilities;
-
-import java.io.*;
-
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.URL;
-
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import edu.cmu.sphinx.linguist.WordSequence;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
+import edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory;
+import edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel;
+import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.Utilities;
 
 
 /**
@@ -81,11 +83,12 @@ public class UtteranceTest {
      * @param outFile the output file
      */
     public UtteranceTest(String context, String propsPath, 
-			 String testFile, String outFile) throws IOException {
+			 String testFile, String outFile) throws IOException, Exception {
 	
         SphinxProperties.initContext(context, new URL(propsPath));
+        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
         dictionary = new FastDictionary(context);
-        lm = new LargeTrigramModel(context, dictionary);
+        lm = (LargeTrigramModel) LanguageModelFactory.getModel(props, dictionary);
         printScores = Boolean.getBoolean("printScores");
 
         InputStream stream = new FileInputStream(testFile);

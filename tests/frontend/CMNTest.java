@@ -13,16 +13,9 @@
 
 package tests.frontend;
 
-import edu.cmu.sphinx.frontend.Cepstrum;
-import edu.cmu.sphinx.frontend.LiveCMN;
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer;
-import edu.cmu.sphinx.frontend.mfc.MelFilterbank;
-import edu.cmu.sphinx.frontend.SpectrumAnalyzer;
-import edu.cmu.sphinx.frontend.Windower;
-import edu.cmu.sphinx.frontend.Preemphasizer;
-
-import edu.cmu.sphinx.util.*;
+import edu.cmu.sphinx.frontend.feature.LiveCMN;
+import edu.cmu.sphinx.frontend.filter.Preemphasizer;
+import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**

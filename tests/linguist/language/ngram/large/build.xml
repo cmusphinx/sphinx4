@@ -32,13 +32,13 @@ NOTE:  Before running the tests, you must have already built
     <property name="jit"                value="server"/>
 
     <property name="large_trigram_test"
-              value="tests.knowledge.language.large.LargeTrigramModelTest"/>
+              value="tests.linguist.language.ngram.large.LargeTrigramModelTest"/>
     <property name="output_diff_class"
-              value="tests.knowledge.language.large.OutputDiff"/>    
+              value="tests.linguist.language.ngram.large.OutputDiff"/>    
     <property name="utterance_test"
-              value="tests.knowledge.language.large.UtteranceTest"/>    
+              value="tests.linguist.language.ngram.large.UtteranceTest"/>    
     <property name="memory_test"
-              value="tests.knowledge.language.large.MemoryTest"/>
+              value="tests.linguist.language.ngram.large.MemoryTest"/>
 
 
     <!-- ********************************************************** -->

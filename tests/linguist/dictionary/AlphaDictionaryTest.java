@@ -10,12 +10,12 @@
  *
  */
 
-package tests.knowledge.dictionary;
+package tests.linguist.dictionary;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
 
 import java.io.File;
 

@@ -11,12 +11,12 @@
  */
 
 
-package tests.knowledge.language.large;
+package tests.linguist.language.ngram.large;
 
 import java.io.*;
 import java.util.*;
 
-public class OutputDiffTest {
+public class OutputDiff {
 
     public static void main(String[] argv) {
 

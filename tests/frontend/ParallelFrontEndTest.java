@@ -13,18 +13,13 @@
 
 package tests.frontend;
 
-import edu.cmu.sphinx.frontend.FeatureFrame;
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.parallel.ParallelFrontEnd;
-
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory;
-
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.SphinxProperties;
-
-import java.util.Iterator;
 import java.util.Collection;
+import java.util.Iterator;
+
+import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
 
 /**
  * Test program for the FrontEnd.

@@ -49,7 +49,7 @@ NOTE:  Before running the tests, you must have already built
 		  fork="true">
                   <jvmarg value="-ms${initial_heap_size}"/>
                   <jvmarg value="-mx${maximum_heap_size}"/> 
-                  <sysproperty key="edu.cmu.sphinx.knowledge.acoustic.location"
+                  <sysproperty key="edu.cmu.sphinx.linguist.acoustic.location"
                                value="."/>
                   <arg value="trainer.props"/>
 	    </java>
@@ -73,7 +73,7 @@ NOTE:  Before running the tests, you must have already built
                                value="_00_INITIALIZATION"/>
                   <sysproperty key="edu.cmu.sphinx.trainer.Trainer.finalStage"
                                value="_00_INITIALIZATION"/>
-                  <sysproperty key="edu.cmu.sphinx.knowledge.acoustic.location"
+                  <sysproperty key="edu.cmu.sphinx.linguist.acoustic.location"
                                value="."/>
                   <arg value="trainer.props"/>
 	    </java>
@@ -96,7 +96,7 @@ NOTE:  Before running the tests, you must have already built
                                value="_10_CI_TRAIN"/>
                   <sysproperty key="edu.cmu.sphinx.trainer.Trainer.finalStage"
                                value="_10_CI_TRAIN"/>
-                  <sysproperty key="edu.cmu.sphinx.knowledge.acoustic.location"
+                  <sysproperty key="edu.cmu.sphinx.linguist.acoustic.location"
                                value="/lab/speech/sphinx4/data/save"/>
                   <arg value="trainer.props"/>
 	    </java>

@@ -1,13 +1,13 @@
 ##### Used properties #####
-edu.cmu.sphinx.knowledge.acoustic.sparseForm=true
+edu.cmu.sphinx.linguist.acoustic.sparseForm=true
 ##### Unused properties #####
- edu.cmu.sphinx.knowledge.acoustic.cmn.enabled=true
- edu.cmu.sphinx.knowledge.acoustic.cmn.live.initialCepstralMean=12
- edu.cmu.sphinx.knowledge.acoustic.cmn.live.shiftWindow=800
- edu.cmu.sphinx.knowledge.acoustic.cmn.live.windowSize=500
- edu.cmu.sphinx.knowledge.acoustic.ditherAdded=true
- edu.cmu.sphinx.knowledge.acoustic.featureType=cepstra_delta_doubledelta
- edu.cmu.sphinx.knowledge.acoustic.fft.numberFftPoints=512
- edu.cmu.sphinx.knowledge.acoustic.mel.maxfreq=6800
- edu.cmu.sphinx.knowledge.acoustic.mel.minfreq=130
- edu.cmu.sphinx.knowledge.acoustic.mel.numFilters=40
+ edu.cmu.sphinx.linguist.acoustic.cmn.enabled=true
+ edu.cmu.sphinx.linguist.acoustic.cmn.live.initialCepstralMean=12
+ edu.cmu.sphinx.linguist.acoustic.cmn.live.shiftWindow=800
+ edu.cmu.sphinx.linguist.acoustic.cmn.live.windowSize=500
+ edu.cmu.sphinx.linguist.acoustic.ditherAdded=true
+ edu.cmu.sphinx.linguist.acoustic.featureType=cepstra_delta_doubledelta
+ edu.cmu.sphinx.linguist.acoustic.fft.numberFftPoints=512
+ edu.cmu.sphinx.linguist.acoustic.mel.maxfreq=6800
+ edu.cmu.sphinx.linguist.acoustic.mel.minfreq=130
+ edu.cmu.sphinx.linguist.acoustic.mel.numFilters=40

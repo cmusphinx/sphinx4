@@ -1,23 +1,14 @@
 ############################################################
-#
 # Global logging properties
-#
 ############################################################
-
 handlers= java.util.logging.ConsoleHandler
 
 # This is the overall default logging level
-.level= WARN
+.level= SEVERE
 
 # Tracing level for the console
-java.util.logging.ConsoleHandler.level = WARN
+java.util.logging.ConsoleHandler.level = ALL
 java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
-
-
-############################################################
-# Log base for probabilities
-############################################################
-edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
 
 ############################################################
@@ -42,36 +33,20 @@ tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.Featu
 #
 ############################################################
 
-edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
+edu.cmu.sphinx.frontend.MelCepstrumFileProducer.file = /lab/speech/sphinx4/data/connected_digits/sample_feature_files/FAC_1473533A.08.dbw.mfc.ascii
 edu.cmu.sphinx.frontend.cepstrumSize = 13
-edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
-edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
-edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
-edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
-edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
-edu.cmu.sphinx.frontend.windowShiftInMs = 10
-edu.cmu.sphinx.frontend.windower.alpha = 0.46
-edu.cmu.sphinx.frontend.useAcousticModelProperties = true
-
-edu.cmu.sphinx.frontend.endpointer.energy.startLow = 2
-edu.cmu.sphinx.frontend.endpointer.energy.startHigh = 6
-edu.cmu.sphinx.frontend.endpointer.energy.endLow = 2
-edu.cmu.sphinx.frontend.endpointer.energy.endHigh = 6
-edu.cmu.sphinx.frontend.endpointer.energy.startWindow = 10
-edu.cmu.sphinx.frontend.endpointer.energy.endWindow = 20
 
 
-# the following properties are effective only if 'useAcousticModelProperties'
-# is false
+############################################################
+# 
+# Search properties
+#
+############################################################
 
-edu.cmu.sphinx.frontend.mel.numFilters = 40
-edu.cmu.sphinx.frontend.mel.minfreq = 130
-edu.cmu.sphinx.frontend.mel.maxfreq = 6800
-edu.cmu.sphinx.frontend.fft.numberFftPoints = 512
-edu.cmu.sphinx.frontend.cmn.live.initialCepstralMean = 12
-edu.cmu.sphinx.frontend.cmn.live.windowSize = 500
-edu.cmu.sphinx.frontend.cmn.live.shiftWindow = 800
-edu.cmu.sphinx.frontend.sampleRate = 16000
-
+edu.cmu.sphinx.linguist.dictionary.Dictionary.useAcousticModelLocation=false
+edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath = /lab/speech/sphinx4/data/wsj/dict/alpha.dict
+edu.cmu.sphinx.linguist.dictionary.Dictionary.fillerPath = /lab/speech/sphinx4/data/wsj/dict/fillerdict
+edu.cmu.sphinx.search.SimpleLinguist.isMultiDigitGrammar = true
+edu.cmu.sphinx.search.dictionary.addSilEndingPronunciation = true
 
 

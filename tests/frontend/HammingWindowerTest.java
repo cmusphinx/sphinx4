@@ -13,11 +13,7 @@
 
 package tests.frontend;
 
-import edu.cmu.sphinx.frontend.Audio;
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.Windower;
-import edu.cmu.sphinx.frontend.Preemphasizer;
-
+import edu.cmu.sphinx.frontend.filter.Preemphasizer;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 

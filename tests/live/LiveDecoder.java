@@ -12,29 +12,23 @@
 
 package tests.live;
 
-import edu.cmu.sphinx.decoder.Decoder;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
-import edu.cmu.sphinx.frontend.Data;
+import javax.sound.sampled.LineUnavailableException;
+
+import edu.cmu.sphinx.decoder.Decoder;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.SignalListener;
 import edu.cmu.sphinx.frontend.util.Microphone;
-import edu.cmu.sphinx.frontend.util.DataUtil;
-
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.result.Result;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
-import javax.sound.sampled.LineUnavailableException;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
 
 
 /**
