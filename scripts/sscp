@@ -1,0 +1,8 @@
+#!/bin/csh
+
+cat $1 | ssh -o "BatchMode yes" shell.sourceforge.net " cat > `basename $1`"
+
+set returnValue = $status
+if (($returnValue == 0) || ($returnValue == 255)) exit 0
+exit $returnValue
+

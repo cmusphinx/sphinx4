@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+ssh -o "BatchMode yes" shell.sourceforge.net $*
+
