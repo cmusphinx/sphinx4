@@ -23,6 +23,8 @@ import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.language.LanguageModel;
+import edu.cmu.sphinx.knowledge.language.WordSequence;
 import edu.cmu.sphinx.decoder.linguist.util.HMMPool;
 
 
@@ -46,6 +48,7 @@ class LexTree {
     private Word sentenceStartWord;
     private Word sentenceEndWord;
     private Word silenceWord;
+    private LanguageModel lm;
 
     /**
      * Creates the lextree
@@ -54,22 +57,23 @@ class LexTree {
      * @param dictionary the dictionary containing the pronunciations
      * @param words the set of words to add to the lex tree
      */
-    LexTree(HMMPool pool, Dictionary dictionary, Collection words) {
+    LexTree(HMMPool pool, Dictionary dictionary, LanguageModel lm) {
         hmmPool = pool;
         this.dictionary = dictionary;
+        this.lm = lm;
         this.sentenceStartWord = dictionary.getSentenceStartWord();
         this.sentenceEndWord = dictionary.getSentenceEndWord();
         this.silenceWord = dictionary.getSilenceWord();
 
         Utilities.dumpMemoryInfo("lextree before");
         Timer.start("Create lextree");
-        initialNode = new NonLeafLexNode();
-        addWords(words);
+        initialNode = new InitialLexNode();
+        addWords(lm);
         freezeNodes();
         Timer.stop("Create lextree");
         Utilities.dumpMemoryInfo("lextree after");
         dumpStats();
-        this.dictionary = null;
+        // dumpTree(0, initialNode);
     }
 
 
@@ -87,7 +91,8 @@ class LexTree {
      *
      * @param words the collection of words
      */
-    private void addWords(Collection words) {
+    private void addWords(LanguageModel lm) {
+        Collection words = lm.getVocabulary();
         boolean addedSilence = false;
         for (Iterator i = words.iterator(); i.hasNext(); ) {
             String word = (String) i.next();
@@ -125,11 +130,25 @@ class LexTree {
                 System.out.println("LexTree: Can't find pronunciation for '" +
                                    word + " (skipping it)");
             } else {
+                float prob = getProbability(word);
                 for (int i = 0; i < pronunciations.length; i++) {
-                    addPronunciation(pronunciations[i]);
+                    addPronunciation(pronunciations[i], prob);
                 }
             }
         }
+    }
+
+    /**
+     * Gets the unigram probability for the given word
+     *
+     * @param word the word
+     *
+     * @return the unigram probability for the word.
+     */
+    private float getProbability(Word word) {
+        Word[] wordArray = new Word[1];
+        wordArray[0] = word;
+        return lm.getProbability(WordSequence.getWordSequence(wordArray));
     }
 
     /**
@@ -137,14 +156,14 @@ class LexTree {
      *
      * @param pronunciation the pronunciation
      */
-    private void addPronunciation(Pronunciation pronunciation) {
+    private void addPronunciation(Pronunciation pronunciation, float prob) {
         NonLeafLexNode node = initialNode;
         Unit[] units = pronunciation.getUnits();
 
         for (int i = 0; i < units.length; i++) {
-            node = node.addUnit(units[i], getPosition(i, units));
+            node = node.addUnit(units[i], getPosition(i, units), prob);
         }
-        node.addWord(pronunciation);
+        node.addWord(pronunciation, prob);
     }
 
     /**
@@ -230,6 +249,8 @@ class LexTree {
             node.freeze();
         }
         nextNodesMap = null;
+        lm = null;
+        dictionary = null;
     }
 
     /**
@@ -264,11 +285,13 @@ class LexTree {
             if (nextNode instanceof WordLexNode) {
                 WordLexNode wln = (WordLexNode) nextNode;
                 System.out.println(Utilities.pad(level * 1) 
-                   + "'" + wln.getPronunciation().getWord() + "'");
+                   + "'" + wln.getPronunciation().getWord() + "'"
+                   + " " + wln.getProbability());
             } else if (nextNode instanceof UnitLexNode) {
                 UnitLexNode uln = (UnitLexNode) nextNode;
                 System.out.println(Utilities.pad(level * 1) +
-                        uln.getUnit().getName());
+                        uln.getUnit().getName() + 
+                        " " + uln.getProbability());
                 dumpTree(level + 1,  uln);
             }
         }
@@ -343,6 +366,36 @@ class LexTree {
      * node is a leaf lex node.  A leaf lex node has no successors
      */
     class LexNode {
+        private float probability; // probability of reaching this node
+
+        /**
+         * Creates a lex node with the given probability
+         *
+         * @param probability the probability of transitioning to this
+         * node
+         */
+        LexNode(float probability) {
+            this.probability = probability;
+        }
+
+        /**
+         * Sets the node probability
+         *
+         * @param probability the node probability
+         */
+        protected void setProbability(float probability) {
+            this.probability = probability;
+        }
+
+        /**
+         * Gets the node probability
+         *
+         * @param the node probability
+         */
+        public float getProbability() {
+            // BUG: disable this feature
+            return 0.0f;
+        }
     }
 
 
@@ -364,7 +417,8 @@ class LexTree {
         /**
          * creates a lex node.
          */
-        NonLeafLexNode() {
+        NonLeafLexNode(float probability) {
+            super(probability);
             nextNodesMap.put(this, new HashMap());
         }
 
@@ -407,15 +461,18 @@ class LexTree {
          *
          * @return the node representing the unit added
          */
-        NonLeafLexNode addUnit(Unit unit, HMMPosition hmmPosition) {
+        NonLeafLexNode addUnit(Unit unit, HMMPosition hmmPosition, float prob) {
             assert !unit.isContextDependent();
             UnitInPosition uip = new UnitInPosition(unit, hmmPosition);
             UnitLexNode next = (UnitLexNode) getNextNodesMap().get(uip);
             if (next != null) {
                 assert next.getID() == hmmPool.getID(unit);
+                if (next.getProbability() < prob) {
+                    next.setProbability(prob);
+                }
                 return next;
             } else {
-                next = new UnitLexNode(unit, hmmPosition);
+                next = new UnitLexNode(unit, hmmPosition, prob);
                 getNextNodesMap().put(uip, next);
             }
             return next;
@@ -428,13 +485,13 @@ class LexTree {
          *
          * @return the node representing the word
          */
-        void addWord(Pronunciation p) {
+        void addWord(Pronunciation p, float prob) {
             LexNode next = (LexNode) getNextNodesMap().get(p);
             if (next != null) {
                 System.out.println("Duplicate pronunciation for " + p
                         + " dropped");
             } else {
-                getNextNodesMap().put(p, new WordLexNode(p));
+                getNextNodesMap().put(p, new WordLexNode(p, prob));
             }
         }
     }
@@ -454,7 +511,8 @@ class LexTree {
          * @param position the position of the unit
          * word
          */
-        UnitLexNode(Unit unit, HMMPosition position) {
+        UnitLexNode(Unit unit, HMMPosition position, float prob) {
+            super(prob);
             id = hmmPool.getID(unit);
             this.position = position;
         }
@@ -517,6 +575,9 @@ class LexTree {
      * An initial node (the head of the tree)
      */
     class InitialLexNode extends NonLeafLexNode {
+        InitialLexNode() {
+            super(0.0f);
+        }
     }
 
 
@@ -532,7 +593,8 @@ class LexTree {
          *
          * @param p the pronunciation
          */
-        WordLexNode(Pronunciation p) {
+        WordLexNode(Pronunciation p, float probability) {
+            super(probability);
             this.pronunciation = p;
         }
 

@@ -289,8 +289,7 @@ public class LexTreeLinguist implements  Linguist {
         hmmPool = new HMMPool(acousticModel);
         silenceID = hmmPool.getID(Unit.SILENCE);
 
-        lexTree = new LexTree(hmmPool, dictionary,
-                              languageModel.getVocabulary());
+        lexTree = new LexTree(hmmPool, dictionary, languageModel);
 
         hmmPool.dumpInfo();
 
@@ -676,9 +675,10 @@ public class LexTreeLinguist implements  Linguist {
          */
         LexTreeUnitState(int leftID,
                LexTree.UnitLexNode central, LexTree.UnitLexNode right,
-               WordSequence wordSequence) {
+               WordSequence wordSequence, float languageProbability) {
 
-            super(leftID, central, right, wordSequence, logOne, logOne, 
+            super(leftID, central, right, wordSequence,
+                    logOne, logOne, 
                     calculateInsertionProbability(central));
             int rightID;
 
@@ -703,6 +703,11 @@ public class LexTreeLinguist implements  Linguist {
                 System.out.println("center " +
                         hmmPool.getUnit(central.getID()));
                 System.out.println("right " + hmmPool.getUnit(rightID));
+            }
+
+            if (false) {
+                System.out.println("Created LexTreeUnit state for " + this
+                        + " prob is " + languageProbability);
             }
         }
 
@@ -902,7 +907,7 @@ public class LexTreeLinguist implements  Linguist {
                         nextStates[nextStates.length - 1] = 
                             new LexTreeUnitState(getLeftID(),
                                     getCentral(), getRight(),
-                                    getWordSequence());
+                                    getWordSequence(), logOne);
                     } else {
                         nextStates = new SearchStateArc[nodes.length];
                     }
@@ -934,13 +939,20 @@ public class LexTreeLinguist implements  Linguist {
                     // this by making the right context be null
 
                         nextStates = new SearchStateArc[1];
+
+
                         nextStates[0] = new LexTreeUnitState(
                                 nextLeftID, nextCentral,  null,
-                                getWordSequence());
+                                getWordSequence(), logOne);
                     } else {
                         LexTree.LexNode[] nodes = getNextUnits(nextCentral);
 
                         nextStates = new SearchStateArc[nodes.length];
+
+                        float languageProbability =
+                            nextCentral.getProbability() -
+                            getCentral().getProbability();
+
 
                         for (int i = 0; i < nodes.length; i++) {
                             LexTree.LexNode nextRight = nodes[i];
@@ -952,7 +964,8 @@ public class LexTreeLinguist implements  Linguist {
                             nextStates[i] = new LexTreeUnitState(
                                     nextLeftID, nextCentral, 
                                     (LexTree.UnitLexNode) nextRight,
-                                    getWordSequence());
+                                    getWordSequence(),
+                                    languageProbability);
                         }
                     }
                 }
@@ -1046,14 +1059,15 @@ public class LexTreeLinguist implements  Linguist {
 
                 if (central.getUnit().isSilence()) {
                     list.add(new LexTreeUnitState(leftID, central, null,
-                                wordSequence));
+                                wordSequence, logOne));
                 } else {
                     LexTree.LexNode[] rightNodes = getNextUnits(central);
 
                     for (int j = 0; j < rightNodes.length; j++) {
                         list.add(new LexTreeUnitState(leftID, 
                                     central, (LexTree.UnitLexNode)
-                                    rightNodes[j], wordSequence));
+                                    rightNodes[j], wordSequence,
+                                    central.getProbability()));
                     }
                 }
             } else {
@@ -1201,7 +1215,8 @@ public class LexTreeLinguist implements  Linguist {
                     LexTree.LexNode nextRight = nextNodes[i];
                         nextStates[i] = new LexTreeUnitState(nextLeftID, 
                                 nextCentral, (LexTree.UnitLexNode)
-                                nextRight, getWordSequence());
+                                nextRight, getWordSequence(),
+                                nextCentral.getProbability());
                 }
                 //nextStates[nextStates.length - 1] = 
                 /*
@@ -1290,6 +1305,8 @@ public class LexTreeLinguist implements  Linguist {
                 (nextWord.getPronunciation().getWord(),
                  languageModel.getMaxDepth());
             logProbability = languageModel.getProbability(wordSequence);
+            // remove the probability encountered so far
+             logProbability -= curState.getProbability();
 
             if (false) {
                 System.out.println(wordSequence + " " + logProbability);
