@@ -116,9 +116,15 @@ public class LiveDecoder extends Decoder {
             }
         };
 
-        NonSpeechFilter filter = (NonSpeechFilter) frontend.getProcessor
-            ("NonSpeechFilter");
-        filter.setPredecessor(monitor);
+        // are we filtering out the non-speech regions?
+        boolean filterNonSpeech = SphinxProperties.getSphinxProperties
+            (getContext()).getBoolean(FrontEnd.PROP_FILTER_NON_SPEECH, true);
+
+        if (filterNonSpeech) {
+            NonSpeechFilter filter = (NonSpeechFilter) frontend.getProcessor
+                ("NonSpeechFilter");
+            filter.setPredecessor(monitor);
+        }
     }
 
 
