@@ -160,6 +160,11 @@ public class Result {
                 bestToken = token;
             }
         }
+
+        if (bestToken == null) {
+            bestToken = getBestActiveToken();
+        }
+
         return bestToken;
     }
 
