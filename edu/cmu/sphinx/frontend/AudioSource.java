@@ -19,7 +19,7 @@ import java.io.IOException;
 /**
  * An AudioSource produces Audio objects.
  */
-public interface AudioSource {
+public interface AudioSource extends DataSource {
 
     /**
      * Returns the next Audio object produced by this AudioSource.

@@ -18,7 +18,7 @@ import java.io.IOException;
 /**
  * A FeatureSource produces Features.
  */
-public interface FeatureSource {
+public interface FeatureSource extends DataSource {
 
     /**
      * Returns the next Feature object produced by this FeatureSource.

@@ -19,7 +19,7 @@ import java.io.IOException;
 /**
  * A SpectrumSource produces Spectrum(a).
  */
-public interface SpectrumSource {
+public interface SpectrumSource extends DataSource {
 
     /**
      * Returns the next Spectrum object produced by this SpectrumSource.

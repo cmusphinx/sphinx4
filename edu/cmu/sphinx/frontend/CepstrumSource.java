@@ -19,7 +19,7 @@ import java.io.IOException;
 /**
  * A CepstrumSource produces Cepstrum(a).
  */
-public interface CepstrumSource {
+public interface CepstrumSource extends DataSource {
 
     /**
      * Returns the next Cepstrum object produced by this CepstrumSource.
