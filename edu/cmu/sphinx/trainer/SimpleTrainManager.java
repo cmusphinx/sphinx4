@@ -267,6 +267,8 @@ class SimpleTrainManager implements TrainManager {
 		 (iteration < maxIteration) && 
 		     (relativeImprovement > minimumImprovement);
 		 iteration++) {
+		System.out.println("Iteration: " + iteration);
+		models[m].resetBuffers();
 		for (controlFile.startUtteranceIterator();
 		     controlFile.hasMoreUtterances(); ) {
 		    Utterance utterance = controlFile.nextUtterance();
@@ -291,9 +293,14 @@ class SimpleTrainManager implements TrainManager {
 		System.out.println("Loglikelihood: " + logLikelihood);
 		saveModels(context);
 		if (iteration > 0) {
-		    relativeImprovement = (logLikelihood - lastLogLikelihood) /
-			lastLogLikelihood * 100.0f;
-		    System.out.println("Iteration: " + iteration + 
+		    if (lastLogLikelihood != 0) {
+			relativeImprovement = 
+			    (logLikelihood - lastLogLikelihood) /
+			    lastLogLikelihood * 100.0f;
+		    } else if (lastLogLikelihood == logLikelihood) {
+			relativeImprovement = 0;
+		    }
+		    System.out.println("Finished iteration: " + iteration + 
 				       " - Improvement: " + 
 				       relativeImprovement);
 		}
