@@ -28,7 +28,8 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 NO_CONTEXT_FLAGS= -Dedu.cmu.sphinx.model.acoustic.useComposites=false -Dedu.cmu.sphinx.model.acoustic.useCDUnits=false
 
 
-PROFILE_FLAGS=  -Xprof
+PROFILE_FLAGS= -Xrunhprof:cpu=samples,thread=y,depth=10,cutoff=0,format=a
+PROFILE_FLAGS= 
 #PROFILE_FLAGS=  -Xrunhprof:file=dump.hprof,format=b
 LOG_GC_FLAGS=  -Xloggc:gc.txt
  GC_FLAGS=  -XX:+PrintGCDetails
@@ -46,8 +47,6 @@ HEAP_DUMP =   -Xrunhprof:heap=dump,cpu=samples
 #GC_FLAGS = -ms128m  -mx1g
 GC_FLAGS = -ms3g  -mx3g 
 
-#PROFILE2_FLAGS= -Xrunhprof:file=log.txt
-PROFILE2_FLAGS= -Xrunhprof:cpu=samples,file=log.txt
 
 DEBUG_FLAGS= 
 #EXTRA_JAVA_FLAGS=$(LOG_GC_FLAGS) $(LOG)
@@ -78,6 +77,12 @@ all::
 large_flat_unigram:
 	$(JAVA_CMD)  \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
+	edu.cmu.sphinx.decoder.BatchDecoder large_flat_unigram.props large.batch
+
+profile:
+	$(JAVA_CMD)  \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
+    -Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.InstrumentedSearchManager \
 	edu.cmu.sphinx.decoder.BatchDecoder large_flat_unigram.props large.batch
 
 large_unigram:
