@@ -15,7 +15,6 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +27,7 @@ import java.util.logging.Level;
 import java.io.DataOutputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.File;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
@@ -172,7 +172,7 @@ public class LargeTrigramModel implements LanguageModel {
     private int maxDepth;
     private Dictionary dictionary;
     private String format;
-    private URL location;
+    private File location;
     private boolean applyLanguageWeightAndWip;
     private float languageWeight;
     private double wip;
@@ -219,7 +219,7 @@ public class LargeTrigramModel implements LanguageModel {
             throws PropertyException {
         this.name = name;
         registry.register(PROP_FORMAT, PropertyType.STRING);
-        registry.register(PROP_LOCATION, PropertyType.RESOURCE);
+        registry.register(PROP_LOCATION, PropertyType.STRING);
         registry.register(PROP_QUERY_LOG_FILE, PropertyType.STRING);
         registry.register(PROP_TRIGRAM_CACHE_SIZE, PropertyType.INT);
         registry.register(PROP_BIGRAM_CACHE_SIZE, PropertyType.INT);
@@ -245,7 +245,7 @@ public class LargeTrigramModel implements LanguageModel {
         logger = ps.getLogger();
         format = ps.getString(LanguageModel.PROP_FORMAT,
                 LanguageModel.PROP_FORMAT_DEFAULT);
-        location = ps.getResource(LanguageModel.PROP_LOCATION);
+        location = new File(ps.getString(PROP_LOCATION, PROP_LOCATION_DEFAULT));
         ngramLogFile = ps.getString(PROP_QUERY_LOG_FILE,
                 PROP_QUERY_LOG_FILE_DEFAULT);
         maxTrigramCacheSize = ps.getInt(PROP_TRIGRAM_CACHE_SIZE,
