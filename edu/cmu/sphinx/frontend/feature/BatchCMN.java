@@ -32,14 +32,16 @@ import java.util.List;
  * reduce the distortion caused by the transmission channel.  The
  * output is mean normalized cepstral data.
  * <p>
- * The CMN processing subtracts the mean from all the Data objects
- * between a DataStartSignal and a DataEndSignal.  BatchCMN will read
- * in all the Data objects, calculate the mean, and subtract this mean
- * from all the Data objects. For a given utterance, it will only
+ * The CMN processing subtracts the mean from all the {@link Data}
+ * objects between a {@link edu.cmu.sphinx.frontend.DataStartSignal}
+ * and a {@link DataEndSignal}.  BatchCMN will read in all the {@link
+ * Data} objects, calculate the mean, and subtract this mean from all
+ * the {@link Data} objects. For a given utterance, it will only
  * produce an output after reading all the incoming data for the
  * utterance. As a result, this process can introduce a significant
  * processing delay, which is acceptable for batch processing, but not
- * for live mode. In the latter case, one should use the LiveCMN.
+ * for live mode. In the latter case, one should use the {@link
+ * LiveCMN}.
  * <p>
  * CMN is a technique used to reduce distortions that are introduced
  * by the transfer function of the transmission channel (e.g., the

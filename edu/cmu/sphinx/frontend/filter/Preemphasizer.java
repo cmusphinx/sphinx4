@@ -23,13 +23,13 @@ import edu.cmu.sphinx.util.Timer;
 
 
 /**
- * Implements a high-pass filter that filters out the attenuation 
- * of audio data. Speech signals have an attenuation (a decrease in
- * intensity of a signal) of 20 dB/dec. It increases the magnitude
+ * Implements a high-pass filter that compensates for attenuation 
+ * in the audio data. Speech signals have an attenuation (a decrease in
+ * intensity of a signal) of 20 dB/dec. It increases the relative magnitude
  * of the higher frequencies with respect to the lower frequencies.
  *
- * The Preemphasizer takes a Data object that usually represents
- * audio data as input, and outputs the same Data object, but with
+ * The Preemphasizer takes a {@link Data} object that usually represents
+ * audio data as input, and outputs the same {@link Data} object, but with
  * preemphasis applied. For each value X[i] in the input Data object X,
  * the following formula is applied to obtain the output Data object Y:
  * <p>
@@ -37,13 +37,17 @@ import edu.cmu.sphinx.util.Timer;
  * Y[i] = X[i] - (X[i-1] * preemphasisFactor)
  * </code>
  * <p>
- * (note that 'i' is time)
+ * where 'i' denotes time)
  * <p>
- * The preemphasis factor normally has a value of 0.97. 
+ * The preemphasis factor has a value defined by the field {@link
+ * #PROP_PREEMPHASIS_FACTOR}, with default defined by {@link
+ * #PROP_PREEMPHASIS_FACTOR_DEFAULT}. A common value for this factor is
+ * something around 0.97.
  * <p>
- * Other Data objects are passed along unchanged through this Preemphasizer.
+ * Other {@link Data} objects are passed along unchanged through this
+ * Preemphasizer.
  * <p>
- * Preemphasize emphasizes the high frequency components, because
+ * The Preemphasizer emphasizes the high frequency components, because
  * they usually contain much less energy than lower frequency components,
  * even though they are still important for speech recognition.
  * It is a high-pass filter because it allows the high frequency components
@@ -53,8 +57,7 @@ import edu.cmu.sphinx.util.Timer;
 public class Preemphasizer extends BaseDataProcessor {
 
     /**
-     * The name of the SphinxProperty for preemphasis factor/alpha, which
-     * has a default value of 0.97F.
+     * The name of the SphinxProperty for preemphasis factor/alpha.
      */
     public static final String PROP_PREEMPHASIS_FACTOR = 
 	"edu.cmu.sphinx.frontend.window.Preemphasizer.factor";

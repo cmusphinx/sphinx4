@@ -24,21 +24,20 @@ import edu.cmu.sphinx.util.SphinxProperties;
 
 /**
  * Subtracts the mean of all the input so far from the Data objects.
- * Unlike the BatchCMN, it does not read in the entire stream of Data
+ * Unlike the {@link BatchCMN}, it does not read in the entire stream of Data
  * objects before it calculates the mean. It estimates the mean from
  * already seen data and subtracts the mean from the Data objects on
  * the fly. Therefore, there is no delay introduced by LiveCMN.
  * 
- * The Sphinx properties that affect this processor
- * are: <pre>
- * edu.cmu.sphinx.frontend.feature.LiveCMN.initialCepstralMean
- * edu.cmu.sphinx.frontend.feature.LiveCMN.windowSize
- * edu.cmu.sphinx.frontend.feature.LiveCMN.shiftWindow
- * </pre>
+ * The Sphinx properties that affect this processor are defined by the
+ * fields {@link #PROP_INITIAL_MEAN}, {@link #PROP_CMN_WINDOW}, and
+ * {@link #PROP_CMN_SHIFT_WINDOW}. Please follow the link "Constant
+ * Field Values" below to see the actual name of the
+ * Sphinx properties.
  *
  * <p>The mean of all the input cepstrum so far is not reestimated
  * for each cepstrum. This mean is recalculated after every
- * <code>edu.cmu.sphinx.frontend.cmn.shiftWindow</code> cepstra.
+ * {@link #PROP_CMN_SHIFT_WINDOW} cepstra.
  * This mean is estimated by dividing the sum of all input cepstrum so
  * far. After obtaining the mean, the sum is exponentially decayed by
  * multiplying it by the ratio:
