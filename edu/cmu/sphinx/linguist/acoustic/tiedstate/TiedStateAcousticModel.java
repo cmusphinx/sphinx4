@@ -33,6 +33,9 @@ import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
+
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.props.Configurable;
@@ -721,6 +724,12 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
         } else {
             return original;
         }
+    }
+
+
+    public static void main(String[] argv) {
+        System.out.println();
+        System.out.println((new TiedStateAcousticModel()).toString());
     }
 }
 
