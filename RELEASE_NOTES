@@ -10,7 +10,7 @@ New Features:
 -------------
     - Confidence scoring
     - Dynamic grammars
-    - Low bandwidth acoustic model
+    - Narrow bandwidth acoustic model
     - Out-of-grammar utterance rejection
     - More demonstration programs
     - WSJ5K Language model

@@ -27,8 +27,8 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <property name="skip"               value="0"/>
     <property name="logger_props"       value=""/>  
 
-    <property name="initial_heap_size"  value="384m"/>
-    <property name="maximum_heap_size"  value="800m"/>
+    <property name="initial_heap_size"  value="200m"/>
+    <property name="maximum_heap_size"  value="200m"/>
     <property name="jit"                value="server"/>
     <property name="gc_log_file"        value="gc.txt"/>
 
