@@ -197,8 +197,9 @@ public class CepstraViewer extends JFrame {
                     drawSpeechLine(x, Color.GREEN, g);
                 } else if (signal.equals(Signal.SPEECH_END)) {
                     drawSpeechLine(x, Color.RED, g);
-                } else if (signal.equals(Signal.UTTERANCE_START) ||
-                           signal.equals(Signal.UTTERANCE_END)) {
+                } else if (signal.equals(Signal.UTTERANCE_START)) {
+                    drawSpeechLine(x, Color.BLUE, g);
+                } else if (signal.equals(Signal.UTTERANCE_END)) {
                     drawSpeechLine(x, Color.BLACK, g);
                 }
             }
