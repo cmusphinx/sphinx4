@@ -69,7 +69,9 @@ FeatureSource {
 
     private CepstrumSource predecessor;
     private List outputQueue;
-            
+
+    private Utterance currentUtterance;
+
 
     /**
      * Constructs a default FeatureExtractor.
@@ -134,7 +136,8 @@ FeatureSource {
 
             if (segmentEnd) {
                 segmentEnd = false;
-                outputQueue.add(new Feature(Signal.UTTERANCE_END, -1));
+                outputQueue.add(new Feature(Signal.UTTERANCE_END,
+                                            IDGenerator.NON_ID));
 
             } else {
                 Cepstrum input = predecessor.getCepstrum();
@@ -142,6 +145,7 @@ FeatureSource {
                 if (input == null) {
                     return null;
                 } else {
+
                     if (input.hasContent()) {
                         // "featureBlockSize-1" since first Cepstrum
                         // already read
@@ -153,8 +157,9 @@ FeatureSource {
                     } else if (input.getSignal().equals
                                (Signal.UTTERANCE_START)) {
                         segmentStart = true;
-                        outputQueue.add(new Feature
-                                        (Signal.UTTERANCE_START, -1));
+                        outputQueue.add
+                            (new Feature(Signal.UTTERANCE_START,
+                                         IDGenerator.NON_ID));
                     }
                 }
             }
@@ -233,6 +238,8 @@ FeatureSource {
      * @return the number extra cepstra replicated
      */
     private int setStartCepstrum(Cepstrum cepstrum) {
+
+        currentUtterance = cepstrum.getUtterance();
 
         Arrays.fill(cepstraBuffer, 0, window+1, cepstrum.getCepstrumData());
         
@@ -370,16 +377,22 @@ FeatureSource {
             jp3 %= cepstraBufferSize;
         }
 
-        return (new Feature(feature, featureID.getNextID()));
+        return (new Feature(feature, featureID.getNextID(), currentUtterance));
     }
 }
 
 
 /**
- * An ID generator that gives out integer IDs and checks for overflow.
+ * An ID generator that gives out positive integer IDs and
+ * checks for overflow.
  */ 
 class IDGenerator {
-    
+
+    /**
+     * Indicates a non-ID value, which is -1.
+     */
+    public static int NON_ID = -1;
+
     private int id = 0;
     
     /**

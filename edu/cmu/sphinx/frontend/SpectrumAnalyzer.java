@@ -135,7 +135,7 @@ SpectrumSource {
 	/**
 	 * Return the power spectrum
 	 */
-	Spectrum output = new Spectrum(outputSpectrum);
+	Spectrum output = new Spectrum(outputSpectrum, input.getUtterance());
 
         if (getDump()) {
             System.out.println("SPEC_MAGNITUDE " + output.toString());

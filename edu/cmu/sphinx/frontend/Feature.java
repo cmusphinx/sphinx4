@@ -29,6 +29,21 @@ public class Feature extends Data {
 
 
     /**
+     * Constructs a Feature with the given featureData, ID, and utterance
+     *
+     * @param featureData the feature data
+     * @param ID the Id of this Feature with respect to the current
+     *    speech segment
+     * @param utterance the Utterance associated with this Feature
+     */
+    public Feature(float[] featureData, int ID, Utterance utterance) {
+        super(utterance);
+        this.featureData = featureData;
+        this.ID = ID;
+    }
+
+
+    /**
      * Constructs a Feature with the given Signal.
      *
      * @param signal the Signal this Feature carries
@@ -70,7 +85,7 @@ public class Feature extends Data {
      */
     public String toString() {
         if (featureData != null) {
-            return Util.floatArrayToString(featureData);
+            return ID + " " + Util.floatArrayToString(featureData);
         } else {
             return getSignal().toString();
         }

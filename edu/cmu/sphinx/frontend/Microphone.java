@@ -20,14 +20,13 @@ import javax.sound.sampled.TargetDataLine;
  * audio input systems. Converts these audio data into Audio
  * objects.
  */
-public class Microphone extends DataProcessor implements 
-AudioSource, Runnable {
+public class Microphone extends DataProcessor implements AudioSource, Runnable {
 
     /**
      * Parameters for audioFormat
      */
     private AudioFormat audioFormat;
-    private float sampleRate;
+    private float sampleRate = 8000f;
     private int sampleSizeInBits = 16;
     private int channels = 1;
     private boolean signed = true;
@@ -42,7 +41,8 @@ AudioSource, Runnable {
     private int frameSizeInBytes;
     private volatile boolean recording = false;
     private volatile boolean closed = false;
-    
+
+    private boolean keepAudioReference = true;
     private boolean utteranceEndSent = false;
     private boolean utteranceStarted = false;
 
@@ -58,7 +58,6 @@ AudioSource, Runnable {
 	initSphinxProperties();
         audioFormat = new AudioFormat(sampleRate, sampleSizeInBits,
                                       channels, signed, bigEndian);
-        currentUtterance = new Utterance(context);
     }
 
 
@@ -76,6 +75,9 @@ AudioSource, Runnable {
         if (frameSizeInBytes % 2 == 1) {
             frameSizeInBytes++;
         }
+
+        keepAudioReference = properties.getBoolean
+            (FrontEnd.PROP_KEEP_AUDIO_REFERENCE, true);
     }
 
 
@@ -289,9 +291,17 @@ AudioSource, Runnable {
         }
 
         // turn it into an Audio object
-        Audio audio = new Audio
-            (Util.byteToDoubleArray(audioFrame, 0, audioFrame.length));
+        Audio audio = null;
         
+        if (keepAudioReference) {
+            audio = new Audio
+                (Util.byteToDoubleArray(audioFrame, 0, audioFrame.length),
+                 currentUtterance);
+        } else {
+            audio = new Audio
+                (Util.byteToDoubleArray(audioFrame, 0, audioFrame.length));
+        }
+
         if (getDump()) {
             System.out.println("FRAME_SOURCE " + audio.toString());
         }
@@ -300,18 +310,46 @@ AudioSource, Runnable {
     }
 
 
+    /**
+     * Returns true if this Microphone is currently in a recording state;
+     *    false otherwise
+     *
+     * @return true if recording, false if not recording
+     */ 
     private synchronized boolean getRecording() {
         return recording;
     }
 
+    
+    /**
+     * Sets whether this Microphone is in a recording state.
+     *
+     * @param recording true to set this Microphone in a recording state
+     *     false to a non-recording state
+     */
     private synchronized void setRecording(boolean recording) {
         this.recording = recording;
     }
 
+
+    /**
+     * Returns true if this Microphone thread finished running.
+     * Normally, this Microphone is run in its own thread. If this
+     * method returns true, it means the <code>run()</code> method
+     * of the thread is finished running.
+     *
+     * @return true if this Microphone thread has finished running
+     */
     private synchronized boolean getClosed() {
         return closed;
     }
 
+
+    /**
+     * Sets whether to terminate the Microphone thread.
+     *
+     * @param closed true to terminate the Micrphone thread
+     */
     private synchronized void setClosed(boolean closed) {
         this.closed = closed;
     }

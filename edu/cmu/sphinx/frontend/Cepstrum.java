@@ -23,6 +23,18 @@ public class Cepstrum extends Data {
 
 
     /**
+     * Constructs a Cepstrum with the given cepstrum data and Utterance.
+     *
+     * @param cepstrumData the cepstrum data
+     * @param utterance the Utterance associated with this Cepstrum
+     */
+    public Cepstrum(float[] cepstrumData, Utterance utterance) {
+        super(utterance);
+        this.cepstrumData = cepstrumData;
+    }
+
+
+    /**
      * Constructs a Cepstrum with the given Signal.
      *
      * @param signal the Signal this Cepstrum carries

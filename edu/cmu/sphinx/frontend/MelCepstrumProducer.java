@@ -135,7 +135,8 @@ CepstrumSource {
         // create the cepstrum by apply the melcosine filter
         float[] cepstrumCepstrum = applyMelCosine(melspectrum);
 
-	Cepstrum cepstrum = new Cepstrum(cepstrumCepstrum);
+	Cepstrum cepstrum = new Cepstrum
+            (cepstrumCepstrum, input.getUtterance());
 
         if (getDump()) {
             System.out.println("MEL_CEPSTRUM   " + cepstrum.toString());

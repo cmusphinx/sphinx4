@@ -263,7 +263,8 @@ public class MelFilterbank extends DataProcessor implements SpectrumSource {
 	    outputMelFilterbank[i] = filter[i].filterOutput(in);
 	}
 
-	Spectrum outputMelSpectrum = new Spectrum(outputMelFilterbank);
+	Spectrum outputMelSpectrum = new Spectrum
+            (outputMelFilterbank, input.getUtterance());
 
         if (getDump()) {
             System.out.println("MEL_SPECTRUM   " +

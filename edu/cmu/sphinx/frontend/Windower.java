@@ -55,6 +55,7 @@ public class Windower extends DataProcessor implements AudioSource {
     private double ALPHA;                 // Hamming Window parameter
     private Vector outputQueue;           // cache for output windows
     private DoubleBuffer overflowBuffer;  // cache for overlapped audio regions
+    private Utterance currentUtterance;   // the current Utterance
 
 
     /**
@@ -184,6 +185,8 @@ public class Windower extends DataProcessor implements AudioSource {
      */
     private void process(Audio input) {
 
+        currentUtterance = input.getUtterance();
+
 	double[] in = input.getSamples();
         int length = in.length;
 
@@ -220,7 +223,7 @@ public class Windower extends DataProcessor implements AudioSource {
      * of the first array element of next window that is not produced
      * because of insufficient data.
      *
-     * @param in the double array to apply the Hamming window
+     * @param in the audio data to apply window and the Hamming window
      * @param length the number of elements in the array to apply the
      *     HammingWindow
      *
@@ -245,7 +248,7 @@ public class Windower extends DataProcessor implements AudioSource {
             }
             
             // add the frame to the output queue
-            outputQueue.add(new Audio(myWindow));
+            outputQueue.add(new Audio(myWindow, currentUtterance));
 
             if (getDump()) {
                 System.out.println
