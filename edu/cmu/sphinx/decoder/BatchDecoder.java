@@ -45,7 +45,10 @@ import java.util.StringTokenizer;
  */
 public class BatchDecoder {
 
-    public final static String PROP_PREFIX = 
+    /**
+     *  prefix string for sphinx properties
+     */
+    private final static String PROP_PREFIX = 
 	"edu.cmu.sphinx.decoder.BatchDecoder.";
 
 
@@ -148,6 +151,9 @@ public class BatchDecoder {
      *
      * @param context the context of this BatchDecoder
      * @param batchFile the file that contains a list of files to decode
+     *
+     * @throws IOException if an I/O error is encountered while
+     * preparing the batch file
      */
     public BatchDecoder(String context, String batchFile) throws IOException {
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
@@ -212,6 +218,9 @@ public class BatchDecoder {
 
     /**
      * Decodes the batch of audio files
+     *
+     * @throws IOException if there is an I/O error processing the
+     * batch file
      */
     public void decode() throws IOException {
 
@@ -244,6 +253,9 @@ public class BatchDecoder {
      *
      * @param file the file to decode
      * @param ref the reference string (or null if not available)
+     *
+     * @throws IOException if there is an I/O error processing the
+     * file
      */
     public void decodeFile(String file, String ref) throws IOException {
 

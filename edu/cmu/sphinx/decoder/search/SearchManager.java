@@ -37,12 +37,14 @@ public interface SearchManager {
      * @param scorer the AcousticScorer to use
      * @param pruner the Pruner to use
      */
-    public void initialize(String context, edu.cmu.sphinx.decoder.linguist.Linguist linguist,
+    public void initialize(String context, Linguist linguist,
 			   AcousticScorer scorer, Pruner pruner);
 
     /**
      * Prepares the SearchManager for recognition.  This method must
-     * be called before <code> recognize </code> is called.
+     * be called before <code> recognize </code> is called. Typically,
+     * <code> start </code>  and <code> stop </code>  are called
+     * bracketing an utterance.
      */
     public void start();
 
