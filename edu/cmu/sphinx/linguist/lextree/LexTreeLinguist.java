@@ -1504,9 +1504,21 @@ public class LexTreeLinguist implements Linguist {
             }
             return arcs;
         }
+
         public int getOrder() {
             return 1;
         }
+
+        /**
+         * Returns true if this LexTreeWordState indicates the start of a word.
+         * Returns false if this LexTreeWordState indicates the end of a word.
+         *
+         * @return true if this LexTreeWordState indicates the start of a word,
+         *         false if this LexTreeWordState indicates the end of a word
+         */
+        public boolean isWordStart() {
+            return false;
+        }        
     }
 
     /**

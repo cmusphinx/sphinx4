@@ -939,7 +939,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
      * This class representations a word punctuation in the search graph
      */
     class PronunciationState extends FlatSearchState implements
-                WordSearchState {
+                WordSearchState{
         private GrammarState gs;
         private Pronunciation pronunciation;
 
@@ -1096,6 +1096,17 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         GrammarState getGrammarState() {
             return gs;
         }
+
+        /**
+         * Returns true if this WordSearchState indicates the start of a word.
+         * Returns false if this WordSearchState indicates the end of a word.
+         *
+         * @return true if this WordSearchState indicates the start of a word,
+         *         false if this WordSearchState indicates the end of a word
+         */
+        public boolean isWordStart() {
+            return true;
+        }        
     }
 
 

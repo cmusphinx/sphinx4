@@ -148,11 +148,18 @@ public class APosterioriProbabilityScorer {
      */
     private float calculatePathLikelihoodScore(Token token) {
         float logTotalAcousticScore = 0.0f;
+        System.out.println("Starting path...");
 	while (token != null) {
-            // System.out.println(token.getAcousticScore());
+            if (token.isWord()) {
+                System.out.println(token.getWord().getSpelling() + " ");
+            }
+            System.out.println(token.getAcousticScore() + " " +
+                               token.getLanguageScore());
+
             logTotalAcousticScore += token.getAcousticScore();
 	    token = token.getPredecessor();
         }
+        System.out.println("...path ended");
 	return logTotalAcousticScore;
     }
 }

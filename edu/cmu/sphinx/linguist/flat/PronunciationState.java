@@ -84,6 +84,17 @@ public class PronunciationState extends SentenceHMMState implements
     public int getOrder() {
         return 3;
     }
+
+    /**
+     * Returns true if this PronunciationState indicates the start of a word.
+     * Returns false if this PronunciationState indicates the end of a word.
+     *
+     * @return true if this PronunciationState indicates the start of a word,
+     *         false if this PronunciationState indicates the end of a word
+     */
+    public boolean isWordStart() {
+        return true;
+    }
 }
 
 

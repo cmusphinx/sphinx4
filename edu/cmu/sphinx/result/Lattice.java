@@ -135,7 +135,19 @@ public class Lattice {
                 (Integer.toString(token.hashCode()));
             addEdge(getNode(token), thisNode, thisAcousticScore, thisLMScore);
         } else {
-            Node newNode = addNode(token, -1, token.getFrameNumber());
+            WordSearchState wordState =
+                (WordSearchState) token.getSearchState();
+
+            int startFrame = -1;
+            int endFrame = -1;
+
+            if (wordState.isWordStart()) {
+                startFrame = token.getFrameNumber();
+            } else {
+                endFrame = token.getFrameNumber();
+            }
+
+            Node newNode = addNode(token, startFrame, endFrame);
             addEdge(newNode, thisNode, thisAcousticScore, thisLMScore);
 
             if (loserManager != null) {
@@ -153,11 +165,6 @@ public class Lattice {
             } else {
                 initialNode = newNode;
             }
-            /*
-            else {
-                addEdge(initialNode, newNode, thisAcousticScore, thisLMScore);
-            }
-            */
         }
     }
 

@@ -24,4 +24,13 @@ public interface  WordSearchState extends SearchState {
      * @return the word
      */
      Pronunciation getPronunciation();
+
+    /**
+     * Returns true if this WordSearchState indicates the start of a word.
+     * Returns false if this WordSearchState indicates the end of a word.
+     *
+     * @return true if this WordSearchState indicates the start of a word,
+     *         false if this WordSearchState indicates the end of a word
+     */
+    public boolean isWordStart();
 }
