@@ -40,6 +40,7 @@ public class SortingActiveList implements ActiveList  {
     private SphinxProperties props = null;
     private int absoluteBeamWidth;
     private float relativeBeamWidth;
+    private boolean showSameScoreEdgeTokens = false;
 
     // when the list is changed these things should be
     // changed/updated as well
@@ -228,8 +229,8 @@ public class SortingActiveList implements ActiveList  {
             }
         } else {
 
-        // if we have an absolute beam, then we will 
-        // need to sort the tokens to apply the beam
+            // if we have an absolute beam, then we will 
+            // need to sort the tokens to apply the beam
             int count = 0;
             Collections.sort(tokenList, Token.COMPARATOR);
 
@@ -247,22 +248,30 @@ public class SortingActiveList implements ActiveList  {
                         break;
                     }
                 }
-                // checks how many tokens have the same score as the last token
-                if (false && count >= absoluteBeamWidth) {
-                    int lastCount = count;
-                    while (true) {
-                        Token token = (Token) i.next();
-                        if (lastScore == token.getScore()) {
-                            count++;
-                        } else {
-                            break;
+
+                if (showSameScoreEdgeTokens) {
+                    int sameScoreTokens = 0;
+                    // checks how many tokens have the 
+                    // same score as the last token
+                    if (count >= absoluteBeamWidth) {
+                        int lastCount = count;
+                        while (true) {
+                            Token token = (Token) i.next();
+                            if (lastScore == token.getScore()) {
+                                count++;
+                            } else {
+                                break;
+                            }
+                        }
+                        if (count > lastCount) {
+                            sameScoreTokens = (count - lastCount);
                         }
                     }
-                    if (count > lastCount) {
-                        System.out.println
-                            ("Same score token: " + (count - lastCount));
-                    }
+                    System.out.println
+                        ("Frame " + bestToken.getFrameNumber() 
+                         + ": Same score token: " + sameScoreTokens);
                 }
+
                 pruned = tokenList.size() - count;
                 tokenList = tokenList.subList(0, count);
             }
