@@ -11,6 +11,7 @@
 
 $1 == "Words:" && $3 == "Matches:" {
    words[FILENAME] = $2;
+   lines[FILENAME]++;
 }
 
 $1== "Accuracy:" && $3 == "Errors:" {
@@ -20,18 +21,22 @@ $1== "Accuracy:" && $3 == "Errors:" {
 
 
 END {
-    printf("%6.6s %6.6s %7.7s %s\n", "Words", "Errors", "WER%", "File");
+    printf("%6.6s %6.6s %6.6s %7.7s %s\n", \
+        "Lines", "Words", "Errors", "WER%", "File");
     printf("==================================\n");
     for (i in words) {
         sumWords += words[i];
         sumErrors += errors[i];
+        sumLines += lines[i];
         if (words[i] > 0) {
             wer = (errors[i]/words[i]) * 100.0;
-            printf("%6d %6d %6.2f%% %s\n",  words[i], errors[i], wer, i);
+            printf("%6d %6d %6d %6.2f%% %s\n",  \
+                lines[i], words[i], errors[i], wer, i);
         }
     }
     printf("==================================\n");
     wer = (sumErrors/sumWords) * 100.0;
-    printf("%6d %6d %6.2f%% %s\n",  sumWords, sumErrors, wer, "total");
+    printf("%6d %6d %6d %6.2f%% %s\n",  \
+        sumLines, sumWords, sumErrors, wer, "total");
 }
 
