@@ -284,7 +284,7 @@ public class Microphone extends DataProcessor implements AudioSource {
 
                 audioList.add(new Audio(Signal.UTTERANCE_END,
                                         System.currentTimeMillis(),
-                                        totalSamplesRead));
+                                        totalSamplesRead - 1));
                 
                 audioLine.stop();
 		if (closeAudioBetweenUtterances) {
