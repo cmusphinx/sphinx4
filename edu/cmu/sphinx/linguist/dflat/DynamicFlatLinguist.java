@@ -446,6 +446,8 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     }
 
 
+    Map successorCache = new HashMap();
+
     /**
      * The base search state for this dynamic flat linguist.
      */
@@ -534,7 +536,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         /**
          * Gets a successor to this search state
          * 
-         * @return the sucessor state
+         * @return the successor state
          */
         public SearchState getState() {
             return this;
@@ -589,6 +591,23 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             }
         }
 
+        /**
+         * Get the arcs from the cache if the exist
+         *
+         * @return the cached arcs or null
+         */
+        SearchStateArc[] getCachedSuccessors() {
+            return (SearchStateArc[]) successorCache.get(this);
+        }
+
+        /**
+         * Places the set of successor arcs in the cache
+         *
+         * @param the set of arcs to be cached for this state
+         */
+        void cacheSuccessors(SearchStateArc[] successors) {
+            successorCache.put(this, successors);
+        }
     }
 
     /**
@@ -642,8 +661,16 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             this.nextBaseID = nextBaseID;
             this.node = node;
             this.languageProbability = languageProbability;
-            debug("GS " + node + " next " + nextBaseID + " "
-                    + hmmPool.getUnit(nextBaseID));
+        }
+
+
+        /**
+         * Gets the language probability of entering this state
+         * 
+         * @return the log probability
+         */
+        public float getLanguageProbability() {
+            return languageProbability * languageWeight;
         }
 
 
@@ -691,23 +718,29 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return the set of successors
          */
         public SearchStateArc[] getSuccessors() {
-            if (isFinal()) {
-                return EMPTY_ARCS;
-            } else if (node.isEmpty()) {
-                return getNextGrammarStates(lc, nextBaseID);
-            } else {
-                Word word = node.getWord();
-                Pronunciation[] pronunciations = word.getPronunciations();
-                pronunciations = filter(pronunciations, nextBaseID);
-                SearchStateArc[] nextArcs = 
-                    new SearchStateArc[pronunciations.length];
 
-                for (int i = 0; i < pronunciations.length; i++) {
-                    nextArcs[i] = 
-                        new PronunciationState(this, pronunciations[i]);
+            SearchStateArc[] arcs = getCachedSuccessors();
+            if (arcs  == null) {
+                if (isFinal()) {
+                    arcs = EMPTY_ARCS;
+                } else if (node.isEmpty()) {
+                    arcs = getNextGrammarStates(lc, nextBaseID);
+                } else {
+                    Word word = node.getWord();
+                    Pronunciation[] pronunciations = word.getPronunciations();
+                    pronunciations = filter(pronunciations, nextBaseID);
+                    SearchStateArc[] nextArcs = 
+                        new SearchStateArc[pronunciations.length];
+
+                    for (int i = 0; i < pronunciations.length; i++) {
+                        nextArcs[i] = 
+                            new PronunciationState(this, pronunciations[i]);
+                    }
+                    arcs = nextArcs;
                 }
-                return nextArcs;
+                cacheSuccessors(arcs);
             }
+            return arcs;
         }
 
 
@@ -828,15 +861,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
 
 
         /**
-         * Gets the language probability of entering this state
-         * 
-         * @return the log probability
-         */
-        public float getLanguageProbability() {
-            return languageProbability * languageWeight;
-        }
-
-        /**
          * Gets the ID of the left context unit for this path
          *
          * @return the left context ID
@@ -952,8 +976,21 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         PronunciationState(GrammarState gs, Pronunciation p) {
             this.gs = gs;
             this.pronunciation = p;
-            debug("PS " + p);
         }
+
+        /**
+         * Gets the insertion probability of entering this state
+         * 
+         * @return the log probability
+         */
+        public float getInsertionProbability() {
+            if (pronunciation.getWord().isFiller()) {
+                return logOne;
+            } else {
+                return logWordInsertionProbability;
+            }
+        }
+
 
         /**
          * Generate a hashcode for an object
@@ -990,7 +1027,12 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return the successor states
          */
         public SearchStateArc[] getSuccessors() {
-            return getSuccessors(gs.getLC(), 0);
+            SearchStateArc[] arcs = getCachedSuccessors();
+            if (arcs == null) {
+                arcs = getSuccessors(gs.getLC(), 0);
+                cacheSuccessors(arcs);
+            }
+            return arcs;
         }
 
         /**
@@ -1003,9 +1045,10 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return the set of sucessor arcs
          */
         SearchStateArc[] getSuccessors(int lc, int index) {
-            SearchStateArc[] arcs;
+            SearchStateArc[] arcs = null;
             if (index == pronunciation.getUnits().length -1) {
-                if (isContextIndependentUnit(pronunciation.getUnits()[index])) {
+                if (isContextIndependentUnit(
+                            pronunciation.getUnits()[index])) {
                     arcs = new SearchStateArc[1];
                     arcs[0] = new FullHMMSearchState(this, index, lc, ANY);
                 } else {
@@ -1013,7 +1056,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
                     arcs = new SearchStateArc[nextUnits.length];
                     for (int i = 0; i < arcs.length; i++) {
                         arcs[i] = new 
-                            FullHMMSearchState(this, index, lc, nextUnits[i]);
+                            FullHMMSearchState(this,index,lc,nextUnits[i]);
                     }
                 }
             } else {
@@ -1043,20 +1086,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         private boolean isContextIndependentUnit(Unit unit) {
             return unit.isFiller();
         }
-
-        /**
-         * Gets the insertion probability of entering this state
-         * 
-         * @return the log probability
-         */
-        public float getInsertionProbability() {
-            if (pronunciation.getWord().isFiller()) {
-                return logOne;
-            } else {
-                return logWordInsertionProbability;
-            }
-        }
-
 
         /**
          * Returns a unique string representation of the state. This string is
@@ -1153,10 +1182,24 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             hmm = hmmPool.getHMM(id, getPosition());
             isLastUnitOfWord = 
                     which == p.getPronunciation().getUnits().length - 1;
-
-            debug("HMM " + hmm.getUnit() + " rc " + rc);
         }
 
+        /**
+         * Determines the insertion probability based upon the type of unit
+         *
+         * @return the insertion probability
+         */
+        public float getInsertionProbability() {
+            Unit unit = hmm.getBaseUnit();
+
+            if (unit.isSilence()) {
+                return logSilenceInsertionProbability;
+            } else if (unit.isFiller()) {
+                return logFillerInsertionProbability;
+            } else {
+                return logUnitInsertionProbability;
+            }
+        }
 
         /**
          * Returns a string representation of this object
@@ -1220,8 +1263,12 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return the set of successors
          */
         public SearchStateArc[] getSuccessors() {
-            SearchStateArc[] arcs = new SearchStateArc[1];
-            arcs[0] = new HMMStateSearchState(this, hmm.getInitialState());
+            SearchStateArc[] arcs = getCachedSuccessors();
+            if (arcs == null) {
+                arcs = new SearchStateArc[1];
+                arcs[0] = new HMMStateSearchState(this, hmm.getInitialState());
+                cacheSuccessors(arcs);
+            }
             return arcs;
         }
 
@@ -1277,7 +1324,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the insertion probability
          */
-        public float getInsertionProbability() {
+        private float calcInsertionProbability() {
             Unit unit = hmm.getBaseUnit();
 
             if (unit.isSilence()) {
@@ -1332,7 +1379,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
                 // we are at the end of the word, so we transit to the
                 // next grammar nodes
                 GrammarState gs = pState.getGrammarState();
-                debug("HSSS next base " + getRC());
                 arcs = gs.getNextGrammarStates(nextLC, getRC());
             }
             return arcs;
@@ -1371,7 +1417,16 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             this.probability = prob;
             fullHMMSearchState = hss;
             this.hmmState = hmmState;
-            debug("HSS " + hmmState);
+        }
+
+
+        /**
+         * Returns the acoustic probability for this state
+         *
+         * @return the probability
+         */
+        public float getAcousticProbability() {
+            return probability;
         }
 
         /**
@@ -1411,14 +1466,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             return hmmState.isEmitting();
         }
 
-        /**
-         * Returns the acoustic probability for this state
-         *
-         * @return the probability
-         */
-        public float getAcousticProbability() {
-            return probability;
-        }
 
         /**
          * Gets the set of successors for this state
@@ -1426,18 +1473,22 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return the set of successors
          */
         public SearchStateArc[] getSuccessors() {
-            SearchStateArc[] arcs;
-            if (hmmState.isExitState()) {
-                arcs = fullHMMSearchState.getNextArcs();
-            } else {
-                HMMStateArc[] next = hmmState.getSuccessors();
-                arcs = new SearchStateArc[next.length];
-                for (int i = 0; i < arcs.length; i++) {
-                    arcs[i] = new
-                        HMMStateSearchState(fullHMMSearchState,
-                                next[i].getHMMState(), 
-                                next[i].getLogProbability());
+
+            SearchStateArc[] arcs = getCachedSuccessors();
+            if (arcs == null) {
+                if (hmmState.isExitState()) {
+                    arcs = fullHMMSearchState.getNextArcs();
+                } else {
+                    HMMStateArc[] next = hmmState.getSuccessors();
+                    arcs = new SearchStateArc[next.length];
+                    for (int i = 0; i < arcs.length; i++) {
+                        arcs[i] = new
+                            HMMStateSearchState(fullHMMSearchState,
+                                    next[i].getHMMState(), 
+                                    next[i].getLogProbability());
+                    }
                 }
+                cacheSuccessors(arcs);
             }
             return arcs;
         }
