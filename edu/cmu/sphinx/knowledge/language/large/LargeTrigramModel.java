@@ -221,19 +221,18 @@ public class LargeTrigramModel implements LanguageModel {
      * Clears the various N-gram caches.
      */
     private void clearCache() {
-        /*
         for (int i = 0; i < loadedBigramBuffers.length; i++) {
             BigramBuffer buffer = loadedBigramBuffers[i];
             if (buffer != null) {
                 if (!buffer.getUsed()) {
-                    loadedBigramBuffers[i] = null;
+                    loadedBigramBuffers[i] = null; // free the BigramBuffer
                 } else {
                     buffer.setUsed(false);
                 }
             }
         }
-	loadedBigramBuffers = new BigramBuffer[unigrams.length];
-        */
+        
+        // loadedBigramBuffers = new BigramBuffer[unigrams.length];
         loadedTrigramBuffer = new HashMap();
         trigramCache = new HashMap();
 	bigramCache = new HashMap();
@@ -383,6 +382,7 @@ public class LargeTrigramModel implements LanguageModel {
             BigramBuffer bigrams = getBigramBuffer(firstWordID);
             
             if (bigrams != null) {
+                bigrams.setUsed(true);
                 bigramProbability = bigrams.findBigram(secondWordID);
                 if (bigramProbability != null) {
                     bigramCache.put(ws, bigramProbability);
