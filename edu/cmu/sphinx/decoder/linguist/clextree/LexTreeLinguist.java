@@ -118,7 +118,6 @@ public class LexTreeLinguist implements  Linguist {
     private HMMTree hmmTree;
     private Dictionary dictionary;
     
-    private int silenceID;
     private boolean fullWordHistories = true;
     private boolean addFillerWords = false;
     private boolean generateUnitStates = false;
@@ -291,7 +290,6 @@ public class LexTreeLinguist implements  Linguist {
         Timer.start("compile");
 
         hmmPool = new HMMPool(acousticModel);
-        silenceID = hmmPool.getID(Unit.SILENCE);
 
         hmmTree = new HMMTree(hmmPool, dictionary, languageModel,
                 addFillerWords, languageWeight);
@@ -524,6 +522,7 @@ public class LexTreeLinguist implements  Linguist {
 
             float fixupProb = getUnigramSmear(lastUnit);
 
+            // System.out.println("CWSA " + wordNode + " fup " +  fixupProb);
             WordSequence nextWordSequence = wordSequence;
 
             if (nextWord.isFiller()) {
