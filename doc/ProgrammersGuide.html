@@ -57,7 +57,7 @@ WARRANTIES.
      <ul>
      <li><a href="#helloCodeWalk">Code Walk - HelloWorld.java</a></li>
      <li><a href="#helloConfigWalk">Configuration File Walk - helloworld.config.xml</a></li>
-     <li>Build File Walk - build.xml</li>
+     <li><a href="#buildFileWalk">Build File Walk - build.xml</a></li>
      </ul>
   </li>
   </ol>
@@ -824,6 +824,59 @@ The various knobs of these monitors mainly control whether statistical
 information about accuracy, speed and memory usage should be printed out.
 Moreover, the monitors monitor the behavior of a recognizer,
 so they need a reference to the recognizer that they are monitoring.
+
+
+<p><h3><a name="buildFileWalk">Build File Walk - build.xml</a></h3></p>
+
+The last piece of the puzzle of the Hello World! demo is the build.xml
+file, which defines Ant targets for running the demo. For details about
+writing the build.xml file, please refer to the 
+<a href="http://ant.apache.org/manual/index.html">Ant documentation</a>.
+The file <code>demo/sphinx/helloworld/build.xml</code> is pretty
+straightforward. Lets look at the top part of the build.xml file:
+
+<pre>
+    &lt;property name="top_dir"		value="../../.."/&gt;
+    &lt;property name="build_dir"		value="${top_dir}/bld"/&gt;
+    &lt;property name="classes_dir"	value="${build_dir}/classes"/&gt;
+    &lt;property name="lib_dir"            value="${build_dir}/lib"/&gt;
+
+    &lt;path id="run.classpath"&gt;
+        &lt;pathelement path="${classes_dir}"/&gt;
+	&lt;pathelement location="${top_dir}/lib/jsapi.jar"/&gt;
+    &lt;/path&gt;
+</pre>
+
+It defines several variables, e.g., the top level Sphinx-4 directory,
+the build directory, the classes directory, and the libraries directory.
+It also defines the <codE>run.classpath</code> path ID, which includes
+the classes directory and the <code>jsapi.jar</code> library, latter of
+which is needed for interpreting JSGF grammars in the Hello World! demo.
+
+<p>Now lets take a look at the "run" target:</p>
+
+<pre>
+    &lt;target name="run"
+	    description="Runs the hello world demo."
+	    depends="all"&gt;
+	    &lt;java classname="demo.sphinx.helloworld.HelloWorld"
+	          fork="true"
+		  maxmemory="128m"&gt;
+		  &lt;classpath refid="run.classpath"/&gt;
+		  &lt;arg value="helloworld.config.xml"/&gt;
+	    &lt;/java&gt;
+    &lt;/target&gt;
+</pre>
+
+This defines an Ant target called "run". It first makes sure that the
+"all" target, which compiles the hello world demo code, is run.
+It then executes the class <code>demo.sphinx.helloworld.HelloWorld</code>
+which contains a main() method as you can see above. It also forks a separate
+process to run the Hello World! demo, with a maximum heap of 128MB.
+The classpath is defined by the Ant path ID "run.classpath", which is defined
+at the top of the build.xml file. The configuration file 
+<code>helloworld.config.xml</code> is fed as an argument to the HelloWorld
+class.
 
   </font>
 </body>
