@@ -53,6 +53,8 @@ DEBUG_FLAGS=
 #EXTRA_JAVA_FLAGS=$(LOG_GC_FLAGS) $(LOG)
 EXTRA_JAVA_FLAGS=$(PROFILE_FLAGS) $(LOG_GC_FLAGS) $(LOG) $(GC_FLAGS) $(DEBUG_FLAGS) 
 
+PARSED_EXTRA_OPTIONS=$(subst :, , $(EXTRA_OPTIONS))
+
 ##########################################################################
 
 include ${TOP}/build/Makefile.config
@@ -73,10 +75,15 @@ all::
 
 # The full TIDGITS test.  Takes a long long time to run
 
+large_flat_unigram:
+	$(JAVA_CMD)  \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
+	edu.cmu.sphinx.decoder.BatchDecoder large_flat_unigram.props large.batch
+
 large_unigram:
 	$(JAVA_CMD)  \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
-	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch
+	edu.cmu.sphinx.decoder.BatchDecoder large_unigram.props large.batch
 
 large_error:
 	$(JAVA_CMD)  \
@@ -100,6 +107,7 @@ run_batch:
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=$(WHICH_BATCH)\
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=$(TOTAL_BATCHES)\
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+        $(PARSED_EXTRA_OPTIONS) \
 	edu.cmu.sphinx.decoder.BatchDecoder $(PROPS) $(BATCH_FILE) \
 
 

@@ -2,8 +2,9 @@
 
 case $# in
 	8) echo Running tests;;
+	9) echo Running tests -with options ;;
 
-	*) echo "usage: nBatch start count skip props batch outdir name";
+	*) echo "usage: nBatch start count skip props batch outdir name [options]";
             exit 1;;
 esac
 
@@ -17,9 +18,11 @@ props=$5
 batch=$6
 outdir=$7
 name=$8
+options=$9
 
 mkdir -p $outdir
 cp $props $outdir
+echo $options >> $outdir/$props
 
 
 index=0
@@ -27,6 +30,9 @@ while [ $index -lt $count ]; do
     let which=$start+$index;
     fullName="$name.$which.$nBatch.out"
     gmake WHICH_BATCH=$which TOTAL_BATCHES=$nBatch SKIP=$skip \
+    EXTRA_OPTIONS=$options \
     PROPS=$props BATCH_FILE=$batch run_batch > $outdir/$fullName &
     let index=$index+1
 done;
+
+wait
