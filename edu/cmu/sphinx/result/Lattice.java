@@ -154,7 +154,7 @@ public class Lattice {
         for (Iterator i = result.getResultTokens().iterator(); i.hasNext();) {
             Token token = (Token) i.next();
             while (token != null && !token.isWord()) {
-                token = token.getPredecessor();
+		token = token.getPredecessor();
             }
             assert token.getWord().isSentenceEndWord();
             collapseWordToken(token);
@@ -173,7 +173,7 @@ public class Lattice {
         if (token.getWord().isSentenceEndWord()) {
             return terminalNode;
         }
-        Node node = (Node) nodes.get(token);
+        Node node = (Node) nodes.get(getNodeID(token));
         if (node == null) {
 	    WordSearchState wordState = 
 		(WordSearchState) token.getSearchState();
