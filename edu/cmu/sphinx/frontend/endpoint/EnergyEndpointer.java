@@ -71,7 +71,7 @@ import java.util.*;
  * speech unless it is contiguously more than <code>endWindow</code>
  * frames from speech.
  */
-public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
+public class EnergyEndpointer extends DataProcessor implements Endpointer {
 
 
     private static final String PROP_PREFIX = 
@@ -251,7 +251,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
 
 
     /**
-     * Constructs an EnergyEndpointer with the given name, context,
+     * Initializes this EnergyEndpointer with the given name, context,
      * and CepstrumSource predecessor.
      *
      * @param name the name of this EnergyEndpointer
@@ -263,10 +263,10 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
      *
      * @throws java.io.IOException
      */
-    public EnergyEndpointer(String name, String context, 
-			    SphinxProperties props,
-                            CepstrumSource predecessor) throws IOException {
-        super(name, context, props);
+    public void initialize(String name, String context, 
+                           SphinxProperties props,
+                           CepstrumSource predecessor) throws IOException {
+        super.initialize(name, context, props);
         setProperties();
         this.predecessor = predecessor;
         this.outputQueue = new LinkedList();
