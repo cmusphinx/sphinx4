@@ -53,7 +53,7 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=100
+edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=-1
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.FastActiveList
 
 
@@ -67,6 +67,8 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation = true
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dictionary
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = fillerdict
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
+
+edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=1 
 
 
 ############################################################
