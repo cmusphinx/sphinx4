@@ -3,9 +3,9 @@
 <head>
 <!--
 
-Copyright 1999-2002 Carnegie Mellon University.  
-Portions Copyright 2002 Sun Microsystems, Inc.  
-Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+Copyright 1999-2004 Carnegie Mellon University.  
+Portions Copyright 2004 Sun Microsystems, Inc.  
+Portions Copyright 2004 Mitsubishi Electronic Research Laboratories.
 All Rights Reserved.  Use is subject to license terms.
 
 See the file "license.terms" for information on usage and
@@ -19,55 +19,50 @@ WARRANTIES.
   code {font-size: medium; color: teal}
   </style>
 </head>
-<body style="background-color: white;">
-<center>
-<table bgcolor="#99cbff" border="0" width="100%">
-  <tbody>
-    <tr>
-      <td align="center" width="100%">
-      <h1><a name="mozTocId705774" class="mozTocH1"></a>Configuration
-Management for Sphinx-4<br>
-      <font size="+1"><br>
-      </font></h1>
-      </td>
-    </tr>
-  </tbody>
-</table>
-</center>
-<font face="Arial" size="2">
-<br>
-</font>
-<hr>
-<h2><a name="mozTocId974613" class="mozTocH2"></a>Managing the Sphinx
-Configuration</h2>
-The Sphinx-4 configuration manager system has two primary purposes:<br>
-<ul>
-  <li><span style="font-weight: bold;">Determining which components are
-to be used in the system</span>. <span style="font-family: arial;">The
-Sphinx-4 system is designed to be
-extremely flexible.&nbsp; At runtime, just about any component can be
-replaced with another.&nbsp; For example, in Sphinx-4 the <span
- style="font-style: italic;">FrontEnd&nbsp; </span>component
-provides acoustic features that are used scored against the acoustic
-model.&nbsp; Typically, Sphinx-4 is configured with a FrontEnd that
-produces
-MEL frequency cepstral coefficients (MFCCs), however it is possible to
-reconfigure Sphinx-4 to use a different FrontEnd that, for instance,
-produces </span><font size="-1"><big>Perceptual Linear Prediction</big></font>
-coefficients (PLP). The Sphinx-4 configuration manager is used to
-configure the system in this fashion.<br>
-  </li>
-  <li><span style="font-weight: bold;">Determining the detailed
-configuration of each of these components. </span>- The Sphinx-4
-system is like most speech recognition systems in that it has a large
-number of parameters that control how the system functions. For
-instance,&nbsp; a <span style="font-style: italic;">beam width</span>
-is sometimes used to control the number of active search paths
-maintained during the speech decoding.&nbsp; A larger value for this
-beam width can sometimes yield higher recognition accuracy&nbsp; at the
-expense of longer decode times.&nbsp; The Sphinx-4 configuration
-manager is used to configure such parameters.</li>
-</ul>
+  <body>
+    <center>
+      <table bgcolor="#99cbff" border="0" width="100%">
+	<tbody>
+	  <tr>
+	    <td align="center" width="100%">
+	      <h1><a name="mozTocId705774" class="mozTocH1"></a>Configuration
+Management for Sphinx-4</h1>
+	    </td>
+	  </tr>
+	</tbody>
+      </table>
+    </center>
+    <font face="Arial" size="2">
+
+      <hr>
+      <h2><a name="mozTocId974613" class="mozTocH2"></a>Managing the Sphinx
+	Configuration</h2>
+      The Sphinx-4 configuration manager system has two primary purposes:<br>
+      <ul>
+	<li><b>Determining which components are to be used in the
+	system.</b> The Sphinx-4 system is designed to be extremely
+	flexible. At runtime, just about any component can be replaced
+	with another. For example, in Sphinx-4 the <i>FrontEnd</i>
+	component provides acoustic features that are used scored
+	against the acoustic model. Typically, Sphinx-4 is configured
+	with a FrontEnd that produces <i>Mel frequency cepstral
+	coefficients</i> (MFCCs), however it is possible to
+	reconfigure Sphinx-4 to use a different FrontEnd that, for
+	instance, produces <i>Perceptual Linear Prediction
+	coefficients</i> (PLP). The Sphinx-4 configuration manager is
+	used to configure the system in this fashion.
+	</li>
+      <br>
+      <li><b>Determining the detailed configuration of each of these
+      components.</b> The Sphinx-4 system is like most speech
+      recognition systems in that it has a large number of parameters
+      that control how the system functions. For instance, a <i>beam
+      width</i> is sometimes used to control the number of active
+      search paths maintained during the speech decoding. A larger
+      value for this beam width can sometimes yield higher recognition
+      accuracy at the expense of longer decode times. The Sphinx-4
+      configuration manager is used to configure such parameters.</li>
+    </ul>
 <h2><a name="mozTocId758838" class="mozTocH2"></a>The Configuration File</h2>
 The configuration of a particular Sphinx-4 system is determined by a <span
  style="font-weight: bold;">configuration file.</span> This
@@ -473,6 +468,7 @@ Portions Copyright 2002-2004 Mitsubishi Electronic Research
 Laboratories.<br>
 All Rights Reserved. Usage is subject to <a href="license.terms">license
 terms</a>.
+</font>
 </font>
 </body>
 </html>
