@@ -48,6 +48,13 @@ import java.io.IOException;
  * <img src="doc-files/melfilterbank.jpg">
  * <br><center><b>Figure 1: A Mel-filter bank.</b></center>
  * <p>
+ * As you might notice in the above figure, the triangles are of
+ * decreasing height and increasing width. The distance at the base
+ * from the center to the left edge is different from the center to
+ * the right edge. This is due to the mel-frequency scale,
+ * which is a nonlinear scale that models the behavior of the 
+ * human auditory system. The area under each triangle is equal to 1.
+ * <p>
  * The minimum frequency has a default value of 130Hz, while 
  * the maximum frequency has a default value of 6800Hz.
  * These frequencies depend on the channel and the sampling frequency
@@ -65,10 +72,9 @@ import java.io.IOException;
  * between models. Particularly for very noisy channels,
  * maximum frequency of around 5000Hz may help cut off the noise.
  * <p>
- * The mel-frequency scale is a nonlinear scale which models
- * the behavior of the human auditory system. Davis and Mermelstein
- * showed that Mel-frequency cepstral coefficients are good for
- * speech recognition. For details, see Davis and Mermelstein,
+ * Davis and Mermelstein showed that Mel-frequency cepstral
+ * coefficients are good for speech recognition.
+ * For details, see Davis and Mermelstein,
  * <i>Comparison of Parametric Representations for Monosyllable
  * Word Recognition in Continuously Spoken Sentences, IEEE
  * Transactions on Acoustic, Speech and Signal Processing, 1980</i>.
