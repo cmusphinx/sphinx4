@@ -92,7 +92,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * 
  * <p>
  * The location of the grammar file(s) is(are) defined by the
- * {@link #PROP_BASE_GRAMMAR_URL baseGrammarURL}property. Since all JSGF
+ * {@link #PROP_GRAMMAR_LOCATION grammarLocation}property. Since all JSGF
  * grammar files end with ".gram", it will automatically search all such files
  * at the given URL for the grammar. The name of the grammar to search for is
  * specified by {@link #PROP_GRAMMAR_NAME grammarName}. In this example, the
@@ -173,13 +173,23 @@ public class JSGFGrammar extends Grammar {
 
     /**
      * Sphinx property that defines the location of the JSGF grammar file.
+     * This property can either be the URL of the grammar location
+     * (e.g., "file:./" for the current directory), or a resource locator
+     * (e.g., "/demo/sphinx/helloworld", if an application is deployed 
+     * within a JAR file, and the grammar files reside in the directory
+     * "/demo/sphinx/helloworld" within the JAR file.) In the case of
+     * a resource locator, the method <code>Class.getResource(grammarLocation)
+     * </code> will be used to obtain the URL of that location.
+     * In either case, we eventually get a URL, which is then passed
+     * into the JSAPI method <code>loadJSGF(URL context, String grammarName)
+     * </code>.
      */
-    public final static String PROP_BASE_GRAMMAR_URL = "baseGrammarURL";
+    public final static String PROP_GRAMMAR_LOCATION = "grammarLocation";
 
     /**
      * Default value for the location of the JSGF grammar file.
      */
-    public final static String PROP_BASE_GRAMMAR_URL_DEFAULT = "file:./";
+    public final static String PROP_GRAMMAR_LOCATION_DEFAULT = "file:./";
 
     /**
      * Sphinx property that defines the location of the JSGF grammar file.
@@ -194,7 +204,6 @@ public class JSGFGrammar extends Grammar {
     /**
      * Sphinx property that defines the logMath component. 
      */
-    
     public final static String PROP_LOG_MATH = "logMath";
     
 
@@ -205,7 +214,7 @@ public class JSGFGrammar extends Grammar {
     private int identity;
     private Map ruleNameStack = new HashMap();
     private Recognizer recognizer;
-    private String urlString;
+    private String location;
     private String grammarName;
     private URL baseURL = null;
     private LogMath logMath;
@@ -219,7 +228,7 @@ public class JSGFGrammar extends Grammar {
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
-        registry.register(PROP_BASE_GRAMMAR_URL, PropertyType.STRING);
+        registry.register(PROP_GRAMMAR_LOCATION, PropertyType.STRING);
         registry.register(PROP_GRAMMAR_NAME, PropertyType.STRING);
         registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
     }
@@ -231,10 +240,10 @@ public class JSGFGrammar extends Grammar {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        urlString = ps.getString(PROP_BASE_GRAMMAR_URL,
-                PROP_BASE_GRAMMAR_URL_DEFAULT);
-        grammarName = ps
-                .getString(PROP_GRAMMAR_NAME, PROP_GRAMMAR_NAME_DEFAULT);
+        location = ps.getString(PROP_GRAMMAR_LOCATION,
+                                PROP_GRAMMAR_LOCATION_DEFAULT);
+        grammarName = ps.getString(PROP_GRAMMAR_NAME,
+                                   PROP_GRAMMAR_NAME_DEFAULT);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
 
     }
@@ -249,12 +258,19 @@ public class JSGFGrammar extends Grammar {
     }
 
     /**
-     * Sets the URL context of the JSGF grammars.
+     * Returns true if the given string is a well-formed URL.
      *
-     * @param url the URL context of the grammars
+     * @param url the URL string to test
+     *
+     * @return true if the given string is a well-formed URL
      */
-    public void setBaseURL(URL url) {
-        baseURL = url;
+    private boolean isURL(String url) {
+        try {
+            URL u = new URL(url);
+            return true;
+        } catch (MalformedURLException me) {
+            return false;
+        }
     }
 
     /**
@@ -268,9 +284,12 @@ public class JSGFGrammar extends Grammar {
         recognizer = new BaseRecognizer();
 
         try {
-            if (baseURL == null) {
-                baseURL = new URL(urlString);
+            if (isURL(location)) {
+                baseURL = new URL(location);
+            } else {
+                baseURL = this.getClass().getResource(location);
             }
+
             recognizer.allocate();
             ruleGrammar = recognizer.loadJSGF(baseURL, grammarName);
             recognizer.commitChanges();
@@ -302,9 +321,8 @@ public class JSGFGrammar extends Grammar {
             dumpGrammarException(ge);
             throw new IOException("GrammarException: " + ge);
         } catch (MalformedURLException mue) {
-            throw new IOException("bad base grammar url " + urlString + " "
-                    + mue);
-
+            throw new IOException("bad base grammar url " + location + 
+                                  " " + mue);
         }
     }
 
