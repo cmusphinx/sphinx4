@@ -117,6 +117,7 @@ public class ParallelRecognizer implements Configurable {
     private BatchManager batchManager;
     private Recognizer recognizer;
 
+
     /*
      * (non-Javadoc)
      * 
@@ -192,16 +193,17 @@ public class ParallelRecognizer implements Configurable {
 
             batchManager.start();
             System.out.println("\nBatchDecoder: decoding files in "
-			       + batchManager.getFilename());
-            System.out.println();
-        
+                               + batchManager.getFilename() + "\n");
+            
             while ((batchItem = batchManager.getNextItem()) != null) {
+                System.out.println("\nFile: " + batchItem.getFilename());
                 setInputStream(batchItem.getFilename());
                 recognizer.recognize(batchItem.getTranscript());
             }
             batchManager.stop();
         } catch (IOException io) {
-            System.err.println("I/O error during decoding: " + io.getMessage());
+            System.err.println("I/O error during decoding: " 
+                               + io.getMessage());
 	    io.printStackTrace();
         }
         recognizer.deallocate();
