@@ -16,26 +16,30 @@ import java.io.IOException;
  */
 public class MelFilterbank extends DataProcessor implements SpectrumSource {
 
+
     /**
      * The name of the Sphinx Property for the number of filters in
      * the filterbank.
      */
     public static final String PROP_NUMBER_FILTERS =
-    "edu.cmu.sphinx.frontend.mel.numFilters";
+    FrontEnd.PROP_PREFIX + "mel.numFilters";
+
     
     /**
      * The name of the Sphinx Property for the minimum frequency
      * covered by the filterbank.
      */
     public static final String PROP_MIN_FREQ = 
-    "edu.cmu.sphinx.frontend.mel.minfreq";
+    FrontEnd.PROP_PREFIX + "mel.minfreq";
+
 
     /**
      * The name of the Sphinx Property for the maximum frequency
      * covered by the filterbank.
      */
     public static final String PROP_MAX_FREQ = 
-    "edu.cmu.sphinx.frontend.mel.maxfreq";
+    FrontEnd.PROP_PREFIX + "mel.maxfreq";
+
 
     private int sampleRate;
     private int numberFftPoints;
@@ -63,7 +67,7 @@ public class MelFilterbank extends DataProcessor implements SpectrumSource {
      */
     public MelFilterbank(String name, String context,
                          SpectrumSource predecessor) {
-        super("MelFilterbank", context);
+        super(name, context);
 	initSphinxProperties();
         this.predecessor = predecessor;
 	buildFilterbank(numberFftPoints, numberFilters, minFreq, maxFreq);

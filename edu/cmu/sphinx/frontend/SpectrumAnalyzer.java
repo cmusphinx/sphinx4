@@ -20,7 +20,8 @@ SpectrumSource {
      * in the Fourier Transform, which is 512 by default.
      */
     public static final String PROP_NUMBER_FFT_POINTS =
-	"edu.cmu.sphinx.frontend.fft.numberFftPoints";
+    FrontEnd.PROP_PREFIX + "fft.numberFftPoints";
+
 
     private AudioSource predecessor;
 

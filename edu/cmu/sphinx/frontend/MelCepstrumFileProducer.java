@@ -16,8 +16,9 @@ import java.io.IOException;
 public class MelCepstrumFileProducer extends DataProcessor implements
 CepstrumSource {
 
-    public final static String PROP_CEPSTRUM_FILE =
-	"edu.cmu.sphinx.frontend.MelCepstrumFileProducer.file";
+    private final static String PROP_CEPSTRUM_FILE =
+    FrontEnd.PROP_PREFIX + "MelCepstrumFileProducer.file";
+
 
     private String path;
     private ExtendedStreamTokenizer est;

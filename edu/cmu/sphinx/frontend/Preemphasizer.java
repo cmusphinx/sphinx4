@@ -33,8 +33,8 @@ public class Preemphasizer extends DataProcessor implements AudioSource {
      * The name of the SphinxProperty for preemphasis factor/alpha, which
      * has a default value of 0.97F.
      */
-    public static final String PROP_PREEMPHASIS_FACTOR =
-	"edu.cmu.sphinx.frontend.preemphasis.factor";
+    private static final String PROP_PREEMPHASIS_FACTOR = 
+    FrontEnd.PROP_PREFIX + "preemphasis.factor";
     
 
     private float preemphasisFactor;

@@ -43,40 +43,51 @@ import java.io.IOException;
  */
 public class FrontEnd extends DataProcessor {
 
+    
+    /**
+     * The prefix for all Frontend SphinxProperties names.
+     * Its value is currently <code>"edu.cmu.sphinx.frontend."</code>.
+     */
+    public static final String PROP_PREFIX = "edu.cmu.sphinx.frontend.";
+
+
     /**
      * The name of the SphinxProperty for sample rate in Hertz (i.e.,
      * number of times per second), which has a default value of 8000.
      */
-    public static final String PROP_SAMPLE_RATE =
-	"edu.cmu.sphinx.frontend.sampleRate";
+    public static final String PROP_SAMPLE_RATE = PROP_PREFIX + "sampleRate";
+
 
     /**
      * The name of the SphinxProperty for the number of bytes per frame,
      * which has a default value of 4000.
      */
-    public static final String PROP_BYTES_PER_AUDIO_FRAME =
-	"edu.cmu.sphinx.frontend.bytesPerAudioFrame";
+    public static final String PROP_BYTES_PER_AUDIO_FRAME = 
+    PROP_PREFIX + ".bytesPerAudioFrame";
+
 
     /**
      * The name of the SphinxProperty for window size in milliseconds,
      * which has a default value of 25.625F.
      */
-    public static final String PROP_WINDOW_SIZE_MS =
-	"edu.cmu.sphinx.frontend.windowSizeInMs";
+    public static final String PROP_WINDOW_SIZE_MS = 
+    PROP_PREFIX + "windowSizeInMs";
+
 
     /**
      * The name of the SphinxProperty for window shift in milliseconds,
      * which has a default value of 10F.
      */
     public static final String PROP_WINDOW_SHIFT_MS =
-        "edu.cmu.sphinx.frontend.windowShiftInMs";
+    PROP_PREFIX + "windowShiftInMs";
+
 
     /**
      * The name of the SphinxProperty for the size of a cepstrum, which is
      * 13 by default.
      */
-    public static final String PROP_CEPSTRUM_SIZE =
-    "edu.cmu.sphinx.frontend.cepstrumSize";
+    public static final String PROP_CEPSTRUM_SIZE = 
+    PROP_PREFIX + "cepstrumSize";
 
 
     /**
@@ -85,7 +96,7 @@ public class FrontEnd extends DataProcessor {
      * default value is true.
      */
     public static final String PROP_KEEP_AUDIO_REFERENCE =
-    "edu.cmu.sphinx.frontend.keepAudioReference";
+    PROP_PREFIX + "keepAudioReference";
     
     
     private AudioSource audioSource;

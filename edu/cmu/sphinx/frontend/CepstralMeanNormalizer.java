@@ -40,16 +40,16 @@ CepstrumSource {
      * which has a default value of 12.0F.
      * This is a front-end dependent magic number.
      */
-    public static final String PROP_INITIAL_MEAN =
-	"edu.cmu.sphinx.frontend.cmn.initialCepstralMean";
+    private static final String PROP_INITIAL_MEAN =
+    FrontEnd.PROP_PREFIX + "cmn.initialCepstralMean";
 
 
     /**
      * The name of the SphinxProperty for the CMN window size,
      * which has a default value of 500.
      */
-    public static final String PROP_CMN_WINDOW =
-	"edu.cmu.sphinx.frontend.cmn.windowSize";
+    private static final String PROP_CMN_WINDOW = 
+    FrontEnd.PROP_PREFIX + "cmn.windowSize";
 
 
     /**
@@ -58,8 +58,8 @@ CepstrumSource {
      * The shifting window specifies how many cepstrum after which
      * we re-calculate the cepstral mean.
      */
-    public static final String PROP_CMN_SHIFT_WINDOW =
-	"edu.cmu.sphinx.frontend.cmn.shiftWindow";
+    private static final String PROP_CMN_SHIFT_WINDOW =
+    FrontEnd.PROP_PREFIX + "cmn.shiftWindow";
 
 
     private float[] currentMean;   // array of current means

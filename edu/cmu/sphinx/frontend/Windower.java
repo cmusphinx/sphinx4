@@ -38,13 +38,14 @@ import java.util.Arrays;
  */
 public class Windower extends DataProcessor implements AudioSource {
 
+
     /**
      * The name of the SphinxProperty for the alpha value of the Window,
      * which has a default value of 0.46 (double), which is the value for the
      * HammingWindow.
      */
-    public static final String PROP_ALPHA =
-	"edu.cmu.sphinx.frontend.windower.alpha";
+    private static final String PROP_ALPHA =
+    FrontEnd.PROP_PREFIX + "windower.alpha";
 
 
     private AudioSource predecessor;     // the previous processor

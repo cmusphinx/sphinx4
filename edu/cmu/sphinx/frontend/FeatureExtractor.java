@@ -19,8 +19,9 @@ import java.util.Vector;
  * FeatureFrame. This is a 1-to-1 processor.
  *
  * <p>The Sphinx properties that affect this processor are: <pre>
- * edu.cmu.sphinx.frontend.feature.length
- * edu.cmu.sphinx.frontend.feature.windowSize
+ * edu.cmu.sphinx.frontend.featureExtractor.featureLength
+ * edu.cmu.sphinx.frontend.featureExtractor.windowSize
+ * edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize
  * </pre>
  *
  * @see Cepstrum
@@ -34,21 +35,21 @@ FeatureSource {
      * which is 39 by default.
      */
     public static final String PROP_FEATURE_LENGTH =
-	"edu.cmu.sphinx.frontend.featureExtractor.featureLength";
-
+    FrontEnd.PROP_PREFIX + "featureExtractor.featureLength";
+    
     /**
      * The name of the SphinxProperty for the window of the
      * FeatureExtractor, which has a default value of 3.
      */
-    public static final String PROP_FEATURE_WINDOW =
-	"edu.cmu.sphinx.frontend.featureExtractor.windowSize";
-
+    private static final String PROP_FEATURE_WINDOW =
+    FrontEnd.PROP_PREFIX + "featureExtractor.windowSize";
+    
     /**
      * The name of the SphinxProperty for the size of the circular
      * Cepstra buffer, which has a default value of 256.
      */
-    public static final String PROP_CEP_BUFFER_SIZE =
-    "edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize";
+    private static final String PROP_CEP_BUFFER_SIZE =
+    FrontEnd.PROP_PREFIX + "featureExtractor.cepstraBufferSize";
 
 
     private int featureBlockSize = 25;

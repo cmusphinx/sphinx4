@@ -25,6 +25,7 @@ import java.util.Arrays;
 public class StreamAudioSource extends DataProcessor implements AudioSource {
 
     private InputStream audioStream;
+    private Utterance currentUtterance = null;
 
     private int frameSizeInBytes;
     private boolean keepAudioReference;
@@ -71,10 +72,18 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
      * @param inputStream the InputStream from which audio data comes
      */
     public void setInputStream(InputStream inputStream) {
-	this.audioStream = inputStream;
+	
+        this.audioStream = inputStream;
+        
         streamEndReached = false;
         utteranceEndSent = false;
         utteranceStarted = false;
+        
+        if (keepAudioReference) {
+            currentUtterance = new Utterance(getContext());
+        } else {
+            currentUtterance = null;
+        }
     }
 
     
@@ -146,6 +155,7 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
         }
 
         // shrink incomplete frames
+
         if (totalRead < bytesToRead) {
             totalRead = (totalRead % 2 == 0) ? totalRead + 2 : totalRead + 3;
             streamEndReached = true;
@@ -153,9 +163,19 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
         }
 
         // turn it into an Audio
-        Audio audio = new Audio
-            (Util.byteToDoubleArray(samplesBuffer, 0, totalRead));
-        
+
+        double[] doubleAudio = 
+            Util.byteToDoubleArray(samplesBuffer, 0, totalRead);
+
+        Audio audio = null;
+
+        if (keepAudioReference) {
+            currentUtterance.add(samplesBuffer);
+            audio = new Audio(doubleAudio, currentUtterance);
+        } else {
+            audio = new Audio(doubleAudio);
+        }
+
         if (getDump()) {
             System.out.println("FRAME_SOURCE " + audio.toString());
         }
