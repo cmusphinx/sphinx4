@@ -16,6 +16,8 @@ import edu.cmu.sphinx.util.SphinxProperties;
 
 import edu.cmu.sphinx.decoder.linguist.LMGrammar;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.knowledge.language.LanguageModelFactory;
 import edu.cmu.sphinx.util.Timer;
@@ -52,8 +54,11 @@ public class LMGramTest {
         Timer lmTimer = Timer.getTimer("LMGramTest", "LanguageModel");
         Timer gramTimer = Timer.getTimer("LMGramTest", "Grammar");
 
+	Dictionary dictionary = new FullDictionary(context);
+
         lmTimer.start();
-        languageModel = LanguageModelFactory.createLanguageModel(context);
+        languageModel = LanguageModelFactory.createLanguageModel
+	    (context, dictionary);
         lmTimer.stop();
 
         Utilities.dumpMemoryInfo("before grammar load");
