@@ -56,9 +56,21 @@ public class Recognizer {
     public final static String PROP_LINGUIST = PROP_PREFIX + "linguist";
 
     /**
+     * The default value for the sphinx property name for the Linguist class.
+     */
+    public final static String PROP_LINGUIST_DEFAULT =
+	"edu.cmu.sphinx.decoder.linguist.SimpleLinguist";
+    
+    /**
      * The sphinx property name for the Grammar class.
      */
     public final static String PROP_GRAMMAR = PROP_PREFIX + "grammar";
+
+    /**
+     * The default value of the sphinx property name for the Grammar class.
+     */
+    public final static String PROP_GRAMMAR_DEFAULT =
+	"edu.cmu.sphinx.decoder.linguist.WordListGrammar";
 
     /**
      * The sphinx property name for the FrontEnd class.
@@ -70,12 +82,26 @@ public class Recognizer {
      */
     public final static String PROP_ACOUSTIC_SCORER = PROP_PREFIX +
 	"acousticScorer";
+    
+    /**
+     * The default value of the sphinx property name for the AcousticScorer
+     * class.
+     */
+    public final static String PROP_ACOUSTIC_SCORER_DEFAULT =
+	"edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer";
 
     /**
      * The sphinx property name for the SearchManager class.
      */
     public final static String PROP_SEARCH_MANAGER = PROP_PREFIX +
 	"searchManager";
+
+    /**
+     * The default value of the sphinx property name for the SearchManager
+     * class.
+     */
+    public final static String PROP_SEARCH_MANAGER_DEFAULT =
+	"edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager";
 
     /**
      * The sphinx property name for whether to output the sentence HMM.
@@ -311,8 +337,7 @@ public class Recognizer {
     private Grammar getGrammar(LanguageModel languageModel) {
         String path = null;
         try {
-            path = props.getString(PROP_GRAMMAR,
-                    "edu.cmu.sphinx.decoder.linguist.WordListGrammar");
+            path = props.getString(PROP_GRAMMAR, PROP_GRAMMAR_DEFAULT);
             Grammar newGrammar = (Grammar)Class.forName(path).newInstance();
             newGrammar.initialize(props.getContext(), languageModel, null);
             return newGrammar;
@@ -372,9 +397,11 @@ public class Recognizer {
 				 Grammar grammar,
 				 AcousticModel[] models) {
         try {
+	    String linguistClass = 
+		props.getString(PROP_LINGUIST, PROP_LINGUIST_DEFAULT);
+	    
             Linguist newLinguist = (Linguist)
-                Class.forName(props.getString(PROP_LINGUIST,
-                "edu.cmu.sphinx.decoder.linguist.StaticLinguist")).newInstance();
+                Class.forName(linguistClass).newInstance();
             newLinguist.initialize(props.getContext(), 
 				   languageModel, grammar, models);
 
@@ -444,8 +471,8 @@ public class Recognizer {
 	String path = null;
         try {
             path = props.getString
-		(PROP_ACOUSTIC_SCORER,
-		 "edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer");
+		(PROP_ACOUSTIC_SCORER, PROP_ACOUSTIC_SCORER_DEFAULT);
+	    
             AcousticScorer scorer =
 		(AcousticScorer)Class.forName(path).newInstance();
             scorer.initialize(props.getContext(), frontend);
@@ -478,8 +505,8 @@ public class Recognizer {
         String path = null;
         try {
             path = props.getString
-		(PROP_SEARCH_MANAGER,
-		 "edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager");
+		(PROP_SEARCH_MANAGER, PROP_SEARCH_MANAGER_DEFAULT);
+
             SearchManager searchManager =
 		(SearchManager)Class.forName(path).newInstance();
             searchManager.initialize(props.getContext(), linguist,
