@@ -187,7 +187,6 @@ your environment to use JSAPI.
 
   <target name="release_zipcity" depends="compile_zipcity">
       <copy todir="bld/zipcity" file="demo/sphinx/zipcity/zipcity.jnlp"/>
-      <copy todir="bld/zipcity" file="demo/sphinx/zipcity/zipcity_test.jnlp"/>
       <copy todir="bld/zipcity" file="demo/sphinx/zipcity/s4.jpg"/>
       <copy todir="bld/zipcity" file="demo/sphinx/zipcity/README.html"/>
       <copy todir="bld/zipcity" file="bin/ZipCity.jar"/>
