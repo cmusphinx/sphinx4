@@ -62,8 +62,9 @@ mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.fron
 mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
 mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveCMN
 mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.8.class=edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor
-mfc_ep;edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=16
-mfc_ep;edu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer=50
+
+edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=16
+edu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer=50
 
 
 ############################################################
