@@ -47,21 +47,32 @@ public interface ControlFile {
     String PROP_TRANSCRIPT_FILE_DEFAULT = "train.trans";
 
     /**
+     * The SphinxProperty name for which batch partition to process.
+     */
+    public final static String PROP_WHICH_BATCH = PROP_PREFIX + "whichBatch";
+
+    /**
+     * The default value for the whichBatch SphinxProperty.
+     */
+    public final static int PROP_WHICH_BATCH_DEFAULT = 1;
+
+    /**
+     * The SphinxProperty name for the total number of batch partitions.
+     */
+    public final static String PROP_TOTAL_BATCHES 
+	= PROP_PREFIX + "totalBatches";
+
+    /**
+     * The default value of the totalBatches SphinxProperty.
+     */
+    public final static int PROP_TOTAL_BATCHES_DEFAULT = 1;
+
+    /**
      * Initializes the ControlFile with the proper context.
      *
      * @param context the context to use
      */
     public void initialize(String context);
-
-    /**
-     * Initializes the ControlFile with the proper context and partitions.
-     *
-     * @param context the context to use
-     * @param thisPartition the current partition of the control file
-     * @param numberOfPartitions the total number of partitions
-     */
-    public void initialize(String context, int thisPartition, 
-			   int numberOfPartitions);
 
     /**
      * Gets an iterator for utterances.

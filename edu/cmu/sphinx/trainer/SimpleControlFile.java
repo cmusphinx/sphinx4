@@ -69,22 +69,22 @@ public class SimpleControlFile implements ControlFile {
      * Initializes the SimpleControlFile with the proper context.
      *
      * @param context the context to use
-     * @param thisPartition the current partition of the transcript file
-     * @param numberOfPartitions the total number of partitions
      */
-    public void initialize(String context, int thisPartition, 
-			   int numberOfPartitions) {
+    public void initialize(String context) {
 	this.props = SphinxProperties.getSphinxProperties(context);
 	this.audioFile = props.getString(PROP_AUDIO_FILE, 
 					   PROP_AUDIO_FILE_DEFAULT);
 	this.transcriptFile = props.getString(PROP_TRANSCRIPT_FILE, 
 					   PROP_TRANSCRIPT_FILE_DEFAULT);
+	this.currentPartition = props.getInt(PROP_WHICH_BATCH, 
+					     PROP_WHICH_BATCH_DEFAULT);
+	this.numberOfPartitions = props.getInt(PROP_TOTAL_BATCHES, 
+					       PROP_TOTAL_BATCHES_DEFAULT);
+
 	logger.info("Audio control file: " + this.audioFile);
 	logger.info("Transcript file: " + this.transcriptFile);
 	this.dictionary = new TrainerDictionary();
 	this.wordSeparator = " \t\n\r\f"; // the white spaces
-	this.currentPartition = thisPartition;
-	this.numberOfPartitions = numberOfPartitions;
 	logger.info("Processing part " + this.currentPartition +
 		    " of " + this.numberOfPartitions);
 	try {
@@ -97,15 +97,6 @@ public class SimpleControlFile implements ControlFile {
 	} catch (IOException ioe) {
 	    throw new Error("IOE: Can't open file " + transcriptFile, ioe);
 	}
-    }
-
-    /**
-     * Initializes the SimpleControlFile with the proper context.
-     *
-     * @param context the context to use
-     */
-    public void initialize(String context) {
-	initialize(context, 1, 1);
     }
 
     /**

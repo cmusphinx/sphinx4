@@ -16,6 +16,10 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Iterator;
+
 import java.io.IOException;
 
 import java.net.URL;
@@ -28,19 +32,41 @@ import java.net.URL;
  */
 public class Trainer {
 
-    private final static String PROP_PREFIX = 
-	"edu.cmu.sphinx.trainer.Trainer.";
+    /**
+     * Prefix for SphinxProperties in this file.
+     */
+    public final static String PROP_PREFIX = "edu.cmu.sphinx.trainer.Trainer.";
 
     /**
-     * The SphinxProperty name for how many files to skip.
+     * The SphinxProperty name for the initial trainer stage to be processed.
      */
-    public final static String PROP_WHICH_BATCH = PROP_PREFIX + "whichBatch";
-    public final static String PROP_TOTAL_BATCHES 
-	= PROP_PREFIX + "totalBatches";
+    public final static String PROP_INITIAL_STAGE = PROP_PREFIX + 
+	"initialStage";
+
+    /**
+     * Default initial stage.
+     */
+    public final static String PROP_INITIAL_STAGE_DEFAULT = 
+	"_00_INITIALIZATION";
+
+    /**
+     * The SphinxProperty name for the final trainer stage to be processed.
+     */
+    public final static String PROP_FINAL_STAGE = PROP_PREFIX + 
+	"finalStage";
+
+    /**
+     * Default final stage.
+     */
+    public final static String PROP_FINAL_STAGE_DEFAULT = 
+	"_40_TIED_CD_TRAIN";
+
 
     private String context;
-    private int whichBatch;
-    private int totalBatches;
+    private String initialStage;
+    private String finalStage;
+    private boolean isStageActive = false;
+    private List StageList = new LinkedList();
     private TrainManager trainManager;
 
 
@@ -71,10 +97,16 @@ public class Trainer {
      */
     private void init(SphinxProperties props) {
         context = props.getContext();
-	whichBatch = props.getInt(PROP_WHICH_BATCH, 0);
-	totalBatches = props.getInt(PROP_TOTAL_BATCHES, 1);
-
 	trainManager = new SimpleTrainManager(context);
+	initialStage = props.getString(PROP_INITIAL_STAGE, 
+				       PROP_INITIAL_STAGE_DEFAULT);
+	finalStage = props.getString(PROP_FINAL_STAGE, 
+				       PROP_FINAL_STAGE_DEFAULT);
+	StageList.add(Stage._00_INITIALIZATION);
+	StageList.add(Stage._10_CI_TRAIN);
+	StageList.add(Stage._20_UNTIED_CD_TRAIN);
+	StageList.add(Stage._30_STATE_PRUNING);
+	StageList.add(Stage._40_TIED_CD_TRAIN);
     }
 
     /**
@@ -82,6 +114,38 @@ public class Trainer {
      */
     private void printAll() {
 	trainManager.train();
+    }
+
+    /**
+     * Process this stage.
+     * 
+     * @param stage the stage to process.
+     */
+    private void processStages() {
+	if (!(StageList.contains(initialStage) && 
+	    StageList.contains(finalStage))) {
+	    return;
+	}
+	for (Iterator iterator = StageList.iterator();
+	     iterator.hasNext();) {
+	    Stage stage = (Stage) iterator.next();
+	    if (!isStageActive) {
+		if (initialStage.equals(stage)) {
+		    isStageActive = true;
+		}
+	    }
+	    if (isStageActive) {
+		/*
+		 * Not sure of an elegant way to do it. For each
+		 * stage, it should call a different method.
+		 *
+		 * run();
+		*/
+		if (finalStage.equals(stage)) {
+		    isStageActive = false;
+		}
+	    }
+	}
     }
 
     /**
@@ -108,6 +172,7 @@ public class Trainer {
 
             Trainer trainer = new Trainer(context);
 	    trainer.printAll();
+	    trainer.processStages();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
