@@ -15,7 +15,7 @@ package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.knowledge.acoustic.*;
-import edu.cmu.sphinx.search.*;
+import edu.cmu.sphinx.decoder.search.*;
 
 /**
  * Provides mechanisms for building and maintaining a sentence HMM.

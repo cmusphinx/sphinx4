@@ -29,7 +29,7 @@ import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.search.*;
+import edu.cmu.sphinx.decoder.search.*;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.linguist.*;
 

@@ -8,7 +8,7 @@
 # WARRANTIES.
 
 # Relative path to the "base" of the source tree
-TOP = ../../../..
+TOP = ../../../../..
 PACKAGE_PATH = edu/cmu/sphinx/decoder/linguist
 
 # By default, build all of the .java files. 
@@ -17,7 +17,7 @@ FILES = $(shell echo *.java)
 # List any sub directories that need to be built.  Start with generic
 # packages going toward specialized.  That is, if one package depends
 # on another, put the dependent package later in the list.
-SUBDIRS = search linguist scorer
+SUBDIRS = 
 
 ##########################################################################
 
