@@ -61,8 +61,8 @@ public class LinguistTimer {
         // profiling of the linguist, independent of the search
         // or scoring
         Random random = new Random(1000);
-        Timer frameTimer = Timer.getTimer("LinguistTimer", "frameTimer");
-        Timer totalTimer = Timer.getTimer("LinguistTimer", "totalTimer");
+        Timer frameTimer = Timer.getTimer("frameTimer");
+        Timer totalTimer = Timer.getTimer("totalTimer");
         // Note: this comparator imposes orderings that are
         // inconsistent with equals.
         System.out.println("TestLinguist: runs " + numRuns + " frames "
@@ -72,7 +72,7 @@ public class LinguistTimer {
             int level = 0;
             List activeList = new ArrayList();
             activeList.add(linguist.getSearchGraph().getInitialState());
-            linguist.start();
+            linguist.startRecognition();
             for (int i = 0; i < numFrames; i++) {
                 List oldList = activeList;
                 activeList = new ArrayList(maxBeam * 10);
@@ -87,7 +87,7 @@ public class LinguistTimer {
                     activeList = activeList.subList(0, maxBeam);
                 }
             }
-            linguist.stop();
+            linguist.stopRecognition();
             frameTimer.dump();
         }
         totalTimer.stop();
