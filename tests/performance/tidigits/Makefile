@@ -46,7 +46,7 @@ HEAP_DUMP =   -Xrunhprof:heap=dump,cpu=samples
 #GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 #GC_FLAGS= -ms1g -XX:+UseConcMarkSweepGC -XX:-UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 
-GC_FLAGS = -ms1g -mx1g
+GC_FLAGS = -ms128m -mx128m
 
 #PROFILE2_FLAGS= -Xrunhprof:file=log.txt
 PROFILE2_FLAGS= -Xrunhprof:cpu=samples,file=log.txt
@@ -245,7 +245,6 @@ wsj_tidigits_super_quick:
 wsj_tidigits_super_quick_tree:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
-	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.TreeLinguist\
 	-Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushterbi=false\
 	edu.cmu.sphinx.decoder.BatchDecoder wsjDigits.props \
@@ -262,7 +261,6 @@ wsj_tidigits_super_quick_bush:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
-	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.TreeLinguist\
 	-Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushterbi=true\
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true\
@@ -277,7 +275,6 @@ wsj_tidigits_super_quick_bush:
 wsj_tidigits_super_quick_tree_fst:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
-	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.TreeLinguist\
 	-Dedu.cmu.sphinx.model.acoustic.useComposites=false\
 	-Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar\
