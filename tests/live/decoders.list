@@ -1,4 +1,4 @@
-decoders = isolatedDigits connectedDigits bishop player jsgf alphaSpelling
+decoders = isolatedDigits connectedDigits bishop weather player jsgf alphaSpelling
 
 # connectedDigits
 connectedDigits.name = Connected Digits
@@ -34,3 +34,8 @@ player.testFile=./player/player.test
 integers.name=Integers
 integers.configFile=./jsgf/integers.config.xml
 integers.testFile=./jsgf/integers.test
+
+# Weather
+weather.name=Weather
+weather.configFile = ./weather/weather.config.xml
+weather.testFile = ./weather/weather.transcript
