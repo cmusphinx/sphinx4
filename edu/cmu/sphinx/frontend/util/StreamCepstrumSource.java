@@ -11,7 +11,7 @@
  */
 
 
-package edu.cmu.sphinx.frontend;
+package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.Cepstrum;
 import edu.cmu.sphinx.frontend.CepstrumSource;

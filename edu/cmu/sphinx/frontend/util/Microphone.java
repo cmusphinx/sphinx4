@@ -11,8 +11,14 @@
  */
 
 
-package edu.cmu.sphinx.frontend;
+package edu.cmu.sphinx.frontend.util;
 
+import edu.cmu.sphinx.frontend.Audio;
+import edu.cmu.sphinx.frontend.AudioSource;
+import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.Signal;
+import edu.cmu.sphinx.frontend.Utterance;
 import edu.cmu.sphinx.frontend.util.Util;
 
 import edu.cmu.sphinx.util.SphinxProperties;
