@@ -120,9 +120,7 @@ public class BatchDecoder {
      * @param batchFile the file that contains a list of files to decode
      */
     public BatchDecoder(String context, String batchFile) throws IOException {
-	this.context = context;
-	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        init(props, batchFile);
+        this(context, batchFile, true);
     }
 
     /**
@@ -137,14 +135,31 @@ public class BatchDecoder {
     }
 
     /**
-     * Common intialization code
+     * Constructs a BatchDeocder with the given context, batch file,
+     * and a boolean indicating whether to initialize the decoder.
      *
-     * @param props the sphinx properties
-     * 
-     * @param batchFile the batch file
+     * @param context the context of this BatchDecoder
+     * @param batchFile the file that contains a list of files to decode
+     * @param initDecoder indicates whether to initialize the decoder 
      */
-    private void init(SphinxProperties props, String batchFile) 
-                                throws IOException {
+    protected BatchDecoder(String context, String batchFile, 
+                           boolean initDecoder) throws IOException {
+        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
+        if (initDecoder) {
+            init(props, batchFile);
+        } else {
+            initSphinxProperties(props);
+            this.batchFile = batchFile;
+        }
+    }
+
+
+    /**
+     * Initialize the SphinxProperties.
+     *
+     * @param props the SphinxProperties
+     */
+    private void initSphinxProperties(SphinxProperties props) {
         context = props.getContext();
 	inputDataType = props.getString(PROP_INPUT_TYPE, 
                                         PROP_INPUT_TYPE_DEFAULT);
@@ -152,6 +167,21 @@ public class BatchDecoder {
 	whichBatch = props.getInt(PROP_WHICH_BATCH, PROP_WHICH_BATCH_DEFAULT);
 	totalBatches = props.getInt(PROP_TOTAL_BATCHES, 
                                     PROP_TOTAL_BATCHES_DEFAULT);
+    }
+
+
+    /**
+     * Common intialization code
+     *
+     * @param props the sphinx properties
+     * 
+     * @param batchFile the batch file
+     */
+    private void init(SphinxProperties props, String batchFile) 
+        throws IOException {
+
+        initSphinxProperties(props);
+        this.batchFile = batchFile;
 
 	if (inputDataType.equals("audio")) {
 	    dataSource = new StreamAudioSource
@@ -165,7 +195,6 @@ public class BatchDecoder {
 	}
 
 	decoder = new Decoder(context, dataSource);
-        this.batchFile = batchFile;
     }
 
 
