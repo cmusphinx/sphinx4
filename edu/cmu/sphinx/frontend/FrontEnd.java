@@ -80,6 +80,14 @@ public class FrontEnd implements DataSource, Runnable {
 	"edu.cmu.sphinx.frontend.fftNPoint";
 
 
+    /**
+     * The name of the SphinxProperty for the size of a cepstrum, which is
+     * 13 by default.
+     */
+    public static final String PROP_CEPSTRUM_SIZE =
+    "edu.cmu.sphinx.frontend.cepstrumSize";
+    
+
     private int samplesPerAudioFrame;
     private List processors = null;
     private DataSource audioFrameSource;

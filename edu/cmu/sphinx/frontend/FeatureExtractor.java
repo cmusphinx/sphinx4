@@ -115,8 +115,7 @@ public class FeatureExtractor extends DataProcessor {
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
 	featureLength = properties.getInt(PROP_FEATURE_LENGTH, 39);
 	window = properties.getInt(PROP_FEATURE_WINDOW, 3);
-	cepstrumLength = properties.getInt
-	    (CepstrumProducer.PROP_CEPSTRUM_SIZE, 13);
+	cepstrumLength = properties.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
     }
 
 

@@ -14,11 +14,17 @@ import java.util.ListIterator;
 
 /**
  * Apply Cepstral Mean Normalization (CMN) to the set of input MFC frames,
- * that is, a CepstrumFrame. It subtracts the mean of the input from
- * each frame. The Sphinx properties that affect this processor are: <pre>
+ * that is, a CepstrumFrame. It subtracts the mean of all the input so far
+ * from each cepstrum. The Sphinx properties that affect this processor
+ * are: <pre>
  * edu.cmu.sphinx.frontend.cmn.initialCepstralMean
  * edu.cmu.sphinx.frontend.cmn.windowSize
  * edu.cmu.sphinx.frontend.cmn.shiftWindow </pre>
+ * The mean of all the input cepstrum so far is not recalculated
+ * for each cepstrum. This mean is recalculated after
+ * <code>edu.cmu.sphinx.frontend.cmn.shiftWindow</code> cepstrum.
+ * This mean is calculated by dividing the sum of all input cepstrum so
+ * far by the number of input cepstrum. After
  */
 public class CepstralMeanNormalizer extends DataProcessor {
 
@@ -41,8 +47,8 @@ public class CepstralMeanNormalizer extends DataProcessor {
     /**
      * The name of the SphinxProperty for the CMN shifting window,
      * which has a default value of 800.
-     * The shifting window specifies how many frames after which
-     * the window is shifted.
+     * The shifting window specifies how many cepstrum after which
+     * we re-calculate the cepstral mean.
      */
     public static final String PROP_CMN_SHIFT_WINDOW =
 	"edu.cmu.sphinx.frontend.cmn.shiftWindow";
@@ -87,8 +93,7 @@ public class CepstralMeanNormalizer extends DataProcessor {
 	// TODO : specify the context
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
 	initialMean = properties.getFloat(PROP_INITIAL_MEAN, 12.0f);
-	cepstrumLength = properties.getInt
-	    (CepstrumProducer.PROP_CEPSTRUM_SIZE, 13);
+	cepstrumLength = properties.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
 	cmnWindow = properties.getInt(PROP_CMN_WINDOW, 500);
 	cmnShiftWindow = properties.getInt(PROP_CMN_SHIFT_WINDOW, 800);
     }
