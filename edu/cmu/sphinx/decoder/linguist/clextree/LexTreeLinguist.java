@@ -858,10 +858,17 @@ public class LexTreeLinguist implements  Linguist {
                 for (int i = 0; i < arcs.length; i++) {
                     HMMStateArc arc = arcs[i];
                     if (arc.getHMMState().isEmitting()) {
-                        nextStates[i] = new LexTreeHMMState(
-                            (HMMNode) getNode(), getWordHistory(),
-                            arc.getHMMState(), logOne, logOne,
-                            arc.getLogProbability());
+                        // if its a self loop and the prob. matches
+                        // reuse the state
+                        if (arc.getHMMState()  == hmmState &&
+                            logAcousticProbability == arc.getLogProbability()) {
+                            nextStates[i] = this;
+                        } else {
+                            nextStates[i] = new LexTreeHMMState(
+                                (HMMNode) getNode(), getWordHistory(),
+                                arc.getHMMState(), logOne, logOne,
+                                arc.getLogProbability());
+                        }
                     } else {
                         nextStates[i] = new LexTreeNonEmittingHMMState(
                             (HMMNode) getNode(), getWordHistory(),
