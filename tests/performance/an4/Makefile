@@ -81,6 +81,7 @@ an4_words_wordlist:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path=./an4_words.wordlist\
+    -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=1.0E-25\
     -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-250 \
     -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10.0 \
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
