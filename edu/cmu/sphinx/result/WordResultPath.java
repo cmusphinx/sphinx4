@@ -52,7 +52,7 @@ public class WordResultPath extends Vector implements Path {
      * @see edu.cmu.sphinx.result.Path#getScore()
      */
     public double getScore() {
-        double score = LogMath.getLogZero();
+        double score = logMath.getLogOne();
         Iterator i = iterator();
         while (i.hasNext()) {
             WordResult wr = (WordResult)i.next();
