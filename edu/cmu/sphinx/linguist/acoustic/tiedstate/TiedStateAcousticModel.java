@@ -138,6 +138,7 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
     // -----------------------------
     transient protected Timer loadTimer;
     transient private Map compositeSenoneSequenceCache = new HashMap();
+    private boolean allocated = false;
 
 
     /* (non-Javadoc)
@@ -170,11 +171,14 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
      *
      */
     public void allocate() throws IOException {
-        this.loadTimer = Timer.getTimer(TIMER_LOAD);
-        loadTimer.start();
-        loader.load();
-        loadTimer.stop();
-        logInfo();
+	if (!allocated) {
+	    this.loadTimer = Timer.getTimer(TIMER_LOAD);
+	    loadTimer.start();
+	    loader.load();
+	    loadTimer.stop();
+	    logInfo();
+	    allocated = true;
+	}
     }
     
     /* (non-Javadoc)
@@ -363,7 +367,6 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
       */
      public Iterator getContextIndependentUnitIterator() {
 	 return loader.getContextIndependentUnits().values().iterator();
-
      }
 
      /**
