@@ -38,6 +38,13 @@ public class GapInsertionDetector {
     private HypothesisFile hypothesisFile;
     private int totalGapInsertions;
 
+    /**
+     * Create a gap insertion detector to detect gap insertions using
+     * the given reference file and hypothesis file.
+     *
+     * @param referenceFile the file of references
+     * @param hypothesisFile the file of hypotheses
+     */
     public GapInsertionDetector(String referenceFile, String hypothesisFile)
         throws IOException {
         this.referenceFile = new ReferenceFile(referenceFile);
@@ -151,6 +158,13 @@ class ReferenceUtterance {
     private float endTime;
     private String[] words;
 
+    /**
+     * Creates a ReferenceUtterance from the given line of reference.
+     *
+     * @param line the line of reference, in the format:
+     *   [test_name] [category] [speaker_name|"inter_segment_gap"]
+     *   [start_time] [end_time] [<params>] [reference_text]
+     */
     ReferenceUtterance(String line) {
         StringTokenizer st = new StringTokenizer(line);
         st.nextToken();                 // parse the test set name
@@ -220,6 +234,11 @@ class HypothesisFile {
         reader = new BufferedReader(new FileReader(fileName));
     }
 
+    /**
+     * Returns the next hypothesized word in the hypothesis file.
+     *
+     * @return the next hypothesized word
+     */
     HypothesisWord nextWord() throws IOException {
         if (iterator == null || !iterator.hasNext()) {
             HypothesisUtterance utterance = nextUtterance();
@@ -246,7 +265,12 @@ class HypothesisFile {
         String line = reader.readLine();
         if (line != null) {
             utteranceCount++;
-            return new HypothesisUtterance(line);
+            HypothesisUtterance utterance = new HypothesisUtterance(line);
+            if (utterance.getWordCount() <= 0) {
+                return nextUtterance();
+            } else {
+                return utterance;
+            }
         } else {
             return null;
         }
@@ -262,18 +286,22 @@ class HypothesisFile {
     }
 }
 
+/**
+ * A hypothesis utterance, which will give you a list of hypothesis words.
+ */
 class HypothesisUtterance {
 
     private List words;
     private float startTime;
     private float endTime;
 
+    /**
+     * Creates a hypothesis utterance from a line of input describing
+     * the hypothesis.
+     */
     HypothesisUtterance(String line) {
         words = new LinkedList();
         StringTokenizer st = new StringTokenizer(line, " \t\n\r\f(),");
-        if (!st.hasMoreTokens()) {
-            throw new Error("Utterance has no words");
-        }
         while (st.hasMoreTokens()) {
             String text = st.nextToken();
             float myStartTime = Float.parseFloat(st.nextToken());
@@ -282,51 +310,100 @@ class HypothesisUtterance {
                 (text, myStartTime, myEndTime);
             words.add(word);
         }
-        HypothesisWord firstWord = (HypothesisWord) words.get(0);
-        startTime = firstWord.getStartTime();
-        HypothesisWord lastWord = (HypothesisWord) words.get(words.size()-1);
-        endTime = lastWord.getEndTime();
+        if (words.size() > 0) {
+            HypothesisWord firstWord = (HypothesisWord) words.get(0);
+            startTime = firstWord.getStartTime();
+            HypothesisWord lastWord = 
+                (HypothesisWord) words.get(words.size()-1);
+            endTime = lastWord.getEndTime();
+        }
     }
 
+    /**
+     * Returns the number of words in this hypothesis.
+     *
+     * @return the number of words in this hypothesis
+     */
     int getWordCount() {
         return words.size();
     }
 
+    /**
+     * Returns a list of the words in this hypothesis.
+     *
+     * @return a list of the words in this hypothesis
+     */
     List getWords() {
         List newList = new LinkedList();
         newList.addAll(words);
         return newList;
     }
 
+    /**
+     * Returns the start time of this hypothesis.
+     *
+     * @return the start time of this hypothesis
+     */
     float getStartTime() {
         return startTime;
     }
 
+    /**
+     * Returns the end time of this hypothesis.
+     *
+     * @return the end time of this hypothesis
+     */
     float getEndTime() {
         return endTime;
     }
 }
 
+/**
+ * A word in the hypothesis, containing information about when the
+ * word started and ended.
+ */
 class HypothesisWord {
 
     private String text;
     private float startTime;
     private float endTime;
 
+    /**
+     * Constructs a hypothesis word with the given start and end times.
+     *
+     * @param text the text of the hypothesized word
+     * @param startTime the starting time of the word
+     * @param endTime the ending time of the word
+     */
     HypothesisWord(String text, float startTime, float endTime) {
         this.text = text;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
+    /**
+     * Returns the text of the word.
+     *
+     * @return the text of the word
+     */
     String getText() {
         return text;
     }
 
+    /**
+     * Returns the starting time of the word.
+     *
+     * @return the starting time of the word
+     */
     float getStartTime() {
         return startTime;
     }
 
+    /**
+     * Returns the ending time of the word.
+     *
+     * @return the ending time of the word
+     */
     float getEndTime() {
         return endTime;
     }
