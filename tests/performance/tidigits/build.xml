@@ -316,50 +316,51 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
         </java>
     </target>
 
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * tidigits_wordlist_live                                 * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * --> 
+    <!-- * tidigits_wordlist_live                                 * --> 
+    <!-- *                                                        * --> 
+    <!-- ********************************************************** --> 
     <target name="tidigits_wordlist_live"
-	    description="TIDIGITS live test set with a wordlist language model">
+            description="Write me!">
         <java classpath="${classes_dir}"
-	      classname="${live_main}"
-	      fork="true">
-            <jvmarg value="-ea"/>
-            <jvmarg value="-${jit}"/>   
-            <jvmarg value="-ms${initial_heap_size}"/>
-            <jvmarg value="-mx${maximum_heap_size}"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.skip"
-                         value="${skip}"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer"
-                         value="50"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.transcriptFile"
-                         value="transcript.txt"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile"
-                         value="/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.keepAudioReference"
-                         value="false"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.bytesPerAudioFrame"
-                         value="320"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.cmn"
-                         value="edu.cmu.sphinx.frontend.LiveCMN"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.featureExtractor"
-                         value="edu.cmu.sphinx.frontend.LiveFeatureExtractor"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.endpointer"
-                         value="edu.cmu.sphinx.frontend.endpoint.LevelTracker"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold"
-                         value="16"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature"
-                         value="true"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.hypothesisTranscript"
-                         value="hypothesis.txt"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.alignInterval"
-                         value="870"/>
-            <arg value="tidigits.props"/> 
-            <arg value="tidigits.batch"/> 
+              classname="${batch_main}"
+              fork="true">
+             <jvmarg value="-ea"/>
+             <jvmarg value="-${jit}"/>   
+             <jvmarg value="-ms${initial_heap_size}"/>
+             <jvmarg value="-mx${maximum_heap_size}"/> 
+             <jvmarg value="-Xloggc:${gc_log_file}"/>
+             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
+                          value="${skip}"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer"
+                          value="50"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.keepAudioReference"
+                          value="false"/>
+             <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.dataSource"
+                          value="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.featureExtractor"
+                          value="edu.cmu.sphinx.frontend.LiveFeatureExtractor"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile"
+                          value="/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold"
+                          value="16"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.bytesPerAudioFrame"
+                          value="320"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.skip"
+                          value="$(SKIP)"/>
+             <sysproperty key="java.util.logging.config.file"
+                          value="${logger_props}"/>
+             <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.alignInterval"
+                          value="870"/>
+             <sysproperty key="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature"
+                          value="true"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.cmn"
+                          value="edu.cmu.sphinx.frontend.LiveCMN"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.endpointer"
+                          value="edu.cmu.sphinx.frontend.endpoint.LevelTracker"/>
+             <arg value="tidigits.props"/>
+             <arg value="tidigits.batch"/>
         </java>
     </target>
 
