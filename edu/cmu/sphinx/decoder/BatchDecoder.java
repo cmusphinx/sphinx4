@@ -123,17 +123,7 @@ public class BatchDecoder {
         this(context, batchFile, true);
     }
 
-    /**
-     * Constructs a BatchDecoder.
-     *
-     * @param props the sphinx properties to use
-     * @param batchFile the file that contains a list of files to decode
-     */
-    public BatchDecoder(SphinxProperties props, String batchFile) 
-        throws IOException {
-            init(props, batchFile);
-    }
-
+    
     /**
      * Constructs a BatchDeocder with the given context, batch file,
      * and a boolean indicating whether to initialize the decoder.
@@ -230,7 +220,15 @@ public class BatchDecoder {
 
         System.out.println("\nBatchDecoder: All files decoded\n");
         Timer.dumpAll(context);
-	decoder.showSummary();
+	getDecoder().showSummary();
+    }
+
+
+    /**
+     * Returns the Decoder.
+     */
+    protected Decoder getDecoder() {
+        return decoder;
     }
 
 
@@ -313,7 +311,7 @@ public class BatchDecoder {
 
         // usually 25 features in one audio frame
         // but it doesn't really matter what this number is
-        decoder.decode(ref);
+        getDecoder().decode(ref);
     }
 
 
