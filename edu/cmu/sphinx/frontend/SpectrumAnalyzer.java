@@ -42,12 +42,12 @@ public class SpectrumAnalyzer extends DataProcessor {
      * @param context the context of the SphinxProperties to use
      */
     public SpectrumAnalyzer(String context) {
-	initSphinxProperties(context);
+        super("SpectrumAnalyzer", context);
+	initSphinxProperties();
 	computeLogBase2(this.numberFftPoints);
 	createWeightFft(numberFftPoints, false);
         initComplexArrays();
         weightFftTimesFrom2 = new Complex();
-        setTimer(Timer.getTimer(context, "SpectrumAnalyzer"));
     }
 
 
@@ -148,9 +148,8 @@ public class SpectrumAnalyzer extends DataProcessor {
      *
      * @param context the context of the SphinxProperties used
      */
-    private void initSphinxProperties(String context) {
+    private void initSphinxProperties() {
 
-        setSphinxProperties(context);
 	SphinxProperties properties = getSphinxProperties();
 
         int sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);

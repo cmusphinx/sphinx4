@@ -40,4 +40,14 @@ public class AudioFrame implements Data {
     public double[] getAudioSamples() {
 	return audioSamples;
     }
+
+
+    /**
+     * Returns a string representation of this AudioFrame.
+     *
+     * @return a string representation of this AudioFrame
+     */
+    public String toString() {
+        return Util.doubleArrayToString(audioSamples);
+    }
 }

@@ -63,6 +63,7 @@ public class MelFilterbank extends DataProcessor {
 
     private MelFilter[] filter;
 
+
     /**
      * Constructs a default MelFilterbank object with the given 
      * SphinxProperties context.
@@ -70,19 +71,19 @@ public class MelFilterbank extends DataProcessor {
      * @param context the context of the SphinxProperties to use
      */
     public MelFilterbank(String context) {
-	initSphinxProperties(context);
+        super("MelFilterbank", context);
+	initSphinxProperties();
 	buildFilterbank(numberFftPoints, numberFilters, minFreq, maxFreq);
-        setTimer(Timer.getTimer(context, "MelFilterbank"));
     }
+
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      *
      * @param context the context of the SphinxProperties used
      */
-    private void initSphinxProperties(String context) {
+    private void initSphinxProperties() {
 
-        setSphinxProperties(context);
 	SphinxProperties properties = getSphinxProperties();
 
         sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);
@@ -91,13 +92,12 @@ public class MelFilterbank extends DataProcessor {
 
 	numberFilters = properties.getInt(PROP_NUMBER_FILTERS, 31);
 
-	/**
-	 * Oh, don't we all love legacy code with its inescrutable constants!
-	 */
+        // Oh, don't we all love legacy code with its inescrutable constants!
 	minFreq = properties.getDouble(PROP_MIN_FREQ, 200);
 
 	maxFreq = properties.getDouble(PROP_MAX_FREQ, 3500);
     }
+
 
     /**
      * Compute mel frequency from linear frequency.
@@ -110,11 +110,11 @@ public class MelFilterbank extends DataProcessor {
      * @return the frequency in a mel scale
      *
      */
-
     private double linToMelFreq(double inputFreq) {
 
 	return (2595.0 * (Math.log(1.0 + inputFreq / 700.0) / Math.log(10.0)));
     }
+
 
     /**
      * Compute linear frequency from mel frequency.
@@ -124,11 +124,11 @@ public class MelFilterbank extends DataProcessor {
      * @return the frequency in a linear scale
      *
      */
-
     private double melToLinFreq(double inputFreq) {
 
 	return (700.0 * (Math.pow(10.0, (inputFreq / 2595.0)) - 1.0));
     }
+
 
     /**
      * Sets the given frequency to the nearest frequency bin from the
@@ -150,6 +150,7 @@ public class MelFilterbank extends DataProcessor {
 	}
 	return stepFreq * Math.round (inFreq / stepFreq);
     }
+
 
     /**
      * Build a mel filterbank with the parameters given.
@@ -252,7 +253,8 @@ public class MelFilterbank extends DataProcessor {
      * @throws java.lang.IllegalArgumentException
      *
      */
-    private MelSpectrum process (Spectrum input) throws IllegalArgumentException {
+    private MelSpectrum process (Spectrum input) throws 
+        IllegalArgumentException {
 
 	MelSpectrum outputMelSpectrum;
 

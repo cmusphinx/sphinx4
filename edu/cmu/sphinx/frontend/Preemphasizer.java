@@ -51,18 +51,16 @@ public class Preemphasizer extends DataProcessor {
      * @param the context of SphinxProperty this Preemphasizer uses
      */
     public Preemphasizer(String context) {
-        initSphinxProperties(context);
-        setTimer(Timer.getTimer(context, "Preemphasizer"));
+        super("Preemphasizer", context);
+        initSphinxProperties();
     }
 
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void initSphinxProperties(String context) {
-	setSphinxProperties(context);
-        SphinxProperties properties = getSphinxProperties();
-	preemphasisFactor = properties.getFloat
+    private void initSphinxProperties() {
+	preemphasisFactor = getSphinxProperties().getFloat
 	    (PROP_PREEMPHASIS_FACTOR, (float) 0.97);
     }
 
@@ -126,7 +124,7 @@ public class Preemphasizer extends DataProcessor {
         getTimer().stop();
 
 	if (getDump()) {
-	    System.out.println("PREEMPHASIS " + Util.doubleArrayToString(in));
+	    System.out.println("PREEMPHASIS " + input.toString());
 	}
 
 	return input;

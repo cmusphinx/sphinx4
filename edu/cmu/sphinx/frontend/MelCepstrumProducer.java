@@ -35,9 +35,9 @@ public class MelCepstrumProducer extends DataProcessor {
      * @param context the context of the SphinxProperties to use
      */
     public MelCepstrumProducer(String context) {
-	initSphinxProperties(context);
+        super("MelCepstrum", context);
+	initSphinxProperties();
         computeMelCosine();
-        setTimer(Timer.getTimer(context, "MelCepstrum"));
     }
 
 
@@ -46,10 +46,8 @@ public class MelCepstrumProducer extends DataProcessor {
      *
      * @param context the context of the SphinxProperties used
      */
-    private void initSphinxProperties(String context) {
-        setSphinxProperties(context);
+    private void initSphinxProperties() {
 	SphinxProperties properties = getSphinxProperties();
-
         cepstrumSize = properties.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
         numberMelFilters = properties.getInt(PROP_NUM_MEL_FILTERS, 31);
     }

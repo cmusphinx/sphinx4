@@ -64,8 +64,6 @@ public class CepstralMeanNormalizer extends DataProcessor {
     private float[] sum;
     private int cmnShiftWindow;
     private int cmnWindow;
-
-    private Timer normTimer;
     
 
     /**
@@ -75,10 +73,9 @@ public class CepstralMeanNormalizer extends DataProcessor {
      * @param context the context of the SphinxProperties to use
      */
     public CepstralMeanNormalizer(String context) {
-        initSphinxProperties(context);
+        super("CMN", context);
+        initSphinxProperties();
 	initMeansSums();
-        setTimer(Timer.getTimer(context, "CMN"));
-        normTimer = Timer.getTimer(context, "CMN.norm");
     }
 
 
@@ -95,9 +92,8 @@ public class CepstralMeanNormalizer extends DataProcessor {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void initSphinxProperties(String context) {
-	setSphinxProperties(context);
-	SphinxProperties properties = getSphinxProperties();
+    private void initSphinxProperties() {
+        SphinxProperties properties = getSphinxProperties();
 	initialMean = properties.getFloat(PROP_INITIAL_MEAN, 12.0f);
 	cepstrumLength = properties.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
 	cmnWindow = properties.getInt(PROP_CMN_WINDOW, 500);

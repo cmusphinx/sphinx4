@@ -64,19 +64,18 @@ public class Windower extends DataProcessor {
      * @param context the context of the SphinxProperties this Windower uses
      */
     public Windower(String context) {
-	initSphinxProperties(context);
+        super("Windower", context);
+	initSphinxProperties();
 	createWindow();
         outputQueue = new Vector();
-        setTimer(Timer.getTimer(context, "Windower"));
     }
 
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void initSphinxProperties(String context) {
+    private void initSphinxProperties() {
 
-        setSphinxProperties(context);
 	SphinxProperties properties = getSphinxProperties();
 
         int sampleRate = properties.getInt

@@ -66,21 +66,33 @@ public abstract class DataProcessor implements DataSource {
 
 
     /**
-     * the predecessor DataSource to pull Data objects from
+     * The name of this DataProcessor.
      */
-    private DataSource predecessorDataSource;
+    private String name;
+
+
+    /**
+     * The context of this DataProcessor.
+     */
+    private String context;
+
+
+    /**
+     * The predecessor DataSource to pull Data objects from
+     */
+    private DataSource predecessorDataSource = null;
 
 
     /**
      * A Timer for timing processing.
      */
-    private Timer timer;
+    private Timer timer = null;
 
     
     /**
      * Indicates whether to dump the processed Data
      */
-    private boolean dump;
+    private boolean dump = false;
 
 
     /**
@@ -90,28 +102,46 @@ public abstract class DataProcessor implements DataSource {
 
 
     /**
+     * Constructs a DataProcessor of the given name and at the given context. 
+     *
+     * @param name the name of this DataProcessor
+     * @param context the context of this DataProcessor
+     */
+    protected DataProcessor(String name, String context) {
+        this.name = name;
+        this.context = context;
+        this.timer = Timer.getTimer(context, name);
+        this.sphinxProperties = SphinxProperties.getSphinxProperties(context);
+    }
+
+
+    /**
+     * Returns the name of this DataProcessor.
+     *
+     * @return the name of this DataProcessor
+     */
+    public String getName() {
+        return name;
+    }
+
+
+    /**
+     * Returns the context of this DataProcessor.
+     *
+     * @return the context of this DataProcessor
+     */
+    public String getContext() {
+        return context;
+    }
+
+
+    /**
      * Returns the SphinxProperties used by this DataProcessor.
      *
      * @return the SphinxProperties
      */
     public SphinxProperties getSphinxProperties() {
         return sphinxProperties;
-    }
-
-
-    /**
-     * Sets the SphinxProperties used by this DataProcessor.
-     * This method is effective only on the first call. Each time this
-     * method is called, it will check if the actual SphinxProperties
-     * class variable is null, and will set it only if it is not null.
-     *
-     * @param context the context of the SphinxProperties to set
-     */
-    public void setSphinxProperties(String context) {
-        if (this.sphinxProperties == null) {
-            this.sphinxProperties = SphinxProperties.getSphinxProperties
-                (context);
-        }
     }
 
 
@@ -136,22 +166,12 @@ public abstract class DataProcessor implements DataSource {
 
 
     /**
-     * Returns the Timer for metrics collection purposes.
+     * Returns the Timer for metrics collection purposes. 
      *
      * @return the Timer
      */
     public final Timer getTimer() {
         return timer;
-    }
-
-
-    /**
-     * Sets the Timer for metrics collection purposes.
-     *
-     * @param timer the Timer
-     */
-    public void setTimer(Timer timer) {
-        this.timer = timer;
     }
 
 
@@ -172,5 +192,15 @@ public abstract class DataProcessor implements DataSource {
      */
     public void setDump(boolean dump) {
 	this.dump = dump;
+    }
+
+
+    /**
+     * Returns the name of this DataProcessor.
+     *
+     * @return the name of this DataProcessor
+     */
+    public String toString() {
+        return name;
     }
 }

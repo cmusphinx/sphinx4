@@ -55,7 +55,6 @@ public class FeatureExtractor extends DataProcessor {
     private int window;
     private int jp1, jp2, jp3, jf1, jf2, jf3;
     private InputQueue inputQueue;
-    private Timer fcTimer;
     private boolean segmentStart;
     private boolean segmentEnd;
 
@@ -105,10 +104,9 @@ public class FeatureExtractor extends DataProcessor {
      * @param context the context of the SphinxProperties to use
      */
     public FeatureExtractor(String context) {
-	initSphinxProperties(context);
+        super("FeatureExtractor", context);
+	initSphinxProperties();
 	cepstraBuffer = new float[LIVEBUFBLOCKSIZE][];
-        setTimer(Timer.getTimer(context, "FeatureExtractor"));
-        fcTimer = Timer.getTimer(context, "featComp");
         inputQueue = new InputQueue();
     }
 
@@ -116,8 +114,7 @@ public class FeatureExtractor extends DataProcessor {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void initSphinxProperties(String context) {
-	setSphinxProperties(context);
+    private void initSphinxProperties() {
 	SphinxProperties properties = getSphinxProperties();
 	featureLength = properties.getInt(PROP_FEATURE_LENGTH, 39);
 	window = properties.getInt(PROP_FEATURE_WINDOW, 3);

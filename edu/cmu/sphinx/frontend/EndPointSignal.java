@@ -64,7 +64,7 @@ public class EndPointSignal implements Signal {
      * @return a hash code value for this EndPointSignal
      */
     public int hashCode() {
-        return toString.hashCode();
+        return toString().hashCode();
     }
 
 

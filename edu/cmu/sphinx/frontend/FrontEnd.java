@@ -34,7 +34,9 @@ import java.util.Vector;
  *
  * The processors will be executed in the order that they are added. The
  * first processor must take <b><code>AudioFrame</code></b> as
- * input, and the last processor must output <b><code>Features</code></b>. 
+ * input, and the last processor must output <b><code>Features</code></b>.
+ *
+ * @see FeatureFrame 
  */
 public class FrontEnd implements DataSource, Runnable {
 
@@ -153,6 +155,8 @@ public class FrontEnd implements DataSource, Runnable {
      *
      * @return a Data object, which is usually a FeatureFrame, or null
      *    if no Data available
+     *
+     * @see FeatureFrame
      */
     public Data read() {
         synchronized (queue) {
