@@ -79,7 +79,7 @@ NOTE:  Before running the tests, you must have already built
 	    <exec executable="chmod">
 	    <arg line="a+x ./compareOutput.sh"/>
 	    </exec>
-	    <exec executable="compareOutput.sh">
+	    <exec executable="./compareOutput.sh">
 	    <arg line="ngrams.out s4.hub4.ngram.scores.out backoff.out s4.hub4.ngram.backoff.out"/>
 	    </exec>
     </target>
