@@ -38,7 +38,7 @@ public interface Utterance {
     /**
      * Gets the transcript iterator.
      */
-    public void getTranscriptIterator();
+    public void startTranscriptIterator();
 
     /**
      * Returns whether there is a next transcript.

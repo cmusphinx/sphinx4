@@ -56,6 +56,7 @@ public class SimpleTranscript implements Transcript {
      * @param transcript this transcript's text
      * @param dictionary this transcript's dictionary
      * @param isExact whether the transcription is exact
+     * @param wordSeparator string containing the word separator characters.
      */
     public SimpleTranscript(String transcript, Dictionary dictionary, 
 			    boolean isExact, String wordSeparator) {
@@ -77,6 +78,7 @@ public class SimpleTranscript implements Transcript {
 	this.transcript = transcript;
 	this.dictionary = dictionary;
 	this.isExact = isExact;
+	this.wordSeparator = " \t\n\r\f"; // the white spaces
     }
 
     /**
@@ -152,18 +154,18 @@ public class SimpleTranscript implements Transcript {
     }
 
     /**
-     * Returns a tring representation of this transcript.
+     * Returns a string representation of this transcript.
      *
      * @return the string representation
      */
     public String toString() {
 	String result = "";
 
-	result = "Dict: " + dictionary;
+	result = "Dict: " + dictionary + " : transcript ";
 	if (isExact) {
-	    result += " IS exact: ";
+	    result += "IS exact: ";
 	} else {
-	    result += " is NOT exact: ";
+	    result += "is NOT exact: ";
 	}
 	result += transcript;
 	return result;

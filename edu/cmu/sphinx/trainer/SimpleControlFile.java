@@ -31,13 +31,15 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Provides mechanisms for accessing a next utterance's file name
  * and transcription.
  */
 public class SimpleControlFile implements ControlFile {
 
-    private Utterance utterance;        // the utterance
     private SphinxProperties props;	// the sphinx properties
     private String audioFile;           // the audio file
     private String transcriptFile;      // the transcript file
@@ -49,6 +51,12 @@ public class SimpleControlFile implements ControlFile {
     private Iterator transcriptFileIterator; // iterator for the transcriptions
     private List audioFileList;         // list containing the audio files
     private List transcriptFileList;    // list containing the transcriptions
+
+    /*
+     * The logger for this class
+     */
+    private static Logger logger =
+        Logger.getLogger("edu.cmu.sphinx.trainer.SimpleControlFile");
 
     /**
      * Constructor for SimpleControlFile.
@@ -71,10 +79,14 @@ public class SimpleControlFile implements ControlFile {
 					   PROP_AUDIO_FILE_DEFAULT);
 	this.transcriptFile = props.getString(PROP_TRANSCRIPT_FILE, 
 					   PROP_TRANSCRIPT_FILE_DEFAULT);
+	logger.info("Audio control file: " + this.audioFile);
+	logger.info("Transcript file: " + this.transcriptFile);
 	this.dictionary = new TrainerDictionary();
 	this.wordSeparator = " \t\n\r\f"; // the white spaces
 	this.currentPartition = thisPartition;
 	this.numberOfPartitions = numberOfPartitions;
+	logger.info("Processing part " + this.currentPartition +
+		    " of " + this.numberOfPartitions);
 	try {
 	    this.audioFileList = getLines(audioFile);
 	} catch (IOException ioe) {
@@ -106,6 +118,8 @@ public class SimpleControlFile implements ControlFile {
 
     /**
      * Returns whether there is another utterance.
+     *
+     * @return true if there is another utterance.
      */
     public boolean hasMoreUtterances() {
 	// Should throw exception or break if one has next and the
@@ -116,48 +130,14 @@ public class SimpleControlFile implements ControlFile {
 
     /**
      * Gets the next utterance.
+     *
+     * @return the next utterance.
      */
     public Utterance nextUtterance() {
 	Utterance utterance = new SimpleUtterance((String) audioFileIterator.next());
 	utterance.add((String) transcriptFileIterator.next(), dictionary,
 		      false, wordSeparator);
 	return utterance;
-    }
-
-    /**
-     * Gets the next utterance's full path file name.
-     */
-    public String getNextUttId() {
-	if (audioFileIterator.hasNext()) {
-	    return (String) audioFileIterator.next();
-	} else {
-	    return null;
-	}
-    }
-
-    /**
-     * Gets the next utterance's transcription.
-     */
-    public String getNextTranscription() {
-	if (transcriptFileIterator.hasNext()) {
-	    return (String) transcriptFileIterator.next();
-	} else {
-	    return null;
-	}
-    }
-
-    /**
-     * Gets the next utterance's dictionary.
-     */
-    public Dictionary getNextDictionary() {
-	return dictionary;
-    }
-
-    /**
-     * Gets the word separator for the utterance.
-     */
-    public String wordSeparator() {
-	return wordSeparator;
     }
 
     // Next method copied from decoder.BatchDecoder

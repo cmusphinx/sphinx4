@@ -39,7 +39,7 @@ public class BuildSentenceHMM {
     
     public void sentenceHMMBuilder (Utterance utterance) {
 	Transcript currentTranscript;
-	for (utterance.getTranscriptIterator();
+	for (utterance.startTranscriptIterator();
 	     utterance.hasMoreTranscripts(); ) {
 	    /* The transcript object has a pointer to its own dictionary 
 	     */
@@ -67,8 +67,7 @@ public class BuildSentenceHMM {
 
         /* The wordgraph must always begin with the <s> */
         wordGraph = new SentenceHMMGraph();
-	Node initialNode = new SentenceHMMNode(NodeType.UTTERANCE_BEGIN, 
-			       TrainerDictionary.UTTERANCE_BEGIN_SYMBOL);
+	Node initialNode = new SentenceHMMNode(NodeType.UTTERANCE_BEGIN);
 	wordGraph.setInitialNode(initialNode);
 	
         if (transcript.isExact()) {
@@ -85,15 +84,13 @@ public class BuildSentenceHMM {
 		prevNode = wordNode;
 	    }
 	    /* All words are done. Just add the </s> */
-	    Node wordNode = new SentenceHMMNode(NodeType.UTTERANCE_END, 
-				TrainerDictionary.UTTERANCE_END_SYMBOL);
+	    Node wordNode = new SentenceHMMNode(NodeType.UTTERANCE_END);
 	    wordGraph.linkNodes(prevNode, wordNode);
 	    wordGraph.setFinalNode(wordNode);
 	} else {
 	    /* Begin the utterance with a loopy silence */
 	    Node silLoopBack = 
-		new SentenceHMMNode(NodeType.SILENCE_WITH_LOOPBACK, 
-				    TrainerDictionary.SILENCE_SYMBOL);
+		new SentenceHMMNode(NodeType.SILENCE_WITH_LOOPBACK);
 	    wordGraph.linkNodes(initialNode, silLoopBack);
 	    
             /* But allow the initial silence to be skipped */
@@ -128,8 +125,7 @@ public class BuildSentenceHMM {
 
 		/* Add silence */
 	        silLoopBack = new
-		    SentenceHMMNode(NodeType.SILENCE_WITH_LOOPBACK, 
-				    TrainerDictionary.SILENCE_SYMBOL);
+		    SentenceHMMNode(NodeType.SILENCE_WITH_LOOPBACK);
 	        wordGraph.linkNodes(dummyWordEndNode, silLoopBack);
 
                 /* But allow the silence to be skipped */
@@ -138,8 +134,7 @@ public class BuildSentenceHMM {
 
 		wordGraph.linkNodes(silLoopBack, dummyWordBeginNode);
             }
-	    Node wordNode = new SentenceHMMNode(NodeType.UTTERANCE_END, 
-				TrainerDictionary.UTTERANCE_END_SYMBOL);
+	    Node wordNode = new SentenceHMMNode(NodeType.UTTERANCE_END);
 	    wordGraph.linkNodes(dummyWordBeginNode, wordNode);
 	}
         return wordGraph;

@@ -34,7 +34,7 @@ public interface ControlFile {
     /**
      * The default value for the property PROP_AUDIO_FILE.
      */
-    String PROP_AUDIO_FILE_DEFAULT = null;
+    String PROP_AUDIO_FILE_DEFAULT = "train.ctl";
 
     /**
      * Transcription file containing transcriptions, simple or full.
@@ -44,7 +44,7 @@ public interface ControlFile {
     /**
      * The default value for the property PROP_TRANSCRIPT_FILE.
      */
-    String PROP_TRANSCRIPT_FILE_DEFAULT = null;
+    String PROP_TRANSCRIPT_FILE_DEFAULT = "train.trans";
 
     /**
      * Initializes the ControlFile with the proper context.
@@ -77,10 +77,5 @@ public interface ControlFile {
      * Returns next utterance.
      */
     public Utterance nextUtterance();
-
-    /**
-     * Gets the word separator for the file.
-     */
-    public String wordSeparator();
 
 }

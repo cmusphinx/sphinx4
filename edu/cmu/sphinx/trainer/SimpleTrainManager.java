@@ -55,5 +55,14 @@ public class SimpleTrainManager implements TrainManager {
      * Do the train.
      */
     public void train() {
+	for (controlFile.startUtteranceIterator();
+	     controlFile.hasMoreUtterances(); ) {
+	    Utterance utterance = controlFile.nextUtterance();
+	    System.out.println(utterance);
+	    for (utterance.startTranscriptIterator();
+		 utterance.hasMoreTranscripts(); ) {
+		System.out.println(utterance.nextTranscript());
+	    }
+	}
     }
 }

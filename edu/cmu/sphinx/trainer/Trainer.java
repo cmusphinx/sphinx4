@@ -78,6 +78,13 @@ public class Trainer {
     }
 
     /**
+     * Prints debugging info.
+     */
+    private void printAll() {
+	trainManager.train();
+    }
+
+    /**
      * Main method of this Trainer.
      *
      * @param argv argv[0] : SphinxProperties file
@@ -100,7 +107,7 @@ public class Trainer {
                                    + propertiesFile));
 
             Trainer trainer = new Trainer(context);
-
+	    trainer.printAll();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

@@ -102,4 +102,10 @@ public class TrainerDictionary implements Dictionary {
     public void dump() {
     }
 
+    /**
+     * Prints out dictionary as a string.
+     */
+    public String toString() {
+	return "DEFAULT";
+    }
 }

@@ -18,6 +18,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Iterator;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Provides mechanism for handling a simple utterance.
  */
@@ -25,6 +28,12 @@ public class SimpleUtterance implements Utterance{
     private String utteranceID;
     private Collection transcriptSet;
     private Iterator transcriptIterator;
+
+    /*
+     * The logger for this class
+     */
+    private static Logger logger =
+        Logger.getLogger("edu.cmu.sphinx.trainer.SimpleUtterance");
 
     /**
      * Constructor for class SimpleUtterance.
@@ -39,8 +48,9 @@ public class SimpleUtterance implements Utterance{
      * @param utteranceID the utterance ID, usually a file name.
      */
     public SimpleUtterance(String utteranceID) {
-	utteranceID = utteranceID;
-	transcriptSet  = new LinkedList();
+	logger.info("Utterance ID: " + utteranceID);
+	this.utteranceID = utteranceID;
+	this.transcriptSet  = new LinkedList();
     }
 
     /**
@@ -53,6 +63,7 @@ public class SimpleUtterance implements Utterance{
      */
     public void add(String transcript, Dictionary dictionary, 
 		    boolean isExact, String wordSeparator) {
+	logger.info("Transcript: " + transcript);
 	transcriptSet.add(new SimpleTranscript(transcript, dictionary,
 					       isExact, wordSeparator));
     }
@@ -62,7 +73,7 @@ public class SimpleUtterance implements Utterance{
      *
      * @return the transcript iterator.
      */
-    public void getTranscriptIterator() {
+    public void startTranscriptIterator() {
 	transcriptIterator = transcriptSet.iterator();
     }
 
