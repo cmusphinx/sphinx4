@@ -92,7 +92,8 @@ public interface LanguageModel {
     /**
      * Initializes this LanguageModel
      *
-     * @param context the context to associate this linguist with
+     * @param prop the sphinx properties for the model
+     * @param dictionary the dictinary to use
      * 
      *
      * @throws IOException if an error occurs while loading the model
