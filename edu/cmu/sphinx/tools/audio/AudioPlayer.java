@@ -69,7 +69,8 @@ public class AudioPlayer extends Thread {
                     line.start();
 
                     byte[] frame = new byte[2];
-                    for (int i = selectionStart; i < selectionEnd; i++) {
+                    for (int i = selectionStart;
+			 i < selectionEnd && i < data.length; i++) {
                         Utils.toBytes(data[i], frame, true);
                         line.write(frame, 0, frame.length);
                     }
