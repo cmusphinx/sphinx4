@@ -131,7 +131,6 @@ an4_spelling_trigram:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-26\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false\
--Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.TreeActiveList \
     -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.model.language.format=arpa \
     -Dedu.cmu.sphinx.model.language.location=./an4_spelling.trigram.lm \
@@ -307,9 +306,8 @@ an4_plus_trigram_super_quick:
 
 an4_plus_fst:
 	$(JAVA_CMD) \
-        -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_plus.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
