@@ -60,13 +60,6 @@ public class FrontEnd extends DataProcessor {
 
     
     /**
-     * The name of the SphinxProperty for sample rate in Hertz (i.e.,
-     * number of times per second), which has a default value of 8000.
-     */
-    public static final String PROP_SAMPLE_RATE = "sampleRate";
-
-
-    /**
      * The prefix for all Frontend SphinxProperties names.
      * Its value is currently <code>"edu.cmu.sphinx.frontend."</code>.
      */
@@ -74,7 +67,14 @@ public class FrontEnd extends DataProcessor {
 
 
     /**
-     * The name of the SphinxProperty that specifies whether the
+     * The SphinxProperty for sample rate in Hertz (i.e.,
+     * number of times per second), which has a default value of 8000.
+     */
+    public static final String PROP_SAMPLE_RATE = PROP_PREFIX + "sampleRate";
+
+
+    /**
+     * The SphinxProperty that specifies whether the
      * FrontEnd should use the properties from the AcousticModel.
      */
     public static final String PROP_USE_ACOUSTIC_MODEL_PROPS =
@@ -82,72 +82,79 @@ public class FrontEnd extends DataProcessor {
 
     
     /**
-     * The name of the SphinxProperty for the number of bits per
-     * sample.
+     * The SphinxProperty for the number of bits per sample.
      */
-    public static final String PROP_BITS_PER_SAMPLE = PROP_PREFIX +
-    "bitsPerSample";
+    public static final String PROP_BITS_PER_SAMPLE = 
+	PROP_PREFIX + "bitsPerSample";
 
 
     /**
-     * The name of the SphinxProperty for the number of bytes per frame,
-     * which has a default value of 4000.
+     * The SphinxProperty for the number of bytes per frame.
      */
     public static final String PROP_BYTES_PER_AUDIO_FRAME = 
-    PROP_PREFIX + ".bytesPerAudioFrame";
+	PROP_PREFIX + "bytesPerAudioFrame";
 
 
     /**
-     * The name of the SphinxProperty for window size in milliseconds,
-     * which has a default value of 25.625F.
+     * The SphinxProperty for window size in milliseconds.
      */
     public static final String PROP_WINDOW_SIZE_MS = 
-    PROP_PREFIX + "windowSizeInMs";
+	PROP_PREFIX + "windowSizeInMs";
 
 
     /**
-     * The name of the SphinxProperty for window shift in milliseconds,
+     * The SphinxProperty for window shift in milliseconds,
      * which has a default value of 10F.
      */
     public static final String PROP_WINDOW_SHIFT_MS =
-    PROP_PREFIX + "windowShiftInMs";
+	PROP_PREFIX + "windowShiftInMs";
 
-
+    
     /**
-     * The name of the SphinxProperty for the size of a cepstrum, which is
+     * The SphinxProperty for the size of a cepstrum, which is
      * 13 by default.
      */
-    public static final String PROP_CEPSTRUM_SIZE = 
-    PROP_PREFIX + "cepstrumSize";
+    public static final String PROP_CEPSTRUM_SIZE =
+	PROP_PREFIX + "cepstrumSize";
 
 
     /**
-     * The name of the SphinxProperty that indicates whether Features
+     * The SphinxProperty that indicates whether Features
      * should retain a reference to the original raw audio bytes. The
      * default value is true.
      */
     public static final String PROP_KEEP_AUDIO_REFERENCE =
-    PROP_PREFIX + "keepAudioReference";
+	PROP_PREFIX + "keepAudioReference";
+
+    
+    /**
+     * The SphinxProperty that specifies the Filterbank class.
+     */
+    public static final String PROP_FILTERBANK = PROP_PREFIX + "filterbank";
 
 
     /**
-     * The name of the SphinxProperty that specifies the endpointer.
-     * The default value is "none".
+     * The SphinxProperty that specifies the CepstrumProducer class.
+     */
+    public static final String PROP_CEPSTRUM_PRODUCER = PROP_PREFIX +
+	"cepstrumProducer";
+
+
+    /**
+     * The SphinxProperty that specifies the Endpointer class.
      */
     public static final String PROP_ENDPOINTER = PROP_PREFIX + "endpointer";
 
 
     /**
-     * The name of the SphinxProperty that decides whether we do live
-     * mode CMN or batch mode CMN.
+     * The SphinxProperty that specifies the CMN class.
      */
-    public static final String PROP_LIVE_CMN = PROP_PREFIX + "cmn.live";
-    
-    
+    public static final String PROP_CMN = PROP_PREFIX + "cmn";
+
+
     private Map processors;
     private AudioSource audioSource;
     private FeatureSource featureSource;
-    private boolean liveCMN = false;
     
 
     /**
@@ -160,13 +167,8 @@ public class FrontEnd extends DataProcessor {
         throws IOException {
 
         super(name, context);
-        
-        frontends.put(context, this);
-
-        // add all the processors to the hashmap
         processors = new HashMap();
-
-        liveCMN = getSphinxProperties().getBoolean(PROP_LIVE_CMN, false);
+        frontends.put(context, this);
 
         // initialize all the frontend processors
 
@@ -179,43 +181,19 @@ public class FrontEnd extends DataProcessor {
         SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer
             ("FFT", context, windower);
 
-        MelFilterbank melFilterbank = new MelFilterbank
-            ("MelFilter", context, spectrumAnalyzer);
+	Filterbank filterbank = getFilterbank(spectrumAnalyzer);
 
-        MelCepstrumProducer melCepstrum = new MelCepstrumProducer
-            ("MelCepstrum", context, melFilterbank);
+        CepstrumSource cepstrumProducer = getCepstrumProducer(filterbank);
 
-        CepstrumSource cepstrumSource = melCepstrum;
+	CepstrumSource preCMNSource = getEndpointer(cepstrumProducer);
 
-        // initialize the endpointer
+	if (preCMNSource == null) {
+	    preCMNSource = cepstrumProducer;
+	} else {
+	    addProcessor((DataProcessor) preCMNSource);
+	}
 
-        String endpointer = getSphinxProperties().getString
-            (PROP_ENDPOINTER, "none");
-
-        if (endpointer.equals("edu.cmu.sphinx.frontend.EnergyEndpointer")) {
-
-            EnergyEndpointer energyEndpointer = new EnergyEndpointer
-                ("EnergyEndpointer", context, melCepstrum);
-            NonSpeechFilter nonSpeechFilter = new NonSpeechFilter
-                ("NonSpeechFilter", context, energyEndpointer);
-
-            addProcessor(energyEndpointer);
-            addProcessor(nonSpeechFilter);
-
-            cepstrumSource = nonSpeechFilter;
-        }
-
-        // initialize the CMN and FeatureExtractor
-
-        CepstrumSource cmn = null;
-
-        if (liveCMN) {
-            cmn = (CepstrumSource) addProcessor
-                (new LiveCMN("LiveCMN", context, cepstrumSource));
-        } else {
-            cmn = (CepstrumSource) addProcessor
-                (new BatchCMN("BatchCMN", context, cepstrumSource));
-        }
+        CepstrumSource cmn = getCMN(preCMNSource);
 
         FeatureExtractor extractor = new FeatureExtractor
             ("FeatureExtractor", context, cmn);
@@ -223,29 +201,109 @@ public class FrontEnd extends DataProcessor {
         setAudioSource(audioSource);
         setFeatureSource(extractor);
 
-        addProcessor(preemphasizer);
-        addProcessor(windower);
-        addProcessor(spectrumAnalyzer);
-        addProcessor(melFilterbank);
-        addProcessor(melCepstrum);
-        addProcessor(extractor);
+	addProcessor(preemphasizer);
+	addProcessor(windower);
+	addProcessor(spectrumAnalyzer);
+	addProcessor((DataProcessor) filterbank);
+	addProcessor((DataProcessor) cepstrumProducer);
+	addProcessor((DataProcessor) cmn);
+	addProcessor(extractor);
     }
 
 
     /**
-     * Returns the FrontEnd with the given context, or null if there is no
-     * FrontEnd with that context.
+     * Returns the appropriate Filterbank and initializes it with
+     * the given predecessor.
      *
-     * @return the FrontEnd with the given context, or null if there
-     *    is no FrontEnd with that context
+     * @param predecessor the predecessor of this Filterbank
+     *
+     * @return the appropriate Filterbank
      */
-    public static FrontEnd getFrontEnd(String context) {
-        Object frontend = frontends.get(context);
-        if (frontend != null) {
-            return (FrontEnd) frontend;
+    private Filterbank getFilterbank(SpectrumSource predecessor) {
+	String path = null;
+	try {
+	    path = getSphinxProperties().getString
+		(PROP_FILTERBANK, "edu.cmu.sphinx.frontend.mfc.MelFilterbank");
+	    Filterbank bank = (Filterbank) Class.forName(path).newInstance();
+	    bank.initialize("Filterbank", getContext(), predecessor);
+	    return bank;
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    throw new Error("Can't create Filterbank: " + e);
+	}
+    }
+
+
+    /**
+     * Returns the appropriate CepstrumProducer, and initializes it
+     * with the given predecessor.
+     *
+     * @param predecessor the predecessor
+     *
+     * @return the appropriate CepstrumProducer
+     */
+    private CepstrumProducer getCepstrumProducer(SpectrumSource predecessor) {
+	String path = null;
+	try {
+	    path = getSphinxProperties().getString
+		(PROP_CEPSTRUM_PRODUCER,
+		 "edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer");
+	    CepstrumProducer producer = 
+		(CepstrumProducer) Class.forName(path).newInstance();
+	    producer.initialize("CepstrumProducer", getContext(), predecessor);
+	    return producer;
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    throw new Error("Can't create CepstrumProducer: " + e);
+	}
+    }
+
+
+    /**
+     * Returns the appropriate Endpointer, if any, and initializes it
+     * with the given predecessor.
+     *
+     * @param predecessor the predecessor of this Endpointer
+     */
+    private CepstrumSource getEndpointer(CepstrumSource predecessor) {
+        String path = getSphinxProperties().getString(PROP_ENDPOINTER, null);
+
+        if (path != null) {
+	    CepstrumSource endpointer = null;
+
+	    /*
+            EnergyEndpointer energyEndpointer = new EnergyEndpointer
+                ("EnergyEndpointer", context, melCepstrum);
+            NonSpeechFilter nonSpeechFilter = new NonSpeechFilter
+                ("NonSpeechFilter", context, energyEndpointer);
+	    */
+
+	    return endpointer;
         } else {
-            return null;
-        }
+	    return null;
+	}
+    }
+
+
+    /**
+     * Returns the appropriate Cepstral Mean Normalizer (CMN)
+     * as specified in the SphinxProperties, with the given predecessor.
+     *
+     * @param predecessor the predecessor of the CMN step
+     */
+    private CepstrumSource getCMN(CepstrumSource predecessor) throws 
+	IOException {
+	String path = getSphinxProperties().getString
+	    (PROP_CMN, "edu.cmu.sphinx.frontend.BatchCMN");
+
+	CepstrumSource cmn = null;
+
+	if (path.equals("edu.cmu.sphinx.frontend.LiveCMN")) {
+	    cmn = new LiveCMN("LiveCMN", getContext(), predecessor);
+	} else if (path.equals("edu.cmu.sphinx.frontend.BatchCMN")) {
+	    cmn = new BatchCMN("BatchCMN", getContext(), predecessor);
+	}
+	return cmn;
     }
 
 
@@ -275,6 +333,23 @@ public class FrontEnd extends DataProcessor {
             return null;
         } else {
             return (DataProcessor) object;
+        }
+    }
+
+
+    /**
+     * Returns the FrontEnd with the given context, or null if there is no
+     * FrontEnd with that context.
+     *
+     * @return the FrontEnd with the given context, or null if there
+     *    is no FrontEnd with that context
+     */
+    public static FrontEnd getFrontEnd(String context) {
+        Object frontend = frontends.get(context);
+        if (frontend != null) {
+            return (FrontEnd) frontend;
+        } else {
+            return null;
         }
     }
 

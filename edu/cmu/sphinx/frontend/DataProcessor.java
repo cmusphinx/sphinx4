@@ -44,7 +44,7 @@ public abstract class DataProcessor {
     /**
      * A Timer for timing processing.
      */
-    private Timer timer = null;
+    private Timer timer;
 
     
     /**
@@ -56,7 +56,13 @@ public abstract class DataProcessor {
     /**
      * The SphinxProperties used by this DataProcessor
      */
-    private SphinxProperties sphinxProperties = null;
+    private SphinxProperties sphinxProperties;
+
+    
+    /**
+     * Constructs a default DataProcessor
+     */
+    public DataProcessor() {}
 
 
     /**
@@ -65,11 +71,25 @@ public abstract class DataProcessor {
      * @param name the name of this DataProcessor
      * @param context the context of this DataProcessor
      */
-    protected DataProcessor(String name, String context) {
-        this.name = name;
-        this.context = context;
-        this.timer = Timer.getTimer(context, name);
-        this.sphinxProperties = SphinxProperties.getSphinxProperties(context);
+    public DataProcessor(String name, String context) {
+	initialize(name, context);
+    }
+
+    
+    /**
+     * Initializes this DataProcessor.
+     *
+     * @param name the name of this DataProcessor
+     * @param context the context of this DataProcessor
+     */
+    public void initialize(String name, String context) {
+	if (sphinxProperties == null) {
+	    this.name = name;
+	    this.context = context;
+	    this.timer = Timer.getTimer(context, name);
+	    this.sphinxProperties = 
+		SphinxProperties.getSphinxProperties(context);
+	}
     }
 
 
