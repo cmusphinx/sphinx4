@@ -46,9 +46,9 @@ public class FullDictionary implements Dictionary {
 
     private Map dictionary = new HashMap();
     private boolean addSilEndingPronunciation;
-    private String wordReplacement;
     private boolean allowMissingWords;
-
+    private String wordReplacement;
+    private int wordID;
 
     /**
      * Constructs a FullDictionary using the given context.
@@ -113,6 +113,7 @@ public class FullDictionary implements Dictionary {
 
 	Timer loadTimer = Timer.getTimer(context, "DictionaryLoad");
 
+        wordID = 1;
 	loadTimer.start();
 
         // NOTE: "location" can be null here, in which case the 
@@ -133,15 +134,13 @@ public class FullDictionary implements Dictionary {
      * ASCII data.
      *
      * @param inputStream the InputStream of the dictionary
-     * @param path the path to load the dictionary from
      * @param isFillerDict true if this is a filler dictionary, 
      *    false otherwise
      *
      * @throws java.io.IOException if there is an error reading the dictionary
      */
     private void loadDictionary(InputStream inputStream,
-                                boolean isFillerDict) throws
-            IOException {
+                                boolean isFillerDict) throws IOException {
 
         ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
             (inputStream, true);
@@ -161,13 +160,18 @@ public class FullDictionary implements Dictionary {
             
             Unit[] unitsArray = (Unit[]) units.toArray
                 (new Unit[units.size()]);
-            Pronunciation pronunciation = new Pronunciation
-                (word, unitsArray, null, null, 1.0f);
+            
+            int thisWordID = getNextWordID(word);
 
             List pronunciations = (List) dictionary.get(word);
+
             if (pronunciations == null) {
                 pronunciations = new LinkedList();
             }
+
+            Pronunciation pronunciation = new Pronunciation
+                (word, thisWordID, unitsArray, null, null, 1.0f);
+
             pronunciations.add(pronunciation);
             
             // if we are adding a SIL ending duplicate
@@ -176,13 +180,27 @@ public class FullDictionary implements Dictionary {
                 Unit[] unitsArray2 = (Unit[]) units.toArray
                     (new Unit[units.size()]);
                 Pronunciation pronunciation2 = new Pronunciation
-                    (word, unitsArray2, null, null, 1.0f);
+                    (word, thisWordID, unitsArray2, null, null, 1.0f);
                 pronunciations.add(pronunciation2);
             }
 
             dictionary.put(word, pronunciations);
         }
         est.close();
+    }
+
+    /**
+     * Returns an appropriate word ID for the given word.
+     *
+     * @return an appropriate ID for the given word
+     */
+    private int getNextWordID(String word) {
+        int id = getWordID(word);
+        if (id == Dictionary.UNKNOWN_WORD_ID) {
+            return wordID++;
+        } else {
+            return id;
+        }
     }
 
     /**
@@ -223,6 +241,28 @@ public class FullDictionary implements Dictionary {
         return word;
     }
 
+    /**
+     * Returns the ID of the given word.
+     *
+     * @return the ID of the given word, or UNKNOWN_WORD_ID if the word is not
+     *    in the dictionary.
+     */
+    public int getWordID(String word) {
+        if (word.equals(SENTENCE_START_SPELLING)) {
+            return SENTENCE_START_ID;
+        } else if (word.equals(SENTENCE_END_SPELLING)) {
+            return SENTENCE_END_ID;
+        } else if (word.equals(SILENCE_SPELLING)) {
+            return SILENCE_ID;
+        }
+        List pronunciations = (List) dictionary.get(word.toLowerCase());
+        if (pronunciations != null) {
+            Pronunciation pron = (Pronunciation) pronunciations.get(0);
+            return pron.getWordID();
+        } else {
+            return UNKNOWN_WORD_ID;
+        }
+    }
 
     /**
      * Retrieves the pronunciations for a particular word based upon
@@ -293,7 +333,7 @@ public class FullDictionary implements Dictionary {
 	
 	if (pronounceList == null) {
 	    throw new Error("Can't find pronunciation for '" + text
-		    + "' in dictionary "  );
+                            + "' in dictionary "  );
 	}
 
         Pronunciation[] pronunciations =

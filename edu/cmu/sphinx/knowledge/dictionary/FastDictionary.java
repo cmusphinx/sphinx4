@@ -60,8 +60,9 @@ public class FastDictionary implements Dictionary {
 
     private Map dictionary = new HashMap();
     private boolean addSilEndingPronunciation;
-    private String wordReplacement;
     private boolean allowMissingWords;
+    private String wordReplacement;
+    private int wordID;
     private final static String FILLER_TAG=  "-F-";
 
 
@@ -71,7 +72,8 @@ public class FastDictionary implements Dictionary {
      * where the word and filler dictionaries are by the following
      * properties: <pre>
      * edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath
-     * edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerDictionaryPath </pre>
+     * edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerDictionaryPath 
+     * </pre>
      *
      * @param context the context of this FastDictionary
      *
@@ -139,13 +141,19 @@ public class FastDictionary implements Dictionary {
 
 	logger.info("Loading dictionary from: ");
         logger.info(location + "/" + wordDictionaryFile);
-        loadDictionary(StreamFactory.getInputStream
-                       (location, wordDictionaryFile), false);
-	logger.info("Loading filler dictionary from: ");
+        
+        loadDictionary
+            (StreamFactory.getInputStream(location, wordDictionaryFile), 
+             false);
+	
+        logger.info("Loading filler dictionary from: ");
         logger.info(location + "/" + fillerDictionaryFile);
-        loadDictionary(StreamFactory.getInputStream
-                       (location, fillerDictionaryFile), true);
-	loadTimer.stop();
+        
+        loadDictionary
+            (StreamFactory.getInputStream(location, fillerDictionaryFile), 
+             true);
+	
+        loadTimer.stop();
     }
     
 
@@ -155,7 +163,6 @@ public class FastDictionary implements Dictionary {
      * ASCII data.
      *
      * @param inputStream the InputStream of the dictionary
-     * @param path the path to load the dictionary from
      * @param isFillerDict true if this is a filler dictionary, 
      *    false otherwise
      *
@@ -181,15 +188,32 @@ public class FastDictionary implements Dictionary {
 	    // TODO: throw an exception if spaceIndex == -1 ?
 	    String word = line.substring(0, spaceIndex);
 	    word = word.toLowerCase();
+            int wordID = getNextWordID(word);
 	    if (isFillerDict) {
-		dictionary.put(word, FILLER_TAG + line);
+		dictionary.put(word, (wordID + " " + FILLER_TAG + line));
 	    } else {
-		dictionary.put(word, line);
+		dictionary.put(word, (wordID + " " + line));
 	    }
 	}
 
 	br.close();
 	isr.close();
+    }
+
+    /**
+     * Returns a word ID given a word.
+     *
+     * @return a suitable ID for the given word
+     */
+    private int getNextWordID(String word) {
+        String line = (String)dictionary.get(word);
+        if (line == null) {
+            return wordID++;
+        } else {
+            int spaceIndex = line.indexOf(" ");
+            String idString = line.substring(0, spaceIndex);
+            return Integer.parseInt(idString);
+        }
     }
 
     /**
@@ -206,7 +230,27 @@ public class FastDictionary implements Dictionary {
         return Unit.getUnit(name, isFiller, Context.EMPTY_CONTEXT);
     }
 
-
+    /**
+     * Returns the ID of the given word.
+     *
+     * @return the ID of the given word, or UNKNOWN_WORD_ID if the
+     *    word is not in the dictionary
+     */
+    public int getWordID(String word) {
+        if (word.equals(SENTENCE_START_SPELLING)) {
+            return SENTENCE_START_ID;
+        } else if (word.equals(SENTENCE_END_SPELLING)) {
+            return SENTENCE_END_ID;
+        } else if (word.equals(SILENCE_SPELLING)) {
+            return SILENCE_ID;
+        }
+        Pronunciation[] prons = getPronunciations(word, null);
+        if (prons == null) {
+            return UNKNOWN_WORD_ID;
+        } else {
+            return prons[0].getWordID();
+        }
+    }
 
     /**
      * Retrieves the pronunciations for a particular word based upon
@@ -281,11 +325,9 @@ public class FastDictionary implements Dictionary {
      * pronunciations.
      */
     private Pronunciation[] processEntry(String word) {
-	Pronunciation[] pronunciations = null;
-	List pList = new ArrayList(10);
+	List pList = new LinkedList();
 	String line = null;
 	int count = 0;
-	boolean isFiller;
 
 	do {
 	    count++;
@@ -296,8 +338,9 @@ public class FastDictionary implements Dictionary {
 	    line = (String) dictionary.get(lookupWord);
 	    if (line != null) {
 		StringTokenizer st = new StringTokenizer(line);
+                int wordID = Integer.parseInt(st.nextToken());
 		String tag = st.nextToken();
-		isFiller = tag.startsWith(FILLER_TAG);
+		boolean isFiller = tag.startsWith(FILLER_TAG);
 		int unitCount = st.countTokens();
 		dictionary.remove(lookupWord);
 
@@ -306,23 +349,21 @@ public class FastDictionary implements Dictionary {
 		    String unitName = st.nextToken();
 		    units[i] = getCIUnit(unitName, isFiller);
 		}
-		pList.add(units);
 
 		if (!isFiller && addSilEndingPronunciation) {
 		    Unit[] silUnits = new Unit[unitCount + 1];
 		    System.arraycopy(units, 0, silUnits, 0, unitCount);
 		    silUnits[unitCount] = Unit.SILENCE;
-		    pList.add(silUnits);
+                    units = silUnits;
 		}
-	    }
+                pList.add
+                    (new Pronunciation(word, wordID, units, null, null, 1.f));
+            }
 	} while (line != null);
 
-	pronunciations = new Pronunciation[pList.size()];
+        Pronunciation[] pronunciations = new Pronunciation[pList.size()];
+        pList.toArray(pronunciations);
 
-	for (int i = 0; i < pronunciations.length; i++) {
-	    Unit[] units = (Unit[]) pList.get(i);
-            pronunciations[i] = new Pronunciation(word, units, null, null, 1.f);
-	}
 	dictionary.put(word, pronunciations);
 	return pronunciations;
     }
