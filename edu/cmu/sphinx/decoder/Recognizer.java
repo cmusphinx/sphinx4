@@ -53,6 +53,19 @@ public class Recognizer {
 
 
     /**
+     * The sphinx property for the front end class.
+     */
+    public final static String PROP_FRONT_END = PROP_PREFIX + "frontend";
+
+
+    /**
+     * The default value of PROP_FRONT_END.
+     */
+    public final static String PROP_FRONT_END_DEFAULT
+        = "edu.cmu.sphinx.frontend.SimpleFrontEnd";
+
+
+    /**
      * The sphinx property name for the Linguist class.
      */
     public final static String PROP_LINGUIST = PROP_PREFIX + "linguist";
@@ -124,14 +137,14 @@ public class Recognizer {
     /**
      * The sphinx property name for whether to output the FrontEnd.
      */
-    public final static String PROP_DUMP_FRONTEND = 
+    public final static String PROP_DUMP_FRONT_END = 
         PROP_PREFIX + "dumpFrontEnd";
 
 
     /**
-     * The default value of the property PROP_DUMP_FRONTEND.
+     * The default value of the property PROP_DUMP_FRONT_END.
      */
-    public final static boolean PROP_DUMP_FRONTEND_DEFAULT = false;
+    public final static boolean PROP_DUMP_FRONT_END_DEFAULT = false;
 
 
     /**
@@ -244,11 +257,11 @@ public class Recognizer {
         
         props = SphinxProperties.getSphinxProperties(context);
         dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
-                PROP_DUMP_MEMORY_INFO_DEFAULT);
+                                          PROP_DUMP_MEMORY_INFO_DEFAULT);
         dumpSentenceHMM = props.getBoolean(PROP_DUMP_SENTENCE_HMM,
-                PROP_DUMP_SENTENCE_HMM_DEFAULT);
-        dumpFrontEnd = props.getBoolean(PROP_DUMP_FRONTEND,
-                PROP_DUMP_FRONTEND_DEFAULT);
+                                           PROP_DUMP_SENTENCE_HMM_DEFAULT);
+        dumpFrontEnd = props.getBoolean(PROP_DUMP_FRONT_END,
+                                        PROP_DUMP_FRONT_END_DEFAULT);
         
         dumpMemoryInfo("recognizer start");
         
@@ -349,22 +362,27 @@ public class Recognizer {
      *
      * @param context the context of interest
      * @param dataSource the source of data to decode
-     *
-     * @throws java.io.IOException if there is an I/O error
      */
-    private FrontEnd getFrontEnd(String context, DataSource dataSource)
-	throws IOException {
-	FrontEnd fe = null;
-	List modelNames = AcousticModel.getNames(context);
-	if (modelNames.size() <= 1) {
-	    fe = new SimpleFrontEnd("SimpleFrontEnd", context, dataSource);
-	} else {
-	    fe = new ParallelFrontEnd("ParallelFrontEnd", context, dataSource);
-	}
-	if (dumpFrontEnd) {
-	    System.out.println(fe.toString());
-	}
-	return fe;
+    private FrontEnd getFrontEnd(String context, DataSource dataSource) {
+        String path = null;
+        try {
+            path = props.getString(PROP_FRONT_END, PROP_FRONT_END_DEFAULT);
+            FrontEnd fe = (FrontEnd)Class.forName(path).newInstance();
+            fe.initialize("FrontEnd", context, dataSource);
+            if (dumpFrontEnd) {
+                System.out.println(fe.toString());
+            }
+            return fe;
+        } catch (ClassNotFoundException fe) {
+            throw new Error("CNFE:Can't create front end " + path, fe);
+        } catch (InstantiationException ie) {
+            throw new Error("IE: Can't create front end " + path, ie);
+        } catch (IllegalAccessException iea) {
+            throw new Error("IEA: Can't create front end " + path, iea);
+        } catch (IOException ioe) {
+            throw new Error("IOE: Can't create front end " + path + " "
+                    + ioe, ioe);
+        }
     }
 
 
