@@ -48,6 +48,7 @@ all:: ${CLASSES} ${STUBS}
 
 live: all
 	$(JAVA_CMD) \
+	-DshowEnergyPanel=false \
 	-DshowPartialResults=true \
 	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
 	tests.live.Live decoders.list
