@@ -78,17 +78,18 @@ your environment to use JSAPI.
 		     compile_sphinx_hellongram,
 	             compile_zipcity,
 	             check_jsapi_jar.isPresent,
-	             check_jsapi_jar.isPresent,
                      issue_jsapi_warning"
 	    description="Compiles Sphinx-4 demos that do not use JSAPI"/>
 
     <target name="compile_sphinx_helloworld">
-	<mkdir dir="${classes_dir}/demo/sphinx/helloworld"/>
+    	<mkdir dir="${classes_dir}/demo/sphinx/helloworld"/>
 	<javac debug="true"
 	       source="1.4"
+	       listfiles="true"
 	       deprecation="true"
-	       srcdir="${src_dir}/demo/sphinx/helloworld"
-	       destdir="${classes_dir}">
+	       srcdir="${src_dir}"
+	       destdir="${classes_dir}"
+	       includes="demo/sphinx/helloworld/**">
 	    <classpath refid="libs"/>
 	</javac>
 	<copy file="${src_dir}/demo/sphinx/helloworld/hello.gram"
@@ -108,8 +109,10 @@ your environment to use JSAPI.
     	<mkdir dir="${classes_dir}/demo/sphinx/hellodigits"/>
 	<javac debug="true"
 	       source="1.4"
+	       listfiles="true"
 	       deprecation="true"
-	       srcdir="${src_dir}/demo/sphinx/hellodigits"
+	       srcdir="${src_dir}"
+	       includes="demo/sphinx/hellodigits/**"
 	       destdir="${classes_dir}">
 	    <classpath refid="libs"/>
 	</javac>
@@ -123,15 +126,16 @@ your environment to use JSAPI.
 	     includes="demo/sphinx/hellodigits/**"
 	     filesonly="true"
 	     compress="true"/>
-	<delete dir="${classes_dir}/demo/sphinx/hellodigits"/>
     </target>
 
     <target name="compile_sphinx_hellongram">
 	<mkdir dir="${classes_dir}/demo/sphinx/hellongram"/>
 	<javac debug="true"
 	       source="1.4"
+	       listfiles="true"
 	       deprecation="true"
-	       srcdir="${src_dir}/demo/sphinx/hellongram"
+	       srcdir="${src_dir}"
+	       includes="demo/sphinx/hellongram/**"
 	       destdir="${classes_dir}">
 	    <classpath refid="libs"/>
 	</javac>
@@ -146,7 +150,6 @@ your environment to use JSAPI.
 	     includes="demo/sphinx/hellongram/**"
 	     filesonly="true"
 	     compress="true"/>
-	<delete dir="${classes_dir}/demo/sphinx/hellongram"/>
     </target>
 
     <target name="init">
@@ -163,8 +166,10 @@ your environment to use JSAPI.
     	<mkdir dir="${classes_dir}/demo/sphinx/zipcity"/>
 	<javac debug="true"
 	       source="1.4"
+	       listfiles="true"
 	       deprecation="true"
-	       srcdir="${src_dir}/demo/sphinx/zipcity"
+	       srcdir="${src_dir}"
+	       includes="demo/sphinx/zipcity/**"
 	       destdir="${classes_dir}">
 	    <classpath refid="libs"/>
 	</javac>
@@ -182,11 +187,11 @@ your environment to use JSAPI.
 	     includes="demo/sphinx/zipcity/**"
 	     filesonly="true"
 	     compress="true"/>
-	<delete dir="${classes_dir}/demo/sphinx/zipcity"/>
     </target>
 
   <target name="release_zipcity" depends="compile_zipcity">
       <copy todir="bld/zipcity" file="demo/sphinx/zipcity/zipcity.jnlp"/>
+      <copy todir="bld/zipcity" file="demo/sphinx/zipcity/zipcity_test.jnlp"/>
       <copy todir="bld/zipcity" file="demo/sphinx/zipcity/s4.jpg"/>
       <copy todir="bld/zipcity" file="demo/sphinx/zipcity/README.html"/>
       <copy todir="bld/zipcity" file="bin/ZipCity.jar"/>
