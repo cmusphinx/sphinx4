@@ -131,14 +131,6 @@ public interface Loader extends Configurable {
      */
     public int getRightContextSize();
 
-    /**
-     * Returns the properties of the loaded AcousticModel.
-     *
-     * @return the properties of the loaded
-     * AcousticModel, or null if
-     *   it has no properties
-     */
-    public SphinxProperties getModelProperties();
 }
 
 
