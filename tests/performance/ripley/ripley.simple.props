@@ -1,4 +1,4 @@
-
+ 
 ##########################################################
 #
 # Global logging properties
@@ -93,7 +93,7 @@ edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-205
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-16
 edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=8
-edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path=/lab/speech/sphinx4/data/medialab/wordlist
+edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path=./ripley.wordlist
 
 
 ############################################################
@@ -124,7 +124,7 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true
 #
 # Use the number of available CPUS for scoring:
 
-edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=false
-edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=1
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=true
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=-1
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
 
