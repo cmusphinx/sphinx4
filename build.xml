@@ -226,7 +226,6 @@ jsapi.exe from the lib directory.
 	      <fileset dir="${classes_dir}/edu/cmu/sphinx/model/acoustic"/>
 	</move>
 	<antcall target="create_all_models"/>
-	<antcall target="delete_all_model_classes"/>
 	<antcall target="jars"/>
 	<antcall target="demos"/>
 	<echo message="Build complete."/>
@@ -547,6 +546,7 @@ jsapi.exe from the lib directory.
 	<delete file="${lib_dir}/${wsj_name}.jar"/>
 	<delete file="${lib_dir}/${tidigits_name}.jar"/>
 	<delete file="tempKeystore"/>
+	<antcall target="delete_all_model_classes"/>
     </target>
 
     <!-- ********************************************************** --> 
