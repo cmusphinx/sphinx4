@@ -1,5 +1,21 @@
 Sphinx-4 Speech Recognition System
 
+Version:       XXXX
+Release Date:  XXXX
+
+-------------------------------------------------------------------
+
+
+PBL - 6/21/04 - 
+    Added the DynamicFlatLinguist. This linguist supports
+    C&C style grammars (such as JSGF grammars). It differs from the simple
+    FlatLinguist in that it can load much larger and more perplex grammars,
+    loads them much more quickly and uses less memory. Currently this
+    linguist runs slower than the simple FlatLinguist. Performance work is
+    underway.
+
+
+-------------------------------------------------------------------
 Version:       0.1alpha
 Release Date:  June 2004
 
