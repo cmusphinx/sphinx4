@@ -214,6 +214,14 @@ large_bigram:
 	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch
 
 
+run_batch:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=$(WHICH_BATCH)\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=$(TOTAL_BATCHES)\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder $(PROPS) $(BATCH_FILE) \
+
+
 small:
 	$(JAVA_CMD)  \
         -Dedu.cmu.sphinx.util.LinguistDumper.filename=small.gdl \
