@@ -6,6 +6,7 @@ package tests.frontend;
 
 import edu.cmu.sphinx.frontend.Cepstrum;
 import edu.cmu.sphinx.frontend.Signal;
+import edu.cmu.sphinx.frontend.Utterance;
 
 import java.awt.*;
 import java.util.*;

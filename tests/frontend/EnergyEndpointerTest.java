@@ -82,11 +82,12 @@ public class EnergyEndpointerTest {
                         cepstraList.toArray(cepstra);
                         String name = "no name";
 
-                        // last Cepstrum with cepstral data
-                        Utterance utterance = 
-                            cepstra[cepstra.length-2].getUtterance();
-                        if (utterance != null) {
-                            name = utterance.getName();
+                        // find the name of this group
+                        for (int i = 0; i < cepstra.length; i++) {
+                            if (cepstra[i].getUtterance() != null) {
+                                name = cepstra[i].getUtterance().getName();
+                                break;
+                            }
                         }
 
                         // create the CepstraGroup and add it to the viewer

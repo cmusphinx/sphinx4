@@ -67,7 +67,7 @@ live: all
 ep-tidigits: all
 	$(JAVA_CMD) \
 	-Dtests.frontend.energyEndpointer.batchMode=true \
-	-DremoveNonSpeech=true \
+	-DremoveNonSpeech=false \
 	tests.frontend.EnergyEndpointerTest \
 	energyEndpointer ../decoder/tiDigits.props ../decoder/tidigits.batch
 
