@@ -66,6 +66,7 @@ class UtteranceTest {
     private Timer timer;
     private PrintStream outStream = System.out;
     private int totalQueries;
+    private boolean printScores;
     
 
     /**
@@ -81,6 +82,7 @@ class UtteranceTest {
 	
         SphinxProperties.initContext(context, new URL(propsPath));
         lm = new LargeTrigramModel(context);
+        printScores = Boolean.getBoolean("printScores");
 
         InputStream stream = new FileInputStream(testFile);
 
@@ -90,6 +92,11 @@ class UtteranceTest {
 	}
 	
         timer = Timer.getTimer(context, "lmLookup");
+    }
+
+
+    public void close() {
+        outStream.close();
     }
 
 
@@ -119,11 +126,11 @@ class UtteranceTest {
             StringTokenizer st = new StringTokenizer(input);
             List list = new ArrayList();
             while (st.hasMoreTokens()) {
-                String tok = (String) st.nextToken();
+                String tok = (String) st.nextToken().toLowerCase();
                 list.add(tok);
             }
             WordSequence wordSequence = new WordSequence(list);
-            wordSequences.add(wordSequence);
+	    wordSequences.add(wordSequence);
         }
 
         int[] logScores = new int[wordSequences.size()];
@@ -143,15 +150,15 @@ class UtteranceTest {
 	lm.stop();
 	
         timer.stop();
-
-        /*
-        s = 0;
-        for (Iterator i = wordSequences.iterator(); i.hasNext(); ) {
-            WordSequence ws = (WordSequence) i.next();
-            outStream.println(Utilities.pad(logScores[s++], 10) + " "+
-                              ws.toText().toUpperCase());
+	
+        if (printScores) {
+            s = 0;
+            for (Iterator i = wordSequences.iterator(); i.hasNext(); ) {
+                WordSequence ws = (WordSequence) i.next();
+                outStream.println(Utilities.pad(logScores[s++], 10) + " "+
+                                  ws.toText().toUpperCase());
+            }
         }
-	*/
     }
 
 
@@ -165,6 +172,7 @@ class UtteranceTest {
 	System.out.println("Used memory: " + usedMemory + " bytes");
 	System.out.println("Bigram misses: " + lm.getBigramMisses());
 	System.out.println("Trigram misses: " + lm.getTrigramMisses());
+	System.out.println("Trigram hits: " + lm.getTrigramHits());
 	Timer.dumpAll();
     }
 
@@ -201,6 +209,7 @@ class UtteranceTest {
 	    }
 	    
 	    test.printStats();
+            test.close();
 	} catch (IOException ioe) {
 	    ioe.printStackTrace();
 	}
