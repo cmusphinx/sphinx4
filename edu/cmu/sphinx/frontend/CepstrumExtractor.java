@@ -13,7 +13,7 @@
 
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer;
+import edu.cmu.sphinx.frontend.endpoint.Endpointer;
 import edu.cmu.sphinx.frontend.endpoint.NonSpeechFilter;
 
 import edu.cmu.sphinx.frontend.util.StubAudioSource;
@@ -182,7 +182,7 @@ implements CepstrumSource {
      */
     private void initialize(CepstrumSource cepstrumSource) throws IOException {
 
-	CepstrumSource endpointer = getEndpointer(cepstrumSource);
+	Endpointer endpointer = getEndpointer(cepstrumSource);
         	
 	if (endpointer != null) { // if we're using an endpointer
             addProcessor((DataProcessor) endpointer);
@@ -269,22 +269,24 @@ implements CepstrumSource {
      *
      * @param predecessor the predecessor of this Endpointer
      */
-    private CepstrumSource getEndpointer(CepstrumSource predecessor) 
+    private Endpointer getEndpointer(CepstrumSource predecessor) 
 	throws IOException {
-        
-        CepstrumSource endpointer = null;
-	String endPointerClass = getEndpointerName();
-        
-        if (endPointerClass != null) {
-            if (endPointerClass.equals
-                ("edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer")) {
-                endpointer = new EnergyEndpointer
-                    ("EnergyEndpointer", getContext(), 
-                     getSphinxProperties(), predecessor);
+        try {
+            Endpointer endpointer = null;
+            String endPointerClass = getEndpointerName();
+            
+            if (endPointerClass != null) {
+                endpointer = (Endpointer)
+                    Class.forName(getEndpointerName()).newInstance();
+                
+                endpointer.initialize("Endpointer", getContext(), 
+                                      getSphinxProperties(), predecessor);
             }
+            return endpointer;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Error("Can't create Endpointer: " + e);
         }
-
-        return endpointer;
     }
 
 
