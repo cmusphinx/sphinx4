@@ -80,7 +80,7 @@ edu.cmu.sphinx.search.validateResults=false
 #
 ############################################################
 
-edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.FlatLinguist
+edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar
 
 
