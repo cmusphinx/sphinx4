@@ -13,14 +13,23 @@
 
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
+import java.io.IOException;
 import java.util.Map;
 
+import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 /**
  * Generic interface for a loader of acoustic models
  */
-public interface Loader {
+public interface Loader extends Configurable {
+    
+    /**
+     * Loads the acoustic model
+     * @throws IOException if an error occurs while loading the model
+     */
+    public void load() throws IOException;
+    
     /**
      * Gets the pool of means for this loader
      *
@@ -121,11 +130,12 @@ public interface Loader {
      * @return the left context size
      */
     public int getRightContextSize();
-    
+
     /**
      * Returns the properties of the loaded AcousticModel.
      *
-     * @return the properties of the loaded AcousticModel, or null if
+     * @return the properties of the loaded
+     * AcousticModel, or null if
      *   it has no properties
      */
     public SphinxProperties getModelProperties();

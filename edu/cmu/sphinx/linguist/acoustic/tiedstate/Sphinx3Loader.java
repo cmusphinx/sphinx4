@@ -1,4 +1,3 @@
-
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -10,9 +9,7 @@
  * WARRANTIES.
  *
  */
-
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
-
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -26,7 +23,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipException;
-
 import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
@@ -37,40 +33,128 @@ import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StreamFactory;
 import edu.cmu.sphinx.util.Utilities;
-
-
-
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 /**
  * an acoustic model loader that loads sphinx3 ascii data
- *
- * Mixture weights and transition probabilities are maintained in logMath 
- * log base, 
+ * 
+ * Mixture weights and transition probabilities are maintained in logMath log
+ * base,
  */
 public class Sphinx3Loader implements Loader {
-
+    /**
+     * The log math component for the system.
+     */
+    public final static String PROP_LOG_MATH = "logMath";
+    /**
+     * The directory where the acoustic model data can be found.
+     */
+    public final static String PROP_LOCATION = "location";
+    /**
+     * The default value of PROP_LOCATION.
+     */
+    public final static String PROP_LOCATION_DEFAULT = ".";
+    /**
+     * Specifies whether the model to be loaded is in ASCII or binary format
+     */
+    public final static String PROP_IS_BINARY = "isBinary";
+    /**
+     * The default value of PROP_IS_BINARY
+     */
+    public final static boolean PROP_IS_BINARY_DEFAULT = false;
+    /**
+     * The name of the model definition file (contains the HMM data)
+     */
+    public final static String PROP_MODEL = "definition_file";
+    /**
+     * The default value of PROP_MODEL_DEFAULT.
+     */
+    public final static String PROP_MODEL_DEFAULT = "model.mdef";
+    /**
+     * Subdirectory of PROP_LOCATION where the acoustic model can be found
+     */
+    public final static String PROP_DATA_LOCATION = "data_location";
+    /**
+     * The default value of PROP_DATA_LOCATION.
+     */
+    public final static String PROP_DATA_LOCATION_DEFAULT = "data";
+    /**
+     * The SphinxProperty for the name of the acoustic properties file.
+     */
+    public final static String PROP_PROPERTIES_FILE = "properties_file";
+    /**
+     * The default value of PROP_PROPERTIES_FILE.
+     */
+    public final static String PROP_PROPERTIES_FILE_DEFAULT = "am.props";
+    /**
+     * The SphinxProperty for the length of feature vectors.
+     */
+    public final static String PROP_VECTOR_LENGTH = "FeatureVectorLength";
+    /**
+     * The default value of PROP_VECTOR_LENGTH.
+     */
+    public final static int PROP_VECTOR_LENGTH_DEFAULT = 39;
+    /**
+     * The SphinxProperty specifying whether the transition matrices of the
+     * acoustic model is in sparse form, i.e., omitting the zeros of the
+     * non-transitioning states.
+     */
+    public final static String PROP_SPARSE_FORM = "sparseForm";
+    /**
+     * The default value of PROP_SPARSE_FORM.
+     */
+    public final static boolean PROP_SPARSE_FORM_DEFAULT = true;
+    /**
+     * The SphinxProperty specifying whether context-dependent units should be
+     * used.
+     */
+    public final static String PROP_USE_CD_UNITS = "useCDUnits";
+    /**
+     * The default value of PROP_USE_CD_UNITS.
+     */
+    public final static boolean PROP_USE_CD_UNITS_DEFAULT = true;
+    /**
+     * Mixture component score floor.
+     */
+    public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
+    /**
+     * Mixture component score floor default value.
+     */
+    public final static float PROP_MC_FLOOR_DEFAULT = 0.0f;
+    /**
+     * Variance floor.
+     */
+    public final static String PROP_VARIANCE_FLOOR = "varianceFloor";
+    /**
+     * Variance floor default value.
+     */
+    public final static float PROP_VARIANCE_FLOOR_DEFAULT = 0.0001f;
+    /**
+     * Mixture weight floor.
+     */
+    public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
+    /**
+     * Mixture weight floor default value.
+     */
+    public final static float PROP_MW_FLOOR_DEFAULT = 1e-7f;
     /**
      * The logger for this class
      */
-    private static Logger logger = 
-	    Logger.getLogger(TiedStateAcousticModel.PROP_PREFIX + "AcousticModel");
-
+    private static Logger logger = //TODO fixme get a real logger here.
+    Logger.getLogger("AcousticModel");
     protected final static String NUM_SENONES = "num_senones";
     protected final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
     protected final static String NUM_STREAMS = "num_streams";
-
     protected final static String FILLER = "filler";
-    protected final static String SILENCE_CIPHONE  = "SIL";
-
+    protected final static String SILENCE_CIPHONE = "SIL";
     protected final static int BYTE_ORDER_MAGIC = 0x11223344;
-
     /**
      * Supports this version of the acoustic model
      */
     public final static String MODEL_VERSION = "0.3";
-
     protected final static int CONTEXT_SIZE = 1;
-
-
     private Pool meansPool;
     private Pool variancePool;
     private Pool matrixPool;
@@ -79,253 +163,201 @@ public class Sphinx3Loader implements Loader {
     private Pool varianceTransformationMatrixPool;
     private Pool varianceTransformationVectorPool;
     private Pool mixtureWeightsPool;
-
     private Pool senonePool;
-    private int vectorLength;
-
     private Map contextIndependentUnits;
     private HMMManager hmmManager;
     private LogMath logMath;
     private SphinxProperties acousticProperties;
-    private SphinxProperties systemProperties;
-    private boolean binary = false;
-    private String location;
     private boolean swap;
-
     protected final static String DENSITY_FILE_VERSION = "1.0";
     protected final static String MIXW_FILE_VERSION = "1.0";
     protected final static String TMAT_FILE_VERSION = "1.0";
-
-
-    /**
-     * Loads the sphinx3 ascii model.
-     *
-     * @param modelName  the name of the model as specified in the
-     *    props file.
-     * @param props  the SphinxProperties object
-     * @param binary  if <code>true</code> the file is in binary
-     * format
-     *
-     * @throws FileNotFoundException if the file could not be found
-     * @throws IOException if the file could not be loaded
-     * @throws ZipException if the file could not be accessed as a zip
-     * file
+    // --------------------------------------
+    // Configuration variables
+    // --------------------------------------
+    private String name;
+    private boolean binary;
+    private int vectorLength;
+    private String location;
+    private String model;
+    private String dataDir;
+    private float distFloor;
+    private float mixtureWeightFloor;
+    private float varianceFloor;
+    private boolean useCDUnits;
+    private String propsFile;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
      */
-    public Sphinx3Loader(String modelName, SphinxProperties props, 
-            boolean binary) throws 
-	FileNotFoundException, IOException, ZipException {
-
-	this.systemProperties = props;
-        this.binary = binary;
-	logMath = LogMath.getLogMath(systemProperties.getContext());
-
-	vectorLength = systemProperties.getInt
-	    (modelName, TiedStateAcousticModel.PROP_VECTOR_LENGTH,
-             TiedStateAcousticModel.PROP_VECTOR_LENGTH_DEFAULT);
-	
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        this.name = name;
+        registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
+        registry.register(PROP_IS_BINARY, PropertyType.BOOLEAN);
+        registry.register(PROP_VECTOR_LENGTH, PropertyType.INT);
+        registry.register(PROP_LOCATION, PropertyType.STRING);
+        registry.register(PROP_MODEL, PropertyType.STRING);
+        registry.register(PROP_DATA_LOCATION, PropertyType.STRING);
+        registry.register(PROP_PROPERTIES_FILE, PropertyType.STRING);
+        registry.register(PROP_MC_FLOOR, PropertyType.FLOAT);
+        registry.register(PROP_MW_FLOOR, PropertyType.FLOAT);
+        registry.register(PROP_VARIANCE_FLOOR, PropertyType.FLOAT);
+        registry.register(PROP_USE_CD_UNITS, PropertyType.BOOLEAN);
+    }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+        binary = ps.getBoolean(PROP_IS_BINARY, PROP_IS_BINARY_DEFAULT);
+        vectorLength = ps
+                .getInt(PROP_VECTOR_LENGTH, PROP_VECTOR_LENGTH_DEFAULT);
+        location = ps.getString(PROP_LOCATION, PROP_LOCATION_DEFAULT);
+        model = ps.getString(PROP_MODEL, PROP_MODEL_DEFAULT);
+        dataDir = ps.getString(PROP_DATA_LOCATION, PROP_DATA_LOCATION_DEFAULT)
+                + "/";
+        propsFile = ps.getString(PROP_PROPERTIES_FILE,
+                PROP_PROPERTIES_FILE_DEFAULT);
+        distFloor = ps.getFloat(PROP_MC_FLOOR, PROP_MC_FLOOR_DEFAULT);
+        mixtureWeightFloor = ps.getFloat(PROP_MW_FLOOR, PROP_MW_FLOOR_DEFAULT);
+        varianceFloor = ps.getFloat(PROP_VARIANCE_FLOOR,
+                PROP_VARIANCE_FLOOR_DEFAULT);
+        useCDUnits = ps
+                .getBoolean(PROP_USE_CD_UNITS, PROP_USE_CD_UNITS_DEFAULT);
+    }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getName()
+     */
+    public String getName() {
+        return name;
+    }
+    public void load() throws IOException {
+        // TODO: what is this all about?
         hmmManager = new HMMManager();
         contextIndependentUnits = new LinkedHashMap();
-
         // dummy pools for these elements
-        meanTransformationMatrixPool
-            = createDummyMatrixPool("meanTransformationMatrix");
-        meanTransformationVectorPool
-            = createDummyVectorPool("meanTransformationMatrix");
-        varianceTransformationMatrixPool
-            = createDummyMatrixPool("varianceTransformationMatrix");
-        varianceTransformationVectorPool
-            = createDummyVectorPool("varianceTransformationMatrix");
-
+        meanTransformationMatrixPool = createDummyMatrixPool("meanTransformationMatrix");
+        meanTransformationVectorPool = createDummyVectorPool("meanTransformationMatrix");
+        varianceTransformationMatrixPool = createDummyMatrixPool("varianceTransformationMatrix");
+        varianceTransformationVectorPool = createDummyVectorPool("varianceTransformationMatrix");
         // do the actual acoustic model loading
-        loadModelFiles(modelName);
+        loadModelFiles(model);
     }
-
-
     /**
      * Return the HmmManager.
-     *
+     * 
      * @return the hmmManager
      */
     protected HMMManager getHmmManager() {
-	return hmmManager;
+        return hmmManager;
     }
-
     /**
      * Return the MatrixPool.
-     *
+     * 
      * @return the matrixPool
      */
     protected Pool getMatrixPool() {
-	return matrixPool;
+        return matrixPool;
     }
-
     /**
      * Return the MixtureWeightsPool.
-     *
+     * 
      * @return the mixtureWeightsPool
      */
     protected Pool getMixtureWeightsPool() {
-	return mixtureWeightsPool;
+        return mixtureWeightsPool;
     }
-
-    /**
-     * Return the LogMath.
-     *
-     * @return the logMath
-     */
-    protected LogMath getLogMath() {
-	return logMath;
-    }
-
     /**
      * Return the acousticProperties.
-     *
+     * 
      * @return the acousticProperties
      */
     protected SphinxProperties getAcousticProperties() {
-	return acousticProperties;
+        return acousticProperties;
     }
-
-    /**
-     * Return the systemProperties.
-     *
-     * @return the systemProperties
-     */
-    protected SphinxProperties getSystemProperties() {
-	return systemProperties;
-    }
-
     /**
      * Return the location.
-     *
+     * 
      * @return the location
      */
     protected String getLocation() {
-	return location;
+        return location;
     }
-
-
     /**
      * Loads the AcousticModel from a directory in the file system.
-     *
-     * @param modelName the name of the acoustic model; if null we just
-     *    load from the default location
+     * 
+     * @param modelName
+     *                the name of the acoustic model; if null we just load from
+     *                the default location
      */
-    private void loadModelFiles(String modelName) 
-	throws FileNotFoundException, IOException, ZipException {
-
-	String prefix, model, dataDir, propsFile;
-
-	if (modelName == null) {
-	    prefix = TiedStateAcousticModel.PROP_PREFIX;
-	} else {
-	    prefix = TiedStateAcousticModel.PROP_PREFIX + modelName + ".";
-	}
-	// System.out.println("Using prefix: " + prefix);
-
-	location = systemProperties.getString (modelName, 
-                        TiedStateAcousticModel.PROP_LOCATION, 
-                        TiedStateAcousticModel.PROP_LOCATION_DEFAULT);
-
-	model = systemProperties.getString(modelName,
-	                TiedStateAcousticModel.PROP_MODEL, 
-                        TiedStateAcousticModel.PROP_MODEL_DEFAULT);
-	dataDir = systemProperties.getString(modelName,
-	     TiedStateAcousticModel.PROP_DATA_LOCATION,
-	     TiedStateAcousticModel.PROP_DATA_LOCATION_DEFAULT) + "/";
-
-	propsFile = systemProperties.getString(modelName,
-	     TiedStateAcousticModel.PROP_PROPERTIES_FILE,
-	     TiedStateAcousticModel.PROP_PROPERTIES_FILE_DEFAULT);
-
-	float distFloor = systemProperties.getFloat(modelName,
-	     TiedStateAcousticModel.PROP_MC_FLOOR, 
-             TiedStateAcousticModel.PROP_MC_FLOOR_DEFAULT);
-
-        float mixtureWeightFloor = systemProperties.getFloat(modelName,
-                   TiedStateAcousticModel.PROP_MW_FLOOR, 
-                   TiedStateAcousticModel.PROP_MW_FLOOR_DEFAULT);
-
-        float varianceFloor = systemProperties.getFloat(modelName,
-                   TiedStateAcousticModel.PROP_VARIANCE_FLOOR, 
-		   TiedStateAcousticModel.PROP_VARIANCE_FLOOR_DEFAULT);
-
-	logger.info("Loading Sphinx3 acoustic model: " + modelName);
-	logger.info("    Path      : " + location);
-	logger.info("    modellName: " + model);
-	logger.info("    dataDir   : " + dataDir);
-
-        // load the acoustic properties file (am.props), 
-	// create a different URL depending on the data format
-
+    private void loadModelFiles(String modelName) throws FileNotFoundException,
+            IOException, ZipException {
+        logger.info("Loading Sphinx3 acoustic model: " + modelName);
+        logger.info("    Path      : " + location);
+        logger.info("    modellName: " + model);
+        logger.info("    dataDir   : " + dataDir);
+        // load the acoustic properties file (am.props),
+        // create a different URL depending on the data format
         URL url = null;
         String format = StreamFactory.resolve(location);
-
         if (format.equals(StreamFactory.ZIP_FILE)) {
             url = new URL("jar:" + location + "!/" + propsFile);
         } else {
             File file = new File(location, propsFile);
             url = file.toURI().toURL();
         }
-
-        prefix = systemProperties.getContext() + ".acoustic." + modelName;
-	acousticProperties = loadAcousticPropertiesFile(prefix, url);
-
-
+        acousticProperties = loadAcousticPropertiesFile(url);
         if (binary) {
             meansPool = loadDensityFileBinary(dataDir + "means",
                     -Float.MAX_VALUE);
             variancePool = loadDensityFileBinary(dataDir + "variances",
                     varianceFloor);
-            mixtureWeightsPool = loadMixtureWeightsBinary(
-                dataDir + "mixture_weights", mixtureWeightFloor);
-           
-            matrixPool = loadTransitionMatricesBinary(
-                    dataDir + "transition_matrices");
-
-        } else  {
+            mixtureWeightsPool = loadMixtureWeightsBinary(dataDir
+                    + "mixture_weights", mixtureWeightFloor);
+            matrixPool = loadTransitionMatricesBinary(dataDir
+                    + "transition_matrices");
+        } else {
             meansPool = loadDensityFileAscii(dataDir + "means.ascii",
                     -Float.MAX_VALUE);
             variancePool = loadDensityFileAscii(dataDir + "variances.ascii",
                     varianceFloor);
-            mixtureWeightsPool = loadMixtureWeightsAscii(
-                    dataDir + "mixture_weights.ascii", mixtureWeightFloor);
-            matrixPool = loadTransitionMatricesAscii(
-                    dataDir + "transition_matrices.ascii");
+            mixtureWeightsPool = loadMixtureWeightsAscii(dataDir
+                    + "mixture_weights.ascii", mixtureWeightFloor);
+            matrixPool = loadTransitionMatricesAscii(dataDir
+                    + "transition_matrices.ascii");
         }
-
-	senonePool = createSenonePool(distFloor, varianceFloor);
-
+        senonePool = createSenonePool(distFloor, varianceFloor);
         // load the HMM model file
-	boolean useCDUnits = systemProperties.getBoolean(modelName,
-	     TiedStateAcousticModel.PROP_USE_CD_UNITS, 
-	     TiedStateAcousticModel.PROP_USE_CD_UNITS_DEFAULT);
-	loadHMMPool(useCDUnits,
-                    StreamFactory.getInputStream(location, model),
-                    location + File.separator + model);
+        loadHMMPool(useCDUnits, StreamFactory.getInputStream(location, model),
+                location + File.separator + model);
     }
-
-
     /**
-     * Returns the map of context indepent units. The map can be
-     * accessed by unit name.
-     *
+     * Returns the map of context indepent units. The map can be accessed by
+     * unit name.
+     * 
      * @return the map of context independent units.
      */
     public Map getContextIndependentUnits() {
-	return contextIndependentUnits;
+        return contextIndependentUnits;
     }
-
-
     /**
      * Creates the senone pool from the rest of the pools.
-     *
-     * @param distFloor the lowest allowed score 
-     * @param varianceFloor the lowest allowed variance
-     *
+     * 
+     * @param distFloor
+     *                the lowest allowed score
+     * @param varianceFloor
+     *                the lowest allowed variance
+     * 
      * @return the senone pool
      */
-    private Pool createSenonePool(float distFloor, float varianceFloor) {
+private Pool createSenonePool(float distFloor, float varianceFloor) {
     	Pool pool = new Pool("senones");
 	int numMixtureWeights = mixtureWeightsPool.size();
 
@@ -372,112 +404,111 @@ public class Sphinx3Loader implements Loader {
 	    pool.put(i, senone);
 	}
 	return pool;
-    }
-
+    }   
 
     /**
-     * Loads the Sphinx 3 acoustic model properties file, which
-     * is basically a normal system properties file.
-     *
-     * @param context this models' context
-     * @param url the path to the acoustic properties file
-     *
-     * @return a SphinxProperty object containing the acoustic properties,
-     *    or null if there are no acoustic model properties
-     *
-     * @throws FileNotFoundException if the file cannot be found
-     * @throws IOException if an error occurs while loading the data
-     */
-    private SphinxProperties loadAcousticPropertiesFile(String context,
-                                                        URL url)
-        throws FileNotFoundException, IOException {
+      * Loads the Sphinx 3 acoustic model properties file, which is
+      * basically a normal system properties file.
+      * 
+      * @param url
+      *                the path to the acoustic properties file
+      * 
+      * @return a SphinxProperty object containing the acoustic properties,
+      *         or null if there are no acoustic model properties
+      * 
+      * @throws FileNotFoundException
+      *                 if the file cannot be found
+      * @throws IOException
+      *                 if an error occurs while loading the data
+      */
+    private SphinxProperties loadAcousticPropertiesFile(URL url)
+            throws FileNotFoundException, IOException {
+        //TODO what to do for prefix here
+        String context = "acoustic." + getName();
         SphinxProperties.initContext(context, url);
         return (SphinxProperties.getSphinxProperties(context));
     }
-
-
     /**
-     * Loads the sphinx3 densityfile, a set of density arrays are
-     * created and placed in the given pool.
-     *
-     * @param path the name of the data
-     * @param floor the minimum density allowed
-     *
+     * Loads the sphinx3 densityfile, a set of density arrays are created and
+     * placed in the given pool.
+     * 
+     * @param path
+     *                the name of the data
+     * @param floor
+     *                the minimum density allowed
+     * 
      * @return a pool of loaded densities
-     *
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * 
+     * @throws FileNotFoundException
+     *                 if a file cannot be found
+     * @throws IOException
+     *                 if an error occurs while loading the data
      */
-    private Pool loadDensityFileAscii(String path, float floor) 
-        throws FileNotFoundException, IOException {
-	int token_type;
-	int numStates;
-	int numStreams;
-	int numGaussiansPerState;
-
+    private Pool loadDensityFileAscii(String path, float floor)
+            throws FileNotFoundException, IOException {
+        int token_type;
+        int numStates;
+        int numStreams;
+        int numGaussiansPerState;
         InputStream inputStream = StreamFactory.getInputStream(location, path);
-
-	if (inputStream == null) {
-	    throw new FileNotFoundException("Error trying to read file "
-                                        + location + path);
-	}
+        if (inputStream == null) {
+            throw new FileNotFoundException("Error trying to read file "
+                    + location + path);
+        }
         // 'false' argument refers to EOL is insignificant
-	ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
-            (inputStream, '#', false);
-
-    	Pool pool = new Pool(path);
-
-	logger.info("Loading density file from: ");
-	logger.info(path);
-
-	est.expectString("param");
-	numStates = est.getInt("numStates");
-	numStreams = est.getInt("numStreams");
-	numGaussiansPerState = est.getInt("numGaussiansPerState");
-
-	pool.setFeature(NUM_SENONES, numStates);
-	pool.setFeature(NUM_STREAMS, numStreams);
-	pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
-
-	for (int i = 0; i < numStates; i++) {
-	    est.expectString("mgau");
-	    est.expectInt("mgau index", i);
-	    est.expectString("feat");
-	    est.expectInt("feat index", 0);
-	    for (int j = 0; j < numGaussiansPerState; j++) {
-		est.expectString("density");
-		est.expectInt("densityValue", j);
-
-		float[] density = new float[vectorLength];
-		for (int k = 0; k < vectorLength; k++) {
-		    density[k] = est.getFloat("val");
-		    if (density[k] < floor) {
-			density[k] = floor;
-		    }
-                 //   System.out.println(" " + i + " " + j + " " + k +
-                  //          " " + density[k]);
-		}
-		int id = i * numGaussiansPerState + j;
-		pool.put(id, density);
-	    }
-	}
-	est.close();
-	return pool;
+        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
+                '#', false);
+        Pool pool = new Pool(path);
+        logger.info("Loading density file from: ");
+        logger.info(path);
+        est.expectString("param");
+        numStates = est.getInt("numStates");
+        numStreams = est.getInt("numStreams");
+        numGaussiansPerState = est.getInt("numGaussiansPerState");
+        pool.setFeature(NUM_SENONES, numStates);
+        pool.setFeature(NUM_STREAMS, numStreams);
+        pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
+        for (int i = 0; i < numStates; i++) {
+            est.expectString("mgau");
+            est.expectInt("mgau index", i);
+            est.expectString("feat");
+            est.expectInt("feat index", 0);
+            for (int j = 0; j < numGaussiansPerState; j++) {
+                est.expectString("density");
+                est.expectInt("densityValue", j);
+                float[] density = new float[vectorLength];
+                for (int k = 0; k < vectorLength; k++) {
+                    density[k] = est.getFloat("val");
+                    if (density[k] < floor) {
+                        density[k] = floor;
+                    }
+                    //   System.out.println(" " + i + " " + j + " " + k +
+                    //          " " + density[k]);
+                }
+                int id = i * numGaussiansPerState + j;
+                pool.put(id, density);
+            }
+        }
+        est.close();
+        return pool;
     }
-
     /**
-     * Loads the sphinx3 densityfile, a set of density arrays are
-     * created and placed in the given pool.
-     *
-     * @param path the name of the data
-     * @param floor the minimum density allowed
-     *
+     * Loads the sphinx3 densityfile, a set of density arrays are created and
+     * placed in the given pool.
+     * 
+     * @param path
+     *                the name of the data
+     * @param floor
+     *                the minimum density allowed
+     * 
      * @return a pool of loaded densities
-     *
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * 
+     * @throws FileNotFoundException
+     *                 if a file cannot be found
+     * @throws IOException
+     *                 if an error occurs while loading the data
      */
-    private Pool loadDensityFileBinary(String path, float floor) 
+        private Pool loadDensityFileBinary(String path, float floor) 
         throws FileNotFoundException, IOException {
 	int token_type;
 	int numStates;
@@ -544,35 +575,32 @@ public class Sphinx3Loader implements Loader {
         // BUG: not checking the check sum yet.
         dis.close();
         return pool;
-    }
-
-
-    /**
-     * Reads the S3 binary hearder from the given location+path. Adds
-     * header information to the given set of properties.
-     *
-     * @param location the location of the file
-     * @param path the name of the file
-     * @param props the properties
-     *
-     * @return the input stream positioned after the header
-     *
-     * @throws IOException on error
-     */
-
-    protected DataInputStream readS3BinaryHeader(String location, String
-            path, Properties props) throws IOException {
-
+    }    /**
+          * Reads the S3 binary hearder from the given location+path. Adds
+          * header information to the given set of properties.
+          * 
+          * @param location
+          *                the location of the file
+          * @param path
+          *                the name of the file
+          * @param props
+          *                the properties
+          * 
+          * @return the input stream positioned after the header
+          * 
+          * @throws IOException
+          *                 on error
+          */
+    protected DataInputStream readS3BinaryHeader(String location, String path,
+            Properties props) throws IOException {
         InputStream inputStream = StreamFactory.getInputStream(location, path);
-        DataInputStream dis = new DataInputStream(new
-                BufferedInputStream(inputStream));
-
+        DataInputStream dis = new DataInputStream(new BufferedInputStream(
+                inputStream));
         String id = readWord(dis);
         if (!id.equals("s3")) {
-            throw new IOException("Not proper s3 binary file " +
-                    location + path);
+            throw new IOException("Not proper s3 binary file " + location
+                    + path);
         }
-
         String name;
         while ((name = readWord(dis)) != null) {
             if (!name.equals("endhdr")) {
@@ -582,9 +610,7 @@ public class Sphinx3Loader implements Loader {
                 break;
             }
         }
-
         int byteOrderMagic = dis.readInt();
-
         if (byteOrderMagic == BYTE_ORDER_MAGIC) {
             // System.out.println("Not swapping " + path);
             swap = false;
@@ -594,72 +620,68 @@ public class Sphinx3Loader implements Loader {
         } else {
             throw new IOException("Corrupt S3 file " + location + path);
         }
-
         return dis;
     }
-
     /**
-     * Reads the next word (text separated by whitespace) from the
-     * given stream
-     *
-     * @param dis the input stream
-     *
+     * Reads the next word (text separated by whitespace) from the given stream
+     * 
+     * @param dis
+     *                the input stream
+     * 
      * @return the next word
-     *
-     * @throws IOException on error
+     * 
+     * @throws IOException
+     *                 on error
      */
     String readWord(DataInputStream dis) throws IOException {
         StringBuffer sb = new StringBuffer();
         char c;
-
         // skip leading whitespace
         do {
             c = readChar(dis);
-        } while(Character.isWhitespace(c));
-
+        } while (Character.isWhitespace(c));
         // read the word
-
         do {
             sb.append(c);
             c = readChar(dis);
         } while (!Character.isWhitespace(c));
         return sb.toString();
     }
-
-
     /**
      * Reads a single char from the stream
-     *
-     * @param dis the stream to read
+     * 
+     * @param dis
+     *                the stream to read
      * @return the next character on the stream
-     *
-     * @throws IOException if an error occurs
+     * 
+     * @throws IOException
+     *                 if an error occurs
      */
     private char readChar(DataInputStream dis) throws IOException {
         return (char) dis.readByte();
     }
-
     /**
      * swap a 32 bit word
-     *
-     * @param val the value to swap
-     *
+     * 
+     * @param val
+     *                the value to swap
+     * 
      * @return the swapped value
      */
     private int byteSwap(int val) {
-        return ((0xff & (val >>24)) | (0xff00 & (val >>8)) |
-         (0xff0000 & (val <<8)) | (0xff000000 & (val <<24)));
+        return ((0xff & (val >> 24)) | (0xff00 & (val >> 8))
+                | (0xff0000 & (val << 8)) | (0xff000000 & (val << 24)));
     }
-
     /**
-     * Read an integer from the input stream, byte-swapping as
-     * necessary
-     *
-     * @param dis the inputstream
-     *
+     * Read an integer from the input stream, byte-swapping as necessary
+     * 
+     * @param dis
+     *                the inputstream
+     * 
      * @return an integer value
-     *
-     * @throws IOException on error
+     * 
+     * @throws IOException
+     *                 on error
      */
     protected int readInt(DataInputStream dis) throws IOException {
         if (swap) {
@@ -668,35 +690,35 @@ public class Sphinx3Loader implements Loader {
             return dis.readInt();
         }
     }
-
     /**
-     * Read a float from the input stream, byte-swapping as
-     * necessary
-     *
-     * @param dis the inputstream
-     *
+     * Read a float from the input stream, byte-swapping as necessary
+     * 
+     * @param dis
+     *                the inputstream
+     * 
      * @return a floating pint value
-     *
-     * @throws IOException on error
+     * 
+     * @throws IOException
+     *                 on error
      */
-
     protected float readFloat(DataInputStream dis) throws IOException {
         float val;
         if (swap) {
-            val =  Utilities.readLittleEndianFloat(dis);
+            val = Utilities.readLittleEndianFloat(dis);
         } else {
-            val =  dis.readFloat();
+            val = dis.readFloat();
         }
         return val;
     }
-
     // Do we need the method nonZeroFloor??
     /**
-     * If a data point is non-zero and below 'floor' make
-     * it equal to floor (don't floor zero values though).
-     *
-     * @param data the data to floor
-     * @param floor the floored value
+     * If a data point is non-zero and below 'floor' make it equal to floor
+     * (don't floor zero values though).
+     * 
+     * @param data
+     *                the data to floor
+     * @param floor
+     *                the floored value
      */
     protected void nonZeroFloor(float[] data, float floor) {
         for (int i = 0; i < data.length; i++) {
@@ -705,13 +727,13 @@ public class Sphinx3Loader implements Loader {
             }
         }
     }
-
     /**
-     * If a data point is below 'floor' make
-     * it equal to floor.
-     *
-     * @param data the data to floor
-     * @param floor the floored value
+     * If a data point is below 'floor' make it equal to floor.
+     * 
+     * @param data
+     *                the data to floor
+     * @param floor
+     *                the floored value
      */
     private void floorData(float[] data, float floor) {
         for (int i = 0; i < data.length; i++) {
@@ -720,31 +742,31 @@ public class Sphinx3Loader implements Loader {
             }
         }
     }
-
     /**
      * Normalize the given data
-     *
-     * @param data the data to normalize
+     * 
+     * @param data
+     *                the data to normalize
      */
     protected void normalize(float[] data) {
         float sum = 0;
         for (int i = 0; i < data.length; i++) {
             sum += data[i];
         }
-
         if (sum != 0.0f) {
             for (int i = 0; i < data.length; i++) {
-                 data[i] = data[i] / sum ;
+                data[i] = data[i] / sum;
             }
         }
     }
-
     /**
      * Dump the data
-     *
-     * @param name the name of the data
-     * @param data the data itself
-     *
+     * 
+     * @param name
+     *                the name of the data
+     * @param data
+     *                the data itself
+     *  
      */
     private void dumpData(String name, float[] data) {
         System.out.println(" ----- " + name + " -----------");
@@ -752,11 +774,11 @@ public class Sphinx3Loader implements Loader {
             System.out.println(name + " " + i + ": " + data[i]);
         }
     }
-
     /**
      * Convert to log math
-     *
-     * @param data the data to normalize
+     * 
+     * @param data
+     *                the data to normalize
      */
     // linearToLog returns a float, so zero values in linear scale
     // should return -Float.MAX_VALUE.
@@ -765,43 +787,47 @@ public class Sphinx3Loader implements Loader {
             data[i] = logMath.linearToLog(data[i]);
         }
     }
-
-
     /**
-     * Reads the given number of floats from the stream and returns
-     * them in an array of floats
-     *
-     * @param dis the stream to read data from
-     * @param size the number of floats to read
-     *
+     * Reads the given number of floats from the stream and returns them in an
+     * array of floats
+     * 
+     * @param dis
+     *                the stream to read data from
+     * @param size
+     *                the number of floats to read
+     * 
      * @return an array of size float elements
-     *
-     * @throws IOException if an exception occurs
+     * 
+     * @throws IOException
+     *                 if an exception occurs
      */
     protected float[] readFloatArray(DataInputStream dis, int size)
-        throws IOException{
+            throws IOException {
         float[] data = new float[size];
-
         for (int i = 0; i < size; i++) {
             data[i] = readFloat(dis);
         }
         return data;
     }
-
     /**
-     * Loads the sphinx3 densityfile, a set of density arrays are
-     * created and placed in the given pool.
-     *
-     * @param useCDUnits if true, loads also the context dependent units
-     * @param inputStream the open input stream to use
-     * @param path the path to a density file
-     *
+     * Loads the sphinx3 densityfile, a set of density arrays are created and
+     * placed in the given pool.
+     * 
+     * @param useCDUnits
+     *                if true, loads also the context dependent units
+     * @param inputStream
+     *                the open input stream to use
+     * @param path
+     *                the path to a density file
+     * 
      * @return a pool of loaded densities
-     *
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * 
+     * @throws FileNotFoundException
+     *                 if a file cannot be found
+     * @throws IOException
+     *                 if an error occurs while loading the data
      */
-    protected Pool loadHMMPool(boolean useCDUnits,
+            protected Pool loadHMMPool(boolean useCDUnits,
                              InputStream inputStream,
                              String path) 
             throws FileNotFoundException, IOException {
@@ -890,7 +916,7 @@ public class Sphinx3Loader implements Loader {
 	    hmmManager.put(hmm);
 	}
 
-	// Load the context dependent phones.  If the useCDUnits
+	// Load the context dependent phones. If the useCDUnits
 	// property is false, the CD phones will not be created, but
         // the values still need to be read in from the file.
 
@@ -965,14 +991,12 @@ public class Sphinx3Loader implements Loader {
 
 	est.close();
 	return pool;
-    }
-
-    /**
-     * Returns true if the given senone sequence IDs are the same.
-     *
-     * @return true if the given senone sequence IDs are the same,
-     *         false otherwise
-     */
+    }    /**
+          * Returns true if the given senone sequence IDs are the same.
+          * 
+          * @return true if the given senone sequence IDs are the same, false
+          *         otherwise
+          */
     protected boolean sameSenoneSequence(int[] ssid1, int[] ssid2) {
         if (ssid1.length == ssid2.length) {
             for (int i = 0; i < ssid1.length; i++) {
@@ -985,93 +1009,89 @@ public class Sphinx3Loader implements Loader {
             return false;
         }
     }
-
     /**
      * Gets the senone sequence representing the given senones
-     *
-     * @param stateid is the array of senone state ids
-     *
+     * 
+     * @param stateid
+     *                is the array of senone state ids
+     * 
      * @return the senone sequence associated with the states
      */
     protected SenoneSequence getSenoneSequence(int[] stateid) {
         Senone[] senones = new Senone[stateid.length];
-        
-        for (int i=0; i<stateid.length; i++){
+        for (int i = 0; i < stateid.length; i++) {
             senones[i] = (Senone) senonePool.get(stateid[i]);
         }
-        
         return new SenoneSequence(senones);
     }
-
     /**
      * Loads the mixture weights
-     *
-     * @param path the path to the mixture weight file
-     * @param floor the minimum mixture weight allowed
-     *
+     * 
+     * @param path
+     *                the path to the mixture weight file
+     * @param floor
+     *                the minimum mixture weight allowed
+     * 
      * @return a pool of mixture weights
-     *
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * 
+     * @throws FileNotFoundException
+     *                 if a file cannot be found
+     * @throws IOException
+     *                 if an error occurs while loading the data
      */
-    private Pool loadMixtureWeightsAscii(String path,
-                                    float floor) 
-        throws FileNotFoundException, IOException {
-	logger.info("Loading mixture weights from: " );
-	logger.info(path);
-
-	int numStates;
-	int numStreams;
-	int numGaussiansPerState;
-
+    private Pool loadMixtureWeightsAscii(String path, float floor)
+            throws FileNotFoundException, IOException {
+        logger.info("Loading mixture weights from: ");
+        logger.info(path);
+        int numStates;
+        int numStreams;
+        int numGaussiansPerState;
         InputStream inputStream = StreamFactory.getInputStream(location, path);
-    	Pool pool = new Pool(path);
-	ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
-            (inputStream, '#', false);
-
-	est.expectString("mixw");
-	numStates = est.getInt("numStates");
-	numStreams = est.getInt("numStreams");
-	numGaussiansPerState = est.getInt("numGaussiansPerState");
-
-	pool.setFeature(NUM_SENONES, numStates);
-	pool.setFeature(NUM_STREAMS, numStreams);
-	pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
-
-	for (int i = 0; i < numStates; i++) {
-	    est.expectString("mixw");
-	    est.expectString("[" + i);
-	    est.expectString("0]");
-	    float total = est.getFloat("total");
-	    float[] logMixtureWeight = new float[numGaussiansPerState];
-
-	    for (int j = 0; j < numGaussiansPerState; j++) {
-		float val = est.getFloat("mixwVal");
-		if (val < floor) {
-		    val = floor;
-		}
-		logMixtureWeight[j] =  val;
-
-	    }
+        Pool pool = new Pool(path);
+        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
+                '#', false);
+        est.expectString("mixw");
+        numStates = est.getInt("numStates");
+        numStreams = est.getInt("numStreams");
+        numGaussiansPerState = est.getInt("numGaussiansPerState");
+        pool.setFeature(NUM_SENONES, numStates);
+        pool.setFeature(NUM_STREAMS, numStreams);
+        pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
+        for (int i = 0; i < numStates; i++) {
+            est.expectString("mixw");
+            est.expectString("[" + i);
+            est.expectString("0]");
+            float total = est.getFloat("total");
+            float[] logMixtureWeight = new float[numGaussiansPerState];
+            for (int j = 0; j < numGaussiansPerState; j++) {
+                float val = est.getFloat("mixwVal");
+                if (val < floor) {
+                    val = floor;
+                }
+                logMixtureWeight[j] = val;
+            }
             convertToLogMath(logMixtureWeight);
-	    pool.put(i, logMixtureWeight);
-	}
-	est.close();
-	return pool;
+            pool.put(i, logMixtureWeight);
+        }
+        est.close();
+        return pool;
     }
-
     /**
      * Loads the mixture weights (Binary)
-     *
-     * @param path the path to the mixture weight file
-     * @param floor the minimum mixture weight allowed
-     *
+     * 
+     * @param path
+     *                the path to the mixture weight file
+     * @param floor
+     *                the minimum mixture weight allowed
+     * 
      * @return a pool of mixture weights
-     *
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * 
+     * @throws FileNotFoundException
+     *                 if a file cannot be found
+     * @throws IOException
+     *                 if an error occurs while loading the data
      */
-    private Pool loadMixtureWeightsBinary(String path,
+     private Pool loadMixtureWeightsBinary(String path,
                                     float floor) 
         throws FileNotFoundException, IOException {
 	logger.info("Loading mixture weights from: " );
@@ -1119,91 +1139,81 @@ public class Sphinx3Loader implements Loader {
 	}
         dis.close();
 	return pool;
-    }
-
-
-    /**
-     * Loads the transition matrices
-     *
-     * @param path the path to the transitions matrices
-     *
-     * @return a pool of transition matrices
-     *
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
-     */
+    }    /**
+          * Loads the transition matrices
+          * 
+          * @param path
+          *                the path to the transitions matrices
+          * 
+          * @return a pool of transition matrices
+          * 
+          * @throws FileNotFoundException
+          *                 if a file cannot be found
+          * @throws IOException
+          *                 if an error occurs while loading the data
+          */
     protected Pool loadTransitionMatricesAscii(String path)
-        throws FileNotFoundException, IOException {
+            throws FileNotFoundException, IOException {
         InputStream inputStream = StreamFactory.getInputStream(location, path);
-        boolean sparseForm = acousticProperties.getBoolean
-	    (TiedStateAcousticModel.PROP_SPARSE_FORM, 
-	     TiedStateAcousticModel.PROP_SPARSE_FORM_DEFAULT);
-	logger.info("Loading transition matrices from: ");
-	logger.info( path);
-	int numMatrices;
-	int numStates;
-
-    	Pool pool = new Pool(path);
-	ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
-            (inputStream, '#', false);
-
-	est.expectString("tmat");
-	numMatrices = est.getInt("numMatrices");
-	numStates = est.getInt("numStates");
-
-	for (int i = 0; i < numMatrices; i++) {
-	    est.expectString("tmat");
-	    est.expectString("[" + i + "]");
-
-	    float[][] tmat = new float[numStates][numStates];
-
-	    for (int j = 0; j < numStates ; j++) {
-		for (int k = 0; k < numStates ; k++) {
-
-		    // the last row is just zeros, so we just do
-		    // the first (numStates - 1) rows
-
-		    if (j < numStates - 1) {
-			if (sparseForm) {
-			    if (k == j  || k  == j + 1) {
-				tmat[j][k] = est.getFloat("tmat value");
-			    }
-			} else {
-			    tmat[j][k] = est.getFloat("tmat value");
-			}
-		    }
-
+        boolean sparseForm = acousticProperties.getBoolean(PROP_SPARSE_FORM,
+                PROP_SPARSE_FORM_DEFAULT);
+        logger.info("Loading transition matrices from: ");
+        logger.info(path);
+        int numMatrices;
+        int numStates;
+        Pool pool = new Pool(path);
+        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
+                '#', false);
+        est.expectString("tmat");
+        numMatrices = est.getInt("numMatrices");
+        numStates = est.getInt("numStates");
+        for (int i = 0; i < numMatrices; i++) {
+            est.expectString("tmat");
+            est.expectString("[" + i + "]");
+            float[][] tmat = new float[numStates][numStates];
+            for (int j = 0; j < numStates; j++) {
+                for (int k = 0; k < numStates; k++) {
+                    // the last row is just zeros, so we just do
+                    // the first (numStates - 1) rows
+                    if (j < numStates - 1) {
+                        if (sparseForm) {
+                            if (k == j || k == j + 1) {
+                                tmat[j][k] = est.getFloat("tmat value");
+                            }
+                        } else {
+                            tmat[j][k] = est.getFloat("tmat value");
+                        }
+                    }
                     tmat[j][k] = logMath.linearToLog(tmat[j][k]);
-
-		    if (logger.isLoggable(Level.FINE)) {
-			logger.fine("tmat j " + j  + " k " 
-			    + k + " tm "+ tmat[j][k]);
-		    }
-		}
-	    }
-	    pool.put(i, tmat);
-	}
-	est.close();
-	return pool;
+                    if (logger.isLoggable(Level.FINE)) {
+                        logger.fine("tmat j " + j + " k " + k + " tm "
+                                + tmat[j][k]);
+                    }
+                }
+            }
+            pool.put(i, tmat);
+        }
+        est.close();
+        return pool;
     }
-
-
-
     /**
      * Loads the transition matrices (Binary)
-     *
-     * @param path the path to the transitions matrices
-     *
+     * 
+     * @param path
+     *                the path to the transitions matrices
+     * 
      * @return a pool of transition matrices
-     *
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * 
+     * @throws FileNotFoundException
+     *                 if a file cannot be found
+     * @throws IOException
+     *                 if an error occurs while loading the data
      */
     protected Pool loadTransitionMatricesBinary(String path)
         throws FileNotFoundException, IOException {
         boolean sparseForm = acousticProperties.getBoolean
-	    (TiedStateAcousticModel.PROP_SPARSE_FORM, 
-	     TiedStateAcousticModel.PROP_SPARSE_FORM_DEFAULT);
+	    (PROP_SPARSE_FORM, 
+	     PROP_SPARSE_FORM_DEFAULT);
 	logger.info("Loading transition matrices from: ");
 	logger.info( path);
 	int numMatrices;
@@ -1250,199 +1260,170 @@ public class Sphinx3Loader implements Loader {
 	}
 	dis.close();
 	return pool;
-    }
-
-
-    /**
-     * Creates a pool with a single identity matrix in it.
-     *
-     * @param name the name of the pool
-     *
-     * @return the pool with the matrix
-     */
+    }    /**
+          * Creates a pool with a single identity matrix in it.
+          * 
+          * @param name
+          *                the name of the pool
+          * 
+          * @return the pool with the matrix
+          */
     private Pool createDummyMatrixPool(String name) {
-    	Pool pool = new Pool(name);
-	float[][] matrix = new float[vectorLength][vectorLength];
-	logger.info("creating dummy matrix pool " + name);
-
-	for (int i = 0; i < vectorLength; i++) {
-	    for (int j = 0; j < vectorLength; j++) {
-		if (i == j) {
-		    matrix[i][j] = 1.0F;
-		} else {
-		    matrix[i][j] = 0.0F;
-		}
-	    }
-	}
-
-	pool.put(0, matrix);
-	return pool;
+        Pool pool = new Pool(name);
+        float[][] matrix = new float[vectorLength][vectorLength];
+        logger.info("creating dummy matrix pool " + name);
+        for (int i = 0; i < vectorLength; i++) {
+            for (int j = 0; j < vectorLength; j++) {
+                if (i == j) {
+                    matrix[i][j] = 1.0F;
+                } else {
+                    matrix[i][j] = 0.0F;
+                }
+            }
+        }
+        pool.put(0, matrix);
+        return pool;
     }
-
     /**
      * Creates a pool with a single zero vector in it.
-     *
-     * @param name the name of the pool
-     *
+     * 
+     * @param name
+     *                the name of the pool
+     * 
      * @return the pool with the vector
      */
     private Pool createDummyVectorPool(String name) {
-	logger.info("creating dummy vector pool " + name);
-    	Pool pool = new Pool(name);
-	float[] vector = new float[vectorLength];
-
-	for (int i = 0; i < vectorLength; i++) {
-	    vector[i] = 0.0f;
-	}
-	pool.put(0, vector);
-	return pool;
+        logger.info("creating dummy vector pool " + name);
+        Pool pool = new Pool(name);
+        float[] vector = new float[vectorLength];
+        for (int i = 0; i < vectorLength; i++) {
+            vector[i] = 0.0f;
+        }
+        pool.put(0, vector);
+        return pool;
     }
-
-
     /**
      * Returns the properties of the loaded AcousticModel.
-     *
-     * @return the properties of the loaded AcousticModel, or null if
-     *   it has no properties
+     * 
+     * @return the properties of the loaded AcousticModel, or null if it has no
+     *         properties
      */
     public SphinxProperties getModelProperties() {
         return acousticProperties;
     }
-
-
     /**
      * Gets the pool of means for this loader
-     *
+     * 
      * @return the pool
      */
     public Pool getMeansPool() {
-	return meansPool;
+        return meansPool;
     }
-
-
     /**
      * Gets the pool of means transformation matrices for this loader
-     *
+     * 
      * @return the pool
      */
     public Pool getMeansTransformationMatrixPool() {
-	return meanTransformationMatrixPool;
+        return meanTransformationMatrixPool;
     }
-
-
     /**
      * Gets the pool of means transformation vectors for this loader
-     *
+     * 
      * @return the pool
      */
     public Pool getMeansTransformationVectorPool() {
-	return meanTransformationVectorPool;
+        return meanTransformationVectorPool;
     }
-
-
     /*
      * Gets the variance pool
-     *
+     * 
      * @return the pool
      */
     public Pool getVariancePool() {
-	return variancePool;
+        return variancePool;
     }
-
     /**
      * Gets the variance transformation matrix pool
-     *
+     * 
      * @return the pool
      */
     public Pool getVarianceTransformationMatrixPool() {
-	return varianceTransformationMatrixPool;
+        return varianceTransformationMatrixPool;
     }
-
     /**
      * Gets the pool of variance transformation vectors for this loader
-     *
+     * 
      * @return the pool
      */
     public Pool getVarianceTransformationVectorPool() {
-	return varianceTransformationVectorPool;
+        return varianceTransformationVectorPool;
     }
-
-
     /*
      * Gets the mixture weight pool
-     *
+     * 
      * @return the pool
      */
     public Pool getMixtureWeightPool() {
-	return mixtureWeightsPool;
+        return mixtureWeightsPool;
     }
-
     /*
      * Gets the transition matrix pool
-     *
+     * 
      * @return the pool
      */
     public Pool getTransitionMatrixPool() {
-	return matrixPool;
+        return matrixPool;
     }
-
     /*
      * Gets the senone pool for this loader
-     *
+     * 
      * @return the pool
      */
     public Pool getSenonePool() {
-	return senonePool;
+        return senonePool;
     }
-
-     /**
-      * Returns the size of the left context for context dependent
-      * units
-      *
-      * @return the left context size
-      */
-     public int getLeftContextSize() {
-	 return CONTEXT_SIZE;
-     }
-
-     /**
-      * Returns the size of the right context for context dependent
-      * units
-      *
-      * @return the left context size
-      */
-     public int getRightContextSize() {
-	 return CONTEXT_SIZE;
-     }
-
-
+    /**
+     * Returns the size of the left context for context dependent units
+     * 
+     * @return the left context size
+     */
+    public int getLeftContextSize() {
+        return CONTEXT_SIZE;
+    }
+    /**
+     * Returns the size of the right context for context dependent units
+     * 
+     * @return the left context size
+     */
+    public int getRightContextSize() {
+        return CONTEXT_SIZE;
+    }
     /**
      * Returns the hmm manager associated with this loader
-     *
+     * 
      * @return the hmm Manager
      */
     public HMMManager getHMMManager() {
-	return hmmManager;
+        return hmmManager;
     }
-
     /**
      * Log info about this loader
      */
     public void logInfo() {
-	logger.info("Sphinx3Loader");
-	meansPool.logInfo(logger);
-	variancePool.logInfo(logger);
-	matrixPool.logInfo(logger);
-	senonePool.logInfo(logger);
-	meanTransformationMatrixPool.logInfo(logger);
-	meanTransformationVectorPool.logInfo(logger);
-	varianceTransformationMatrixPool.logInfo(logger);
-	varianceTransformationVectorPool.logInfo(logger);
-	mixtureWeightsPool.logInfo(logger);
-	senonePool.logInfo(logger);
-	logger.info("Context Independent Unit Entries: " 
-		+ contextIndependentUnits.size());
-	hmmManager.logInfo(logger);
+        logger.info("Sphinx3Loader");
+        meansPool.logInfo(logger);
+        variancePool.logInfo(logger);
+        matrixPool.logInfo(logger);
+        senonePool.logInfo(logger);
+        meanTransformationMatrixPool.logInfo(logger);
+        meanTransformationVectorPool.logInfo(logger);
+        varianceTransformationMatrixPool.logInfo(logger);
+        varianceTransformationVectorPool.logInfo(logger);
+        mixtureWeightsPool.logInfo(logger);
+        senonePool.logInfo(logger);
+        logger.info("Context Independent Unit Entries: "
+                + contextIndependentUnits.size());
+        hmmManager.logInfo(logger);
     }
 }
-

@@ -15,7 +15,6 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import java.util.Map;
 
-import edu.cmu.sphinx.util.SphinxProperties;
 
 /**
  * Generic interface for a saver of acoustic models
@@ -107,13 +106,6 @@ public interface Saver {
      */
     public int getRightContextSize();
     
-    /**
-     * Returns the properties of the loaded AcousticModel.
-     *
-     * @return the properties of the loaded AcousticModel, or null if
-     *   it has no properties
-     */
-    public SphinxProperties getModelProperties();
 }
 
 
