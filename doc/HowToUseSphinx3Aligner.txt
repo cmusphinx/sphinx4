@@ -66,8 +66,6 @@ its more appropriately named "wave2cep"). It generates cepstra of length
   compile the wave2feat program into the appropriate "bin" directory.
   The wave2feat program is fairly easy to use. Don't forget the
   "-srate", "-raw" and "-mach_endian" switches for Solaris.
-  Though, Evandro has reported that setting "-srate 8000" gives
-  strange cepstra values. He recommended omitting this switch.
 
 - Normally, we give the generated cepstra files a ".mfc" extension.
 
