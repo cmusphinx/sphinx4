@@ -67,6 +67,21 @@ include ${TOP}/build/Makefile.config
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 
 
+########################
+# The main test targest
+# ###################
+
+rm1_flat_unigram:
+	$(MAKE) rm1_flat_unigram_clex
+
+rm1_unigram:
+	$(MAKE) rm1_unigram_clex
+
+rm1_bigram:
+	$(MAKE) rm1_bigram_clex
+
+rm1_trigram:
+	$(MAKE) rm1_trigram_clex
 
 rm1_flat_unigram_simple:
 	$(JAVA_CMD) \
@@ -93,7 +108,7 @@ rm1_bigram_simple:
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
 
-rm1_flat_unigram:
+rm1_flat_unigram_lex:
 	$(JAVA_CMD) \
   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.flat_unigram.lm \
         -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=9.5 \
@@ -102,14 +117,14 @@ rm1_flat_unigram:
 	-Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-160\
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
-rm1_unigram:
+rm1_unigram_lex:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.unigram.lm\
         -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7 \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
-rm1_bigram:
+rm1_bigram_lex:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm\
@@ -120,29 +135,6 @@ rm1_bigram:
    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7 \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
-rm1_bigram_clex:
-	$(JAVA_CMD) \
-        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm\
-        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
-	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
-   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1000 \
-   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80 \
-   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7 \
-	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
-
-rm1_bigram_clex_beamfinder:
-	$(JAVA_CMD) \
-        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm\
-        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
-	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
-   -Dedu.cmu.sphinx.util.BeamFinder.enable=true\
-        -Dedu.cmu.sphinx.decoder.Decoder.showBestToken=true \
-   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=3000\
-   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-200 \
-   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7 \
-	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
 
 rm1_bigram_beamfinder:
 	$(JAVA_CMD) \
@@ -180,7 +172,7 @@ rm1_bigram_test:
    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7 \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
-rm1_trigram:
+rm1_trigram_lex:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.trigram.lm\
@@ -190,6 +182,79 @@ rm1_trigram:
         -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80 \
 	-Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.maxWordsPerFrame=70 \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
+
+
+# ========================================
+# clextree targets
+# ========================================
+# clextree targets use the compressed hmm
+# lextree to represent the search space
+
+rm1_flat_unigram_clex:
+	$(JAVA_CMD) \
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.flat_unigram.lm \
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=9.5 \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+   -Dedu.cmu.sphinx.util.BeamFinder.enable=false\
+	-Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1600\
+	-Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-70\
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
+
+rm1_unigram_clex:
+	$(JAVA_CMD) \
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.flat_unigram.lm \
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10 \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+   -Dedu.cmu.sphinx.util.BeamFinder.enable=false\
+	-Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1600\
+	-Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-110\
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
+
+rm1_bigram_clex:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1000 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80 \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
+
+
+rm1_trigram_clex:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.trigram.lm\
+       -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=20.0 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1400 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-115 \
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
+
+rm1_bigram_clex_beamfinder:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+   -Dedu.cmu.sphinx.util.BeamFinder.enable=true\
+        -Dedu.cmu.sphinx.decoder.Decoder.showBestToken=true \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=3000\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-200 \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
+
+rm1_trigram_clex_beamfinder:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.trigram.lm\
+       -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=27.0 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=4000 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-200 \
+   -Dedu.cmu.sphinx.util.BeamFinder.enable=true\
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+	-Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.maxWordsPerFrame=70 \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
+
 
 
 rt:
