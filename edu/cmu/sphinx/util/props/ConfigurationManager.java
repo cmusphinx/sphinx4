@@ -463,7 +463,7 @@ public class ConfigurationManager {
         LogManager logManager = LogManager.getLogManager();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Properties props = new Properties();
-        props.setProperty(".level", "FINEST");
+        props.setProperty(".edu.cmu.sphinx.level", "FINEST");
         props.setProperty("handlers", "java.util.logging.ConsoleHandler");
         props.setProperty("java.util.logging.ConsoleHandler.level", "FINEST");
         props.setProperty("java.util.logging.ConsoleHandler.formatter",
