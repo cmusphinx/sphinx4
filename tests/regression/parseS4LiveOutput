@@ -134,6 +134,7 @@ END {
     printf(correctSentences "|");
     printf(heapSize "|");
     printf(loadAverage "|");
+    printf(actualUtterances "|");
     printf(foundUtterances "|");
     printf(gapInsertions "|");
     printf(avgResponseTime "|");
