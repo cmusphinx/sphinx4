@@ -24,10 +24,23 @@ import java.io.IOException;
  */
 public class LanguageModelFactory {
 
-    public final static String PROP_PREFIX =
-    "edu.cmu.sphinx.knowledge.language.LanguageModelFactory";
-    public final static String PROP_CLASS 
-			    = PROP_PREFIX + ".languageClass";
+    /**
+     * Prefix string for properties.
+     */
+    public final static String PROP_PREFIX
+        = "edu.cmu.sphinx.knowledge.language.LanguageModelFactory";
+
+    /**
+     * The SphinxProperty for the language model class.
+     */
+    public final static String PROP_CLASS = PROP_PREFIX + ".languageClass";
+
+
+    /**
+     * The default value of PROP_CLASS.
+     */
+    public final static String PROP_CLASS_DEFAULT = null;
+
 
     /**
      * Creates a language model based upon the particular context

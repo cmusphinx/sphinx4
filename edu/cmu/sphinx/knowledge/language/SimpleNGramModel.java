@@ -81,9 +81,9 @@ public class SimpleNGramModel implements LanguageModel {
         this.props = SphinxProperties.getSphinxProperties(context);
         
         String format = props.getString
-            (LanguageModel.PROP_FORMAT, "arpa");
+            (LanguageModel.PROP_FORMAT, LanguageModel.PROP_FORMAT_DEFAULT);
         String location = props.getString
-            (LanguageModel.PROP_LOCATION, ".");
+            (LanguageModel.PROP_LOCATION, LanguageModel.PROP_LOCATION_DEFAULT);
         
         map = new HashMap();
         vocabulary = new HashSet();

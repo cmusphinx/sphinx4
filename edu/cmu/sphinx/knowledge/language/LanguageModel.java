@@ -26,10 +26,34 @@ import java.io.IOException;
  */
 public interface LanguageModel {
 
+    /**
+     * Property prefix string.
+     */
     public final static String PROP_PREFIX =
         "edu.cmu.sphinx.knowledge.language.LanguageModel";
+
+    /**
+     * The SphinxProperty specifying the format of the language model.
+     */
     public final static String PROP_FORMAT = PROP_PREFIX + ".format";
+
+
+    /**
+     * The default value of PROP_FORMAT.
+     */
+    public final static String PROP_FORMAT_DEFAULT = "arpa";
+
+
+    /**
+     * The Sphinx Property specifying the location of the language model.
+     */
     public final static String PROP_LOCATION = PROP_PREFIX + ".location";
+
+
+    /**
+     * The default value of PROP_LOCATION.
+     */
+    public final static String PROP_LOCATION_DEFAULT = ".";
 
 
     /**
