@@ -1,4 +1,4 @@
-############################################################
+##########################################################
 #
 # Global logging properties
 #
@@ -21,12 +21,13 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 ############################################################
 
 edu.cmu.sphinx.model.acoustic.format = sphinx3.ascii
-edu.cmu.sphinx.model.acoustic.location = file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.ascii.zip
-edu.cmu.sphinx.model.acoustic.definition_file = wd_dependent_phone.500.mdef
-edu.cmu.sphinx.model.acoustic.data_location = wd_dependent_phone.cd_continuous_8gau
-edu.cmu.sphinx.model.acoustic.properties_file = am.props
 edu.cmu.sphinx.model.acoustic.FeatureVectorLength = 39
 edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+
+edu.cmu.sphinx.model.acoustic.location = /lab/speech/sphinx4/data/wsj
+edu.cmu.sphinx.model.acoustic.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
+edu.cmu.sphinx.model.acoustic.data_location = cd_continuous_8gau
+edu.cmu.sphinx.model.acoustic.properties_file = am.props
 
 
 ############################################################
@@ -40,16 +41,13 @@ edu.cmu.sphinx.frontend.cepstrumSize = 13
 edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
 edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
 edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
-edu.cmu.sphinx.frontend.keepAudioReference = true
 edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
 edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
 edu.cmu.sphinx.frontend.windowShiftInMs = 10
 edu.cmu.sphinx.frontend.windower.alpha = 0.46
 
-# set the following properties only if you want to override the ones
-# in the acoustic model
+# set the following only if you want to override the acoustic model properties
 
-# edu.cmu.sphinx.frotnend.sampleRate = 16000
 # edu.cmu.sphinx.frontend.mel.numFilters = 40
 # edu.cmu.sphinx.frontend.mel.minfreq = 130
 # edu.cmu.sphinx.frontend.mel.maxfreq = 6800
@@ -57,6 +55,8 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 # edu.cmu.sphinx.frontend.cmn.live.initialCepstralMean = 12
 # edu.cmu.sphinx.frontend.cmn.live.windowSize = 500
 # edu.cmu.sphinx.frontend.cmn.live.shiftWindow = 800
+# edu.cmu.sphinx.frontend.sampleRate = 16000
+
 
 ############################################################
 # 
@@ -64,16 +64,20 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 #
 ############################################################
 
-edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=200
-edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-200
-edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.SimpleActiveList
-edu.cmu.sphinx.search.SimpleDigitLinguist.isConnectedDigitGrammar=true
-edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-36
+edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.FastActiveList
+edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-56
 edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.search.Linguist.validateSentenceHMM=false
-edu.cmu.sphinx.search.Linguist.compositeThreshold=10000
 edu.cmu.sphinx.search.validateResults=false
+
+
+############################################################
+# 
+# Recognizer properties
+#
+############################################################
+
 
 
 ############################################################
@@ -83,9 +87,9 @@ edu.cmu.sphinx.search.validateResults=false
 ############################################################
 
 edu.cmu.sphinx.search.Dictionary.useAcousticModelLocation = true
-edu.cmu.sphinx.search.Dictionary.dictionaryPath = dictionary
-edu.cmu.sphinx.search.Dictionary.fillerPath = fillerdict
-edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true
+edu.cmu.sphinx.search.Dictionary.dictionaryPath = dict/cmudict.0.6d+rm1.txt
+edu.cmu.sphinx.search.Dictionary.fillerPath = dict/fillerdict
+edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false
 
 
 ############################################################
@@ -108,27 +112,17 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 
 
 
-############################################################
-# 
-# Recognizer properties
-#
-############################################################
-
-
-
-edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=800
+edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=200
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-200
 edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
+edu.cmu.sphinx.search.Linguist.compositeThreshold=10
+
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar
 edu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel
 edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist
 edu.cmu.sphinx.model.language.format=arpa
-edu.cmu.sphinx.model.language.location=small.unigram
-edu.cmu.sphinx.search.Recognizer.linguistProcessors=edu.cmu.sphinx.util.GDLDumper 
+edu.cmu.sphinx.model.language.location=med.bigram
 edu.cmu.sphinx.util.LinguistDumper.filename=small.gdl
 edu.cmu.sphinx.util.SphinxProperties.warnIfPropertyNotDefined=false
-edu.cmu.sphinx.util.GDLDumper.skipHMMs=false
-edu.cmu.sphinx.util.GDLDumper.verticalLayout=true
-edu.cmu.sphinx.util.GDLDumper.dumpArcLabels=true
 edu.cmu.sphinx.decoder.Decoder.showErrorToken=false

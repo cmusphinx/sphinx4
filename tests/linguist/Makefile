@@ -43,7 +43,7 @@ HEAP_DUMP =   -Xrunhprof:heap=dump,cpu=samples
 #GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 #GC_FLAGS= -ms1g -XX:+UseConcMarkSweepGC -XX:-UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 
-GC_FLAGS = -ms128m -mx512m
+GC_FLAGS = -ms128m -mx1g
 
 #PROFILE2_FLAGS= -Xrunhprof:file=log.txt
 PROFILE2_FLAGS= -Xrunhprof:cpu=samples,file=log.txt
@@ -74,17 +74,46 @@ all::
 
 large:
 	$(JAVA_CMD)  \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=2000\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
 	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch
-
-small:
-	$(JAVA_CMD)  \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=2000\
-        edu.cmu.sphinx.decoder.BatchDecoder small.props small.batch
 
 large_bigram:
 	$(JAVA_CMD)  \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=2000\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
 	-Dedu.cmu.sphinx.model.language.location=large.bigram \
 	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch
 
+
+small:
+	$(JAVA_CMD)  \
+        -Dedu.cmu.sphinx.util.LinguistDumper.filename=small.gdl \
+        -Dedu.cmu.sphinx.model.language.location=small.unigram \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
+        edu.cmu.sphinx.decoder.BatchDecoder small.props small.batch
+
+tidigits_quick:
+	$(JAVA_CMD)  \
+        -Dedu.cmu.sphinx.util.LinguistDumper.filename=small.gdl \
+        -Dedu.cmu.sphinx.model.language.location=small.unigram \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
+        edu.cmu.sphinx.decoder.BatchDecoder small.props small.batch
+
+tiny:
+	$(JAVA_CMD)  \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=2000\
+        -Dedu.cmu.sphinx.util.LinguistDumper.filename=tiny.gdl \
+        -Dedu.cmu.sphinx.model.language.location=tiny.unigram \
+        edu.cmu.sphinx.decoder.BatchDecoder small.props small.batch
+
+
+med:
+	$(JAVA_CMD)  \
+        -Dedu.cmu.sphinx.model.language.location=med.bigram \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
+        edu.cmu.sphinx.decoder.BatchDecoder med.props med.batch
+
+tiny_static:
+	$(JAVA_CMD)  \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=2000\
+        -Dedu.cmu.sphinx.util.LinguistDumper.filename=tiny_static.gdl \
+        edu.cmu.sphinx.decoder.BatchDecoder tiny_static.props small.batch
