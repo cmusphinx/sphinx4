@@ -42,7 +42,7 @@ import edu.cmu.sphinx.util.LogMath;
 
 
 /**
- * Defines a grammar based on JSGF grammar rules in a file.
+ * Defines a BNF-style grammar based on JSGF grammar rules in a file.
  *
  * <p>
  * The Java Speech Grammar Format (JSGF) is a BNF-style, platform-independent,
