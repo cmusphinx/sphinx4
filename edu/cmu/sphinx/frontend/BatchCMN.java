@@ -48,6 +48,17 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
 
 
     /**
+     * Sets the predecessor (i.e., the previous processor)
+     * of this LiveCMN processor.
+     *
+     * @param predecessor the predecessor
+     */
+    public void setPredecessor(CepstrumSource predecessor) {
+        this.predecessor = predecessor;
+    }
+
+
+    /**
      * Initializes the sums array and clears the cepstra list.
      */
     private void reset() {

@@ -50,7 +50,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
      *    gets Cepstrum from
      */
     public NonSpeechFilter(String name, String context,
-                            CepstrumSource predecessor) throws IOException {
+                           CepstrumSource predecessor) throws IOException {
         super(name, context);
         this.predecessor = predecessor;
         this.inputBuffer = new LinkedList();
@@ -65,6 +65,11 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
     private void initSphinxProperties() throws IOException {
         mergeSpeechSegments = getSphinxProperties().getBoolean
             (PROP_PREFIX + "mergeSpeechSegments", true);
+    }
+
+    
+    public void setPredecessor(CepstrumSource predecessor) {
+        this.predecessor = predecessor;
     }
 
 

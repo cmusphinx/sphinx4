@@ -92,6 +92,17 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
 
 
     /**
+     * Sets the predecessor (i.e., the previous processor)
+     * of this LiveCMN processor.
+     *
+     * @param predecessor the predecessor
+     */
+    public void setPredecessor(CepstrumSource predecessor) {
+        this.predecessor = predecessor;
+    }
+
+
+    /**
      * Initializes the currentMean and sum arrays.
      */
     private void initMeansSums() {
