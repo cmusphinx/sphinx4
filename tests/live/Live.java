@@ -223,6 +223,15 @@ public class Live {
         updateLiveFrame(aligner);
     }
 
+    /**
+     * Make a new named decoder
+     *
+     * @param name    the name of the decoder to make
+     */
+    public LiveDecoder makeDecoder(String name)
+        throws IOException, LineUnavailableException {
+        return new LiveDecoder(name, this);
+    }
 
     /**
      * Returns the Decoder that is currently in use.
@@ -387,7 +396,7 @@ public class Live {
         // obtain the decoder
         LiveDecoder decoder = null;
         if ((decoder = (LiveDecoder) decoders.get(decoderName)) == null) {
-            decoder = new LiveDecoder(decoderName, this);
+            decoder = makeDecoder(decoderName);
             decoders.put(decoderName, decoder);
         }
 
