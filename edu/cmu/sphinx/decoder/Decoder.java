@@ -49,6 +49,14 @@ public class Decoder {
     public final static String PROP_SHOW_BEST_TOKEN =
 	PROP_PREFIX + "showBestToken";
 
+    /**
+     * A SphinxProperty name for a boolean property that when set will
+     * cause the decoder to show all the tokens associated with the
+     * actual result (if present) 
+     */
+    public final static String PROP_SHOW_ACTUAL_TOKEN =
+	PROP_PREFIX + "showActualToken";
+
 
     /**
      * A SphinxProperty name for a boolean property that when set will
@@ -82,6 +90,7 @@ public class Decoder {
     private boolean showPartialResults = false;
     private boolean showBestToken = false;	
     private boolean showErrorToken = false;
+    private boolean showActualToken = false;
 
     private boolean findResult = true;
 
@@ -138,6 +147,8 @@ public class Decoder {
 	    props.getBoolean(PROP_SHOW_ERROR_TOKEN, false);
 	showBestToken =
 	    props.getBoolean(PROP_SHOW_BEST_TOKEN, false);
+	showActualToken =
+	    props.getBoolean(PROP_SHOW_ACTUAL_TOKEN, false);
         
         recognizer = null;        // first initialize it to null
         aligner = null;
@@ -295,6 +306,7 @@ public class Decoder {
 
 	if (showBestToken || (!match && showErrorToken)) {
 	    if (bestToken != null) {
+		System.out.println("\n\n Token path for best result");
 		bestToken.dumpTokenPath();
 	    }
         }
@@ -311,6 +323,10 @@ public class Decoder {
 	    if (matchingToken != null) {
 		System.out.print(
 			"  ActScore: " + matchingToken.getScore());
+		if (showActualToken) {
+		    System.out.println("\n\n Token path for actual result");
+		    matchingToken.dumpTokenPath();
+		}
 	    } else {
 		System.out.print("  ActScore: NONE");
 	    }
