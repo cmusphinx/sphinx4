@@ -49,7 +49,8 @@ public class PartitionerTest {
             tokens[i] = parent.child(null, logTotalScore, 0.0f, 0.0f, i);
         }
 
-        final int r = partitioner.partition(tokens, absoluteBeamWidth);
+        final int r = partitioner.partition
+            (tokens, tokens.length, absoluteBeamWidth);
         
         if (tokenListLarger) {                
             assert (r == (absoluteBeamWidth - 1));

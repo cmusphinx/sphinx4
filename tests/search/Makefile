@@ -62,3 +62,12 @@ FSTGrammarTestMega: all
 -Dedu.cmu.sphinx.search.FSTGrammar.path=/lab/speech/sphinx4/data/fst/language_model.arpaformat.FST.ascii\
 	tests.search.FSTGrammarTest FSTGrammarTest.props
 
+
+#################################################################
+#
+# Tests the token Partitioner
+#
+partitionertest: all
+	$(JAVA_CMD) \
+	tests.search.PartitionerTest
+
