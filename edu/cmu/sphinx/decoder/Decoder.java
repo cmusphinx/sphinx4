@@ -330,8 +330,6 @@ public class Decoder {
     /**
      * Decodes an utterance.
      *
-     * @param ref the reference input
-     *
      * @return the decoded Result
      */
     public Result decode() {
@@ -560,6 +558,8 @@ public class Decoder {
 
     /**
      * Calculate the processing and audio time of the current result.
+     *
+     * @param result the Result to calculate times on
      */
     protected void calculateTimes(Result result) {
         processingTime = getDecoderTimer().getCurTime() / 1000.f;
