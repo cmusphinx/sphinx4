@@ -12,6 +12,7 @@
 package edu.cmu.sphinx.result;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -74,9 +75,33 @@ public class ConfusionSet extends TreeMap {
     
     /**
      * Get the highest posterior (confidence) stored in this set.
+     *
      * @return the highes posterior
      */
     public double getBestPosterior() {
         return ((Double)lastKey()).doubleValue();
+    }
+
+    /**
+     * Returns the WordResult in this ConfusionSet for the given word.
+     *
+     * @param word the word to look for
+     *
+     * @return the WordResult for the given word, or null if no WordResult
+     *     for the given word is found
+     */
+    public WordResult getWordResult(String word) {
+        for (Iterator i = values().iterator(); i.hasNext(); ) {
+            Set wordSet = (Set) i.next();
+            for (Iterator r = wordSet.iterator(); r.hasNext(); ) {
+                WordResult wordResult = (WordResult) r.next();
+                String resultSpelling 
+                    = wordResult.getPronunciation().getWord().getSpelling();
+                if (resultSpelling.equals(word)) {
+                    return wordResult;
+                }
+            }
+        }
+        return null;
     }
 }
