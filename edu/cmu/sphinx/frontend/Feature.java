@@ -133,7 +133,7 @@ public class Feature extends Data {
      * @param type the type name of this Feature
      */
     public void setType(String type) {
-	if (this.type != null) {
+	if (this.type == null) {
 	    this.type = type;
 	}
     }
