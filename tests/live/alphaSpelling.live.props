@@ -46,11 +46,12 @@ edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
 edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
 edu.cmu.sphinx.frontend.windowShiftInMs = 10
 edu.cmu.sphinx.frontend.windower.alpha = 0.46
-edu.cmu.sphinx.frontend.endpointer = edu.cmu.sphinx.frontend.EnergyEndpointer
+
 edu.cmu.sphinx.frontend.EnergyEndpointer.startLow = 10
 edu.cmu.sphinx.frontend.EnergyEndpointer.startHigh = 13
 edu.cmu.sphinx.frontend.EnergyEndpointer.endLow = 10
 edu.cmu.sphinx.frontend.EnergyEndpointer.startWindow = 10
+
 edu.cmu.sphinx.frontend.useAcousticModelProperties = true
 
 # the following properties are effective only if 'useAcousticModelProperties'

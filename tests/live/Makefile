@@ -102,4 +102,9 @@ live-alpha: all
 	-DshowPartialResults=true \
 	-Dedu.cmu.sphinx.frontend.cmn.live=true \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
+	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=10 \
+	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=13 \
+	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=10 \
+	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startWindow=10 \
+	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	tests.live.Live decoders.list
