@@ -421,10 +421,6 @@ public class Util {
     /**
      * Reads a float from the given DataInputStream, where the data is in
      * little endian.
-     * This assumes that if the little endian is:
-     * <code>byte_0 byte_1 byte_2 byte_3</code>
-     * the big-endian will be:
-     * <code>byte_1 byte_0 byte_3 byte 2</code>
      *
      * @param dataStream the DataInputStream to read from
      *
@@ -438,10 +434,6 @@ public class Util {
 
     /**
      * Reads a little-endian integer from the given DataInputStream.
-     * This assumes that if the little endian is:
-     * <code>byte_0 byte_1 byte_2 byte_3</code>
-     * the big-endian will be:
-     * <code>byte_1 byte_0 byte_3 byte 2</code>
      *
      * @param dataStream the DataInputStream to read from
      *
@@ -450,11 +442,9 @@ public class Util {
     public static int readLittleEndianInt(DataInputStream dataStream)
 	throws IOException {
 	int bits = 0x00000000;
-	for (int shift = 16; shift < 32; shift += 8) {
-	    bits |= ((dataStream.readByte() & 0xff) << shift);
-	}
-	for (int shift = 0; shift < 16; shift += 8) {
-	    bits |= ((dataStream.readByte() & 0xff) << shift);
+	for (int shift = 0; shift < 32; shift += 8) {
+	    int byteRead = (0x000000ff & dataStream.readByte());
+	    bits |= (byteRead << shift);
 	}
 	return bits;
     }
