@@ -13,13 +13,12 @@
 
 package edu.cmu.sphinx.knowledge.acoustic;
 
-import java.util.HashMap;
+import java.lang.Integer;
+
 import java.util.logging.Logger;
 import java.util.Map;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
 
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -32,6 +31,7 @@ import edu.cmu.sphinx.util.LogMath;
 class HMMPoolManager {
 
     private HMMManager hmmManager;
+    private HashMap indexMap;
     private Pool meansPool;
     private Pool variancePool;
     private Pool matrixPool;
@@ -70,6 +70,7 @@ class HMMPoolManager {
      */
     protected HMMPoolManager(Loader loader, SphinxProperties props) {
         hmmManager = loader.getHMMManager();
+	indexMap = new HashMap();
 	meansPool = loader.getMeansPool();
 	variancePool = loader.getVariancePool();
 	mixtureWeightsPool = loader.getMixtureWeightPool();
@@ -122,6 +123,7 @@ class HMMPoolManager {
 
 	for (int i = 0; i < pool.size(); i++) {
 	    float[] element = (float [])pool.get(i);
+	    indexMap.put(element, new Integer(i));
 	    Buffer buffer = new Buffer(element.length, isLog, i);
 	    bufferPool.put(i, buffer);
 	}
@@ -136,6 +138,7 @@ class HMMPoolManager {
 
 	for (int i = 0; i < pool.size(); i++) {
 	    float[][] element = (float [][])pool.get(i);
+	    indexMap.put(element, new Integer(i));
 	    int poolSize = element.length;
 	    Buffer[] bufferArray = new Buffer[poolSize];
 	    for (int j = 0; j < poolSize; j++) {
@@ -216,7 +219,9 @@ class HMMPoolManager {
 	    MixtureComponent[] mix = gaussian.getMixtureComponents();
 	    for (int i = 0; i < mix.length; i++) {
 		float[] mean = mix[i].getMean();
-		int indexMean = meansPool.indexOf(mean);
+		// int indexMean = meansPool.indexOf(mean);
+		Integer indexInMap = (Integer) indexMap.get(mean);
+		int indexMean = indexInMap.intValue();
 		assert indexMean >= 0;
 		assert indexMean == senone;
 		Buffer buffer = (Buffer) meansBufferPool.get(indexMean);
@@ -249,7 +254,9 @@ class HMMPoolManager {
 	    for (int i = 0; i < mix.length; i++) {
 		float[] mean = mix[i].getMean();
 		float[] variance = mix[i].getVariance();
-		int indexVariance = variancePool.indexOf(variance);
+		// int indexVariance = variancePool.indexOf(variance);
+		Integer indexInMap = (Integer) indexMap.get(variance);
+		int indexVariance = indexInMap.intValue();
 		Buffer buffer = 
 		    (Buffer) varianceBufferPool.get(indexVariance);
 		float[] feature = score.getFeature().getFeatureData();
@@ -308,7 +315,9 @@ class HMMPoolManager {
 	float[][] matrix = hmm.getTransitionMatrix();
 
 	// Find the index for current matrix in the transition matrix pool
-	int indexMatrix = matrixPool.indexOf(matrix);
+	// int indexMatrix = matrixPool.indexOf(matrix);
+	Integer indexInMap = (Integer) indexMap.get(matrix);
+	int indexMatrix = indexInMap.intValue();
 
 	// Find the corresponding buffer
 	Buffer[] bufferArray = 
@@ -373,7 +382,9 @@ class HMMPoolManager {
 
 	// Find the index of the current transition matrix in the
 	// transition matrix pool.
-	int indexMatrix = matrixPool.indexOf(matrix);
+	// int indexMatrix = matrixPool.indexOf(matrix);
+	Integer indexInMap = (Integer) indexMap.get(matrix);
+	int indexMatrix = indexInMap.intValue();
 
 	// Find the buffer for the transition matrix.
 	Buffer[] bufferArray = 
