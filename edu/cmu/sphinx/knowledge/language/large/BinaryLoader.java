@@ -348,6 +348,7 @@ class BinaryLoader {
 	// read standard header string-size; set bigEndian flag
         readHeader(stream);
 
+        // +1 is the sentinel unigram at the end
 	unigrams = readUnigrams(stream, numberUnigrams+1, bigEndian);
 
         skipBigramsTrigrams(stream);
@@ -355,8 +356,6 @@ class BinaryLoader {
 	// read the bigram probabilities table
 	if (numberBigrams > 0) {
             this.bigramProbTable = readFloatTable(stream, bigEndian);
-            applyLanguageWeight(bigramProbTable, languageWeight);
-            applyWip(bigramProbTable, wip);
 	}
 
 	// read the trigram backoff weight table and trigram prob table
@@ -364,19 +363,13 @@ class BinaryLoader {
 	    trigramBackoffTable = readFloatTable(stream, bigEndian);
             trigramProbTable = readFloatTable(stream, bigEndian);
 
-            if (applyLanguageWeightAndWip) {
-                applyLanguageWeight(trigramProbTable, languageWeight);
-                applyWip(trigramProbTable, wip);
-                applyLanguageWeight(trigramBackoffTable, languageWeight);
-            }
-
             int bigramSegmentSize = 1 << logBigramSegmentSize;
             int trigramSegTableSize = ((numberBigrams+1)/bigramSegmentSize)+1;
             trigramSegmentTable = readIntTable(stream, bigEndian, 
                                                trigramSegTableSize);
         }
-
-	// read word string names
+        
+        // read word string names
         int wordsStringLength = readInt(stream, bigEndian);
         if (wordsStringLength <= 0) {
             throw new Error("Bad word string size: " + wordsStringLength);
@@ -395,6 +388,13 @@ class BinaryLoader {
 	}
         
         applyUnigramWeight();
+        if (applyLanguageWeightAndWip) {
+            applyLanguageWeight(bigramProbTable, languageWeight);
+            applyWip(bigramProbTable, wip);
+            applyLanguageWeight(trigramProbTable, languageWeight);
+            applyWip(trigramProbTable, wip);
+            applyLanguageWeight(trigramBackoffTable, languageWeight);
+        }
 
         fis.close();
         stream.close();
