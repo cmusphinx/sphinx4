@@ -78,7 +78,6 @@ tidigits:
 tidigits_quick:
 	$(JAVA_CMD)  \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
-	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false\
 	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
 
 
