@@ -13,6 +13,8 @@
 package edu.cmu.sphinx.linguist.acoustic;
 
 import java.util.Iterator;
+import java.util.Properties;
+
 import java.io.IOException;
 
 /**
@@ -118,5 +120,11 @@ public interface AcousticModel {
      public int getRightContextSize();
 
 
+    /**
+     * Returns the properties of this acoustic model.
+     *
+     * @return the properties of this acoustic model
+     */
+    public Properties getProperties();
 }
 
