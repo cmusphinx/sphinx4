@@ -108,9 +108,12 @@ public class LivePretendDecoder {
      * Constructs a LivePretendDecoder.
      *
      * @param context the context of this LivePretendDecoder
+     *
+     * @throws InstantiationException if the decoder could not be  created
+     * @throws IOException if the decoder could not be loaded
      */
     public LivePretendDecoder(String context)
-        throws IOException {
+        throws IOException, InstantiationException {
         this.context = context;
         this.props = SphinxProperties.getSphinxProperties(context);
         init(props);
@@ -121,8 +124,11 @@ public class LivePretendDecoder {
      *
      * @param props the sphinx properties
      * 
+     * @throws InstantiationException if the decoder could not be  created
+     * @throws IOException if the decoder could not be loaded
      */
-    private void init(SphinxProperties props) throws IOException {
+    private void init(SphinxProperties props) 
+                throws IOException, InstantiationException  {
         hypothesisFile 
             = props.getString(PROP_HYPOTHESIS_TRANSCRIPT,
                               PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT);
@@ -365,7 +371,12 @@ public class LivePretendDecoder {
             decoder.decode();
             decoder.close();
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            System.err.println("Can't create decoder: " +
+                    ioe.getMessage());
+        } catch (InstantiationException ie) {
+            System.err.println("Can't create decoder: " +
+                    ie.getMessage());
         }
     }
 }
+

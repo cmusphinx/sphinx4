@@ -74,10 +74,11 @@ public class AcousticModelFactory {
       * @return the acoustic model associated with the context or null
       * if no model could be found
       *
+      * @throws InstantiationException if the model could not be * created
       * @throws IOException if the model could not be loaded
       */
     public static AcousticModel getModel(SphinxProperties props, String name) 
-	throws IOException {
+	throws IOException, InstantiationException {
 
         if (name == null) {
             name = defaultModelName;
@@ -99,18 +100,21 @@ public class AcousticModelFactory {
                }
                Timer.stop(name);
             } catch (ClassNotFoundException fe) {
-                throw new IOException(
+                throw new InstantiationException(
                         "CNFE:Can't find acoustic model class" + className);
             } catch (InstantiationException ie) {
                 throw new IOException(
                         "IE: Can't instantiate acoustic model " + className);
             } catch (IllegalAccessException iea) {
-                throw new IOException("IEA: Can't create acoustic model " 
+                throw new InstantiationException(
+                        "IEA: Can't create acoustic model " 
                         + className);
             } 
         }
         if (false) {
-        System.out.println("Requesting model " + name + " with props " + props.getContext() + " model is " + am.getName());
+            System.out.println("Requesting model " + name 
+                + " with props " + props.getContext() 
+                + " model is " + am.getName());
         }
        return am;
     }

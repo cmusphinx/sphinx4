@@ -219,8 +219,12 @@ public class Recognizer {
      *
      * @param context the context of this Recognizer
      * @param dataSource the source of data of this Recognizer
+     *
+     * @throws InstantiationException if the recognizer could not be  created
+     * @throws IOException if the recognizer could not be loaded
      */
-    public Recognizer(String context) throws IOException {
+    public Recognizer(String context) 
+                throws IOException, InstantiationException {
 
         createModels(context);
 
@@ -256,8 +260,12 @@ public class Recognizer {
      * as multiple implementations become available
      *
      * @param context the context of this Recognizer
+     *
+     * @throws InstantiationException if there was a problem creating the models
+     * @throws IOException if there was a problem loading the models
      */
-    protected void createModels(String context) throws IOException {
+    protected void createModels(String context) 
+            throws IOException, InstantiationException {
 
         props = SphinxProperties.getSphinxProperties(context);
         dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
@@ -410,9 +418,12 @@ public class Recognizer {
      * @param props the sphinx properties
      *
      * @return the AcousticModel(s) used by this Recognizer
+     * @throws InstantiationException if the model could not be
+     * created
+     * @throws IOException if the model could not be loaded
      */
     protected AcousticModel[] getAcousticModels(SphinxProperties props)
-	throws IOException {
+	throws IOException, InstantiationException {
 	Collection modelNames = AcousticModelFactory.getNames(props);
 	AcousticModel[] models;
         models = new AcousticModel[modelNames.size()];

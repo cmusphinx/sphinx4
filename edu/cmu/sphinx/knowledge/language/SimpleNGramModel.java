@@ -165,6 +165,17 @@ public class SimpleNGramModel implements LanguageModel {
         return logProbability;
     }
 
+     /**
+      * Gets the smear term for the given wordSequence
+      *
+      * @param wordSequence the word sequence
+      * @return the smear term associated with this word sequence
+      */
+     public float getSmear(WordSequence wordSequence) {
+         return 0.0f;
+     }
+
+
 
     /**
      * Returns the backoff probability for the give sequence of words

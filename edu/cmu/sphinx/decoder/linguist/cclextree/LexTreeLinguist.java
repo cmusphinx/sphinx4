@@ -451,7 +451,7 @@ public class LexTreeLinguist implements  Linguist {
         InitialWordNode node = hmmTree.getInitialNode();
         return new LexTreeWordState(node, node.getParent(),
               WordSequence.getWordSequence(sentenceStartWordArray).trim
-               (languageModel.getMaxDepth() - 1), logOne);
+               (languageModel.getMaxDepth() - 1), 0f, logOne, logOne);
     }
 
 
@@ -493,6 +493,8 @@ public class LexTreeLinguist implements  Linguist {
     class LexTreeState implements SearchState, SearchStateArc {
         private Node node;
         private WordSequence wordSequence;
+        float currentSmearTerm;
+        float currentSmearProb;
 
         /**
          * Creates a LexTreeState.
@@ -501,10 +503,12 @@ public class LexTreeLinguist implements  Linguist {
          * @param wordSequence the history of words up until this point
          *
          */
-        LexTreeState(Node node, WordSequence wordSequence) {
-
+        LexTreeState(Node node, WordSequence wordSequence, 
+                float smearTerm, float smearProb) {
             this.node = node;
             this.wordSequence = wordSequence;
+            currentSmearTerm = smearTerm;
+            currentSmearProb = smearProb;
         }
 
 
@@ -517,6 +521,15 @@ public class LexTreeLinguist implements  Linguist {
          */
         public String getSignature() {
             return "lts-" + node.hashCode() + "-ws-" + wordSequence;
+        }
+
+
+        public float getSmearTerm() {
+            return currentSmearTerm;
+        }
+
+        public float getSmearProb() {
+            return currentSmearProb;
         }
 
 
@@ -662,14 +675,12 @@ public class LexTreeLinguist implements  Linguist {
 		 Node nextNode = (Node) iter.next();
                //  System.out.println("           " + nextNode);
                  if (nextNode instanceof WordNode) {
-                     arcs[i] = createWordStateArc((WordNode) nextNode, 
-                             (HMMNode) getNode(), getUnigramSmear(theNode));
+                     arcs[i] = createWordStateArc(
+                             (WordNode) nextNode, (HMMNode) getNode(), this);
                  } else if (nextNode instanceof EndNode) {
-                     arcs[i] = createEndUnitArc((EndNode) nextNode, 
-                             getUnigramSmear(theNode));
+                     arcs[i] = createEndUnitArc((EndNode) nextNode, this);
                  } else {
-                     arcs[i] = createUnitStateArc((HMMNode)nextNode, 
-                             getUnigramSmear(theNode));
+                     arcs[i] = createUnitStateArc((HMMNode)nextNode, this);
                  }
 	     }
              return arcs;
@@ -684,39 +695,33 @@ public class LexTreeLinguist implements  Linguist {
           * @return the search state for the wordNode
           */
          protected SearchStateArc createWordStateArc(WordNode wordNode,
-                 HMMNode lastUnit, float fixupProb) {
+                 HMMNode lastUnit, LexTreeState previous) {
             // System.out.println("CWSA " + wordNode + " fup " +  fixupProb);
-            float logProbability = logOne;
+            float probability = logOne;
+            float arcProbability = logOne;
             Word nextWord = wordNode.getWord();
-
-            // the last node has the unigram probability that has been
-            // applied up until this point (the unigram smear).  Since
-            // we are now going to apply the actual probability, we
-            // will subtract out this previously applied probablilty
-
-
             WordSequence nextWordSequence = wordSequence;
+            float smearTerm = previous.getSmearTerm();
 
             if (!nextWord.isFiller() || nextWord == sentenceEndWord) {
                 nextWordSequence  = wordSequence.addWord(nextWord, 
                         languageModel.getMaxDepth());
-                logProbability = languageModel.getProbability(nextWordSequence);
-            // System.out.println("LP " + nextWordSequence + " " + logProbability);
-                logProbability *= languageWeight;
-                // subtract off the previously applied unigram  probability
-                logProbability -= unigramSmearOffset;
-                logProbability -= fixupProb;
+                probability = languageModel.getProbability(nextWordSequence);
+                smearTerm = getSmearTermFromLanguageModel(nextWordSequence);
+        // System.out.println("LP " + nextWordSequence + " " + logProbability);
+                probability *= languageWeight;
+                // subtract off the previously applied smear  probability
+                arcProbability = probability - previous.getSmearProb();
             }
-
             if (nextWord == sentenceEndWord) {
-             // System.out.println("LP " + nextWordSequence + " " + logProbability);
+         // System.out.println("LP " + nextWordSequence + " " + logProbability);
                 return new LexTreeEndWordState(wordNode, lastUnit,
                     nextWordSequence.trim(languageModel.getMaxDepth() - 1), 
-                    logProbability);
+                    smearTerm, logOne, arcProbability);
             } else {
                 return new LexTreeWordState(wordNode, lastUnit,
                     nextWordSequence.trim(languageModel.getMaxDepth() - 1), 
-                    logProbability);
+                    smearTerm, logOne, arcProbability);
             }
          }
 
@@ -729,25 +734,30 @@ public class LexTreeLinguist implements  Linguist {
           *
           * @return the search state
           */
-         SearchStateArc createUnitStateArc(HMMNode hmmNode, float lastProb) {
+         SearchStateArc createUnitStateArc(HMMNode hmmNode,
+                 LexTreeState previous) {
              SearchStateArc arc;
 	     // System.out.println("CUSA " + hmmNode);
              float insertionProbability =
                  calculateInsertionProbability(hmmNode);
-             float languageProbability = getUnigramSmear(hmmNode) - lastProb;
+             float probability = 
+                 getUnigramSmear(hmmNode) + previous.getSmearTerm();
+             float arcProbability = probability - previous.getSmearProb();
 
              // if we want a unit state create it, otherwise
              // get the first hmm state of the unit
 
              if (generateUnitStates) {
                  arc = new LexTreeUnitState(hmmNode,
-                         getWordHistory(), languageProbability, 
+                         getWordHistory(), previous.getSmearTerm(), 
+                         probability, arcProbability, 
                          insertionProbability);
             } else {
                 HMM hmm = hmmNode.getHMM();
                 arc = new LexTreeHMMState(hmmNode,
-                     getWordHistory(), hmm.getInitialState(),
-                     languageProbability,
+                     getWordHistory(), previous.getSmearTerm(), 
+                     probability, hmm.getInitialState(),
+                     arcProbability,
                      insertionProbability, logOne, null);
             }
             return arc;
@@ -761,12 +771,16 @@ public class LexTreeLinguist implements  Linguist {
           *
           * @return the search state
           */
-         SearchStateArc createEndUnitArc(EndNode endNode, float lastProb) {
-             float languageProbability = getUnigramSmear(endNode) - lastProb;
+         SearchStateArc createEndUnitArc(EndNode endNode, 
+                 LexTreeState previous) {
+             float probability = 
+                 getUnigramSmear(endNode) + previous.getSmearTerm();
+             float arcProbability = probability - previous.getSmearProb();
              float insertionProbability =
                  calculateInsertionProbability(endNode);
              return  new LexTreeEndUnitState(endNode, getWordHistory(), 
-                     languageProbability, insertionProbability);
+                     previous.getSmearTerm(), probability,
+                     arcProbability, insertionProbability);
          }
 
          /**
@@ -805,9 +819,9 @@ public class LexTreeLinguist implements  Linguist {
          * @param wordSequence the history of words
          */
         LexTreeEndUnitState(EndNode endNode, WordSequence
-                wordSequence, float languageProbability, 
-                float insertionProbability) {
-            super(endNode, wordSequence);
+                wordSequence, float smearTerm, float smearProb,
+                float languageProbability, float insertionProbability) {
+            super(endNode, wordSequence, smearTerm, smearProb);
             logLanguageProbability = languageProbability;
             logInsertionProbability = insertionProbability;
             // System.out.println("LTEUS " + logLanguageProbability + " " + logInsertionProbability);
@@ -888,14 +902,15 @@ public class LexTreeLinguist implements  Linguist {
           if (generateUnitStates) {
               for (int i = 0; i < nodes.length; i++) {
                   arcs[i] = new LexTreeUnitState(nodes[i], getWordHistory(), 
+                      getSmearTerm(), getSmearProb(),
                       logOne, logOne, this.getNode());
               }
           } else {
               for (int i = 0; i < nodes.length; i++) {
                     HMM hmm = nodes[i].getHMM();
                     arcs[i] = new LexTreeHMMState(nodes[i],
-                         getWordHistory(), hmm.getInitialState(),
-                         logOne,
+                         getWordHistory(), getSmearTerm(), getSmearProb(),
+                         hmm.getInitialState(), logOne,
                          logOne, logOne, this.getNode());
               }
           }
@@ -926,10 +941,10 @@ public class LexTreeLinguist implements  Linguist {
          * @param wordSequence the history of words
          */
         LexTreeUnitState(HMMNode hmmNode, 
-               WordSequence wordSequence, 
+               WordSequence wordSequence, float smearTerm, float smearProb,
                float languageProbability, float insertionProbability) {
-            this(hmmNode, wordSequence, languageProbability,
-                    insertionProbability, null);
+            this(hmmNode, wordSequence, smearTerm, smearProb,
+                    languageProbability, insertionProbability, null);
         }
 
         /**
@@ -939,10 +954,10 @@ public class LexTreeLinguist implements  Linguist {
          * @param wordSequence the history of words
          */
         LexTreeUnitState(HMMNode hmmNode, 
-               WordSequence wordSequence, 
+               WordSequence wordSequence, float smearTerm, float smearProb,
                float languageProbability, float insertionProbability,
                Node parentNode) {
-            super(hmmNode, wordSequence);
+            super(hmmNode, wordSequence, smearTerm, smearProb);
             this.logInsertionProbability = insertionProbability;
             this.logLanguageProbability = languageProbability;
             this.parentNode = parentNode;
@@ -1008,7 +1023,8 @@ public class LexTreeLinguist implements  Linguist {
             SearchStateArc[] arcs = new SearchStateArc[1];
             HMM hmm = getHMMNode().getHMM();
             arcs[0] = new LexTreeHMMState(getHMMNode(),
-                 getWordHistory(), hmm.getInitialState(),
+                 getWordHistory(), getSmearTerm(), getSmearProb(),
+                 hmm.getInitialState(),
                  logOne, logOne, logOne, parentNode);
             return arcs;
          }
@@ -1063,10 +1079,11 @@ public class LexTreeLinguist implements  Linguist {
          * occuring
          */
         LexTreeHMMState(HMMNode hmmNode, WordSequence wordSequence, 
+                float smearTerm, float smearProb,
                HMMState hmmState, float languageProbability,
 	       float insertionProbability,
                float acousticProbability, Node parentNode) {
-            super(hmmNode, wordSequence);
+            super(hmmNode, wordSequence, smearTerm, smearProb);
             this.hmmState = hmmState;
             this.parentNode = parentNode;
             this.logLanguageProbability = languageProbability;
@@ -1187,12 +1204,14 @@ public class LexTreeLinguist implements  Linguist {
                         } else {
                             nextStates[i] = new LexTreeHMMState(
                                 (HMMNode) getNode(), getWordHistory(),
+                                getSmearTerm(), getSmearProb(),
                                 arc.getHMMState(), logOne, logOne,
                                 arc.getLogProbability(), parentNode);
                         }
                     } else {
                         nextStates[i] = new LexTreeNonEmittingHMMState(
                             (HMMNode) getNode(), getWordHistory(),
+                            getSmearTerm(), getSmearProb(),
                             arc.getHMMState(),
                             arc.getLogProbability(), parentNode);
                     }
@@ -1229,9 +1248,10 @@ public class LexTreeLinguist implements  Linguist {
          * occuring
          */
         LexTreeNonEmittingHMMState(HMMNode hmmNode, 
-               WordSequence wordSequence, 
+               WordSequence wordSequence, float smearTerm, float smearProb,
                HMMState hmmState, float probability, Node parentNode) {
-            super(hmmNode, wordSequence, hmmState, logOne, logOne, 
+            super(hmmNode, wordSequence, smearTerm, smearProb,
+                    hmmState, logOne, logOne, 
                     probability, parentNode);
         }
     }
@@ -1260,9 +1280,10 @@ public class LexTreeLinguist implements  Linguist {
          *
          */
         LexTreeWordState(WordNode wordNode, HMMNode lastNode,
-               WordSequence wordSequence, float logProbability) {
+               WordSequence wordSequence, float smearTerm,  float smearProb,
+               float logProbability) {
 
-            super(wordNode, wordSequence);
+            super(wordNode, wordSequence, smearTerm, smearProb);
             // System.out.println("LTWS " + wordSequence);
             this.lastNode = lastNode;
             this.logLanguageProbability = logProbability;
@@ -1357,15 +1378,14 @@ public class LexTreeLinguist implements  Linguist {
                  arcs = new SearchStateArc[list.size() + 1];
                  for (Iterator i = list.iterator(); i.hasNext(); ) {
                      HMMNode node = (HMMNode) i.next();
-                     arcs[index++] = createUnitStateArc(node,
-                             LogMath.getLogOne());
+                     arcs[index++] = createUnitStateArc(node, this);
                  }
 
                  // now add the link to the end of sentence arc:
 
                  arcs[index++] =
                      createWordStateArc(hmmTree.getSentenceEndWordNode(),
-                             lastNode, logOne);
+                             lastNode, this);
              }
              return arcs;
          }
@@ -1391,8 +1411,10 @@ public class LexTreeLinguist implements  Linguist {
          *
          */
         LexTreeEndWordState(WordNode wordNode, HMMNode lastNode,
-               WordSequence wordSequence, float logProbability) {
-            super(wordNode, lastNode, wordSequence, logProbability);
+               WordSequence wordSequence, float smearTerm, 
+               float smearProb, float logProbability) {
+            super(wordNode, lastNode, wordSequence, smearTerm,
+                    smearProb, logProbability);
         }
 
     }
@@ -1431,6 +1453,17 @@ public class LexTreeLinguist implements  Linguist {
             prob = logOne;
         }
         return prob;
+    }
+
+
+    /**
+     * Returns the smear term for the given word sequence
+     *
+     * @param ws the word sequence
+     * @return the smear term for the word sequence
+     */
+    private float getSmearTermFromLanguageModel(WordSequence ws) {
+        return languageModel.getSmear(ws);
     }
 
 

@@ -57,8 +57,12 @@ public class BatchAligner {
      *
      * @param context the context of this BatchAligner
      * @param batchFile the file that contains a list of files to decode
+     *
+     * @throws InstantiationException if the aligner could not be  created
+     * @throws IOException if the aligner could not be loaded
      */
-    public BatchAligner(String context, String batchFile) throws IOException {
+    public BatchAligner(String context, String batchFile) 
+            throws IOException, InstantiationException  {
 	this.context = context;
 	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 	skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
@@ -170,6 +174,8 @@ public class BatchAligner {
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
+        } catch (InstantiationException ie) {
+            ie.printStackTrace();
         }
     }
 }

@@ -409,6 +409,15 @@ public class LargeTrigramModel implements LanguageModel {
         }
     }
 
+     /**
+      * Gets the smear term for the given wordSequence
+      *
+      * @param wordSequence the word sequence
+      * @return the smear term associated with this word sequence
+      */
+     public float getSmear(WordSequence wordSequence) {
+         return 0.0f;
+     }
 
     /**
      * Returns the unigram probability of the given unigram.
@@ -782,7 +791,92 @@ public class LargeTrigramModel implements LanguageModel {
     public int getTrigramHits() {
 	return trigramHit;
     }
-    
+
+    float[] unigramSmearTerm;
+    private void buildSmearInfo() {
+        double S0 = 0;
+        double R0 = 0;
+
+        double[] ugNumerator = new double[unigrams.length];
+        double[] ugDenominator = new double[unigrams.length];
+        double[] ugAvgLogProb = new double[unigrams.length];
+        unigramSmearTerm = new float[unigrams.length];
+
+
+
+        for (int i = 0; i < unigrams.length; i++) {
+            float p = unigrams[i].getLogProbability();
+            S0 += p;
+            R0 += logMath.logToLinear(p) * p;
+        }
+
+        for (int i = 0; i < loadedBigramBuffers.length; i++) {
+            BigramBuffer bigram = getBigramBuffer(i);
+            if (bigram == null) {
+                unigramSmearTerm[i] = 1.0f;
+                continue;
+            }
+
+            ugNumerator[i] = 0.0;
+            ugDenominator[i] = 0.0;
+            ugAvgLogProb[i] = 0.0;
+            for (int j = 0; j < bigram.getNumberNGrams(); j++) {
+                int wordID = bigram.getWordID(j);
+                BigramProbability bgProb = bigram.getBigramProbability(j);
+                float logugprob = unigrams[wordID].getLogProbability();
+                float logbgprob = bigramProbTable[bgProb.getProbabilityID()];
+                float logbackoffbgprob = unigrams[i].getLogBackoff()*logugprob;
+                double bgprob = logMath.logToLinear(logbgprob);
+                double backoffbgprob = logMath.logToLinear(logbackoffbgprob);
+
+                ugNumerator[i] += (bgprob * logbgprob
+                     - backoffbgprob * logbackoffbgprob) * logugprob;
+
+                ugDenominator[i] += (bgprob - backoffbgprob) * logugprob;
+            }
+
+            /*
+            ugnumerator[i] += word[i].ugbackoff *
+                (log(word[i].ugbackoff)*S0 + R0);
+            ugavglogprob[i] = ugdenominator[i] + word[i].ugbackoff * S0;
+            ugdenominator[i] += word[i].ugbackoff * R0;
+
+            word[i].ug_smear = ugnumerator[i] / ugdenominator[i];
+            */
+        }
+
+        /*
+        for (i = 0; i < vocabsize; i++) {
+            for (j=0; j<word[i].num_bigrams; j++) {
+                bigram = word[i].bigram[j];
+                k = bigram.wordid;
+                if (bigram.num_trigrams == 0) {
+                    bigram.ug_smear = word[wordid].ug_smear;
+                }
+
+                bg_numerator = 0;
+                bg_denominator = 0;
+                for (l=0; l<bigram.num_trigrams; l++) {
+                    m = bigram.trigram[l].wordid;
+                    tgprob = bigram.trigramprob[l].bgprob = BIGRAMPROB(k, m);
+                    ugprob = word[m].ugprob;
+                    backofftgprob = bigram.bgbackoff * bgprob;
+
+                    bg_numerator += (tgprob*log(tgprob)
+                         - backofftgprob*log(backofftgprob)) * log(ugprob);
+
+                    bg_denominator += (tgprob - backofftgprob)
+                        * log(ugprob) * log(ugprob);
+                }
+                bg_numerator += bigram.bgbackoff *  (log(bigram.bgbackoff)*
+                            ugavglogprob[k] - ugnumerator[k]);
+
+                bg_denominator += bigram.bgbackoff * ugdenominator[k];
+                bigram.ugsmear = bg_numerator / bg_denominator;
+            }
+        } 
+        */
+    }
 }
 
 /**

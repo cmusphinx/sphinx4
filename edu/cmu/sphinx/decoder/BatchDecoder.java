@@ -140,8 +140,11 @@ public class BatchDecoder {
      *
      * @throws IOException if an I/O error is encountered while
      * preparing the batch file
+     * @throws InstantiationException if the decoder could not be
+     * fully instantiated
      */
-    public BatchDecoder(String context, String batchFile) throws IOException {
+    public BatchDecoder(String context, String batchFile) 
+        throws IOException, InstantiationException {
         props = SphinxProperties.getSphinxProperties(context);
         context = props.getContext();
         skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
@@ -247,8 +250,11 @@ public class BatchDecoder {
             System.err.println("I/O error during initialization: \n   " 
                     + ioe.getMessage());
             return;
+        } catch (InstantiationException ie) {
+            System.err.println("Error during initialization: \n   " 
+                    + ie.getMessage());
+            return;
         }
-
         try {
             decoder.decode();
         } catch (IOException ioe) {

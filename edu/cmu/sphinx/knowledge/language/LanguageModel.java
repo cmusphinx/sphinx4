@@ -135,6 +135,15 @@ public interface LanguageModel {
 
 
      /**
+      * Gets the smear term for the given wordSequence
+      *
+      * @param wordSequence the word sequence
+      * @return the smear term associated with this word sequence
+      */
+     public float getSmear(WordSequence wordSequence);
+
+
+     /**
       * Returns the set of words in the lanaguage model. The set is
       * unmodifiable.
       *

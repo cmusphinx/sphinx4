@@ -210,8 +210,12 @@ public class Decoder {
      * fully loaded, taking up memory.
      *
      * @param context the context of this Decoder
+     *
+     * @throws InstantiationException if the deocder could not be  created
+     * @throws IOException if the decoder could not be loaded
      */
-    public Decoder(String context) throws IOException {
+    public Decoder(String context) throws IOException,
+    InstantiationException {
         this(context, false);
     }
 
@@ -229,7 +233,8 @@ public class Decoder {
      * @param initialize indicate whether to fully load this Decoder
      */
     private Decoder(String context,
-                    boolean initialize) throws IOException {
+                    boolean initialize) 
+        throws IOException , InstantiationException{
 
         this.context = context;
 	props = SphinxProperties.getSphinxProperties(context);
@@ -274,8 +279,11 @@ public class Decoder {
      * all the components (e.g., Frontend, AcousticModel, SentenceHMM, etc.)
      * of this Decoder. This method does nothing if this Decoder has
      * already been initialized.
+     *
+     * @throws InstantiationException if the decoder could not be  created
+     * @throws IOException if the decoder could not be loaded
      */
-    public void initialize() throws IOException {
+    public void initialize() throws IOException, InstantiationException {
         if (recognizer == null) {
             beamFinder = new BeamFinder(context);
             recognizer = new Recognizer(context);

@@ -50,9 +50,13 @@ public class LanguageModelFactory {
      * @param context the context
      *
      * @return a language model (or null)
+     *
+     * @throws InstantiationException if the model could not be created
+     * @throws IOException if the model could not be loaded
      */
     public static LanguageModel createLanguageModel(String context, 
-                                                    Dictionary dictionary) {
+                                            Dictionary dictionary)
+            throws IOException, InstantiationException {
 	String path =  "";
 	try {
 
@@ -69,13 +73,11 @@ public class LanguageModelFactory {
            Timer.stop("createLanguageModel");
 	   return lm;
 	} catch (ClassNotFoundException fe) {
-	    throw new Error("CNFE:Can't create language model " + path, fe);
-	} catch (InstantiationException ie) {
-	    throw new Error("IE: Can't create language model " + path, ie);
+	    throw new InstantiationException(
+                    "CNFE:Can't create language model " + path);
 	} catch (IllegalAccessException iea) {
-	    throw new Error("IEA: Can't create language model " + path, iea);
-	} catch (IOException ioe) {
-	    throw new Error("IOE: Can't create language model " + path, ioe);
+	    throw new InstantiationException(
+                    "IEA: Can't create language model " + path);
 	} 
     }
 }
