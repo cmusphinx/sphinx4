@@ -105,43 +105,19 @@ public class AudioPanel extends JPanel
     }
 
     /**
-     * Readjust scroll bar.
+     * Sets the zoom, adjusting the scroll bar in the process.
      */
-    private void adjustBar() {
+    protected void zoomSet(float zoom) {
+	xScale = originalXScale * zoom;
 	int width = (int) (audio.getAudioData().length * xScale);
 	int height = (int) ((1 << 16) * yScale);
 
         setPreferredSize(new Dimension(width, height));
 	revalidate();
+	repaint();
     }
+
     
-    /**
-     * Zoom the image in.
-     */
-    public void zoomIn() {
-	xScale *= 2.0f;
-	adjustBar();
-	repaint();
-    }
-
-    /**
-     * Zoom the image out.
-     */
-    public void zoomOut() {
-	xScale /= 2.0f;
-	adjustBar();
-	repaint();
-    }
-
-    /**
-     * Resets the image to the original size
-     */
-    public void resetSize() {
-	xScale = originalXScale;
-	adjustBar();
-	repaint();
-    }
-
     /**
      * Repaints the component with the given Graphics.
      *

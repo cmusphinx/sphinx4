@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.tools.audio;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -25,6 +26,7 @@ import java.util.StringTokenizer;
 import java.util.prefs.Preferences;
 
 import javax.sound.sampled.AudioFormat;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -77,7 +79,16 @@ public class AudioTool {
     static RawRecorder recorder;
     static boolean recording = false;
     static Preferences prefs;
+    static float zoom;
     
+    private static JMenuItem saveMenuItem;
+    private static JMenuItem saveAsMenuItem;
+
+    private static JButton playButton;
+    private static JButton zoomInButton;
+    private static JButton zoomOutButton;
+    private static JButton zoomResetButton;
+
     /**
      * Gets a filename.
      */
@@ -108,6 +119,7 @@ public class AudioTool {
             if (newAudio == null) {
                 newAudio = Utils.readRawFile(filename);
             }
+	    zoomReset();
             audio.setAudioData(newAudio.getAudioData());
             player.play(audioPanel.getSelectionStart(),
                         audioPanel.getSelectionEnd());
@@ -156,6 +168,60 @@ public class AudioTool {
         }
     }
     
+
+    /**
+     * Zoom the panels according to the zoom scale.
+     */
+    private static void zoomPanels() {
+	if (audioPanel != null) {
+	    audioPanel.zoomSet(zoom);
+	}
+	if (spectrogramPanel != null) {
+	    spectrogramPanel.zoomSet(zoom);
+	}
+    }
+
+    /**
+     * Zoom in.
+     */
+    private static void zoomIn() {
+	zoom *= 2.0f;
+	zoomPanels();
+    }
+
+    /**
+     * Zoom out.
+     */
+    private static void zoomOut() {
+	zoom /= 2.0f;
+	zoomPanels();
+    }
+
+    /**
+     * Reset zoom size.
+     */
+    private static void zoomReset() {
+	zoom = 1.0f;
+	zoomPanels();
+    }
+
+
+    /**
+     * Enables menu items for saving file.
+     */
+    private static void saveEnable() {
+	saveMenuItem.setEnabled(true);
+	saveAsMenuItem.setEnabled(true);
+    }
+
+    /**
+     * Enables menu items for saving file.
+     */
+    private static void saveDisable() {
+	saveMenuItem.setEnabled(false);
+	saveAsMenuItem.setEnabled(false);
+    }
+
     /**
      * Creates the menu bar.
      */
@@ -183,24 +249,27 @@ public class AudioTool {
             });
         menu.add(menuItem);
         
-        menuItem = new JMenuItem("Save");
-        menuItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
-        menuItem.addActionListener(new ActionListener() {
+        saveMenuItem = new JMenuItem("Save");
+        saveMenuItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
+	saveMenuItem.setEnabled(false);
+        saveMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     if ((filename != null) && (filename.length() > 0)) {
                         try {
                             Utils.writeRawFile(audio, filename);
+			    saveDisable();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }
             });
-        menu.add(menuItem);
+        menu.add(saveMenuItem);
         
-        menuItem = new JMenuItem("Save As...");
-        menuItem.setAccelerator(KeyStroke.getKeyStroke("control V"));
-        menuItem.addActionListener(new ActionListener() {
+        saveAsMenuItem = new JMenuItem("Save As...");
+        saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke("control V"));
+	saveAsMenuItem.setEnabled(false);
+        saveAsMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     getFilename("Save As...", JFileChooser.SAVE_DIALOG);
                     if ((filename == null) || (filename.length() == 0)) {
@@ -208,12 +277,13 @@ public class AudioTool {
                     }
                     try {
                         Utils.writeRawFile(audio, filename);
+			saveDisable();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             });
-        menu.add(menuItem);
+        menu.add(saveAsMenuItem);
         
         menuItem = new JMenuItem("Quit");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control Q"));
@@ -258,8 +328,7 @@ public class AudioTool {
         menuItem.setAccelerator(KeyStroke.getKeyStroke('>'));
         menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    audioPanel.zoomIn();
-		    spectrogramPanel.zoomIn();
+                    zoomIn();
                 }
             });
         menu.add(menuItem);
@@ -268,8 +337,7 @@ public class AudioTool {
         menuItem.setAccelerator(KeyStroke.getKeyStroke('<'));
         menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    audioPanel.zoomOut();
-		    spectrogramPanel.zoomOut();
+                    zoomOut();
                 }
             });
         menu.add(menuItem);
@@ -278,8 +346,7 @@ public class AudioTool {
         menuItem.setAccelerator(KeyStroke.getKeyStroke('!'));
         menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    audioPanel.resetSize();
-		    spectrogramPanel.resetSize();
+                    zoomReset();
                 }
             });
         menu.add(menuItem);
@@ -321,6 +388,7 @@ public class AudioTool {
                             System.exit(-1);
                         }
                         recorder.start();
+			saveEnable();
                     } else {
                         recording = false;
                         audio.setAudioData(recorder.stop());
@@ -332,6 +400,67 @@ public class AudioTool {
         menu.add(menuItem);        
     }
     
+    /**
+     * Create the Panel where all the buttons are.
+     *
+     * @return a Panel with buttons on it.
+     */
+    private static JPanel createButtonPanel() {
+        JPanel buttonPanel = new JPanel();
+	FlowLayout layout = new FlowLayout();
+	layout.setAlignment(FlowLayout.LEFT);
+        buttonPanel.setLayout(layout);
+
+        playButton = new JButton("Play");
+        playButton.setEnabled(true);
+        playButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+                    player.play(audioPanel.getSelectionStart(),
+                                audioPanel.getSelectionEnd());
+		}
+	    });
+
+        zoomInButton = new JButton("Zoom In");
+        zoomInButton.setEnabled(true);
+        zoomInButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+                    zoomIn();
+		}
+	    });
+
+        zoomOutButton = new JButton("Zoom Out");
+        zoomOutButton.setEnabled(true);
+        zoomOutButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+                    zoomOut();
+		}
+	    });
+
+        zoomResetButton = new JButton("Reset Size");
+        zoomResetButton.setEnabled(true);
+        zoomResetButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+                    zoomReset();
+		}
+	    });
+
+        JButton exitButton = new JButton("Exit");
+        exitButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    System.exit(0);
+		}
+	    });
+
+        buttonPanel.add(playButton);
+        buttonPanel.add(zoomInButton);
+        buttonPanel.add(zoomOutButton);
+        buttonPanel.add(zoomResetButton);
+        buttonPanel.add(exitButton);
+
+        return buttonPanel;
+    }
+
+
     /**
      * Main method.
      *
@@ -382,8 +511,9 @@ public class AudioTool {
 
             JPanel panel = new JPanel();
             panel.setLayout(new BorderLayout());
-            panel.add(audioPanel, BorderLayout.NORTH);
-            panel.add(spectrogramPanel, BorderLayout.SOUTH);
+	    panel.add(createButtonPanel(), BorderLayout.NORTH);
+            panel.add(audioPanel, BorderLayout.CENTER);
+	    panel.add(spectrogramPanel, BorderLayout.SOUTH);
             
 	    JScrollPane scroller = new JScrollPane(panel);
 

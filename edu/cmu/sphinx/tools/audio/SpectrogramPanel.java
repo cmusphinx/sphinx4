@@ -203,44 +203,21 @@ public class SpectrogramPanel extends JPanel {
     /**
      * Zoom the image, preparing for new display.
      */
-    private void zoom() {
-	int width = spectrogram.getWidth();
-	int height = spectrogram.getHeight();
+    protected void zoomSet(float zoom) {
+	this.zoom = zoom;
+	if (spectrogram != null) {
+	    int width = spectrogram.getWidth();
+	    int height = spectrogram.getHeight();
 
-	ImageFilter scaleFilter = 
-	    new ReplicateScaleFilter((int) (zoom * width), height);
-	scaledSpectrogram = 
-	    createImage(new FilteredImageSource(spectrogram.getSource(),
-						scaleFilter));
+	    ImageFilter scaleFilter = 
+		new ReplicateScaleFilter((int) (zoom * width), height);
+	    scaledSpectrogram = 
+		createImage(new FilteredImageSource(spectrogram.getSource(),
+						    scaleFilter));
+	    repaint();
+	}
     }
 
-    /**
-     * Zoom the image in.
-     */
-    public void zoomIn() {
-	zoom *= 2.0f;
-	zoom();
-	repaint();
-    }
-
-    /**
-     * Zoom the image out.
-     */
-    public void zoomOut() {
-	zoom /= 2.0f;
-	zoom();
-	repaint();
-    }
-
-    /**
-     * Resets the image to the original size
-     */
-    public void resetSize() {
-	zoom = 1.0f;
-	zoom();
-	repaint();
-    }
-    
     /** 
      * Paint the component.  This will be called by AWT/Swing.
      * 
