@@ -180,9 +180,6 @@ public class Live {
      */
     public void stopRecording() {
         getDecoder().getMicrophone().stopRecording();
-        if (!handsFree) {
-            liveFrame.setButtonsEnabled(false);
-        }
     }
 
     /**
@@ -449,28 +446,35 @@ public class Live {
          * Implements the run() method of this thread.
          */
         public void run() {
-            if (!handsFree) {
-                lastResult = decoder.decode(liveFrame.getReference());
-                updateLiveFrame(decoder.getNISTAlign());
-                liveFrame.setButtonsEnabled(true);
-                liveFrame.setDecoderComboBoxEnabled(true);
-            } else {
-                liveFrame.setNextButtonEnabled(true);
+            if (handsFree) {
                 while (decoder.getMicrophone().hasMoreData()) {
                     try {
                         System.out.println("Live: decoding ...");
                         lastResult = decoder.decode();
                         decoder.setReferenceText(liveFrame.getReference());
-                        decoder.showFinalResult(lastResult);
+                        if (lastResult != null) {
+                            decoder.showFinalResult(lastResult);
+                        }
                         System.out.println("Live: ... decoded");
                         updateLiveFrame(decoder.getNISTAlign());
                     } catch (NullPointerException npe) {
                         npe.printStackTrace();
                     }
                 }
-                liveFrame.setButtonsEnabled(true);
+                liveFrame.setDecoderComboBoxEnabled(true);
+            } else {
+                lastResult = decoder.decode(liveFrame.getReference());
+                if (Boolean.getBoolean("epMode")) {
+                    getDecoder().getMicrophone().stopRecording();
+                    liveFrame.setMessage("");
+                }
+                updateLiveFrame(decoder.getNISTAlign());
                 liveFrame.setDecoderComboBoxEnabled(true);
             }
+            liveFrame.setSpeakButtonEnabled(true);
+            liveFrame.setStopButtonEnabled(false);
+            liveFrame.setNextButtonEnabled(true);
+            liveFrame.setPlayButtonEnabled(true);
             System.out.println("DecodingThread completed.");
         }
     }
