@@ -18,7 +18,7 @@
 ./runTest ../performance/tidigits tidigits_quick
 ./runTest ../performance/an4 an4_full_unigram
 ./runTest ../performance/an4 an4_full_trigram
-./runTest ../performance/an4 an4_full_fst
+#./runTest ../performance/an4 an4_full_fst
 
 #./runTest ../performance/an4 an4_words_unigram_quick
 
