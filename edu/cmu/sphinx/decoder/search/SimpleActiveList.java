@@ -13,17 +13,14 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
+import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.decoder.scorer.Scoreable;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * An active list that tries to be simple and correct. This type of
@@ -38,8 +35,8 @@ import edu.cmu.sphinx.decoder.scorer.Scoreable;
  */
 public class SimpleActiveList implements ActiveList  {
     private SphinxProperties props = null;
-    private int absoluteBeamWidth = 2000;
-    private float relativeBeamWidth;
+    public int absoluteBeamWidth = 2000;
+    public float relativeBeamWidth;
     private StatisticsVariable tokens;
 
     // when the list is changed these things should be
@@ -49,9 +46,7 @@ public class SimpleActiveList implements ActiveList  {
 
 
     /**
-     * Creates an empty active list 
-     * 
-     * @param props the sphinx properties
+     * Creates an empty active list
      */
     public SimpleActiveList() {
     }
@@ -118,7 +113,7 @@ public class SimpleActiveList implements ActiveList  {
      * Determines if a token with the given score
      * is insertable into the list
      *
-     * @param float score the entry score of the token to insert. The
+     * @param logScore the entry score of the token to insert. The
      * score is in the log math domain
      * 
      * @return <code>true</code>  if its insertable

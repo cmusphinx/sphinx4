@@ -778,7 +778,7 @@ public class SimpleLinguist implements  Linguist {
                         i.hasNext(); ) {
                     ContextPair cp = (ContextPair) i.next();
                     List epList = (List) entryPoints.get(cp);
-                    SentenceHMMState bs = new BranchState(cp, node.getID());
+                    SentenceHMMState bs = new BranchState(cp.getLeftContext().toString(), cp.getRightContext().toString(), node.getID());
                     epList.add(bs);
                     addExitPoint(cp, bs);
                 }
@@ -1791,68 +1791,6 @@ class ContextPair {
         return right;
     }
 
-}
-
-/**
- * A unit state that modifies how the unit state is cached.  Caching
- * keys are generated from the full name for the sentence hmm. The
- * default behavior for the unit (and all sentence hmms) is to
- * generate the full name by combining the name for this unit with the
- * name of the parent.  For the simple linguist, this is undesirable,
- * because there are many different names for the parent
- * pronunciations (differing contexts).  We want to be able to combine
- * units that have identical names and context and are in the same
- * position in the same pronunciation.  By defining getFullName to
- * combine the name and the pronunciation index we allow units with
- * identical contexts in the same position in a pronunciation to be
- * combined.
- *
- */
-class ExtendedUnitState extends UnitState {
-    public ExtendedUnitState(PronunciationState parent, int which,  Unit unit) {
-        super(parent, which, unit);
-    }
-
-    /**
-     * Gets the fullName for this state
-     *
-     * @return the full name for this state
-     */
-    public String getFullName() {
-        return getName() + " in P" + getParent().getWhich();
-    }
-}
-
-
-
-/**
- * Represents a branching node in a grammar
- * 
- */
-class BranchState extends SentenceHMMState {
-
-    /**
-     * Creates a branch state
-     *
-     * @param name the name of the branch state
-     * @param nodeID the grammar node id
-     */
-    public BranchState(ContextPair cp, int nodeID) {
-	super("B" + "[" + cp.getLeftContext() +"," +
-                cp.getRightContext() + "]", null, nodeID);
-    }
-
-
-    /**
-     * Retrieves a short label describing the type of this state.
-     * Typically, subclasses of SentenceHMMState will implement this
-     * method and return a short (5 chars or less) label
-     *
-     * @return the short label.
-     */
-    public String getTypeLabel() {
-	return "Brnch";
-    }
 }
 
 
