@@ -49,7 +49,7 @@ import javax.swing.UIManager;
 public class LiveFrame extends JFrame {
 
     private Live live;
-    private boolean debug = true;
+    private boolean debug = false;
     private boolean handsFree = false;
     
     // Dimension of this LiveFrame

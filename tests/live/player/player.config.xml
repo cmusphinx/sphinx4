@@ -22,7 +22,7 @@
     <property name="recognizer"         value="recognizer"/>
     <property name="grammar"            value="jsgfGrammar"/>
     <property name="frontend"   value="mfcFrontEnd"/>
-    <property name="showCreations"   value="true"/>
+    <property name="showCreations"   value="false"/>
     
     
     

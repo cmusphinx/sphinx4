@@ -432,7 +432,6 @@ public class Live {
 
                 if (epMode) {
                     microphone.stopRecording();
-                    System.out.println("Speaker turned off.");
                     liveFrame.setMessage("Speaker turned off.");
                 }
 
@@ -442,7 +441,6 @@ public class Live {
             liveFrame.setNextButtonEnabled(true);
             liveFrame.setPlayButtonEnabled(true);
             liveFrame.setDecoderComboBoxEnabled(true);
-            System.out.println("DecodingThread completed.");
         }
     }
 

@@ -21,7 +21,7 @@
     <property name="silenceInsertionProbability" value=".1"/>
     <property name="frontend" value="mfcFrontEnd"/>
     <property name="recognizer" value="recognizer"/>
-    <property name="showCreations" value="true"/>
+    <property name="showCreations" value="false"/>
 
     <!-- ******************************************************** -->
     <!-- batch tool configuration                                 -->
@@ -315,7 +315,7 @@
     
     <component name="configMonitor" 
                 type="edu.cmu.sphinx.instrumentation.ConfigMonitor">
-        <property name="showConfig" value="true"/>
+        <property name="showConfig" value="false"/>
     </component>
     
     <component name="beamFinder" 
