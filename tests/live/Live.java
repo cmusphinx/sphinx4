@@ -391,11 +391,17 @@ public class Live {
         float sentenceAccuracy = (aligner.getTotalSentenceAccuracy() * 100);
         liveFrame.setSentenceAccuracyLabel(sentenceAccuracy + "%");
 
-        liveFrame.setSpeedLabel
-            (timeFormat.format(decoder.getSpeed()) + " X RT");
-        
-        liveFrame.setCumulativeSpeedLabel
-            (timeFormat.format(decoder.getCumulativeSpeed()) +" X RT");
+        String speedLabel = "N/A";
+        String cumulativeSpeedLabel = "N/A";
+
+        if (!handsFree) {
+            speedLabel = (timeFormat.format(decoder.getSpeed()) + " X RT");
+            cumulativeSpeedLabel = 
+                (timeFormat.format(decoder.getCumulativeSpeed()) + " X RT");
+        }
+
+        liveFrame.setSpeedLabel(speedLabel);
+        liveFrame.setCumulativeSpeedLabel(cumulativeSpeedLabel);
     }
 
 
