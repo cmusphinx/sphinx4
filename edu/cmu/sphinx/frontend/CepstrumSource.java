@@ -23,6 +23,9 @@ public interface CepstrumSource extends DataSource {
 
     /**
      * Returns the next Cepstrum object produced by this CepstrumSource.
+     * The Cepstra objects of an Utterance should be preceded by
+     * a Cepstrum object with Signal.UTTERANCE_START and ended by
+     * a Cepstrum object with Signal.UTTERANCE_END.
      *
      * @return the next available Cepstrum object, returns null if no
      *     Cepstrum object is available

@@ -23,6 +23,9 @@ public interface SpectrumSource extends DataSource {
 
     /**
      * Returns the next Spectrum object produced by this SpectrumSource.
+     * The Spectra objects belong to one Utterance should be preceded
+     * by a Spectrum object with the Signal.UTTERANCE_START, and ended by
+     * a Spectrum object with the Signal.UTTERANCE_END.
      *
      * @return the next available Spectrum object, returns null if no
      *     Spectrum object is available

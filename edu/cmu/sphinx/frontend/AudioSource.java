@@ -23,6 +23,9 @@ public interface AudioSource extends DataSource {
 
     /**
      * Returns the next Audio object produced by this AudioSource.
+     * The Audio objects of a single Utterance should be preceded by
+     * an Audio object that contains Signal.UTTERANCE_START and
+     * ended by an Audio object that contains Signal.UTTERANCE_END.
      *
      * @return the next available Audio object, returns null if no
      *     Audio object is available

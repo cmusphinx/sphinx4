@@ -22,6 +22,9 @@ public interface FeatureSource extends DataSource {
 
     /**
      * Returns the next Feature object produced by this FeatureSource.
+     * The Feature objects belonging to a single Utterance should be
+     * preceded by a Feature object with the Signal.UTTERANCE_START, and
+     * ended by a Feature object wtih the Signal.UTTERANCE_END.
      *
      * @return the next available Feature object, returns null if no
      *     Feature object is available
