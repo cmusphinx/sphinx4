@@ -47,19 +47,6 @@ public class FrontEndFactory {
 
 
     /**
-     * The SphinxProperty name for the size of a cepstrum.
-     */
-    public static final String PROP_CEPSTRUM_SIZE = PROP_PREFIX + 
-	"cepstrumSize";
-
-
-    /**
-     * The default value for PROP_CEPSTRUM_SIZE.
-     */
-    public static final int PROP_CEPSTRUM_SIZE_DEFAULT = 13;
-
-
-    /**
      * A map for storing the front ends.
      */
     private static Map frontends = new HashMap();
