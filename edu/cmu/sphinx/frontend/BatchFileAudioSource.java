@@ -66,7 +66,6 @@ public class BatchFileAudioSource extends DataProcessor {
     private void fileSetStream(String audioFile) throws IOException {
         streamAudioSource.setInputStream
             (new FileInputStream(audioFile + ".raw"));
-        streamAudioSource.reset();
     }
 
     

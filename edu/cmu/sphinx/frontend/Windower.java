@@ -8,6 +8,7 @@ import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
 import java.util.Vector;
+import java.util.Arrays;
 
 
 /**
@@ -56,6 +57,8 @@ public class Windower extends DataProcessor {
     private int windowShift;
     private double ALPHA;
     private Vector outputQueue;
+    private int frameSize;
+    private DoubleBuffer overflowBuffer;
 
 
     /**
@@ -68,6 +71,7 @@ public class Windower extends DataProcessor {
 	initSphinxProperties();
 	createWindow();
         outputQueue = new Vector();
+        overflowBuffer = new DoubleBuffer(windowSize + frameSize);
     }
 
 
@@ -91,6 +95,15 @@ public class Windower extends DataProcessor {
         windowShift = Util.getSamplesPerShift(sampleRate, windowShiftInMs);
 
         ALPHA = properties.getDouble(Windower.PROP_ALPHA, 0.46);
+
+        int frameSizeInBytes = properties.getInt
+	    (FrontEnd.PROP_BYTES_PER_AUDIO_FRAME, 4000);
+
+        if (frameSizeInBytes % 2 == 1) {
+            frameSizeInBytes++;
+        }
+        
+        frameSize = frameSizeInBytes / 2;
     }
 
 
@@ -128,11 +141,23 @@ public class Windower extends DataProcessor {
         if (output == null) {
             output = getSource().read();
 
+            getTimer().start();
+
             if (output != null && output instanceof AudioFrame) { 
                 // process the AudioFrame, and output the data
                 process((AudioFrame) output);
                 output = getWindow();                
+            } else if (output instanceof EndPointSignal) {
+                // the end of segment
+                EndPointSignal signal = (EndPointSignal) output;
+                if (signal.equals(EndPointSignal.SEGMENT_END)) {
+                    processSegmentEnd();
+                    output = getWindow();
+                    outputQueue.add(signal);
+                }
             }
+
+            getTimer().stop();
         }
 
         return output;
@@ -164,22 +189,65 @@ public class Windower extends DataProcessor {
      * @return the same AudioFrame but with Window applied
      */
     private void process(AudioFrame input) {
-        
-	double[] in = input.getAudioSamples();
-
-        int windowCount = Util.getWindowCount
-            (in.length, windowSize, windowShift);
-
-        // create all the windows at once, not individually, saves time
-        double[][] windows = new double[windowCount][windowSize];
 
         // send a Signal indicating start of frame
         outputQueue.add(EndPointSignal.FRAME_START);
 
-        for (int windowStart = 0, i = 0; i < windowCount;
-             windowStart += windowShift, i++) {
+	double[] in = input.getAudioSamples();
+        int length = in.length;
 
-            getTimer().start();
+        // prepend overflow samples
+        if (overflowBuffer.getOccupancy() > 0) {
+            length = overflowBuffer.appendAll(in);
+            in = overflowBuffer.getBuffer();
+        }
+
+        // apply Hamming window
+        int residual = applyHammingWindow(in, length);
+
+        // save elements that also belong to the next window
+        overflowBuffer.reset();
+        overflowBuffer.append(in, residual, length - residual);
+
+        // send a Signal indicating end of frame
+        outputQueue.add(EndPointSignal.FRAME_END);
+    }
+
+
+    /**
+     * What happens when an EndPointSignal.SEGMENT_END signal is
+     * received.
+     */
+    private void processSegmentEnd() {
+        overflowBuffer.padWindow(windowSize);
+        applyHammingWindow(overflowBuffer.getBuffer(), windowSize);
+        overflowBuffer.reset();
+    }
+
+
+    /**
+     * Applies the Hamming window to the given double array.
+     * The windows are added to the output queue. Returns the index
+     * of the first array element of next window that is not produced
+     * because of insufficient data.
+     *
+     * @param in the double array to apply the Hamming window
+     * @param length the number of elements in the array to apply the
+     *     HammingWindow
+     *
+     * @return the index of the first array element of the next window
+     */
+    private int applyHammingWindow(double[] in, int length) {
+
+        int windowCount = Util.getWindowCount
+            (length, windowSize, windowShift);
+
+        // create all the windows at once, not individually, saves time
+        double[][] windows = new double[windowCount][windowSize];
+
+        int windowStart = 0;
+
+        for (int i = 0; i < windowCount; windowStart += windowShift, i++) {
 
             double[] myWindow = windows[i];
             
@@ -191,15 +259,91 @@ public class Windower extends DataProcessor {
             // add the frame to the output queue
             outputQueue.add(new AudioFrame(myWindow));
 
-            getTimer().stop();
-
             if (getDump()) {
                 System.out.println
                     ("HAMMING_WINDOW " + Util.doubleArrayToString(myWindow));
             }
         }
 
-        // send a Signal indicating end of frame
-        outputQueue.add(EndPointSignal.FRAME_END);
+        return windowStart;
+    }
+}
+
+    
+class DoubleBuffer {
+
+    private double[] buffer;
+    private int occupancy;
+
+    /**
+     * Constructs a DoubleBuffer of the given size.
+     */
+    public DoubleBuffer(int size) {
+        buffer = new double[size];
+        occupancy = 0;
+    }
+
+    /**
+     * Returns the number of elements in this DoubleBuffer.
+     *
+     * @return the number of elements in this DoubleBuffer.
+     */
+    public int getOccupancy() {
+        return occupancy;
+    }
+
+    /**
+     * Returns the underlying double array used to store the data.
+     *
+     * @return the underlying double array
+     */
+    public double[] getBuffer() {
+        return buffer;
+    }
+
+    /**
+     * Appends all the elements in the given array to this DoubleBuffer.
+     *
+     * @param the array to copy from
+     *
+     * @return the resulting number of elements in this DoubleBuffer.
+     */
+    public int appendAll(double[] src) {
+        return append(src, 0, src.length);
+    }
+
+    /**
+     * Appends the specified elements in the given array to this DoubleBuffer.
+     *
+     * @param src the array to copy from
+     * @param srcPos where in the source array to start from
+     * @param length the number of elements to copy
+     *
+     * @return the resulting number of elements in this DoubleBuffer
+     */
+    public int append(double[] src, int srcPos, int length) {
+        System.arraycopy(src, srcPos, buffer, occupancy, length);
+        occupancy += length;
+        return occupancy;
+    }
+
+    /**
+     * If there are less than windowSize elements in this DoubleBuffer,
+     * pad the up to windowSize elements with zero.
+     *
+     * @param windowSize the window size
+     */
+    public void padWindow(int windowSize) {
+        if (occupancy < windowSize) {
+            Arrays.fill(buffer, occupancy, windowSize, 0);
+        }
+    }
+
+    /**
+     * Sets the number of elements in this DoubleBuffer to zero, without
+     * actually remove the elements.
+     */
+    public void reset() {
+        occupancy = 0;
     }
 }

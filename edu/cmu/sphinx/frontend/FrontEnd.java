@@ -70,6 +70,14 @@ public class FrontEnd implements DataSource, Runnable {
 	"edu.cmu.sphinx.frontend.bytesPerAudioFrame";
 
     /**
+     * The name of the SphinxProperty which specifies the maximum
+     * number of bytes in a segment of speech.
+     * The default value is 2,000,000.
+     */
+    public static final String PROP_SEGMENT_MAX_BYTES =
+    "edu.cmu.sphinx.frontend.segmentMaxBytes";
+    
+    /**
      * The name of the SphinxProperty for the size of a cepstrum, which is
      * 13 by default.
      */
