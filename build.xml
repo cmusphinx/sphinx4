@@ -48,6 +48,11 @@
                 includes="edu/**,com/**"
 	        excludes="edu/cmu/sphinx/research/parallel/**"/>
 
+    <patternset id="edu" 
+                includes="edu/**"
+	        excludes="com/**,
+                          edu/cmu/sphinx/research/parallel/**"/>
+
     <patternset id="no_jsapi" 
                 includes="edu/**"
 	        excludes="com/**,
@@ -67,6 +72,30 @@
         </condition>
     </target>
 
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Determine which sources should be documented using     * -->
+    <!-- * javadoc depending on the availability of               * -->
+    <!-- * lib/jsapi.jar. This creates a property called          * -->
+    <!-- * "patternset_to_doc" and sets its val to either         * -->
+    <!-- * "all" or "no_jsapi", which refers to the name of a     * -->
+    <!-- * patternset.                                            * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+
+    <target name="set_patternset_to_doc">
+        <condition property="patternset_to_doc"
+                   value="edu">
+            <available file="lib/jsapi.jar"/>
+        </condition>
+        <condition property="patternset_to_doc"
+                   value="no_jsapi">
+            <not>
+                <available file="lib/jsapi.jar"/>
+            </not>
+        </condition>
+    </target>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -125,7 +154,8 @@ jsapi.exe from the lib directory.
     <target name="handle_jsapi"
             depends="check_jsapi_jar.isPresent,
                      issue_jsapi_warning,
-                     set_patternset_to_compile"/>
+                     set_patternset_to_compile,
+                     set_patternset_to_doc"/>
 
 
     <!-- ********************************************************** -->
@@ -226,7 +256,7 @@ jsapi.exe from the lib directory.
                   offline="true"
                   packagelistLoc="lib/jsapi" />
             <packageset dir="${src_dir}" defaultexcludes="yes">
-                  <patternset refid="${patternset_to_compile}"/>
+                  <patternset refid="${patternset_to_doc}"/>
             </packageset>
 	    <classpath refid="libs"/>
         </javadoc>
