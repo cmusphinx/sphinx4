@@ -598,16 +598,16 @@ public class LargeTrigramModel implements LanguageModel {
 
 	// read the bigram probabilities table
 	if (numberBigrams > 0) {
-            this.bigramProbTable = readProbabilitiesTable(stream, bigEndian);
+            this.bigramProbTable = readFloatTable(stream, bigEndian);
 	}
 
 	// read the trigram backoff weight table and trigram prob table
 	if (numberTrigrams > 0) {
-	    trigramBackoffTable = readProbabilitiesTable(stream, bigEndian);
-	    trigramProbTable = readProbabilitiesTable(stream, bigEndian);
+	    trigramBackoffTable = readFloatTable(stream, bigEndian);
+	    trigramProbTable = readFloatTable(stream, bigEndian);
             int trigramSegTableSize = ((numberBigrams+1)/bigramSegmentSize)+1;
-            trigramSegmentTable = readTrigramSegmentTable(stream, bigEndian, 
-                                                          trigramSegTableSize);
+            trigramSegmentTable = readIntTable(stream, bigEndian, 
+                                               trigramSegTableSize);
         }
 
 	// read word string names
@@ -692,9 +692,8 @@ public class LargeTrigramModel implements LanguageModel {
      * @param stream the DataInputStream from which to read the table
      * @param bigEndian true if the given stream is bigEndian, false otherwise
      */
-    private float[] readProbabilitiesTable(DataInputStream stream,
-                                           boolean bigEndian) throws
-    IOException {
+    private float[] readFloatTable(DataInputStream stream,
+                                   boolean bigEndian) throws IOException {
         
 	int numProbs = readInt(stream, bigEndian);
 	if (numProbs <= 0 || numProbs > 65536) {
@@ -710,7 +709,7 @@ public class LargeTrigramModel implements LanguageModel {
 
 
     /**
-     * Reads the probability table from the given DataInputStream.
+     * Reads a table of integers from the given DataInputStream.
      *
      * @param stream the DataInputStream from which to read the table
      * @param bigEndian true if the given stream is bigEndian, false otherwise
@@ -718,10 +717,10 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @return the trigram segment table, which is an array of integers
      */
-    private int[] readTrigramSegmentTable(DataInputStream stream, 
-                                          boolean bigEndian, int tableSize) 
-	throws IOException {
-	int numSegments = readInt(stream, bigEndian);
+    private int[] readIntTable(DataInputStream stream, 
+                               boolean bigEndian, int tableSize) 
+        throws IOException {
+        int numSegments = readInt(stream, bigEndian);
 	if (numSegments != tableSize) {
 	    throw new Error("Bad trigram seg table size: " + numSegments);
 	}
