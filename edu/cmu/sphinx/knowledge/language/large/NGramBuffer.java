@@ -12,38 +12,39 @@
 
 package edu.cmu.sphinx.knowledge.language.large;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 
 /**
- * Implements a ByteBuffer that contains NGrams. It assumes that the
+ * Implements a buffer that contains NGrams. It assumes that the
  * first two bytes of each n-gram entry is the ID of the n-gram. 
  */
 public class NGramBuffer {
     
-    private ByteBuffer buffer;
+    private byte[] buffer;
     private int numberNGrams;
+    private int position;
+    private boolean bigEndian;
 
 
     /**
-     * Constructs a NGramBuffer object with the given ByteBuffer.
+     * Constructs a NGramBuffer object with the given byte[].
      *
-     * @param buffer the ByteBuffer with trigrams
+     * @param buffer the byte[] with trigrams
      * @param numberNGrams the number of N-gram
      */
-    public NGramBuffer(ByteBuffer buffer, int numberNGrams) {
+    public NGramBuffer(byte[] buffer, int numberNGrams, boolean bigEndian) {
         this.buffer = buffer;
         this.numberNGrams = numberNGrams;
+	this.bigEndian = bigEndian;
+	this.position = 0;
     }
 
 
     /**
-     * Returns the ByteBuffer of n-grams.
+     * Returns the byte[] of n-grams.
      *
-     * @return the ByteBuffer of n-grams
+     * @return the byte[] of n-grams
      */
-    public ByteBuffer getBuffer() {
+    public byte[] getBuffer() {
 	return buffer;
     }
 
@@ -59,6 +60,26 @@ public class NGramBuffer {
 
 
     /**
+     * Returns the position of the buffer.
+     *
+     * @return the position of the buffer
+     */
+    protected int getPosition() {
+	return position;
+    }
+
+
+    /**
+     * Sets the position of the buffer.
+     *
+     * @param new buffer position
+     */
+    protected void setPosition(int position) {
+	this.position = position;
+    }
+
+
+    /**
      * Returns the word ID of the nth follower, assuming that the ID
      * is the first two bytes of the NGram entry.
      *
@@ -67,9 +88,8 @@ public class NGramBuffer {
      * @return the word ID
      */
     public final int getWordID(int nthFollower) {
-        int nthPosition = nthFollower * 
-            (buffer.capacity()/numberNGrams);
-        buffer.position(nthPosition);
+        int nthPosition = nthFollower * (buffer.length/numberNGrams);
+        setPosition(nthPosition);
         return readTwoBytesAsInt();
     }
 
@@ -80,7 +100,7 @@ public class NGramBuffer {
      * @return true if the trigramBuffer is big-endian, false if little-endian
      */
     public final boolean isBigEndian() {
-        return (buffer.order() == ByteOrder.BIG_ENDIAN);
+        return bigEndian;
     }
 
 
@@ -91,12 +111,12 @@ public class NGramBuffer {
      * @return the next two bytes as an integer
      */
     public final int readTwoBytesAsInt() {
-        int value = (0x000000ff & buffer.get());
-        if (isBigEndian()) {
+        int value = (0x000000ff & buffer[position++]);
+        if (bigEndian) {
             value <<= 8;
-            value |= (0x000000ff & buffer.get());
+            value |= (0x000000ff & buffer[position++]);
         } else {
-            int second = (0x000000ff & buffer.get());
+            int second = (0x000000ff & buffer[position++]);
             second <<= 8;
             value |= second;
         }

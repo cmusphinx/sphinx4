@@ -12,9 +12,6 @@
 
 package edu.cmu.sphinx.knowledge.language.large;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 
 /**
  * Implements a buffer for bigrams read from disk.
@@ -22,14 +19,14 @@ import java.nio.ByteOrder;
 public class BigramBuffer extends NGramBuffer {
     
     /**
-     * Constructs a BigramBuffer object with the given ByteBuffer.
+     * Constructs a BigramBuffer object with the given byte[].
      *
-     * @param bigramsOnDisk the ByteBuffer with bigrams
-     * @param numberNGrams the number of bigram follows in the ByteBuffer
+     * @param bigramsOnDisk the byte[] with bigrams
+     * @param numberNGrams the number of bigram follows in the byte[]
      */
-    public BigramBuffer(ByteBuffer bigramsOnDisk,
-			int numberNGrams) {
-        super(bigramsOnDisk, numberNGrams);
+    public BigramBuffer(byte[] bigramsOnDisk,
+			int numberNGrams, boolean bigEndian) {
+        super(bigramsOnDisk, numberNGrams, bigEndian);
     }
 
 
@@ -70,7 +67,7 @@ public class BigramBuffer extends NGramBuffer {
      */
     public final BigramProbability getBigramProbability(int nthFollower) {
         int nthPosition = nthFollower * LargeTrigramModel.BYTES_PER_BIGRAM;
-        getBuffer().position(nthPosition);
+	setPosition(nthPosition);
 
         int wordID = readTwoBytesAsInt();
         int probID = readTwoBytesAsInt();

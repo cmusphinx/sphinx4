@@ -452,8 +452,9 @@ public class LargeTrigramModel implements LanguageModel {
 
                 try {
                     // System.out.println("Loading TrigramBuffer from disk");
-                    ByteBuffer buffer = loader.loadBuffer(position, size);
-                    trigramBuffer = new TrigramBuffer(buffer, numberTrigrams);
+                    byte[] buffer = loader.loadBuffer(position, size);
+                    trigramBuffer = new TrigramBuffer(buffer, numberTrigrams,
+						      loader.getBigEndian());
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                     throw new Error("Error loading trigrams.");
@@ -560,8 +561,9 @@ public class LargeTrigramModel implements LanguageModel {
 	long position = (long) (loader.getBigramOffset() + 
 				(firstBigramEntry * BYTES_PER_BIGRAM));
 	try {
-	    ByteBuffer buffer = loader.loadBuffer(position, size);
-	    followers = new BigramBuffer(buffer, numberFollowers + 1);
+	    byte[] buffer = loader.loadBuffer(position, size);
+	    followers = new BigramBuffer(buffer, numberFollowers + 1,
+					 loader.getBigEndian());
 	} catch (IOException ioe) {
 	    ioe.printStackTrace();
 	    throw new Error("Error loading bigram followers");

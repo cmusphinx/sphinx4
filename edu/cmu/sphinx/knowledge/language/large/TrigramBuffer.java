@@ -12,7 +12,6 @@
 
 package edu.cmu.sphinx.knowledge.language.large;
 
-import java.nio.ByteBuffer;
 
 /**
  * Implements a buffer for trigrams read from disk.
@@ -20,14 +19,14 @@ import java.nio.ByteBuffer;
 public class TrigramBuffer extends NGramBuffer {
     
     /**
-     * Constructs a TrigramBuffer object with the given ByteBuffer.
+     * Constructs a TrigramBuffer object with the given byte[].
      *
-     * @param trigramsOnDisk the ByteBuffer with trigrams
-     * @param numberNGrams the number of trigram follows in the ByteBuffer
+     * @param trigramsOnDisk the byte[] with trigrams
+     * @param numberNGrams the number of trigram follows in the byte[]
      */
-    public TrigramBuffer(ByteBuffer trigramsOnDisk,
-			 int numberNGrams) {
-        super(trigramsOnDisk, numberNGrams);
+    public TrigramBuffer(byte[] trigramsOnDisk,
+			 int numberNGrams, boolean bigEndian) {
+        super(trigramsOnDisk, numberNGrams, bigEndian);
     }
 
 
@@ -70,7 +69,7 @@ public class TrigramBuffer extends NGramBuffer {
      */
     public final TrigramProbability getTrigramProbability(int nthFollower) {
         int nthPosition = nthFollower * LargeTrigramModel.BYTES_PER_TRIGRAM;
-        getBuffer().position(nthPosition);
+        setPosition(nthPosition);
 
         int wordID = readTwoBytesAsInt();
         int probID = readTwoBytesAsInt();

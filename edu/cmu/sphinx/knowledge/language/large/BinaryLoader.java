@@ -294,6 +294,16 @@ class BinaryLoader {
 
 
     /**
+     * Returns true if the loaded file is in big-endian.
+     *
+     * @return true if the loaded file is big-endian
+     */
+    public boolean getBigEndian() {
+	return bigEndian;
+    }
+
+
+    /**
      * Loads the contents of the memory-mapped file starting at the 
      * given position and for the given size, into a byte buffer.
      * This method is implemented because MappedByteBuffer.load()
@@ -304,36 +314,14 @@ class BinaryLoader {
      *
      * @return the loaded ByteBuffer
      */
-    public ByteBuffer loadBuffer(long position, int size) throws IOException {
+    public byte[] loadBuffer(long position, int size) throws IOException {
         // assert ((position + size) <= fileChannel.size());
         file.seek(position);
         byte[] bytes = new byte[size];
         if (file.read(bytes) != size) {
             throw new IOException("Incorrect number of bytes read.");
         }
-        ByteBuffer bb = ByteBuffer.wrap(bytes);
-	if (!bigEndian) {
-	    bb.order(ByteOrder.LITTLE_ENDIAN);
-	} else {
-            bb.order(ByteOrder.BIG_ENDIAN);
-        }
-        return bb;
-    }
-
-
-    /**
-     * Loads the bigram at the given absolute index into the bigram region.
-     *
-     * @param index the absolute index into the bigram region
-     *
-     * @return a ByteBuffer of the requested bigram
-     */
-    public BigramBuffer loadBigram(int index) throws IOException {
-        long position = (long) bigramOffset + 
-            (index * LargeTrigramModel.BYTES_PER_BIGRAM);
-        ByteBuffer buffer = loadBuffer
-            (position, LargeTrigramModel.BYTES_PER_BIGRAM);
-        return (new BigramBuffer(buffer, 1));
+	return bytes;
     }
 
 

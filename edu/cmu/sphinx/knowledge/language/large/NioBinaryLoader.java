@@ -314,35 +314,13 @@ class NioBinaryLoader {
      *
      * @return the loaded ByteBuffer
      */
-    public ByteBuffer loadBuffer(long position, int size) throws IOException {
+    public byte[] loadBuffer(long position, int size) throws IOException {
         file.seek(position);
         byte[] bytes = new byte[size];
         if (file.read(bytes) != size) {
             throw new IOException("Incorrect number of bytes read.");
         }
-        ByteBuffer bb = ByteBuffer.wrap(bytes);
-	if (!bigEndian) {
-	    bb.order(ByteOrder.LITTLE_ENDIAN);
-	} else {
-            bb.order(ByteOrder.BIG_ENDIAN);
-        }
-        return bb;
-    }
-
-
-    /**
-     * Loads the bigram at the given absolute index into the bigram region.
-     *
-     * @param index the absolute index into the bigram region
-     *
-     * @return a ByteBuffer of the requested bigram
-     */
-    public BigramBuffer loadBigram(int index) throws IOException {
-        long position = (long) bigramOffset + 
-            (index * LargeTrigramModel.BYTES_PER_BIGRAM);
-        ByteBuffer buffer = loadBuffer
-            (position, LargeTrigramModel.BYTES_PER_BIGRAM);
-        return (new BigramBuffer(buffer, 1));
+        return bytes;
     }
 
 
@@ -370,7 +348,7 @@ class NioBinaryLoader {
             if (headerLength == (DARPA_LM_HEADER.length() + 1)) {
 		// little-endian
                 bigEndian = false;
-                bb.order(ByteOrder.LITTLE_ENDIAN);
+		bb.order(ByteOrder.BIG_ENDIAN);
 	    } else {
 		throw new Error
 		    ("Bad binary LM file magic number: " + headerLength +
