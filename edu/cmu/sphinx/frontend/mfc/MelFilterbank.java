@@ -285,7 +285,7 @@ public class MelFilterbank extends DataProcessor implements Filterbank {
 
 	double[] in = input.getSpectrumData();
 
-	if (in.length != (numberFftPoints >> 1)) {
+	if (in.length != (numberFftPoints/2 +1)) {
 	    throw new IllegalArgumentException
                ("Window size is incorrect: in.length == " + in.length +
                  ", numberFftPoints == " + numberFftPoints);
