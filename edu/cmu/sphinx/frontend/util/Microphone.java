@@ -275,15 +275,6 @@ public class Microphone extends DataProcessor implements AudioSource {
                 while (getRecording() && !getClosed()) {
                     printMessage("reading ...");
                     audioList.add(readAudio(currentUtterance));
-                    /*
-                    if (sleepBetweenAudio) {
-                        try {
-                            Thread.sleep(sleepTime);
-                        } catch (InterruptedException ie) {
-                            ie.printStackTrace();
-                        }
-                    }
-                    */
                 }
 
                 audioList.add(new Audio(Signal.UTTERANCE_END));
@@ -545,7 +536,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      *
      * @return true if there is more data in the Microphone
      */
-    public synchronized boolean hasMoreData() {
+    public boolean hasMoreData() {
         boolean moreData;
         synchronized (audioList) {
             moreData = (recording || audioList.size() > 0);
