@@ -44,7 +44,18 @@ edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sph
 #
 ############################################################
 
-edu.cmu.sphinx.frontend.featureExtractor=edu.cmu.sphinx.frontend.LiveFeatureExtractor
+edu.cmu.sphinx.frontend.FrontEndFactory.pipelines=mfc
+
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=7
+
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class=edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.feature.BatchCMN
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor
+
 
 
 ############################################################

@@ -38,8 +38,18 @@ edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 #
 ############################################################
 
-edu.cmu.sphinx.frontend.featureExtractor = edu.cmu.sphinx.frontend.LiveFeatureExtractor
-edu.cmu.sphinx.frontend.keepAudioReference = true
+edu.cmu.sphinx.frontend.FrontEndFactory.pipelines=mfc
+
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=7
+
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class=edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.feature.BatchCMN
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor
+
 
 
 ############################################################
@@ -58,7 +68,6 @@ edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu
 #
 ############################################################
 
-edu.cmu.speech.knowledge.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.location =  file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dictionary
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = fillerdict

@@ -39,8 +39,29 @@ tidigits;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.Feat
 #
 ############################################################
 
-edu.cmu.sphinx.frontend.featureExtractor=edu.cmu.sphinx.frontend.LiveFeatureExtractor
-edu.cmu.sphinx.frontend.keepAudioReference = true
+edu.cmu.sphinx.frontend.FrontEndFactory.pipelines=mfc
+
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=7
+
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class=edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.feature.BatchCMN
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor
+
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=8
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.endpoint.LevelTracker
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveCMN
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.8.class=edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor
+mfc_ep;edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=16
+mfc_ep;edu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer=50
 
 
 ############################################################
