@@ -1,0 +1,133 @@
+#!/bin/sh
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi ElectricResearch Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This script parses the output of S4 and generates a log entry
+#
+# usage: parseS4LiveOutput logfile label [testStatus]
+#
+# if testStatus is not given, we assume that we are running
+# interactively and will generate an OK testStatus and will use the
+# current date and time.
+#
+
+gawk '
+
+BEGIN {
+	
+    if (ARGC == 4) {
+	status = ARGV[3];
+	ARGV[3] = "";
+	# use date/time that the test was started so we can
+	# more easily track down CVS history
+	getline date < ".startDate";
+	getline time < ".startTime";
+    } else if (ARGC == 3) {
+        status = "OK";
+	"date +%Y-%m-%d" | getline date;
+	 "date +%T" | getline time;
+    } else {
+        print "Usage: parseS4Output  logfile label [status]"
+	exit
+    }
+
+    testName = ARGV[2];
+    ARGV[2] = "";
+
+# Here is a sample of what we are parsing
+#
+# ------------- Summary Statistics -------------
+#   Accuracy: 100.000%    Errors: 0  (Sub: 0  Ins: 0  Del: 0)
+#   Words: 1   Matches: 1    WER: 0.000%
+#   Sentences: 1   Matches: 1   SentenceAcc: 100.000%
+#   Rejection Accuracy: 100.0%
+#   Correct OOG: 1   False OOG: 0   Correct IG: 0   False IG: 0
+#   This  Time Audio: 1.00s  Proc: 0.91s  Speed: 0.91 X real time
+#   Total Time Audio: 1.00s  Proc: 0.91s  Speed: 0.91 X real time
+#   Mem  Total: 230.62 Mb  Free: 50.50 Mb
+#   Used: This: 180.12 Mb  Avg: 180.12 Mb  Max: 180.12 Mb
+
+
+    while (getline x < ARGV[1] > 0) {
+	gsub(/\(/, "", x);
+	gsub(/\)/, "", x);
+	split(x, arry);
+	
+	if (summaryFound == 0) {
+	    if (arry[3] == "Summary") {
+		summaryFound = 1;
+	    } 
+	} else {
+	    if (arry[3] == "Audio:") {
+	        audioTime = arry[4];
+	        procTime = arry[6];
+			gsub(/s/, "", audioTime);
+			gsub(/s/, "", procTime);
+	    } else if (arry[1] == "Used:" && arry[2] == "This:") {
+	        heapSize = arry[6];
+	    } else if (arry[1] == "Words:") {
+	        words = arry[2];
+	    } else if (arry[1] == "Accuracy:") {
+	        substitutions = arry[6];
+	        insertions = arry[8];
+	        deletions = arry[10];
+	    } else if (arry[1] == "Sentences:") {
+	        sentences = arry[2];
+	        correctSentences = arry[4];
+            } else if (arry[1] == "Rejection" && arry[2] == "Accuracy:") {
+		rejectionAccuracy = arry[3];
+            } else if (arry[1] == "Correct" && arry[2] == "OOG") {
+		correctOOG = arry[3];
+		falseOOG = arry[6];
+		correctIG = arry[9];
+		falseIG = arry[12];
+            }
+	}
+    }
+    close(ARGV[1]);
+}
+
+END {
+    # "date +%D" | getline date;
+    #"date +%Y-%m-%d" | getline date;
+    # "date +%T" | getline time;
+
+
+    "./getHostname" | getline machine;
+    "uptime" | getline uptime;
+    "whoami" | getline who;
+
+    count = split(uptime, arr, " ");
+    loadAverage = arr[count]
+
+    printf("rejection_test" "|");
+    printf(date  "|");
+    printf(time  "|");
+    printf(machine "|");
+    printf("s4" "|");
+    printf(testName "|");
+    printf(who "|");
+    printf(status "|");
+    printf(audioTime "|");
+    printf(procTime "|");
+    printf(words "|");
+    printf(insertions "|");
+    printf(deletions "|");
+    printf(substitutions "|");
+    printf(sentences "|");
+    printf(correctSentences "|");
+    printf(heapSize "|");
+    printf(loadAverage "|");
+    printf(rejectionAccuracy "|");
+    printf(correctOOG "|");
+    printf(falseOOG "|");
+    printf("\n");
+}
+
+'  $*
