@@ -23,8 +23,7 @@ import edu.cmu.sphinx.decoder.search.Token;
  */
 public class ParallelToken extends Token {
 
-    private String modelName;       // the name of the acoustic model
-    private float eta;              // feature stream eta factor
+    private FeatureStream featureStream;
     private float combinedScore;    // the combined score
     private boolean pruned;         // is this token pruned?
     private int lastCombineTime;    // the last combination time
@@ -36,7 +35,6 @@ public class ParallelToken extends Token {
      *
      * @param predecessor the predecessor for this token
      * @param state the SentenceHMMState associated with this token
-     * @param eta the eta factor of this parallel branch
      * @param featureScore the score for this feature stream
      * @param combinedScore the combinedScore
      * @param frameNumber the frame number associated with this token
@@ -44,15 +42,11 @@ public class ParallelToken extends Token {
      */
     public ParallelToken(ParallelToken predecessor, 
 			 SentenceHMMState state,
-                         float eta,
 			 float featureScore,
 			 float combinedScore,
 			 int frameNumber) {
 	super(predecessor, state, featureScore, 0.0f, 0.0f, frameNumber);
-	if (predecessor != null) {
-	    this.modelName = predecessor.getModelName();
-	}
-        this.eta = eta;
+        this.featureStream = predecessor.getFeatureStream();
 	this.combinedScore = combinedScore;
 	this.pruned = false;
     }
@@ -63,7 +57,6 @@ public class ParallelToken extends Token {
      *
      * @param predecessor the predecessor for this token
      * @param state the SentenceHMMState associated with this token
-     * @param eta the eta factor of this parallel branch
      * @param featureScore the score for this feature stream
      * @param combinedScore the combinedScore
      * @param frameNumber the frame number associated with this token
@@ -73,12 +66,11 @@ public class ParallelToken extends Token {
      */
     public ParallelToken(ParallelToken predecessor,
 			 SentenceHMMState state,
-			 float eta,
 			 float featureScore,
 			 float combinedScore,
 			 int frameNumber,
 			 int lastCombineFrame) {
-	this(predecessor, state, eta, featureScore, combinedScore,frameNumber);
+	this(predecessor, state, featureScore, combinedScore,frameNumber);
 	this.lastCombineTime = lastCombineFrame;
     }
 
@@ -98,12 +90,11 @@ public class ParallelToken extends Token {
      */
     public ParallelToken(ParallelToken predecessor,
 			 SentenceHMMState state,
-			 float eta,
 			 float featureScore,
 			 float combinedScore,
 			 int frameNumber,
                          String lastCombineStamp) {
-	this(predecessor, state, eta, featureScore, combinedScore, -1);
+	this(predecessor, state, featureScore, combinedScore, -1);
         this.lastCombineStamp = lastCombineStamp;
     }
 
@@ -117,10 +108,20 @@ public class ParallelToken extends Token {
      * @param eta the eta factor of this parallel branch
      * @param frameNumber the frame number of this token
      */
-    public ParallelToken(String modelName, SentenceHMMState state,
-                         float eta, int frameNumber) {
-        this(null, state, eta, 0.0f, 0.0f, frameNumber);
-        this.modelName = modelName;
+    public ParallelToken(SentenceHMMState state, FeatureStream featureStream,
+                         int frameNumber) {
+        this(null, state, 0.0f, 0.0f, frameNumber);
+        this.featureStream = featureStream;
+    }
+
+
+    /**
+     * Returns the FeatureStream of this ParallelToken.
+     *
+     * @return the FeatureStream
+     */
+    public FeatureStream getFeatureStream() {
+        return featureStream;
     }
 
 
@@ -130,7 +131,7 @@ public class ParallelToken extends Token {
      * @return the eta factor
      */
     public float getEta() {
-        return eta;
+        return featureStream.getEta();
     }
 
 
@@ -160,11 +161,7 @@ public class ParallelToken extends Token {
      * @return the name of the acoustic model
      */
     public String getModelName() {
-	return modelName;
-	/*
-        ParallelState parallelState = (ParallelState) getSentenceHMMState();
-        return parallelState.getModelName();
-	*/
+	return featureStream.getName();
     }
 
 
