@@ -18,10 +18,6 @@ CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 
 all:: ${CLASSES} ${STUBS}
 
-cmnFeatExt: all
-	@chmod +x testCmnFeatExt.sh
-	sh ./testCmnFeatExt.sh
-
 preemphasizer: all
 	@chmod +x testFrontEnd.sh
 	sh ./testFrontEnd.sh preemphasis PreemphasizerTest
@@ -42,6 +38,14 @@ melcepstrum: all
 	@chmod +x testFrontEnd.sh
 	sh ./testFrontEnd.sh melcepstrum MelCepstrumTest
 
+cmn: all
+	@chmod +x testFrontEnd.sh
+	sh ./testFrontEnd.sh cmn CMNTest
+
+featureExtractor: all
+	@chmod +x testFrontEnd.sh
+	sh ./testFrontEnd.sh features FeatureExtractorTest
+
 alltests: all
 	(cd $(TOP); $(MAKE))
 	@$(MAKE) -s preemphasizer
@@ -49,7 +53,8 @@ alltests: all
 	@$(MAKE) -s spectrumAnalyzer
 	@$(MAKE) -s melspectrum
 	@$(MAKE) -s melcepstrum
-	@$(MAKE) -s cmnFeatExt
+	@$(MAKE) -s cmn
+	@$(MAKE) -s featureExtractor
 
 clean::
 	rm -f *.out *.diff

@@ -1,46 +1,9 @@
 #!/bin/sh
 
 ${JAVA_HOME}/bin/java -server -cp ../../classes \
- -Dtests.frontend.PreemphasizerTest.dumpTimes=true \
- -Dtests.frontend.PreemphasizerTest.batchMode=true \
- tests.frontend.PreemphasizerTest \
- PreemphasizerTest \
+ -Dtests.frontend.FeatureExtractorTest.dumpTimes=true \
+ -Dtests.frontend.FeatureExtractorTest.batchMode=true \
+ tests.frontend.FeatureExtractorTest \
+ FeatureExtractorTest \
  frontend.props.16k \
  batch.ctl
-
-${JAVA_HOME}/bin/java -server -cp ../../classes \
- -Dtests.frontend.HammingWindowerTest.dumpTimes=true \
- -Dtests.frontend.HammingWindowerTest.batchMode=true \
- tests.frontend.HammingWindowerTest \
- HammingWindowerTest \
- frontend.props.16k \
- batch.ctl
-
-${JAVA_HOME}/bin/java -server -cp ../../classes \
- -Dtests.frontend.SpectrumAnalyzerTest.dumpTimes=true \
- -Dtests.frontend.SpectrumAnalyzerTest.batchMode=true \
- tests.frontend.SpectrumAnalyzerTest \
- SpectrumAnalyzerTest \
- frontend.props.16k \
- batch.ctl
-
-${JAVA_HOME}/bin/java -server -cp ../../classes \
- -Dtests.frontend.MelFilterbankTest.dumpTimes=true \
- -Dtests.frontend.MelFilterbankTest.batchMode=true \
- tests.frontend.MelFilterbankTest \
- MelFilterbankTest \
- frontend.props.16k \
- batch.ctl
-
-${JAVA_HOME}/bin/java -server -cp ../../classes \
- -Dtests.frontend.MelCepstrumTest.dumpTimes=true \
- -Dtests.frontend.MelCepstrumTest.batchMode=true \
- tests.frontend.MelCepstrumTest \
- MelCepstrumTest \
- frontend.props.16k \
- batch.ctl
-
-${JAVA_HOME}/bin/java -server -cp ../../classes \
- -Dtests.frontend.CmnFeatureExtractorTest.dumpTimes=true \
- tests.frontend.CmnFeatureExtractorTest \
- cepstra.batch.ctl

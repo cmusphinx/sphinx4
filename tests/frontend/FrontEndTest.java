@@ -47,7 +47,7 @@ public class FrontEndTest {
             (testName, new URL
              ("file://" + pwd + File.separatorChar + audioSourceFile));
         
-	frontend = new FrontEnd();
+	frontend = new FrontEnd(context);
 	
         if (batchMode) {
             frontend.setAudioSource
