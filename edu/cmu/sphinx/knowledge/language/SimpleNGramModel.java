@@ -12,6 +12,8 @@
 
 package edu.cmu.sphinx.knowledge.language;
 
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 
@@ -61,9 +63,9 @@ public class SimpleNGramModel implements LanguageModel {
      *
      * @throws IOException if there is trouble loading the data
      */
-    public SimpleNGramModel(String context) 
+    public SimpleNGramModel(String context, Dictionary dictionary) 
         throws IOException, FileNotFoundException {
-            initialize(context);
+            initialize(context, dictionary);
     }
     
     /**
@@ -77,7 +79,8 @@ public class SimpleNGramModel implements LanguageModel {
      *
      * @param context the context to associate this linguist with
      */
-    public void initialize(String context)  throws IOException {
+    public void initialize(String context, Dictionary dictionary)
+        throws IOException {
         this.props = SphinxProperties.getSphinxProperties(context);
         
         String format = props.getString
@@ -92,11 +95,11 @@ public class SimpleNGramModel implements LanguageModel {
         map = new HashMap();
         vocabulary = new HashSet();
         logMath = LogMath.getLogMath(context);
-        load(format, location, unigramWeight);
+        load(format, location, unigramWeight, dictionary);
 
-        int desiredMaxDepth = props.getInt(
-                LanguageModel.PROP_MAX_DEPTH,
-                LanguageModel.PROP_MAX_DEPTH_DEFAULT);
+        int desiredMaxDepth = props.getInt
+            (LanguageModel.PROP_MAX_DEPTH,
+             LanguageModel.PROP_MAX_DEPTH_DEFAULT);
 
         if (desiredMaxDepth > 0) {
             if (desiredMaxDepth < maxNGram) {
@@ -152,11 +155,11 @@ public class SimpleNGramModel implements LanguageModel {
             logProbability = prob.logProbability;
         }
         if (false) {
-            System.out.println(wordSequence + " : " +
-                    logProbability
-                    + " " + logMath.logToLinear(logProbability));
+            System.out.println("Search: " + wordSequence + " : " +
+                               logProbability
+                               + " " + logMath.logToLinear(logProbability));
         }
-
+        
         return logProbability;
     }
 
@@ -259,9 +262,9 @@ public class SimpleNGramModel implements LanguageModel {
      */
     public void dump() {
         for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
-            String key = (String) i.next();
-            Probability prob = (Probability) map.get(key);
-            System.out.println(key + " " + prob);
+            WordSequence ws = (WordSequence) i.next();
+            Probability prob = (Probability) map.get(ws);
+            System.out.println(ws.toString() + " " + prob);
         }
     }
     
@@ -296,7 +299,8 @@ public class SimpleNGramModel implements LanguageModel {
      * 
      * @throws IOException if an error occurs while loading
      */
-    private void load(String format, String location, float unigramWeight) 
+    private void load(String format, String location, float unigramWeight,
+                      Dictionary dictionary) 
         throws FileNotFoundException, IOException {
         
         String line;
@@ -353,13 +357,20 @@ public class SimpleNGramModel implements LanguageModel {
                 float log10Prob = Float.parseFloat(tok.nextToken());
                 float log10Backoff = 0.0f;
 
-                List wordList = new ArrayList(3);
+                List wordList = new ArrayList(maxNGram);
                 for (int j = 0; j < ngram; j++) {
                     String word = tok.nextToken().toLowerCase();
                     vocabulary.add(word);
-                    wordList.add(word);
+                    int wordID = dictionary.getWordID(word);
+                    if (wordID == Dictionary.UNKNOWN_WORD_ID &&
+                        !word.equals("<unk>")) {
+                        throw new Error
+                            ("LM Word \"" + word + "\" not in dictionary.");
+                    }
+                    wordList.add(new Integer(wordID));
                 }
-                WordSequence wordSequence = new WordSequence(wordList);
+                WordSequence wordSequence = 
+                    WordSequence.getWordSequence(wordList);
                 if (tok.hasMoreTokens()) {
                     log10Backoff = Float.parseFloat(tok.nextToken());
                 }
@@ -400,8 +411,8 @@ public class SimpleNGramModel implements LanguageModel {
      * @param logProb the probability in log math base 
      * @param logBackoff the backoff probability in log math base 
      */
-    private void put(WordSequence wordSequence, 
-            float logProb, float logBackoff) {
+    private void put(WordSequence wordSequence,
+                     float logProb, float logBackoff) {
 
         if (false) {
             System.out.println("Putting " + wordSequence + " p " +
@@ -482,11 +493,11 @@ public class SimpleNGramModel implements LanguageModel {
     }
     
     
-    
     /**
      * A test routine
      *
      */
+    /*
     public static void main(String[] args) throws Exception {
         String propsPath; 
         if (args.length == 0) {
@@ -543,6 +554,7 @@ public class SimpleNGramModel implements LanguageModel {
         
         Timer.dumpAll("test");
     }
+    */
 }
 
 /**
