@@ -56,10 +56,10 @@ public abstract class  Grammar {
      */
 
     public void initialize(String context,
-            LanguageModel languageModel, Dictionary dictionary)
+                           LanguageModel languageModel, Dictionary dictionary)
 			throws IOException, NoSuchMethodException {
 	if (dictionary == null) {
-	    dictionary = new FastDictionary(context);
+            throw new Error("Dictionary is null!");
 	}
 
         this.languageModel = languageModel;
@@ -106,7 +106,7 @@ public abstract class  Grammar {
 			   String referenceText)
 			throws IOException, NoSuchMethodException {
 	if (dictionary == null) {
-	    dictionary = new FullDictionary(context);
+            throw new Error("Dictionary is null!");
 	}
 	this.props = SphinxProperties.getSphinxProperties(context);
 	this.dictionary = dictionary;
@@ -158,7 +158,7 @@ public abstract class  Grammar {
      * @return the dictionary
      *
      */
-    private Dictionary getDictionary() {
+    protected Dictionary getDictionary() {
 	return dictionary;
     }
 
