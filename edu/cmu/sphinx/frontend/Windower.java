@@ -23,13 +23,9 @@ import java.util.Vector;
  * <p>For each input DoubleAudioFrame, calling
  * <code>Windower.read()</code> will return the following
  * series of <code>Data</code> objects: <pre>
- * FrameEndPointSignal DoubleAudioFrame ... DoubleAudioFrame
- * FrameEndPointSignal </pre>
- * Calling <code>isStart()</code> on the first
- * <code>FrameEndPointSignal</code> will return true, and calling
- * <code>isEnd()</code> on the last <code>FrameEndPointSignal</code>
- * will return true. The <code>DoubleAudioFrame(s)</code> are the
- * windowed data.
+ * EndPointSignal.FRAME_START DoubleAudioFrame ... DoubleAudioFrame
+ * EndPointSignal.FRAME_END </pre>
+ * The <code>DoubleAudioFrame(s)</code> are the windowed data.
  *
  * <p> The applied Window, <i>W</i> of length <i>N</i> (usually the
  * window size) is given by the following:
@@ -39,7 +35,7 @@ import java.util.Vector;
  * the value for the HammingWindow, which is commonly used.
  *
  * <p>The Sphinx property that affects this processor is: <pre>
- * edu.cmu.sphinx.frontend.window.alpha
+ * edu.cmu.sphinx.frontend.windower.alpha
  * </pre>
  */
 public class Windower extends DataProcessor {
@@ -50,7 +46,7 @@ public class Windower extends DataProcessor {
      * HammingWindow.
      */
     public static final String PROP_ALPHA =
-	"edu.cmu.sphinx.frontend.window.alpha";
+	"edu.cmu.sphinx.frontend.windower.alpha";
 
 
     private double[] window;
@@ -78,8 +74,8 @@ public class Windower extends DataProcessor {
 	// TODO : specify the context
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
 
-        float sampleRate = properties.getFloat
-            (FrontEnd.PROP_SAMPLE_RATE, 8000.0F);
+        int sampleRate = properties.getInt
+            (FrontEnd.PROP_SAMPLE_RATE, 8000);
 
         float windowSizeInMs = properties.getFloat
             (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
@@ -160,7 +156,7 @@ public class Windower extends DataProcessor {
      */
     private void process(DoubleAudioFrame input) {
         
-	double[] in = input.getData();
+	double[] in = input.getAudioSamples();
 
         int windowCount = Util.getWindowCount
             (in.length, windowSize, windowShift);
@@ -189,7 +185,8 @@ public class Windower extends DataProcessor {
             outputQueue.add(new DoubleAudioFrame(myWindow));
 
             if (getDump()) {
-                Util.dumpDoubleArray(myWindow, "HAMMING_WINDOW");
+                System.out.println
+                    (Util.dumpDoubleArray(myWindow, "HAMMING_WINDOW"));
             }
         }
 

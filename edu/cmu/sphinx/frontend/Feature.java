@@ -26,7 +26,7 @@ public class Feature implements Data {
      *
      * @return the feature data
      */
-    public float[] getData() {
+    public float[] getFeatureData() {
 	return featureData;
     }
 }

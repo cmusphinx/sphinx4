@@ -135,7 +135,7 @@ public class CepstralMeanNormalizer extends DataProcessor {
 
         if (cepstrumFrame != null) {
 
-            Cepstrum[] cepstra = cepstrumFrame.getData();
+            Cepstrum[] cepstra = cepstrumFrame.getCepstra();
             
             if (cepstra.length > 0) {
 
@@ -166,7 +166,7 @@ public class CepstralMeanNormalizer extends DataProcessor {
 	// do the mean normalization
         int cepstraLength = cepstra.length;
 	for (int i = 0; i < cepstraLength; i++) {
-            normalizeCepstrum(cepstra[i].getData());
+            normalizeCepstrum(cepstra[i].getCepstrumData());
         }
         numberFrame += cepstra.length;
     }

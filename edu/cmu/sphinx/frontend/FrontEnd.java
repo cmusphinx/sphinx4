@@ -184,10 +184,10 @@ public class FrontEnd implements DataSource, Runnable {
                     
                     // add the Features in the FeatureFrame to the output queue
                     if (output != null && output instanceof FeatureFrame) {
-                        float[][] features = ((FeatureFrame) output).getData();
+                        Feature[] features = 
+                            ((FeatureFrame) output).getFeatures();
                         for (int i = 0; i < features.length; i++) {
-                            Feature feature = new Feature(features[i]);
-                            queue.add(feature);
+                            queue.add(features[i]);
                         }
                     }
                     

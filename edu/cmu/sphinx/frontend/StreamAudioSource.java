@@ -95,8 +95,7 @@ public class StreamAudioSource implements DataSource {
 	// TODO : specify the context
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
 
-        float sampleRate = properties.getFloat
-            (FrontEnd.PROP_SAMPLE_RATE, 8000.0F);
+        int sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);
 
         float windowSizeInMs = properties.getFloat
             (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);

@@ -40,7 +40,7 @@ public class Preemphasizer extends DataProcessor {
 
     /**
      * The name of the SphinxProperty for preemphasis factor/alpha, which
-     * has a default values of 0.97F.
+     * has a default value of 0.97F.
      */
     public static final String PROP_PREEMPHASIS_FACTOR =
 	"edu.cmu.sphinx.frontend.preemphasis.factor";
@@ -110,7 +110,7 @@ public class Preemphasizer extends DataProcessor {
 
         getTimer().start();
 
-	double[] in = input.getData();
+	double[] in = input.getAudioSamples();
 	
 	if (in.length > 1 && preemphasisFactor != 0.0) {
 
@@ -121,7 +121,7 @@ public class Preemphasizer extends DataProcessor {
 	    in[0] = previous - preemphasisFactor * prior;
 
 	    for (int i = 1; i < in.length; i++) {
-                current = (double) in[i];
+                current = in[i];
 		in[i] = current - preemphasisFactor * previous;
                 previous = current;
 	    }
@@ -131,7 +131,7 @@ public class Preemphasizer extends DataProcessor {
         getTimer().stop();
 
 	if (getDump()) {
-	    Util.dumpDoubleArray(in, "PREEMPHASIS");
+	    System.out.println(Util.dumpDoubleArray(in, "PREEMPHASIS"));
 	}
 
 	return input;

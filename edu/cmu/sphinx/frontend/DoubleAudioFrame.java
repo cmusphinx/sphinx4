@@ -37,7 +37,7 @@ public class DoubleAudioFrame implements Data {
      *
      * @return the audio samples
      */
-    public double[] getData() {
+    public double[] getAudioSamples() {
 	return audioSamples;
     }
 }

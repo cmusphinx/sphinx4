@@ -179,18 +179,18 @@ public class Util {
      * @param data the short array to dump
      * @param description some comment notes
      */
-    public static void dumpShortArray(short[] data, String description) {
-	System.out.print(description + " " + data.length);
+    public static String dumpShortArray(short[] data, String description) {
+        String dump = (description + " " + data.length);
 	for (int i = 0; i < data.length; i++) {
-	    System.out.print(" " + data[i]);
+	    dump += (" " + data[i]);
 	}
-	System.out.println();
+        return dump;
     }
 	
 
 
     /**
-     * Dumps the given double array as a line to stdout.
+     * Dumps the given double array as a string.
      * The dump will be in the form:
      * <pre>description data[0] data[1] ... data[data.length]</pre>where
      * <code>data[i]</code> is formatted by the method
@@ -198,13 +198,15 @@ public class Util {
      *
      * @param data the double array to dump
      * @param description some comment notes
+     *
+     * @return a string of the dump
      */
-    public static void dumpDoubleArray(double[] data, String description) {
-	System.out.print(description + " " + data.length);
+    public static String dumpDoubleArray(double[] data, String description) {
+	String dump = (description + " " + data.length);
 	for (int i = 0; i < data.length; i++) {
-	    System.out.print(" " + formatDouble(data[i], 9, 5));
+	    dump += (" " + formatDouble(data[i], 9, 5));
 	}
-	System.out.println();
+        return dump;
     }
 
 
@@ -226,7 +228,7 @@ public class Util {
      */
     public static String formatDouble(double number, int integerDigits,
 				      int fractionDigits) {
-	String formatter = "";
+        String formatter = "";
 	for (int i = 0; i < integerDigits; i++) {
 	    formatter += "#";
 	}
@@ -259,32 +261,37 @@ public class Util {
 
 
     /**
-     * Dumps to stdout the given float array.
+     * Dumps the given float array as a string.
      *
      * @param data the float array to dump
      * @param name name of the array
+     *
+     * @return a string of the given float array
      */
-    public static void dumpFloatArray(float[] data, String name) {
-        System.out.print(name + " " + data.length);
+    public static String dumpFloatArray(float[] data, String name) {
+        String dump = (name + " " + data.length);
         for (int i = 0; i < data.length; i++) {
-            System.out.print(" " + formatDouble
+            dump += (" " + formatDouble
 			     ((new Float(data[i])).doubleValue(), 9, 5));
         }
-        System.out.println();
+        return dump;
     }
 
 
     /**
-     * Dumps to stdout the given FeatureFrame.
+     * Dumps the given FeatureFrame as a string.
      *
      * @param featureFrame the FeatureFrame to dump
+     *
+     * @return a string dump of the given FeatureFrame
      */
-    public static void dumpFeatureFrame(FeatureFrame featureFrame) {
-	float[][] features = featureFrame.getData();
-	System.out.println("FEATURE_FRAME " + features.length);
+    public static String dumpFeatureFrame(FeatureFrame featureFrame) {
+	Feature[] features = featureFrame.getFeatures();
+	String dump = ("FEATURE_FRAME " + features.length + "\n");
         for (int i = 0; i < features.length; i++) {
-	    dumpFloatArray(features[i], "FEATURE");
+	    dump += dumpFloatArray(features[i].getFeatureData(), "FEATURE");
 	}
+        return dump;
     }
 
 
@@ -298,12 +305,12 @@ public class Util {
      *
      * @return the number of samples per window
      */
-    public static int getSamplesPerWindow(float sampleRate, 
+    public static int getSamplesPerWindow(int sampleRate, 
                                           float windowSizeInMs) {
-        return (int) (sampleRate * windowSizeInMs / 1000);
+        return (int) ( ((float) sampleRate) * windowSizeInMs / 1000);
     }
-
-
+    
+    
     /**
      * Returns the number of samples in a window shift given the sample
      * rate (in Hertz) and the window shift (in milliseconds).
@@ -314,8 +321,8 @@ public class Util {
      *
      * @return the number of samples in a window shift
      */
-    public static int getSamplesPerShift(float sampleRate,
+    public static int getSamplesPerShift(int sampleRate,
                                          float windowShiftInMs) {
-        return (int) (sampleRate * windowShiftInMs / 1000);
+        return (int) (((float) sampleRate) * windowShiftInMs / 1000);
     }
 }

@@ -171,7 +171,7 @@ public class FeatureExtractor extends DataProcessor {
 
         getTimer().start();
 
-	Cepstrum[] cepstra = cepstrumFrame.getData();
+	Cepstrum[] cepstra = cepstrumFrame.getCepstra();
 	assert(cepstra.length < LIVEBUFBLOCKSIZE);
 
 	int residualVectors = 0;
@@ -183,7 +183,8 @@ public class FeatureExtractor extends DataProcessor {
 
 	// copy (the reference of) all the input cepstrum to our cepstraBuffer
 	for (int i = 0; i < cepstra.length; i++) {
-	    this.cepstraBuffer[bufferPosition++] = cepstra[i].getData();
+	    this.cepstraBuffer[bufferPosition++] =
+                cepstra[i].getCepstrumData();
             if (bufferPosition == LIVEBUFBLOCKSIZE) {
                 bufferPosition = 0;
             }
@@ -196,19 +197,18 @@ public class FeatureExtractor extends DataProcessor {
 
 
 	// create the Features
-
         fcTimer.start();
 
         int totalFeatures = cepstra.length + residualVectors;
-        float[][] features = new float[totalFeatures][featureLength];
+        Feature[] features = new Feature[totalFeatures];
 
 	for (int i = 0; i < totalFeatures; i++) {
-            float[] feature = features[i];
-
-            computeNextFeature(feature);
+            
+            features[i] = computeNextFeature();
             
             if (getDump()) {
-                Util.dumpFloatArray(feature, "FEATURE");
+                System.out.println(Util.dumpFloatArray
+                                   (features[i].getFeatureData(), "FEATURE"));
             }
 	}
 
@@ -225,7 +225,7 @@ public class FeatureExtractor extends DataProcessor {
      * the cepstraBuffer.
      */
     private void replicateFirstFrame(Cepstrum cepstrum) {
-        Arrays.fill(cepstraBuffer, 0, window, cepstrum.getData());
+        Arrays.fill(cepstraBuffer, 0, window, cepstrum.getCepstrumData());
         
         bufferPosition = window;
         bufferPosition %= LIVEBUFBLOCKSIZE;
@@ -256,7 +256,7 @@ public class FeatureExtractor extends DataProcessor {
     private void replicateLastFrame(Cepstrum[] cepstra) {
         float[] last;
         if (cepstra.length > 0) {
-            last = cepstra[cepstra.length-1].getData();
+            last = cepstra[cepstra.length-1].getCepstrumData();
         } else {
             last = this.cepstraBuffer[bufferPosition - 1];
         }
@@ -277,7 +277,10 @@ public class FeatureExtractor extends DataProcessor {
     /**
      * Computes the next feature. Advances the pointers as well.
      */
-    private void computeNextFeature(float[] feature) {
+    private Feature computeNextFeature() {
+
+        float[] feature = new float[featureLength];
+
 	float[] mfc3f = cepstraBuffer[jf3++];
 	float[] mfc2f = cepstraBuffer[jf2++];
 	float[] mfc1f = cepstraBuffer[jf1++];
@@ -313,5 +316,8 @@ public class FeatureExtractor extends DataProcessor {
             jp2 %= LIVEBUFBLOCKSIZE;
             jp3 %= LIVEBUFBLOCKSIZE;
         }
+
+        return (new Feature(feature));
     }
 }
+

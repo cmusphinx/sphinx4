@@ -26,7 +26,7 @@ public class CepstrumFrame implements Data {
      *
      * @return the cepstrum data
      */
-    public Cepstrum[] getData() {
+    public Cepstrum[] getCepstra() {
 	return cepstra;
     }
 }

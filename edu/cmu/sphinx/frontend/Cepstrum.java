@@ -9,14 +9,14 @@ package edu.cmu.sphinx.frontend;
  */
 public class Cepstrum implements Data {
 
-    private float[] cepstraData;
+    private float[] cepstrumData;
 
 
     /**
-     * Constructs a Cepstrum with the given cepstra data.
+     * Constructs a Cepstrum with the given cepstrum data.
      */
-    public Cepstrum(float[] cepstraData) {
-	this.cepstraData = cepstraData;
+    public Cepstrum(float[] cepstrumData) {
+	this.cepstrumData = cepstrumData;
     }
 
 
@@ -25,7 +25,7 @@ public class Cepstrum implements Data {
      *
      * @return the cepstrum data
      */
-    public float[] getData() {
-	return cepstraData;
+    public float[] getCepstrumData() {
+	return cepstrumData;
     }
 }
