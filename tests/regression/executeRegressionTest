@@ -40,6 +40,8 @@ regressionDir=`pwd`
 testType=${1:-standard}
 batchMode=${2:-normal}
 
+echo executeRegressionTest $testType $batchMode
+
 # We can run full tests or quick tests. Quick tests
 # are used for testing the regression tests
 #
@@ -111,10 +113,12 @@ if [ $status = "OK" ]; then
    case $batchMode in
 
        normal) 
+		echo Normal mode;
        		echo $regressionDir/$runTests;
        		$regressionDir/$runTests;;
 
        batch) 
+	      echo batch mode;
 	      rm -f $regressionDir/.testDone;
 	      echo qsub $regressionDir/$runTests; 
 	      qsub $regressionDir/$runTests; 
