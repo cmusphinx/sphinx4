@@ -70,7 +70,8 @@ public class TrainerDictionary extends FullDictionary {
 		new Error("Word with invalid pronunciation ID", nfe);
 	    }
 	}
-	pronunciations = getPronunciations(wordWithoutParentheses, null);
+	pronunciations 
+            = getWord(wordWithoutParentheses).getPronunciations(null);
 	if (pronunciations == null) {
 	    System.out.println("Pronunciation not found for word " + 
 			       wordWithoutParentheses);
