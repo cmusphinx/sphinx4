@@ -61,7 +61,8 @@ public class BatchDecoder {
 
     
     /**
-     * The SphinxProperty for which batch job
+     * The SphinxProperty that specified which batch job is to be run.
+     *
      */
     public final static String PROP_WHICH_BATCH = PROP_PREFIX + "whichBatch";
 
@@ -73,7 +74,12 @@ public class BatchDecoder {
     
 
     /**
-     * The SphinxProperty for the total number of batch jobs.
+     * The SphinxProperty for the total number of batch jobs the decoding 
+     * run is being divided into.
+     *
+     * The BatchDecoder supports running a subset of a batch. 
+     * This allows a test to be distributed among several machines.
+     *
      */
     public final static String PROP_TOTAL_BATCHES 
 	= PROP_PREFIX + "totalBatches";
