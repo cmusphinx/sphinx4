@@ -13,21 +13,15 @@
 package tests.live;
 
 import edu.cmu.sphinx.decoder.Decoder;
-import edu.cmu.sphinx.decoder.FeatureListener;
 
-import edu.cmu.sphinx.frontend.BatchCMN;
-import edu.cmu.sphinx.frontend.Cepstrum;
-import edu.cmu.sphinx.frontend.CepstrumSource;
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.LiveCMN;
-import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.frontend.Signal;
-import edu.cmu.sphinx.frontend.SimpleFrontEnd;
-import edu.cmu.sphinx.frontend.Utterance;
-import edu.cmu.sphinx.frontend.util.Util;
-
-import edu.cmu.sphinx.frontend.endpoint.NonSpeechFilter;
+import edu.cmu.sphinx.frontend.SignalListener;
+import edu.cmu.sphinx.frontend.util.Microphone;
+import edu.cmu.sphinx.frontend.util.DataUtil;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.result.Result;
@@ -41,9 +35,6 @@ import javax.sound.sampled.LineUnavailableException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-
-import tests.frontend.CepstraPanel;
-import tests.frontend.CepstrumMonitor;
 
 
 /**
@@ -80,33 +71,23 @@ public class LiveDecoder extends Decoder {
     public void initialize(Microphone microphone) throws IOException {
         if (!isInitialized()) {
             this.microphone = microphone;
-            super.initialize(microphone);
-            getRecognizer().addSignalFeatureListener(new FeatureListener() {
-                    public void featureOccurred(Feature feature) {
-                        if (feature.getSignal() == Signal.UTTERANCE_START) {
-                            audioStart = feature.getCollectTime();
+            super.initialize();
+
+            FrontEnd frontend = getRecognizer().getFrontEnd();
+            frontend.setDataSource(microphone);
+            frontend.addSignalListener(new SignalListener() {
+                    public void signalOccurred(Signal signal) {
+                        if (signal instanceof DataStartSignal) {
+                            audioStart = signal.getTime();
                         }
-                        else if (feature.getSignal() == Signal.UTTERANCE_END) {
-                            audioLength = 
-                                feature.getCollectTime() - audioStart;
+                        else if (signal instanceof DataEndSignal) {
+                            audioLength = signal.getTime() - audioStart;
                         }
                     }
                 });
         }
     }
 
-    /**
-     * Returns true if this LiveDecoder has some sort of endpointer.
-     *
-     * @return true if this LiveDecoder has some sort of endpointer
-     */
-    public boolean hasEndpointer() {
-        String endpointer = 
-            SphinxProperties.getSphinxProperties(getContext()).getString
-            (FrontEnd.PROP_ENDPOINTER, null);
-        return (endpointer != null);
-    }
-    
     /**
      * Return the Live instance that spawned this decoder.
      *

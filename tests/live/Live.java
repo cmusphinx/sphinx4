@@ -16,7 +16,7 @@ import edu.cmu.sphinx.decoder.Decoder;
 
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.util.Microphone;
-import edu.cmu.sphinx.frontend.util.Util;
+import edu.cmu.sphinx.frontend.util.DataUtil;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.NISTAlign;
@@ -39,8 +39,6 @@ import javax.sound.sampled.LineUnavailableException;
 
 import javax.swing.DefaultComboBoxModel;
 
-import tests.frontend.AudioPlayer;
-
 
 /**
  * The live decoder main program. This class contains the control logic.
@@ -58,7 +56,6 @@ public class Live {
     private File currentDirectory = null;
 
     private boolean showPartialResults = false;
-    private boolean hasEndpointer;
     private boolean handsFree;              // uses endpointer
 
     /**
@@ -253,9 +250,10 @@ public class Live {
         try {
             decoder = getDecoder(decoderName);
             if (!decoder.isInitialized()) {
-                decoder.initialize
-		    (new Microphone("mic", decoderName,
-				    decoder.getSphinxProperties()));
+                Microphone microphone = new Microphone();
+                microphone.initialize
+                    ("Microphone", null, decoder.getSphinxProperties(), null);
+                decoder.initialize(microphone);
             }            
         } catch (LineUnavailableException lue) {
             // if the audio line is unavailable for some reason
@@ -368,10 +366,6 @@ public class Live {
             decoder.setTestFile(testFile);
             decoder.setShowPartialResults(showPartialResults);
             
-            if (decoder.hasEndpointer()) {
-                hasEndpointer = true;
-            }
-            
             info(".");
         }
 
@@ -465,7 +459,8 @@ public class Live {
                 lastResult = decoder.decode(liveFrame.getReference());
                 if (Boolean.getBoolean("epMode")) {
                     getDecoder().getMicrophone().stopRecording();
-                    liveFrame.setMessage("");
+                    System.out.println("Speaker turned off.");
+                    liveFrame.setMessage("Speaker turned off.");
                 }
                 updateLiveFrame(decoder.getNISTAlign());
                 liveFrame.setDecoderComboBoxEnabled(true);

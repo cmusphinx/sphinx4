@@ -43,6 +43,7 @@ NOTE:  Before running the tests, you must have already built
 	    <javac debug="true"
 	           source="1.4"
 		   deprecation="true"
+                   fork="true"
 		   destdir="${classes_dir}"
 		   classpath="${classes_dir}"
 		   srcdir="."/>
@@ -64,8 +65,8 @@ NOTE:  Before running the tests, you must have already built
 		  fork="true"
 		  maxmemory="512m">
 		  <sysproperty key="showPartialResults" value="true"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.cmn"
-		               value="edu.cmu.sphinx.frontend.LiveCMN"/>
+                  <sysproperty key="edu.cmu.sphinx.frontend.FrontEndFactory.pipelines"
+                               value="mfc"/>
 		  <arg value="decoders.list"/>
                   <jvmarg value="-server"/>   
 	    </java>
@@ -90,16 +91,6 @@ NOTE:  Before running the tests, you must have already built
                  <jvmarg value="-server"/>   
 		  <sysproperty key="epMode" value="true"/>
 		  <sysproperty key="showPartialResults" value="true"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.cmn"
-		               value="edu.cmu.sphinx.frontend.LiveCMN"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.endpointer"
-		               value="edu.cmu.sphinx.frontend.endpoint.LevelTracker"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.bytesPerAudioFrame"
-		               value="320"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame"
-		               value="2"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious"
-		               value="true"/>
 		  <arg value="decoders.list"/>
 	    </java>
     </target>
@@ -129,22 +120,8 @@ NOTE:  Before running the tests, you must have already built
                  <sysproperty key="java.util.logging.config.file"
                               value="tidigits.props"/>
 		  <sysproperty key="showPartialResults" value="true"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.bytesPerAudioFrame"
-		               value="320"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.cmn"
-		               value="edu.cmu.sphinx.frontend.LiveCMN"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.keepAudioReference"
+		  <sysproperty key="edu.cmu.sphinx.frontend.util.Microphone.keepLastAudio"
 		               value="false"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.endpointer"
-		               value="edu.cmu.sphinx.frontend.endpoint.LevelTracker"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold"
-		               value="15"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame"
-		               value="2"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious"
-		               value="true"/>
-		  <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.searchManager"
-		               value="edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager"/>
 		  <arg value="decoders.list"/>
 	    </java>
     </target>

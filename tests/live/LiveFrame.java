@@ -66,8 +66,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
-import tests.frontend.CepstraPanel;
-
 
 /**
  * The GUI class for the LiveDecoder
@@ -102,8 +100,6 @@ public class LiveFrame extends JFrame {
     private JButton stopButton;
     private JButton nextButton;
     private JButton playButton;
-
-    private CepstraPanel endpointerPanel;
 
 
     /**
@@ -345,15 +341,6 @@ public class LiveFrame extends JFrame {
             });
     }
 
-    /**
-     * Returns the (endpointer) CesptraPanel.
-     *
-     * @return the CepstraPanel
-     */
-    public CepstraPanel getCepstraPanel() {
-        return endpointerPanel;
-    }
-
 
     /**
      * Enters speaking (i.e., recording) mode, sets the various GUI objects
@@ -566,17 +553,6 @@ public class LiveFrame extends JFrame {
         c.gridy = 2;
         gridBag.setConstraints(statisticsPanel, c);
         textPanel.add(statisticsPanel);
-
-        // add the endpointer Panel, if any
-        if (showEndpointerPanel) {
-            endpointerPanel = new CepstraPanel();
-            JScrollPane pane = new JScrollPane(endpointerPanel);
-            c.gridy = 3;
-            c.ipady = 100;
-            // c.anchor = GridBagConstraints.NORTH;
-            gridBag.setConstraints(pane, c);
-            textPanel.add(pane);
-        }
 
         return textPanel;
     }

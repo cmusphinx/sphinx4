@@ -30,7 +30,6 @@ tidigits;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.data
 tidigits;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
 tidigits;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
 
-
 edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
 
@@ -40,9 +39,38 @@ edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 #
 ############################################################
 
-edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
-edu.cmu.sphinx.frontend.cepstrumSize = 13
-edu.cmu.sphinx.frontend.keepAudioReference = true
+edu.cmu.sphinx.frontend.util.Microphone.debug=false
+edu.cmu.sphinx.frontend.util.Microphone.keepLastAudio=true
+edu.cmu.sphinx.frontend.util.Microphone.closeBetweenUtterances=true
+
+edu.cmu.sphinx.frontend.FrontEndFactory.pipelines=mfc_ep
+
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=8
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class=edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.feature.LiveCMN
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.8.class=edu.cmu.sphinx.frontend.feature.FrameDropper
+mfc;edu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2
+mfc;edu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true
+
+
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=9
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.endpoint.LevelTracker
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveCMN
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.8.class=edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.9.class=edu.cmu.sphinx.frontend.feature.FrameDropper
+mfc_ep;edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=13
+mfc_ep;edu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2
+mfc_ep;edu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true
 
 
 ############################################################
@@ -62,10 +90,10 @@ edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=7.0
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.location =  file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dictionary
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = fillerdict
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=true
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
 
 
 ############################################################
@@ -105,5 +133,13 @@ edu.cmu.sphinx.decoder.linguist.Linguist.compositeThreshold=10000
 edu.cmu.sphinx.decoder.linguist.Linguist.expandInterNodeContexts=true
 
 
+############################################################
+# 
+# Recognizer properties
+#
+############################################################
 
-
+edu.cmu.sphinx.decoder.Recognizer.dumpFrontEnd = false
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist
+edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar
+edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager

@@ -1,3 +1,4 @@
+
 ###########################################################
 #
 # Global logging properties
@@ -20,22 +21,12 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 #
 ############################################################
 
-edu.cmu.sphinx.util.LogMath.logBase = 1.0001
-
-
-
-
-############################################################
-# 
-# FrontEnd properties
-#
-############################################################
 edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.models=wsj
 wsj;edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel
 
 wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
 
-wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.format=sphinx3.binary
+wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.format=sphinx3.binary 
 wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 
 wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
@@ -43,6 +34,47 @@ wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.data_loca
 wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
 wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.useComposites=false
 
+edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+
+
+############################################################
+# 
+# FrontEnd properties
+#
+############################################################
+
+edu.cmu.sphinx.frontend.util.Microphone.debug=false
+edu.cmu.sphinx.frontend.util.Microphone.keepLastAudio=true
+edu.cmu.sphinx.frontend.util.Microphone.closeBetweenUtterances=true
+
+edu.cmu.sphinx.frontend.FrontEndFactory.pipelines=mfc_ep
+
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=8
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class=edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.feature.LiveCMN
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.8.class=edu.cmu.sphinx.frontend.feature.FrameDropper
+mfc;edu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2
+mfc;edu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true
+
+
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=9
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.endpoint.LevelTracker
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveCMN
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.8.class=edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.9.class=edu.cmu.sphinx.frontend.feature.FrameDropper
+mfc_ep;edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=13
+mfc_ep;edu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2
+mfc_ep;edu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true
 
 
 ############################################################
@@ -92,6 +124,7 @@ edu.cmu.sphinx.decoder.linguist.Grammar.showGrammar=true
 # Dictionary properties
 #
 ############################################################
+
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dict/cmudict.0.6d
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = dict/fillerdict
