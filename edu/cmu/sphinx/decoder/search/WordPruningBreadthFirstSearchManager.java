@@ -515,7 +515,13 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             float bestScore = -Float.MAX_VALUE;
             for (Iterator i = activeList.iterator(); i.hasNext();) {
                 Token t = (Token) i.next();
-                Token p = getLastEmittingToken(t);
+        // TODO: this is disabled currently. The call to
+        // getLastEmittingToken was
+        // a hotspot representing 10 % of recognition time
+        // this extrapolation doesn't seem to help accuracy
+        // or speed so it is disabled
+                // Token p = getLastEmittingToken(t);
+                Token p = null;
                 float delta = 0;
                 if (p != null) {
                     delta = t.getAcousticScore() - p.getAcousticScore();
