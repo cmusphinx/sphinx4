@@ -1,0 +1,22 @@
+############################################################
+# Global logging properties
+############################################################
+handlers= java.util.logging.ConsoleHandler
+
+# This is the overall default logging level
+.level= SEVERE
+
+# Tracing level for the console
+java.util.logging.ConsoleHandler.level = ALL
+java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
+
+
+############################################################
+# Facility specific properties.
+# Provides extra control for each logger.
+############################################################
+
+edu.cmu.sphinx.frontend.MelCepstrumFileProducer.file = /lab/speech/sphinx3j/data/connected_digits/sample_feature_files/FAC_1473533A.08.dbw.mfc.ascii
+edu.cmu.sphinx.frontend.cepstrumSize = 13
+edu.cmu.sphinx.search.dictionaryPath=/lab/speech/sphinx3j/data/connected_digits/train.dict
+edu.cmu.sphinx.search.fillerDictionaryPath=/lab/speech/sphinx3j/data/connected_digits/fillerdict
