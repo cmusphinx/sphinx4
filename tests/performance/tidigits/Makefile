@@ -32,7 +32,8 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 NO_CONTEXT_FLAGS= -Dedu.cmu.sphinx.model.acoustic.useComposites=false -Dedu.cmu.sphinx.model.acoustic.useCDUnits=false
 
 
-PROFILE_FLAGS= -Xprof -server
+#PROFILE_FLAGS= -Xprof -server
+PROFILE_FLAGS= 
 LOG_GC_FLAGS=  -Xloggc:gc.txt
  GC_FLAGS=  -XX:+PrintGCDetails
 # GC_FLAGS=  -XX:+UseConcMarkSweepGC
@@ -51,9 +52,9 @@ GC_FLAGS = -ms128m -mx128m
 #PROFILE2_FLAGS= -Xrunhprof:file=log.txt
 PROFILE2_FLAGS= -Xrunhprof:cpu=samples,file=log.txt
 
-DEBUG_FLAGS=
+DEBUG_FLAGS= 
 #EXTRA_JAVA_FLAGS=$(LOG_GC_FLAGS) $(LOG)
-EXTRA_JAVA_FLAGS=$(PROFILE_FLAGS) $(LOG_GC_FLAGS) $(LOG) $(GC_FLAGS) $(DEBUG_FLAGS)
+EXTRA_JAVA_FLAGS=$(PROFILE_FLAGS) $(LOG_GC_FLAGS) $(LOG) $(GC_FLAGS) $(DEBUG_FLAGS) 
 
 ##########################################################################
 
