@@ -96,7 +96,6 @@ tidigits_quick:
 tidigits_quick_ep:
 	$(JAVA_CMD)  \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
-	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=2 \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=6 \
@@ -111,7 +110,6 @@ tidigits_quick_ep:
 tidigits_very_quick:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=50\
-	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
 	-Dtests.search.Decoder.showPartialResults=false \
 	-Dedu.cmu.sphinx.decoder.Decoder.showBestToken=false \
@@ -124,9 +122,9 @@ tidigits_very_quick:
 tidigits_super_quick:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
-	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
 	-Dedu.cmu.sphinx.decoder.Decoder.showPartialResults=false \
+	-Dedu.cmu.sphinx.decoder.Decoder.showErrorToken=false \
 	-Dedu.cmu.sphinx.decoder.Decoder.showBestToken=false \
 	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
 
@@ -134,7 +132,6 @@ tidigits_super_quick:
 tidigits_super_quick_align:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
-	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
 	-Dtests.search.Decoder.showPartialResults=false \
 	-Dtests.search.Decoder.showBestToken=false \
@@ -234,7 +231,6 @@ wsj_tidigits_quick:
 wsj_tidigits_super_quick:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
-	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false\
 	edu.cmu.sphinx.decoder.BatchDecoder wsjDigits.props \
 	./tidigits.batch
 
@@ -264,7 +260,6 @@ wsj_tidigits_super_quick_bush:
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
 	-Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushterbi=true\
-	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-100 \
 	edu.cmu.sphinx.decoder.BatchDecoder wsjDigits.props \
 	./tidigits.batch
@@ -283,7 +278,6 @@ wsj_tidigits_super_quick_tree_fst:
 	-Dedu.cmu.sphinx.search.Dictionary.wordReplacement=lollapalooza\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-100 \
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx4/data/fst/digits.fst \
-        -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
 	edu.cmu.sphinx.decoder.BatchDecoder wsjDigits.props \
 	./tidigits.batch
@@ -302,7 +296,6 @@ wsj_tidigits_super_quick_tree_fst:
 prune_test:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
-	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
 	-Dtests.search.Decoder.showPartialResults=false \
 	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=1000000\
@@ -314,7 +307,6 @@ prune_test:
 prune_test2:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
-	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
 	-Dtests.search.Decoder.showPartialResults=false \
 	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=1000000\

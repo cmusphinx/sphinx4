@@ -85,7 +85,7 @@ edu.cmu.sphinx.search.validateResults=false
 edu.cmu.sphinx.search.Dictionary.useAcousticModelLocation = true
 edu.cmu.sphinx.search.Dictionary.dictionaryPath = dictionary
 edu.cmu.sphinx.search.Dictionary.fillerPath = fillerdict
-edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true
+edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false
 
 
 ############################################################
@@ -111,8 +111,8 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 # WordListGrammar properties
 #
 ############################################################
-edu.cmu.sphinx.search.WordListGrammar.isLooping = true
-edu.cmu.sphinx.search.WordListGrammar.path = ./digits.wordlist
+edu.cmu.sphinx.search.SimpleWordListGrammar.isLooping = true
+edu.cmu.sphinx.search.SimpleWordListGrammar.path = ./digits.wordlist
 
 
 ############################################################
@@ -122,11 +122,19 @@ edu.cmu.sphinx.search.WordListGrammar.path = ./digits.wordlist
 ############################################################
 
 edu.cmu.sphinx.search.Recognizer.dumpFrontEnd = true
-edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist
+edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist
 edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false
-edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar
+edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.SimpleWordListGrammar
 
 edu.cmu.sphinx.model.acoustic.useComposites=false
 edu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true
-edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=true
-edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
+edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
+edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=8.0
+edu.cmu.sphinx.search.Recognizer.linguistProcessors=edu.cmu.sphinx.util.GDLDumper 
+edu.cmu.sphinx.util.GDLDumper.skipHMMs=true
+edu.cmu.sphinx.util.GDLDumper.verticalLayout=true
+edu.cmu.sphinx.util.GDLDumper.dumpArcLabels=true
+edu.cmu.sphinx.util.LinguistDumper.filename=tidigits.gdl
+edu.cmu.sphinx.decoder.Decoder.showErrorToken=false
+edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
+
