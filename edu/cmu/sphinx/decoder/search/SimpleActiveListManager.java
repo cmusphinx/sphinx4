@@ -169,6 +169,10 @@ public class SimpleActiveListManager implements ActiveListManager  {
         } else {
             activeList = findListFor(token.getSearchState().getClass());
         }
+        if (activeList == null) {
+            throw new Error("Cannot find ActiveList for " + 
+                            token.getSearchState().getClass());
+        }
         activeList.add(token);
     }
 
