@@ -136,6 +136,7 @@ public class SimpleNGramModel implements LanguageModel {
                     logProbability
                     + " " + logMath.logToLinear(logProbability));
         }
+
         return logProbability;
     }
 
@@ -322,12 +323,14 @@ public class SimpleNGramModel implements LanguageModel {
                 }
                 double log10Prob = Double.parseDouble(tok.nextToken());
                 double log10Backoff = 0.0;
-                WordSequence wordSequence = new WordSequence();
+
+                List wordList = new ArrayList(3);
                 for (int j = 0; j < ngram; j++) {
                     String word = tok.nextToken().toLowerCase();
                     vocabulary.add(word);
-                    wordSequence = wordSequence.addWord(word, maxNGram);
+                    wordList.add(word);
                 }
+                WordSequence wordSequence = new WordSequence(wordList);
                 if (tok.hasMoreTokens()) {
                     log10Backoff = Double.parseDouble(tok.nextToken());
                 }

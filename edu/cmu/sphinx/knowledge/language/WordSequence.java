@@ -23,6 +23,7 @@ import java.util.List;
 public class WordSequence {
     private String[] words;
     private transient int hashCode = -1;
+    private final static WordSequence EMPTY = new WordSequence(1);
 
     /**
      * Constructs a word sequence with the given depth
@@ -31,6 +32,10 @@ public class WordSequence {
      */
     private WordSequence(int size) {
         words = new String[size];
+        if (size == 0) {
+            System.out.println("Size is 0");
+            assert size != 0;
+        }
     }
 
     /**
@@ -108,6 +113,7 @@ public class WordSequence {
         while (nextIndex >= 0 && thisIndex >= 0) {
             next.words[nextIndex--] = this.words[thisIndex--];
         }
+
 	return next;
     }
 
@@ -117,11 +123,14 @@ public class WordSequence {
      *
      */
     public WordSequence getOldest() {
-        assert size() > 1;
-        WordSequence next = new WordSequence(words.length -1);
-	for (int i = 0; i < next.words.length; i++) {
-	    next.words[i] = this.words[i];
-	}
+        WordSequence next = EMPTY;
+
+        if (size() >= 1) {
+            next = new WordSequence(words.length -1);
+            for (int i = 0; i < next.words.length; i++) {
+                next.words[i] = this.words[i];
+            }
+        }
 	return next;
     }
 
@@ -131,12 +140,42 @@ public class WordSequence {
      *
      */
     public WordSequence getNewest() {
-        assert size() > 1;
-        WordSequence next = new WordSequence(words.length -1);
-	for (int i = 0; i < next.words.length; i++) {
-	    next.words[i] = this.words[i + 1];
-	}
+        WordSequence next = EMPTY;
+
+        if (size() >= 1) {
+            next = new WordSequence(words.length -1);
+            for (int i = 0; i < next.words.length; i++) {
+                next.words[i] = this.words[i + 1];
+            }
+        }
 	return next;
+    }
+
+    /**
+     * Returns a word sequence that is no longer than the given size,
+     * that is filled in with the newest words from this sequence
+     *
+     * @param maxSize the maximum size of the sequence
+     *
+     */
+    public WordSequence trim(int maxSize) {
+        if (maxSize == 0 || size() == 0) {
+            return EMPTY;
+        } else  if (maxSize == size()) {
+            return this;
+        } else {
+            if (maxSize > size()) {
+                maxSize = size();
+            }
+            WordSequence next = new WordSequence(maxSize);
+            int thisIndex = words.length - 1;
+            int nextIndex = next.words.length - 1;
+
+            for (int i = 0; i < maxSize; i++) {
+                next.words[nextIndex--] = this.words[thisIndex--];
+            }
+            return next;
+        }
     }
 
 

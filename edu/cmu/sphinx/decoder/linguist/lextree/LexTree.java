@@ -38,6 +38,7 @@ class LexTree {
     private HMMPool hmmPool;
     private Dictionary dictionary;
     private Map nextNodesMap = new HashMap();
+    private boolean addSilenceWord = true;
 
     /**
      * Creates the lextree
@@ -76,6 +77,7 @@ class LexTree {
      * @param words the collection of words
      */
     private void addWords(Collection words) {
+        boolean addedSilence = false;
         for (Iterator i = words.iterator(); i.hasNext(); ) {
             String word = (String) i.next();
 
@@ -84,15 +86,31 @@ class LexTree {
                 continue;
             }
 
-            Pronunciation[] pronunciations =
-                dictionary.getPronunciations(word, null);
-            if (pronunciations == null) {
-                System.out.println("Can't find pronunciation for '" +
-                        word + "' .. skipping it.");
-            } else {
-                for (int j = 0; j < pronunciations.length; j++) {
-                    addPronunciation(pronunciations[j]);
-                }
+            if (word.equals(Dictionary.SILENCE_SPELLING)) {
+                addedSilence = true;
+            }
+            addWord(word);
+        }
+        if (addSilenceWord && !addedSilence) {
+            addWord(Dictionary.SILENCE_SPELLING);
+        }
+    }
+
+
+    /**
+     * Adds a single word to the lex tree
+     *
+     * @param word the word to add
+     */
+    private void addWord(String word) {
+        Pronunciation[] pronunciations =
+            dictionary.getPronunciations(word, null);
+        if (pronunciations == null) {
+            System.out.println("Can't find pronunciation for '" +
+                    word + "' .. skipping it.");
+        } else {
+            for (int i = 0; i < pronunciations.length; i++) {
+                addPronunciation(pronunciations[i]);
             }
         }
     }
@@ -105,10 +123,54 @@ class LexTree {
     private void addPronunciation(Pronunciation pronunciation) {
         NonLeafLexNode node = initialNode;
         Unit[] units = pronunciation.getUnits();
+
         for (int i = 0; i < units.length; i++) {
             node = node.addUnit(units[i], getPosition(i, units));
         }
         node.addWord(pronunciation);
+    }
+
+    /**
+     * Searches through the lex tree for the node that represents the
+     * given word.
+     *
+     * @param word the word of intereset
+     */
+    WordLexNode findWordNode(String word) {
+        return findWordNode(initialNode, word);
+    }
+
+    /**
+     * Searches through the lex tree for the node that represents the
+     * given word.
+     *
+     * @param node the node to start the search at
+     * @param word the word to search for
+     *
+     * @return the first found node representing the word or null if
+     * it is not found
+     */
+    private WordLexNode findWordNode(LexNode node, String word) {
+
+        if (node instanceof WordLexNode) {
+            WordLexNode wordNode = (WordLexNode) node;
+            if (wordNode.getPronunciation().getWord().equals(word)) {
+                return wordNode;
+            } else {
+                return null;
+            }
+        } else if (node instanceof NonLeafLexNode) {
+            NonLeafLexNode nlNode = (NonLeafLexNode) node;
+            LexNode[] nextNodes = nlNode.getNextNodes();
+            for (int i = 0; i < nextNodes.length; i++) {
+                LexNode nextNode = nextNodes[i];
+                WordLexNode result = findWordNode(nextNode, word);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -139,7 +201,7 @@ class LexTree {
      * tree we can convert our successor hashmaps into simple arrays,
      * conserving space and making access faster.
      */
-    void freezeNodes() {
+    private void freezeNodes() {
         for (Iterator i = nextNodesMap.keySet().iterator(); i.hasNext(); ) {
             NonLeafLexNode node = (NonLeafLexNode) i.next();
             node.freeze();
@@ -366,6 +428,8 @@ class LexTree {
          * Creates a UnitLexNode for the given unit
          *
          * @param unit the unit held by this node
+         * @param position the position of the unit
+         * word
          */
         UnitLexNode(Unit unit, HMMPosition position) {
             id = hmmPool.getID(unit);
@@ -405,8 +469,8 @@ class LexTree {
          * @return <code>true</code> if this unit marks a word end.
          */
         boolean isWordEnd() {
-            return position == HMMPosition.END || 
-                   position == HMMPosition.SINGLE;
+            return position == HMMPosition.SINGLE || 
+                   position == HMMPosition.END;
         }
 
         /**
@@ -488,6 +552,17 @@ class LexTree {
         public boolean isSentenceEnd() {
             return pronunciation.getWord().
                 equals(Dictionary.SENTENCE_END_SPELLING);
+        }
+
+        /**
+         * Determines if this node marks a silence word
+         *
+         * @return true if this node marks a silence word
+         *
+         */
+        public boolean isSilence() {
+            return pronunciation.getWord().
+                equals(Dictionary.SILENCE_SPELLING);
         }
     }
 
