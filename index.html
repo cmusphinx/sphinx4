@@ -600,11 +600,11 @@ d:\work\sphinx4&gt;ant clean
   <p>
   Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary TIDIGITS models</a>.
   <br>
-  Then in properties file,
-  <br><code>sphinx4/tests/performance/ti46/tidigits.props</code>
-  <br>make sure that you set the line
-  <br><code>tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location</code>
-  <br>to point to the URL of downloaded binary TIDIGITS models.
+  Then in configuration file,
+  <code>sphinx4/tests/performance/ti46/ti46.config.xml</code>,
+  find the component called <code>sphinx3Loader</code>
+  and change the <code>location</code> property to point to the URL of 
+  your downloaded binary TIDIGITS models.
 
   <p>
   You also need to prepare a batch file called <code>ti46.batch</code>,
@@ -627,10 +627,10 @@ d:\work\sphinx4&gt;ant clean
   <p>
   Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary TIDIGITS models</a>.
   <br>
-  Then in properties file,
-  <br><code>sphinx4/tests/performance/ti46/tidigits.props</code>
-  <br>make sure that you set the line
-  <br><code>tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location</code>
+  Then in configuration file,
+  <code>sphinx4/tests/performance/ti46/tidigits.config.xml</code>,
+  find the component called <code>sphinx3Loader</code>
+  and change the <code>location</code> property to point to the URL of 
   <br>to point to the URL of downloaded binary TIDIGITS models.
 
   <p>
@@ -677,13 +677,11 @@ d:\work\sphinx4&gt;ant clean
   <p>
   Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary RM1 models</a>.
   <br>
-  Then in properties files:
-  <br><code>sphinx4/tests/performance/rm1/rm1.props</code>,
-  <br><code>sphinx4/tests/performance/rm1/rm1.clex.props</code>, and
-  <br><code>sphinx4/tests/performance/rm1/rm1.wpbfsm.props</code>,
-  <br>make sure that you set the line
-  <br><code>rm1;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location</code>
-  <br>to point to the URL of the downloaded binary RM1 models.
+  Then in properties file,
+  <code>sphinx4/tests/performance/rm1/rm1.config.xml</code>,
+  find the component called <code>sphinx3Loader</code>
+  and change the <code>location</code> property to point to the URL of
+  the downloaded binary RM1 models.
 
   <p>
   You also need to prepare a batch file called <code>rm1.batch</code>,
@@ -926,11 +924,19 @@ cat $task.transcript | $bindir/text2idngram -n 3 -vocab $task.vocab | \
 
 <p>
 Sphinx-4 uses the Java Speech API Grammar Format (JSGF) to perform 
-speech recognition using a BNF-style grammar. To use JSGF grammars,
-you need to set the following in the configuration file:
+speech recognition using a BNF-style grammar. Currently, you can only
+use JSGF grammars with the FlatLinguist. To specify JSGF grammars, 
+set the following in the configuration file:
 
 <pre>
-edu.cmu.sphinx.decoder.Recognizer.grammar = edu.cmu.sphinx.jsapi.JSGFGrammar
+&lt;component name="flatLinguist" type="edu.cmu.sphinx.linguist.flat.FlatLinguist"&gt;
+    &lt;property name="grammar" value="jsgfGrammar"&gt;
+    // ... other properties ...
+&lt/component&gt;
+
+&lt;component name="jsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar"&gt;
+    &lt;property name="baseGrammarURL" value="...URL of grammar directory"/&gt;
+&lt/component&gt;
 </pre>
 
 <p>
