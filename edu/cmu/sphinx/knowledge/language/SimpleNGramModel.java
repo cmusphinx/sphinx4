@@ -59,7 +59,7 @@ public class SimpleNGramModel implements LanguageModel {
      * Creates a simple ngram model from the data at the URL. The
      * data should be an ARPA format
      *
-     * @param prop the sphinx properties for the model
+     * @param props the sphinx properties for the model
      * @param dictionary the dictionary for the model
      *
      * @throws IOException if there is trouble loading the data
