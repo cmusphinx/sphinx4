@@ -10,17 +10,16 @@
  *
  */
 
-
 package edu.cmu.sphinx.frontend.frequencywarp;
 
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
-import edu.cmu.sphinx.util.SphinxProperties;
-
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 /**
  * Filters an input power spectrum through a PLP filterbank. The
@@ -46,15 +45,11 @@ import edu.cmu.sphinx.util.SphinxProperties;
  */
 public class PLPFrequencyFilterBank extends BaseDataProcessor {
     
-    private static final String PROP_PREFIX = 
-	"edu.cmu.sphinx.frontend.frequencywarp.PLPFilterBank.";
-    
-
     /**
      * The name of the Sphinx Property for the number of filters in
      * the filterbank.
      */
-    public static final String PROP_NUMBER_FILTERS = PROP_PREFIX +"numFilters";
+    public static final String PROP_NUMBER_FILTERS = "numFilters";
 
 
     /**
@@ -67,7 +62,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
      * The name of the Sphinx Property for the center frequency
      * of the lowest filter in the filterbank.
      */
-    public static final String PROP_MIN_FREQ = PROP_PREFIX + "minfreq";
+    public static final String PROP_MIN_FREQ = "minfreq";
 
 
     /**
@@ -80,7 +75,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
      * The name of the Sphinx Property for the center frequency
      * of the highest filter in the filterbank.
      */
-    public static final String PROP_MAX_FREQ = PROP_PREFIX + "maxfreq";
+    public static final String PROP_MAX_FREQ = "maxfreq";
 
 
     /**
@@ -97,46 +92,38 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
     private PLPFilter[] criticalBandFilter;
     private double[] equalLoudnessScaling;
 
-
-    /**
-     * Initializes this PLPFrequencyFilterBank object with the given 
-     * SphinxProperties context.
-     * Constructs both the Bark frequency critical band filters
-     * and the array of equal loudness scaling factor.
-     *
-     * @param name         the name of this PLPFrequencyFilterBank, if it is
-     *                     null, the name "PLPFrequencyFilterBank" will be
-     *                     given by default
-     * @param frontEnd     the front end this PLPFrequencyFilterBank belongs to
-     * @param props        the SphinxProperties to read properties from
-     * @param predecessor  the DataProcessor to obtain Spectrum(a) from,
-     *     which is usually a SpectrumAnalyzer (does FFT)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
      */
-    public void initialize(String name, String frontEnd,
-                           SphinxProperties props, DataProcessor predecessor) {
-        super.initialize((name == null ? "PLPFrequencyFilterBank" : name),
-                         frontEnd, props, predecessor);
-	setProperties(props);
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_MIN_FREQ, PropertyType.DOUBLE);
+        registry.register(PROP_MAX_FREQ, PropertyType.DOUBLE);
+        registry.register(PROP_NUMBER_FILTERS, PropertyType.INT);
     }
 
-
-    /**
-     * Reads the parameters.
-     *
-     * @param props the SphinxProperties to read from
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
-    private void setProperties(SphinxProperties props) {
-
-        minFreq = props.getDouble
-            (getName(), PROP_MIN_FREQ, PROP_MIN_FREQ_DEFAULT);
-
-        maxFreq = props.getDouble
-            (getName(), PROP_MAX_FREQ, PROP_MAX_FREQ_DEFAULT);
-
-        numberFilters = props.getInt
-            (getName(), PROP_NUMBER_FILTERS, PROP_NUMBER_FILTERS_DEFAULT);
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        minFreq = ps.getDouble (PROP_MIN_FREQ, PROP_MIN_FREQ_DEFAULT);
+        maxFreq = ps.getDouble (PROP_MAX_FREQ, PROP_MAX_FREQ_DEFAULT);
+        numberFilters = ps.getInt (PROP_NUMBER_FILTERS, PROP_NUMBER_FILTERS_DEFAULT);
     }
 
+    /**
+     * Initializes this PLPFrequencyFilterBank object 
+     */
+    public void initialize() {
+        super.initialize();
+    }
 
     /**
      * Build a PLP filterbank with the parameters given.

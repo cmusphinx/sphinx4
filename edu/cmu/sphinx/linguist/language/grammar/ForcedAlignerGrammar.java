@@ -34,15 +34,13 @@ public class ForcedAlignerGrammar extends Grammar {
     /**
      * Create class from reference text (not implemented).
      *
-     * @throws NoSuchMethogException if called with reference sentence
      */
     protected GrammarNode createGrammar()
-	throws NoSuchMethodException {
+	{
 	GrammarNode initialNode = null;
 	initialNode = createGrammarNode(0, true);
 	return initialNode;
     }
-
     /**
      * Creates the grammar
      *

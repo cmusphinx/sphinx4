@@ -9,81 +9,64 @@
  * WARRANTIES.
  *
  */
-
-
 package edu.cmu.sphinx.frontend.feature;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
-
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FloatData;
-import edu.cmu.sphinx.util.SphinxProperties;
-
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 /**
- * Computes the delta and double delta of input cepstrum (or plp or
- * ...). The delta is the first order derivative and the double delta
- * (a.k.a. delta delta) is the second order derivative of the original
- * cepstrum.  They help model the speech signal dynamics.  The output
- * data is a {@link FloatData} object with a float array of
- * size three times
- * the original cepstrum, formed by the concatenation of cepstra,
- * delta cepstra, and double delta cepstra. The output is the feature
- * vector used by the decoder. Figure 1 shows the arrangement of the
- * output feature data array:
+ * Computes the delta and double delta of input cepstrum (or plp or ...). The
+ * delta is the first order derivative and the double delta (a.k.a. delta
+ * delta) is the second order derivative of the original cepstrum. They help
+ * model the speech signal dynamics. The output data is a {@link FloatData}
+ * object with a float array of size three times the original cepstrum, formed
+ * by the concatenation of cepstra, delta cepstra, and double delta cepstra.
+ * The output is the feature vector used by the decoder. Figure 1 shows the
+ * arrangement of the output feature data array:
  * <p>
- * <img src="doc-files/feature.jpg">
- * <br><b>Figure 1: Layout of the returned features.</b>
- * <p>Suppose that the original cepstrum has a length of N,
- * the first N elements of the feature are just the original
- * cepstrum, the second N elements are the delta of the cepstrum,
- * and the last N elements are the double delta of the cepstrum.
+ * <img src="doc-files/feature.jpg"> <br>
+ * <b>Figure 1: Layout of the returned features. </b>
  * <p>
- * Figure 2 below shows pictorially the computation of the
- * delta and double delta of a cepstrum vector, using
- * the last 3 cepstra and the next 3 cepstra.
- * <img src="doc-files/deltas.jpg">
- * <br><b>Figure 2: Delta and double delta vector computation.</b>
- * <p>Refering to Figure 2, the delta is computed by subtracting
- * the cepstrum that is two frames behind of the current cepstrum
- * from the cepstrum that is two frames ahead of the current cepstrum.
- * The computation of the double delta is similar. It is computed by
- * subtracting the delta cepstrum one time frame behind from the
- * delta cepstrum one time frame ahead. Replacing delta cepstra with
- * cepstra, this works out to a formula involving the cepstra that are
- * one and three behind and after the current cepstrum.
+ * Suppose that the original cepstrum has a length of N, the first N elements
+ * of the feature are just the original cepstrum, the second N elements are the
+ * delta of the cepstrum, and the last N elements are the double delta of the
+ * cepstrum.
+ * <p>
+ * Figure 2 below shows pictorially the computation of the delta and double
+ * delta of a cepstrum vector, using the last 3 cepstra and the next 3 cepstra.
+ * <img src="doc-files/deltas.jpg"> <br>
+ * <b>Figure 2: Delta and double delta vector computation. </b>
+ * <p>
+ * Refering to Figure 2, the delta is computed by subtracting the cepstrum that
+ * is two frames behind of the current cepstrum from the cepstrum that is two
+ * frames ahead of the current cepstrum. The computation of the double delta is
+ * similar. It is computed by subtracting the delta cepstrum one time frame
+ * behind from the delta cepstrum one time frame ahead. Replacing delta cepstra
+ * with cepstra, this works out to a formula involving the cepstra that are one
+ * and three behind and after the current cepstrum.
  */
 public class DeltasFeatureExtractor extends BaseDataProcessor {
-
-    /**
-     * SphinxProperty prefix of this DeltasFeatureExtractor.
-     */
-    public static final String PROP_PREFIX
-	= "edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor.";
-
-
     /**
      * The name of the SphinxProperty for the window of the
      * DeltasFeatureExtractor.
      */
-    public static final String PROP_FEATURE_WINDOW 
-        = PROP_PREFIX + "windowSize";
-
-
+    public static final String PROP_FEATURE_WINDOW = "windowSize";
     /**
      * The default value of PROP_FEATURE_WINDOW.
      */
     public static final int PROP_FEATURE_WINDOW_DEFAULT = 3;
-    
-
     private int cepstraBufferSize;
     private int cepstraBufferEdge;
     private int bufferPosition;
@@ -94,61 +77,61 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
     private DataEndSignal dataEndSignal;
     private List outputQueue;
 
-
-    
-    /**
-     * Initializes this DeltasFeatureExtractor.
-     *
-     * @param name        the name of this DeltasFeatureExtractor, if it is
-     *                    null, the name "DeltasFeatureExtractor" is given
-     *                    by default
-     * @param frontend    the front end this DeltasFeatureExtractor belongs to
-     * @param props       the SphinxProperties to use
-     * @param predecessor the DataProcessor to get Cepstrum from
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
      */
-    public void initialize(String name, String frontend,
-                           SphinxProperties props,
-			   DataProcessor predecessor) {
-        super.initialize((name == null ? "DeltasFeatureExtractor" : name),
-                         frontend, props, predecessor);
-	cepstraBufferSize = 256;
-        cepstraBuffer = new DoubleData[cepstraBufferSize];
-	setProperties(props);
-        outputQueue = new Vector();
-	reset();
-        System.out.println("Using DeltasFeatureExtractor");
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_FEATURE_WINDOW, PropertyType.INT);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        window = ps.getInt(PROP_FEATURE_WINDOW, PROP_FEATURE_WINDOW_DEFAULT);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
+     */
+    public void initialize() {
+        super.initialize();
+        cepstraBufferSize = 256;
+        cepstraBuffer = new DoubleData[cepstraBufferSize];
+        cepstraBufferEdge = cepstraBufferSize - (window * 2 + 2);
+        outputQueue = new Vector();
+        reset();
+    }
 
     /**
      * Resets the DeltasFeatureExtractor to be ready to read the next segment
-     * of data. 
+     * of data.
      */
     private void reset() {
-	bufferPosition = 0;
+        bufferPosition = 0;
         currentPosition = 0;
     }
 
 
-    /**
-     * Reads the parameters needed from the the static SphinxProperties object.
-     *
-     * @param props the SphinxProperties to read properties from
-     */
-    private void setProperties(SphinxProperties props) {
-        window = props.getInt
-            (getName(), PROP_FEATURE_WINDOW, PROP_FEATURE_WINDOW_DEFAULT);
-        cepstraBufferEdge = cepstraBufferSize - (window * 2 + 2);
-    }
-
 
     /**
      * Returns the next Data object produced by this DeltasFeatureExtractor.
-     *
-     * @return the next available Data object, returns null if no
-     *         Data is available
-     *
-     * @throws DataProcessingException if there is a data processing error
+     * 
+     * @return the next available Data object, returns null if no Data is
+     *         available
+     * 
+     * @throws DataProcessingException
+     *                 if there is a data processing error
      */
     public Data getData() throws DataProcessingException {
         if (outputQueue.size() == 0) {
@@ -160,7 +143,7 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
                 } else if (input instanceof DataStartSignal) {
                     dataEndSignal = null;
                     outputQueue.add(input);
-		    Data start = getPredecessor().getData();
+                    Data start = getPredecessor().getData();
                     int n = processFirstCepstrum(start);
                     computeFeatures(n);
                     if (dataEndSignal != null) {
@@ -175,25 +158,25 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
             }
         }
         if (outputQueue.size() > 0) {
-	    Data feature = (Data) outputQueue.remove(0);
+            Data feature = (Data) outputQueue.remove(0);
             return feature;
         } else {
             return null;
         }
     }
 
-
     /**
-     * Replicate the given cepstrum Data object into the first window+1
-     * number of frames in the cepstraBuffer. This is the first cepstrum
-     * in the segment.
-     *
-     * @param cepstrum the Data to replicate
-     *
+     * Replicate the given cepstrum Data object into the first window+1 number
+     * of frames in the cepstraBuffer. This is the first cepstrum in the
+     * segment.
+     * 
+     * @param cepstrum
+     *                the Data to replicate
+     * 
      * @return the number of Features that can be computed
      */
-    private int processFirstCepstrum(Data cepstrum) 
-        throws DataProcessingException {
+    private int processFirstCepstrum(Data cepstrum)
+            throws DataProcessingException {
         if (cepstrum instanceof DataEndSignal) {
             outputQueue.add(cepstrum);
             return 0;
@@ -204,17 +187,13 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
             // into window+1 frames, and then read the next "window" number
             // of frames. This will allow us to compute the delta-
             // double-delta of the first frame.
-
-            Arrays.fill(cepstraBuffer, 0, window+1, cepstrum);
-        
+            Arrays.fill(cepstraBuffer, 0, window + 1, cepstrum);
             bufferPosition = window + 1;
             bufferPosition %= cepstraBufferSize;
             currentPosition = window;
             currentPosition %= cepstraBufferSize;
-
             int numberFeatures = 1;
             dataEndSignal = null;
-            
             for (int i = 0; i < window; i++) {
                 Data next = getPredecessor().getData();
                 if (next != null) {
@@ -223,8 +202,8 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
                         addCepstrum((DoubleData) next);
                     } else if (next instanceof DataEndSignal) {
                         // end of segment cepstrum
-			dataEndSignal = (DataEndSignal) next;
-			replicateLastCepstrum();
+                        dataEndSignal = (DataEndSignal) next;
+                        replicateLastCepstrum();
                         numberFeatures += i;
                         break;
                     } else if (next instanceof DataStartSignal) {
@@ -232,14 +211,12 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
                     }
                 }
             }
-            
             jp1 = currentPosition - 1;
             jp2 = currentPosition - 2;
             jp3 = currentPosition - 3;
             jf1 = currentPosition + 1;
             jf2 = currentPosition + 2;
             jf3 = currentPosition + 3;
-            
             if (jp3 > cepstraBufferEdge) {
                 jf3 %= cepstraBufferSize;
                 jf2 %= cepstraBufferSize;
@@ -248,31 +225,29 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
                 jp2 %= cepstraBufferSize;
                 jp3 %= cepstraBufferSize;
             }
-            
             return numberFeatures;
         }
     }
 
     /**
      * Adds the given DoubleData object to the cepstraBuffer.
-     *
-     * @param cepstrum the DoubleData object to add
+     * 
+     * @param cepstrum
+     *                the DoubleData object to add
      */
     private void addCepstrum(DoubleData cepstrum) {
         cepstraBuffer[bufferPosition++] = cepstrum;
         bufferPosition %= cepstraBufferSize;
     }
 
-
     /**
-     * Replicate the last frame into the last window number of frames in
-     * the cepstraBuffer.
-     *
+     * Replicate the last frame into the last window number of frames in the
+     * cepstraBuffer.
+     * 
      * @return the number of replicated Cepstrum
      */
     private int replicateLastCepstrum() {
         DoubleData last = null;
-
         if (bufferPosition > 0) {
             last = this.cepstraBuffer[bufferPosition - 1];
         } else if (bufferPosition == 0) {
@@ -280,20 +255,18 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
         } else {
             throw new Error("BufferPosition < 0");
         }
-        
         for (int i = 0; i < window; i++) {
             addCepstrum(last);
         }
-
         return window;
     }
 
-
     /**
      * Converts the Cepstrum data in the cepstraBuffer into a FeatureFrame.
-     *
-     * @param totalFeatures the number of Features that will be produced
-     *
+     * 
+     * @param totalFeatures
+     *                the number of Features that will be produced
+     * 
      * @return a FeatureFrame
      */
     private void computeFeatures(int totalFeatures) {
@@ -319,43 +292,33 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
 
     /**
      * Computes the next feature. Advances the pointers as well.
-     *
+     * 
      * @return the feature Data computed
      */
     private Data computeNextFeature() {
-
         DoubleData currentCepstrum = cepstraBuffer[currentPosition++];
-
-	double[] mfc3f = cepstraBuffer[jf3++].getValues();
-	double[] mfc2f = cepstraBuffer[jf2++].getValues();
-	double[] mfc1f = cepstraBuffer[jf1++].getValues();
+        double[] mfc3f = cepstraBuffer[jf3++].getValues();
+        double[] mfc2f = cepstraBuffer[jf2++].getValues();
+        double[] mfc1f = cepstraBuffer[jf1++].getValues();
         double[] current = currentCepstrum.getValues();
-	double[] mfc1p = cepstraBuffer[jp1++].getValues();
-	double[] mfc2p = cepstraBuffer[jp2++].getValues();
-	double[] mfc3p = cepstraBuffer[jp3++].getValues();
-
+        double[] mfc1p = cepstraBuffer[jp1++].getValues();
+        double[] mfc2p = cepstraBuffer[jp2++].getValues();
+        double[] mfc3p = cepstraBuffer[jp3++].getValues();
         float[] feature = new float[current.length * 3];
-	
-	// CEP; copy all the cepstrum data
-	int j = 0;
-
+        // CEP; copy all the cepstrum data
+        int j = 0;
         for (int k = 0; k < current.length; k++) {
             feature[j++] = (float) current[k];
         }
-
-	// System.arraycopy(current, 0, feature, 0, j);
-	
-	// DCEP: mfc[2] - mfc[-2]
-	for (int k = 0; k < mfc2f.length; k++) {
-	    feature[j++] = (float) (mfc2f[k] - mfc2p[k]);
-	}
-	
-	// D2CEP: (mfc[3] - mfc[-1]) - (mfc[1] - mfc[-3])
-	for (int k = 0; k < mfc3f.length; k++) {
-	    feature[j++] 
-                = (float) ((mfc3f[k] - mfc1p[k]) - (mfc1f[k] - mfc3p[k]));
-	}
-
+        // System.arraycopy(current, 0, feature, 0, j);
+        // DCEP: mfc[2] - mfc[-2]
+        for (int k = 0; k < mfc2f.length; k++) {
+            feature[j++] = (float) (mfc2f[k] - mfc2p[k]);
+        }
+        // D2CEP: (mfc[3] - mfc[-1]) - (mfc[1] - mfc[-3])
+        for (int k = 0; k < mfc3f.length; k++) {
+            feature[j++] = (float) ((mfc3f[k] - mfc1p[k]) - (mfc1f[k] - mfc3p[k]));
+        }
         if (jp3 > cepstraBufferEdge) {
             jf3 %= cepstraBufferSize;
             jf2 %= cepstraBufferSize;
@@ -372,4 +335,3 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
                               currentCepstrum.getFirstSampleNumber()));
     }
 }
-

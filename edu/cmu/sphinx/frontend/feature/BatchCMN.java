@@ -12,18 +12,18 @@
 
 package edu.cmu.sphinx.frontend.feature;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DoubleData;
-
-import edu.cmu.sphinx.util.SphinxProperties;
-
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
@@ -65,19 +65,28 @@ public class BatchCMN extends BaseDataProcessor {
     private int numberDataCepstra;
 
 
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry) throws PropertyException {
+        super.register(name, registry);
+        
+    }
+
+
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+    }
+
     /**
      * Initializes this BatchCMN.
      *
-     * @param name        the name of this BatchCMN
-     * @param frontEnd    the front end this BatchCMN belongs to
-     * @param props       the SphinxProperties to read properties from
-     * @param predecessor the DataProcessor from which this normalizer
-     *                    obtains Data to normalize
      */
-    public void initialize(String name, String frontEnd,
-			   SphinxProperties props, DataProcessor predecessor) {
-	super.initialize((name == null ? "BatchCMN" : name),
-                         frontEnd, props, predecessor);
+    public void initialize() {
+        super.initialize();
         sums = null;
         cepstraList = new LinkedList();
     }
@@ -188,4 +197,6 @@ public class BatchCMN extends BaseDataProcessor {
             }
         }
     }
+
+
 }

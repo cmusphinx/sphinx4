@@ -10,16 +10,17 @@
  *
  */
 
-
 package edu.cmu.sphinx.frontend.transform;
 
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.util.Complex;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 /**
  * Computes the Discrete Fourier Transform (FT) of an input sequence,
@@ -65,18 +66,13 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * of the utterance "one three nine oh" in Figure 1.</b>
  */
 public class DiscreteFourierTransform extends BaseDataProcessor {
-
-    private static final String PROP_PREFIX
-        = "edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.";
-
     /**
      * The name of the SphinxProperty for the number of points
      * in the Fourier Transform.
      */
     public static final String PROP_NUMBER_FFT_POINTS
-        = PROP_PREFIX + "numberFftPoints";
+        =  "numberFftPoints";
 
-    
     /**
      * The default value of PROP_NUMBER_FFT_POINTS.
      */
@@ -94,22 +90,36 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
     private Complex weightFftTimesFrom2;
     private Complex tempComplex;
 
-
-    /**
-     * Initializes this DiscreteFourierTransform.
-     *
-     * @param name      the name of this DiscreteFourierTransform, if it is
-     *                  null, the name "DiscreteFourierTransform" will be
-     *                  given by default
-     * @param frontEnd  the context of the SphinxProperties to use
-     * @param props     the SphinxProperties object to read properties from
-     * @param predecessor the DataProcessor from which to get Data objects
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
      */
-    public void initialize(String name, String frontEnd,
-			   SphinxProperties props, DataProcessor predecessor) {
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_NUMBER_FFT_POINTS, PropertyType.INT);
+    }
 
-        super.initialize((name == null ? "DiscreteFourierTransform" : name),
-                         frontEnd, props, predecessor);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        numberFftPoints = ps.getInt(PROP_NUMBER_FFT_POINTS,
+               PROP_NUMBER_FFT_POINTS_DEFAULT);
+    }
+
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
+     */
+    public void initialize() {
+
+        super.initialize();
 
 	/**
 	 * Number of points in the FFT. By default, the value is 512,
@@ -119,9 +129,8 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
 	 * 511 are symmetrical with the ones between 1 and 254. Therefore,
 	 * we need only return values between 0 and 255.
 	 */
-	numberFftPoints = props.getInt(getName(), PROP_NUMBER_FFT_POINTS,
-                                       PROP_NUMBER_FFT_POINTS_DEFAULT);
-	computeLogBase2(this.numberFftPoints);
+
+	computeLogBase2(numberFftPoints);
 	createWeightFft(numberFftPoints, false);
         initComplexArrays();
         weightFftTimesFrom2 = new Complex();
@@ -201,7 +210,8 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
 	 * Return the power spectrum
 	 */
 	DoubleData output = new DoubleData
-            (outputSpectrum, input.getSampleRate(), input.getCollectTime(),
+            (outputSpectrum,  input.getSampleRate(), 
+                    input.getCollectTime(),
 	     input.getFirstSampleNumber());
 
         return output;

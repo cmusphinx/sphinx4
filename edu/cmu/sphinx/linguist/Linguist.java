@@ -12,10 +12,10 @@
  */
 
 package edu.cmu.sphinx.linguist;
-import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-import edu.cmu.sphinx.linguist.language.grammar.Grammar;
-import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
+
+import java.io.IOException;
+
+import edu.cmu.sphinx.util.props.Configurable;
 
 
 
@@ -23,21 +23,19 @@ import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
  * Provides language model services. 
  *
  */
-public interface Linguist {
+public interface Linguist extends Configurable {
 
-
-    /**
-     * Prefix for search.Linguist SphinxProperties.
-     */
-    public final static String PROP_PREFIX =
-	"edu.cmu.sphinx.linguist.Linguist.";
-
+    // TODO sort out all of these props. Are the all necessary?
+    // should the all be here at this level?
+    
+    
+    // TODO check all classes for PREFIX and eliminate
 
     /**
       * Word insertion probability property
       */
     public final static String PROP_WORD_INSERTION_PROBABILITY
-        = PROP_PREFIX + "wordInsertionProbability";
+        = "wordInsertionProbability";
 
 
     /**
@@ -50,7 +48,7 @@ public interface Linguist {
       * Unit insertion probability property
       */
     public final static String PROP_UNIT_INSERTION_PROBABILITY
-        = PROP_PREFIX + "unitInsertionProbability";
+        =  "unitInsertionProbability";
 
 
     /**
@@ -63,7 +61,7 @@ public interface Linguist {
       * Silence insertion probability property
       */
     public final static String PROP_SILENCE_INSERTION_PROBABILITY
-        = PROP_PREFIX + "silenceInsertionProbability";
+        = "silenceInsertionProbability";
 
 
     /**
@@ -76,7 +74,7 @@ public interface Linguist {
       * Filler insertion probability property
       */
     public final static String PROP_FILLER_INSERTION_PROBABILITY
-        = PROP_PREFIX + "fillerInsertionProbability";
+        =  "fillerInsertionProbability";
 
 
     /**
@@ -89,7 +87,7 @@ public interface Linguist {
      * Sphinx property that defines the language weight for the search
      */
     public final static String PROP_LANGUAGE_WEIGHT  =
-	PROP_PREFIX + "languageWeight";
+	 "languageWeight";
 
 
     /**
@@ -103,7 +101,7 @@ public interface Linguist {
      * consider before switching over to using composite hmms
      */
     public final static String PROP_COMPOSITE_THRESHOLD 
-        = PROP_PREFIX + "compositeThreshold";
+        =  "compositeThreshold";
 
     
     /**
@@ -117,7 +115,7 @@ public interface Linguist {
      * re-joined to reduce fan-out
      */
     public final static String PROP_JOIN_PRONUNCIATIONS
-        = PROP_PREFIX + "joinPronunciations";
+        =  "joinPronunciations";
 
 
     /**
@@ -132,7 +130,7 @@ public interface Linguist {
      */
     public final static 
         String PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS =
-        PROP_PREFIX + "spreadWordProbabilitiesAcrossPronunciations";
+         "spreadWordProbabilitiesAcrossPronunciations";
 
 
     /**
@@ -147,7 +145,7 @@ public interface Linguist {
      * added to the vocabulary
      */
     public final static String PROP_ADD_FILLER_WORDS =
-            PROP_PREFIX + "addFillerWords";
+             "addFillerWords";
 
 
     /**
@@ -160,7 +158,7 @@ public interface Linguist {
      * Property to control whether silence units are automatically
      * looped to allow for longer silences
      */
-    public final static String PROP_AUTO_LOOP_SILENCES = PROP_PREFIX +
+    public final static String PROP_AUTO_LOOP_SILENCES = 
 	"autoLoopSilences";
 
 
@@ -174,7 +172,7 @@ public interface Linguist {
      * Property to control the the dumping of the search space
      */
     public final static String PROP_SHOW_SEARCH_SPACE 
-        = PROP_PREFIX + "showSearchSpace";
+        = "showSearchSpace";
 
 
     /**
@@ -187,7 +185,7 @@ public interface Linguist {
      * Property to control the the validating of the search space
      */
     public final static String PROP_VALIDATE_SEARCH_SPACE
-        = PROP_PREFIX + "validateSearchSpace";
+        =  "validateSearchSpace";
 
 
     /**
@@ -201,7 +199,7 @@ public interface Linguist {
      * grammar node boundaries
      */
     public final static String PROP_EXPAND_INTER_NODE_CONTEXTS
-        = PROP_PREFIX + "expandInterNodeContexts";
+        = "expandInterNodeContexts";
 
 
     /**
@@ -217,7 +215,7 @@ public interface Linguist {
      * every 1000 search states added to the search space
      */
     public final static String PROP_SHOW_COMPILATION_PROGRESS
-        = PROP_PREFIX + "showCompilationProgress";
+        =  "showCompilationProgress";
 
 
     /**
@@ -233,7 +231,7 @@ public interface Linguist {
      * this will allow for a faster search with more compact results.
      */
     public final static String PROP_GENERATE_UNIT_STATES
-        = PROP_PREFIX + "generateUnitStates";
+        =  "generateUnitStates";
 
     /**
      * The default value for PROP_GENERATE_UNIT_STATES
@@ -245,7 +243,7 @@ public interface Linguist {
       * probabilities are smeared through the lex tree
       */
     public final static String PROP_WANT_UNIGRAM_SMEAR
-        = PROP_PREFIX + "wantUnigramSmear";
+        = "wantUnigramSmear";
 
     /**
      * The default value for PROP_WANT_UNIGRAM_SMEAR
@@ -257,30 +255,13 @@ public interface Linguist {
       * A sphinx property that determines the weight of the smear
       */
     public final static String PROP_UNIGRAM_SMEAR_WEIGHT
-        = PROP_PREFIX + "unigramSmearWeight";
+        = "unigramSmearWeight";
 
     /**
      * The default value for PROP_UNIGRAM_SMEAR_WEIGHT
      */
     public final static float PROP_UNIGRAM_SMEAR_WEIGHT_DEFAULT = 1.0f;
 
-
-
-    /**
-     * Initializes this linguist
-     *
-     * @param context the context to associate this linguist with
-     * @param languageModel the language model
-     * @param grammar the grammar for this linguist
-     * @param models the acoustic model(s) used by this linguist,
-     *    normally there is only one AcousticModel, but it is possible
-     *    for the Linguist to use multiple AcousticModel(s)
-     */
-    public void initialize(String context,
-			   LanguageModel languageModel,
-                           Dictionary dictionary,
-			   Grammar grammar,
-			   AcousticModel[] models) ;
 
 
     /**
@@ -295,19 +276,27 @@ public interface Linguist {
     /**
      * Called before a recognition
      */
-    public void start();
+    public void startRecognition();
 
     /**
      * Called after a recognition
      */
-    public void stop();
-
-
+    public void stopRecognition();
+    
+    
     /**
-     * Retrieves the language model for this linguist
-     *
-     * @return the language model (or null if there is none)
+     * Allocates the linguist
+     * @throws IOException if an IO error occurs
      */
-    public LanguageModel getLanguageModel();
+    public void allocate() throws IOException;
+    
+    
+    /**
+     * Deallocates the linguist
+     *
+     */
+    public void deallocate();
+
+
 }
 

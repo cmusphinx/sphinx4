@@ -17,9 +17,11 @@ import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
@@ -51,16 +53,13 @@ import edu.cmu.sphinx.util.SphinxProperties;
  */
 public class LiveCMN extends BaseDataProcessor {
 
-    private static final String PROP_PREFIX
-        = "edu.cmu.sphinx.frontend.feature.LiveCMN.";
-
 
     /**
      * The name of the SphinxProperty for the initial cepstral mean.
      * This is a front-end dependent magic number.
      */
     public static final String PROP_INITIAL_MEAN
-        = PROP_PREFIX + "initialMean";
+        = "initialMean";
 
 
     /**
@@ -72,7 +71,7 @@ public class LiveCMN extends BaseDataProcessor {
     /**
      * The name of the SphinxProperty for the live CMN window size.
      */
-    public static final String PROP_CMN_WINDOW = PROP_PREFIX + "cmnWindow";
+    public static final String PROP_CMN_WINDOW = "cmnWindow";
 
 
     /**
@@ -87,7 +86,7 @@ public class LiveCMN extends BaseDataProcessor {
      * we re-calculate the cepstral mean.
      */
     public static final String PROP_CMN_SHIFT_WINDOW
-        = PROP_PREFIX + "shiftWindow";
+        = "shiftWindow";
 
 
     /**
@@ -103,22 +102,37 @@ public class LiveCMN extends BaseDataProcessor {
     private int cmnShiftWindow;     // # of Cepstrum to recalculate mean
     private int cmnWindow;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        super.register(name, registry);
+	registry.register(PROP_INITIAL_MEAN, PropertyType.DOUBLE);
+	registry.register(PROP_CMN_WINDOW, PropertyType.INT);
+	registry.register(PROP_CMN_SHIFT_WINDOW, PropertyType.INT);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+	initialMean = ps.getDouble (PROP_INITIAL_MEAN, PROP_INITIAL_MEAN_DEFAULT);
+	cmnWindow = ps.getInt (PROP_CMN_WINDOW, PROP_CMN_WINDOW_DEFAULT);
+	cmnShiftWindow = ps.getInt (PROP_CMN_SHIFT_WINDOW, PROP_CMN_SHIFT_WINDOW_DEFAULT);
+    }
 
     /**
      * Initializes this LiveCMN.
-     *
-     * @param name         the name of this LiveCMN, if it is null, the
-     *                     name "LiveCMN" will be given by default
-     * @param frontEnd     the front end this LiveCMN belongs to
-     * @param props        the SphinxProperties to read properties from
-     * @param predecessor  the DataProcessor from which this normalizer
-     *                     obtains Data to normalize
      */
-    public void initialize(String name, String frontEnd,
-			   SphinxProperties props, DataProcessor predecessor) {
-        super.initialize((name == null ? "LiveCMN" : name), frontEnd,
-                          props, predecessor);
-        setProperties(props);
+    public void initialize() {
+        super.initialize();
     }
 
 
@@ -134,21 +148,6 @@ public class LiveCMN extends BaseDataProcessor {
 	sum = new double[cepstrumLength];
     }
 
-
-    /**
-     * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param props the SphinxProperties to read properties from
-     */
-    private void setProperties(SphinxProperties props) {
-	initialMean = props.getDouble
-            (getName(), PROP_INITIAL_MEAN, PROP_INITIAL_MEAN_DEFAULT);
-	cmnWindow = props.getInt
-            (getName(), PROP_CMN_WINDOW, PROP_CMN_WINDOW_DEFAULT);
-	cmnShiftWindow = props.getInt
-            (getName(), PROP_CMN_SHIFT_WINDOW, PROP_CMN_SHIFT_WINDOW_DEFAULT);
-    }
-	
 
     /**
      * Returns the next Data object, which is a normalized Data

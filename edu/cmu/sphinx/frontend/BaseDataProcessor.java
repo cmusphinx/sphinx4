@@ -13,42 +13,38 @@
 
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
  * An abstract DataProcessor implementing elements common to all
- * concrete DataProcessors, such as name, front end name, SphinxProperties,
- * predecessor, and timer.
+ * concrete DataProcessors, such as name, predecessor, and timer.
  */
-public abstract class BaseDataProcessor implements DataProcessor {
-
+public  abstract class BaseDataProcessor implements DataProcessor {
     private String name;
-    private String frontEndName;
-    private SphinxProperties props;
     private DataProcessor predecessor;
     private Timer timer;
-
-    /**
-     * Initializes this DataProcessor.
-     *
-     * @param name the name of this DataProcessor
-     * @param frontEndName the name of the front-end pipeline this
-     *                     DataProcessor is in
-     * @param sphinxProperties the SphinxProperties to use
-     * @param predecessor the predecessor of this DataProcessor
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
      */
-    public void initialize(String name, String frontEndName,
-                           SphinxProperties sphinxProperties,
-                           DataProcessor predecessor) {
-        this.name = name;
-        this.frontEndName = frontEndName;
-        this.props = sphinxProperties;
-        this.predecessor = predecessor;
-        this.timer = Timer.getTimer(name, props.getContext());
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        setName(name);
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+    }
     /**
      * Returns the processed Data output.
      *
@@ -57,6 +53,17 @@ public abstract class BaseDataProcessor implements DataProcessor {
      * @throws DataProcessingException if a data processor error occurs
      */
     public abstract Data getData() throws DataProcessingException;
+    
+    
+    
+    /**
+     * Initializes this DataProcessor. This is typically called after the
+     * DataProcessor has been configured.
+     * 
+     */
+    public  void initialize() {
+        this.timer = Timer.getTimer(name); 
+    }
 
     /**
      * Returns the name of this DataProcessor.
@@ -66,33 +73,16 @@ public abstract class BaseDataProcessor implements DataProcessor {
     public String getName() {
         return name;
     }
-
+    
     /**
-     * Returns the name of the front end this DataProcessor is in.
+     * Sets the name for this front end
      *
-     * @return the name of the front end this DataProcessor is in.
+     * @param name the name
      */
-    public String getFrontEndName() {
-        return frontEndName;
+     private void setName(String name) {
+        this.name = name;
     }
 
-    /**
-     * Returns the context of this BaseDataProcessor.
-     *
-     * @return the context
-     */
-    public String getContext() {
-        return props.getContext();
-    }
-
-    /**
-     * Returns the SphinxProperties.
-     *
-     * @return the SphinxProperties this DataProcessor uses
-     */
-    public SphinxProperties getSphinxProperties() {
-        return props;
-    }
 
     /**
      * Returns the predecessor DataProcessor.
@@ -130,4 +120,5 @@ public abstract class BaseDataProcessor implements DataProcessor {
     public String toString() {
         return name;
     }
+
 }

@@ -12,27 +12,70 @@
 
 package edu.cmu.sphinx.linguist;
 
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 /**
  * A standard interface for a linguist processor
  *
  */
-public interface LinguistProcessor {
+public class LinguistProcessor implements Configurable, Runnable {
 
-  /**
-   * Allows for pluggable behaviors for the linguist.  Linguist
-   * processors are typically invoked after the linguist has been
-   * 'initialized', but before recognition begins. LinguistProcessors
-   * are often used to do things such as optimize the sentence hmm or
-   * dumping out the sentence hmm in a fashion suitable for plotting.
-   *
-   * @param props the set of sphinx properties
-   * @param linguist the initial state of the sentence hmm
-   *
-   */
-    public void  process(SphinxProperties props, Linguist linguist);
+    /**
+     * The sphinx property that defines the name of the linguist to process
+     */
+    
+    public final static String PROP_LINGUIST = "linguist";
 
+    
+    // ----------------------------
+    // Configuration data
+    // ----------------------------
+    private String name;
+    private Linguist linguist;
+    
+    
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry) throws PropertyException {
+        registry.register(PROP_LINGUIST, PropertyType.COMPONENT);
+        this.name = name;
+    }
+
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        linguist = (Linguist) ps.getComponent(PROP_LINGUIST, Linguist.class);
+        
+    }
+
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.util.props.Configurable#getName()
+     */
+    public String getName() {
+        return name;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Runnable#run()
+     */
+    public void run() {
+        
+    }
+
+    
+    /**
+     * Returns the configured lingust
+     * @return the linguist
+     */
+    protected Linguist getLinguist() {
+        return linguist;
+    }
 }
 
 

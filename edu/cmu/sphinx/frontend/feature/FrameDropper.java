@@ -16,9 +16,11 @@ import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.FloatData;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
@@ -29,9 +31,6 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * with the 5th frame, etc..
  */
 public class FrameDropper extends BaseDataProcessor {
-    
-    private static final String PROP_PREFIX
-        = "edu.cmu.sphinx.frontend.feature.FrameDropper.";
 
     /**
      * The SphinxProperty that specifies dropping one in every
@@ -39,7 +38,7 @@ public class FrameDropper extends BaseDataProcessor {
      * drop every third frame, etc..
      */
     public static final String PROP_DROP_EVERY_NTH_FRAME
-        = PROP_PREFIX + "dropEveryNthFrame";
+        = "dropEveryNthFrame";
     
     /**
      * The default value of PROP_DROP_EVERY_NTH_FRAME.
@@ -51,7 +50,7 @@ public class FrameDropper extends BaseDataProcessor {
      * Nth frame with the previous frame.
      */
     public static final String PROP_REPLACE_NTH_WITH_PREVIOUS
-        = PROP_PREFIX + "replaceNthWithPrevious";
+        = "replaceNthWithPrevious";
 
     /**
      * The default value of PROP_REPLACE_NTH_WITH_PREVIOUS.
@@ -65,33 +64,47 @@ public class FrameDropper extends BaseDataProcessor {
     private int dropEveryNthFrame;
     private int id;   // first frame has ID "0", second "1", etc.
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_DROP_EVERY_NTH_FRAME, PropertyType.INT);
+        registry.register(PROP_REPLACE_NTH_WITH_PREVIOUS, PropertyType.BOOLEAN);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        dropEveryNthFrame = ps.getInt
+            ( PROP_DROP_EVERY_NTH_FRAME,
+             PROP_DROP_EVERY_NTH_FRAME_DEFAULT);
+
+        if (dropEveryNthFrame <= 1) {
+            throw new PropertyException(this, PROP_DROP_EVERY_NTH_FRAME, 
+                "must be greater than one");
+        }
+        
+        replaceNthWithPrevious = ps.getBoolean
+            ( PROP_REPLACE_NTH_WITH_PREVIOUS, 
+             PROP_REPLACE_NTH_WITH_PREVIOUS_DEFAULT);
+    }
 
     /**
      * Initializes this FrameDropper.
      *
-     * @param name        the name of this FrameDropper, if it is null,
-     *                    the name "FrameDropper" will be given by default
-     * @param frontEnd    the front end this FrameDropper belongs
-     * @param props       the SphinxProperties to use
-     * @param predecessor the DataProcessor from which to read features
      */
-    public void initialize(String name, String frontEnd, 
-                           SphinxProperties props, DataProcessor predecessor) {
-        super.initialize((name == null ? "FrameDropper" : name),
-                         frontEnd, props, predecessor);
+    public void initialize() {
+        super.initialize();
         this.id = -1;
-
-        dropEveryNthFrame = props.getInt
-            (getName(),
-             PROP_DROP_EVERY_NTH_FRAME,
-             PROP_DROP_EVERY_NTH_FRAME_DEFAULT);
-
-        assert (dropEveryNthFrame > 1);
-        
-        replaceNthWithPrevious = props.getBoolean
-            (getName(),
-             PROP_REPLACE_NTH_WITH_PREVIOUS, 
-             PROP_REPLACE_NTH_WITH_PREVIOUS_DEFAULT);
     }
 
     /**

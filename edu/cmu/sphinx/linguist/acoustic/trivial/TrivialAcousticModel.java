@@ -202,6 +202,22 @@ public class TrivialAcousticModel implements AcousticModel {
         HMM hmm = new TrivialHMM(unit, HMMPosition.UNDEFINED);
         hmmMap.put(unit, hmm);
     }
+
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.linguist.acoustic.AcousticModel#allocate()
+     */
+    public void allocate() throws IOException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.linguist.acoustic.AcousticModel#deallocate()
+     */
+    public void deallocate() {
+        // TODO Auto-generated method stub
+        
+    }
 }
 
 

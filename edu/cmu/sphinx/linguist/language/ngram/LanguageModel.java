@@ -9,17 +9,13 @@
  * WARRANTIES.
  *
  */
-
 package edu.cmu.sphinx.linguist.language.ngram;
 
 import java.io.IOException;
 import java.util.Set;
 
 import edu.cmu.sphinx.linguist.WordSequence;
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.SphinxProperties;
-
+import edu.cmu.sphinx.util.props.Configurable;
 
 /**
  * Represents the generic interface to an N-Gram language model.
@@ -27,81 +23,62 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * Note that all probabilities are in LogMath log base, except as
  * otherwise noted.
  */
-public interface LanguageModel {
-
-    /**
-     * Property prefix string.
-     */
-    public final static String PROP_PREFIX =
-        "edu.cmu.sphinx.linguist.language.ngram.LanguageModel";
-
+public interface LanguageModel extends Configurable {
     /**
      * The SphinxProperty specifying the format of the language model.
      */
-    public final static String PROP_FORMAT = PROP_PREFIX + ".format";
-
-
+    public final static String PROP_FORMAT = "format";
     /**
      * The default value of PROP_FORMAT.
      */
     public final static String PROP_FORMAT_DEFAULT = "arpa";
-
-
     /**
      * The Sphinx Property specifying the location of the language model.
      */
-    public final static String PROP_LOCATION = PROP_PREFIX + ".location";
-
-
+    public final static String PROP_LOCATION = "location";
     /**
      * The default value of PROP_LOCATION.
      */
     public final static String PROP_LOCATION_DEFAULT = ".";
-
-
     /**
      * The Sphinx Property specifying the unigram weight
      */
-    public final static String PROP_UNIGRAM_WEIGHT = PROP_PREFIX 
-        + ".unigramWeight";
-
+    public final static String PROP_UNIGRAM_WEIGHT = "unigramWeight";
     /**
      * The default value for PROP_UNIGRAM_WEIGHT
      */
     public final static float PROP_UNIGRAM_WEIGHT_DEFAULT = 1.0f;
-
-
     /**
-     * The Sphinx Property specifying the maximum depth reported by
-     * the language model (from a getMaxDepth()) call. If this
-     * property is set to (-1) (the default) the language model
-     * reports the implicit depth of the model.  This property allows
-     * a deeper language model to be used. For instance, a trigram
-     * language model could be used as a bigram model by setting this
-     * property to 2.  Note if this property is set to a value greater
-     * than the implicit depth, the implicit depth is used.  Legal
+     * The Sphinx Property specifying the maximum depth reported by the
+     * language model (from a getMaxDepth()) call. If this property is set to
+     * (-1) (the default) the language model reports the implicit depth of the
+     * model. This property allows a deeper language model to be used. For
+     * instance, a trigram language model could be used as a bigram model by
+     * setting this property to 2. Note if this property is set to a value
+     * greater than the implicit depth, the implicit depth is used. Legal
      * values for this property are 1..N and -1.
      */
-    public final static String PROP_MAX_DEPTH = PROP_PREFIX 
-        + ".maxDepth";
-
+    public final static String PROP_MAX_DEPTH = "maxDepth";
     /**
-     * The default value for PROP_MAX_DEPTH. 
+     * The default value for PROP_MAX_DEPTH.
      */
     public final static int PROP_MAX_DEPTH_DEFAULT = -1;
 
+    
     /**
-     * Initializes this LanguageModel
-     *
-     * @param prop the sphinx properties for the model
-     * @param dictionary the dictinary to use
-     * 
-     *
-     * @throws IOException if an error occurs while loading the model
+     * The Sphinx Property specifying the dictionary to use
      */
-    public void initialize(SphinxProperties prop, Dictionary dictionary) 
-        throws IOException;
-	    	
+    public final static String PROP_DICTIONARY = "dictionary";
+    
+    /**
+     * Create the language model
+     */
+    public void allocate() throws IOException;
+
+    /**
+     * Deallocate resources allocated to this language model
+     */
+    public void deallocate();
 
     /**
      * Called before a recognition
@@ -113,67 +90,38 @@ public interface LanguageModel {
      */
     public void stop();
 
-     /**
-      * Gets the ngram probability of the word sequence represented by
-      * the word list 
-      *
-      * @param wordList a list of strings representing the word
-      * sequence of interest.
-      *
-      * @return the probability of the word sequence in LogMath log
-      * base
-      */
-     // public float getProbability(List wordList);
+    /**
+     * Gets the ngram probability of the word sequence represented by the word
+     * list
+     * 
+     * @param wordSequence
+     *                the wordSequence
+     * 
+     * @return the probability of the word sequence in LogMath log base
+     */
+    public float getProbability(WordSequence wordSequence);
 
-     /**
-      * Gets the ngram probability of the word sequence represented by
-      * the word list 
-      *
-      * @param wordSequence the wordSequence
-      *
-      * @return the probability of the word sequence in LogMath log
-      * base
-      */
-     public float getProbability(WordSequence wordSequence);
+    /**
+     * Gets the smear term for the given wordSequence
+     * 
+     * @param wordSequence
+     *                the word sequence
+     * @return the smear term associated with this word sequence
+     */
+    public float getSmear(WordSequence wordSequence);
 
+    /**
+     * Returns the set of words in the lanaguage model. The set is
+     * unmodifiable.
+     * 
+     * @return the unmodifiable set of words
+     */
+    public Set getVocabulary();
 
-     /**
-      * Gets the smear term for the given wordSequence
-      *
-      * @param wordSequence the word sequence
-      * @return the smear term associated with this word sequence
-      */
-     public float getSmear(WordSequence wordSequence);
-
-
-     /**
-      * Returns the set of words in the lanaguage model. The set is
-      * unmodifiable.
-      *
-      * @return the unmodifiable set of words
-      */
-     public Set getVocabulary();
-
-
-     /**
-      * Provides the log base that controls the range of probabilities
-      * returned by this N-Gram
-      */
-     public void setLogMath(LogMath logMath);
-
-     /**
-      * Returns the log base that controls the range of probabilities
-      * used by this N-gram
-      */
-     public LogMath getLogMath();
-
-
-
-     /**
-      * Returns the maximum depth of the language model
-      *
-      * @return the maximum depth of the language mdoel
-      */
-     public int getMaxDepth();
+    /**
+     * Returns the maximum depth of the language model
+     * 
+     * @return the maximum depth of the language mdoel
+     */
+    public int getMaxDepth();
 }
-

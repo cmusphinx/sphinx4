@@ -21,9 +21,11 @@ package edu.cmu.sphinx.frontend.frequencywarp;
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
@@ -46,14 +48,11 @@ import edu.cmu.sphinx.util.SphinxProperties;
  */
 public class PLPCepstrumProducer extends BaseDataProcessor {
 
-    private static final String PROP_PREFIX
-        = "edu.cmu.sphinx.frontend.frequencywarp.PLPCepstrumProducer.";
-
     /**
      * The SphinxProperty specifying the length of the cepstrum data.
      */
     public static final String PROP_CEPSTRUM_LENGTH
-        = PROP_PREFIX + "cepstrumLength";
+        = "cepstrumLength";
 
     /**
      * The default value of PROP_CEPSTRUM_LENGTH.
@@ -63,7 +62,7 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
     /**
      * The SphinxProperty specifying the LPC order.
      */
-    public static final String PROP_LPC_ORDER = PROP_PREFIX + "lpcOrder";
+    public static final String PROP_LPC_ORDER = "lpcOrder";
 
     /**
      * The default value of PROP_LPC_ORDER.
@@ -75,47 +74,46 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
     private int LPCOrder;           // LPC Order to compute cepstrum
     private int numberPLPFilters;   // number of PLP filters
     private double[][] cosine;
-    private DataProcessor predecessor;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        super.register(name, registry);
+        registry.register(PLPFrequencyFilterBank.PROP_NUMBER_FILTERS, PropertyType.INT);
+        registry.register(PROP_CEPSTRUM_LENGTH, PropertyType.INT);
+
+	registry.register(PROP_LPC_ORDER, PropertyType.INT);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        numberPLPFilters = ps.getInt
+            (PLPFrequencyFilterBank.PROP_NUMBER_FILTERS,
+             PLPFrequencyFilterBank.PROP_NUMBER_FILTERS_DEFAULT);
+        cepstrumSize = ps.getInt(PROP_CEPSTRUM_LENGTH, PROP_CEPSTRUM_LENGTH_DEFAULT);
+
+	LPCOrder = ps.getInt(PROP_LPC_ORDER, PROP_LPC_ORDER_DEFAULT);
+    }
 
     /**
-     * Constructs a PLPCepstrumProducer with the given
-     * SphinxProperties context.
-     *
-     * @param name        the name of this PLPCepstrumProducer, if it is null,
-     *                    the name "PLPCepstrumProducer" will be given by
-     *                    default
-     * @param frontEnd    the front end this PLPCepstrumProducer belongs to
-     * @param props       the SphinxProperties to read properties from
-     * @param predecessor the DataProcessor to get Spectrum objects from
-     *
-     * @throws IOException if an I/O error occurs
+     * Constructs a PLPCepstrumProducer
      */
-    public void initialize(String name, String frontEnd,
-                           SphinxProperties props, DataProcessor predecessor) {
-        super.initialize((name == null ? "PLPCepstrumProducer" : name),
-                         frontEnd, props, predecessor);
-	setProperties(props);
-        this.predecessor = predecessor;
+    public void initialize() {
+        super.initialize();
         computeCosine();
     }
 
 
-    /**
-     * Reads the properties.
-     */
-    private void setProperties(SphinxProperties props) {
-
-        numberPLPFilters = props.getInt
-            (getName(), PLPFrequencyFilterBank.PROP_NUMBER_FILTERS,
-             PLPFrequencyFilterBank.PROP_NUMBER_FILTERS_DEFAULT);
-
-        cepstrumSize = props.getInt
-            (getName(), PROP_CEPSTRUM_LENGTH, PROP_CEPSTRUM_LENGTH_DEFAULT);
-
-	LPCOrder = props.getInt
-            (getName(), PROP_LPC_ORDER, PROP_LPC_ORDER_DEFAULT);
-    }
 
 
     /**
@@ -167,7 +165,7 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
      */
     public Data getData() throws DataProcessingException {
 
-	Data input = predecessor.getData();
+	Data input = getPredecessor().getData();
         Data output = input;
 
         getTimer().start();

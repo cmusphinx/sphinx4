@@ -22,13 +22,14 @@ import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
@@ -39,101 +40,106 @@ import edu.cmu.sphinx.util.Utilities;
  * have cepstra data in it.
  */
 public class StreamCepstrumSource extends BaseDataProcessor {
-
-    private static final String PROP_PREFIX
-        = "edu.cmu.sphinx.frontend.util.StreamCepstrumSource.";
-
     /**
-     * The SphinxProperties specifying whether the input is in binary.
+     * The SphinxProperty specifying whether the input is in binary.
      */
-    public final static String PROP_BINARY = PROP_PREFIX + "binary";
-
+    public final static String PROP_BINARY = "binary";
     /**
      * The default value for PROP_BINARY.
      */
     public final static boolean PROP_BINARY_DEFAULT = true;
-
     /**
-     * The SphinxProperties name for frame size in milliseconds.
+     * The sphinx property  name for frame size in milliseconds.
      */
-    public static final String PROP_FRAME_SIZE_MS
-        = PROP_PREFIX + "frameSizeInMs";
-
+    public static final String PROP_FRAME_SIZE_MS = "frameSizeInMs";
     /**
      * The default value for PROP_FRAME_SIZE_MS.
      */
     public static final float PROP_FRAME_SIZE_MS_DEFAULT = 25.625f;
-
     /**
-     * The SphinxProperties name for frame shift in milliseconds,
-     * which has a default value of 10F.
+     * The sphinx property  name for frame shift in milliseconds, which has a
+     * default value of 10F.
      */
-    public static final String PROP_FRAME_SHIFT_MS
-        = PROP_PREFIX + "frameShiftInMs";
-
+    public static final String PROP_FRAME_SHIFT_MS = "frameShiftInMs";
     /**
      * The default value for PROP_FRAME_SHIFT_MS.
      */
     public static final float PROP_FRAME_SHIFT_MS_DEFAULT = 10;
-
     /**
-     * The SphinxProperty specifying the length of the cepstrum data.
+     * The sphinx property  specifying the length of the cepstrum data.
      */
-    public static final String PROP_CEPSTRUM_LENGTH
-        = PROP_PREFIX + "cepstrumLength";
-
+    public static final String PROP_CEPSTRUM_LENGTH = "cepstrumLength";
     /**
      * The default value of PROP_CEPSTRUM_LENGTH.
      */
     public static final int PROP_CEPSTRUM_LENGTH_DEFAULT = 13;
-
     /**
-     * The SphinxProperty specifying the sample rate of the original data
-     * from which the cepstral data were created.
+     * The sphinx property that defines the sample rate
      */
-    public static final String PROP_SAMPLE_RATE = PROP_PREFIX + "sampleRate";
-
+    public static final String PROP_SAMPLE_RATE = "sampleRate";
     /**
-     * The default value of PROP_SAMPLE_RATE.
+     * The default value for PROP_SAMPLE_RATE
      */
-    public static final int PROP_SAMPLE_RATE_DEFAULT = 16;
-
-
+    public static final int PROP_SAMPLE_RATE_DEFAULT = 16000;
     private boolean binary;
-    private ExtendedStreamTokenizer est;  // for ASCII files
+    private ExtendedStreamTokenizer est; // for ASCII files
     private DataInputStream binaryStream; // for binary files
     private int numPoints;
     private int curPoint;
     private int cepstrumLength;
-    private int sampleRate;
     private int frameShift;
     private int frameSize;
+    private int sampleRate;
     private long firstSampleNumber;
     private boolean bigEndian = true;
 
-
-    /**
-     * Constructs a StreamCepstrumSource that reads
-     * MelCepstrum data from the given path.
-     *
-     * @param name         the name of this StreamCepstrumSource, if it is
-     *                     null, the name "StreamCepstrumSource" will be given
-     *                     by default
-     * @param frontEnd     the front end this StreamCepstrumSource belongs to
-     * @param props        the SphinxProperties used to read properties
-     * @param predecessor  the DataProcessor to read Data from, usually
-     *                     null for this StreamCepstrumSource
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
      */
-    public void initialize(String name, String frontEnd,
-                           SphinxProperties props, DataProcessor predecessor) {
-	super.initialize((name == null ? "StreamCepstrumSource" : name),
-                         frontEnd, props, predecessor);
-	initSphinxProperties(props);
-	curPoint = -1;
-        firstSampleNumber = 0;
-	bigEndian = true;
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_CEPSTRUM_LENGTH, PropertyType.INT);
+        registry.register(PROP_BINARY, PropertyType.BOOLEAN);
+        registry.register(PROP_FRAME_SHIFT_MS, PropertyType.INT);
+        registry.register(PROP_FRAME_SIZE_MS, PropertyType.INT);
+        registry.register(PROP_SAMPLE_RATE, PropertyType.INT);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        cepstrumLength = ps.getInt(PROP_CEPSTRUM_LENGTH,
+                PROP_CEPSTRUM_LENGTH_DEFAULT);
+        binary = ps.getBoolean(PROP_BINARY, PROP_BINARY_DEFAULT);
+        float frameShiftMs = ps.getFloat(PROP_FRAME_SHIFT_MS,
+                PROP_FRAME_SHIFT_MS_DEFAULT);
+        float frameSizeMs = ps.getFloat(PROP_FRAME_SIZE_MS,
+                PROP_FRAME_SIZE_MS_DEFAULT);
+        sampleRate = ps.getInt(PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
+        frameShift = DataUtil.getSamplesPerWindow(sampleRate, frameShiftMs);
+        frameSize = DataUtil.getSamplesPerShift(sampleRate, frameSizeMs);
+    }
+
+    /**
+     * Constructs a StreamCepstrumSource that reads MelCepstrum data from the
+     * given path.
+     *  
+     */
+    public void initialize() {
+        super.initialize();
+        curPoint = -1;
+        firstSampleNumber = 0;
+        bigEndian = true;
+    }
+ 
 
     /**
      * Sets the InputStream to read cepstral data from.
@@ -164,33 +170,6 @@ public class StreamCepstrumSource extends BaseDataProcessor {
 	}
 	curPoint = -1;
         firstSampleNumber = 0;
-    }
-
-
-    /**
-     * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param props the SphinxProperties to read from
-     */
-    private void initSphinxProperties(SphinxProperties props) {
-	
-        cepstrumLength = props.getInt
-            (getName(), PROP_CEPSTRUM_LENGTH, PROP_CEPSTRUM_LENGTH_DEFAULT);
-	
-        binary = props.getBoolean
-            (getName(), PROP_BINARY, PROP_BINARY_DEFAULT);
-        
-        float frameShiftMs = props.getFloat
-            (getName(), PROP_FRAME_SHIFT_MS, PROP_FRAME_SHIFT_MS_DEFAULT);
-        
-        float frameSizeMs = props.getFloat
-            (getName(), PROP_FRAME_SIZE_MS, PROP_FRAME_SIZE_MS_DEFAULT);
-        
-        sampleRate = props.getInt
-            (getName(), PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
-
-        frameShift = DataUtil.getSamplesPerWindow(sampleRate, frameShiftMs);
-        frameSize = DataUtil.getSamplesPerShift(sampleRate, frameSizeMs);
     }
 
 

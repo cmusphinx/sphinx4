@@ -32,11 +32,12 @@ import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
@@ -49,14 +50,10 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * data as Data objects.
  */
 public class Microphone extends BaseDataProcessor {
-
-    private final static String PROP_PREFIX = 
-        "edu.cmu.sphinx.frontend.util.Microphone.";
-
     /**
      * SphinxProperty for the sample rate of the data.
      */
-    public static final String PROP_SAMPLE_RATE = PROP_PREFIX + "sampleRate";
+    public static final String PROP_SAMPLE_RATE = "sampleRate";
 
     /**
      * Default value for PROP_SAMPLE_RATE.
@@ -70,7 +67,7 @@ public class Microphone extends BaseDataProcessor {
      * too well.
      */
     public final static String PROP_CLOSE_BETWEEN_UTTERANCES =
-	PROP_PREFIX + "closeBetweenUtterances";
+	"closeBetweenUtterances";
 
     /**
      * The default value for the PROP_CLOSE_BETWEEN_UTTERANCES
@@ -82,7 +79,7 @@ public class Microphone extends BaseDataProcessor {
      * The Sphinx property that specifies whether debug statements should
      * be printed.
      */
-    public final static String PROP_DEBUG = PROP_PREFIX + "debug";
+    public final static String PROP_DEBUG = "debug";
 
     /**
      * The default value of PROP_DEBUG.
@@ -94,7 +91,7 @@ public class Microphone extends BaseDataProcessor {
      * read each time from the underlying Java Sound audio device.
      */
     public final static String PROP_BYTES_PER_READ
-        = PROP_PREFIX + "bytesPerRead";
+        = "bytesPerRead";
 
     /**
      * The default value of PROP_BYTES_PER_READ. The current default
@@ -108,7 +105,7 @@ public class Microphone extends BaseDataProcessor {
      * SphinxProperty for the number of bits per value.
      */
     public static final String PROP_BITS_PER_SAMPLE =
-        PROP_PREFIX + "bitsPerSample";
+        "bitsPerSample";
 
     /**
      * Default value for PROP_BITS_PER_SAMPLE.
@@ -120,7 +117,7 @@ public class Microphone extends BaseDataProcessor {
      * data of an utterance around until the next utterance is recorded.
      */
     public final static String PROP_KEEP_LAST_AUDIO
-        = PROP_PREFIX + "keepLastAudio";
+        = "keepLastAudio";
 
     /**
      * The default value of PROP_KEEP_AUDIO.
@@ -169,22 +166,61 @@ public class Microphone extends BaseDataProcessor {
     private static Logger logger = Logger.getLogger
         ("edu.cmu.sphinx.frontend.util.Microphone");
     
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry) throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_SAMPLE_RATE, PropertyType.INT);
+	registry.register(PROP_CLOSE_BETWEEN_UTTERANCES, PropertyType.BOOLEAN);
+        registry.register(PROP_BYTES_PER_READ, PropertyType.INT);
+        registry.register(PROP_BITS_PER_SAMPLE, PropertyType.INT);
+        registry.register(PROP_KEEP_LAST_AUDIO, PropertyType.BOOLEAN);
+        registry.register(PROP_DEBUG, PropertyType.BOOLEAN);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+
+        sampleRate = ps.getInt
+            (PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
+        
+	closeBetweenUtterances = ps.getBoolean
+            (PROP_CLOSE_BETWEEN_UTTERANCES,
+             PROP_CLOSE_BETWEEN_UTTERANCES_DEFAULT);
+
+        frameSizeInBytes = ps.getInt
+            (PROP_BYTES_PER_READ, PROP_BYTES_PER_READ_DEFAULT);
+
+        if (frameSizeInBytes % 2 == 1) {
+            frameSizeInBytes++;
+        }
+
+        sampleSizeInBytes = ps.getInt
+            (PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT)/8;
+
+        keepDataReference = ps.getBoolean
+            (PROP_KEEP_LAST_AUDIO, PROP_KEEP_LAST_AUDIO_DEFAULT);
+        
+        debug = ps.getBoolean
+            (PROP_DEBUG, PROP_DEBUG_DEFAULT);
+    }
 
     /**
      * Constructs a Microphone with the given InputStream.
      *
-     * @param name the name of this Microphone
-     * @param frontEnd the frontEnd this Microphone belongs to
-     * @param props the SphinxProperties to read properties from
-     * @param predecessor the predecessor DataProcessor of this Microphone
-     *
      * @throws IOException if an I/O error occurs
      */
-    public void initialize(String name, String frontEnd,
-                           SphinxProperties props, DataProcessor predecessor) {
-        super.initialize((name == null ? "Microphone" : name),
-                         frontEnd, props, predecessor);
-	setProperties(props);
+    public void initialize() {
+        super.initialize();
         audioFormat = new AudioFormat
             ((float) sampleRate, sampleSizeInBytes * 8, channels,
              signed, bigEndian);
@@ -192,36 +228,6 @@ public class Microphone extends BaseDataProcessor {
     }
 
 
-    /**
-     * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param props a SphinxProperties object specifying the properties values
-     */
-    private void setProperties(SphinxProperties props) {
-
-        sampleRate = props.getInt
-            (getName(), PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
-        
-	closeBetweenUtterances = props.getBoolean
-            (getName(), PROP_CLOSE_BETWEEN_UTTERANCES,
-             PROP_CLOSE_BETWEEN_UTTERANCES_DEFAULT);
-
-        frameSizeInBytes = props.getInt
-            (getName(), PROP_BYTES_PER_READ, PROP_BYTES_PER_READ_DEFAULT);
-
-        if (frameSizeInBytes % 2 == 1) {
-            frameSizeInBytes++;
-        }
-
-        sampleSizeInBytes = props.getInt
-            (getName(), PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT)/8;
-
-        keepDataReference = props.getBoolean
-            (getName(), PROP_KEEP_LAST_AUDIO, PROP_KEEP_LAST_AUDIO_DEFAULT);
-        
-        debug = props.getBoolean
-            (getName(), PROP_DEBUG, PROP_DEBUG_DEFAULT);
-    }
 
     /**
      * Calculate the sleep time in milliseconds.

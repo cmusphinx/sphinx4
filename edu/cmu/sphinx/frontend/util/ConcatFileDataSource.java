@@ -24,14 +24,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import edu.cmu.sphinx.frontend.BaseDataProcessor;
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.util.BatchFile;
 import edu.cmu.sphinx.util.ReferenceSource;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
@@ -91,19 +89,22 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * describes the "correct" sequence of speech and silences in the 
  * concatenated version of the audio files.
  */
-public class ConcatFileDataSource extends BaseDataProcessor
+public class ConcatFileDataSource extends StreamDataSource
     implements ReferenceSource {
 
     /**
-     * The prefix for the SphinxProperties in this class.
+     * SphinxProperty for the sample rate.
      */
-    public static final String PROP_PREFIX =
-        "edu.cmu.sphinx.frontend.util.ConcatFileDataSource.";
+    public static final String PROP_SAMPLE_RATE =  "sampleRate";
+    /**
+     * Default value for PROP_SAMPLE_RATE.
+     */
+    public static final int PROP_SAMPLE_RATE_DEFAULT = 16000;
 
     /**
      * The SphinxProperty that specifies which file to start at.
      */
-    public static final String PROP_START_FILE = PROP_PREFIX + "startFile";
+    public static final String PROP_START_FILE = "startFile";
 
     /**
      * The default value for PROP_START_FILE_DEFAULT.
@@ -114,7 +115,7 @@ public class ConcatFileDataSource extends BaseDataProcessor
      * The SphinxProperty that specifies the number of files to skip
      * for every file read.
      */
-    public static final String PROP_SKIP = PROP_PREFIX + "skip";
+    public static final String PROP_SKIP = "skip";
 
     /**
      * The default value for PROP_SKIP.
@@ -125,7 +126,7 @@ public class ConcatFileDataSource extends BaseDataProcessor
      * The SphinxProperty that specifies the total number of files to read.
      * The default value should be no limit.
      */
-    public static final String PROP_TOTAL_FILES = PROP_PREFIX + "totalFiles";
+    public static final String PROP_TOTAL_FILES = "totalFiles";
 
     /**
      * The default value for PROP_TOTAL_FILES.
@@ -138,7 +139,7 @@ public class ConcatFileDataSource extends BaseDataProcessor
      * files.
      */
     public static final String PROP_SILENCE_FILE =
-        PROP_PREFIX + "silenceFile";
+        "silenceFile";
 
     /**
      * The default value for PROP_SILENCE_FILE.
@@ -149,7 +150,7 @@ public class ConcatFileDataSource extends BaseDataProcessor
      * The SphinxProperty that specifies whether to add random silence.
      */
     public static final String PROP_ADD_RANDOM_SILENCE = 
-        PROP_PREFIX + "addRandomSilence";
+        "addRandomSilence";
 
     /**
      * The default value for PROP_ADD_RANDOM_SILENCE.
@@ -167,7 +168,7 @@ public class ConcatFileDataSource extends BaseDataProcessor
      * between files.
      */
     public static final String PROP_MAX_SILENCE = 
-        PROP_PREFIX + "maxSilence";
+        "maxSilence";
 
     /**
      * The default value of PROP_MAX_SILENCE.
@@ -180,7 +181,7 @@ public class ConcatFileDataSource extends BaseDataProcessor
      * No transcript file will be created if this property is not set.
      */
     public static final String PROP_TRANSCRIPT_FILE = 
-        PROP_PREFIX + "transcriptFile";
+        "transcriptFile";
 
     /**
      * The default value of PROP_TRANSCRIPT_FILE.
@@ -192,7 +193,7 @@ public class ConcatFileDataSource extends BaseDataProcessor
      * to read from.
      */
     public static final String PROP_BATCH_FILE =
-        PROP_PREFIX + "batchFile";
+        "batchFile";
 
     /**
      * The default value of PROP_BATCH_FILE.
@@ -203,7 +204,7 @@ public class ConcatFileDataSource extends BaseDataProcessor
      * SphinxProperty for the number of bits per value.
      */
     public static final String PROP_BITS_PER_SAMPLE =
-        PROP_PREFIX + "bitsPerSample";
+        "bitsPerSample";
 
     /**
      * Default value for PROP_BITS_PER_SAMPLE.
@@ -228,93 +229,85 @@ public class ConcatFileDataSource extends BaseDataProcessor
     private StreamDataSource streamDataSource;
     private List referenceList;
     private FileWriter transcript;
+    private int startFile;
+    private int totalFiles;
+    private int sampleRate;
+    private int bitsPerSample;
+    private String batchFile;
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_ADD_RANDOM_SILENCE, PropertyType.BOOLEAN);
+        registry.register(PROP_MAX_SILENCE, PropertyType.INT);
+        registry.register(PROP_SKIP, PropertyType.INT);
+        registry.register(PROP_SILENCE_FILE, PropertyType.STRING);
+        registry.register(PROP_START_FILE, PropertyType.INT);
+        registry.register(PROP_TOTAL_FILES, PropertyType.INT);
+        registry.register(PROP_TRANSCRIPT_FILE, PropertyType.STRING);
+        registry.register(PROP_BATCH_FILE, PropertyType.STRING);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        int sampleRate = ps.getInt ( PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
+        int bitsPerSample = ps.getInt
+            (PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT);
+        bytesPerSecond = sampleRate * (bitsPerSample / 8);
+        addRandomSilence = ps.getBoolean
+            (PROP_ADD_RANDOM_SILENCE, PROP_ADD_RANDOM_SILENCE_DEFAULT);
+        maxSilence = ps.getInt (PROP_MAX_SILENCE, PROP_MAX_SILENCE_DEFAULT);
+        skip = ps.getInt (PROP_SKIP, PROP_SKIP_DEFAULT);
+        silenceFileName = ps.getString (PROP_SILENCE_FILE, PROP_SILENCE_FILE_DEFAULT);
+        startFile = ps.getInt
+            (PROP_START_FILE, PROP_START_FILE_DEFAULT);
+        totalFiles = ps.getInt
+            ( PROP_TOTAL_FILES, PROP_TOTAL_FILES_DEFAULT);
+        transcriptFile = ps.getString
+            ( PROP_TRANSCRIPT_FILE, PROP_TRANSCRIPT_FILE_DEFAULT);
+        batchFile = ps.getString
+            ( PROP_BATCH_FILE, PROP_BATCH_FILE_DEFAULT);
+    }
 
 
     /**
      * Initializes a ConcatFileDataSource.
-     *
-     * @param name         the name of this ConcatFileDataSource, if it is
-     *                     null, the name "ConcatFileDataSource" will be given
-     *                     by default
-     * @param frontEnd     the front end this ConcatFileDataSource belongs
-     * @param props        the SphinxProperties to use
-     * @param predecessor  the DataProcessor to read Data from, usually
-     *                     null for the ConcatFileDataSource
+
      */
-    public void initialize(String name, String frontEnd,
-                           SphinxProperties props, DataProcessor predecessor) {
-        super.initialize((name == null ? "ConcatFileDataSource" : name),
-                         frontEnd, props, predecessor);
+    public void initialize() {
+        super.initialize();
 
-        int sampleRate = props.getInt
-            (getName(),
-             FrontEndFactory.PROP_SAMPLE_RATE,
-             FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
-
-        int bitsPerSample = props.getInt
-            (getName(), PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT);
-        
-        bytesPerSecond = sampleRate * (bitsPerSample / 8);
-
-        addRandomSilence = props.getBoolean
-            (getName(), PROP_ADD_RANDOM_SILENCE,
-             PROP_ADD_RANDOM_SILENCE_DEFAULT);
-        
-        maxSilence = props.getInt
-            (getName(), PROP_MAX_SILENCE, PROP_MAX_SILENCE_DEFAULT);
-        
-        skip = props.getInt
-            (getName(), PROP_SKIP, PROP_SKIP_DEFAULT);
-        
-        silenceFileName = props.getString
-            (getName(), PROP_SILENCE_FILE, PROP_SILENCE_FILE_DEFAULT);
-        
-        File silenceFile = new File(silenceFileName);
-        silenceFileLength = silenceFile.length();
-
-        int startFile = props.getInt
-            (getName(), PROP_START_FILE, PROP_START_FILE_DEFAULT);
-
-        int totalFiles = props.getInt
-            (getName(), PROP_TOTAL_FILES, PROP_TOTAL_FILES_DEFAULT);
-
-        transcriptFile = props.getString
-            (getName(), PROP_TRANSCRIPT_FILE, PROP_TRANSCRIPT_FILE_DEFAULT);
-
-        String batchFile = props.getString
-            (getName(), PROP_BATCH_FILE, PROP_BATCH_FILE_DEFAULT);
-        
         try {
+            File silenceFile = new File(silenceFileName);
+            silenceFileLength = silenceFile.length();
+
             if (transcriptFile != null) {
                 transcript = new FileWriter(transcriptFile);
             }
             if (batchFile == null) {
                 throw new Error("BatchFile cannot be null!");
             }
-            streamDataSource = new StreamDataSource();
-            streamDataSource.initialize
-                ("StreamDataSource", frontEnd, props, null);
-            streamDataSource.setInputStream
+            setInputStream
                 (new SequenceInputStream
                  (new InputStreamEnumeration
                   (batchFile, startFile, totalFiles)), batchFile);
             referenceList = new LinkedList();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace(); //TODO fix this
         }
     }
 
-    /**
-     * Returns the next Data object.
-     * Returns null if all the audio data in all the files have been read.
-     *
-     * @return the next Data or <code>null</code> if no more is available
-     *
-     * @throws DataProcessingException if a data processing error occurs
-     */
-    public Data getData() throws DataProcessingException {
-        return streamDataSource.getData();
-    }
 
     /**
      * Returns a list of all reference text. Implements the getReferences()

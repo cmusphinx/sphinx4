@@ -1,4 +1,3 @@
-
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -10,198 +9,165 @@
  * WARRANTIES.
  *
  */
-
 package edu.cmu.sphinx.linguist.dictionary;
 
-
+import java.io.IOException;
+import edu.cmu.sphinx.util.props.Configurable;
 
 /**
- * Provides a generic interface to a dictionary. The dictionary is
- * responsibile for determining how a word is pronounced.
+ * Provides a generic interface to a dictionary. The dictionary is responsibile
+ * for determining how a word is pronounced.
  */
-public interface Dictionary {
-
+public interface Dictionary extends Configurable {
     /**
      * Spelling of the sentence start word.
      */
     public static final String SENTENCE_START_SPELLING = "<s>";
-
     /**
      * Spelling of the sentence end word.
      */
     public static final String SENTENCE_END_SPELLING = "</s>";
-
     /**
      * Spelling of the 'word' that marks a silence
      */
     public static final String SILENCE_SPELLING = "<sil>";
-
-
     /**
-     * Prefix string for the Sphinx properties of this Dictionary.
+     * The name of the SphinxProperty that defines the location (directory or
+     * jar file) for the dictionary
      */
-    public static final String PROP_PREFIX =
-        "edu.cmu.sphinx.linguist.dictionary.Dictionary.";
-
-
-    /**
-     * The name of the SphinxProperty that defines the location
-     * (directory or jar file) for the dictionary
-     */
-    public static final String PROP_LOCATION =
-        PROP_PREFIX + "location";
-
-
+    public static final String PROP_LOCATION = "location";
     /**
      * The default value of PROP_LOCATION.
      */
     public static final String PROP_LOCATION_DEFAULT = null;
-
-
     /**
      * The name of the SphinxProperty for the dictionary file path.
      */
-    public static final String PROP_DICTIONARY = PROP_PREFIX +"dictionaryPath";
-
-
+    public static final String PROP_DICTIONARY = "dictionaryPath";
     /**
      * The default value of PROP_DICTIONARY.
      */
     public static final String PROP_DICTIONARY_DEFAULT = null;
-
-
     /**
      * The name of the SphinxProperty for the filler dictionary file path.
      */
-    public static final String PROP_FILLER_DICTIONARY =
-        PROP_PREFIX + "fillerPath";
-
-
+    public static final String PROP_FILLER_DICTIONARY = "fillerPath";
     /**
      * The default value of PROP_FILLER_DICTIONARY.
      */
     public static final String PROP_FILLER_DICTIONARY_DEFAULT = null;
-
-
     /**
-     * The name of the SphinxProperty that specifies whether to add
-     * a duplicate SIL-ending pronunication.
+     * The name of the SphinxProperty that specifies whether to add a duplicate
+     * SIL-ending pronunication.
      */
-    public static final String PROP_ADD_SIL_ENDING_PRONUNCIATION =
-        PROP_PREFIX + "addSilEndingPronunciation";
-
-
+    public static final String PROP_ADD_SIL_ENDING_PRONUNCIATION = "addSilEndingPronunciation";
     /**
      * The default value of PROP_ADD_SIL_ENDING_PRONUNCIATION.
      */
-    public static final boolean PROP_ADD_SIL_ENDING_PRONUNCIATION_DEFAULT
-	= false;
-
-
+    public static final boolean PROP_ADD_SIL_ENDING_PRONUNCIATION_DEFAULT = false;
     /**
-     * The name of the SphinxProperty that specifies the word to
-     * substitute when a lookup fails to find the word in the
-     * dictionary.  If this is not set, no substitute is performed.
+     * The name of the SphinxProperty that specifies the word to substitute
+     * when a lookup fails to find the word in the dictionary. If this is not
+     * set, no substitute is performed.
      */
-    public static final String PROP_WORD_REPLACEMENT =
-        PROP_PREFIX + "wordReplacement";
-   
-
+    public static final String PROP_WORD_REPLACEMENT = "wordReplacement";
     /**
      * The default value of PROP_WORD_REPLACEMENT.
      */
     public static final String PROP_WORD_REPLACEMENT_DEFAULT = null;
-
- 
     /**
-     * The name of the SphinxProperty that specifies whether the
-     * dictionary should return null if a word is not found in the
-     * dictionary, or whether it should throw an error.  If true, a
-     * null is returned for words that are not found in the dictionary
-     * (and the 'PROP_WORD_REPLACEMENT' property is not set).
+     * The name of the SphinxProperty that specifies whether the dictionary
+     * should return null if a word is not found in the dictionary, or whether
+     * it should throw an error. If true, a null is returned for words that are
+     * not found in the dictionary (and the 'PROP_WORD_REPLACEMENT' property is
+     * not set).
      */
-    public static final String PROP_ALLOW_MISSING_WORDS =
-        PROP_PREFIX + "allowMissingWords";
-
-
+    public static final String PROP_ALLOW_MISSING_WORDS = "allowMissingWords";
     /**
      * The default value of PROP_ALLOW_MISSING_WORDS.
      */
     public static final boolean PROP_ALLOW_MISSING_WORDS_DEFAULT = false;
-
-
     /**
      * The SphinxProperty that specifies whether the Dictionary.getWord()
-     * method should return a Word object even if the word does not exist
-     * in the dictionary. If this property is true, and property
-     * allowMissingWords is also true, the method will return a Word, 
-     * but the Word will have null Pronunciations. Otherwise, the method
-     * will return null. This property is usually only used for
-     * testing purposes.
+     * method should return a Word object even if the word does not exist in
+     * the dictionary. If this property is true, and property allowMissingWords
+     * is also true, the method will return a Word, but the Word will have null
+     * Pronunciations. Otherwise, the method will return null. This property is
+     * usually only used for testing purposes.
      */
-    public static final String PROP_CREATE_MISSING_WORDS =
-        PROP_PREFIX + "createMissingWords";
-
-
+    public static final String PROP_CREATE_MISSING_WORDS = "createMissingWords";
     /**
      * The default value of PROP_CREATE_MISSING_WORD.
      */
     public static final boolean PROP_CREATE_MISSING_WORDS_DEFAULT = false;
-    
 
     /**
-     * Returns a Word object based on the spelling and its classification.
-     * The behavior of this method is also affected by the properties
+     * Returns a Word object based on the spelling and its classification. The
+     * behavior of this method is also affected by the properties
      * wordReplacement, allowMissingWords, and createMissingWords.
-     *
-     * @param text the spelling of the word of interest.
-     *
+     * 
+     * @param text
+     *                the spelling of the word of interest.
+     * 
      * @return a Word object
-     *
+     * 
      * @see edu.cmu.sphinx.linguist.dictionary.Pronunciation
      */
     public Word getWord(String text);
 
     /**
      * Returns the sentence start word.
-     *
+     * 
      * @return the sentence start word
      */
     public Word getSentenceStartWord();
 
     /**
      * Returns the sentence end word.
-     *
+     * 
      * @return the sentence end word
      */
     public Word getSentenceEndWord();
 
     /**
      * Returns the silence word.
-     *
+     * 
      * @return the silence word
      */
     public Word getSilenceWord();
-    
+
     /**
      * Returns the set of all possible word classifications for this
      * dictionary.
-     *
+     * 
      * @return the set of all possible word classifications
      */
     public WordClassification[] getPossibleWordClassifications();
 
     /**
      * Dumps out a dictionary
-     *
+     *  
      */
     public void dump();
 
     /**
      * Gets the set of all filler words in the dictionary
-     *
+     * 
      * @return an array (possibly empty) of all filler words
      */
     public Word[] getFillerWords();
-}
 
+    /**
+     * Allocates the dictionary
+     * 
+     * @throws IOException
+     *                 if there is trouble loading the dictionary
+     */
+    public void allocate() throws IOException;
+
+    /**
+     * Deallocates the dictionary
+     *  
+     */
+    public void deallocate();
+}
