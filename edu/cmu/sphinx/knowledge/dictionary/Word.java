@@ -68,6 +68,15 @@ public class Word implements Serializable {
     }
 
     /**
+     * Retrieves the pronunciations of this word
+     * 
+     * @return the pronunciations of this word
+     */
+    public Pronunciation[] getPronunciations() {
+	return pronunciations;
+    }
+
+    /**
      * Returns a string representation of this word, which is the spelling
      *
      * @return the spelling of this word
