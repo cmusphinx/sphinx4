@@ -96,6 +96,25 @@ public class HMMPosition implements Serializable {
         return index;
     }
 
+
+    /**
+     * Determines if this position is an end word position
+     *
+     * @return true if this is an end of word position
+     */
+    public boolean isWordEnd() {
+        return this == SINGLE || this == END;
+    }
+
+    /**
+     * Determines if this position is word beginning position
+     *
+     * @return true if this is a word beginning position
+     */
+    public boolean isWordBeginning() {
+        return this == SINGLE || this == BEGIN;
+    }
+
     /**
      * Returns the canonical object for the HMMPosition
      */
