@@ -234,7 +234,7 @@ function printTestResults(testName) {
       print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
       print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
       print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
-      print "<td valign=top bgcolor=#ccffff><b>Speed (X Realtime)<br> </b></td>";
+      print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
 
       for (i = 1; i <= testCount[testName]; i++) {
          printSingleTest(testName, i);

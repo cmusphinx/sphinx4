@@ -87,7 +87,7 @@ function getWER(testName, testCount,     _errors, _words) {
 ####
 # gets the speed for the given test
 #
-function getSpeed(testName, testCount, _audioTime, _procTime) {
+function getTime(testName, testCount, _audioTime, _procTime) {
     updateData(testName, testCount);
     _audioTime = data[F_AUDIO_TIME];
     _procTime = data[F_PROC_TIME];
@@ -133,35 +133,35 @@ function getAccuracyStatus(testName) {
 ####
 # returns the speed status for the given test
 #
-function getSpeedStatus(testName, _slowThreshold, _fastThreshold) {
-  thisSpeed = getSpeed(testName, testCount[testName]);
-  prevSpeed = getSpeed(testName, testCount[testName] - 1);
+function getTimeStatus(testName, _slowThreshold, _fastThreshold) {
+  thisTime = getTime(testName, testCount[testName]);
+  prevTime = getTime(testName, testCount[testName] - 1);
 
-  if (thisSpeed == "N/A") {
+  if (thisTime == "N/A") {
       return "N/A";
   }
 
-  if (prevSpeed == "N/A") {
-      return "OK - " thisSpeed " ";
+  if (prevTime == "N/A") {
+      return "OK - " thisTime " ";
   }
 
-  if (thisSpeed == prevSpeed) {
-      return "OK - " thisSpeed " ";
+  if (thisTime == prevTime) {
+      return "OK - " thisTime " ";
   }
 
-  _slowThreshold = prevSpeed + prevSpeed * .0;
-  _fastThreshold = prevSpeed - prevSpeed * .0;
+  _slowThreshold = prevTime + prevTime * .1;
+  _fastThreshold = prevTime - prevTime * .1;
 
-  if (thisSpeed > _slowThreshold) {
-      return "REGRESSED - decreased from " prevSpeed " to " \
-      	thisSpeed " " ;
+  if (thisTime > _slowThreshold) {
+      return "REGRESSED - increased from " prevTime " to " \
+      	thisTime " " ;
   }
 
-  if (thisSpeed  < _fastThreshold) {
-      return "IMPROVED  - increased from " prevSpeed " to " \
-      	thisSpeed " ";
+  if (thisTime  < _fastThreshold) {
+      return "IMPROVED  - decreased from " prevTime " to " \
+      	thisTime " ";
   }
-  return "OK - " thisSpeed " ";
+  return "OK - " thisTime " ";
 }
 
 ####
@@ -209,9 +209,9 @@ END {
 
     for (i in testCount) {
         print i;
-	print "    Status           "  getRunStatus(i);
-	print "    Accuracy (WER %) "  getAccuracyStatus(i);
-	print "    Speed (X RT)     "  getSpeedStatus(i);
+	print "    Status            "  getRunStatus(i);
+	print "    Accuracy (WER %)  "  getAccuracyStatus(i);
+	print "    Time (X Realtime) "  getTimeStatus(i);
 	printf("\n");
     }
     print ""
