@@ -95,8 +95,11 @@ public class Edge {
     }
 
     /**
-     * Get the acoustic score associated with an Edge
-     * @return the score
+     * Get the acoustic score associated with an Edge. This is the acoustic
+     * score of the word that this edge is transitioning to, that is,
+     * the word represented by the node returned by the getToNode() method.
+     *
+     * @return the acoustic score of the word this edge is transitioning to
      */
     public double getAcousticScore() {
         return acousticScore;
