@@ -20,22 +20,21 @@ package edu.cmu.sphinx.frontend.frequencywarp;
  * creates mel-filters and filters spectrum data using the method
  * {@link #filterOutput(double[]) filterOutput}.
  * <p>
- * A mel-filter is a bandpass filter with a triangular shape, with the
- * area of the triangle equals to 1.  When a mel-filter is
- * constructed, the parameters <code>leftEdge</code>,
+ * A mel-filter is a triangular shaped bandpass filter.  When a
+ * mel-filter is constructed, the parameters <code>leftEdge</code>,
  * <code>rightEdge</code>, <code>centerFreq</code>,
  * <code>initialFreq</code>, and <code>deltaFreq</code> are given to
  * the {@link MelFilter Constructor}. The first three arguments to the
- * constructor, i.e. <code>leftEdge</code>, <code>rightEdge</code>, and
- * <code>centerFreq</code>, specify the filter's slopes. The total area
- * under the filter is 1. The filter is shaped as a triangle. Knowing
- * the distance between the center frequency and each of the edges, it
- * is easy to compute the slopes of the two sides in the triangle -
- * the third side being the frequency axis. The last two arguments,
- * <code>initialFreq</code> and <code>deltaFreq</code>, identify the
- * first frequency bin that falls inside this filter and the spacing
- * between successive frequency bins. All frequencies here are
- * considered in a linear scale.
+ * constructor, i.e. <code>leftEdge</code>, <code>rightEdge</code>,
+ * and <code>centerFreq</code>, specify the filter's slopes. The total
+ * area under the filter is 1. The filter is shaped as a
+ * triangle. Knowing the distance between the center frequency and
+ * each of the edges, it is easy to compute the slopes of the two
+ * sides in the triangle - the third side being the frequency
+ * axis. The last two arguments, <code>initialFreq</code> and
+ * <code>deltaFreq</code>, identify the first frequency bin that falls
+ * inside this filter and the spacing between successive frequency
+ * bins. All frequencies here are considered in a linear scale.
  * <p>
  * Figure 1 below shows pictorially what the other parameters mean.
  * <p>
