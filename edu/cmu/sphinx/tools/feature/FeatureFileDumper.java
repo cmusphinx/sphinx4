@@ -29,6 +29,9 @@ import java.util.LinkedList;
 
 import java.util.Collection;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataStartSignal;
@@ -58,7 +61,13 @@ public class FeatureFileDumper {
     private List allFeatures;
     // Initialize this to an invalid number
     private int featureLength = -1;
-    
+
+    /**
+     * The logger for this class
+     */
+    private static Logger logger =
+            Logger.getLogger("edu.cmu.sphinx.tools.feature.FeatureFileDumper");
+
     /**
      * Constructs a FeatureFileDumper.
      *
@@ -69,7 +78,7 @@ public class FeatureFileDumper {
 	throws FileNotFoundException, IOException {
 	try {
             /*
-	     * Create a new front end and get the feature (cesptra, plp, etc).
+	     * Create a new front end and get the feature (cepstra, plp, etc).
              */
 	    String context = "featureDumping";
             URL url = new File(propsFile).toURI().toURL();
@@ -93,7 +102,7 @@ public class FeatureFileDumper {
 
 	    allFeatures = new LinkedList();
 	    getAllFeatures();
-	    System.out.println("Samples: " + allFeatures.size());
+	    logger.info("Frames: " + allFeatures.size());
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
@@ -109,13 +118,12 @@ public class FeatureFileDumper {
 	try {
 	    assert(allFeatures != null);
 	    Data feature = frontEnd.getData();
-	    System.out.println("Feature: " + feature);
 	    while (!(feature instanceof DataEndSignal)) {
 		if (feature instanceof DoubleData) {
 		    double[] featureData = ((DoubleData)feature).getValues();
 		    if (featureLength < 0) {
 			featureLength = featureData.length;
-                        System.out.println("Feature length: " + featureLength);
+                        logger.info("Feature length: " + featureLength);
 		    }
 		    allFeatures.add(featureData);
 		}
@@ -201,6 +209,9 @@ public class FeatureFileDumper {
 	if (argv.length == 4) {
 	    format = argv[3];
 	}
+	logger.info("Input file: " + inputFile);
+	logger.info("Output file: " + outputFile);
+	logger.info("Format: " + format);
 
 	try {
 	    FeatureFileDumper dumper = new FeatureFileDumper

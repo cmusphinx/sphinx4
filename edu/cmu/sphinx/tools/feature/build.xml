@@ -15,6 +15,11 @@ To create cepstra:
 
 To create plp: 
     ant -Dinput="input file" -Doutput="output file" plp_producer
+
+To create spectra: 
+    ant -Dinput="input file" -Doutput="output file" spectra_producer
+
+Run ant with -Dlogger=logger.props to turn on the logging.
 </description>
 
     <!-- ********************************************************** -->
@@ -27,6 +32,7 @@ To create plp:
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="input"              value="/dev/null"/>
     <property name="output"             value="/dev/null"/>
+    <property name="logger"       value=""/>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -55,6 +61,17 @@ To create plp:
 		   srcdir="."/>
     </target>
 
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Deletes all build output and *~ file droppings         * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="clean" description="Delete all build output">
+        <delete>
+            <fileset defaultexcludes="no" dir="." includes="**/*~"/>
+        </delete>
+        <delete dir="${classes_dir}/edu/cmu/sphinx/tools/feature"/>
+    </target>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -62,13 +79,15 @@ To create plp:
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="cepstra_producer"
-	    description="Produces feature."
+	    description="Produces cepstra."
 	    depends="all">
-	    <java classname="edu.cmu.sphinx.tools.cepstra.FeatureFileDumper"
+	    <java classname="edu.cmu.sphinx.tools.feature.FeatureFileDumper"
 	          classpath="${classes_dir}"
 		  fork="true"
 		  maxmemory="128m">
                   <jvmarg value="-ea"/>
+                  <sysproperty key="java.util.logging.config.file"
+                         value="${logger}"/>
 		  <arg value="cepstra_dump.props"/>
 		  <arg value="${input}"/>
 		  <arg value="${output}"/>
@@ -81,14 +100,37 @@ To create plp:
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="plp_producer"
-	    description="Produces feature."
+	    description="Produces plp."
 	    depends="all">
-	    <java classname="edu.cmu.sphinx.tools.cepstra.FeatureFileDumper"
+	    <java classname="edu.cmu.sphinx.tools.feature.FeatureFileDumper"
 	          classpath="${classes_dir}"
 		  fork="true"
 		  maxmemory="128m">
                   <jvmarg value="-ea"/>
+                  <sysproperty key="java.util.logging.config.file"
+                         value="${logger}"/>
 		  <arg value="plp_dump.props"/>
+		  <arg value="${input}"/>
+		  <arg value="${output}"/>
+            </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Produces a spectra file.                              * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="spectra_producer"
+	    description="Produces plp."
+	    depends="all">
+	    <java classname="edu.cmu.sphinx.tools.feature.FeatureFileDumper"
+	          classpath="${classes_dir}"
+		  fork="true"
+		  maxmemory="128m">
+                  <jvmarg value="-ea"/>
+                  <sysproperty key="java.util.logging.config.file"
+                         value="${logger}"/>
+		  <arg value="spectra_dump.props"/>
 		  <arg value="${input}"/>
 		  <arg value="${output}"/>
             </java>
