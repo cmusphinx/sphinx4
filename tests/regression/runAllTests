@@ -1,6 +1,23 @@
-runTest /home/plamere/s4test an4_words_unigram
-runTest /home/plamere/s4test an4_words_trigram
-runTest /home/plamere/s4test an4_words_fail
-runTest /home/plamere/s4test an4_words_fst
-runTest /home/plamere/s4test an4_words_total_fail
-runTest /home/plamere/s4test an4_words
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This script specifies the tests to run for the S4 regression tests
+#
+# each test should start with 'runTest'. The second field is a
+# relative path from the regression test directory to the directory
+# where the test should be run from,  The third field is the make
+# target for the test.
+
+runTest ../performance/an4 an4_words_unigram_quick
+#runTest dummyTests an4_words_unigram
+#runTest dummyTests an4_words_trigram
+#runTest dummyTests an4_words_fail
+#runTest dummyTests an4_words_fst
+#runTest dummyTests an4_words_total_fail
+#runTest dummyTests an4_words

@@ -51,6 +51,9 @@ BEGIN {
 
 }
 
+$1 == "build" {
+    finalBuildRecord = $0;
+}
 $1 == "test" {
     testCount[$5] = testCount[$5] + 1;
     testData[$5 testCount[$5]] = $0;
@@ -168,12 +171,27 @@ function getRunStatus(testName) {
     return data[F_STATUS];
 }
 
+####
+# Prints summary info
+#
+function printSummaryInfo() {
+    split(finalBuildRecord, data);
+    print "Host:             " data[4]
+    print "Date:             " data[2]
+    print "Build Status:     " data[7]
+    print "Build Time:       " data[8] " Secs"
+    print "Run Time:         " data[9] " Secs"
+    print ""
+    print ""
+}
+
 END {
 
     "date" | getline date
     print ""
     print "Sphinx 4 Regression Test Summary for " date
     print "================================================================="
+    printSummaryInfo();
 
     for (i in testCount) {
         print i;

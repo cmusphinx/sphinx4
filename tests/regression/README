@@ -1,0 +1,20 @@
+This directory contains the scripts that execute the S4 regression
+tests.  
+
+Here are some simple instructions.
+
+
+Requirements:
+
+  - Usual set of gnu/unix tools (gawk/perl/cvs/mailx) must be in your path
+  - NIST align program must be your path.
+  - a script called 'scvs' in your path that points to the sourecode
+    repository.  A typical implementation of scvs would look like
+    this:
+
+  export CVS_RSH='/usr/dist/exe/ssh' 
+  cvs -z3 -d:ext:lamere@cvs.cmusphinx.sourceforge.net:/cvsroot/cmusphinx $*
+
+
+ - To add or remove a test from the regression tests, edit the
+   'runAllTests' script

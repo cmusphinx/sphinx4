@@ -16,3 +16,5 @@ test|11/14/02|08:07:53|sunlabs|an4_words_fail|plamere|FAILED|1908.24|982.09|1846
 test|11/14/02|08:07:55|sunlabs|an4_words_fst|plamere|OK|1908.24|982.09|1846|203|102|300|467|170|558.59|0.06|
 test|11/14/02|08:07:56|sunlabs|an4_words_total_fail|plamere|FAILED|||0|0|0|0|0|0||0.06|
 test|11/14/02|08:07:59|sunlabs|an4_words|plamere|OK|1908.24|382.09|1846|203|102|310|467|170|558.59|0.06|
+build|11/14/02|11:40:00|sunlabs|plamere|make|FAILED|4|0|
+build|11/14/02|11:48:25|sunlabs|plamere|make|FAILED|4|N/A|

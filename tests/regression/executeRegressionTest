@@ -1,1 +1,70 @@
-echo welcome to execute regression test
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This script performs the highlevel coordination for the regression
+# tests which includes building S4, runnng the tests, logging the
+# results, putting the results out to CVS and performing email
+# notification
+
+regressionDir=$PWD
+logBase=regression.log
+logPath=$regressionDir/$logBase
+rootDir=../../
+#rootDir=/home/plamere/s4test/
+
+##########################
+# first we build the world
+##########################
+cd $rootDir
+date=`date +%D`
+time=`date +%T`
+machine=`hostname`
+who=`whoami`
+
+startBuildTime=`$regressionDir/getTime`
+if gmake all
+then
+  status="OK";
+else
+  status="FAILED";
+fi
+endBuildTime=`$regressionDir/getTime`
+totalBuildTime=$((endBuildTime - startBuildTime))
+
+
+#########################################
+# If the build succeeded, run the tests
+########################################
+cd $regressionDir
+
+if [ $status = "OK" ]; then
+   startRunTime=`$regressionDir/getTime`
+   runAllTests
+   endRunTime=`$regressionDir/getTime`
+   totalRunTime=$((endRunTime - startRunTime))
+else
+   echo build failure - tests not run
+   totalRunTime="N/A"
+fi
+
+#############################
+# Log the build information
+#############################
+echo "build|$date|$time|$machine|$who|make|$status|$totalBuildTime|$totalRunTime|" >> $logPath
+
+#############################
+# checkin the log
+#############################
+cd $regressionDir
+echo FIXME scvs commit -m "regression_test" $logBase
+
+#################################
+# Generate the email notification
+#################################
+./mailReport
