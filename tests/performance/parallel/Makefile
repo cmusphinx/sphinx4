@@ -250,8 +250,21 @@ aurora.testa.N1_SNR0.prune:
 ##########################################################################
 
 
+aurora.testa.N1_SNR-5.baseline:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora_mfc.props ./batchfiles/aurora.testa.N1_SNR-5.batch
+
+
 aurora.testa.N1_SNR-5:
 	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR-5.batch
+
+
+aurora.testa.N1_SNR-5.prune:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doPruning=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR-5.batch
 
