@@ -1,4 +1,3 @@
-
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -16,9 +15,7 @@ package edu.cmu.sphinx.decoder.scorer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
 import java.io.IOException;
-
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.Feature;
@@ -219,22 +216,22 @@ public class ThreadedAcousticScorer implements AcousticScorer {
             }
 
 	    if (numThreads > 1) {
+                
 		int nThreads = numThreads;
-		int scoreablesPerThread = 
-                    (scoreableList.size() + (numThreads - 1)) / numThreads;
+		int scoreablesPerThread = (scoreableList.size()
+			+ (numThreads - 1)) / numThreads;
 		if (scoreablesPerThread < minScoreablesPerThread) {
 		    scoreablesPerThread = minScoreablesPerThread;
-		    nThreads = (scoreableList.size() + 
-                                (scoreablesPerThread - 1)) 
-                        / scoreablesPerThread;
+		    nThreads =
+                        (scoreableList.size() + 
+                         (scoreablesPerThread - 1)) / scoreablesPerThread;
 		}
 
 		semaphore.reset(nThreads);
 
 		for (int i = 0; i < nThreads; i++) {
-		    ScoreableJob job = new ScoreableJob
-                        (scoreableList, i * scoreablesPerThread, 
-                         scoreablesPerThread);
+		    ScoreableJob job = new ScoreableJob(scoreableList,
+			    i * scoreablesPerThread, scoreablesPerThread);
                     if (i < (nThreads - 1)) {
                         mailbox.post(job);
                     } else {
@@ -246,8 +243,8 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 		best = semaphore.pend();
 
 	    } else {
-		ScoreableJob job = new ScoreableJob
-                    (scoreableList, 0, scoreableList.size());
+		ScoreableJob job = new ScoreableJob(scoreableList, 0,
+                        scoreableList.size());
 		best = scoreScoreables(job);
 	    }
 	} catch (IOException ioe) {
@@ -271,15 +268,18 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * @return the best scoring scoreable in the job
      */
     private Scoreable scoreScoreables(ScoreableJob job) {
-        if (job.getSize() <= 0) {
-            return null;
+        
+        Scoreable best = job.getFirst();
+	int listSize = job.getScoreables().size();
+        int end = job.getStart() + job.getSize();
+        if (end > listSize) {
+            end = listSize;
         }
 
-        Scoreable best = job.getFirst();
-        List scoreables = job.getScoreables();
+        ListIterator iterator = job.getListIterator();
 
-	for (int i = job.getStart(); i < job.getSize(); i++) {
-            Scoreable scoreable = (Scoreable) scoreables.get(i);
+	for (int i = job.getStart(); i < end; i++) {
+            Scoreable scoreable = (Scoreable) iterator.next();
 	    if (scoreable.getFrameNumber() != curFeature.getID()) {
 		throw new Error
 		    ("Frame number mismatch: Token: " + 
@@ -436,11 +436,7 @@ class ScoreableJob {
     ScoreableJob(List scoreables, int start, int size) {
 	this.scoreables = scoreables;
 	this.start = start;
-        if ((start + size) > scoreables.size()) {
-            this.size = scoreables.size() - start;
-        } else {
-            this.size = size;
-        }
+	this.size = size;
     }
 
     /**
@@ -462,15 +458,6 @@ class ScoreableJob {
     }
 
     /**
-     * Gets the entire list of scoreables
-     *
-     * @return the list of scoreables
-     */
-    List getScoreables() {
-        return scoreables;
-    }
-
-    /**
      * Returns the first scoreable in this job.
      *
      * @return the first scoreable in this job
@@ -478,7 +465,25 @@ class ScoreableJob {
     Scoreable getFirst() {
         return (Scoreable) scoreables.get(start);
     }
-    
+
+    /**
+     * Gets the entire list of scoreables
+     *
+     * @return the list of scoreables
+     */
+    List getScoreables() {
+	return scoreables;
+    }
+
+    /**
+     * Returns a ListIterator for this job.
+     *
+     * @return a ListIterator for this job.
+     */
+    ListIterator getListIterator() {
+        return scoreables.listIterator(start);
+    }
+
     /**
      * Returns a string representation of this object
      *
