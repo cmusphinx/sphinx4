@@ -228,6 +228,10 @@ public class LevelTracker extends DataProcessor implements AudioSource {
             if (outputQueue.size() == 0) {
                 Audio audio = predecessor.getAudio();
                 if (audio != null) {
+                    /*
+                    System.out.println("LevelTracker: incoming: " +
+                                       audio.getSignal().toString());
+                    */
                     audio.setSpeech(false);
                     if (audio.hasContent()) {
                         assert audio.getSamples().length == frameLength;
