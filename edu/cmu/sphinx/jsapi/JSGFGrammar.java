@@ -219,7 +219,6 @@ public class JSGFGrammar extends Grammar {
     // Configurable data
     // ---------------------
     private RuleGrammar ruleGrammar;
-    private int identity;
     private Map ruleNameStack = new HashMap();
     private Recognizer recognizer;
     private String grammarName;
@@ -278,7 +277,6 @@ public class JSGFGrammar extends Grammar {
      * @return the initial node of the Grammar
      */
     protected GrammarNode createGrammar() throws IOException {
-        identity = 0;
 
         recognizer = new BaseRecognizer();
 
@@ -288,8 +286,8 @@ public class JSGFGrammar extends Grammar {
             recognizer.commitChanges();
             ruleGrammar.setEnabled(true);
 
-            GrammarNode firstNode = createGrammarNode(identity++, "<sil>");
-            GrammarNode finalNode = createGrammarNode(identity++, "<sil>");
+            GrammarNode firstNode = createGrammarNode("<sil>");
+            GrammarNode finalNode = createGrammarNode("<sil>");
             finalNode.setFinalNode(true);
 
             // go through each rule and create a network of GrammarNodes
@@ -567,7 +565,7 @@ public class JSGFGrammar extends Grammar {
     private GrammarGraph parseRuleToken(RuleToken ruleToken) {
         debugPrintln("parseRuleToken: " + ruleToken.toString());
 
-        GrammarNode node = createGrammarNode(identity++, ruleToken.getText());
+        GrammarNode node = createGrammarNode(ruleToken.getText());
         return new GrammarGraph(node, node);
     }
 
@@ -653,8 +651,8 @@ public class JSGFGrammar extends Grammar {
          * Creates a graph with non-word nodes for the start and ending nodes
          */
         GrammarGraph() {
-            startNode = createGrammarNode(identity++, false);
-            endNode = createGrammarNode(identity++, false);
+            startNode = createGrammarNode(false);
+            endNode = createGrammarNode(false);
         }
 
         /**
