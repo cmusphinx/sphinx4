@@ -353,7 +353,7 @@ class ValidatingPropertySheet implements PropertySheet {
                         // jar:file:/foo.jar!/a/b/c/HelloWorld.class
                         // after the ! with the resource name
                         String urlString = url.toString();
-                        urlString = urlString.replace("/" + classPath, resourceName);
+                        urlString = urlString.replaceAll("/" + classPath, resourceName);
                         try {
                             url = new URL(urlString);
                         } catch (MalformedURLException mfe) {
