@@ -51,10 +51,11 @@ public class FrontEndTest {
 	
         if (batchMode) {
             frontend.setAudioSource
-                (new BatchFileAudioSource(audioSourceFile));
+                (new BatchFileAudioSource(context, audioSourceFile));
         } else {
             frontend.setAudioSource
-                (new StreamAudioSource(new FileInputStream(audioSourceFile)));
+                (new StreamAudioSource
+                 (context, (new FileInputStream(audioSourceFile))));
         }
     }
 

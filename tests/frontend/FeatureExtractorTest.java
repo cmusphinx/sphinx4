@@ -28,16 +28,21 @@ public class FeatureExtractorTest {
 	}
 
         try {
-            FrontEndTest fet = new FrontEndTest(argv[0], argv[1], argv[2]);
+            String testName = argv[0];
+            String propertiesFile = argv[1];
+            String audioFileName = argv[2];
+
+            FrontEndTest fet = new FrontEndTest
+                (testName, propertiesFile, audioFileName);
 
             // create the processors
-            Preemphasizer preemphasizer = new Preemphasizer(argv[0]);
-            Windower hammingWindow = new Windower(argv[0]);
-            SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer(argv[0]);
-            MelFilterbank melFilterbank = new MelFilterbank(argv[0]);
-	    MelCepstrumProducer melCepstrum = new MelCepstrumProducer(argv[0]);
-            CepstralMeanNormalizer cmn = new CepstralMeanNormalizer(argv[0]);
-            FeatureExtractor featureExtractor = new FeatureExtractor(argv[0]);
+            Preemphasizer preemphasizer = new Preemphasizer(testName);
+            Windower hammingWindow = new Windower(testName);
+            SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer(testName);
+            MelFilterbank melFilterbank = new MelFilterbank(testName);
+	    MelCepstrumProducer melCepstrum = new MelCepstrumProducer(testName);
+            CepstralMeanNormalizer cmn = new CepstralMeanNormalizer(testName);
+            FeatureExtractor featureExtractor = new FeatureExtractor(testName);
 
             // add the processors
             FrontEnd fe = fet.getFrontEnd();
