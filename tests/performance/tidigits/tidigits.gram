@@ -1,0 +1,7 @@
+#JSGF V1.0;
+
+grammar tidigits;
+
+public <digits> = (one | two | three | four | five | six | seven |
+                    eight | nine | oh | zero )+;
+

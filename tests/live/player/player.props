@@ -81,8 +81,8 @@ edu.cmu.sphinx.frontend.feature.FrameDropper.replaceNthWithPrevious=true
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.JSGFGrammar.baseGrammarURL=file:./
-edu.cmu.sphinx.decoder.linguist.JSGFGrammar.grammarName=player.player
+edu.cmu.sphinx.jsapi.JSGFGrammar.baseGrammarURL=file:./
+edu.cmu.sphinx.jsapi.JSGFGrammar.grammarName=player.player
 
 
 ############################################################
@@ -91,7 +91,7 @@ edu.cmu.sphinx.decoder.linguist.JSGFGrammar.grammarName=player.player
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.JSGFGrammar
+edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.jsapi.JSGFGrammar
 
 
 ############################################################

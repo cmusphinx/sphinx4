@@ -26,7 +26,7 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
     <property name="lib_dir"            value="${build_dir}/lib"/>
 
     <property name="skip"               value="0"/>
-    <property name="logger_props"       value=""/>  
+    <property name="logger_props"       value="tidigits.props"/>  
 
     <property name="initial_heap_size"  value="128m"/>
     <property name="maximum_heap_size"  value="128m"/>
@@ -56,6 +56,32 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
 			 value="${logger_props}"/>
             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
 			 value="${skip}"/> 
+            <arg value="tidigits.props"/> 
+            <arg value="tidigits.batch"/> 
+        </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_jsgf                                          * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_jsgf"
+	    description="TIDIGITS test set with a JSGF digits grammar">
+        <java classname="${batch_main}"
+              classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar" 
+			 value="edu.cmu.sphinx.jsapi.JSGFGrammar"/> 
+            <sysproperty
+                key="edu.cmu.sphinx.jsapi.JSGFGrammar.baseGrammarURL"
+                value="file:./"/>
+            <sysproperty key="edu.cmu.sphinx.jsapi.JSGFGrammar.grammarName" 
+			 value="tidigits"/> 
             <arg value="tidigits.props"/> 
             <arg value="tidigits.batch"/> 
         </java>
