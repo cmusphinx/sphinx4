@@ -44,7 +44,6 @@ public class FeatureExtractor extends PullingProcessor {
     private int currentPosition;
     private int window;
     private int jp1, jp2, jp3, jf1, jf2, jf3;
-    private Timer meatTimer;
     private List outputQueue;
 
 
@@ -55,7 +54,6 @@ public class FeatureExtractor extends PullingProcessor {
 	getSphinxProperties();
 	cepstraBuffer = new float[LIVEBUFBLOCKSIZE][];
         setTimer(Timer.getTimer("", "FeatureExtractor"));
-        meatTimer = Timer.getTimer("", "FEMeat");
         outputQueue = new Vector();
     }
 
@@ -129,18 +127,20 @@ public class FeatureExtractor extends PullingProcessor {
 
         getTimer().start();
 	
-	CepstrumFrame cepstrumFrame;
+	CepstrumFrame cepstrumFrame = null;
 	SegmentEndPointSignal signal = null;
 	boolean startSegment = false, endSegment = false;
 
-	if (input instanceof SegmentEndPointSignal) {
+        if (input instanceof CepstrumFrame) {
+            cepstrumFrame = (CepstrumFrame) input;
+	} else if (input instanceof SegmentEndPointSignal) {
 	    signal = (SegmentEndPointSignal) input;
 	    startSegment = signal.isStart();
 	    endSegment = signal.isEnd();
 	    cepstrumFrame = (CepstrumFrame) signal.getData();
 	} else {
-	    cepstrumFrame = (CepstrumFrame) input;
-	}
+            return;
+        }
 
 	Cepstrum[] cepstra = cepstrumFrame.getData();
 	assert(cepstra.length < LIVEBUFBLOCKSIZE);
@@ -207,8 +207,6 @@ public class FeatureExtractor extends PullingProcessor {
 
         int totalFeatures = cepstra.length + residualVectors;
         
-        meatTimer.start();
-
         float[] feature = null;
         boolean dump = getDump();
 
@@ -219,8 +217,6 @@ public class FeatureExtractor extends PullingProcessor {
                 Util.dumpFloatArray(feature, "FEATURE");
             }
 	}
-
-        meatTimer.stop();
 
         getTimer().stop();
     }

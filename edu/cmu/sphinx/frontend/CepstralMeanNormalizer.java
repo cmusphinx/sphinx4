@@ -48,8 +48,7 @@ public class CepstralMeanNormalizer extends PullingProcessor {
     private float[] sum;
     private int cmnShiftWindow;
     private int cmnWindow;
-    private float sf;
-
+    
 
     /**
      * Constructs a default CepstralMeanNormalizer.
@@ -95,14 +94,7 @@ public class CepstralMeanNormalizer extends PullingProcessor {
     public Data read() throws IOException {
 	
         Data input = getSource().read();
-        Data output = input;
-
-	if (input instanceof SegmentEndPointSignal ||
-	    input instanceof CepstrumFrame) {
-	    output = process(input);
-	}
-
-        return output;
+        return process(input);
     }	
 
 
@@ -120,31 +112,36 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	
         getTimer().start();
 
-	CepstrumFrame cepstrumFrame;
+	CepstrumFrame cepstrumFrame = null;
 	SegmentEndPointSignal signal = null;
 
-	if (input instanceof SegmentEndPointSignal) {
+        
+        if (input instanceof CepstrumFrame) {
+	    cepstrumFrame = (CepstrumFrame) input;
+	} else if (input instanceof SegmentEndPointSignal) {
 	    signal = (SegmentEndPointSignal) input;
 	    cepstrumFrame = (CepstrumFrame) signal.getData();
-	} else {
-	    cepstrumFrame = (CepstrumFrame) input;
 	}
 
-	Cepstrum[] cepstra = cepstrumFrame.getData();
+        if (cepstrumFrame != null) {
 
-	if (cepstra.length > 0) {
+            Cepstrum[] cepstra = cepstrumFrame.getData();
+            
+            if (cepstra.length > 0) {
+                
+                normalize(cepstra);
 
-	    normalize(cepstra);
-	    
-	    // Shift buffers down if we have more than cmnShiftWindow frames
-	    if (numberFrame > cmnShiftWindow) {
-		updateMeanSumBuffers();
-	    }
-
-	    // if this is the end of the segment, shift the buffers
-	    if (signal != null && signal.isEnd()) {
-		updateMeanSumBuffers();
-	    }
+                // Shift buffers down if we have more than 
+                // cmnShiftWindow frames
+                if (numberFrame > cmnShiftWindow) {
+                    updateMeanSumBuffers();
+                }
+                
+                // if this is the end of the segment, shift the buffers
+                if (signal != null && signal.isEnd()) {
+                    updateMeanSumBuffers();
+                }
+            }
 	}
 	
         getTimer().stop();
@@ -162,8 +159,8 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	// do the mean normalization
 	for (int i = 0; i < cepstra.length; i++) {
             normalizeCepstrum(cepstra[i].getData());
-	    ++numberFrame;
 	}
+        numberFrame += cepstra.length;
     }
 
 
@@ -187,7 +184,7 @@ public class CepstralMeanNormalizer extends PullingProcessor {
     private void updateMeanSumBuffers() {
 
 	// update the currentMean buffer with the sum buffer
-	sf = (float) (1.0/numberFrame);
+	float sf = (float) (1.0/numberFrame);
 
 	for (int i = 0; i < currentMean.length; i++) {
 	    currentMean[i] = sum[i] * sf;

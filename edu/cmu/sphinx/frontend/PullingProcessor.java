@@ -43,7 +43,7 @@ public abstract class PullingProcessor implements DataSource {
      *
      * @return the DataSource to pull Data objects from, or null if no source
      */
-    public DataSource getSource() {
+    public final DataSource getSource() {
 	return predecessorDataSource;
     }
 
@@ -63,7 +63,7 @@ public abstract class PullingProcessor implements DataSource {
      *
      * @return the Timer
      */
-    public Timer getTimer() {
+    public final Timer getTimer() {
         return timer;
     }
 
@@ -83,7 +83,7 @@ public abstract class PullingProcessor implements DataSource {
      *
      * @return true to dump, false to not dump
      */
-    public boolean getDump() {
+    public final boolean getDump() {
 	return this.dump;
     }
 
