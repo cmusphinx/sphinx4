@@ -27,12 +27,12 @@ import java.util.logging.Logger;
 
 
 /**
- * Pre-processes the audio into Features. The BaseFrontEnd consists
- * of a series of processors. The BaseFrontEnd connects all the processors
- * by the input and output points.
+ * Pre-processes the audio into Features. The BaseFrontEnd extends
+ * the CepstrumExtractor, with additional processors for cepstral mean
+ * normalization (CMN) and feature extraction.
  * 
- * <p>The input to the BaseFrontEnd is a DataSource object.
- * For an audio stream,
+ * <p>Like the CepstrumExtractor, the input to the BaseFrontEnd 
+ * is a DataSource object. For an audio stream,
  * the <code>StreamAudioSource</code> should be used. The 
  * input can also be a file containing a list of audio files, in which case
  * the <code>BatchFileAudioSource</code> can be used.
