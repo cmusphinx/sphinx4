@@ -68,7 +68,7 @@ CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 
 
 
-rm1_flat_unigram:
+rm1_flat_unigram_simple:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
         -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=8 \
@@ -76,7 +76,7 @@ rm1_flat_unigram:
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.flat_unigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
-rm1_unigram:
+rm1_unigram_simple:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
         -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7 \
@@ -84,7 +84,7 @@ rm1_unigram:
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.unigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
-rm1_bigram:
+rm1_bigram_simple:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
         -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
@@ -92,7 +92,7 @@ rm1_bigram:
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
 
-rm1_flat_unigram_lex:
+rm1_flat_unigram:
 	$(JAVA_CMD) \
   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.flat_unigram.lm \
         -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=9.5 \
@@ -101,14 +101,14 @@ rm1_flat_unigram_lex:
 	-Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-160\
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
-rm1_unigram_lex:
+rm1_unigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.unigram.lm\
         -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7 \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
-rm1_bigram_lex:
+rm1_bigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm\
@@ -120,7 +120,7 @@ rm1_bigram_lex:
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
 
-rm1_trigram_lex:
+rm1_trigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.trigram.lm\
