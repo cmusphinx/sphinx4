@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.net.URL;
 
 import java.util.StringTokenizer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 
 
 /**
@@ -46,6 +49,9 @@ public class BatchDecoder {
      * The SphinxProperty name for how many files to skip.
      */
     public final static String PROP_SKIP = PROP_PREFIX + "skip";
+    public final static String PROP_WHICH_BATCH = PROP_PREFIX + "whichBatch";
+    public final static String PROP_TOTAL_BATCHES 
+	= PROP_PREFIX + "totalBatches";
 
     /**
      * The SphinxProperty name for the input data type.
@@ -58,6 +64,8 @@ public class BatchDecoder {
     private String context;
     private String inputDataType;
     private int skip;
+    private int whichBatch;
+    private int totalBatches;
 
 
     /**
@@ -71,7 +79,9 @@ public class BatchDecoder {
 
 	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 	inputDataType = props.getString(PROP_INPUT_TYPE, "audio");
-	skip = props.getInt(PROP_SKIP, 0);
+	int skip = props.getInt(PROP_SKIP, 0);
+	whichBatch = props.getInt(PROP_WHICH_BATCH, 1);
+	totalBatches = props.getInt(PROP_TOTAL_BATCHES, 1);
 
 	if (inputDataType.equals("audio")) {
 	    dataSource = new StreamAudioSource
@@ -96,14 +106,11 @@ public class BatchDecoder {
     public void decode() throws IOException {
 
 	int curCount = skip;
-        BufferedReader reader = new BufferedReader(new FileReader(batchFile));
-
-        String line = null;
-
         System.out.println("\nBatchDecoder: decoding files in " + batchFile);
         System.out.println("----------");
 
-        while ((line = reader.readLine()) != null) {
+	for (Iterator i = getLines(batchFile).iterator(); i.hasNext();) {
+	    String line = (String) i.next();
 	    StringTokenizer st = new StringTokenizer(line);
 	    String ref = null;
 	    String file = (String) st.nextToken();
@@ -126,6 +133,48 @@ public class BatchDecoder {
         System.out.println("\nBatchDecoder: All files decoded\n");
         Timer.dumpAll(context);
 	decoder.showSummary();
+    }
+
+
+
+    /**
+     * Gets the set of lines from the file
+     *
+     * @param file the name of the file 
+     */
+    List getLines(String file) throws IOException {
+	List list = new ArrayList();
+	BufferedReader reader 
+	    = new BufferedReader(new FileReader(batchFile));
+
+	String line = null;
+
+	while ((line = reader.readLine()) != null) {
+	    list.add(line);
+	}
+	reader.close();
+
+	if (totalBatches > 1) {
+	    int linesPerBatch = list.size() / totalBatches;
+	    if (linesPerBatch < 1) {
+		linesPerBatch = 1;
+	    }
+	    if (whichBatch >= totalBatches) {
+		whichBatch = totalBatches - 1;
+	    }
+	    int startLine = whichBatch * linesPerBatch;
+	    System.out.print("Startline " + startLine + " " );
+	    //
+	    // last batch needs to get all remaining lines
+	    if (whichBatch == (totalBatches - 1)) {
+		list = list.subList(startLine, list.size());
+	    } else {
+		list = list.subList(startLine, startLine +
+			linesPerBatch);
+	    }
+	}
+	    System.out.println(" size " + list.size());
+	return list;
     }
 
 
