@@ -34,6 +34,8 @@ public interface Dictionary {
      * Spelling of the 'word' that marks a silence
      */
     public static final String SILENCE_SPELLING = "<sil>";
+
+
     /**
      * Prefix string for the Sphinx properties of this Dictionary.
      */
@@ -50,10 +52,21 @@ public interface Dictionary {
 
 
     /**
+     * The default value of PROP_USE_AM_LOCATION.
+     */
+    public static final boolean PROP_USE_AM_LOCATION_DEFAULT = true;
+
+
+    /**
      * The name of the SphinxProperty for the dictionary file path.
      */
-    public static final String PROP_DICTIONARY =
-        PROP_PREFIX + "dictionaryPath";
+    public static final String PROP_DICTIONARY = PROP_PREFIX +"dictionaryPath";
+
+
+    /**
+     * The default value of PROP_DICTIONARY.
+     */
+    public static final String PROP_DICTIONARY_DEFAULT = null;
 
 
     /**
@@ -64,11 +77,25 @@ public interface Dictionary {
 
 
     /**
+     * The default value of PROP_FILLER_DICTIONARY.
+     */
+    public static final String PROP_FILLER_DICTIONARY_DEFAULT = null;
+
+
+    /**
      * The name of the SphinxProperty that specifies whether to add
      * a duplicate SIL-ending pronunication.
      */
     public static final String PROP_ADD_SIL_ENDING_PRONUNCIATION =
         PROP_PREFIX + "addSilEndingPronunciation";
+
+
+    /**
+     * The default value of PROP_ADD_SIL_ENDING_PRONUNCIATION.
+     */
+    public static final boolean PROP_ADD_SIL_ENDING_PRONUNCIATION_DEFAULT
+	= false;
+
 
     /**
      * The name of the SphinxProperty that specifies the word to
@@ -77,7 +104,14 @@ public interface Dictionary {
      */
     public static final String PROP_WORD_REPLACEMENT =
         PROP_PREFIX + "wordReplacement";
-    
+   
+
+    /**
+     * The default value of PROP_WORD_REPLACEMENT.
+     */
+    public static final String PROP_WORD_REPLACEMENT_DEFAULT = null;
+
+ 
     /**
      * The name of the SphinxProperty that specifies whether the
      * dictionary should return null if a word is not found in the
@@ -87,7 +121,14 @@ public interface Dictionary {
      */
     public static final String PROP_ALLOW_MISSING_WORDS =
         PROP_PREFIX + "allowMissingWords";
+
+
+    /**
+     * The default value of PROP_ALLOW_MISSING_WORDS.
+     */
+    public static final boolean PROP_ALLOW_MISSING_WORDS_DEFAULT = false;
     
+
     /**
      * Retrieves the pronunciations for a particular word based upon
      * its classification.

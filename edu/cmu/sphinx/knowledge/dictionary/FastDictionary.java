@@ -83,7 +83,8 @@ public class FastDictionary implements Dictionary {
             (context);
 
         boolean useAMLocation = properties.getBoolean
-            (Dictionary.PROP_USE_AM_LOCATION, true);
+            (Dictionary.PROP_USE_AM_LOCATION,
+	     Dictionary.PROP_USE_AM_LOCATION_DEFAULT);
 
         String location = null;
         if (useAMLocation) {
@@ -91,23 +92,27 @@ public class FastDictionary implements Dictionary {
         }
 
         String wordDictionaryFile = properties.getString
-            (Dictionary.PROP_DICTIONARY, null);
+            (Dictionary.PROP_DICTIONARY, Dictionary.PROP_DICTIONARY_DEFAULT);
 
         String fillerDictionaryFile = properties.getString
-            (Dictionary.PROP_FILLER_DICTIONARY, null);
+            (Dictionary.PROP_FILLER_DICTIONARY, 
+	     Dictionary.PROP_FILLER_DICTIONARY_DEFAULT);
 
         addSilEndingPronunciation = properties.getBoolean
-            (Dictionary.PROP_ADD_SIL_ENDING_PRONUNCIATION, false);
+            (Dictionary.PROP_ADD_SIL_ENDING_PRONUNCIATION,
+	     Dictionary.PROP_ADD_SIL_ENDING_PRONUNCIATION_DEFAULT);
 
         wordReplacement = properties.getString
-            (Dictionary.PROP_WORD_REPLACEMENT, null);
+            (Dictionary.PROP_WORD_REPLACEMENT, 
+	     Dictionary.PROP_WORD_REPLACEMENT_DEFAULT);
 
 	if (wordReplacement != null) {
 	    wordReplacement = wordReplacement.toLowerCase();
 	}
 
         allowMissingWords = properties.getBoolean
-            (Dictionary.PROP_ALLOW_MISSING_WORDS, false);
+            (Dictionary.PROP_ALLOW_MISSING_WORDS,
+	     Dictionary.PROP_ALLOW_MISSING_WORDS_DEFAULT);
 
         if (wordDictionaryFile == null) {
             throw new IllegalArgumentException
