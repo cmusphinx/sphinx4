@@ -70,7 +70,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
     /**
      * The default value for PROP_CMN_WINDOW.
      */
-    public static final int PROP_CMN_WINDOW_DEFAULT = 500;
+    public static final int PROP_CMN_WINDOW_DEFAULT = 100;
     
 
     /**
@@ -85,7 +85,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
     /**
      * The default value of PROP_CMN_SHIFT_WINDOW.
      */
-    public static final int PROP_CMN_SHIFT_WINDOW_DEFAULT = 800;
+    public static final int PROP_CMN_SHIFT_WINDOW_DEFAULT = 160;
 
  
 
