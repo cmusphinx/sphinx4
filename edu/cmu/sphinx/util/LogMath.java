@@ -49,6 +49,13 @@ public final class LogMath implements Serializable {
 	= "edu.cmu.sphinx.util.LogMath.logBase";
 
     /**
+     * Default value for the Log base
+     */
+
+    public final static double PROP_LOG_BASE_DEFAULT 
+	= Math.E;
+
+    /**
      * Sphinx property that controls whether we use the old, slow (but
      * correct) method of performing the LogMath.add by doing the actual
      * computation.
@@ -56,6 +63,15 @@ public final class LogMath implements Serializable {
 
     public final static String PROP_USE_ADD_TABLE
 	= "edu.cmu.sphinx.util.LogMath.useAddTable";
+
+    /**
+     * Default value for whether we use the old, slow (but
+     * correct) method of performing the LogMath.add by doing the actual
+     * computation.
+     */
+
+    public final static boolean PROP_USE_ADD_TABLE_DEFAULT
+	= false;
 
     private double logBase;
     private boolean useAddTable;
@@ -90,8 +106,10 @@ public final class LogMath implements Serializable {
 	 if (logMath == null) {
 	    SphinxProperties props = 
 		    SphinxProperties.getSphinxProperties(context);
-	    double base = props.getDouble(PROP_LOG_BASE, Math.E);
-	    boolean useTable = props.getBoolean(PROP_USE_ADD_TABLE, true);
+	    double base = props.getDouble(PROP_LOG_BASE, 
+					  PROP_LOG_BASE_DEFAULT);
+	    boolean useTable = props.getBoolean(PROP_USE_ADD_TABLE, 
+						PROP_USE_ADD_TABLE_DEFAULT);
 	    logMath = new LogMath(base, useTable);
 	    contextMap.put(context, logMath);
 	 } 
@@ -513,7 +531,7 @@ public final class LogMath implements Serializable {
 	// return Math.pow(logBase, logValue);
 	double returnValue;
 	if (logValue < minLogValue) {
-	    returnValue = getLogZero();
+	    returnValue = 0.0;
 	} else if (logValue > maxLogValue) {
 	    returnValue = Double.MAX_VALUE;
 	} else {
