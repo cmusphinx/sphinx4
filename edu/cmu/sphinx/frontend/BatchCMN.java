@@ -44,12 +44,14 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
      *
      * @param name the name of this BatchCMN
      * @param context the context of the SphinxProperties to use
+     * @param props the SphinxProperties to read properties from
      * @param predecessor the CepstrumSource from which this normalizer
      *    obtains Cepstrum to normalize
      */
-    public BatchCMN(String name, String context, CepstrumSource predecessor) {
+    public BatchCMN(String name, String context, SphinxProperties props,
+		    CepstrumSource predecessor) {
         super(name, context);
-        initSphinxProperties();
+	setProperties(props);
         sums = new float[cepstrumLength];
         this.predecessor = predecessor;
         cepstraList = new LinkedList();
@@ -78,10 +80,12 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
+     *
+     * @param props the SphinxProperties to read properties from
      */
-    private void initSphinxProperties() {
-        SphinxProperties properties = getSphinxProperties();
-	cepstrumLength = properties.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
+    public void setProperties(SphinxProperties props) {
+	cepstrumLength = getSphinxProperties().getInt
+	    (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
     }
 	
 

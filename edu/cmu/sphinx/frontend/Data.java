@@ -120,6 +120,12 @@ public class Data implements Serializable, Cloneable {
         }
     }
 
+
+    /**
+     * Returns a clone of this Data object.
+     *
+     * @return a clone of this data object
+     */
     public Object clone() {
 	try {
 	    Data data = (Data) super.clone();

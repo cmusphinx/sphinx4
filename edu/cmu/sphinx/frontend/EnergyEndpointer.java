@@ -150,13 +150,17 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
      * @param name the name of this EnergyEndpointer
      * @param context the context of the SphinxProperties this
      *    EnergyEndpointer uses
+     * @param props the SphinxProperties to read properties from
      * @param predecessor the CepstrumSource where this EnergyEndpointer
      *    gets Cepstrum from
+     *
+     * @throws java.io.IOException
      */
-    public EnergyEndpointer(String name, String context,
+    public EnergyEndpointer(String name, String context, 
+			    SphinxProperties props,
                             CepstrumSource predecessor) throws IOException {
         super(name, context);
-        initSphinxProperties();
+        setProperties(props);
         this.predecessor = predecessor;
         this.outputQueue = new LinkedList();
         reset();
@@ -166,9 +170,9 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      *
-     * @throws IOException if there is an error reading the parameters
+     * @param props the SphinxProperties to read properties from
      */
-    private void initSphinxProperties() throws IOException {
+    public void setProperties(SphinxProperties props) {
         SphinxProperties properties = getSphinxProperties();
 
         startLow = properties.getFloat(PROP_PREFIX + "startLow", 0.0f);

@@ -63,14 +63,15 @@ CepstrumProducer {
      *
      * @param name the name of this PLCepstrumProducer
      * @param context the context of the SphinxProperties to use
+     * @param props the SphinxProperties to read properties from
      * @param predecessor the SpectrumSource to get Spectrum objects from
      *
      * @throws IOException if an I/O error occurs
      */
-    public void initialize(String name, String context,
+    public void initialize(String name, String context, SphinxProperties props,
 			   SpectrumSource predecessor) throws IOException {
         super.initialize(name, context);
-	initSphinxProperties();
+	setProperties(props);
         this.predecessor = predecessor;
         computeCosine();
     }
@@ -79,13 +80,12 @@ CepstrumProducer {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      *
-     * @throws IOException if an I/O error occurs
+     * @param props the SphinxProperties to read properties from
      */
-    private void initSphinxProperties() throws IOException {
-        numberPLPFilters = getIntAcousticProperty
-            (PLPFilterbank.PROP_NUMBER_FILTERS, 40);
+    public void setProperties(SphinxProperties props) {
+        numberPLPFilters = props.getInt(PLPFilterbank.PROP_NUMBER_FILTERS, 40);
         cepstrumSize = getSphinxProperties().getInt
-            (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
+	    (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
 	// Just hardcoding this for now
 	LPCOrder = 14;
     }

@@ -13,6 +13,8 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.util.SphinxProperties;
+
 import java.io.IOException;
 
 
@@ -24,8 +26,13 @@ public interface Filterbank extends SpectrumSource {
     /**
      * Initializes this Filterbank.
      *
-     * @param context the context to use
+     * @param name the name of this Filterbank
+     * @param context the context
+     * @param props the SphinxProperties to read properties from
+     * @param predecessor the SpectrumSource from which Spectra to filter
+     *    are obtained
      */
-    public void initialize(String name, String context, 
+    public void initialize(String name, String context,
+			   SphinxProperties props,
 			   SpectrumSource predecessor) throws IOException;
 }

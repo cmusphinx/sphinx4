@@ -52,13 +52,15 @@ CepstrumProducer {
      *
      * @param name the name of this MelCepstrumProducer
      * @param context the context of the SphinxProperties to use
+     * @param props the SphinxProperties to read properties from
      * @param predecessor the SpectrumSource to get Spectrum objects from
      *
      * @throws IOException if an I/O error occurs
      */
-    public MelCepstrumProducer(String name, String context,
+    public MelCepstrumProducer(String name, String context, 
+			       SphinxProperties props,
 			       SpectrumSource predecessor) throws IOException {
-        initialize(name, context, predecessor);
+        initialize(name, context, props, predecessor);
     }
 
 
@@ -67,14 +69,15 @@ CepstrumProducer {
      *
      * @param name the name of this MelCepstrumProducer
      * @param context the context of the SphinxProperties to use
+     * @param props the SphinxProperties to read properties from
      * @param predecessor the SpectrumSource to get Spectrum objects from
      *
      * @throws IOException if an I/O error occurs
      */
-    public void initialize(String name, String context,
+    public void initialize(String name, String context, SphinxProperties props,
 			   SpectrumSource predecessor) throws IOException {
         super.initialize(name, context);
-	initSphinxProperties();
+	setProperties(props);
         this.predecessor = predecessor;
         computeMelCosine();
     }
@@ -83,13 +86,12 @@ CepstrumProducer {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      *
-     * @throws IOException if an I/O error occurs
+     * @param props the SphinxProperties to read properties from
      */
-    private void initSphinxProperties() throws IOException {
-        numberMelFilters = getIntAcousticProperty
-            (MelFilterbank.PROP_NUMBER_FILTERS, 40);
+    public void setProperties(SphinxProperties props) {
+        numberMelFilters = props.getInt(MelFilterbank.PROP_NUMBER_FILTERS, 40);
         cepstrumSize = getSphinxProperties().getInt
-            (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
+	    (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
     }
 
 

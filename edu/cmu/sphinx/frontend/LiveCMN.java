@@ -49,16 +49,16 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * This is a front-end dependent magic number.
      */
     private static final String PROP_INITIAL_MEAN = 
-    "cmn.live.initialCepstralMean";
-
-
+	"cmn.live.initialCepstralMean";
+    
+    
     /**
      * The name of the SphinxProperty for the CMN window size,
      * which has a default value of 500.
      */
     private static final String PROP_CMN_WINDOW = 
-    "cmn.live.windowSize";
-
+	"cmn.live.windowSize";
+    
 
     /**
      * The name of the SphinxProperty for the CMN shifting window,
@@ -67,8 +67,8 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * we re-calculate the cepstral mean.
      */
     private static final String PROP_CMN_SHIFT_WINDOW =
-    "cmn.live.shiftWindow";
-
+	"cmn.live.shiftWindow";
+    
 
     private float[] currentMean;   // array of current means
     private float[] sum;           // array of current sums
@@ -86,15 +86,17 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      *
      * @param name the name of this LiveCMN
      * @param context the context of the SphinxProperties to use
+     * @param props the SphinxProperties to read properties from
      * @param predecessor the CepstrumSource from which this normalizer
      *    obtains Cepstrum to normalize
      *
      * @throws IOException if an I/O error occurs
      */
-    public LiveCMN(String name, String context, CepstrumSource predecessor)
+    public LiveCMN(String name, String context, SphinxProperties props,
+		   CepstrumSource predecessor)
         throws IOException {
         super(name, context);
-        initSphinxProperties();
+        setProperties(props);
 	initMeansSums();
         this.predecessor = predecessor;
     }
@@ -124,12 +126,12 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      *
-     * @throws IOException if an I/O error occurs
+     * @param props the SphinxProperties to read properties from
      */
-    private void initSphinxProperties() throws IOException {
-	initialMean = getFloatAcousticProperty(PROP_INITIAL_MEAN, 12.0f);
-	cmnWindow = getIntAcousticProperty(PROP_CMN_WINDOW, 500);
-	cmnShiftWindow = getIntAcousticProperty(PROP_CMN_SHIFT_WINDOW, 800);
+    public void setProperties(SphinxProperties props) {
+	initialMean = props.getFloat(PROP_INITIAL_MEAN, 12.0f);
+	cmnWindow = props.getInt(PROP_CMN_WINDOW, 500);
+	cmnShiftWindow = props.getInt(PROP_CMN_SHIFT_WINDOW, 800);
 
 	cepstrumLength = getSphinxProperties().getInt
             (FrontEnd.PROP_CEPSTRUM_SIZE, 13);

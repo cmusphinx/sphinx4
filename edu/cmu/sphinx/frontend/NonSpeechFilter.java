@@ -84,7 +84,7 @@ import java.util.*;
 public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
 
     private static final String PROP_PREFIX = 
-    FrontEnd.PROP_PREFIX + "NonSpeechFilter.";
+	FrontEnd.PROP_PREFIX + "NonSpeechFilter.";
 
     /**
      * Controls whether to merge multiple speech segments within an
@@ -106,13 +106,14 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
      * @param name the name of this NonSpeechFilter
      * @param context the context of the SphinxProperties this
      *    NonSpeechFilter uses
+     * @param props the SphinxProperties to read properties from
      * @param predecessor the CepstrumSource where this NonSpeechFilter
      *    gets Cepstrum from
      */
-    public NonSpeechFilter(String name, String context,
+    public NonSpeechFilter(String name, String context, SphinxProperties props,
                            CepstrumSource predecessor) throws IOException {
         super(name, context);
-        initSphinxProperties();
+        setProperties(props);
         this.discardMode = false;
         this.predecessor = predecessor;
         this.inputBuffer = new LinkedList();
@@ -122,16 +123,18 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      *
-     * @throws IOException if there is an error reading the parameters
+     * @param props the SphinxProperties to read properties from
      */
-    private void initSphinxProperties() throws IOException {
+    public void setProperties(SphinxProperties props) {
         mergeSpeechSegments = getSphinxProperties().getBoolean
             (PROP_PREFIX + "mergeSpeechSegments", true);
     }
 
     
     /**
-     * Sets the predeces
+     * Sets the predecessor.
+     *
+     * @param predecessor the predecessor
      */
     public void setPredecessor(CepstrumSource predecessor) {
         this.predecessor = predecessor;

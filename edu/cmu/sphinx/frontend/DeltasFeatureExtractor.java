@@ -93,12 +93,14 @@ FeatureExtractor {
      * Constructs a default DeltasFeatureExtractor.
      *
      * @param name the name of this DeltasFeatureExtractor
-     * @param context the context of the SphinxProperties to use
+     * @param context the context of interest
+     * @param props the SphinxProperties to read properties from
      * @param predecessor the CepstrumSource to get Cepstrum from
      */
     public DeltasFeatureExtractor(String name, String context,
+				  SphinxProperties props,
 				  CepstrumSource predecessor) {
-	initialize(name, context, predecessor);
+	initialize(name, context, props, predecessor);
     }
 
     
@@ -106,13 +108,15 @@ FeatureExtractor {
      * Initializes this DeltasFeatureExtractor.
      *
      * @param name the name of this DeltasFeatureExtractor
-     * @param context the context of the SphinxProperties to use
+     * @param context the context of interest
+     * @param props the SphinxProperties to read properties from
      * @param predecessor the CepstrumSource to get Cepstrum from
      */
     public void initialize(String name, String context,
+			   SphinxProperties props,
 			   CepstrumSource predecessor) {
 	super.initialize(name, context);
-        initSphinxProperties();
+        setProperties(props);
         this.predecessor = predecessor;
         cepstraBuffer = new float[cepstraBufferSize][];
         outputQueue = new Vector();
@@ -136,8 +140,11 @@ FeatureExtractor {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
+     *
+     * @param props the SphinxProperties to read properties from
      */
-    private void initSphinxProperties() {
+    public void setProperties(SphinxProperties props) {
+	// props is actually not used here
 	SphinxProperties properties = getSphinxProperties();
 	featureLength = properties.getInt(PROP_FEATURE_LENGTH, 39);
 	window = properties.getInt(PROP_FEATURE_WINDOW, 3);

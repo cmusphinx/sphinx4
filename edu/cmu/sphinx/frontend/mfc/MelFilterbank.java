@@ -80,15 +80,16 @@ public class MelFilterbank extends DataProcessor implements Filterbank {
      *
      * @param name the name of this MelFilterbank
      * @param context the context of the SphinxProperties to use
+     * @param props the SphinxProperties object to read properties from
      * @param predecessor the SpectrumSource to obtain Spectrum(a) from,
      *     which is usually a SpectrumAnalyzer (does FFT)
      *
      * @throws IOException if an I/O error occurs
      */
-    public MelFilterbank(String name, String context,
+    public MelFilterbank(String name, String context, SphinxProperties props,
                          SpectrumSource predecessor) throws IOException {
 	this();
-	initialize(name, context, predecessor);
+	initialize(name, context, props, predecessor);
     }
 
 
@@ -98,12 +99,13 @@ public class MelFilterbank extends DataProcessor implements Filterbank {
      *
      * @param name the name of this MelFilterbank
      * @param context the context of this MelFilterbank
+     * @param props the SphinxProperties object to read properties from
      * @param predecessor the predecessor of this MelFilterbank
      */
-    public void initialize(String name, String context,
+    public void initialize(String name, String context, SphinxProperties props,
 			   SpectrumSource predecessor) throws IOException {
         super.initialize(name, context);
-	initSphinxProperties();
+	setProperties(props);
         this.predecessor = predecessor;
 	buildFilterbank(numberFftPoints, numberFilters, minFreq, maxFreq);
     }
@@ -111,13 +113,15 @@ public class MelFilterbank extends DataProcessor implements Filterbank {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
+     *
+     * @param props the SphinxProperties to read properties from
      */
-    private void initSphinxProperties() throws IOException {
-        sampleRate = getIntAcousticProperty(FrontEnd.PROP_SAMPLE_RATE, 16000);
-        minFreq = getDoubleAcousticProperty(PROP_MIN_FREQ, 130);
-        maxFreq = getDoubleAcousticProperty(PROP_MAX_FREQ, 6800);
-        numberFilters = getIntAcousticProperty(PROP_NUMBER_FILTERS, 40);
-        numberFftPoints = getIntAcousticProperty
+    public void setProperties(SphinxProperties props) {
+        sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
+        minFreq = props.getDouble(PROP_MIN_FREQ, 130);
+        maxFreq = props.getDouble(PROP_MAX_FREQ, 6800);
+        numberFilters = props.getInt(PROP_NUMBER_FILTERS, 40);
+        numberFftPoints = props.getInt
             (SpectrumAnalyzer.PROP_NUMBER_FFT_POINTS, 512);
     }
 

@@ -82,10 +82,12 @@ public class Microphone extends DataProcessor implements AudioSource {
      *
      * @param name the name of this Microphone
      * @param context the context of this Microphone
+     * @param props the SphinxProperties to read properties from
      */
-    public Microphone(String name, String context) throws IOException {
+    public Microphone(String name, String context, SphinxProperties props) 
+	throws IOException {
         super(name, context);
-        initSphinxProperties();
+	setProperties(props);
         audioFormat = new AudioFormat(sampleRate, sampleSizeInBits,
                                       channels, signed, bigEndian);
         utteranceList = new UtteranceList();
@@ -95,9 +97,9 @@ public class Microphone extends DataProcessor implements AudioSource {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void initSphinxProperties() throws IOException {
+    public void setProperties(SphinxProperties props) {
 
-        sampleRate = getIntAcousticProperty(FrontEnd.PROP_SAMPLE_RATE, 16000);
+        sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
 
         SphinxProperties properties = getSphinxProperties();
         frameSizeInBytes = properties.getInt

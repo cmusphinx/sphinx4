@@ -14,6 +14,8 @@ package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.frontend.CepstrumSource;
 
+import edu.cmu.sphinx.util.SphinxProperties;
+
 import java.io.IOException;
 
 
@@ -38,8 +40,14 @@ public interface FeatureExtractor extends FeatureSource {
      * Initializes this FeatureExtractor with the appropriate name,
      * context and CepstrumSource.
      *
+     * @param name the name of this FeatureExtractor
+     * @param context the context of interest
+     * @param props the SphinxProperties to read properties from
+     * @param predecessor where to obtain cepstra objects
+     *
      * @throws java.io.IOException
      */
-    public void initialize(String name, String context, 
+    public void initialize(String name, String context,
+			   SphinxProperties props,
 			   CepstrumSource predecessor);
 }

@@ -13,6 +13,8 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.model.acoustic.AcousticModel;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
@@ -162,9 +164,11 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
 	PROP_PREFIX + "featureExtractor";
 
 
-    private Map processors;
-    private DataSource dataSource;
-    private FeatureSource featureSource;
+    private String amName;                // Acoustic model name
+    private Map processors;               // all frontend modules
+    private DataSource dataSource;        // source of data to decode
+    private FeatureSource featureSource;  // the end of the pipeline
+    private boolean useAcousticModelProperties;
     
 
     /**
@@ -176,44 +180,103 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
      */
     public FrontEnd(String name, String context, DataSource dataSource)
         throws IOException {
-
-        super(name, context);
-        processors = new HashMap();
-        frontends.put(context, this);
-	setDataSource(dataSource);
-
-	// add other data types here if necessary
-
-	if (dataSource instanceof AudioSource) {
-	    initialize(context, (AudioSource) dataSource);
-	} else if (dataSource instanceof CepstrumSource) {
-	    initialize(context, (CepstrumSource) dataSource);
-	} else {
-	    throw new Error("Unsupported Data type: " + 
-			    dataSource.getClass().getName());
-	}
+	this(name, context, null, dataSource);
     }
 
 
     /**
+     * Constructs a FrontEnd with the given name, context, acoustic 
+     * model name, and DataSource.
+     *
+     * @param name the name of this FrontEnd
+     * @param context the context of interest
+     * @param amName the name of the acoustic model
+     * @param dataSource the source of data
+     */
+    public FrontEnd(String name, String context, String amName,
+		    DataSource dataSource) throws IOException {
+	super(name, context);
+        processors = new HashMap();
+        frontends.put(context, this);
+        setDataSource(dataSource);
+	useAcousticModelProperties = getSphinxProperties().getBoolean
+	    (PROP_PREFIX + "useAcousticModelProperties", true);
+
+        // add other data types here if necessary
+
+        if (dataSource instanceof AudioSource) {
+            initialize((AudioSource) dataSource);
+        } else if (dataSource instanceof CepstrumSource) {
+            initialize((CepstrumSource) dataSource);
+        } else {
+            throw new Error("Unsupported Data type: " +
+                            dataSource.getClass().getName());
+        }
+    }
+
+
+    /**
+     * Returns the appropriate SphinxProperties to use based on the
+     * "useAcousticModelProperties" property.
+     *
+     * @return the appropriate SphinxProperties
+     *
+     * @throw java.io.IOException if an I/O error occurred
+     */
+    private SphinxProperties getCorrectProperties() throws IOException {
+	SphinxProperties props = null;
+	if (useAcousticModelProperties) {
+	    props = getAcousticProperties();
+	}
+	if (props == null) {
+	    props = getSphinxProperties();
+	}
+	return props;
+    }
+
+
+    /**
+     * Returns the properties of the relevant acoustic model.
+     *
+     * @return the properties of the relevant acoustic model
+     *
+     * @throw java.io.IOException if an I/O error occurred
+     */
+    public SphinxProperties getAcousticProperties() throws IOException {
+	AcousticModel am;
+	if (amName != null) {
+	    am = AcousticModel.getAcousticModel(amName, getContext());
+	} else {
+	    am = AcousticModel.getAcousticModel(getContext());
+	}
+	if (am != null) {
+	    return am.getProperties();
+	} else {
+	    return null;
+	}
+    }
+
+    
+    /**
      * Initializes this FrontEnd with the given AudioSource.
      *
-     * @param context the context
+     * @param amName the name of the acoustic model
      * @param audioSource the source of Audio objects
      */
-    private void initialize(String context, AudioSource audioSource) throws
-	IOException {
+    private void initialize(AudioSource audioSource) throws IOException {
 
         // initialize all the frontend processors
 
+	SphinxProperties props = getCorrectProperties();
+
         Preemphasizer preemphasizer = new Preemphasizer
-            ("Preemphasizer", context, audioSource);
+            ("Preemphasizer", getContext(), props, audioSource);
 
         Windower windower = new Windower
-            ("HammingWindow", context, preemphasizer);
+            ("HammingWindow", getContext(), props, preemphasizer);
 
         SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer
-            ("FFT", context, windower);
+            ("FFT", getContext(), props, windower);
 
 	Filterbank filterbank = getFilterbank(spectrumAnalyzer);
 
@@ -225,17 +288,16 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
         addProcessor((DataProcessor) filterbank);
         addProcessor((DataProcessor) cepstrumProducer);
 
-	initialize(context, cepstrumProducer);
+	initialize(cepstrumProducer);
     }
 
 
     /**
      * Initializes this FrontEnd with the given CepstrumSource.
      *
-     * @param context the context
      * @param cepstrumProducer the place where Cepstra comes from
      */
-    private void initialize(String context, CepstrumSource cepstrumProducer) 
+    private void initialize(CepstrumSource cepstrumProducer) 
 	throws IOException {
 
 	CepstrumSource lastCepstrumSource = cepstrumProducer;
@@ -272,7 +334,8 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
 	    path = getSphinxProperties().getString
 		(PROP_FILTERBANK, "edu.cmu.sphinx.frontend.mfc.MelFilterbank");
 	    Filterbank bank = (Filterbank) Class.forName(path).newInstance();
-	    bank.initialize("Filterbank", getContext(), predecessor);
+	    bank.initialize("Filterbank", getContext(), getCorrectProperties(),
+			    predecessor);
 	    return bank;
 	} catch (Exception e) {
 	    e.printStackTrace();
@@ -297,7 +360,8 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
 		 "edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer");
 	    CepstrumProducer producer = 
 		(CepstrumProducer) Class.forName(path).newInstance();
-	    producer.initialize("CepstrumProducer", getContext(), predecessor);
+	    producer.initialize("CepstrumProducer", getContext(), 
+				getCorrectProperties(), predecessor);
 	    return producer;
 	} catch (Exception e) {
 	    e.printStackTrace();
@@ -346,9 +410,11 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
 	CepstrumSource cmn = null;
 
 	if (path.equals("edu.cmu.sphinx.frontend.LiveCMN")) {
-	    cmn = new LiveCMN("LiveCMN", getContext(), predecessor);
+	    cmn = new LiveCMN("LiveCMN", getContext(), 
+			      getCorrectProperties(), predecessor);
 	} else if (path.equals("edu.cmu.sphinx.frontend.BatchCMN")) {
-	    cmn = new BatchCMN("BatchCMN", getContext(), predecessor);
+	    cmn = new BatchCMN("BatchCMN", getContext(), 
+			       getCorrectProperties(), predecessor);
 	}
 	return cmn;
     }
@@ -370,7 +436,8 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
         try {
 	    FeatureExtractor extractor =
                 (FeatureExtractor) Class.forName(path).newInstance();
-            extractor.initialize("FeatureExtractor",getContext(), predecessor);
+            extractor.initialize("FeatureExtractor", getContext(),
+				 getCorrectProperties(), predecessor);
             return extractor;
         } catch (Exception e) {
             e.printStackTrace();

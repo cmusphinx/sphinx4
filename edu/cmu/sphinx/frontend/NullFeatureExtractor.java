@@ -39,15 +39,25 @@ FeatureExtractor {
      * Initializes this NullFeatureExtractor.
      *
      * @param name the name of this NullFeatureExtractor
-     * @param context the context of the SphinxProperties to use
+     * @param context the context
+     * @param props the SphinxProperties to read properties from
      * @param predecessor the CepstrumSource to get Cepstrum from
      */
     public void initialize(String name, String context,
+			   SphinxProperties props,
 			   CepstrumSource predecessor) {
         super.initialize(name, context);
         this.predecessor = predecessor;
 	this.featureID = new IDGenerator();
     }
+
+    /**
+     * Sets the properties of this NullFeatureExtractor. It currently
+     * does nothing.
+     *
+     * @param props the SphinxProperties to read properties from
+     */
+    public void setProperties(SphinxProperties props) {}
 
     /**
      * Returns the next Feature object produced by this NullFeatureExtractor.

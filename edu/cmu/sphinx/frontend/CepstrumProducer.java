@@ -13,6 +13,8 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.util.SphinxProperties;
+
 import java.io.IOException;
 
 
@@ -23,7 +25,13 @@ public interface CepstrumProducer extends CepstrumSource {
 
     /**
      * Initializes this CepstrumProducer.
+     *
+     * @param name the name of this CepstrumProducer
+     * @param context the relevant context to use
+     * @param props the SphinxProperties to read properties from
+     * @param predecessor where to get the Spectrum objects
      */
-    public void initialize(String name, String context, 
+    public void initialize(String name, String context,
+			   SphinxProperties props,
 			   SpectrumSource predecessor) throws IOException;
 }
