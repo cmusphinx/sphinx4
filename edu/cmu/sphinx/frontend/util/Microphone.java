@@ -487,6 +487,22 @@ public class Microphone extends DataProcessor implements AudioSource {
     }
 
 
+    /**
+     * Returns true if there is more data in the Microphone.
+     * This happens either if getRecording() return true, or if the
+     * buffer in the Microphone has a size larger than zero.
+     *
+     * @return true if there is more data in the Microphone
+     */
+    public boolean hasMoreData() {
+        boolean moreData;
+        synchronized (audioList) {
+            moreData = (recording || audioList.size() > 0);
+        }
+        return moreData;
+    }
+
+
     private boolean getStarted() {
         return started;
     }
