@@ -64,7 +64,6 @@ edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-205
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.wantEntryPruning=false
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-80
 
 
 ############################################################
