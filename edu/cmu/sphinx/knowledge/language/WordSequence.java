@@ -23,7 +23,7 @@ import java.util.List;
 public class WordSequence {
     private String[] words;
     private transient int hashCode = -1;
-    private final static WordSequence EMPTY = new WordSequence();
+    public final static WordSequence EMPTY = new WordSequence();
 
     /**
      * Constructs a word sequence with the given depth
@@ -113,6 +113,9 @@ public class WordSequence {
      * @param maxSize the maximum size of the generated sequence
      */
     public WordSequence addWord(String word, int maxSize) {
+        if (maxSize <= 0) {
+            return EMPTY;
+        }
         int nextSize = size() + 1 > maxSize ? maxSize : size() + 1;
         WordSequence next = new WordSequence(nextSize);
         int nextIndex = nextSize - 1;
@@ -168,7 +171,7 @@ public class WordSequence {
      *
      */
     public WordSequence trim(int maxSize) {
-        if (maxSize == 0 || size() == 0) {
+        if (maxSize <= 0 || size() == 0) {
             return EMPTY;
         } else  if (maxSize == size()) {
             return this;
