@@ -13,6 +13,7 @@
 
 package edu.cmu.sphinx.decoder.linguist;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
 import java.io.Serializable;
 
@@ -22,12 +23,6 @@ import java.io.Serializable;
  * All word probabilities are in the LogMath log domain
  */
 public class GrammarWord implements Serializable {
-
-    //TODO: Should these come from somewhare (like perhaps)
-    // the language model?
-
-    private final static String SENTENCE_START_SPELLING = "<s>";
-    private final static String SENTENCE_END_SPELLING = "</s>";
     private Pronunciation[] pronunciations;
     private String spelling;
 
@@ -71,7 +66,7 @@ public class GrammarWord implements Serializable {
      * start
      */
     public boolean isSentenceStart() {
-        return spelling.equals(SENTENCE_START_SPELLING);
+        return spelling.equals(Dictionary.SENTENCE_START_SPELLING);
     }
 
     /**
@@ -81,7 +76,7 @@ public class GrammarWord implements Serializable {
      * start
      */
     public boolean isSentenceEnd() {
-        return spelling.equals(SENTENCE_END_SPELLING);
+        return spelling.equals(Dictionary.SENTENCE_END_SPELLING);
     }
 
 
@@ -114,8 +109,7 @@ public class GrammarWord implements Serializable {
      * @return true if the word is a silence
      */
     public boolean isSilence() {
-	return spelling.equals("<sil>") ||
-	       spelling.equals("<s>") ||
-	       spelling.equals("</s>");
+	return spelling.equals(Dictionary.SILENCE_SPELLING) ||
+            isSentenceEnd() || isSentenceEnd();
     }
 }

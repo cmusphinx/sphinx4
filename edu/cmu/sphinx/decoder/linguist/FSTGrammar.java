@@ -19,6 +19,7 @@ import edu.cmu.sphinx.decoder.linguist.Grammar;
 import edu.cmu.sphinx.decoder.linguist.GrammarArc;
 import edu.cmu.sphinx.decoder.linguist.GrammarNode;
 import edu.cmu.sphinx.decoder.linguist.GrammarWord;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -115,7 +116,7 @@ public class FSTGrammar extends Grammar {
 	int maxNodeId = createNodes(path);
 
 	// create the final node:
-	finalNode = createGrammarNode(++maxNodeId, "<sil>");
+	finalNode = createGrammarNode(++maxNodeId, Dictionary.SILENCE_SPELLING);
         finalNode.setFinalNode(true);
 
 	// replace each word node with a pair of nodes, which
@@ -148,13 +149,15 @@ public class FSTGrammar extends Grammar {
             // initial grammar node
             //          initialNode = createGrammarNode(initialID, false);
 
-		initialNode = createGrammarNode(initialID, "<sil>");
+		initialNode = createGrammarNode(initialID,
+                        Dictionary.SILENCE_SPELLING);
 		nodes.put(nodeName, initialNode);
 
 		// optionally add a silence node
 		if (addInitialSilenceNode) {
 		    GrammarNode silenceNode =
-			createGrammarNode(++maxNodeId, "<sil>");
+			createGrammarNode(++maxNodeId, 
+                                Dictionary.SILENCE_SPELLING);
 		    initialNode.add(silenceNode, getLogMath().getLogOne());
 		    silenceNode.add(initialNode, getLogMath().getLogOne());
 		}
@@ -304,7 +307,7 @@ public class FSTGrammar extends Grammar {
      */
     private int expandWordNodes(int maxNodeID) {
 	Collection allNodes = nodes.values();
-	String[][] silence = {{"<sil>"}};
+	String[][] silence = {{Dictionary.SILENCE_SPELLING}};
 
 	for (Iterator i = allNodes.iterator(); i.hasNext();) {
 	    GrammarNode node = (GrammarNode) i.next();

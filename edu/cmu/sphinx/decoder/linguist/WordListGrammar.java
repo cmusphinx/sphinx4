@@ -17,6 +17,7 @@ import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
 import edu.cmu.sphinx.decoder.linguist.GrammarNode;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
 import java.io.IOException;
 import java.util.List;
@@ -79,8 +80,8 @@ public class WordListGrammar extends Grammar {
 	String path = props.getString(PROP_PATH, "spelling.gram");
 	boolean isLooping = props.getBoolean(PROP_LOOP, true);
 	boolean addSilence = props.getBoolean(PROP_ADD_SILENCE, false);
-	String[][] silenceNode = {{"<sil>"}};
-	String[] silenceAlternative = { "<sil>" };
+	String[][] silenceNode = {{Dictionary.SILENCE_SPELLING}};
+	String[] silenceAlternative = { Dictionary.SILENCE_SPELLING };
 	int identity = 0;
 	ExtendedStreamTokenizer tok = new ExtendedStreamTokenizer(path, true);
 

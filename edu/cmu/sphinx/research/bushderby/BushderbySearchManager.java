@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Collections;
 
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
@@ -96,7 +97,6 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
     public final static boolean PROP_FILTER_SUCCESSORS_DEFAULT = true;
 
         
-    private final static String SENTENCE_START = "<s>";
 
     private LanguageModel languageModel;
 
@@ -548,7 +548,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		}
 
 		if (token == null && wordList.size() < depth) {
-		    wordList.add(SENTENCE_START);
+		    wordList.add(Dictionary.SENTENCE_START_SPELLING);
 		}
 		Collections.reverse(wordList);
 		logProbability = (float) languageModel.getProbability(wordList);
@@ -567,7 +567,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      * @return true if the word is a real word.
      */
     private boolean isWord(String word) {
-	return !word.equals("<sil>");
+	return !word.equals(Dictionary.SILENCE_SPELLING);
     }
 
     /**

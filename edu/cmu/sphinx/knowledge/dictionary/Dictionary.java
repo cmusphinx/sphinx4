@@ -21,6 +21,20 @@ package edu.cmu.sphinx.knowledge.dictionary;
 public interface Dictionary {
 
     /**
+     * Spelling of the 'word' that marks the beginning of a sentence
+     */
+    public static final String SENTENCE_START_SPELLING = "<s>";
+
+    /**
+     * Spelling of the 'word' that marks the end of a sentence
+     */
+    public static final String SENTENCE_END_SPELLING = "</s>";
+
+    /**
+     * Spelling of the 'word' that marks a silence
+     */
+    public static final String SILENCE_SPELLING = "<sil>";
+    /**
      * Prefix string for the Sphinx properties of this Dictionary.
      */
     public static final String PROP_PREFIX =
@@ -91,7 +105,7 @@ public interface Dictionary {
      * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
      */
     public Pronunciation[] getPronunciations(String text,
-                                             WordClassification wordClassification);
+                                     WordClassification wordClassification);
 
     /**
      * Retrieves the pronunciations for a particular word based upon
@@ -112,8 +126,7 @@ public interface Dictionary {
      * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
      */
     public Pronunciation[] getPronunciations(String text,
-                                             WordClassification wordClassification,
-                                             String tag);
+                 WordClassification wordClassification, String tag);
 
 
     /**

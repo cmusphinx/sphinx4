@@ -18,6 +18,7 @@ import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.acoustic.HMMState;
 import edu.cmu.sphinx.knowledge.acoustic.Context;
 import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.decoder.linguist.WordSearchState;
@@ -41,9 +42,6 @@ import java.util.ArrayList;
 public class Token implements Scoreable {
 
     private final static boolean COMBINE_BRANCHES = true;
-    private final static String SILENCE = "<sil>";
-    private final static String SENTENCE_START = "<s>";
-    private final static String SENTENCE_END = "</s>";
 
     private static int curCount;
     private static int lastCount;
@@ -53,10 +51,9 @@ public class Token implements Scoreable {
 
     static {
         silenceSet = new HashSet();
-        // BUG: Need a standard place to get these symbols from
-        silenceSet.add(SILENCE);
-        silenceSet.add(SENTENCE_START);
-        silenceSet.add(SENTENCE_END);
+        silenceSet.add(Dictionary.SILENCE_SPELLING);
+        silenceSet.add(Dictionary.SENTENCE_START_SPELLING);
+        silenceSet.add(Dictionary.SENTENCE_END_SPELLING);
     }
 
     private Token predecessor;

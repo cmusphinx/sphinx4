@@ -26,8 +26,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Iterator;
 
 import edu.cmu.sphinx.util.LogMath;
 
@@ -126,7 +128,7 @@ public class GDLDumper extends LinguistDumper  {
 		    " label: " + qs(state.toPrettyString()) + 
 		    " color: " + color +
 		    " shape: " + shape + 
-	//	    " vertical_order: " + level +
+		    " vertical_order: " + level +
 		    "}");
 	}
     }
@@ -175,42 +177,82 @@ public class GDLDumper extends LinguistDumper  {
     protected void dumpArc(PrintStream out, SearchState from,
                            SearchStateArc arc, int level) {
 
+        List arcList = new ArrayList();
         boolean skipHMMs = getProperties().getBoolean(PROP_SKIP_HMMS, true);
         boolean dumpArcLabels = 
             getProperties().getBoolean(PROP_DUMP_ARC_LABELS,true);
         
         LogMath logMath = LogMath.getLogMath(getProperties().getContext());
 
-        String color = getArcColor(arc);
-	SearchState nextState = arc.getState();
 
 	if (skipHMMs) {
-	    if (nextState instanceof HMMSearchState) {
-		return;
-	    } else if (from instanceof HMMSearchState) {
-                // FIX ME
-	    }
-	}
-
-        String label = "";
-        if (dumpArcLabels) {
-            double acoustic = logMath.logToLinear
-                ((double) arc.getAcousticProbability());
-            double language = logMath.logToLinear
-                ((double) arc.getLanguageProbability());
-            double insert = logMath.logToLinear
-                ((double) arc.getInsertionProbability());
-
-            label = " label: " +
-                qs("(" + formatEdgeLabel(acoustic) +
-                   "," + formatEdgeLabel(language) +
-                   "," + formatEdgeLabel(insert) +
-                   ")");
+            if (from instanceof HMMSearchState) {
+                return;
+            } else if (arc.getState()  instanceof HMMSearchState) {
+                findNextNonHMMArc(arc, arcList);
+	    }  else {
+                arcList.add(arc);
+            }
+	} else {
+            arcList.add(arc);
         }
-        out.println("   edge: { sourcename: " + qs(getUniqueName(from)) + 
-                    " targetname: " + qs(getUniqueName(nextState)) + 
-                    label +
-                    " color: " + color + "}");
+
+        for (Iterator i = arcList.iterator(); i.hasNext(); ) {
+            SearchStateArc nextArc = (SearchStateArc) i.next();
+            String label = "";
+            String color = getArcColor(nextArc);
+            if (dumpArcLabels) {
+                double acoustic = logMath.logToLinear
+                    ((double) nextArc.getAcousticProbability());
+                double language = logMath.logToLinear
+                    ((double) nextArc.getLanguageProbability());
+                double insert = logMath.logToLinear
+                    ((double) nextArc.getInsertionProbability());
+
+                label = " label: " +
+                    qs("(" + formatEdgeLabel(acoustic) +
+                       "," + formatEdgeLabel(language) +
+                       "," + formatEdgeLabel(insert) +
+                       ")");
+            }
+            out.println("   edge: { sourcename: " + qs(getUniqueName(from)) + 
+                    " targetname: " + qs(getUniqueName(nextArc.getState())) + 
+                    label + " color: " + color + "}");
+        }
+    }
+
+
+
+    /**
+     * Given an arc to an HMMSearchState, find a downstream arc to the
+     * first non-HMM state
+     *
+     * @param arc the arc to start the search at
+     * @param results the resulting arcs are placed on this list
+     */
+    private void findNextNonHMMArc(SearchStateArc arc, List results) {
+        Set visited = new HashSet();
+        List queue = new ArrayList();
+
+        queue.add(arc);
+
+        while (queue.size() > 0) {
+            SearchStateArc nextArc = (SearchStateArc) queue.remove(0);
+            if (visited.contains(nextArc)) {
+                continue;
+            } else {
+                visited.add(nextArc);
+                if (! (nextArc.getState()  instanceof HMMSearchState)) {
+                    results.add(nextArc);
+                } else {
+                    SearchStateArc[] nextArcs =
+                        nextArc.getState().getSuccessors();
+                    for (int i = 0; i < nextArcs.length; i++) {
+                        queue.add(nextArcs[i]);
+                    }
+                }
+            }
+        }
     }
 
 

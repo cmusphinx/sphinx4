@@ -300,14 +300,18 @@ public class LexTreeLinguist implements  Linguist {
          */
         public String getSignature() {
             int c = 121;
-            int r = 121;
+            int r = 123;
+            int l = 125;
             if (central != null) {
                 c = central.hashCode();
             }
             if (right != null) {
                 r = right.hashCode();
             }
-            return "c:" + c+ " r:" + r;
+            if (left != null) {
+                l = left.hashCode();
+            }
+            return "c:" + c+ "-r:" + r + "-l:" + l;
         }
 
 
@@ -499,7 +503,7 @@ public class LexTreeLinguist implements  Linguist {
          * @return the ID
          */
         public String getSignature() {
-            return super.getSignature() + "INIT";
+            return super.getSignature() + "-INIT";
         }
 
         /**
@@ -621,7 +625,7 @@ public class LexTreeLinguist implements  Linguist {
          * @return the ID
          */
         public String getSignature() {
-            return super.getSignature() + "UNIT";
+            return super.getSignature() + "-UNIT";
         }
 
         /**
@@ -695,7 +699,7 @@ public class LexTreeLinguist implements  Linguist {
          * @return the ID
          */
         public String getSignature() {
-            return super.getSignature() + "HMM " + hmmState.getState();
+            return super.getSignature() + "-HMM-" + hmmState.getState();
         }
 
         /**
@@ -856,7 +860,7 @@ public class LexTreeLinguist implements  Linguist {
          * @return the ID
          */
         public String getSignature() {
-            return super.getSignature() + "word " + wordLexNode.hashCode();
+            return super.getSignature() + "-WORD-" + wordLexNode.hashCode();
         }
 
         /**
@@ -940,7 +944,8 @@ public class LexTreeLinguist implements  Linguist {
          }
 
          public String toPrettyString() {
-             return wordLexNode.getPronunciation().getWord();
+             return wordLexNode.getPronunciation().getWord() 
+                 + "[" + getLeft() + "," + getRight() + "]"; 
          }
     }
 

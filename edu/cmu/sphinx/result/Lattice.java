@@ -15,6 +15,7 @@ package edu.cmu.sphinx.result;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.decoder.linguist.WordSearchState;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
 import java.util.*;
 import java.io.*;
@@ -62,8 +63,8 @@ public class Lattice {
      * @param result
      */
     public Lattice( Result result ) {
-        initialNode = addNode("0","<s>",0,0);
-        terminalNode = addNode("-1","</s>",0,0);
+        initialNode = addNode("0", Dictionary.SENTENCE_START_SPELLING, 0,0);
+        terminalNode = addNode("-1", Dictionary.SENTENCE_END_SPELLING,0,0);
 
         Node thisNode;
         double thisAcousticScore=0.0;
