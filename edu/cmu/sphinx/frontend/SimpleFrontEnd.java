@@ -16,6 +16,7 @@ package edu.cmu.sphinx.frontend;
 import edu.cmu.sphinx.frontend.util.PropertiesResolver;
 
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
@@ -97,12 +98,10 @@ public class SimpleFrontEnd extends BaseFrontEnd {
     public SphinxProperties getAcousticProperties(String context,
                                                   String amName) 
         throws IOException {
+
+	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 	AcousticModel am;
-	if (amName != null) {
-	    am = AcousticModel.getAcousticModel(amName, context);
-	} else {
-	    am = AcousticModel.getAcousticModel(context);
-	}
+        am = AcousticModelFactory.getModel(props, amName);
 	if (am != null) {
 	    return am.getProperties();
 	} else {

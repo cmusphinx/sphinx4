@@ -11,8 +11,6 @@
  */
 
 package edu.cmu.sphinx.knowledge.acoustic;
-import edu.cmu.sphinx.util.Utilities;
-import java.io.Serializable;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -20,15 +18,17 @@ import java.util.HashMap;
  * Represents a unit of speech. Units may represent phones, words or
  * any other suitable unit
  */
-public class  Unit implements Serializable {
+public class  Unit {
     /**
      * The name for the silence unit
      */
     public static String SILENCE_NAME = "SIL";
+
     /**
      * The silence unit
      */
     public static Unit SILENCE;
+
     private static Map ciMap;
     private static int nextID ;
 
@@ -45,7 +45,6 @@ public class  Unit implements Serializable {
     private int baseID;
 
     private volatile String key = null;
-    private static int objectCount; 	 // for tracking object counts
 
 
     /**
@@ -89,10 +88,22 @@ public class  Unit implements Serializable {
      *
      * @return the unit
      */
+    /*
     public static Unit getCIUnit(String name) {
         return (Unit) ciMap.get(name);
     }
+    */
 
+    /**
+     * Gets or creates a unit from the unit pool
+     *
+     * @param name the name of the unit
+     *
+     * @return the unit
+     */
+    public static Unit getUnit(String name) {
+        return getUnit(name, false, Context.EMPTY_CONTEXT);
+    }
 
 
     /**
@@ -103,7 +114,7 @@ public class  Unit implements Serializable {
      *
      * @return the unit
      */
-    static Unit createCIUnit(String name, boolean filler) {
+    private static Unit createCIUnit(String name, boolean filler) {
         Unit unit = (Unit) ciMap.get(name);
         if (unit == null) {
             Unit u = new Unit(name, filler, Context.EMPTY_CONTEXT, nextID++);
@@ -122,7 +133,7 @@ public class  Unit implements Serializable {
      *
      * @return the unit
      */
-    static Unit createCDUnit(String name, 
+    private static Unit createCDUnit(String name, 
             boolean filler, Context context) {
         Unit u = new Unit(name, filler, context, getIDFromName(name));
         return u;
@@ -139,16 +150,6 @@ public class  Unit implements Serializable {
     }
 
 
-    /**
-     * Gets or creates a unit from the unit pool
-     *
-     * @param name the name of the unit
-     *
-     * @return the unit
-     */
-    public static Unit getUnit(String name) {
-        return getUnit(name, false, Context.EMPTY_CONTEXT);
-    }
 
 
    /**
@@ -167,7 +168,6 @@ public class  Unit implements Serializable {
 	if (name.equals(SILENCE_NAME)) {
 	    silence = true;
 	}
-	Utilities.objectTracker("Unit", objectCount++);
     }
 
    /**
@@ -181,25 +181,6 @@ public class  Unit implements Serializable {
         this(name, filler, context, -1);
     }
 
-    /**
-     * Gets the name for this unit
-     *
-     * @return the name for this unit
-     */
-    public String getName() {
-	return name;
-    }
-
-
-    /**
-     * Gets the base ID for this unit
-     *
-     * @return the id
-     */
-    public int getBaseID() {
-        assert baseID != -1;
-        return baseID;
-    }
 
     /**
      * Determines if this unit is context dependent
@@ -286,11 +267,48 @@ public class  Unit implements Serializable {
     }
 
     /**
+     * Gets the name for this unit
+     *
+     * @return the name for this unit
+     */
+    public String getName() {
+	return name;
+    }
+
+
+    /**
+     * Gets the base ID for this unit
+     *
+     * @return the id
+     */
+    public int getBaseID() {
+        if (baseID == -1) {
+            baseID = getBaseUnit().getBaseID();
+            assert baseID != -1;
+        }
+        return baseID;
+    }
+
+    /**
      * gets the key for this unit
      */
     private String getKey() {
 	return toString();
     }
+
+    /**
+     * Gets the  base unit associated with this HMM
+     *
+     * @return the unit associated with this HMM
+     */
+    public Unit getBaseUnit() {
+        if (context == Context.EMPTY_CONTEXT) {
+            return this;
+        } else {        // BUG: this maybe too slow
+            return getUnit(this.getName());
+        }
+    }
+
 
      /**
       * Checks to see if the given unit with associated contexts
@@ -302,7 +320,7 @@ public class  Unit implements Serializable {
       *
       * @return true if this unit matches the name and non-null context
       */
-     boolean isPartialMatch(String name, Context context) {
+     public boolean isPartialMatch(String name, Context context) {
 	 return (getName().equals(name) && 
 		 context.isPartialMatch(this.context));
      }

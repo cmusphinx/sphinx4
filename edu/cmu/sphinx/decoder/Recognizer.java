@@ -19,6 +19,7 @@ import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.dictionary.FastDictionary;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
@@ -36,7 +37,7 @@ import edu.cmu.sphinx.decoder.linguist.LinguistProcessor;
 import edu.cmu.sphinx.decoder.search.SimplePruner;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -277,7 +278,7 @@ public class Recognizer {
         
         dumpMemoryInfo("recognizer start");
         
-        AcousticModel[] models = getAcousticModels(context);
+        AcousticModel[] models = getAcousticModels(props);
         dumpMemoryInfo("acoustic model");
 
         dictionary = new FastDictionary(context);
@@ -431,20 +432,15 @@ public class Recognizer {
      *
      * @return the AcousticModel(s) used by this Recognizer
      */
-    protected AcousticModel[] getAcousticModels(String context)
+    protected AcousticModel[] getAcousticModels(SphinxProperties props)
 	throws IOException {
-	List modelNames = AcousticModel.getNames(context);
+	Collection modelNames = AcousticModelFactory.getNames(props);
 	AcousticModel[] models;
-	if (modelNames.size() == 0) {
-	    models = new AcousticModel[1];
-	    models[0] = AcousticModel.getAcousticModel(context);
-	} else {
-	    models = new AcousticModel[modelNames.size()];
-	    int m = 0;
-	    for (Iterator i = modelNames.iterator(); i.hasNext(); m++) {
-		String modelName = (String) i.next();
-		models[m] = AcousticModel.getAcousticModel(modelName, context);
-	    }
+        models = new AcousticModel[modelNames.size()];
+        int m = 0;
+        for (Iterator i = modelNames.iterator(); i.hasNext(); m++) {
+            String modelName = (String) i.next();
+            models[m] = AcousticModelFactory.getModel(props, modelName);
 	}
 	return models;
     }

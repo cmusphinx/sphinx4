@@ -22,14 +22,18 @@ edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.acoustic.FeatureVectorLength = 39
+edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.models=hub4
+hub4;edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel
 
-edu.cmu.sphinx.knowledge.acoustic.format=sphinx3.binary 
-edu.cmu.sphinx.knowledge.acoustic.location = /lab/speech/sphinx4/data/hub4_model
+hub4;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
 
-edu.cmu.sphinx.knowledge.acoustic.definition_file = hub4opensrc.6000.mdef
-edu.cmu.sphinx.knowledge.acoustic.data_location = 6000senones/hub4opensrc.cd_continuous_8gau
-edu.cmu.sphinx.knowledge.acoustic.properties_file = am.props
+hub4;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.format=sphinx3.binary 
+hub4;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.location = /lab/speech/sphinx4/data/hub4_model
+
+hub4;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.definition_file = hub4opensrc.6000.mdef
+hub4;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.data_location = 6000senones/hub4opensrc.cd_continuous_8gau
+hub4;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
+
 edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel 
 edu.cmu.sphinx.knowledge.language.LanguageModel.location=./hub4.flat_unigram.lm
 edu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=1
@@ -84,7 +88,7 @@ edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation = true
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.location = /lab/speech/sphinx4/data/hub4_model
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = cmudict.06d
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = fillerdict
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true

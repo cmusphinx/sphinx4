@@ -11,7 +11,14 @@
  *
  */
 
-package edu.cmu.sphinx.knowledge.acoustic;
+package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
+
+import edu.cmu.sphinx.knowledge.acoustic.HMM;
+import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
+import edu.cmu.sphinx.knowledge.acoustic.HMMState;
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.knowledge.acoustic.Context;
+import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StreamFactory;
@@ -54,7 +61,7 @@ class Sphinx3Loader implements Loader {
      * The logger for this class
      */
     private static Logger logger = 
-	    Logger.getLogger(AcousticModel.PROP_PREFIX + "AcousticModel");
+	    Logger.getLogger(TiedStateAcousticModel.PROP_PREFIX + "AcousticModel");
 
     protected final static String NUM_SENONES = "num_senones";
     protected final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
@@ -113,14 +120,9 @@ class Sphinx3Loader implements Loader {
         this.binary = binary;
 	logMath = LogMath.getLogMath(systemProperties.getContext());
 
-	// extract the feature vector length
-	String vectorLengthProp = AcousticModel.PROP_VECTOR_LENGTH;
-	if (modelName != null) {
-	    vectorLengthProp = AcousticModel.PROP_PREFIX + modelName +
-		".FeatureVectorLength";
-	}
 	vectorLength = systemProperties.getInt
-	    (vectorLengthProp, AcousticModel.PROP_VECTOR_LENGTH_DEFAULT);
+	    (modelName, TiedStateAcousticModel.PROP_VECTOR_LENGTH,
+             TiedStateAcousticModel.PROP_VECTOR_LENGTH_DEFAULT);
 	
         hmmManager = new HMMManager();
         contextIndependentUnits = new LinkedHashMap();
@@ -216,31 +218,38 @@ class Sphinx3Loader implements Loader {
 	String prefix, model, dataDir, propsFile;
 
 	if (modelName == null) {
-	    prefix = AcousticModel.PROP_PREFIX;
+	    prefix = TiedStateAcousticModel.PROP_PREFIX;
 	} else {
-	    prefix = AcousticModel.PROP_PREFIX + modelName + ".";
+	    prefix = TiedStateAcousticModel.PROP_PREFIX + modelName + ".";
 	}
 	// System.out.println("Using prefix: " + prefix);
 
-	location = systemProperties.getString
-	    (prefix + "location", AcousticModel.PROP_LOCATION_DEFAULT);
-	model = systemProperties.getString
-	    (prefix + "definition_file", AcousticModel.PROP_MODEL_DEFAULT);
-	dataDir = systemProperties.getString
-	    (prefix + "data_location", 
-	     AcousticModel.PROP_DATA_LOCATION_DEFAULT) + "/";
-	propsFile = systemProperties.getString
-	    (prefix + "properties_file", 
-	     AcousticModel.PROP_PROPERTIES_FILE_DEFAULT);
+	location = systemProperties.getString (modelName, 
+                        TiedStateAcousticModel.PROP_LOCATION, 
+                        TiedStateAcousticModel.PROP_LOCATION_DEFAULT);
 
-	float distFloor = systemProperties.getFloat
-	    (AcousticModel.PROP_MC_FLOOR, AcousticModel.PROP_MC_FLOOR_DEFAULT);
-        float mixtureWeightFloor = 
-	    systemProperties.getFloat(AcousticModel.PROP_MW_FLOOR, 
-			   AcousticModel.PROP_MW_FLOOR_DEFAULT);
-        float varianceFloor = 
-	    systemProperties.getFloat(AcousticModel.PROP_VARIANCE_FLOOR, 
-			   AcousticModel.PROP_VARIANCE_FLOOR_DEFAULT);
+	model = systemProperties.getString(modelName,
+	                TiedStateAcousticModel.PROP_MODEL, 
+                        TiedStateAcousticModel.PROP_MODEL_DEFAULT);
+	dataDir = systemProperties.getString(modelName,
+	     TiedStateAcousticModel.PROP_DATA_LOCATION,
+	     TiedStateAcousticModel.PROP_DATA_LOCATION_DEFAULT) + "/";
+
+	propsFile = systemProperties.getString(modelName,
+	     TiedStateAcousticModel.PROP_PROPERTIES_FILE,
+	     TiedStateAcousticModel.PROP_PROPERTIES_FILE_DEFAULT);
+
+	float distFloor = systemProperties.getFloat(modelName,
+	     TiedStateAcousticModel.PROP_MC_FLOOR, 
+             TiedStateAcousticModel.PROP_MC_FLOOR_DEFAULT);
+
+        float mixtureWeightFloor = systemProperties.getFloat(modelName,
+                   TiedStateAcousticModel.PROP_MW_FLOOR, 
+                   TiedStateAcousticModel.PROP_MW_FLOOR_DEFAULT);
+
+        float varianceFloor = systemProperties.getFloat(modelName,
+                   TiedStateAcousticModel.PROP_VARIANCE_FLOOR, 
+		   TiedStateAcousticModel.PROP_VARIANCE_FLOOR_DEFAULT);
 
 	logger.info("Loading Sphinx3 acoustic model: " + modelName);
 	logger.info("    Path      : " + location);
@@ -260,11 +269,7 @@ class Sphinx3Loader implements Loader {
             url = file.toURI().toURL();
         }
 
-	if (modelName == null) {
-	    prefix = systemProperties.getContext() + ".acoustic";
-	} else {
-	    prefix = systemProperties.getContext() + ".acoustic." + modelName;
-	}
+        prefix = systemProperties.getContext() + ".acoustic." + modelName;
 	acousticProperties = loadAcousticPropertiesFile(prefix, url);
 
 
@@ -293,9 +298,9 @@ class Sphinx3Loader implements Loader {
 	senonePool = createSenonePool(distFloor, varianceFloor);
 
         // load the HMM model file
-	boolean useCDUnits = systemProperties.getBoolean
-	    (AcousticModel.PROP_USE_CD_UNITS, 
-	     AcousticModel.PROP_USE_CD_UNITS_DEFAULT);
+	boolean useCDUnits = systemProperties.getBoolean(modelName,
+	     TiedStateAcousticModel.PROP_USE_CD_UNITS, 
+	     TiedStateAcousticModel.PROP_USE_CD_UNITS_DEFAULT);
 	loadHMMPool(useCDUnits,
                     StreamFactory.getInputStream(location, model),
                     location + File.separator + model);
@@ -865,7 +870,7 @@ class Sphinx3Loader implements Loader {
 	    assert position.equals("-");
 	    assert tmat < numTiedTransitionMatrices;
 
-	    Unit unit = Unit.createCIUnit(name, attribute.equals(FILLER));
+	    Unit unit = Unit.getUnit(name, attribute.equals(FILLER));
 	    contextIndependentUnits.put(unit.getName(), unit);
 
 	    if (logger.isLoggable(Level.FINE)) {
@@ -881,7 +886,7 @@ class Sphinx3Loader implements Loader {
 	    float[][] transitionMatrix = (float[][]) matrixPool.get(tmat);
 	    SenoneSequence ss = getSenoneSequence(stid);
 
-	    HMM hmm = new HMM(unit,  ss, 
+	    HMM hmm = new SenoneHMM(unit,  ss, 
 		    	transitionMatrix, HMMPosition.lookup(position));
 	    hmmManager.put(hmm);
 	}
@@ -933,7 +938,7 @@ class Sphinx3Loader implements Loader {
                 
                     Context context = LeftRightContext.get(leftContext,
                                                            rightContext);
-                    unit = Unit.createCDUnit(name, false, context);
+                    unit = Unit.getUnit(name, false, context);
                 }
                 lastUnitName = unitName;
                 lastUnit = unit;
@@ -951,7 +956,7 @@ class Sphinx3Loader implements Loader {
                 lastSenoneSequence = ss;
                 lastStid = stid;
         
-                HMM hmm = new HMM(unit,
+                HMM hmm = new SenoneHMM(unit,
                                   ss, 
                                   transitionMatrix,
                                   HMMPosition.lookup(position));
@@ -1132,8 +1137,8 @@ class Sphinx3Loader implements Loader {
         throws FileNotFoundException, IOException {
         InputStream inputStream = StreamFactory.getInputStream(location, path);
         boolean sparseForm = acousticProperties.getBoolean
-	    (AcousticModel.PROP_SPARSE_FORM, 
-	     AcousticModel.PROP_SPARSE_FORM_DEFAULT);
+	    (TiedStateAcousticModel.PROP_SPARSE_FORM, 
+	     TiedStateAcousticModel.PROP_SPARSE_FORM_DEFAULT);
 	logger.info("Loading transition matrices from: ");
 	logger.info( path);
 	int numMatrices;
@@ -1198,8 +1203,8 @@ class Sphinx3Loader implements Loader {
     protected Pool loadTransitionMatricesBinary(String path)
         throws FileNotFoundException, IOException {
         boolean sparseForm = acousticProperties.getBoolean
-	    (AcousticModel.PROP_SPARSE_FORM, 
-	     AcousticModel.PROP_SPARSE_FORM_DEFAULT);
+	    (TiedStateAcousticModel.PROP_SPARSE_FORM, 
+	     TiedStateAcousticModel.PROP_SPARSE_FORM_DEFAULT);
 	logger.info("Loading transition matrices from: ");
 	logger.info( path);
 	int numMatrices;

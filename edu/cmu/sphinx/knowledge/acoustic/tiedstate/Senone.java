@@ -10,7 +10,7 @@
  *
  */
 
-package edu.cmu.sphinx.knowledge.acoustic;
+package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
 
 
 import edu.cmu.sphinx.frontend.Feature;

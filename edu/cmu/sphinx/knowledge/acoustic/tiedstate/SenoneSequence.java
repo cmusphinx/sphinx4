@@ -10,7 +10,7 @@
  *
  */
 
-package edu.cmu.sphinx.knowledge.acoustic;
+package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
 
 import java.util.List;
 import java.io.Serializable;

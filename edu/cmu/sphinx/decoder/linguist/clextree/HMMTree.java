@@ -990,7 +990,7 @@ class HMMNode extends Node {
      * @return the base unit
      */
     Unit getBaseUnit() {
-        return hmm.getBaseUnit();
+        return hmm.getUnit().getBaseUnit();
     }
 
     /**

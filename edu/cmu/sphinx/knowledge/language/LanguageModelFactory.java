@@ -71,11 +71,11 @@ public class LanguageModelFactory {
 	} catch (ClassNotFoundException fe) {
 	    throw new Error("CNFE:Can't create language model " + path, fe);
 	} catch (InstantiationException ie) {
-	    throw new Error("IE: Can't create language model" + path, ie);
+	    throw new Error("IE: Can't create language model " + path, ie);
 	} catch (IllegalAccessException iea) {
-	    throw new Error("IEA: Can't create language model" + path, iea);
+	    throw new Error("IEA: Can't create language model " + path, iea);
 	} catch (IOException ioe) {
-	    throw new Error("IOE: Can't create language model" + path, ioe);
+	    throw new Error("IOE: Can't create language model " + path, ioe);
 	} 
     }
 }

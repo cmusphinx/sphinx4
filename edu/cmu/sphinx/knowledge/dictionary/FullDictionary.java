@@ -81,14 +81,8 @@ public class FullDictionary implements Dictionary {
         SphinxProperties properties = SphinxProperties.getSphinxProperties
             (context);
 
-        boolean useAMLocation = properties.getBoolean
-            (Dictionary.PROP_USE_AM_LOCATION,
-	     Dictionary.PROP_USE_AM_LOCATION_DEFAULT);
-
-        String location = null;
-        if (useAMLocation) {
-            location = properties.getString(AcousticModel.PROP_LOCATION, null);
-        }
+        String location = properties.getString(Dictionary.PROP_LOCATION,
+                    PROP_LOCATION_DEFAULT);
 
         String wordDictionaryFile = properties.getString
             (Dictionary.PROP_DICTIONARY, Dictionary.PROP_DICTIONARY_DEFAULT);

@@ -11,7 +11,7 @@
  *
  */
 
-package edu.cmu.sphinx.knowledge.acoustic;
+package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
 
 
 import java.util.HashMap;

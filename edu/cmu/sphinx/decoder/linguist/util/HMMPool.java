@@ -98,7 +98,7 @@ public class HMMPool {
                 }
                 if (unit != null) {
                     hmmTable[index][j] = 
-                        model.lookupNearestHMM(unit, position);
+                        model.lookupNearestHMM(unit, position, false);
                     assert hmmTable[index][j] != null;
                 }
             }

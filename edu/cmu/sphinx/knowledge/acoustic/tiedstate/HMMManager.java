@@ -11,7 +11,10 @@
  *
  */
 
-package edu.cmu.sphinx.knowledge.acoustic;
+package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
+import edu.cmu.sphinx.knowledge.acoustic.HMM;
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
 
 import java.util.HashMap;
 import java.util.logging.Logger;

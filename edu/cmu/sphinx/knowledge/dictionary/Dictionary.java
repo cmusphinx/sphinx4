@@ -44,17 +44,17 @@ public interface Dictionary {
 
 
     /**
-     * The name of the SphinxProperty that specifies whether to look
-     * for the Dictionaries at the Acoustic Model location.
+     * The name of the SphinxProperty that defines the location
+     * (directory or jar file) for the dictionary
      */
-    public static final String PROP_USE_AM_LOCATION =
-        PROP_PREFIX + "useAcousticModelLocation";
+    public static final String PROP_LOCATION =
+        PROP_PREFIX + "location";
 
 
     /**
-     * The default value of PROP_USE_AM_LOCATION.
+     * The default value of PROP_LOCATION.
      */
-    public static final boolean PROP_USE_AM_LOCATION_DEFAULT = true;
+    public static final String PROP_LOCATION_DEFAULT = null;
 
 
     /**

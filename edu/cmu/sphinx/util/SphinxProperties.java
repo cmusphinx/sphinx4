@@ -370,7 +370,7 @@ public class SphinxProperties {
      */
     public String getString(String instanceName,
 			    String propertyName, String defaultValue) {
-	return getString(instanceName + "." + propertyName,
+	return getString(instanceName + ";" + propertyName,
 			defaultValue);
     }
 
@@ -416,7 +416,7 @@ public class SphinxProperties {
     public float getFloat(String instanceName, 
 	    		String propertyName, float defaultValue) 
     		throws NumberFormatException {
-	return getFloat(instanceName + "." + propertyName, defaultValue);
+	return getFloat(instanceName + ";" + propertyName, defaultValue);
     }
 
     /**
@@ -460,7 +460,7 @@ public class SphinxProperties {
     public double getDouble(String instanceName, 
 	    		String propertyName, double defaultValue) 
     		throws NumberFormatException {
-	return getDouble(instanceName + "." + propertyName, defaultValue);
+	return getDouble(instanceName + ";" + propertyName, defaultValue);
     }
 
     /**
@@ -504,7 +504,7 @@ public class SphinxProperties {
     public int getInt(String instanceName, 
 	    		String propertyName, int defaultValue) 
     		throws NumberFormatException {
-	return getInt(instanceName + "." + propertyName, defaultValue);
+	return getInt(instanceName + ";" + propertyName, defaultValue);
     }
 
     /**
@@ -549,7 +549,7 @@ public class SphinxProperties {
      */
     public boolean getBoolean(String instanceName, 
 	    		String propertyName, boolean defaultValue)  {
-	return getBoolean(instanceName + "." + propertyName, defaultValue);
+	return getBoolean(instanceName + ";" + propertyName, defaultValue);
     }
 
 

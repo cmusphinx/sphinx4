@@ -36,9 +36,7 @@ public class HMMStateState extends SentenceHMMState
      * @param hmmState the hmmState associated with this state
      */
     public HMMStateState(SentenceHMMState parent, HMMState hmmState) {
-	super((hmmState.getHMM().isComposite() ? "@":"") + "S",
-		parent,
-		hmmState.getState()); 
+	super( "S", parent, hmmState.getState()); 
 	this.hmmState = hmmState;
         this.isEmitting = hmmState.isEmitting();
     }
