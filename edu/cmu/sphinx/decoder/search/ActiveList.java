@@ -79,16 +79,6 @@ public interface ActiveList {
      */
     public final static boolean PROP_STRICT_PRUNING_DEFAULT = true;
 
-    /**
-     * Determines if a token with the given score
-     * is insertable into the list
-     *
-     * @param logScore the entry score (in the LogMath Log domain)
-     * of the token to insert
-     * 
-     * @return true if its insertable
-     */
-    public boolean isInsertable(float logScore);
 
     /**
      * Adds the given token to the list, keeping track of the lowest
@@ -109,12 +99,6 @@ public interface ActiveList {
      */
     public void replace(Token oldToken, Token newToken);
 
-    /**
-     * Returns true if the token is scored high enough to grow.
-     *
-     * @param token the token to check, false otherwise
-     */
-    public boolean isWorthGrowing(Token token);
 
     /**
      * Purges the active list of excess members returning a
@@ -186,5 +170,34 @@ public interface ActiveList {
      * @return the set of tokens
      */
     public List getTokens();
+
+
+    /**
+     * gets the beam threshold best upon the best scoring token
+     *
+     * @return the beam threshold
+     */
+    public float getBeamThreshold();
+
+    /**
+     * gets the best score in the list
+     *
+     * @return the best score
+     */
+    public float getBestScore();
+
+    /**
+     * Sets the best scoring token for this active list
+     *
+     * @param token the best scoring token
+     */
+    public void setBestToken(Token token);
+
+    /**
+     * Gets the best scoring token for this active list
+     *
+     * @return the best scoring token
+     */
+    public Token getBestToken();
 }
 
