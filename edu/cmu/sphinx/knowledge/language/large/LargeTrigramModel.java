@@ -200,7 +200,6 @@ public class LargeTrigramModel implements LanguageModel {
      * Called before a recognition
      */
     public void start() {
-        clearCache();
 	if (logFile != null) {
 	    logFile.println("<START_UTT>");
 	}
@@ -210,6 +209,7 @@ public class LargeTrigramModel implements LanguageModel {
      * Called after a recognition
      */
     public void stop() {
+        clearCache();
 	if (logFile != null) {
 	    logFile.println("<END_UTT>");
 	    logFile.flush();
