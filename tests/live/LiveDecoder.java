@@ -23,9 +23,8 @@ import edu.cmu.sphinx.frontend.Microphone;
 import edu.cmu.sphinx.frontend.NonSpeechFilter;
 import edu.cmu.sphinx.frontend.Signal;
 
-import edu.cmu.sphinx.search.Result;
-
 import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.result.Result;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

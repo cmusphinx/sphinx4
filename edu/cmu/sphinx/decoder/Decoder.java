@@ -1,11 +1,11 @@
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Copyright 1999-2002 Carnegie Mellon University.
+ * Portions Copyright 2002 Sun Microsystems, Inc.
  * Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
  * All Rights Reserved.  Use is subject to license terms.
- * 
+ *
  * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
  */
@@ -17,13 +17,13 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Util;
 import edu.cmu.sphinx.frontend.Utterance;
 import edu.cmu.sphinx.search.Recognizer;
-import edu.cmu.sphinx.search.ResultListener;
-import edu.cmu.sphinx.search.Result;
 import edu.cmu.sphinx.search.Token;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.result.ResultListener;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -37,7 +37,7 @@ public class Decoder {
     /**
      * Base property name for the decoder properties
      */
-    private  final static String PROP_PREFIX = 
+    private  final static String PROP_PREFIX =
 	"edu.cmu.sphinx.decoder.Decoder.";
 
     /**
@@ -51,7 +51,7 @@ public class Decoder {
     /**
      * A SphinxProperty name for a boolean property that when set will
      * cause the decoder to show all the tokens associated with the
-     * actual result (if present) 
+     * actual result (if present)
      */
     public final static String PROP_SHOW_ACTUAL_TOKEN =
 	PROP_PREFIX + "showActualToken";
@@ -87,7 +87,7 @@ public class Decoder {
     private float cumulativeProcessingTime = 0.0f;
 
     private boolean showPartialResults = false;
-    private boolean showBestToken = false;	
+    private boolean showBestToken = false;
     private boolean showErrorToken = false;
     private boolean showActualToken = false;
 
@@ -118,11 +118,11 @@ public class Decoder {
     public Decoder(String context) throws IOException {
         this(context, null, false);
     }
-    
+
 
     /**
      * Constructs a Decoder with the given context and DataSource,
-     * specifying whether to initialize all the components 
+     * specifying whether to initialize all the components
      * at construction time.
      * This is to avoid having several Decoders fully loaded but
      * only one is actually being used. "Fully loading" a Decoder
@@ -131,12 +131,12 @@ public class Decoder {
      *
      * @param context the context of this Decoder
      * @param dataSource the source of audio of this Decoder
-     * @param initialize indicate whether to fully load this Decoder 
+     * @param initialize indicate whether to fully load this Decoder
      */
     private Decoder(String context,
                     DataSource dataSource,
                     boolean initialize) throws IOException {
-                        
+
         this.context = context;
 	props = SphinxProperties.getSphinxProperties(context);
 
@@ -148,7 +148,7 @@ public class Decoder {
 	    props.getBoolean(PROP_SHOW_BEST_TOKEN, false);
 	showActualToken =
 	    props.getBoolean(PROP_SHOW_ACTUAL_TOKEN, false);
-        
+
         recognizer = null;        // first initialize it to null
         aligner = null;
 
@@ -214,7 +214,7 @@ public class Decoder {
         timer.stop();  // stop the timer
 
 	showFinalResult(ref, result, timer);
-        
+
         return result;
     }
 
@@ -228,7 +228,7 @@ public class Decoder {
         return recognizer;
     }
 
-    
+
     /**
      * Returns the context.
      *
@@ -272,13 +272,13 @@ public class Decoder {
      */
     protected void showPartialResult(Result result) {
         String resultLine = null;
-        
+
         if (result.isFinal()) {
             resultLine = "FINAL   ";
         } else {
             resultLine = "partial ";
         }
-        
+
         System.out.println
             (resultLine + "Result: " + result.toString() + "      " +
              "Active branches: " + result.getActiveTokens().size());
@@ -310,11 +310,11 @@ public class Decoder {
 	    }
         }
 
-	
+
 	if (bestToken == null) {
-	    System.out.print("   HypScore: NONE"); 
+	    System.out.print("   HypScore: NONE");
 	} else {
-	    System.out.print("   HypScore: " 
+	    System.out.print("   HypScore: "
 			+ result.getBestToken().getScore());
 	}
 	if (!match) {
@@ -337,7 +337,7 @@ public class Decoder {
         audioTime = getAudioTime(result);
 	cumulativeProcessingTime += processingTime;
 	cumulativeAudioTime += audioTime;
-                     
+
 	showAudioUsage();
 	showMemoryUsage();
 	StatisticsVariable.dumpAll(context);
@@ -391,7 +391,7 @@ public class Decoder {
                          timeFormat.format(audioTime) + "s");
         System.out.print("  Proc: " +
                          timeFormat.format(processingTime) + "s");
-        System.out.println("  Speed: " + 
+        System.out.println("  Speed: " +
                            timeFormat.format(getSpeed()) +
                            " X real time");
 	showAudioSummary();
@@ -405,11 +405,11 @@ public class Decoder {
                          timeFormat.format(cumulativeAudioTime) + "s");
         System.out.print("  Proc: " +
 		timeFormat.format(cumulativeProcessingTime) + "s");
-        System.out.println("  Speed: " + 
+        System.out.println("  Speed: " +
                            timeFormat.format(getCumulativeSpeed())
                            + " X real time");
     }
-        
+
     /**
      * Shows the size of the heap used
      */
