@@ -43,7 +43,7 @@ public class ArpaGrammarTest {
 
             Grammar grammar = new ArpaGrammar();
 
-	    grammar.initialize(context, dictionary);
+	    grammar.initialize(context, null, dictionary);
 	    grammar.dump();
 	    System.out.println("Num nodes loaded is " +
 		    grammar.getNumNodes());
