@@ -41,17 +41,46 @@ public class CardMatch implements Recorder {
 
     private static final String PROP_PREFIX = "demo.jsapi.cardmatch.";
 
-    private static final String PROP_NUM_CARDS = PROP_PREFIX + "numberOfCards";
-    private static final int PROP_NUM_CARDS_DEFAULT = 6;
+    /**
+     * The SphinxProperty for the number of cards in this game.
+     */
+    public static final String PROP_NUM_CARDS = PROP_PREFIX + "numberOfCards";
 
-    private static final String PROP_IMAGE_FILES = PROP_PREFIX + "imageFiles";
+    /**
+     * The default value of PROP_NUM_CARDS.
+     */
+    public static final int PROP_NUM_CARDS_DEFAULT = 6;
+
+    /**
+     * The SphinxProperty for the image files.
+     */
+    public static final String PROP_IMAGE_FILES = PROP_PREFIX + "imageFiles";
     
-    private static final String PROP_DO_ENDPOINTING = 
-        PROP_PREFIX + "doEndpointing";
-    private static final boolean PROP_DO_ENDPOINTING_DEFAULT = false;
+    /**
+     * The default value of PROP_IMAGE_FILES.
+     */
+    public static final String PROP_IMAGE_FILES_DEFAULT = null;
 
-    private static final String PROP_USE_VOICE = PROP_PREFIX + "useVoice";
-    private static final boolean PROP_USE_VOICE_DEFAULT = true;
+    /**
+     * The SphinxProperty specifying whether to do endpointing.
+     */
+    public static final String PROP_DO_ENDPOINTING =
+        PROP_PREFIX + "doEndpointing";
+
+    /**
+     * The default value of PROP_DO_ENDPOINTING.
+     */
+    public static final boolean PROP_DO_ENDPOINTING_DEFAULT = false;
+
+    /**
+     * The SphinxProperty specifying whether to use a voice.
+     */
+    public static final String PROP_USE_VOICE = PROP_PREFIX + "useVoice";
+
+    /**
+     * The default value of PROP_USE_VOICE.
+     */
+    public static final boolean PROP_USE_VOICE_DEFAULT = true;
 
 
     private int goodGuessIndex = 0;
