@@ -14,7 +14,7 @@
     <property name="build_dir"		value="bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="${build_dir}/lib"/>
-    <property name="javadoc_dir"	value="${build_dir}/javadoc"/>
+    <property name="javadoc_dir"	value="javadoc"/>
     <property name="javadoc_check_dir"  value="${build_dir}/javadoc_check"/>
     <property name="javadoc_zip"	value="javadoc.zip"/>
     <property name="javadoc_level"	value="public"/>
@@ -238,6 +238,7 @@ jsapi.exe from the lib directory.
 	    <fileset defaultexcludes="no" dir="." includes="**/*~"/>
 	</delete>
 	<delete dir="${build_dir}"/>
+	<delete dir="${javadoc_dir}"/>
     </target>
 
 </project>
