@@ -70,19 +70,22 @@ public class TrainerScore {
 			float[] logComponentProb) {
 
 	this.feature = feature;
+	this.hmmState = state;
 
-	hmmState = state;
-	// get the index and the HMM for this HMMState
-	int stateIndex = hmmState.getState();
-	HMM hmm = hmmState.getHMM();
-	// Get the senone sequence associated with this HMM
-	SenoneSequence ss = hmm.getSenoneSequence();
-	// Get the senone associated with this HMMState, located in
-	// the stateIndex-th position in the senone sequence
-	senone = ss.getSenones()[stateIndex];
-	// After this, we need to the senone pool to find out the
-	// senone id... Or maybe we can operate directly on the senone
-
+	// For dummy state, the state is a null pointer
+	if ((state != null) && (state.isEmitting())) {
+	    // get the index and the HMM for this HMMState
+	    int stateIndex = state.getState();
+	    HMM hmm = state.getHMM();
+	    // Get the senone sequence associated with this HMM
+	    SenoneSequence ss = hmm.getSenoneSequence();
+	    // Get the senone associated with this HMMState, located
+	    // in the stateIndex-th position in the senone sequence
+	    senone = ss.getSenones()[stateIndex];
+	    // After this, we need to go to the senone pool to find
+	    // out the senone id... Or maybe we can operate directly
+	    // on the senone
+	}
 	// Now, the probabilities
 	this.logOutputProbability = probability;
 	this.logAlpha = logAlpha;
