@@ -96,11 +96,9 @@ public class Lattice {
         if (result.getAlternateHypothesisManager() == null) {
             throw new Error("ahm is null");
         }
-        if (result.getAlternateHypothesisManager().getProperties() == null) {
-            throw new Error("prop is null");
-        }
 
-        logBase = result.getAlternateHypothesisManager().getProperties().getDouble("edu.cmu.sphinx.util.LogMath.logBase",1.0001);
+        // TODO need to get the real logBase
+        logBase = 1.0001; // BUG:
     }
 
     protected void processToken(Node thisNode, Token token) {
