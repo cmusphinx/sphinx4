@@ -28,6 +28,20 @@ public class ExtendedStreamTokenizer {
      */
     public ExtendedStreamTokenizer(String path) 
 			throws FileNotFoundException {
+	this(path, false);
+    }
+
+    /**
+     * Creates and returns a stream tokenizer that has
+     * been properly configured to parse sphinx3 data
+     *
+     * @param path the source of the data
+     * @param eolIsSignificant if true eol is significant
+     *
+     * @throws FileNotFoundException if a file cannot be found
+     */
+    public ExtendedStreamTokenizer(String path, boolean eolIsSignificant) 
+			throws FileNotFoundException {
 	FileReader fileReader = new FileReader(path);
 	reader = new BufferedReader(fileReader);
 	this.path = path;
@@ -35,7 +49,7 @@ public class ExtendedStreamTokenizer {
 	st.resetSyntax();
 	st.whitespaceChars(0, 32);
 	st.wordChars(33, 127);
-	st.eolIsSignificant(false);
+	st.eolIsSignificant(eolIsSignificant);
 	st.commentChar('#');
     }
 
@@ -54,10 +68,18 @@ public class ExtendedStreamTokenizer {
      * @throws IOException if an error occurs while loading the data
      */
     public String getString() throws StreamCorruptedException, IOException  {
-	if (st.nextToken() != StreamTokenizer.TT_WORD) {
+	st.nextToken();
+	if (st.ttype != StreamTokenizer.TT_WORD &&
+	    st.ttype != StreamTokenizer.TT_EOL &&
+	    st.ttype != StreamTokenizer.TT_EOF) {
 	    corrupt("word expected but not found");
 	}
-	return st.sval;
+	if (st.ttype == StreamTokenizer.TT_EOL ||
+	    st.ttype == StreamTokenizer.TT_EOF) {
+	    return null;
+	} else {
+	    return st.sval;
+	}
     }
 
 
