@@ -42,13 +42,122 @@ import edu.cmu.sphinx.util.LogMath;
 
 
 /**
- * Defines a grammar based JSGF grammar rules in a file. The path to
- * the file is defined by the PROP_PATH property.
+ * Defines a grammar based on JSGF grammar rules in a file.
  *
- * This implementation does not support RuleCount and does not support
- * right-hand recursion.
+ * <p>
+ * The Java Speech Grammar Format (JSGF) is a BNF-style, platform-independent,
+ * and vendor-independent textual representation of grammars for use in
+ * speech recognition. It is used by the
+ * <a href="http://java.sun.com/products/java-media/speech/">Java Speech API (JSAPI)</a>.
  *
- * All probabilities are maintained in LogMath log base
+ * <p>
+ * Here we only intend to give a couple of examples of grammars written
+ * in JSGF, so that you can quickly learn to write your own grammars.
+ * For more examples and a complete specification of JSGF, go to
+ * <p>
+ * <a href="http://java.sun.com/products/java-media/speech/forDevelopers/JSGF/">http://java.sun.com/products/java-media/speech/forDevelopers/JSGF/</a>.
+ *
+ * <p><b>Example 1: "Hello World" in JSGF</b>
+ * 
+ * <p>
+ * The example below shows how a JSGF grammar that generates the sentences
+ * "Hello World":
+ *
+ * <p>
+ * <table width="100%" cellpadding="10">
+ * <tr><td bgcolor="#DDDDDD">
+ * <pre>
+ * #JSGF V1.0
+ * 
+ * public &lt;helloWorld&gt; = Hello World;
+ * </pre>
+ * </td></tr>
+ * </table>
+ *
+ * <i>Figure 1: Hello grammar that generates the sentences "Hello World".</i>
+ *
+ * <p>
+ * The above grammar is saved in a file called "hello.gram". It defines
+ * a public grammar rule called "helloWorld".  In order for this grammar rule
+ * to be publicly accessible, we must be declared it "public".
+ * Non-public grammar rules are not visible outside of the grammar file.
+ *
+ * <p>
+ * The location of the grammar file(s) is(are) defined by the 
+ * {@link #PROP_BASE_GRAMMAR_URL baseGrammarURL} property.
+ * Since all JSGF grammar files end with ".gram", it will automatically
+ * search all such files at the given URL for the grammar.
+ * The name of the grammar to search for is specified by
+ * {@link #PROP_GRAMMAR_NAME grammarName}. In this example, the grammar name
+ * is "helloWorld".
+ *
+ * <p>
+ * <b>Example 2: Command Grammar in JSGF</b>
+ *
+ * <p>
+ * This examples shows a grammar that generates basic control commands like
+ * "move a menu thanks please", "close file",
+ * "oh mighty computer please kindly delete menu thanks". It is the same
+ * as one of the command & control examples in the 
+ * <a href="http://java.sun.com/products/java-media/speech/forDevelopers/JSGF/">JSGF specification</a>.
+ * It is considerably more complex than the previous example.
+ * It defines the public grammar called "basicCmd".
+ * 
+ * <p>
+ * <table width="100%" cellpadding="10">
+ * <tr><td bgcolor="#DDDDDD">
+ * <pre>
+ * #JSGF V1.0
+ * 
+ * public &lt;basicCmd&gt; = &lt;startPolite&gt; &lt;command&gt; &lt;endPolite&gt;;
+ *
+ * &lt;command&gt; = &lt;action&gt; &lt;object&gt;;
+ * &lt;action&gt; = /10/ open |/2/ close |/1/ delete |/1/ move;
+ * &lt;object&gt; = [the | a] (window | file | menu);
+ *
+ * &lt;startPolite&gt; = (please | kindly | could you | oh  mighty  computer) *;
+ * &lt;endPolite&gt; = [ please | thanks | thank you ];
+ * </pre>
+ * </td></tr>
+ * </table>
+ *
+ * <i>Figure 2: Command grammar that generates simple control commands.</i>
+ * 
+ * <p>
+ * The features of JSGF that are shown in this example includes:
+ * <ul>
+ * <li>using other grammar rules within a grammar rule.
+ * <li>the OR "|" operator.
+ * <li>the grouping "(...)" operator.
+ * <li>the optional grouping "[...]" operator.
+ * <li>the zero-or-many "*" (called Kleene star) operator.
+ * <li>a probability (e.g., "open" is more likely than the others).
+ * </ul>
+ *
+ * <p>
+ * <h3>From JSGF to Grammar Graph</h3>
+ *
+ * After the JSGF grammar is read in, it is converted to a graph of words
+ * representing the grammar. Lets call this the grammar graph.
+ * It is from this grammar graph that the eventual search structure
+ * used for speech recognition is built. Below,
+ * we show the grammar graphs created from the above JSGF grammars.
+ * The nodes <code>"&lt;sil&gt;"</code> means "silence".
+ *
+ * <p>
+ * <img src="doc-files/helloWorld.jpg">
+ * <br><i>Figure 3: Grammar graph created from the Hello World grammar.</i>
+ *
+ * <p>
+ * <img src="doc-files/commandGrammar.jpg">
+ * <br><i>Figure 4: Grammar graph created from the Command grammar.</i>
+ * 
+ * <p>
+ * <h3>Implementation Notes</h3>
+ * <ol>
+ * <li>This implementation does not support right-hand recursion.
+ * <li>All probabilities are maintained in LogMath log base.
+ * </ol>
  */
 public class JSGFGrammar extends Grammar {
 
