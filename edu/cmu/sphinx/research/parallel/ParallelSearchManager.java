@@ -194,8 +194,12 @@ public class ParallelSearchManager implements SearchManager {
      */
     public void allocate() throws IOException {
         linguist.allocate();
-        featureScorePruner.allocate();
-        combinedScorePruner.allocate();
+	if (doFeaturePruning) {
+	    featureScorePruner.allocate();
+	}
+	if (doCombinePruning) {
+	    combinedScorePruner.allocate();
+	}
         scorer.allocate();
     }
     
@@ -216,7 +220,7 @@ public class ParallelSearchManager implements SearchManager {
      * @param message the debug message to print
      */
     private void debugPrint(String message) {
-	if (true) {
+	if (false) {
 	    System.out.println(message);
 	}
     }
@@ -275,6 +279,7 @@ public class ParallelSearchManager implements SearchManager {
         resultList = new LinkedList();
         
         calculateCombinedScore(firstToken);
+	printActiveLists();
         growCombineToken(firstToken);
         printActiveLists();
     }
@@ -452,8 +457,10 @@ public class ParallelSearchManager implements SearchManager {
 	
 	while (iterator.hasNext()) {
 	    CombineToken token = (CombineToken) iterator.next();
-            token.setLastCombineTime(currentFrameNumber);
-            growCombineToken(token);
+	    if (!token.isPruned()) {
+		token.setLastCombineTime(currentFrameNumber);
+		growCombineToken(token);
+	    }
         }
     }
 
@@ -496,7 +503,7 @@ public class ParallelSearchManager implements SearchManager {
      */
     private void growParallelToken(ParallelToken token) {
 
-        System.out.println("Entering growParallelToken");
+        debugPrint("Entering growParallelToken");
 
 	// If this is a final state, add it to the result list.
 	assert !token.isFinal();
@@ -539,14 +546,14 @@ public class ParallelSearchManager implements SearchManager {
                     nextToken = new CombineToken
                         (token, nextState, nextFrameNumber);
                     setBestToken(nextState, nextToken);
-                    System.out.println("Adding to delayedExpansionList");
+                    debugPrint("Adding to delayedExpansionList");
                     delayedExpansionList.add(nextToken);
                 } else {
                     // get the combine token at the next state
                     nextToken = (CombineToken) getBestToken(nextState);
                 }
 
-                assert (oldNextToken.getFrameNumber() == nextFrameNumber);
+                assert (nextToken.getFrameNumber() == nextFrameNumber);
 
                 ParallelToken oldParallelToken = 
                     nextToken.getParallelToken(token.getFeatureStream());
@@ -555,7 +562,7 @@ public class ParallelSearchManager implements SearchManager {
                 // greater than the old one in the next CombineToken
                 // add this token or replace the old one with this token
 
-                if (oldParallelToken == null ||
+                if (firstToken || oldParallelToken == null ||
                     oldParallelToken.getScore() <= logEntryScore) {
 
                     ParallelToken newToken = new ParallelToken
@@ -630,11 +637,11 @@ public class ParallelSearchManager implements SearchManager {
      * @param token the CombineToken to grow
      */
     private void growCombineToken(CombineToken token) {
-        System.out.println("Entering growCombineToken");
+        debugPrint("Entering growCombineToken");
 	// If this is a final state, add it to the result list.
 	if (token.isFinal()) {
 	    resultList.add(token);
-            System.out.println("FINAL RESULT found!");
+	    System.out.println("FINAL RESULT found!");
 	}
 
         int nextFrameNumber = token.getFrameNumber();
@@ -813,8 +820,12 @@ public class ParallelSearchManager implements SearchManager {
      */
     public void deallocate() {
         scorer.deallocate();
-        featureScorePruner.deallocate();
-        combinedScorePruner.deallocate();
+	if (doFeaturePruning) {
+	    featureScorePruner.deallocate();
+	}
+	if (doCombinePruning) {
+	    combinedScorePruner.deallocate();
+	}
         linguist.deallocate();
     }    
 }
