@@ -40,6 +40,6 @@ edu.cmu.sphinx.frontend.cepstrumSize = 13
 #
 ############################################################
 
-edu.cmu.sphinx.search.dictionaryPath=/lab/speech/sphinx3j/data/connected_digits/train.dict
-edu.cmu.sphinx.search.fillerDictionaryPath=/lab/speech/sphinx3j/data/connected_digits/fillerdict
+edu.cmu.sphinx.search.Dictionary.dictionaryPath=/lab/speech/sphinx3j/data/connected_digits/train.dict
+edu.cmu.sphinx.search.Dictionary.fillerPath=/lab/speech/sphinx3j/data/connected_digits/fillerdict
 edu.cmu.sphinx.search.SimpleLinguist.isMultiDigitGrammar=true
