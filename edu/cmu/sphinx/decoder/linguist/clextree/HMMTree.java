@@ -1,4 +1,3 @@
-
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -20,6 +19,7 @@ import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
@@ -53,6 +53,7 @@ class HMMTree {
     private Set allWords = null;
     private EntryPointTable entryPointTable;
     private boolean debug = false;
+    private float languageWeight;
 
     /**
      * Creates the HMMTree
@@ -63,17 +64,18 @@ class HMMTree {
      * @param addFillerWords if <code>false</code> add filler words
      */
     HMMTree(HMMPool pool, Dictionary dictionary, LanguageModel lm,
-            boolean addFillerWords) {
+            boolean addFillerWords, float languageWeight) {
         this.hmmPool = pool;
         this.dictionary = dictionary;
         this.lm = lm;
         this.addFillerWords = addFillerWords;
+        this.languageWeight = languageWeight;
 
         Timer.start("Create HMMTree");
         compile();
         Timer.stop("Create HMMTree");
         Node.dumpNodeInfo();
-        // dumpTree();
+        dumpTree();
     }
 
 
@@ -125,10 +127,12 @@ class HMMTree {
         if (dupNode.get(node) == null) {
             dupNode.put(node, node);
             System.out.println(Utilities.pad(level * 1) + node);
-            Collection next = node.getSuccessors();
-            for (Iterator i= next.iterator(); i.hasNext(); ) {
-                Node nextNode = (Node) i.next();
-                dumpTree(level + 1, nextNode, dupNode);
+            if (! (node instanceof WordNode)) {
+                Collection next = node.getSuccessors();
+                for (Iterator i= next.iterator(); i.hasNext(); ) {
+                    Node nextNode = (Node) i.next();
+                    dumpTree(level + 1, nextNode, dupNode);
+                }
             }
         }
     }
@@ -219,9 +223,10 @@ class HMMTree {
      * @param word the word to add
      */
     private void addWord(Word word) {
+        float prob = getWordUnigramProbability(word);
         Pronunciation[] pronunciations = word.getPronunciations();
         for (int i = 0; i < pronunciations.length; i++) {
-            addPronunciation(pronunciations[i]);
+            addPronunciation(pronunciations[i], prob);
         }
     }
 
@@ -229,8 +234,10 @@ class HMMTree {
      * Adds the given pronunciation to the lex tree
      *
      * @param pronunciation the pronunciation
+     * @param probability the unigram probability
      */
-    private void addPronunciation(Pronunciation pronunciation ) {
+    private void addPronunciation(Pronunciation pronunciation, 
+            float probability) {
         Unit baseUnit;
         Unit lc;
         Unit rc;
@@ -240,6 +247,8 @@ class HMMTree {
 	baseUnit = units[0];
 	EntryPoint ep = entryPointTable.getEntryPoint(baseUnit);
 
+        ep.addProbability(probability);
+
         if  (units.length > 1) {
             curNode = ep.getNode();
             lc = baseUnit;
@@ -247,7 +256,7 @@ class HMMTree {
                 baseUnit = units[i];
                 rc = units[i + 1];
                 HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.INTERNAL);
-                curNode = curNode.addSuccessor(hmm);
+                curNode = curNode.addSuccessor(hmm, probability);
                 lc = baseUnit;          // next lc is this baseUnit
             }
 
@@ -259,9 +268,9 @@ class HMMTree {
                 rc = (Unit) i.next();
                 HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.END);
                 HMMNode actualTailNode = 
-		    (HMMNode) penultimateNode.addSuccessor(hmm);
+		    (HMMNode) penultimateNode.addSuccessor(hmm, probability);
                 actualTailNode.addRC(rc);
-                actualTailNode.addSuccessor(pronunciation);
+                actualTailNode.addSuccessor(pronunciation, probability);
             }
         } else {
 	    ep.addSingleUnitWord(pronunciation);
@@ -300,6 +309,24 @@ class HMMTree {
         return hmm;
     }
 
+    /**
+     * Gets the unigram probability for the given word
+     *
+     * @param word the word
+     *
+     * @return the unigram probability for the word.
+     */
+    private float getWordUnigramProbability(Word word) {
+        float prob = LogMath.getLogOne();
+        if (!word.isFiller()) {
+            Word[] wordArray = new Word[1];
+            wordArray[0] = word;
+            prob = lm.getProbability(WordSequence.getWordSequence(wordArray));
+            // System.out.println("gwup: " + word + " " + prob);
+            prob *= languageWeight;
+        }
+        return prob;
+    }
 
     /**
      * Returns the initial node for this lex tree
@@ -388,6 +415,7 @@ class HMMTree {
 	List singleUnitWords;
 	int nodeCount = 0;
 	Set rcSet;
+        float totalProbability;
 
         /**
          * Creates an entry point for the given usnit
@@ -396,9 +424,10 @@ class HMMTree {
          */
 	EntryPoint(Unit baseUnit) {
 	    this.baseUnit = baseUnit;
-	    this.baseNode = new Node();
+	    this.baseNode = new Node(LogMath.getLogZero());
 	    this.unitToEntryPointMap = new HashMap();
 	    this.singleUnitWords = new ArrayList();
+            this.totalProbability = LogMath.getLogZero();
 	}
 
         /**
@@ -413,6 +442,27 @@ class HMMTree {
 	    return (Node) unitToEntryPointMap.get(leftContext);
 	}
 
+
+        /**
+         * Accumulates the probability for this entry point
+         *
+         * @param probability a new  probability
+         */
+        void addProbability(float probability) {
+            if (probability > totalProbability) {
+                totalProbability = probability;
+            }
+        }
+
+        /**
+         * Returns the probability for all words reachable
+         * from this node
+         *
+         * @return the log probability
+         */
+        float getProbability() {
+            return totalProbability;
+        }
 
         /**
          * Once we have built the full entry point we can
@@ -477,11 +527,11 @@ class HMMTree {
 	void createEntryPointMap() {
 	    for (Iterator i = exitPoints.iterator(); i.hasNext(); ) {
 		Unit lc = (Unit) i.next();
-		Node epNode = new Node();
+		Node epNode = new Node(LogMath.getLogZero());
 		for (Iterator j = getEntryPointRC().iterator(); j.hasNext(); ) {
 		    Unit rc = (Unit) j.next();
 		    HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.BEGIN);
-		    Node addedNode = epNode.addSuccessor(hmm);
+		    Node addedNode = epNode.addSuccessor(hmm, getProbability());
 		    nodeCount++;
 		    connectEntryPointNode(addedNode, rc);
 		}
@@ -507,7 +557,8 @@ class HMMTree {
 		for (Iterator i = entryPoints.iterator(); i.hasNext(); ) {
 		    Unit rc = (Unit) i.next();
 		    HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.SINGLE);
-		    HMMNode tailNode = (HMMNode) epNode.addSuccessor(hmm);
+		    HMMNode tailNode = (HMMNode)
+                        epNode.addSuccessor(hmm, getProbability());
                     WordNode wordNode;
                     tailNode.addRC(rc);
 		    nodeCount++;
@@ -516,10 +567,13 @@ class HMMTree {
 			Pronunciation p = (Pronunciation) 
 			    singleUnitWords.get(j);
 
+
 			if (p.getWord() == dictionary.getSentenceStartWord()) {
                             initialNode = new InitialWordNode(p, tailNode);
 			} else {
-                            wordNode = (WordNode) tailNode.addSuccessor(p);
+                            float prob = getWordUnigramProbability(p.getWord());
+                            wordNode = (WordNode)
+                                tailNode.addSuccessor(p, prob);
                         }
                         nodeCount++;
 		    }
@@ -589,11 +643,15 @@ class Node {
     private static int successorCount = 0;
     private static Map wordNodeMap = new HashMap();
     private Object successors = null;
+    private float logUnigramProbability;
 
     /**
      * Creates a node
+     *
+     * @param probability the unigram probability for the node
      */
-    Node() {
+    Node(float probability) {
+        logUnigramProbability = probability;
         nodeCount++;
         if (false) {
             if ((nodeCount % 10000) == 0) {
@@ -603,6 +661,23 @@ class Node {
     }
 
 
+    /**
+     * Returns the unigram probability
+     *
+     * @return the unigram probability
+     */
+    public float getUnigramProbability() {
+        return logUnigramProbability;
+    }
+
+    /**
+     * Sets the unigram probability
+     *
+     * @param probability  the unigram probability
+     */
+    public void setUnigramProbability(float probability) {
+        logUnigramProbability = probability;
+    }
 
     /**
      * Given an object get the set of successors for this object
@@ -675,13 +750,16 @@ class Node {
      * @param hmm the hmm to add
      * @return the node that holds the hmm (new or old)
      */
-    Node addSuccessor(HMM hmm) {
+    Node addSuccessor(HMM hmm, float probability) { 
         Node child = null;
         Node matchingChild = getSuccessor(hmm);
         if (matchingChild == null) {
-            child = new HMMNode(hmm);
+            child = new HMMNode(hmm, probability);
             putSuccessor(hmm, child);
         } else {
+            if (matchingChild.getUnigramProbability() < probability) {
+                matchingChild.setUnigramProbability(probability);
+            }
             child = matchingChild;
         }
         return child;
@@ -698,13 +776,16 @@ class Node {
      *
      * @return the node that holds the pronunciation (new or old)
      */
-    WordNode addSuccessor(Pronunciation pronunciation) {
+    WordNode addSuccessor(Pronunciation pronunciation, float probability) {
         WordNode child = null;
         WordNode matchingChild = (WordNode) getSuccessor(pronunciation);
         if (matchingChild == null) {
-            child = getWordNode(pronunciation);
+            child = getWordNode(pronunciation, probability);
             putSuccessor(pronunciation, child);
         } else {
+            if (matchingChild.getUnigramProbability() < probability) {
+                matchingChild.setUnigramProbability(probability);
+            }
             child = matchingChild;
         }
         return child;
@@ -718,10 +799,10 @@ class Node {
      *
      * @return the word node
      */
-    private WordNode getWordNode(Pronunciation p) {
+    private WordNode getWordNode(Pronunciation p, float probability) {
         WordNode node = (WordNode) wordNodeMap.get(p);
         if (node == null) {
-            node = new WordNode(p);
+            node = new WordNode(p, probability);
             wordNodeMap.put(p, node);
         } 
         return node;
@@ -786,9 +867,10 @@ class WordNode extends Node {
      * Creates a word node
      *
      * @param pronunciation the pronunciation to wrap in this node
-     * @param parent the parent node
+     * @param probability the word unigram probability
      */
-    WordNode(Pronunciation pronunciation) {
+    WordNode(Pronunciation pronunciation, float probability) {
+        super(probability);
         this.pronunciation = pronunciation;
     }
 
@@ -838,7 +920,8 @@ class WordNode extends Node {
      * @return a string representation
      */
     public String toString() {
-        return "WordNode " + pronunciation;
+        return "WordNode " + pronunciation +" p " +
+            getUnigramProbability();
     }
 }
 
@@ -858,7 +941,7 @@ class InitialWordNode extends WordNode {
      * @param parent the parent node
      */
     InitialWordNode(Pronunciation pronunciation, HMMNode parent) {
-        super(pronunciation);
+        super(pronunciation, LogMath.getLogOne());
         this.parent = parent;
     }
 
@@ -895,7 +978,8 @@ class HMMNode extends Node {
      *
      * @param hmm the hmm to hold
      */
-    HMMNode(HMM hmm) {
+    HMMNode(HMM hmm, float probablilty) {
+        super(probablilty);
         this.hmm = hmm;
     }
 
@@ -923,7 +1007,7 @@ class HMMNode extends Node {
      * @return a string representation
      */
     public String toString() {
-        return "HMMNode " + hmm;
+        return "HMMNode " + hmm + " p " + getUnigramProbability();
     }
 
     /**
