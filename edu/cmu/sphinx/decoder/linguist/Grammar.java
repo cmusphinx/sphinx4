@@ -19,9 +19,12 @@ import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
 import edu.cmu.sphinx.knowledge.dictionary.Word;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.FileOutputStream;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Random;
 
 
 /**
@@ -67,6 +70,7 @@ public abstract class  Grammar {
     private boolean showGrammar; 	
     private boolean optimizeGrammar = true; 	
     private final static Word[][] EMPTY_ALTERNATIVE = new Word[0][0];
+    private Random randomizer = new Random();
 
 
     /**
@@ -98,17 +102,15 @@ public abstract class  Grammar {
 			PROP_OPTIMIZE_GRAMMAR_DEFAULT);
 	grammarNodes = new HashSet();
 	initialNode = createGrammar();
-	if (showGrammar) {
-	    dumpGrammar("grammar.gdl");
-	}
 
         if (optimizeGrammar) {
             optimizeGrammar();
-            if (showGrammar) {
-                dumpGrammar("optimized.gdl");
-            }
         }
 
+        if (showGrammar) {
+            dumpGrammar("optimized.gdl");
+            dumpRandomSentences("sentences.txt", 100);
+        }
 	this.dictionary = null;
     }
 
@@ -153,14 +155,14 @@ public abstract class  Grammar {
 	this.dictionary = dictionary;
 	grammarNodes = new HashSet();
 	initialNode = createGrammar(referenceText);
-	if (showGrammar) {
-	    dumpGrammar("grammar.gdl");
-	}
+
         if (optimizeGrammar) {
             optimizeGrammar();
-            if (showGrammar) {
-                dumpGrammar("optimized.gdl");
-            }
+        }
+
+        if (showGrammar) {
+            dumpGrammar("grammar.gdl");
+            dumpRandomSentences("sentences.txt", 100);
         }
 	this.dictionary = null;
     }
@@ -197,6 +199,63 @@ public abstract class  Grammar {
         System.out.println("Num arcs  : " + successorCount);
         System.out.println("Avg arcs  : " +
                 ((float) successorCount / getNumNodes()));
+    }
+
+
+    /**
+     * Dump a set of random sentences that fit this grammar
+     *
+     * @param path the name of the file to dump the sentences to
+     * @param count the number of sentences to dump
+     */
+    public void dumpRandomSentences(String path, int count) {
+        try {
+            PrintWriter out = new PrintWriter(new FileOutputStream(path));
+            for (int i = 0; i < count; i++) {
+                out.println(getRandomSentence());
+            }
+            out.close();
+        } catch (IOException ioe) {
+            System.out.println("Can't write random sentences to " +
+                    path + " " + ioe);
+        }
+    }
+
+    /**
+     * Returns a random sentence that fits this grammar
+     *
+     * @return a random sentence that fits this grammar
+     */
+    public String getRandomSentence() {
+        StringBuffer sb = new StringBuffer();
+        GrammarNode node = getInitialNode();
+        while (!node.isFinalNode()) {
+            if (!node.isEmpty()) {
+                Word word = node.getWord();
+                if (!word.isFiller()) {
+                    if (sb.length() > 0) {
+                        sb.append(" ");
+                    }
+                    sb.append(word.getSpelling());
+                }
+            }
+            node = selectRandomSuccessor(node);
+        }
+        return sb.toString();
+    }
+
+
+    /**
+     * Given a node, select a random successor from the set of
+     * possible successor nodes
+     *
+     * @param node the node
+     * @return a random successor node.
+     */
+    private GrammarNode selectRandomSuccessor(GrammarNode node) {
+        GrammarArc[] arcs = node.getSuccessors();
+        int index = randomizer.nextInt(arcs.length);
+        return arcs[index].getGrammarNode();
     }
 
     /**
@@ -369,4 +428,5 @@ public abstract class  Grammar {
             g.optimize();
         }
     }
+
 }
