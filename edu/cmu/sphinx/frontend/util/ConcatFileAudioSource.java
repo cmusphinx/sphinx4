@@ -241,7 +241,7 @@ public class ConcatFileAudioSource implements AudioSource, ReferenceSource {
      * Returns the audio time in seconds represented by the given
      * number of bytes.
      *
-     * @param the number of bytes
+     * @param bytes the number of bytes
      *
      * @return the audio time
      */

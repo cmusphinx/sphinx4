@@ -138,7 +138,7 @@ public class GrammarPoint {
      * Gets the unit associated with this point in the grammar. If
      * there is no unit, return filler
      *
-     * @param filler the filler to use if the unit is empty
+     * @return the unit for this grammar node or a filler unit
      */
      private Unit getUnitOrFill() {
          Unit unit = getUnit();
@@ -209,7 +209,7 @@ public class GrammarPoint {
       * there is a branch to multiple words in subsequent nodes, for
       * instance)
       *
-      * @param context the list of contexts to add the new units to
+      * @param contexts the list of contexts to add the new units to
       * @param units the units to add to the context
       * 
       */

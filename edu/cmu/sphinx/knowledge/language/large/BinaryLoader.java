@@ -409,7 +409,7 @@ class BinaryLoader {
     /**
      * Reads the LM file header
      *
-     * @param the data stream of the LM file
+     * @param stream the data stream of the LM file
      */
     private void readHeader(DataInputStream stream) throws IOException {
 	int headerLength = readInt(stream, bigEndian);

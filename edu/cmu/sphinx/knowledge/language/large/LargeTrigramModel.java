@@ -387,8 +387,7 @@ public class LargeTrigramModel implements LanguageModel {
     /**
      * Finds the BigramProbability for a particular bigram
      *
-     * @param firstWordID the first word in the bigram
-     * @param secondWordID the second word in the bigram
+     * @param ws the word sequence
      *
      * @return the BigramProbability of the bigram, or null if the
      *         given first word has no bigrams

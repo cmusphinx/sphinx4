@@ -139,6 +139,7 @@ public class LexTreeLinguist implements  Linguist {
 
     private Word sentenceEndWord;
     private Word[] sentenceStartWordArray;
+    private LexTreeEndWordState endWord;
 
     /**
      * Returns an array of classes that represents the order 
@@ -334,9 +335,6 @@ public class LexTreeLinguist implements  Linguist {
          *
          * @param wordSequence the history of words up until this point
          *
-         * @param logProbability the probability (in log math domain)
-         * of entering this state.  This is a combination of insertion
-         * and language probability.
          */
         LexTreeState(int leftID,
                      LexTree.UnitLexNode central,
@@ -1403,7 +1401,6 @@ public class LexTreeLinguist implements  Linguist {
      *
      * @return the end word.
      */
-    LexTreeEndWordState endWord;
     private SearchStateArc getEndWord() {
         if (endWord == null) {
             endWord = new LexTreeEndWordState();

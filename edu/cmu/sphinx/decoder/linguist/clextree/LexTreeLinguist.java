@@ -324,20 +324,10 @@ public class LexTreeLinguist implements  Linguist {
         /**
          * Creates a LexTreeState.
          *
-         * @param leftID the id of the unit forming the left context
-         * (or 0 if  there is no left context) of a triphone context
-         *
-         * @param central the unit forming the central portion of a
-         * triphone context
-         *
-         * @param right the unit forming the right portion of a
-         * triphone context
+         * @param node the associated node
          *
          * @param wordSequence the history of words up until this point
          *
-         * @param logProbability the probability (in log math domain)
-         * of entering this state.  This is a combination of insertion
-         * and language probability.
          */
         LexTreeState(Node node, WordSequence wordSequence) {
 
@@ -915,6 +905,7 @@ public class LexTreeLinguist implements  Linguist {
          * Constructs a LexTreeWordState
          *
          * @param wordNode the word node
+         * @param lastNode the previous node
          *
          * @param wordSequence the sequence of words
          * triphone context
@@ -923,11 +914,11 @@ public class LexTreeLinguist implements  Linguist {
          *
          */
         LexTreeWordState(WordNode wordNode, HMMNode lastNode,
-               WordSequence wordSequence, float logProability) {
+               WordSequence wordSequence, float logProbability) {
 
             super(wordNode, wordSequence);
             this.lastNode = lastNode;
-            this.logLanguageProbability = logProability;
+            this.logLanguageProbability = logProbability;
         }
 
         /**

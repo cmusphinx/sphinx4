@@ -29,7 +29,7 @@ public class Partitioner {
     /**
      * Partitions sub-array of tokens around the rth token.
      *
-     * @param token the token array to partition
+     * @param tokens the token array to partition
      * @param p the starting index of the subarray
      * @param r the pivot and the ending index of the subarray, inclusive
      *
@@ -59,7 +59,7 @@ public class Partitioner {
      * Partitions sub-array of tokens around the x-th token by
      * selecting the midpoint of the token array as the pivot.
      *
-     * @param token the token array to partition
+     * @param tokens the token array to partition
      * @param p the starting index of the subarray
      * @param r the ending index of the subarray, inclusive
      *
@@ -117,7 +117,7 @@ public class Partitioner {
     /**
      * Selects the token with the ith largest token score.
      *
-     * @param token the token array to partition
+     * @param tokens the token array to partition
      * @param p the starting index of the subarray
      * @param r the ending index of the subarray, inclusive
      * @param i the token with the i-th largest score

@@ -146,7 +146,6 @@ public class LivePretendDecoder {
      *
      * @param props the sphinx properties
      * 
-     * @param batchFile the batch file
      */
     private void init(SphinxProperties props) throws IOException {
         referenceFile = props.getString(PROP_REFERENCE_TRANSCRIPT,
@@ -311,7 +310,7 @@ public class LivePretendDecoder {
      * and the different types of errors.
      *
      * @param hypothesisList the list of hypotheses
-     * @param referenceLis the list of references
+     * @param referenceList the list of references
      */
     private void alignResults(List hypothesisList, List referenceList) {
         System.out.println();

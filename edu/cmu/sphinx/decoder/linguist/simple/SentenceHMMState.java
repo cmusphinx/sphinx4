@@ -656,7 +656,7 @@ public class  SentenceHMMState implements Serializable, SearchState  {
     /**
      * Gets the state number for this state
      *
-     * @param stateNumber the state number
+     * @return  the state number
      */
     private int getStateNumber() {
 	return stateNumber;

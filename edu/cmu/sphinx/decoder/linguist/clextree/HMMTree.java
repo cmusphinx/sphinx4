@@ -60,8 +60,9 @@ class HMMTree {
      *
      * @param pool the pool of HMMs and units
      * @param dictionary the dictionary containing the pronunciations
-     * @param words the set of words to add to the lex tree
+     * @param lm the source for the set of words
      * @param addFillerWords if <code>false</code> add filler words
+     * @param languageWeight the language weight
      */
     HMMTree(HMMPool pool, Dictionary dictionary, LanguageModel lm,
             boolean addFillerWords, float languageWeight) {
@@ -121,7 +122,7 @@ class HMMTree {
      *
      * @param level the level of the dump
      * @param node the root of the tree to dump
-     * @param map map of visited nodes
+     * @param dupNode map of visited nodes
      */
     private void dumpTree(int level, Node node, Map dupNode) {
         if (dupNode.get(node) == null) {

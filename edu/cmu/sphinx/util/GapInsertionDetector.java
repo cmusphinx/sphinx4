@@ -147,7 +147,7 @@ class ReferenceFile {
     /**
      * Creates a ReferenceFile, given the name of the reference file.
      *
-     * @param the name of the reference file
+     * @param fileName the name of the reference file
      */
     ReferenceFile(String fileName) throws IOException {
         reader = new BufferedReader(new FileReader(fileName));

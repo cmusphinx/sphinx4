@@ -55,7 +55,7 @@ class LexTree {
      *
      * @param pool the pool of HMMs and units
      * @param dictionary the dictionary containing the pronunciations
-     * @param words the set of words to add to the lex tree
+     * @param lm the language model 
      */
     LexTree(HMMPool pool, Dictionary dictionary, LanguageModel lm) {
         hmmPool = pool;
@@ -89,7 +89,7 @@ class LexTree {
     /**
      * Adds the given collection of words to the lex tree
      *
-     * @param words the collection of words
+     * @param lm the language model that contains the words
      */
     private void addWords(LanguageModel lm) {
         Collection words = lm.getVocabulary();
@@ -300,7 +300,7 @@ class LexTree {
     /**
      * Collects stats for a subtree
      *
-     * @param int depth the current depth in the tree
+     * @param depth the current depth in the tree
      * @param stats the stats are accumulated here
      * @param node the root of the tree to collect the stats
      */
@@ -390,7 +390,7 @@ class LexTree {
         /**
          * Gets the node probability
          *
-         * @param the node probability
+         * @return the node probability
          */
         public float getProbability() {
             // BUG: disable this feature
@@ -602,7 +602,7 @@ class LexTree {
         /**
          * Returns the pronunciation for this node
          *
-         * @param the pronunciation
+         * @return the pronunciation
          */
         Pronunciation getPronunciation() {
             return pronunciation;
@@ -611,7 +611,7 @@ class LexTree {
         /**
          * Returns a string representation of this object
          *
-         * @param the string representation
+         * @return the string representation
          */
         public String toString() {
             return "WordLexNode: " + pronunciation.toString();

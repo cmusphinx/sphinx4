@@ -660,7 +660,7 @@ public class SimpleLinguist implements  Linguist {
          * Add the given left contexts to the set of left contexts for
          * this state
          *
-         * @param contexts the set of contexts to add
+         * @param context the set of contexts to add
          */
         private void addLeftContext(Collection context) {
             leftContexts.addAll(context);
@@ -1007,10 +1007,12 @@ public class SimpleLinguist implements  Linguist {
          * unit if necessary. If an identical unit is already
          * attached, then this path is folded into the existing path.
          *
+         * @param parent the parent state
          * @param tail the place to attach the unit to
-         * @param unitState the new unit to attach
+         * @param units the set of units
+         * @param which the index into the set of units
          * @param leftContext the left context for the unit
-         * @param righttContext the right context for the unit
+         * @param rightContext the right context for the unit
          *
          * @return the tail of the added unit (or null if the path was
          * folded onto an already expanded path.
@@ -1106,7 +1108,7 @@ public class SimpleLinguist implements  Linguist {
          * Adds an exit point to this gstate
          *
          * @param cp the context tag for the state
-         * @param tail the state associated with the tag
+         * @param state the state associated with the tag
          */
         private void addExitPoint(ContextPair cp, SentenceHMMState state) {
             List list = (List) exitPoints.get(cp);
@@ -1751,7 +1753,8 @@ class ContextPair {
      * Creates a UnitContext for the given context. This constructor
      * is not directly accessible, use the factory method instead.
      * 
-     * @param context the context to wrap with this UnitContext
+     * @param left the left context
+     * @param right the right context
      */
     private ContextPair(UnitContext left, UnitContext right) {
         this.left = left;

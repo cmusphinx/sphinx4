@@ -671,7 +671,7 @@ class ModelInitializerLoader implements Loader {
      *
      * @param pool the pool to add matrix to
      * @param hmmId current HMM's id
-     * @param numStates number of states in current HMM
+     * @param numEmittingStates number of states in current HMM
      * @param floor the transition probability floor
      * @param skip if true, states can be skipped
      *

@@ -37,7 +37,7 @@ public class BatchItem {
     /**
      * Gets the filename for this batch
      *
-     * @reutrn the file name
+     * @return the file name
      */
     public String getFilename() {
         return filename;

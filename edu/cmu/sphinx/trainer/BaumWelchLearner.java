@@ -593,7 +593,7 @@ public class BaumWelchLearner implements Learner {
     /**
      * Does the backward pass, one frame at a time.
      *
-     * @param feature the feature to be used
+     * @param score the feature to be used
      */
     private void backwardPass(TrainerScore[] score) {
 	// Now, the backward pass.

@@ -94,7 +94,6 @@ public class  Unit implements Serializable {
      *
      * @param name the name of the unit
      * @param filler <code>true</code> if the unit is a filler unit
-     * @param id the id for this unit
      *
      * @return the unit
      */

@@ -193,7 +193,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * Normalizes the given Cepstrum with using the currentMean array.
      * Updates the sum array with the given Cepstrum.
      *
-     * @param input a Cepstrum
+     * @param cepstrumObject a Cepstrum
      */
     private void normalize(Cepstrum cepstrumObject) {
 
@@ -244,7 +244,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * Multiplies each element of the given array by the multiplier.
      *
      * @param array the array to multiply
-     * @param multipler the amount to multiply by
+     * @param multiplier the amount to multiply by
      */
     private static final void multiplyArray(float[] array,
                                             float multiplier) {

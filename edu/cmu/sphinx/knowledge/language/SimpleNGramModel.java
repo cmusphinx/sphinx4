@@ -228,7 +228,7 @@ public class SimpleNGramModel implements LanguageModel {
     /**
      * Converts a wordList to a string
      *
-     * @param wordLIst the wordList
+     * @param wordList the wordList
      *
      * @return the string
      */
@@ -579,8 +579,8 @@ class Probability {
     /**
      * Constructs a probability
      *
-     * @param probability the probability
-     * @param backoff the backoff probability
+     * @param logProbability the probability
+     * @param logBackoff the backoff probability
      */
     Probability(float logProbability, float logBackoff) {
         this.logProbability = logProbability;

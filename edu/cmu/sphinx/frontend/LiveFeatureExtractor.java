@@ -339,7 +339,7 @@ public class LiveFeatureExtractor extends DataProcessor
     /**
      * Converts the Cepstrum data in the cepstraBuffer into a FeatureFrame.
      *
-     * @param the number of Features that will be produced
+     * @param totalFeatures the number of Features that will be produced
      *
      * @return a FeatureFrame
      */

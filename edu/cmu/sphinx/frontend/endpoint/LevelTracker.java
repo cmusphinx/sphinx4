@@ -209,7 +209,7 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
          * Returns the logarithm base 10 of the root mean square of the
          * given samples.
          *
-         * @param sample the samples
+         * @param samples the samples
          *
          * @return the calculated log root mean square in log 10
          */

@@ -270,7 +270,7 @@ public class ResultAnalyzer {
      * @param refList the list of reference words
      * @param refIndex the starting point in the ref list
      * @param hypList the list of hypothesis  words
-     * @param refIndex the starting point in the hyp list
+     * @param hypIndex the starting point in the hyp list
      *
      * @return the number of matching words
      */

@@ -27,8 +27,9 @@ class UnigramProbability {
     /**
      * Constructs a UnigramProbability
      *
-     * @param probability the probability
-     * @param backoff the backoff probability
+     * @param wordID the id of the word
+     * @param logProbability the probability
+     * @param logBackoff the backoff probability
      * @param firstBigramEntry the first bigram entry
      */
     public UnigramProbability(int wordID, float logProbability, 
@@ -92,7 +93,7 @@ class UnigramProbability {
     /**
      * Sets the log probability of this unigram
      *
-     * @param probability  the new log probability of this unigram
+     * @param logProbability  the new log probability of this unigram
      */
     public void setLogProbability(float logProbability) {
         this.logProbability = logProbability;
@@ -102,7 +103,7 @@ class UnigramProbability {
     /**
      * Sets the log backoff weight.
      *
-     * @param backoff the new log backoff weight
+     * @param logBackoff the new log backoff weight
      */
     public void setLogBackoff(float logBackoff) {
         this.logBackoff = logBackoff;

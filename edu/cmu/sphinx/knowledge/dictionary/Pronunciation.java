@@ -32,7 +32,6 @@ public class Pronunciation implements Serializable {
     /**
      * Creates a pronunciation
      *
-     * @param word the word this pronunciation represents
      * @param units represents the pronunciation
      * @param tag a grammar specific tag
      * @param wordClassification the classification for this word

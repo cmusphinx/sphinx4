@@ -590,7 +590,7 @@ public class ParallelSearchManager implements SearchManager {
     /**
      * Returns the best Token for the given SearchState.
      *
-     * @param the SearchState to look for
+     * @param state the SearchState to look for
      *
      * @return the best Token for the given SearchState
      */
@@ -754,7 +754,7 @@ public class ParallelSearchManager implements SearchManager {
      * the given newToken.
      * This method will automatically find the correct ActiveList.
      *
-     * @param oldToken the old Token to replace
+     * @param state the state of the current token
      * @param newToken the new Token
      */
     private void replaceParallelToken(SentenceHMMState state,

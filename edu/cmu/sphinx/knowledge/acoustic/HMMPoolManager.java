@@ -485,7 +485,7 @@ class HMMPoolManager {
      * not allowed, and should be ignored.
      *
      * @param pool the buffer pool to normalize
-     * @param mask pool containing a mask with zero/non-zero values.
+     * @param maskPool pool containing a mask with zero/non-zero values.
      */
     private void logNormalize2DPool(Pool pool, Pool maskPool) {
 	assert pool != null;

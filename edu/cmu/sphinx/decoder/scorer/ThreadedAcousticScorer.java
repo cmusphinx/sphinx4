@@ -451,7 +451,7 @@ class ScoreableJob {
     /**
      * Creates a scoreable job
      *
-     * @param scoreableList the list of scoreables
+     * @param scoreables the list of scoreables
      * @param start the starting point for this job
      * @param size the number of scoreables in this job
      */

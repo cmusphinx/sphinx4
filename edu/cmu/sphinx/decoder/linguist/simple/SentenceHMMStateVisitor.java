@@ -21,7 +21,7 @@ interface SentenceHMMStateVisitor {
     /**
      * Method called when a state is visited by the vistor
      *
-     * @param the state that is being visited
+     * @param state the state that is being visited
      *
      * @return true if the visiting should be terminated
      */

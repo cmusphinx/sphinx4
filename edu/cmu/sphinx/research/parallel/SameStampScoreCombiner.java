@@ -109,7 +109,7 @@ public class SameStampScoreCombiner implements ScoreCombiner {
      * It will retain only the highest scoring token of each stream
      * and remove all the other lower scoring tokens from the list.
      *
-     * @param sameTimeTokenList the token list
+     * @param sameStampTokenList the token list
      *
      * @return the combined log score
      */

@@ -62,8 +62,9 @@ class HMMTree {
      *
      * @param pool the pool of HMMs and units
      * @param dictionary the dictionary containing the pronunciations
-     * @param words the set of words to add to the lex tree
+     * @param lm the source of the set of words to add to the lex tree
      * @param addFillerWords if <code>false</code> add filler words
+     * @param languageWeight the languageWeight
      */
     HMMTree(HMMPool pool, Dictionary dictionary, LanguageModel lm,
             boolean addFillerWords, float languageWeight) {
@@ -183,7 +184,7 @@ class HMMTree {
      *
      * @param level the level of the dump
      * @param node the root of the tree to dump
-     * @param map map of visited nodes
+     * @param dupNode map of visited nodes
      */
     private void dumpTree(int level, Node node, Map dupNode) {
         if (dupNode.get(node) == null) {
@@ -864,7 +865,8 @@ class Node {
      * the child has already been added, we use the previously
      * added node, otherwise we add this. 
      *
-     * @param endNode the endNode to add
+     * @param child the endNode to add
+     * @param probability probability for this transition
      *
      * @return the node that holds the endNode (new or old)
      */
@@ -1196,7 +1198,10 @@ class EndNode extends UnitNode {
     /**
      * Creates the node, wrapping the given hmm
      *
-     * @param hmm the hmm to hold
+     * @param baseUnit  the base unit for this node
+     * @param lc the left context
+     * @param probablilty  the probability for the transition to this
+     * node
      */
     EndNode(Unit baseUnit, Unit lc, float probablilty) {
         super(probablilty);

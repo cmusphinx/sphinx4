@@ -165,8 +165,8 @@ public class LinguistDumper implements LinguistProcessor  {
     /**
      * Dumps the search graph 
      *
-     * @param name out place to dump the output
-     * @param state the initial state of the search space
+     * @param out place to dump the output
+     * @param startingState the initial state of the search space
      */
     private void dumpSearchGraph(PrintStream out, 
                                  SearchState startingState) {

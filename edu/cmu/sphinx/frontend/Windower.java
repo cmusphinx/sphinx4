@@ -128,9 +128,6 @@ public class Windower extends DataProcessor implements AudioSource {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      *
-     * @param props the SphinxProperties object to read parameters from
-     * @param the property prefix to use for properties in this
-     *    SphinxProperties object
      */
     private void setProperties() {
 	SphinxProperties props = getSphinxProperties();
@@ -418,7 +415,7 @@ class DoubleBuffer {
     /**
      * Appends all the elements in the given array to this DoubleBuffer.
      *
-     * @param the array to copy from
+     * @param src the array to copy from
      *
      * @return the resulting number of elements in this DoubleBuffer.
      */
