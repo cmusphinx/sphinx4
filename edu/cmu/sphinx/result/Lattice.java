@@ -161,7 +161,7 @@ public class Lattice {
                 throw new Error("Token chain does not end with </s>.");
             }
             assert token.getWord().isSentenceEndWord();
-            processToken(terminalNode, token.getPredecessor());
+            processToken(terminalNode, token.getPredecessor(), token);
         }
 
         if (result == null) {
@@ -183,55 +183,54 @@ public class Lattice {
      * @param thisNode since we are processing the token tree backwards,
      *     thisNode will be the 'toNode' of the Edge created from the given
      *     path token
+     *
      * @param token the path token that contains the acoustic and language
      *     scores
      */
-    protected void processToken(Node thisNode, Token token) {
+    protected void processToken(Node node, Token pathToken, Token parent) {
+        
+        assert node != null && hasNode(node.getId());
 
-        //assert token.isWord();
-        assert thisNode != null;
-        assert token != null;
+        double acousticScore =
+            parent.getAcousticScore() + pathToken.getAcousticScore();
+        double lmScore =
+            parent.getLanguageScore() + pathToken.getLanguageScore();
 
-        double thisAcousticScore = token.getAcousticScore();
-        double thisLMScore = token.getLanguageScore();
-
-        token = token.getPredecessor();
-        assert hasNode(thisNode.getId());
-        assert token.isWord();
+        Token wordToken = pathToken.getPredecessor();
 
         // test to see if token is processed via a previous node path
-        if (hasNode(token)) {
-            assert getNode(token).getId().equals
-                (Integer.toString(token.hashCode()));
-            addEdge(getNode(token), thisNode, thisAcousticScore, thisLMScore);
+        if (hasNode(wordToken)) {
+            assert getNode(wordToken).getId().equals
+                (Integer.toString(wordToken.hashCode()));
+            addEdge(getNode(wordToken), node, acousticScore, lmScore);
         } else {
             WordSearchState wordState =
-                (WordSearchState) token.getSearchState();
+                (WordSearchState) wordToken.getSearchState();
 
             int startFrame = -1;
             int endFrame = -1;
 
             if (wordState.isWordStart()) {
-                startFrame = token.getFrameNumber();
+                startFrame = wordToken.getFrameNumber();
             } else {
-                endFrame = token.getFrameNumber();
+                endFrame = wordToken.getFrameNumber();
             }
 
-            Node newNode = addNode(token, startFrame, endFrame);
-            addEdge(newNode, thisNode, thisAcousticScore, thisLMScore);
+            Node newNode = addNode(wordToken, startFrame, endFrame);
+            addEdge(newNode, node, acousticScore, lmScore);
 
             if (loserManager != null) {
-                List list = loserManager.getAlternatePredecessors(token);
+                List list = loserManager.getAlternatePredecessors(wordToken);
                 if (list != null) {
                     for (Iterator iter = list.iterator(); iter.hasNext();) {
                         Token predecessor = (Token) iter.next();
-                        processToken(newNode, predecessor);
+                        processToken(newNode, predecessor, wordToken);
                     }
                 }
             }
-            Token predecessor = token.getPredecessor();
+            Token predecessor = wordToken.getPredecessor();
             if (predecessor != null) {
-                processToken(newNode, predecessor);
+                processToken(newNode, predecessor, wordToken);
             } else {
                 initialNode = newNode;
             }
