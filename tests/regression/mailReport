@@ -16,7 +16,7 @@
 #
 # usage: mailReport
 
-recipients="cmusphinx-commits@lists.sourceforge.net"
+recipients="cmusphinx-results@lists.sourceforge.net"
 #recipients="Paul.Lamere@sun.com"
 ./makeReport < regression.log | mailx -s "S4 regression test report" $recipients
 
