@@ -18,7 +18,7 @@ import edu.cmu.sphinx.model.acoustic.*;
 
 
 /**
- * Provides machanisms for computing statistics given a set of states
+ * Provides mechanisms for computing statistics given a set of states
  * and input data.
  */
 public interface  Learner {
@@ -53,5 +53,5 @@ public interface  Learner {
      *
      * @param stateID state ID number, relative to the sentence HMM
      */
-    public Double getScore(int stateID);
+    public double getScore(int stateID);
 }
