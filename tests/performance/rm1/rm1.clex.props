@@ -64,6 +64,7 @@ edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-205
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.wantEntryPruning=false
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-80
 
 
 ############################################################
@@ -76,6 +77,7 @@ edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = .1
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-10
 edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=9.0
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist
+edu.cmu.sphinx.decoder.linguist.Linguist.generateUnitStates=false
 
 
 ############################################################
@@ -115,3 +117,5 @@ edu.cmu.sphinx.decoder.BatchDecoder.showPropertiesAtStart=true
 
 #edu.cmu.sphinx.decoder.Recognizer.acousticScorer=edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer
 #edu.cmu.sphinx.decoder.Recognizer.linguistProcessors=edu.cmu.sphinx.decoder.linguist.util.LinguistStats
+edu.cmu.sphinx.decoder.Decoder.showBestToken=false
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.growSkipInterval=0
