@@ -6,6 +6,12 @@ Release Date:  XXXX
 
 -------------------------------------------------------------------
 
+PBL - 7/21/04 -
+    Improved look of ZipCity, now with a USA map.
+
+PBL - 7/20/04 -
+    Fixed bug in JSGFGrammar parsing of NULL productions
+
 PBL - 6/30/04 - 
     Added the Sphinx-4 FAQ
 
