@@ -182,7 +182,7 @@ public class DataUtil {
      * @param offset which byte to start from
      * @param length how many bytes to convert
      * @param bytesPerValue the number of bytes per value
-     * @param signed whether the data is signed
+     * @param signedData whether the data is signed
      *
      * @return a double array, or <code>null</code> if byteArray is of zero
      *    length
