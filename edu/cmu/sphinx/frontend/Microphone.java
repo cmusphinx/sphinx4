@@ -18,7 +18,17 @@ import javax.sound.sampled.TargetDataLine;
 /**
  * A Microphone captures audio data from the system's underlying
  * audio input systems. Converts these audio data into Audio
- * objects.
+ * objects. The Microphone should be run in a separate thread.
+ * When the method <code>startRecording()</code> is called, it will
+ * start capturing audio, and stops when <code>stopRecording()</code>
+ * is called. An Utterance is created for all the audio captured
+ * in between calls to <code>startRecording()</code> and
+ * <code>stopRecording()</code>.
+ * Calling <code>getAudio()</code> returns the captured audio
+ * data as Audio objects. If the SphinxProperty: <pre>
+ * edu.cmu.sphinx.frontend.keepAudioReference </pre>
+ * is set to true, then the Audio objects returned will contain
+ * a reference to the (entire) Utterance object.
  */
 public class Microphone extends DataProcessor implements AudioSource, Runnable {
 
@@ -83,7 +93,8 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
 
     /**
      * Terminates this Microphone, effectively terminates this
-     * thread of execution.
+     * thread of execution. Calling <code>startRecording()</code>
+     * will not work after call this method.
      */
     public void terminate() {
         setClosed(true);
@@ -235,9 +246,16 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
 
     
     /**
-     * Reads and returns the next Audio from the InputStream of
-     * Microphone, return null if no data is read and end of file
-     * is reached.
+     * Reads and returns the next Audio object from this
+     * Microphone, return null if there is no more audio data.
+     * All audio data captured in-between <code>startRecording()</code>
+     * and <code>stopRecording()</code> is cached in an Utterance
+     * object. Calling this method basically returns the next
+     * chunk of audio data cached in this Utterance. If the
+     * SphinxProperty <pre>
+     * edu.cmu.sphinx.frontend.keepAudioReference </pre> is true,
+     * then the return Audio object will contain a reference to
+     * the original Utterance object.
      *
      * @return the next Audio or <code>null</code> if none is
      *     available
