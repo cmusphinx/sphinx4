@@ -36,6 +36,7 @@ import java.io.Serializable;
  */
 public class Data implements Serializable, Cloneable {
 
+    private long collectTime;
     private Signal signal = null;
     private Utterance utterance = null;
 
@@ -44,8 +45,8 @@ public class Data implements Serializable, Cloneable {
      * Constructs a default Data object. Calling <code>getSignal()</code>
      * on this Data will return <code>Signal.CONTENT</code>.
      */
-    protected Data() {
-        signal = Signal.CONTENT;
+    protected Data(long collectTime) {
+        this(Signal.CONTENT, collectTime);
     }
     
 
@@ -54,17 +55,18 @@ public class Data implements Serializable, Cloneable {
      *
      * @param signal the Signal of this Data object
      */
-    protected Data(Signal signal) {
+    protected Data(Signal signal, long collectTime) {
         this.signal = signal;
+        this.collectTime = collectTime;
     }
 
 
     /**
      * Constructs a Data object with the given Utterance.
      */
-    protected Data(Utterance utterance) {
+    protected Data(Utterance utterance, long collectTime) {
+        this(collectTime);
         this.utterance = utterance;
-        this.signal = Signal.CONTENT;
     }
 
 
@@ -75,6 +77,17 @@ public class Data implements Serializable, Cloneable {
      */
     public Signal getSignal() {
         return signal;
+    }
+
+
+    /**
+     * Returns the time in milliseconds at which the audio data is collected.
+     *
+     * @return the difference, in milliseconds, between the time the
+     *    audio data is collected and midnight, January 1, 1970
+     */
+    public long getCollectTime() {
+        return collectTime;
     }
 
 

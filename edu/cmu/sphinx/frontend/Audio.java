@@ -29,8 +29,10 @@ public class Audio extends Data implements Cloneable {
      * Constructs an Audio object with the given audio data.
      *
      * @param audioSamples the audio samples for this Audio
+     * @param collectTime the time at which the audio data is collected
      */
-    public Audio(double[] audioSamples) {
+    public Audio(double[] audioSamples, long collectTime) {
+        super(collectTime);
 	this.audioSamples = audioSamples;
     }
 
@@ -40,9 +42,10 @@ public class Audio extends Data implements Cloneable {
      *
      * @param audioSamples the audio samples for this Audio
      * @param utterance the Utterance associated with this Audio
+     * @param collectTime the time at which the audio data is collected
      */
-    public Audio(double[] audioSamples, Utterance utterance) {
-        super(utterance);
+    public Audio(double[] audioSamples, Utterance utterance, long collectTime) {
+        super(utterance, collectTime);
 	this.audioSamples = audioSamples;
     }
 
@@ -51,9 +54,10 @@ public class Audio extends Data implements Cloneable {
      * Constructs an Audio object with the given Signal.
      *
      * @param signal the Signal this Audio object carries
+     * @param collectTime the time this Audio object is created
      */
-    public Audio(Signal signal) {
-        super(signal);
+    public Audio(Signal signal, long collectTime) {
+        super(signal, collectTime);
         isSpeech = signal.equals(Signal.CONTENT);
     }
 

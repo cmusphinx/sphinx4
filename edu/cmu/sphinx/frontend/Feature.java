@@ -32,9 +32,11 @@ public class Feature extends Data {
      * @param featureData the feature data points
      * @param ID the ID of this Feature with respect to the current
      *    speech segment.
+     * @param collectTime the time at which the original audio (from
+     *    which this feature is obtained) is collected
      */
-    public Feature(float[] featureData, int ID) {
-	this(featureData, ID, null);
+    public Feature(float[] featureData, int ID, long collectTime) {
+	this(featureData, ID, null, collectTime);
     }
 
 
@@ -45,9 +47,12 @@ public class Feature extends Data {
      * @param ID the Id of this Feature with respect to the current
      *    speech segment
      * @param utterance the Utterance associated with this Feature
+     * @param collectTime the time at which the original audio (from
+     *    which this feature is obtained) is collected
      */
-    public Feature(float[] featureData, int ID, Utterance utterance) {
-        super(utterance);
+    public Feature(float[] featureData, int ID, Utterance utterance,
+                   long collectTime) {
+        super(utterance, collectTime);
         this.featureData = featureData;
 	this.type = null;
         this.ID = ID;
@@ -60,9 +65,11 @@ public class Feature extends Data {
      * @param signal the Signal this Feature carries
      * @param ID the ID of this Feature with respect to the current
      *    speech segment.
+     * @param collectTime the time at which the original audio (from
+     *    which this feature is obtained) is collected
      */
-    public Feature(Signal signal, int ID) {
-        super(signal);
+    public Feature(Signal signal, int ID, long collectTime) {
+        super(signal, collectTime);
         this.ID = ID;
     }
 

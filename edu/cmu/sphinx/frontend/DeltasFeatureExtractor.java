@@ -75,14 +75,18 @@ public class DeltasFeatureExtractor extends DataProcessor
 
     private int cepstraBufferSize;
     private int cepstraBufferEdge;
-    private float[][] cepstraBuffer;
+    private Cepstrum[] cepstraBuffer;
 
     private int bufferPosition;
     private int currentPosition;
     private int window;
     private int jp1, jp2, jp3, jf1, jf2, jf3;
+
+    private long utteranceEndTime;
+
     private boolean segmentStart;
     private boolean segmentEnd;
+
     private IDGenerator featureID;
 
     private CepstrumSource predecessor;
@@ -125,7 +129,7 @@ public class DeltasFeatureExtractor extends DataProcessor
 	super.initialize(name, context, props);
         setProperties();
         this.predecessor = predecessor;
-        cepstraBuffer = new float[cepstraBufferSize][];
+        cepstraBuffer = new Cepstrum[cepstraBufferSize];
         outputQueue = new Vector();
         featureID = new IDGenerator();
         reset();
@@ -181,7 +185,8 @@ public class DeltasFeatureExtractor extends DataProcessor
             if (segmentEnd) {
                 segmentEnd = false;
                 outputQueue.add(new Feature(Signal.UTTERANCE_END,
-                                            IDGenerator.NON_ID));
+                                            IDGenerator.NON_ID,
+                                            utteranceEndTime));
             } else {
                 Cepstrum input = predecessor.getCepstrum();
                 
@@ -200,12 +205,14 @@ public class DeltasFeatureExtractor extends DataProcessor
                     } else if (input.hasSignal(Signal.UTTERANCE_START)) {
                         segmentStart = true;
                         outputQueue.add(new Feature(Signal.UTTERANCE_START,
-						    IDGenerator.NON_ID));
+						    IDGenerator.NON_ID,
+                                                    input.getCollectTime()));
                     } else if (input.hasSignal(Signal.UTTERANCE_END)) {
 			// when the UTTERANCE_END is right at the boundary
 			segmentEnd = false;
 			outputQueue.add(new Feature(Signal.UTTERANCE_END,
-						    IDGenerator.NON_ID));
+						    IDGenerator.NON_ID,
+                                                    input.getCollectTime()));
 		    }
                 }
             }
@@ -244,7 +251,7 @@ public class DeltasFeatureExtractor extends DataProcessor
             cepstraRead++;
             featureID.reset();
         } else if (firstCepstrum.hasContent()) {
-            addCepstrumData(firstCepstrum.getCepstrumData());
+            addCepstrum(firstCepstrum);
             cepstraRead++;
         }
 
@@ -256,11 +263,12 @@ public class DeltasFeatureExtractor extends DataProcessor
             if (cepstrum != null) {
                 if (cepstrum.hasContent()) {
                     // just a cepstra
-                    addCepstrumData(cepstrum.getCepstrumData());
+                    addCepstrum(cepstrum);
                     cepstraRead++;
                 } else if (cepstrum.hasSignal(Signal.UTTERANCE_END)) {
                     // end of segment cepstrum
                     segmentEnd = true;
+                    utteranceEndTime = cepstrum.getCollectTime();
                     residualVectors += replicateLastCepstrum();
                     done = true;
                     break;
@@ -288,7 +296,7 @@ public class DeltasFeatureExtractor extends DataProcessor
 
         currentUtterance = cepstrum.getUtterance();
 
-        Arrays.fill(cepstraBuffer, 0, window+1, cepstrum.getCepstrumData());
+        Arrays.fill(cepstraBuffer, 0, window+1, cepstrum);
         
         bufferPosition = window + 1;
         bufferPosition %= cepstraBufferSize;
@@ -318,8 +326,8 @@ public class DeltasFeatureExtractor extends DataProcessor
     /**
      * Adds the given Cepstrum to the cepstraBuffer.
      */
-    private void addCepstrumData(float[] cepstrumData) {
-        cepstraBuffer[bufferPosition++] = cepstrumData;
+    private void addCepstrum(Cepstrum cepstrum) {
+        cepstraBuffer[bufferPosition++] = cepstrum;
         bufferPosition %= cepstraBufferSize;
     }
 
@@ -336,14 +344,14 @@ public class DeltasFeatureExtractor extends DataProcessor
 
         if (bufferPosition > 0) {
          
-            float[] last = this.cepstraBuffer[bufferPosition - 1];
+            Cepstrum last = this.cepstraBuffer[bufferPosition - 1];
             
             if (bufferPosition + window < cepstraBufferSize) {
                 Arrays.fill(cepstraBuffer, bufferPosition, 
                             bufferPosition + window, last);
             } else {
                 for (int i = 0; i < window; i++) {
-                    addCepstrumData(last);
+                    addCepstrum(last);
                 }
             }
             replicated = window;
@@ -385,15 +393,17 @@ public class DeltasFeatureExtractor extends DataProcessor
      */
     private Feature computeNextFeature() {
 
+        Cepstrum currentCepstrum = cepstraBuffer[currentPosition++];
+
         float[] feature = new float[featureLength];
 
-	float[] mfc3f = cepstraBuffer[jf3++];
-	float[] mfc2f = cepstraBuffer[jf2++];
-	float[] mfc1f = cepstraBuffer[jf1++];
-        float[] current = cepstraBuffer[currentPosition++];
-	float[] mfc1p = cepstraBuffer[jp1++];
-	float[] mfc2p = cepstraBuffer[jp2++];
-	float[] mfc3p = cepstraBuffer[jp3++];
+	float[] mfc3f = cepstraBuffer[jf3++].getCepstrumData();
+	float[] mfc2f = cepstraBuffer[jf2++].getCepstrumData();
+	float[] mfc1f = cepstraBuffer[jf1++].getCepstrumData();
+        float[] current = currentCepstrum.getCepstrumData();
+	float[] mfc1p = cepstraBuffer[jp1++].getCepstrumData();
+	float[] mfc2p = cepstraBuffer[jp2++].getCepstrumData();
+	float[] mfc3p = cepstraBuffer[jp3++].getCepstrumData();
 	
 	// CEP; copy all the cepstrum data
 	int j = cepstrumLength;
@@ -419,7 +429,8 @@ public class DeltasFeatureExtractor extends DataProcessor
             jp3 %= cepstraBufferSize;
         }
 
-        return (new Feature(feature, featureID.getNextID(), currentUtterance));
+        return (new Feature(feature, featureID.getNextID(), currentUtterance,
+                            currentCepstrum.getCollectTime()));
     }
 }
 
