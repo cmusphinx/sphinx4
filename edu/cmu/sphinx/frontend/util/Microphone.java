@@ -136,13 +136,18 @@ public class Microphone extends DataProcessor implements AudioSource {
                              PROP_CLOSE_AUDIO_BETWEEN_UTTERANCES_DEFAULT);
 
         SphinxProperties properties = getSphinxProperties();
+
         frameSizeInBytes = properties.getInt
-            (AudioSource.PROP_BYTES_PER_AUDIO_FRAME,
-             AudioSource.PROP_BYTES_PER_AUDIO_FRAME_DEFAULT);
+            (FrontEnd.PROP_BYTES_PER_AUDIO_FRAME,
+             FrontEnd.PROP_BYTES_PER_AUDIO_FRAME_DEFAULT);
 
         if (frameSizeInBytes % 2 == 1) {
             frameSizeInBytes++;
         }
+
+        sampleSizeInBits = getSphinxProperties().getInt
+            (FrontEnd.PROP_BITS_PER_SAMPLE, 
+             FrontEnd.PROP_BITS_PER_SAMPLE_DEFAULT);
 
         keepAudioReference = properties.getBoolean
             (FrontEnd.PROP_KEEP_AUDIO_REFERENCE,
@@ -544,14 +549,13 @@ public class Microphone extends DataProcessor implements AudioSource {
             
             // turn it into an Audio object
             Audio audio = null;
+            double[] samples = Util.bytesToSamples
+                (audioFrame, 0, audioFrame.length, sampleSizeInBits/8, signed);
         
             if (keepAudioReference) {
-                audio = new Audio
-                    (Util.byteToDoubleArray(audioFrame, 0, audioFrame.length),
-                     currentUtterance);
+                audio = new Audio(samples, currentUtterance);
             } else {
-                audio = new Audio
-                    (Util.byteToDoubleArray(audioFrame, 0, audioFrame.length));
+                audio = new Audio(samples);
             }
             
             if (getDump()) {
