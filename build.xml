@@ -524,20 +524,23 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** --> 
     <target name="clean" description="Delete all build output">
+        <antcall target="clean_not_deploy"/>
+	<delete dir="${deploy_dir}"/>
+    </target>
+
+    <target name="clean_not_deploy"
+            description="Delete all build output except for the deploy dir">
 	<delete>
 	    <fileset defaultexcludes="no" dir="." includes="**/*~"/>
 	</delete>
 	<delete dir="${build_dir}"/>
 	<delete dir="${javadoc_dir}"/>
 	<delete dir="${bin_dir}"/>
-	<delete dir="${deploy_dir}"/>
 	<delete file="${lib_dir}/sphinx4.jar"/>
 	<delete file="${lib_dir}/${wsj_name}.jar"/>
 	<delete file="${lib_dir}/${tidigits_name}.jar"/>
-	<delete file="${lib_dir}/${tidigits_name}.jar"/>
 	<delete file="tempKeystore"/>
     </target>
-
 
     <!-- ********************************************************** --> 
     <!-- *                                                        * -->
@@ -599,7 +602,7 @@ to setup JSAPI.
     <!-- ********************************************************** --> 
     <target name="deploy_src_zip"
             description="Creates the src.zip deploy file."
-	    depends="clean">
+	    depends="clean_not_deploy">
 	<mkdir dir="${deploy_dir}/sphinx4-${version}"/>
 	<copy todir="${deploy_dir}/sphinx4-${version}"
 	      includeEmptyDirs="false">
