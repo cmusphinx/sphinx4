@@ -17,7 +17,7 @@ import java.util.Vector;
  * A BatchFileAudioSource takes a file (called batch file onwards)
  * that contains a list of audio files,
  * and converts the audio data in each of the audio files into
- * DoubleAudioFrame(s). One would obtain the DoubleAudioFrames using
+ * AudioFrame(s). One would obtain the AudioFrames using
  * the <code>read()</code> method. This class uses the StreamAudioSource
  * class. In fact, it converts each audio file in the batch file into
  * an InputStream, and sets it to the InputStream of StreamAudioSource.
@@ -69,10 +69,10 @@ public class BatchFileAudioSource implements DataSource {
 
     
     /**
-     * Reads and returns the next DoubleAudioFrame. 
+     * Reads and returns the next AudioFrame. 
      * Returns null if all the data in all the files have been read.
      *
-     * @return the next DoubleAudioFrame or <code>null</code> if no more is
+     * @return the next AudioFrame or <code>null</code> if no more is
      *     available
      *
      * @throws java.io.IOException

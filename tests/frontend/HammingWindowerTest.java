@@ -4,8 +4,10 @@
 
 package tests.frontend;
 
+import edu.cmu.sphinx.frontend.BatchFileAudioSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Preemphasizer;
+import edu.cmu.sphinx.frontend.StreamAudioSource;
 import edu.cmu.sphinx.frontend.Windower;
 import edu.cmu.sphinx.util.Timer;
 
@@ -40,9 +42,10 @@ public class HammingWindowerTest {
 
 	try {
             if (batchMode) {
-                frontend.setBatchFile(argv[0]);
+                frontend.setAudioSource(new BatchFileAudioSource(argv[0]));
             } else {
-                frontend.setInputStream(new FileInputStream(argv[0]));
+                frontend.setAudioSource
+                    (new StreamAudioSource(new FileInputStream(argv[0])));
             }
 
 	    frontend.run();

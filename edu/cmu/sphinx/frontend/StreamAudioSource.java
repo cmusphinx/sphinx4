@@ -12,7 +12,7 @@ import java.util.Vector;
 
 /**
  * A StreamAudioSource converts data from an InputStream into
- * DoubleAudioFrame(s). One would obtain the DoubleAudioFrames using
+ * AudioFrame(s). One would obtain the AudioFrames using
  * the <code>read()</code> method.
  * The Sphinx properties that affect this StreamAudioSource are:
  * <pre>
@@ -28,7 +28,7 @@ public class StreamAudioSource implements DataSource {
 
     /**
      * The name of the SphinxProperty which indicates if the produced
-     * DoubleAudioFrames should be dumped. The default value of this
+     * AudioFrames should be dumped. The default value of this
      * SphinxProperty is false.
      */
     public static final String PROP_DUMP =
@@ -127,11 +127,11 @@ public class StreamAudioSource implements DataSource {
 
     
     /**
-     * Reads and returns the next DoubleAudioFrame from the InputStream of
+     * Reads and returns the next AudioFrame from the InputStream of
      * StreamAudioSource, return null if no data is read and end of file
      * is reached.
      *
-     * @return the next DoubleAudioFrame or <code>null</code> if none is
+     * @return the next AudioFrame or <code>null</code> if none is
      *     available
      *
      * @throws java.io.IOException
@@ -162,13 +162,13 @@ public class StreamAudioSource implements DataSource {
 
 
     /**
-     * Reads the next DoubleAudioFrame from the input stream.
+     * Reads the next AudioFrame from the input stream.
      *
-     * @return a DoubleAudioFrame
+     * @return a AudioFrame
      *
      * @throws java.io.IOException
      */
-    private DoubleAudioFrame readNextFrame() throws IOException {
+    private AudioFrame readNextFrame() throws IOException {
 
 	totalInBuffer = 0;
 
@@ -214,7 +214,7 @@ public class StreamAudioSource implements DataSource {
 		samplesBuffer[totalInBuffer++] = 0;
 	    }
 
-	    // convert the byte[] into a DoubleAudioFrame
+	    // convert the byte[] into a AudioFrame
 	    double[] audioFrame = Util.byteToDoubleArray
 		(samplesBuffer, 0, totalInBuffer);
             
@@ -222,7 +222,7 @@ public class StreamAudioSource implements DataSource {
 		Util.dumpDoubleArray(audioFrame, "FRAME_SOURCE");
 	    }
 
-	    return (new DoubleAudioFrame(audioFrame));
+	    return (new AudioFrame(audioFrame));
 	}
     }
 

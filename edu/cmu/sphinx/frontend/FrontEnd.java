@@ -31,15 +31,14 @@ import javax.sound.sampled.AudioSystem;
  * frontend.addProcessor(...a processor...);
  * // add other processors
  * 
- * frontend.setInputStream(...InputStream created from a file...);
- * OR
- * frontend.setBatchFile(...a batch file containing a list of audio files...);
+ * frontend.setAudioSource(...either a StreamAudioSource
+ * or a BatchFileAudioSource...)
  *
  * frontend.run();
  * </pre>
  *
  * The processors will be executed in the order that they are added. The
- * first processor must take <b><code>DoubleAudioFrame</code></b> as
+ * first processor must take <b><code>AudioFrame</code></b> as
  * input, and the last processor must output <b><code>Features</code></b>. 
  */
 public class FrontEnd implements DataSource, Runnable {
@@ -135,22 +134,13 @@ public class FrontEnd implements DataSource, Runnable {
     /**
      * Sets the source of audio input to this front-end.
      *
-     * @param inputStream the source of audio input
-     */
-    public void setInputStream(InputStream inputStream) {
-	this.audioFrameSource = new StreamAudioSource(inputStream);
-    }
-
-
-    /**
-     * Sets the input as a file that contains a list of audio files.
+     * @param audioSource the source of audio data
      *
-     * @param batchFile a file that contains a list of audio files
-     *
-     * @throws IOException if there is a file I/O problem
+     * @see BatchFileAudioSource
+     * @see StreamAudioSource
      */
-    public void setBatchFile(String batchFile) throws IOException {
-        this.audioFrameSource = new BatchFileAudioSource(batchFile);
+    public void setAudioSource(DataSource audioSource) {
+	this.audioFrameSource = audioSource;
     }
 
 

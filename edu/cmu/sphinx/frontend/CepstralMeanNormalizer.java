@@ -22,9 +22,11 @@ import java.util.ListIterator;
  * edu.cmu.sphinx.frontend.cmn.shiftWindow </pre>
  * The mean of all the input cepstrum so far is not recalculated
  * for each cepstrum. This mean is recalculated after
- * <code>edu.cmu.sphinx.frontend.cmn.shiftWindow</code> cepstrum.
+ * <code>edu.cmu.sphinx.frontend.cmn.shiftWindow</code> cepstra.
  * This mean is calculated by dividing the sum of all input cepstrum so
- * far by the number of input cepstrum. After
+ * far by the number of input cepstrum. After obtaining the mean,
+ * the sum is exponentially by multiplying it by the ratio: <pre>
+ * cmnWindow/(cmnWindow + number of frames since the last recalculation)</pre>
  */
 public class CepstralMeanNormalizer extends DataProcessor {
 

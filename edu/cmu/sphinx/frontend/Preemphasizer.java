@@ -14,8 +14,8 @@ import java.io.IOException;
  * Filters out the attenuation of audio data. Speech signals have an
  * attenuation of 20 dB/dec. Preemphasis flatten the signal to make it
  * less susceptible to finite precision effects later in the signal
- * processing. The Preemphasizer takes a DoubleAudioFrame as input
- * and outputs the same DoubleAudioFrame, but with preemphasis applied.
+ * processing. The Preemphasizer takes a AudioFrame as input
+ * and outputs the same AudioFrame, but with preemphasis applied.
  *
  * The SphinxProperties of this Preemphasizer are: <pre>
  * edu.cmu.sphinx.frontend.preemphasis.dump
@@ -32,7 +32,7 @@ public class Preemphasizer extends DataProcessor {
 
     /**
      * The name of the SphinxProperty which indicates if the preemphasized
-     * DoubleAudioFrames should be dumped. The default value of this
+     * AudioFrames should be dumped. The default value of this
      * SphinxProperty is false.
      */
     public static final String PROP_DUMP =
@@ -73,7 +73,7 @@ public class Preemphasizer extends DataProcessor {
 
 
     /**
-     * Returns the next Data object, which is usually a DoubleAudioFrame,
+     * Returns the next Data object, which is usually a AudioFrame,
      * produced by this Preemphasizerm, though it can also be Data objects
      * like EndPoint.SEGMENT_START.
      *
@@ -84,12 +84,11 @@ public class Preemphasizer extends DataProcessor {
 
 	Data input = getSource().read();
         
-        if (input instanceof DoubleAudioFrame) {
+        if (input instanceof AudioFrame) {
 
-            input = process((DoubleAudioFrame) input);
+            input = process((AudioFrame) input);
 
 	} else if (input instanceof PreemphasisPriorSignal) {
-
 	    PreemphasisPriorSignal signal = (PreemphasisPriorSignal) input;
 	    prior = (double) signal.getPrior();
 	    input = read();
@@ -100,13 +99,13 @@ public class Preemphasizer extends DataProcessor {
 
 
     /**
-     * Applies pre-emphasis filter to the given DoubleAudioFrame.
+     * Applies pre-emphasis filter to the given AudioFrame.
      *
-     * @param input a DoubleAudioFrame of audio data
+     * @param input a AudioFrame of audio data
      *
-     * @return a DoubleAudioFrame of data with pre-emphasis filter applied
+     * @return a AudioFrame of data with pre-emphasis filter applied
      */
-    private Data process(DoubleAudioFrame input) {
+    private Data process(AudioFrame input) {
 
         getTimer().start();
 
@@ -125,7 +124,6 @@ public class Preemphasizer extends DataProcessor {
 		in[i] = current - preemphasisFactor * previous;
                 previous = current;
 	    }
-
 	}
 
         getTimer().stop();

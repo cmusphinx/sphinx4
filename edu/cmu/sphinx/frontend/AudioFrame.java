@@ -7,27 +7,27 @@ package edu.cmu.sphinx.frontend;
 /**
  * Represents an audio data frame of type double.
  */
-public class DoubleAudioFrame implements Data {
+public class AudioFrame implements Data {
 
     private double[] audioSamples;
 
 
     /**
-     * Constructs a DoubleAudioFrame with the given audio data.
+     * Constructs a AudioFrame with the given audio data.
      *
-     * @param audioSamples the audio samples for this DoubleAudioFrame
+     * @param audioSamples the audio samples for this AudioFrame
      */
-    public DoubleAudioFrame(double[] audioSamples) {
+    public AudioFrame(double[] audioSamples) {
 	this.audioSamples = audioSamples;
     }
 
 
     /**
-     * Constructs a DoubleAudioFrame with the given number of samples.
+     * Constructs a AudioFrame with the given number of samples.
      *
-     * @param numberOfSamples the number of samples in this DoubleAudioFrame
+     * @param numberOfSamples the number of samples in this AudioFrame
      */
-    public DoubleAudioFrame(int numberOfSamples) {
+    public AudioFrame(int numberOfSamples) {
 	audioSamples = new double[numberOfSamples];
     }
 

@@ -11,21 +11,21 @@ import java.util.Vector;
 
 
 /**
- * Slices up a DoubleAudioFrame into a number of overlapping
+ * Slices up a AudioFrame into a number of overlapping
  * windows, and applies a Window function to each of them.
  * The number of resulting windows depends on the window
  * size and the window shift (commonly known as frame size and frame
  * shift in speech world). The Window will be applied to each such
  * window. Since the <code>read()</code> method will return a window,
- * and multiple windows are created for each DoubleAudioFrame, this
+ * and multiple windows are created for each AudioFrame, this
  * is a one-to-many processor.
  *
- * <p>For each input DoubleAudioFrame, calling
+ * <p>For each input AudioFrame, calling
  * <code>Windower.read()</code> will return the following
  * series of <code>Data</code> objects: <pre>
- * EndPointSignal.FRAME_START DoubleAudioFrame ... DoubleAudioFrame
+ * EndPointSignal.FRAME_START AudioFrame ... AudioFrame
  * EndPointSignal.FRAME_END </pre>
- * The <code>DoubleAudioFrame(s)</code> are the windowed data.
+ * The <code>AudioFrame(s)</code> are the windowed data.
  *
  * <p> The applied Window, <i>W</i> of length <i>N</i> (usually the
  * window size) is given by the following:
@@ -107,7 +107,7 @@ public class Windower extends DataProcessor {
 
     /**
      * Returns the next Data object, which is usually a window of the input
-     * DoubleAudioFrame, with the Window function applied to it.
+     * AudioFrame, with the Window function applied to it.
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
@@ -119,9 +119,9 @@ public class Windower extends DataProcessor {
         if (output == null) {
             output = getSource().read();
 
-            if (output != null && output instanceof DoubleAudioFrame) { 
-                // process the DoubleAudioFrame, and output the data
-                process((DoubleAudioFrame) output);
+            if (output != null && output instanceof AudioFrame) { 
+                // process the AudioFrame, and output the data
+                process((AudioFrame) output);
                 output = getWindow();                
             }
         }
@@ -146,15 +146,15 @@ public class Windower extends DataProcessor {
 
 
     /**
-     * Applies the Window to the given DoubleAudioFrame.
+     * Applies the Window to the given AudioFrame.
      * The audio samples are modified in place, and the original
-     * DoubleAudioFrame is returned.
+     * AudioFrame is returned.
      *
      * @param input the input Data object
      *
-     * @return the same DoubleAudioFrame but with Window applied
+     * @return the same AudioFrame but with Window applied
      */
-    private void process(DoubleAudioFrame input) {
+    private void process(AudioFrame input) {
         
 	double[] in = input.getAudioSamples();
 
@@ -182,7 +182,7 @@ public class Windower extends DataProcessor {
             getTimer().stop();
 
             // add the frame to the output queue
-            outputQueue.add(new DoubleAudioFrame(myWindow));
+            outputQueue.add(new AudioFrame(myWindow));
 
             if (getDump()) {
                 System.out.println
