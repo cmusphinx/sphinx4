@@ -69,11 +69,10 @@ class HMMTree {
         this.lm = lm;
         this.addFillerWords = addFillerWords;
 
-        // Utilities.dumpMemoryInfo("lextree before");
         Timer.start("Create HMMTree");
         compile();
         Timer.stop("Create HMMTree");
-        // Utilities.dumpMemoryInfo("lextree after");
+        Node.dumpNodeInfo();
         // dumpTree();
     }
 
@@ -455,15 +454,14 @@ class HMMTree {
          *
          * @return the set of possible transition points.
          */
-	private Collection getRC() {
+	private Collection getEntryPointRC() {
 	    if (rcSet == null) {
 		rcSet = new HashSet();
-	    }
-
-	    for (Iterator i = baseNode.getSuccessors().iterator();
-		    i.hasNext(); ) {
-		HMMNode node = (HMMNode) i.next();
-		rcSet.add(node.getBaseUnit());
+                for (Iterator i = baseNode.getSuccessors().iterator();
+                        i.hasNext(); ) {
+                    HMMNode node = (HMMNode) i.next();
+                    rcSet.add(node.getBaseUnit());
+                }
 	    }
 	    return  rcSet;
 	}
@@ -480,7 +478,7 @@ class HMMTree {
 	    for (Iterator i = exitPoints.iterator(); i.hasNext(); ) {
 		Unit lc = (Unit) i.next();
 		Node epNode = new Node();
-		for (Iterator j = getRC().iterator(); j.hasNext(); ) {
+		for (Iterator j = getEntryPointRC().iterator(); j.hasNext(); ) {
 		    Unit rc = (Unit) j.next();
 		    HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.BEGIN);
 		    Node addedNode = epNode.addSuccessor(hmm);
@@ -552,9 +550,9 @@ class HMMTree {
          */
 	void dump() {
 	    System.out.println("EntryPoint " + baseUnit + " RC Followers: " 
-			    + getRC().size());
+			    + getEntryPointRC().size());
 	    int count = 0;
-	    Collection rcs = getRC();
+	    Collection rcs = getEntryPointRC();
 	    System.out.print("    ");
 	    for (Iterator i = rcs.iterator(); i.hasNext(); ) {
 		Unit rc = (Unit) i.next();
@@ -588,6 +586,7 @@ class HMMTree {
 // depending upon whether the node has been frozen or not.
 class Node {
     private static int nodeCount = 0;
+    private static int successorCount = 0;
     private static Map wordNodeMap = new HashMap();
     private Object successors = null;
 
@@ -602,6 +601,8 @@ class Node {
             }
         }
     }
+
+
 
     /**
      * Given an object get the set of successors for this object
@@ -634,7 +635,7 @@ class Node {
      */
     private Map getSuccessorMap() {
         if (successors == null) {
-            successors = new HashMap();
+            successors = new HashMap(4);
         }
 
         assert successors instanceof Map;
@@ -648,7 +649,7 @@ class Node {
     void freeze() {
         if (successors instanceof Map) {
             Map map = getSuccessorMap();
-            List frozenSuccessors = new ArrayList();
+            List frozenSuccessors = new ArrayList(map.values().size());
             successors = null; // avoid recursive death spiral
             for (Iterator i = map.values().iterator(); i.hasNext();) {
                 Node node = (Node) i.next();
@@ -656,7 +657,13 @@ class Node {
                 node.freeze();
             }
             successors = frozenSuccessors;
+            successorCount += frozenSuccessors.size();
         }
+    }
+
+    static void dumpNodeInfo() {
+        System.out.println("Nodes: " + nodeCount + " successors " +
+                successorCount + " avg " + (successorCount / nodeCount));
     }
 
     /**
@@ -871,7 +878,17 @@ class InitialWordNode extends WordNode {
  */
 class HMMNode extends Node {
     private HMM hmm;
-    private Set rcSet;
+
+    // There can potentially be a large number of nodes (millions),
+    // therefore it is important to conserve space as much as
+    // possible.  While building the HMMNOdes, we keep right contexts
+    // in a set to allow easy pruning of duplicates.  Once the tree is
+    // entirely built, we no longer need to manage the right contexts
+    // as a set, a simple array will do. The freeze method converts
+    // the set to the array of units.  This rcSet object holds the set
+    // during contruction and the array after the freeze.
+
+    private Object rcSet;
 
     /**
      * Creates the node, wrapping the given hmm
@@ -917,10 +934,35 @@ class HMMNode extends Node {
      * @param rc the right context.
      */
     void addRC(Unit rc) {
+	getRCSet().add(rc);
+    }
+
+
+    /**
+     * Freeze this node. Convert the set into an array to reduce
+     * memory overhead
+     */
+    void freeze() {
+        super.freeze();
+        if (rcSet instanceof HashSet) {
+            Set set = (Set) rcSet;
+            rcSet = set.toArray(new Unit[set.size()]);
+        }
+    }
+
+    /**
+     * Gets the rc as a set. If we've already been frozen it is an
+     * error
+     *
+     * @return the set of right contexts
+     */
+    private Set getRCSet() {
 	if (rcSet == null) {
 	    rcSet = new HashSet();
 	}
-	rcSet.add(rc);
+
+        assert rcSet instanceof HashSet;
+        return (Set) rcSet;
     }
 
     /**
@@ -928,8 +970,9 @@ class HMMNode extends Node {
      *
      * @return the set of right contexts
      */
-    Collection getRC() {
-	return rcSet;
+    Unit[]  getRC() {
+	return (Unit[]) rcSet;
     }
 }
+
 

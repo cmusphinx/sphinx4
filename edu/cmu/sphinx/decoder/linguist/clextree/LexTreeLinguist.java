@@ -79,17 +79,6 @@ public class LexTreeLinguist implements  Linguist {
      */
     public final static boolean PROP_FULL_WORD_HISTORIES_DEFAULT = true;
 
-    /**
-      * A sphinx property that determines whether or not the linguist
-      * will maintain separate right context for word states. If this
-      * property is set to true (the default), distinct word states
-      * are maintained for all possible right contexts during the
-      * search. This yields a correct search. When set to false, the
-      * linguist will treat words with different right contexts as
-      * equivalent.
-      */
-    public final static String PROP_MAINTAIN_SEPARATE_WORD_RC
-        = PROP_PREFIX + "maintainSeparateWordRC";
 
     /**
      * The default value for PROP_MAINTAIN_SEPARATE_WORD_RC
@@ -110,33 +99,29 @@ public class LexTreeLinguist implements  Linguist {
 
     private final static SearchStateArc[] EMPTY_ARC = new SearchStateArc[0];
 
+    // just for detailed debugging
+    private final boolean tracing = false;
 
     private SphinxProperties props;
-
     private LanguageModel languageModel;
     private AcousticModel acousticModel;
-
     private LogMath logMath;
+
     private float languageWeight;
     private float logWordInsertionProbability;
     private float logUnitInsertionProbability;
     private float logFillerInsertionProbability;
     private float logSilenceInsertionProbability;
-
-    // just for detailed debugging
-    private final boolean tracing = false;
-
+    private float logOne;
 
     private HMMPool hmmPool;
     private HMMTree hmmTree;
     private Dictionary dictionary;
     
-    private float logOne;
     private int silenceID;
-    private WordNode finalNode;
     private boolean fullWordHistories = true;
-    private boolean maintainSeparateRightContextsForWords = false;
     private boolean addFillerWords = false;
+    private boolean omitUnitStates = false;
 
     private Word sentenceEndWord;
     private Word[] sentenceStartWordArray;
@@ -177,9 +162,6 @@ public class LexTreeLinguist implements  Linguist {
             props.getBoolean(PROP_FULL_WORD_HISTORIES,
                     PROP_FULL_WORD_HISTORIES_DEFAULT);
 
-        this.maintainSeparateRightContextsForWords =
-                    props.getBoolean(PROP_MAINTAIN_SEPARATE_WORD_RC,
-                    PROP_MAINTAIN_SEPARATE_WORD_RC_DEFAULT);
 
         // System.out.println("LM Max depth is " + languageModel.getMaxDepth());
 
@@ -217,6 +199,9 @@ public class LexTreeLinguist implements  Linguist {
 
         addFillerWords = (props.getBoolean (Linguist.PROP_ADD_FILLER_WORDS,
               Linguist.PROP_ADD_FILLER_WORDS_DEFAULT));
+
+        omitUnitStates = (props.getBoolean (Linguist.PROP_OMIT_UNIT_STATES,
+              Linguist.PROP_OMIT_UNIT_STATES_DEFAULT));
 
 
         compileGrammar();
@@ -326,9 +311,6 @@ public class LexTreeLinguist implements  Linguist {
     class LexTreeState implements SearchState, SearchStateArc {
         private Node node;
         private WordSequence wordSequence;
-        private float logLanguageProbability;
-        private float logAcousticProbability;
-        private float logInsertionProbability;
 
         /**
          * Creates a LexTreeState.
@@ -348,19 +330,10 @@ public class LexTreeLinguist implements  Linguist {
          * of entering this state.  This is a combination of insertion
          * and language probability.
          */
-        LexTreeState(
-                Node node,
-                WordSequence wordSequence,
-                float logLanguageProbability,
-                float logAcousticProbability,
-                float logInsertionProbability) {
+        LexTreeState(Node node, WordSequence wordSequence) {
 
             this.node = node;
             this.wordSequence = wordSequence;
-            this.logLanguageProbability = logLanguageProbability *
-                languageWeight;
-            this.logAcousticProbability = logAcousticProbability;
-            this.logInsertionProbability = logInsertionProbability;
         }
 
 
@@ -422,8 +395,8 @@ public class LexTreeLinguist implements  Linguist {
           * @return the log probability
           */
          public float getProbability() {
-             return logLanguageProbability + logAcousticProbability +
-                 logInsertionProbability;
+             return getLanguageProbability() +
+                 getAcousticProbability() + getInsertionProbability();
          }
 
          /**
@@ -432,7 +405,7 @@ public class LexTreeLinguist implements  Linguist {
           * @return the log probability
           */
          public float getLanguageProbability() {
-             return logLanguageProbability;
+             return logOne;
           }
 
          /**
@@ -441,7 +414,7 @@ public class LexTreeLinguist implements  Linguist {
           * @return the log probability
           */
          public float getAcousticProbability() {
-             return logAcousticProbability;
+             return logOne;
          }
 
          /**
@@ -450,8 +423,10 @@ public class LexTreeLinguist implements  Linguist {
           * @return the log probability
           */
          public float getInsertionProbability() {
-             return logInsertionProbability;
+             return logOne;
          }
+
+
 
          /**
           * Determines if this is an emitting state
@@ -553,11 +528,23 @@ public class LexTreeLinguist implements  Linguist {
           * @return the search state
           */
          SearchStateArc createUnitStateArc(HMMNode hmmNode) {
+             SearchStateArc arc;
 	     // System.out.println("CUSA " + hmmNode);
              float insertionProbability =
                  calculateInsertionProbability(hmmNode);
-             return new LexTreeUnitState(hmmNode,
-                     getWordSequence(), insertionProbability);
+             // if we want a unit state create it, otherwise
+             // get the first hmm state of the unit
+
+             if (!omitUnitStates) {
+                 arc = new LexTreeUnitState(hmmNode,
+                         getWordSequence(), insertionProbability);
+            } else {
+                HMM hmm = hmmNode.getHMM();
+                arc = new LexTreeHMMState(hmmNode,
+                     getWordSequence(), hmm.getInitialState(),
+                     insertionProbability);
+            }
+            return arc;
          }
 
          /**
@@ -588,6 +575,8 @@ public class LexTreeLinguist implements  Linguist {
     public class LexTreeUnitState extends LexTreeState 
                 implements UnitSearchState {
 
+        private float logInsertionProbability;
+
         /**
          * Constructs a LexTreeUnitState
          *
@@ -596,8 +585,8 @@ public class LexTreeLinguist implements  Linguist {
          */
         LexTreeUnitState(HMMNode hmmNode, 
                WordSequence wordSequence, float insertionProbability) {
-            super(hmmNode, wordSequence,
-                    logOne, logOne, insertionProbability);
+            super(hmmNode, wordSequence);
+            this.logInsertionProbability = insertionProbability;
         }
 
         /**
@@ -644,6 +633,15 @@ public class LexTreeLinguist implements  Linguist {
             return (HMMNode) getNode();
         }
 
+         /**
+          * Gets the insertion probability of entering this state
+          *
+          * @return the log probability
+          */
+         public float getInsertionProbability() {
+             return logInsertionProbability;
+         }
+
         /**
          * Returns the successors for this unit. The successors for a
          * unit are always the initial states(s) of the HMM associated
@@ -667,6 +665,7 @@ public class LexTreeLinguist implements  Linguist {
             implements HMMSearchState {
     
         private HMMState hmmState;
+        private float logAcousticProbability;
 
         /**
          * Constructs a LexTreeHMMState
@@ -679,11 +678,11 @@ public class LexTreeLinguist implements  Linguist {
          * @param probability the probability of the transition
          * occuring
          */
-        LexTreeHMMState(HMMNode hmmNode, 
-               WordSequence wordSequence, 
+        LexTreeHMMState(HMMNode hmmNode, WordSequence wordSequence, 
                HMMState hmmState, float probability) {
-            super(hmmNode, wordSequence, logOne, probability, logOne);
+            super(hmmNode, wordSequence);
             this.hmmState = hmmState;
+            this.logAcousticProbability = probability;
         }
 
         /**
@@ -730,19 +729,28 @@ public class LexTreeLinguist implements  Linguist {
             }
         }
 
+         /**
+          * Gets the language probability of entering this state
+          *
+          * @return the log probability
+          */
+         public float getAcousticProbability() {
+             return logAcousticProbability;
+         }
+
         /**
          * Retreives the set of successors for this state
          *
          * @return the list of sucessor states
          */
         public SearchStateArc[] getSuccessors() {
-            SearchStateArc[] nextStates;
+            SearchStateArc[] nextStates = null;
 
             // if this is an exit state, we are transitioning to a
             // new unit or to a word end.
 
             if (hmmState.isExitState()) {
-                return super.getSuccessors();
+                nextStates =  super.getSuccessors();
             } else {
                 // The current hmm state is not an exit state, so we
                 // just go through the next set of successors
@@ -764,6 +772,21 @@ public class LexTreeLinguist implements  Linguist {
                 }
             }
             return nextStates;
+        }
+
+        /**
+         * Counts the number of non emittiting successors to this node
+         *
+         * @return the non emitting successors
+         */
+        private boolean hasNonEmittingSuccessors() {
+            HMMStateArc[] arcs = hmmState.getSuccessors();
+            for (int i = 0; i < arcs.length; i++) {
+                if (!arcs[i].getHMMState().isEmitting()) {
+                    return true;
+                }
+            }
+            return false;
         }
 
          /**
@@ -806,6 +829,7 @@ public class LexTreeLinguist implements  Linguist {
         implements WordSearchState {
 
         private HMMNode lastNode;
+        private float logLanguageProbability;
 
         /**
          * Constructs a LexTreeWordState
@@ -821,8 +845,9 @@ public class LexTreeLinguist implements  Linguist {
         LexTreeWordState(WordNode wordNode, HMMNode lastNode,
                WordSequence wordSequence, float logProability) {
 
-            super(wordNode, wordSequence, logProability, logOne, logOne);
+            super(wordNode, wordSequence);
             this.lastNode = lastNode;
+            this.logLanguageProbability = logProability * languageWeight;
         }
 
         /**
@@ -870,6 +895,15 @@ public class LexTreeLinguist implements  Linguist {
         }
 
          /**
+          * Gets the language probability of entering this state
+          *
+          * @return the log probability
+          */
+         public float getLanguageProbability() {
+             return logLanguageProbability;
+          }
+
+         /**
           * Returns the list of successors to this state
           *
           * @return a list of SearchState objects
@@ -881,12 +915,11 @@ public class LexTreeLinguist implements  Linguist {
              if (wordNode.getWord() != sentenceEndWord) {
                  int index = 0;
                  List list = new ArrayList();
-                 Collection baseList  = lastNode.getRC();
+                 Unit[] rc  = lastNode.getRC();
                  Unit left = wordNode.getLastUnit();
 
-                 for (Iterator i = baseList.iterator(); i.hasNext(); ) {
-                     Unit base = (Unit) i.next();
-                     Collection epList = hmmTree.getEntryPoint(left, base);
+                 for (int i = 0; i < rc.length; i++) {
+                     Collection epList = hmmTree.getEntryPoint(left, rc[i]);
                      list.addAll(epList);
                  }
 
