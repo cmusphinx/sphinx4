@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+
+<!--
+
+Copyright 1999-2004 Carnegie Mellon University.
+Portions Copyright 2004 Sun Microsystems, Inc.
+Portions Copyright 2004 Mitsubishi Electronic Research Laboratories.
+All Rights Reserved.  Use is subject to license terms.
+
+See the file "license.terms" for information on usage and
+redistribution of this file, and for a DISCLAIMER OF ALL
+WARRANTIES.
+
+-->
+
+<html>
+<head>
+  <title>Sphinx-4 Programmer's Guide</title>
+   <style TYPE="text/css">
+     pre { font-size: medium; background: #f0f8ff; padding: 2mm; border-style: ridge ; color: teal}
+     code {font-size: medium; color: teal}
+     s4keyword { color: red; font-weight: bold }
+   </style>
+</head>
+
+<body>
+  <font face="Arial" size="2">
+  <table bgcolor="#99CCFF" width="100%">
+    <tr>
+      <td align=center width="100%">
+        <center><font face="Times New Roman"><h1>Sphinx-4 Programmer's Guide</h1></font></center>
+      </td>
+    </tr>
+  </table>
+  <p>
+  This tutorial shows you how to write Sphinx-4 applications. We will
+  start with an overview of the Sphinx-4 system, with just enough depth
+  so that you can use to build applications, but without the full-blown
+  details. After that, we will use the Hello World!
+  demo as an example to show how a simple application can be written.
+  We will then proceed to a more complex example. Consequently,
+  this tutorial into the following parts:
+  </p>
+  <ol>
+  <li><a href="#sphinx4basics">Overview of Sphinx-4</a>
+     <ul>
+     <li><a href="#hmmRecognizers">Overview of an HMM-based Speech Recognizer</a></li>
+     <li>Sphinx-4 Architecture and Main Components</li>
+     <li>Sphinx-4 Configuration System</li>
+     </ul>
+  <br>
+  <li><a href="#helloWorld">Simple Example - Hello World!</a>
+     <ul>
+     <li>Code Walk - HelloWorld.java
+     <li>Configuration File Walk - helloworld.config.xml
+     <li>Build File Walk - build.xml
+     </ul>
+  </ol>
+
+  <hr>
+
+  <a name="sphinx4basics"><h2>1. Overview of Sphinx-4</h2></a>
+
+  <p>
+  In this section, we will provide an overview of the Sphinx-4 system,
+  starting from an overview of HMM-based recognizers. We will highlight
+  in <s4keyword>red</s4keyword> those keywords that are 
+  critical to understanding Sphinx-4.
+  </p>
+
+  <p>
+  <h3><a name="hmmRecognizers">Overview of an HMM-based Speech Recognition System</a></h3>
+  <p>
+  Sphinx-4 is an HMM-based speech recognizer. <s4keyword>HMM</s4keyword>
+  stands for Hidden Markov Models, which is a type of statistical model.
+  In HMM-based systems,
+  each unit of sound (usually called a phoneme) is represented by a statistical
+  model that represents the distribution of all the evidence (data) for
+  that phoneme. This is called the <s4keyword>acoustic model</s4keyword> 
+  for that phoneme.
+  The speech signals are first transformed into a sequence of vectors
+  that represent certain characteristics of the signal, and the
+  parameters of the acoustic model are then estimated using these vectors
+  (usually called <s4keyword>features</s4keyword>). This process is called 
+  training the acoustic models.
+  </p>
+  <p>
+  During speech recognition, features are derived from the 
+  incoming speech (we will use "speech" to mean the same thing as "audio")
+  in the same way as in the training process. The component of the recognizer
+  that generates these features is called the <s4keyword>front end</s4keyword>.
+  These live features are scored against the acoustic model.
+  The <s4keyword>score</s4keyword> obtained indicates how 
+  likely that a particular set of features (extracted from live
+  audio) belongs to the particular phoneme of the corresponding model.
+  </p>
+  <p>
+  The process of speech recognition is to find the best possible sequence
+  of words (or units) that will fit the given input speech. It is a 
+  <s4keyword>search</s4keyword> problem, and in the case of HMM-based 
+  recognizers, a graph search problem. The graph represents all possible
+  sequences of phonemes in the entire <s4keyword>language</s4keyword>
+  of the task under consideration. The graph is typically a very large
+  HMM, composed of the HMMs of sound units concatenated in a guided manner,
+  as specified by the <s4keyword>grammar</s4keyword> of the task.
+  </p>
+  </p>
+
+  (to be continued)
+
+  <hr>  
+
+  <a name="helloWorld"><h2>2. Simple Example - Hello World!</h2></a>
+
+  <p>
+
+  </p>
+  
+  <pre>ant all</pre>
+  
+  </font>
+</body>
+
+</html>
