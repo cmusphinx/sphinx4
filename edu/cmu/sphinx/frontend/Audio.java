@@ -54,7 +54,7 @@ public class Audio extends Data implements Cloneable {
      */
     public Audio(Signal signal) {
         super(signal);
-        isSpeech = false;
+        isSpeech = signal.equals(Signal.CONTENT);
     }
 
     
