@@ -72,7 +72,7 @@ public class Token implements Scoreable {
     }
 
     private Token predecessor;
-    private Feature feature;
+    // private Feature feature;
     private int frameNumber;
     private float logTotalScore;
     private float logLanguageScore;
@@ -86,9 +86,10 @@ public class Token implements Scoreable {
     private static Set predecessorClasses = null;
 
     /**
-     * Set the predecessor class.  Used to modify the behavior of child() so that
-     * the predecessor backpointer will skip internal states.  For example, when
-     * retaining tokens to form a word lattice, it would be inefficient to
+     * Set the predecessor class. Used to modify the behavior of child() 
+     * so that the predecessor backpointer will skip internal states.  
+     * For example, when retaining tokens to form a word lattice, 
+     * it would be inefficient to
      * keep any states but WordStates-- other types of states are not used
      * and the memory should be saved.  On the other hand, a phoneme recognizer
      * would require PronunciationStates to create a suitable result.
@@ -124,15 +125,21 @@ public class Token implements Scoreable {
                        float logLanguageScore,
                        float logInsertionProbability,
                        int frameNumber) {
-       if ((predecessorClasses == null) || predecessorClasses.contains(state.getClass())) {
-            return new Token(this, state, logTotalScore, logLanguageScore, logInsertionProbability, frameNumber);
+       if ((predecessorClasses == null) || 
+	   predecessorClasses.contains(state.getClass())) {
+            return new Token(this, state, 
+			     logTotalScore, logLanguageScore, 
+			     logInsertionProbability, frameNumber);
         } else {
-            return new Token(predecessor, state, logTotalScore, logLanguageScore, logInsertionProbability, frameNumber);
+            return new Token(predecessor, state, 
+			     logTotalScore, logLanguageScore, 
+			     logInsertionProbability, frameNumber);
         }
     }
 
     /**
-     * Internal constructor for a token.  Used by classes Token, CombineToken, ParallelToken
+     * Internal constructor for a token.  
+     * Used by classes Token, CombineToken, ParallelToken
      *
      * @param predecessor the predecessor for this token
      * @param state the SentenceHMMState associated with this token
@@ -205,7 +212,7 @@ public class Token implements Scoreable {
      * Returns the feature for this Token.
      */
     public Feature getFeature() {
-        return feature;
+        return null; // feature;
     }
 
     /**
@@ -231,8 +238,9 @@ public class Token implements Scoreable {
             HMMSearchState hmmSearchState = (HMMSearchState) searchState;
             HMMState hmmState = hmmSearchState.getHMMState();
             float logScore = hmmState.getScore(feature);
-            logTotalScore += logScore;
-            logAcousticScore = logScore;
+            this.logTotalScore += logScore;
+            this.logAcousticScore = logScore;
+	    // this.feature = feature;
             return logScore;
         } else {
             System.out.println("SS: " + searchState);
@@ -276,24 +284,6 @@ public class Token implements Scoreable {
 	    logWorkingScore = logScore;
     }
 
-    /**
-     * Applies the given score and the Feature that produced this
-     * score for this token.
-     *
-     * @param logScore the score to apply to this token (in logMath
-     * log base)
-     * @param feature the Feature that generated the given score
-     */
-    public void applyScore(float logScore, Feature feature) {
-        if (false) {
-            System.out.println("Applying score " + logScore + " to " + this);
-        } else if (false) {
-            assert(logScore <= 0.0);
-        }
-        this.logTotalScore += logScore;
-        this.logAcousticScore = logScore;
-        this.feature = feature;
-    }
 
     /**
      * Sets the score for this token
