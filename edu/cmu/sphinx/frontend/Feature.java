@@ -77,6 +77,29 @@ public class Feature extends Data {
 
 
     /**
+     * Returns the audio data that corresponds to this Feature.
+     * Note that this method only returns that particular window of
+     * audio data that this Feature corresponds to, not the audio data
+     * of the entire utterance.
+     *
+     * <p>The audio data might not be available, because the
+     * <code>edu.cmu.sphinx.frontend.keepAudioReference</code>
+     * SphinxProperty is set to false. In that case, this method
+     * return null.
+     *
+     * @return the audio data that corresponds to this Feature, or null
+     *    if the audio data is not available.
+     */
+    public byte[] getAudio() {
+        if (getUtterance() == null) {
+            return null;
+        } else {
+            return getUtterance().getAudio(getID());
+        }
+    }
+
+
+    /**
      * Returns a String representation of this Feature.
      * The format of the string is:
      * <pre>featureLength data0 data1 ...</pre>
