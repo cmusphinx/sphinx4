@@ -8,24 +8,24 @@ import edu.cmu.sphinx.util.Timer;
 
 
 /**
- * A PullingProcessor reads a Data object from a DataSource, processes
+ * A DataProcessor reads a Data object from a DataSource, processes
  * it and returns either the same Data object (in which case the
- * PullingProcessor is called a <i>filter</i>), or another Data object (in
- * which case the PullingProcessor is called a <i>translator</i>).
+ * DataProcessor is called a <i>filter</i>), or another Data object (in
+ * which case the DataProcessor is called a <i>translator</i>).
  * This Data object is then read by another object via the
  * <code>read()</code> method. Therefore, it is a <code>DataSource</code>.
  *
- * <p>A series of PullingProcessors chained together produces a processing
- * pipeline, with each PullingProcessor having a different processing
- * function. PullingProcessors are chained together by the <pre>
- * PullingProcesor.setSource(DataSource) </pre>
- * method. This is possible because each PullingProcessor is also
- * a <code>DataSource</code>. Therefore, to chain three PullingProcessors,
+ * <p>A series of DataProcessors chained together produces a processing
+ * pipeline, with each DataProcessor having a different processing
+ * function. DataProcessors are chained together by the <pre>
+ * DataProcessor.setSource(DataSource) </pre>
+ * method. This is possible because each DataProcessor is also
+ * a <code>DataSource</code>. Therefore, to chain three DataProcessors,
  * A, B and C, with B reading the product of A, and C reading the product
  * of B, one would do: <pre>
- * PullingProcessor A = new PullingProcessor();
- * PullingProcessor B = new PullingProcessor();
- * PullingProcessor C = new PullingProcessor();
+ * DataProcessor A = new DataProcessor();
+ * DataProcessor B = new DataProcessor();
+ * DataProcessor C = new DataProcessor();
  * B.setSource(A);
  * C.setSource(B);</pre>
  *
@@ -50,18 +50,18 @@ import edu.cmu.sphinx.util.Timer;
  *     return process(input); 
  * } </pre>
  *
- * Note that a PullingProcessor might be reading different types of
+ * Note that a DataProcessor might be reading different types of
  * <code>Data</code> objects from its source. As a result, the
  * <code>process()</code> method should handle each Data type differently.
  * For more detailed examples, please look at the code of the different
- * subclasses of PullingProcessors.
+ * subclasses of DataProcessors.
  *
- * <p>PullingProcessor implements the methods that allow you
+ * <p>DataProcessor implements the methods that allow you
  * to get/set the source to "pull" from, but leaves it to the subclass
  * to implement the <code>read()</code> method of the <code>DataSource</code>
  * interface.
  */
-public abstract class PullingProcessor implements DataSource {
+public abstract class DataProcessor implements DataSource {
 
 
     /**
@@ -103,7 +103,7 @@ public abstract class PullingProcessor implements DataSource {
 
 
     /**
-     * Returns the Timer.
+     * Returns the Timer for metrics collection purposes.
      *
      * @return the Timer
      */
@@ -113,7 +113,7 @@ public abstract class PullingProcessor implements DataSource {
 
 
     /**
-     * Sets the Timer.
+     * Sets the Timer for metrics collection purposes.
      *
      * @param timer the Timer
      */
@@ -123,7 +123,7 @@ public abstract class PullingProcessor implements DataSource {
 
 
     /**
-     * Determine whether to dump the output.
+     * Determine whether to dump the output for debug purposes.
      *
      * @return true to dump, false to not dump
      */
@@ -133,7 +133,7 @@ public abstract class PullingProcessor implements DataSource {
 
 
     /**
-     * Set whether we should dump the output.
+     * Set whether we should dump the output for debug purposes.
      *
      * @param dump true to dump the output; false otherwise
      */
