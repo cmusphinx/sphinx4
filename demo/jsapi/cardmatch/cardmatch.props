@@ -77,6 +77,7 @@ edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=13
 #
 ############################################################
 
+demo.jsapi.cardmatch.useVoice = false
 demo.jsapi.cardmatch.numberOfCards = 6
 demo.jsapi.cardmatch.imageFiles = ./willie.gif ./paul.gif ./philip.gif
 edu.cmu.sphinx.jsapi.JSGFGrammar.grammarName=cardmatch

@@ -222,9 +222,11 @@ public class CardMatch implements Recorder {
                 microphone.stopRecording();
             }
 
-            String resultText = result.getBestResultNoFiller();
-            String tag = getResultTag(resultText);
-            cardMatchFrame.processResults(resultText, tag);
+            if (result != null) {
+                String resultText = result.getBestResultNoFiller();
+                String tag = getResultTag(resultText);
+                cardMatchFrame.processResults(resultText, tag);
+            }
             drain();
         }
     }

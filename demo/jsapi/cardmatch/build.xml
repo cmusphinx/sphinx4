@@ -17,12 +17,18 @@ NOTE:  Before running the tests, you must have already built
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <property name="top_dir"		value="../../.."/>
-    <path id="libs">
-        <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
-    </path>
     <property name="build_dir"		value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="${build_dir}/lib"/>
+    <property name="freetts_dir"        value="${top_dir}/../../FreeTTS"/>
+
+    <path id="run.classpath">
+        <pathelement path="${classes_dir}"/>
+	<pathelement location="${top_dir}/lib/jsapi.jar"/>
+        <fileset dir="${freetts_dir}/lib">
+	    <include name="**/*.jar"/>
+	</fileset>
+    </path>
 
 
     <!-- ********************************************************** -->
@@ -60,10 +66,10 @@ NOTE:  Before running the tests, you must have already built
 	    description="Runs the card match demo without endpointing."
 	    depends="all">
 	    <java classname="demo.jsapi.cardmatch.CardMatch"
-	          classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
 		  fork="true"
 		  maxmemory="128m">
-                <sysproperty key="java.util.logging.config.file"
+                <classpath refid="run.classpath"/>
+		<sysproperty key="java.util.logging.config.file"
                              value="cardmatch.props"/>
 		  <arg value="cardmatch.props"/>
 	    </java>
@@ -79,9 +85,9 @@ NOTE:  Before running the tests, you must have already built
 	    description="Runs the card match demo with endpointing."
 	    depends="all">
 	    <java classname="demo.jsapi.cardmatch.CardMatch"
-	          classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
-		  fork="true"
+	          fork="true"
 		  maxmemory="128m">
+		  <classpath refid="run.classpath"/>
 		  <sysproperty key="edu.cmu.sphinx.frontend.FrontEndFactory.pipelines"
 		               value="mfc_ep"/>
 		  <sysproperty key="demo.jsapi.cardmatch.doEndpointing"

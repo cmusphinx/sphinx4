@@ -27,15 +27,13 @@ public class CardMatchVoice {
     
     public CardMatchVoice() throws Exception {
 	try {
-            String synthesizerName = getProperty
-                ("synthesizerName",
-                 "Unlimited domain FreeTTS Speech Synthesizer from Sun Labs");
+            String domain = getProperty("domain", "general");
 
 	    // Create a new SynthesizerModeDesc that will match the FreeTTS
 	    // Synthesizer.
 	    SynthesizerModeDesc desc = new SynthesizerModeDesc
-		(synthesizerName,
-		 null,
+		(null,
+		 domain,
 		 Locale.US,
 		 Boolean.FALSE,         // running?
 		 null);                 // voice

@@ -16,6 +16,7 @@ package demo.jsapi.cardmatch;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -47,6 +49,7 @@ public class CardMatchFrame extends JFrame {
     private Color backgroundColor = new Color(220, 220, 220);
 
     private JPanel cardPanel;
+    private JButton newGameButton;
     private JToggleButton speakButton;
     private JTextField resultsTextField;
 
@@ -230,6 +233,7 @@ public class CardMatchFrame extends JFrame {
         game.startOver();
         newCardPanel();
         speak(newGamePrompt);
+        speakButton.setSelected(false);
     }
 
 
@@ -331,6 +335,8 @@ public class CardMatchFrame extends JFrame {
 	resultsPanel.add(textArea, BorderLayout.WEST);
 	resultsPanel.add(resultsTextField, BorderLayout.CENTER);
 
+        JPanel buttonsPanel = getJPanel(new FlowLayout());
+        
 	speakButton = new JToggleButton("Speak");
         speakButton.requestFocus();
 	speakButton.addActionListener(new ActionListener() {
@@ -343,7 +349,18 @@ public class CardMatchFrame extends JFrame {
 	    }
         });
 
-        resultsPanel.add(speakButton, BorderLayout.EAST);
+        newGameButton = new JButton("New Game");
+        newGameButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    stopButtonPressed();
+                    startNewGame(game);
+                }
+            });
+
+        buttonsPanel.add(speakButton);
+        buttonsPanel.add(newGameButton);
+
+        resultsPanel.add(buttonsPanel, BorderLayout.EAST);
 
 	return resultsPanel;
     }
