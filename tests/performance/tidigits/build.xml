@@ -82,6 +82,10 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
                 value="file:./"/>
             <sysproperty key="edu.cmu.sphinx.jsapi.JSGFGrammar.grammarName" 
 			 value="tidigits"/> 
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
             <arg value="tidigits.props"/> 
             <arg value="tidigits.batch"/> 
         </java>
