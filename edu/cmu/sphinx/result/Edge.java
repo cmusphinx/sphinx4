@@ -155,11 +155,9 @@ public class Edge {
      * @return true if the Edges are equivalent; false otherwise
      */
     public boolean isEquivalent(Edge other) {
-        /*
         return ((acousticScore == other.getAcousticScore() &&
                  lmScore == other.getLMScore()) &&
-        */
-        return ((fromNode.isEquivalent(other.getFromNode()) &&
+                (fromNode.isEquivalent(other.getFromNode()) &&
                  toNode.isEquivalent(other.getToNode())));
     }
 }
