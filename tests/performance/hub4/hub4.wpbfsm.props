@@ -92,11 +92,11 @@ edu.cmu.sphinx.util.BeamFinder.enable=false
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=9.5
+edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = .2
-edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = .1
+edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = .5
 edu.cmu.sphinx.decoder.linguist.Linguist.addFillerWords=true
-edu.cmu.sphinx.decoder.linguist.Linguist.fillerInsertionProbability=.1
+edu.cmu.sphinx.decoder.linguist.Linguist.fillerInsertionProbability=.5
 edu.cmu.sphinx.decoder.linguist.Linguist.generateUnitStates=false
 
 ############################################################
@@ -141,11 +141,11 @@ edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.fullWordHistories=true
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=30000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-60
 edu.cmu.sphinx.decoder.search.ActiveListManager.relativeWordBeamWidth=1E-30
-edu.cmu.sphinx.decoder.search.ActiveListManager.absoluteWordBeamWidth=19
+edu.cmu.sphinx.decoder.search.ActiveListManager.absoluteWordBeamWidth=22
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.growSkipInterval=0
 edu.cmu.sphinx.decoder.linguist.Linguist.unigramSmearWeight=1
 
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.acousticLookaheadFrames=2.0
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.acousticLookaheadFrames=1.7
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.keepAllTokens=true
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.cclextree.LexTreeLinguist 
