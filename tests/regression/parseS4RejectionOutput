@@ -80,7 +80,7 @@ BEGIN {
 	    } else if (arry[1] == "Sentences:") {
 	        sentences = arry[2];
 	        correctSentences = arry[4];
-            } else if (arry[1] == "Correct" && arry[2] == "OOG") {
+            } else if (arry[1] == "Correct" && arry[2] == "OOG:") {
 		correctOOG = arry[3];
 		falseOOG = arry[6];
 		correctIG = arry[9];
