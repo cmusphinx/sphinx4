@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="none" name="TIDIGITS Tests">
+<description>
+This file is used to run the TIDIGITS performance tests.
+Run ant with -Dskip=5 to do the standard 'quick' version of a test.
+Run ant with -Dlogger_props=tidigits.props to turn on the logging.
+</description>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Properties common to all tests                         * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <property name="top_dir"		value="../../.."/>
+    <path id="libs">
+        <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
+    </path>
+    <property name="build_dir"		value="${top_dir}/bld"/>
+    <property name="classes_dir"	value="${build_dir}/classes"/>
+    <property name="lib_dir"            value="${build_dir}/lib"/>
+
+    <property name="skip"               value="0"/>
+    <property name="logger_props"       value=""/>  
+
+    <property name="initial_heap_size"  value="128m"/>
+    <property name="maximum_heap_size"  value="128m"/>
+    <property name="jit"                value="server"/>
+
+    <property name="batch_main"               
+	      value="edu.cmu.sphinx.decoder.BatchDecoder"/>
+
+    <property name="live_main"               
+	      value="edu.cmu.sphinx.decoder.LivePretendDecoder"/>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_wordlist                                      * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_wordlist"
+	    description="TIDIGITS test set with a word list language model">
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <arg value="tidigits.props"/> 
+            <arg value="tidigits.batch"/> 
+        </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_flat_unigram                                  * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_flat_unigram"
+	    description="TIDIGITS test set with a flat unigram language model">
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
+                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+                         value="1"/> 
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                         value="tidigits.flat_unigram.lm"/>
+            <arg value="tidigits.props"/> 
+            <arg value="tidigits.batch"/> 
+        </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_flat_unigram_fst                              * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_flat_unigram_fst"
+	    description="TIDIGITS test set with a flat unigram fst language model">
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
+                         value="edu.cmu.sphinx.decoder.linguist.FSTGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.linguist.FSTGrammar.path"
+                         value="tidigits.flat_unigram.fst"/>
+            <arg value="tidigits.props"/> 
+            <arg value="tidigits.batch"/> 
+        </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_flat_unigram_lex                              * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_flat_unigram_lex"
+	    description="TIDIGITS test set with a flat unigram language model and the lex tree linguist">
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
+                         value="edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
+                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+                         value="1"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                         value="tidigits.flat_unigram.lm"/>
+            <arg value="tidigits.props"/> 
+            <arg value="tidigits.batch"/> 
+        </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_bigram_lex                                    * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_bigram_lex"
+	    description="TIDIGITS test set with a bigram language model and the lex tree linguist">
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
+                         value="edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+                         value="2"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
+                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                         value="tidigits.bigram.lm"/>
+            <arg value="tidigits.props"/> 
+            <arg value="tidigits.batch"/> 
+        </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_bigram                                        * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_bigram"
+	    description="TIDIGITS test set with a bigram language model">
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+                         value="2"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
+                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                         value="tidigits.bigram.lm"/>
+            <arg value="tidigits.props"/> 
+            <arg value="tidigits.batch"/> 
+        </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_bigram_flat                                   * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_bigram_flat"
+	    description="TIDIGITS test set with a bigram language model and the flat dynamic linguist">
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
+                         value="edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+                         value="2"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
+                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                         value="tidigits.bigram.lm"/>
+            <arg value="tidigits.props"/> 
+            <arg value="tidigits.batch"/> 
+        </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_flat_unigram_flat                             * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_flat_unigram_flat"
+	    description="TIDIGITS test set with a flat unigram language model and the flat dynamic linguist">
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
+                         value="edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+                         value="2"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
+                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                         value="tidigits.flat_unigram.lm"/>
+            <arg value="tidigits.props"/> 
+            <arg value="tidigits.batch"/> 
+        </java>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_trigram_lex                                   * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_trigram_lex"
+	    description="TIDIGITS test set with a trigram language model and the lex tree linguist">
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+                         value="3"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
+                         value="edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
+                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                         value="tidigits.trigram.lm"/>
+            <arg value="tidigits.props"/> 
+            <arg value="tidigits.batch"/> 
+        </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_wordlist_live                                 * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_wordlist_live"
+	    description="TIDIGITS live test set with a wordlist language model">
+        <java classpath="${classes_dir}"
+	      classname="${live_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.skip"
+                         value="${skip}"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer"
+                         value="50"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.transcriptFile"
+                         value="transcript.txt"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile"
+                         value="/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.keepAudioReference"
+                         value="false"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.bytesPerAudioFrame"
+                         value="320"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.cmn"
+                         value="edu.cmu.sphinx.frontend.LiveCMN"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.featureExtractor"
+                         value="edu.cmu.sphinx.frontend.LiveFeatureExtractor"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.endpointer"
+                         value="edu.cmu.sphinx.frontend.endpoint.LevelTracker"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold"
+                         value="16"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature"
+                         value="true"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.hypothesisTranscript"
+                         value="hypothesis.txt"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.alignInterval"
+                         value="870"/>
+            <arg value="tidigits.props"/> 
+            <arg value="tidigits.batch"/> 
+        </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_an4_words_rejection_live                      * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_an4_words_rejection_live"
+	    description="TIDIGITS live with AN4 test set">
+        <java classpath="${classes_dir}"
+	      classname="${live_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.skip"
+                         value="${skip}"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer"
+                         value="50"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.transcriptFile"
+                         value="transcript.txt"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile"
+                         value="/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.keepAudioReference"
+                         value="false"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.bytesPerAudioFrame"
+                         value="320"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.cmn"
+                         value="edu.cmu.sphinx.frontend.LiveCMN"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.featureExtractor"
+                         value="edu.cmu.sphinx.frontend.LiveFeatureExtractor"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.endpointer"
+                         value="edu.cmu.sphinx.frontend.endpoint.LevelTracker"/>
+            <sysproperty key="edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold"
+                         value="16"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature"
+                         value="true"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.hypothesisTranscript"
+                         value="hypothesis.txt"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.alignInterval"
+                         value="870"/>
+            <arg value="tidigits.props"/> 
+            <arg value="../an4/an4_words.batch"/> 
+        </java>
+    </target>
+</project>
