@@ -19,8 +19,8 @@ import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.TokenStack;
 import edu.cmu.sphinx.decoder.search.ArrayTokenStack;
 
-import edu.cmu.sphinx.decoder.linguist.simple.HMMStateState;
-import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMState;
+import edu.cmu.sphinx.linguist.flat.HMMStateState;
+import edu.cmu.sphinx.linguist.flat.SentenceHMMState;
 
 import java.io.Serializable;
 import java.util.Iterator;

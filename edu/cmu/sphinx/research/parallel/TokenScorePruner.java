@@ -14,8 +14,9 @@
 package edu.cmu.sphinx.research.parallel;
 
 import edu.cmu.sphinx.decoder.search.ActiveList;
-import edu.cmu.sphinx.decoder.search.Pruner;
 import edu.cmu.sphinx.decoder.search.Token;
+
+import edu.cmu.sphinx.decoder.pruner.Pruner;
 
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;

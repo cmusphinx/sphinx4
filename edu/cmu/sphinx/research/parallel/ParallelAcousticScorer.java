@@ -39,7 +39,6 @@ import java.io.IOException;
  */
 public class ParallelAcousticScorer implements AcousticScorer {
 
-    private FrontEnd frontEnd;
     private SphinxProperties props;
 
 
@@ -51,7 +50,6 @@ public class ParallelAcousticScorer implements AcousticScorer {
      * @param frontend the FrontEnd to use
      */
     public void initialize(String context, FrontEnd frontend) {
-	this.frontEnd = frontend;
         this.props = SphinxProperties.getSphinxProperties(context);
     }
 
@@ -74,9 +72,10 @@ public class ParallelAcousticScorer implements AcousticScorer {
      * @param scoreableList a list containing StateToken objects to
      * be scored
      *
-     * @return true if there are more features available
+     * @return the best scoring scorable, or null if there are
+     *          no more frames to score
      */
-    public boolean calculateScores(List scoreableList) {
+    public Scoreable calculateScores(List scoreableList) {
 
         assert scoreableList.size() > 0;
         
@@ -86,26 +85,24 @@ public class ParallelAcousticScorer implements AcousticScorer {
                 ("ParallelAcousticScorer: modelName is null");
         }
         assert modelName != null;
-        frontEnd = FrontEndFactory.getFrontEnd(modelName, props);
-        
-	Data data;
-
+	
 	try {
-	    data = frontEnd.getData();
+	    FrontEnd frontEnd = FrontEndFactory.getFrontEnd(props, modelName);
+	    Data data = frontEnd.getData();
 	 
 	    if (data == null) {
-                return false;
+                return null;
             }
 
 	    if (data instanceof DataStartSignal) {
                 data = frontEnd.getData();
                 if (data == null) {
-                    return false;
+                    return null;
                 }
 	    }
 
 	    if (data instanceof DataEndSignal) {
-		return false;
+		return null;
 	    }
 
             if (data instanceof Signal) {
@@ -113,22 +110,23 @@ public class ParallelAcousticScorer implements AcousticScorer {
             }
 
             float logMaxScore = -Float.MAX_VALUE;
+	    Scoreable bestScoreable = null;
 	    for (Iterator i = scoreableList.iterator(); i.hasNext(); ) {
                 Scoreable scoreable = (Scoreable) i.next();
-                float logScore =  scoreable.calculateScore(data);
+                float logScore =  scoreable.calculateScore(data, false);
                 if (logScore > logMaxScore) {
                     logMaxScore = logScore;
+		    bestScoreable = scoreable;
                 }
 	    }
-	} catch (IOException ioe) {
-	    System.out.println("IO Exception " + ioe);
-	    return false;
+	    return bestScoreable;
+	} catch (InstantiationException ie) {
+	    ie.printStackTrace();
+	    return null;
 	} catch (DataProcessingException dpe) {
             dpe.printStackTrace();
-            return false;
+            return null;
         }
-        
-	return true;
     }
 
 

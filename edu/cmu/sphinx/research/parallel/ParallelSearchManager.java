@@ -14,25 +14,33 @@
 package edu.cmu.sphinx.research.parallel;
 
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory;
 
 import edu.cmu.sphinx.result.Result;
 
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
+
 import edu.cmu.sphinx.decoder.search.ActiveList;
-import edu.cmu.sphinx.decoder.linguist.Color;
-import edu.cmu.sphinx.decoder.linguist.Linguist;
-import edu.cmu.sphinx.decoder.linguist.SearchState;
-import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
-import edu.cmu.sphinx.decoder.search.Pruner;
 import edu.cmu.sphinx.decoder.search.SearchManager;
-import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMState;
-import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMStateArc;
+
+import edu.cmu.sphinx.decoder.pruner.Pruner;
+
+import edu.cmu.sphinx.linguist.Linguist;
+import edu.cmu.sphinx.linguist.SearchGraph;
+import edu.cmu.sphinx.linguist.SearchState;
+import edu.cmu.sphinx.linguist.SearchStateArc;
+import edu.cmu.sphinx.linguist.flat.Color;
+import edu.cmu.sphinx.linguist.flat.SentenceHMMState;
+import edu.cmu.sphinx.linguist.flat.SentenceHMMStateArc;
+
 import edu.cmu.sphinx.decoder.search.Token;
 
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -149,7 +157,7 @@ public class ParallelSearchManager implements SearchManager {
         bestTokenMap = new HashMap();
 	        
         // initialize the FeatureStreams for the separate models
-        List models = AcousticModel.getNames(context);
+        Collection models = AcousticModelFactory.getNames(props);
         assert (models.size() > 0);
 
 	float defaultEta = 1.f/models.size();
@@ -215,7 +223,7 @@ public class ParallelSearchManager implements SearchManager {
             delayedExpansionList = getActiveList(activeListClass, props);
 
 	    SentenceHMMState firstState = (SentenceHMMState)
-                linguist.getInitialSearchState();
+                linguist.getSearchGraph().getInitialState();
 
             // create the first token and grow it, its first parameter
             // is null because it has no predecessor
@@ -329,8 +337,9 @@ public class ParallelSearchManager implements SearchManager {
 	boolean moreFeatures = false;
 	for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
             FeatureStream stream = (FeatureStream) i.next();
-	    moreFeatures =
-                scorer.calculateScores(stream.getActiveList().getTokens());
+	    Scoreable scoreable = 
+		scorer.calculateScores(stream.getActiveList().getTokens());
+	    moreFeatures = (scoreable != null);    
 	}
 	debugPrint(" done Scoring");
 	scoreTimer.stop();

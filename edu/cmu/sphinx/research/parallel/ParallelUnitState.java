@@ -19,10 +19,10 @@ import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.TokenStack;
 import edu.cmu.sphinx.decoder.search.ArrayTokenStack;
 
-import edu.cmu.sphinx.decoder.linguist.simple.HMMStateState;
-import edu.cmu.sphinx.decoder.linguist.simple.PronunciationState;
-import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMState;
-import edu.cmu.sphinx.decoder.linguist.simple.UnitState;
+import edu.cmu.sphinx.linguist.flat.HMMStateState;
+import edu.cmu.sphinx.linguist.flat.PronunciationState;
+import edu.cmu.sphinx.linguist.flat.SentenceHMMState;
+import edu.cmu.sphinx.linguist.flat.UnitState;
 
 import java.io.Serializable;
 import java.util.Iterator;

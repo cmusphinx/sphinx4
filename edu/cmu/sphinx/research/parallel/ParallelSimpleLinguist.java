@@ -20,18 +20,24 @@ import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
-import edu.cmu.sphinx.linguist.language.LanguageModel;
+
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+
+import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
+import edu.cmu.sphinx.linguist.language.grammar.Grammar;
+import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 
 import edu.cmu.sphinx.decoder.search.*;
+import edu.cmu.sphinx.decoder.pruner.Pruner;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
-import edu.cmu.sphinx.decoder.linguist.*;
-import edu.cmu.sphinx.decoder.linguist.simple.*;
-import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.linguist.*;
+import edu.cmu.sphinx.linguist.flat.*;
+import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 
 
@@ -61,7 +67,7 @@ import java.util.HashSet;
  *
  * Note that all probabilties are maintained in the log math domain
  */
-public class ParallelSimpleLinguist extends SimpleLinguist {
+public class ParallelSimpleLinguist extends FlatLinguist {
 
     private static final String PROP_PREFIX = 
         "edu.cmu.sphinx.research.parallel.ParallelSimpleLinguist.";
@@ -100,13 +106,15 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
     /**
      * Creates a tree linguist associated with the given context
      *
-     * @param context the context to associate this linguist with
-     * @param languageModel the language model
-     * @param grammar the grammar for this linguist
-     * @param models the acoustic model used by this linguist
+     * @param context        the context to associate this linguist with
+     * @param languageModel  the language model
+     * @param dictionary     the dictionary used
+     * @param grammar        the grammar used
+     * @param models         the acoustic models used
      */
     public void initialize(String context, LanguageModel languageModel,
-                        Grammar grammar, AcousticModel[] models) {
+			   Dictionary dictionary, Grammar grammar,
+			   AcousticModel[] models) {
         
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 
@@ -115,8 +123,9 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
         this.tieLevel = props.getString
             (PROP_TIE_LEVEL, PROP_TIE_LEVEL_DEFAULT);
 
-        super.initialize(context, languageModel, grammar, models);
-
+        super.initialize(context, languageModel, dictionary, grammar, models);
+	this.acousticModels = models;
+	
         System.out.println("Finished ParallelSimpleLinguist initialize()");
     }
 

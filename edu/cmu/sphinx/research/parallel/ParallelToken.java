@@ -13,7 +13,7 @@
 
 package edu.cmu.sphinx.research.parallel;
 
-import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMState;
+import edu.cmu.sphinx.linguist.flat.SentenceHMMState;
 import edu.cmu.sphinx.decoder.search.Token;
 
 
