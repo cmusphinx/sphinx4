@@ -152,6 +152,32 @@ your environment to use JSAPI.
 	     compress="true"/>
     </target>
 
+    <target name="compile_sphinx_wavfile">
+         <mkdir dir="${classes_dir}/demo/sphinx/wavfile"/>
+	 <javac debug="true"
+	        source="1.4"
+		listfiles="true"
+		deprecation="true"
+		srcdir="${src_dir}"
+		includes="demo/sphinx/wavfile/**"
+		destdir="${classes_dir}">
+	     <classpath refid="libs"/>
+	 </javac>
+	 <copy file="${src_dir}/demo/sphinx/wavfile/config.xml"
+	       todir="${classes_dir}/demo/sphinx/wavfile"/>
+	 <copy file="${src_dir}/demo/sphinx/wavfile/12345.wav"
+	       todir="${classes_dir}/demo/sphinx/wavfile"/>
+	 <copy file="${src_dir}/demo/sphinx/wavfile/digits.gram"
+	       todir="${classes_dir}/demo/sphinx/wavfile"/>
+	 <mkdir dir="${bin_dir}"/>
+	 <jar destfile="${bin_dir}/WavFile.jar"
+	      manifest="${src_dir}/demo/sphinx/wavfile/wavfile.Manifest"
+	      basedir="${classes_dir}"
+	      includes="demo/sphinx/wavfile/**"
+	      filesonly="true"
+	      compress="true"/>
+    </target>
+
     <target name="init">
         <available property="keystore.exists" file="tempKeystore"/>
         <tstamp/>
