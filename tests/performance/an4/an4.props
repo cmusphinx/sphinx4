@@ -61,6 +61,7 @@ edu.cmu.sphinx.decoder.Recognizer.dumpMemoryInfo=false
 edu.cmu.sphinx.decoder.Recognizer.dumpSentenceHMM=false
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar
+edu.cmu.sphinx.decoder.Recognizer.acousticScorer=edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer
 
 
 ############################################################
@@ -115,7 +116,7 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true
 # Use the number of available CPUS for scoring:
 #
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=true
-edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=-1
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=0
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
 
 
