@@ -22,12 +22,12 @@ import edu.cmu.sphinx.decoder.search.TokenStack;
 public interface ParallelState {
 
     /**
-     * Returns the name of the acoustic model behind this 
+     * Returns the FeatureStream of the acoustic model behind this 
      * ParallelHMMStateState.
      *
-     * @return the name of the acoustic model
+     * @return the FeatureStream of the acoustic model
      */
-    public String getModelName();
+    public FeatureStream getFeatureStream();
 
     /**
      * Returns the token stack of this ParallelUnitState.

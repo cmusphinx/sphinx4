@@ -44,7 +44,7 @@ public class ParallelUnitState extends UnitState implements ParallelState {
 	allStates = new LinkedList();
     }
 
-    private String modelName;
+    private FeatureStream stream;
     private TokenStack tokenStack;
 
 
@@ -69,12 +69,12 @@ public class ParallelUnitState extends UnitState implements ParallelState {
      * @param tokenStackSize the token stack size
      */
     public ParallelUnitState(PronunciationState parent,
-                             String modelName,
+                             FeatureStream stream,
                              int which,
                              Unit unit,
                              int tokenStackSize) {
 	super(parent, which, unit);
-	this.modelName = modelName;
+	this.stream = stream;
         if (tokenStackSize > 0) {
             this.tokenStack = new ArrayTokenStack(tokenStackSize);
         } else {
@@ -95,13 +95,13 @@ public class ParallelUnitState extends UnitState implements ParallelState {
         
 
     /**
-     * Returns the name of the acoustic model behind this 
+     * Returns the FeatureStream of the acoustic model behind this 
      * ParallelUnitState.
      *
-     * @return the name of the acoustic model
+     * @return the FeatureStream of the acoustic model
      */
-    public String getModelName() {
-	return modelName;
+    public FeatureStream getFeatureStream() {
+	return stream;
     }
 
     
@@ -116,7 +116,7 @@ public class ParallelUnitState extends UnitState implements ParallelState {
      */
     public String getName() {
 	String name = super.getName();
-	return name + "." + modelName;
+	return name + "." + stream.getName();
     }
 
 
@@ -126,16 +126,26 @@ public class ParallelUnitState extends UnitState implements ParallelState {
      * @return the pretty name 
      */
     public String getPrettyName() {
-        return super.getPrettyName() + "." + modelName;
+        return super.getPrettyName() + "." + stream.getName();
     }
 
-
+    /**
+     * Returns the title of this state
+     *
+     * @return the title
+     */
     public String getTitle() {
-        return super.getTitle() + "." + modelName;
+        return super.getTitle() + "." + stream.getName();
     }
 
+
+    /**
+     * Returns the value signature
+     *
+     * @return the value signature
+     */
     public String getValueSignature() {
-        return super.getValueSignature() + "." + modelName;
+        return super.getValueSignature() + "." + stream.getName();
     }
 
 
