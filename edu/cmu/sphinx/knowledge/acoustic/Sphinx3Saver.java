@@ -155,14 +155,15 @@ class Sphinx3Saver implements Saver {
 	String prefix, model, dataDir, propsFile;
 
 	if (modelName == null) {
-	    prefix = AcousticModel.PROP_PREFIX;
+	    prefix = TrainerAcousticModel.PROP_PREFIX;
 	} else {
-	    prefix = AcousticModel.PROP_PREFIX + modelName + ".";
+	    prefix = TrainerAcousticModel.PROP_PREFIX + modelName + ".";
 	}
 	// System.out.println("Using prefix: " + prefix);
 
 	location = props.getString
-	    (prefix + "location.save", AcousticModel.PROP_LOCATION_DEFAULT);
+	    (prefix + "location.save", 
+	     TrainerAcousticModel.PROP_LOCATION_SAVE_DEFAULT);
 	model = props.getString
 	    (prefix + "definition_file", AcousticModel.PROP_MODEL_DEFAULT);
 	dataDir = props.getString

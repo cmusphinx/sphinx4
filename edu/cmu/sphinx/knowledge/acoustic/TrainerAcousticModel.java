@@ -37,6 +37,19 @@ public class TrainerAcousticModel extends AcousticModel {
 
 
     /**
+     * The directory where the acoustic model data can be found.
+     */
+    public final static String PROP_LOCATION_SAVE = 
+	PROP_PREFIX + "location.save";
+
+
+    /**
+     * The default value of PROP_LOCATION_SAVE.
+     */
+    public final static String PROP_LOCATION_SAVE_DEFAULT = ".";
+
+
+    /**
      * The save format for the acoustic model data. Current supported
      * formats are:
      *
