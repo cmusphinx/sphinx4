@@ -94,7 +94,7 @@ public class CepstraPanel extends JPanel {
         y0Pixel = getHeight();
         if (lowestEnergy < 0) {
             y0Pixel = getHeight() - 
-                ((int) (lowestEnergy * -1) + 1) * pixelsPerYUnit;
+                ((int) -lowestEnergy + 1) * pixelsPerYUnit;
         }
     }
 
@@ -102,7 +102,7 @@ public class CepstraPanel extends JPanel {
      * Clears the list of Cepstra to draw.
      */
     public void clearCepstra() {
-        cepstraList.clear();
+        cepstraList = new LinkedList();
     }
     
     /**
@@ -203,13 +203,20 @@ public class CepstraPanel extends JPanel {
         g.setColor(minorYIntervalColor);
         
         // draw the grids from zero to the top of the Panel
-        for (int y = y0Pixel, x = 0; y > 0;
-             y -= pixelsPerYUnit, x %= majorYInterval) {
+        for (int y = y0Pixel, x = 0; y > 0; y -= pixelsPerYUnit) { 
+            //, x %= majorYInterval) {
+            if (x == majorYInterval) {
+                x = 0;
+            }
             drawGridLine(g, y, x++);
         }
         // draw the grids from zero to the bottom of the Panel
         for (int y = y0Pixel, x = 0; y < getHeight(); 
-             y += pixelsPerYUnit, x %= majorYInterval) {
+             y += pixelsPerYUnit) {
+            // , x %= majorYInterval) {
+            if (x == majorYInterval) {
+                x = 0;
+            }
             drawGridLine(g, y, x++);
         }
         g.setColor(oldColor);
