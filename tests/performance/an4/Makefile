@@ -215,10 +215,12 @@ an4_full_unigram:
 
 an4_full_trigram:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-5 \
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=15.0 \
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=1000 \
 	-Dedu.cmu.sphinx.model.language.location=an4_full.trigram.lm \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_full.wordlist \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
