@@ -57,19 +57,19 @@ import java.util.*;
  * Speech start will be <code>startOffset</code> number of frames
  * before speech went above <code>startLow</code>.
  *
- * When the energy level is below <code>endLow</code> for
+ * <p>When the energy level is below <code>endLow</code> for
  * <code>endWindow</code> number of frames, then speech has ended.
  * Speech end will be <code>endOffset</code> number of frames after
  * speech went below <code>endLow</code>.
  *
- * The <code>maxDropout</code> parameter deals with spikes before
+ * <p>The <code>maxDropout</code> parameter deals with spikes before
  * speech starts. If the energy previously when above startLow, but
  * returns to below <code>startLow</code> without entering speech,
  * then it is a spike. If the spike is less than <code>maxDropout</code>
  * number of frames from speech, the spike is part of speech.
  * Otherwise, it is not part of speech.
  *
- * At the end of speech side, spikes are always consider part of
+ * <p>At the end of speech side, spikes are always consider part of
  * speech unless it is contiguously more than <code>endWindow</code>
  * frames from speech.
  */
