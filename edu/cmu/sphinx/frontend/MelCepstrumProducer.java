@@ -29,9 +29,11 @@ CepstrumSource {
      * @param name the name of this MelCepstrumProducer
      * @param context the context of the SphinxProperties to use
      * @param predecessor the SpectrumSource to get Spectrum objects from
+     *
+     * @throws IOException if an I/O error occurs
      */
     public MelCepstrumProducer(String name, String context,
-                               SpectrumSource predecessor) {
+                               SpectrumSource predecessor) throws IOException {
         super(name, context);
 	initSphinxProperties();
         this.predecessor = predecessor;
@@ -41,12 +43,14 @@ CepstrumSource {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
+     *
+     * @throws IOException if an I/O error occurs
      */
-    private void initSphinxProperties() {
-	SphinxProperties properties = getSphinxProperties();
-        cepstrumSize = properties.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
-        numberMelFilters = properties.getInt
-            (MelFilterbank.PROP_NUMBER_FILTERS, 31);
+    private void initSphinxProperties() throws IOException {
+        numberMelFilters = getIntAcousticProperty
+            (MelFilterbank.PROP_NUMBER_FILTERS, 40);
+        cepstrumSize = getSphinxProperties().getInt
+            (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
     }
 
 

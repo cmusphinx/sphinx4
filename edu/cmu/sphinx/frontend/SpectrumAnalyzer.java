@@ -19,9 +19,7 @@ SpectrumSource {
      * The name of the SphinxProperty for the number of points
      * in the Fourier Transform, which is 512 by default.
      */
-    public static final String PROP_NUMBER_FFT_POINTS =
-    FrontEnd.PROP_PREFIX + "fft.numberFftPoints";
-
+    public static final String PROP_NUMBER_FFT_POINTS = "fft.numberFftPoints";
 
     private AudioSource predecessor;
 
@@ -45,9 +43,11 @@ SpectrumSource {
      * @param name the name of this SpectrumAnalyzer
      * @param context the context of the SphinxProperties to use
      * @param predecessor the AudioSource from which to get Audio objects
+     *
+     * @throws IOException if an I/O error occurs
      */
     public SpectrumAnalyzer(String name, String context, 
-                            AudioSource predecessor) {
+                            AudioSource predecessor) throws IOException {
         super(name, context);
 	initSphinxProperties();
         this.predecessor = predecessor;
@@ -152,16 +152,10 @@ SpectrumSource {
      *
      * @param context the context of the SphinxProperties used
      */
-    private void initSphinxProperties() {
+    private void initSphinxProperties() throws IOException {
 
-	SphinxProperties properties = getSphinxProperties();
-
-        int sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);
-
-        float windowSizeInMs = properties.getFloat
-            (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
-
-	windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);
+        int sampleRate = getIntAcousticProperty
+            (FrontEnd.PROP_SAMPLE_RATE, 16000);
 
 	/**
 	 * Number of points in the FFT. By default, the value is 512,
@@ -171,7 +165,12 @@ SpectrumSource {
 	 * 511 are symmetrical with the ones between 1 and 254. Therefore,
 	 * we need only return values between 0 and 255.
 	 */
-	numberFftPoints = properties.getInt(PROP_NUMBER_FFT_POINTS, 512);
+	numberFftPoints = getIntAcousticProperty(PROP_NUMBER_FFT_POINTS, 512);
+
+        float windowSizeInMs = getSphinxProperties().getFloat
+            (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
+
+	windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);
     }
 
 

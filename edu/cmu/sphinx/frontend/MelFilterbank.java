@@ -16,29 +16,25 @@ import java.io.IOException;
  */
 public class MelFilterbank extends DataProcessor implements SpectrumSource {
 
-
     /**
      * The name of the Sphinx Property for the number of filters in
      * the filterbank.
      */
-    public static final String PROP_NUMBER_FILTERS =
-    FrontEnd.PROP_PREFIX + "mel.numFilters";
+    public static final String PROP_NUMBER_FILTERS = "mel.numFilters";
 
-    
+
     /**
      * The name of the Sphinx Property for the minimum frequency
      * covered by the filterbank.
      */
-    public static final String PROP_MIN_FREQ = 
-    FrontEnd.PROP_PREFIX + "mel.minfreq";
+    public static final String PROP_MIN_FREQ = "mel.minfreq";
 
 
     /**
      * The name of the Sphinx Property for the maximum frequency
      * covered by the filterbank.
      */
-    public static final String PROP_MAX_FREQ = 
-    FrontEnd.PROP_PREFIX + "mel.maxfreq";
+    public static final String PROP_MAX_FREQ = "mel.maxfreq";
 
 
     private int sampleRate;
@@ -63,9 +59,11 @@ public class MelFilterbank extends DataProcessor implements SpectrumSource {
      * @param context the context of the SphinxProperties to use
      * @param predecessor the SpectrumSource to obtain Spectrum(a) from,
      *     which is usually a SpectrumAnalyzer (does FFT)
+     *
+     * @throws IOException if an I/O error occurs
      */
     public MelFilterbank(String name, String context,
-                         SpectrumSource predecessor) {
+                         SpectrumSource predecessor) throws IOException {
         super(name, context);
 	initSphinxProperties();
         this.predecessor = predecessor;
@@ -76,19 +74,13 @@ public class MelFilterbank extends DataProcessor implements SpectrumSource {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void initSphinxProperties() {
-
-	SphinxProperties properties = getSphinxProperties();
-
-        sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);
-
-	numberFftPoints = properties.getInt
+    private void initSphinxProperties() throws IOException {
+        sampleRate = getIntAcousticProperty(FrontEnd.PROP_SAMPLE_RATE, 16000);
+        minFreq = getDoubleAcousticProperty(PROP_MIN_FREQ, 130);
+        maxFreq = getDoubleAcousticProperty(PROP_MAX_FREQ, 6800);
+        numberFilters = getIntAcousticProperty(PROP_NUMBER_FILTERS, 40);
+        numberFftPoints = getIntAcousticProperty
             (SpectrumAnalyzer.PROP_NUMBER_FFT_POINTS, 512);
-	numberFilters = properties.getInt(PROP_NUMBER_FILTERS, 31);
-
-        // Oh, don't we all love legacy code with its inescrutable constants!
-	minFreq = properties.getDouble(PROP_MIN_FREQ, 200);
-	maxFreq = properties.getDouble(PROP_MAX_FREQ, 3500);
     }
 
 

@@ -61,8 +61,11 @@ public class Windower extends DataProcessor implements AudioSource {
      * Constructs a default Windower with the specified context.
      *
      * @param context the context of the SphinxProperties this Windower uses
+     *
+     * @throws IOException if an I/O error occurs
      */
-    public Windower(String name, String context, AudioSource predecessor) {
+    public Windower(String name, String context, AudioSource predecessor) 
+        throws IOException {
         super(name, context);
 	initSphinxProperties();
         this.predecessor = predecessor;
@@ -82,15 +85,16 @@ public class Windower extends DataProcessor implements AudioSource {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void initSphinxProperties() {
+    private void initSphinxProperties() throws IOException {
 
-	SphinxProperties properties = getSphinxProperties();
+        int sampleRate = getIntAcousticProperty
+            (FrontEnd.PROP_SAMPLE_RATE, 16000);
 
-        int sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);
+	SphinxProperties sphinxProperties = getSphinxProperties();
 
-        float windowSizeInMs = properties.getFloat
+        float windowSizeInMs = sphinxProperties.getFloat
             (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
-        float windowShiftInMs = properties.getFloat
+        float windowShiftInMs = sphinxProperties.getFloat
             (FrontEnd.PROP_WINDOW_SHIFT_MS, 10.0F);
 
         windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);

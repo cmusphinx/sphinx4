@@ -45,6 +45,12 @@ FeatureSource {
     FrontEnd.PROP_PREFIX + "featureExtractor.windowSize";
     
     /**
+     * The name of the SphinxProperty for the feature type to compute.
+     */
+    private static final String PROP_FEATURE_TYPE =
+    FrontEnd.PROP_PREFIX + "featureExtractor.featureType";
+
+    /**
      * The name of the SphinxProperty for the size of the circular
      * Cepstra buffer, which has a default value of 256.
      */
@@ -334,7 +340,6 @@ FeatureSource {
         getTimer().stop();
     }
 
-
     /**
      * Computes the next feature. Advances the pointers as well.
      */
@@ -350,18 +355,14 @@ FeatureSource {
 	float[] mfc2p = cepstraBuffer[jp2++];
 	float[] mfc3p = cepstraBuffer[jp3++];
 	
-	// CEP; copy all the cepstrum data except for the first one
-	int j = cepstrumLength - 1;
-	System.arraycopy(current, 1, feature, 0, j);
+	// CEP; copy all the cepstrum data
+	int j = cepstrumLength;
+	System.arraycopy(current, 0, feature, 0, j);
 	
 	// DCEP: mfc[2] - mfc[-2]
-	for (int k = 1; k < mfc2f.length; k++) {
+	for (int k = 0; k < mfc2f.length; k++) {
 	    feature[j++] = (mfc2f[k] - mfc2p[k]);
 	}
-	
-  	// POW: C0, DC0, D2C0
-	feature[j++] = current[0];
-	feature[j++] = mfc2f[0] - mfc2p[0];
 	
 	// D2CEP: (mfc[3] - mfc[-1]) - (mfc[1] - mfc[-3])
 	for (int k = 0; k < mfc3f.length; k++) {

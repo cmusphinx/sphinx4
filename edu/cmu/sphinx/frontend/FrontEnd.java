@@ -6,8 +6,11 @@ package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
+
 import java.io.IOException;
 
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Pre-processes the audio into Features. The FrontEnd consists
@@ -44,12 +47,29 @@ import java.io.IOException;
  */
 public class FrontEnd extends DataProcessor {
 
+    private static Map frontends = new HashMap(); 
+
     
+    /**
+     * The name of the SphinxProperty for sample rate in Hertz (i.e.,
+     * number of times per second), which has a default value of 8000.
+     */
+    public static final String PROP_SAMPLE_RATE = "sampleRate";
+
+
     /**
      * The prefix for all Frontend SphinxProperties names.
      * Its value is currently <code>"edu.cmu.sphinx.frontend."</code>.
      */
     public static final String PROP_PREFIX = "edu.cmu.sphinx.frontend.";
+
+
+    /**
+     * The name of the SphinxProperty that specifies whether the
+     * FrontEnd should use the properties from the AcousticModel.
+     */
+    public static final String PROP_USE_ACOUSTIC_MODEL_PROPS =
+    PROP_PREFIX + "useAcousticModelProperties";
 
     
     /**
@@ -58,13 +78,6 @@ public class FrontEnd extends DataProcessor {
      */
     public static final String PROP_BITS_PER_SAMPLE = PROP_PREFIX +
     "bitsPerSample";
-
-
-    /**
-     * The name of the SphinxProperty for sample rate in Hertz (i.e.,
-     * number of times per second), which has a default value of 8000.
-     */
-    public static final String PROP_SAMPLE_RATE = PROP_PREFIX + "sampleRate";
 
 
     /**
@@ -126,9 +139,12 @@ public class FrontEnd extends DataProcessor {
      * @param name the name of this FrontEnd
      * @param context the context of this FrontEnd
      */
-    public FrontEnd(String name, String context, AudioSource audioSource) {
+    public FrontEnd(String name, String context, AudioSource audioSource)
+        throws IOException {
 
         super(name, context);
+        
+        frontends.put(context, this);
 
         liveCMN = getSphinxProperties().getBoolean(PROP_LIVE_CMN, false);
 
@@ -162,6 +178,23 @@ public class FrontEnd extends DataProcessor {
 
         setAudioSource(audioSource);
         setFeatureSource(extractor);
+    }
+
+
+    /**
+     * Returns the FrontEnd with the given context, or null if there is no
+     * FrontEnd with that context.
+     *
+     * @return the FrontEnd with the given context, or null if there
+     *    is no FrontEnd with that context
+     */
+    public static FrontEnd getFrontEnd(String context) {
+        Object frontend = frontends.get(context);
+        if (frontend != null) {
+            return (FrontEnd) frontend;
+        } else {
+            return null;
+        }
     }
 
 
@@ -263,4 +296,5 @@ public class FrontEnd extends DataProcessor {
 
         return featureFrame;
     }
+
 }

@@ -39,8 +39,8 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * which has a default value of 12.0F.
      * This is a front-end dependent magic number.
      */
-    private static final String PROP_INITIAL_MEAN =
-    FrontEnd.PROP_PREFIX + "cmn.initialCepstralMean";
+    private static final String PROP_INITIAL_MEAN = 
+    "cmn.live.initialCepstralMean";
 
 
     /**
@@ -48,7 +48,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * which has a default value of 500.
      */
     private static final String PROP_CMN_WINDOW = 
-    FrontEnd.PROP_PREFIX + "cmn.windowSize";
+    "cmn.live.windowSize";
 
 
     /**
@@ -58,7 +58,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * we re-calculate the cepstral mean.
      */
     private static final String PROP_CMN_SHIFT_WINDOW =
-    FrontEnd.PROP_PREFIX + "cmn.shiftWindow";
+    "cmn.live.shiftWindow";
 
 
     private float[] currentMean;   // array of current means
@@ -79,8 +79,11 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * @param context the context of the SphinxProperties to use
      * @param predecessor the CepstrumSource from which this normalizer
      *    obtains Cepstrum to normalize
+     *
+     * @throws IOException if an I/O error occurs
      */
-    public LiveCMN(String name, String context, CepstrumSource predecessor) {
+    public LiveCMN(String name, String context, CepstrumSource predecessor)
+        throws IOException {
         super(name, context);
         initSphinxProperties();
 	initMeansSums();
@@ -100,13 +103,16 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
+     *
+     * @throws IOException if an I/O error occurs
      */
-    private void initSphinxProperties() {
-        SphinxProperties properties = getSphinxProperties();
-	initialMean = properties.getFloat(PROP_INITIAL_MEAN, 12.0f);
-	cepstrumLength = properties.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
-	cmnWindow = properties.getInt(PROP_CMN_WINDOW, 500);
-	cmnShiftWindow = properties.getInt(PROP_CMN_SHIFT_WINDOW, 800);
+    private void initSphinxProperties() throws IOException {
+	initialMean = getFloatAcousticProperty(PROP_INITIAL_MEAN, 12.0f);
+	cmnWindow = getIntAcousticProperty(PROP_CMN_WINDOW, 500);
+	cmnShiftWindow = getIntAcousticProperty(PROP_CMN_SHIFT_WINDOW, 800);
+
+	cepstrumLength = getSphinxProperties().getInt
+            (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
     }
 	
 
