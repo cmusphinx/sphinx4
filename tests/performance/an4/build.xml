@@ -912,56 +912,55 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
         </java>
     </target>
 
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * an4_words_bigram_live                                  * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * --> 
+    <!-- * an4_words_bigram_live                                  * --> 
+    <!-- *                                                        * --> 
+    <!-- ********************************************************** --> 
     <target name="an4_words_bigram_live"
-	    description="AN4 live words test set with a bigram grammar">
+            description="AN4 live words test with a bigram grammar">
         <java classpath="${classes_dir}"
-	      classname="${live_main}"
-	      fork="true">
-            <jvmarg value="-ea"/>
-            <jvmarg value="-${jit}"/>   
-            <jvmarg value="-ms${initial_heap_size}"/>
-            <jvmarg value="-mx${maximum_heap_size}"/> 
-            <jvmarg value="-Xprof"/>
-            <jvmarg value="-Xloggc:${gc_log_file}"/>
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer"
-                         value="50"/>
-            <sysproperty key="cmu.sphinx.frontend.util.ConcatFileAudioSource.transcriptFile"
-                         value="transcript.txt"/>
-            <sysproperty key="cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile"
-                         value="/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw"/>
-            <sysproperty key="cmu.sphinx.frontend.keepAudioReference"
-                         value="false"/>
-            <sysproperty key="cmu.sphinx.frontend.bytesPerAudioFrame"
-                         value="320"/>
-            <sysproperty key="cmu.sphinx.frontend.cmn"
-                         value="edu.cmu.sphinx.frontend.LiveCMN"/>
-            <sysproperty key="cmu.sphinx.frontend.featureExtractor"
-                         value="edu.cmu.sphinx.frontend.LiveFeatureExtractor"/>
-            <sysproperty key="cmu.sphinx.frontend.endpointer"
-                         value="edu.cmu.sphinx.frontend.endpoint.LevelTracker"/>
-            <sysproperty key="cmu.sphinx.frontend.endpoint.LevelTracker.threshold"
-                         value="16"/>
-            <sysproperty key="cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature"
-                         value="true"/>
-            <sysproperty key="cmu.sphinx.decoder.LivePretendDecoder.hypothesisTranscript"
-                         value="hypothesis.txt"/>
-            <sysproperty key="cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
-            <sysproperty key="cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
-            <sysproperty key="cmu.sphinx.knowledge.language.LanguageModel.location"
-                         value="an4_words.bigram.lm"/>
-            <arg value="an4.props"/> 
-            <arg value="an4_words.batch"/> 
+              classname="${batch_main}"
+              fork="true">
+             <jvmarg value="-ea"/>
+             <jvmarg value="-${jit}"/>   
+             <jvmarg value="-ms${initial_heap_size}"/>
+             <jvmarg value="-mx${maximum_heap_size}"/> 
+             <jvmarg value="-Xloggc:${gc_log_file}"/>
+             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
+                          value="${skip}"/>
+             <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
+                          value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer"
+                          value="50"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.keepAudioReference"
+                          value="false"/>
+             <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.dataSource"
+                          value="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.featureExtractor"
+                          value="edu.cmu.sphinx.frontend.LiveFeatureExtractor"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile"
+                          value="/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw"/>
+             <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                          value="./an4_words.bigram.lm"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold"
+                          value="16"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.bytesPerAudioFrame"
+                          value="320"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.skip"
+                          value="$(SKIP)"/>
+             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
+                          value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
+             <sysproperty key="java.util.logging.config.file"
+                          value="${logger_props}"/>
+             <sysproperty key="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature"
+                          value="true"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.cmn"
+                          value="edu.cmu.sphinx.frontend.LiveCMN"/>
+             <sysproperty key="edu.cmu.sphinx.frontend.endpointer"
+                          value="edu.cmu.sphinx.frontend.endpoint.LevelTracker"/>
+             <arg value="an4.props"/>
+             <arg value="an4_words.batch"/>
         </java>
     </target>
 </project>
