@@ -58,45 +58,18 @@ import java.util.Comparator;
  */
 public class LexTreeLinguist implements  Linguist {
 
-    /**
-     * Sphinx property used to determine whether or not
-     * the gstates are dumped.
-     */
-    public final static String PROP_DUMP_GSTATES =
-        "edu.cmu.sphinx.decoder.linguist.SimpleLinguist.dumpGstates";
-    /**
-     * The default value for the PROP_DUMP_GSTATES property
-     */
-    public final static boolean PROP_DUMP_GSTATES_DEFAULT = false;
-
     private SphinxProperties props;
 
     private LanguageModel languageModel;
     private AcousticModel acousticModel;
+
     private LogMath logMath;
     private float languageWeight;
-
     private float logWordInsertionProbability;
     private float logSilenceInsertionProbability;
     private float logUnitInsertionProbability;
 
-    private boolean showSentenceHMM;
-    private boolean showCompilationProgress = true;
 
-    private StatisticsVariable totalStates;
-    private StatisticsVariable totalArcs;
-    private StatisticsVariable actualArcs;
-
-
-    private Map nodeStateMap = new HashMap();
-    private Map arcPool = new HashMap();
-
-    private transient int totalStateCounter = 0;
-    private transient Collection stateSet = null;
-
-    private boolean spreadWordProbabilitiesAcrossPronunciations;
-    private float logOne;
-    private boolean dumpGStates;
 
     // just for detailed debugging
     private final boolean tracing = false;
@@ -106,6 +79,11 @@ public class LexTreeLinguist implements  Linguist {
     private LexTree lexTree;
     private Dictionary dictionary;
     private SearchStateArc[] emptyArc = new SearchStateArc[0];
+    private float logOne;
+    private int silenceID;
+    
+
+    private float logWordProbability;
 
 
     /**
@@ -124,6 +102,9 @@ public class LexTreeLinguist implements  Linguist {
         this.acousticModel = models[0];
         this.logMath = LogMath.getLogMath(context);
         this.languageModel = languageModel;
+
+        logWordProbability = (float) logMath.linearToLog( 1.0 /
+                languageModel.getVocabulary().size());
 
 
         try {
@@ -144,31 +125,13 @@ public class LexTreeLinguist implements  Linguist {
         logUnitInsertionProbability =  (float) logMath.linearToLog(
             props.getDouble(Linguist.PROP_UNIT_INSERTION_PROBABILITY, 1.0));
 
-        showCompilationProgress =
-            props.getBoolean(Linguist.PROP_SHOW_COMPILATION_PROGRESS, false);
-
         languageWeight = props.getFloat(PROP_LANGUAGE_WEIGHT,
                 PROP_LANGUAGE_WEIGHT_DEFAULT);
 
-        totalStates = StatisticsVariable.getStatisticsVariable(
-                props.getContext(), "totalStates");
-        totalArcs = StatisticsVariable.getStatisticsVariable(
-                props.getContext(), "totalArcs");
-        actualArcs = StatisticsVariable.getStatisticsVariable(
-                props.getContext(), "actualArcs");
-        stateSet = compileGrammar();
 
-        // totalStates.value = stateSet.size();
-
-        // after we have compiled the grammar, we no longer need
-        // these things, so release them so that resources can be
-        // reclaimed.
+        compileGrammar();
 
         acousticModel = null;
-        nodeStateMap = null;
-        arcPool = null;
-
-        StatisticsVariable.dumpAll();
 
         if (false) {
             LinguistTimer lt = new LinguistTimer(this, false);
@@ -210,19 +173,16 @@ public class LexTreeLinguist implements  Linguist {
 
 
     /**
-     * Compiles the grammar into a sentence hmm.  A GrammarJob is
-     * created for the initial grammar node and added to the
-     * GrammarJob queue. While there are jobs left on the grammar job
-     * queue, a job is removed from the queue and the associated
-     * grammar node is expanded and attached to the tails. GrammarJobs
-     * for the successors are added to the grammar job queue.
+     * Compiles the n-gram into a lex tree that is used during the
+     * search
      */
-    protected Collection compileGrammar() {
+    protected void compileGrammar() {
         Timer.start("compile");
 
         Timer.start("buildHmmPool");
         hmmPool = new HMMPool(acousticModel);
         Timer.stop("buildHmmPool");
+        silenceID = hmmPool.getID(Unit.SILENCE);
 
         lexTree = new LexTree(hmmPool, dictionary,
                 languageModel.getVocabulary());
@@ -234,8 +194,6 @@ public class LexTreeLinguist implements  Linguist {
         // information about the process
 
         Timer.dumpAll();
-
-        return null;
     }
 
 
@@ -256,15 +214,15 @@ public class LexTreeLinguist implements  Linguist {
         private float logLanguageProbability;
         private float logAcousticProbability;
         private float logInsertionProbability;
-        private LexTree.UnitLexNode left;
+        private int leftID;
         private LexTree.UnitLexNode central;
         private LexTree.UnitLexNode right;
 
         /**
          * Creates a LexTreeState.
          *
-         * @param left the unit forming the left context (or null if
-         * there is no left context) of a triphone context
+         * @param leftID the id of the unit forming the left context
+         * (or 0 if  there is no left context) of a triphone context
          *
          * @param central the unit forming the central portion of a
          * triphone context
@@ -277,13 +235,18 @@ public class LexTreeLinguist implements  Linguist {
          * and language probability.
          */
         LexTreeState(
-                LexTree.UnitLexNode left,
+                int leftID,
                 LexTree.UnitLexNode central,
                 LexTree.UnitLexNode right,
                 float logLanguageProbability,
                 float logAcousticProbability,
                 float logInsertionProbability) {
-            this.left = left;
+
+            if (leftID == 0) {
+                leftID = silenceID;
+            }
+
+            this.leftID = leftID;
             this.central = central;
             this.right = right;
             this.logLanguageProbability = logLanguageProbability *
@@ -294,24 +257,22 @@ public class LexTreeLinguist implements  Linguist {
 
 
         /**
-         * Gets the unique for this state
+         * Gets the unique signature for this state. The signature
+         * building code is slow and should only be used for
+         * non-time-critical tasks such as plotting states.
          *
          * @return the ID
          */
         public String getSignature() {
             int c = 121;
             int r = 123;
-            int l = 125;
             if (central != null) {
                 c = central.hashCode();
             }
             if (right != null) {
                 r = right.hashCode();
             }
-            if (left != null) {
-                l = left.hashCode();
-            }
-            return "c:" + c+ "-r:" + r + "-l:" + l;
+            return "c:" + c + "-r:" + r + "-l;" + leftID;
         }
 
 
@@ -321,19 +282,17 @@ public class LexTreeLinguist implements  Linguist {
          * @return the hashcode
          */
         public int hashCode() {
-            int l = 111;
             int c = 121;
+            int l = leftID;
             int r = 127;
-            if (left != null) {
-                l = left.hashCode();
-            }
+
             if (central != null) {
                 c = central.hashCode();
             }
             if (right != null) {
                 r = right.hashCode();
             }
-            return (c << 22) | (r << 8) | l;
+            return (c << 22) | (l << 8) | (r);
         }
 
         /**
@@ -347,8 +306,8 @@ public class LexTreeLinguist implements  Linguist {
                 return true;
             } else if (o instanceof LexTreeState) {
                 LexTreeState other = (LexTreeState) o;
-                return  left == other.left &&
-                        central == other.central &&
+                return  central == other.central &&
+                        leftID == other.leftID &&
                         right == other.right;
             } else {
                 return false;
@@ -440,14 +399,13 @@ public class LexTreeLinguist implements  Linguist {
          }
 
          /**
-          * Gets the lex tree node representing the 
-          * left portion of the triphone unit
+          * Gets id of the left context
           *
-          * @return the left unit lex tree node (or null if there is
-          * no left context)
+          * @return the left unit ID (or 0 if there is no left
+          * context)
           */
-         public LexTree.UnitLexNode getLeft() {
-             return left;
+         public int getLeftID() {
+             return leftID;
          }
 
 
@@ -466,6 +424,7 @@ public class LexTreeLinguist implements  Linguist {
         public String toString() {
             String pos = central == null ? "" 
                 : central.getPosition().toString();
+            Unit left = hmmPool.getUnit(leftID);
             return central + "[" + left +
                    "," + right +"]@" + pos + " " + getProbability();
         }
@@ -493,7 +452,7 @@ public class LexTreeLinguist implements  Linguist {
          * Creates a LexTreeInitialState object
          */
         LexTreeInitialState(LexTree.NonLeafLexNode node) {
-            super(null, null, null, logOne, logOne, logOne);
+            super(silenceID, null, null, logOne, logOne, logOne);
             this.node = node;
         }
 
@@ -540,40 +499,7 @@ public class LexTreeLinguist implements  Linguist {
          * @return a successor
          */
         public SearchStateArc[] getSuccessors(){
-            List list = new ArrayList();
-
-
-            LexTree.LexNode[] nodes = node.getNextNodes();
-
-            // the set of successors for the initial state is a set
-            // of LexTreeUnitStates that correspond to the lex tree
-            // successors.  We have to create a new state for each
-            // possible right context. The set of next lex nodes for
-            // this initial state must all be Unit nodes (that is,
-            // there can be no word nodes at this point).
-
-            for (int i = 0; i < nodes.length; i++) {
-                LexTree.LexNode node = nodes[i];
-
-                if (! (node instanceof LexTree.UnitLexNode)) {
-                    throw new Error("Corrupt lex tree (initial state)");
-                }
-
-                LexTree.UnitLexNode leftNode = getCentral();
-                LexTree.UnitLexNode central = (LexTree.UnitLexNode) node;
-                LexTree.LexNode[] rightNodes = getNextUnits(central);
-
-                for (int j = 0; j < rightNodes.length; j++) {
-                    list.add(new LexTreeUnitState(
-                                leftNode, central, 
-                                (LexTree.UnitLexNode) rightNodes[j]));
-                }
-            }
-            // since this only called once, it doesn't have to be too
-            // fast, so we can create the array of successors from the
-            // list
-            return (SearchStateArc[]) 
-                list.toArray(new SearchStateArc[list.size()]);
+            return getArcsToAllWords(0);
         }
 
 
@@ -586,15 +512,15 @@ public class LexTreeLinguist implements  Linguist {
     /**
      * Represents a unit in the search space
      */
-    class LexTreeUnitState extends LexTreeState {
+    class LexTreeUnitState extends LexTreeState implements UnitSearchState {
         int unitID;
 
 
         /**
          * Constructs a LexTreeUnitState
          *
-         * @param left the unit forming the left context (or null if
-         * there is no left context) of a triphone context
+         * @param leftID the id of the unit forming the left context
+         * (or 0 if there is no left context) of a triphone context
          *
          * @param central the unit forming the central portion of a
          * triphone context
@@ -602,21 +528,25 @@ public class LexTreeLinguist implements  Linguist {
          * @param right the unit forming the right portion of a
          * triphone context
          */
-        LexTreeUnitState( LexTree.UnitLexNode left,
+        LexTreeUnitState(int leftID,
                LexTree.UnitLexNode central, LexTree.UnitLexNode right) {
 
-            super(left, central, right, logOne, logOne, 
+            super(leftID, central, right, logOne, logOne, 
                     calculateInsertionProbability(central));
-            int leftID;
+            int rightID;
 
-            if (left == null) {
-                leftID = hmmPool.getID(Unit.SILENCE);
+            if (leftID == 0) {
+                leftID = silenceID;
+            } 
+
+            if (right == null) {
+                rightID = silenceID;
             } else {
-                leftID = left.getID();
+                rightID = right.getID();
             }
 
             unitID = hmmPool.buildID(
-                        central.getID(), leftID, right.getID());
+                        central.getID(), leftID, rightID);
         }
 
         /**
@@ -634,7 +564,7 @@ public class LexTreeLinguist implements  Linguist {
          * @return the triphone unit
          */
 
-        Unit getUnit() {
+        public Unit getUnit() {
             return hmmPool.getUnit(unitID);
         }
 
@@ -651,14 +581,29 @@ public class LexTreeLinguist implements  Linguist {
 
             HMM hmm = hmmPool.getHMM(unitID, position);
 
-            nextStates[0] = new LexTreeHMMState(getLeft(), getCentral(),
+            nextStates[0] = new LexTreeHMMState(getLeftID(), getCentral(),
                 getRight(), hmm.getInitialState(), logOne);
             return nextStates;
         }
 
 
+        /*
+         * Returns a string representation of this object
+         *
+         * @return a string representation of this object
+         */
         public String toString() {
             return super.toString() + " unit";
+        }
+
+        /*
+         * Returns a pretty string representation
+         *
+         * @return a pretty string representation
+         */
+        public String toPrettyString() {
+            HMMPosition position = getCentral().getPosition();
+            return getUnit().toString() + "@" +  position;
         }
     }
 
@@ -671,8 +616,8 @@ public class LexTreeLinguist implements  Linguist {
         /**
          * Constructs a LexTreeHMMState
          *
-         * @param left the unit forming the left context (or null if
-         * there is no left context) of a triphone context
+         * @param leftID the id of the unit forming the left context
+         * (or 0 if there is no left context) of a triphone context
          *
          * @param central the unit forming the central portion of a
          * triphone context
@@ -685,11 +630,10 @@ public class LexTreeLinguist implements  Linguist {
          * @param probability the probability of the transition
          * occuring
          */
-        LexTreeHMMState( LexTree.UnitLexNode left,
-               LexTree.UnitLexNode central, 
+        LexTreeHMMState(int leftID, LexTree.UnitLexNode central, 
                LexTree.UnitLexNode right, HMMState hmmState, 
                float probability) {
-            super(left, central, right, logOne, probability, logOne);
+            super(leftID, central, right, logOne, probability, logOne);
             this.hmmState = hmmState;
         }
 
@@ -765,7 +709,7 @@ public class LexTreeLinguist implements  Linguist {
                         }
                 // BUG: we are not incorporating language
                 // probabilities into the search yet.
-                        nextStates[i] = new LexTreeWordState(getLeft(), 
+                        nextStates[i] = new LexTreeWordState(getLeftID(), 
                             getCentral(), getRight(), 
                             (LexTree.WordLexNode) node);
                     }
@@ -776,23 +720,36 @@ public class LexTreeLinguist implements  Linguist {
                     // and central units and iterate through the
                     // possible right contexts.
 
-                    LexTree.UnitLexNode nextLeft = getCentral();
+                    int nextLeftID = getCentral() == null ?  
+                                        0 : getCentral().getID();
                     LexTree.UnitLexNode nextCentral = getRight();
 
-                    LexTree.LexNode[] nodes = getNextUnits(nextCentral);
+                    if (nextCentral.getUnit().isSilence()) {
 
-                    nextStates = new SearchStateArc[nodes.length];
+                    // for units with no right context (silence for
+                    // instance), we just create a single state
+                    // instead of one for each right context.  We mark
+                    // this by making the right context be null
 
-                    for (int i = 0; i < nodes.length; i++) {
-                        LexTree.LexNode nextRight = nodes[i];
+                        nextStates = new SearchStateArc[1];
+                        nextStates[0] = new LexTreeUnitState(
+                                nextLeftID, nextCentral,  null);
+                    } else {
+                        LexTree.LexNode[] nodes = getNextUnits(nextCentral);
 
-                        if (! (nextRight instanceof LexTree.UnitLexNode)) {
-                            throw new Error("Corrupt lex tree (hmm) ");
+                        nextStates = new SearchStateArc[nodes.length];
+
+                        for (int i = 0; i < nodes.length; i++) {
+                            LexTree.LexNode nextRight = nodes[i];
+
+                            if (! (nextRight instanceof LexTree.UnitLexNode)) {
+                                throw new Error("Corrupt lex tree (hmm) ");
+                            }
+
+                            nextStates[i] = new LexTreeUnitState(
+                                    nextLeftID, nextCentral, 
+                                    (LexTree.UnitLexNode) nextRight);
                         }
-
-                        nextStates[i] = new LexTreeUnitState(
-                                nextLeft, nextCentral, 
-                                (LexTree.UnitLexNode) nextRight);
                     }
                 }
             } else {
@@ -804,7 +761,7 @@ public class LexTreeLinguist implements  Linguist {
                 for (int i = 0; i < arcs.length; i++) {
                     HMMStateArc arc = arcs[i];
                     nextStates[i] = new LexTreeHMMState(
-                                getLeft(), getCentral(), getRight(),
+                                getLeftID(), getCentral(), getRight(),
                                 arc.getHMMState(), arc.getLogProbability());
                 }
             }
@@ -824,6 +781,44 @@ public class LexTreeLinguist implements  Linguist {
     }
 
     /**
+     * Gets the arcs to all of the successor nodes
+     *
+     * @param leftID the left context
+     *
+     * @return an array of arcs to the first units of all the wods
+     */
+
+    SearchStateArc[] getArcsToAllWords(int leftID) {
+        List list = new ArrayList();
+        LexTree.LexNode[] nodes =lexTree.getInitialNode().getNextNodes();
+
+
+        for (int i = 0; i < nodes.length; i++) {
+            LexTree.LexNode node = nodes[i];
+
+            if (! (node instanceof LexTree.UnitLexNode)) {
+                throw new Error("Corrupt lex tree (initial state)");
+            }
+
+            LexTree.UnitLexNode central = (LexTree.UnitLexNode) node;
+
+            if (central.getUnit().isSilence()) {
+                list.add(new LexTreeUnitState(leftID, central, null));
+            } else {
+                LexTree.LexNode[] rightNodes = getNextUnits(central);
+
+                for (int j = 0; j < rightNodes.length; j++) {
+                    list.add(new LexTreeUnitState(
+                                leftID, central, 
+                                (LexTree.UnitLexNode) rightNodes[j]));
+                }
+            }
+        }
+        return (SearchStateArc[]) 
+            list.toArray(new SearchStateArc[list.size()]);
+    }
+
+    /**
      * Represents a word state in the search space
      */
     class LexTreeWordState extends LexTreeState implements WordSearchState {
@@ -832,8 +827,8 @@ public class LexTreeLinguist implements  Linguist {
         /**
          * Constructs a LexTreeWordState
          *
-         * @param left the unit forming the left context (or null if
-         * there is no left context) of a triphone context
+         * @param leftID the id of the unit forming the left context
+         * (or 0 if there is no left context) of a triphone context
          *
          * @param central the unit forming the central portion of a
          * triphone context
@@ -845,12 +840,12 @@ public class LexTreeLinguist implements  Linguist {
          * word
          *
          */
-        LexTreeWordState( LexTree.UnitLexNode left,
+        LexTreeWordState(int leftID,
                LexTree.UnitLexNode central, 
                LexTree.UnitLexNode right, 
                LexTree.WordLexNode wordLexNode) {
 
-            super(left, central, right, logOne, logOne, logOne);
+            super(leftID, central, right, logWordProbability, logOne, logOne);
             this.wordLexNode = wordLexNode;
         }
 
@@ -899,43 +894,52 @@ public class LexTreeLinguist implements  Linguist {
             }
         }
 
+         /**
+          * Determines if this is a final state
+          *
+          * @return <code>true</code> if this is an final state.
+          */
+         public boolean isFinal() {
+             return wordLexNode.isSentenceEnd();
+         }
+
         /**
          * Retrieves the successors for this node
          *
          * @return the list of successor states
          */
         public SearchStateArc[] getSuccessors() {
-            boolean addFinalState =  false;
-            LexTree.UnitLexNode nextLeft = getCentral();
+            int nextLeftID = getCentral() == null ?  0 : getCentral().getID();
             LexTree.UnitLexNode nextCentral = getRight();
-            LexTree.LexNode[] nextNodes = getNextUnits(nextCentral);
-            int numSuccessors = nextNodes.length;
 
-            if (getRight() == null || getRight().getUnit().isSilence()) {
-                addFinalState = true;
+            if (isFinal()) {
+                return emptyArc;
             }
 
-            if (addFinalState) {
-                numSuccessors++;
-            }
-            
-            SearchStateArc[] nextStates = new SearchStateArc[numSuccessors];
+            if (nextCentral == null) {
+                return getArcsToAllWords(nextLeftID);
+            } else if (nextCentral.getUnit().isSilence()) {
+                SearchStateArc[] nextStates = new SearchStateArc[1];
+                nextStates[0] = new LexTreeUnitState(nextLeftID, nextCentral, 
+                                 null);
+                return nextStates;
+            } else {
+                LexTree.LexNode[] nextNodes = getNextUnits(nextCentral);
+                SearchStateArc[] nextStates 
+                    = new SearchStateArc[nextNodes.length];
 
-            for (int i = 0; i < nextNodes.length; i++) {
-                LexTree.LexNode nextRight = nextNodes[i];
+                for (int i = 0; i < nextNodes.length; i++) {
+                    LexTree.LexNode nextRight = nextNodes[i];
 
-                if (! (nextRight instanceof LexTree.UnitLexNode)) {
-                    System.out.println("nextRight " + nextRight);
-                    throw new Error("Corrupt lex tree (unit) ");
+                    if (! (nextRight instanceof LexTree.UnitLexNode)) {
+                        System.out.println("nextRight " + nextRight);
+                        throw new Error("Corrupt lex tree (unit) ");
+                    }
+                    nextStates[i] = new LexTreeUnitState(nextLeftID, 
+                            nextCentral, (LexTree.UnitLexNode) nextRight);
                 }
-                nextStates[i] = new LexTreeUnitState(nextLeft, nextCentral, 
-                            (LexTree.UnitLexNode) nextRight);
+                return nextStates;
             }
-
-            if (addFinalState) {
-                nextStates[nextStates.length - 1] = new LexTreeFinalState();
-            }
-            return nextStates;
         }
 
          public String toString() {
@@ -943,83 +947,18 @@ public class LexTreeLinguist implements  Linguist {
                  wordLexNode.getPronunciation();
          }
 
-         public String toPrettyString() {
-             return wordLexNode.getPronunciation().getWord() 
-                 + "[" + getLeft() + "," + getRight() + "]"; 
-         }
-    }
-
-    /**
-     * Represents a word state in the search space
-     */
-    class LexTreeFinalState extends LexTreeState {
-
-        public LexTreeFinalState() {
-            super(null, null, null, 0.0f, 0.0f, 0.0f);
-        }
-
-        /**
-         * Gets a successor to this search state
-         *
-         * @param the successor index
-         *
-         * @return the set of successors
-         */
-         public SearchStateArc[]  getSuccessors() {
-             return emptyArc;
-         }
-
-        /**
-         * Generate a hashcode for an object
-         *
-         * @return the hashcode
-         */
-        public int hashCode() {
-            return super.hashCode() + 37;
-        }
-
-        /**
-         * Determines if the given object is equal to this object
-         * 
-         * @param o the object to test
-         * @return <code>true</code> if the object is equal to this
-         */
-        public boolean equals(Object o) {
-            if (o == this) {
-                return true;
-            } else if (o instanceof LexTreeFinalState) {
-                return super.equals(o);
-            } else {
-                return false;
-            }
-        }
-
          /**
-          * Determines if this is a final state
+          * Returns a pretty string version of this state
           *
-          * @return <code>true</code> if the state is a final state
-          */
-         public boolean isFinal() {
-             return true;
-         }
-
-         /**
-          * Returns a pretty version of the string representation 
-          * for this object
-          *
-          * @return a pretty string
+          * @return the pretty string representation
           */
          public String toPrettyString() {
-             return toString();
-         }
-
-         /**
-          * Returns a string representation of the object
-          *
-          * @return the string representation
-          */
-         public String toString() {
-             return "<final>";
+             if (isFinal()) {
+                 return wordLexNode.getPronunciation().getWord();
+             } else {
+                 return wordLexNode.getPronunciation().getWord() 
+                     + "[" + getCentral() + "," + getRight() + "]"; 
+             }
          }
     }
 
@@ -1051,7 +990,7 @@ public class LexTreeLinguist implements  Linguist {
     private float calculateInsertionProbability(LexTree.UnitLexNode unitNode) {
         float logInsertionProbability = logUnitInsertionProbability;
         if (unitNode.getUnit().isSilence()) {
-            logUnitInsertionProbability = logSilenceInsertionProbability;
+            logInsertionProbability = logSilenceInsertionProbability;
         } 
         if (unitNode.isWordBeginning()) {
             logInsertionProbability += logWordInsertionProbability;
