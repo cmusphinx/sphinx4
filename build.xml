@@ -45,18 +45,15 @@
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <patternset id="all" 
-                includes="edu/**,com/**"
-	        excludes="edu/cmu/sphinx/research/parallel/**"/>
+                includes="edu/**,com/**"/>
 
     <patternset id="edu" 
                 includes="edu/**"
-	        excludes="com/**,
-                          edu/cmu/sphinx/research/parallel/**"/>
+	        excludes="com/**"/>
 
     <patternset id="no_jsapi" 
                 includes="edu/**"
 	        excludes="com/**,
-                          edu/cmu/sphinx/research/parallel/**,
                           edu/cmu/sphinx/jsapi/**"/>
              
     <target name="set_patternset_to_compile">
@@ -275,8 +272,7 @@ jsapi.exe from the lib directory.
         <javadoc sourcepath="${src_dir}"
 		 additionalparam="-source 1.4"
 		 packagenames="edu.*"
-                 excludepackagenames="edu.cmu.sphinx.trainer,
-		                      edu.cmu.sphinx.research.parallel"
+                 excludepackagenames="edu.cmu.sphinx.trainer"
 		 destdir="${javadoc_check_dir}" 
 		 overview="${src_dir}/overview.html"
                  doclet="com.sun.tools.doclets.doccheck.DocCheck"
