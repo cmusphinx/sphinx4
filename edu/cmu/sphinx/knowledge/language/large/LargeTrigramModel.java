@@ -273,14 +273,28 @@ public class LargeTrigramModel implements LanguageModel {
 
 
     /**
+     * Returns its UnigramProbability if this language model has
+     * the given unigram.
+     *
+     * @param unigram the unigram to find
+     *
+     * @return the UnigramProbability, or null if this language model
+     *     does not have the unigram
+     */
+    private UnigramProbability getUnigram(String unigram) {
+        return (UnigramProbability) unigramIDMap.get(unigram.toLowerCase());
+    }
+
+
+    /**
      * Returns true if this language model has the given unigram.
      *
      * @param unigram the unigram to find
      *
      * @return true if this LM has this unigram, false otherwise
      */
-    private UnigramProbability getUnigram(String unigram) {
-        return (UnigramProbability) unigramIDMap.get(unigram.toLowerCase());
+    private boolean hasUnigram(String unigram) {
+        return (unigramIDMap.get(unigram) != null);
     }
 
 
@@ -310,18 +324,18 @@ public class LargeTrigramModel implements LanguageModel {
      */
     private float getBigramProbability(WordSequence wordSequence) {
 
+        String firstWord = wordSequence.getWord(0);
+        if (loader.getNumberBigrams() <= 0 || !hasUnigram(firstWord)) {
+            return getUnigramProbability(wordSequence.getNewest());
+        }
+
 	BigramProbability bigram = findBigram(wordSequence);
 	
 	if (bigram != null) {
 	    return bigramProbTable[bigram.getProbabilityID()];
-	
 	} else {
-	    String firstWord = wordSequence.getWord(0);
 	    String secondWord = wordSequence.getWord(1);
 	    
-	    if (loader.getNumberBigrams() <= 0 || firstWord == null) {
-		return getUnigramProbability(wordSequence.getNewest());
-	    }
 	    if (getUnigram(secondWord) == null) {
 		throw new Error("Bad word2: " + secondWord);
 	    }
@@ -376,9 +390,11 @@ public class LargeTrigramModel implements LanguageModel {
 	BigramBuffer bigramBuffer = loadedBigramCache[firstWordID];
 	if (bigramBuffer == null) {
 	    int numberBigrams = getNumberBigramFollowers(firstWordID);
-            bigramBuffer = loadBigramBuffer(firstWordID, numberBigrams);
-            if (bigramBuffer != null) {
-		loadedBigramCache[firstWordID] = bigramBuffer;
+            if (numberBigrams > 0) {
+                bigramBuffer = loadBigramBuffer(firstWordID, numberBigrams);
+                if (bigramBuffer != null) {
+                    loadedBigramCache[firstWordID] = bigramBuffer;
+                }
             }
         }
 	return bigramBuffer;
@@ -437,7 +453,9 @@ public class LargeTrigramModel implements LanguageModel {
      * @return the trigram probability
      */
     private float getTrigramProbability(WordSequence wordSequence) {
-        if (loader.getNumberTrigrams() == 0) {
+        String firstWord = wordSequence.getWord(0);
+
+        if (loader.getNumberTrigrams() == 0 || !hasUnigram(firstWord)) {
             return getBigramProbability(wordSequence.getNewest());
         }
 
@@ -494,9 +512,12 @@ public class LargeTrigramModel implements LanguageModel {
             
             if (trigramBuffer != null) {
                 loadedTrigramBuffer.put(oldest, trigramBuffer);
-                int thirdWordID = getWordID(wordSequence.getWord(2));
-                trigram = trigramBuffer.findProbabilityID(thirdWordID);
             }
+        }
+
+        if (trigramBuffer != null) {
+            int thirdWordID = getWordID(wordSequence.getWord(2));
+            trigram = trigramBuffer.findProbabilityID(thirdWordID);
         }
 
 	return trigram;
