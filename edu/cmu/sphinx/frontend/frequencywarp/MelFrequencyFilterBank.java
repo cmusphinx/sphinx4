@@ -45,27 +45,30 @@ import java.io.IOException;
  * <p>
  * As you might notice in the above figure, the distance at the base
  * from the center to the left edge is different from the center to
- * the right edge. This is due to the mel-frequency scale,
- * which is a non-linear scale that models the non-linear human
- * hearing behavior. As can be inferred from the figure, filtering with
- * the mel scale emphasizes the lower frequencies. In general,
- * the mel frequency can be calculated from the linear frequency by:
+ * the right edge. This is due to the mel-frequency scale, which is a
+ * non-linear scale that models the non-linear human hearing
+ * behavior. As can be inferred from the figure, filtering with the
+ * mel scale emphasizes the lower frequencies. A common model for the
+ * relation between frequencies in mel and linear scales is as
+ * follows:
  * <p>
- * <code>Mel(linearFrequency) = 2595 * log(1 + linearFrequency/700)</code>
+ * <code>melFrequency = 2595 * log(1 + linearFrequency/700)</code>
  * <p>
- * The minimum frequency has a default value of 130Hz, while 
- * the maximum frequency has a default value of 6800Hz.
- * These frequencies depend on the channel and the sampling frequency
- * that you are using. For telephone speech, since the telephone channel
- * corresponds to a bandpass filter with cutoff frequencies of 
- * around 300Hz and 3700Hz, using limits wider than these would waste
- * bandwidth. For clean speech, the minimum frequency should be higher 
- * than about 100Hz, since there's no speech information below it.
- * Furthermore, by setting the lower frequency above 50/60Hz,
- * we get rid of the hum resulting from the AC power, if present.
+ * The constants that define the filterbank are the number of filters,
+ * the minimum frequency, and the maximum frequency. The minimum and
+ * maximum frequencies determine the frequency range spanned by the
+ * filterbank.  These frequencies depend on the channel and the
+ * sampling frequency that you are using. For telephone speech, since
+ * the telephone channel corresponds to a bandpass filter with cutoff
+ * frequencies of around 300Hz and 3700Hz, using limits wider than
+ * these would waste bandwidth. For clean speech, the minimum
+ * frequency should be higher than about 100Hz, since there is no
+ * speech information below it.  Furthermore, by setting the minimum
+ * frequency above 50/60Hz, we get rid of the hum resulting from the
+ * AC power, if present.
  * <p>
  * The maximum frequency has to be lower than the Nyquist frequency,
- * that is, half the sampling rate. Furthermore, there isn't much
+ * that is, half the sampling rate. Furthermore, there is not much
  * information above 6800Hz that can be used for improving separation
  * between models. Particularly for very noisy channels,
  * maximum frequency of around 5000Hz may help cut off the noise.
