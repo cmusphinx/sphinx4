@@ -74,8 +74,11 @@ END {
     testName = ARGV[1];
     gsub(/.out/, "", testName);
     # "date +%D" | getline date;
-    "date +%Y-%m-%d" | getline date;
-    "date +%T" | getline time;
+    #"date +%Y-%m-%d" | getline date;
+    # "date +%T" | getline time;
+    getline date < ".startDate";
+    getline time < ".startTime";
+
     "hostname" | getline machine;
     "uptime" | getline uptime;
     "whoami" | getline who;

@@ -31,6 +31,9 @@ rootDir=../../
 date=`date +%Y-%m-%d`
 time=`date +%T`
 
+echo $date > .startDate
+echo $time > .startTime
+
 #############################
 # Log the metrics
 #############################

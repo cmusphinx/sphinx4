@@ -13,7 +13,7 @@
 # address to the list of recipients
 #
 
-date=`date +%Y-%m-%d`
+date=`cat .startDate`
 
 ./makeWebpage < regression.log > regression_report.html
 ./whatsNew $date > $date.html

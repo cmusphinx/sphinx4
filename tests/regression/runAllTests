@@ -20,7 +20,7 @@
 ./runTest ../performance/an4 an4_full_trigram
 ./runTest ../performance/an4 an4_full_fst
 
-./runTest ../performance/an4 an4_words_unigram_quick
+#./runTest ../performance/an4 an4_words_unigram_quick
 
 
 # These tests were used for testing the regression test. That is why

@@ -20,12 +20,14 @@ rawOutput=$target.out
 alignOutput=$target.align
 
 cd $directory
-if gmake $target > $rawOutput
+if gmake $target > $base/$rawOutput
 then
   status="OK";
 else
   status="FAILED";
 fi
+
+cd $base
 
 $base/s4_align $rawOutput > $alignOutput
 $base/parseLog $rawOutput $alignOutput $status >>  $log
