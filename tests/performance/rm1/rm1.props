@@ -112,9 +112,10 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 
 
 edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-10
+#edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=1500
+#edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-80
 edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250
-edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
 
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar
@@ -122,3 +123,4 @@ edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist
 edu.cmu.sphinx.model.language.format=arpa
 edu.cmu.sphinx.decoder.Decoder.showErrorToken=false
 edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
+edu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.SimpleBreadthFirstSearchManager 
