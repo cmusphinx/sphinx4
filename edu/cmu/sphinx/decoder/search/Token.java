@@ -72,7 +72,6 @@ public class Token implements Scoreable {
     }
 
     private Token predecessor;
-    private Feature feature;
     private int frameNumber;
     private float logTotalScore;
     private float logLanguageScore;
@@ -211,9 +210,10 @@ public class Token implements Scoreable {
 
     /**
      * Returns the feature for this Token.
+     * The current implementation simply returns null.
      */
     public Feature getFeature() {
-        return feature;
+        return null;
     }
 
     /**
@@ -241,7 +241,6 @@ public class Token implements Scoreable {
         float score = hmmState.getScore(feature);
         this.logTotalScore += score;
         this.logAcousticScore = score;
-        // this.feature = feature;
         return score;
     }
 
