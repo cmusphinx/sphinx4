@@ -193,4 +193,21 @@ NOTE:  Before running the tests, you must have already built
 	    </java>
     </target>
 
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * GDL Lattice test                                       * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="gdl_lattice"
+	    description="Runs the GDL Lattice Test"
+	    depends="all">
+	    <java classname="tests.result.lattice.GDLLatticeTest"
+		  fork="true">
+		  <classpath refid="run.classpath"/>
+		  <jvmarg value="-ea"/>
+		  <jvmarg value="-mx${maximum_heap_size}"/>
+	    </java>
+    </target>
+
 </project>
