@@ -251,7 +251,7 @@ public class Node {
      */
     void dumpAISee(FileWriter f) throws IOException {
         f.write( "node: { title: \"" + id + "\" label: \""
-                + getWord() + "\" }\n" );
+                + getWord() +":" + getId() + "[" + getBeginTime() + "," + getEndTime() + "]\" }\n" );
     }
 
     /**

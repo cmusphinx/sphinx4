@@ -93,7 +93,8 @@ public class Edge {
      */
     void dumpAISee(FileWriter f) throws IOException {
         f.write( "edge: { sourcename: \"" + fromNode.getId()
-                + "\" targetname: \"" + toNode.getId() + "\" }\n" );
+                + "\" targetname: \"" + toNode.getId()
+                + "\" label: \"" + acousticScore + "\" }\n" );
     }
 
     /**

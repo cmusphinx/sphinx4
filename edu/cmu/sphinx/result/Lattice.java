@@ -64,78 +64,55 @@ public class Lattice {
      * @param result
      */
     public Lattice(Result result) {
-        //initialNode = addNode("0", Dictionary.SENTENCE_START_SPELLING, 0, 0);
-        terminalNode = addNode("-1", Dictionary.SENTENCE_END_SPELLING, 0, 0);
+        initialNode = addNode("0",Dictionary.SENTENCE_START_SPELLING, 0, 0);
+        terminalNode = addNode("-1",Dictionary.SENTENCE_END_SPELLING, 0, 0);
 
         loserManager = result.getAlternateHypothesisManager();
 
-        if (loserManager == null) {
-
-            Node thisNode;
-            double thisAcousticScore = 0.0;
-            double thisLMScore = 0.0;
-            for (Iterator it = result.getResultTokens().iterator(); it.hasNext();) {
-                thisNode = terminalNode;
-                for (Token token = (Token) (it.next());
-                     token != null;
-                     token = token.getPredecessor()) {
-                    if (token.isWord()) {
-                        Node newNode;
-                        if (hasNode(token)) {
-                            newNode = getNode(token);
-                        } else {
-                            newNode = addNode(token);
-                        }
-                        thisAcousticScore = token.getScore();
-                        thisLMScore = 0.0f;
-                        addEdge(newNode, thisNode, thisAcousticScore, thisLMScore);
-                        thisNode = newNode;
-                    }
-                }
-                addEdge(initialNode, thisNode, thisAcousticScore, thisLMScore);
-            }
-        } else {
+        if (loserManager != null) {
             loserManager.purge(1);
+        }
 
-            for (Iterator it = result.getResultTokens().iterator(); it.hasNext();) {
-                Token token = (Token) (it.next());
-                processToken(terminalNode, token);
-            }
+        for (Iterator it = result.getResultTokens().iterator(); it.hasNext();) {
+            Token token = (Token) (it.next());
+            processToken(terminalNode, token);
         }
     }
 
     protected void processToken(Node thisNode, Token token) {
 
-        assert token.isWord();
-        assert thisNode!=null;
-        assert token!=null;
+        assert hasNode(thisNode.getId());
+        //assert token.isWord();
+        assert thisNode != null;
+        assert token != null;
 
         double thisAcousticScore = token.getScore();
         double thisLMScore = 0.0;
 
         // test to see if token is processed via a previous node path
         if (hasNode(token)) {
-            //if (token.isWord()) // Only add word nodes to the graph
-                addEdge(getNode(token), thisNode, thisAcousticScore, thisLMScore);
-            return;
-        }
-        Node newNode = addNode(token);
-        //if (token.isWord()) // Only add word nodes to the graph
+            assert getNode(token).getId().equals( Integer.toString(token.hashCode()) );
+            addEdge(getNode(token), thisNode, thisAcousticScore, thisLMScore);
+        } else {
+            Node newNode = addNode(token);
             addEdge(newNode, thisNode, thisAcousticScore, thisLMScore);
 
-        List list = loserManager.getAlternatePredecessors(token);
-        if (list != null) {
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Token predecessor = (Token) iter.next();
+            if (loserManager != null) {
+                List list = loserManager.getAlternatePredecessors(token);
+                if (list != null) {
+                    for (Iterator iter = list.iterator(); iter.hasNext();) {
+                        Token predecessor = (Token) iter.next();
+                        processToken(newNode, predecessor);
+                    }
+                }
+            }
+            Token predecessor = token.getPredecessor();
+            if (predecessor != null) {
                 processToken(newNode, predecessor);
             }
-        }
-        Token predecessor = token.getPredecessor();
-        if (predecessor != null) {
-            processToken(newNode, predecessor);
-        }
-        if (predecessor == null) {
-            // addEdge(initialNode, newNode, thisAcousticScore, thisLMScore);
+            else {
+                addEdge( initialNode,newNode,thisAcousticScore, thisLMScore );
+            }
         }
     }
 
@@ -301,6 +278,7 @@ public class Lattice {
      */
     protected void addNode(Node n) {
         assert !hasNode(n.getId());
+        //System.out.println("Lattice adding node " + n);
         nodes.put(n.getId(), n);
     }
 
