@@ -1064,14 +1064,20 @@ class Sphinx3Loader implements Loader {
 
 	    float[][] tmat = new float[numStates][numStates];
 
-	    for (int j = 0; j < numStates - 1; j++) {
+	    for (int j = 0; j < numStates ; j++) {
 		for (int k = 0; k < numStates ; k++) {
-		    if (sparseForm) {
-			if (k == j  || k  == j + 1) {
+
+		    // the last row is just zeros, so we just do
+		    // the first (numStates - 1) rows
+
+		    if (j < numStates - 1) {
+			if (sparseForm) {
+			    if (k == j  || k  == j + 1) {
+				tmat[j][k] = est.getFloat("tmat value");
+			    }
+			} else {
 			    tmat[j][k] = est.getFloat("tmat value");
 			}
-		    } else {
-			tmat[j][k] = est.getFloat("tmat value");
 		    }
 
                     tmat[j][k] = (float) logMath.linearToLog(tmat[j][k]);
