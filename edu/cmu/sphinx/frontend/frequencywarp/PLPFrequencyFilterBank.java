@@ -49,7 +49,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
      * The name of the Sphinx Property for the number of filters in
      * the filterbank.
      */
-    public static final String PROP_NUMBER_FILTERS = "numFilters";
+    public static final String PROP_NUMBER_FILTERS = "numberFilters";
 
 
     /**
@@ -62,7 +62,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
      * The name of the Sphinx Property for the center frequency
      * of the lowest filter in the filterbank.
      */
-    public static final String PROP_MIN_FREQ = "minfreq";
+    public static final String PROP_MIN_FREQ = "minimumFrequency";
 
 
     /**
@@ -75,7 +75,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
      * The name of the Sphinx Property for the center frequency
      * of the highest filter in the filterbank.
      */
-    public static final String PROP_MAX_FREQ = "maxfreq";
+    public static final String PROP_MAX_FREQ = "maximumFrequency";
 
 
     /**

@@ -74,19 +74,19 @@ import edu.cmu.sphinx.util.props.Registry;
  * <td><b>8000 </b></td>
  * </tr>
  * <tr>
- * <td>{@link #PROP_NUMBER_FILTERS numFilters (number of filters)}</td>
+ * <td>{@link #PROP_NUMBER_FILTERS numberFilters}</td>
  * <td>40</td>
  * <td>36</td>
  * <td>31</td>
  * </tr>
  * <tr>
- * <td>{@link #PROP_MIN_FREQ minfreq (minimum frequency)}(Hz)</td>
+ * <td>{@link #PROP_MIN_FREQ minimumFrequency}(Hz)</td>
  * <td>130</td>
  * <td>130</td>
  * <td>200</td>
  * </tr>
  * <tr>
- * <td>{@link #PROP_MAX_FREQ maxfreq (maximum frequency)}(Hz)</td>
+ * <td>{@link #PROP_MAX_FREQ maximumFrequency}(Hz)</td>
  * <td>6800</td>
  * <td>5400</td>
  * <td>3500</td>
@@ -107,7 +107,7 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
      * The name of the Sphinx Property for the number of filters in the
      * filterbank.
      */
-    public static final String PROP_NUMBER_FILTERS = "numFilters";
+    public static final String PROP_NUMBER_FILTERS = "numberFilters";
     /**
      * The default value for PROP_NUMBER_FILTERS.
      */
@@ -116,7 +116,7 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
      * The name of the Sphinx Property for the minimum frequency covered by the
      * filterbank.
      */
-    public static final String PROP_MIN_FREQ = "minfreq";
+    public static final String PROP_MIN_FREQ = "minimumFrequency";
     /**
      * The default value of PROP_MIN_FREQ.
      */
@@ -125,7 +125,7 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
      * The name of the Sphinx Property for the maximum frequency covered by the
      * filterbank.
      */
-    public static final String PROP_MAX_FREQ = "maxfreq";
+    public static final String PROP_MAX_FREQ = "maximumFrequency";
     /**
      * The default value of PROP_MAX_FREQ.
      */
