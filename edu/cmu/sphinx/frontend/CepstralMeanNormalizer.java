@@ -79,8 +79,8 @@ public class CepstralMeanNormalizer extends DataProcessor {
     public CepstralMeanNormalizer(String context) {
         initSphinxProperties(context);
 	initMeansSums();
-        setTimer(Timer.getTimer("", "CMN"));
-        normTimer = Timer.getTimer("", "CMN.norm");
+        setTimer(Timer.getTimer(context, "CMN"));
+        normTimer = Timer.getTimer(context, "CMN.norm");
     }
 
 

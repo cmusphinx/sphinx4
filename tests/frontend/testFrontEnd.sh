@@ -15,9 +15,10 @@ printf "Running $TEST_CLASS ...\n";
 
 # do the test/comparison
 ${JAVA_HOME}/bin/java -cp ../../classes \
- -Dtest.frontend.$TEST_CLASS.dumpValues=true \
+ -Dtests.frontend.$TEST_CLASS.dumpValues=true \
  tests.frontend.$TEST_CLASS \
- $TEST_CLASS frontend.props \
+ $TEST_CLASS \
+ frontend.props \
  19990601-114739-00000001.raw > $REF_FILE.out
 
 diff $REF_FILE.s3 $REF_FILE.out > $REF_FILE.diff

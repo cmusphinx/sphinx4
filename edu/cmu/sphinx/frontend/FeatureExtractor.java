@@ -110,8 +110,8 @@ public class FeatureExtractor extends DataProcessor {
     public FeatureExtractor(String context) {
 	initSphinxProperties(context);
 	cepstraBuffer = new float[LIVEBUFBLOCKSIZE][];
-        setTimer(Timer.getTimer("", "FeatureExtractor"));
-        fcTimer = Timer.getTimer("", "featComp");
+        setTimer(Timer.getTimer(context, "FeatureExtractor"));
+        fcTimer = Timer.getTimer(context, "featComp");
         inputQueue = new InputQueue();
     }
 

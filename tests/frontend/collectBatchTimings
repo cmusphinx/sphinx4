@@ -1,15 +1,30 @@
 #!/bin/sh
 
 ${JAVA_HOME}/bin/java -server -cp ../../classes \
- -Dtest.frontend.PreemphasizerTest.dumpTimes=true \
- -Dtest.frontend.PreemphasizerTest.batchMode=true \
- tests.frontend.PreemphasizerTest batch.ctl
+ -Dtests.frontend.PreemphasizerTest.dumpTimes=true \
+ -Dtests.frontend.PreemphasizerTest.batchMode=true \
+ tests.frontend.PreemphasizerTest \
+ PreemphasizerTest \
+ frontend.props \
+ batch.ctl
 
 ${JAVA_HOME}/bin/java -server -cp ../../classes \
  -Dtests.frontend.HammingWindowerTest.dumpTimes=true \
  -Dtests.frontend.HammingWindowerTest.batchMode=true \
- tests.frontend.HammingWindowerTest batch.ctl
+ tests.frontend.HammingWindowerTest \
+ HammingWindowerTest \
+ frontend.props \
+ batch.ctl
+
+${JAVA_HOME}/bin/java -server -cp ../../classes \
+ -Dtests.frontend.SpectrumAnalyzerTest.dumpTimes=true \
+ -Dtests.frontend.SpectrumAnalyzerTest.batchMode=true \
+ tests.frontend.SpectrumAnalyzerTest \
+ SpectrumAnalyzerTest \
+ frontend.props \
+ batch.ctl
 
 ${JAVA_HOME}/bin/java -server -cp ../../classes \
  -Dtests.frontend.CmnFeatureExtractorTest.dumpTimes=true \
- tests.frontend.CmnFeatureExtractorTest cepstra.batch.ctl
+ tests.frontend.CmnFeatureExtractorTest \
+ cepstra.batch.ctl

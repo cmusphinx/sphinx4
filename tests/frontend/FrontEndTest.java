@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Test program for the Preemphasizer.
@@ -24,18 +25,22 @@ public class FrontEndTest {
     FrontEnd frontend;
     boolean batchMode;
     boolean dumpTimes;
-
+    boolean dumpValues;
+    String context;
 
     /**
      * Constructs a FrontEndTest.
      */
-    public FrontEndTest(String testName, String propertiesFile,
-                        String audioSourceFile) throws Exception {
+    public FrontEndTest(String testName, String propertiesFile, String audioSourceFile) throws Exception {
+                            
+        context = testName;
 
         batchMode = Boolean.getBoolean
-            ("test.frontend." + testName + ".batchMode");
+            ("tests.frontend." + testName + ".batchMode");
         dumpTimes = Boolean.getBoolean
-            ("test.frontend." + testName + ".dumpTimes");
+            ("tests.frontend." + testName + ".dumpTimes");
+        dumpValues = Boolean.getBoolean
+            ("tests.frontend." + testName + ".dumpValues");
 
         String pwd = System.getProperty("user.dir");
         SphinxProperties.initContext
@@ -66,9 +71,18 @@ public class FrontEndTest {
      * Runs the FrontEnd test.
      */
     public void run() {
+
+        if (dumpValues) {
+            List processors = frontend.getProcessors();
+            DataProcessor last = (DataProcessor) processors.get
+                (processors.size() - 1);
+            last.setDump(dumpValues);
+        }
+
         frontend.run();
+
         if (dumpTimes) {
-            Timer.dumpAll("");
+            Timer.dumpAll(context);
         }
     }
 }

@@ -30,8 +30,7 @@ public class SpectrumAnalyzerTest {
             Preemphasizer preemphasizer = new Preemphasizer(argv[0]);
             Windower hammingWindow = new Windower(argv[0]);
             SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer(argv[0]);
-            spectrumAnalyzer.setDump(true);
-
+            
             // add the processors
             FrontEnd fe = fet.getFrontEnd();
             fe.addProcessor(preemphasizer);

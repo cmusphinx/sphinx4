@@ -27,7 +27,6 @@ public class HammingWindowerTest {
 
             Preemphasizer preemphasizer = new Preemphasizer(argv[0]);
             Windower hammingWindow = new Windower(argv[0]);
-            hammingWindow.setDump(true);
 
             FrontEnd fe = fet.getFrontEnd();
             fe.addProcessor(preemphasizer);

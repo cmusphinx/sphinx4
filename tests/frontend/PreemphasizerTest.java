@@ -25,7 +25,6 @@ public class PreemphasizerTest {
             FrontEndTest fet = new FrontEndTest(argv[0], argv[1], argv[2]);
 
             Preemphasizer preemphasizer = new Preemphasizer(argv[0]);
-            preemphasizer.setDump(true);
 
             FrontEnd fe = fet.getFrontEnd();
             fe.addProcessor(preemphasizer);
@@ -37,3 +36,5 @@ public class PreemphasizerTest {
 	}
     }
 }
+
+

@@ -21,24 +21,40 @@ public class Complex {
      * Create a default complex number
      */
     public Complex() {
-	this.real = 0.0f;
-	this.imaginary = 0.0f;
+        reset();
     }
 
     /**
      * Create a complex number from a real one
      */
     public Complex(double real) {
-	this.real = real;
-	this.imaginary = 0.0f;
+        set(real, 0.0f);
     }
 
     /**
      * Create a complex number from the real and imaginary parts
      */
     public Complex(double real, double imaginary) {
-	this.real = real;
-	this.imaginary = imaginary;
+        set(real, imaginary);
+    }
+
+    /**
+     * Sets both the real and imaginary parts of this complex number to zero.
+     */
+    public void reset() {
+        this.real = 0.0f;
+        this.imaginary = 0.0f;
+    }
+
+    /**
+     * Sets the real and imaginary parts of this complex number.
+     *
+     * @param real the value of the real part
+     * @param imaginary the value of the imaginary part
+     */
+    public void set(double real, double imaginary) {
+        this.real = real;
+        this.imaginary = imaginary;
     }
 
     /**

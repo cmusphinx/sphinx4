@@ -4,8 +4,9 @@
 
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Complex;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
 
@@ -28,6 +29,9 @@ public class SpectrumAnalyzer extends DataProcessor {
     private int log2N;
     private Complex[] Wk;
 
+    Complex[] inputSeq;
+    Complex[] from;
+    Complex[] to;
 
     /**
      * Constructs a default Spectrum Analyzer with the given 
@@ -39,6 +43,25 @@ public class SpectrumAnalyzer extends DataProcessor {
 	initSphinxProperties(context);
 	computeLog2N();
 	createWk(NPoint, false);
+        setTimer(Timer.getTimer(context, "SpectrumAnalyzer"));
+        initComplexArrays();
+    }
+
+
+    /**
+     * Initialize all the Complex arrays that will be necessary for FFT.
+     */
+    private void initComplexArrays() {
+
+        inputSeq = new Complex[NPoint];
+    	from = new Complex[NPoint];
+	to = new Complex[NPoint];
+        
+        for (int i = 0; i < NPoint; i++) {
+            inputSeq[i] = new Complex();
+            from[i] = new Complex();
+            to[i] = new Complex();
+        }
     }
 
 
@@ -53,8 +76,8 @@ public class SpectrumAnalyzer extends DataProcessor {
      * @throws java.lang.IllegalArgumentException
      *
      */
-    private Spectrum process (AudioFrame input) 
-	throws IllegalArgumentException {
+    private Spectrum process (AudioFrame input) throws IllegalArgumentException {
+        getTimer().start();
 
 	/**
 	 * Create complex input sequence equivalent to the real
@@ -71,10 +94,11 @@ public class SpectrumAnalyzer extends DataProcessor {
                  ", windowSize == " + windowSize);
 	}
 
-	Complex[] inputSeq = new Complex[NPoint];
-	if (NPoint < windowSize) {
+	// Complex[] inputSeq = new Complex[NPoint];
+	
+        if (NPoint < windowSize) {
 	    for (int i = 0; i < NPoint; i++) {
-		inputSeq[i]= new Complex(in[i]);
+		inputSeq[i].set(in[i], 0.0f);
 	    }
 	    for (int i = NPoint; i < windowSize; i++) {
 		inputSeq[i % NPoint].addComplex(inputSeq[i % NPoint],
@@ -82,10 +106,10 @@ public class SpectrumAnalyzer extends DataProcessor {
 	    }
 	} else {
 	    for (int i = 0; i < windowSize; i++) {
-		inputSeq[i] = new Complex(in[i]);
+		inputSeq[i].set(in[i], 0.0f);
 	    }
 	    for (int i = windowSize; i < NPoint; i++) {
-		inputSeq[i] = new Complex();
+		inputSeq[i].reset();
 	    }
 	}
 
@@ -103,6 +127,8 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * Return the power spectrum
 	 */
 	Spectrum output = new Spectrum(outputSpectrum);
+
+        getTimer().stop();
 	
         if (getDump()) {
             System.out.println(Util.dumpDoubleArray
@@ -214,8 +240,8 @@ public class SpectrumAnalyzer extends DataProcessor {
 		    int NPoint,
 		    boolean invert) {
 
-	Complex[] from = new Complex[NPoint];
-	Complex[] to = new Complex[NPoint];
+	// Complex[] from = new Complex[NPoint];
+	// Complex[] to = new Complex[NPoint];
 	double divisor;
 
 	/**
@@ -234,8 +260,8 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * Initialize the "from" and "to" variables.
 	 */
 	for (int i = 0; i < NPoint; i++){
-	    to[i] = new Complex();
-	    from[i] = new Complex();
+	    to[i].reset();
+	    from[i].reset();
 	    from[i].scaleComplex(input[i], divisor);
 	}
 	/**
@@ -288,7 +314,10 @@ public class SpectrumAnalyzer extends DataProcessor {
 	int ndxWk;
 	Complex wkTimesF2 = new Complex();
 
-	if (currentDistance > 0){
+	if (currentDistance > 0) {
+
+            int twiceCurrentDistance = 2 * currentDistance;
+
 	    for (int s = 0; s < currentDistance; s++) {
 		ndx1From = s;
 		ndx2From = s + currentDistance;
@@ -308,8 +337,8 @@ public class SpectrumAnalyzer extends DataProcessor {
 		     * <b>to[ndx2To] = from[ndx1From] - wkTimesF2</b>
 		     */
 		    to[ndx2To].subtractComplex(from[ndx1From], wkTimesF2);
-		    ndx1From += (2 * currentDistance);
-		    ndx2From += (2 * currentDistance);
+		    ndx1From += twiceCurrentDistance; //(2 * currentDistance);
+		    ndx2From += twiceCurrentDistance; //(2 * currentDistance);
 		    ndx1To += currentDistance;
 		    ndx2To += currentDistance;
 		    ndxWk += currentDistance;
@@ -353,6 +382,4 @@ public class SpectrumAnalyzer extends DataProcessor {
         
 	return input;
     }	
-
-
 }

@@ -109,6 +109,16 @@ public class FrontEnd implements DataSource, Runnable {
 
 
     /**
+     * Returns all the processors.
+     *
+     * @return all the processors
+     */
+    public List getProcessors() {
+        return processors;
+    }
+
+
+    /**
      * Links all the added processors together by calling
      * <code>setSource()</code> on each processor.
      */

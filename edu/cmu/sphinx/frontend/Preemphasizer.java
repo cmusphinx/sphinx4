@@ -52,7 +52,7 @@ public class Preemphasizer extends DataProcessor {
      */
     public Preemphasizer(String context) {
         initSphinxProperties(context);
-        setTimer(Timer.getTimer("", "Preemphasizer"));
+        setTimer(Timer.getTimer(context, "Preemphasizer"));
     }
 
 

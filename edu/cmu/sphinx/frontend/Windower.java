@@ -67,7 +67,7 @@ public class Windower extends DataProcessor {
 	initSphinxProperties(context);
 	createWindow();
         outputQueue = new Vector();
-        setTimer(Timer.getTimer("", "Windower"));
+        setTimer(Timer.getTimer(context, "Windower"));
     }
 
 

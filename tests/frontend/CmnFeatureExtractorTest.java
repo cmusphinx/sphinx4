@@ -43,6 +43,7 @@ public class CmnFeatureExtractorTest implements DataSource {
     private String line;
     private boolean dumpValues;
     private boolean dumpTimes;
+    private String context = "CmnFeatureExtractorTest";
 
 
     /**
@@ -59,8 +60,6 @@ public class CmnFeatureExtractorTest implements DataSource {
             ("tests.frontend.CmnFeatureExtractorTest.dumpValues");
         dumpTimes = Boolean.getBoolean
             ("tests.frontend.CmnFeatureExtractorTest.dumpTimes");
-
-        String context = "CmnFeatureExtractorTest";
         
         cmn = new CepstralMeanNormalizer(context);
 	cmn.setSource(this);
@@ -99,7 +98,7 @@ public class CmnFeatureExtractorTest implements DataSource {
         }
 
         if (dumpTimes) {
-            Timer.dumpAll("");
+            Timer.dumpAll(context);
         }
     }
 
