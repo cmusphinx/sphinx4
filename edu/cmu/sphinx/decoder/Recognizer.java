@@ -27,6 +27,7 @@ import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.decoder.search.Pruner;
+import edu.cmu.sphinx.util.BeamFinder;
 import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
@@ -213,6 +214,7 @@ public class Recognizer {
     protected boolean dumpFrontEnd;
 
 
+
     /**
      * Constructs a Recognizer with known dataSource.
      *
@@ -294,11 +296,12 @@ public class Recognizer {
         pruner = new SimplePruner();
         dumpMemoryInfo("pruner");
         
-        featureBlockSize = props.getInt(PROP_FEATURE_BLOCK_SIZE,
-                                        PROP_FEATURE_BLOCK_SIZE_DEFAULT);
+        setFeatureBlockSize(props.getInt(PROP_FEATURE_BLOCK_SIZE,
+                                    PROP_FEATURE_BLOCK_SIZE_DEFAULT));
 
 	// free up the Dictionary
 	dictionary = null;
+
     }
 
 
@@ -341,7 +344,6 @@ public class Recognizer {
         } while (!result.isFinal());
 
         searchManager.stop();
-
         dumpMemoryInfo("recognize");
 
         return result;
@@ -367,6 +369,28 @@ public class Recognizer {
         return grammar;
     }
 
+    /**
+     * Sets the feature block size for the recognizer. The feature
+     * block size controls the number of features that are processed
+     * at a time by the recognizer.  It is slightly more efficient to
+     * process more features at a time. For certain configurations,
+     * however (especially testing and debugging), it may be desirable
+     * to set this to a lower number.
+     */
+
+    public void setFeatureBlockSize(int blockSize) {
+        if (blockSize < 1 ) {
+            blockSize = 1;
+        }
+        featureBlockSize = blockSize;
+    }
+
+    /**
+     * Gets the feature block size for the recognizer. 
+     */
+    public int getFeatureBlockSize() {
+        return featureBlockSize;
+    }
 
     /**
      * Initialize and return the frontend based on the given sphinx
