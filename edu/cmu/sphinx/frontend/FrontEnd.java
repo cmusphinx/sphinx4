@@ -123,13 +123,13 @@ import java.util.Vector;
  * <p>
  * A front end is obtained through the
  * {@link edu.cmu.sphinx.frontend.FrontEndFactory}. You will call the 
- * {@link edu.cmu.sphinx.frontend.FrontEndFactory#getFrontEnd(String, edu.cmu.sphinx.util.SphinxProperties) getFrontEnd} factory method. Continuing the above example,
+ * {@link edu.cmu.sphinx.frontend.FrontEndFactory#getFrontEnd(edu.cmu.sphinx.util.SphinxProperties,String) getFrontEnd} factory method. Continuing the above example,
  * if the name of the front end as specified in the properties file is
  * "mfcc":
  * <p>
  * <code>
  * SphinxProperties properties = ... // pass in from outside
- * <br>FrontEnd frontend = FrontEndFactory.getFrontEnd("mfcc", properties);
+ * <br>FrontEnd frontend = FrontEndFactory.getFrontEnd(properties, "mfcc");
  * </code>
  * <p>
  * <b>Example code:</b>
@@ -141,7 +141,7 @@ import java.util.Vector;
  * <p>
  * <code>
  * // obtaining the front end and setting its data source
- * <br>FrontEnd frontend = FrontEndFactory.getFrontEnd("mfcc", sphinxProperties);
+ * <br>FrontEnd frontend = FrontEndFactory.getFrontEnd(sphinxProperties, "mfcc");
  * <br>DataProcessor microphone = new Microphone();
  * <br>microphone.initialize(...);
  * <br>
