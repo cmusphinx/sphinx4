@@ -176,6 +176,9 @@ public class Live {
      */
     public void stopRecording() {
         getDecoder().getMicrophone().stopRecording();
+        if (!handsFree) {
+            liveFrame.setButtonsEnabled(false);
+        }
     }
 
     /**
@@ -415,9 +418,7 @@ public class Live {
             if (!handsFree) {
                 lastResult = decoder.decode(liveFrame.getReference());
                 updateLiveFrame(decoder.getNISTAlign());
-                if (hasEndpointer) {
-                    liveFrame.exitSpeakingMode();
-                }
+                liveFrame.setButtonsEnabled(true);
             } else {
                 liveFrame.setNextButtonEnabled(true);
                 while (decoder.getMicrophone().getRecording()) {
