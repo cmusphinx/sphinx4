@@ -171,7 +171,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
         getTimer().start();
 
         if (cepstrum != null) {
-            if (!mergeSpeechSegments) {
+           if (!mergeSpeechSegments) {
                 cepstrum = handleNonMergingCepstrum(cepstrum);
             } else {
                 cepstrum = handleMergingCepstrum(cepstrum);
@@ -217,8 +217,10 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
                 if (last.hasSignal(Signal.SPEECH_START)) {
                     // first remove the SPEECH_START, then add
                     // all the Cepstra to the inputBuffer
+                    
                     cepstrumList.remove(last);
                     inputBuffer.addAll(cepstrumList);
+                    
                     next = readCepstrum();
                         
                 } else if (last.hasSignal(Signal.UTTERANCE_END)) {
@@ -268,6 +270,15 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
             cepstrum = (Cepstrum) inputBuffer.remove(0);
         } else {
             cepstrum = predecessor.getCepstrum();
+            if (false) {
+                if (cepstrum != null) {
+                    if (cepstrum.hasContent()) {
+                        System.out.print(cepstrum.getEnergy() + " ");
+                    } else {
+                        System.out.print(cepstrum.toString() + " ");
+                    }
+                }
+            }
         }
         /*
         if (cepstrum != null && cepstrum.getSignal() != null) {
