@@ -63,7 +63,8 @@ public class EnergyEndpointerTest {
                 ("MelFilter", testName, props, spectrumAnalyzer);
             MelCepstrumProducer melCepstrum = new MelCepstrumProducer
 		("MelCepstrumProducer", testName, props, melFilterbank);
-	    EnergyEndpointer endpointer = new EnergyEndpointer
+	    EnergyEndpointer endpointer = new EnergyEndpointer();
+            endpointer.initialize
                 ("EnergyEndpointer", testName, props, melCepstrum);
             NonSpeechFilter nonSpeechFilter = new NonSpeechFilter
                 ("NonSpeechFilter", testName, props, endpointer);
