@@ -372,11 +372,11 @@ class BinaryLoader {
 
 	if (startWordID > -1) {
 	    UnigramProbability unigram = unigrams[startWordID];
-	    unigram.setLogProbability(-0.99f);
+	    unigram.setLogProbability(MIN_PROBABILITY);
 	}
 	if (endWordID > -1) {
 	    UnigramProbability unigram = unigrams[endWordID];
-	    unigram.setLogProbability(-0.99f);
+	    unigram.setLogBackoff(MIN_PROBABILITY);
 	}
         
         applyUnigramWeight();
