@@ -1,7 +1,9 @@
-edu.cmu.sphinx.knowledge.acoustic.location=file:/lab/speech/sphinx4/data/wsj
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation=false
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/wsj/dict/alpha.dict
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath=/lab/speech/sphinx4/data/wsj/dict/fillerdict
+edu.cmu.sphinx.knowledge.acoustic.location=/lab/speech/sphinx4/data/wsj
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.createMissingWords=true
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation=true
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath=dict/cmudict.0.6d
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath=dict/fillerdict
 
 edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=9.5
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=0.7

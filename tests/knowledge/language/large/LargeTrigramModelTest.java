@@ -89,8 +89,8 @@ class LargeTrigramModelTest {
 		StringTokenizer st = new StringTokenizer(input);
 		List list = new ArrayList();
 		while (st.hasMoreTokens()) {
-		    String tok = (String) st.nextToken().toLowerCase();
-		    list.add(tok.trim());
+		    String tok = st.nextToken().toLowerCase().trim();
+		    list.add(dictionary.getWord(tok));
 		}
 		WordSequence wordSequence = WordSequence.getWordSequence(list);
 		wordSequences.add(wordSequence);

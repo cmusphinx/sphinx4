@@ -18,7 +18,7 @@ FILES = $(shell echo *.java)
 SUBDIRS = 
 
 PROFILE_FLAGS= -Xprof
-EXTRA_JAVA_FLAGS = $(PROFILE_FLAGS) -ms1g -mx2g
+EXTRA_JAVA_FLAGS = $(PROFILE_FLAGS) -ms128m -mx256m
 
 
 ##########################################################################
