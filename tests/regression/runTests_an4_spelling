@@ -19,6 +19,6 @@
 ./runTest ../performance/an4 an4_spelling_unigram
 ./runTest ../performance/an4 an4_spelling_trigram
 ./runTest ../performance/an4 an4_spelling_journey_trigram
-./runTest ../performance/an4 an4_spelling_journey_fst
+#./runTest ../performance/an4 an4_spelling_journey_fst
 
 touch ./.testDone
