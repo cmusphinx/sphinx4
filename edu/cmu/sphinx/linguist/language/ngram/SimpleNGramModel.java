@@ -14,7 +14,9 @@ package edu.cmu.sphinx.linguist.language.ngram;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,7 +54,7 @@ public class SimpleNGramModel implements LanguageModel {
     private String name;
     private LogMath logMath;
     private String format;
-    private String location;
+    private URL urlLocation;
     private float unigramWeight;
     private Dictionary dictionary;
     private int desiredMaxDepth;
@@ -74,7 +76,7 @@ public class SimpleNGramModel implements LanguageModel {
             throws PropertyException {
         this.name = name;
         registry.register(PROP_FORMAT, PropertyType.STRING);
-        registry.register(PROP_LOCATION, PropertyType.STRING);
+        registry.register(PROP_LOCATION, PropertyType.RESOURCE);
         registry.register(PROP_UNIGRAM_WEIGHT, PropertyType.FLOAT);
         registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
         registry.register(PROP_MAX_DEPTH, PropertyType.INT);
@@ -94,7 +96,7 @@ public class SimpleNGramModel implements LanguageModel {
                     "Can't change properties after allocation");
         }
         format = ps.getString(PROP_FORMAT, PROP_FORMAT_DEFAULT);
-        location = ps.getString(PROP_LOCATION, PROP_LOCATION_DEFAULT);
+        urlLocation = ps.getResource(PROP_LOCATION);
         unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT,
                 PROP_UNIGRAM_WEIGHT_DEFAULT);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
@@ -112,7 +114,7 @@ public class SimpleNGramModel implements LanguageModel {
      */
     public void allocate() throws IOException {
         allocated = true;
-        load(format, location, unigramWeight, dictionary);
+        load(format, urlLocation, unigramWeight, dictionary);
         if (desiredMaxDepth > 0) {
             if (desiredMaxDepth < maxNGram) {
                 maxNGram = desiredMaxDepth;
@@ -310,14 +312,14 @@ public class SimpleNGramModel implements LanguageModel {
      * @param format
      *                the format of the model
      * @param location
-     *                the location of the model
+     *                the URL location of the model
      * @param unigramWeight
      *                the unigram weight
      * 
      * @throws IOException
      *                 if an error occurs while loading
      */
-    private void load(String format, String location, float unigramWeight,
+    private void load(String format, URL location, float unigramWeight,
             Dictionary dictionary) throws FileNotFoundException, IOException {
         String line;
         float logUnigramWeight = logMath.linearToLog(unigramWeight);
@@ -452,11 +454,12 @@ public class SimpleNGramModel implements LanguageModel {
      * @throws IOException
      *                 if an error occurs while opening the file
      */
-    private void open(String location) throws FileNotFoundException,
+    private void open(URL location) throws FileNotFoundException,
             IOException {
         lineNumber = 0;
-        fileName = location;
-        reader = new BufferedReader(new FileReader(location));
+        fileName = location.toString();
+        reader = new BufferedReader
+	    (new InputStreamReader(location.openStream()));
     }
 
     /**
