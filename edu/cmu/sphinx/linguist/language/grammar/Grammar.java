@@ -28,6 +28,7 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.Timer;
 
 /**
 
@@ -133,6 +134,8 @@ public abstract class Grammar implements Configurable {
      * Create the grammar
      */
     public void allocate() throws IOException {
+        Timer timer = Timer.getTimer("grammarLoad");
+        timer.start();
         dictionary.allocate();
         grammarNodes = new HashSet();
         initialNode = createGrammar();
@@ -142,6 +145,7 @@ public abstract class Grammar implements Configurable {
         if (optimizeGrammar) {
             optimizeGrammar();
         }
+        timer.stop();
         
         dumpStatistics();
         if (showGrammar) {

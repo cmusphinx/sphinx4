@@ -226,7 +226,10 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         hmmPool = new HMMPool(acousticModel, logger, unitManager);
         nodeToNextUnitArrayMap = new HashMap();
         nodeToUnitSetMap = new HashMap();
+        Timer timer = Timer.getTimer("compileGrammar");
+        timer.start();
         compileGrammar();
+        timer.stop();
         logger.info("Done allocating  DFLAT");
     }
 
