@@ -18,9 +18,14 @@ import java.util.*;
 public class HrefTaglet extends AbstractInlineTaglet {
 
     private static final String NAME = "href";
+    private String name;
 
     public HrefTaglet() {
         name = NAME;
+    }
+
+    private String getName() {
+        return name;
     }
 
     public static void register(Map tagletMap) {
