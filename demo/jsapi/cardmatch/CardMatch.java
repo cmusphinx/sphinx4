@@ -78,7 +78,8 @@ public class CardMatch implements Recorder {
     /**
      * The default value of PROP_USE_VOICE.
      */
-    public static final boolean PROP_USE_VOICE_DEFAULT = true;
+    public static final boolean PROP_USE_VOICE_DEFAULT = false;
+
 
     private Decoder decoder;
     private Microphone microphone;
@@ -86,7 +87,6 @@ public class CardMatch implements Recorder {
 
     private RuleGrammar ruleGrammar;
     private boolean doEndpointing;
-    private boolean useVoice;
 
 
     /**
@@ -104,9 +104,9 @@ public class CardMatch implements Recorder {
         doEndpointing = props.getBoolean(PROP_DO_ENDPOINTING,
                                          PROP_DO_ENDPOINTING_DEFAULT);
 
-        useVoice = props.getBoolean(PROP_USE_VOICE,
-                                    PROP_USE_VOICE_DEFAULT);
-
+        boolean useVoice = props.getBoolean(PROP_USE_VOICE,
+                                            PROP_USE_VOICE_DEFAULT);
+        
 	microphone = new Microphone("mic", context, props);
 	decoder.initialize(microphone);
         System.out.println("   Initialized Decoder");
