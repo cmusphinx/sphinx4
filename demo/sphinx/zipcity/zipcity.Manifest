@@ -1,0 +1,2 @@
+Main-Class: demo.sphinx.zipcity.ZipCity
+Class-Path: ../lib/sphinx4.jar ../lib/jsapi.jar ../lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar

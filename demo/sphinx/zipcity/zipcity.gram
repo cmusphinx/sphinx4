@@ -1,0 +1,14 @@
+#JSGF V1.0;
+
+/**
+ * JSGF zipcode grammar
+ */
+
+grammar zipcity;
+
+public <zipcode> = <digit> <digit> <digit> <digit> <digit> ;
+
+
+<digit> = oh | zero | one | two | three | four | five | six | seven
+  | eight | nine ;
+
