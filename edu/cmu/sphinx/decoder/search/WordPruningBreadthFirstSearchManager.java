@@ -678,11 +678,20 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         if (keepAllTokens) {
             return token;
         } else {
+            float logAcousticScore = 0.0f;
+            float logLanguageScore = 0.0f;
+
             while (token != null && !token.isWord()) {
+                logAcousticScore += token.getAcousticScore();
+                logLanguageScore += token.getLanguageScore();
                 token = token.getPredecessor();
             }
+            if (buildWordLattice) {
+                return new Token(logAcousticScore, logLanguageScore, token);
+            } else {
+                return token;
+            }
         }
-        return token;
     }
 
     /**
