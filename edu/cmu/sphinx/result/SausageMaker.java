@@ -135,6 +135,8 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         if (toBeMerged1 != null) {
             clusters.remove(toBeMerged2);
             toBeMerged1.addAll(toBeMerged2);
+	    System.out.println("interWordClusterStep");
+	    printClusters(clusters);
             return true;
         }
         return false;
@@ -363,8 +365,9 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
     protected void printCluster(List cluster) {
         ListIterator j = cluster.listIterator();
         while (j.hasNext()) {
-            System.out.println(j.next());                
+            System.out.print(" " + j.next());                
         }
+	System.out.println();
     }
     
     /**
@@ -375,7 +378,7 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
     protected void printClusters(List clusters) {
         ListIterator i = clusters.listIterator();
         while (i.hasNext()) {
-            System.out.println("----cluster " + i.nextIndex());
+            System.out.print("----cluster " + i.nextIndex() + " : ");
             printCluster((List)i.next());
         }
         System.out.println("----");
@@ -420,6 +423,8 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         if (toBeMerged1 != null) {
             clusters.remove(toBeMerged2);
             toBeMerged1.addAll(toBeMerged2);
+	    System.out.println("intraWordClusterStep");
+	    printClusters(clusters);
             return true;
         }
         return false;
