@@ -539,5 +539,14 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     public StatisticsVariable getTokensCreated() {
 	return tokensCreated;
     }
-    
+
+
+    /**
+     * Returns the language weight.
+     *
+     * @return the language weight
+     */
+    public float getLanguageWeight() {
+        return languageWeight;
+    }
 }
