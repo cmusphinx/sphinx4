@@ -1,0 +1,88 @@
+#!/bin/sh
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+#
+# This is the main updateTwikiReport script. This script should be run on
+# demand, when new entry warranty it.  The following functions are performed:
+#
+# 	Retrieves the S4 regression from sourceforge
+#	Generates a summary report
+#	puts the log result back into the sourceforge repository
+#
+#
+# usage: updateTwikiReport hostname (up to the first "dot")
+#
+
+# S4 code will be checked out here. WARNING: This directory will be 
+# completely removed when done 
+
+testDir=./regressionTestDirectory$$
+
+originalDir=`pwd`
+
+mkdir -p $testDir
+
+cd $testDir
+
+# checkout the regression part from the source
+scvs checkout sphinx4/tests/regression
+cd sphinx4/tests/regression
+
+regressionDir=`pwd`
+
+###################
+# If we have a command line argument, it must be the hostname, so
+# replace the "getHostname" script with a fake one.
+if [[ $# > 0 ]]; then
+  echo "echo $1" > getHostname;
+fi
+
+###################
+# Since the scripts just came out of CVS, they may not
+# be executable yet.  So make them executable
+#
+scripts="getTime getHostname mailReport makeReport parseS4Output regressionTest\
+	runTest s4_align s4_align_sum collectMetrics \
+	getTime makeWebpage pushChanges pushReport whatsNew \
+	cvs_history updateLog finalizeLog \
+	runTests_an4 runTests_an4_full runTests_an4_plus \
+	runTests_an4_spelling runTests_an4_words runTests_quick \
+	runTests_rm1 runTests_standard runTests_ti46 runTests_an4_fst\
+	runTests_tidigits s4_align s4_align_sum whatsNew \
+	makeTwikiDetailReport pushAllTwikiReports runTests_rm1_on_rm1\
+	makeTwikiSummaryReport makeTwikiReports waitForFile"
+
+chmod +x $scripts
+
+rootDir=../../
+#rootDir=/home/plamere/s4test/
+date=`date +%Y-%m-%d`
+time=`date +%T`
+echo $date > .startDate
+echo $time > .startTime
+
+###############################
+# Generate the regression test web page
+#################################A
+$regressionDir/pushReport
+$regressionDir/pushChanges
+
+###############################
+# Generate the twiki results
+#################################
+cd $regressionDir
+$regressionDir/pushAllTwikiReports
+
+# clean up 
+
+cd $originalDir
+
+# remove the workspace when done
+rm -rf $testDir
