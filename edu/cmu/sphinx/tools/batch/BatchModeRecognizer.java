@@ -257,10 +257,10 @@ public class BatchModeRecognizer implements Configurable {
                 count++;
             }
             batchManager.stop();
+            recognizer.deallocate();
         } catch (IOException io) {
             logger.severe("I/O error during decoding: " + io.getMessage());
         }
-        recognizer.deallocate();
         logger.info("BatchDecoder: " + count + " files decoded");
     }
     
