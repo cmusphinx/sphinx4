@@ -320,8 +320,8 @@ RM1_FST_CMD = $(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
-	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=RM.2845.trigram.arpa.fst \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+	-Dedu.cmu.sphinx.search.FSTGrammar.path=RM.2845.trigram.arpa.fst \
 	edu.cmu.sphinx.decoder.BatchDecoder
 
 rm1_fst:
