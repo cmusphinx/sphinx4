@@ -31,7 +31,8 @@ public class FrontEndTest {
     /**
      * Constructs a FrontEndTest.
      */
-    public FrontEndTest(String testName, String propertiesFile, String audioSourceFile) throws Exception {
+    public FrontEndTest(String testName, String propertiesFile,
+                        String audioSourceFile) throws Exception {
                             
         context = testName;
 
@@ -47,15 +48,17 @@ public class FrontEndTest {
             (testName, new URL
              ("file://" + pwd + File.separatorChar + audioSourceFile));
         
-	frontend = new FrontEnd(context);
+	frontend = new FrontEnd("FrontEnd", context);
 	
         if (batchMode) {
             frontend.setAudioSource
-                (new BatchFileAudioSource(context, audioSourceFile));
+                (new BatchFileAudioSource
+                 ("BatchFileAudioSource", context, audioSourceFile));
         } else {
             frontend.setAudioSource
                 (new StreamAudioSource
-                 (context, (new FileInputStream(audioSourceFile))));
+                 ("StreamAudioSource", context,
+                  (new FileInputStream(audioSourceFile))));
         }
     }
 
@@ -68,17 +71,15 @@ public class FrontEndTest {
     }
 
 
+    public boolean getDump() {
+        return dumpValues;
+    }
+
+
     /**
      * Runs the FrontEnd test.
      */
     public void run() {
-
-        if (dumpValues) {
-            List processors = frontend.getProcessors();
-            DataProcessor last = (DataProcessor) processors.get
-                (processors.size() - 1);
-            last.setDump(dumpValues);
-        }
 
         frontend.run();
 

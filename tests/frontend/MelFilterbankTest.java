@@ -6,6 +6,7 @@ package tests.frontend;
 
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.MelFilterbank;
+import edu.cmu.sphinx.frontend.Spectrum;
 import edu.cmu.sphinx.frontend.SpectrumAnalyzer;
 import edu.cmu.sphinx.frontend.Windower;
 import edu.cmu.sphinx.frontend.Preemphasizer;
@@ -25,22 +26,30 @@ public class MelFilterbankTest {
 	}
 
         try {
-            FrontEndTest fet = new FrontEndTest(argv[0], argv[1], argv[2]);
+            String testName = argv[0];
+            String propertiesFile = argv[1];
+            String audioFile = argv[2];
 
-            // create the processors
-            Preemphasizer preemphasizer = new Preemphasizer(argv[0]);
-            Windower hammingWindow = new Windower(argv[0]);
-            SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer(argv[0]);
-            MelFilterbank melFilterbank = new MelFilterbank(argv[0]);
+            FrontEndTest fet = new FrontEndTest
+                (testName, propertiesFile, audioFile);
 
-            // add the processors
             FrontEnd fe = fet.getFrontEnd();
-            fe.addProcessor(preemphasizer);
-            fe.addProcessor(hammingWindow);
-            fe.addProcessor(spectrumAnalyzer);
-	    fe.addProcessor(melFilterbank);
 
-            fet.run();
+            Preemphasizer preemphasizer = new Preemphasizer
+                ("Preemphasizer", testName, fe.getAudioSource());
+            Windower windower = new Windower
+                ("HammingWindow", testName, preemphasizer);
+            SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer
+                ("FFT", testName, windower);
+            MelFilterbank melFilterbank = new MelFilterbank
+                ("MelFilter", testName, spectrumAnalyzer);
+            
+            melFilterbank.setDump(fet.getDump());
+
+            Spectrum spectrum = null;
+            do {
+                spectrum = melFilterbank.getSpectrum();
+            } while (spectrum != null);
 
 	} catch (Exception e) {
 	    e.printStackTrace();

@@ -5,6 +5,7 @@
 package tests.frontend;
 
 import edu.cmu.sphinx.frontend.CepstralMeanNormalizer;
+import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.FeatureExtractor;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.MelCepstrumProducer;
@@ -30,30 +31,31 @@ public class FeatureExtractorTest {
         try {
             String testName = argv[0];
             String propertiesFile = argv[1];
-            String audioFileName = argv[2];
+            String audioFile = argv[2];
 
             FrontEndTest fet = new FrontEndTest
-                (testName, propertiesFile, audioFileName);
+                (testName, propertiesFile, audioFile);
 
-            // create the processors
-            Preemphasizer preemphasizer = new Preemphasizer(testName);
-            Windower hammingWindow = new Windower(testName);
-            SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer(testName);
-            MelFilterbank melFilterbank = new MelFilterbank(testName);
-	    MelCepstrumProducer melCepstrum = new MelCepstrumProducer(testName);
-            CepstralMeanNormalizer cmn = new CepstralMeanNormalizer(testName);
-            FeatureExtractor featureExtractor = new FeatureExtractor(testName);
-
-            // add the processors
             FrontEnd fe = fet.getFrontEnd();
-            fe.addProcessor(preemphasizer);
-            fe.addProcessor(hammingWindow);
-            fe.addProcessor(spectrumAnalyzer);
-	    fe.addProcessor(melFilterbank);
-	    fe.addProcessor(melCepstrum);
-            fe.addProcessor(cmn);
-            fe.addProcessor(featureExtractor);
 
+            Preemphasizer preemphasizer = new Preemphasizer
+                ("Preemphasizer", testName, fe.getAudioSource());
+            Windower windower = new Windower
+                ("HammingWindow", testName, preemphasizer);
+            SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer
+                ("FFT", testName, windower);
+            MelFilterbank melFilterbank = new MelFilterbank
+                ("MelFilter", testName, spectrumAnalyzer);
+	    MelCepstrumProducer melCepstrum = new MelCepstrumProducer
+                ("MelCepstrum", testName, melFilterbank);
+            CepstralMeanNormalizer cmn = new CepstralMeanNormalizer
+                ("CMN", testName, melCepstrum);
+            FeatureExtractor extractor = new FeatureExtractor
+                ("FeatureExtractor", testName, cmn);
+
+            extractor.setDump(fet.getDump());
+
+            fe.setFeatureSource(extractor);
             fet.run();
 
 	} catch (Exception e) {
