@@ -35,6 +35,16 @@ import javax.speech.recognition.RuleGrammar;
 
 
 
+/**
+ * The DialogManager is a component that is used to manage speech
+ * dialogs.  A speech dialog is represented as a graph of dialog
+ * nodes. The dialog manager maintains an active node. When a node is
+ * active it is directing the recognition process. Typically a dialog
+ * node will define the current active grammar. The recognition result
+ * is typically used to direct the dialog manager to select the next
+ * active node. An application can easily customize the behavior at
+ * each active node.
+ */
 public class DialogManager implements Configurable {
     /**
      * Sphinx property that defines the name of the grammar component 
@@ -100,7 +110,9 @@ public class DialogManager implements Configurable {
 
 
     /**
-     * Adds a new node to the dialog manager. 
+     * Adds a new node to the dialog manager. The dialog manager
+     * maintains a set of dialog nodes. When a new node is added the
+     * application specific beh
      *
      * @param the name of the node
      * @param behavior the application specified behavior for the node
