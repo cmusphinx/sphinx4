@@ -58,6 +58,9 @@ public class  Unit implements Serializable {
         Unit unit = null;
         if (context.EMPTY_CONTEXT == context) {
             unit = (Unit) ciMap.get(name);
+            if (unit == null) {
+                unit = createCIUnit(name, filler);
+            }
         } else {
             unit =  new Unit(name, filler, context);
         }
