@@ -54,6 +54,9 @@ import java.util.List;
  */
 public class LevelTracker extends DataProcessor implements AudioEndpointer {
 
+    /**
+     * Prefix for the SphinxProperties of this class.
+     */
     public static final String PROP_PREFIX = 
         "edu.cmu.sphinx.frontend.endpoint.LevelTracker.";
 
