@@ -1,0 +1,26 @@
+#!/bin/sh
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This script generates and pushes the DocCheck report
+#
+
+if ant -emacs javadoc 
+then
+    if [  -f bld/javadoc/index.html ]; then
+        (cd bld; tar cf ../javadoc.tar javadoc)
+        sscp javadoc.tar
+        sshh '(cd /home/groups/c/cm/cmusphinx/htdocs; tar xf ~/javadoc.tar; chgrp -R cmusphinx javadoc; mv javadoc sphinx4)'
+        echo OK
+    else
+        echo Error: javadoc: no output produced
+    fi
+else
+    echo Error: javadoc: command failed
+fi

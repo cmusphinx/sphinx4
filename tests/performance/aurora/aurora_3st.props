@@ -20,15 +20,18 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.acoustic.format = sphinx3.ascii
-edu.cmu.sphinx.knowledge.acoustic.FeatureVectorLength = 39
-edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.models=aurora
+aurora;edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel
 
-edu.cmu.sphinx.knowledge.acoustic.location = file:/lab/speech/sphinx4/data/aurora/models3st.zip
-edu.cmu.sphinx.knowledge.acoustic.definition_file = etc/mfcclean_forbushderby.500.mdef
-edu.cmu.sphinx.knowledge.acoustic.data_location = mfcclean_forbushderby_cd_continuous_8gau
-edu.cmu.sphinx.knowledge.acoustic.properties_file = am.props
-edu.cmu.sphinx.knowledge.acoustic.useComposites=false
+aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.format = sphinx3.ascii
+aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
+aurora;edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+
+aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/aurora/models3st.zip
+aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.definition_file = etc/mfcclean_forbushderby.500.mdef
+aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.data_location = mfcclean_forbushderby_cd_continuous_8gau
+aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
+aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.useComposites=false
 
 
 ############################################################
@@ -93,7 +96,7 @@ edu.cmu.sphinx.decoder.Recognizer.dumpSentenceHMM=false
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation = true
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/aurora/models3st.zip
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dict/dict
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = dict/fillerdict
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.wordReplacement=<sil>
