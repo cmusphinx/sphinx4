@@ -76,6 +76,7 @@ public class LiveFrame extends JFrame {
     private JButton stopButton;
     private JButton nextButton;
     private JButton playButton;
+    private JButton clearButton;
 
 
     /**
@@ -303,6 +304,19 @@ public class LiveFrame extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 playButton.setEnabled(enabled);
+            }
+        });
+    }
+
+    /**
+     * Enables or disables the "Clear" button.
+     *
+     * @param enable boolean to enable or disable
+     */
+    public void setClearButtonEnabled(final boolean enabled) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                clearButton.setEnabled(enabled);
             }
         });
     }
@@ -561,7 +575,7 @@ public class LiveFrame extends JFrame {
         statisticsPanel.add(getStatisticsTextArea("Cumulative Speed:"));
         statisticsPanel.add(cumulativeSpeedTextArea);
 
-        JButton clearButton = new JButton("Clear");
+        clearButton = new JButton("Clear");
 
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
