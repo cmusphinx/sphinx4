@@ -19,17 +19,17 @@ package edu.cmu.sphinx.trainer;
  */
 
 public class Edge {
-    /*
+    /**
      * The identifier for this edge
      */
     public String id;
 
-    /*
+    /**
      * The source node for this edge
      */
     public Node sourceNode;
 
-    /*
+    /**
      * The destination node for this edge
      */
     public Node destinationNode;
@@ -52,6 +52,10 @@ public class Edge {
 
     /**
      * Sets the destination node for a given edge.
+     *
+     * @param node the destination node for this edge
+     *
+     * @see #getDestination
      */
     public void setDestination(Node node) {
 	this.destinationNode = node;
@@ -59,6 +63,10 @@ public class Edge {
 
     /**
      * Sets source node for a given edge.
+     *
+     * @param node the source node for this edge
+     *
+     * @see #getSource
      */
     public void setSource(Node node) {
 	this.sourceNode = node;
@@ -68,6 +76,8 @@ public class Edge {
      * Gets the destination node for a given edge.
      *
      * @return the destination node
+     *
+     * @see #setDestination
      */
     public Node getDestination() {
 	return destinationNode;
@@ -77,6 +87,8 @@ public class Edge {
      * Gets source node for a given edge.
      *
      * @return the source node
+     *
+     * @see #setSource
      */
     public Node getSource() {
 	return sourceNode;

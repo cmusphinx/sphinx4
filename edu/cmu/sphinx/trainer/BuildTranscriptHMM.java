@@ -24,6 +24,10 @@ import java.util.StringTokenizer;
 import java.util.Map;
 import java.util.HashMap;
 
+/**
+ * This class builds an HMM from a transcript, at increasing levels of
+ * details.
+ */
 public class BuildTranscriptHMM {
     private Graph wordGraph;
     private Graph phonemeGraph;
@@ -39,6 +43,10 @@ public class BuildTranscriptHMM {
      * method creates graphs for the transcript at several levels of
      * detail, subsequently mapping from a word graph to a phone
      * graph, to a state graph.
+     *
+     * @param context this object's context
+     * @param transcript the transcript to be converted to HMM
+     * @param acousticModel the acoustic model to be used
      */
     public BuildTranscriptHMM(String context, Transcript transcript, 
 			      AcousticModel acousticModel) {
@@ -187,7 +195,11 @@ public class BuildTranscriptHMM {
     /**
      * Convert phoneme graph to a context sensitive phoneme graph.
      * This graph expands paths out to have separate phoneme nodes for
-     * phonemes in different contexts
+     * phonemes in different contexts.
+     *
+     * @param phonemeGraph the phoneme graph
+     *
+     * @return a context dependendent phoneme graph
      */
     public Graph buildContextDependentPhonemeGraph(Graph phonemeGraph) {
 	// TODO: Dummy stub for now - return a copy of the original graph
@@ -197,7 +209,11 @@ public class BuildTranscriptHMM {
     }
 
     /**
-     * Convert the phoneme graph to an HMM
+     * Convert the phoneme graph to an HMM.
+     *
+     * @param cdGraph a context dependent phoneme graph
+     *
+     * @return an HMM graph for a context dependent phoneme graph
      */
     public Graph buildHMMGraph(Graph cdGraph)
     {
