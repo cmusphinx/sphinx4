@@ -102,7 +102,7 @@ import java.util.Vector;
  * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class = {@link edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank}
  * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class = {@link edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform}
  * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class = {@link edu.cmu.sphinx.frontend.feature.BatchCMN edu.cmu.sphinx.frontend.feature.BatchCMN}
- * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class = {@link edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor}
+ * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class = {@link edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor}
  * </code>
  * <p>
  * Note: In this example, 'mfcc' becomes the name of the front end.
