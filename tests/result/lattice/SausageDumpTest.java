@@ -15,8 +15,6 @@ import edu.cmu.sphinx.frontend.util.StreamDataSource;
 
 import edu.cmu.sphinx.recognizer.Recognizer;
 
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-
 import edu.cmu.sphinx.result.Lattice;
 import edu.cmu.sphinx.result.LatticeOptimizer;
 import edu.cmu.sphinx.result.Result;
@@ -87,8 +85,7 @@ public class SausageDumpTest {
 		}
 		lattice.computeNodePosteriors(lmw);
 		try {
-		    Dictionary d = (Dictionary) cm.lookup("dictionary");
-		    SausageMaker sm = new SausageMaker(lattice, d);
+		    SausageMaker sm = new SausageMaker(lattice);
 		    Sausage sausage = sm.makeSausage();
 		    System.out.println
 			("best sausage hypothesis: \""

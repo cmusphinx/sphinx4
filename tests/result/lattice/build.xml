@@ -64,7 +64,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="alltests"
             description="Runs all the tests."
-	    depends="token_graph_dump,lattice_dump">
+	    depends="token_graph_dump,lattice_dump,lattice_comp,posterior_test,sausage_dump">
     </target>
 
 
