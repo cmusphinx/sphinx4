@@ -84,7 +84,7 @@ all::
 #
 ti46:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
+	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
 #
@@ -102,7 +102,7 @@ ti46_eight:
 #
 ti46_tree:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
+	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
         -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-20\
 	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false \
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
@@ -114,7 +114,7 @@ ti46_tree:
 ti46_quick:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=40\
-	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
+	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
 
@@ -123,7 +123,7 @@ ti46_quick:
 #
 ti46_multi:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true \
+	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=true \
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
 
@@ -134,7 +134,7 @@ ti46_multi:
 ti46_multi_quick:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=40\
-	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true \
+	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=true \
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
 ##########################################################################
@@ -149,7 +149,7 @@ ti46_multi_quick:
 #
 ti46_no_context:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
+	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
 	$(NO_CONTEXT_FLAGS) \
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
@@ -160,7 +160,7 @@ ti46_no_context:
 ti46_quick_no_context:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=40\
-	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
+	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
 	$(NO_CONTEXT_FLAGS) \
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
@@ -170,7 +170,7 @@ ti46_quick_no_context:
 #
 ti46_multi_no_context:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true \
+	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=true \
 	$(NO_CONTEXT_FLAGS) \
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
@@ -182,6 +182,6 @@ ti46_multi_no_context:
 ti46_multi_quick_no_context:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=40\
-	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true \
+	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=true \
 	$(NO_CONTEXT_FLAGS) \
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch

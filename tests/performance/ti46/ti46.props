@@ -64,13 +64,12 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 #
 ############################################################
 
-edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400
+edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=100
 edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.FastActiveList
 edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-56
 edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.search.Linguist.validateSentenceHMM=false
-edu.cmu.sphinx.search.Linguist.compositeThreshold=100
 edu.cmu.sphinx.search.validateResults=false
 
 
@@ -100,8 +99,8 @@ edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true
 #
 # Use the number of available CPUS for scoring:
 #
-edu.cmu.sphinx.search.ThreadedAcousticScorer.isCpuRelative=true
-edu.cmu.sphinx.search.ThreadedAcousticScorer.numThreads=0
+edu.cmu.sphinx.search.ThreadedAcousticScorer.isCpuRelative=false
+edu.cmu.sphinx.search.ThreadedAcousticScorer.numThreads=1
 edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 
 ############################################################
@@ -109,8 +108,8 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 # WordListGrammar properties
 #
 ############################################################
-edu.cmu.sphinx.search.WordListGrammar.isLooping = true
-edu.cmu.sphinx.search.WordListGrammar.path = ./digits.wordlist
+edu.cmu.sphinx.search.SimpleWordListGrammar.isLooping = true
+edu.cmu.sphinx.search.SimpleWordListGrammar.path = ./digits.wordlist
 
 
 ############################################################
@@ -119,7 +118,8 @@ edu.cmu.sphinx.search.WordListGrammar.path = ./digits.wordlist
 #
 ############################################################
 
-edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist
-edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=true
-edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar
+edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist
+edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.SimpleWordListGrammar
+edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
+edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=8.0
 
