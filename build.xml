@@ -16,25 +16,105 @@
     <property name="lib_dir"            value="${build_dir}/lib"/>
     <property name="javadoc_dir"	value="${build_dir}/javadoc"/>
     <property name="javadoc_zip"	value="javadoc.zip"/>
+
     <!-- Load the environment -->
     <property environment="env"/>
-    <!-- Complicated way of doing a "if... else"                 -->
-    <!-- Check if the environment variable is set. If it is, set -->
-    <!-- the local variable to the same value.                   -->
-    <condition property="EXTERNAL_JSAPI_LOCATION" 
-               value="${env.EXTERNAL_JSAPI_LOCATION}">
-        <isset property="env.EXTERNAL_JSAPI_LOCATION"/>
-    </condition>
-    <!-- If environment variable is not set, set the local       -->
-    <!-- variable to a default value.                            -->
-    <condition property="EXTERNAL_JSAPI_LOCATION" 
-               value="/lab/speech/sphinx4/lib/jsapi.jar">
-        <not>
-             <isset property="env.EXTERNAL_JSAPI_LOCATION"/>
-        </not>
-    </condition>
-    <available file="${EXTERNAL_JSAPI_LOCATION}" 
-               property="jsapi_default.isPresent"/>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Determine which sources should be compiled depending   * -->
+    <!-- * on the availability of lib/jsapi.jar.  This creates a  * -->
+    <!-- * property called "patternset_to_compile" and sets its   * -->
+    <!-- * val to either "all" or "no_jsapi", which refers to the * -->
+    <!-- * name of a patternset.  The value of srcs_to_compile    * -->
+    <!-- * will be used in the javac target as a patternset       * -->
+    <!-- * refid.                                                 * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <patternset id="all" 
+                includes="edu/**,com/**"
+	        excludes="edu/cmu/sphinx/research/parallel/**"/>
+
+    <patternset id="no_jsapi" 
+                includes="edu/**"
+	        excludes="com/**,
+                          edu/cmu/sphinx/research/parallel/**,
+                          edu/cmu/sphinx/jsapi/**,
+                          edu/cmu/sphinx/decoder/linguist/JSGFGrammar.java"/>
+             
+    <target name="set_patternset_to_compile">
+        <condition property="patternset_to_compile"
+                   value="all">
+            <available file="lib/jsapi.jar"/>
+        </condition>
+        <condition property="patternset_to_compile"
+                   value="no_jsapi">
+            <not>
+                <available file="lib/jsapi.jar"/>
+            </not>
+        </condition>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Handle JSAPI:                                          * -->
+    <!-- *                                                        * -->
+    <!-- *    1) If a jsapi.jar file can be found, use it and     * --> 
+    <!-- *       compile all the sources.                         * -->
+    <!-- *                                                        * -->
+    <!-- *    2) If a jsapi.jar file cannot be found, issue a     * -->
+    <!-- *       message and just compile the sources that do     * -->
+    <!-- *       not depend upon jsapi.jar.                       * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="check_jsapi_default.isPresent">
+        <!-- Complicated way of doing a "if... else"                 -->
+        <!-- Check if the environment variable is set. If it is, set -->
+        <!-- the local variable to the same value.                   -->
+        <condition property="EXTERNAL_JSAPI_LOCATION" 
+                   value="${env.EXTERNAL_JSAPI_LOCATION}">
+            <isset property="env.EXTERNAL_JSAPI_LOCATION"/>
+        </condition>
+
+        <!-- If environment variable is not set, set the local       -->
+        <!-- variable to a default value.                            -->
+        <condition property="EXTERNAL_JSAPI_LOCATION" 
+                   value="/lab/speech/sphinx4/lib/jsapi.jar">
+            <not>
+                 <isset property="env.EXTERNAL_JSAPI_LOCATION"/>
+            </not>
+        </condition>
+        <available file="${EXTERNAL_JSAPI_LOCATION}" 
+                   property="jsapi_default.isPresent"/>
+    </target>
+
+    <target name="copy_jsapi_jar" if="jsapi_default.isPresent">
+        <copy file="${EXTERNAL_JSAPI_LOCATION}" tofile="lib/jsapi.jar"/>
+    </target>
+
+    <target name="check_jsapi_jar.isPresent"
+            depends="check_jsapi_default.isPresent,copy_jsapi_jar">
+        <available file="lib/jsapi.jar" property="jsapi_jar.isPresent"/>
+    </target>
+
+    <target name="issue_jsapi_warning"
+            unless="jsapi_jar.isPresent">
+        <echo>
+
+Cannot find lib/jsapi.jar needed to build Java Speech API
+(JSAPI) support for Sphinx-4.  Will not build any sources
+that require jsapi.jar.  If you'd like to enable JSAPI
+support, please extract jsapi.jar by running jsapi.sh or 
+jsapi.exe from the lib directory.
+        </echo>
+    </target>
+
+    <target name="handle_jsapi"
+            depends="check_jsapi_jar.isPresent,
+                     issue_jsapi_warning,
+                     set_patternset_to_compile"/>
 
 
     <!-- ********************************************************** -->
@@ -48,20 +128,6 @@
 	<echo message="Build complete."/>
     </target>
 
-    <target name="check_jsapi_jar.isPresent"
-            depends="copy_jsapi_jar">
-        <available file="lib/jsapi.jar" property="jsapi_jar.isPresent"/>
-        <fail unless="jsapi_jar.isPresent">
-
-Cannot find lib/jsapi.jar needed to build Sphinx-4.  Please
-extract it by running jsapi.sh or jsapi.exe from the lib
-directory.
-        </fail>
-    </target>
-
-    <target name="copy_jsapi_jar" if="jsapi_default.isPresent">
-        <copy file="${EXTERNAL_JSAPI_LOCATION}" tofile="lib/jsapi.jar"/>
-    </target>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -69,26 +135,25 @@ directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="compile_src"
-	    depends="check_jsapi_jar.isPresent"
+	    depends="handle_jsapi"
 	    description="Build just the srcs">
 	<mkdir dir="${classes_dir}"/>
 	<javac debug="true"
 	       source="1.4"
+ 	       srcdir="${src_dir}"
 	       deprecation="true"
-	       srcdir="${src_dir}"
-	       includes="edu/**,com/**"
-	       excludes="edu/cmu/sphinx/research/parallel/**"
 	       destdir="${classes_dir}">
+            <patternset refid="${patternset_to_compile}"/>
 	    <classpath refid="libs"/>
 	</javac>
     </target>
+
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Generates the jar files                                * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-
     <target name="jars"
 	    depends="sphinx4_jar"
 	    description="Builds all the jar files"/>
