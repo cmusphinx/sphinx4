@@ -15,7 +15,7 @@ package edu.cmu.sphinx.trainer;
 
 import java.util.StringTokenizer;
 
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 
 /**
  * Provides mechanisms for accessing a transcription.

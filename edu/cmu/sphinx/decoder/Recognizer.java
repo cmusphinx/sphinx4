@@ -18,21 +18,21 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import edu.cmu.sphinx.decoder.linguist.Grammar;
-import edu.cmu.sphinx.decoder.linguist.Linguist;
-import edu.cmu.sphinx.decoder.linguist.LinguistProcessor;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.search.Pruner;
 import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.decoder.search.SimplePruner;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.FrontEndFactory;
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory;
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FastDictionary;
-import edu.cmu.sphinx.knowledge.language.LanguageModel;
-import edu.cmu.sphinx.knowledge.language.LanguageModelFactory;
+import edu.cmu.sphinx.linguist.Linguist;
+import edu.cmu.sphinx.linguist.LinguistProcessor;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
+import edu.cmu.sphinx.linguist.language.grammar.Grammar;
+import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
+import edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -62,7 +62,7 @@ public class Recognizer {
      * The default value for the sphinx property name for the Linguist class.
      */
     public final static String PROP_LINGUIST_DEFAULT =
-	"edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist";
+	"edu.cmu.sphinx.decoder.linguist.simple.FlatLinguist";
 
     
     /**

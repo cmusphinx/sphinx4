@@ -23,11 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.cmu.sphinx.decoder.linguist.Linguist;
-import edu.cmu.sphinx.decoder.linguist.SearchState;
-import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
-import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
+import edu.cmu.sphinx.linguist.Linguist;
+import edu.cmu.sphinx.linguist.SearchState;
+import edu.cmu.sphinx.linguist.SearchStateArc;
+import edu.cmu.sphinx.linguist.WordSearchState;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;

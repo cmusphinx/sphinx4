@@ -35,8 +35,8 @@ import javax.speech.recognition.RuleToken;
 
 import com.sun.speech.engine.recognition.BaseRecognizer;
 
-import edu.cmu.sphinx.decoder.linguist.Grammar;
-import edu.cmu.sphinx.decoder.linguist.GrammarNode;
+import edu.cmu.sphinx.linguist.language.grammar.Grammar;
+import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 import edu.cmu.sphinx.util.LogMath;
 
 

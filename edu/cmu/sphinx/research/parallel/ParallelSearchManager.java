@@ -13,7 +13,7 @@
 
 package edu.cmu.sphinx.research.parallel;
 
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 
 import edu.cmu.sphinx.result.Result;
 

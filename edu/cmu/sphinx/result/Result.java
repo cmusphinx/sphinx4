@@ -22,7 +22,7 @@ import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.FloatData;
-import edu.cmu.sphinx.knowledge.dictionary.Word;
+import edu.cmu.sphinx.linguist.dictionary.Word;
 
 /**
  * Provides recognition results. Results can be partial or final. A

@@ -15,7 +15,7 @@
 package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 
 
 /**

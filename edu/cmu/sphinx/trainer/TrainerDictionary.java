@@ -14,10 +14,10 @@ package edu.cmu.sphinx.trainer;
 
 import java.io.IOException;
 
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
-import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
+import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 
 /**
  * Dummy trainer dictionary.

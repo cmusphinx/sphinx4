@@ -15,7 +15,7 @@
 package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.Unit;
 
 /**
  * Contains statistics about a frame. 

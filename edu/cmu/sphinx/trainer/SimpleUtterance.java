@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 
 /**
  * Provides mechanism for handling a simple utterance.

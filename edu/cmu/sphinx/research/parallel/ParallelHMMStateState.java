@@ -13,7 +13,7 @@
 
 package edu.cmu.sphinx.research.parallel;
 
-import edu.cmu.sphinx.knowledge.acoustic.HMMState;
+import edu.cmu.sphinx.linguist.acoustic.HMMState;
 
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.TokenStack;

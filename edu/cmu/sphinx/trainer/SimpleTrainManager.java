@@ -12,10 +12,10 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory;
-import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerAcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerScore;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerAcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerScore;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
 

@@ -1,0 +1,13 @@
+edu.cmu.sphinx.linguist.acoustic.location=file:/lab/speech/sphinx4/data/wsj
+edu.cmu.sphinx.linguist.dictionary.Dictionary.useAcousticModelLocation=false
+edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/wsj/dict/alpha.dict
+edu.cmu.sphinx.linguist.dictionary.Dictionary.fillerPath=/lab/speech/sphinx4/data/wsj/dict/fillerdict
+edu.cmu.sphinx.linguist.language.ngram.LanguageModel.unigramWeight=1.0
+edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location=../../../../../tests/performance/an4/an4_spelling.trigram.lm
+edu.cmu.sphinx.linguist.language.languageWeight=8.5
+edu.cmu.sphinx.util.LogMath.logBase=10
+edu.cmu.sphinx.util.LogMath.logBase=1.0003
+edu.cmu.sphinx.util.LogMath.useAddTable=true
+
+# edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location=alphabet.arpaformat
+# edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location=/lab/speech/sphinx4/data/rm1/lists/RM.2880.trigram.arpa

@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 /**

@@ -14,7 +14,7 @@ package edu.cmu.sphinx.trainer;
 
 import java.io.IOException;
 
-import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerScore;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerScore;
 
 
 /**

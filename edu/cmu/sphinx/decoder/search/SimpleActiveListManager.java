@@ -107,7 +107,7 @@ public class SimpleActiveListManager implements ActiveListManager  {
 
         try {
             Class wordSearchState = Class.forName
-                ("edu.cmu.sphinx.decoder.linguist.WordSearchState");
+                ("edu.cmu.sphinx.linguist.WordSearchState");
             
             emittingActiveList = 
                 (ActiveList)Class.forName(activeListClass).newInstance();

@@ -18,13 +18,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
-import edu.cmu.sphinx.decoder.linguist.SearchState;
-import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.decoder.scorer.Scoreable;
 import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.knowledge.acoustic.HMMState;
-import edu.cmu.sphinx.knowledge.dictionary.Word;
+import edu.cmu.sphinx.linguist.HMMSearchState;
+import edu.cmu.sphinx.linguist.SearchState;
+import edu.cmu.sphinx.linguist.WordSearchState;
+import edu.cmu.sphinx.linguist.acoustic.HMMState;
+import edu.cmu.sphinx.linguist.dictionary.Word;
 
 /**
  * Represents a single state in the recognition trellis. Subclasses of

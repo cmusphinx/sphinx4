@@ -12,7 +12,7 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 
 /**
  * Defines the Utterance Graph.

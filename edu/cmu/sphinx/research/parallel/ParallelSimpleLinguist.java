@@ -12,15 +12,15 @@
 
 package edu.cmu.sphinx.research.parallel;
 
-import edu.cmu.sphinx.knowledge.acoustic.HMM;
-import edu.cmu.sphinx.knowledge.acoustic.HMMState;
-import edu.cmu.sphinx.knowledge.acoustic.HMMStateArc;
-import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.Context;
-import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
-import edu.cmu.sphinx.knowledge.language.LanguageModel;
+import edu.cmu.sphinx.linguist.acoustic.HMM;
+import edu.cmu.sphinx.linguist.acoustic.HMMState;
+import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
+import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
+import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.Context;
+import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
+import edu.cmu.sphinx.linguist.language.LanguageModel;
 
 import edu.cmu.sphinx.decoder.search.*;
 
@@ -32,7 +32,7 @@ import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.decoder.linguist.*;
 import edu.cmu.sphinx.decoder.linguist.simple.*;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
-import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 
 
 import java.util.HashMap;

@@ -27,10 +27,10 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
 import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.WordSearchState;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 
 /**
  * Provides recognition lattice results. Lattices are created from Results
