@@ -18,6 +18,6 @@
 
 ./getTime >.startTime
 
-./runTest ../performance/tidigits tidigits_quick MODE=quick tidigits_wordlist
+./runTest ../performance/tidigits tidigits_quick  -Dskip=5 tidigits_wordlist
 
 touch ./.testDone

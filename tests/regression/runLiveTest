@@ -32,7 +32,7 @@ rawOutput=$label.out
 alignOutput=$label.align
 
 cd $directory
-if gmake $target > $base/$rawOutput
+if ant -emacs $target > $base/$rawOutput
 then
   status="OK";
 else

@@ -92,7 +92,7 @@ cd $rootDir
 who=`whoami`
 
 startBuildTime=`$regressionDir/getTime`
-if gmake all
+if ant all
 then
   status="OK";
 else

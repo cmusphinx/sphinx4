@@ -24,10 +24,10 @@
 
 ./getTime >.startTime
 
-./runTest ../performance/rm1 rm1_flat_unigram_quick     MODE=quick rm1_flat_unigram
-./runTest ../performance/rm1 rm1_unigram_quick          MODE=quick rm1_unigram
-./runTest ../performance/rm1 rm1_unigram_fst_quick      MODE=quick rm1_unigram_fst
-./runTest ../performance/rm1 rm1_flat_unigram_fst_quick MODE=quick rm1_flat_unigram_fst
-./runTest ../performance/rm1 rm1_bigram_fst_quick       MODE=quick rm1_bigram_fst
+./runTest ../performance/rm1 rm1_flat_unigram_quick      -Dskip=5 rm1_flat_unigram
+./runTest ../performance/rm1 rm1_unigram_quick           -Dskip=5 rm1_unigram
+./runTest ../performance/rm1 rm1_unigram_fst_quick       -Dskip=5 rm1_unigram_fst
+./runTest ../performance/rm1 rm1_flat_unigram_fst_quick  -Dskip=5 rm1_flat_unigram_fst
+./runTest ../performance/rm1 rm1_bigram_fst_quick        -Dskip=5 rm1_bigram_fst
 
 touch ./.testDone
