@@ -416,7 +416,8 @@ public class Token implements Scoreable {
             if (token.isWord()) {
                 WordSearchState wordState =
                         (WordSearchState) token.getSearchState();
-                String word = wordState.getPronunciation().getWord();
+                String word = 
+                    wordState.getPronunciation().getWord().getSpelling();
                 if (wantSilences || !silenceSet.contains(word)) {
                     sb.insert(0, word);
                     sb.insert(0, " ");

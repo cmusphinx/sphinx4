@@ -79,6 +79,16 @@ public class Lattice {
             processToken(terminalNode, token);
         }
 
+        if (result == null) {
+            throw new Error("result is null");
+        }
+        if (result.getAlternateHypothesisManager() == null) {
+            throw new Error("ahm is null");
+        }
+        if (result.getAlternateHypothesisManager().getProperties() == null) {
+            throw new Error("prop is null");
+        }
+
         logBase = result.getAlternateHypothesisManager().getProperties().getDouble("edu.cmu.sphinx.util.LogMath.logBase",1.0001);
     }
 
@@ -220,7 +230,7 @@ public class Lattice {
         String word;
         if (token.getSearchState() instanceof WordSearchState) {
             word = ((WordSearchState) (token.getSearchState()))
-                    .getPronunciation().getWord();
+                    .getPronunciation().getWord().getSpelling();
         } else {
             word = token.getSearchState().toString();
         }
