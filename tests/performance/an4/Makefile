@@ -151,7 +151,7 @@ an4_words_fst:
 	-Dedu.cmu.sphinx.search.Linguist.autoLoopSilences=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-30\
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=20.0\
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=25.0\
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_words.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
@@ -194,7 +194,7 @@ an4_spelling_fst:
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false\
 	-Dedu.cmu.sphinx.search.Linguist.autoLoopSilences=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-30\
-	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0\
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=25.0\
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_spelling.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
