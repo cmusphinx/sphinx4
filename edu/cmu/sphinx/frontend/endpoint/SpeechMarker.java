@@ -91,7 +91,7 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
 
     private AudioSource predecessor;
     private List outputQueue;
-    private boolean inUtterance;
+    private boolean inSpeech;
     private int startSpeechTime;
     private int endSilenceTime;
     private int speechLeader;
@@ -119,6 +119,7 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
         this.predecessor = predecessor;
         this.outputQueue = new ArrayList();
         setProperties();
+        reset();
     }
 
     /**
@@ -143,7 +144,7 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
      * Resets this SpeechMarker to a starting state.
      */
     private void reset() {
-        inUtterance = false;
+        inSpeech = false;
     }
 
     /**
@@ -157,13 +158,21 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
      */
     public Audio getAudio() throws IOException {
         if (outputQueue.size() == 0) {
-            if (!inUtterance) {
+            if (!inSpeech) {
                 readInitialFrames();
             } else {
-                Audio audio = predecessor.getAudio();
-                outputQueue.add(audio);
-                if (!audio.isSpeech()) {
-                    inUtterance = !(readEndFrames(audio));
+                Audio audio = readAudio();
+                if (audio.hasContent()) {
+                    sendToQueue(audio);
+                    if (!audio.isSpeech()) {
+                        inSpeech = !(readEndFrames(audio));
+                    }
+                } else if (audio.hasSignal(Signal.UTTERANCE_END)) {
+                    sendToQueue(new Audio(Signal.SPEECH_END));
+                    sendToQueue(audio);
+                    inSpeech = false;
+                } else if (audio.hasSignal(Signal.UTTERANCE_START)) {
+                    throw new Error("Got UTTERANCE_START while in speech");
                 }
             }
         }
@@ -172,6 +181,41 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
             return audio;
         } else {
             return null;
+        }
+    }
+
+    private Audio readAudio() throws IOException {
+        Audio audio = predecessor.getAudio();
+        /*
+        if (audio != null) {
+            String speech = "";
+            if (audio.hasContent() && audio.isSpeech()) {
+                speech = " *";
+            }
+            System.out.println("SpeechMarker: incoming: " + 
+                               audio.getSignal() + speech);
+        }
+        */
+        return audio;
+    }
+
+    private int numUttStarts;
+    private int numUttEnds;
+
+    private void sendToQueue(Audio audio) {
+        outputQueue.add(audio);
+        if (audio.hasSignal(Signal.UTTERANCE_START)) {
+            numUttEnds = 0;
+            numUttStarts++;
+            if (numUttStarts > 1) {
+                throw new Error("Too many utterance starts");
+            }
+        } else if (audio.hasSignal(Signal.UTTERANCE_END)) {
+            numUttStarts = 0;
+            numUttEnds++;
+            if (numUttEnds > 1) {
+                throw new Error("Too many utterance ends");
+            }
         }
     }
 
@@ -191,22 +235,22 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
      * Read the starting frames until the utterance has started.
      */
     private void readInitialFrames() throws IOException {
-        while (!inUtterance) {
-            Audio audio = predecessor.getAudio();
+        while (!inSpeech) {
+            Audio audio = readAudio();
             if (audio == null) {
                 return;
             } else {
-                outputQueue.add(audio);
-                if (audio.isSpeech()) {
-                    boolean speechStarted = handleFirstSpeech(audio);
-                    if (speechStarted) {
-                        // System.out.println("Speech started !!!");
-                        addUtteranceStart();
-                        inUtterance = true;
-                        break;
+                sendToQueue(audio);
+                if (audio.hasContent()) {
+                    if (audio.isSpeech()) {
+                        boolean speechStarted = handleFirstSpeech(audio);
+                        if (speechStarted) {
+                            // System.out.println("Speech started !!!");
+                            addSpeechStart();
+                            inSpeech = true;
+                            break;
+                        }
                     }
-                } else {
-                    outputQueue.add(audio);
                 }
             }
         }
@@ -224,8 +268,8 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
         int speechTime = getAudioTime(audio);
         // System.out.println("Entering handleFirstSpeech()");
         while (speechTime < startSpeechTime) {
-            Audio next = predecessor.getAudio();
-            outputQueue.add(next);
+            Audio next = readAudio();
+            sendToQueue(next);
             if (!next.isSpeech()) {
                 return false;
             } else {
@@ -239,7 +283,7 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
      * Backtrack from the current position to add an SPEECH_START Signal
      * to the outputQueue.
      */
-    private void addUtteranceStart() {
+    private void addSpeechStart() {
         int silenceLength = 0;
         ListIterator i = outputQueue.listIterator(outputQueue.size()-1);
 
@@ -253,10 +297,10 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
                     silenceLength += getAudioTime(current);
                 }
             } else if (current.hasSignal(Signal.UTTERANCE_START)) {
+                i.next(); // put the SPEECH_START after the UTTERANCE_START
                 break;
             } else if (current.hasSignal(Signal.UTTERANCE_END)) {
-                i.next(); // skip the SPEECH_END
-                break;
+                throw new Error("No UTTERANCE_START after UTTERANCE_END");
             }
         }
 
@@ -274,40 +318,61 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
      *    has not ended
      */
     private boolean readEndFrames(Audio audio) throws IOException {
-        int originalLast = outputQueue.size() - 1;
 
+        boolean speechEndAdded = false;
+        boolean readTrailer = true;
+        int originalLast = outputQueue.size() - 1;
         int silenceLength = getAudioTime(audio);
 
         // read ahead until we have 'endSilenceTime' amount of silence
         while (silenceLength < endSilenceTime) {
-            Audio next = predecessor.getAudio();
-            outputQueue.add(next);
-            if (next.isSpeech()) {
-                // if speech is detected again, we're still in
-                // an utterance
-                return false;
-            } else {
-                silenceLength += getAudioTime(next);
-            }
-        }
-
-        boolean utteranceEndAdded = false;
-
-        // read ahead util we have 'speechTrailer' amount of silence
-        while (silenceLength < speechTrailer) {
-            Audio next = predecessor.getAudio();
-            if (next.isSpeech()) {
-                outputQueue.add(new Audio(Signal.SPEECH_END));
-                outputQueue.add(next);
-                utteranceEndAdded = true;
+            Audio next = readAudio();
+            if (next.hasContent()) {
+                sendToQueue(next);
+                if (next.isSpeech()) {
+                    // if speech is detected again, we're still in
+                    // an utterance
+                    return false;
+                } else {
+                    // it is non-speech
+                    silenceLength += getAudioTime(next);
+                }
+            } else if (next.hasSignal(Signal.UTTERANCE_END)) {
+                sendToQueue(next);
+                readTrailer = false;
                 break;
             } else {
-                silenceLength += getAudioTime(next);
-                outputQueue.add(next);
+                throw new Error("Illegal signal: " + next.getSignal());
             }
         }
 
-        if (!utteranceEndAdded) {
+        if (readTrailer) {
+            // read ahead until we have 'speechTrailer' amount of silence
+            while (!speechEndAdded && silenceLength < speechTrailer) {
+                Audio next = readAudio();
+                if (next.hasContent()) {
+                    if (next.isSpeech()) {
+                        // if we have hit speech again, then the current
+                        // speech should end
+                        sendToQueue(new Audio(Signal.SPEECH_END));
+                        sendToQueue(next);
+                        speechEndAdded = true;
+                        break;
+                    } else {
+                        silenceLength += getAudioTime(next);
+                        sendToQueue(next);
+                    }
+                } else if (next.hasSignal(Signal.UTTERANCE_END)) {
+                    sendToQueue(new Audio(Signal.SPEECH_END));
+                    sendToQueue(next);
+                    speechEndAdded = true;
+                } else {
+                    throw new Error("Illegal signal: " + next.getSignal());
+                }
+            }
+        }
+
+        if (!speechEndAdded) {
             // iterator from the end of speech and read till we
             // have 'speechTrailer' amount of non-speech, and
             // then add an SPEECH_END
@@ -315,10 +380,15 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
             silenceLength = 0;
             while (silenceLength < speechTrailer && i.hasNext()) {
                 Audio next = (Audio) i.next();
-                assert !next.isSpeech();
-                silenceLength += getAudioTime(next);
+                if (next.hasSignal(Signal.UTTERANCE_END)) {
+                    i.previous();
+                    break;
+                } else {
+                    assert !next.isSpeech();
+                    silenceLength += getAudioTime(next);
+                }
             }
-            outputQueue.add(new Audio(Signal.SPEECH_END));
+            i.add(new Audio(Signal.SPEECH_END));
         }
 
         // System.out.println("Speech ended !!!");

@@ -120,6 +120,7 @@ public class AudioFilter extends DataProcessor implements AudioSource {
 
     private AudioSource predecessor;
     private List inputBuffer;
+    private List outputQueue;
 
 
     /**
@@ -142,6 +143,7 @@ public class AudioFilter extends DataProcessor implements AudioSource {
         this.inSpeech = false;
         this.predecessor = predecessor;
         this.inputBuffer = new LinkedList();
+        this.outputQueue = new LinkedList();
     }
 
 
@@ -152,6 +154,14 @@ public class AudioFilter extends DataProcessor implements AudioSource {
      */
     public void setPredecessor(AudioSource predecessor) {
         this.predecessor = predecessor;
+    }
+
+
+    /**
+     * Prints out a message to System.out.
+     */
+    private void message(String message) {
+        System.out.println("AudioFilter: " + message);
     }
 
 
@@ -167,32 +177,29 @@ public class AudioFilter extends DataProcessor implements AudioSource {
      * @see Audio
      */
     public Audio getAudio() throws IOException {
-        
-        Audio audio = readAudio();
 
-        getTimer().start();
-
-        if (audio != null) {
-           if (!mergeSpeechSegments) {
-                audio = handleNonMergingAudio(audio);
-            } else {
-                audio = handleMergingAudio(audio);
+        if (outputQueue.size() == 0) {
+            Audio audio = readAudio();
+            
+            getTimer().start();
+            
+            if (audio != null) {
+                if (!mergeSpeechSegments) {
+                    audio = handleNonMergingAudio(audio);
+                } else {
+                    audio = handleMergingAudio(audio);
+                }
             }
+            outputQueue.add(audio);
+            
+            getTimer().stop();
         }
 
-        getTimer().stop();
-
-        /*
-        if (audio != null) {
-            if (audio.hasSignal(Signal.UTTERANCE_START)) {
-                System.out.println("NSF: UTTERANCE_START");
-            } else if (audio.hasSignal(Signal.UTTERANCE_END)) {
-                System.out.println("NSF: UTTERANCE_END");
-            }            
+        if (outputQueue.size() > 0) {
+            return (Audio) outputQueue.remove(0);
+        } else {
+            return null;
         }
-        */
-
-        return audio;
     }
 
 
@@ -200,32 +207,39 @@ public class AudioFilter extends DataProcessor implements AudioSource {
      * Handles the given Audio in the case when mergeSpeechSegment
      * is true.
      */
-    private Audio handleMergingAudio(Audio audio) throws
-    IOException {
+    private Audio handleMergingAudio(Audio audio) throws IOException {
         Audio next = audio;
 
         if (audio.hasSignal(Signal.UTTERANCE_START)) {
+            
             // Read (and discard) all the Audio from UTTERANCE_START
             // until we hit a SPEECH_START. The SPEECH_START is discarded.
-            readUntil(Signal.SPEECH_START);
+            List audioList = readUntil(Signal.SPEECH_START,
+                                       Signal.UTTERANCE_END);
+            Audio last = (Audio) audioList.get(audioList.size() - 1);
+            if (last != null) {
+                if (last.hasSignal(Signal.UTTERANCE_END)) {
+                    outputQueue.add(audio);
+                    next = last;
+                }
+            }
         } else if (audio.getSignal().equals(Signal.SPEECH_END)) {
             // read (and discard) all the Audio from SPEECH_END
             // until we hit a UTTERANCE_END
             List audioList = readUntil(Signal.SPEECH_START,
-                                          Signal.UTTERANCE_END);
-            Audio last = (Audio) audioList.get
-                (audioList.size() - 1);
+                                       Signal.UTTERANCE_END);
+            Audio last = (Audio) audioList.get(audioList.size() - 1);
             if (last != null) {
                 if (last.hasSignal(Signal.SPEECH_START)) {
                     // first remove the SPEECH_START, then add
                     // all the Audio to the inputBuffer
                     
                     audioList.remove(last);
-                    inputBuffer.addAll(audioList);
-                    
+                    inputBuffer.addAll(audioList);                    
                     next = readAudio();
                         
                 } else if (last.hasSignal(Signal.UTTERANCE_END)) {
+                    // System.out.println("Last is UTTERANCE_END");
                     next = last;
                 }
             }
@@ -246,8 +260,8 @@ public class AudioFilter extends DataProcessor implements AudioSource {
                 if (inSpeech) {
                     // Normally, we should not be encounter a SPEECH_START
                     // if we are inSpeech. This is error-handling code.
-                    System.out.println("ALERT: getting a SPEECH_START while "+
-                                       "in speech, removing it.");
+                    message("ALERT: getting a SPEECH_START while "+
+                            "in speech, removing it.");
                     do {
                         next = readAudio();
                     } while (next != null &&
@@ -266,8 +280,8 @@ public class AudioFilter extends DataProcessor implements AudioSource {
                 if (!inSpeech) {
                     // Normally, we should not get a SPEECH_END
                     // if we are not inSpeech. This is error-handling code.
-                    System.out.println("ALERT: getting a SPEECH_END while "+
-                                       "not in speech, removing it.");
+                    message("ALERT: getting a SPEECH_END while "+
+                            "not in speech, removing it.");
                     do {
                         next = readAudio();
                     } while (next != null &&
@@ -307,13 +321,14 @@ public class AudioFilter extends DataProcessor implements AudioSource {
             audio = (Audio) inputBuffer.remove(0);
         } else {
             audio = predecessor.getAudio();
+            if (audio != null) {
+                String speech = "";
+                if (audio.isSpeech()) { 
+                    speech = " *";
+                }
+                // message("incoming: " + audio.getSignal().toString() + speech);
+            }
         }
-        /*
-        if (audio != null && audio.getSignal() != null) {
-            System.out.println("NSF: incoming: " + 
-                               audio.getSignal().toString());
-        }
-        */
         return audio;
     }
 
