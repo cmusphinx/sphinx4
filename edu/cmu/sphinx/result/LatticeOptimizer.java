@@ -16,13 +16,12 @@ import edu.cmu.sphinx.result.Lattice;
 
 import java.util.Iterator;
 import java.util.Vector;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
- * Class used to collapse all equivalent paths in a Lattice.  Results in a Lattices that is
- * deterministic (no Node has Edges to two or more equivalent Nodes), and minimal (no Node
- * has Edge from two or more equivalent Nodes).
+ * Class used to collapse all equivalent paths in a Lattice.  Results in a
+ * Lattices that is deterministic (no Node has Edges to two or more
+ * equivalent Nodes), and minimal (no Node has Edge from two or more
+ * equivalent Nodes).
  */
 
 public class LatticeOptimizer {
@@ -43,10 +42,11 @@ public class LatticeOptimizer {
      *
      * Note that these methods are all in Lattice so that it is easy to
      * change the definition of "equivalent" nodes and edges.  For example,
-     * an equivalent node might have the same word, but start or end at a different time.
+     * an equivalent node might have the same word, but start or end at a
+     * different time.
      *
-     * To experiment with other definitions of equivalent, just create a superclass
-     * of Lattice.
+     * To experiment with other definitions of equivalent, just create a
+     * superclass of Lattice.
      */
     public void optimize() {
         //System.err.println("***");
@@ -104,7 +104,7 @@ public class LatticeOptimizer {
         while (moreChanges) {
             moreChanges = false;
             // search for a node that can be optimized
-            for (Iterator i = lattice.getCopyOfNodes().iterator(); i.hasNext();) {
+            for (Iterator i=lattice.getCopyOfNodes().iterator(); i.hasNext();) {
                 Node n = (Node) i.next();
                 moreChanges |= optimizeNodeForward(n);
             }
@@ -116,12 +116,13 @@ public class LatticeOptimizer {
      * Look for 2 "to" edges to equivalent nodes.  Replace the edges
      * with one edge to one node that is a merge of the equivalent nodes
      *
-     * nodes are equivalent if they have equivalent from edges, and the same label
+     * nodes are equivalent if they have equivalent from edges, and the
+     * same label
      *
      * merged nodes have a union of "from" and "to" edges
      *
      * @param n
-     * @return
+     * @return true if Node n required an optimize forward
      */
     protected boolean optimizeNodeForward(Node n) {
         Vector toEdges = new Vector(n.getToEdges());
@@ -148,12 +149,12 @@ public class LatticeOptimizer {
     }
 
     /**
-     * nodes are equivalent forward if they have "from" edges from the same nodes,
-     * and have equivalent labels (Token, start/end times)
+     * nodes are equivalent forward if they have "from" edges from the same
+     * nodes, and have equivalent labels (Token, start/end times)
      *
      * @param n1
      * @param n2
-     * @return
+     * @return true if n1 and n2 are "equivalent forwards"
      */
     protected boolean equivalentNodesForward(Node n1, Node n2) {
 
@@ -161,7 +162,8 @@ public class LatticeOptimizer {
         if (!equivalentNodeLabels(n1, n2)) return false;
 
         // if they have different number of "from" edges they are not equivalent
-        // or if there is a "from" edge with no match then the nodes are not equiv
+        // or if there is a "from" edge with no match then the nodes are not
+        // equivalent
         return n1.hasEquivalentFromEdges(n2);
     }
 
@@ -189,29 +191,37 @@ public class LatticeOptimizer {
         assert n1.getWord().equals(n2.getWord());
 
         // create the new node with a new id and the same label
-        Node nprime = lattice.addNode(n1.getWord(),n1.getBeginTime(),n1.getEndTime());
+        Node nprime =
+                lattice.addNode(n1.getWord(),n1.getBeginTime(),n1.getEndTime());
 
         // add all the from edges (they should be the same in n1 and n2)
         for (Iterator i = n1.getFromEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
-            Edge eprime = lattice.addEdge( e.getFromNode(), nprime, e.getAcousticScore(), e.getLMScore() );
+            lattice.addEdge(
+                        e.getFromNode(), nprime,
+                        e.getAcousticScore(), e.getLMScore() );
         }
 
         // add n1's to edges
         for (Iterator i = n1.getToEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
-            Edge eprime = lattice.addEdge( nprime, e.getToNode(), e.getAcousticScore(), e.getLMScore() );
+            lattice.addEdge(
+                        nprime, e.getToNode(),
+                        e.getAcousticScore(), e.getLMScore() );
         }
 
         // add n2's to edges
         for (Iterator i = n2.getToEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
             if (!nprime.hasEdgeToNode(e.getToNode())) {
-                Edge eprime = lattice.addEdge( nprime, e.getToNode(), e.getAcousticScore(), e.getLMScore() );
+                lattice.addEdge(
+                            nprime, e.getToNode(),
+                            e.getAcousticScore(), e.getLMScore() );
             } else {
                 // if we got here then n1 and n2 had edges to the same node
                 // what happens if the score is not the same?
-                System.err.println("What happens with duplicate to nodes; " + e.getToNode());
+                System.err.println("What happens with duplicate to nodes; " +
+                                    e.getToNode());
             }
         }
 
@@ -251,8 +261,6 @@ public class LatticeOptimizer {
      *
      *  A and A' would not be equivalent because the outgoing edges
      *  are different
-     *
-     *
      */
     protected void optimizeBackward() {
         //System.err.println("*** Optimizing backward ***");
@@ -261,7 +269,7 @@ public class LatticeOptimizer {
         while (moreChanges) {
             moreChanges = false;
             // search for a node that can be optimized
-            for (Iterator i = lattice.getCopyOfNodes().iterator(); i.hasNext();) {
+            for (Iterator i=lattice.getCopyOfNodes().iterator(); i.hasNext();) {
                 Node n = (Node) i.next();
                 moreChanges |= optimizeNodeBackward(n);
             }
@@ -277,7 +285,7 @@ public class LatticeOptimizer {
      * merged nodes have a union of "from" and "to" edges
      *
      * @param n
-     * @return
+     * @return true if Node n required opimizing backwards
      */
     protected boolean optimizeNodeBackward(Node n) {
         Vector fromEdges = new Vector( n.getFromEdges());
@@ -291,7 +299,7 @@ public class LatticeOptimizer {
                  * equivalent nodes, we have a hit, return true
                  */
                 assert e != e2;
-                if (equivalentNodesBackward(e.getFromNode(), e2.getFromNode())) {
+                if (equivalentNodesBackward(e.getFromNode(),e2.getFromNode())) {
                     mergeNodesAndEdgesBackward(n, e, e2);
                     return true;
                 }
@@ -309,7 +317,7 @@ public class LatticeOptimizer {
      *
      * @param n1
      * @param n2
-     * @return
+     * @return true if n1 and n2 are "equivalent backwards"
      */
     protected boolean equivalentNodesBackward(Node n1, Node n2) {
         // do the labels match?
@@ -325,7 +333,7 @@ public class LatticeOptimizer {
      *
      * @param n1
      * @param n2
-     * @return
+     * @return true if n1 and n2 have "equivalent labels"
      */
     protected boolean equivalentNodeLabels(Node n1, Node n2) {
         return n1.getWord().equals(n2.getWord());
@@ -355,29 +363,33 @@ public class LatticeOptimizer {
         assert n1.getWord().equals(n2.getWord());
 
         // create the new node with a new id and the same label
-        Node nprime = lattice.addNode(n1.getWord(),n1.getBeginTime(),n1.getEndTime());
+        Node nprime = lattice.addNode(n1.getWord(),
+                                        n1.getBeginTime(),n1.getEndTime());
 
         // add all the to edges (they should be the same in n1 and n2)
         for (Iterator i = n1.getToEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
-            Edge eprime = lattice.addEdge( nprime, n,  e.getAcousticScore(), e.getLMScore() );
+            lattice.addEdge( nprime, n,  e.getAcousticScore(), e.getLMScore() );
         }
 
         // add n1's from edges
         for (Iterator i = n1.getFromEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
-            Edge eprime = lattice.addEdge( e.getFromNode(), nprime,  e.getAcousticScore(), e.getLMScore() );
+            lattice.addEdge( e.getFromNode(), nprime,
+                            e.getAcousticScore(), e.getLMScore() );
         }
 
         // add n2's from edges
         for (Iterator i = n2.getFromEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
             if (!nprime.hasEdgeFromNode(e.getFromNode())) {
-                Edge eprime = lattice.addEdge( e.getFromNode(), nprime,  e.getAcousticScore(), e.getLMScore() );
+                lattice.addEdge( e.getFromNode(), nprime,
+                                e.getAcousticScore(), e.getLMScore() );
             } else {
                 // if we got here then n1 and n2 had edges to the same node
                 // what happens if the score is not the same?
-                System.err.println("What happens with duplicate from nodes; " + e.getFromNode());
+                System.err.println("What happens with duplicate from nodes; " +
+                                    e.getFromNode());
             }
         }
 
