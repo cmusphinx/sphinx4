@@ -38,6 +38,7 @@ public class AutoTuner {
     public final static String TP_SPHINX_PROPERTIES = "propsFile";
     public final static String TP_BATCH_FILE = "batchFile";
     public final static String TP_PROPS_FILE = "propsFile";
+    public final static String TP_NUM_PARAMS = "numParams";
 
 
     /** test types */
@@ -131,8 +132,7 @@ public class AutoTuner {
      * Opens the output file
      */
     private void open() throws IOException {
-        String outputFileName = 
-            tunerProps.getProperty(TP_OUTPUT_NAME, "tuner.out");
+        String outputFileName = getString(TP_OUTPUT_NAME, "tuner.out");
         outputFile = new PrintStream(new
                 FileOutputStream(outputFileName));
         outputFile.println("# Date: " + new Date());
@@ -150,15 +150,86 @@ public class AutoTuner {
      * Creates the chain of tuner objects
      */
     private Tuner  createTuningChain() throws IOException {
-        if (!tunerProps.getProperty(TP_TYPE,
-                    TYPE_BRUTE_FORCE).equals(TYPE_BRUTE_FORCE)) {
+        if (!getString(TP_TYPE, TYPE_BRUTE_FORCE).equals(TYPE_BRUTE_FORCE)) {
             throw new IOException("unknown test type");
         }
 
-        Tuner batchTuner = new BatchTuner();
-        return batchTuner;
+        Tuner tuner = new BatchTuner();
+
+        int numParams = getInt(TP_NUM_PARAMS);
+
+        for (int i =0; i < numParams; i++) {
+            tuner = createTuner(tuner, i);
+        }
+
+        return tuner;
     }
 
+    /**
+     * Creates a chained tuner that invokes the given tuner
+     * 
+     * @param prevTuner the previous tuner in the chain
+     * @param which specifies which params describe this tuner
+     */
+    private Tuner createTuner(Tuner prevTuner, int which) {
+
+        String name = getString("param" + which + ".name");
+        double start = getDouble("param" + which + ".start");
+        int count = getInt("param" + which + ".count");
+        String op = getString("param" + which + ".op");
+        double val = getDouble("param" + which + ".op.value");
+
+        return null;
+    }
+
+
+    /**
+     * Return a tuner props as a double
+     *
+     * @param name the name of the tuner property
+     */
+    private double getDouble(String name) {
+        String value = tunerProps.getProperty(name, "0");
+        return Double.parseDouble(value);
+    }
+
+    /**
+     * Return a tuner props as an int
+     *
+     * @param name the name of the tuner property
+     */
+    private int getInt(String name) {
+        String value = tunerProps.getProperty(name, "0");
+        return Integer.parseInt(value);
+    }
+
+    /**
+     * Return a tuner props as an string
+     *
+     * @param name the name of the tuner property
+     */
+    private String getString(String name) {
+        return tunerProps.getProperty(name);
+    }
+
+    /**
+     * Return a tuner props as an string
+     *
+     * @param name the name of the tuner property
+     * @param defValue the default value of the tuner property
+     */
+    private String getString(String name, String defValue) {
+        return tunerProps.getProperty(name, defValue);
+    }
+
+
+    /*
+param1.name=edu.cmu.sphinx.search.Linguist.wordInsertionProbability
+param1.start=1E-10
+param1.count=1E-100
+param1.op=div   # op can be mul, div, add, sub
+param1.op.value=10
+*/
 
     /**
      * Standard interface for tuning objects
@@ -207,15 +278,16 @@ public class AutoTuner {
                 int column = 0;
                 for (Iterator i = keys.iterator(); i.hasNext(); ) {
                     String key = (String) i.next();
-                    outputFile.print("#  column " +  (column++) + " " + key);
+                    outputFile.println("#  column " +  (column++) + " " + key);
                 }
-                outputFile.print(" # column " + (column++) + " num words");
-                outputFile.print(" # column " + (column++) + " WER%");
-                outputFile.print(" # column " + (column++) + " tot errs");
-                outputFile.print(" # column " + (column++) + " sub errs");
-                outputFile.print(" # column " + (column++) + " ins errs");
-                outputFile.print(" # column " + (column++) + " del errs");
-                outputFile.print(" # column " + (column++) + " sent errs");
+                outputFile.println("# column " + (column++) + " numWords");
+                outputFile.println("# column " + (column++) + " numSentences");
+                outputFile.println("# column " + (column++) + " WER%");
+                outputFile.println("# column " + (column++) + " tot errs");
+                outputFile.println("# column " + (column++) + " sub errs");
+                outputFile.println("# column " + (column++) + " ins errs");
+                outputFile.println("# column " + (column++) + " del errs");
+                outputFile.println("# column " + (column++) + " sent errs");
             }
 
             for (Iterator i = keys.iterator(); i.hasNext(); ) {
@@ -224,7 +296,7 @@ public class AutoTuner {
                 outputFile.print(value);
                 outputFile.print(" ");
             }
-            outputFile.print(" " + results);
+            outputFile.println(" " + results);
         }
 
 
