@@ -210,6 +210,19 @@ public class SphinxProperties {
 
 
     /**
+     * Sets a sphinx property.  Note that there is no guarantee that modified
+     * properties will be actually used
+     *
+     * @param name the name of the property
+     * @param value the new value for the property
+     *
+     */
+    public void setProperty(String name, String value) {
+        props.setProperty(name, value);
+    }
+
+
+    /**
      * Prints the list of unused properties to the specified stream.
      * Unused properties are properties that were defined in the
      * property list or in the system environment but were never used

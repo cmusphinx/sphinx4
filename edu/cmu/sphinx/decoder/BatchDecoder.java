@@ -31,6 +31,7 @@ import java.net.URL;
 
 import java.util.List;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 
 
 /**
@@ -173,23 +174,62 @@ public class BatchDecoder {
     public void decode() throws IOException {
 
 	int curCount = skip;
+        String file = null;
+        String reference = null;
+
         System.out.println("\nBatchDecoder: decoding files in " + batchFile);
         System.out.println("----------");
 
 	for (Iterator i = getLines(batchFile).iterator(); i.hasNext();) {
 	    String line = (String) i.next();
-            String file = BatchFile.getFilename(line);
-	    String reference = BatchFile.getReference(line);
 
-	    if (++curCount >= skip) {
-		curCount = 0;
-		decodeFile(file, reference);
-	    }
+
+            // skip blank lines
+            if (line.length() == 0) {
+                continue;
+            } else if (line.startsWith("set")) {
+                processPropertySetter(line);
+            } else if (line.startsWith("reset")) {
+                NISTAlign.resetTotals();
+            } else if (line.startsWith("go")) {
+                NISTAlign.resetTotals();
+                if (file != null && reference != null) {
+                    decodeFile(file, reference);
+                }
+            } else {
+                file = BatchFile.getFilename(line);
+                reference = BatchFile.getReference(line);
+
+                if (++curCount >= skip) {
+                    curCount = 0;
+                    decodeFile(file, reference);
+                }
+            }
         }
 
         System.out.println("\nBatchDecoder: All files decoded\n");
         Timer.dumpAll(context);
 	decoder.showSummary();
+    }
+
+
+    /**
+     * Sets the sphinx properties given a line of the form
+     * set propertyName value
+     */
+    private void processPropertySetter(String line) {
+        StringTokenizer st = new StringTokenizer(line);
+
+        if (st.countTokens() != 3) {
+            System.out.println("Bad 'set' in " + line);
+        }
+
+        String set = st.nextToken();
+        String name = st.nextToken();
+        String value = st.nextToken();
+        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
+        System.out.println("Setting " + name + " to " + value);
+        props.setProperty(name, value);
     }
 
 
