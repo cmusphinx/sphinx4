@@ -52,62 +52,26 @@ import java.util.Map;
  * search graph loop, simply called the method 
  * {@link #getSearchGraph() getSearchGraph}.
  */
-public class CIPhoneLoopLinguist implements Linguist, Configurable {
-
-    public static final String PROP_ACOUSTIC_MODEL = "acousticModel";
-
-    public static final String PROP_LOG_MATH = "logMath";
-
-    public static final String PROP_PHONE_INSERTION_PROBABILITY
-        = "phoneInsertionProbability";
-
-    public static final double PROP_PHONE_INSERTION_PROBABILITY_DEFAULT = 1.0;
-
-    private final static float logOne = LogMath.getLogOne();
-
+public class CIPhoneLoop {
     private AcousticModel model;
     private LogMath logMath;
-
     private float logPhoneInsertionProbability;
-    private String name;
+    private float logOne = LogMath.getLogOne();
 
     /**
-     * Returns the name of this CIPhoneLoopLinguist
+     * Creates the CIPhoneLoop with the given acoustic model
+     * and phone insertion probability
      *
-     * @return the name of this CIPhoneLoopLinguist
+     * @param model the acoustic model
+     * @param logPhoneInsertionProbability the insertion probability
      */
-    public String getName() {
-        return name;
+    public CIPhoneLoop(AcousticModel model, 
+            float logPhoneInsertionProbability) {
+        this.model = model;
+        this.logPhoneInsertionProbability =
+            logPhoneInsertionProbability;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
-    public void register(String name, Registry registry)
-        throws PropertyException {
-        this.name = name;
-        registry.register(PROP_ACOUSTIC_MODEL, PropertyType.COMPONENT);
-        registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
-        registry.register(PROP_PHONE_INSERTION_PROBABILITY,
-                          PropertyType.DOUBLE);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
-    public void newProperties(PropertySheet ps) throws PropertyException {
-        model = (AcousticModel)
-            ps.getComponent(PROP_ACOUSTIC_MODEL, AcousticModel.class);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
-        logPhoneInsertionProbability = logMath.linearToLog
-            (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY,
-                          PROP_PHONE_INSERTION_PROBABILITY_DEFAULT));
-    }
 
     /**
      * Creates a new loop of all the context-independent phones.
@@ -250,32 +214,6 @@ public class CIPhoneLoopLinguist implements Linguist, Configurable {
             prevState.connect(arc);
         }
     }
-
-    /**
-     * Called before a recognition
-     */
-    public void startRecognition() {}
-
-    /**
-     * Called after a recognition
-     */
-    public void stopRecognition() {}
-
-
-    /**
-     * Allocates the linguist
-     * @throws IOException if an IO error occurs
-     */
-    public void allocate() throws IOException {
-	model.allocate();
-    }
-
-
-    /**
-     * Deallocates the linguist
-     *
-     */
-    public void deallocate() {}
 }
 
 class UnknownWordState extends SentenceHMMState implements WordSearchState {

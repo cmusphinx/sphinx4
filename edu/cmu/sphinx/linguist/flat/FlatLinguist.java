@@ -103,12 +103,6 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     public final static boolean PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT = false;
 
-    /**
-     * Sphinx property that specifies whether to a branch for detecting
-     * out-of-grammar utterances that is parallel to the main search graph.
-     */
-    public final static String PROP_OUT_OF_GRAMMAR_LINGUIST
-        = "outOfGrammarLinguist";
     
     /**
      * Sphinx property for the probability of entering the out-of-grammar
@@ -116,6 +110,18 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     public final static String PROP_OUT_OF_GRAMMAR_PROBABILITY
         = "outOfGrammarProbability";
+
+    /**
+     * Sphinx property for the probability of inserting a CI phone in
+     * the out-of-grammar ci phone loop
+     */
+    public static final String PROP_PHONE_INSERTION_PROBABILITY
+        = "phoneInsertionProbability";
+
+    /**
+     * Default value for PROP_PHONE_INSERTION_PROBABILITY
+     */
+    public static final double PROP_PHONE_INSERTION_PROBABILITY_DEFAULT = 1.0;
 
     /**
      * The default value for PROP_OUT_OF_GRAMMAR_PROBABILITY.
@@ -134,7 +140,6 @@ public class FlatLinguist implements Linguist, Configurable {
     private AcousticModel acousticModel;
     private LogMath logMath;
     private UnitManager unitManager;
-    private Linguist outOfGrammarLinguist;
 
     // ------------------------------------
     // Data that is configured by the
@@ -201,9 +206,9 @@ public class FlatLinguist implements Linguist, Configurable {
         registry.register(PROP_UNIT_MANAGER, PropertyType.COMPONENT);
         registry.register(PROP_ADD_OUT_OF_GRAMMAR_BRANCH,
                           PropertyType.BOOLEAN);
-        registry.register(PROP_OUT_OF_GRAMMAR_LINGUIST, PropertyType.COMPONENT);
         registry.register(PROP_OUT_OF_GRAMMAR_PROBABILITY,
                           PropertyType.DOUBLE);
+        registry.register(PROP_PHONE_INSERTION_PROBABILITY, PropertyType.DOUBLE);
     }
 
     /*
@@ -241,16 +246,16 @@ public class FlatLinguist implements Linguist, Configurable {
         spreadWordProbabilitiesAcrossPronunciations = ps.getBoolean(
                 PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS,
                 PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS_DEFAULT);
+
         addOutOfGrammarBranch = ps.getBoolean
             (PROP_ADD_OUT_OF_GRAMMAR_BRANCH,
              PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT);
-        if (addOutOfGrammarBranch) {
-            outOfGrammarLinguist = (Linguist) ps.getComponent
-                (PROP_OUT_OF_GRAMMAR_LINGUIST, Linguist.class);
-            logOutOfGrammarBranchProbability = logMath.linearToLog
-                (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY,
-                              PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT));
-        }
+        logOutOfGrammarBranchProbability = logMath.linearToLog
+            (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY,
+                          PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT));
+        logPhoneInsertionProbability = logMath.linearToLog
+            (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY,
+                          PROP_PHONE_INSERTION_PROBABILITY_DEFAULT));
     }
 
     /**
@@ -282,9 +287,6 @@ public class FlatLinguist implements Linguist, Configurable {
         nodeStateMap = new HashMap();
         arcPool = new HashMap();
         allocateAcousticModel();
-        if (addOutOfGrammarBranch) {
-            outOfGrammarLinguist.allocate();
-	}
         grammar.allocate();
         totalStates = StatisticsVariable.getStatisticsVariable(getName(),
                 "totalStates");
@@ -394,8 +396,10 @@ public class FlatLinguist implements Linguist, Configurable {
 
         // add an out-of-grammar branch if configured to do so
         if (addOutOfGrammarBranch) {
+            CIPhoneLoop phoneLoop  = new CIPhoneLoop(acousticModel,
+                    logPhoneInsertionProbability);
             SentenceHMMState firstBranchState = (SentenceHMMState)
-                outOfGrammarLinguist.getSearchGraph().getInitialState();
+                phoneLoop.getSearchGraph().getInitialState();
             initialState.connect(getArc(firstBranchState, logOne, logOne,
                                         logOutOfGrammarBranchProbability));
         }
