@@ -25,15 +25,20 @@ import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.io.File;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Vector;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
@@ -80,6 +85,7 @@ public class Microphone extends DataProcessor implements AudioSource {
     private volatile boolean recording = false;
     private volatile boolean closed = false;
     private boolean keepAudioReference = true;
+    private boolean tracing = false;
 
     private static Logger logger = Logger.getLogger
     ("edu.cmu.sphinx.frontend.Microphone");
@@ -145,13 +151,16 @@ public class Microphone extends DataProcessor implements AudioSource {
      * @param message the message to print
      */
     private void printMessage(String message) {
-        logger.info("Microphone: " + message);
+	if (tracing) {
+	    System.out.println("Microphone: " + message);
+	}
     }
 
 
     /**
      * This Thread records audio, and caches them in an audio buffer.
      */
+
     class RecordingThread extends Thread {
         
         /**
@@ -166,10 +175,18 @@ public class Microphone extends DataProcessor implements AudioSource {
                     ("Microphone", getContext());
                 utteranceList.add(currentUtterance);
                 
+		if (audioLine.isRunning()) {
+		    printMessage("Whoops: line is running");
+		}
                 audioLine.start();
-                printMessage("started recording");
+		if (tracing) {
+		    printMessage("started recording");
+		}
                                 
                 while (getRecording() && !getClosed()) {
+		    if (tracing) {
+			printMessage("reading ...");
+		    }
                                         
                     // Read the next chunk of data from the TargetDataLine.
                     byte[] data = new byte[frameSizeInBytes];
@@ -185,20 +202,29 @@ public class Microphone extends DataProcessor implements AudioSource {
                         System.arraycopy(data, 0, shrinked, 0, numBytesRead);
                         currentUtterance.add(shrinked);
                     }
-                    
-                    printMessage("recorded 1 frame (" + numBytesRead + ") bytes");
+
+		    if (tracing) {
+			printMessage(
+			    "recorded 1 frame (" + numBytesRead + ") bytes");
+		    }
                 }
                 
                 audioLine.stop();
-                audioLine.close();
+                //audioLine.close();
+		//audioLine = null;
                 
-                printMessage("stopped recording");
+		if (tracing) {
+		    printMessage("stopped recording");
+		}
                 
             } else {
-                printMessage("Unable to open line");
+		if (tracing) {
+		    printMessage("Unable to open line");
+		}
             }
         }
     }
+
 
     /**
      * Opens the audio capturing device so that it will be ready
@@ -208,6 +234,11 @@ public class Microphone extends DataProcessor implements AudioSource {
      *     false otherwise
      */
     private boolean open() {
+
+	if (audioLine != null) {
+	    return true;
+	}
+
         DataLine.Info info = new DataLine.Info
             (TargetDataLine.class, audioFormat);
         
@@ -215,6 +246,7 @@ public class Microphone extends DataProcessor implements AudioSource {
             logger.severe(audioFormat + " not supported");
             return false;
         }
+
 
         // Obtain and open the line.
         try {
@@ -246,13 +278,19 @@ public class Microphone extends DataProcessor implements AudioSource {
      * @return true if the recording started successfully; false otherwise
      */
     public synchronized boolean startRecording() {
+	//System.out.println("SR:open");
         if (open()) {
+	//System.out.println("SR:setRecording");
             setRecording(true);
             RecordingThread recorder = new RecordingThread();
+	//System.out.println("SR:start");
             recorder.start();
             while (!getStarted()) {
+	//System.out.println("SR:!getStarted");
                 try {
+	//System.out.println("SR:wait");
                     wait();
+	//System.out.println("SR:done wait");
                 } catch (InterruptedException ie) {
                     ie.printStackTrace();
                 }
@@ -372,6 +410,7 @@ public class Microphone extends DataProcessor implements AudioSource {
          * @param event the LineEvent to handle
          */
         public void update(LineEvent event) {
+	// System.out.println("MicrophoneLineListener: update " + event);
             if (event.getType().equals(LineEvent.Type.START)) {
                 setStarted(true);
                 synchronized (Microphone.this) {
