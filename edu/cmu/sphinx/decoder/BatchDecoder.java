@@ -16,22 +16,19 @@ import edu.cmu.sphinx.frontend.util.StreamAudioSource;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.DataSource;
 
+import edu.cmu.sphinx.util.BatchFile;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.Utilities;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.IOException;
 
 import java.net.URL;
 
-import java.util.StringTokenizer;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
 
@@ -199,22 +196,12 @@ public class BatchDecoder {
 
 	for (Iterator i = getLines(batchFile).iterator(); i.hasNext();) {
 	    String line = (String) i.next();
-	    StringTokenizer st = new StringTokenizer(line);
-	    String ref = null;
-	    String file = (String) st.nextToken();
-	    StringBuffer reference = new StringBuffer();
+            String file = BatchFile.getFilename(line);
+	    String reference = BatchFile.getReference(line);
 
-	    while (st.hasMoreTokens()) {
-		reference.append((String) st.nextToken());
-		reference.append(" ");
-	    }
-
-	    if (reference.length() > 0) {
-		ref = reference.toString();
-	    }
 	    if (++curCount >= skip) {
 		curCount = 0;
-		decodeFile(file, ref);
+		decodeFile(file, reference);
 	    }
         }
 
@@ -258,16 +245,7 @@ public class BatchDecoder {
      * @param file the name of the file 
      */
     List getLines(String file) throws IOException {
-	List list = new ArrayList();
-	BufferedReader reader 
-	    = new BufferedReader(new FileReader(file));
-
-	String line = null;
-
-	while ((line = reader.readLine()) != null) {
-	    list.add(line);
-	}
-	reader.close();
+	List list = BatchFile.getLines(file);
 
 	if (totalBatches > 1) {
 	    int linesPerBatch = list.size() / totalBatches;
@@ -314,18 +292,6 @@ public class BatchDecoder {
         getDecoder().decode(ref);
     }
 
-
-
-    /**
-     * Returns only the file name of the given full file path.
-     * For example, "/usr/java/bin/javac" will return "javac".
-     *
-     * @return the file name of the given full file path
-     */
-    private static String getFilename(String fullPath) {
-        int lastSlash = fullPath.lastIndexOf(File.separatorChar);
-        return fullPath.substring(lastSlash+1);
-    }
 
 
     /**
