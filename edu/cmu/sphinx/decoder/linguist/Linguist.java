@@ -13,6 +13,7 @@
 
 package edu.cmu.sphinx.decoder.linguist;
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
 
@@ -212,6 +213,7 @@ public interface Linguist {
      */
     public void initialize(String context,
 			   LanguageModel languageModel,
+                           Dictionary dictionary,
 			   Grammar grammar,
 			   AcousticModel[] models) ;
 
