@@ -96,7 +96,7 @@
         <property name="unitManager" value="unitManager"/>
 	<property name="addOutOfGrammarBranch" value="true"/>
 	<property name="outOfGrammarLinguist" value="phoneLoopLinguist"/>
-	<property name="outOfGrammarProbability" value="1E-60"/>
+	<property name="outOfGrammarProbability" value="1E-20"/>
     </component>
 
     <component name="phoneLoopLinguist"
