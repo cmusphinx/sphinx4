@@ -12,17 +12,9 @@
 
 package demo.jsapi.cardmatch;
 
-import edu.cmu.sphinx.decoder.Decoder;
-import edu.cmu.sphinx.decoder.linguist.JSGFGrammar;
-import edu.cmu.sphinx.frontend.util.Microphone;
-import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.util.SphinxProperties;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.net.URL;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -30,6 +22,13 @@ import java.util.StringTokenizer;
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
+
+import edu.cmu.sphinx.decoder.Decoder;
+import edu.cmu.sphinx.frontend.util.Microphone;
+import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.jsapi.JSGFGrammar;
+
 
 
 /**

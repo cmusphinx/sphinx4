@@ -11,7 +11,7 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.jsapi;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,6 +35,8 @@ import javax.speech.recognition.RuleToken;
 
 import com.sun.speech.engine.recognition.BaseRecognizer;
 
+import edu.cmu.sphinx.decoder.linguist.Grammar;
+import edu.cmu.sphinx.decoder.linguist.GrammarNode;
 import edu.cmu.sphinx.util.LogMath;
 
 
