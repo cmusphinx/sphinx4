@@ -25,6 +25,9 @@ public class  Unit implements Serializable {
      * The name for the silence unit
      */
     public static String SILENCE_NAME = "SIL";
+    /**
+     * The silence unit
+     */
     public static Unit SILENCE;
     private static Map ciMap;
     private static int nextID ;

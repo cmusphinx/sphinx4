@@ -872,6 +872,9 @@ public class LexTreeLinguist implements  Linguist {
          }
     }
 
+    /**
+     * A non-emitting hmm state
+     */
     public class LexTreeNonEmittingHMMState extends LexTreeHMMState {
         
         /**
