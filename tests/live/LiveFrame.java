@@ -50,7 +50,7 @@ public class LiveFrame extends JFrame {
 
     private Live live;
     private boolean debug = true;
-    private boolean showEndpointerPanel;
+    private boolean handsFree = false;
     
     // Dimension of this LiveFrame
     private Dimension dimension = new Dimension(500, 700);
@@ -87,7 +87,7 @@ public class LiveFrame extends JFrame {
     public LiveFrame(String title, Live live) {
         super(title);
         this.live = live;
-        this.showEndpointerPanel = Boolean.getBoolean("showEnergyPanel");
+        handsFree = Boolean.getBoolean("handsFree");
 
         setSize(dimension);
         setDefaultLookAndFeelDecorated(true);
@@ -261,7 +261,9 @@ public class LiveFrame extends JFrame {
     public void setNextButtonEnabled(final boolean enabled) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                nextButton.setEnabled(enabled);
+                if (nextButton != null) {
+                    nextButton.setEnabled(enabled);
+                }
             }
         });
     }
@@ -664,13 +666,15 @@ public class LiveFrame extends JFrame {
                 }
             });
 
-        nextButton = new JButton("Next");
-        nextButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setReferenceLabel(live.getNextReference());
+        if (!handsFree) {
+            nextButton = new JButton("Next");
+            nextButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        setReferenceLabel(live.getNextReference());
                 setRecognitionLabel("");
-            }
-        });
+                    }
+                });
+        }
 
         playButton = new JButton("Play");
         playButton.setEnabled(false);
@@ -691,7 +695,9 @@ public class LiveFrame extends JFrame {
 
         buttonPanel.add(speakButton);
         buttonPanel.add(stopButton);
-        buttonPanel.add(nextButton);
+        if (nextButton != null) {
+            buttonPanel.add(nextButton);
+        }
         buttonPanel.add(playButton);
         buttonPanel.add(exitButton);
 
@@ -710,7 +716,6 @@ public class LiveFrame extends JFrame {
             public void run() {
                 speakButton.setEnabled(!speaking);
                 stopButton.setEnabled(speaking);
-                // nextButton.setEnabled(!speaking);
                 playButton.setEnabled(!speaking);
                 decoderComboBox.setEnabled(!speaking);
             }

@@ -1,4 +1,4 @@
-decoders = bishop isolatedDigits connectedDigits player jsgf alphaSpelling
+decoders = isolatedDigits connectedDigits bishop player jsgf alphaSpelling
 
 # connectedDigits
 connectedDigits.name = Connected Digits

@@ -239,8 +239,14 @@ public class Live {
             // if the decoder switch is successful
             currentRecognizer = nextRecognizer;
             liveFrame.setTestFile(currentRecognizer.getTestFile());
-            liveFrame.setReferenceLabel(currentRecognizer.getNextReference());
-            liveFrame.setMessage("Using " + recognizerName + " recognizer");
+            if (!handsFree) {
+                liveFrame.setReferenceLabel
+                    (currentRecognizer.getNextReference());
+            }  else {
+                liveFrame.setReferenceLabel("");
+            }
+            liveFrame.setRecognitionLabel("");
+            liveFrame.setMessage(recognizerName + ", press \"Speak\" to start");
 
         } else {
             liveFrame.setMessage("Error trying to use " + recognizerName);
@@ -399,7 +405,17 @@ public class Live {
             
             if (handsFree) {
                 while (microphone.hasMoreData()) {
-                    recognizer.recognize(liveFrame.getReference());
+                    // just sleep for 500ms so that it won't appear to
+                    // be flipping through so quickly
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ie) {
+                        ie.printStackTrace();
+                    }
+                    String nextReference = getNextReference();
+                    liveFrame.setReferenceLabel(nextReference);
+                    liveFrame.setRecognitionLabel("");
+                    recognizer.recognize(nextReference);
                 }
                 liveFrame.setDecoderComboBoxEnabled(true);
             } else {
@@ -490,17 +506,19 @@ public class Live {
                     aligner = ((AccuracyTracker) cm.lookup("accuracyTracker")).getAligner();
                     recognizer.allocate();
                     setTestFile(testFile);
-                    
+
                     recognizer.addResultListener(new ResultListener() {
-                        public void newResult(Result result) {
-                            if (!result.isFinal() && showPartialResults) {
-                                showPartialResult(result);
+                            public void newResult(Result result) {
+                                if (!result.isFinal() && 
+                                    showPartialResults) {
+                                    showPartialResult(result);
+                                }
+                                if (result.isFinal()) {
+                                    updateLiveFrame
+                                        (currentRecognizer.getAligner());
+                                }
                             }
-                            if (result.isFinal()) {
-                                updateLiveFrame(currentRecognizer.getAligner());
-                            }
-                        }
-                    });
+                        });
                     allocated = true;
                 }
 
