@@ -56,6 +56,7 @@ WARRANTIES.
 <li><a href="#j2me">Can I use Sphinx-4 in a J2ME device such as a phone or a PDA?</a></li>
 <li><a href="#prior_1.4">Why can't I use Java versions prior to 1.4?</a></li>
 <li><a href="#microphone_linux">I am having microphone troubles under linux. What can I do?</a></li>
+<li><a href="#microphone_selection">How do I select a different microphone on my machine?</a></li>
 <li><a href="#java_tts">Where can I find a speech synthesizer for the Java platform?</a></li>
 </ul>
 
@@ -245,6 +246,70 @@ WARRANTIES.
          </li>
     </blockquote>
 
+<a name="microphone_selection"> <b> How do I select a different
+microphone (e.g., a USB headset) on my machine?</b></a>
+    <blockquote>
+      <p>By default, Sphinx-4 will use the getLine method of the Java
+      Sound AudioSystem class to obtain a TargetDataLine (i.e., the
+      object used to interface to your microphone).  This method grabs
+      a line from any of the available Mixers known to the
+      AudioSystem.  As such, when using the AudioSystem to obtain the
+      TargetDataLine, you have little control over which line is
+      chosen if more than one line matches the requirements of the
+      front end.  For example, if you plug in a USB headset into a
+      Macintosh PowerBook, the getLine method of the AudioSystem class
+      will typcially never select a line from the USB device.
+
+      <p>This behavior can be frustrating, especially when you have
+      a nice USB microphone you'd like to use.  
+
+      <p>To override the default behavior, you can set the <a
+      href="../javadoc/edu/cmu/sphinx/frontend/util/Microphone.html#PROP_SELECT_MIXER">selectMixer</a>
+      property of the <a
+      href="../javadoc/edu/cmu/sphinx/frontend/util/Microphone.html">Microphone</a>
+      class.  In Java Sound, a Mixer is an audio device with one or
+      more lines.  In practice, a Mixer tends to be mapped to a
+      particular system audio device.  For example, on the Mac,
+      there's a Mixer associated with the built-in audio hardware.
+      Furthermore, when you plug in a USB headset, a new Mixer will
+      appear for that headset.  The selectMixer property allows you to
+      specify which specific Mixer Sphinx-4 will use to select the
+      TargetDataLine.
+
+      <p>The value of the selectMixer property can be "default," which
+      means let the AudioSystem decide which line to use from all the
+      available Mixers, "last," which means select the last Mixer
+      supported by the AudioSystem (USB headsets tend to be associated
+      with the last Mixer), or an integer value that represents the
+      index of the Mixer.Info that is returned by
+      AudioSystem.getMixerInfo().  
+
+      <P>To get the list of Mixer.Info objects available on your
+      system, along with their integer index values, run the AudioTool
+      application with a command line argument of "-dumpMixers".
+
+      <p>To set the selectMixer property of the Microphone, you 
+      need to have a component in your config file that defines the
+      microphone.  In the examples in Sphinx-4, this component is
+      aptly named "microphone."  In the configuration for the 
+      microphone component, you can the set the selectMixer
+      property in the config file for the application.  For example:
+
+<pre>
+        &lt;property name="selectMixer" value="last"/>
+</pre>
+
+      <p>You can also set the selectMixer property from the command
+      line.  For example:
+
+<pre>
+        java -Dmicrophone[selectMixer]=last -jar bin/AudioTool.jar 
+</pre>
+ 
+      <p>In both of these examples, the last Mixer discovered by
+      the Java Sound AudioSystem class will be used to select
+      the TargetDataLine for the microphone.
+    </blockquote>
 
 <a name="java_tts"> <b> Where can I find a speech synthesizer for the Java
     platform?</b></a>

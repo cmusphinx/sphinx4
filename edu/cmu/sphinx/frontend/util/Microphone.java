@@ -181,7 +181,7 @@ public class Microphone extends BaseDataProcessor {
      * can be "default," (which means let the AudioSystem decide),
      * "last," (which means select the last Mixer supported by the
      * AudioSystem), which appears to be what is often used for USB
-     * headsets), or an integer value which represents the index of
+     * headsets, or an integer value which represents the index of
      * the Mixer.Info that is returned by AudioSystem.getMixerInfo().
      * To get the list of Mixer.Info objects, run the AudioTool
      * application with a command line argument of "-dumpMixers".

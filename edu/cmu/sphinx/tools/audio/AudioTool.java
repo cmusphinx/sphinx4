@@ -62,7 +62,10 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 
 
 /**
- * Records and displays the waveform and spectrogram of an audio signal.
+ * Records and displays the waveform and spectrogram of an audio
+ * signal.  See
+ * <a href="doc-files/HowToRunAudioTool.html">How to Run AudioTool</a>
+ * for information on how to run AudioTool.
  */
 public class AudioTool {
     static final String CONTEXT = "AudioTool";
