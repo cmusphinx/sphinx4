@@ -149,6 +149,23 @@ NOTE:  Before running the tests, you must have already built
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
+    <!-- * Runs the SphinxProperties test.                        * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="sphinxproperties"
+            description="Tests the SphinxProperties."
+	    depends="all">
+	    <java classname="tests.other.SphinxPropertiesTest"
+	          classpath="${classes_dir}"
+		  fork="true">
+		  <jvmarg value="-ea"/>
+		  <arg value="test.props"/>
+	    </java>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
     <!-- * Deletes all the .out files.                            * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
