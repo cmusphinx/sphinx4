@@ -20,7 +20,7 @@ import javax.sound.sampled.AudioSystem;
 /**
  * Pre-processes the input audio into Features. 
  */
-public class FrontEnd {
+public class FrontEnd implements Runnable {
 
     /**
      * The name of the SphinxProperty for window size (in samples).

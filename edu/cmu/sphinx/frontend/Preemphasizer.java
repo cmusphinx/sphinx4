@@ -60,7 +60,8 @@ public class Preemphasizer extends PullingProcessor {
 
 
     /**
-     * Reads the next Data object from this DataSource.
+     * Reads the next Data object, which is a DoubleAudioFrame,
+     * produced by this Preemphasizer
      *
      * @return the next available Data object, returns null if no
      *     Data object is available

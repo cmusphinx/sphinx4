@@ -17,6 +17,8 @@ public interface DataSource {
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
+     *
+     * @throws java.io.IOException
      */
     public Data read() throws IOException;
 }
