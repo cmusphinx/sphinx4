@@ -11,6 +11,8 @@ import java.io.StreamTokenizer;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.BufferedReader;
+import java.util.List;
+import java.util.ArrayList;
 
 
 public class ExtendedStreamTokenizer {
@@ -18,6 +20,7 @@ public class ExtendedStreamTokenizer {
     private StreamTokenizer st;
     private Reader reader;
     private boolean atEOF = false;
+    private List putbackList;
 
     /**
      * Creates and returns a stream tokenizer that has
@@ -52,6 +55,7 @@ public class ExtendedStreamTokenizer {
 	st.wordChars(33, 127);
 	st.eolIsSignificant(eolIsSignificant);
 	st.commentChar('#');
+	putbackList = new ArrayList();
     }
 
 
@@ -69,21 +73,35 @@ public class ExtendedStreamTokenizer {
      * @throws IOException if an error occurs while loading the data
      */
     public String getString() throws StreamCorruptedException, IOException  {
-	st.nextToken();
-	if (st.ttype == StreamTokenizer.TT_EOF) {
-	    atEOF = true;
-	}
-	if (st.ttype != StreamTokenizer.TT_WORD &&
-	    st.ttype != StreamTokenizer.TT_EOL &&
-	    st.ttype != StreamTokenizer.TT_EOF) {
-	    corrupt("word expected but not found");
-	}
-	if (st.ttype == StreamTokenizer.TT_EOL ||
-	    st.ttype == StreamTokenizer.TT_EOF) {
-	    return null;
+	if (putbackList.size() > 0) {
+	    return (String) putbackList.remove(putbackList.size() - 1);
 	} else {
-	    return st.sval;
+	    st.nextToken();
+	    if (st.ttype == StreamTokenizer.TT_EOF) {
+		atEOF = true;
+	    }
+	    if (st.ttype != StreamTokenizer.TT_WORD &&
+		st.ttype != StreamTokenizer.TT_EOL &&
+		st.ttype != StreamTokenizer.TT_EOF) {
+		corrupt("word expected but not found");
+	    }
+	    if (st.ttype == StreamTokenizer.TT_EOL ||
+		st.ttype == StreamTokenizer.TT_EOF) {
+		return null;
+	    } else {
+		return st.sval;
+	    }
 	}
+    }
+
+
+    /**
+     * Puts a string back, the next get will return this string
+     *
+     * @param string the string to unget
+     */
+    public void unget(String string) {
+	putbackList.add(string);
     }
 
 
