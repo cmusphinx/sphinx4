@@ -34,9 +34,23 @@ import java.util.StringTokenizer;
  */
 public class GapInsertionDetector {
 
+    /**
+     * SphinxProperty specifying whether to print out the gap
+     * insertion errors.
+     */
+    public static final String PROP_SHOW_GAP_INSERTIONS =
+        "edu.cmu.sphinx.util.GapInsertionDetector.showGapInsertions";
+
+    /**
+     * Default value for PROP_SHOW_GAP_INSERTIONS.
+     */
+    public static final boolean PROP_SHOW_GAP_INSERTIONS_DEFAULT = false;
+    
     private ReferenceFile referenceFile;
     private HypothesisFile hypothesisFile;
     private int totalGapInsertions;
+    private boolean showGapInsertions;
+
 
     /**
      * Create a gap insertion detector to detect gap insertions using
@@ -45,10 +59,13 @@ public class GapInsertionDetector {
      * @param referenceFile the file of references
      * @param hypothesisFile the file of hypotheses
      */
-    public GapInsertionDetector(String referenceFile, String hypothesisFile)
+    public GapInsertionDetector
+        (SphinxProperties props, String referenceFile, String hypothesisFile)
         throws IOException {
         this.referenceFile = new ReferenceFile(referenceFile);
         this.hypothesisFile = new HypothesisFile(hypothesisFile);
+        showGapInsertions = props.getBoolean
+            (PROP_SHOW_GAP_INSERTIONS, PROP_SHOW_GAP_INSERTIONS_DEFAULT);
     }
 
     /**
@@ -93,24 +110,29 @@ public class GapInsertionDetector {
 
                 if (hasGapError) {
                     gaps++;
-                    log += "GapInsError: Utterance: " + 
-                        hypothesisFile.getUtteranceCount() + 
-                        " Word: " + word.getText() + " (" + 
-                        word.getStartTime() + "," + word.getEndTime() + "). ";
-                    if (reference != null) {
-                        assert reference.isSilenceGap();
-                        log += ("Reference: <sil> (" + 
-                                reference.getStartTime() + "," +
-                                reference.getEndTime() + ")");
+                    if (showGapInsertions) {
+                        log += "GapInsError: Utterance: " + 
+                            hypothesisFile.getUtteranceCount() + 
+                            " Word: " + word.getText() + " (" + 
+                            word.getStartTime() + "," + word.getEndTime() +
+                            "). ";
+                        if (reference != null) {
+                            assert reference.isSilenceGap();
+                            log += ("Reference: <sil> (" + 
+                                    reference.getStartTime() + "," +
+                                    reference.getEndTime() + ")");
+                        }
+                        log += "\n";
                     }
-                    log += "\n";
                 }
             } else {
                 done = true;
             }
         }
         totalGapInsertions += gaps;
-        System.out.println(log);
+        if (showGapInsertions) {
+            System.out.println(log);
+        }
         return gaps;
     }
 }
