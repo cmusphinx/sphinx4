@@ -33,15 +33,15 @@ public class Utilities {
      * char.
      */
     public static String pad(int padding) {
-	if (padding > 0) {
-	    StringBuffer sb = new StringBuffer(padding);
-	    for (int i = 0; i < padding; i++) {
-		sb.append(' ');
-	    }
-	    return sb.toString();
-	 } else {
-	     return "";
-	 }
+        if (padding > 0) {
+            StringBuffer sb = new StringBuffer(padding);
+            for (int i = 0; i < padding; i++) {
+                sb.append(' ');
+            }
+            return sb.toString();
+         } else {
+             return "";
+         }
     }
 
     /**
@@ -55,14 +55,14 @@ public class Utilities {
      * padded with whitespace or truncated
      */
     public static String pad(String string, int minLength) {
-	String result = string;
-	int pad = minLength - string.length();
-	if (pad > 0) {
-	    result =  string + pad(minLength - string.length());
-	} else if (pad < 0) {
-	    result = string.substring(0, minLength);
-	}
-	return result;
+        String result = string;
+        int pad = minLength - string.length();
+        if (pad > 0) {
+            result =  string + pad(minLength - string.length());
+        } else if (pad < 0) {
+            result = string.substring(0, minLength);
+        }
+        return result;
     }
 
     
@@ -75,8 +75,8 @@ public class Utilities {
      * @param string the string to output
      */
     public static void dump(PrintWriter pw, int padding, String string) {
-	pw.print(pad(padding));
-	pw.println(string);
+        pw.print(pad(padding));
+        pw.println(string);
     }
 
 
@@ -87,12 +87,42 @@ public class Utilities {
      * @param count the count of objects
      */
     public static void objectTracker(String name, int count) {
-	if (TRACKING_OBJECTS) {
-	    if (count % 1000 == 0) {
-		System.out.println("OT: " + name + " " + count);
-	    }
-	}
+        if (TRACKING_OBJECTS) {
+            if (count % 1000 == 0) {
+                System.out.println("OT: " + name + " " + count);
+            }
+        }
     }
+
+    /**
+     * Dumps  out memory information
+     *
+     * @param msg addditional text for the dump
+     */
+
+    static long maxUsed = 0L;
+
+    public static void dumpMemoryInfo(String msg) {
+        Runtime rt = Runtime.getRuntime();
+        long free = rt.freeMemory();
+        rt.gc();
+        long reclaimedMemory = (rt.freeMemory() - free) 
+				/ (1024 * 1024);
+	long freeMemory = rt.freeMemory() / (1024 * 1024);
+	long totalMemory = rt.totalMemory() / (1024 * 1024);
+	long usedMemory = rt.totalMemory() - rt.freeMemory();
+
+	if (usedMemory > maxUsed) {
+	    maxUsed = usedMemory;
+	}
+
+	System.out.println("Memory (mb) " 
+		+ " total: " +  totalMemory 
+		+ " reclaimed: " +  reclaimedMemory
+		+ " free: " +  freeMemory 
+		+ " Max Used: " +  (maxUsed / (1024 * 1024))
+		+ " -- " + msg);
+     }
 }
 
   
