@@ -413,6 +413,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
         SearchState state = token.getSearchState();
         SearchStateArc[] arcs = state.getSuccessors();
+        Token wordPredecessor = getWordPredecessor(token);
         
         // For each successor
         // calculate the entry score for the token based upon the
@@ -439,7 +440,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             boolean firstToken = bestToken == null ;
 
             if (firstToken || bestToken.getScore() < logEntryScore) {
-                Token newBestToken = new Token(getWordPredecessor(token),
+                Token newBestToken = new Token(wordPredecessor,
                                                nextState,
                                                logEntryScore,
                                                arc.getLanguageProbability(),
@@ -462,7 +463,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                 }
             } else {
                 if (nextState instanceof WordSearchState)  {
-                    Token wordPredecessor = getWordPredecessor(token);
+                    // Token wordPredecessor = getWordPredecessor(token);
                     if (wordPredecessor != null) {
                         loserManager.addAlternatePredecessor
                             (bestToken, wordPredecessor);
