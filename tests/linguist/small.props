@@ -66,7 +66,7 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 
 edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=200
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-200
-edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.SimpleActiveList
+edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.FastActiveList
 edu.cmu.sphinx.search.SimpleDigitLinguist.isConnectedDigitGrammar=true
 edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-36
 edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1.0
@@ -121,6 +121,7 @@ edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-200
 edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar
+edu.cmu.sphinx.search.Recognizer.featureBlockSize=500
 edu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel
 edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist
 edu.cmu.sphinx.model.language.format=arpa
