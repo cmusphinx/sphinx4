@@ -23,10 +23,9 @@ import java.util.*;
  * edu.cmu.sphinx.frontend.EnergyEndpointer.startLow
  * edu.cmu.sphinx.frontend.EnergyEndpointer.startHigh
  * edu.cmu.sphinx.frontend.EnergyEndpointer.endLow
- * edu.cmu.sphinx.frontend.EnergyEndpointer.endHigh
  * </pre>
  *
- * The above 
+ * The above parameters are usually set by the user.
  * <pre>
  * edu.cmu.sphinx.frontend.EnergyEndpointer.startWindow
  * edu.cmu.sphinx.frontend.EnergyEndpointer.startOffset
@@ -101,7 +100,6 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     private float startHigh;  // upper bound for the start window
     
     private float endLow;     // lower bound for the end window
-    private float endHigh;    // upper bound for the end window
 
     // location values: below startLow, between low and high, above high
     private static final int BELOW_START_LOW = 1;
@@ -170,7 +168,6 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
         startOffset = properties.getInt(PROP_PREFIX + "startOffset", 5);
 
         endLow = properties.getFloat(PROP_PREFIX + "endLow", 0.0f);
-        endHigh = properties.getFloat(PROP_PREFIX + "endHigh", 0.0f);
         endWindow = properties.getInt(PROP_PREFIX + "endWindow", 30);
         endOffset = properties.getInt(PROP_PREFIX + "endOffset", 10);
         maxDropout = properties.getInt(PROP_PREFIX + "maxDropout", 10);
