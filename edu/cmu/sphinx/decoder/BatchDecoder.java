@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.util.BatchItem;
 import edu.cmu.sphinx.util.BatchManager;
@@ -26,6 +28,7 @@ import edu.cmu.sphinx.util.PooledBatchManager;
 import edu.cmu.sphinx.util.SimpleBatchManager;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.Utilities;
 
 
 /**
@@ -110,7 +113,21 @@ public class BatchDecoder {
      */
     public final static boolean PROP_SHOW_PROPS_AT_START_DEFAULT = false;
 
-    private StreamDataSource dataSource;
+
+    /**
+     * The SphinxProperty that specifies the type of data to decode.
+     */
+    public final static String PROP_INPUT_DATA_TYPE = 
+        PROP_PREFIX + "inputDataType";
+
+    
+    /**
+     * The default value for the property PROP_INPUT_DATA_TYPE.
+     */
+    public final static String PROP_INPUT_DATA_TYPE_DEFAULT = "audio";
+
+
+    private DataProcessor dataSource;
     private Decoder decoder;
     private String context;
     private int skip;
@@ -155,8 +172,16 @@ public class BatchDecoder {
                                                   whichBatch, totalBatches);
         }
 
-        dataSource = new StreamDataSource();
-        dataSource.initialize("StreamDataSource", null, props, null);
+        String inputDataType = props.getString
+            (PROP_INPUT_DATA_TYPE, PROP_INPUT_DATA_TYPE_DEFAULT);
+                                               
+        if (inputDataType.equals("cepstrum")) {
+            dataSource = new StreamCepstrumSource();
+            dataSource.initialize("StreamCepstrumSource", null, props, null);
+        } else {
+            dataSource = new StreamDataSource();
+            dataSource.initialize("StreamDataSource", null, props, null);
+        }
 
 	decoder = new Decoder(context);
         decoder.initialize();
@@ -185,7 +210,21 @@ public class BatchDecoder {
 
         while ((batchItem = batchManager.getNextItem()) != null) {
             InputStream is = new FileInputStream(batchItem.getFilename());
-            dataSource.setInputStream(is, batchItem.getFilename());
+            
+            if (dataSource instanceof StreamDataSource) {
+                
+                ((StreamDataSource) dataSource).setInputStream
+                    (is, batchItem.getFilename());
+            
+            } else if (dataSource instanceof StreamCepstrumSource) {
+            
+                boolean isBigEndian = Utilities.isCepstraFileBigEndian
+                    (batchItem.getFilename());
+                StreamCepstrumSource cepstrumSource =
+                    (StreamCepstrumSource) dataSource;
+                cepstrumSource.setInputStream(is, isBigEndian);
+            }
+
             decoder.decode(batchItem.getTranscript());
         }
         System.out.println("\nBatchDecoder: All files decoded\n");
