@@ -136,20 +136,6 @@ public class NISTAlign {
     DecimalFormat percentageFormat = new DecimalFormat("##0.0%");
     
 
-    /** 
-     * The filtered set contains a set of tokens that should be
-     * filtered out of the align process. We ignore silences, sentence
-     * starts and sentence ends.
-     */
-    private static Set filteredSet;
-
-    static {
-        filteredSet = new HashSet();
-        filteredSet.add("<sil>");
-        filteredSet.add("<s>");
-        filteredSet.add("</s>");
-    }
-
     /**
      * Creates a new NISTAlign object.
      */
@@ -873,8 +859,7 @@ public class NISTAlign {
     }
     
     /**
-     * Converts the given String or words to a LinkedList.  All
-     * "<sil>" are filtered out.
+     * Converts the given String or words to a LinkedList.  
      *
      * @param s the String of words to parse to a LinkedList
      *
@@ -885,9 +870,7 @@ public class NISTAlign {
         StringTokenizer st = new StringTokenizer(s.trim());
         while (st.hasMoreTokens()) {
             String token = st.nextToken().toLowerCase();
-            if (!filteredSet.contains(token)) {
-                list.add(token);
-            }
+            list.add(token);
         }
         return list;
     }

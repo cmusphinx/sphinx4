@@ -136,7 +136,7 @@ public class ServerDecoder extends BaseServer {
                 // "1" from the client signals a recognition request
                 while ((recognition = reader.readInt()) == 1) {
                     Result result = decoder.decode();
-                    String resultString = result.getBestResultNoSilences();
+                    String resultString = result.getBestResultNoFiller();
                     sendLine(resultString);
                 }
             } catch (EOFException eofe) {

@@ -15,6 +15,7 @@ package edu.cmu.sphinx.decoder.search;
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.knowledge.acoustic.HMMState;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
@@ -60,16 +61,8 @@ public class Token implements Scoreable {
 
     private static int curCount;
     private static int lastCount;
-    private static Set silenceSet;
     private static DecimalFormat scoreFmt = new DecimalFormat("0.0000000E00");
     private static DecimalFormat numFmt = new DecimalFormat("0000");
-
-    static {
-        silenceSet = new HashSet();
-        silenceSet.add(Dictionary.SILENCE_SPELLING);
-        silenceSet.add(Dictionary.SENTENCE_START_SPELLING);
-        silenceSet.add(Dictionary.SENTENCE_END_SPELLING);
-    }
 
     private Token predecessor;
     private int frameNumber;
@@ -409,11 +402,11 @@ public class Token implements Scoreable {
     /**
      * returns the string of words leading up to this token
      *
-     * @param wantSilences if true, silences are added
+     * @param wantFiller if true, filler words are added
      *
      * @return the word path
      */
-    public String getWordPath(boolean wantSilences) {
+    public String getWordPath(boolean wantFiller) {
         StringBuffer sb = new StringBuffer();
         Token token = this;
 
@@ -421,10 +414,9 @@ public class Token implements Scoreable {
             if (token.isWord()) {
                 WordSearchState wordState =
                         (WordSearchState) token.getSearchState();
-                String word = 
-                    wordState.getPronunciation().getWord().getSpelling();
-                if (wantSilences || !silenceSet.contains(word)) {
-                    sb.insert(0, word);
+                Word word = wordState.getPronunciation().getWord();
+                if (wantFiller || !word.isFiller()) {
+                    sb.insert(0, word.getSpelling());
                     sb.insert(0, " ");
                 }
             }
@@ -435,11 +427,11 @@ public class Token implements Scoreable {
 
     /**
      * Returns the string of words for this token, with no embedded
-     * silences
+     * filler words
      *
      * @return the string of words
      */
-    public String getWordPathNoSilences() {
+    public String getWordPathNoFiller() {
         return getWordPath(false);
     }
 

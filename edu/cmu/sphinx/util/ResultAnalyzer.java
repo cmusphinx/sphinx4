@@ -135,8 +135,7 @@ public class ResultAnalyzer {
     }
 
     /**
-     * Returns the list of hypothesized words only (that is, without
-     * words like <SIL>) to a space separated string.
+     * Returns the list of hypothesized words only  to a space separated string.
      */
     public String getHypothesis() {
         if (hypOutput == null) {
@@ -336,9 +335,7 @@ public class ResultAnalyzer {
 
 	while (st.hasMoreTokens()) {
 	    String word = st.nextToken();
-	    if (!word.equals("<sil>")) {
-		list.add(word);
-	    }
+            list.add(word);
 	}
 	return list;
     }
@@ -403,7 +400,7 @@ public class ResultAnalyzer {
 	ra.analyze("a b", "c c");
 	ra.analyze("aaa bbb ccc", "aaaa bbbb cccc");
 	ra.analyze("aaa bbb ccc ddd", "aaa bbb bbb ccc ddd");
-	ra.analyze("aaa bbb ccc ddd", "aaa <sil> bbb ccc ddd");
+	ra.analyze("aaa bbb ccc ddd", "aaa bbb ccc ddd");
 
 	ra.analyze("a b c d e f", "a z b c e f");
 

@@ -190,7 +190,7 @@ public class Result {
         text = text.trim();
         for (Iterator i = resultList.iterator(); i.hasNext();) {
             Token token = (Token) i.next();
-            if (text.equals(token.getWordPathNoSilences())) {
+            if (text.equals(token.getWordPathNoFiller())) {
                 return token;
             }
         }
@@ -209,7 +209,7 @@ public class Result {
         text = text.trim();
         for (Iterator i = activeList.iterator(); i.hasNext();) {
             Token token = (Token) i.next();
-            if (text.startsWith(token.getWordPathNoSilences())) {
+            if (text.startsWith(token.getWordPathNoFiller())) {
                 list.add(token);
             }
         }
@@ -335,16 +335,18 @@ public class Result {
 
 
     /**
-     * Returns the string of the best result, removing any silences.
+     * Returns the string of the best result, removing any filler
+     * words.
      *
-     * @return the string of the best result, removing any silences
+     * @return the string of the best result, removing any filler
+     * words
      */
-    public String getBestResultNoSilences() {
+    public String getBestResultNoFiller() {
         Token token = getBestToken();
         if (token == null) {
             return "";
         } else {
-            return token.getWordPathNoSilences();
+            return token.getWordPathNoFiller();
         }
     }
 

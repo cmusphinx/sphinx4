@@ -448,7 +448,8 @@ public class Decoder {
 	Token bestToken = result.getBestToken();
         
 	if (currentReferenceText != null) {
-            match = aligner.align(currentReferenceText, result.toString());
+            match = aligner.align(currentReferenceText,
+                    result.getBestResultNoFiller());
             aligner.printSentenceSummary();
             aligner.printTotalSummary();
 	} else {
