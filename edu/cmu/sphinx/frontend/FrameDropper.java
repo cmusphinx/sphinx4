@@ -95,29 +95,36 @@ public class FrameDropper extends DataProcessor implements FeatureSource {
      */
     public Feature getFeature() throws IOException {
         Feature feature = predecessor.getFeature();
-        if (feature.hasContent()) {
-            if ((feature.getID() % dropEveryNthFrame) == 
-                (dropEveryNthFrame - 1)) {
-                if (replaceNthWithPrevious) {
-                    feature = new Feature
-                        (lastFeature.getFeatureData(), id++);
-                } else {
-                    feature = predecessor.getFeature();
-                    if (feature.hasContent()) {
-                        feature.setID(id++);
+        if (feature != null) {
+            if (feature.hasContent()) {
+                if ((feature.getID() % dropEveryNthFrame) == 
+                    (dropEveryNthFrame - 1)) {
+                    if (replaceNthWithPrevious) {
+                        feature = new Feature
+                            (lastFeature.getFeatureData(), id++);
+                    } else {
+                        feature = predecessor.getFeature();
+                        if (feature != null && feature.hasContent()) {
+                            feature.setID(id++);
+                        }
                     }
+                } else {
+                    feature.setID(id++);
+                }
+            }
+            if (feature != null) {
+                if (feature.hasSignal(Signal.UTTERANCE_START)) {
+                    id = 0;
+                }
+                
+                if (feature.hasContent()) {
+                    lastFeature = feature;
+                } else {
+                    lastFeature = null;
                 }
             } else {
-                feature.setID(id++);
+                lastFeature = null;
             }
-        } else if (feature.hasSignal(Signal.UTTERANCE_START)) {
-            id = 0;
-        }
-
-        if (feature.hasContent()) {
-            lastFeature = feature;
-        } else {
-            lastFeature = null;
         }
 
         return feature;
