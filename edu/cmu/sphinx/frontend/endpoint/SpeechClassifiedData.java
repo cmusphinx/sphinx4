@@ -70,6 +70,16 @@ class SpeechClassifiedData implements Data {
 
 
     /**
+     * Returns the sample rate of the data.
+     *
+     * @return the sample rate of the data
+     */
+    public int getSampleRate() {
+        return data.getSampleRate();
+    }
+
+
+    /**
      * Returns the time in milliseconds at which the audio data is collected.
      *
      * @return the difference, in milliseconds, between the time the
