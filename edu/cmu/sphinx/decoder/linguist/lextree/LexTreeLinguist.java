@@ -95,6 +95,20 @@ public class LexTreeLinguist implements  Linguist {
      */
     public final static boolean PROP_MAINTAIN_SEPARATE_WORD_RC_DEFAULT = true;
 
+
+    /**
+     * An array of classes that represents the order 
+     * in which the states will be returned.
+     */
+    private final static Class[] searchStateOrder = {
+        LexTreeInitialState.class,
+        LexTreeHMMState.class,
+        LexTreeNonEmittingHMMState.class,
+        LexTreeUnitState.class,
+        LexTreeWordState.class
+    };
+
+
     private SphinxProperties props;
 
     private LanguageModel languageModel;
@@ -120,6 +134,18 @@ public class LexTreeLinguist implements  Linguist {
     private boolean fullWordHistories = true;
     private boolean maintainSeparateRightContextsForWords = false;
     
+
+    /**
+     * Returns an array of classes that represents the order 
+     * in which the states will be returned.
+     *
+     * @return an array of classes that represents the order 
+     *     in which the states will be returned
+     */
+    public Class[] getSearchStateOrder() {
+        return searchStateOrder;
+    }
+
 
     /**
      * Creates a LexTree linguist associated with the given context
@@ -623,7 +649,8 @@ public class LexTreeLinguist implements  Linguist {
     /**
      * Represents a unit in the search space
      */
-    public class LexTreeUnitState extends LexTreeState implements UnitSearchState {
+    public class LexTreeUnitState extends LexTreeState 
+    implements UnitSearchState {
         int unitID;
 
 
@@ -762,7 +789,9 @@ public class LexTreeLinguist implements  Linguist {
     /**
      * Represents a HMM state in the search space
      */
-    public class LexTreeHMMState extends LexTreeState implements HMMSearchState {
+    public class LexTreeHMMState extends LexTreeState 
+    implements HMMSearchState {
+    
         private HMMState hmmState;
 
         /**
@@ -926,10 +955,17 @@ public class LexTreeLinguist implements  Linguist {
                 nextStates = new SearchStateArc[arcs.length];
                 for (int i = 0; i < arcs.length; i++) {
                     HMMStateArc arc = arcs[i];
-                    nextStates[i] = new LexTreeHMMState(
-                                getLeftID(), getCentral(), getRight(),
-                                getWordSequence(),
-                                arc.getHMMState(), arc.getLogProbability());
+                    if (arc.getHMMState().isEmitting()) {
+                        nextStates[i] = new LexTreeHMMState
+                            (getLeftID(), getCentral(), getRight(),
+                             getWordSequence(),
+                             arc.getHMMState(), arc.getLogProbability());
+                    } else {
+                        nextStates[i] = new LexTreeNonEmittingHMMState
+                            (getLeftID(), getCentral(), getRight(),
+                             getWordSequence(),
+                             arc.getHMMState(), arc.getLogProbability());
+                    }
                 }
             }
             return nextStates;
@@ -946,6 +982,36 @@ public class LexTreeLinguist implements  Linguist {
              return super.toString() + " hmm:" +  hmmState;
          }
     }
+
+    public class LexTreeNonEmittingHMMState extends LexTreeHMMState {
+        
+        /**
+         * Constructs a NonEmittingLexTreeHMMState
+         *
+         * @param leftID the id of the unit forming the left context
+         * (or 0 if there is no left context) of a triphone context
+         *
+         * @param central the unit forming the central portion of a
+         * triphone context
+         *
+         * @param right the unit forming the right portion of a
+         * triphone context
+         * 
+         * @param hmmState the hmm state associated with this unit
+         *
+         * @param wordSequence the word history 
+         *
+         * @param probability the probability of the transition
+         * occuring
+         */
+        LexTreeNonEmittingHMMState(int leftID, LexTree.UnitLexNode central, 
+                                   LexTree.UnitLexNode right, 
+                                   WordSequence wordSequence, 
+                                   HMMState hmmState, float probability) {
+            super(leftID, central, right, wordSequence, hmmState, probability);
+        }
+    }
+
 
     /**
      * Gets the arcs to all of the successor nodes
