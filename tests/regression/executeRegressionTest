@@ -119,8 +119,8 @@ if [ $status = "OK" ]; then
        batch) 
 	      echo batch mode;
 	      rm -f $regressionDir/.testDone;
-	      echo qsub $regressionDir/$runTests; 
-	      qsub $regressionDir/$runTests; 
+	      echo qsub -q s4 $regressionDir/$runTests; 
+	      qsub -q s4 $regressionDir/$runTests; 
 	      echo waitForFile $regressionDir/.testDone;
 	      $regressionDir/waitForFile $regressionDir/.testDone;;
    esac
