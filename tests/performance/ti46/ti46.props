@@ -83,7 +83,7 @@ edu.cmu.sphinx.knowledge.language.format=arpa
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation = true
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dictionary
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = fillerdict
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=true
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
 
 
 ############################################################
