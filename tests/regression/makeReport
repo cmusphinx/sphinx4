@@ -110,25 +110,23 @@ function getAccuracyStatus(testName) {
   }
 
   if (prevWER == "N/A") {
-      return "OK";
+      return "OK - " thisWER "";
   }
 
   if (thisWER == prevWER) {
-      return "OK";
+      return "OK - " thisWER "";
   }
 
   if (thisWER > prevWER) {
       
-      return "REGRESSED - WER increased by " (thisWER - prevWER) \
-         " to " thisWER "%"
+      return "REGRESSED - increased from " prevWER  " to " thisWER ""
   }
 
   if (thisWER < prevWER) {
-      return "IMPROVED - WER decreased by " (prevWER - thisWER) \
-         " to " thisWER "%"
+      return "IMPROVED  - decreased from " prevWER  " to " thisWER ""
   }
 
-  return thisWER "%"
+  return "OK - " thisWER "";
 }
 
 ####
@@ -143,26 +141,26 @@ function getSpeedStatus(testName, _slowThreshold, _fastThreshold) {
   }
 
   if (prevSpeed == "N/A") {
-      return "OK";
+      return "OK - " thisSpeed " ";
   }
 
   if (thisSpeed == prevSpeed) {
-      return "OK";
+      return "OK - " thisSpeed " ";
   }
 
   _slowThreshold = prevSpeed + prevSpeed * .0;
   _fastThreshold = prevSpeed - prevSpeed * .0;
 
   if (thisSpeed > _slowThreshold) {
-      return "REGRESSED - reduced from " prevSpeed " to " \
-      	thisSpeed " X Realtime" ;
+      return "REGRESSED - decreased from " prevSpeed " to " \
+      	thisSpeed " " ;
   }
 
   if (thisSpeed  < _fastThreshold) {
-      return "IMPROVED - increased from " prevSpeed " to " \
-      	thisSpeed " X Realtime";
+      return "IMPROVED  - increased from " prevSpeed " to " \
+      	thisSpeed " ";
   }
-  return "OK";
+  return "OK - " thisSpeed " ";
 }
 
 ####
@@ -210,9 +208,9 @@ END {
 
     for (i in testCount) {
         print i;
-	print "    Status       "  getRunStatus(i);
-	print "    Accuracy     "  getAccuracyStatus(i);
-	print "    Speed        "  getSpeedStatus(i);
+	print "    Status           "  getRunStatus(i);
+	print "    Accuracy (WER %) "  getAccuracyStatus(i);
+	print "    Speed (X RT)     "  getSpeedStatus(i);
 	printf("\n");
     }
     print ""

@@ -122,25 +122,25 @@ function getAccuracyStatus(testName, count) {
   prevWER = getWER(testName, count - 1);
 
   if (thisWER == "N/A") {
-      return "<td bgcolor=#ffcccc>" "N/A" "%</td>";
+      return "<td bgcolor=#ffcccc>" "N/A" "</td>";
   }
 
   if (prevWER == "N/A") {
-      return "<td>" thisWER "%</td>";
+      return "<td>" thisWER "</td>";
   }
 
   if (thisWER == prevWER) {
-      return "<td>" thisWER "%</td>";
+      return "<td>" thisWER "</td>";
   }
 
   if (thisWER > prevWER) {
-      return "<td bgcolor=#ffcccc>" thisWER "%</td>";
+      return "<td bgcolor=#ffcccc>" thisWER "</td>";
   }
 
   if (thisWER < prevWER) {
-      return "<td bgcolor=#99ff99>" thisWER "%</td>";
+      return "<td bgcolor=#99ff99>" thisWER "</td>";
   }
-  return "<td>" thisWER "%</td>";
+  return "<td>" thisWER "</td>";
 }
 
 ####
