@@ -1,4 +1,3 @@
-
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -40,7 +39,7 @@ import javax.speech.recognition.RuleParse;
  */
 public class CardMatch implements Recorder {
 
-    private static final String PROP_PREFIX = "demo.jsapi.CardMatch.";
+    private static final String PROP_PREFIX = "demo.jsapi.cardmatch.";
 
     private static final String PROP_NUM_CARDS = PROP_PREFIX + "numberOfCards";
     private static final int PROP_NUM_CARDS_DEFAULT = 6;
@@ -71,6 +70,9 @@ public class CardMatch implements Recorder {
          "What a shame.",
          "What is wrong with you?",
          "Can you remember anything?"};
+
+    private String victoryText = 
+	"Ha ha! You finally got all the cards. Congratulations!";
          
 
     private Decoder decoder;
@@ -89,7 +91,7 @@ public class CardMatch implements Recorder {
      */
     public CardMatch(String context) throws IOException {
 
-        System.out.println("Loading decoder...");
+        System.out.println("   Loading decoder...");
 	
 	decoder = new Decoder(context);
         SphinxProperties props = decoder.getSphinxProperties();
@@ -102,39 +104,41 @@ public class CardMatch implements Recorder {
 
 	microphone = new Microphone("mic", context, props);
 	decoder.initialize(microphone);
-        System.out.println("decoder initialized");
+        System.out.println("   Initialized Decoder");
 
         int numberOfCards = props.getInt
             (PROP_NUM_CARDS, PROP_NUM_CARDS_DEFAULT);
         String[] imageFiles = getImageFiles(props);
-        System.out.println("parsed image files");
+        System.out.println("   Parsed image files");
 
         game = new Game(numberOfCards, imageFiles);
-        System.out.println("created and shuffled cards");
+        System.out.println("   Created and shuffled cards");
 
         if (useVoice) {
             try {
                 voice = new CardMatchVoice();
-                System.out.println("CardMatchVoice loaded");
+                System.out.println("   Loaded synthesizer voice");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-	cardMatchFrame = new CardMatchFrame
-            ("Card Match", this, game.getCards());
+	cardMatchFrame = 
+	    new CardMatchFrame("Card Match", this, game.getCards());
+
 	cardMatchFrame.show();
 
-        JSGFGrammar grammar = 
-            (JSGFGrammar)decoder.getRecognizer().getGrammar();
+        JSGFGrammar grammar = (JSGFGrammar)decoder.getRecognizer().getGrammar();
         ruleGrammar = grammar.getRuleGrammar();
+        System.out.println("   Loaded Grammar");
+        System.out.println("   Here we go ...");
     }
 
 
     /**
      * Returns an array of all the image file names.
      *
-     * @param the SphinxProperties to get the file names from
+     * @param props the SphinxProperties to get the file names from
      *
      * @return an array of all the image file names
      */
@@ -158,16 +162,14 @@ public class CardMatch implements Recorder {
 
     /**
      * Starts recording.
+     *
+     * @return true if recording started successfully.
      */
     public boolean startRecording() {
-	System.out.println("Draining ...");
-        decoder.getRecognizer().getFrontEnd().drain();
-	System.out.println("Clearing ...");
+	drain();
         microphone.clear();
-	System.out.println("Starting ...");
 	boolean started = microphone.startRecording();
         if (started) {
-	    System.out.println("Started!");
             (new DecodingThread()).start();
         } else {
 	    System.out.println("Not started!");
@@ -181,7 +183,6 @@ public class CardMatch implements Recorder {
      */
     public boolean stopRecording() {
 	microphone.stopRecording();
-	System.out.println("Stopped!");
 	return true;
     }
 
@@ -220,6 +221,14 @@ public class CardMatch implements Recorder {
 
 
     /**
+     * Drains the frontend of any remaining audio
+     */
+    private void drain() {
+        decoder.getRecognizer().getFrontEnd().drain();
+    }
+
+
+    /**
      * Returns a line of text saying its a bad guess.
      *
      * @return a line of text saying its a bad guess
@@ -244,19 +253,17 @@ public class CardMatch implements Recorder {
          * Runs this DecodingThread.
          */
         public void run() {
-            System.out.println("Start decoding...");
             Result result = decoder.decode();
             
             if (doEndpointing) {
                 microphone.stopRecording();
             }
 
-            System.out.println("...stop decoding");
             String resultText = result.getBestResultNoSilences();
 
             try {
                 String tag = getResultTag(resultText);
-                System.out.println("ACTION tag: " + tag);
+		// System.out.println("Tag: " + tag);
 
                 if (tag != null) {
                     if (tag.equals("new_game")) {
@@ -268,9 +275,7 @@ public class CardMatch implements Recorder {
                     } else {
                         // or it tag is "1", "2" ... "6"
                         game.turnCard(tag);
-                        cardMatchFrame.invalidate();
-                        cardMatchFrame.repaint();
-                        (new MatchingThread()).start();
+			handleCards();
                     }
                 }
             } catch (GrammarException ge) {
@@ -278,9 +283,42 @@ public class CardMatch implements Recorder {
             } finally {
                 cardMatchFrame.setResultTextField(resultText);
                 cardMatchFrame.setSpeakButtonSelected(false);
-                (new DrainingThread()).start();
+		drain();
             }
         }
+
+
+	/**
+	 * Handle card turnovers
+	 */
+	private void handleCards() {
+            if (game.hasTwoGuesses()) {
+                if (game.checkForMatches()) {
+                    if (game.hasWon()) {
+                        speak(victoryText);
+                    } else {
+                        speak(getGoodGuessText());
+                    }
+                } else {
+                    speak(getBadGuessText());
+		    delay(1000L);
+                    game.turnGuessedCards();
+                }
+            }
+	}
+
+	/**
+	 * Delay for the given number of milliseconds
+	 *
+	 * @param milli milliseconds to delay
+	 */
+	private void delay(long milli) {
+            try {
+                Thread.sleep(milli);
+            } catch (InterruptedException ie) {
+                ie.printStackTrace();
+            }
+	}
 
 
         /**
@@ -302,37 +340,6 @@ public class CardMatch implements Recorder {
         }
     }
 
-
-    class MatchingThread extends Thread {
-        public void run() {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ie) {
-                ie.printStackTrace();
-            }
-            if (game.hasTwoGuesses()) {
-                if (game.checkForMatches()) {
-                    if (game.hasWon()) {
-                        speak
-                            ("Ha ha! You finally got all the cards. " +
-                             "Congratulations!");
-                    } else {
-                        speak(getGoodGuessText());
-                    }
-                } else {
-                    speak(getBadGuessText());
-                    game.turnGuessedCards();
-                }
-            }
-        }
-    }
-
-
-    class DrainingThread extends Thread {
-        public void run() {
-            decoder.getRecognizer().getFrontEnd().drain();
-        }
-    }
 
 
     /**
