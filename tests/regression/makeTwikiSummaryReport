@@ -185,6 +185,25 @@ function getAccuracy(testName, systemName) {
      return getAccuracyFromLine(testData[testName "-" systemName]);
 }
 
+####
+# returns the accuracy for the given test/system
+#
+function getDateFromLine(line) {
+     split(line, data);
+    _date = data[F_DATE];
+    _status = data[F_STATUS];
+
+    if (_date == "" || _status != "OK") {
+        return NOT_AVAILABLE;
+    } else {
+	return _date;
+    }
+}
+
+function getDate(testName, systemName) {
+     return getDateFromLine(testData[testName "-" systemName]);
+}
+
 
 
 ####
@@ -201,6 +220,8 @@ function dumpTest(testName,  _j) {
        accuracy = getAccuracy(testName, systemName[_j]);
        printf("| %s ", accuracy);
    }
+   date = getDate(testName, "s4");
+   printf("| %s ", date);
    printf("|\n");
 }
 
@@ -216,8 +237,8 @@ function dumpTitle(  i) {
         machineName = machine;
     }
 
-    printf("|   *%s %s on %s*  |||||||\n", modeTitle[mode], title, machineName);
-    printf("| *&nbsp;* | *Speed (RT)*  ||| *WER (%)* |||\n");
+    printf("|   *%s %s on %s*  ||||||||\n", modeTitle[mode], title, machineName);
+    printf("| *&nbsp;* | *Speed (RT)*  ||| *WER (%)* ||| *Date* |\n");
 
 
     printf("| *%s* ", "Test");
@@ -229,6 +250,7 @@ function dumpTitle(  i) {
 	detailLink = "Regression.AutoGen" mode title systemLinkName[systemName[i]] "_" machine;
         printf("| *[[%s][%s]]* ", detailLink, systemTitle[systemName[i]]);
     }
+    printf("| *%s* ", systemTitle["s4"]); 
     printf("|\n");
 }
 
