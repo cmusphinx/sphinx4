@@ -13,6 +13,21 @@
 
 package edu.cmu.sphinx.frontend.util;
 
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
+
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
@@ -21,32 +36,7 @@ import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FrontEndFactory;
-import edu.cmu.sphinx.frontend.Signal;
-
 import edu.cmu.sphinx.util.SphinxProperties;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileOutputStream;
-import java.io.File;
-
-import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Arrays;
-import java.util.Vector;
-
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.TargetDataLine;
-import javax.sound.sampled.Line;
 
 
 /**
