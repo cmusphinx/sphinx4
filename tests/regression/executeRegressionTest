@@ -13,6 +13,16 @@
 # notification
 
 regressionDir=$PWD
+
+###################
+# Since the scripts just came out of CVS, they may not
+# be executable yet.  So make them executable
+#
+scripts="getTime mailReport makeReport parseLog regressionTest\
+	runAllTests runTest s4_align s4_align_sum"
+
+chmod +x $scripts
+
 logBase=regression.log
 logPath=$regressionDir/$logBase
 rootDir=../../

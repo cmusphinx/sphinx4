@@ -13,6 +13,6 @@
 # address to the list of recipients
 #
 
-recipients="Paul.Lamere@sun.com plamere@east"
+recipients="Paul.Lamere@sun.com "
 makeReport < regression.log | mailx -s "S4 regression test report" $recipients
 
