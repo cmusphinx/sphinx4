@@ -195,7 +195,7 @@ function get(testName, field) {
 
 function getPercent(num, denom) {
     if (denom != NOT_AVAILABLE && denom !=  0) {
-         return (num / denom) * 100.0;
+         return ((num / denom) * 100.0)  " ("  num ")";
     } else {
         return NOT_AVAILABLE;
     }
@@ -241,9 +241,9 @@ function dumpTitle(  i) {
     printf("| *%s %s* ", "Test run on", machineName);
     printf("| *%s* ", "Speed (RT)");
     printf("| *%s* ", "Num Words");
-    printf("| *%s* ", "Insertions (%)");
-    printf("| *%s* ", "Deletions (%)");
-    printf("| *%s* ", "Substitutions (%)");
+    printf("| *%s* ", "Insertions (%) (#)");
+    printf("| *%s* ", "Deletions (%) (#)");
+    printf("| *%s* ", "Substitutions (%) (#)");
     printf("| *%s* ", "Word Error Rate (%)");
     printf("| *%s* ", "Num Sentences");
     printf("| *%s* ", "Sentences with Errors");
