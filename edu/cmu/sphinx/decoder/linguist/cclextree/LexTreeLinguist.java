@@ -720,12 +720,23 @@ public class LexTreeLinguist implements  Linguist {
           HMMNode[] nodes = getHMMNodes(getEndNode());
           SearchStateArc[] arcs = new SearchStateArc[nodes.length];
 
-          for (int i = 0; i < nodes.length; i++) {
-              arcs[i] = new LexTreeUnitState(nodes[i], getWordHistory(), 
-                  logOne, logOne, this.getNode());
+          if (generateUnitStates) {
+              for (int i = 0; i < nodes.length; i++) {
+                  arcs[i] = new LexTreeUnitState(nodes[i], getWordHistory(), 
+                      logOne, logOne, this.getNode());
+              }
+          } else {
+              for (int i = 0; i < nodes.length; i++) {
+                    HMM hmm = nodes[i].getHMM();
+                    arcs[i] = new LexTreeHMMState(nodes[i],
+                         getWordHistory(), hmm.getInitialState(),
+                         logOne,
+                         logOne, logOne, this.getNode());
+              }
           }
           return arcs;
        }
+
 
        public String toString() {
            return super.toString() + " EndUnit";
