@@ -71,6 +71,7 @@ live: all
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=12 \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=9 \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startWindow=8 \
+	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	tests.live.Live decoders.list
 
 
@@ -88,6 +89,7 @@ live-free: all
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=12 \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=9 \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startWindow=8 \
+	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	tests.live.Live decoders.list
 
 
@@ -100,4 +102,5 @@ live-alpha: all
 	-DshowPartialResults=true \
 	-Dedu.cmu.sphinx.frontend.cmn.live=true \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
+	-D
 	tests.live.Live decoders.list
