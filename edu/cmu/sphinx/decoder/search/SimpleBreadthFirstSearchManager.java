@@ -30,6 +30,7 @@ import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 
 import java.util.HashSet;
@@ -131,6 +132,9 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     private StatisticsVariable totalTokensScored;
     private StatisticsVariable curTokensScored;
     private StatisticsVariable tokensCreated;
+    private StatisticsVariable viterbiPruned;
+    private StatisticsVariable beamPruned;
+    private StatisticsVariable wordsPruned;
 
     private boolean showTokenCount;
     private Map bestTokenMap;
@@ -138,6 +142,8 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
     private int absoluteWordBeamWidth;
     private float logRelativeWordBeamWidth;
+
+    private int totalHmms;
 
 
     /**
@@ -169,6 +175,15 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	tokensCreated =
             StatisticsVariable.getStatisticsVariable(props.getContext(),
 		    "tokensCreated");
+	viterbiPruned =
+            StatisticsVariable.getStatisticsVariable(props.getContext(),
+                    "viterbiPruned");
+	beamPruned =
+            StatisticsVariable.getStatisticsVariable(props.getContext(),
+                    "beamPruned");
+	wordsPruned =
+            StatisticsVariable.getStatisticsVariable(props.getContext(),
+                    "wordsPruned");
 
         absoluteWordBeamWidth = props.getInt(PROP_ABSOLUTE_WORD_BEAM_WIDTH,
                     PROP_ABSOLUTE_WORD_BEAM_WIDTH_DEFAULT);
@@ -305,8 +320,20 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
         }
 
         pruneWords();
+        int words = wordList.size();
         growWords();
         growTimer.stop();
+        int hmms  = activeList.size();
+
+        totalHmms += hmms;
+
+        if (false) {
+            System.out.println("Frame: " + currentFrameNumber 
+                     + " Hmms: " + hmms + " Words: " + words + " total " 
+                     + totalHmms );
+        }
+        // dump out the active list
+
     }
 
 
@@ -336,8 +363,13 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      *
      */
     protected void pruneBranches() {
-	 pruneTimer.start();
+         int startSize = activeList.size();
+         pruneTimer.start();
+         if (false) {
+             System.out.print("Frame: " + currentFrameNumber + " ");
+         }
          activeList =  pruner.prune(activeList);
+         beamPruned.value += startSize - activeList.size();
 	 pruneTimer.stop();
     }
 
@@ -427,9 +459,12 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
                         activeList.add(newToken);
                     } else {
                         activeList.replace(bestToken, newToken);
+                        viterbiPruned.value++;
                     }
                 }
-	    }
+	    } else {
+                viterbiPruned.value++;
+            }
         }
     }
 
@@ -439,6 +474,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      */
     public void pruneWords() {
 	if (absoluteWordBeamWidth > 0 && wordList.size() > 0) {
+
             Collections.sort(wordList, Token.COMPARATOR);
 
 	    Token bestToken = (Token) wordList.get(0);
@@ -456,9 +492,11 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
             if (false) {
                 System.out.println("Words: "+ wordList.size() + " to " + count);
             }
+            wordsPruned.value += (wordList.size() - count);
 	    wordList = wordList.subList(0, count);
 	}
     }
+
 
     /**
      * Grow the remaining word tokens onto the active list
