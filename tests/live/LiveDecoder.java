@@ -20,9 +20,10 @@ import edu.cmu.sphinx.frontend.CepstrumSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.LiveCMN;
 import edu.cmu.sphinx.frontend.util.Microphone;
-import edu.cmu.sphinx.frontend.NonSpeechFilter;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.SimpleFrontEnd;
+
+import edu.cmu.sphinx.frontend.endpoint.NonSpeechFilter;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.result.Result;
@@ -148,7 +149,8 @@ public class LiveDecoder extends Decoder {
             SphinxProperties.getSphinxProperties(getContext()).getString
             (FrontEnd.PROP_ENDPOINTER, null);
         return (endpointer != null &&
-                endpointer.equals("edu.cmu.sphinx.frontend.EnergyEndpointer"));
+                endpointer.equals
+                ("edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer"));
     }
     
     

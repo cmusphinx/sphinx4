@@ -15,16 +15,17 @@ package tests.frontend;
 
 import edu.cmu.sphinx.frontend.Cepstrum;
 import edu.cmu.sphinx.frontend.CepstrumSource;
-import edu.cmu.sphinx.frontend.EnergyEndpointer;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer;
 import edu.cmu.sphinx.frontend.mfc.MelFilterbank;
-import edu.cmu.sphinx.frontend.NonSpeechFilter;
 import edu.cmu.sphinx.frontend.Preemphasizer;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.SpectrumAnalyzer;
 import edu.cmu.sphinx.frontend.Utterance;
 import edu.cmu.sphinx.frontend.Windower;
+
+import edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer;
+import edu.cmu.sphinx.frontend.endpoint.NonSpeechFilter;
 
 import edu.cmu.sphinx.util.*;
 

@@ -76,11 +76,11 @@ live-ep: all
 	$(JAVA_CMD) \
 	-DshowPartialResults=true \
 	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=9 \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=12 \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=9 \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startWindow=8 \
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=9 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=12 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=9 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=8 \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	tests.live.Live decoders.list
 
@@ -94,11 +94,11 @@ live-free: all
 	-DhandsFree=true \
 	-Dedu.cmu.sphinx.frontend.NonSpeechFilter.mergeSpeechSegments=false \
 	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=9 \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=12 \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=9 \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startWindow=8 \
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=9 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=12 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=9 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=8 \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	tests.live.Live decoders.list
 
@@ -111,10 +111,10 @@ live-alpha: all
 	-DfirstDecoder="Alpha Spelling" \
 	-DshowPartialResults=true \
 	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=10 \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=13 \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=10 \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startWindow=10 \
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=10 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=13 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=10 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=10 \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	tests.live.Live decoders.list
