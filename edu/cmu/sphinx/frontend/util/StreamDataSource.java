@@ -42,6 +42,16 @@ public class StreamDataSource extends BaseDataProcessor {
         "edu.cmu.sphinx.frontend.util.StreamDataSource.";
 
     /**
+     * SphinxProperty for the sample rate of the data.
+     */
+    public static final String PROP_SAMPLE_RATE = PROP_PREFIX + "sampleRate";
+
+    /**
+     * Default value for PROP_SAMPLE_RATE.
+     */
+    public static final int PROP_SAMPLE_RATE_DEFAULT = 16000;
+
+    /**
      * SphinxProperty for the number of bytes to read from the InputStream
      * each time.
      */
@@ -89,9 +99,10 @@ public class StreamDataSource extends BaseDataProcessor {
 
     private InputStream dataStream;
 
+    private int sampleRate;
     private int bytesPerRead;
     private int bytesPerValue;
-    private long totalValuesRead;
+    private long totalValuesRead = 0;
 
     private boolean bigEndian;
     private boolean signedData;
@@ -133,6 +144,9 @@ public class StreamDataSource extends BaseDataProcessor {
         bigEndian = props.getBoolean
             (getName(), PROP_BIG_ENDIAN_DATA, PROP_BIG_ENDIAN_DATA_DEFAULT);
 
+        sampleRate = props.getInt
+            (getName(), PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
+
         signedData = props.getBoolean
             (getName(), PROP_SIGNED_DATA, PROP_SIGNED_DATA_DEFAULT);
 
@@ -153,7 +167,7 @@ public class StreamDataSource extends BaseDataProcessor {
         streamEndReached = false;
         utteranceEndSent = false;
         utteranceStarted = false;
-        totalValuesRead = 0;
+        // totalValuesRead = 0;
     }
 
     
@@ -175,10 +189,9 @@ public class StreamDataSource extends BaseDataProcessor {
 
         if (streamEndReached) {
             if (!utteranceEndSent) {
-                // since 'firstSampleNumber' starts at 0, the last
-                // sample number should be 'totalValuesRead - 1'
-                output = new DataEndSignal();
+                output = new DataEndSignal(getDuration());
                 utteranceEndSent = true;
+                totalValuesRead = 0;
             }
         } else {
             if (!utteranceStarted) {
@@ -189,8 +202,9 @@ public class StreamDataSource extends BaseDataProcessor {
                     output = readNextFrame();
                     if (output == null) {
                         if (!utteranceEndSent) {
-                            output = new DataEndSignal();
+                            output = new DataEndSignal(getDuration());
                             utteranceEndSent = true;
+                            totalValuesRead = 0;
                         }
                     }
                 }
@@ -202,6 +216,14 @@ public class StreamDataSource extends BaseDataProcessor {
         return output;
     }
 
+    /**
+     * Returns the duration of the current data stream in milliseconds.
+     *
+     * @return the duration of the current data stream in milliseconds
+     */
+    private long getDuration() {
+        return (long)(((double)totalValuesRead/(double)sampleRate) * 1000.0);
+    }
 
     /**
      * Returns the next Data from the input stream, or null if
@@ -264,7 +286,8 @@ public class StreamDataSource extends BaseDataProcessor {
                 (samplesBuffer, 0, totalRead, bytesPerValue, signedData);
         }
 
-        Data audio = new DoubleData(doubleData, collectTime, firstSample);
+        Data audio = new DoubleData(doubleData, sampleRate, 
+                                    collectTime, firstSample);
         
         return audio;
     }

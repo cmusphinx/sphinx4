@@ -87,6 +87,17 @@ public class StreamCepstrumSource extends BaseDataProcessor {
      */
     public static final int PROP_CEPSTRUM_LENGTH_DEFAULT = 13;
 
+    /**
+     * The SphinxProperty specifying the sample rate of the original data
+     * from which the cepstral data were created.
+     */
+    public static final String PROP_SAMPLE_RATE = PROP_PREFIX + "sampleRate";
+
+    /**
+     * The default value of PROP_SAMPLE_RATE.
+     */
+    public static final int PROP_SAMPLE_RATE_DEFAULT = 16;
+
 
     private boolean binary;
     private ExtendedStreamTokenizer est;  // for ASCII files
@@ -94,6 +105,7 @@ public class StreamCepstrumSource extends BaseDataProcessor {
     private int numPoints;
     private int curPoint;
     private int cepstrumLength;
+    private int sampleRate;
     private int frameShift;
     private int frameSize;
     private long firstSampleNumber;
@@ -174,10 +186,8 @@ public class StreamCepstrumSource extends BaseDataProcessor {
         float frameSizeMs = props.getFloat
             (getName(), PROP_FRAME_SIZE_MS, PROP_FRAME_SIZE_MS_DEFAULT);
         
-        int sampleRate = props.getInt
-            (getName(),
-             FrontEndFactory.PROP_SAMPLE_RATE,
-             FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
+        sampleRate = props.getInt
+            (getName(), PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
 
         frameShift = DataUtil.getSamplesPerWindow(sampleRate, frameShiftMs);
         frameSize = DataUtil.getSamplesPerShift(sampleRate, frameSizeMs);
@@ -206,7 +216,14 @@ public class StreamCepstrumSource extends BaseDataProcessor {
                 firstSampleNumber =
                     (firstSampleNumber - frameShift + frameSize - 1);
             }
-            data = new DataEndSignal();
+            // send a DataEndSignal
+            int numberFrames = curPoint / frameSize;
+            int totalSamples = (numberFrames - 1) * frameShift + frameSize;
+            long duration = (long)
+                (((double)totalSamples/(double)sampleRate) * 1000.0);
+
+            data = new DataEndSignal(duration);
+
             try {
                 binaryStream.close();
                 curPoint++;
@@ -240,7 +257,8 @@ public class StreamCepstrumSource extends BaseDataProcessor {
 	    }
 
 	    // System.out.println("Read: " + curPoint);
-	    data  = new DoubleData(vectorData, collectTime, firstSampleNumber);
+	    data  = new DoubleData
+                (vectorData, sampleRate, collectTime, firstSampleNumber);
             firstSampleNumber += frameShift;
 	    // System.out.println(data);
 	}

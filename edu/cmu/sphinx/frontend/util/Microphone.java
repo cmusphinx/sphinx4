@@ -54,6 +54,16 @@ public class Microphone extends BaseDataProcessor {
         "edu.cmu.sphinx.frontend.util.Microphone.";
 
     /**
+     * SphinxProperty for the sample rate of the data.
+     */
+    public static final String PROP_SAMPLE_RATE = PROP_PREFIX + "sampleRate";
+
+    /**
+     * Default value for PROP_SAMPLE_RATE.
+     */
+    public static final int PROP_SAMPLE_RATE_DEFAULT = 16000;
+
+    /**
      * Sphinx property that specifies whether or not the microphone
      * will release the audio between utterances.  On certain systems
      * (linux for one), closing and reopening the audio does not work
@@ -122,7 +132,7 @@ public class Microphone extends BaseDataProcessor {
      * Parameters for audioFormat
      */
     private AudioFormat audioFormat;
-    private float sampleRate = 8000f;
+    private int sampleRate;
     private int sampleSizeInBytes;
     private int channels = 1;
     private boolean signed = true;
@@ -175,8 +185,9 @@ public class Microphone extends BaseDataProcessor {
         super.initialize((name == null ? "Microphone" : name),
                          frontEnd, props, predecessor);
 	setProperties(props);
-        audioFormat = new AudioFormat(sampleRate, sampleSizeInBytes * 8,
-                                      channels, signed, bigEndian);
+        audioFormat = new AudioFormat
+            ((float) sampleRate, sampleSizeInBytes * 8, channels,
+             signed, bigEndian);
         audioList = new DataList();
     }
 
@@ -189,9 +200,8 @@ public class Microphone extends BaseDataProcessor {
     private void setProperties(SphinxProperties props) {
 
         sampleRate = props.getInt
-            (getName(), FrontEndFactory.PROP_SAMPLE_RATE,
-             FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
-
+            (getName(), PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
+        
 	closeBetweenUtterances = props.getBoolean
             (getName(), PROP_CLOSE_BETWEEN_UTTERANCES,
              PROP_CLOSE_BETWEEN_UTTERANCES_DEFAULT);
@@ -219,8 +229,8 @@ public class Microphone extends BaseDataProcessor {
      * @return the sleep time in milliseconds
      */
     private int getSleepTime() {
-        float samplesPerFrame = frameSizeInBytes/sampleSizeInBytes;
-        float timePerFrameInSecs = samplesPerFrame/sampleRate;
+        float samplesPerFrame = frameSizeInBytes / sampleSizeInBytes;
+        float timePerFrameInSecs = samplesPerFrame / (float) sampleRate;
         return (int) (timePerFrameInSecs * 1000 * 0.8);
     }
 
@@ -301,7 +311,10 @@ public class Microphone extends BaseDataProcessor {
                     audioList.add(readData(currentUtterance));
                 }
 
-                audioList.add(new DataEndSignal());
+                long duration = (long)
+                    (((double)totalSamplesRead/(double)sampleRate) * 1000.0);
+
+                audioList.add(new DataEndSignal(duration));
                 
                 audioLine.stop();
 		if (closeBetweenUtterances) {
@@ -370,7 +383,8 @@ public class Microphone extends BaseDataProcessor {
         double[] samples = DataUtil.bytesToValues
             (data, 0, data.length, sampleSizeInBytes, signed);
         
-        return (new DoubleData(samples, collectTime, firstSampleNumber));
+        return (new DoubleData(samples, sampleRate, collectTime,
+                               firstSampleNumber));
     }
 
     /**
