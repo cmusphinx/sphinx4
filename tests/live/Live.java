@@ -17,7 +17,7 @@ import edu.cmu.sphinx.decoder.Decoder;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Microphone;
 import edu.cmu.sphinx.frontend.Util;
-import edu.cmu.sphinx.search.Result;
+import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.NISTAlign;
 
