@@ -24,7 +24,7 @@
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="all"
-	    depends="check_jsapi_jar.isPresent,compile_src,jars"
+	    depends="compile_src,jars"
 	    description="Build everything">
 	<echo message="Build complete."/>
     </target>

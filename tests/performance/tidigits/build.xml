@@ -3,6 +3,11 @@
 <project basedir="." default="none" name="TIDIGITS Tests">
 <description>
 This file is used to run the TIDIGITS performance tests.
+
+NOTE:  Before running the tests, you must have already built 
+       the sphinx-4 sources by typing "ant" in the top level 
+       sphinx4 directory.
+
 Run ant with -Dskip=5 to do the standard 'quick' version of a test.
 Run ant with -Dlogger_props=tidigits.props to turn on the logging.
 </description>
