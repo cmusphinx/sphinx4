@@ -28,6 +28,7 @@ public class Word implements Serializable {
     static {
         Pronunciation[] pros = { Pronunciation.UNKNOWN };
         UNKNOWN = new Word("<unk>", pros, false);
+        Pronunciation.UNKNOWN.setWord(UNKNOWN);
     }
 
     private String spelling;               // the spelling of the word
@@ -46,9 +47,6 @@ public class Word implements Serializable {
 	this.spelling = spelling;
         this.pronunciations = pronunciations;
         this.isFiller = isFiller;
-        for (int i = 0; i < this.pronunciations.length; i++) {
-            pronunciations[i].setWord(this);
-        }
     }
 
 
