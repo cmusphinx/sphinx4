@@ -20,7 +20,7 @@ import java.util.ListIterator;
  * edu.cmu.sphinx.frontend.cmn.windowSize
  * edu.cmu.sphinx.frontend.cmn.shiftWindow </pre>
  */
-public class CepstralMeanNormalizer extends PullingProcessor {
+public class CepstralMeanNormalizer extends DataProcessor {
 
 
     /**
@@ -95,7 +95,7 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	
 
     /**
-     * Reads the next Data object, which is a normalized CepstrumFrame
+     * Returns the next Data object, which is a normalized CepstrumFrame
      * produced by this class. However, it can also be other Data objects
      * like a SegmentEndPointSignal.
      *

@@ -28,7 +28,7 @@ import java.io.IOException;
  * Other Data objects are passed along unchanged through this Preemphasizer.
  *
  */
-public class Preemphasizer extends PullingProcessor {
+public class Preemphasizer extends DataProcessor {
 
     /**
      * The name of the SphinxProperty which indicates if the preemphasized
@@ -73,7 +73,7 @@ public class Preemphasizer extends PullingProcessor {
 
 
     /**
-     * Reads the next Data object, which is usually a DoubleAudioFrame,
+     * Returns the next Data object, which is usually a DoubleAudioFrame,
      * produced by this Preemphasizerm, though it can also be Data objects
      * like EndPoint.SEGMENT_START.
      *

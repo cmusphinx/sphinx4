@@ -15,7 +15,7 @@ import java.io.IOException;
  * be revised. Don't use it as is!!! As yet.
  * <br><b>PI</b> is 3.14159265358979323846
  */
-public class SpectrumAnalyzer extends PullingProcessor {
+public class SpectrumAnalyzer extends DataProcessor {
 
     /**
      * The name of the SphinxProperty for the number of points
@@ -292,18 +292,9 @@ public class SpectrumAnalyzer extends PullingProcessor {
      *     Data object is available
      */
     public Data read() throws IOException {
-	
-        Data input = getSource().read();
-        
-	if (input instanceof SegmentEndPointSignal) {
-            SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
-            if (signal.isEnd()) {
-            }
-            return input;
-
-        } else {
-            return input;
-        }
+        // EVANDRO: the below is dummy code to get it to compile,
+        // replace it with your code
+        return getSource().read();
     }	
 
 

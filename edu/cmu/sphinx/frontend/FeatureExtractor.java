@@ -25,7 +25,7 @@ import java.util.Vector;
  * edu.cmu.sphinx.frontend.feature.windowSize
  * </pre>
  */
-public class FeatureExtractor extends PullingProcessor {
+public class FeatureExtractor extends DataProcessor {
 
     /**
      * The name of the SphinxProperty for the length of a Feature,
@@ -121,7 +121,7 @@ public class FeatureExtractor extends PullingProcessor {
 
 
     /**
-     * Reads the next Data object, which is a FeatureFrame
+     * Returns the next Data object, which is a FeatureFrame
      * produced by this FeatureExtractor.
      *
      * @return the next available Data object, returns null if no

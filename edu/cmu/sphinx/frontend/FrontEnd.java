@@ -100,7 +100,7 @@ public class FrontEnd implements DataSource, Runnable {
      *
      * @param processorClass the name of the processor Class
      */
-    public void addProcessor(PullingProcessor processor) {
+    public void addProcessor(DataProcessor processor) {
 	if (processors == null) {
 	    processors = new LinkedList();
 	}
@@ -117,7 +117,7 @@ public class FrontEnd implements DataSource, Runnable {
 	ListIterator iterator = processors.listIterator();
 
 	while (iterator.hasNext()) {
-	    PullingProcessor current = (PullingProcessor) iterator.next();
+	    DataProcessor current = (DataProcessor) iterator.next();
 	    current.setSource(predecessor);
 	    predecessor = current;
 	}
@@ -169,13 +169,13 @@ public class FrontEnd implements DataSource, Runnable {
         linkProcessors();
 
 	// set the data source of the first processor 
-	PullingProcessor first = (PullingProcessor) processors.get(0);
+	DataProcessor first = (DataProcessor) processors.get(0);
 	if (first != null) {
 	    first.setSource(this.audioFrameSource);
 	}
 
-	PullingProcessor last =
-	    (PullingProcessor) processors.get(processors.size() - 1);
+	DataProcessor last =
+	    (DataProcessor) processors.get(processors.size() - 1);
 	if (last != null) {
 	    try {
                 Data output = null;

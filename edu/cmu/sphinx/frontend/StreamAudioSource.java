@@ -13,8 +13,7 @@ import java.util.Vector;
 /**
  * A StreamAudioSource converts data from an InputStream into
  * DoubleAudioFrame(s). One would obtain the DoubleAudioFrames using
- * the <code>read()</code> method. It will make sure that the
- * returned DoubleAudioFrame can be made into exactly N windows.
+ * the <code>read()</code> method.
  * The Sphinx properties that affect this StreamAudioSource are:
  * <pre>
  * edu.cmu.sphinx.frontend.bytesPerAudioFrame
