@@ -47,25 +47,28 @@ public class FrontEnd implements DataSource, Runnable {
 
     /**
      * The name of the SphinxProperty for sample rate in Hertz (i.e.,
-     * number of times per second.
+     * number of times per second), which has a default value of 8000.
      */
     public static final String PROP_SAMPLE_RATE =
 	"edu.cmu.sphinx.frontend.sampleRate";
 
     /**
-     * The name of the SphinxProperty for window size in milliseconds.
+     * The name of the SphinxProperty for window size in milliseconds,
+     * which has a default value of 25.625F.
      */
     public static final String PROP_WINDOW_SIZE_MS =
 	"edu.cmu.sphinx.frontend.windowSizeInMs";
 
     /**
-     * The name of the SphinxProperty for window shift in milliseconds.
+     * The name of the SphinxProperty for window shift in milliseconds,
+     * which has a default value of 10F.
      */
     public static final String PROP_WINDOW_SHIFT_MS =
 	"edu.cmu.sphinx.frontend.windowShiftInMs";
 
     /**
-     * The name of the SphinxProperty for the number of bytes per frame.
+     * The name of the SphinxProperty for the number of bytes per frame,
+     * which has a default value of 4000.
      */
     public static final String PROP_BYTES_PER_AUDIO_FRAME =
 	"edu.cmu.sphinx.frontend.bytesPerAudioFrame";
