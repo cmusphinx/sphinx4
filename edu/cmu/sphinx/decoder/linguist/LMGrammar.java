@@ -15,7 +15,6 @@ package edu.cmu.sphinx.decoder.linguist;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.knowledge.language.WordSequence;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
