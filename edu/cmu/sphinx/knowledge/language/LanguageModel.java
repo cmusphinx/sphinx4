@@ -69,18 +69,6 @@ public interface LanguageModel {
 
 
     /**
-     * The Sphinx property specify the maximum depth of the language model.
-     */
-    public final static String PROP_MAX_DEPTH = PROP_PREFIX + ".maxDepth";
-
-
-    /**
-     * The default value for PROP_MAX_DEPTH.
-     */
-    public final static int PROP_MAX_DEPTH_DEFAULT = -1;
-
-
-    /**
      * The Sphinx Property specifying the maximum depth reported by
      * the language model (from a getMaxDepth()) call. If this
      * property is set to (-1) (the default) the language model
