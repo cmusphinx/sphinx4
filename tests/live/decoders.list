@@ -1,4 +1,4 @@
-decoders = bishop player jsgf alphaSpelling connectedDigits isolatedDigits   
+decoders = connectedDigits bishop player jsgf alphaSpelling isolatedDigits   
 # connectedDigits
 connectedDigits.name = Connected Digits
 connectedDigits.configFile = tidigits/tidigits.config.xml
