@@ -145,7 +145,7 @@ public class FrontEnd extends DataProcessor {
      *
      * @return the AudioSource
      */
-    public AudioSource getAudioSource() {
+    private AudioSource getAudioSource() {
         return audioSource;
     }
 
@@ -166,7 +166,7 @@ public class FrontEnd extends DataProcessor {
      *
      * @return the FeatureSource of this FrontEnd
      */
-    public FeatureSource getFeatureSource() {
+    private FeatureSource getFeatureSource() {
         return featureSource;
     }
 
@@ -176,7 +176,7 @@ public class FrontEnd extends DataProcessor {
      *
      * @param featureSource the FeatureSource
      */
-    public void setFeatureSource(FeatureSource featureSource) {
+    private void setFeatureSource(FeatureSource featureSource) {
         this.featureSource = featureSource;
     }
 
