@@ -34,6 +34,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
@@ -204,6 +205,13 @@ public class LexTreeLinguist implements Linguist {
      * the search graph
      */
     public final static String PROP_ACOUSTIC_MODEL = "acousticModel";
+
+    /**
+     * A sphinx property used to define the unit manager to use 
+     * when building the search graph
+     */
+    public final static String PROP_UNIT_MANAGER = "unitManager";
+
     /**
      * Sphinx property that defines the name of the logmath to be used by this
      * search manager.
@@ -254,6 +262,7 @@ public class LexTreeLinguist implements Linguist {
     private AcousticModel acousticModel;
     private LogMath logMath;
     private Dictionary dictionary;
+    private UnitManager unitManager;
 
     // ------------------------------------
     // Data that is configured by the
@@ -319,6 +328,7 @@ public class LexTreeLinguist implements Linguist {
         registry.register(PROP_GENERATE_UNIT_STATES, PropertyType.BOOLEAN);
         registry.register(PROP_UNIGRAM_SMEAR_WEIGHT, PropertyType.FLOAT);
         registry.register(PROP_CACHE_SIZE, PropertyType.INT);
+        registry.register(PROP_UNIT_MANAGER, PropertyType.COMPONENT);
     }
 
     /*
@@ -331,6 +341,8 @@ public class LexTreeLinguist implements Linguist {
         acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL,
                 AcousticModel.class);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
+                UnitManager.class);
         languageModel = (LanguageModel) ps.getComponent(PROP_LANGUAGE_MODEL,
                 LanguageModel.class);
         dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY,
@@ -461,7 +473,7 @@ public class LexTreeLinguist implements Linguist {
         sentenceStartWordArray = new Word[1];
         sentenceStartWordArray[0] = dictionary.getSentenceStartWord();
         
-        hmmPool = new HMMPool(acousticModel, logger);
+        hmmPool = new HMMPool(acousticModel, logger, unitManager);
 
         hmmTree = new HMMTree(hmmPool, dictionary, languageModel,
                 addFillerWords, languageWeight);

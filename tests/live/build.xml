@@ -82,7 +82,7 @@ NOTE:  Before running the tests, you must have already built
 		  <sysproperty key="showPartialResults" value="true"/>
 		  <sysproperty key="frontend" value="mfcFrontEnd"/>
 		  <arg value="decoders.list"/>
-                  <jvmarg value="-server"/>
+                  <jvmarg value="-client"/>
 	    </java>
     </target>
 

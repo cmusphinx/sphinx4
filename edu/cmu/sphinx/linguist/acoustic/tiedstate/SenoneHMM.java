@@ -56,7 +56,8 @@ public class SenoneHMM implements HMM {
 	for (int i = 0; i < hmmStates.length; i++) {
 	    hmmStates[i] = new SenoneHMMState(this, i);
 	}
-        baseUnit = Unit.getUnit(unit.getName());
+        // baseUnit = Unit.getUnit(unit.getName());
+        baseUnit = unit.getBaseUnit();
     }
 
     /**

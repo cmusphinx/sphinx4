@@ -22,6 +22,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.Timer;
 
 
@@ -39,16 +40,18 @@ public class HMMPool {
     private HMM hmmTable[][];
     private int numCIUnits;
     private Logger logger;
+    private UnitManager unitManager;
 
     /**
      * Constructs a HMMPool object.
      *
      * @param model  the model to use for the pool
      */
-    public HMMPool(AcousticModel model, Logger logger) {
+    public HMMPool(AcousticModel model, Logger logger, UnitManager unitManager) {
         this.logger = logger;
         int maxCIUnits = 0;
         this.model = model;
+        this.unitManager = unitManager;
         Timer.start("buildHmmPool");
 
         if (model.getLeftContextSize() != 1) {
@@ -143,7 +146,8 @@ public class HMMPool {
         rc[0] = rightUnit;
         LeftRightContext context = LeftRightContext.get(lc, rc);
 
-        Unit unit = Unit.getUnit(centralUnit.getName(), centralUnit.isFiller(),
+        Unit unit = unitManager.getUnit(
+                centralUnit.getName(), centralUnit.isFiller(),
                 context);
 
         if (logger.isLoggable(Level.FINER)) {

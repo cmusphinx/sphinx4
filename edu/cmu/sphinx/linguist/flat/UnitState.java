@@ -15,6 +15,7 @@ package edu.cmu.sphinx.linguist.flat;
 import edu.cmu.sphinx.linguist.UnitSearchState;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 
 /**
  * Represents a unit in an SentenceHMMS
@@ -44,7 +45,7 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
 	// a word-ending phone for the last phone. Decrementing
 	// length will make the phone before SIL the last phone.
 
-	if (units[length-1] == Unit.SILENCE && length > 1) {
+	if (units[length-1] == UnitManager.SILENCE && length > 1) {
 	    length--;
 	}
 

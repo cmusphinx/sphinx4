@@ -122,6 +122,7 @@
         <property name="unigramSmearWeight" value="1"/>
         <property name="cacheSize" value="0"/>
         <property name="generateUnitStates" value="false"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     <!-- ************************************************** -->
@@ -131,6 +132,7 @@
     <component name="hub4"
         type="edu.cmu.sphinx.model.acoustic.HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz">
         <property name="loader" value="sphinx3Loader"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     <!-- ************************************************** -->
@@ -140,6 +142,7 @@
     <component name="sphinx3Loader"
                type="edu.cmu.sphinx.model.acoustic.HUB4Loader">
         <property name="logMath" value="logMath"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     <!-- ************************************************** -->
@@ -179,6 +182,7 @@
         <property name="fillerPath" value="resource:/edu.cmu.sphinx.model.acoustic.HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz!/edu/cmu/sphinx/model/acoustic/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="allowMissingWords" value="false"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     <!-- ************************************************** -->
@@ -201,6 +205,13 @@
         <property name="isCpuRelative" value="true"/>
         <property name="minScoreablesPerThread" value="10"/>
     </component>
+
+    <!-- ******************************************************** -->
+    <!-- The unit manager configuration                           -->
+    <!-- ******************************************************** -->
+
+    <component name="unitManager" 
+        type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
 
     <!-- ************************************************** -->
     <!-- mfcFrontEnd                                        -->

@@ -135,6 +135,7 @@
         <property name="silenceInsertionProbability" 
                 value="${silenceInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
+        <property name="unitManager" value="unitManager"/>
     </component>    
     
     
@@ -149,6 +150,7 @@
 	          value="resource:/edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/dict/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
     
 
@@ -172,11 +174,20 @@
     <component name="wsj"
                type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz">
         <property name="loader" value="wsjLoader"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
     
     <component name="wsjLoader" type="edu.cmu.sphinx.model.acoustic.WSJLoader">
         <property name="logMath" value="logMath"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
+
+    <!-- ******************************************************** -->
+    <!-- The unit manager configuration                           -->
+    <!-- ******************************************************** -->
+
+    <component name="unitManager" 
+        type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
 
     
     <!-- ******************************************************** -->

@@ -97,6 +97,7 @@
         <property name="silenceInsertionProbability" 
  	    	value="${silenceInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
     
     <component name="wordListGrammar" 
@@ -123,11 +124,13 @@
     <component name="acousticModel" 
         type="edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz">
         <property name="loader" value="sphinx3Loader"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
         
     <component name="sphinx3Loader" 
            type="edu.cmu.sphinx.model.acoustic.TIDIGITSLoader">
         <property name="logMath" value="logMath"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
     
     <component name="dictionary"
@@ -137,6 +140,7 @@
         <property name="fillerPath"
 	    value="resource:/edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
         
     <component name="ngramLanguageModel" 
@@ -148,6 +152,13 @@
     </component>
     
     
+    <!-- ******************************************************** -->
+    <!-- The unit manager configuration                           -->
+    <!-- ******************************************************** -->
+
+    <component name="unitManager" 
+        type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
+
     <!-- ******************************************************** -->
     <!-- The frontend configuration                               -->
     <!-- ******************************************************** -->

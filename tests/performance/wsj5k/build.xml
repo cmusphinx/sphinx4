@@ -119,4 +119,26 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
         </java>
     </target>
 
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * --> 
+    <!-- * wsj5k_trigram_nvp                                      * --> 
+    <!-- *                                                        * --> 
+    <!-- ********************************************************** --> 
+    <target name="test"
+            description="trigram decode of wsj 5K words using the word
+            pruning breadth first search manager - no verbalized punctuation">
+       <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="batch[skip]" 	value="${skip}"/> 
+            <sysproperty key="lexTreeLinguist[languageModel]" 
+			 value="trigramModel"/> 
+            <arg value="wsj5k.config.xml"/> 
+            <arg value="test.batch"/> 
+        </java>
+    </target>
+
 </project>

@@ -23,6 +23,14 @@
     <property name="recognizer" value="recognizer"/>
     <property name="showCreations" value="true"/>
 
+    <!-- ******************************************************** -->
+    <!-- batch tool configuration                                 -->
+    <!-- ******************************************************** -->   
+    
+    <component name="batch" 
+                type="edu.cmu.sphinx.tools.batch.BatchModeRecognizer">
+        <property name="recognizer" value="recognizer"/>
+    </component>
     
     <!-- ******************************************************** -->
     <!-- word recognizer configuration                            -->
@@ -123,6 +131,7 @@
     <component name="lexTreeLinguist" 
                 type="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist">
         <property name="logMath" value="logMath"/>
+        <property name="logLevel" value="WARN"/>
         <property name="acousticModel" value="wsj"/>
         <property name="languageModel" value="trigramModel"/>
         <property name="dictionary" value="dictionary"/>
@@ -136,6 +145,7 @@
         <property name="silenceInsertionProbability" 
                 value="${silenceInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
     
         
@@ -152,6 +162,7 @@
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
         <property name="allowMissingWords" value="true"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
     
 
@@ -175,13 +186,24 @@
     <component name="wsj"
                type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz">
         <property name="loader" value="sphinx3Loader"/>
+        <property name="unitManager" value="unitManager"/>
+        <property name="logLevel" value="WARN"/>
     </component>
     
     <component name="sphinx3Loader" 
                type="edu.cmu.sphinx.model.acoustic.WSJLoader">
         <property name="logMath" value="logMath"/>
+        <property name="unitManager" value="unitManager"/>
+        <property name="logLevel" value="WARN"/>
     </component>    
     
+    <!-- ******************************************************** -->
+    <!-- The unit manager configuration                           -->
+    <!-- ******************************************************** -->
+
+    <component name="unitManager" 
+        type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
+
     
     <!-- ******************************************************** -->
     <!-- The frontend configuration                               -->

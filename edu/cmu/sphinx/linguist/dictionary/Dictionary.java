@@ -102,6 +102,12 @@ public interface Dictionary extends Configurable {
     public static final boolean PROP_CREATE_MISSING_WORDS_DEFAULT = false;
 
     /**
+      * The sphinx property that defines the name of the unit manager
+      * that is used to convert strings to Unit objects
+      */
+    public static final String PROP_UNIT_MANAGER = "unitManager";
+
+    /**
      * Returns a Word object based on the spelling and its classification. The
      * behavior of this method is also affected by the properties
      * wordReplacement, allowMissingWords, and createMissingWords.

@@ -88,6 +88,7 @@
         <property name="wordInsertionProbability" 
                 value="${wordInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
         
     
@@ -117,6 +118,7 @@
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
         <property name="allowMissingWords" value="false"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
 
@@ -126,14 +128,23 @@
     <component name="tidigits" 
       type="edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz">
         <property name="loader" value="sphinx3Loader"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     <component name="sphinx3Loader"
                type="edu.cmu.sphinx.model.acoustic.TIDIGITSLoader">
         <property name="logMath" value="logMath"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
     
         
+    <!-- ******************************************************** -->
+    <!-- The unit manager configuration                           -->
+    <!-- ******************************************************** -->
+
+    <component name="unitManager" 
+        type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
+
     <!-- ******************************************************** -->
     <!-- The live frontend configuration                          -->
     <!-- ******************************************************** -->

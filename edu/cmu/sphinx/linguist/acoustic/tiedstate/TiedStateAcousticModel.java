@@ -32,6 +32,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.props.Configurable;
@@ -95,6 +96,12 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
      */
     
     public final static String PROP_LOADER = "loader";
+
+    /**
+     * The property that defines the unit manager 
+     */
+    
+    public final static String PROP_UNIT_MANAGER  = "unitManager";
     
     /**
      * Controls whether we generate composites or CI units when no
@@ -121,6 +128,7 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
     protected String name;
     private  Logger logger;
     protected Loader loader;
+    protected UnitManager unitManager;
     private boolean useComposites = false;
     private Properties properties;    
 
@@ -134,9 +142,11 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
      */
-    public void register(String name, Registry registry) throws PropertyException {
+    public void register(String name, Registry registry) 
+                        throws PropertyException {
         this.name = name;
-        registry.register("loader", PropertyType.COMPONENT);
+        registry.register(PROP_LOADER, PropertyType.COMPONENT);
+        registry.register(PROP_UNIT_MANAGER, PropertyType.COMPONENT);
         registry.register(PROP_USE_COMPOSITES, PropertyType.BOOLEAN);
     }
 
@@ -145,6 +155,8 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         loader = (Loader) ps.getComponent(PROP_LOADER, Loader.class);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
+                UnitManager.class);
         useComposites = 
             ps.getBoolean(PROP_USE_COMPOSITES, PROP_USE_COMPOSITES_DEFAULT);
         logger = ps.getLogger();
@@ -159,7 +171,6 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
     public void allocate() throws IOException {
         this.loadTimer = Timer.getTimer(TIMER_LOAD);
         loadTimer.start();
-        Unit.reset();
         loader.load();
         loadTimer.stop();
         logInfo();
@@ -193,7 +204,7 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
 
 
          if (true) { // use a true composite
-             Unit ciUnit = Unit.getUnit(unit.getName(),
+             Unit ciUnit = unitManager.getUnit(unit.getName(),
                      unit.isFiller(), Context.EMPTY_CONTEXT);
 
              SenoneSequence compositeSequence =
@@ -400,7 +411,7 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
 
 	 // couldn't find any matches, so at least include the CI unit
 	 if (senoneSequenceList.size() == 0) {
-	    Unit ciUnit = Unit.getUnit(unit.getName(), unit.isFiller());
+	    Unit ciUnit = unitManager.getUnit(unit.getName(), unit.isFiller());
 	     SenoneHMM baseHMM = lookupHMM(ciUnit, HMMPosition.UNDEFINED);
 	     senoneSequenceList.add(baseHMM.getSenoneSequence());
 	 }
@@ -579,7 +590,7 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
             
             if (nlc != lc || nrc != rc) {
                 Context newContext =  LeftRightContext.get(nlc, nrc);
-                Unit newUnit = Unit.getUnit(unit.getName(),
+                Unit newUnit = unitManager.getUnit(unit.getName(),
                         unit.isFiller(), newContext);
                 hmm = (SenoneHMM) mgr.get(position, newUnit);
                 if (hmm == null) {
@@ -622,7 +633,7 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
 
         for (int i = 0; i < units.length; i++) {
             if (units[i].isFiller() &&
-                !units[i].equals(Unit.SILENCE)) {
+                !units[i].equals(UnitManager.SILENCE)) {
                 return true;
             }
         }
@@ -642,8 +653,9 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
     private Unit[] replaceNonSilenceFillerWithSilence(Unit[] context) {
         Unit[] replacementContext = new Unit[context.length];
         for (int i = 0; i < context.length; i++) {
-            if (context[i].isFiller() && !context[i].equals(Unit.SILENCE)) {
-                replacementContext[i] = Unit.SILENCE;
+            if (context[i].isFiller() &&
+                    !context[i].equals(UnitManager.SILENCE)) {
+                replacementContext[i] = UnitManager.SILENCE;
             } else {
                 replacementContext[i] = context[i];
             }

@@ -20,7 +20,7 @@ NOTE:  Before running the tests, you must have already built
     <property name="build_dir"		value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="${build_dir}/lib"/>
-    <property name="freetts_dir"        value="${top_dir}/../../FreeTTS"/>
+    <property name="freetts_dir"        value="${top_dir}/../FreeTTS"/>
 
     <path id="run.classpath">
         <pathelement path="${classes_dir}"/>

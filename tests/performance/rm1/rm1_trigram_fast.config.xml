@@ -99,6 +99,7 @@
         <property name="unigramSmearWeight" value="1.25"/>
         <property name="cacheSize" value="0"/>
         <property name="wantUnigramSmear" value="true"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     <!-- ******************************************************** -->
@@ -106,11 +107,13 @@
     <!-- ******************************************************** -->
     <component name="rm1" type="edu.cmu.sphinx.model.acoustic.RM1_13dCep_16k_40mel_130Hz_6800Hz">
         <property name="loader" value="sphinx3Loader"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
     
     <component name="sphinx3Loader"
                type="edu.cmu.sphinx.model.acoustic.RM1Loader">
         <property name="logMath" value="logMath"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
 
@@ -137,6 +140,7 @@
         <property name="fillerPath" value="resource:/edu.cmu.sphinx.model.acoustic.RM1_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/dict/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="allowMissingWords" value="true"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     <!-- ************************************************** -->
@@ -159,6 +163,13 @@
         <property name="isCpuRelative" value="true"/>
         <property name="minScoreablesPerThread" value="10"/>
     </component>
+
+    <!-- ******************************************************** -->
+    <!-- The unit manager configuration                           -->
+    <!-- ******************************************************** -->
+
+    <component name="unitManager" 
+        type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
 
 
     <!-- ************************************************** -->

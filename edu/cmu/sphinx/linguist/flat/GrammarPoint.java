@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarArc;
@@ -141,7 +142,7 @@ public class GrammarPoint {
      private Unit getUnitOrFill() {
          Unit unit = getUnit();
          if (unit == null) {
-             unit = Unit.SILENCE;
+             unit = UnitManager.SILENCE;
          }
          return unit;
      }

@@ -99,6 +99,7 @@
         <property name="unigramSmearWeight" value="1.2"/>
         <property name="cacheSize" value="0"/>
         <property name="wantUnigramSmear" value="true"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     <!-- ************************************************** -->
@@ -108,6 +109,7 @@
     <component name="wsj"
           type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
         <property name="loader" value="sphinx3Loader"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     <!-- ************************************************** -->
@@ -125,6 +127,7 @@
         <property name="properties_file" value="am.props"/>
         <property name="location"
          value="file:./../../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     <!-- ************************************************** -->
@@ -153,6 +156,7 @@
         <property name="fillerPath" value="dict/fillerdict"/>
         <property name="location"
          value="file:./../../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     <!-- ************************************************** -->
@@ -180,6 +184,13 @@
         <property name="isCpuRelative" value="true"/>
         <property name="minScoreablesPerThread" value="10"/>
     </component>
+
+    <!-- ******************************************************** -->
+    <!-- The unit manager configuration                           -->
+    <!-- ******************************************************** -->
+
+    <component name="unitManager" 
+        type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
 
     <!-- ************************************************** -->
     <!-- mfcFrontEnd                                        -->

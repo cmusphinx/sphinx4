@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 
 import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.StreamFactory;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -88,6 +89,8 @@ public class FastDictionary implements Dictionary {
     private URL wordDictionaryFile;
     private URL fillerDictionaryFile;
 
+    private UnitManager unitManager;
+
     // -------------------------------
     // working data
     // -------------------------------
@@ -113,6 +116,7 @@ public class FastDictionary implements Dictionary {
         registry.register(PROP_WORD_REPLACEMENT, PropertyType.STRING);
         registry.register(PROP_ALLOW_MISSING_WORDS, PropertyType.BOOLEAN);
         registry.register(PROP_CREATE_MISSING_WORDS, PropertyType.BOOLEAN);
+        registry.register(PROP_UNIT_MANAGER, PropertyType.COMPONENT);
 
     }
 
@@ -136,6 +140,8 @@ public class FastDictionary implements Dictionary {
                 PROP_ALLOW_MISSING_WORDS_DEFAULT);
         createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS,
                 PROP_CREATE_MISSING_WORDS_DEFAULT);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
+                UnitManager.class);
     }
 
     /*
@@ -250,7 +256,7 @@ public void deallocate() {
      *  
      */
     private Unit getCIUnit(String name, boolean isFiller) {
-        return Unit.getUnit(name, isFiller, Context.EMPTY_CONTEXT);
+        return unitManager.getUnit(name, isFiller, Context.EMPTY_CONTEXT);
     }
 
     /**
@@ -371,7 +377,7 @@ public void deallocate() {
                 if (!isFiller && addSilEndingPronunciation) {
                     Unit[] silUnits = new Unit[unitCount + 1];
                     System.arraycopy(units, 0, silUnits, 0, unitCount);
-                    silUnits[unitCount] = Unit.SILENCE;
+                    silUnits[unitCount] = UnitManager.SILENCE;
                     units = silUnits;
                 }
                 pList.add(new Pronunciation(units, null, null, 1.f));

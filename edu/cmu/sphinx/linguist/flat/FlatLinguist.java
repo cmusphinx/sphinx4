@@ -30,6 +30,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
 import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
@@ -61,6 +62,13 @@ public class FlatLinguist implements Linguist, Configurable {
      * search graph
      */
     public final static String PROP_GRAMMAR = "grammar";
+
+    /**
+     * A sphinx property used to define the unit manager to use 
+     * when building the search graph
+     */
+    public final static String PROP_UNIT_MANAGER = "unitManager";
+
     /**
      * A sphinx property used to define the acoustic model to use when building
      * the search graph
@@ -87,6 +95,7 @@ public class FlatLinguist implements Linguist, Configurable {
     private Grammar grammar;
     private AcousticModel acousticModel;
     private LogMath logMath;
+    private UnitManager unitManager;
     // ------------------------------------
     // Data that is configured by the
     // property sheet
@@ -146,6 +155,7 @@ public class FlatLinguist implements Linguist, Configurable {
         registry.register(PROP_SHOW_COMPILATION_PROGRESS, PropertyType.BOOLEAN);
         registry.register(PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS,
                 PropertyType.BOOLEAN);
+        registry.register(PROP_UNIT_MANAGER, PropertyType.COMPONENT);
     }
     /*
      * (non-Javadoc)
@@ -157,6 +167,8 @@ public class FlatLinguist implements Linguist, Configurable {
         setupAcousticModel(ps);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
         grammar = (Grammar) ps.getComponent(PROP_GRAMMAR, Grammar.class);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
+                UnitManager.class);
         
         // get the rest of the configuration data
         logWordInsertionProbability = logMath.linearToLog(ps.getDouble(
@@ -943,7 +955,7 @@ public class FlatLinguist implements Linguist, Configurable {
             Unit[] rc = getRC(units, which, rightContext);
             UnitContext actualRightContext = UnitContext.get(rc);
             LeftRightContext context = LeftRightContext.get(lc, rc);
-            Unit cdUnit = Unit.getUnit(units[which].getName(), units[which]
+            Unit cdUnit = unitManager.getUnit(units[which].getName(), units[which]
                     .isFiller(), context);
             UnitState unitState = new ExtendedUnitState(parent, which, cdUnit);
             float logInsertionProbability;
@@ -987,7 +999,7 @@ public class FlatLinguist implements Linguist, Configurable {
                     if (actualRightContext == UnitContext.SILENCE) {
                         SentenceHMMState silTail;
                         UnitState silUnit = new ExtendedUnitState(parent,
-                                which + 1, Unit.SILENCE);
+                                which + 1, UnitManager.SILENCE);
                         SentenceHMMState silExistingState = getExistingState(silUnit);
                         if (silExistingState != null) {
                             attachState(tail, silExistingState, logOne, logOne,
@@ -1488,7 +1500,7 @@ class UnitContext {
     public final static UnitContext SILENCE;
     static {
         Unit[] silenceUnit = new Unit[1];
-        silenceUnit[0] = Unit.SILENCE;
+        silenceUnit[0] = UnitManager.SILENCE;
         SILENCE = new UnitContext(silenceUnit);
         unitContextMap.put(EMPTY, EMPTY);
         unitContextMap.put(SILENCE, SILENCE);

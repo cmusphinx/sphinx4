@@ -105,6 +105,7 @@
         <property name="silenceInsertionProbability" 
                 value="${silenceInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
     
     
@@ -131,7 +132,15 @@
         <property name="dictionaryPath" value= "dictionary"/>
         <property name="fillerPath" value="fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
+
+    <!-- ******************************************************** -->
+    <!-- The unit manager configuration                           -->
+    <!-- ******************************************************** -->
+
+    <component name="unitManager" 
+        type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
 
     
     <!-- ******************************************************** -->
@@ -140,6 +149,7 @@
     <component name="mfcAcousticModel" 
       type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
         <property name="loader" value="mfcSphinx3Loader"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     <component name="mfcSphinx3Loader" 
@@ -152,6 +162,7 @@
         <property name="definition_file"  value="mfc.500.mdef"/>
         <property name="data_location"    value="mfc.cd_continuous_8gau"/>
         <property name="properties_file"  value="mfc.am.props"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
     

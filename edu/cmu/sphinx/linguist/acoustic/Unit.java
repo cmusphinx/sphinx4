@@ -19,171 +19,54 @@ import java.util.Map;
  * any other suitable unit
  */
 public class  Unit {
-    /**
-     * The name for the silence unit
-     */
-    public static String SILENCE_NAME = "SIL";
-
-    /**
-     * The silence unit
-     */
-    public static Unit SILENCE;
-
-    private static Map ciMap;
-    private static int nextID ;
-
-    static {
-    }
-
     private String name;
     private boolean filler = false;
     private boolean silence = false;
     private Context context = null;
     private int baseID;
+    private Unit baseUnit;
 
     private volatile String key = null;
 
-    /**
-     * Clears out this unit.
-     */
-    public static void reset() {
-        nextID = 1;
-        ciMap = new HashMap();
-        SILENCE = createCIUnit(SILENCE_NAME, true);
-    }
-
-    /**
-     * Gets or creates a unit from the unit pool
-     *
-     * @param name the name of the unit
-     * @param filler <code>true</code> if the unit is a filler unit
-     * @param context the context for this unit
-     *
-     * @return the unit
-     */
-    public static Unit getUnit(String name, boolean filler, Context context) {
-        Unit unit = null;
-        if (Context.EMPTY_CONTEXT == context) {
-            unit = (Unit) ciMap.get(name);
-            if (unit == null) {
-                unit = createCIUnit(name, filler);
-            }
-        } else {
-            unit =  new Unit(name, filler, context);
-        }
-        return unit;
-    }
-
-    /**
-     * Gets or creates a unit from the unit pool
-     *
-     * @param name the name of the unit
-     * @param filler <code>true</code> if the unit is a filler unit
-     *
-     * @return the unit
-     */
-    public static Unit getUnit(String name, boolean filler) {
-        return getUnit(name, filler, Context.EMPTY_CONTEXT);
-    }
-
-    /**
-     * Gets a CI unit by name
-     *
-     * @param name the name of the unit
-     *
-     * @return the unit
-     */
-    /*
-    public static Unit getCIUnit(String name) {
-        return (Unit) ciMap.get(name);
-    }
-    */
-
-    /**
-     * Gets or creates a unit from the unit pool
-     *
-     * @param name the name of the unit
-     *
-     * @return the unit
-     */
-    public static Unit getUnit(String name) {
-        return getUnit(name, false, Context.EMPTY_CONTEXT);
-    }
-
-
-    /**
-     * creates a unit ci unit 
-     *
-     * @param name the name of the unit
-     * @param filler <code>true</code> if the unit is a filler unit
-     *
-     * @return the unit
-     */
-    private static Unit createCIUnit(String name, boolean filler) {
-        Unit unit = (Unit) ciMap.get(name);
-        if (unit == null) {
-            Unit u = new Unit(name, filler, Context.EMPTY_CONTEXT, nextID++);
-            unit = u;
-            ciMap.put(name, unit);
-        }
-        return unit;
-    }
-
-    /**
-     * creates a cd unit 
-     *
-     * @param name the name of the unit
-     * @param filler <code>true</code> if the unit is a filler unit
-     * @param context the context for this unit
-     *
-     * @return the unit
-     */
-    private static Unit createCDUnit(String name, 
-            boolean filler, Context context) {
-        Unit u = new Unit(name, filler, context, getIDFromName(name));
-        return u;
-    }
-
-    /**
-     * Gets the CI id for a unit based on its name
-     *
-     * @param name the name of the unit
-     * @return the id
-     */
-    private static int getIDFromName(String name) {
-        return ((Unit) ciMap.get(name)).getBaseID();
-    }
-
-
-
 
    /**
-    * Constructs a context dependent  unit
+    * Constructs a context dependent  unit.  Constructors are package
+    * private, use the UnitManager to create and access units.
     *
     * @param name the name of the unit
     * @param filler <code>true</code> if the unit is a filler unit
-    * @param context the context for this unit
     * @param id the base id for the unit
+    * @param baseUnit the base id for the unit
     */
-    private Unit(String name, boolean filler, Context context, int id) {
+    Unit(String name, boolean filler, int id) {
 	this.name = name;
 	this.filler = filler;
-	this.context = context;
+	this.context = Context.EMPTY_CONTEXT;
         this.baseID = id;
-	if (name.equals(SILENCE_NAME)) {
+        this.baseUnit = this;
+	if (name.equals(UnitManager.SILENCE_NAME)) {
 	    silence = true;
 	}
     }
 
    /**
-    * Constructs a context dependent  unit
+    * Constructs a context dependent  unit.  Constructors are package
+    * private, use the UnitManager to create and access units.
     *
-    * @param name the name of the unit
+    * @param baseUnit the base id for the unit
     * @param filler <code>true</code> if the unit is a filler unit
     * @param context the context for this unit
+    * @param id the base id for the unit
     */
-    private Unit(String name, boolean filler, Context context) {
-        this(name, filler, context, -1);
+    Unit(Unit baseUnit, boolean filler, Context context) {
+        this.baseUnit = baseUnit;
+	this.filler = filler;
+	this.context = context;
+	this.name = baseUnit.getName();
+        this.baseID = baseUnit.getBaseID();
+	if (name.equals(UnitManager.SILENCE_NAME)) {
+	    silence = true;
+	}
     }
 
 
@@ -287,10 +170,6 @@ public class  Unit {
      * @return the id
      */
     public int getBaseID() {
-        if (baseID == -1) {
-            baseID = getBaseUnit().getBaseID();
-            assert baseID != -1;
-        }
         return baseID;
     }
 
@@ -307,11 +186,7 @@ public class  Unit {
      * @return the unit associated with this HMM
      */
     public Unit getBaseUnit() {
-        if (context == Context.EMPTY_CONTEXT) {
-            return this;
-        } else {        // BUG: this maybe too slow
-            return getUnit(this.getName());
-        }
+        return baseUnit;
     }
 
 
@@ -344,7 +219,7 @@ public class  Unit {
 	 Unit[] context = new Unit[size];
 
 	 for (int i = 0; i < context.length; i++) {
-	     context[i] = Unit.SILENCE;
+	     context[i] = UnitManager.SILENCE;
 	 }
 	 return context;
      }
@@ -372,3 +247,5 @@ public class  Unit {
 	}
     }
 }
+
+

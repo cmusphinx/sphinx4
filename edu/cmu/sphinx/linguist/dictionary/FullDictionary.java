@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.StreamFactory;
 import edu.cmu.sphinx.util.Timer;
@@ -81,6 +82,7 @@ public class FullDictionary implements Dictionary {
     private URL wordDictionaryFile;
     private URL fillerDictionaryFile;
     private boolean allocated = false;
+    private UnitManager unitManager;
     
     
     private Map wordDictionary;
@@ -103,6 +105,7 @@ public class FullDictionary implements Dictionary {
         registry.register(PROP_WORD_REPLACEMENT, PropertyType.STRING);
         registry.register(PROP_ALLOW_MISSING_WORDS, PropertyType.BOOLEAN);
         registry.register(PROP_CREATE_MISSING_WORDS, PropertyType.BOOLEAN);
+        registry.register(PROP_UNIT_MANAGER, PropertyType.COMPONENT);
     }
 
     /*
@@ -123,6 +126,8 @@ public class FullDictionary implements Dictionary {
                 PROP_ALLOW_MISSING_WORDS_DEFAULT);
         createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS,
                 PROP_CREATE_MISSING_WORDS_DEFAULT);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
+                UnitManager.class);
     }
 
     /*
@@ -207,7 +212,7 @@ public class FullDictionary implements Dictionary {
             pronunciations.add(pronunciation);
             // if we are adding a SIL ending duplicate
             if (!isFillerDict && addSilEndingPronunciation) {
-                units.add(Unit.SILENCE);
+                units.add(UnitManager.SILENCE);
                 Unit[] unitsArray2 = (Unit[]) units.toArray(new Unit[units
                         .size()]);
                 Pronunciation pronunciation2 = new Pronunciation(unitsArray2,
@@ -260,7 +265,7 @@ public class FullDictionary implements Dictionary {
      *  
      */
     private Unit getCIUnit(String name, boolean isFiller) {
-        return Unit.getUnit(name, isFiller, Context.EMPTY_CONTEXT);
+        return unitManager.getUnit(name, isFiller, Context.EMPTY_CONTEXT);
     }
 
     /**

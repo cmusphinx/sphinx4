@@ -32,6 +32,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -145,6 +146,11 @@ public class Sphinx3Loader implements Loader {
      * The log math component for the system.
      */
     public final static String PROP_LOG_MATH = "logMath";
+
+    /**
+     * The unit manager
+     */
+    public final static String PROP_UNIT_MANAGER  = "unitManager";
 
     /**
      * Specifies whether the model to be loaded is in ASCII or binary format
@@ -273,6 +279,7 @@ public class Sphinx3Loader implements Loader {
     private Map contextIndependentUnits;
     private HMMManager hmmManager;
     private LogMath logMath;
+    private UnitManager unitManager;
     private Properties properties;
     private boolean swap;
     protected final static String DENSITY_FILE_VERSION = "1.0";
@@ -306,6 +313,7 @@ public class Sphinx3Loader implements Loader {
             throws PropertyException {
         this.name = name;
         registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
+        registry.register(PROP_UNIT_MANAGER, PropertyType.COMPONENT);
         registry.register(PROP_IS_BINARY, PropertyType.BOOLEAN);
 	registry.register(PROP_SPARSE_FORM, PropertyType.BOOLEAN);
         registry.register(PROP_VECTOR_LENGTH, PropertyType.INT);
@@ -329,6 +337,9 @@ public class Sphinx3Loader implements Loader {
             ps.getString(PROP_PROPERTIES_FILE, PROP_PROPERTIES_FILE_DEFAULT);
         logMath = 
             (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+        unitManager = 
+            (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
+                                          UnitManager.class);
         binary = 
             ps.getBoolean(PROP_IS_BINARY, getIsBinaryDefault());
 	sparseForm = 
@@ -1110,7 +1121,7 @@ public class Sphinx3Loader implements Loader {
 	    assert position.equals("-");
 	    assert tmat < numTiedTransitionMatrices;
 
-	    Unit unit = Unit.getUnit(name, attribute.equals(FILLER));
+	    Unit unit = unitManager.getUnit(name, attribute.equals(FILLER));
 	    contextIndependentUnits.put(unit.getName(), unit);
 
 	    if (logger.isLoggable(Level.FINE)) {
@@ -1120,7 +1131,7 @@ public class Sphinx3Loader implements Loader {
 
 	    // The first filler
 	    if (unit.isFiller() && unit.getName().equals(SILENCE_CIPHONE)) {
-		unit = Unit.SILENCE;
+		unit = UnitManager.SILENCE;
 	    }
 
 	    float[][] transitionMatrix = (float[][]) matrixPool.get(tmat);
@@ -1178,7 +1189,7 @@ public class Sphinx3Loader implements Loader {
                 
                     Context context = LeftRightContext.get(leftContext,
                                                            rightContext);
-                    unit = Unit.getUnit(name, false, context);
+                    unit = unitManager.getUnit(name, false, context);
                 }
                 lastUnitName = unitName;
                 lastUnit = unit;

@@ -26,6 +26,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 /**
@@ -196,9 +197,10 @@ public class TrivialAcousticModel implements AcousticModel {
       * @param unitName the name of the unit
       */
     private void createTrivialHMM(String unitName) {
-        Unit unit = Unit.getUnit(unitName);
-        HMM hmm = new TrivialHMM(unit, HMMPosition.UNDEFINED);
-        hmmMap.put(unit, hmm);
+        // FIXME
+        //Unit unit = Unit.getUnit(unitName);
+        //HMM hmm = new TrivialHMM(unit, HMMPosition.UNDEFINED);
+        //hmmMap.put(unit, hmm);
     }
 
     /* (non-Javadoc)
@@ -237,7 +239,8 @@ class TrivialHMM implements HMM {
         this.unit = unit;
         this.position = position;
         hmmStates = new HMMState[NUM_STATES];
-        baseUnit = Unit.getUnit(unit.getName());
+        // baseUnit = Unit.getUnit(unit.getName());
+        baseUnit = unit.getBaseUnit();
 
         for (int i = 0; i < hmmStates.length; i++) {
             boolean finalState = i == hmmStates.length - 1;
