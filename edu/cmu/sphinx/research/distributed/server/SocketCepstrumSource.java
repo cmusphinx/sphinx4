@@ -75,6 +75,9 @@ public class SocketCepstrumSource implements CepstrumSource {
             if (firstValue == UTTERANCE_END) {
                 inUtterance = false;
                 return (new Cepstrum(Signal.UTTERANCE_END));
+            } else if (firstValue == UTTERANCE_START) {
+                throw new IllegalStateException
+                    ("Too many UTTERANCE_STARTs.");
             } else {
                 float[] data = new float[cepstrumLength];
                 data[0] = firstValue;
