@@ -26,7 +26,7 @@ if gmake $target > $base/$rawOutput
 then
   status="OK";
 else
-  status="FAILED";
+  status="FAILED"; cat $base/$rawOutput;
 fi
 
 cd $base
