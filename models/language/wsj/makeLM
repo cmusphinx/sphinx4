@@ -1,21 +1,50 @@
-file=wsj.prep.txt
+#
+# Generates the language model for a 5k general business vocabulary
+#
+# uses:
+#       wsj.txt         - transcript of wsj
+#       5k_words.vocab - hand prepared vocabulary list
+#
+# generates:
+#       wsj.lm - arpa format of the language model
+#       wsj.DMP - CMU binary format of the language model
+#
+#       
+# requires:
+#       CMU language model toolkit:
+#               http://www.speech.cs.cmu.edu/SLM_info.html
+#       lm3g2dmp - utility to generate DMP format models:
+#           http://cmusphinx.sourceforge.net/webpage/html/download.php#utilities#
+# unix commands:
+#       gawk mv rmdir rm tr
+#
+# All commands should be in your path
+#
+
+# Convert transcript to all lower case
+tr "[A-Z]" "[a-z]" < wsj.txt > wsj.lc.tmp
+
+# normalize the tags
+gawk -f prep.awk < wsj.lc.tmp > wsj.prep.tmp
+
 #
 # Generate the word frequencies
 #
 
-text2wfreq < $file > $file.tmp.wfreq
+text2wfreq < wsj.prep.tmp > wsj.wfreq.tmp
 
 #
 # Generate the vocabulary (this should be a subset wsj.vocab)
 #
 
-wfreq2vocab  -top 5000 < $file.tmp.wfreq > $file.tmp.vocab
+wfreq2vocab  -top 5000 < wsj.wfreq.tmp > wsj.vocab.tmp
 
 #
 # Generate the idngram
 
 #text2idngram -vocab $file.tmp.vocab < $file  > $file.tmp.idngram
-text2idngram -vocab 5k_words.vocab < $file  > $file.tmp.idngram
+# uses the custom word list
+text2idngram -vocab 5k_words.vocab < wsj.prep.tmp  > wsj.idngram.tmp
 
 
 #
@@ -25,7 +54,8 @@ text2idngram -vocab 5k_words.vocab < $file  > $file.tmp.idngram
 #idngram2lm  -idngram $file.tmp.idngram -vocab $file.tmp.vocab -arpa $file.arpa
 #idngram2lm  -witten_bell -idngram $file.tmp.idngram -vocab $file.tmp.vocab -arpa $file.arpa
 #idngram2lm  -two_byte_alphas -idngram $file.tmp.idngram -vocab $file.tmp.vocab -arpa $file.arpa
-idngram2lm  -vocab_type 0 -idngram $file.tmp.idngram -vocab 5k_words.vocab -arpa $file.arpa
+
+idngram2lm  -vocab_type 0 -idngram wsj.idngram.tmp -vocab 5k_words.vocab -arpa wsj.lm
 
 
 #
@@ -33,14 +63,13 @@ idngram2lm  -vocab_type 0 -idngram $file.tmp.idngram -vocab 5k_words.vocab -arpa
 #
 
 mkdir dmp
-lm3g2dmp $file.arpa dmp
-mv dmp/$file.arpa.DMP wsj.DMP
-mv $file.arpa wsj.lm
+lm3g2dmp wsj.lm dmp
+mv dmp/wsj.lm.DMP wsj.DMP
 
 #
 # cleanup
 #
 
 rmdir dmp
-rm *.tmp.*
+rm *.tmp
 

@@ -36,32 +36,12 @@ Steps to prepare the large WSJ lm:
 
 2) uncompress the np_data and collect into a single transcript file:
 
-   find np_data -name "*.z" | xargs zcat >> wsj.txt
-
-3) Convert it all to lower case
-
-   tr "[A-Z]" "[a-z]" < wsj.txt > wsj.lc.txt
-
-4) Filter <s> and <p> into proper format with:
+   find /ldc/disk/np_data -name "*.z" | xargs zcat >> ./wsj.txt
 
 
- gawk -f prep.awk < wsj.lc.txt > wsj.prep.txt 
+3) generate the language models:
 
-
-Where prep.awk is:
-
-{
-    gsub(/<s[0-9\.\-]+>/, "<s>");
-    gsub(/<p[0-9\.\-]+>/, "");
-    gsub(/<\/p>/, "");
-    if (length($0) > 0) {
-        print;
-    }
-}
-
-4) Generate the language model (ARPA and DMP format)
-
-   makeLM
+  % makeLM
 
    This will create two files:
         wsj.DMP - CMU binary format language model
