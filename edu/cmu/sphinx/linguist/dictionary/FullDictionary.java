@@ -306,8 +306,7 @@ public class FullDictionary implements Dictionary {
         text = text.toLowerCase();
         Word word = lookupWord(text);
         if (word == null) {
-            // System.out.println("Word `" + text + "' not in
-            // FullDictionary.");
+            logger.warning("Missing word: " + text);
             if (wordReplacement != null) {
                 word = lookupWord(wordReplacement);
                 logger.warning("Replacing " + text + " with " + 
@@ -320,12 +319,8 @@ public class FullDictionary implements Dictionary {
                 if (createMissingWords) {
                     word = new Word(text, null, false);
                     wordDictionary.put(text, word);
-                } else {
-                    logger.warning("Missing word: " + text);
                 }
                 return null;
-            } else {
-                logger.warning("Missing word: " + text);
             }
         }
         return word;

@@ -306,16 +306,13 @@ public void deallocate() {
         Object object = dictionary.get(text);
 
         if (object == null) { // deal with 'not found' case
+            logger.warning("Missing word: " + text);
             if (wordReplacement != null) {
                 word = getWord(wordReplacement);
             } else if (allowMissingWords) {
                 if (createMissingWords) {
                     word = createWord(text, null, false);
-                } else {
-                    logger.warning("FastDictionary: Missing word: " + text);
                 }
-            } else {
-                logger.warning("FastDictionary: Missing word: " + text);
             }                
         } else if (object instanceof String) { // first lookup for this string
             word = processEntry(text);
