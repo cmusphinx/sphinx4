@@ -796,7 +796,7 @@ class Sphinx3Loader implements Loader {
 	    assert position.equals("-");
 	    assert tmat < numTiedTransitionMatrices;
 
-	    Unit unit = new Unit(name, attribute.equals(FILLER));
+	    Unit unit = Unit.createCIUnit(name, attribute.equals(FILLER));
 	    contextIndependentUnits.put(unit.getName(), unit);
 
 	    if (logger.isLoggable(Level.FINE)) {
@@ -852,7 +852,7 @@ class Sphinx3Loader implements Loader {
                 Context context = LeftRightContext.get(leftContext,
                                                        rightContext);
 
-                Unit unit = new Unit(name, context);
+                Unit unit = Unit.createCDUnit(name, false, context);
                 if (logger.isLoggable(Level.FINE)) {
                     logger.fine("Loaded " + unit);
                 }

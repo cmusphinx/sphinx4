@@ -1012,7 +1012,7 @@ public class SimpleLinguist implements  Linguist {
             Unit[] rc = getRC(units, which, rightContext);
             UnitContext actualRightContext = UnitContext.get(rc);
             LeftRightContext context = LeftRightContext.get(lc, rc);
-            Unit cdUnit = new Unit(units[which].getName(),
+            Unit cdUnit = Unit.getUnit(units[which].getName(),
                         units[which].isFiller(), context);
 
             UnitState unitState = new ExtendedUnitState(parent, which, cdUnit);

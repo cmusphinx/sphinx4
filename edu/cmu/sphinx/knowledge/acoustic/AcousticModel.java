@@ -466,7 +466,7 @@ public class AcousticModel {
       * @return a composite HMM
       */
      private HMM getCompositeHMM(Unit unit, HMMPosition position) {
-	 Unit ciUnit = new Unit(unit.getName(),
+	 Unit ciUnit = Unit.getUnit(unit.getName(),
 		 unit.isFiller(), Context.EMPTY_CONTEXT);
 
 	 SenoneSequence compositeSequence = getCompositeSenoneSequence(unit);
@@ -657,7 +657,7 @@ public class AcousticModel {
 
 	 // couldn't find any matches, so at least include the CI unit
 	 if (senoneSequenceList.size() == 0) {
-	     Unit ciUnit = new Unit(unit.getName(), unit.isFiller());
+	    Unit ciUnit = Unit.getUnit(unit.getName(), unit.isFiller());
 	     HMM baseHMM = lookupHMM(ciUnit, HMMPosition.UNDEFINED);
 	     senoneSequenceList.add(baseHMM.getSenoneSequence());
 	 }
@@ -867,7 +867,8 @@ public class AcousticModel {
             
             if (nlc != lc || nrc != rc) {
                 Context newContext =  LeftRightContext.get(nlc, nrc);
-                Unit newUnit = new Unit(unit.getName(), newContext);
+                Unit newUnit = Unit.getUnit(unit.getName(),
+                        unit.isFiller(), newContext);
                 hmm = mgr.get(position, newUnit);
                 if (hmm == null) {
                     hmm = getHMMAtAnyPosition(newUnit);

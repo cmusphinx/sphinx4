@@ -539,7 +539,7 @@ class ModelInitializerLoader implements Loader {
 		attribute = "-";
 	    }
 
-	    Unit unit = new Unit(phone, attribute.equals(FILLER));
+	    Unit unit = Unit.getUnit(phone, attribute.equals(FILLER));
 	    contextIndependentUnits.put(unit.getName(), unit);
 
 	    if (logger.isLoggable(Level.FINE)) {

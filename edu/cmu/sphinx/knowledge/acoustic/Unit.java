@@ -13,6 +13,8 @@
 package edu.cmu.sphinx.knowledge.acoustic;
 import edu.cmu.sphinx.util.Utilities;
 import java.io.Serializable;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Represents a unit of speech. Units may represent phones, words or
@@ -23,36 +25,144 @@ public class  Unit implements Serializable {
      * The silence unit
      */
     public static String SILENCE_NAME = "SIL";
-    public static Unit SILENCE = new Unit(SILENCE_NAME, true);
+    public static Unit SILENCE;
+    private static Map ciMap;
+    private static int nextID ;
 
+    static {
+        nextID = 1;
+        ciMap = new HashMap();
+        SILENCE = createCIUnit(SILENCE_NAME, true);
+    }
 
     private String name;
     private boolean filler = false;
     private boolean silence = false;
     private Context context = null;
+    private int baseID;
 
     private volatile String key = null;
     private static int objectCount; 	 // for tracking object counts
 
+
+    /**
+     * Gets or creates a unit from the unit pool
+     *
+     * @param name the name of the unit
+     * @param filler <code>true</code> if the unit is a filler unit
+     * @param context the context for this unit
+     *
+     * @return the unit
+     */
+    public static Unit getUnit(String name, boolean filler, Context context) {
+        Unit unit = null;
+        if (context.EMPTY_CONTEXT == context) {
+            unit = (Unit) ciMap.get(name);
+        } else {
+            unit =  new Unit(name, filler, context);
+        }
+        return unit;
+    }
+
+    /**
+     * Gets or creates a unit from the unit pool
+     *
+     * @param name the name of the unit
+     * @param filler <code>true</code> if the unit is a filler unit
+     *
+     * @return the unit
+     */
+    public static Unit getUnit(String name, boolean filler) {
+        return getUnit(name, filler, Context.EMPTY_CONTEXT);
+    }
+
+    /**
+     * Gets a CI unit by name
+     *
+     * @param name the name of the unit
+     *
+     * @return the unit
+     */
+    public static Unit getCIUnit(String name) {
+        return (Unit) ciMap.get(name);
+    }
+
+
+
+    /**
+     * creates a unit ci unit 
+     *
+     * @param name the name of the unit
+     * @param filler <code>true</code> if the unit is a filler unit
+     * @param id the id for this unit
+     *
+     * @return the unit
+     */
+    static Unit createCIUnit(String name, boolean filler) {
+        Unit unit = (Unit) ciMap.get(name);
+        if (unit == null) {
+            Unit u = new Unit(name, filler, Context.EMPTY_CONTEXT, nextID++);
+            unit = u;
+            ciMap.put(name, unit);
+        }
+        return unit;
+    }
+
+    /**
+     * creates a cd unit 
+     *
+     * @param name the name of the unit
+     * @param filler <code>true</code> if the unit is a filler unit
+     * @param context the context for this unit
+     *
+     * @return the unit
+     */
+    static Unit createCDUnit(String name, 
+            boolean filler, Context context) {
+        Unit u = new Unit(name, filler, context, getIDFromName(name));
+        return u;
+    }
+
+    /**
+     * Gets the CI id for a unit based on its name
+     *
+     * @param name the name of the unit
+     * @return the id
+     */
+    private static int getIDFromName(String name) {
+        return ((Unit) ciMap.get(name)).getBaseID();
+    }
+
+
+    /**
+     * Gets or creates a unit from the unit pool
+     *
+     * @param name the name of the unit
+     *
+     * @return the unit
+     */
+    public static Unit getUnit(String name) {
+        return getUnit(name, false, Context.EMPTY_CONTEXT);
+    }
+
+
    /**
-    * Constructs a unit with an empty context
+    * Constructs a context dependent  unit
     *
     * @param name the name of the unit
     * @param filler <code>true</code> if the unit is a filler unit
-    */
-    public Unit(String name, boolean filler) {
-	this(name, filler, Context.EMPTY_CONTEXT);
-    }
-
-   /**
-    * Constructs a unit with a context. Unit is assumed to not be a
-    * filler unit
-    *
-    * @param name the name of the unit
     * @param context the context for this unit
+    * @param id the base id for the unit
     */
-    public Unit(String name, Context context) {
-	this(name, false, context);
+    private Unit(String name, boolean filler, Context context, int id) {
+	this.name = name;
+	this.filler = filler;
+	this.context = context;
+        this.baseID = id;
+	if (name.equals(SILENCE_NAME)) {
+	    silence = true;
+	}
+	Utilities.objectTracker("Unit", objectCount++);
     }
 
    /**
@@ -62,14 +172,8 @@ public class  Unit implements Serializable {
     * @param filler <code>true</code> if the unit is a filler unit
     * @param context the context for this unit
     */
-    public Unit(String name, boolean filler, Context context) {
-	this.name = name;
-	this.filler = filler;
-	this.context = context;
-	if (name.equals(SILENCE_NAME)) {
-	    silence = true;
-	}
-	Utilities.objectTracker("Unit", objectCount++);
+    private Unit(String name, boolean filler, Context context) {
+        this(name, filler, context, -1);
     }
 
     /**
@@ -79,6 +183,17 @@ public class  Unit implements Serializable {
      */
     public String getName() {
 	return name;
+    }
+
+
+    /**
+     * Gets the base ID for this unit
+     *
+     * @return the id
+     */
+    public int getBaseID() {
+        assert baseID != -1;
+        return baseID;
     }
 
     /**

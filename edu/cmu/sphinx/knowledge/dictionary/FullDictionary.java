@@ -45,7 +45,6 @@ import java.util.TreeMap;
 public class FullDictionary implements Dictionary {
 
     private Map dictionary = new HashMap();
-    private Map unitCache = new HashMap();
     private boolean addSilEndingPronunciation;
     private String wordReplacement;
     private boolean allowMissingWords;
@@ -125,8 +124,6 @@ public class FullDictionary implements Dictionary {
         loadDictionary(StreamFactory.getInputStream
                        (location, fillerDictionaryFile), true);
 	loadTimer.stop();
-
-        unitCache.put(Unit.SILENCE.getName(), Unit.SILENCE);
     }
     
 
@@ -199,12 +196,7 @@ public class FullDictionary implements Dictionary {
      *
      */
     private Unit getCIUnit(String name, boolean isFiller) {
-	Unit unit = (Unit) unitCache.get(name);
-	if (unit == null) {
-	    unit = new Unit(name, isFiller, Context.EMPTY_CONTEXT);
-	    unitCache.put(name, unit);
-	}
-	return unit;
+        return Unit.getUnit(name, isFiller, Context.EMPTY_CONTEXT);
     }
 
 
