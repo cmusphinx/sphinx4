@@ -18,8 +18,11 @@ package demo.jsapi.cardmatch;
  * An interface that represents a spoken prompt
  */
 public interface Prompt {
+
     /**
      * Gets the next text to be spoken
+     *
+     * @return the text to be spoken
      */
     public String getText();
 
