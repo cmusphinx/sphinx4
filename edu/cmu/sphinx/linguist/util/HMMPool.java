@@ -107,6 +107,11 @@ public class HMMPool {
         Timer.stop("buildHmmPool");
     }
 
+
+    public AcousticModel getModel() {
+        return model;
+    }
+
     /**
      * Given a unit ID, generate a full context dependent unit that
      * will allow us to look for a suitable hmm
