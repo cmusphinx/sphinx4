@@ -179,6 +179,10 @@ public class LargeTrigramModel implements LanguageModel {
         buildUnigramIDMap();
 	loadedBigramCache = new BigramBuffer[unigrams.length];
 
+        System.out.println("# of unigrams: " + loader.getNumberUnigrams());
+        System.out.println("# of  bigrams: " + loader.getNumberBigrams());
+        System.out.println("# of trigrams: " + loader.getNumberTrigrams());
+
         Timer.stop("LM Load");
     }
 
