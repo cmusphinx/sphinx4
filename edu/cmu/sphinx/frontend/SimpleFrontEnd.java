@@ -150,7 +150,8 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 	    SphinxProperties.getSphinxProperties(getContext());
 	if (useAcousticModelProperties) {
 	    return (PropertiesResolver.resolve
-		    (sphinxProperties, getAcousticProperties(), getName()));
+		    (sphinxProperties, getAcousticProperties(), 
+                     getContext() + "." + getName()));
 	} else {
 	    return sphinxProperties;
 	}
@@ -312,19 +313,20 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      */
     private CepstrumSource getEndpointer(CepstrumSource predecessor) 
 	throws IOException {
-	SphinxProperties props = getSphinxProperties();
-
+        
+        CepstrumSource endpointer = null;
+        SphinxProperties props = getSphinxProperties();
 	endPointerClass = props.getString(PROP_ENDPOINTER, null);
-
+        
         if (endPointerClass != null) {
-	    CepstrumSource endpointer = null;
-            EnergyEndpointer energyEndpointer = new EnergyEndpointer
-                ("EnergyEndpointer", getContext(), props, predecessor);
+            if (endPointerClass.equals
+                ("edu.cmu.sphinx.frontend.EnergyEndpointer")) {
+                endpointer = new EnergyEndpointer
+                    ("EnergyEndpointer", getContext(), props, predecessor);
+            }
+        }
 
-	    return endpointer;
-        } else {
-	    return null;
-	}
+        return endpointer;
     }
 
 
@@ -416,6 +418,8 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
     public DataProcessor getProcessor(String processorName) {
         Object object = processors.get(processorName);
         if (object == null) {
+            System.out.println
+                ("WARNING: SimpleFrontEnd does not have " + processorName);
             return null;
         } else {
             return (DataProcessor) object;
@@ -548,7 +552,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      * @return a description of this SimpleFrontEnd
      */
     public String toString() {
-	getSphinxProperties().list(System.out);
+	// getSphinxProperties().list(System.out);
 	String description = ("FrontEnd: " + getName() + "\n");
 	description += ("------------------\n");
 	description += ("Context          = " + getContext() + "\n");
