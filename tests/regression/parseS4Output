@@ -66,7 +66,7 @@ BEGIN {
 		gsub(/s/, "", audioTime);
 		gsub(/s/, "", procTime);
 	    } else if (arry[1] == "Used:" && arry[2] == "This:") {
-	        heapSize = arry[5];
+	        heapSize = arry[6];
 	    } else if (arry[1] == "Words:") {
 	        words = arry[2];
 	    } else if (arry[1] == "Accuracy:") {
