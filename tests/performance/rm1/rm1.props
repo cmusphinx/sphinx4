@@ -38,6 +38,7 @@ edu.cmu.sphinx.knowledge.acoustic.properties_file = am.props
 #
 ############################################################
 
+edu.cmu.sphinx.frontend.featureExtractor=edu.cmu.sphinx.frontend.LiveFeatureExtractor
 
 
 ############################################################

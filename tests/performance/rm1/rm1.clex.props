@@ -42,6 +42,7 @@ edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sph
 #
 ############################################################
 
+edu.cmu.sphinx.frontend.featureExtractor=edu.cmu.sphinx.frontend.LiveFeatureExtractor
 
 
 ############################################################
