@@ -21,9 +21,19 @@ package edu.cmu.sphinx.knowledge.dictionary;
 public interface Dictionary {
 
     /**
+     * ID of an unknown word.
+     */
+    public static final int UNKNOWN_WORD_ID = -1;
+
+    /**
      * Spelling of the 'word' that marks the beginning of a sentence
      */
     public static final String SENTENCE_START_SPELLING = "<s>";
+
+    /**
+     * ID of the 'word' that marks the beginning of a sentence
+     */
+    public static final int SENTENCE_START_ID = -2;
 
     /**
      * Spelling of the 'word' that marks the end of a sentence
@@ -31,10 +41,19 @@ public interface Dictionary {
     public static final String SENTENCE_END_SPELLING = "</s>";
 
     /**
+     * ID of the 'word' that marks the end of a sentence
+     */
+    public static final int SENTENCE_END_ID = -3;
+
+    /**
      * Spelling of the 'word' that marks a silence
      */
     public static final String SILENCE_SPELLING = "<sil>";
 
+    /**
+     * ID of the 'word' that marks a silence
+     */
+    public static final int SILENCE_ID = -4;
 
     /**
      * Prefix string for the Sphinx properties of this Dictionary.
@@ -178,6 +197,14 @@ public interface Dictionary {
      */
     public WordClassification[] getPossibleWordClassifications();
 
+
+    /**
+     * Returns the ID of the given word.
+     *
+     * @return the ID of the given word, or -1 if the given word is
+     *   not in the dictionary
+     */
+    public int getWordID(String word);
 
 
     /**
