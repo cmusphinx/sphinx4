@@ -29,6 +29,7 @@ public class AcousticModelFactory {
     static Map classMap = new HashMap();
     static Map modelMap = new HashMap();
     static String defaultModelName = null;
+    static SphinxProperties curProps;
 
     /**
      * Prefix for acoustic model SphinxProperties.
@@ -108,6 +109,9 @@ public class AcousticModelFactory {
                         + className);
             } 
         }
+        if (false) {
+        System.out.println("Requesting model " + name + " with props " + props.getContext() + " model is " + am.getName());
+        }
        return am;
     }
 
@@ -119,21 +123,25 @@ public class AcousticModelFactory {
      * @param props the sphinx properties
      */
     private static void loadClassMap(SphinxProperties props) {
-        String modelNames = props.getString(PROP_MODELS,"");
-        StringTokenizer st = new StringTokenizer(modelNames);
+        if (curProps == null || curProps != props) {
+            classMap.clear();
+            curProps = props;
+            String modelNames = props.getString(PROP_MODELS,"");
+            StringTokenizer st = new StringTokenizer(modelNames);
 
-        while (st.hasMoreTokens()) {
-            String name = st.nextToken();
-            String className = props.getString(name,  PROP_CLASS, null);
+            while (st.hasMoreTokens()) {
+                String name = st.nextToken();
+                String className = props.getString(name,  PROP_CLASS, null);
 
-            if (className != null) {
-                if (defaultModelName == null) {
-                    defaultModelName = name;
+                if (className != null) {
+                    if (defaultModelName == null) {
+                        defaultModelName = name;
+                    }
+                    classMap.put(name, className);
+                }  else {
+                    System.err.println(
+                      "AcousticModelFactory: Bad config for model " + name);
                 }
-                classMap.put(name, className);
-            }  else {
-                System.err.println(
-                  "AcousticModelFactory: Bad config for model " + name);
             }
         }
     }

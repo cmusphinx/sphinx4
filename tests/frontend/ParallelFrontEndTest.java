@@ -18,11 +18,13 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.parallel.ParallelFrontEnd;
 
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory;
 
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.util.Iterator;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Test program for the FrontEnd.
@@ -50,7 +52,9 @@ public class ParallelFrontEndTest {
            
 	    System.out.println(fe.toString());
 
-	    List namelist = AcousticModel.getNames(testName);
+            SphinxProperties props = 
+                SphinxProperties.getSphinxProperties(testName);
+	    Collection namelist = AcousticModelFactory.getNames(props);
 
 	    for (Iterator i = namelist.iterator(); i.hasNext();) {
 		String amName = (String) i.next();
