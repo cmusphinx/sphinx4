@@ -45,10 +45,10 @@ import javax.speech.recognition.RuleToken;
  *
  * All probabilities are maintained in LogMath log base
  */
-public class JSGFGrammar extends edu.cmu.sphinx.decoder.linguist.Grammar {
+public class JSGFGrammar extends Grammar {
 
     private final static String PROP_PREFIX 
-        = "demo.jsapi.CardMatch.JSGFGrammar.";
+        = "demo.jsapi.cardmatch.JSGFGrammar.";
 
     /**
      * Sphinx property that defines the location of the JSGF
@@ -67,7 +67,7 @@ public class JSGFGrammar extends edu.cmu.sphinx.decoder.linguist.Grammar {
     
 
     private void debugPrintln(String message) {
-        if (true) {
+        if (false) {
             System.out.println(message);
         }
     }
@@ -88,7 +88,7 @@ public class JSGFGrammar extends edu.cmu.sphinx.decoder.linguist.Grammar {
      *
      * @return the initial node of the Grammar
      */
-    protected edu.cmu.sphinx.decoder.linguist.GrammarNode createGrammar()
+    protected GrammarNode createGrammar()
         throws IOException, NoSuchMethodException {
         identity = 0;
         String path = props.getString(PROP_PATH, PROP_PATH_DEFAULT);
@@ -100,8 +100,8 @@ public class JSGFGrammar extends edu.cmu.sphinx.decoder.linguist.Grammar {
             ruleGrammar = recognizer.loadJSGF(new FileReader(path));
             ruleGrammar.setEnabled(true);
             
-            edu.cmu.sphinx.decoder.linguist.GrammarNode firstNode = createGrammarNode(identity++, "<sil>");
-            edu.cmu.sphinx.decoder.linguist.GrammarNode finalNode = createGrammarNode(identity++, "<sil>");
+            GrammarNode firstNode = createGrammarNode(identity++, "<sil>");
+            GrammarNode finalNode = createGrammarNode(identity++, "<sil>");
             finalNode.setFinalNode(true);
             
             // go through each rule and create a network of GrammarNodes
@@ -112,7 +112,7 @@ public class JSGFGrammar extends edu.cmu.sphinx.decoder.linguist.Grammar {
                 if (ruleGrammar.isRulePublic(ruleName)) {
                     debugPrintln("New Rule: " + ruleName);
                     Rule rule = ruleGrammar.getRule(ruleName);
-                    edu.cmu.sphinx.decoder.linguist.GrammarNode[] newNodes = parseRule(rule);
+                    GrammarNode[] newNodes = parseRule(rule);
                     firstNode.add(newNodes[0], 0.0);
                     newNodes[1].add(finalNode, 0.0);
                 }
@@ -136,7 +136,7 @@ public class JSGFGrammar extends edu.cmu.sphinx.decoder.linguist.Grammar {
      *
      * @return the first and last GrammarNodes created from the parsing
      */
-    private edu.cmu.sphinx.decoder.linguist.GrammarNode[] parseRule(Rule rule) {
+    private GrammarNode[] parseRule(Rule rule) {
 
         debugPrintln("parseRule: " + rule.toString());
 
@@ -166,7 +166,7 @@ public class JSGFGrammar extends edu.cmu.sphinx.decoder.linguist.Grammar {
     /**
      * Parses the given RuleName into a network of GrammarNodes.
      */
-    private edu.cmu.sphinx.decoder.linguist.GrammarNode[] parseRuleName(RuleName ruleName) {
+    private GrammarNode[] parseRuleName(RuleName ruleName) {
         debugPrintln("parseRuleName: " + ruleName.toString());
         Rule rule = ruleGrammar.getRule(ruleName.getSimpleRuleName());
         return parseRule(rule);
@@ -180,11 +180,11 @@ public class JSGFGrammar extends edu.cmu.sphinx.decoder.linguist.Grammar {
      *
      * @return the first and last GrammarNodes of the network
      */
-    private edu.cmu.sphinx.decoder.linguist.GrammarNode[] parseRuleAlternatives(RuleAlternatives
+    private GrammarNode[] parseRuleAlternatives(RuleAlternatives
                                                 ruleAlternatives) {
         debugPrintln("parseRuleAlternatives: " + ruleAlternatives.toString());
-        edu.cmu.sphinx.decoder.linguist.GrammarNode firstNode = createGrammarNode(identity++, false);
-        edu.cmu.sphinx.decoder.linguist.GrammarNode lastNode = createGrammarNode(identity++, false);
+        GrammarNode firstNode = createGrammarNode(identity++, false);
+        GrammarNode lastNode = createGrammarNode(identity++, false);
 
         Rule[] rules = ruleAlternatives.getRules();
         float[] weights = ruleAlternatives.getWeights();
@@ -197,12 +197,12 @@ public class JSGFGrammar extends edu.cmu.sphinx.decoder.linguist.Grammar {
                 weight = weights[i];
             }
             debugPrintln("Alternative: " + rule.toString());
-            edu.cmu.sphinx.decoder.linguist.GrammarNode[] newNodes = parseRule(rule);
+            GrammarNode[] newNodes = parseRule(rule);
             firstNode.add(newNodes[0], weight);
             newNodes[1].add(lastNode, 0.0);
         }
         
-        edu.cmu.sphinx.decoder.linguist.GrammarNode[] nodes = new edu.cmu.sphinx.decoder.linguist.GrammarNode[2];
+        GrammarNode[] nodes = new GrammarNode[2];
         nodes[0] = firstNode;
         nodes[1] = lastNode;
         return nodes;
@@ -216,19 +216,19 @@ public class JSGFGrammar extends edu.cmu.sphinx.decoder.linguist.Grammar {
      *
      * @return the first and last GrammarNodes of the network
      */
-    private edu.cmu.sphinx.decoder.linguist.GrammarNode[] parseRuleSequence(RuleSequence ruleSequence) {
+    private GrammarNode[] parseRuleSequence(RuleSequence ruleSequence) {
 
         debugPrintln("parseRuleSequence: " + ruleSequence);
 
-        edu.cmu.sphinx.decoder.linguist.GrammarNode[] nodes = new edu.cmu.sphinx.decoder.linguist.GrammarNode[2];
+        GrammarNode[] nodes = new GrammarNode[2];
         Rule[] rules = ruleSequence.getRules();
 
-        edu.cmu.sphinx.decoder.linguist.GrammarNode lastGrammarNode = null;
+        GrammarNode lastGrammarNode = null;
 
         // expand and connect each rule in the sequence serially
         for (int i = 0; i < rules.length; i++) {
             Rule rule = rules[i];
-            edu.cmu.sphinx.decoder.linguist.GrammarNode[] newNodes = parseRule(rule);
+            GrammarNode[] newNodes = parseRule(rule);
             
             // first node
             if (i == 0) {
@@ -257,7 +257,7 @@ public class JSGFGrammar extends edu.cmu.sphinx.decoder.linguist.Grammar {
      *
      * @return the first and last GrammarNodes of the network
      */
-    private edu.cmu.sphinx.decoder.linguist.GrammarNode[] parseRuleTag(RuleTag ruleTag) {
+    private GrammarNode[] parseRuleTag(RuleTag ruleTag) {
         debugPrintln("parseRuleTag: " + ruleTag);
         Rule rule = ruleTag.getRule();
         return parseRule(rule);
@@ -271,12 +271,12 @@ public class JSGFGrammar extends edu.cmu.sphinx.decoder.linguist.Grammar {
      *
      * @return a GrammarNode with the word in the given RuleToken
      */
-    private edu.cmu.sphinx.decoder.linguist.GrammarNode[] parseRuleToken(RuleToken ruleToken) {
+    private GrammarNode[] parseRuleToken(RuleToken ruleToken) {
 
         debugPrintln("parseRuleToken: " + ruleToken.toString());
         
-        edu.cmu.sphinx.decoder.linguist.GrammarNode node = createGrammarNode(identity++, ruleToken.getText());
-        edu.cmu.sphinx.decoder.linguist.GrammarNode[] nodes = new edu.cmu.sphinx.decoder.linguist.GrammarNode[2];
+        GrammarNode node = createGrammarNode(identity++, ruleToken.getText());
+        GrammarNode[] nodes = new GrammarNode[2];
         nodes[0] = node;
         nodes[1] = node;
         return nodes;
