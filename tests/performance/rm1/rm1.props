@@ -13,14 +13,14 @@ handlers= java.util.logging.ConsoleHandler
 java.util.logging.ConsoleHandler.level = WARN
 java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
 
+edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+
 
 ############################################################
 #
 # Acoustic model properties
 #
 ############################################################
-
-edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
 edu.cmu.sphinx.knowledge.acoustic.FeatureVectorLength = 39
 
@@ -58,9 +58,6 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
-
-edu.cmu.sphinx.decoder.Decoder.showErrorToken=false
-edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
 
 
 ############################################################
