@@ -59,7 +59,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * them) in an utterance should be merged into one big region, or
  * whether the individual speech regions should be converted into
  * individual utterances.
- * If <b>mergeSpeechSegments</b> is set to true (the default),
+ * If <b>mergeSpeechSegments</b> is set to true,
  * all the Data from the first SpeechStartSignal to the last SpeechEndSignal
  * will be considered as one Utterance, and enclosed by a pair of
  * DataStartSignal and DataEndSignal. All non-speech
@@ -71,8 +71,8 @@ import edu.cmu.sphinx.util.props.Registry;
  * when <b>mergeSpeechSegments</b> is set to <b>true</b>. Note that all
  * SpeechStartSignals and SpeechEndSignals are removed.</i>
  * <p>
- * On the other hand, if <b>mergeSpeechSegments</b> is set to
- * false, then each speech region will become its own data stream.
+ * On the other hand, if <b>mergeSpeechSegments</b> is set to false 
+ * (the default), then each speech region will become its own data stream.
  * Pictorially, our data stream with two speech regions becomes:
  * <p><img src="doc-files/two-regions-nonmerge.gif">
  * <br><i>Figure 5: A data stream with two speech regions after filtering,
