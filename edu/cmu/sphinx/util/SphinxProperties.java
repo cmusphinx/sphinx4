@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 
 
 /**
@@ -186,6 +187,39 @@ public class SphinxProperties {
      */
     public void list(PrintStream out) {
 	shadowProps.list(out);
+        listUnused(out);
+    }
+
+    /**
+     * Prints the list of unused properties to the specified stream.
+     * Unused properties are properties that were defined in the
+     * property list or in the system environment but were never used
+     * by the system. They are potentially mispellings or properties
+     * that are no longer used. They almost always indicate that some
+     * sort of error has taken place.  
+     *
+     * @param out an output stream.
+     */
+    public void listUnused(PrintStream out) {
+        out.println("---- Unused properties ---");
+        out.println(" Unused properties defined in " + url + ":" );
+        for (Iterator i = props.keySet().iterator(); i.hasNext(); ) {
+            String key = (String) i.next();
+            if (shadowProps.get(key) == null) {
+                out.println(" " + key);
+            }
+        }
+
+        out.println(" Unused system properties:" );
+        for (Iterator i = System.getProperties().keySet().iterator(); 
+                i.hasNext(); ) {
+            String key = (String) i.next();
+            if (key.startsWith("edu.cmu")) {
+                if (shadowProps.get(key) == null) {
+                    out.println(" " + key);
+                }
+            }
+        }
     }
 
     /**
