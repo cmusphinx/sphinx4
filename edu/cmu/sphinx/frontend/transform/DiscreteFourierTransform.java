@@ -43,17 +43,18 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * the spectrum of one window of data. To display the spectrogram
  * of the entire original audio, one has to collect all the spectra
  * from all the windows generated from the original data.
- * For example, Figure 1 below shows the spectrogram of the
- * utterance, "three", produced by putting together all the spectra 
- * returned by this FFT. The vertical axis represents frequency,
+ * For example, Figure 1 below shows the audio signal of the
+ * utterance "one three nine oh", and Figure 2 shows its spectrogram,
+ * produced by putting together all the spectra returned by this FFT.
+ * The vertical axis represents frequency,
  * and the horizontal axis represents time. The darkness of the shade
  * represents the strength of that frequency at that point in time:
  * <p>
- * <img src="doc-files/spectrogram.gif">
- * <b>Figure 1: A spectrogram of the word "three".</b>
+ * <img src="doc-files/139o.jpg">
+ * <b>Figure 1: The audio signal of the utterance "one three nine oh".</b>
  * <p>
- * <img src="doc-files/three.gif">
- * <b>Figure 2: The amplitude plot of the original signal "three".</b>
+ * <img src="doc-files/139ospectrum.jpg">
+ * <b>Figure 2: The spectrogram of the utterance "one three nine oh" in Figure 1.</b>
  */
 public class DiscreteFourierTransform extends BaseDataProcessor {
 
@@ -98,7 +99,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
 			   SphinxProperties props, DataProcessor predecessor) {
 
         super.initialize((name == null ? "DFT" : name), frontEnd,
-                         props, predecessor);
+			 props, predecessor);
 
 	/**
 	 * Number of points in the FFT. By default, the value is 512,
