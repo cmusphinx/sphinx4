@@ -200,8 +200,8 @@ public class LargeTrigramModel implements LanguageModel {
      * Called before a recognition
      */
     public void start() {
-        loadedTrigramBuffer.clear();
-        trigramCache.clear();
+        loadedTrigramBuffer = new HashMap();//.clear();
+        trigramCache = new HashMap(); //.clear();
 	if (logFile != null) {
 	    logFile.println("<START_UTT>");
 	}
