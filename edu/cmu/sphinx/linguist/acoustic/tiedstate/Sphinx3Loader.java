@@ -124,7 +124,7 @@ public class Sphinx3Loader implements Loader {
     /**
      * The default value of PROP_PROPERTIES_FILE.
      */
-    public final static String PROP_PROPERTIES_FILE_DEFAULT = "am.props";
+    public final static String PROP_PROPERTIES_FILE_DEFAULT = "model.props";
 
     /**
      * The SphinxProperty for the length of feature vectors.
@@ -229,6 +229,7 @@ public class Sphinx3Loader implements Loader {
     private String location;
     private String model;
     private String dataDir;
+    private String propsFile;
     private float distFloor;
     private float mixtureWeightFloor;
     private float varianceFloor;
@@ -264,6 +265,8 @@ public class Sphinx3Loader implements Loader {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
+        propsFile =
+            ps.getString(PROP_PROPERTIES_FILE, PROP_PROPERTIES_FILE_DEFAULT);
         logMath = 
             (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
         binary = 
@@ -290,7 +293,7 @@ public class Sphinx3Loader implements Loader {
         if (properties == null) {
             properties = new Properties();
             try {
-                URL url = getClass().getResource("model.props");
+                URL url = getClass().getResource(propsFile);
                 // System.out.println(getClass() + " " + url);
                 properties.load(url.openStream());
             } catch (IOException ioe) {
@@ -430,6 +433,9 @@ public class Sphinx3Loader implements Loader {
      * @return the acoustic model properties
      */
     protected Properties getProperties() {
+        if (properties == null) {
+            loadProperties();
+        }
         return properties;
     }
 
