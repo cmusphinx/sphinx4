@@ -15,29 +15,18 @@ package edu.cmu.sphinx.decoder.search;
 import java.util.Iterator;
 import java.util.List;
 
-import edu.cmu.sphinx.util.SphinxProperties;
-
 /**
  * An active list is maintained as a sorted list
  *
  * Note that all scores are represented in LogMath logbase
  */
-public interface ActiveList {
-
-
-    /**
-     * Prefix string for all ActiveList properties.
-     */
-    public final static String PROP_PREFIX
-        = "edu.cmu.sphinx.decoder.search.ActiveList.";
-
+public interface ActiveList  {
 
     /**
      * property that sets the desired (or target) size for this
      * active list.  This is sometimes referred to as the beam size
      */
-    public final static String PROP_ABSOLUTE_BEAM_WIDTH  =
-        PROP_PREFIX + "absoluteBeamWidth";
+    public final static String PROP_ABSOLUTE_BEAM_WIDTH  ="absoluteBeamWidth";
 
     /**
      * The default value for the PROP_ABSOLUTE_BEAM_WIDTH property
@@ -50,8 +39,7 @@ public interface ActiveList {
      * relativeBeamWidth * maximumScore will be pruned from the list
      */
 
-    public final static String PROP_RELATIVE_BEAM_WIDTH
-        = PROP_PREFIX + "relativeBeamWidth";
+    public final static String PROP_RELATIVE_BEAM_WIDTH = "relativeBeamWidth";
 
     /**
      * The default value for the PROP_RELATIVE_BEAM_WIDTH property
@@ -68,8 +56,7 @@ public interface ActiveList {
      * (disabled).
      */
 
-    public final static String PROP_STRICT_PRUNING
-	= PROP_PREFIX + "strictPruning";
+    public final static String PROP_STRICT_PRUNING = "strictPruning";
 
     /**
      * The default for the PROP_STRICT_PRUNING property
@@ -104,46 +91,6 @@ public interface ActiveList {
      * @return a purged active list
      */
     public ActiveList purge();
-
-    /**
-     * Creates a new version of the active list with
-     * the same general properties of this one
-     *
-     * @return a new active list
-     */
-    public ActiveList createNew();
-
-
-    /**
-     * Returns the SphinxProperties of this list.
-     *
-     * @return the SphinxProperties of this list.
-     */
-    public SphinxProperties getProperties();
-
-
-    /**
-     * Sets the properties for this list
-     *
-     * @param props the properties for this list
-     */
-    public void setProperties(SphinxProperties props);
-
-
-    /**
-     * Sets the absolute beam width.
-     *
-     * @param absoluteBeamWidth the absolute beam width
-     */
-    public void setAbsoluteBeamWidth(int absoluteBeamWidth);
-
-
-    /**
-     * Sets the relative beam width.
-     *
-     * @param relativeBeamWidth the linear relative beam width
-     */
-    public void setRelativeBeamWidth(double relativeBeamWidth);
 
 
     /**
@@ -196,5 +143,14 @@ public interface ActiveList {
      * @return the best scoring token
      */
     public Token getBestToken();
+    
+    
+    /**
+     * Creates a new empty version of this active list
+     * with the same general properties.
+     * 
+     * @return a new active list.
+     */
+    public ActiveList newInstance();
 }
 
