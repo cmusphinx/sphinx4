@@ -356,14 +356,18 @@ public class ResultAnalyzer {
 	if (numSentences > 0) {
 	    int totalErrors = recognitionErrors 
 		+ insertionErrors + deletionErrors; 
+	    float wordErrorRate = (recognitionErrors + insertionErrors
+		    + deletionErrors) / (float) numRefWords;
+
 	    System.out.print("   Accuracy: " + 
 		    percent.format(getWordAccuracy()));
 	    System.out.println("    Errors: " + totalErrors +
-	       "  (Rec: " + recognitionErrors +
+	       "  (Sub: " + recognitionErrors +
 	       "  Ins: " + insertionErrors +
 	       "  Del: " + deletionErrors + ")");
             System.out.println("   Words: " + numRefWords + 
-                               "   Matches: " + numMatchingWords);
+                               "   Matches: " + numMatchingWords +
+			       "    WER: " + percent.format(wordErrorRate));
 	    System.out.println("   Sentences: " + numSentences +
                                "   Matches: " + numMatchingSentences +
                                "   SentenceAcc: " +
