@@ -28,8 +28,8 @@ import java.util.ArrayList;
  */
 class HMMManager {
 
-    private Map hmmsPerPosition = new HashMap();
     private List allHMMs = new ArrayList();
+    private Map[] hmmsPerPosition = new Map[HMMPosition.MAX_POSITIONS];
 
     /**
      * Put an HMM into this manager
@@ -76,10 +76,10 @@ class HMMManager {
      * @return the map of HMMs for the given position.
      */
     private Map getHMMMap(HMMPosition pos) {
-	Map hmmMap = (Map) hmmsPerPosition.get(pos);
+	Map hmmMap = (Map) hmmsPerPosition[pos.getIndex()];
 	if (hmmMap == null) {
 	    hmmMap = new LinkedHashMap();
-	    hmmsPerPosition.put(pos, hmmMap);
+	    hmmsPerPosition[pos.getIndex()] = hmmMap;
 	}
 	return hmmMap;
     }
@@ -91,9 +91,9 @@ class HMMManager {
      */
     private int getNumHMMs() {
 	int count = 0;
-	for (Iterator i = hmmsPerPosition.values().iterator();
-			i.hasNext(); ) {
-	    Map map = (Map) i.next();
+
+        for (int i = 0; i < hmmsPerPosition.length; i++) {
+	    Map map = hmmsPerPosition[i];
 	    count += map.size();
 	}
 	return count;
