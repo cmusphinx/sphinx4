@@ -348,7 +348,7 @@ function printMachineDescription() {
 }
 
 
-# echo "metrics|$fileCount|$javaFileCount|$classCount|$lineCount|$packageCount|"
+# "metrics|$date|$fileCount|$javaFileCount|$classCount|$lineCount|$packageCount|"
 function printMetrics() {
     split(metrics, data);
 
@@ -362,19 +362,19 @@ function printMetrics() {
     print("</b></big></td>");
     print(" </tr>");
     print(" <tr>");
-    print(" <td ><b>Number of files </b></td> <td> " data[2] " </td>");
+    print(" <td ><b>Number of files </b></td> <td> " data[3] " </td>");
     print(" </tr>");
     print(" <tr>");
-      print(" <td ><b>Number of source files </b></td> <td >" data[3] " </td>");
+      print(" <td ><b>Number of source files </b></td> <td >" data[4] " </td>");
     print(" </tr>");
     print(" <tr>");
-      print(" <td ><b>Number of classes</b></td> <td >" data[4] "</td>");
+      print(" <td ><b>Number of classes</b></td> <td >" data[5] "</td>");
     print(" </tr>");
     print(" <tr>");
-      print(" <td ><b>Source lines of code</b></td> <td >" data[5] "</td>");
+      print(" <td ><b>Source lines of code</b></td> <td >" data[6] "</td>");
     print(" </tr>");
     print(" <tr>");
-      print(" <td ><b>Packages </b></td> <td >" data[6] "</td>");
+      print(" <td ><b>Packages </b></td> <td >" data[7] "</td>");
     print(" </tr>");
     print("</tbody>");
     print("</table>");

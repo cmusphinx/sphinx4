@@ -11,6 +11,8 @@
 # 
 # Outputs the following metrics:
 #
+# 'metrics' - the record tag
+# date - the date the metrics were collected
 # fileCount - the number of files in the workspace
 # javaFileCount - the number of java files in the workspace
 # classCount - the number of java classes
@@ -24,6 +26,8 @@
 
 rootDir=../../
 
+##### The date 
+date=`date +%Y-%m-%d`
 
 #### count all of the files
 
@@ -44,4 +48,4 @@ lineCount=`find $rootDir -name "*.java" | xargs egrep "[{;]" | wc -l`
 #### package count
 packageCount=`find ../.. -name "*.java" -exec cat {} \; | grep "^package" | sort -u | wc -l`
 
-echo "metrics|$fileCount|$javaFileCount|$classCount|$lineCount|$packageCount|"
+echo "metrics|$date|$fileCount|$javaFileCount|$classCount|$lineCount|$packageCount|"
