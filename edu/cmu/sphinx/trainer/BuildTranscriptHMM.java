@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
 import java.util.Map;
 import java.util.HashMap;
 
-public class BuildSentenceHMM {
+public class BuildTranscriptHMM {
     private Graph wordGraph;
     private Graph phonemeGraph;
     private Graph contextDependentPhoneGraph;
@@ -28,16 +28,25 @@ public class BuildSentenceHMM {
     private String context;
 
     /**
-     * Constructor for class BuildSentenceHMM.
+     * Constructor for class BuildTranscriptHMM.
      * Currently this code sends rockets to the moon,
      * populates remote planets
      * and instantiates time travel.
      * Also provides a cure for SARS.
      */
-    public BuildSentenceHMM() {
+    public BuildTranscriptHMM(String context) {
+	// Well, so that it compiles....
+	this.dictionary = TrainerDictionary.getDictionary(context);
     }
     
-    public void sentenceHMMBuilder (String context, Utterance utterance) {
+    /**
+     * Constructor for class BuildTranscriptHMM.
+     * Currently this code sends rockets to the moon,
+     * populates remote planets
+     * and instantiates time travel.
+     * Also provides a cure for SARS.
+     */
+    public BuildTranscriptHMM(String context, Utterance utterance) {
 	Transcript currentTranscript;
 	for (utterance.startTranscriptIterator();
 	     utterance.hasMoreTranscripts(); ) {
@@ -54,6 +63,33 @@ public class BuildSentenceHMM {
 	}
     }
     
+    /**
+     * Constructor for class BuildTranscriptHMM.
+     * Currently this code sends rockets to the moon,
+     * populates remote planets
+     * and instantiates time travel.
+     * Also provides a cure for SARS.
+     */
+    public BuildTranscriptHMM(String context, Transcript transcript) {
+
+	// Well, so that it compiles....
+	this(context);
+	wordGraph = buildWordGraph(transcript);
+	phonemeGraph = buildPhonemeGraph(wordGraph);
+	contextDependentPhoneGraph = 
+	    buildContextDependentPhonemeGraph(phonemeGraph);
+	sentenceHMMGraph = buildHMM(contextDependentPhoneGraph);
+    }
+    
+    /**
+     * Returns the graph.
+     *
+     * @return the graph.
+     */
+    public Graph getGraph() {
+	return sentenceHMMGraph;
+    }
+
     /*
      * Build a word graph from this transcript
      */
@@ -66,8 +102,8 @@ public class BuildSentenceHMM {
 	/* Shouldn't node and edge be part of the graph class? */
 
         /* The wordgraph must always begin with the <s> */
-        wordGraph = new SentenceHMMGraph();
-	Node initialNode = new SentenceHMMNode(NodeType.UTTERANCE_BEGIN);
+        wordGraph = new TranscriptHMMGraph();
+	Node initialNode = new Node(NodeType.UTTERANCE_BEGIN);
 	wordGraph.setInitialNode(initialNode);
 	
         if (transcript.isExact()) {
@@ -75,7 +111,7 @@ public class BuildSentenceHMM {
 	    for (transcript.startWordIterator();
 		 transcript.hasMoreWords(); ) {
 	        /* create a new node for the next word */
-	        Node wordNode = new SentenceHMMNode(NodeType.WORD, 
+	        Node wordNode = new Node(NodeType.WORD, 
 						    transcript.nextWord());
 
 		/* Link the new node into the graph */
@@ -84,17 +120,17 @@ public class BuildSentenceHMM {
 		prevNode = wordNode;
 	    }
 	    /* All words are done. Just add the </s> */
-	    Node wordNode = new SentenceHMMNode(NodeType.UTTERANCE_END);
+	    Node wordNode = new Node(NodeType.UTTERANCE_END);
 	    wordGraph.linkNodes(prevNode, wordNode);
 	    wordGraph.setFinalNode(wordNode);
 	} else {
 	    /* Begin the utterance with a loopy silence */
 	    Node silLoopBack = 
-		new SentenceHMMNode(NodeType.SILENCE_WITH_LOOPBACK);
+		new Node(NodeType.SILENCE_WITH_LOOPBACK);
 	    wordGraph.linkNodes(initialNode, silLoopBack);
 	    
             /* But allow the initial silence to be skipped */
-	    Node dummyWordBeginNode = new SentenceHMMNode(NodeType.DUMMY);
+	    Node dummyWordBeginNode = new Node(NodeType.DUMMY);
 	    wordGraph.linkNodes(initialNode, dummyWordBeginNode);
 	    
             /* Link the silence to the dummy too */
@@ -112,29 +148,29 @@ public class BuildSentenceHMM {
 		for (int i = 0; i < numberOfPronunciations; i++){
 		    // TODO: pronunciationID() method is not correct. Fix
 	            pronNode[i] = new 
-			SentenceHMMNode(NodeType.WORD, "nada");
+			Node(NodeType.WORD, "nada");
 					// dictionary.pronunciationID(word,i));
 		    wordGraph.linkNodes(dummyWordBeginNode, pronNode[i]);
 		}
 
 		/* Add word ending dummy node */
-	        Node dummyWordEndNode = new SentenceHMMNode(NodeType.DUMMY);
+	        Node dummyWordEndNode = new Node(NodeType.DUMMY);
 		for (int i = 0; i < numberOfPronunciations; i++){
 	            wordGraph.linkNodes(pronNode[i], dummyWordEndNode);
 		}
 
 		/* Add silence */
 	        silLoopBack = new
-		    SentenceHMMNode(NodeType.SILENCE_WITH_LOOPBACK);
+		    Node(NodeType.SILENCE_WITH_LOOPBACK);
 	        wordGraph.linkNodes(dummyWordEndNode, silLoopBack);
 
                 /* But allow the silence to be skipped */
-	        dummyWordBeginNode = new SentenceHMMNode(NodeType.DUMMY);
+	        dummyWordBeginNode = new Node(NodeType.DUMMY);
 	        wordGraph.linkNodes(dummyWordEndNode, dummyWordBeginNode);
 
 		wordGraph.linkNodes(silLoopBack, dummyWordBeginNode);
             }
-	    Node wordNode = new SentenceHMMNode(NodeType.UTTERANCE_END);
+	    Node wordNode = new Node(NodeType.UTTERANCE_END);
 	    wordGraph.linkNodes(dummyWordBeginNode, wordNode);
 	}
         return wordGraph;
@@ -152,7 +188,7 @@ public class BuildSentenceHMM {
 	    if (node.getType().equals(NodeType.WORD)) {
 	        String wordAndPronunciation = node.getID();
 		// So that it compiles...
-	        Graph pronunciationGraph = new SentenceHMMGraph();
+	        Graph pronunciationGraph = new TranscriptHMMGraph();
 		//  dictionary.getPronunciationGraph(wordAndPronunciation);
 		//  TODO: Redo as
 		//  wordGraph.expandNodeToGraph(node,
@@ -196,6 +232,6 @@ public class BuildSentenceHMM {
     public Graph buildHMM (Graph PhonemeGraph)
     {
 	// TODO: Much is missing here
-         return new SentenceHMMGraph();
+         return new TranscriptHMMGraph();
     }
 }

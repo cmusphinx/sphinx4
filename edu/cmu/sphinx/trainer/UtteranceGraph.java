@@ -12,11 +12,17 @@
 
 package edu.cmu.sphinx.trainer;
 
+
 /**
- * Provides mechanisms for handling tokens in the trainer.
+ * Interface to the UtteranceGraph, a graph of an utterance.
  */
-public class TrainerLink {
-    private TrainerToken source;
-    private TrainerToken destination;
-    private Edge transition;
+public interface UtteranceGraph {
+
+    /**
+     * Add a transcript graph to the current utterance graph.
+     *
+     * @param transcriptGraph the transcript graph to add
+     */
+    public void add(Graph transcriptGraph);
+
 }

@@ -27,7 +27,7 @@ public class TrainerToken /* extends Token */ {
     private float alpha;
     private float beta;
 
-    private SentenceHMMNode state;
+    private Node state;
     private boolean isEmitting;
     private Feature dataVector;
     private int timeStamp;

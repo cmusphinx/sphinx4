@@ -143,7 +143,7 @@ public class SimpleTrainManager implements TrainManager {
         
         dumpMemoryInfo("TrainManager start");
         
-	models = getAcousticModels(context);
+	models = getTrainerAcousticModels(context);
 	for (int m = 0; m < models.length; m++) {
 		models[m].load();
 	}
@@ -165,7 +165,7 @@ public class SimpleTrainManager implements TrainManager {
         
         dumpMemoryInfo("TrainManager start");
         
-        models = getAcousticModels(context);
+        models = getTrainerAcousticModels(context);
 	for (int m = 0; m < models.length; m++) {
 	    models[m].initialize();
 
@@ -191,7 +191,7 @@ public class SimpleTrainManager implements TrainManager {
      *
      * @return the AcousticModel(s) used by this Recognizer, not initialized
      */
-    protected TrainerAcousticModel[] getAcousticModels(String context)
+    protected TrainerAcousticModel[] getTrainerAcousticModels(String context)
 	throws IOException {
 	List modelNames = AcousticModel.getNames(context);
 	TrainerAcousticModel[] models;
@@ -209,6 +209,48 @@ public class SimpleTrainManager implements TrainManager {
 	    }
 	}
 	return models;
+    }
+
+    /**
+     * Trains context independent models. If the initialization stage
+     * was skipped, it loads models from files, automatically.
+     *
+     * @param context the context of this train manager.
+     *
+     * @throws IOException
+     */
+    protected void trainContextIndependentModels(String context) 
+	throws IOException {
+	UtteranceGraph uttGraph;
+	TranscriptGraph transcriptGraph;
+	TrainerScore score;
+
+	if (learner == null) {
+	    loadModels(context);
+	}
+        props = SphinxProperties.getSphinxProperties(context);
+        dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
+                                          PROP_DUMP_MEMORY_INFO_DEFAULT);
+        
+        dumpMemoryInfo("TrainManager start");
+
+        assert models != null;
+        models = getTrainerAcousticModels(context);
+	for (int m = 0; m < models.length; m++) {
+	    Learner learner = new BaumWelchLearner(props);
+
+	    for (controlFile.startUtteranceIterator();
+		 controlFile.hasMoreUtterances(); ) {
+		Utterance utterance = controlFile.nextUtterance();
+		uttGraph = new UtteranceHMMGraph(context, utterance);
+		learner.setUtterance(utterance);
+		learner.setGraph(uttGraph);
+		while ((score = learner.getScore()) != null) {
+		    models[m].accumulate(score);
+		}
+	    }
+	    models[m].normalize();
+	}
     }
 
 

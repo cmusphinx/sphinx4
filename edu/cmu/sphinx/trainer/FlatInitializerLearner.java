@@ -235,11 +235,27 @@ public class FlatInitializerLearner implements Learner {
     }
 
     /**
-     * Initializes computation for current SentenceHMM.
+     * Initializes computation for current utterance and utterance graph.
      *
-     * @param sentenceHMM sentence HMM being processed
+     * @param utterance the current utterance
+     * @param graph the current utterance graph
+     *
+     * @throws IOException
      */
-    public void initializeComputation(SentenceHMM sentenceHMM) {
+    public void initializeComputation(Utterance utterance, 
+		      UtteranceGraph graph)  throws IOException {
+	setUtterance(utterance);
+	setGraph(graph);
+    }
+
+    /**
+     * Implements the setGraph method. Since the flat initializer does
+     * not need a graph, this method produces an error.
+     *
+     * @param graph the graph
+     */
+    public void setGraph(UtteranceGraph graph) {
+	new Error("Flat initializer does not use a graph!");
     }
 
     /**

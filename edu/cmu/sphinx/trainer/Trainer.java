@@ -167,6 +167,8 @@ public class Trainer {
 			((SimpleTrainManager)
 			 trainManager).saveModels(context);
 		    } else if (stage.equals(Stage._10_CI_TRAIN)) {
+			((SimpleTrainManager)
+			 trainManager).trainContextIndependentModels(context);
 		    } else if (stage.equals(Stage._20_UNTIED_CD_TRAIN)) {
 		    } else if (stage.equals(Stage._30_STATE_PRUNING)) {
 		    } else if (stage.equals(Stage._40_TIED_CD_TRAIN)) {

@@ -35,13 +35,6 @@ public interface  Learner {
     public void stop();
 
     /**
-     * Initializes computation for current SentenceHMM.
-     *
-     * @param sentenceHMM sentence HMM being processed
-     */
-    public void initializeComputation(SentenceHMM sentenceHMM);
-
-    /**
      * Sets the learner to use a utterance.
      *
      * @param utterance the utterance
@@ -49,6 +42,25 @@ public interface  Learner {
      * @throws IOException
      */
     public void setUtterance(Utterance utterance) throws IOException;
+
+    /**
+     * Initializes computation for current utterance and utterance graph.
+     *
+     * @param utterance the current utterance
+     * @param graph the current utterance graph
+     *
+     * @throws IOException
+     */
+    public void initializeComputation(Utterance utterance, 
+		      UtteranceGraph graph)  throws IOException;
+
+    /**
+     * Implements the setGraph method. Since the flat initializer does
+     * not need a graph, this method produces an error.
+     *
+     * @param graph the graph
+     */
+    public void setGraph(UtteranceGraph graph);
 
     /**
      * Gets posterior probabilities for a given state.
