@@ -35,8 +35,10 @@ import java.util.ArrayList;
  */
 public class SimpleWordListGrammar extends Grammar {
 
+
     private final static String PROP_PREFIX
 	= "edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.";
+
 
     /**
      * Sphinx property that defines the location of the word list
@@ -46,10 +48,22 @@ public class SimpleWordListGrammar extends Grammar {
 
 
     /**
+     * The default value for PROP_PATH.
+     */
+    public final static String PROP_PATH_DEFAULT = "spelling.gram";
+
+
+    /**
      * Sphinx property that if true, indicates that this is a looping
      * grammar
      */
     public final static String PROP_LOOP = PROP_PREFIX + "isLooping";
+
+
+    /**
+     * The default value for PROP_LOOP.
+     */
+    public final static boolean PROP_LOOP_DEFAULT = true;
 
 
     /**
@@ -71,8 +85,8 @@ public class SimpleWordListGrammar extends Grammar {
      */
     protected GrammarNode createGrammar()
 	throws IOException, NoSuchMethodException {
-	String path = props.getString(PROP_PATH, "spelling.gram");
-	boolean isLooping = props.getBoolean(PROP_LOOP, true);
+	String path = props.getString(PROP_PATH, PROP_PATH_DEFAULT);
+	boolean isLooping = props.getBoolean(PROP_LOOP, PROP_LOOP_DEFAULT);
 
 	int identity = 0;
 	ExtendedStreamTokenizer tok = new ExtendedStreamTokenizer(path,true);

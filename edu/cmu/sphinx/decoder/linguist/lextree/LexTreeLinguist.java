@@ -116,17 +116,23 @@ public class LexTreeLinguist implements  Linguist {
         logOne = (float) logMath.getLogOne();
 
 
-        logWordInsertionProbability = (float) logMath.linearToLog(
-                props.getDouble(Linguist.PROP_WORD_INSERTION_PROBABILITY, 1.0));
+        logWordInsertionProbability = (float) logMath.linearToLog
+            (props.getDouble
+             (Linguist.PROP_WORD_INSERTION_PROBABILITY,
+              Linguist.PROP_WORD_INSERTION_PROBABILITY_DEFAULT));
 
-        logSilenceInsertionProbability = (float) logMath.linearToLog(
-            props.getDouble(Linguist.PROP_SILENCE_INSERTION_PROBABILITY, 1.0));
+        logSilenceInsertionProbability = (float) logMath.linearToLog
+            (props.getDouble
+             (Linguist.PROP_SILENCE_INSERTION_PROBABILITY,
+              Linguist.PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT));
 
-        logUnitInsertionProbability =  (float) logMath.linearToLog(
-            props.getDouble(Linguist.PROP_UNIT_INSERTION_PROBABILITY, 1.0));
+        logUnitInsertionProbability =  (float) logMath.linearToLog
+            (props.getDouble
+             (Linguist.PROP_UNIT_INSERTION_PROBABILITY,
+              Linguist.PROP_UNIT_INSERTION_PROBABILITY_DEFAULT));
 
         languageWeight = props.getFloat(PROP_LANGUAGE_WEIGHT,
-                PROP_LANGUAGE_WEIGHT_DEFAULT);
+                                        PROP_LANGUAGE_WEIGHT_DEFAULT);
 
 
         compileGrammar();

@@ -39,14 +39,23 @@ import java.util.Set;
  */
 public class LinguistDumper implements LinguistProcessor  {
     
+
     /**
      * A sphinx property name for the destination of the LinguistDumper
      */
     public final static String PROP_FILENAME 
-            = "edu.cmu.sphinx.decoder.linguist.util.LinguistDumper.filename";
+        = "edu.cmu.sphinx.decoder.linguist.util.LinguistDumper.filename";
+
+    
+    /**
+     * The default value for PROP_FILENAME.
+     */
+    public final static String PROP_FILENAME_DEFAULT = "linguistDump.txt";
+
 
     protected SphinxProperties properties;
     private boolean depthFirst = true;
+
 
     /**
      * Dumps the search space hmm in GDL format
@@ -99,7 +108,7 @@ public class LinguistDumper implements LinguistProcessor  {
      * @return the default name for the file.
      */
     protected String getDefaultName() {
-	return "linguistDump.txt";
+	return PROP_FILENAME_DEFAULT;
     }
 
     /**

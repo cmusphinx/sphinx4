@@ -45,12 +45,43 @@ public class GDLDumper extends LinguistDumper  {
     private static final String PROP_PREFIX =
         "edu.cmu.sphinx.decoder.linguist.util.GDLDumper.";
 
-    private static final String PROP_SKIP_HMMS = PROP_PREFIX + "skipHMMs"; 
-    private static final String PROP_VERTICAL_LAYOUT
-        = PROP_PREFIX + "verticalLayout"; 
+
+    /**
+     * The SphinxProperty specifying whether to skip HMMs during dumping.
+     */
+    public static final String PROP_SKIP_HMMS = PROP_PREFIX + "skipHMMs"; 
+
     
-    private static final String PROP_DUMP_ARC_LABELS = 
-        PROP_PREFIX + "dumpArcLabels";
+    /**
+     * The default value for PROP_SKIP_HMMS.
+     */
+    public static final boolean PROP_SKIP_HMMS_DEFAULT = true;
+
+
+    /**
+     * The SphinxProperty to specify whether to use vertical graph layout.
+     */
+    public static final String PROP_VERTICAL_LAYOUT
+        = PROP_PREFIX + "verticalLayout"; 
+   
+
+    /**
+     * The default value for PROP_VERTICAL_LAYOUT.
+     */
+    public static final boolean PROP_VERTICAL_LAYOUT_DEFAULT = false;
+
+ 
+    /**
+     * The SphinxProperty to specify whether to dump arc labels.
+     */
+    public static final String PROP_DUMP_ARC_LABELS
+        = PROP_PREFIX + "dumpArcLabels";
+
+
+    /**
+     * The default value for PROP_DUMP_ARC_LABELS.
+     */
+    public static final boolean PROP_DUMP_ARC_LABELS_DEFAULT = true;
 
 
     /**
@@ -78,7 +109,8 @@ public class GDLDumper extends LinguistDumper  {
      */
     protected void startDump(PrintStream out) {
         boolean verticalLayout =
-            getProperties().getBoolean(PROP_VERTICAL_LAYOUT, false);
+            getProperties().getBoolean(PROP_VERTICAL_LAYOUT, 
+                                       PROP_VERTICAL_LAYOUT_DEFAULT);
 
 	out.println("graph: {");
 	out.println("    layout_algorithm: minbackward");
@@ -113,7 +145,8 @@ public class GDLDumper extends LinguistDumper  {
     protected void startDumpNode(PrintStream out, 
                                  SearchState state, int level) {
         
-        boolean skipHMMs = getProperties().getBoolean(PROP_SKIP_HMMS, true);
+        boolean skipHMMs = getProperties().getBoolean(PROP_SKIP_HMMS,
+                                                      PROP_SKIP_HMMS_DEFAULT);
 
 	if (skipHMMs && (state instanceof HMMSearchState)) {
 	} else {
@@ -178,9 +211,11 @@ public class GDLDumper extends LinguistDumper  {
                            SearchStateArc arc, int level) {
 
         List arcList = new ArrayList();
-        boolean skipHMMs = getProperties().getBoolean(PROP_SKIP_HMMS, true);
+        boolean skipHMMs = getProperties().getBoolean(PROP_SKIP_HMMS,
+                                                      PROP_SKIP_HMMS_DEFAULT);
         boolean dumpArcLabels = 
-            getProperties().getBoolean(PROP_DUMP_ARC_LABELS,true);
+            getProperties().getBoolean(PROP_DUMP_ARC_LABELS,
+                                       PROP_DUMP_ARC_LABELS_DEFAULT);
         
         LogMath logMath = LogMath.getLogMath(getProperties().getContext());
 

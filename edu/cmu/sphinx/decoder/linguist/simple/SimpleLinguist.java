@@ -71,10 +71,13 @@ public class SimpleLinguist implements  Linguist {
      */
     public final static String PROP_DUMP_GSTATES =
         "edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist.dumpGstates";
+    
+
     /**
      * The default value for the PROP_DUMP_GSTATES property
      */
     public final static boolean PROP_DUMP_GSTATES_DEFAULT = false;
+
 
     private SphinxProperties props;
 
@@ -133,32 +136,40 @@ public class SimpleLinguist implements  Linguist {
         logOne = logMath.getLogOne();
 
 
-        logWordInsertionProbability = logMath.linearToLog(
-                props.getDouble(Linguist.PROP_WORD_INSERTION_PROBABILITY, 1.0));
+        logWordInsertionProbability = logMath.linearToLog
+            (props.getDouble
+             (Linguist.PROP_WORD_INSERTION_PROBABILITY,
+              Linguist.PROP_WORD_INSERTION_PROBABILITY_DEFAULT));
 
-        logSilenceInsertionProbability = logMath.linearToLog(
-            props.getDouble(Linguist.PROP_SILENCE_INSERTION_PROBABILITY, 1.0));
+        logSilenceInsertionProbability = logMath.linearToLog
+            (props.getDouble
+             (Linguist.PROP_SILENCE_INSERTION_PROBABILITY,
+              Linguist.PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT));
 
-        logUnitInsertionProbability =  logMath.linearToLog(
-            props.getDouble(Linguist.PROP_UNIT_INSERTION_PROBABILITY, 1.0));
+        logUnitInsertionProbability =  logMath.linearToLog
+            (props.getDouble
+             (Linguist.PROP_UNIT_INSERTION_PROBABILITY,
+              Linguist.PROP_UNIT_INSERTION_PROBABILITY_DEFAULT));
 
-
-        languageWeight = props.getFloat(PROP_LANGUAGE_WEIGHT,
-                PROP_LANGUAGE_WEIGHT_DEFAULT);
+        languageWeight = props.getFloat
+            (Linguist.PROP_LANGUAGE_WEIGHT,
+             Linguist.PROP_LANGUAGE_WEIGHT_DEFAULT);
 
         showSentenceHMM = 
-            props.getBoolean(Linguist.PROP_SHOW_SEARCH_SPACE, false);
+            props.getBoolean(Linguist.PROP_SHOW_SEARCH_SPACE,
+                             Linguist.PROP_SHOW_SEARCH_SPACE_DEFAULT);
 
         dumpGStates = props.getBoolean(PROP_DUMP_GSTATES,
-                    PROP_DUMP_GSTATES_DEFAULT);
+                                       PROP_DUMP_GSTATES_DEFAULT);
 
         showCompilationProgress =
-            props.getBoolean(Linguist.PROP_SHOW_COMPILATION_PROGRESS, false);
-
+            props.getBoolean(Linguist.PROP_SHOW_COMPILATION_PROGRESS,
+                             Linguist.PROP_SHOW_COMPILATION_PROGRESS_DEFAULT);
+                             
         spreadWordProbabilitiesAcrossPronunciations =
-            props.getBoolean(
-                Linguist.PROP_SPREAD_WORD_PROBABILTIES_ACROSS_PRONUNCIATIONS
-                , false);
+            props.getBoolean
+            (Linguist.PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS,
+             Linguist.PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS_DEFAULT);
 
         totalStates = StatisticsVariable.getStatisticsVariable(
                 props.getContext(), "totalStates");

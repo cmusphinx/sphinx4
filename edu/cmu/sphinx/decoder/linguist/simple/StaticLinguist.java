@@ -1,3 +1,4 @@
+
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -62,12 +63,32 @@ import java.util.Set;
  * Note that all probabilities are maintained in the LogMath log
  * domain
  */
-public class StaticLinguist implements  Linguist {
+public class StaticLinguist implements Linguist {
+
+    private final static String PROP_PREFIX
+        = "edu.cmu.sphinx.decoder.linguist.simple.StaticLinguist.";
+
+    
+    /**
+     * The SphinxProperty to specify whether the SentenceHMM created
+     * will be flat.
+     */
+    public final static String PROP_IS_FLAT_SENTENCE_HMM
+        = PROP_PREFIX + "isFlatSentenceHMM";
+
+
+    /**
+     * The default value for PROP_IS_FLAT_SENTENCE_HMM.
+     */
+    public final static boolean PROP_IS_FLAT_SENTENCE_HMM_DEFAULT = false;
+
+
     private static Logger logger = 
             Logger.getLogger("edu.cmu.sphinx.decoder.linguist.StaticLinguist");
+
+
     private final static boolean singlePass = false;
-    public final static String PROP_IS_FLAT_SENTENCE_HMM = 
-        "edu.cmu.sphinx.decoder.linguist.simple.StaticLinguist.isFlatSentenceHMM";
+
 
     private SphinxProperties props;
 
@@ -139,35 +160,47 @@ public class StaticLinguist implements  Linguist {
 	}
 
         logWordInsertionProbability = logMath.linearToLog(
-            props.getDouble(Linguist.PROP_WORD_INSERTION_PROBABILITY, 1.0));
+            props.getDouble(Linguist.PROP_WORD_INSERTION_PROBABILITY,
+                            Linguist.PROP_WORD_INSERTION_PROBABILITY_DEFAULT));
 
         logSilenceInsertionProbability = logMath.linearToLog(
-            props.getDouble(Linguist.PROP_SILENCE_INSERTION_PROBABILITY, 1.0));
+            props.getDouble(Linguist.PROP_SILENCE_INSERTION_PROBABILITY,
+                            Linguist.PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT));
 
         logUnitInsertionProbability =  logMath.linearToLog(
-            props.getDouble(Linguist.PROP_UNIT_INSERTION_PROBABILITY, 1.0));
+            props.getDouble(Linguist.PROP_UNIT_INSERTION_PROBABILITY,
+                            Linguist.PROP_UNIT_INSERTION_PROBABILITY_DEFAULT));
 
         compositeThreshold = 
-            props.getInt(Linguist.PROP_COMPOSITE_THRESHOLD, 1000);
+            props.getInt(Linguist.PROP_COMPOSITE_THRESHOLD,
+                         Linguist.PROP_COMPOSITE_THRESHOLD_DEFAULT);
+
         showSentenceHMM = 
-            props.getBoolean(Linguist.PROP_SHOW_SEARCH_SPACE, false);
+            props.getBoolean(Linguist.PROP_SHOW_SEARCH_SPACE,
+                             Linguist.PROP_SHOW_SEARCH_SPACE_DEFAULT);
 
         validateSentenceHMM = 
-            props.getBoolean(Linguist.PROP_VALIDATE_SEARCH_SPACE, false);
+            props.getBoolean(Linguist.PROP_VALIDATE_SEARCH_SPACE,
+                             Linguist.PROP_VALIDATE_SEARCH_SPACE_DEFAULT);
 
         joinPronunciations = 
-            props.getBoolean(Linguist.PROP_JOIN_PRONUNCIATIONS, false);
+            props.getBoolean(Linguist.PROP_JOIN_PRONUNCIATIONS,
+                             Linguist.PROP_JOIN_PRONUNCIATIONS_DEFAULT);
 
         autoLoopSilences = 
-            props.getBoolean(Linguist.PROP_AUTO_LOOP_SILENCES, false);
+            props.getBoolean(Linguist.PROP_AUTO_LOOP_SILENCES,
+                             Linguist.PROP_AUTO_LOOP_SILENCES_DEFAULT);
 
-        flatSentenceHMM = props.getBoolean(PROP_IS_FLAT_SENTENCE_HMM, false);
+        flatSentenceHMM = props.getBoolean(PROP_IS_FLAT_SENTENCE_HMM,
+                                           PROP_IS_FLAT_SENTENCE_HMM_DEFAULT);
 
         isExpandingInterNodeContexts =
-            props.getBoolean(Linguist.PROP_EXPAND_INTER_NODE_CONTEXTS, false);
+            props.getBoolean(Linguist.PROP_EXPAND_INTER_NODE_CONTEXTS,
+                             Linguist.PROP_EXPAND_INTER_NODE_CONTEXTS_DEFAULT);
 
         showCompilationProgress =
-            props.getBoolean(Linguist.PROP_SHOW_COMPILATION_PROGRESS, false);
+            props.getBoolean(Linguist.PROP_SHOW_COMPILATION_PROGRESS,
+                             Linguist.PROP_SHOW_COMPILATION_PROGRESS_DEFAULT);
 
         totalUniqueStates = StatisticsVariable.getStatisticsVariable(
                 props.getContext(), "totalUniqueStatesSentenceHMM");
@@ -175,6 +208,7 @@ public class StaticLinguist implements  Linguist {
                 props.getContext(), "totalAttachedStatesSentenceHMM");
         averageBranches = StatisticsVariable.getStatisticsVariable(
                 props.getContext(), "averageBranches");
+
         GrammarPoint.setBounded(!isExpandingInterNodeContexts);
 	logger.info("Compiling grammar");
         compileGrammar();
