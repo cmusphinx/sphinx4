@@ -71,7 +71,7 @@ import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 
     private final static String PROP_PREFIX = 
-	"edu.cmu.sphinx.decoder.research.BushderbySearchManager.";
+	"edu.cmu.sphinx.research.bushderby.BushderbySearchManager.";
 
     /**
      * The sphinx property for the Bushderby eta value.
@@ -95,10 +95,9 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      * The default value for whether to filter success states during
      * the search, which is true.
      */
-    public final static boolean PROP_FILTER_SUCCESSORS_DEFAULT = true;
+    public final static boolean PROP_FILTER_SUCCESSORS_DEFAULT = false;
 
         
-
     private LanguageModel languageModel;
 
     private boolean filterSuccessors;
@@ -239,21 +238,15 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      * be immediately expaned are placed. Null if we should always
      * expand all nodes.
      */
-    private final void collectSuccessorTokens(Token token,
-					      List delayedExpansionList) {
-	int nextFrameNumber = token.getFrameNumber();
+    private void collectSuccessorTokens(Token token,
+					List delayedExpansionList) {
+
+	// System.out.println("Entering cst...");
 
 	// If this is a final state, add it to the final list
-
 	if (token.isFinal()) {
 	    getResultList().add(token);
-	}
-
-	// we only bump counter if we are finishing up an emitting
-	// state
-
-	if (token.isEmitting()) {
-	    nextFrameNumber++;
+	    return;
 	}
 
 	SentenceHMMState state = (SentenceHMMState) token.getSearchState();
@@ -261,15 +254,15 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
             (SentenceHMMStateArc[]) state.getSuccessors();
 
 	// For each successor
-	    // calculate the entry score for the token based upon the
-	    // predecessor token score and the transition probabilities
-	    // if the score is better than the best score encountered for
-	    // the SentenceHMMState and frame then create a new token, add
-	    // it to the lattice and the SentenceHMMState. 
-	    // If the token is an emitting token add it to the list,
-	    // othewise recursively collect the new tokens successors.
-
-	 for (int i = 0; i < arcs.length; i++) {
+	// calculate the entry score for the token based upon the
+	// predecessor token score and the transition probabilities
+	// if the score is better than the best score encountered for
+	// the SentenceHMMState and frame then create a new token, add
+	// it to the lattice and the SentenceHMMState. 
+	// If the token is an emitting token add it to the list,
+	// othewise recursively collect the new tokens successors.
+	
+	for (int i = 0; i < arcs.length; i++) {
 	    SentenceHMMStateArc arc = arcs[i];
 	    SentenceHMMState nextState = (SentenceHMMState) arc.getState();
 
@@ -286,9 +279,8 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		arc.getAcousticProbability() + 
 		arc.getInsertionProbability();
 	    
-	    boolean firstToken = getBestToken(nextState) == null ||
-		getBestToken(nextState).getFrameNumber() != nextFrameNumber;
-	    boolean greenToken = nextState.getColor() == Color.GREEN;
+	    boolean firstToken = (getBestToken(nextState) == null);
+	    boolean greenToken = (nextState.getColor() == Color.GREEN);
 
 	    double logWorkingScore =  firstToken ? getLogMath().getLogZero() :
 		getBestToken(nextState).getWorkingScore();
@@ -306,14 +298,13 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 			logCurrentScore, 		// the score on entry
 			logLanguageProbability, 	// entry lang score
 			arc.getInsertionProbability(), // insertion prob
-			nextFrameNumber 	// the frame number
+			getCurrentFrameNumber() 	// the frame number
 		    );
                     getTokensCreated().value++;
 
 		    newToken = collapseToken(newToken);
 
-		    Token oldBestToken = getBestToken(nextState);
-		    setBestToken(newToken, nextState);
+		    Token oldBestToken = setBestToken(newToken, nextState);
 
 		    if (!newToken.isEmitting()) {
 			if (greenToken && delayedExpansionList != null) {
@@ -326,6 +317,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		            }
 			    delayedExpansionList.add(newToken);
 			} else  {
+			    // System.out.println("Recursing into cst...");
 			    collectSuccessorTokens(newToken, 
                                                    delayedExpansionList);
 			}
