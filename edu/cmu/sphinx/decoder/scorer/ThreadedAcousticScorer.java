@@ -142,7 +142,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 	if (numThreads > 1) {
 	    mailbox = new Mailbox();
 	    semaphore = new Semaphore();
-	    for (int i = 0; i < numThreads; i++) {
+	    for (int i = 0; i < (numThreads - 1); i++) {
 		Thread t = new ScoringThread();
 		t.start();
 	    }
@@ -232,7 +232,12 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 		for (int i = 0; i < nThreads; i++) {
 		    ScoreableJob job = new ScoreableJob(scoreables,
 			    i * scoreablesPerThread, scoreablesPerThread);
-			mailbox.post(job);
+                    if (i < (nThreads - 1)) {
+                        mailbox.post(job);
+                    } else {
+                        scoreScoreables(job);
+                        semaphore.post();
+                    }
 		}
 
 		semaphore.pend();
