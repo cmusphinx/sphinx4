@@ -312,6 +312,36 @@ public class BatchModeRecognizer implements Configurable {
                 return "show component configuration";
             }
         });
+	ci.add("edit", new CommandInterface() {
+	     public String execute(CommandInterpreter ci, String[] args) {
+                 if (args.length != 2) {
+                    ci.putResponse("Usage: edit component");
+                 } else {
+                    cm.editConfig(args[1]);
+                }
+                return "";
+           }
+            public String getHelp() {
+                return "edit a  component's configuration";
+            }
+        });
+	ci.add("save", new CommandInterface() {
+	     public String execute(CommandInterpreter ci, String[] args) {
+                 if (args.length != 2) {
+                    ci.putResponse("Usage: save filename.xml");
+                 } else {
+                    try {
+                         cm.save(new File(args[1]));
+                    } catch (IOException ioe) {
+                        ci.putResponse("Can't save, " + ioe);
+                    }
+                }
+                return "";
+           }
+            public String getHelp() {
+                return "save configuration to a file";
+            }
+        });
 	ci.add("set", new CommandInterface() {
 	     public String execute(CommandInterpreter ci, String[] args) {
                  if (args.length != 4) {
@@ -398,8 +428,8 @@ public class BatchModeRecognizer implements Configurable {
 
 	ci.add("batchNext", new CommandInterface() {
 	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length != 1) {
-                    ci.putResponse("Usage: batchNext");
+                 if (args.length != 1 && args.length != 2) {
+                    ci.putResponse("Usage: batchNext [norec]");
                  } else {
                     try {
 
@@ -421,8 +451,12 @@ public class BatchModeRecognizer implements Configurable {
 
                         String audioFile = curBatchItem.getFilename();
                         String transcript = curBatchItem.getTranscript();
-                        setInputStream(audioFile);
-                        Result result = recognizer.recognize(transcript);
+                        if (args.length == 2) {
+                            ci.putResponse("Skipping: " + transcript);
+                        } else {
+                            setInputStream(audioFile);
+                            Result result = recognizer.recognize(transcript);
+                        }
                     } catch (IOException io) {
                         ci.putResponse("I/O error during decoding: " +
                             io.getMessage());
