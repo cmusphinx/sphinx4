@@ -19,6 +19,7 @@ public class ResultAnalyzer {
     private int numRefWords;
     private int numHypWords;
     private int numMatchingWords;
+    private int numMatchingSentences;
     private int recognitionErrors;
     private int insertionErrors;
     private int deletionErrors;
@@ -73,6 +74,9 @@ public class ResultAnalyzer {
 	    }
 	}
 
+	if (filteredHyp.equals(filteredRef)) {
+	    numMatchingSentences++;
+	}
 	if (verbose) {
 	    System.out.println();
 	    System.out.println("REF:       " + filteredRef);
@@ -254,8 +258,17 @@ public class ResultAnalyzer {
      *
      * @return the accuracy between 0.0 and 1.0
      */
-    public float getAccuracy() {
+    public float getWordAccuracy() {
 	return ((float) numMatchingWords) / ((float) numRefWords);
+    }
+
+    /**
+     * Returns the sentence accuracy
+     *
+     * @return the accuracy between 0.0 and 1.0
+     */
+    public float getSentenceAccuracy() {
+	return ((float) numMatchingSentences) / ((float) numSentences);
     }
 
 
@@ -287,14 +300,17 @@ public class ResultAnalyzer {
 	if (numSentences > 0) {
 	    int totalErrors = recognitionErrors 
 		+ insertionErrors + deletionErrors; 
-	    System.out.print("   Accuracy: " + percent.format(getAccuracy()));
+	    System.out.print("   Accuracy: " + 
+		    percent.format(getWordAccuracy()));
 	    System.out.println("    Errors: " + totalErrors +
 	       "  (Rec: " + recognitionErrors +
 	       "  Ins: " + insertionErrors +
 	       "  Del: " + deletionErrors + ")");
-	    System.out.println("   Sentences: " + numSentences 
+	    System.out.print("   Sentences: " + numSentences 
 		    + "      Words: " + numRefWords  + "   Matches: " +
 		    numMatchingWords);
+	    System.out.println(" SentenceAcc: " +
+		    percent.format(getSentenceAccuracy()));
 	}
     }
 
