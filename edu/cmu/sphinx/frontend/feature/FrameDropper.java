@@ -114,7 +114,8 @@ public class FrameDropper extends BaseDataProcessor {
                         // replace the feature
                         feature = new FloatData
                             (lastFeature.getValues(),
-                             lastFeature.getCollectTime(),
+                             lastFeature.getSampleRate(),
+			     lastFeature.getCollectTime(),
                              lastFeature.getFirstSampleNumber());
                     } else {
                         // read the next feature

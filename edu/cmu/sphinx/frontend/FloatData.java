@@ -21,20 +21,22 @@ package edu.cmu.sphinx.frontend;
 public class FloatData implements Data, Cloneable {
 
     private float[] values;
+    private int sampleRate;
     private long firstSampleNumber;
     private long collectTime;
 
 
     /**
-     * Constructs a Data object with the given values, collect time,
-     * and first sample number.
+     * Constructs a Data object with the given values, sample rate,
+     * collect time, and first sample number.
      *
      * @param values the data values
+     * @param sampleRate the sample rate of the data
      * @param collectTime the time at which this data is collected
      * @param firstSampleNumber the position of the first sample in the
      *                          original data
      */
-    public FloatData(float[] values,
+    public FloatData(float[] values, int sampleRate,
                      long collectTime, long firstSampleNumber) {
         this.values = values;
         this.collectTime = collectTime;
@@ -48,6 +50,16 @@ public class FloatData implements Data, Cloneable {
      */
     public float[] getValues() {
         return values;
+    }
+
+
+    /**
+     * Returns the sample rate of this data.
+     *
+     * @return the sample rate of this data
+     */
+    public int getSampleRate() {
+	return sampleRate;
     }
 
     

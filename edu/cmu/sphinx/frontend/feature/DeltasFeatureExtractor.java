@@ -366,7 +366,9 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
             jp3 %= cepstraBufferSize;
         }
 
-        return (new FloatData(feature, currentCepstrum.getCollectTime(),
+        return (new FloatData(feature, 
+			      currentCepstrum.getSampleRate(),
+			      currentCepstrum.getCollectTime(),
                               currentCepstrum.getFirstSampleNumber()));
     }
 }
