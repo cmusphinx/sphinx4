@@ -87,9 +87,13 @@ public class HMMPool {
             int index = position.getIndex();
             for (int j = 1 ; j < unitTable.length; j++) {
                 Unit unit = unitTable[j];
+                if (unit == null) {
+                    unit = unitTable[getCentralUnitID(j)];
+                }
                 if (unit != null) {
                     hmmTable[index][j] = 
                         model.lookupNearestHMM(unit, position);
+                    assert hmmTable[index][j] != null;
                 }
             }
         }
