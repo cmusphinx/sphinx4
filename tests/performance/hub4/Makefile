@@ -88,6 +88,9 @@ all::
 
 # hub4_f0 with wsj models
 
+# #########################################################
+# regrssion test targets
+# #########################################################
 
 hub4_flat_unigram:
 	$(JAVA_CMD) \
@@ -96,6 +99,19 @@ hub4_flat_unigram:
         $(HUB4_DIR)/f0_hub4.batch
 
 hub4_trigram:
+	$(MAKE) hub4_trigram_wpbfsm
+
+
+# #########################################################
+# Implementations
+# #########################################################
+hub4_flat_unigram_original:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.flat.props \
+        $(HUB4_DIR)/f0_hub4.batch
+
+hub4_trigram_original:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
 	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props \
