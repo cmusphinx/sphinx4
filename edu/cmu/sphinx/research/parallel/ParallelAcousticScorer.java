@@ -44,12 +44,6 @@ import java.io.IOException;
  */
 public class ParallelAcousticScorer implements AcousticScorer {
 
-    /**
-     * Property that defines the frontends to retrieve features from
-     *
-     */
-    public static String PROP_FRONTENDS = "frontends";
-
     private String name;
 
 
