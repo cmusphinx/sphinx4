@@ -94,6 +94,8 @@ public class ParallelSearchManager implements SearchManager {
     private ActiveList delayedExpansionList;  // for tokens at CombineStates
     private List resultList;
 
+    private Map bestTokenMap;
+
     private Timer scoreTimer;
     private Timer pruneTimer;
     private Timer growTimer;
@@ -146,6 +148,7 @@ public class ParallelSearchManager implements SearchManager {
         this.languageWeight = props.getFloat(PROP_LANGUAGE_WEIGHT,
                                              PROP_LANGUAGE_WEIGHT_DEFAULT);
 
+        bestTokenMap = new HashMap();
 	featureStreams = new HashMap();
         
         // initialize the FeatureStreams for the separate models
@@ -495,13 +498,8 @@ public class ParallelSearchManager implements SearchManager {
 	    
 	    float logEntryScore = token.getScore() +  arc.getProbability();
 
-                
-            // BUG: no getBestToken anymore, use a local hash
-
-	    // boolean firstToken = nextState.getBestToken() == null ||
-            // nextState.getBestToken().getFrameNumber() != nextFrameNumber;
-
-            boolean firstToken = false;
+	    boolean firstToken = getBestToken(nextState) == null ||
+                getBestToken(nextState).getFrameNumber() != nextFrameNumber;
 
             // RED states are the unsplitted states, or the non-feature
             // stream states
@@ -517,19 +515,16 @@ public class ParallelSearchManager implements SearchManager {
 
                     CombineToken newToken = new CombineToken
                         (token, nextState, nextFrameNumber);
-                    // nextState.setBestToken(newToken);
-                    // FIX ME
+                    setBestToken(nextState, newToken);
                     delayedExpansionList.add(newToken);
                 }
 
-                // assert (nextState.getBestToken().getFrameNumber() ==
-                        // nextFrameNumber);
+                assert (getBestToken(nextState).getFrameNumber() ==
+                        nextFrameNumber);
 
                 // get the combine token at the next state
-                CombineToken nextToken =  null;
-                // BUG: fix me Was 
-                // CombineToken nextToken  
-                //      = (CombineToken) nextState.getBestToken();
+                CombineToken nextToken  
+                    = (CombineToken) getBestToken(nextState);
 
                 ParallelToken oldNextToken = 
                     nextToken.getParallelToken(token.getModelName());
@@ -585,13 +580,26 @@ public class ParallelSearchManager implements SearchManager {
 	}
     }
 
-    // BUG fix me
-    Token getBestToken(SearchState state) {
-        return null;    
+    /**
+     * Returns the best Token for the given SearchState.
+     *
+     * @param the SearchState to look for
+     *
+     * @return the best Token for the given SearchState
+     */
+    private Token getBestToken(SearchState state) {
+        return (Token) bestTokenMap.get(state);
     }
 
-    // BUG fix me
-    void setBestToken(SearchState state, Token token) {
+
+    /**
+     * Sets the best Token for the given SearchState
+     *
+     * @param state the SearchState
+     * @param token the best Token for the given SearchState
+     */
+    private void setBestToken(SearchState state, Token token) {
+        bestTokenMap.put(state, token);
     }
 
 
@@ -796,6 +804,7 @@ public class ParallelSearchManager implements SearchManager {
             combinedScorePruner.stop();
         }
 	linguist.stop();
+        bestTokenMap.clear();
     }
 }
 
