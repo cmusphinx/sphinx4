@@ -18,6 +18,10 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <property name="top_dir"		value="../.."/>
     <property name="classes_dir"	value="${top_dir}/classes"/>
+
+    <property name="initial_heap_size"  value="256m"/>
+    <property name="maximum_heap_size"  value="1g"/>
+
     <property name="trainer_class"
               value="edu.cmu.sphinx.trainer.Trainer"/>
 
@@ -32,6 +36,8 @@ NOTE:  Before running the tests, you must have already built
 	    <java classname="${trainer_class}"
 	          classpath="${classes_dir}"
 		  fork="true">
+                  <jvmarg value="-ms${initial_heap_size}"/>
+                  <jvmarg value="-mx${maximum_heap_size}"/> 
                   <sysproperty key="edu.cmu.sphinx.knowledge.acoustic.location"
                                value="."/>
                   <arg value="trainer.props"/>
@@ -50,6 +56,8 @@ NOTE:  Before running the tests, you must have already built
 	    <java classname="${trainer_class}"
 	          classpath="${classes_dir}"
 		  fork="true">
+                  <jvmarg value="-ms${initial_heap_size}"/>
+                  <jvmarg value="-mx${maximum_heap_size}"/> 
                   <sysproperty key="edu.cmu.sphinx.trainer.Trainer.initialStage"
                                value="_00_INITIALIZATION"/>
                   <sysproperty key="edu.cmu.sphinx.trainer.Trainer.finalStage"
@@ -71,6 +79,8 @@ NOTE:  Before running the tests, you must have already built
 	    <java classname="${trainer_class}"
 	          classpath="${classes_dir}"
 		  fork="true">
+                  <jvmarg value="-ms${initial_heap_size}"/>
+                  <jvmarg value="-mx${maximum_heap_size}"/> 
                   <sysproperty key="edu.cmu.sphinx.trainer.Trainer.initialStage"
                                value="_10_CI_TRAIN"/>
                   <sysproperty key="edu.cmu.sphinx.trainer.Trainer.finalStage"
@@ -92,6 +102,8 @@ NOTE:  Before running the tests, you must have already built
 	    <java classname="${trainer_class}"
 	          classpath="${classes_dir}"
 		  fork="true">
+                  <jvmarg value="-ms${initial_heap_size}"/>
+                  <jvmarg value="-mx${maximum_heap_size}"/> 
                   <sysproperty key="edu.cmu.sphinx.trainer.Trainer.initialStage"
                                value="_90_CP_MODEL"/>
                   <sysproperty key="edu.cmu.sphinx.trainer.Trainer.finalStage"
