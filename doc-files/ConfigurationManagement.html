@@ -100,7 +100,7 @@ must implement the <span style="font-style: italic;"><a
 </ul>
 <h3><a name="mozTocId662197" class="mozTocH3"></a>Defining components<br>
 </h3>
-Now lets look at somewhat more complex configuration file:<br>
+Now lets look at a somewhat more complex configuration file:<br>
 <pre>&lt;config&gt;<br>    &lt;component name="mySampleComponent" type="<span
  style="font-style: italic;">edu.cmu.sphinx.sample.MyComponent</span>"/&gt;<br>    &lt;component name="anotherComponent" type="<span
  style="font-style: italic;">edu.cmu.sphinx.sample.MyComponent</span>"/&gt;<br>    &lt;component name="aDifferentComponent" type="<span
@@ -115,8 +115,14 @@ The data types&nbsp; <span style="font-style: italic;">MyComponent</span>
 and <span style="font-style: italic;">YourComponent</span> are, of
 course, fictional types.&nbsp;&nbsp; Now lets look at a section from a
 real configuration file. <br>
-<pre>&lt;config&gt;<br><br>    &lt;component name="dct" type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/&gt;<br>    &lt;component name="batchCMN"type="edu.cmu.sphinx.frontend.feature.BatchCMN"/&gt;<br>    &lt;component name="liveCMN"type="edu.cmu.sphinx.frontend.feature.LiveCMN"/&gt;<br>    &lt;component name="featureExtraction"type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/&gt;<br><br>&lt;/config&gt;<br><br></pre>
-Here we see some of the components used in the front-end of
+<pre>&lt;config&gt;
+<br>    &lt;component name="dct" type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/&gt;
+    &lt;component name="batchCMN" type="edu.cmu.sphinx.frontend.feature.BatchCMN"/&gt;
+    &lt;component name="liveCMN" type="edu.cmu.sphinx.frontend.feature.LiveCMN"/&gt;
+    &lt;component name="featureExtraction" type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/&gt;
+<br>&lt;/config&gt;<br><br></pre>
+
+Here we see some of the components used in the front end of
 Sphinx4<br>
 <h3><a name="mozTocId226388" class="mozTocH3"></a>Defining
 configuration data</h3>
@@ -161,7 +167,7 @@ Here are some examples:<br>
   <tbody>
     <tr>
       <td style="vertical-align: top;">
-      <pre> value="'Twas brillig and slithey toves" 	</pre>
+      <pre>value="'Twas brillig and slithey toves" 	</pre>
       </td>
       <td style="vertical-align: top; font-weight: bold;">A string<br>
       </td>
