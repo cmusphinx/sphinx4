@@ -82,21 +82,6 @@ public class Microphone extends DataProcessor implements AudioSource {
 	PROP_CLOSE_AUDIO_BETWEEN_UTTERANCES_DEFAULT = true;
 
     /**
-     * The Sphinx property that specifies the amount of time in
-     * milliseconds the microphone should sleep in between reading
-     * audio. It is recommended to set this property to true
-     * on a single CPU system, to boost the performance of
-     * live decoding.
-     */
-    public final static String PROP_SLEEP_BETWEEN_AUDIO =
-        PROP_PREFIX + "sleepBetweenAudio";
-
-    /**
-     * The default value for PROP_SLEEP_TIME.
-     */
-    public final static boolean PROP_SLEEP_BETWEEN_AUDIO_DEFAULT = false;
-
-    /**
      * The Sphinx property that specifies whether debug statements should
      * be printed.
      */
@@ -136,14 +121,15 @@ public class Microphone extends DataProcessor implements AudioSource {
 
     private long totalSamplesRead;
     private int frameSizeInBytes;
-    private int sleepTime;
+
     private volatile boolean started = false;
     private volatile boolean recording = false;
     private volatile boolean closed = false;
+    private volatile boolean utteranceEndReached = true;
+
     private boolean debug = false;
     private boolean closeAudioBetweenUtterances = true;
     private boolean keepAudioReference = true;
-    private boolean sleepBetweenAudio = false;
 
     private static Logger logger = Logger.getLogger
         ("edu.cmu.sphinx.frontend.util.Microphone");
@@ -195,13 +181,6 @@ public class Microphone extends DataProcessor implements AudioSource {
             (FrontEnd.PROP_KEEP_AUDIO_REFERENCE,
              FrontEnd.PROP_KEEP_AUDIO_REFERENCE_DEFAULT);
         
-        sleepBetweenAudio = properties.getBoolean
-            (PROP_SLEEP_BETWEEN_AUDIO, PROP_SLEEP_BETWEEN_AUDIO_DEFAULT);
-
-        if (sleepBetweenAudio) {
-            sleepTime = getSleepTime();
-        }
-
         debug = properties.getBoolean(PROP_DEBUG, PROP_DEBUG_DEFAULT);
     }
 
@@ -490,7 +469,8 @@ public class Microphone extends DataProcessor implements AudioSource {
      * @return true if the recording started successfully; false otherwise
      */
     public synchronized boolean startRecording() {
-        if (open()) {
+        if (!recording && open()) {
+            utteranceEndReached = false;
             setRecording(true);
             RecordingThread recorder = new RecordingThread("Microphone");
             recorder.start();
@@ -538,18 +518,16 @@ public class Microphone extends DataProcessor implements AudioSource {
 
         Audio output = null;
 
-        if (recording) {
+        if (!utteranceEndReached) {
             output = (Audio) audioList.remove(0);
-        } else {
-            // not recording
-            if (audioList.size() > 0) {
-                output = (Audio) audioList.remove(0);
+            if (output.hasSignal(Signal.UTTERANCE_END)) {
+                utteranceEndReached = true;
             }
         }
 
         getTimer().stop();
 
-        signalCheck(output);
+        // signalCheck(output);
 
         return output;
     }
@@ -565,7 +543,7 @@ public class Microphone extends DataProcessor implements AudioSource {
     public boolean hasMoreData() {
         boolean moreData;
         synchronized (audioList) {
-            moreData = (recording || audioList.size() > 0);
+            moreData = (!utteranceEndReached || audioList.size() > 0);
         }
         return moreData;
     }
