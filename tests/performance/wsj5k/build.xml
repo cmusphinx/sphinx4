@@ -36,11 +36,11 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
 
     <!-- ********************************************************** --> 
     <!-- *                                                        * --> 
-    <!-- * wsj5k_bigram                                           * --> 
+    <!-- * wsj5k_bigram_vp                                        * --> 
     <!-- *                                                        * --> 
     <!-- ********************************************************** --> 
-    <target name="wsj5k_bigram"
-            description="bigram decode of wsj 5K words using the word pruning breadth first search manager ">
+    <target name="wsj5k_bigram_vp"
+            description="bigram decode of wsj 5K words using the word pruning breadth first search manager with verbalized punctuation">
        <java classpath="${classes_dir}"
 	      classname="${batch_main}"
 	      fork="true">
@@ -60,7 +60,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- * wsj5k_bigram_nvp                                       * --> 
     <!-- *                                                        * --> 
     <!-- ********************************************************** --> 
-    <target name="wsj5k_bigram_nvp"
+    <target name="wsj5k_bigram"
             description="bigram decode of wsj 5K words using the word pruning breadth first search manager  non verbalized punctuation">
        <java classpath="${classes_dir}"
 	      classname="${batch_main}"
@@ -78,11 +78,11 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
 
     <!-- ********************************************************** --> 
     <!-- *                                                        * --> 
-    <!-- * wsj5k_trigram                                          * --> 
+    <!-- * wsj5k_trigram_vp                                       * --> 
     <!-- *                                                        * --> 
     <!-- ********************************************************** --> 
-    <target name="wsj5k_trigram"
-            description="trigram decode of wsj 5K words using the word pruning breadth first search manager ">
+    <target name="wsj5k_trigram_vp"
+            description="trigram decode of wsj 5K words using the word pruning breadth first search manager with verbalized punctuation">
        <java classpath="${classes_dir}"
 	      classname="${batch_main}"
 	      fork="true">
@@ -102,7 +102,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- * wsj5k_trigram_nvp                                      * --> 
     <!-- *                                                        * --> 
     <!-- ********************************************************** --> 
-    <target name="wsj5k_trigram_nvp"
+    <target name="wsj5k_trigram"
             description="trigram decode of wsj 5K words using the word
             pruning breadth first search manager - no verbalized punctuation">
        <java classpath="${classes_dir}"
