@@ -283,6 +283,7 @@ public class Decoder {
      */
     protected void showFinalResult(String ref, Result result, Timer timer) {
 	boolean match = true;
+	Token bestToken = result.getBestToken();
 
 	if (ref != null) {
 	    match = resultAnalyzer.analyze(ref, result.toString());
@@ -291,13 +292,18 @@ public class Decoder {
 	}
 
 	if (showBestToken || (!match && showErrorToken)) {
-	    if (result.getBestToken() != null) {
-		result.getBestToken().dumpTokenPath();
+	    if (bestToken != null) {
+		bestToken.dumpTokenPath();
 	    }
-    }
+        }
 
-	System.out.print("   HypScore: " 
-		    + result.getBestToken().getScore());
+	
+	if (bestToken == null) {
+	    System.out.print("   HypScore: NONE"); 
+	} else {
+	    System.out.print("   HypScore: " 
+			+ result.getBestToken().getScore());
+	}
 	if (!match) {
 	    Token  matchingToken = result.findToken(ref);
 	    if (matchingToken != null) {
