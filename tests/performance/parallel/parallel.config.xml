@@ -17,8 +17,8 @@
     
     <property name="absoluteBeamWidth"         value="2000"/>
     <property name="relativeBeamWidth"         value="1E-200"/>
-    <property name="wordInsertionProbability"  value="1E-26"/>
-    <property name="languageWeight"            value="8"/>
+    <property name="wordInsertionProbability"  value="1E-16"/>
+    <property name="languageWeight"            value="1"/>
     <property name="silenceInsertionProbability" value="1"/>
     <property name="skip"     value="0"/>
     
@@ -65,6 +65,8 @@
         type="edu.cmu.sphinx.research.parallel.ParallelSearchManager">
         <property name="linguist" value="parallelLinguist"/>
         <property name="scorer" value="parallelScorer"/>
+        <property name="doFeaturePruning" value="false"/>
+        <property name="doCombinePruning" value="true"/>
 	<property name="featureScorePruner" value="featureScorePruner"/>
 	<property name="combinedScorePruner" value="combinedScorePruner"/>
         <property name="activeListFactory" value="activeList"/>
@@ -79,14 +81,18 @@
 
     <component name="featureScorePruner"
                type="edu.cmu.sphinx.research.parallel.FeatureScorePruner">
-	<property name="absoluteBeamWidth" value="2000"/>
-	<property name="relativeBeamWidth" value="1E-200"/>
+	<property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
+	<property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
+        <property name="logMath" value="logMath"/>
+        <property name="activeListFactory" value="activeList"/>
     </component>
 
     <component name="combinedScorePruner"
                type="edu.cmu.sphinx.research.parallel.CombinedScorePruner">
-	<property name="absoluteBeamWidth" value="2000"/>
-	<property name="relativeBeamWidth" value="1E-200"/>
+	<property name="absoluteBeamWidth" value="30"/>
+	<property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
+        <property name="logMath" value="logMath"/>
+        <property name="activeListFactory" value="activeList"/>
     </component>
     
     <component name="parallelScorer" 
@@ -110,7 +116,6 @@
                   value="${wordInsertionProbability}"/>
         <property name="silenceInsertionProbability" 
                   value="${silenceInsertionProbability}"/>
-        <property name="languageWeight" value="${languageWeight}"/>
     </component>
     
     <component name="mfcFeatureStream"
@@ -133,7 +138,7 @@
     <!-- ******************************************************** -->
     <component name="wordListGrammar" 
         type="edu.cmu.sphinx.linguist.language.grammar.SimpleWordListGrammar">
-        <property name="path" value="./one.wordlist"/>
+        <property name="path" value="./digits.wordlist"/>
         <property name="isLooping" value="true"/>
         <property name="dictionary" value="dictionary"/>
         <property name="logMath" value="logMath"/>
