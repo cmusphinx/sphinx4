@@ -22,6 +22,7 @@ import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DataStartSignal;
+import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.util.SphinxProperties;
 
@@ -121,6 +122,13 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
 
     private List inputBuffer;
     private List outputQueue;
+
+    /**
+     * The number of samples in a speech segment, used to calculate
+     * the duration of the speech segment.
+     */
+    private int numberSpeechSamples;
+    private int sampleRate;
 
 
     /**
@@ -252,6 +260,9 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
         Data next = audio;
         if (audio != null) {
             if (audio instanceof SpeechStartSignal) {
+
+                numberSpeechSamples = 0;
+
                 if (inSpeech) {
                     // Normally, we should not be encounter a SpeechStartSignal
                     // if we are inSpeech. This is error-handling code.
@@ -286,10 +297,11 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
                     }
                 } else {
                     // if we hit a SpeechEndSignal, we will start
-                    // discarding Data, and return an DataEndSignal instead
+                    // discarding Data, and return a DataEndSignal instead
                     inSpeech = false;
                     discardMode = true;
-                    next = new DataEndSignal(((Signal) audio).getTime());
+                    next = new DataEndSignal
+                        (getDuration(), ((Signal) audio).getTime());
                 }
             } else if (discardMode) {
                 while (next != null && 
@@ -298,9 +310,24 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
                     next = readData();
                 }
                 next = handleNonMergingData(next);
+            } else if (audio instanceof DoubleData) {
+                DoubleData realData = (DoubleData) audio;
+                numberSpeechSamples += realData.getValues().length;
+                sampleRate = realData.getSampleRate();
             }
         }
         return next;
+    }
+
+
+    /**
+     * Returns the duration of the current speech segment.
+     *
+     * @return the duration of the current speech segment
+     */
+    private long getDuration() {
+        return (long)
+            (((double)numberSpeechSamples/(double)sampleRate) * 1000.0);
     }
 
 
