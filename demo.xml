@@ -103,6 +103,7 @@ your environment to use JSAPI.
 	     excludes="**/HelloWorld.class"
 	     filesonly="true"
 	     compress="true"/>
+	<delete dir="${classes_dir}/demo/sphinx/helloworld"/>
     </target>
 
     <target name="compile_sphinx_hellongram">
@@ -125,6 +126,7 @@ your environment to use JSAPI.
 	     includes="demo/sphinx/hellongram/**"
 	     filesonly="true"
 	     compress="true"/>
+	<delete dir="${classes_dir}/demo/sphinx/hellongram"/>
     </target>
 
 </project>
