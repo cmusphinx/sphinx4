@@ -160,7 +160,7 @@ function getWER(testName, testCount, _errors, _words) {
 #
 function getRejectionAccuracy(testName, testCount) {
     updateData(testName, testCount);
-    return (data[F_CORRECT_OOG] + data[F_CORRECT_IG) * 100 / data{F_SENTENCES];
+    return (data[F_CORRECT_OOG] + data[F_CORRECT_IG]) * 100 / data[F_SENTENCES];
 }
 
 ####
