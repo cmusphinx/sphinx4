@@ -56,7 +56,11 @@ public class Signal implements Serializable {
      * @return true if they are the same, false otherwise
      */
     public boolean equals(Signal signal) {
-        return toString().equals(signal.toString());
+        if (signal != null) {
+            return toString().equals(signal.toString());
+        } else {
+            return false;
+        }
     }
 
 

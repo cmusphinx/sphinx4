@@ -119,6 +119,9 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
     }
 
     
+    /**
+     * Sets the predeces
+     */
     public void setPredecessor(CepstrumSource predecessor) {
         this.predecessor = predecessor;
     }
@@ -225,14 +228,10 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
      *
      * @param signal where we should stop removing
      *
-     * @return the last Cepstrum removed
+     * @return a list of all Cepstrum removed, including the Signal
      */
-    private Cepstrum readUntil(Signal signal) throws IOException {
-        Cepstrum cepstrum = null;
-        do {
-            cepstrum = readCepstrum();
-        } while (cepstrum != null && !cepstrum.getSignal().equals(signal));
-        return cepstrum;
+    private List readUntil(Signal signal) throws IOException {
+        return readUntil(signal, null);
     }
 
 
@@ -242,8 +241,8 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
      * @param signal1 the first Signal type
      * @param signal2 the second Signal type
      *
-     * @return all the Cepstrum read, including the last Cepstrum with
-     *    the Signal
+     * @return a list of all the Cepstrum read,
+     *    including the last Cepstrum with the Signal
      */
     private List readUntil(Signal signal1, Signal signal2) throws
     IOException {
