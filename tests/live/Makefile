@@ -88,6 +88,7 @@ live-ep: all
 live-free: all
 	$(JAVA_CMD) \
 	-DhandsFree=true \
+	-Dedu.cmu.sphinx.frontend.keepAudioReference=false \
 	-Dedu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments=false \
 	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
@@ -113,6 +114,7 @@ live-free-voice: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=4 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=3 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=8 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow=50 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=true \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	tests.live.Live decoders.list
