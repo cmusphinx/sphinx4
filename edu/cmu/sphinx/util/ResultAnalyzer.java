@@ -39,8 +39,12 @@ public class ResultAnalyzer {
 
 
     /**
-     * compare the hypothesis to the reference string collecting
-     * statistics on it
+     * Compare the hypothesis to the reference string collecting
+     * statistics on it. If verbose was set to true, statistics of the
+     * match sent to stdout.
+     *
+     * @param ref the reference string
+     * @param hyp the hypothesis string
      */
     public void analyze(String ref, String hyp) {
 	List refList = stringToList(ref);
@@ -143,7 +147,6 @@ public class ResultAnalyzer {
      * @param refList the list of reference words
      * @param hypList the list of hypothesis  words
      *
-     * @return true if the error is a deletion error
      */
     private void processMismatch(List refList, List hypList) {
 	int deletionMatches = countMatches(
@@ -190,9 +193,10 @@ public class ResultAnalyzer {
 
 
     /**
-     * Return a string of "*" of the given length
+     * Returns a string of "*" of the given length
      *
      * @param length the length of the resulting string
+     *
      * @return the string
      */
     private String pad(int length) {
@@ -235,6 +239,7 @@ public class ResultAnalyzer {
      * Converts the given string to a list
      *
      * @param s the string to convert
+     *
      * @return  a list, one word per item with silences removed
      */
     private List stringToList(String s) {
@@ -270,6 +275,11 @@ public class ResultAnalyzer {
     }
 
 
+    /**
+     * Quick and dirty test program
+     *
+     * @param args the commandline arguments
+     */
     public static void main(String[] args) {
 	ResultAnalyzer ra = new ResultAnalyzer(true);
 
