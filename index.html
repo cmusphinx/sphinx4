@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+
+<!--
+
+Copyright 1999-2002 Carnegie Mellon University.  
+Portions Copyright 2002 Sun Microsystems, Inc.  
+Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+All Rights Reserved.  Use is subject to license terms.
+
+See the file "license.terms" for information on usage and
+redistribution of this file, and for a DISCLAIMER OF ALL 
+WARRANTIES.
+
+-->
+
+<html>
+<head>
+  <title>Sphinx-4 - A speech recognizer written entirely in the
+ Java(TM) programming language</title>
+</head>
+
+<body bgcolor="white">
+  <center>
+    <table bgcolor="#bbbae2" border="0" width="100%">
+      <tbody>
+        <tr>
+	  <td align="center" width="100%">
+            <h2><i>Sphinx-4</i> - A speech recognizer written
+                entirely in the Java<sup><font size="-1">TM</font></sup> 
+	        programming language</h2>
+	  </td>
+        </tr>
+      </tbody>
+    </table>
+  </center>
+
+  <table border="0" width="100%">
+    <tbody>
+      <tr>
+        <td bgcolor="#eeeeff" valign="top" width="20%">
+          <center><b><font>Sphinx-4 Links</font></b></center>
+          <b><font size="-1"><br>
+          <a href="http://sourceforge.net/projects/cmusphinx">Project Page</a><br>
+          <a href="https://sourceforge.net/forum/?group_id=1094">Forums</a><br>
+          <a href="http://sourceforge.net/project/showfiles.php?group_id=1904">
+          Download</a> <br>
+          <a href="http://sourceforge.net/cvs/?group_id=1904">CVS Repository</a> <br>
+      <hr>
+          <center><a href="http://www.sourceforge.net">
+          <img src="http://sourceforge.net/sflogo.php?group_id=1904&amp;type=1"
+          width="88" height="31" border="0" alt="SourceForge Logo"></a>
+          <br>Hosted by SourceForge.net</center>
+          </font></b></td>
+
+      <td width="5%"><br>
+      </td>
+
+      <td valign="top"><br><br>
+      <h3>General Information - (this page is currently under development)</h3>
+      <ul>
+        <li><a href="#what_is_sphinx4">Introduction</a></li>
+        <li><a href="#capabilities">Capabilities</a></li>
+        <li><a href="#speed_and_accuracy">Performance</a></li>
+        <li><a href="#download_and_install">Downloading and Installing</a></li>
+        <li><a href="#configuration">Configuration</a></li>
+      </ul>
+
+      <h3>How Do I Use It: Sphinx-4 for Speech Application Developers</h3>
+      <ul>
+        <li><a href="#architecture_and_api1">Architecture and API</a></li>
+        <li><a href="#demos">Demos</a></li>
+      </ul>
+
+      <h3>How Do I Change It: Sphinx-4 for Speech Engine Developers</h3>
+      <ul>
+        <li><a href="#architecture_and_api2">Architecture and API</a></li>
+        <li><a href="#how_build">Building Sphinx-4</a></li>
+      </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2>General Information about Sphinx-4</h2>
+<ul>
+  <li><a name="what_is_sphinx4"><b>Introduction</b></a>
+      <p>Sphinx-4 is a state-of-the-art speech recognition system
+	 written entirely in the Java
+         <sup><font size="-1">TM</font></sup> programming language.
+         It was created via a joint collaboration between Carnegie
+         Mellon's Sphinx group, Sun Microsystems, Mitsubishi Electric
+         Research Lab (MERL), and Hewlett Packard (HP), with
+         contributions from the University of California at Santa
+         Cruz (UCSC) and the Massachusetts Institute of Technology
+         (MIT).
+
+      <p>Sphinx-4 started out as a port of Sphinx-3 to the
+         Java(TM) programming language, but evolved into a recognizer
+         designed to be much more flexible than Sphinx-3, thus
+         becoming an excellent platform for speech research.
+  </li>
+  <br>&nbsp;
+  <li><a name="capabilities"><b>Capabilities</b></a>
+      <p>[[[WDW: FIXME - these are just notes.  Should include links
+         into the javadoc]]].
+      <p>Discrete and continous speech.  
+      <p>Generalized front end feature extraction.  Includes pluggable
+         implementations of preemphasis, Hamming window, FFT, Mel
+         frequency filter bank, discrete cosine transform, and
+	 feature extraction of cepstra, delta cepstra, double delta
+	 cepstra features.
+      <p>Generalized pluggable language model architecture.  Includes
+         pluggable language model support for unigram, bigram,
+         trigram, Java Speech API JSGF, and FST grammars.  
+      <p>Generalized acoustic model architecture.  Includes pluggable
+         support for sphinx-3 acoustic models.
+      <p>Generalized search management.  Includes pluggable support
+         for simple breadth first and word pruning searches.
+  </li>
+  <br>&nbsp;
+  <li><a name="speed_and_accuracy"><b>Performance</b></a>
+      <p>Sphinx-4 is a very flexible system capable of performing many
+         different types of recognition tasks.  As such, it is
+         difficult to characterize the performance and accuracy of
+         Sphinx-4 with just a few simple numbers such as speech and
+         accuracy.  Instead, we regularly run regression tests on
+         Sphinx-4 to determine how it performs under a variety of
+         tasks.  These tasks and their latest results are as follows
+         (each task is progressively more difficult than the previous
+	 task):
+      <ul>
+          <li><a href="http://cmusphinx.sourceforge.net/IsolatedDigitsResults.html">
+              Isolated Digits (TI46)</a>: Runs Sphinx-4 with pre-recorded
+              test data to gather performance metrics for recognizing
+              just one word at a time.  The vocabulary is merely the
+              spoken digits from 0 through 9, with a single utterance
+              containing just one digit.
+          </li>
+          <li><a href="http://cmusphinx.sourceforge.net/ConnectedDigitsResults.html">
+              Connected Digits (TIDIGITS)</a>: Extends the Isolated
+              Digits test to recognize more than one word at a time
+              (i.e., continuous speech).  The vocabulary is merely the
+              spoken digits from 0 through 9, with a single utterance
+              containing a
+	      sequence of digits.
+          </li>
+          <li><a href="http://cmusphinx.sourceforge.net/SmallVocabResults.html">
+              Small Vocabulary (AN4)</a>: Extends the vocabulary
+	      to approximately 100 words, with input data ranging
+	      from speaking words as well as spelling words out
+	      letter by letter.
+          </li>
+          <li><a href="http://cmusphinx.sourceforge.net/MediumVocabResults.html">
+              Medium Vocabulary (RM1)</a>: Extends the vocabulary
+	      to approximately 1000 words.
+          </li>
+          <li><a href="http://cmusphinx.sourceforge.net/LargeVocabResults.html">
+              Large Vocabulary (HUB4)</a>: Extends the vocabulary
+	      to approximately 1000 words.
+          </li>
+      </ul>
+  </li>
+  <br>&nbsp;
+  <li><a name="download_and_install"><b>Downloading and Installing</b></a>
+      <p>Include notes on acoustic model and language model files.
+      <p>Sphinx-4 has been build and tested on the Solaris<sup>
+         <font size="-1">TM</font></sup> Operating Environment, Mac OS X,
+         Linux and Win32 operating systems.  
+      <p>Running, building, and testing Sphinx-4 requires the
+         Java<sup>TM</sup> 2 SDK, Standard Edition, 1.4.  You can download
+         the developer kit from <a href="http://java.sun.com/j2se/1.4/">
+         http://java.sun.com/j2se/1.4/</a>.  Make sure you set your
+         JAVA_HOME environment variable to point your installation (e.g.,
+         JAVA_HOME=/usr/java/j2sdk1.4.0).
+  </li>
+  <br>&nbsp;
+  <li><a name="configuration"><b>Configuration</b></a>
+      <p>Describe Sphinx4Properties philosophy and include pointer to 
+         various files that define particular Sphinx-4 properties.
+  </li>
+</ul>
+
+<hr>
+
+<h2>How Do I Use It:  Sphinx-4 for Speech Application Developers</h2>
+<ul>
+  <li><a name="architecture_and_api1"><b>Architecture and API</b></a>
+      <p>The architecture and API can be found in the 
+         <a href="javadoc/index.html">javadoc documentation</a>.
+  </li>
+  <br>&nbsp;
+  <li><a name="demos"><b>Demos</b></a>
+      <p>Include the following, plus the ability to parse results,
+         create/use lattices, get confidence scores, etc.
+      <ul>
+          <li>Simple Wordlist</li>
+          <li>Simple JSGF</li>
+          <li>Bigram</li>
+          <li>Trigram</li>
+      </ul>
+  </li>
+</ul>
+
+<hr>
+
+<h2>How Do I Change It:  Sphinx-4 for Speech Engine Developers</h2>
+<p>All the source is available under a <a href="license.terms">BSD Style</a>
+   license.  You can download it, build it, and modify it to your 
+   heart's content.
+<ul>
+  <li><a name="architecture_and_api2"><b>Architecture and API</b></a>
+      <p>The architecture and API can be found in the 
+         <a href="javadoc/index.html">javadoc documentation</a>.
+  </li>
+  <br>&nbsp;
+  <li><a name="how_build"><b>Building Sphinx-4</b></a>
+      <p>The prerequisites for building Sphinx-4 are as follows:
+      <br>&nbsp;
+      <ul>
+         <li><b>Sphinx-4 Source Distribution</b>.  Download from ...
+         </li>
+         <li><b>Java<sup><font size="-1">TM</font></sup> 2 SDK, Standard
+             Edition, v1.4</b> available at 
+             <a href="http://java.sun.com/j2se/1.4/">
+             http://java.sun.com/j2se/1.4/</a> (all platforms).  After you
+             have downloaded and installed the SDK, remember to set your
+             <code><b>JAVA_HOME</b></code> environment variable to point to
+             where you installed the SDK.
+         </li><br>
+         <li><b>Apache Ant 1.5.3</b> or
+             better.  After you install ant, sure the "ant" command is in
+             your path.  Visit the <a href="http://ant.apache.org/">Apache
+             Ant site</a> to get ant.
+         </li><br>
+      </ul>
+    <p>To build Sphinx-4, merely type the following in a command prompt 
+       situated at the top level Sphinx-4 directory:
+      <ul>
+         <p><code>ant</code>
+      </ul>
+    <p>This executes the <a href="http://ant.apache.org/">Apache Ant</a>
+       command to build the FreeTTS classes, voices, demos, and jar files.
+       The output will be placed under the <code>bld</code> directory.
+
+    <p>We have also provided a number of ant targets for convenience:
+    <ul>
+       <p><code>ant clean</code>: deletes all the output from the build 
+          to give you a fresh start
+       <br><code>ant javadoc</code>: builds the javadoc documentation and
+          places the results in the <code>javadoc</code> directory
+    </ul>
+  </li>
+</ul>
+
+<hr>
+
+Copyright 1999-2004 Carnegie Mellon University.<br>
+Portions Copyright 2002-2004 Sun Microsystems, Inc.<br>
+Portions Copyright 2002-2004 Mitsubishi Electronic Research Laboratories.<br>
+All Rights Reserved.  Usage is subject to 
+<a href="../license.terms">license terms</a>.
+</body>
+</html>
