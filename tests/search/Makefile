@@ -26,9 +26,6 @@ EXTRA_JAVA_FLAGS=-mx128m
 
 all:: ${CLASSES} ${STUBS}
 
-dict: all
-	$(JAVA_CMD) tests.search.FullDictionaryTest dictest.props
-
 grammar: all
 	$(JAVA_CMD) tests.search.SimpleLinguistTest simple_search.props
 
@@ -37,9 +34,6 @@ connected-grammar: all
 
 search: all
 	$(JAVA_CMD) tests.search.SimpleSearchTest simple_search.props
-
-alpha-dict: all
-	$(JAVA_CMD) tests.search.AlphaDictionaryTest alpha_dictionary.props
 
 FSTGrammarTestTiny: all
 	$(JAVA_CMD) tests.search.FSTGrammarTest FSTGrammarTest.props
