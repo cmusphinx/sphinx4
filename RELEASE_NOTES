@@ -15,6 +15,11 @@ PBL - 9/22/04
     Fixed some problems with the PartitionActiveList that would allow
     incorrect tokens to be removed from the list during a replace.
 
+WDW - 9/20/04
+    Added selectMixer parameter and implementation to Microphone,
+    which gives the ability to configure which Mixer the Microphone 
+    class uses.  Helps with working around audio issue on the Mac.
+
 PBL - 9/15/04
     Added scripts and instructions for building a WSJ5k language model
     from LDC data.
