@@ -7,7 +7,7 @@
     <!-- * Where to find things...                                * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <property name="version"            value="0.1alpha"/>
+    <property name="version"            value="1.0"/>
 
     <path id="libs">
         <fileset dir="lib" includes="**/jsapi.jar,**/js.jar"/>
