@@ -136,6 +136,9 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
             }
         }
 
+	// System.out.println("SAS: " + output);
+	// signalCheck(output);
+
         getTimer().stop();
 
         return output;
