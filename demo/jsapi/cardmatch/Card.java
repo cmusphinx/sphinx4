@@ -19,9 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
-import javax.swing.JToggleButton;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 
 /**
@@ -32,8 +29,8 @@ public class Card {
     private String id;
     private String defaultImageFile;
     private String imageFile;
-    private JToggleButton toggleButton;
     private boolean isMatched;
+    private boolean isSelected;
 
 
     /**
@@ -43,19 +40,27 @@ public class Card {
      */
     public Card(String imageFile) {
         this.imageFile = imageFile;
-        this.toggleButton = null;
         this.isMatched = false;
     }
 
 
     /**
      * Returns true if this Card is selected.
+     *
+     * @return <code>true</code> if the card was selected
      */
     public boolean isSelected() {
-        if (toggleButton == null) {
-            throw new IllegalStateException("This card has no JCheckBox.");
-        }
-        return toggleButton.isSelected();
+        return isSelected;
+    }
+
+    /**
+     * Returns the string representation of this card
+     *
+     * @return the string representation
+     */
+    public String toString() {
+        return imageFile + " Matched:" + isMatched + " Selected: " +
+            isSelected();
     }
 
 
@@ -65,20 +70,14 @@ public class Card {
      * @param select whether to select this Card or not
      */
     public void setSelected(final boolean selected) {
-        if (!isMatched()) {
-            if (toggleButton != null) {
-		SwingUtilities.invokeLater( new Runnable() {
-		    public void run() {
-			toggleButton.setSelected(selected);
-		    }
-		});
-            }
-        }
+        isSelected = selected;
     }
 
 
     /**
      * Returns true if this Card has already been matched correctly.
+     *
+     * @return <code>true</code> if the card has been matched
      */
     public boolean isMatched() {
         return isMatched;
@@ -90,17 +89,21 @@ public class Card {
      *
      * @param matched true if it has already been match, false otherwise
      */
-    public void setMatched(final boolean matched) {
+    public void setMatched(boolean matched) {
         this.isMatched = matched;
-        if (toggleButton != null) {
-	    SwingUtilities.invokeLater( new Runnable() {
-		public void run() {
-		    toggleButton.setSelected(matched);
-		}
-	    });
-        }
     }
 
+
+    /**
+     * Determines if the given card matches this card
+     *
+     * @param card the card to check
+     *
+     * @return <code>true</code> if the cards match
+     */
+    public boolean isMatch(Card card) {
+        return getImageFile().equals(card.getImageFile());
+    }
 
     /**
      * Sets the ID of this Card.
@@ -149,45 +152,6 @@ public class Card {
      */
     public String getDefaultImageFile() {
         return defaultImageFile;
-    }
-
-
-    /**
-     * Resets the JToggleButton.
-     */
-    public synchronized void resetJToggleButton() {
-        toggleButton = null;
-    }
-
-
-    /**
-     * Returns a JCheckBox for the given Card.
-     *
-     * @param card the card of the JCheckBox
-     *
-     * @return a JCheckBox
-     */
-    public synchronized JToggleButton getJToggleButton() {
-        if (toggleButton == null) {
-            toggleButton = new JToggleButton
-                ("Card " + id, new ImageIcon(getDefaultImageFile()));
-            toggleButton.setSelectedIcon(new ImageIcon(getImageFile()));
-            toggleButton.setBorderPainted(true);
-            toggleButton.setContentAreaFilled(false);
-            centerJToggleButton();
-        }
-        return toggleButton;
-    }
-
-
-    /**
-     * Sets the various alignments for this button.
-     */
-    private void centerJToggleButton() {
-        toggleButton.setHorizontalAlignment(SwingConstants.CENTER);
-        toggleButton.setVerticalAlignment(SwingConstants.CENTER);
-        toggleButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        toggleButton.setHorizontalTextPosition(SwingConstants.CENTER);
     }
 }
 
