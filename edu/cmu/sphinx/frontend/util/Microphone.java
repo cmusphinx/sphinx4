@@ -289,9 +289,18 @@ public class Microphone extends BaseDataProcessor {
                     return false;
                 }
 
+                /* Conversion might not be supported, which will
+                 * result in audioStream being null after this call.
+                 * If that is the case, we'll let the data processors
+                 * down the stream handle the conversion for us.  Note
+                 * that the assumption here is that the conversion is a
+                 * sample rate conversion and nothing else.
+                 */
                 if (doConversion) {
                     audioStream = getConvertingStream();
-                } else {
+                }
+                
+                if (audioStream == null) {
                     audioStream = new AudioInputStream(audioLine);
                 }
 
