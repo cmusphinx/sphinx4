@@ -285,7 +285,7 @@ public class AudioTool {
     /**
      * Main method.
      *
-     * @param argv argv[0] : The name of an audio file
+     * @param args argv[0] : The name of an audio file
      *             argv[1] : SphinxProperties file
      */
     static public void main(String[] args) {

@@ -244,7 +244,7 @@ public class AudioPanel extends JPanel
      * Sets the index of the sample of representing the end of the
      * selection.  -1 means the very end.
      *
-     * @param newStart the new selection end
+     * @param newEnd the new selection end
      * @see #crop
      * @see #setSelectionStart
      */

@@ -107,7 +107,7 @@ public class Utils {
      * 1, then the value is doubled to make it match a frame size
      * of 2.
      *
-     * @param audioFormat the audio format
+     * @param format the audio format
      * @param byteArray the byte array
      *
      * @return a short
