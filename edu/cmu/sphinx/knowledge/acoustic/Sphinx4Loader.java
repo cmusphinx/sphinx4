@@ -58,6 +58,11 @@ class Sphinx4Loader extends Sphinx3Loader {
 
     protected final static String TMAT_FILE_VERSION = "4.0";
 
+    public final static String MAX_MODEL_SIZE = 
+	TrainerAcousticModel.PROP_PREFIX + "maxStatePerModel";
+
+    public final static int MAX_MODEL_SIZE_DEFAULT = 10;
+
 
     /**
      * Loads the sphinx4 ascii model.
@@ -71,7 +76,6 @@ class Sphinx4Loader extends Sphinx3Loader {
     public Sphinx4Loader(String modelName, SphinxProperties props, 
             boolean binary) throws 
 	FileNotFoundException, IOException, ZipException {
-
 	super(modelName, props, binary);
 
     }
@@ -131,9 +135,10 @@ class Sphinx4Loader extends Sphinx3Loader {
 	numTiedTransitionMatrices = est.getInt("numTiedTransitionMatrices");
 	est.expectString("n_tied_tmat");
 
-	//	numStatePerHMM = numStateMap/(numTri+numBase);
-	int maxStatePerHmm = 10;
-	int[] maxStid = new int[maxStatePerHmm];
+	SphinxProperties props = super.getSystemProperties();
+	int maxModelSize = 
+	    props.getInt(MAX_MODEL_SIZE, MAX_MODEL_SIZE_DEFAULT);
+	int[] maxStid = new int[maxModelSize];
 
 	HMMManager hmmManager = super.getHmmManager();
 	Pool matrixPool = super.getMatrixPool();
@@ -161,7 +166,12 @@ class Sphinx4Loader extends Sphinx3Loader {
 
 		if (!str.equals("N")) {
 		    int id = Integer.parseInt(str);
-		    maxStid[j] = id;
+		    try {
+			maxStid[j] = id;
+		    } catch (ArrayIndexOutOfBoundsException aie) {
+			throw new Error("Use a larger value for " +
+					"maxStatePerModel");
+		    }
 		    assert maxStid[j] >= 0 && 
 			maxStid[j] < numContextIndependentTiedState;
 		} else {

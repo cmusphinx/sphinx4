@@ -86,6 +86,7 @@ class Sphinx3Loader implements Loader {
     private HMMManager hmmManager;
     private LogMath logMath;
     private SphinxProperties acousticProperties;
+    private SphinxProperties systemProperties;
     private boolean binary = false;
     private String location;
     private boolean swap;
@@ -108,8 +109,9 @@ class Sphinx3Loader implements Loader {
             boolean binary) throws 
 	FileNotFoundException, IOException, ZipException {
 
+	this.systemProperties = props;
         this.binary = binary;
-	logMath = LogMath.getLogMath(props.getContext());
+	logMath = LogMath.getLogMath(systemProperties.getContext());
 
 	// extract the feature vector length
 	String vectorLengthProp = AcousticModel.PROP_VECTOR_LENGTH;
@@ -117,7 +119,7 @@ class Sphinx3Loader implements Loader {
 	    vectorLengthProp = AcousticModel.PROP_PREFIX + modelName +
 		".FeatureVectorLength";
 	}
-	vectorLength = props.getInt
+	vectorLength = systemProperties.getInt
 	    (vectorLengthProp, AcousticModel.PROP_VECTOR_LENGTH_DEFAULT);
 	
         hmmManager = new HMMManager();
@@ -134,7 +136,7 @@ class Sphinx3Loader implements Loader {
             = createDummyVectorPool("varianceTransformationMatrix");
 
         // do the actual acoustic model loading
-        loadModelFiles(modelName, props);
+        loadModelFiles(modelName);
     }
 
 
@@ -184,6 +186,15 @@ class Sphinx3Loader implements Loader {
     }
 
     /**
+     * Return the systemProperties.
+     *
+     * @return the systemProperties
+     */
+    protected SphinxProperties getSystemProperties() {
+	return systemProperties;
+    }
+
+    /**
      * Return the location.
      *
      * @return the location
@@ -198,9 +209,8 @@ class Sphinx3Loader implements Loader {
      *
      * @param modelName the name of the acoustic model; if null we just
      *    load from the default location
-     * @param props the SphinxProperties object to use
      */
-    private void loadModelFiles(String modelName, SphinxProperties props) 
+    private void loadModelFiles(String modelName) 
 	throws FileNotFoundException, IOException, ZipException {
 
 	String prefix, model, dataDir, propsFile;
@@ -212,24 +222,24 @@ class Sphinx3Loader implements Loader {
 	}
 	// System.out.println("Using prefix: " + prefix);
 
-	location = props.getString
+	location = systemProperties.getString
 	    (prefix + "location", AcousticModel.PROP_LOCATION_DEFAULT);
-	model = props.getString
+	model = systemProperties.getString
 	    (prefix + "definition_file", AcousticModel.PROP_MODEL_DEFAULT);
-	dataDir = props.getString
+	dataDir = systemProperties.getString
 	    (prefix + "data_location", 
 	     AcousticModel.PROP_DATA_LOCATION_DEFAULT) + "/";
-	propsFile = props.getString
+	propsFile = systemProperties.getString
 	    (prefix + "properties_file", 
 	     AcousticModel.PROP_PROPERTIES_FILE_DEFAULT);
 
-	float distFloor = props.getFloat(AcousticModel.PROP_MC_FLOOR, 
-					 AcousticModel.PROP_MC_FLOOR_DEFAULT);
+	float distFloor = systemProperties.getFloat
+	    (AcousticModel.PROP_MC_FLOOR, AcousticModel.PROP_MC_FLOOR_DEFAULT);
         float mixtureWeightFloor = 
-	    props.getFloat(AcousticModel.PROP_MW_FLOOR, 
+	    systemProperties.getFloat(AcousticModel.PROP_MW_FLOOR, 
 			   AcousticModel.PROP_MW_FLOOR_DEFAULT);
         float varianceFloor = 
-	    props.getFloat(AcousticModel.PROP_VARIANCE_FLOOR, 
+	    systemProperties.getFloat(AcousticModel.PROP_VARIANCE_FLOOR, 
 			   AcousticModel.PROP_VARIANCE_FLOOR_DEFAULT);
 
 	logger.info("Loading Sphinx3 acoustic model: " + modelName);
@@ -250,9 +260,9 @@ class Sphinx3Loader implements Loader {
         }
 
 	if (modelName == null) {
-	    prefix = props.getContext() + ".acoustic";
+	    prefix = systemProperties.getContext() + ".acoustic";
 	} else {
-	    prefix = props.getContext() + ".acoustic." + modelName;
+	    prefix = systemProperties.getContext() + ".acoustic." + modelName;
 	}
 	acousticProperties = loadAcousticPropertiesFile(prefix, url);
 
@@ -282,7 +292,7 @@ class Sphinx3Loader implements Loader {
 	senonePool = createSenonePool(distFloor, varianceFloor);
 
         // load the HMM model file
-	boolean useCDUnits = props.getBoolean
+	boolean useCDUnits = systemProperties.getBoolean
 	    (AcousticModel.PROP_USE_CD_UNITS, 
 	     AcousticModel.PROP_USE_CD_UNITS_DEFAULT);
 	loadHMMPool(useCDUnits,
