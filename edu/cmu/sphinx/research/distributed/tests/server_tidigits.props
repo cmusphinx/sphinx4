@@ -48,6 +48,8 @@ edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
 edu.cmu.sphinx.frontend.windowShiftInMs = 10
 edu.cmu.sphinx.frontend.windower.alpha = 0.46
 edu.cmu.sphinx.frontend.cmn = edu.cmu.sphinx.frontend.LiveCMN
+edu.cmu.sphinx.frontend.LiveCMN.windowSize = 50
+edu.cmu.sphinx.frontend.LiveCMN.shiftWindow = 80
 
 
 ############################################################
@@ -118,7 +120,7 @@ edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.dumpFrontEnd = false
+edu.cmu.sphinx.decoder.Recognizer.dumpFrontEnd = true
 
 edu.cmu.sphinx.decoder.Recognizer.frontend = edu.cmu.sphinx.research.distributed.server.ServerFrontEnd
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist
