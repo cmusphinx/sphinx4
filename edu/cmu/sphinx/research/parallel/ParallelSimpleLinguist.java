@@ -120,7 +120,6 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
         System.out.println("Finished ParallelSimpleLinguist initialize()");
     }
 
-
     /**
      * Sets the acoustic model(s) used.
      *
@@ -235,10 +234,12 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
                 
                 HMM hmm = acousticModels[i].lookupNearestHMM
                     (unitState.getUnit(), unitState.getPosition(), false);
+
+                FeatureStream stream = FeatureStream.getFeatureStream
+                    (acousticModels[i].getName());
                 
                 ParallelHMMStateState firstHMMState = 
-                    new ParallelHMMStateState(unitState,
-                                              acousticModels[i].getName(),
+                    new ParallelHMMStateState(unitState, stream,
                                               hmm.getInitialState(),
                                               tokenStackCapacity);
                 
@@ -256,9 +257,8 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
                 hmmStates.put(firstHMMState.getHMMState(), firstHMMState);
                 
                 SentenceHMMState lastState =
-                    expandParallelHMMTree(firstHMMState, 
-                                          acousticModels[i].getName(),
-                                          hmmStates);
+                    expandParallelHMMTree(firstHMMState, stream, hmmStates);
+
                 attachState(lastState, combineState,
                             getLogMath().getLogOne(),
                             getLogMath().getLogOne(),
@@ -273,13 +273,13 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
          * Expands the given HMM tree into the full set of HMMStateStates.
          *
          * @param hmmStateState the first state of the HMM tree
-         * @param modelName the name of the acoustic model behind this HMM tree
+         * @param stream the FeatureStream of the relevant acoustic model
          * @param expandedStates the map of HMMStateStates
          *
          * @return the last state of the expanded tree
          */
         private SentenceHMMState expandParallelHMMTree
-        (ParallelHMMStateState hmmStateState, String modelName,
+        (ParallelHMMStateState hmmStateState, FeatureStream stream,
          Map expandedStates) {
             
             SentenceHMMState lastState = hmmStateState;
@@ -310,7 +310,7 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
                             expandedStates.get(nextHmmState);
                     } else {
                         nextState = new ParallelHMMStateState
-                            (hmmStateState.getParent(), modelName, 
+                            (hmmStateState.getParent(), stream,
                              nextHmmState, tokenStackCapacity);
                         expandedStates.put(nextHmmState, nextState);
                     }
@@ -324,7 +324,7 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
                                 getLogMath().getLogOne());
                     
                     lastState = expandParallelHMMTree
-                        (nextState, modelName, expandedStates);
+                        (nextState, stream, expandedStates);
                 }
             }
             
@@ -379,11 +379,12 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
             for (int i = 0; i < hmms.length; i++) {
                 HMMState hmmState = hmms[i].getInitialState();
                 
-                ParallelHMMStateState firstHMMState = 
-                    new ParallelHMMStateState(unitState,
-                                              acousticModels[i].getName(),
-                                              hmmState,
-                                              tokenStackCapacity);
+                ParallelHMMStateState firstHMMState = new ParallelHMMStateState
+                    (unitState,
+                     FeatureStream.getFeatureStream
+                     (acousticModels[i].getName()),
+                     hmmState,
+                     tokenStackCapacity);
                 
                 // Color.GREEN indicates an in-feature-stream state
                 firstHMMState.setColor(Color.GREEN);
@@ -422,10 +423,12 @@ public class ParallelSimpleLinguist extends SimpleLinguist {
                     HMMState hmmState = arc.getHMMState();
                     
                     ParallelHMMStateState hmmStateState = 
-                    new ParallelHMMStateState(unitState,
-                                              acousticModels[a].getName(),
-                                              hmmState,
-                                              tokenStackCapacity);
+                    new ParallelHMMStateState
+                        (unitState,
+                         FeatureStream.getFeatureStream
+                         (acousticModels[a].getName()),
+                         hmmState,
+                         tokenStackCapacity);
                     
                     // Color.GREEN indicates an in-feature-stream state
                     hmmStateState.setColor(Color.GREEN);
