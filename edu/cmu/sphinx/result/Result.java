@@ -169,7 +169,8 @@ public class Result {
 
     /**
      * Returns the best scoring token in the result. First, the best
-     * final token is retrieved. If no final tokens can be found, then
+     * final token is retrieved. A final token is one that has reached the
+     * final state in the search space. If no final tokens can be found, then
      * the best, non-final token is returned.
      *
      * @return the best scoring token or null
@@ -326,6 +327,10 @@ public class Result {
 
     /**
      * Returns the string of the best result, removing any filler words.
+     * This method first attempts to return the best final result, that is,
+     * the result that has reached the final state of the search space. 
+     * If there are no best final results, then the best non-final result,
+     * that is, the one that did not reach the final state, is returned.
      *
      * @return the string of the best result, removing any filler
      * words
@@ -341,9 +346,12 @@ public class Result {
 
     /**
      * Returns the string of the best final result, removing any filler words.
+     * A final result is a path that has reached the final state.
+     * A Result object can also contain paths that did not reach the
+     * final state, and those paths are not returned by this method.
      *
      * @return the string of the best result, removing any filler
-     * words
+     * words, or null if there are no best results
      */
     public String getBestFinalResultNoFiller() {
         Token token = getBestFinalToken();
