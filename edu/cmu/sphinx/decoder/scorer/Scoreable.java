@@ -24,10 +24,12 @@ public interface  Scoreable {
      * retreived with get score
      *
      * @param feature the feature to be scored
+     * @param keepFeature whether this Scoreable should keep a reference
+     *    to the given feature
      *
      * @return the score for the feature
      */
-    public float calculateScore(Feature feature);
+    public float calculateScore(Feature feature, boolean keepFeature);
 
     
     /**

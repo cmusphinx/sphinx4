@@ -132,7 +132,8 @@ public class SimpleAcousticScorer implements AcousticScorer {
 			 scoreable.getFrameNumber() +
 			 "  Feature: " + feature.getID());
 		}
-                if (scoreable.calculateScore(feature) > best.getScore()) {
+                if (scoreable.calculateScore(feature, false) > 
+                    best.getScore()) {
                     best = scoreable;
                 }
 	    }

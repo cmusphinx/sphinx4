@@ -93,6 +93,19 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     public final static int PROP_MIN_SCOREABLES_PER_THREAD_DEFAULT = 50;
 
 
+    /**
+     * A SphinxProperty specifying whether the scoreables should keep
+     * a reference to the scored features.
+     */
+    public final static String PROP_SCOREABLES_KEEP_FEATURE
+        = PROP_PREFIX + "scoreablesKeepFeature";
+
+    /**
+     * The default value for PROP_SCOREABLES_KEEP_FEATURE.
+     */
+    public final static boolean PROP_SCOREABLES_KEEP_FEATURE_DEFAULT = false;
+
+
     private FrontEnd frontEnd;		// where features come from
     private SphinxProperties props;	// the sphinx properties
     private Mailbox mailbox;		// sync between caller and threads
@@ -100,6 +113,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     private Feature curFeature;		// current feature being processed
     private int numThreads;		// number of threads in use
     private int minScoreablesPerThread;	// min scoreables sent to a thread
+    private boolean keepFeature;        // scoreables keep feature or not
 
 
     /**
@@ -126,6 +140,8 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 	minScoreablesPerThread =  
             props.getInt(PROP_MIN_SCOREABLES_PER_THREAD,
                          PROP_MIN_SCOREABLES_PER_THREAD_DEFAULT);
+        keepFeature = props.getBoolean(PROP_SCOREABLES_KEEP_FEATURE,
+                                       PROP_SCOREABLES_KEEP_FEATURE_DEFAULT);
 
 	if (cpuRelative) {
 	    numThreads += Runtime.getRuntime().availableProcessors();
@@ -291,7 +307,8 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 		     scoreable.getFrameNumber() +
 		     "  Feature: " + curFeature.getID());
 	    } 
-	    if (scoreable.calculateScore(curFeature) > best.getScore()) {
+	    if (scoreable.calculateScore(curFeature, keepFeature) > 
+                best.getScore()) {
                 best = scoreable;
             }
 	}
