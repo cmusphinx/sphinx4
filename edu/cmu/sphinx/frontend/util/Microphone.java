@@ -120,7 +120,7 @@ public class Microphone extends DataProcessor implements AudioSource {
     private TargetDataLine audioLine = null;
     private AudioInputStream audioStream = null;
     private LineListener lineListener = new MicrophoneLineListener();
-    private List audioList;
+    private AudioList audioList;
     private Utterance currentUtterance;
 
     private int frameSizeInBytes;
@@ -150,7 +150,7 @@ public class Microphone extends DataProcessor implements AudioSource {
 	setProperties(props);
         audioFormat = new AudioFormat(sampleRate, sampleSizeInBits,
                                       channels, signed, bigEndian);
-        audioList = new LinkedList();
+        audioList = new AudioList();
     }
 
 
@@ -275,6 +275,7 @@ public class Microphone extends DataProcessor implements AudioSource {
                 while (getRecording() && !getClosed()) {
                     printMessage("reading ...");
                     audioList.add(readAudio(currentUtterance));
+                    /*
                     if (sleepBetweenAudio) {
                         try {
                             Thread.sleep(sleepTime);
@@ -282,6 +283,7 @@ public class Microphone extends DataProcessor implements AudioSource {
                             ie.printStackTrace();
                         }
                     }
+                    */
                 }
 
                 audioList.add(new Audio(Signal.UTTERANCE_END));
@@ -461,7 +463,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      * Clears all cached audio data.
      */
     public void clear() {
-        audioList = new LinkedList();
+        audioList = new AudioList();
     }
 
 
@@ -515,17 +517,20 @@ public class Microphone extends DataProcessor implements AudioSource {
      *
      * @throws java.io.IOException
      */
-    public Audio getAudio() throws IOException {
+    public synchronized Audio getAudio() throws IOException {
 
         getTimer().start();
 
         Audio output = null;
 
-        do {
+        if (recording) {
+            output = (Audio) audioList.remove(0);
+        } else {
+            // not recording
             if (audioList.size() > 0) {
                 output = (Audio) audioList.remove(0);
             }
-        } while (output == null && recording);
+        }
 
         getTimer().stop();
 
@@ -540,7 +545,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      *
      * @return true if there is more data in the Microphone
      */
-    public boolean hasMoreData() {
+    public synchronized boolean hasMoreData() {
         boolean moreData;
         synchronized (audioList) {
             moreData = (recording || audioList.size() > 0);
@@ -625,5 +630,36 @@ public class Microphone extends DataProcessor implements AudioSource {
                 }
             }
         }
+    }
+}
+
+class AudioList {
+
+    private List list;
+
+    public AudioList() {
+        list = new LinkedList();
+    }
+
+    public synchronized void add(Audio audio) {
+        list.add(audio);
+        // System.out.println("Audio added...");
+        notify();
+    }
+
+    public synchronized int size() {
+        return list.size();
+    }
+
+    public synchronized Object remove(int index) {
+        try {
+            while (list.size() == 0) {
+                // System.out.println("Waiting...");
+                wait();
+            }
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }        
+        return list.remove(index);
     }
 }
