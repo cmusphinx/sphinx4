@@ -317,9 +317,9 @@ public class LiveFrame extends JFrame {
         setMessage("Wait...");
         
         // update GUI states
-        setGUISpeakingState(true);
         setRecognitionLabel("");
-        
+        setGUISpeakingState(true);
+
         // start recording
         if (live.startRecording()) {
             setMessage("OK, start speaking...");
@@ -694,7 +694,6 @@ public class LiveFrame extends JFrame {
     private void setGUISpeakingState(final boolean speaking) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                speakButton.setSelected(speaking);
                 nextButton.setEnabled(!speaking);
                 playButton.setEnabled(!speaking);
                 decoderComboBox.setEnabled(!speaking);
