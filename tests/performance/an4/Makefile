@@ -132,6 +132,39 @@ an4_words_trigram:
     -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=1.0E-20\
     edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_words.batch
 
+an4_words_trigram_flat:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
+    -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist\
+    -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.NullGrammar\
+    \
+    -Dedu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./an4_words.trigram.lm\
+    -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=-1 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80 \
+   -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-40 \
+    -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.2 \
+    edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_words.batch
+
+an4_full_trigram_flat:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
+    -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist\
+    -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.NullGrammar\
+    \
+    -Dedu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./an4_full.trigram.lm\
+    -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=-1 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80 \
+   -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-40 \
+    -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.2 \
+    edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_full.batch
+
+
 # Tests the 79 whole words from AN4, using an FST created from
 # the flat unigram LM based on the spoken words of AN4.
 
