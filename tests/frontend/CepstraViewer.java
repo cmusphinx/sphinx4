@@ -26,7 +26,6 @@ public class CepstraViewer extends JFrame {
 
     private java.util.List cepstraGroups;     // all CepstraGroups
     private CepstraGroup current;   // the currently showing CepstraGroup
-    private int lastEnergy;
     private int numberCepstra;
    
 
@@ -41,7 +40,6 @@ public class CepstraViewer extends JFrame {
         scrollPane = new JScrollPane(createMainPanel());
         getContentPane().add(scrollPane, BorderLayout.CENTER);
         setVisible(true);
-        lastEnergy = 0;
         numberCepstra = 0;
         cepstraGroups = new LinkedList();
         current = null;
@@ -110,10 +108,9 @@ public class CepstraViewer extends JFrame {
      * Updates this Viewer with the current CepstraGroup.
      */
     private void updateCurrent() {
-        canvas.repaint();
+        canvas.setCepstra(current.getCepstra());
         cepstraName.setText(current.getName());
     }
-
 
     /**
      * Adds the given CepstraGroup to the list of CepstraGroup 
@@ -126,129 +123,6 @@ public class CepstraViewer extends JFrame {
         if (cepstraGroups.size() == 1) {
             current = cepstraGroup;
             updateCurrent();
-        }
-    }
-
-
-    /**
-     * A Panel to draw the Cepstra.
-     */
-    class CepstraPanel extends JPanel {
-
-        private int pixelsPerYUnit = 10;
-        private int majorYInterval = 5;
-        private int maxHeight = getHeight();
-
-        private Color majorYIntervalColor = Color.GRAY;
-        private Color minorYIntervalColor = Color.LIGHT_GRAY;
-
-
-        /**
-         * If the Cepstrum contains data,
-         * it will plot the energy value of the Cepstrum, otherwise,
-         * if it is a SPEECH_START, it will draw a green line,
-         * if it is a SPEECH_END Cepstrum, it will draw a red line.
-         */
-        public void paint(Graphics g) {
-            clear(g);
-            drawGrid(g);
-
-            // draw the current CepstraGroup
-            if (current != null) {
-                int x = 1;
-                Cepstrum[] cepstra = current.getCepstra();
-                for (int i = 0; i < cepstra.length; i++) {
-                    drawCepstrum(cepstra[i], g, x);
-                    x += 2;
-                }
-                setSize(x, maxHeight);
-                setPreferredSize(getSize());
-                revalidate();
-            }
-        }
-
-        /**
-         * Clears this JPanel, essentially fills the background with white.
-         */
-        private void clear(Graphics g) {
-            g.setColor(Color.WHITE);
-            g.fillRect(0, 0, getWidth(), getHeight());
-        }
-
-        /**
-         * Draws the given Cepstrum at the given x position.
-         *
-         * @param cepstrum Cepstrum to draw
-         * @param g the Graphics context to use
-         * @param the x position to draw at
-         */
-        private void drawCepstrum(Cepstrum cepstrum, Graphics g, int x) {
-            if (cepstrum.hasContent()) {
-                // draw the cepstrum's energy
-                int energy = (int) (cepstrum.getEnergy() * pixelsPerYUnit);
-                g.setColor(Color.BLACK);
-                g.drawLine(x, getHeight() - lastEnergy,
-                           x+1, getHeight() - energy);
-                lastEnergy = energy;
-                
-                // check for maxHeight
-                if (energy > maxHeight) {
-                    maxHeight = energy + 10;
-                }
-            } else {
-                // draw the SPEECH_START and SPEECH_END
-                Signal signal = cepstrum.getSignal();
-                if (signal.equals(Signal.SPEECH_START)) {
-                    drawSpeechLine(x, Color.ORANGE, g);
-                } else if (signal.equals(Signal.SPEECH_END)) {
-                    drawSpeechLine(x, Color.RED, g);
-                } else if (signal.equals(Signal.UTTERANCE_START)) {
-                    drawSpeechLine(x, Color.BLUE, g);
-                } else if (signal.equals(Signal.UTTERANCE_END)) {
-                    drawSpeechLine(x, Color.GREEN, g);
-                }
-            }
-        }
-        
-        /**
-         * Draws a vertical line at the given x coordinate with the
-         * given color.
-         *
-         * @param xCoordinate the x coordinate to draw the line
-         * @param lineColor the color of the line
-         * @param g the Graphics context to draw the line
-         */
-        private void drawSpeechLine(int xCoordinate, Color lineColor, 
-                                    Graphics g) {
-            Color oldColor = g.getColor();
-            g.setColor(lineColor);
-            g.drawLine(xCoordinate, 0, xCoordinate, getHeight());
-            g.setColor(oldColor);
-        }
-
-        /**
-         * Draws the basic grid of this JPanel.
-         *
-         * @param g the Graphics context to draw the grid
-         */
-        private void drawGrid(Graphics g) {
-            boolean atYInterval = false;
-
-            Color oldColor = g.getColor();
-            g.setColor(minorYIntervalColor);
-
-            for (int y = getHeight(), x = 0; y > 0; 
-                 y -= pixelsPerYUnit, x++) {
-                if (x == majorYInterval) {
-                    g.setColor(majorYIntervalColor);
-                }
-                g.drawLine(0, y, getWidth(), y);
-                if (x == majorYInterval) {
-                    g.setColor(minorYIntervalColor);
-                    x = 0;
-                }
-            }
-            g.setColor(oldColor);
         }
     }
 

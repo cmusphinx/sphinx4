@@ -60,47 +60,21 @@ public class EnergyEndpointerTest {
                 finalSource = nonSpeechFilter;
             }
 
-            CepstraViewer cepstraViewer = new CepstraViewer("EndpointerTest");
+            final CepstraViewer cepstraViewer = 
+                new CepstraViewer("EndpointerTest");
             cepstraViewer.show();
 
-            List cepstraGroupList = new LinkedList();
-            List cepstraList = new LinkedList();
+            CepstraGroupProducer groupProducer = new CepstraGroupProducer
+                ("CepstraGroupProducer", testName, finalSource) {
+                
+                public void cepstraGroupProduced(CepstraGroup cepstraGroup) {
+                    cepstraViewer.addCepstraGroup(cepstraGroup);
+                }
+            };
 
             Cepstrum cepstrum = null;
-
             do {
-                cepstrum = finalSource.getCepstrum();
-                if (cepstrum != null) {
-                    cepstraList.add(cepstrum);
-                    Signal signal = cepstrum.getSignal();
-
-                    // If this is the end of an Utterance, group all
-                    // the Cepstrum found so far together to create a
-                    // CepstrumGroup, and give it to the CepstraViewer.
-
-                    if (signal != null && 
-                        signal.equals(Signal.UTTERANCE_END)) {
-
-                        // an Utterance has ended
-                        Cepstrum[] cepstra = new Cepstrum[cepstraList.size()];
-                        cepstraList.toArray(cepstra);
-                        String name = "no name";
-
-                        // find the name of this group
-                        for (int i = 0; i < cepstra.length; i++) {
-                            if (cepstra[i].getUtterance() != null) {
-                                name = cepstra[i].getUtterance().getName();
-                                break;
-                            }
-                        }
-
-                        // create the CepstraGroup and add it to the viewer
-                        CepstraGroup cepstraGroup = new CepstraGroup
-                            (cepstra, name);
-                        cepstraViewer.addCepstraGroup(cepstraGroup);
-                        cepstraList = new LinkedList();
-                    }
-                }
+                cepstrum = groupProducer.getCepstrum();
             } while (cepstrum != null);
 
             System.out.println("no more cepstrum");
