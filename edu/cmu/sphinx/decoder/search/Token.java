@@ -23,7 +23,9 @@ import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.WordSearchState;
+import edu.cmu.sphinx.linguist.UnitSearchState;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
+import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 
 /**
@@ -453,6 +455,32 @@ public class Token implements Scoreable {
      */
     public String getWordPath() {
         return getWordPath(true);
+    }
+
+    /**
+     * Returns the string of words and units for this token, with
+     * embedded silences.
+     *
+     * @return the string of words and units
+     */
+    public String getWordUnitPath() {
+        StringBuffer sb = new StringBuffer();
+        Token token = this;
+
+        while (token != null) {
+            SearchState searchState = token.getSearchState();
+            if (searchState instanceof WordSearchState) {
+                WordSearchState wordState = (WordSearchState) searchState;
+                Word word = wordState.getPronunciation().getWord();
+                sb.insert(0, " " + word.getSpelling());
+            } else if (searchState instanceof UnitSearchState) {
+                UnitSearchState unitState = (UnitSearchState) searchState;
+                Unit unit = unitState.getUnit();
+                sb.insert(0, " " + unit.getName());
+            }
+            token = token.getPredecessor();
+        }
+        return sb.toString().trim();
     }
 
     /**
