@@ -154,6 +154,7 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
                 wordNode.add(branchNode, LogMath.getLogOne());
             }
         }
+        
         return initialNode;
     }
 }

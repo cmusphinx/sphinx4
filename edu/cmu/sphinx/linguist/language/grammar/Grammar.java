@@ -119,6 +119,8 @@ public abstract class Grammar implements Configurable {
         if (optimizeGrammar) {
             optimizeGrammar();
         }
+        
+        dumpStatistics();
         if (showGrammar) {
             dumpGrammar("grammar.gdl");
             dumpRandomSentences("sentences.txt", 100);
