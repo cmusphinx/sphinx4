@@ -1,0 +1,33 @@
+/*
+ * Copyright 1999-2002 Carnegie Mellon University.  
+ * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ * 
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * WARRANTIES.
+ *
+ */
+
+The protocol between client and server.
+
+Client                                Server
+------                                ------
+1.                                    Waiting for connection.
+2. Opens socket connection
+   to Server. 
+3.                                    Accepts connection request.
+4. Send "1".
+5.				      Start decode().
+6. Send "<UTTERANCE_START>\n"  --->
+7. Send cepstra bytes.         --->
+8. Send "<UTTERANCE_END>\n"    --->
+9.                                    Perform recognition.
+10.                            <---   Send result string.
+11. Receive result string.
+12. Go back to step 4 or go to step 13.
+13. Closes the socket connection.
+
+
+
