@@ -16,8 +16,11 @@ package edu.cmu.sphinx.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.BufferedOutputStream;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,12 +29,13 @@ import java.net.URL;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipException;
-
+import java.util.zip.ZipOutputStream;
 
 /**
- * Supports the loading of files from different sources, e.g., a ZIP
- * file or a plain directory. Provides methods that returns an
- * InputStream to the named file in the given source.
+ * Supports the loading and saving of files from different sources,
+ * e.g., a ZIP file or a plain directory. Provides methods that
+ * returns an InputStream or OutputStream to the named file in the
+ * given source.
  */
 public class StreamFactory {
 
@@ -153,6 +157,247 @@ public class StreamFactory {
             }
         }
         return stream;
+    }
+
+
+    /**
+     * Returns an appropriate OutputStream of the given file in the
+     * given URL location.  The location can be a plain directory or a
+     * ZIP file (these are the only two supported at this point).  The
+     * <code>resolve</code> method is called to resolve whether
+     * "location" refers to a ZIP file or a directory. If saving to a
+     * zip or jar, the file can be appended or overwritten. If saving
+     * to a directory, files are always overwritten.
+     *
+     * Suppose you want the OutputStream to the file "dict/dictionary.txt"
+     * in the ZIP file "file:/lab/speech/sphinx4/data/wsj.zip".
+     * You will do:
+     * <code>
+     * StreamFactory.getOutputStream(
+     *   "file:/lab/speech/sphinx4/data/wsj.zip", "dict/dictionary.txt", true);
+     * </code>
+     *
+     * Suppose you want the OutputStream to the file "dict/dictionary.txt"
+     * in the directory "file:/lab/speech/sphinx4/data/wsj", you will do:
+     * <code>
+     * StreamFactory.getOutputStream(
+     *    "file:/lab/speech/sphinx4/data/wsj", "dict/dictionary.txt", false);
+     * </code>
+     *
+     * The <code>StreamFactory.resolve()</code> method is called to
+     * resolve whether "location" refers to a ZIP file or a directory.
+     *
+     * @param location the URL location of the output data, it can now
+     *    be a directory or a ZIP file
+     *
+     * @param file the file in the given location to obtain the OutputStream
+     *
+     * @param append if true and saving to a zip file, then file is appended
+     * rather than overwritten.
+     *
+     * @return an OutputStream of the given file in the given location 
+     */
+    public static OutputStream getOutputStream(String location,
+					       String file,
+					       boolean append) throws 
+    FileNotFoundException, IOException, ZipException {
+        if (location != null) {
+            return StreamFactory.getOutputStream
+                (StreamFactory.resolve(location), location, file, append);
+        } else {
+            return StreamFactory.getOutputStream(StreamFactory.DIRECTORY,
+                                                location, file);
+        }
+    }
+
+
+    /**
+     * According to the given data format, returns an appropriate
+     * OutputStream of the given file in the given URL location.  The
+     * location can be a plain directory or a JAR or ZIP file (these
+     * are the only ones supported at this point). If saving to a zip
+     * or jar, the file can be appended or overwritten. If saving to a
+     * directory, files are always overwritten.
+     *
+     * Suppose you want the OutputStream to the file "dict/dictionary.txt"
+     * in the ZIP file "file:/lab/speech/sphinx4/data/wsj.zip".
+     * You will do:
+     * <code>
+     * StreamFactory.getOutputStream(StreamFactory.ZIP_FILE,
+     *   "file:/lab/speech/sphinx4/data/wsj.zip", "dict/dictionary.txt", true);
+     * </code>
+     *
+     * Suppose you want the OutputStream to the file "dict/dictionary.txt"
+     * in the directory "file:/lab/speech/sphinx4/data/wsj", you will do:
+     * <code>
+     * StreamFactory.getOutputStream(StreamFactory.DIRECTORY,
+     *    "file:/lab/speech/sphinx4/data/wsj", "dict/dictionary.txt", false);
+     * </code>
+     *
+     * @param format the format of the output data, the currently supported
+     *    formats are:
+     * <br>StreamFactory.ZIP_FILE
+     * <br>StreamFactory.DIRECTORY
+     *
+     * @param location the URL location of the output data, it can now
+     *    be a directory or a JAR or ZIP file, or null if no location
+     *    is given, which means that the <code>argument</code> also 
+     *    specifies the exact location
+     *
+     * @param file the file in the given location to obtain the OutputStream
+     *
+     * @param append if true and saving to a zip file, then file is appended
+     * rather than overwritten.
+     *
+     * @return an OutputStream of the given file in the given location 
+     */
+    public static OutputStream getOutputStream(String format,
+					       String location,
+					       String file,
+					       boolean append) throws 
+    FileNotFoundException, IOException, ZipException {
+        OutputStream stream = null;
+        if (format.equals(ZIP_FILE)) {
+            try {
+		System.out.println("WARNING: ZIP not yet fully supported.!");
+		File path = new File(location);
+		File parent = new File(path.getParent());
+		if (!parent.exists()) {
+		    parent.mkdirs();
+		}
+		FileOutputStream fos = 
+		    new FileOutputStream(new File(new URI(location)), append);
+		stream = new ZipOutputStream(new BufferedOutputStream(fos));
+
+                ZipEntry entry = new ZipEntry(file);
+		((ZipOutputStream)stream).putNextEntry(entry);
+            } catch (URISyntaxException use) {
+                use.printStackTrace();
+                throw new ZipException("URISyntaxException: " +
+                                       use.getMessage());
+            }
+        } else if (format.equals(DIRECTORY)) {
+            if (location != null) {
+		File path = new File(location + File.separator + file);
+		File parent = new File(path.getParent());
+		if (!parent.exists()) {
+		    parent.mkdirs();
+		}
+                stream = new FileOutputStream(location + File.separator + file);
+            } else {
+		File path = new File(file);
+		File parent = new File(path.getParent());
+		if (!parent.exists()) {
+		    parent.mkdirs();
+		}
+                stream = new FileOutputStream(file);
+            }
+        } else {
+	    throw new IOException("Format not supported for writing");
+	}
+        return stream;
+    }
+
+
+    /**
+     * Returns an appropriate OutputStream of the given file in the
+     * given URL location.  The location can be a plain directory or a
+     * ZIP file (these are the only two supported at this point).  The
+     * <code>resolve</code> method is called to resolve whether
+     * "location" refers to a ZIP file or a directory. Files are
+     * overwritten, which may be risky for ZIP of JAR files.
+     *
+     * Suppose you want the OutputStream to the file "dict/dictionary.txt"
+     * in the ZIP file "file:/lab/speech/sphinx4/data/wsj.zip".
+     * You will do:
+     * <code>
+     * StreamFactory.getOutputStream(
+     *   "file:/lab/speech/sphinx4/data/wsj.zip", "dict/dictionary.txt");
+     * </code>
+     *
+     * Suppose you want the OutputStream to the file "dict/dictionary.txt"
+     * in the directory "file:/lab/speech/sphinx4/data/wsj", you will do:
+     * <code>
+     * StreamFactory.getOutputStream(
+     *    "file:/lab/speech/sphinx4/data/wsj", "dict/dictionary.txt");
+     * </code>
+     *
+     * The <code>StreamFactory.resolve()</code> method is called to
+     * resolve whether "location" refers to a ZIP file or a directory.
+     *
+     * @param location the URL location of the output data, it can now
+     *    be a directory or a ZIP file
+     *
+     * @param file the file in the given location to obtain the OutputStream
+     *
+     * @return an OutputStream of the given file in the given location 
+     */
+    public static OutputStream getOutputStream(String location,
+					       String file) throws 
+    FileNotFoundException, IOException, ZipException {
+        if (location != null) {
+            return StreamFactory.getOutputStream
+                (StreamFactory.resolve(location), location, file);
+        } else {
+            return StreamFactory.getOutputStream(StreamFactory.DIRECTORY,
+                                                location, file);
+        }
+    }
+
+
+    /**
+     * According to the given data format, returns an appropriate
+     * OutputStream of the given file in the given URL location.  The
+     * location can be a plain directory or a JAR or ZIP file (these
+     * are the only ones supported at this point). Files are always
+     * overwritten, which can be risky for ZIP or JAR files.
+     *
+     * Suppose you want the OutputStream to the file "dict/dictionary.txt"
+     * in the ZIP file "file:/lab/speech/sphinx4/data/wsj.zip".
+     * You will do:
+     * <code>
+     * StreamFactory.getOutputStream(StreamFactory.ZIP_FILE,
+     *   "file:/lab/speech/sphinx4/data/wsj.zip", "dict/dictionary.txt");
+     * </code>
+     *
+     * Suppose you want the OutputStream to the file "dict/dictionary.txt"
+     * in the directory "file:/lab/speech/sphinx4/data/wsj", you will do:
+     * <code>
+     * StreamFactory.getOutputStream(StreamFactory.DIRECTORY,
+     *    "file:/lab/speech/sphinx4/data/wsj", "dict/dictionary.txt");
+     * </code>
+     *
+     * @param format the format of the output data, the currently supported
+     *    formats are:
+     * <br>StreamFactory.ZIP_FILE
+     * <br>StreamFactory.DIRECTORY
+     *
+     * @param location the URL location of the output data, it can now
+     *    be a directory or a JAR or ZIP file, or null if no location
+     *    is given, which means that the <code>argument</code> also 
+     *    specifies the exact location
+     *
+     * @param file the file in the given location to obtain the OutputStream
+     *
+     * @return an OutputStream of the given file in the given location 
+     */
+    public static OutputStream getOutputStream(String format,
+					       String location,
+					       String file) throws 
+    FileNotFoundException, IOException, ZipException {
+        if (location != null) {
+        } else {
+        }
+        if (format.equals(ZIP_FILE)) {
+	    System.out.println("WARNING: overwriting ZIP or JAR file!");
+            return StreamFactory.getOutputStream
+                (StreamFactory.resolve(location), location, file, false);
+        } else if (format.equals(DIRECTORY)) {
+            return StreamFactory.getOutputStream(StreamFactory.DIRECTORY,
+                                                location, file, false);
+        } else {
+	    throw new IOException("Format not supported for writing");
+	}
     }
 
 
