@@ -20,8 +20,8 @@ import edu.cmu.sphinx.frontend.util.StreamAudioSource;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.DataSource;
 
-import edu.cmu.sphinx.knowledge.acoustic.TrainerAcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.TrainerScore;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerAcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerScore;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;

@@ -34,7 +34,7 @@ public class Pool {
      *
      * @param name the name of the pool
      */
-    Pool(String name) {
+    public Pool(String name) {
 	this.name = name;
 	pool = new ArrayList();
     }
@@ -44,7 +44,7 @@ public class Pool {
      *
      * @return the pool name
      */
-    protected String getName() {
+    public String getName() {
 	return name;
     }
 
@@ -57,7 +57,7 @@ public class Pool {
      *
      * @throws IndexOutOfBoundsException if the ID is out of range
      */
-    Object get(int id) {
+    public Object get(int id) {
 	return pool.get(id);
     }
 
@@ -68,7 +68,7 @@ public class Pool {
      *
      * @return the index
      */
-    int indexOf(Object object) {
+    public int indexOf(Object object) {
 	return pool.indexOf(object);
     }
 
@@ -78,7 +78,7 @@ public class Pool {
      * @param id a unique ID for this object
      * @param o  the object to add to the pool
      */
-    void put(int id, Object o) {
+    public void put(int id, Object o) {
 	if (id == pool.size()) {
 	    pool.add(o);
 	} else {
@@ -91,7 +91,7 @@ public class Pool {
      * 
      * @return the size of the pool
      */
-    int size() {
+    public int size() {
 	return pool.size();
     }
 
@@ -101,7 +101,7 @@ public class Pool {
      * 
      * @param logger the logger to send the info to
      */
-    void logInfo(Logger logger) {
+    public void logInfo(Logger logger) {
 	logger.info("Pool " + name + " Entries: " + size());
     }
 
@@ -112,7 +112,7 @@ public class Pool {
      * @param value the value for the feature
      *
      */
-    void setFeature(String name, int value) {
+    public void setFeature(String name, int value) {
 	features.put(name, new Integer(value));
     }
 
@@ -124,7 +124,7 @@ public class Pool {
      *
      * @return the value for the feature
      */
-    int getFeature(String name, int defaultValue) {
+    public int getFeature(String name, int defaultValue) {
 	Integer val = (Integer) features.get(name);
 	if (val == null) {
 	    return defaultValue;

@@ -18,6 +18,7 @@ import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 import edu.cmu.sphinx.knowledge.acoustic.HMM;
 import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.SenoneHMM;
 import edu.cmu.sphinx.util.LogMath;
 
 import java.util.StringTokenizer;
@@ -228,7 +229,8 @@ public class BuildTranscriptHMM {
 	    Node node = hmmGraph.getNode(index);
 	    Unit unit;
 	    if (node.getType().equals(NodeType.PHONE)) {
-		unit = acousticModel.lookupUnit(node.getID());
+		// unit = acousticModel.lookupUnit(node.getID());
+		unit = Unit.getUnit(node.getID());
 	    } else if (node.getType().equals(NodeType.SILENCE_WITH_LOOPBACK)) {
 		unit = Unit.SILENCE;
 	    } else {
@@ -238,8 +240,8 @@ public class BuildTranscriptHMM {
 	    }
 	    HMM hmm = 
 		acousticModel.lookupNearestHMM(unit, 
-					       HMMPosition.UNDEFINED);
-	    Graph modelGraph = buildModelGraph(hmm);
+                                           HMMPosition.UNDEFINED, false);
+	    Graph modelGraph = buildModelGraph((SenoneHMM) hmm);
 	    modelGraph.validate();
 	    hmmGraph.insertGraph(modelGraph, node);
 	}
@@ -256,7 +258,7 @@ public class BuildTranscriptHMM {
      *
      * @return the graph
      */
-    private Graph buildModelGraph(HMM hmm) {
+    private Graph buildModelGraph(SenoneHMM hmm) {
 	Graph graph = new Graph();
 	Node prevNode;
 	Node stateNode = null;

@@ -20,8 +20,10 @@ import edu.cmu.sphinx.frontend.util.StreamAudioSource;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.DataSource;
 
-import edu.cmu.sphinx.knowledge.acoustic.TrainerAcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.TrainerScore;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerAcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.SenoneHMMState;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.SenoneHMM;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerScore;
 import edu.cmu.sphinx.knowledge.acoustic.HMM;
 import edu.cmu.sphinx.knowledge.acoustic.HMMState;
 
@@ -424,7 +426,7 @@ public class BaumWelchLearner implements Learner {
     private float calculateScores(int index) {
 	float logScore;
 	// Find the HMM state for this node
-	HMMState state = (HMMState) graph.getNode(index).getObject();
+	SenoneHMMState state = (SenoneHMMState) graph.getNode(index).getObject();
 	if ((state != null) && (state.isEmitting())) {
 	    // Compute the scores for each mixture component in this state
 	    componentScores = state.calculateComponentScore(curFeature);
@@ -471,8 +473,8 @@ public class BaumWelchLearner implements Learner {
 	    if (!node.isType("STATE")) {
 		continue;
 	    }
-	    HMMState state = (HMMState) node.getObject();
-	    HMM hmm = state.getHMM();
+	    SenoneHMMState state = (SenoneHMMState) node.getObject();
+	    SenoneHMM hmm = (SenoneHMM) state.getHMM();
 	    if (!state.isEmitting()) {
 		continue;
 	    }
@@ -528,10 +530,10 @@ public class BaumWelchLearner implements Learner {
 	for (int indexNode = 0; indexNode < graph.size(); indexNode++) {
 	    Node node = graph.getNode(indexNode);
 	    HMMState state = null;
-	    HMM hmm = null;
+	    SenoneHMM hmm = null;
 	    if (node.isType("STATE")) {
 		state = (HMMState) node.getObject();
-		hmm = state.getHMM();
+		hmm = (SenoneHMM) state.getHMM();
 		if (state.isEmitting()) {
 		    continue;
 		}
@@ -613,7 +615,7 @@ public class BaumWelchLearner implements Learner {
 		continue;
 	    }
 	    HMMState state = (HMMState) node.getObject();
-	    HMM hmm = state.getHMM();
+	    SenoneHMM hmm = (SenoneHMM) state.getHMM();
 	    if (!state.isEmitting()) {
 		continue;
 	    }

@@ -11,7 +11,7 @@
  *
  */
 
-package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
+package edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer;
 
 import edu.cmu.sphinx.util.LogMath;
 

@@ -98,7 +98,7 @@ public class MixtureComponent implements Serializable {
      *
      * @return the mean
      */
-    protected float[] getMean(){
+    public float[] getMean(){
 	return mean;
     }
 
@@ -107,7 +107,7 @@ public class MixtureComponent implements Serializable {
      *
      * @return the variance
      */
-    protected float[] getVariance(){
+    public float[] getVariance(){
 	return variance;
     }
 
@@ -192,7 +192,7 @@ public class MixtureComponent implements Serializable {
       *
       * @return the precomputed distance
       */
-     protected float precomputeDistance() {
+     public float precomputeDistance() {
 	 // First, apply transformations
 	 transformStats();
 	 float logPreComputedGaussianFactor = 0.0f; // = log(1.0)

@@ -117,7 +117,7 @@ public class SenoneHMM implements HMM {
      */
     // [[ NOTE: the senone sequence may in fact be a sequence of
     // composite senones
-    SenoneSequence getSenoneSequence() {
+    public SenoneSequence getSenoneSequence() {
 	return senoneSequence;
     }
 
@@ -127,7 +127,7 @@ public class SenoneHMM implements HMM {
      *
      * @return true if this is a composite hmm
      */
-    boolean isComposite() {
+    public boolean isComposite() {
 	Senone[] senones = getSenoneSequence().getSenones();
 	for (int i = 0; i < senones.length; i++) {
 	    if (senones[i] instanceof CompositeSenone) {
@@ -150,7 +150,7 @@ public class SenoneHMM implements HMM {
      * @return the transition matrix of size NxN where N is the order
      * of the HMM
      */
-    float[][] getTransitionMatrix() {
+    public float[][] getTransitionMatrix() {
 	return transitionMatrix;
     }
 
@@ -163,7 +163,7 @@ public class SenoneHMM implements HMM {
      *
      * @return the transition probability
      */
-    float getTransitionProbability(int stateFrom, int stateTo) {
+    public float getTransitionProbability(int stateFrom, int stateTo) {
 	return transitionMatrix[stateFrom][stateTo];
     }
 

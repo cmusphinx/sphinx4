@@ -13,13 +13,16 @@
 package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.TrainerAcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.TrainerScore;
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerAcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerScore;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 
@@ -121,13 +124,15 @@ class SimpleTrainManager implements TrainManager {
 	    models[0].save(null);
 	} else {
 	    String name;
-	    List modelList = AcousticModel.getNames(context);
-	    for (Iterator i = modelList.listIterator(); i.hasNext();) {
+	    Collection modelList = AcousticModelFactory.getNames(props);
+	    for (Iterator i = modelList.iterator(); i.hasNext();) {
 		name = (String) i.next();
-		TrainerAcousticModel model = 
-		    TrainerAcousticModel.getTrainerAcousticModel(name, 
-								 context);
-		model.save(name);
+		AcousticModel model = 
+                    AcousticModelFactory.getModel(props, name);
+                if (model instanceof  TrainerAcousticModel) {
+                    TrainerAcousticModel tmodel = (TrainerAcousticModel) model;
+		    tmodel.save(name);
+                }
 	    }
 	}
     }
@@ -169,7 +174,6 @@ class SimpleTrainManager implements TrainManager {
         
         models = getTrainerAcousticModels(context);
 	for (int m = 0; m < models.length; m++) {
-	    models[m].initialize();
 
 	    learner = new FlatInitializerLearner(props);
 	    if (controlFile == null) {
@@ -200,24 +204,20 @@ class SimpleTrainManager implements TrainManager {
      */
     protected TrainerAcousticModel[] getTrainerAcousticModels(String context)
 	throws IOException {
-	List modelNames = AcousticModel.getNames(context);
-	TrainerAcousticModel[] models;
-	if (modelNames.size() == 0) {
-	    models = new TrainerAcousticModel[1];
-	    models[0] = TrainerAcousticModel.getTrainerAcousticModel(context);
-	} else {
-	    models = new TrainerAcousticModel[modelNames.size()];
-	    int m = 0;
-	    // We iterate over the model names, but increase the model
-	    // index m in the for statement.
-	    for (Iterator i = modelNames.iterator(); i.hasNext(); m++) {
-		String modelName = (String) i.next();
-		models[m] = 
-		    TrainerAcousticModel.getTrainerAcousticModel(modelName, 
-								 context);
-	    }
-	}
-	return models;
+        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
+        List modelList = new ArrayList();
+	Collection modelNames = AcousticModelFactory.getNames(props);
+
+        for (Iterator i = modelNames.iterator(); i.hasNext();) {
+            String modelName = (String) i.next();
+            AcousticModel model =
+                   AcousticModelFactory.getModel(props, modelName);
+            if (model instanceof TrainerAcousticModel) {
+                modelList.add(model);
+            }
+        }
+	return (TrainerAcousticModel[]) 
+            modelList.toArray(new TrainerAcousticModel[modelList.size()]);
     }
 
     /**
