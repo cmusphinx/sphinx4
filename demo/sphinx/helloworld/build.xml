@@ -17,13 +17,14 @@ NOTE:  Before running the tests, you must have already built
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <property name="top_dir"		value="../../.."/>
+    <property name="lib_dir"            value="${top_dir}/lib"/>
     <property name="build_dir"		value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
-    <property name="lib_dir"            value="${build_dir}/lib"/>
 
     <path id="run.classpath">
         <pathelement path="${classes_dir}"/>
 	<pathelement location="${top_dir}/lib/jsapi.jar"/>
+        <pathelement location="${lib_dir}/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
     </path>
 
 
