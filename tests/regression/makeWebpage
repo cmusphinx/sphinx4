@@ -373,6 +373,7 @@ function printMetrics() {
     print(" </tr>");
     print("</tbody>");
     print("</table>");
+    print "<br>";
 
 }
 
@@ -410,8 +411,6 @@ function printTitle() {
     print "Results are";
     print "posted here.<br>";
     print "</div>";
-    print "<br>";
-    print "<br>";
     print "<br>";
 }
 

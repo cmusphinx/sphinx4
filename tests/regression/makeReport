@@ -200,6 +200,12 @@ END {
 	print "    Speed        "  getSpeedStatus(i);
 	printf("\n");
     }
+    print ""
+    print ""
+    print "Complete test details at: ";
+    print ""
+    print "    http://cmusphinx.sourceforge.net/regression_report.html"
+    print ""
 }
 
 '  $*
