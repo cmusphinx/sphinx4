@@ -201,7 +201,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
 	 * Return the power spectrum
 	 */
 	DoubleData output = new DoubleData
-            (outputSpectrum, input.getCollectTime(),
+            (outputSpectrum, input.getSampleRate(), input.getCollectTime(),
 	     input.getFirstSampleNumber());
 
         return output;

@@ -160,7 +160,8 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
         double[] cepstrum = applyMelCosine(melspectrum);
         
 	DoubleData output = new DoubleData
-            (cepstrum, input.getCollectTime(), input.getFirstSampleNumber());
+            (cepstrum, input.getSampleRate(), input.getCollectTime(), 
+             input.getFirstSampleNumber());
 
         return output;
     }
