@@ -64,8 +64,6 @@ class LargeTrigramModelTest {
         SphinxProperties.initContext("test", new URL(propsPath));
         LargeTrigramModel lm = new LargeTrigramModel("test");
 
-        Timer.dumpAll();
-
         LogMath logMath = LogMath.getLogMath("test");
 
         InputStream stream = new FileInputStream(testFile);
@@ -91,26 +89,35 @@ class LargeTrigramModelTest {
             wordSequences.add(wordSequence);
         }
 
+        int[] logScores = new int[wordSequences.size()];
+        int s = 0;
+
+        timer.start();
+
+        for (Iterator i = wordSequences.iterator(); i.hasNext(); ) {
+            lm.start();
+            WordSequence ws = (WordSequence) i.next();
+            logScores[s++] = (int)lm.getProbability(ws);
+            lm.stop();
+        }
+
+        timer.stop();
+        
+        s = 0;
         for (Iterator i = wordSequences.iterator(); i.hasNext(); ) {
             WordSequence ws = (WordSequence) i.next();
-
-            timer.start();
-            lm.start();
-            int logProbability = (int)lm.getProbability(ws);
-            timer.stop();
-            
-            System.out.println(Utilities.pad(logProbability, 10) + " "+
+            System.out.println(Utilities.pad(logScores[s++], 10) + " "+
                                getString(ws));
-
-            if (false) {
-                long usedMemory = Runtime.getRuntime().totalMemory() - 
-                    Runtime.getRuntime().freeMemory();                
-                System.out.println("Used memory: " + usedMemory + " bytes");
-                System.out.print("Enter words: ");
-            }
         }
         
-        Timer.dumpAll("test");
+        if (true) {
+            long usedMemory = Runtime.getRuntime().totalMemory() - 
+                Runtime.getRuntime().freeMemory();                
+            System.out.println("Used memory: " + usedMemory + " bytes");
+        }
+        
+        
+        Timer.dumpAll();
     }
 
     public static String getString(WordSequence ws) {

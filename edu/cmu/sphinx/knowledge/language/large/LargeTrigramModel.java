@@ -158,7 +158,7 @@ public class LargeTrigramModel implements LanguageModel {
             } else if (words[i].equals(Dictionary.SENTENCE_END_SPELLING)) {
                 this.endWordID = i;
             }
-            unigramIDMap.put(words[i].toLowerCase(), (new Integer(i)));
+            unigramIDMap.put(words[i], (new Integer(i)));
         }
     }
     
@@ -232,7 +232,7 @@ public class LargeTrigramModel implements LanguageModel {
      * @return true if this LM has this unigram, false otherwise
      */
     private boolean hasUnigram(String unigram) {
-        return (unigramIDMap.get(unigram) != null);
+        return (unigramIDMap.get(unigram.toLowerCase()) != null);
     }
 
 
@@ -262,13 +262,12 @@ public class LargeTrigramModel implements LanguageModel {
      */
     private float getBigramProbability(WordSequence wordSequence) {
 
-        String firstWord = wordSequence.getWord(0).toLowerCase();
-        String secondWord = wordSequence.getWord(1).toLowerCase();
+        String firstWord = wordSequence.getWord(0);
+        String secondWord = wordSequence.getWord(1);
 
         if (loader.getNumberBigrams() <= 0 || firstWord == null) {
             return getUnigramProbability(wordSequence.getNewest());
         }
-        
         if (!hasUnigram(secondWord)) {
             throw new Error("Bad word2: " + secondWord);
         }
@@ -279,7 +278,6 @@ public class LargeTrigramModel implements LanguageModel {
         BigramProbability bigram = findBigram(firstWordID, secondWordID);
 
         if (bigram != null) {
-            assert (loader.getWords()[bigram.getWordID()].equals(secondWord));
             // System.out.println("Found bigram!");
             return bigramProbTable[bigram.getProbabilityID()];
         } else {

@@ -17,7 +17,8 @@ FILES = $(shell echo *.java)
 # List any sub directories that need to be built
 SUBDIRS = 
 
-EXTRA_JAVA_FLAGS = -ms1g -mx2g 
+# PROFILE_FLAGS= -Xprof
+EXTRA_JAVA_FLAGS = $(PROFILE_FLAGS) -ms1g -mx2g 
 
 ##########################################################################
 
