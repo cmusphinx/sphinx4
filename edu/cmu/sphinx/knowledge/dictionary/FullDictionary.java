@@ -290,6 +290,7 @@ public class FullDictionary implements Dictionary {
         Word word = lookupWord(text);
         
         if (word == null) {
+            // System.out.println("Word `" + text + "' not in FullDictionary.");
             if (wordReplacement != null) {
                 word = lookupWord(wordReplacement);
                 System.out.println("Replacing " + text + " with " +
@@ -378,7 +379,8 @@ public class FullDictionary implements Dictionary {
         sorted.putAll(fillerDictionary);
 
         for (Iterator i = sorted.keySet().iterator(); i.hasNext();) {
-            Word word = (Word) i.next();
+            String text = (String) i.next();
+            Word word = getWord(text);
             Pronunciation[] pronunciations = word.getPronunciations(null);
             result += (word + "\n");
             for (int p = 0; p < pronunciations.length; p++) {
@@ -403,6 +405,7 @@ public class FullDictionary implements Dictionary {
      * Dumps this FullDictionary to System.out.
      */
     public void dump() {
+        System.out.println(wordDictionary.size() + " words");
         System.out.print(toString());
     }
 }
