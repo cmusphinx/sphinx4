@@ -306,11 +306,12 @@ public class ResultAnalyzer {
 	       "  (Rec: " + recognitionErrors +
 	       "  Ins: " + insertionErrors +
 	       "  Del: " + deletionErrors + ")");
-	    System.out.print("   Sentences: " + numSentences 
-		    + "      Words: " + numRefWords  + "   Matches: " +
-		    numMatchingWords);
-	    System.out.println(" SentenceAcc: " +
-		    percent.format(getSentenceAccuracy()));
+            System.out.println("   Words: " + numRefWords + 
+                               "   Matches: " + numMatchingWords);
+	    System.out.println("   Sentences: " + numSentences +
+                               "   Matches: " + numMatchingSentences +
+                               "   SentenceAcc: " +
+                               percent.format(getSentenceAccuracy()));
 	}
     }
 
