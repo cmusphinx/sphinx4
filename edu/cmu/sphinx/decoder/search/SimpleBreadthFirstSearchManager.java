@@ -524,7 +524,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      *
      * @param resultList the new result list
      */
-    public void setResultList(List list) {
+    public void setResultList(List resultList) {
 	this.resultList = resultList;
     }
  
