@@ -44,7 +44,6 @@ public class CombineToken extends Token {
      *
      * @param predecessor the predecessor for this token
      * @param state the SentenceHMMState associated with this token
-     * @param combinedScore the combinedScore
      * @param frameNumber the frame number associated with this token
      *
      */
@@ -81,8 +80,8 @@ public class CombineToken extends Token {
     /**
      * Adds the parallel score of the given parallel stream.
      *
-     * @param parallelScore the parallel score
-     * @param parallelStreamName the name of the parallel stream
+     * @param key the stream name
+     * @param parallelToken the the parallel token
      */
     public ParallelToken addParallelToken(Object key, 
                                           ParallelToken parallelToken) {

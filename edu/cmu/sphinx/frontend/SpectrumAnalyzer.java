@@ -62,7 +62,7 @@ SpectrumSource {
      *
      * @param name the name of this SpectrumAnalyzer
      * @param context the context of the SphinxProperties to use
-     * @param acousticProps the SphinxProperties object to read 
+     * @param sphinxProps the SphinxProperties object to read 
      *    acoustic properties from
      * @param predecessor the AudioSource from which to get Audio objects
      *

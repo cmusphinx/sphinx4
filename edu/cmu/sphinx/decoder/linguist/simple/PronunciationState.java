@@ -29,7 +29,8 @@ public class PronunciationState extends SentenceHMMState implements
     /**
      * Creates a PronunciationState
      *
-     * @param pronunciation the pronunciation associated with this state
+     * @param parent the parent word of the current pronunciation
+     * @param which the pronunciation of interest
      */
     public PronunciationState(WordState parent, int which) {
 	super("P", parent,  which);
@@ -40,7 +41,9 @@ public class PronunciationState extends SentenceHMMState implements
     /**
      * Creates a PronunciationState
      *
-     * @param pronunciation the pronunciation associated with this state
+     * @param name the name of the pronunciation associated with this state
+     * @param p the pronunciation
+     * @param which the index for the pronunciation
      */
     public PronunciationState(String name, Pronunciation p, int which) {
 	super(name, null,  which);

@@ -33,11 +33,6 @@ public class HMMStateState extends SentenceHMMState
      *
      * @param parent the parent of this state
      * @param hmmState the hmmState associated with this state
-     * @param leftContext the left context for this hmmstate.  The
-     * left context can be different than the parents left context
-     * since the parent is likely to be a unit which marks a new left
-     * context. Note that the right context can be retrieved from the
-     * parent
      */
     public HMMStateState(SentenceHMMState parent, HMMState hmmState) {
 	super((hmmState.getHMM().isComposite() ? "@":"") + "S",

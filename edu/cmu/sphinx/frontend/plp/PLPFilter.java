@@ -63,7 +63,7 @@ public class PLPFilter {
      * @param DFTFrequenciesInHz is a double array containing the frequencies
      *        in Hertz corresponding to each of the DFT points in the spectrum
      *        of the signal to be filtered.
-     * @param centerFreq is the filter's center frequency
+     * @param centerFreqInHz is the filter's center frequency
      *
      * @throws IllegalArgumentException
      *

@@ -60,8 +60,8 @@ public class LinguistDumper implements LinguistProcessor  {
     /**
      * Dumps the search space hmm in GDL format
      *
-     * @param fileName the place to dump the output
-     * @param state the initial state of the search space
+     * @param props the set of SphinxProperties
+     * @param linguist the linguist
      *
      * @return <code>true</code>  if the file was successfully dumped
      */

@@ -333,7 +333,6 @@ public class Decoder {
     /**
      * Forced alignment of an utterance.
      *
-     * @param timer the Timer to use
      * @param ref the reference input
      *
      * @return the decoded Result

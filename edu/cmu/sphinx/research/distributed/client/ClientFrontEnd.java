@@ -100,7 +100,6 @@ public class ClientFrontEnd extends CepstrumExtractor {
      *
      * @param name the name of this ClientFrontEnd
      * @param context the context of this ClientFrontEnd
-     * @param dataSource the place to pull data from
      */
     public void initialize(String name, String context) throws IOException {
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
@@ -140,7 +139,7 @@ public class ClientFrontEnd extends CepstrumExtractor {
     /**
      * Decodes the data in the given InputStream.
      *
-     * @param inputStream the InputStream to decode
+     * @param is the InputStream to decode
      * @param streamName the name of the InputStream
      *
      * @return the result string

@@ -33,7 +33,7 @@ public class FrequencyWarper {
      * The function is:
      * bark = 6.0*log(hertz/600 + sqrt((hertz/600)^2 + 1))
      *
-     * @param inputFreq the input frequency in Hertz
+     * @param hertz the input frequency in Hertz
      *
      * @return the frequency in a Bark scale
      *
@@ -49,7 +49,7 @@ public class FrequencyWarper {
      * The function is:
      * hertz = 300*(exp(bark/6.0) - exp(-bark/6.0))
      *
-     * @param inputFreq the input frequency in Barks
+     * @param bark the input frequency in Barks
      *
      * @return the frequency in Hertz
      *

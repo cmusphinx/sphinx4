@@ -337,7 +337,7 @@ implements CepstrumSource {
      * Sets the DataSource of this CepstrumExtractor.  The DataSource of
      * the front end is where it gets its audio data
      *
-     * @param audioSource the DataSource
+     * @param dataSource the DataSource
      */
     public void setDataSource(DataSource dataSource) {
         if (dataSource instanceof AudioSource) {

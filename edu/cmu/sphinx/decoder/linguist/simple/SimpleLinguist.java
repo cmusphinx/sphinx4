@@ -1373,9 +1373,9 @@ public class SimpleLinguist implements  Linguist {
          * Attaches one SentenceHMMState as a child to another, the
          * transition has the given probability
          *
-         * @param parent the parent state
+         * @param prevState the parent state
          * @param nextState the child state
-         * @param logAcouticProbability the acoustic probability of
+         * @param logAcousticProbability the acoustic probability of
          * transition in the LogMath log domain
          *
          * @param logLanguageProbablity the language probability of

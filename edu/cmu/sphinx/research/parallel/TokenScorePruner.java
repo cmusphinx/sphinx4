@@ -161,7 +161,7 @@ public abstract class TokenScorePruner implements Pruner {
     /**
      * Sets the absolute beam width of this TokenScorePruner
      *
-     * @param the absolute beam width
+     * @param absoluteBeamWidth the absolute beam width
      */
     public void setAbsoluteBeamWidth(int absoluteBeamWidth) {
         this.absoluteBeamWidth = absoluteBeamWidth;
@@ -182,7 +182,7 @@ public abstract class TokenScorePruner implements Pruner {
     /**
      * Sets the relative beam width (log domain) of this TokenScorePruner.
      *
-     * @param the relative beam width in log domain
+     * @param relativeBeamWidth the relative beam width in log domain
      */
     public void setRelativeBeamWidth(float relativeBeamWidth) {
         this.relativeBeamWidth = relativeBeamWidth;

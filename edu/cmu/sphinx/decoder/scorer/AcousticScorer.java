@@ -41,7 +41,7 @@ public interface AcousticScorer {
     /**
      * Scores the given set of states
      *
-     * @param stateTokenList a list containing Scorable objects to
+     * @param scorableList a list containing Scorable objects to
      * be scored
      *
      * @return true if there are more features in this utterance,

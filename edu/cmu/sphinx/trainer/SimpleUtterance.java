@@ -36,7 +36,7 @@ public class SimpleUtterance implements Utterance{
     /** 
      * Constructor for class SimpleUtterance.
      *
-     * @param utteranceId the utterance ID, usually a file name.
+     * @param utteranceID the utterance ID, usually a file name.
      */
     public SimpleUtterance(String utteranceID) {
 	utteranceID = utteranceID;

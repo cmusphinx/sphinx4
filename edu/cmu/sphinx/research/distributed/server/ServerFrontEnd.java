@@ -188,7 +188,7 @@ public class ServerFrontEnd extends DataProcessor implements FrontEnd {
      * Sets the CepstrumSource of this ServerFrontEnd. It should be
      * expecting a SocketCepstrumSource.
      *
-     * @param audioSource the DataSource
+     * @param dataSource the DataSource
      */
     public void setDataSource(DataSource dataSource) {
         assert (dataSource instanceof CepstrumSource);

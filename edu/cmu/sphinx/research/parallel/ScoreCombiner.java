@@ -26,7 +26,6 @@ public interface ScoreCombiner {
      *
      * @param token the CombineToken on which to combine the feature
      *   stream scores
-     * @param logMath the LogMath to use for calculations
      */
     public void combineScore(CombineToken token);
 }

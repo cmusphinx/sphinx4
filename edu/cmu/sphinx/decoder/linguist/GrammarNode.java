@@ -59,7 +59,6 @@ public class GrammarNode implements Serializable {
      * words by default.
      *
      * @param id the identity of this GrammarNode
-     * @param isSilence if true this is a silence node
      * @param isFinal if true this is a final node
      */
     protected GrammarNode(int id, boolean isFinal) {

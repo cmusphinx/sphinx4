@@ -191,7 +191,7 @@ public class ParallelToken extends Token {
     /**
      * Sets the combined score of this ParallelToken.
      *
-     * @param the new combined score
+     * @param combinedScore the new combined score
      */
     public void setCombinedScore(float combinedScore) {
         this.combinedScore = combinedScore;
@@ -201,7 +201,7 @@ public class ParallelToken extends Token {
     /**
      * Sets the feature score of this ParallelToken.
      *
-     * @param the new feature score
+     * @param featureScore the new feature score
      */
     public void setFeatureScore(float featureScore) {
 	setScore(featureScore);

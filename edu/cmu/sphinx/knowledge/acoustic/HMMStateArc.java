@@ -29,7 +29,7 @@ public class HMMStateArc implements Serializable {
     /**
      * Constructs an HMMStateArc
      *
-     * @param state destination state for this arc
+     * @param hmmState destination state for this arc
      * @param probability the probability for this transition
      */
     public HMMStateArc(HMMState hmmState, float probability) {

@@ -152,7 +152,7 @@ public class SimpleNGramModel implements LanguageModel {
     /**
      * Returns the backoff probability for the give sequence of words
      *
-     * @param the sequence of words
+     * @param wordSequence the sequence of words
      *
      * @return the backoff probability in LogMath log base
      */

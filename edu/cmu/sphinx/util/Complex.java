@@ -157,8 +157,6 @@ public class Complex {
     /**
      * Method to compute the squared magnitude of a complex number.
      * 
-     * @param a the complex number
-     *
      * @return the squared magnitude of the complex number
      */
     public double squaredMagnitudeComplex() {

@@ -19,8 +19,6 @@ public interface  SearchState {
     /**
      * Gets a successor to this search state
      *
-     * @param the successor index
-     *
      * @return the set of successors
      */
      SearchStateArc[]  getSuccessors();

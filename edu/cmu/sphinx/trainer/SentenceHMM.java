@@ -61,8 +61,8 @@ public interface  SentenceHMM {
      * Accumulates counts into pool.
      *
      * @param models the set of acoustic models
-     * @param Unit the HMM Unit
-     * @param HMMState the HMM state whose accumulators are to be updated.
+     * @param unit the HMM Unit
+     * @param state the HMM state whose accumulators are to be updated.
      * @param probability the posterior probability
      */
     public void accumulateCount(AcousticModel[] models, Unit unit, 

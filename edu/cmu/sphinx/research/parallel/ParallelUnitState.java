@@ -64,7 +64,9 @@ public class ParallelUnitState extends UnitState implements ParallelState {
      *
      * @param parent the parent of this state
      * @param modelName the name of the acoustic model behind this HMMState
-     * @param hmmState the hmmState associated with this state
+     * @param which the index of the given state
+     * @param unit the unit associated with this state
+     * @param tokenStackSize the token stack size
      */
     public ParallelUnitState(PronunciationState parent,
                              String modelName,

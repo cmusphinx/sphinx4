@@ -45,7 +45,7 @@ public class Result {
      *
      * @param activeList the active list associated with this result
      * @param resultList the result list associated with this result
-     * @param franeNumber the frame number for this result.
+     * @param frameNumber the frame number for this result.
      * @param isFinal if true, the result is a final result
      */
      public Result(ActiveList activeList, List resultList, int frameNumber,
@@ -349,9 +349,6 @@ public class Result {
     /**
      * Determines if the Result is valid. This is used for testing and
      * debugging
-     *
-     *
-     * @param fill the unit to fill empty contexts with
      *
      * @return true if the result is properly formed.
      *

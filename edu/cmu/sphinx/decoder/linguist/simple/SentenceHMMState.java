@@ -63,7 +63,9 @@ public class  SentenceHMMState implements Serializable, SearchState  {
     /**
      * Creates a SentenceHMMState
      *
-     * @param arcs the arcs to the next set of states
+     * @param name the name of the current SentenceHMMState
+     * @param parent the parent of the current instance
+     * @param which the index of the current instance
      *
      */
     protected SentenceHMMState(String name, SentenceHMMState parent, int which) {
@@ -237,8 +239,6 @@ public class  SentenceHMMState implements Serializable, SearchState  {
 
     /**
      * Gets a successor to this search state
-     *
-     * @param the successor index
      *
      * @return the set of successors
      */
@@ -557,7 +557,7 @@ public class  SentenceHMMState implements Serializable, SearchState  {
     /**
      * Visit all of the states starting at start with the given vistor
      *
-     * @param vistor the state visitor
+     * @param visitor the state visitor
      * @param start the place to start the search
      * @param sorted if true, states are sorted before visited
      *

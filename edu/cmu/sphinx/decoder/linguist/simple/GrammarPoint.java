@@ -43,8 +43,7 @@ public class GrammarPoint {
       * Creates a grammar point that points to the given unit of the
       * given pronunciation state.
       *
-      * @param pState the pronunciation of interest
-      * @param unitIndex the index of the unit of interest
+      * @param state the pronunciation of interest
       */
      public GrammarPoint(SentenceHMMState state) {
 	 while (state != null) {

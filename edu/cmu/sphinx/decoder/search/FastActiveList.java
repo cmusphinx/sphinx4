@@ -48,8 +48,6 @@ public class FastActiveList implements ActiveList  {
 
     /**
      * Creates an empty active list 
-     * 
-     * @param props the sphinx properties
      */
     public FastActiveList() {
     }

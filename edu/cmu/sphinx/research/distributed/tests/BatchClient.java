@@ -115,7 +115,7 @@ public class BatchClient {
      * Decodes the given file.
      *
      * @param file the file to decode
-     * @param ref the reference string (or null if not available)
+     * @param reference the reference string (or null if not available)
      */
     public void decodeFile(String file, String reference) throws IOException {
 

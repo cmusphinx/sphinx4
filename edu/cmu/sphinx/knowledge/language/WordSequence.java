@@ -36,8 +36,6 @@ public class WordSequence {
 
     /**
      * Constructs a word sequence with the given depth
-     *
-     * @param size the maxium depth of the word history
      */
     public WordSequence() {
         this(0);

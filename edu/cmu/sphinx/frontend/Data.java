@@ -43,8 +43,6 @@ public class Data implements Serializable, Cloneable {
     /**
      * Constructs a default Data object. Calling <code>getSignal()</code>
      * on this Data will return <code>Signal.CONTENT</code>.
-     *
-     * @param signal the Signal of this Data object
      */
     protected Data() {
         signal = Signal.CONTENT;

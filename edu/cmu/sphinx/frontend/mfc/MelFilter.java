@@ -43,7 +43,6 @@ public class MelFilter {
      * @param initialFreq the first frequency bin in the pass band
      * @param deltaFreq the step in the frequency axis between
      *               frequency bins
-     * @param samplingRate sampling frequency
      *
      * @throws IllegalArgumentException
      *

@@ -602,7 +602,6 @@ public class AcousticModel {
       * should succeed on any context.
       *
       * @param unit the unit
-      * @param context the context for the unit
       *
       */
      public SenoneSequence getCompositeSenoneSequence(Unit unit) {

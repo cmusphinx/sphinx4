@@ -73,11 +73,6 @@ public class StreamFactory {
      * The <code>StreamFactory.resolve()</code> method is called to
      * resolve whether "location" refers to a ZIP file or a directory.
      *
-     * @param format the format of the input data, the currently supported
-     *    formats are:
-     * <br>StreamFactory.ZIP_FILE
-     * <br>StreamFactory.DIRECTORY
-     *
      * @param location the URL location of the input data, it can now
      *    be a directory or a ZIP file
      *

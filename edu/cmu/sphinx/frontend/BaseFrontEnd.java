@@ -206,7 +206,7 @@ public class BaseFrontEnd extends CepstrumExtractor implements FrontEnd {
      * Sets the DataSource of this BaseFrontEnd.  The DataSource of
      * the front end is where it gets its audio data
      *
-     * @param audioSource the DataSource
+     * @param dataSource the DataSource
      */
     public void setDataSource(DataSource dataSource) {
         super.setDataSource(dataSource);

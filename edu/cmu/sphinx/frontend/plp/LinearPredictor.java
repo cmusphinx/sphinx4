@@ -75,7 +75,7 @@ public class LinearPredictor {
      *
      * @param RC double array of reflection coefficients. The RC array
      *        must begin at 1 (RC[0] is a dummy value)
-     * @param order AR order desired
+     * @param lpcorder AR order desired
      */
 
     public double[] reflectionCoeffsToARParameters(double[] RC, int lpcorder) {

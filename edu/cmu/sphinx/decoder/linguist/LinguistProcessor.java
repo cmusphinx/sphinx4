@@ -29,7 +29,7 @@ public interface LinguistProcessor {
    * dumping out the sentence hmm in a fashion suitable for plotting.
    *
    * @param props the set of sphinx properties
-   * @param Linguist the initial state of the sentence hmm
+   * @param linguist the initial state of the sentence hmm
    *
    */
     public void  process(SphinxProperties props, Linguist linguist);
