@@ -290,11 +290,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                 } while (!done && (growSkipInterval > 1 && 
                         ((currentFrameNumber % growSkipInterval) == 0)));
                 if (!done) {
-                    int mapSize = activeList.size() * 10;
-                    if (mapSize == 0) {
-                        mapSize = 1;
-                    }
-                    bestTokenMap = new HashMap(mapSize);
+                    bestTokenMap = createBestTokenMap();
                     // prune and grow the emitting list
                     pruneBranches();
 
@@ -315,6 +311,23 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             showTokenCount();
         }
         return result;
+    }
+
+
+
+    /**
+     * creates a new best token map
+     * with the best size
+     *
+     * @return the best token map
+     */
+    private Map createBestTokenMap() {
+        // int mapSize = activeList.size() * 10;
+        int mapSize = activeList.size() * 2;
+        if (mapSize == 0) {
+            mapSize = 1;
+        }
+        return new HashMap(mapSize, 0.5F);
     }
 
 
@@ -630,7 +643,6 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      *    no previous best token
      */
     protected void setBestToken(Token token, SearchState state) {
-
         Object key = getStateKey(state);
         if (!wantTokenStacks) {
             bestTokenMap.put(key, token);
