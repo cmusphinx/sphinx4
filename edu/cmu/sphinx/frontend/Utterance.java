@@ -18,6 +18,7 @@ import edu.cmu.sphinx.frontend.util.Util;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -49,7 +50,7 @@ public class Utterance {
      */
     public Utterance(String name, String context) {
         this.name = name;
-        audioBuffer = new Vector();
+        audioBuffer = new LinkedList();
 
         // get the Sphinx properties
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
