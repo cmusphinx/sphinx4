@@ -56,8 +56,7 @@ public class LivePretendDecoder {
 	"edu.cmu.sphinx.decoder.LivePretendDecoder.";
 
     /**
-     * SphinxProperty specifying the transcript file. If a transcript file
-     * is specified, it will be created. Otherwise, it is not created.
+     * SphinxProperty specifying the transcript file.
      */
     public final static String PROP_HYPOTHESIS_TRANSCRIPT = 
         PROP_PREFIX + "hypothesisTranscript";
@@ -65,7 +64,20 @@ public class LivePretendDecoder {
     /**
      * The default value of PROP_TRANSCRIPT.
      */
-    public final static String PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT = null;
+    public final static String PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT =
+        "hypothesis.txt";
+
+    /**
+     * SphinxProperty specifying the transcript file.
+     */
+    public final static String PROP_REFERENCE_TRANSCRIPT = 
+        PROP_PREFIX + "referenceTranscript";
+
+    /**
+     * The default value of PROP_TRANSCRIPT.
+     */
+    public final static String PROP_REFERENCE_TRANSCRIPT_DEFAULT =
+        "reference.txt";
 
     /**
      * SphinxProperty specifying the number of files to decode before
@@ -90,6 +102,7 @@ public class LivePretendDecoder {
     private String context;
     private String batchFile;
     private String hypothesisFile;
+    private String referenceFile;
     private Decoder decoder;
     private FileWriter hypothesisTranscript;
     private SphinxProperties props;
@@ -120,21 +133,24 @@ public class LivePretendDecoder {
     private void init(SphinxProperties props, String batchFile) 
         throws IOException {
         this.batchFile = batchFile;
+        referenceFile = props.getString(PROP_REFERENCE_TRANSCRIPT,
+                                        PROP_REFERENCE_TRANSCRIPT_DEFAULT);
         dataSource = new ConcatFileAudioSource
-            ("ConcatFileAudioSource", context, props, batchFile);
+            ("ConcatFileAudioSource", context, props, 
+             batchFile, referenceFile);
         decoder = new Decoder(context, dataSource);
         hypothesisFile 
             = props.getString(PROP_HYPOTHESIS_TRANSCRIPT,
                               PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT);
-        if (hypothesisFile != null) {
-            sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE,
-                                      FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
-            hypothesisTranscript = new FileWriter(hypothesisFile);
-        }
+        hypothesisTranscript = new FileWriter(hypothesisFile);
+        
+        sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE,
+                                  FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
         alignInterval = props.getInt(PROP_ALIGN_INTERVAL, 
                                      PROP_ALIGN_INTERVAL_DEFAULT);
         maxResponseTime = Long.MIN_VALUE;
         minResponseTime = Long.MAX_VALUE;
+        
         Recognizer recognizer = decoder.getRecognizer();
         recognizer.addSignalFeatureListener(new FeatureListener() {
                 public void featureOccurred(Feature feature) {
@@ -173,14 +189,12 @@ public class LivePretendDecoder {
             decoder.showMemoryUsage();
             resultList.add(resultText);
             
-            if (hypothesisTranscript != null) {
-                hypothesisTranscript.write
-                    (result.getTimedBestResult(false, true, sampleRate) +"\n");
-                hypothesisTranscript.flush();
-            }
-
+            hypothesisTranscript.write
+                (result.getTimedBestResult(false, true, sampleRate) +"\n");
+            hypothesisTranscript.flush();
+            
             if (alignInterval > 0 && (numUtterances % alignInterval == 0)) {
-                // perform alignment
+                // perform alignment if the property 'alignInterval' is set
                 List references = dataSource.getReferences();
                 List section =
                     references.subList(startReference, references.size());
@@ -190,27 +204,29 @@ public class LivePretendDecoder {
             }
         }
 
+        // perform alignment on remaining results
         List references = dataSource.getReferences();
         List section = references.subList(startReference, references.size());
-        
         if (resultList.size() > 0 || section.size() > 0) {
             alignResults(resultList, section);
         }
 
+        // detect gap insertion errors
+        int gapInsertions = detectGapInsertionErrors();
+
         Timer.dumpAll(context);
-        showLiveSummary();
+        showLiveSummary(gapInsertions);
         decoder.showSummary();
     }
 
     /**
      * Shows the test statistics that relates to live mode decoding.
      */
-    private void showLiveSummary() throws IOException {
+    private void showLiveSummary(int gapInsertions) throws IOException {
 
         assert numUtteranceStart == numUtterances;
 
         int actualUtterances = dataSource.getReferences().size();
-        int gapInsertions = detectGapInsertionErrors();
         float avgResponseTime =
             (float) totalResponseTime / (numUtteranceStart * 1000);
         
@@ -236,7 +252,7 @@ public class LivePretendDecoder {
         Timer gapTimer = Timer.getTimer(context, "GapInsertionDetector");
         gapTimer.start();
         GapInsertionDetector gid = new GapInsertionDetector
-            (props, dataSource.getTranscriptFile(), hypothesisFile);
+            (props, referenceFile, hypothesisFile);
         int gapInsertions = gid.detect();
         gapTimer.stop();
         return gapInsertions;
@@ -244,6 +260,8 @@ public class LivePretendDecoder {
 
     /**
      * Align the list of results with reference text.
+     * This method figures out how many words and sentences match,
+     * and the different types of errors.
      *
      * @param hypothesisList the list of hypotheses
      * @param referenceLis the list of references
@@ -327,9 +345,7 @@ public class LivePretendDecoder {
      * Do clean up
      */
     public void close() throws IOException {
-        if (hypothesisTranscript != null) {
-            hypothesisTranscript.close();
-        }
+        hypothesisTranscript.close();
     }
 
     /**
