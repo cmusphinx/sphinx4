@@ -31,7 +31,7 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 PROFILE_FLAGS= -Xprof -server
 LOG_GC_FLAGS=  -Xloggc:gc.txt
 # GC_FLAGS=  -XX:+PrintGCDetails
-GC_FLAGS = -ms1g -mx2g
+GC_FLAGS = -ms256m -mx256m
 # GC_FLAGS=  -XX:+UseConcMarkSweepGC
 #GC_FLAGS=  -XX:+UseParallelGC
 #GC_FLAGS= -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+PrintGCDetails
@@ -190,6 +190,7 @@ RM1_TRIGRAM_CMD = $(JAVA_CMD) \
 	-Dedu.cmu.sphinx.model.language.location=RM.2880.trigram.arpa \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.showTokenCount=true \
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-5\
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \

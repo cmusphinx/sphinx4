@@ -1,0 +1,802 @@
+/**
+ * Copyright 1998-2003 Sun Microsystems, Inc.
+ * 
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * WARRANTIES.
+ */
+/** 
+ * JavaCC grammar for parsing and creating grammars from JSGF files 
+ * using JSAPI.
+ */
+
+/**
+ * This grammar can be compiled with javacc, which is available at
+ *   http://www.webgain.com/products/java_cc/
+ */
+
+options {
+    JAVA_UNICODE_ESCAPE = true;
+}
+
+PARSER_BEGIN(JSGFParser)
+
+package com.sun.speech.engine.recognition;
+
+import javax.speech.*;
+import javax.speech.recognition.*;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
+public class JSGFParser {
+
+    // For now we create one global parser, if needed JavaCC can be set
+    // to allow the creation of multiple parser instances
+    //
+    static final String version = "1.0";
+    static JSGFParser parser = null;
+
+    // This main method simplly checks the syntax of a jsgf Grammar
+    //
+    public static void main(String args[]) {
+        if (args.length == 0) {
+            System.out.println("JSGF Parser Version " + version 
+                               + ":  Reading from standard input . . .");
+            parser = new JSGFParser(System.in);
+        } else if (args.length > 0) {
+            System.out.println("JSGF Parser Version " + version
+                               +" :  Reading from file " + args[0] + " . . .");
+            try {
+	       URL codeBase = null;
+               File f = new File(".");
+	       String path = f.getAbsolutePath() + "/" + args[0];	             
+               try {	
+                     codeBase = new URL("file:" + path);
+               } catch (MalformedURLException e) {
+                   System.out.println(
+                    "Could not get URL for current directory " + e);
+                     return;
+               }
+               BufferedInputStream i = new BufferedInputStream(codeBase.openStream(),256);
+	       Object a[] = getJSGFEncoding(i);
+	       Reader rdr;
+	       if ((a != null) && (a[1] != null)) {
+	         System.out.println("Grammar Character Encoding \""+a[1]+"\"");
+		 rdr = new InputStreamReader(i,(String)a[1]);
+               }
+	       else { 
+	         if (a==null) System.out.println("WARNING: Grammar missing self identifying header");
+	         rdr = new InputStreamReader(i);
+               }
+               parser = new JSGFParser(rdr);
+            } catch (Exception e) {
+                System.out.println("JSGF Parser Version " + version
+                                   + ":  File " + args[0] + " not found.");
+                return;
+            }
+        } else {
+            System.out.println("JSGF Parser Version " + version
+                               + ":  Usage is one of:");
+            System.out.println("         java JSGFParser < inputfile");
+            System.out.println("OR");
+            System.out.println("         java JSGFParser inputfile");
+            return;
+        }
+        try {
+            parser.GrammarUnit(null);
+            System.out.println("JSGF Parser Version " + version
+                               + ":  JSGF Grammar parsed successfully.");
+        } catch (ParseException e) {
+            System.out.println("JSGF Parser Version " + version
+                               + ":  Encountered errors during parse." 
+                               + e.getMessage());
+        }
+    }
+
+    /**
+     * newGrammarFromJSGF - Once JavaCC supports Readers we will change this
+     */
+    public static RuleGrammar newGrammarFromJSGF(InputStream i, Recognizer R) 
+        throws GrammarException {
+        RuleGrammar G = null;
+        if (parser == null) {
+            parser = new JSGFParser(i);
+        } else {
+            parser.ReInit(i);
+        }
+        try {
+            G = parser.GrammarUnit(R);
+            return G;
+        } catch (ParseException e) {
+            Token etoken = e.currentToken;
+            GrammarSyntaxDetail gsd = new GrammarSyntaxDetail(
+                null,
+                null,
+                null,
+                null,
+                etoken.beginLine,
+                etoken.beginColumn,
+                e.getMessage());
+            GrammarSyntaxDetail gsda[] = new GrammarSyntaxDetail[1];
+            gsda[0] = gsd;
+            GrammarException ge = new GrammarException("Grammar Error",gsda);
+            throw ge;
+        }
+    }
+
+    /**
+     * newGrammarFromJSGF - Once JavaCC supports Readers we will change this
+     */
+    public static RuleGrammar newGrammarFromJSGF(Reader i, Recognizer R) 
+        throws GrammarException {
+        RuleGrammar G = null;
+        if (parser == null) {
+            parser = new JSGFParser(i);
+        } else {
+            parser.ReInit(i);
+        }
+        try {
+            G = parser.GrammarUnit(R);
+            return G;
+        } catch (ParseException e) {
+            Token etoken = e.currentToken;
+            GrammarSyntaxDetail gsd = new GrammarSyntaxDetail(
+                null,
+                null,
+                null,
+                null,
+                etoken.beginLine,
+                etoken.beginColumn,
+                e.getMessage());
+            GrammarSyntaxDetail gsda[] = new GrammarSyntaxDetail[1];
+            gsda[0] = gsd;
+            GrammarException ge = new GrammarException("Grammar Error",gsda);
+            throw ge;
+        }
+    }
+
+  // returns object array containing the following
+  // three strings:
+  //    arry[0] = JSGF Version string
+  //    arry[1] = ISO Char encoding
+  //    arry[2] = Locale
+  // 
+  private static Object[] getJSGFEncoding(BufferedInputStream is) {
+    int i=0;
+    byte b[] = new byte[2];
+    byte c[] = new byte[80];
+
+    is.mark(256);
+
+    /* read 2 bytes */
+    try {
+      if (is.read(b,0,2) != 2) {
+	is.reset();
+	return null;
+      }
+      
+      // UTF-8
+      if ((b[0] == 0x23) && (b[1] == 0x4A)) {	
+	i=0;
+	c[i++]=b[0];
+	c[i++]=b[1];
+	while (i<80) {
+	  if (is.read(b,0,1) != 1) { is.reset(); return null; }
+	  if ((b[0] == 0x0A)||(b[0]==0x0D)) break;
+	  c[i++]=b[0];
+	}
+      } else	// UTF-16 BE
+	if ((b[0] == 0x23) && (b[1] == 0x00)) {
+	  i=0;
+	  c[i++]=b[0];
+	  while (i<80) {
+	    if (is.read(b,0,2) != 2) { is.reset(); return null; }
+	    if (b[1] != 0) return null;
+	    if ((b[0] == 0x0A)||(b[0]==0x0D)) break;
+	    c[i++]=b[0];
+	  }
+	} else {
+	  // UTF-16 LE
+	  if ((b[0] == 0x00) && (b[1] == 0x23)) {
+	    i=0;
+	    c[i++]=b[1];
+	    while (i<80) {
+	      if (is.read(b,0,2) != 2) { is.reset(); return null; }
+	      if (b[0] != 0) return null;
+	      if ((b[1] == 0x0A)||(b[1]==0x0D)) break;
+	      c[i++]=b[1];
+	    }
+	  }
+	}
+    } catch (IOException ioe) {
+      try { is.reset(); } catch (IOException ioe2) { }
+      return null;
+    }
+
+    if (i==0) { 
+      try { is.reset(); } catch (IOException ioe2) { }
+      return null; 
+    }
+
+    //
+    // Now c[] should have first line of text in UTF-8 format
+    //
+    
+    String estr = new String(c,0,i);
+
+    StringTokenizer st = new StringTokenizer(estr," \t\n\r\f;");    
+
+    String id = null;
+    String ver = null;
+    String enc = null;
+    String loc = null;
+
+    if (st.hasMoreTokens()) id = st.nextToken();
+
+    if (!id.equals("#JSGF")) { 
+      try { is.reset(); } catch (IOException ioe2) { }
+      return null;
+    }
+    
+    if (st.hasMoreTokens()) ver = st.nextToken();
+    
+    if (st.hasMoreTokens()) enc = st.nextToken();
+    
+    if (st.hasMoreTokens()) loc = st.nextToken();
+
+    Object rv[] = new Object[3];
+
+    rv[0] = ver;
+    rv[1] = enc;
+    rv[2] = loc;
+
+    return rv;
+    
+  }
+
+    /**
+     * newGrammarFromURL
+     */
+    public static RuleGrammar newGrammarFromJSGF(URL u, Recognizer R) 
+        throws GrammarException, IOException {
+        BufferedInputStream i = new BufferedInputStream(u.openStream(),256);
+	Object a[] = getJSGFEncoding(i);
+	Reader rdr;
+	if ((a != null) && (a[1] != null)) {
+	        System.out.println("Grammar Character Encoding \""+a[1]+"\"");
+		rdr = new InputStreamReader(i,(String)a[1]);
+        }
+	else { 
+	   if (a==null) System.out.println("WARNING: Grammar missing self identifying header");
+	   rdr = new InputStreamReader(i);
+        }
+        return newGrammarFromJSGF(rdr,R);
+    }
+
+    /**
+     * ruleForJSGF
+     */
+    public static Rule ruleForJSGF(String text) {
+        Rule r = null;
+        try {
+	    StringReader sread = new StringReader(text);
+            if (parser == null) parser = new JSGFParser(sread);
+            else parser.ReInit(sread);
+            r = parser.alternatives();
+            // System.out.println("JSGF Parser Version " + version
+            //                    + ":  JSGF RHS parsed successfully.");
+        } catch (ParseException e) {
+            System.out.println("JSGF Parser Version " + version
+                               + ":  Encountered errors during parse.");
+        }
+        return r;
+    }
+
+    /**
+     * Parse an apparent rulename reference.
+     */
+    public static RuleName parseRuleName(String text)
+      throws GrammarException
+    {
+       RuleName r = null;
+       try {
+         ByteArrayInputStream stream = new ByteArrayInputStream(text.getBytes());
+         if (parser == null) parser = new JSGFParser(stream);
+         else parser.ReInit(stream);
+         r = parser.ruleRef();
+       } catch (ParseException e) {
+	 throw new GrammarException("JSGF Parser Version " + version 
+                                    + " error", null);
+       }
+       return r;
+    }
+
+    /**
+     * Parse and apparent import declaration
+     */
+    public static RuleName parseImport(String text)
+      throws GrammarException
+    {
+      RuleName r = null;
+      try {
+        ByteArrayInputStream stream = new ByteArrayInputStream(text.getBytes());
+        if (parser == null) parser = new JSGFParser(stream);
+        else parser.ReInit(stream);
+        r = parser.importRef();
+      } catch (ParseException e) {
+	throw new GrammarException("JSGF Parser Version 0.1 error", null);
+      }
+      return r;
+    }
+
+    /**
+     * extract @xxxx keywords from documention comments
+     */
+    static void extractKeywords(Grammar G,String rname,String comment) {
+        if (!(G instanceof BaseRuleGrammar)) {
+	    return;
+	}
+
+        String sample;
+        BaseRuleGrammar JG = (BaseRuleGrammar) G;
+        int i = comment.indexOf("@example ");
+        while (i > 0) {
+            int j = comment.indexOf('\n',i);
+            if (j < 0) {
+                sample = comment.substring(i+8);
+                i = -1;
+            } else {
+                sample = comment.substring(i+8,j);
+                i = j;
+            }
+            i = comment.indexOf("@example ",i);
+            JG.addSampleSentence(rname,sample);
+        }
+    }
+}
+
+PARSER_END(JSGFParser)
+
+/* WHITE SPACE */
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+/* COMMENTS */
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+|
+  <"/**" ~["/"]> { input_stream.backup(1); } : IN_FORMAL_COMMENT
+|
+  "/*" : IN_MULTI_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <FORMAL_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+TOKEN : /* RESERVED WORDS AND LITERALS */
+{
+  < GRAMMAR: "grammar" >
+| < IMPORT: "import" >
+| < PUBLIC: "public" >
+}
+
+TOKEN : /* LITERALS */
+{
+  < INTEGER_LITERAL:
+        <DECIMAL_LITERAL>
+  >
+|
+  < #DECIMAL_LITERAL: ["0"-"9"] (["0"-"9"])* >
+|
+  < FLOATING_POINT_LITERAL:
+        (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
+      | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?
+      | (["0"-"9"])+ <EXPONENT> (["f","F","d","D"])?
+      | (["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"]
+  >
+|
+  < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+|
+  < CHARACTER_LITERAL:
+      "'"
+      (   (~["'","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )
+      "'"
+  >
+|
+  < STRING_LITERAL:
+      "\""
+      (   (~["\"","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      "\""
+  >|
+  < TAG:
+      "{"
+      (   (~["}"])
+        | ("\\"
+            ( ["}","n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      "}"
+  >
+}
+
+TOKEN : /* IDENTIFIERS */
+{
+  < IDENTIFIER: (<LETTER>|<DIGIT>)+ >
+|
+  < #LETTER:
+      [
+       "-","'",":",",","\\","@","#","%","!",
+	"^","&","~", 
+       "\u0024",
+       "\u0041"-"\u005a",
+       "\u005f",
+       "\u0061"-"\u007a",
+       "\u00c0"-"\u00d6",
+       "\u00d8"-"\u00f6",
+       "\u00f8"-"\u00ff",
+       "\u0100"-"\u1fff",
+       "\u3040"-"\u318f",
+       "\u3300"-"\u337f",
+       "\u3400"-"\u3d2d",
+       "\u4e00"-"\u9fff",
+       "\uf900"-"\ufaff"
+      ]
+  >
+|
+  < #DIGIT:
+      [
+       "\u0030"-"\u0039",
+       "\u0660"-"\u0669",
+       "\u06f0"-"\u06f9",
+       "\u0966"-"\u096f",
+       "\u09e6"-"\u09ef",
+       "\u0a66"-"\u0a6f",
+       "\u0ae6"-"\u0aef",
+       "\u0b66"-"\u0b6f",
+       "\u0be7"-"\u0bef",
+       "\u0c66"-"\u0c6f",
+       "\u0ce6"-"\u0cef",
+       "\u0d66"-"\u0d6f",
+       "\u0e50"-"\u0e59",
+       "\u0ed0"-"\u0ed9",
+       "\u1040"-"\u1049"
+      ]
+  >
+}
+
+RuleGrammar GrammarUnit(Recognizer R) :
+{ RuleGrammar G = null; }
+{ [IdentHeader()] G=GrammarDeclaration(R)
+  ( ImportDeclaration(G) )*
+  ( RuleDeclaration(G) )*
+  <EOF>
+  { return G; }
+}
+
+RuleGrammar GrammarDeclaration(Recognizer R) :
+{
+ String s;
+ RuleGrammar G = null;
+ Token t = null;
+}
+{
+  t=<GRAMMAR> s=Name() ";"
+  {
+    if (R != null) try { G=R.newRuleGrammar(s); } catch (IllegalArgumentException ge) {
+	  System.out.println("ERROR " + ge);
+	};
+
+    if (G != null && G instanceof BaseRuleGrammar && t != null && 
+        t.specialToken != null) {
+      if (t.specialToken.image != null && t.specialToken.image.startsWith("/**")) {
+        BaseRuleGrammar JG = (BaseRuleGrammar) G;
+        JG.addGrammarDocComment(t.specialToken.image);
+      }
+    }
+
+    return G;
+  }
+}
+
+void IdentHeader() :
+{
+}
+{
+  // oops this should be "#JSGF"
+  <IDENTIFIER> "V1.0" [<IDENTIFIER> [<IDENTIFIER>]] ";"
+}
+
+void ImportDeclaration(RuleGrammar G) :
+{
+ boolean all = false;
+ String name;
+ Token t = null;
+}
+{
+  t=<IMPORT> "<" name=Name() [ "." "*" { all=true; }] ">" ";"
+  {
+   // import all rules if .*
+
+    if (all)
+      name = name + ".*";
+
+    RuleName r = new RuleName(name);
+
+    if (G != null) {
+      G.addImport(r);
+
+      if (G instanceof BaseRuleGrammar && t != null && t.specialToken != null) {
+        if (t.specialToken.image != null && t.specialToken.image.startsWith("/**")) {
+          BaseRuleGrammar JG = (BaseRuleGrammar) G;
+          JG.addImportDocComment(r, t.specialToken.image);
+        }
+      }
+    }
+  }
+}
+
+String Name() :
+/*
+ * A lookahead of 2 is required below since "Name" can be followed
+ * by a ".*" when used in the context of an "ImportDeclaration".
+ */
+{
+ Token t1, t2;
+ StringBuffer sb = new StringBuffer();
+}
+{
+  (t1=<IDENTIFIER>  | t1=<PUBLIC> | t1=<IMPORT> | t1=<GRAMMAR>) { sb.append(t1.image); }
+  ( LOOKAHEAD(2) "." t2=<IDENTIFIER> { sb.append('.'); sb.append(t2.image); }
+  )*
+  {
+   return sb.toString();
+  }
+}
+
+void RuleDeclaration(RuleGrammar G) :
+{
+ boolean pub = false;
+ String s;
+ Rule r;
+ Token t = null;
+ Token t1 = null;
+}
+{
+  [t=<PUBLIC> { pub=true; }] t1="<" s=ruleDef() ">" "=" r=alternatives() ";"
+  {
+    try {
+     if (G != null) {
+	G.setRule(s,r,pub);
+
+	if (G instanceof BaseRuleGrammar) {
+	  BaseRuleGrammar JG = (BaseRuleGrammar) G;
+          String docComment = null;
+
+          if ((t != null) && (t.specialToken != null) && (t.specialToken.image != null))
+            docComment = t.specialToken.image;
+          else if ((t1 != null) && (t1.specialToken != null) && (t1.specialToken.image != null))
+            docComment = t1.specialToken.image;
+
+	  if (docComment != null && docComment.startsWith("/**"))
+          {
+	    extractKeywords(JG,s,docComment);
+	    JG.addRuleDocComment(s,docComment);
+          }
+
+	  JG.setSourceLine(s,t1.beginLine);
+       }
+     }
+    } catch (IllegalArgumentException e) { 
+     System.out.println("ERROR SETTING RULE " + s);
+    }
+  }
+}
+
+RuleAlternatives alternatives() :
+{
+ Vector rv = new Vector();
+ Rule r;
+ float w;
+ float wa[] = new float[25];
+ int cnt=0;
+}
+{
+  ((r=sequence() { rv.addElement(r); } ("|" r=sequence() { rv.addElement(r); } )*) |
+   (w=weight() r=sequence() { rv.addElement(r); wa[cnt++]=w; } 
+                  ("|" w=weight() r=sequence() { 
+			rv.addElement(r); 
+                        // make array bigger if needed
+	                if (cnt > (wa.length-1)) {
+	                 float watmp[] = new float[wa.length+25];
+                         System.arraycopy(wa,0,watmp,0,wa.length);
+			 wa = watmp;
+			}
+                        wa[cnt++]=w; 
+                       }
+                  )+))    {
+     Rule rarry[] = new Rule[rv.size()];
+     rv.copyInto(rarry);
+     RuleAlternatives ra = new RuleAlternatives(rarry);
+     if (cnt != 0) {
+      float wa1[] = new float[cnt];
+      System.arraycopy(wa,0,wa1,0,cnt);
+      try {
+       ra.setWeights(wa1);
+      } catch (IllegalArgumentException e) {
+	System.out.println("ERROR " + e);
+      }
+     }
+     return ra;
+    }
+}
+
+String ruleDef() : 
+{
+ Token t;
+}
+{
+  (t=<IDENTIFIER> | t=<INTEGER_LITERAL> | t=<PUBLIC> | t=<IMPORT> | t=<GRAMMAR>)
+  {
+    return t.image;
+  }
+}
+
+RuleSequence sequence() :
+{
+ Rule r;
+ Vector v = new Vector();
+}
+{
+  (r=item() { v.addElement(r); })+
+  {
+    Rule ra[] = new Rule[v.size()];
+    v.copyInto(ra);
+    return new RuleSequence(ra);
+  }
+}
+
+float weight() :
+{
+ Token t;
+ float f;
+}
+{
+  "/" (t=<FLOATING_POINT_LITERAL>|t=<INTEGER_LITERAL>) "/" 
+  {
+    return Float.valueOf(t.image).floatValue();
+  }
+}
+
+Rule item() :
+{
+ Rule r;
+ Vector t = null;
+ int count=-1;
+}
+{
+   (   ((r=terminal() | r=ruleRef()) 
+             ["*" { count=RuleCount.ZERO_OR_MORE; } | "+" { count=RuleCount.ONCE_OR_MORE; }] [t=tag()])
+     | ("(" r=alternatives() ")" 
+             ["*" { count=RuleCount.ZERO_OR_MORE; } | "+" { count=RuleCount.ONCE_OR_MORE; }] [t=tag()])
+     | ("[" r=alternatives() "]" { count = RuleCount.OPTIONAL; } [t=tag()])
+   ) {
+     if (count != -1) r = new RuleCount(r,count);
+     if (t != null) {
+       for (int i = 0; i < t.size(); i++) {
+         String tag = (String) t.elementAt(i);       
+         if (tag.charAt(0) == '{') {
+           tag = tag.substring(1,tag.length()-1);
+           tag = tag.replace('\\',' ');
+         }
+         r = new RuleTag(r,tag);
+       }
+     }
+     return r;
+   }
+}
+
+Vector tag() :
+{
+  Token t;
+  Vector v = new Vector();
+}
+{
+  (t=<TAG> { v.addElement(t.image); })+
+  { return v; }
+}
+
+Rule terminal() :
+{
+ Token t;
+}
+{
+  (t=<IDENTIFIER> | t=<STRING_LITERAL> | t=<INTEGER_LITERAL> | t=<PUBLIC> | t=<IMPORT> | t=<GRAMMAR>)
+  {
+    String tn = t.image;
+    if (tn.startsWith("\"") && tn.endsWith("\""))
+	tn = tn.substring(1, tn.length()-1);
+    RuleToken rt = new RuleToken(tn);
+
+
+    return rt;
+  }
+}
+
+RuleName ruleRef() :
+{
+ String s;
+}
+{
+  ("<" s=Name() ">")
+  {
+    RuleName rn = new RuleName(s);
+    return rn;
+  }
+}
+
+
+RuleName importRef() :
+{
+ String s;
+ boolean all = false;
+}
+{
+  ("<" s=Name() [ "." "*" {all=true;}] ">")
+  {
+    if (all) s = s + ".*";
+    RuleName rn = new RuleName(s);
+    return rn;
+  }
+}
+
+
+
