@@ -26,7 +26,7 @@ import java.io.IOException;
  */
 public class AcousticModelFactory {
 
-    static Map classMap = null;
+    static Map classMap = new HashMap();
     static Map modelMap = new HashMap();
     static String defaultModelName = null;
 
@@ -119,24 +119,21 @@ public class AcousticModelFactory {
      * @param props the sphinx properties
      */
     private static void loadClassMap(SphinxProperties props) {
-        if (classMap == null) {
-            classMap = new HashMap();
-            String modelNames = props.getString(PROP_MODELS,"");
-            StringTokenizer st = new StringTokenizer(modelNames);
+        String modelNames = props.getString(PROP_MODELS,"");
+        StringTokenizer st = new StringTokenizer(modelNames);
 
-            while (st.hasMoreTokens()) {
-                String name = st.nextToken();
-                String className = props.getString(name,  PROP_CLASS, null);
+        while (st.hasMoreTokens()) {
+            String name = st.nextToken();
+            String className = props.getString(name,  PROP_CLASS, null);
 
-                if (className != null) {
-                    if (defaultModelName == null) {
-                        defaultModelName = name;
-                    }
-                    classMap.put(name, className);
-                }  else {
-                    System.err.println(
-                      "AcousticModelFactory: Bad config for model " + name);
+            if (className != null) {
+                if (defaultModelName == null) {
+                    defaultModelName = name;
                 }
+                classMap.put(name, className);
+            }  else {
+                System.err.println(
+                  "AcousticModelFactory: Bad config for model " + name);
             }
         }
     }
