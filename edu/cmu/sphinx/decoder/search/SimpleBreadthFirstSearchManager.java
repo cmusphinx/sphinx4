@@ -116,6 +116,18 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      */
     public final static boolean PROP_SHOW_TOKEN_COUNT_DEFAULT = false;
 
+    /**
+     * A sphinx property that controls whether or not relative beam
+     * pruning will be performed on the entry into a state.
+     */
+    public final static String PROP_WANT_ENTRY_PRUNING = PROP_PREFIX +
+                    "wantEntryPruning";
+    /**
+     * The default value for the PROP_WANT_ENTRY_PRUNING property
+     */
+    public final static boolean PROP_WANT_ENTRY_PRUNING_DEFAULT = false;
+
+
 
     private Linguist linguist;		// Provides grammar/language info
     private Pruner pruner;		// used to prune the active list
@@ -140,6 +152,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     private StatisticsVariable wordsPruned;
 
     private boolean showTokenCount;
+    private boolean wantEntryPruning;
     private Map bestTokenMap;
     private List wordList;
     private Map wordMap;
@@ -203,6 +216,8 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	logRelativeWordBeamWidth = logMath.linearToLog(relativeWordBeamWidth);
 
 	showTokenCount = props.getBoolean(PROP_SHOW_TOKEN_COUNT, false);
+	wantEntryPruning = props.getBoolean(PROP_WANT_ENTRY_PRUNING,
+                PROP_WANT_ENTRY_PRUNING_DEFAULT);
     }
 
 
@@ -437,6 +452,8 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      */
     protected void collectSuccessorTokens(Token token) {
 
+	SearchState state = token.getSearchState();
+
 	// If this is a final state, add it to the final list
 
 	if (token.isFinal()) {
@@ -447,7 +464,11 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
             return;
         }
 
-	SearchState state = token.getSearchState();
+        if (state instanceof WordSearchState 
+                && token.getScore() < wordThreshold) {
+            return;
+        }
+
 	SearchStateArc[] arcs = state.getSuccessors();
 
 	// For each successor
@@ -467,13 +488,15 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	    // these come in log(), multiply gets converted to add
 	    float logEntryScore = token.getScore() +  arc.getProbability();
 
-            if (logEntryScore < threshold) {
-                continue;
-            }
+            if (wantEntryPruning) {
+                if (logEntryScore < threshold) {
+                    continue;
+                }
 
-            if (nextState instanceof WordSearchState 
-                    && logEntryScore < wordThreshold) {
-                continue;
+                if (nextState instanceof WordSearchState 
+                        && logEntryScore < wordThreshold) {
+                    continue;
+                }
             }
 
             Token bestToken = getBestToken(nextState);
