@@ -322,6 +322,37 @@ public class ExtendedStreamTokenizer {
 	return fVal;
     }
 
+    /**
+     * gets a optional float from the tokenizer stream. If a float is
+     * not present, the default is returned
+     *
+     * @param name	the name of the parameter (for error reporting)
+     * @param defaultValue	the default value
+     *
+     * @return the next word in the stream as a float
+     *
+     * @throws StreamCorruptedException if the next value is not a
+     * @throws IOException if an error occurs while loading the data
+     * number
+     */
+    public float getFloat(String name, float defaultValue) 
+	throws StreamCorruptedException, IOException  {
+	float fVal = 0.0F;
+	try {
+	    String val = getString();
+            if (val == null) {
+                fVal = defaultValue;
+            } else if (val.equals("inf")) {
+		fVal = Float.POSITIVE_INFINITY;
+	    } else {
+		fVal =  Float.parseFloat(val);
+	    }
+	} catch (NumberFormatException nfe) {
+	    corrupt("while parsing float " + name);
+	}
+	return fVal;
+    }
+
      /**
       * Skip any carriage returns.
       */
