@@ -129,10 +129,20 @@ public class Edge {
         return toNode;
     }
 
+    /**
+     * Sets the acoustic score
+     *
+     * @param v the acoustic score.
+     */
     public void setAcousticScore(double v) {
         acousticScore = v;
     }
 
+    /**
+     * Sets the language model score 
+     *
+     * @param v the lm score.
+     */
     public void setLMScore(double v) {
         lmScore = v;
     }

@@ -86,6 +86,14 @@ public class Node {
         return getEdgeToNode(n) != null;
     }
 
+    /**
+     * given a node find the edge to that node
+     *
+     * @param n the node of interest
+     *
+     * @return the edge to that node or <code> null</code>  if no edge
+     * could be found.
+     */
     public Edge getEdgeToNode(Node n) {
         for (Iterator j = toEdges.iterator(); j.hasNext();) {
             Edge e = (Edge) j.next();
@@ -106,6 +114,14 @@ public class Node {
         return getEdgeFromNode(n) != null;
     }
 
+    /**
+     * given a node find the edge from that node
+     *
+     * @param n the node of interest
+     *
+     * @return the edge from that node or <code> null</code>  if no edge
+     * could be found.
+     */
     public Edge getEdgeFromNode(Node n) {
         for (Iterator j = fromEdges.iterator(); j.hasNext();) {
             Edge e = (Edge) j.next();
@@ -139,7 +155,7 @@ public class Node {
     /**
      * Test if a Node has all Edges to the same Nodes and another Node.
      *
-     * @param n
+     * @param n the node of interest
      * @return true if this Node has all Edges to the sames Nodes as n
      */
     public boolean hasEquivalentToEdges(Node n) {
@@ -204,7 +220,7 @@ public class Node {
     /**
      * Remove an Edge to this Node
      *
-     * @param e
+     * @param e the edge to remove
      */
     public void removeToEdge(Edge e) {
         toEdges.remove(e);
