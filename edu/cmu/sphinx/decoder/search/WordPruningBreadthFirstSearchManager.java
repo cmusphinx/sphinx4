@@ -41,7 +41,7 @@ import java.util.*;
  * an application should call initialize before
  * recognition begins, and repeatedly call <code> recognize </code>
  * until Result.isFinal() returns true.  Once a final result has been
- * obtained, <code> terminate </code> should be called. 
+ * obtained, <code> terminate </code> should be called.
  *
  * All scores and probabilities are maintained in the log math log
  * domain.
@@ -203,7 +203,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
     /**
      * Gets the initial grammar node from the linguist and
-     * creates a GrammarNodeToken 
+     * creates a GrammarNodeToken
      */
     protected void localStart() {
         currentFrameNumber = 0;
@@ -326,7 +326,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     }
 
     /**
-     * Collects the next set of emitting tokens from a token 
+     * Collects the next set of emitting tokens from a token
      * and accumulates them in the active or result lists
      *
      * @param token  the token to collect successors from
@@ -366,26 +366,32 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             boolean firstToken = bestToken == null ;
 
             if (firstToken || bestToken.getScore() < logEntryScore) {
-                Token newToken = new Token(getWordPredecessor(token), nextState,
+                Token newBestToken = new Token(getWordPredecessor(token), nextState,
                         logEntryScore,
                         arc.getLanguageProbability(),
                         arc.getInsertionProbability(),
                         currentFrameNumber);
                 tokensCreated.value++;
 
-                setBestToken(newToken, nextState);
+                setBestToken(newBestToken, nextState);
                 if (firstToken) {
-                    activeBucket.add(newToken);
+                    activeBucket.add(newBestToken);
                 } else {
-                    activeBucket.replace(bestToken, newToken);
-                    if (newToken.isWord()) {
-                        loserManager.changeSuccessor(newToken,bestToken);
-                        loserManager.addAlternatePredecessor(newToken,bestToken.getPredecessor());
+                    activeBucket.replace(bestToken, newBestToken);
+                    if (newBestToken.isWord()) {
+                        // Move predecessors of bestToken to precede newBestToken
+                        // bestToken is going to be garbage collected.
+                        loserManager.movePredecessors(newBestToken,bestToken);
+                        loserManager.addAlternatePredecessor(newBestToken,bestToken.getPredecessor());
                     }
                 }
             } else {
-                if (nextState instanceof WordSearchState)
-                    loserManager.addAlternatePredecessor(bestToken, getWordPredecessor(token));
+                if (nextState instanceof WordSearchState)  {
+                    Token wordPredecessor = getWordPredecessor(token);
+                    if (wordPredecessor != null) {
+                        loserManager.addAlternatePredecessor(bestToken, wordPredecessor);
+                    }
+                }
             }
         }
     }
