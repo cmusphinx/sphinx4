@@ -13,7 +13,7 @@ export DOC_DEST
 
 JAVADOC_OUT=javadoc.out
 
-COPY_LIST=/lab/speech/sphinx4/lib/doclist.txt
+COPY_LIST=scripts/doclist.txt
 
 LIST=cmusphinx-commits@lists.sourceforge.net
 
