@@ -272,6 +272,9 @@ public class Node {
      * @return the begin frame number, or -1 if the frame number is unknown
      */
     public int getBeginTime() {
+        if (beginTime == -1) {
+            calculateBeginTime();
+        }
         return beginTime;
     }
 
@@ -393,7 +396,7 @@ public class Node {
      * begin time was not specified. The begin time is the latest of the
      * end times of its predecessor nodes.
      */
-    public void calculateBeginTime() {
+    private void calculateBeginTime() {
         beginTime = 0;
         Iterator e = enteringEdges.iterator();
         while (e.hasNext()) {
