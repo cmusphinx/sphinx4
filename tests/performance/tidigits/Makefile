@@ -201,6 +201,7 @@ tidigits_wordlist_live:
 	-Dedu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=16 \
 	-Dedu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature=true \
 	-Dedu.cmu.sphinx.decoder.LivePretendDecoder.alignInterval=870 \
+	-Dedu.cmu.sphinx.decoder.LivePretendDecoder.dataSource=edu.cmu.sphinx.frontend.util.ConcatFileAudioSource \
 	edu.cmu.sphinx.decoder.LivePretendDecoder tidigits.props tidigits.batch
 
 
@@ -217,4 +218,5 @@ tidigits_an4_words_rejection_live:
 	-Dedu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=16 \
 	-Dedu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature=true \
 	-Dedu.cmu.sphinx.decoder.LivePretendDecoder.alignInterval=870 \
+	-Dedu.cmu.sphinx.decoder.LivePretendDecoder.dataSource=edu.cmu.sphinx.frontend.util.ConcatFileAudioSource \
 	edu.cmu.sphinx.decoder.LivePretendDecoder tidigits.props ../an4/an4_words.batch
