@@ -13,163 +13,124 @@
 package edu.cmu.sphinx.trainer;
 
 
-import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.knowledge.acoustic.*;
-
-import edu.cmu.sphinx.util.SphinxProperties;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.StringTokenizer;
 import java.util.Iterator;
 
 /**
- * Provides mechanisms for accessing a next utterance's file name
- * and transcription.
+ * Provides mechanisms for accessing a transcription.
  */
 public class SimpleTranscript implements Transcript {
-
-    private SphinxProperties props;	// the sphinx properties
-    private String controlFile;         // the control file
-    private String transcriptFile;      // the transcript file
-    private String dictionary;          // the dictionary
-    private String wordSeparator;       // the word separator
-    private int currentPartition;       // the current partition
-    private int numberOfPartitions;    // total number of partitions
-    private Iterator controlFileIterator;
-    private Iterator transcriptFileIterator;
+    private String transcript;              // the transcript
+    private String dictionary;              // the dictionary
+    boolean isExact;                        // is exact transcription?
+    private boolean wasInitialized = false; // Has this object been initialized?
+    private StringTokenizer words;          // string tokenizer for current transcription.
 
     /**
-     * Initializes the SimpleTranscript with the proper context.
+     * Constructor for the SimpleTranscript.
      *
-     * @param context the context to use
-     * @param thisPartition the current partition of the transcript file
-     * @param numberOfPartitions the total number of partitions
+     * @param transcript this transcript's text
      */
-    public void initialize(String context, int thisPartition, 
-			   int numberOfPartitions) {
-	this.props = SphinxProperties.getSphinxProperties(context);
-	this.controlFile = props.getString(PROP_CONTROL_FILE, 
-					   PROP_CONTROL_FILE_DEFAULT);
-	this.transcriptFile = props.getString(PROP_TRANSCRIPT_FILE, 
-					   PROP_TRANSCRIPT_FILE_DEFAULT);
-	this.dictionary = null; // here, we don't care
-	this.wordSeparator = " \t\n\r\f"; // the white spaces
-	this.currentPartition = thisPartition;
-	this.numberOfPartitions = numberOfPartitions;
-	try {
-	    this.controlFileIterator = getLines(controlFile).iterator();
-	} catch (IOException ioe) {
-	    throw new Error("IOE: Can't open file " + controlFile, ioe);
+    public SimpleTranscript(String transcript) {
+	if (!wasInitialized) {
+	    initialize(null, false);
 	}
-	try {
-	    this.transcriptFileIterator = getLines(transcriptFile).iterator();
-	} catch (IOException ioe) {
-	    throw new Error("IOE: Can't open file " + transcriptFile, ioe);
-	}
+	this.transcript = transcript;
     }
 
     /**
-     * Initializes the SimpleTranscript with the proper context.
+     * Constructor for the SimpleTranscript.
      *
-     * @param context the context to use
+     * @param dictionary this transcript's dictionary
+     * @param isExact whether the transcription is exact
      */
-    public void initialize(String context) {
-	initialize(context, 1, 1);
+    public SimpleTranscript(String dictionary, boolean isExact) {
+	initialize(dictionary, isExact);
     }
 
     /**
-     * Starts the SimpleTranscript.
+     * Constructor for the SimpleTranscript.
+     *
+     * @param transcript this transcript's text
+     * @param dictionary this transcript's dictionary
+     * @param isExact whether the transcription is exact
      */
-    public void start() {
+    public SimpleTranscript(String transcript, String dictionary, boolean isExact) {
+	this.transcript = transcript;
+	this.dictionary = dictionary;
+	this.isExact = isExact;
     }
 
     /**
-     * Stops the SimpleTranscript.
+     * Initializes the SimpleTranscript with dictionary and exact flag.
+     *
+     * @param dictionary this transcript's dictionary
+     * @param isExact whether the transcription is exact
      */
-    public void stop() {
+    public void initialize(String dictionary, boolean isExact) {
+	this.dictionary = dictionary;
+	this.isExact = isExact;
+	wasInitialized = true;
     }
 
     /**
-     * Gets the next utterance's full path file name.
+     * Gets the transcription.
+     *
+     * @return current transcription string.
      */
-    public String getNextUttId() {
-	if (controlFileIterator.hasNext()) {
-	    return (String) controlFileIterator.next();
-	} else {
-	    return null;
-	}
+    public String getTranscriptText() {
+	return transcript;
     }
 
     /**
-     * Gets the next utterance's transcription.
+     * Gets the transcript's dictionary.
+     *
+     * @return current dictionary.
      */
-    public String getNextTranscription() {
-	if (transcriptFileIterator.hasNext()) {
-	    return (String) transcriptFileIterator.next();
-	} else {
-	    return null;
-	}
-    }
-
-    /**
-     * Gets the next utterance's dictionary.
-     */
-    public String getNextDictionary() {
+    public String getDictionary() {
 	return dictionary;
     }
 
     /**
-     * Gets the word separator for the utterance.
+     * Returns whether the transcript is exact.
+     *
+     * @return true is transcription is exact (has been forced aligned)
      */
-    public String wordSeparator() {
-	return wordSeparator;
+    public boolean isExact(){
+        return isExact;
     }
 
-    // Next method copied from decoder.BatchDecoder
+    /**
+     * Get the number of words in the transcription.
+     *
+     * @return number of words in the transcription.
+     */
+    public int numberOfWords(){
+	return words.countTokens();
+    }
+    /**
+     * Start the iterator for the words in the transcription.
+     */
+    public void startWordIterator(){
+	words = new StringTokenizer(transcript);
+    }
 
     /**
-     * Gets the set of lines from the file. 
+     * Return whether there are more words.
      *
-     * @param file the name of the file 
-     * @throws IOException if error occurs while reading file
+     * @return whether there are more words.
      */
-    private List getLines(String file) throws IOException {
-	List list = new ArrayList();
-	BufferedReader reader 
-	    = new BufferedReader(new FileReader(file));
+    public boolean hasMoreWords() {
+	return words.hasMoreTokens();
+    }
 
-	String line = null;
-
-	while ((line = reader.readLine()) != null) {
-	    list.add(line);
-	}
-	reader.close();
-
-	if (numberOfPartitions > 1) {
-	    int linesPerBatch = list.size() / numberOfPartitions;
-	    if (linesPerBatch < 1) {
-		linesPerBatch = 1;
-	    }
-	    if (currentPartition >= numberOfPartitions) {
-		currentPartition = numberOfPartitions - 1;
-	    }
-	    int startLine = currentPartition * linesPerBatch;
-	    // last batch needs to get all remaining lines
-	    if (currentPartition == (numberOfPartitions - 1)) {
-		list = list.subList(startLine, list.size());
-	    } else {
-		list = list.subList(startLine, startLine +
-			linesPerBatch);
-	    }
-	}
-	return list;
+    /**
+     * Returns the next word.
+     *
+     * @return next word in the transcription.
+     */
+    public String nextWord() {
+	return (String) words.nextToken();
     }
 
 }

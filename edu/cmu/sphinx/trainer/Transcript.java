@@ -13,13 +13,8 @@
 package edu.cmu.sphinx.trainer;
 
 
-import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.knowledge.acoustic.*;
-
-
 /**
- * Provides mechanisms for accessing a next utterance's file name
- * and transcription.
+ * Provides mechanisms for accessing an utterance's transcription.
  */
 public interface Transcript {
 
@@ -29,69 +24,37 @@ public interface Transcript {
     String PROP_PREFIX = "edu.cmu.sphinx.trainer.Transcript.";
 
     /**
-     * Simple control file containing file names only.
+     * Gets the transcript's text
      */
-    String PROP_CONTROL_FILE = PROP_PREFIX + "controlFile";
+    public String getTranscriptText();
 
     /**
-     * The default value for the property PROP_CONTROL_FILE.
+     * Gets the transcript's dictionary.
      */
-    String PROP_CONTROL_FILE_DEFAULT = "./input.ctl";
+    public String getDictionary();
 
     /**
-     * Transcription file containing transcriptions, simple or full.
+     * Returns whether the transcript is exact.
      */
-    String PROP_TRANSCRIPT_FILE = PROP_PREFIX + "transcriptFile";
+    public boolean isExact();
 
     /**
-     * The default value for the property PROP_TRANSCRIPT_FILE.
+     * Get the number of words in the transcription.
      */
-    String PROP_TRANSCRIPT_FILE_DEFAULT = "./input.trans";
+    public int numberOfWords();
 
     /**
-     * Initializes the Transcript with the proper context.
-     *
-     * @param context the context to use
+     * Start the iterator for the words in the transcription.
      */
-    public void initialize(String context);
+    public void startWordIterator();
 
     /**
-     * Initializes the SimpleTranscript with the proper context.
-     *
-     * @param context the context to use
-     * @param thisPartition the current partition of the transcript file
-     * @param numberOfPartitions the total number of partitions
+     * Return whether there are more words.
      */
-    public void initialize(String context, int thisPartition, 
-			   int numberOfPartitions);
+    public boolean hasMoreWords();
 
     /**
-     * Starts the Transcript.
+     * Returns the next word.
      */
-    public void start();
-
-    /**
-     * Stops the Transcript.
-     */
-    public void stop();
-
-    /**
-     * Gets the next utterance's full path file name.
-     */
-    public String getNextUttId();
-
-    /**
-     * Gets the next utterance's transcription.
-     */
-    public String getNextTranscription();
-
-    /**
-     * Gets the next utterance's dictionary.
-     */
-    public String getNextDictionary();
-
-    /**
-     * Gets the word separator for the utterance.
-     */
-    public String wordSeparator();
+    public String nextWord();
 }
