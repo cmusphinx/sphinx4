@@ -97,7 +97,8 @@ public class LiveFrame extends JFrame {
     private JTextArea speedTextArea;
     private JTextArea cumulativeSpeedTextArea;
 
-    private JToggleButton speakButton;
+    private JButton speakButton;
+    private JButton stopButton;
     private JButton nextButton;
     private JButton playButton;
 
@@ -274,19 +275,45 @@ public class LiveFrame extends JFrame {
         });
     }
 
-
     /**
      * Enables or disables the "Speak" button.
+     *
+     * @param enable boolean to enable or disable
      */
-    public void setButtonsEnabled(final boolean enabled) {
+    public void setSpeakButtonEnabled(final boolean enabled) {
         SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    speakButton.setEnabled(enabled);
-                    nextButton.setEnabled(enabled);
-                    playButton.setEnabled(live.canPlayUtterance());
-                }
-            });
+            public void run() {
+                speakButton.setEnabled(enabled);
+            }
+        });
     }
+
+    /**
+     * Enables or disables the "Stop" button.
+     *
+     * @param enable boolean to enable or disable
+     */
+    public void setStopButtonEnabled(final boolean enabled) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                stopButton.setEnabled(enabled);
+            }
+        });
+    }
+
+    /**
+     * Enables or disables the "Play" button.
+     *
+     * @param enable boolean to enable or disable
+     */
+    public void setPlayButtonEnabled(final boolean enabled) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                playButton.setEnabled(enabled);
+            }
+        });
+    }
+
 
     /**
      * Enables or disables the Decoder ComboBox.
@@ -314,11 +341,11 @@ public class LiveFrame extends JFrame {
      * to the correct state.
      */
     public void enterSpeakingMode() {
+        setGUISpeakingState(true);
         setMessage("Wait...");
         
         // update GUI states
         setRecognitionLabel("");
-        setGUISpeakingState(true);
 
         // start recording
         if (live.startRecording()) {
@@ -326,6 +353,7 @@ public class LiveFrame extends JFrame {
             live.decode();
         } else {
             setMessage("Error opening the audio device");
+            setGUISpeakingState(false);
         }
     }
 
@@ -642,17 +670,24 @@ public class LiveFrame extends JFrame {
     private JPanel createButtonPanel() {
         JPanel buttonPanel = getJPanel(new FlowLayout());
 
-        speakButton = new JToggleButton("Speak", false);
+        speakButton = new JButton("Speak");
         speakButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                if (speakButton.isSelected()) {
+                if (speakButton.isEnabled()) {
                     enterSpeakingMode();
-                } else {
-                    setMessage("Stop speaking");
-                    live.stopRecording();
                 }
             }
         });
+
+        stopButton = new JButton("Stop");
+        stopButton.setEnabled(false);
+        stopButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    stopButton.setEnabled(false);
+                    setMessage("Stop speaking");
+                    live.stopRecording();
+                }
+            });
 
         nextButton = new JButton("Next");
         nextButton.addActionListener(new ActionListener() {
@@ -680,6 +715,7 @@ public class LiveFrame extends JFrame {
         });
 
         buttonPanel.add(speakButton);
+        buttonPanel.add(stopButton);
         buttonPanel.add(nextButton);
         buttonPanel.add(playButton);
         buttonPanel.add(exitButton);
@@ -694,7 +730,9 @@ public class LiveFrame extends JFrame {
     private void setGUISpeakingState(final boolean speaking) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                nextButton.setEnabled(!speaking);
+                speakButton.setEnabled(!speaking);
+                stopButton.setEnabled(speaking);
+                // nextButton.setEnabled(!speaking);
                 playButton.setEnabled(!speaking);
                 decoderComboBox.setEnabled(!speaking);
             }
