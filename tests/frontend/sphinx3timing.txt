@@ -5,7 +5,7 @@ To get the performance of the Sphinx 3j frontend:
 2. Type ./collectBatchTimings
 
 The following 3 tables show the times of running the Sphinx 3
-frontend 50 times on 0601/114739-hiker/19990601-114739-00000001.
+frontend 100 times on 0601/114739-hiker/19990601-114739-00000001.
 Sphinx 3 was compiled using the following gcc compiler:
 
 sunlabs 379 =>gcc -v 
@@ -18,39 +18,42 @@ gcc version 2.95.3 20010315 (release)
 ==================================
 
             Function     Total  Count   Average
-         preemphasis    0.1833 001020    0.0002
-       HammingWindow    0.2678 024225    0.0000
-   SpectrumMagnitude   22.0378 024225    0.0009
-         MelSpectrum    0.7122 024225    0.0000
-         MelCepstrum    1.5303 024225    0.0001
-                 cmn    0.0180 001020    0.0000
-    FeatureExtractor    0.0650 001020    0.0001
-Total Times 24.814381 seconds
+            FrontEnd   47.5473 002020    0.0235
+         preemphasis    0.3677 002121    0.0002
+       HammingWindow    0.5290 048076    0.0000
+   SpectrumMagnitude   39.7867 048076    0.0008
+         MelSpectrum    1.7739 048076    0.0000
+         MelCepstrum    3.2621 048076    0.0001
+                 cmn    0.0319 002020    0.0000
+    FeatureExtractor    0.0959 002020    0.0000
+Total Times 93.394569 seconds
 
 
 1-CPU 296MHz sparcv9 128MB (mute)
 =================================
 
             Function     Total  Count   Average
-         preemphasis    0.2209 001020    0.0002
-       HammingWindow    0.3282 024225    0.0000
-   SpectrumMagnitude   25.7744 024225    0.0011
-         MelSpectrum    0.7921 024225    0.0000
-         MelCepstrum    1.9100 024225    0.0001
-                 cmn    0.0233 001020    0.0000
-    FeatureExtractor    0.0661 001020    0.0001
-Total Times 29.115034 seconds
+            FrontEnd   52.6617 002020    0.0261
+         preemphasis    0.4404 002121    0.0002
+       HammingWindow    0.6028 048076    0.0000
+   SpectrumMagnitude   44.1186 048076    0.0009
+         MelSpectrum    2.0196 048076    0.0000
+         MelCepstrum    3.6369 048076    0.0001
+                 cmn    0.0388 002020    0.0000
+    FeatureExtractor    0.1137 002020    0.0001
+Total Times 103.632462 seconds
 
 
 Multi-CPU SunRay server (sunlabs)
 =================================
 
             Function     Total  Count   Average
-         preemphasis    0.2188 001020    0.0002
-       HammingWindow    0.2902 024225    0.0000
-   SpectrumMagnitude   20.6353 024225    0.0009
-         MelSpectrum    0.6436 024225    0.0000
-         MelCepstrum    1.6535 024225    0.0001
-                 cmn    0.0234 001020    0.0000
-    FeatureExtractor    0.0692 001020    0.0001
-Total Times 23.534042 seconds
+            FrontEnd   49.1192 002020    0.0243
+         preemphasis    0.4385 002121    0.0002
+       HammingWindow    0.5761 048076    0.0000
+   SpectrumMagnitude   40.6693 048076    0.0008
+         MelSpectrum    1.8866 048076    0.0000
+         MelCepstrum    3.2994 048076    0.0001
+                 cmn    0.0487 002020    0.0000
+    FeatureExtractor    0.1423 002020    0.0001
+Total Times 96.179993 seconds
