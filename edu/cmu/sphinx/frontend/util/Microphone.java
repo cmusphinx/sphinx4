@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.FileOutputStream;
 import java.io.File;
 
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.LinkedList;
@@ -375,12 +376,12 @@ public class Microphone extends DataProcessor implements AudioSource {
     }
 
 
-    private synchronized boolean getStarted() {
+    private boolean getStarted() {
         return started;
     }
 
 
-    private synchronized void setStarted(boolean started) {
+    private void setStarted(boolean started) {
         this.started = started;
     }
 
@@ -391,7 +392,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      *
      * @return true if recording, false if not recording
      */ 
-    public synchronized boolean getRecording() {
+    public boolean getRecording() {
         return recording;
     }
 
@@ -402,7 +403,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      * @param recording true to set this Microphone
      * in a recording state false to a non-recording state
      */
-    private synchronized void setRecording(boolean recording) {
+    private void setRecording(boolean recording) {
         this.recording = recording;
     }
 
@@ -415,7 +416,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      *
      * @return true if this Microphone thread has finished running
      */
-    private synchronized boolean getClosed() {
+    private boolean getClosed() {
         return closed;
     }
 
@@ -425,7 +426,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      *
      * @param closed true to terminate the Micrphone thread
      */
-    private synchronized void setClosed(boolean closed) {
+    private void setClosed(boolean closed) {
         this.closed = closed;
     }
 
@@ -462,7 +463,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      */
     class UtteranceList {
         
-        private List utterances = new LinkedList();
+        private List utterances = Collections.synchronizedList(new LinkedList());
         private Utterance currentUtterance = null;
         
         
@@ -472,9 +473,7 @@ public class Microphone extends DataProcessor implements AudioSource {
          * @param utterance the Utterance to add
          */
         public void add(Utterance utterance) {
-            synchronized (utterances) {
-                utterances.add(utterance);
-            }
+            utterances.add(utterance);
         }
 
 
@@ -506,10 +505,8 @@ public class Microphone extends DataProcessor implements AudioSource {
             if (currentUtterance == null) {
                 Object first = null;
 
-                synchronized (utterances) {
-                    if (utterances.size() > 0) {
-                        first = utterances.remove(0);
-                    }
+                if (utterances.size() > 0) {
+                    first = utterances.remove(0);
                 }
 
                 if (first != null) {
