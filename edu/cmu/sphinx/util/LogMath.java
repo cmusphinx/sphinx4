@@ -73,12 +73,13 @@ public final class LogMath implements Serializable {
     public final static boolean PROP_USE_ADD_TABLE_DEFAULT
 	= true;
 
+    private static double logZero = -Double.MAX_VALUE;
+    private static double logOne = 0.0;
+
     private double logBase;
     private boolean useAddTable;
     private transient double naturalLogBase;
     private transient double inverseNaturalLogBase;
-    private transient static double logZero;
-    private transient static double logOne;
     private transient double theAddTable[];
     private transient double maxLogValue;
     private transient double minLogValue;
@@ -157,15 +158,6 @@ public final class LogMath implements Serializable {
 	 naturalLogBase = Math.log(logBase);
 	 inverseNaturalLogBase = 1.0/naturalLogBase;
 
-	 // [[[ TODO: probably not right way to get logZero ]]]
-	 // EBG: Probably the right way is just to assign 
-	 // -MAX_VALUE to logZero
-
-	 // logZero = Math.log(Double.MIN_VALUE);
-	 logZero = -Double.MAX_VALUE;
-         logOne = 0.0;
-
-	 // System.out.println("Logz is " + logZero);
 
 	 // When converting a number from/to linear, we need to make
 	 // sure it's within certain limits to prevent it from
@@ -556,7 +548,7 @@ public final class LogMath implements Serializable {
      *
      * @return zero value in the log domain
      */
-    public final double getLogZero() {
+    public final static double getLogZero() {
 	return logZero;
     }
 
@@ -565,7 +557,7 @@ public final class LogMath implements Serializable {
      *
      * @return one value in the log domain
      */
-    public final double getLogOne() {
+    public final static double getLogOne() {
 	return logOne;
     }
 
