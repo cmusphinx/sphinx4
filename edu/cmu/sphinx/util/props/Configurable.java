@@ -32,18 +32,18 @@ package edu.cmu.sphinx.util.props;
  * before registering its own properties. 
  * 
  * <li> <b> Configuration</b> - shortly after registration, the component's 
- * <code>newData</code> method is called.  This method is called with a
+ * <code>newProperties</code> method is called.  This method is called with a
  * <code>PropertySheet</code> containing the properties (from the external
  * config file).  The component should extract the properties from the 
  * property sheet and validate them.  Invalid properties should be reported
  * by throwing a <code>PropertyException</code>. Typically, once a component
  * gets its configuration data via the <code>newData</code> method, the 
- * component will initialize itself.  Currently, the <code>newData</code> 
+ * component will initialize itself.  Currently, the <code>newProperties</code> 
  * method is called only once as a result of system configuration during 
  * startup. However, future extensions to the configuration manager may
  * allow configuration changes while the system is running. Therefore, a
- * well behaved component should react properly to multiple <code>newData</code>
- * calls.
+ * well behaved component should react properly to multiple 
+ * <code>newProperties</code> calls.
  * </ul>
  * 
  * <p><b>Connecting to other components</b> <p>
@@ -70,11 +70,11 @@ package edu.cmu.sphinx.util.props;
  *     }
  * </pre> </code>
  * 
- * <p> The linguist is made available in the <code>newData</code>
+ * <p> The linguist is made available in the <code>newProperties</code>
  * method, like so: <p>
  * 
  *  <code> <pre>
- *     public void newData(PropertySheet propertySheet) {
+ *     public void newProperties(PropertySheet propertySheet) {
  *      linguist = (Linguist) 
  *            propertySheet.getComponent(PROP_LINGUIST, Linguist.class);
  *     }
