@@ -35,11 +35,13 @@ import java.text.DecimalFormat;
  */
 public class Decoder {
 
+
     /**
      * Base property name for the decoder properties
      */
     private  final static String PROP_PREFIX =
 	"edu.cmu.sphinx.decoder.Decoder.";
+
 
     /**
      * A SphinxProperty name for a boolean property that when set will
@@ -48,6 +50,13 @@ public class Decoder {
      */
     public final static String PROP_SHOW_BEST_TOKEN =
 	PROP_PREFIX + "showBestToken";
+
+
+    /**
+     * The default value for the property PROP_SHOW_BEST_TOKEN.
+     */
+    public final static boolean PROP_SHOW_BEST_TOKEN_DEFAULT = false;
+
 
     /**
      * A SphinxProperty name for a boolean property that when set will
@@ -59,18 +68,39 @@ public class Decoder {
 
 
     /**
+     * The default value for the property PROP_SHOW_ACTUAL_TOKEN.
+     */
+    public final static boolean PROP_SHOW_ACTUAL_TOKEN_DEFAULT = false;
+
+
+    /**
      * A SphinxProperty name for a boolean property that when set will
      * cause the decoder to show all the tokens associated with an
      * error result
      */
     public final static String PROP_SHOW_ERROR_TOKEN =
 	PROP_PREFIX + "showErrorToken";
+
+
+    /**
+     * The default value for the property PROP_SHOW_ERROR_TOKEN.
+     */
+    public final static boolean PROP_SHOW_ERROR_TOKEN_DEFAULT = false;
+
+
     /**
      * A SphinxProperty name for a boolean property that when set will
      * cause the decoder to show all intermediate best token results
      */
     public final static String PROP_SHOW_PARTIAL_RESULTS =
 	PROP_PREFIX + "showPartialResults";
+
+
+    /**
+     * The default value for the property PROP_SHOW_PARTIAL_RESULTS.
+     */
+    public final static boolean PROP_SHOW_PARTIAL_RESULTS_DEFAULT = false;
+
 
     /**
      * A SphinxProperty name for a boolean property, that when set to
@@ -79,6 +109,15 @@ public class Decoder {
      */
     public final static String PROP_SHOW_PARTIAL_ACTUAL_RESULTS =
 	PROP_PREFIX + "showPartialActualResults";
+
+
+    /**
+     * The default value for the property PROP_SHOW_PARTIAL_ACTUAL_RESULTS.
+     */
+    public final static boolean PROP_SHOW_PARTIAL_ACTUAL_RESULTS_DEFAULT = 
+        false;
+
+
 
     private static DecimalFormat memFormat = new DecimalFormat("0.00 Mb");
     private static DecimalFormat timeFormat = new DecimalFormat("0.00");
@@ -153,15 +192,20 @@ public class Decoder {
 	props = SphinxProperties.getSphinxProperties(context);
 
 	showPartialResults =
-	    props.getBoolean(PROP_SHOW_PARTIAL_RESULTS, false);
+	    props.getBoolean(PROP_SHOW_PARTIAL_RESULTS, 
+                             PROP_SHOW_PARTIAL_RESULTS_DEFAULT);
 	showPartialActualResults =
-	    props.getBoolean(PROP_SHOW_PARTIAL_ACTUAL_RESULTS, false);
+	    props.getBoolean(PROP_SHOW_PARTIAL_ACTUAL_RESULTS,
+                             PROP_SHOW_PARTIAL_ACTUAL_RESULTS_DEFAULT);
 	showErrorToken =
-	    props.getBoolean(PROP_SHOW_ERROR_TOKEN, false);
+	    props.getBoolean(PROP_SHOW_ERROR_TOKEN,
+                             PROP_SHOW_ERROR_TOKEN_DEFAULT);
 	showBestToken =
-	    props.getBoolean(PROP_SHOW_BEST_TOKEN, false);
+	    props.getBoolean(PROP_SHOW_BEST_TOKEN,
+                             PROP_SHOW_BEST_TOKEN_DEFAULT);
 	showActualToken =
-	    props.getBoolean(PROP_SHOW_ACTUAL_TOKEN, false);
+	    props.getBoolean(PROP_SHOW_ACTUAL_TOKEN,
+                             PROP_SHOW_ACTUAL_TOKEN_DEFAULT);
 
         recognizer = null;        // first initialize it to null
         aligner = null;

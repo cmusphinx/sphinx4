@@ -47,18 +47,55 @@ public class BatchDecoder {
     private final static String PROP_PREFIX = 
 	"edu.cmu.sphinx.decoder.BatchDecoder.";
 
+
     /**
-     * The SphinxProperty name for how many files to skip.
+     * The SphinxProperty name for how many files to skip for every decode.
      */
     public final static String PROP_SKIP = PROP_PREFIX + "skip";
+
+    
+    /**
+     * The default value for the property PROP_SKIP.
+     */
+    public final static int PROP_SKIP_DEFAULT = 0;
+
+    
+    /**
+     * The SphinxProperty for which batch job
+     */
     public final static String PROP_WHICH_BATCH = PROP_PREFIX + "whichBatch";
+
+
+    /**
+     * The default value for the property PROP_WHICH_BATCH.
+     */
+    public final static int PROP_WHICH_BATCH_DEFAULT = 0;
+    
+
+    /**
+     * The SphinxProperty for the total number of batch jobs.
+     */
     public final static String PROP_TOTAL_BATCHES 
 	= PROP_PREFIX + "totalBatches";
+
+
+    /**
+     * The default value for the property PROP_TOTAL_BATCHES.
+     */
+    public final static int PROP_TOTAL_BATCHES_DEFAULT = 1;
+
 
     /**
      * The SphinxProperty name for the input data type.
      */
     public final static String PROP_INPUT_TYPE = PROP_PREFIX+"inputDataType";
+
+
+    /**
+     * The default value for the property PROP_INPUT_TYPE.
+     */
+    public final static String PROP_INPUT_TYPE_DEFAULT = "audio";
+
 
     private DataSource dataSource;
     private Decoder decoder;
@@ -103,10 +140,12 @@ public class BatchDecoder {
     private void init(SphinxProperties props, String batchFile) 
                                 throws IOException {
         context = props.getContext();
-	inputDataType = props.getString(PROP_INPUT_TYPE, "audio");
-	skip = props.getInt(PROP_SKIP, 0);
-	whichBatch = props.getInt(PROP_WHICH_BATCH, 0);
-	totalBatches = props.getInt(PROP_TOTAL_BATCHES, 1);
+	inputDataType = props.getString(PROP_INPUT_TYPE, 
+                                        PROP_INPUT_TYPE_DEFAULT);
+	skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
+	whichBatch = props.getInt(PROP_WHICH_BATCH, PROP_WHICH_BATCH_DEFAULT);
+	totalBatches = props.getInt(PROP_TOTAL_BATCHES, 
+                                    PROP_TOTAL_BATCHES_DEFAULT);
 
 	if (inputDataType.equals("audio")) {
 	    dataSource = new StreamAudioSource

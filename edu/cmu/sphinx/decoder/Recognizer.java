@@ -44,27 +44,32 @@ import java.util.StringTokenizer;
  */
 public class Recognizer {
 
+
     /**
      * The sphinx property name prefix for this Recognizer.
      */
     private final static String PROP_PREFIX =
         "edu.cmu.sphinx.decoder.Recognizer.";
 
+
     /**
      * The sphinx property name for the Linguist class.
      */
     public final static String PROP_LINGUIST = PROP_PREFIX + "linguist";
+
 
     /**
      * The default value for the sphinx property name for the Linguist class.
      */
     public final static String PROP_LINGUIST_DEFAULT =
 	"edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist";
+
     
     /**
      * The sphinx property name for the Grammar class.
      */
     public final static String PROP_GRAMMAR = PROP_PREFIX + "grammar";
+
 
     /**
      * The default value of the sphinx property name for the Grammar class.
@@ -72,16 +77,13 @@ public class Recognizer {
     public final static String PROP_GRAMMAR_DEFAULT =
 	"edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar";
 
-    /**
-     * The sphinx property name for the FrontEnd class.
-     */
-    public final static String PROP_FRONTEND = PROP_PREFIX + "frontend";
 
     /**
      * The sphinx property name for the AcousticScorer class.
      */
-    public final static String PROP_ACOUSTIC_SCORER = PROP_PREFIX +
-	"acousticScorer";
+    public final static String PROP_ACOUSTIC_SCORER = 
+        PROP_PREFIX + "acousticScorer";
+
     
     /**
      * The default value of the sphinx property name for the AcousticScorer
@@ -90,11 +92,13 @@ public class Recognizer {
     public final static String PROP_ACOUSTIC_SCORER_DEFAULT =
 	"edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer";
 
+
     /**
      * The sphinx property name for the SearchManager class.
      */
-    public final static String PROP_SEARCH_MANAGER = PROP_PREFIX +
-	"searchManager";
+    public final static String PROP_SEARCH_MANAGER = 
+        PROP_PREFIX + "searchManager";
+
 
     /**
      * The default value of the sphinx property name for the SearchManager
@@ -103,24 +107,46 @@ public class Recognizer {
     public final static String PROP_SEARCH_MANAGER_DEFAULT =
 	"edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager";
 
+
     /**
      * The sphinx property name for whether to output the sentence HMM.
      */
-    public final static String PROP_DUMP_SENTENCE_HMM = PROP_PREFIX +
-	"dumpSentenceHMM";
+    public final static String PROP_DUMP_SENTENCE_HMM = 
+        PROP_PREFIX + "dumpSentenceHMM";
+
+
+    /**
+     * The default value of the property PROP_DUMP_SENTENCE_HMM.
+     */
+    public final static boolean PROP_DUMP_SENTENCE_HMM_DEFAULT = false;
+
 
     /**
      * The sphinx property name for whether to output the FrontEnd.
      */
-    public final static String PROP_DUMP_FRONTEND = PROP_PREFIX +
-	"dumpFrontEnd";
+    public final static String PROP_DUMP_FRONTEND = 
+        PROP_PREFIX + "dumpFrontEnd";
+
+
+    /**
+     * The default value of the property PROP_DUMP_FRONTEND.
+     */
+    public final static boolean PROP_DUMP_FRONTEND_DEFAULT = false;
+
 
     /**
      * The sphinx property name for the number of features to
      * recognize at once.
      */
-    public final static String PROP_FEATURE_BLOCK_SIZE = PROP_PREFIX +
-        "featureBlockSize";
+    public final static String PROP_FEATURE_BLOCK_SIZE = 
+        PROP_PREFIX + "featureBlockSize";
+
+
+    /**
+     * The default value of the property PROP_FEATURE_BLOCK_SIZE.
+     */
+    public final static int PROP_FEATURE_BLOCK_SIZE_DEFAULT = 50;
+
 
     /**
      * A sphinx property name for (space separated) set of sentence
@@ -129,14 +155,27 @@ public class Recognizer {
     public final static String PROP_LINGUIST_PROCESSORS =
 	PROP_PREFIX + "linguistProcessors";
 
+
+    /**
+     * The default value for the property PROP_LINGUIST_PROCESSORS.
+     */
+    public final static String PROP_LINGUIST_PROCESSORS_DEFAULT = null;
+
+
     /**
      * A SphinxProperty name for the boolean property that controls
      * whether or not the recognizer will display detailed memory
      * information while it is running. The default value is
      * <code>true</code>.
      */
-    public final static String PROP_DUMP_MEMORY_INFO = PROP_PREFIX +
-        "dumpMemoryInfo";
+    public final static String PROP_DUMP_MEMORY_INFO = 
+        PROP_PREFIX + "dumpMemoryInfo";
+
+
+    /**
+     * The default value for the property PROP_DUMP_MEMORY_INFO.
+     */
+    public final static boolean PROP_DUMP_MEMORY_INFO_DEFAULT = false;
 
 
     private SphinxProperties props;       // sphinx properties
@@ -152,9 +191,10 @@ public class Recognizer {
     private int featureBlockSize = 50;    // the feature blocksize
 
     private Vector resultsListeners = new Vector();
-    private boolean dumpMemoryInfo = false;
-    private boolean dumpSentenceHMM = false;
-    private boolean dumpFrontEnd = false;
+
+    private boolean dumpMemoryInfo;
+    private boolean dumpSentenceHMM;
+    private boolean dumpFrontEnd;
 
 
     /**
@@ -171,9 +211,12 @@ public class Recognizer {
 	throws IOException {
 
         props = SphinxProperties.getSphinxProperties(context);
-        dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO, false);
-        dumpSentenceHMM = props.getBoolean(PROP_DUMP_SENTENCE_HMM, false);
-	dumpFrontEnd = props.getBoolean(PROP_DUMP_FRONTEND, false);
+        dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
+                                          PROP_DUMP_MEMORY_INFO_DEFAULT);
+        dumpSentenceHMM = props.getBoolean(PROP_DUMP_SENTENCE_HMM,
+                                           PROP_DUMP_SENTENCE_HMM_DEFAULT);
+	dumpFrontEnd = props.getBoolean(PROP_DUMP_FRONTEND,
+                                        PROP_DUMP_FRONTEND_DEFAULT);
 
         dumpMemoryInfo("recognizer start");
 
@@ -204,7 +247,8 @@ public class Recognizer {
         searchManager = getSearchManager(linguist, scorer, pruner);
         dumpMemoryInfo("search");
 
-        featureBlockSize = props.getInt(PROP_FEATURE_BLOCK_SIZE, 50);
+        featureBlockSize = props.getInt(PROP_FEATURE_BLOCK_SIZE,
+                                        PROP_FEATURE_BLOCK_SIZE_DEFAULT);
     }
 
     /**
@@ -425,7 +469,8 @@ public class Recognizer {
      * @param linguist the linguist
      */
     private void runLinguistProcessors(Linguist linguist) {
-	String processors = props.getString(PROP_LINGUIST_PROCESSORS, null);
+	String processors = props.getString(PROP_LINGUIST_PROCESSORS,
+                                            PROP_LINGUIST_PROCESSORS_DEFAULT);
 	if (processors != null) {
 	    StringTokenizer st = new StringTokenizer(processors);
 	    while (st.hasMoreTokens()) {

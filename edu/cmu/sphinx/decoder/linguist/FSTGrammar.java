@@ -71,17 +71,29 @@ import java.util.Set;
  */
 public class FSTGrammar extends Grammar {
 
+    
+    /**
+     * The SphinxProperty for the location of the FST n-gram file.
+     */
     public final static String PROP_PATH
 	= "edu.cmu.sphinx.decoder.linguist.FSTGrammar.path";
 
+
+    /**
+     * The default value for PROP_PATH.
+     */
+    public final static String PROP_PATH_DEFAULT = "default.arpa_gram";
+
+
     // TODO: If this property turns out to be worthwhile, turn this
     // into a full fledged sphinx property
-    private final static boolean addInitialSilenceNode = false;
-    private boolean ignoreUnknownTransitions = true;
+    private boolean addInitialSilenceNode = false;
 
     // TODO: If this property turns out to be worthwhile, turn this
     // into a full fledged sphinx property
     private boolean addOptionalSilence = false;
+
+    private boolean ignoreUnknownTransitions = true;
 
     private Map nodes = new HashMap();
     private Set expandedNodes = new HashSet();
@@ -110,7 +122,7 @@ public class FSTGrammar extends Grammar {
 	GrammarNode initialNode = null;
 	GrammarNode finalNode = null;
 
-	String path = props.getString(PROP_PATH, "default.arpa_gram");
+	String path = props.getString(PROP_PATH, PROP_PATH_DEFAULT);
 
 	// first pass create the FST nodes
 	int maxNodeId = createNodes(path);

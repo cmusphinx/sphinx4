@@ -30,8 +30,21 @@ import java.util.StringTokenizer;
  */
 public class BatchAligner {
 
+
+    /**
+     * Sphinx property to indicate the number of files to skip after every
+     * decode.
+     */
     public final static String PROP_SKIP = 
-    "edu.cmu.sphinx.decoder.BatchAligner.skip";
+        "edu.cmu.sphinx.decoder.BatchAligner.skip";
+
+
+    /**
+     * Default value for the property PROP_SKIP.
+     */
+    public final static int PROP_SKIP_DEFAULT = 0;
+
+
     private StreamAudioSource audioSource;
     private Decoder decoder;
     private String batchFile;
@@ -48,7 +61,7 @@ public class BatchAligner {
     public BatchAligner(String context, String batchFile) throws IOException {
 	this.context = context;
 	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-	skip = props.getInt(PROP_SKIP, 0);
+	skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
         audioSource = new StreamAudioSource("batchAudioSource", context, 
 					    null, null);
         decoder = new Decoder(context, audioSource);
