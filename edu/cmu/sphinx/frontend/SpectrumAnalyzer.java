@@ -12,14 +12,12 @@ import java.io.IOException;
 
 /**
  * Computes the FFT of an input sequence.
- * This is a code under construction. Lots of things need to
- * be revised. Don't use it as is!!! As yet.
  */
 public class SpectrumAnalyzer extends DataProcessor {
 
     /**
      * The name of the SphinxProperty for the number of points
-     * in the Fourier Transform, which is 256 by default.
+     * in the Fourier Transform, which is 512 by default.
      */
     public static final String PROP_NPOINT =
 	"edu.cmu.sphinx.frontend.fft.NPoint";
@@ -369,9 +367,9 @@ public class SpectrumAnalyzer extends DataProcessor {
     }
 
     /**
-     * Reads the next Data object, which is the power spectrum of the
-     * input frame. However, it can also be other Data objects
-     * like a EndPointSignal.
+     * Reads the next Data object, which is an audio frame from which
+     * we'll compute the power spectrum. However, it can also be other
+     * Data objects like a EndPointSignal.
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
