@@ -66,6 +66,19 @@ public interface LanguageModel {
      */
     public final static float PROP_UNIGRAM_WEIGHT_DEFAULT = 1.0f;
 
+
+    /**
+     * The Sphinx property specify the maximum depth of the language model.
+     */
+    public final static String PROP_MAX_DEPTH = PROP_PREFIX + ".maxDepth";
+
+
+    /**
+     * The default value for PROP_MAX_DEPTH.
+     */
+    public final static int PROP_MAX_DEPTH_DEFAULT = -1;
+
+
     /**
      * Initializes this LanguageModel
      *

@@ -107,6 +107,7 @@ public class LargeTrigramModel implements LanguageModel {
 
     private BinaryLoader loader;
 
+    private int maxDepth;
     private int bigramMisses;
     private int trigramMisses;
     private int trigramHit;
@@ -175,6 +176,12 @@ public class LargeTrigramModel implements LanguageModel {
 
         buildUnigramIDMap();
 	loadedBigramBuffers = new BigramBuffer[unigrams.length];
+
+        maxDepth = props.getInt(LanguageModel.PROP_MAX_DEPTH,
+                                LanguageModel.PROP_MAX_DEPTH_DEFAULT);        
+        if (maxDepth == LanguageModel.PROP_MAX_DEPTH_DEFAULT) {
+            maxDepth = loader.getMaxDepth();
+        }
 
         System.out.println("# of unigrams: " + loader.getNumberUnigrams());
         System.out.println("# of  bigrams: " + loader.getNumberBigrams());
@@ -254,15 +261,16 @@ public class LargeTrigramModel implements LanguageModel {
 	    logFile.println(wordSequence.toText());
 	}
 	int numberWords = wordSequence.size();
-        if (numberWords == 3) {
-            return getTrigramProbability(wordSequence);
-        } else if (numberWords == 2) {
-            return getBigramProbability(wordSequence);
-	} else if (numberWords == 1) {
-	    return getUnigramProbability(wordSequence);
-	} else {
-            throw new Error("Unsupported N-gram: " + wordSequence.size());
-        }
+        if (numberWords <= maxDepth) {
+            if (numberWords == 3) {
+                return getTrigramProbability(wordSequence);
+            } else if (numberWords == 2) {
+                return getBigramProbability(wordSequence);
+            } else if (numberWords == 1) {
+                return getUnigramProbability(wordSequence);
+            }
+	}
+        throw new Error("Unsupported N-gram: " + wordSequence.size());
     }
 
 
@@ -629,10 +637,10 @@ public class LargeTrigramModel implements LanguageModel {
     /**
      * Returns the maximum depth of the language model
      *
-     * @return the maximum depth of the language mdoel
+     * @return the maximum depth of the language model
      */
     public int getMaxDepth() {
-        return loader.getMaxDepth();
+        return maxDepth;
     }
 
 
