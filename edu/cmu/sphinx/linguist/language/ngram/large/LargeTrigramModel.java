@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
@@ -142,6 +144,7 @@ public class LargeTrigramModel implements LanguageModel {
     // ------------------------------
     // Configuration data
     // ------------------------------
+    private Logger logger;
     private LogMath logMath;
     private String name;
     private String ngramLogFile;
@@ -219,6 +222,7 @@ public class LargeTrigramModel implements LanguageModel {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        logger = ps.getLogger();
         format = ps.getString(LanguageModel.PROP_FORMAT,
                 LanguageModel.PROP_FORMAT_DEFAULT);
         location = ps.getString(LanguageModel.PROP_LOCATION,
@@ -287,9 +291,9 @@ public class LargeTrigramModel implements LanguageModel {
             throw new Error("Invalid LM max-depth: " + maxDepth);
         }
 
-        System.out.println("# of unigrams: " + loader.getNumberUnigrams());
-        System.out.println("# of  bigrams: " + loader.getNumberBigrams());
-        System.out.println("# of trigrams: " + loader.getNumberTrigrams());
+        logger.info("Unigrams: " + loader.getNumberUnigrams());
+        logger.info("Bigrams: " + loader.getNumberBigrams());
+        logger.info("Trigrams: " + loader.getNumberTrigrams());
 
         if (calculateUnigramSmear) {
             buildSmearInfo();
@@ -324,7 +328,7 @@ public class LargeTrigramModel implements LanguageModel {
         }
 
         if (missingWords > 0) {
-            System.out.println("Warning: Dictionary is missing " + missingWords
+            logger.warning("Dictionary is missing " + missingWords
                     + " words that are contained in the language model.");
         }
     }
@@ -367,7 +371,7 @@ public class LargeTrigramModel implements LanguageModel {
         // loadedBigramBuffers = new BigramBuffer[unigrams.length];
         loadedTrigramBuffer = new HashMap();
 
-        System.out.println("LM Cache: 3-g " + trigramCache.size() + " 2-g "
+        logger.info("LM Cache: 3-g " + trigramCache.size() + " 2-g "
                 + bigramCache.size());
 
         if (clearCacheAfterUtterance) {
@@ -480,8 +484,8 @@ public class LargeTrigramModel implements LanguageModel {
                 smearTerm = (float) unigramSmearTerm[wordID];
             }
         }
-        if (calculateUnigramSmear && true) {
-            System.out.println("SmearTerm: " + smearTerm);
+        if (calculateUnigramSmear && logger.isLoggable(Level.FINE)) {
+            logger.fine("SmearTerm: " + smearTerm);
         }
         return smearTerm;
     }
