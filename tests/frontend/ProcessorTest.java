@@ -16,7 +16,7 @@ import java.net.URL;
 
 
 /**
- * Test program for the Preemphasizer.
+ * Test module for a FrontEnd processor.
  */
 public class ProcessorTest {
 
@@ -27,7 +27,23 @@ public class ProcessorTest {
     String context;
 
     /**
-     * Constructs a ProcessorTest.
+     * Constructs a ProcessorTest, with the given test name, propertiesFile,
+     * and audioSourceFile. Whether this test is in batch mode is
+     * determined by the Sphinx property:
+     *
+     * <pre>tests.frontend.<testName>.batchMode</pre>
+     *
+     * If batch mode is used, then the parameter "audioSourceFile" refers
+     * to the file contain the list of files to test.
+     *
+     * If it is not in batch mode, then the paramter "audioSourceFile"
+     * refers to the audio file to test.
+     *
+     * @param testName name of the test
+     * @param propertiesFile the SphinxProperties file
+     * @param audioSourceFile if in batch mode, this refers to the batch file
+     *    containing the list of files to test, if not in batch mode, this
+     *    refers to the audio file to test
      */
     public ProcessorTest
     (String testName, String propertiesFile, String audioSourceFile) throws
@@ -45,8 +61,8 @@ public class ProcessorTest {
         String pwd = System.getProperty("user.dir");
         SphinxProperties.initContext
             (testName, new URL
-             ("file://" + pwd + File.separatorChar + audioSourceFile));
-        
+             ("file://" + pwd + File.separatorChar + propertiesFile));
+                
         if (batchMode) {
             audioSource = 
                 (new BatchFileAudioSource
@@ -60,16 +76,31 @@ public class ProcessorTest {
     }
 
 
+    /**
+     * Returns the AudioSource of this test.
+     *
+     * @return the AudioSource of this test
+     */
     public AudioSource getAudioSource() {
         return audioSource;
     }
 
 
+    /**
+     * Returns true if this test will dump results.
+     *
+     * @return true if this test will dump results
+     */
     public boolean getDump() {
         return dumpValues;
     }
 
 
+    /**
+     * Returns true if this test will dump the timing data.
+     *
+     * @return true if this test will dump the timing data
+     */
     public boolean getDumpTimes() {
         return dumpTimes;
     }
