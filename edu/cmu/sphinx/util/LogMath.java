@@ -274,8 +274,7 @@ public final class LogMath implements Serializable {
      * @return sum of val1 and val2 in the log domain
      */
     public final float addAsLinear(float logVal1, float logVal2) {
-	float logHighestValue;
-	float returnValue;
+        float logHighestValue = logVal1;
 	float logDifference = logVal1 - logVal2;
 
 	/*
@@ -285,11 +284,9 @@ public final class LogMath implements Serializable {
 	 */
 
 	// difference is always a positive number
-	if (logDifference > 0) {
-	    logHighestValue = logVal1;
-	} else {
+	if (logDifference < 0) {
 	    logHighestValue = logVal2;
-	    logDifference = logVal2 - logVal1;
+            logDifference = -logDifference;
 	}
 	return logHighestValue + addTable(logDifference);
     }
