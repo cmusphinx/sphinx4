@@ -97,8 +97,7 @@ fi
 # Log the build information
 #############################
 cd $regressionDir
-echo "build|$date|$time|$machine|$who|make|$status|$totalBuildTime|$totalRunTime|" | updateLog
-
+echo "build|$date|$time|$machine|$who|make|$status|$totalBuildTime|$totalRunTime|$testType|" | updateLog
 
 
 #################################
