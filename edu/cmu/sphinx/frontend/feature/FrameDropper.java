@@ -17,6 +17,8 @@ import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.FloatData;
+import edu.cmu.sphinx.frontend.DoubleData;
+import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
@@ -59,7 +61,7 @@ public class FrameDropper extends BaseDataProcessor {
         = false;
 
 
-    private FloatData lastFeature;
+    private Data lastFeature;
     private boolean replaceNthWithPrevious;
     private int dropEveryNthFrame;
     private int id;   // first frame has ID "0", second "1", etc.
@@ -118,21 +120,33 @@ public class FrameDropper extends BaseDataProcessor {
      * @throws DataProcessingException if a data processing error occurs
      */
     public Data getData() throws DataProcessingException {
-        Data feature = getPredecessor().getData();
+        Data feature = readData();
         if (feature != null) {
-            if (feature instanceof FloatData) {
+            if (! (feature instanceof Signal)) {
                 if ((id % dropEveryNthFrame) == (dropEveryNthFrame - 1)) {
                     // should drop the feature
                     if (replaceNthWithPrevious) {
                         // replace the feature
-                        feature = new FloatData
-                            (lastFeature.getValues(),
-                             lastFeature.getSampleRate(),
-			     lastFeature.getCollectTime(),
-                             lastFeature.getFirstSampleNumber());
+                        if (feature instanceof FloatData) {
+                            FloatData floatLastFeature = (FloatData)
+                                lastFeature;
+                            feature = new FloatData
+                                (floatLastFeature.getValues(),
+                                 floatLastFeature.getSampleRate(),
+                                 floatLastFeature.getCollectTime(),
+                                 floatLastFeature.getFirstSampleNumber());
+                        } else {
+                            DoubleData doubleLastFeature  = (DoubleData)
+                                lastFeature;
+                            feature = new DoubleData
+                                (doubleLastFeature.getValues(),
+                                 doubleLastFeature.getSampleRate(),
+                                 doubleLastFeature.getCollectTime(),
+                                 doubleLastFeature.getFirstSampleNumber());
+                        }
                     } else {
                         // read the next feature
-                        feature = getPredecessor().getData();
+                        feature = readData();
                     }
                 }
             }
