@@ -444,7 +444,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
             }
             endLowFrames++;
         } else {
-            if (startLowFrames > 1) {
+            if (startLowFrames > maxDropout) {
                 startHighFrames = 0;
             }
             startLowFrames++;
@@ -514,6 +514,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
         } else {
             startHighFrames++;
         }
+        
         location = ABOVE_START_HIGH;
         endLowFrames = 0;
     }
@@ -608,6 +609,10 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
                 }
             }
         }
+        /*
+        System.out.println("Inserting SPEECH_START, startHighFrames: " +
+                           startHighFrames);
+        */
         outputQueue.add(index, (new Cepstrum(Signal.SPEECH_START)));
     }
 
