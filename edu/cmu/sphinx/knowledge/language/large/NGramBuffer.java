@@ -111,16 +111,18 @@ public class NGramBuffer {
      * @return the next two bytes as an integer
      */
     public final int readTwoBytesAsInt() {
-        int value = (0x000000ff & buffer[position++]);
         if (bigEndian) {
-            value <<= 8;
+	    int value = (0x000000ff & buffer[position++]);
+	    value <<= 8;
             value |= (0x000000ff & buffer[position++]);
+	    return value;
         } else {
-            int second = (0x000000ff & buffer[position++]);
-            second <<= 8;
-            value |= second;
+            int value = (0x000000ff & buffer[position+1]);
+	    value <<= 8;
+            value |= (0x000000ff & buffer[position]);
+	    position += 2;
+	    return value;
         }
-        return value;
     }
 
 }
