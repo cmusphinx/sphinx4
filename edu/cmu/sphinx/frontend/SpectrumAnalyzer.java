@@ -81,7 +81,6 @@ public class SpectrumAnalyzer extends DataProcessor {
      */
     private Spectrum process (AudioFrame input) 
 	throws IllegalArgumentException {
-        getTimer().start();
 
 	/**
 	 * Create complex input sequence equivalent to the real
@@ -133,8 +132,6 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 */
 	Spectrum output = new Spectrum(outputSpectrum);
 
-        getTimer().stop();
-	
         if (getDump()) {
             System.out.println("SPEC_MAGNITUDE " + output.toString());
         }
@@ -387,6 +384,8 @@ public class SpectrumAnalyzer extends DataProcessor {
 
 	Data input = getSource().read();
         
+        getTimer().start();
+
         if (input instanceof AudioFrame) {
 
             input = process((AudioFrame) input);
@@ -397,6 +396,8 @@ public class SpectrumAnalyzer extends DataProcessor {
         // whatever data came last, even if we had less than
         // windowSize of data.
         
+        getTimer().stop();
+	
 	return input;
     }	
 }

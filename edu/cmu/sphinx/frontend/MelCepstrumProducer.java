@@ -87,9 +87,13 @@ public class MelCepstrumProducer extends DataProcessor {
 
 	Data input = getSource().read();
         
+        getTimer().start();
+
         if (input instanceof MelSpectrum) {
             input = process((MelSpectrum) input);
         }
+
+        getTimer().stop();
 
 	return input;
     }
@@ -105,8 +109,6 @@ public class MelCepstrumProducer extends DataProcessor {
      */
     private Cepstrum process(MelSpectrum input) throws IllegalArgumentException {
 
-        getTimer().start();
-
         double[] melspectrum = input.getMelSpectrumData();
 
         if (melspectrum.length != numberMelFilters) {
@@ -120,7 +122,7 @@ public class MelCepstrumProducer extends DataProcessor {
             if (melspectrum[i] > 0) {
                 melspectrum[i] = Math.log(melspectrum[i]);
             } else {
-		// in case melspectrum[i] isn;t greater than 0
+		// in case melspectrum[i] isn't greater than 0
 		// instead of trying to compute a log we just
 		// assign a very small number
                 melspectrum[i] = -1.0e+5;
@@ -129,8 +131,6 @@ public class MelCepstrumProducer extends DataProcessor {
 
         // create the cepstrum by apply the melcosine filter
         float[] cepstrumData = applyMelCosine(melspectrum);
-
-        getTimer().stop();
 
 	Cepstrum cepstrum = new Cepstrum(cepstrumData);
 
@@ -153,7 +153,7 @@ public class MelCepstrumProducer extends DataProcessor {
         float beta = 0.5f;
         
         // apply the melcosine filter
-        for (int i = 0; i < cepstrumSize; i++) {
+        for (int i = 0; i < cepstrumData.length; i++) {
             
             if (numberMelFilters > 0) {
                 float[] melcosine_i = melcosine[i];

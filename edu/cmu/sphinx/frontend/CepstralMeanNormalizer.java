@@ -42,12 +42,14 @@ public class CepstralMeanNormalizer extends DataProcessor {
     public static final String PROP_INITIAL_MEAN =
 	"edu.cmu.sphinx.frontend.cmn.initialCepstralMean";
 
+
     /**
      * The name of the SphinxProperty for the CMN window size,
      * which has a default value of 500.
      */
     public static final String PROP_CMN_WINDOW =
 	"edu.cmu.sphinx.frontend.cmn.windowSize";
+
 
     /**
      * The name of the SphinxProperty for the CMN shifting window,
@@ -59,14 +61,14 @@ public class CepstralMeanNormalizer extends DataProcessor {
 	"edu.cmu.sphinx.frontend.cmn.shiftWindow";
 
 
-    private float initialMean;
-    private int cepstrumLength;
-    private int numberFrame;
-    private float[] currentMean;
-    private float[] sum;
-    private int cmnShiftWindow;
+    private float initialMean;     // initial mean, magic number
+    private int cepstrumLength;    // length of a Cepstrum
+    private int numberFrame;       // total number of input Cepstrum
+    private float[] currentMean;   // array of current means
+    private float[] sum;           // array of current sums
+    private int cmnShiftWindow;    // # of Cepstrum to recalculate mean
     private int cmnWindow;
-    
+  
 
     /**
      * Constructs a default CepstralMeanNormalizer with the given
@@ -118,28 +120,23 @@ public class CepstralMeanNormalizer extends DataProcessor {
 	
         Data input = getSource().read();
 
+        getTimer().start();
+
         if (input instanceof Cepstrum) {
-            return process((Cepstrum) input);
-        
+
+            input = process((Cepstrum) input);
+
         } else if (input instanceof EndPointSignal) {
             
             EndPointSignal signal = (EndPointSignal) input;
 
-            if (signal.equals(EndPointSignal.FRAME_END)) {
-                
-                // Shift buffers down if we have more 
-                // than cmnShiftWindow frames
-                
-                if (numberFrame > cmnShiftWindow) {
-                    updateMeanSumBuffers();
-                }
-            } else if (signal.equals(EndPointSignal.SEGMENT_END)) {
+            if (signal.equals(EndPointSignal.SEGMENT_END)) {
                 updateMeanSumBuffers();
-                return input;
-            } else if (signal.equals(EndPointSignal.SEGMENT_START)) {
-                return input;
             }
         }
+
+        getTimer().stop();
+
         return input;
     }
     
@@ -152,8 +149,6 @@ public class CepstralMeanNormalizer extends DataProcessor {
      * @return a normalized Cepstrum
      */
     private Data process(Cepstrum cepstrumObject) {
-	
-        getTimer().start();
 
         float[] cepstrum = cepstrumObject.getCepstrumData();
         for (int j = 0; j < cepstrum.length; j++) {
@@ -163,7 +158,9 @@ public class CepstralMeanNormalizer extends DataProcessor {
 
         numberFrame++;
 
-        getTimer().stop();
+        if (numberFrame > cmnShiftWindow) {
+            updateMeanSumBuffers();
+        }
 
         if (getDump()) {
             System.out.println("CMN_CEPSTRUM " + cepstrumObject.toString());
@@ -179,10 +176,9 @@ public class CepstralMeanNormalizer extends DataProcessor {
      * with numberFrames.
      */
     private void updateMeanSumBuffers() {
-        
-        getTimer().start();
 
         if (numberFrame > 0) {
+
             // update the currentMean buffer with the sum buffer
             float sf = (float) (1.0/numberFrame);
             
@@ -196,8 +192,6 @@ public class CepstralMeanNormalizer extends DataProcessor {
                 numberFrame = cmnWindow;
             }
         }
-
-        getTimer().stop();
     }
 
 
@@ -208,8 +202,7 @@ public class CepstralMeanNormalizer extends DataProcessor {
      * @param multipler the amount to multiply by
      */
     private static final void multiplyArray(float[] array, float multiplier) {
-        int arrayLength = array.length;
-        for (int i = 0; i < arrayLength; i++) {
+        for (int i = 0; i < array.length; i++) {
             array[i] *= multiplier;
         }
     }

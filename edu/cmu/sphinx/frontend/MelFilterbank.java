@@ -256,10 +256,6 @@ public class MelFilterbank extends DataProcessor {
     private MelSpectrum process (Spectrum input) throws 
         IllegalArgumentException {
 
-	MelSpectrum outputMelSpectrum;
-
-        getTimer().start();
-
 	double[] in = input.getSpectrumData();
 
 	if (in.length != (numberFftPoints >> 1)) {
@@ -277,9 +273,7 @@ public class MelFilterbank extends DataProcessor {
 	    outputMelFilterbank[i] = filter[i].filterOutput(in);
 	}
 
-        getTimer().stop();
-	
-	outputMelSpectrum = new MelSpectrum(outputMelFilterbank);
+	MelSpectrum outputMelSpectrum = new MelSpectrum(outputMelFilterbank);
 
         if (getDump()) {
             System.out.println("MEL_SPECTRUM   " +
@@ -305,10 +299,15 @@ public class MelFilterbank extends DataProcessor {
 
 	Data input = getSource().read();
         
+        getTimer().start();
+
         if (input instanceof Spectrum) {
 
             input = process((Spectrum) input);
         }
+
+        getTimer().stop();
+	
       	return input;
     }	
 }
