@@ -13,9 +13,11 @@
 package edu.cmu.sphinx.linguist.acoustic.trivial;
 
 import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
@@ -110,6 +112,15 @@ public class TrivialAcousticModel implements AcousticModel {
     public String getName()  {
         return name;
     }
+
+    /**
+     * Returns the properties of this acoustic model.
+     *
+     * @return the properties of this acoustic model
+     */
+    public Properties getProperties() {
+        return new Properties();
+    }
     
     /**
      * Given a unit, returns the HMM that best matches the given unit.
@@ -177,17 +188,6 @@ public class TrivialAcousticModel implements AcousticModel {
       */
      public int getRightContextSize() {
          return rightContextSize;
-     }
-
-
-     /**
-      * Returns the properties that were used to build this model
-      *
-      * @return the properties used to build this model (or null if
-      * they are not available).
-      */
-     public SphinxProperties getProperties() {
-         return SphinxProperties.getSphinxProperties("--empty--");
      }
 
      /**
