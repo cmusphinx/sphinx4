@@ -72,6 +72,25 @@ public class PartitionActiveList implements ActiveList  {
 
 
     /**
+     * Creats a new empty  partition active list with the same
+     * properties as the given list
+     *
+     * @param old the list to base this new list on
+     */ 
+    public PartitionActiveList(PartitionActiveList old) {
+        this.props = old.props;
+        this.logMath = old.logMath;
+        this.absoluteBeamWidth = old.absoluteBeamWidth;
+        this.relativeBeamWidth = old.relativeBeamWidth;
+        int listSize = PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT;
+        if (absoluteBeamWidth > 0) {
+            listSize = absoluteBeamWidth;
+        }
+        this.tokenList = new Token[listSize];
+    }
+
+
+    /**
      * Returns the SphinxProperties of this list.
      *
      * @return the properties of this list
@@ -138,13 +157,8 @@ public class PartitionActiveList implements ActiveList  {
      * @return the new active list
      */
     public ActiveList createNew() {
-	PartitionActiveList newList = new PartitionActiveList(props);
-	newList.absoluteBeamWidth = absoluteBeamWidth;
-	newList.relativeBeamWidth = relativeBeamWidth;
-
-	return newList;
+	return new PartitionActiveList(this);
     }
-
 
     /**
      * Adds the given token to the list
