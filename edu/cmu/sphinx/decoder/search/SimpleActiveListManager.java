@@ -14,7 +14,9 @@ package edu.cmu.sphinx.decoder.search;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 import edu.cmu.sphinx.linguist.WordSearchState;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -48,29 +50,22 @@ public class SimpleActiveListManager implements ActiveListManager {
      * Sphinx property that defines the name of the active list factory to be
      * used by this search manager.
      */
-    public final static String PROP_ACTIVE_LIST_FACTORY = "activeListFactory";
+    public final static String PROP_ACTIVE_LIST_FACTORIES = 
+        "activeListFactories";
 
-    /**
-     * Sphinx property that defines the name of the word active list factory to
-     * be used by this search manager. The Word active list typically has
-     * narrower relative and absolute beams than the standard factory.
-     */
-    public final static String PROP_WORD_ACTIVE_LIST_FACTORY = "wordActiveListFactory";
     // --------------------------------------
     // Configuration data
     // --------------------------------------
     private String name;
+    private Logger logger;
     private boolean checkPriorLists;
-    private ActiveListFactory activeListFactory;
-    private ActiveListFactory wordActiveListFactory;
+    private List activeListFactories;
     private int absoluteWordBeam;
     private double relativeWordBeam;
+    private ActiveList emittingActiveList;
 
     private Class[] searchStateOrder;
-    private Class[] nonEmittingClasses;
-    private Class emittingClass;
     private AbstractMap listMap = new HashMap();
-    private ActiveList emittingActiveList;
 
     /*
      * (non-Javadoc)
@@ -81,9 +76,8 @@ public class SimpleActiveListManager implements ActiveListManager {
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
-        registry.register(PROP_ACTIVE_LIST_FACTORY, PropertyType.COMPONENT);
-        registry
-                .register(PROP_WORD_ACTIVE_LIST_FACTORY, PropertyType.COMPONENT);
+        registry.register(PROP_ACTIVE_LIST_FACTORIES,
+                PropertyType.COMPONENT_LIST);
         registry.register(PROP_CHECK_PRIOR_LISTS_EMPTY, PropertyType.BOOLEAN);
         
     }
@@ -94,10 +88,9 @@ public class SimpleActiveListManager implements ActiveListManager {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        activeListFactory = (ActiveListFactory) ps.getComponent(
-                PROP_ACTIVE_LIST_FACTORY, ActiveListFactory.class);
-        wordActiveListFactory = (ActiveListFactory) ps.getComponent(
-                PROP_WORD_ACTIVE_LIST_FACTORY, ActiveListFactory.class);
+        logger = ps.getLogger();
+        activeListFactories =  ps.getComponentList(PROP_ACTIVE_LIST_FACTORIES, 
+                    ActiveListFactory.class);
         checkPriorLists = ps.getBoolean(PROP_CHECK_PRIOR_LISTS_EMPTY,
                 PROP_CHECK_PRIOR_LISTS_EMPTY_DEFAULT);
     }
@@ -117,16 +110,21 @@ public class SimpleActiveListManager implements ActiveListManager {
      * @see edu.cmu.sphinx.decoder.search.ActiveListManager#setStateOrder(java.lang.Class[])
      */
     public void setStateOrder(Class[] searchStateOrder) {
+        // check to make sure that we have the correct
+        // number of active list factories for the given searc states
         this.searchStateOrder = searchStateOrder;
-        emittingClass = searchStateOrder[searchStateOrder.length - 1];
-        nonEmittingClasses = new Class[searchStateOrder.length - 1];
 
-        // assign the non-emitting classes
-        for (int i = 0; i < nonEmittingClasses.length; i++) {
-            nonEmittingClasses[i] = searchStateOrder[i];
+        if (activeListFactories.size() == 0) {
+            logger.severe("No active list factories configured");
+            dumpStateOrder();
+            throw new Error("No active list factories configured");
         }
-
-        // create the emitting and non-emitting active lists
+        if (activeListFactories.size() != searchStateOrder.length) {
+            logger.warning("Need " + searchStateOrder.length + 
+                    " active list factories, found " +
+                    activeListFactories.size());
+            dumpStateOrder();
+        }
         createActiveLists();
     }
 
@@ -139,22 +137,37 @@ public class SimpleActiveListManager implements ActiveListManager {
         return searchStateOrder;
     }
 
+    /*
+     * Dumps the state order for this list manager
+     */
+    public void dumpStateOrder() {
+        for (int i = 0; i < searchStateOrder.length; i++) {
+            logger.warning("State " + i + ": " +
+                    searchStateOrder[i].getName());
+        }
+    }
+
     /**
      * Creates the emitting and non-emitting active lists. When creating the
      * non-emitting active lists, we will look at their respective beam widths
      * (eg, word beam, unit beam, state beam).
      */
     private void createActiveLists() {
-        emittingActiveList = activeListFactory.newInstance();
-        for (int i = 0; i < nonEmittingClasses.length; i++) {
-            ActiveList list;
-
-            if (WordSearchState.class.isAssignableFrom(nonEmittingClasses[i])) {
-                list = wordActiveListFactory.newInstance();
-            } else {
-                list = activeListFactory.newInstance();
+        int nlists = activeListFactories.size();
+        for (int i = 0; i < searchStateOrder.length; i++) {
+            int which = i;
+            if (which >= nlists) {
+                which = nlists - 1;
             }
-            listMap.put(nonEmittingClasses[i], list);
+            ActiveListFactory alf = 
+                    (ActiveListFactory) activeListFactories.get(which);
+            ActiveList activeList = alf.newInstance();
+
+            if (i < searchStateOrder.length - 1) {
+                listMap.put(searchStateOrder[i], activeList);
+            } else {
+                emittingActiveList = activeList;
+            }
         }
     }
 
@@ -178,13 +191,10 @@ public class SimpleActiveListManager implements ActiveListManager {
         if (token.isEmitting()) {
             return emittingActiveList;
         } else {
-            return findListFor(token.getSearchState().getClass());
+            return (ActiveList) listMap.get(token.getSearchState().getClass());
         }
     }
 
-    private ActiveList findListFor(Class type) {
-        return (ActiveList) listMap.get(type);
-    }
 
     /**
      * Replaces an old token with a new token
@@ -233,14 +243,14 @@ public class SimpleActiveListManager implements ActiveListManager {
         }
 
         public boolean hasNext() {
-            return (listPtr < nonEmittingClasses.length);
+            return (listPtr < searchStateOrder.length - 1);
         }
 
         public Object next() {
             if (checkPriorLists) {
                 checkPriorLists();
             }
-            stateClass = nonEmittingClasses[listPtr++];
+            stateClass = searchStateOrder[listPtr++];
             list = (ActiveList) listMap.get(stateClass);
             return list;
         }
@@ -250,10 +260,11 @@ public class SimpleActiveListManager implements ActiveListManager {
          */
         private void checkPriorLists() {
             for (int i = 0; i < listPtr; i++) {
-                ActiveList activeList = findListFor(nonEmittingClasses[i]);
+                ActiveList activeList = (ActiveList) 
+                                listMap.get(searchStateOrder[i]);
                 if (activeList.size() > 0) {
-                    throw new Error("At " + nonEmittingClasses[listPtr]
-                            + ". List for " + nonEmittingClasses[i]
+                    throw new Error("At " + searchStateOrder[listPtr]
+                            + ". List for " + searchStateOrder[i]
                             + " should not have tokens.");
                 }
             }

@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.Map;
 import java.util.Set;
 
@@ -191,6 +193,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     // Configuration data
     // -----------------------------------
     private String name;
+    private Logger logger;
     private boolean showTokenCount;
     private boolean checkStateOrder;
     private boolean buildWordLattice;
@@ -257,6 +260,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+        logger = ps.getLogger();
         linguist = (Linguist) ps.getComponent(PROP_LINGUIST, Linguist.class);
         pruner = (Pruner) ps.getComponent(PROP_PRUNER, Pruner.class);
         scorer = (AcousticScorer) ps.getComponent(PROP_SCORER,
@@ -458,8 +462,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         growTimer.start();
         Iterator iterator = activeList.iterator();
         float relativeBeamThreshold = activeList.getBeamThreshold();
-        if (false) {
-            System.out.println("thresh : " + relativeBeamThreshold + " bs "
+        if (logger.isLoggable(Level.FINE)) {
+            logger.fine("Frame: " + currentFrameNumber 
+                    + " thresh : " + relativeBeamThreshold + " bs "
                     + activeList.getBestScore() + " tok "
                     + activeList.getBestToken());
         }
