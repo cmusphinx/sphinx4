@@ -250,6 +250,19 @@ public class Utilities {
 	return bits;
     }
 
+
+    /**
+     * Byte-swaps the given integer to the other endian. That is, if this
+     * integer is big-endian, it becomes little-endian, and vice-versa.
+     *
+     * @param integer the integer to swap
+     */
+    public static int swapInteger(int integer) {
+	return (((0x000000ff & integer) << 24) |
+		((0x0000ff00 & integer) << 8) |
+		((0x00ff0000 & integer) >> 8) |
+		((0xff000000 & integer) >> 24));
+    }
 }
 
   
