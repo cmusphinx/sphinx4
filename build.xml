@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="all" name="Sphinx-4">
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Where to find things...                                * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <path id="extra_libs">
+        <fileset dir="lib" includes="**/jsapi.jar"/>
+    </path>
+    <property name="src_dir"		value="."/>
+    <property name="build_dir"		value="bld"/>
+    <property name="classes_dir"	value="${build_dir}/classes"/>
+    <property name="lib_dir"            value="${build_dir}/lib"/>
+    <property name="javadoc_dir"	value="${build_dir}/javadoc"/>
+    <property name="javadoc_zip"	value="javadoc.zip"/>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Builds srcs, voices, lexicons, jars, demos             * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="all"
+	    depends="compile_src,javadoc"
+	    description="Build everything">
+	<echo message="Build complete."/>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Builds just the srcs.                                  * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="compile_src"
+	    description="Build just the srcs">
+        <copy file="lib/jsapi.jar" todir="${lib_dir}"/>
+	<mkdir dir="${classes_dir}"/>
+	<javac debug="true"
+	       source="1.4"
+	       deprecation="true"
+	       srcdir="${src_dir}"
+	       includes="edu/**,com/**"
+	       destdir="${classes_dir}">
+	    <classpath refid="extra_libs"/>
+	</javac>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Generates the javadoc                                  * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <property name="javadoc_desc" value="Sphinx-4"/>
+
+    <target name="javadoc" description="Generate javadoc">
+        <mkdir dir="${javadoc_dir}"/>
+        <javadoc sourcepath="${src_dir}"
+	         source="1.4"
+		 additionalparam="-breakiterator"
+		 destdir="${javadoc_dir}" 
+		 packagenames="edu.*"
+	         excludepackagenames="edu.cmu.sphinx.jsapi"
+		 overview="${src_dir}/overview.html"
+		 windowtitle="${javadoc_desc}"
+                 doctitle="${javadoc_desc}"
+                 access="private">
+	    <classpath refid="extra_libs"/>
+        </javadoc>
+    </target>
+
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * -->
+    <!-- * Deletes all build output and *~ file droppings         * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** --> 
+    <target name="clean" description="Delete all build output">
+	<delete>
+	    <fileset defaultexcludes="no" dir="." includes="**/*~"/>
+	</delete>
+	<delete dir="${build_dir}"/>
+    </target>
+
+</project>
