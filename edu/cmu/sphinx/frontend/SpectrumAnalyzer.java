@@ -138,7 +138,7 @@ SpectrumSource {
 	/**
 	 * Create output sequence.
 	 */
-	double[] outputSpectrum = new double[numberFftPoints/2 + 1];
+	double[] outputSpectrum = new double[numberFftPoints >> 1 + 1];
 
 	/**
 	 * Start Fast Fourier Transform recursion
@@ -236,7 +236,7 @@ SpectrumSource {
             w = -w;
         }
 	
-	for (int k = 0; k < (numberFftPoints / 2); k++) {
+	for (int k = 0; k < (numberFftPoints >> 1); k++) {
             weightFft[k] = new Complex(Math.cos (w * k), Math.sin (w * k));
 	}
     }

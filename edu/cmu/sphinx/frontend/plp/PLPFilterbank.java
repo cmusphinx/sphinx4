@@ -136,7 +136,7 @@ public class PLPFilterbank extends DataProcessor implements Filterbank {
 	double deltaBarkFreq;
 	double nyquistFreq;
 	double centerFreq;
-	int numberDFTPoints = numberFftPoints/2+1;
+	int numberDFTPoints = numberFftPoints>>1 + 1;
 	double[] DFTFrequencies;
 
 	/* This is the same class of warper called by PLPFilter.java */
@@ -235,10 +235,10 @@ public class PLPFilterbank extends DataProcessor implements Filterbank {
 
 	double[] in = input.getSpectrumData();
 
-	if (in.length != (numberFftPoints/2+1)) {
+	if (in.length != (numberFftPoints >> 1 + 1)) {
 	    throw new IllegalArgumentException
                ("Window size is incorrect: in.length == " + in.length +
-                 ", numberFftPoints == " + numberFftPoints/2+1);
+                 ", numberFftPoints == " + numberFftPoints >> 1 + 1);
 	}
 
 	double[] outputPLPSpectralArray = new double[numberFilters];
