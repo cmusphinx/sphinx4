@@ -367,11 +367,11 @@ setenv JAVA_HOME /usr/java/j2sdk1.4.2
       Sphinx-4 has two packages available for <a href="http://sourceforge.net/project/showfiles.php?group_id=1904&package_id=117949">download</a>:
       <ul>
       <li>
-      <b>sphinx4-bin-{version}.zip</b>: 
+      <b>sphinx4-{version}-bin.zip</b>: 
       provides the jar files, documentation, and demos
       </li>
       <li>
-      <b>sphinx4-src-{version}.zip</b>: 
+      <b>sphinx4-{version}-src.zip</b>: 
       provides the sources, documentation, demos, unit tests
       and regression tests.
       </li>
@@ -382,8 +382,8 @@ setenv JAVA_HOME /usr/java/j2sdk1.4.2
       <code>jar</code> command which is in the <code>bin</code> directory of
       your Java installation:
       <pre>
-jar xvf sphinx4-bin-{version}.zip
-jar xvf sphinx4-src-{version}.zip</pre>
+jar xvf sphinx4-{version}-bin.zip
+jar xvf sphinx4-{version}-src.zip</pre>
       </p>
       <p>
       For both downloads, a directory called "sphinx4-{version}" will be 
@@ -437,8 +437,8 @@ jar xvf sphinx4-src-{version}.zip</pre>
 
   <li><a name="how_build"><b>Building Sphinx-4</b></a>
       <p>
-      Since the sphinx4-bin-{version}.zip distribution does not contain
-      the source code, you must download the sphinx4-src-{version}.zip, or
+      Since the sphinx4-{version}-bin.zip distribution does not contain
+      the source code, you must download the sphinx4-{version}-src.zip, or
       retrieved the code from SourceForge using CVS, in order to be able to
       build from the sources. The software required for building Sphinx-4 are 
       listed in the <a href="#download_and_install">Required Software</a> 
@@ -476,8 +476,8 @@ jar xvf sphinx4-src-{version}.zip</pre>
 
 <p>
 The javadocs have already been built if you downloaded the 
-sphinx4-bin-{version}.zip. In order to build the javadocs yourself, you must 
-download the sphinx4-src-{version}.zip distribution instead. To build the 
+sphinx4-{version}-bin.zip. In order to build the javadocs yourself, you must 
+download the sphinx4-{version}-src.zip distribution instead. To build the 
 javadocs, go to the top level directory ("sphinx4-{version}"), and type:
 </p>
 <pre>ant javadoc</pre>
@@ -623,9 +623,9 @@ d:\work\sphinx4&gt;ant clean
 
   <p>
   Sphinx-4 contains a number of demo programs. If you downloaded the
-  binary distribution (sphinx4-bin-{version}.zip), the JAR files of the demos
+  binary distribution (sphinx4-{version}-bin.zip), the JAR files of the demos
   are already built, so you can just run them directly. However, if you
-  downloaded the source distribution (sphinx4-src-{version}.zip or via CVS),
+  downloaded the source distribution (sphinx4-{version}-src.zip or via CVS),
   you need to build the demos. Click on the links below for instructions on
   how to build and run the demos.
     <ul>
@@ -1007,7 +1007,7 @@ the AN4 tests.
 <p>
 <li><b>Acoustic model & Dictionary</b> - use the Wall Street Journal (WSJ) 
     models for the AN4 test, which is already included as a JAR file
-    in the binary distribution (sphinx4-bin-{version}.zip). If you downloaded
+    in the binary distribution (sphinx4-{version}-bin.zip). If you downloaded
     the source distribution, building it by running <code>ant</code>
     at the top level directory will create the JAR file for the WSJ model.
     The JAR file should be included in the classpath of the application
