@@ -79,7 +79,6 @@ an4_words_unigram:
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
     -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
-    -Dedu.cmu.sphinx.decoder.Decoder.showActualToken=true \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
