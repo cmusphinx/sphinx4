@@ -12,8 +12,11 @@
 package edu.cmu.sphinx.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import java.net.URL;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -134,6 +137,43 @@ public class GapInsertionDetector {
             System.out.println(log);
         }
         return gaps;
+    }
+
+
+    /**
+     * A command line program for detecting gap insertion errors.
+     * To run this program, type:
+     * <code>
+     * java GapInsertionDetector {propsFile} {referenceFile} {hypothesisFile}
+     * </code>
+     * The propsFile need to have only one property:
+     * <code>
+     * edu.cmu.sphinx.util.GapInsertionDetector.showGapInsertions=true/false
+     * </code>
+     */
+    public static void main(String[] argv) {
+
+        if (argv.length < 3) {
+            System.out.println("Usage: java GapInsertionDetector <propsFile>" +
+                               "<referenceFile> <hypothesisFile>");
+        } 
+        try {
+            String context = "gid";
+            String propsFile = argv[0];
+            String referenceFile = argv[1];
+            String hypothesisFile = argv[2];
+
+            String pwd = System.getProperty("user.dir");
+            SphinxProperties.initContext
+                (context, new URL("file://" + pwd + File.separatorChar + 
+                                  propsFile));
+            GapInsertionDetector gid = new GapInsertionDetector
+                (SphinxProperties.getSphinxProperties(context),
+                 referenceFile, hypothesisFile);
+            System.out.println("# of gap insertions: " + gid.detect());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 
@@ -326,11 +366,16 @@ class HypothesisUtterance {
         StringTokenizer st = new StringTokenizer(line, " \t\n\r\f(),");
         while (st.hasMoreTokens()) {
             String text = st.nextToken();
-            float myStartTime = Float.parseFloat(st.nextToken());
-            float myEndTime = Float.parseFloat(st.nextToken());
-            HypothesisWord word = new HypothesisWord
-                (text, myStartTime, myEndTime);
-            words.add(word);
+            try {
+                float myStartTime = Float.parseFloat(st.nextToken());
+                float myEndTime = Float.parseFloat(st.nextToken());
+                HypothesisWord word = new HypothesisWord
+                    (text, myStartTime, myEndTime);
+                words.add(word);
+            } catch (NumberFormatException nfe) {
+                System.out.println("NumberFormatException at line: " + line);
+                nfe.printStackTrace();
+            }
         }
         if (words.size() > 0) {
             HypothesisWord firstWord = (HypothesisWord) words.get(0);
