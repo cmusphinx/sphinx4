@@ -374,6 +374,8 @@ public class SphinxProperties {
         String value = getString(instanceName + ";" + propertyName);
         if (value == null) {
             value = getString(propertyName, defaultValue);
+        } else {
+            shadowProps.setProperty(instanceName + ";" + propertyName, value);
         }
 	if (value != null) {
 	    value = value.trim();
@@ -424,12 +426,8 @@ public class SphinxProperties {
     public float getFloat(String instanceName, 
                           String propertyName, float defaultValue) 
     		throws NumberFormatException {
-        String value = getString(instanceName + ";" + propertyName);
-        if (value != null) {
-            return Float.parseFloat(value);
-        } else {
-            return getFloat(propertyName, defaultValue);
-        }
+        return Float.parseFloat(getString(instanceName, propertyName,
+                                          String.valueOf(defaultValue)));
     }
 
 
@@ -475,12 +473,8 @@ public class SphinxProperties {
     public double getDouble(String instanceName, 
                             String propertyName, double defaultValue) 
         throws NumberFormatException {
-        String value = getString(instanceName + ";" + propertyName);
-        if (value != null) {
-            return Double.parseDouble(value);
-        } else {
-            return getDouble(propertyName, defaultValue);
-        }
+        return Double.parseDouble(getString(instanceName, propertyName,
+                                            String.valueOf(defaultValue)));
     }
 
 
@@ -526,12 +520,8 @@ public class SphinxProperties {
     public int getInt(String instanceName, 
                       String propertyName, int defaultValue) 
         throws NumberFormatException {
-        String value = getString(instanceName + ";" + propertyName);
-        if (value != null) {
-            return Integer.parseInt(value);
-        } else {
-            return getInt(propertyName, defaultValue);
-        }
+        return Integer.parseInt(getString(instanceName, propertyName,
+                                          String.valueOf(defaultValue)));
     }
 
 
@@ -574,13 +564,9 @@ public class SphinxProperties {
      * 	converted to the number format
      */
     public boolean getBoolean(String instanceName, 
-	    		String propertyName, boolean defaultValue)  {
-        String value = getString(instanceName + ";" + propertyName);
-        if (value != null) {
-            return isTrue(value);
-        } else {
-            return getBoolean(propertyName, defaultValue);
-        }
+	    		String propertyName, boolean defaultValue) {
+        return isTrue(getString(instanceName, propertyName,
+                                String.valueOf(defaultValue)));
     }
 
 
