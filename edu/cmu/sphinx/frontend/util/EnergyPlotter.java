@@ -23,7 +23,8 @@ import java.util.Arrays;
 
 
 /**
- * Plots energy values of Cepstrum to stdout. 
+ * Plots positive energy values of Cepstrum to stdout. 
+ * An exception will be thrown if the given energy is negative.
  * The plots look like the following, one line per Cepstrum. The
  * energy value for that particular Cepstrum is printed at the end of
  * the line.
@@ -151,10 +152,16 @@ public class EnergyPlotter {
 
     /**
      * Returns the corresponding plot String for the given energy value.
+     * The energy value must be positive, otherwise an 
+     * IllegalArgumentException will be thrown.
      *
      * @return energy the energy value
      */
     private String getPlot(int energy) {
+        if (energy < 0) {
+            throw new IllegalArgumentException
+                ("Negative energy encountered: " + energy);
+        }
         if (energy <= maxEnergy) {
             return plots[energy];
         } else {
