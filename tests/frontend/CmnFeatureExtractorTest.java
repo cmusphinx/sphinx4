@@ -8,6 +8,7 @@ import edu.cmu.sphinx.frontend.CepstralMeanNormalizer;
 import edu.cmu.sphinx.frontend.Cepstrum;
 import edu.cmu.sphinx.frontend.CepstrumFrame;
 import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataSource;
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.FeatureExtractor;
 import edu.cmu.sphinx.frontend.FeatureFrame;
@@ -27,7 +28,7 @@ import java.util.StringTokenizer;
  * Reads in a file of CepstrumFrames, and test the process() method of
  * both processors on each Frame.
  */
-public class CmnFeatureExtractorTest {
+public class CmnFeatureExtractorTest implements DataSource {
 
     private static final String CEPSTRUM_FRAME = "CEPSTRUM_PRODUCER";
     private static final String CEPSTRUM = "CEPSTRUM";
@@ -35,6 +36,8 @@ public class CmnFeatureExtractorTest {
     private BufferedReader reader;
     private CepstralMeanNormalizer cmn;
     private FeatureExtractor featureExtractor;
+    private boolean start = true;
+    private String line;
 
 
     /**
@@ -46,49 +49,32 @@ public class CmnFeatureExtractorTest {
     public CmnFeatureExtractorTest(String cepstrumFile) throws IOException {
 	this.reader = new BufferedReader(new FileReader(cepstrumFile));
 	cmn = new CepstralMeanNormalizer();
+	cmn.setSource(this);
 	featureExtractor = new FeatureExtractor();
+	featureExtractor.setSource(cmn);
+	featureExtractor.setDump(true);
     }
 
 
     /**
      * Runs the CmnFeatureExtractorTest.
      */
-    public void run() {
-	Data cepstrumFrame = readCepstrumFrame();
-	Data nextFrame;
-	boolean start = true;
+    public void run() throws IOException {
+	Data result = null;
+	FeatureFrame featureFrame = null;
 
 	do {
-	    if (cepstrumFrame != null) {
+	    result = featureExtractor.read();
 
-		nextFrame = readCepstrumFrame();
-
-		if (start) { // start of segment
-		    cepstrumFrame =
-			SegmentEndPointSignal.createSegmentStartSignal
-			(cepstrumFrame);
-		    start = false;
-		} else if (nextFrame == null) { // end of segment
-		    cepstrumFrame =
-			SegmentEndPointSignal.createSegmentEndSignal
-			(cepstrumFrame);
-		}
-
-		FeatureFrame featureFrame = null;
-		Data result = featureExtractor.process
-		    (cmn.process(cepstrumFrame));
+	    if (result != null) {
 		if (result instanceof SegmentEndPointSignal) {
 		    featureFrame = (FeatureFrame)
 			((SegmentEndPointSignal) result).getData();
 		} else {
 		    featureFrame = (FeatureFrame) result;
 		}
-
-		Util.dumpFeatureFrame(featureFrame);
-		
-		cepstrumFrame = nextFrame;
 	    }
-	} while (cepstrumFrame != null);
+	} while (result != null);
     }
 
 
@@ -98,34 +84,50 @@ public class CmnFeatureExtractorTest {
      *
      * @returns the next available cepstrum frame, or null
      */ 
-    private CepstrumFrame readCepstrumFrame() {
-	CepstrumFrame frame = null;
-	try {
-	    String line = reader.readLine();
-	    
-	    if (line != null && line.startsWith(CEPSTRUM_FRAME)) {
-		int numberCepstrum = Integer.parseInt
-		    (line.substring(line.lastIndexOf(' ') + 1));
-		
-		Cepstrum[] cepstra = new Cepstrum[numberCepstrum];
-		
-		for (int i = 0; i < numberCepstrum; i++) {
-		    line = reader.readLine();
-		    String[] data = line.split("\\s+");
-		    
-		    int cepstrumLength = Integer.parseInt(data[1]);
-		    float[] cepstrumData = new float[cepstrumLength];
-		    for (int j = 2; j < data.length; j++) {
-			cepstrumData[j-2] = Float.parseFloat(data[j]);
-		    }
-		    cepstra[i] = new Cepstrum(cepstrumData);
-		}
-		frame = new CepstrumFrame(cepstra);
-	    }
-	} catch (IOException ioe) {
-	    ioe.printStackTrace();
-	}
+    public Data read() throws IOException {
+	Data frame = null;
 
+	if (start) {
+	    line = reader.readLine();
+	}
+	
+	if (line != null && line.startsWith(CEPSTRUM_FRAME)) {
+	    int numberCepstrum = Integer.parseInt
+		(line.substring(line.lastIndexOf(' ') + 1));
+	    
+	    Cepstrum[] cepstra = new Cepstrum[numberCepstrum];
+		
+	    for (int i = 0; i < numberCepstrum; i++) {
+
+		// read one Cepstrum
+		line = reader.readLine();
+		String[] data = line.split("\\s+");
+		
+		int cepstrumLength = Integer.parseInt(data[1]);
+		float[] cepstrumData = new float[cepstrumLength];
+		for (int j = 2; j < data.length; j++) {
+		    cepstrumData[j-2] = Float.parseFloat(data[j]);
+		}
+		cepstra[i] = new Cepstrum(cepstrumData);
+	    }
+	    
+	    CepstrumFrame cepstrumFrame = new CepstrumFrame(cepstra);
+	    
+	    if (start) {
+		frame = SegmentEndPointSignal.createSegmentStartSignal
+		    (cepstrumFrame);
+		start = false;
+	    } 
+	    
+	    line = reader.readLine();
+	    if (line == null) {
+		frame = SegmentEndPointSignal.createSegmentEndSignal
+		    (cepstrumFrame);
+	    } else {
+		frame = cepstrumFrame;
+	    }
+	}
+    
 	return frame;
     }
 

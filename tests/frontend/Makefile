@@ -1,11 +1,4 @@
-# Copyright 2001 Sun Microsystems, Inc.
-# All Rights Reserved.  Use is subject to license terms.
-# 
-# See the file "license.terms" for information on usage and
-# redistribution of this file, and for a DISCLAIMER OF ALL 
-# WARRANTIES.
-#
-# @(#)Makefile	1.2 01/07/12
+# [[[copyright]]]
 
 # Relative path to the top of the source tree
 TOP = ../..
@@ -29,8 +22,15 @@ cmnFeatExt: all
 	@chmod +x testCmnFeatExt.sh
 	sh ./testCmnFeatExt.sh
 
+preemphasizer: all
+	@chmod +x testPreemphasizer.sh
+	sh ./testPreemphasizer.sh
+
 alltests: all
+	(cd $(TOP); $(MAKE))
+	@$(MAKE) preemphasizer
 	@$(MAKE) cmnFeatExt
 
 clean::
-	rm -f *.out
+	rm -f *.out *.diff
+

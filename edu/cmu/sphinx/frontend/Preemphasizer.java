@@ -14,21 +14,28 @@ import java.io.IOException;
  * less susceptible to finite precision effects later in the signal
  * processing. The Preemphasizer takes a ShortAudioFrame as input
  * and outputs a DoubleAudioFrame.
+ *
+ * The SphinxProperties of this Preemphasizer are: <pre>
+ * edu.cmu.sphinx.frontend.preemphasis.dump
+ * edu.cmu.sphinx.frontend.preemphasis.factor
+ * </pre>
  */
 public class Preemphasizer extends PullingProcessor {
+
+    /**
+     * The name of the SphinxProperty which indicates if the preemphasized
+     * ShortAudioFrames should be dumped. The default value of this
+     * SphinxProperty is false.
+     */
+    public static final String PROP_DUMP =
+	"edu.cmu.sphinx.frontend.preemphasis.dump";
 
     /**
      * The name of the SphinxProperty for preemphasis factor/alpha.
      */
     public static final String PROP_PREEMPHASIS_FACTOR =
-	"edu.cmu.sphinx.frontend.preemphasisFactor";
+	"edu.cmu.sphinx.frontend.preemphasis.factor";
     
-    /**
-     * The name of the SphinxProperty for pre-emphasis prior.
-     */
-    public static final String PROP_PREEMPHASIS_PRIOR =
-	"edu.cmu.sphinx.frontend.preemphasisPrior";
-
 
     private float preemphasisFactor;
     private int windowSize;
@@ -67,8 +74,14 @@ public class Preemphasizer extends PullingProcessor {
      *     Data object is available
      */
     public Data read() throws IOException {
-	Data input = super.read();
-	if (input instanceof PreemphasisPriorSignal) {
+
+	Data input = getSource().read();
+
+	if (input instanceof SegmentEndPointSignal) {
+	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
+	    signal.setData(process(signal.getData()));
+	    return signal;
+	} else if (input instanceof PreemphasisPriorSignal) {
 	    PreemphasisPriorSignal signal = (PreemphasisPriorSignal) input;
 	    prior = (double) signal.getPrior();
 	    return read();
@@ -89,7 +102,7 @@ public class Preemphasizer extends PullingProcessor {
      *
      * @return a DoubleAudioFrame of data with pre-emphasis filter applied
      */
-    public Data process(Data input) {
+    private Data process(Data input) {
 
 	// NOTE:
 	// It will not be necessary to allocate this extra double[]
@@ -113,7 +126,9 @@ public class Preemphasizer extends PullingProcessor {
 	    }
 	}
 
-	Util.dumpDoubleArray(out, "PREEMPHASIS");
+	if (getDump()) {
+	    Util.dumpDoubleArray(out, "PREEMPHASIS");
+	}
 
 	return (new DoubleAudioFrame(out));
     }

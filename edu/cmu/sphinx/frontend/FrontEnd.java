@@ -42,7 +42,7 @@ public class FrontEnd implements Runnable {
 
 
     private int samplesPerAudioFrame;
-    private List processors;
+    private List processors = null;
     private InputStream audioInputStream;
     private DataSource audioFrameSource;
 
@@ -52,19 +52,27 @@ public class FrontEnd implements Runnable {
      */
     public FrontEnd() {
 	processors = new LinkedList();
-	processors.add(new Preemphasizer());
-	processors.add(new CepstrumProducer());
-	// processors.add(new CepstralMeanNormalizer());
-	// processors.add(new FeatureExtractor());
-	linkProcessors();
     }
 
 
     /**
-     * Links all the processors together by calling <code>setSource()</code>
-     * on each processor.
+     * Adds the given processor to the list of processors.
+     *
+     * @param processorClass the name of the processor Class
      */
-    private void linkProcessors() {
+    public void addProcessor(PullingProcessor processor) {
+	if (processors == null) {
+	    processors = new LinkedList();
+	}
+	processors.add(processor);
+    }
+
+
+    /**
+     * Links all the added processors together by calling
+     * <code>setSource()</code> on each processor.
+     */
+    public void linkProcessors() {
 	DataSource predecessor = null;
 	ListIterator iterator = processors.listIterator();
 
@@ -85,12 +93,6 @@ public class FrontEnd implements Runnable {
     public void setInputStream(InputStream inputStream) {
 	this.audioInputStream = inputStream;
 	this.audioFrameSource = new ShortAudioFrameSource(inputStream);
-
-	// set the data source of the first processor 
-	PullingProcessor first = (PullingProcessor) processors.get(0);
-	if (first != null) {
-	    first.setSource(this.audioFrameSource);
-	}
     }
 
 
@@ -99,6 +101,13 @@ public class FrontEnd implements Runnable {
      */
     public void run() {
 	Data output;
+
+	// set the data source of the first processor 
+	PullingProcessor first = (PullingProcessor) processors.get(0);
+	if (first != null) {
+	    first.setSource(this.audioFrameSource);
+	}
+
 	PullingProcessor last =
 	    (PullingProcessor) processors.get(processors.size() - 1);
 	if (last != null) {
@@ -123,6 +132,10 @@ public class FrontEnd implements Runnable {
 	    System.out.println("Usage: java FrontEnd <filename>");
 	}
 	FrontEnd frontEnd = new FrontEnd();
+	frontEnd.addProcessor(new Preemphasizer());
+	frontEnd.addProcessor(new CepstrumProducer());
+	frontEnd.linkProcessors();
+
 	try {
 	    frontEnd.setInputStream(new FileInputStream(argv[0]));
 	    frontEnd.run();

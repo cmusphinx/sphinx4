@@ -89,7 +89,7 @@ public class FeatureExtractor extends PullingProcessor {
      *
      * @return a FeatureFrame
      */
-    public Data process(Data input) {
+    private Data process(Data input) {
 	
 	CepstrumFrame cepstrumFrame;
 	SegmentEndPointSignal signal = null;
@@ -169,6 +169,10 @@ public class FeatureExtractor extends PullingProcessor {
 	}
 
 	FeatureFrame featureFrame = new FeatureFrame(features);
+
+	if (getDump()) {
+	    Util.dumpFeatureFrame(featureFrame);
+	}
 
 	if (input instanceof SegmentEndPointSignal) {
 	    signal.setData(featureFrame);

@@ -1,5 +1,24 @@
 #!/bin/sh
 
-java -cp ../../classes tests.frontend.CmnFeatureExtractorTest cepstra.s3 > features.out
 
-diff features.s3 features.out | wc -l
+if [ -f features.out ]; then
+        rm -f features.out
+fi
+
+if [ -f features.diff ]; then
+        rm -f features.diff
+fi
+
+${JAVA_HOME}/bin/java -cp ../../classes tests.frontend.CmnFeatureExtractorTest cepstra.s3 > features.out
+
+diff features.s3 features.out > features.diff
+
+wc -l features.diff | awk '
+{
+  if ($1 == 0) {
+    printf("%s differences in features.out. Test PASSED\n", $1);
+  } else {
+    printf("%s differences in features.out. Test FAILED\n", $1);
+  }
+}
+'

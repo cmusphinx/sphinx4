@@ -26,6 +26,14 @@ import java.util.Vector;
  */
 public class ShortAudioFrameSource implements DataSource {
 
+    /**
+     * The name of the SphinxProperty which indicates if the produced
+     * ShortAudioFrames should be dumped. The default value of this
+     * SphinxProperty is false.
+     */
+    public static final String PROP_DUMP =
+	"edu.cmu.sphinx.frontend.shortAudioFrameSource.dump";
+
     private static final int SEGMENT_MAX_BYTES = 2000000;
 
     private InputStream audioStream;
@@ -38,6 +46,7 @@ public class ShortAudioFrameSource implements DataSource {
     private byte[] overflowBuffer;
     private int overflowBytes;
     private Queue queue;
+    private boolean dump;
 
 
     /**
@@ -70,6 +79,7 @@ public class ShortAudioFrameSource implements DataSource {
 	    (FrontEnd.PROP_WINDOW_SHIFT, 80) * 2;
 	frameSizeInBytes = properties.getInt
 	    (FrontEnd.PROP_BYTES_PER_AUDIO_FRAME, 4000);
+	dump = properties.getBoolean(PROP_DUMP, false);
     }
 
 
@@ -185,7 +195,9 @@ public class ShortAudioFrameSource implements DataSource {
 	    short[] audioFrame = Util.byteToShortArray
 		(samplesBuffer, 0, totalInBuffer);
 
-	    Util.dumpShortArray(audioFrame, "FRAME_SOURCE");
+	    if (dump) {
+		Util.dumpShortArray(audioFrame, "FRAME_SOURCE");
+	    }
 
 	    return (new ShortAudioFrame(audioFrame));
 	}
@@ -217,6 +229,7 @@ public class ShortAudioFrameSource implements DataSource {
 	return totalRead;
     }
 }
+
 
 class Queue {
 

@@ -70,8 +70,14 @@ public class CepstrumProducer extends PullingProcessor {
      *     Data object is available
      */
     public Data read() throws IOException {
-	Data input = super.read();
-	if (input instanceof DoubleAudioFrame) {
+
+	Data input = getSource().read();
+
+	if (input instanceof SegmentEndPointSignal) {
+	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
+	    signal.setData(process(signal.getData()));
+	    return signal;
+	} else if (input instanceof DoubleAudioFrame) {
 	    return process(input);
 	} else {
 	    return input;
@@ -86,7 +92,7 @@ public class CepstrumProducer extends PullingProcessor {
      *
      * @return a CepstrumFrame
      */
-    public Data process(Data input) {
+    private Data process(Data input) {
 	
 	if (!(input instanceof DoubleAudioFrame)) {
 	    return input;

@@ -110,7 +110,7 @@ public class CepstralMeanNormalizer extends PullingProcessor {
      *
      * @return a normalized CepstrumFrame
      */
-    public Data process(Data input) {
+    private Data process(Data input) {
 	
 	CepstrumFrame cepstrumFrame;
 	SegmentEndPointSignal signal = null;
@@ -129,7 +129,7 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	} else {
 
 	    normalize(cepstra);
-
+	    
 	    // Shift buffers down if we have more than cmnShiftWindow frames
 	    if (numberFrame > cmnShiftWindow) {
 		updateMeanSumBuffers();

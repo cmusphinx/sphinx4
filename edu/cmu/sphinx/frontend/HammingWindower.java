@@ -26,10 +26,19 @@ public class HammingWindower implements Processor {
     public static final String PROP_ALPHA =
 	"edu.cmu.sphinx.frontend.hammingWindow.alpha";
 
+    /**
+     * The name of the SphinxProperty which indicates if the preemphasized
+     * ShortAudioFrames should be dumped. The default value of this
+     * SphinxProperty is false.
+     */
+    public static final String PROP_DUMP =
+	"edu.cmu.sphinx.frontend.hammingWindow.dump";
+
     private double[] window;
     private int windowSize;
     private static final double PI = 3.14159265358979323846;
     private static double ALPHA;
+    private boolean dump;
 
 
     /**
@@ -49,6 +58,7 @@ public class HammingWindower implements Processor {
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
 	windowSize = properties.getInt(FrontEnd.PROP_WINDOW_SIZE, 205);
 	ALPHA = properties.getDouble(HammingWindower.PROP_ALPHA, 0.46);
+	dump = properties.getBoolean(PROP_DUMP, false);
     }
 
 
@@ -84,6 +94,10 @@ public class HammingWindower implements Processor {
 	    for (int i = 0; i < in.length; i++) {
 		in[i] *= window[i];
 	    }
+	}
+
+	if (dump) {
+	    Util.dumpDoubleArray(in, "HAMMING_WINDOW");
 	}
 
 	return audioFrame;
