@@ -100,19 +100,21 @@ public class SpectrumAnalyzer extends DataProcessor {
 	}
 
         if (NPoint < windowSize) {
-	    for (int i = 0; i < NPoint; i++) {
+            int i = 0;
+	    for (; i < NPoint; i++) {
 		inputSeq[i].set(in[i], 0.0f);
 	    }
-	    for (int i = NPoint; i < windowSize; i++) {
+	    for (; i < windowSize; i++) {
                 tempComplex.set(in[i], 0.0f);
 		inputSeq[i % NPoint].addComplex(inputSeq[i % NPoint],
 						tempComplex);
 	    }
 	} else {
-	    for (int i = 0; i < windowSize; i++) {
+            int i = 0;
+	    for (; i < windowSize; i++) {
 		inputSeq[i].set(in[i], 0.0f);
 	    }
-	    for (int i = windowSize; i < NPoint; i++) {
+	    for (; i < NPoint; i++) {
 		inputSeq[i].reset();
 	    }
 	}
@@ -136,7 +138,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	
         if (getDump()) {
             System.out.println(Util.dumpDoubleArray
-                               (outputSpectrum, "SPEC_MAGNITUDE"));
+                               (outputSpectrum, "SPEC_MAGNITUDE", 20, 10));
         }
 
         return output;
@@ -209,16 +211,18 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * Wk will have N/2 complex elements.
 	 */
         Wk = new Complex[N >> 1];
+
 	/**
 	 * For the inverse FFT,
 	 * w = 2 * PI / N;
 	 */
 	double w = -2 * Math.PI / N;
-	if (invert == true){
-	    w = -w;
-	}
+        if (invert == true) {
+            w = -w;
+        }
+	
 	for (int k = 0; k < (N / 2); k++) {
-	    Wk[k] = new Complex(Math.cos (w * k), Math.sin (w * k));
+            Wk[k] = new Complex(Math.cos (w * k), Math.sin (w * k));
 	}
     }
 
@@ -247,7 +251,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 		    boolean invert) {
 
 	double divisor;
-
+        
 	/**
 	 * The direct and inverse FFT are essentially the same
 	 * algorithm, except for two difference: a scaling factor
@@ -256,10 +260,11 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 */
 
 	if (invert == false){
-	    divisor = 1.0f;
+	    divisor = 1.0;
 	} else {
 	    divisor = (double) NPoint;
 	}
+
 	/**
 	 * Initialize the "from" and "to" variables.
 	 */
@@ -267,23 +272,25 @@ public class SpectrumAnalyzer extends DataProcessor {
 	    to[i].reset();
 	    from[i].scaleComplex(input[i], divisor);
 	}
+
 	/**
 	 * Repeat the recursion log2(NPoint) times,
 	 * i.e., we have log2(NPoint) butterfly stages.
 	 */
 	butterflyStage(from, to, NPoint, NPoint >> 1);
+
 	/**
 	 * Compute energy ("float") for each frequency point
 	 * from the fft ("complex")
 	 */
-	if ((this.log2N & 1) == 0){
+	if ((this.log2N & 1) == 0) {
 	    for (int i = 0; i < (NPoint >> 1); i++){
 		output[i] = from[i].squaredMagnitudeComplex(); 
-	    }
+            }
 	} else {
 	    for (int i = 0; i < (NPoint >> 1); i++){
 		output[i] = to[i].squaredMagnitudeComplex();
-	    }
+            }
 	}
 	return;
     }

@@ -198,15 +198,35 @@ public class Util {
      *
      * @param data the double array to dump
      * @param description some comment notes
+     * @param integerDigits the number of digits in the integer portion
+     * @param fractionDigits the number of digits in the fraction portion
+     *
+     * @return a string of the dump
+     */
+    public static String dumpDoubleArray(double[] data, String description,
+                                         int integerDigits, int fractionDigits) {
+	String dump = (description + " " + data.length);
+	for (int i = 0; i < data.length; i++) {
+	    dump += (" " + formatDouble(data[i], integerDigits, fractionDigits));
+	}
+        return dump;
+    }
+
+
+    /**
+     * Dumps the given double array as a string.
+     * The dump will be in the form:
+     * <pre>description data[0] data[1] ... data[data.length]</pre>where
+     * <code>data[i]</code> is formatted by the method
+     * <code>Util.formatDouble(data[i], 9, 5)</code>.
+     *
+     * @param data the double array to dump
+     * @param description some comment notes
      *
      * @return a string of the dump
      */
     public static String dumpDoubleArray(double[] data, String description) {
-	String dump = (description + " " + data.length);
-	for (int i = 0; i < data.length; i++) {
-	    dump += (" " + formatDouble(data[i], 9, 5));
-	}
-        return dump;
+        return dumpDoubleArray(data, description, 15, 5);
     }
 
 
