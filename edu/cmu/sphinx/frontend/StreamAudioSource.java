@@ -20,22 +20,27 @@ import java.io.InputStream;
  * </pre>
  * The maximum size of a segment of speech is given by:
  * <pre>
- * edu.cmu.sphinx.frontend.segmentMaxBytes
+ * edu.cmu.sphinx.frontend.streamAudioSource.segmentMaxBytes
  * </pre>
  *
  * @see BatchFileAudioSource
  */
 public class StreamAudioSource extends DataProcessor implements AudioSource {
 
+    /**
+     * The name of the SphinxProperty which specifies the maximum
+     * number of bytes in a segment of speech.
+     * The default value is 2,000,000.
+     */
+    public static final String PROP_SEGMENT_MAX_BYTES =
+    "edu.cmu.sphinx.frontend.streamAudioSource.segmentMaxBytes";
+    
+
     private InputStream audioStream;
 
     private int segmentMaxBytes;
     private int frameSizeInBytes;
 
-    /**
-     * The buffer that contains the samples. "totalInBuffer" indicates
-     * the number of bytes in the samplesBuffer so far.
-     */
     private byte[] samplesBuffer;
     private int totalBytesRead;
     
@@ -47,6 +52,8 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
     /**
      * Constructs a StreamAudioSource with the given InputStream.
      *
+     * @param name the name of this StreamAudioSource
+     * @param context the context of this StreamAudioSource
      * @param audioStream the InputStream where audio data comes from
      */
     public StreamAudioSource(String name, String context,
@@ -71,8 +78,7 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
             frameSizeInBytes++;
         }
 
-        segmentMaxBytes = properties.getInt
-            (FrontEnd.PROP_SEGMENT_MAX_BYTES, 2000000);
+        segmentMaxBytes = properties.getInt(PROP_SEGMENT_MAX_BYTES, 2000000);
     }
 
 
@@ -107,7 +113,6 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
         Audio output = null;
 
         if (streamEndReached) {
-     
             if (!segmentEndSent) {
                 output = new Audio(Signal.SEGMENT_END);
                 segmentEndSent = true;

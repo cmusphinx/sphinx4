@@ -56,7 +56,10 @@ public class MelFilterbank extends DataProcessor implements SpectrumSource {
      * Constructs a default MelFilterbank object with the given 
      * SphinxProperties context.
      *
+     * @param name the name of this MelFilterbank
      * @param context the context of the SphinxProperties to use
+     * @param predecessor the SpectrumSource to obtain Spectrum(a) from,
+     *     which is usually a SpectrumAnalyzer (does FFT)
      */
     public MelFilterbank(String name, String context,
                          SpectrumSource predecessor) {
@@ -69,8 +72,6 @@ public class MelFilterbank extends DataProcessor implements SpectrumSource {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param context the context of the SphinxProperties used
      */
     private void initSphinxProperties() {
 

@@ -43,7 +43,7 @@ SpectrumSource {
      *
      * @param name the name of this SpectrumAnalyzer
      * @param context the context of the SphinxProperties to use
-     * @param predecessor the predecessor
+     * @param predecessor the AudioSource from which to get Audio objects
      */
     public SpectrumAnalyzer(String name, String context, 
                             AudioSource predecessor) {

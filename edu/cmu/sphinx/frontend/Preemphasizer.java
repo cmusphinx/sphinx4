@@ -29,7 +29,6 @@ import java.io.IOException;
  */
 public class Preemphasizer extends DataProcessor implements AudioSource {
 
-
     /**
      * The name of the SphinxProperty for preemphasis factor/alpha, which
      * has a default value of 0.97F.
@@ -37,6 +36,7 @@ public class Preemphasizer extends DataProcessor implements AudioSource {
     public static final String PROP_PREEMPHASIS_FACTOR =
 	"edu.cmu.sphinx.frontend.preemphasis.factor";
     
+
     private float preemphasisFactor;
     private double prior;
     private AudioSource predecessor;
@@ -45,7 +45,9 @@ public class Preemphasizer extends DataProcessor implements AudioSource {
     /**
      * Constructs a default Preemphasizer.
      *
-     * @param the context of SphinxProperty this Preemphasizer uses
+     * @param name the name of this Preemphasizer
+     * @param context the context of SphinxProperty this Preemphasizer uses
+     * @param predecessor the AudioSource from which it obtains Audio objects
      */
     public Preemphasizer(String name, String context,
                          AudioSource predecessor) {
@@ -83,9 +85,13 @@ public class Preemphasizer extends DataProcessor implements AudioSource {
 
         getTimer().start();
         
-        if (input != null && input.hasContent()) {
-            applyPreemphasis(input);
-	}
+        if (input != null) {
+            if (input.hasContent()) {
+                applyPreemphasis(input);
+            } else if (input.hasSegmentEndSignal()) {
+                prior = 0;
+            }
+        }
 
         getTimer().stop();
 

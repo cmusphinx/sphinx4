@@ -28,6 +28,7 @@ CepstrumSource {
      *
      * @param name the name of this MelCepstrumProducer
      * @param context the context of the SphinxProperties to use
+     * @param predecessor the SpectrumSource to get Spectrum objects from
      */
     public MelCepstrumProducer(String name, String context,
                                SpectrumSource predecessor) {
@@ -40,8 +41,6 @@ CepstrumSource {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param context the context of the SphinxProperties used
      */
     private void initSphinxProperties() {
 	SphinxProperties properties = getSphinxProperties();
@@ -148,6 +147,11 @@ CepstrumSource {
     
     /**
      * Apply the MelCosine filter to the given melspectrum.
+     *
+     * @param melspectrum the MelSpectrum data
+     *
+     * @return MelCepstrum data produced by apply the MelCosine filter
+     *    to the MelSpectrum data
      */
     private float[] applyMelCosine(double[] melspectrum) {
 

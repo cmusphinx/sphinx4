@@ -10,31 +10,59 @@ import java.io.IOException;
 
 
 /**
- * Pre-processes the input audio into Features. The FrontEnd is composed
- * of a series of processors that are added by the <pre>addProcessor()</pre>
- * method. The input to the FrontEnd can be an InputStream (which contains
- * audio data), in which case
- * the method <pre>setInputStream()</pre> will be used. Alternatively, the
- * input can also be a file containing a list of audio files, in which case
- * the method <pre>setBatchFile()</pre> will be used. A typical sequence
- * of method calls to use the FrontEnd is: <pre>
- * FrontEnd frontend = new FrontEnd();
- * frontend.addProcessor(...a processor...);
- * // add other processors
+ * Pre-processes the audio into Features. The FrontEnd consists
+ * of a series of processors. The FrontEnd connects all the processors
+ * by the input and output points.
  * 
- * frontend.setAudioSource(...either a StreamAudioSource
- * or a BatchFileAudioSource...)
+ * <p>The input to the FrontEnd is an AudioSource. For an audio stream,
+ * the <code>StreamAudioSource</code> should be used. The 
+ * input can also be a file containing a list of audio files, in which case
+ * the <code>BatchFileAudioSource</code> can be used.
  *
- * frontend.run();
+ * <p>The output of the FrontEnd are Features, so a <code>FeatureSource</code>
+ * is needed.
+ * A typical sequence of calls to initialize the FrontEnd is:
+ * <pre>
+ * FrontEnd fe = new FrontEnd("frontend", context);
+ * fe.setAudioSource(new StreamAudioSource(...));
+ * 
+ * // create the processors
+ * Preemphasizer preemphasizer = new Preemphasizer
+ *     ("Preemphasizer", context, fe.getAudioSource());
+ * Windower windower = new Windower
+ *     ("HammingWindow", context, preemphasizer);
+ * SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer
+ *     ("FFT", context, windower);
+ * MelFilterbank melFilterbank = new MelFilterbank
+ *     ("MelFilter", context, spectrumAnalyzer);
+ * MelCepstrumProducer melCepstrum = new MelCepstrumProducer
+ *     ("MelCepstrum", context, melFilterbank);
+ * CepstralMeanNormalizer cmn = new CepstralMeanNormalizer
+ *     ("CMN", context, melCepstrum);
+ *
+ * // FeatureExtractor implements FeatureSource
+ * fe.setFeatureSource(new FeatureExtractor(name, context, cmn));
  * </pre>
  *
- * The processors will be executed in the order that they are added. The
- * first processor must take <b><code>AudioFrame</code></b> as
- * input, and the last processor must output <b><code>Features</code></b>.
+ * <p>To obtain <code>Feature</code>(s) from the FrontEnd, you would use:
+ * <pre>
+ * fe.getFeatureFrame(10);
+ * </pre>
+ * which will return a <code>FeatureFrame</code> with 10 <code>Feature</code>s
+ * in it. If there are only 5 more features before the end of segment,
  *
- * @see FeatureFrame 
+ * @see AudioSource
+ * @see CepstralMeanNormalizer
+ * @see Feature
+ * @see FeatureExtractor
+ * @see FeatureFrame
+ * @see FeatureSource
+ * @see MelCepstrumProducer
+ * @see MelFilterbank
+ * @see SpectrumAnalyzer
+ * @see Windower
  */
-public class FrontEnd extends DataProcessor implements Runnable {
+public class FrontEnd extends DataProcessor {
 
     /**
      * The name of the SphinxProperty for sample rate in Hertz (i.e.,
@@ -42,6 +70,13 @@ public class FrontEnd extends DataProcessor implements Runnable {
      */
     public static final String PROP_SAMPLE_RATE =
 	"edu.cmu.sphinx.frontend.sampleRate";
+
+    /**
+     * The name of the SphinxProperty for the number of bytes per frame,
+     * which has a default value of 4000.
+     */
+    public static final String PROP_BYTES_PER_AUDIO_FRAME =
+	"edu.cmu.sphinx.frontend.bytesPerAudioFrame";
 
     /**
      * The name of the SphinxProperty for window size in milliseconds,
@@ -55,23 +90,8 @@ public class FrontEnd extends DataProcessor implements Runnable {
      * which has a default value of 10F.
      */
     public static final String PROP_WINDOW_SHIFT_MS =
-	"edu.cmu.sphinx.frontend.windowShiftInMs";
+        "edu.cmu.sphinx.frontend.windowShiftInMs";
 
-    /**
-     * The name of the SphinxProperty for the number of bytes per frame,
-     * which has a default value of 4000.
-     */
-    public static final String PROP_BYTES_PER_AUDIO_FRAME =
-	"edu.cmu.sphinx.frontend.bytesPerAudioFrame";
-
-    /**
-     * The name of the SphinxProperty which specifies the maximum
-     * number of bytes in a segment of speech.
-     * The default value is 2,000,000.
-     */
-    public static final String PROP_SEGMENT_MAX_BYTES =
-    "edu.cmu.sphinx.frontend.segmentMaxBytes";
-    
     /**
      * The name of the SphinxProperty for the size of a cepstrum, which is
      * 13 by default.
@@ -86,19 +106,44 @@ public class FrontEnd extends DataProcessor implements Runnable {
 
     /**
      * Constructs a default FrontEnd.
+     *
+     * @param name the name of this FrontEnd
+     * @param context the context of this FrontEnd
      */
     public FrontEnd(String name, String context) {
         super(name, context);
     }
 
 
+    /**
+     * Returns the AudioSource of this FrontEnd. The AudioSource of
+     * the front end is where it gets its audio data.
+     *
+     * @return the AudioSource
+     */
     public AudioSource getAudioSource() {
         return audioSource;
     }
 
 
+    /**
+     * Sets the AudioSource of this FrontEnd.  The AudioSource of
+     * the front end is where it gets its audio data
+     *
+     * @param audioSource the AudioSource
+     */
     public void setAudioSource(AudioSource audioSource) {
         this.audioSource = audioSource;
+    }
+
+
+    /**
+     * Returns the FeatureSource of this FrontEnd.
+     *
+     * @return the FeatureSource of this FrontEnd
+     */
+    public FeatureSource getFeatureSource() {
+        return featureSource;
     }
 
 
@@ -142,28 +187,5 @@ public class FrontEnd extends DataProcessor implements Runnable {
         } while (i < numberFeatures);
         
         return featureFrame;
-    }
-
-
-    /**
-     * Executes the FrontEnd. When this FrontEnd is used to create a
-     * Thread, calling <code>Thread.start()</code> causes this method
-     * to be executed in that Thread.
-     */
-    public void run() {
-
-        getTimer().start();
-
-        Feature feature = null;
-        
-        try {
-            do {
-                feature = featureSource.getFeature();
-            } while (feature != null);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
-        getTimer().stop();
     }
 }

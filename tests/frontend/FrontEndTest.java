@@ -6,6 +6,8 @@ package tests.frontend;
 
 import edu.cmu.sphinx.frontend.BatchFileAudioSource;
 import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.FeatureSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.StreamAudioSource;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -81,8 +83,25 @@ public class FrontEndTest {
      */
     public void run() {
 
-        frontend.run();
+        frontend.getTimer().start();
 
+        FeatureSource featureSource = frontend.getFeatureSource();
+        
+        if (featureSource != null) {
+
+            Feature feature = null;
+            
+            try {
+                do {
+                    feature = featureSource.getFeature();
+                } while (feature != null);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
+
+        frontend.getTimer().stop();
+        
         if (dumpTimes) {
             Timer.dumpAll(context);
         }

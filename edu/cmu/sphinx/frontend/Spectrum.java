@@ -18,7 +18,6 @@ public class Spectrum extends Data {
      * @param spectraData a frame's spectral data
      */
     public Spectrum(double[] spectraData) {
-        super(Signal.CONTENT);
 	this.spectraData = spectraData;
     }
 

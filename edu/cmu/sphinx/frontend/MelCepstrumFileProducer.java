@@ -18,11 +18,13 @@ CepstrumSource {
 
     public final static String PROP_CEPSTRUM_FILE =
 	"edu.cmu.sphinx.frontend.MelCepstrumFileProducer.file";
+
     private String path;
     private ExtendedStreamTokenizer est;
     private int numFrames;
     private int curFrame;
     private int cepstrumLength;
+
 
     /**
      * Constructs a MelCepstrumFileProducer that reads
@@ -40,6 +42,7 @@ CepstrumSource {
 	numFrames = est.getInt("num_frames");
 	est.expectString("frames");
     }
+
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
