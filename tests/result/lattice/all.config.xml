@@ -64,7 +64,7 @@
         <property name="buildWordLattice" value="true"/>
         <property name="acousticLookaheadFrames" value="1.7"/>
         <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
-	<property name="keepAllTokens" value="false"/>
+	<property name="keepAllTokens" value="true"/>
     </component>
 
     <component name="activeList"

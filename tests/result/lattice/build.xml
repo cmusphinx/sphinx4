@@ -87,7 +87,7 @@ NOTE:  Before running the tests, you must have already built
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
-    <!-- * Runs the lattice dump test.                        * -->
+    <!-- * Runs the lattice dump test.                            * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="lattice_dump"
@@ -100,6 +100,24 @@ NOTE:  Before running the tests, you must have already built
 		  <jvmarg value="-mx${maximum_heap_size}"/>
 	          <sysproperty key="wordPruningSearchManager[keepAllTokens]"
 		               value="false"/>
+	    </java>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Compares the two lattices generated with the           * -->
+    <!-- * 'keepAllTokens' flag set to true/false.                * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="lattice_comp"
+	    description="Runs the lattice comparison test."
+	    depends="all">
+	    <java classname="tests.result.lattice.LatticeCompTest"
+		  fork="true">
+		  <classpath refid="run.classpath"/>
+		  <jvmarg value="-ea"/>
+		  <jvmarg value="-mx${maximum_heap_size}"/>
 	    </java>
     </target>
 
