@@ -211,7 +211,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
         try {
             activeBucket = new SimpleActiveListManager(props);
-            loserManager = new AlternateHypothesisManager();
+            loserManager = new AlternateHypothesisManager(props);
 
             //ActiveList newActiveList = (ActiveList)
             Class.forName( props.getString(PROP_ACTIVE_LIST_TYPE,

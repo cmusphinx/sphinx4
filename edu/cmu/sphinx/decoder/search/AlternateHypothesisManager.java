@@ -1,5 +1,8 @@
 package edu.cmu.sphinx.decoder.search;
 
+
+import edu.cmu.sphinx.util.SphinxProperties;
+
 import java.util.*;
 
 /**
@@ -10,8 +13,19 @@ import java.util.*;
  * To change this template use Options | File Templates.
  */
 public class AlternateHypothesisManager {
+
+    public AlternateHypothesisManager(SphinxProperties props) {
+        this.props = props;
+    }
+
     private Map viterbiLoserMap = new HashMap();
 
+    protected SphinxProperties props;
+    protected double logBase;
+
+    public SphinxProperties getProperties() {
+        return props;
+    }
 
     /**
      * Collects adds alternate predecessors for a token
@@ -23,9 +37,10 @@ public class AlternateHypothesisManager {
      * @param predecessor - a predecessor that scores lower
      * than token.getPredecessor().
      */
+
     public void addAlternatePredecessor(Token token, Token predecessor) {
         assert predecessor != token.getPredecessor();
-        List list = (List)viterbiLoserMap.get(token);
+        List list = (List) viterbiLoserMap.get(token);
         if (list == null) {
             list = new ArrayList();
             viterbiLoserMap.put(token, list);
@@ -42,29 +57,34 @@ public class AlternateHypothesisManager {
      * @return A list of predecessors that scores lower
      * than token.getPredecessor().
      */
-     public List getAlternatePredecessors(Token token) {
-        return (List)viterbiLoserMap.get(token);
+    public List getAlternatePredecessors(Token token) {
+        return (List) viterbiLoserMap.get(token);
     }
 
     /**
      * Purge all but max number of alternate preceding token
      * hypotheses.
-     * @param max
      */
-    public void purge(int max) {
+    public void purge() {
+
+        int max = props.getInt("edu.cmu.sphinx.result.Lattice.maxEdgesToNode",10)-1;
         Iterator iterator = viterbiLoserMap.keySet().iterator();
+
         while (iterator.hasNext()) {
             Object key = iterator.next();
             List list = (List) viterbiLoserMap.get(key);
             Collections.sort(list, Token.COMPARATOR);
-            List newList = list.subList(0,list.size() > max ? max : list.size());
-            viterbiLoserMap.put(key,newList);
+            List newList = list.subList(0, list.size() > max ? max : list.size());
+            viterbiLoserMap.put(key, newList);
         }
     }
+
 
     public void changeSuccessor(Token newSuccessor, Token oldSuccessor) {
         Object list = viterbiLoserMap.get(oldSuccessor);
         viterbiLoserMap.put(newSuccessor, list);
         viterbiLoserMap.remove(oldSuccessor);
     }
+
 }
+
