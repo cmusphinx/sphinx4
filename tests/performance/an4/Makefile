@@ -117,6 +117,20 @@ an4_words_bigram:
     -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./an4_words.bigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_words.batch
 
+# Tests the 79 whole words from AN4, using a trigram arpa-format
+# grammar whose vocabulary is just the spoken words from AN4.
+an4_words_trigram:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16.0 \
+    -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist\
+    -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.NullGrammar\
+    \
+    -Dedu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=false \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./an4_words.trigram.lm\
+    -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=1.0E-20\
+    edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_words.batch
 
 # Tests the 79 whole words from AN4, using an FST created from
 # the flat unigram LM based on the spoken words of AN4.
