@@ -77,8 +77,7 @@ public class Lattice {
      */
     public Lattice(Result result) {
         this.logBase = result.getLogMath().getLogBase();
-
-        initialNode = addNode("0",Dictionary.SENTENCE_START_SPELLING, -1, 0);
+        
         terminalNode = addNode("-1",Dictionary.SENTENCE_END_SPELLING, -1, -1);
 
         loserManager = result.getAlternateHypothesisManager();
@@ -147,9 +146,12 @@ public class Lattice {
             Token predecessor = token.getPredecessor();
             if (predecessor != null) {
                 processToken(newNode, predecessor);
-            } else {
+            }
+            /*
+            else {
                 addEdge(initialNode, newNode, thisAcousticScore, thisLMScore);
             }
+            */
         }
     }
 
