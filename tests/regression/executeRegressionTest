@@ -1,3 +1,4 @@
+
 # Copyright 1999-2002 Carnegie Mellon University.  
 # Portions Copyright 2002 Sun Microsystems, Inc.  
 # Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
@@ -45,7 +46,9 @@ else
   status="FAILED";
 fi
 endBuildTime=`$regressionDir/getTime`
-totalBuildTime=$((endBuildTime - startBuildTime))
+
+#totalBuildTime=$((endBuildTime - startBuildTime))
+totalBuildTime=`expr $endBuildTime - $startBuildTime`
 
 
 #########################################
@@ -57,7 +60,8 @@ if [ $status = "OK" ]; then
    startRunTime=`$regressionDir/getTime`
    $regressionDir/runAllTests
    endRunTime=`$regressionDir/getTime`
-   totalRunTime=$((endRunTime - startRunTime))
+   # totalRunTime=$((endRunTime - startRunTime)) // a bash-ism
+   totalRunTime=`expr $endRunTime - $startRunTime`
 else
    echo build failure - tests not run
    totalRunTime="N/A"
@@ -72,7 +76,7 @@ echo "build|$date|$time|$machine|$who|make|$status|$totalBuildTime|$totalRunTime
 # checkin the log
 #############################
 cd $regressionDir
-echo FIXME scvs commit -m "regression_test" $logBase
+scvs commit -m "regression_test" $logBase
 
 #################################
 # Generate the email notification
