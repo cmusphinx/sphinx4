@@ -133,6 +133,8 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 	if (numThreads < 1) {
 	    numThreads = 1;
 	}
+        System.out.println("# of scoring threads: " + numThreads);
+
 	// if we only have one thread, then we'll score the
 	// states in the calling thread and we won't need any
 	// of the synchronization objects or threads
