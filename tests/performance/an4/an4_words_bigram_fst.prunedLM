@@ -1,0 +1,590 @@
+/lab/speech/java/j2sdk1.4.0/bin/java -ea -server -Xprof  -Xloggc:gc.txt -Djava.util.logging.config.file= -ms128m -mx512m  -cp '/lab/speech/ThirdPartySoftware/junit3.7/junit.jar:../../../classes:' \
+-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-5\
+-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
+-Dedu.cmu.sphinx.decoder.Decoder.showErrorToken=false\
+-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=15.0\
+-Dedu.cmu.sphinx.search.ArpaGrammar.path=./prunedLM/an4_words.bigram.fst.prunedloops\
+edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
+Composite count: 0
+bushderby is false
+bushderbyEta is 1.0E99
+
+BatchDecoder: decoding files in ./an4_words.batch
+----------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/an251-fash-b.raw.s4.raw
+
+REF:       yes
+HYP:       yes four
+ALIGN_REF: yes ****
+ALIGN_HYP: yes FOUR
+
+   Accuracy: 100.000%    Errors: 1  (Sub: 0  Ins: 1  Del: 0)
+   Words: 1   Matches: 1    WER: 100.000%
+   Sentences: 1   Matches: 0   SentenceAcc: 0.000%
+   HypScore: 3958366.0  ActScore: NONE
+   This  Time Audio: 2.00s  Proc: 13.27s  Speed: 6.63 X real time
+   Total Time Audio: 2.00s  Proc: 13.27s  Speed: 6.63 X real time
+   Mem Total: 192.71 Mb Free: 73.36 Mb Used: 119.35 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 283821.0
+curTokensScored 283821.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/an253-fash-b.raw.s4.raw
+
+REF:       go
+HYP:       go
+ALIGN_REF: go
+ALIGN_HYP: go
+
+   Accuracy: 100.000%    Errors: 1  (Sub: 0  Ins: 1  Del: 0)
+   Words: 2   Matches: 2    WER: 50.000%
+   Sentences: 2   Matches: 1   SentenceAcc: 50.000%
+   HypScore: 4438557.0
+   This  Time Audio: 1.40s  Proc: 7.08s  Speed: 5.06 X real time
+   Total Time Audio: 3.40s  Proc: 20.35s  Speed: 5.98 X real time
+   Mem Total: 192.71 Mb Free: 70.91 Mb Used: 121.80 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 482512.0
+curTokensScored 198691.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/an254-fash-b.raw.s4.raw
+
+REF:       yes
+HYP:       yes
+ALIGN_REF: yes
+ALIGN_HYP: yes
+
+   Accuracy: 100.000%    Errors: 1  (Sub: 0  Ins: 1  Del: 0)
+   Words: 3   Matches: 3    WER: 33.333%
+   Sentences: 3   Matches: 2   SentenceAcc: 66.667%
+   HypScore: 6655002.0
+   This  Time Audio: 1.80s  Proc: 9.88s  Speed: 5.49 X real time
+   Total Time Audio: 5.20s  Proc: 30.22s  Speed: 5.81 X real time
+   Mem Total: 192.71 Mb Free: 85.64 Mb Used: 107.07 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 737045.0
+curTokensScored 254533.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen7-fash-b.raw.s4.raw
+
+REF:       two six eight four four one eight
+HYP:       two sixth a eight four four one a
+ALIGN_REF: two ***** SIX eight four four one EIGHT
+ALIGN_HYP: two SIXTH A   eight four four one A    
+
+   Accuracy: 80.000%    Errors: 4  (Sub: 2  Ins: 2  Del: 0)
+   Words: 10   Matches: 8    WER: 40.000%
+   Sentences: 4   Matches: 2   SentenceAcc: 50.000%
+   HypScore: 1.4348126E7  ActScore: NONE
+   This  Time Audio: 5.00s  Proc: 21.46s  Speed: 4.29 X real time
+   Total Time Audio: 10.20s  Proc: 51.68s  Speed: 5.07 X real time
+   Mem Total: 192.71 Mb Free: 47.12 Mb Used: 145.60 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 1441880.0
+curTokensScored 704835.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/an87-fbbh-b.raw.s4.raw
+
+REF:       enter six two four
+HYP:       enter six two four
+ALIGN_REF: enter six two four
+ALIGN_HYP: enter six two four
+
+   Accuracy: 85.714%    Errors: 4  (Sub: 2  Ins: 2  Del: 0)
+   Words: 14   Matches: 12    WER: 28.571%
+   Sentences: 5   Matches: 3   SentenceAcc: 60.000%
+   HypScore: 2043281.1
+   This  Time Audio: 3.40s  Proc: 13.55s  Speed: 3.98 X real time
+   Total Time Audio: 13.60s  Proc: 65.23s  Speed: 4.80 X real time
+   Mem Total: 192.71 Mb Free: 65.58 Mb Used: 127.13 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 1924180.0
+curTokensScored 482300.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/an90-fbbh-b.raw.s4.raw
+
+REF:       no
+HYP:       no
+ALIGN_REF: no
+ALIGN_HYP: no
+
+   Accuracy: 86.667%    Errors: 4  (Sub: 2  Ins: 2  Del: 0)
+   Words: 15   Matches: 13    WER: 26.667%
+   Sentences: 6   Matches: 4   SentenceAcc: 66.667%
+   HypScore: 4051939.8
+   This  Time Audio: 2.00s  Proc: 13.99s  Speed: 7.00 X real time
+   Total Time Audio: 15.60s  Proc: 79.22s  Speed: 5.08 X real time
+   Mem Total: 192.71 Mb Free: 46.48 Mb Used: 146.23 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 2208066.0
+curTokensScored 283886.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen3-fbbh-b.raw.s4.raw
+
+REF:       fifty one fifty six
+HYP:       fifty one fifty sixth
+ALIGN_REF: fifty one fifty SIX  
+ALIGN_HYP: fifty one fifty SIXTH
+
+   Accuracy: 84.211%    Errors: 5  (Sub: 3  Ins: 2  Del: 0)
+   Words: 19   Matches: 16    WER: 26.316%
+   Sentences: 7   Matches: 4   SentenceAcc: 57.143%
+   HypScore: 7930365.5  ActScore: 7896358.5
+   This  Time Audio: 4.60s  Proc: 20.06s  Speed: 4.36 X real time
+   Total Time Audio: 20.20s  Proc: 99.28s  Speed: 4.91 X real time
+   Mem Total: 192.71 Mb Free: 62.94 Mb Used: 129.77 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 2862622.0
+curTokensScored 654556.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen6-fbbh-b.raw.s4.raw
+
+REF:       one five oh four four
+HYP:       one five oh four four
+ALIGN_REF: one five oh four four
+ALIGN_HYP: one five oh four four
+
+   Accuracy: 87.500%    Errors: 5  (Sub: 3  Ins: 2  Del: 0)
+   Words: 24   Matches: 21    WER: 20.833%
+   Sentences: 8   Matches: 5   SentenceAcc: 62.500%
+   HypScore: 1.0483201E7
+   This  Time Audio: 4.80s  Proc: 21.53s  Speed: 4.48 X real time
+   Total Time Audio: 25.00s  Proc: 120.81s  Speed: 4.83 X real time
+   Mem Total: 192.71 Mb Free: 46.80 Mb Used: 145.92 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 3544659.0
+curTokensScored 682037.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen7-fbbh-b.raw.s4.raw
+
+REF:       four four three six three one two
+HYP:       four four three eight sixth area one two
+ALIGN_REF: four four three ***** SIX   THREE one two
+ALIGN_HYP: four four three EIGHT SIXTH AREA  one two
+
+   Accuracy: 83.871%    Errors: 8  (Sub: 5  Ins: 3  Del: 0)
+   Words: 31   Matches: 26    WER: 25.806%
+   Sentences: 9   Matches: 5   SentenceAcc: 55.556%
+   HypScore: 1.4956082E7  ActScore: NONE
+   This  Time Audio: 6.20s  Proc: 26.18s  Speed: 4.22 X real time
+   Total Time Audio: 31.20s  Proc: 146.99s  Speed: 4.71 X real time
+   Mem Total: 192.71 Mb Free: 42.96 Mb Used: 149.75 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 4424815.0
+curTokensScored 880156.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen8-fbbh-b.raw.s4.raw
+
+REF:       march third nineteen twenty eight
+HYP:       march third nineteen twenty eight
+ALIGN_REF: march third nineteen twenty eight
+ALIGN_HYP: march third nineteen twenty eight
+
+   Accuracy: 86.111%    Errors: 8  (Sub: 5  Ins: 3  Del: 0)
+   Words: 36   Matches: 31    WER: 22.222%
+   Sentences: 10   Matches: 6   SentenceAcc: 60.000%
+   HypScore: 1.5720314E7
+   This  Time Audio: 5.60s  Proc: 23.97s  Speed: 4.28 X real time
+   Total Time Audio: 36.80s  Proc: 170.95s  Speed: 4.65 X real time
+   Mem Total: 192.71 Mb Free: 47.89 Mb Used: 144.82 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 5225390.0
+curTokensScored 800575.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/an149-fclc-b.raw.s4.raw
+
+REF:       enter nine eighty nine
+HYP:       enter of nine eighty nine a
+ALIGN_REF: enter ** nine eighty nine *
+ALIGN_HYP: enter OF nine eighty nine A
+
+   Accuracy: 87.500%    Errors: 10  (Sub: 5  Ins: 5  Del: 0)
+   Words: 40   Matches: 35    WER: 25.000%
+   Sentences: 11   Matches: 6   SentenceAcc: 54.545%
+   HypScore: -1482702.5  ActScore: NONE
+   This  Time Audio: 4.60s  Proc: 20.94s  Speed: 4.55 X real time
+   Total Time Audio: 41.40s  Proc: 191.89s  Speed: 4.63 X real time
+   Mem Total: 192.71 Mb Free: 62.33 Mb Used: 130.38 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 5884253.0
+curTokensScored 658863.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen3-fclc-b.raw.s4.raw
+
+REF:       five five three five
+HYP:       five five three five
+ALIGN_REF: five five three five
+ALIGN_HYP: five five three five
+
+   Accuracy: 88.636%    Errors: 10  (Sub: 5  Ins: 5  Del: 0)
+   Words: 44   Matches: 39    WER: 22.727%
+   Sentences: 12   Matches: 7   SentenceAcc: 58.333%
+   HypScore: 3643102.8
+   This  Time Audio: 3.80s  Proc: 18.93s  Speed: 4.98 X real time
+   Total Time Audio: 45.20s  Proc: 210.82s  Speed: 4.66 X real time
+   Mem Total: 192.71 Mb Free: 54.49 Mb Used: 138.22 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 6422774.0
+curTokensScored 538521.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen6-fclc-b.raw.s4.raw
+
+REF:       one five two one seven
+HYP:       one five two one seven
+ALIGN_REF: one five two one seven
+ALIGN_HYP: one five two one seven
+
+   Accuracy: 89.796%    Errors: 10  (Sub: 5  Ins: 5  Del: 0)
+   Words: 49   Matches: 44    WER: 20.408%
+   Sentences: 13   Matches: 8   SentenceAcc: 61.538%
+   HypScore: 189386.03
+   This  Time Audio: 4.20s  Proc: 18.24s  Speed: 4.34 X real time
+   Total Time Audio: 49.40s  Proc: 229.06s  Speed: 4.64 X real time
+   Mem Total: 192.71 Mb Free: 24.41 Mb Used: 168.30 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 7021384.0
+curTokensScored 598610.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen7-fclc-b.raw.s4.raw
+
+REF:       six eight seven five eight oh eight
+HYP:       six eight seven five eight oh eight
+ALIGN_REF: six eight seven five eight oh eight
+ALIGN_HYP: six eight seven five eight oh eight
+
+   Accuracy: 91.071%    Errors: 10  (Sub: 5  Ins: 5  Del: 0)
+   Words: 56   Matches: 51    WER: 17.857%
+   Sentences: 14   Matches: 9   SentenceAcc: 64.286%
+   HypScore: 2823040.0
+   This  Time Audio: 6.00s  Proc: 29.95s  Speed: 4.99 X real time
+   Total Time Audio: 55.40s  Proc: 259.02s  Speed: 4.68 X real time
+   Mem Total: 192.71 Mb Free: 27.39 Mb Used: 165.32 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 7870977.0
+curTokensScored 849593.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen8-fclc-b.raw.s4.raw
+
+REF:       june eleventh nineteen sixty seven
+HYP:       two oh of of nineteen sixty seven
+ALIGN_REF: *** ** JUNE ELEVENTH nineteen sixty seven
+ALIGN_HYP: TWO OH OF   OF       nineteen sixty seven
+
+   Accuracy: 88.525%    Errors: 14  (Sub: 7  Ins: 7  Del: 0)
+   Words: 61   Matches: 54    WER: 22.951%
+   Sentences: 15   Matches: 9   SentenceAcc: 60.000%
+   HypScore: -4557836.0  ActScore: NONE
+   This  Time Audio: 5.40s  Proc: 24.80s  Speed: 4.59 X real time
+   Total Time Audio: 60.80s  Proc: 283.82s  Speed: 4.67 X real time
+   Mem Total: 192.71 Mb Free: 42.20 Mb Used: 150.51 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 8640253.0
+curTokensScored 769276.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/an38-fejs-b.raw.s4.raw
+
+REF:       go
+HYP:       ten oh
+ALIGN_REF: *** GO
+ALIGN_HYP: TEN OH
+
+   Accuracy: 87.097%    Errors: 16  (Sub: 8  Ins: 8  Del: 0)
+   Words: 62   Matches: 54    WER: 25.806%
+   Sentences: 16   Matches: 9   SentenceAcc: 56.250%
+   HypScore: 1819526.2  ActScore: NONE
+   This  Time Audio: 1.60s  Proc: 13.05s  Speed: 8.15 X real time
+   Total Time Audio: 62.40s  Proc: 296.86s  Speed: 4.76 X real time
+   Mem Total: 233.73 Mb Free: 131.70 Mb Used: 102.04 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 8869530.0
+curTokensScored 229277.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen3-fejs-b.raw.s4.raw
+
+REF:       one zero six five
+HYP:       one zero six five
+ALIGN_REF: one zero six five
+ALIGN_HYP: one zero six five
+
+   Accuracy: 87.879%    Errors: 16  (Sub: 8  Ins: 8  Del: 0)
+   Words: 66   Matches: 58    WER: 24.242%
+   Sentences: 17   Matches: 10   SentenceAcc: 58.824%
+   HypScore: 2.2081584E7
+   This  Time Audio: 5.60s  Proc: 27.70s  Speed: 4.95 X real time
+   Total Time Audio: 68.00s  Proc: 324.56s  Speed: 4.77 X real time
+   Mem Total: 233.73 Mb Free: 85.85 Mb Used: 147.88 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 9662863.0
+curTokensScored 793333.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen6-fejs-b.raw.s4.raw
+
+REF:       one five two two one
+HYP:       one of a of two two one
+ALIGN_REF: one ** * FIVE two two one
+ALIGN_HYP: one OF A OF   two two one
+
+   Accuracy: 87.324%    Errors: 19  (Sub: 9  Ins: 10  Del: 0)
+   Words: 71   Matches: 62    WER: 26.761%
+   Sentences: 18   Matches: 10   SentenceAcc: 55.556%
+   HypScore: 9757438.0  ActScore: NONE
+   This  Time Audio: 4.00s  Proc: 15.22s  Speed: 3.80 X real time
+   Total Time Audio: 72.00s  Proc: 339.78s  Speed: 4.72 X real time
+   Mem Total: 233.73 Mb Free: 63.53 Mb Used: 170.20 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 1.0233985E7
+curTokensScored 571122.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen7-fejs-b.raw.s4.raw
+
+REF:       two six eight three eight zero two
+HYP:       two six eight three eight eighth zero two
+ALIGN_REF: two six eight three eight ****** zero two
+ALIGN_HYP: two six eight three eight EIGHTH zero two
+
+   Accuracy: 88.462%    Errors: 20  (Sub: 9  Ins: 11  Del: 0)
+   Words: 78   Matches: 69    WER: 25.641%
+   Sentences: 19   Matches: 10   SentenceAcc: 52.632%
+   HypScore: 1.0830744E7  ActScore: NONE
+   This  Time Audio: 6.00s  Proc: 23.69s  Speed: 3.95 X real time
+   Total Time Audio: 78.00s  Proc: 363.47s  Speed: 4.66 X real time
+   Mem Total: 233.73 Mb Free: 73.74 Mb Used: 159.99 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 1.1086666E7
+curTokensScored 852681.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen8-fejs-b.raw.s4.raw
+
+REF:       two fifteen sixty two
+HYP:       two of fifty eight sixty two
+ALIGN_REF: two ** ***** FIFTEEN sixty two
+ALIGN_HYP: two OF FIFTY EIGHT   sixty two
+
+   Accuracy: 87.805%    Errors: 23  (Sub: 10  Ins: 13  Del: 0)
+   Words: 82   Matches: 72    WER: 28.049%
+   Sentences: 20   Matches: 10   SentenceAcc: 50.000%
+   HypScore: 3526709.5  ActScore: NONE
+   This  Time Audio: 4.40s  Proc: 17.66s  Speed: 4.01 X real time
+   Total Time Audio: 82.40s  Proc: 381.13s  Speed: 4.63 X real time
+   Mem Total: 233.73 Mb Free: 55.05 Mb Used: 178.69 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 1.1714378E7
+curTokensScored 627712.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/an291-ffmm-b.raw.s4.raw
+
+REF:       enter five
+HYP:       enter five
+ALIGN_REF: enter five
+ALIGN_HYP: enter five
+
+   Accuracy: 88.095%    Errors: 23  (Sub: 10  Ins: 13  Del: 0)
+   Words: 84   Matches: 74    WER: 27.381%
+   Sentences: 21   Matches: 11   SentenceAcc: 52.381%
+   HypScore: 7889687.0
+   This  Time Audio: 3.00s  Proc: 11.31s  Speed: 3.77 X real time
+   Total Time Audio: 85.40s  Proc: 392.44s  Speed: 4.60 X real time
+   Mem Total: 233.73 Mb Free: 55.42 Mb Used: 178.31 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 1.2139212E7
+curTokensScored 424834.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/an292-ffmm-b.raw.s4.raw
+
+REF:       enter seventy eight
+HYP:       enter seventy eight
+ALIGN_REF: enter seventy eight
+ALIGN_HYP: enter seventy eight
+
+   Accuracy: 88.506%    Errors: 23  (Sub: 10  Ins: 13  Del: 0)
+   Words: 87   Matches: 77    WER: 26.437%
+   Sentences: 22   Matches: 12   SentenceAcc: 54.545%
+   HypScore: 7662011.0
+   This  Time Audio: 3.40s  Proc: 13.98s  Speed: 4.11 X real time
+   Total Time Audio: 88.80s  Proc: 406.42s  Speed: 4.58 X real time
+   Mem Total: 233.73 Mb Free: 83.82 Mb Used: 149.91 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 1.2617159E7
+curTokensScored 477947.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen3-ffmm-b.raw.s4.raw
+
+REF:       fifty six thirty two
+HYP:       fifty six thirty two
+ALIGN_REF: fifty six thirty two
+ALIGN_HYP: fifty six thirty two
+
+   Accuracy: 89.011%    Errors: 23  (Sub: 10  Ins: 13  Del: 0)
+   Words: 91   Matches: 81    WER: 25.275%
+   Sentences: 23   Matches: 13   SentenceAcc: 56.522%
+   HypScore: 4083944.8
+   This  Time Audio: 4.00s  Proc: 17.61s  Speed: 4.40 X real time
+   Total Time Audio: 92.80s  Proc: 424.03s  Speed: 4.57 X real time
+   Mem Total: 233.73 Mb Free: 115.70 Mb Used: 118.04 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 1.3185474E7
+curTokensScored 568315.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen6-ffmm-b.raw.s4.raw
+
+REF:       one five two one seven
+HYP:       one five two one seven
+ALIGN_REF: one five two one seven
+ALIGN_HYP: one five two one seven
+
+   Accuracy: 89.583%    Errors: 23  (Sub: 10  Ins: 13  Del: 0)
+   Words: 96   Matches: 86    WER: 23.958%
+   Sentences: 24   Matches: 14   SentenceAcc: 58.333%
+   HypScore: 1.0164911E7
+   This  Time Audio: 4.60s  Proc: 17.98s  Speed: 3.91 X real time
+   Total Time Audio: 97.40s  Proc: 442.01s  Speed: 4.54 X real time
+   Mem Total: 233.73 Mb Free: 60.69 Mb Used: 173.05 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 1.3838468E7
+curTokensScored 652994.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen7-ffmm-b.raw.s4.raw
+
+REF:       four one two four two one eight eight nine six
+HYP:       four one two four two one eight eight nine six a
+ALIGN_REF: four one two four two one eight eight nine six *
+ALIGN_HYP: four one two four two one eight eight nine six A
+
+   Accuracy: 90.566%    Errors: 24  (Sub: 10  Ins: 14  Del: 0)
+   Words: 106   Matches: 96    WER: 22.642%
+   Sentences: 25   Matches: 14   SentenceAcc: 56.000%
+   HypScore: 1.6820772E7  ActScore: 1.6782908E7
+   This  Time Audio: 9.80s  Proc: 41.38s  Speed: 4.22 X real time
+   Total Time Audio: 107.20s  Proc: 483.39s  Speed: 4.51 X real time
+   Mem Total: 233.73 Mb Free: 72.05 Mb Used: 161.69 Mb
+ ========= statistics for batch=======
+totalUniqueStatesSentenceHMM 34385.0
+totalAttachedStatesSentenceHMM 2772417.0
+averageBranches 1.8581358194351196
+totalTokensScored 1.5232997E7
+curTokensScored 1394529.0
+tokensCreated 0.0
+--------------
+
+Decoding: /lab/speech/sphinx4/data/an4/an4_s4/cen8-ffmm-b.raw.s4.raw
