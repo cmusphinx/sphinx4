@@ -65,8 +65,21 @@ public class LivePretendDecoder {
      */
     public final static String PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT = null;
 
+    /**
+     * SphinxProperty specifying the number of files to decode before
+     * alignment is performed.
+     */
+    public final static String PROP_ALIGN_INTERVAL = 
+        PROP_PREFIX + "alignInterval";
+
+    /**
+     * The default value of PROP_ALIGN_INTERVAL.
+     */
+    public final static int PROP_ALIGN_INTERVAL_DEFAULT = -1;
+
 
     private int sampleRate;
+    private int alignInterval;
     private String context;
     private String batchFile;
     private String hypothesisFile;
@@ -111,6 +124,8 @@ public class LivePretendDecoder {
                                       FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
             hypothesisTranscript = new FileWriter(hypothesisFile);
         }
+        alignInterval = props.getInt(PROP_ALIGN_INTERVAL, 
+                                     PROP_ALIGN_INTERVAL_DEFAULT);
     }
 
     /**
@@ -120,6 +135,7 @@ public class LivePretendDecoder {
         int numUtterances = 0;
         List resultList = new LinkedList();
         Result result = null;
+        int startReference = 0;
 
         while ((result = decoder.decode()) != null) {
             numUtterances++;
@@ -137,19 +153,43 @@ public class LivePretendDecoder {
                     (result.getTimedBestResult(false, true, sampleRate) +"\n");
                 hypothesisTranscript.flush();
             }
+
+            if (alignInterval > 0 && (numUtterances % alignInterval == 0)) {
+                // perform alignment
+                List references = dataSource.getReferences();
+                List section =
+                    references.subList(startReference, references.size());
+                alignResults(resultList, section);
+                resultList = new LinkedList();
+                startReference = references.size();
+            }
         }
 
-        alignResults(resultList, dataSource.getReferences());
+        List references = dataSource.getReferences();
+        List section = references.subList(startReference, references.size());
+        
+        if (resultList.size() > 0 || section.size() > 0) {
+            alignResults(resultList, section);
+        }
+        
+        detectGapInsertionErrors();
 
+        Timer.dumpAll(context);
+        decoder.showSummary();
+    }
+
+    /**
+     * Detect gap insertion errors.
+     */
+    private void detectGapInsertionErrors() throws IOException {
         Timer gapTimer = Timer.getTimer(context, "GapInsertionDetector");
         gapTimer.start();
         GapInsertionDetector gid = new GapInsertionDetector
             (dataSource.getTranscriptFile(), hypothesisFile);
+        System.out.println();
         System.out.println("# of gap insertion errors: " + gid.detect());
+        System.out.println();
         gapTimer.stop();
-
-        Timer.dumpAll(context);
-        decoder.showSummary();
     }
 
     /**
