@@ -30,48 +30,34 @@ import java.util.HashMap;
  */
 public class SimpleActiveListManager implements ActiveListManager  {
 
-    Class listOrder[] = {
-        // Todo: Find an alternative to hardcoding the state class order.
-        // TODO:  This is a horrible hack.  How should we really do this
-        // TODO: it is tied to the question of what information should
-        // TODO: be exported by the linguist
-        LexTreeLinguist.LexTreeInitialState.class,
-        HMMStateState.class,
-        LexTreeLinguist.LexTreeHMMState.class,
-        HMMStateStateNE.class,
-        LexTreeHMMStateNE.class,
-        BranchState.class,
-        LexTreeLinguist.LexTreeUnitState.class,
-        PronunciationState.class,
-        LexTreeLinguist.LexTreeWordState.class,
-        ExtendedUnitState.class,
-        GrammarState.class
-    };
-    AbstractMap listMap = new HashMap();
-    SphinxProperties props;
-    int listPtr = 0;
-    private class HMMStateStateNE {}
-    private class LexTreeHMMStateNE {}
-    int absoluteWordBeamWidth;
-    float relativeWordBeamWidth;
+    private Class[] listOrder;
+    private AbstractMap listMap = new HashMap();
+    private SphinxProperties props;
+    private int listPtr = 0;
+    private int absoluteWordBeamWidth;
+    private float relativeWordBeamWidth;
+
 
     /**
      * Creates active lists with properties
      *
      * @param props the sphinx properties
+     * @param searchStateOrder an array of classes that represents the order 
+     *     in which the states will be returned
      */
-    public SimpleActiveListManager(SphinxProperties props) {
+    public SimpleActiveListManager(SphinxProperties props, 
+                                   Class[] searchStateOrder) {
         this.props = props;
-        absoluteWordBeamWidth = props.getInt(PROP_ABSOLUTE_WORD_BEAM_WIDTH,
-                PROP_ABSOLUTE_WORD_BEAM_WIDTH_DEFAULT);
-        double linearRelativeWordBeamWidth = props.getFloat(PROP_RELATIVE_WORD_BEAM_WIDTH,
-                PROP_RELATIVE_WORD_BEAM_WIDTH_DEFAULT);
+        this.listOrder = searchStateOrder;
 
-        LogMath logMath = LogMath.getLogMath(props.getContext());
-        relativeWordBeamWidth = logMath.linearToLog(linearRelativeWordBeamWidth);
-
-
+        absoluteWordBeamWidth = props.getInt
+            (PROP_ABSOLUTE_WORD_BEAM_WIDTH,
+             PROP_ABSOLUTE_WORD_BEAM_WIDTH_DEFAULT);
+        relativeWordBeamWidth = 
+            props.getFloat(PROP_RELATIVE_WORD_BEAM_WIDTH,
+                           PROP_RELATIVE_WORD_BEAM_WIDTH_DEFAULT);
     }
+
 
     /**
      * Creates a new version of this active list with
@@ -80,10 +66,8 @@ public class SimpleActiveListManager implements ActiveListManager  {
      * @return the new active list
      */
     public ActiveListManager createNew() {
-        return new SimpleActiveListManager(props);
+        return new SimpleActiveListManager(props, listOrder);
     }
-
-
 
 
     /**
@@ -94,25 +78,18 @@ public class SimpleActiveListManager implements ActiveListManager  {
     public void add(Token token) {
         assert isKnownType(token);
 
-        Class type;
-        // TODO:  This is a horrible hack.  How should we really do this
-        // TODO: it is tied to the question of what information should
-        // TODO: be exported by the linguist
-        if (token.getSearchState() instanceof HMMStateState && !token.isEmitting()) {
-            type = HMMStateStateNE.class;
-        } else if( token.getSearchState() instanceof LexTreeLinguist.LexTreeHMMState && !token.isEmitting() ) {
-            type = LexTreeHMMStateNE.class;
-        } else {
-            type = token.getSearchState().getClass();
-        }
+        Class type = token.getSearchState().getClass();
+        
         ActiveList activeList = findListFor(type);
         if (activeList == null) {
-            SimpleActiveList simpleActiveList = new SimpleActiveList(props);
-            if (!token.isEmitting()) {
-                simpleActiveList.absoluteBeamWidth = absoluteWordBeamWidth;
-                simpleActiveList.relativeBeamWidth = relativeWordBeamWidth;
+            FastActiveList newActiveList;
+            if (token.isEmitting()) {
+                newActiveList = new FastActiveList(props);
+            } else { 
+                newActiveList = new FastActiveList
+                    (props, absoluteWordBeamWidth, relativeWordBeamWidth);
             }
-            activeList = simpleActiveList;
+            activeList = newActiveList;
             listMap.put(type, activeList);
         }
         activeList.add(token);
@@ -151,6 +128,12 @@ public class SimpleActiveListManager implements ActiveListManager  {
         activeList.replace(oldToken, newToken);
     }
 
+
+    /**
+     * Returns the next ActiveList according to the order of SearchStates.
+     *
+     * @return the next ActiveList
+     */
     public ActiveList getNextList() {
         if (listMap.isEmpty()) {
             return null;
