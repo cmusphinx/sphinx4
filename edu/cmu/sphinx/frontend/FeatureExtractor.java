@@ -8,6 +8,7 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
@@ -177,32 +178,7 @@ public class FeatureExtractor extends PullingProcessor {
 	int residualVectors = 0;
 
 	if (startSegment) {
-	    // Replicate first frame into the first win frames
-	    // in the cepstraBuffer
-	    for (int i = 0; i < window; i++) {
-		this.cepstraBuffer[i] = cepstra[0].getData();
-	    }
-
-	    bufferPosition = window;
-	    bufferPosition %= LIVEBUFBLOCKSIZE;
-	    currentPosition = bufferPosition;
-
-	    jp1 = currentPosition - 1;
-	    jp2 = currentPosition - 2;
-	    jp3 = currentPosition - 3;
-	    jf1 = currentPosition + 1;
-	    jf2 = currentPosition + 2;
-	    jf3 = currentPosition + 3;
-
-            if (jp3 > BUFFER_EDGE) {
-                jf3 %= LIVEBUFBLOCKSIZE;
-                jf2 %= LIVEBUFBLOCKSIZE;
-                jf1 %= LIVEBUFBLOCKSIZE;
-                jp1 %= LIVEBUFBLOCKSIZE;
-                jp2 %= LIVEBUFBLOCKSIZE;
-                jp3 %= LIVEBUFBLOCKSIZE;
-            }
-
+            replicateFirstFrame(cepstra[0]);
 	    residualVectors -= window;
 	}
 
@@ -215,30 +191,17 @@ public class FeatureExtractor extends PullingProcessor {
 	}
 
 	if (endSegment) {
-	    // Replicate the last frame into the last win frames in
-	    // the cepstraBuffer
-            float[] last;
-	    if (cepstra.length > 0) {
-                last = cepstra[cepstra.length-1].getData();
-            } else {
-                last = this.cepstraBuffer[bufferPosition - 1];
-            }
-
-            for (int i = 0; i < window; i++) {
-                this.cepstraBuffer[bufferPosition++] = last;
-                bufferPosition %= LIVEBUFBLOCKSIZE;
-            }
-
+            replicateLastFrame(cepstra);
 	    residualVectors += window;
 	}
 
 
 	// create the Features
 
+        fcTimer.start();
+
         int totalFeatures = cepstra.length + residualVectors;
         float[][] features = new float[totalFeatures][featureLength];
-
-        fcTimer.start();
 
 	for (int i = 0; i < totalFeatures; i++) {
             float[] feature = features[i];
@@ -255,6 +218,60 @@ public class FeatureExtractor extends PullingProcessor {
         getTimer().stop();
 
         return (new FeatureFrame(features));
+    }
+
+
+    /**
+     * Replicate the given cepstrum into the last window number of frames in
+     * the cepstraBuffer.
+     */
+    private void replicateFirstFrame(Cepstrum cepstrum) {
+        Arrays.fill(cepstraBuffer, 0, window, cepstrum.getData());
+        
+        bufferPosition = window;
+        bufferPosition %= LIVEBUFBLOCKSIZE;
+        currentPosition = bufferPosition;
+        
+        jp1 = currentPosition - 1;
+        jp2 = currentPosition - 2;
+        jp3 = currentPosition - 3;
+        jf1 = currentPosition + 1;
+        jf2 = currentPosition + 2;
+        jf3 = currentPosition + 3;
+        
+        if (jp3 > BUFFER_EDGE) {
+            jf3 %= LIVEBUFBLOCKSIZE;
+            jf2 %= LIVEBUFBLOCKSIZE;
+            jf1 %= LIVEBUFBLOCKSIZE;
+            jp1 %= LIVEBUFBLOCKSIZE;
+            jp2 %= LIVEBUFBLOCKSIZE;
+            jp3 %= LIVEBUFBLOCKSIZE;
+        }
+    }
+
+
+    /**
+     * Replicate the last frame into the last window number of frames in
+     * the cepstraBuffer.
+     */
+    private void replicateLastFrame(Cepstrum[] cepstra) {
+        float[] last;
+        if (cepstra.length > 0) {
+            last = cepstra[cepstra.length-1].getData();
+        } else {
+            last = this.cepstraBuffer[bufferPosition - 1];
+        }
+        
+        if (bufferPosition + window < LIVEBUFBLOCKSIZE) {
+            Arrays.fill(cepstraBuffer, bufferPosition, 
+                        bufferPosition + window, last);
+        } else {
+            for (int i = 0; i < window; i++) {
+                this.cepstraBuffer[bufferPosition++] = last;
+                bufferPosition %= LIVEBUFBLOCKSIZE;
+            }
+        }
+            
     }
 
 

@@ -15,11 +15,12 @@ import java.util.Vector;
  * DoubleAudioFrame(s). One would obtain the DoubleAudioFrames using
  * the <code>read()</code> method. It will make sure that the
  * returned DoubleAudioFrame can be made into exactly N windows.
- * The size of the windows and the window shift is specified by
- * the SphinxProperties
+ * The Sphinx properties that affect this StreamAudioSource are:
  * <pre>
- * edu.cmu.sphinx.frontend.windowSize
- * edu.cmu.sphinx.frontend.windowShift
+ * edu.cmu.sphinx.frontend.bytesPerAudioFrame
+ * edu.cmu.sphinx.frontend.sampleRate
+ * edu.cmu.sphinx.frontend.windowSizeInMs
+ * edu.cmu.sphinx.frontend.windowShiftInMs
  * </pre>The audio samples that do not fit into the current frame
  * will be used in the next frame (which is obtained by the next call to
  * <code>read()</code>).

@@ -56,9 +56,7 @@ public class SlicingWindower extends PullingProcessor {
     private double[] window;
     private int windowSize;
     private int windowShift;
-
     private double ALPHA;
-    
     private Vector outputQueue;
 
 
@@ -180,14 +178,14 @@ public class SlicingWindower extends PullingProcessor {
 
             double[] myWindow = windows[i];
             
-            // copy the frame into the window
-            System.arraycopy(in, windowStart, myWindow, 0, windowSize);
+            // apply the Window function to the window of data            
+            for (int w = 0, s = windowStart; w < windowSize; s++, w++) {
+                myWindow[w] = in[s] * window[w];
+            }
             
-            applyWindow(myWindow);
-
             getTimer().stop();
 
-            // add the frame to the output queue.
+            // add the frame to the output queue
             outputQueue.add(new DoubleAudioFrame(myWindow));
 
             if (getDump()) {
@@ -197,17 +195,5 @@ public class SlicingWindower extends PullingProcessor {
 
         // send a Signal indicating end of frame
         outputQueue.add(FrameEndPointSignal.getEndSignal());
-    }
-
-
-    /**
-     * Applies the Window to the given frame.
-     *
-     * @param frame the frame to apply the Window to
-     */
-    private void applyWindow(double[] frame) {
-        for (int f = 0; f < frame.length; f++) {
-            frame[f] *= window[f];
-        }
     }
 }
