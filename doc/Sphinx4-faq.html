@@ -341,8 +341,7 @@ microphone (e.g., a USB headset) on my machine?</b></a>
       application that transcribes audio in a '.wav' file.  Additionally, the
       <a
       href="../demo/sphinx/transcriber/README.html">Transcriber Demo</a> demonstrates how Sphinx-4 can be used to
-      transcribe a continuous audio file with multiple utterances. <i> Note
-      that this demo is not avaiable in the current release</i>
+      transcribe a continuous audio file with multiple utterances.
     </blockquote>
 
 
@@ -377,11 +376,14 @@ microphone (e.g., a USB headset) on my machine?</b></a>
         the tokens associated with paths that have reached the end of
         sentence state.
 
-        This list is not a traditional N-best list of results. Some
+        <p>This list is not a traditional N-best list of results. Some
         good results are not represented in this list. We also support
         full word lattices that can provide full N-Best lists. We
         currently do not have any user documentation for this,
         however, we will be providing some shortly.
+
+        <p>See also: <a href="#confidence_scores">How can I obtain
+        confidence scores for the recognition result?</a>
     </blockquote>
 
 <a name="out_of_grammar"> <b>How can I detect and ignore out-of-grammar
@@ -423,14 +425,21 @@ microphone (e.g., a USB headset) on my machine?</b></a>
 
     <blockquote>
         The <a
-        href="../javadoc/edu/cmu/sphinx/jsapi/JSGFGrammar.html">JSGFGrammar
-        </a>provides methods that allow for swapping in a new JSGF or
+        href="../javadoc/edu/cmu/sphinx/jsapi/JSGFGrammar.html">JSGFGrammar</a>
+        class provides methods that allow for swapping in a new JSGF
+        grammar or
         modifying the currently active <a
         href="http://java.sun.com/products/java-media/speech/forDevelopers/jsapi-doc/javax/speech/recognition/RuleGrammar.html">RuleGrammar</a>
-        grammar, or modifying the current grammar. The <a
-        href="../demo/jsapi/dialog/README.html">Dialog
-        Demo</a> provides a a good example of how grammars can be manipulated
-        by an application.
+        grammar used by a given Recognizer.  The <a
+        href="../demo/jsapi/jsgf/README.html">JSGFDemo</a> gives an
+        example of how to do this.
+
+        <p>To handle more complex problems, such as switching between
+        n-Gram grammars, you can configure more than one Recognizer
+        (one grammar per Recognizer) and switch between those
+        Recognizers.  The <a
+        href="../demo/jsapi/dialog/README.html">Dialog Demo</a>
+        provides an example of how to do this.
     </blockquote>
 
 <a name="word_spotting"> <b>How can I perform word-spotting?</b></a>
@@ -508,7 +517,8 @@ microphone (e.g., a USB headset) on my machine?</b></a>
         The getInsertionProbability() returns the insertion component
         of the score.
 
-        So the method getScore returns:
+        So the method getScore returns (all values are in the log
+        domain):
 
         <pre>
         entryScore + getAcousticScore() + getLanguageScore() + getInsertionProbability()
