@@ -31,6 +31,7 @@ public class SimpleWordResult implements WordResult {
     int endFrame;
     double score;
     double confidence;
+    LogMath logMath;
     
     /**
      * Construct a word result from a string and a confidence score.
@@ -38,7 +39,7 @@ public class SimpleWordResult implements WordResult {
      * @param w the word
      * @param confidence the confidence for this word
      */
-    public SimpleWordResult(String w, double confidence) {
+    public SimpleWordResult(String w, double confidence, LogMath logMath) {
         Pronunciation[] pros = { Pronunciation.UNKNOWN };
         this.word = new Word(w,pros,false);
         this.confidence = confidence;
@@ -54,12 +55,14 @@ public class SimpleWordResult implements WordResult {
      * @param score score of the word
      * @param confidence confidence (posterior) of the word
      */
-    public SimpleWordResult(Word w, int sf, int ef, double score, double confidence) {
+    public SimpleWordResult(Word w, int sf, int ef, double score, 
+                            double confidence, LogMath logMath) {
         this.word = w;
         this.startFrame = sf;
         this.endFrame = ef;
         this.score = score;
         this.confidence = confidence;
+        this.logMath = logMath;
     }
     
     /**
@@ -71,9 +74,9 @@ public class SimpleWordResult implements WordResult {
      * @param node the node to extract information from
      * @param confidence the confidence (posterior) to assign
      */
-    public SimpleWordResult(Node node, double confidence) {
+    public SimpleWordResult(Node node, double confidence, LogMath logMath) {
         this(node.getWord(), node.getBeginTime(), node.getEndTime(), 
-                LogMath.getLogZero(), confidence);
+             LogMath.getLogZero(), confidence, logMath);
     }
     
     /**
@@ -88,6 +91,13 @@ public class SimpleWordResult implements WordResult {
      */
     public double getConfidence() {
         return confidence;
+    }
+
+    /**
+     * @see edu.cmu.sphinx.result.WordResult#getLogMath()
+     */
+    public LogMath getLogMath() {
+        return logMath;
     }
 
     /**

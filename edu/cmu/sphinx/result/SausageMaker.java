@@ -431,7 +431,7 @@ public class SausageMaker implements ConfidenceScorer {
         interWordCluster(clusters);
         //System.out.println("final clusters");
         //printClusters(clusters);
-        Sausage sausage = new Sausage(clusters.size());
+        Sausage sausage = new Sausage(clusters.size(), lattice.getLogMath());
         ListIterator c1 = clusters.listIterator();
         while (c1.hasNext()) {
             HashSet seenWords = new HashSet();
@@ -445,7 +445,10 @@ public class SausageMaker implements ConfidenceScorer {
                     continue;
                 }
                 seenWords.add(word.getSpelling());
-                SimpleWordResult swr = new SimpleWordResult(node,wordSubClusterProbability(cluster,word.getSpelling()));
+                SimpleWordResult swr = new SimpleWordResult
+                    (node,
+                     wordSubClusterProbability(cluster,word.getSpelling()),
+                     lattice.getLogMath());
                 sausage.addWordHypothesis(index,swr);
             }
         }
@@ -462,7 +465,7 @@ public class SausageMaker implements ConfidenceScorer {
         lop.optimize();
         //TODO: the following currently does not return a valid sausage, because
         //      we here need the language model weight to compute posteriors.
-        //lattice.computeNodePosteriors(lmw);
+        //lattice.computeNodePosteriors(languageWeight);
         return makeSausage();
     }
 }
