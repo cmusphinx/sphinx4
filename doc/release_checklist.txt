@@ -1,7 +1,27 @@
-Sphinx-4 Release Steps
-----------------------
+Sphinx-4 1.0 Release Steps
+--------------------------
 
-1) Prepare the distribution
+1) Check the demos
+   - Make sure that all demos can run and have a README.html.
+   - Current demos are:
+     demo/jsapi/dialog
+     demo/jsapi/jsgf
+     demo/jsapi/tags
+     demo/sphinx/hellodigits
+     demo/sphinx/hellongram
+     demo/sphinx/helloworld
+     demo/sphinx/transcriber
+     demo/sphinx/wavfile
+     demo/sphinx/zipcity
+
+2) Organize the FAQ
+   - Find out what people's main questions are on the forum.
+   - List all the questions at the top of the page.
+   - Fix links to FAQ : looks like a lot of the links to the FAQ that are broken.
+
+3) Update RELEASE_NOTES to say version 1.0.
+
+4) Prepare the distribution
     - update the version number in SphinxHelp.java
     - update the README with release information
     - check all web docs by building javadocs and running linklint
@@ -9,7 +29,7 @@ Sphinx-4 Release Steps
     - check in all changes
     - check latest regression test outputs for no regressions
 
-2) Create the binary and source distribution:
+5) Create the binary and source distribution:
     - Download fresh copy of Sphinx-4 from sourceforge
     - cd lib
     - chmod a+x ./jsapi.sh
@@ -18,11 +38,11 @@ Sphinx-4 Release Steps
     - make sure that JAVA_HOME points to a 1.4.X compiler
     - ant deploy
 
-2a) Deploy ZipCity webstart
+6) Deploy ZipCity webstart
     - build deploy with 'ant -find demo.xml release_zipcity'
     - release it to sourceforge with  'scripts/deployZipCity.sh'
 
-3) Test the Binary Distribution:
+7) Test the Binary Distribution:
     - jar xvf sphinx4-1.0-bin.zip
     - cd lib
     - chmod a+x jsapi.sh, ./jsapi.sh or ./jsapi.exe
@@ -48,7 +68,7 @@ Sphinx-4 Release Steps
     - Go through index.html, click through the links to make sure they are
       not broken. (or use 'linklint /@')
 
-4) Test the Source Distribution:
+8) Test the Source Distribution:
     - jar xvf sphinx4-1.0-src.zip
     - cd lib
     - chmod a+x jsapi.sh, ./jsapi.sh or ./jsapi.exe
@@ -84,9 +104,12 @@ Sphinx-4 Release Steps
     - Go through index.html, click through the links to make sure they are
       not broken. (or use 'linklint /@')
 
-5) Test WebStart app
+9) Test WebStart app
     - clear webstart cache
     - go to cmusphinx.sourceforge.net/sphinx4
     - click on zipcity
     - test app
 
+10) Upload the release tarballs.
+
+11) Announce the release.
