@@ -70,8 +70,6 @@ public class SampleComponent implements Configurable {
      * 
      * @param propertySheet
      *            contains the new data
-     * @return true if the given data was valid and accepted, otherwise false.
-     *  
      */
     public void newProperties(PropertySheet propertySheet) throws PropertyException {
         int tWidth = propertySheet.getInt(PROP_WIDTH, PROP_WIDTH_DEFAULT);
