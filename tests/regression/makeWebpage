@@ -362,7 +362,7 @@ function printMachineDescription() {
     print(" <tr>");
     print(" <td ><b>Test Date </b></td> <td> " theDate " </td></tr>");
     print(" <tr><td ><b>Test Details </b></td> <td> " )
-    print("<a href=http://www.speech.cs.cmu.edu/cgi-bin/twiki/view/Sphinx4/?topic=TaskStatus> Sphinx 4 Twiki</a></td>");
+    print("<a href=http://www.speech.cs.cmu.edu/cgi-bin/cmusphinx/twiki/view/Sphinx4/?topic=TaskStatus> Sphinx 4 Twiki</a></td>");
     print(" </tr>");
 
     print(" <td ><b>CPUs </b></td> <td> " data[3] " </td>");
