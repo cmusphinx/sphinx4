@@ -17,31 +17,45 @@ package edu.cmu.sphinx.knowledge.language.large;
  * Represents a word ID (second word of a bigram), a bigram probability ID,
  * a backoff probability ID, and the location of the first trigram entry.
  */
-class BigramProbability {
+public class BigramProbability {
 
+    private int which;
     private int wordID;
     private int probabilityID;
     private int backoffID;
     private int firstTrigramEntry;
     private int numberTrigramEntries;
-    
+
 
     /**
      * Constructs a BigramProbability
      *
+     * @param which which follower of the first word is this bigram
      * @param wordID the ID of the second word in a bigram
      * @param probabilityID the index into the probability array
      * @param backoffID the index into the backoff probability array
      * @param firstTrigramEntry the first trigram entry
      * @param trigramEntries the number trigram entries for this bigram 
      */
-    public BigramProbability(int wordID, int probabilityID, int backoffID,
+    public BigramProbability(int which, int wordID, 
+			     int probabilityID, int backoffID,
                              int firstTrigramEntry, int trigramEntries) {
-        this.wordID = wordID;
+        this.which = which;
+	this.wordID = wordID;
         this.probabilityID = probabilityID;
         this.backoffID = backoffID;
         this.firstTrigramEntry = firstTrigramEntry;
         this.numberTrigramEntries = trigramEntries;
+    }
+
+    
+    /**
+     * Returns which follower of the first word is this bigram
+     *
+     * @return which follower of the first word is this bigram
+     */
+    public int getWhichFollower() {
+	return which;
     }
 
 
