@@ -13,21 +13,21 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import edu.cmu.sphinx.decoder.search.Token;
-
 import java.util.Iterator;
+
+import edu.cmu.sphinx.util.props.Configurable;
 
 /**
  * An active list is maintained as a sorted list
  *
  */
-public interface ActiveListManager {
+public interface ActiveListManager extends Configurable {
 
     /**
      * Sphinx4 property that specifies the absolute word beam width
      */
     public final static String PROP_ABSOLUTE_WORD_BEAM_WIDTH  =
-	"edu.cmu.sphinx.decoder.search.ActiveListManager.absoluteWordBeamWidth";
+	"absoluteWordBeamWidth";
 
     /**
      * Sphinx4 property that specifies the default value for the
@@ -39,7 +39,7 @@ public interface ActiveListManager {
      * Sphinx4 property that specifies the relative word beam width
      */
     public final static String PROP_RELATIVE_WORD_BEAM_WIDTH  =
-	"edu.cmu.sphinx.decoder.search.ActiveListManager.relativeWordBeamWidth";
+	"relativeWordBeamWidth";
 
     /**
      * Sphinx4 property that specifies the default value for the 
@@ -81,19 +81,23 @@ public interface ActiveListManager {
      */
     public ActiveList getEmittingList();
 
-     /**
-     * Creates a new version of the active list with
-     * the same general properties of this one
-     *
-     * @return a new active list
-     */
-    public ActiveListManager createNew();
-
 
     /**
      * Dumps out debug info for the active list manager
      */
     public void dump();
+    
+    /**
+     * Sets the search state order for this manager
+     * @param searchStateOrder the search state order
+     */
+    public void setStateOrder( Class[] searchStateOrder);
+    
+    /**
+     * Retrieves the search state order for this manager
+     * @return the search state order
+     */
+    public Class[] getStateOrder();
 
 }
 
