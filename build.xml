@@ -209,7 +209,8 @@ jsapi.exe from the lib directory.
 		 additionalparam="-breakiterator"
 		 destdir="${javadoc_dir}" 
 		 packagenames="edu.*"
-                 excludepackagenames="edu.cmu.sphinx.trainer"
+                 excludepackagenames="edu.cmu.sphinx.trainer,
+		                      edu.cmu.sphinx.research.parallel"
 		 overview="${src_dir}/overview.html"
 		 windowtitle="${javadoc_desc}"
                  doctitle="${javadoc_desc}"
@@ -234,7 +235,8 @@ jsapi.exe from the lib directory.
         <javadoc sourcepath="${src_dir}"
 		 additionalparam="-source 1.4"
 		 packagenames="edu.*"
-                 excludepackagenames="edu.cmu.sphinx.trainer"
+                 excludepackagenames="edu.cmu.sphinx.trainer,
+		                      edu.cmu.sphinx.research.parallel"
 		 destdir="${javadoc_check_dir}" 
 		 overview="${src_dir}/overview.html"
                  doclet="com.sun.tools.doclets.doccheck.DocCheck"
