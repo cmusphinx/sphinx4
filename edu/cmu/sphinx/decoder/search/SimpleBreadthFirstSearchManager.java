@@ -233,7 +233,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         }
         if (!noData) {
             result = new Result(activeList, resultList, currentFrameNumber,
-                    done);
+                    done, logMath);
         }
         if (showTokenCount) {
             showTokenCount();

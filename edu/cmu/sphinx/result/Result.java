@@ -23,6 +23,7 @@ import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.dictionary.Word;
+import edu.cmu.sphinx.util.LogMath;
 
 /**
  * Provides recognition results. Results can be partial or final. A
@@ -43,6 +44,7 @@ public class Result {
     private boolean isFinal = false;
     private int currentFrameNumber;
     private String reference;
+    private LogMath logMath;
 
     /**
      * Creates a result
@@ -54,8 +56,8 @@ public class Result {
      */
     public Result(AlternateHypothesisManager alternateHypothesisManager,
                   ActiveList activeList, List resultList, int frameNumber,
-                  boolean isFinal) {
-        this(activeList, resultList, frameNumber, isFinal);
+                  boolean isFinal, LogMath logMath) {
+        this(activeList, resultList, frameNumber, isFinal, logMath);
         this.alternateHypothesisManager = alternateHypothesisManager;
     }
 
@@ -68,11 +70,12 @@ public class Result {
      * @param isFinal if true, the result is a final result
      */
     public Result(ActiveList activeList, List resultList, int frameNumber,
-                  boolean isFinal) {
+                  boolean isFinal, LogMath logMath) {
         this.activeList = activeList;
         this.resultList = resultList;
         this.currentFrameNumber = frameNumber;
         this.isFinal = isFinal;
+        this.logMath = logMath;
     }
 
     /**
@@ -85,6 +88,15 @@ public class Result {
      */
     public boolean isFinal() {
         return isFinal;
+    }
+
+    /**
+     * Returns the log math used for this Result.
+     *
+     * @return the log math used
+     */
+    public LogMath getLogMath() {
+        return logMath;
     }
 
     /**

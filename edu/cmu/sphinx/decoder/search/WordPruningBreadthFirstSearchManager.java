@@ -389,7 +389,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
 
         result = new Result(loserManager, activeList, resultList,
-                currentFrameNumber, done);
+                currentFrameNumber, done, logMath);
 
        // tokenTypeTracker.show();
        if (showTokenCount) {

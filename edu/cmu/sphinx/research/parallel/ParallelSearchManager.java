@@ -106,6 +106,11 @@ public class ParallelSearchManager implements SearchManager {
      */
     public static final String PROP_LINGUIST = "linguist";
 
+    /**
+     * The sphinx property for the log math used.
+     */
+    public static final String PROP_LOG_MATH = "logMath";
+
 
     private String name;
     private ParallelSimpleLinguist linguist;
@@ -113,6 +118,7 @@ public class ParallelSearchManager implements SearchManager {
     private Pruner featureScorePruner;
     private Pruner combinedScorePruner;
     private ScoreCombiner featureScoreCombiner;
+    private LogMath logMath;
 
     private int currentFrameNumber;           // the current frame number
     private ActiveListFactory activeListFactory;
@@ -143,6 +149,7 @@ public class ParallelSearchManager implements SearchManager {
         registry.register(PROP_DO_COMBINE_PRUNING, PropertyType.BOOLEAN);
         registry.register(PROP_FEATURE_SCORE_PRUNER, PropertyType.COMPONENT);
         registry.register(PROP_COMBINED_SCORE_PRUNER, PropertyType.COMPONENT);
+        registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
     }
 
 
@@ -152,6 +159,8 @@ public class ParallelSearchManager implements SearchManager {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
 
         linguist = (ParallelSimpleLinguist) ps.getComponent
             (PROP_LINGUIST, ParallelSimpleLinguist.class);
@@ -307,7 +316,7 @@ public class ParallelSearchManager implements SearchManager {
 	    done = recognize();
 	}
 	result = new Result
-	    (combinedActiveList, resultList, currentFrameNumber, done);
+	    (combinedActiveList, resultList, currentFrameNumber, done, logMath);
 
 	return result;
     }
