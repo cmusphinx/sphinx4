@@ -92,7 +92,6 @@ edu.cmu.sphinx.util.BeamFinder.enable=false
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist 
 edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=9.5
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = .2
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = .1
