@@ -48,7 +48,9 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="batch[skip]" 	value="${skip}"/> 
-            <arg value="wsj5k.bigram.config.xml"/> 
+            <sysproperty key="lexTreeLinguist[languageModel]" 
+			 value="bigramModel"/> 
+            <arg value="wsj5k.config.xml"/> 
             <arg value="wsj5k.batch"/> 
         </java>
     </target>
@@ -67,7 +69,9 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="batch[skip]" 	value="${skip}"/> 
-            <arg value="wsj5k.trigram.config.xml"/> 
+            <sysproperty key="lexTreeLinguist[languageModel]" 
+			 value="trigramModel"/> 
+            <arg value="wsj5k.config.xml"/> 
             <arg value="wsj5k.batch"/> 
         </java>
     </target>

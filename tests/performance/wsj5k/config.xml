@@ -21,6 +21,8 @@
         <property name="frontend" value="mfcFrontEnd"/>
         <property name="recognizer" value="wordRecognizer"/>
         <property name="showCreations" value="false"/>
+        <property name="gopherProxySet" value="false"/>
+        <property name="socksNonProxyHosts" value="east.sun.com|*.east.sun.com|eng.sun.com|*.eng.sun.com|sfbay.sun.com|*.sfbay.sun.com"/>
 
   <!-- ************************************************** -->
   <!-- Components                                         -->
@@ -389,4 +391,4 @@
     </component>
 
 </config>
-<!-- Generated on Thu Apr 29 13:33:51 EDT 2004-->
+<!-- Generated on Thu Apr 29 15:38:15 EDT 2004-->
