@@ -18,8 +18,9 @@ WARRANTIES.
   <title>Sphinx-4 - A speech recognizer written entirely in the
  Java(TM) programming language</title>
 <STYLE TYPE="text/css">
-  pre { font-size: medium; background: #f0f8ff; padding: 2mm; border-style: ridge ; color: teal}
-  code {font-size: medium; color: teal}
+     pre { font-size: medium; background: #f0f8ff; padding: 2mm; border-style: ridge ; color: teal}
+     code {font-size: medium; color: teal}
+     s4keyword { color: red; font-weight: bold }
 </STYLE></head>
 
 <body bgcolor="white">
@@ -1126,12 +1127,201 @@ JSGFGrammar</a>.
 
   <li>
      <a name="architecture_and_api1"><b>Architecture and API</b></a>
-     <p>The architecture and API can be found in the 
-        <a href="javadoc/index.html">javadoc documentation</a>.</p>
-     <p>If the previous is broken, please build the javadocs using the
-        instructions in <a href="#create_javadocs">Creating Javadocs</a>.
-	In fact, rebuilding javadocs is something you should do every time
-	you change code in Sphinx-4.
+     <p>
+     The Sphinx-4 API can be found in the 
+     <a href="javadoc/index.html">javadoc documentation</a>.
+     </p>
+     <p>
+     If the previous is broken, please build the javadocs using the
+     instructions in <a href="#create_javadocs">Creating Javadocs</a>.
+     In fact, rebuilding javadocs is something you should do every time
+     you change code in Sphinx-4.
+     </p>
+
+     <p>
+     In this section, we will provide an overview of Sphinx-4, starting with 
+     an introduction of HMM-based recognizers. We will highlight in 
+     <s4keyword>red</s4keyword> those keywords that are critical to 
+     understanding Sphinx-4.
+     </p>
+
+     <h4>Overview of an HMM-based Speech Recognition System</h4>
+
+  <p>
+  Sphinx-4 is an HMM-based speech recognizer. <s4keyword>HMM</s4keyword>
+  stands for Hidden Markov Models, which is a type of statistical model.
+  In HMM-based speech recognizers,
+  each unit of sound (usually called a phoneme) is represented by a statistical
+  model that represents the distribution of all the evidence (data) for
+  that phoneme. This is called the <s4keyword>acoustic model</s4keyword> 
+  for that phoneme. When creating an acoustic model,
+  the speech signals are first transformed into a sequence of vectors
+  that represent certain characteristics of the signal, and the
+  parameters of the acoustic model are then estimated using these vectors
+  (usually called <s4keyword>features</s4keyword>). This process is called 
+  training the acoustic models.
+  </p>
+
+  <p>
+  During speech recognition, features are derived from the 
+  incoming speech (we will use "speech" to mean the same thing as "audio")
+  in the same way as in the training process. The component of the recognizer
+  that generates these features is called the <s4keyword>front end</s4keyword>.
+  These live features are scored against the acoustic model.
+  The <s4keyword>score</s4keyword> obtained indicates how 
+  likely that a particular set of features (extracted from live
+  audio) belongs to the phoneme of the corresponding acoustic model.
+  </p>
+
+  <p>
+  The process of speech recognition is to find the best possible sequence
+  of words (or units) that will fit the given input speech. It is a 
+  <s4keyword>search</s4keyword> problem, and in the case of HMM-based 
+  recognizers, a graph search problem. The graph represents all possible
+  sequences of phonemes in the entire <s4keyword>language</s4keyword>
+  of the task under consideration. The graph is typically
+  composed of the HMMs of sound units concatenated in a guided manner,
+  as specified by the <s4keyword>grammar</s4keyword> of the task. 
+  As an example, lets look at a simple search graph that decodes the words
+  "one" and "two". It is composed of the HMMs of the sounds units of the
+  words "one" and "two":
+  </p>
+
+  <img src="doc/1-2-searchgraph.jpg">
+
+  <p>
+  Constructing the above graph requires knowledge from various sources.
+  It requires a <s4keyword>dictionary</s4keyword>, which maps the word
+  "one" to the phonemes W, AX and N, and the word "two" to T and OO.
+  It requires the acoustic model to obtain the HMMs for the phonemes
+  W, AX, N, T and OO. In Sphinx-4, the task of constructing this search graph
+  is done by the <s4keyword>linguist</s4keyword>.
+  </p>
+
+  <p>
+  Usually, the search graph also has information about how likely certain
+  words will occur. This information is supplied by the
+  <s4keyword>language model</s4keyword>. Suppose that, in our example,
+  the probability of someone saying "one" (e.g., 0.8) is much higher than 
+  saying "two" (0.2). Then, in the above graph, the probability of the
+  transition between the entry node and the first node of the HMM for W
+  will be 0.8, while the probability of the transition between the entry
+  node and the first node of the HMM for T will be 0.2. The path to
+  "one" will consequently have a higher score.
+  </p>
+
+  <p>
+  Once this graph is constructed, the sequence of parametrized speech
+  signals (i.e., the features) is matched against different paths 
+  through the graph to find the best fit. 
+  The best fit is usually the least cost or highest
+  scoring path, depending on the implementation.
+  In Sphinx-4, the task of searching through the graph for the best path
+  is done by the <s4keyword>search manager</s4keyword>.
+  </p>
+
+  <p>
+  As you can see from the above graph, a lot of the nodes have self
+  transitions. This can lead to a very large number of possible paths
+  through the graph. As a result, finding the best possible path can
+  take a very long time. The purpose of the <s4keyword>pruner</s4keyword>
+  is to reduce the number of possible paths during the search,
+  using heuristics like pruning away the lowest scoring paths.
+  </p>
+
+  <p>
+  As we described earlier, the input speech signal is transformed into a
+  sequence of feature vectors. After the last feature vector is decoded,
+  we look at all the paths that have reached the final exit node 
+  (the red node). The path with the highest score is the best fit, and a 
+  <s4keyword>result</s4keyword> taking all the words of that path is returned.
+  </p>
+
+  <h4><a name="architectureComponents">Sphinx-4 Architecture and Main Components</a></h4>
+
+  <p>
+  In this section, we describe the main components of Sphinx-4, and how
+  they work together during the recognition process. First of all,
+  lets look at the architecture diagram of Sphinx-4. It contains almost
+  all the concepts (the words in red) that were introduced in the previous
+  section. There are a few additional concepts in the diagram, 
+  which we will explain promptly.
+  </p>
+
+  <center>
+  <img src="doc-files/architecture.gif">
+  </center>
+
+  <p>
+  When the recognizer starts up, it constructs the front end (which generates
+  features from speech), the decoder, and the linguist (which generates 
+  the search graph) according to the configuration specified by the user.
+  These components will in turn construct their own subcomponents. For example,
+  the linguist will construct the acoustic model, the dictionary,
+  and the language model. It will use the knowledge from these three
+  components to contruct a search graph that is appropriate for the task. 
+  The decoder will construct the search manager,
+  which in turn constructs the scorer, the pruner, and the active list.
+  </p>
+
+  <p>
+  Most of these components represents interfaces. The search manager,
+  linguist, acoustic model, dictionary, language model, active list, scorer,
+  pruner, and search graph are all Java interfaces. There can
+  be different implementations of these interfaces. For example,
+  there are two different implementations of the search manager.
+  Then, how does the system know which implementation to use? It is specified
+  by the user via the configuration file, an XML-based file that is loaded 
+  by the <s4keyword>configuration manager</s4keyword>. In this configuration
+  file, the user can also specify the <s4keyword>properties</s4keyword>
+  of the implementations. One example of a property is the sample rate 
+  of the incoming speech data.
+  </p>
+
+  <p>
+  The <s4keyword>active list</s4keyword> is a component that requires 
+  explanation. Remember we mentioned that there can be many possible paths
+  through the search graph. Sphinx-4 currently implements a 
+  <s4keyword>token</s4keyword>-passing algorithm. Each time the search arrives
+  at the next state in the graph, a token is created. A token points to the 
+  previous token, as well as the next state. The active list keeps track of 
+  all the current active paths through the search graph by storing the last
+  token of each path. A token has the score of the path at that particular
+  point in the search. To perform pruning, we simply prune the tokens in the
+  active list.
+  </p>  
+
+  <p>
+  When the application asks the recognizer to perform recognition,
+  the search manager will ask the scorer to score each token in the
+  active list against the next feature vector obtained from the front end.
+  This gives a new score for each of the active paths. The pruner will then 
+  prune the tokens (i.e., active paths) using certain heuristics. 
+  Each surviving paths will 
+  then be expanded to the next states, where a new token will be created 
+  for each next state. The process repeats itself until no more feature 
+  vectors can be obtained from the front end for scoring. This usually 
+  means that there
+  is no more input speech data. At that point, we look at all paths 
+  that have reached the final exit state,
+  and return the highest scoring path as the result to the application.
+  </p>
+
+  <h4><a name="configuration">Sphinx-4 Configuration System</a></h4>
+
+  <p>
+  The performance of Sphinx-4 critically depends on your task and how
+  you configured Sphinx-4 to suit your task. For example, 
+  a large vocabulary task needs a different linguist than a small 
+  vocabulary task. Your system has to be configured differently
+  for the two tasks. This section will not tell you the exact configuration
+  for different tasks, which will be dealt with later. Instead, this section
+  will introduce you to the configuration mechanism of Sphinx-4, which is
+  via an XML-based configuration file. Please click on the document
+  <a href="javadoc/edu/cmu/sphinx/util/props/doc-files/ConfigurationManagement.html">Sphinx-4 Configuration Management</a> to learn how to do this.
+  It is important that you read this document before you proceed.
+  </p>
+
   </li>
   <br>&nbsp;
 
