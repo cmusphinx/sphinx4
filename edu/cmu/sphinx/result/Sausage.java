@@ -16,26 +16,21 @@ package edu.cmu.sphinx.result;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.Vector;
 
 import edu.cmu.sphinx.util.LogMath;
 
 /**
  * A Sausage is a sequence of confusion sets, one for each position in an utterance. 
- * A confusion set is a set of words with their associated posteriors.
- *
+ * 
  * @author pgorniak
  */
 
-public class Sausage {
+public class Sausage implements ConfidenceResult {
     protected List confusionSets;
     
     /**
@@ -46,7 +41,7 @@ public class Sausage {
     public Sausage(int size) {
         confusionSets = new Vector(size);
         for (int i=0;i<size;i++) {
-            confusionSets.add(new TreeMap());
+            confusionSets.add(new ConfusionSet());
         }
     }
     
@@ -57,7 +52,7 @@ public class Sausage {
      * 
      * @return an iterator that steps through confusion sets
      */
-    public Iterator iterator() {
+    public Iterator confusionSetIterator() {
         return confusionSets.iterator();
     }
     
@@ -70,7 +65,7 @@ public class Sausage {
     public void fillInBlanks(LogMath logMath) {
         for (ListIterator i=confusionSets.listIterator();i.hasNext();) {
             int index = i.nextIndex();
-            SortedMap set = (SortedMap)i.next();
+            ConfusionSet set = (ConfusionSet)i.next();
             float sum = LogMath.getLogZero();
             for (Iterator j=set.keySet().iterator();j.hasNext();) {
                 sum = logMath.addAsLinear(sum,((Double)j.next()).floatValue());
@@ -79,7 +74,7 @@ public class Sausage {
                 float remainder = logMath.subtractAsLinear(LogMath.getLogOne(),sum);
                 addWordHypothesis(index,"<noop>",remainder);
             } else {
-                SortedMap newSet = new TreeMap();
+                ConfusionSet newSet = new ConfusionSet();
                 for (Iterator j=set.keySet().iterator();j.hasNext();) {
                     Double oldProb = (Double)j.next();
                     Double newProb = new Double(oldProb.doubleValue() - sum);
@@ -95,17 +90,27 @@ public class Sausage {
      * 
      * @param position the position to add a hypothesis to
      * @param word the word to add
-     * @param prob the posterior to attach to the word
      */
-    public void addWordHypothesis(int position, String word, double prob) {
-        //System.out.println("adding " + word + " " + prob + " at " + position);
-        Double key = new Double(prob);
-        Set wordSet = (Set)((Map)confusionSets.get(position)).get(key);
-        if (wordSet == null) {
-            wordSet = new HashSet();
-            ((Map)confusionSets.get(position)).put(key,wordSet);
+    public void addWordHypothesis(int position, WordResult word) {
+        getConfusionSet(position).addWordHypothesis(word);
+    }
+
+    public void addWordHypothesis(int position, String word, double confidence) {
+        WordResult wr = new SimpleWordResult(word, confidence);
+        addWordHypothesis(position,wr);
+    }
+    
+    /**
+     * @see edu.cmu.sphinx.result.ConfidenceResult#getBestHypothesis()
+     */
+    public Path getBestHypothesis() {
+        WordResultPath path = new WordResultPath();
+        Iterator i = confusionSetIterator();
+        while (i.hasNext()) {
+            ConfusionSet cs = (ConfusionSet)i.next();
+            path.add(cs.getBestHypothesis());
         }
-        wordSet.add(word);
+        return path;
     }
     
     /**
@@ -114,23 +119,7 @@ public class Sausage {
      * @return best string
      */
     public String getBestHypothesisString() {
-        String s = "";
-        Iterator i = confusionSets.iterator();
-        while (i.hasNext()) {
-            SortedMap set = (SortedMap)i.next();             
-            Set wordSet = (Set)set.get(set.lastKey());
-            Iterator j = wordSet.iterator();
-            while (j.hasNext()) {
-                s += j.next();
-                if (j.hasNext()) {
-                    s += "/";
-                }
-            }
-            if (i.hasNext()) {
-                s += " ";
-            }
-        }
-        return s;
+        return getBestHypothesis().toString();
     }
     
     /**
@@ -139,8 +128,8 @@ public class Sausage {
      * @param pos the word slot to look at
      * @return the word with the highest posterior in the slot
      */
-    public Set getBestWordHypothesis(int pos) {
-        SortedMap set = (SortedMap)confusionSets.get(pos);
+    public Set getBestWordHypothesis(int pos) {        
+        ConfusionSet set = (ConfusionSet)confusionSets.get(pos);
         return (Set)set.get(set.lastKey());
     }
 
@@ -152,7 +141,7 @@ public class Sausage {
      */
 
     public double getBestWordHypothesisPosterior(int pos) {
-        SortedMap set = (SortedMap)confusionSets.get(pos);
+        ConfusionSet set = (ConfusionSet)confusionSets.get(pos);
         return ((Double)set.lastKey()).doubleValue();        
     }
     
@@ -163,8 +152,8 @@ public class Sausage {
      * @return a map from Double posteriors to Sets of String words,
      *         sorted from lowest to highest.
      */
-    public SortedMap getConfusionSet(int pos) {
-        return (SortedMap)confusionSets.get(pos);
+    public ConfusionSet getConfusionSet(int pos) {
+        return (ConfusionSet)confusionSets.get(pos);
     }
     
     /**
@@ -189,25 +178,10 @@ public class Sausage {
             f.write("title: \"" + title + "\"\n");
             f.write("display_edge_labels: yes\n");
             f.write( "orientation: left_to_right\n");
-            /*
-            f.write( "colorentry 32: 25 225 0\n");
-            f.write( "colorentry 33: 50 200 0\n");
-            f.write( "colorentry 34: 75 175 0\n");
-            f.write( "colorentry 35: 100 150 0\n");
-            f.write( "colorentry 36: 125 125 0\n");
-            f.write( "colorentry 37: 150 100 0\n");
-            f.write( "colorentry 38: 175 75 0\n");
-            f.write( "colorentry 39: 200 50 0\n");
-            f.write( "colorentry 40: 225 25 0\n");
-            f.write( "colorentry 41: 250 0 0\n");
-            f.write( "color: black\n");
-            f.write( "xspace: 10\n");
-            f.write( "yspace: 10\n");
-            */
             ListIterator i = confusionSets.listIterator();
             while (i.hasNext()) {
                 int index = i.nextIndex();
-                SortedMap set = (SortedMap)i.next();
+                ConfusionSet set = (ConfusionSet)i.next();
                 Iterator j = set.keySet().iterator();
                 f.write("node: { title: \"" + index + "\" label: \"" + index + "\"}\n");
                 while (j.hasNext()) {

@@ -98,26 +98,6 @@ public class SausageMaker {
     }
     
     /**
-     * Get the highest probability pronunciation for a word
-     * TODO: this could be moved to Word.java
-     * 
-     * @param w the word
-     * @return the highest probability pronunciation
-     */
-    protected Pronunciation getBestPronunciation(Word w) {
-        Pronunciation[] ps = w.getPronunciations();
-        float bestScore = Float.NEGATIVE_INFINITY;
-        Pronunciation best = null;
-        for (int i=0;i<ps.length;i++) {
-            if (ps[i].getProbability() > bestScore) {
-                bestScore = ps[i].getProbability();
-                best = ps[i];
-            }
-        }
-        return best;
-    }
-    
-    /**
      * Find the string edit distance between to lists of objects.
      * Objects are compared using .equals()
      * TODO: could be moved to a general utility class
@@ -162,9 +142,8 @@ public class SausageMaker {
      * @return the phonetic similarity, between 0 and 1
      */
     protected double computePhoneticSimilarity(Node n1, Node n2) {
-        Pronunciation p1 = getBestPronunciation(n1.getWord());
-        Pronunciation p2 = getBestPronunciation(n2.getWord());
-        //System.out.println("comparing pronunciations " + p1 + " " + p2);
+        Pronunciation p1 = n1.getWord().getMostLikelyPronunciation();
+        Pronunciation p2 = n2.getWord().getMostLikelyPronunciation();
         double sim = stringEditDistance(Arrays.asList(p1.getUnits()),
                         Arrays.asList(p2.getUnits()));
         sim /= (double)(p1.getUnits().length + p2.getUnits().length);
@@ -454,12 +433,13 @@ public class SausageMaker {
             Iterator c2 = cluster.iterator();
             while (c2.hasNext()) {
                 Node node = (Node)c2.next();
-                String word = node.getWord().getSpelling();
-                if (seenWords.contains(word)) {
+                Word word = node.getWord();
+                if (seenWords.contains(word.getSpelling())) {
                     continue;
                 }
-                seenWords.add(word);
-                sausage.addWordHypothesis(index,word,wordSubClusterProbability(cluster,word));
+                seenWords.add(word.getSpelling());
+                SimpleWordResult swr = new SimpleWordResult(node,wordSubClusterProbability(cluster,word.getSpelling()));
+                sausage.addWordHypothesis(index,swr);
             }
         }
         sausage.fillInBlanks(lattice.logMath);
