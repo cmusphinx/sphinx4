@@ -22,9 +22,9 @@ EXTRA_JAVA_FLAGS= -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 # LOGGER_PROPERTIES=tiDigits.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
-PROFILE_FLAGS= -Xprof 
-LOG_GC_FLAGS= -Xloggc:gc.txt
-GC_FLAGS= -XX:+PrintGCDetails
+PROFILE_FLAGS=
+LOG_GC_FLAGS=
+GC_FLAGS= 
 GC_FLAGS = -ms128m -mx512m
 # GC_FLAGS=  -XX:+UseConcMarkSweepGC
 #GC_FLAGS=  -XX:+UseParallelGC
