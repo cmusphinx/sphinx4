@@ -12,8 +12,8 @@
 # align. Align results are sent to stdout
 #
 
-awk '$1 == "REF:" { $1=""; print $0 }' <$1 >> /tmp/ref.$PPID.tmp
-awk '$1 == "HYP:" { $1=""; print $0 }' <$1 >> /tmp/hyp.$PPID.tmp
+gawk '$1 == "REF:" { $1=""; print $0 }' <$1 >> /tmp/ref.$PPID.tmp
+gawk '$1 == "HYP:" { $1=""; print $0 }' <$1 >> /tmp/hyp.$PPID.tmp
 align -ref /tmp/ref.$PPID.tmp -hyp /tmp/hyp.$PPID.tmp 2> /dev/null
 rm /tmp/ref.$PPID.tmp
 rm /tmp/hyp.$PPID.tmp

@@ -9,7 +9,7 @@
 #
 # Shows the NIST Align summary data for the given S4 output
 #
-s4_align $* | awk '
+s4_align $* | gawk '
 
 $2 == "SUMMARY" {
   printOn = 1;

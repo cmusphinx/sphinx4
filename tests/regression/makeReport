@@ -29,7 +29,7 @@
 #  17) heapSize 
 #  18) loadAverage 
 
-nawk '
+gawk '
 
 BEGIN {
     FS = "|"
@@ -51,16 +51,18 @@ BEGIN {
     F_CORRECT_SENTENCES = 16;
     F_HEAP_SIZE = 17;
     F_LOAD_AVERAGE = 18;
-
+    "hostname" | getline machine
 }
 
-$1 == "build" {
+$1 == "build" && $4 == machine {
     finalBuildRecord = $0;
 }
-$1 == "test" && $5 == "s4" {
+
+$1 == "test"  && $4 == machine && $5 == "s4" {
     testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
     testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
 }
+
 
 #####
 # updates the data array with info for the given test
