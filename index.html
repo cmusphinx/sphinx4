@@ -90,7 +90,8 @@ WARRANTIES.
 
       <h3>Sphinx-4 in Detail</h3>
       <ul>
-	<li><a href="#sphinx_properties">Understanding Sphinx Properties</a></li>
+	<li><a href="#sphinx_properties">Understanding Sphinx-4
+        Configuration Management</a></li>
 	<li><a href="doc/FrontEnd.html">Front End</a></li>
 	    <ul>
 	        <li><a href="javadoc/edu/cmu/sphinx/frontend/doc-files/FrontEndProperties.html">Configuration</a></li>
@@ -546,71 +547,14 @@ d:\work\sphinx4&gt;ant clean
 
 <ul>
 
-  <li><a name="sphinx_properties"><b>Understanding Sphinx Properties</b></a>
-
-  <p>The system behavior is determined by SphinxProperties, which is similar
-     in nature to the Java Platform Properties class. The SphinxProperties
-     can be defined at command line, but in general it is defined from a file
-     with extension ".props". Properties defined in the props file are
-     overridden by properties defined as command line arguments when you run
-     the program.
-  </p>
-
-  <p>The properties can be a number (int, float, double), a boolean, a string,
-     or the name of a class. For example, you can define the 
-     FeatureVectorLength is 39, or that the logBase is 1.0001, or that
-     the property "islooping" in the class "SimpleWordListGrammar" in the
-     "Linguist" package is true or false.
-     It can also be the name of a class. You may be defining that the
-     grammar used is the SimpleWordListGrammar, and this is the grammar
-     that will be loaded at run time. Notice that you can change the class
-     to be used without the need to recompile code.
-  </p>
-
-  <p>A property is specified as follows:
-
-  <p><code>edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.format = sphinx3.binary</code>
-  </p>
+  <li><a name="sphinx_properties"><b>Understanding Sphinx-4
+  Configuration Management </b><p>
   
-  <p>That is, the full name of the property (edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.format), followed by "=", followed by the value of the property (sphinx3.binary).
-
-  </p>
-
-  <p>How do you know what the property names and their default values are?
-     The Java platform has a tool named Javadoc, which extracts information
-     from comments in the source code and creates a set of local html files
-     documenting the <a href="./javadoc">API</a> and the
-     <a href="./javadoc/constant-values.html">constants</a> in the code.
-     If you have access to the web, you can visit the
-     <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/constant-values.html">constant field values page</a> 
-     or the <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc">API page</a> located at sourceforge.net.
-  </p>
-
-  <p>For each class, the properties are defined as constant fields.
-     The constant field value page displays the type of variable,
-     whether an int or float or boolean or something else,
-     and the property's name and default value.
-  </p>
-
-  <p>For example, the class edu.cmu.sphinx.frontend.Preemphasizer
-     defines a property that internally, in the code, is named
-     PROP_PREEMPHASIS_FACTOR. This is not the name seen from outside,
-     not the name used in a props file. This is the internal name,
-     used in the code. This is a string, and the value,
-     "edu.cmu.sphinx.frontend.preemphasizer.factor", is used in the properties
-     file to specify the preemphasis factor.
-  </p>
-
-  <p>Immediately following this property, there is another field with
-     "_DEFAULT" appended to the previous field name, that is,
-     PROP_PREEMPHASIS_FACTOR_DEFAULT. This field is the default value for
-     this property. If the props file makes no reference to the property,
-     this is the value the property will have. The field definition
-     contains the type of constant that can be used. So, if this field is
-     int, only an integer can be used as the value for this property.
-  </p>
-
-  </li>
+  </a> The document <a
+  href="doc-files/ConfigurationManagement.html"> Sphinx-4
+  Configuration Management</a> describes, in detail, how to configure a
+  Sphinx-4 system.
+  
 
 <br>&nbsp;
 
