@@ -19,21 +19,19 @@
 <html>
   <head><title>Sphinx-4 Live Demo</title></head>
   <body>
-      <center>
-	<font face="Times New Roman">
-      <table bgcolor="#FFCC99" width="100%">
+    <font face="Times New Roman">
+     <center>
+     <table bgcolor="#99CCFF" width="100%">
 	<tr>
 	  <td align=center width="100%">
 	    <h1><i>Sphinx-4</i> Live Demo</h1>
 	  </td>
 	</tr>
       </table>
-    </font>
     </center>
-      
-      <p>
-	<b>NOTE:</b> To build and run some parts of this demo, you must <a href="../../doc/jsapi_setup.html">setup JSAPI</a>.
+    </font>
 
+    <font face="Arial" size="-1">      
       <p>
 	This is a very simple program that shows the basic speech recognition
 	capabilities of Sphinx-4. When you run the program, the following
@@ -41,35 +39,143 @@
       <p>
 	<center><img src="live.jpg"></center>
       <p>
-	As you can see, the program prompts you to say a certain sentence,
-	and you tell the program when you start to speak. You can select
-	the different tasks in the "Decoder:" selection box. The text you
-	should say is in the "Say:" box. The recognition results are in
-	the "Recognized:" box.
+	The program prompts you to say a certain sentence
+	(here it prompts you to say "the left most and closest").
+	You can select the different tasks (e.g., isolated digits,
+	connected digits, spelling) in the "Decoder:" selection box. 
+	The text you should say is in the "Say:" box. The recognition 
+	results are displayed in the "Recognized:" box.
+      <p>
+	<h3>Building</h3>
+      <p>
+	To build this demo, type the following in this directory:
+	<p>
+	<code>ant all</code>
+      <p>
+	<h3>Running</h3>
       <p>
 	You can run this program in three different modes:
       <ul>
 	<li><b>Click to start, click to stop.</b> <br>In this mode, you click
 	  the "Speak" button to start speaking, and click the "Stop"
-	  button to stop speaking.
+	  button when you have finished speaking. To run in this mode, 
+	  type the following in this directory: <pre>ant live</pre>
+
 	<li><b>Click to talk (endpointed).</b> <br>In this mode, you click the
 	  "Speak" button to start speaking. The endpointer will automatically
-	  detect the end of speech and stop the recognition.
+	  detect the end of speech and stop the recognition. To run
+	  in this mode, type the following in this directory:
+	  <pre>ant live-ep</pre>
+
 	<li><b>Hands free mode</b> <br>In this mode, you click the "Speak"
 	  button only once. You then start speaking, wait for it to perform
-	  recognition, then click the "Next" button to go to the next
-	  sentence, start speaking, etc.. The endpointer will detect
-	  the utterance boundaries.  Finally, when you are done
-	  with all the utterances, click "Stop".
+	  endpointing and recognition, then click the "Next" button to go to 
+	  the next sentence, start speaking again, etc.. 
+	  The endpointer will detect the utterance boundaries.
+	  Finally, when you are done with all the utterances, 
+	  click "Stop". To run in this mode,
+	  type the following in this directory: <pre>ant live-free</pre>
+
       </ul>
-      <p>
-	<b>Building</b>
-      <p>
-	To build this demo, type the following:
 
       <p>
-	<b>Running</b>
+      <h3>Customizing the Demo</h3>
       <p>
-	To run this demo, type the following:
+      All the tests that the live demo program will run are listed
+      at the "decoders.list" file in this directory. Using the isolated
+      digits test as an example, a test is specified as follows:
+      <p>
+      <code>
+      isolatedDigits.name = Isolated Digits 
+      <br>isolatedDigits.propertiesFile = ./ti46.props
+      <br>isolatedDigits.testFile = ./isolatedDigits.test
+      </code>
+      <p>
+      <b>name</b> - this is the name you will see in the "Decoder:" box
+      in the live program
+      <br><b>propertiesFile</b> - the SphinxProperties file for this test
+      <br><b>testFile</b> - a list of the sentences the live demo should prompt
+      the user to say
+      <p>
+      You can create your own demo using different types of grammars:
+      <ul>
+        <li><a href="#WordList">Word list grammar</a></li>
+	<li><a href="#JSGF">Java Speech Grammar Format (JSGF) grammar</a></li>
+	<li><a href="#Ngram">N-Gram grammars</a></li>
+      </ul>
+      <p>
+      The only difference in setup between the three types of grammars
+      is in the properties file. Lets look at each in turn:
+      <p>
+      <h4><a name="WordList">Word List Grammar</a></h4>
+      To set up a word list grammar test, in the properties file, specify:
+      <p>
+      <code>edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar</code>
+      <p>
+      You will also need a simple text file listing all the words in
+      your grammar, one word per line. Assuming that this file is called
+      "digits.txt", in the properties file, specify:
+      <p>
+      <code>edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path=digits.txt
+      <br>edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.isLooping=true</code>
+      <p>Specify the last property only if you want to be able to repeat
+      the words within an utterance. For example, if you are building an
+      isolated digits decoder, you should set that property to false.
+      If you are building a connected digits decoder, you should set that 
+      property to true.
+
+      <p>
+      <h4><a name="JSGF">JSGF Grammar</a></h4>
+      <p>
+      <b>NOTE:</b> To build and run demos with JSGF, you must <a href="../../doc/jsapi_setup.html">setup JSAPI</a>.
+      <p>
+      First of all, you need to write your grammar in terms of JSGF.
+      Several JSGF examples (the files ending in ".gram") exists in the 
+      <code><a href="jsgf">jsgf</a></code> directory. A complete 
+      specification is found at the 
+      <a href="http://java.sun.com/products/java-media/speech/forDevelopers/JSGF/">Java Speech Grammar Format Specification</a>.
+      <p>
+      To set up a JSGF grammar test, specify in the properties file:
+      <p>
+      <code>edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.jsapi.JSGFGrammar</code>
+      <p>
+      All JSGF grammar files end with ".gram". When you specify
+      the URL of the directory where the JSGF grammar files are, 
+      the grammar files will be discovered automatically. Therefore, in
+      addition to the directory, you only need to specify the name of
+      the grammar you want to use:
+      <p>
+      <code>edu.cmu.sphinx.jsapi.JSGFGrammar.baseGrammarURL=file:./
+      <br>edu.cmu.sphinx.jsapi.JSGFGrammar.grammarName=jsgf.hello</code>
+      <p>
+      This assumes that the JSGF grammar files are in the current directory,
+      and you want to use the grammar named "jsgf.hello".
+      <p>
+      <h4><a name="Ngram">N-Gram Grammars</a></h4>
+      <p>
+      Currently, only N-gram grammars generated by the
+      <a href="http://mi.eng.cam.ac.uk/~prc14/toolkit.html">
+      CMU-Cambridge Statistical Language Modeling Toolkit</a> are supported
+      by Sphinx-4. Both ASCII and binary versions are supported.
+      Suppose your ASCII language model file is called "bigram.txt" and
+      is located in the current directory, specify in the properties file:
+      <p>
+      <code>edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel
+      <br>edu.cmu.sphinx.knowledge.language.LanguageModel.location=./bigram.txt
+      <br>edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar
+      <p>
+      Suppose your binary language model file is at 
+      "/usr/sphinx4/bigram.binary", specify in the properties file:
+      <p>
+      <code>edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.large.LargeTrigramModel
+      <br>edu.cmu.sphinx.knowledge.language.LanguageModel.location=/usr/sphinx4/bigram.binary
+      <br>edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar
+      </code>
+      <p>
+      The use of the LMGrammar class assumes that you are also using the
+      SimpleLinguist (edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist).
+      If you are using the LexTreeLinguist, then the grammar should be set
+      to <code>"edu.cmu.sphinx.decoder.linguist.NullGrammar"</code>.
+    </font>      
   </body>
 </html>
