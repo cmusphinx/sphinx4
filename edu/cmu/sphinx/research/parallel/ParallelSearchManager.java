@@ -183,7 +183,6 @@ public class ParallelSearchManager implements SearchManager {
         pruneTimer = Timer.getTimer("Prune");
         growTimer = Timer.getTimer("Grow");
         
-        bestTokenMap = new HashMap();
     }
 
 
@@ -193,6 +192,7 @@ public class ParallelSearchManager implements SearchManager {
      * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
      */
     public void allocate() throws IOException {
+        bestTokenMap = new HashMap();
         linguist.allocate();
 	if (doFeaturePruning) {
 	    featureScorePruner.allocate();
