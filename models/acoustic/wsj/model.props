@@ -17,10 +17,10 @@ vectorLength = 39
 sparseForm = false
 
 numberFftPoints = 512
-filters = 40
+numberFilters = 40
 gaussians = 8
-maxFreq = 6800
-minFreq. = 130
+minimumFrequency = 130
+maximumFrequency = 6800
 sampleRate = 16000
 
 dataLocation = cd_continuous_8gau

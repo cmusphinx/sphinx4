@@ -6,6 +6,10 @@ Release Date:  XXXX
 
 -------------------------------------------------------------------
 
+WDW - 8/03/04 - 
+    Added 8kHz models trained from the WSJ0 channel 1 training data:
+    WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.
+
 PBL - 7/21/04 -
     Improved look of ZipCity, now with a USA map.
 
