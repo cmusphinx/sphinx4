@@ -102,6 +102,7 @@ public abstract class Grammar implements Configurable {
     private Random randomizer = new Random();
     private int maxIdentity = 0;
     private boolean postProcessed = false;
+    private boolean idCheck = false;
 
 
 
@@ -498,7 +499,20 @@ public abstract class Grammar implements Configurable {
         if (node.getID() > maxIdentity) {
             maxIdentity = node.getID();
         }
+
+        // check to see if there is already a node with the given ID.
+        if (idCheck) {
+            for (Iterator i = grammarNodes.iterator(); i.hasNext();) {
+                GrammarNode gn = (GrammarNode) i.next();
+                if (gn.getID() == node.getID()) {
+
+                    throw new Error("DUP ID " + gn + " and " + node);
+                }
+            }
+        }
+
         grammarNodes.add(node);
+
     }
 
     /**
