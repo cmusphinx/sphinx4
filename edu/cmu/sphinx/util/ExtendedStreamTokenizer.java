@@ -45,8 +45,7 @@ public class ExtendedStreamTokenizer {
      *
      * @throws FileNotFoundException if a file cannot be found
      */
-    public ExtendedStreamTokenizer(String path) 
-			throws FileNotFoundException {
+    public ExtendedStreamTokenizer(String path) throws FileNotFoundException {
 	this(path, false);
     }
 
@@ -63,6 +62,7 @@ public class ExtendedStreamTokenizer {
     public ExtendedStreamTokenizer(String path, boolean eolIsSignificant) 
 			throws FileNotFoundException {
 	this(new FileReader(path), eolIsSignificant);
+	this.path = path;
     }
 
 
@@ -229,8 +229,10 @@ public class ExtendedStreamTokenizer {
      */
     public void expectString(String expecting) 
     		throws StreamCorruptedException, IOException  {
-	if (!getString().equals(expecting)) {
-	    corrupt("matching " + expecting);
+	String line = getString();
+	if (!line.equals(expecting)) {
+	    corrupt("error matching expected string '" + expecting + 
+		    "' in line: '" + line + "'");
 	}
     }
 
