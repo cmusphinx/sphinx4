@@ -14,5 +14,5 @@
 #
 
 recipients="Paul.Lamere@sun.com "
-makeReport < regression.log | mailx -s "S4 regression test report" $recipients
+./makeReport < regression.log | mailx -s "S4 regression test report" $recipients
 

@@ -55,7 +55,7 @@ cd $regressionDir
 
 if [ $status = "OK" ]; then
    startRunTime=`$regressionDir/getTime`
-   runAllTests
+   $regressionDir/runAllTests
    endRunTime=`$regressionDir/getTime`
    totalRunTime=$((endRunTime - startRunTime))
 else
@@ -77,4 +77,4 @@ echo FIXME scvs commit -m "regression_test" $logBase
 #################################
 # Generate the email notification
 #################################
-./mailReport
+$regressionDir/mailReport
