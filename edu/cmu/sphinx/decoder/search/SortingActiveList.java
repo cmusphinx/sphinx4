@@ -35,7 +35,7 @@ import edu.cmu.sphinx.decoder.scorer.Scoreable;
  *
  * Note that all scores are maintained in the LogMath log base.
  */
-public class FastActiveList implements ActiveList  {
+public class SortingActiveList implements ActiveList  {
 
     private SphinxProperties props = null;
     private int absoluteBeamWidth;
@@ -50,7 +50,7 @@ public class FastActiveList implements ActiveList  {
     /**
      * Creates an empty active list 
      */
-    public FastActiveList() {
+    public SortingActiveList() {
     }
 
     /**
@@ -60,7 +60,7 @@ public class FastActiveList implements ActiveList  {
      * @param props the sphinx properties
      *
      */
-    public FastActiveList(SphinxProperties props) {
+    public SortingActiveList(SphinxProperties props) {
 	setProperties(props);
     }
 
@@ -121,7 +121,7 @@ public class FastActiveList implements ActiveList  {
      * @return the new active list
      */
     public ActiveList createNew() {
-	FastActiveList newList = new FastActiveList();
+	SortingActiveList newList = new SortingActiveList();
 	newList.props = props;
 	newList.absoluteBeamWidth = absoluteBeamWidth;
 	newList.relativeBeamWidth = relativeBeamWidth;
@@ -169,7 +169,7 @@ public class FastActiveList implements ActiveList  {
             // BUG:CHeck:
 
             if (tokenList.get(location) != oldToken) {
-                System.out.println("FastActiveList: replace " +
+                System.out.println("SortingActiveList: replace " +
                         oldToken + " not where it should have been.  New " 
                         + newToken + " location is " + location 
                         + " found " + tokenList.get(location));
