@@ -9,15 +9,12 @@
 package demo.jsapi.cardmatch;
 
 import java.io.File;
-
 import java.util.Locale;
 
 import javax.speech.Central;
-import javax.speech.Engine;
 import javax.speech.EngineStateError;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerModeDesc;
-import javax.speech.synthesis.SynthesizerProperties;
 import javax.speech.synthesis.Voice;
 
 

@@ -13,7 +13,19 @@
 
 package edu.cmu.sphinx.research.bushderby;
 
-import edu.cmu.sphinx.decoder.linguist.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
+import edu.cmu.sphinx.decoder.linguist.Linguist;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
+import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
+import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.Pruner;
@@ -25,9 +37,8 @@ import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.dictionary.Word;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.knowledge.language.WordSequence;
+import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
-
-import java.util.*;
 
 
 
@@ -258,7 +269,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	    boolean firstToken = (getBestToken(nextState) == null);
 	    boolean greenToken = isGreenState(nextState);
 
-	    float logWorkingScore =  firstToken ? getLogMath().getLogZero() :
+	    float logWorkingScore =  firstToken ? LogMath.getLogZero() :
 		getBestToken(nextState).getWorkingScore();
 
 	    if (firstToken || getBestToken(nextState).getScore() <= logCurrentScore) {

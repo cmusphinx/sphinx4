@@ -13,12 +13,6 @@
 
 package demo.jsapi.cardmatch;
 
-import java.awt.Insets;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.ImageIcon;
 
 
 /**

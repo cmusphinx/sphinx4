@@ -7,10 +7,24 @@
  */
 package com.sun.speech.engine.recognition;
 
-import java.util.*;
-import javax.speech.*;
-import javax.speech.recognition.*;
 import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.Vector;
+
+import javax.speech.recognition.FinalRuleResult;
+import javax.speech.recognition.GrammarException;
+import javax.speech.recognition.ResultToken;
+import javax.speech.recognition.Rule;
+import javax.speech.recognition.RuleAlternatives;
+import javax.speech.recognition.RuleCount;
+import javax.speech.recognition.RuleGrammar;
+import javax.speech.recognition.RuleName;
+import javax.speech.recognition.RuleParse;
+import javax.speech.recognition.RuleSequence;
+import javax.speech.recognition.RuleTag;
+import javax.speech.recognition.RuleToken;
 
 /**
  * Implementation of javax.speech.recognition.RuleGrammar.

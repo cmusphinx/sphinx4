@@ -8,9 +8,19 @@
 
 package com.sun.speech.engine.recognition;
 
-import java.util.*;
-import javax.speech.*;
-import javax.speech.recognition.*;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.speech.recognition.Recognizer;
+import javax.speech.recognition.Rule;
+import javax.speech.recognition.RuleAlternatives;
+import javax.speech.recognition.RuleCount;
+import javax.speech.recognition.RuleGrammar;
+import javax.speech.recognition.RuleName;
+import javax.speech.recognition.RuleParse;
+import javax.speech.recognition.RuleSequence;
+import javax.speech.recognition.RuleTag;
+import javax.speech.recognition.RuleToken;
 
 /**
  * Implementation of the parse method(s) on 
@@ -347,12 +357,12 @@ public class RuleParser {
             empty.setPos(iPos);
             Vector p = parse(G,rc.getRule(),input,iPos);
             if (p == null) {
-                if (rcount == rc.ONCE_OR_MORE) return null;
+                if (rcount == RuleCount.ONCE_OR_MORE) return null;
                 Vector v = new Vector();
                 v.addElement(empty);
                 return v;
             }
-            if (rcount != rc.ONCE_OR_MORE) {
+            if (rcount != RuleCount.ONCE_OR_MORE) {
                 p.addElement(empty);
             }
             if (rcount == rc.OPTIONAL) {
