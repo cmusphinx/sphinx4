@@ -44,10 +44,10 @@ public interface AcousticScorer {
      * @param scorableList a list containing Scorable objects to
      * be scored
      *
-     * @return true if there are more features in this utterance,
-     * otherwise false.
+     * @return the best scoring scorable, or null if there are no
+     * more frames to score
      */
-    public boolean calculateScores(List scorableList);
+    public Scoreable calculateScores(List scorableList);
 
     /**
      * stops the scorer

@@ -182,10 +182,11 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * @param scoreableList a list containing scoreable objects to
      * be scored
      *
-     * @return true if there was a Feature available to score
-     *         false if there was no more Feature available to score
+     * @return the best scorign scoreable, or null if there are no
+     * more features to score
      */
-    public boolean calculateScores(List scoreableList) {
+    public Scoreable calculateScores(List scoreableList) {
+        Scoreable best = null;
 
 	FeatureFrame ff;
 
@@ -193,7 +194,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 	    ff = frontEnd.getFeatureFrame(1, null);
 
             if (!hasFeatures(ff)) {
-                return false;
+                return best;
             }
 
 	    curFeature = ff.getFeatures()[0];
@@ -201,13 +202,13 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 	    if (curFeature.getSignal() == Signal.UTTERANCE_START) {
                 ff = frontEnd.getFeatureFrame(1, null);
                 if (!hasFeatures(ff)) {
-                    return false;
+                    return best;
                 }
                 curFeature = ff.getFeatures()[0];
             }
 
 	    if (curFeature.getSignal() == Signal.UTTERANCE_END) {
-		return false;
+		return best;
 	    }
 
             if (!curFeature.hasContent()) {
@@ -227,7 +228,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 			/ scoreablesPerThread;
 		}
 
-		semaphore.setCount(nThreads);
+		semaphore.reset(nThreads);
 
 		for (int i = 0; i < nThreads; i++) {
 		    ScoreableJob job = new ScoreableJob(scoreables,
@@ -235,24 +236,24 @@ public class ThreadedAcousticScorer implements AcousticScorer {
                     if (i < (nThreads - 1)) {
                         mailbox.post(job);
                     } else {
-                        scoreScoreables(job);
-                        semaphore.post();
+                        Scoreable myBest = scoreScoreables(job);
+                        semaphore.post(myBest);
                     }
 		}
 
-		semaphore.pend();
+		best = semaphore.pend();
 
 	    } else {
 		ScoreableJob job = new ScoreableJob(scoreables, 0,
                         scoreables.length);
-		scoreScoreables(job);
+		best = scoreScoreables(job);
 	    }
 	} catch (IOException ioe) {
 	    System.out.println("IO Exception " + ioe);
 	    ioe.printStackTrace();
-	    return false;
+	    return best;
 	}
-	return true;
+	return best;
     }
 
     /**
@@ -262,12 +263,15 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     }
 
     /**
-     * Scores a scoreable
+     * Scores all of the Scoreables in the ScoreableJob
      *
-     * @param scoreable the scoreable
+     * @param job the scoreable job
+     * @return the best scoring scoreable in the job
      */
-    private void scoreScoreables(ScoreableJob job) {
+    private Scoreable scoreScoreables(ScoreableJob job) {
 	Scoreable[] scoreables = job.getScoreables();
+        Scoreable best = null;
+        float logBestScore = -Float.MAX_VALUE;
 	int end = job.getStart() + job.getSize();
 	for (int i = job.getStart(); i < end && i < scoreables.length; i++) {
             Scoreable scoreable = scoreables[i];
@@ -277,8 +281,13 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 		     scoreable.getFrameNumber() +
 		     "  Feature: " + curFeature.getID());
 	    } 
-	    scoreable.calculateScore(curFeature);
+	    float logCurScore = scoreable.calculateScore(curFeature);
+            if (logCurScore > logBestScore) {
+                logBestScore = logCurScore;
+                best = scoreable;
+            }
 	}
+        return best;
     }
 
 
@@ -302,11 +311,10 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 	public void run() {
 	    while (true) {
 		ScoreableJob scoreableJob = mailbox.pend();
-		scoreScoreables(scoreableJob);
-		semaphore.post();
+		Scoreable best = scoreScoreables(scoreableJob);
+		semaphore.post(best);
 	    }
 	}
-
     }
 }
 
@@ -361,37 +369,49 @@ class Mailbox {
  */
 class Semaphore {
     int count;
+    Scoreable bestScoreable;
 
     /**
      * Sets the count for this counting semaphore
      *
      * @param count the count for the semaphore
      */
-    synchronized void setCount(int count) {
+    synchronized void reset(int count) {
 	this.count = count;
+        bestScoreable = null;
     }
 
     /**
      * Pends the caller until the count reaches zero
+     *
+     * @return the best scoreable encounted
      */
-    synchronized void pend() {
+    synchronized Scoreable pend() {
 	while (count > 0) {
 	  try {
 	      wait();
 	  } catch (InterruptedException ioe) {}
 	}
+        return bestScoreable;
     }
 
     /**
      * Posts to the semaphore, decrementing the counter by one.
      * should the counter arrive at zero, wake up any penders.
+     *
+     * @param postedBest the best scoreable encounted for this batch.
      */
-    synchronized void post() {
+    synchronized void post(Scoreable postedBest) {
+        if (bestScoreable == null ||
+                postedBest.getScore() > bestScoreable.getScore()) {
+            bestScoreable = postedBest;
+        }
 	count--;
 	if (count <= 0) {
 	    notifyAll();
 	}
     }
+
 }
 
 /**

@@ -87,7 +87,8 @@ public class SimpleAcousticScorer implements AcousticScorer {
      * @return true if there was a Feature available to score
      *         false if there was no more Feature available to score
      */
-    public boolean calculateScores(List scoreableList) {
+    public Scoreable calculateScores(List scoreableList) {
+        Scoreable best = null;
 
 	FeatureFrame ff;
 
@@ -96,7 +97,7 @@ public class SimpleAcousticScorer implements AcousticScorer {
 	    Feature feature;
 
 	    if (!hasFeatures(ff)) {
-                return false;
+                return best;
             }
 
 	    feature = ff.getFeatures()[0];
@@ -104,13 +105,13 @@ public class SimpleAcousticScorer implements AcousticScorer {
 	    if (feature.getSignal() == Signal.UTTERANCE_START) {
                 ff = frontEnd.getFeatureFrame(1, null);
                 if (!hasFeatures(ff)) {
-                    return false;
+                    return best;
                 }
                 feature = ff.getFeatures()[0];
 	    }
 
 	    if (feature.getSignal() == Signal.UTTERANCE_END) {
-		return false;
+		return best;
 	    }
 
             if (!feature.hasContent()) {
@@ -129,6 +130,7 @@ public class SimpleAcousticScorer implements AcousticScorer {
                 float logScore =  scoreable.calculateScore(feature);
                 if (logScore > logMaxScore) {
                     logMaxScore = logScore;
+                    best = scoreable;
                 }
 	    }
 
@@ -140,10 +142,10 @@ public class SimpleAcousticScorer implements AcousticScorer {
 	    }
 	} catch (IOException ioe) {
 	    System.out.println("IO Exception " + ioe);
-	    return false;
+	    return best;
 	}
         
-	return true;
+	return best;
     }
 
     /**
