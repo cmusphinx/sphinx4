@@ -74,8 +74,14 @@
     
     <component name="activeListManager" 
              type="edu.cmu.sphinx.decoder.search.SimpleActiveListManager">
-        <property name="activeListFactory" value="standardActiveListFactory"/>
-        <property name="wordActiveListFactory" value="wordActiveListFactory"/>
+        <propertylist name="activeListFactories">
+	    <item>standardActiveListFactory</item>
+	    <item>wordActiveListFactory</item>
+	    <item>wordActiveListFactory</item>
+	    <item>standardActiveListFactory</item>
+	    <item>standardActiveListFactory</item>
+	    <item>standardActiveListFactory</item>
+	</propertylist>
     </component>
     
     <component name="standardActiveListFactory" 
