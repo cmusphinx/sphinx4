@@ -218,7 +218,6 @@ public class Recognizer {
      * as multiple implementations become available
      *
      * @param context the context of this Recognizer
-     * @param dataSource the source of data of this Recognizer
      *
      * @throws InstantiationException if the recognizer could not be  created
      * @throws IOException if the recognizer could not be loaded
@@ -397,8 +396,12 @@ public class Recognizer {
      *
      * @param context the context of interest
      * @param dataSource the source of data to decode
+     *
+     * @throws InstantiationException if there is an error initializing
+     *                                the front end
      */
-    protected void initializeFrontEnds(SphinxProperties props) {
+    protected void initializeFrontEnds(SphinxProperties props)
+        throws InstantiationException {
         Collection frontEndNames = FrontEndFactory.getNames(props);
         // right now we only support one front end
         assert frontEndNames.size() == 1;

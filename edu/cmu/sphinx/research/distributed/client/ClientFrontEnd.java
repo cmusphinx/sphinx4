@@ -86,8 +86,12 @@ public interface ClientFrontEnd {
      *
      * @param name the name of this ClientFrontEnd
      * @param context the context of this ClientFrontEnd
+     *
+     * @throws InstantiationException if there is an initialization error
+     * @throws IOException if there is an I/O error
      */
-    public void initialize(String name, String context) throws IOException;
+    public void initialize(String name, String context)
+        throws InstantiationException, IOException;
 
 
     /**

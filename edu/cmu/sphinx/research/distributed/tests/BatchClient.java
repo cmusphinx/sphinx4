@@ -76,9 +76,11 @@ public class BatchClient {
      * @param context the context to use
      * @param batchFile the batch file to decode
      *
+     * @throws InstantiationException if an initialization error occurs
      * @throws IOException if an I/O error occurred
      */
-    public BatchClient(String context, String batchFile) throws IOException {
+    public BatchClient(String context, String batchFile) 
+        throws InstantiationException, IOException {
         this.context = context;
         this.batchFile = batchFile;
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
@@ -181,10 +183,8 @@ public class BatchClient {
             BatchClient client = new BatchClient(context, batchFile);
             client.decode();
 
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        } catch (DataProcessingException dpe) {
-            dpe.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

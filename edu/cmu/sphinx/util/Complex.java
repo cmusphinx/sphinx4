@@ -90,8 +90,6 @@ public class Complex {
      * 
      * @param a the first element to be added
      * @param b the second element to be added
-     *
-     * @return the sum of the complex numbers a and b
      */
     public void addComplex(Complex a, Complex b) {
 	this.real = a.real + b.real;
@@ -103,8 +101,6 @@ public class Complex {
      * 
      * @param a the element we subtract from
      * @param b the element to be subtracted
-     *
-     * @return the difference between the complex numbers a and b
      */
     public void subtractComplex(Complex a, Complex b) {
 	this.real = a.real - b.real;
@@ -116,8 +112,6 @@ public class Complex {
      * 
      * @param a the first element to multiply
      * @param b the second element to multiply
-     *
-     * @return the product the complex numbers a and b
      */
     public void multiplyComplex(Complex a, Complex b) {
 	this.real = a.real * b.real - a.imaginary * b.imaginary;
@@ -132,8 +126,6 @@ public class Complex {
      * 
      * @param a the numerator
      * @param b the denominator
-     *
-     * @return the ratio between the complex numbers a and b
      */
     public void divideComplex(Complex a, Complex b) {
 	this.real = a.real * b.real + a.imaginary * b.imaginary;

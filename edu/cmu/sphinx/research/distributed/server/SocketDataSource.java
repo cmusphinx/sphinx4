@@ -67,7 +67,7 @@ public class SocketDataSource extends BaseDataProcessor {
      * Initializes this DataProcessor.
      *
      * @param name         the name of this DataProcessor
-     * @param pipelineName the name of the front-end pipeline this
+     * @param frontEndName the name of the front-end pipeline this
      *                     DataProcessor is in
      * @param props        the SphinxProperties to use
      * @param predecessor  the predecessor of this DataProcessor

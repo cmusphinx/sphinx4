@@ -37,8 +37,6 @@
     <patternset id="all" 
                 includes="edu/**,com/**"
 	        excludes="edu/cmu/sphinx/research/parallel/**,
-		          edu/cmu/sphinx/research/distributed/**,
-		          edu/cmu/sphinx/frontend/parallel/**,
 			  edu/cmu/sphinx/trainer/** " />
 
     <patternset id="no_jsapi" 

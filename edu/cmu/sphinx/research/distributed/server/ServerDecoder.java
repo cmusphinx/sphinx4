@@ -43,9 +43,11 @@ public class ServerDecoder extends BaseServer {
      *
      * @param context the context of this ServerDecoder
      *
+     * @throws InstantiationException if an initialization error occurs
      * @throws IOException if an I/O error occurs
      */
-    public ServerDecoder(String context) throws IOException {
+    public ServerDecoder(String context) throws InstantiationException, 
+                                                IOException {
         initDecoder(context);
     }
 
@@ -55,9 +57,11 @@ public class ServerDecoder extends BaseServer {
      *
      * @param context the context to use
      *
+     * @throws InstantiationException if an initialization error occurs
      * @throws IOException if an I/O error occurs
      */
-    public void initDecoder(String context) throws IOException {
+    public void initDecoder(String context) throws InstantiationException, 
+                                                   IOException {
         // using null as the DataSource will still initialize the decoder
         decoder = new Decoder(context);
         decoder.initialize();

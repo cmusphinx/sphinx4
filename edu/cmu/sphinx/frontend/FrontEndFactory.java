@@ -80,9 +80,12 @@ public class FrontEndFactory {
      * @param props the SphinxProperty to use
      *
      * @return the last DataProcessor of the front end with the given name
+     *
+     * @throw InstantiationException if there is an error initializing
+     *                               a new front end
      */
-    public static FrontEnd getFrontEnd(String name,
-                                            SphinxProperties props) {
+    public static FrontEnd getFrontEnd(String name, SphinxProperties props)
+        throws InstantiationException {
         String[] frontEndNames = getFrontEndNames(props);
         boolean exists = false;
         for (int i = 0; i < frontEndNames.length; i++) {
@@ -138,7 +141,8 @@ public class FrontEndFactory {
      * @return the FrontEnd with the given name
      */
     private static FrontEnd loadFrontEnd(String frontEndName,
-                                         SphinxProperties props) {
+                                         SphinxProperties props)
+        throws InstantiationException {
         FrontEnd frontend = (FrontEnd) frontends.get(frontEndName);
 
         if (frontend == null) {
@@ -170,15 +174,12 @@ public class FrontEndFactory {
                             firstProcessor = processor;
                         }
                         lastProcessor = processor;
-                    } catch (InstantiationException ie) {
-                        ie.printStackTrace();
-                        throw new Error("Error instantiating " + className);
                     } catch (ClassNotFoundException cnfe) {
-                        cnfe.printStackTrace();
-                        throw new Error("Class " + className + " not found");
+                        throw new InstantiationException
+                            ("Class " + className + " not found");
                     } catch (IllegalAccessException iae) {
-                        iae.printStackTrace();
-                        throw new Error("Illegal access: " + className);
+                        throw new InstantiationException
+                            ("Illegal access: " + className);
                     }
                 }
             }

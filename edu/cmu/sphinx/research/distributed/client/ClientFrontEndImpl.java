@@ -63,8 +63,12 @@ public class ClientFrontEndImpl implements ClientFrontEnd {
      *
      * @param name the name of this ClientFrontEndImpl
      * @param context the context of this ClientFrontEndImpl
+     *
+     * @throws InstantiationException if there is an initialization error
+     * @throws IOException if there is an I/O error
      */
-    public void initialize(String name, String context) throws IOException {
+    public void initialize(String name, String context)
+        throws InstantiationException, IOException {
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 
         streamAudioSource = new StreamDataSource();
