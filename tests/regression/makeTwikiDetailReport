@@ -238,8 +238,8 @@ function dumpTitle(  i) {
         machineName = machine;
     }
 
-    printf("|   *%s %s for %s*  ||||||||||\n", modeTitle[mode], \
-        title, systemTitle[whichSystem]);
+    printf("|   *%s [[Sphinx4.%s][%s]] for %s*  ||||||||||\n", \
+        modeTitle[mode], title, title, systemTitle[whichSystem]);
 
     printf("| *%s %s* ", "Test run on", machineName);
     printf("| *%s* ", "Speed (RT)");
