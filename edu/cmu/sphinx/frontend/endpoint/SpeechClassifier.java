@@ -52,16 +52,17 @@ import edu.cmu.sphinx.util.props.Registry;
  * @see SpeechMarker
  */
 public class SpeechClassifier extends BaseDataProcessor {
-    /**
-     * The SphinxProperty specifying the endpointing frame length.
-     * This is the number of samples in each endpointed frame.
-     */
-    public static final String PROP_FRAME_LENGTH = "frameLength";
 
     /**
-     * The default value of PROP_FRAME_LENGTH.
+     * The SphinxProperty specifying the endpointing frame length
+     * in milliseconds.
      */
-    public static final int PROP_FRAME_LENGTH_DEFAULT = 160;
+    public static final String PROP_FRAME_LENGTH_MS = "frameLengthInMs";
+
+    /**
+     * The default value of PROP_FRAME_LENGTH_MS.
+     */
+    public static final int PROP_FRAME_LENGTH_MS_DEFAULT = 10;
 
     /**
      * The SphinxProperty specifying the minimum signal level used
@@ -118,7 +119,7 @@ public class SpeechClassifier extends BaseDataProcessor {
     private double background;          // background signal level
     private double minSignal;           // minimum valid signal level
     private double threshold;
-    private int frameLength;
+    private float frameLengthSec;
     List outputQueue = new LinkedList();
     
     /*
@@ -130,7 +131,7 @@ public class SpeechClassifier extends BaseDataProcessor {
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
-        registry.register(PROP_FRAME_LENGTH, PropertyType.INT);
+        registry.register(PROP_FRAME_LENGTH_MS, PropertyType.INT);
         registry.register(PROP_ADJUSTMENT, PropertyType.DOUBLE);
         registry.register(PROP_THRESHOLD, PropertyType.DOUBLE);
         registry.register(PROP_MIN_SIGNAL, PropertyType.DOUBLE);
@@ -144,20 +145,13 @@ public class SpeechClassifier extends BaseDataProcessor {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        frameLength = ps.getInt
-            (PROP_FRAME_LENGTH, PROP_FRAME_LENGTH_DEFAULT);
-
-        adjustment = ps.getDouble
-            ( PROP_ADJUSTMENT, PROP_ADJUSTMENT_DEFAULT);
-
-        threshold = ps.getDouble
-            ( PROP_THRESHOLD, PROP_THRESHOLD_DEFAULT);
-
-        minSignal = ps.getDouble
-            ( PROP_MIN_SIGNAL, PROP_MIN_SIGNAL_DEFAULT);
-
-        debug = ps.getBoolean
-            ( PROP_DEBUG, PROP_DEBUG_DEFAULT);
+        int frameLengthMs = ps.getInt
+            (PROP_FRAME_LENGTH_MS, PROP_FRAME_LENGTH_MS_DEFAULT);
+        frameLengthSec = ((float) frameLengthMs) / 1000.f;
+        adjustment = ps.getDouble(PROP_ADJUSTMENT, PROP_ADJUSTMENT_DEFAULT);
+        threshold = ps.getDouble(PROP_THRESHOLD, PROP_THRESHOLD_DEFAULT);
+        minSignal = ps.getDouble(PROP_MIN_SIGNAL, PROP_MIN_SIGNAL_DEFAULT);
+        debug = ps.getBoolean(PROP_DEBUG, PROP_DEBUG_DEFAULT);
     }
 
     /**
@@ -248,12 +242,13 @@ public class SpeechClassifier extends BaseDataProcessor {
             if (audio != null) {
                 if (audio instanceof DoubleData) {
                     DoubleData data = (DoubleData) audio;
-                    if (data.getValues().length > frameLength) {
+                    if (data.getValues().length > 
+                        ((int)(frameLengthSec * data.getSampleRate()))) {
                         throw new Error
-                            ("Size of each audio frame should be <= " +
-                             frameLength + ". If you have 2 bytes per " +
-                             "sample, you should set the byte per read to "
-                             + frameLength*2);
+                            ("Length of data frame is " + 
+                             data.getValues().length + 
+                             " samples, but the expected frame is <= " +
+                             (frameLengthSec * data.getSampleRate()));
                     }
                     classify(data);
                 } else {
