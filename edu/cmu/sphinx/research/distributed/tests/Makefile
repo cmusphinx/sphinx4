@@ -34,7 +34,7 @@ all:: ${CLASSES} ${STUBS}
 
 runclient:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5 \
+	-Dedu.cmu.sphinx.research.distributed.tests.BatchClient.skip=5 \
 	edu.cmu.sphinx.research.distributed.tests.BatchClient \
 	client.props \
 	$(TOP)/tests/performance/tidigits/tidigits.batch
