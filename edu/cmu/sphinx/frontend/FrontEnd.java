@@ -158,4 +158,9 @@ public interface FrontEnd {
 					String acousticModelName) 
 	throws IOException;
 
+
+    /**
+     * Drains all the data in this FrontEnd.
+     */
+    public void drain();
 }

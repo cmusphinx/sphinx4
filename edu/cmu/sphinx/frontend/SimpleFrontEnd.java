@@ -558,6 +558,21 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 
 
     /**
+     * Drains all the data in this FrontEnd.
+     */
+    public void drain() {
+        Feature feature = null;
+        do {
+            try {
+                feature = featureSource.getFeature();
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+        } while (feature != null);
+    }
+
+
+    /**
      * Returns a description of this SimpleFrontEnd.
      *
      * @return a description of this SimpleFrontEnd
