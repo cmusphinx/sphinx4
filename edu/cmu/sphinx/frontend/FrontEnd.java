@@ -184,8 +184,16 @@ public class FrontEnd extends DataProcessor {
             (PROP_ENDPOINTER, "none");
 
         if (endpointer.equals("edu.cmu.sphinx.frontend.EnergyEndpointer")) {
-            cepstrumSource = (CepstrumSource) addProcessor
-                (createEnergyEndpointer(context, melCepstrum));
+
+            EnergyEndpointer energyEndpointer = new EnergyEndpointer
+                ("EnergyEndpointer", context, melCepstrum);
+            NonSpeechFilter nonSpeechFilter = new NonSpeechFilter
+                ("NonSpeechFilter", context, energyEndpointer);
+
+            addProcessor(energyEndpointer);
+            addProcessor(nonSpeechFilter);
+
+            cepstrumSource = nonSpeechFilter;
         }
 
         // initialize the CMN and FeatureExtractor
@@ -212,26 +220,6 @@ public class FrontEnd extends DataProcessor {
         addProcessor(melFilterbank);
         addProcessor(melCepstrum);
         addProcessor(extractor);
-    }
-
-
-    /**
-     * Creates an energy-based endpointer using the given context
-     * and given predecessor.
-     *
-     * @param context the context to use
-     * @param predecessor the CepstrumSource to obtain Cepstra from
-     *
-     * @return the endpointer which is a CepstrumSource
-     */
-    private NonSpeechFilter createEnergyEndpointer(String context,
-                                                   CepstrumSource predecessor) 
-    throws IOException {
-        EnergyEndpointer energyEndpointer = new EnergyEndpointer
-            ("EnergyEndpointer", context, predecessor);
-        NonSpeechFilter nonSpeechFilter = new NonSpeechFilter
-            ("NonSpeechFilter", context, energyEndpointer);
-        return nonSpeechFilter;
     }
 
 
