@@ -268,10 +268,18 @@ public class Microphone extends BaseDataProcessor {
 
                 audioList.add(new DataStartSignal());
                 logger.info("DataStartSignal added");
-                                
-                while (recording) {
-		    audioList.add(readData(currentUtterance));
-                }
+
+		try {
+		    while (recording || audioStream.available() > 0) {
+			Data data = readData(currentUtterance);
+			if (data == null) {
+			    break;
+			}
+			audioList.add(data);
+		    }
+		} catch (IOException ioe) {
+		    ioe.printStackTrace();
+		}
 
                 long duration = (long)
                     (((double)totalSamplesRead/
@@ -318,7 +326,10 @@ public class Microphone extends BaseDataProcessor {
 
         try {
             int numBytesRead = audioStream.read(data, 0, data.length);
-            logger.info("... finished reading from audio stream.");
+            logger.info("Read " + numBytesRead + " bytes from audio stream.");
+	    if (numBytesRead <= 0) {
+		return null;
+	    }
             totalSamplesRead += (numBytesRead / sampleSizeInBytes);
 
             if (numBytesRead != frameSizeInBytes) {
@@ -408,7 +419,7 @@ public class Microphone extends BaseDataProcessor {
 	}
 
         DataLine.Info info = new DataLine.Info
-            (TargetDataLine.class, audioFormat);
+	    (TargetDataLine.class, audioFormat);
 
         AudioFormat nativeFormat = null;        
         if (!AudioSystem.isLineSupported(info)) {
@@ -461,7 +472,7 @@ public class Microphone extends BaseDataProcessor {
             logger.info("Frame size: " + frameSizeInBytes + " bytes");
 
             /* open the audio line */
-            audioLine.open();
+            audioLine.open(info.getFormats()[0], 160000);
 
             return true;
         } catch (LineUnavailableException ex) {
@@ -488,29 +499,28 @@ public class Microphone extends BaseDataProcessor {
      * @return true if the recording started successfully; false otherwise
      */
     public synchronized boolean startRecording() {
-        if (audioLine == null) {
+	if (audioLine != null && audioLine.isActive()) {
+	    logger.severe("Whoops: audio line is still active.");
+	    return false;
+	} else if (audioLine == null) {
 	    open();
 	}
-	if (!audioLine.isActive()) {
-            utteranceEndReached = false;
-            setRecording(true);
-            RecordingThread recorder = new RecordingThread("Microphone");
-	    if (audioLine.isRunning()) {
-		logger.severe("Whoops: line is running");
+	utteranceEndReached = false;
+	setRecording(true);
+	RecordingThread recorder = new RecordingThread("Microphone");
+	if (audioLine.isRunning()) {
+	    logger.severe("Whoops: audio line is running");
+	}
+	audioLine.start();
+	while (!started) {
+	    try {
+		wait();
+	    } catch (InterruptedException ie) {
+		ie.printStackTrace();
 	    }
-	    audioLine.start();
-	    while (!getStarted()) {
-		try {
-		    wait();
-		} catch (InterruptedException ie) {
-		    ie.printStackTrace();
-		}
-	    }
-            recorder.start();
-            return true;
-        } else {
-            return false;
-        }
+	}
+	recorder.start();
+	return true;
     }
 
 
@@ -520,8 +530,8 @@ public class Microphone extends BaseDataProcessor {
     public synchronized void stopRecording() {
         if (audioLine != null) {
 	    audioLine.stop();
-            setRecording(false);
-            setStarted(false);
+            recording = false;
+            started = false;
         }
     }
 
@@ -575,17 +585,6 @@ public class Microphone extends BaseDataProcessor {
         return moreData;
     }
 
-
-    private boolean getStarted() {
-        return started;
-    }
-
-
-    private void setStarted(boolean started) {
-        this.started = started;
-    }
-
-
     /**
      * Returns true if this Microphone is currently
      * in a recording state, false otherwise.
@@ -623,7 +622,7 @@ public class Microphone extends BaseDataProcessor {
 	    logger.info("LineEvent: " + event);
 	    LineEvent.Type eventType = event.getType();
             if (eventType.equals(LineEvent.Type.START)) {
-                setStarted(true);
+                started = true;
                 synchronized (Microphone.this) {
                     Microphone.this.notifyAll();
                 }
