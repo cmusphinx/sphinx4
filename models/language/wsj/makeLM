@@ -1,0 +1,46 @@
+file=wsj.prep.txt
+#
+# Generate the word frequencies
+#
+
+text2wfreq < $file > $file.tmp.wfreq
+
+#
+# Generate the vocabulary (this should be a subset wsj.vocab)
+#
+
+wfreq2vocab  -top 5000 < $file.tmp.wfreq > $file.tmp.vocab
+
+#
+# Generate the idngram
+
+#text2idngram -vocab $file.tmp.vocab < $file  > $file.tmp.idngram
+text2idngram -vocab 5k_words.vocab < $file  > $file.tmp.idngram
+
+
+#
+# generates the language model
+
+#idngram2lm -vocab_type 0 -idngram $file.tmp.idngram -vocab $file.tmp.vocab -arpa $file.arpa
+#idngram2lm  -idngram $file.tmp.idngram -vocab $file.tmp.vocab -arpa $file.arpa
+#idngram2lm  -witten_bell -idngram $file.tmp.idngram -vocab $file.tmp.vocab -arpa $file.arpa
+#idngram2lm  -two_byte_alphas -idngram $file.tmp.idngram -vocab $file.tmp.vocab -arpa $file.arpa
+idngram2lm  -vocab_type 0 -idngram $file.tmp.idngram -vocab 5k_words.vocab -arpa $file.arpa
+
+
+#
+# generate the DMP version of the language model
+#
+
+mkdir dmp
+lm3g2dmp $file.arpa dmp
+mv dmp/$file.arpa.DMP wsj.DMP
+mv $file.arpa wsj.lm
+
+#
+# cleanup
+#
+
+rmdir dmp
+rm *.tmp.*
+
