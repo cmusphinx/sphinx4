@@ -266,7 +266,7 @@ public class OutOfGrammarGraph {
          * Creates an OogHMMState
          *
          * @param hmmState the hmm state associated with this search state
-         * @parma logProbability the probability of transitioning to this
+         * @param logProbability the probability of transitioning to this
          * state
          */
         OogHMMState(HMMState hmmState, float logProbability) {
