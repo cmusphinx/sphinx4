@@ -211,6 +211,14 @@ public interface FrontEnd {
 
 
     /**
+     * Sets the source of data for this FrontEnd.
+     *
+     * @param dataSource the source of data to decode
+     */
+    public void setDataSource(DataSource dataSource);
+
+
+    /**
      * Drains all the data in this FrontEnd.
      */
     public void drain();

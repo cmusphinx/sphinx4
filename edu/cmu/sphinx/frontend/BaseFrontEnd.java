@@ -74,8 +74,7 @@ public class BaseFrontEnd extends DataProcessor implements FrontEnd {
 
     private String amName;                // Acoustic model name
     private Map processors;               // all frontend modules
-    private DataProcessor firstProcessor; // the first front-end processor
-    private DataSource dataSource;        // the source of data to decode
+    private DataSource stubDataSource;    // the source of data to decode
     private FeatureSource featureSource;  // the end of the pipeline
 
 
@@ -118,12 +117,15 @@ public class BaseFrontEnd extends DataProcessor implements FrontEnd {
         // add other data types here if necessary
 
         if (dataSource instanceof AudioSource) {
-            initialize((AudioSource) dataSource);
+            stubDataSource = new StubAudioSource((AudioSource)dataSource);
+            initialize((AudioSource)stubDataSource);
         } else if (dataSource instanceof CepstrumSource) {
-            initialize((CepstrumSource) dataSource);
+            stubDataSource = 
+                new StubCepstrumSource((CepstrumSource)dataSource);
+            initialize((CepstrumSource)stubDataSource);
         } else {
-            throw new Error("Unsupported Data type: " +
-                            dataSource.getClass().getName());
+            throw new IllegalArgumentException
+                ("Unsupported Data type: " + dataSource.getClass().getName());
         }
     }
 
@@ -387,7 +389,28 @@ public class BaseFrontEnd extends DataProcessor implements FrontEnd {
      * @param audioSource the DataSource
      */
     public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+        if (dataSource instanceof AudioSource) {
+            if (stubDataSource instanceof StubAudioSource) {
+                ((StubAudioSource)stubDataSource).setAudioSource
+                    ((AudioSource)dataSource);
+            } else {
+                throw new IllegalArgumentException
+                    ("Error: BaseFrontEnd.setDataSource() should not be " +
+                     "called with an AudioSource,");
+            }
+        } else if (dataSource instanceof CepstrumSource) {
+            if (stubDataSource instanceof StubCepstrumSource) {
+                ((StubCepstrumSource)stubDataSource).setCepstrumSource
+                    ((CepstrumSource)dataSource);
+            } else {
+                throw new IllegalArgumentException
+                    ("Error: BaseFrontEnd.setDataSource() should not be " +
+                     "called with an CepstrumSource,");
+            }
+        } else {
+            throw new IllegalArgumentException
+                ("Unsupported Data type: " + dataSource.getClass().getName());
+        }
     }
 
 
@@ -498,7 +521,7 @@ public class BaseFrontEnd extends DataProcessor implements FrontEnd {
 	description += ("Context          = " + getContext() + "\n");
 	description += ("AM               = " + amName + "\n");
 	description += ("DataSource       = " +
-			dataSource.getClass().getName() + "\n");
+                        stubDataSource.toString() + "\n");
 	description += ("Preemphasizer    = Preemphasizer\n");
 	description += ("Windower         = Windower\n");
 	description += ("FFT              = SpectrumAnalyzer\n");
@@ -565,3 +588,120 @@ public class BaseFrontEnd extends DataProcessor implements FrontEnd {
 	    (PROP_FEATURE_EXTRACTOR, PROP_FEATURE_EXTRACTOR_DEFAULT);
     }
 }
+
+
+/**
+ * An AudioSource object that acts as a stub between the real AudioSource
+ * and the first processor in the front end. It is there so that changing
+ * the real AudioSource will not require resetting the AudioSource of the
+ * first processor.
+ *
+ * A StubAudioSource is constructed using the real AudioSource, and
+ * calling <code>StubAudioSource.getAudio()</code> simply returns
+ * <code>realAudioSource.getAudio()</code>.
+ * The real AudioSource can be changed by the method 
+ * <code>setAudioSource()</code>.
+ */
+class StubAudioSource implements AudioSource {
+    
+    private AudioSource realSource;
+    
+    /**
+     * Constructs a StubAudioSource with the given AudioSource.
+     *
+     * @param audioSource the real AudioSource
+     */
+    public StubAudioSource(AudioSource audioSource) {
+        this.realSource = audioSource;
+    }
+    
+    /**
+     * Returns the next Audio object produced by this AudioSource.
+     *
+     * @return the next available Audio object, returns null if no
+     *     Audio object is available
+     *
+     * @throws java.io.IOException
+     */
+    public Audio getAudio() throws IOException {
+        return realSource.getAudio();
+    }
+    
+    /**
+     * Sets the real AudioSource.
+     *
+     * @return the real AudioSource
+     */
+    public void setAudioSource(AudioSource newAudioSource) {
+        this.realSource = newAudioSource;
+    }
+
+    /**
+     * Returns a string of the class name for the real audio source.
+     *
+     * @return a string of the class name for the real audio source.
+     */
+    public String toString() {
+        return "Stub for: " + realSource.getClass().getName();
+    }
+}
+
+
+/**
+ * An CepstrumSource object that acts as a stub between the real
+ * CepstrumSource and the first processor in the front end. It is 
+ * there so that changing the real CepstrumSource will not require
+ * resetting the CepstrumSource of the first processor.
+ *
+ * A StubAudioSource is constructed using the real AudioSource, and
+ * calling <code>StubAudioSource.getAudio()</code> simply returns
+ * <code>realAudioSource.getAudio()</code>.
+ * The real AudioSource can be changed by the method 
+ * <code>setAudioSource()</code>.
+ */
+class StubCepstrumSource implements CepstrumSource {
+    
+    private CepstrumSource realSource;
+    
+    /**
+     * Constructs a StubCepstrumSource with the given CepstrumSource.
+     *
+     * @param audioSource the real CepstrumSource
+     */
+    public StubCepstrumSource(CepstrumSource audioSource) {
+        this.realSource = audioSource;
+    }
+    
+    /**
+     * Returns the next Cepstrum object produced by this CepstrumSource.
+     *
+     * @return the next available Cepstrum object, returns null if no
+     *     Cepstrum object is available
+     *
+     * @throws java.io.IOException
+     */
+    public Cepstrum getCepstrum() throws IOException {
+        return realSource.getCepstrum();
+    }
+    
+    /**
+     * Sets the real CepstrumSource.
+     *
+     * @return the real CepstrumSource
+     */
+    public void setCepstrumSource(CepstrumSource newCepstrumSource) {
+            this.realSource = newCepstrumSource;
+    }
+
+    /**
+     * Returns a string of the class name for the real cepstrum source.
+     *
+     * @return a string of the class name for the real cepstrum source.
+     */
+    public String toString() {
+        return "Stub for: " + realSource.getClass().getName();
+    }
+}
+
+
+
