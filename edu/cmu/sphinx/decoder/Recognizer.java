@@ -710,7 +710,7 @@ public class Recognizer {
 
         for (Iterator i = copy.iterator(); i.hasNext(); ) {
             SignalListener listener = (SignalListener) i.next();
-            listener.newSignal(signal);
+            listener.signalOccurred(signal);
         }
     }
 
