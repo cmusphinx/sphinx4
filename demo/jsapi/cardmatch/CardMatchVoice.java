@@ -24,7 +24,7 @@ import com.sun.speech.freetts.util.Utilities;
 
 
 /**
- * Simple program showing how to use FreeTTS in JSAPI.
+ * Manages TTS output
  */
 public class CardMatchVoice {
 
@@ -85,11 +85,8 @@ public class CardMatchVoice {
         if (synthesizer != null) {
             try {
                 synthesizer.speakPlainText(text, null);
-                synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
             } catch (EngineStateError ese) {
                 ese.printStackTrace();
-            } catch (InterruptedException ie) {
-                ie.printStackTrace();
             }
         } else {
             System.out.println("CardMatchVoice unavailable");
