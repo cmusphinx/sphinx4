@@ -223,7 +223,7 @@ class Sphinx3Loader implements Loader {
                     dataDir + "transition_matrices.ascii");
         }
 
-	senonePool = createSenonePool(distFloor);
+	senonePool = createSenonePool(distFloor, varianceFloor);
 
         // load the HMM model file
 	boolean useCDUnits = props.getBoolean
@@ -250,10 +250,11 @@ class Sphinx3Loader implements Loader {
      * Creates the senone pool from the rest of the pools.
      *
      * @param distFloor the lowest allowed score 
+     * @param varianceFloor the lowest allowed variance
      *
      * @return the senone pool
      */
-    private Pool createSenonePool(float distFloor) {
+    private Pool createSenonePool(float distFloor, float varianceFloor) {
     	Pool pool = new Pool("senones");
 	int numMixtureWeights = mixtureWeightsPool.size();
 
@@ -287,7 +288,8 @@ class Sphinx3Loader implements Loader {
 		    (float[]) variancePool.get(whichGaussian),
 		    (float[][]) varianceTransformationMatrixPool.get(0),
 		    (float[]) varianceTransformationVectorPool.get(0),
-		    distFloor);
+		    distFloor,
+		    varianceFloor);
 
 		whichGaussian++;
 	    }

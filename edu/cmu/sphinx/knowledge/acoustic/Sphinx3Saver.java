@@ -257,7 +257,7 @@ class Sphinx3Saver implements Saver {
      *
      * @return the senone pool
      */
-    private Pool createSenonePool(float distFloor) {
+    private Pool createSenonePool(float distFloor, float varianceFloor) {
     	Pool pool = new Pool("senones");
 	int numMixtureWeights = mixtureWeightsPool.size();
 
@@ -291,7 +291,8 @@ class Sphinx3Saver implements Saver {
 		    (float[]) variancePool.get(whichGaussian),
 		    (float[][]) varianceTransformationMatrixPool.get(0),
 		    (float[]) varianceTransformationVectorPool.get(0),
-		    distFloor);
+		    distFloor,
+		    varianceFloor);
 
 		whichGaussian++;
 	    }
