@@ -507,7 +507,8 @@ public class  SentenceHMMState implements Serializable, SearchState  {
      * @return the signature
      */
     public String getSignature() {
-        return getFullName();
+        //return getFullName();
+        return toString();
     }
 
 
