@@ -660,7 +660,7 @@ function printRejectionTestResults(testName) {
     print "<tr>";
     print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Rejection Accuracy<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><a href=#glossary><b>Rejection Accuracy</b></a></td>";
     print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Test Time<br> </b></td>";
@@ -1000,7 +1000,7 @@ function printLatestRejectionTestResults(  _testName, _testCount) {
     print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Test Name<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Rejection Accuracy<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><a href=#glossary><b>Rejection Accuracy<br> </b></a></td>";
     print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
 
@@ -1061,6 +1061,7 @@ function printGlossary() {
     print "<b>Gap Insertion Rate</b> - Gap insertions are words inserted in the non-speech regions of audio. The gap insertion rate is defined the percentage of recognized words that are gap insertions:<br>gap insertion rate = number of gap insertions / total number of words recognized<p>\n";
     print "<b>Response Time</b> - This is defined the time between audio entering the front end, to the decoder obtaining the first feature with an UTTERANCE_START signal.<p>\n";
     print "<b>Utterance Ratio</b> - This is defined as the number of utterances detected (by the endpointer) divided by the actual number of utterances.<p>\n";
+    print "<b>Rejection Accuracy</b> - This is defined as the percentage of utterances that are correctly classified as in-grammar or out-of-grammar.<p>\n"
 }
 
 
