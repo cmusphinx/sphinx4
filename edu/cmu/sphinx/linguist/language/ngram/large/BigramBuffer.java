@@ -17,7 +17,7 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
 /**
  * Implements a buffer for bigrams read from disk.
  */
-public class BigramBuffer extends NGramBuffer {
+class BigramBuffer extends NGramBuffer {
     
     /**
      * Constructs a BigramBuffer object with the given byte[].

@@ -17,7 +17,7 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
  * Represents a word ID (second word of a bigram), a bigram probability ID,
  * a backoff probability ID, and the location of the first trigram entry.
  */
-public class BigramProbability {
+class BigramProbability {
 
     private int which;
     private int wordID;

@@ -17,7 +17,7 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
 /**
  * Implements a buffer for trigrams read from disk.
  */
-public class TrigramBuffer extends NGramBuffer {
+class TrigramBuffer extends NGramBuffer {
     
     /**
      * Constructs a TrigramBuffer object with the given byte[].
