@@ -198,32 +198,53 @@ public class Recognizer {
 
 
     /**
-     * Constructs a Recognizer. Some of the building blocks for the
+     * Constructs a Recognizer with known dataSource.
+     *
+     * Some of the building blocks for the
      * decoder (currently the linguist and the grammar) are set via
      * properties. This can be extended for other parts of the decoder
      * as multiple implementations become available
      *
      * @param context the context of this Recognizer
-     * @param propertiesFile the SphinxProperties file to use
      * @param dataSource the source of data of this Recognizer
      */
-    public Recognizer(String context, DataSource dataSource)
-	throws IOException {
-
-        props = SphinxProperties.getSphinxProperties(context);
-        dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
-                                          PROP_DUMP_MEMORY_INFO_DEFAULT);
-        dumpSentenceHMM = props.getBoolean(PROP_DUMP_SENTENCE_HMM,
-                                           PROP_DUMP_SENTENCE_HMM_DEFAULT);
-	dumpFrontEnd = props.getBoolean(PROP_DUMP_FRONTEND,
-                                        PROP_DUMP_FRONTEND_DEFAULT);
-
-        dumpMemoryInfo("recognizer start");
+    public Recognizer(String context, DataSource dataSource) 
+        throws IOException {
+        this(context);
 
         frontend = getFrontEnd(context, dataSource);
         dumpMemoryInfo("front end");
 
+        scorer = getAcousticScorer(frontend);
+        dumpMemoryInfo("scorer");
 
+        searchManager = getSearchManager(linguist, scorer, pruner);
+        dumpMemoryInfo("search");
+    }
+
+
+    /**
+     * Constructs a Recognizer when the dataSource is not yet known.
+     *
+     * Some of the building blocks for the
+     * decoder (currently the linguist and the grammar) are set via
+     * properties. This can be extended for other parts of the decoder
+     * as multiple implementations become available
+     *
+     * @param context the context of this Recognizer
+     */
+    protected Recognizer(String context) throws IOException {
+        
+        props = SphinxProperties.getSphinxProperties(context);
+        dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
+                PROP_DUMP_MEMORY_INFO_DEFAULT);
+        dumpSentenceHMM = props.getBoolean(PROP_DUMP_SENTENCE_HMM,
+                PROP_DUMP_SENTENCE_HMM_DEFAULT);
+        dumpFrontEnd = props.getBoolean(PROP_DUMP_FRONTEND,
+                PROP_DUMP_FRONTEND_DEFAULT);
+        
+        dumpMemoryInfo("recognizer start");
+        
         AcousticModel[] models = getAcousticModels(context);
         dumpMemoryInfo("acoustic model");
 
@@ -241,15 +262,10 @@ public class Recognizer {
         pruner = new SimplePruner();
         dumpMemoryInfo("pruner");
         
-        scorer = getAcousticScorer(frontend);
-	dumpMemoryInfo("scorer");
-
-        searchManager = getSearchManager(linguist, scorer, pruner);
-        dumpMemoryInfo("search");
-
         featureBlockSize = props.getInt(PROP_FEATURE_BLOCK_SIZE,
                                         PROP_FEATURE_BLOCK_SIZE_DEFAULT);
     }
+
 
     /**
      * Prepares recognizer for forced alignment. It resets the grammar
