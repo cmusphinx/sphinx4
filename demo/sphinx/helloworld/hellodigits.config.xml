@@ -116,7 +116,7 @@
         <property name="fillerPath" value="fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
-        <property name="allowMissingWords" value="true"/>
+        <property name="allowMissingWords" value="false"/>
     </component>
 
     <!-- ******************************************************** -->
@@ -138,7 +138,6 @@
                 value="wd_dependent_phone.500.mdef"/>
         <property name="data_location" 
                 value="wd_dependent_phone.cd_continuous_8gau"/>
-        <property name="properties_file" value="am.props"/>
     </component>
     
         
