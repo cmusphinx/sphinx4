@@ -76,6 +76,7 @@ your environment to use JSAPI.
 	    depends="compile_sphinx_helloworld,
 	             compile_sphinx_hellodigits,
 		     compile_sphinx_hellongram,
+	             compile_sphinx_dialog,
 	             compile_zipcity,
                      compile_sphinx_wavfile,
                      compile_sphinx_transcriber,
@@ -126,6 +127,33 @@ your environment to use JSAPI.
 	     manifest="${src_dir}/demo/sphinx/hellodigits/hellodigits.Manifest"
 	     basedir="${classes_dir}"
 	     includes="demo/sphinx/hellodigits/**"
+	     filesonly="true"
+	     compress="true"/>
+    </target>
+
+    <target name="compile_sphinx_dialog">
+    	<mkdir dir="${classes_dir}/demo/sphinx/dialog"/>
+	<javac debug="true"
+	       source="1.4"
+	       listfiles="true"
+	       deprecation="true"
+	       srcdir="${src_dir}"
+	       includes="demo/sphinx/dialog/**"
+	       destdir="${classes_dir}">
+	    <classpath refid="libs"/>
+	</javac>
+
+	<copy todir="${classes_dir}/demo/sphinx/dialog">
+         <fileset dir="${src_dir}/demo/sphinx/dialog">
+            <include name="**/*.gram"/>
+         </fileset>
+        </copy>
+	<copy file="${src_dir}/demo/sphinx/dialog/dialog.config.xml"
+	      todir="${classes_dir}/demo/sphinx/dialog"/>
+        <jar destfile="${bin_dir}/Dialog.jar" 
+	     manifest="${src_dir}/demo/sphinx/dialog/dialog.Manifest"
+	     basedir="${classes_dir}"
+	     includes="demo/sphinx/dialog/**"
 	     filesonly="true"
 	     compress="true"/>
     </target>

@@ -27,6 +27,7 @@ import edu.cmu.sphinx.util.props.Registry;
 import java.io.IOException;
 import java.util.logging.Logger;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.speech.recognition.GrammarException;
@@ -76,7 +77,7 @@ public class DialogManager implements Configurable {
     // local data
     // ------------------------------------
     private DialogNode initialNode;
-    private Map nodeMap;
+    private Map nodeMap = new HashMap();
     private String name;
 
     /*
@@ -168,27 +169,31 @@ public class DialogManager implements Configurable {
         DialogNode curNode = initialNode;
 
         try {
-            while (true) {
+	    if (microphone.startRecording()) {
+                while (true) {
 
-                if (curNode != lastNode) {
-                    if (lastNode != null) {
-                        lastNode.exit();
-                    }
-                    curNode.enter();
-                    lastNode = curNode;
-                } 
-                String nextStateName  = curNode.recognize();
-                if (nextStateName == null || nextStateName.length() == 0) {
-                    continue;
-                } else {
-                    DialogNode node = (DialogNode) nodeMap.get(nextStateName);
-                    if (node == null) {
-                        warn("Can't transition to unknown state " 
-                                + nextStateName);
+                    if (curNode != lastNode) {
+                        if (lastNode != null) {
+                            lastNode.exit();
+                        }
+                        curNode.enter();
+                        lastNode = curNode;
+                    } 
+                    String nextStateName  = curNode.recognize();
+                    if (nextStateName == null || nextStateName.length() == 0) {
+                        continue;
                     } else {
-                        curNode = node;
+                        DialogNode node = (DialogNode) nodeMap.get(nextStateName);
+                        if (node == null) {
+                            warn("Can't transition to unknown state " 
+                                    + nextStateName);
+                        } else {
+                            curNode = node;
+                        }
                     }
                 }
+            } else {
+                error("Can't start the microphone");
             }
         } catch (GrammarException ge) {
             error("grammar problem in state " + curNode.getName() 
