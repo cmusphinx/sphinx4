@@ -195,7 +195,7 @@ public class JSGFGrammar extends Grammar {
     /**
      * Parses the given RuleName into a network of GrammarNodes.
      *
-     * @param ruleName the RuleName rule to parse
+     * @param initialRuleName the RuleName rule to parse
      *
      * @return a grammar graph
      */

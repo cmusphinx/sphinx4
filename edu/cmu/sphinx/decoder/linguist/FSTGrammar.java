@@ -314,7 +314,7 @@ public class FSTGrammar extends Grammar {
      * adding an optional silence node between the grammar node and its
      * end node.
      *
-     * @param maxNodeId the node ID to start with for the new nodes
+     * @param maxNodeID the node ID to start with for the new nodes
      *
      * @return the last (or maximum) node ID
      */
@@ -346,7 +346,7 @@ public class FSTGrammar extends Grammar {
     /**
      * Converts the probability from -ln to logmath
      *
-     * @param prob the probability to convert. Probabilities in the
+     * @param lnProb the probability to convert. Probabilities in the
      * arpa format in negative natural log format. We convert them to
      * logmath.
      * 
