@@ -45,13 +45,6 @@ public class HelloDigits {
 
             ConfigurationManager cm = new ConfigurationManager(url);
 
-            /*
-             * Sets the base URL of the JSGF grammar files to the 
-             * directory where the HelloWorld class is.
-             */
-            JSGFGrammar grammar = (JSGFGrammar) cm.lookup("jsgfGrammar");
-            grammar.setBaseURL(HelloWorld.class.getResource(""));
-
 	    Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
 	    Microphone microphone = (Microphone) cm.lookup("microphone");
 
@@ -68,7 +61,7 @@ public class HelloDigits {
 
 		while (true) {
 		    System.out.println
-			("Start speaking. Press Ctrl-C to quit.");
+			("Start speaking. Press Ctrl-C to quit.\n");
 
                     /*
                      * This method will return when the end of speech

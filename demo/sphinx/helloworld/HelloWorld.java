@@ -44,13 +44,6 @@ public class HelloWorld {
 
             ConfigurationManager cm = new ConfigurationManager(url);
 
-            /*
-             * Sets the base URL of the JSGF grammar files to the 
-             * directory where the HelloWorld class is.
-             */
-            JSGFGrammar grammar = (JSGFGrammar) cm.lookup("jsgfGrammar");
-            grammar.setBaseURL(HelloWorld.class.getResource(""));
-
 	    Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
 	    final Microphone microphone = 
                 (Microphone) cm.lookup("microphone");

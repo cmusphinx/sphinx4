@@ -37,7 +37,7 @@
             <item>speedTracker </item>
             <item>memoryTracker </item>
         </propertylist>
-    </component>
+   </component>
     
     <!-- ******************************************************** -->
     <!-- The Decoder   configuration                              -->
@@ -96,7 +96,8 @@
     <!-- ******************************************************** -->
             
     <component name="jsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar">
-        <property name="baseGrammarURL" value="file:./"/>
+        <property name="baseGrammarURL"
+	   value="jar:file:./bld/bin/HelloWorld.jar!/demo/sphinx/helloworld/"/>
         <property name="dictionary" value="dictionary"/>
         <property name="grammarName" value="digits"/>
 	<property name="logMath" value="logMath"/>
