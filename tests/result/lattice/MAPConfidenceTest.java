@@ -22,6 +22,7 @@ import edu.cmu.sphinx.result.LatticeOptimizer;
 import edu.cmu.sphinx.result.MAPConfidenceScorer;
 import edu.cmu.sphinx.result.Path;
 import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.result.WordResult;
 
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -75,9 +76,25 @@ public class MAPConfidenceTest {
                     ("confidenceScorer");
                 ConfidenceResult cr = cs.score(result);
                 Path best = cr.getBestHypothesis();
+
+                /* print out confidence of individual words in the best path */
+                WordResult[] words = best.getWords();
+                for (int i = 0; i < words.length; i++) {
+                    WordResult wr = (WordResult) words[i];
+                    System.out.println
+                        (wr.getPronunciation().getWord().getSpelling());
+                    System.out.println
+                        ("   (confidence: " +
+                         wr.getLogMath().logToLinear((float)wr.getConfidence()) + ")");
+                }
+
+                System.out.println();
+
+                /* confidence of the best path */
+                System.out.println(best.getTranscription());
                 System.out.println
-                    (best.getTranscription() + ": " +
-                     best.getLogMath().logToLinear((float)best.getConfidence()));
+                    ("   (confidence: " +
+                     best.getLogMath().logToLinear((float)best.getConfidence()) + ")");
             }
         } catch (IOException e) {
             System.err.println("Problem when loading MAPConfidenceTest: " + e);
