@@ -16,11 +16,14 @@ import edu.cmu.sphinx.frontend.util.StreamAudioSource;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.DataSource;
 
-import edu.cmu.sphinx.util.BatchFile;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.util.BatchItem;
+import edu.cmu.sphinx.util.BatchManager;
+import edu.cmu.sphinx.util.SimpleBatchManager;
+import edu.cmu.sphinx.util.PooledBatchManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,8 +45,7 @@ import java.util.StringTokenizer;
  */
 public class BatchDecoder {
 
-
-    private final static String PROP_PREFIX = 
+    public final static String PROP_PREFIX = 
 	"edu.cmu.sphinx.decoder.BatchDecoder.";
 
 
@@ -89,7 +91,6 @@ public class BatchDecoder {
      */
     public final static int PROP_TOTAL_BATCHES_DEFAULT = 1;
 
-
     /**
      * The SphinxProperty name for the input data type.
      */
@@ -108,6 +109,19 @@ public class BatchDecoder {
     public final static String PROP_SHOW_PROPS_AT_START = 
         PROP_PREFIX + "showPropertiesAtStart";
 
+    /**
+     * The SphinxProperty that defines whether or not the decoder
+     * should use the pooled batch manager
+     */
+    public final static String PROP_USE_POOLED_BATCH_MANAGER = 
+        PROP_PREFIX + "usePooledBatchManager";
+
+
+    /**
+     * The default value for the property * PROP_USE_POOLED_BATCH_MANAGER.
+     */
+    public final static boolean PROP_USE_POOLED_BATCH_MANAGER_DEFAULT = false;
+
 
     /**
      * The default value for the property PROP_SHOW_PROPS_AT_START.
@@ -116,14 +130,17 @@ public class BatchDecoder {
 
     private DataSource dataSource;
     private Decoder decoder;
-    private String batchFile;
     private String context;
     private String inputDataType;
     private int skip;
     private int whichBatch;
     private int totalBatches;
+
+
     private SphinxProperties props;
+    private boolean usePooledBatchManager;
     private boolean showPropertiesAtStart;
+    private BatchManager batchManager;
 
 
     /**
@@ -148,10 +165,13 @@ public class BatchDecoder {
         context = props.getContext();
 	inputDataType = props.getString(PROP_INPUT_TYPE, 
                                         PROP_INPUT_TYPE_DEFAULT);
-	skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
-	whichBatch = props.getInt(PROP_WHICH_BATCH, PROP_WHICH_BATCH_DEFAULT);
-	totalBatches = props.getInt(PROP_TOTAL_BATCHES, 
-                                    PROP_TOTAL_BATCHES_DEFAULT);
+        skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
+        whichBatch = props.getInt(PROP_WHICH_BATCH, PROP_WHICH_BATCH_DEFAULT);
+        totalBatches = props.getInt(PROP_TOTAL_BATCHES, 
+                PROP_TOTAL_BATCHES_DEFAULT);
+        usePooledBatchManager = props.getBoolean(PROP_USE_POOLED_BATCH_MANAGER, 
+                PROP_USE_POOLED_BATCH_MANAGER_DEFAULT);
+
 	showPropertiesAtStart = props.getBoolean(PROP_SHOW_PROPS_AT_START,
                                     PROP_SHOW_PROPS_AT_START_DEFAULT);
     }
@@ -168,7 +188,12 @@ public class BatchDecoder {
         throws IOException {
 
         initSphinxProperties(props);
-        this.batchFile = batchFile;
+        if (usePooledBatchManager) {
+            batchManager = new PooledBatchManager(batchFile, skip);
+        } else {
+            batchManager = new SimpleBatchManager(batchFile, skip,
+                    whichBatch, totalBatches);
+        }
 
 	if (inputDataType.equals("audio")) {
 	    dataSource = new StreamAudioSource
@@ -190,66 +215,27 @@ public class BatchDecoder {
      */
     public void decode() throws IOException {
 
-	int curCount = skip;
         String file = null;
         String reference = null;
+        BatchItem batchItem;
+
+        batchManager.start();
 
         if (showPropertiesAtStart) {
             props.list(System.out);
         }
-        System.out.println("\nBatchDecoder: decoding files in " + batchFile);
+
+        System.out.println("\nBatchDecoder: decoding files in " +
+                batchManager.getFilename());
         System.out.println("----------");
 
-	for (Iterator i = getLines(batchFile).iterator(); i.hasNext();) {
-	    String line = (String) i.next();
-
-
-            // skip blank lines
-            if (line.length() == 0) {
-                continue;
-            } else if (line.startsWith("set")) {
-                processPropertySetter(line);
-            } else if (line.startsWith("reset")) {
-                NISTAlign.resetTotals();
-            } else if (line.startsWith("go")) {
-                NISTAlign.resetTotals();
-                if (file != null && reference != null) {
-                    decodeFile(file, reference);
-                }
-            } else {
-                file = BatchFile.getFilename(line);
-                reference = BatchFile.getReference(line);
-
-                if (++curCount >= skip) {
-                    curCount = 0;
-                    decodeFile(file, reference);
-                }
-            }
+        while ((batchItem = batchManager.getNextItem()) != null) {
+            decodeFile(batchItem.getFilename(), batchItem.getTranscript());
         }
-
         System.out.println("\nBatchDecoder: All files decoded\n");
         Timer.dumpAll(context);
 	decoder.showSummary();
-    }
-
-
-    /**
-     * Sets the sphinx properties given a line of the form
-     * set propertyName value
-     */
-    private void processPropertySetter(String line) {
-        StringTokenizer st = new StringTokenizer(line);
-
-        if (st.countTokens() != 3) {
-            System.out.println("Bad 'set' in " + line);
-        }
-
-        String set = st.nextToken();
-        String name = st.nextToken();
-        String value = st.nextToken();
-        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        System.out.println("Setting " + name + " to " + value);
-        props.setProperty(name, value);
+        batchManager.stop();
     }
 
 
@@ -295,33 +281,6 @@ public class BatchDecoder {
 
 
 
-    /**
-     * Gets the set of lines from the file
-     *
-     * @param file the name of the file 
-     */
-    private List getLines(String file) throws IOException {
-	List list = BatchFile.getLines(file);
-
-	if (totalBatches > 1) {
-	    int linesPerBatch = list.size() / totalBatches;
-	    if (linesPerBatch < 1) {
-		linesPerBatch = 1;
-	    }
-	    if (whichBatch >= totalBatches) {
-		whichBatch = totalBatches - 1;
-	    }
-	    int startLine = whichBatch * linesPerBatch;
-	    // last batch needs to get all remaining lines
-	    if (whichBatch == (totalBatches - 1)) {
-		list = list.subList(startLine, list.size());
-	    } else {
-		list = list.subList(startLine, startLine +
-			linesPerBatch);
-	    }
-	}
-	return list;
-    }
 
 
     /**
