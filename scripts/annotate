@@ -1,0 +1,31 @@
+# usage:
+#     annotate s4.out ...
+#   or
+# 
+# cat s4.out | annotate
+#
+# This script will go though all the given s4 output
+# data and annotate the REF and HYP entries with the 
+# associated audio file
+#
+
+
+gawk '
+$1 == "Decoding:" { 
+    currentFile = $2;
+}
+
+$1 == "REF:" {
+    $1 = "REF(" currentFile "):";
+}
+
+$1 == "HYP:" {
+    $1 = "HYP(" currentFile "):";
+}
+
+$1 == "RAW:" {
+    $1 = "RAW(" currentFile "):";
+}
+
+{ print; }
+' $*
