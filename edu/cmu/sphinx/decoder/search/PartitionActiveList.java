@@ -237,22 +237,36 @@ public class PartitionActiveList implements ActiveList  {
 
             if (tokenList.size() > 0) {
 
-                Token[] tokens = (Token[]) 
+                if (tokenList.size() > absoluteBeamWidth) {
+                    
+                    Token[] tokens = (Token[]) 
                     tokenList.toArray(new Token[tokenList.size()]);
+                    
+                    // "r" is the index of the last element in the partition
+                    int r = partitioner.partition(tokens, absoluteBeamWidth);
+                    
+                    highestScore = partitioner.getBestToken().getScore();
+                    pruneScore = highestScore + relativeBeamWidth;
 
-                // "r" is the index of the last element in the partition
-                int r = partitioner.partition(tokens, absoluteBeamWidth);
+                    tokenList = new ArrayList(absoluteBeamWidth);
 
-                highestScore = partitioner.getBestToken().getScore();
-                pruneScore = highestScore + relativeBeamWidth;
-
-                tokenList = new ArrayList(absoluteBeamWidth);
-
-                for (int i = 0; i <= r; i++) {
-                    Token token = tokens[i];
-                    if (token.getScore() > pruneScore) {
-                        tokenList.add(token);
+                    for (int i = 0; i <= r; i++) {
+                        Token token = tokens[i];
+                        if (token.getScore() > pruneScore) {
+                            tokenList.add(token);
+                        }
                     }
+                } else {
+                    pruneScore = getBestScore() + relativeBeamWidth;
+                    Iterator i = tokenList.iterator();
+                    List newList = new ArrayList(absoluteBeamWidth);
+                    while (i.hasNext()) {
+                        Token token = (Token) i.next();
+                        if (token.getScore() > pruneScore) {
+                            newList.add(token);
+                        }
+                    }
+                    tokenList = newList;
                 }
             }
         }
