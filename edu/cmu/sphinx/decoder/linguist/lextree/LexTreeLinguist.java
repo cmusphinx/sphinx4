@@ -105,6 +105,7 @@ public class LexTreeLinguist implements  Linguist {
         LexTreeInitialState.class,
         LexTreeNonEmittingHMMState.class,
         LexTreeWordState.class,
+        LexTreeEndWordState.class,
         LexTreeUnitState.class,
         LexTreeHMMState.class
     };
@@ -1299,14 +1300,25 @@ public class LexTreeLinguist implements  Linguist {
      *
      * @return the end word.
      */
-    LexTreeWordState endWord;
+    LexTreeEndWordState endWord;
     private SearchStateArc getEndWord() {
         if (endWord == null) {
-            float logProbability = 0.0f;
-            endWord = new LexTreeWordState(0, null, null, 
-                    new WordSequence(), finalNode, logProbability);
+            endWord = new LexTreeEndWordState();
         }
         return endWord;
+    }
+
+    /**
+     * Represents the end word state in the search space.
+     */
+    public class LexTreeEndWordState extends LexTreeWordState {
+     
+        /**
+         * Constructs a default LexTreeEndWordState.
+         */
+        public LexTreeEndWordState() {
+            super(0, null, null, new WordSequence(), finalNode, 0.0f);
+        }
     }
 }
 
