@@ -296,6 +296,9 @@ public class Recognizer {
         
         featureBlockSize = props.getInt(PROP_FEATURE_BLOCK_SIZE,
                                         PROP_FEATURE_BLOCK_SIZE_DEFAULT);
+
+	// free up the Dictionary
+	dictionary = null;
     }
 
 

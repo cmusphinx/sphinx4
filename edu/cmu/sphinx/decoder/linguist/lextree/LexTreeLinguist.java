@@ -216,6 +216,8 @@ public class LexTreeLinguist implements  Linguist {
         }
 
         finalNode = lexTree.findWordNode(Dictionary.SENTENCE_END_SPELLING);
+	
+	dictionary = null;
     }
 
     /**
