@@ -42,6 +42,13 @@ public class TrainerScore {
 	this.feature = feature;
 	this.logOutputProbability = probability;
 	this.senoneID = senone;
+	logAlpha = 0.0f;
+	logBeta = 0.0f;
+	logGamma = 0.0f;
+	logComponentProb = new float[1];
+	logComponentProb[0] = 0.0f;
+	logComponentGamma = new float[1];
+	logComponentGamma[0] = 0.0f;
     }
 
     /**
