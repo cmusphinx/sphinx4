@@ -90,6 +90,7 @@ WARRANTIES.
 	<li><a href="#configuration">Configuration (Sphinx Properties)</a></li>
 	<li><a href="doc/FrontEnd.html">Front End</a></li>
 	<li><a href="doc/Grammars.html">Specifying Grammars</a></li>
+	<li><a href="#faq">Troubleshooting section</a></li>
       </ul>
 
       <h3>Sphinx-4 for Application Developers</h3>
@@ -352,6 +353,7 @@ set path=( $path $ANT_HOME/bin )
 <br>
 <li><a name="language_models"><b>Language Models</b></a>
 
+<p>The language model used by Sphinx-4 follows the format 
 </li>
 
 
@@ -441,6 +443,125 @@ contains the type of constant that can be used. So, if this field is
 int, only an integer can be used as the value for this property.
 </p>
   </li>
+<li><a name="faq"><b>Troublehooting/FAQ</b></a><br>&nbsp;
+<ol>
+  <li>How can I specify the location of the Java JDK?
+    <ul>
+
+      <li>Using the JAVA_HOME environment variable. For the different
+      versions of OS, do:
+        <ul>
+          <li>
+            <pre>Unix (t)csh: setenv JAVA_HOME /lab/speech/java/j2sdk1.4.0</pre>
+          </li>
+          <li>
+            <pre>Unix (ba)sh: export JAVA_HOME='/lab/speech/java/jdk1.4.1_01'</pre>
+          </li>
+
+          <li>
+            <pre>Windows/cygwin: export JAVA_HOME='c:/Progra~1/J2SDK_Forte/jdk1.4.0'</pre>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>How can I update the code in the the current working copy that I
+  have?
+    <ul>
+
+      <li>If you are using CVS, you can do a "cvs update -d". The
+      switch "-d" will also get new directories or files that have
+      been added to the cvs module since the last time you
+      downloaded.</li>
+    </ul>
+  </li>
+  <li>I always get a "timeout" message when I try to download/update
+  the cvs tree.
+    <ul>
+      <li>Make sure you defined the CVS_RSH environment variable as
+      'ssh'. If ssh is not on your path, make sure you specify the
+      full path. For the different versions of OS, do:
+        <ul>
+          <li>
+            <pre>Unix (t)csh: setenv CVS_RSH ssh</pre>
+
+          </li>
+          <li>
+            <pre>Unix (ba)sh: export CVS_RSH='/usr/local/bin/ssh'</pre>
+          </li>
+          <li>
+            <pre>Windows/cygwin: export CVS_RSH='ssh'</pre>
+          </li>
+        </ul>
+
+      </li>
+    </ul>
+  </li>
+  <li><a name="cygwin">What are the limitations/hacks if one's using
+  cygwin?</a></li>
+  <ul>
+    <li>Make sure that you install "ssh" and "cvs" when you install
+    cygwin. If you do not want to go through the list of packages
+    trying to decide what you need, installing everything is a good
+    solution.
+    </li>
+    <li>Cygwin does not define a home directory, which is used by
+    cvs. You have to explicitly define it. You are better off creating
+    an environment variable HOME, which will be used by every cygwin
+    window that you open. Follow the instructions below to create this
+    variable on Windows 2000.
+    <ul>
+
+	<li>Assume your userid is "johndoe", and you created a
+	directory named "/home/johndoe" in the cygwin environment
+        </li>
+        <li>Right click on the "My Computer" icon
+	</li>
+	<li>On the menu, click on "Properties"
+	</li>
+	<li>Click the "Advanced" tab
+	</li>
+	<li>Select "Environment Variables"
+	</li>
+	<li>Click "New" on the "User variables for johndoe" box
+	</li>
+
+	<li>On "Variable Name", type "HOME"
+	</li>
+	<li>On "Variable Value", type "c:\cygwin\home\johndoe"
+	</li>
+    </ul>
+    When you start a new cygwin window, if you type "echo $HOME", you
+    should get "/home/johndoe".
+    </li>
+    <li>Handling absolute paths: Cygwin interprets directory paths in
+    a unix-like way, relative to its own "root" directory (which
+    cygwin sees as "/" but Windows sees as "c:\cygwin"). However, the
+    Java platform interprets directory paths via the operating
+    system. Therefore, absolute paths, such as "/lab/speech", will be
+    interpreted differently by cygwin and by the Java platform. One
+    workaround is to keep the absolute path in Windows (e.g.
+    "c:\lab\") and create a link, in cygwin, from that location (such
+    as "ln -s /cygdrive/c/lab /lab"). If you use absolute paths to
+    identify data location and the directories are not setup this way,
+    you may encounter error messages such as:
+    </li>
+    <pre>
+d:\work\sphinx4&gt;ant clean 
+/c: Can't open /c: No such file or directory 
+</pre>
+    <li>Handling DOS 8.3 filename format: Since cygwin deals with unix
+    and DOS filename formats at the same time, filenames in different
+    files (e.g., build.xml, .props file) have different
+    requirements. Paths interpreted directly by cygwin can be as long
+    as you want. Paths passed to the program, though, conform to the
+    8.3 convention of DOS filenames. Therefore you have to define the
+    path to, say, junit as something like
+    /lab/speech/ThirdP~1/junit3.7, since this string is passed from
+    the environment to the Java code to the OS. </li>
+  </ul>
+</ol>
+
 </ul>
 
 
@@ -606,6 +727,8 @@ int, only an integer can be used as the value for this property.
 
   </li>
 </ul>
+
+
 
 <hr>
 
