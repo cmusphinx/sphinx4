@@ -60,6 +60,10 @@ class UnigramProbability {
     public int getFirstBigramEntry() {
         return firstBigramEntry;
     }
+
+    public void setLogProbability(float probability) {
+        logProbability = probability;
+    }
 }
 
 

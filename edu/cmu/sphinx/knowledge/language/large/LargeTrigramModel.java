@@ -187,7 +187,7 @@ public class LargeTrigramModel implements LanguageModel {
         if (probability == null) {
             throw new Error("Unigram not in LM: " + unigram);
         } else {
-            return probability.logProbability;
+            return probability.getLogProbability();
         }
     }
 
@@ -242,8 +242,8 @@ public class LargeTrigramModel implements LanguageModel {
         int firstWordID = getWordID(firstWord);
 
         int numberBigramFollowers = 
-            unigrams[firstWordID+1].firstBigramEntry -
-            unigrams[firstWordID].firstBigramEntry;
+            unigrams[firstWordID+1].getFirstBigramEntry() -
+            unigrams[firstWordID].getFirstBigramEntry();
 
         int secondWordID = getWordID(wordSequence.getWord(1));
 
@@ -259,8 +259,8 @@ public class LargeTrigramModel implements LanguageModel {
         if (bigram != null) {
             return bigramProbTable[bigram.getProbabilityID()];
         } else {
-            return (unigrams[firstWordID].logBackoff + 
-                    unigrams[secondWordID].logProbability);
+            return (unigrams[firstWordID].getLogBackoff() + 
+                    unigrams[secondWordID].getLogProbability());
         }
     }
 
@@ -276,7 +276,7 @@ public class LargeTrigramModel implements LanguageModel {
         float logBackoff = 0.0f;           // log of 1.0
         UnigramProbability prob = null; //getProb(wordSequence);
         if (prob != null) {
-            logBackoff = prob.logBackoff;
+            logBackoff = prob.getLogBackoff();
         }
         return logBackoff;
     }
@@ -333,9 +333,10 @@ public class LargeTrigramModel implements LanguageModel {
         if ((followers = isBigramLoaded(firstWordID)) == null) {
 
             long position = (long) 
-                (bigramOffset + unigrams[firstWordID].firstBigramEntry);
-            int numberFollowers = unigrams[firstWordID+1].firstBigramEntry -
-                unigrams[firstWordID].firstBigramEntry;
+                (bigramOffset + unigrams[firstWordID].getFirstBigramEntry());
+            int numberFollowers = 
+                unigrams[firstWordID+1].getFirstBigramEntry() -
+                unigrams[firstWordID].getFirstBigramEntry();
             long size = (long) (numberFollowers + 1) * 8;
 
             try {
@@ -569,8 +570,8 @@ public class LargeTrigramModel implements LanguageModel {
 
         for (int i = 0; i < unigrams.length; i++) {
             if (!words[i].equals(Dictionary.SENTENCE_START_SPELLING)) {
-                float p1 = unigrams[i].logProbability + logUnigramWeight;
-                unigrams[i].logProbability = logMath.addAsLinear(p1, p2);
+                float p1 = unigrams[i].getLogProbability() + logUnigramWeight;
+                unigrams[i].setLogProbability(logMath.addAsLinear(p1, p2));
             }
         }
     }
