@@ -247,7 +247,7 @@ public class FastDictionary implements Dictionary {
      * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
      */
     public Pronunciation[] getPronunciations(String text,
-                                             WordClassification wordClassification, String tag) {
+                     WordClassification wordClassification, String tag) {
         
 	Pronunciation[] pronunciations = null;
 	text = text.toLowerCase();
