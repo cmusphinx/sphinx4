@@ -7,7 +7,7 @@ Here are some simple instructions.
 Requirements:
 
   - Usual set of gnu/unix tools (gawk/perl/cvs/mailx) must be in your path
-  - a script called 'scvs' in your path that points to the sourecode
+  - a script called 'scvs' in your path that points to the sourcecode
     repository.  A typical implementation of scvs would look like
     this:
 
