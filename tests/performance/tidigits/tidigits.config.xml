@@ -117,6 +117,19 @@
         <property name="languageWeight" value="${languageWeight}"/>
         <property name="unitManager" value="unitManager"/>
     </component>
+
+    <component name="dflatLinguist" 
+                type="edu.cmu.sphinx.linguist.dflat.DynamicFlatLinguist">
+        <property name="logMath" value="logMath"/>
+        <property name="grammar" value="wordListGrammar"/>
+        <property name="acousticModel" value="acousticModel"/>
+        <property name="wordInsertionProbability" 
+                value="${wordInsertionProbability}"/>
+        <property name="silenceInsertionProbability" 
+                value="${silenceInsertionProbability}"/>
+        <property name="languageWeight" value="${languageWeight}"/>
+        <property name="unitManager" value="unitManager"/>
+    </component>
     
     <component name="lexTreeLinguist" 
                 type="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist">
@@ -344,14 +357,19 @@
                 type="edu.cmu.sphinx.instrumentation.RecognizerMonitor">
         <property name="recognizer" value="connectedDigitsRecognizer"/>
         <propertylist name="allocatedMonitors">
-            <item>linguistStats
-            </item>
+            <item>linguistStats</item>
+            <!-- <item>linguistDumper</item> -->
         </propertylist>
     </component>
     
     <component name="linguistStats" 
                 type="edu.cmu.sphinx.linguist.util.LinguistStats">
         <property name="linguist" value="${linguist}"/>
+    </component>
+
+    <component name="linguistDumper" type="edu.cmu.sphinx.linguist.util.GDLDumper">
+        <property name="linguist" value="${linguist}"/>
+        <property name="logMath" value="logMath"/>
     </component>
     
     <!-- ******************************************************* -->
