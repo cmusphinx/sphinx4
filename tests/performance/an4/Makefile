@@ -263,3 +263,17 @@ an4_plus_fst:
 #
 ##########################################################################
 
+
+# Tests the spelled-out words in AN4, using a looping grammar 
+# of the spelled out words in AN4. This test is called 'an4_spelling'
+# in the previous results of results.txt, dated 9/13/2002 and 10/7/2002.
+
+an4_spelled_out:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-56 \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=0.0 \
+	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
+	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_spelled_out.wordlist\
+	tests.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
+
