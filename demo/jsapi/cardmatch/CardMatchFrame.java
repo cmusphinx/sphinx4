@@ -121,7 +121,7 @@ public class CardMatchFrame extends JFrame {
      * @param game the game
      */
     public CardMatchFrame(String title, Recorder recorder, Game game,
-            boolean useVoice) {
+                          boolean useVoice) {
 	super(title);
 	this.recorder = recorder;
         this.game = game;
@@ -375,7 +375,11 @@ public class CardMatchFrame extends JFrame {
      * @param prompt the prompt to speak
      */
     private void speak(Prompt prompt) {
-        voice.speak(prompt.getText());
+        if (voice != null) {
+            voice.speak(prompt.getText());
+        } else {
+            System.out.println("Speak: " + prompt.getText());
+        }
     }
 
 
