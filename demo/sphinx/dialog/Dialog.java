@@ -17,6 +17,7 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.recognizer.Recognizer;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,6 +63,9 @@ public class Dialog {
             DialogManager dialogManager = (DialogManager)
                 cm.lookup("dialogManager");
 
+            Recognizer weatherRecognizer = (Recognizer)
+                cm.lookup("weatherRecognizer");
+
 
             System.out.println("\nWelcome to the Sphinx-4 Dialog Demo "
                     + " - Version 1.0\n");
@@ -74,18 +78,22 @@ public class Dialog {
             dialogManager.addNode("movies", new MyBehavior());
             dialogManager.addNode("phone",  new MyBehavior());
             dialogManager.addNode("books",  new MyBehavior());
+            dialogManager.addNode("weather",new WeatherNode(weatherRecognizer));
 
             dialogManager.setInitialNode("menu");
 
-            System.out.println("Loading ....");
+            System.out.println("Loading dialogs ...");
 
             dialogManager.allocate();
+            System.out.println("Loading weather recognizer ...");
+            weatherRecognizer.allocate();
 
-            System.out.println("Running  ....");
+
+            System.out.println("Running  ...");
 
             dialogManager.go();
 
-            System.out.println("Cleaning up  ....");
+            System.out.println("Cleaning up  ...");
 
             dialogManager.deallocate();
 
@@ -149,14 +157,16 @@ class MyBehavior extends NewGrammarDialogNodeBehavior {
         if (tag != null) {
             System.out.println("\n " 
                     + result.getBestFinalResultNoFiller() + "\n");
-            if (tag.equals("help")) {
+            if (tag.equals("exit")) {
+                System.out.println("Goodbye! Thanks for visiting!\n");
+                System.exit(0);
+            } if (tag.equals("help")) {
                 help();
             } else if (tag.equals("stats")) {
                 Timer.dumpAll();
             } else if (tag.startsWith("goto_")) {
                 return tag.replaceFirst("goto_", "");
-            } else {
-            }
+            } 
         } else {
             System.out.println("\n Oops! didn't hear you.\n");
         }
@@ -169,7 +179,7 @@ class MyBehavior extends NewGrammarDialogNodeBehavior {
      *  TODO: Note the current
      *  implementation just generates a large set of random utterances
      *  and tosses away any duplicates. There's no guarantee that this
-     *  will generate all of the possible utterances.
+     *  will generate all of the possible utterances. (yep, this is a hack)
      *
      *  @return the set of sample utterances
      */
@@ -289,5 +299,87 @@ class MyMusicBehavior extends MyBehavior {
             System.out.println("Rule: " + ruleNames[i] + " " +
                     rg.getRule(ruleNames[i]) + " " + enabled);
         }
+    }
+}
+
+/**
+ *  Defines the behavior for a weather node. The weather node allows
+ *  the user to dictate a weather forecast.  To do this we can't use a
+ *  JSGF grammar since JSGF grammars are not appropriate for
+ *  dictation, so instead we have a special weather node that will
+ *  install a 'weather recognizer' as the current recognizer when this
+ *  node is active.  The weather recognizer is configured to use a
+ *  language model suitable for weather forecasts.
+ */
+
+class WeatherNode extends DialogNodeBehavior {
+    private Recognizer weatherRecognizer;
+    private Recognizer savedRecognizer;
+    private DialogManager dialogManager;
+
+    /**
+     * Creates the WeatherNode
+     *
+     * @param recognizer the weather recognizer
+     */
+    public WeatherNode(Recognizer recognizer) {
+            this.weatherRecognizer = recognizer;
+    }
+
+    /**
+     * Called during the initialization phase
+     *
+     * @param node the dialog node that the behavior is attached to
+     */
+    public void onInit(DialogManager.DialogNode node) {
+        super.onInit(node);
+        dialogManager = node.getDialogManager();
+    }
+
+    /**
+     * Called when this node becomes the active node
+     */
+    public void onEntry() throws IOException {
+        savedRecognizer = dialogManager.getRecognizer();
+        dialogManager.setRecognizer(weatherRecognizer);
+        System.out.println("  Give your best imitation of ");
+        System.out.println("  a british weather forecaster");
+        System.out.println();
+        System.out.println(" Say 'forecast over' when you are done.");
+        System.out.println();
+    }
+
+    /**
+     * Called when this node is ready to perform recognition
+     */
+    public void onReady() {
+        trace("Ready " + getName());
+    }
+
+    /*
+     * Called with the recognition results. Should return a string
+     * representing the name of the next node.
+     *
+     * @return a tag indicating where to go next. An empty string
+     * indicates that control should stay in this node.
+     */
+    public String onRecognize(Result result) throws GrammarException {
+        trace("Recognize result: " + result.getBestFinalResultNoFiller());
+        String forecast = result.getBestFinalResultNoFiller();
+
+        System.out.println("Forecast: " + forecast);
+
+        if ("forecast over".equals(forecast)) {
+            return "menu";
+        }
+        return "";
+    }
+
+    /**
+     * Called when this node is no lnoger the active node
+     */
+    public void onExit() {
+        System.out.println();
+        dialogManager.setRecognizer(savedRecognizer);
     }
 }

@@ -47,7 +47,7 @@
             <item>memoryTracker </item>
         </propertylist>
     </component>
-    
+
     <!-- ******************************************************** -->
     <!-- The Decoder   configuration                              -->
     <!-- ******************************************************** --> 
@@ -194,7 +194,7 @@
     
     <component name="speechClassifier" 
                type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier">
-        <property name="threshold" value="13"/>
+        <property name="threshold" value="20"/>
     </component>
     
     <component name="nonSpeechDataFilter" 
@@ -272,19 +272,106 @@
         <property name="useAddTable" value="true"/>
     </component>
     
+    <!-- ******************************************************** -->
+    <!-- recognizer configuration                                 -->
+    <!-- ******************************************************** --> 
+    
+    <component name="weatherRecognizer" type="edu.cmu.sphinx.recognizer.Recognizer">
+        <property name="decoder" value="weatherDecoder"/>
+    </component>
+    
+    
+    <!-- ******************************************************** -->
+    <!-- The Decoder   configuration                              -->
+    <!-- ******************************************************** --> 
+    
+    <component name="weatherDecoder" type="edu.cmu.sphinx.decoder.Decoder">
+        <property name="searchManager" value="wordPruningSearchManager"/>
+        <property name="featureBlockSize" value="50"/>
+    </component>
+    
+    <!-- ******************************************************** -->
+    <!-- The Search Manager                                       -->
+    <!-- ******************************************************** --> 
+    
+    <component name="wordPruningSearchManager" 
+    type="edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager">
+        <property name="logMath" value="logMath"/>
+        <property name="linguist" value="lexTreeLinguist"/>
+        <property name="pruner" value="trivialPruner"/>
+        <property name="scorer" value="threadedScorer"/>
+        <property name="activeListManager" value="activeListManager"/>
+        <property name="growSkipInterval" value="0"/>
+        <property name="checkStateOrder" value="false"/>
+        <property name="buildWordLattice" value="false"/>
+        <property name="acousticLookaheadFrames" value="1.7"/>
+        <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
+    </component>
+    
+    
+    <!-- ******************************************************** -->
+    <!-- The Active Lists                                         -->
+    <!-- ******************************************************** --> 
+    
+    <component name="activeListManager" 
+             type="edu.cmu.sphinx.decoder.search.SimpleActiveListManager">
+        <propertylist name="activeListFactories">
+	    <item>standardActiveListFactory</item>
+	    <item>wordActiveListFactory</item>
+	    <item>wordActiveListFactory</item>
+	    <item>standardActiveListFactory</item>
+	    <item>standardActiveListFactory</item>
+	    <item>standardActiveListFactory</item>
+	</propertylist>
+    </component>
+    
+    <component name="standardActiveListFactory" 
+             type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
+        <property name="logMath" value="logMath"/>
+        <property name="absoluteBeamWidth" value="500"/>
+        <property name="relativeBeamWidth" value="1E-80"/>
+    </component>
+    
+    <component name="wordActiveListFactory" 
+             type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
+        <property name="logMath" value="logMath"/>
+        <property name="absoluteBeamWidth" value="20"/>
+        <property name="relativeBeamWidth" value="1E-60"/>
+    </component>
+    
+    
+    <!-- ******************************************************** -->
+    <!-- The linguist  configuration                              -->
+    <!-- ******************************************************** -->
+    
+    <component name="lexTreeLinguist" 
+                type="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist">
+        <property name="logMath" value="logMath"/>
+        <property name="acousticModel" value="wsj"/>
+        <property name="languageModel" value="trigramModel"/>
+        <property name="dictionary" value="dictionary"/>
+        <property name="addFillerWords" value="false"/>
+        <property name="fillerInsertionProbability" value="1E-10"/>
+        <property name="generateUnitStates" value="false"/>
+        <property name="wantUnigramSmear" value="true"/>
+        <property name="unigramSmearWeight" value="1"/>
+        <property name="wordInsertionProbability" value="1E-16"/>
+        <property name="silenceInsertionProbability" value=".1"/>
+        <property name="languageWeight" value="7.0"/>
+        <property name="unitManager" value="unitManager"/>
+    </component>
+    
+
+    <!-- ******************************************************** -->
+    <!-- The Language Model configuration                         -->
+    <!-- ******************************************************** -->
+    <component name="trigramModel" 
+        type="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel">
+        <property name="location" 
+            value="resource:/demo.sphinx.dialog.Dialog!/demo/sphinx/dialog/weather.lm"/>
+        <property name="logMath" value="logMath"/>
+        <property name="dictionary" value="dictionary"/>
+        <property name="maxDepth" value="3"/>
+        <property name="unigramWeight" value=".7"/>
+    </component>
 </config>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

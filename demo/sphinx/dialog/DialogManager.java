@@ -261,6 +261,20 @@ public class DialogManager implements Configurable {
         logger.info(s);
     }
 
+
+    public Recognizer getRecognizer() {
+        return recognizer;
+    }
+
+    /**
+     * Sets the recognizer
+     *
+     * @param recognizer the recognizer
+     */
+    public void setRecognizer(Recognizer recognizer) {
+        this.recognizer = recognizer;
+    }
+
     /**
      * Represents a node in the dialog
      */
@@ -345,6 +359,10 @@ public class DialogManager implements Configurable {
          */
         public void trace(String msg) {
             DialogManager.this.trace(msg);
+        }
+
+        public DialogManager getDialogManager() {
+            return DialogManager.this;
         }
     }
 }

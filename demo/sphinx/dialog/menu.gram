@@ -6,13 +6,15 @@
 
 grammar menu;
 
-public <command> =      read email      { goto_email } |
-                        play games      { goto_games } |
-                        read news       { goto_news } |
-                        read a book     { goto_books } |
-                        listen to music { goto_music } |
-                        watch movies    { goto_movies } |
-                        make a phone call { goto_phone } |
-
-                        show stats          { stats } |
-                        get help            { help } ;
+public <command> =      
+                        listen to music         { goto_music } |
+                        make a phone call       { goto_phone } |
+                        play a game             { goto_games } |
+                        read a book             { goto_books } |
+                        read my email           { goto_email } |
+                        read a newspaper        { goto_news } |
+                        show statistics         { stats } |
+                        watch a movie           { goto_movies } |
+                        exit the program        { exit } |
+                        weather forecaster      { goto_weather } |
+                        get help                { help } ;
