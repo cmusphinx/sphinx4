@@ -138,7 +138,7 @@ SpectrumSource {
 	/**
 	 * Create output sequence.
 	 */
-	double[] outputSpectrum = new double[numberFftPoints >> 1 + 1];
+	double[] outputSpectrum = new double[(numberFftPoints >> 1) + 1];
 
 	/**
 	 * Start Fast Fourier Transform recursion
