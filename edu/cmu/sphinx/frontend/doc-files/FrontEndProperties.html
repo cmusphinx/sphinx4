@@ -99,24 +99,27 @@ When the first DiscreteFourierTransform class is initialized in the
 'initialize()' method, the 'name' argument will be 'dft_1'. Calling
 DiscreteFourierTransform.getName() on it will return 'dft_1'.
 
+<h3>Search for Properties</h3>
+
 As you might infer, the front end uses the following algorithm
 to search for properties:
 
 <ol>
 
-<li>If the front end data processor has a name, then the front end looks in the SphinxProperty object for the property: <pre> &lt;data processor name&gt; + ";" + &lt;property name&gt;</pre> e.g., <pre>dft_2;edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints</pre>
+<li>If the front end data processor has a name, then the front end looks in the SphinxProperty object using the property string: <pre> &lt;data processor name&gt; + ";" + &lt;property name&gt;</pre> e.g., <pre>dft_2;edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints</pre>
 
-<li>If the front end data processor has no name, it just looks in the SphinxProperty object for the property name.
+<li>If the front end data processor has no name, it just looks in the SphinxProperty object using the property name.
 
 </ol>
 
-<p>Therefore, in the above example, if you did not prepend "dft_2;" to
+<p>Therefore, in the above example, if all you specified is:
 <pre>
 edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints = 256
 </pre>
-then the second DiscreteFourierTransform will not know that it should
-use 256 FFT points, and just use the default of 512!
-
+then the first DiscreteFourierTransform will use 256 FFT points. If you did not even specify this line, it will use the default of 512 FFT points. To specify that you want 128 FFT points for only the first DiscreteFourierTransform, you must specify:
+<pre>
+dft_1;edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints = 128
+</pre>
 
 <h3>Multiple Front Ends</h3>
 
