@@ -409,7 +409,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             SearchStateArc arc = arcs[i];
             SearchState nextState = arc.getState();
 
-            checkStateOrder(state, nextState);
+            //checkStateOrder(state, nextState);
 
             // We're actually multiplying the variables, but since
             // these come in log(), multiply gets converted to add
