@@ -1107,8 +1107,8 @@ public class BaseRecognizer extends BaseEngine
         RuleName imports[] = G.listImports();
         if (imports != null) {
             for (int i=0; i<imports.length; i++) {
-                RecognizerUtilities.debugMessageOut("Checking import " + 
-                                                    imports[i].getRuleName());
+                //RecognizerUtilities.debugMessageOut("Checking import " + 
+                //                                   imports[i].getRuleName());
                 String gname = imports[i].getFullGrammarName();
                 RuleGrammar GI = R.getRuleGrammar(gname);
 		if ((GI != null) && relo) {
@@ -1117,7 +1117,7 @@ public class BaseRecognizer extends BaseEngine
                 if (GI == null) {
 		    URL grammarURL = gnameToURL(context,imports[i].getFullGrammarName());
 
-		    RecognizerUtilities.debugMessageOut("loading " + grammarURL);
+	        //  RecognizerUtilities.debugMessageOut("loading " + grammarURL);
 		  
 		    G2 = JSGFParser.newGrammarFromJSGF(grammarURL, R);
 		  
