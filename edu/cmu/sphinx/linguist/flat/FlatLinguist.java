@@ -112,8 +112,8 @@ public class FlatLinguist implements Linguist, Configurable {
     // Data used for building and maintaining
     // the search graph
     // -------------------------------------
-    private Map nodeStateMap = new HashMap();
-    private Map arcPool = new HashMap();
+    private Map nodeStateMap;
+    private Map arcPool;
     private transient Collection stateSet = null;
     private String name;
     /**
@@ -207,6 +207,8 @@ public class FlatLinguist implements Linguist, Configurable {
      * @see edu.cmu.sphinx.linguist.Linguist#allocate()
      */
     public void allocate() throws IOException {
+        nodeStateMap = new HashMap();
+        arcPool = new HashMap();
         allocateAcousticModel();
         grammar.allocate();
         totalStates = StatisticsVariable.getStatisticsVariable(getName(),
