@@ -17,6 +17,10 @@
 #	Executes the tests
 #	Generates a summary report and emails it to parties of interest
 #	puts the log result back into the sourceforge repository
+#
+#
+# usage: regressionTest [testName]
+#
 
 
 # S4 code will be checked out here. WARNING: This directory will be 

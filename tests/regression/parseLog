@@ -8,20 +8,33 @@
 # WARRANTIES.
 #
 # This script parses the output of S4 and generates a log entry
+#
+# usage: parseLog logfile testStatus
+#
 
 gawk '
 
 BEGIN {
 
-    if (ARGC != 4 ) {
-        print "Usage: parseLog  logfile alignfile status"
+    if (ARGC != 3 ) {
+        print "Usage: parseLog  logfile status"
 	exit
     }
-    status = ARGV[3];
-    ARGV[3] = "";
+    status = ARGV[2];
+    ARGV[2] = "";
 
+# Here is a sample of what we are parsing
+#
+
+# Accuracy: 100.000%    Errors: 0  (Sub: 0  Ins: 0  Del: 0)
+# Words: 126   Matches: 126    WER: 0.000%
+# Sentences: 44   Matches: 44   SentenceAcc: 100.000%
+# Total Time Audio: 149.03s  Proc: 30.86s  Speed: 0.21 X real time
+# Mem Total: 126.75 Mb Free: 106.42 Mb Used: 20.33 Mb
 
     while (getline x < ARGV[1] > 0) {
+	gsub(/\(/, "", x);
+	gsub(/\)/, "", x);
         split(x, arry);
 	if (summaryFound == 0) {
 	    if (arry[3] == "Summary") {
@@ -35,39 +48,19 @@ BEGIN {
 		gsub(/s/, "", procTime);
 	    } else if (arry[1] == "Mem") {
 	        heapSize = arry[9];
-	    }
+	    } else if (arry[1] == "Words:") {
+	        words = arry[2];
+	    } else if (arry[1] == "Accuracy:") {
+	        substitutions = arry[6];
+	        insertions = arry[8];
+	        deletions = arry[10];
+	    } else if (arry[1] == "Sentences:") {
+	        sentences = arry[2];
+	        correctSentences = arry[4];
+	    } 
 	}
     }
     close(ARGV[1]);
-
-
-    # parse the s4 align summary output
-    summaryFound = 0;
-    while (getline x < ARGV[2] > 0) {
-	gsub(/\(/, "", x);
-	gsub(/\)/, "", x);
-        split(x, arry);
-	if (summaryFound == 0) {
-	    if (arry[2] == "SUMMARY") {
-		summaryFound = 1;
-	    }
-	} else {
-	    if (arry[1] == "Ref.") {
-	        words = arry[4];
-	    } else if (arry[1] == "Insertions") {
-	        insertions = arry[4];
-	    } else if (arry[1] == "Deletions") {
-	        deletions = arry[4];
-	    } else if (arry[1] == "Substitutions") {
-	        substitutions = arry[4];
-	    } else if (arry[1] == "sentences") {
-	        sentences = arry[2];
-	    } else if (arry[1] == "correct") {
-	        correctSentences = arry[3];
-	    }
-	}
-    }
-    close(ARGV[2]);
 }
 
 END {

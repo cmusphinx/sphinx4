@@ -1,4 +1,13 @@
 #!/usr/bin/perl
+# This script collects the set of CVS changes for a particular date 
+# and builds a web page for them. This script was originally going to
+# be a CGI script which is why it is written in perl, but there were
+# problems accessesing CVS anonymously from the web server, so it is
+# now only run at build time.
+#
+# usage: whatsNew YYYY-MM-DD
+#
+#
 
 sub getPreviousVersion {
     local($version) = @_;

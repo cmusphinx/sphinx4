@@ -9,10 +9,11 @@
 # redistribution of this file, and for a DISCLAIMER OF ALL 
 # WARRANTIES.
 #
-# This script parses the output of S4 and generates a log entry
-
-# To receive email reports about regression tests, add your email
-# address to the list of recipients
+# This script installs the indicated file into the sphinx 4 twiki
+#
+# usage: installTwikiPage pageName.html
+#
+# Requires 'sscp' and 'sshh' scripts to be in invokers path
 
 sscp $1
 sshh mv $1 /home/groups/c/cm/cmusphinx/twiki/data/Sphinx4

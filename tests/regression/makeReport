@@ -8,7 +8,9 @@
 # WARRANTIES.
 #
 # This script parses the regression log and presents a quick report
-# Field definitions: 
+#
+# Usage: makeReport < regression.log
+#
 # Field definitions: 
 #   1) "test"
 #   2) date

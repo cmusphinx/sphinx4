@@ -9,6 +9,11 @@
 #
 # Collects S4 metrics
 # 
+#
+# usage:  collectMetrics
+#
+# This should be run from the regression test directory
+#
 # Outputs the following metrics:
 #
 # 'metrics' - the record tag

@@ -12,6 +12,28 @@
 # tests which includes building S4, runnng the tests, logging the
 # results, putting the results out to CVS and performing email
 # notification
+#
+# This script should be run from the regression test directory
+#
+# usage: executeRegressionTest [testType]
+#
+# where testType is either:
+#
+# 	standard
+#	quick
+#  	an4
+#       an4_full
+#       an4_plus
+#       an4_spelling
+#       an4_words
+#       rm1
+#       ti46
+#       tidigits
+#
+# more tests can be added by adding a script called runTests_XXX to
+# the regression test directory, where XXX is the name of the new test.
+#
+
 
 regressionDir=`pwd`
 

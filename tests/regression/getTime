@@ -12,6 +12,8 @@
 # results, putting the results out to CVS and performing email
 # notification
 
-# a cript that returns the number of seconds since the epoch
+# a script that returns the number of seconds since the epoch
+#
+# usage: getTime
 
 perl -e "print time();"

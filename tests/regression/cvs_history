@@ -10,5 +10,9 @@
 #
 # This script retrieves the sphinx4 history for a particular date
 #
+# usage: cvs_history date
+#
+# date should be in the form 2002-12-07 (YYYY-MM-DD)
+#
 scvs history -ac | grep sphinx4 | grep $*
 

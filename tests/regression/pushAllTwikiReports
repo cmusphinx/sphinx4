@@ -8,10 +8,7 @@
 # redistribution of this file, and for a DISCLAIMER OF ALL 
 # WARRANTIES.
 #
-# This script parses the output of S4 and generates a log entry
-
-# To receive email reports about regression tests, add your email
-# address to the list of recipients
+# This script generates and pushes the twiki reports
 #
 
 ./pushTwikiReports IsolatedDigitsResults

@@ -7,7 +7,10 @@
 # redistribution of this file, and for a DISCLAIMER OF ALL 
 # WARRANTIES.
 #
-# This script parses the output of S4 and generates a log entry
+# This script generates the 'whats new' web page and pushes it to the
+# web
+#
+# usage: pushChanges
 
 # To receive email reports about regression tests, add your email
 # address to the list of recipients

@@ -7,11 +7,13 @@
 # redistribution of this file, and for a DISCLAIMER OF ALL 
 # WARRANTIES.
 #
-# This script parses the output of S4 and generates a log entry
-
+# This script generates a test summary report and mails it to the
+# proper mailing list.
+#
 # To receive email reports about regression tests, add your email
 # address to the list of recipients
 #
+# usage: mailReport
 
 recipients="cmusphinx-commits@lists.sourceforge.net"
 #recipients="Paul.Lamere@sun.com"

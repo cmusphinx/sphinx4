@@ -10,6 +10,8 @@
 #
 # This script runs a particular test in the given directory
 #
+# usage: runTest directory makeTargetName
+#
 
 base=`pwd`
 
@@ -28,5 +30,4 @@ fi
 
 cd $base
 
-$base/s4_align $rawOutput > $alignOutput
-$base/parseLog $rawOutput $alignOutput $status | $base/updateLog
+$base/parseLog $rawOutput $status | $base/updateLog

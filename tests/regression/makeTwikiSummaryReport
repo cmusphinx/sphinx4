@@ -7,7 +7,11 @@
 # redistribution of this file, and for a DISCLAIMER OF ALL 
 # WARRANTIES.
 #
-# This script parses the regression log and outputs an HTML summary
+# This script parses the regression log and outputs a summary
+# regression report suitable for a twiki
+#
+# usage: ./makeTwikiSummaryReport regression.log listoftests.list
+#     machine typeOfResults  title 
 #
 # Field definitions: 
 #   1) "test"
@@ -90,11 +94,13 @@ BEGIN {
 
     # read in the test list
 
-    # parse the s4 align summary output
     totalTestCount = 0;
     while (getline x < testList > 0) {
-        tests[x] = 1;
-	testOrder[totalTestCount++] = x;
+	# skip comment lines
+	if (match(x, "#") != 1) {
+	    tests[x] = 1;
+	    testOrder[totalTestCount++] = x;
+	}
     }
     close(testList);
 }
