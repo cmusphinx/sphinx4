@@ -55,7 +55,7 @@ public class LevelTracker extends DataProcessor implements AudioSource {
     /**
      * The default value of PROP_THRESHOLD.
      */
-    public static final double PROP_THRESHOLD_DEFAULT = 15;
+    public static final double PROP_THRESHOLD_DEFAULT = 10;
 
     /**
      * The SphinxProperty specifying the adjustment.
