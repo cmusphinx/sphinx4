@@ -163,6 +163,7 @@ public class Live {
      * @return true if recording started successfully, false if it did not
      */
     public boolean startRecording() {
+        currentRecognizer.getMicrophone().clear();
         return currentRecognizer.getMicrophone().startRecording();
     }
 
