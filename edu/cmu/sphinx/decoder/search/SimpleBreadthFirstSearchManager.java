@@ -137,13 +137,10 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private StatisticsVariable tokensCreated;
     private StatisticsVariable viterbiPruned;
     private StatisticsVariable beamPruned;
-    private StatisticsVariable wordsPruned;
 
     private boolean showTokenCount;
     private boolean wantEntryPruning;
     private Map bestTokenMap;
-    private List wordList;
-    private Map wordMap;
     private float logRelativeWordBeamWidth;
     private int totalHmms;
     private double startTime = 0;
@@ -602,7 +599,6 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         viterbiPruned = StatisticsVariable
                 .getStatisticsVariable("viterbiPruned");
         beamPruned = StatisticsVariable.getStatisticsVariable("beamPruned");
-        wordsPruned = StatisticsVariable.getStatisticsVariable("wordsPruned");
         linguist.allocate();
         pruner.allocate();
         scorer.allocate();
