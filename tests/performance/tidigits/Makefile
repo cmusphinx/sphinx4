@@ -29,6 +29,7 @@ SUBDIRS =
 # LOGGER_PROPERTIES=tidigits.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
+NO_CONTEXT_FLAGS= -Dedu.cmu.sphinx.model.acoustic.useComposites=false -Dedu.cmu.sphinx.model.acoustic.useCDUnits=false
 
 
 PROFILE_FLAGS= -Xprof -server
@@ -128,17 +129,6 @@ tidigits_super_quick:
 	-Dtests.search.Decoder.showPartialResults=false \
 	-Dtests.search.Decoder.showBestToken=false \
 	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
-
-
-
-# A quicker version of the TI46 (isolated digits) test
-
-ti46_quick_align: all
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=40\
-	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
-	edu.cmu.sphinx.decoder.BatchAligner tiDigits_aligner.props ./ti46.batch
-
 
 
 tidigits_super_quick_align:
