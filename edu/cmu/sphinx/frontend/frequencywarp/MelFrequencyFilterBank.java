@@ -74,19 +74,19 @@ import edu.cmu.sphinx.util.props.Registry;
  * <td><b>8000 </b></td>
  * </tr>
  * <tr>
- * <td>{@link #PROP_NUMBER_FILTERS number of filters}</td>
+ * <td>{@link #PROP_NUMBER_FILTERS numFilters (number of filters)}</td>
  * <td>40</td>
  * <td>36</td>
  * <td>31</td>
  * </tr>
  * <tr>
- * <td>{@link #PROP_MIN_FREQ minimum frequency}(Hz)</td>
+ * <td>{@link #PROP_MIN_FREQ minFreq (minimum frequency)}(Hz)</td>
  * <td>130</td>
  * <td>130</td>
  * <td>200</td>
  * </tr>
  * <tr>
- * <td>{@link #PROP_MAX_FREQ maximum frequency}(Hz)</td>
+ * <td>{@link #PROP_MAX_FREQ maxFreq (maximum frequency)}(Hz)</td>
  * <td>6800</td>
  * <td>5400</td>
  * <td>3500</td>
