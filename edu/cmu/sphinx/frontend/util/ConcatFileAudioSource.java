@@ -50,6 +50,16 @@ public class ConcatFileAudioSource implements AudioSource {
         "edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.";
 
     /**
+     * The SphinxProperty that specifies which file to start at.
+     */
+    public static final String PROP_START_FILE = PROP_PREFIX + "startFile";
+
+    /**
+     * The default value for PROP_START_FILE_DEFAULT.
+     */
+    public static final int PROP_START_FILE_DEFAULT = 1;
+
+    /**
      * The SphinxProperty that specifies the number of files to skip
      * for every file read.
      */
@@ -59,6 +69,17 @@ public class ConcatFileAudioSource implements AudioSource {
      * The default value for PROP_SKIP.
      */
     public static final int PROP_SKIP_DEFAULT = 0;
+
+    /**
+     * The SphinxProperty that specifies the total number of files to read.
+     * The default value should be no limit.
+     */
+    public static final String PROP_TOTAL_FILES = PROP_PREFIX + "totalFiles";
+
+    /**
+     * The default value for PROP_TOTAL_FILES.
+     */
+    public static final int PROP_TOTAL_FILES_DEFAULT = -1;
 
     /**
      * The SphinxProperty that specifies the silence audio file, if any.
@@ -74,11 +95,28 @@ public class ConcatFileAudioSource implements AudioSource {
     public static final String PROP_SILENCE_FILE_DEFAULT = null;
 
     /**
-     * The SphinxProperty that specifies the maximum amount of silence
-     * allowed between files. The amount of time is defined as a multiple
-     * of the silence file.
+     * The SphinxProperty that specifies whether to add random silence.
      */
-    public static final String PROP_MAX_SILENCE = PROP_PREFIX + "maxSilence";
+    public static final String PROP_ADD_RANDOM_SILENCE = 
+        PROP_PREFIX + "addRandomSilence";
+
+    /**
+     * The default value for PROP_ADD_RANDOM_SILENCE.
+     */
+    public static final boolean PROP_ADD_RANDOM_SILENCE_DEFAULT = false;
+
+    /**
+     * The SphinxProperty that specifies the maximum number of times the 
+     * silence file is added  between files. 
+     * If PROP_ADD_RANDOM_SILENCE is set to true, the number of times the
+     * silence file is added is between 1 and this value.
+     * If PROP_ADD_RANDOM_SILENCE is set to false, this value will be the
+     * number of times the silence file is added. So if PROP_MAX_SILENCE
+     * is set to 3, then the silence file will be added three times
+     * between files.
+     */
+    public static final String PROP_MAX_SILENCE = 
+        PROP_PREFIX + "maxSilence";
 
     /**
      * The default value of PROP_MAX_SILENCE.
@@ -86,6 +124,7 @@ public class ConcatFileAudioSource implements AudioSource {
     public static final int PROP_MAX_SILENCE_DEFAULT = 3;
 
 
+    private boolean addRandomSilence;
     private int skip;
     private int maxSilence;
     private int silenceCount;
@@ -106,17 +145,23 @@ public class ConcatFileAudioSource implements AudioSource {
     public ConcatFileAudioSource(String name, String context,
                                  SphinxProperties props, String batchFile)
         throws IOException {
+
+        addRandomSilence = props.getBoolean
+            (PROP_ADD_RANDOM_SILENCE, PROP_ADD_RANDOM_SILENCE_DEFAULT);
         maxSilence = props.getInt(PROP_MAX_SILENCE, PROP_MAX_SILENCE_DEFAULT);
         skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
         silenceFileName = 
             props.getString(PROP_SILENCE_FILE, PROP_SILENCE_FILE_DEFAULT);
-       
+        int startFile = props.getInt(PROP_START_FILE, PROP_START_FILE_DEFAULT);
+        int totalFiles = props.getInt(PROP_TOTAL_FILES, PROP_TOTAL_FILES_DEFAULT);
+
         if (batchFile == null) {
             throw new Error("BatchFile cannot be null!");
         }
         streamAudioSource = new StreamAudioSource
             ("StreamAudioSource", context,
-             new SequenceInputStream(new InputStreamEnumeration(batchFile)),
+             new SequenceInputStream
+             (new InputStreamEnumeration(batchFile, startFile, totalFiles)),
              batchFile);
         referenceList = new LinkedList();
     }
@@ -152,16 +197,23 @@ public class ConcatFileAudioSource implements AudioSource {
      */
     class InputStreamEnumeration implements Enumeration {
 
+        private int totalFiles;
         private boolean inSilence;
         private Random silenceRandom;
         private BufferedReader reader;
 
-        InputStreamEnumeration(String batchFile) throws IOException {
+        InputStreamEnumeration(String batchFile, int startFile, int totalFiles)
+            throws IOException {
+            this.totalFiles = totalFiles;
             reader = new BufferedReader(new FileReader(batchFile));
             if (silenceFileName != null) {
                 inSilence = true;
                 silenceRandom = new Random(System.currentTimeMillis());
-                silenceCount = silenceRandom.nextInt(maxSilence) + 1;
+                silenceCount = getSilenceCount();
+            }
+            // go to the start file
+            for (int i = 1; i < startFile; i++) {
+                reader.readLine();
             }
         }
         
@@ -212,6 +264,10 @@ public class ConcatFileAudioSource implements AudioSource {
         public String readNext() {
             if (!inSilence) {
                 try {
+                    if (0 <= totalFiles &&
+                        totalFiles <= referenceList.size()) {
+                        return null;
+                    }
                     String next = reader.readLine();
                     if (next != null) {
                         referenceList.add(BatchFile.getReference(next));
@@ -220,8 +276,7 @@ public class ConcatFileAudioSource implements AudioSource {
                             reader.readLine();
                         }
                         if (silenceFileName != null && maxSilence > 0) {
-                            silenceCount = 
-                                silenceRandom.nextInt(maxSilence) + 1;
+                            silenceCount = getSilenceCount();
                             inSilence = true;
                         }
                     }
@@ -240,6 +295,21 @@ public class ConcatFileAudioSource implements AudioSource {
                     }
                 }
                 return next;
+            }
+        }
+
+        /**
+         * Returns how many times the silence file should be added between
+         * utterances.
+         *
+         * @return the number of times the silence file should be added between
+         *    utterances
+         */
+        private int getSilenceCount() {
+            if (addRandomSilence) {
+                return silenceRandom.nextInt(maxSilence) + 1;
+            } else {
+                return maxSilence;
             }
         }
     }
