@@ -22,7 +22,7 @@ import edu.cmu.sphinx.knowledge.acoustic.Context;
 import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 
-import edu.cmu.sphinx.search.*;
+import edu.cmu.sphinx.decoder.search.*;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;

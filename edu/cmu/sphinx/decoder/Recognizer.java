@@ -374,7 +374,7 @@ public class Recognizer {
         try {
             Linguist newLinguist = (Linguist)
                 Class.forName(props.getString(PROP_LINGUIST,
-                "edu.cmu.sphinx.search.StaticLinguist")).newInstance();
+                "edu.cmu.sphinx.decoder.linguist.StaticLinguist")).newInstance();
             newLinguist.initialize(props.getContext(), 
 				   languageModel, grammar, models);
 

@@ -49,7 +49,7 @@ public class BreadthFirstSearchManager implements  SearchManager {
     public final static String PROP_ACTIVE_LIST_TYPE =
 	"edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType";
     public final static String PROP_RESULTS_VALIDATE =
-	"edu.cmu.sphinx.search.validateResults";
+	"edu.cmu.sphinx.decoder.search.validateResults";
 
     public final static String PROP_ENABLE_BUSHDERBY =
 	"edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.enableBushderby";

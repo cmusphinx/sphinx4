@@ -68,7 +68,7 @@ edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.decoder.linguist.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.decoder.linguist.Linguist.validateSentenceHMM=false
-edu.cmu.sphinx.search.validateResults=false
+edu.cmu.sphinx.decoder.search.validateResults=false
 
 
 ############################################################
@@ -119,7 +119,7 @@ edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-250
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=7.0
 
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.SimpleLinguist
 edu.cmu.sphinx.knowledge.language.format=arpa
 edu.cmu.sphinx.decoder.Decoder.showErrorToken=false
 edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false

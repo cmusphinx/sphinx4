@@ -72,9 +72,9 @@ ti46_wordlist:
 ti46_flat_unigram:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
-    -Dedu.cmu.sphinx.model.language.location=./ti46.flat_unigram.lm\
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
+    -Dedu.cmu.sphinx.knowledge.language.location=./ti46.flat_unigram.lm \
     edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
 #
@@ -83,7 +83,7 @@ ti46_flat_unigram:
 ti46_flat_unigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar \
-    -Dedu.cmu.sphinx.search.FSTGrammar.path=./ti46.flat_unigram.fst \
+    -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar \
+    -Dedu.cmu.sphinx.decoder.linguist.FSTGrammar.path=./ti46.flat_unigram.fst \
     edu.cmu.sphinx.decoder.BatchDecoder ./ti46.props ./ti46.batch
 

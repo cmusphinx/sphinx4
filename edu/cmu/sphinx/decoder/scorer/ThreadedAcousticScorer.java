@@ -46,7 +46,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * false. The default value is 1
      */
     public final static String PROP_NUM_THREADS =
-	"edu.cmu.sphinx.search.ThreadedAcousticScorer.numThreads";
+	"edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads";
 
     /**
      * A sphinx property name that controls whether the number of
@@ -60,7 +60,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * false.
      */
     public final static String PROP_IS_CPU_RELATIVE =
-	"edu.cmu.sphinx.search.ThreadedAcousticScorer.isCpuRelative";
+	"edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative";
 
     /**
      * A Sphinx Property name that controls the minimum number of
@@ -69,7 +69,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * high compared to the size of the activelist. The default is 50
      */
     public final static String PROP_MIN_TOKENS_PER_THREAD  =
-	"edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread";
+	"edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minTokensPerThread";
 
     private FrontEnd frontEnd;		// where features come from
     private SphinxProperties props;	// the sphinx properties

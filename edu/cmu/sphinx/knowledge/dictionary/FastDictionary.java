@@ -66,8 +66,8 @@ public class FastDictionary implements Dictionary {
      * The context will give you the SphinxProperties that tells you
      * where the word and filler dictionaries are by the following
      * properties: <pre>
-     * edu.cmu.sphinx.search.dictionaryPath
-     * edu.cmu.sphinx.search.fillerDictionaryPath </pre>
+     * edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath
+     * edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerDictionaryPath </pre>
      *
      * @param context the context of this FastDictionary
      *

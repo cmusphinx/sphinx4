@@ -46,7 +46,7 @@ public class DynamicSearchManager implements  SearchManager {
     public final static String PROP_ACTIVE_LIST_TYPE =
 	"edu.cmu.sphinx.decoder.search.DynamicSearchManager.activeListType";
     public final static String PROP_RESULTS_VALIDATE =
-	"edu.cmu.sphinx.search.validateResults";
+	"edu.cmu.sphinx.decoder.search.validateResults";
 
     private final static boolean COMBINE_BRANCHES = true;
     private final static String SENTENCE_START = "<s>";

@@ -70,7 +70,7 @@ edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-56
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.decoder.linguist.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.decoder.linguist.Linguist.validateSentenceHMM=false
-edu.cmu.sphinx.search.validateResults=false
+edu.cmu.sphinx.decoder.search.validateResults=false
 edu.cmu.sphinx.knowledge.language.format=arpa
 
 
@@ -120,7 +120,7 @@ edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path = ./ti46.wordlist
 ############################################################
 
 edu.cmu.sphinx.decoder.Recognizer.dumpFrontEnd = false
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.SimpleLinguist
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.filterSuccessors=false

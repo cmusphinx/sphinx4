@@ -63,7 +63,7 @@ public class SimpleLinguist implements  Linguist {
      * the gstates are dumped.
      */
     public final static String PROP_DUMP_GSTATES =
-        "edu.cmu.sphinx.search.SimpleLinguist.dumpGstates";
+        "edu.cmu.sphinx.decoder.linguist.SimpleLinguist.dumpGstates";
     /**
      * The default value for the PROP_DUMP_GSTATES property
      */

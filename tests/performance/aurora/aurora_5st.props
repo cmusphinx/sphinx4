@@ -73,7 +73,7 @@ edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.decoder.linguist.Linguist.validateSentenceHMM=false
 edu.cmu.sphinx.decoder.linguist.Linguist.compositeThreshold=100000
 edu.cmu.sphinx.knowledge.acoustic.useComposites=false
-edu.cmu.sphinx.search.validateResults=false
+edu.cmu.sphinx.decoder.search.validateResults=false
 
 
 ############################################################
@@ -82,7 +82,7 @@ edu.cmu.sphinx.search.validateResults=false
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.StaticLinguist
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.WordListGrammar
 edu.cmu.sphinx.decoder.Recognizer.dumpMemoryInfo=false
 edu.cmu.sphinx.decoder.Recognizer.dumpSentenceHMM=false
@@ -115,9 +115,9 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true
 #
 # Use the number of available CPUS for scoring:
 #
-edu.cmu.sphinx.search.ThreadedAcousticScorer.isCpuRelative=false
-edu.cmu.sphinx.search.ThreadedAcousticScorer.numThreads=0
-edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=false
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=0
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minTokensPerThread=10
 
 
 ############################################################
@@ -146,7 +146,7 @@ edu.cmu.sphinx.decoder.linguist.Linguist.showSentenceHMM=false
 #edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-26
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-16
 edu.cmu.sphinx.decoder.linguist.Linguist.autoLoopSilence=false
-edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false
+edu.cmu.sphinx.decoder.linguist.StaticLinguist.isFlatSentenceHMM=false
 
-edu.cmu.sphinx.search.validateResults=false
+edu.cmu.sphinx.decoder.search.validateResults=false
 edu.cmu.sphinx.decoder.linguist.Linguist.showCompilationProgress=false

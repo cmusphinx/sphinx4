@@ -57,10 +57,10 @@ import java.util.Set;
  */
 public class StaticLinguist implements  Linguist {
     private static Logger logger = 
-            Logger.getLogger("edu.cmu.sphinx.search.StaticLinguist");
+            Logger.getLogger("edu.cmu.sphinx.decoder.linguist.StaticLinguist");
     private final static boolean singlePass = false;
     public final static String PROP_IS_FLAT_SENTENCE_HMM = 
-        "edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM";
+        "edu.cmu.sphinx.decoder.linguist.StaticLinguist.isFlatSentenceHMM";
 
     private SphinxProperties props;
 

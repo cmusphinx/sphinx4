@@ -85,7 +85,7 @@ edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1
 edu.cmu.sphinx.decoder.linguist.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.decoder.linguist.Linguist.validateSentenceHMM=false
 edu.cmu.sphinx.decoder.linguist.Linguist.compositeThreshold=10000
-edu.cmu.sphinx.search.validateResults=false
+edu.cmu.sphinx.decoder.search.validateResults=false
 
 
 
