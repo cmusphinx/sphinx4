@@ -116,6 +116,14 @@ public interface FrontEnd {
 
 
     /**
+     * The SphinxProperty name that specifies whether to use the
+     * properties from the acoustic model.
+     */
+    public static final String PROP_USE_ACOUSTIC_MODEL_PROPERTIES =
+	PROP_PREFIX + "useAcousticModelProperties";
+
+
+    /**
      * The prefix for acoustic model properties.
      */
     public static final String ACOUSTIC_PROP_PREFIX = 

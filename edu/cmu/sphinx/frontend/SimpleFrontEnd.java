@@ -84,6 +84,8 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
     private String endPointerClass;
     private String cmnClass;
     private String featureExtractorClass;
+
+    private boolean useAcousticModelProperties;
     
 
     /**
@@ -115,6 +117,11 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
         processors = new HashMap();
         frontends.put(context, this);
         setDataSource(dataSource);
+
+	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
+	useAcousticModelProperties = props.getBoolean
+	    (FrontEnd.PROP_USE_ACOUSTIC_MODEL_PROPERTIES, true);
+	
 	setSphinxProperties(getCorrectProperties());
 
         // add other data types here if necessary
@@ -141,8 +148,12 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
     private SphinxProperties getCorrectProperties() throws IOException {
 	SphinxProperties sphinxProperties = 
 	    SphinxProperties.getSphinxProperties(getContext());
-	return (PropertiesResolver.resolve
-		(sphinxProperties, getAcousticProperties(), getName()));
+	if (useAcousticModelProperties) {
+	    return (PropertiesResolver.resolve
+		    (sphinxProperties, getAcousticProperties(), getName()));
+	} else {
+	    return sphinxProperties;
+	}
     }
 
 
