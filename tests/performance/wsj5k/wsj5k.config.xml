@@ -161,7 +161,6 @@
           type="edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel">
         <property name="unigramWeight" value=".5"/>
         <property name="maxDepth" value="3"/>
-        <property name="logLevel" value="FINE"/>
         <property name="logMath" value="logMath"/>
         <property name="dictionary" value="dictionary"/>
         <property name="location"
