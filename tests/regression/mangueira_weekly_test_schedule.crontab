@@ -4,5 +4,5 @@
 0 23 * * 3 (. $HOME/.profile ; ./regressionTest an4_spelling batch)
 0 23 * * 4 (. $HOME/.profile ; ./regressionTest an4_full batch)
 0 23 * * 5 (. $HOME/.profile ; ./regressionTest an4_plus batch)
-0 23 * * 6 (. $HOME/.profile ; ./regressionTest rm1 batch)
+0 06 * * 6 (. $HOME/.profile ; ./regressionTest rm1 batch)
 0 21 * * * (. $HOME/.profile ; ./regressionTest standard batch)
