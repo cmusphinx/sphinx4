@@ -132,6 +132,7 @@
         <property name="addOutOfGrammarBranch" value="false"/>
 	<property name="outOfGrammarProbability" value="1E-20"/>
 	<property name="phoneInsertionProbability" value="1E-10"/>
+	<property name="phoneLoopAcousticModel" value="wsj"/>
     </component>
 
     <component name="dflatLinguist" 
@@ -145,7 +146,7 @@
                 value="${silenceInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
         <property name="unitManager" value="unitManager"/>
-	<property name="addOutOfGrammarBranch" value="true"/>
+	<property name="addOutOfGrammarBranch" value="false"/>
 	<property name="outOfGrammarProbability" value="1E-20"/>
 	<property name="phoneInsertionProbability" value="1E-10"/>
     </component>
