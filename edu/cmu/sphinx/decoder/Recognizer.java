@@ -211,7 +211,7 @@ public class Recognizer {
     protected int featureBlockSize = 50;    // the feature blocksize
 
     protected Vector resultsListeners = new Vector();
-    protected Vector signalListeners = new Vector();
+    protected Vector signalFeatureListeners = new Vector();
 
     protected boolean dumpMemoryInfo;
     protected boolean dumpSentenceHMM;
@@ -687,8 +687,8 @@ public class Recognizer {
      *
      * @param listener the listener to be added
      */
-    public void addSignalListener(SignalListener listener) {
-        signalListeners.add(listener);
+    public void addSignalFeatureListener(FeatureListener listener) {
+        signalFeatureListeners.add(listener);
     }
 
     /**
@@ -696,8 +696,8 @@ public class Recognizer {
      *
      * @param listener the listener to be removed
      */
-    public void removeSignalListener(SignalListener listener) {
-        signalListeners.remove(listener);
+    public void removeSignalFeatureListener(FeatureListener listener) {
+        signalFeatureListeners.remove(listener);
     }
 
     /**
@@ -705,12 +705,12 @@ public class Recognizer {
      *
      * @param signal the signal to listen to.
      */
-    protected void fireSignalListeners(Signal signal) {
-        Vector copy = (Vector) signalListeners.clone();
+    protected void fireSignalFeatureListeners(Feature feature) {
+        Vector copy = (Vector) signalFeatureListeners.clone();
 
         for (Iterator i = copy.iterator(); i.hasNext(); ) {
-            SignalListener listener = (SignalListener) i.next();
-            listener.signalOccurred(signal);
+            FeatureListener listener = (FeatureListener) i.next();
+            listener.featureOccurred(feature);
         }
     }
 
@@ -790,7 +790,7 @@ public class Recognizer {
 
             for (int i = 0; i < features.length; i++) {
                 if (features[i].getSignal() != Signal.CONTENT) {
-                    fireSignalListeners(features[i].getSignal());
+                    fireSignalFeatureListeners(features[i]);
                 }
             }
         }

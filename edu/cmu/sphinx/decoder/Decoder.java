@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.decoder;
 
 import edu.cmu.sphinx.frontend.DataSource;
+import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.util.Util;
@@ -276,29 +277,30 @@ public class Decoder {
         if (recognizer == null) {
             beamFinder = new BeamFinder(context);
             recognizer = new Recognizer(context, dataSource);
+
             recognizer.addResultListener(new ResultListener() {
-		public void newResult(Result result) {
-                    if (result.isFinal()) {
-                        getDecoderTimer().stop();
+                    public void newResult(Result result) {
+                        if (result.isFinal()) {
+                            getDecoderTimer().stop();
+                        }
+                        beamFinder.process(result);
+                        if (showPartialResults) {
+                            showPartialResult(result);
+                        }
+                        
+                        if (showPartialActualResults) {
+                            showPartialActualResults(result);
+                        }
                     }
-                    beamFinder.process(result);
-		    if (showPartialResults) {
-			showPartialResult(result);
-		    }
+                });
 
-                    if (showPartialActualResults) {
-                        showPartialActualResults(result);
+            recognizer.addSignalFeatureListener(new FeatureListener() {
+                    public void featureOccurred(Feature feature) {
+                        if (feature.getSignal() == Signal.UTTERANCE_START) {
+                            getDecoderTimer().start(feature.getCollectTime());
+                        }
                     }
-		}
-	    });
-
-            recognizer.addSignalListener(new SignalListener() {
-		public void signalOccurred(Signal signal) {
-                    if (signal == Signal.UTTERANCE_START) {
-                        getDecoderTimer().start();
-                    }
-		}
-	    });
+                });
 
             if (beamFinder.isEnabled()) {
                 recognizer.setFeatureBlockSize(1);
@@ -340,14 +342,9 @@ public class Decoder {
      * @return the decoded Result
      */
     public Result decode(String ref) {
-        Result result;
         currentReferenceText = ref;
-
-
-	result = recognizer.recognize();
-
+	Result result = recognizer.recognize();
 	showFinalResult(result);
-
         return result;
     }
 
@@ -393,14 +390,9 @@ public class Decoder {
     public Result align(String ref) throws IOException {
 	Result result;
         currentReferenceText = ref;
-
-
 	recognizer.forcedAligner(context, ref);
 	result = recognizer.recognize();
-
 	showFinalResult(result);
-
-
         return result;
     }
 
@@ -484,7 +476,6 @@ public class Decoder {
      * @param result the recognition result
      */
     public void showFinalResult(Result result) {
-        Timer timer = getDecoderTimer();
 	boolean match = true;
 	Token bestToken = result.getBestToken();
         
@@ -534,7 +525,7 @@ public class Decoder {
             System.out.println();
         }
 
-        processingTime = timer.getCurTime() / 1000.f;
+        processingTime = getDecoderTimer().getCurTime() / 1000.f;
         audioTime = getAudioTime(result);
 	cumulativeProcessingTime += processingTime;
 	cumulativeAudioTime += audioTime;
