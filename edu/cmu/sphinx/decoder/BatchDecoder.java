@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
  */
 public class BatchDecoder {
 
-    public final static String PROP_SKIP = "tests.decoder.BatchDecoder.skip";
+    public final static String PROP_SKIP = "edu.cmu.sphinx.decoder.BatchDecoder.skip";
     private StreamAudioSource audioSource;
     private Decoder decoder;
     private String batchFile;

@@ -21,7 +21,8 @@ import java.util.StringTokenizer;
  */
 public class BatchAligner {
 
-    public final static String PROP_SKIP = "tests.decoder.BatchAligner.skip";
+    public final static String PROP_SKIP = 
+    "edu.cmu.sphinx.decoder.BatchAligner.skip";
     private StreamAudioSource audioSource;
     private Decoder decoder;
     private String batchFile;
