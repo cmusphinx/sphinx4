@@ -39,7 +39,7 @@ edu.cmu.sphinx.knowledge.acoustic.useComposites=true
 ############################################################
 
 edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel
-edu.cmu.sphinx.knowledge.language.LanguageModel.location=/lab/speech/sphinx4/data/medialab/language_models/mit.flat_unigram.lm
+edu.cmu.sphinx.knowledge.language.LanguageModel.location=./ripley.flat_unigram.lm
 edu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=0.7
 
 
@@ -79,7 +79,7 @@ edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.NullGr
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.SortingActiveList
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.PartitionActiveList
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1500
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-205
 
