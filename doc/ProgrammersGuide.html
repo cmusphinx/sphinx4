@@ -46,13 +46,13 @@ WARRANTIES.
      <ul>
      <li><a href="#hmmRecognizers">Overview of an HMM-based Speech Recognizer</a></li>
      <li><a href="#architectureComponents">Sphinx-4 Architecture and Main Components</a></li>
-     <li>Sphinx-4 Configuration System</li>
+     <li><a href="#configuration">Sphinx-4 Configuration System</a></li>
      </ul>
   <br>
   <li><a href="#helloWorld">Simple Example - Hello World!</a>
      <ul>
-     <li>Code Walk - HelloWorld.java
-     <li>Configuration File Walk - helloworld.config.xml
+     <li><a href="#helloCodeWalk">Code Walk - HelloWorld.java</a>
+     <li><a href="#helloConfigWalk">Configuration File Walk - helloworld.config.xml</a>
      <li>Build File Walk - build.xml
      </ul>
   </ol>
@@ -92,7 +92,7 @@ WARRANTIES.
   These live features are scored against the acoustic model.
   The <s4keyword>score</s4keyword> obtained indicates how 
   likely that a particular set of features (extracted from live
-  audio) belongs to the particular phoneme of the corresponding model.
+  audio) belongs to the phoneme of the corresponding acoustic model.
   </p>
   <p>
   The process of speech recognition is to find the best possible sequence
@@ -103,10 +103,10 @@ WARRANTIES.
   of the task under consideration. The graph is typically a very large
   HMM, composed of the HMMs of sound units concatenated in a guided manner,
   as specified by the <s4keyword>grammar</s4keyword> of the task. 
-  As an example, lets look at the simple search graph that decodes the words
+  As an example, lets look at a simple search graph that decodes the words
   "one" and "two":
   </p>
-  <img src="one-two-search-graph.jpg">
+  <img src="1-2-searchgraph.jpg">
   <p>
   Constructing the above graph requires knowledge from various sources.
   It will require a <s4keyword>dictionary</s4keyword>, which maps the word
@@ -127,10 +127,11 @@ WARRANTIES.
   "one" will consequently have a higher score.
   </p>
   <p>
-  Once this graph is constructed, the parametrized speech signal (i.e., the
-  features) is matched against different paths through the graph to find
-  the best fit. The best fit is usually the least cost or highest
-  scoring path through the graph, depending on the implementation.
+  Once this graph is constructed, the sequence of parametrized speech
+  signals (i.e., the features) is matched against different paths 
+  through the graph to find the best fit. 
+  The best fit is usually the least cost or highest
+  scoring path, depending on the implementation.
   In Sphinx-4, the task of searching through the graph for the best path
   is done by the <s4keyword>search manager</s4keyword>.
   </p>
@@ -145,8 +146,8 @@ WARRANTIES.
   <p>
   As we described earlier, the input speech signal is transformed into a
   sequence of feature vectors. After the last feature vector is decoded,
-  we look at all the paths that have reached the final exit node.
-  The path with the highest score is the best fit, and a 
+  we look at all the paths that have reached the final exit node 
+  (the red node). The path with the highest score is the best fit, and a 
   <s4keyword>result</s4keyword> taking all the words of that path is returned.
   </p>
   </p>
@@ -154,7 +155,7 @@ WARRANTIES.
   <p>
   <h3><a name="architectureComponents">Sphinx-4 Architecture and Main Components</a></h3>
   <p>
-  In this section, we will describe the main components of Sphinx-4, and how
+  In this section, we describe the main components of Sphinx-4, and how
   they work together during the recognition process. First of all,
   lets look at the architecture diagram of Sphinx-4. It contains almost
   all the concepts (the words in red) that were introduced in the previous
@@ -167,10 +168,12 @@ WARRANTIES.
 
   <p>
   When the recognizer starts up, it constructs the front end, the decoder,
-  and the linguist according to its configuration. These components
-  will in turn construct their own subcomponents. For example,
+  and the linguist according to the configuration specified by the user.
+  These components will in turn construct their own subcomponents. For example,
   the linguist will construct the acoustic model, the dictionary,
-  and the language model. The decoder will construct the search manager,
+  and the language model. It will use the knowledge from these three
+  components to contruct a search graph that is appropriate for the task. 
+  The decoder will construct the search manager,
   which in turn constructs the scorer, the pruner, and the active list.
   </p>
   <p>
@@ -209,26 +212,205 @@ WARRANTIES.
   for each next state. The process repeats itself until no more feature 
   vectors can be obtained from the front end. This usually means that there
   is no more input speech data. At that point, we look at all paths 
-  that have reached the final exit state, and return the highest scoring path
-  as the result to the application.
+  that have reached the final exit state,
+  and return the highest scoring path as the result to the application.
+  </p>
   </p>
 
+  <p>
+  <h3><a name="configuration">Sphinx-4 Configuration System</a></h3>
+  <p>
+  The performance of Sphinx-4 critically depends on your task and how
+  you configured Sphinx-4 to suit your task. For example, 
+  a large vocabulary task needs a different linguist than a small 
+  vocabulary task. Your system has to be configured differently
+  for the two tasks. This section will not tell you the exact configuration
+  for different tasks, which will be dealt with later. Instead, this section
+  will introduce you to the configuration mechanism of Sphinx-4, which is
+  via an XML-based configuration file. Please click on the document
+  <a href="../javadoc/edu/cmu/sphinx/util/props/doc-files/ConfigurationManagement.html">Sphinx-4 Configuration Management</a> to learn how to do this.
+  It is important that you read this document before you proceed.
   </p>
-
-  (to be continued)
+  </p>
 
   <hr>  
 
   <a name="helloWorld"><h2>2. Simple Example - Hello World!</h2></a>
 
   <p>
+  We will now look at a very simple speech application written using
+  Sphinx-4, our Hello World! demo. This application recognizes connected
+  digits. As you will see, the code is very simple. The tricky part is
+  understanding the configuration, but we will guide you through every step
+  of it. Lets look at the code first.
+  </p>
+  <p>
+  <h3><a name="helloCodeWalk">Code Walk - HelloWorld.java</a></h3>
+  <p>
+  All the source code of the Hello World! demo is in one short file
+  <code>sphinx4/demo/sphinx/helloworld/HelloWorld.java</code>:
+  </p>
+  <pre>
+package demo.sphinx.helloworld;
+
+import edu.cmu.sphinx.frontend.util.Microphone;
+import edu.cmu.sphinx.recognizer.Recognizer;
+import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.PropertyException;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
+/**
+ * A simple HelloWorld demo showing a simple speech application 
+ * built using Sphinx-4.
+ */
+public class HelloWorld {
+
+    /**
+     * Main method for running the HelloWorld demo.
+     */
+    public static void main(String[] args) {
+        try {
+            URL url;
+            if (args.length > 0) {
+                url = new File(args[0]).toURI().toURL();
+            } else {
+                url = HelloWorld.class.getResource("helloworld.config.xml");
+            }
+
+            ConfigurationManager cm = new ConfigurationManager(url);
+
+	    Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
+	    Microphone microphone = (Microphone) cm.lookup("microphone");
+
+            recognizer.allocate();
+
+	    if (microphone.startRecording()) {
+		System.out.println
+		    ("Say any digit(s): e.g. \"two oh oh four\", " +
+		     "\"three six five\".");
+
+		while (true) {
+		    System.out.println
+			("Start speaking. " + 
+			 "Press Ctrl-C or say 'good bye' to quit.");
+
+		    Result result = recognizer.recognize();
+
+		    if (result != null) {
+			String resultText = result.getBestResultNoFiller();
+			System.out.println("You said: " + resultText + "\n");
+
+			if (resultText.equals("good bye")) {
+			    microphone.stopRecording();
+			    recognizer.deallocate();
+			    System.exit(0);
+			}
+		    } else {
+			System.out.println("I can't hear what you said.\n");
+		    }
+		}
+	    } else {
+	        System.out.println("Cannot start microphone.");
+		recognizer.deallocate();
+		System.exit(1);
+	    }
+        } catch (IOException e) {
+            System.err.println("Problem when loading HelloWorld: " + e);
+            e.printStackTrace();
+        } catch (PropertyException e) {
+            System.err.println("Problem configuring HelloWorld: " + e);
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            System.err.println("Problem creating HelloWorld: " + e);
+            e.printStackTrace();
+        }
+    }
+}
+</pre>
+
+  <p>
+  This demo imports several important classes in Sphinx-4:
+  <br>
+  <code>
+<br><a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html">edu.cmu.sphinx.recognizer.Recognizer</a>
+<br><a href="../javadoc/edu/cmu/sphinx/result/Result.html">edu.cmu.sphinx.result.Result</a>
+<br><a href="../javadoc/edu/cmu/sphinx/util/props/ConfigurationManager.html">edu.cmu.sphinx.util.props.ConfigurationManager</a>
+  </code>
+  </p>
+  <p>
+  The <code>Recognizer</code> is the main class any application should
+  interact with (refer also to the architecture diagram above).
+  The <code>Result</code> is returned by the Recognizer to the application
+  after recognition completes. The <code>ConfigurationManager</code>
+  creates the entire Sphinx-4 system according to the configuration specified
+  by the user.
+  </p>
+  <p>
+  Lets look at the <code>main()</code> method. The first few
+  lines creates the URL of the XML-based configuration file.
+  A <code>ConfigurationManager</code> is then created using that URL.
+  The ConfigurationManager then reads in the
+  file internally. Since the configuration file specifies the components 
+  <code>"recognizer"</code> and <code>"microphone"</code> (we will look
+  at the configuration file next),
+  we perform a <a href="../javadoc/edu/cmu/sphinx/util/props/ConfigurationManager.html#lookup(java.lang.String)"><code>lookup()</code></a> of these components
+  in the ConfigurationManager to obtain these components. The <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html#allocate()"><code>allocate()</code></a> method of the Recognizer is then called to allocate the resources
+  need for the recognizer.
+  </p>
+  <p>
+  Once all the necessary components are created, we can start running the demo.
+  We first ask the Microphone to
+  <a href="../javadoc/edu/cmu/sphinx/frontend/util/Microphone.html#startRecording()"><code>startRecording</code></a>, i.e., we turn on the microphone.
+  After the microphone is turned on successfully, the demo goes into a
+  loop that tries to recognize what the user is saying, using the
+  <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html#recognize()">
+  <code>Recognizer.recognize()</code></a> method. Note that endpointing 
+  is used here to decide when an utterance starts and ends.
+  Once an utterance is recognized, the recognized text,
+  which is returned by the method
+  <a href="../javadoc/edu/cmu/sphinx/result/Result.html#getBestResultNoFiller()">
+  <code>Result.getBestResultNoFiller()</code></a>, is printed out. 
+  If the user said "good bye", the microphone will stop recording, 
+  the recognizer deallocated, and the program exits.
+  It is generally a good practice to call the method
+  <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html#deallocate()">
+  <code>deallocate()</code></a> after the work is done to release all the
+  resources. If the Recognizer recognized nothing (i.e., <code>result</code> is
+  null), then it will print out a message saying that. Finally, if the
+  demo program cannot turn on the microphone in the first place, the
+  Recognizer will be deallocated, and the program exits.
+  </p>
+  <p>
+  Note that several exceptions were being caught. First of all,
+  the IOException is thrown by the <a href="../javadoc/edu/cmu/sphinx/util/props/ConfigurationManager.html#ConfigurationManager(java.net.URL)">constructor</a>
+  of the ConfigurationManager</a> and the Recognizer.allocate() method.
+  The <a href="../javadoc/edu/cmu/sphinx/util/props/PropertyException.html">
+  PropertyException</a> is thrown again by the constructor, and by the
+  <code>lookup()</code> method, of the ConfigurationManager.
+  These exceptions should be caught and handled appropriately.
+  </p>
+  <p>
+  Hopefully, by this point, you will have some idea of how to write a simple
+  Sphinx-4 application. We will now turn to the harder part, understanding
+  the various components necessary to create a connected-digits recognizer.
+  These components are specified in the configuration file, which we will
+  now explain in depth.
+  </p>
+  </p>
+  <p>
+  <h3><a name="helloConfigWalk">Configuration File Walk - helloworld.config.xml</a></h3>
 
   </p>
-  
-  <pre>ant all</pre>
 
   (to be continued)
-  
+
+
+  <pre>ant all</pre>
+
   </font>
 </body>
 
