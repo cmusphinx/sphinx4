@@ -25,6 +25,6 @@ public interface SignalListener {
      * @param signal the non-content signal
      *
      */
-     public void newSignal(Signal signal);
+     public void signalOccurred(Signal signal);
 }
 

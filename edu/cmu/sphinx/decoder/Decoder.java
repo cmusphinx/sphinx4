@@ -293,7 +293,7 @@ public class Decoder {
 	    });
 
             recognizer.addSignalListener(new SignalListener() {
-		public void newSignal(Signal signal) {
+		public void signalOccurred(Signal signal) {
                     if (signal == Signal.UTTERANCE_START) {
                         getDecoderTimer().start();
                     }
