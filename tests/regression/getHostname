@@ -7,14 +7,8 @@
 # redistribution of this file, and for a DISCLAIMER OF ALL 
 # WARRANTIES.
 #
-# This script performs the highlevel coordination for the regression
-# tests which includes building S4, runnng the tests, logging the
-# results, putting the results out to CVS and performing email
-# notification
-
-# a script that returns the number of seconds since the epoch
+# prints the leftmost name of the host name
 #
-# usage: getTime
+# usage: getHostName
 
-
-perl -e "print time();"
+hostname | awk 'BEGIN {FS="."} {print $1}'
