@@ -27,10 +27,8 @@ public interface TrainManager{
      *
      * @param context the context to use
      * @param learner the Learner to use
-     * @param sentenceHMM the SentenceHMM to use
      */
-    public void initialize(String context, Learner learner, 
-			   SentenceHMM sentenceHMM);
+    public void initialize(String context, Learner learner);
 
     /**
      * Starts the TrainManager.

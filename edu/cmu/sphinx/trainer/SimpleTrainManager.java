@@ -18,10 +18,16 @@ package edu.cmu.sphinx.trainer;
  */
 public class SimpleTrainManager implements TrainManager {
 
+    private Learner learner;
+    private ControlFile controlFile;
+
     /** 
      * Constructor for the class.
      */
     public SimpleTrainManager(String context) {
+	learner = new BaumWelchLearner();
+	controlFile = new SimpleControlFile();
+	initialize(context, learner);
     }
 
     /**
@@ -29,10 +35,8 @@ public class SimpleTrainManager implements TrainManager {
      *
      * @param context the context to use
      * @param learner the Learner to use
-     * @param sentenceHMM the SentenceHMM to use
      */
-    public void initialize(String context, Learner learner, 
-			   SentenceHMM sentenceHMM) {
+    public void initialize(String context, Learner learner) {
     }
 
     /**
