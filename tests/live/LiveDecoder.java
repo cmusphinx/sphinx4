@@ -22,6 +22,8 @@ import edu.cmu.sphinx.frontend.LiveCMN;
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.SimpleFrontEnd;
+import edu.cmu.sphinx.frontend.Utterance;
+import edu.cmu.sphinx.frontend.util.Util;
 
 import edu.cmu.sphinx.frontend.endpoint.NonSpeechFilter;
 
@@ -226,5 +228,20 @@ public class LiveDecoder extends Decoder {
      */
     protected void showPartialResult(Result result) {
         live.getLiveFrame().setRecognitionLabel(result.toString());
+    }
+
+
+    /**
+     * Returns the audio time for the result.
+     */
+    public float getAudioTime(Result result) {
+        Utterance utterance = microphone.getUtterance();
+        if (utterance != null) {
+            return utterance.getAudioTime();
+        } else {
+            return Util.getAudioTime
+                (result.getFrameNumber(),
+                 SphinxProperties.getSphinxProperties(getContext()));
+        }
     }
 }
