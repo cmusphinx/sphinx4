@@ -23,3 +23,6 @@ dict: all
 
 grammar: all
 	$(JAVA_CMD) tests.search.SimpleLinguistTest simple_search.props
+
+search: all
+	$(JAVA_CMD) tests.search.SimpleSearchTest simple_search.props
