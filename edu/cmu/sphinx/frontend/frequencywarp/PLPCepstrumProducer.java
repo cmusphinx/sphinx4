@@ -27,16 +27,22 @@ import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**
- * Computes the PLP cepstrum from a given PLP Spectrum.
- * The procedure has the following steps: <br>
- * 1. Compute the cube root of the PLP spectrum <br>
- * 2. Compute the IDCT of the cube-rooted PLP spectrum to get 
- *    autocorrelation values <br>
- * 3. Compute a linear prediction filter from the autocorrelation values <br>
- * 4. Compute the linear prediction cepstrum from the LP filter.<br>
+ * Computes the PLP cepstrum from a given PLP Spectrum. The power
+ * spectrum has the amplitude compressed by computing the cubed root
+ * of the PLP spectrum.  This operation is an approximation to the
+ * power law of hearing and simulates the non-linear relationship
+ * between sound intensity and perceived loudness.  Computationally,
+ * this operation is used to reduce the spectral amplitude of the
+ * critical band to enable all-pole modeling with relatively low order
+ * AR filters. The inverse discrete cosine transform (IDCT) is then
+ * applied to the autocorrelation coefficients. A linear prediction
+ * filter is then estimated from the autocorrelation values, and the
+ * linear prediction cepstrum (LPC cepstrum) is finally computed from
+ * the LP filter.
  *
  * @author <a href="mailto:rsingh@cs.cmu.edu">rsingh</a>
  * @version 1.0
+ * @see LinearPredictor
  */
 public class PLPCepstrumProducer extends BaseDataProcessor {
 
@@ -137,7 +143,7 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
      * and percieved loudness. 
      * Computationally, this operation is used to reduce the spectral
      * amplitude of the critical band to enable all-pole modeling with
-     * relatively low order AR filters
+     * relatively low order AR filters.
      */
     private double[] powerLawCompress(double[] inspectrum){
 	double[] compressedspectrum = new double[inspectrum.length];
