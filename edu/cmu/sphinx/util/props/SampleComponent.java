@@ -60,7 +60,7 @@ public class SampleComponent implements Configurable {
     /**
      * Returns the name
      * 
-     * @returns the name of this configurable
+     * @return the name of this configurable
      */
     public String getName() {
         return name;
