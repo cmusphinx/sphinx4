@@ -149,10 +149,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 
 	    while (iterator.hasNext()) {
 		Token token = (Token) iterator.next();
-
-		if (oldActiveList.isWorthGrowing(token)) {
-		    collectSuccessorTokens(token, delayedExpansionList);
-		}
+                collectSuccessorTokens(token, delayedExpansionList);
 	    }
 
 	    if (delayedExpansionList != null && 
@@ -267,8 +264,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	    if (firstToken || getBestToken(nextState).getScore() <= logCurrentScore) {
 		
 		// we may want to create  green tokens all the time
-		if (greenToken || 
-		    getActiveList().isInsertable(logCurrentScore)) {
+		if (greenToken) { 
 
 		    Token newToken = token.child(
 			    nextState, 		// the SentenceHMMState
