@@ -25,6 +25,8 @@
     <property name="build_model_dir"
               value="${build_dir}/models/edu/cmu/sphinx/model/acoustic"/>
     <property name="model_class_dir"
+              value="${src_dir}/edu/cmu/sphinx/model/acoustic"/>
+    <property name="tiedstate_dir"
               value="${src_dir}/edu/cmu/sphinx/linguist/acoustic/tiedstate"/>
 
 
@@ -222,9 +224,9 @@ jsapi.exe from the lib directory.
 	<antcall target="create_all_model_classes"/>
 	<antcall target="compile_src"/>
 	<mkdir dir="${build_model_dir}"/>
-	<move todir="${build_model_dir}">
+	<copy todir="${build_model_dir}">
 	      <fileset dir="${classes_dir}/edu/cmu/sphinx/model/acoustic"/>
-	</move>
+	</copy>
 	<antcall target="create_all_models"/>
 	<antcall target="jars"/>
 	<antcall target="demos"/>
@@ -382,8 +384,8 @@ jsapi.exe from the lib directory.
     <target name="create_my_model_classes"
             description="Creates the model class files.">
 	<mkdir dir="${model_class_dir}/${my_model_name}/"/>
-
-	<copy file="${model_class_dir}/PropertiesDumper.java"
+	
+	<copy file="${tiedstate_dir}/PropertiesDumper.java"
 	  tofile="${model_class_dir}/${my_model_name}/PropertiesDumper.java"/>
 	<replace
              file="${model_class_dir}/${my_model_name}/PropertiesDumper.java"
@@ -391,7 +393,7 @@ jsapi.exe from the lib directory.
 	    <replacetoken>package edu.cmu.sphinx.linguist.acoustic.tiedstate</replacetoken>
 	</replace>
 
-        <copy file="${model_class_dir}/TiedStateAcousticModel.java"
+        <copy file="${tiedstate_dir}/TiedStateAcousticModel.java"
 	      tofile="${model_class_dir}/${my_model_name}/Model.java"/>
 	<replace file="${model_class_dir}/${my_model_name}/Model.java"
 	     value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
@@ -403,7 +405,7 @@ jsapi.exe from the lib directory.
 	</replace>
 
 	<mkdir dir="${model_class_dir}/${my_model_name}/"/>
-        <copy file="${model_class_dir}/Sphinx3Loader.java"
+        <copy file="${tiedstate_dir}/Sphinx3Loader.java"
 	      tofile="${model_class_dir}/${my_model_name}/ModelLoader.java"/>
 	<replace file="${model_class_dir}/${my_model_name}/ModelLoader.java"
 	     value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
