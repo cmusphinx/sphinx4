@@ -35,6 +35,7 @@ import javax.sound.sampled.Port;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -45,13 +46,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.frontend.window.RaisedCosineWindower;
 import edu.cmu.sphinx.tools.audio.AudioData;
 import edu.cmu.sphinx.tools.audio.AudioPanel;
 import edu.cmu.sphinx.tools.audio.AudioPlayer;
-import edu.cmu.sphinx.tools.audio.RawRecorder;
 import edu.cmu.sphinx.tools.audio.SpectrogramPanel;
 import edu.cmu.sphinx.tools.audio.Utils;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
@@ -73,6 +76,7 @@ public class AudioTool {
     // These names should match the correspondong names in the
     // spectrogram.config.xml
     
+    static final String MICROPHONE = "microphone";
     static final String FRONT_END = "frontEnd";
     static final String DATA_SOURCE = "streamDataSource";
     static final String WINDOWER = "windower";
@@ -85,7 +89,7 @@ public class AudioTool {
     static String filename; 
     static File file = null;
     static AudioPlayer player;
-    static RawRecorder recorder;
+    static Microphone recorder;
     static boolean recording = false;
     static Preferences prefs;
     static float zoom = 1.0f;
@@ -98,6 +102,8 @@ public class AudioTool {
     private static JButton zoomOutButton;
     private static JButton zoomResetButton;
 
+    private static ActionListener recordListener;
+    
     /**
      * Dumps the information about a line.
      */
@@ -226,7 +232,54 @@ public class AudioTool {
         }
     }
     
+    /**
+     * Gets the audio that's in the recorder.  This should only
+     * be called after recorder.stopRecording is called.
+     */
+    static private short[] getRecordedAudio(Microphone recorder) {
+        short[] shorts = new short[0];
+        int sampleRate = 16000;
 
+        /* [[[WDW - TODO: this is not the most efficient way
+         * to do this, but it at least works for now.]]]
+         */
+        while (recorder.hasMoreData()) {
+            try {
+                Data data = recorder.getData();
+                if (data instanceof DoubleData) {
+                    sampleRate =
+                        ((DoubleData) data).getSampleRate();
+                    double[] values =
+                        ((DoubleData) data).getValues();
+                    short[] newShorts =
+                        new short[shorts.length
+                                  + values.length];
+                    for (int i = 0; i < shorts.length; i++) {
+                        newShorts[i] = shorts[i];
+                    }
+                    for (int i = 0; i < values.length; i++) {
+                        newShorts[shorts.length + i] =
+                            (short) values[i];
+                    }
+                    shorts = newShorts;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        if (sampleRate > 16000) {
+            System.out.println("Downsampling from " +
+                               sampleRate + " to 16000.");
+            shorts = Downsampler.downsample(
+                shorts,
+                sampleRate / 1000,
+                16);
+        }
+
+        return shorts;
+    }
+    
     /**
      * Zoom the panels according to the zoom scale.
      */
@@ -409,37 +462,28 @@ public class AudioTool {
             });
         menu.add(menuItem);
 
-        
-        
-        menuItem = new JMenuItem("Record Start/Stop");
-        menuItem.setAccelerator(KeyStroke.getKeyStroke("control R"));
-        menuItem.addActionListener(new ActionListener() {
+        recordListener = new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     if (!recording) {
                         recording = true;
-                        try {
-                            recorder = new RawRecorder(
-                                new AudioFormat(16000.0f, // sample rate
-                                                16,       // sample size
-                                                1,        // chan. (1 == mono)
-                                                true,     // signed
-                                                true));   // big endian
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            System.exit(-1);
-                        }
-                        recorder.start();
+                        recorder.startRecording();
                         recordButton.setText("Stop");
 			saveMenuItem.setEnabled(true);
                     } else {
                         recording = false;
-                        audio.setAudioData(recorder.stop());
+                        recorder.stopRecording();
+                        audio.setAudioData(getRecordedAudio(recorder));
                         recordButton.setText("Record");
                         player.play(audioPanel.getSelectionStart(),
                                     audioPanel.getSelectionEnd());
                     }
                 }
-            });
+            };
+
+        
+        menuItem = new JMenuItem("Record Start/Stop");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke("control R"));
+        menuItem.addActionListener(recordListener);
         menu.add(menuItem);        
     }
     
@@ -465,37 +509,8 @@ public class AudioTool {
 
         recordButton = new JButton("Record");
         recordButton.setEnabled(true);
-        recordButton.addActionListener(new ActionListener() {
-                // [[[WDW - FIXME: this and any other duplicate
-                // buttons should be handled via a shared Action.]]]
-                //
-                public void actionPerformed(ActionEvent evt) {
-                    if (!recording) {
-                        recording = true;
-                        try {
-                            recorder = new RawRecorder(
-                                new AudioFormat(16000.0f, // sample rate
-                                                16,       // sample size
-                                                1,        // chan. (1 == mono)
-                                                true,     // signed
-                                                true));   // big endian
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            System.exit(-1);
-                        }
-                        recorder.start();
-                        recordButton.setText("Stop");
-			saveMenuItem.setEnabled(true);
-                    } else {
-                        recording = false;
-                        audio.setAudioData(recorder.stop());
-                        recordButton.setText("Record");
-                        player.play(audioPanel.getSelectionStart(),
-                                    audioPanel.getSelectionEnd());
-                    }
-                }
-            });
-
+        recordButton.addActionListener(recordListener);
+        
         zoomInButton = new JButton("Zoom In");
         zoomInButton.setEnabled(true);
         zoomInButton.addActionListener(new ActionListener() {
@@ -547,6 +562,7 @@ public class AudioTool {
     static public void main(String[] args) {
         FrontEnd frontEnd;
         StreamDataSource dataSource;
+        
         prefs = Preferences.userRoot().node(PREFS_CONTEXT);
         filename = prefs.get(FILENAME_PREFERENCE, "untitled.raw");
         file = new File(filename);
@@ -568,14 +584,17 @@ public class AudioTool {
             }
             ConfigurationManager cm = new ConfigurationManager(url);
 
+            recorder = (Microphone) cm.lookup(MICROPHONE);
+            recorder.initialize();
+            audio = new AudioData();
             
             frontEnd = (FrontEnd) cm.lookup(FRONT_END);
             dataSource = (StreamDataSource) cm.lookup(DATA_SOURCE);
+            
             PropertySheet ps = cm.getPropertySheet(WINDOWER);
             float windowShiftInMs = ps.getFloat
                 (RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
              RaisedCosineWindower.PROP_WINDOW_SHIFT_MS_DEFAULT);
-            audio = new AudioData();
 
 	    final JFrame jframe = new JFrame("AudioTool");
             fileChooser = new JFileChooser();
