@@ -18,6 +18,6 @@
 
 ./getTime >.startTime
 
-./runTest ../performance/tidigits tidigits_super_quick
+./runTest ../performance/tidigits tidigits_quick MODE=quick tidigits
 
 touch ./.testDone
