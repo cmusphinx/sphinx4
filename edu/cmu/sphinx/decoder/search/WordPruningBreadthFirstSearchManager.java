@@ -173,6 +173,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                         break; //  Stop if we're out of audio, or otherwise can't score.
                     }
                     currentFrameNumber++;
+                    bestTokenMap = new HashMap(activeList.size() * 3);
                 }
                 pruneBranches(); 	    // eliminate poor branches
                 growBranches(); 	    // extend remaining branches
@@ -250,7 +251,6 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
         growTimer.start();
         resultList = new LinkedList();
-        bestTokenMap = new HashMap(activeList.size() * 10);
 
         Iterator iterator = activeList.iterator();
         while (iterator.hasNext()) {
