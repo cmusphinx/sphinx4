@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+
+<!--
+
+/**
+ * Copyright 1999-2004 Carnegie Mellon University.
+ * Portions Copyright 2004 Sun Microsystems, Inc.
+ * Portions Copyright 2004 Mitsubishi Electronic Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ *
+ */
+
+-->
+
+<html>
+  <head><title>Parallel Decoder Test Using AURORA</title>
+  <style TYPE="text/css">
+  pre { font-size: medium; background: #f0f8ff; padding: 2mm; border-style: ridge ; color: teal}
+  code {font-size: medium; color: teal}
+  </style>
+  </head>
+
+  <body>
+    <font face="Times New Roman">
+     <center>
+     <table bgcolor="#99CCFF" width="100%">
+	<tr>
+	  <td align=center width="100%">
+	    <h1>Parallel Decoder Test</h1>
+	  </td>
+	</tr>
+      </table>
+    </center>
+    </font>
+
+    <font face="Arial" size="2">      
+      <p>
+      The tests in this directory (tests/performance/parallel) tests
+      the parallel decoder using the AURORA 2 test set.
+      <p>
+      <h3>Prerequisites</h3>
+      <p>
+      To run the tests in this directory, you need:
+      <ol>
+      <li>The <a href="http://www.elda.fr/article52.html">Aurora Project
+          Database, Version 2</a>, produced by the ETSI/Aurora
+          project. The batch files in the "batchfiles" directory includes
+	  tests for "N1" from "testa" only. You will need to create
+	  your own batch files for the full Aurora test.
+      <li>MFCC and PLP acoustic models trained from the Aurora 2 database.
+      </ol>
+      <p>
+      <h3>Building</h3>
+      <p>
+      First, make sure that all the Sphinx-4 classes are built.
+      Go to the top level directory (sphinx4), and type:
+      <p>
+      <code>ant all</code>
+      <p>
+      <h3>Running</h3>
+      <p>
+      There are two run targets, "parallel" and "mfc".
+      The parallel tests uses the parallel decoder, and the mfc test uses
+      the single stream decoder. They both test the N1_SNR10 the test set
+      by default. To run the parallel test:
+      <p>
+      <code>ant parallel</code>
+      <p>To run the mfc test:
+      <p>
+      <code>ant mfc</code>
+      <p>
+      If you want to test a particular batch file (e.g., if your batch file
+      is called "N4_SNR0.batch"), type:
+      <p>
+      <code>ant -Dbatch=N4_SNR0.batch parallel</code>
+      <p>
+      Running the default parallel test should give out put like:
+      <p>
+      <pre>
+Buildfile: build.xml
+
+parallel:
+     [java] # ----------- linguist stats ------------ 
+     [java] # Total states: 3222
+     [java] # class edu.cmu.sphinx.linguist.flat.GrammarState: 1
+     [java] # class edu.cmu.sphinx.research.parallel.ParallelHMMStateState: 2432
+     [java] # class edu.cmu.sphinx.research.parallel.CombineState: 304
+     [java] # class edu.cmu.sphinx.linguist.flat.ExtendedUnitState: 304
+     [java] # class edu.cmu.sphinx.linguist.flat.BranchState: 81
+     [java] # class edu.cmu.sphinx.linguist.flat.PronunciationState: 100
+
+     [java] BatchDecoder: decoding files in batchfiles/aurora.testa.N1_SNR10.batch
+
+     [java] File: /lab/speech/sphinx4/data/aurora2/speechdata/testa/N1_SNR10/FAK_1B.08
+
+     [java] REF:       one
+     [java] HYP:       one
+
+     [java]    Accuracy: 100.000%    Errors: 0  (Sub: 0  Ins: 0  Del: 0)
+     [java]    Words: 1   Matches: 1    WER: 0.000%
+     [java]    Sentences: 1   Matches: 1   SentenceAcc: 100.000%
+     [java]    This  Time Audio: 1.11s  Proc: 3.81s  Speed: 3.42 X real time
+     [java]    Total Time Audio: 1.11s  Proc: 3.81s  Speed: 3.42 X real time
+     [java]    Mem  Total: 126.50 Mb  Free: 104.33 Mb
+     [java]    Used: This: 22.17 Mb  Avg: 22.17 Mb  Max: 22.17 Mb
+     </pre>
+     <p>
+     For the parallel test, to change the <b>eta</b> values of the feature 
+     streams, search for "FeatureStream" in the file 
+     <code>parallel.config.xml</code>,
+     and set the values appropriately. The eta values of all feature streams
+     should add up to 1.
+  </body>
+</html>
