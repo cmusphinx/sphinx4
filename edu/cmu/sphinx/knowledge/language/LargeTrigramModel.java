@@ -12,6 +12,8 @@
 
 package edu.cmu.sphinx.knowledge.language;
 
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
@@ -46,21 +48,25 @@ import edu.cmu.sphinx.util.Timer;
  * base format. Language Probabilties in the language model file are
  * stored in log 10  base.
  */
-public class LargeNGramModel implements LanguageModel {
+public class LargeTrigramModel implements LanguageModel {
 
     private static final String DARPA_LM_HEADER = "Darpa Trigram LM";
 
     private static final int LOG2_BIGRAM_SEGMENT_SIZE_DEFAULT = 9;
 
+    private static final float MIN_PROBABILITY = -99.0f;
+
 
     private SphinxProperties props;
     private LogMath logMath;
-    private Map map;
     private Set vocabulary;
-    private int lineNumber;
-    private String fileName;
-    private BufferedReader reader;
     private int maxNGram = 0;
+
+    private Map unigramMap;
+    private String[] words;
+    private int startWordID;
+    private int endWordID;
+
     
     /**
      * Creates a simple ngram model from the data at the URL. The
@@ -70,7 +76,7 @@ public class LargeNGramModel implements LanguageModel {
      *
      * @throws IOException if there is trouble loading the data
      */
-    public LargeNGramModel(String context) 
+    public LargeTrigramModel(String context) 
         throws IOException, FileNotFoundException {
 	initialize(context);
     }
@@ -78,7 +84,7 @@ public class LargeNGramModel implements LanguageModel {
     /**
      * Raw constructor
      */
-    public LargeNGramModel() {
+    public LargeTrigramModel() {
     }
     
     /**
@@ -93,12 +99,9 @@ public class LargeNGramModel implements LanguageModel {
             (LanguageModel.PROP_FORMAT, LanguageModel.PROP_FORMAT_DEFAULT);
         String location = props.getString
             (LanguageModel.PROP_LOCATION, LanguageModel.PROP_LOCATION_DEFAULT);
-        float unigramWeight = props.getFloat
-            (LanguageModel.PROP_UNIGRAM_WEIGHT, 
-	     LanguageModel.PROP_UNIGRAM_WEIGHT_DEFAULT);
         
-        map = new HashMap();
         vocabulary = new HashSet();
+        unigramMap = new HashMap();
         logMath = LogMath.getLogMath(context);
         loadBinary(location); //, unigramWeight);
     }
@@ -116,11 +119,6 @@ public class LargeNGramModel implements LanguageModel {
     public void stop() {
     }
 
-    /**
-     * apply the unigram weight to the set of unigrams
-     */
-    private void applyUnigramWeight(float weight) {
-    }
     
     /**
      * Gets the ngram probability of the word sequence represented by
@@ -135,7 +133,7 @@ public class LargeNGramModel implements LanguageModel {
     public float getProbability(WordSequence wordSequence) {
         float logProbability = 0.0f;
 
-        Probability prob = getProb(wordSequence);
+        Probability prob = null; //getProb(wordSequence);
         if (prob == null) {
             if (wordSequence.size() > 1 ) {
                  logProbability = 
@@ -168,7 +166,7 @@ public class LargeNGramModel implements LanguageModel {
      */
     public float getBackoff(WordSequence wordSequence) {
         float logBackoff = 0.0f;           // log of 1.0
-        Probability prob = getProb(wordSequence);
+        Probability prob = null; //getProb(wordSequence);
         if (prob != null) {
             logBackoff = prob.logBackoff;
         }
@@ -184,55 +182,16 @@ public class LargeNGramModel implements LanguageModel {
         return maxNGram;
     }
 
-     /**
-      * Returns the set of words in the lanaguage model. The set is
-      * unmodifiable.
-      *
-      * @return the unmodifiable set of words
-      */
-     public Set getVocabulary() {
-         return Collections.unmodifiableSet(vocabulary);
-     }
-    
     /**
-     * Gets the probability entry for the given word sequence or null if
-     * there is no entry
+     * Returns the set of words in the lanaguage model. The set is
+     * unmodifiable.
      *
-     * @param wordSequence a word sequence
-     *
-     * @return the probability entry for the wordlist or null
+     * @return the unmodifiable set of words
      */
-    private Probability getProb(WordSequence wordSequence) {
-        return (Probability) map.get(wordSequence);
+    public Set getVocabulary() {
+        return Collections.unmodifiableSet(vocabulary);
     }
     
-    /**
-     * Gets the probability entry for the single word
-     *
-     * @param string the word of interest
-     *
-     * @return the probability entry or null
-     */
-    private Probability getProb(String string) {
-        return (Probability) map.get(string);
-    }
-    
-
-    /**
-     * Converts a wordList to a string
-     *
-     * @param wordLIst the wordList
-     *
-     * @return the string
-     */
-    private String listToString(List wordList) {
-        StringBuffer sb = new StringBuffer();
-        for (Iterator i = wordList.iterator(); i.hasNext(); ) {
-            sb.append(i.next().toString());
-            sb.append(" ");
-        }
-        return sb.toString();
-    }
     
     /**
      * Provides the log base that controls the range of probabilities
@@ -256,9 +215,9 @@ public class LargeNGramModel implements LanguageModel {
      * Dumps the language model
      */
     public void dump() {
-        for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
+        for (Iterator i = unigramMap.keySet().iterator(); i.hasNext(); ) {
             String key = (String) i.next();
-            Probability prob = (Probability) map.get(key);
+            Probability prob = (Probability) unigramMap.get(key);
             System.out.println(key + " " + prob);
         }
     }
@@ -291,13 +250,10 @@ public class LargeNGramModel implements LanguageModel {
 
 	// read and verify standard header string
 
-	StringBuffer header = new StringBuffer();
-	for (int i = 0; i < headerLength - 1; i++) {
-	    header.append((char)stream.readByte());
-	}
+	String header = readString(stream, headerLength - 1);
 	stream.readByte(); // read the '\0'
 
-	if (!header.toString().equals(DARPA_LM_HEADER)) {
+	if (!header.equals(DARPA_LM_HEADER)) {
 	    throw new Error("Bad binary LM file header: " + header);
 	}
 
@@ -342,6 +298,8 @@ public class LargeNGramModel implements LanguageModel {
 	    numberUnigrams = version;
 	}
 
+        int bigramSegmentSize = 1 << logBigramSegmentSize;
+
 	if (numberUnigrams <= 0) {
 	    throw new Error("Bad number of unigrams: " + numberUnigrams +
 			    ", must be > 0.");
@@ -357,7 +315,8 @@ public class LargeNGramModel implements LanguageModel {
 	    throw new Error("Bad number of trigrams: " + numberTrigrams);
 	}
 
-	readUnigrams(stream, numberUnigrams, bigEndian);
+	UnigramProbability[] unigramProbabilities = 
+            readUnigrams(stream, numberUnigrams, bigEndian);
 
 	System.out.println("# of bigrams: " + numberBigrams);
 
@@ -385,13 +344,82 @@ public class LargeNGramModel implements LanguageModel {
 		readProbabilitiesTable(stream, bigEndian);
 	    float[] trigramProbTable =
 		readProbabilitiesTable(stream, bigEndian);
-	    /*
-	    float[] trigramSegmentTable =
-		readTrigramSegmentTable(stream, bigEndian);
-	    */
-	}
+            int trigramSegTableSize = ((numberBigrams+1)/bigramSegmentSize)+1;
+            float[] trigramSegmentTable =
+		readTrigramSegmentTable(stream, bigEndian, 
+                                        trigramSegTableSize);
+        }
 
-	// to be continued
+	// read word string names
+        int wordsStringLength = readInt(stream, bigEndian);
+        if (wordsStringLength <= 0) {
+            throw new Error("Bad word string size: " + wordsStringLength);
+        }
+
+        // read the string of all words
+        String wordsString = readString(stream, wordsStringLength);
+
+        // first make sure string just read contains ucount words
+        int numberWords = 0;
+        for (int i = 0; i < wordsStringLength; i++) {
+            if (wordsString.charAt(i) == '\0') {
+                numberWords++;
+            }
+        }
+        if (numberWords != numberUnigrams) {
+            throw new Error("Bad # of words: " + numberWords);
+        }
+
+        // break up string just read into words
+        this.words = wordsString.split("\0");
+
+        buildUnigramMap(unigramProbabilities);
+        
+        applyUnigramWeight(unigramProbabilities);
+    }
+    
+    
+    /**
+     * Builds the map from unigram to UnigramProbability.
+     * Also finds the startWordID and endWordID.
+     *
+     * @param unigramProbabilities the array of UnigramProbability
+     */
+    private void buildUnigramMap(UnigramProbability[] unigramProbabilities) {
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].equals(Dictionary.SENTENCE_START_SPELLING)) {
+                this.startWordID = i;
+            } else if (words[i].equals(Dictionary.SENTENCE_END_SPELLING)) {
+                this.endWordID = i;
+            }
+            unigramMap.put(words[i].toLowerCase(), unigramProbabilities[i]);
+        }
+    }
+    
+
+    /**
+     * Apply the unigram weight to the set of unigrams
+     */
+    private void applyUnigramWeight(UnigramProbability[] probabilities) {
+
+        float unigramWeight = props.getFloat
+            (LanguageModel.PROP_UNIGRAM_WEIGHT, 
+	     LanguageModel.PROP_UNIGRAM_WEIGHT_DEFAULT);
+
+        float logUnigramWeight = logMath.linearToLog(unigramWeight);
+        float logNotUnigramWeight = logMath.linearToLog
+            (1.0f - probabilities.length);
+        float logUniform = logMath.linearToLog
+            (1.0f/(probabilities.length - 1));
+
+        float p2 = logUniform + logNotUnigramWeight;
+
+        for (int i = 0; i < probabilities.length; i++) {
+            if (!words[i].equals(Dictionary.SENTENCE_START_SPELLING)) {
+                float p1 = probabilities[i].logProbability + logUnigramWeight;
+                probabilities[i].logProbability = logMath.addAsLinear(p1, p2);
+            }
+        }
     }
 
 
@@ -417,31 +445,68 @@ public class LargeNGramModel implements LanguageModel {
 
 
     /**
+     * Reads the probability table from the given DataInputStream.
+     *
+     * @param stream the DataInputStream from which to read the table
+     * @param bigEndian true if the given stream is bigEndian, false otherwise
+     */
+    private float[] readTrigramSegmentTable(DataInputStream stream, 
+                                            boolean bigEndian, int tableSize) 
+	throws IOException {
+	int numProbs = readInt(stream, bigEndian);
+	if (numProbs != tableSize) {
+	    throw new Error("Bad trigram seg table size: " + numProbs);
+	}
+	float[] segmentTable = new float[numProbs];
+	for (int i = 0; i < numProbs; i++) {
+	    segmentTable[i] = readFloat(stream, bigEndian);
+	}
+	return segmentTable;
+    }
+
+
+    /**
      * Read in the unigrams in the given DataInputStream.
      *
      * @param stream the DataInputStream to read from
      * @param numberUnigrams the number of unigrams to read
      * @param bigEndian true if the DataInputStream is big-endian,
      *                  false otherwise
+     *
+     * @return an array of UnigramProbability index by the unigram ID
      */
-    private void readUnigrams(DataInputStream stream, int numberUnigrams,
-			      boolean bigEndian) throws IOException {
+    private UnigramProbability[] readUnigrams(DataInputStream stream, 
+                                              int numberUnigrams, 
+                                              boolean bigEndian)
+    throws IOException {
 
+        UnigramProbability[] unigrams = new UnigramProbability[numberUnigrams];
+                                  
 	for (int i = 0; i < numberUnigrams; i++) {
 
 	    // read unigram ID, unigram probability, unigram backoff weight
 	    int unigramID = readInt(stream, bigEndian);
-	    float unigramProbability = readFloat(stream, bigEndian);
-	    float unigramBackoffWeight = readFloat(stream, bigEndian);
+	    assert (unigramID == i);
+
+            float unigramProbability = readFloat(stream, bigEndian);
+	    float unigramBackoff = readFloat(stream, bigEndian);
 	    int firstBigramEntry = readInt(stream, bigEndian);
+
+            float logProbability = logMath.log10ToLog(unigramProbability);
+            float logBackoff = logMath.log10ToLog(unigramBackoff);
+
+            unigrams[i] = new UnigramProbability
+                (logProbability, logBackoff, firstBigramEntry);
 
 	    if (false) {
 		System.out.println("Unigram: ID: " + unigramID +
 				   ", Prob: " + unigramProbability +
-				   ", BackoffWeight: " + unigramBackoffWeight +
+				   ", BackoffWeight: " + unigramBackoff +
 				   ", FirstBigramEntry: " + firstBigramEntry);
 	    }
 	}
+
+        return unigrams;
     }
 
 
@@ -478,6 +543,25 @@ public class LargeNGramModel implements LanguageModel {
 	}
     }
 
+
+    /**
+     * Reads a string of the given length from the given DataInputStream.
+     * It is assumed that the DataInputStream contains 8-bit chars.
+     *
+     * @param stream the DataInputStream to read from
+     * @param length the number of characters in the returned string
+     *
+     * @return a string of the given length from the given DataInputStream
+     */
+    private String readString(DataInputStream stream, int length)
+        throws IOException {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < length; i++) {
+            buffer.append((char)stream.readByte());
+	}
+        return buffer.toString();
+    }
+
     
     /**
      * Puts the probability into the map
@@ -486,88 +570,16 @@ public class LargeNGramModel implements LanguageModel {
      * @param logProb the probability in log math base 
      * @param logBackoff the backoff probability in log math base 
      */
-    private void put(WordSequence wordSequence, 
-            float logProb, float logBackoff) {
-
+    private void put(WordSequence wordSequence,
+                     float logProb, float logBackoff) {
         if (false) {
             System.out.println("Putting " + wordSequence + " p " +
                     logProb + " b " + logBackoff);
         }
-        map.put(wordSequence, new Probability(logProb, logBackoff));
+        unigramMap.put(wordSequence, new Probability(logProb, logBackoff));
     }
+
     
-    /**
-     * Reads the next line from the LM file. Keeps track of line
-     * number.
-     *
-     * @throws IOException if an error occurs while reading the input
-     * or an EOF is encountered.
-     *
-     */
-    private String readLine() throws IOException {
-        String line;
-        lineNumber++;
-        line = reader.readLine();
-        if (line == null) {
-            corrupt("Premature EOF");
-        }
-        return line;
-    }
-    
-    /**
-     * Opens the language model at the given location
-     *
-     * @param location the path to the language model
-     *
-     * @throws IOException if an error occurs while opening the file
-     */
-    private void open(String location) throws
-    FileNotFoundException, IOException {
-        lineNumber = 0;
-        fileName = location;
-        reader = new BufferedReader(new FileReader(location));
-    }
-    
-    /**
-     * Reads from the input stream until the input matches the given
-     * string
-     *
-     * @param match the string to match on
-     *
-     * @throws IOException if an error occurs while reading the input
-     * or an EOF is encountered before finding the match
-     */
-    private void readUntil(String match) throws IOException {
-        try {
-            while (!readLine().equals(match)) {
-            }
-        } catch (IOException ioe) {
-            corrupt("Premature EOF while waiting for " + match);
-        }
-    }
-    
-    /**
-     * Closes the language model file
-     *
-     * @throws IOException if an error occurs
-     */
-    private void close() throws IOException {
-        reader.close();
-        reader = null;
-    }
-    
-    /**
-     * Generates a 'corrupt' IO exception
-     *
-     * @throws an IOException with the given string
-     */
-    private void corrupt(String why) throws IOException {
-        throw new IOException("Corrupt Language Model " + fileName +
-                              " at line " +
-                              lineNumber + ":" + why);
-    }
-    
-        
     /**
      * A test routine
      *
@@ -575,14 +587,14 @@ public class LargeNGramModel implements LanguageModel {
     public static void main(String[] args) throws Exception {
         String propsPath; 
         if (args.length == 0) {
-            propsPath = "file:./test.props";
+            propsPath = "file:./binary.props";
         } else {
             propsPath = args[0];
         }
 
         Timer.start("LM Load");
         SphinxProperties.initContext("test", new URL(propsPath));
-        LargeNGramModel sm = new LargeNGramModel("test");
+        LargeTrigramModel sm = new LargeTrigramModel("test");
         Timer.stop("LM Load");
 
         Timer.dumpAll();
@@ -630,10 +642,12 @@ public class LargeNGramModel implements LanguageModel {
     }
 }
 
+
 /**
  * Represents a probability and a backoff probability
  */
 class Probability {
+
     float logProbability;
     float logBackoff;
 
@@ -657,4 +671,27 @@ class Probability {
         return "Prob: " + logProbability + " " + logBackoff;
     }
 };
+
+
+/**
+ * Represents a probability, a backoff probability, and the location
+ * of the first bigram entry.
+ */
+class UnigramProbability extends Probability {
+
+    int firstBigramEntry;
+
+    /**
+     * Constructs a UnigramProbability
+     *
+     * @param probability the probability
+     * @param backoff the backoff probability
+     * @param firstBigramEntry the first bigram entry
+     */
+    UnigramProbability(float logProbability, float logBackoff, 
+                       int firstBigramEntry) {
+        super(logProbability, logBackoff);
+        this.firstBigramEntry = firstBigramEntry;
+    }
+}
 

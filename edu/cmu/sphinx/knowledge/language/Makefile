@@ -40,3 +40,7 @@ run:
 large: 
 	$(MAKE) all
 	$(JAVA_CMD) edu.cmu.sphinx.knowledge.language.SimpleNGramModel file:./large.props
+
+binary:
+	$(MAKE) all
+	$(JAVA_CMD) edu.cmu.sphinx.knowledge.language.LargeNGramModel
