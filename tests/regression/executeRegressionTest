@@ -13,7 +13,7 @@
 # results, putting the results out to CVS and performing email
 # notification
 
-regressionDir=$PWD
+regressionDir=`pwd`
 
 echo regressionDir is $regressionDir while pwd is `pwd`
 ###################

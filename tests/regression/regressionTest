@@ -24,7 +24,7 @@
 
 testDir=./regressionTestDirectory
 
-originalDir=$PWD
+originalDir=`pwd`
 
 mkdir -p $testDir
 cd $testDir
