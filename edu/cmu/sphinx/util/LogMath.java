@@ -155,7 +155,6 @@ public final class LogMath implements Serializable {
 	     logger.info("Performing actual computation when adding logs");
 	 }
 	 naturalLogBase = Math.log(logBase);
-	 naturalLogBase = 0.000100012;
 	 inverseNaturalLogBase = 1.0/naturalLogBase;
 
 	 // [[[ TODO: probably not right way to get logZero ]]]
