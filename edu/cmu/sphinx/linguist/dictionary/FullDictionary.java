@@ -310,20 +310,22 @@ public class FullDictionary implements Dictionary {
             // FullDictionary.");
             if (wordReplacement != null) {
                 word = lookupWord(wordReplacement);
-                System.out.println("Replacing " + text + " with "
-                        + wordReplacement);
+                logger.warning("Replacing " + text + " with " + 
+                               wordReplacement);
                 if (word == null) {
-                    System.out.println("Replacement word " + wordReplacement
-                            + " not found!");
+                    logger.severe("Replacement word " + wordReplacement
+                                  + " not found!");
                 }
             } else if (allowMissingWords) {
                 if (createMissingWords) {
                     word = new Word(text, null, false);
                     wordDictionary.put(text, word);
                 } else {
-                    System.out.println("FullDictionary: Missing word: " + text);
+                    logger.warning("Missing word: " + text);
                 }
                 return null;
+            } else {
+                logger.warning("Missing word: " + text);
             }
         }
         return word;

@@ -314,7 +314,9 @@ public void deallocate() {
                 } else {
                     logger.warning("FastDictionary: Missing word: " + text);
                 }
-            }
+            } else {
+                logger.warning("FastDictionary: Missing word: " + text);
+            }                
         } else if (object instanceof String) { // first lookup for this string
             word = processEntry(text);
         } else if (object instanceof Word) {
