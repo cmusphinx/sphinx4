@@ -138,7 +138,7 @@ SpectrumSource {
 	/**
 	 * Create output sequence.
 	 */
-	double[] outputSpectrum = new double[numberFftPoints >> 1];
+	double[] outputSpectrum = new double[numberFftPoints/2 + 1];
 
 	/**
 	 * Start Fast Fourier Transform recursion
@@ -334,11 +334,11 @@ SpectrumSource {
 	 * from the fft ("complex")
 	 */
 	if ((this.logBase2NumberFftPoints & 1) == 0) {
-	    for (int i = 0; i < (numberFftPoints >> 1); i++){
+	    for (int i = 0; i <= (numberFftPoints >> 1); i++){
 		output[i] = from[i].squaredMagnitudeComplex(); 
             }
 	} else {
-	    for (int i = 0; i < (numberFftPoints >> 1); i++){
+	    for (int i = 0; i <= (numberFftPoints >> 1); i++){
 		output[i] = to[i].squaredMagnitudeComplex();
             }
 	}
