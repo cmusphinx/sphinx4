@@ -52,8 +52,6 @@ class MixtureComponent implements Serializable {
     private float logPreComputedGaussianFactor;
     private LogMath logMath;
 
-    transient volatile private Feature lastFeatureScored;
-    transient volatile private float logLastScore;
 
     /**
      * Create a MixtureComponent with the given sub components.
@@ -146,30 +144,6 @@ class MixtureComponent implements Serializable {
     }
 
     /**
-     * Returns a score for the given feature based upon this mixture
-     * component, and calculates it if not already calculated. Note
-     * that this method is not thread safe and should be externally
-     * synchronized if it could be potentially called from multiple
-     * threads.
-     *
-     * @param feature the feature to score
-     *
-     * @return the score, in logMath log base, for the feature
-     */
-    public float getScore(Feature feature)  {
-	float logScore;
-	
-	if (feature == lastFeatureScored) {
-	    logScore = logLastScore;
-	} else {
-	    logScore = calculateScore(feature);
-	    logLastScore = logScore;
-	    lastFeatureScored = feature;
-	}
-	return logScore;
-    }
-
-    /**
      * Calculate the score for this mixture against the given
      * feature. We model the output distributions using a mixture of
      * Gaussians, therefore the current implementation is simply the
@@ -189,7 +163,7 @@ class MixtureComponent implements Serializable {
      *
      * @return the score, in log, for the given feature
      */
-    public float calculateScore(Feature feature) {
+    public float getScore(Feature feature) {
 
 	 float[] data = feature.getFeatureData();
 	 float logVal = 0.0f;
