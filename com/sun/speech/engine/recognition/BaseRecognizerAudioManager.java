@@ -29,7 +29,6 @@ import com.sun.speech.engine.SpeechEventDispatcher;
  */
 public class BaseRecognizerAudioManager extends BaseAudioManager
     implements SpeechEventDispatcher {
-    protected Vector listeners;
     
 //////////////////////
 // Begin utility methods for calling RecognizerAudioListeners
