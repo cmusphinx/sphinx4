@@ -14,7 +14,9 @@ package edu.cmu.sphinx.decoder;
 
 import edu.cmu.sphinx.frontend.util.ConcatFileAudioSource;
 import edu.cmu.sphinx.frontend.DataSource;
+import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.Signal;
 
 import edu.cmu.sphinx.result.Result;
 
@@ -80,6 +82,11 @@ public class LivePretendDecoder {
 
     private int sampleRate;
     private int alignInterval;
+    private int numUtterances;
+    private int numUtteranceStart;
+    private long maxResponseTime;
+    private long minResponseTime;
+    private long totalResponseTime;
     private String context;
     private String batchFile;
     private String hypothesisFile;
@@ -98,7 +105,7 @@ public class LivePretendDecoder {
      */
     public LivePretendDecoder(String context, String batchFile) 
         throws IOException {
-        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
+        props = SphinxProperties.getSphinxProperties(context);
         this.context = context;
         init(props, batchFile);
     }
@@ -126,13 +133,31 @@ public class LivePretendDecoder {
         }
         alignInterval = props.getInt(PROP_ALIGN_INTERVAL, 
                                      PROP_ALIGN_INTERVAL_DEFAULT);
+        maxResponseTime = Long.MIN_VALUE;
+        minResponseTime = Long.MAX_VALUE;
+        Recognizer recognizer = decoder.getRecognizer();
+        recognizer.addSignalFeatureListener(new FeatureListener() {
+                public void featureOccurred(Feature feature) {
+                    if (feature.getSignal() == Signal.UTTERANCE_START) {
+                        long responseTime = (System.currentTimeMillis() -
+                                             feature.getCollectTime());
+                        totalResponseTime += responseTime;
+                        if (responseTime > maxResponseTime) {
+                            maxResponseTime = responseTime;
+                        }
+                        if (responseTime < minResponseTime) {
+                            minResponseTime = responseTime;
+                        }
+                        numUtteranceStart++;
+                    }
+                }
+            });
     }
 
     /**
      * Decodes the batch of audio files
      */
     public void decode() throws IOException {
-        int numUtterances = 0;
         List resultList = new LinkedList();
         Result result = null;
         int startReference = 0;
@@ -171,33 +196,63 @@ public class LivePretendDecoder {
         if (resultList.size() > 0 || section.size() > 0) {
             alignResults(resultList, section);
         }
-        
-        detectGapInsertionErrors();
 
         Timer.dumpAll(context);
+        showLiveSummary();
         decoder.showSummary();
+    }
+
+    /**
+     * Shows the test statistics that relates to live mode decoding.
+     */
+    private void showLiveSummary() throws IOException {
+
+        assert numUtteranceStart == numUtterances;
+
+        int actualUtterances = dataSource.getReferences().size();
+        int gapInsertions = detectGapInsertionErrors();
+        float avgResponseTime =
+            (float) totalResponseTime / (numUtteranceStart * 1000);
+        
+        System.out.println();
+        System.out.println
+            ("# ------------- LiveSummary Statistics -------------");
+        System.out.println
+            ("   Utterances:  Actual: " + actualUtterances + 
+             "  Found: " + numUtterances);
+        System.out.println
+            ("   Gap Insertions: " + gapInsertions);
+        System.out.println
+            ("   Response Time:  Avg: " + avgResponseTime + "s" +
+             "  Max: " + ((float) maxResponseTime/1000) + 
+             "s  Min: " + ((float) minResponseTime/1000) + "s");
+        System.out.println();
     }
 
     /**
      * Detect gap insertion errors.
      */
-    private void detectGapInsertionErrors() throws IOException {
+    private int detectGapInsertionErrors() throws IOException {
         Timer gapTimer = Timer.getTimer(context, "GapInsertionDetector");
         gapTimer.start();
         GapInsertionDetector gid = new GapInsertionDetector
-            (dataSource.getTranscriptFile(), hypothesisFile);
-        System.out.println();
-        System.out.println("# of gap insertion errors: " + gid.detect());
-        System.out.println();
+            (props, dataSource.getTranscriptFile(), hypothesisFile);
+        int gapInsertions = gid.detect();
         gapTimer.stop();
+        return gapInsertions;
     }
 
     /**
      * Align the list of results with reference text.
+     *
+     * @param hypothesisList the list of hypotheses
+     * @param referenceLis the list of references
      */
     private void alignResults(List hypothesisList, List referenceList) {
+        System.out.println();
         System.out.println("Aligning results...");
-        System.out.println("   Actual utterances: " + referenceList.size());
+        System.out.println("   Utterances: Found: " + hypothesisList.size() +
+                           "   Actual: " + referenceList.size());
         
         String hypothesis = listToString(hypothesisList);
         String reference = listToString(referenceList);
@@ -208,9 +263,8 @@ public class LivePretendDecoder {
         aligner.align(reference, hypothesis);
         getAlignTimer().stop();
 
-        System.out.println("...done aligning");
-        aligner.printTotalSummary();
-
+        System.out.println(" ...done aligning");
+        System.out.println();
     }
 
     /**
