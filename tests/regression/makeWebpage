@@ -146,12 +146,22 @@ function getHeap(testName, testCount) {
     }
 }
 
+## Finds the last reported WER
+
+function getLastGoodWER(testName, count,   wer) {
+    do {
+      wer = getWER(testName, count);
+      count--;
+    } while (count > 0 && wer == "N/A");
+    return wer;
+}
+
 ####
 # returns the accuracy status for the given test
 #
 function getAccuracyStatus(testName, count) {
   thisWER = getWER(testName, count);
-  prevWER = getWER(testName, count - 1);
+  prevWER = getLastGoodWER(testName, count - 1);
 
   if (thisWER == "N/A") {
       return "<td bgcolor=#ffcccc>" "N/A" "</td>";
@@ -175,12 +185,24 @@ function getAccuracyStatus(testName, count) {
   return "<td>" thisWER "</td>";
 }
 
+## Finds the last reported speed
+
+function getLastGoodSpeed(testName, count,  speed) {
+    # print "in last good speed";
+    do {
+      speed = getSpeed(testName, count);
+      count--;
+     #  print "    Lgs ", speed, testName, count, "\n";
+    } while (count > 0 && speed == "N/A");
+    # printf("out last good speed %d [%s]\n", count, speed);
+    return speed;
+}
 ####
 # returns the speed status for the given test
 #
 function getSpeedStatus(testName, count, _slowThreshold, _fastThreshold) {
   thisSpeed = getSpeed(testName, count);
-  prevSpeed = getSpeed(testName, count - 1);
+  prevSpeed = getLastGoodSpeed(testName, count - 1);
 
   if (thisSpeed == "N/A") {
       return "<td bgcolor=#ffcccc>" "N/A" "</td>";
@@ -196,6 +218,8 @@ function getSpeedStatus(testName, count, _slowThreshold, _fastThreshold) {
 
   _slowThreshold = prevSpeed + prevSpeed * .1;
   _fastThreshold = prevSpeed - prevSpeed * .1;
+
+  # print "thresh", _slowThreshold, _fastThreshold, thisSpeed;
 
   if (thisSpeed > _slowThreshold) {
       return "<td bgcolor=#ffcccc>" thisSpeed "</td>";
