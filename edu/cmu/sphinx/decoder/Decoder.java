@@ -21,6 +21,7 @@ import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.BeamFinder;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 
@@ -144,6 +145,7 @@ public class Decoder {
     private boolean showErrorToken = false;
     private boolean showActualToken = false;
     private boolean showPartialActualResults;;
+    private BeamFinder beamFinder;
 
     private boolean findResult = true;
 
@@ -232,9 +234,11 @@ public class Decoder {
      */
     public void initialize(DataSource dataSource) throws IOException {
         if (recognizer == null) {
+            beamFinder = new BeamFinder(context);
             recognizer = new Recognizer(context, dataSource);
             recognizer.addResultListener(new ResultListener() {
 		public void newResult(Result result) {
+                    beamFinder.process(result);
 		    if (showPartialResults) {
 			showPartialResult(result);
 		    }
@@ -244,6 +248,10 @@ public class Decoder {
                     }
 		}
 	    });
+
+            if (beamFinder.isEnabled()) {
+                recognizer.setFeatureBlockSize(1);
+            }
         }
         if (aligner == null) {
             aligner = new NISTAlign();
@@ -465,6 +473,7 @@ public class Decoder {
 
 	showAudioUsage();
 	showMemoryUsage();
+        beamFinder.showLatestResult();
 	StatisticsVariable.dumpAll(context);
         System.out.println("--------------");
     }
@@ -499,6 +508,7 @@ public class Decoder {
 	aligner.printTotalSummary();
 	showAudioSummary();
 	showMemoryUsage();
+        beamFinder.showSummary();
 	StatisticsVariable.dumpAll(context);
 
 	System.out.println("# ------------- Properties ----------- ");
