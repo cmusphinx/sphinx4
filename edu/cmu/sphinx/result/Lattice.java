@@ -180,14 +180,14 @@ public class Lattice {
      * predecessor of the path token will be converted to a node in the 
      * lattice.
      *
-     * @param thisNode since we are processing the token tree backwards,
-     *     thisNode will be the 'toNode' of the Edge created from the given
-     *     path token
-     *
-     * @param token the path token that contains the acoustic and language
-     *     scores
+     * @param node      since we are processing the token tree backwards,
+     *                  node will be the 'toNode' of the Edge created from the
+     *                  given path token
+     * @param pathToken the path token that contains the acoustic and language
+     *                  scores
+     * @param parent    the parent token of pathToken
      */
-    protected void processToken(Node node, Token pathToken, Token parent) {
+    private void processToken(Node node, Token pathToken, Token parent) {
         
         assert node != null && hasNode(node.getId());
         assert parent.isWord() && parent.getAcousticScore() == 0;
