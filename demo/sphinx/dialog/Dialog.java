@@ -122,7 +122,6 @@ class MyMusicBehavior extends MyBehavior {
             while ((song = br.readLine()) != null) {
                 if (song.length() > 0) {
                     songList.add(song);
-                    System.out.println("Added " + song);
                 }
             }
             br.close();
