@@ -46,12 +46,11 @@ p_3     wd_1 wd_2 wd_3
 end of data mark: \end\
 
 \data\
-ngram 1=162
+ngram 1=161
 ngram 2=747
 ngram 3=1444
 
 \1-grams:
--3.7839 <UNK>	0.0000
 -0.8280 </s>	-2.6692
 -0.8285 <s>	-1.1650
 -3.7839 i	-0.2250
