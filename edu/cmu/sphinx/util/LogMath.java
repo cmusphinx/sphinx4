@@ -54,7 +54,7 @@ public final class LogMath implements Serializable {
      * computation.
      */
 
-    private final static String PROP_USE_ADD_TABLE
+    public final static String PROP_USE_ADD_TABLE
 	= "edu.cmu.sphinx.util.LogMath.useAddTable";
 
     private double logBase = 1.0001;
