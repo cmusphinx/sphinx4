@@ -16,6 +16,7 @@ import edu.cmu.sphinx.result.Result;
 
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.Timer;
 
 import java.io.File;
 import java.io.IOException;
@@ -157,6 +158,8 @@ class MyBehavior extends NewGrammarDialogNodeBehavior {
                     + result.getBestFinalResultNoFiller() + "\n");
             if (tag.equals("help")) {
                 help();
+            } else if (tag.equals("stats")) {
+                Timer.dumpAll();
             } else if (tag.startsWith("goto_")) {
                 return tag.replaceFirst("goto_", "");
             } else {
