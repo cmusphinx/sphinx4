@@ -11,7 +11,7 @@ fi
 
 ${JAVA_HOME}/bin/java -cp ../../classes \
  -Dtests.frontend.CmnFeatureExtractorTest.dumpValues=true \
- tests.frontend.CmnFeatureExtractorTest cepstra.s3 > features.out
+ tests.frontend.CmnFeatureExtractorTest cepstra.ctl > features.out
 
 diff features.s3 features.out > features.diff
 
