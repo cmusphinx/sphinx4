@@ -222,40 +222,12 @@ public class Microphone extends DataProcessor implements AudioSource {
                 printMessage("started recording");
 
                 currentUtterance = new Utterance("Microphone", getContext());
+                
+                audioList.add(new Audio(Signal.UTTERANCE_START));
                                 
                 while (getRecording() && !getClosed()) {
                     printMessage("reading ...");
-                                        
-                    // Read the next chunk of data from the TargetDataLine.
-                    byte[] data = new byte[frameSizeInBytes];
-                    int numBytesRead = 0;
-                    try {
-                        numBytesRead = audioStream.read(data, 0, data.length);
-                        
-                        if (numBytesRead != frameSizeInBytes) {
-                            numBytesRead = (numBytesRead % 2 == 0) ?
-                                numBytesRead + 2 : numBytesRead + 3;
-                            
-                            byte[] shrinked = new byte[numBytesRead];
-                            System.arraycopy(data, 0, shrinked, 0, numBytesRead);
-                            data = shrinked;
-                        }
-                    } catch(IOException e) {
-                        audioLine.stop();
-                        audioLine = null;
-                        e.printStackTrace();
-                        return;
-                    }
-
-                    currentUtterance.add(data);
-
-                    double[] samples = Util.bytesToSamples
-                        (data, 0, data.length, sampleSizeInBits/8, signed);
-                    
-                    audioList.add(new Audio(samples));
-
-                    printMessage(
-                                 "recorded 1 frame (" + numBytesRead + ") bytes");
+                    audioList.add(readAudio(currentUtterance));
                 }
 
                 audioList.add(new Audio(Signal.UTTERANCE_END));
@@ -280,6 +252,42 @@ public class Microphone extends DataProcessor implements AudioSource {
                 printMessage("Unable to open line");
             }
         }
+    }
+
+    /**
+     * Reads one frame of audio data, and adds it to the given Utterance.
+     *
+     * @return an Audio object containing the audio data
+     */
+    private Audio readAudio(Utterance utterance) {
+        // Read the next chunk of data from the TargetDataLine.
+        byte[] data = new byte[frameSizeInBytes];
+        try {
+            int numBytesRead = audioStream.read(data, 0, data.length);
+            
+            if (numBytesRead != frameSizeInBytes) {
+                numBytesRead = (numBytesRead % 2 == 0) ?
+                    numBytesRead + 2 : numBytesRead + 3;
+                
+                byte[] shrinked = new byte[numBytesRead];
+                System.arraycopy(data, 0, shrinked, 0, numBytesRead);
+                data = shrinked;
+            }
+
+            printMessage("recorded 1 frame (" + numBytesRead + ") bytes");
+
+        } catch(IOException e) {
+            audioLine.stop();
+            audioLine = null;
+            e.printStackTrace();
+            return null;
+        }
+        
+        utterance.add(data);
+        double[] samples = Util.bytesToSamples
+            (data, 0, data.length, sampleSizeInBits/8, signed);
+        
+        return (new Audio(samples));
     }
 
     /**
@@ -409,7 +417,6 @@ public class Microphone extends DataProcessor implements AudioSource {
      */
     public synchronized boolean startRecording() {
         if (open()) {
-            audioList.add(new Audio(Signal.UTTERANCE_START));
             setRecording(true);
             RecordingThread recorder = new RecordingThread("Microphone");
             recorder.start();
