@@ -146,12 +146,14 @@ public class LexTreeLinguist implements  Linguist {
      * Called before a recognition
      */
     public void start() {
+	languageModel.start();
     }
 
     /**
      * Called after a recognition
      */
     public void stop() {
+	languageModel.stop();
     }
 
     /**
