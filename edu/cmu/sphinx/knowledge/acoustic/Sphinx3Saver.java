@@ -309,7 +309,7 @@ class Sphinx3Saver implements Saver {
      * Loads the Sphinx 3 acoustic model properties file, which
      * is basically a normal system properties file.
      *
-     * @param props the SphinxProperties object 
+     * @param property the SphinxProperties object 
      * @param path the path to the acoustic properties file
      * @param append if true, append to the current file, if ZIP file
      *
@@ -700,8 +700,9 @@ class Sphinx3Saver implements Saver {
      * Saves the sphinx3 densityfile, a set of density arrays are
      * created and placed in the given pool.
      *
+     * @param useCDUnits if true, uses context dependent units
+     * @param outputStream the open output stream to use
      * @param path the path to a density file
-     * @param name the name of the data
      *
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException if an error occurs while saving the data

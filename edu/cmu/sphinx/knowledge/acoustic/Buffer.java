@@ -28,6 +28,11 @@ import java.util.Map;
 class Buffer {
     private float[] numerator;
     private float denominator;
+    // Maybe isLog should be used otherwise: one single, say,
+    // accumulate(), which would be directed according to isLog. But
+    // then again having accumulate() and logAccumulate() makes it
+    // clearer if we're dealing with log scale or not...
+    private boolean isLog;
 
     /**
      * Creates a new buffer
@@ -36,12 +41,21 @@ class Buffer {
     }
 
     /**
-     * Creates a new buffer
+     * Creates a new buffer. If the values will be in log, the buffer
+     * is initialized to all <code>LogMath.getLogZero()</code>.
      *
      * @param size the number of elements in this buffer
+     * @param isLog if true, the values in the buffer will be in log
      */
-    Buffer(int size) {
+    Buffer(int size, boolean isLog) {
+	this.isLog = isLog;
 	numerator = new float[size];
+	if (isLog) {
+	    denominator = LogMath.getLogZero();
+	    for (int i = 0; i < size; i++) {
+		numerator[i] = LogMath.getLogZero();
+	    }
+	}
     }
 
     /**
@@ -53,6 +67,7 @@ class Buffer {
      */
     void accumulate(float data, int entry) {
 	assert numerator != null;
+	assert !isLog;
 	numerator[entry] += data;
 	denominator += data;
     }
@@ -68,6 +83,7 @@ class Buffer {
      */
     void logAccumulate(float data, int entry, LogMath logMath) {
 	assert numerator != null;
+	assert isLog;
 	numerator[entry] = logMath.addAsLinear(numerator[entry], data);
 	denominator = logMath.addAsLinear(denominator, data);
     }
@@ -83,6 +99,7 @@ class Buffer {
 	assert numerator != null;
 	assert numeratorData != null;
 	assert numerator.length == numeratorData.length;
+	assert !isLog;
 	for (int i = 0; i < numerator.length; i++) {
 	    numerator[i] += numeratorData[i];
 	}
@@ -103,6 +120,7 @@ class Buffer {
 	assert numerator != null;
 	assert logNumeratorData != null;
 	assert numerator.length == logNumeratorData.length;
+	assert isLog;
 	for (int i = 0; i < numerator.length; i++) {
 	    numerator[i] = 
 		logMath.addAsLinear(numerator[i], logNumeratorData[i]);
@@ -116,6 +134,7 @@ class Buffer {
      * denominator to 1.
      */
     void normalize() {
+	assert !isLog;
 	float invDenominator = 1.0f / denominator;
 	for (int i = 0; i < numerator.length; i++) {
 	    numerator[i] *= invDenominator;
@@ -129,8 +148,24 @@ class Buffer {
      * numerator, and setting denominator to log(1) = 0.
      */
     void logNormalize() {
+	assert isLog;
 	for (int i = 0; i < numerator.length; i++) {
 	    numerator[i] -= denominator;
+	}
+	denominator = 0.0f;
+    }
+
+    /**
+     * Normalize the non-zero elements in a buffer in log scale. This
+     * method divides the numerator by the denominator, storing the
+     * result in the numerator, and setting denominator to log(1) = 0.
+     */
+    void logNormalizeNonZero() {
+	assert isLog;
+	for (int i = 0; i < numerator.length; i++) {
+	    if (numerator[i] != LogMath.getLogZero()) {
+		numerator[i] -= denominator;
+	    }
 	}
 	denominator = 0.0f;
     }
@@ -140,6 +175,7 @@ class Buffer {
      * summation of elements in the buffer is 1.
      */
     void normalizeToSum() {
+	assert !isLog;
 	float den = 0.0f;
 	for (int i = 0; i < numerator.length; i++) {
 	    den += numerator[i];
@@ -160,6 +196,7 @@ class Buffer {
      * @param logMath the logMath to use
      */
     void logNormalizeToSum(LogMath logMath) {
+	assert isLog;
 	float logZero = logMath.getLogZero();
 	float den = logZero;
 	for (int i = 0; i < numerator.length; i++) {
@@ -183,6 +220,7 @@ class Buffer {
      * @return if true, the buffer was modified
      */
     protected boolean floor(float floor) {
+	assert !isLog;
 	boolean wasModified = false;
 	for (int i = 0; i < numerator.length; i++) {
 	    if (numerator[i] < floor) {
@@ -201,6 +239,7 @@ class Buffer {
      * @return if true, the buffer was modified
      */
     protected boolean logFloor(float logFloor) {
+	assert isLog;
 	boolean wasModified = false;
 	for (int i = 0; i < numerator.length; i++) {
 	    if (numerator[i] < logFloor) {

@@ -88,21 +88,22 @@ class HMMPoolManager {
      * Create buffers for all pools used by the trainer in this pool manager.
      */
     protected void createBuffers() {
-	meansBufferPool = create1DPoolBuffer(meansPool);
-	varianceBufferPool = create1DPoolBuffer(variancePool);
-	matrixBufferPool = create2DPoolBuffer(matrixPool);
-	mixtureWeightsBufferPool = create1DPoolBuffer(mixtureWeightsPool);
+	meansBufferPool = create1DPoolBuffer(meansPool, false);
+	varianceBufferPool = create1DPoolBuffer(variancePool, false);
+	matrixBufferPool = create2DPoolBuffer(matrixPool, true);
+	mixtureWeightsBufferPool = create1DPoolBuffer(mixtureWeightsPool, 
+						      true);
     }
 
     /**
      * Create buffers for a given pool.
      */
-    private Pool create1DPoolBuffer(Pool pool) {
+    private Pool create1DPoolBuffer(Pool pool, boolean isLog) {
 	Pool bufferPool = new Pool(pool.getName());
 
 	for (int i = 0; i < pool.size(); i++) {
 	    float[] element = (float [])pool.get(i);
-	    Buffer buffer = new Buffer(element.length);
+	    Buffer buffer = new Buffer(element.length, isLog);
 	    bufferPool.put(i, buffer);
 	}
 	return bufferPool;
@@ -111,7 +112,7 @@ class HMMPoolManager {
     /**
      * Create buffers for a given pool.
      */
-    private Pool create2DPoolBuffer(Pool pool) {
+    private Pool create2DPoolBuffer(Pool pool, boolean isLog) {
 	Pool bufferPool = new Pool(pool.getName());
 
 	for (int i = 0; i < pool.size(); i++) {
@@ -119,7 +120,7 @@ class HMMPoolManager {
 	    int poolSize = element.length;
 	    Buffer[] bufferArray = new Buffer[poolSize];
 	    for (int j = 0; j < poolSize; j++) {
-		bufferArray[j] = new Buffer(element[j].length);
+		bufferArray[j] = new Buffer(element[j].length, isLog);
 	    }
 	    bufferPool.put(i, bufferArray);
 	}
@@ -266,7 +267,7 @@ class HMMPoolManager {
 	for (int i = 0; i < pool.size(); i++) {
 	    Buffer[] bufferArray = (Buffer []) pool.get(i);
 	    for (int j = 0; j < bufferArray.length; j++) {
-		bufferArray[j].logNormalize();
+		bufferArray[j].logNormalizeNonZero();
 	    }
 	}
     }

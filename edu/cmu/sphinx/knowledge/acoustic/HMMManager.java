@@ -71,7 +71,7 @@ class HMMManager {
      * Gets the map associated with the given position. Creates the
      * map as necessary.
      *
-     * @param position the position of interest
+     * @param pos the position of interest
      *
      * @return the map of HMMs for the given position.
      */

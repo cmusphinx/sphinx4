@@ -300,8 +300,8 @@ class ModelInitializerLoader implements Loader {
      * Loads the Sphinx 3 acoustic model properties file, which
      * is basically a normal system properties file.
      *
-     * @param props the SphinxProperties object 
-     * @param path the path to the acoustic properties file
+     * @param context this models' context
+     * @param url the path to the acoustic properties file
      *
      * @return a SphinxProperty object containing the acoustic properties,
      *    or null if there are no acoustic model properties
@@ -396,8 +396,10 @@ class ModelInitializerLoader implements Loader {
         }
 
         if (sum != 0.0f) {
+	    // Invert, so we multiply instead of dividing inside the loop
+	    sum = 1.0f / sum;
             for (int i = 0; i < data.length; i++) {
-                 data[i] = data[i] / sum ;
+                 data[i] = data[i] * sum ;
             }
         }
     }
@@ -435,8 +437,9 @@ class ModelInitializerLoader implements Loader {
      * Loads the phone list, which possibly contains the sizes (number
      * of states) of models.
      *
+     * @param useCDUnits if true, uses context dependent units
+     * @param inputStream the open input stream to use
      * @param path the path to a density file
-     * @param name the name of the data
      * @param props the properties for this set of HMMs
      *
      * @throws FileNotFoundException if a file cannot be found
@@ -617,7 +620,7 @@ class ModelInitializerLoader implements Loader {
      *
      * @param pool the pool to add models to
      * @param stateID vector containing state ids for hmm
-     * @param stream the number of streams
+     * @param numStreams the number of streams
      * @param numGaussiansPerState the number of Gaussians per state
      * @param floor the minimum mixture weight allowed
      *
@@ -682,6 +685,8 @@ class ModelInitializerLoader implements Loader {
 
 	for (int j = 0; j < numStates ; j++) {
 	    for (int k = 0; k < numStates ; k++) {
+		// Just to be sure...
+		tmat[j][k] = 0.0f;
 
 		// the last row is just zeros, so we just do
 		// the first (numStates - 1) rows
@@ -698,7 +703,7 @@ class ModelInitializerLoader implements Loader {
 		    // the next state
 		    if (skip) {
 			if (k == j + 2) {
-			    tmat[k][j] = floor;
+			    tmat[j][k] = floor;
 			}
 		    }
 		}

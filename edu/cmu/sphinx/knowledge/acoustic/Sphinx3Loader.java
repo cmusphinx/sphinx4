@@ -305,8 +305,8 @@ class Sphinx3Loader implements Loader {
      * Loads the Sphinx 3 acoustic model properties file, which
      * is basically a normal system properties file.
      *
-     * @param props the SphinxProperties object 
-     * @param path the path to the acoustic properties file
+     * @param context this models' context
+     * @param url the path to the acoustic properties file
      *
      * @return a SphinxProperty object containing the acoustic properties,
      *    or null if there are no acoustic model properties
@@ -718,8 +718,9 @@ class Sphinx3Loader implements Loader {
      * Loads the sphinx3 densityfile, a set of density arrays are
      * created and placed in the given pool.
      *
+     * @param useCDUnits if true, loads also the context dependent units
+     * @param inputStream the open input stream to use
      * @param path the path to a density file
-     * @param name the name of the data
      *
      * @return a pool of loaded densities
      *
