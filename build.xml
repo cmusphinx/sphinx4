@@ -471,10 +471,6 @@ jsapi.exe from the lib directory.
 		<attribute name="Class-Path" value="sphinx4.jar"/>
              </manifest>
         </jar>
-	<delete includeEmptyDirs="true">
-            <fileset dir="${build_model_dir}/${my_model_name}" includes="**"
-	             excludes="**/*.class"/>
-        </delete>
     </target>
 
 
