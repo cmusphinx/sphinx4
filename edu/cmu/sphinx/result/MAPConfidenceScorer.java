@@ -38,9 +38,32 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
      */
     public final static float PROP_LANGUAGE_WEIGHT_DEFAULT  = 1.0f;
     
+    /**
+     * Sphinx property that specifies whether to dump the lattice.
+     */
+    public final static String PROP_DUMP_LATTICE = "dumpLattice";
+
+    /**
+     * The default value of PROP_DUMP_LATTICE.
+     */
+    public final static boolean PROP_DUMP_LATTICE_DEFAULT = false;
+
+    /**
+     * Sphinx property that specifies whether to dump the sausage.
+     */
+    public final static String PROP_DUMP_SAUSAGE = "dumpSausage";
+
+    /**
+     * The default value of PROP_DUMP_SAUSAGE.
+     */
+    public final static boolean PROP_DUMP_SAUSAGE_DEFAULT = false;
+
 
     private String name;
     private float languageWeight;
+    private boolean dumpLattice;
+    private boolean dumpSausage;
+
     
     /*
      * (non-Javadoc)
@@ -52,6 +75,8 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
         throws PropertyException {
         this.name = name;
         registry.register(PROP_LANGUAGE_WEIGHT, PropertyType.FLOAT);
+        registry.register(PROP_DUMP_LATTICE, PropertyType.BOOLEAN);
+        registry.register(PROP_DUMP_SAUSAGE, PropertyType.BOOLEAN);
     }
 
 
@@ -63,6 +88,10 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
     public void newProperties(PropertySheet ps) throws PropertyException {
         languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT,
                                      PROP_LANGUAGE_WEIGHT_DEFAULT);
+        dumpLattice = ps.getBoolean(PROP_DUMP_LATTICE,
+                                    PROP_DUMP_LATTICE_DEFAULT);
+        dumpSausage = ps.getBoolean(PROP_DUMP_SAUSAGE,
+                                    PROP_DUMP_SAUSAGE_DEFAULT);
     }
 
 
@@ -92,7 +121,12 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
         SausageMaker sm = new SausageMaker(lattice);
         Sausage s = sm.makeSausage();
 
-        // s.dumpAISee("mapSausage.gdl", "MAP Sausage");
+        if (dumpLattice) {
+            lattice.dumpAISee("mapLattice.gdl", "MAP Lattice");
+        }
+        if (dumpSausage) {
+            s.dumpAISee("mapSausage.gdl", "MAP Sausage");
+        }
 
         ConfidenceResult sausage = (ConfidenceResult) s;
         WordResultPath mapPath = new WordResultPath();
@@ -116,11 +150,12 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
 
                 /*
                  * NOTE: since there is no Word for <noop>,
-                 * we check for <unk> instead
+                 * we check for <unk> and <sil> instead
                  */
                 while (slot >= 0 &&
                        (((wr = cs.getWordResult(word)) == null) &&
-                        ((wr = cs.getWordResult("<unk>")) != null))) {
+                        (((wr = cs.getWordResult("<unk>")) != null) ||
+                         ((wr = cs.getWordResult("<sil>")) != null)))) {
                     slot--;
                     cs = sausage.getConfusionSet(slot);
                 }
@@ -133,6 +168,7 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
                     */
                     mapPath.add(0, wr);
                 } else {
+                    cs.dump("Slot " + slot);
                     throw new Error("Can't find WordResult in ConfidenceResult slot " +
                                     slot + " for word " + word);
                 }
