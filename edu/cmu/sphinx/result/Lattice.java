@@ -704,8 +704,10 @@ public class Lattice {
      * 
      * Node posteriors can be retrieved by calling getPosterior() on Node objects.
      * 
+     * @param languageModelWeight the language model weight that was used in generating 
+     *        the scores in the lattic.e
      */
-    public void computeNodePosteriors() {      
+    public void computeNodePosteriors(float languageModelWeight) {      
         //forward
         initialNode.setForwardScore(LogMath.getLogOne());
         List sortedNodes = sortNodes();
@@ -717,7 +719,7 @@ public class Lattice {
             for (Iterator i = currentEdges.iterator();i.hasNext();) {
                 Edge edge = (Edge)i.next();
                 double forwardProb = edge.getFromNode().getForwardScore();
-                forwardProb += edge.getAcousticScore() + edge.getLMScore();
+                forwardProb += edge.getAcousticScore()/languageModelWeight + edge.getLMScore();
                 edge.getToNode().setForwardScore(logMath.addAsLinear((float)forwardProb,
                         (float)edge.getToNode().getForwardScore()));
             }
@@ -733,7 +735,7 @@ public class Lattice {
             for (Iterator i = currentEdges.iterator();i.hasNext();) {
                 Edge edge = (Edge)i.next();
                 double backwardProb = edge.getToNode().getBackwardScore();
-                backwardProb += edge.getAcousticScore() + edge.getLMScore();
+                backwardProb += edge.getAcousticScore()/languageModelWeight + edge.getLMScore();
                 edge.getFromNode().setBackwardScore(logMath.addAsLinear((float)backwardProb,
                         (float)edge.getFromNode().getBackwardScore()));
             }
