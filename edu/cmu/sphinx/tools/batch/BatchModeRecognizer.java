@@ -38,23 +38,28 @@ import edu.cmu.sphinx.util.props.Registry;
  * either audio files or cepstral files, but defaults to audio files.
  */
 public class BatchModeRecognizer implements Configurable {
+
     /**
      * The SphinxProperty name for how many files to skip for every decode.
      */
     public final static String PROP_SKIP = "skip";
+
     /**
      * The default value for the property PROP_SKIP.
      */
     public final static int PROP_SKIP_DEFAULT = 0;
+
     /**
      * The SphinxProperty that specified which batch job is to be run.
      *  
      */
     public final static String PROP_WHICH_BATCH = "whichBatch";
+
     /**
      * The default value for the property PROP_WHICH_BATCH.
      */
     public final static int PROP_WHICH_BATCH_DEFAULT = 0;
+
     /**
      * The SphinxProperty for the total number of batch jobs the decoding run
      * is being divided into.
@@ -64,31 +69,28 @@ public class BatchModeRecognizer implements Configurable {
      *  
      */
     public final static String PROP_TOTAL_BATCHES = "totalBatches";
+
     /**
      * The default value for the property PROP_TOTAL_BATCHES.
      */
     public final static int PROP_TOTAL_BATCHES_DEFAULT = 1;
+
     /**
      * The SphinxProperty that defines whether or not the decoder should use
      * the pooled batch manager
      */
     public final static String PROP_USE_POOLED_BATCH_MANAGER = "usePooledBatchManager";
+
     /**
      * The default value for the property PROP_USE_POOLED_BATCH_MANAGER.
      */
     public final static boolean PROP_USE_POOLED_BATCH_MANAGER_DEFAULT = false;
-    /**
-     * The SphinxProperty that specifies the type of data to decode.
-     */
-    public final static String PROP_INPUT_DATA_TYPE = "inputDataType";
-    /**
-     * The default value for the property PROP_INPUT_DATA_TYPE.
-     */
-    public final static String PROP_INPUT_DATA_TYPE_DEFAULT = "audio";
+
     /**
      * The Sphinx property that specifies the recognizer to use
      */
     public final static String PROP_RECOGNIZER = "recognizer";
+
     /**
      * The sphinx property that specifies the input source
      */
@@ -112,7 +114,6 @@ public class BatchModeRecognizer implements Configurable {
     private boolean usePooledBatchManager;
     private BatchManager batchManager;
     private Recognizer recognizer;
-    private String inputDataType;
 
     /*
      * (non-Javadoc)
@@ -127,7 +128,6 @@ public class BatchModeRecognizer implements Configurable {
         registry.register(PROP_WHICH_BATCH, PropertyType.INT);
         registry.register(PROP_TOTAL_BATCHES, PropertyType.INT);
         registry.register(PROP_USE_POOLED_BATCH_MANAGER, PropertyType.BOOLEAN);
-        registry.register(PROP_INPUT_DATA_TYPE, PropertyType.STRING);
         registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
         registry.register(PROP_INPUT_SOURCE, PropertyType.COMPONENT);
         registry.register(PROP_MONITORS, PropertyType.COMPONENT_LIST);
@@ -145,8 +145,6 @@ public class BatchModeRecognizer implements Configurable {
                 .getInt(PROP_TOTAL_BATCHES, PROP_TOTAL_BATCHES_DEFAULT);
         usePooledBatchManager = ps.getBoolean(PROP_USE_POOLED_BATCH_MANAGER,
                 PROP_USE_POOLED_BATCH_MANAGER_DEFAULT);
-        inputDataType = ps.getString(PROP_INPUT_DATA_TYPE,
-                PROP_INPUT_DATA_TYPE_DEFAULT);
         recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER,
                 Recognizer.class);
         dataSource = (DataProcessor) ps.getComponent(PROP_INPUT_SOURCE,
