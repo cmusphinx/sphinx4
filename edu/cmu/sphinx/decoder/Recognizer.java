@@ -673,7 +673,7 @@ public class Recognizer {
     }
 
     /**
-     * Removes a listener 
+     * Removes a result listener. 
      *
      * @param listener the listener to be removed
      */
@@ -682,8 +682,8 @@ public class Recognizer {
     }
 
     /**
-     * Add a listener to be called when a non-content signal is
-     * detected
+     * Add a listener to be called when a feature with non-content
+     * signal is detected.
      *
      * @param listener the listener to be added
      */
@@ -692,7 +692,7 @@ public class Recognizer {
     }
 
     /**
-     * Removes a listener 
+     * Removes a listener for features with non-content signals.
      *
      * @param listener the listener to be removed
      */
@@ -701,9 +701,9 @@ public class Recognizer {
     }
 
     /**
-     * Fire all audio listeners
+     * Fire all listeners for features with non-content signals.
      *
-     * @param signal the signal to listen to.
+     * @param signal the feature with non-content signal
      */
     protected void fireSignalFeatureListeners(Feature feature) {
         Vector copy = (Vector) signalFeatureListeners.clone();
