@@ -706,10 +706,11 @@ public class LexTreeLinguist implements  Linguist {
 
             WordSequence nextWordSequence = wordSequence;
 
-            if (!nextWord.isFiller()) {
+            if (!nextWord.isFiller() || nextWord == sentenceEndWord) {
                 nextWordSequence  = wordSequence.addWord(nextWord, 
                         languageModel.getMaxDepth());
                 logProbability = languageModel.getProbability(nextWordSequence);
+            // System.out.println("LP " + nextWordSequence + " " + logProbability);
                 logProbability *= languageWeight;
                 // subtract off the previously applied unigram  probability
                 logProbability -= unigramSmearOffset;
@@ -717,6 +718,7 @@ public class LexTreeLinguist implements  Linguist {
             }
 
             if (nextWord == sentenceEndWord) {
+             // System.out.println("LP " + nextWordSequence + " " + logProbability);
                 return new LexTreeEndWordState(wordNode, lastUnit,
                     nextWordSequence.trim(languageModel.getMaxDepth() - 1), 
                     logProbability);
@@ -1266,6 +1268,7 @@ public class LexTreeLinguist implements  Linguist {
                WordSequence wordSequence, float logProability) {
 
             super(wordNode, wordSequence);
+            // System.out.println("LTWS " + wordSequence);
             this.lastNode = lastNode;
             this.logLanguageProbability = logProability;
         }
