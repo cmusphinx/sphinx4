@@ -268,21 +268,31 @@ public class TrainerAcousticModel extends AcousticModel {
     /**
      * Accumulate the current TrainerScore into the buffers.
      *
-     * @param trainerScore the TrainerScore
+     * @param index the current index into the TrainerScore vector
+     * @param trainerScore the TrainerScore in the current frame
      * @param nextTrainerScore the TrainerScore in the next frame
      */
-    public void accumulate(TrainerScore trainerScore, 
+    public void accumulate(int index, TrainerScore[] trainerScore, 
 			   TrainerScore[] nextTrainerScore) {
-	hmmPoolManager.accumulate(trainerScore, nextTrainerScore);
+	hmmPoolManager.accumulate(index, trainerScore, nextTrainerScore);
     }
 
     /**
      * Accumulate the current TrainerScore into the buffers.
      *
+     * @param index the current index into the TrainerScore vector
      * @param trainerScore the TrainerScore
      */
-    public void accumulate(TrainerScore trainerScore) {
-	hmmPoolManager.accumulate(trainerScore);
+    public void accumulate(int index, TrainerScore[] trainerScore) {
+	hmmPoolManager.accumulate(index, trainerScore);
+    }
+
+    /**
+     * Update the log likelihood. This should be called at the end of
+     * each utterance.
+     */
+    public void updateLogLikelihood() {
+	hmmPoolManager.updateLogLikelihood();
     }
 
     /**
