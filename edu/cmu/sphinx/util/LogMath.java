@@ -335,6 +335,21 @@ public final class LogMath implements Serializable {
 	return returnValue;
     }
 
+    /**
+     * Divides the two log values. 
+     *
+     * @param val1 value in log domain to multiply
+     * @param val2 value in log domain to multiply
+     *
+     * @return division of val1 and val2 in the log domain
+     *
+     * TODO: Add check for underflow
+     */
+    public final double divide(double val1, double val2) {
+	double returnValue = val1 - val2;
+	return returnValue;
+    }
+
 
     /**
      * Adds the two log values.
