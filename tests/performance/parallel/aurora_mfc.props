@@ -64,22 +64,14 @@ edu.cmu.sphinx.frontend.cmn = edu.cmu.sphinx.frontend.BatchCMN
 
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-200
-
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.filterSuccessors=false
+edu.cmu.sphinx.decoder.search.validateResults=false
 
 edu.cmu.sphinx.research.parallel.FeatureScorePruner.absoluteBeamWidth=2000
 edu.cmu.sphinx.research.parallel.FeatureScorePruner.relativeBeamWidth=1E-200
 
 edu.cmu.sphinx.research.parallel.CombinedScorePruner.absoluteBeamWidth=40
 edu.cmu.sphinx.research.parallel.CombinedScorePruner.relativeBeamWidth=1E-200
-
-edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-26
-edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1
-edu.cmu.sphinx.decoder.linguist.Linguist.showSentenceHMM=false
-edu.cmu.sphinx.decoder.linguist.Linguist.validateSentenceHMM=false
-edu.cmu.sphinx.decoder.linguist.Linguist.compositeThreshold=10000
-edu.cmu.sphinx.decoder.search.validateResults=false
-
 
 
 ############################################################
@@ -96,12 +88,18 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
 
 ############################################################
 #
-# WordListGrammar properties
+# Linguist properties
 #
 ############################################################
 
 edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.isLooping = true
 edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path = ./digits.wordlist
+
+edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-26
+edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1
+edu.cmu.sphinx.decoder.linguist.Linguist.showSentenceHMM=false
+edu.cmu.sphinx.decoder.linguist.Linguist.validateSentenceHMM=false
+edu.cmu.sphinx.decoder.linguist.Linguist.compositeThreshold=10000
 
 
 ############################################################
