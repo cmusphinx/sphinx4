@@ -77,7 +77,7 @@ public class RawRecorder {
                     "Unsupported format: " + audioFormat);
             }
         }
-            
+
         microphone = (TargetDataLine) AudioSystem.getLine(info);
         microphone.open(audioFormat, microphone.getBufferSize());
     }

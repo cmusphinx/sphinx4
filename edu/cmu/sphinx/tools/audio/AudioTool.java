@@ -157,7 +157,7 @@ public class AudioTool {
                 spectrogram = new SpectrogramPanel(
                     intensitiesList,
                     maxIntensity,
-                    60.0);
+                    100.0);
             } else {
                 spectrogram.setSpectrogram(
                     intensitiesList,
@@ -182,10 +182,10 @@ public class AudioTool {
             SphinxProperties.initContext(CONTEXT, url);
             props = SphinxProperties.getSphinxProperties(CONTEXT);
             windowSizeInMs = props.getFloat
-		(RaisedCosineWindower.PROP_WINDOW_SIZE_MS,
+		("sfe;" + RaisedCosineWindower.PROP_WINDOW_SIZE_MS,
 		 RaisedCosineWindower.PROP_WINDOW_SIZE_MS_DEFAULT);
             windowShiftInMs = props.getFloat
-		(RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
+		("sfe;" + RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
                  RaisedCosineWindower.PROP_WINDOW_SHIFT_MS_DEFAULT);
             
             if (args[0].indexOf(":") == -1) {
@@ -262,7 +262,7 @@ public class AudioTool {
             jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setContentPane(scroller);
             jframe.pack();
-            jframe.setSize(640,480);
+            jframe.setSize(640,540);
             jframe.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();

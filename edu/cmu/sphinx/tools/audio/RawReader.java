@@ -98,8 +98,12 @@ public class RawReader {
                         val = (val << 8) + temp;
                     }
                 }
+
+                /* We'll always give signed data.  So, if the input
+                 * is unsigned, convert it to signed.
+                 */
                 if (!signedData) {
-                    val = val - (1 << (bytesPerSample - 1));
+                    val = val - (1 << ((bytesPerSample * 8) - 1));
                 }
                 samples.add(new Short((short) val));
             }
