@@ -119,6 +119,16 @@ tidigits_super_quick:
 
 
 
+# A quicker version of the TI46 (isolated digits) test
+
+ti46_quick_align: all
+	$(JAVA_CMD) \
+	-Dtests.decoder.BatchDecoder.skip=40\
+	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
+	tests.decoder.BatchAligner tiDigits_aligner.props ./ti46.batch
+
+
+
 tidigits_super_quick_align:
 	$(JAVA_CMD) \
 	-Dtests.decoder.BatchDecoder.skip=200\
@@ -178,4 +188,34 @@ tidigits_super_quick_tree:
 	tests.decoder.BatchDecoder tidigits.props ./tidigits.batch
 
 
+
+##########################################################################
+#
+# Miscellaneous tests
+#
+##########################################################################
+
+prune_test:
+	$(JAVA_CMD) \
+	-Dtests.decoder.BatchDecoder.skip=200\
+        -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
+	-Dtests.search.Decoder.showPartialResults=false \
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=1000000\
+	-Dtests.search.Decoder.showBestToken=false \
+	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1e-100\
+	tests.decoder.BatchDecoder tiDigits.props \
+	./tidigits.batch
+
+prune_test2:
+	$(JAVA_CMD) \
+	-Dtests.decoder.BatchDecoder.skip=5\
+        -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
+	-Dtests.search.Decoder.showPartialResults=false \
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=1000000\
+	-Dtests.search.Decoder.showBestToken=false \
+	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1e-100\
+	tests.decoder.BatchDecoder tiDigits.props \
+	./tidigits.batch
 
