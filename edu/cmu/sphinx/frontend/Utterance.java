@@ -89,17 +89,19 @@ public class Utterance {
      * Flattens the Audio objects in this Utterance to one flat array.
      */
     private void flatten() {
-        if (flattenedAudio == null || !isFlattened()) {
-            flattenedAudio = new byte[totalBytes];
-            int start = 0;
-            for (Iterator i = audioBuffer.iterator(); i.hasNext(); ) {
-                byte[] current = (byte[]) i.next();
-                System.arraycopy(current, 0, flattenedAudio, start, 
-                                 current.length);
-                start += current.length;
-            }
-            setFlattened(true);
-        }
+        synchronized (audioBuffer) {
+	    if (flattenedAudio == null || !isFlattened()) {
+		flattenedAudio = new byte[totalBytes];
+		int start = 0;
+		for (Iterator i = audioBuffer.iterator(); i.hasNext(); ) {
+		    byte[] current = (byte[]) i.next();
+		    System.arraycopy(current, 0, flattenedAudio, start, 
+				     current.length);
+		    start += current.length;
+		}
+		setFlattened(true);
+	    }
+	}
     }
 
 
