@@ -23,8 +23,7 @@ import java.io.Serializable;
  */
 public class Pronunciation implements Serializable {
 
-    private String word; 	// the spelling of the word
-    private int wordID;
+    private Word word;
     private WordClassification wordClassification;
     private Unit[] units;
     private String tag;
@@ -40,37 +39,36 @@ public class Pronunciation implements Serializable {
      * @param probability the probability of this pronunciation
      * occurring
      */
-    Pronunciation(String word,
-                  int wordID,
-                  Unit[] units,
+    Pronunciation(Unit[] units,
                   String tag,
                   WordClassification wordClassification,
                   float probability) {
-	this.word = word;
-        this.wordID = wordID;
-	this.wordClassification = wordClassification;
+        this.wordClassification = wordClassification;
 	this.units = units;
 	this.tag = tag;
 	this.probability = probability;
     }
 
+    /**
+     * Sets the word this pronunciation represents.
+     *
+     * @param word the Word this Pronunciation represents
+     */
+    protected void setWord(Word word) {
+        if (this.word == null) {
+            this.word = word;
+        } else {
+            throw new Error("Word of Pronunciation cannot be set twice.");
+        }
+    }
 
     /**
      * Retrives the word that this Pronunciation object represents.
      * 
      * @return the word
      */
-    public String getWord() {
+    public Word getWord() {
 	return word;
-    }
-
-    /**
-     * Returns the word ID of this Pronunciation.
-     *
-     * @return the word ID
-     */
-    public int getWordID() {
-        return wordID;
     }
 
     /**
