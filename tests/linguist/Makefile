@@ -74,7 +74,7 @@ rm1_flat_unigram:
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
         -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7 \
         -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
-	-Dedu.cmu.sphinx.knowledge.language.location=rm1.flat_unigram.lm \
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.flat_unigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
 wsj:
@@ -102,3 +102,20 @@ tiny:
         -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.knowledge.language.location=tiny.unigram \
 	edu.cmu.sphinx.decoder.BatchDecoder ./tiny.props ./tiny.batch
+
+tidigits:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7 \
+        -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=tidigits.flat_unigram.lm \
+	edu.cmu.sphinx.decoder.BatchDecoder ./tidigits.props ./tidigits.batch
+
+
+run_batch:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=$(WHICH_BATCH)\
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=$(TOTAL_BATCHES)\
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+        $(PARSED_EXTRA_OPTIONS) \
+        edu.cmu.sphinx.decoder.BatchDecoder $(PROPS) $(BATCH_FILE) 

@@ -1,0 +1,124 @@
+##########################################################
+#
+# Global logging properties
+#
+############################################################
+
+handlers= java.util.logging.ConsoleHandler
+
+# This is the overall default logging level
+.level= WARN
+
+# Tracing level for the console
+java.util.logging.ConsoleHandler.level = WARN
+java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
+
+
+############################################################
+#
+# Acoustic model properties
+#
+############################################################
+
+edu.cmu.sphinx.knowledge.acoustic.format = sphinx3.ascii
+edu.cmu.sphinx.knowledge.acoustic.FeatureVectorLength = 39
+edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+
+#edu.cmu.sphinx.knowledge.acoustic.location = /lab/speech/sphinx4/data/rm1_model
+edu.cmu.sphinx.knowledge.acoustic.location = file:/lab/speech/sphinx4/data/rm1_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+edu.cmu.sphinx.knowledge.acoustic.format = sphinx3.binary
+edu.cmu.sphinx.knowledge.acoustic.definition_file = etc/RM1_clean_13dCep_16k_40mel_130Hz_6800Hz.1800.mdef
+edu.cmu.sphinx.knowledge.acoustic.data_location = cd_continuous_8gau
+edu.cmu.sphinx.knowledge.acoustic.properties_file = am.props
+
+
+############################################################
+# 
+# FrontEnd properties
+#
+############################################################
+
+edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
+edu.cmu.sphinx.frontend.cepstrumSize = 13
+edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
+edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
+edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
+edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
+edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
+edu.cmu.sphinx.frontend.windowShiftInMs = 10
+edu.cmu.sphinx.frontend.windower.alpha = 0.46
+
+# set the following only if you want to override the acoustic model properties
+
+# edu.cmu.sphinx.frontend.mel.numFilters = 40
+# edu.cmu.sphinx.frontend.mel.minfreq = 130
+# edu.cmu.sphinx.frontend.mel.maxfreq = 6800
+# edu.cmu.sphinx.frontend.fft.numberFftPoints = 512
+# edu.cmu.sphinx.frontend.cmn.live.initialCepstralMean = 12
+# edu.cmu.sphinx.frontend.cmn.live.windowSize = 500
+# edu.cmu.sphinx.frontend.cmn.live.shiftWindow = 800
+# edu.cmu.sphinx.frontend.sampleRate = 16000
+
+
+############################################################
+# 
+# Search properties
+#
+############################################################
+
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.FastActiveList
+edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
+
+
+############################################################
+# 
+# Recognizer properties
+#
+############################################################
+
+
+
+############################################################
+# 
+# Dictionary properties
+#
+############################################################
+
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation = true
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dict/RM.dictionary
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = dict/fillerdict
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
+
+
+############################################################
+#
+# ThreadedAcousticScorer properties
+#
+############################################################
+#
+# By setting isCpuRelative to true, num scoring threads is
+#    equal to num_avail_processors + e.c.s.ThreadedAcousticScorernumThreads.
+#
+# By setting isCpuRelative to false, num scoring threads is
+#    equal to edu.cmu.sphinx.ThreadedAcousticScorer.numThreads
+#
+# Use the number of available CPUS for scoring:
+#
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=false
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=1
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
+
+
+
+edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-10
+#edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1500
+#edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80
+edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
+edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80
+edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10.0
+
+edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist
+edu.cmu.sphinx.decoder.Decoder.showErrorToken=false
+edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
+edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
