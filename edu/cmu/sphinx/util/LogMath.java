@@ -41,20 +41,24 @@ public final class LogMath implements Serializable {
     private static Logger logger = 
 	    Logger.getLogger("edu.cmu.sphinx.util.LogMath");
 
-    // controls whether we use the old, slow (but correct) method of
-    // performing the log.add by doing the actual computation.  This
-    // is a rollback to the old slow way until the fast way is fixed.
-
-    private final static boolean ACTUAL_COMPUTATION_IN_ADD = false;
-
     /**
-     * Sphinx3 property to get the Log base
+     * Sphinx property to get the Log base
      */
 
     public final static String PROP_LOG_BASE 
 	= "edu.cmu.sphinx.util.LogMath.logBase";
 
+    /**
+     * Sphinx property that controls whether we use the old, slow (but
+     * correct) method of performing the log.add by doing the actual
+     * computation.
+     */
+
+    private final static String PROP_USE_ADD_TABLE
+	= "edu.cmu.sphinx.util.LogMath.useAddTable";
+
     private double logBase = 1.0001;
+    private boolean useAddTable;
     private transient double naturalLogBase;
     private transient double inverseNaturalLogBase;
     private transient double logZero;
@@ -67,9 +71,11 @@ public final class LogMath implements Serializable {
       * Creates a log math with the given base
       *
       * @param base the base for the log math
+      *
+      * @param useTable use the addTable (true) or do computation (false)
       */
-     public static  LogMath getLogMath(double base) {
-	 return new LogMath(base);
+     public static  LogMath getLogMath(double base, boolean useTable) {
+	 return new LogMath(base, useTable);
      }
 
      /**
@@ -85,7 +91,8 @@ public final class LogMath implements Serializable {
 	    SphinxProperties props = 
 		    SphinxProperties.getSphinxProperties(context);
 	    double base = props.getDouble(PROP_LOG_BASE, Math.E);
-	    logMath = new LogMath(base);
+	    boolean useTable = props.getBoolean(PROP_USE_ADD_TABLE, true);
+	    logMath = new LogMath(base, useTable);
 	    contextMap.put(context, logMath);
 	 } 
 	 return logMath;
@@ -96,9 +103,12 @@ public final class LogMath implements Serializable {
       * depends on the log base.
       *
       * @param base the log base
+      *
+      * @param useTable use the addTable (true) or do computation (false)
       */
-     private LogMath(double base) {
+     private LogMath(double base, boolean useTable) {
 	 logBase = base;
+	 useAddTable = useTable;
 	 init();
      }
 
@@ -121,10 +131,10 @@ public final class LogMath implements Serializable {
      private void init() {
 
 	 logger.info("Log base is " + logBase);
-	 if (ACTUAL_COMPUTATION_IN_ADD) {
-	     logger.info("Performing actual computation when adding logs");
-	 } else {
+	 if (useAddTable) {
 	     logger.info("Using AddTable when adding logs");
+	 } else {
+	     logger.info("Performing actual computation when adding logs");
 	 }
 	 naturalLogBase = Math.log(logBase);
 	 inverseNaturalLogBase = 1.0/naturalLogBase;
@@ -151,80 +161,142 @@ public final class LogMath implements Serializable {
 	 // (absolute) value that a double can hold.
 	 minLogValue = linearToLog(Double.MIN_VALUE);
 
-	 // Now create the addTable table.
+	 if (useAddTable) {
+	     // Now create the addTable table.
 
-	 // summation needed in the loop
-	 double innerSummation;
+	     // summation needed in the loop
+	     double innerSummation;
 
-	 // First decide number of elements.
-	 int entriesInTheAddTable;
-	 final int veryLargeNumberOfEntries = 150000;
+	     // First decide number of elements.
+	     int entriesInTheAddTable;
+	     final int veryLargeNumberOfEntries = 150000;
+	     final int verySmallNumberOfEntries = 0;
 
-	 // To decide size of table, take into account that a base of
-	 // 1.0001 or 1.0003 converts probabilities, which are numbers
-	 // less than 1, into integers.  Therefore, a good
-	 // approximation for the smallest number in the table,
-	 // therefore the value with the highest index, is an index
-	 // that maps into 0.5: indices higher than that, if they were
-	 // present, would map to less values less than 0.5, therefore
-	 // they would be mapped to 0 as integers. Since the table
-	 // implements the expression:
-	 //
-	 // log(1.0 + base^(-index)))
-	 //
-	 // then the highest index would be:
-	 //
-	 // topIndex = - log(logBase^(0.5) - 1)
-	 //
-	 // where log is the log in the appropriate base.
-
-	 // TODO: PBL changed this to get it to compile, also
-	 // added -Math.rint(...) to round to nearest integer. Added
-	 // the negation to match the preceeding documentation
-
-	 entriesInTheAddTable = 
-	     (int) -Math.rint(linearToLog(logToLinear(0.5) - 1));
-
-	 // We reach this max if the log base is 1.00007. The closer
-	 // you get to 1, the higher the number of entries in the
-	 // table.
-
-	 if (entriesInTheAddTable > veryLargeNumberOfEntries) {
-	     entriesInTheAddTable = veryLargeNumberOfEntries;
-	 }
-
-	 // PBL added this just to see how many entries really are in
-	 // the table
-
-	 if (false)  {
-	     System.out.println("LogAdd table has " + entriesInTheAddTable
-		 + " entries.");
-	 }
-
-	 theAddTable = new double[entriesInTheAddTable];
-	 for (int index = 0; index < entriesInTheAddTable; index++) {
-	     // This loop implements the expression:
+	     // To decide size of table, take into account that a base
+	     // of 1.0001 or 1.0003 converts probabilities, which are
+	     // numbers less than 1, into integers.  Therefore, a good
+	     // approximation for the smallest number in the table,
+	     // therefore the value with the highest index, is an
+	     // index that maps into 0.5: indices higher than that, if
+	     // they were present, would map to less values less than
+	     // 0.5, therefore they would be mapped to 0 as
+	     // integers. Since the table implements the expression:
 	     //
-	     // log( 1.0 + power(base, index))
+	     // log(1.0 + base^(-index)))
 	     //
-	     // needed to add two numbers in the log domain.
+	     // then the highest index would be:
+	     //
+	     // topIndex = - log(logBase^(0.5) - 1)
+	     //
+	     // where log is the log in the appropriate base.
 
-	     innerSummation = logToLinear(-index);
-	     innerSummation += 1.0f;
-	     theAddTable[index] = linearToLog(innerSummation);
+	     // TODO: PBL changed this to get it to compile, also
+	     // added -Math.rint(...) to round to nearest
+	     // integer. Added the negation to match the preceeding
+	     // documentation
+
+	     entriesInTheAddTable = 
+		 (int) -Math.rint(linearToLog(logToLinear(0.5) - 1));
+
+	     // We reach this max if the log base is 1.00007. The
+	     // closer you get to 1, the higher the number of entries
+	     // in the table.
+
+	     if (entriesInTheAddTable > veryLargeNumberOfEntries) {
+		 entriesInTheAddTable = veryLargeNumberOfEntries;
+	     }
+
+	     if (entriesInTheAddTable <= verySmallNumberOfEntries) {
+		 throw new IllegalArgumentException("The log base "
+		      + logBase + " yields a very small addTable. "
+		      + "Either choose not to use the addTable, "
+                      + "or choose a logBase closer to 1.0");
+	     }
+
+	     // PBL added this just to see how many entries really are
+	     // in the table
+
+	     if (false)  {
+		 System.out.println("LogAdd table has " + entriesInTheAddTable
+				    + " entries.");
+	     }
+
+	     theAddTable = new double[entriesInTheAddTable];
+	     for (int index = 0; index < entriesInTheAddTable; index++) {
+		 // This loop implements the expression:
+		 //
+		 // log( 1.0 + power(base, index))
+		 //
+		 // needed to add two numbers in the log domain.
+
+		 innerSummation = logToLinear(-index);
+		 innerSummation += 1.0f;
+		 theAddTable[index] = linearToLog(innerSummation);
+	     }
 	 }
      }
 
 
 
     /**
+     * Exponentiate base to the power in log.
+     *
+     * <p>Will check for underflow and report.</p>
+     *
+     * <p>Will check for overflow on the lowest bound and constrain
+     * values to be no lower than -Double.MAX_VALUE.</p>
+     *
+     * <p>Will check for overflow on the highest bound and constrain
+     * values to be no higher than Double.MAX_VALUE.</p>
+     *
+     *
+     * @param base base to be raised in log domain
+     * @param exponent power of the exponentiation
+     *
+     * @return base raised to exponent
+     *
+     */
+    public final double power(double base, double exponent) {
+	double returnValue = base * exponent;
+	boolean overflowOccurred = false;
+
+	// if abs(exponent) is > 1, the product may result larger than max
+	if (Math.abs(exponent) > 1) {
+	    if (Math.abs(base) > (Double.MAX_VALUE / Math.abs(exponent))) {
+		overflowOccurred = true;
+		// base/exponent will have the same sign as their
+		// product, but will not overflow.
+		if ((base / exponent > 0)) {
+		    returnValue = Double.MAX_VALUE;
+		} else {
+		    returnValue = -Double.MAX_VALUE;
+		}
+	    }
+	} else if (Math.abs(exponent) < 1) {
+	    // Underflow may occur if exponent is less than one (the
+	    // power will be less than the base in absolute terms.
+	    if (Math.abs(base) < ( Double.MIN_VALUE / Math.abs(exponent))) {
+		overflowOccurred = true;
+		returnValue = 0.0;
+	    }
+	}
+	if (overflowOccurred) {
+	    logger.info("********Overflow or underflow occurred "
+			+ "while trying to log.power "
+			+  base + " raised to " + exponent);
+	}
+	return returnValue;
+    }
+
+
+    /**
      * Multiplies the two log values. 
      *
-     * <p>Will check for underflow and constrain values to be no lower
-     * than Double.MIN_VALUE.</p>
+     * <p>Will check for overflow on the lowest bound and constrain
+     * values to be no lower than -Double.MAX_VALUE.</p>
      *
-     * <p>Will check for overflow and constrain values to be no higher
-     * than Double.MAX_VALUE.</p>
+     * <p>Will check for overflow on the highest bound and constrain
+     * values to be no higher than Double.MAX_VALUE.</p>
      *
      *
      * @param val1 value in log domain to multiply
@@ -252,12 +324,13 @@ public final class LogMath implements Serializable {
 	} else if (val1 < 0) {
 	    if (val2 < ( -Double.MAX_VALUE - val1)) {
 		overflowOccurred = true;
-		returnValue = -Double.MIN_VALUE;
+		returnValue = -Double.MAX_VALUE;
 	    }
 	}
 	if (overflowOccurred) {
-	    logger.info("********Overflow occurred while trying to log.multiply " +
-			   val1 + " and " + val2);
+	    logger.info("********Overflow or underflow occurred "
+			+ "while trying to log.multiply "
+			+ val1 + " and " + val2);
 	}
 	return returnValue;
     }
@@ -367,7 +440,7 @@ public final class LogMath implements Serializable {
     private final double addTable(double index) 
 	throws IllegalArgumentException {
 
-	if (ACTUAL_COMPUTATION_IN_ADD) {
+	if (!useAddTable) {
 	    return addTableActualComputation(index);
 	} else {
 	    int intIndex = (int) Math.rint(index);
