@@ -13,7 +13,6 @@
 
 package edu.cmu.sphinx.decoder.linguist;
 
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.decoder.linguist.AlternativeState;
 
 /**
@@ -35,7 +34,7 @@ public class WordState extends SentenceHMMState {
      *
      * @return the word
      */
-    public edu.cmu.sphinx.decoder.linguist.GrammarWord getWord() {
+    public GrammarWord getWord() {
 	return ((AlternativeState) getParent()).getAlternative()[getWhich()];
     }
 

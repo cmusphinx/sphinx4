@@ -32,9 +32,6 @@ import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
-import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.decoder.linguist.WordState;
 
@@ -170,8 +167,8 @@ public class  SentenceHMMState implements Serializable {
      * @return the word associated with this state, or null if there
      * is no word associated with this state.
      */
-    public edu.cmu.sphinx.decoder.linguist.GrammarWord getAssociatedWord() {
-	edu.cmu.sphinx.decoder.linguist.GrammarWord word = null;
+    public GrammarWord getAssociatedWord() {
+	GrammarWord word = null;
 	SentenceHMMState state = this;
 
 	while ( state != null && !(state instanceof WordState)) {

@@ -11,7 +11,6 @@
  */
 
 package edu.cmu.sphinx.decoder.linguist;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
 
 import java.io.Serializable;
 
@@ -22,14 +21,14 @@ import java.io.Serializable;
  */
 public class GrammarState extends SentenceHMMState implements
         Serializable {
-    private edu.cmu.sphinx.decoder.linguist.GrammarNode grammarNode;
+    private GrammarNode grammarNode;
 
     /**
      * Creates a GrammarState
      *
      * @param node the GrammarNode associated with this state
      */
-    public GrammarState(edu.cmu.sphinx.decoder.linguist.GrammarNode node) {
+    public GrammarState(GrammarNode node) {
 	super("G", null,  node.getID());
 	this.grammarNode = node;
 	setFinalState(grammarNode.isFinalNode());
@@ -40,7 +39,7 @@ public class GrammarState extends SentenceHMMState implements
      *
      * @return the grammar node
      */
-    public edu.cmu.sphinx.decoder.linguist.GrammarNode getGrammarNode() {
+    public GrammarNode getGrammarNode() {
 	return grammarNode;
     }
 
