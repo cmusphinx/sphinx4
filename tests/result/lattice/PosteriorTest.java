@@ -48,20 +48,26 @@ public class PosteriorTest {
 	    Node b = lattice.addNode("B", 0, 0);
 	    Node c = lattice.addNode("C", 0, 0);
 	    Node d = lattice.addNode("D", 0, 0);
-	    
+
+	    double acousticAB = 4;
+            double acousticAC = 6;
+            double acousticCB = 1;
+            double acousticBD = 5;
+            double acousticCD = 2;
+
 	    lattice.setInitialNode(a);
 	    lattice.setTerminalNode(d);
 	    
-	    lattice.addEdge(a, b, logMath.linearToLog(4), 0);
-	    lattice.addEdge(a, c, logMath.linearToLog(6), 0);
-	    lattice.addEdge(c, b, logMath.linearToLog(1), 0);
-	    lattice.addEdge(b, d, logMath.linearToLog(5), 0);
-	    lattice.addEdge(c, d, logMath.linearToLog(2), 0);
+	    lattice.addEdge(a, b, logMath.linearToLog(acousticAB), 0);
+	    lattice.addEdge(a, c, logMath.linearToLog(acousticAC), 0);
+	    lattice.addEdge(c, b, logMath.linearToLog(acousticCB), 0);
+	    lattice.addEdge(b, d, logMath.linearToLog(acousticBD), 0);
+	    lattice.addEdge(c, d, logMath.linearToLog(acousticCD), 0);
 	    
 	    lattice.computeNodePosteriors(1.0f);
-	    double pathABD = 4 * 5;
-	    double pathACBD = 6 * 1 * 5;
-	    double pathACD = 6 * 2;
+	    double pathABD = acousticAB * acousticBD;
+	    double pathACBD = acousticAC * acousticCB * acousticBD;
+	    double pathACD = acousticAC * acousticCD;
 	    double allPaths = pathABD + pathACBD + pathACD;
 
 	    double bPosterior = (pathABD + pathACBD)/allPaths;
