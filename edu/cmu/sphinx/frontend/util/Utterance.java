@@ -12,9 +12,15 @@
 
 package edu.cmu.sphinx.frontend.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
+import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 
 
 /**
@@ -87,5 +93,20 @@ public class Utterance {
         return ((float) audioBuffer.size()) /
             (audioFormat.getSampleRate() * 
              audioFormat.getSampleSizeInBits()/8);
+    }
+
+    /**
+     * Save the audio as a WAV file in the given file.
+     *
+     * @param fileName the name of the audio file
+     * @param fileFormat the audio file format
+     */
+    public void save(String fileName, AudioFileFormat.Type fileFormat)
+        throws IOException {
+        File file = new File(fileName);
+        byte[] audio = getAudio();
+        AudioInputStream ais = new AudioInputStream
+            ((new ByteArrayInputStream(audio)), getAudioFormat(), audio.length);
+        AudioSystem.write(ais, fileFormat, file);
     }
 }
