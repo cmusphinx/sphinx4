@@ -55,12 +55,6 @@ class Sphinx3Loader implements Loader {
     private static Logger logger = 
 	    Logger.getLogger(AcousticModel.PROP_PREFIX + "AcousticModel");
 
-    private final static String DEFAULT_MODEL_FORMAT = "sphinx4.v1";
-    private final static String DEFAULT_MODEL_LOCATION = ".";
-    private final static String DEFAULT_MODEL_FILE = "model.mdef";
-    private final static String DEFAULT_DATA_DIR = "data";
-    private final static String DEFAULT_AM_PROPS_FILE = "am.props";
-
     private final static String NUM_SENONES = "num_senones";
     private final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
     private final static String NUM_STREAMS = "num_streams";
@@ -68,23 +62,8 @@ class Sphinx3Loader implements Loader {
     private final static String FILLER = "filler";
     private final static String SILENCE_CIPHONE  = "SIL";
 
-    private final static String PROPS_VECTOR_LENGTH = 
-                AcousticModel.PROP_PREFIX + "FeatureVectorLength";
-    private final static String PROPS_AM_PROPERTIES_FILE = 
-                AcousticModel.PROP_PREFIX + "properties_file";
-    private final static String PROPS_SPARSE_FORM = 
-                AcousticModel.PROP_PREFIX + "sparseForm";
-
     private final static int BYTE_ORDER_MAGIC = 0x11223344;
 
-    /**
-     * If true (default), instructs the loader to load context
-     * dependent units.  Otherwise, the loader will ignore context
-     * dependent units.
-     */
-    private final static String PROPS_USE_CD_UNITS =
-	    	AcousticModel.PROP_PREFIX + "useCDUnits";
-    
     public final static String MODEL_VERSION = "0.3";
 
     private final static int CONTEXT_SIZE = 1;
@@ -132,12 +111,13 @@ class Sphinx3Loader implements Loader {
 	logMath = LogMath.getLogMath(props.getContext());
 
 	// extract the feature vector length
-	String vectorLengthProp = PROPS_VECTOR_LENGTH;
+	String vectorLengthProp = AcousticModel.PROP_VECTOR_LENGTH;
 	if (modelName != null) {
 	    vectorLengthProp = AcousticModel.PROP_PREFIX + modelName +
 		".FeatureVectorLength";
 	}
-	vectorLength = props.getInt(vectorLengthProp, 39);
+	vectorLength = props.getInt
+	    (vectorLengthProp, AcousticModel.PROP_VECTOR_LENGTH_DEFAULT);
 	
         hmmManager = new HMMManager();
         contextIndependentUnits = new LinkedHashMap();
@@ -176,23 +156,25 @@ class Sphinx3Loader implements Loader {
 	}
 	// System.out.println("Using prefix: " + prefix);
 
-	location = props.getString(prefix + "location",
-				   DEFAULT_MODEL_LOCATION);
-	model = props.getString(prefix + "definition_file",
-				DEFAULT_MODEL_FILE);
-	dataDir = props.getString(prefix + "data_location", 
-				  DEFAULT_DATA_DIR) + "/";
-	propsFile = props.getString(prefix + "properties_file",
-				    DEFAULT_AM_PROPS_FILE);
+	location = props.getString
+	    (prefix + "location", AcousticModel.PROP_LOCATION_DEFAULT);
+	model = props.getString
+	    (prefix + "definition_file", AcousticModel.PROP_MODEL_DEFAULT);
+	dataDir = props.getString
+	    (prefix + "data_location", 
+	     AcousticModel.PROP_DATA_LOCATION_DEFAULT) + "/";
+	propsFile = props.getString
+	    (prefix + "properties_file", 
+	     AcousticModel.PROP_PROPERTIES_FILE_DEFAULT);
 
-	float distFloor = props.getFloat(AcousticModel.PROPS_MC_FLOOR, 
-					 AcousticModel.PROPS_MC_FLOOR_DEFAULT);
+	float distFloor = props.getFloat(AcousticModel.PROP_MC_FLOOR, 
+					 AcousticModel.PROP_MC_FLOOR_DEFAULT);
         float mixtureWeightFloor = 
-	    props.getFloat(AcousticModel.PROPS_MW_FLOOR, 
-			   AcousticModel.PROPS_MW_FLOOR_DEFAULT);
+	    props.getFloat(AcousticModel.PROP_MW_FLOOR, 
+			   AcousticModel.PROP_MW_FLOOR_DEFAULT);
         float varianceFloor = 
-	    props.getFloat(AcousticModel.PROPS_VARIANCE_FLOOR, 
-			   AcousticModel.PROPS_VARIANCE_FLOOR_DEFAULT);
+	    props.getFloat(AcousticModel.PROP_VARIANCE_FLOOR, 
+			   AcousticModel.PROP_VARIANCE_FLOOR_DEFAULT);
 
 	logger.info("Loading Sphinx3 acoustic model: " + modelName);
 	logger.info("    Path      : " + location);
@@ -244,7 +226,9 @@ class Sphinx3Loader implements Loader {
 	senonePool = createSenonePool(distFloor);
 
         // load the HMM model file
-	boolean useCDUnits = props.getBoolean(PROPS_USE_CD_UNITS, true);
+	boolean useCDUnits = props.getBoolean
+	    (AcousticModel.PROP_USE_CD_UNITS, 
+	     AcousticModel.PROP_USE_CD_UNITS_DEFAULT);
 	loadHMMPool(useCDUnits,
                     StreamFactory.getInputStream(location, model),
                     location + File.separator + model);
@@ -838,9 +822,6 @@ class Sphinx3Loader implements Loader {
 	// property is false, the CD phones will not be created, but
         // the values still need to be read in from the file.
 
-        //boolean useCDUnits = props.getBoolean(PROPS_USE_CD_UNITS, true);
-        //System.out.println(PROPS_USE_CD_UNITS + "=" + useCDUnits);
-        
 	for (int i = 0; i < numTri; i++) {
 	    String name = est.getString();
 	    String left = est.getString();
@@ -1043,8 +1024,9 @@ class Sphinx3Loader implements Loader {
     private Pool loadTransitionMatricesAscii(String path)
         throws FileNotFoundException, IOException {
         InputStream inputStream = StreamFactory.getInputStream(location, path);
-        boolean sparseForm 
-	    = acousticProperties.getBoolean(PROPS_SPARSE_FORM, true);
+        boolean sparseForm = acousticProperties.getBoolean
+	    (AcousticModel.PROP_SPARSE_FORM, 
+	     AcousticModel.PROP_SPARSE_FORM_DEFAULT);
 	logger.info("Loading transition matrices from: ");
 	logger.info( path);
 	int numMatrices;
@@ -1108,8 +1090,9 @@ class Sphinx3Loader implements Loader {
      */
     private Pool loadTransitionMatricesBinary(String path)
         throws FileNotFoundException, IOException {
-        boolean sparseForm 
-	    = acousticProperties.getBoolean(PROPS_SPARSE_FORM, true);
+        boolean sparseForm = acousticProperties.getBoolean
+	    (AcousticModel.PROP_SPARSE_FORM, 
+	     AcousticModel.PROP_SPARSE_FORM_DEFAULT);
 	logger.info("Loading transition matrices from: ");
 	logger.info( path);
 	int numMatrices;

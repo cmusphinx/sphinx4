@@ -43,7 +43,8 @@ public class AcousticModel {
     /**
      * Prefix for acoustic model SphinxProperties.
      */
-    public final static String PROP_PREFIX = "edu.cmu.sphinx.knowledge.acoustic.";
+    public final static String PROP_PREFIX
+	= "edu.cmu.sphinx.knowledge.acoustic.";
 
 
     /**
@@ -53,12 +54,25 @@ public class AcousticModel {
 
 
     /**
+     * The default value for PROP_NAMES.
+     */
+    public final static String PROP_NAMES_DEFAULT = null;
+
+
+    /**
      * The format for the acoustic model data. Current supported
      * formats are:
      *
-     *  sphinx3_ascii 
+     *  sphinx3_ascii
+     *  sphinx3_binary
      */
     public final static String PROP_FORMAT = PROP_PREFIX + "format";
+
+
+    /**
+     * The default value of PROP_FORMAT.
+     */
+    public final static String PROP_FORMAT_DEFAULT = "sphinx3_binary";
 
 
     /**
@@ -68,60 +82,144 @@ public class AcousticModel {
 
 
     /**
+     * The default value of PROP_LOCATION.
+     */
+    public final static String PROP_LOCATION_DEFAULT = ".";
+
+
+    /**
      * The name of the model definition file (contains the HMM data)
      */
     public final static String PROP_MODEL = PROP_PREFIX + "definition_file";
 
 
     /**
-     * subdir of PROP_LOCATION where the acoustic model can be found
+     * The default value of PROP_MODEL_DEFAULT.
      */
-    public final static String PROP_SUBDIR = PROP_PREFIX + "data_location";
+    public final static String PROP_MODEL_DEFAULT = "model.mdef";
+
+
+    /**
+     * Subdirectory of PROP_LOCATION where the acoustic model can be found
+     */
+    public final static String PROP_DATA_LOCATION
+	= PROP_PREFIX + "data_location";
+
+
+    /**
+     * The default value of PROP_DATA_LOCATION.
+     */
+    public final static String PROP_DATA_LOCATION_DEFAULT = "data";
+
+
+    /**
+     * The SphinxProperty for the name of the acoustic properties file.
+     */
+    public final static String PROP_PROPERTIES_FILE
+	= PROP_PREFIX + "properties_file";
+
+
+    /**
+     * The default value of PROP_PROPERTIES_FILE.
+     */
+    public final static String PROP_PROPERTIES_FILE_DEFAULT = "am.props";
+
+
+    /**
+     * The SphinxProperty for the length of feature vectors.
+     */
+    public final static String PROP_VECTOR_LENGTH
+	= PROP_PREFIX + "FeatureVectorLength";
+
+
+    /**
+     * The default value of PROP_VECTOR_LENGTH.
+     */
+    public final static int PROP_VECTOR_LENGTH_DEFAULT = 39;
+
+
+    /**
+     * The SphinxProperty specifying whether the transition matrices
+     * of the acoustic model is in sparse form, i.e., omitting
+     * the zeros of the non-transitioning states.
+     */
+    public final static String PROP_SPARSE_FORM = PROP_PREFIX + "sparseForm";
+
+
+    /**
+     * The default value of PROP_SPARSE_FORM.
+     */
+    public final static boolean PROP_SPARSE_FORM_DEFAULT = true;
+
+
+    /**
+     * The SphinxProperty specifying whether context-dependent units
+     * should be used.
+     */
+    public final static String PROP_USE_CD_UNITS = PROP_PREFIX + "useCDUnits";
+
+
+    /**
+     * The default value of PROP_USE_CD_UNITS.
+     */
+    public final static boolean PROP_USE_CD_UNITS_DEFAULT = true;
 
 
     /**
      * Controls whether we generate composites or CI units when no
      * context is given during a lookup.
      */
-    private final static String PROP_USE_COMPOSITES = PROP_PREFIX +
-	"useComposites";
+    public final static String PROP_USE_COMPOSITES
+	= PROP_PREFIX + "useComposites";
+
+
+    /**
+     * The default value of PROP_USE_COMPOSITES.
+     */
+    public final static boolean PROP_USE_COMPOSITES_DEFAULT = true;
+
 
     /**
      * Mixture component score floor.
      */
-    public final static String PROPS_MC_FLOOR = PROP_PREFIX + 
+    public final static String PROP_MC_FLOOR = PROP_PREFIX + 
 	"MixtureComponentScoreFloor";
+
 
     /**
      * Mixture component score floor default value.
      */
-    public final static float PROPS_MC_FLOOR_DEFAULT = 0.0f;
+    public final static float PROP_MC_FLOOR_DEFAULT = 0.0f;
+
 
     /**
      * Variance floor.
      */
-    public final static String PROPS_VARIANCE_FLOOR = PROP_PREFIX + 
+    public final static String PROP_VARIANCE_FLOOR = PROP_PREFIX + 
 	"varianceFloor";
+
 
     /**
      * Variance floor default value.
      */
-    public final static float PROPS_VARIANCE_FLOOR_DEFAULT = 0.0001f;
+    public final static float PROP_VARIANCE_FLOOR_DEFAULT = 0.0001f;
+
 
     /**
      * Mixture weight floor.
      */
-    public final static String PROPS_MW_FLOOR = PROP_PREFIX + 
+    public final static String PROP_MW_FLOOR = PROP_PREFIX + 
 	"mixtureWeightFloor";
+
 
     /**
      * Mixture weight floor default value.
      */
-    public final static float PROPS_MW_FLOOR_DEFAULT = 1e-7f;
+    public final static float PROP_MW_FLOOR_DEFAULT = 1e-7f;
 
 
     /**
-     * model load timer
+     * Model load timer
      */
     private final static String TIMER_LOAD = "AM_Load";
 
@@ -169,7 +267,7 @@ public class AcousticModel {
 	
 	SphinxProperties props = 
 	    SphinxProperties.getSphinxProperties(context);
-	String amNames = props.getString(PROP_NAMES, null);
+	String amNames = props.getString(PROP_NAMES, PROP_NAMES_DEFAULT);
 	if (amNames != null) {
 	    StringTokenizer tokenizer = new StringTokenizer(amNames);
 	    
@@ -246,7 +344,7 @@ public class AcousticModel {
 	List nameList = new LinkedList();
 	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 	if (props != null) {
-	    String names = props.getString(PROP_NAMES, null);
+	    String names = props.getString(PROP_NAMES, PROP_NAMES_DEFAULT);
 	    if (names != null) {
 		StringTokenizer tokenizer = new StringTokenizer(names);
 		while (tokenizer.hasMoreTokens()) {
@@ -280,7 +378,8 @@ public class AcousticModel {
 	this.context = context;
         this.props = SphinxProperties.getSphinxProperties(context);
         this.loadTimer = Timer.getTimer(context, TIMER_LOAD);
-        this.useComposites = props.getBoolean(PROP_USE_COMPOSITES, true);
+        this.useComposites = props.getBoolean(PROP_USE_COMPOSITES,
+					      PROP_USE_COMPOSITES_DEFAULT);
 
         loadTimer.start();
         load();
