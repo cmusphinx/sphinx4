@@ -172,8 +172,10 @@ public class Timer {
      *
      * @param verbose if <code>true</code>, print out details from
      * 	this run; otherwise, don't print the details
+     *
+     * @return the duration since start in milliseconds
      */
-    public void stop(boolean verbose) {
+    public long stop(boolean verbose) {
 	if (startTime == 0L) {
 	    notReliable = true;		// stop called, but start never called
 	}
@@ -190,6 +192,7 @@ public class Timer {
 	if (verbose) {
 	    dump();
 	}
+	return curTime;
     }
 
     /**
@@ -214,6 +217,16 @@ public class Timer {
      */
     public long getCount() {
 	return count;
+    }
+
+
+    /**
+     * Returns the latest time gathered
+     *
+     * @return the time in milliseconds
+     */
+    public long getCurTime() {
+	return curTime;
     }
 
     /**

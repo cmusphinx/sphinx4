@@ -17,6 +17,7 @@ public class ExtendedStreamTokenizer {
     private String path;
     private StreamTokenizer st;
     private Reader reader;
+    private boolean atEOF = false;
 
     /**
      * Creates and returns a stream tokenizer that has
@@ -69,6 +70,9 @@ public class ExtendedStreamTokenizer {
      */
     public String getString() throws StreamCorruptedException, IOException  {
 	st.nextToken();
+	if (st.ttype == StreamTokenizer.TT_EOF) {
+	    atEOF = true;
+	}
 	if (st.ttype != StreamTokenizer.TT_WORD &&
 	    st.ttype != StreamTokenizer.TT_EOL &&
 	    st.ttype != StreamTokenizer.TT_EOF) {
@@ -80,6 +84,16 @@ public class ExtendedStreamTokenizer {
 	} else {
 	    return st.sval;
 	}
+    }
+
+
+    /**
+     * Determines if the stream is at the end of file
+     *
+     * @return true if the stream is at EOF
+     */
+    public boolean isEOF() {
+	return atEOF;
     }
 
 
