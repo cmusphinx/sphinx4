@@ -487,27 +487,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 		    feature.setType(amName);
 		}
                 features[i++] = feature;
-		
-		if (!inUtterance) {
-		    if (feature.hasSignal(Signal.UTTERANCE_START)) {
-			inUtterance = true;
-		    } else {
-			throw new Error
-			    ("SimpleFrontEnd, named " + getName() + ": " +
-			     NO_UTTERANCE_START_ERROR);
-		    }
-		} else {
-		    if (feature.hasSignal(Signal.UTTERANCE_END)) {
-			inUtterance = false;
-			break;
-		    } else if (feature.hasSignal(Signal.UTTERANCE_START)) {
-			/*
-			throw new Error
-			    ("SimpleFrontEnd, named " + getName() + ": " +
-			     TOO_MANY_UTTERANCE_START_ERROR);
-			*/
-		    }
-                }
+		signalCheck(feature);
             } else {
                 break;
             }
@@ -545,7 +525,10 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 	description += ("------------------\n");
 	description += ("Context          = " + getContext() + "\n");
 	description += ("AM               = " + amName + "\n");
-	description += ("useAMProperties  = "+useAcousticModelProperties+"\n");
+	description += ("useAMProperties  = " +
+			useAcousticModelProperties+"\n");
+	description += ("DataSource       = " +
+			dataSource.getClass().getName() + "\n");
 	description += ("Preemphasizer    = Preemphasizer\n");
 	description += ("Windower         = Windower\n");
 	description += ("FFT              = SpectrumAnalyzer\n");
