@@ -15,19 +15,13 @@ import com.sun.tools.doclets.standard.tags.*;
 
 import java.util.*;
 
-public class HrefTaglet extends AbstractInlineTaglet {
+public class HrefTaglet implements Taglet {
 
-    private static final String NAME = "href";
-    private String name;
+    private static final String NAME = "href.tag";
 
-    public HrefTaglet() {
-        name = NAME;
-    }
-
-    private String getName() {
-        return name;
-    }
-
+    /**
+     * Register this taglet.
+     */
     public static void register(Map tagletMap) {
        HrefTaglet tag = new HrefTaglet();
        Taglet t = (Taglet) tagletMap.get(tag.getName());
@@ -36,7 +30,81 @@ public class HrefTaglet extends AbstractInlineTaglet {
        }
        tagletMap.put(tag.getName(), tag);
     }
+    
+    /**
+     * Return the name of this custom tag.
+     */
+    public String getName() {
+        return NAME;
+    }
+    
+    /**
+     * @return false since this is an inline tag.
+     */
+    public boolean inField() {
+        return false;
+    }
 
+    /**
+     * @return false since this is an inline tag.
+     */
+    public boolean inConstructor() {
+        return false;
+    }
+    
+    /**
+     * @return false since this is an inline tag.
+     */
+    public boolean inMethod() {
+        return false;
+    }
+    
+    /**
+     * @return false since this is an inline tag.
+     */
+    public boolean inOverview() {
+        return false;
+    }
+
+    /**
+     * @return false since this is an inline tag.
+     */
+    public boolean inPackage() {
+        return false;
+    }
+
+    /**
+     * @return false since this is an inline tag.
+     */
+    public boolean inType() {
+        return false;
+    }
+    
+    /**
+     * @return true since this is an inline tag.
+     */
+    
+    public boolean isInlineTag() {
+        return true;
+    }
+    
+    /**
+     * Returns null to force the taglet infrastructure to call
+     * the more sophisticated toString method below.  FIXME: this
+     * seems to be broken.
+     */
+    public String toString(Tag tag) {
+        return null;
+    }
+
+    /**
+     * Returns null to force the taglet infrastructure to call
+     * the more sophisticated toString method below.  FIXME: this
+     * seems to be broken.
+     */
+    public String toString(Tag[] tags) {
+        return null;
+    }
 
     public String toString(Tag tag, Doc doc, HtmlStandardWriter writer) {
         StringBuffer result = new StringBuffer("href=\""+
@@ -64,8 +132,8 @@ public class HrefTaglet extends AbstractInlineTaglet {
         System.out.println(
             "When run with the javadoc tool, the HrefTaglet\n"
             + "will replace inline references such as\n\n"
-            + "  {@href com.acme.babblefish.BabbleFish}\n\n"
+            + "  {@" + NAME + " com.acme.babblefish.BabbleFish}\n\n"
             + "with a string such as\n\n"
-            + "  com/acme/babblefish/BabbleFish.html\n\n");
+            + "  com/acme/babblefish/BabbleFish.html");
     }
 }
