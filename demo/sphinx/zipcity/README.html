@@ -16,12 +16,15 @@
  */
 
 -->
-  <title>Sphinx-4 Hello World! Demo</title>
+  <title>Sphinx-4 ZipCity Demo</title>
   <style type="text/css">
   pre { font-size: medium; background: #f0f8ff; padding: 2mm; 
         border-style: ridge ; color: teal }
   code { font-size: medium; color: teal }
   </style>
+  <meta name="author" content="The Sphinx-4 team">
+  <meta name="description"
+ content="A description of how to build and run the ZipCity demo">
 </head>
 <body>
 <font face="Times New Roman">
@@ -30,7 +33,7 @@
   <tbody>
     <tr>
       <td align="center" width="100%">
-      <h1><i>Sphinx-4</i> Zip City Demo<br>
+      <h1><i>Sphinx-4</i> ZipCity Demo<br>
       </h1>
       </td>
     </tr>
@@ -39,9 +42,29 @@
 </center>
 </font> <font face="Arial" size="2">
 <p>This is a Java WebStart application that will demonstrate digit
-recognition </p>
+recognition. ZipCity will listen for spoken zip codes and will display
+the associated city and state.<br>
+</p>
+<p><img src="screenshot.gif" title="" alt="ZipCity screen shot"
+ style="width: 450px; height: 408px;"><br>
+</p>
+<p>Once ZipCity is running, click on the <span
+ style="font-weight: bold;">Speak</span> button and then speak your zip
+code (a five-digit number).&nbsp; The recognized digits as well as the
+associated city and state will be displayed</p>
+</font><code></code> <font face="Arial" size="2">
+</font>
+<h3><font face="Arial" size="2">
+<p> </p>
+</font></h3>
+<font face="Arial" size="2">
 <h3>Building</h3>
-<p> Check if the <code>bin</code> directory already has the<span
+<p>You only need to build ZipCity if you are running it as a
+stand-alone application. You do not need to build ZipCity to run it as
+a WebStart application.<br>
+</p>
+<p>If you intend to run ZipCity as a stand-alone application, check the
+<code>bin</code> directory to determine if it already has the<span
  style="font-family: monospace;"> ZipCity</span><code>.jar</code> file.
 If not, you need to build the demo to create that JAR. To build this
 demo, merely type the following:</p>
@@ -53,23 +76,47 @@ level directory. You can run the demo using <code>java -jar</code>
 (see "Running" below).<span style="font-weight: bold;"><br>
 </span></p>
 </font>
-<h3><font face="Arial" size="2">
-<p><span style="font-weight: bold;"></span>Running<br>
-</p>
+<h3><font face="Arial" size="2"></font>
+<p><font face="Arial" size="2"><big>Running<br>
+</big></font></p>
+</h3>
 <p><font face="Arial" size="2">
-<p><span style="font-weight: bold;"><br>
-</span></p>
+<p>To run ZipCity as a WebStart application, click here:&nbsp; <a
+ href="http://cmusphinx.sourceforge.net/sphinx4/zipcity/zipcity.jnlp">ZipCity
+WebStart</a><br>
+<br>
+You can also run ZipCity as a stand-alone application. To do so first
+make sure that you have <a
+ href="http://cmusphinx.sourceforge.net/sphinx4/doc/jsapi_setup.html"
+ style="font-weight: bold;">JSAPI setup</a> correctly. Then, to run the
+demo, type: </p>
 </font></p>
-</font></h3>
+<code>sphinx4&gt; java -mx256m -jar bin/ZipCity.jar<br>
+<br>
+</code><font face="Arial" size="2">
+<p> <font color="#ff0000"><b>NOTE:</b></font> </p>
+<ol>
+  <li> Make sure that you give it a large enough heap by putting in
+"-mx256m". </li>
+  <li> Make sure that you are using Java<sup>TM</sup> 2 SDK, Standard
+Edition, v1.4 or higher. </li>
+  <li> If you have the source distribution, make sure that the JAR file
+    <code>lib/sphinx4.jar</code> is built. If not, go to the top level
+directory and type: <code>ant</code></li>
+  <li>Visit the <a href="http://java.sun.com/products/javawebstart/">Java
+Web Start Technology page </a>to learn more about how standalone Java
+software applications can be deployed with a single click over the
+network.</li>
+</ol>
+</font>
 <h3 style="font-weight: bold;"><font face="Arial" size="2">
-<p>Acknowledgments<br>
+<p><big>Acknowledgments</big><br>
 </p>
 </font></h3>
-<font face="Arial" size="2" style="font-weight: bold;"> </font>
-<font face="Arial" size="2"></font>Thanks to the <a
- href="http://sourceforge.net/projects/zipcodedb/">The <span
- style="background-color: pink;">Zipcode</span> Database Project</a>&nbsp;
-for the use of their Zipcode database.<br>
+<font face="Arial" size="2" style="font-weight: bold;"> </font><small>
+Thanks to the <a href="http://sourceforge.net/projects/zipcodedb/">The
+<span style="background-color: pink;">Zipcode</span> Database Project</a>&nbsp;
+for the use of their Zipcode database.</small><br>
 <hr>Copyright 1999-2004 Carnegie Mellon University.
 <br>
 Portions Copyright 2002-2004 Sun Microsystems, Inc.
