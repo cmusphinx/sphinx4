@@ -145,7 +145,6 @@ public class LargeTrigramModel implements LanguageModel {
     }
 
 
-
     /**
      * Builds the map from unigram to unigramID.
      * Also finds the startWordID and endWordID.
@@ -167,9 +166,9 @@ public class LargeTrigramModel implements LanguageModel {
      * Called before a recognition
      */
     public void start() {
-	loadedBigramBuffer.clear();
-	loadedTrigramBuffer.clear();
-	trigramCache.clear();
+        loadedBigramBuffer.clear();
+        loadedTrigramBuffer.clear();
+        trigramCache.clear();
     }
     
     /**
@@ -271,7 +270,8 @@ public class LargeTrigramModel implements LanguageModel {
             return getUnigramProbability(wordSequence.getNewest());
         }
         if (!hasUnigram(secondWord)) {
-            throw new Error("Bad word2: " + secondWord);
+            // throw new Error("Bad word2: " + secondWord);
+            secondWord = "<unk>";
         }
 
         int firstWordID = getWordID(firstWord);
