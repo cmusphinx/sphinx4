@@ -158,7 +158,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         boolean done = false;
         Result result;
 
-        int nFinishedFrames = 0;
+        // int nFinishedFrames = 0;
 
         for (activeList = activeBucket.getNextList();
              activeList != null;
@@ -174,9 +174,9 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                     }
                     currentFrameNumber++;
                 }
-                pruneBranches(); 		// eliminate poor branches
+                pruneBranches(); 	    // eliminate poor branches
                 growBranches(); 	    // extend remaining branches
-                if (++nFinishedFrames == nFrames)
+                if (currentFrameNumber == nFrames)
                     break; // Stop if we've finished the required frames.
             }
         }
@@ -210,7 +210,8 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         curTokensScored.value = 0;
 
         try {
-            activeBucket = new SimpleActiveListManager(props);
+            activeBucket = new SimpleActiveListManager
+                (props, linguist.getSearchStateOrder());
             loserManager = new AlternateHypothesisManager(props);
 
             //ActiveList newActiveList = (ActiveList)
