@@ -8,8 +8,6 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.ListIterator;
 
 
 /**
@@ -211,18 +209,20 @@ public class CepstralMeanNormalizer extends DataProcessor {
      */
     private void updateMeanSumBuffers() {
 
-	// update the currentMean buffer with the sum buffer
-	float sf = (float) (1.0/numberFrame);
-
-        System.arraycopy(sum, 0, currentMean, 0, sum.length);
-
-        multiplyArray(currentMean, sf);
-
-	// decay the sum buffer exponentially
-	if (numberFrame >= cmnShiftWindow) {
-            multiplyArray(sum, (sf * cmnWindow));
-	    numberFrame = cmnWindow;
-	}
+        if (numberFrame > 0) {
+            // update the currentMean buffer with the sum buffer
+            float sf = (float) (1.0/numberFrame);
+            
+            System.arraycopy(sum, 0, currentMean, 0, sum.length);
+            
+            multiplyArray(currentMean, sf);
+            
+            // decay the sum buffer exponentially
+            if (numberFrame >= cmnShiftWindow) {
+                multiplyArray(sum, (sf * cmnWindow));
+                numberFrame = cmnWindow;
+            }
+        }
     }
 
 
