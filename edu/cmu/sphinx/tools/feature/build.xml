@@ -32,6 +32,7 @@ Run ant with -Dlogger=logger.props to turn on the logging.
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="input"              value="/dev/null"/>
     <property name="output"             value="/dev/null"/>
+    <property name="format"             value="binary"/>
     <property name="logger"       value=""/>
 
     <!-- ********************************************************** -->
@@ -88,9 +89,11 @@ Run ant with -Dlogger=logger.props to turn on the logging.
                   <jvmarg value="-ea"/>
                   <sysproperty key="java.util.logging.config.file"
                          value="${logger}"/>
-		  <arg value="cepstra_dump.props"/>
+		  <arg value="frontend.config.xml"/>
+		  <arg value="cepstraFrontEnd"/>
 		  <arg value="${input}"/>
 		  <arg value="${output}"/>
+		  <arg value="${format}"/>
             </java>
     </target>
 
@@ -109,9 +112,11 @@ Run ant with -Dlogger=logger.props to turn on the logging.
                   <jvmarg value="-ea"/>
                   <sysproperty key="java.util.logging.config.file"
                          value="${logger}"/>
-		  <arg value="plp_dump.props"/>
+		  <arg value="frontend.config.xml"/>
+		  <arg value="plpFrontEnd"/>
 		  <arg value="${input}"/>
 		  <arg value="${output}"/>
+		  <arg value="${format}"/>
             </java>
     </target>
 
@@ -121,7 +126,7 @@ Run ant with -Dlogger=logger.props to turn on the logging.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="spectra_producer"
-	    description="Produces plp."
+	    description="Produces spectra."
 	    depends="all">
 	    <java classname="edu.cmu.sphinx.tools.feature.FeatureFileDumper"
 	          classpath="${classes_dir}"
@@ -130,9 +135,11 @@ Run ant with -Dlogger=logger.props to turn on the logging.
                   <jvmarg value="-ea"/>
                   <sysproperty key="java.util.logging.config.file"
                          value="${logger}"/>
-		  <arg value="spectra_dump.props"/>
+		  <arg value="frontend.config.xml"/>
+		  <arg value="spectraFrontEnd"/>
 		  <arg value="${input}"/>
 		  <arg value="${output}"/>
+		  <arg value="${format}"/>
             </java>
     </target>
 
