@@ -25,7 +25,7 @@ SUBDIRS =
 
 PROFILE_FLAGS= -Xprof -server
 LOG_GC_FLAGS=  -Xloggc:gc.txt
-GC_FLAGS = -ms256m -mx800m
+GC_FLAGS = -ms256m -mx900m
 
 # LOGGER_PROPERTIES=tidigits.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
@@ -142,6 +142,8 @@ q_rm1onrm1_unigram:
 
 RM1_BIGRAM_CMD = $(JAVA_CMD) \
 	-Dedu.cmu.sphinx.model.language.location=RM.2845.bigram.arpa \
+        -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10 \
+        -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10 \
 	edu.cmu.sphinx.decoder.BatchDecoder
 
 rm1_bigram:
