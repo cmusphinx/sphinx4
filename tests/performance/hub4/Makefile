@@ -107,6 +107,13 @@ hub4_trigram_f1:
 	$(MAKE) BATCH=$(HUB4_DIR)/f1_hub4.batch hub4_trigram_wpbfsm
 
 
+hub4_trigram_pooled:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=false \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.usePooledBatchManager=true \
+	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.wpbfsm.props   \
+	$(BATCH) hub4_trigram_wpbfsm
 
 # #########################################################
 # Implementations
