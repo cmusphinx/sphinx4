@@ -163,10 +163,31 @@ import edu.cmu.sphinx.util.props.Registry;
  * <i>Figure 4: Grammar graph created from the Command grammar. </i>
  * 
  * <p>
+ * <h3>Limitations</h3>
+ *
+ * There is a known limitation with the current JSGF support.
+ * Grammars that contain non-speech loops
+ * currently cause the recognizer to hang.  
+ * <p>
+ * For example, in the following grammar
+ *
+ * <pre>
+ *  #JSGF V1.0
+ *  grammar jsgf.nastygram;
+ *  public <nasty> = I saw a ((cat* | dog* | mouse*)+)+;
+ * </pre>
+ *
+ * the production: ((cat* | dog* | mouse*)+)+ can result in a
+ * continuous loop, since (cat* | dog* | mouse*) can represent no
+ * speech (i.e. zero cats, dogs and mice), this is equivalent to ()+.
+ * To avoid this problem, the grammar writer should ensure that there
+ * are no rules that could possibly match no speech within a plus
+ * operator or kleene star operator.
+ * 
+ * <p>
  * <h3>Implementation Notes</h3>
  * <ol>
- * <li>This implementation does not support right-hand recursion.
- * <li>All probabilities are maintained in LogMath log base.
+ * <li>All internal probabilities are maintained in LogMath log base.
  * </ol>
  */
 public class JSGFGrammar extends Grammar {
