@@ -1,2 +1,0 @@
-Main-Class: demo.sphinx.helloworld.HelloDigits
-Class-Path: ../lib/sphinx4.jar ../../lib/jsapi.jar
