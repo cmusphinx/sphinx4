@@ -71,7 +71,7 @@ public final class LogMath implements Serializable {
      */
 
     public final static boolean PROP_USE_ADD_TABLE_DEFAULT
-	= false;
+	= true;
 
     private double logBase;
     private boolean useAddTable;
@@ -358,7 +358,8 @@ public final class LogMath implements Serializable {
 	if (!useAddTable) {
 	    return addTableActualComputation(index);
 	} else {
-	    int intIndex = (int) Math.rint(index);
+	    // int intIndex = (int) Math.rint(index);
+	    int intIndex = (int) (index + 0.5);
 	    // When adding two numbers, the highest one should be
 	    // preserved, and therefore the difference should always
 	    // be positive.
