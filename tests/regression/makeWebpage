@@ -205,6 +205,7 @@ function getRunStatus(testName, count) {
 function printSingleTest(testName, testCount) {
     updateData(testName, testCount);
     date = data[F_DATE];
+    runTime = data[F_PROC_TIME];
     status = getRunStatus(testName, testCount);
     accuracy = getAccuracyStatus(testName, testCount);
     speed = getSpeedStatus(testName, testCount);
@@ -213,6 +214,7 @@ function printSingleTest(testName, testCount) {
     print status;
     print accuracy;
     print speed;
+    print "<td>" fmtTime(runTime)"</td>";
     print "</tr>"
 }
 
@@ -251,7 +253,7 @@ function printTestResults(testName) {
     print "<table align=center cellpadding=2 cellspacing=2 border=1 width=60%>";
     print "<tbody>";
     print "<tr align=center>";
-    print "<td valign=top rowspan=1 colspan=4 bgcolor=#ccccff>";
+    print "<td valign=top rowspan=1 colspan=5 bgcolor=#ccccff>";
     print "<big><b>" testName "</b></big>";
     print "<br>"
     print "</td>";
@@ -261,6 +263,7 @@ function printTestResults(testName) {
       print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
       print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
       print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
+      print "<td valign=top bgcolor=#ccffff><b>Test Time<br> </b></td>";
 
       for (i = 1; i <= testCount[testName]; i++) {
          printSingleTest(testName, i);
