@@ -1,8 +1,12 @@
 # this is the ordered set of medium vocabulary tests
+wsj5k_trigram
+
+rm1_trigram_quick
+rm1_trigram
+
 rm1_flat_unigram_quick
 rm1_unigram_quick
 rm1_bigram_quick
-rm1_trigram_quick
 
 rm1_flat_unigram_fst_quick
 rm1_unigram_fst_quick
@@ -11,8 +15,8 @@ rm1_bigram_fst_quick
 rm1_flat_unigram
 rm1_unigram
 rm1_bigram
-rm1_trigram
 
 rm1_flat_unigram_fst
 rm1_unigram_fst
 rm1_bigram_fst
+

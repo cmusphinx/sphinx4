@@ -27,5 +27,6 @@
 ./runTest ../performance/tidigits tidigits_wordlist
 ./runTest ../performance/tidigits tidigits_flat_unigram
 ./runTest ../performance/tidigits tidigits_flat_unigram_fst
+./runTest ../performance/wsj20k wsj20k_trigram
 
 touch ./.testDone

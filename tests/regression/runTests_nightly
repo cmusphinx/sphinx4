@@ -36,6 +36,7 @@
 ./runTest ../performance/an4 an4_words_wordlist
 ./runTest ../performance/an4 an4_words_unigram
 ./runTest ../performance/an4 an4_words_bigram
+./runTest ../performance/an4 an4_words_trigram
 ./runTest ../performance/an4 an4_words_unigram_fst
 ./runTest ../performance/an4 an4_words_bigram_fst
 ./runTest ../performance/an4 an4_words_trigram_fst

@@ -140,7 +140,7 @@ function getSpeed(testName, testCount, _audioTime, _procTime) {
     _audioTime = data[F_AUDIO_TIME];
     _procTime = data[F_PROC_TIME];
 
-    if (_audioTime == "" || _procTime == "") {
+    if (_audioTime == "" || _procTime == "" || _audioTime == 0 || _procTime == 0) {
         return "N/A";
     } else {
 	return _procTime / _audioTime;
