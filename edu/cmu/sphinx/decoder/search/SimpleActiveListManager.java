@@ -16,6 +16,8 @@ package edu.cmu.sphinx.decoder.search;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.decoder.linguist.simple.*;
+import edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist;
+
 import java.util.AbstractMap;
 import java.util.HashMap;
 
@@ -28,11 +30,28 @@ import java.util.HashMap;
  */
 public class SimpleActiveListManager implements ActiveListManager  {
 
-    Class listOrder[] = new Class[6];
+    Class listOrder[] = {
+        // Todo: Find an alternative to hardcoding the state class order.
+        // TODO:  This is a horrible hack.  How should we really do this
+        // TODO: it is tied to the question of what information should
+        // TODO: be exported by the linguist
+        LexTreeLinguist.LexTreeInitialState.class,
+        HMMStateState.class,
+        LexTreeLinguist.LexTreeHMMState.class,
+        HMMStateStateNE.class,
+        LexTreeHMMStateNE.class,
+        BranchState.class,
+        LexTreeLinguist.LexTreeUnitState.class,
+        PronunciationState.class,
+        LexTreeLinguist.LexTreeWordState.class,
+        ExtendedUnitState.class,
+        GrammarState.class
+    };
     AbstractMap listMap = new HashMap();
     SphinxProperties props;
     int listPtr = 0;
     private class HMMStateStateNE {}
+    private class LexTreeHMMStateNE {}
     int absoluteWordBeamWidth;
     float relativeWordBeamWidth;
 
@@ -51,13 +70,7 @@ public class SimpleActiveListManager implements ActiveListManager  {
         LogMath logMath = LogMath.getLogMath(props.getContext());
         relativeWordBeamWidth = logMath.linearToLog(linearRelativeWordBeamWidth);
 
-        // Todo: Find an alternative to hardcoding the state class order.
-        listOrder[0] = HMMStateState.class;
-        listOrder[1] = HMMStateStateNE.class;
-        listOrder[2] = BranchState.class;
-        listOrder[3] = PronunciationState.class;
-        listOrder[4] = ExtendedUnitState.class;
-        listOrder[5] = GrammarState.class;
+
     }
 
     /**
@@ -70,15 +83,25 @@ public class SimpleActiveListManager implements ActiveListManager  {
         return new SimpleActiveListManager(props);
     }
 
+
+
+
     /**
      * Adds the given token to the list
      *
      * @param token the token to add
      */
     public void add(Token token) {
+        assert isKnownType(token);
+
         Class type;
+        // TODO:  This is a horrible hack.  How should we really do this
+        // TODO: it is tied to the question of what information should
+        // TODO: be exported by the linguist
         if (token.getSearchState() instanceof HMMStateState && !token.isEmitting()) {
             type = HMMStateStateNE.class;
+        } else if( token.getSearchState() instanceof LexTreeLinguist.LexTreeHMMState && !token.isEmitting() ) {
+            type = LexTreeHMMStateNE.class;
         } else {
             type = token.getSearchState().getClass();
         }
@@ -92,21 +115,16 @@ public class SimpleActiveListManager implements ActiveListManager  {
             activeList = simpleActiveList;
             listMap.put(type, activeList);
         }
-
-/*        if (token.getSearchState() instanceof HMMStateState) {
-        } else if (token.getSearchState() instanceof HMMStateState) {
-        } else if (token.getSearchState() instanceof HMMStateStateNE) {
-        } else if (token.getSearchState() instanceof BranchState) {
-        } else if (token.getSearchState() instanceof PronunciationState) {
-        } else if (token.getSearchState() instanceof ExtendedUnitState) {
-        } else if (token.getSearchState() instanceof GrammarState) {
-         } else {
-            int i = 3;
-            i = 4;
-        } */
-
-
         activeList.add(token);
+    }
+
+    private boolean isKnownType(Token token) {
+        for (int i = 0; i<listOrder.length;i++) {
+            if (token.getSearchState().getClass() == listOrder[i]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private ActiveList findListFor(Token token) {
@@ -137,7 +155,7 @@ public class SimpleActiveListManager implements ActiveListManager  {
         if (listMap.isEmpty()) {
             return null;
         }
-        if (listPtr == 6) {
+        if (listPtr == listOrder.length) {
             listPtr = 0;
         }
 
