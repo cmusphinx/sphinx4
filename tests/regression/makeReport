@@ -118,6 +118,20 @@ function getTime(testName, testCount, _audioTime, _procTime) {
 }
 
 ####
+# gets the average heap size
+#
+function getHeap(testName, testCount) {
+    updateData(testName, testCount);
+    if (data[F_HEAP_SIZE] == "") {
+        return "N/A";
+    } else {
+	return data[F_HEAP_SIZE];
+    }
+}
+
+
+
+####
 # returns the accuracy status for the given test
 #
 function getAccuracyStatus(testName) {
@@ -180,6 +194,36 @@ function getTimeStatus(testName, _slowThreshold, _fastThreshold) {
       	thisTime " ";
   }
   return "OK - " thisTime " ";
+}
+
+####
+# returns the heap average for the given test
+#
+function getHeapStatus(testName, _minThreshold, _maxThreshold) {
+  thisHeap = getHeap(testName, testCount[testName]);
+  prevHeap = getHeap(testName, testCount[testName] - 1);
+
+  if (thisHeap == "N/A") {
+      return "N/A";
+  }
+
+  if (prevHeap == "N/A") {
+      return "OK - " thisHeap " ";
+  }
+
+  _maxThreshold = prevHeap + prevHeap * .1;
+  _minThreshold = prevHeap - prevHeap * .1;
+
+  if (thisHeap > _maxThreshold) {
+      return "REGRESSED - increased from " prevHeap " to " \
+      	thisHeap " " ;
+  }
+
+  if (thisHeap  < _minThreshold) {
+      return "IMPROVED  - decreased from " prevHeap " to " \
+      	thisHeap " ";
+  }
+  return "OK - " thisHeap " ";
 }
 
 ####
@@ -246,6 +290,7 @@ END {
 	print "    Status            "  getRunStatus(i);
 	print "    Accuracy (WER %)  "  getAccuracyStatus(i);
 	print "    Time (X Realtime) "  getTimeStatus(i);
+	print "    Average Heap (MB) "  getHeapStatus(i);
 	printf("\n");
     }
     print ""

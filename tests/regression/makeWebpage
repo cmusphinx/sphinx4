@@ -126,6 +126,21 @@ function getSpeed(testName, testCount, _audioTime, _procTime) {
 }
 
 ####
+# gets the average heap size
+#
+function getHeap(testName, testCount) {
+    updateData(testName, testCount);
+
+# print "Data " testData[testName testCount]
+
+    if (data[F_HEAP_SIZE] == "") {
+        return "N/A";
+    } else {
+	return data[F_HEAP_SIZE];
+    }
+}
+
+####
 # returns the accuracy status for the given test
 #
 function getAccuracyStatus(testName, count) {
@@ -183,7 +198,37 @@ function getSpeedStatus(testName, count, _slowThreshold, _fastThreshold) {
   if (thisSpeed  < _fastThreshold) {
       return "<td bgcolor=#99ff99>" thisSpeed "</td>";
   }
-      return "<td>" thisSpeed "</td>";
+  return "<td>" thisSpeed "</td>";
+}
+
+####
+# returns the heap average for the given test
+#
+function getHeapStatus(testName, count, _minThreshold, _maxThreshold) {
+  thisHeap = getHeap(testName, count);
+  prevHeap = getHeap(testName, count - 1);
+
+  if (thisHeap == "N/A") {
+      return "<td bgcolor=#ffcccc>" "N/A" "</td>";
+  }
+
+  if (prevHeap == "N/A") {
+      return "<td>" thisHeap "</td> ";
+  }
+
+  _maxThreshold = prevHeap + prevHeap * .1;
+  _minThreshold = prevHeap - prevHeap * .1;
+
+  if (thisHeap > _maxThreshold) {
+      # return "<td bgcolor=#ffcccc>" thisHeap "</td>";
+      return "<td bgcolor=#ffffff>" thisHeap "</td>";
+  }
+
+  if (thisHeap  < _minThreshold) {
+      # return "<td bgcolor=#99ff99>" thisHeap "</td>";
+      return "<td bgcolor=#ffffff>" thisHeap "</td>";
+  }
+  return "<td>" thisHeap "</td>";
 }
 
 ####
@@ -209,11 +254,13 @@ function printSingleTest(testName, testCount) {
     status = getRunStatus(testName, testCount);
     accuracy = getAccuracyStatus(testName, testCount);
     speed = getSpeedStatus(testName, testCount);
+    heap = getHeapStatus(testName, testCount);
     print "<tr>"
     print "<td>" dateAnchor(date)  "</td>"
     print status;
     print accuracy;
     print speed;
+    print heap;
     print "<td>" fmtTime(runTime)"</td>";
     print "</tr>"
 }
@@ -224,12 +271,14 @@ function printLongSingleTest(testName, testCount) {
     status = getRunStatus(testName, testCount);
     accuracy = getAccuracyStatus(testName, testCount);
     speed = getSpeedStatus(testName, testCount);
+    heap = getHeapStatus(testName, testCount);
     print "<tr>";
     print "<td>" dateAnchor(date)  "</td>";
     print "<td><a href=#" testName ">" testName  "</a></td>";
     print status;
     print accuracy;
     print speed;
+    print heap;
     print "</tr>";
 }
 
@@ -253,7 +302,7 @@ function printTestResults(testName) {
     print "<table align=center cellpadding=2 cellspacing=2 border=1 width=60%>";
     print "<tbody>";
     print "<tr align=center>";
-    print "<td valign=top rowspan=1 colspan=5 bgcolor=#ccccff>";
+    print "<td valign=top rowspan=1 colspan=6 bgcolor=#ccccff>";
     print "<big><b>" testName "</b></big>";
     print "<br>"
     print "</td>";
@@ -263,6 +312,7 @@ function printTestResults(testName) {
       print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
       print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
       print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
+      print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
       print "<td valign=top bgcolor=#ccffff><b>Test Time<br> </b></td>";
 
       for (i = 1; i <= testCount[testName]; i++) {
@@ -306,7 +356,7 @@ function printBuildHistory() {
    print "<table cellpadding=2 cellspacing=2 border=1 width=80% align=center>";
    print "<tbody>";
    print "<tr align=center>";
-   print "<td valign=top rowspan=1 colspan=5";
+   print "<td valign=top rowspan=1 colspan=6";
    print "    bgcolor=#ccccff><big><b>Build History<br>";
    print "</b></big></td> </tr>";
    print "<tr>";
@@ -494,7 +544,7 @@ function printLatestTestResults(  _testName, _testCount) {
     print "<table align=center cellpadding=2 cellspacing=2 border=1 width=80%>";
     print "<tbody>";
     print "<tr align=center>";
-    print "<td valign=top rowspan=1 colspan=5 bgcolor=#ccccff>";
+    print "<td valign=top rowspan=1 colspan=6 bgcolor=#ccccff>";
     print "<big><b>" "Latest Test Results" "</b></big>";
     print "<br>"
     print "</td>";
@@ -505,6 +555,7 @@ function printLatestTestResults(  _testName, _testCount) {
     print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
 
     for (i = 0; i < lastTestCount; i++) {
         split(lastTestData[i], thisData);
