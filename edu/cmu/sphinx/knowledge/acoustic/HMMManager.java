@@ -94,7 +94,9 @@ class HMMManager {
 
         for (int i = 0; i < hmmsPerPosition.length; i++) {
 	    Map map = hmmsPerPosition[i];
-	    count += map.size();
+	    if (map != null) {
+		count += map.size();
+	    }
 	}
 	return count;
     }
