@@ -74,7 +74,7 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
      * @param streamName the name of the InputStream
      */
     public void setInputStream(InputStream inputStream, String streamName) {
-	
+
         this.audioStream = inputStream;
         
         streamEndReached = false;
@@ -114,9 +114,16 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
             if (!utteranceStarted) {
                 utteranceStarted = true;
                 output = new Audio(Signal.UTTERANCE_START);
-                
             } else {
-                output = readNextFrame();
+                if (audioStream != null) {
+                    output = readNextFrame();
+                    if (output == null) {
+                        if (!utteranceEndSent) {
+                            output = new Audio(Signal.UTTERANCE_END);
+                            utteranceEndSent = true;
+                        }
+                    }
+                }
             }
         }
 
@@ -151,8 +158,7 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
 	} while (read != -1 && totalRead < bytesToRead);
 
         if (totalRead <= 0) {
-            streamEndReached = true;
-            audioStream.close();
+            closeAudioStream();
             return null;
         }
 
@@ -163,8 +169,7 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
             byte[] shrinkedBuffer = new byte[totalRead];
             System.arraycopy(samplesBuffer, 0, shrinkedBuffer, 0, totalRead);
             samplesBuffer = shrinkedBuffer;
-            streamEndReached = true;
-            audioStream.close();
+            closeAudioStream();
         }
 
         // turn it into an Audio
@@ -186,6 +191,13 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
         }
         
         return audio;
+    }
+
+    private void closeAudioStream() throws IOException {
+        streamEndReached = true;
+        if (audioStream != null) {
+            audioStream.close();
+        }
     }
 }
 
