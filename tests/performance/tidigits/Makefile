@@ -69,7 +69,7 @@ all:: ${CLASSES} ${STUBS}
 
 ##########################################################################
 #
-# The TIDIGITS tests that uses FlatLinguist.
+# The TIDIGITS tests that uses TreeLinguist.
 #
 ##########################################################################
 
@@ -144,7 +144,7 @@ tidigits_super_quick_align:
 
 ##########################################################################
 #
-# The TIDIGITS tests that uses TreeLinguist.
+# The TIDIGITS tests that uses FlatLinguist.
 #
 ##########################################################################
 
@@ -152,10 +152,10 @@ tidigits_super_quick_align:
 
 # The TIDIGITS test, but uses the TreeLinguist instead of the FlatLinguist
 
-tidigits_tree:
+tidigits_flat:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
-	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.TreeLinguist\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0 \
+	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=true \
 	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
 
 
@@ -163,7 +163,7 @@ tidigits_tree:
 # A quick version of the TIDIGITS test, but uses the TreeLinguist
 # instead of the FlatLinguist
 
-tidigits_quick_tree:
+tidigits_quick_flat:
 	$(JAVA_CMD)   \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
 	-Dedu.cmu.sphinx.model.acoustic.useComposites=false\
@@ -173,7 +173,7 @@ tidigits_quick_tree:
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-36 \
 	-Dtests.search.Decoder.showBestToken=false \
 	-Dtests.search.Decoder.showErrorToken=true \
-	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.TreeLinguist\
+	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=true \
 	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
 
 
@@ -181,15 +181,32 @@ tidigits_quick_tree:
 # A very quick version of the TIDIGITS test, but uses the TreeLinguist
 # instead of the FlatLinguist
 
-tidigits_super_quick_tree:
+tidigits_super_quick_flat:
 	$(JAVA_CMD)   \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
 	-Dedu.cmu.sphinx.model.acoustic.useComposites=false\
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true\
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
-	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.TreeLinguist\
+	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=true \
 	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props ./tidigits.batch
 
+
+
+# A quick version of the TIDIGITS test, but uses the TreeLinguist
+# instead of the FlatLinguist
+
+tidigits_quick_flat_no_context:
+	$(JAVA_CMD)   \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true\
+	-Dedu.cmu.sphinx.search.Linguist.joinPronunciations=false \
+	-Dtests.search.Decoder.showPartialResults=false \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-36 \
+	-Dtests.search.Decoder.showBestToken=false \
+	-Dtests.search.Decoder.showErrorToken=true \
+	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=true \
+	$(NO_CONTEXT_FLAGS) \
+	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
 
 
 
