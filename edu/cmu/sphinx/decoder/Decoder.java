@@ -217,7 +217,20 @@ public class Decoder {
     /**
      * Decodes an utterance.
      *
-     * @param timer the Timer to use
+     * @return the decoded Result object
+     */
+    public Result decode() {
+	Timer timer = Timer.getTimer(context, "Decode");
+        timer.start();  // start the timer
+	Result result = recognizer.recognize();
+        timer.stop();  // stop the timer
+        return result;
+    }
+
+
+    /**
+     * Decodes an utterance.
+     *
      * @param ref the reference input
      *
      * @return the decoded Result
