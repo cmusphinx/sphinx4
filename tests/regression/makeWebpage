@@ -414,9 +414,10 @@ function printBuildHistory() {
 
 function printMachineDescription() {
     split(machineDescription, data);
-    javaHome = environment[4];
-    javaVersion = environment[5];
-    uptime = environment[6];
+    split(environment, envData);
+    javaHome = envData[4];
+    javaVersion = envData[5];
+    uptime = envData[6];
     "date" | getline theDate;
 
     print("<br><br>");
