@@ -20,13 +20,13 @@ import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
 /**
  * Represents a state where different states merge into.
  */
-public class CombineState extends edu.cmu.sphinx.decoder.linguist.SentenceHMMState {
+public class CombineState extends SentenceHMMState {
 
     /**
      * Creates a CombineState
      *
      */
-    public CombineState(edu.cmu.sphinx.decoder.linguist.SentenceHMMState parent, int which) {
+    public CombineState(SentenceHMMState parent, int which) {
 	super("C", parent,  which);
     }
 

@@ -20,13 +20,13 @@ import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
 /**
  * Represents a state where it splits into multiple streams.
  */
-public class SplitState extends edu.cmu.sphinx.decoder.linguist.SentenceHMMState {
+public class SplitState extends SentenceHMMState {
 
     /**
      * Creates a SplitState
      *
      */
-    public SplitState(edu.cmu.sphinx.decoder.linguist.SentenceHMMState parent, int which) {
+    public SplitState(SentenceHMMState parent, int which) {
 	super("SP", parent,  which);
     }
 

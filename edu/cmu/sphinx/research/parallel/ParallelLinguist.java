@@ -54,7 +54,7 @@ import java.util.Set;
  * Constructs a SentenceHMM that is capable of decoding multiple
  * feature streams in parallel.
  */
-public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguist {
+public class ParallelLinguist implements Linguist {
 
     private static final String PROP_PREFIX = 
 	"edu.cmu.sphinx.research.parallel.ParallelLinguist.";
@@ -79,7 +79,7 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
 
 
     private String context;
-    private edu.cmu.sphinx.decoder.linguist.SentenceHMMState initialState;  // the first SentenceHMMState
+    private SentenceHMMState initialState;  // the first SentenceHMMState
     private LanguageModel languageModel;
     private AcousticModel[] acousticModels;
 
@@ -105,7 +105,7 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      *    we might have more than one acoustic models.
      */
     public void initialize(String context, LanguageModel languageModel,
-			   edu.cmu.sphinx.decoder.linguist.Grammar grammar, AcousticModel[] models) {
+			   Grammar grammar, AcousticModel[] models) {
 	this.context = context;
 	this.languageModel = languageModel;
 	this.logMath = LogMath.getLogMath(context);
@@ -118,13 +118,13 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
 	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 
 	silenceInsertionProbability = logMath.linearToLog
-	    (props.getDouble(edu.cmu.sphinx.decoder.linguist.Linguist.PROP_SILENCE_INSERTION_PROBABILITY,
+	    (props.getDouble(Linguist.PROP_SILENCE_INSERTION_PROBABILITY,
 			     PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT));
 	unitInsertionProbability = logMath.linearToLog
-	    (props.getDouble(edu.cmu.sphinx.decoder.linguist.Linguist.PROP_UNIT_INSERTION_PROBABILITY,
+	    (props.getDouble(Linguist.PROP_UNIT_INSERTION_PROBABILITY,
                              PROP_UNIT_INSERTION_PROBABILITY_DEFAULT));
 	wordInsertionProbability = logMath.linearToLog
-	    (props.getDouble(edu.cmu.sphinx.decoder.linguist.Linguist.PROP_WORD_INSERTION_PROBABILITY,
+	    (props.getDouble(Linguist.PROP_WORD_INSERTION_PROBABILITY,
                              PROP_WORD_INSERTION_PROBABILITY_DEFAULT));
 
 	addSelfLoopWordEndSilence =
@@ -145,7 +145,7 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      *
      * @return the initial SentenceHMMState
      */
-    public edu.cmu.sphinx.decoder.linguist.SentenceHMMState getInitialState() {
+    public SentenceHMMState getInitialState() {
 	return initialState;
     }
 
@@ -156,7 +156,7 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
     public void start() {
         // clear out all the SentenceHMMStates
         for (Iterator i = allStates.iterator(); i.hasNext(); ) {
-            edu.cmu.sphinx.decoder.linguist.SentenceHMMState state = (edu.cmu.sphinx.decoder.linguist.SentenceHMMState) i.next();
+            SentenceHMMState state = (SentenceHMMState) i.next();
             state.clear();
         }
     }
@@ -184,14 +184,14 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      *
      * @param grammar the Grammar object to compile
      */
-    private void compileGrammar(edu.cmu.sphinx.decoder.linguist.Grammar grammar) {
+    private void compileGrammar(Grammar grammar) {
 	Timer compileTimer = Timer.getTimer(context, "compileGrammar");
 
 	compileTimer.start();
 
 	Map compiledNodes = new HashMap();
 
-	edu.cmu.sphinx.decoder.linguist.GrammarNode firstGrammarNode = grammar.getInitialNode();
+	GrammarNode firstGrammarNode = grammar.getInitialNode();
 	this.initialState = compileGrammarNode(firstGrammarNode,compiledNodes);
 
 	compileTimer.stop();
@@ -205,8 +205,8 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      *
      * @param grammarNode the GrammarNode to return a GrammarState for
      */
-    private edu.cmu.sphinx.decoder.linguist.GrammarState getGrammarState(edu.cmu.sphinx.decoder.linguist.GrammarNode grammarNode) {
-	edu.cmu.sphinx.decoder.linguist.GrammarState grammarState = new edu.cmu.sphinx.decoder.linguist.GrammarState(grammarNode);
+    private GrammarState getGrammarState(GrammarNode grammarNode) {
+	GrammarState grammarState = new GrammarState(grammarNode);
 	return grammarState;
     }
 
@@ -220,11 +220,11 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      * @param languageProbability the language probability of the transition
      * @param insertionProbability the insertion probability of the transition
      */
-    private void attachState(edu.cmu.sphinx.decoder.linguist.SentenceHMMState src, edu.cmu.sphinx.decoder.linguist.SentenceHMMState dest,
+    private void attachState(SentenceHMMState src, SentenceHMMState dest,
 			     double acousticProbability,
 			     double languageProbability,
 			     double insertionProbability) {
-	src.connect(new edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc(dest,
+	src.connect(new SentenceHMMStateArc(dest,
 					    (float) acousticProbability,
 					    (float) languageProbability,
 					    (float) insertionProbability));
@@ -244,25 +244,25 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      * @return the first SentenceHMMState after compiling the GrammarNode
      *    into SentenceHMMStates
      */
-    private edu.cmu.sphinx.decoder.linguist.SentenceHMMState compileGrammarNode(edu.cmu.sphinx.decoder.linguist.GrammarNode grammarNode,
+    private SentenceHMMState compileGrammarNode(GrammarNode grammarNode,
 						Map compiledNodes) {
 
 	// create and expand the GrammarState for the GrammarNode
-	edu.cmu.sphinx.decoder.linguist.GrammarState firstState = getGrammarState(grammarNode);
+	GrammarState firstState = getGrammarState(grammarNode);
         allStates.add(firstState);
 	compiledNodes.put(grammarNode, firstState);
 
-	edu.cmu.sphinx.decoder.linguist.SentenceHMMState lastState = expandGrammarState(firstState);
+	SentenceHMMState lastState = expandGrammarState(firstState);
 
 	// expand the successor GrammarNodes
 	for (int i = 0; i < grammarNode.getSuccessors().length; i++) {
-	    edu.cmu.sphinx.decoder.linguist.GrammarArc arc = grammarNode.getSuccessors()[i];
-	    edu.cmu.sphinx.decoder.linguist.GrammarNode nextNode = arc.getGrammarNode();
-	    edu.cmu.sphinx.decoder.linguist.SentenceHMMState nextFirstState = null;
+	    GrammarArc arc = grammarNode.getSuccessors()[i];
+	    GrammarNode nextNode = arc.getGrammarNode();
+	    SentenceHMMState nextFirstState = null;
 
 	    if (compiledNodes.containsKey(nextNode)) {
 		// nextNode has already been compiled
-		nextFirstState = (edu.cmu.sphinx.decoder.linguist.SentenceHMMState)compiledNodes.get(nextNode);
+		nextFirstState = (SentenceHMMState)compiledNodes.get(nextNode);
 	    } else {
 		// get the first state from compiling the next GrammarNode
 		nextFirstState =
@@ -289,19 +289,19 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      *
      * @return the last state after expanding the given GrammarState
      */
-    private edu.cmu.sphinx.decoder.linguist.SentenceHMMState expandGrammarState(edu.cmu.sphinx.decoder.linguist.GrammarState grammarState) {
-	edu.cmu.sphinx.decoder.linguist.GrammarWord[][] alternatives =
+    private SentenceHMMState expandGrammarState(GrammarState grammarState) {
+	GrammarWord[][] alternatives =
 	    grammarState.getGrammarNode().getAlternatives();
 
 	if (alternatives.length == 0) {
 	    return grammarState;
 	} else {
-	    edu.cmu.sphinx.decoder.linguist.SentenceHMMState endGrammarState =
+	    SentenceHMMState endGrammarState =
 		new CombineState(grammarState, 0);
 	    
 	    for (int i = 0; i < alternatives.length; i++) {
-		edu.cmu.sphinx.decoder.linguist.AlternativeState alternativeState =
-		    new edu.cmu.sphinx.decoder.linguist.AlternativeState(grammarState, i);
+		AlternativeState alternativeState =
+		    new AlternativeState(grammarState, i);
 
 		// add this AlternativeState after the GrammarState
 		// Note that "logMath.getLogOne() - logValue" is
@@ -313,7 +313,7 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
 			    - logMath.linearToLog(alternatives.length),
 			    logMath.getLogOne());
 
-		edu.cmu.sphinx.decoder.linguist.SentenceHMMState lastState = expandAlternative
+		SentenceHMMState lastState = expandAlternative
 		    (alternativeState);
 
                 // if there is only one alternative, we don't need
@@ -343,12 +343,12 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      *
      * @return the last SentenceHMMState from the expansion
      */
-    private edu.cmu.sphinx.decoder.linguist.SentenceHMMState expandAlternative(edu.cmu.sphinx.decoder.linguist.AlternativeState state) {
-	edu.cmu.sphinx.decoder.linguist.GrammarWord alternative[] = state.getAlternative();
-	edu.cmu.sphinx.decoder.linguist.SentenceHMMState lastState = state;
+    private SentenceHMMState expandAlternative(AlternativeState state) {
+	GrammarWord alternative[] = state.getAlternative();
+	SentenceHMMState lastState = state;
 
 	for (int i = 0; i < alternative.length; i++) {
-	    edu.cmu.sphinx.decoder.linguist.WordState wordState = new edu.cmu.sphinx.decoder.linguist.WordState(state, i);
+	    WordState wordState = new WordState(state, i);
             
             // if its silence, use silenceInsertionProbability
             double insertionProbability = wordInsertionProbability;
@@ -375,19 +375,19 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      *
      * @return the last SentenceHMMState from the expansion
      */
-    private edu.cmu.sphinx.decoder.linguist.SentenceHMMState expandWord(edu.cmu.sphinx.decoder.linguist.WordState wordState) {
-	edu.cmu.sphinx.decoder.linguist.GrammarWord word = wordState.getWord();
+    private SentenceHMMState expandWord(WordState wordState) {
+	GrammarWord word = wordState.getWord();
 	Pronunciation[] pronunciations = word.getPronunciations();
 
 	// create the combining state for the multiple pronunciations
-	edu.cmu.sphinx.decoder.linguist.SentenceHMMState endWordState = new CombineState
+	SentenceHMMState endWordState = new CombineState
 	    (wordState.getParent(), wordState.getWhich());
 
 	for (int i = 0; i < pronunciations.length; i++) {
 
 	    // attach all pronunciation states to the wordState
-	    edu.cmu.sphinx.decoder.linguist.PronunciationState pronunciationState =
-		new edu.cmu.sphinx.decoder.linguist.PronunciationState(wordState, i);
+	    PronunciationState pronunciationState =
+		new PronunciationState(wordState, i);
 
 	    attachState(wordState, pronunciationState,
 			logMath.getLogOne(),
@@ -396,7 +396,7 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
 			logMath.getLogOne());
 
 	    // attach last state from expansion to endWordState
-	    edu.cmu.sphinx.decoder.linguist.SentenceHMMState lastState =
+	    SentenceHMMState lastState =
 		expandPronunciation(pronunciationState);
 
 	    // use the combining state only if there are more than
@@ -424,21 +424,21 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      *
      * @return the last SentenceHMMState from the expansion
      */
-    private edu.cmu.sphinx.decoder.linguist.SentenceHMMState expandPronunciation(edu.cmu.sphinx.decoder.linguist.PronunciationState state) {
+    private SentenceHMMState expandPronunciation(PronunciationState state) {
 	Pronunciation pronunciation = state.getPronunciation();
 	Unit[] units = pronunciation.getUnits();
 
-	edu.cmu.sphinx.decoder.linguist.SentenceHMMState lastState = state;
+	SentenceHMMState lastState = state;
 
 	// creates: - P - U - ... - U - ... - U - ...
 
 	for (int i = 0; i < units.length; i++) {
 
-	    edu.cmu.sphinx.decoder.linguist.UnitState unitState = null;
+	    UnitState unitState = null;
 
 	    if (i == 0 || i == (units.length - 1)) {
 		// the first and last units will be context-independent
-	        unitState = new edu.cmu.sphinx.decoder.linguist.UnitState(state, i, units[i]);
+	        unitState = new UnitState(state, i, units[i]);
 	    } else {
 		// the middle units will be context-dependent
 		Unit[] leftContext = new Unit[1];
@@ -450,7 +450,7 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
 		    (leftContext, rightContext);
 		Unit unit = new Unit(units[i].getName(), units[i].isFiller(),
 				     context);
-		unitState = new edu.cmu.sphinx.decoder.linguist.UnitState(state, i, unit);
+		unitState = new UnitState(state, i, unit);
 	    }
 
 	    // attach new unitState to 'lastState'
@@ -497,13 +497,13 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      *
      * @param state the SentenceHMMState to add the looping silence to
      */
-    private void addLoopSilence(edu.cmu.sphinx.decoder.linguist.SentenceHMMState state,
-				edu.cmu.sphinx.decoder.linguist.PronunciationState pronunciationState) {
+    private void addLoopSilence(SentenceHMMState state,
+				PronunciationState pronunciationState) {
 
 	// FIX: 'which' shouldn't go beyond the length of pronunciation
 	int which = pronunciationState.getPronunciation().getUnits().length;
 
-	edu.cmu.sphinx.decoder.linguist.UnitState unitState = new edu.cmu.sphinx.decoder.linguist.UnitState
+	UnitState unitState = new UnitState
 	    (pronunciationState, which, Unit.SILENCE);
 	
 	// add the silence UnitState to the state
@@ -513,7 +513,7 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
 		    silenceInsertionProbability);
 	
 	// expand the HMMTree
-	edu.cmu.sphinx.decoder.linguist.SentenceHMMState lastSilenceState = expandUnit(unitState);
+	SentenceHMMState lastSilenceState = expandUnit(unitState);
 	
 	// add a self-loop
 	attachState(lastSilenceState, unitState,
@@ -537,7 +537,7 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      *
      * @return the last SentenceHMMState from the expansion
      */
-    private edu.cmu.sphinx.decoder.linguist.SentenceHMMState expandUnit(edu.cmu.sphinx.decoder.linguist.UnitState unitState) {
+    private SentenceHMMState expandUnit(UnitState unitState) {
 
 	/*
         SentenceHMMState splitState = new SplitState
@@ -549,7 +549,7 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
 	logMath.getLogOne());
 	*/
 
-	edu.cmu.sphinx.decoder.linguist.SentenceHMMState combineState = new CombineState
+	SentenceHMMState combineState = new CombineState
 	    (unitState.getParent(), unitState.getWhich());
 
 	// create an HMM branch for each acoustic model
@@ -578,7 +578,7 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
 	    Map hmmStates = new HashMap();
 	    hmmStates.put(firstHMMState.getHMMState(), firstHMMState);
 
-	    edu.cmu.sphinx.decoder.linguist.SentenceHMMState lastState =
+	    SentenceHMMState lastState =
 		expandHMMTree(firstHMMState, acousticModels[i].getName(),
 			      hmmStates);
 	    attachState(lastState, combineState,
@@ -600,11 +600,11 @@ public class ParallelLinguist implements edu.cmu.sphinx.decoder.linguist.Linguis
      *
      * @return the last state of the expanded tree
      */
-    private edu.cmu.sphinx.decoder.linguist.SentenceHMMState expandHMMTree(ParallelHMMStateState hmmStateState,
+    private SentenceHMMState expandHMMTree(ParallelHMMStateState hmmStateState,
 					   String modelName,
 					   Map expandedStates) {
 
-	edu.cmu.sphinx.decoder.linguist.SentenceHMMState lastState = hmmStateState;
+	SentenceHMMState lastState = hmmStateState;
 
 	HMMState hmmState = hmmStateState.getHMMState();
 	HMMStateArc[] arcs = hmmState.getSuccessors();

@@ -31,7 +31,7 @@ import java.util.List;
  * Pruning by this Pruner simply means performing a
  * <code>Token.setPruned(true)</code>.
  */
-public abstract class TokenScorePruner implements edu.cmu.sphinx.decoder.search.Pruner {
+public abstract class TokenScorePruner implements Pruner {
 
     private int absoluteBeamWidth;
     private float relativeBeamWidth;
@@ -52,7 +52,7 @@ public abstract class TokenScorePruner implements edu.cmu.sphinx.decoder.search.
      *
      * @param token the Token to compare
      */
-    protected abstract float getTokenScore(edu.cmu.sphinx.decoder.search.Token token);
+    protected abstract float getTokenScore(Token token);
 
 
     /**
@@ -65,8 +65,8 @@ public abstract class TokenScorePruner implements edu.cmu.sphinx.decoder.search.
         if (tokenComparator == null) {
             tokenComparator = new Comparator() {
                 public int compare(Object o1, Object o2) {
-                    edu.cmu.sphinx.decoder.search.Token t1 = (edu.cmu.sphinx.decoder.search.Token) o1;
-		    edu.cmu.sphinx.decoder.search.Token t2 = (edu.cmu.sphinx.decoder.search.Token) o2;
+                    Token t1 = (Token) o1;
+		    Token t2 = (Token) o2;
                     
                     if (getTokenScore(t1) > getTokenScore(t2)) {
                         return -1;
@@ -94,12 +94,12 @@ public abstract class TokenScorePruner implements edu.cmu.sphinx.decoder.search.
 
 	ActiveList newList = activeList.createNew();
 
-	edu.cmu.sphinx.decoder.search.Token[] tokens = activeList.getTokens();
+	Token[] tokens = activeList.getTokens();
         List tokenList = Arrays.asList(tokens);
         Collections.sort(tokenList, getTokenComparator());
 
         if (tokenList.size() > 0) {
-            edu.cmu.sphinx.decoder.search.Token bestToken = (edu.cmu.sphinx.decoder.search.Token) tokenList.get(0);
+            Token bestToken = (Token) tokenList.get(0);
             float highestScore = getTokenScore(bestToken);
             float pruneScore = highestScore + relativeBeamWidth;
 
@@ -112,7 +112,7 @@ public abstract class TokenScorePruner implements edu.cmu.sphinx.decoder.search.
             // do the pruning
             while (i.hasNext() && newList.size() < absoluteBeamWidth) {
 
-                edu.cmu.sphinx.decoder.search.Token token = (edu.cmu.sphinx.decoder.search.Token) i.next();
+                Token token = (Token) i.next();
                 thisScore = getTokenScore(token);
 
 		if (doRelativePruning) {

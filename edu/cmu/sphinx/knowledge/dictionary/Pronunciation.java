@@ -24,7 +24,7 @@ import java.io.Serializable;
 public class Pronunciation implements Serializable {
 
     private String word; 	// the spelling of the word
-    private edu.cmu.sphinx.knowledge.dictionary.WordClassification wordClassification;
+    private WordClassification wordClassification;
     private Unit[] units;
     private String tag;
     private float probability;
@@ -40,10 +40,10 @@ public class Pronunciation implements Serializable {
      * occurring
      */
     Pronunciation(String word,
-	    Unit[] units,
-	    String tag,
-	    edu.cmu.sphinx.knowledge.dictionary.WordClassification wordClassification,
-	    float probability) {
+                  Unit[] units,
+                  String tag,
+                  WordClassification wordClassification,
+                  float probability) {
 	this.word = word;
 	this.wordClassification = wordClassification;
 	this.units = units;
@@ -66,7 +66,7 @@ public class Pronunciation implements Serializable {
      * 
      * @return the word classification for this pronunciation.
      */
-    public edu.cmu.sphinx.knowledge.dictionary.WordClassification getWordClassification() {
+    public WordClassification getWordClassification() {
 	return wordClassification;
     }
 

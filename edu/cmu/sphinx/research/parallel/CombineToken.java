@@ -27,7 +27,7 @@ import java.util.Map;
  * A Token for the outside parallel stream sentence HMM states.
  * The <code>getScore()</code> method returns the combined score.
  */
-public class CombineToken extends edu.cmu.sphinx.decoder.search.Token {
+public class CombineToken extends Token {
 
     private Map tokens;     // the list of predecessor tokens
     private boolean pruned;
@@ -48,8 +48,8 @@ public class CombineToken extends edu.cmu.sphinx.decoder.search.Token {
      * @param frameNumber the frame number associated with this token
      *
      */
-    public CombineToken(edu.cmu.sphinx.decoder.search.Token predecessor,
-			edu.cmu.sphinx.decoder.linguist.SentenceHMMState state,
+    public CombineToken(Token predecessor,
+			SentenceHMMState state,
 			int frameNumber) {
 	super(predecessor, state, 0.0f, 0.0f, 0.0f, frameNumber);
 	this.tokens = new HashMap();

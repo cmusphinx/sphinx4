@@ -55,8 +55,6 @@ public class Token {
         silenceSet.add(SILENCE);
         silenceSet.add(SENTENCE_START);
         silenceSet.add(SENTENCE_END);
-
-
     }
 
     private Token predecessor;
@@ -67,7 +65,7 @@ public class Token {
     private float logInsertionProbability;
     private float logAcousticScore;
     private double logWorkingScore;
-    private edu.cmu.sphinx.decoder.linguist.SentenceHMMState sentenceHMMState;
+    private SentenceHMMState sentenceHMMState;
 
     private int location;
 
@@ -90,7 +88,7 @@ public class Token {
      *
      */
     public Token(Token predecessor,
-                 edu.cmu.sphinx.decoder.linguist.SentenceHMMState state,
+                 SentenceHMMState state,
                  float logTotalScore,
                  float logLanguageScore,
                  float logInsertionProbability,
@@ -116,7 +114,7 @@ public class Token {
      *
      * @param frameNumber the frame number for this token
      */
-    public Token(edu.cmu.sphinx.decoder.linguist.SentenceHMMState state, int frameNumber) {
+    public Token(SentenceHMMState state, int frameNumber) {
 	this(null, state, 0.0f, 0.0f, 0.0f, frameNumber);
     }
 
@@ -243,7 +241,7 @@ public class Token {
      *
      * @return the sentenceHMMState 
      */
-    public edu.cmu.sphinx.decoder.linguist.SentenceHMMState getSentenceHMMState() {
+    public SentenceHMMState getSentenceHMMState() {
 	return sentenceHMMState;
     }
 
@@ -316,7 +314,7 @@ public class Token {
 	for (int i = list.size() - 1; i >= 0; i--) {
 	    token = (Token) list.get(i);
             if (includeHMMStates || 
-                (! (token.getSentenceHMMState() instanceof edu.cmu.sphinx.decoder.linguist.HMMStateState))) {
+                (! (token.getSentenceHMMState() instanceof HMMStateState))) {
                 System.out.println("  " + token);
             }
 	}
@@ -333,9 +331,9 @@ public class Token {
 	Token token = this;
 
 	while (token != null) {
-	    if (token.getSentenceHMMState() instanceof edu.cmu.sphinx.decoder.linguist.PronunciationState) {
-		edu.cmu.sphinx.decoder.linguist.PronunciationState pronunciationState  =
-		    (edu.cmu.sphinx.decoder.linguist.PronunciationState) token.getSentenceHMMState();
+	    if (token.getSentenceHMMState() instanceof PronunciationState) {
+		PronunciationState pronunciationState  =
+		    (PronunciationState) token.getSentenceHMMState();
 		sb.insert(0, pronunciationState.getPronunciation().getWord());
 		sb.insert(0, " ");
 	    }
@@ -355,9 +353,9 @@ public class Token {
 	Token token = this;
 
 	while (token != null) {
-	    if (token.getSentenceHMMState() instanceof edu.cmu.sphinx.decoder.linguist.PronunciationState) {
-		edu.cmu.sphinx.decoder.linguist.PronunciationState pronunciationState  =
-		    (edu.cmu.sphinx.decoder.linguist.PronunciationState) token.getSentenceHMMState();
+	    if (token.getSentenceHMMState() instanceof PronunciationState) {
+                PronunciationState pronunciationState  =
+		    (PronunciationState) token.getSentenceHMMState();
 		String word = pronunciationState.getPronunciation().getWord();
                 if (!silenceSet.contains(word)) {
 		    sb.insert(0, word);
@@ -379,45 +377,6 @@ public class Token {
 	System.out.println("Cur count: " + curCount + " new " +
 		(curCount - lastCount));
 	lastCount = curCount;
-    }
-
-    /**
-     * Gets the left child token
-     *
-     * @return the left child token
-     */
-    public final Token getLeft() {
-        // BUG: remove me
-	return null;
-    }
-
-    /**
-     * Gets the right child token
-     *
-     * @return the right child token
-     */
-    public final Token getRight() {
-        // BUG: remove me
-	return null;
-    }
-
-
-    /**
-     * Sets the left child token
-     *
-     * @param token the token to set
-     */
-    public final void setLeft(Token token) {
-        // BUG: remove me
-    }
-
-    /**
-     * Sets the right child token
-     *
-     * @param token the token to set
-     */
-    public final void setRight(Token token) {
-        // BUG: remove me
     }
 
     /**
@@ -456,8 +415,8 @@ public class Token {
 	    // matches the actual left context.
 
 
-	    if (getSentenceHMMState() instanceof edu.cmu.sphinx.decoder.linguist.UnitState) {
-		edu.cmu.sphinx.decoder.linguist.UnitState unitState = (edu.cmu.sphinx.decoder.linguist.UnitState) getSentenceHMMState();
+	    if (getSentenceHMMState() instanceof UnitState) {
+                UnitState unitState = (UnitState) getSentenceHMMState();
 		Context context  = unitState.getUnit().getContext();
 		if (context instanceof LeftRightContext) {
 		    LeftRightContext lrContext = (LeftRightContext)
@@ -478,9 +437,9 @@ public class Token {
 			    }
 
 			    if (prev.getSentenceHMMState() 
-				    instanceof edu.cmu.sphinx.decoder.linguist.UnitState) {
-				edu.cmu.sphinx.decoder.linguist.UnitState prevUnitState =
-				    (edu.cmu.sphinx.decoder.linguist.UnitState) prev.getSentenceHMMState();
+                                instanceof UnitState) {
+				UnitState prevUnitState =
+				    (UnitState) prev.getSentenceHMMState();
 				Unit cdUnit = prevUnitState.getUnit();
 				Unit ciUnit = new Unit(cdUnit.getName(),
 					    cdUnit.isFiller());

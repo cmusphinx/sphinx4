@@ -21,7 +21,7 @@ import edu.cmu.sphinx.decoder.search.Token;
  * A Token for the within parallel stream sentence HMM states.
  * The <code>getScore()</code> method returns the parallel stream score.
  */
-public class ParallelToken extends edu.cmu.sphinx.decoder.search.Token {
+public class ParallelToken extends Token {
 
     private String modelName;       // the name of the acoustic model
     private float eta;              // feature stream eta factor
@@ -43,7 +43,7 @@ public class ParallelToken extends edu.cmu.sphinx.decoder.search.Token {
      *
      */
     public ParallelToken(ParallelToken predecessor, 
-			 edu.cmu.sphinx.decoder.linguist.SentenceHMMState state,
+			 SentenceHMMState state,
                          float eta,
 			 float featureScore,
 			 float combinedScore,
@@ -72,7 +72,7 @@ public class ParallelToken extends edu.cmu.sphinx.decoder.search.Token {
      *
      */
     public ParallelToken(ParallelToken predecessor,
-			 edu.cmu.sphinx.decoder.linguist.SentenceHMMState state,
+			 SentenceHMMState state,
 			 float eta,
 			 float featureScore,
 			 float combinedScore,
@@ -97,7 +97,7 @@ public class ParallelToken extends edu.cmu.sphinx.decoder.search.Token {
      *
      */
     public ParallelToken(ParallelToken predecessor,
-			 edu.cmu.sphinx.decoder.linguist.SentenceHMMState state,
+			 SentenceHMMState state,
 			 float eta,
 			 float featureScore,
 			 float combinedScore,
@@ -117,7 +117,7 @@ public class ParallelToken extends edu.cmu.sphinx.decoder.search.Token {
      * @param eta the eta factor of this parallel branch
      * @param frameNumber the frame number of this token
      */
-    public ParallelToken(String modelName, edu.cmu.sphinx.decoder.linguist.SentenceHMMState state,
+    public ParallelToken(String modelName, SentenceHMMState state,
                          float eta, int frameNumber) {
         this(null, state, eta, 0.0f, 0.0f, frameNumber);
         this.modelName = modelName;

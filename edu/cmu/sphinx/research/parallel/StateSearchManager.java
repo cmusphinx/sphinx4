@@ -42,7 +42,7 @@ import java.util.Map;
 /**
  * Performs recognition on parallel feature streams.
  */
-public class StateSearchManager implements edu.cmu.sphinx.decoder.search.SearchManager {
+public class StateSearchManager implements SearchManager {
 
     // The sphinx property prefix for all property names of this class.
     private static final String PROP_PREFIX =
@@ -90,10 +90,10 @@ public class StateSearchManager implements edu.cmu.sphinx.decoder.search.SearchM
 
 
     private SphinxProperties props;
-    private edu.cmu.sphinx.decoder.linguist.Linguist linguist;
+    private Linguist linguist;
     private AcousticScorer scorer;
-    private edu.cmu.sphinx.decoder.search.Pruner featureScorePruner;
-    private edu.cmu.sphinx.decoder.search.Pruner combinedScorePruner;
+    private Pruner featureScorePruner;
+    private Pruner combinedScorePruner;
     private ScoreCombiner scoreCombiner;
 
     private int currentFrameNumber;           // the current frame number
@@ -129,8 +129,8 @@ public class StateSearchManager implements edu.cmu.sphinx.decoder.search.SearchM
      * @param scorer the AcousticScorer to use
      * @param pruner the Pruner to use
      */
-    public void initialize(String context, edu.cmu.sphinx.decoder.linguist.Linguist linguist,
-			   AcousticScorer scorer, edu.cmu.sphinx.decoder.search.Pruner pruner) {
+    public void initialize(String context, Linguist linguist,
+			   AcousticScorer scorer, Pruner pruner) {
 	this.props = SphinxProperties.getSphinxProperties(context);
 	this.linguist = linguist;
 	this.scorer = scorer;
@@ -252,7 +252,7 @@ public class StateSearchManager implements edu.cmu.sphinx.decoder.search.SearchM
                 (ActiveList)activeListClass.newInstance();
 	    nonEmittingExpansionList.setProperties(props);
 
-	    edu.cmu.sphinx.decoder.linguist.SentenceHMMState firstState = linguist.getInitialState();
+	    SentenceHMMState firstState = linguist.getInitialState();
 	    assert !firstState.isEmitting();
 
             // create the first token and grow it, its first parameter
@@ -535,14 +535,14 @@ public class StateSearchManager implements edu.cmu.sphinx.decoder.search.SearchM
 	    nextFrameNumber++;
 	}
 
-	edu.cmu.sphinx.decoder.linguist.SentenceHMMState state = token.getSentenceHMMState();
-	edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc[] arcs = state.getSuccessorArray();
+	SentenceHMMState state = token.getSentenceHMMState();
+	SentenceHMMStateArc[] arcs = state.getSuccessorArray();
 
 	// expand into each successor states
 	for (int i = 0; i < arcs.length; i++) {
 
-	    edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc arc = arcs[i];
-	    edu.cmu.sphinx.decoder.linguist.SentenceHMMState nextState = arc.getNextState();
+	    SentenceHMMStateArc arc = arcs[i];
+	    SentenceHMMState nextState = arc.getNextState();
 	    
 	    float currentScore = token.getScore() + 
                 getTransitionScore(token, arc);
@@ -642,14 +642,14 @@ public class StateSearchManager implements edu.cmu.sphinx.decoder.search.SearchM
 	// make sure that this state is non-emitting
 	assert !token.isEmitting();
 
-	edu.cmu.sphinx.decoder.linguist.SentenceHMMState state = token.getSentenceHMMState();
-	edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc[] arcs = state.getSuccessorArray();
+	SentenceHMMState state = token.getSentenceHMMState();
+	SentenceHMMStateArc[] arcs = state.getSuccessorArray();
 
 	// expand into each successor states
 	for (int a = 0; a < arcs.length; a++) {
 
-	    edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc arc = arcs[a];
-	    edu.cmu.sphinx.decoder.linguist.SentenceHMMState nextState = arc.getNextState();
+	    SentenceHMMStateArc arc = arcs[a];
+	    SentenceHMMState nextState = arc.getNextState();
 
 	    float transitionScore = getTransitionScore(token, arc);
 
@@ -769,7 +769,7 @@ public class StateSearchManager implements edu.cmu.sphinx.decoder.search.SearchM
      *
      * @return the transition score
      */
-    private float getTransitionScore(edu.cmu.sphinx.decoder.search.Token token, edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc arc) {
+    private float getTransitionScore(Token token, SentenceHMMStateArc arc) {
         return getLanguageProbability(token, arc) +
             arc.getAcousticProbability() + arc.getInsertionProbability();
     }
@@ -810,8 +810,8 @@ public class StateSearchManager implements edu.cmu.sphinx.decoder.search.SearchM
      *
      * @param arc the arc to the next state
      */
-    private float getLanguageProbability(edu.cmu.sphinx.decoder.search.Token token,
-                                         edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc arc) {
+    private float getLanguageProbability(Token token,
+                                         SentenceHMMStateArc arc) {
 	return arc.getLanguageProbability() * languageWeight;
     }
 

@@ -71,7 +71,7 @@ public class CombinedScorePruner extends TokenScorePruner {
      *
      * @return the score we use for comparison
      */
-    protected float getTokenScore(edu.cmu.sphinx.decoder.search.Token token) {
+    protected float getTokenScore(Token token) {
 	CombineToken combineToken = (CombineToken) token;
         return combineToken.getCombinedScore();
     }

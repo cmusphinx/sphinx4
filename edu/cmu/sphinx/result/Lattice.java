@@ -70,10 +70,10 @@ public class Lattice {
         double thisLMScore=0.0;
         for( Iterator it=result.getResultTokens().iterator(); it.hasNext(); ) {
             thisNode=terminalNode;
-            for( edu.cmu.sphinx.decoder.search.Token token = (edu.cmu.sphinx.decoder.search.Token)(it.next());
+            for( Token token = (Token)(it.next());
                  token != null;
                  token = token.getPredecessor() ) {
-                if( token.getSentenceHMMState() instanceof edu.cmu.sphinx.decoder.linguist.WordState ) {
+                if( token.getSentenceHMMState() instanceof WordState ) {
                     Node newNode;
                     if( hasNode(token) ) {
                         newNode = getNode( token );
@@ -206,10 +206,10 @@ public class Lattice {
      * @param token
      * @return the new Node
      */
-    protected Node addNode(edu.cmu.sphinx.decoder.search.Token token) {
+    protected Node addNode(Token token) {
         String word;
-        if( token.getSentenceHMMState() instanceof edu.cmu.sphinx.decoder.linguist.WordState) {
-            word = ((edu.cmu.sphinx.decoder.linguist.WordState)(token.getSentenceHMMState())).getWord().getSpelling();
+        if( token.getSentenceHMMState() instanceof WordState) {
+            word = ((WordState)(token.getSentenceHMMState())).getWord().getSpelling();
         }
         else {
             word = token.getSentenceHMMState().toString();
@@ -225,7 +225,7 @@ public class Lattice {
      * @return true if yes
      */
 
-    protected boolean hasNode(edu.cmu.sphinx.decoder.search.Token token) {
+    protected boolean hasNode(Token token) {
         return hasNode( Integer.toString(token.hashCode()));
     }
 
@@ -256,8 +256,8 @@ public class Lattice {
      * @param token
      * @return the Node
      */
-    protected Node getNode( edu.cmu.sphinx.decoder.search.Token token ) {
-        return getNode( Integer.toString(token.hashCode()) );
+    protected Node getNode(Token token) {
+        return getNode(Integer.toString(token.hashCode()));
     }
 
     /**

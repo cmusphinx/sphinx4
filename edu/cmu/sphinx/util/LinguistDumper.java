@@ -15,9 +15,11 @@ import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
 import edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc;
 import edu.cmu.sphinx.decoder.linguist.LinguistProcessor;
 import edu.cmu.sphinx.decoder.linguist.Linguist;
+
 import java.io.PrintStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,8 +31,8 @@ import java.util.Set;
  *  format. This processor is designed so that it can be easily
  *  extended by replacing the dumpNode and the dumpEdge methods.
  */
-public class LinguistDumper implements edu.cmu.sphinx.decoder.linguist.LinguistProcessor  {
-
+public class LinguistDumper implements LinguistProcessor  {
+    
     /**
      * A sphinx property name for the destination of the LinguistDumper
      */
@@ -48,7 +50,7 @@ public class LinguistDumper implements edu.cmu.sphinx.decoder.linguist.LinguistP
      *
      * @return <code>true</code>  if the file was successfully dumped
      */
-    public void process(SphinxProperties props, edu.cmu.sphinx.decoder.linguist.Linguist linguist) {
+    public void process(SphinxProperties props, Linguist linguist) {
         String fileName = props.getString(PROP_FILENAME, getDefaultName());
         properties = props;
 
@@ -118,7 +120,7 @@ public class LinguistDumper implements edu.cmu.sphinx.decoder.linguist.LinguistP
      * @param level the level of the state
      */
     protected void startDumpNode(PrintStream out, 
-                                 edu.cmu.sphinx.decoder.linguist.SentenceHMMState state, int level) {
+                                 SentenceHMMState state, int level) {
     }
 
     /**
@@ -128,7 +130,7 @@ public class LinguistDumper implements edu.cmu.sphinx.decoder.linguist.LinguistP
      * @param state the state to dump
      * @param level the level of the state
      */
-    protected void endDumpNode(PrintStream out, edu.cmu.sphinx.decoder.linguist.SentenceHMMState state,
+    protected void endDumpNode(PrintStream out, SentenceHMMState state,
 	    int level) {
     }
 
@@ -140,8 +142,8 @@ public class LinguistDumper implements edu.cmu.sphinx.decoder.linguist.LinguistP
      * @param arc the arc to dump
      * @param level the level of the state
      */
-    protected void dumpArc(PrintStream out, edu.cmu.sphinx.decoder.linguist.SentenceHMMState from,
-                           edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc arc, int level) {
+    protected void dumpArc(PrintStream out, SentenceHMMState from,
+                           SentenceHMMStateArc arc, int level) {
     }
 
 
@@ -152,7 +154,7 @@ public class LinguistDumper implements edu.cmu.sphinx.decoder.linguist.LinguistP
      * @param state the initial state of the SentenceHMM
      */
     private void dumpSentenceHMM(PrintStream out, 
-                                 edu.cmu.sphinx.decoder.linguist.SentenceHMMState startingState) {
+                                 SentenceHMMState startingState) {
 	List queue = new LinkedList();
 	Set visitedStates = new HashSet();
 
@@ -162,18 +164,18 @@ public class LinguistDumper implements edu.cmu.sphinx.decoder.linguist.LinguistP
 	while (queue.size() > 0) {
 	    StateLevel stateLevel = (StateLevel) queue.remove(0);
 	    int level = stateLevel.getLevel();
-	    edu.cmu.sphinx.decoder.linguist.SentenceHMMState state = stateLevel.getState();
+	    SentenceHMMState state = stateLevel.getState();
 
 
 	    if (!visitedStates.contains(state)) {
 		visitedStates.add(state);
 
 		startDumpNode(out, state, level);
-		edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc[] arcs = state.getSuccessorArray();
+		SentenceHMMStateArc[] arcs = state.getSuccessorArray();
 
 
 		for (int i = arcs.length - 1; i >= 0; i--) {
-		    edu.cmu.sphinx.decoder.linguist.SentenceHMMState nextState = arcs[i].getNextState();
+		    SentenceHMMState nextState = arcs[i].getNextState();
 		    dumpArc(out, state, arcs[i], level);
 		    if (depthFirst) {
 			// if depth first, its a stack
@@ -195,7 +197,7 @@ public class LinguistDumper implements edu.cmu.sphinx.decoder.linguist.LinguistP
  */
 class StateLevel {
     private int level;
-    private edu.cmu.sphinx.decoder.linguist.SentenceHMMState state;
+    private SentenceHMMState state;
 
     /**
      * Constructs a StateLevel from its primitive components.
@@ -203,7 +205,7 @@ class StateLevel {
      * @param state the state to be bundled in the StateLevel
      * @param level the level of the state
      */
-    StateLevel(edu.cmu.sphinx.decoder.linguist.SentenceHMMState state, int level) {
+    StateLevel(SentenceHMMState state, int level) {
 	this.state = state;
 	this.level = level;
     }
@@ -213,7 +215,7 @@ class StateLevel {
      *
      * @return the state
      */
-    edu.cmu.sphinx.decoder.linguist.SentenceHMMState getState() {
+    SentenceHMMState getState() {
 	return state;
     }
 

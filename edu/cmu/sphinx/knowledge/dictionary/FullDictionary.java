@@ -251,7 +251,7 @@ public class FullDictionary implements Dictionary {
      * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
      */
     public Pronunciation[] getPronunciations(String text,
-            edu.cmu.sphinx.knowledge.dictionary.WordClassification wordClassification) {
+            WordClassification wordClassification) {
         return getPronunciations(text, wordClassification, null);
     }
 
@@ -275,7 +275,7 @@ public class FullDictionary implements Dictionary {
      * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
      */
     public Pronunciation[] getPronunciations(String text,
-            edu.cmu.sphinx.knowledge.dictionary.WordClassification wordClassification, String tag) {
+            WordClassification wordClassification, String tag) {
         
 	text = text.toLowerCase();
         List pronounceList = (List) dictionary.get(text);
@@ -325,7 +325,7 @@ public class FullDictionary implements Dictionary {
      *
      * @return the set of all possible word classifications
      */
-    public edu.cmu.sphinx.knowledge.dictionary.WordClassification[] getPossibleWordClassifications() {
+    public WordClassification[] getPossibleWordClassifications() {
         return null;
     }
 

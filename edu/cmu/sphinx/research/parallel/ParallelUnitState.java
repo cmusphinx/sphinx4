@@ -38,7 +38,7 @@ import java.util.List;
  * parallel branches this HMMStateState is in. See the getName()
  * method for details.
  */
-public class ParallelUnitState extends edu.cmu.sphinx.decoder.linguist.UnitState implements ParallelState {
+public class ParallelUnitState extends UnitState implements ParallelState {
 
     private static List allStates;
     static {
@@ -67,7 +67,7 @@ public class ParallelUnitState extends edu.cmu.sphinx.decoder.linguist.UnitState
      * @param modelName the name of the acoustic model behind this HMMState
      * @param hmmState the hmmState associated with this state
      */
-    public ParallelUnitState(edu.cmu.sphinx.decoder.linguist.PronunciationState parent,
+    public ParallelUnitState(PronunciationState parent,
                              String modelName,
                              int which,
                              Unit unit,

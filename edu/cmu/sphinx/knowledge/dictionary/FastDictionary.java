@@ -51,7 +51,7 @@ public class FastDictionary implements Dictionary {
      * The logger for this class
      */
     private static Logger logger =
-	    Logger.getLogger("edu.cmu.sphinx.knowledge.dictionary.FastDictionary");
+        Logger.getLogger("edu.cmu.sphinx.knowledge.dictionary.FastDictionary");
 
     private Map dictionary = new HashMap();
     private Map unitCache = new HashMap();
@@ -223,7 +223,7 @@ public class FastDictionary implements Dictionary {
      * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
      */
     public Pronunciation[] getPronunciations(String text,
-            edu.cmu.sphinx.knowledge.dictionary.WordClassification wordClassification) {
+            WordClassification wordClassification) {
         return getPronunciations(text, wordClassification, null);
     }
 
@@ -247,7 +247,7 @@ public class FastDictionary implements Dictionary {
      * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
      */
     public Pronunciation[] getPronunciations(String text,
-            edu.cmu.sphinx.knowledge.dictionary.WordClassification wordClassification, String tag) {
+                                             WordClassification wordClassification, String tag) {
         
 	Pronunciation[] pronunciations = null;
 	text = text.toLowerCase();
@@ -332,7 +332,7 @@ public class FastDictionary implements Dictionary {
      *
      * @return the set of all possible word classifications
      */
-    public edu.cmu.sphinx.knowledge.dictionary.WordClassification[] getPossibleWordClassifications() {
+    public WordClassification[] getPossibleWordClassifications() {
         return null;
     }
 

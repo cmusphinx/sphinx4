@@ -33,6 +33,10 @@ import edu.cmu.sphinx.decoder.linguist.HMMStateState;
  */
 public class ThreadedAcousticScorer implements AcousticScorer {
 
+    private final static String PROP_PREFIX = 
+        "edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.";
+
+
     /**
      * A SphinxProperty name that controls the number of threads that
      * are used to score hmm states.  If the isCpuRelative property is
@@ -45,8 +49,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * to process scores set NUM_THREADS to 1 and isCpuRelative to
      * false. The default value is 1
      */
-    public final static String PROP_NUM_THREADS =
-	"edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads";
+    public final static String PROP_NUM_THREADS = PROP_PREFIX + "numThreads";
 
     /**
      * A sphinx property name that controls whether the number of
@@ -59,8 +62,8 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * thread, no separate threads are started. The default value is
      * false.
      */
-    public final static String PROP_IS_CPU_RELATIVE =
-	"edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative";
+    public final static String PROP_IS_CPU_RELATIVE = 
+        PROP_PREFIX + "isCpuRelative";
 
     /**
      * A Sphinx Property name that controls the minimum number of
@@ -69,7 +72,8 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * high compared to the size of the activelist. The default is 50
      */
     public final static String PROP_MIN_TOKENS_PER_THREAD  =
-	"edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minTokensPerThread";
+        PROP_PREFIX + "minTokensPerThread";
+
 
     private FrontEnd frontEnd;		// where features come from
     private SphinxProperties props;	// the sphinx properties

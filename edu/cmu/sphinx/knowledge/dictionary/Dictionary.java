@@ -13,7 +13,6 @@
 
 package edu.cmu.sphinx.knowledge.dictionary;
 
-import java.util.List;
 
 /**
  * Provides a generic interface to a dictionary. The dictionary is
@@ -22,25 +21,32 @@ import java.util.List;
 public interface Dictionary {
 
     /**
+     * Prefix string for the Sphinx properties of this Dictionary.
+     */
+    public static final String PROP_PREFIX =
+        "edu.cmu.sphinx.knowledge.dictionary.Dictionary.";
+
+
+    /**
      * The name of the SphinxProperty that specifies whether to look
      * for the Dictionaries at the Acoustic Model location.
      */
     public static final String PROP_USE_AM_LOCATION =
-    "edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation";
+        PROP_PREFIX + "useAcousticModelLocation";
 
 
     /**
      * The name of the SphinxProperty for the dictionary file path.
      */
     public static final String PROP_DICTIONARY =
-    "edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath";
+        PROP_PREFIX + "dictionaryPath";
 
 
     /**
      * The name of the SphinxProperty for the filler dictionary file path.
      */
     public static final String PROP_FILLER_DICTIONARY =
-    "edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath";
+        PROP_PREFIX + "fillerPath";
 
 
     /**
@@ -48,7 +54,7 @@ public interface Dictionary {
      * a duplicate SIL-ending pronunication.
      */
     public static final String PROP_ADD_SIL_ENDING_PRONUNCIATION =
-    "edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation";
+        PROP_PREFIX + "addSilEndingPronunciation";
 
     /**
      * The name of the SphinxProperty that specifies the word to
@@ -56,8 +62,8 @@ public interface Dictionary {
      * dictionary.  If this is not set, no substitute is performed.
      */
     public static final String PROP_WORD_REPLACEMENT =
-    "edu.cmu.sphinx.knowledge.dictionary.Dictionary.wordReplacement";
-
+        PROP_PREFIX + "wordReplacement";
+    
     /**
      * The name of the SphinxProperty that specifies whether the
      * dictionary should return null if a word is not found in the
@@ -66,7 +72,7 @@ public interface Dictionary {
      * (and the 'PROP_WORD_REPLACEMENT' property is not set).
      */
     public static final String PROP_ALLOW_MISSING_WORDS =
-    "edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords";
+        PROP_PREFIX + "allowMissingWords";
     
     /**
      * Retrieves the pronunciations for a particular word based upon
@@ -85,7 +91,7 @@ public interface Dictionary {
      * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
      */
     public Pronunciation[] getPronunciations(String text,
-	    edu.cmu.sphinx.knowledge.dictionary.WordClassification wordClassification);
+                                             WordClassification wordClassification);
 
     /**
      * Retrieves the pronunciations for a particular word based upon
@@ -106,7 +112,8 @@ public interface Dictionary {
      * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
      */
     public Pronunciation[] getPronunciations(String text,
-	    edu.cmu.sphinx.knowledge.dictionary.WordClassification wordClassification, String tag);
+                                             WordClassification wordClassification,
+                                             String tag);
 
 
     /**
@@ -115,7 +122,7 @@ public interface Dictionary {
      *
      * @return the set of all possible word classifications
      */
-    public edu.cmu.sphinx.knowledge.dictionary.WordClassification[] getPossibleWordClassifications();
+    public WordClassification[] getPossibleWordClassifications();
 
 
 

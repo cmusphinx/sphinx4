@@ -32,27 +32,30 @@ import java.util.ArrayList;
  */
 public class WordListGrammar extends Grammar {
 
+    private final static String PROP_PREFIX =
+        "edu.cmu.sphinx.decoder.linguist.WordListGrammar.";
+
+
     /**
      * Sphinx property that defines the location of the word list
      * grammar
      */
-    public final static String PROP_PATH
-	= "edu.cmu.sphinx.decoder.linguist.WordListGrammar.path";
+    public final static String PROP_PATH = PROP_PREFIX + "path";
 
 
     /**
      * Sphinx property that if true, indicates that this is a looping
      * grammar
      */
-    public final static String PROP_LOOP
-	= "edu.cmu.sphinx.decoder.linguist.WordListGrammar.isLooping";
+    public final static String PROP_LOOP = PROP_PREFIX + "isLooping";
 
     /**
      * Sphinx property that indicates that a silence word should
      * automatically be added to the grammar
      */
-    public final static String PROP_ADD_SILENCE
-	= "edu.cmu.sphinx.decoder.linguist.WordListGrammar.addSilenceWord";
+    public final static String PROP_ADD_SILENCE = 
+        PROP_PREFIX + "addSilenceWord";
+
 
     /**
      * Create class from reference text (not implemented).
