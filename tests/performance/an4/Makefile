@@ -173,7 +173,7 @@ an4_spelling_fst:
 
 an4_spelling_journey_trigram:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-20\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-26\
 	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150 \
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
@@ -253,8 +253,11 @@ an4_full_fst:
 an4_plus_unigram:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
-	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400 \
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000 \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
+	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false\
+	-Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
@@ -267,6 +270,12 @@ an4_plus_unigram:
 an4_plus_trigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000 \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
+	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false\
+	-Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.model.language.location=an4_plus.trigram.lm \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
