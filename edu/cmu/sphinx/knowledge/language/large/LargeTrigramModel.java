@@ -340,6 +340,13 @@ public class LargeTrigramModel implements LanguageModel {
     }
 
 
+    /**
+     * Finds or loads the trigram probability of the given trigram.
+     *
+     * @param wordSequence the trigram to load
+     *
+     * @return a TrigramProbability of the given trigram
+     */
     private TrigramProbability loadTrigram(WordSequence wordSequence) {
 	WordSequence oldest = wordSequence.getOldest();
 	TrigramBuffer trigramBuffer = 
