@@ -85,12 +85,24 @@ public class SimpleNGramModel implements LanguageModel {
         String location = props.getString
             (LanguageModel.PROP_LOCATION, LanguageModel.PROP_LOCATION_DEFAULT);
         float unigramWeight = props.getFloat
-            (LanguageModel.PROP_UNIGRAM_WEIGHT, LanguageModel.PROP_UNIGRAM_WEIGHT_DEFAULT);
+            (LanguageModel.PROP_UNIGRAM_WEIGHT, 
+             LanguageModel.PROP_UNIGRAM_WEIGHT_DEFAULT);
+
         
         map = new HashMap();
         vocabulary = new HashSet();
         logMath = LogMath.getLogMath(context);
         load(format, location, unigramWeight);
+
+        int desiredMaxDepth = props.getInt(
+                LanguageModel.PROP_MAX_DEPTH,
+                LanguageModel.PROP_MAX_DEPTH_DEFAULT);
+
+        if (desiredMaxDepth > 0) {
+            if (desiredMaxDepth < maxNGram) {
+                maxNGram = desiredMaxDepth;
+            }
+        }
     }
     
     

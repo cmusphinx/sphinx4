@@ -59,7 +59,8 @@ public interface LanguageModel {
     /**
      * The Sphinx Property specifying the unigram weight
      */
-    public final static String PROP_UNIGRAM_WEIGHT = PROP_PREFIX + ".unigramWeight";
+    public final static String PROP_UNIGRAM_WEIGHT = PROP_PREFIX 
+        + ".unigramWeight";
 
     /**
      * The default value for PROP_UNIGRAM_WEIGHT
@@ -78,6 +79,25 @@ public interface LanguageModel {
      */
     public final static int PROP_MAX_DEPTH_DEFAULT = -1;
 
+
+    /**
+     * The Sphinx Property specifying the maximum depth reported by
+     * the language model (from a getMaxDepth()) call. If this
+     * property is set to (-1) (the default) the language model
+     * reports the implicit depth of the model.  This property allows
+     * a deeper language model to be used. For instance, a trigram
+     * language model could be used as a bigram model by setting this
+     * property to 2.  Note if this property is set to a value greater
+     * than the implicit depth, the implicit depth is used.  Legal
+     * values for this property are 1..N and -1.
+     */
+    public final static String PROP_MAX_DEPTH = PROP_PREFIX 
+        + ".maxDepth";
+
+    /**
+     * The default value for PROP_MAX_DEPTH. 
+     */
+    public final static int PROP_MAX_DEPTH_DEFAULT = -1;
 
     /**
      * Initializes this LanguageModel
