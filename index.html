@@ -164,21 +164,139 @@ WARRANTIES.
   </li>
   <br>&nbsp;
   <li><a name="download_and_install"><b>Downloading and Installing</b></a>
+
       <p>Include notes on acoustic model and language model files.
-      <p>Sphinx-4 has been build and tested on the Solaris<sup>
-         <font size="-1">TM</font></sup> Operating Environment, Mac OS X,
-         Linux and Win32 operating systems.  
-      <p>Running, building, and testing Sphinx-4 requires the
-         Java<sup>TM</sup> 2 SDK, Standard Edition, 1.4.  You can download
-         the developer kit from <a href="http://java.sun.com/j2se/1.4/">
-         http://java.sun.com/j2se/1.4/</a>.  Make sure you set your
-         JAVA_HOME environment variable to point your installation (e.g.,
-         JAVA_HOME=/usr/java/j2sdk1.4.0).
+</p>
+      <p>Sphinx-4 has been build and tested on the Solaris<sup> <font
+      size="-1">TM</font></sup> Operating Environment, Mac OS X, Linux
+      and Win32 operating systems.
+</p>
+      <p>Running, building, and testing Sphinx-4 requires additional
+      software, mainly the Java<sup>TM</sup> 2 SDK, Standard Edition,
+      1.4. Before you start, you will need the following software
+      available on your machine.
+</p>
+<ul>
+  <li>Ant 1.6.0 or better, available at <a
+  href="http://ant.apache.org">ant.apache.org</a>. The site has a manual with instructions on how to download, install, and use ant. The gist of it, just to get started:
+  <ul>
+  <li> On <a href="http://ant.apache.org">ant.apache.org</a> click on
+  "binary distributions" under "Download", on the left-hand side.
+  </li>
+
+  <li> Go to the title "Current release of ant", and select the
+  archive file of your preference. The most common formats are
+  "tar.gz" and "zip". Clicking on any of them should start downloading
+  the file to your machine.
+  </li>
+  <li> Save the file locally, and extract the files from the
+  archive. On Windows machines, clicking on the archive file should
+  start "WinZip". On Unix/Linux machines, depending on which file you
+  chose, you'll need to "unzip" or "gunzip" and subsequently "tar xf"
+  the file.
+  </li>
+  <li> After extracting the files from the archive, you'll get a
+  directory named something like "apache-ant-1.6.0". Rename this
+  directory to "ant", and move it to a convenient location. On Windows
+  machines, this location is usually "c:\ant". On Unix/linux, this
+  location is usually "/usr/local/ant".
+  </li>
+  <li> Define variables to support ant. This will depend on your platform:
+  <ul>
+  <li> Windows
+  <pre>
+
+set ANT_HOME=c:\ant
+set PATH=%PATH%;%ANT_HOME%\bin
+</pre>
+  </li>
+  <li> Unix (bash)
+  <pre>
+export ANT_HOME=/usr/local/ant
+export PATH=${PATH}:${ANT_HOME}/bin
+</pre>
+  </li>
+  <li> Unix (csh)
+  <pre>
+setenv ANT_HOME /usr/local/ant
+set path=( $path $ANT_HOME/bin )
+
+</pre>
+  </li>
+  </ul>
+  </li>
+  <li> Installation of ant is completed.
+  </li>
+  </ul>
+  </li>
+  <li>Java JDK 1.4 or better. Go to <a href="http://java.sun.com">java.sun.com</a>,
+and select "J2SE". Download the latest version. At the time of writing,
+the latest version is 1.4.2.
+  </li>
+
+  <li> Additionally, if you want to interact directly with the cvs
+  tree (which we recommend), you'll need cvs and ssh on your
+  machine. The canonical places to get them are <a
+  href="http://www.cvshome.org">www.cvshome.org</a> and <a
+  href="http://openssh.org">openssh.org</a>. If you are using Windows,
+  your best choice is to install <a
+  href="http://cygwin.com">cygwin</a>, which will give you a
+  linux-like environment in a command prompt window. Make sure to
+  choose "ssh" and "cvs" when you install cygwin.
+  </li>
+</ul>
+
   </li>
   <br>&nbsp;
   <li><a name="configuration"><b>Configuration</b></a>
-      <p>Describe Sphinx4Properties philosophy and include pointer to 
-         various files that define particular Sphinx-4 properties.
+<p>The system behavior is determined by SphinxProperties, which make use, and therefore are similar in nature, to the Java Platform Properties class. The SphinxProperties can be defined at command line, but in general it is defined from a file with extension ".props". Properties defined in
+the props file are overridden by properties defined as command line
+arguments when you run the program.
+</p>
+<p>The properties can be a number, so you can define, using the
+properties, that the FeatureVectorLength is 39, or that the logBase is
+1.0001. It can be a Boolean, so you may be defining that the
+property "islooping" in the class "SimpleWordListGrammar" in the
+"Linguist" package is true or false.
+</p>
+<p>It can be a string, for example defining that the format of the
+acoustic model is sphinx3.ascii.
+</p>
+<p>Or it can be the name of a class. You may be defining that the
+linguist used is the SimpleWordListGrammar, and this is the linguist
+that will be loaded at run time. Notice that you can change the class
+to be used without the need to recompile code.
+</p>
+<p>How do you know property names, and what their default values are?
+The Java platform has a tool named Javadoc, which extracts information
+from comments in the source code and creates a set of html files
+documenting the API and the constants in the code. You can visit the
+<a
+href="http://cmusphinx.sourceforge.net/sphinx4/constant-values.html">constant
+field values page</a> or the <a
+href="http://cmusphinx.sourceforge.net/sphinx4">API page</a>.
+</p>
+<p>For each class, the properties are defined as constant
+fields. The page displays the type of variable, whether an int or float or
+Boolean or something else, and the property's name and default value.
+</p>
+<p>For example, the class edu.cmu.sphinx.frontend.Preemphasizer
+defines a property that internally, in the code, is named
+PROP_PREEMPHASIS_FACTOR. This is not the name seen from outside, not
+the name used in a props file. This is the internal name, used in the
+code. This is a string, and the value,
+edu.cmu.sphinx.frontend.preemphasizer.factor, is the name seen from
+the outside. If you want to use this property in a props file, this is
+the name you have to refer to.
+</p>
+<p>Immediately following this property, there is another field with
+"_DEFAULT" appended to the previous field name, that is,
+PROP_PREEMPHASIS_FACTOR_DEFAULT. This field is the default value for
+this property. If the props file makes no reference to the property,
+this is the value the property will have. The field definition
+contains the type of constant that can be used. So, if this field is
+int, only an integer can be used as the value for this property.
+</p>
   </li>
 </ul>
 
@@ -189,6 +307,13 @@ WARRANTIES.
   <li><a name="architecture_and_api1"><b>Architecture and API</b></a>
       <p>The architecture and API can be found in the 
          <a href="javadoc/index.html">javadoc documentation</a>.
+</p>
+<p>If the previous link failed, please build the javadocs. In fact, rebuilding javadocs something you should do every time there is a major change in your code. To build the javadoc, go to the top level directory ("sphinx4"), and type:
+</p>
+<pre>ant javadoc</pre>
+<p>This will build javadocs from public classes, displaying only the public methods and fields. In general, this is all the information you will need. If you need more details, such as private or protected classes, you can generate the corresponding javadoc by doing, for example:
+</p>
+<pre>ant -Daccess=private javadoc</pre>
   </li>
   <br>&nbsp;
   <li><a name="demos"><b>Demos</b></a>
