@@ -108,7 +108,7 @@ public class SortingActiveList implements ActiveList  {
     /**
      * Sets the relative beam width.
      *
-     * @param relativeBeamWidth the linear relative beam width
+     * @param linearRelativeBeamWidth the linear relative beam width
      */
     public void setRelativeBeamWidth(double linearRelativeBeamWidth) {
         LogMath logMath = LogMath.getLogMath(props.getContext());

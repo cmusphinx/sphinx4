@@ -58,7 +58,7 @@ public class BeamFinder {
     /**
      * Creates the beam finder
      *
-     * @param enabled if true the beamfinder is enabled
+     * @param context the context of this Beamfinder
      */
     public BeamFinder(String context) {
 	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
