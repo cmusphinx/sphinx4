@@ -1,0 +1,8 @@
+0 22 * * 0 (. $HOME/.profile ; ./regressionTest runTests_ti46)
+0 22 * * 1 (. $HOME/.profile ; ./regressionTest runTests_tidigits)
+0 22 * * 2 (. $HOME/.profile ; ./regressionTest runTests_an4_words)
+0 22 * * 3 (. $HOME/.profile ; ./regressionTest runTests_an4_spelling)
+0 22 * * 4 (. $HOME/.profile ; ./regressionTest runTests_an4_full)
+0 22 * * 5 (. $HOME/.profile ; ./regressionTest runTests_an4_plus)
+0 22 * * 5 (. $HOME/.profile ; ./regressionTest runTests_rm1)
+

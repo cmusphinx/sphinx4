@@ -15,17 +15,15 @@
 
 regressionDir=`pwd`
 
-testType=${1:-full}
+testType=${1:-standard}
 
 # We can run full tests or quick tests. Quick tests
 # are used for testing the regression tests
 #
 
-if [ $testType = "quick" ]; then
-    runTests="runQuickTests";
-else
-    runTests="runAllTests";
-fi
+runTests="runTests_"$testType
+echo runtests is $runTests
+exit
 
 ###################
 # Since the scripts just came out of CVS, they may not
