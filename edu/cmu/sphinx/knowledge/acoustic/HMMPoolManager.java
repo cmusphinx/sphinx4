@@ -53,6 +53,8 @@ class HMMPoolManager {
     private float logMixtureWeightFloor;
     private float logTransitionProbabilityFloor;
     private float varianceFloor;
+    private float logLikelihood;
+    private float currentLogLikelihood;
 
     /**
      * Constructor for this pool manager.
@@ -82,6 +84,7 @@ class HMMPoolManager {
 			   AcousticModel.PROP_VARIANCE_FLOOR_DEFAULT);
 
 	createBuffers();
+	logLikelihood = LogMath.getLogZero();
     }
 
     /**
@@ -151,6 +154,8 @@ class HMMPoolManager {
 	    senoneID = senonePool.indexOf(state.getSenone());
 	}
 	Feature feature = score.getFeature();
+	// We should be doing this just once per utterance...
+	currentLogLikelihood = score.getLogLikelihood();
 	float prob = score.getScore();
 	accumulateMean(senoneID, score);
 	accumulateVariance(senoneID, score);
@@ -177,6 +182,7 @@ class HMMPoolManager {
 		float[] feature = score.getFeature().getFeatureData();
 		float[] data = new float[feature.length];
 		float prob = score.getComponentGamma()[i];
+		prob -= currentLogLikelihood;
 		prob = (float) logMath.logToLinear(prob);
 		for (int j = 0; j < data.length; j++) {
 		    data[j] = feature[j] * prob;
@@ -207,6 +213,7 @@ class HMMPoolManager {
 		float[] feature = score.getFeature().getFeatureData();
 		float[] data = new float[feature.length];
 		float prob = score.getComponentGamma()[i];
+		prob -= currentLogLikelihood;
 		prob = (float) logMath.logToLinear(prob);
 		for (int j = 0; j < data.length; j++) {
 		    data[j] = (feature[j] - mean[j]);
@@ -233,6 +240,7 @@ class HMMPoolManager {
 	    float[] mixw = (float [])mixtureWeightsPool.get(senone);
 	    for (int i = 0; i < mixw.length; i++) {
 		float prob = score.getComponentGamma()[i];
+		prob -= currentLogLikelihood;
 		buffer.logAccumulate(prob, i, logMath);
 	    }
 	}
@@ -268,8 +276,30 @@ class HMMPoolManager {
 						 indexNextState);
 		float outputProb = nextScore[i].getScore();
 		float prob = alpha + beta + transitionProb + outputProb;
+		prob -= currentLogLikelihood;
 		bufferArray[indexState].
 		    logAccumulate(prob, indexNextState, logMath);
+	    }
+	}
+    }
+
+    /**
+     * Accumulate transitions from a given state.
+     *
+     * @param indexState the state index
+     * @param hmm the HMM
+     * @param value the value to accumulate
+     */
+    private void accumulateStateTransition(int indexState, HMM hmm, 
+					   float value) {
+	float[][] matrix = hmm.getTransitionMatrix();
+	float[] stateVector = matrix[indexState];
+	int indexMatrix = matrixPool.indexOf(matrix);
+	Buffer[] bufferArray = 
+	    (Buffer []) matrixBufferPool.get(indexMatrix);
+	for (int i = 0; i < stateVector.length; i++) {
+	    if (stateVector[i] != logMath.getLogZero()) {
+		bufferArray[indexState].logAccumulate(value, i, logMath);
 	    }
 	}
     }
@@ -280,10 +310,14 @@ class HMMPoolManager {
     private void accumulateTransition(int indexHmm, TrainerScore score,
 				      TrainerScore[] nextScore) {
 	if (indexHmm == TrainerAcousticModel.ALL_MODELS) {
-	    // Need to review this call, so that this can be used for
-	    // initialization.
-	    for (int i = 0; i < senonePool.size(); i++) {
-		accumulateStateTransition(i, score, nextScore);
+	    // Well, special case... we want to add an amount to all
+	    // the states in all models
+	    for (Iterator i = hmmManager.getIterator();
+		 i.hasNext(); ) {
+		HMM hmm = (HMM) i.next();
+		for (int j = 0; j < hmm.getOrder(); j++) {
+		    accumulateStateTransition(j, hmm, score.getScore());
+		}
 	    }
 	} else {
 	    HMMState state = score.getState();
@@ -293,12 +327,15 @@ class HMMPoolManager {
 
     /** 
      * Normalize the buffers.
+     *
+     * @return the log likelihood associated with the current training set
      */
-    protected void normalize() {
+    protected float normalize() {
 	normalizePool(meansBufferPool);
 	normalizePool(varianceBufferPool);
 	logNormalizePool(mixtureWeightsBufferPool);
 	logNormalize2DPool(matrixBufferPool);
+	return logLikelihood;
    }
 
     /**

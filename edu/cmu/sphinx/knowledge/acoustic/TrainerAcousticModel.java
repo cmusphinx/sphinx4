@@ -286,11 +286,14 @@ public class TrainerAcousticModel extends AcousticModel {
     }
 
     /**
-     * Normalize the buffers and update the models
+     * Normalize the buffers and update the models.
+     *
+     * @return the log likelihood for the whole training set
      */
-    public void normalize() {
-	hmmPoolManager.normalize();
+    public float normalize() {
+	float logLikelihood = hmmPoolManager.normalize();
 	hmmPoolManager.update();
+	return logLikelihood;
     }
 
 }

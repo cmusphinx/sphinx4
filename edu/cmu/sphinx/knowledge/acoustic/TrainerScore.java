@@ -215,7 +215,7 @@ public class TrainerScore {
     /**
      * Sets the forward probability.
      *
-     * @param the forward log probability
+     * @param logAlpha the forward log probability
      */
     public void setAlpha(float logAlpha) {
 	this.logAlpha = logAlpha;
@@ -224,7 +224,7 @@ public class TrainerScore {
     /**
      * Sets the backward probability.
      *
-     * @param the backward log probability
+     * @param logBeta the backward log probability
      */
     public void setBeta(float logBeta) {
 	this.logBeta = logBeta;
@@ -235,8 +235,6 @@ public class TrainerScore {
      * the current alpha and beta, or the summation of the current
      * logAlpha and logBeta. The current beta is updated in the
      * object, and the current alpha and beta are used.
-     *
-     * @param the backward log probability
      */
     public void setGamma() {
 	logGamma = logAlpha + this.logBeta;
