@@ -84,7 +84,9 @@ public class Microphone extends DataProcessor implements AudioSource {
     /**
      * The Sphinx property that specifies the amount of time in
      * milliseconds the microphone should sleep in between reading
-     * audio.
+     * audio. It is recommended to set this property to true
+     * on a single CPU system, to boost the performance of
+     * live decoding.
      */
     public final static String PROP_SLEEP_BETWEEN_AUDIO =
         PROP_PREFIX + "sleepBetweenAudio";
@@ -186,7 +188,6 @@ public class Microphone extends DataProcessor implements AudioSource {
 
         if (sleepBetweenAudio) {
             sleepTime = getSleepTime();
-            System.out.println("Microphone: sleep " + sleepTime);
         }
     }
 
