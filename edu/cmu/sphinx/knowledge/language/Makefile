@@ -17,6 +17,8 @@ FILES = $(shell echo *.java)
 # List any sub directories that need to be built
 SUBDIRS = 
 
+EXTRA_JAVA_FLAGS = -ms1g -mx2g
+
 ##########################################################################
 
 include ${TOP}/build/Makefile.config
@@ -34,3 +36,7 @@ clean::
 run: 
 	$(MAKE) all
 	$(JAVA_CMD) edu.cmu.sphinx.knowledge.language.SimpleNGramModel
+
+large: 
+	$(MAKE) all
+	$(JAVA_CMD) edu.cmu.sphinx.knowledge.language.SimpleNGramModel file:./large.props

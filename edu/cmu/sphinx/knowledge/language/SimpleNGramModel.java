@@ -284,12 +284,13 @@ public class SimpleNGramModel implements LanguageModel {
      * 
      * @throws IOException if an error occurs while loading
      */
-    private void load(String format, String location, float unigramWeight) throws
-    FileNotFoundException, IOException {
+    private void load(String format, String location, float unigramWeight) 
+        throws FileNotFoundException, IOException {
         
         String line;
         float logUnigramWeight = logMath.linearToLog(unigramWeight);
-        float inverseLogUnigramWeight = logMath.linearToLog(1.0 - unigramWeight);
+        float inverseLogUnigramWeight = 
+            logMath.linearToLog(1.0 - unigramWeight);
         
         if (!format.equals("arpa")) {
             throw new IOException("Loading of " + format + 
@@ -469,8 +470,20 @@ public class SimpleNGramModel implements LanguageModel {
      *
      */
     public static void main(String[] args) throws Exception {
-        SphinxProperties.initContext("test", new URL("file:./test.props"));
+        String propsPath; 
+        if (args.length == 0) {
+            propsPath = "file:./test.props";
+        } else {
+            propsPath = args[0];
+        }
+
+        Timer.start("LM Load");
+        SphinxProperties.initContext("test", new URL(propsPath));
         SimpleNGramModel sm = new SimpleNGramModel("test");
+        Timer.stop("LM Load");
+
+        Timer.dumpAll();
+
         LogMath logMath = LogMath.getLogMath("test");
         
         BufferedReader reader = new BufferedReader
