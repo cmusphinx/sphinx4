@@ -99,7 +99,7 @@ class MemoryTest {
      * Close the results output stream
      */
     public void close() {
-        outStream.close();
+        // outStream.close();
     }
 
 
