@@ -497,31 +497,31 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	if (languageModel != null && arc.getState() instanceof WordSearchState) {
 	    WordSearchState state = (WordSearchState) arc.getState();
 	    int depth = languageModel.getMaxDepth();
-	    String word = state.getPronunciation().getWord();
-
-	    if (isWord(word)) {
+	    int wordID = state.getPronunciation().getWordID();
+            
+	    if (isWord(wordID)) {
 		List wordList = new ArrayList(depth);
-		wordList.add(word);
+		wordList.add(new Integer(wordID));
 		while (token != null && wordList.size() < depth) {
 		    if (token.getSearchState() 
 				    instanceof WordSearchState) {
 			WordSearchState prevWord =
 			    (WordSearchState) token.getSearchState();
-			String prevSpelling =
-			    prevWord.getPronunciation().getWord();
-			if (isWord(prevSpelling)) {
-			    wordList.add(prevSpelling);
+			int prevSpellingID =
+			    prevWord.getPronunciation().getWordID();
+			if (isWord(prevSpellingID)) {
+			    wordList.add((new Integer(prevSpellingID)));
 			}
 		    }
 		    token = token.getPredecessor();
 		}
 
 		if (token == null && wordList.size() < depth) {
-		    wordList.add(Dictionary.SENTENCE_START_SPELLING);
+		    wordList.add(new Integer(Dictionary.SENTENCE_START_ID));
 		}
 		Collections.reverse(wordList);
-		logProbability = 
-                    languageModel.getProbability(new WordSequence(wordList));
+		logProbability = languageModel.getProbability
+                    (WordSequence.getWordSequence(wordList));
 	    }
 	}
 	return logProbability;
@@ -536,8 +536,8 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      *
      * @return true if the word is a real word.
      */
-    private boolean isWord(String word) {
-	return !word.equals(Dictionary.SILENCE_SPELLING);
+    private boolean isWord(int wordID) {
+	return (wordID != Dictionary.SILENCE_ID);
     }
 
     /**
