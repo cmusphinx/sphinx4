@@ -105,8 +105,13 @@ public class BigramFollowers {
         int backoffID = readTwoBytesAsInt();
         int firstTrigram = readTwoBytesAsInt();
 
+        // move the pointer to the firstTrigramEntry of the next bigram
+        bigramBuffer.position(bigramBuffer.position() + 6);
+        int nextFirstTrigram = readTwoBytesAsInt();
+
         return (new BigramProbability
-                (wordID, probID, backoffID, firstTrigram));
+                (wordID, probID, backoffID, firstTrigram, 
+                 nextFirstTrigram - firstTrigram));
     }
 
 
