@@ -85,9 +85,6 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
     private String cmnClass;
     private String featureExtractorClass;
     
-    // state of this frontend
-    private boolean inUtterance;
-
 
     /**
      * Constructs a default SimpleFrontEnd.
@@ -115,12 +112,12 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 		    DataSource dataSource) throws IOException {
 	super(name, context);
 	this.amName = amName;
-	this.inUtterance = false;
         processors = new HashMap();
         frontends.put(context, this);
         setDataSource(dataSource);
 	useAcousticModelProperties = getSphinxProperties().getBoolean
 	    (PROP_PREFIX + "useAcousticModelProperties", true);
+	setAcousticProperties(getCorrectProperties());
 
         // add other data types here if necessary
 
@@ -250,7 +247,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      */
     private Filterbank getFilterbank(SpectrumSource predecessor) {
 	try {
-	    filterBankClass = getSphinxProperties().getString
+	    filterBankClass = getStringAcousticProperty
 		(PROP_FILTERBANK, "edu.cmu.sphinx.frontend.mfc.MelFilterbank");
 	    Filterbank bank = (Filterbank) 
 		Class.forName(filterBankClass).newInstance();
@@ -274,7 +271,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      */
     private CepstrumProducer getCepstrumProducer(SpectrumSource predecessor) {
 	try {
-	    cepstrumProducerClass = getSphinxProperties().getString
+	    cepstrumProducerClass = getStringAcousticProperty
 		(PROP_CEPSTRUM_PRODUCER,
 		 "edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer");
 	    CepstrumProducer producer = (CepstrumProducer)
