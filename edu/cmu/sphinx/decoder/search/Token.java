@@ -178,6 +178,21 @@ public class Token implements Scoreable {
     }
 
     /**
+     * Creates a Token with the given acoustic and language scores and
+     * predecessor.
+     *
+     * @param logAcousticScore the log acoustic score
+     * @param logLanguageScore the log language score
+     * @param predecessor the predecessor Token
+     */
+    public Token(float logAcousticScore, float logLanguageScore,
+                 Token predecessor) {
+        this.logAcousticScore = logAcousticScore;
+        this.logLanguageScore = logLanguageScore;
+        this.predecessor = predecessor;
+    }
+
+    /**
      * Returns the predecessor for this token, or null if this token
      * has no predecessors
      *
@@ -249,6 +264,7 @@ public class Token implements Scoreable {
         return logTotalScore;
     }
 
+
     /**
      * Normalizes a previously calculated score
      *
@@ -294,7 +310,6 @@ public class Token implements Scoreable {
     public void setScore(float logScore) {
         this.logTotalScore = logScore;
     }
-
 
     /**
      * Returns the language score associated with this token
