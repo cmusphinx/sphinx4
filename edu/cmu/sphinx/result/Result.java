@@ -1,42 +1,44 @@
-
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Copyright 1999-2002 Carnegie Mellon University.
+ * Portions Copyright 2002 Sun Microsystems, Inc.
  * Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
  * All Rights Reserved.  Use is subject to license terms.
- * 
+ *
  * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
  */
 
 package edu.cmu.sphinx.result;
+
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.Utterance;
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
 
-import  java.util.List;
-import  java.util.Iterator;
-import  java.util.LinkedList;
-import  java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Provides recognition results. Results can be partial or final. A
  * result should not be modified before it is a final result. Note
- * that a result may not contain all possible information. 
- * 
+ * that a result may not contain all possible information.
+ *
  *  The following methods are not yet defined but should be:
  * <pre>
-	public Result getDAG(int compressionLevel);
-    </pre>
+ public Result getDAG(int compressionLevel);
+ </pre>
  *
  */
 public class Result {
 
     private ActiveList activeList;
     private List resultList;
+    private AlternateHypothesisManager alternateHypothesisManager;
     private boolean isFinal = false;
     private int currentFrameNumber;
 
@@ -48,13 +50,28 @@ public class Result {
      * @param frameNumber the frame number for this result.
      * @param isFinal if true, the result is a final result
      */
-     public Result(ActiveList activeList, List resultList, int frameNumber,
-	     boolean isFinal) {
-	 this.activeList = activeList;
-	 this.resultList = resultList;
-	 this.currentFrameNumber = frameNumber;
-	 this.isFinal = isFinal;
-     }
+    public Result(AlternateHypothesisManager alternateHypothesisManager,
+                  ActiveList activeList, List resultList, int frameNumber,
+                  boolean isFinal) {
+        this(activeList, resultList, frameNumber, isFinal);
+        this.alternateHypothesisManager = alternateHypothesisManager;
+    }
+
+    /**
+     * Creates a result
+     *
+     * @param activeList the active list associated with this result
+     * @param resultList the result list associated with this result
+     * @param frameNumber the frame number for this result.
+     * @param isFinal if true, the result is a final result
+     */
+    public Result(ActiveList activeList, List resultList, int frameNumber,
+                  boolean isFinal) {
+        this.activeList = activeList;
+        this.resultList = resultList;
+        this.currentFrameNumber = frameNumber;
+        this.isFinal = isFinal;
+    }
 
     /**
      * Determines if the result is a final result.  A final result is
@@ -65,7 +82,7 @@ public class Result {
      * @return true if the result is a final result
      */
     public boolean isFinal() {
-	return isFinal;
+        return isFinal;
     }
 
     /**
@@ -86,7 +103,7 @@ public class Result {
      * @see Token
      */
     public ActiveList getActiveTokens() {
-	return activeList;
+        return activeList;
     }
 
     /**
@@ -107,7 +124,17 @@ public class Result {
      * @see Token
      */
     public List getResultTokens() {
-	return resultList;
+        return resultList;
+    }
+
+    /**
+     * Returns the AlternateHypothesisManager
+     * Used to construct a Lattice
+     *
+     * @return the AlternateHypothesisManager
+     */
+    public AlternateHypothesisManager getAlternateHypothesisManager() {
+        return alternateHypothesisManager;
     }
 
 
@@ -117,9 +144,8 @@ public class Result {
      * @return the frame number
      */
     public int getFrameNumber() {
-	return currentFrameNumber;
+        return currentFrameNumber;
     }
-
 
     /**
      * Returns the best scoring token in the result
@@ -127,14 +153,14 @@ public class Result {
      * @return the best scoring token or null
      */
     public Token getBestToken() {
-	Token bestToken = null;
-	for (Iterator i = resultList.iterator(); i.hasNext(); ) {
-	    Token token = (Token) i.next();
-	    if (bestToken == null || token.getScore() > bestToken.getScore()) {
-		bestToken = token;
-	    }
-	}
-	return bestToken;
+        Token bestToken = null;
+        for (Iterator i = resultList.iterator(); i.hasNext();) {
+            Token token = (Token) i.next();
+            if (bestToken == null || token.getScore() > bestToken.getScore()) {
+                bestToken = token;
+            }
+        }
+        return bestToken;
     }
 
     /**
@@ -143,14 +169,14 @@ public class Result {
      * @return the best scoring token or null
      */
     public Token getBestActiveToken() {
-	Token bestToken = null;
-	for (Iterator i = activeList.iterator(); i.hasNext(); ) {
-	    Token token = (Token) i.next();
-	    if (bestToken == null || token.getScore() > bestToken.getScore()) {
-		bestToken = token;
-	    }
-	}
-	return bestToken;
+        Token bestToken = null;
+        for (Iterator i = activeList.iterator(); i.hasNext();) {
+            Token token = (Token) i.next();
+            if (bestToken == null || token.getScore() > bestToken.getScore()) {
+                bestToken = token;
+            }
+        }
+        return bestToken;
     }
 
     /**
@@ -158,17 +184,17 @@ public class Result {
      * the branch that matches the given string
      *
      * @param text the string to search for
-     * @return the token at the head of the branch or null 
+     * @return the token at the head of the branch or null
      */
     public Token findToken(String text) {
-	text = text.trim();
-	for (Iterator i = resultList.iterator(); i.hasNext(); ) {
-	    Token token = (Token) i.next();
-	    if (text.equals(token.getWordPathNoSilences())) {
-		return token;
-	    }
-	}
-	return null;
+        text = text.trim();
+        for (Iterator i = resultList.iterator(); i.hasNext();) {
+            Token token = (Token) i.next();
+            if (text.equals(token.getWordPathNoSilences())) {
+                return token;
+            }
+        }
+        return null;
     }
 
     /**
@@ -176,17 +202,17 @@ public class Result {
      * the branch that matches the beginning of the given  string
      *
      * @param text the string to search for
-     * @return the list token at the head of the branch 
+     * @return the list token at the head of the branch
      */
-    public List  findPartialMatchingTokens(String text) {
+    public List findPartialMatchingTokens(String text) {
         List list = new ArrayList();
-	text = text.trim();
-	for (Iterator i = activeList.iterator(); i.hasNext(); ) {
-	    Token token = (Token) i.next();
-	    if (text.startsWith(token.getWordPathNoSilences())) {
+        text = text.trim();
+        for (Iterator i = activeList.iterator(); i.hasNext();) {
+            Token token = (Token) i.next();
+            if (text.startsWith(token.getWordPathNoSilences())) {
                 list.add(token);
-	    }
-	}
+            }
+        }
         return list;
     }
 
@@ -198,14 +224,14 @@ public class Result {
      */
     public Token getBestActiveParitalMatchingToken(String text) {
         List matchingList = findPartialMatchingTokens(text);
-	Token bestToken = null;
-	for (Iterator i = matchingList.iterator(); i.hasNext(); ) {
-	    Token token = (Token) i.next();
-	    if (bestToken == null || token.getScore() > bestToken.getScore()) {
-		bestToken = token;
-	    }
-	}
-	return bestToken;
+        Token bestToken = null;
+        for (Iterator i = matchingList.iterator(); i.hasNext();) {
+            Token token = (Token) i.next();
+            if (bestToken == null || token.getScore() > bestToken.getScore()) {
+                bestToken = token;
+            }
+        }
+        return bestToken;
     }
 
 
@@ -217,7 +243,7 @@ public class Result {
      * are available.
      */
     public FrameStatistics[] getFrameStatistics() {
-	return null;	// [[[ TBD:  write me ]]]
+        return null;	// [[[ TBD:  write me ]]]
     }
 
 
@@ -230,7 +256,7 @@ public class Result {
      * paths.
      */
     public Path[] getBestPaths(int numBestPaths) {
-	return null;	// [[[ TBD:  write me ]]]
+        return null;	// [[[ TBD:  write me ]]]
     }
 
     /**
@@ -239,7 +265,7 @@ public class Result {
      * @return the starting frame number for the result
      */
     public int getStartFrame() {
-	return 0;
+        return 0;
     }
 
     /**
@@ -248,13 +274,13 @@ public class Result {
      * @return the ending frame number for the result
      */
     public int getEndFrame() {
-	return 0;	// [[[ TBD: write me ]]]
+        return 0;	// [[[ TBD: write me ]]]
     }
 
     /**
      * Gets the feature frames associated with this result
      *
-     * @return the set of feature frames associated with this result, 
+     * @return the set of feature frames associated with this result,
      *    or null if
      * the frames are not available.
      */
@@ -270,11 +296,11 @@ public class Result {
                 featureList.add(0, feature);
                 token = token.getPredecessor();
             } while (token != null);
-            
+
             features = new Feature[featureList.size()];
             featureList.toArray(features);
         }
-	return features;
+        return features;
     }
 
 
@@ -297,12 +323,12 @@ public class Result {
             }
 
             // from the Feature, obtain a reference to the Utterance
-	    if (token != null) {
-		Feature feature = token.getFeature();
-		if (feature != null) {
-		    utterance = feature.getUtterance();
-		}
-	    }
+            if (token != null) {
+                Feature feature = token.getFeature();
+                if (feature != null) {
+                    utterance = feature.getUtterance();
+                }
+            }
         }
         return utterance;
     }
@@ -327,12 +353,12 @@ public class Result {
      * Returns a string representation of this object
      */
     public String toString() {
-	Token token = getBestToken();
-	if (token == null) {
-	    return "";
-	} else {
-	    return token.getWordPath();
-	}
+        Token token = getBestToken();
+        if (token == null) {
+            return "";
+        } else {
+            return token.getWordPath();
+        }
     }
 
 
@@ -342,7 +368,7 @@ public class Result {
      * @param finalResult if true, the result should be made final
      */
     void setFinal(boolean finalResult) {
-	this.isFinal = finalResult;
+        this.isFinal = finalResult;
     }
 
 
@@ -354,15 +380,15 @@ public class Result {
      *
      */
     public boolean validate() {
-	boolean valid = true;
-	for (Iterator i = activeList.iterator(); i.hasNext(); ) {
-	    Token token = (Token) i.next();
-	    if (!token.validate()) {
-		valid = false;
-		token.dumpTokenPath();
-	    }
-	}
-	return valid;
+        boolean valid = true;
+        for (Iterator i = activeList.iterator(); i.hasNext();) {
+            Token token = (Token) i.next();
+            if (!token.validate()) {
+                valid = false;
+                token.dumpTokenPath();
+            }
+        }
+        return valid;
     }
 }
 

@@ -1,4 +1,3 @@
-
 /*
 * Copyright 1999-2002 Carnegie Mellon University.
 * Portions Copyright 2002 Sun Microsystems, Inc.
@@ -43,9 +42,10 @@ public class Lattice {
     protected Map edges;
     protected Map nodes;
     AlternateHypothesisManager loserManager;
+
     {
-        edges=new HashMap();
-        nodes=new HashMap();
+        edges = new HashMap();
+        nodes = new HashMap();
         logBase = Math.exp(1);
     }
 
@@ -63,84 +63,79 @@ public class Lattice {
      *
      * @param result
      */
-    public Lattice( Result result ) {
-        initialNode = addNode("0", Dictionary.SENTENCE_START_SPELLING, 0,0);
-        terminalNode = addNode("-1", Dictionary.SENTENCE_END_SPELLING,0,0);
+    public Lattice(Result result) {
+        //initialNode = addNode("0", Dictionary.SENTENCE_START_SPELLING, 0, 0);
+        terminalNode = addNode("-1", Dictionary.SENTENCE_END_SPELLING, 0, 0);
 
-        Node thisNode;
-        double thisAcousticScore=0.0;
-        double thisLMScore=0.0;
-        for( Iterator it=result.getResultTokens().iterator(); it.hasNext(); ) {
-            thisNode=terminalNode;
-            for( Token token = (Token)(it.next());
-                 token != null;
-                 token = token.getPredecessor() ) {
-                if( token.getSearchState() instanceof WordSearchState ) {
-                    Node newNode;
-                    if( hasNode(token) ) {
-                        newNode = getNode( token );
+        loserManager = result.getAlternateHypothesisManager();
+
+        if (loserManager == null) {
+
+            Node thisNode;
+            double thisAcousticScore = 0.0;
+            double thisLMScore = 0.0;
+            for (Iterator it = result.getResultTokens().iterator(); it.hasNext();) {
+                thisNode = terminalNode;
+                for (Token token = (Token) (it.next());
+                     token != null;
+                     token = token.getPredecessor()) {
+                    if (token.isWord()) {
+                        Node newNode;
+                        if (hasNode(token)) {
+                            newNode = getNode(token);
+                        } else {
+                            newNode = addNode(token);
+                        }
+                        thisAcousticScore = token.getScore();
+                        thisLMScore = 0.0f;
+                        addEdge(newNode, thisNode, thisAcousticScore, thisLMScore);
+                        thisNode = newNode;
                     }
-                    else {
-                        newNode = addNode( token );
-                    }
-                    thisAcousticScore = token.getScore();
-                    thisLMScore = 0.0f;
-                    addEdge( newNode,thisNode,thisAcousticScore,thisLMScore );
-                    thisNode = newNode;
                 }
+                addEdge(initialNode, thisNode, thisAcousticScore, thisLMScore);
             }
-            addEdge(initialNode,thisNode,thisAcousticScore,thisLMScore);
-        }
-    }
+        } else {
+            loserManager.purge(1);
 
-    /**
-     * Create a Lattice from a Result and a viterbiLoserMap.
-     *
-     * @param result
-     * @param loserManager
-     */
-    public Lattice( Result result, AlternateHypothesisManager loserManager ) {
-        initialNode = addNode("0", Dictionary.SENTENCE_START_SPELLING, 0,0);
-        terminalNode = addNode("-1", Dictionary.SENTENCE_END_SPELLING,0,0);
-        this.loserManager = loserManager;
-        loserManager.purge(1);
-
-        for (Iterator it=result.getResultTokens().iterator(); it.hasNext();) {
-            Token token = (Token)(it.next());
-            processToken(terminalNode, token);
+            for (Iterator it = result.getResultTokens().iterator(); it.hasNext();) {
+                Token token = (Token) (it.next());
+                processToken(terminalNode, token);
+            }
         }
     }
 
     protected void processToken(Node thisNode, Token token) {
-        double thisAcousticScore=0.0;
-        double thisLMScore=0.0;
-        if (token.isWord()) {
-            Node newNode;
-            if( hasNode(token) ) {
-                newNode = getNode( token );
-            }
-            else {
-                newNode = addNode( token );
-            }
-            thisAcousticScore = token.getScore();
-            thisLMScore = 0.0f;
-            addEdge( newNode,thisNode,thisAcousticScore,thisLMScore );
-            thisNode = newNode;
+
+        assert token.isWord();
+        assert thisNode!=null;
+        assert token!=null;
+
+        double thisAcousticScore = token.getScore();
+        double thisLMScore = 0.0;
+
+        // test to see if token is processed via a previous node path
+        if (hasNode(token)) {
+            //if (token.isWord()) // Only add word nodes to the graph
+                addEdge(getNode(token), thisNode, thisAcousticScore, thisLMScore);
+            return;
         }
+        Node newNode = addNode(token);
+        //if (token.isWord()) // Only add word nodes to the graph
+            addEdge(newNode, thisNode, thisAcousticScore, thisLMScore);
 
         List list = loserManager.getAlternatePredecessors(token);
         if (list != null) {
-            for (Iterator iter = list.iterator();iter.hasNext();) {
-                Token predecessor = (Token)iter.next();
-                processToken(thisNode, predecessor);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Token predecessor = (Token) iter.next();
+                processToken(newNode, predecessor);
             }
         }
         Token predecessor = token.getPredecessor();
         if (predecessor != null) {
-            processToken(thisNode, predecessor);
+            processToken(newNode, predecessor);
         }
-        if (predecessor==null) {
-            addEdge(initialNode,thisNode,thisAcousticScore,thisLMScore);
+        if (predecessor == null) {
+            // addEdge(initialNode, newNode, thisAcousticScore, thisLMScore);
         }
     }
 
@@ -150,42 +145,36 @@ public class Lattice {
      *
      * @param fileName
      */
-    public Lattice( String fileName ) {
+    public Lattice(String fileName) {
         try {
-            System.err.println( "Loading from " + fileName );
+            System.err.println("Loading from " + fileName);
 
             // load the nodes
-            LineNumberReader in=new LineNumberReader(new FileReader(fileName));
+            LineNumberReader in = new LineNumberReader(new FileReader(fileName));
             String line;
-            while( (line=in.readLine()) != null ) {
+            while ((line = in.readLine()) != null) {
                 StringTokenizer tokens = new StringTokenizer(line);
-                if( tokens.hasMoreTokens() ) {
+                if (tokens.hasMoreTokens()) {
                     String type = tokens.nextToken();
 
-                    if( type.equals( "edge:" ) ) {
-                        Edge.load( this, tokens );
-                    }
-                    else if( type.equals( "node:" ) ) {
-                        Node.load( this, tokens );
-                    }
-                    else if( type.equals( "initialNode:" ) ) {
-                        setInitialNode( getNode( tokens.nextToken() ) );
-                    }
-                    else if( type.equals( "terminalNode:" ) ) {
-                        setTerminalNode( getNode( tokens.nextToken() ) );
-                    }
-                    else if( type.equals( "logBase:" ) ) {
-                        setLogBase( Double.parseDouble( tokens.nextToken() ) );
-                    }
-                    else {
-                        throw new Error( "SYNTAX ERROR: " + fileName +
-                                "[" + in.getLineNumber() + "] " + line );
+                    if (type.equals("edge:")) {
+                        Edge.load(this, tokens);
+                    } else if (type.equals("node:")) {
+                        Node.load(this, tokens);
+                    } else if (type.equals("initialNode:")) {
+                        setInitialNode(getNode(tokens.nextToken()));
+                    } else if (type.equals("terminalNode:")) {
+                        setTerminalNode(getNode(tokens.nextToken()));
+                    } else if (type.equals("logBase:")) {
+                        setLogBase(Double.parseDouble(tokens.nextToken()));
+                    } else {
+                        throw new Error("SYNTAX ERROR: " + fileName +
+                                "[" + in.getLineNumber() + "] " + line);
                     }
                 }
             }
             in.close();
-        }
-        catch( Exception e ) {
+        } catch (Exception e) {
             throw new Error(e.toString());
         }
     }
@@ -203,10 +192,12 @@ public class Lattice {
     public Edge addEdge(Node fromNode, Node toNode,
                         double acousticScore, double lmScore) {
         String edgeId = fromNode.id + toNode.id;
-        Edge e = (Edge)edges.get(edgeId);
+        Edge e = (Edge) edges.get(edgeId);
         if (e == null) {
-            e = new Edge(fromNode,toNode,acousticScore,lmScore);
-            edges.put(edgeId,e);
+            e = new Edge(fromNode, toNode, acousticScore, lmScore);
+            fromNode.addToEdge(e);
+            toNode.addFromEdge(e);
+            edges.put(edgeId, e);
         }
         return e;
     }
@@ -221,8 +212,8 @@ public class Lattice {
      * @return the new Node
      */
     public Node addNode(String word, int beginTime, int endTime) {
-        Node n = new Node(word,beginTime,endTime);
-        addNode( n );
+        Node n = new Node(word, beginTime, endTime);
+        addNode(n);
         return n;
     }
 
@@ -237,8 +228,8 @@ public class Lattice {
      * @return the new Node
      */
     protected Node addNode(String id, String word, int beginTime, int endTime) {
-        Node n = new Node(id, word,beginTime,endTime);
-        addNode( n );
+        Node n = new Node(id, word, beginTime, endTime);
+        addNode(n);
         return n;
     }
 
@@ -251,14 +242,13 @@ public class Lattice {
      */
     protected Node addNode(Token token) {
         String word;
-        if( token.getSearchState() instanceof WordSearchState) {
-            word = ((WordSearchState)(token.getSearchState()))
+        if (token.getSearchState() instanceof WordSearchState) {
+            word = ((WordSearchState) (token.getSearchState()))
                     .getPronunciation().getWord();
-        }
-        else {
+        } else {
             word = token.getSearchState().toString();
         }
-        return addNode(Integer.toString(token.hashCode()),word,0,0);
+        return addNode(Integer.toString(token.hashCode()), word, 0, 0);
     }
 
     /**
@@ -270,7 +260,7 @@ public class Lattice {
      */
 
     protected boolean hasNode(Token token) {
-        return hasNode( Integer.toString(token.hashCode()));
+        return hasNode(Integer.toString(token.hashCode()));
     }
 
     /**
@@ -291,7 +281,7 @@ public class Lattice {
      * @return the Node
      */
     protected Node getNode(String id) {
-        return (Node)(nodes.get(id));
+        return (Node) (nodes.get(id));
     }
 
     /**
@@ -310,8 +300,8 @@ public class Lattice {
      * @param n
      */
     protected void addNode(Node n) {
-        assert ! hasNode(n.getId());
-        nodes.put( n.getId(), n );
+        assert !hasNode(n.getId());
+        nodes.put(n.getId(), n);
     }
 
     /**
@@ -321,7 +311,7 @@ public class Lattice {
      */
     protected void removeNode(Node n) {
         assert hasNode(n.getId());
-        nodes.remove( n.getId() );
+        nodes.remove(n.getId());
     }
 
     /**
@@ -344,7 +334,7 @@ public class Lattice {
         return nodes.values();
     }
 
-     /**
+    /**
      * Remove an Edge from the set of all Edges.
      * @param e
      */
@@ -370,11 +360,11 @@ public class Lattice {
      */
     public void dumpAISee(String fileName, String title) {
         try {
-            System.err.println( "Dumping " + title + " to " + fileName );
-            FileWriter f = new FileWriter( fileName );
-            f.write( "graph: {\n" );
-            f.write( "title: \"" + title + "\"\n" );
-            f.write( "display_edge_labels: yes\n" );
+            System.err.println("Dumping " + title + " to " + fileName);
+            FileWriter f = new FileWriter(fileName);
+            f.write("graph: {\n");
+            f.write("title: \"" + title + "\"\n");
+            f.write("display_edge_labels: yes\n");
             /*
             f.write( "colorentry 32: 25 225 0\n");
             f.write( "colorentry 33: 50 200 0\n");
@@ -392,17 +382,16 @@ public class Lattice {
             f.write( "yspace: 10\n");
             */
 
-            for( Iterator i= nodes.values().iterator(); i.hasNext(); ) {
-                ((Node)(i.next())).dumpAISee( f );
+            for (Iterator i = nodes.values().iterator(); i.hasNext();) {
+                ((Node) (i.next())).dumpAISee(f);
             }
-            for( Iterator i= edges.values().iterator(); i.hasNext(); ) {
-                ((Edge)(i.next())).dumpAISee( f );
+            for (Iterator i = edges.values().iterator(); i.hasNext();) {
+                ((Edge) (i.next())).dumpAISee(f);
             }
-            f.write( "}\n");
+            f.write("}\n");
             f.close();
-        }
-        catch ( IOException e ) {
-            throw new Error( e.toString() );
+        } catch (IOException e) {
+            throw new Error(e.toString());
         }
     }
 
@@ -421,9 +410,9 @@ public class Lattice {
         for (Iterator i = edges.values().iterator(); i.hasNext();) {
             ((Edge) (i.next())).dump(out);
         }
-        out.println("initialNode: " + initialNode.getId() );
-        out.println("terminalNode: " + terminalNode.getId() );
-        out.println("logBase: " + logBase );
+        out.println("initialNode: " + initialNode.getId());
+        out.println("terminalNode: " + terminalNode.getId());
+        out.println("logBase: " + logBase);
         out.flush();
     }
 
@@ -435,9 +424,8 @@ public class Lattice {
      */
     public void dump(String file) {
         try {
-            dump( new PrintWriter(new FileWriter(file)) );
-        }
-        catch( IOException e ) {
+            dump(new PrintWriter(new FileWriter(file)));
+        } catch (IOException e) {
             throw new Error(e.toString());
         }
     }
@@ -450,14 +438,14 @@ public class Lattice {
      */
     protected void removeNodeAndEdges(Node n) {
         //System.err.println("Removing node " + n + " and associated edges");
-        for( Iterator i=n.getToEdges().iterator(); i.hasNext(); ) {
-            Edge e = (Edge)(i.next());
+        for (Iterator i = n.getToEdges().iterator(); i.hasNext();) {
+            Edge e = (Edge) (i.next());
             e.getToNode().removeFromEdge(e);
             //System.err.println( "\tRemoving " + e );
             edges.remove(e);
         }
-        for( Iterator i=n.getFromEdges().iterator(); i.hasNext(); ) {
-            Edge e = (Edge)(i.next());
+        for (Iterator i = n.getFromEdges().iterator(); i.hasNext();) {
+            Edge e = (Edge) (i.next());
             e.getFromNode().removeToEdge(e);
             //System.err.println( "\tRemoving " + e );
             edges.remove(e);
@@ -556,7 +544,7 @@ public class Lattice {
      * Dump all paths through this Lattice.  Used for debugging.
      */
     public void dumpAllPaths() {
-        for( Iterator i=allPaths().iterator(); i.hasNext(); ) {
+        for (Iterator i = allPaths().iterator(); i.hasNext();) {
             System.out.println(i.next());
         }
     }
@@ -567,7 +555,7 @@ public class Lattice {
      * @return a lists of lists of Nodes
      */
     public List allPaths() {
-        return allPathsFrom( "",initialNode );
+        return allPathsFrom("", initialNode);
     }
 
     /**
@@ -580,13 +568,12 @@ public class Lattice {
     protected List allPathsFrom(String path, Node n) {
         String p = path + " " + n.getWord();
         List l = new LinkedList();
-        if( n == terminalNode ) {
-            l.add( p );
-        }
-        else {
-            for( Iterator i=n.getToEdges().iterator(); i.hasNext(); ) {
+        if (n == terminalNode) {
+            l.add(p);
+        } else {
+            for (Iterator i = n.getToEdges().iterator(); i.hasNext();) {
                 Edge e = (Edge) i.next();
-                l.addAll( allPathsFrom( p, e.getToNode() ) );
+                l.addAll(allPathsFrom(p, e.getToNode()));
             }
         }
         return l;
@@ -598,15 +585,14 @@ public class Lattice {
      *
      * @param args
      */
-    public static void main( String[] args ) {
+    public static void main(String[] args) {
 
-        Lattice lattice=null;
+        Lattice lattice = null;
 
-        if( args.length > 0 ) {
+        if (args.length > 0) {
             System.err.println("Loading lattice from " + args[0]);
-            lattice = new Lattice( args[0] );
-        }
-        else {
+            lattice = new Lattice(args[0]);
+        } else {
             System.err.println("Building test Lattice");
 
             lattice = new Lattice();
@@ -619,26 +605,26 @@ public class Lattice {
             2 --> 3 -
             */
 
-            Node n0 = lattice.addNode("0","0",0,0);
-            Node n1 = lattice.addNode("1","1",0,0);
-            Node n1a = lattice.addNode("1a","1",0,0);
-            Node n2 = lattice.addNode("2","2",0,0);
-            Node n2a = lattice.addNode("2a","2",0,0);
-            Node n3 = lattice.addNode("3","3",0,0);
-            Node n4 = lattice.addNode("4","4",0,0);
+            Node n0 = lattice.addNode("0", "0", 0, 0);
+            Node n1 = lattice.addNode("1", "1", 0, 0);
+            Node n1a = lattice.addNode("1a", "1", 0, 0);
+            Node n2 = lattice.addNode("2", "2", 0, 0);
+            Node n2a = lattice.addNode("2a", "2", 0, 0);
+            Node n3 = lattice.addNode("3", "3", 0, 0);
+            Node n4 = lattice.addNode("4", "4", 0, 0);
 
-            Edge e01 = lattice.addEdge(n0,n1,-1,0);
-            Edge e01a = lattice.addEdge(n0,n1a,-1,0);
-            Edge e14 = lattice.addEdge(n1,n4,-1,0);
-            Edge e1a2a = lattice.addEdge(n1a,n2a,-1,0);
-            Edge e2a4 = lattice.addEdge(n2a,n4,-1,0);
-            Edge e02 = lattice.addEdge(n0,n2,-1,0);
-            Edge e23 = lattice.addEdge(n2,n3,-1,0);
-            Edge e13 = lattice.addEdge(n1,n3,-1,0);
-            Edge e34 = lattice.addEdge(n3,n4,-1,0);
+            Edge e01 = lattice.addEdge(n0, n1, -1, 0);
+            Edge e01a = lattice.addEdge(n0, n1a, -1, 0);
+            Edge e14 = lattice.addEdge(n1, n4, -1, 0);
+            Edge e1a2a = lattice.addEdge(n1a, n2a, -1, 0);
+            Edge e2a4 = lattice.addEdge(n2a, n4, -1, 0);
+            Edge e02 = lattice.addEdge(n0, n2, -1, 0);
+            Edge e23 = lattice.addEdge(n2, n3, -1, 0);
+            Edge e13 = lattice.addEdge(n1, n3, -1, 0);
+            Edge e34 = lattice.addEdge(n3, n4, -1, 0);
 
-            lattice.setInitialNode( n0 );
-            lattice.setTerminalNode( n4 );
+            lattice.setInitialNode(n0);
+            lattice.setTerminalNode(n4);
         }
 
         System.err.println("Lattice has " + lattice.getNodes().size() + " nodes and " + lattice.getEdges().size() + " edges");
