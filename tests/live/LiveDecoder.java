@@ -98,7 +98,7 @@ public class LiveDecoder extends Decoder {
 	    getRecognizer().getFrontEnd();
 
         CepstrumSource predecessor = (CepstrumSource) frontend.getProcessor
-            ("EnergyEndpointer");
+            ("Endpointer");
 
         // create the viewer
         CepstrumSource monitor = new CepstrumMonitor

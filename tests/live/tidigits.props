@@ -58,7 +58,7 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=200
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-200
 
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.FastActiveList
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.SortingActiveList
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=7.0
 
 

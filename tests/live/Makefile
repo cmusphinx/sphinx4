@@ -75,6 +75,7 @@ live: all
 live-ep: all
 	$(JAVA_CMD) \
 	-DshowPartialResults=true \
+	-Dedu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments=false \
 	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=9 \
@@ -92,7 +93,7 @@ live-ep: all
 live-free: all
 	$(JAVA_CMD) \
 	-DhandsFree=true \
-	-Dedu.cmu.sphinx.frontend.NonSpeechFilter.mergeSpeechSegments=false \
+	-Dedu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments=false \
 	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=9 \

@@ -381,6 +381,9 @@ public class Live {
             if (!handsFree) {
                 lastResult = decoder.decode(liveFrame.getReference());
                 updateLiveFrame(decoder.getNISTAlign());
+                if (hasEndpointer) {
+                    liveFrame.exitSpeakingMode();
+                }
             } else {
                 while (decoder.getMicrophone().getRecording()) {
                     try {
