@@ -66,6 +66,15 @@ public class HMM implements Serializable {
 	return unit;
     }
 
+    /**
+     * Gets the  base unit associated with this HMM
+     *
+     * @return the unit associated with this HMM
+     */
+    public Unit getBaseUnit() {
+	return Unit.getCIUnit(unit.getName());
+    }
+
 
     /**
      * Retrieves the hmm state 
@@ -199,6 +208,24 @@ public class HMM implements Serializable {
     public String toString() {
 	String name = isComposite() ? "HMM@" : "HMM";
 	return name + "(" + unit +"):" + position;
+    }
+
+    public int hashCode() {
+        return getTransitionMatrix().hashCode() * 3 + 
+               getSenoneSequence().hashCode(); 
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (o instanceof HMM) {
+            HMM other = (HMM) o;
+            return getTransitionMatrix() == 
+                other.getTransitionMatrix()
+                && getSenoneSequence().equals(
+                        other.getSenoneSequence());
+        }
+        return false;
     }
 }
 
