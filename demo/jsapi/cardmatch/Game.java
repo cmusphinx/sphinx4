@@ -13,27 +13,23 @@
 
 package demo.jsapi.cardmatch;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * A CardMatch Game.
  */
 public class Game {
-
     private List cards;
-    private Card card1;
-    private Card card2;
 
 
     /**
      * Constructs a Card with the following image file.
      *
-     * @param imageFile the image file for this Card
+     * @param numberOfCards the number of cards to use in the game
+     * @param imageFile the array of image file for the cards
      */
     public Game(int numberOfCards, String[] imageFiles) {
         cards = createCards(numberOfCards, imageFiles);
@@ -82,27 +78,39 @@ public class Game {
             card.setDefaultImageFile(id + ".gif");
             card.setMatched(false);
             card.setSelected(false);
-            card.resetJToggleButton();
         }
-        card1 = null;
-        card2 = null;
     }
 
 
     /**
      * Returns the Card of the given ID, which can be "1", "2", ... "6".
      *
+     * @param id the card id
      * @return the Card of the given ID
      */
     public Card getCard(String id) {
         for (Iterator i = cards.iterator(); i.hasNext(); ) {
             Card card = (Card) i.next();
             if (card.getID().equals(id)) {
-                // System.out.println("getCard(): " + card.getID());
                 return card;
             }
         }
         return null;
+    }
+
+
+    /**
+     * Mark all cards matching the given ID as unmatched
+     *
+     * @param id the card id
+     */
+    public void unsetMatch(Card card) {
+        for (Iterator i = cards.iterator(); i.hasNext(); ) {
+            Card otherCard = (Card) i.next();
+            if (card.isMatch(otherCard)) {
+                otherCard.setMatched(false);
+            }
+        }
     }
 
 
@@ -115,64 +123,92 @@ public class Game {
         Card card = getCard(cardID);
         if (card != null && !card.isMatched()) {
             card.setSelected(true);
-            if (card1 == null) {
-                card1 = card;
-            } else {
-                if (card2 == null && card1 != card) {
-                    card2 = card;
-                }
-            }
         }
     }
 
 
     /**
+     * Determines if the given card is already selected
+     * 
+     * @param cardID the card
+     *
+     * @return <code>true</code>  if the card is already selected
+     */
+    public boolean isSelected(String cardID) {
+        return getCard(cardID).isSelected();
+    }
+
+    /**
      * Checks if there are any matches.
      *
-     * @return true if the last two selected cards match, false otherwise
+     * @return <code>true</code>  if the last two selected 
+     * cards match, false otherwise
      */
-    public boolean checkForMatches() {
-        if (card1 != null && card2 != null) {
-            // System.out.println("Card1 = " + card1.getID());
-            // System.out.println("Card2 = " + card2.getID());
-            boolean match =
-                (card1.getImageFile().equals(card2.getImageFile()));
-            if (match) {
+    public boolean processMatches() {
+        Card card0 = findUnmatchedCard(0);
+        Card card1 = findUnmatchedCard(1);
+
+        if (card0 != null && card1 != null) {
+            if (card0.isMatch(card1)) {
+                card0.setMatched(true);
                 card1.setMatched(true);
-                card2.setMatched(true);
-                card1 = null;
-                card2 = null;
+                return true;
             }
-            return match;
         }
         return false;
     }
 
 
     /**
+     * finds the first unmatched card
+     *
+     * @param which which card to find
+     *
+     * @return the first unmatched card
+     */
+    private Card findUnmatchedCard(int which) {
+        int count = 0;
+        for (Iterator i = cards.iterator(); i.hasNext(); ) {
+            Card card = (Card) i.next();
+            if (card.isSelected() && !card.isMatched()) {
+                if (count == which) {
+                    return card;
+                }
+                count++;
+            }
+        }
+        return null;
+    }
+        
+
+
+    /**
      * Turn back the last two cards that were guessed.
      */
     public void turnGuessedCards() {
-        if (card1 != null && card2 != null) {
-            if (!card1.isMatched()) {
-                card1.setSelected(false);
+        for (Iterator i = cards.iterator(); i.hasNext(); ) {
+            Card card = (Card) i.next();
+            if (!card.isMatched()) {
+                card.setSelected(false);
             }
-            if (!card2.isMatched()) {
-                card2.setSelected(false);
-            }
-            card1 = null;
-            card2 = null;
         }
     }
 
 
     /**
-     * Returns true if there are two guesses already.
+     * Returns the number of selected, but unmatched cares
      *
-     * @return true if there were two guesses already
+     * @return the number of unselected cards
      */
-    public boolean hasTwoGuesses() {
-        return (card1 != null && card2 != null);
+    public int getNumSelected() {
+        int numSelected = 0;
+        for (Iterator i = cards.iterator(); i.hasNext(); ) {
+            Card card = (Card) i.next();
+            if (card.isSelected() && !card.isMatched()) {
+                numSelected ++;
+            }
+        }
+        return numSelected;
     }
 
 
