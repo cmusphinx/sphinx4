@@ -250,6 +250,7 @@ an4_spelling_bigram:
     -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
+    -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=0\
     -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./an4_spelling.bigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_spelling.batch
 
@@ -282,6 +283,7 @@ an4_spelling_unigram_fst:
 an4_spelling_bigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=0\
     -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10.0 \
     -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.decoder.linguist.FSTGrammar.path=./an4_spelling.bigram.fst\
@@ -293,6 +295,7 @@ an4_spelling_bigram_fst:
 an4_spelling_trigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=0\
     -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10.0 \
     -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.decoder.linguist.FSTGrammar.path=./an4_spelling.trigram.fst\
