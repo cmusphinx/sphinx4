@@ -101,7 +101,7 @@ import java.util.Vector;
  * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class = {@link edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform}
  * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class = {@link edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank}
  * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class = {@link edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform}
- * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class = {@link edu.cmu.sphinx.frontend.feature.BatchCMN edu.cmu.sphinx.frontend.feature.BatchCMN}}
+ * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class = {@link edu.cmu.sphinx.frontend.feature.BatchCMN edu.cmu.sphinx.frontend.feature.BatchCMN}
  * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class = {@link edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor}
  * </code>
  * <p>
