@@ -39,7 +39,7 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     /**
      * The confidence scorer
      */
-    private ConfidenceScorer confidenceScorer;    
+    protected ConfidenceScorer confidenceScorer;    
     
     /*
      * (non-Javadoc)
@@ -68,7 +68,7 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     /**
      * Gets the transcription with no fillers and no "<unk>".
      */
-    private String getTranscriptionNoFiller(Path path) {
+    protected String getTranscriptionNoFiller(Path path) {
         StringBuffer buf = new StringBuffer();
         WordResult[] words = path.getWords();
         for (int i = 0; i < words.length; i++) {
@@ -83,7 +83,7 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     /**
      * Gets the raw transcription
      */
-    private String getTranscriptionRaw(Path path) {
+    protected String getTranscriptionRaw(Path path) {
         StringBuffer buf = new StringBuffer();
         WordResult[] words = path.getWords();
         for (int i = 0; i < words.length; i++) {
