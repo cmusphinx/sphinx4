@@ -175,22 +175,9 @@ public class SimpleActiveList implements ActiveList  {
      * @return a (possible new) active list
      */
     public ActiveList purge() {
-	int count = 0;
-	Collections.sort(tokenList, Token.COMPARATOR);
-
-	if (tokenList.size() > 0) {
-	    Token bestToken = (Token) tokenList.get(0);
-	    float highestScore = bestToken.getScore();
-	    float pruneScore = highestScore + relativeBeamWidth;
-
-	    for (Iterator i = tokenList.iterator();
-		    i.hasNext() && count < absoluteBeamWidth; count++) {
-		Token token = (Token) i.next();
-		if (token.getScore() <= pruneScore) {
-		    break;
-		}
-	    }
-	    tokenList = tokenList.subList(0, count);
+	if (absoluteBeamWidth > 0 && tokenList.size() > absoluteBeamWidth) {
+            Collections.sort(tokenList, Token.COMPARATOR);
+	    tokenList = tokenList.subList(0, absoluteBeamWidth);
 	}
 	return this;
     }
