@@ -24,17 +24,14 @@ FILES = $(shell echo *.java)
 SUBDIRS =
 
 
-GCSPY_FLAGS= -client -Xport3000 -Xverbose -Xwait
-PROFILE_FLAGS= $(GCSPY_FLAGS)
-PROFILE_FLAGS= -Xprof -server
-
+PROFILE_FLAGS= -Xprof
 LOG_GC_FLAGS=  -Xloggc:gc.txt
-GC_FLAGS = -ms256m -mx512m
+GC_FLAGS = -ms256m -mx512m -XX:NewSize=100m  -XX:MaxNewSize=100m
 
-# LOGGER_PROPERTIES=tidigits.props
+# GC_FLAGS = -ms256m -mx512m -XX:-UseConcMarkSweepGC -XX:+UseParNewGC -XX:NewSize=100m -XX:MaxNewSize=100m 
+
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
-DEBUG_FLAGS= -XX:+UsePerfData
 DEBUG_FLAGS= 
 
 EXTRA_JAVA_FLAGS=$(PROFILE_FLAGS) $(LOG_GC_FLAGS) $(LOG) $(GC_FLAGS) $(DEBUG_FLAGS)
