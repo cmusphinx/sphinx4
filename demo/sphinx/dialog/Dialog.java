@@ -44,7 +44,6 @@ import javax.speech.recognition.Rule;
  * This demo uses a DialogManager to manage a set of dialog states.
  * Each dialog state potentially has its own grammar. 
  */
-
 public class Dialog {
 
     /**
@@ -67,12 +66,12 @@ public class Dialog {
             System.out.println("\nWelcome to the Sphinx-4 Dialog Demo "
                     + " - Version 1.0\n");
 
-            dialogManager.addNode("menu",  new MyBehavior());
+            dialogManager.addNode("menu",   new MyBehavior());
             dialogManager.addNode("email",  new MyBehavior());
             dialogManager.addNode("games",  new MyBehavior());
-            dialogManager.addNode("news", new MyBehavior());
+            dialogManager.addNode("news",   new MyBehavior());
             dialogManager.addNode("music",  new MyMusicBehavior());
-            dialogManager.addNode("movies",  new MyBehavior());
+            dialogManager.addNode("movies", new MyBehavior());
             dialogManager.addNode("phone",  new MyBehavior());
             dialogManager.addNode("books",  new MyBehavior());
 
@@ -115,12 +114,6 @@ public class Dialog {
 class MyBehavior extends NewGrammarDialogNodeBehavior {
     private Collection sampleUtterances;
 
-    /**
-     *  Executed when we enter this node. Displays the active grammar
-     */
-    public void onEntry() throws IOException {
-        super.onEntry();
-    }
 
     /**
      *  Executed when we are ready to recognize
