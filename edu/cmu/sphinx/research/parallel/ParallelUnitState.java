@@ -63,7 +63,7 @@ public class ParallelUnitState extends UnitState implements ParallelState {
      * Creates a ParallelUnitState
      *
      * @param parent the parent of this state
-     * @param modelName the name of the acoustic model behind this HMMState
+     * @param stream the feature stream of this state
      * @param which the index of the given state
      * @param unit the unit associated with this state
      * @param tokenStackSize the token stack size

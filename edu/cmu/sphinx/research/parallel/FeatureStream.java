@@ -109,7 +109,7 @@ public class FeatureStream {
     /**
      * Sets the active list
      *
-     * @param activeList the active list
+     * @param list the active list
      */
     public void setActiveList(ActiveList list) {
         this.activeList = list;

@@ -62,8 +62,9 @@ implements ParallelState {
      * Creates a ParallelHMMStateState
      *
      * @param parent the parent of this state
-     * @param modelName the name of the acoustic model behind this HMMState
+     * @param stream the name of the feature stream of this HMMState
      * @param hmmState the hmmState associated with this state
+     * @param tokenStackSize the height of the token stack
      */
     public ParallelHMMStateState(SentenceHMMState parent,
 				 FeatureStream stream,

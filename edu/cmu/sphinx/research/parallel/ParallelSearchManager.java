@@ -439,11 +439,9 @@ public class ParallelSearchManager implements SearchManager {
 	
 	while (iterator.hasNext()) {
 	    CombineToken token = (CombineToken) iterator.next();
-	    if (!token.isPruned()) {
-		token.setLastCombineTime(currentFrameNumber);
-		growCombineToken(token);
-	    }
-	}
+            token.setLastCombineTime(currentFrameNumber);
+            growCombineToken(token);
+        }
     }
 
 
@@ -484,6 +482,8 @@ public class ParallelSearchManager implements SearchManager {
      * @param token the Token to grow
      */
     private void growParallelToken(ParallelToken token) {
+
+        System.out.println("Entering growParallelToken");
 
 	// If this is a final state, add it to the result list.
 	assert !token.isFinal();
@@ -526,6 +526,7 @@ public class ParallelSearchManager implements SearchManager {
                     nextToken = new CombineToken
                         (token, nextState, nextFrameNumber);
                     setBestToken(nextState, nextToken);
+                    System.out.println("Adding to delayedExpansionList");
                     delayedExpansionList.add(nextToken);
                 } else {
                     // get the combine token at the next state
