@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project basedir="." default="none" name="hub4 Tests">
+<project basedir="." default="hub4_trigram" name="hub4 Tests">
 <description>
 This file is used to run the hub4 performance tests.
 
@@ -18,7 +18,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** -->
     <property name="top_dir"		value="../../.."/>
     <path id="libs">
-        <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
+        <fileset dir="lib" includes="${top_dir}/**/*.jar"/>
     </path>
     <property name="build_dir"		value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
@@ -28,7 +28,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <property name="logger_props"       value=""/>  
 
     <property name="initial_heap_size"  value="384m"/>
-    <property name="maximum_heap_size"  value="1500m"/>
+    <property name="maximum_heap_size"  value="800m"/>
     <property name="jit"                value="server"/>
     <property name="gc_log_file"        value="gc.txt"/>
 
@@ -55,8 +55,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <jvmarg value="-Xloggc:${gc_log_file}"/>
-            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <arg value="${config}"/> 
             <arg value="${batch}"/> 
         </java>
@@ -76,9 +75,9 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="batch[skip]" 					value="${skip}"/> 
             <sysproperty key="batch[usePooledBatchManager]" value="true"/>
+            <sysproperty key="threadedScorer[isCpuRelative]" value="false"/>
             <arg value="${config}"/> 
             <arg value="${batch}"/>
         </java>
