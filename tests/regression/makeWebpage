@@ -432,6 +432,9 @@ function printMachineDescription() {
     print(" <tr>");
       print(" <td ><b>OS </b></td> <td >" data[8] "</td>");
     print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>JAVA_HOME </b></td> <td >" ENVIRON["JAVA_HOME"] "</td>");
+    print(" </tr>");
         
     print("</tbody>");
     print("</table>");
