@@ -71,9 +71,10 @@ public class LargeTrigramModel implements LanguageModel {
     private LogMath logMath;
 
     private Map unigramIDMap;
-    private Map loadedBigramBuffer;
     private Map loadedTrigramBuffer;
     private Map trigramCache;
+
+    private BigramBuffer[] bigramCache;
 
     private UnigramProbability[] unigrams;
 
@@ -130,7 +131,6 @@ public class LargeTrigramModel implements LanguageModel {
             (LanguageModel.PROP_LOCATION, LanguageModel.PROP_LOCATION_DEFAULT);
 
         unigramIDMap = new HashMap();
-        loadedBigramBuffer = new HashMap();
 	loadedTrigramBuffer = new HashMap();
 	trigramCache = new HashMap();
         logMath = LogMath.getLogMath(context);
@@ -142,7 +142,9 @@ public class LargeTrigramModel implements LanguageModel {
         trigramProbTable = loader.getTrigramProbabilities();
         trigramBackoffTable = loader.getTrigramBackoffWeights();
         trigramSegmentTable = loader.getTrigramSegments();
+
         buildUnigramIDMap();
+	bigramCache = new BigramBuffer[unigrams.length];
 
         Timer.stop("LM Load");
     }
@@ -169,11 +171,8 @@ public class LargeTrigramModel implements LanguageModel {
      * Called before a recognition
      */
     public void start() {
-        
-        loadedBigramBuffer.clear();
         loadedTrigramBuffer.clear();
         trigramCache.clear();
-        
     }
     
     /**
@@ -314,17 +313,15 @@ public class LargeTrigramModel implements LanguageModel {
      * @return the bigrams of the word
      */
     private BigramBuffer getBigramBuffer(int firstWordID) {
-        Integer key = new Integer(firstWordID);
-        BigramBuffer bigramBuffer = 
-            (BigramBuffer) loadedBigramBuffer.get(key);
-        if (bigramBuffer == null) {
-            int numberBigrams = getNumberBigramFollowers(firstWordID);
+	BigramBuffer bigramBuffer = bigramCache[firstWordID];
+	if (bigramBuffer == null) {
+	    int numberBigrams = getNumberBigramFollowers(firstWordID);
             bigramBuffer = loadBigramBuffer(firstWordID, numberBigrams);
             if (bigramBuffer != null) {
-                loadedBigramBuffer.put(key, bigramBuffer);
+		bigramCache[firstWordID] = bigramBuffer;
             }
         }
-        return bigramBuffer;
+	return bigramBuffer;
     }
 
 
