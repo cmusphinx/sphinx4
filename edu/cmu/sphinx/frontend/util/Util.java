@@ -189,11 +189,11 @@ public class Util {
      * in the double is specified as an argument. The size of
      * the returned array is (data.length/bytesPerSample).
      * 
-     * @param byteArray a byte array
+     * @param data a byte array
      * @param offset which byte to start from
      * @param length how many bytes to convert
      * @param bytesPerSample the number of bytes per sample
-     * @param signedData whether the data is signed
+     * @param signed whether the data is signed
      *
      * @return a double array, or <code>null</code> if byteArray is of zero
      *    length
