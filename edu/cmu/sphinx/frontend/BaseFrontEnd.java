@@ -125,10 +125,41 @@ public class BaseFrontEnd extends CepstrumExtractor implements FrontEnd {
                            String amName,
                            DataSource dataSource) throws IOException {
 	super.initialize(name, context, props, amName, dataSource);
-        FeatureExtractor extractor = getFeatureExtractor(this);
+
+	CepstrumSource lastCepstrumSource = this;
+	
+        CepstrumSource cmn = getCMN(lastCepstrumSource);
+	if (cmn != null) { // if we're using a CMN
+	    addProcessor((DataProcessor) cmn);
+	    lastCepstrumSource = cmn;
+	}
+
+        FeatureExtractor extractor = getFeatureExtractor(lastCepstrumSource);
         this.featureSource = extractor;
 	addProcessor((DataProcessor) extractor);
     }
+
+
+    /**
+     * Returns the appropriate Cepstral Mean Normalizer (CMN)
+     * as specified in the SphinxProperties, with the given predecessor.
+     *
+     * @param predecessor the predecessor of the CMN step
+     */
+    private CepstrumSource getCMN(CepstrumSource predecessor) throws 
+	IOException {
+	String cmnClass = getCmnName();
+	CepstrumSource cmn = null;
+	if (cmnClass.equals("edu.cmu.sphinx.frontend.LiveCMN")) {
+	    cmn = new LiveCMN("LiveCMN", getContext(), 
+                              getSphinxProperties(), predecessor);
+	} else if (cmnClass.equals("edu.cmu.sphinx.frontend.BatchCMN")) {
+	    cmn = new BatchCMN("BatchCMN", getContext(), 
+                               getSphinxProperties(), predecessor);
+        }
+	return cmn;
+    }
+
 
 
     /**
@@ -267,9 +298,21 @@ public class BaseFrontEnd extends CepstrumExtractor implements FrontEnd {
 	String description = ("FrontEnd: " + getName() + "\n");
 	description += ("------------------\n");
 	description += super.toString();
+	description += ("CMN              = " + getCmnName() + "\n");
 	description += ("FeatureExtractor = " + getFeatureExtractorName() +
                         "\n");
 	return description;
+    }
+
+
+    /**
+     * Returns the name of the CMN class.
+     *
+     * @return the name of the CMN class
+     */
+    public String getCmnName() {
+        return getSphinxProperties().getString(FrontEnd.PROP_CMN, 
+                                               FrontEnd.PROP_CMN_DEFAULT);
     }
 
 

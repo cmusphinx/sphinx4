@@ -13,6 +13,9 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.frontend.util.StubAudioSource;
+import edu.cmu.sphinx.frontend.util.StubCepstrumSource;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
@@ -71,7 +74,7 @@ import java.util.logging.Logger;
  * @see Windower
  */
 public class CepstrumExtractor extends DataProcessor 
-    implements CepstrumSource {
+implements CepstrumSource {
 
     private String amName;                     // Acoustic model name
     private Map processors;                    // all frontend modules
@@ -122,7 +125,10 @@ public class CepstrumExtractor extends DataProcessor
         } else if (dataSource instanceof CepstrumSource) {
             stubDataSource = 
                 new StubCepstrumSource((CepstrumSource)dataSource);
-            initialize((CepstrumSource)stubDataSource);
+            lastCepstrumSource = (CepstrumSource)stubDataSource;
+        } else if (dataSource == null) {
+            stubDataSource = new StubAudioSource();
+            initialize((AudioSource)stubDataSource);            
         } else {
             throw new IllegalArgumentException
                 ("Unsupported Data type: " + dataSource.getClass().getName());
@@ -133,7 +139,6 @@ public class CepstrumExtractor extends DataProcessor
     /**
      * Initializes this CepstrumExtractor with the given AudioSource.
      *
-     * @param amName the name of the acoustic model
      * @param audioSource the source of Audio objects
      */
     private void initialize(AudioSource audioSource) throws IOException {
@@ -155,27 +160,27 @@ public class CepstrumExtractor extends DataProcessor
 
         CepstrumSource cepstrumProducer = getCepstrumProducer(filterbank);
 
+        lastCepstrumSource = cepstrumProducer;
+
         addProcessor(preemphasizer);
         addProcessor(windower);
         addProcessor(spectrumAnalyzer);
         addProcessor((DataProcessor) filterbank);
         addProcessor((DataProcessor) cepstrumProducer);
-	initialize(cepstrumProducer);
+
+        initialize(lastCepstrumSource);
     }
 
 
     /**
      * Initializes this CepstrumExtractor with the given CepstrumSource.
      *
-     * @param cepstrumProducer the place where Cepstra comes from
+     * @param cepstrumSource the source of Cepstrum objects
      */
-    private void initialize(CepstrumSource cepstrumProducer) 
-	throws IOException {
+    private void initialize(CepstrumSource cepstrumSource) throws IOException {
 
-	lastCepstrumSource = cepstrumProducer;
-	
-	CepstrumSource endpointer = getEndpointer(lastCepstrumSource);
-
+	CepstrumSource endpointer = getEndpointer(cepstrumSource);
+        	
 	if (endpointer != null) { // if we're using an endpointer
             addProcessor((DataProcessor) endpointer);
 	    lastCepstrumSource = endpointer;
@@ -191,12 +196,6 @@ public class CepstrumExtractor extends DataProcessor
                 addProcessor((DataProcessor) nonSpeechFilter);
                 lastCepstrumSource = nonSpeechFilter;
             }
-	}
-
-        CepstrumSource cmn = getCMN(lastCepstrumSource);
-	if (cmn != null) { // if we're using a CMN
-	    addProcessor((DataProcessor) cmn);
-	    lastCepstrumSource = cmn;
 	}
     }
 
@@ -303,27 +302,6 @@ public class CepstrumExtractor extends DataProcessor
 
 
     /**
-     * Returns the appropriate Cepstral Mean Normalizer (CMN)
-     * as specified in the SphinxProperties, with the given predecessor.
-     *
-     * @param predecessor the predecessor of the CMN step
-     */
-    private CepstrumSource getCMN(CepstrumSource predecessor) throws 
-	IOException {
-	String cmnClass = getCmnName();
-	CepstrumSource cmn = null;
-	if (cmnClass.equals("edu.cmu.sphinx.frontend.LiveCMN")) {
-	    cmn = new LiveCMN("LiveCMN", getContext(), 
-                              getSphinxProperties(), predecessor);
-	} else if (cmnClass.equals("edu.cmu.sphinx.frontend.BatchCMN")) {
-	    cmn = new BatchCMN("BatchCMN", getContext(), 
-                               getSphinxProperties(), predecessor);
-        }
-	return cmn;
-    }
-
-
-    /**
      * Adds the given DataProcessor into the list of processors,
      * with the name of the processor as key.
      *
@@ -405,7 +383,6 @@ public class CepstrumExtractor extends DataProcessor
 	description += ("CepstrumProducer = " + getCepstrumProducerName() + 
                         "\n");
 	description += ("Endpointer       = " + getEndpointerName() + "\n");
-	description += ("CMN              = " + getCmnName() + "\n");
 	return description;
     }
 
@@ -444,17 +421,6 @@ public class CepstrumExtractor extends DataProcessor
 
 
     /**
-     * Returns the name of the CMN class.
-     *
-     * @return the name of the CMN class
-     */
-    public String getCmnName() {
-        return getSphinxProperties().getString(FrontEnd.PROP_CMN, 
-                                               FrontEnd.PROP_CMN_DEFAULT);
-    }
-
-
-    /**
      * Returns the name of the acoustic model use.
      *
      * @return the name of the acoustic model use, or null if no name
@@ -463,120 +429,4 @@ public class CepstrumExtractor extends DataProcessor
         return amName;
     }
 }
-
-
-/**
- * An AudioSource object that acts as a stub between the real AudioSource
- * and the first processor in the front end. It is there so that changing
- * the real AudioSource will not require resetting the AudioSource of the
- * first processor.
- *
- * A StubAudioSource is constructed using the real AudioSource, and
- * calling <code>StubAudioSource.getAudio()</code> simply returns
- * <code>realAudioSource.getAudio()</code>.
- * The real AudioSource can be changed by the method 
- * <code>setAudioSource()</code>.
- */
-class StubAudioSource implements AudioSource {
-    
-    private AudioSource realSource;
-    
-    /**
-     * Constructs a StubAudioSource with the given AudioSource.
-     *
-     * @param audioSource the real AudioSource
-     */
-    public StubAudioSource(AudioSource audioSource) {
-        this.realSource = audioSource;
-    }
-    
-    /**
-     * Returns the next Audio object produced by this AudioSource.
-     *
-     * @return the next available Audio object, returns null if no
-     *     Audio object is available
-     *
-     * @throws java.io.IOException
-     */
-    public Audio getAudio() throws IOException {
-        return realSource.getAudio();
-    }
-    
-    /**
-     * Sets the real AudioSource.
-     *
-     * @return the real AudioSource
-     */
-    public void setAudioSource(AudioSource newAudioSource) {
-        this.realSource = newAudioSource;
-    }
-
-    /**
-     * Returns a string of the class name for the real audio source.
-     *
-     * @return a string of the class name for the real audio source.
-     */
-    public String toString() {
-        return "Stub for: " + realSource.getClass().getName();
-    }
-}
-
-
-/**
- * An CepstrumSource object that acts as a stub between the real
- * CepstrumSource and the first processor in the front end. It is 
- * there so that changing the real CepstrumSource will not require
- * resetting the CepstrumSource of the first processor.
- *
- * A StubAudioSource is constructed using the real AudioSource, and
- * calling <code>StubAudioSource.getAudio()</code> simply returns
- * <code>realAudioSource.getAudio()</code>.
- * The real AudioSource can be changed by the method 
- * <code>setAudioSource()</code>.
- */
-class StubCepstrumSource implements CepstrumSource {
-    
-    private CepstrumSource realSource;
-    
-    /**
-     * Constructs a StubCepstrumSource with the given CepstrumSource.
-     *
-     * @param audioSource the real CepstrumSource
-     */
-    public StubCepstrumSource(CepstrumSource audioSource) {
-        this.realSource = audioSource;
-    }
-    
-    /**
-     * Returns the next Cepstrum object produced by this CepstrumSource.
-     *
-     * @return the next available Cepstrum object, returns null if no
-     *     Cepstrum object is available
-     *
-     * @throws java.io.IOException
-     */
-    public Cepstrum getCepstrum() throws IOException {
-        return realSource.getCepstrum();
-    }
-    
-    /**
-     * Sets the real CepstrumSource.
-     *
-     * @return the real CepstrumSource
-     */
-    public void setCepstrumSource(CepstrumSource newCepstrumSource) {
-            this.realSource = newCepstrumSource;
-    }
-
-    /**
-     * Returns a string of the class name for the real cepstrum source.
-     *
-     * @return a string of the class name for the real cepstrum source.
-     */
-    public String toString() {
-        return "Stub for: " + realSource.getClass().getName();
-    }
-}
-
-
 
