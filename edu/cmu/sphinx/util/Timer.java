@@ -25,18 +25,15 @@ import java.util.LinkedHashMap;
  * minimum, maximum, average and last time executed for all start/stop
  * pairs when the timer.dump is called.
  *
- * Timers can be organized into groups called contexts. Timers in the
- * same context can be dumped together.
  */
 public class Timer {
     private final static DecimalFormat timeFormatter 
 	= new DecimalFormat("###0.0000");
     private final static DecimalFormat percentFormatter 
 	= new DecimalFormat("###0.00%");
-    private static Map contextPool = new LinkedHashMap();
+    private static Map timerPool = new LinkedHashMap();
 
     private String name;
-    private String context;
     private double sum;
     private long count = 0L;
     private long startTime = 0L;
@@ -46,79 +43,43 @@ public class Timer {
     private boolean notReliable; // if true, timing is not reliable
 
   /**
-   * Retrieves (or creates) a timer with the given name in the given context.
-   *
-   * @param context the context for this timer. Timers are grouped by a
-   * context. Timers can be manipulated as  group within these contexts. 
+   * Retrieves (or creates) a timer with the given name 
    *
    * @param timerName the name of the particular timer to retrieve. If 
    *  the timer does not already exist, it will be created
    *
    * @return the timer.
    */
-    public static Timer getTimer(String context, String timerName) {
-	Map timerPool = (Map) contextPool.get(context);
+    public static Timer getTimer(String timerName) {
 	Timer timer = null;
-	if (timerPool == null) {
-	    timerPool = new LinkedHashMap();
-	    contextPool.put(context, timerPool);
-	}
 	timer = (Timer) timerPool.get(timerName);
 	if (timer == null) {
-	    timer = new Timer(timerName, context);
+	    timer = new Timer(timerName);
 	    timerPool.put(timerName, timer);
 	}
 	return timer;
     }
 
     /**
-     * Dump all timers of a particular context.
+     * Dump all timers 
      *
-     * @param context all timers of this context will be dumped
-     */
-    public static void dumpAll(String context) {
-    	showTimesShortTitle(context);
-	Map timerPool = (Map) contextPool.get(context);
-	if (timerPool != null) {
-	    for (Iterator i = timerPool.values().iterator(); i.hasNext(); ) {
-		Timer timer = (Timer) i.next();
-		timer.dump();
-	    }
-	}
-    }
-
-    /**
-     * Resets all timers of a particular context.
-     *
-     * @param context all timers of this context will be reset
-     */
-    public static void resetAll(String context) {
-	Map timerPool = (Map) contextPool.get(context);
-	if (timerPool != null) {
-	    for (Iterator i = timerPool.values().iterator(); i.hasNext(); ) {
-		Timer timer = (Timer) i.next();
-		timer.reset();
-	    }
-	}
-    }
-
-    /**
-     * Dump all of the timers in all of the contexts
      */
     public static void dumpAll() {
-	for (Iterator i = contextPool.keySet().iterator(); i.hasNext(); ) {
-	    String context = (String) i.next();
-	    dumpAll(context);
-	}
+    	showTimesShortTitle();
+        for (Iterator i = timerPool.values().iterator(); i.hasNext(); ) {
+            Timer timer = (Timer) i.next();
+            timer.dump();
+        }
     }
 
     /**
-     * Resets all of the timers in all of the contexts
+     * Resets all timers 
+     *
      */
     public static void resetAll() {
-	for (Iterator i = contextPool.keySet().iterator(); i.hasNext(); ) {
-	    String context = (String) i.next();
-	    resetAll(context);
+        for (Iterator i = timerPool.values().iterator(); i.hasNext(); ) {
+            Timer timer = (Timer) i.next();
+            timer.reset();
 	}
     }
 
@@ -126,11 +87,9 @@ public class Timer {
      * Creates a timer.
      *
      * @param name the name of the timer
-     * @param context the context that the timer is in.
      */
-    private Timer(String name, String context) {
+    private Timer(String name) {
          this.name = name;
-	 this.context = context;
 	 reset();
     }
 
@@ -141,15 +100,6 @@ public class Timer {
      */
     public String getName() {
 	return name;
-    }
-
-    /**
-     * Retrieves the context for the timer
-     *
-     * @return the context of the timer
-     */
-    public String getContext() {
-	return context;
     }
 
     /**
@@ -248,7 +198,7 @@ public class Timer {
      * @param name the name of the timer to start
      */
     public static void start(String name) {
-        Timer.getTimer("anonymous", name).start();
+        Timer.getTimer(name).start();
     }
 
     /**
@@ -257,7 +207,7 @@ public class Timer {
      * @param name the name of the timer to stop
      */
     public static void stop(String name) {
-        Timer.getTimer("anonymous", name).stop();
+        Timer.getTimer(name).stop();
     }
 
     /**
@@ -345,7 +295,8 @@ public class Timer {
      * @param title shows the title and column headings for the time
      * 	display
      */
-    private static void showTimesShortTitle(String title) {
+    private static void showTimesShortTitle() {
+        String title = "Timers";
 	String titleBar =
              "# ----------------------------- " + title +
              "----------------------------------------------------------- ";
@@ -387,88 +338,6 @@ public class Timer {
 	    System.out.print(fmtTime(avgTime));
 	    System.out.print(fmtTime(sum / 1000.0));
 	    System.out.println();
-	}
-    }
-
-
-    /**
-     * a simple set of tests for the Timer clas
-     e
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-	System.out.println("Dump empty set");
-	Timer.dumpAll();
-
-	System.out.println("Create timers");
-	Timer launchTime = Timer.getTimer("navy", "launch");
-	Timer cruiseTime = Timer.getTimer("navy", "cruise");
-	Timer sinkTime = Timer.getTimer("navy", "sink");
-
-	Timer markTime = Timer.getTimer("army", "mark");
-	Timer marchTime = Timer.getTimer("army", "march");
-	Timer restTime = Timer.getTimer("army", "rest");
-
-	Timer aflaunchTime = Timer.getTimer("airforce", "launch");
-	Timer flightTime = Timer.getTimer("airforce", "flight");
-	Timer landTime = Timer.getTimer("airforce", "land");
-
-	System.out.println("Dump navy");
-	Timer.dumpAll("navy");
-	System.out.println("Dump all");
-	Timer.dumpAll();
-
-	System.out.println("Navy time");
-
-	launchTime.start();
-	sleep(300L);
-	launchTime.stop();
-
-	for (int i = 0; i < 4; i++) {
-	    cruiseTime.start();
-	    sleep(500L);
-	    cruiseTime.stop();
-	}
-
-	sinkTime.start();
-	sleep(500L);
-	sinkTime.stop();
-
-	dumpAll("navy");
-	System.out.println("airforce time");
-
-	aflaunchTime.start();
-	sleep(800L);
-	aflaunchTime.stop();
-
-	flightTime.start();
-	sleep(700L);
-	flightTime.stop();
-
-	for (int i = 0; i < 4; i++) {
-	    landTime.start();
-	    sleep(400L);
-	    landTime.stop();
-	}
-
-	System.out.println("dump airforce time");
-	dumpAll("airforce");
-	System.out.println("Dump all");
-	Timer.dumpAll();
-
-	System.out.println("Dump garbage");
-	Timer.dumpAll("garbage");
-    }
-
-    /**
-     * Sleep for a while, while silently ignoring interrupts
-     *
-     * @param delay the time to sleep in milliseconds
-     */
-    static void sleep(long delay) {
-	try {
-	    Thread.sleep(delay);
-	} catch (InterruptedException ie) {
 	}
     }
 }
