@@ -212,6 +212,24 @@ public class Timer {
     }
 
     /**
+     * Starts a timer by name
+     *
+     * @param name the name of the timer to start
+     */
+    public static void start(String name) {
+        Timer.getTimer("anonymous", name).start();
+    }
+
+    /**
+     * Stops a timer by name
+     *
+     * @param name the name of the timer to stop
+     */
+    public static void stop(String name) {
+        Timer.getTimer("anonymous", name).stop();
+    }
+
+    /**
      * Dump the timer. Shows the timer details.
      */
     public void dump() {
