@@ -45,7 +45,7 @@ public class DoubleData implements Data, Cloneable {
     /**
      * Returns a string that describes this DoubleData.
      *
-     * @returns a string that describes this DoubleData
+     * @return a string that describes this DoubleData
      */
     public String toString() {
         return ("DoubleData: " + sampleRate + "Hz, first sample #: " +
