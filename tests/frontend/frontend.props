@@ -17,3 +17,4 @@ edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
 edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
 edu.cmu.sphinx.frontend.fft.numberFftPoints = 256
 edu.cmu.sphinx.frontend.windower.alpha = 0.46
+edu.cmu.sphinx.frontend.useAcousticModelProperties = false
