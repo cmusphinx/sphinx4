@@ -22,14 +22,16 @@ public class Preemphasizer implements Processor {
     private static final String PROP_PREEMPHASIS_PRIOR =
 	"edu.cmu.sphinx.frontend.preemphasisPrior";
 
-    private double preemphasisFactor = 0.0f;
+    private double preemphasisFactor;
     private double prior;
 
 
     /**
      * Constructs a default Preemphasizer.
      */
-    public Preemphasizer() {}
+    public Preemphasizer() {
+	getSphinxProperties();
+    }
 
 
     /**
@@ -64,7 +66,7 @@ public class Preemphasizer implements Processor {
 	// for loop below, we can just start at the end of the array
 	// to calculate the preemphasis in-place.
 
-	short[] in = audioDataFrame.getSamples();
+	short[] in = audioDataFrame.getData();
 	double[] out = new double[in.length];
 
 	if (preemphasisFactor != 0.0) {

@@ -25,7 +25,7 @@ public class ShortAudioFrame implements Data {
      *
      * @return the audio samples
      */
-    public short[] getSamples() {
+    public short[] getData() {
 	return audioSamples;
     }
 }

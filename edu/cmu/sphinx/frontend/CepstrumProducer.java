@@ -80,7 +80,8 @@ public class CepstrumProducer implements Processor {
 	    template = new DoubleAudioFrame(samples.length);
 	}
 
-	int frameCount = getFrameCount(samples.length);
+	int frameCount = FrontEnd.getFrameCount
+	    (samples.length, frameSize, frameShift);
 	Cepstrum[] cepstra = new Cepstrum[frameCount];
 
 	for (int i = 0, frameStart = 0; i < frameCount;
@@ -97,22 +98,5 @@ public class CepstrumProducer implements Processor {
 	}
 
 	return (new CepstrumFrame(cepstra));
-    }
-    
-    
-    /**
-     * Returns the number of frames in the given array.
-     *
-     * @param arrayLength the length of the array
-     *
-     * @return the number of frames
-     */
-    private int getFrameCount(int arrayLength) {
-	int frameCount = 0;
-	for (int frameStart = 0; frameStart + frameSize < arrayLength;
-	     frameStart += frameShift) {
-	    frameCount++;
-	}
-	return frameCount;
     }
 }
