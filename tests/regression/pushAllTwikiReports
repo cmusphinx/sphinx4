@@ -18,6 +18,6 @@ twikidir=/home/groups/c/cm/cmusphinx/twiki/data/Sphinx4
 ./makeTwikiReports SmallVocabResults
 ./makeTwikiReports MediumVocabResults
 
-tar cvf twikireports.tar AutoGen*.txt
+tar cf twikireports.tar AutoGen*.txt
 sscp twikireports.tar
-sshh "(cd $twikidir; tar xvf ~/twikireports.tar)"
+sshh '(cd /home/groups/c/cm/cmusphinx/twiki/data/Sphinx4; tar xf ~/twikireports.tar; chgrp cmusphinx `ls AutoGen*`;)'
