@@ -20,11 +20,11 @@
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
-    <!-- * Builds srcs, voices, lexicons, jars, demos             * -->
+    <!-- * Builds srcs, jars, demos                               * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="all"
-	    depends="compile_src,javadoc"
+	    depends="compile_src,javadoc,jars"
 	    description="Build everything">
 	<echo message="Build complete."/>
     </target>
@@ -50,6 +50,30 @@
 	</javac>
     </target>
 
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Generates the jar files                                * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+
+    <target name="jars"
+	    depends="sphinx4_jar"
+	    description="Builds all the jar files"/>
+
+
+    <!-- sphinx4.jar -->
+    <property name="sphinx4_jar" value="${lib_dir}/sphinx4.jar"/>
+
+    <target name="sphinx4_jar" 
+	    depends="compile_src"
+	    description="Create ${lib_dir}/freetts.jar">
+        <mkdir dir="${lib_dir}"/>
+        <jar destfile="${sphinx4_jar}" 
+	     manifest="${src_dir}/edu/cmu/sphinx/sphinx4.Manifest"
+	     compress="true">
+            <fileset dir="${classes_dir}" />
+        </jar>
+    </target>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
