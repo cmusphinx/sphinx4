@@ -13,9 +13,13 @@
 package edu.cmu.sphinx.decoder.search;
 
 
-import edu.cmu.sphinx.util.SphinxProperties;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,28 +30,17 @@ import java.util.*;
  */
 public class AlternateHypothesisManager {
     private Map viterbiLoserMap = new HashMap();
-
-    protected SphinxProperties props;
-    protected double logBase;
+    private int maxEdges;
 
     /**
      * Creates an alternate hypotheses manager
      *
      * @param props the sphinx-4 properties
      */
-    public AlternateHypothesisManager(SphinxProperties props) {
-        this.props = props;
+    public AlternateHypothesisManager(int maxEdges) {
+        this.maxEdges = maxEdges;
     }
 
-
-    /**
-     * Retrieves the s4 properties
-     *
-     * @return the sphinx4 properties.
-     */
-    public SphinxProperties getProperties() {
-        return props;
-    }
 
     /**
      * Collects adds alternate predecessors for a token
@@ -89,7 +82,7 @@ public class AlternateHypothesisManager {
      */
     public void purge() {
 
-        int max = props.getInt("edu.cmu.sphinx.result.Lattice.maxEdgesToNode",10)-1;
+        int max = maxEdges - 1;
         Iterator iterator = viterbiLoserMap.keySet().iterator();
 
         while (iterator.hasNext()) {
@@ -113,6 +106,5 @@ public class AlternateHypothesisManager {
         viterbiLoserMap.put(newSuccessor, list);
         viterbiLoserMap.remove(oldSuccessor);
     }
-
 }
 
