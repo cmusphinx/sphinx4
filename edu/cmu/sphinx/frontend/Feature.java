@@ -79,7 +79,7 @@ public class Feature extends Data {
 
     /**
      * Returns the ID of this Feature, telling you which Feature it is
-     * with respect to the utterance.
+     * with respect to the utterance. Feature IDs start at 0.
      *
      * @return the ID
      */
