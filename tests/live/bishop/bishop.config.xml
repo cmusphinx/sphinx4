@@ -145,10 +145,10 @@
     <!-- The Dictionary configuration                            -->
     <!-- ******************************************************** -->
     <component name="dictionary" 
-        type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
+        type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
         <property name="location" 
                 value="file:./../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
-        <property name="dictionaryPath" value= "dict/cmudict.0.6d"/>
+        <property name="dictionaryPath" value="dict/cmudict.0.6d"/>
         <property name="fillerPath" value="dict/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
@@ -245,24 +245,21 @@
                 type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter"/>
     
     <component name="speechMarker" 
-                type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" >
-        <!-- <property name="speechTrailer" value="50"/> -->
+                type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker">
+        <property name="speechTrailer" value="50"/>
     </component>
     
-
     <component name="premphasizer" 
 		type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
     
-    <component name="windower" 
-		type="edu.cmu.sphinx.frontend.window.RaisedCosineWindower">
-    </component>
+    <component name="windower"
+	type="edu.cmu.sphinx.frontend.window.RaisedCosineWindower"/>
     
     <component name="fft" 
             type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"/>
     
     <component name="melFilterBank" 
-            type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank">
-    </component>
+        type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank"/>
     
     <component name="dct" 
             type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/>
