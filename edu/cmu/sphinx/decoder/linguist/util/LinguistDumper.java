@@ -180,7 +180,7 @@ public class LinguistDumper implements LinguistProcessor  {
 	    int level = stateLevel.getLevel();
 	    SearchState state = stateLevel.getState();
 
-            // equalCheck(state);
+            equalCheck(state);
 
 
 	    if (!visitedStates.contains(state)) {
