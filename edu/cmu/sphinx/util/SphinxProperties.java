@@ -41,6 +41,7 @@ import java.util.Iterator;
  */
 public class SphinxProperties {
 
+    
     /**
      * The context pool contains a mapping from the context to either
      * the URL for the context or once the properties has been loaded
@@ -92,8 +93,11 @@ public class SphinxProperties {
     static public void initContext(String context, URL url) 	
 				throws IOException {
 	if (contextPool.containsKey(context)) {
-	    throw new Error("Cannot init SphinxProperties with same context: "+
+	    SphinxProperties cur = (SphinxProperties) contextPool.get(context);
+	    if (!url.equals(cur.url)) {
+	        throw new Error("Cannot init SphinxProperties with same context: "+
 			    context);
+	    }
 	} else {
 	    contextPool.put(context, new SphinxProperties(context, url));
 	}
