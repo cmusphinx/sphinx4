@@ -71,11 +71,10 @@ public abstract class  SentenceHMMState implements Serializable, SearchState  {
      *
      */
     protected SentenceHMMState(String name, SentenceHMMState parent, int which) {
+        this();
 	this.name = name + which;
 	this.parent = parent;
 	setWhich(which);
-	this.arcs = new LinkedHashMap();
-	stateNumber = globalStateNumber--;
 	setProcessed(false);
 	setColor(Color.RED);
     }
@@ -86,6 +85,7 @@ public abstract class  SentenceHMMState implements Serializable, SearchState  {
      */
     protected SentenceHMMState() {
 	stateNumber = globalStateNumber--;
+        this.arcs = new LinkedHashMap();
     }
 
 
