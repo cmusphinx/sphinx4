@@ -24,7 +24,7 @@ edu.cmu.sphinx.model.acoustic.format = sphinx3.ascii
 edu.cmu.sphinx.model.acoustic.FeatureVectorLength = 39
 edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
-edu.cmu.sphinx.model.acoustic.location = /lab/speech/sphinx4/data/wsj
+edu.cmu.sphinx.model.acoustic.location =  file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.ascii.zip
 edu.cmu.sphinx.model.acoustic.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
 edu.cmu.sphinx.model.acoustic.data_location = cd_continuous_8gau
 edu.cmu.sphinx.model.acoustic.properties_file = am.props
@@ -73,7 +73,7 @@ edu.cmu.sphinx.frontend.sampleRate = 16000
 ############################################################
 
 edu.cmu.sphinx.search.ActiveList.targetSize=2000
-edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.TreeActiveList
+edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.HeapActiveList
 edu.cmu.sphinx.search.SimpleDigitLinguist.isConnectedDigitGrammar=true
 edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-56
 #edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-76

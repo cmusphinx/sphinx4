@@ -19,7 +19,7 @@ import edu.cmu.sphinx.frontend.Microphone;
 import edu.cmu.sphinx.frontend.Util;
 import edu.cmu.sphinx.search.Result;
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.ResultAnalyzer;
+import edu.cmu.sphinx.util.NISTAlign;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -164,13 +164,13 @@ public class Live {
 
 
     /**
-     * Resets the statistics in the ResultAnalyzer of the current Decoder.
+     * Resets the statistics in the NISTAlign of the current Decoder.
      */
     public void resetStatistics() {
-        ResultAnalyzer analyzer = getDecoder().getResultAnalyzer();
-        analyzer.reset();
+        NISTAlign aligner = getDecoder().getNISTAlign();
+        aligner.resetTotals();
         getDecoder().resetSpeed();
-        updateLiveFrame(analyzer);
+        updateLiveFrame(aligner);
     }
 
 
@@ -340,17 +340,17 @@ public class Live {
 
 
     /**
-     * Updates the LiveFrame with the statistics in the given ResultAnalyzer.
+     * Updates the LiveFrame with the statistics in the given NISTAlign.
      *
-     * @param analyzer the ResultAnalyzer to get statistics from
+     * @param aligner the NISTAlign to get statistics from
      */
-    private void updateLiveFrame(ResultAnalyzer analyzer) {
-        liveFrame.setRecognitionLabel(analyzer.getHypothesis());
+    private void updateLiveFrame(NISTAlign aligner) {
+        liveFrame.setRecognitionLabel(aligner.getHypothesis());
         
-        float wordAccuracy = (analyzer.getWordAccuracy() * 100);
+        float wordAccuracy = (aligner.getTotalWordAccuracy() * 100);
         liveFrame.setWordAccuracyLabel(wordAccuracy + "%");
                 
-        float sentenceAccuracy = (analyzer.getSentenceAccuracy() * 100);
+        float sentenceAccuracy = (aligner.getTotalSentenceAccuracy() * 100);
         liveFrame.setSentenceAccuracyLabel(sentenceAccuracy + "%");
 
         liveFrame.setSpeedLabel
@@ -372,14 +372,14 @@ public class Live {
         public void run() {
             if (!handsFree) {
                 lastResult = decoder.decode(liveFrame.getReference());
-                updateLiveFrame(decoder.getResultAnalyzer());
+                updateLiveFrame(decoder.getNISTAlign());
             } else {
                 while (decoder.getMicrophone().getRecording()) {
                     try {
                         System.out.println("Live: decoding");
                         lastResult = decoder.decode(liveFrame.getReference());
                         System.out.println("Live: decoded");
-                        updateLiveFrame(decoder.getResultAnalyzer());
+                        updateLiveFrame(decoder.getNISTAlign());
                         System.out.println("Live: updatedFrame");
                     } catch (NullPointerException npe) {
                         npe.printStackTrace();

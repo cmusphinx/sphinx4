@@ -161,8 +161,10 @@ public class NISTAlign {
      *
      * @param reference the reference string
      * @param hypothesis the hypothesis string
+     *
+     * @return true if the reference and hypothesis match
      */
-    public void align(String reference, String hypothesis) {
+    public boolean align(String reference, String hypothesis) {
         int annotationIndex;
 
         // Save the original strings for future reference.
@@ -176,11 +178,10 @@ public class NISTAlign {
         annotationIndex = rawReference.indexOf('(');
         if (annotationIndex != -1) {
             referenceAnnotation = rawReference.substring(annotationIndex);
-            referenceWords = stringToList(
-                rawReference.substring(0,annotationIndex));
+            referenceWords = toList(rawReference.substring(0,annotationIndex));
         } else {
             referenceAnnotation = null;
-            referenceWords = stringToList(rawReference);
+            referenceWords = toList(rawReference);
         }
 
         // Strip the annotation off the hypothesis string.
@@ -190,10 +191,10 @@ public class NISTAlign {
         //
         annotationIndex = rawHypothesis.indexOf('(');
         if (annotationIndex != -1) {
-            hypothesisWords = stringToList(
+            hypothesisWords = toList(
                 rawHypothesis.substring(0, annotationIndex));
         } else {
-            hypothesisWords = stringToList(rawHypothesis);
+            hypothesisWords = toList(rawHypothesis);
         }
 
         // Reset the counts for this sentence.
@@ -218,8 +219,289 @@ public class NISTAlign {
         // class.
         //
         updateTotals();
+
+        return (insertions + deletions + substitutions) == 0;
     }
     
+    /**
+     * Returns the reference string.  This string will be filtered
+     * (all spurious whitespace removed and annotation removed) and
+     * set to all lower case.
+     *
+     * @return the reference string
+     */
+    public String getReference() {
+        return toString(referenceWords);
+    }
+
+    /**
+     * Returns the hypothesis string.  This string will be filtered
+     * (all spurious whitespace removed and annotation removed) and
+     * set to all lower case.
+     *
+     * @return the hypothesis string
+     */
+    public String getHypothesis() {
+        return toString(hypothesisWords);
+    }
+
+    /**
+     * Returns the aligned reference string. 
+     *
+     * @return the aligned reference string
+     */
+    public String getAlignedReference() {
+        return toString(alignedReferenceWords);
+    }
+
+    /**
+     * Returns the aligned hypothesis string.
+     *
+     * @return the aligned hypothesis string
+     */
+    public String getAlignedHypothesis() {
+        return toString(alignedHypothesisWords);
+    }
+
+    /**
+     * Gets the total number of word errors for all calls to align.
+     *
+     * @return the total number of word errors for all calls to align
+     */
+    public int getTotalWordErrors() {
+        return totalSubstitutions + totalInsertions + totalDeletions;
+    }
+    
+    /**
+     * Returns the total word accuracy.
+     *
+     * @return the accuracy between 0.0 and 1.0
+     */
+    public float getTotalWordAccuracy() {
+        if (totalReferenceWords == 0) {
+            return 0;
+        } else {
+            return ((float) totalWordsCorrect) / ((float) totalReferenceWords);
+        }
+    }
+
+    /**
+     * Returns the total word accuracy.
+     *
+     * @return the accuracy between 0.0 and 1.0
+     */
+    public float getTotalWordErrorRate() {
+        if (totalReferenceWords == 0) {
+            return 0;
+        } else {
+            return ((float) getTotalWordErrors())
+                / ((float) totalReferenceWords);
+        }
+    }
+
+    /**
+     * Returns the total sentence accuracy.
+     *
+     * @return the accuracy between 0.0 and 1.0
+     */
+    public float getTotalSentenceAccuracy() {
+        int totalSentencesCorrect = totalSentences - totalSentencesWithErrors;
+        if (totalSentences == 0) {
+            return 0;
+        } else {
+            return ((float) totalSentencesCorrect / (float) totalSentences);
+        }
+    }
+
+    /**
+     * Prints the results for this sentence to System.out.  If you
+     * want the output to match the NIST output, see
+     * printNISTSentenceSummary.
+     *
+     * @see #printNISTSentenceSummary
+     */
+    public void printSentenceSummary() {
+        System.out.println();
+        System.out.println("REF:       " + toString(referenceWords));
+        System.out.println("HYP:       " + toString(hypothesisWords));
+        System.out.println("ALIGN_REF: " + toString(alignedReferenceWords));
+        System.out.println("ALIGN_HYP: " + toString(alignedHypothesisWords));
+        System.out.println();
+    }
+
+    /**
+     * Prints the total summary for all calls.  If you want the output
+     * to match the NIST output, see printNISTTotalSummary.
+     *
+     * @see #printNISTTotalSummary
+     */
+    public void printTotalSummary() {
+        if (totalSentences > 0) {
+            float wordErrorRate = getTotalWordErrorRate();
+
+	    System.out.print(
+                "   Accuracy: " + toPercentage("##0.000%",
+                                               getTotalWordAccuracy()));
+	    System.out.println(
+                "    Errors: " + getTotalWordErrors() 
+                + "  (Sub: " + totalSubstitutions
+                + "  Ins: " + totalInsertions
+                + "  Del: " + totalDeletions + ")");
+            System.out.println(
+                "   Words: " + totalReferenceWords 
+                + "   Matches: " + totalWordsCorrect
+                + "    WER: " + toPercentage("##0.000%",
+                                             getTotalWordErrorRate()));
+	    System.out.println(
+                "   Sentences: " + totalSentences
+                + "   Matches: " + (totalSentences - totalSentencesWithErrors)
+                + "   SentenceAcc: " + toPercentage("##0.000%",
+                                                    getTotalSentenceAccuracy()));
+	}
+    }
+    
+    /**
+     * Prints the results for this sentence to System.out.  This
+     * matches the output from the NIST aligner.
+     */
+    public void printNISTSentenceSummary() {
+        int sentenceErrors = substitutions + insertions + deletions;
+        
+        System.out.println();
+        
+        System.out.print("REF: " + toString(alignedReferenceWords));
+        if (referenceAnnotation != null) {
+            System.out.print(" " + referenceAnnotation);
+        }        
+        System.out.println();
+        
+        System.out.print("HYP: " + toString(alignedReferenceWords));
+        if (referenceAnnotation != null) {
+            System.out.print(" " + referenceAnnotation);
+        }
+        System.out.println();
+
+        System.out.println();
+
+        if (referenceAnnotation != null) {
+            System.out.println("SENTENCE " + totalSentences
+                               + "  " + referenceAnnotation);
+        } else {
+            System.out.println("SENTENCE " + totalSentences);
+        }
+        
+        System.out.println("Correct          = "
+                           + toPercentage("##0.0%",
+                                          correct,
+                                          referenceWords.size())
+                           + padLeft(5, correct)
+                           + "   ("
+                           + padLeft(6, totalWordsCorrect)
+                           + ")");
+        System.out.println("Errors           = "
+                           + toPercentage("##0.0%",
+                                          sentenceErrors,
+                                          referenceWords.size())
+                           + padLeft(5, sentenceErrors)
+                           + "   ("
+                           + padLeft(6, totalSentencesWithErrors)
+                           + ")");
+        
+        System.out.println();
+        System.out.println(HRULE);
+    }
+
+    
+    /**
+     * Prints the summary for all calls to align to System.out.  This
+     * matches the output from the NIST aligner.
+     */
+    public void printNISTTotalSummary() {
+        int totalSentencesCorrect = totalSentences - totalSentencesWithErrors;
+        
+        System.out.println();
+        System.out.println("---------- SUMMARY ----------");
+        System.out.println();
+        System.out.println("SENTENCE RECOGNITION PERFORMANCE:");
+        System.out.println(
+            "sentences                          " + totalSentences);
+        System.out.println(
+            "  correct                  "
+            + toPercentage("##0.0%", totalSentencesCorrect, totalSentences)
+            + " (" + padLeft(4, totalSentencesCorrect) + ")");
+        System.out.println(
+            "  with error(s)            "
+            + toPercentage("##0.0%", totalSentencesWithErrors, totalSentences)
+            + " (" + padLeft(4, totalSentencesWithErrors) + ")");
+        System.out.println(
+            "    with substitutions(s)  "
+            + toPercentage("##0.0%", totalSentencesWithSubtitutions, totalSentences)
+            + " (" + padLeft(4, totalSentencesWithSubtitutions) + ")");
+        System.out.println(
+            "    with insertion(s)      "
+            + toPercentage("##0.0%", totalSentencesWithInsertions, totalSentences)
+            + " (" + padLeft(4, totalSentencesWithInsertions) + ")");
+        System.out.println(
+            "    with deletions(s)      "
+            + toPercentage("##0.0%", totalSentencesWithDeletions, totalSentences)
+            + " (" + padLeft(4, totalSentencesWithDeletions) + ")");
+
+        System.out.println();
+        System.out.println();
+        System.out.println();
+
+        System.out.println("WORD RECOGNITION PERFORMANCE:");
+        System.out.println(
+            "Correct           = "
+            + toPercentage("##0.0%", totalWordsCorrect, totalReferenceWords)
+            + " (" + padLeft(6, totalWordsCorrect) + ")");
+        System.out.println(
+            "Substitutions     = "
+            + toPercentage("##0.0%", totalSubstitutions, totalReferenceWords)
+            + " (" + padLeft(6, totalSubstitutions) + ")");
+        System.out.println(
+            "Deletions         = "
+            + toPercentage("##0.0%", totalDeletions, totalReferenceWords)
+            + " (" + padLeft(6, totalDeletions) + ")");
+        System.out.println(
+            "Insertions        = "
+            + toPercentage("##0.0%", totalInsertions, totalReferenceWords)
+            + " (" + padLeft(6, totalInsertions) + ")");
+        System.out.println(
+            "Errors            = "
+            + toPercentage("##0.0%", getTotalWordErrors(), totalReferenceWords)
+            + " (" + padLeft(6, getTotalWordErrors()) + ")");
+
+        System.out.println();
+        
+        System.out.println(
+            "Ref. words           = " + padLeft(6, totalReferenceWords));
+        System.out.println(
+            "Hyp. words           = " + padLeft(6, totalHypothesisWords));
+        System.out.println(
+            "Aligned words        = " + padLeft(6, totalAlignedWords));
+
+        System.out.println();
+        System.out.println(
+            "WORD ACCURACY=  "
+            + toPercentage("##0.000%", totalWordsCorrect, totalReferenceWords)
+            + " ("
+            + padLeft(5, totalWordsCorrect)
+            + "/"
+            + padLeft(5, totalReferenceWords)
+            + ")  ERRORS= "
+            + toPercentage("##0.000%",
+                           getTotalWordErrors(),
+                           totalReferenceWords)
+            + " ("
+            + padLeft(5, getTotalWordErrors())
+            + "/"
+            + padLeft(5, totalReferenceWords)
+            + ")");            
+                           
+        System.out.println();
+    }
+
     /**   
      * Creates the backtrace table.  This is magic.  The basic idea is
      * that the penalty table contains a set of penalty values based
@@ -454,151 +736,6 @@ public class NISTAlign {
     }
 
     /**
-     * Prints the results for this sentence to System.out.
-     */
-    public void printSentenceSummary() {
-        int sentenceErrors = substitutions + insertions + deletions;
-        
-        System.out.println();
-        System.out.print("REF: ");
-	for (int i = 0; i < alignedReferenceWords.size(); i++) {
-	    System.out.print(alignedReferenceWords.get(i) + " ");
-	}
-        if (referenceAnnotation != null) {
-            System.out.print(" " + referenceAnnotation);
-        }
-        
-        System.out.println();
-        
-        System.out.print("HYP: ");
-	for (int i = 0; i < alignedHypothesisWords.size(); i++) {
-	    System.out.print(alignedHypothesisWords.get(i) + " ");
-	}
-        if (referenceAnnotation != null) {
-            System.out.print(" " + referenceAnnotation);
-        }
-        System.out.println();
-
-        System.out.println();
-
-        if (referenceAnnotation != null) {
-            System.out.println("SENTENCE " + totalSentences
-                               + "  " + referenceAnnotation);
-        } else {
-            System.out.println("SENTENCE " + totalSentences);
-        }
-        
-        System.out.println("Correct          = "
-                           + toPercentage("##0.0%",
-                                          correct,
-                                          referenceWords.size())
-                           + padLeft(5, correct)
-                           + "   ("
-                           + padLeft(6, totalWordsCorrect)
-                           + ")");
-        System.out.println("Errors           = "
-                           + toPercentage("##0.0%",
-                                          sentenceErrors,
-                                          referenceWords.size())
-                           + padLeft(5, sentenceErrors)
-                           + "   ("
-                           + padLeft(6, totalSentencesWithErrors)
-                           + ")");
-        
-        System.out.println();
-        System.out.println(HRULE);
-    }
-
-    
-    /**
-     * Prints the summary for all calls to align to System.out.
-     */
-    public void printTotalSummary() {
-        int totalSentencesCorrect = totalSentences - totalSentencesWithErrors;
-        int totalErrors = totalSubstitutions + totalInsertions + totalDeletions;
-        
-        System.out.println();
-        System.out.println("---------- SUMMARY ----------");
-        System.out.println();
-        System.out.println("SENTENCE RECOGNITION PERFORMANCE:");
-        System.out.println(
-            "sentences                          " + totalSentences);
-        System.out.println(
-            "  correct                  "
-            + toPercentage("##0.0%", totalSentencesCorrect, totalSentences)
-            + " (" + padLeft(4, totalSentencesCorrect) + ")");
-        System.out.println(
-            "  with error(s)            "
-            + toPercentage("##0.0%", totalSentencesWithErrors, totalSentences)
-            + " (" + padLeft(4, totalSentencesWithErrors) + ")");
-        System.out.println(
-            "    with substitutions(s)  "
-            + toPercentage("##0.0%", totalSentencesWithSubtitutions, totalSentences)
-            + " (" + padLeft(4, totalSentencesWithSubtitutions) + ")");
-        System.out.println(
-            "    with insertion(s)      "
-            + toPercentage("##0.0%", totalSentencesWithInsertions, totalSentences)
-            + " (" + padLeft(4, totalSentencesWithInsertions) + ")");
-        System.out.println(
-            "    with deletions(s)      "
-            + toPercentage("##0.0%", totalSentencesWithDeletions, totalSentences)
-            + " (" + padLeft(4, totalSentencesWithDeletions) + ")");
-
-        System.out.println();
-        System.out.println();
-        System.out.println();
-
-        System.out.println("WORD RECOGNITION PERFORMANCE:");
-        System.out.println(
-            "Correct           = "
-            + toPercentage("##0.0%", totalWordsCorrect, totalReferenceWords)
-            + " (" + padLeft(6, totalWordsCorrect) + ")");
-        System.out.println(
-            "Substitutions     = "
-            + toPercentage("##0.0%", totalSubstitutions, totalReferenceWords)
-            + " (" + padLeft(6, totalSubstitutions) + ")");
-        System.out.println(
-            "Deletions         = "
-            + toPercentage("##0.0%", totalDeletions, totalReferenceWords)
-            + " (" + padLeft(6, totalDeletions) + ")");
-        System.out.println(
-            "Insertions        = "
-            + toPercentage("##0.0%", totalInsertions, totalReferenceWords)
-            + " (" + padLeft(6, totalInsertions) + ")");
-        System.out.println(
-            "Errors            = "
-            + toPercentage("##0.0%", totalErrors, totalReferenceWords)
-            + " (" + padLeft(6, totalErrors) + ")");
-
-        System.out.println();
-        
-        System.out.println(
-            "Ref. words           = " + padLeft(6, totalReferenceWords));
-        System.out.println(
-            "Hyp. words           = " + padLeft(6, totalHypothesisWords));
-        System.out.println(
-            "Aligned words        = " + padLeft(6, totalAlignedWords));
-
-        System.out.println();
-        System.out.println(
-            "WORD ACCURACY=  "
-            + toPercentage("##0.000%", totalWordsCorrect, totalReferenceWords)
-            + " ("
-            + padLeft(5, totalWordsCorrect)
-            + "/"
-            + padLeft(5, totalReferenceWords)
-            + ")  ERRORS= "
-            + toPercentage("##0.000%", totalErrors, totalReferenceWords)
-            + " ("
-            + padLeft(5, totalErrors)
-            + "/"
-            + padLeft(5, totalReferenceWords)
-            + ")");            
-                           
-        System.out.println();
-    }
-
-    /**
      * Turns the numerator/denominator into a percentage.
      *
      * @param pattern percentage pattern (ala DecimalFormat)
@@ -613,6 +750,19 @@ public class NISTAlign {
             6,
             percentageFormat.format((double) numerator
                                     / (double) denominator));
+    }
+
+    /**
+     * Turns the float into a percentage.
+     *
+     * @param pattern percentage pattern (ala DecimalFormat)
+     * @param value the floating point value
+     *
+     * @return a String that represents the percentage value.
+     */
+    String toPercentage(String pattern, float value) {
+        percentageFormat.applyPattern(pattern);
+        return percentageFormat.format(value);
     }
 
     /**
@@ -646,21 +796,43 @@ public class NISTAlign {
     }
     
     /**
-     * Converts the given String or words to a LinkedList.
+     * Converts the given String or words to a LinkedList.  All
+     * "<sil>" are filtered out.
      *
      * @param s the String of words to parse to a LinkedList
      *
      * @return a list, one word per item
      */
-    LinkedList stringToList(String s) {
+    LinkedList toList(String s) {
         LinkedList list = new LinkedList();
         StringTokenizer st = new StringTokenizer(s.trim());
-        while (st.hasMoreTokens()) {    
-	    list.add(st.nextToken().toLowerCase());
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken().toLowerCase();
+            if (!token.equals("<sil>")) {
+                list.add(token);
+            }
         }
         return list;
     }
     
+    /**
+     * convert the list of words back to a space separated string
+     *
+     * @param list the list of words
+     * @return a space separated string
+     */
+    private String toString(LinkedList list) {
+	StringBuffer sb = new StringBuffer();
+        ListIterator iterator = list.listIterator();
+        while (iterator.hasNext()) {
+	    sb.append(iterator.next());
+	    if (iterator.hasNext()) {
+		sb.append(" ");
+	    }
+	}
+	return sb.toString();
+    }
+
     /**
      * Take two filenames -- the first contains a list of reference
      * sentences, the second contains a list of hypothesis sentences.
@@ -688,12 +860,12 @@ public class NISTAlign {
                         break;
                     } else {
                         align.align(reference, hypothesis);
-                        align.printSentenceSummary();
+                        align.printNISTSentenceSummary();
                     }
                 }
             } catch (java.io.IOException e) {
             }
-            align.printTotalSummary();
+            align.printNISTTotalSummary();
         } catch (Exception e) {
             System.err.println(e);
             e.printStackTrace();

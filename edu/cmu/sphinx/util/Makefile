@@ -27,3 +27,6 @@ all:: ${CLASSES} ${STUBS} ${DATA}
 
 ra: all
 	$(JAVA_CMD) edu.cmu.sphinx.util.ResultAnalyzer
+
+align: all
+	$(JAVA_CMD) edu.cmu.sphinx.util.NISTAlign ${ARGS}

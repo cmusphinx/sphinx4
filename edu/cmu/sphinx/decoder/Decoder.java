@@ -20,7 +20,7 @@ import edu.cmu.sphinx.search.Recognizer;
 import edu.cmu.sphinx.search.ResultListener;
 import edu.cmu.sphinx.search.Result;
 import edu.cmu.sphinx.search.Token;
-import edu.cmu.sphinx.util.ResultAnalyzer;
+import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
@@ -69,7 +69,7 @@ public class Decoder {
 
     private Recognizer recognizer;
 
-    private ResultAnalyzer resultAnalyzer;// analyzes results
+    private NISTAlign aligner;// analyzes results
 
     private String context;
     private SphinxProperties props;	  // sphinx properties
@@ -140,7 +140,7 @@ public class Decoder {
 	    props.getBoolean(PROP_SHOW_BEST_TOKEN, false);
         
         recognizer = null;        // first initialize it to null
-        resultAnalyzer = null;
+        aligner = null;
 
         if (initialize) {
             initialize(audioSource);
@@ -150,7 +150,7 @@ public class Decoder {
 
     /**
      * Fully loads this Decoder, effectively creating the
-     * Recognizer and ResultAnalyzer. This would mean loading
+     * Recognizer and NISTAlign. This would mean loading
      * all the components (e.g., Frontend, AcousticModel, SentenceHMM, etc.)
      * of this Decoder. This method does nothing if this Decoder has
      * already been initialized.
@@ -168,8 +168,8 @@ public class Decoder {
 		}
 	    });
         }
-        if (resultAnalyzer == null) {
-            resultAnalyzer = new ResultAnalyzer(true);
+        if (aligner == null) {
+            aligner = new NISTAlign();
         }
     }
 
@@ -286,7 +286,9 @@ public class Decoder {
 	Token bestToken = result.getBestToken();
 
 	if (ref != null) {
-	    match = resultAnalyzer.analyze(ref, result.toString());
+	    match = aligner.align(ref, result.toString());
+            aligner.printSentenceSummary();
+            aligner.printTotalSummary();
 	} else {
             System.out.println("FINAL Result: " + result.toString());
 	}
@@ -340,12 +342,12 @@ public class Decoder {
 
 
     /**
-     * Returns the ResultAnalyzer of this Decoder.
+     * Returns the NISTAlign of this Decoder.
      *
-     * @return the ResultAnalyzer
+     * @return the NISTAlign
      */
-    public ResultAnalyzer getResultAnalyzer() {
-        return resultAnalyzer;
+    public NISTAlign getNISTAlign() {
+        return aligner;
     }
 
 
@@ -354,14 +356,11 @@ public class Decoder {
      */
     public void showSummary() {
 	System.out.println("# ------------- Summary statistics ----------- ");
-	resultAnalyzer.showResults();
+	aligner.printTotalSummary();
 	showAudioSummary();
 	showMemoryUsage();
 	StatisticsVariable.dumpAll(context);
 
-        if (Boolean.getBoolean("showMisrecognitions")) {
-            resultAnalyzer.showMisrecognitions();
-        }
 	System.out.println("# ------------- Properties ----------- ");
 	props.list(System.out);
     }
