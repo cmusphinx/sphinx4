@@ -7,6 +7,8 @@
     <!-- * Where to find things...                                * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
+    <property name="version"            value="0.1alpha"/>
+
     <path id="libs">
         <fileset dir="lib" includes="**/jsapi.jar"/>
     </path>
@@ -15,6 +17,7 @@
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="lib"/>
     <property name="bin_dir"            value="bin"/>
+    <property name="deploy_dir"         value="deploy"/>
     <property name="javadoc_dir"	value="javadoc"/>
     <property name="javadoc_check_dir"  value="${build_dir}/javadoc_check"/>
     <property name="javadoc_zip"	value="javadoc.zip"/>
@@ -535,6 +538,7 @@ jsapi.exe from the lib directory.
 	</delete>
 	<delete dir="${build_dir}"/>
 	<delete dir="${javadoc_dir}"/>
+	<delete dir="${bin_dir}"/>
 	<delete file="${lib_dir}/sphinx4.jar"/>
 	<delete file="${lib_dir}/${wsj_name}.jar"/>
 	<delete file="${lib_dir}/${tidigits_name}.jar"/>
@@ -543,32 +547,60 @@ jsapi.exe from the lib directory.
 
     <!-- ********************************************************** --> 
     <!-- *                                                        * -->
-    <!-- * Deploys the bin.zip file.                              * -->
+    <!-- * Deploys the bin.zip and src.zip files.                 * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** --> 
-    <target name="deploy_bin_zip"
-            description="Creates the bin.zip deploy file."
-	    depends="clean,all,javadoc">
-	<jar destfile="bin.zip"
-	     basedir="."
-	     includes="lib/*.jar,lib/jsapi.jar,lib/jsapi.sh,bin/*.jar,demo/**,index.html,README,doc/ProgrammersGuide.html,doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,javadoc/**"
-	     excludes="lib/jsapi.jar"
-	     compress="true"/>
+    <target name="deploy"
+            description="Deploys the bin.zip and src.zip files.">
+	<delete dir="${deploy_dir}"/>
+	<antcall target="deploy_bin_zip"/>
+	<antcall target="deploy_src_zip"/>
     </target>
 
 
     <!-- ********************************************************** --> 
     <!-- *                                                        * -->
-    <!-- * Deploys the src.zip file.                              * -->
+    <!-- * Deploys the sphinx4-bin.zip file.                      * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** --> 
+    <target name="deploy_bin_zip"
+            description="Creates the bin.zip deploy file."
+	    depends="clean,all,javadoc">
+	<mkdir dir="${deploy_dir}/sphinx4-bin-${version}"/>
+	<copy todir="${deploy_dir}/sphinx4-bin-${version}"
+	      includeEmptyDirs="false">
+	     <fileset dir="."
+   	         includes="build.xml,demo.xml,index.html,license.terms,MANIFEST,README,lib/**,bin/*.jar,demo/**,javadoc/**,doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html"
+		 excludes="lib/jsapi.jar"/>
+	</copy>
+	<jar destfile="${deploy_dir}/sphinx4-bin-${version}.zip"
+	     basedir="${deploy_dir}"
+	     includes="sphinx4-bin-${version}/**"
+	     compress="true"/>
+	<delete dir="${deploy_dir}/sphinx4-bin-${version}"/>
+    </target>
+
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * -->
+    <!-- * Deploys the sphinx4-src.zip file.                      * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** --> 
     <target name="deploy_src_zip"
             description="Creates the src.zip deploy file."
 	    depends="clean">
-	<jar destfile="src.zip"
-	     basedir="."
-	     includes="**"
-	     excludes="**/CVS,**/.*,bin"/>
+	<mkdir dir="${deploy_dir}/sphinx4-src-${version}"/>
+	<copy todir="${deploy_dir}/sphinx4-src-${version}"
+	      includeEmptyDirs="false">
+	    <fileset dir="."/>
+	</copy>
+	<delete dir="${deploy_dir}/sphinx4-src-${version}/bin"/>
+	<delete dir="${deploy_dir}/sphinx4-src-${version}/deploy"/>
+	<jar destfile="${deploy_dir}/sphinx4-src-${version}.zip"
+	     basedir="${deploy_dir}"
+	     includes="sphinx4-src-${version}/**"
+	     compress="true"/>
+	<delete dir="${deploy_dir}/sphinx4-src-${version}"/>
     </target>
 
 </project>
