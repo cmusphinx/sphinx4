@@ -21,39 +21,20 @@ package edu.cmu.sphinx.knowledge.dictionary;
 public interface Dictionary {
 
     /**
-     * ID of an unknown word.
-     */
-    public static final int UNKNOWN_WORD_ID = -1;
-
-    /**
-     * Spelling of the 'word' that marks the beginning of a sentence
+     * Spelling of the sentence start word.
      */
     public static final String SENTENCE_START_SPELLING = "<s>";
 
     /**
-     * ID of the 'word' that marks the beginning of a sentence
-     */
-    public static final int SENTENCE_START_ID = -2;
-
-    /**
-     * Spelling of the 'word' that marks the end of a sentence
+     * Spelling of the sentence end word.
      */
     public static final String SENTENCE_END_SPELLING = "</s>";
-
-    /**
-     * ID of the 'word' that marks the end of a sentence
-     */
-    public static final int SENTENCE_END_ID = -3;
 
     /**
      * Spelling of the 'word' that marks a silence
      */
     public static final String SILENCE_SPELLING = "<sil>";
 
-    /**
-     * ID of the 'word' that marks a silence
-     */
-    public static final int SILENCE_ID = -4;
 
     /**
      * Prefix string for the Sphinx properties of this Dictionary.
@@ -149,46 +130,37 @@ public interface Dictionary {
     
 
     /**
-     * Retrieves the pronunciations for a particular word based upon
-     * its classification.
+     * Returns a Word object based on the spelling and its classification.
      *
      * @param text the spelling of the word of interest.
-     * @param wordClassification the classification of the word
-     * (typically part of speech classification)  or null if all word
-     * classifications are acceptable. The word classification must be
-     * one of the set returned by <code>
-     * getPossibleWordClassifications </code>
      *
-     * @return an array of zero or more
-     * <code>Pronunciation</code> objects.
+     * @return a Word object
      *
      * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
      */
-    public Pronunciation[] getPronunciations(String text,
-                                     WordClassification wordClassification);
+    public Word getWord(String text);
 
     /**
-     * Retrieves the pronunciations for a particular word based upon
-     * its classification and tag.
+     * Returns the sentence start word.
      *
-     * @param text the spelling of the word of interest.
-     * @param wordClassification the classification of the word
-     * (typically part of speech classification)  or null if all word
-     * classifications are acceptable. The word classification must be
-     * one of the set returned by <code>
-     * getPossibleWordClassifications </code>
-     * @param tag a tag used to distinguish one homograph from
-     * another.
-     *
-     * @return an array of zero or more
-     * <code>Pronunciation</code> objects.
-     *
-     * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
+     * @return the sentence start word
      */
-    public Pronunciation[] getPronunciations(String text,
-                 WordClassification wordClassification, String tag);
+    public Word getSentenceStartWord();
 
+    /**
+     * Returns the sentence end word.
+     *
+     * @return the sentence end word
+     */
+    public Word getSentenceEndWord();
 
+    /**
+     * Returns the silence word.
+     *
+     * @return the silence word
+     */
+    public Word getSilenceWord();
+    
     /**
      * Returns the set of all possible word classifications for this
      * dictionary.
@@ -197,21 +169,10 @@ public interface Dictionary {
      */
     public WordClassification[] getPossibleWordClassifications();
 
-
-    /**
-     * Returns the ID of the given word.
-     *
-     * @return the ID of the given word, or -1 if the given word is
-     *   not in the dictionary
-     */
-    public int getWordID(String word);
-
-
     /**
      * Dumps out a dictionary
      *
      */
     public void dump();
-
 }
 
