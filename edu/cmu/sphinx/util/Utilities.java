@@ -12,6 +12,10 @@
 
 package edu.cmu.sphinx.util;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import java.text.DecimalFormat;
@@ -192,6 +196,26 @@ public class Utilities {
         } else {
             return formatted;
         }
+    }
+
+
+    /**
+     * Returns true if the given binary cepstra file is in big-endian format.
+     * It assumes that the first 4 bytes of the file tells you how many
+     * 4-byte floating point cepstra values are in the file.
+     *
+     * @param filename the cepstra file name
+     *
+     * @return true if the given binary cepstra file is big-endian
+     */
+    public static boolean isCepstraFileBigEndian(String filename) 
+	throws IOException {
+	File cepstraFile = new File(filename);
+	int fileSize = (int) cepstraFile.length();
+	DataInputStream stream = 
+	    new DataInputStream(new FileInputStream(filename));
+	int numberBytes = stream.readInt() * 4 + 4;
+	return (fileSize == numberBytes);
     }
 }
 
