@@ -49,14 +49,29 @@ import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
 /**
- * A simple form of the linguist. It makes the following simplifying
- * assumptions: 1) Zero or one word per grammar node 2) No fan-in allowed ever 3)
- * No composites (yet) 4) Only Unit, HMMState, and pronunciation states (and
+ * A simple form of the linguist. 
+ *
+ * The flat linguist takes a Grammar graph (as returned by the
+ * underlying, configurable grammar), and generates a search graph for
+ * this grammar.  
+ *
+ * It makes the following simplifying
+ * assumptions: 
+ *
+ * <ul>
+ * <li>Zero or one word per grammar node 
+ * <li> No fan-in allowed ever 
+ * <li> No composites (yet) 
+ * <li> Only Unit, HMMState, and pronunciation states (and
  * the initial/final grammar state are in the graph (no word, alternative or
- * grammar states attached). 5) Only valid tranisitions (matching contexts) are
- * allowed 6) No tree organization of units 7) Branching grammar states are
- * allowed
+ * grammar states attached). 
+ * <li> Only valid tranisitions (matching contexts) are
+ * allowed 
+ * <li> No tree organization of units 
+ * <li> Branching grammar states are  allowed
+ * </ul>
  * 
+ * <p>
  * Note that all probabilties are maintained in the log math domain
  */
 public class FlatLinguist implements Linguist, Configurable {

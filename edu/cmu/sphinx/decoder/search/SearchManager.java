@@ -19,23 +19,26 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.Configurable;
 
 /**
- * Provides the main interface for the recognizer.  To performn
- * recognition, an application should call initialize before
- * recognition begins, and repeatedly call <code> recognize </code>
- * until Result.isFinal() returns true.  Once a final result has been
- * obtained, <code> terminate </code> should be called. 
+ *
+ * Defines the interface for the SearchManager. The SearchManager's
+ * primary role is to execute the search for a given number of frames.
+ * The SearchManager will return interim results as the recognition proceeds
+ * and when recognition completes a final result will be returned.
  *
  */
 public interface SearchManager extends Configurable {    
    /**
-     * Allocates the resources necessary for this search
+     * Allocates the resources necessary for this search. This should
+     * be called once before an recognitions are performed
      *
      */
     public void allocate() throws IOException ;
     
     
     /**
-     * Deallocates resources necessary for this search
+     * Deallocates resources necessary for this search. This should be
+     * called once after all recognitions are completed at the search
+     * manager is no longer needed.
      *
      */
     public void deallocate();
