@@ -115,7 +115,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
         super(name, context, props);
 	this.mergeSpeechSegments = getSphinxProperties().getBoolean
 	    (PROP_PREFIX + "mergeSpeechSegments", true);
-        this.discardMode = false;
+        this.discardMode = true;
         this.predecessor = predecessor;
         this.inputBuffer = new LinkedList();
     }
@@ -158,6 +158,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
 
         getTimer().stop();
 
+        /*
         if (cepstrum != null) {
             if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
                 System.out.println("NSF: UTTERANCE_START");
@@ -165,6 +166,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
                 System.out.println("NSF: UTTERANCE_END");
             }            
         }
+        */
 
         return cepstrum;
     }
@@ -239,11 +241,19 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
      * @return the next available Cepstrum
      */
     private Cepstrum readCepstrum() throws IOException {
+        Cepstrum cepstrum = null;
         if (inputBuffer.size() > 0) {
-            return (Cepstrum) inputBuffer.remove(0);
+            cepstrum = (Cepstrum) inputBuffer.remove(0);
         } else {
-            return predecessor.getCepstrum();
+            cepstrum = predecessor.getCepstrum();
         }
+        /*
+        if (cepstrum != null && cepstrum.getSignal() != null) {
+            System.out.println("NSF: incoming: " + 
+                               cepstrum.getSignal().toString());
+        }
+        */
+        return cepstrum;
     }
 
 
