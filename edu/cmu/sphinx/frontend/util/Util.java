@@ -122,7 +122,9 @@ public class Util {
      * Converts a byte array into an array of samples (a bouble). 
      * Each consecutive bytes in the byte array are converted into a double, 
      * and becomes the next element in the double array. The size of the
-     * returned array is (length/bytesPerDouble).
+     * returned array is (length/bytesPerDouble). 
+     * Currently, only 1 byte (8-bit) or 2 bytes (16-bit)
+     * samples are supported.
      *
      * @param byteArray a byte array
      * @param offset which byte to start from
@@ -142,24 +144,36 @@ public class Util {
                                                 boolean signedData)
         throws ArrayIndexOutOfBoundsException {
 
-        assert (bytesPerSample > 0 && bytesPerSample < 5);
-        if (signedData) {
-            throw new Error("Signed big-endian data not yet supported");
-        }
-        
         if (0 < length && (offset + length) <= byteArray.length) {
             int doubleLength = length/bytesPerSample;
             double[] doubleArray = new double[doubleLength];
-            
-            for (int i = offset, j = 0; j < doubleLength; j++) {
-                int temp = (int) byteArray[i++];
-                for (int b = 1; b < bytesPerSample; b++) {
-                    temp = (temp << 8);
-                    temp |= (int) (0x000000FF & byteArray[i++]);
+
+            if (bytesPerSample == 2) { 
+                if (!signedData) {
+                    for (int i = offset, j = 0; j < doubleLength; j++) {
+                        int temp = (int) byteArray[i++];
+                        temp = (temp << 8);
+                        temp |= (int) (0x000000FF & byteArray[i++]);
+                        doubleArray[j] = (double) temp;
+                    }
+                } else {
+                    for (int i = offset, j = 0; j < doubleLength; j++) {
+                        short temp = (short) (byteArray[i++] << 8);
+                        temp |= (short) (0x00FF & byteArray[i++]);
+                        doubleArray[j] = (double) temp;
+                    }
                 }
-                doubleArray[j] = (double) temp;
+            } else if (bytesPerSample == 1) {
+                for (int i = offset; i < doubleLength; i++) {
+                    doubleArray[i] = (double) byteArray[i];
+                }
+            } else {
+                throw new Error
+                    ("Unsupported bytes per sample: " + bytesPerSample);
             }
+
             return doubleArray;
+
 	} else {
 	    throw new ArrayIndexOutOfBoundsException
 		("offset: " + offset + ", length: " + length
@@ -192,36 +206,40 @@ public class Util {
                                                             int bytesPerSample,
                                                             boolean signed)
         throws ArrayIndexOutOfBoundsException {
-        assert (bytesPerSample > 0 && bytesPerSample < 5);
 
         if (0 < length && (offset + length) <= data.length) {
             double[] doubleArray = new double[length/bytesPerSample];
-            if (bytesPerSample == 2 && signed) {
-                littleEndianSigned16BitToDouble(data, offset, length,
-                                                doubleArray);
+
+            if (bytesPerSample == 2) {
+                if (signed) {
+                    for (int i = offset, j = 0; i < length; j++) {
+                        short temp = (short) ((0x000000FF & data[i++]) | 
+                                              (data[i++] << 8));
+                        doubleArray[j] = (double) temp;
+                    }
+                } else {
+                    for (int i = offset, j = 0; i < length; j++) {
+                        int temp = (int) ((0x000000FF & data[i++]) | 
+                                          (data[i++] << 8));
+                        doubleArray[j] = (double) temp;
+                    }
+                }
+            } else if (bytesPerSample == 1) {
+                for (int i = 0; i < doubleArray.length; i++) {
+                    doubleArray[i] = data[i];
+                }
             } else {
                 throw new Error
-                    ("Unsupported bytesPerSample: " + bytesPerSample +
-                     "and signed data: " + signed);
+                    ("Unsupported bytesPerSample: " + bytesPerSample);
             }
+
             return doubleArray;
+
         } else {
 	    throw new ArrayIndexOutOfBoundsException
 		("offset: " + offset + ", length: " + length
 		 + ", array length: " + data.length);
 	}
-    }
-
-
-    private static final void littleEndianSigned16BitToDouble
-        (byte[] data, 
-         int offset,
-         int length,
-         double[] doubleArray) {
-         for (int i = offset, j = 0; j < doubleArray.length; j++) {
-            short temp = (short) ((0x000000FF & data[i++]) | (data[i++] << 8));
-            doubleArray[j] = (double) temp;
-        }
     }
 
 
