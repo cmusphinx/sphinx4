@@ -83,7 +83,7 @@ your environment to use JSAPI.
 	       destdir="${classes_dir}">
 	    <classpath refid="libs"/>
 	</javac>
-	<copy file="${src_dir}/demo/sphinx/helloworld/digits.gram"
+	<copy file="${src_dir}/demo/sphinx/helloworld/hello.gram"
 	      todir="${classes_dir}/demo/sphinx/helloworld"/>
 	<copy file="${src_dir}/demo/sphinx/helloworld/helloworld.config.xml"
 	      todir="${classes_dir}/demo/sphinx/helloworld"/>
