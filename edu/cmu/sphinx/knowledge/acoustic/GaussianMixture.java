@@ -31,7 +31,7 @@ class GaussianMixture implements Senone, Serializable {
     private MixtureComponent[] mixtureComponents;	
     private long id;
 
-    transient volatile private Feature logLastFeatureScored;
+    transient volatile private Feature lastFeatureScored;
     transient volatile private float logLastScore;
 
     private LogMath logMath;
@@ -46,7 +46,7 @@ class GaussianMixture implements Senone, Serializable {
      * senone
      */
     public GaussianMixture(LogMath logMath, float[] logMixtureWeights, 
-    		MixtureComponent[] mixtureComponents, long id) {
+                           MixtureComponent[] mixtureComponents, long id) {
 
 	assert mixtureComponents.length == logMixtureWeights.length;
 
@@ -80,12 +80,12 @@ class GaussianMixture implements Senone, Serializable {
     public float getScore(Feature feature)  {
 	float logScore;
 	
-	if (feature == logLastFeatureScored) {
+	if (feature.equals(lastFeatureScored)) {
 	    logScore = logLastScore;
 	} else {
 	    logScore = calculateScore(feature);
 	    logLastScore = logScore;
-	    logLastFeatureScored = feature;
+	    lastFeatureScored = feature;
 	}
 	return logScore;
     }
