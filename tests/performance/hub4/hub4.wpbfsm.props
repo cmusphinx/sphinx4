@@ -141,11 +141,11 @@ edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.fullWordHistories=true
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=30000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-60
 edu.cmu.sphinx.decoder.search.ActiveListManager.relativeWordBeamWidth=1E-30
-edu.cmu.sphinx.decoder.search.ActiveListManager.absoluteWordBeamWidth=22
+edu.cmu.sphinx.decoder.search.ActiveListManager.absoluteWordBeamWidth=19
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.growSkipInterval=0
 edu.cmu.sphinx.decoder.linguist.Linguist.unigramSmearWeight=1
 
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.acousticLookaheadFrames=1.9
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.acousticLookaheadFrames=2.0
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.keepAllTokens=true
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.cclextree.LexTreeLinguist 
