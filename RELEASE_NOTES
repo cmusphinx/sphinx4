@@ -7,6 +7,10 @@ Release Date:  xxx xxxx
 Detailed Changes:
 ----------------
 
+PBL - 12/13/04
+    Incorporated contribution from Gregg Liming that adds support for 
+    dictionary addenda in the FastDictionary.
+
 WDW - 11/09/04 
     Made WordPruningBreadthFirstSearchManager.recognize behavior
     consistent with the SimpleBreadthFirstSearchManager:  when

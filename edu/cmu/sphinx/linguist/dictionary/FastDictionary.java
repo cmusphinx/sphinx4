@@ -18,7 +18,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import java.net.URL;
+import java.net.MalformedURLException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -77,6 +79,15 @@ import edu.cmu.sphinx.util.props.Registry;
 public class FastDictionary implements Dictionary {
 
 
+    /**
+     * The name of the SphinxProperty for the custom dictionary file paths.
+     */
+    public static final String PROP_ADDENDA = "addenda";
+    /**
+     * The default value of PROP_ADDENDA.
+     */
+    public static final String PROP_ADDENDA_DEFAULT = null;
+
     // -------------------------------
     // Configuration data
     // --------------------------------
@@ -88,6 +99,7 @@ public class FastDictionary implements Dictionary {
     private String wordReplacement;
     private URL wordDictionaryFile;
     private URL fillerDictionaryFile;
+    private List addendaUrlList;
 
     private UnitManager unitManager;
 
@@ -117,7 +129,7 @@ public class FastDictionary implements Dictionary {
         registry.register(PROP_ALLOW_MISSING_WORDS, PropertyType.BOOLEAN);
         registry.register(PROP_CREATE_MISSING_WORDS, PropertyType.BOOLEAN);
         registry.register(PROP_UNIT_MANAGER, PropertyType.COMPONENT);
-
+        registry.register(PROP_ADDENDA, PropertyType.STRING_LIST);
     }
 
     /*
@@ -130,6 +142,7 @@ public class FastDictionary implements Dictionary {
         
         wordDictionaryFile = ps.getResource(PROP_DICTIONARY);
         fillerDictionaryFile = ps.getResource(PROP_FILLER_DICTIONARY);
+        addendaUrlList = this.getResourceList(PROP_ADDENDA, ps);
 
         addSilEndingPronunciation = ps.getBoolean(
                 PROP_ADD_SIL_ENDING_PRONUNCIATION,
@@ -170,6 +183,8 @@ public class FastDictionary implements Dictionary {
 
             loadDictionary(wordDictionaryFile.openStream(), false);
 
+            loadCustomDictionaries(addendaUrlList);
+            
             logger.info("Loading filler dictionary from: " +
                         fillerDictionaryFile);
 
@@ -449,6 +464,56 @@ public void deallocate() {
      */
     public void dump() {
         System.out.print(toString());
+    }
+    
+    /**
+     * Creates a list of resource URLs given the name of the property.
+     * This method should eventually be replaced by a corresponding version 
+     * in PropertySheet
+     * @param propertyListName
+     * 			the name of the propertyList
+     * @param ps
+     * 			the FastDictionary property sheet
+     * @return
+     * 			the list of resource URLs - empty if no propertyList 
+     *                  exists
+     * @throws PropertyException
+     * 			if a URL (from the list) isn't a valid file path
+     */
+    private List getResourceList(String propertyListName, PropertySheet ps) 
+                throws PropertyException {
+    	List resourceList = new ArrayList();
+    	List pathList = ps.getStrings(propertyListName);
+    	if (pathList != null) {
+            for (Iterator i = pathList.iterator(); i.hasNext();) {
+                String addendumPath = (String) i.next();
+                try {
+                    URL addendaUrl = new URL(addendumPath);
+                    resourceList.add(addendaUrl);
+                } catch (MalformedURLException mue) {
+                    throw new PropertyException(this, PROP_ADDENDA, 
+                    "Addendum path: " + addendumPath + " is not a valid URL.");
+                }
+            }
+    	}
+    	return resourceList;
+    }
+
+    /**
+     * 
+     * Loads the dictionary with a list of URLs to custom dictionary resources
+     * @param addenda
+     * 			the list of custom dictionary URLs to be loaded
+     * @throws IOException
+     * 			if there is an error reading the resource URL
+     */
+    private void loadCustomDictionaries(List addenda) throws IOException {
+    	if (addenda != null) {
+    		for (Iterator i = addenda.iterator(); i.hasNext();) {
+    			URL addendumUrl = (URL) i.next();
+    			loadDictionary(addendumUrl.openStream(), false);
+    		}
+    	}
     }
 
 }
