@@ -111,14 +111,6 @@ WARRANTIES.
 		<li><a href="javadoc/edu/cmu/sphinx/frontend/doc-files/FrontEndFAQ.html#enable_endpointer">Enabling the endpointer</a></li>
 	    </ul>
 	<li><a href="#batch_tests">Running the Regression Tests</a></li>
-	    <ul>
-	       <li><a href="#isolated_digits_test">Isolated Digits</a>, 
-	           <a href="#connected_digits_test">Connected Digits</a>
-	       <li><a href="#small_vocab_test">Small Vocabulary</a>, 
-	           <a href="#medium_vocab_test">Medium Vocabulary</a>, 
-	           <a href="#large_vocab_test">Large Vocabulary</a>
-	    </ul>
-	</li>
 	<li><a href="#setup_test">Setting up a Regression Test</a>
 	    <ul>
 	       <li><a href="#batch_files">Batch Files</a>
@@ -371,7 +363,7 @@ setenv JAVA_HOME /usr/java/j2sdk1.4.2
       <li>
       <b>Instructions for retrieving code from a release package.</b>
       <p>
-      Sphinx-4 has two packages available for <a href="http://sourceforge.net/project/showfiles.php?group_id=1904">download</a>:
+      Sphinx-4 has two packages available for <a href="http://sourceforge.net/project/showfiles.php?group_id=1904&package_id=117949">download</a>:
       <ul>
       <li>
       <b>sphinx4-bin-{version}.zip</b>: 
@@ -688,28 +680,24 @@ d:\work\sphinx4&gt;ant clean
   Sphinx-4 contains a number of regression tests using common speech databases.
   Again, you have to download the source distribution or downloaded the
   source tree using CVS in order to get the regression tests directory.
-  In order to run the batch regression tests, you will need to have
-  any or all of the following test data. The links will lead you to an
-  outside site where you can acquire them. Data from the <a
-  href="http://www.ldc.upenn.edu">Language Data Consortium (LDC)</a>
-  are available for a fee. Data from other sources may be free.
+  The regression tests we have are:
   </p>
-     <ul>
-     <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S9">TI46</a> - isolated speech</li>
-     <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S10">TIDIGITS</a> - connected digits</li>
-     <li><a href="http://www.speech.cs.cmu.edu/databases/an4/">AN4</a> - 
-         small vocabulary alphanumeric connect speech</li>
-     <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S3B">RM1</a> - medium vocabulary connected speech
-     <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC2000S88">HUB4</a> - large vocabulary connected speech</li>
-     </ul>
-  
+  <ul>
+  <li><a href="#isolated_digits_test">Isolated Digits - TI46</a></li>
+  <li><a href="#connected_digits_test">Connected Digits - TIDIGITS</a></li>
+  <li><a href="#small_vocab_test">Small Vocabulary - AN4</a></li>
+  <li><a href="#medium_vocab_test">Medium Vocabulary - RM1</a></li>
+  <li><a href="#large_vocab_test">Large Vocabulary - HUB4</a></li>
+  </ul>
   <p>
-  First of all, make sure that you have built Sphinx-4 already.
-  To do so, go to the top level and type:
+  Before you run any of the tests, make sure that you have built Sphinx-4
+  already. To do so, go to the top level and type:
   <pre>ant</pre>
+  </p>
   <p>
   You also need to make sure you have the appropriate acoustic model(s)
   installed. More details below.
+  </p>
   <p>
   The Sphinx-4 regression tests have different directories for the
   different tasks. The directory sphinx4/tests/performance contains 
@@ -719,16 +707,18 @@ d:\work\sphinx4&gt;ant clean
   different tests. Type:
   <pre>ant -projecthelp</pre>
   to list a help text with the possible targets.
+  </p>
 
   <p>
-  <a name="isolated_digits_test"><br><b>Isolated Digits</b></a>
+  <a name="isolated_digits_test"><br><b>Isolated Digits - TI46</b></a>
+  </p>
 
   <p>
   The TIDIGITS models are already included as part of the distribution.
   Therefore, you do not need to download them separately.
-  <p>
   You must have the TI46 test data, available from the
   <a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S9">LDC TI46</a> website.
+  </p>
   <p>
   You need to edit the batch file called <code>ti46.batch</code>,
   located in <code>tests/performance/ti46</code> directory.
@@ -736,16 +726,19 @@ d:\work\sphinx4&gt;ant clean
   it matches where you stored the TI46 test files. Refer to the section
   <a href="#batch_files">Batch Files</a> for detail about the format of
   batch files.
+  </p>
   <p>
   To run the tests:
+  </p>
   <pre>
   % cd sphinx4/tests/performance/ti46
   % ant -projecthelp      # to see a list of possible targets
   % ant ti46_wordlist
   </pre>
-
+  
   <p>
-  <a name="connected_digits_test"><br><b>Connected Digits</b></a>
+  <a name="connected_digits_test"><br><b>Connected Digits - TIDIGITS</b></a>
+  </p>
 
   <p>
   The TIDIGITS models are already included as part of the distribution.
@@ -770,7 +763,7 @@ d:\work\sphinx4&gt;ant clean
 </pre>
 
   <p>
-  <a name="small_vocab_test"><br><b>Small Vocabulary</b></a>
+  <a name="small_vocab_test"><br><b>Small Vocabulary - AN4</b></a>
 
   <p>
   The Wall Street Journal (WSJ) models are already included as part of
@@ -802,12 +795,12 @@ d:\work\sphinx4&gt;ant clean
 </pre>
   
   <p>
-  <a name="medium_vocab_test"><br><b>Medium Vocabulary</b></a>
+  <a name="medium_vocab_test"><br><b>Medium Vocabulary - RM1</b></a>
 
   <p>
   Make sure that you have downloaded the binary RM1 model file, called
   <code>RM1_13dCep_16k_40mel_130Hz_6800Hz.jar</code>, located at the
-  <code>sphinx4</code> package in the <a href="http://sourceforge.net/project/showfiles.php?group_id=1904">downloads page</a>.
+  <code>sphinx4</code> package in the <a href="http://sourceforge.net/project/showfiles.php?group_id=1904&package_id=117949">downloads page</a>.
   <br>
   Then in the build file for the RM1 tests,
   <code>sphinx4/tests/performance/rm1/build.xml</code>,
@@ -833,7 +826,7 @@ d:\work\sphinx4&gt;ant clean
 </pre>
 
   <p>
-  <a name="large_vocab_test"><br><b>Large Vocabulary</b></a>
+  <a name="large_vocab_test"><br><b>Large Vocabulary - HUB4</b></a>
 
   <p>
   You must have the HUB4 test data, available from the 
@@ -845,7 +838,7 @@ d:\work\sphinx4&gt;ant clean
   <code>HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.jar</code>, and the
   binary HUB4 trigram language model, called <code>HUB4_trigram_lm.jar</code>,
   both located at the <code>sphinx4</code> package in the 
-  <a href="http://sourceforge.net/project/showfiles.php?group_id=1904">
+  <a href="http://sourceforge.net/project/showfiles.php?group_id=1904&package_id=117949">
   downloads page</a>. For the trigram language model file, unpack it by:
   <pre>jar xvf HUB4_trigram_lm.jar</pre>
   The trigram model file is called <code>language_model.arpaformat.DMP</code>.
