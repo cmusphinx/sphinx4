@@ -107,7 +107,7 @@ public class Live {
 
         // initialize the Swing GUI JFrame
         liveFrame = new LiveFrame("Live Decoder!", this);
-        liveFrame.show();
+        liveFrame.setVisible(true);
 
         initializeFirstDecoder();
         audioPlayer = new AudioPlayer();
