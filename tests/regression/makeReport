@@ -80,6 +80,7 @@ $1 == "test"  && $4 == machine && $5 == "s4" {
 }
 
 $1 == "environment" && $3 == machine  {
+    javaHome = $4;
     javaVersion = $5;
 }
 
@@ -262,6 +263,8 @@ function printSummaryInfo() {
     print "Build Time:       " fmtTime(data[8]);
     print "Run Time:         " fmtTime(data[9]);
     print "Test Name:        " data[10];
+    print "Java Home:        " javaHome;
+    print "Java Version:     " javaVersion;
     print "";
     print "";
 }
@@ -296,10 +299,6 @@ END {
 	print "    Average Heap (MB) "  getHeapStatus(i);
 	printf("\n");
     }
-    print ""
-    print "Java Version: ";
-    print ""
-    print javaVersion;
     print ""
     print ""
     print "Complete test details at: ";
