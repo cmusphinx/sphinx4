@@ -130,7 +130,6 @@ public class LargeTrigramModel implements LanguageModel {
     public static final int BYTES_PER_TRIGRAM = 4;
 
 
-    private SphinxProperties props;
     private LogMath logMath;
 
     private Map unigramIDMap;
@@ -162,18 +161,23 @@ public class LargeTrigramModel implements LanguageModel {
     private int maxBigramCacheSize;
     private boolean clearCacheAfterUtterance;
 
+    private boolean calculateUnigramSmear = false;
+
+    double[] unigramSmearTerm;
+
 
     /**
      * Creates a simple ngram model from the data at the URL. The
      * data should be an ARPA format
      *
-     * @param context the context for this model
+     * @param props the SphinxProperties for this model
+     * @param dictionary the dictionary
      *
      * @throws IOException if there is trouble loading the data
      */
-    public LargeTrigramModel(String context, Dictionary dictionary) 
+    public LargeTrigramModel(SphinxProperties props, Dictionary dictionary) 
         throws IOException, FileNotFoundException {
-	initialize(context, dictionary);
+	initialize(props, dictionary);
     }
     
 
@@ -187,14 +191,13 @@ public class LargeTrigramModel implements LanguageModel {
     /**
      * Initializes this LanguageModel
      *
-     * @param context the context to associate this linguist with
+     * @param props the SphinxProperties for this model
+     * @param dictionary the dictionary
      */
-    public void initialize(String context, Dictionary dictionary) 
+    public void initialize(SphinxProperties props, Dictionary dictionary) 
         throws IOException {
 
         Timer.start("LM Load");
-
-        this.props = SphinxProperties.getSphinxProperties(context);
         
         String format = props.getString
             (LanguageModel.PROP_FORMAT, LanguageModel.PROP_FORMAT_DEFAULT);
@@ -221,9 +224,9 @@ public class LargeTrigramModel implements LanguageModel {
 	trigramCache = new LRUCache(maxTrigramCacheSize);
 	bigramCache = new LRUCache(maxBigramCacheSize);
 	
-        logMath = LogMath.getLogMath(context);
+        logMath = LogMath.getLogMath(props.getContext());
 
-        loader = new BinaryLoader(context);
+        loader = new BinaryLoader(props);
 
         unigrams = loader.getUnigrams();
         bigramProbTable = loader.getBigramProbabilities();
@@ -247,6 +250,9 @@ public class LargeTrigramModel implements LanguageModel {
         System.out.println("# of  bigrams: " + loader.getNumberBigrams());
         System.out.println("# of trigrams: " + loader.getNumberTrigrams());
 
+        if (calculateUnigramSmear) {
+            buildSmearInfo();
+        }
         Timer.stop("LM Load");
     }
 
@@ -416,7 +422,18 @@ public class LargeTrigramModel implements LanguageModel {
       * @return the smear term associated with this word sequence
       */
      public float getSmear(WordSequence wordSequence) {
-         return 0.0f;
+         float smearTerm = 0.0f;
+         if (calculateUnigramSmear) {
+             int length = wordSequence.size();
+             if (length > 0) {
+                 int wordID = getWordID(wordSequence.getWord(length - 1));
+                 smearTerm = (float) unigramSmearTerm[wordID];
+             }
+         }
+         if (calculateUnigramSmear && true) {
+             System.out.println("SmearTerm: " + smearTerm);
+         }
+         return smearTerm;
      }
 
     /**
@@ -792,7 +809,6 @@ public class LargeTrigramModel implements LanguageModel {
 	return trigramHit;
     }
 
-    float[] unigramSmearTerm;
     private void buildSmearInfo() {
         double S0 = 0;
         double R0 = 0;
@@ -800,7 +816,7 @@ public class LargeTrigramModel implements LanguageModel {
         double[] ugNumerator = new double[unigrams.length];
         double[] ugDenominator = new double[unigrams.length];
         double[] ugAvgLogProb = new double[unigrams.length];
-        unigramSmearTerm = new float[unigrams.length];
+        unigramSmearTerm = new double[unigrams.length];
 
 
 
@@ -811,9 +827,10 @@ public class LargeTrigramModel implements LanguageModel {
         }
 
         for (int i = 0; i < loadedBigramBuffers.length; i++) {
+            System.out.println("bi " + i);
             BigramBuffer bigram = getBigramBuffer(i);
             if (bigram == null) {
-                unigramSmearTerm[i] = 1.0f;
+                unigramSmearTerm[i] = 1.0;
                 continue;
             }
 
@@ -835,14 +852,11 @@ public class LargeTrigramModel implements LanguageModel {
                 ugDenominator[i] += (bgprob - backoffbgprob) * logugprob;
             }
 
-            /*
-            ugnumerator[i] += word[i].ugbackoff *
-                (log(word[i].ugbackoff)*S0 + R0);
-            ugavglogprob[i] = ugdenominator[i] + word[i].ugbackoff * S0;
-            ugdenominator[i] += word[i].ugbackoff * R0;
-
-            word[i].ug_smear = ugnumerator[i] / ugdenominator[i];
-            */
+            double backoff = logMath.logToLinear(unigrams[i].getLogBackoff());
+            double logBackoff = unigrams[i].getLogBackoff();
+            ugNumerator[i] += backoff * (logBackoff * S0 + R0);
+            ugAvgLogProb[i] = ugDenominator[i] + backoff * S0;
+            unigramSmearTerm[i] = ugNumerator[i] / ugDenominator[i];
         }
 
         /*

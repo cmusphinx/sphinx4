@@ -281,8 +281,7 @@ public class Recognizer {
 
         dictionary = new FastDictionary(context);
 
-        languageModel = 
-            LanguageModelFactory.createLanguageModel(context, dictionary);
+        languageModel = LanguageModelFactory.getModel(props, dictionary);
         dumpMemoryInfo("languageModel");
 
         grammar = getGrammar(languageModel, dictionary);

@@ -115,15 +115,15 @@ class BinaryLoader {
      * Creates a simple ngram model from the data at the URL. The
      * data should be an ARPA format
      *
-     * @param context the context for this model
+     * @param SphinxProperties the context for this model
      *
      * @throws IOException if there is trouble loading the data
      */
-    public BinaryLoader(String context) 
+    public BinaryLoader(SphinxProperties props) 
         throws IOException, FileNotFoundException {
 	startWordID = -1;
 	endWordID = -1;
-	initialize(context);
+	initialize(props);
     }
 
 
@@ -232,9 +232,8 @@ class BinaryLoader {
      *
      * @param context the context to associate this linguist with
      */
-    private void initialize(String context) throws IOException {
-        this.props = SphinxProperties.getSphinxProperties(context);
-        
+    private void initialize(SphinxProperties props) throws IOException {
+        this.props = props;
         String format = props.getString
             (LanguageModel.PROP_FORMAT, LanguageModel.PROP_FORMAT_DEFAULT);
         String location = props.getString
@@ -244,7 +243,7 @@ class BinaryLoader {
             (PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP,
              PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP_DEFAULT);
 
-        logMath = LogMath.getLogMath(context);
+        logMath = LogMath.getLogMath(props.getContext());
 
         languageWeight = props.getFloat(Linguist.PROP_LANGUAGE_WEIGHT, 
                                         Linguist.PROP_LANGUAGE_WEIGHT_DEFAULT);

@@ -45,30 +45,30 @@ public class LanguageModelFactory {
 
 
     /**
-     * Creates a language model based upon the particular context
+     * Creates a language model based upon the particular set of
+     * sphinx properties
      *
-     * @param context the context
+     * @param props the sphinx properties
+     * @param dictionary the dictionary to be used by the model
      *
      * @return a language model (or null)
      *
      * @throws InstantiationException if the model could not be created
      * @throws IOException if the model could not be loaded
      */
-    public static LanguageModel createLanguageModel(String context, 
-                                            Dictionary dictionary)
+    public static LanguageModel getModel(
+            SphinxProperties props, Dictionary dictionary)
             throws IOException, InstantiationException {
 	String path =  "";
 	try {
 
            Timer.start("createLanguageModel");
 	   LanguageModel lm = null;
-	   SphinxProperties props = 
-	       	SphinxProperties.getSphinxProperties(context);
 	   path = props.getString(PROP_CLASS, null);
 
 	   if (path != null) {
 	       lm = (LanguageModel) Class.forName(path).newInstance();
-	       lm.initialize(context, dictionary);
+	       lm.initialize(props, dictionary);
 	   }
            Timer.stop("createLanguageModel");
 	   return lm;
