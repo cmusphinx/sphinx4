@@ -64,7 +64,15 @@ import java.io.IOException;
  * information above 6800Hz that can be used for improving separation
  * between models. Particularly for very noisy channels,
  * maximum frequency of around 5000Hz may help cut off the noise.
- *
+ * <p>
+ * The mel-frequency scale is a nonlinear scale which models
+ * the behavior of the human auditory system. Davis and Mermelstein
+ * showed that Mel-frequency cepstral coefficients are good for
+ * speech recognition. For details see, Davis and Mermelstein,
+ * <i>Comparison of Parametric Representations for Monosyllable
+ * Word Recognition in Continuously Spoken Sentences, IEEE
+ * Transactions on Acoustic, Speech and Signal Processing, 1980</i>.
+ * 
  * @see MelFilter
  */
 public class MelFrequencyFilterBank extends BaseDataProcessor {
