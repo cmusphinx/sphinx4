@@ -36,6 +36,7 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
     private int cepstrumLength;     // length of a Cepstrum
     private CepstrumSource predecessor;
     private List cepstraList;
+    private int numberDataCepstra;
 
 
     /**
@@ -75,6 +76,7 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
     private void reset() {
         Arrays.fill(sums, 0.0f);
 	cepstraList.clear();
+	numberDataCepstra = 0;
     }
 
 
@@ -132,15 +134,13 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
      */
     private int readUtterance() throws IOException {
 
-        int count = 0;
-
         Cepstrum input = null;
 
         do {
             input = predecessor.getCepstrum();
             if (input != null) {
                 if (input.hasContent()) {
-                    count++;
+                    numberDataCepstra++;
                     float[] cepstrumData = input.getCepstrumData();
 		    // add the cepstrum data to the sums
                     for (int j = 0; j < cepstrumData.length; j++) {
@@ -157,7 +157,7 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
             }
         } while (input != null);
 
-        return count;
+        return numberDataCepstra;
     }
         
 
@@ -170,7 +170,7 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
 
         // calculate the mean first
         for (int i = 0; i < sums.length; i++) {
-            sums[i] /= numberCepstrum;
+            sums[i] /= numberDataCepstra;
         }
 
         for (Iterator iterator = cepstraList.iterator();
