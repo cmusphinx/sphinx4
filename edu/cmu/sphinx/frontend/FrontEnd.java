@@ -135,6 +135,16 @@ public class FrontEnd implements DataSource, Runnable {
 
 
     /**
+     * Returns the AudioSource of this FrontEnd.
+     *
+     * @return the AudioSource
+     */
+    public DataSource getAudioSource() {
+        return this.audioFrameSource;
+    }
+
+
+    /**
      * Sets the source of audio input to this front-end.
      *
      * @param audioSource the source of audio data

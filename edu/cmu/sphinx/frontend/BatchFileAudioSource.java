@@ -30,7 +30,7 @@ import java.io.IOException;
  *
  * @see StreamAudioSource
  */
-public class BatchFileAudioSource implements DataSource {
+public class BatchFileAudioSource extends DataProcessor {
 
     private BufferedReader reader;
     private StreamAudioSource streamAudioSource = null;
@@ -43,8 +43,8 @@ public class BatchFileAudioSource implements DataSource {
      *
      * @throws java.io.IOException if error opening the batch file
      */
-    public BatchFileAudioSource(String context, String batchFile)
-        throws IOException {
+    public BatchFileAudioSource(String context, String batchFile) throws IOException {
+        super("BatchFileAudioSource", context);
         reader = new BufferedReader(new FileReader(batchFile));
         streamAudioSource = new StreamAudioSource(context, null);
 

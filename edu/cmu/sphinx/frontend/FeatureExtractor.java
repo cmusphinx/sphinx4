@@ -304,7 +304,7 @@ public class FeatureExtractor extends DataProcessor {
      */
     private void replicateLastFrame() {
 
-        if (bufferPosition >= 0) {
+        if (bufferPosition > 0) {
          
             float[] last = this.cepstraBuffer[bufferPosition - 1];
             

@@ -29,18 +29,16 @@ import java.util.Vector;
 public class StreamAudioSource extends DataProcessor {
 
     /**
-     * The name of the SphinxProperty which indicates if the produced
-     * AudioFrames should be dumped. The default value of this
-     * SphinxProperty is false.
+     * The name of the SphinxProperty which specifies the maximum
+     * number of bytes in a segment of speech.
+     * The default value is 2,000,000.
      */
-    public static final String PROP_DUMP =
-	"edu.cmu.sphinx.frontend.doubleAudioFrameSource.dump";
-
-    private static final int SEGMENT_MAX_BYTES = 2000000;
-    private static final int SEGMENT_NOT_STARTED = -1;
-
+    public static final String PROP_SEGMENT_MAX_BYTES =
+    "edu.cmu.sphinx.frontend.streamAudioSource.segmentMaxBytes";
+    
     private InputStream audioStream;
 
+    private int segmentMaxBytes;
     private int frameSizeInBytes;
     private int windowSizeInBytes;
     private int windowShiftInBytes;
@@ -49,18 +47,11 @@ public class StreamAudioSource extends DataProcessor {
      * The buffer that contains the samples. "totalInBuffer" indicates
      * the number of bytes in the samplesBuffer so far.
      */
-    private byte[] samplesBuffer;
-    private int totalInBuffer;
-    private int totalBytesRead;
+    private ByteBuffer samplesBuffer;
+    private ByteBuffer overflowBuffer;
+
     private boolean streamEndReached = false;
-
-    /**
-     * The buffer that contains the overflow samples.
-     */
-    private byte[] overflowBuffer;
-    private int overflowBytes;
-
-    private boolean dump;
+    private boolean segmentStarted = false;
 
 
     /**
@@ -69,11 +60,11 @@ public class StreamAudioSource extends DataProcessor {
      * @param audioStream the InputStream where audio data comes from
      */
     public StreamAudioSource(String context, InputStream audioStream) {
-        super(context, "StreamAudioSource");
+        super("StreamAudioSource", context);
 	initSphinxProperties();
 	this.audioStream = audioStream;
-	this.samplesBuffer = new byte[frameSizeInBytes * 2];
-        this.overflowBuffer = new byte[frameSizeInBytes];
+	samplesBuffer = new ByteBuffer(frameSizeInBytes * 2);
+        overflowBuffer = new ByteBuffer(frameSizeInBytes);
         reset();
     }
 
@@ -83,8 +74,8 @@ public class StreamAudioSource extends DataProcessor {
      * current InputStream.
      */
     public void reset() {
-        this.totalBytesRead = SEGMENT_NOT_STARTED;
-        this.overflowBytes = 0;
+        samplesBuffer.reset();
+        overflowBuffer.reset();
     }
 
 
@@ -111,8 +102,8 @@ public class StreamAudioSource extends DataProcessor {
 	
         frameSizeInBytes = properties.getInt
 	    (FrontEnd.PROP_BYTES_PER_AUDIO_FRAME, 4000);
-	
-        dump = properties.getBoolean(PROP_DUMP, false);
+
+        segmentMaxBytes = properties.getInt(PROP_SEGMENT_MAX_BYTES, 2000000);
     }
 
 
@@ -139,34 +130,38 @@ public class StreamAudioSource extends DataProcessor {
      */
     public Data read() throws IOException {
 
+        getTimer().start();
+
         Data output = null;
 
-        if (streamEndReached) {
-           
-            return null;
-
-	} else if (totalBytesRead == SEGMENT_NOT_STARTED) {
-
-            totalBytesRead = 0;
-            return EndPointSignal.SEGMENT_START;
-
-	} else if (totalBytesRead >= SEGMENT_MAX_BYTES) {
-
-            totalBytesRead = SEGMENT_NOT_STARTED;
-	    return EndPointSignal.SEGMENT_END;
-
-	} else {
-
-	    Data nextFrame = readNextFrame();
-            streamEndReached = (nextFrame == null);
+        if (!streamEndReached) {
             
-            if (streamEndReached) {
-                audioStream.close();
-                return EndPointSignal.SEGMENT_END;
+            if (!segmentStarted) {
+                
+                segmentStarted = true;
+                output = EndPointSignal.SEGMENT_START;
+                
+            } else if (samplesBuffer.getTotalBytesRead() >= segmentMaxBytes) {
+                
+                segmentStarted = false;
+                output = EndPointSignal.SEGMENT_END;
+                
             } else {
-                return nextFrame;
+                Data nextFrame = readNextFrame();
+                streamEndReached = (nextFrame == null);
+                
+                if (streamEndReached) {
+                    audioStream.close();
+                    output = EndPointSignal.SEGMENT_END;
+                } else {
+                    output = nextFrame;
+                }
             }
-	}
+        }
+
+        getTimer().stop();
+
+        return output;
     }
 
 
@@ -180,116 +175,194 @@ public class StreamAudioSource extends DataProcessor {
      */
     private AudioFrame readNextFrame() throws IOException {
 
-	totalInBuffer = 0;
-
 	// if there are previous samples, pre-pend them to input speech samps
-        overflowToSamplesBuffer();
-
 	// read one frame from the inputstream
-	readInputStream(frameSizeInBytes);
-
+        samplesBuffer.reset();
+        samplesBuffer.transferAllFrom(overflowBuffer);
+        overflowBuffer.reset();
+	samplesBuffer.readFrom(audioStream, frameSizeInBytes);
+        
 	// if nothing in the samplesBuffer, return null
-	if (totalInBuffer == 0) {
+	if (samplesBuffer.getTotalInBuffer() == 0) {
 	    return null;
 	}
 	
 	// if read bytes do not fill a frame, copy them to overflow buffer
 	// after the previously stored overlap samples
-	if (totalInBuffer < windowSizeInBytes) {
-
-            samplesToOverflowBuffer(0, overflowBytes, totalInBuffer);
+	if (samplesBuffer.getTotalInBuffer() < windowSizeInBytes) {
+            overflowBuffer.transferAllFrom(samplesBuffer);
 	    return null;
 
 	} else {
 	    int occupiedElements = Util.getOccupiedElements
-		(totalInBuffer, windowSizeInBytes, windowShiftInBytes);
+		(samplesBuffer.getTotalInBuffer(), windowSizeInBytes,
+                 windowShiftInBytes);
 
-	    if (occupiedElements < totalInBuffer) {
+	    if (occupiedElements < samplesBuffer.getTotalInBuffer()) {
 
 		// assign samples which don't fill an entire frame to 
 		// overflow buffer for use on next pass
 		int offset = occupiedElements - 
                     (windowSizeInBytes - windowShiftInBytes);
+                int residue = samplesBuffer.getTotalInBuffer() - offset;
 
-                samplesToOverflowBuffer(offset, 0, (totalInBuffer - offset));
-
-		totalInBuffer = occupiedElements;
+                overflowBuffer.reset();
+                overflowBuffer.transferFrom(samplesBuffer, offset,
+                                            residue);
+		samplesBuffer.setTotalInBuffer(occupiedElements);
 	    }
 
-	    if (totalInBuffer % 2 == 1) {
-		samplesBuffer[totalInBuffer++] = 0;
-	    }
-
-	    // convert the byte[] into a AudioFrame
-	    double[] audioFrame = Util.byteToDoubleArray
-		(samplesBuffer, 0, totalInBuffer);
+	    // convert the ByteBuffer into a AudioFrame
+	    AudioFrame audioFrame = samplesBuffer.toAudioFrame();
             
-	    if (dump) {
-		System.out.println
-                    ("FRAME_SOURCE " + Util.doubleArrayToString(audioFrame));
+	    if (getDump()) {
+		System.out.println("FRAME_SOURCE " + audioFrame.toString());
 	    }
 
-	    return (new AudioFrame(audioFrame));
+	    return audioFrame;
 	}
     }
+}
 
+
+/**
+ * A byte buffer that provides the functionality needed by the
+ * StreamAudioSource.
+ */
+class ByteBuffer {
+
+    private byte[] buffer;
+    private int totalInBuffer;
+    private int totalBytesRead;
 
     /**
-     * Copies the overflow samples in the overflowBuffer to the
-     * beginning of the samplesBuffer.
-     * Increments totalInBuffer, and sets overflowBytes to zero.
+     * Constructs a ByteBuffer of the given size.
+     *
+     * @param size size of the buffer
      */
-    private void overflowToSamplesBuffer() {
-	if (overflowBytes > 0) {
-	    System.arraycopy(overflowBuffer, 0, samplesBuffer, 0,
-			     overflowBytes);
-	    totalInBuffer = overflowBytes;
-	    overflowBytes = 0;
-	}
+    public ByteBuffer(int size) {
+        buffer = new byte[size];
     }
 
-        
     /**
-     * Copies from the samplesBuffer at the specified position, to
-     * the overflowBuffer at the specified position.
+     * Returns the actual byte array.
      *
-     * @param samplesPos where to start in the samplesBuffer
-     * @param overflowPos where to start in the overflowBuffer
-     * @param length how many bytes to copy
+     * @return the actual byte array
      */
-    private void samplesToOverflowBuffer(int samplesPos, int overflowPos,
-                                         int length) {
-        if (totalInBuffer > 0) {
-            System.arraycopy(samplesBuffer, samplesPos,
-                             overflowBuffer, overflowPos,
-                             length);
-            overflowBytes = overflowPos + length;
-        }
+    public byte[] getBuffer() {
+        return buffer;
     }
 
+    /**
+     * Returns the total number of bytes in the buffer.
+     *
+     * @return the total number of bytes in the buffer
+     */
+    public int getTotalInBuffer() {
+        return totalInBuffer;
+    }
 
     /**
-     * Reads the specified number of bytes from the InputStream, and
-     * return the number of bytes read.
+     * Sets the number of bytes consider relevant in this buffer.
      *
-     * @param numberOfBytes the number of bytes to read
-     *
-     * @return the number of bytes read
+     * @param the number of relevant bytes
      */
-    private int readInputStream(int numberOfBytes) throws IOException {
+    public void setTotalInBuffer(int numberBytes) {
+        this.totalInBuffer = numberBytes;
+    }
+
+    /**
+     * Returns the total number of bytes read as a result of the
+     * <code>readFrom()</code> method.
+     *
+     * @return the total number of bytes read
+     */
+    public int getTotalBytesRead() {
+        return totalBytesRead;
+    }
+    
+    /**
+     * Sets the number of bytes in the buffer to zero, and sets
+     * the total number of bytes read from an InputStream to zero.
+     */
+    public void reset() {
+        totalInBuffer = 0;
+        totalBytesRead = 0;
+    }
+
+    /**
+     * Reads the given number of bytes from the given InputStream.
+     *
+     * @return the actual number of bytes read
+     *
+     * @throws java.io.IOException if there is an error reading from
+     * the InputStream
+     */
+    public int readFrom(InputStream inputStream, int bytesToRead) throws IOException {
 	int read = 0;
 	int totalRead = 0;
 	do {
-	    read = audioStream.read
-		(samplesBuffer, totalInBuffer, numberOfBytes - totalRead);
+	    read = inputStream.read
+		(buffer, totalInBuffer, bytesToRead - totalRead);
 	    if (read > 0) {
 		totalRead += read;
 		totalInBuffer += read;
 	    }
-	} while (read != -1 && totalRead < numberOfBytes);
-	
-	totalBytesRead += totalRead;
+	} while (read != -1 && totalRead < bytesToRead);
+
+        totalBytesRead += totalRead;
 
 	return totalRead;
+    }
+
+    /**
+     * Transfer the given number of bytes from the given ByteBuffer,
+     * starting at the given position.
+     *
+     * @param src the ByteBuffer to transfer bytes from
+     * @param srcPos where to start from the source ByteBuffer
+     * @param number of bytes to transfer
+     */
+    public void transferFrom(ByteBuffer src, int srcPos, int length) {
+        System.arraycopy(src.buffer, srcPos, buffer, totalInBuffer, length);
+        totalInBuffer += length;
+    }
+
+    /**
+     * Transfer all the bytes in the given ByteBuffer to this ByteBuffer.
+     *
+     * @param src the ByteBuffer to transfer bytes from
+     */
+    public void transferAllFrom(ByteBuffer src) {
+        transferFrom(src, 0, src.totalInBuffer);
+    }
+
+    /**
+     * If this ByteBuffer has an odd number of bytes, pad an extra
+     * zero byte to make it even.
+     */
+    private void padOddBytes() {
+        if (totalInBuffer % 2 == 1) {
+            buffer[totalInBuffer++] = 0;
+        }
+    }
+
+    /**
+     * Returns this ByteBuffer as a double array.
+     *
+     * @return a double array
+     */
+    public double[] toDoubleArray() {
+        padOddBytes();
+        return Util.byteToDoubleArray(buffer, 0, totalInBuffer);
+    }
+
+    /**
+     * Returns this ByteBuffer as an AudioFrame object.
+     *
+     * @return an AudioFrame
+     */
+    public AudioFrame toAudioFrame() {
+        return (new AudioFrame(toDoubleArray()));
     }
 }
