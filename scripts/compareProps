@@ -1,0 +1,10 @@
+#!/bin/sh
+# 
+# Compares the properties used in two runs and outputs the differences
+#
+# Usage:
+#       comparProps s4.1.out s4.2.out
+#
+egrep edu\.cmu $1 | grep '=' | sort -ub > /tmp/$1
+egrep edu\.cmu $2 | grep '=' | sort -ub > /tmp/$2
+diff /tmp/$1 /tmp/$2
