@@ -177,7 +177,7 @@ class SimplePruner implements Pruner {
      * @param stateTokenList a list containing StateToken objects to
      * be scored
      */
-    public void prune(List stateTokenList) {
+    public List prune(List stateTokenList) {
 	int startSize = stateTokenList.size();
 	for (Iterator i = stateTokenList.listIterator(); i.hasNext();) {
 	    Token token = (Token) i.next();
@@ -189,6 +189,7 @@ class SimplePruner implements Pruner {
 	System.out.println("Pruner: " + stateTokenList.size() 
 		+ " tokens remaining after pruning " + (startSize -
 		stateTokenList.size()));
+	return stateTokenList;
     }
 
 
