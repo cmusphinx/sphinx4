@@ -96,6 +96,13 @@ aurora:
 
 
 
+
+##########################################################################
+#
+# Aurora  SNR 20 tests
+#
+##########################################################################
+
 aurora.testa.N1_SNR20:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-16\
@@ -109,4 +116,86 @@ aurora.testa.N1_SNR20.static:
 	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist \
 	-Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.BreadthFirstSearchManager \
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR20.batch
+
+aurora.testa.N1_SNR20.simple:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-46\
+	-Dedu.cmu.sphinx.search.Recognizer.acousticScorer=edu.cmu.sphinx.search.ThreadedAcousticScorer \
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist \
+	-Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.BreadthFirstSearchManager \
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR20.batch
+
+
+
+
+##########################################################################
+#
+# Aurora  SNR 15 tests
+#
+##########################################################################
+
+
+aurora.testa.N1_SNR15:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-16\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR15.batch
+
+
+
+
+##########################################################################
+#
+# Aurora  SNR 10 tests
+#
+##########################################################################
+
+
+aurora.testa.N1_SNR10:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-8\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR10.batch
+
+
+
+##########################################################################
+#
+# Aurora  SNR 5 tests
+#
+##########################################################################
+
+
+aurora.testa.N1_SNR5:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-8\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR5.batch
+
+
+
+##########################################################################
+#
+# Aurora  SNR 0 tests
+#
+##########################################################################
+
+
+aurora.testa.N1_SNR0:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR0.batch
+
+
+
+##########################################################################
+#
+# Aurora  SNR -5 tests
+#
+##########################################################################
+
+
+aurora.testa.N1_SNR0:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR-5.batch
+
+
 
