@@ -412,17 +412,15 @@ public class Microphone extends BaseDataProcessor {
 
         AudioFormat nativeFormat = null;        
         if (!AudioSystem.isLineSupported(info)) {
-            logger.warning(audioFormat + " not supported");
+            logger.info(audioFormat + " not supported");
                         
             nativeFormat = getNativeAudioFormat(audioFormat);
             
             if (nativeFormat == null) {
-                logger.severe("couldn't find suitable target " +
-                              "audio format for conversion");
+                logger.severe("couldn't find suitable target audio format " +
+                              "for conversion");
                 return false;
             } else {
-                logger.warning("accepting " + nativeFormat + 
-                               " as natively supported format");
                 info = new DataLine.Info(TargetDataLine.class, nativeFormat);
                 doConversion = true;
             }
@@ -439,13 +437,15 @@ public class Microphone extends BaseDataProcessor {
                     nativelySupportedStream = new AudioInputStream(audioLine);
                     audioStream = AudioSystem.getAudioInputStream
                         (audioFormat, nativelySupportedStream);
+                    logger.info
+                        ("Converting from " + nativeFormat.getSampleRate() + 
+                         "Hz to " + audioFormat.getSampleRate() + "Hz");
                 } catch (IllegalArgumentException e) {
-                    logger.severe("couldn't construct converter " +
-                                  "from native audio format");
-                    audioLine.close();
-                    audioLine = null;
-                    e.printStackTrace();
-                    return false;
+                    logger.info
+                        ("Using native format: Cannot convert from " +
+                         nativeFormat.getSampleRate() + "Hz to " + 
+                         audioFormat.getSampleRate() + "Hz");
+                    audioStream = nativelySupportedStream;
                 }
             } else {
                 audioStream = new AudioInputStream(audioLine);
@@ -620,7 +620,7 @@ public class Microphone extends BaseDataProcessor {
          * @param event the LineEvent to handle
          */
         public void update(LineEvent event) {
-	    // System.out.println("MicrophoneLineListener: update " + event);
+	    logger.info("LineEvent: " + event);
 	    LineEvent.Type eventType = event.getType();
             if (eventType.equals(LineEvent.Type.START)) {
                 setStarted(true);
