@@ -61,7 +61,6 @@ edu.cmu.sphinx.decoder.Recognizer.dumpMemoryInfo=false
 edu.cmu.sphinx.decoder.Recognizer.dumpSentenceHMM=false
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar
-edu.cmu.sphinx.decoder.Recognizer.acousticScorer=edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer
 
 
 ############################################################
