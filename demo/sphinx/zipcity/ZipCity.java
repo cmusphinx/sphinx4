@@ -24,6 +24,8 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.LayoutManager;
 import java.awt.Toolkit;
+import java.awt.Graphics;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -64,6 +66,11 @@ public class ZipCity extends JFrame {
     private JTextField cityField;
     private JButton speakButton;
     private Color backgroundColor = new Color(0xff, 0xff, 0xff);
+    private final static Color NORM_COLOR = new Color(0x22, 0x88, 0x33);
+    private final static Color HIGHLIGHT_COLOR = Color.red;
+    private JPanel mapPanel;
+    private JPanel imagePanel;
+    private ZipInfo currentInfo;
 
     /**
      * Constructs a ZipCity with the given title.
@@ -73,13 +80,16 @@ public class ZipCity extends JFrame {
      */
     public ZipCity() {
         super("ZipCity - a Sphinx-4 WebStart Demo");
-        setSize(460, 435);
+        setSize(800, 580);
         setDefaultLookAndFeelDecorated(true);
         setApplicationIcon();
+        imagePanel = createImagePanel();
         getContentPane().add(createMainPanel(), BorderLayout.NORTH);
-        getContentPane().add(createImagePanel(), BorderLayout.CENTER);
+        getContentPane().add(imagePanel, BorderLayout.CENTER);
         getContentPane().add(createMessagePanel(), BorderLayout.SOUTH);
         
+        mapPanel = createMapPanel();
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 if (zipRecognizer != null) {
@@ -101,6 +111,20 @@ public class ZipCity extends JFrame {
         });
     }
 
+
+    public void replaceImageWithMap() {
+        SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    getContentPane().remove(imagePanel);
+                    getContentPane().add(mapPanel, BorderLayout.CENTER);
+                    validate();
+                    repaint();
+                    //mapPanel.repaint();
+                }
+        });
+               
+    }
+
     /**
      * Perform any needed initializations and then enable the 'speak'
      * button, allowing recognition to proceed
@@ -109,6 +133,7 @@ public class ZipCity extends JFrame {
         try {
             setMessage("Loading zip codes...");
             zipDB = new ZipDatabase();
+
 
             setMessage("Loading recognizer...");
             zipRecognizer = new ZipRecognizer();
@@ -124,6 +149,7 @@ public class ZipCity extends JFrame {
 
             setMessage("ZipCity Version 1.0");
             speakButton.setEnabled(true);
+            replaceImageWithMap();
         } catch (Throwable e) {
             setMessage("Error: " + e.getMessage());
         }
@@ -142,19 +168,23 @@ public class ZipCity extends JFrame {
                 if (zip == null) {
                     zipField.setText("????");
                     cityField.setText("");
+                    currentInfo = null;
                     setMessage("I didn't understand what you said");
                 } else {
                     zipField.setText(zip);
                     if (zipInfo == null) {
                         cityField.setText("<Unknown>");
+                        currentInfo = null;
                         setMessage("Can't find that zip code in the database");
                     } else {
                         String location = zipInfo.getCity() + ", " 
                             + zipInfo.getState();
                         cityField.setText(location);
                         setMessage("");
+                        currentInfo = zipInfo;
                     }
                 }
+                mapPanel.repaint();
                 speakButton.setEnabled(true);
             }
         });
@@ -250,7 +280,7 @@ public class ZipCity extends JFrame {
         speakButton.setMnemonic('s');
         mainPanel.add(speakButton);
         zipField = addLabeledTextField(mainPanel, "Zip Code: ", 4);
-        cityField = addLabeledTextField(mainPanel, "Location: ", 15);
+        cityField = addLabeledTextField(mainPanel, "Location: ", 20);
         return mainPanel;
     }
 
@@ -283,6 +313,68 @@ public class ZipCity extends JFrame {
         JLabel imageLabel = new JLabel(createImageIcon("s4.jpg", "s4-logo"));
         panel.add(imageLabel);
         return panel;
+    }
+
+    private JPanel createMapPanel() {
+        return new MapPanel();
+    }
+
+    class MapPanel extends JPanel {
+
+        private final static float MIN_LAT = 23;
+        private final static float MAX_LAT = 50;
+        private final static float MAX_LONG = 125;
+        private final static float MIN_LONG = 65;
+        private final static float RANGE_LAT = MAX_LAT - MIN_LAT;
+        private final static float RANGE_LONG = MAX_LONG - MIN_LONG;
+
+
+        MapPanel() {
+            setBackground(backgroundColor);
+        }
+        private Graphics g; 
+        private Dimension size;
+        public void paintComponent(Graphics graphics) {
+            g = graphics;
+            size = getSize();
+            super.paintComponent(g);
+            if (zipDB != null) {
+                g.setColor(NORM_COLOR);
+                for (Iterator i = zipDB.iterator();  i.hasNext(); ) {
+                    ZipInfo zi = (ZipInfo) i.next();
+                    plot(zi, 2);
+                }
+                if (currentInfo != null) {
+                    g.setColor(HIGHLIGHT_COLOR);
+                    plot(currentInfo, 10);
+                }
+
+            }
+        }
+
+        void plot(ZipInfo zi, int size) {
+            //System.out.println("ll " + zi.getLongitude() + " " +
+            //       zi.getLatitude());
+            int x = mapx(zi.getLongitude());
+            int y = mapy(zi.getLatitude());
+            plot(x,y, size);
+        }
+
+        void plot(int x, int y, int size) {
+            // System.out.println("Plot : " + x + " " + y);
+            // g.drawRect(x, y, size, size);
+             g.fillOval(x, y, size, size);
+        }
+
+        private int mapx(float x) {
+            return size.width - 
+                (int) (size.width * (x - MIN_LONG) / RANGE_LONG);
+        }
+
+        private int mapy(float y)  {
+            return size.height - 
+                (int) (size.height * (y - MIN_LAT) / RANGE_LAT);
+        }
     }
 
     /**

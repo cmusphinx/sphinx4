@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -38,19 +39,32 @@ public class ZipDatabase {
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         String input;
         // parses entries of the form:
-        // 03064,NH,NASHUA
+        // 03064,NH,NASHUA,lat,long
         try {
             while  ((input = br.readLine()) != null) {
                 line++;
                 StringTokenizer st = new StringTokenizer(input, ",");
-                if (st.countTokens() == 3) {
+                if (st.countTokens() == 5) {
                     String zip = st.nextToken();
                     String state = st.nextToken();
                     String city = st.nextToken();
+                    String slong = st.nextToken();
+                    String slat = st.nextToken();
                     city = fixupCase(city);
-                    zipDB.put(zip, new ZipInfo(zip, city, state));
+
+                    try {
+                        float latitude = Float.parseFloat(slat);
+                        float longitude = Float.parseFloat(slong);
+                        zipDB.put(zip, new ZipInfo(zip, city, state,
+                                    latitude, longitude));
+                    } catch (NumberFormatException nfe) {
+                        throw new IOException("Bad zip format, line " + line
+                                + "(" + input + ")");
+                    }
+
                 } else {
-                    throw new IOException("Bad zip format, line " + line);
+                    throw new IOException("Bad zip format, line " + line
+                                + "(" + input + ")");
                 }
             }
         } finally {
@@ -67,6 +81,15 @@ public class ZipDatabase {
      */
     public ZipInfo lookup(String zipcode) {
         return (ZipInfo) zipDB.get(zipcode);
+    }
+
+    /**
+     * Returns the iterator for all entries
+     *
+     * @return an iterator for all entries
+     */
+    public Iterator iterator() {
+        return zipDB.values().iterator();
     }
 
     /**
@@ -122,6 +145,8 @@ class ZipInfo {
     private String zip;
     private String city;
     private String state;
+    private float latitude;
+    private float longitude;
 
     /**
      * Creates a ZipInfo 
@@ -129,11 +154,16 @@ class ZipInfo {
       * @param zip the zip code
       * @param city the city
       * @param state the state
+      * @param lat the latitude
+      * @param lat the longitude
       */
-    ZipInfo(String zip, String city, String state) {
+    ZipInfo(String zip, String city, String state, float lat, float
+            longitude) {
         this.zip = zip;
         this.city = city;
         this.state = state;
+        this.latitude = lat;
+        this.longitude = longitude;
     }
 
     /**
@@ -164,6 +194,24 @@ class ZipInfo {
     }
 
     /**
+     * Gets the latitude
+     *
+     * @return the latitude
+     */
+    public float getLatitude() {
+        return latitude;
+    }
+
+    /**
+     * Gets the longitude
+     *
+     * @return the longitude
+     */
+    public float getLongitude() {
+        return longitude;
+    }
+
+    /**
      * Returns a string representation of this object
      *
      * @return a string representation of this object
@@ -171,6 +219,7 @@ class ZipInfo {
     public String toString() {
         return "Zip: " + getZip() +
               " City: " + getCity() +
-              " State: " + getState();
+              " State: " + getState() +
+              "  " + getLatitude() + "," + getLongitude();
     }
 }
