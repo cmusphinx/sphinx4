@@ -64,9 +64,28 @@ NOTE:  Before running the tests, you must have already built
 	    <java classname="demo.sphinx.helloworld.HelloWorld"
 	          fork="true"
 		  maxmemory="128m">
+                  <sysproperty key="frontend" value="epFrontEnd"/>
 		  <classpath refid="run.classpath"/>
 		  <arg value="helloworld.config.xml"/>
 	    </java>
     </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs the hello world demo without the endpointer.      * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="run-nep"
+	    description="Runs the hello world demo without the endpointer">
+	    <java classname="demo.sphinx.helloworld.HelloDigits">
+		  <arg value="helloworld.config.xml"/>
+		  <classpath>
+                      <pathelement location="${top_dir}/lib/jsapi.jar"/>
+                      <pathelement path="${classes_dir}"/>
+                  </classpath>
+	    </java>
+    </target>
+
 
 </project>

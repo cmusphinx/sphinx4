@@ -21,7 +21,7 @@
     <property name="wordInsertionProbability" value="1E-36"/>
     <property name="languageWeight"     value="8"/>
     
-    <property name="frontend" value="epFrontEnd"/>
+    <property name="frontend" value="frontEnd"/>
     <property name="recognizer" value="recognizer"/>
     <property name="showCreations" value="false"/>
     
@@ -212,9 +212,6 @@
     <component name="dct" 
             type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/>
     
-    <component name="batchCMN" 
-               type="edu.cmu.sphinx.frontend.feature.BatchCMN"/>
-
     <component name="liveCMN" 
                type="edu.cmu.sphinx.frontend.feature.LiveCMN"/>
         
