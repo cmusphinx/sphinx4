@@ -18,7 +18,7 @@ import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 
 
@@ -75,13 +75,8 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
                            SphinxProperties props, DataProcessor predecessor) {
 	super.initialize((name == null ? "DiscreteCosineTransform" : name),
                          frontEnd, props, predecessor);
-        numberMelFilters = props.getInt
-            (getName(),
-             MelFrequencyFilterBank.PROP_NUMBER_FILTERS,
-             MelFrequencyFilterBank.PROP_NUMBER_FILTERS_DEFAULT);
         cepstrumSize = props.getInt
             (getName(), PROP_CEPSTRUM_LENGTH, PROP_CEPSTRUM_LENGTH_DEFAULT);
-        computeMelCosine();
     }
 
 
@@ -138,7 +133,11 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
 
         double[] melspectrum = input.getValues();
 
-        if (melspectrum.length != numberMelFilters) {
+        if (melcosine == null) {
+            numberMelFilters = melspectrum.length;
+            computeMelCosine();
+
+        } else if (melspectrum.length != numberMelFilters) {
             throw new IllegalArgumentException
                 ("MelSpectrum size is incorrect: melspectrum.length == " +
                  melspectrum.length + ", numberMelFilters == " +
