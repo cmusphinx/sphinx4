@@ -80,7 +80,12 @@ public class NISTAlign {
     int insertions;
     int deletions;
     int correct;
-    
+
+
+
+
+
+
     /**
      * The raw reference string.  Updated with each call to 'align'.
      */
@@ -328,6 +333,61 @@ public class NISTAlign {
         } else {
             return ((float) totalSentencesCorrect / (float) totalSentences);
         }
+    }
+
+    /**
+     * Gets the total number of words
+     *
+     * @return the total number of words
+     */
+    public int getTotalWords() {
+        return totalReferenceWords;
+    }
+
+    /**
+     * Gets the total number of substitution errors
+     *
+     * @return the total number of substitutions
+     */
+    public int getTotalSubstitutions() {
+        return totalSubstitutions;
+    }
+
+    /**
+     * Gets the total number of insertion errors
+     *
+     * @return the total number of insertion errors
+     */
+    public int getTotalInsertions() {
+        return totalInsertions;
+    }
+
+
+    /**
+     * Gets the total number of deletions
+     *
+     * @return the total number of deletions
+     */
+    public int getTotalDeletions() {
+        return totalDeletions;
+    }
+
+    /**
+     * Gets the total number of sentences
+     *
+     * @return the total number of sentences
+     */
+    public int getTotalSentences() {
+        return totalSentences;
+    }
+
+    /**
+     * Gets the total number of sentences with errors
+     *
+     * @return the total number of sentences with errors
+     */
+    public int getTotalSentencesWithErrors() {
+        return totalSentencesWithDeletions;
     }
 
     /**
