@@ -289,12 +289,12 @@ jsapi.exe from the lib directory.
         </jar>
     </target>
 
-    <!-- audiotool.jar -->
-    <property name="audiotool_jar" value="${bin_dir}/audiotool.jar"/>
+    <!-- AudioTool.jar -->
+    <property name="audiotool_jar" value="${bin_dir}/AudioTool.jar"/>
 
     <target name="audiotool_jar" 
 	    depends="compile_src"
-	    description="Create ${bin_dir}/audiotool.jar">
+	    description="Create ${bin_dir}/AudioTool.jar">
         <mkdir dir="${bin_dir}"/>
         <jar destfile="${audiotool_jar}" 
 	     manifest="${src_dir}/edu/cmu/sphinx/tools/audio/Manifest"
@@ -568,7 +568,7 @@ to setup JSAPI.
 
     <!-- ********************************************************** --> 
     <!-- *                                                        * -->
-    <!-- * Deploys the sphinx4-bin.zip file.                      * -->
+    <!-- * Deploys the sphinx4-{version}-bin.zip file.            * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** --> 
     <target name="deploy_bin_zip"
@@ -587,7 +587,7 @@ to setup JSAPI.
 	     <fileset dir="." includes="doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html"/>
 	</copy>
 	<delete dir="${deploy_dir}/sphinx4-${version}/lib/jsapi"/>
-	<jar destfile="${deploy_dir}/sphinx4-bin-${version}.zip"
+	<jar destfile="${deploy_dir}/sphinx4-${version}-bin.zip"
 	     basedir="${deploy_dir}"
 	     includes="sphinx4-${version}/**"
 	     compress="true"/>
@@ -597,7 +597,7 @@ to setup JSAPI.
 
     <!-- ********************************************************** --> 
     <!-- *                                                        * -->
-    <!-- * Deploys the sphinx4-src.zip file.                      * -->
+    <!-- * Deploys the sphinx4-{version}-src.zip file.            * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** --> 
     <target name="deploy_src_zip"
@@ -621,7 +621,7 @@ to setup JSAPI.
 	<delete dir="${deploy_dir}/sphinx4-${version}/tests/trainer"/>
 	<delete file="${deploy_dir}/sphinx4-${version}/lib/jsapi.jar"/>
 
-	<jar destfile="${deploy_dir}/sphinx4-src-${version}.zip"
+	<jar destfile="${deploy_dir}/sphinx4-${version}-src.zip"
 	     basedir="${deploy_dir}"
 	     includes="sphinx4-${version}/**"
 	     compress="true"/>
