@@ -72,8 +72,32 @@ public class SphinxProperties {
      */
     static public void initContext(String context, URL url) 	
 				throws IOException {
-	contextPool.put(context, new SphinxProperties(context, url));
+	if (contextPool.containsKey(context)) {
+	    throw new Error("Cannot init SphinxProperties with same context: "+
+			    context);
+	} else {
+	    contextPool.put(context, new SphinxProperties(context, url));
+	}
     }
+
+
+    /**
+     * Initialize a new SphinxProperty with the given Properties object and
+     * context.
+     *
+     * @param context the name of the context
+     * @param properties the Properties object where our Properties reside
+     */
+    static public void initContext(String context, Properties properties) {
+	if (contextPool.containsKey(context)) {
+	    throw new Error("Cannot init SphinxProperties with same context: "+
+			    context);
+	} else {
+	    contextPool.put(context, 
+			    new SphinxProperties(context, properties));
+	}
+    }
+
 
     /**
      * Retrieves the SphinxProperties for the particular context. 
@@ -92,6 +116,7 @@ public class SphinxProperties {
 	}
 	return sp;
     }
+
 
     /**
      * Contructs a new SphinxProperties from the given URL and
@@ -112,6 +137,21 @@ public class SphinxProperties {
 	    props.load(url.openStream());
 	}
     }
+
+
+    /**
+     * Constructs a new SphinxProperties from the given context and Properties.
+     *
+     * @param context the name of the context
+     * @param properties the Properties object
+     */
+    private SphinxProperties(String context, Properties properties) {
+	this.contextName = context;
+	this.url = null;
+	props = properties;
+	shadowProps = new Properties();
+    }
+
 
     /**
      * Creates an empty SphinxProperties
@@ -142,7 +182,19 @@ public class SphinxProperties {
 	shadowProps.list(out);
     }
 
-    
+    /**
+     * Returns a new Property object that contains all the properties of
+     * this SphinxProperties.
+     *
+     * @return a new Property object of all the properties of 
+     *    this SphinxProperties
+     */
+    public Properties getProperties() {
+	Properties properties = new Properties();
+	properties.putAll(props);
+	return properties;
+    }
+
     /**
      * Returns true if this SphinxProperties contains the given
      * property.
@@ -160,6 +212,23 @@ public class SphinxProperties {
 
 
     /**
+     * Searches for and returns the value of the given property.
+     *
+     * @param propertyName the property to search for
+     *
+     * @return the value of the property, or null if the property
+     *    does not exists
+     */
+    private String getString(String propertyName) {
+	String value = System.getProperty(propertyName);
+	if (value == null) {
+	    value = props.getProperty(propertyName);
+	}
+	return value;
+    }
+
+
+    /**
      * Searches for the property with the specified name.
      *
      * @param propertyName the name of the property to search for
@@ -169,14 +238,10 @@ public class SphinxProperties {
      * @return the value of the property
      */
     public String getString(String propertyName, String defaultValue) {
-	String value = null;
-	value = System.getProperty(propertyName);
-	if  (value == null) {
-	    value = props.getProperty(propertyName, defaultValue);
-	}
-	if (false) {
-	    System.out.println(" na " + propertyName
-		    + " va " + value);
+	String value = getString(propertyName);
+	if (value == null) {
+	    warnNoProperty(propertyName, defaultValue);
+	    value = defaultValue;
 	}
 	if (value != null) {
 	    shadowProps.setProperty(propertyName, value);
@@ -199,7 +264,7 @@ public class SphinxProperties {
      * @return the value of the property
      */
     public String getString(String instanceName,
-	    		String propertyName, String defaultValue) {
+			    String propertyName, String defaultValue) {
 	return getString(instanceName + "." + propertyName,
 			defaultValue);
     }
@@ -220,8 +285,8 @@ public class SphinxProperties {
     public float getFloat(String propertyName, float defaultValue) 
     		throws NumberFormatException {
 	float value = defaultValue;
-	String svalue = getString(propertyName, null);
-	if (svalue != null) {
+	String svalue = getString(propertyName, String.valueOf(defaultValue));
+       	if (svalue != null) {
 	    value = Float.parseFloat(svalue);
 	}
 	return value;
@@ -264,7 +329,7 @@ public class SphinxProperties {
     public double getDouble(String propertyName, double defaultValue) 
     		throws NumberFormatException {
 	double value = defaultValue;
-	String svalue = getString(propertyName, null);
+	String svalue = getString(propertyName, String.valueOf(defaultValue));
 	if (svalue != null) {
 	    value = Double.parseDouble(svalue);
 	}
@@ -308,7 +373,7 @@ public class SphinxProperties {
     public int getInt(String propertyName, int defaultValue) 
     		throws NumberFormatException {
 	int value = defaultValue;
-	String svalue = getString(propertyName, null);
+	String svalue = getString(propertyName, String.valueOf(defaultValue));
 	if (svalue != null) {
 	    value = Integer.parseInt(svalue);
 	}
@@ -351,7 +416,7 @@ public class SphinxProperties {
      */
     public boolean getBoolean(String propertyName, boolean defaultValue) {
 	boolean value = defaultValue;
-	String svalue = getString(propertyName, null);
+	String svalue = getString(propertyName, String.valueOf(defaultValue));
 	if (svalue != null) {
 	    value = 	svalue.equalsIgnoreCase("true") ||
 	     		svalue.equalsIgnoreCase("on") ||
@@ -382,6 +447,23 @@ public class SphinxProperties {
 	return getBoolean(instanceName + "." + propertyName, defaultValue);
     }
 
+
+    /**
+     * Prints out a warning to System.out saying that the given
+     * property does not exist and is using the given default value.
+     *
+     * @param propertyName the name of the property
+     * @param defaultValue the default value used
+     */
+    private void warnNoProperty(String propertyName, String defaultValue) {
+	if (!shadowProps.containsKey(propertyName)) {
+	    System.out.println("WARNING: no property, " + propertyName + "\n" +
+			       "         using the default value " + 
+			       defaultValue);
+	}
+    }
+
+
     /**
      * A test program
      */
@@ -389,7 +471,8 @@ public class SphinxProperties {
 
 	try {
 	    // an empty context
-	    SphinxProperties.initContext("sun", null);
+	    URL emptyURL = null;
+	    SphinxProperties.initContext("sun", emptyURL);
 	    // an populated context
 	    SphinxProperties.initContext("moon", new URL("file:./test.props"));
     	} catch (IOException ioe) {
