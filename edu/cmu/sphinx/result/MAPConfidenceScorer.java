@@ -13,6 +13,12 @@ package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.decoder.search.Token;
 
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
+
 import java.util.Iterator;
 
 /**
@@ -20,7 +26,55 @@ import java.util.Iterator;
  * The highest scoring path refers to the path with the maximum
  * a posteriori (MAP) probability, which is why this class is so named.
  */
-public class MAPConfidenceScorer implements ConfidenceScorer {
+public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
+
+    /**
+     * Sphinx property that defines the language model weight.
+     */
+    public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
+
+    /**
+     * The default value for the PROP_LANGUAGE_WEIGHT property
+     */
+    public final static float PROP_LANGUAGE_WEIGHT_DEFAULT  = 1.0f;
+    
+
+    private String name;
+    private float languageWeight;
+    
+    /*
+     * (non-Javadoc)
+     *
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry)
+        throws PropertyException {
+        this.name = name;
+        registry.register(PROP_LANGUAGE_WEIGHT, PropertyType.FLOAT);
+    }
+
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT,
+                                     PROP_LANGUAGE_WEIGHT_DEFAULT);
+    }
+
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see edu.cmu.sphinx.util.props.Configurable#getName()
+     */
+    public String getName() {
+        return name;
+    }
+
 
     /**
      * Computes confidences for a Result and returns a ConfidenceResult,
@@ -31,9 +85,17 @@ public class MAPConfidenceScorer implements ConfidenceScorer {
      * @return a confidence result
      */
     public ConfidenceResult score(Result result) {
-        SausageMaker sausageMaker = new SausageMaker();
-        ConfidenceResult sausage = sausageMaker.score(result);
-        WordResultPath mapPath = new WordResultPath();
+        Lattice lattice = new Lattice(result);
+        LatticeOptimizer lop = new LatticeOptimizer(lattice);
+        lop.optimize();
+        lattice.computeNodePosteriors(languageWeight);
+        SausageMaker sm = new SausageMaker(lattice);
+        Sausage s = sm.makeSausage();
+
+        // s.dumpAISee("mapSausage.gdl", "MAP Sausage");
+
+        ConfidenceResult sausage = (ConfidenceResult) s;
+        WordResultPath mapPath = new WordResultPath(result.getLogMath());
         Token mapToken = result.getBestToken();
 
         /* start with the last slot */
@@ -48,8 +110,8 @@ public class MAPConfidenceScorer implements ConfidenceScorer {
 
             /* if a word is found */
             if (mapToken != null) {
-                ConfusionSet cs = sausage.getConfusionSet(slot);
                 String word = mapToken.getWord().getSpelling();
+                ConfusionSet cs = sausage.getConfusionSet(slot);
                 WordResult wr = null;
 
                 /*
@@ -63,13 +125,18 @@ public class MAPConfidenceScorer implements ConfidenceScorer {
                     cs = sausage.getConfusionSet(slot);
                 }
                 if (wr != null) {
-                    System.out.println("Confidence for " + word + ": " +
-                                       wr.getConfidence());
+                    /*
+                    System.out.println
+                        ("Confidence for " + word + ": " +
+                         wr.getConfidence() + " " +
+                         wr.getLogMath().logToLinear((float)wr.getConfidence()));
+                    */
                     mapPath.add(0, wr);
                 } else {
-                    throw new Error("Can't find WordResult in ConfidenceResu[Blt slot " +
+                    throw new Error("Can't find WordResult in ConfidenceResult slot " +
                                     slot + " for word " + word);
                 }
+                slot--;
                 mapToken = mapToken.getPredecessor();
             } else {
                 break;
