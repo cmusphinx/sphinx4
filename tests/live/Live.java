@@ -135,6 +135,8 @@ public class Live {
 
     /**
      * Returns the LiveFrame.
+     *
+     * @return the LiveFrame
      */
     public LiveFrame getLiveFrame() {
         return liveFrame;
@@ -164,6 +166,8 @@ public class Live {
 
     /**
      * Start recording.
+     *
+     * @return true if recording started successfully, false if it did not
      */
     public boolean startRecording() {
         Microphone microphone = getDecoder().getMicrophone();
@@ -202,6 +206,8 @@ public class Live {
 
     /**
      * Returns true if the current decoder keeps the audio.
+     *
+     * @return true if the current decoder kept the last utterance
      */
     public boolean canPlayUtterance() {
         return (getDecoder().getMicrophone().getUtterance() != null);
@@ -313,7 +319,7 @@ public class Live {
      * @param decoderListFile a file listing all the available decoders
      */
     private void parseDecoderListFile(String decoderListFile) throws 
-    IOException, LineUnavailableException {
+        IOException, LineUnavailableException {
 
         info("Parsing file " + decoderListFile + " ");
 
@@ -375,8 +381,8 @@ public class Live {
      *
      * @return the requested Decoder
      */
-    private LiveDecoder getDecoder(String decoderName) throws IOException,
-    LineUnavailableException {
+    private LiveDecoder getDecoder(String decoderName) throws 
+        IOException, LineUnavailableException {
         
         // obtain the decoder
         LiveDecoder decoder = null;
@@ -423,10 +429,16 @@ public class Live {
      */
     class DecodingThread extends Thread {
 
+        /**
+         * Constructs a DecodingThread.
+         */
         public DecodingThread() {
             super("Decoding");
         }
 
+        /**
+         * Implements the run() method of this thread.
+         */
         public void run() {
             if (!handsFree) {
                 lastResult = decoder.decode(liveFrame.getReference());
