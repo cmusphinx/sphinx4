@@ -195,6 +195,7 @@ implements AudioSource, Runnable {
                 printMessage("recorded 1 frame (" + numBytesRead + ") bytes");
             }
 
+            audioLine.drain();
             audioLine.stop();
             audioLine.close();
 
@@ -390,6 +391,8 @@ implements AudioSource, Runnable {
                 synchronized (Microphone.this) {
                     Microphone.this.notifyAll();
                 }
+            } else if (event.getType().equals(LineEvent.Type.CLOSE)) {
+                printMessage("CLOSE event received");
             }
         }
     }
