@@ -34,10 +34,12 @@ public class Spectrum implements Data {
     
     /**
      * Returns a string representation of this Spectrum.
+     * The format of the string is:
+     * <pre>spectrumLength data0 data1 ...</pre>
      *
      * @return a string representation of this Spectrum
      */ 
     public String toString() {
-        return ("SPEC_MAGNITUDE " + Util.doubleArrayToString(spectraData));
+        return (Util.doubleArrayToString(spectraData));
     }                
 }

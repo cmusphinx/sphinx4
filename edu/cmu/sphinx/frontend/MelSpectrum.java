@@ -34,10 +34,12 @@ public class MelSpectrum implements Data {
 
     /**
      * Returns a string representation of this MelSpectrum.
+     * The format of the string is:
+     * <pre>melspectrumLength data0 data1 ...</pre>
      *
      * @return a string representation of this MelSpectrum
      */
     public String toString() {
-        return "MEL_SPECTRUM   " + Util.doubleArrayToString(melSpectralData);
+        return Util.doubleArrayToString(melSpectralData);
     }
 }

@@ -35,10 +35,12 @@ public class Feature implements Data {
 
     /**
      * Returns a String representation of this Feature.
+     * The format of the string is:
+     * <pre>featureLength data0 data1 ...</pre>
      *
      * @return the String representation
      */
     public String toString() {
-        return "FEATURE " + Util.floatArrayToString(featureData);
+        return Util.floatArrayToString(featureData);
     }
 }

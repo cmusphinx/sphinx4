@@ -44,6 +44,8 @@ public class AudioFrame implements Data {
 
     /**
      * Returns a string representation of this AudioFrame.
+     * The format of the string is:
+     * <pre>audioFrameLength data0 data1 ...</pre>
      *
      * @return a string representation of this AudioFrame
      */

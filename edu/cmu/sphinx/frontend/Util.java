@@ -27,7 +27,7 @@ public class Util {
     private static int decimalFractionDigits = 5;
 
     private static int floatScientificFractionDigits = 8;
-    private static int doubleScientificFractionDigits = 16;
+    private static int doubleScientificFractionDigits = 8;
 
 
     /**

@@ -19,13 +19,15 @@ import java.io.IOException;
  * edu.cmu.sphinx.frontend.cmn.windowSize
  * edu.cmu.sphinx.frontend.cmn.shiftWindow </pre>
  *
- * The mean of all the input cepstrum so far is not recalculated
+ * <p>The mean of all the input cepstrum so far is not recalculated
  * for each cepstrum. This mean is recalculated after
  * <code>edu.cmu.sphinx.frontend.cmn.shiftWindow</code> cepstra.
  * This mean is calculated by dividing the sum of all input cepstrum so
  * far by the number of input cepstrum. After obtaining the mean,
  * the sum is exponentially by multiplying it by the ratio: <pre>
  * cmnWindow/(cmnWindow + number of frames since the last recalculation)</pre>
+ *
+ * <p>This is a 1-to-1 processor.
  *
  * @see Cepstrum
  */
@@ -108,6 +110,9 @@ public class CepstralMeanNormalizer extends DataProcessor {
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
+     *
+     * @throws java.io.IOException if there is an error reading
+     * the Data objects
      */
     public Data read() throws IOException {
 	
@@ -161,6 +166,10 @@ public class CepstralMeanNormalizer extends DataProcessor {
         numberFrame++;
 
         getTimer().stop();
+
+        if (getDump()) {
+            System.out.println("CMN_CEPSTRUM " + cepstrumObject.toString());
+        }
 
 	return cepstrumObject;
     }

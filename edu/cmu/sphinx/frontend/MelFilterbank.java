@@ -282,7 +282,8 @@ public class MelFilterbank extends DataProcessor {
 	outputMelSpectrum = new MelSpectrum(outputMelFilterbank);
 
         if (getDump()) {
-            System.out.println(outputMelSpectrum.toString());
+            System.out.println("MEL_SPECTRUM   " +
+                               outputMelSpectrum.toString());
         }
 
         return outputMelSpectrum;
@@ -296,6 +297,9 @@ public class MelFilterbank extends DataProcessor {
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
+     *
+     * @throws java.io.IOException if there is an error reading
+     * the Data objects
      */
     public Data read() throws IOException {
 

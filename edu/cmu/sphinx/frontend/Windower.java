@@ -18,7 +18,7 @@ import java.util.Vector;
  * shift in speech world). The Window will be applied to each such
  * window. Since the <code>read()</code> method will return a window,
  * and multiple windows are created for each AudioFrame, this
- * is a one-to-many processor.
+ * is a 1-to-many processor.
  *
  * <p>For each input AudioFrame, calling
  * <code>Windower.read()</code> will return the following
@@ -116,6 +116,9 @@ public class Windower extends DataProcessor {
      * @return the next available Data object, returns null if no
      *     Data object is available
      *
+     * @throws java.io.IOException if there is an error reading
+     * the Data objects
+     *
      * @see AudioFrame
      */
     public Data read() throws IOException {
@@ -185,10 +188,10 @@ public class Windower extends DataProcessor {
                 myWindow[w] = in[s] * window[w];
             }
             
-            getTimer().stop();
-
             // add the frame to the output queue
             outputQueue.add(new AudioFrame(myWindow));
+
+            getTimer().stop();
 
             if (getDump()) {
                 System.out.println

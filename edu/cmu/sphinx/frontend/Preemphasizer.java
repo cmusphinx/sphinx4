@@ -73,6 +73,9 @@ public class Preemphasizer extends DataProcessor {
      * @return the next available Data object, returns null if no
      *     Data object is available
      *
+     * @throws java.io.IOException if there is an error reading
+     * the Data objects
+     *
      * @see AudioFrame
      */
     public Data read() throws IOException {

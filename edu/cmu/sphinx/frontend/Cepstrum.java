@@ -32,10 +32,12 @@ public class Cepstrum implements Data {
 
     /**
      * Returns a string representation of this Cepstrum.
+     * The format of the string is:
+     * <pre>cepstrumLength data0 data1 ...</pre>
      *
      * @return a string representation of this Cepstrum
      */
     public String toString() {
-        return ("MEL_CEPSTRUM   " + Util.floatArrayToString(cepstrumData));
+        return (Util.floatArrayToString(cepstrumData));
     }
 }

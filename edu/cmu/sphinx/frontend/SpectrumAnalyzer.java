@@ -136,7 +136,7 @@ public class SpectrumAnalyzer extends DataProcessor {
         getTimer().stop();
 	
         if (getDump()) {
-            System.out.println(output.toString());
+            System.out.println("SPEC_MAGNITUDE " + output.toString());
         }
 
         return output;

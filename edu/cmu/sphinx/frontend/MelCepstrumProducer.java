@@ -79,6 +79,9 @@ public class MelCepstrumProducer extends DataProcessor {
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
+     *
+     * @throws java.io.IOException if there is an error reading
+     * the Data objects
      */
     public Data read() throws IOException {
 
@@ -132,7 +135,7 @@ public class MelCepstrumProducer extends DataProcessor {
 	Cepstrum cepstrum = new Cepstrum(cepstrumData);
 
         if (getDump()) {
-            System.out.println(cepstrum.toString());
+            System.out.println("MEL_CEPSTRUM   " + cepstrum.toString());
         }
 
         return cepstrum;

@@ -41,7 +41,7 @@ public class FeatureFrame implements Data {
         if (features != null) {
             result += features.length;
             for (int i = 0; i < features.length; i++) {
-                result += ("\n" + features[i].toString());
+                result += ("\nFEATURE " + features[i].toString());
             }
         } else {
             result += "0";

@@ -120,7 +120,7 @@ public abstract class DataProcessor implements DataSource {
      *
      * @return the name of this DataProcessor
      */
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
@@ -130,7 +130,7 @@ public abstract class DataProcessor implements DataSource {
      *
      * @return the context of this DataProcessor
      */
-    public String getContext() {
+    public final String getContext() {
         return context;
     }
 
@@ -140,7 +140,7 @@ public abstract class DataProcessor implements DataSource {
      *
      * @return the SphinxProperties
      */
-    public SphinxProperties getSphinxProperties() {
+    public final SphinxProperties getSphinxProperties() {
         return sphinxProperties;
     }
 
