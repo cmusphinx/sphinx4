@@ -23,9 +23,9 @@ import java.io.IOException;
  * It subtracts the mean of all the input so far
  * from the cepstrum. The Sphinx properties that affect this processor
  * are: <pre>
- * edu.cmu.sphinx.frontend.cmn.initialCepstralMean
- * edu.cmu.sphinx.frontend.cmn.windowSize
- * edu.cmu.sphinx.frontend.cmn.shiftWindow </pre>
+ * edu.cmu.sphinx.frontend.LiveCMN.initialCepstralMean
+ * edu.cmu.sphinx.frontend.LiveCMN.windowSize
+ * edu.cmu.sphinx.frontend.LiveCMN.shiftWindow </pre>
  *
  * <p>The mean of all the input cepstrum so far is not recalculated
  * for each cepstrum. This mean is recalculated after
@@ -44,7 +44,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
 
 
     private static final String PROP_PREFIX
-        = "edu.cmu.sphinx.frontend.cmn.live.";
+        = "edu.cmu.sphinx.frontend.LiveCMN.";
 
 
     /**
