@@ -1,3 +1,4 @@
+
 # Copyright 1999-2002 Carnegie Mellon University.  
 # Portions Copyright 2002 Sun Microsystems, Inc.  
 # Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
@@ -54,10 +55,12 @@ BEGIN {
 
     NOT_AVAILABLE = "n/a";
 
+# usage makeTwikiDetailReport log test.list machine mode title system
     testList = ARGV[2];
     machine = ARGV[3];
     mode = ARGV[4];
     title = ARGV[5];
+    whichSystem = ARGV[6];
 
     if (machine == "this") {
 	"hostname" | getline hostname;
@@ -65,6 +68,8 @@ BEGIN {
     }
 
 
+    ARGV[6] = "";
+    ARGV[5] = "";
     ARGV[5] = "";
     ARGV[4] = "";
     ARGV[3] = "";
@@ -80,9 +85,9 @@ BEGIN {
     systemCount = 3;
 
 
-    modeTitle["latest"] =  "Latest results for ";
-    modeTitle["fastest"] = "Fastest results for ";
-    modeTitle["best"] =    "Most accurate results for ";
+    modeTitle["latest"] =  "Latest detailed results for ";
+    modeTitle["fastest"] = "Fastest detailed results for ";
+    modeTitle["best"] =    "Most accurate detailed results for ";
 
     # read in the test list
 
@@ -96,8 +101,9 @@ BEGIN {
 }
 
 $F_TEST == "test"  && ($F_MACHINE == machine || machine == "any") \
-	&& ($F_TEST_NAME in tests || testList == "any") {
-    tag = $F_TEST_NAME "-" $F_SYSTEM;
+	&& ($F_TEST_NAME in tests || testList == "any") && \
+	   ($F_SYSTEM == whichSystem) {
+    tag = $F_TEST_NAME;
     if (mode == "latest") {
         testData[tag] = $0;
     } else if (mode == "fastest") {
@@ -147,8 +153,8 @@ function getSpeedFromLine(line) {
     }
 }
 
-function getSpeed(testName, systemName) {
-     return getSpeedFromLine(testData[testName "-" systemName]);
+function getSpeed(testName) {
+     return getSpeedFromLine(testData[testName]);
 }
 
 ####
@@ -166,26 +172,48 @@ function getAccuracyFromLine(line) {
     }
 }
 
-function getAccuracy(testName, systemName) {
-     return getAccuracyFromLine(testData[testName "-" systemName]);
+function getAccuracy(testName) {
+     return getAccuracyFromLine(testData[testName]);
 }
 
+function get(testName, field) {
+# very inefficient, but fast enough for what we are doing
+    split(testData[testName], _data);
+    _val = _data[field];
+    if (_val == "")  {
+        return NOT_AVAILABLE;
+    } else {
+        return _val;
+    }
+}
 
+function getPercent(num, denom) {
+    if (denom != NOT_AVAILABLE && denom !=  0) {
+         return (num / denom) * 100.0;
+    } else {
+        return NOT_AVAILABLE;
+    }
+}
 
 ####
 # Dumps data for a single test
 #
 
-function dumpTest(testName,  _j) {
+function dumpTest(testName) {
    printf("|<font color=#018888> %s </font>", testName);
-   for (_j = 0; _j < systemCount; _j++) {
-       speed = getSpeed(testName, systemName[_j]);
-       printf("| %s ", speed);
-   }
-   for (_j = 0; _j < systemCount; _j++) {
-       accuracy = getAccuracy(testName, systemName[_j]);
-       printf("| %s ", accuracy);
-   }
+   printf("|%s", getSpeed(testName));
+   words = get(testName, F_WORDS);
+   printf("|%s", words);
+   printf("|%s", getPercent(get(testName, F_INSERTIONS), words));
+   printf("|%s", getPercent(get(testName, F_DELETIONS), words));
+   printf("|%s", getPercent(get(testName, F_SUBSTITUTIONS), words));
+   printf("|%s", getAccuracy(testName));
+   sentences = get(testName, F_SENTENCES);
+   printf("|%s", sentences);
+   correctSentences = get(testName, F_CORRECT_SENTENCES);
+   sentencesWithErrors = sentences - correctSentences;
+   printf("|%s", sentencesWithErrors);
+   printf("|%s", getPercent(sentencesWithErrors, sentences));
    printf("|\n");
 }
 
@@ -201,18 +229,18 @@ function dumpTitle(  i) {
         machineName = machine;
     }
 
-    printf("|   *%s %s on %s*  |||||||\n", modeTitle[mode], title, machineName);
-    printf("| *&nbsp;* | *Speed (RT)*  ||| *WER (%)* |||\n");
+    printf("|   *%s %s*  ||||||||||\n", modeTitle[mode], title);
 
-
-    printf("| *%s* ", "Test");
-    for (i = 0; i < systemCount; i++) {
-        printf("| *%s* ", systemTitle[systemName[i]]);
-    }
-
-    for (i = 0; i < systemCount; i++) {
-        printf("| *%s* ", systemTitle[systemName[i]]);
-    }
+    printf("| *%s %s* ", "Test run on", machineName);
+    printf("| *%s* ", "Speed (RT)");
+    printf("| *%s* ", "Num Words");
+    printf("| *%s* ", "Insertions (%)");
+    printf("| *%s* ", "Deletions (%)");
+    printf("| *%s* ", "Substitutions (%)");
+    printf("| *%s* ", "Word Error Rate (%)");
+    printf("| *%s* ", "Num Sentences");
+    printf("| *%s* ", "Sentences with Errors");
+    printf("| *%s* ", "Sentence Error Rate");
     printf("|\n");
 }
 
