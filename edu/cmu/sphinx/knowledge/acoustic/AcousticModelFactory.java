@@ -98,17 +98,14 @@ public class AcousticModelFactory {
                }
                Timer.stop(name);
             } catch (ClassNotFoundException fe) {
-                throw new Error("CNFE:Can't create acoustic model " 
-                        + className, fe);
+                throw new IOException(
+                        "CNFE:Can't find acoustic model class" + className);
             } catch (InstantiationException ie) {
-                throw new Error("IE: Can't create acoustic model " 
-                        + className, ie);
+                throw new IOException(
+                        "IE: Can't instantiate acoustic model " + className);
             } catch (IllegalAccessException iea) {
-                throw new Error("IEA: Can't create acoustic model " 
-                        + className, iea);
-            } catch (IOException ioe) {
-                throw new Error("IOE: Can't create acoustic model " 
-                        + className, ioe);
+                throw new IOException("IEA: Can't create acoustic model " 
+                        + className);
             } 
         }
        return am;
