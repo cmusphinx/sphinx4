@@ -40,6 +40,14 @@ import java.util.Map;
  */
 public class SameStampScoreCombiner implements ScoreCombiner {
 
+    /**
+     * Remove all tokens in the given token list that has the given stamp.
+     *
+     * @param tokenList the token list
+     * @param stamp the stamp of tokens to remove
+     *
+     * @return a list of the removed tokens
+     */
     public List removeTokensByStamp(List tokenList, String stamp) {
         List returnList = new LinkedList();
         for (ListIterator i = tokenList.listIterator(); i.hasNext(); ) {

@@ -16,10 +16,17 @@ package edu.cmu.sphinx.research.parallel;
 import edu.cmu.sphinx.decoder.search.Token;
 
 /**
+ * Utility methods for the parallel decoder.
  */
 public class Util {
 
     /**
+     * Prints the score and frame numbers of tokens.
+     *
+     * @param oldScore score of the replaced token
+     * @param oldFrameNumber frame number of the replaced token
+     * @param newScore score of the replacing token
+     * @param newFrameNumber frame number of the replacing token 
      */
     public static void printTokenReplace(float oldScore, int oldFrameNumber,
                                          float newScore, int newFrameNumber) {

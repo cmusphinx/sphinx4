@@ -65,6 +65,13 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
         return combineTimeComparator;
     }        
 
+    /**
+     * Constructs a SameTimeScoreCombiner.
+     *
+     * @param timeDifference the maximum difference in time between
+     *                       tokens for them to be considered approximately
+     *                       the 'same time'
+     */
     public SameTimeScoreCombiner(int timeDifference) {
 	reader = new SameTimeTokensReader(timeDifference);
     }
