@@ -263,13 +263,13 @@ public class ResultAnalyzer {
 	if (numSentences > 0) {
 	    int totalErrors = recognitionErrors 
 		+ insertionErrors + deletionErrors; 
-	    System.out.print("   Accuracy : " + percent.format(getAccuracy()));
-	    System.out.println("   Errors: " + totalErrors +
+	    System.out.print("   Accuracy: " + percent.format(getAccuracy()));
+	    System.out.println("    Errors: " + totalErrors +
 	       "  (Rec: " + recognitionErrors +
 	       "  Ins: " + insertionErrors +
 	       "  Del: " + deletionErrors + ")");
 	    System.out.println("   Sentences: " + numSentences 
-		    + "      Words : " + numRefWords  + "   Matches: " +
+		    + "      Words: " + numRefWords  + "   Matches: " +
 		    numMatchingWords);
 	}
     }
