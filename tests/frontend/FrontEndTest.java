@@ -4,6 +4,7 @@
 
 package tests.frontend;
 
+import edu.cmu.sphinx.frontend.AudioSource;
 import edu.cmu.sphinx.frontend.BatchFileAudioSource;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.Feature;
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class FrontEndTest {
 
-    FrontEnd frontend;
+    AudioSource audioSource;
     boolean batchMode;
     boolean dumpTimes;
     boolean dumpValues;
@@ -50,14 +51,12 @@ public class FrontEndTest {
             (testName, new URL
              ("file://" + pwd + File.separatorChar + audioSourceFile));
         
-	frontend = new FrontEnd("FrontEnd", context);
-	
         if (batchMode) {
-            frontend.setAudioSource
+            audioSource = 
                 (new BatchFileAudioSource
                  ("BatchFileAudioSource", context, audioSourceFile));
         } else {
-            frontend.setAudioSource
+            audioSource =
                 (new StreamAudioSource
                  ("StreamAudioSource", context,
                   (new FileInputStream(audioSourceFile))));
@@ -65,45 +64,12 @@ public class FrontEndTest {
     }
 
 
-    /**
-     * Returns the FrontEnd to be tested.
-     */
-    public FrontEnd getFrontEnd() {
-        return frontend;
+    public AudioSource getAudioSource() {
+        return audioSource;
     }
 
 
     public boolean getDump() {
         return dumpValues;
-    }
-
-
-    /**
-     * Runs the FrontEnd test.
-     */
-    public void run() {
-
-        frontend.getTimer().start();
-
-        FeatureSource featureSource = frontend.getFeatureSource();
-        
-        if (featureSource != null) {
-
-            Feature feature = null;
-            
-            try {
-                do {
-                    feature = featureSource.getFeature();
-                } while (feature != null);
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
-
-        frontend.getTimer().stop();
-        
-        if (dumpTimes) {
-            Timer.dumpAll(context);
-        }
     }
 }

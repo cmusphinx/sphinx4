@@ -34,10 +34,8 @@ public class MelCepstrumTest {
             FrontEndTest fet = new FrontEndTest
                 (testName, propertiesFile, audioFile);
 
-            FrontEnd fe = fet.getFrontEnd();
-
             Preemphasizer preemphasizer = new Preemphasizer
-                ("Preemphasizer", testName, fe.getAudioSource());
+                ("Preemphasizer", testName, fet.getAudioSource());
             Windower windower = new Windower
                 ("HammingWindow", testName, preemphasizer);
             SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer

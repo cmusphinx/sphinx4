@@ -5,7 +5,6 @@
 package tests.frontend;
 
 import edu.cmu.sphinx.frontend.Audio;
-import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Preemphasizer;
 
 
@@ -30,10 +29,8 @@ public class PreemphasizerTest {
             FrontEndTest fet = new FrontEndTest
                 (testName, propertiesFile, audioFile);
 
-            FrontEnd fe = fet.getFrontEnd();
-
             Preemphasizer preemphasizer = new Preemphasizer
-                ("Preemphasizer", testName, fe.getAudioSource());
+                ("Preemphasizer", testName, fet.getAudioSource());
             preemphasizer.setDump(fet.getDump());
 
             Audio audio = null;

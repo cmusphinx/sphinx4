@@ -36,10 +36,8 @@ public class FeatureExtractorTest {
             FrontEndTest fet = new FrontEndTest
                 (testName, propertiesFile, audioFile);
 
-            FrontEnd fe = fet.getFrontEnd();
-
             Preemphasizer preemphasizer = new Preemphasizer
-                ("Preemphasizer", testName, fe.getAudioSource());
+                ("Preemphasizer", testName, fet.getAudioSource());
             Windower windower = new Windower
                 ("HammingWindow", testName, preemphasizer);
             SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer
@@ -55,8 +53,10 @@ public class FeatureExtractorTest {
 
             extractor.setDump(fet.getDump());
 
-            fe.setFeatureSource(extractor);
-            fet.run();
+            Feature feature = null;
+            do {
+                feature = extractor.getFeature();
+            } while (feature != null);
 
 	} catch (Exception e) {
 	    e.printStackTrace();
