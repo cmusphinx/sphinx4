@@ -289,6 +289,7 @@ public class ConfigurationManager {
         for (Iterator i = globalProperties.keySet().iterator(); i.hasNext(); ) {
             String name = (String) i.next();
             String value = (String) globalProperties.get(name);
+            value = encodeValue(value);
             writer.println("        <property name=\"" +
                 stripGlobalSymbol(name) + "\" value=\"" + value + "\"/>");
         }
@@ -311,6 +312,7 @@ public class ConfigurationManager {
                 Object obj = ps.getRawNoReplacment(names[j]);
                 if (obj instanceof String) {
                     String value = (String) obj;
+                    value = encodeValue(value);
                     String pad = (value.length() > 25) ? "\n        " : "" ;
                     writer.println("        <property name=\"" + names[j]
                             + "\"" + pad + " value=\"" + value + "\"/>");
@@ -319,8 +321,8 @@ public class ConfigurationManager {
                     writer.println("        <propertylist name=\"" + names[j]
                             + "\">");
                     for (int k = 0; k < list.size(); k++) {
-                        writer.println("            <item>" + list.get(k)
-                                + "</item>");
+                        writer.println("            <item>" + 
+                            encodeValue(list.get(k).toString()) + "</item>");
                     }
                     writer.println("        </propertylist>");
                 } else {
@@ -350,6 +352,18 @@ public class ConfigurationManager {
                     name.length()) + " -->");
         writer.println(pad(' ', indent) + "<!-- " + pad('*', 50) + " -->");
         writer.println();
+    }
+
+    /**
+     * Encodes a value so that it is suitable for an xml property
+     *
+     * @param value the value to be encoded
+     * @return the encoded value
+     */
+    private String encodeValue(String value) {
+        value = value.replaceAll("<", "&lt;");
+        value = value.replaceAll(">", "&gt;");
+        return value;
     }
      
 
