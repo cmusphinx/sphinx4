@@ -46,19 +46,18 @@ edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
 edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
 edu.cmu.sphinx.frontend.windowShiftInMs = 10
 edu.cmu.sphinx.frontend.windower.alpha = 0.46
-edu.cmu.sphinx.frontend.useAcousticModelProperties = true
 
-# the following properties are effective only if 'useAcousticModelProperties'
-# is false
+# set the following only if you want to override the acoustic model properties
 
-edu.cmu.sphinx.frontend.mel.numFilters = 40
-edu.cmu.sphinx.frontend.mel.minfreq = 130
-edu.cmu.sphinx.frontend.mel.maxfreq = 6800
-edu.cmu.sphinx.frontend.fft.numberFftPoints = 512
-edu.cmu.sphinx.frontend.cmn.live.initialCepstralMean = 12
-edu.cmu.sphinx.frontend.cmn.live.windowSize = 500
-edu.cmu.sphinx.frontend.cmn.live.shiftWindow = 800
-edu.cmu.sphinx.frontend.sampleRate = 16000
+# edu.cmu.sphinx.frontend.sampleRate
+# edu.cmu.sphinx.frontend.mel.numFilters = 40
+# edu.cmu.sphinx.frontend.mel.minfreq = 130
+# edu.cmu.sphinx.frontend.mel.maxfreq = 6800
+# edu.cmu.sphinx.frontend.fft.numberFftPoints = 512
+# edu.cmu.sphinx.frontend.cmn.live.initialCepstralMean = 12
+# edu.cmu.sphinx.frontend.cmn.live.windowSize = 500
+# edu.cmu.sphinx.frontend.cmn.live.shiftWindow = 800
+
 
 
 ############################################################
