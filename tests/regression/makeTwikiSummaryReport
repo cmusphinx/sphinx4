@@ -220,8 +220,8 @@ function dumpTest(testName,  _j) {
        accuracy = getAccuracy(testName, systemName[_j]);
        printf("| %s ", accuracy);
    }
-   date = getDate(testName, "s4");
-   printf("| %s ", date);
+   testDate = getDate(testName, "s4");
+   printf("| %s ", testDate);
    printf("|\n");
 }
 
