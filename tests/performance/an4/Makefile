@@ -128,7 +128,7 @@ an4_spelling_unigram:
 
 an4_spelling_trigram:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-65\
+    -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-26\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false\
     -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.model.language.format=arpa \
