@@ -136,17 +136,17 @@ live-free: all
 	-Dedu.cmu.sphinx.frontend.keepAudioReference=false \
 	-Dedu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments=false \
 	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.LevelTracker \
+	-Dedu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=10\
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=9 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=12 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=9 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow=40 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
-	-Dedu.cmu.sphinx.frontend.util.Microphone.sleepBetweenAudio=true \
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager \
 	tests.live.Live decoders.list
 
@@ -167,7 +167,6 @@ live-free-cube: all
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
-	-Dedu.cmu.sphinx.frontend.util.Microphone.sleepBetweenAudio=true \
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager \
 	tests.live.Live decoders.list
 
@@ -191,7 +190,6 @@ live-free-voice: all
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
-	-Dedu.cmu.sphinx.frontend.util.Microphone.sleepBetweenAudio=true \
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager \
 	tests.live.Live decoders.list
 
