@@ -337,10 +337,10 @@ jsapi.exe from the lib directory.
 
     <target name="delete_model_classes"
             description="Deletes all the model class files.">
-	<delete file="${wsj_class}"/>
+	<delete file="${model_class_dir}/${wsj_name}.java"/>
 	<delete file="${model_class_dir}/${wsj_loader_name}.java"/>
-	<delete file="${tidigits_class}"/>
-	<delete file="${model_class_dir}/${wsj_loader_name}.java"/>
+	<delete file="${model_class_dir}/${tidigits_name}.java"/>
+	<delete file="${model_class_dir}/${tidigits_loader_name}.java"/>
     </target>
 
     <target name="create_wsj_model_classes"
