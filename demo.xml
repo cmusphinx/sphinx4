@@ -69,6 +69,7 @@ your environment to use JSAPI.
     <!-- Sphinx-4 (non-JSAPI) demos -->
     <target name="compile_sphinx_demos"
 	    depends="compile_sphinx_helloworld,
+	             compile_sphinx_hellodigits,
 	             compile_sphinx_hellongram,
 	             check_jsapi_jar.isPresent"
 	    description="Compiles Sphinx-4 demos that do not use JSAPI"/>
@@ -91,19 +92,30 @@ your environment to use JSAPI.
 	     manifest="${src_dir}/demo/sphinx/helloworld/helloworld.Manifest"
 	     basedir="${classes_dir}"
 	     includes="demo/sphinx/helloworld/**"
-	     excludes="**/HelloDigits.class"
 	     filesonly="true"
 	     compress="true"/>
-	<copy file="${src_dir}/demo/sphinx/helloworld/hellodigits.config.xml"
-	      todir="${classes_dir}/demo/sphinx/helloworld"/>
+    </target>
+
+    <target name="compile_sphinx_hellodigits">
+    	<mkdir dir="${classes_dir}/demo/sphinx/hellodigits"/>
+	<javac debug="true"
+	       source="1.4"
+	       deprecation="true"
+	       srcdir="${src_dir}/demo/sphinx/hellodigits"
+	       destdir="${classes_dir}">
+	    <classpath refid="libs"/>
+	</javac>
+	<copy file="${src_dir}/demo/sphinx/hellodigits/digits.gram"
+	      todir="${classes_dir}/demo/sphinx/hellodigits"/>
+	<copy file="${src_dir}/demo/sphinx/hellodigits/hellodigits.config.xml"
+	      todir="${classes_dir}/demo/sphinx/hellodigits"/>
         <jar destfile="${bin_dir}/HelloDigits.jar" 
-	     manifest="${src_dir}/demo/sphinx/helloworld/hellodigits.Manifest"
+	     manifest="${src_dir}/demo/sphinx/hellodigits/hellodigits.Manifest"
 	     basedir="${classes_dir}"
-	     includes="demo/sphinx/helloworld/**"
-	     excludes="**/HelloWorld.class"
+	     includes="demo/sphinx/hellodigits/**"
 	     filesonly="true"
 	     compress="true"/>
-	<delete dir="${classes_dir}/demo/sphinx/helloworld"/>
+	<delete dir="${classes_dir}/demo/sphinx/hellodigits"/>
     </target>
 
     <target name="compile_sphinx_hellongram">
