@@ -276,7 +276,7 @@ public class Decoder {
      * @return the decoded Result object
      */
     public Result decode() {
-	Timer timer = Timer.getTimer(context, "Decode");
+	Timer timer = getTimer();
         timer.start();  // start the timer
 	Result result = recognizer.recognize();
         timer.stop();  // stop the timer
@@ -295,7 +295,7 @@ public class Decoder {
         Result result;
         currentReferenceText = ref;
 
-	Timer timer = Timer.getTimer(context, "Decode");
+	Timer timer = getTimer();
         timer.start();  // start the timer
 
 	result = recognizer.recognize();
@@ -348,7 +348,7 @@ public class Decoder {
      */
     public Result align(String ref) throws IOException {
 	Result result;
-	Timer timer = Timer.getTimer(context, "Decode");
+	Timer timer = getTimer();
         currentReferenceText = ref;
 
         timer.start();  // start the timer
@@ -362,6 +362,25 @@ public class Decoder {
 
 
         return result;
+    }
+
+    /**
+     * Returns the decoding timer.
+     *
+     * @return the decoding timer
+     */
+    public Timer getTimer() {
+        return Timer.getTimer(context, "Decode");
+    }
+
+    /**
+     * Sets the reference text, i.e., the string that is the correct
+     * recognition answer.
+     *
+     * @param reference the reference text
+     */
+    public void setReferenceText(String reference) {
+        this.currentReferenceText = reference;
     }
 
     /**
@@ -424,12 +443,12 @@ public class Decoder {
      *
      * @param result the recognition result
      */
-    protected void showFinalResult(Result result, Timer timer) {
+    public void showFinalResult(Result result, Timer timer) {
 	boolean match = true;
 	Token bestToken = result.getBestToken();
-
+        
 	if (currentReferenceText != null) {
-	    match = aligner.align(currentReferenceText, result.toString());
+            match = aligner.align(currentReferenceText, result.toString());
             aligner.printSentenceSummary();
             aligner.printTotalSummary();
 	} else {
