@@ -394,11 +394,14 @@ public class Microphone extends BaseDataProcessor {
     }
 
     /**
-     * Returns a suitable native audio format.
+     * Returns a native audio format that has the same encoding, number
+     * of channels, endianness and sample size as the given format,
+     * and a sample rate that is larger than the given sample rate
+     * (which is given by desiredFormat.getSampleRate()).
      *
      * @return a suitable native audio format
      */
-    private AudioFormat getNativeAudioFormat() {
+    public static AudioFormat getNativeAudioFormat(AudioFormat format) {
         // try to do sample rate conversion
         Line.Info[] lineInfos = AudioSystem.getTargetLineInfo
             (new Line.Info(TargetDataLine.class));
@@ -416,14 +419,14 @@ public class Microphone extends BaseDataProcessor {
                 // for now, just accept downsampling, not checking frame
                 // size/rate (encoding assumed to be PCM)
                 
-                AudioFormat format = formats[j];
-                if (format.getEncoding() == audioFormat.getEncoding()
-                    && format.getChannels() == audioFormat.getChannels()
-                    && format.isBigEndian() == audioFormat.isBigEndian()
-                    && format.getSampleSizeInBits() == 
-                    audioFormat.getSampleSizeInBits()
-                    && format.getSampleRate() > audioFormat.getSampleRate()) {
-                    nativeFormat = format;
+                AudioFormat thisFormat = formats[j];
+                if (thisFormat.getEncoding() == format.getEncoding()
+                    && thisFormat.getChannels() == format.getChannels()
+                    && thisFormat.isBigEndian() == format.isBigEndian()
+                    && thisFormat.getSampleSizeInBits() == 
+                    format.getSampleSizeInBits()
+                    && thisFormat.getSampleRate() > format.getSampleRate()) {
+                    nativeFormat = thisFormat;
                     break;
                 }
             }
@@ -456,15 +459,15 @@ public class Microphone extends BaseDataProcessor {
             logger.warning(audioFormat + " not supported");
             printMessage(audioFormat + " not supported");
             
-            nativeFormat = getNativeAudioFormat();
+            nativeFormat = getNativeAudioFormat(audioFormat);
             
             if (nativeFormat == null) {
                 logger.severe("couldn't find suitable target " +
                               "audio format for conversion");
                 return false;
             } else {
-                printMessage("accepting " + nativeFormat + 
-                             " as natively supported format");
+                logger.info("accepting " + nativeFormat + 
+                            " as natively supported format");
                 info = new DataLine.Info(TargetDataLine.class, nativeFormat);
                 doConversion = true;
             }
