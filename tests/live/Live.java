@@ -523,6 +523,8 @@ public class Live {
                                 if (result.isFinal()) {
                                     updateLiveFrame
                                         (currentRecognizer.getAligner());
+                                    System.out.println
+                                        (result.getBestToken().getWordUnitPath());
                                 }
                             }
                         });
