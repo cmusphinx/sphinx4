@@ -85,3 +85,10 @@ tidigits_quick_parallel:
 	-Dedu.cmu.sphinx.search.WordListGrammar.path=./digits.wordlist\
 	-Dedu.cmu.sphinx.util.GDLDumper.skipHMMs=false\
 	edu.cmu.sphinx.decoder.BatchDecoder ./wsj_mfc_plp.props ../tidigits/tidigits.batch
+
+
+
+aurora:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.util.GDLDumper.skipHMMs=false\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ../aurora/aurora.batch
