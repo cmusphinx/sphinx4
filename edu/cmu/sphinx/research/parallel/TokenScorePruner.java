@@ -172,7 +172,6 @@ public abstract class TokenScorePruner implements Pruner {
 			newList.add(token);
 			lastScore = thisScore;
 		    } else {
-			// token.setPruned(true);
 			break;
 		    }
 		} else {
@@ -180,21 +179,6 @@ public abstract class TokenScorePruner implements Pruner {
 		    lastScore = thisScore;
 		}
             }
-
-            // include the next token(s) that have the same score
-            // as the last included token
-            /*
-            while (i.hasNext()) {
-                Token token = (Token) i.next();
-                thisScore = getTokenScore(token);
-		if (thisScore == lastScore) {
-		    newList.add(token);
-		} else {
-		    // token.setPruned(true);
-		    break;
-		}
-            }
-            */
         }
 
 	return newList;
