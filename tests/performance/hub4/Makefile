@@ -28,8 +28,8 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
 PROFILE_FLAGS= -Xprof 
 LOG_GC_FLAGS=  -Xloggc:gc.txt
-#GC_FLAGS = -ms128m -mx512m
-GC_FLAGS = -ms128m -mx2048m
+GC_FLAGS = -ms128m -mx512m
+#GC_FLAGS = -ms128m -mx3048m
 
 
 DEBUG_FLAGS= 
@@ -85,8 +85,15 @@ all::
 hub4_flat_unigram:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.flat.props \
+        $(HUB4_DIR)/f0_hub4.batch
+
+hub4_trigram:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
 	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props \
         $(HUB4_DIR)/f0_hub4.batch
+
 
 test:
 	$(JAVA_CMD) \
