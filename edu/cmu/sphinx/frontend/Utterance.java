@@ -18,7 +18,7 @@ import edu.cmu.sphinx.frontend.util.Util;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -50,7 +50,7 @@ public class Utterance {
      */
     public Utterance(String name, String context) {
         this.name = name;
-        audioBuffer = new LinkedList();
+        audioBuffer = new ArrayList();
 
         // get the Sphinx properties
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
@@ -90,11 +90,9 @@ public class Utterance {
      * @param audio the audio frame to add
      */
     public void add(byte[] audio) {
-        synchronized (audioBuffer) {
-            totalBytes += audio.length;
-            audioBuffer.add(audio);
-            setFlattened(false);
-        }
+        totalBytes += audio.length;
+        audioBuffer.add(audio);
+        setFlattened(false);
     }
 
 
