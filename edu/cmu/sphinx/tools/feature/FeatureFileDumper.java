@@ -86,7 +86,7 @@ public class FeatureFileDumper {
 	    assert (names.size() == 1);
 	    String feName = (String) names.iterator().next();
 
-            frontEnd = FrontEndFactory.getFrontEnd(feName, props);
+            frontEnd = FrontEndFactory.getFrontEnd(props, feName);
             frontEnd.setDataSource(audioSource);
 
 

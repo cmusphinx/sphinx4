@@ -93,7 +93,7 @@ public class SpectrogramPanel extends JPanel {
 	    assert (names.size() == 1);
 	    String feName = (String) names.iterator().next();
 
-            FrontEnd frontEnd = FrontEndFactory.getFrontEnd(feName, props);
+            FrontEnd frontEnd = FrontEndFactory.getFrontEnd(props, feName);
             frontEnd.setDataSource(audioSource);
 
             /* Run through all the spectra one at a time and convert
