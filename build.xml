@@ -566,18 +566,18 @@ jsapi.exe from the lib directory.
     <target name="deploy_bin_zip"
             description="Creates the bin.zip deploy file."
 	    depends="clean,all,javadoc">
-	<mkdir dir="${deploy_dir}/sphinx4-bin-${version}"/>
-	<copy todir="${deploy_dir}/sphinx4-bin-${version}"
+	<mkdir dir="${deploy_dir}/sphinx4-${version}"/>
+	<copy todir="${deploy_dir}/sphinx4-${version}"
 	      includeEmptyDirs="false">
 	     <fileset dir="."
-   	         includes="build.xml,demo.xml,index.html,license.terms,MANIFEST,README,lib/**,bin/*.jar,demo/**,javadoc/**,doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html"
+   	         includes="demo.xml,index.html,license.terms,README,lib/**,bin/*.jar,demo/**,doc-files/**,javadoc/**,doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html"
 		 excludes="lib/jsapi.jar"/>
 	</copy>
 	<jar destfile="${deploy_dir}/sphinx4-bin-${version}.zip"
 	     basedir="${deploy_dir}"
-	     includes="sphinx4-bin-${version}/**"
+	     includes="sphinx4-${version}/**"
 	     compress="true"/>
-	<delete dir="${deploy_dir}/sphinx4-bin-${version}"/>
+	<delete dir="${deploy_dir}/sphinx4-${version}"/>
     </target>
 
 
@@ -589,18 +589,18 @@ jsapi.exe from the lib directory.
     <target name="deploy_src_zip"
             description="Creates the src.zip deploy file."
 	    depends="clean">
-	<mkdir dir="${deploy_dir}/sphinx4-src-${version}"/>
-	<copy todir="${deploy_dir}/sphinx4-src-${version}"
+	<mkdir dir="${deploy_dir}/sphinx4-${version}"/>
+	<copy todir="${deploy_dir}/sphinx4-${version}"
 	      includeEmptyDirs="false">
 	    <fileset dir="."/>
 	</copy>
-	<delete dir="${deploy_dir}/sphinx4-src-${version}/bin"/>
-	<delete dir="${deploy_dir}/sphinx4-src-${version}/deploy"/>
+	<delete dir="${deploy_dir}/sphinx4-${version}/bin"/>
+	<delete dir="${deploy_dir}/sphinx4-${version}/deploy"/>
 	<jar destfile="${deploy_dir}/sphinx4-src-${version}.zip"
 	     basedir="${deploy_dir}"
-	     includes="sphinx4-src-${version}/**"
+	     includes="sphinx4-${version}/**"
 	     compress="true"/>
-	<delete dir="${deploy_dir}/sphinx4-src-${version}"/>
+	<delete dir="${deploy_dir}/sphinx4-${version}"/>
     </target>
 
 </project>
