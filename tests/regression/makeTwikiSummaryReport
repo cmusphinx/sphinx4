@@ -93,6 +93,10 @@ BEGIN {
     modeTitle["fastest"] = "Fastest results for ";
     modeTitle["best"] =    "Most accurate results for ";
 
+    # read in the date and time when the test was started
+    getline date < ".startDate";
+    getline time < ".startTime";
+
     # read in the test list
 
     totalTestCount = 0;
@@ -246,7 +250,9 @@ END {
 # Make the page read-only so people do not try to edit these pages
 
     print "<small>"
-    print "_This table is automatically generated. Do not edit this by hand._";
+    printf("_This table is automatically generated. ");
+    printf("Do not edit this by hand. ");
+    printf("Last updated on %s at %s._\n", date, time);
     print "</small>"
     print "<!--";
     print "Set DENYTOPICCHANGE=Main.SphinxGroup SphinxGroup";
