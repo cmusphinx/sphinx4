@@ -31,7 +31,8 @@ import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
 /**
- * A utility that assists in optimizing relative and absolute beam
+ * Monitors the absolute and relative beam sizes required to achieve the
+ * optimum recognition results and reports this data.
  */
 public class BeamFinder implements Configurable, ResultListener, StateListener {
     /**

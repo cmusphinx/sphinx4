@@ -24,7 +24,9 @@ import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
 /**
- * A class that will monitor the state transitions of a given recognizer
+ *Monitor the state transitions of a given recognizer. This monitor maintains
+ * lists of components that should be 'run' when a recognizer state change is
+ * detected.
  */
 public class RecognizerMonitor implements Configurable, StateListener {
     /**

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="edu/cmu/sphinx/research/parallel/|tests/|edu/cmu/sphinx/research/bushderby/BushderbySearchManager.java|edu/cmu/sphinx/decoder/BatchAligner.java|edu/cmu/sphinx/decoder/BatchDecoder.java|edu/cmu/sphinx/decoder/LivePretendDecoder.java|demo/|edu/cmu/sphinx/research/|edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/|edu/cmu/sphinx/trainer/|edu/cmu/sphinx/tools/feature/FeatureFileDumper.java|edu/cmu/sphinx/tools/audio/" kind="src" path=""/>
+	<classpathentry excluding="edu/cmu/sphinx/research/parallel/|tests/|demo/|edu/cmu/sphinx/research/|edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/|edu/cmu/sphinx/trainer/|edu/cmu/sphinx/tools/feature/FeatureFileDumper.java|edu/cmu/sphinx/tools/audio/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/home/plamere/work/SourceForge/FreeTTS/lib/jsapi.jar"/>
 	<classpathentry kind="output" path="bld/classes"/>

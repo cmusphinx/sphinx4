@@ -20,10 +20,9 @@ import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
 /**
- * @author plamere
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * Shows the configuration currently in use. This monitor is typically added
+ * as a recognition monitor such that the configuration is shown immediately
+ * after the recognizer is allocated.
  */
 public class ConfigMonitor implements Configurable, Runnable {
     
