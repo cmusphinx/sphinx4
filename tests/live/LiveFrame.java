@@ -75,8 +75,9 @@ import tests.frontend.CepstraPanel;
 public class LiveFrame extends JFrame {
 
     private Live live;
+    private boolean debug = true;
     private boolean showEndpointerPanel;
-
+    
     // Dimension of this LiveFrame
     private Dimension dimension = new Dimension(500, 700);
     private Color backgroundColor = new Color(220, 220, 220);
@@ -109,7 +110,7 @@ public class LiveFrame extends JFrame {
      * Constructs a LiveFrame with the given title.
      *
      * @param title the title of this JFrame
-     * @param liveDecoder the LiveDecoder that this GUI controls
+     * @param live the Live instance that this GUI controls
      */
     public LiveFrame(String title, Live live) {
         super(title);
@@ -128,6 +129,19 @@ public class LiveFrame extends JFrame {
         });
 
         setGlobalFontSize(20);
+    }
+
+
+    /**
+     * Prints out a debug message on System.out, if the 'debug' private
+     * class variable is set to true.
+     *
+     * @param message the debug message to print
+     */
+    private void debugMessage(String message) {
+        if (debug) {
+            System.out.println(message);
+        }
     }
 
 
@@ -154,7 +168,12 @@ public class LiveFrame extends JFrame {
         return textToSayArea.getText();
     }
 
-
+    
+    /**
+     * Sets the name of the decoder at the decoder ComboBox.
+     *
+     * @param decoderName the name of the decoder to display at the ComboBox
+     */
     public void setDecoderComboBox(final String decoderName) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -341,6 +360,7 @@ public class LiveFrame extends JFrame {
      * to the correct state.
      */
     public void enterSpeakingMode() {
+        debugMessage("Entering speaking mode.");
         setGUISpeakingState(true);
         setMessage("Wait...");
         
@@ -348,10 +368,13 @@ public class LiveFrame extends JFrame {
         setRecognitionLabel("");
 
         // start recording
+        debugMessage("Turning speaker on.");
         if (live.startRecording()) {
+            debugMessage("Speaker turned on.");
             setMessage("OK, start speaking...");
             live.decode();
         } else {
+            debugMessage("Can't turn speaker on.");
             setMessage("Error opening the audio device");
             setGUISpeakingState(false);
         }
@@ -360,6 +383,8 @@ public class LiveFrame extends JFrame {
 
     /**
      * Returns a JPanel with the given layout and custom background color.
+     *
+     * @param layout the LayoutManager to use for the returned JPanel
      *
      * @return a JPanel
      */
@@ -618,10 +643,12 @@ public class LiveFrame extends JFrame {
     /**
      * Creates a JTextArea for the Statistics text.
      *
+     * @param statistic the default statistic text shown at the text area
+     *
      * @return a JTextArea for the Statistics text
      */
-    private JTextArea getStatisticsTextArea(String statisticsName) {
-        JTextArea textArea = new JTextArea(statisticsName);
+    private JTextArea getStatisticsTextArea(String statistic) {
+        JTextArea textArea = new JTextArea(statistic);
         textArea.setEditable(false);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
@@ -639,7 +666,7 @@ public class LiveFrame extends JFrame {
      * @param title title of the scrollPane
      * @param textArea textArea to display text
      *
-     * @return the main JTextArea
+     * @return the main JScrollPane
      */
     private JScrollPane getMainTextJScrollPane(String title, 
                                                JTextArea textArea) {
@@ -725,7 +752,10 @@ public class LiveFrame extends JFrame {
 
 
     /**
-     * Only enable the "Speak" button (and the "Exit" button).
+     * Sets the state of the various relevant Swing GUI objects,
+     * depending on whether we are in the 'speaking' state or not.
+     *
+     * @param speaking true for speaking state, false for a non-speaking state
      */
     private void setGUISpeakingState(final boolean speaking) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -759,7 +789,7 @@ public class LiveFrame extends JFrame {
     /**
      * Changes the font size of all components in this JFrame.
      * 
-     * @param change the change in font size
+     * @param fontSize the new font size
      */
     private void setGlobalFontSize(int fontSize) {
         if (globalFont == null) {
@@ -784,7 +814,9 @@ public class LiveFrame extends JFrame {
         repaint();
     }
 
-
+    /**
+     * A ComboBox that shows which decoder we are using.
+     */
     class DecoderComboBox extends JComboBox {
 
         private int lastIndex;
@@ -802,6 +834,12 @@ public class LiveFrame extends JFrame {
         }
 
         class ComboBoxActionListener implements ActionListener {
+            
+            /**
+             * Invoked when an action is performed on this DecoderComboBox.
+             *
+             * @param e the ActionEvent performed
+             */
             public void actionPerformed(ActionEvent e) {
                 if (getSelectedIndex() != lastIndex) {
                     try {
