@@ -24,8 +24,8 @@ public class MelFilterbank extends DataProcessor {
      * The name of the SphinxProperty for the number of points
      * in the Fourier Transform, which is 512 by default.
      */
-    public static final String PROP_NUMBER_DFT_POINTS =
-	"edu.cmu.sphinx.frontend.fft.numberDftPoints";
+    public static final String PROP_NUMBER_FFT_POINTS =
+	"edu.cmu.sphinx.frontend.fft.numberFftPoints";
 
     /**
      * The name of the Sphinx Property for the number of filters in
@@ -50,7 +50,7 @@ public class MelFilterbank extends DataProcessor {
 
     private int sampleRate;
 
-    private int numberDftPoints;
+    private int numberFftPoints;
 
     private int numberFilters;
 
@@ -71,7 +71,7 @@ public class MelFilterbank extends DataProcessor {
      */
     public MelFilterbank(String context) {
 	initSphinxProperties(context);
-	buildFilterbank(numberDftPoints, numberFilters, minFreq, maxFreq);
+	buildFilterbank(numberFftPoints, numberFilters, minFreq, maxFreq);
         setTimer(Timer.getTimer(context, "MelFilterbank"));
     }
 
@@ -87,7 +87,7 @@ public class MelFilterbank extends DataProcessor {
 
         sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);
 
-	numberDftPoints = properties.getInt(PROP_NUMBER_DFT_POINTS, 512);
+	numberFftPoints = properties.getInt(PROP_NUMBER_FFT_POINTS, 512);
 
 	numberFilters = properties.getInt(PROP_NUMBER_FILTERS, 31);
 
@@ -132,7 +132,7 @@ public class MelFilterbank extends DataProcessor {
 
     /**
      * Sets the given frequency to the nearest frequency bin from the
-     * DFT.  The DFT can be thought of as a sampling of the actual
+     * FFT.  The FFT can be thought of as a sampling of the actual
      * spectrum of a signal. We use this function to find the sampling
      * point of the spectrum that is closest to the given frequency.
      *
@@ -158,14 +158,14 @@ public class MelFilterbank extends DataProcessor {
      * of a given triangle will be by default at the center of the 
      * neighboring triangles.
      *
-     * @param numberDftPoints number of points in the power spectrum
+     * @param numberFftPoints number of points in the power spectrum
      * @param numberFilters number of filters in the filterbank
      * @param minFreq lowest frequency in the range of interest
      * @param maxFreq highest frequency in the range of interest
      *
      * @throws IllegalArgumentException
      */
-    private void buildFilterbank(int numberDftPoints, 
+    private void buildFilterbank(int numberFftPoints, 
 				 int numberFilters, 
 				 double minFreq, 
 				 double maxFreq) 
@@ -185,17 +185,17 @@ public class MelFilterbank extends DataProcessor {
 
 	/**
 	 * In fact, the ratio should be between <code>sampleRate /
-	 * 2</code> and <code>numberDftPoints / 2</code> since the number of
+	 * 2</code> and <code>numberFftPoints / 2</code> since the number of
 	 * points in the power spectrum is half of the number of FFT
 	 * points - the other half would be symmetrical for a real
 	 * sequence -, and these points cover up to the Nyquist
 	 * frequency, which is half of the sampling rate. The two
 	 * "divide by 2" get canceled out.
 	 */
-	if (numberDftPoints == 0) {
-	    throw new IllegalArgumentException("Number of DFT points is zero");
+	if (numberFftPoints == 0) {
+	    throw new IllegalArgumentException("Number of FFT points is zero");
 	}
-	deltaFreq = (double)sampleRate / numberDftPoints;
+	deltaFreq = (double)sampleRate / numberFftPoints;
 	/**
 	 * Initialize edges and center freq. These variables will be
 	 * updated so that the center frequency of a filter is the
@@ -260,10 +260,10 @@ public class MelFilterbank extends DataProcessor {
 
 	double[] in = input.getSpectrumData();
 
-	if (in.length != (numberDftPoints >> 1)) {
+	if (in.length != (numberFftPoints >> 1)) {
 	    throw new IllegalArgumentException
                ("Window size is incorrect: in.length == " + in.length +
-                 ", numberDftPoints == " + numberDftPoints);
+                 ", numberFftPoints == " + numberFftPoints);
 	}
 
 	double[] outputMelFilterbank = new double[numberFilters];

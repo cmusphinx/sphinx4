@@ -19,12 +19,12 @@ public class SpectrumAnalyzer extends DataProcessor {
      * The name of the SphinxProperty for the number of points
      * in the Fourier Transform, which is 512 by default.
      */
-    public static final String PROP_NUMBER_DFT_POINTS =
-	"edu.cmu.sphinx.frontend.fft.numberDftPoints";
+    public static final String PROP_NUMBER_FFT_POINTS =
+	"edu.cmu.sphinx.frontend.fft.numberFftPoints";
 
     private int windowSize;
-    private int numberDftPoints;
-    private int logBase2NumberDftPoints;
+    private int numberFftPoints;
+    private int logBase2NumberFftPoints;
 
     private Complex[] weightFft;
     private Complex[] inputFrame;
@@ -43,8 +43,8 @@ public class SpectrumAnalyzer extends DataProcessor {
      */
     public SpectrumAnalyzer(String context) {
 	initSphinxProperties(context);
-	computeLogBase2(this.numberDftPoints);
-	createWeightFft(numberDftPoints, false);
+	computeLogBase2(this.numberFftPoints);
+	createWeightFft(numberFftPoints, false);
         initComplexArrays();
         weightFftTimesFrom2 = new Complex();
         setTimer(Timer.getTimer(context, "SpectrumAnalyzer"));
@@ -56,11 +56,11 @@ public class SpectrumAnalyzer extends DataProcessor {
      */
     private void initComplexArrays() {
 
-        inputFrame = new Complex[numberDftPoints];
-    	from = new Complex[numberDftPoints];
-	to = new Complex[numberDftPoints];
+        inputFrame = new Complex[numberFftPoints];
+    	from = new Complex[numberFftPoints];
+	to = new Complex[numberFftPoints];
         
-        for (int i = 0; i < numberDftPoints; i++) {
+        for (int i = 0; i < numberFftPoints; i++) {
             inputFrame[i] = new Complex();
             from[i] = new Complex();
             to[i] = new Complex();
@@ -98,22 +98,22 @@ public class SpectrumAnalyzer extends DataProcessor {
                  ", windowSize == " + windowSize);
 	}
 
-        if (numberDftPoints < windowSize) {
+        if (numberFftPoints < windowSize) {
             int i = 0;
-	    for (; i < numberDftPoints; i++) {
+	    for (; i < numberFftPoints; i++) {
 		inputFrame[i].set(in[i], 0.0f);
 	    }
 	    for (; i < windowSize; i++) {
                 tempComplex.set(in[i], 0.0f);
-		inputFrame[i % numberDftPoints].addComplex
-		    (inputFrame[i % numberDftPoints], tempComplex);
+		inputFrame[i % numberFftPoints].addComplex
+		    (inputFrame[i % numberFftPoints], tempComplex);
 	    }
 	} else {
             int i = 0;
 	    for (; i < windowSize; i++) {
 		inputFrame[i].set(in[i], 0.0f);
 	    }
-	    for (; i < numberDftPoints; i++) {
+	    for (; i < numberFftPoints; i++) {
 		inputFrame[i].reset();
 	    }
 	}
@@ -121,12 +121,12 @@ public class SpectrumAnalyzer extends DataProcessor {
 	/**
 	 * Create output sequence.
 	 */
-	double[] outputSpectrum = new double[numberDftPoints >> 1];
+	double[] outputSpectrum = new double[numberFftPoints >> 1];
 
 	/**
 	 * Start Fast Fourier Transform recursion
 	 */
-	recurseFft(inputFrame, outputSpectrum, numberDftPoints, false);
+	recurseFft(inputFrame, outputSpectrum, numberFftPoints, false);
 
 	/**
 	 * Return the power spectrum
@@ -169,7 +169,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * 511 are symmetrical with the ones between 1 and 254. Therefore,
 	 * we need only return values between 0 and 255.
 	 */
-	numberDftPoints = properties.getInt(PROP_NUMBER_DFT_POINTS, 512);
+	numberFftPoints = properties.getInt(PROP_NUMBER_FFT_POINTS, 512);
     }
 
 
@@ -178,17 +178,17 @@ public class SpectrumAnalyzer extends DataProcessor {
      * of 2 by computing its log base 2 and checking for
      * remainders.
      *
-     * @params numberDftPoints number of points in the FFT
+     * @params numberFftPoints number of points in the FFT
      *
      * @throws java.lang.IllegalArgumentException
      */
-    private void computeLogBase2(int numberDftPoints)
+    private void computeLogBase2(int numberFftPoints)
 	throws IllegalArgumentException {
-	this.logBase2NumberDftPoints = 0;
-	for (int k = numberDftPoints; k > 1; k >>= 1, this.logBase2NumberDftPoints++) {
-	    if (((k % 2) != 0) || (numberDftPoints < 0)) {
+	this.logBase2NumberFftPoints = 0;
+	for (int k = numberFftPoints; k > 1; k >>= 1, this.logBase2NumberFftPoints++) {
+	    if (((k % 2) != 0) || (numberFftPoints < 0)) {
 		throw new IllegalArgumentException("Not a power of 2: "
-						   + numberDftPoints);
+						   + numberFftPoints);
 	    }
 	}
     }
@@ -204,26 +204,26 @@ public class SpectrumAnalyzer extends DataProcessor {
      * <b>Re(weightFft[k]) = cos ( -2 * PI * k / N)</b>
      * <b>Im(weightFft[k]) = sin ( -2 * PI * k / N)</b>
      *
-     * @param numberDftPoints number of points in the FFT
+     * @param numberFftPoints number of points in the FFT
      * @param invert whether it's direct (false) or inverse (true) FFT
      *
      */
-    private void createWeightFft(int numberDftPoints, boolean invert) {
+    private void createWeightFft(int numberFftPoints, boolean invert) {
 	/**
-	 * weightFFT will have numberDftPoints/2 complex elements.
+	 * weightFFT will have numberFftPoints/2 complex elements.
 	 */
-        weightFft = new Complex[numberDftPoints >> 1];
+        weightFft = new Complex[numberFftPoints >> 1];
 
 	/**
 	 * For the inverse FFT,
-	 * w = 2 * PI / numberDftPoints;
+	 * w = 2 * PI / numberFftPoints;
 	 */
-	double w = -2 * Math.PI / numberDftPoints;
+	double w = -2 * Math.PI / numberFftPoints;
         if (invert) {
             w = -w;
         }
 	
-	for (int k = 0; k < (numberDftPoints / 2); k++) {
+	for (int k = 0; k < (numberFftPoints / 2); k++) {
             weightFft[k] = new Complex(Math.cos (w * k), Math.sin (w * k));
 	}
     }
@@ -242,14 +242,14 @@ public class SpectrumAnalyzer extends DataProcessor {
      *
      * @param input input sequence
      * @param output output sequence
-     * @param numberDftPoints number of points in the FFT
+     * @param numberFftPoints number of points in the FFT
      * @param invert whether it's direct (false) or inverse (true) FFT
      *
      */
 
     private void recurseFft(Complex[] input,
 		    double[] output,
-		    int numberDftPoints,
+		    int numberFftPoints,
 		    boolean invert) {
 
 	double divisor;
@@ -257,7 +257,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	/**
 	 * The direct and inverse FFT are essentially the same
 	 * algorithm, except for two difference: a scaling factor of
-	 * "numberDftPoints" and the signal of the exponent in the
+	 * "numberFftPoints" and the signal of the exponent in the
 	 * weightFft vectors, defined in the method
 	 * <code>createWeightFft</code>.
 	 */
@@ -265,33 +265,33 @@ public class SpectrumAnalyzer extends DataProcessor {
 	if (!invert){
 	    divisor = 1.0;
 	} else {
-	    divisor = (double) numberDftPoints;
+	    divisor = (double) numberFftPoints;
 	}
 
 	/**
 	 * Initialize the "from" and "to" variables.
 	 */
-	for (int i = 0; i < numberDftPoints; i++){
+	for (int i = 0; i < numberFftPoints; i++){
 	    to[i].reset();
 	    from[i].scaleComplex(input[i], divisor);
 	}
 
 	/**
-	 * Repeat the recursion log2(numberDftPoints) times,
-	 * i.e., we have log2(numberDftPoints) butterfly stages.
+	 * Repeat the recursion log2(numberFftPoints) times,
+	 * i.e., we have log2(numberFftPoints) butterfly stages.
 	 */
-	butterflyStage(from, to, numberDftPoints, numberDftPoints >> 1);
+	butterflyStage(from, to, numberFftPoints, numberFftPoints >> 1);
 
 	/**
 	 * Compute energy ("float") for each frequency point
 	 * from the fft ("complex")
 	 */
-	if ((this.logBase2NumberDftPoints & 1) == 0) {
-	    for (int i = 0; i < (numberDftPoints >> 1); i++){
+	if ((this.logBase2NumberFftPoints & 1) == 0) {
+	    for (int i = 0; i < (numberFftPoints >> 1); i++){
 		output[i] = from[i].squaredMagnitudeComplex(); 
             }
 	} else {
-	    for (int i = 0; i < (numberDftPoints >> 1); i++){
+	    for (int i = 0; i < (numberFftPoints >> 1); i++){
 		output[i] = to[i].squaredMagnitudeComplex();
             }
 	}
@@ -307,18 +307,18 @@ public class SpectrumAnalyzer extends DataProcessor {
      * butterfly.
      *
      * We repeat <code>butterflyStage</code> for
-     * <b>log_2(numberDftPoints)</b> stages, by calling the recursion
+     * <b>log_2(numberFftPoints)</b> stages, by calling the recursion
      * with the argument <code>currentDistance</code> divided by 2 at
      * each call, and checking if it's still > 0.
      *
      * @param from the input sequence at each stage
      * @param to the output sequence
-     * @param numberDftPoints the total number of points
+     * @param numberFftPoints the total number of points
      * @param currentDistance the "distance" between elements in the butterfly
      */
     private void butterflyStage(Complex[] from, 
 				Complex[] to, 
-				int numberDftPoints,
+				int numberFftPoints,
 				int currentDistance)
     {
 	int ndx1From;
@@ -335,9 +335,9 @@ public class SpectrumAnalyzer extends DataProcessor {
 		ndx1From = s;
 		ndx2From = s + currentDistance;
 		ndx1To = s;
-		ndx2To = s + (numberDftPoints >> 1);
+		ndx2To = s + (numberFftPoints >> 1);
 		ndxWeightFft = 0;
-		while (ndxWeightFft < (numberDftPoints >> 1)) {
+		while (ndxWeightFft < (numberFftPoints >> 1)) {
 		    /**
 		     * <b>weightFftTimesFrom2 = weightFft[k]   </b>
 		     * <b>                      *from[ndx2From]</b>
@@ -372,7 +372,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	     * the total number of points remains the same, and
 	     * the <i>currentDistance</i> is divided by 2.
 	     */
-	    butterflyStage(to, from, numberDftPoints, (currentDistance >> 1));
+	    butterflyStage(to, from, numberFftPoints, (currentDistance >> 1));
 	}
 	return;
     }
