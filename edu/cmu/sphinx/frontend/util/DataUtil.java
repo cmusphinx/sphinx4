@@ -17,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
-import edu.cmu.sphinx.frontend.window.RaisedCosineWindower;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
 
@@ -438,37 +437,6 @@ public class DataUtil {
     public static int getSamplesPerShift(int sampleRate,
                                          float windowShiftInMs) {
         return (int) (((float) sampleRate) * windowShiftInMs / 1000);
-    }
-
-
-    /**
-     * Returns the total amount of audio time (in seconds) represented by
-     * the first frame to given frame. The first frame number is 0.
-     *
-     * @param frameNumber the given frame
-     * @param properties the SphinxProperties object where information
-     *    about window shift, window size, etc., can be retrieved
-     *
-     * @return the total audio time in seconds
-     */
-    public static float getAudioTime(int frameNumber, 
-                                     SphinxProperties properties) {
-        float audioTime = 0.0f;
-
-        if (frameNumber >= 0) {
-            float windowSizeInMs = properties.getFloat
-                (RaisedCosineWindower.PROP_WINDOW_SIZE_MS, 
-                 RaisedCosineWindower.PROP_WINDOW_SIZE_MS_DEFAULT);
-            float windowShiftInMs = properties.getFloat
-                (RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
-                 RaisedCosineWindower.PROP_WINDOW_SHIFT_MS_DEFAULT);
-            
-            // calculate audio time in milliseconds
-            audioTime = frameNumber * windowShiftInMs + windowSizeInMs;
-            audioTime /= 1000;
-        }
-
-        return audioTime;
     }
 
 
