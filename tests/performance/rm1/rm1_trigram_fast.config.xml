@@ -25,7 +25,7 @@
         <propertylist name="inputDataProcessors">
             <item>streamDataSource</item>
         </propertylist>
-        <property name="skip" value="5"/>
+        <property name="skip" value="0"/>
         <property name="recognizer" value="${recognizer}"/>
     </component>
 
@@ -66,7 +66,7 @@
         <property name="logMath" value="logMath"/>
         <property name="activeListManager" value="activeListManager"/>
         <property name="buildWordLattice" value="false"/>
-        <property name="relativeBeamWidth" value="1E-80"/>
+        <property name="relativeBeamWidth" value="1E-78"/>
         <property name="growSkipInterval" value="6"/>
         <property name="linguist" value="lexTreeLinguist"/>
         <property name="checkStateOrder" value="false"/>
@@ -96,7 +96,7 @@
         <property name="languageWeight" value="19"/>
         <property name="logMath" value="logMath"/>
         <property name="dictionary" value="dictionary"/>
-        <property name="unigramSmearWeight" value="1.2"/>
+        <property name="unigramSmearWeight" value="1.25"/>
         <property name="cacheSize" value="0"/>
         <property name="wantUnigramSmear" value="true"/>
     </component>
@@ -133,7 +133,7 @@
 
     <component name="ngramLanguageModel"
           type="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel">
-        <property name="unigramWeight" value=".7"/>
+        <property name="unigramWeight" value=".6"/>
         <property name="maxDepth" value="3"/>
         <property name="logMath" value="logMath"/>
         <property name="dictionary" value="dictionary"/>
@@ -294,7 +294,7 @@
           type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
         <property name="absoluteBeamWidth" value="22"/>
         <property name="logMath" value="logMath"/>
-        <property name="relativeBeamWidth" value="1E-37"/>
+        <property name="relativeBeamWidth" value="1E-36"/>
     </component>
 
     <!-- ************************************************** -->
