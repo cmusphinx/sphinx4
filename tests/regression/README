@@ -27,4 +27,14 @@ Requirements:
 
 
  - To setup a nightly regression test, run the script 'regressionTest' 
-   from a crontab job.
+   from a crontab job. Make sure that paths are setup properly.  Here
+   is an example entry:
+
+   0 22 * * * (. $HOME/.profile ; ./regressionTest)
+
+ - Here is the associated profile. Make sure that path is exported
+
+
+PATH=$PATH:"$HOME/bin:/lab/speech/bin:/usr/dist/exe:/pkg/gnu/bin:/lab/speech/java/j2sdk1.4.0/bin::/lab/speech/bin:/usr/bin:/usr/ucb:/lab/speech/java/j2sdk1.4.0/bin:."
+export PATH
+
