@@ -36,17 +36,82 @@ import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.util.LogMath;
 
 /**
- * Provides recognition lattice results. Lattices are created from Results
+ * <p>
+ * Provides recognition lattice results. Lattices are created from
+ * {@link edu.cmu.sphinx.result.Result Results}
  * which can be partial or final.
- *
+ * </p>
+ * <p>
  * Lattices describe all theories considered by the Recognizer that have not
- * been pruned out.  Lattices are a directed graph containing Nodes and Edges.
+ * been pruned out.  Lattices are a directed graph containing 
+ * {@link edu.cmu.sphinx.result.Node Nodes} and
+ * {@link edu.cmu.sphinx.result.Edge Edges}.
  * A Node that correponda to a theory that a word was spoken over a particular
  * period of time.  An Edge that corresponds to the score of one word following
  * another.  The usual result transcript is the sequence of Nodes though the
- * Lattice with the best scoring path.
- *
- * Lattices are a useful tool for analyzing "alternate results".
+ * Lattice with the best scoring path. Lattices are a useful tool for 
+ * analyzing "alternate results".
+ * </p>
+ * <p>
+ * The creation of a Lattice depends on a Result that has a collapsed
+ * {@link edu.cmu.sphinx.decoder.search.Token}
+ * tree and an AlternativeHypothesisManager. This is what 'collapsed' means.
+ * Normally, between two word tokens is a series of tokens for other types
+ * of states, such as unit or HMM states. Using 'W' for word tokens,
+ * 'U' for unit tokens, 'H' for HMM tokens, a token chain can look like:
+ * </p>
+ * <pre>
+ * W - U - H - H - H - H - U - H - H - H - H - W
+ * </pre>
+ * <p>
+ * Usually, HMM tokens contains acoustic scores, and word tokens contains
+ * language scores. If we want to know the total acoustic and language 
+ * scores between any two words, it is unnecessary to keep around the
+ * unit and HMM tokens. Therefore, all their acoustic and language scores
+ * are 'collapsed' into one token, so that it will look like:
+ * </p>
+ * <pre>
+ * W - P - W
+ * </pre>
+ * <p>
+ * where 'P' is a token that represents the path between the two words,
+ * and P contains the acoustic and language scores between the two words.
+ * It is this type of collapsed token tree that the Lattice class is
+ * expecting. Normally, the task of collapsing the token tree is done
+ * by the
+ * {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}.
+ * A collapsed token tree is structurally the same as
+ * a lattice, except for the absence of alternative hypotheses.
+ * A collapsed token tree can look like:
+ * </p>
+ * <pre>
+ *             W
+ *            / \
+ *           P   P
+ *          /     \
+ * W - P - W       W
+ *          \     /
+ *           P   P
+ *            \ /
+ *             W
+ * </pre>
+ * <p>
+ * When a Lattice is constructed from a Result, the above collapsed token tree 
+ * will be converted into a Lattice that looks like
+ * the following ('N' for {@link edu.cmu.sphinx.result.Node nodes},
+ * and '-' for the {@link edu.cmu.sphinx.result.Edge edges}):
+ * <pre>
+ *       N
+ *      / \
+ * N - N   N
+ *      \ /
+ *       N
+ * </pre>
+ * <p>
+ * Initially, a lattice can have redundant nodes, i.e., nodes referring to
+ * the same word and that originate from the same parent node. These
+ * nodes can be collapsed using the {@link LatticeOptimizer}.
+ * </p>
  *
  */
 public class Lattice {
