@@ -11,7 +11,7 @@
  */
 
 
-package edu.cmu.sphinx.tools.cepstra;
+package edu.cmu.sphinx.tools.feature;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -115,6 +115,7 @@ public class FeatureFileDumper {
 		    double[] featureData = ((DoubleData)feature).getValues();
 		    if (featureLength < 0) {
 			featureLength = featureData.length;
+                        System.out.println("Feature length: " + featureLength);
 		    }
 		    allFeatures.add(featureData);
 		}
@@ -190,7 +191,7 @@ public class FeatureFileDumper {
 
 	if (argv.length < 3) {
 	    System.out.println("Usage: FeatureFileDumper " + 
-			       "inputFile outputFile [(binary|ascii)]");
+			       "propsFile inputFile outputFile [(binary|ascii)]");
 	    System.exit(1);
 	}
 	String propsFile = argv[0];

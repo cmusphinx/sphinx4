@@ -1,0 +1,13 @@
+############################################################
+#
+# FrontEnd properties
+#
+############################################################
+
+edu.cmu.sphinx.frontend.FrontEndFactory.pipelines=spectra
+
+spectra;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=3
+
+spectra;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+spectra;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+spectra;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
