@@ -569,6 +569,32 @@ public class LexTreeLinguist implements  Linguist {
         }
 
         /**
+         * Generate a hashcode for an object
+         *
+         * @return the hashcode
+         */
+        public int hashCode() {
+            return super.hashCode() * 17 + unitID;
+        }
+
+        /**
+         * Determines if the given object is equal to this object
+         * 
+         * @param o the object to test
+         * @return <code>true</code> if the object is equal to this
+         */
+        public boolean equals(Object o) {
+            if (o == this) {
+                return true;
+            } else if (o instanceof LexTreeUnitState) {
+                LexTreeUnitState other = (LexTreeUnitState) o;
+                return  super.equals(o) && unitID == other.unitID;
+            } else {
+                return false;
+            }
+        }
+
+        /**
          * Returns the successors for this unit. The successors for a
          * unit are always the initial states(s) of the HMM associated
          * with the unit
@@ -580,6 +606,8 @@ public class LexTreeLinguist implements  Linguist {
             HMMPosition position = getCentral().getPosition();
 
             HMM hmm = hmmPool.getHMM(unitID, position);
+
+            assert hmm != null;
 
             nextStates[0] = new LexTreeHMMState(getLeftID(), getCentral(),
                 getRight(), hmm.getInitialState(), logOne);
@@ -900,7 +928,7 @@ public class LexTreeLinguist implements  Linguist {
           * @return <code>true</code> if this is an final state.
           */
          public boolean isFinal() {
-             return wordLexNode.isSentenceEnd();
+             return true;
          }
 
         /**
@@ -911,10 +939,6 @@ public class LexTreeLinguist implements  Linguist {
         public SearchStateArc[] getSuccessors() {
             int nextLeftID = getCentral() == null ?  0 : getCentral().getID();
             LexTree.UnitLexNode nextCentral = getRight();
-
-            if (isFinal()) {
-                return emptyArc;
-            }
 
             if (nextCentral == null) {
                 return getArcsToAllWords(nextLeftID);
