@@ -394,11 +394,9 @@ public class Live {
         String speedLabel = "N/A";
         String cumulativeSpeedLabel = "N/A";
 
-        if (!handsFree) {
-            speedLabel = (timeFormat.format(decoder.getSpeed()) + " X RT");
-            cumulativeSpeedLabel = 
-                (timeFormat.format(decoder.getCumulativeSpeed()) + " X RT");
-        }
+	speedLabel = (timeFormat.format(decoder.getSpeed()) + " X RT");
+	cumulativeSpeedLabel = 
+	    (timeFormat.format(decoder.getCumulativeSpeed()) + " X RT");
 
         liveFrame.setSpeedLabel(speedLabel);
         liveFrame.setCumulativeSpeedLabel(cumulativeSpeedLabel);
@@ -430,8 +428,7 @@ public class Live {
                         System.out.println("Live: decoding ...");
                         lastResult = decoder.decode();
                         decoder.setReferenceText(liveFrame.getReference());
-                        decoder.showFinalResult
-                            (lastResult, decoder.getTimer());
+                        decoder.showFinalResult(lastResult);
                         System.out.println("Live: ... decoded");
                         updateLiveFrame(decoder.getNISTAlign());
                     } catch (NullPointerException npe) {
