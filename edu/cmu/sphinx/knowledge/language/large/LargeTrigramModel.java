@@ -290,9 +290,13 @@ public class LargeTrigramModel implements LanguageModel {
         if (numberBigramBuffer > 0) {
             // load all the bigram followers of firstWord
             // and then find the bigram with the secondWord
-            BigramBuffer bigramFollowers = 
-                loadBigramBuffer(firstWordID, numberBigramBuffer);
-            bigram = bigramFollowers.findBigram(secondWordID);
+            BigramBuffer followers = (BigramBuffer) 
+		loadedBigramBuffer.get(new Integer(firstWordID));
+	    if (followers == null) {
+                followers = loadBigramBuffer(firstWordID, numberBigramBuffer);
+		loadedBigramBuffer.put(new Integer(firstWordID), followers);
+	    }
+            bigram = followers.findBigram(secondWordID);
         }
 
         return bigram;
@@ -394,11 +398,7 @@ public class LargeTrigramModel implements LanguageModel {
 	    
 	try {
 	    // System.out.println("Loading TrigramBuffer from disk");
-	    assert ((position + size) <= fileChannel.size());
 	    ByteBuffer buffer = loadBuffer(position, size);
-	    if (!bigEndian) {
-		buffer.order(ByteOrder.LITTLE_ENDIAN);
-	    }
 	    trigramBuffer = new TrigramBuffer
 		(buffer, bigram.getNumberTrigramEntries());
 	} catch (IOException ioe) {
@@ -479,31 +479,20 @@ public class LargeTrigramModel implements LanguageModel {
     private BigramBuffer loadBigramBuffer(int firstWordID, 
 					  int numberFollowers) {
         BigramBuffer followers = null;
-
-        if ((followers = queryBigramCache(firstWordID)) == null) {
-
-            int firstBigramEntry = unigrams[firstWordID].getFirstBigramEntry();
-            
-            long position = (long) (bigramOffset + 
-                                    (firstBigramEntry * BYTES_PER_BIGRAM));
-            int size = (numberFollowers + 1) * BYTES_PER_BIGRAM;
-            
-            try {
-		// System.out.println("Loading BigramBuffer from disk");
-                assert ((position + size) <= fileChannel.size());
-                ByteBuffer buffer = loadBuffer(position, size);
-                if (!bigEndian) {
-                    buffer.order(ByteOrder.LITTLE_ENDIAN);
-                }
-                followers = new BigramBuffer(buffer, numberFollowers);
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-                throw new Error("Error loading bigram followers");
-            }
-            loadedBigramBuffer.put(new Integer(firstWordID), followers);
-        }
-
-        return followers;
+	int firstBigramEntry = unigrams[firstWordID].getFirstBigramEntry();
+	int size = (numberFollowers + 1) * BYTES_PER_BIGRAM;
+	long position = (long) (bigramOffset + 
+				(firstBigramEntry * BYTES_PER_BIGRAM));
+	try {
+	    // System.out.println("Loading BigramBuffer from disk");
+	    ByteBuffer buffer = loadBuffer(position, size);
+	    followers = new BigramBuffer(buffer, numberFollowers);
+	} catch (IOException ioe) {
+	    ioe.printStackTrace();
+	    throw new Error("Error loading bigram followers");
+	}
+	
+	return followers;
     }
 
 
@@ -518,29 +507,19 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @return the loaded ByteBuffer
      */
-    private ByteBuffer loadBuffer(long position, int size) throws
-    IOException {
+    private ByteBuffer loadBuffer(long position, int size) 
+	throws IOException {
+	assert ((position + size) <= fileChannel.size());
         ByteBuffer bb = ByteBuffer.allocate(size);
         fileChannel.position(position);
         int bytesRead = fileChannel.read(bb);
+	if (!bigEndian) {
+	    bb.order(ByteOrder.LITTLE_ENDIAN);
+	}
         if (bytesRead != size) {
             throw new IOException("Insufficient bytes read.");
         }
         return bb;
-    }
-
-
-    /**
-     * Returns the BigramFollower of the given word, if it is loaded.
-     *
-     * @param firstWordID the ID of the word whose bigrams we want to check
-     *
-     * @return the BigramFollower of the given word, if it is loaded,
-     *         or null if it is not loaded
-     */
-    private BigramBuffer queryBigramCache(int firstWordID) {
-        return (BigramBuffer) loadedBigramBuffer.get
-            (new Integer(firstWordID));
     }
 
 
