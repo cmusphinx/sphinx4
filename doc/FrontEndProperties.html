@@ -1,0 +1,154 @@
+<html>
+
+<body>
+
+<center>
+<h2>Specifying the Sphinx-4 Front End and Its Properties</h2>
+</center>
+
+<p>
+The main design goal of the Sphinx-4 front end is flexibility.
+Therefore, the front end is modeled as a pipeline of data processors,
+and the entire composition of the pipeline can be configured
+from the Sphinx properties file. Multiple instances of the same 
+data processor is allowed in the same front end, the properties of
+which can be configured differently. Moreover, there can be more than
+one front end in the system.
+
+<p>
+To enable all these capabilities, the following scheme is devised to specify
+the front end in the properties file. Lets work with the example of a standard 
+Mel Frequency Cepstral Coefficients (MFCC) front end,
+followed by an explanation:
+
+<p>
+<table cellpadding="10">
+<tr>
+<td bgcolor="DDDDDD">
+<pre>
+edu.cmu.sphinx.frontend.FrontEndFactory.pipelines = mfcc
+
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.nStages = 7
+
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class = edu.cmu.sphinx.frontend.filter.Preemphasizer
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class = edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.name = dft
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class = edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class = edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class = edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class = edu.cmu.sphinx.frontend.feature.LiveCMN
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class = edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor
+
+dft;edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints = 512
+</pre>
+
+</td>
+</tr>
+</table>
+
+<b><i>Example 1: Specifying a standard MFCC front end.</i></b>
+
+<p>
+The first line specifies all the front end pipelines. "mfcc" is the name
+of our MFCC front end pipeline. You will notice that all the properties
+relating to the mfcc pipeline are prepended by "mfcc", followed by a ";".
+The choice of ";" is because <code>java.util.Properties</code> treat ":"
+(which is more intuitive) as "=", messing things up.
+
+<p>
+The second line specifies that the mfcc pipeline has 7 stages.
+We then proceed to specify the Java class used by each stage.
+The stage numbers must be monotonically increasing from 1,
+and there must be nStages in total.
+We can optionally specify the name of the stage. For example,
+you can see that stage 3 is named "dft".
+The reason why we give stage 3 a name is because we want
+to specify certain properties of the DiscreteFourierTransform,
+like in the very last line of our example, we specify
+the number of FFT points to be 512.
+
+<p>
+The name is also useful if we have multiple instances of the 
+same data processor class. For example, suppose that we perform
+Discrete Fourier Transform two times in a row, but each with a different
+number of FFT points, we would specify the following:
+
+<p>
+<table cellpadding="10">
+<tr>
+<td bgcolor="DDDDDD">
+<pre>
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.name = dft_1
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class = edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.name = dft_2
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class = edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+
+dft_1;edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints = 128
+
+dft_2;edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints = 256
+</pre>
+</td>
+</tr>
+</table>
+
+<b><i>Example 2: Specifying a front-end pipeline with two DataProcessors of the same class, but different properties.</i></b>
+
+<p>
+When the first DiscreteFourierTransform class is initialized in the
+'initialize()' method, the 'name' argument will be 'dft_1'. Calling
+DiscreteFourierTransform.getName() on it will return 'dft_1'.
+
+<h3>Search for Properties</h3>
+
+As you might infer, the front end uses the following algorithm
+to search for properties:
+
+<ol>
+
+<li>If the front end data processor has a name, then the front end looks in the SphinxProperty object using the property string: <pre> &lt;data processor name&gt; + ";" + &lt;property name&gt;</pre> e.g., <code>dft_2;edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints</code><p>If it can't find a value using this property string, it will look in the SphinxProperty object using the property name (without the data processor name).
+
+<li>If the front end data processor has no name (or its name is null), it will look in the SphinxProperty object using just the property name.
+
+</ol>
+
+<p>Therefore, in the above example, if all you specified is:
+<pre>
+edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints = 256
+</pre>
+then the first DiscreteFourierTransform will use 256 FFT points. If you did not even specify this line, it will use the default of 512 FFT points. To specify that you want 128 FFT points for only the first DiscreteFourierTransform, you must specify:
+<pre>
+dft_1;edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints = 128
+</pre>
+
+<h3>Multiple Front Ends</h3>
+
+Multiple front ends are easily specified as follows:
+
+<p>
+<table cellpadding="10">
+<tr>
+<td bgcolor="DDDDDD">
+<pre>
+edu.cmu.sphinx.frontend.FrontEndFactory.pipelines = mfcc plp
+
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.nStages = 7
+mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class = edu.cmu.sphinx.frontend.filter.Preemphasizer
+...
+
+plp;edu.cmu.sphinx.frontend.FrontEndFactory.nStages = 8
+plp;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class = edu.cmu.sphinx.frontend.filter.Preemphasizer
+...
+</pre>
+</td>
+</tr>
+</table>
+
+<b><i>Example 3: Specifying multiple front-end pipelines.</i></b>
+
+<p>
+That is, you specify the different pipelines, and then just specify each pipeline as you would individually.
+
+</body>
+
+</html>
