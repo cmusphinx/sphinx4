@@ -22,6 +22,8 @@
 # this is a set of tests that run every saturday night.
 # this should be restricted to run in less than 10 hours
 
+./getTime >.startTime
+
 ./runTest ../performance/rm1 rm1_bigram_quick     MODE=quick rm1_bigram
 ./runTest ../performance/rm1 rm1_bigram_fst       MODE=quick rm1_bigram_fst
 

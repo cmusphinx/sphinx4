@@ -22,6 +22,8 @@
 # this is a set of standard tests that run every night.
 # this should be restricted to run in about 4 hours
 
+./getTime >.startTime
+
 ./runTest ../performance/ti46 ti46_wordlist
 ./runTest ../performance/ti46 ti46_flat_unigram
 ./runTest ../performance/ti46 ti46_flat_unigram_fst

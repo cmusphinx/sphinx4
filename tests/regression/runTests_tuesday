@@ -22,6 +22,8 @@
 # this is a set of tests that run every tuesday night.
 # this should be restricted to run in less than 5 hours
 
+./getTime >.startTime
+
 ./runTest ../performance/an4 an4_spelling_wordlist
 ./runTest ../performance/an4 an4_spelling_flat_unigram
 ./runTest ../performance/an4 an4_spelling_unigram

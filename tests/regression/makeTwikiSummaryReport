@@ -211,14 +211,44 @@ function getDate(testName, systemName) {
 #
 
 function dumpTest(testName,  _j) {
+   bestTime = 10000;
+   bestWER = 10000;
+   for (_j = 0; _j < systemCount; _j++) {
+       speed = getSpeed(testName, systemName[_j]);
+       if (speed == NOT_AVAILABLE) {
+           speed = 10000;
+       }
+       if (speed < bestTime) {
+          bestTime = speed;
+       }
+   }
+   for (_j = 0; _j < systemCount; _j++) {
+       wer = getAccuracy(testName, systemName[_j]);
+       if (wer == NOT_AVAILABLE) {
+           wer = 10000;
+       }
+       if (wer < bestWER) {
+           bestWER = wer;
+       }
+   }
+
    printf("|<font color=#018888> %s </font>", testName);
    for (_j = 0; _j < systemCount; _j++) {
        speed = getSpeed(testName, systemName[_j]);
-       printf("| %s ", speed);
+       if (speed == bestTime) {
+           printf("| <font color=green> %s </font>", speed);
+       } else {
+           printf("| %s ", speed);
+       }
    }
    for (_j = 0; _j < systemCount; _j++) {
-       accuracy = getAccuracy(testName, systemName[_j]);
-       printf("| %s ", accuracy);
+       wer = getAccuracy(testName, systemName[_j]);
+
+       if (wer == bestWER) {
+           printf("| <font color=green> %s </font>", wer);
+       } else {
+           printf("| %s ", wer);
+       }
    }
    testDate = getDate(testName, "s4");
    printf("| %s ", testDate);

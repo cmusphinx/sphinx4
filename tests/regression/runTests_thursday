@@ -22,6 +22,7 @@
 # this is a set of tests that run every thursday night.
 # this should be restricted to run in less than 5 hours
 
+./getTime >.startTime
 ./runTest ../performance/an4 an4_full_unigram_fst
 ./runTest ../performance/an4 an4_full_bigram_fst
 ./runTest ../performance/an4 an4_full_trigram_fst
