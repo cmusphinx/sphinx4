@@ -1,4 +1,4 @@
-It is with great pleasure that we announce the Alpha 0.1 release of
+It is with great pleasure that we announce the 1.0 beta release of
 Sphinx-4:
 
     http://cmusphinx.sourceforge.net/sphinx4
@@ -20,7 +20,7 @@ state-of-the-art techniques.  The framework and the implementations
 are all freely available via open source under a very generous
 BSD-style license.
 
-With the Alpha 0.1 release, you get the complete Sphinx-4 source tree
+With the 1.0 beta release, you get the complete Sphinx-4 source tree
 along with several acoustic and language models capable of handling a
 variety of tasks ranging from simple digit recognition to large
 vocabulary n-Gram recognition.
@@ -32,7 +32,7 @@ following platforms with success: the Solaris 9 Operating System
 on the SPARC platform, Mac OS X 10.3.3, RedHat 9.0, Fedora Core 1, 
 Microsoft Windows XP, and Microsoft Windows 2000. 
 
-Please give Sphinx-4 0.1 alpha a try and post your questions,
+Please give Sphinx-4 1.0 beta a try and post your questions,
 comments, and feedback to one of the CMU Sphinx Forums:
 
     https://sourceforge.net/forum/?group_id=1904
