@@ -149,8 +149,6 @@ aurora.testa.N1_SNR15.prune:
 	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doCombinePruning=false\
 	-Dedu.cmu.sphinx.search.parallel.CombinedScorePruner.absoluteBeamWidth=10\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-16\
-	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.checkCombineTimeDifference=true\
-	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.combineTimeMaxDiff=30\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR15.batch
 
 
