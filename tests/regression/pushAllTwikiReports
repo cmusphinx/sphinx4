@@ -11,6 +11,12 @@
 # This script generates and pushes the twiki reports
 #
 
-./pushTwikiReports IsolatedDigitsResults
-./pushTwikiReports ConnectedDigitsResults
-./pushTwikiReports SmallVocabResults
+twikidir=/home/groups/c/cm/cmusphinx/twiki/data/Sphinx4
+
+./makeTwikiReports IsolatedDigitsResults
+./makeTwikiReports ConnectedDigitsResults
+./makeTwikiReports SmallVocabResults
+
+tar cvf twikireports.tar AutoGen*.txt
+sscp twikireports.tar
+sshh "(cd $twikidir; tar xvf ~/twikireports.tar)"

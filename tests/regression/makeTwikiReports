@@ -7,10 +7,10 @@
 # redistribution of this file, and for a DISCLAIMER OF ALL 
 # WARRANTIES.
 #
-# This script generates and pushes all of the twiki detailed and
+# This script generates all of the twiki detailed and
 # summary reports for a particular test
 #
-# usage: pushTwikiReports testName
+# usage: makeTwikiReports testName
 
 log=regression.log
 ./makeTwikiSummaryReport $log $1.list this latest $1 > AutoGenlatest$1.txt
@@ -28,21 +28,3 @@ log=regression.log
 ./makeTwikiDetailReport $log $1.list this latest $1 s3.3 > AutoGenlatest$1SphinxThreeThree.txt
 ./makeTwikiDetailReport $log $1.list this fastest $1 s3.3 > AutoGenfastest$1SphinxThreeThree.txt 
 ./makeTwikiDetailReport $log $1.list this best $1 s3.3 > AutoGenbest$1SphinxThreeThree.txt
-
-
-./installTwikiPage AutoGenlatest$1.txt
-./installTwikiPage AutoGenfastest$1.txt
-./installTwikiPage AutoGenbest$1.txt
-
-./installTwikiPage AutoGenlatest$1SphinxFour.txt
-./installTwikiPage AutoGenfastest$1SphinxFour.txt
-./installTwikiPage AutoGenbest$1SphinxFour.txt
-
-./installTwikiPage AutoGenlatest$1SphinxThree.txt
-./installTwikiPage AutoGenfastest$1SphinxThree.txt
-./installTwikiPage AutoGenbest$1SphinxThree.txt
-
-./installTwikiPage AutoGenlatest$1SphinxThreeThree.txt
-./installTwikiPage AutoGenfastest$1SphinxThreeThree.txt
-./installTwikiPage AutoGenbest$1SphinxThreeThree.txt
-
