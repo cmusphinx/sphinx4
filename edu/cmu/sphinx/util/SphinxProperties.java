@@ -16,6 +16,9 @@ import java.net.URL;
 import java.util.Properties;
 import java.io.IOException;
 import java.io.PrintStream;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -186,9 +189,14 @@ public class SphinxProperties {
      * @param out an output stream.
      */
     public void list(PrintStream out) {
-	shadowProps.list(out);
+        // lists the used properties
+        out.println("----- Used properties -----");
+        listProperties(shadowProps, out);
+
+        // lists the un-used properties
         listUnused(out);
     }
+
 
     /**
      * Prints the list of unused properties to the specified stream.
@@ -201,18 +209,18 @@ public class SphinxProperties {
      * @param out an output stream.
      */
     public void listUnused(PrintStream out) {
-        out.println("---- Unused properties ---");
-        out.println(" Unused properties defined in " + url + ":" );
-        for (Iterator i = props.keySet().iterator(); i.hasNext(); ) {
+        out.println("----- Unused properties -----");
+        out.println("- Unused properties defined in " + url + ":" );
+        for (Iterator i = getSortedIterator(props); i.hasNext(); ) {
             String key = (String) i.next();
             if (shadowProps.get(key) == null) {
                 out.println(" " + key);
             }
         }
 
-        out.println(" Unused system properties:" );
-        for (Iterator i = System.getProperties().keySet().iterator(); 
-                i.hasNext(); ) {
+        out.println("- Unused system properties:" );
+        for (Iterator i = getSortedIterator(System.getProperties());
+             i.hasNext(); ) {
             String key = (String) i.next();
             if (key.startsWith("edu.cmu")) {
                 if (shadowProps.get(key) == null) {
@@ -221,6 +229,36 @@ public class SphinxProperties {
             }
         }
     }
+
+
+    /**
+     * Returns a sorted Iterator of the given Properties object.
+     *
+     * @param props the Properties to get an Iterator of
+     *
+     * @return a sorted Iterator of the given Properties object
+     */
+    private Iterator getSortedIterator(Properties props) {
+        List sortedKeyList = Collections.list(props.keys());
+        Collections.sort(sortedKeyList);
+        return sortedKeyList.iterator();
+    }
+
+
+    /**
+     * Prints the given Properties to the PrintStream in sorted order.
+     *
+     * @param props the Properties to print
+     * @param out the PrintStream to print to
+     */
+    private void listProperties(Properties props, PrintStream out) {
+        for (Iterator i = getSortedIterator(props); i.hasNext(); ) {
+            String key = (String) i.next();
+            String value = (String) props.get(key);
+            out.println(key + "=" + value);
+        }
+    } 
+
 
     /**
      * Returns a new Property object that contains all the properties of
