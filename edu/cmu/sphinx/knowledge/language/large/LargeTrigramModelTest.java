@@ -83,7 +83,7 @@ class LargeTrigramModelTest {
             List list = new ArrayList();
             while (st.hasMoreTokens()) {
                 String tok = (String) st.nextToken();
-                list.add(tok);
+                list.add(tok.trim());
             }
             WordSequence wordSequence = new WordSequence(list);
             wordSequences.add(wordSequence);

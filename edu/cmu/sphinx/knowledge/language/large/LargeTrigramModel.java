@@ -210,16 +210,10 @@ public class LargeTrigramModel implements LanguageModel {
      */
     private float getUnigramProbability(WordSequence wordSequence) {
         String unigram = wordSequence.getWord(0);
-        UnigramProbability unigramProb = 
-	    (UnigramProbability) unigramIDMap.get(unigram);
+        UnigramProbability unigramProb = getUnigram(unigram);
         if (unigramProb == null) {
-            unigram = "<unk>";
-            unigramProb = (UnigramProbability) unigramIDMap.get(unigram);
-            if (unigramProb == null) {
-                throw new Error("Unigram not in LM: " + unigram);
-            }
+            throw new Error("Unigram not in LM: " + unigram);
         }
-        // UnigramProbability probability = unigrams[unigramID.intValue()];
         return unigramProb.getLogProbability();
     }
 
@@ -231,8 +225,8 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @return true if this LM has this unigram, false otherwise
      */
-    private boolean hasUnigram(String unigram) {
-        return (unigramIDMap.get(unigram.toLowerCase()) != null);
+    private UnigramProbability getUnigram(String unigram) {
+        return (UnigramProbability) unigramIDMap.get(unigram.toLowerCase());
     }
 
 
@@ -244,8 +238,7 @@ public class LargeTrigramModel implements LanguageModel {
      * @return the ID of the word
      */
     private final int getWordID(String word) {
-	UnigramProbability probability = 
-	    (UnigramProbability) unigramIDMap.get(word.toLowerCase());
+	UnigramProbability probability = getUnigram(word);
         if (probability == null) {
             throw new IllegalArgumentException("No word ID: " + word);
         } else {
@@ -269,9 +262,8 @@ public class LargeTrigramModel implements LanguageModel {
         if (loader.getNumberBigrams() <= 0 || firstWord == null) {
             return getUnigramProbability(wordSequence.getNewest());
         }
-        if (!hasUnigram(secondWord)) {
-            // throw new Error("Bad word2: " + secondWord);
-            secondWord = "<unk>";
+        if (getUnigram(secondWord) == null) {
+            throw new Error("Bad word2: " + secondWord);
         }
 
         int firstWordID = getWordID(firstWord);
