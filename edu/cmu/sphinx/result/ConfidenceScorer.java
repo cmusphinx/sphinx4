@@ -11,6 +11,9 @@
  */
 package edu.cmu.sphinx.result;
 
+/**
+ * Computes confidences for a Result.
+ */
 public interface ConfidenceScorer {
 
     /**

@@ -13,6 +13,9 @@ package edu.cmu.sphinx.result;
 
 import java.util.Iterator;
 
+/**
+ * Shows the confidence information about a Result.
+ */
 public interface ConfidenceResult {
 
     /**
