@@ -98,7 +98,7 @@ public class InstanceOfTest {
         for (int i = 0; i < maxIterations; i++) {
 	    for (int j = 0; j < bc.length; j++) {
 		if (bc[j] instanceof FooClass) {
-		    FooClass foo = bc[j].getFooClass();
+		    FooClass foo = ((FooClass) bc[j]).getFooClass();
 		    fooCount += foo.getBigId();
 		}
 	    }
@@ -165,10 +165,6 @@ class BaseClass {
 
     boolean isFoo() {
 	return false;
-    }
-
-    FooClass getFooClass() {
-	return null;
     }
 
     int getId() {
