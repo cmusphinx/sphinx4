@@ -443,7 +443,11 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
             }
             endLowFrames++;
         } else {
+            if (startLowFrames > 1) {
+                startHighFrames = 0;
+            }
             startLowFrames++;
+                
         }
 
         if (cepstrum.getEnergy() < startLow) {
@@ -508,6 +512,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
             startHighFrames++;
         }
         location = ABOVE_START_HIGH;
+        endLowFrames = 0;
     }
 
 
@@ -535,9 +540,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
      * What happens when speech starts.
      */
     private void speechStart() {
-        
         insertSpeechStart();
-
         setLastStartLowFrame(null);
         inSpeech = true;
         endLowFrames = 0;
@@ -571,7 +574,8 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
             for (ListIterator iterator = outputQueue.listIterator(index);
                  i < startOffset && iterator.hasNext(); i++) {
                 Cepstrum cepstrum = (Cepstrum) iterator.next();
-                if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
+                if (cepstrum.hasSignal(Signal.UTTERANCE_START) ||
+                    cepstrum.hasSignal(Signal.SPEECH_END)) {
                     break;
                 }
             }
