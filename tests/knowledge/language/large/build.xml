@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="none" name="Binary language model Tests">
+
+<description>
+This file is used to run the binary language model tests.
+
+NOTE:  Before running the tests, you must have already built 
+       the sphinx-4 sources by typing "ant" in the top level 
+       sphinx4 directory.
+
+</description>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Properties common to all tests                         * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <property name="top_dir"		value="../../../.."/>
+    <path id="libs">
+        <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
+    </path>
+    <property name="build_dir"		value="${top_dir}/bld"/>
+    <property name="classes_dir"	value="${top_dir}/classes"/>
+    <property name="lib_dir"            value="${build_dir}/lib"/>
+
+    <property name="skip"               value="0"/>
+    <property name="logger_props"       value=""/>  
+
+    <property name="initial_heap_size"  value="128m"/>
+    <property name="maximum_heap_size"  value="128m"/>
+    <property name="jit"                value="server"/>
+
+    <property name="large_trigram_test"
+              value="tests.knowledge.language.large.LargeTrigramModelTest"/>
+    <property name="output_diff_class"
+              value="tests.knowledge.language.large.OutputDiff"/>    
+    <property name="utterance_test"
+              value="tests.knowledge.language.large.UtteranceTest"/>    
+    <property name="memory_test"
+              value="tests.knowledge.language.large.MemoryTest"/>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Compile all the test code.                             * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="all"
+            description="Compiles all the tests.">
+	    <mkdir dir="${classes_dir}/tests/knowledge/language/large"/>
+	    <javac debug="true"
+	           source="1.4"
+		   deprecation="true"
+		   destdir="${classes_dir}"
+		   classpath="${classes_dir}"
+		   srcdir="."/>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs all the large LM tests                            * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="alltests"
+	    description="Runs all the large LM tests"
+	    depends="all,random_ngram,random_trigram">
+	    <exec executable="chmod">
+	    <arg line="a+x ./compareOutput.sh"/>
+	    </exec>
+	    <exec executable="compareOutput.sh">
+	    <arg line="ngrams.out s4.hub4.ngram.scores.out backoff.out s4.hub4.ngram.backoff.out"/>
+	    </exec>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs the random n-gram test                            * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="random_ngram"
+            description="Runs the random n-gram test.">
+	    <exec executable="rm">
+	    <arg line="-f ngrams.out"/>
+	    </exec>
+	    <java classpath="${classes_dir}"
+	          classname="${large_trigram_test}">
+		  <arg value="file:./binary.props"/>
+		  <arg value="/lab/speech/sphinx4/data/hub4_model/random_ngrams.txt"/>
+		  <arg value="ngrams.out"/>
+	    </java>
+    </target>	    
+    
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs the random trigram test                            * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="random_trigram"
+            description="Runs the random trigram test.">
+	    <exec executable="rm">
+	    <arg line="-f backoff.out"/>
+	    </exec>
+	    <java classpath="${classes_dir}"
+	          classname="${large_trigram_test}">
+		  <arg value="file:./binary.props"/>
+		  <arg value="/lab/speech/sphinx4/data/hub4_model/random_trigrams.txt"/>
+		  <arg value="backoff.out"/>
+	    </java>
+    </target>	    
+    
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Compares the output of the binary LM with s3.3 output  * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="s3tests"
+            description="Runs the random trigram test."
+	    depends="all,random_ngram,random_trigram">
+	    <exec executable="rm">
+	          <arg line="ngrams.diff"/>
+	    </exec>
+	    <exec executable="rm">
+	          <arg line="backoff.diff"/>
+	    </exec>
+	    <java classname="${output_diff_class}"
+	          classpath="${classes_dir}"
+		  output="ngrams.diff">
+	    	  <arg value="20"/>
+		  <arg value="s3.3.hub4.ngram.scores.out"/>
+		  <arg value="ngrams.out"/>
+	    </java>
+	    <java classname="${output_diff_class}"
+	          classpath="${classes_dir}"
+		  output="backoff.diff">
+	    	  <arg value="30"/>
+		  <arg value="s3.3.hub4.ngram.backoff.out"/>
+		  <arg value="backoff.out"/>
+	    </java>
+	    <exec executable="chmod">
+	          <arg line="a+x ./outputDiff.sh"/>
+	    </exec>
+	    <exec executable="outputDiff.sh">
+	          <arg line="ngrams.diff"/>
+	    </exec>
+	    <exec executable="outputDiff.sh">
+	          <arg line="backoff.diff"/>
+	    </exec>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Test the scoring of ngrams                             * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="ngram-test"
+            description="Test the scoring of ngrams"
+	    depends="all">
+	    <java classpath="${classes_dir}"
+	          classname="${large_trigram_test}">
+		  <arg value="file:./binary.props"/>
+		  <arg value="/lab/speech/sphinx4/data/hub4_model/random_ngrams.txt"/>
+	    </java>
+    </target>	    
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Test the calculation of backoff probabilities.         * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="backoff-test"
+            description="Test the calculation of backoff probabilities"
+	    depends="all">
+	    <java classpath="${classes_dir}"
+	          classname="${large_trigram_test}">
+		  <arg value="file:./binary.props"/>
+		  <arg value="/lab/speech/sphinx4/data/hub4_model/random_trigrams.txt"/>
+	    </java>
+    </target>	    
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * A test of a long list of ngrams.                       * -->
+    <!-- * This list is generated by logging the ngrams queried   * -->
+    <!-- * during a run of the hub4_trigram test.                 * -->
+    <!-- * Note that this test uses the initial heap size of      * -->
+    <!-- * 100MB, since it is reading in all the N-grams of the   * -->
+    <!-- * entire utterance to make sure that the time used for   * -->
+    <!-- * reading is not included in the lookup time.            * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="lm-utt-test"
+            description="A test of a long list of ngrams."
+	    depends="all">
+	    <exec executable="rm">
+	    <arg line="-f s4.lm-utt-test.out"/>
+	    </exec>
+	    <exec executable="rm">
+	    <arg line="-f lm-utt-test.diff"/>
+	    </exec>
+	    <java classname="${utterance_test}"
+	          classpath="${classes_dir}">
+		  <arg value="file:./binary.props"/>
+		  <arg value="/lab/speech/sphinx4/data/hub4_model/ngram.queried"/>
+		  <arg value="s4.lm-utt-test.out"/>
+	    </java>
+	    <java classname="${output_diff_test}"
+	          classpath="${classes_dir}"
+		  output="lm-utt-test.diff">
+		  <arg value="40"/>
+		  <arg value="s3.3.lm-utt-test.out"/>
+		  <arg value="s4.lm-utt-test.out"/>
+	    </java>
+	    <exec executable="chmod">
+	    <arg line="a+x ./outputDiff.sh"/>
+	    </exec>
+	    <exec executable="outputDiff.sh">
+	    <arg line="lm-utt-test.diff"/>
+	    </exec>
+    </target>	    
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Tests how much memory the large binary LM uses.        * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="memory-test"
+            description="Test how much memory the binary LM uses."
+	    depends="all">
+	    <java classname="${memory_test}"
+	          classpath="${classes_dir}"
+		  maxmemory="250m">
+		  <jvmarg value="-XX:+TraceGen0Time -XX:+TraceGen1Time"/>
+		  <arg value="file:./binary.props"/>
+		  <arg value="/lab/speech/sphinx4/data/hub4_model/ngram.queried"/>
+	    </java>
+    </target>	    
+
+</project>
