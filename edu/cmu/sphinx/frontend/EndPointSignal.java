@@ -5,45 +5,33 @@
 package edu.cmu.sphinx.frontend;
 
 /**
- * Indicates that the next audio frame is the start or end of the
- * a sequence of frames.
+ * A data-less Signal to indicate the start or the end of a sequence of frames.
  */
 public class EndPointSignal implements Signal {
 
-    private boolean isStart;
-    
-
     /**
-     * Constructs an EndPointSignal
-     * indicating whether it is the start and/or the end.
-     *
-     * @param isStart true if this is the start of the sequence
-     *                false if this is the end of the sequence
+     * A signal to indicates the start of segment.
      */
-    protected EndPointSignal(boolean isStart) {
-	this.isStart = isStart;
-    }
-
+    public static final EndPointSignal SEGMENT_START = new EndPointSignal();
 
 
     /**
-     * Returns true if this EndPointSignal indicates a segment start,
-     *    false otherwise
-     *
-     * @return true or false
+     * A signal to indicate the end of segment.
      */
-    public boolean isStart() {
-	return isStart;
-    }
+    public static final EndPointSignal SEGMENT_END = new EndPointSignal();
 
 
     /**
-     * Returns true if this EndPointSignal indicates a segment end,
-     *    false otherwise
-     *
-     * @return true of false
+     * A signal to indicate the start of frame sequence.
      */
-    public boolean isEnd() {
-	return (!isStart);
-    }
+    public static final EndPointSignal FRAME_START = new EndPointSignal();
+
+
+    /**
+     * A signal to indicate the end of frame sequence.
+     */
+    public static final EndPointSignal FRAME_END = new EndPointSignal();
+
+
+    private EndPointSignal() {}
 }

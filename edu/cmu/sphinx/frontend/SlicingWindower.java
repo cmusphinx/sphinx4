@@ -169,7 +169,7 @@ public class SlicingWindower extends PullingProcessor {
         double[][] windows = new double[windowCount][windowSize];
 
         // send a Signal indicating start of frame
-        outputQueue.add(FrameEndPointSignal.getStartSignal());
+        outputQueue.add(EndPointSignal.SEGMENT_START);
 
         for (int windowStart = 0, i = 0; i < windowCount;
              windowStart += windowShift, i++) {
@@ -194,6 +194,6 @@ public class SlicingWindower extends PullingProcessor {
         }
 
         // send a Signal indicating end of frame
-        outputQueue.add(FrameEndPointSignal.getEndSignal());
+        outputQueue.add(EndPointSignal.SEGMENT_END);
     }
 }

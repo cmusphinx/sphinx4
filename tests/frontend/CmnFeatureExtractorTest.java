@@ -12,7 +12,7 @@ import edu.cmu.sphinx.frontend.DataSource;
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.FeatureExtractor;
 import edu.cmu.sphinx.frontend.FeatureFrame;
-import edu.cmu.sphinx.frontend.SegmentEndPointSignal;
+import edu.cmu.sphinx.frontend.EndPointSignal;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.Util;
 import edu.cmu.sphinx.util.Timer;
@@ -113,7 +113,7 @@ public class CmnFeatureExtractorTest implements DataSource {
 
 	if (start) {
             start = false;
-	    return SegmentEndPointSignal.getStartSignal();
+	    return EndPointSignal.SEGMENT_START;
         }
 
         if (ended) {
@@ -140,7 +140,7 @@ public class CmnFeatureExtractorTest implements DataSource {
         } else {
 
             ended = true;
-            return SegmentEndPointSignal.getEndSignal();
+            return EndPointSignal.SEGMENT_END;
 	}
     }
 

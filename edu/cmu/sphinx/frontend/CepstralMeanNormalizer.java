@@ -109,11 +109,8 @@ public class CepstralMeanNormalizer extends PullingProcessor {
         if (input instanceof CepstrumFrame) {
             return process((CepstrumFrame) input);
         
-        } else if (input instanceof SegmentEndPointSignal) {
-            SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
-            if (signal.isEnd()) {
-                updateMeanSumBuffers();
-            }
+        } else if (input == EndPointSignal.SEGMENT_END) {
+            updateMeanSumBuffers();
             return input;
 
         } else {

@@ -138,7 +138,7 @@ public class FeatureExtractor extends PullingProcessor {
             
             boolean segmentStart = false;
             
-            if (input instanceof SegmentEndPointSignal) {
+            if (input == EndPointSignal.SEGMENT_START) {
                 // it must be a SegmentStartSignal
                 segmentStart = true;
                 input = inputQueue.removeNext();
@@ -146,8 +146,7 @@ public class FeatureExtractor extends PullingProcessor {
             
             Data nextFrame = inputQueue.peekNext();
             
-            boolean segmentEnd =
-                (nextFrame instanceof SegmentEndPointSignal);
+            boolean segmentEnd = (nextFrame == EndPointSignal.SEGMENT_END);
             
             // absorb the SegmentEndSignal
             if (segmentEnd) {

@@ -149,12 +149,12 @@ public class StreamAudioSource implements DataSource {
 	} else if (totalBytesRead == SEGMENT_NOT_STARTED) {
 
             totalBytesRead = 0;
-            return SegmentEndPointSignal.getStartSignal();
+            return EndPointSignal.SEGMENT_START;
 
 	} else if (totalBytesRead >= SEGMENT_MAX_BYTES) {
 
             totalBytesRead = SEGMENT_NOT_STARTED;
-	    return SegmentEndPointSignal.getEndSignal();
+	    return EndPointSignal.SEGMENT_END;
 
 	} else {
 

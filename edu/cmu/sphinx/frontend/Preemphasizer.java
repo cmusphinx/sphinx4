@@ -75,7 +75,7 @@ public class Preemphasizer extends PullingProcessor {
     /**
      * Reads the next Data object, which is usually a DoubleAudioFrame,
      * produced by this Preemphasizerm, though it can also be Data objects
-     * like SegmentEndPointSignal.
+     * like EndPoint.SEGMENT_START.
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
