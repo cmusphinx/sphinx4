@@ -79,6 +79,7 @@ NOTE:  Before running the tests, you must have already built
 	    <java classname="tests.result.lattice.TokenGraphDumpTest"
 		  fork="true">
 		  <classpath refid="run.classpath"/>
+		  <jvmarg value="-ea"/>
 		  <jvmarg value="-mx${maximum_heap_size}"/>
 	    </java>
     </target>
@@ -95,6 +96,7 @@ NOTE:  Before running the tests, you must have already built
 	    <java classname="tests.result.lattice.LatticeDumpTest"
 		  fork="true">
 		  <classpath refid="run.classpath"/>
+		  <jvmarg value="-ea"/>
 		  <jvmarg value="-mx${maximum_heap_size}"/>
 	          <sysproperty key="wordPruningSearchManager[keepAllTokens]"
 		               value="false"/>
