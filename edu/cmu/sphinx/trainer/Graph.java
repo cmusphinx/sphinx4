@@ -12,7 +12,6 @@
 
 package edu.cmu.sphinx.trainer;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -22,8 +21,8 @@ import java.util.Iterator;
 
 public class Graph {
 
-    private List edges; // The list of edges.
-    private List nodes; // The list of nodes.
+    private ArrayList edges; // The list of edges.
+    private ArrayList nodes; // The list of nodes.
     private Iterator edgeIterator; // The iterator for the list of edges.
     private Iterator nodeIterator; // The iterator for the list of nodes.
 
@@ -101,6 +100,15 @@ public class Graph {
      */
     public Node getNode(int index) {
 	return (Node) nodes.get(index);
+    }
+
+    /**
+     * Gets an array containing the nodes in this graph.
+     *
+     * @return an array of nodes
+     */
+    public Object[] nodeToArray() {
+	return nodes.toArray();
     }
 
     /**
@@ -261,9 +269,13 @@ public class Graph {
 	// Make sure the node belongs to the graph
 	assert isNodeInGraph(node) : "Node not in graph";
 	assert graph != null: "Graph not defined";
-	for (graph.startNodeIterator();
-	     graph.hasMoreNodes(); ) {
-	    addNode(graph.nextNode());
+	assert ((!isFinalNode(node)) && (!isInitialNode(node)));
+	int nodePosition = nodes.indexOf(node);
+	nodes.remove(nodePosition);
+	int index;
+	for (graph.startNodeIterator(), index = nodePosition;
+	     graph.hasMoreNodes(); index++) {
+	    nodes.add(index, graph.nextNode());
 	}
 	for (graph.startEdgeIterator();
 	     graph.hasMoreEdges(); ) {
@@ -283,8 +295,6 @@ public class Graph {
 	    edge.setSource(finalNode);
 	    finalNode.addOutgoingEdge(edge);
 	}
-	int index = nodes.indexOf(node);
-	nodes.remove(index);
     }
 
     /**
@@ -308,17 +318,27 @@ public class Graph {
 		    passed = false;
 		}
 	    }
+	    for (node.startIncomingEdgeIterator();
+		 node.hasMoreIncomingEdges();) {
+		passed &= edges.contains(node.nextIncomingEdge());
+	    }
 	    if (outgoing < 1) {
 		if (!isFinalNode(node)) {
 		    System.out.println("No outgoing edge: " + node.toString());
 		    passed = false;
 		}
 	    }
+	    for (node.startOutgoingEdgeIterator();
+		 node.hasMoreOutgoingEdges();) {
+		passed &= edges.contains(node.nextOutgoingEdge());
+	    }
 	}
 	for (startEdgeIterator();
 	     hasMoreEdges(); ) {
 	    Edge edge = nextEdge();
 	    passed &= edge.validate();
+	    passed &= nodes.contains(edge.getSource());
+	    passed &= nodes.contains(edge.getDestination());
 	}
 	return passed;
     }
