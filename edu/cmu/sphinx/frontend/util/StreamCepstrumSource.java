@@ -64,7 +64,7 @@ public class StreamCepstrumSource extends BaseDataProcessor {
     /**
      * The default value for PROP_FRAME_SHIFT_MS.
      */
-    public static final float PROP_FRAME_SHIFT_MS_DEFAULT = 10;
+    public static final float PROP_FRAME_SHIFT_MS_DEFAULT = 10.0f;
     /**
      * The sphinx property  specifying the length of the cepstrum data.
      */
@@ -104,8 +104,8 @@ public class StreamCepstrumSource extends BaseDataProcessor {
         super.register(name, registry);
         registry.register(PROP_CEPSTRUM_LENGTH, PropertyType.INT);
         registry.register(PROP_BINARY, PropertyType.BOOLEAN);
-        registry.register(PROP_FRAME_SHIFT_MS, PropertyType.INT);
-        registry.register(PROP_FRAME_SIZE_MS, PropertyType.INT);
+        registry.register(PROP_FRAME_SHIFT_MS, PropertyType.FLOAT);
+        registry.register(PROP_FRAME_SIZE_MS, PropertyType.FLOAT);
         registry.register(PROP_SAMPLE_RATE, PropertyType.INT);
     }
 
