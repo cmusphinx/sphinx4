@@ -164,7 +164,7 @@
         <task id="32" name="Implement" start="20020304T000000" end="20020316T000000" percent-complete="100" note="">
           <predecessors/>
         </task>
-        <task id="33" name="Test and Debug" start="20020304T000000" end="20020413T000000" percent-complete="0" note="">
+        <task id="33" name="Test and Debug" start="20020304T000000" end="20020413T000000" percent-complete="100" note="">
           <predecessors/>
         </task>
       </task>
