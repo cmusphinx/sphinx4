@@ -33,7 +33,8 @@ fi
 #
 scripts="getTime mailReport makeReport parseLog regressionTest\
 	runAllTests runTest s4_align s4_align_sum collectMetrics \
-	getTime makeWebpage pushChanges pushReport whatsNew runQuickTests"
+	getTime makeWebpage pushChanges pushReport whatsNew runQuickTests \
+	cvs_history"
 
 chmod +x $scripts
 
