@@ -23,6 +23,7 @@ class BigramProbability {
     private int probabilityID;
     private int backoffID;
     private int firstTrigramEntry;
+    private int numberTrigramEntries;
     
 
     /**
@@ -32,32 +33,64 @@ class BigramProbability {
      * @param probabilityID the index into the probability array
      * @param backoffID the index into the backoff probability array
      * @param firstTrigramEntry the first trigram entry
+     * @param trigramEntries the number trigram entries for this bigram 
      */
     public BigramProbability(int wordID, int probabilityID, int backoffID,
-                             int firstTrigramEntry) {
+                             int firstTrigramEntry, int trigramEntries) {
         this.wordID = wordID;
         this.probabilityID = probabilityID;
         this.backoffID = backoffID;
         this.firstTrigramEntry = firstTrigramEntry;
+        this.numberTrigramEntries = trigramEntries;
     }
 
 
+    /**
+     * Returns the second word ID of this bigram
+     *
+     * @return the second word ID
+     */ 
     public int getWordID() {
         return wordID;
     }
 
 
+    /**
+     * Returns the bigram probability ID.
+     *
+     * @return the bigram probability ID
+     */
     public int getProbabilityID() {
         return probabilityID;
     }
 
 
+    /**
+     * Returns the backoff weight ID.
+     *
+     * @return the backoff weight ID
+     */
     public int getBackoffID() {
         return backoffID;
     }
 
 
+    /**
+     * Returns the index of the first trigram entry.
+     *
+     * @return the index of the first trigram entry
+     */
     public int getFirstTrigramEntry() {
         return firstTrigramEntry;
+    }
+
+
+    /**
+     * Returns the number of trigram entries this bigram has.
+     *
+     * @return the number of trigram entries this bigram has
+     */
+    public int getNumberTrigramEntries() {
+        return numberTrigramEntries;
     }
 }
