@@ -467,10 +467,12 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
     public Sausage makeSausage() {
         //TODO: this first loop should be taken out as soon as node have
         //proper starting times without it.
+        /*
         Iterator n = lattice.getNodes().iterator();
         while (n.hasNext()) {
             ((Node)n.next()).calculateBeginTime();
         }
+        */
         Vector clusters = new Vector(lattice.getNodes().size());
         Collection nodes = lattice.nodes.values();
         Iterator i = nodes.iterator();
