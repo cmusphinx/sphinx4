@@ -64,11 +64,18 @@ class ClusterComparator implements Comparator {
 
 
 /**
+ * <p>
  * The SausageMaker takes word lattices as input and turns them into sausages 
  * (Confusion Networks) according to Mangu, Brill and Stolcke, "Finding 
  * Consensus in Speech Recognition: word error minimization and other 
- * applicatiosn of confusion networks", Computer Speech and Language, 2000. 
- * 
+ * applications of confusion networks", Computer Speech and Language, 2000.
+ * Note that the <code>getBestHypothesis</code> of the ConfidenceResult
+ * object returned by the {@link #score(Result) score} method
+ * returns the path where all the words have the highest posterior
+ * probability within its corresponding time slot.
+ * </p>
+ *
+ *
  * @author pgorniak
  *
  */

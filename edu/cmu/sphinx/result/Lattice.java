@@ -48,7 +48,7 @@ import edu.cmu.sphinx.util.LogMath;
  * been pruned out.  Lattices are a directed graph containing 
  * {@link edu.cmu.sphinx.result.Node Nodes} and
  * {@link edu.cmu.sphinx.result.Edge Edges}.
- * A Node that correponda to a theory that a word was spoken over a particular
+ * A Node that correponds to a theory that a word was spoken over a particular
  * period of time.  An Edge that corresponds to the score of one word following
  * another.  The usual result transcript is the sequence of Nodes though the
  * Lattice with the best scoring path. Lattices are a useful tool for 
@@ -56,9 +56,23 @@ import edu.cmu.sphinx.util.LogMath;
  * </p>
  * <p>
  * A Lattice can be created from a Result that has a full token tree
- * (with its corresponding AlternativeHypothesisManager), as well as from a 
- * collapsed {@link edu.cmu.sphinx.decoder.search.Token}
- * tree and its AlternativeHypothesisManager. This is what 'collapsed' means.
+ * (with its corresponding AlternativeHypothesisManager).
+ * Currently, only the
+ * {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}
+ * has an AlternativeHypothesisManager. Furthermore, the lattice
+ * construction code currently only works for linguists where the
+ * {@link edu.cmu.sphinx.linguist.WordSearchState} returns false on the
+ * <code>isWordStart</code> method, i.e., where the word states appear
+ * at the end of the word in the linguist. <i>Therefore, lattices should
+ * only be created from Result from the
+ * {@link edu.cmu.sphinx.linguist.lextree.LexTreeLinguist} and the
+ * {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}.
+ * </i>
+ * </p>
+ * <p>
+ * Lattices can also be created from a collapsed
+ * {@link edu.cmu.sphinx.decoder.search.Token} tree and its 
+ * AlternativeHypothesisManager. This is what 'collapsed' means.
  * Normally, between two word tokens is a series of tokens for other types
  * of states, such as unit or HMM states. Using 'W' for word tokens,
  * 'U' for unit tokens, 'H' for HMM tokens, a token chain can look like:
@@ -128,7 +142,7 @@ public class Lattice {
     /**
      * Create an empty Lattice.
      */
-    public Lattice() {
+    protected Lattice() {
         edges = new HashSet();
         nodes = new HashMap();
     }
@@ -136,7 +150,7 @@ public class Lattice {
     /**
      * Create an empty Lattice.
      */
-    public Lattice(LogMath logMath) {
+    protected Lattice(LogMath logMath) {
 	this();
 	this.logMath = logMath;
     }

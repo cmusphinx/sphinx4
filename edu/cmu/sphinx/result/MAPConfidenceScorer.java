@@ -31,6 +31,11 @@ import java.util.LinkedList;
  * Computes confidences for the highest scoring path in a Result.
  * The highest scoring path refers to the path with the maximum
  * a posteriori (MAP) probability, which is why this class is so named.
+ * Note that this MAPConfidenceScorer creates a
+ * {@link edu.cmu.sphinx.result.Lattice} from the result first, which means
+ * that you should only use this confidence scorer if the result is created
+ * from the {@link edu.cmu.sphinx.linguist.lextree.LexTreeLinguist} and the
+ * {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}.
  */
 public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
 

@@ -19,9 +19,13 @@ import java.io.IOException;
 
 
 /**
- * Creates a Lattice from a GDL (AISee) Lattice file.
+ * Creates a Lattice from a GDL (AISee) Lattice file. One can obtain such
+ * a GDL file from a lattice by calling the <code>Lattice.dumpAISee</code>
+ * method.
  */
 public class GDLLatticeFactory {
+
+    private GDLLatticeFactory() {}
 
     /**
      * Create a Lattice from a GDL (AISee) Lattice file.

@@ -20,9 +20,9 @@ import edu.cmu.sphinx.util.LogMath;
 
 
 /**
- * Represents a word in a recognition result
- * 
- * All scores are maintained in LogMath log base
+ * Represents a word in a recognition result. This is designed specifically
+ * for obtaining confidence scores. All scores are maintained in LogMath
+ * log base.
  */
 public interface WordResult {
 

@@ -12,7 +12,42 @@
 package edu.cmu.sphinx.result;
 
 /**
+ * <p>
  * Computes confidences for a Result.
+ * Typically, one is interested in the confidence of the best path
+ * of a result, as well as the confidence of each word in the best path
+ * of a result. To obtain this information, one should do the following:
+ * </p>
+ *
+ * <pre>
+ *
+ * ConfidenceScorer scorer = (ConfidenceScorer) ... // obtain scorer from configuration manager
+ *
+ * Result result = recognizer.recognize();
+ * ConfidenceResult confidenceResult = scorer.score(result);
+ *
+ * // confidence for best path
+ * Path bestPath = confidenceResult.getBestHypothesis();
+ * double pathConfidence = bestPath.getConfidence();
+ *
+ * // confidence for each word in best path
+ * WordResult[] words = bestPath.getWords();
+ * for (int i = 0; i < words.length; i++) {
+ *     WordResult wordResult = (WordResult) words[i];
+ *     double wordConfidence = wordResult.getConfidence();
+ * }
+ *
+ * </pre>
+ *
+ * <p>
+ * Note that different ConfidenceScorers have different definitions for
+ * the 'best path', and therefore their <code>getBestHypothesis</code> methods
+ * will return different things. The
+ * {@link edu.cmu.sphinx.result.MAPConfidenceScorer} returns the highest
+ * scoring path. On the other hand, the
+ * {@link edu.cmu.sphinx.result.SausageMaker} returns the path where
+ * all the words have the highest confidence in their corresponding time slot. 
+ * </p>
  */
 public interface ConfidenceScorer {
 
