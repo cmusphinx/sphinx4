@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+   Sphinx-4 Configuration file
+-->
+
+<!-- ******************************************************** -->
+<!--  tidigits configuration file                             -->
+<!-- ******************************************************** -->
+
+<config>        
+    
+    
+    <!-- ******************************************************** -->
+    <!-- frequently tuned properties                              -->
+    <!-- ******************************************************** --> 
+    
+    <property name="absoluteBeamWidth"         value="2000"/>
+    <property name="relativeBeamWidth"         value="1E-200"/>
+    <property name="wordInsertionProbability"  value="1E-26"/>
+    <property name="languageWeight"            value="8"/>
+    <property name="silenceInsertionProbability" value="1"/>
+    <property name="skip"     value="0"/>
+    
+    
+    <!-- ******************************************************** -->
+    <!-- batch tool configuration                                 -->
+    <!-- ******************************************************** -->   
+    
+    <component name="batch" 
+               type="edu.cmu.sphinx.research.parallel.ParallelBatchRecognizer">
+        <property name="recognizer" value="parallelRecognizer"/>
+        <propertylist name="inputSource">
+	    <item>mfcStreamDataSource</item>
+	    <item>plpStreamDataSource</item>
+	</propertylist>
+        <propertylist name="monitors">
+            <item>accuracyTracker </item>
+            <item>speedTracker </item>
+            <item>memoryTracker </item>
+            <item>recognizerMonitor </item>
+        </propertylist>
+    </component>
+
+    
+    <!-- ******************************************************** -->
+    <!-- The connectedDigitsRecognizer configuration              -->
+    <!-- ******************************************************** --> 
+    
+    <component name="parallelRecognizer" 
+               type="edu.cmu.sphinx.recognizer.Recognizer">
+        <property name="decoder" value="parallelDecoder"/>
+    </component>
+    
+
+    <!-- ******************************************************** -->
+    <!-- The Decoder   configuration                              -->
+    <!-- ******************************************************** --> 
+    
+    <component name="parallelDecoder" type="edu.cmu.sphinx.decoder.Decoder">
+        <property name="searchManager" value="searchManager"/>
+    </component>
+    
+    <component name="searchManager" 
+        type="edu.cmu.sphinx.research.parallel.ParallelSearchManager">
+        <property name="logMath" value="logMath"/>
+        <property name="linguist" value="parallelLinguist"/>
+        <property name="pruner" value="trivialPruner"/>
+        <property name="scorer" value="parallelScorer"/>
+        <property name="activeListFactory" value="activeList"/>
+    </component>
+        
+    <component name="activeList" 
+        type="edu.cmu.sphinx.decoder.search.SortingActiveListFactory">
+        <property name="logMath" value="logMath"/>
+        <property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
+        <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
+    </component>
+    
+    <component name="trivialPruner" 
+               type="edu.cmu.sphinx.decoder.pruner.SimplePruner"/>
+    
+    <component name="parallelScorer" 
+               type="edu.cmu.sphinx.research.parallel.ParallelAcousticScorer">
+        <propertylist name="frontends">
+            <item>mfcFrontEnd</item>
+	    <item>plpFrontEnd</item>
+	</propertylist>
+        <property name="isCpuRelative" value="true"/>
+        <property name="numThreads" value="0"/>
+        <property name="minScoreablesPerThread" value="10"/>
+        <property name="scoreablesKeepFeature" value="true"/>
+    </component>
+    
+
+    <!-- ******************************************************** -->
+    <!-- The linguist  configuration                              -->
+    <!-- ******************************************************** -->
+    
+    <component name="parallelLinguist" 
+                type="edu.cmu.sphinx.research.parallel.ParallelSimpleLinguist">
+        <propertylist name="acousticModels">
+	    <item>mfcAcousticModel</item>
+	    <item>plpAcousticModel</item>
+	</propertylist>
+        <property name="logMath" value="logMath"/>
+        <property name="grammar" value="wordListGrammar"/>
+        <property name="wordInsertionProbability" 
+                  value="${wordInsertionProbability}"/>
+        <property name="silenceInsertionProbability" 
+                  value="${silenceInsertionProbability}"/>
+        <property name="languageWeight" value="${languageWeight}"/>
+    </component>
+    
+
+    <!-- ******************************************************** -->
+    <!-- The Grammar  configuration                               -->
+    <!-- ******************************************************** -->
+    <component name="wordListGrammar" 
+        type="edu.cmu.sphinx.linguist.language.grammar.SimpleWordListGrammar">
+        <property name="path" value="./digits.wordlist"/>
+        <property name="isLooping" value="true"/>
+        <property name="dictionary" value="dictionary"/>
+        <property name="optimizeGrammar" value="true"/>
+        <property name="logMath" value="logMath"/>
+    </component>
+    
+    
+    <!-- ******************************************************** -->
+    <!-- The Dictionary configuration                            -->
+    <!-- ******************************************************** -->
+    
+    <component name="dictionary" 
+        type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
+        <property name="location" 
+                  value="file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
+        <property name="dictionaryPath" value= "dictionary"/>
+        <property name="fillerPath" value="fillerdict"/>
+        <property name="addSilEndingPronunciation" value="false"/>
+    </component>
+
+    
+    <!-- ******************************************************** -->
+    <!-- The acoustic model configuration                         -->
+    <!-- ******************************************************** -->
+
+    <component name="mfcAcousticModel" 
+      type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
+        <property name="loader" value="mfcSphinx3Loader"/>
+    </component>
+
+    <component name="mfcSphinx3Loader" 
+           type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
+        <property name="logMath"          value="logMath"/>
+        <property name="isBinary"         value="false"/>
+        <property name="location" 
+                  value="/lab/speech/sphinx4/data/aurora2_model"/>
+        <property name="definition_file"  value="mfc.500.mdef"/>
+        <property name="data_location"    value="mfc.cd_continuous_8gau"/>
+        <property name="properties_file"  value="mfc.am.props"/>
+    </component>
+
+    <component name="plpAcousticModel" 
+      type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
+        <property name="loader" value="plpSphinx3Loader"/>
+    </component>
+
+    <component name="plpSphinx3Loader" 
+           type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
+        <property name="logMath"          value="logMath"/>
+        <property name="isBinary"         value="false"/>
+        <property name="location" 
+                  value="/lab/speech/sphinx4/data/aurora2_model"/>
+        <property name="definition_file"  value="plp.500.mdef"/>
+        <property name="data_location"    value="plp.cd_continuous_8gau"/>
+        <property name="properties_file"  value="plp.am.props"/>
+    </component>
+    
+    
+    <!-- ******************************************************** -->
+    <!-- MFCC Frontend configuration                              -->
+    <!-- ******************************************************** -->
+    
+    <component name="mfcFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
+        <propertylist name="pipeline">
+            <item>mfcStreamDataSource</item>
+            <item>mfcPremphasizer</item>
+            <item>mfcWindower</item>
+            <item>mfcFft</item>
+            <item>melFilterBank</item>
+            <item>dct</item>
+            <item>mfcBatchCMN</item>
+            <item>mfcFeatureExtraction</item>
+        </propertylist>
+    </component>
+
+    <component name="mfcStreamDataSource" 
+               type="edu.cmu.sphinx.frontend.util.StreamDataSource"/>
+
+    <component name="mfcPremphasizer" 
+               type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
+    
+    <component name="mfcWindower" 
+               type="edu.cmu.sphinx.frontend.window.RaisedCosineWindower"/>
+    
+    <component name="mfcFft" 
+        type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"/>
+    
+    <component name="melFilterBank" 
+        type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank"/>
+        
+    <component name="dct" 
+        type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/>
+
+    <component name="mfcBatchCMN" 
+               type="edu.cmu.sphinx.frontend.feature.BatchCMN"/>
+    
+    <component name="mfcFeatureExtraction" 
+               type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/>
+
+
+    <!-- ******************************************************** -->
+    <!-- PLP Frontend configuration                               -->
+    <!-- ******************************************************** -->
+    
+    <component name="plpFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
+        <propertylist name="pipeline">
+            <item>plpStreamDataSource </item>
+            <item>plpPremphasizer </item>
+            <item>plpWindower </item>
+            <item>plpFft </item>
+            <item>plpFilterBank </item>
+            <item>plpCepstrumProducer </item>
+            <item>plpBatchCMN </item>
+            <item>plpFeatureExtraction </item>
+        </propertylist>
+    </component>
+
+    <component name="plpStreamDataSource" 
+               type="edu.cmu.sphinx.frontend.util.StreamDataSource"/>
+
+    <component name="plpPremphasizer" 
+               type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
+    
+    <component name="plpWindower" 
+               type="edu.cmu.sphinx.frontend.window.RaisedCosineWindower"/>
+    
+    <component name="plpFft" 
+        type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"/>
+    
+    <component name="plpFilterBank"
+        type="edu.cmu.sphinx.frotnend.frequencywarp.PLPFrequencyFilterBank"/>
+
+    <component name="plpCepstrumProducer"
+        type="edu.cmu.sphinx.frotnend.frequencywarp.PLPCepstrumProducer"/>
+    
+    <component name="plpBatchCMN" 
+               type="edu.cmu.sphinx.frontend.feature.BatchCMN"/>
+    
+    <component name="plpFeatureExtraction" 
+               type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/>
+        
+    
+    <!-- ******************************************************* -->
+    <!--  monitors                                               -->
+    <!-- ******************************************************* -->
+    
+    <component name="accuracyTracker" 
+                type="edu.cmu.sphinx.instrumentation.AccuracyTracker">
+        <property name="recognizer" value="connectedDigitsRecognizer"/>
+        <property name="showAlignedResults" value="false"/>
+        <property name="showRawResults" value="false"/>
+    </component>
+    
+    <component name="memoryTracker" 
+                type="edu.cmu.sphinx.instrumentation.MemoryTracker">
+        <property name="recognizer" value="connectedDigitsRecognizer"/>
+    </component>
+    
+    <component name="speedTracker" 
+                type="edu.cmu.sphinx.instrumentation.SpeedTracker">
+        <property name="recognizer" value="connectedDigitsRecognizer"/>
+        <property name="frontend" value="${frontend}"/>
+    </component>
+    
+    <component name="recognizerMonitor" 
+                type="edu.cmu.sphinx.instrumentation.RecognizerMonitor">
+        <property name="recognizer" value="connectedDigitsRecognizer"/>
+        <propertylist name="allocatedMonitors">
+            <item>linguistStats
+            </item>
+        </propertylist>
+    </component>
+    
+    <component name="linguistStats" 
+                type="edu.cmu.sphinx.linguist.util.LinguistStats">
+        <property name="linguist" value="${linguist}"/>
+    </component>
+
+    
+    <!-- ******************************************************* -->
+    <!--  Miscellaneous components                               -->
+    <!-- ******************************************************* -->
+    
+    <component name="logMath" type="edu.cmu.sphinx.util.LogMath">
+        <property name="logBase" value="1.0001"/>
+        <property name="useAddTable" value="true"/>
+    </component>
+    
+</config>
