@@ -17,6 +17,7 @@ import edu.cmu.sphinx.frontend.Cepstrum;
 import edu.cmu.sphinx.frontend.CepstrumSource;
 import edu.cmu.sphinx.frontend.Signal;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -46,7 +47,8 @@ public class SocketCepstrumSource implements CepstrumSource {
      */
     public SocketCepstrumSource(Socket socket) throws IOException {
         inUtterance = false;
-        this.dataReader = new DataInputStream(socket.getInputStream());
+        this.dataReader = new DataInputStream
+            (new BufferedInputStream(socket.getInputStream()));
     }
 
 
@@ -69,7 +71,8 @@ public class SocketCepstrumSource implements CepstrumSource {
                 return (new Cepstrum(Signal.UTTERANCE_START));
             } else {
                 throw new IllegalStateException
-                    ("No UTTERANCE_START read from socket");
+                    ("No UTTERANCE_START read from socket: " + firstValue +
+                     ", while UTTERANCE_START is " + UTTERANCE_START);
             }
         } else {
             if (firstValue == UTTERANCE_END) {
