@@ -139,23 +139,30 @@ public class StreamFactory {
         InputStream stream = null;
 	String absoluteLocation;
 
-	// Create a url from the location, possibly relative path
-	URI uri = URI.create(location);
-	// Get the scheme and the path
-	String scheme = uri.getScheme();
-	String path = uri.getSchemeSpecificPart();
-	// Create a file with the path (aka scheme-specific part)
-	File relativeFile = new File(path);
-	// Make the path absolute and reconstruct the location, with
-	// the correct scheme
-	if (scheme == null) {
-	    absoluteLocation = relativeFile.getAbsolutePath();
+	if (location == null) {
+	    absoluteLocation = null;
 	} else {
-	    absoluteLocation = scheme + ":" + relativeFile.getAbsolutePath();
+	    // Create a url from the location, possibly relative path
+	    URI uri = URI.create(location);
+	    // Get the scheme and the path
+	    String scheme = uri.getScheme();
+	    String path = uri.getSchemeSpecificPart();
+	    // Create a file with the path (aka scheme-specific part)
+	    File relativeFile = new File(path);
+	    // Make the path absolute and reconstruct the location, with
+	    // the correct scheme
+	    URI absoluteURI = relativeFile.getAbsoluteFile().toURI();
+	    if (scheme == null) {
+		absoluteLocation = absoluteURI.getSchemeSpecificPart();
+	    } else {
+		absoluteLocation = scheme + ":" + 
+		    absoluteURI.getSchemeSpecificPart();
+	    }
 	}
 
         if (format.equals(ZIP_FILE)) {
             try {
+		URI newURI = new URI(absoluteLocation);
                 ZipFile zipFile = 
 		    new ZipFile(new File(new URI(absoluteLocation)));
                 ZipEntry entry = zipFile.getEntry(file);
