@@ -121,4 +121,38 @@ NOTE:  Before running the tests, you must have already built
 	    </java>
     </target>
 
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Checks that the posterior scores are computed          * -->
+    <!-- * correctly.                                             * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="posterior_test"
+	    description="Runs the lattice comparison test."
+	    depends="all">
+	    <java classname="tests.result.lattice.PosteriorTest"
+		  fork="true">
+		  <classpath refid="run.classpath"/>
+		  <jvmarg value="-ea"/>
+	    </java>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs the sausage dump test.                            * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="sausage_dump"
+	    description="Runs the sausage dump test."
+	    depends="all">
+	    <java classname="tests.result.lattice.SausageDumpTest"
+		  fork="true">
+		  <classpath refid="run.classpath"/>
+		  <jvmarg value="-ea"/>
+		  <jvmarg value="-mx${maximum_heap_size}"/>
+	    </java>
+    </target>
+
 </project>
