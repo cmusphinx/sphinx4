@@ -530,9 +530,12 @@ jsapi.exe from the lib directory.
 	<delete dir="${build_dir}"/>
 	<delete dir="${javadoc_dir}"/>
 	<delete dir="${bin_dir}"/>
+	<delete dir="${deploy_dir}"/>
 	<delete file="${lib_dir}/sphinx4.jar"/>
 	<delete file="${lib_dir}/${wsj_name}.jar"/>
 	<delete file="${lib_dir}/${tidigits_name}.jar"/>
+	<delete file="${lib_dir}/${tidigits_name}.jar"/>
+	<delete file="tempKeystore"/>
     </target>
 
 
