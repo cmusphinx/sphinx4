@@ -13,11 +13,6 @@
 # "NIST CD-ROM Version of the Texas Instruments-developed 46-Word
 # Speaker-Dependent Isolated Word Speech Database"
 #
-# "tidigits" refers to the:
-#
-# "NIST CD-ROM Version of the Texas Instruments-developed Studio Quality
-# Speaker-Independent Connected-Digit Corpus".
-#
 # Makefile for all the TI46 tests.
 #
 
@@ -31,7 +26,6 @@ FILES = $(shell echo *.java)
 # List any sub directories that need to be built
 SUBDIRS =
 
-# LOGGER_PROPERTIES=tidigits.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
 PROFILE_FLAGS= 
@@ -50,7 +44,14 @@ SKIP=0
 
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 
+#
+# Makes all of the tests
+#
+
 all:: 
+	$(MAKE) ti46_wordlist
+	$(MAKE) ti46_flat_unigram
+	$(MAKE) ti46_flat_unigram_fst
 
 
 #
@@ -105,107 +106,3 @@ ti46_flat_unigram_fst:
 ti46_flat_unigram_fst_quick:
 	$(MAKE) SKIP=5 ti46_flat_unigram_fst
 
-##########################################################################
-#
-#  Older tests, (of historical interest)
-#
-##########################################################################
-
-
-#
-# The full TI46 (isolated digits) test.
-#
-ti46:
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
-	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
-
-
-#
-# The full TI46 (isolated digits) test using the TreeLinguist.
-#
-ti46_tree:
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
-        -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-20\
-	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false \
-	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
-
-
-#
-# A quicker version of the TI46 (isolated digits) test.
-#
-ti46_quick:
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=40\
-	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
-	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
-
-
-#
-# The full TI46 (isolated digits) test, using a looping grammar.
-#
-ti46_multi:
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=true \
-	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
-
-
-#
-# A quicker version of the TI46 (isolated digits) test that uses a
-# looping grammar.
-#
-ti46_multi_quick:
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=40\
-	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=true \
-	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
-
-##########################################################################
-#
-# The TI46 tests that DO NOT use unit context and composite senones.
-#
-##########################################################################
-
-
-#
-# The full TI46 (isolated digits) test.
-#
-ti46_no_context:
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
-	$(NO_CONTEXT_FLAGS) \
-	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
-
-
-#
-# A quicker version of the TI46 (isolated digits) test.
-#
-ti46_quick_no_context:
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=40\
-	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
-	$(NO_CONTEXT_FLAGS) \
-	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
-
-
-#
-# The full TI46 (isolated digits) test, using a looping grammar.
-#
-ti46_multi_no_context:
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=true \
-	$(NO_CONTEXT_FLAGS) \
-	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
-
-
-#
-# A quicker version of the TI46 (isolated digits) test that uses a
-# looping grammar.
-#
-ti46_multi_quick_no_context:
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=40\
-	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=true \
-	$(NO_CONTEXT_FLAGS) \
-	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
