@@ -49,6 +49,8 @@
 
 ./runLiveTest ../performance/tidigits tidigits_wordlist_live_quick  -Dskip=5 tidigits_wordlist_live
 ./runLiveTest ../performance/an4 an4_words_bigram_live
+
+./runRejectionTest ../performance/tidigits tidigits_rejection_quick -Dskip=5 tidigits_rejection
 ./runRejectionTest ../performance/an4 an4_words_rejection
 
 touch ./.testDone
