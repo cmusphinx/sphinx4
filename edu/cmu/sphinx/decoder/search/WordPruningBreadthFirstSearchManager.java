@@ -31,7 +31,13 @@ import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 import edu.cmu.sphinx.decoder.linguist.WordSearchState;
+import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
 import edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist;
+
+import edu.cmu.sphinx.knowledge.acoustic.HMM;
+import edu.cmu.sphinx.knowledge.acoustic.HMMState;
+import edu.cmu.sphinx.knowledge.language.WordSequence;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 
 import java.util.*;
 
@@ -125,9 +131,15 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     private boolean showTokenCount;
     private boolean checkStateOrder;
     private boolean buildWordLattice;
+    private boolean allowSinglePathThroughHMM = false;
+
     private Map bestTokenMap;
     private AlternateHypothesisManager loserManager;
     private Class[] stateOrder;
+
+
+    private boolean wantTokenStacks = false;
+    private int maxTokenHeapSize = 3;
 
 
     /**
@@ -338,12 +350,57 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         moreTokens =  (bestToken != null);
         activeList.setBestToken(bestToken);
 
+        // monitorWords(activeList);
+        // monitorStates(activeList);
+        if (false) {
+            System.out.println("BEST " + bestToken);
+        }
+
 	curTokensScored.value += activeList.size();
 	totalTokensScored.value += activeList.size();
 
 	return moreTokens;
 
     }
+
+
+    /**
+     * Keeps track of and reports all of the active word histories for
+     * the given active list
+     *
+     * @param activeList the activelist to track
+     */
+    private void monitorWords(ActiveList activeList) {
+        WordTracker tracker = new WordTracker(currentFrameNumber);
+
+        for (Iterator i = activeList.iterator(); i.hasNext(); ) {
+            Token t = (Token) i.next();
+            tracker.add(t);
+        }
+        tracker.dump();
+    }
+
+
+    int tokenSum = 0;
+    int count = 0;
+    /**
+     * Keeps track of and reports statistics about the number of
+     * active states
+     *
+     * @param activeList the active list of states
+     */
+    private void monitorStates(ActiveList activeList) {
+
+        tokenSum += activeList.size();
+        count++;
+
+        if ((count % 100) == 0) {
+            System.out.println("Tokens: " + activeList.size() + 
+                " avg " + (tokenSum / count));
+        }
+    }
+
+
 
     /**
      * Removes unpromising branches from the active list
@@ -363,7 +420,26 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      * @return the best token
      */
     protected Token getBestToken(SearchState state) {
-        return (Token) bestTokenMap.get(state);
+        Object key = getStateKey(state);
+
+        if (!wantTokenStacks) {
+            return (Token) bestTokenMap.get(key);
+        } else {
+            // new way... if the heap for this state isn't full return 
+            // null, otherwise return the worst scoring token
+            TokenHeap th = (TokenHeap) bestTokenMap.get(key);
+            Token t;
+
+            if (th == null) {
+                return null;
+            } else if ((t = th.get(state)) != null) {
+                return t;
+            } else if (!th.isFull()) {
+                return null;
+            } else {
+                return th.getSmallest();
+            }
+        }
     }
 
     /**
@@ -376,15 +452,43 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      * @return the previous best token for the given state, or null if
      *    no previous best token
      */
-    protected Token setBestToken(Token token, SearchState state) {
-        return (Token) bestTokenMap.put(state, token);
+    protected void setBestToken(Token token, SearchState state) {
+
+        Object key = getStateKey(state);
+        if (!wantTokenStacks) {
+            bestTokenMap.put(key, token);
+        } else {
+            TokenHeap th = (TokenHeap) bestTokenMap.get(key);
+            if (th == null) {
+                th = new TokenHeap(maxTokenHeapSize);
+                bestTokenMap.put(key, th);
+            }
+            th.add(token);
+        }
     }
 
     protected Token getWordPredecessor(Token token) {
+        if (true) {    // DEBUG: see all predecessors
+            return token; 
+        }
         while (token != null && !token.isWord()) {
             token = token.getPredecessor();
         }
         return token;
+    }
+
+
+    private Object getStateKey(SearchState state) {
+        if (!wantTokenStacks) {
+            return state;
+        } else {
+            if (state.isEmitting()) {
+                return new  SinglePathThroughHMMKey(((HMMSearchState) state));
+                // return ((HMMSearchState) state).getHMMState().getHMM();
+            } else {
+                 return state;
+            }
+        }
     }
 
     /**
@@ -487,6 +591,10 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                 if (firstToken) {
 		    activeBucket.add(newBestToken);
                 } else {
+                    if (false) {
+                        System.out.println("Replacing " + bestToken + " with " 
+                                + newBestToken);
+                    }
 		    activeBucket.replace(bestToken, newBestToken);
 		    if (buildWordLattice && newBestToken.isWord()) {
                         
@@ -679,5 +787,296 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      */
     public StatisticsVariable getTokensCreated() {
         return tokensCreated;
+    }
+}
+
+/**
+ * A 'best token' key. This key will allow hmm states that have
+ * identical word histories and are in the same HMM state to be
+ * treated equivalently. When used as the best token key, only the
+ * best scoring token with a given word history survives per HMM.
+ */
+class SinglePathThroughHMMKey  {
+    private HMMSearchState hmmSearchState;
+
+    public SinglePathThroughHMMKey(HMMSearchState hmmSearchState) {
+        this.hmmSearchState = hmmSearchState;
+    }
+
+    public int hashCode() {
+        return hmmSearchState.getLexState().hashCode() * 13 +
+               hmmSearchState.getWordHistory().hashCode();
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (o instanceof SinglePathThroughHMMKey) {
+            SinglePathThroughHMMKey other = (SinglePathThroughHMMKey) o;
+            boolean equal = hmmSearchState.getLexState().equals(
+                    other.hmmSearchState.getLexState()) &&
+                hmmSearchState.getWordHistory().equals(
+                        other.hmmSearchState.getWordHistory());
+            if (equal && false) {
+                System.out.println("SPTHK A: " + hmmSearchState);
+                System.out.println("SPTHK B: " + other.hmmSearchState);
+            }
+            return equal;
+        }
+        return false;
+    }
+}
+
+
+/**
+ * A quick and dirty token heap that allows us to perform token stack
+ * experiments. It is not very efficient. We will likely replace this
+ * with something better once we figure out how we want to prune
+ * things.
+ */
+class TokenHeap {
+    Token[] tokens;
+    int curSize = 0;
+
+    /**
+     * Creates a token heap with the maximum size
+     *
+     * @param maxSize the maximum size of the heap
+     */
+    TokenHeap(int maxSize) {
+        tokens = new Token[maxSize];
+    }
+
+    /**
+     * Adds a token to the heap
+     *
+     * @param token the token to add
+     */
+    void add(Token token) {
+        // first, if an identical state exists, replace
+        // it.
+
+        if (!tryReplace(token)) {
+            if (curSize < tokens.length) {
+                tokens[curSize++] = token;
+            } else if (token.getScore() > tokens[curSize - 1].getScore()) {
+                tokens[curSize - 1] = token;
+            }
+        }
+        fixupInsert();
+    }
+
+    /**
+     * Returns the smallest scoring token on the heap
+     *
+     * @return the smallest scoring token
+     */
+    Token getSmallest() {
+        if (curSize == 0) {
+            return null;
+        } else {
+            return tokens[curSize - 1];
+        }
+    }
+
+    /**
+     * Determines if the heap is ful
+     *
+     * @return <code>true</code> if the heap is full
+     */
+    boolean isFull() {
+        return curSize == tokens.length;
+    }
+
+    /**
+     * Checks to see if there is already a token t on the heap that
+     * has the same search state. If so, this token replaces that one
+     *
+     * @param t the token to try to add to the heap
+     *
+     * @return <code>true</code> if the token was added
+     */
+    private boolean tryReplace(Token t) {
+        for (int i = 0; i < curSize; i++) {
+            if (t.getSearchState().equals(tokens[i].getSearchState())) {
+                assert t.getScore() > tokens[i].getScore();
+                tokens[i] = t;
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Orders the heap after an insert
+     */
+    private void fixupInsert() {
+        Arrays.sort(tokens, 0, curSize - 1, Token.COMPARATOR);
+    }
+
+    /**
+     * returns a token on the heap that matches the given search state
+     *
+     * @param s the search state
+     *
+     * @return the token that matches, or null
+     */
+    Token  get(SearchState s) {
+        for (int i = 0; i < curSize; i++) {
+            if (tokens[i].getSearchState().equals(s)) {
+                return tokens[i];
+            }
+        }
+        return null;
+    }
+}
+
+
+/**
+ * A class that keeps track of word histories 
+ */
+class WordTracker {
+    Map statMap;
+    int frameNumber;
+    int stateCount;
+    int maxWordHistories;
+
+    /**
+     * Creates a word tracker for the given frame number
+     *
+     * @param frameNumber the frame number
+     */
+    WordTracker(int frameNumber) {
+        statMap = new HashMap();
+        this.frameNumber = frameNumber;
+    }
+
+    /**
+     * Adds a word history for the given token to the word tracker
+     *
+     * @param t the token to add
+     */
+    void add(Token t) {
+        stateCount++;
+        WordSequence ws = getWordSequence(t);
+        WordStats stats = (WordStats) statMap.get(ws);
+        if (stats == null) {
+            stats = new WordStats(ws);
+            statMap.put(ws, stats);
+        }
+        stats.update(t);
+    }
+
+    /**
+     * Dumps the word histories in the tracker
+     */
+    void dump() {
+        dumpSummary();
+        Object[] stats = statMap.values().toArray();
+        Arrays.sort(stats, WordStats.COMPARATOR);
+        for (int i = 0; i < stats.length; i++) {
+            System.out.println("   " + stats[i]);
+        }
+    }
+
+    void prune() {
+        Object[] stats = statMap.values().toArray();
+        Arrays.sort(stats, WordStats.COMPARATOR);
+        for (int i = 0; i < maxWordHistories; i++) {
+            System.out.println("   " + stats[i]);
+        }
+    }
+
+    /**
+     * Dumps summary information in the tracker
+     */
+    void dumpSummary() {
+        System.out.println("Frame: " + frameNumber 
+                + " states: " + stateCount + " histories " + statMap.size());
+    }
+
+    /**
+     * Given a token, gets the word sequence represented by the token
+     *
+     * @param token the token of interest
+     *
+     * @return the word sequence for the token
+     */
+    private WordSequence getWordSequence(Token token) {
+        List wordList = new LinkedList();
+
+        while (token != null) {
+            if (token.isWord()) {
+                WordSearchState wordState =
+                        (WordSearchState) token.getSearchState();
+                Word word = wordState.getPronunciation().getWord();
+                wordList.add(0, word);
+            }
+            token = token.getPredecessor();
+        }
+        return WordSequence.getWordSequence(wordList);
+    }
+}
+
+/**
+ * Keeps track of statistics for a particular word sequence
+ */
+class WordStats {
+    public final static Comparator COMPARATOR = new Comparator() {
+	    public int compare(Object o1, Object o2) {
+		WordStats ws1 = (WordStats) o1;
+		WordStats ws2 = (WordStats) o2;
+
+		if (ws1.maxScore > ws2.maxScore) {
+		    return -1;
+		} else if (ws1.maxScore ==  ws2.maxScore) {
+		    return 0;
+		} else {
+		    return 1;
+		}
+	    }
+	};
+
+    int size;
+    float maxScore;
+    float minScore;
+    WordSequence ws;
+
+    /**
+     * Creates a word stat for the given sequence
+     *
+     * @param ws the word sequence
+     */
+    WordStats(WordSequence ws) {
+        size = 0;
+        maxScore = -Float.MAX_VALUE;
+        minScore = Float.MAX_VALUE;
+        this.ws = ws;
+    }
+
+    /**
+     * Updates the stats based upon the scores for the given token
+     *
+     * @param t the token
+     */
+    void update(Token t) {
+        size++;
+        if (t.getScore() > maxScore) {
+            maxScore = t.getScore();
+        }
+        if (t.getScore() < minScore) {
+            minScore = t.getScore();
+        }
+    }
+
+    /**
+     * Returns a string representation of the stats
+     *
+     * @return a string representation
+     */
+    public String toString() {
+        return "states:" + size + " max:" + maxScore + " min:" + minScore +
+            " " + ws;
     }
 }
