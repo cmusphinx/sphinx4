@@ -1,0 +1,118 @@
+This document records the various Sphinx 4/TI46 accuracy results by changing
+the word insertion penalty. This uses the multi-digit grammar.
+
+
+WIP = (1 - 0.0000001^20)
+========================
+
+# ------------- Summary statistics ----------- 
+   Accuracy: %99.4    Errors: 14  (Rec: 14  Ins: 0  Del: 0)
+   Words: 2382   Matches: 2368
+   Sentences: 2382   Matches: 2368   SentenceAcc: %99.4
+   Total Time Audio: 2571.90s  Proc: 724.33s  Speed: 0.28 X real time
+   Mem Total: 17.04 Mb Free: 5.34 Mb Used: 11.70 Mb
+
+
+WIP = (1 - 0.0000001^10)
+=======================
+
+ ------------- Summary statistics ----------- 
+   Accuracy: %99.4    Errors: 14  (Rec: 14  Ins: 0  Del: 0)
+   Words: 2382   Matches: 2368
+   Sentences: 2382   Matches: 2368   SentenceAcc: %99.4
+   Total Time Audio: 2571.90s  Proc: 920.87s  Speed: 0.36 X real time
+   Mem Total: 17.43 Mb Free: 7.67 Mb Used: 9.76 Mb
+
+
+WIP = (1 - 0.0000001^9)
+=======================
+
+# ------------- Summary statistics ----------- 
+   Accuracy: %99.4    Errors: 15  (Rec: 14  Ins: 1  Del: 0)
+   Words: 2382   Matches: 2368
+   Sentences: 2382   Matches: 2367   SentenceAcc: %99.4
+   Total Time Audio: 2571.90s  Proc: 893.84s  Speed: 0.35 X real time
+   Mem Total: 17.03 Mb Free: 8.14 Mb Used: 8.89 Mb
+
+
+WIP = (1 - 0.0000001^8)
+=======================
+
+# ------------- Summary statistics ----------- 
+   Accuracy: %99.4    Errors: 17  (Rec: 14  Ins: 3  Del: 0)
+   Words: 2382   Matches: 2368
+   Sentences: 2382   Matches: 2365   SentenceAcc: %99.3
+   Total Time Audio: 2571.90s  Proc: 1401.55s  Speed: 0.54 X real time
+   Mem Total: 17.77 Mb Free: 10.53 Mb Used: 7.25 Mb
+
+
+WIP = (1 - 0.0000001^7)
+=======================
+
+# ------------- Summary statistics ----------- 
+   Accuracy: %99.4    Errors: 17  (Rec: 14  Ins: 3  Del: 0)
+   Words: 2382   Matches: 2368
+   Sentences: 2382   Matches: 2365   SentenceAcc: %99.3
+   Total Time Audio: 2571.90s  Proc: 652.82s  Speed: 0.25 X real time
+   Mem Total: 17.30 Mb Free: 6.38 Mb Used: 10.91 Mb
+
+WIP = (1 - 0.0000001^6)
+=======================
+
+# ------------- Summary statistics ----------- 
+   Accuracy: %99.4    Errors: 17  (Rec: 14  Ins: 3  Del: 0)
+   Words: 2382   Matches: 2368
+   Sentences: 2382   Matches: 2365   SentenceAcc: %99.3
+   Total Time Audio: 2571.90s  Proc: 656.70s  Speed: 0.26 X real time
+   Mem Total: 18.03 Mb Free: 3.65 Mb Used: 14.38 Mb
+
+WIP = (1 - 0.0000001^5)
+=======================
+
+# ------------- Summary statistics ----------- 
+   Accuracy: %99.4    Errors: 20  (Rec: 14  Ins: 6  Del: 0)
+   Words: 2382   Matches: 2368
+   Sentences: 2382   Matches: 2362   SentenceAcc: %99.2
+   Total Time Audio: 2571.90s  Proc: 643.40s  Speed: 0.25 X real time
+   Mem Total: 17.78 Mb Free: 8.89 Mb Used: 8.89 Mb
+
+WIP = (1 - 0.0000001^4)
+=======================
+
+# ------------- Summary statistics ----------- 
+   Accuracy: %99.4    Errors: 22  (Rec: 14  Ins: 8  Del: 0)
+   Words: 2382   Matches: 2368
+   Sentences: 2382   Matches: 2360   SentenceAcc: %99.1
+   Total Time Audio: 2571.90s  Proc: 657.39s  Speed: 0.26 X real time
+   Mem Total: 18.75 Mb Free: 3.06 Mb Used: 15.69 Mb
+
+WIP = (1 - 0.0000001^3)
+=======================
+
+# ------------- Summary statistics ----------- 
+   Accuracy: %99.5    Errors: 29  (Rec: 13  Ins: 16  Del: 0)
+   Words: 2382   Matches: 2369
+   Sentences: 2382   Matches: 2353   SentenceAcc: %98.8
+   Total Time Audio: 2571.90s  Proc: 654.89s  Speed: 0.25 X real time
+   Mem Total: 18.43 Mb Free: 6.54 Mb Used: 11.89 Mb
+
+WIP = (1 - 0.0000001^2)
+=======================
+
+# ------------- Summary statistics ----------- 
+   Accuracy: %99.5    Errors: 40  (Rec: 12  Ins: 28  Del: 0)
+   Words: 2382   Matches: 2370
+   Sentences: 2382   Matches: 2342   SentenceAcc: %98.3
+   Total Time Audio: 2571.90s  Proc: 712.75s  Speed: 0.28 X real time
+   Mem Total: 17.45 Mb Free: 10.70 Mb Used: 6.76 Mb
+
+
+WIP = (1 - 0.0000001)
+=======================
+
+# ------------- Summary statistics ----------- 
+   Accuracy: %99.5    Errors: 86  (Rec: 12  Ins: 74  Del: 0)
+   Words: 2382   Matches: 2370
+   Sentences: 2382   Matches: 2301   SentenceAcc: %96.6
+   Total Time Audio: 2571.90s  Proc: 1253.11s  Speed: 0.49 X real time
+   Mem Total: 17.27 Mb Free: 5.65 Mb Used: 11.62 Mb

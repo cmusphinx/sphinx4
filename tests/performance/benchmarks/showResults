@@ -1,0 +1,178 @@
+
+#
+# [[[copyright]]]
+#
+# A program that processes a sphinx3/sphinx4 results.txt file
+# and generates summary information in a web table.
+# The showResults program usage is as follows:
+#
+# showResults system program test result.txt
+# 
+# where 
+# 	system 		is the system name (like argus or mangueira)
+#       program  	is either sphinx3 or sphinx4
+#       test  		is the test name (like ti46 or ti46_quick)
+#	result.txt	is the name of the results file to process
+#
+#  if system, program or test is 'any' then these will match on
+#  anything.
+#
+#  Some examples:
+#
+#    showResults argus sphinx4 any results.txt  > results1.html
+#    showResults any any ti46_quick results.txt  > results2.html
+#    showResults  any sphinx4 ti46 results.txt > results3.html
+#
+#
+
+nawk '
+BEGIN {
+   if (ARGC != 5) {
+       print "Usage: showResults system program test file" > "/dev/stderr"
+       print "Example: showResults argus sphinx4 ti46 results.txt" > "/dev/stderr"
+       print "Example: showResults any any any results.txt" > "/dev/stderr"
+       exit(0);
+   } else {
+# system 	argus   2 	4096 	360 	512 	sparcv9 	solaris  
+      targetSystemName = ARGV[1];
+      targetProgramName = ARGV[2];
+      targetTestName = ARGV[3];
+      ARGV[1] = "";
+      ARGV[2] = "";
+      ARGV[3] = "";
+   }
+   state = 0;
+
+   printFooter = 1;
+   print "<html>"
+   print "<table border=1>"
+    print "<tr>"
+    print "<th>", "Date", "</th>"
+    print "<th>", "System", "</th>"
+    print "<th>", "Program", "</th>"
+    print "<th>", "Test", "</th>"
+    print "<th>", "Accuracy", "</th>"
+    print "<th>", "Sentence Accuracy", "</th>"
+    print "<th>",  "Proc Time", "</th>"
+    print "<th>",  " X RealTime", "</th>"
+    print "<th>",  "Comment", "</th>"
+    print "</tr>"
+}
+
+
+$1 == "system" {
+     cpus[$2]  = $3;
+     cache[$2]  = $4;
+     clock[$2]  = $5;
+     memory[$2]  = $6;
+     arch[$2]  = $7;
+     os[$2]  = $8;
+}
+
+# Gets a one liner system description
+
+function getSystemDescription(name) {
+   return "<b>"name "</b>: " cpus[name] "-" clock[name] "MHz "  \
+	os[name] "/"arch[name] " w/ " memory[name]  "MB"
+}
+
+$1 == "Date:" {
+    date = $2;
+}
+
+state == 0 && $1 == "SystemName:" {
+    comment = "";
+    sentenceAccuracy = "n/a";
+    if (targetSystemName == "any" || $2 == targetSystemName) {
+	systemName = $2;
+	state = 1;
+    } else {
+	state = 0;
+    }
+}
+
+
+state == 1 && $1 == "Program:" {
+    if (targetProgramName == "any" || $2 == targetProgramName) {
+	state = 2;
+	programName = $2;
+    } else {
+	state = 0;
+    }
+}
+
+state == 2 && $1 == "Test:" {
+    if (targetTestName == "any"  || $2 == targetTestName) {
+	state = 3;
+	testName = $2;
+    } else {
+	state = 0;
+    }
+}
+
+
+state == 3 {
+    # printf("First is [%s]\n", $1); 
+}
+state == 3 && $1 == "Accuracy:"  {
+   accuracy = $2;
+   # print "acc " , accuracy;
+}
+
+state == 3 && $5 == "SentenceAcc:"  {
+   sentenceAccuracy = $6;
+   # print "acc " , accuracy;
+}
+
+state == 3 && $5 == "Proc:"  {
+   procTime = $6;
+   speed = $8;
+   # print "speed " , speed;
+}
+
+state == 4 && $1 != "-" {
+    dumpRecord();
+}
+
+(state == 3 || state == 4) && $1 == "-"  {
+   $1 = "";
+   comment = comment " " $0;
+   state = 4;
+   # print "com " , comment;
+}
+
+function dumpRecord() {
+    dataFound = 1;
+    print "<tr>"
+    print "<td>", date, "</td>"
+    print "<td>", getSystemDescription(systemName), "</td>"
+    if (programName == "sphinx4") {
+	print "<td> <font color=#lcdd8c>", programName, "</font></td>"
+    } else {
+	print "<td>", programName, "</td>"
+    }
+    print "<td>", testName, "</td>"
+    print "<td>", accuracy, "</td>"
+    print "<td>", sentenceAccuracy, "</td>"
+    print "<td>", procTime, "</td>"
+    print "<td>", speed, "</td>"
+    print "<td>", comment, "</td>"
+    print "</tr>"
+    state = 0;
+}
+
+END {
+    if (state == 4) {
+        dumpRecord();
+    }
+    if (dataFound != 1) {
+	printf("<tr><td colspan=9>No data found for test %s on system %s\n",
+	targetTestName, targetSystemName);
+    }
+    if (printFooter) {
+	print "</table>"
+	print "</html>"
+    }
+}
+
+' $*

@@ -1,0 +1,155 @@
+This document records the various Sphinx 3 accuracy results by changing
+the word insertion penalty.
+
+WIP = 0.00000000000001
+======================
+
+# ------------- Summary statistics -----------
+   Accuracy: %98.7   Errors: 74  (Rec: 40  Ins: 1  Del: 33)
+   Words: 5762   Matches: 5689
+   Sentences: 1740   Matches: 1673   SentenceAcc: %96.1
+   Total Timing Audio: 3103.2s  Proc: 401.2s  Speed: 0.13 X real time
+   Memory usage data unavailable
+
+WIP = 0.000001
+==============
+
+# ------------- Summary statistics -----------
+   Accuracy: %98.9   Errors: 70  (Rec: 39  Ins: 6  Del: 25)
+   Words: 5762   Matches: 5698
+   Sentences: 1740   Matches: 1677   SentenceAcc: %96.4
+   Total Timing Audio: 3103.2s  Proc: 725.0s  Speed: 0.23 X real time
+   Memory usage data unavailable
+
+WIP = 0.005
+===========
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 65  (Rec: 38  Ins: 8  Del: 19)
+   Words: 5762   Matches: 5705
+   Sentences: 1740   Matches: 1681   SentenceAcc: %96.6
+   Total Timing Audio: 3103.2s  Proc: 555.6s  Speed: 0.18 X real time
+   Memory usage data unavailable
+
+WIP = 0.01
+==========
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 65  (Rec: 38  Ins: 8  Del: 19)
+   Words: 5762   Matches: 5705
+   Sentences: 1740   Matches: 1681   SentenceAcc: %96.6
+   Total Timing Audio: 3103.2s  Proc: 423.3s  Speed: 0.14 X real time
+   Memory usage data unavailable
+
+WIP = 0.1
+=========
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 64  (Rec: 38  Ins: 8  Del: 18)
+   Words: 5762   Matches: 5706
+   Sentences: 1740   Matches: 1682   SentenceAcc: %96.7
+   Total Timing Audio: 3103.2s  Proc: 424.5s  Speed: 0.14 X real time
+   Memory usage data unavailable
+
+
+WIP = 0.2
+=========
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 65  (Rec: 38  Ins: 9  Del: 18)
+   Words: 5762   Matches: 5706
+   Sentences: 1740   Matches: 1682   SentenceAcc: %96.7
+   Total Timing Audio: 3103.2s  Proc: 425.5s  Speed: 0.14 X real time
+   Memory usage data unavailable
+
+WIP = 0.3
+=========
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 65  (Rec: 38  Ins: 9  Del: 18)
+   Words: 5762   Matches: 5706
+   Sentences: 1740   Matches: 1682   SentenceAcc: %96.7
+   Total Timing Audio: 3103.2s  Proc: 428.0s  Speed: 0.14 X real time
+   Memory usage data unavailable
+
+WIP = 0.4
+=========
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 65  (Rec: 38  Ins: 9  Del: 18)
+   Words: 5762   Matches: 5706
+   Sentences: 1740   Matches: 1682   SentenceAcc: %96.7
+   Total Timing Audio: 3103.2s  Proc: 734.0s  Speed: 0.24 X real time
+   Memory usage data unavailable
+
+WIP = 0.5
+=========
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 65  (Rec: 38  Ins: 9  Del: 18)
+   Words: 5762   Matches: 5706
+   Sentences: 1740   Matches: 1682   SentenceAcc: %96.7
+   Total Timing Audio: 3103.2s  Proc: 425.9s  Speed: 0.14 X real time
+   Memory usage data unavailable
+
+WIP = 0.6
+=========
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 65  (Rec: 38  Ins: 9  Del: 18)
+   Words: 5762   Matches: 5706
+   Sentences: 1740   Matches: 1682   SentenceAcc: %96.7
+   Total Timing Audio: 3103.2s  Proc: 437.5s  Speed: 0.14 X real time
+   Memory usage data unavailable
+
+WIP = 0.7
+=========
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 65  (Rec: 38  Ins: 9  Del: 18)
+   Words: 5762   Matches: 5706
+   Sentences: 1740   Matches: 1682   SentenceAcc: %96.7
+   Total Timing Audio: 3103.2s  Proc: 736.0s  Speed: 0.24 X real time
+   Memory usage data unavailable
+
+WIP = 0.8
+=========
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 65  (Rec: 38  Ins: 9  Del: 18)
+   Words: 5762   Matches: 5706
+   Sentences: 1740   Matches: 1682   SentenceAcc: %96.7
+   Total Timing Audio: 3103.2s  Proc: 567.8s  Speed: 0.18 X real time
+   Memory usage data unavailable
+
+
+WIP = 0.9
+=========
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 65  (Rec: 38  Ins: 9  Del: 18)
+   Words: 5762   Matches: 5706
+   Sentences: 1740   Matches: 1682   SentenceAcc: %96.7
+   Total Timing Audio: 3103.2s  Proc: 576.9s  Speed: 0.19 X real time
+   Memory usage data unavailable
+
+WIP = 0.9999999
+===============
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 65  (Rec: 38  Ins: 9  Del: 18)
+   Words: 5762   Matches: 5706
+   Sentences: 1740   Matches: 1682   SentenceAcc: %96.7
+   Total Timing Audio: 3103.2s  Proc: 731.4s  Speed: 0.24 X real time
+   Memory usage data unavailable
+
+WIP = 100.0
+===========
+
+# ------------- Summary statistics -----------
+   Accuracy: %99.0   Errors: 68  (Rec: 39  Ins: 11  Del: 18)
+   Words: 5762   Matches: 5705
+   Sentences: 1740   Matches: 1680   SentenceAcc: %96.6
+   Total Timing Audio: 3103.2s  Proc: 578.7s  Speed: 0.19 X real time
+   Memory usage data unavailable
+
