@@ -30,9 +30,9 @@ import java.util.Vector;
  * FeatureFrame. This is a 1-to-1 processor.
  *
  * <p>The Sphinx properties that affect this processor are: <pre>
- * edu.cmu.sphinx.frontend.featureExtractor.featureLength
- * edu.cmu.sphinx.frontend.featureExtractor.windowSize
- * edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize
+ * edu.cmu.sphinx.frontend.FeatureExtractor.featureLength
+ * edu.cmu.sphinx.frontend.FeatureExtractor.windowSize
+ * edu.cmu.sphinx.frontend.FeatureExtractor.cepstraBufferSize
  * </pre>
  *
  * @see Cepstrum

@@ -53,7 +53,7 @@ import java.util.*;
  *
  * <p>The second case is a little more complicated. If the SphinxProperty
  * <pre>
- * edu.cmu.sphinx.frontend.NonSpeechFilter.mergeSpeechSegments </pre>
+ * edu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments </pre>
  * is set to true (the default),
  * all the Cepstra from the first SPEECH_START to the last SPEECH_END
  * will be considered as one Utterance, and enclosed by a pair of

@@ -44,9 +44,6 @@ import java.util.ListIterator;
  * W(n) = (1-a) - (a * cos((2*Math.PI*n)/(N - 1))) </pre> where:
  * <br><b>a</b> is commonly known as the "alpha" value, it defaults to 0.46,
  * the value for the HammingWindow, which is commonly used.
- *
- * <p>The Sphinx property that affects this processor is: <pre>
- * edu.cmu.sphinx.frontend.windower.alpha
  * </pre>
  *
  * @see Audio

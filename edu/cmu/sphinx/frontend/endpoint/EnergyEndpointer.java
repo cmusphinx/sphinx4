@@ -38,19 +38,19 @@ import java.util.*;
  *
  * This endpointer maintains several configurable parameters:
  * <pre>
- * edu.cmu.sphinx.frontend.EnergyEndpointer.startLow
- * edu.cmu.sphinx.frontend.EnergyEndpointer.startHigh
- * edu.cmu.sphinx.frontend.EnergyEndpointer.endLow
+ * edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow
+ * edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh
+ * edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow
  * </pre>
  *
  * The above parameters are usually set by the user.
  * <pre>
- * edu.cmu.sphinx.frontend.EnergyEndpointer.startWindow
- * edu.cmu.sphinx.frontend.EnergyEndpointer.startOffset
- * edu.cmu.sphinx.frontend.EnergyEndpointer.endWindow
- * edu.cmu.sphinx.frontend.EnergyEndpointer.endOffset
+ * edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow
+ * edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startOffset
+ * edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow
+ * edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endOffset
  *
- * edu.cmu.sphinx.frontend.EnergyEndpointer.maxDropout
+ * edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.maxDropout
  * </pre>
  * When the energy level is above <code>startHigh</code> for
  * <code>startWindow</code> number of frames, then speech has started.
