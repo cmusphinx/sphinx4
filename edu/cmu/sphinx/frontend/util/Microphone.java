@@ -189,7 +189,11 @@ public class Microphone extends DataProcessor implements AudioSource {
      */
 
     class RecordingThread extends Thread {
-        
+
+        public RecordingThread(String name) {
+            super(name);
+        }
+
         /**
          * Implements the run() method of the Thread class.
          * Records audio, and cache them in the audio buffer.
@@ -311,7 +315,7 @@ public class Microphone extends DataProcessor implements AudioSource {
         if (open()) {
 	//System.out.println("SR:setRecording");
             setRecording(true);
-            RecordingThread recorder = new RecordingThread();
+            RecordingThread recorder = new RecordingThread("Microphone");
 	//System.out.println("SR:start");
             recorder.start();
             while (!getStarted()) {
