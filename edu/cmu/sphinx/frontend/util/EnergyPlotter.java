@@ -14,7 +14,8 @@
 
 package edu.cmu.sphinx.frontend.util;
 
-import edu.cmu.sphinx.frontend.Cepstrum;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.Signal;
 
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -23,10 +24,12 @@ import java.util.Arrays;
 
 
 /**
- * Plots positive energy values of Cepstrum to stdout. 
+ * Plots positive energy values of a cepstrum to stdout.
+ * The energy value is assumed to be the first element of the 
+ * double array returned by <code>Data.getValues()</code>. 
  * For negative energy value, a "-" will be printed out.
- * The plots look like the following, one line per Cepstrum. The
- * energy value for that particular Cepstrum is printed at the end of
+ * The plots look like the following, one line per cepstrum. The
+ * energy value for that particular cepstrum is printed at the end of
  * the line.
  * <p>
  * <code>
@@ -145,10 +148,10 @@ public class EnergyPlotter {
      *
      * @param cepstrum the Cepstrum to plot
      */
-    public void plot(Cepstrum cepstrum) {
+    public void plot(Data cepstrum) {
         if (cepstrum != null) {
-            if (cepstrum.hasContent()) {
-                int energy = (int) cepstrum.getEnergy();
+            if (cepstrum instanceof DoubleData) {
+                int energy = (int) ((DoubleData) cepstrum).getValues()[0];
                 System.out.println(getPlot(energy));
             } else {
                 System.out.println(cepstrum.toString());

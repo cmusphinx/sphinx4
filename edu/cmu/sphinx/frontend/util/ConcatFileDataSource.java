@@ -12,9 +12,12 @@
  */
 package edu.cmu.sphinx.frontend.util;
 
-import edu.cmu.sphinx.frontend.Audio;
-import edu.cmu.sphinx.frontend.AudioSource;
-import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.BaseDataProcessor;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataProcessingException;
+import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.FrontEndFactory;
+import edu.cmu.sphinx.frontend.Signal;
 
 import edu.cmu.sphinx.util.BatchFile;
 import edu.cmu.sphinx.util.ReferenceSource;
@@ -35,17 +38,17 @@ import java.util.Random;
 
 
 /**
- * An AudioSource that concatenates a list of audio files as one continuous
+ * Concatenates a list of audio files as one continuous
  * audio InputStream. An UTTERANCE_START will be placed before
  * the start of the first file, and an UTTERANCE_END after the last file.
  * No UTTERANCE_STARTs or UTTERANCE_ENDs will be placed between them. 
  * Optionally, silence can be added in-between the audio files by setting
  * the property:
- * <pre>edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile</pre>
+ * <pre>edu.cmu.sphinx.frontend.util.ConcatFileDataSource.silenceFile</pre>
  * to a audio file for silence. By default, no silence is added.
  * Moreover, one can also specify how many files to skip for every file read.
  * <p>
- * The constructor of ConcatFileAudioSource takes the name of a transcript
+ * The constructor of ConcatFileDataSource takes the name of a transcript
  * file, in HUB-4 style. This is the file to write the transcription to.
  * A sample HUB-4 transcript looks like:
  * <pre>
@@ -81,19 +84,20 @@ import java.util.Random;
  * <br>transcript is "Tonight this Thursday big pressure on the Clinton 
  * administration to do something about the latest killing in Yugoslavia
  * <p>
- * The ConcatFileAudioSource will produce such a transcript if the name
+ * The ConcatFileDataSource will produce such a transcript if the name
  * of the file to write to is supplied in the constructor. This transcript
  * file will be used in detected gap insertion errors, because it accurately
  * describes the "correct" sequence of speech and silences in the 
  * concatenated version of the audio files.
  */
-public class ConcatFileAudioSource implements AudioSource, ReferenceSource {
+public class ConcatFileDataSource extends BaseDataProcessor
+    implements ReferenceSource {
 
     /**
      * The prefix for the SphinxProperties in this class.
      */
     public static final String PROP_PREFIX =
-        "edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.";
+        "edu.cmu.sphinx.frontend.util.ConcatFileDataSource.";
 
     /**
      * The SphinxProperty that specifies which file to start at.
@@ -182,8 +186,32 @@ public class ConcatFileAudioSource implements AudioSource, ReferenceSource {
      */
     public static final String PROP_TRANSCRIPT_FILE_DEFAULT = null;
 
+    /**
+     * SphinxProperty for the file containing a list of audio files 
+     * to read from.
+     */
+    public static final String PROP_BATCH_FILE =
+        PROP_PREFIX + "batchFile";
+
+    /**
+     * The default value of PROP_BATCH_FILE.
+     */
+    public static final String PROP_BATCH_FILE_DEFAULT = null;
+
+    /**
+     * SphinxProperty for the number of bits per value.
+     */
+    public static final String PROP_BITS_PER_SAMPLE =
+        PROP_PREFIX + "bitsPerSample";
+
+    /**
+     * Default value for PROP_BITS_PER_SAMPLE.
+     */
+    public static final int PROP_BITS_PER_SAMPLE_DEFAULT = 16;
+
 
     private static final String GAP_LABEL = "inter_segment_gap";
+
 
 
     private boolean addRandomSilence;
@@ -198,78 +226,94 @@ public class ConcatFileAudioSource implements AudioSource, ReferenceSource {
     private String nextFile = null;
     private String context;
     private String transcriptFile;
-    private StreamAudioSource streamAudioSource;
+    private StreamDataSource streamDataSource;
     private List referenceList;
     private FileWriter transcript;
 
 
     /**
-     * Constructs a ConcatFileAudioSource.
+     * Initializes a ConcatFileDataSource.
      *
-     * @param name the name of this ConcatFileAudioSource
-     * @param context the context used
-     * @param props the SphinxProperties to use
-     * @param batchFile the file containing a list of audio files to read from
-     * @param transcriptFile the file to write the transcription to
-     *
-     * @throws IOException if an I/O error occurs
+     * @param name         the name of this ConcatFileDataSource
+     * @param frontEnd     the front end this ConcatFileDataSource belongs
+     * @param props        the SphinxProperties to use
+     * @param predecessor  the DataProcessor to read Data from, usually
+     *                     null for the ConcatFileDataSource
      */
-    public ConcatFileAudioSource(String name, String context,
-                                 SphinxProperties props,
-                                 String batchFile, String transcriptFile)
-        throws IOException {
+    public void initialize(String name, String frontEnd,
+                           SphinxProperties props, DataProcessor predecessor) {
+        super.initialize(name, frontEnd, props, predecessor);
 
-        this.context = context;
+        int sampleRate = props.getInt
+            (getFullPropertyName(FrontEndFactory.PROP_SAMPLE_RATE),
+             FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
 
-        if (transcriptFile != null) {
-            transcript = new FileWriter(transcriptFile);
-        }
-
-        int sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE,
-                                      FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
         int bitsPerSample = props.getInt
-            (FrontEnd.PROP_BITS_PER_SAMPLE,
-             FrontEnd.PROP_BITS_PER_SAMPLE_DEFAULT);
+            (getFullPropertyName(PROP_BITS_PER_SAMPLE),
+             PROP_BITS_PER_SAMPLE_DEFAULT);
         
         bytesPerSecond = sampleRate * (bitsPerSample / 8);
 
         addRandomSilence = props.getBoolean
-            (PROP_ADD_RANDOM_SILENCE, PROP_ADD_RANDOM_SILENCE_DEFAULT);
-        maxSilence = props.getInt(PROP_MAX_SILENCE, PROP_MAX_SILENCE_DEFAULT);
-        skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
-        silenceFileName = 
-            props.getString(PROP_SILENCE_FILE, PROP_SILENCE_FILE_DEFAULT);
+            (getFullPropertyName(PROP_ADD_RANDOM_SILENCE),
+             PROP_ADD_RANDOM_SILENCE_DEFAULT);
+        
+        maxSilence = props.getInt
+            (getFullPropertyName(PROP_MAX_SILENCE), PROP_MAX_SILENCE_DEFAULT);
+        
+        skip = props.getInt
+            (getFullPropertyName(PROP_SKIP), PROP_SKIP_DEFAULT);
+        
+        silenceFileName = props.getString
+            (getFullPropertyName(PROP_SILENCE_FILE),
+             PROP_SILENCE_FILE_DEFAULT);
         
         File silenceFile = new File(silenceFileName);
         silenceFileLength = silenceFile.length();
 
-        int startFile = props.getInt(PROP_START_FILE, 
+        int startFile = props.getInt(getFullPropertyName(PROP_START_FILE), 
                                      PROP_START_FILE_DEFAULT);
-        int totalFiles = props.getInt(PROP_TOTAL_FILES, 
+
+        int totalFiles = props.getInt(getFullPropertyName(PROP_TOTAL_FILES), 
                                       PROP_TOTAL_FILES_DEFAULT);
 
-        if (batchFile == null) {
-            throw new Error("BatchFile cannot be null!");
+        transcriptFile = props.getString
+            (getFullPropertyName(PROP_TRANSCRIPT_FILE),
+             PROP_TRANSCRIPT_FILE_DEFAULT);
+
+        String batchFile = props.getString
+            (getFullPropertyName(PROP_BATCH_FILE), PROP_BATCH_FILE_DEFAULT);
+        
+        try {
+            if (transcriptFile != null) {
+                transcript = new FileWriter(transcriptFile);
+            }
+            if (batchFile == null) {
+                throw new Error("BatchFile cannot be null!");
+            }
+            streamDataSource = new StreamDataSource();
+            streamDataSource.initialize
+                ("StreamDataSource", frontEnd, props, null);
+            streamDataSource.setInputStream
+                (new SequenceInputStream
+                 (new InputStreamEnumeration
+                  (batchFile, startFile, totalFiles)), batchFile);
+            referenceList = new LinkedList();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
-        streamAudioSource = new StreamAudioSource
-            ("StreamAudioSource", context,
-             new SequenceInputStream
-             (new InputStreamEnumeration(batchFile, startFile, totalFiles)),
-             batchFile);
-        referenceList = new LinkedList();
     }
 
     /**
-     * Returns the next Audio object.
+     * Returns the next Data object.
      * Returns null if all the audio data in all the files have been read.
      *
-     * @return the next Audio or <code>null</code> if no more is
-     *     available
+     * @return the next Data or <code>null</code> if no more is available
      *
-     * @throws java.io.IOException
+     * @throws DataProcessingException if a data processing error occurs
      */
-    public Audio getAudio() throws IOException {
-        return streamAudioSource.getAudio();
+    public Data getData() throws DataProcessingException {
+        return streamDataSource.getData();
     }
 
     /**
@@ -280,6 +324,15 @@ public class ConcatFileAudioSource implements AudioSource, ReferenceSource {
      */
     public List getReferences() {
         return referenceList;
+    }
+
+    /**
+     * Returns the name of the transcript file.
+     *
+     * @return the name of the transcript file
+     */
+    public String getTranscriptFile() {
+        return transcriptFile;
     }
 
     /**
@@ -380,7 +433,7 @@ public class ConcatFileAudioSource implements AudioSource, ReferenceSource {
          */
         public String readNext() {
             if (!inSilence) {
-                return readNextAudioFile();       
+                return readNextDataFile();       
             } else {
                 // return the silence file
                 String next = null;
@@ -403,7 +456,7 @@ public class ConcatFileAudioSource implements AudioSource, ReferenceSource {
          *
          * @return the name of the next audio file
          */
-        private String readNextAudioFile() {
+        private String readNextDataFile() {
             try {
                 if (0 <= totalFiles &&
                     totalFiles <= referenceList.size()) {

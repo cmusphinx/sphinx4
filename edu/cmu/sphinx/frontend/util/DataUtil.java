@@ -13,8 +13,7 @@
 
 package edu.cmu.sphinx.frontend.util;
 
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.Windower;
+import edu.cmu.sphinx.frontend.window.RaisedCosineWindower;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
@@ -27,9 +26,9 @@ import java.text.DecimalFormat;
 
 
 /**
- * Defines utility methods for the FrontEnd.
+ * Defines utility methods for manipulating data values.
  */
-public class Util {
+public class DataUtil {
 
     private static final int HEXADECIMAL = 1;
     private static final int SCIENTIFIC = 2;
@@ -75,7 +74,7 @@ public class Util {
     /**
      * Uninstantiable class.
      */
-    private Util() {}
+    private DataUtil() {}
 
 
     /**
@@ -119,17 +118,17 @@ public class Util {
 
 
     /**
-     * Converts a byte array into an array of samples (a bouble). 
+     * Converts a byte array into an array of doubles.
      * Each consecutive bytes in the byte array are converted into a double, 
      * and becomes the next element in the double array. The size of the
-     * returned array is (length/bytesPerDouble). 
+     * returned array is (length/bytesPerValue). 
      * Currently, only 1 byte (8-bit) or 2 bytes (16-bit)
      * samples are supported.
      *
      * @param byteArray a byte array
      * @param offset which byte to start from
      * @param length how many bytes to convert
-     * @param bytesPerSample the number of bytes per sample
+     * @param bytesPerValue the number of bytes per value
      * @param signedData whether the data is signed
      *
      * @return a double array, or <code>null</code> if byteArray is of zero
@@ -137,18 +136,18 @@ public class Util {
      *
      * @throws java.lang.ArrayIndexOutOfBoundsException
      */
-    public static final double[] bytesToSamples(byte[] byteArray, 
-                                                int offset,
-                                                int length, 
-                                                int bytesPerSample,
-                                                boolean signedData)
+    public static final double[] bytesToValues(byte[] byteArray, 
+                                               int offset,
+                                               int length, 
+                                               int bytesPerValue,
+                                               boolean signedData)
         throws ArrayIndexOutOfBoundsException {
 
         if (0 < length && (offset + length) <= byteArray.length) {
-            int doubleLength = length/bytesPerSample;
+            int doubleLength = length/bytesPerValue;
             double[] doubleArray = new double[doubleLength];
 
-            if (bytesPerSample == 2) { 
+            if (bytesPerValue == 2) { 
                 if (!signedData) {
                     for (int i = offset, j = 0; j < doubleLength; j++) {
                         int temp = (int) byteArray[i++];
@@ -163,13 +162,13 @@ public class Util {
                         doubleArray[j] = (double) temp;
                     }
                 }
-            } else if (bytesPerSample == 1) {
+            } else if (bytesPerValue == 1) {
                 for (int i = offset; i < doubleLength; i++) {
                     doubleArray[i] = (double) byteArray[i];
                 }
             } else {
                 throw new Error
-                    ("Unsupported bytes per sample: " + bytesPerSample);
+                    ("Unsupported bytes per sample: " + bytesPerValue);
             }
 
             return doubleArray;
@@ -183,16 +182,16 @@ public class Util {
 
 
     /**
-     * Converts a little-endian byte array into an array of samples (double). 
+     * Converts a little-endian byte array into an array of doubles. 
      * Each consecutive bytes of a float are converted into a double, and
      * becomes the next element in the double array. The number of bytes
      * in the double is specified as an argument. The size of
-     * the returned array is (data.length/bytesPerSample).
+     * the returned array is (data.length/bytesPerValue).
      * 
      * @param data a byte array
      * @param offset which byte to start from
      * @param length how many bytes to convert
-     * @param bytesPerSample the number of bytes per sample
+     * @param bytesPerValue the number of bytes per value
      * @param signed whether the data is signed
      *
      * @return a double array, or <code>null</code> if byteArray is of zero
@@ -200,17 +199,17 @@ public class Util {
      *
      * @throws java.lang.ArrayIndexOutOfBoundsException
      */
-    public static final double[] littleEndianBytesToSamples(byte[] data, 
-                                                            int offset, 
-                                                            int length, 
-                                                            int bytesPerSample,
-                                                            boolean signed)
+    public static final double[] littleEndianBytesToValues(byte[] data, 
+                                                           int offset, 
+                                                           int length, 
+                                                           int bytesPerValue,
+                                                           boolean signed)
         throws ArrayIndexOutOfBoundsException {
 
         if (0 < length && (offset + length) <= data.length) {
-            double[] doubleArray = new double[length/bytesPerSample];
+            double[] doubleArray = new double[length/bytesPerValue];
 
-            if (bytesPerSample == 2) {
+            if (bytesPerValue == 2) {
                 if (signed) {
                     for (int i = offset, j = 0; i < length; j++) {
                         short temp = (short) ((0x000000FF & data[i++]) | 
@@ -224,13 +223,13 @@ public class Util {
                         doubleArray[j] = (double) temp;
                     }
                 }
-            } else if (bytesPerSample == 1) {
+            } else if (bytesPerValue == 1) {
                 for (int i = 0; i < doubleArray.length; i++) {
                     doubleArray[i] = data[i];
                 }
             } else {
                 throw new Error
-                    ("Unsupported bytesPerSample: " + bytesPerSample);
+                    ("Unsupported bytesPerValue: " + bytesPerValue);
             }
 
             return doubleArray;
@@ -475,11 +474,11 @@ public class Util {
 
         if (frameNumber >= 0) {
             float windowSizeInMs = properties.getFloat
-                (Windower.PROP_WINDOW_SIZE_MS, 
-                 Windower.PROP_WINDOW_SIZE_MS_DEFAULT);
+                (RaisedCosineWindower.PROP_WINDOW_SIZE_MS, 
+                 RaisedCosineWindower.PROP_WINDOW_SIZE_MS_DEFAULT);
             float windowShiftInMs = properties.getFloat
-                (Windower.PROP_WINDOW_SHIFT_MS,
-                 Windower.PROP_WINDOW_SHIFT_MS_DEFAULT);
+                (RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
+                 RaisedCosineWindower.PROP_WINDOW_SHIFT_MS_DEFAULT);
             
             // calculate audio time in milliseconds
             audioTime = frameNumber * windowShiftInMs + windowSizeInMs;

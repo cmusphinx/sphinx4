@@ -13,16 +13,15 @@
 
 package edu.cmu.sphinx.frontend.endpoint;
 
-import edu.cmu.sphinx.frontend.Audio;
-import edu.cmu.sphinx.frontend.AudioSource;
+import edu.cmu.sphinx.frontend.BaseDataProcessor;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataProcessor;
-import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.Signal;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.LogMath;
-
-import java.io.IOException;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -48,12 +47,12 @@ import java.util.List;
  * as speech. Otherwise, it is marked as non-speech.
  *
  * <p>The second and third step of this endpointer are documented in the
- * classes SpeechMarker and AudioFilter.
+ * classes SpeechMarker and DataFilter.
  *
  * @see SpeechMarker
- * @see AudioFilter
+ * @see DataFilter
  */
-public class LevelTracker extends DataProcessor implements AudioEndpointer {
+public class LevelTracker extends BaseDataProcessor {
 
     /**
      * Prefix for the SphinxProperties of this class.
@@ -124,9 +123,9 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
     private double minSignal;           // minimum valid signal level
     private double threshold;
     private int frameLength;
-    private AudioSource predecessor;
+    private SpeechClassifier classifier;
     private SpeechMarker speechMarker;
-    private AudioFilter filter;
+    private NonSpeechDataFilter filter;
     
 
     /**
@@ -136,44 +135,52 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
 
     /**
      * Initializes this LevelTracker endpointer with the given name, context,
-     * and AudioSource predecessor.
+     * and DataProcessor predecessor.
      *
-     * @param name the name of this LevelTracker
-     * @param context the context of the SphinxProperties this
-     *    LevelTracker use
-     * @param props the SphinxProperties to read properties from
-     * @param predecessor the AudioSource where this LevelTracker
-     *    gets Audio from
-     *
-     * @throws java.io.IOException
+     * @param name        the name of this LevelTracker
+     * @param frontEnd    the context of the SphinxProperties this
+     *                    LevelTracker use
+     * @param props       the SphinxProperties to read properties from
+     * @param predecessor the DataProcessor where this LevelTracker
+     *                    gets Data from
      */
-    public void initialize(String name, String context, 
-                           SphinxProperties props,
-                           AudioSource predecessor) throws IOException {
-        super.initialize(name, context, props);
-        this.predecessor = predecessor;
+    public void initialize(String name, String frontEnd, 
+                           SphinxProperties props, DataProcessor predecessor) {
+        super.initialize((name == null ? "LevelTracker" : name),
+                         frontEnd, props, predecessor);
         reset();
-        setProperties();
+        setProperties(props);
+        classifier = new SpeechClassifier();
+        classifier.initialize
+            ("SpeechClassifier", frontEnd, props, predecessor);
         speechMarker = new SpeechMarker();
         speechMarker.initialize
-            ("SpeechMarker", getContext(), getSphinxProperties(), 
-             new SpeechClassifier());
-        filter = new AudioFilter
-            ("AudioFilter", getContext(), getSphinxProperties(),
-             speechMarker);
+            ("SpeechMarker", frontEnd, props, classifier);
+        filter = new NonSpeechDataFilter();
+        filter.initialize
+            ("NonSpeechDataFilter", frontEnd, props, speechMarker);
     }
 
     /**
      * Sets the properties for this LevelTracker.
      */
-    private void setProperties() {
-        SphinxProperties props = getSphinxProperties();
+    private void setProperties(SphinxProperties props) {
+
         frameLength = props.getInt
-            (PROP_FRAME_LENGTH, PROP_FRAME_LENGTH_DEFAULT);
-        adjustment = props.getDouble(PROP_ADJUSTMENT, PROP_ADJUSTMENT_DEFAULT);
-        threshold = props.getDouble(PROP_THRESHOLD, PROP_THRESHOLD_DEFAULT);
-        minSignal = props.getDouble(PROP_MIN_SIGNAL, PROP_MIN_SIGNAL_DEFAULT);
-        debug = props.getBoolean(PROP_DEBUG, PROP_DEBUG_DEFAULT);
+            (getFullPropertyName(PROP_FRAME_LENGTH),
+             PROP_FRAME_LENGTH_DEFAULT);
+
+        adjustment = props.getDouble
+            (getFullPropertyName(PROP_ADJUSTMENT), PROP_ADJUSTMENT_DEFAULT);
+
+        threshold = props.getDouble
+            (getFullPropertyName(PROP_THRESHOLD), PROP_THRESHOLD_DEFAULT);
+
+        minSignal = props.getDouble
+            (getFullPropertyName(PROP_MIN_SIGNAL), PROP_MIN_SIGNAL_DEFAULT);
+
+        debug = props.getBoolean
+            (getFullPropertyName(PROP_DEBUG), PROP_DEBUG_DEFAULT);
     }
 
     /**
@@ -185,26 +192,51 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
     }
 
     /**
-     * Returns the next Audio object, which are already class[Aified
-     * as speech or non-speech.
+     * Sets the predecessor DataProcessor.
      *
-     * @return the next Audio object, or null if none available
-     *
-     * @throws java.io.IOException if an error occurred
-     *
-     * @see Audio
+     * @param predecessor the new predecessor of this LevelTracker
      */
-    public Audio getAudio() throws IOException {
-        return filter.getAudio();            
+    public void setPredecessor(DataProcessor predecessor) {
+        super.setPredecessor(predecessor);
+        classifier.setPredecessor(predecessor);
     }
 
     /**
-     * Classifies Audio into either speech or non-speech.
+     * Returns the next Data object, which are already class[Aified
+     * as speech or non-speech.
+     *
+     * @return the next Data object, or null if none available
+     *
+     * @throws java.io.IOException if an error occurred
+     *
+     * @see Data
      */
-    class SpeechClassifier implements AudioSource {
+    public Data getData() throws DataProcessingException {
+        return filter.getData();            
+    }
+
+    /**
+     * Classifies Data into either speech or non-speech.
+     */
+    class SpeechClassifier extends BaseDataProcessor {
 
         List outputQueue = new LinkedList();
         
+        /**
+         * Initializes this DataProcessor.
+         *
+         * @param name the name of this DataProcessor
+         * @param pipelineName the name of the front-end pipeline this
+         *                     DataProcessor is in
+         * @param props        the SphinxProperties to use
+         * @param predecessor the predecessor of this DataProcessor
+         */
+        public void initialize(String name, String frontEndName,
+                               SphinxProperties props,
+                               DataProcessor predecessor) {
+            super.initialize(name, frontEndName, props, predecessor);
+        }
+
         /**
          * Returns the logarithm base 10 of the root mean square of the
          * given samples.
@@ -232,8 +264,8 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
          *
          * @param audio the audio frame
          */
-        private void classify(Audio audio) {
-            double current = logRootMeanSquare(audio.getSamples());
+        private void classify(DoubleData audio) {
+            double current = logRootMeanSquare(audio.getValues());
             // System.out.println("current: " + current);
             boolean isSpeech = false;
             if (current >= minSignal) {
@@ -248,53 +280,47 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
                 }
                 isSpeech = (level - background > threshold);
             }
-            audio.setSpeech(isSpeech);
+            SpeechClassifiedData labeledAudio
+                = new SpeechClassifiedData(audio, isSpeech);
             if (debug) {
                 String speech = "";
-                if (audio.isSpeech()) {
+                if (labeledAudio.isSpeech()) {
                     speech = "*";
                 }
                 System.out.println("Bkg: " + background + ", level: " + level +
                                    ", current: " + current + " " + speech);
             }
-            outputQueue.add(audio);
+            outputQueue.add(labeledAudio);
         }
         
         /**
-         * Returns the next Audio object.
+         * Returns the next Data object.
          *
-         * @return the next Audio object, or null if none available
+         * @return the next Data object, or null if none available
          *
-         * @throws java.io.IOException if an error occurred
-         *
-         * @see Audio
+         * @throws DataProcessingException if a data processing error occurs
          */
-        public Audio getAudio() throws IOException {
+        public Data getData() throws DataProcessingException {
             if (outputQueue.size() == 0) {
-                Audio audio = predecessor.getAudio();
+                Data audio = getPredecessor().getData();
                 if (audio != null) {
-                    /*
-                    System.out.println("LevelTracker: incoming: " +
-                                       audio.getSignal().toString());
-                    */
-                    audio.setSpeech(false);
-                    if (audio.hasContent()) {
-                        if (audio.getSamples().length > frameLength) {
+                    if (audio instanceof DoubleData) {
+                        DoubleData data = (DoubleData) audio;
+                        if (data.getValues().length > frameLength) {
                             throw new Error
                                 ("Size of each audio frame should be <= " +
                                  frameLength + ". If you have 2 bytes per " +
-                                 "sample, the property " + 
-                                 FrontEnd.PROP_BYTES_PER_AUDIO_FRAME + 
-                                 "should be set to " + frameLength*2);
+                                 "sample, you should set the byte per read to "
+                                 + frameLength*2);
                         }
-                        classify(audio);
+                        classify(data);
                     } else {
                         outputQueue.add(audio);
                     }
                 }
             }
             if (outputQueue.size() > 0) {
-                Audio audio = (Audio) outputQueue.remove(0);
+                Data audio = (Data) outputQueue.remove(0);
                 return audio;
             } else {
                 return null;

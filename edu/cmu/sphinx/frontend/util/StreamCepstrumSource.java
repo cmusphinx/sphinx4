@@ -13,13 +13,17 @@
 
 package edu.cmu.sphinx.frontend.util;
 
-import edu.cmu.sphinx.frontend.Cepstrum;
-import edu.cmu.sphinx.frontend.CepstrumSource;
+import edu.cmu.sphinx.frontend.BaseDataProcessor;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataProcessor;
-import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.DataStartSignal;
+import edu.cmu.sphinx.frontend.DoubleData;
+import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.frontend.Signal;
-import edu.cmu.sphinx.frontend.Windower;
-import edu.cmu.sphinx.frontend.util.Util;
+
+import edu.cmu.sphinx.frontend.util.DataUtil;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
@@ -34,21 +38,54 @@ import java.io.IOException;
 /**
  * Produces MelCepstrum data from a file.
  */
-public class StreamCepstrumSource extends DataProcessor implements
-CepstrumSource {
+public class StreamCepstrumSource extends BaseDataProcessor {
 
+    private static final String PROP_PREFIX
+        = "edu.cmu.sphinx.frontend.util.StreamCepstrumSource.";
 
     /**
-     * The SphinxProperty specifying whether the input is in binary.
+     * The SphinxProperties specifying whether the input is in binary.
      */
-    public final static String PROP_BINARY
-        = "edu.cmu.sphinx.frontend.util.StreamCepstrumSource.binary";
-
+    public final static String PROP_BINARY = PROP_PREFIX + "binary";
 
     /**
      * The default value for PROP_BINARY.
      */
     public final static boolean PROP_BINARY_DEFAULT = true;
+
+    /**
+     * The SphinxProperties name for frame size in milliseconds.
+     */
+    public static final String PROP_FRAME_SIZE_MS
+        = PROP_PREFIX + "frameSizeInMs";
+
+    /**
+     * The default value for PROP_FRAME_SIZE_MS.
+     */
+    public static final float PROP_FRAME_SIZE_MS_DEFAULT = 25.625f;
+
+    /**
+     * The SphinxProperties name for frame shift in milliseconds,
+     * which has a default value of 10F.
+     */
+    public static final String PROP_FRAME_SHIFT_MS
+        = PROP_PREFIX + "frameShiftInMs";
+
+    /**
+     * The default value for PROP_FRAME_SHIFT_MS.
+     */
+    public static final float PROP_FRAME_SHIFT_MS_DEFAULT = 10;
+
+    /**
+     * The SphinxProperty specifying the length of the cepstrum data.
+     */
+    public static final String PROP_CEPSTRUM_LENGTH
+        = PROP_PREFIX + "cepstrumLength";
+
+    /**
+     * The default value of PROP_CEPSTRUM_LENGTH.
+     */
+    public static final int PROP_CEPSTRUM_LENGTH_DEFAULT = 13;
 
 
     private boolean binary;
@@ -57,8 +94,8 @@ CepstrumSource {
     private int numPoints;
     private int curPoint;
     private int cepstrumLength;
-    private int windowShift;
-    private int windowSize;
+    private int frameShift;
+    private int frameSize;
     private long firstSampleNumber;
     private boolean bigEndian = true;
 
@@ -67,15 +104,16 @@ CepstrumSource {
      * Constructs a StreamCepstrumSource that reads
      * MelCepstrum data from the given path.
      *
-     * @param name the name of this StreamCepstrumSource
-     * @param context the context for the producer
-     *
-     * @throws IOException if an error occurs while reading the data
+     * @param name         the name of this StreamCepstrumSource
+     * @param frontEnd     the front end this StreamCepstrumSource belongs to
+     * @param props        the SphinxProperties used to read properties
+     * @param predecessor  the DataProcessor to read Data from, usually
+     *                     null for this StreamCepstrumSource
      */
-    public StreamCepstrumSource(String name, String context) throws
-    IOException {
-	super(name, context);
-	initSphinxProperties();
+    public void initialize(String name, String frontEnd,
+                           SphinxProperties props, DataProcessor predecessor) {
+	super.initialize(name, frontEnd, props, predecessor);
+	initSphinxProperties(props);
 	curPoint = -1;
         firstSampleNumber = 0;
 	bigEndian = true;
@@ -117,77 +155,90 @@ CepstrumSource {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void initSphinxProperties() {
-	SphinxProperties properties = getSphinxProperties();
-	cepstrumLength = properties.getInt
-            (FrontEnd.PROP_CEPSTRUM_SIZE, FrontEnd.PROP_CEPSTRUM_SIZE_DEFAULT);
-	binary = properties.getBoolean(PROP_BINARY, PROP_BINARY_DEFAULT);
-        float windowShiftMs = 
-            properties.getFloat(Windower.PROP_WINDOW_SHIFT_MS,
-                                Windower.PROP_WINDOW_SHIFT_MS_DEFAULT);
-        float windowSizeMs = 
-            properties.getFloat(Windower.PROP_WINDOW_SIZE_MS,
-                                Windower.PROP_WINDOW_SIZE_MS_DEFAULT);
-        int sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE,
-                                           FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
-        windowShift = Util.getSamplesPerWindow(sampleRate, windowShiftMs);
-        windowSize = Util.getSamplesPerShift(sampleRate, windowSizeMs);
+    private void initSphinxProperties(SphinxProperties props) {
+	
+        cepstrumLength = props.getInt
+            (getFullPropertyName(PROP_CEPSTRUM_LENGTH),
+             PROP_CEPSTRUM_LENGTH_DEFAULT);
+	
+        binary = props.getBoolean
+            (getFullPropertyName(PROP_BINARY), PROP_BINARY_DEFAULT);
+        
+        float frameShiftMs = props.getFloat
+            (getFullPropertyName(PROP_FRAME_SHIFT_MS),
+             PROP_FRAME_SHIFT_MS_DEFAULT);
+        
+        float frameSizeMs = props.getFloat
+            (getFullPropertyName(PROP_FRAME_SIZE_MS),
+             PROP_FRAME_SIZE_MS_DEFAULT);
+        
+        int sampleRate = props.getInt
+            (getFullPropertyName(FrontEndFactory.PROP_SAMPLE_RATE),
+             FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
+
+        frameShift = DataUtil.getSamplesPerWindow(sampleRate, frameShiftMs);
+        frameSize = DataUtil.getSamplesPerShift(sampleRate, frameSizeMs);
     }
 
 
     /**
-     * Returns the next Cepstrum object, which is the mel cepstrum of the
-     * input frame. However, it can also be other Cepstrum objects
-     * like a EndPointSignal.
+     * Returns the next Data object, which is the mel cepstrum of the
+     * input frame. However, it can also be other Data objects
+     * like DataStartSignal.
      *
-     * @return the next available Cepstrum object, returns null if no
-     *     Cepstrum object is available
+     * @return the next available Data object, returns null if no
+     *     Data object is available
      *
-     * @throws IOException if an I/O error occurs
+     * @throws DataProcessingException if a data processing error occurs
      */
-    public Cepstrum getCepstrum() throws IOException {
+    public Data getData() throws DataProcessingException {
 
-	Cepstrum data = null;
+	Data data = null;
 
 	if (curPoint == -1) {
-	    data = new Cepstrum
-                (Signal.UTTERANCE_START, System.currentTimeMillis(),
-                 firstSampleNumber);
+	    data = new DataStartSignal();
 	    curPoint++;
 	} else if (curPoint == numPoints) {
             if (numPoints > 0) {
                 firstSampleNumber =
-                    (firstSampleNumber - windowShift + windowSize - 1);
+                    (firstSampleNumber - frameShift + frameSize - 1);
             }
-            data = new Cepstrum
-                (Signal.UTTERANCE_END, System.currentTimeMillis(),
-                 firstSampleNumber);
-	    binaryStream.close();
-	    curPoint++;
+            data = new DataEndSignal();
+            try {
+                binaryStream.close();
+                curPoint++;
+            } catch (IOException ioe) {
+                throw new DataProcessingException
+                    ("IOException closing cepstrum stream.");
+            }
 	} else if (curPoint > numPoints) {
             data = null;
 	} else {
-            float[] vectorCepstrum = new float[cepstrumLength];
+            double[] vectorData = new double[cepstrumLength];
             long collectTime = System.currentTimeMillis();
 
 	    for (int i = 0; i < cepstrumLength; i++) {
-		if (binary) {
-		    if (bigEndian) {
-			vectorCepstrum[i] = binaryStream.readFloat();
-		    } else {
-			vectorCepstrum[i] = 
-			    Utilities.readLittleEndianFloat(binaryStream);
-		    }
-		} else {
-		    vectorCepstrum[i] = est.getFloat("cepstrum data");
-		}
-		curPoint++;
+                try {
+                    if (binary) {
+                        if (bigEndian) {
+                            vectorData[i] = (double) binaryStream.readFloat();
+                        } else {
+                            vectorData[i] = (double)
+                                Utilities.readLittleEndianFloat(binaryStream);
+                        }
+                    } else {
+                        vectorData[i] = (double) est.getFloat("cepstrum data");
+                    }
+                    curPoint++;
+                } catch (IOException ioe) {
+                    throw new DataProcessingException
+                        ("IOException reading from cepstrum stream.");
+                }
 	    }
 
 	    // System.out.println("Read: " + curPoint);
-	    data  = new Cepstrum(vectorCepstrum, collectTime,
-                                 firstSampleNumber);
-            firstSampleNumber += windowShift;
+	    data  = new DoubleData(vectorData, collectTime, firstSampleNumber);
+            firstSampleNumber += frameShift;
 	    // System.out.println(data);
 	}
 	return data;
