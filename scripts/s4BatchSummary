@@ -1,3 +1,4 @@
+#!/pkg/gnu/bin/gawk -f
 #!/usr/bin/awk -f 
 # usage:
 #     s4BatchSummary s4_res.1.out [s4_res.2.out ....]
@@ -18,25 +19,41 @@ $1== "Accuracy:" && $3 == "Errors:" {
    errors[FILENAME] = $4;
 }
 
+# Total Time Audio: 5.37s  Proc: 51.47s  Speed: 9.59 X real time
+
+$1== "Total" && $3 == "Audio:" {
+   aTime=$4;
+   pTime=$6;
+   gsub(/s/, "", aTime);
+   gsub(/s/, "", pTime);
+   audioTime[FILENAME] =aTime;
+   procTime[FILENAME] =pTime;
+}
+
+
 
 
 END {
-    printf("%6.6s %6.6s %6.6s %7.7s %s\n", \
-        "Lines", "Words", "Errors", "WER%", "File");
-    printf("==================================\n");
+    printf("%6.6s %6.6s %6.6s %7.7s %6.6s %s\n", \
+        "Lines", "Words", "Errors", "WER%", "xRT", "File");
+    printf("=============================================================\n");
     for (i in words) {
         sumWords += words[i];
         sumErrors += errors[i];
         sumLines += lines[i];
+        sumAudio += audioTime[i];
+        sumProc += procTime[i];
         if (words[i] > 0) {
             wer = (errors[i]/words[i]) * 100.0;
-            printf("%6d %6d %6d %6.2f%% %s\n",  \
-                lines[i], words[i], errors[i], wer, i);
+            speed = procTime[i]/audioTime[i];
+            printf("%6d %6d %6d %6.2f%% %6.2f %s\n",  \
+                lines[i], words[i], errors[i], wer, speed, i);
         }
     }
-    printf("==================================\n");
+    printf("=============================================================\n");
     wer = (sumErrors/sumWords) * 100.0;
-    printf("%6d %6d %6d %6.2f%% %s\n",  \
-        sumLines, sumWords, sumErrors, wer, "total");
+    sumSpeed = sumProc/sumAudio;
+    printf("%6d %6d %6d %6.2f%% %6.2f %s\n",  \
+        sumLines, sumWords, sumErrors, wer, sumSpeed, "total");
 }
 
