@@ -16,7 +16,9 @@ TOP = .
 SUBDIRS = com edu tests  
 
 GTAR=/bin/tar
+ifeq ($(EXTERNAL_JSAPI_LOCATION),)
 EXTERNAL_JSAPI_LOCATION=/lab/speech/sphinx4/lib/jsapi.jar
+endif
 JSAPI_DEST=${TOP}/lib/jsapi.jar
 
 
