@@ -5,6 +5,12 @@ Version:       XXXX
 Release Date:  XXXX
 
 -------------------------------------------------------------------
+PBL - 9/8/04
+    Fixed bug 1003820 - Sphinx4 cannot handle non-ASCII characters in dictionaries
+    Fixed bug 995124 - jsgf right hand recursion is now properly supported
+    Fixed bug 981889 - Eliminated JSGF grammar limitations
+    Addresed RFE  1012098 - add filler support to JSGF style grammars
+
 PBL - 9/2/04
     Fixed bug 995123 - JSAPI allocate/deallocate issues
 

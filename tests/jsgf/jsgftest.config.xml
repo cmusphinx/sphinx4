@@ -21,7 +21,8 @@
         <property name="grammarLocation" value="."/>
         <property name="grammarName" value="test"/>
 	<property name="logMath" value="logMath"/>
-	<property name="showGrammar" value="false"/>
+	<property name="addFillerWords" value="true"/>
+	<property name="showGrammar" value="true"/>
 
     </component>
     

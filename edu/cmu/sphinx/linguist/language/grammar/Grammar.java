@@ -72,6 +72,16 @@ public abstract class Grammar implements Configurable {
      * The default value for PROP_ADD_SIL_WORDS
      */
     public final static boolean PROP_ADD_SIL_WORDS_DEFAULT  = false;
+
+    /**
+     * Property to control whether filler words are inserted into the graph
+     */
+    public final static String PROP_ADD_FILLER_WORDS = "addFillerWords";
+    /**
+     * The default value for PROP_ADD_FILLER_WORDS
+     */
+    public final static boolean PROP_ADD_FILLER_WORDS_DEFAULT  = false;
+
     /**
      * Property that defines the dictionary to use for this grammar
      */
@@ -84,13 +94,14 @@ public abstract class Grammar implements Configurable {
     private boolean showGrammar;
     private boolean optimizeGrammar = true;
     private boolean addSilenceWords = false;
+    private boolean addFillerWords = false;
     private Dictionary dictionary;
     private GrammarNode initialNode;
     private Set grammarNodes;
     private final static Word[][] EMPTY_ALTERNATIVE = new Word[0][0];
     private Random randomizer = new Random();
-    private int identity = 0;
     private int maxIdentity = 0;
+    private boolean postProcessed = false;
 
 
 
@@ -107,6 +118,7 @@ public abstract class Grammar implements Configurable {
         registry.register(PROP_SHOW_GRAMMAR, PropertyType.BOOLEAN);
         registry.register(PROP_OPTIMIZE_GRAMMAR, PropertyType.BOOLEAN);
         registry.register(PROP_ADD_SIL_WORDS, PropertyType.BOOLEAN);
+        registry.register(PROP_ADD_FILLER_WORDS, PropertyType.BOOLEAN);
     }
 
     /*
@@ -120,8 +132,12 @@ public abstract class Grammar implements Configurable {
                 PROP_SHOW_GRAMMAR_DEFAULT);
         optimizeGrammar = ps.getBoolean(PROP_OPTIMIZE_GRAMMAR,
                 PROP_OPTIMIZE_GRAMMAR_DEFAULT);
+
         addSilenceWords = ps.getBoolean(PROP_ADD_SIL_WORDS,
                 PROP_ADD_SIL_WORDS_DEFAULT);
+        addFillerWords = ps.getBoolean(PROP_ADD_FILLER_WORDS,
+                PROP_ADD_FILLER_WORDS_DEFAULT);
+
         dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY,
                 Dictionary.class);
     }
@@ -171,17 +187,23 @@ public abstract class Grammar implements Configurable {
      * include inserting silence nodes and optimizing out empty nodes
      */
     protected void postProcessGrammar() {
-        if (addSilenceWords) {
-            addSilenceWords();
-        }
-        if (optimizeGrammar) {
-            optimizeGrammar();
-        }
-        dumpStatistics();
-        if (showGrammar) {
-            dumpGrammar("grammar.gdl");
-            dumpRandomSentences("sentences.txt", 100);
-            logger.info("Total number of nodes " + grammarNodes.size());
+        if (!postProcessed) {
+            if (addFillerWords) {
+                addFillerWords();
+            } else if (addSilenceWords) {
+                addSilenceWords();
+            }
+
+            if (optimizeGrammar) {
+                optimizeGrammar();
+            }
+            dumpStatistics();
+            if (showGrammar) {
+                dumpGrammar("grammar.gdl");
+                dumpRandomSentences("sentences.txt", 100);
+                logger.info("Total number of nodes " + grammarNodes.size());
+            }
+            postProcessed = true;
         }
     }
 
@@ -323,9 +345,9 @@ public abstract class Grammar implements Configurable {
      */
     protected void newGrammar() {
         maxIdentity = 0;
-        identity = 0;
         grammarNodes = new HashSet();
         initialNode = null;
+        postProcessed = false;
     }
 
     /**
@@ -392,9 +414,6 @@ public abstract class Grammar implements Configurable {
         node = new GrammarNode(identity, alternatives);
         add(node);
 
-        if (identity > maxIdentity) {
-            maxIdentity = identity;
-        }
         return node;
     }
 
@@ -408,7 +427,7 @@ public abstract class Grammar implements Configurable {
      */
 
     protected GrammarNode createGrammarNode(String word) {
-        GrammarNode node =  createGrammarNode(identity++, word);
+        GrammarNode node =  createGrammarNode(maxIdentity + 1, word);
         return node;
     }
 
@@ -422,7 +441,7 @@ public abstract class Grammar implements Configurable {
      * @return the grammar node
      */
     protected GrammarNode createGrammarNode(boolean isFinal) {
-        return createGrammarNode(identity++, isFinal);
+        return createGrammarNode(maxIdentity + 1, isFinal);
     }
 
     /**
@@ -449,9 +468,6 @@ public abstract class Grammar implements Configurable {
             node = createGrammarNode(identity, false);
             logger.warning("Can't find pronunciation for " + word);
         }
-        if (identity > maxIdentity) {
-            maxIdentity = identity;
-        }
         return node;
     }
 
@@ -469,9 +485,6 @@ public abstract class Grammar implements Configurable {
         GrammarNode node;
         node = new GrammarNode(identity, isFinal);
         add(node);
-        if (identity > maxIdentity) {
-            maxIdentity = identity;
-        }
         return node;
     }
 
@@ -482,6 +495,9 @@ public abstract class Grammar implements Configurable {
      *                the grammar node
      */
     private void add(GrammarNode node) {
+        if (node.getID() > maxIdentity) {
+            maxIdentity = node.getID();
+        }
         grammarNodes.add(node);
     }
 
@@ -506,14 +522,13 @@ public abstract class Grammar implements Configurable {
      */
     private void addSilenceWords() {
         Set nodes =  new HashSet(getGrammarNodes());
-        int nextID = maxIdentity + 1;
         for (Iterator i = nodes.iterator(); i.hasNext();) {
             GrammarNode g = (GrammarNode) i.next();
             if (!g.isEmpty() && !g.getWord().isFiller()) {
-                GrammarNode silNode = createGrammarNode(nextID++,
+                GrammarNode silNode = createGrammarNode(maxIdentity + 1,
                         dictionary.getSilenceWord().getSpelling());
 
-                GrammarNode branchNode = g.splitNode(nextID++);
+                GrammarNode branchNode = g.splitNode(maxIdentity + 1);
                 add(branchNode);
 
                 g.add(silNode, 0.00f);
@@ -521,5 +536,62 @@ public abstract class Grammar implements Configurable {
                 silNode.add(silNode, 0.0f);
             }
         }
+    }
+
+    /**
+     * Adds an optional filler word loop after every 
+     *  non-filler word in the
+     *  grammar
+     */
+    private void addFillerWords() {
+        Set nodes =  new HashSet(getGrammarNodes());
+
+        Word[] fillers = getInterWordFillers();
+
+        if (fillers.length == 0) {
+            return;     
+        }
+
+        for (Iterator i = nodes.iterator(); i.hasNext();) {
+            GrammarNode wordNode = (GrammarNode) i.next();
+            if (!wordNode.isEmpty() && !wordNode.getWord().isFiller()) {
+                GrammarNode wordExitNode = wordNode.splitNode(maxIdentity + 1);
+                add(wordExitNode);
+                GrammarNode fillerStart = createGrammarNode(false);
+                GrammarNode fillerEnd = createGrammarNode(false);
+                fillerEnd.add(fillerStart, 0.0f);
+                fillerEnd.add(wordExitNode, 0.0f);
+                wordNode.add(fillerStart, 0.0f); 
+
+                for (int j = 0; j < fillers.length; j++) {
+                    GrammarNode fnode = createGrammarNode(maxIdentity + 1,
+                            fillers[j].getSpelling());
+                    fillerStart.add(fnode, 0.0f);
+                    fnode.add(fillerEnd, 0.0f);
+                }
+            }
+        }
+    }
+
+    /**
+     * Gets the set of fillers after filtering out fillers that don't go
+     * between words.
+     *
+     * @return the set of inter-word fillers
+     */
+    private Word[] getInterWordFillers() {
+        List fillerList = new ArrayList();
+        Word[] fillers = dictionary.getFillerWords();
+
+        for (int i = 0; i < fillers.length; i++) {
+            if (fillers[i] == dictionary.getSentenceStartWord()) {
+                continue;
+            } else if (fillers[i] == dictionary.getSentenceEndWord()) {
+                continue;
+            } else {
+                fillerList.add(fillers[i]);
+            }
+        }
+        return (Word[]) fillerList.toArray(new Word[fillerList.size()]);
     }
 }

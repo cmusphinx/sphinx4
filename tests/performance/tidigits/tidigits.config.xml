@@ -198,6 +198,9 @@
         <property name="dictionary" value="dictionary"/>
         <property name="grammarName" value="tidigits"/>
         <property name="logMath" value="logMath"/>
+        <property name="addFillerWords" value="true"/>
+        <property name="addSilenceWords" value="true"/>
+        <property name="showGrammar" value="true"/>
     </component>
     
     <!-- ******************************************************** -->
