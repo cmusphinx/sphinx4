@@ -17,10 +17,18 @@ import java.io.IOException;
  */
 public class Preemphasizer extends PullingProcessor {
 
-    private static final String PROP_PREEMPHASIS_FACTOR =
+    /**
+     * The name of the SphinxProperty for preemphasis factor/alpha.
+     */
+    public static final String PROP_PREEMPHASIS_FACTOR =
 	"edu.cmu.sphinx.frontend.preemphasisFactor";
-    private static final String PROP_PREEMPHASIS_PRIOR =
+    
+    /**
+     * The name of the SphinxProperty for pre-emphasis prior.
+     */
+    public static final String PROP_PREEMPHASIS_PRIOR =
 	"edu.cmu.sphinx.frontend.preemphasisPrior";
+
 
     private float preemphasisFactor;
     private int windowSize;
@@ -83,7 +91,7 @@ public class Preemphasizer extends PullingProcessor {
      *
      * @return a DoubleAudioFrame of data with pre-emphasis filter applied
      */
-    public Data process(Data input) throws IOException {
+    public Data process(Data input) {
 
 	// NOTE:
 	// It will not be necessary to allocate this extra double[]

@@ -12,6 +12,13 @@ import java.text.DecimalFormat;
  */
 public class Util {
 
+
+    /**
+     * Uninstantiable class.
+     */
+    private Util() {}
+
+
     /**
      * Returns the number of windows in the given array, given the windowSize
      * and windowShift.
@@ -74,11 +81,13 @@ public class Util {
      * discarded.
      *
      * @param byteArray a byte array
-     * @param offset which bytes to start from
+     * @param offset which byte to start from
      * @param length how many bytes to convert
      *
      * @return a short array, or <code>null</code> if byteArray is of zero
      *    length
+     *
+     * @throws java.lang.ArrayIndexOutOfBoundsException
      */
     public static short[] byteToShortArray
 	(byte[] byteArray, int offset, int length)
@@ -110,6 +119,8 @@ public class Util {
      * @param offset where to start
      *
      * @return a short
+     *
+     * @throws java.lang.ArrayIndexOutOfBoundsException
      */
     public static short bytesToShort(byte[] byteArray, int offset)
 	throws ArrayIndexOutOfBoundsException {
@@ -121,8 +132,11 @@ public class Util {
 
 
     /**
-     * Dumps the given short array.
+     * Dumps the given short array as a line to stdout.
+     * The dump will be in the form:
+     * <pre>description data[0] data[1] ... data[data.length]</pre>
      *
+     * @param data the short array to dump
      * @param description some comment notes
      */
     public static void dumpShortArray(short[] data, String description) {
@@ -136,8 +150,13 @@ public class Util {
 
 
     /**
-     * Dumps the given double array.
+     * Dumps the given double array as a line to stdout.
+     * The dump will be in the form:
+     * <pre>description data[0] data[1] ... data[data.length]</pre>where
+     * <code>data[i]</code> is formatted by the method
+     * <code>Util.formatDouble(data[i], 9, 5)</code>.
      *
+     * @param data the double array to dump
      * @param description some comment notes
      */
     public static void dumpDoubleArray(double[] data, String description) {
@@ -149,8 +168,24 @@ public class Util {
     }
 
 
-    private static String formatDouble(double number, int integerDigits,
-				       int fractionDigits) {
+    /**
+     * Returns a formatted string of the given number, with
+     * the given numbers of digit space for the integer and fraction parts.
+     * If the integer part has less than <code>integerDigits</code> digits,
+     * spaces will be prepended to it. If the fraction part has less than
+     * <code>fractionDigits</code>, spaces will be appended to it.
+     * Therefore, <code>formatDouble(12345.6789, 6, 6)</code> will give
+     * the string <pre>" 12345.6789  "</pre> (one space before 1, two spaces
+     * after 9).
+     *
+     * @param number the number to format
+     * @param integerDigits the length of the integer part
+     * @param fractionDigits the length of the fraction part
+     *
+     * @return a formatted number
+     */
+    public static String formatDouble(double number, int integerDigits,
+				      int fractionDigits) {
 	String formatter = "";
 	for (int i = 0; i < integerDigits; i++) {
 	    formatter += "#";

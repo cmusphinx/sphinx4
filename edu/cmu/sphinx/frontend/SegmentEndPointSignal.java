@@ -5,9 +5,8 @@
 package edu.cmu.sphinx.frontend;
 
 /**
- * Indicates an endpoint (start/end) of an audio segment. This
- * SegmentEndPointSignal should also carry to the corresponding start/end
- * audio frame. 
+ * Indicates that the next audio frame is the start or end of the
+ * audio segment.
  */
 public class SegmentEndPointSignal implements Signal {
 

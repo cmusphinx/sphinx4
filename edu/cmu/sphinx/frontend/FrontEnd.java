@@ -22,10 +22,21 @@ import javax.sound.sampled.AudioSystem;
  */
 public class FrontEnd {
 
+    /**
+     * The name of the SphinxProperty for window size (in samples).
+     */
     public static final String PROP_WINDOW_SIZE =
 	"edu.cmu.sphinx.frontend.windowSize";
+
+    /**
+     * The name of the SphinxProperty for window shift.
+     */
     public static final String PROP_WINDOW_SHIFT =
 	"edu.cmu.sphinx.frontend.windowShift";
+
+    /**
+     * The name of the SphinxProperty for the number of bytes per frame.
+     */
     public static final String PROP_BYTES_PER_AUDIO_FRAME =
 	"edu.cmu.sphinx.frontend.bytesPerAudioFrame";
 

@@ -17,6 +17,10 @@ public class HammingWindower implements Processor {
     private int windowSize;
     private static final double PI = 3.14159265358979323846;
 
+
+    /**
+     * Constructs a default HammingWindower.
+     */
     public HammingWindower() {
 	getSphinxProperties();
 	createWindow();

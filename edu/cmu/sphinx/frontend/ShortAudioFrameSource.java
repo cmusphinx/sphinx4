@@ -8,16 +8,27 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
 
 
+/**
+ * A ShortAudioFrameSource converts data from an InputStream into
+ * ShortAudioFrames. One would obtain the ShortAudioFrames using
+ * the <code>read()</code> method. It will make sure that the
+ * returned ShortAudioFrame can be made into exactly N windows.
+ * The size of the windows and the window shift is specified by
+ * the SphinxProperties
+ * <pre>
+ * edu.cmu.sphinx.frontend.windowSize
+ * edu.cmu.sphinx.frontend.windowShift
+ * </pre>The audio samples that do not fit into the current frame
+ * will be used in the next frame (which is obtained by the next call to
+ * <code>read()</code>).
+ */
 public class ShortAudioFrameSource implements DataSource {
 
     private static final int SEGMENT_MAX_BYTES = 2000000;
 
     private InputStream audioStream;
-    private AudioFormat audioFormat;
     private int frameSizeInBytes;
     private int windowSizeInBytes;
     private int windowShiftInBytes;
@@ -34,9 +45,6 @@ public class ShortAudioFrameSource implements DataSource {
      * Frame size refers to the number of audio samples in each frame.
      *
      * @param audioStream the InputStream where audio data comes from
-     * @param audioFormat the audio format of the input audioStream
-     * @param frameSize the number of audio samples in each output
-     *     AudioFrame
      */
     public ShortAudioFrameSource(InputStream audioStream) {
 	getSphinxProperties();
@@ -82,6 +90,8 @@ public class ShortAudioFrameSource implements DataSource {
      *
      * @return the next ShortAudioFrame or <code>null</code> if none is
      *     available
+     *
+     * @throws java.io.IOException
      */
     public Data read() throws IOException {
 
@@ -114,6 +124,8 @@ public class ShortAudioFrameSource implements DataSource {
      * Reads the next ShortAudioFrame from the input stream.
      *
      * @return a ShortAudioFrame
+     *
+     * @throws java.io.IOException
      */
     private ShortAudioFrame readNextFrame() throws IOException {
 

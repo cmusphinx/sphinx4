@@ -36,7 +36,7 @@ public abstract class PullingProcessor implements DataSource, Processor {
     /**
      * Returns the DataSource to pull Data objects from
      *
-     * @return the DataSource to pull Data objects from
+     * @return the DataSource to pull Data objects from, or null if no source
      */
     public DataSource getSource() {
 	return predecessorDataSource;
@@ -64,6 +64,8 @@ public abstract class PullingProcessor implements DataSource, Processor {
      * method. 
      *
      * @return a Data object
+     *
+     * @throws java.io.IOException
      */
     public Data read() throws IOException {
 	Data input = getSource().read();
