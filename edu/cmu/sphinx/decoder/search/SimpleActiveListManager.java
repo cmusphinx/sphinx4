@@ -263,4 +263,26 @@ public class SimpleActiveListManager implements ActiveListManager  {
             listMap.put(stateClass, list.createNew());
         }
     }
+
+
+    /**
+     * Outputs debugging info for this list manager
+     */
+    public void dump() {
+        dumpList(emittingActiveList);
+	for (Iterator i = listMap.values().iterator(); i.hasNext(); ) {
+	    ActiveList al = (ActiveList) i.next();
+	    dumpList(al);
+	}
+    }
+
+    /**
+     * Dumps out debugging info for the given active list
+     *
+     * @param al the active list to dump
+     */
+    private void dumpList(ActiveList al) {
+	    System.out.println("GBT " + al.getBestToken() + " size: "
+			    + al.size());
+    }
 }

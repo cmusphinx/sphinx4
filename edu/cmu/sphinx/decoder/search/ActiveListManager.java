@@ -75,5 +75,11 @@ public interface ActiveListManager {
      */
     public ActiveListManager createNew();
 
+
+    /**
+     * Dumps out debug info for the active list manager
+     */
+    public void dump();
+
 }
 
