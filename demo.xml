@@ -23,8 +23,8 @@
     <property name="src_dir"		value="."/>
     <property name="build_dir"		value="bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
-    <property name="lib_dir"            value="${build_dir}/lib"/>
-    <property name="bin_dir"            value="${build_dir}/bin"/>
+    <property name="lib_dir"            value="lib"/>
+    <property name="bin_dir"            value="bin"/>
     <property name="deploy_dir"		value="deploy"/>
     <path id="libs">
         <pathelement path="${classes_dir}"/>
