@@ -51,9 +51,11 @@ END {
         }
     }
     printf("=============================================================\n");
-    wer = (sumErrors/sumWords) * 100.0;
-    sumSpeed = sumProc/sumAudio;
-    printf("%6d %6d %6d %6.2f%% %6.2f %s\n",  \
-        sumLines, sumWords, sumErrors, wer, sumSpeed, "total");
+    if (sumWords != 0 && sumAudio != 0) {
+        wer = (sumErrors/sumWords) * 100.0;
+        sumSpeed = sumProc/sumAudio;
+        printf("%6d %6d %6d %6.2f%% %6.2f %s\n",  \
+            sumLines, sumWords, sumErrors, wer, sumSpeed, "total");
+    }
 }
 
