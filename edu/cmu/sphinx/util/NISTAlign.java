@@ -77,11 +77,6 @@ public class NISTAlign {
     int deletions;
     int correct;
 
-
-
-
-
-
     /**
      * The raw reference string.  Updated with each call to 'align'.
      */
@@ -131,11 +126,16 @@ public class NISTAlign {
      */
     DecimalFormat percentageFormat = new DecimalFormat("##0.0%");
     
+    
+    private boolean showResults;
+    private boolean showAlignedResults;
 
     /**
      * Creates a new NISTAlign object.
      */
-    public NISTAlign() {
+    public NISTAlign(boolean showResults, boolean showAlignedResults) {
+        this.showResults = showResults;
+        this.showAlignedResults = showAlignedResults;
         resetTotals();
     }
 
@@ -380,10 +380,15 @@ public class NISTAlign {
      * @see #printNISTSentenceSummary
      */
     public void printSentenceSummary() {
-        System.out.println("REF:       " + toString(referenceWords));
-        System.out.println("HYP:       " + toString(hypothesisWords));
-        System.out.println("ALIGN_REF: " + toString(alignedReferenceWords));
-        System.out.println("ALIGN_HYP: " + toString(alignedHypothesisWords));
+        if (showResults) {
+            System.out.println("REF:       " + toString(referenceWords));
+            System.out.println("HYP:       " + toString(hypothesisWords));
+        }
+        
+        if (showAlignedResults) {
+            System.out.println("ALIGN_REF: " + toString(alignedReferenceWords));
+            System.out.println("ALIGN_HYP: " + toString(alignedHypothesisWords));
+        }
     }
 
     /**
@@ -894,7 +899,7 @@ public class NISTAlign {
      * total results.
      */
     public static void main(String args[]) {
-        NISTAlign align = new NISTAlign();
+        NISTAlign align = new NISTAlign(true, true);
         
         BufferedReader referenceFile;
         BufferedReader hypothesisFile;
