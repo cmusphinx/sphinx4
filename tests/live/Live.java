@@ -421,11 +421,13 @@ public class Live {
                 liveFrame.setNextButtonEnabled(true);
                 while (decoder.getMicrophone().getRecording()) {
                     try {
-                        System.out.println("Live: decoding");
-                        lastResult = decoder.decode(liveFrame.getReference());
-                        System.out.println("Live: decoded");
+                        System.out.println("Live: decoding ...");
+                        lastResult = decoder.decode();
+                        decoder.setReferenceText(liveFrame.getReference());
+                        decoder.showFinalResult
+                            (lastResult, decoder.getTimer());
+                        System.out.println("Live: ... decoded");
                         updateLiveFrame(decoder.getNISTAlign());
-                        System.out.println("Live: updatedFrame");
                     } catch (NullPointerException npe) {
                         npe.printStackTrace();
                     }
