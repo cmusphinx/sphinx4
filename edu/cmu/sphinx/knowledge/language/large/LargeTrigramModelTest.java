@@ -17,12 +17,17 @@ import edu.cmu.sphinx.knowledge.language.WordSequence;
 
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Utilities;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import java.net.URL;
 
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -41,30 +46,39 @@ import edu.cmu.sphinx.util.Timer;
 class LargeTrigramModelTest {
 
     public static void main(String[] args) throws Exception {
-        String propsPath; 
+
+        String propsPath;
+        String testFile = null;
+
         if (args.length == 0) {
-            propsPath = "file:./binary.props";
-        } else {
-            propsPath = args[0];
+            System.out.println
+                ("Usage: java LargeTrigramModelTest <props_file> " +
+                 "[<testFile>]");
+        }
+        
+        propsPath = args[0];
+        if (args.length == 2) {
+            testFile = args[1];
         }
 
-        Timer.start("LM Load");
         SphinxProperties.initContext("test", new URL(propsPath));
-        LargeTrigramModel sm = new LargeTrigramModel("test");
-        Timer.stop("LM Load");
+        LargeTrigramModel lm = new LargeTrigramModel("test");
 
         Timer.dumpAll();
 
         LogMath logMath = LogMath.getLogMath("test");
-        
+
+        InputStream stream = new FileInputStream(testFile);
+
         BufferedReader reader = new BufferedReader
-            (new InputStreamReader(System.in));
+            (new InputStreamReader(stream));
+
+        Timer timer = Timer.getTimer("test", "lmLookup");
         
         String input;
         
-        System.out.println("Max depth is " + sm.getMaxDepth());
-        System.out.print("Enter words: ");
-
+        List wordSequences = new LinkedList();
+        
         while ((input = reader.readLine()) != null) {
 
             StringTokenizer st = new StringTokenizer(input);
@@ -74,41 +88,37 @@ class LargeTrigramModelTest {
                 list.add(tok);
             }
             WordSequence wordSequence = new WordSequence(list);
-            float logProbability = sm.getProbability(wordSequence);
-            
-            System.out.println
-                ("Probability of " + wordSequence + " is: " +
-                 logProbability + "(log), " + 
-                 LogMath.logToLog(logProbability, 
-                                  logMath.getLogBase(),
-                                  10.0f) + 
-                 "(log10)");
-
-            long usedMemory = Runtime.getRuntime().totalMemory() - 
-                Runtime.getRuntime().freeMemory();
-            
-            System.out.println("Used memory: " + usedMemory + " bytes");
-
-            System.out.print("Enter words: ");
+            wordSequences.add(wordSequence);
         }
-        
-        
-        Timer timer = Timer.getTimer("test", "lookup trigram");
-        
-        List list1 = new ArrayList();
-        WordSequence ws1 = new WordSequence("t", "h", "e");
-        WordSequence ws2 = new WordSequence("a", "l", "q");
-        
-        for (int i = 0; i < 1000000; i++) {
+
+        for (Iterator i = wordSequences.iterator(); i.hasNext(); ) {
+            WordSequence ws = (WordSequence) i.next();
+
             timer.start();
-            sm.getProbability(ws1);
+            lm.start();
+            int logProbability = (int)lm.getProbability(ws);
             timer.stop();
-            timer.start();
-            sm.getProbability(ws2);
-            timer.stop();
+            
+            System.out.println(Utilities.pad(logProbability, 10) + " "+
+                               getString(ws));
+
+            if (false) {
+                long usedMemory = Runtime.getRuntime().totalMemory() - 
+                    Runtime.getRuntime().freeMemory();                
+                System.out.println("Used memory: " + usedMemory + " bytes");
+                System.out.print("Enter words: ");
+            }
         }
         
         Timer.dumpAll("test");
+    }
+
+    public static String getString(WordSequence ws) {
+        String line = ws.getWord(0);
+        for (int i = 1; i < ws.size(); i++) {
+            line += (" " + ws.getWord(i));
+        }
+        return line;
     }
 }
 

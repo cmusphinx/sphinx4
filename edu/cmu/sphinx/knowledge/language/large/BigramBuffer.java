@@ -77,13 +77,7 @@ public class BigramBuffer extends NGramBuffer {
         int backoffID = readTwoBytesAsInt();
         int firstTrigram = readTwoBytesAsInt();
 
-        // move the pointer to the firstTrigramEntry of the next bigram
-        getBuffer().position(getBuffer().position() + 
-			     LargeTrigramModel.BYTES_PER_BIGRAM - 2);
-        int nextFirstTrigram = readTwoBytesAsInt();
-
         return (new BigramProbability
-                (nthFollower, wordID, probID, backoffID, firstTrigram, 
-                 nextFirstTrigram - firstTrigram));
+                (nthFollower, wordID, probID, backoffID, firstTrigram));
     }
 }

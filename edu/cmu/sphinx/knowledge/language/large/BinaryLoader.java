@@ -53,6 +53,22 @@ class BinaryLoader {
 
     private static final float MIN_PROBABILITY = -99.0f;
 
+    private static final String PROP_PREFIX = 
+    "edu.cmu.sphinx.knowledge.language.large.BinaryLoader.";
+    
+    /**
+     * Sphinx property for whether to apply the language weight and
+     * word insertion probability.
+     */
+    public static final String PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP =
+    PROP_PREFIX + "applyLanguageWeightAndWip";
+        
+    /**
+     * Default value for PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP.
+     */
+    public static final boolean PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP_DEFAULT =
+    false;
+
 
     private SphinxProperties props;
     private LogMath logMath;
@@ -79,6 +95,7 @@ class BinaryLoader {
     private FileInputStream is;
     private FileChannel fileChannel;
     private boolean bigEndian = true;
+    private boolean applyLanguageWeightAndWip;
 
     
     /**
@@ -207,6 +224,10 @@ class BinaryLoader {
             (LanguageModel.PROP_FORMAT, LanguageModel.PROP_FORMAT_DEFAULT);
         String location = props.getString
             (LanguageModel.PROP_LOCATION, LanguageModel.PROP_LOCATION_DEFAULT);
+
+        applyLanguageWeightAndWip = props.getBoolean
+            (PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP,
+             PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP_DEFAULT);
         
         logMath = LogMath.getLogMath(context);
         loadBinary(location);
@@ -285,6 +306,22 @@ class BinaryLoader {
             throw new IOException("Insufficient bytes read.");
         }
         return bb;
+    }
+
+
+    /**
+     * Loads the bigram at the given absolute index into the bigram region.
+     *
+     * @param index the absolute index into the bigram region
+     *
+     * @return a ByteBuffer of the requested bigram
+     */
+    public BigramBuffer loadBigram(int index) throws IOException {
+        long position = (long) bigramOffset + 
+            (index * LargeTrigramModel.BYTES_PER_BIGRAM);
+        ByteBuffer buffer = loadBuffer
+            (position, LargeTrigramModel.BYTES_PER_BIGRAM);
+        return (new BigramBuffer(buffer, 1));
     }
 
 
@@ -450,7 +487,9 @@ class BinaryLoader {
 
         applyUnigramWeight();
 
-        applyLanguageWeightAndWip();
+        if (applyLanguageWeightAndWip) {
+            applyLanguageWeightAndWip();
+        }
 
         fis.close();
         stream.close();

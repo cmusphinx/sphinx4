@@ -39,13 +39,12 @@ public class BigramProbability {
      */
     public BigramProbability(int which, int wordID, 
 			     int probabilityID, int backoffID,
-                             int firstTrigramEntry, int trigramEntries) {
+                             int firstTrigramEntry) {
         this.which = which;
 	this.wordID = wordID;
         this.probabilityID = probabilityID;
         this.backoffID = backoffID;
         this.firstTrigramEntry = firstTrigramEntry;
-        this.numberTrigramEntries = trigramEntries;
     }
 
     
