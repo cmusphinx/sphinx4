@@ -171,7 +171,7 @@ function getAccuracyFromLine(line) {
     _errors = data[F_INSERTIONS] + data[F_DELETIONS] + data[F_SUBSTITUTIONS];
     _words = data[F_WORDS];
 
-    if (_words == 0) {
+    if (_words == "") {
         return NOT_AVAILABLE;
     } else {
 	return _errors / _words * 100;
