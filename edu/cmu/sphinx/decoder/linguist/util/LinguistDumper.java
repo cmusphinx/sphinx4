@@ -25,6 +25,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -170,6 +172,8 @@ public class LinguistDumper implements LinguistProcessor  {
 	    int level = stateLevel.getLevel();
 	    SearchState state = stateLevel.getState();
 
+            equalCheck(state);
+
 
 	    if (!visitedStates.contains(state)) {
 		visitedStates.add(state);
@@ -193,7 +197,70 @@ public class LinguistDumper implements LinguistProcessor  {
 	}
 	endDump(out);
     }
+
+    Map eqStates = new HashMap();
+    Map eqSigs = new HashMap();
+
+    /**
+     * This is a bit of test/debugging code that ensures that the
+     * states that have equal signatures are also considered to be
+     * object.equals and vice versa.. This method will dump out any
+     * states where this contract is not true
+     *
+     * @param state the state to check
+     */
+    private void equalCheck(SearchState state) {
+        SearchState eqState = (SearchState) eqStates.get(state);
+        SearchState eqSig = (SearchState) eqSigs.get(state.getSignature());
+
+
+        if ((eqState == null || eqSig == null) && !(eqState == eqSig)) {
+            System.out.println("Missing one: ");
+            System.out.println("  state val: " + state);
+            System.out.println("  state sig: " + state.getSignature());
+
+            System.out.println("  eqState val: " + eqState);
+            System.out.println("  eqSig val: " + eqSig);
+
+            if (eqState != null) {
+                System.out.println("   eqState sig: " + eqState.getSignature());
+            }
+            if (eqSig != null) {
+                System.out.println("   eqSig sig: " + eqSig.getSignature());
+            }
+
+        }
+
+
+        if (eqState == null) {
+            eqStates.put(state, state);
+            eqState = state;
+        }
+
+        if (eqSig == null) {
+            eqSigs.put(state.getSignature(), state);
+            eqSig = state;
+        }
+
+        if (!eqState.getSignature().equals(state.getSignature())) {
+            System.out.println("Sigs mismatch for: ");
+            System.out.println("  state sig: " + state.getSignature());
+            System.out.println("  eqSig sig: " + eqSig.getSignature());
+            System.out.println("  state val: " + state);
+            System.out.println("  eqSig val: " + eqSig);
+        }
+
+        if (!eqState.equals(state)) {
+            System.out.println("obj mismatch for: ");
+            System.out.println("  state sig: " + state.getSignature());
+            System.out.println("  eqSig sig: " + eqSig.getSignature());
+            System.out.println("  state val: " + state);
+            System.out.println("  eqSig val: " + eqSig);
+        }
+    }
 }
+
+
 
 
 /**
