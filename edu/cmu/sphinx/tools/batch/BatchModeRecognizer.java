@@ -43,7 +43,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * either audio files or cepstral files, but defaults to audio files.
  * To run this BatchModeRecognizer:
  * <pre>
- * java BatchModeRecognizer <xmlConfigFile> <batchFile>
+ * java BatchModeRecognizer &lt;xmlConfigFile&gt; &lt;batchFile&gt;
  * </pre>
  * where <code>xmlConfigFile</code> is an XML-based configuration file and
  * <code>batchFile</code> is a file listing all the files to decode and
