@@ -9,6 +9,9 @@
 
 description = TIDIGITS acoustic models
 
+modelClass = edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model
+modelLoader = edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.ModelLoader
+
 isBinary = true
 featureType = cepstra_delta_doubledelta
 vectorLength = 39
