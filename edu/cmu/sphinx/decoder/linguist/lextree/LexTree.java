@@ -400,6 +400,16 @@ class LexTree {
             return position == HMMPosition.END || 
                    position == HMMPosition.SINGLE;
         }
+
+        /**
+         * Determines if this unit marks a word beginning
+         *
+         * @return <code>true</code> if this unit marks a word end.
+         */
+        boolean isWordBeginning() {
+            return position == HMMPosition.BEGIN || 
+                   position == HMMPosition.SINGLE;
+        }
     }
 
 

@@ -29,13 +29,22 @@ public interface  LanguageState {
 
      /**
       * Determines if this is an emitting state
+      *
+      * @return <code>true</code> if the state is an emitting state
       */
      boolean isEmitting();
+
+     /**
+      * Determines if this is a final state
+      *
+      * @return <code>true</code> if the state is a final state
+      */
+     boolean isFinal();
 
      /**
       * Gets the probability of entering this state
       *
       * @return the log probability
       */
-     float getProbability();
+     double getProbability();
 }
