@@ -26,10 +26,6 @@ import edu.cmu.sphinx.decoder.scorer.Scoreable;
  */
 public class Partitioner {
 
-    private float bestTokenScore;
-    private Token bestToken;
-
-
     /**
      * Partitions sub-array of tokens around the rth token.
      *
@@ -46,11 +42,6 @@ public class Partitioner {
         int i = p - 1;
         for (int j = p; j < r; j++) {
             Token current = tokens[j];
-            if (current.getScore() >= bestTokenScore) {
-                bestToken = current;
-                bestTokenScore = current.getScore();
-            }
-
             if (current.getScore() >= pivot.getScore()) {
                 i++;
                 tokens[j] = tokens[i];
@@ -94,21 +85,14 @@ public class Partitioner {
      * @return the index of the last element in the partition
      */
     public int partition(Token[] tokens, int size, int n) {
-        bestTokenScore = -Float.MAX_VALUE;
-        bestToken = null;
-        int r = size - 1;
         if (tokens.length > n) {
-            r = midPointSelect(tokens, 0, size - 1, n);
-        }
-        if (bestToken == null) {
+            return midPointSelect(tokens, 0, size - 1, n);
+        } else {
+            int r = -1;
             float lowestScore = Float.MAX_VALUE;
             for (int i = 0; i < tokens.length; i++) {
                 Token current = tokens[i];
                 float currentScore = current.getScore();
-                if (currentScore >= bestTokenScore) {
-                    bestToken = current;
-                    bestTokenScore = currentScore;
-                }
                 if (currentScore <= lowestScore) {
                     lowestScore = currentScore;
                     r = i; // "r" is the returned index
@@ -125,21 +109,8 @@ public class Partitioner {
             }
 
             // return the last index
-            r = last;
+            return last;
         }
-
-        return r;
-    }
-
-
-    /**
-     * Returns the highest scoring token in the array given to the
-     * last call to method partition().
-     *
-     * @return the highest scoring token
-     */
-    public Token getBestToken() {
-        return bestToken;
     }
 
 
