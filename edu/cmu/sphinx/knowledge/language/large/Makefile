@@ -17,7 +17,7 @@ FILES = $(shell echo *.java)
 # List any sub directories that need to be built
 SUBDIRS = 
 
-EXTRA_JAVA_FLAGS = -ms1g -mx2g
+EXTRA_JAVA_FLAGS = -ms1g -mx2g 
 
 ##########################################################################
 
@@ -34,4 +34,4 @@ clean::
 
 binary:
 	$(MAKE) all
-	$(JAVA_CMD) edu.cmu.sphinx.knowledge.language.large.LargeTrigramModel
+	$(JAVA_CMD) edu.cmu.sphinx.knowledge.language.large.LargeTrigramModelTest

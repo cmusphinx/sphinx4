@@ -271,9 +271,12 @@ public class LargeTrigramModel implements LanguageModel {
         }
 
         if (bigram != null) {
+            // System.out.println(words[bigram.getWordID()] + " " + secondWord);
             assert (words[bigram.getWordID()].equals(secondWord));
+            // System.out.println("Found bigram!");
             return bigramProbTable[bigram.getProbabilityID()];
         } else {
+            // System.out.println("Didn't find bigram");
             return (unigrams[firstWordID].getLogBackoff() + 
                     unigrams[secondWordID].getLogProbability());
         }
@@ -433,12 +436,15 @@ public class LargeTrigramModel implements LanguageModel {
 	    headerLength = Utilities.swapInteger(headerLength);
 	    if (headerLength == (DARPA_LM_HEADER.length() + 1)) {
 		bigEndian = false;
+                System.out.println("Little-endian");
 	    } else {
 		throw new Error
 		    ("Bad binary LM file magic number: " + headerLength +
 		     ", not an LM dumpfile?");
 	    }
-	}
+	} else {
+            System.out.println("Big-endian");
+        }
 
 	// read and verify standard header string
 
@@ -551,7 +557,8 @@ public class LargeTrigramModel implements LanguageModel {
         }
 
         // read the string of all words
-        String wordsString = readString(stream, wordsStringLength);
+        String wordsString = 
+            readString(stream, wordsStringLength).toLowerCase();
 
         // first make sure string just read contains ucount words
         int numberWords = 0;
@@ -775,83 +782,6 @@ public class LargeTrigramModel implements LanguageModel {
             buffer.append((char)readByte(stream));
 	}
         return buffer.toString();
-    }
-
-    
-    
-    /**
-     * A test routine
-     *
-     */
-    public static void main(String[] args) throws Exception {
-        String propsPath; 
-        if (args.length == 0) {
-            propsPath = "file:./binary.props";
-        } else {
-            propsPath = args[0];
-        }
-
-        Timer.start("LM Load");
-        SphinxProperties.initContext("test", new URL(propsPath));
-        LargeTrigramModel sm = new LargeTrigramModel("test");
-        Timer.stop("LM Load");
-
-        Timer.dumpAll();
-
-        LogMath logMath = LogMath.getLogMath("test");
-        
-        BufferedReader reader = new BufferedReader
-            (new InputStreamReader(System.in));
-        
-        String input;
-        
-        System.out.println("Max depth is " + sm.getMaxDepth());
-        System.out.print("Enter words: ");
-
-        while ((input = reader.readLine()) != null) {
-
-            StringTokenizer st = new StringTokenizer(input);
-            List list = new ArrayList();
-            while (st.hasMoreTokens()) {
-                String tok = (String) st.nextToken();
-                list.add(tok);
-            }
-            WordSequence wordSequence = new WordSequence(list);
-            float logProbability = sm.getProbability(wordSequence);
-            
-            System.out.println
-                ("Probability of " + wordSequence + " is: " +
-                 logProbability + "(log), " + 
-                 LogMath.logToLog(logProbability, 
-                                  logMath.getLogBase(),
-                                  10.0f) + 
-                 "(log10)");
-
-            long usedMemory = Runtime.getRuntime().totalMemory() - 
-                Runtime.getRuntime().freeMemory();
-            
-            System.out.println("Used memory: " + usedMemory + " bytes");
-
-            System.out.print("Enter words: ");
-        }
-        
-        
-        Timer timer = Timer.getTimer("test", "lookup trigram");
-        
-        List list1 = new ArrayList();
-        WordSequence ws1 = new WordSequence("t", "h", "e");
-        WordSequence ws2 = new WordSequence("a", "l", "q");
-        
-        for (int i = 0; i < 1000000; i++) {
-            timer.start();
-            sm.getProbability(ws1);
-            timer.stop();
-            timer.start();
-            sm.getProbability(ws2);
-            timer.stop();
-        }
-        
-        Timer.dumpAll("test");
     }
 }
 
