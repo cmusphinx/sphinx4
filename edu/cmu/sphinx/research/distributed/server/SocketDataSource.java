@@ -25,6 +25,7 @@ import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 
 
@@ -43,6 +44,7 @@ public class SocketDataSource extends BaseDataProcessor {
     
     // BUG: should use window size and shift to calculate sample number
     private long firstSampleNumber = -1;
+    private int sampleRate = 16;
 
     private boolean inUtterance;
 
@@ -100,7 +102,11 @@ public class SocketDataSource extends BaseDataProcessor {
             } else {
                 if (firstValue == DATA_END) {
                     inUtterance = false;
-                    return (new DataEndSignal());
+
+                    // BUG : should calculate the duration using frame size
+                    //       and frame shift
+                    return (new DataEndSignal(-1));
+
                 } else if (firstValue == DATA_START) {
                     throw new IllegalStateException("Too many DATA_STARTs.");
                 } else {
@@ -111,7 +117,8 @@ public class SocketDataSource extends BaseDataProcessor {
                     for (int i = 1; i < cepstrumLength; i++) {
                         data[i] = dataReader.readDouble();
                     }
-                    return (new DoubleData(data, timeStamp, firstSampleNumber));
+                    return (new DoubleData
+                            (data, sampleRate, timeStamp, firstSampleNumber));
                 }
             }
         } catch (IOException ioe) {
