@@ -304,7 +304,6 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      * @return the best token
      */
     protected Token getBestToken(SearchState state) {
-        Token token =  (Token) bestTokenMap.get(state);
         return (Token) bestTokenMap.get(state);
     }
 
@@ -468,7 +467,27 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     public SphinxProperties getSphinxProperties() {
 	return props;
     }
-    
+
+
+    /**
+     * Returns the best token map.
+     *
+     * @return the best token map
+     */
+    protected Map getBestTokenMap() {
+        return bestTokenMap;
+    }
+
+
+    /**
+     * Sets the best token Map.
+     *
+     * @param bestTokenMap the new best token Map
+     */
+    protected void setBestTokenMap(Map bestTokenMap) {
+        this.bestTokenMap = bestTokenMap;
+    }
+
 
     /**
      * Returns the ActiveList.
