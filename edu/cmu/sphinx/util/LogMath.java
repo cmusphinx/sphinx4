@@ -277,7 +277,7 @@ public final class LogMath {
      *
      * @param source the number in base Math.E to convert
      */
-    public final double logEToLog(double source) {
+    public final double lnToLog(double source) {
 	return (source * inverseNaturalLogBase);
     }
 
