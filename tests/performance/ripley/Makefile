@@ -85,6 +85,7 @@ ripley_trigram:
 ripley_trigram_ep:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	-Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.decoder.search.PartitionActiveList\
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager\
 	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
