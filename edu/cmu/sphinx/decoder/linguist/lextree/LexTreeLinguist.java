@@ -716,6 +716,11 @@ public class LexTreeLinguist implements  Linguist {
             return logInsertionProbability;
         }
 
+        /**
+         * Returns the insertion probability of this state.
+         *
+         * @return the insertion probability
+         */
         public float getInsertionProbability() {
             return logInsertionProbability;
         }
@@ -855,6 +860,11 @@ public class LexTreeLinguist implements  Linguist {
             return logAcousticProbability;
         }
 
+        /**
+         * Returns the acoustic probability of entering this state.
+         *
+         * @return the acoustic probability
+         */
         public float getAcousticProbability() {
             return logAcousticProbability;
         }
@@ -1164,6 +1174,11 @@ public class LexTreeLinguist implements  Linguist {
             return logLanguageProbability;
         }
 
+        /**
+         * Returns the language probability of entering this state
+         *
+         * @return the language probability
+         */
         public float getLanguageProbability() {
             return logLanguageProbability;
         }
