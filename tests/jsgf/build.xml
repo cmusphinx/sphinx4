@@ -27,7 +27,7 @@ NOTE:  Before running the tests, you must have already built
     <property name="logger_props"       value=""/>  
 
     <property name="initial_heap_size"  value="128m"/>
-    <property name="maximum_heap_size"  value="128m"/>
+    <property name="maximum_heap_size"  value="256m"/>
     <property name="jit"                value="server"/>
 
 
@@ -53,7 +53,7 @@ NOTE:  Before running the tests, you must have already built
                    source="1.4"
                    deprecation="true"
                    destdir="${classes_dir}"
-                   classpath="${classes_dir}"
+                   classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
                    srcdir="."/>
     </target>
 
@@ -64,7 +64,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="test"
-	    description="the grammar test">
+	    description="the grammar test" depends="all">
         <java 
               classpath="${classes_dir}:${top_dir}/lib/jsapi.jar;${top_dir}/lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"
 	      classname="tests.jsgf.JSGFTest"
@@ -74,6 +74,7 @@ NOTE:  Before running the tests, you must have already built
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <arg value="jsgftest.config.xml"/> 
+            <arg value="100000"/> 
         </java>
     </target>
 

@@ -13,8 +13,16 @@ public <rightRecursion> = <action> | (<action> and <rightRecursion> ) ;
 <action> = stop | start;
 
 
+/*
+ * BUG: this is valid JSGF, but the ruleGrammar.parse
+ * method generates a stack overflow (although the
+ * decoder and the JSGF grammar deal with it just fine
+ */
+
+/*
 public <nestedRightRecursion> = something | <Y> ;
 <Y> = another | <nestedRightRecursion> ;
+*/
 
 public <kleene> = <polite>* don't crash;
 <polite> =  please | kindly | oh mighty computer;
