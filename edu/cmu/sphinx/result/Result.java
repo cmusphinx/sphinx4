@@ -280,19 +280,6 @@ public class Result {
         return null;	// [[[ TBD:  write me ]]]
     }
 
-
-    /**
-     * Returns the set of best paths for this result.
-     *
-     * @param numBestPaths the maximum number of paths returned
-     *
-     * @return an array containing at most <code>numBestPaths</code>
-     * paths.
-     */
-    public Path[] getBestPaths(int numBestPaths) {
-        return null;	// [[[ TBD:  write me ]]]
-    }
-
     /**
      * Gets the starting frame number for the result
      *
