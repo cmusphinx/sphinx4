@@ -201,7 +201,7 @@ public class SphinxProperties {
      */
     public void list(PrintStream out) {
         // lists the used properties
-        out.println("----- Used properties -----");
+        out.println("##### Used properties #####");
         listProperties(shadowProps, out);
 
         // lists the un-used properties
@@ -233,22 +233,24 @@ public class SphinxProperties {
      * @param out an output stream.
      */
     public void listUnused(PrintStream out) {
-        out.println("----- Unused properties -----");
-        out.println("- Unused properties defined in " + url + ":" );
+        out.println("##### Unused properties #####");
+        out.println("# Unused properties defined in " + url + ":" );
         for (Iterator i = getSortedIterator(props); i.hasNext(); ) {
             String key = (String) i.next();
             if (shadowProps.get(key) == null) {
-                out.println(" " + key);
+		String value = (String) props.get(key);
+                out.println(" " + key + "=" + value);
             }
         }
 
-        out.println("- Unused system properties:" );
+        out.println("# Unused system properties:" );
         for (Iterator i = getSortedIterator(System.getProperties());
              i.hasNext(); ) {
             String key = (String) i.next();
             if (key.startsWith("edu.cmu")) {
                 if (shadowProps.get(key) == null) {
-                    out.println(" " + key);
+		    String value = (String) props.get(key);
+		    out.println(" " + key + "=" + value);
                 }
             }
         }
