@@ -94,7 +94,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      */
     private TargetDataLine audioLine = null;
     private LineListener lineListener = new MicrophoneLineListener();
-    private UtteranceList utteranceList;
+    private List audioList;
 
     private int frameSizeInBytes;
     private volatile boolean started = false;
@@ -105,8 +105,8 @@ public class Microphone extends DataProcessor implements AudioSource {
     private boolean closeAudioBetweenUtterances = true;
 
     private static Logger logger = Logger.getLogger
-    ("edu.cmu.sphinx.frontend.Microphone");
-
+        ("edu.cmu.sphinx.frontend.Microphone");
+    
 
     /**
      * Constructs a Microphone with the given InputStream.
@@ -121,7 +121,7 @@ public class Microphone extends DataProcessor implements AudioSource {
 	setProperties(props);
         audioFormat = new AudioFormat(sampleRate, sampleSizeInBits,
                                       channels, signed, bigEndian);
-        utteranceList = new UtteranceList();
+        audioList = new LinkedList();
     }
 
 
@@ -203,10 +203,6 @@ public class Microphone extends DataProcessor implements AudioSource {
             
             if (audioLine != null && audioLine.isOpen()) {
                 
-                Utterance currentUtterance = new Utterance
-                    ("Microphone", getContext());
-                utteranceList.add(currentUtterance);
-                
 		if (audioLine.isRunning()) {
 		    printMessage("Whoops: line is running");
 		}
@@ -224,22 +220,27 @@ public class Microphone extends DataProcessor implements AudioSource {
                     byte[] data = new byte[frameSizeInBytes];
                     int numBytesRead = audioLine.read(data, 0, data.length);
                     
-                    if (numBytesRead == frameSizeInBytes) {
-                        currentUtterance.add(data);
-                    } else {
+                    if (numBytesRead != frameSizeInBytes) {
                         numBytesRead = (numBytesRead % 2 == 0) ?
                             numBytesRead + 2 : numBytesRead + 3;
                         
                         byte[] shrinked = new byte[numBytesRead];
                         System.arraycopy(data, 0, shrinked, 0, numBytesRead);
-                        currentUtterance.add(shrinked);
+                        data = shrinked;
                     }
+
+                    double[] samples = Util.bytesToSamples
+                        (data, 0, data.length, sampleSizeInBits/8, signed);
+                    
+                    audioList.add(new Audio(samples));
 
 		    if (tracing) {
 			printMessage(
 			    "recorded 1 frame (" + numBytesRead + ") bytes");
 		    }
                 }
+
+                audioList.add(new Audio(Signal.UTTERANCE_END));
                 
                 audioLine.stop();
 		if (closeAudioBetweenUtterances) {
@@ -300,7 +301,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      * Clears all cached audio data.
      */
     public void clear() {
-        utteranceList.clear();
+        audioList = new LinkedList();
     }
 
 
@@ -312,19 +313,14 @@ public class Microphone extends DataProcessor implements AudioSource {
      * @return true if the recording started successfully; false otherwise
      */
     public synchronized boolean startRecording() {
-	//System.out.println("SR:open");
         if (open()) {
-	//System.out.println("SR:setRecording");
+            audioList.add(new Audio(Signal.UTTERANCE_START));
             setRecording(true);
             RecordingThread recorder = new RecordingThread("Microphone");
-	//System.out.println("SR:start");
             recorder.start();
             while (!getStarted()) {
-	//System.out.println("SR:!getStarted");
                 try {
-	//System.out.println("SR:wait");
                     wait();
-	//System.out.println("SR:done wait");
                 } catch (InterruptedException ie) {
                     ie.printStackTrace();
                 }
@@ -368,7 +364,13 @@ public class Microphone extends DataProcessor implements AudioSource {
 
         getTimer().start();
 
-        Audio output = utteranceList.getNextAudio();
+        Audio output = null;
+
+        do {
+            if (audioList.size() > 0) {
+                output = (Audio) audioList.remove(0);
+            }
+        } while (output == null && recording);
 
         getTimer().stop();
 
@@ -444,126 +446,13 @@ public class Microphone extends DataProcessor implements AudioSource {
          * @param event the LineEvent to handle
          */
         public void update(LineEvent event) {
-	// System.out.println("MicrophoneLineListener: update " + event);
+            // System.out.println("MicrophoneLineListener: update " + event);
             if (event.getType().equals(LineEvent.Type.START)) {
                 setStarted(true);
                 synchronized (Microphone.this) {
                     Microphone.this.notifyAll();
                 }
             }
-        }
-    }
-    
-
-    /**
-     * A cache of Utterances for live-mode decoding. This inner class
-     * allows you add convenient add Utterance objects to it by the
-     * <code>add()</code> method, and get Audio objects generated by
-     * these Utterances using the <code>getNextAudio()</code> method.
-     */
-    class UtteranceList {
-        
-        private List utterances = Collections.synchronizedList(new LinkedList());
-        private Utterance currentUtterance = null;
-        
-        
-        /**
-         * Adds an Utterance into this cache.
-         *
-         * @param utterance the Utterance to add
-         */
-        public void add(Utterance utterance) {
-            utterances.add(utterance);
-        }
-
-
-        /**
-         * Remove all the Utterances in this UtteranceList.
-         */
-        public void clear() {
-            utterances.clear();
-            currentUtterance = null;
-        }
-        
-        
-        /**
-         * Returns the next Audio object from this UtteranceList.
-         * Audio objects with Signal.UTTERANCE_START and Signal.UTTERANCE_END
-         * are returned before and after the Audio objects from each
-         * Utterance.
-         *
-         * @return the next Audio object, or null if no more Audio available
-         */
-        public Audio getNextAudio() throws IOException {
-            Audio output = null;
-  
-            // If the current Utterance is null, try to get the next
-            // one from the list. If a new one is obtained, send
-            // an UTTERANCE_START Signal. Otherwise, we really have no
-            // more utterances, so return null.
-
-            if (currentUtterance == null) {
-                Object first = null;
-
-                if (utterances.size() > 0) {
-                    first = utterances.remove(0);
-                }
-
-                if (first != null) {
-                    currentUtterance = (Utterance) first;
-                    output = new Audio(Signal.UTTERANCE_START);
-                } else {
-                    // we really have no more utterances
-                    output = null;
-                }
-            } else {
-                output = readNextFrame();
-                if (output == null) {
-                    currentUtterance = null;
-                    output = new Audio(Signal.UTTERANCE_END);
-                }
-            }
-            return output;
-        }
-        
-        
-        /**
-         * Returns the next Audio object from the current Utterance, 
-         * or null if there is none available.
-         *
-         * @return an Audio object or null
-         *
-         * @throws java.io.IOException
-         */
-        private Audio readNextFrame() throws IOException {
-            
-            // read one frame's worth of bytes
-            byte[] audioFrame = null;
-            
-            do {
-                audioFrame = currentUtterance.getNext();
-            } while (audioFrame == null && getRecording());
-            
-            if (audioFrame == null) {
-                return null;
-            }
-            
-            // turn it into an Audio object
-            Audio audio = null;
-            double[] samples = Util.bytesToSamples
-                (audioFrame, 0, audioFrame.length, sampleSizeInBits/8, signed);
-        
-            if (keepAudioReference) {
-                audio = new Audio(samples, currentUtterance);
-            } else {
-                audio = new Audio(samples);
-            }
-            
-            if (getDump()) {
-                System.out.println("FRAME_SOURCE " + audio.toString());
-            }
-            
-            return audio;
         }
     }
 }
