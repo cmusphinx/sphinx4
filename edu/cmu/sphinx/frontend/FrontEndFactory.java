@@ -27,8 +27,7 @@ import edu.cmu.sphinx.util.SphinxProperties;
 public class FrontEndFactory {
 
     /**
-     * The prefix for all Frontend SphinxProperties names.
-     * Its value is currently <code>"edu.cmu.sphinx.frontend."</code>.
+     * The prefix for the SphinxProperties names of this class.
      */
     public static final String PROP_PREFIX
         = "edu.cmu.sphinx.frontend.FrontEndFactory.";
@@ -36,7 +35,7 @@ public class FrontEndFactory {
 
     /**
      * The SphinxProperty name for sample rate in Hertz (i.e.,
-     * number of times per second), which has a default value of 8000.
+     * number of times per second).
      */
     public static final String PROP_SAMPLE_RATE = PROP_PREFIX + "sampleRate";
 
@@ -48,8 +47,7 @@ public class FrontEndFactory {
 
 
     /**
-     * The SphinxProperty name for the size of a cepstrum, which is
-     * 13 by default.
+     * The SphinxProperty name for the size of a cepstrum.
      */
     public static final String PROP_CEPSTRUM_SIZE = PROP_PREFIX + 
 	"cepstrumSize";
