@@ -1,0 +1,36 @@
+#!/pkg/gnu/bin/gawk -f
+#!/usr/bin/awk -f 
+# usage:
+#     s4BatchSummary s4_res.1.out [s4_res.2.out ....]
+#
+# This script will go though all the given s4 output
+# data report a summary word error rate for all files.
+#
+# This is useful when tests have been divided into separate
+# batches and summary info is desired.
+
+$1 == "#" && $3 == "Summary" && $4 == "statistics" {
+    done = 1;
+}
+
+FILENAME != lastFilename {
+   lastFilename = FILENAME;
+   sumWords += words;
+   sumErrors += errors;
+   print "#", sumWords, sumErrors;
+   done = 0;
+}
+
+
+done == 0 && $1 == "Words:" && $3 == "Matches:" {
+    words = $2;
+    totWords = words + sumWords;
+    totErrors = errors + sumErrors;
+    wer = (totErrors/totWords) * 100.0;
+    printf("%d %d %6.2f\n", totWords, totErrors, wer);
+}
+
+done == 0 && $1== "Accuracy:" && $3 == "Errors:" {
+    errors = $4;
+}
+
