@@ -1,0 +1,173 @@
+=====================================================
+Fast, efficient and clear math for the acoustic model
+=====================================================
+I've been looking a bit at math performance with an eye to the type of math 
+(int, floating point,  double, log base) will be best for the acoustic model.
+
+There are a number of approaches, each of which have advantages and 
+disadvantages in terms of space used, clarity, precision and speed.
+
+I'll try to outline the advantages and disadvantages of each. 
+
+
+===============
+Some BenchMarks
+===============
+As a starting point for this investigation, I wrote a few benchmarks
+that simulate/duplicate the mathematics for gaussian scoring. I coded
+a number of versions using various numeric representations. The 'Time'
+shows the time to score one million 39 element feature vectors against
+a single gaussian.
+
+
+Version					Time (low is better)
+==================================================================
+ * java pure double          		0.95s
+ * java pure Float       		1.06s
+ * java Sphinx3 scoring            	1.77s
+ * java mixed float/double           	1.81s
+ * c version pure double		2.39s
+ * java pure Int         		5.22s
+ * c version pure int			5.99s
+
+
+----
+KEY:
+----
+ * java pure double - all math done in double precision floating point
+ * java pure float - all math done in single precision floating point
+ * javaSphinx3 Scoring - duplicates the datatypes used in the current 
+ 	version of sphinx3. This uses single, double and integer math 
+	to score a Mixture.
+ * java mixed float/double - input vectors are floats, internals are doubles
+ * c version pure double - double precision version written in C
+ * java pure int - all math done with integers
+ * c version pure int - int precision version written in C
+
+Java timings taken with the 1.4 compiler with the -server option
+C version compiled with gcc -O3
+
+These timing show that the Java version perform quite a bit faster than the C 
+versions, that pure double math is fastest of all and pure integer math 
+is slowest of all. (Usual caveats about micro-benchmarks apply here,
+this is not a real world test and actual results may vary...)
+
+
+===================
+Rating the Models
+===================
+With these benchmarks in mind, I've rated each mode based upon the 
+following criteria:
+
+Space: 		How much space would the senone data take using the data type?
+Clarity 	How clear is the code?
+Speed		How fast is the code?
+Precision	How good are the answers?
+
+
+================================================================
+Current Model (Mixed float/double/integer with log table for add)
+================================================================
+The current Sphinx3 Acoustic Model Math is a mix of single, double and 
+integer math.  Gaussians and vectors are represented as floats,
+intermediate calculations are performed in double arithmetic with a
+final weighting score applied using integer math. The scores are
+accumulated into a final score. This accumulation is awkward, since
+the results are in logarithmic form and log values are not easy to
+add.
+
+Ratings:
+
+Space:		5 Stars - gaussians represented as 32bits use minimal memory
+
+Clarity:	1 Stars - log conversions, adding to multiply, table
+			  lookups to add, make this approach the
+			  hardest to understand
+
+Speed:		2 Stars - Even without considering the table lookup
+			  for the log add, a poor performer compared
+			  to the pure single or double precision
+			  versions
+
+Precision:	? Stars - Not sure what the precision issues are here.
+			  (See precision note below)
+
+
+==================
+All Floating Point
+==================
+
+Space  :	5 Stars - uses no more space than current model
+
+Clarity:	5 Stars - using a single data type is the most clear.
+			  Floating point math is most natural.
+
+
+Speed:		4 Stars - Nearly fastest model
+
+Precision:	3 Stars - Not as precise as double model
+
+===========================
+All double floating  Point
+===========================
+
+Space  :	1 Stars - uses twice the space as the current mode. If
+			  we were to represent all senone data with
+			  doubles, the senone size for a large
+			  vocabulary model would go from 32MB to 64MB.
+			  This is a significant increase in overall
+			  footprint.
+
+Clarity:	5 Stars - using a single data type is the most clear.
+			  Floating point math is most natural.
+
+
+Speed:		5 Stars - The fastest model
+
+Precision:	5 Stars - Most precise
+
+=======================================
+Mixed double and single floating  Point
+=======================================
+Space  :	5 Stars - uses no more space than current model
+
+
+Clarity:	4 Stars - inner loop uses a double, most other vars 
+			  declared a single.  Floating point math is 
+			  most natural.
+
+
+Speed:		2 Stars - float to double conversions take time
+
+Precision:	4 Stars - More precise than single, not as precise as
+			  double.
+
+
+
+================
+Precision issues
+================
+I am not sure of all of the ramifications on precision that using log
+representation has. Its not clear to me whether the reason why log
+representation is used is to speed up the math or to reduce the
+occurance of underflow when multiplying very small numbers. I'll need
+some assistance from the Speech Experts here.  
+
+In general, I need to get a feeling for what is the required precision 
+in the Acoutic Model calculations.  Are 32 bit floating calculations 
+precise enough for the recognizer?
+
+
+===============
+Recommendations
+===============
+Until I understand the precision issues a bit more, its hard to make a
+recomendation. That being said, if it were not for the space issue,
+the double precision floating point method would be the obvious
+choice, since it is clear, fast and most precise of all.  However,
+doubling the size of the senone data will probably not be an
+acceptable approach, so the next best alternative would likely be the
+mixed double/single approach, which trades off quite a bit of speed
+for the reduced memory footprint.  The single precision floating point
+model would be a faster and clearer approach, but it may not give 
+precise enough answers.

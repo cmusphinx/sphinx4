@@ -1,0 +1,195 @@
+
+------------ public classes and interfaces ------------------
+Represents the generic interface to the Acoustic Model for sphinx3j.
+A set of generic classes and interfaces that provide the overall
+interface to the AcousticModel. 
+
+So, as you read this, you may be wondering, "Hey! Where are all those
+wonderful things like MixtureGaussians and Composite Senone Sequences,
+and pools of Variance Transform Matrices?". Well they are all present
+and accounted for, they just are not visible at this level. 
+
+The next layer down (which discusses the package private classes and
+interfaces) will account for such beasts.
+
+
+/**
+ * Represents the generic interface to the Acoustic 
+ * Model for sphinx3j
+ */
+public class AcousticModel {
+
+     /**
+      * Initializes an acoustic model of a given context. This method
+      * should be called once per context. It is used to associate a
+      * particular context with an acoustic model resource. 
+      *
+      * @param context	the context of interest
+      * @param url	the location of the acoustic model data for
+      * 		context
+      *
+      * @throws IOException if the model could not be loaded
+      * @throws FileNotFoundException if the model does not exist
+      */
+     public static void initAcousticModel(String context, URL url);
+
+     /**
+      * Gets the acoustic model for the given context. This is a
+      * factory method that gets the acoustic model for this given
+      * context. 
+      *
+      * @param context the context of interest
+      *
+      * @return the acoustic model associated with the context or null
+      * if the given context has no associated acoustic model
+      */
+     public static AcousticModel getAcousticModel(String context);
+
+  // [[[ NOTE: I am currently not too sure what the language
+  // model or search/Decode systems are going to need beyond
+  // looking up an HMM for a particular unit, I would guess that as
+  // the decoder and LM designs solidify that a few more interfaces
+  // may be added ]]
+
+     /**
+      * Given a unit, return the HMM that exactly matches the given
+      * unit.  
+      *
+      * @param unit 	the unit of interest
+      *
+      * @return 	the HMM that exactly matches, or null if no match
+      * 		could be found.
+      */
+     public HMM lookup(Unit unit);
+
+     /**
+      * Returns an iterator that can be used to iterate through all
+      * the HMMs of the acoustic model
+      *
+      * @return an iterator that can be used to iterate through all
+      * HMMs in the model
+      */
+      // [[[ NOTE: I'm not sure that we even need this ]]]
+     Iterator iterator();
+}
+
+/**
+ * Represents a unit of speech. Units may represent phones, words or
+ * any other suitable unit
+ */
+interface Unit {
+
+    /**
+     * Gets the name for this unit
+     *
+     * @return the name for this unit
+     */
+    public String getName();
+}
+
+/**
+ * Represents a context dependent unit of speech.  The context of a
+ * unit is defined as the set of units to the left (preceding) and to
+ * the right (following) this unit. [[[ QUESTION: Should we allow for
+ * other types of context dependent units,(part of speech for example?) ]]]
+ */
+interface ContextDependentUnit extends Unit {
+    /**
+     * Gets the left context for the unit
+     * 
+     * @return the left context for a unit, or null if the unit has
+     * no left context
+     */
+    public Unit[] getLeftContext();
+
+    /**
+     * Gets the right context for the unit
+     * 
+     * @return the right context for a unit, or null if the unit has
+     * no right context
+     */
+    public Unit[] getRightContext();
+}
+
+
+/**
+ * Represents a hidden-markov-model. An HMM consists of a unit
+ * (context dependent or independent), a transition matrix from state
+ * to state, and a sequence of senones associated with each state.
+ */
+interface HMM {
+    /**
+     * Gets the  unit associated with this HMM
+     *
+     * @return the unit associated with this HMM
+     */
+    public Unit getUnit();
+
+
+    /**
+     * Returns the order of the HMM
+     *
+     * @return the order of the HMM
+     */
+    // [[[NOTE: this method is probably not explicitly needed since
+    // getSenoneSequence.getSenones().length will provide the same
+    // value, but this is certainly more convenient and easier to
+    // understand
+    public int getOrder();
+
+
+    /**
+     * Returns the SenoneSequence associated with this HMM
+     *
+     * @return the sequence of senones associated with this HMM. The
+     * length of the sequence is N, where N is the order of the HMM
+     */
+    // [[ NOTE: the senone sequence may in fact be a sequence of
+    // composite senones
+    public SenoneSequence getSenoneSequence();
+
+
+    /**
+     * Returns the transition matrix that determines the state
+     * transition probabilities for the matrix
+     *
+     * @return the transition matrix of size NxN where N is the order
+     * of the HMM
+     */
+    public float[][] getTransitionMatrix();
+
+    // [[ NOTE: For convenience we could provide some methods that
+    // return slices of the matrix (depending on the reqs. of the
+    // decoder
+
+}
+
+/**
+ * Contains an ordered list of senones. 
+ */
+interface SenoneSequence {
+    /**
+     * Returns the ordered set of senones for this sequence
+     *
+     * @return	 the ordered set of senones for this sequence
+     */
+    public Senone[] getSenones();
+}
+
+/**
+ * Represents a set of acoustic data that can be scored against a
+ * feature
+ */
+interface Senone {
+    /**
+     * Calculates the score for this senone based upon the given
+     * feature.
+     *
+     * @param feature	the feature vector to score this senone
+     * 			against
+     *
+     * @return 		the score for this senone
+     */
+    public float getScore(Feature feature);
+}
+

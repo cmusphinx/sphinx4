@@ -1,0 +1,211 @@
+I've received a number of comments on the first version. Here is the
+second version. I've included change-bars to help you identify areas
+that have been modified, added or removed.
+
+Acoustic Model Requirements  Version 0.2
+----------------------------------------
+-  The Acoustic Model provides a set of objects and interfaces that
+   can be used by entities for acoustic scoring of features.
+
+
+#ifdef VERSION_0.1 - old and obsolete:
+-  Mutation - These sets of objects are immutable, 
+   that is, once they are created
+   during system initialization they are never modified. Transient and
+   dynamic data such as senone and hmm state scores are not maintained
+   within the acoustic model. An immutable acoustic model allows the
+   acoustic model to be easily shared by different components and
+   recognizers. Since the A.M. is immutable, there are no
+   threading/concurrency issues to be concerned about.  [[[ QUESTION: 
+   we talked last week about adaptive acoustic models.
+   I'm not exactly sure how acoustic models are adapted. Perhaps as
+   updates to mixture gaussian transformation matrices. If this is the
+   case, then we may no longer have an immutable acoustic model.  Is
+   my understanding correct?]]]
+
+#else ifdef VERSION_0.2
+
+-   Mutation - Acoustic Models may be adapted during the course
+    of recognition. The Acoustic Model should provide a mechanism for
+    identifying subsets of the A.M. that are immutable and potentially
+    allow these to be shared among different acoustic models. The
+
+-  Persistence of Adaptation - An acoustic model may be adapted over the
+   course of time. This adaptation should optionally be persistent 
+   across runs. 
+
+-  The acoustic model will be used by the trainer, and thus needs to
+   support (eventual) trainer type operations (including saving)
+#endif
+    
+-  The Acoustic model can be read in from a file or a set of files.
+
+-  There could potentially be more than one Acoustic Model in the
+   system at a time.
+
+-  The acoustic model consists of a pool of Hidden Markov Models
+   (HMMs).
+
+-  Each HMM is associated with a single unit of speech. A unit can 
+   be a phone, a word, or any other segment of speech.
+
+-  The HMMs are left-right HMMs.
+
+-  There can be an arbitrary number of states per HMM.  
+
+-  The number of states per HMM can vary from one HMM to the next.
+
+
+-  An HMM contains at least the following information:
+
+   	- A description of the unit of speech that the HMM models.
+
+	- The context for the unit of speech.  The context consists
+	  of:
+
+	     - The set of units (of arbitrary size) preceeding this
+	       unit.
+
+	     - The set of units (of arbitrary size) following this
+	       unit.
+
+  	- A transition matrix that details the probability of a state
+	  transition between each state of the HMM.  The transition
+	  matrix is a 2 dimensional matrix of size N by N where N is
+	  the number of states. [[ QUESTION - with the
+	  one-step-viterbi design, do we sill need the non-emitting
+	  entry and exit states? If so then the matrix should be
+	  dimensioned N+1 by N+1 to include the probability of
+	  transitioning toe the non-emitting exit state.]]
+
+	- A set of senone sequences, or composite senone sequeneces
+
+-   The HMM interface will need to supply the following methods:
+        
+	 - getUnitDescripton - returns a description of the unit,
+	   including its context.
+	
+	 - getTransitionMatrix
+
+	 - getSenoneSequence 
+
+    [[ NOTE: Since we don't have the Viterbi-one-step completely
+    defined as of yet, nor do we have the 'Mystery Layer' defined
+    completely, it is likely that the interface will change somewhat
+    (i.e. this interface is woefully incomplete)
+    ]]]
+
+-   A Senone sequence is an ordered list of senones. Each senone in a 
+    senone sequence corresponds to an HMM state. Thus a 5 state HMM 
+    will point to a senone sequence that contains 5 senones.
+
+-   A composite senone sequence is a list of sets of senones. Each
+    element in a composite senones sequence list is the set of
+    possible senones for that state.  Composite senone sequences are 
+    used by HMMs to represent units where the left and/or right 
+    contexts are unknown.
+
+-   Senone sequences are maintained in a pool so they can be shared 
+    among different HMMs
+
+-   Composite senone sequences are maintained in a pool so they can 
+    be shared among different HMMs. 
+    
+-   The sharing of senones and composite senones not only reduces 
+    memory footprint but also can reduce  processing time since 
+    shared senones need only be scored once per frame.
+
+-   A fundamental property of a senone is that it can be scored
+    against a Feature.
+
+-  The Acoustic Scorer (the part of the system responsible for scoring
+   all senones for a particular frame) may call on the acoustic model
+   to score individual senones, but is not part of the acoustic model.
+   [[[ QUESTION: Should subvector quantization management be
+   considered part of the Acoustic Model? It seem to me that this is
+   part of the Acoustic Score (meaning that I think the answer is no)
+   ]]]
+
+-   A senone is essentially a probability distribution function (PDF).
+    It can be represented by an abstract interface.  
+
+-   One implementation of the senone interface is to represent the PDF as
+    a Mixture Gaussian. The Mixture Gaussian will be the first
+    implementation of the senone interface.
+
+-   The Mixture Gaussian consists of:
+
+    	- A set of MixtureWeights, one weighting for each component.
+
+	- A set of Mixture components each of which contains:
+
+	    - Mean vector
+
+	    - MeanTransformationMatrix
+
+	    - Variance Vector
+
+	    - VarianceTransformationMatrix
+
+    [[ QUESTION: I know we talked about this briefly last week, but I
+    am not entirely clear on the raison d'etre of the transformation
+    matrices.  Are these to allow for adaptive acoustic models? If so,
+    what is a good interface to provide such adaptation capability? ]]
+
+    [[ QUESTION: If the transformation matrices are to support acoustic
+    model adaptation, is that something that we want to support
+    initially, or can it be left until we are really ready to start
+    adapting acoustic models. It seems that if these matrices are just
+    going to be unit matrices for the next 6 months that we may be
+    better off leaving them out until we are ready to actually use
+    them. ]]]
+
+-   Each of the members that form the MixtureComponent shall be
+    kept in a pool so that the elements can be shared by
+    different mixture components.
+
+-   The format of the Mixture Gaussian input file shall be defined by
+    the output of the Sphinx3 trainer.
+
+-  Database sizes:
+
+	Note that it is somewhat difficult to predict the senone size
+	since many of the components may be shared. This is a rough
+	(order of magnitude) estimate of the size of the Senones and
+	HMMs for the various reference applications.
+
+
+	senone size:
+		8-16 Mixtures
+		    39 Means
+		    39 Variance
+		    39x39 Xform Matrix (shared)
+		    39x39 Xform Matrix (shared)
+	Estimate a typical senone
+		is 8 * 39 * 2 * 4 + shared = 4K
+
+	HMM Size: (for a 3 state)
+		4x4 matrix
+		Name
+		Context = 
+		Senone/Composite senone sequence = 
+	Typical HMM: about 100 bytes
+
+	Large Vocabulary:
+		100,000 HMMS = 10MB
+		8000 Senones = 32MB
+
+	Command and Control
+		300 HMMs 	= 30K
+		400 Senones	= 1.6MB
+
+	Connected Digits
+		300 HMMs 	= 30K
+		400 Senones	= 1.6MB
+
+
+		
+
+
+
+Thus ends the initial pass at the Acoustic Model requirements.
