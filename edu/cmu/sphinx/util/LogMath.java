@@ -284,6 +284,16 @@ public final class LogMath {
     }
 
     /**
+     * Converts the source, which is a number in base 10, to a log value
+     * which base is the LogBase of this LogMath.
+     *
+     * @param source the number in base Math.E to convert
+     */
+    public final double log10ToLog(double source) {
+	return logToLog(source, 10.0, logBase);
+    }
+
+    /**
      * Converts the given log value into a base Math.E log value.
      *
      * @param logValue the log value to convert
