@@ -36,6 +36,19 @@ import edu.cmu.sphinx.util.props.Registry;
 /**
  * Decodes a batch file containing a list of files to decode. The files can be
  * either audio files or cepstral files, but defaults to audio files.
+ * To run this BatchModeRecognizer:
+ * <pre>
+ * java BatchModeRecognizer <xmlConfigFile> <batchFile>
+ * </pre>
+ * where <code>xmlConfigFile</code> is an XML-based configuration file and
+ * <code>batchFile</code> is a file listing all the files to decode and
+ * transcript of those files. For information about the configuration
+ * file, refer to the document 
+ * <a href="../../util/props/doc-files/ConfigurationManagement.html">
+ * Sphinx-4 Configuration Management</a>. For information about the
+ * batch file, refer to the <a href="../../../../../index.html#batch_files">
+ * batch file description</a>.
+ *
  */
 public class BatchModeRecognizer implements Configurable {
 
@@ -225,7 +238,7 @@ public class BatchModeRecognizer implements Configurable {
      * Main method of this BatchDecoder.
      * 
      * @param argv
-     *                argv[0] : confif.xml argv[1] : a file listing
+     *                argv[0] : config.xml argv[1] : a file listing
      *                all the audio files to decode
      */
     public static void main(String[] argv) {
