@@ -585,7 +585,11 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
             // below startLow so far for this Utterance. We just
             // go back and find the UTTERANCE_START.
             index = 0;
-            System.out.println("Cannot find lastStartLowFrame");
+            
+            System.out.println
+                ("No frames under startLow so far, " +
+                 "will insert SPEECH_START right after UTTERANCE_START.");
+            
             for (ListIterator i = outputQueue.listIterator(); i.hasNext();) {
                 Cepstrum cepstrum = (Cepstrum) i.next();
                 if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
