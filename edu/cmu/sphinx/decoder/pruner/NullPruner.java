@@ -11,46 +11,53 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.search;
+package edu.cmu.sphinx.decoder.pruner;
+
+import edu.cmu.sphinx.decoder.search.ActiveList;
 
 
 /**
- * Provides a mechanism for pruning a set of StateTokens
- *
+ * A Null pruner. Does no actual pruning
  */
-public interface Pruner {
+public class NullPruner implements Pruner {
+
 
     /**
-     * Starts the pruner
+     * Creates a simple pruner
+     *
      */
-    public void start();
-
+    public NullPruner() {
+    }
 
     /**
      * Initializes this Pruner with the given context.
      *
      * @param context the context to use
      */
-    public void initialize(String context);
+    public void initialize(String context) {
+    }
 
-
+    /**
+     * starts the pruner
+     */
+    public void start() {
+    }
 
     /**
      * prunes the given set of states
      *
-     * @param stateTokenList a list containing StateToken objects to
-     * be scored
+     * @param activeList the active list of tokens
      *
-     * @return the pruned list, (may be the sample list as
-     * stateTokenList)
+     * @return the pruned (and possibly new) activeList
      */
-    public ActiveList prune(ActiveList stateTokenList);
+    public ActiveList prune(ActiveList activeList) {
+	return activeList;
+    }
 
 
     /**
      * Performs post-recognition cleanup. 
      */
-    public void stop();
+    public void stop() {
+    }
 }
-
-

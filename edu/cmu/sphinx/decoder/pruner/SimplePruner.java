@@ -11,24 +11,22 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.search;
+package edu.cmu.sphinx.decoder.pruner;
 
-import edu.cmu.sphinx.decoder.search.Pruner;
 import edu.cmu.sphinx.decoder.search.ActiveList;
 
 
 /**
- * A Null pruner. Does no actual pruning
+ * Performs the default pruning behavior which is to invoke
+ * the purge on the active list
  */
-public class NullPruner implements Pruner {
-
+public class SimplePruner implements Pruner {
 
     /**
-     * Creates a simple pruner
-     *
+     * Starts the pruner
      */
-    public NullPruner() {
-    }
+    public void start() {}
+
 
     /**
      * Initializes this Pruner with the given context.
@@ -38,27 +36,21 @@ public class NullPruner implements Pruner {
     public void initialize(String context) {
     }
 
-    /**
-     * starts the pruner
-     */
-    public void start() {
-    }
 
     /**
      * prunes the given set of states
      *
-     * @param activeList the active list of tokens
-     *
-     * @return the pruned (and possibly new) activeList
+     * @param activeList a activeList of tokens
      */
     public ActiveList prune(ActiveList activeList) {
-	return activeList;
+	return activeList.purge(); 
     }
 
 
     /**
      * Performs post-recognition cleanup. 
      */
-    public void stop() {
-    }
+    public void stop() {}
 }
+
+

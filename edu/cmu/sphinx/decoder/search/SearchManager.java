@@ -15,7 +15,7 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.decoder.search.Pruner;
+import edu.cmu.sphinx.decoder.pruner.*;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 
 /**

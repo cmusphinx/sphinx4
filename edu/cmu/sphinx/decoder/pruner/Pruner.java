@@ -11,19 +11,21 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.search;
+package edu.cmu.sphinx.decoder.pruner;
+
+import edu.cmu.sphinx.decoder.search.ActiveList;
 
 
 /**
- * Performs the default pruning behavior which is to invoke
- * the purge on the active list
+ * Provides a mechanism for pruning a set of StateTokens
+ *
  */
-public class SimplePruner implements Pruner {
+public interface Pruner {
 
     /**
      * Starts the pruner
      */
-    public void start() {}
+    public void start();
 
 
     /**
@@ -31,24 +33,26 @@ public class SimplePruner implements Pruner {
      *
      * @param context the context to use
      */
-    public void initialize(String context) {
-    }
+    public void initialize(String context);
+
 
 
     /**
      * prunes the given set of states
      *
-     * @param activeList a activeList of tokens
+     * @param stateTokenList a list containing StateToken objects to
+     * be scored
+     *
+     * @return the pruned list, (may be the sample list as
+     * stateTokenList)
      */
-    public ActiveList prune(ActiveList activeList) {
-	return activeList.purge(); 
-    }
+    public ActiveList prune(ActiveList stateTokenList);
 
 
     /**
      * Performs post-recognition cleanup. 
      */
-    public void stop() {}
+    public void stop();
 }
 
 

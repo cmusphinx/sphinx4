@@ -18,10 +18,10 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import edu.cmu.sphinx.decoder.pruner.Pruner;
+import edu.cmu.sphinx.decoder.pruner.SimplePruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
-import edu.cmu.sphinx.decoder.search.Pruner;
 import edu.cmu.sphinx.decoder.search.SearchManager;
-import edu.cmu.sphinx.decoder.search.SimplePruner;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.linguist.Linguist;
