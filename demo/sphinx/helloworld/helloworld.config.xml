@@ -232,7 +232,7 @@
     <!-- ******************************************************* -->
     
     <component name="accuracyTracker" 
-                type="edu.cmu.sphinx.instrumentation.AccuracyTracker">
+                type="edu.cmu.sphinx.instrumentation.BestPathAccuracyTracker">
         <property name="recognizer" value="${recognizer}"/>
         <property name="showAlignedResults" value="false"/>
         <property name="showRawResults" value="false"/>

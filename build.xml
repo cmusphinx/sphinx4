@@ -562,6 +562,7 @@ jsapi.exe from the lib directory.
 	<delete dir="${javadoc_dir}"/>
 	<delete dir="${bin_dir}"/>
 	<delete file="${lib_dir}/sphinx4.jar"/>
+	<delete file="${lib_dir}/tags.jar"/>
 	<delete file="${lib_dir}/${wsj_name}.jar"/>
 	<delete file="${lib_dir}/${wsj_8kHz_name}.jar"/>
 	<delete file="${lib_dir}/${tidigits_name}.jar"/>

@@ -1,6 +1,28 @@
 Sphinx-4 Speech Recognition System
 -------------------------------------------------------------------
 
+Version:       1.0Beta+
+Release Date:  xxx xxxx
+
+Detailed Changes:
+----------------
+
+WDW - 11/09/04 
+    Made WordPruningBreadthFirstSearchManager.recognize behavior
+    consistent with the SimpleBreadthFirstSearchManager:  when
+    their is no more data to decode, a null Result is returned.
+
+    Made AccuracyTracker an abstract class; moved its best path
+    logic to a new class: BestPathAccuracyTracker; created a 
+    new class, BestConfidenceAccuracyTracker, that uses the
+    ConfidenceScorer to determine the best hypothesis.
+
+    Added a LatticeDemo to demonstrate how to obtain lattices
+    from recognition results.
+
+
+-------------------------------------------------------------------
+
 Version:       1.0Beta
 Release Date:  September 2004
 

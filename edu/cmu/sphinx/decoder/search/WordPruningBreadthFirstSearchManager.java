@@ -358,7 +358,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     public Result recognize(int nFrames) {
         boolean done = false;
         Result result;
-
+        int startingFrame = currentFrameNumber;
+        
         for (int i = 0; i < nFrames && !done; i++) {
             // System.out.println("Frame " + currentFrameNumber);
             // score the emitting list
@@ -367,8 +368,10 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             activeList = activeListManager.getEmittingList();
             if (activeList != null) {
                 do {
-                    currentFrameNumber++;
                     done = !scoreTokens();
+                    if (!done) {
+                        currentFrameNumber++;
+                    }
                 } while (!done
                         && (growSkipInterval > 1 && 
                             ((currentFrameNumber % growSkipInterval) == 0)));
@@ -387,13 +390,21 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             // tokenTracker.stopFrame();
         }
 
-        result = new Result(loserManager, activeList, resultList,
-                currentFrameNumber, done, logMath);
-
-       // tokenTypeTracker.show();
-       if (showTokenCount) {
+        /* To be consistent with the SimpleBreadthFirstSearchManager,
+         * only return a result if we actually had data to recognize.
+         */
+        if (startingFrame < currentFrameNumber) {
+            result = new Result(loserManager, activeList, resultList,
+                                currentFrameNumber, done, logMath);
+        } else {
+            result = null;
+        }
+        
+        // tokenTypeTracker.show();
+        if (showTokenCount) {
             showTokenCount();
         }
+        
         return result;
     }
 

@@ -17,19 +17,18 @@ import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
-import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.Resetable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.Resetable;
 
 /**
  * Tracks and reports recognition accuracy
  */
-public class AccuracyTracker
+abstract public class AccuracyTracker
         implements
             Configurable,
             ResultListener,
@@ -57,15 +56,6 @@ public class AccuracyTracker
      * The default setting of PROP_SHOW_DETAILS
      */
     public final static boolean PROP_SHOW_DETAILS_DEFAULT = true;
-    /**
-     * A sphinx property that define whether the full token path is
-     * displayed
-     */
-    public final static String PROP_SHOW_FULL_PATH = "showFullPath";
-    /**
-     * The default setting of PROP_SHOW_FULL_PATH
-     */
-    public final static boolean PROP_SHOW_FULL_PATH_DEFAULT = false;
     /**
      * A sphinx property that define whether recognition results
      * should be displayed.
@@ -107,7 +97,6 @@ public class AccuracyTracker
     private boolean showResults;
     private boolean showAlignedResults;
     private boolean showRaw;
-    private boolean showFullPath;
     
     private NISTAlign aligner = new NISTAlign(false, false);
 
@@ -126,8 +115,6 @@ public class AccuracyTracker
         registry.register(PROP_SHOW_RESULTS, PropertyType.BOOLEAN);
         registry.register(PROP_SHOW_ALIGNED_RESULTS, PropertyType.BOOLEAN);
         registry.register(PROP_SHOW_RAW_RESULTS, PropertyType.BOOLEAN);       
-        registry.register(PROP_SHOW_FULL_PATH, PropertyType.BOOLEAN);       
-
     }
 
     /*
@@ -159,11 +146,10 @@ public class AccuracyTracker
                 PROP_SHOW_RESULTS_DEFAULT);
         showAlignedResults = ps.getBoolean(PROP_SHOW_ALIGNED_RESULTS,
                 PROP_SHOW_ALIGNED_RESULTS_DEFAULT);
-        showFullPath = ps.getBoolean(PROP_SHOW_FULL_PATH,
-                PROP_SHOW_FULL_PATH_DEFAULT);
         
         showRaw = ps.getBoolean(PROP_SHOW_RAW_RESULTS,
                 PROP_SHOW_RAW_RESULTS_DEFAULT);
+        
         aligner.setShowResults(showResults);
         aligner.setShowAlignedResults(showAlignedResults);
     }
@@ -197,45 +183,28 @@ public class AccuracyTracker
 
 
     /**
-     * Dumps the best path 
+     * Shows the complete details.
      *
-     * @param result the result to dump
+     * @param rawText the RAW result
      */
-    private void dumpBestPath(Result result) {
-        System.out.println();
-        Token bestToken = result.getBestToken();
-        if (bestToken != null) {
-            bestToken.dumpTokenPath();
-        } else {
-            System.out.println("Null result");
+    protected void showDetails(String rawText) {
+        if (showDetails) {
+            System.out.println();
+            aligner.printSentenceSummary();
+            if (showRaw) {
+                System.out.println("RAW     " + rawText);
+            }
+            System.out.println(); 
+            aligner.printTotalSummary();
         }
-        System.out.println(); 
     }
-
+    
     /*
      * (non-Javadoc)
      * 
      * @see edu.cmu.sphinx.result.ResultListener#newResult(edu.cmu.sphinx.result.Result)
      */
-    public void newResult(Result result) {
-        String ref = result.getReferenceText();
-        if (result.isFinal() && ref != null) {
-            String hyp = result.getBestResultNoFiller();
-            aligner.align(ref, hyp);
-            if (showFullPath) {
-                dumpBestPath(result);
-            }
-            if (showDetails) {
-                System.out.println();
-                aligner.printSentenceSummary();
-                if (showRaw) {
-                    System.out.println("RAW     " + result.toString());
-                }
-                System.out.println(); 
-                aligner.printTotalSummary();
-            }
-        }
-    }
+    abstract public void newResult(Result result);
 
     /*
      * (non-Javadoc)

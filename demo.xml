@@ -80,6 +80,7 @@ your environment to use JSAPI.
 	    depends="compile_sphinx_helloworld,
 	             compile_sphinx_hellodigits,
 		     compile_sphinx_hellongram,
+		     compile_sphinx_lattice,
 		     compile_sphinx_confidence,
 	             compile_jsapi_dialog,
 	             compile_jsapi_jsgf,
@@ -214,6 +215,30 @@ your environment to use JSAPI.
 	     manifest="${src_dir}/demo/sphinx/hellongram/hellongram.Manifest"
 	     basedir="${classes_dir}"
 	     includes="demo/sphinx/hellongram/**"
+	     filesonly="true"
+	     compress="true"/>
+    </target>
+
+    <target name="compile_sphinx_lattice">
+	<mkdir dir="${classes_dir}/demo/sphinx/lattice"/>
+	<javac debug="true"
+	       source="1.4"
+	       listfiles="true"
+	       deprecation="true"
+	       srcdir="${src_dir}"
+	       includes="demo/sphinx/lattice/**"
+	       destdir="${classes_dir}">
+	    <classpath refid="libs"/>
+	</javac>
+	<copy file="${src_dir}/demo/sphinx/lattice/10001-90210-01803.wav"
+	      todir="${classes_dir}/demo/sphinx/lattice"/>
+	<copy file="${src_dir}/demo/sphinx/lattice/config.xml"
+	      todir="${classes_dir}/demo/sphinx/lattice"/>
+	<mkdir dir="${bin_dir}"/>
+        <jar destfile="${bin_dir}/LatticeDemo.jar" 
+	     manifest="${src_dir}/demo/sphinx/lattice/latticedemo.Manifest"
+	     basedir="${classes_dir}"
+	     includes="demo/sphinx/lattice/**"
 	     filesonly="true"
 	     compress="true"/>
     </target>

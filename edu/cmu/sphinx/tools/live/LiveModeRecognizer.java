@@ -90,7 +90,7 @@ public class LiveModeRecognizer implements Configurable {
     // TODO - the instrumentation in here that is looking for gap insertions
     // and performing the alignment and reporting of the live summary data
     // should probably be moved to a separate instrumentation package, much
-    // like the AccuracyTracker.
+    // like the BestPathAccuracyTracker.
 
     // -------------------------------
     // Configuration data
