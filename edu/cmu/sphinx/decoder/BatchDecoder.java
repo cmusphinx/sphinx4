@@ -19,6 +19,7 @@ import edu.cmu.sphinx.frontend.DataSource;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.NISTAlign;
+import edu.cmu.sphinx.util.Utilities;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -232,7 +233,8 @@ public class BatchDecoder {
 	if (inputDataType.equals("audio")) {
 	    ((StreamAudioSource) dataSource).setInputStream(is, file);
 	} else if (inputDataType.equals("cepstrum")) {
-	    ((StreamCepstrumSource) dataSource).setInputStream(is);
+	    boolean bigEndian = Utilities.isCepstraFileBigEndian(file);
+	    ((StreamCepstrumSource) dataSource).setInputStream(is, bigEndian);
 	}
 
         // usually 25 features in one audio frame
