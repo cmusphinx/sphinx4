@@ -20,8 +20,7 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 #
 ############################################################
 
-edu.cmu.sphinx.model.acoustic.sparseForm = false
-edu.cmu.sphinx.model.acoustic.names = aurora_plp
+edu.cmu.sphinx.model.acoustic.names = aurora_mfc
 
 edu.cmu.sphinx.model.acoustic.aurora_mfc.format = sphinx3.ascii
 edu.cmu.sphinx.model.acoustic.aurora_mfc.location = /lab/speech/sphinx4/data/aurora2_model
@@ -53,7 +52,6 @@ edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 #
 ############################################################
 
-edu.cmu.sphinx.frontend.sampleRate = 8000
 edu.cmu.sphinx.frontend.useAcousticModelProperties = true
 
 edu.cmu.sphinx.frontend.featureExtractor = edu.cmu.sphinx.frontend.DeltasFeatureExtractor
