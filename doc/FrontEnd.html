@@ -31,7 +31,7 @@
     </center>
     </font>
 
-    <font face="Arial" size="-1">      
+    <font face="Arial" size="2">      
       <p>
         <h3>Table of Contents</h3>
 	<ul>
@@ -48,21 +48,20 @@
       There is a program called FeatureFileDumper that turns an audio file
       into binary cepstra file using the front end.
       To create MFCC cepstra using this program,
-      go to the <font size="+1">
-      <code>edu/cmu/sphinx/tools/feature</code></font> directory,
+      go to the
+      <code>edu/cmu/sphinx/tools/feature</code> directory,
       and type:
-      <font size="+1">
-      <pre>ant -Dinput="input file" -Doutput="output file" cepstra_producer</pre></font>
-
+      <p>
+      <code>ant -Dinput="input file" -Doutput="output file" cepstra_producer</code>
+      <p>
       To create a binary PLP cepstra file using this program, type:
-      <font size="+1">
-      <pre>ant -Dinput="input file" -Doutput="output file" plp_producer</pre>
-      </font>
-
+      <p>
+      <code>ant -Dinput="input file" -Doutput="output file" plp_producer</code>
+      <p>
       To create a binary spectra file, type:
-      <font size="+1">
-      <pre>ant -Dinput="input file" -Doutput="output file" spectra_producer
-      </pre></font>
+      <p>
+      <code>ant -Dinput="input file" -Doutput="output file" spectra_producer
+      </code>
 
       <p>
       <b>Binary File Format</b>
@@ -81,9 +80,8 @@
       <p>
       This normally applies to batch mode decoding using the BatchDecoder.
       To decode from cepstra files, you should set the sphinx property as:
-      <font size="+1">
-      <pre>edu.cmu.sphinx.decoder.BatchDecoder.inputDataType = cepstrum</pre>
-      </font>
+      <code>edu.cmu.sphinx.decoder.BatchDecoder.inputDataType = cepstrum</code>
+      
       Setting this property to "audio" (the default) simply decodes 
       from audio files.
 
@@ -98,16 +96,16 @@
       The Sphinx-4 audio endpointer (called LevelTracker) is enabled by
       including it as part of the front end pipeline. The LevelTracker
       should be placed in front of all the other data processors, e.g.,
-      <font size="+1">
-      <pre>
-edu.cmu.sphinx.frontend.FrontEndFactory.pipelines=mfc_ep
-mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=9
+      <p>
+      <code>
+      edu.cmu.sphinx.frontend.FrontEndFactory.pipelines=mfc_ep
+      <br>mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=9
+      <br>mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.endpoint.LevelTracker
+      <br>mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+      <br>...
+      </code>
 
-mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.endpoint.LevelTracker
-mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
-...
-      </pre></font>
-
+      <p>
       The LevelTracker property 'threshold' controls how sensitive 
       the endpointer is. It is empirically determined that the value of 13
       is optimal for most environments. A lower threshold will make the
