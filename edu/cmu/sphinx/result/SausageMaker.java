@@ -452,7 +452,7 @@ public class SausageMaker implements ConfidenceScorer {
                 sausage.addWordHypothesis(index,swr);
             }
         }
-        sausage.fillInBlanks(lattice.logMath);
+        sausage.fillInBlanks();
         return sausage;
     }
     

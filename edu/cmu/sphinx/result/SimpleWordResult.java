@@ -43,7 +43,8 @@ public class SimpleWordResult implements WordResult {
         Pronunciation[] pros = { Pronunciation.UNKNOWN };
         this.word = new Word(w,pros,false);
         this.confidence = confidence;
-        this.score = LogMath.getLogZero();
+        this.score = logMath.getLogZero();
+        this.logMath = logMath;
     }
     
     /**

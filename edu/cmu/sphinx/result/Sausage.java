@@ -44,6 +44,7 @@ public class Sausage implements ConfidenceResult {
         for (int i=0;i<size;i++) {
             confusionSets.add(new ConfusionSet());
         }
+        this.logMath = logMath;
     }
     
     /**
@@ -63,15 +64,15 @@ public class Sausage implements ConfidenceResult {
      * 
      * @param logMath the log math object to use for probability computations
      */
-    public void fillInBlanks(LogMath logMath) {
+    public void fillInBlanks() {
         for (ListIterator i=confusionSets.listIterator();i.hasNext();) {
             int index = i.nextIndex();
             ConfusionSet set = (ConfusionSet)i.next();
-            float sum = LogMath.getLogZero();
+            float sum = logMath.getLogZero();
             for (Iterator j=set.keySet().iterator();j.hasNext();) {
                 sum = logMath.addAsLinear(sum,((Double)j.next()).floatValue());
             }
-            if (sum < LogMath.getLogOne() - 10) {
+            if (sum < logMath.getLogOne() - 10) {
                 float remainder = logMath.subtractAsLinear(LogMath.getLogOne(),sum);
                 addWordHypothesis(index,"<noop>",remainder);
             } else {
