@@ -22,12 +22,12 @@ import java.io.IOException;
 public interface FeatureFrameSource {
 
     /**
-     * Returns the next FeatureFrame object produced by this FeatureFrameSource.
+     * Returns the next N FeatureFrames produced by this FeatureFrameSource.
      *
-     * @return the next available FeatureFrame object, returns null if no
+     * @return the next N FeatureFrames, returns null if no
      *     FeatureFrame object is available
      *
      * @throws java.io.IOException
      */
-    public FeatureFrame getFeatureFrame() throws IOException;
+    public FeatureFrame getFeatureFrame(int numberFrames) throws IOException;
 }
