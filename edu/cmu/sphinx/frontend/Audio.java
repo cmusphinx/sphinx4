@@ -16,7 +16,7 @@ package edu.cmu.sphinx.frontend;
 /**
  * Represents an audio data frame of type double.
  */
-public class Audio extends Data {
+public class Audio extends Data implements Cloneable {
 
     private double[] audioSamples;
 
@@ -77,12 +77,12 @@ public class Audio extends Data {
 
     /**
      * Returns a duplicate of this Audio object.
+     *
+     * @return a duplicate of this Audio object
      */
-    public Audio duplicate() {
+    public Object clone() {
 	if (hasContent()) {
-	    double[] newSamples = new double[audioSamples.length];
-	    System.arraycopy(audioSamples, 0, newSamples, 0,
-			     audioSamples.length);
+	    double[] newSamples = (double[]) audioSamples.clone();
 	    return (new Audio(newSamples, getUtterance()));
 	} else {
 	    return (new Audio(getSignal()));
