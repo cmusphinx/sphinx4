@@ -22,6 +22,7 @@ import edu.cmu.sphinx.frontend.util.StreamAudioSource;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -83,8 +84,6 @@ public class ClientFrontEnd extends CepstrumExtractor {
     
 
     private BufferedReader reader;
-    private DataInputStream dataReader;     // for reading raw bytes
-    private PrintWriter writer;
     private DataOutputStream dataWriter;
 
     private String serverAddress;
@@ -92,6 +91,8 @@ public class ClientFrontEnd extends CepstrumExtractor {
     private Socket socket;
 
     private StreamAudioSource streamAudioSource;
+
+    private boolean inUtterance = false;
 
 
     /**
@@ -146,8 +147,8 @@ public class ClientFrontEnd extends CepstrumExtractor {
      */
     public String decode(InputStream is, String streamName) 
         throws IOException {
-        streamAudioSource.setInputStream(is, streamName);
         sendRecognition();
+        streamAudioSource.setInputStream(is, streamName);
         sendCepstrum();
         String result = readResult();
         return result;
@@ -161,19 +162,19 @@ public class ClientFrontEnd extends CepstrumExtractor {
         Socket socket = new Socket(serverAddress, serverPort);
         reader = new BufferedReader
             (new InputStreamReader(socket.getInputStream()));
-        dataReader = new DataInputStream(socket.getInputStream());
-        writer = new PrintWriter(socket.getOutputStream(), true);
-        dataWriter = new DataOutputStream(socket.getOutputStream());
+        dataWriter = new DataOutputStream
+            (new BufferedOutputStream(socket.getOutputStream()));
         return socket;
     }
 
 
     /**
-     * Sends a single line "RECOGNITION" to the back-end server to
+     * Sends a single int "1" to the back-end server to
      * signal the cepstra will be sent for recognition.
      */
-    private void sendRecognition() {
-        sendLine("RECOGNITION");
+    private void sendRecognition() throws IOException {
+        dataWriter.writeInt(1);
+        dataWriter.flush();
     }
 
 
@@ -181,39 +182,12 @@ public class ClientFrontEnd extends CepstrumExtractor {
      * Closes the connection to the back-end server.
      */
     private void closeConnection(Socket socket) throws IOException {
-        dataReader.close();
-        writer.close();
+        reader.close();
         dataWriter.close();
         socket.close();
     }
 
 
-    /**
-     * Sends the given line of text to the Socket, appending an end of
-     * line character to the end.
-     *
-     * @param the line of text to send
-     */
-    private void sendLine(String line) {
-	line = line.trim();
-	if (line.length() > 0) {
-	    writer.print(line);
-	    writer.print('\n');
-	    writer.flush();
-	}
-    }
-
-
-    /**
-     * Reads a line of text from the Socket.
-     *
-     * @return a line of text without the end of line character
-     */
-    private String readLine() throws IOException {
-        return reader.readLine();
-    }
-
-    
     /**
      * Sends all the available cepstra to the back-end server.
      */
@@ -222,18 +196,31 @@ public class ClientFrontEnd extends CepstrumExtractor {
         do {
             cepstrum = getCepstrum();
             if (cepstrum != null) {
-                if (cepstrum.hasContent()) {
-                    // send the cepstrum data
-                    float[] data = cepstrum.getCepstrumData();
-                    for (int i = 0; i < data.length; i++) {
-                        dataWriter.writeFloat(data[i]);
+                if (!inUtterance) {
+                    if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
+                        inUtterance = true;
+                        dataWriter.writeFloat(Float.MAX_VALUE);
+                        dataWriter.flush();
+                    } else {
+                        throw new IllegalStateException
+                            ("No UTTERANCE_START read");
                     }
-                } else if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
-                    // send an UTTERANCE_START
-                    dataWriter.writeFloat(Float.MAX_VALUE);
-                } else if (cepstrum.hasSignal(Signal.UTTERANCE_END)) {
-                    // send an UTTERANCE_END
-                    dataWriter.writeFloat(Float.MIN_VALUE);
+                } else {
+                    if (cepstrum.hasContent()) {
+                        // send the cepstrum data
+                        float[] data = cepstrum.getCepstrumData();
+                        for (int i = 0; i < data.length; i++) {
+                            dataWriter.writeFloat(data[i]);
+                        }
+                    } else if (cepstrum.hasSignal(Signal.UTTERANCE_END)) {
+                        // send an UTTERANCE_END
+                        dataWriter.writeFloat(Float.MIN_VALUE);
+                        inUtterance = false;
+                    } else if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
+                        throw new IllegalStateException
+                            ("Too many UTTERANCE_STARTs");
+                    }
+                    dataWriter.flush();
                 }
             }
         } while (cepstrum != null);
@@ -246,7 +233,7 @@ public class ClientFrontEnd extends CepstrumExtractor {
      * @return the result string
      */
     private String readResult() throws IOException {
-        return readLine();
+        return reader.readLine();
     }
 
 }
