@@ -120,6 +120,40 @@ rm1_bigram:
    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7 \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
+rm1_bigram_beamfinder:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+   -Dedu.cmu.sphinx.util.BeamFinder.enable=true\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=3000\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-55 \
+   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7 \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
+
+rm1_bigram_little_beam:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1200\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-60 \
+   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7 \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
+
+rm1_bigram_test:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+  -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm\
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-140 \
+    -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-100 \
+   -Dedu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7 \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
 rm1_trigram:
 	$(JAVA_CMD) \
