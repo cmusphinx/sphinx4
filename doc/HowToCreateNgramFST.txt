@@ -27,7 +27,10 @@ bin/idngram2lm
 
 Suppose that our corpus is called "simple.txt", with the following contents:
 
-one two three two one two one three two
+<s> one two three two one two one three two </s>
+
+IMPORTANT: Each sentence in the corpus MUST begin with <s> and end with </s>.
+Otherwise, the MIT FST tools will crash!
 
 This is the series of step to obtain the N-Gram language 
 model file (simple.arpa, in ascii format):
