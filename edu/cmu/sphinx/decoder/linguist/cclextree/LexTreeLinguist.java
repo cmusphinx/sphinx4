@@ -93,8 +93,8 @@ public class LexTreeLinguist implements  Linguist {
     private final static Class[] searchStateOrder = {
         LexTreeNonEmittingHMMState.class,
         LexTreeWordState.class,
-        LexTreeUnitState.class,
         LexTreeEndUnitState.class,
+        LexTreeUnitState.class,
         LexTreeHMMState.class
     };
 
@@ -119,7 +119,6 @@ public class LexTreeLinguist implements  Linguist {
     private HMMTree hmmTree;
     private Dictionary dictionary;
     
-    private int silenceID;
     private boolean fullWordHistories = true;
     private boolean addFillerWords = false;
     private boolean generateUnitStates = false;
@@ -292,7 +291,6 @@ public class LexTreeLinguist implements  Linguist {
         Timer.start("compile");
 
         hmmPool = new HMMPool(acousticModel);
-        silenceID = hmmPool.getID(Unit.SILENCE);
 
         hmmTree = new HMMTree(hmmPool, dictionary, languageModel,
                 addFillerWords, languageWeight);
@@ -526,7 +524,7 @@ public class LexTreeLinguist implements  Linguist {
           */
          private SearchStateArc createWordStateArc(WordNode wordNode,
                  HMMNode lastUnit, float fixupProb) {
-	      // System.out.println("CWSA " + wordNode);
+            // System.out.println("CWSA " + wordNode + " fup " +  fixupProb);
             float logProbability = logOne;
             Word nextWord = wordNode.getWord();
 
@@ -668,6 +666,24 @@ public class LexTreeLinguist implements  Linguist {
             return super.hashCode() * 17 + 423;
         }
 
+         /**
+          * Gets the acoustic  probability of entering this state
+          *
+          * @return the log probability
+          */
+         public float getInsertionProbability() {
+             return logInsertionProbability;
+         }
+
+         /**
+          * Gets the language probability of entering this state
+          *
+          * @return the log probability
+          */
+         public float getLanguageProbability() {
+             return logLanguageProbability;
+         }
+
         /**
          * Determines if the given object is equal to this object
          * 
@@ -706,8 +722,7 @@ public class LexTreeLinguist implements  Linguist {
 
           for (int i = 0; i < nodes.length; i++) {
               arcs[i] = new LexTreeUnitState(nodes[i], getWordHistory(), 
-                  logLanguageProbability, logInsertionProbability, 
-                  this.getNode());
+                  logOne, logOne, this.getNode());
           }
           return arcs;
        }
@@ -875,8 +890,8 @@ public class LexTreeLinguist implements  Linguist {
             this.hmmState = hmmState;
             this.parentNode = parentNode;
             this.logLanguageProbability = languageProbability;
-            this.logAcousticProbability = acousticProbability;
             this.logInsertionProbability = insertionProbability;
+            this.logAcousticProbability = acousticProbability;
         }
 
         /**
