@@ -45,12 +45,13 @@ class HMMTree {
     private Node initialNode;
     private Dictionary dictionary;
 
-    private Word silenceWord;
     private LanguageModel lm;
-    private boolean addSilenceWord = true;
+    private boolean addFillerWords = false;
+    private boolean addSilenceWord = true; // TODO: Property for this?
     private Set entryPoints = new HashSet();
     private Set exitPoints = new HashSet();
     private Set wordSet = new HashSet();
+    private Set allWords = null;
     private EntryPointTable entryPointTable;
     private boolean debug = false;
 
@@ -60,12 +61,14 @@ class HMMTree {
      * @param pool the pool of HMMs and units
      * @param dictionary the dictionary containing the pronunciations
      * @param words the set of words to add to the lex tree
+     * @param addFillerWords if <code>false</code> add filler words
      */
-    HMMTree(HMMPool pool, Dictionary dictionary, LanguageModel lm) {
+    HMMTree(HMMPool pool, Dictionary dictionary, LanguageModel lm,
+            boolean addFillerWords) {
         this.hmmPool = pool;
         this.dictionary = dictionary;
         this.lm = lm;
-        this.silenceWord = dictionary.getSilenceWord();
+        this.addFillerWords = addFillerWords;
 
         Utilities.dumpMemoryInfo("lextree before");
         Timer.start("Create HMMTree");
@@ -126,23 +129,15 @@ class HMMTree {
      * Collects all of the entry and exit points for the vocabulary.
      */
     private void collectEntryAndExitUnits() {
-        Collection words = lm.getVocabulary();
+        Collection words = getAllWords();
         for (Iterator i = words.iterator(); i.hasNext(); ) {
-            String sword = (String) i.next();
-            // BUG: why doesn't th getVocabulary call return a
-            // collection of Words instead of strings, to eliminate
-            // this redundant lookup
-            Word word = dictionary.getWord(sword);
-            if (word != null) {
-                for (int j = 0; j < word.getPronunciations().length; j++) {
-                    Pronunciation p = word.getPronunciations()[j];
-                    Unit first = p.getUnits()[0];
-                    Unit last = p.getUnits()[p.getUnits().length - 1];
-                    entryPoints.add(first);
-                    exitPoints.add(last);
-                }
-            } else {
-                System.out.println("Dropped missing " + sword);
+            Word word = (Word) i.next();
+            for (int j = 0; j < word.getPronunciations().length; j++) {
+                Pronunciation p = word.getPronunciations()[j];
+                Unit first = p.getUnits()[0];
+                Unit last = p.getUnits()[p.getUnits().length - 1];
+                entryPoints.add(first);
+                exitPoints.add(last);
             }
         }
 
@@ -213,24 +208,41 @@ class HMMTree {
      *
      */
     private void addWords() {
-        Collection words = lm.getVocabulary();
-        boolean addedSilence = false;
+        Set words = getAllWords();
         for (Iterator i = words.iterator(); i.hasNext(); ) {
-            String sword = (String) i.next();
-            Word word = dictionary.getWord(sword);
-
-            if (word == null) {
-                continue;
-            }
-
-            if (word == silenceWord) {
-                addedSilence = true;
-            }
+            Word word = (Word) i.next();
             addWord(word);
         }
-        if (addSilenceWord && !addedSilence) {
-            addWord(silenceWord);
+    }
+
+
+    /**
+     * Returns the entire set of words, including filler words
+     *
+     * @return the set of all words (as Word objects)
+     */
+    private Set getAllWords() {
+        if (allWords == null) {
+            allWords = new HashSet();
+            Collection words = lm.getVocabulary();
+            for (Iterator i = words.iterator(); i.hasNext(); ) {
+                String spelling = (String) i.next();
+                Word word = dictionary.getWord(spelling);
+                if (word != null) {
+                    allWords.add(word);
+                }
+            }
+
+            if (addFillerWords) {
+                Word[] fillerWords = dictionary.getFillerWords();
+                for (int i = 0; i < fillerWords.length; i++) {
+                    allWords.add(fillerWords[i]);
+                }
+            } else if (addSilenceWord) {
+                allWords.add(dictionary.getSilenceWord());
+            }
         }
+        return allWords;
     }
 
     /**

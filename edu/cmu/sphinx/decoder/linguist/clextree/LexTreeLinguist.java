@@ -117,8 +117,9 @@ public class LexTreeLinguist implements  Linguist {
     private LogMath logMath;
     private float languageWeight;
     private float logWordInsertionProbability;
-    private float logSilenceInsertionProbability;
     private float logUnitInsertionProbability;
+    private float logFillerInsertionProbability;
+    private float logSilenceInsertionProbability;
 
     // just for detailed debugging
     private final boolean tracing = false;
@@ -134,6 +135,7 @@ public class LexTreeLinguist implements  Linguist {
     private WordNode finalNode;
     private boolean fullWordHistories = true;
     private boolean maintainSeparateRightContextsForWords = false;
+    private boolean addFillerWords = false;
 
     private Word sentenceEndWord;
     private Word[] sentenceStartWordArray;
@@ -199,6 +201,11 @@ public class LexTreeLinguist implements  Linguist {
              (Linguist.PROP_SILENCE_INSERTION_PROBABILITY,
               Linguist.PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT));
 
+        logFillerInsertionProbability = logMath.linearToLog
+            (props.getDouble
+             (Linguist.PROP_FILLER_INSERTION_PROBABILITY,
+              Linguist.PROP_FILLER_INSERTION_PROBABILITY_DEFAULT));
+
         logUnitInsertionProbability = logMath.linearToLog
             (props.getDouble
              (Linguist.PROP_UNIT_INSERTION_PROBABILITY,
@@ -206,6 +213,9 @@ public class LexTreeLinguist implements  Linguist {
 
         languageWeight = props.getFloat(PROP_LANGUAGE_WEIGHT,
                                         PROP_LANGUAGE_WEIGHT_DEFAULT);
+
+        addFillerWords = (props.getBoolean (Linguist.PROP_ADD_FILLER_WORDS,
+              Linguist.PROP_ADD_FILLER_WORDS_DEFAULT));
 
 
         compileGrammar();
@@ -285,7 +295,8 @@ public class LexTreeLinguist implements  Linguist {
         hmmPool = new HMMPool(acousticModel);
         silenceID = hmmPool.getID(Unit.SILENCE);
 
-        hmmTree = new HMMTree(hmmPool, dictionary, languageModel);
+        hmmTree = new HMMTree(hmmPool, dictionary, languageModel,
+                addFillerWords);
 
         hmmPool.dumpInfo();
 
@@ -513,13 +524,16 @@ public class LexTreeLinguist implements  Linguist {
             Word nextWord = wordNode.getWord();
             WordSequence nextWordSequence = wordSequence;
 
-
-            if (nextWord != dictionary.getSilenceWord()) {
+            if (nextWord.isFiller()) {
+                if (nextWord != dictionary.getSilenceWord()) {
+                    logProbability = logFillerInsertionProbability;
+                }
+            } else {
                 nextWordSequence  = wordSequence.addWord(nextWord, 
                         languageModel.getMaxDepth());
                 logProbability = languageModel.getProbability(nextWordSequence);
-                // System.out.println("            Probability for " + nextWordSequence + " is " + logProbability);
             }
+
             return new LexTreeWordState(wordNode,
                 nextWordSequence.trim(languageModel.getMaxDepth() - 1), 
                 logProbability);
