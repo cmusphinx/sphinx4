@@ -624,7 +624,9 @@ public class SimpleLinguist implements  Linguist {
          */
         void pushLeftContexts() {
             Collection endingContext = getEndingContexts();
-            pushLeftContexts(endingContext);
+
+            Set visitedSet = new HashSet();
+            pushLeftContexts(visitedSet, endingContext);
         }
 
         /**
@@ -634,7 +636,13 @@ public class SimpleLinguist implements  Linguist {
          *
          * @param leftContext the context to push
          */
-        void pushLeftContexts(Collection leftContext) {
+        void pushLeftContexts(Set visitedSet, Collection leftContext) {
+
+            if (visitedSet.contains(getNode())) {
+                return;
+            } else {
+                visitedSet.add(getNode());
+            }
             GrammarArc[] arcs = getSuccessors();
             for (int i = 0; i < arcs.length; i++) {
                 GState gstate = 
@@ -643,7 +651,7 @@ public class SimpleLinguist implements  Linguist {
                 // if our successor state is empty, also push our
                 // ending context into the empty nodes successors
                 if (gstate.getNode().isEmpty()) {
-                    gstate.pushLeftContexts(leftContext);
+                    gstate.pushLeftContexts(visitedSet, leftContext);
                 }
             }
         }
