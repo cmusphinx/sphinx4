@@ -29,6 +29,7 @@ edu.cmu.sphinx.model.acoustic.location = /lab/speech/sphinx4/data/wsj
 edu.cmu.sphinx.model.acoustic.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
 edu.cmu.sphinx.model.acoustic.data_location = cd_continuous_8gau
 edu.cmu.sphinx.model.acoustic.properties_file = am.props
+edu.cmu.sphinx.model.acoustic.useComposites=false
 
 
 ############################################################
@@ -94,6 +95,8 @@ edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar
 edu.cmu.sphinx.search.Dictionary.useAcousticModelLocation = true
 edu.cmu.sphinx.search.Dictionary.dictionaryPath = dict/cmudict.0.6d
 edu.cmu.sphinx.search.Dictionary.fillerPath = dict/fillerdict
+edu.cmu.sphinx.search.Dictionary.wordReplacement=<sil> 
+edu.cmu.sphinx.search.Dictionary.allowMissingWords=true
 
 
 ############################################################
@@ -122,6 +125,7 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 ############################################################
 
 edu.cmu.sphinx.search.WordListGrammar.isLooping=true
+edu.cmu.sphinx.search.WordListGrammar.addSilenceWord=true
 
 
 ############################################################
@@ -130,18 +134,16 @@ edu.cmu.sphinx.search.WordListGrammar.isLooping=true
 #
 ############################################################
 
-edu.cmu.sphinx.model.acoustic.useComposites=false
 edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150
 edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
 edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true
-edu.cmu.sphinx.search.Dictionary.allowMissingWords=true
 edu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true
-edu.cmu.sphinx.search.Linguist.showCompilationProgress=true
 edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-26
 edu.cmu.sphinx.search.Linguist.autoLoopSilence=false
-edu.cmu.sphinx.search.Dictionary.wordReplacement=<sil> 
 edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false
+
 edu.cmu.sphinx.search.validateResults=false
+edu.cmu.sphinx.search.Linguist.showCompilationProgress=true
