@@ -34,7 +34,7 @@ public class Preemphasizer extends PullingProcessor {
     private int windowSize;
     private int windowShift;
     // TODO: somehow get the prior from the frontend
-    private short prior;
+    private double prior;
 
 
     /**
@@ -67,14 +67,11 @@ public class Preemphasizer extends PullingProcessor {
      *     Data object is available
      */
     public Data read() throws IOException {
-	Data input = getSource().read();
+	Data input = super.read();
 	if (input instanceof PreemphasisPriorSignal) {
 	    PreemphasisPriorSignal signal = (PreemphasisPriorSignal) input;
-	    prior = signal.getPrior();
+	    prior = (double) signal.getPrior();
 	    return read();
-	} else if (input instanceof SegmentEndPointSignal) {
-	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
-	    return process(signal.getData());
 	} else if (input instanceof ShortAudioFrame) {
 	    return process(input);
 	} else {
@@ -105,7 +102,7 @@ public class Preemphasizer extends PullingProcessor {
 
 	if (preemphasisFactor != 0.0) {
 	    // do preemphasis
-	    out[0] = (double) in[0] - preemphasisFactor * (double) prior;
+	    out[0] = (double) in[0] - preemphasisFactor * prior;
 	    for (int i = 1; i < out.length; i++) {
 		out[i] = (double) in[i] - preemphasisFactor * (double) in[i-1];
 	    }

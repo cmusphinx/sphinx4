@@ -5,6 +5,7 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
+import java.io.IOException;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -21,7 +22,7 @@ import java.util.ListIterator;
  */
 public class CepstrumProducer extends PullingProcessor {
 
-    private static final String PROP_CEPSTRUM_SIZE =
+    public static final String PROP_CEPSTRUM_SIZE =
 	"edu.cmu.sphinx.frontend.cepstrumSize";
 
     private int windowSize;
@@ -60,6 +61,23 @@ public class CepstrumProducer extends PullingProcessor {
 	cepstrumSize = properties.getInt(PROP_CEPSTRUM_SIZE, 13);
     }
 	
+
+    /**
+     * Reads the next Data object, which is a CepstrumFrame
+     * produced by this CepstrumProducer.
+     *
+     * @return the next available Data object, returns null if no
+     *     Data object is available
+     */
+    public Data read() throws IOException {
+	Data input = super.read();
+	if (input instanceof DoubleAudioFrame) {
+	    return process(input);
+	} else {
+	    return input;
+	}
+    }	
+
 
     /**
      * Converts the given input DoubleAudioFrame into a CepstrumFrame.

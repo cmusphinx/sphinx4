@@ -54,6 +54,7 @@ public class FrontEnd implements Runnable {
 	processors = new LinkedList();
 	processors.add(new Preemphasizer());
 	processors.add(new CepstrumProducer());
+	// processors.add(new CepstralMeanNormalizer());
 	linkProcessors();
     }
 

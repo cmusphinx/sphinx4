@@ -86,4 +86,14 @@ public class SegmentEndPointSignal implements Signal {
     public Data getData() {
 	return dataFrame;
     }
+
+
+    /**
+     * Sets the Data object associated with this SegmentEndPointSignal
+     *
+     * @param data the Data object
+     */
+    public void setData(Data data) {
+	this.dataFrame = data;
+    }
 }

@@ -69,6 +69,12 @@ public abstract class PullingProcessor implements DataSource, Processor {
      */
     public Data read() throws IOException {
 	Data input = getSource().read();
-	return process(input);
+	if (input instanceof SegmentEndPointSignal) {
+	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
+	    signal.setData(process(signal.getData()));
+	    return signal;
+	} else {
+	    return input;
+	}
     }
 }

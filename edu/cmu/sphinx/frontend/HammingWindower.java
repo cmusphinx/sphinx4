@@ -30,7 +30,6 @@ public class HammingWindower implements Processor {
     private int windowSize;
     private static final double PI = 3.14159265358979323846;
     private static double ALPHA;
-    private static double ONE_MINUS_ALPHA;
 
 
     /**
@@ -50,7 +49,6 @@ public class HammingWindower implements Processor {
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
 	windowSize = properties.getInt(FrontEnd.PROP_WINDOW_SIZE, 205);
 	ALPHA = properties.getDouble(HammingWindower.PROP_ALPHA, 0.46);
-	ONE_MINUS_ALPHA = (1 - ALPHA);
     }
 
 
@@ -60,8 +58,9 @@ public class HammingWindower implements Processor {
     private void createWindow() {
 	this.window = new double[windowSize];
 	if (windowSize > 1){
+	    double oneMinusAlpha = (1 - ALPHA);
 	    for (int i = 0; i < windowSize; i++) {
-		window[i] = ONE_MINUS_ALPHA - ALPHA *
+		window[i] = oneMinusAlpha - ALPHA *
 		    Math.cos(2 * PI * i / ((double) windowSize - 1.0));
 	    }
 	}
@@ -80,8 +79,6 @@ public class HammingWindower implements Processor {
     public Data process(Data input) {
 	DoubleAudioFrame audioFrame = (DoubleAudioFrame) input;
 	double[] in = audioFrame.getData();
-
-	// System.out.println(in.length + " " + window.length);
 
 	if (in.length > 1) {
 	    for (int i = 0; i < in.length; i++) {
