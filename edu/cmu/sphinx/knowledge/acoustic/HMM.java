@@ -142,6 +142,19 @@ public class HMM implements Serializable {
 
 
     /**
+     * Returns the transition probability between two states.
+     *
+     * @param stateFrom the index of the state this transition goes from
+     * @param stateTo the index of the state this transition goes to
+     *
+     * @return the transition probability
+     */
+    public float getTransitionProbability(int stateFrom, int stateTo) {
+	return transitionMatrix[stateFrom][stateTo];
+    }
+
+
+    /**
      * Retrieves the position of this HMM. Possible
      *
      * @return the position for this HMM
