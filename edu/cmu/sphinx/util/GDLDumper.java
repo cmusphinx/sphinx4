@@ -11,7 +11,7 @@
  */
 package edu.cmu.sphinx.util;
 
-import edu.cmu.sphinx.frontend.util.Util;
+import edu.cmu.sphinx.util.Utilities;
 
 import edu.cmu.sphinx.search.SentenceHMMState;
 import edu.cmu.sphinx.search.SentenceHMMStateArc;
@@ -225,7 +225,7 @@ public class GDLDumper extends LinguistDumper  {
             int maxStringLength = 5;
             String stringValue = String.valueOf(value);
             if (stringValue.length() > maxStringLength) {
-                stringValue = Util.doubleToScientificString(value, 3);
+                stringValue = Utilities.doubleToScientificString(value, 3);
             }
             return stringValue;
         }

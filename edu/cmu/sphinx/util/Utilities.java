@@ -14,6 +14,9 @@ package edu.cmu.sphinx.util;
 
 import java.io.PrintWriter;
 
+import java.text.DecimalFormat;
+
+
 /**
  * Provides a set of generic utilities
  */
@@ -123,6 +126,45 @@ public class Utilities {
 		+ " Max Used: " +  (maxUsed / (1024 * 1024))
 		+ " -- " + msg);
      }
+
+
+    /**
+     * Returns the string representation of the given double value in
+     * normalized scientific notation. The <code>fractionDigits</code>
+     * argument gives the number of decimal digits in the fraction
+     * portion. For example, if <code>fractionDigits</code> is 4, then
+     * the 123450 will be "1.2345e+05". There will always be two digits
+     * in the exponent portion, and a plus or minus sign before the
+     * exponent.
+     *
+     * @param number the double to convert
+     * @param fractionDigits the number of digits in the fraction part,
+     *    e.g., 4 in "1.2345e+05".
+     *
+     * @return the string representation of the double in scientific
+     *    notation
+     */
+    public static String doubleToScientificString(double number,
+						  int fractionDigits) {
+	DecimalFormat format = new DecimalFormat();
+
+        String formatter = "0.";
+        for (int i = 0; i < fractionDigits; i++) {
+            formatter += "0";
+        }
+        formatter += "E00";
+
+        format.applyPattern(formatter);
+        String formatted = format.format(number);
+
+        int index = formatted.indexOf('E');
+        if (formatted.charAt(index+1) != '-') {
+            return formatted.substring(0, index+1) + "+" +
+                formatted.substring(index+1);
+        } else {
+            return formatted;
+        }
+    }
 }
 
   

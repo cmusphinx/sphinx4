@@ -16,9 +16,11 @@ package edu.cmu.sphinx.frontend.util;
 import edu.cmu.sphinx.frontend.FrontEnd;
 
 import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Utilities;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.text.DecimalFormat;
 
 
@@ -176,43 +178,6 @@ public class Util {
 
 
     /**
-     * Returns the string representation of the given double value in
-     * normalized scientific notation. The <code>fractionDigits</code>
-     * argument gives the number of decimal digits in the fraction
-     * portion. For example, if <code>fractionDigits</code> is 4, then
-     * the 123450 will be "1.2345e+05". There will always be two digits
-     * in the exponent portion, and a plus or minus sign before the
-     * exponent.
-     *
-     * @param number the double to convert
-     * @param fractionDigits the number of digits in the fraction part,
-     *    e.g., 4 in "1.2345e+05".
-     *
-     * @return the string representation of the double in scientific
-     *    notation
-     */
-    public static String doubleToScientificString(double number,
-						  int fractionDigits) {
-        String formatter = "0.";
-        for (int i = 0; i < fractionDigits; i++) {
-            formatter += "0";
-        }
-        formatter += "E00";
-
-        format.applyPattern(formatter);
-        String formatted = format.format(number);
-
-        int index = formatted.indexOf('E');
-        if (formatted.charAt(index+1) != '-') {
-            return formatted.substring(0, index+1) + "+" +
-                formatted.substring(index+1);
-        } else {
-            return formatted;
-        }
-    }
-
-
-    /**
      * Returns the string representation of the given short array.
      * The string will be in the form:
      * <pre>data.length data[0] data[1] ... data[data.length-1]</pre>
@@ -276,7 +241,7 @@ public class Util {
                 long binary = Double.doubleToRawLongBits(data[i]);
                 dump += (" 0x" + Long.toHexString(binary));
             } else if (format == SCIENTIFIC) {
-                dump += (" " + doubleToScientificString
+                dump += (" " + Utilities.doubleToScientificString
                          (data[i], doubleScientificFractionDigits));
             }
         }
@@ -328,7 +293,7 @@ public class Util {
                 int binary = Float.floatToRawIntBits(data[i]);
                 dump += (" 0x" + Integer.toHexString(binary));
             } else if (format == SCIENTIFIC) {
-                dump += (" " + doubleToScientificString
+                dump += (" " + Utilities.doubleToScientificString
                          ((double) data[i], floatScientificFractionDigits));
             }
         }
