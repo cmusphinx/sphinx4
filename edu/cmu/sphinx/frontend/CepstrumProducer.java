@@ -20,6 +20,13 @@ import java.util.ListIterator;
  */
 public class CepstrumProducer implements Processor {
 
+    private static final String PROP_FRAME_SIZE =
+	"edu.cmu.sphinx.frontend.frameSize";
+    private static final String PROP_FRAME_SHIFT =
+	"edu.cmu.sphinx.frontend.frameShift";
+    private static final String PROP_CEPSTRUM_SIZE =
+	"edu.cmu.sphinx.frontend.cepstrumSize";
+
     private int frameSize;
     private int frameShift;
     private int cepstrumSize;
@@ -34,8 +41,6 @@ public class CepstrumProducer implements Processor {
     /**
      * Constructs a default CepstrumProducer with the given Pre-emphasis Factor
      * value.
-     *
-     * @param preemphasisFactor the pre-emphasis factor
      */
     public CepstrumProducer() {
 
@@ -54,21 +59,18 @@ public class CepstrumProducer implements Processor {
 	// TODO : specify the context
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
 
-	/*
-	frameSize = properties.getInt("edu.cmu.sphinx.frontend.frameSize");
-	frameShift = properties.getInt("edu.cmu.sphinx.frontend.frameShift");
-	cepstrumSize = properties.getInt
-	    ("edu.cmu.sphinx.frontend.cepstrumSize");
-	*/
+	frameSize = properties.getInt(PROP_FRAME_SIZE, 410);
+	frameShift = properties.getInt(PROP_FRAME_SHIFT, 160);
+	cepstrumSize = properties.getInt(PROP_CEPSTRUM_SIZE, 13);
     }
 	
 
     /**
-     * Converts the given input DoubleAudioFrame into a CepstraFrame.
+     * Converts the given input DoubleAudioFrame into a CepstrumFrame.
      *
      * @param input the input DoubleAudioFrame
      *
-     * @return a CepstraFrame
+     * @return a CepstrumFrame
      */
     public Data process(Data input) {
 

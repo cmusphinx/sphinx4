@@ -17,6 +17,11 @@ import edu.cmu.sphinx.util.SphinxProperties;
  */
 public class Preemphasizer implements Processor {
 
+    private static final String PROP_PREEMPHASIS_FACTOR =
+	"edu.cmu.sphinx.frontend.preemphasisFactor";
+    private static final String PROP_PREEMPHASIS_PRIOR =
+	"edu.cmu.sphinx.frontend.preemphasisPrior";
+
     private double preemphasisFactor = 0.0f;
     private double prior;
 
@@ -24,8 +29,6 @@ public class Preemphasizer implements Processor {
     /**
      * Constructs a default Preemphasizer with the given Pre-emphasis Factor
      * value.
-     *
-     * @param preemphasisFactor the pre-emphasis factor
      */
     public Preemphasizer() {}
 
@@ -37,12 +40,10 @@ public class Preemphasizer implements Processor {
 	// TODO : specify the context
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
 
-	/*
 	preemphasisFactor = properties.getDouble
-	("edu.cmu.sphinx.frontend.preemphasisFactor");
-	preemphasisFactor = properties.getDouble
-	("edu.cmu.sphinx.frontend.preemphasisPrior");
-	*/
+	    (PROP_PREEMPHASIS_FACTOR, 0.97);
+	// TODO : specify the prior value
+	// preemphasisFactor = properties.getDouble(PROP_PREEMPHASIS_PRIOR);
     }
 
 
