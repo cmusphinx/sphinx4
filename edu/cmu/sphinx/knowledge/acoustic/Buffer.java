@@ -28,18 +28,13 @@ import java.util.Map;
 class Buffer {
     private double[] numerator;
     private double denominator;
-    private boolean wasUsed = false;
+    private boolean wasUsed;
     // Maybe isLog should be used otherwise: one single, say,
     // accumulate(), which would be directed according to isLog. But
     // then again having accumulate() and logAccumulate() makes it
     // clearer if we're dealing with log scale or not...
     private boolean isLog;
-
-    /**
-     * Creates a new buffer
-     */
-    Buffer() {
-    }
+    private int id;
 
     /**
      * Creates a new buffer. If the values will be in log, the buffer
@@ -48,8 +43,10 @@ class Buffer {
      * @param size the number of elements in this buffer
      * @param isLog if true, the values in the buffer will be in log
      */
-    Buffer(int size, boolean isLog) {
+    Buffer(int size, boolean isLog, int id) {
+	this.id = id;
 	this.isLog = isLog;
+	wasUsed = false;
 	numerator = new double[size];
 	if (isLog) {
 	    denominator = LogMath.getLogZero();
@@ -67,6 +64,8 @@ class Buffer {
      * @param entry the numerator entry to be accumulated to
      */
     void accumulate(float data, int entry) {
+	// Not needed anymore??
+	assert false;
 	assert numerator != null;
 	assert !isLog;
 	numerator[entry] += data;
@@ -98,7 +97,7 @@ class Buffer {
      * @param numeratorData the data to be added to the numerator
      * @param denominatorData the data to be added to the denominator
      */
-    void accumulate(float[] numeratorData, float denominatorData) {
+    void accumulate(double[] numeratorData, double denominatorData) {
 	assert numerator != null;
 	assert numeratorData != null;
 	assert numerator.length == numeratorData.length;
@@ -117,10 +116,10 @@ class Buffer {
      *
      * @param logNumeratorData the data to be added to the numerator
      * @param logDenominatorData the data to be added to the denominator
-     * @param entry the numerator entry to be accumulated to
+     * @param logMath the LogMath instance to be used
      */
     void logAccumulate(float[] logNumeratorData, float logDenominatorData, 
-		       int entry, LogMath logMath) {
+		       LogMath logMath) {
 	assert numerator != null;
 	assert logNumeratorData != null;
 	assert numerator.length == logNumeratorData.length;
@@ -140,11 +139,19 @@ class Buffer {
      */
     void normalize() {
 	assert !isLog;
-	float invDenominator = (float) (1.0 / denominator);
+	if (denominator == 0) {
+	    System.out.println("Empty denominator: " + id);
+	    // dump();
+	    // assert false;
+	    wasUsed = false;
+	    return;
+	}
+
+	double invDenominator = (1.0 / denominator);
 	for (int i = 0; i < numerator.length; i++) {
 	    numerator[i] *= invDenominator;
 	}
-	denominator = 1.0f;
+	denominator = 1.0;
     }
 
     /**
@@ -163,12 +170,17 @@ class Buffer {
     /**
      * Normalize the non-zero elements in a buffer in log scale. This
      * method divides the numerator by the denominator, storing the
-     * result in the numerator, and setting denominator to log(1) = 0.
+     * result in the numerator, and setting denominator to log(1) =
+     * 0. A mask is used to tell whether a component should be
+     * normalized (non-zero) or not (zero).
+     *
+     * @param mask a vector containing zero/non-zero values.
      */
-    void logNormalizeNonZero() {
+    void logNormalizeNonZero(float[] mask) {
 	assert isLog;
+	assert mask.length == numerator.length;
 	for (int i = 0; i < numerator.length; i++) {
-	    if (numerator[i] != LogMath.getLogZero()) {
+	    if (mask[i] != LogMath.getLogZero()) {
 		numerator[i] -= denominator;
 	    }
 	}
