@@ -487,8 +487,10 @@ public class Microphone extends BaseDataProcessor {
             totalSamplesRead += (numBytesRead / sampleSizeInBytes);
             
             if (numBytesRead != frameSizeInBytes) {
-                numBytesRead = (numBytesRead % 2 == 0) ?
-                    numBytesRead + 2 : numBytesRead + 3;
+                
+                if (numBytesRead % sampleSizeInBytes != 0) {
+                    throw new Error("Incomplete sample read.");
+                }
                 
                 byte[] shrinked = new byte[numBytesRead];
                 System.arraycopy(data, 0, shrinked, 0, numBytesRead);
