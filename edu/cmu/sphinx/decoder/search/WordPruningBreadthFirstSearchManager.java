@@ -158,7 +158,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         boolean done = false;
         Result result;
 
-        // int nFinishedFrames = 0;
+        int nFinishedFrames = 0;
 
         for (activeList = activeBucket.getNextList();
              activeList != null;
@@ -176,7 +176,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                 }
                 pruneBranches(); 	    // eliminate poor branches
                 growBranches(); 	    // extend remaining branches
-                if (currentFrameNumber == nFrames)
+                if (++nFinishedFrames == nFrames)
                     break; // Stop if we've finished the required frames.
             }
         }
