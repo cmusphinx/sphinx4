@@ -21,6 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
@@ -44,6 +47,18 @@ import edu.cmu.sphinx.util.CommandInterface;
 /**
  * Decodes a batch file containing a list of files to decode. The files can be
  * either audio files or cepstral files, but defaults to audio files.
+ * The audio data should be 16-bit, 16kHz, PCM-linear data.
+ * Since this classes makes use of Java Sound, it supports all the audio file 
+ * formats that are supported by Java Sound. If the audio file does not
+ * correspond to a format supported by Java Sound, it is treated as a raw
+ * audio file (i.e., one without a header). Audio file formats differ
+ * in the endian order of the audio data. Therefore, it is important to
+ * specify it correctly in the configuration of the
+ * <a href="../../frontend/util/StreamDataSource.html">StreamDataSource</a>.
+ * Note that in the ideal situation, the audio format of the data should
+ * be passed into the StreamDataSource, so that no extra configuration is
+ * needed. This will be fixed in future releases.
+ * <p>
  * To run this BatchModeRecognizer:
  * <pre>
  * java BatchModeRecognizer &lt;xmlConfigFile&gt; &lt;batchFile&gt;
@@ -259,7 +274,17 @@ public class BatchModeRecognizer implements Configurable {
     private void setInputStream(String filename) throws IOException {
         for (Iterator i = inputDataProcessors.iterator(); i.hasNext(); ) {
             DataProcessor dataSource = (DataProcessor) i.next();
-            InputStream is = new FileInputStream(filename);
+            InputStream is = null;
+            try {
+                File file = new File(filename);
+                logger.info
+                    (AudioSystem.getAudioFileFormat(file).toString());
+                is = AudioSystem.getAudioInputStream(file);
+            } catch (UnsupportedAudioFileException uafe) {
+                logger.info
+                    ("Reading " + filename + " as raw audio file.");
+                is = new FileInputStream(filename);
+            }
             if (dataSource instanceof StreamDataSource) {
                 ((StreamDataSource) dataSource).setInputStream(is, filename);
             } else if (dataSource instanceof StreamCepstrumSource) {
