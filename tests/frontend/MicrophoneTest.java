@@ -86,13 +86,7 @@ public class MicrophoneTest extends JFrame {
      * Creates the frontend components.
      */
     private void createModel() {
-
         microphone = new Microphone("Microphone", testName);
-
-        // the microphone runs in a separate thread: it keeps
-        // listening to and caching audio whenever it is "on"
-        new Thread(microphone).start();
-        
         frontend = new FrontEnd("FrontEnd", testName, microphone);
     }
 
