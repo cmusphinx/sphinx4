@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+
+<!--
+
+/**
+ * Copyright 1999-2004 Carnegie Mellon University.
+ * Portions Copyright 2004 Sun Microsystems, Inc.
+ * Portions Copyright 2004 Mitsubishi Electric Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ *
+ */
+
+-->
+
+<html>
+  <head><title>Sphinx-4 Confidence Score Demo</title></head>
+  <style TYPE="text/css">
+  pre { font-size: medium; background: #f0f8ff; padding: 2mm; 
+        border-style: ridge ; color: teal }
+  code { font-size: medium; color: teal }
+  </style></head>
+  <body>
+    <font face="Times New Roman">
+     <center>
+     <table bgcolor="#99CCFF" width="100%">
+	<tr>
+	  <td align=center width="100%">
+	    <h1><i>Sphinx-4</i> Confidence Score Demo</h1>
+	  </td>
+	</tr>
+      </table>
+    </center>
+    </font>
+
+    <font face="Arial" size="2">      
+    <p>
+    This is a simple command line program that shows how to obtain confidence
+    scores using Sphinx-4. <br>
+    <font color="ff0000"><b>NOTE:</b></font> this work on confidence scores
+    is still experimental, so please use it with precaution.
+    </p>
+    <p>
+    When you start up the demo program the following will show:
+    </p>
+    </font>
+<pre>
+Loading Recognizer...
+
+Sample sentences:
+
+the green one right in the middle
+the purple one on the lower right side
+the closest purple one on the far left side
+the only one left on the left
+
+Refer to the file confidence.test for a complete list.
+
+Start speaking. Press Ctrl-C to quit.
+
+&lt;s&gt; &lt;sil&gt; &lt;sil&gt; a purple one on the top right corner &lt;/s&gt;
+     (confidence: 0.6045)
+
+     &lt;s&gt;        (confidence: 1)
+     &lt;sil&gt;      (confidence: 1)
+     &lt;sil&gt;      (confidence: 1)
+     a          (confidence: 0.6045)
+     purple     (confidence: 1)
+     one        (confidence: 1)
+     on         (confidence: 1)
+     the        (confidence: 1)
+     top        (confidence: 1)
+     right      (confidence: 1)
+     corner     (confidence: 1)
+     &lt;/s&gt;       (confidence: 1)
+</pre>
+
+    <font face="Arial" size="2">
+    <p>
+    As you can see, it will show the confidence of the result as a value
+    between 0 and 1 (in this case its 0.6045). It will also show the confidence
+    of each word in the result. In this case, its all 1's except for the
+    word 'a' (0.6045). Note that the confidence of the result is
+    computed as a product of the confidence of its constituent words,
+    which is why the confidence of the result is 0.6045 in this case.
+    </p>
+      <p>
+      There is a <a href="confidence.test">test file</a> which contains
+      a list of sentences you can say to test the application.
+      </p>
+
+      <h3>Building</h3>
+      <p>
+      Check the <code>bin</code> directory to see if it has the file
+      <code>Confidence.jar</code>. If not, type the following at the top level
+      directory:
+      </p>
+      <p>
+      <code>ant -find demo.xml</code>
+      </p>
+      <h3>Running</h3>
+      <p>
+      First make sure that you have
+      <a href="../../../doc/jsapi_setup.html">JSAPI setup</a> correctly. Then,
+      To run the demo, type:
+      </p>
+      <code>sphinx4> java -mx200m -jar bin/Confidence.jar</code>
+      <p>
+      Use the sentences in the <a href="confidence.test">test file</a>
+      to test the demo.
+      </p>
+      <p><font color="FF0000"><b>NOTE:</b></font> 
+      <ol>
+      <li>
+      Make sure that you give it a large enough heap by putting in "-mx200m".
+      </li>
+      <li>
+      Make sure that you are using Java<sup>TM</sup> 2 SDK, Standard Edition, 
+      v1.4 or higher.
+      </li>
+      <li>
+      If you are running Linux and have problems with the audio,
+      please read the 
+      <a href="../../../doc/Sphinx4-faq.html#microphone_linux">
+      Linux JavaSound</a> section.
+      </li>
+      <li>
+      If you have the source distribution, make sure that the JAR file
+      <code>lib/sphinx4.jar</code> is built. If not, go to the top level 
+      directory and type: <code>ant</code>
+      </li>
+      </ol>
+      </p>
+    </font>
+    <hr>
+Copyright 1999-2004 Carnegie Mellon University.
+<br>
+Portions Copyright 2002-2004 Sun Microsystems, Inc.
+<br>
+Portions Copyright 2002-2004 Mitsubishi Electric Research Laboratories.
+<br>
+All Rights Reserved. Usage is subject to <a href="../../../license.terms">license terms</a>.
+  </body>
+</html>
