@@ -150,7 +150,7 @@ ripley_trigram_clex_ep:
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager\
 	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
         -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=15.5 \
-   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=800 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=700 \
    -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80 \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
         -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-200 \
