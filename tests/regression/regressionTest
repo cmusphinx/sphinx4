@@ -1,0 +1,7 @@
+testDir=/home/plamere/regressionTest
+
+mkdir -p $testDir
+cd $testDir
+echo scvs checkout sphinx4
+cd $testDir/sphinx4/tests/regression
+./executeRegressionTest

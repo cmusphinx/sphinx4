@@ -1,0 +1,188 @@
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This script parses the regression log and presents a quick report
+# Field definitions: 
+#   1) "test"
+#   2) date
+#   3) time
+#   4) machine
+#   5) testName 
+#   6) who 
+#   7) status
+#   8) audioTime 
+#   9) procTime 
+#   0) words 
+#  11) insertions 
+#  12) deletions 
+#  13) substitutions 
+#  14) sentences 
+#  15) correctSentences 
+#  16) heapSize 
+#  17) loadAverage 
+
+gawk '
+
+BEGIN {
+    FS = "|"
+    F_TEST = 1;
+    F_DATE = 2;
+    F_TIME = 3;
+    F_MACHINE = 4;
+    F_TEST_NAME = 5;
+    F_WHO = 6;
+    F_STATUS = 7;
+    F_AUDIO_TIME = 8;
+    F_PROC_TIME = 9;
+    F_WORDS = 10;
+    F_INSERTIONS = 11;
+    F_DELETIONS = 12;
+    F_SUBSTITUTIONS = 13;
+    F_SENTENCES = 14;
+    F_CORRECT_SENTENCES = 15;
+    F_HEAP_SIZE = 16;
+    F_LOAD_AVERAGE = 17;
+
+}
+
+$1 == "test" {
+    testCount[$5] = testCount[$5] + 1;
+    testData[$5 testCount[$5]] = $0;
+}
+
+#####
+# updates the data array with info for the given test
+#
+function updateData(testName, testCount) {
+    split(testData[testName testCount], data);
+}
+
+####
+# returns the word error rate for the given test
+#
+function getWER(testName, testCount,     _errors, _words) {
+    updateData(testName, testCount);
+    _errors = data[F_INSERTIONS] + data[F_DELETIONS] + data[F_SUBSTITUTIONS];
+    _words = data[F_WORDS];
+
+    if (_words == 0) {
+        return "N/A";
+    } else {
+	return _errors / _words * 100;
+    }
+}
+
+####
+# gets the speed for the given test
+#
+function getSpeed(testName, testCount, _audioTime, _procTime) {
+    updateData(testName, testCount);
+    _audioTime = data[F_AUDIO_TIME];
+    _procTime = data[F_PROC_TIME];
+
+    if (_audioTime == "" || _procTime == "") {
+        return "N/A";
+    } else {
+	return _procTime / _audioTime;
+    }
+}
+
+####
+# returns the accuracy status for the given test
+#
+function getAccuracyStatus(testName) {
+  thisWER = getWER(testName, testCount[testName]);
+  prevWER = getWER(testName, testCount[testName] - 1);
+
+  if (thisWER == "N/A") {
+      return "N/A";
+  }
+
+  if (prevWER == "N/A") {
+      return "OK";
+  }
+
+  if (thisWER == prevWER) {
+      return "OK";
+  }
+
+  if (thisWER > prevWER) {
+      
+      return "REGRESSED - WER increased by " (thisWER - prevWER) \
+         " to " thisWER "%"
+  }
+
+  if (thisWER < prevWER) {
+      return "IMPROVED - WER decreased by " (prevWER - thisWER) \
+         " to " thisWER "%"
+  }
+
+  return thisWER "%"
+}
+
+####
+# returns the speed status for the given test
+#
+function getSpeedStatus(testName, _slowThreshold, _fastThreshold) {
+  thisSpeed = getSpeed(testName, testCount[testName]);
+  prevSpeed = getSpeed(testName, testCount[testName] - 1);
+
+  if (thisSpeed == "N/A") {
+      return "N/A";
+  }
+
+  if (prevSpeed == "N/A") {
+      return "OK";
+  }
+
+  if (thisSpeed == prevSpeed) {
+      return "OK";
+  }
+
+  _slowThreshold = prevSpeed + prevSpeed * .0;
+  _fastThreshold = prevSpeed - prevSpeed * .0;
+
+  if (thisSpeed > _slowThreshold) {
+      return "REGRESSED - reduced from " prevSpeed " to " \
+      	thisSpeed " X Realtime" ;
+  }
+
+  if (thisSpeed  < _fastThreshold) {
+      return "IMPROVED - increased from " prevSpeed " to " \
+      	thisSpeed " X Realtime";
+  }
+  return "OK";
+}
+
+####
+# return the status of the test
+#
+function getRunStatus(testName) {
+    updateData(testName, testCount[testName]);
+    return data[F_STATUS];
+}
+
+END {
+
+    "date" | getline date
+    print ""
+    print "Sphinx 4 Regression Test Summary for " date
+    print "================================================================="
+
+    for (i in testCount) {
+        print i;
+	print "    Status       "  getRunStatus(i);
+	print "    Accuracy     "  getAccuracyStatus(i);
+	print "    Speed        "  getSpeedStatus(i);
+	printf("\n");
+    }
+}
+
+'  $*
+
