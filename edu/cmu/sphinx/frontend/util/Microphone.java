@@ -134,7 +134,7 @@ public class Microphone extends DataProcessor implements AudioSource {
     private boolean sleepBetweenAudio = false;
 
     private static Logger logger = Logger.getLogger
-        ("edu.cmu.sphinx.frontend.Microphone");
+        ("edu.cmu.sphinx.frontend.util.Microphone");
     
 
     /**
