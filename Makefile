@@ -21,3 +21,9 @@ clean::
 
 javadocs:
 	$(JAVADOC) -d $(DOC_DEST) -quiet -subpackages edu -source 1.4
+
+
+# another quick and dirty implementation, with private methods/fields
+
+javadocs_private:
+	$(JAVADOC) -d $(DOC_DEST) -private -quiet -subpackages edu -source 1.4
