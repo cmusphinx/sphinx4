@@ -120,14 +120,14 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
     public LevelTracker() {}
 
     /**
-     * Initializes an Endpointer with the given name, context,
+     * Initializes this LevelTracker endpointer with the given name, context,
      * and AudioSource predecessor.
      *
-     * @param name the name of this EnergyEndpointer
+     * @param name the name of this LevelTracker
      * @param context the context of the SphinxProperties this
-     *    EnergyEndpointer use
+     *    LevelTracker use
      * @param props the SphinxProperties to read properties from
-     * @param predecessor the AudioSource where this EnergyEndpointer
+     * @param predecessor the AudioSource where this LevelTracker
      *    gets Audio from
      *
      * @throws java.io.IOException
@@ -169,7 +169,8 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
     }
 
     /**
-     * Returns the next Audio object.
+     * Returns the next Audio object, which are already classified
+     * as speech or non-speech.
      *
      * @return the next Audio object, or null if none available
      *
