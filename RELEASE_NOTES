@@ -12,8 +12,20 @@ PBL - 7/21/04 -
 PBL - 7/20/04 -
     Fixed bug in JSGFGrammar parsing of NULL productions
 
+PPK - 7/20/04 -
+    Fixed bug in Microphone that causes an IOException when
+    startRecording() is called immediately after stopRecording().
+    The method stopRecording() will now wait until the audio line has
+    actually stopped before it returns.
+
+PPK - 7/19/04 -
+    Added WavFile demo to show how to decode a .wav or .au audio file.
+
 PBL - 6/30/04 - 
     Added the Sphinx-4 FAQ
+
+PPK - 6/30/04 -
+    Added stereo to mono audio converter to Microphone.
 
 PBL - 6/21/04 - 
     Added the DynamicFlatLinguist. This linguist supports
@@ -25,6 +37,9 @@ PBL - 6/21/04 -
 
 PPK - 6/21/04 - 
     Added CI Phone loop support for rejecting out-of-grammar utterances
+
+PPK - 6/14/04 -
+    Added ability to read different audio file formats to BatchRecognizer.
 
 -------------------------------------------------------------------
 Version:       0.1alpha
