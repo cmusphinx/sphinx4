@@ -58,7 +58,7 @@ scripts="getTime getHostname mailReport makeReport parseS4Output regressionTest\
 	cvs_history updateLog finalizeLog \
 	runTests_an4 runTests_an4_full runTests_an4_plus \
 	runTests_an4_spelling runTests_an4_words runTests_quick \
-	runTests_rm1 runTests_standard runTests_ti46 \
+	runTests_rm1 runTests_standard runTests_ti46 runTests_an4_fst\
 	runTests_tidigits s4_align s4_align_sum whatsNew \
 	makeTwikiDetailReport pushAllTwikiReports \
 	makeTwikiSummaryReport makeTwikiReports waitForFile"
