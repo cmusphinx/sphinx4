@@ -45,7 +45,7 @@ edu.cmu.sphinx.frontend.keepAudioReference = true
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=-1
+edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=100
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.SortingActiveList
 
 
