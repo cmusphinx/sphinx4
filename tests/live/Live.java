@@ -185,16 +185,13 @@ public class Live {
      * Plays the last recorded utterance.
      */
     public void playUtterance() {
-        if (lastResult != null) {
-            if (lastResult.getUtterance() == null) {
-                System.out.println("Last Result has no Utterance");
-            } else {
-                byte[] audio = lastResult.getUtterance().getAudio();
-                audioPlayer.play
-                    (audio, decoder.getMicrophone().getAudioFormat());
-                System.out.println("Finished playing utterance.");
-            }
+        Microphone microphone = getDecoder().getMicrophone();
+        byte[] audio = microphone.getUtterance().getAudio();
+        if (audio != null) {
+            audioPlayer.play
+                (audio, microphone.getAudioFormat());
         }
+        System.out.println("Finished playing utterance.");
     }
 
 
