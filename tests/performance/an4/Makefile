@@ -97,7 +97,7 @@ bush_test:
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
     -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
-    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushderby=false \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushderby=true \
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.bushderbyEta=10000 \
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
