@@ -22,6 +22,7 @@ import edu.cmu.sphinx.search.Path;
 import  java.util.List;
 import  java.util.Iterator;
 import  java.util.LinkedList;
+import  java.util.ArrayList;
 
 /**
  * Provides recognition results. Results can be partial or final. A
@@ -139,6 +140,22 @@ public class Result {
     }
 
     /**
+     * Returns the best scoring token in the active set
+     *
+     * @return the best scoring token or null
+     */
+    public Token getBestActiveToken() {
+	Token bestToken = null;
+	for (Iterator i = activeList.iterator(); i.hasNext(); ) {
+	    Token token = (Token) i.next();
+	    if (bestToken == null || token.getScore() > bestToken.getScore()) {
+		bestToken = token;
+	    }
+	}
+	return bestToken;
+    }
+
+    /**
      * Searches through the n-best list to find the
      * the branch that matches the given string
      *
@@ -154,6 +171,43 @@ public class Result {
 	    }
 	}
 	return null;
+    }
+
+    /**
+     * Searches through the n-best list to find the
+     * the branch that matches the beginning of the given  string
+     *
+     * @param text the string to search for
+     * @return the list token at the head of the branch 
+     */
+    public List  findPartialMatchingTokens(String text) {
+        List list = new ArrayList();
+	text = text.trim();
+	for (Iterator i = activeList.iterator(); i.hasNext(); ) {
+	    Token token = (Token) i.next();
+	    if (text.startsWith(token.getWordPathNoSilences())) {
+                list.add(token);
+	    }
+	}
+        return list;
+    }
+
+    /**
+     * Returns the best scoring token that matches the beginning of
+     * the given text.
+     *
+     * @param text the text to match
+     */
+    public Token getBestActiveParitalMatchingToken(String text) {
+        List matchingList = findPartialMatchingTokens(text);
+	Token bestToken = null;
+	for (Iterator i = matchingList.iterator(); i.hasNext(); ) {
+	    Token token = (Token) i.next();
+	    if (bestToken == null || token.getScore() > bestToken.getScore()) {
+		bestToken = token;
+	    }
+	}
+	return bestToken;
     }
 
 
