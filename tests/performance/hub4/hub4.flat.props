@@ -71,7 +71,7 @@ edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.FastActiveList
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.SortingActiveList
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.maxWordsPerFrame = 200
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80

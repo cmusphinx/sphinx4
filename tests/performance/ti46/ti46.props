@@ -54,7 +54,7 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 ############################################################
 
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=-1
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.FastActiveList
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.SortingActiveList
 
 
 ############################################################
@@ -113,5 +113,5 @@ edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight = 7.0
 edu.cmu.sphinx.decoder.Recognizer.dumpFrontEnd = false
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar
-edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
+edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager
 

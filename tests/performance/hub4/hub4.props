@@ -30,6 +30,14 @@ edu.cmu.sphinx.knowledge.acoustic.location = /lab/speech/sphinx4/data/hub4_model
 edu.cmu.sphinx.knowledge.acoustic.definition_file = hub4opensrc.6000.mdef
 edu.cmu.sphinx.knowledge.acoustic.data_location = 6000senones/hub4opensrc.cd_continuous_8gau
 edu.cmu.sphinx.knowledge.acoustic.properties_file = am.props
+
+
+############################################################
+#
+# Language model properties
+#
+############################################################
+
 edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.large.LargeTrigramModel
 edu.cmu.sphinx.knowledge.language.LanguageModel.location=/lab/speech/sphinx4/data/hub4_model/language_model.arpaformat.DMP
 edu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=0.7
@@ -66,13 +74,14 @@ edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.NullGr
 
 edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
 
+
 ############################################################
 # 
 # Search properties
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.FastActiveList
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.SortingActiveList
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.maxWordsPerFrame = 200
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80
@@ -87,7 +96,6 @@ edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80
 edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=9.5
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = .2
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
-
 
 ############################################################
 # 
