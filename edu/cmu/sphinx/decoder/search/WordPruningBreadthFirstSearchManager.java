@@ -223,6 +223,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             SearchState state = linguist.getInitialSearchState();
             activeBucket.add(new Token(state, currentFrameNumber));
             activeList = activeBucket.getNextList();
+            bestTokenMap = new HashMap();
             growBranches();
         } catch (ClassNotFoundException fe) {
             throw new Error("Can't create active list", fe);
