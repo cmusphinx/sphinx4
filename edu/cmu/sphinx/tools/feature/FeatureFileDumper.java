@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
+import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
@@ -116,7 +117,14 @@ public class FeatureFileDumper {
                         logger.info("Feature length: " + featureLength);
 		    }
 		    allFeatures.add(featureData);
-		}
+		} else if (feature instanceof FloatData) {
+                    float[] featureData = ((FloatData)feature).getValues();
+                    if (featureLength < 0) {
+                        featureLength = featureData.length;
+                        logger.info("Feature length: " + featureLength);
+                    }
+                    allFeatures.add(featureData);
+                }
 		feature = frontEnd.getData();
 	    }
 	} catch (Exception e) {
@@ -145,10 +153,18 @@ public class FeatureFileDumper {
 	outStream.writeInt(getNumberDataPoints());
 
 	for (Iterator i = allFeatures.iterator(); i.hasNext();) {
-	    double[] feature = (double []) i.next();
-	    for (int d = 0; d < feature.length; d++) {
-		outStream.writeFloat((float)feature[d]);
-	    }
+            Object data = i.next();
+            if (data instanceof double[]) {
+                double[] feature = (double []) data;
+                for (int d = 0; d < feature.length; d++) {
+                    outStream.writeFloat((float)feature[d]);
+                }
+            } else if (data instanceof float[]) {
+                float[] feature = (float[]) data;
+                for (int d = 0; d < feature.length; d++) {
+                    outStream.writeFloat(feature[d]);
+                }
+            }
 	}
 
 	outStream.close();
