@@ -280,18 +280,18 @@ public class Decoder {
 
             recognizer.addResultListener(new ResultListener() {
                     public void newResult(Result result) {
-                        if (result.isFinal()) {
-                            if (getDecoderTimer().isStarted()) {
+                        if (result != null) {
+                            if (result.isFinal()) {
                                 getDecoderTimer().stop();
                             }
-                        }
-                        beamFinder.process(result);
-                        if (showPartialResults) {
-                            showPartialResult(result);
-                        }
-                        
-                        if (showPartialActualResults) {
-                            showPartialActualResults(result);
+                            beamFinder.process(result);
+                            if (showPartialResults) {
+                                showPartialResult(result);
+                            }
+                            
+                            if (showPartialActualResults) {
+                                showPartialActualResults(result);
+                            }
                         }
                     }
                 });
@@ -346,7 +346,9 @@ public class Decoder {
     public Result decode(String ref) {
         currentReferenceText = ref;
 	Result result = recognizer.recognize();
-	showFinalResult(result);
+        if (result != null) {
+            showFinalResult(result);
+        }
         return result;
     }
 
@@ -501,7 +503,6 @@ public class Decoder {
 	    }
         }
 
-
         if (showHypothesisScore) {
             if (bestToken == null) {
                 System.out.print("   HypScore: NONE");
@@ -527,11 +528,7 @@ public class Decoder {
             System.out.println();
         }
 
-        processingTime = getDecoderTimer().getCurTime() / 1000.f;
-        audioTime = getAudioTime(result);
-	cumulativeProcessingTime += processingTime;
-	cumulativeAudioTime += audioTime;
-
+        calculateTimes(result);
 	showAudioUsage();
 	showMemoryUsage();
         beamFinder.showLatestResult();
@@ -541,6 +538,15 @@ public class Decoder {
         System.out.println();
     }
 
+    /**
+     * Calculate the processing and audio time of the current result.
+     */
+    protected void calculateTimes(Result result) {
+        processingTime = getDecoderTimer().getCurTime() / 1000.f;
+        audioTime = getAudioTime(result);
+	cumulativeProcessingTime += processingTime;
+	cumulativeAudioTime += audioTime;
+    }
 
     /**
      * Sets whether this decoder should print the partial Results
@@ -580,11 +586,8 @@ public class Decoder {
 
     /**
      * Shows the audio usage data
-     *
-     * @param audioTime current audio time
-     * @param processsingTime current processing time
      */
-    private void showAudioUsage() {
+    protected void showAudioUsage() {
         System.out.print("   This  Time Audio: " +
                          timeFormat.format(audioTime) + "s");
         System.out.print("  Proc: " +
@@ -598,7 +601,7 @@ public class Decoder {
     /**
      * Shows the audio summary data
      */
-    private void showAudioSummary() {
+    protected void showAudioSummary() {
         System.out.print("   Total Time Audio: " +
                          timeFormat.format(cumulativeAudioTime) + "s");
         System.out.print("  Proc: " +
@@ -611,15 +614,12 @@ public class Decoder {
     /**
      * Shows the size of the heap used
      */
-    private void showMemoryUsage() {
-
+    protected void showMemoryUsage() {
 	numMemoryStats++;
-	
-	float totalMem = Runtime.getRuntime().totalMemory() / (1024.0f
+        float totalMem = Runtime.getRuntime().totalMemory() / (1024.0f
 		* 1024.0f);
 	float freeMem = Runtime.getRuntime().freeMemory() / (1024.0f
 		* 1024.0f);
-
 	float usedMem = totalMem - freeMem;
 	
 	if (usedMem > maxMemoryUsed) {
