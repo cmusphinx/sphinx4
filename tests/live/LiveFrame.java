@@ -754,7 +754,8 @@ public class LiveFrame extends JFrame {
      */
     private JPanel createMessagePanel() {
         JPanel messagePanel = getJPanel(new BorderLayout());
-        messageTextField = new JTextField("Welcome!");
+        messageTextField = new JTextField
+            ("Please wait while I'm loading...");
         messageTextField.setBackground(backgroundColor);
         messageTextField.setEditable(false);
         messagePanel.add(messageTextField, BorderLayout.CENTER);
