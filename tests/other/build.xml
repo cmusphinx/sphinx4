@@ -113,6 +113,23 @@ NOTE:  Before running the tests, you must have already built
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
+    <!-- * Runs the time comparison tests between instanceof and  * -->
+    <!-- * equals().                                              * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="equalsInstanceOf"
+	    description="Runs the time comparison tests betwee instanceof and equals()."
+	    depends="all">
+	    <java classname="tests.other.EqualsInstanceOfTest"
+	          classpath="${classes_dir}"
+		  fork="true">
+                  <jvmarg value="-server"/>
+	    </java>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
     <!-- * Compiles the C version of the MathTest.                * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
