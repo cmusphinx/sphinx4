@@ -19,6 +19,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,10 +32,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.ConsoleHandler;
+import java.util.Date;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import edu.cmu.sphinx.util.SphinxLogFormatter;
 
@@ -86,8 +92,12 @@ public class ConfigurationManager {
 
     private Map symbolTable = new LinkedHashMap();
     private Map rawPropertyMap;
-    private Map globalProperties = new HashMap();
+    private Map globalProperties = new LinkedHashMap();
     private boolean showCreations;
+
+    // this pattern matches strings of the form '${word}'
+    private static Pattern globalSymbolPattern = 
+        Pattern.compile("\\$\\{(\\w+)\\}");
 
     /**
      * Creates a new configuration manager. Initial properties are loaded from
@@ -236,8 +246,18 @@ public class ConfigurationManager {
         if (symbol != null) {
             PropertySheet ps = symbol.getPropertySheet();
             Configurable c = symbol.getObject();
+            Object old = ps.getRawNoReplacment(prop);
             ps.setRaw(prop, value);
-            c.newProperties(ps);
+            try {
+                c.newProperties(ps);
+            } catch (PropertyException pe) {
+                // if the newProperties throws an objection
+                // then we need to restore the previous value
+                // roll back the old value if we can
+                ps.setRaw(prop, old);
+                c.newProperties(ps);
+                throw pe;
+            }
         } else {
             throw new PropertyException(null, prop,
                 "Can't find component " + component);
@@ -252,24 +272,48 @@ public class ConfigurationManager {
      * @throws IOException
      *                 if an error occurs while writing to the file
      */
-    public void save(File file) throws IOException, PropertyException {
+    public void save(File file) throws IOException {
         FileOutputStream fos = new FileOutputStream(file);
         PrintWriter writer = new PrintWriter(fos);
+
+        writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        writer.println();
+        outputHeader(0, writer, "Sphinx-4 Configuration File");
+        writer.println();
+
         writer.println("<config>");
+
+        // save global symbols
+
+        outputHeader(2, writer, "Global Properties");
+        for (Iterator i = globalProperties.keySet().iterator(); i.hasNext(); ) {
+            String name = (String) i.next();
+            String value = (String) globalProperties.get(name);
+            writer.println("        <property name=\"" +
+                stripGlobalSymbol(name) + "\" value=\"" + value + "\"/>");
+        }
+        writer.println();
+
+        outputHeader(2, writer, "Components");
+
         String[] allNames = getInstanceNames(Object.class);
         for (int i = 0; i < allNames.length; i++) {
             Symbol symbol = (Symbol) symbolTable.get(allNames[i]);
-            writer.println("    <component name=\"" + symbol.getName() + "\""
-                    + "  type=\"" + symbol.getObject().getClass().getName()
-                    + "\">");
             PropertySheet ps = symbol.getPropertySheet();
             String[] names = ps.getNames();
+
+            outputHeader(4, writer, symbol.getName());
+
+            writer.println("    <component name=\"" + symbol.getName() + "\"" +
+                "\n          type=\"" + symbol.getObject().getClass().getName()
+                + "\">");
             for (int j = 0; j < names.length; j++) {
-                Object obj = ps.getRaw(names[j]);
+                Object obj = ps.getRawNoReplacment(names[j]);
                 if (obj instanceof String) {
                     String value = (String) obj;
+                    String pad = (value.length() > 25) ? "\n        " : "" ;
                     writer.println("        <property name=\"" + names[j]
-                            + "\" value=\"" + value + "\"/>");
+                            + "\"" + pad + " value=\"" + value + "\"/>");
                 } else if (obj instanceof List) {
                     List list = (List) obj;
                     writer.println("        <propertylist name=\"" + names[j]
@@ -284,10 +328,30 @@ public class ConfigurationManager {
                 }
             }
             writer.println("    </component>");
+            writer.println();
         }
         writer.println("</config>");
+        writer.println("<!-- Generated on " + new Date() + "-->");
         writer.close();
     }
+
+    /**
+     * Outputs the pretty header for a component
+     *
+     * @param indent the indentation level
+     * @param writer where to write the header
+     * @param name the component name
+     */
+    private void outputHeader(int indent, PrintWriter writer, String name) 
+            throws
+        IOException {
+        writer.println(pad(' ', indent) + "<!-- " + pad('*', 50) + " -->");
+        writer.println(pad(' ', indent) + "<!-- " + name + pad(' ', 50 -
+                    name.length()) + " -->");
+        writer.println(pad(' ', indent) + "<!-- " + pad('*', 50) + " -->");
+        writer.println();
+    }
+     
 
     /**
      * Loads the configuration data from the given url and adds the info to the
@@ -487,6 +551,63 @@ public class ConfigurationManager {
                 System.out.println();
             } else {
                 System.out.println("[DEFAULT]");
+            }
+        }
+    }
+
+    public void editConfig(String name) {
+        Symbol symbol = (Symbol) symbolTable.get(name);
+        boolean done = false;
+
+        if (symbol == null)  {
+            System.out.println("No component: " + name);
+            return;
+        }
+        System.out.println(symbol.getName() + ":");
+
+        Registry registry = symbol.getRegistry();
+        Collection propertyNames = registry.getRegisteredProperties();
+        PropertySheet properties = symbol.getPropertySheet();
+        BufferedReader br = new BufferedReader(new
+                InputStreamReader(System.in));
+
+        for (Iterator j = propertyNames.iterator(); j.hasNext();) {
+            try {
+                String propName = (String) j.next();
+                Object value = properties.getRaw(propName);
+                String svalue = null;
+
+                if (value instanceof List) {
+                    continue;
+                } else if (value instanceof String) {
+                    svalue = (String) value;
+                } else {
+                    svalue = "DEFAULT";
+                }
+                done = false;
+
+                while (!done) {
+                    System.out.print("  " + propName + " [" + svalue + "]: ");
+                    String in = br.readLine();
+                    if (in.length() == 0) {
+                        done = true;
+                    } else if (in.equals(".")) {
+                        return;
+                    } else {
+                        try {
+                            setProperty(name, propName, in);
+                            done = true;
+                        } catch  (PropertyException pe) {
+                            System.out.println("error setting value " + pe);
+                            svalue = in;
+                        }
+                    }
+                }
+            } catch (PropertyException pe) {
+                System.out.println("error getting values " + pe);
+            } catch (IOException ioe) {
+                System.out.println("Trouble reading input");
+                return;
             }
         }
     }
@@ -735,5 +856,38 @@ public class ConfigurationManager {
      */
     private void dumpGDLFooter(PrintStream out) {
         out.println("}");
+    }
+
+    /**
+     * Strips the ${ and } off of a global symbol of the form
+     * ${symbol}.
+     *
+     * @param symbol the symbol to strip
+     *
+     * @return the stripped symbol
+     */
+    private String stripGlobalSymbol(String symbol) {
+        Matcher matcher = globalSymbolPattern.matcher(symbol);
+        if (matcher.matches()) {
+            return matcher.group(1);
+        } else {
+            return symbol;
+        }
+    }
+
+    /**
+     * Generate a string of the given character 
+     *
+     * @param c the character
+     * @param count the length of the string
+     *
+     * @return the padded string
+     */
+    private String pad(char c, int count) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < count; i++) {
+            sb.append(c);
+        }
+        return sb.toString();
     }
 }

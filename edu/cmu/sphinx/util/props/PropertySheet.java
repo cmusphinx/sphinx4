@@ -170,6 +170,17 @@ public interface PropertySheet {
      *         depending upon the property type)
      */
     Object getRaw(String name) throws PropertyException;
+
+    /**
+     * Gets the raw value associated with this name, no global symbol
+     * replacement is performed.
+     * 
+     * @param name
+     *            the name
+     * @return the value as an object (it could be a String or a String[]
+     *         depending upon the property type)
+     */
+    public Object getRawNoReplacment(String name);
     /**
      * Gets the owning property manager
      * 

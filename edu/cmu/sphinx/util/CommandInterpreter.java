@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.regex.PatternSyntaxException;
 import java.io.BufferedReader;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -285,10 +288,10 @@ public class CommandInterpreter extends Thread {
 			String[] subargs = new String[args.length -2];
 			System.arraycopy(args, 2, subargs, 0, subargs.length);
 
-			for (int i = 0; i < count; i++) {
-			    putResponse(
-			       CommandInterpreter.this.execute(subargs));
-			}
+                        for (int i = 0; i < count; i++) {
+                            putResponse(
+                               CommandInterpreter.this.execute(subargs));
+                        }
 		    } catch (NumberFormatException nfe) {
 		        putResponse("Usage: repeat count command args");
 		    }
@@ -579,15 +582,57 @@ public class CommandInterpreter extends Thread {
     * simple csh-like history. !! - execute last command, !-3 execute
     * 3 from last command, !2 execute second command in history list,
     * !foo - find last command that started with foo and execute it.
+    * Also allows editing of the last command wich ^old^new^ type 
+    * replacesments
     *
     * @return the next history line or null if done
     */
+
+   private static Pattern historyPush = Pattern.compile("(.+):p"); 
+   private static Pattern editPattern =
+       Pattern.compile("\\^(.+?)\\^(.*?)\\^"); 
+   private static Pattern bbPattern= Pattern.compile("(!!)");
+
    private String getInputLine() throws IOException {
        String message = in.readLine();
-       if (message.startsWith("!")) {
-           if (message.equals("!!")) {
-               message = history.getLast(0);
-           } else if (message.matches("!\\d+")) {
+       boolean justPush = false;
+       boolean echo = false;
+       boolean error = false;
+
+       Matcher m = historyPush.matcher(message);
+       if (m.matches()) {
+            justPush = true;
+            echo = true;
+            message = m.group(1);
+       } 
+       if (message.startsWith("^")) { // line editing ^foo^fum^
+           m = editPattern.matcher(message);
+           if (m.matches()) {
+               String orig = m.group(1);
+               String sub = m.group(2);
+               try {
+                   Pattern pat = Pattern.compile(orig);
+                   Matcher subMatcher = pat.matcher(history.getLast(0));
+                   if (subMatcher.find()) {
+                       message = subMatcher.replaceFirst(sub);
+                       echo = true;
+                   } else {
+                       error = true;
+                       putResponse(message + ": substitution failed");
+                   }
+                } catch (PatternSyntaxException pse) {
+                    error = true;
+                    putResponse("Bad regexp: " + pse.getDescription());
+                }
+           } else {
+               error = true;
+               putResponse("bad substitution sytax, use ^old^new^");
+           }
+       } else if ((m = bbPattern.matcher(message)).find()) {
+           message = m.replaceAll(history.getLast(0));
+           echo = true;
+       } else if (message.startsWith("!")) {
+           if (message.matches("!\\d+")) {
                int which = Integer.parseInt(message.substring(1));
                message = history.get(which);
            } else if (message.matches("!-\\d+")) {
@@ -596,12 +641,21 @@ public class CommandInterpreter extends Thread {
            } else  {
                message = history.findLast(message.substring(1));
            }
-       } else {
-           if (message.length() > 0) {
-               history.add(message);
-           }
-       }
-       return message;
+           echo = true;
+      }
+
+      if  (error) {
+          return "";
+      }
+
+      if (message.length() > 0) {
+           history.add(message);
+      }
+
+      if (echo) {
+           putResponse(message);
+      }
+      return justPush ? "" : message;
    }
 
    public void close() {
@@ -677,10 +731,14 @@ public class CommandInterpreter extends Thread {
     public static void main(String[] args) {
 	CommandInterpreter ci = new CommandInterpreter();
 
+        try {
 	System.out.println("Welcome to the Command interpreter test program");
 	ci.setPrompt("CI> "); 
 	ci.run();
 	System.out.println("Goodbye!");
+        } catch (Throwable t) {
+            System.out.println(t);
+        }
     }
 
 

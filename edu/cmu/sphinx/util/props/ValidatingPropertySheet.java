@@ -150,7 +150,7 @@ class ValidatingPropertySheet implements PropertySheet {
      * @return the return value
      */
     public Object getRaw(String name) throws PropertyException {
-        Object value = properties.get(name);
+        Object value = getRawNoReplacment(name);
         
         if (value == null) {
             return null;
@@ -180,6 +180,19 @@ class ValidatingPropertySheet implements PropertySheet {
         }
         return value;
     }
+
+    /**
+     * Gets a property by name from the property map, no global symbol
+     * replacement is done
+     * 
+     * @param name
+     *            the name of the property
+     * @return the return value
+     */
+    public Object getRawNoReplacment(String name) {
+        return properties.get(name);
+    }
+
     /**
      * Gets the value associated with this name. Note that is considered legal
      * to get a string version of any property
