@@ -51,15 +51,6 @@ edu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=0.7
 
 edu.cmu.sphinx.frontend.bigEndianData = false
 edu.cmu.sphinx.frontend.signedData = true
-edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
-edu.cmu.sphinx.frontend.cepstrumSize = 13
-edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
-edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
-edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
-edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
-edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
-edu.cmu.sphinx.frontend.windowShiftInMs = 10
-edu.cmu.sphinx.frontend.windower.alpha = 0.46
 
 
 ############################################################
@@ -80,7 +71,7 @@ edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.Simple
 ############################################################
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.PartitionActiveList
-edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
+edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1500
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-205
 
 
@@ -92,7 +83,7 @@ edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-205
 
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-16
-edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=8
+edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16
 edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path=./ripley.wordlist
 
 
