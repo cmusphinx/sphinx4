@@ -23,6 +23,9 @@ import java.io.Serializable;
  */
 public class Pronunciation implements Serializable {
 
+    public static final Pronunciation UNKNOWN
+        = new Pronunciation(new Unit[0], null, null, 1.0f);
+
     private Word word;
     private WordClassification wordClassification;
     private Unit[] units;
