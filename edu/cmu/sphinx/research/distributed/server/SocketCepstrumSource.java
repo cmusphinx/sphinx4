@@ -24,7 +24,7 @@ import java.net.Socket;
 
 
 /**
- * Reads cepstral data from a Socket, and returns then as Cepstrum
+ * Reads cepstral data from a Socket, and returns them as Cepstrum
  * objects.
  */
 public class SocketCepstrumSource implements CepstrumSource {
