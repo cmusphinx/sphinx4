@@ -44,7 +44,7 @@ HEAP_DUMP =   -Xrunhprof:heap=dump,cpu=samples
 #GC_FLAGS= -ms1g -XX:+UseConcMarkSweepGC -XX:-UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 
 #GC_FLAGS = -ms128m  -mx1g
-GC_FLAGS = -ms1g  -mx1g 
+GC_FLAGS = -ms3g  -mx3g 
 
 #PROFILE2_FLAGS= -Xrunhprof:file=log.txt
 PROFILE2_FLAGS= -Xrunhprof:cpu=samples,file=log.txt
@@ -164,6 +164,15 @@ tiny:
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=2000\
         -Dedu.cmu.sphinx.util.LinguistDumper.filename=tiny.gdl \
         -Dedu.cmu.sphinx.model.language.location=tiny.unigram \
+        edu.cmu.sphinx.decoder.BatchDecoder tiny.props small.batch
+
+
+tiny_wordlist:
+	$(JAVA_CMD)  \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=2000\
+        -Dedu.cmu.sphinx.util.LinguistDumper.filename=tiny.gdl \
+        -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.SimpleWordListGrammar \
+        -Dedu.cmu.sphinx.search.SimpleWordListGrammar.path=./tiny.wordlist \
         edu.cmu.sphinx.decoder.BatchDecoder tiny.props small.batch
 
 

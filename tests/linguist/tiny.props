@@ -136,3 +136,5 @@ edu.cmu.sphinx.util.GDLDumper.verticalLayout=true
 edu.cmu.sphinx.util.GDLDumper.dumpArcLabels=true
 edu.cmu.sphinx.decoder.Decoder.showErrorToken=false
 edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=true
+edu.cmu.sphinx.search.SimpleLinguist.dumpGstates=true
+
