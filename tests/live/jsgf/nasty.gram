@@ -1,4 +1,4 @@
 grammar jsgf.nastygram;
 
-public <nasty> = ((cat* | dog* | mouse*)+)+;
+public <nasty> = I saw a ((cat* | dog* | mouse*)+)+;
 

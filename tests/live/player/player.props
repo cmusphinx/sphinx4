@@ -22,14 +22,6 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 
 edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
-edu.cmu.sphinx.knowledge.acoustic.FeatureVectorLength = 39
-
-edu.cmu.sphinx.knowledge.acoustic.format = sphinx3.binary
-edu.cmu.sphinx.knowledge.acoustic.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
-
-edu.cmu.sphinx.knowledge.acoustic.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
-edu.cmu.sphinx.knowledge.acoustic.data_location = cd_continuous_8gau
-edu.cmu.sphinx.knowledge.acoustic.properties_file = am.props
 
 
 
@@ -38,19 +30,19 @@ edu.cmu.sphinx.knowledge.acoustic.properties_file = am.props
 # FrontEnd properties
 #
 ############################################################
+edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.models=wsj
+wsj;edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel
 
-edu.cmu.sphinx.frontend.useAcousticModelProperties = true
-edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
-edu.cmu.sphinx.frontend.cepstrumSize = 13
-edu.cmu.sphinx.frontend.cmn = edu.cmu.sphinx.frontend.LiveCMN
-edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
-edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
-edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
-edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
-edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
-edu.cmu.sphinx.frontend.windowShiftInMs = 10
-edu.cmu.sphinx.frontend.windower.alpha = 0.46
-edu.cmu.sphinx.frontend.util.Microphone.closeAudioBetweenUtterances=true
+wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
+
+wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.format=sphinx3.binary
+wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+
+wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
+wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.data_location = cd_continuous_8gau
+wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
+wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.useComposites=false
+
 
 
 ############################################################
@@ -100,8 +92,7 @@ edu.cmu.sphinx.decoder.linguist.Grammar.showGrammar=true
 # Dictionary properties
 #
 ############################################################
-
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation = true
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dict/cmudict.0.6d
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = dict/fillerdict
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.wordReplacement=<sil>

@@ -14,6 +14,7 @@ java.util.logging.ConsoleHandler.level = WARN
 java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
 
 
+edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 ############################################################
 #
 # Acoustic model properties
@@ -125,6 +126,6 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.isLooping = false
+edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.isLooping = true
 edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path = ../performance/an4/an4_spelled_out.wordlist
 

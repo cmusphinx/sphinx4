@@ -6,8 +6,9 @@
 grammar jsgf.hello;
 
 
+public <main> = <simple> | <other>;
 public <simple> = hello world ;
 public <other> = hello <someone> ;
 
-<someone> = (universe | planet | sun);
+<someone> = (universe | planet | sun | moon | stars | solar system);
 

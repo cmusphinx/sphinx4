@@ -67,6 +67,7 @@ NOTE:  Before running the tests, you must have already built
 		  <sysproperty key="edu.cmu.sphinx.frontend.cmn"
 		               value="edu.cmu.sphinx.frontend.LiveCMN"/>
 		  <arg value="decoders.list"/>
+                  <jvmarg value="-server"/>   
 	    </java>
     </target>
 
@@ -86,6 +87,7 @@ NOTE:  Before running the tests, you must have already built
 	          classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
 		  fork="true"
 		  maxmemory="512m">
+                 <jvmarg value="-server"/>   
 		  <sysproperty key="epMode" value="true"/>
 		  <sysproperty key="showPartialResults" value="true"/>
 		  <sysproperty key="edu.cmu.sphinx.frontend.cmn"
@@ -122,7 +124,10 @@ NOTE:  Before running the tests, you must have already built
 	          classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
 		  fork="true"
 		  maxmemory="512m">
+                  <jvmarg value="-server"/>   
 		  <sysproperty key="handsFree" value="true"/>
+                 <sysproperty key="java.util.logging.config.file"
+                              value="tidigits.props"/>
 		  <sysproperty key="showPartialResults" value="true"/>
 		  <sysproperty key="edu.cmu.sphinx.frontend.bytesPerAudioFrame"
 		               value="320"/>

@@ -370,7 +370,6 @@ public class Live {
             
             if (decoder.hasEndpointer()) {
                 hasEndpointer = true;
-                System.out.println(decoderName + " has endpointer");
             }
             
             info(".");
