@@ -26,8 +26,9 @@ import java.util.Map;
  * Used to accumulate data for updating of models.
  */
 class Buffer {
-    private float[] numerator;
-    private float denominator;
+    private double[] numerator;
+    private double denominator;
+    private boolean wasUsed = false;
     // Maybe isLog should be used otherwise: one single, say,
     // accumulate(), which would be directed according to isLog. But
     // then again having accumulate() and logAccumulate() makes it
@@ -49,7 +50,7 @@ class Buffer {
      */
     Buffer(int size, boolean isLog) {
 	this.isLog = isLog;
-	numerator = new float[size];
+	numerator = new double[size];
 	if (isLog) {
 	    denominator = LogMath.getLogZero();
 	    for (int i = 0; i < size; i++) {
@@ -70,6 +71,7 @@ class Buffer {
 	assert !isLog;
 	numerator[entry] += data;
 	denominator += data;
+	wasUsed = true;
     }
 
 
@@ -84,8 +86,9 @@ class Buffer {
     void logAccumulate(float data, int entry, LogMath logMath) {
 	assert numerator != null;
 	assert isLog;
-	numerator[entry] = logMath.addAsLinear(numerator[entry], data);
-	denominator = logMath.addAsLinear(denominator, data);
+	numerator[entry] = logMath.addAsLinear((float)numerator[entry], data);
+	denominator = logMath.addAsLinear((float)denominator, data);
+	wasUsed = true;
     }
 
     /**
@@ -104,6 +107,7 @@ class Buffer {
 	    numerator[i] += numeratorData[i];
 	}
 	denominator += denominatorData;
+	wasUsed = true;
     }
 
 
@@ -123,9 +127,10 @@ class Buffer {
 	assert isLog;
 	for (int i = 0; i < numerator.length; i++) {
 	    numerator[i] = 
-		logMath.addAsLinear(numerator[i], logNumeratorData[i]);
+		logMath.addAsLinear((float)numerator[i], logNumeratorData[i]);
 	}
-	denominator = logMath.addAsLinear(denominator, logDenominatorData);
+	denominator = logMath.addAsLinear((float)denominator, logDenominatorData);
+	wasUsed = true;
     }
 
     /**
@@ -135,7 +140,7 @@ class Buffer {
      */
     void normalize() {
 	assert !isLog;
-	float invDenominator = 1.0f / denominator;
+	float invDenominator = (float) (1.0 / denominator);
 	for (int i = 0; i < numerator.length; i++) {
 	    numerator[i] *= invDenominator;
 	}
@@ -167,7 +172,7 @@ class Buffer {
 		numerator[i] -= denominator;
 	    }
 	}
-	denominator = 0.0f;
+	denominator = 0.0;
     }
 
     /**
@@ -180,11 +185,11 @@ class Buffer {
 	for (int i = 0; i < numerator.length; i++) {
 	    den += numerator[i];
 	}
-	float invDenominator = 1.0f / den;
+	float invDenominator = (float) (1.0 / den);
 	for (int i = 0; i < numerator.length; i++) {
 	    numerator[i] *= invDenominator;
 	}
-	denominator = 1.0f;
+	denominator = 1.0;
     }
 
     /**
@@ -201,7 +206,7 @@ class Buffer {
 	float den = logZero;
 	for (int i = 0; i < numerator.length; i++) {
 	    if (numerator[i] != logZero) {
-		den = logMath.addAsLinear(den, numerator[i]);
+		den = logMath.addAsLinear(den, (float)numerator[i]);
 	    }
 	}
 	for (int i = 0; i < numerator.length; i++) {
@@ -209,7 +214,7 @@ class Buffer {
 		numerator[i] -= den;
 	    }
 	}
-	denominator = 0.0f;
+	denominator = 0.0;
     }
 
     /**
@@ -259,7 +264,7 @@ class Buffer {
      * @return the value
      */
     protected float getValue(int entry) {
-	return numerator[entry];
+	return (float)numerator[entry];
     }
 
     /**
@@ -279,7 +284,32 @@ class Buffer {
      * @return the value
      */
     protected float[] getValues() {
-	return numerator;
+	float[] returnVector = new float[numerator.length];
+	for (int i = 0; i < numerator.length; i++) {
+	    returnVector[i] = (float) numerator[i];
+	}
+	return returnVector;
     }
+
+    /**
+     * Returns whether the buffer was used.
+     *
+     * @return if true, the buffer was used
+     */
+    protected boolean wasUsed() {
+	return wasUsed;
+    }
+
+    /**
+     * Dump info about this buffer.
+     */
+    public void dump() {
+	System.out.println("Denominator= " + denominator);
+	System.out.println("Numerators= ");
+	for (int i = 0; i < numerator.length; i++) {
+	    System.out.println("[" + i + "]= " + numerator[i]);
+	}
+    }
+
 }
 
