@@ -18,11 +18,27 @@ public class Complex {
     public double im;
 
     /**
-     * Create a default complex number;
+     * Create a default complex number
      */
-    private Complex() {
+    public Complex() {
 	this.re = 0.0f;
 	this.im = 0.0f;
+    }
+
+    /**
+     * Create a complex number from a real one
+     */
+    public Complex(double real) {
+	this.re = real;
+	this.im = 0.0f;
+    }
+
+    /**
+     * Create a complex number from the real and imaginary parts
+     */
+    public Complex(double real, double imaginary) {
+	this.re = real;
+	this.im = imaginary;
     }
 
     /**
@@ -33,11 +49,9 @@ public class Complex {
      *
      * @return the sum of the complex numbers a and b
      */
-    public Complex addComplex(Complex a, Complex b) {
-	Complex Sum = new Complex(); 
-	Sum.re = a.re + b.re;
-	Sum.im = a.im + b.im;
-	return Sum;
+    public void addComplex(Complex a, Complex b) {
+	this.re = a.re + b.re;
+	this.im = a.im + b.im;
     }
 
     /**
@@ -48,11 +62,9 @@ public class Complex {
      *
      * @return the difference between the complex numbers a and b
      */
-    public Complex subtractComplex(Complex a, Complex b) {
-	Complex Diff = new Complex(); 
-	Diff.re = a.re - b.re;
-	Diff.im = a.im - b.im;
-	return Diff;
+    public void subtractComplex(Complex a, Complex b) {
+	this.re = a.re - b.re;
+	this.im = a.im - b.im;
     }
 
     /**
@@ -63,11 +75,9 @@ public class Complex {
      *
      * @return the product the complex numbers a and b
      */
-    public Complex multiplyComplex(Complex a, Complex b) {
-	Complex Mult = new Complex(); 
-	Mult.re = a.re * b.re - a.im * b.im;
-	Mult.im = a.re * b.im + a.im * b.re;
-	return Mult;
+    public void multiplyComplex(Complex a, Complex b) {
+	this.re = a.re * b.re - a.im * b.im;
+	this.im = a.re * b.im + a.im * b.re;
     }
 
     /**
@@ -81,12 +91,10 @@ public class Complex {
      *
      * @return the ratio between the complex numbers a and b
      */
-    public Complex divideComplex(Complex a, Complex b) {
-	Complex Div = new Complex(); 
-	Div.re = a.re * b.re + a.im * b.im;
-	Div.im = a.im * b.re - a.re * b.im;
-	scaleComplex(Div, squaredMagnitudeComplex(b));
-	return Div;
+    public void divideComplex(Complex a, Complex b) {
+	this.re = a.re * b.re + a.im * b.im;
+	this.im = a.im * b.re - a.re * b.im;
+	this.scaleComplex(this, b.squaredMagnitudeComplex());
     }
 
     /**
@@ -98,8 +106,8 @@ public class Complex {
      *
      */
     public void scaleComplex(Complex a, double b) {
-	a.re /= b;
-	a.im /= b;
+	this.re = a.re / b;
+	this.im = a.re / b;
     }
 
     /**
@@ -109,9 +117,9 @@ public class Complex {
      *
      * @return the squared magnitude of the complex number
      */
-    public double squaredMagnitudeComplex(Complex a) {
+    public double squaredMagnitudeComplex() {
 	double squaredMag;
-	squaredMag = a.re * a.re + a.im * a.im;
+	squaredMag = this.re * this.re + this.im * this.im;
 	return squaredMag;
     }
 

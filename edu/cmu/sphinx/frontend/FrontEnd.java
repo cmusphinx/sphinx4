@@ -73,6 +73,12 @@ public class FrontEnd implements DataSource, Runnable {
     public static final String PROP_BYTES_PER_AUDIO_FRAME =
 	"edu.cmu.sphinx.frontend.bytesPerAudioFrame";
 
+    /**
+     * The name of the SphinxProperty for the number of points in the FFT.
+     */
+    public static final String PROP_FFT_NPOINT =
+	"edu.cmu.sphinx.frontend.fftNPoint";
+
 
     private int samplesPerAudioFrame;
     private List processors = null;
