@@ -13,7 +13,6 @@ import edu.cmu.sphinx.frontend.FeatureExtractor;
 import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Preemphasizer;
-import edu.cmu.sphinx.frontend.SegmentEndPointSignal;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.Util;
 import edu.cmu.sphinx.util.Timer;

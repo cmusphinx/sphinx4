@@ -6,7 +6,7 @@ package tests.frontend;
 
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Preemphasizer;
-import edu.cmu.sphinx.frontend.SlicingWindower;
+import edu.cmu.sphinx.frontend.Windower;
 import edu.cmu.sphinx.util.Timer;
 
 import java.io.FileInputStream;
@@ -31,7 +31,7 @@ public class HammingWindowerTest {
 
         Preemphasizer preemphasizer = new Preemphasizer();
 
-        SlicingWindower hammingWindow = new SlicingWindower();
+        Windower hammingWindow = new Windower();
         hammingWindow.setDump(dumpValues);
         
 	FrontEnd frontend = new FrontEnd();
