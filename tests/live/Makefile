@@ -31,6 +31,7 @@ DEBUG_FLAGS=
 
 EXTRA_JAVA_FLAGS=$(PROFILE_FLAGS) $(LOG_GC_FLAGS) $(LOG) $(GC_FLAGS) $(DEBUG_FLAGS)
 
+EXTRA_JARS=$(EXTRA_LIB)/jsapi.jar
 
 ##########################################################################
 

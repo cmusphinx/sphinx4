@@ -1,4 +1,4 @@
-decoders = bishop isolatedDigits connectedDigits alphaSpelling
+decoders = jsgf bishop isolatedDigits connectedDigits alphaSpelling 
 
 # isolatedDigits decoder
 isolatedDigits.name = Isolated Digits
@@ -24,3 +24,8 @@ helpinghand.testFile = ./helpinghand/helpinghand.test
 bishop.name=Bishop
 bishop.propertiesFile = ./bishop/bishop.props
 bishop.testFile = ./bishop/bishop.test
+
+# CommandAndControl
+jsgf.name=CommandAndControl
+jsgf.propertiesFile=./jsgf/jsgf.props
+jsgf.testFile=./jsgf/jsgf.test
