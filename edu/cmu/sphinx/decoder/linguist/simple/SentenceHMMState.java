@@ -507,8 +507,7 @@ public class  SentenceHMMState implements Serializable, SearchState  {
      * @return the signature
      */
     public String getSignature() {
-        //return getFullName();
-        return toString();
+        return getFullName();
     }
 
 
@@ -521,8 +520,8 @@ public class  SentenceHMMState implements Serializable, SearchState  {
      * @return the title
      */
     public String getTitle() {
-	// return getFullName() + ":" + stateNumber;
-	return getSignature() + ":" + stateNumber;
+	return getFullName() + ":" + stateNumber;
+	// return getSignature() + ":" + stateNumber;
     }
 
 
@@ -588,7 +587,7 @@ public class  SentenceHMMState implements Serializable, SearchState  {
       * @return the value signature
       */
      public String getValueSignature() {
- 	return getSignature();
+ 	return getFullName();
      }
 
 
