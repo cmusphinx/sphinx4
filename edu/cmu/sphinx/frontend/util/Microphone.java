@@ -399,7 +399,7 @@ public class Microphone extends BaseDataProcessor {
         /**
          * Creates the thread with the given name
          *
-         * @name the name of the thread
+         * @param name the name of the thread
          */
         public RecordingThread(String name) {
             super(name);
