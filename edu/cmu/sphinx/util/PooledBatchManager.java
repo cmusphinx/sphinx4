@@ -124,11 +124,11 @@ public class PooledBatchManager implements BatchManager {
     private void createDirectories() throws IOException {
         if (!topDir.isDirectory()) {
             topDir.mkdir();
+            inProcessDir.mkdir();
+            completedDir.mkdir();
+            resultsDir.mkdir();
             createInputDirectory();
         }
-        inProcessDir.mkdir();
-        completedDir.mkdir();
-        resultsDir.mkdir();
     }
 
 
@@ -170,15 +170,24 @@ public class PooledBatchManager implements BatchManager {
      * a name 'Results_xxx.out'
      */
     private void redirectStdout() throws IOException {
-        File resultFile = File.createTempFile("Results_", ".out", resultsDir);
+        String myName = getMyName();
+        File resultFile = File.createTempFile(myName,  ".out", resultsDir);
 
         FileOutputStream fos = new FileOutputStream(resultFile);
         PrintStream ps = new PrintStream(fos);
         oldOut = System.out;
         System.setOut(ps);
 
-        System.out.println("# These results collected on " + 
-                InetAddress.getLocalHost().getHostName());
+        System.out.println("# These results collected on " + getMyName());
+    }
+
+    /**
+     * Gets my network name
+     *
+     * @return my network name
+     */
+    private String getMyName() throws IOException {
+        return InetAddress.getLocalHost().getHostName();
     }
 
     /**
