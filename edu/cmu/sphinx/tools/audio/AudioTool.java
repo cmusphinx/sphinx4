@@ -35,6 +35,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -99,6 +100,37 @@ public class AudioTool {
         short[] audioData = RawReader.readAudioData(stream, format);
         stream.close();
         return new AudioData(audioData, 16000.0f);
+    }
+
+    static private void writeRawFile(JFrame jframe) {
+        System.out.println("saving");
+        FilenameDialog dialog = new FilenameDialog(
+            jframe, true, "Save as...");
+        dialog.setVisible(true);
+        String filename = dialog.getFilename();
+        if (filename.length() == 0) {
+            return;
+        }
+        
+        try {
+            FileOutputStream outputStream = new FileOutputStream(filename);
+            AudioFormat format = new AudioFormat(
+                16000.0f, // sample rate
+                16,       // sample size
+                1,        // channels (1 == mono)
+                true,     // signed
+                true);    // big endian
+            
+            RawWriter writer = new RawWriter(outputStream, format);
+            short[] samples = audio.getAudioData();
+            for (int i = 0; i < samples.length; i++) {
+                writer.writeSample(samples[i]);
+            }
+            outputStream.flush();
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -177,6 +209,12 @@ public class AudioTool {
      *             argv[1] : The name of an audio file
      */
     static public void main(String[] args) {
+        System.out.println("space = play");
+        System.out.println("shift = record (press to talk)");
+        System.out.println("c     = crop selection");
+        System.out.println("a     = select all");
+        System.out.println("s     = save raw 16kHz 16-bit signed PCM to file");
+        
         try {
             URL url = new File(args[0]).toURI().toURL();
             SphinxProperties.initContext(CONTEXT, url);
@@ -198,6 +236,8 @@ public class AudioTool {
             if (audio == null) {
                 audio = readRawFile(url);
             }
+
+	    final JFrame jframe = new JFrame("AudioTool");
 
             /* Scale the width according to the size of the
              * spectrogram.
@@ -254,11 +294,12 @@ public class AudioTool {
                         System.out.println("cropping");
                         audio.crop();
                         updateSpectrogram();
+                    } else if (evt.getKeyChar() == 's') {
+                        writeRawFile(jframe);
                     }
                 }
             });
             
-	    JFrame jframe = new JFrame("AudioTool");
             jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setContentPane(scroller);
             jframe.pack();
