@@ -18,11 +18,20 @@
     <property name="javadoc_dir"	value="javadoc"/>
     <property name="javadoc_check_dir"  value="${build_dir}/javadoc_check"/>
     <property name="javadoc_zip"	value="javadoc.zip"/>
-    <property name="javadoc_level"	value="public"/>
 
     <!-- Load the environment -->
     <property environment="env"/>
 
+    <condition property="javadoc_level" 
+                value="${access}">
+         <isset property="access"/>
+    </condition>
+    <condition property="javadoc_level" 
+                value="public">
+       <not>
+         <isset property="access"/>
+       </not>
+    </condition>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
