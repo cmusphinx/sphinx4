@@ -346,11 +346,14 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     /**
      * Checks that the given two states are in legitimate order.
      */
-    private void checkStateOrder(Class fromState, Class toState) {
+    private void checkStateOrder(SearchState fromState, SearchState toState) {
+        Class fromClass = fromState.getClass();
+        Class toClass = toState.getClass();
+
         // first, find where in stateOrder is the fromState
         int i = 0;
         for (; i < stateOrder.length; i++) {
-            if (stateOrder[i] == fromState) {
+            if (stateOrder[i] == fromClass) {
                 break;
             }
         }
@@ -363,7 +366,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
         if (i < (stateOrder.length - 1)) {
             for (int j = 0; j <= i; j++) {
-                if (stateOrder[j] == toState) {
+                if (stateOrder[j] == toClass) {
                     throw new Error("IllegalState order: from " + 
                                     fromState + " to " + toState);
                 }
@@ -404,7 +407,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             SearchStateArc arc = arcs[i];
             SearchState nextState = arc.getState();
 
-            checkStateOrder(state.getClass(), nextState.getClass());
+            checkStateOrder(state, nextState);
 
             // We're actually multiplying the variables, but since
             // these come in log(), multiply gets converted to add
