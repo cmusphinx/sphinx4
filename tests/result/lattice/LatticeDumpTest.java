@@ -18,6 +18,7 @@ import edu.cmu.sphinx.recognizer.Recognizer;
 
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.Lattice;
+import edu.cmu.sphinx.result.LatticeOptimizer;
 
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -82,6 +83,8 @@ public class LatticeDumpTest {
                 System.out.println("\nRESULT: " + 
                                    result.getBestFinalResultNoFiller() + "\n");
                 Lattice lattice = new Lattice(result);
+		LatticeOptimizer lo = new LatticeOptimizer(lattice);
+		lo.optimize();
                 lattice.dumpAISee("lattice.gdl", "lattice");
             } else {
                 System.out.println("Result: null\n");
