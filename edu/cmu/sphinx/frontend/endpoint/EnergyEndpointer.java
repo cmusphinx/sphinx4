@@ -129,7 +129,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
     /**
      * The default value for PROP_START_OFFSET.
      */
-    public static final int PROP_START_OFFSET_DEFAULT = 5;
+    public static final int PROP_START_OFFSET_DEFAULT = 10;
 
 
     /**
