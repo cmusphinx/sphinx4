@@ -14,7 +14,6 @@
 package edu.cmu.sphinx.research.bushderby;
 
 import edu.cmu.sphinx.decoder.linguist.*;
-import edu.cmu.sphinx.decoder.linguist.simple.*;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.Pruner;
@@ -107,13 +106,6 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	if (getLinguist() != null) {
 	    languageModel  = getLinguist().getLanguageModel();
 	}
-    }
-
-
-    private void M(String s) {
-        if (false) {
-            System.out.println(s);
-        }
     }
    
 
@@ -211,30 +203,10 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      *
      * @return true if the given SearchState is a GREEN state, false otherwise
      */
-    /*
-    private boolean isGreenState(SentenceHMMState state) {
-	boolean green = ((state.getColor() == Color.GREEN) ||
-			 (state instanceof HMMStateState));
-	if (green) {
-	    state.setColor(Color.GREEN);
-	}
-	return green;
+    private boolean isGreenState(SearchState state) {
+        return state instanceof HMMSearchState;
     }
-    */
 
-    private boolean isGreenState(SearchState state) {
-        if( ((SentenceHMMState)state).getColor() == Color.GREEN ) return true;
-        if( state instanceof HMMStateState ) {
-            ((SentenceHMMState)state).setColor(Color.GREEN);
-            return true;
-        }
-        return false;
-    }
-    /*
-    private boolean isGreenState(SearchState state) {
-        return state instanceof HMMStateState;
-    }
-    */
 
     /**
      * Collects the next set of emitting tokens from a token
@@ -382,7 +354,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	// if we are not transitioning to a unit state, then it is a
 	// valid transition
 
-	if (! (nextState instanceof UnitState)) {
+	if (! (nextState instanceof UnitSearchState)) {
 	    return true;
 	}
 
@@ -392,7 +364,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	// previous unit align properly with those of the next
 
 
-	thisUnit = ((UnitState) nextState).getUnit();
+	thisUnit = ((UnitSearchState) nextState).getUnit();
 	thisLC = getLeftContext(thisUnit);
 	thisRC = getRightContext(thisUnit);
 
@@ -522,10 +494,10 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
     private float getLanguageProbability(Token token, 
 					 SearchStateArc arc) {
 	float logProbability = arc.getLanguageProbability();
-	if (languageModel != null && arc.getState() instanceof WordState) {
-	    WordState state = (WordState) arc.getState();
+	if (languageModel != null && arc.getState() instanceof WordSearchState) {
+	    WordSearchState state = (WordSearchState) arc.getState();
 	    int depth = languageModel.getMaxDepth();
-	    String word = state.getWord().getSpelling();
+	    String word = state.getPronunciation().getWord();
 
 	    if (isWord(word)) {
 		List wordList = new ArrayList(depth);
