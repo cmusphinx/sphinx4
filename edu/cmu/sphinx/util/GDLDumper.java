@@ -69,6 +69,7 @@ public class GDLDumper extends LinguistDumper  {
 	out.println("graph: {");
 	out.println("    layout_algorithm: minbackward");
 	out.println("    orientation: left_to_right");
+	out.println("    manhatten_edges: yes");
     }
 
     /**
