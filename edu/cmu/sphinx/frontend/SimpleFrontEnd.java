@@ -392,7 +392,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 	SphinxProperties props = getSphinxProperties();
         featureExtractorClass = props.getString
 	    (PROP_FEATURE_EXTRACTOR, 
-	     "edu.cmu.sphinx.frontend.DeltasFeatureExtractor");
+	     "edu.cmu.sphinx.frontend.S3FeatureExtractor");
         try {
 	    FeatureExtractor extractor = (FeatureExtractor) 
 		Class.forName(featureExtractorClass).newInstance();
