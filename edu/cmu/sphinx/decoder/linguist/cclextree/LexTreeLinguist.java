@@ -689,12 +689,7 @@ public class LexTreeLinguist implements  Linguist {
 
             WordSequence nextWordSequence = wordSequence;
 
-            if (nextWord.isFiller()) {
-                if (nextWord != dictionary.getSilenceWord()) {
-                    logProbability = logFillerInsertionProbability;
-                    logProbability -= fixupProb;
-                }
-            } else {
+            if (!nextWord.isFiller()) {
                 nextWordSequence  = wordSequence.addWord(nextWord, 
                         languageModel.getMaxDepth());
                 logProbability = languageModel.getProbability(nextWordSequence);
@@ -1360,6 +1355,8 @@ public class LexTreeLinguist implements  Linguist {
         float logInsertionProbability = logUnitInsertionProbability;
         if (unitNode.getBaseUnit().isSilence()) {
             logInsertionProbability = logSilenceInsertionProbability;
+        } else if (unitNode.getBaseUnit().isFiller()) {
+            logInsertionProbability = logFillerInsertionProbability;
         } else if (unitNode.getPosition().isWordBeginning()) {
             logInsertionProbability += logWordInsertionProbability;
         }
