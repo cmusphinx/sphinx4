@@ -1,15 +1,15 @@
 
 /*
-* Copyright 1999-2002 Carnegie Mellon University.
-* Portions Copyright 2002 Sun Microsystems, Inc.
-* Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
-* All Rights Reserved.  Use is subject to license terms.
-*
-* See the file "license.terms" for information on usage and
-* redistribution of this file, and for a DISCLAIMER OF ALL
-* WARRANTIES.
-*
-*/
+ * Copyright 1999-2002 Carnegie Mellon University.
+ * Portions Copyright 2002 Sun Microsystems, Inc.
+ * Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ *
+ */
 
 package edu.cmu.sphinx.decoder.search;
 
@@ -21,6 +21,7 @@ import edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -32,13 +33,16 @@ import java.util.Set;
  */
 public class SimpleActiveListManager implements ActiveListManager  {
 
-    private Class[] listOrder;
-    private Set knownStateTypes;
+    private Class[] searchStateOrder;
+    private Class[] nonEmittingClasses;
+    private Class emittingClass;
+
     private AbstractMap listMap = new HashMap();
+    private ActiveList emittingActiveList;
+
     private SphinxProperties props;
-    private int listPtr = 0;
     private int absoluteWordBeamWidth;
-    private float relativeWordBeamWidth;
+    private double relativeWordBeamWidth;
 
 
     /**
@@ -51,20 +55,42 @@ public class SimpleActiveListManager implements ActiveListManager  {
     public SimpleActiveListManager(SphinxProperties props, 
                                    Class[] searchStateOrder) {
         this.props = props;
-        this.listOrder = searchStateOrder;
-        this.knownStateTypes = new HashSet();
+        this.searchStateOrder = searchStateOrder;
 
-        // add the search state class to the map
-        for (int i = 0; i < searchStateOrder.length; i++) {
-            knownStateTypes.add(searchStateOrder[i]);
-        }
-
-        absoluteWordBeamWidth = props.getInt
+        this.absoluteWordBeamWidth = props.getInt
             (PROP_ABSOLUTE_WORD_BEAM_WIDTH,
              PROP_ABSOLUTE_WORD_BEAM_WIDTH_DEFAULT);
-        relativeWordBeamWidth = 
-            props.getFloat(PROP_RELATIVE_WORD_BEAM_WIDTH,
-                           PROP_RELATIVE_WORD_BEAM_WIDTH_DEFAULT);
+
+        this.relativeWordBeamWidth = 
+            props.getDouble(PROP_RELATIVE_WORD_BEAM_WIDTH,
+                            PROP_RELATIVE_WORD_BEAM_WIDTH_DEFAULT);
+
+        String activeListClass = props.getString
+            (SimpleBreadthFirstSearchManager.PROP_ACTIVE_LIST_TYPE,
+             SimpleBreadthFirstSearchManager.PROP_ACTIVE_LIST_TYPE_DEFAULT);
+
+        nonEmittingClasses = new Class[searchStateOrder.length - 1];
+
+        for (int i = 0; i < nonEmittingClasses.length; i++) {
+            nonEmittingClasses[i] = searchStateOrder[i];
+            try {
+                ActiveList list = (ActiveList)
+                    Class.forName(activeListClass).newInstance();
+                list.setProperties(props);
+                list.setAbsoluteBeamWidth(absoluteWordBeamWidth);
+                list.setRelativeBeamWidth(relativeWordBeamWidth);
+                listMap.put(nonEmittingClasses[i], list);
+            } catch (ClassNotFoundException fe) {
+                throw new Error("Can't create active list", fe);
+            } catch (InstantiationException ie) {
+                throw new Error("Can't create active list", ie);
+            } catch (IllegalAccessException iea) {
+                throw new Error("Can't create active list", iea);
+            }
+        }
+
+        emittingClass = searchStateOrder[searchStateOrder.length - 1];
+        emittingActiveList = new PartitionActiveList(props);
     }
 
 
@@ -75,7 +101,7 @@ public class SimpleActiveListManager implements ActiveListManager  {
      * @return the new active list
      */
     public ActiveListManager createNew() {
-        return new SimpleActiveListManager(props, listOrder);
+        return new SimpleActiveListManager(props, searchStateOrder);
     }
 
 
@@ -85,29 +111,21 @@ public class SimpleActiveListManager implements ActiveListManager  {
      * @param token the token to add
      */
     public void add(Token token) {
-
-        Class type = token.getSearchState().getClass();
-
-        // check if the search state type is known
-        assert (knownStateTypes.contains(type));
-
-        ActiveList activeList = findListFor(type);
-        if (activeList == null) {
-            FastActiveList newActiveList;
-            if (token.isEmitting()) {
-                newActiveList = new FastActiveList(props);
-            } else { 
-                newActiveList = new FastActiveList
-                    (props, absoluteWordBeamWidth, relativeWordBeamWidth);
-            }
-            activeList = newActiveList;
-            listMap.put(type, activeList);
+        ActiveList activeList;
+        if (token.isEmitting()) {
+            activeList = emittingActiveList;
+        } else {
+            activeList = findListFor(token.getSearchState().getClass());
         }
         activeList.add(token);
     }
 
     private ActiveList findListFor(Token token) {
-        return findListFor(token.getSearchState().getClass());
+        if (token.isEmitting()) {
+            return emittingActiveList;
+        } else {
+            return findListFor(token.getSearchState().getClass());
+        }
     }
 
     private ActiveList findListFor(Class type) {
@@ -132,24 +150,75 @@ public class SimpleActiveListManager implements ActiveListManager  {
 
 
     /**
-     * Returns the next ActiveList according to the order of SearchStates.
+     * Returns the emitting ActiveList, and removes it from this manager.
      *
-     * @return the next ActiveList
+     * @return the emitting ActiveList
      */
-    public ActiveList getNextList() {
-        if (listMap.isEmpty()) {
-            return null;
-        }
-        if (listPtr == listOrder.length) {
+    public ActiveList getEmittingList() {
+        ActiveList list = emittingActiveList;
+        emittingActiveList = list.createNew();
+        return list;
+    }
+
+
+    /**
+     * Returns an Iterator of all the non-emitting ActiveLists. The
+     * iteration order is the same as the search state order.
+     *
+     * @return an Iterator of non-emitting ActiveLists
+     */
+    public Iterator getNonEmittingListIterator() {
+        /*
+        Class stateClass = nonEmittingClasses[listPtr];
+
+	ActiveList list = (ActiveList)listMap.remove(stateClass);
+        listMap.put(stateClass, list.createNew());
+
+	if ((++listPtr) >= nonEmittingClasses.length) {
+	    listPtr = 0;
+	}
+	return list;
+        */
+        return (new NonEmittingListIterator());
+    }
+
+
+    private class NonEmittingListIterator implements Iterator {
+        private int listPtr;
+        private Class stateClass;
+        private ActiveList list;
+
+        public NonEmittingListIterator() {
             listPtr = 0;
         }
 
-        ActiveList activeList = findListFor(listOrder[listPtr++]);
-        if (activeList == null) {
-            return getNextList();
+        public boolean hasNext() {
+            return (listPtr < nonEmittingClasses.length);
         }
-        listMap.remove(listOrder[listPtr-1]);
-        return activeList;
+
+        public Object next() {
+            checkPriorLists();
+            stateClass = nonEmittingClasses[listPtr++];
+            list = (ActiveList) listMap.get(stateClass);
+            return list;
+        }
+
+        /**
+         * Check that all lists prior to listPtr is empty.
+         */
+        private void checkPriorLists() {
+            for (int i = 0; i < listPtr; i++) {
+                ActiveList activeList = findListFor(nonEmittingClasses[i]);
+                if (activeList.size() > 0) {
+                    throw new Error("At " + nonEmittingClasses[listPtr] +
+                                    ". List for " + nonEmittingClasses[i] + 
+                                    " should not have tokens.");
+                }
+            }
+        }
+
+        public void remove() {
+            listMap.put(stateClass, list.createNew());
+        }
     }
 }
-

@@ -12,8 +12,10 @@
  */
 
 package edu.cmu.sphinx.decoder.search;
+
 import edu.cmu.sphinx.decoder.search.Token;
 
+import java.util.Iterator;
 
 /**
  * An active list is maintained as a sorted list
@@ -50,16 +52,28 @@ public interface ActiveListManager {
      */
     public void replace(Token oldToken, Token newToken);
 
+    /**
+     * Returns an Iterator of all the non-emitting ActiveLists. The
+     * iteration order is the same as the search state order.
+     *
+     * @return an Iterator of non-emitting ActiveLists
+     */
+    public Iterator getNonEmittingListIterator();
+    
+    /**
+     * Returns the emitting ActiveList, and removes it from this manager.
+     *
+     * @return the emitting ActiveList
+     */
+    public ActiveList getEmittingList();
+
      /**
      * Creates a new version of the active list with
      * the same general properties of this one
      *
      * @return a new active list
      */
-
-    public ActiveList getNextList();
-
-
     public ActiveListManager createNew();
+
 }
 
