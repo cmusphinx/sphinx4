@@ -243,7 +243,19 @@ public class Windower extends DataProcessor implements AudioSource {
      */
     private int applyHammingWindow(double[] in, int length) {
 
-        int windowCount = getWindowCount(length, windowSize, windowShift);
+        int windowCount;
+
+	// if no windows can be created but there is some data,
+	// pad it with zeros
+	if (length < windowSize) {
+	    double[] padded = new double[windowSize];
+	    Arrays.fill(padded, 0);
+	    System.arraycopy(in, 0, padded, 0, length);
+	    in = padded;
+	    windowCount = 1;
+	} else {
+	    windowCount = getWindowCount(length, windowSize, windowShift);
+	}
 
         // create all the windows at once, not individually, saves time
         double[][] windows = new double[windowCount][windowSize];
