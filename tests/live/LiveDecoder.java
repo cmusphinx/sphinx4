@@ -13,10 +13,12 @@
 package tests.live;
 
 import edu.cmu.sphinx.decoder.Decoder;
+import edu.cmu.sphinx.decoder.FeatureListener;
 
 import edu.cmu.sphinx.frontend.BatchCMN;
 import edu.cmu.sphinx.frontend.Cepstrum;
 import edu.cmu.sphinx.frontend.CepstrumSource;
+import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.LiveCMN;
 import edu.cmu.sphinx.frontend.util.Microphone;
@@ -55,6 +57,8 @@ public class LiveDecoder extends Decoder {
     private String testFile;
     private List referenceList;
     private ListIterator iterator;
+    private long audioStart;       // in milliseconds
+    private long audioLength;      // in milliseconds
 
 
     /**
@@ -77,6 +81,17 @@ public class LiveDecoder extends Decoder {
         if (!isInitialized()) {
             this.microphone = microphone;
             super.initialize(microphone);
+            getRecognizer().addSignalFeatureListener(new FeatureListener() {
+                    public void featureOccurred(Feature feature) {
+                        if (feature.getSignal() == Signal.UTTERANCE_START) {
+                            audioStart = feature.getCollectTime();
+                        }
+                        else if (feature.getSignal() == Signal.UTTERANCE_END) {
+                            audioLength = 
+                                feature.getCollectTime() - audioStart;
+                        }
+                    }
+                });
         }
     }
 
@@ -171,13 +186,6 @@ public class LiveDecoder extends Decoder {
      * Returns the audio time for the result.
      */
     public float getAudioTime(Result result) {
-        Utterance utterance = microphone.getUtterance();
-        if (utterance != null) {
-            return utterance.getAudioTime();
-        } else {
-            return Util.getAudioTime
-                (result.getFrameNumber(),
-                 SphinxProperties.getSphinxProperties(getContext()));
-        }
+        return (audioLength / 1000f);
     }
 }
