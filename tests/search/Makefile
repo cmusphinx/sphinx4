@@ -20,4 +20,4 @@ all:: ${CLASSES} ${STUBS}
 
 dict: all
 	${JAVA_HOME}/bin/java -cp ../../classes \
-	tests.search.SimpleDictionaryTest
+	tests.search.SimpleDictionaryTest simple_search.props
