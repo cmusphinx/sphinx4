@@ -224,9 +224,11 @@ public class Live {
      */
     public void setDecoder(String recognizerName) throws IOException {
         String changeMessage = "Changing to " + recognizerName + 
-            " recognizer\n";
+            " recognizer ...\n";
         info(changeMessage);
         liveFrame.setMessage(changeMessage);
+        liveFrame.setSpeakButtonEnabled(false);
+        liveFrame.setNextButtonEnabled(false);
 
         if (currentRecognizer != null) {
             currentRecognizer.deallocate();
@@ -246,6 +248,8 @@ public class Live {
                 liveFrame.setReferenceLabel("");
             }
             liveFrame.setRecognitionLabel("");
+            liveFrame.setSpeakButtonEnabled(true);
+            liveFrame.setNextButtonEnabled(true);
             liveFrame.setMessage(recognizerName + ", press \"Speak\" to start");
 
         } else {

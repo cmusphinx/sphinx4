@@ -651,7 +651,13 @@ public class LiveFrame extends JFrame {
         speakButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 if (speakButton.isEnabled()) {
-                    enterSpeakingMode();
+                    Thread t = new Thread() {
+                        public void run() {
+                            enterSpeakingMode();
+                        }
+                    };
+
+                    t.start();
                 }
             }
         });
@@ -671,7 +677,7 @@ public class LiveFrame extends JFrame {
             nextButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         setReferenceLabel(live.getNextReference());
-                setRecognitionLabel("");
+                        setRecognitionLabel("");
                     }
                 });
         }
@@ -688,7 +694,8 @@ public class LiveFrame extends JFrame {
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                live.terminate();
+                // lets just exit, no need to terminate.
+                // live.terminate();
                 System.exit(0);
             }
         });
@@ -796,13 +803,19 @@ public class LiveFrame extends JFrame {
              */
             public void actionPerformed(ActionEvent e) {
                 if (getSelectedIndex() != lastIndex) {
-                    try {
-                        String decoderName = (String) getSelectedItem();
-                        live.setDecoder(decoderName);
-                        lastIndex = getSelectedIndex();
-                    } catch (IOException ioe) {
-                        ioe.printStackTrace();
-                    }
+                    Thread t = new Thread() {
+                        public void run() {
+                            String decoderName = (String) getSelectedItem();
+                            try {
+                                live.setDecoder(decoderName);
+                                lastIndex = getSelectedIndex();
+                            } catch (IOException ioe) {
+                                setMessage("Error switching  to " 
+                                        + decoderName);
+                            }
+                        }
+                    };
+                    t.start();
                 }
             }
         }
