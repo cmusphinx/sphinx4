@@ -140,6 +140,26 @@ public class NISTAlign {
     }
 
     /**
+     * Sets whether results are displayed
+     *
+     * @param showResults true if the results should be
+     * displayed
+     */
+    public void setShowResults(boolean showResults) {
+        this.showResults = showResults;
+    }
+
+    /**
+     * Sets whether aligned results are displayed
+     *
+     * @param showAlignedResults true if the aligned results should be
+     * displayed
+     */
+    public void setShowAlignedResults(boolean showAlignedResults) {
+        this.showAlignedResults = showAlignedResults;
+    }
+
+    /**
      * Reset the total insertions, deletions, and substitutions
      * counts for this class.
      */

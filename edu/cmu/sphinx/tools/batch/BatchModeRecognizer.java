@@ -355,6 +355,20 @@ public class BatchModeRecognizer implements Configurable {
         });
         ci.addAlias("recognize", "rec");
 
+	ci.add("reset", new CommandInterface() {
+	     public String execute(CommandInterpreter ci, String[] args) {
+                 if (args.length != 1) {
+                    ci.putResponse("Usage: reset");
+                 } else {
+                    recognizer.resetMonitors();
+                }
+                return "";
+           }
+            public String getHelp() {
+                return "resets gathered statistics";
+            }
+        });
+
 	ci.add("batchRecognize", new CommandInterface() {
 	     public String execute(CommandInterpreter ci, String[] args) {
                  if (args.length != 1) {
