@@ -16,3 +16,5 @@
 
 
 ./runTest ../performance/rm1 
+
+touch ./.testDone

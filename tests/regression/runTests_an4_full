@@ -18,3 +18,5 @@
 ./runTest ../performance/an4 an4_full_unigram
 ./runTest ../performance/an4 an4_full_trigram
 ./runTest ../performance/an4 an4_full_fst
+
+touch ./.testDone

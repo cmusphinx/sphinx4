@@ -8,14 +8,15 @@
 # redistribution of this file, and for a DISCLAIMER OF ALL 
 # WARRANTIES.
 #
-# This script specifies the tests to run for the S4 regression tests
 #
-# each test should start with 'runTest'. The second field is a
-# relative path from the regression test directory to the directory
-# where the test should be run from,  The third field is the make
-# target for the test.
+# waits for the given file to appear
+#
+# usage:  waitForFile filename
+#
+#
 
 
-./runTest ../performance/tidigits tidigits_super_quick
-
-touch ./.testDone
+until test -f $1
+do
+     sleep 3
+done

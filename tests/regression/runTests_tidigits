@@ -19,3 +19,5 @@
 ./runTest ../performance/tidigits tidigits_quick_flat
 ./runTest ../performance/tidigits tidigits_quick_flat_no_context
 ./runTest ../performance/tidigits wsj_tidigits_quick
+
+touch ./.testDone

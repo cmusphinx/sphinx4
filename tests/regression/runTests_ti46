@@ -21,3 +21,4 @@
 ./runTest ../performance/ti46 ti46_no_context
 ./runTest ../performance/ti46 ti46_multi_no_context
 
+touch ./.testDone

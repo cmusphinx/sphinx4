@@ -19,3 +19,5 @@
 
 ./runTest ../performance/tidigits tidigits_quick
 ./runTest ../performance/an4 an4_words_trigram
+
+touch ./.testDone

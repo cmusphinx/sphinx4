@@ -15,7 +15,7 @@
 #
 # This script should be run from the regression test directory
 #
-# usage: executeRegressionTest [testType]
+# usage: executeRegressionTest [testType [qsub]]
 #
 # where testType is either:
 #
@@ -38,6 +38,7 @@
 regressionDir=`pwd`
 
 testType=${1:-standard}
+batchMode=${2:-normal}
 
 # We can run full tests or quick tests. Quick tests
 # are used for testing the regression tests
@@ -58,7 +59,7 @@ scripts="getTime mailReport makeReport parseS4Output regressionTest\
 	runTests_rm1 runTests_standard runTests_ti46 \
 	runTests_tidigits s4_align s4_align_sum whatsNew \
 	installTwikiPage makeTwikiDetailReport \
-	makeTwikiSummaryReport pushTwikiReports"
+	makeTwikiSummaryReport pushTwikiReports waitForFile"
 
 chmod +x $scripts
 
@@ -106,9 +107,18 @@ cd $regressionDir
 if [ $status = "OK" ]; then
    startRunTime=`$regressionDir/getTime`
    echo running tests from $regressionDir/$runTests
-   $regressionDir/$runTests
+
+   case $batchMode in
+
+       normal) $regressionDir/$runTests;;
+
+       batch) 
+	      rm -f $regressionDir/.testDone
+	      qsub $regressionDir/$runTests; 
+	      waitForFile $regressionDir/testDone;;
+   esac
+
    endRunTime=`$regressionDir/getTime`
-   # totalRunTime=$((endRunTime - startRunTime)) // a bash-ism
    totalRunTime=`expr $endRunTime - $startRunTime`
 else
    echo build failure - tests not run

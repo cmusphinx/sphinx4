@@ -18,3 +18,5 @@
 ./runTest ../performance/an4 an4_words_unigram
 ./runTest ../performance/an4 an4_words_trigram
 ./runTest ../performance/an4 an4_words_fst
+
+touch ./.testDone
