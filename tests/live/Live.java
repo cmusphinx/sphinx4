@@ -416,6 +416,7 @@ public class Live {
                 lastResult = decoder.decode(liveFrame.getReference());
                 updateLiveFrame(decoder.getNISTAlign());
                 liveFrame.setButtonsEnabled(true);
+                liveFrame.setDecoderComboBoxEnabled(true);
             } else {
                 liveFrame.setNextButtonEnabled(true);
                 while (decoder.getMicrophone().getRecording()) {
