@@ -1,11 +1,11 @@
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Copyright 1999-2002 Carnegie Mellon University.
+ * Portions Copyright 2002 Sun Microsystems, Inc.
  * Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
  * All Rights Reserved.  Use is subject to license terms.
- * 
+ *
  * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
  */
@@ -49,7 +49,7 @@ import java.util.Collections;
  * an application should call initialize before
  * recognition begins, and repeatedly call <code> recognize </code>
  * until Result.isFinal() returns true.  Once a final result has been
- * obtained, <code> terminate </code> should be called. 
+ * obtained, <code> terminate </code> should be called.
  *
  * All scores and probabilities are maintained in the log math log
  * domain.
@@ -59,7 +59,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
     private final static String PROP_PREFIX =
 	"edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.";
-    
+
     /**
      * Sphinx property that defines the type of active list to use
      */
@@ -152,7 +152,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 		props.getContext(), "totalTokensScored");
 	curTokensScored = StatisticsVariable.getStatisticsVariable(
 		props.getContext(), "curTokensScored");
-	tokensCreated = 
+	tokensCreated =
             StatisticsVariable.getStatisticsVariable(props.getContext(),
 		    "tokensCreated");
 
@@ -217,17 +217,17 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      */
     protected boolean recognize() {
 	boolean more = scoreTokens(); // score emitting tokens
-        if (more) {	
+        if (more) {
 	    pruneBranches(); 		// eliminate poor branches
-            growBranches(); 	        // extend remaining branches  
+            growBranches(); 	        // extend remaining branches
 	    currentFrameNumber++;
-	} 
+	}
         return !more;
     }
 
     /**
      * Gets the initial grammar node from the linguist and
-     * creates a GrammarNodeToken 
+     * creates a GrammarNodeToken
      */
     protected void localStart() {
         currentFrameNumber = 0;
@@ -269,28 +269,27 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      */
     protected void growBranches() {
 
-	growTimer.start();
+        growTimer.start();
         bestTokenMap = new HashMap(activeList.size() * 10);
 
         ActiveList oldActiveList = activeList;
 
-	Iterator oldListIterator = activeList.iterator();
-	resultList = new LinkedList();
+        Iterator oldListIterator = activeList.iterator();
+        resultList = new LinkedList();
 
-	activeList = activeList.createNew();
+        activeList = activeList.createNew();
         wordList = new ArrayList(oldActiveList.size() / 10);
-		
-	while (oldListIterator.hasNext()) {
-	    Token token = (Token) oldListIterator.next();
+        while (oldListIterator.hasNext()) {
+            Token token = (Token) oldListIterator.next();
 
             if (oldActiveList.isWorthGrowing(token)) {
                 collectSuccessorTokens(token);
             }
-	}
+        }
 
         pruneWords();
         growWords();
-	growTimer.stop();
+        growTimer.stop();
     }
 
 
@@ -321,7 +320,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      */
     protected void pruneBranches() {
 	 pruneTimer.start();
-         activeList =  pruner.prune(activeList); 
+         activeList =  pruner.prune(activeList);
 	 pruneTimer.stop();
     }
 
@@ -353,13 +352,10 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
 
     /**
-     * Collects the next set of emitting tokens from a token 
+     * Collects the next set of emitting tokens from a token
      * and accumulates them in the active or result lists
      *
      * @param token  the token to collect successors from
-     * @param delayedExpansionList the place where tokens that cannot
-     * be immediately expaned are placed. Null if we should always
-     * expand all nodes.
      */
     protected void collectSuccessorTokens(Token token) {
 
@@ -377,7 +373,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	    // predecessor token score and the transition probabilities
 	    // if the score is better than the best score encountered for
 	    // the SearchState and frame then create a new token, add
-	    // it to the lattice and the SearchState. 
+	    // it to the lattice and the SearchState.
 	    // If the token is an emitting token add it to the list,
 	    // othewise recursively collect the new tokens successors.
 
@@ -393,11 +389,12 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	    boolean firstToken = bestToken == null ;
 
 	    if (firstToken || bestToken.getScore() <= logEntryScore) {
-                Token newToken = new Token(token, nextState,
-                        logEntryScore, 
+                Token newToken = token.child(
+                        nextState,
+                        logEntryScore,
                         arc.getLanguageProbability(),
                         arc.getInsertionProbability(),
-                        currentFrameNumber);
+                        currentFrameNumber );
 
                 tokensCreated.value++;
 
@@ -412,10 +409,10 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
                     if (firstToken) {
                         activeList.add(newToken);
                     } else {
-                        activeList.replace(bestToken, newToken); 
+                        activeList.replace(bestToken, newToken);
                     }
                 }
-	    } 
+	    }
         }
     }
 
@@ -487,7 +484,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     public Linguist getLinguist() {
 	return linguist;
     }
-    
+
 
     /**
      * Returns the Pruner.
@@ -497,7 +494,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     public Pruner getPruner() {
 	return pruner;
     }
-    
+
 
     /**
      * Returns the AcousticScorer.
@@ -557,7 +554,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     public ActiveList getActiveList() {
 	return activeList;
     }
-    
+
 
     /**
      * Sets the ActiveList.
@@ -567,7 +564,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     public void setActiveList(ActiveList activeList) {
 	this.activeList = activeList;
     }
-    
+
 
     /**
      * Returns the result list.
@@ -577,7 +574,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     public List getResultList() {
 	return resultList;
     }
-    
+
 
     /**
      * Sets the result list.
@@ -597,7 +594,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     public int getCurrentFrameNumber() {
 	return currentFrameNumber;
     }
-    
+
 
     /**
      * Returns the Timer for growing.

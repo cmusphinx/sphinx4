@@ -313,13 +313,12 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		if (greenToken || 
 		    getActiveList().isInsertable(logCurrentScore)) {
 
-		    Token newToken = new Token(
-			token, 			// the predecessor
-			nextState, 		// the SentenceHMMState
-			logCurrentScore, 		// the score on entry
-			logLanguageProbability, 	// entry lang score
-			arc.getInsertionProbability(), // insertion prob
-			getCurrentFrameNumber() 	// the frame number
+		    Token newToken = token.child(
+			    nextState, 		// the SentenceHMMState
+			    logCurrentScore, 		// the score on entry
+			    logLanguageProbability, 	// entry lang score
+			    arc.getInsertionProbability(), // insertion prob
+			    getCurrentFrameNumber() 	// the frame number
 		    );
                     getTokensCreated().value++;
 
