@@ -14,11 +14,11 @@
 # where the test should be run from,  The third field is the make
 # target for the test.
 
-./runTest ../performance/an4 an4_words_unigram_quick
+#./runTest ../performance/an4 an4_words_unigram_quick
 
-#./runTest ../performance/an4 an4_full_unigram
-#./runTest ../performance/an4 an4_full_trigram
-#./runTest ../performance/an4 an4_full_fst
+./runTest ../performance/an4 an4_full_unigram
+./runTest ../performance/an4 an4_full_trigram
+./runTest ../performance/an4 an4_full_fst
 
 #runTest dummyTests an4_words_unigram
 #runTest dummyTests an4_words_trigram
