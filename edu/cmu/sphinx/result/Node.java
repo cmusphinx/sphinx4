@@ -17,8 +17,10 @@ import edu.cmu.sphinx.result.Lattice;
 import edu.cmu.sphinx.result.Edge;
 import edu.cmu.sphinx.util.LogMath;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Iterator;
 import java.util.Vector;
@@ -42,6 +44,9 @@ public class Node {
     protected double forwardScore;
     protected double backwardScore;
     protected double posterior;
+    protected Node bestPredecessor;
+    protected double viterbiScore;
+    protected Set descendants;
     
     {
         enteringEdges = new Vector();
@@ -422,20 +427,42 @@ public class Node {
         return childNodes;
     }
     
-    protected boolean isAncestorHelper(List children, Node node) {
+    protected void cacheDescendants() {
+        descendants = new HashSet();
+        Set seenNodes = new HashSet();
+        cacheDescendantsHelper(this);
+    }
+    
+    protected void cacheDescendantsHelper(Node n) {
+        Iterator i = n.getChildNodes().iterator();
+        while (i.hasNext()) {
+            Node child = (Node)i.next();
+            if (descendants.contains(child)) {
+                continue;
+            }
+            descendants.add(child);
+            cacheDescendantsHelper(child);
+        }        
+    }
+    
+    protected boolean isAncestorHelper(List children, Node node, Set seenNodes) {
         Iterator i = children.iterator();
         while(i.hasNext()) {
             Node n = (Node)i.next();
+            if (seenNodes.contains(n)) {
+                continue;
+            }
+            seenNodes.add(n);
             if (n.equals(node)) {
                 return true;
             }
-            if (isAncestorHelper(n.getChildNodes(),node)) {
+            if (isAncestorHelper(n.getChildNodes(),node, seenNodes)) {                
                 return true;
             }
         }
         return false;
     }
-    
+        
     /**
      * Check whether this node is an ancestor of another node.
      * 
@@ -443,10 +470,15 @@ public class Node {
      * @return whether this node is an ancestor of the passed in node.
      */
     public boolean isAncestorOf(Node node) {
+        if (descendants != null) {
+            return descendants.contains(node);
+        }
         if (this.equals(node)) {
             return true; // node is its own ancestor
         }
-        return isAncestorHelper(this.getChildNodes(),node);
+        Set seenNodes = new HashSet();
+        seenNodes.add(this);
+        return isAncestorHelper(this.getChildNodes(),node, seenNodes);
     }
     
     /**
@@ -495,5 +527,30 @@ public class Node {
             }
         }
         return null;
+    }
+    
+    /**
+     * @return Returns the bestPredecessor.
+     */
+    public Node getBestPredecessor() {
+        return bestPredecessor;
+    }
+    /**
+     * @param bestPredecessor The bestPredecessor to set.
+     */
+    public void setBestPredecessor(Node bestPredecessor) {
+        this.bestPredecessor = bestPredecessor;
+    }
+    /**
+     * @return Returns the viterbiScore.
+     */
+    public double getViterbiScore() {
+        return viterbiScore;
+    }
+    /**
+     * @param viterbiScore The viterbiScore to set.
+     */
+    public void setViterbiScore(double bestForwardScore) {
+        this.viterbiScore = bestForwardScore;
     }
 }
