@@ -57,10 +57,11 @@ public class BaseRuleName extends RuleName {
         if (r instanceof RuleAlternatives) {
             RuleAlternatives ra = (RuleAlternatives)r;
             Rule array[] = ra.getRules();
+            float[] weights = ra.getWeights();
             for(int i=0; i<array.length; i++) {
                 array[i] = copyForBaseRuleName(array[i]);
             }
-            return new RuleAlternatives(array);
+            return new RuleAlternatives(array, weights);
         }   
         
         if (r instanceof RuleSequence) {
