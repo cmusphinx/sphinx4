@@ -71,10 +71,41 @@ CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 all:: 
 
 
+#
+# The full TI46 (isolated digits) test.
+#
+ti46_wordlist:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
+	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
+
+ti46_quick_wordlist:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
+	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
+
+ti46_flat_unigram:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.SimpleBreadthFirstSearchManager \
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+        -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=./ti46.flat_unigram.lm\
+	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
+
+ti46_quick_flat_unigram:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
+        -Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.SimpleBreadthFirstSearchManager \
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+        -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=./ti46.flat_unigram.lm\
+	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
 ##########################################################################
 #
-# The TI46 tests that use unit context and composite senones.
+#  Older tests, (of historical interest)
 #
 ##########################################################################
 
