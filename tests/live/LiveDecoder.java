@@ -19,7 +19,7 @@ import edu.cmu.sphinx.frontend.Cepstrum;
 import edu.cmu.sphinx.frontend.CepstrumSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.LiveCMN;
-import edu.cmu.sphinx.frontend.Microphone;
+import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.frontend.NonSpeechFilter;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.SimpleFrontEnd;

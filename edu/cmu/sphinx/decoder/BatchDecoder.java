@@ -12,8 +12,8 @@
 
 package edu.cmu.sphinx.decoder;
 
-import edu.cmu.sphinx.frontend.StreamAudioSource;
-import edu.cmu.sphinx.frontend.StreamCepstrumSource;
+import edu.cmu.sphinx.frontend.util.StreamAudioSource;
+import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.DataSource;
 
 import edu.cmu.sphinx.util.SphinxProperties;

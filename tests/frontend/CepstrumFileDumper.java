@@ -33,7 +33,7 @@ import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.FeatureExtractor;
 import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.SimpleFrontEnd;
-import edu.cmu.sphinx.frontend.StreamAudioSource;
+import edu.cmu.sphinx.frontend.util.StreamAudioSource;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 

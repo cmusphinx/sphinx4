@@ -12,7 +12,7 @@
 
 package edu.cmu.sphinx.decoder;
 
-import edu.cmu.sphinx.frontend.StreamAudioSource;
+import edu.cmu.sphinx.frontend.util.StreamAudioSource;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 

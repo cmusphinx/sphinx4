@@ -244,7 +244,7 @@ an4_spelling_journey_fst:
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false\
 	-Dedu.cmu.sphinx.search.Linguist.autoLoopSilences=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-30\
-	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0\
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=5.0\
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_spelling_journey.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder an4.props ./an4_spelling.batch

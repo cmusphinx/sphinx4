@@ -14,8 +14,8 @@
 package tests.frontend;
 
 import edu.cmu.sphinx.frontend.AudioSource;
-import edu.cmu.sphinx.frontend.BatchFileAudioSource;
-import edu.cmu.sphinx.frontend.StreamAudioSource;
+import edu.cmu.sphinx.frontend.util.BatchFileAudioSource;
+import edu.cmu.sphinx.frontend.util.StreamAudioSource;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.File;

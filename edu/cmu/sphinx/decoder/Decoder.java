@@ -14,7 +14,7 @@ package edu.cmu.sphinx.decoder;
 
 import edu.cmu.sphinx.frontend.DataSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.Util;
+import edu.cmu.sphinx.frontend.util.Util;
 import edu.cmu.sphinx.frontend.Utterance;
 import edu.cmu.sphinx.search.Recognizer;
 import edu.cmu.sphinx.search.Token;

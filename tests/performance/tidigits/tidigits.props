@@ -122,7 +122,7 @@ edu.cmu.sphinx.search.WordListGrammar.path = ./digits.wordlist
 #
 ############################################################
 
-edu.cmu.sphinx.search.Recognizer.dumpFrontEnd = false
+edu.cmu.sphinx.search.Recognizer.dumpFrontEnd = true
 edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist
 edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar

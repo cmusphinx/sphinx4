@@ -15,8 +15,8 @@ package tests.live;
 import edu.cmu.sphinx.decoder.Decoder;
 
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.Microphone;
-import edu.cmu.sphinx.frontend.Util;
+import edu.cmu.sphinx.frontend.util.Microphone;
+import edu.cmu.sphinx.frontend.util.Util;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.NISTAlign;
