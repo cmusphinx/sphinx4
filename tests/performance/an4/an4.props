@@ -28,7 +28,7 @@ edu.cmu.sphinx.model.acoustic.location = file:/lab/speech/sphinx4/data/wsj_8gau_
 edu.cmu.sphinx.model.acoustic.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
 edu.cmu.sphinx.model.acoustic.data_location = cd_continuous_8gau
 edu.cmu.sphinx.model.acoustic.properties_file = am.props
-edu.cmu.sphinx.model.acoustic.useComposites=false
+edu.cmu.sphinx.model.acoustic.useComposites=true
 
 
 ############################################################
@@ -143,7 +143,7 @@ edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true
 edu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true
 edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-26
-edu.cmu.sphinx.search.Linguist.autoLoopSilence=false
+edu.cmu.sphinx.search.Linguist.autoLoopSilences=false
 edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false
 
 edu.cmu.sphinx.search.validateResults=false
