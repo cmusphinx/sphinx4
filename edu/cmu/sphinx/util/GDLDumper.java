@@ -45,6 +45,9 @@ public class GDLDumper extends LinguistDumper  {
      */
     public GDLDumper() {
 	setDepthFirst(false); // breadth first traversal
+	skipHMMs = Boolean.valueOf
+	    (System.getProperty("edu.cmu.sphinx.util.GDLDumper.skipHMMs",
+				"true"));
     }
 
     /**
