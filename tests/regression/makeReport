@@ -57,7 +57,7 @@ BEGIN {
 $1 == "build" {
     finalBuildRecord = $0;
 }
-$1 == "test" {
+$1 == "test" && $5 == "s4" {
     testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
     testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
 }
