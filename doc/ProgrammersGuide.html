@@ -13,12 +13,14 @@ WARRANTIES.
 
 -->
 
+
+
 <html>
 
 <head>
   <title>Sphinx-4 Programmer's Guide</title>
    <style TYPE="text/css">
-     pre { padding: 2mm; border-style: ridge; background: #f0f8ff; color: teal}
+     pre { padding: 2mm; border-style: ridge; background: #f0f8ff; color: teal;}
      code {font-size: medium; color: teal}
      s4keyword { color: red; font-weight: bold }
    </style>
@@ -283,6 +285,7 @@ WARRANTIES.
   <code>sphinx4/demo/sphinx/helloworld/HelloWorld.java</code>:
   </p>
 
+  <font face="Courier" size="3">
   <pre>
 /*
  * Copyright 1999-2004 Carnegie Mellon University.
@@ -295,9 +298,11 @@ WARRANTIES.
  * WARRANTIES.
  *
  */
+
 package demo.sphinx.helloworld;
 
 import edu.cmu.sphinx.frontend.util.Microphone;
+import edu.cmu.sphinx.jsapi.JSGFGrammar;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
@@ -307,9 +312,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+
 /**
- * A simple HelloWorld demo showing a simple speech application 
- * built using Sphinx-4.
+ * A version of the HelloWorld demo that does not use endpointing.
+ * Instead, the user will press ENTER to signal the end of speech.
  */
 public class HelloWorld {
 
@@ -328,40 +334,65 @@ public class HelloWorld {
             ConfigurationManager cm = new ConfigurationManager(url);
 
 	    Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
-	    Microphone microphone = (Microphone) cm.lookup("microphone");
+	    final Microphone microphone = 
+                (Microphone) cm.lookup("microphone");
 
+
+            /* allocate the resource necessary for the recognizer */
             recognizer.allocate();
 
-	    if (microphone.startRecording()) {
-		System.out.println
-		    ("Say any digit(s): e.g. \"two oh oh four\", " +
-		     "\"three six five\".");
-
-		while (true) {
-		    System.out.println
-			("Start speaking. " + 
-			 "Press Ctrl-C or say 'good bye' to quit.");
-
-		    Result result = recognizer.recognize();
-
-		    if (result != null) {
-			String resultText = result.getBestResultNoFiller();
-			System.out.println("You said: " + resultText + "\n");
-
-			if (resultText.equals("good bye")) {
-			    microphone.stopRecording();
-			    recognizer.deallocate();
-			    System.exit(0);
+            /*
+             * This thread is used to listen for the ENTER key,
+             * which when pressed will stop the microphone.
+             */
+	    Thread t = new Thread() {
+		    public void run() {
+			try {
+			    while (true) {
+				if (System.in.read() == 10) {
+				    microphone.stopRecording();
+				}
+			    }			    
+			} catch (IOException ioe) {
+			    ioe.printStackTrace();
+			    System.exit(1);
 			}
-		    } else {
-			System.out.println("I can't hear what you said.\n");
 		    }
-		}
-	    } else {
-	        System.out.println("Cannot start microphone.");
-		recognizer.deallocate();
-		System.exit(1);
-	    }
+		};                    
+	    t.start();
+
+	    System.out.println
+		("Say any digit(s): e.g. \"two oh oh four\", " +
+		 "\"three six five\".");
+
+	    /*
+             * The program now enters a loop to keep listening for audio,
+             * and decodes the recorded audio.
+             */
+            while (true) {
+		if (microphone.startRecording()) {
+                    System.out.println
+			("Start speaking. " +
+			 "Press ENTER when you finish speaking.");
+                    
+                    /* 
+                     * this method returns when the ENTER key is pressed,
+                     * which stops the microphone
+                     */
+		    Result result = recognizer.recognize();
+                    
+                    if (result != null) {
+                        String resultText = result.getBestResultNoFiller();
+                        System.out.println("You said: " + resultText + "\n");
+                    } else {
+                        System.out.println("I can't hear what you said.\n");
+                    }                    
+                } else {
+                    System.out.println("Cannot start microphone.");
+                    recognizer.deallocate();
+                    System.exit(1);
+                }
+            }
         } catch (IOException e) {
             System.err.println("Problem when loading HelloWorld: " + e);
             e.printStackTrace();
@@ -375,6 +406,7 @@ public class HelloWorld {
     }
 }
 </pre>
+</font>
 
   <br>
   This demo imports several important classes in Sphinx-4:
@@ -407,26 +439,33 @@ public class HelloWorld {
   need for the recognizer. The Microphone class is used for capturing live
   audio from the system audio device.
   </p>
+
+  <p>
+  We then create a thread that listens to the ENTER key (ASCII value 10).
+  Whenever the ENTER key is pressed, the method 
+  <code>microphone.stopRecording()</code> will be called.
+  </p>
   
   <p>
   Once all the necessary components are created, we can start running the demo.
+  The program enters a loop that repeats the following.
   The program first turns on the Microphone 
   (<a href="../javadoc/edu/cmu/sphinx/frontend/util/Microphone.html#startRecording()"><code>microphone.startRecording()</code></a>).
-  After the microphone is turned on successfully, the demo goes into a
-  loop that tries to recognize what the user is saying, using the
-  <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html#recognize()"><code>Recognizer.recognize()</code></a> method. Note that endpointing 
-  is used here to decide when an utterance starts and ends.
+  After the microphone is turned on successfully, tries to recognize what 
+  the user is saying, using the
+  <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html#recognize()"><code>Recognizer.recognize()</code></a> method. Recognition stops when
+  the user hits the ENTER key, at which point the microphone is turned off,
+  and recognition stops when there is no more data left.
   Once an utterance is recognized, the recognized text,
   which is returned by the method
   <a href="../javadoc/edu/cmu/sphinx/result/Result.html#getBestResultNoFiller()"><code>Result.getBestResultNoFiller()</code></a>, is printed out. 
-  If the user said "good bye", the microphone will stop recording, 
-  the recognizer deallocated, and the program exits.
-  It is generally a good practice to call the method
-  <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html#deallocate()"><code>deallocate()</code></a> after the work is done to release all the
-  resources. If the Recognizer recognized nothing (i.e., <code>result</code> is
+  If the Recognizer recognized nothing (i.e., <code>result</code> is
   null), then it will print out a message saying that. Finally, if the
   demo program cannot turn on the microphone in the first place, the
   Recognizer will be deallocated, and the program exits.
+  It is generally a good practice to call the method
+  <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html#deallocate()"><code>deallocate()</code></a> after the work is done to release all the
+  resources.
   </p>
   
   <p>
@@ -628,7 +667,7 @@ component called 'jsgfGrammar', which is a BNF-style grammar:
 
 <pre>
     &lt;component name="jsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar"&gt;
-        &lt;property name="grammarLocation" value="file:./"/&gt;
+        &lt;property name="grammarLocation" value="/demo/sphinx/helloworld"/&gt;
         &lt;property name="dictionary" value="dictionary"/&gt;
         &lt;property name="grammarName" value="digits"/&gt;
 	&lt;property name="logMath" value="logMath"/&gt;
@@ -638,10 +677,16 @@ component called 'jsgfGrammar', which is a BNF-style grammar:
 JSGF grammars are defined in <a href="http://java.sun.com/products/java-media/speech/">JSAPI</a>. The class that translates JSGF into a form that 
 Sphinx-4 understands is <code>
 <a href="../javadoc/edu/cmu/sphinx/jsapi/JSGFGrammar.html">edu.cmu.sphinx.jsapi.JSGFGrammar</a></code>.
-The property 'grammarLocation' specifies the URL of the directory where
-JSGF grammar files are to be found. The 'grammarName' property specifies
-the grammar to use when creating the search graph. 'logMath' is the same
-log math as the other components. The 'dictionary' is the component
+The property 'grammarLocation' can take two kinds of values. 
+If it is a URL, it specifies the URL of the directory where JSGF grammar files 
+are to be found. Otherwise, it is interpreted as resource locator. 
+In our example, the HelloWorld demo is being deployed as a JAR file.
+The 'grammarLocation' property is therefore used to specify 
+the location of the resource "digits.gram" within the JAR file. Note that 
+it is not necessary to name the JAR file within which to search. The system 
+searches all the relevant JAR files. The 'grammarName' property 
+specifies the grammar to use when creating the search graph. 'logMath' is the 
+same log math as the other components. The 'dictionary' is the component
 that maps words to their phonemes. It is almost always the dictionary of the
 acoustic model, which lists all the words that were used to trained 
 the acoustic model:
@@ -931,7 +976,6 @@ class.
 <p>
 This concludes the walkthrough of the simple Hello World! example.
 To recap the following things were done to create the Hello World! demo:
-
 <ol>
    <li>Write the code - HelloWorld.java</li>
    <li>Create a configuration file that specifies how Sphinx-4 should be
