@@ -21,6 +21,8 @@ import java.util.ListIterator;
  * audio frame a HammingWindow, followed by a Fast-Fourier Transform.
  * Each of these frames now become a Cepstrum. All these frames together
  * give a CepstrumFrame.
+ *
+ * Other Data objects are passed along unchanged by this CepstrumProducer.
  */
 public class CepstrumProducer extends PullingProcessor {
 
@@ -68,8 +70,9 @@ public class CepstrumProducer extends PullingProcessor {
 	
 
     /**
-     * Reads the next Data object, which is a CepstrumFrame
-     * produced by this CepstrumProducer.
+     * Reads the next Data object, which is usually a CepstrumFrame
+     * produced by this CepstrumProducer. However, it can also be
+     * Data objects like the SegmentEndPointSignal.
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
@@ -78,11 +81,7 @@ public class CepstrumProducer extends PullingProcessor {
 
 	Data input = getSource().read();
 
-	if (input instanceof SegmentEndPointSignal) {
-	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
-	    signal.setData(process(signal.getData()));
-	    return signal;
-	} else if (input instanceof DoubleAudioFrame) {
+	if (input instanceof DoubleAudioFrame) {
 	    return process(input);
 	} else {
 	    return input;

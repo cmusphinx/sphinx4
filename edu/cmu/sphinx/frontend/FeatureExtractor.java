@@ -36,7 +36,7 @@ public class FeatureExtractor extends PullingProcessor {
 
     private static final int LIVEBUFBLOCKSIZE = 256;
     private static final int BUFFER_EDGE = LIVEBUFBLOCKSIZE - 8;
-
+    
     private int featureLength;
     private int cepstrumLength;
     private float[][] cepstraBuffer;
@@ -44,8 +44,48 @@ public class FeatureExtractor extends PullingProcessor {
     private int currentPosition;
     private int window;
     private int jp1, jp2, jp3, jf1, jf2, jf3;
+    private InputQueue inputQueue;
     private List outputQueue;
 
+
+    /**
+     * Implements an input queue that allows "peek"-ing as well as
+     * actually reading.
+     */
+    private class InputQueue {
+        private Vector queue = new Vector();
+
+        public InputQueue() {
+            queue = new Vector();
+        };
+
+
+        /**
+         * Remove the next element in the queue. If there are no elements
+         * in the queue, it will return getSource().read().
+         */
+        public Data removeNext() throws IOException {
+            if (queue.size() > 0) {
+                return (Data) queue.remove(0);
+            } else {
+                return getSource().read();
+            }
+        }
+
+        /**
+         * Peek the next element in the queue without actually removing it.
+         */
+        public Data peekNext() throws IOException {
+            if (queue.size() > 0) {
+                return (Data) queue.get(0);
+            } else {
+                Data next = getSource().read();
+                queue.add(next);
+                return next;
+            }
+        }
+    }
+            
 
     /**
      * Constructs a default FeatureExtractor.
@@ -54,6 +94,7 @@ public class FeatureExtractor extends PullingProcessor {
 	getSphinxProperties();
 	cepstraBuffer = new float[LIVEBUFBLOCKSIZE][];
         setTimer(Timer.getTimer("", "FeatureExtractor"));
+        inputQueue = new InputQueue();
         outputQueue = new Vector();
     }
 
@@ -69,7 +110,7 @@ public class FeatureExtractor extends PullingProcessor {
 	cepstrumLength = properties.getInt
 	    (CepstrumProducer.PROP_CEPSTRUM_SIZE, 13);
     }
-	
+
 
     /**
      * Reads the next Data object, which is a Feature
@@ -83,18 +124,35 @@ public class FeatureExtractor extends PullingProcessor {
         if (feature != null) {
             return feature;
         } else {
-            Data input = getSource().read();
+
+            Data input = inputQueue.removeNext();
             
             if (input == null) {
+
                 return null;
+
             } else {
-                if (input instanceof SegmentEndPointSignal ||
-                    input instanceof CepstrumFrame) {
-                    process(input);
-                    return getFeature();
-                } else {
-                    return read();
+
+                boolean segmentStart = false;
+
+                if (input instanceof SegmentEndPointSignal) {
+                    // it must be a SegmentStartSignal
+                    segmentStart = true;
+                    input = inputQueue.removeNext();
                 }
+
+                Data nextFrame = inputQueue.peekNext();
+                
+                boolean segmentEnd =
+                    (nextFrame instanceof SegmentEndPointSignal);
+                
+                // absorb the SegmentEndSignal
+                if (segmentEnd) {
+                    inputQueue.removeNext();
+                }
+
+                process((CepstrumFrame) input, segmentStart, segmentEnd);
+                return getFeature();
             }
         }
     }	
@@ -123,24 +181,10 @@ public class FeatureExtractor extends PullingProcessor {
      *
      * @param input a CepstrumFrame
      */
-    private void process(Data input) {
+    private void process(CepstrumFrame cepstrumFrame,
+                         boolean startSegment, boolean endSegment) {
 
         getTimer().start();
-	
-	CepstrumFrame cepstrumFrame = null;
-	SegmentEndPointSignal signal = null;
-	boolean startSegment = false, endSegment = false;
-
-        if (input instanceof CepstrumFrame) {
-            cepstrumFrame = (CepstrumFrame) input;
-	} else if (input instanceof SegmentEndPointSignal) {
-	    signal = (SegmentEndPointSignal) input;
-	    startSegment = signal.isStart();
-	    endSegment = signal.isEnd();
-	    cepstrumFrame = (CepstrumFrame) signal.getData();
-	} else {
-            return;
-        }
 
 	Cepstrum[] cepstra = cepstrumFrame.getData();
 	assert(cepstra.length < LIVEBUFBLOCKSIZE);

@@ -35,6 +35,7 @@ public class StreamAudioSource implements DataSource {
 	"edu.cmu.sphinx.frontend.doubleAudioFrameSource.dump";
 
     private static final int SEGMENT_MAX_BYTES = 2000000;
+    private static final int SEGMENT_NOT_STARTED = -1;
 
     private InputStream audioStream;
 
@@ -56,7 +57,7 @@ public class StreamAudioSource implements DataSource {
     private byte[] overflowBuffer;
     private int overflowBytes;
 
-    private Queue queue;
+    private Vector outputQueue;
     private boolean dump;
 
 
@@ -71,7 +72,7 @@ public class StreamAudioSource implements DataSource {
 	this.audioStream = audioStream;
 	this.samplesBuffer = new byte[frameSizeInBytes * 2];
         this.overflowBuffer = new byte[frameSizeInBytes];
-        this.queue = new Queue();
+        this.outputQueue = new Vector();
         reset();
     }
 
@@ -81,9 +82,9 @@ public class StreamAudioSource implements DataSource {
      * InputStream.
      */
     public void reset() {
-        this.totalBytesRead = 0;
+        this.totalBytesRead = SEGMENT_NOT_STARTED;
         this.overflowBytes = 0;
-        queue.clear();
+        outputQueue.clear();
     }
 
 
@@ -129,20 +130,21 @@ public class StreamAudioSource implements DataSource {
      */
     public Data read() throws IOException {
 
-	int bytesRead = totalBytesRead;
         Data output = null;
  
-	if (!queue.isEmpty()) {
+	if (!outputQueue.isEmpty()) {
 	    
-            return queue.pop();
+            return (Data) outputQueue.remove(0);
 
-	} else if (bytesRead == 0) {
+	} else if (totalBytesRead == SEGMENT_NOT_STARTED) {
 
-	    return SegmentEndPointSignal.getStartSignal(readNextFrame());
+            totalBytesRead = 0;
+            return SegmentEndPointSignal.getStartSignal();
 
-	} else if (bytesRead + frameSizeInBytes >= SEGMENT_MAX_BYTES) {
+	} else if (totalBytesRead >= SEGMENT_MAX_BYTES) {
 
-	    return SegmentEndPointSignal.getEndSignal(readNextFrame());
+            totalBytesRead = SEGMENT_NOT_STARTED;
+	    return SegmentEndPointSignal.getEndSignal();
 
 	} else {
 
@@ -173,11 +175,6 @@ public class StreamAudioSource implements DataSource {
 	    return null;
 	}
 	
-	// reset the totalBytesRead if necessary
-	if (totalBytesRead >= SEGMENT_MAX_BYTES) {
-	    totalBytesRead = 0;
-	}
-	
 	// if read bytes do not fill a frame, copy them to overflow buffer
 	// after the previously stored overlap samples
 	if (totalInBuffer < windowSizeInBytes) {
@@ -202,7 +199,7 @@ public class StreamAudioSource implements DataSource {
 
 		// set "prior" for the next read
 		short prior = Util.bytesToShort(samplesBuffer, offset - 2);
-		queue.push(new PreemphasisPriorSignal(prior));
+		outputQueue.add(new PreemphasisPriorSignal(prior));
 	    }
 
 	    if (totalInBuffer % 2 == 1) {
@@ -279,27 +276,5 @@ public class StreamAudioSource implements DataSource {
 	totalBytesRead += totalRead;
 
 	return totalRead;
-    }
-}
-
-
-class Queue {
-
-    Vector queue = new Vector();
-
-    public void push(Data data) {
-	queue.add(data);
-    }
-
-    public Data pop() {
-	return (Data) queue.remove(0);
-    }
-
-    public boolean isEmpty() {
-	return queue.isEmpty();
-    }
-
-    public void clear() {
-        queue.clear();
     }
 }

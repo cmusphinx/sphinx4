@@ -21,6 +21,12 @@ import java.io.IOException;
  * edu.cmu.sphinx.frontend.preemphasis.dump
  * edu.cmu.sphinx.frontend.preemphasis.factor
  * </pre>
+ * This Preemphasizer also processes the PreemphasisPriorSignal signal.
+ * This type of signal contain the value of prior sample, used in applying
+ * preemphasis.
+ *
+ * Other Data objects are passed along unchanged through this Preemphasizer.
+ *
  */
 public class Preemphasizer extends PullingProcessor {
 
@@ -70,8 +76,9 @@ public class Preemphasizer extends PullingProcessor {
 
 
     /**
-     * Reads the next Data object, which is a DoubleAudioFrame,
-     * produced by this Preemphasizer
+     * Reads the next Data object, which is usually a DoubleAudioFrame,
+     * produced by this Preemphasizerm, though it can also be Data objects
+     * like SegmentEndPointSignal.
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
@@ -83,13 +90,7 @@ public class Preemphasizer extends PullingProcessor {
 
         if (input instanceof DoubleAudioFrame) {
 
-            output = process(input);
-
-        } else if (input instanceof SegmentEndPointSignal) {
-
-	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
-	    signal.setData(process(signal.getData()));
-	    output = signal;
+            output = process((DoubleAudioFrame) input);
 
 	} else if (input instanceof PreemphasisPriorSignal) {
 
@@ -109,11 +110,11 @@ public class Preemphasizer extends PullingProcessor {
      *
      * @return a DoubleAudioFrame of data with pre-emphasis filter applied
      */
-    private Data process(Data input) {
+    private Data process(DoubleAudioFrame input) {
 
         getTimer().start();
 
-	double[] in = ((DoubleAudioFrame) input).getData();
+	double[] in = input.getData();
 	
 	if (in.length > 1 && preemphasisFactor != 0.0) {
 

@@ -13,8 +13,9 @@ import java.util.ListIterator;
 
 
 /**
- * Apply Cepstral Mean Normalization (CMN) to the set of input MFC frames. 
- * It subtracts the mean of the input from each frame.
+ * Apply Cepstral Mean Normalization (CMN) to the set of input MFC frames,
+ * that is, a CepstrumFrame. It subtracts the mean of the input from
+ * each frame.
  */
 public class CepstralMeanNormalizer extends PullingProcessor {
 
@@ -93,7 +94,8 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 
     /**
      * Reads the next Data object, which is a normalized CepstrumFrame
-     * produced by this class.
+     * produced by this class. However, it can also be other Data objects
+     * like a SegmentEndPointSignal.
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
@@ -101,7 +103,23 @@ public class CepstralMeanNormalizer extends PullingProcessor {
     public Data read() throws IOException {
 	
         Data input = getSource().read();
-        return process(input);
+        
+        if (input instanceof CepstrumFrame) {
+            
+            return process((CepstrumFrame) input);
+        
+        } else if (input instanceof SegmentEndPointSignal) {
+
+            SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
+            if (signal.isEnd()) {
+                updateMeanSumBuffers();
+            }
+            return input;
+
+        } else {
+
+            return input;
+        }
     }	
 
 
@@ -115,20 +133,9 @@ public class CepstralMeanNormalizer extends PullingProcessor {
      *
      * @return a normalized CepstrumFrame
      */
-    private Data process(Data input) {
+    private Data process(CepstrumFrame cepstrumFrame) {
 	
         getTimer().start();
-
-	CepstrumFrame cepstrumFrame = null;
-	SegmentEndPointSignal signal = null;
-
-        
-        if (input instanceof CepstrumFrame) {
-	    cepstrumFrame = (CepstrumFrame) input;
-	} else if (input instanceof SegmentEndPointSignal) {
-	    signal = (SegmentEndPointSignal) input;
-	    cepstrumFrame = (CepstrumFrame) signal.getData();
-	}
 
         if (cepstrumFrame != null) {
 
@@ -140,26 +147,17 @@ public class CepstralMeanNormalizer extends PullingProcessor {
                 normalize(cepstra);
                 normTimer.stop();
 
-                updateTimer.start();
-
                 // Shift buffers down if we have more than 
                 // cmnShiftWindow frames
                 if (numberFrame > cmnShiftWindow) {
                     updateMeanSumBuffers();
                 }
-                
-                // if this is the end of the segment, shift the buffers
-                if (signal != null && signal.isEnd()) {
-                    updateMeanSumBuffers();
-                }
-
-                updateTimer.stop();
             }
 	}
 	
         getTimer().stop();
 
-	return input;
+	return cepstrumFrame;
     }
 
 

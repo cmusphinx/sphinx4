@@ -8,92 +8,36 @@ package edu.cmu.sphinx.frontend;
  * Indicates that the next audio frame is the start or end of the
  * audio segment.
  */
-public class SegmentEndPointSignal implements Signal {
-
-    private boolean isStart;
-    private boolean isEnd;
-    private Data dataFrame;
+public class SegmentEndPointSignal extends EndPointSignal {
 
 
-    private SegmentEndPointSignal(boolean isStart, boolean isEnd, Data dataFrame) {
-	this.isStart = isStart;
-	this.isEnd = isEnd;
-	this.dataFrame = dataFrame;
+    /**
+     * Constructs a SegmentEndPointSignal.
+     *
+     * @param isStart true if this Signal indicates start of segment
+     *                false if this Signal indicates end of segment
+     */
+    private SegmentEndPointSignal(boolean isStart) {
+        super(isStart);
     }
 
 
     /**
-     * Constructs a SegmentEndPointSignal indicating segment start with
-     * the given audio frame.
+     * Constructs a SegmentEndPointSignal indicating segment start.
      *
-     * @param frameData the first audio frame in the segment
+     * @return a Signal indicating start of segment
      */
-    public static SegmentEndPointSignal getStartSignal(Data dataFrame) {
-	return (new SegmentEndPointSignal(true, false, dataFrame));
+    public static SegmentEndPointSignal getStartSignal() {
+        return (new SegmentEndPointSignal(true));
     }
 
 
     /**
-     * Constructs a SegmentEndPointSignal indicating segment end with
-     * the given audio frame.
+     * Constructs a SegmentEndPointSignal indicating segment end.
      *
-     * @param frameData the last audio frame in the segment
+     * @return a Signal indicating end of segment
      */
-    public static SegmentEndPointSignal getEndSignal(Data dataFrame) {
-	return (new SegmentEndPointSignal(false, true, dataFrame));
-    }
-
-
-    /**
-     * Constructs a SegmentEndPointSignal indicating both segment start
-     * and end with the given audio frame.
-     *
-     * @param frameData the first, which is also the last, audio frame
-     *    in the segment
-     */
-    public static SegmentEndPointSignal getStartEndSignal(Data dataFrame) {
-	return (new SegmentEndPointSignal(true, true, dataFrame));
-    }
-
-
-    /**
-     * Returns true if this SegmentEndPointSignal indicates a segment start,
-     *    false otherwise
-     *
-     * @return true or false
-     */
-    public boolean isStart() {
-	return isStart;
-    }
-
-
-    /**
-     * Returns true if this SegmentEndPointSignal indicates a segment end,
-     *    false otherwise
-     *
-     * @return true of false
-     */
-    public boolean isEnd() {
-	return isEnd;
-    }
-
-
-    /**
-     * Returns the Data object associated with this SegmentEndPointSignal.
-     *
-     * @return a Data object
-     */
-    public Data getData() {
-	return dataFrame;
-    }
-
-
-    /**
-     * Sets the Data object associated with this SegmentEndPointSignal
-     *
-     * @param data the Data object
-     */
-    public void setData(Data data) {
-	this.dataFrame = data;
+    public static SegmentEndPointSignal getEndSignal() {
+	return (new SegmentEndPointSignal(false));
     }
 }

@@ -38,6 +38,7 @@ public class CmnFeatureExtractorTest implements DataSource {
     private CepstralMeanNormalizer cmn;
     private FeatureExtractor featureExtractor;
     private boolean start = true;
+    private boolean ended = false;
     private String line;
     private boolean dumpValues;
     private boolean dumpTimes;
@@ -94,9 +95,17 @@ public class CmnFeatureExtractorTest implements DataSource {
 	Data frame = null;
 
 	if (start) {
-	    line = reader.readLine();
-	}
+            start = false;
+	    return SegmentEndPointSignal.getStartSignal();
+        }
+
+        if (ended) {
+            return null;
+        }
+
 	
+        line = reader.readLine();
+
 	if (line != null && line.startsWith(CEPSTRUM_FRAME)) {
 	    int numberCepstrum = Integer.parseInt
 		(line.substring(line.lastIndexOf(' ') + 1));
@@ -108,20 +117,14 @@ public class CmnFeatureExtractorTest implements DataSource {
 	    }
 	    
 	    CepstrumFrame cepstrumFrame = new CepstrumFrame(cepstra);
-	    
-	    line = reader.readLine();
+            
+            return cepstrumFrame;
 
-	    if (start) { // start segment
-		frame = SegmentEndPointSignal.getStartSignal(cepstrumFrame);
-		start = false;
-	    } else if (line == null) { // end segment
-                frame = SegmentEndPointSignal.getEndSignal(cepstrumFrame);
-            } else { // middle
-                frame = cepstrumFrame;
-            }
+        } else {
+
+            ended = true;
+            return SegmentEndPointSignal.getEndSignal();
 	}
-    
-	return frame;
     }
 
 
