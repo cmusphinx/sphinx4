@@ -37,10 +37,10 @@ public class Timer {
 
     private String name;
     private String context;
-    private long startTime;
-    private long curTime;
-    private long count;
     private double sum;
+    private long count = 0L;
+    private long startTime = 0L;
+    private long curTime = 0L;
     private long minTime = Long.MAX_VALUE;
     private long maxTime = 0L;
     private boolean notReliable; // if true, timing is not reliable
@@ -179,7 +179,9 @@ public class Timer {
     public void start() {
 	if (startTime != 0L) {
 	    notReliable = true; // start called while timer already running
-	// throw new IllegalStateException("timer stutter start " + name);
+            System.out.println
+                (getName() + " timer.start() called without a stop()");
+            // throw new IllegalStateException("timer stutter start " + name);
 	}
 	startTime = System.currentTimeMillis();
     }
@@ -187,18 +189,20 @@ public class Timer {
     /**
      * Starts the timer at the given time.
      *
-     * @param startTime the starting time
+     * @param time the starting time
      */
-    public void start(long startTime) {
+    public void start(long time) {
         if (startTime != 0L) {
 	    notReliable = true; // start called while timer already running
+            System.out.println
+                (getName() + " timer.start() called without a stop()");
             // throw new IllegalStateException("timer stutter start " + name);
 	}
-        if (startTime > System.currentTimeMillis()) {
+        if (time > System.currentTimeMillis()) {
             throw new IllegalStateException
                 ("Start time is later than current time");
         }
-	this.startTime = startTime;
+	startTime = time;
     }
 
     /**
@@ -212,6 +216,8 @@ public class Timer {
     public long stop(boolean verbose) {
 	if (startTime == 0L) {
 	    notReliable = true;		// stop called, but start never called
+            System.out.println
+                (getName() + " timer.stop() called without a start()");
 	}
 	curTime = System.currentTimeMillis() - startTime;
 	startTime = 0L;
