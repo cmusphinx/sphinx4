@@ -160,6 +160,8 @@ ripley_trigram_clex_ep:
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=6\
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=5\
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true\
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.addFillerWords=true\
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.fillerInsertionProbability=.1\
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./ripley.trigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./ripley.props /lab/speech/sphinx4/data/medialab/mit.batch
 
