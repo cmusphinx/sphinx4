@@ -320,7 +320,7 @@ jsapi.exe from the lib directory.
 	    <param name="my_model_name" value="${model_name}"/>
         </antcall>
 	<antcall target="compile_src"/>
-	<mkdir dir="${build_model_dir}"/>
+	<mkdir dir="${build_model_dir}/${model_name}"/>
 	<move todir="${build_model_dir}/${model_name}">
 	      <fileset dir="${classes_dir}/edu/cmu/sphinx/model/acoustic/${model_name}"/>
 	</move>
@@ -377,18 +377,27 @@ jsapi.exe from the lib directory.
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
-    <!-- * Creates the Model.java and ModelLoader.java for a      * -->
-    <!-- * particular acoustic model.                             * -->
+    <!-- * Creates the PropertiesDumper.java, Model.java and      * -->
+    <!-- * ModelLoader.java for a particular acoustic model.      * -->
     <!-- * param: 'my_model_name'                                 * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="create_my_model_classes"
             description="Creates the model class files.">
 	<mkdir dir="${model_class_dir}/${my_model_name}/"/>
+
+	<copy file="${model_class_dir}/PropertiesDumper.java"
+	  tofile="${model_class_dir}/${my_model_name}/PropertiesDumper.java"/>
+	<replace
+             file="${model_class_dir}/${my_model_name}/PropertiesDumper.java"
+	     value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
+	    <replacetoken>package edu.cmu.sphinx.linguist.acoustic.tiedstate</replacetoken>
+	</replace>
+
         <copy file="${model_class_dir}/TiedStateAcousticModel.java"
 	      tofile="${model_class_dir}/${my_model_name}/Model.java"/>
 	<replace file="${model_class_dir}/${my_model_name}/Model.java"
-	         value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
+	     value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
 	    <replacetoken>package edu.cmu.sphinx.linguist.acoustic.tiedstate</replacetoken>
 	</replace>
 	<replace file="${model_class_dir}/${my_model_name}/Model.java"
@@ -474,7 +483,7 @@ jsapi.exe from the lib directory.
 		  excludes="edu/cmu/sphinx/model/acoustic/${my_model_name}/*.class"/>
              <manifest>
 	        <attribute name="Main-Class"
-		 value="edu.cmu.sphinx.model.acoustic.${my_model_name}/Model"/>
+		 value="edu.cmu.sphinx.model.acoustic.${my_model_name}.PropertiesDumper"/>
 		<attribute name="Class-Path" value="sphinx4.jar"/>
              </manifest>
         </jar>
