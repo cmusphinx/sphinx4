@@ -42,6 +42,11 @@ class BigramProbability {
     }
 
 
+    public int getWordID() {
+        return wordID;
+    }
+
+
     public int getProbabilityID() {
         return probabilityID;
     }

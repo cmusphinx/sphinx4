@@ -30,7 +30,9 @@ import java.io.Reader;
 
 import java.net.URL;
 
+import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
+
 import java.nio.channels.FileChannel;
 
 import java.util.HashMap;
@@ -64,6 +66,10 @@ public class LargeTrigramModel implements LanguageModel {
 
     private static final float MIN_PROBABILITY = -99.0f;
 
+    private static final int BYTES_PER_BIGRAM = 8;
+
+    private static final int BYTES_PER_TRIGRAM = 4;
+
 
     private SphinxProperties props;
     private LogMath logMath;
@@ -92,7 +98,9 @@ public class LargeTrigramModel implements LanguageModel {
     private float[] trigramProbTable;
     private float[] trigramSegmentTable;
 
+    private FileInputStream is;
     private FileChannel fileChannel;
+    private boolean bigEndian = true;
 
     
     /**
@@ -211,7 +219,7 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @return the ID of the word
      */
-    private int getWordID(String word) {
+    private final int getWordID(String word) {
         Integer integer = (Integer) unigramIDMap.get(word);
         if (integer == null) {
             throw new IllegalArgumentException("No word ID: " + word);
@@ -229,14 +237,19 @@ public class LargeTrigramModel implements LanguageModel {
      * @return the unigram probability
      */
     private float getBigramProbability(WordSequence wordSequence) {
-        String firstWord = wordSequence.getWord(0);
+
+        String firstWord = wordSequence.getWord(0).toLowerCase();
+        String secondWord = wordSequence.getWord(1).toLowerCase();
+
+        System.out.println("getBigramProbability(): " + 
+                           firstWord + " " + secondWord);
 
         if (numberBigrams == 0 || firstWord == null) {
             return getUnigramProbability(wordSequence.getNewest());
         }
         
-        if (!hasUnigram(wordSequence.getWord(1))) {
-            throw new Error("Bad word2: " + wordSequence.getWord(1));
+        if (!hasUnigram(secondWord)) {
+            throw new Error("Bad word2: " + secondWord);
         }
 
         int firstWordID = getWordID(firstWord);
@@ -245,7 +258,10 @@ public class LargeTrigramModel implements LanguageModel {
             unigrams[firstWordID+1].getFirstBigramEntry() -
             unigrams[firstWordID].getFirstBigramEntry();
 
-        int secondWordID = getWordID(wordSequence.getWord(1));
+        System.out.println(unigrams[firstWordID].getFirstBigramEntry() + " " +
+                           unigrams[firstWordID+1].getFirstBigramEntry());
+
+        int secondWordID = getWordID(secondWord);
 
         BigramProbability bigram = null;
 
@@ -257,6 +273,7 @@ public class LargeTrigramModel implements LanguageModel {
         }
 
         if (bigram != null) {
+            assert (words[bigram.getWordID()].equals(secondWord));
             return bigramProbTable[bigram.getProbabilityID()];
         } else {
             return (unigrams[firstWordID].getLogBackoff() + 
@@ -332,23 +349,36 @@ public class LargeTrigramModel implements LanguageModel {
 
         if ((followers = isBigramLoaded(firstWordID)) == null) {
 
-            long position = (long) 
-                (bigramOffset + unigrams[firstWordID].getFirstBigramEntry());
+            System.out.println("loading bfs");
+
+            int firstBigramEntry = unigrams[firstWordID].getFirstBigramEntry();
             int numberFollowers = 
                 unigrams[firstWordID+1].getFirstBigramEntry() -
-                unigrams[firstWordID].getFirstBigramEntry();
-            long size = (long) (numberFollowers + 1) * 8;
+                firstBigramEntry;
 
-            try {
-                MappedByteBuffer buffer = fileChannel.map
-                    (FileChannel.MapMode.READ_ONLY, position, size);
-                followers = new BigramFollowers(buffer, numberFollowers);
-                followers.load();
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-                throw new Error("Error loading bigram followers");
+            if (numberFollowers > 0) {
+
+                long position = (long) (bigramOffset + 
+                                        (firstBigramEntry * BYTES_PER_BIGRAM));
+                long size = (long) (numberFollowers + 1) * BYTES_PER_BIGRAM;
+
+                System.out.println("Pos: " + position + ", size: " + size);
+
+                try {
+                    assert ((position + size) <= fileChannel.size());
+                    MappedByteBuffer buffer = fileChannel.map
+                        (FileChannel.MapMode.READ_ONLY, position, size);
+                    if (!bigEndian) {
+                        buffer.order(ByteOrder.LITTLE_ENDIAN);
+                    }
+                    followers = new BigramFollowers(buffer, numberFollowers);
+                    followers.load();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                    throw new Error("Error loading bigram followers");
+                }
+                loadedBigramFollowers.put(new Integer(firstWordID), followers);
             }
-            loadedBigramFollowers.put(new Integer(firstWordID), followers);
         }
 
         return followers;
@@ -375,15 +405,14 @@ public class LargeTrigramModel implements LanguageModel {
      * @param location the location of the language model
      */
     private void loadBinary(String location) throws IOException {
-	boolean bigEndian = true;
 
+        FileInputStream fis = new FileInputStream(location);
 	DataInputStream stream = new DataInputStream
-	    (new BufferedInputStream(new FileInputStream(location)));
+            (new BufferedInputStream(fis));
 	
 	// read standard header string-size; set bigEndian flag
 	
-	int headerLength = stream.readInt();
-        bytesRead += 4;
+	int headerLength = readInt(stream, bigEndian);
 
 	if (headerLength != (DARPA_LM_HEADER.length() + 1)) { // not big-endian
 	    headerLength = Utilities.swapInteger(headerLength);
@@ -399,8 +428,8 @@ public class LargeTrigramModel implements LanguageModel {
 	// read and verify standard header string
 
 	String header = readString(stream, headerLength - 1);
-	stream.readByte(); // read the '\0'
-
+	readByte(stream); // read the '\0'
+        
 	if (!header.equals(DARPA_LM_HEADER)) {
 	    throw new Error("Bad binary LM file header: " + header);
 	}
@@ -409,7 +438,7 @@ public class LargeTrigramModel implements LanguageModel {
 	
 	int fileNameLength = readInt(stream, bigEndian);
 	for (int i = 0; i < fileNameLength; i++) {
-	    stream.readByte();
+	    readByte(stream);
 	}
 
 	numberUnigrams = 0;
@@ -429,9 +458,8 @@ public class LargeTrigramModel implements LanguageModel {
 		    break;
 		}
 		for (int i = 0; i < formatLength; i++) {
-		    stream.readByte();
-                    bytesRead++;
-		}
+		    readByte(stream);
+                }
 	    }
 
 	    // read log bigram segment size if present
@@ -473,7 +501,8 @@ public class LargeTrigramModel implements LanguageModel {
 	// skip all the bigram entries, the +1 is the sentinel at the end
 	if (numberBigrams > 0) {
             bigramOffset = bytesRead;
-            int bytesToSkip = (numberBigrams + 1) * 8;
+            System.out.println("bigramOffset: " + bigramOffset);
+            int bytesToSkip = (numberBigrams + 1) * BYTES_PER_BIGRAM;
 	    stream.skipBytes(bytesToSkip);
             bytesRead += bytesToSkip;
 	}
@@ -481,14 +510,14 @@ public class LargeTrigramModel implements LanguageModel {
 	// skip all the trigram entries
 	if (numberTrigrams > 0) {
             trigramOffset = bytesRead;
-            int bytesToSkip = numberTrigrams * 4;
+            int bytesToSkip = numberTrigrams * BYTES_PER_TRIGRAM;
 	    stream.skipBytes(bytesToSkip);
             bytesRead += bytesToSkip;
 	}
 
 	// read the bigram probabilities table
 	if (numberBigrams > 0) {
-	    this.bigramProbTable = readProbabilitiesTable(stream, bigEndian);
+            this.bigramProbTable = readProbabilitiesTable(stream, bigEndian);
 	}
 
 	// read the trigram backoff weight table and trigram prob table
@@ -525,13 +554,12 @@ public class LargeTrigramModel implements LanguageModel {
 
         buildUnigramIDMap();
         
-        applyUnigramWeight();
+        // applyUnigramWeight();
 
+        fis.close();
         stream.close();
 
-        // finally, create the FileChannel to the file that will allow
-        // us to do memory mapping
-        FileInputStream is = new FileInputStream(location);
+        is = new FileInputStream(location);
         fileChannel = is.getChannel();
     }
     
@@ -582,17 +610,19 @@ public class LargeTrigramModel implements LanguageModel {
      * @param stream the DataInputStream from which to read the table
      * @param bigEndian true if the given stream is bigEndian, false otherwise
      */
-    private float[] readProbabilitiesTable(DataInputStream stream, 
-					   boolean bigEndian) 
-	throws IOException {
+    private float[] readProbabilitiesTable(DataInputStream stream,
+                                           boolean bigEndian) throws
+    IOException {
+        
 	int numProbs = readInt(stream, bigEndian);
 	if (numProbs <= 0 || numProbs > 65536) {
 	    throw new Error("Bad probabilities table size: " + numProbs);
 	}
 	float[] probTable = new float[numProbs];
 	for (int i = 0; i < numProbs; i++) {
-	    probTable[i] = readFloat(stream, bigEndian);
+	    probTable[i] = logMath.log10ToLog(readFloat(stream, bigEndian));
 	}
+        
 	return probTable;
     }
 
@@ -655,16 +685,15 @@ public class LargeTrigramModel implements LanguageModel {
 
             unigrams[i] = new UnigramProbability
                 (logProbability, logBackoff, firstBigramEntry);
-
-	    if (false) {
-		System.out.println("Unigram: ID: " + unigramID +
-				   ", Prob: " + unigramProbability +
-				   ", BackoffWeight: " + unigramBackoff +
-				   ", FirstBigramEntry: " + firstBigramEntry);
-	    }
 	}
 
         return unigrams;
+    }
+
+
+    private final byte readByte(DataInputStream stream) throws IOException {
+        bytesRead++;
+        return stream.readByte();
     }
 
 
@@ -675,7 +704,7 @@ public class LargeTrigramModel implements LanguageModel {
      * @param bigEndian true if the DataInputStream is in bigEndian,
      *                  false otherwise
      */
-    private int readInt(DataInputStream stream, boolean bigEndian) 
+    private final int readInt(DataInputStream stream, boolean bigEndian) 
     throws IOException {
         bytesRead += 4;
         if (bigEndian) {
@@ -693,7 +722,7 @@ public class LargeTrigramModel implements LanguageModel {
      * @param bigEndian true if the DataInputStream is in bigEndian,
      *                  false otherwise
      */
-    private float readFloat(DataInputStream stream, boolean bigEndian)
+    private final float readFloat(DataInputStream stream, boolean bigEndian)
     throws IOException {
         bytesRead += 4;
         if (bigEndian) {
@@ -713,12 +742,11 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @return a string of the given length from the given DataInputStream
      */
-    private String readString(DataInputStream stream, int length)
+    private final String readString(DataInputStream stream, int length)
         throws IOException {
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < length; i++) {
-            buffer.append((char)stream.readByte());
-            bytesRead++;
+            buffer.append((char)readByte(stream));
 	}
         return buffer.toString();
     }
@@ -753,7 +781,9 @@ public class LargeTrigramModel implements LanguageModel {
         
         System.out.println("Max depth is " + sm.getMaxDepth());
         System.out.print("Enter words: ");
+
         while ((input = reader.readLine()) != null) {
+
             StringTokenizer st = new StringTokenizer(input);
             List list = new ArrayList();
             while (st.hasMoreTokens()) {
@@ -761,9 +791,16 @@ public class LargeTrigramModel implements LanguageModel {
                 list.add(tok);
             }
             WordSequence wordSequence = new WordSequence(list);
-            System.out.println("Probability of " + wordSequence + " is: " +
-               sm.getProbability(wordSequence) + "(" 
-               + logMath.logToLn(sm.getProbability(wordSequence)) + ")");
+            float logProbability = sm.getProbability(wordSequence);
+            
+            System.out.println
+                ("Probability of " + wordSequence + " is: " +
+                 logProbability + "(log), " + 
+                 LogMath.logToLog(logProbability, 
+                                  logMath.getLogBase(),
+                                  10.0f) + 
+                 "(log10)");
+
             System.out.print("Enter words: ");
         }
         
