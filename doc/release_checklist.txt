@@ -29,6 +29,8 @@ Sphinx-4 1.0 Release Steps
      (linklint.org)
     - check in all changes
     - check latest regression test outputs for no regressions
+    - make sure the numbers in the performance table in index.html 
+      are up to date
 
 5) Create the binary and source distribution:
     - Download fresh copy of Sphinx-4 from sourceforge
@@ -58,8 +60,9 @@ Sphinx-4 1.0 Release Steps
     - java -mx200m -jar bin/Dialog.jar
     - java -mx200m -jar bin/JSGFDemo.jar
     - java -jar bin/FeatureValueDemo.jar
-    - java -jar bin/LiveConnectDemo.jar
+    - java -jar bin/LiveConnectDemo.jar    
     - java -mx200m -jar bin/Confidence.jar
+    - ant find demo.xml
     
     - check libs for proper output:
         - cd lib

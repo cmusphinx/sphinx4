@@ -141,9 +141,9 @@ WARRANTIES.
       <p>
       <br>
       <font size="-1">
-      <b>NOTE</b>: This page contains links to javadocs that need to be
-      created. If the links are broken, you should either follow instructions 
-      in <a href="#create_javadocs">Creating Javadocs</a>, or view this page
+      <b>NOTE</b>: This page contains links to javadocs. If the links
+      are broken, you should either follow instructions in <a
+      href="#create_javadocs">Creating Javadocs</a>, or view this page
       online at <a href="http://cmusphinx.sourceforge.net/sphinx4/">
       http://cmusphinx.sourceforge.net/sphinx4/</a>.
       </font>
@@ -171,7 +171,7 @@ WARRANTIES.
          (MIT).
 
       <p>Sphinx-4 started out as a port of Sphinx-3 to the
-         Java(TM) programming language, but evolved into a recognizer
+         Java programming language, but evolved into a recognizer
          designed to be much more flexible than Sphinx-3, thus
          becoming an excellent platform for speech research.
   </li>
@@ -210,9 +210,20 @@ WARRANTIES.
 	 <a href="./javadoc/edu/cmu/sphinx/decoder/search/SimpleBreadthFirstSearchManager.html">breadth first</a> and 
 	 <a href="./javadoc/edu/cmu/sphinx/decoder/search/WordPruningBreadthFirstSearchManager.html">word pruning</a> searches.
 
-      <p>Speech tools. Includes tools for 
+      <p>Utilities for post-processing recognition results, including
+         <a
+         href="./javadoc/edu/cmu/sphinx/result/ConfidenceScorer.html">obtaining confidence scores</a>,
+         <a
+         href="./javadoc/edu/cmu/sphinx/result/Lattice.html">generating lattices</a> and
+         <a
+         href="./javadoc/edu/cmu/sphinx/tools/tags/package-summary.html">embedding
+         ECMAScript into JSGF tags</a>.
+
+      <p>Standalone tools. Includes tools for 
          <a href="./javadoc/edu/cmu/sphinx/tools/audio/package-summary.html">displaying waveforms and spectrograms</a> and
-	 <a href="./javadoc/edu/cmu/sphinx/tools/feature/package-summary.html">generating features from audio</a>.
+	 <a
+	 href="./javadoc/edu/cmu/sphinx/tools/feature/package-summary.html">generating features from audio</a>.  
+
 
       <p>
       (<b>NOTE:</b> The links in this section point to local files created by
@@ -343,7 +354,7 @@ Key:
 </ul>
 
 <p>
-This data was collected on a dual CPU UltraSPARC-III running at 1015 MHz with 2G of memory.
+This data was collected on a dual CPU UltraSPARC(R)-III running at 1015 MHz with 2G of memory.
 </ul>
 
 <hr>
@@ -374,7 +385,7 @@ This data was collected on a dual CPU UltraSPARC-III running at 1015 MHz with 2G
   href="http://ant.apache.org">ant.apache.org</a>. The site has a manual 
   with instructions on how to download, install, and use ant.  You
   will only need ant if you wish to build Sphinx-4 from the source
-  distribution</li>
+  distribution.</li>
 
   <br>
   <li> <b>CVS</b> and <b>SSH</b>, but only if you want to interact directly
@@ -487,7 +498,8 @@ jar xvf sphinx4-{version}-src.zip</pre>
 
       <p>
       Before you build Sphinx-4, it is important to 
-      <a href="doc/jsapi_setup.html">setup your JSAPI environment</a>,
+      <a href="doc/jsapi_setup.html">setup your environment to
+      support the Java Speech API (JSAPI)</a>,
       because a number of tests and demos rely on having JSAPI
       installed.
       </p>

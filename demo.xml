@@ -30,6 +30,7 @@
         <pathelement path="${classes_dir}"/>
 	<pathelement location="${lib_dir}/sphinx4.jar"/>
 	<pathelement location="${lib_dir}/jsapi.jar"/>
+	<pathelement location="${lib_dir}/tags.jar"/>
 	<pathelement location="${lib_dir}/js.jar"/>
     </path>
 
