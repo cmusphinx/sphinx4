@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
 
@@ -523,7 +521,7 @@ class ModelInitializerLoader implements Loader {
 		size = est.getInt("ModelSize");
 	    }
 	    phoneList.put(phone, new Integer(size));
-	    logger.info("Phone: " + phone + " size: " + size);
+	    logger.fine("Phone: " + phone + " size: " + size);
 	    int[] stid = new int[size];
 	    String position = "-";
 

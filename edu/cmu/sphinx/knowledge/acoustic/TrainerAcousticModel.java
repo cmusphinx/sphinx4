@@ -65,11 +65,20 @@ public class TrainerAcousticModel extends AcousticModel {
 
 
     /**
+     * Flag indicating all models should be operated on.
+     */
+    public final static int ALL_MODELS = -1;
+
+    /**
      * The logger for this class
      */
     private static Logger logger = 
 	    Logger.getLogger(PROP_PREFIX + "TrainerAcousticModel");
 
+    /**
+     * The pool manager
+     */
+    private HMMPoolManager hmmPoolManager;
 
      /**
       * Initializes an acoustic model of a given context. This method
@@ -197,6 +206,7 @@ public class TrainerAcousticModel extends AcousticModel {
      */
     public void initialize() throws IOException {
 	loader = new ModelInitializerLoader(name, props);
+	hmmPoolManager = new HMMPoolManager(loader, props);
     }
 
 
@@ -239,6 +249,24 @@ public class TrainerAcousticModel extends AcousticModel {
         super.load();
         loadTimer.stop();
         logInfo();
+	hmmPoolManager = new HMMPoolManager(loader, props);
+    }
+
+    /**
+     * Accumulate the current TrainerScore into the buffers.
+     *
+     * @param trainerScore the TrainerScore
+     */
+    public void accumulate(TrainerScore trainerScore) {
+	hmmPoolManager.accumulate(trainerScore);
+    }
+
+    /**
+     * Normalize the buffers and update the models
+     */
+    public void normalize() {
+	hmmPoolManager.normalize();
+	hmmPoolManager.update();
     }
 
 }

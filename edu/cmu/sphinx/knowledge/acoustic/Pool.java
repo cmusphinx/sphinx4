@@ -40,6 +40,15 @@ class Pool {
     }
 
     /**
+     * returns the pool's name.
+     *
+     * @return the pool name
+     */
+    protected String getName() {
+	return name;
+    }
+
+    /**
      * returns the object with the given ID from the pool
      *
      * @param id the id of the object
