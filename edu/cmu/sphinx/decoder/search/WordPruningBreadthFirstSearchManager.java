@@ -160,9 +160,29 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         boolean done = false;
         Result result;
 
-        for (int i = 0; i < nFrames && !done; i++) {
-            done = recognize();
+        int nFinishedFrames = 0;
+
+        for (activeList = activeBucket.getNextList();
+             activeList != null;
+             activeList = activeBucket.getNextList()) {
+
+            // Todo: Need a better way to determine if list contains emitting tokens.
+            Iterator iterator = activeList.iterator();
+            if (iterator.hasNext()) {         // For all tokens
+                if (((Token) iterator.next()).isEmitting()) {  // If current list is emitting
+                    if (!scoreTokens())  {
+                        done = true;
+                        break; //  Stop if we're out of audio, or otherwise can't score.
+                    }
+                    currentFrameNumber++;
+                }
+                pruneBranches(); 		// eliminate poor branches
+                growBranches(); 	    // extend remaining branches
+                if (++nFinishedFrames == nFrames)
+                    break; // Stop if we've finished the required frames.
+            }
         }
+
         result = new Result(activeList, resultList, currentFrameNumber, done);
 
         if (showTokenCount) {
@@ -182,33 +202,6 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         linguist.stop();
     }
 
-    /**
-     * Performs recognition for one frame. Returns true if recognition
-     * has been completed.
-     *
-     * @return <code>true</code> if recognition is completed.
-     */
-    protected boolean recognize() {
-        boolean more = true;
-        activeList = activeBucket.getNextList();
-        if (activeList == null) {
-            return true;
-        }
-        // Todo: Need a better way to determine if list contains emitting tokens.
-        Iterator iterator = activeList.iterator();
-        if (iterator.hasNext()) {
-            Token token = (Token) iterator.next();
-            if (token.isEmitting()) {
-                more = scoreTokens(); // score emitting tokens
-            }
-            if (more) {
-                pruneBranches(); 		// eliminate poor branches
-                growBranches(); 	        // extend remaining branches
-                currentFrameNumber++;
-            }
-        }
-        return !more;
-    }
 
     /**
      * Gets the initial grammar node from the linguist and
