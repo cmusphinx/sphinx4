@@ -1,0 +1,19 @@
+############################################################
+# 
+# FrontEnd properties
+#
+############################################################
+
+frontend.sampleRate = 8000
+frontend.windowSizeInMs = 25.625
+frontend.windowShiftInMs = 10
+frontend.bytesPerAudioFrame = 4000
+frontend.cepstrumSize = 13
+frontend.cmn.initialCepstralMean = 12
+frontend.cmn.windowSize = 500
+frontend.cmn.shiftWindow = 800
+frontend.featureExtractor.featureLength = 39
+frontend.featureExtractor.windowSize = 3
+frontend.preemphasis.factor = 0.97
+frontend.fft.NPoint = 256
+frontend.windower.alpha = 0.46
