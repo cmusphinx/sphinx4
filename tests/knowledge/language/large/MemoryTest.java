@@ -12,6 +12,8 @@
 
 package tests.knowledge.language.large;
 
+import edu.cmu.sphinx.knowledge.dictionary.*;
+
 import edu.cmu.sphinx.knowledge.language.*;
 import edu.cmu.sphinx.knowledge.language.large.*;
 
@@ -81,7 +83,8 @@ class MemoryTest {
                       String testFile, String outFile) throws IOException {
 	
         SphinxProperties.initContext(context, new URL(propsPath));
-        lm = new LargeTrigramModel(context);
+        Dictionary dictionary = new FastDictionary(context);
+        lm = new LargeTrigramModel(context, dictionary);
         printScores = Boolean.getBoolean("printScores");
 
         InputStream stream = new FileInputStream(testFile);
@@ -134,7 +137,7 @@ class MemoryTest {
                 String tok = (String) st.nextToken();
                 list.add(tok);
             }
-            WordSequence ws = new WordSequence(list);
+            WordSequence ws = WordSequence.getWordSequence(list);
             lm.getProbability(ws);
             totalQueries++;
         }

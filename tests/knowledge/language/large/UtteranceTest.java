@@ -12,6 +12,8 @@
 
 package tests.knowledge.language.large;
 
+import edu.cmu.sphinx.knowledge.dictionary.*;
+
 import edu.cmu.sphinx.knowledge.language.*;
 import edu.cmu.sphinx.knowledge.language.large.*;
 
@@ -81,7 +83,8 @@ class UtteranceTest {
 			 String testFile, String outFile) throws IOException {
 	
         SphinxProperties.initContext(context, new URL(propsPath));
-        lm = new LargeTrigramModel(context);
+        Dictionary dictionary = new FastDictionary(context);
+        lm = new LargeTrigramModel(context, dictionary);
         printScores = Boolean.getBoolean("printScores");
 
         InputStream stream = new FileInputStream(testFile);
@@ -129,7 +132,7 @@ class UtteranceTest {
                 String tok = (String) st.nextToken().toLowerCase();
                 list.add(tok);
             }
-            WordSequence wordSequence = new WordSequence(list);
+            WordSequence wordSequence = WordSequence.getWordSequence(list);
 	    wordSequences.add(wordSequence);
         }
 

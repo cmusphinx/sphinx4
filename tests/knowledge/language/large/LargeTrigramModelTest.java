@@ -12,6 +12,8 @@
 
 package tests.knowledge.language.large;
 
+import edu.cmu.sphinx.knowledge.dictionary.*;
+
 import edu.cmu.sphinx.knowledge.language.*;
 import edu.cmu.sphinx.knowledge.language.large.*;
 
@@ -63,8 +65,10 @@ class LargeTrigramModelTest {
             outStream = new PrintStream(new FileOutputStream(args[2]));
         }
 
-        SphinxProperties.initContext("test", new URL(propsPath));
-        LargeTrigramModel lm = new LargeTrigramModel("test");
+        String context = "test";
+        SphinxProperties.initContext(context, new URL(propsPath));
+        Dictionary dictionary = new FastDictionary(context);
+        LargeTrigramModel lm = new LargeTrigramModel(context, dictionary);
 
         LogMath logMath = LogMath.getLogMath("test");
 
@@ -88,7 +92,7 @@ class LargeTrigramModelTest {
 		    String tok = (String) st.nextToken().toLowerCase();
 		    list.add(tok.trim());
 		}
-		WordSequence wordSequence = new WordSequence(list);
+		WordSequence wordSequence = WordSequence.getWordSequence(list);
 		wordSequences.add(wordSequence);
 	    }	    
         }
@@ -127,9 +131,9 @@ class LargeTrigramModelTest {
     }
 
     public static String getString(WordSequence ws) {
-        String line = ws.getWord(0);
+        String line = ws.getWord(0).getSpelling();
         for (int i = 1; i < ws.size(); i++) {
-            line += (" " + ws.getWord(i));
+            line += (" " + ws.getWord(i).getSpelling());
         }
         return line.toUpperCase();
     }
