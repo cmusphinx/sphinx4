@@ -67,6 +67,9 @@ WARRANTIES.
      <li><a href="#ngramConfigWalk">Configuration File Walk - hellongram.config.xml</a></li>
      </ul>
   </li>
+  <br>
+  <li><a href="#interpretResult">Interpreting the Recognition Result</a>
+  </li>
   </ol>
 
   <hr>  
@@ -1139,6 +1142,34 @@ The rest of the configuration file, which includes the front end configuration
 and the configuration of the monitors, are the same as in the HelloDigits
 demo. Therefore, please refer to those sections for explanations.
 This concludes the walkthrough of the simple HelloNGram example.
+</p>
+
+<hr>  
+
+<h2><a name="interpretResult">3. Interpreting the Recognition Result</a></h2>
+
+<p>
+As you can see from the above examples, the Recognizer returns a Result object
+which provides the recognition results. 
+The Result object essentially contains all the paths during the recognition
+search that have reached the final state. In other words, it contains
+all the legitimate hypotheses during the search. They are ranked by the
+ending score of the path, and the one with the highest score is the best
+hypothesis. Usually, one would call the 
+<code>Result.getBestResultNoFiller</code> method to obtain a string of the
+best result that has no filler words like "++SMACK++".
+</p>
+
+<p>
+There are other methods in the Result object that can give you
+more information, e.g., the N-best results. You will also notice that there are
+a number of methods that return Tokens. Tokens are objects along a search
+path that record where we are at the search, and the various scores at that
+particular location. For example, the Token object has a <code>getWord</code>
+method that tells you which word the search is in. For details about the
+Token object please refer to the <a href="../javadoc/edu/cmu/sphinx/decoder/search/Token.html">javadoc for Token</a>. For details about the Result object,
+please refer to the <a href="../javadoc/edu/cmu/sphinx/result/Result.html">
+javadoc for Result</a>. 
 </p>
 
   </font>
