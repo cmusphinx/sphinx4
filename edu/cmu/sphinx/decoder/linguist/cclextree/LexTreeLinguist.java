@@ -741,6 +741,7 @@ public class LexTreeLinguist implements  Linguist {
         private float logInsertionProbability;
         private float logLanguageProbability;
         private Node parentNode = null;
+        private int hashCode = -1;
 
         /**
          * Constructs a LexTreeUnitState
@@ -786,12 +787,14 @@ public class LexTreeLinguist implements  Linguist {
          * @return the hashcode
          */
         public int hashCode() {
-            int hc = super.hashCode() * 17 + 421;
-            if (parentNode != null) {
-                hc *=432;
-                hc += parentNode.hashCode();
+            if (hashCode == -1) {
+                hashCode = super.hashCode() * 17 + 421;
+                if (parentNode != null) {
+                    hashCode *=432;
+                    hashCode += parentNode.hashCode();
+                }
             }
-            return hc;
+            return hashCode;
         }
 
         /**
@@ -868,6 +871,7 @@ public class LexTreeLinguist implements  Linguist {
         private float logInsertionProbability;
         private float logAcousticProbability;
         private Node parentNode;
+        int hashCode = -1;
 
         /**
          * Constructs a LexTreeHMMState
@@ -918,12 +922,14 @@ public class LexTreeLinguist implements  Linguist {
          * @return the hashcode
          */
         public int hashCode() {
-            int hc =  super.hashCode() * 29 + (hmmState.getState() + 1);
-            if (parentNode != null) {
-                hc *=377;
-                hc += parentNode.hashCode();
+            if (hashCode == -1) {
+                hashCode =  super.hashCode() * 29 + (hmmState.getState() + 1);
+                if (parentNode != null) {
+                    hashCode *=377;
+                    hashCode += parentNode.hashCode();
+                }
             }
-            return hc;
+            return hashCode;
         }
 
         /**
