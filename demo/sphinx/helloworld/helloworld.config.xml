@@ -22,7 +22,7 @@
     <property name="languageWeight"     value="7"/>
     <property name="silenceInsertionProbability"  value="1"/>
     
-    <property name="frontend" value="frontEnd"/>
+    <property name="frontend" value="epFrontEnd"/>
     <property name="recognizer" value="recognizer"/>
     <property name="showCreations" value="false"/>
     

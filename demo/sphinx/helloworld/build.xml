@@ -65,7 +65,6 @@ NOTE:  Before running the tests, you must have already built
 	          fork="true"
 		  maxmemory="128m">
 		  <classpath refid="run.classpath"/>
-		  <sysproperty key="frontend" value="epFrontEnd"/>
 		  <arg value="helloworld.config.xml"/>
 	    </java>
     </target>
