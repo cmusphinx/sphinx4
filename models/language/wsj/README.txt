@@ -1,7 +1,7 @@
 ---------------------------------------------
 What is this?
 ---------------------------------------------
-wsj.DMP is a 5000 word language model suitable for use with Sphinx-3 and
+wsj5k.DMP is a 5000 word language model suitable for use with Sphinx-3 and
 Sphinx-4.  The file is in the CMU binary (DMP) format. It contains:
 
     4,988 unigrams

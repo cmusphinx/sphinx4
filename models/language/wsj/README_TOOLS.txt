@@ -1,13 +1,13 @@
 ---------------------------------------------
-wsj language model
+wsj5k language model
 ---------------------------------------------
 
 A set of scripts and instructions for generating a 5000 word language model.
 
 
 Outputs:
-    wsj.lm - arpa format of the language model
-    wsj.DMP - CMU binary format of the language model
+    wsj5k.lm - arpa format of the language model
+    wsj5k.DMP - CMU binary format of the language model
 
 Requires:
     CSR-I (WSJ0) Complete - from LDC
@@ -36,7 +36,7 @@ Steps to prepare the large WSJ lm:
 
 2) uncompress the np_data and collect into a single transcript file:
 
-   find /ldc/disk/np_data -name "*.z" | xargs zcat >> ./wsj.txt
+   find /ldc/disk/np_data -name "*.z" | xargs zcat >> ./wsj5k.txt
 
 
 3) generate the language models:
@@ -44,8 +44,8 @@ Steps to prepare the large WSJ lm:
   % makeLM
 
    This will create two files:
-        wsj.DMP - CMU binary format language model
-        wsj.LM - ARPA format language model
+        wsj5k.DMP - CMU binary format language model
+        wsj5k.LM - ARPA format language model
 
 ---------------------
 Files:

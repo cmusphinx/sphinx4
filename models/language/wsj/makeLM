@@ -2,12 +2,12 @@
 # Generates the language model for a 5k general business vocabulary
 #
 # uses:
-#       wsj.txt         - transcript of wsj
+#       wsj5k.txt         - transcript of wsj
 #       5k_words.vocab - hand prepared vocabulary list
 #
 # generates:
-#       wsj.lm - arpa format of the language model
-#       wsj.DMP - CMU binary format of the language model
+#       wsj5k.lm - arpa format of the language model
+#       wsj5k.DMP - CMU binary format of the language model
 #
 #       
 # requires:
@@ -22,29 +22,29 @@
 #
 
 # Convert transcript to all lower case
-tr "[A-Z]" "[a-z]" < wsj.txt > wsj.lc.tmp
+tr "[A-Z]" "[a-z]" < wsj5k.txt > wsj5k.lc.tmp
 
 # normalize the tags
-gawk -f prep.awk < wsj.lc.tmp > wsj.prep.tmp
+gawk -f prep.awk < wsj5k.lc.tmp > wsj5k.prep.tmp
 
 #
 # Generate the word frequencies
 #
 
-text2wfreq < wsj.prep.tmp > wsj.wfreq.tmp
+text2wfreq < wsj5k.prep.tmp > wsj5k.wfreq.tmp
 
 #
-# Generate the vocabulary (this should be a subset wsj.vocab)
+# Generate the vocabulary (this should be a subset wsj5k.vocab)
 #
 
-wfreq2vocab  -top 5000 < wsj.wfreq.tmp > wsj.vocab.tmp
+wfreq2vocab  -top 5000 < wsj5k.wfreq.tmp > wsj5k.vocab.tmp
 
 #
 # Generate the idngram
 
 #text2idngram -vocab $file.tmp.vocab < $file  > $file.tmp.idngram
 # uses the custom word list
-text2idngram -vocab 5k_words.vocab < wsj.prep.tmp  > wsj.idngram.tmp
+text2idngram -vocab 5k_words.vocab < wsj5k.prep.tmp  > wsj5k.idngram.tmp
 
 
 #
@@ -55,7 +55,7 @@ text2idngram -vocab 5k_words.vocab < wsj.prep.tmp  > wsj.idngram.tmp
 #idngram2lm  -witten_bell -idngram $file.tmp.idngram -vocab $file.tmp.vocab -arpa $file.arpa
 #idngram2lm  -two_byte_alphas -idngram $file.tmp.idngram -vocab $file.tmp.vocab -arpa $file.arpa
 
-idngram2lm  -vocab_type 0 -idngram wsj.idngram.tmp -vocab 5k_words.vocab -arpa wsj.lm
+idngram2lm  -vocab_type 0 -idngram wsj5k.idngram.tmp -vocab 5k_words.vocab -arpa wsj5k.lm
 
 
 #
@@ -63,8 +63,8 @@ idngram2lm  -vocab_type 0 -idngram wsj.idngram.tmp -vocab 5k_words.vocab -arpa w
 #
 
 mkdir dmp
-lm3g2dmp wsj.lm dmp
-mv dmp/wsj.lm.DMP wsj.DMP
+lm3g2dmp wsj5k.lm dmp
+mv dmp/wsj5k.lm.DMP wsj5k.DMP
 
 #
 # cleanup
