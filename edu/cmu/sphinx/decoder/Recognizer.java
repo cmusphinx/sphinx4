@@ -15,6 +15,9 @@ package edu.cmu.sphinx.decoder;
 
 import edu.cmu.sphinx.frontend.DataSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.FeatureFrame;
+import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.parallel.ParallelFrontEnd;
 import edu.cmu.sphinx.frontend.SimpleFrontEnd;
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
@@ -208,6 +211,7 @@ public class Recognizer {
     protected int featureBlockSize = 50;    // the feature blocksize
 
     protected Vector resultsListeners = new Vector();
+    protected Vector signalListeners = new Vector();
 
     protected boolean dumpMemoryInfo;
     protected boolean dumpSentenceHMM;
@@ -403,7 +407,8 @@ public class Recognizer {
         String path = null;
         try {
             path = props.getString(PROP_FRONT_END, PROP_FRONT_END_DEFAULT);
-            FrontEnd fe = (FrontEnd)Class.forName(path).newInstance();
+            FrontEnd fei = (FrontEnd)Class.forName(path).newInstance();
+            FrontEndWrapper fe = new FrontEndWrapper(fei);
             fe.initialize("FrontEnd", context, dataSource);
             if (dumpFrontEnd) {
                 System.out.println(fe.toString());
@@ -676,6 +681,39 @@ public class Recognizer {
         resultsListeners.remove(listener);
     }
 
+    /**
+     * Add a listener to be called when a non-content signal is
+     * detected
+     *
+     * @param listener the listener to be added
+     */
+    public void addSignalListener(SignalListener listener) {
+        signalListeners.add(listener);
+    }
+
+    /**
+     * Removes a listener 
+     *
+     * @param listener the listener to be removed
+     */
+    public void removeSignalListener(SignalListener listener) {
+        signalListeners.remove(listener);
+    }
+
+    /**
+     * Fire all audio listeners
+     *
+     * @param result the new result
+     */
+    protected void fireSignalListeners(Signal signal) {
+        Vector copy = (Vector) signalListeners.clone();
+
+        for (Iterator i = copy.iterator(); i.hasNext(); ) {
+            SignalListener listener = (SignalListener) i.next();
+            listener.newSignal(signal);
+        }
+    }
+
 
     /**
      * Conditional dumps out memory information
@@ -688,6 +726,73 @@ public class Recognizer {
         }
     }
 
+
+    /**
+     * A wrapper class for the front end that looks for specific
+     * feature signals and throws events based upon those
+     */
+    class FrontEndWrapper implements FrontEnd {
+
+        FrontEnd fe;
+
+        /**
+         * Creates a front end wrapped around the given front end
+         *
+         * @param fe the front end to wrap
+         */
+        FrontEndWrapper(FrontEnd fe) {
+            this.fe = fe;
+        }
+
+        // wrapper for FrontEnd.drain
+
+        public void drain() {
+            fe.drain();
+        }
+
+        // wrapper for getFeatureFrame
+        public FeatureFrame getFeatureFrame(int numberFeatures, String
+                acousticModelName) throws IOException {
+            FeatureFrame ff = 
+                  fe.getFeatureFrame(numberFeatures, acousticModelName);
+            monitorSignals(ff);
+            return ff;
+        }
+
+
+        // wrapper for initialize
+        public void initialize(String name, String context, 
+                DataSource dataSource) throws IOException {
+            fe.initialize(name, context, dataSource);
+        }
+
+        // wrapper for setDataSource
+        public void setDataSource(DataSource dataSource) {
+            fe.setDataSource(dataSource);
+        }
+
+
+        // wrapper for toString
+        public String toString() {
+            return fe.toString();
+        }
+
+        /**
+         * Looks for non-content frames and invokes the appropriate
+         * listeners
+         *
+         * @param ff the feature frame to monitor
+         */
+        private void monitorSignals(FeatureFrame ff) {
+            Feature[] features = ff.getFeatures();
+
+            for (int i = 0; i < features.length; i++) {
+                if (features[i].getSignal() != Signal.CONTENT) {
+                    fireSignalListeners(features[i].getSignal());
+                }
+            }
+        }
+    }
 
 }
 
