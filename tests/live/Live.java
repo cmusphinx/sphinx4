@@ -316,6 +316,7 @@ public class Live {
             
             if (decoder.hasEndpointer()) {
                 hasEndpointer = true;
+                System.out.println(decoderName + " has endpointer");
             }
             
             info(".");
@@ -407,10 +408,14 @@ public class Live {
         
         public void run() {
             if (lastResult != null) {
-                byte[] audio = lastResult.getUtterance().getAudio();
-                audioPlayer.play
-                    (audio, decoder.getMicrophone().getAudioFormat());
-                System.out.println("PlaybackThread completed.");
+                if (lastResult.getUtterance() == null) {
+                    System.out.println("Last Result has no Utterance");
+                } else {
+                    byte[] audio = lastResult.getUtterance().getAudio();
+                    audioPlayer.play
+                        (audio, decoder.getMicrophone().getAudioFormat());
+                    System.out.println("PlaybackThread completed.");
+                }
             }
         }
     }
