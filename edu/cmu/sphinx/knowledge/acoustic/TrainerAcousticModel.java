@@ -266,6 +266,15 @@ public class TrainerAcousticModel extends AcousticModel {
     }
 
     /**
+     * Resets the buffers.
+     */
+    public void resetBuffers() {
+	// Resets the buffers and associated variables.
+	hmmPoolManager.resetBuffers();
+    }
+
+
+    /**
      * Accumulate the current TrainerScore into the buffers.
      *
      * @param index the current index into the TrainerScore vector
