@@ -280,7 +280,7 @@ public class Timer {
              "----------------------------------------------------------- ";
         System.out.println(Utilities.pad(titleBar, 78));
 	System.out.print(Utilities.pad("# Name", 15) + " ");
-	System.out.print(Utilities.pad("Count", 6));
+	System.out.print(Utilities.pad("Count", 8));
 	System.out.print(Utilities.pad("CurTime", 10));
 	System.out.print(Utilities.pad("MinTime", 10));
 	System.out.print(Utilities.pad("MaxTime", 10));
@@ -309,7 +309,7 @@ public class Timer {
 	    System.out.println("Not reliable.");
 	} else {
 	    System.out.print(Utilities.pad(name, 15) + " ");
-	    System.out.print(Utilities.pad("" + count, 6));
+	    System.out.print(Utilities.pad("" + count, 8));
 	    System.out.print(fmtTime(curTime));
 	    System.out.print(fmtTime(minTime));
 	    System.out.print(fmtTime(maxTime));
@@ -322,7 +322,7 @@ public class Timer {
 
     /**
      * a simple set of tests for the Timer clas
-     *
+     e
      * @param args the command line arguments
      */
     public static void main(String[] args) {
