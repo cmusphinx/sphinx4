@@ -15,6 +15,14 @@ package edu.cmu.sphinx.knowledge.language.large;
 import java.nio.MappedByteBuffer;
 
 
+/**
+ * The bigram followers of the word "the" are "apple", "orange", 
+ * and "pear" in the following bigrams:
+ * <code>the apple
+ * the orange
+ * the pear
+ * </code>
+ */
 public class BigramFollowers {
     
     private MappedByteBuffer bigramBuffer;
