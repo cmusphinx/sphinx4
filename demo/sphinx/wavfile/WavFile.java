@@ -44,7 +44,15 @@ public class WavFile {
      */
     public static void main(String[] args) {
         try {
-            URL audioFileURL = WavFile.class.getResource("12345.wav");
+            
+            URL audioFileURL;
+            
+            if (args.length > 0) {
+                audioFileURL = new File(args[0]).toURI().toURL();
+            } else {
+                audioFileURL = WavFile.class.getResource("12345.wav");
+            }
+
             URL configURL = WavFile.class.getResource("config.xml");
 
             System.out.println("Loading Recognizer...\n");
