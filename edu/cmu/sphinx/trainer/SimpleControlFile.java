@@ -15,6 +15,7 @@ package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.knowledge.acoustic.*;
+import edu.cmu.sphinx.knowledge.dictionary.*;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * Provides mechanisms for accessing a next utterance's file name
@@ -39,7 +41,7 @@ public class SimpleControlFile implements ControlFile {
     private SphinxProperties props;	// the sphinx properties
     private String audioFile;           // the audio file
     private String transcriptFile;      // the transcript file
-    private String dictionary;          // the dictionary
+    private Dictionary dictionary;          // the dictionary
     private String wordSeparator;       // the word separator
     private int currentPartition;       // the current partition
     private int numberOfPartitions;     // total number of partitions
@@ -47,6 +49,13 @@ public class SimpleControlFile implements ControlFile {
     private Iterator transcriptFileIterator; // iterator for the transcriptions
     private List audioFileList;         // list containing the audio files
     private List transcriptFileList;    // list containing the transcriptions
+
+    /**
+     * Constructor for SimpleControlFile.
+     */
+    public SimpleControlFile() {
+	initialize("nada");
+    }
 
     /**
      * Initializes the SimpleControlFile with the proper context.
@@ -62,7 +71,7 @@ public class SimpleControlFile implements ControlFile {
 					   PROP_AUDIO_FILE_DEFAULT);
 	this.transcriptFile = props.getString(PROP_TRANSCRIPT_FILE, 
 					   PROP_TRANSCRIPT_FILE_DEFAULT);
-	this.dictionary = null; // here, we should have the default dictionary;
+	this.dictionary = new TrainerDictionary();
 	this.wordSeparator = " \t\n\r\f"; // the white spaces
 	this.currentPartition = thisPartition;
 	this.numberOfPartitions = numberOfPartitions;
@@ -109,8 +118,10 @@ public class SimpleControlFile implements ControlFile {
      * Gets the next utterance.
      */
     public Utterance nextUtterance() {
-	return new SimpleUtterance((String) audioFileIterator.next());
-	//			     transcriptFileIterator.next());
+	Utterance utterance = new SimpleUtterance((String) audioFileIterator.next());
+	utterance.add((String) transcriptFileIterator.next(), dictionary,
+		      false, wordSeparator);
+	return utterance;
     }
 
     /**
@@ -138,7 +149,7 @@ public class SimpleControlFile implements ControlFile {
     /**
      * Gets the next utterance's dictionary.
      */
-    public String getNextDictionary() {
+    public Dictionary getNextDictionary() {
 	return dictionary;
     }
 

@@ -12,6 +12,8 @@
 
 package edu.cmu.sphinx.trainer;
 
+import edu.cmu.sphinx.knowledge.dictionary.*;
+
 /**
  * Provides mechanisms for accessing an utterance.
  */
@@ -23,12 +25,15 @@ public interface Utterance {
     String PROP_PREFIX = "edu.cmu.sphinx.trainer.Utterance.";
 
     /**
-     * Initialize with default dictionary and exact flag.
+     * Add transcript with dictionary and exact flag.
      *
+     * @param transcript the transcript
      * @param dictionary the default dictionary name
      * @param isExact the default flag
+     * @param wordSeparator the word separator characters
      */
-    public void initialize(String dictionary, boolean isExact);
+    public void add(String transcript, Dictionary dictionary, 
+		    boolean isExact, String wordSeparator);
 
     /**
      * Gets the transcript iterator.

@@ -12,6 +12,8 @@
 
 package edu.cmu.sphinx.trainer;
 
+import edu.cmu.sphinx.knowledge.dictionary.*;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -31,21 +33,28 @@ public class SimpleUtterance implements Utterance{
 	transcriptSet  = new LinkedList();
     }
 
-    /** Constructor for class SimpleUtterance.
+    /** 
+     * Constructor for class SimpleUtterance.
      *
      * @param utteranceId the utterance ID, usually a file name.
      */
     public SimpleUtterance(String utteranceID) {
+	utteranceID = utteranceID;
 	transcriptSet  = new LinkedList();
     }
 
     /**
-     * Initialize with default dictionary and exact flag.
+     * Add transcript with dictionary and exact flag.
      *
+     * @param transcript the transcript
      * @param dictionary the default dictionary name
      * @param isExact the default flag
+     * @param wordSeparator the word separator characters
      */
-    public void initialize(String dictionary, boolean isExact) {
+    public void add(String transcript, Dictionary dictionary, 
+		    boolean isExact, String wordSeparator) {
+	transcriptSet.add(new SimpleTranscript(transcript, dictionary,
+					       isExact, wordSeparator));
     }
 
     /**
@@ -73,5 +82,14 @@ public class SimpleUtterance implements Utterance{
      */
     public Transcript nextTranscript() {
 	return (Transcript) transcriptIterator.next();
+    }
+
+    /**
+     * Returns a string representation of this utterance.
+     *
+     * @return the string representation.
+     */
+    public String toString() {
+	return utteranceID;
     }
 }

@@ -12,6 +12,7 @@
 
 package edu.cmu.sphinx.trainer;
 
+import edu.cmu.sphinx.knowledge.dictionary.*;
 
 /**
  * Provides mechanisms for accessing an utterance's transcription.
@@ -31,7 +32,7 @@ public interface Transcript {
     /**
      * Gets the transcript's dictionary.
      */
-    public String getDictionary();
+    public Dictionary getDictionary();
 
     /**
      * Returns whether the transcript is exact.

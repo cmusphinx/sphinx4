@@ -16,16 +16,18 @@ package edu.cmu.sphinx.trainer;
 import java.util.StringTokenizer;
 import java.util.Iterator;
 
+import edu.cmu.sphinx.knowledge.dictionary.*;
+
 /**
  * Provides mechanisms for accessing a transcription.
  */
 public class SimpleTranscript implements Transcript {
     private String transcript;              // the transcript
-    private String dictionary;              // the dictionary
+    private Dictionary dictionary;          // the dictionary
     boolean isExact;                        // is exact transcription?
     private boolean wasInitialized = false; // Has this object been initialized?
     private StringTokenizer words;          // string tokenizer for current transcription.
-
+    private String wordSeparator;           // word separators
     /**
      * Constructor for the SimpleTranscript.
      *
@@ -44,7 +46,7 @@ public class SimpleTranscript implements Transcript {
      * @param dictionary this transcript's dictionary
      * @param isExact whether the transcription is exact
      */
-    public SimpleTranscript(String dictionary, boolean isExact) {
+    public SimpleTranscript(Dictionary dictionary, boolean isExact) {
 	initialize(dictionary, isExact);
     }
 
@@ -55,7 +57,23 @@ public class SimpleTranscript implements Transcript {
      * @param dictionary this transcript's dictionary
      * @param isExact whether the transcription is exact
      */
-    public SimpleTranscript(String transcript, String dictionary, boolean isExact) {
+    public SimpleTranscript(String transcript, Dictionary dictionary, 
+			    boolean isExact, String wordSeparator) {
+	this.transcript = transcript;
+	this.dictionary = dictionary;
+	this.isExact = isExact;
+	this.wordSeparator = wordSeparator;
+    }
+
+    /**
+     * Constructor for the SimpleTranscript.
+     *
+     * @param transcript this transcript's text
+     * @param dictionary this transcript's dictionary
+     * @param isExact whether the transcription is exact
+     */
+    public SimpleTranscript(String transcript, Dictionary dictionary, 
+			    boolean isExact) {
 	this.transcript = transcript;
 	this.dictionary = dictionary;
 	this.isExact = isExact;
@@ -67,7 +85,7 @@ public class SimpleTranscript implements Transcript {
      * @param dictionary this transcript's dictionary
      * @param isExact whether the transcription is exact
      */
-    public void initialize(String dictionary, boolean isExact) {
+    public void initialize(Dictionary dictionary, boolean isExact) {
 	this.dictionary = dictionary;
 	this.isExact = isExact;
 	wasInitialized = true;
@@ -87,7 +105,7 @@ public class SimpleTranscript implements Transcript {
      *
      * @return current dictionary.
      */
-    public String getDictionary() {
+    public Dictionary getDictionary() {
 	return dictionary;
     }
 
@@ -112,7 +130,7 @@ public class SimpleTranscript implements Transcript {
      * Start the iterator for the words in the transcription.
      */
     public void startWordIterator(){
-	words = new StringTokenizer(transcript);
+	words = new StringTokenizer(transcript, wordSeparator);
     }
 
     /**
@@ -133,4 +151,21 @@ public class SimpleTranscript implements Transcript {
 	return (String) words.nextToken();
     }
 
+    /**
+     * Returns a tring representation of this transcript.
+     *
+     * @return the string representation
+     */
+    public String toString() {
+	String result = "";
+
+	result = "Dict: " + dictionary;
+	if (isExact) {
+	    result += " IS exact: ";
+	} else {
+	    result += " is NOT exact: ";
+	}
+	result += transcript;
+	return result;
+    }
 }

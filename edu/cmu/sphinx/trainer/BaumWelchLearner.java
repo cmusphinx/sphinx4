@@ -63,5 +63,89 @@ public abstract class BaumWelchLearner implements Learner {
     public double getScore(int stateID){
 	return 0;
     }
+    /*
+// Cha chaaaang..
+
+[
+    forward pass:
+        token = maketoken(initialstate);
+        List initialTokenlist = new List;
+        newtokenlist.add(token);
+    
+        // Initial token is on a nonemitting state; no need to score;
+        List newList = expandToEmittingStateList(initialTokenList){
+
+        while (morefeatures){
+	   scoreTokenList(emittingTokenList, featurevector[timestamp]);
+	   pruneTokenList(emittingTokenList);
+           List newList = expandToEmittingStateList(emittingTokenList){
+	   timestamp++;
+        }
+        // Some logic to expand to a final nonemitting state (how)?
+	expandToNonEmittingStates(emittingTokenList);
+
+
+    
+    backward pass:
+       state = finaltoken.state.wholelistofeverythingthatcouldbefinal;
+	while (moreTokensAtCurrentTime) { 
+	    Token token = nextToken();
+	    State state = token.state;
+	    state.gamma = state.logalpha + state.logbeta - logtotalprobability;
+	    SentenceHMM.updateState(state,state.gamma,vector[state.timestamp]);
+	    // state.update (state.gamma, vector[state.timestamp], updatefunction());
+            while token.hasMoreIncomingEdges() {
+	        Edge transition = token.nextIncomingEdge();
+	        double logalpha = transition.source.alpha;
+	        double logbeta  = transition.destination.beta;
+	        double logtransition = transition.transitionprob;
+		// transition.posterior = alpha*transition*beta / 
+		// 			  totalprobability;
+		double localtransitionbetascore = logtransition + logbeta + 
+					      transition.destination.logscore;
+	        double transition.posterior = localtransitionbetascore + 
+					      logalpha - logtotalprobability;
+	        transition.updateaccumulator(transition.posterior);
+	        // transition.updateaccumulator(transition.posterior, updatefunction());
+	        SentenceHMM.updateTransition(transition, transitionstate,state.gamma);
+		transition.source.beta = Logadd(transition.source.beta,
+						localtransitionbetascore);
+					
+	    }
+	}
+
+]
+
+
+expandToEmittingStateList(List tokenList){
+   List emittingTokenList = new List();
+   do {
+        List nonEmittingTokenList = new List();
+	expandtokens(newtokenlist, emittingTokenList, nonemittingTokenList);
+   while (nonEmittingTokenList.length() != 0);
+   return emittingTokenList;
+}
+
+
+expandtokens(List tokens, List nonEmittingStateList, List EmittingStateList){
+   while (moreTokens){
+       sucessorlist = SentenceHMM.gettransitions(nextToken());
+       while (moretransitions()){
+	    transition = successor;
+	    State destinationState = successor.state;
+            newtoken = gettokenfromHash(destinationState, currenttimestamp);
+            newtoken.logscore = Logadd(newtoken.logscore,
+				       token.logscore + transition.logscore);
+	    // Add transition to newtoken predecessor list?
+	    // Add transition to token sucessor list
+	    // Should we define a token "arc" for this. ??
+	    if (state.isemitting)
+		EmittingStateList.add(newtoken);
+	    else
+		nonEmittingStateList.add(newtoken);
+       } 
+   }
+}
+*/
 
 }
