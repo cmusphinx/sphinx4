@@ -15,8 +15,9 @@
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="${build_dir}/lib"/>
     <property name="javadoc_dir"	value="${build_dir}/javadoc"/>
+    <property name="javadoc_check_dir"  value="${build_dir}/javadoc_check"/>
     <property name="javadoc_zip"	value="javadoc.zip"/>
-    <property name="access"        value="public"/>
+    <property name="javadoc_level"	value="public"/>
 
     <!-- Load the environment -->
     <property environment="env"/>
@@ -193,10 +194,32 @@ jsapi.exe from the lib directory.
 		 overview="${src_dir}/overview.html"
 		 windowtitle="${javadoc_desc}"
                  doctitle="${javadoc_desc}"
-                 access="${access}">
+                 access="${javadoc_level}">
             <link href="http://java.sun.com/products/java-media/speech/forDevelopers/jsapi-doc"
                   offline="true"
                   packagelistLoc="lib/jsapi" />
+	    <classpath refid="libs"/>
+        </javadoc>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Checks javadocs                                        * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+
+    <target name="javadoc_check" 	    
+	    depends="handle_jsapi"
+	    description="checks the javadocs">
+        <mkdir dir="${javadoc_check_dir}"/>
+        <javadoc sourcepath="${src_dir}"
+		 additionalparam="-source 1.4"
+		 packagenames="edu.*"
+		 destdir="${javadoc_check_dir}" 
+		 overview="${src_dir}/overview.html"
+                 doclet="com.sun.tools.doclets.doccheck.DocCheck"
+                 docletpath="/lab/speech/java/doccheck1.2b2/doccheck.jar"
+                 access="${javadoc_level}">
 	    <classpath refid="libs"/>
         </javadoc>
     </target>
