@@ -35,9 +35,9 @@ import java.io.IOException;
  * 
  * The Sphinx properties that affect this processor
  * are: <pre>
- * edu.cmu.sphinx.frontend.LiveCMN.initialCepstralMean
- * edu.cmu.sphinx.frontend.LiveCMN.windowSize
- * edu.cmu.sphinx.frontend.LiveCMN.shiftWindow
+ * edu.cmu.sphinx.frontend.feature.LiveCMN.initialCepstralMean
+ * edu.cmu.sphinx.frontend.feature.LiveCMN.windowSize
+ * edu.cmu.sphinx.frontend.feature.LiveCMN.shiftWindow
  * </pre>
  *
  * <p>The mean of all the input cepstrum so far is not recalculated

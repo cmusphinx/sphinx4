@@ -28,8 +28,15 @@ import java.io.IOException;
 
 
 /**
- * Applies a discrete cosine transform to the given spectrum.
- *
+ * Applies a logarithm and then a Discrete Cosine Transform (DCT)
+ * to the input data. This is usually used in the last stage of
+ * converting a power spectrum into Mel-frequency cepstral coefficients.
+ * The property 
+ * <code>edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform.cepstrumLength</code>
+ * refers to the dimensionality of the coefficients that are actually returned,
+ * and defaults to 13. If the input is mel-spectrum, the first of these
+ * 13 values is actually the energy value, while the rest are MFCC
+ * (Mel-Frequency Cepstral Coefficient) values.
  */
 public class DiscreteCosineTransform extends BaseDataProcessor {
 

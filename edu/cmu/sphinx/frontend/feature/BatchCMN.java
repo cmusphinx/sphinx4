@@ -27,7 +27,11 @@ import java.util.List;
 
 
 /**
- * Subtract the mean from all the Data objects between a
+ * Applies cepstral mean normalization (CMN) to incoming cepstral data,
+ * to reduce the distortion caused by the transmission channel.
+ * The output is mean normalized cepstral data.
+ * <p>
+ * This CMN subtracts the mean from all the Data objects between a
  * DataStartSignal and a DataEndSignal.
  * It will read in all the Data objects, calculate the mean, 
  * and subtract this mean from all the Data objects. As a result,
@@ -35,8 +39,20 @@ import java.util.List;
  * all the Data objects have to be read in before the mean can
  * be calculated. This is fine in batch mode, but in live mode,
  * in which fast response times are needed, one should use the LiveCMN.
- * This process is typically applied to cepstrum objects, in which
- * case it is called cepstral mean normalization (CMN).
+ * <p>
+ * CMN is a technique used to reduce distortions that are introduced
+ * by the transfer function of the transmission channel (e.g., the
+ * microphone). Using a transmission channel to transmit
+ * input speech translates to multiplying the spectrum of the
+ * input speech with the transfer function of the channel (the distortion).
+ * Since the cepstrum is the Fourier Transform of the log 
+ * of the spectrum, the logarithm of the multiplication becomes an addition,
+ * which can be conveniently removed from the cepstrum by subtracting
+ * the mean cepstral vector. Intuitively,
+ * the mean cepstral vector approximately describes the
+ * spectral characteristics of the transmission channel (e.g., microphone).
+ *
+ * @see LiveCMN
  */
 public class BatchCMN extends BaseDataProcessor {
     
