@@ -43,7 +43,7 @@ implements ParallelState {
 	allStates = new LinkedList();
     }
 
-    private String modelName;
+    private FeatureStream stream;
     private TokenStack tokenStack;
 
 
@@ -66,11 +66,11 @@ implements ParallelState {
      * @param hmmState the hmmState associated with this state
      */
     public ParallelHMMStateState(SentenceHMMState parent,
-				 String modelName,
+				 FeatureStream stream,
 				 HMMState hmmState,
                                  int tokenStackSize) {
 	super(parent, hmmState);
-	this.modelName = modelName;
+	this.stream = stream;
         if (tokenStackSize > 0) {
             this.tokenStack = new ArrayTokenStack(tokenStackSize);
         } else {
@@ -91,13 +91,13 @@ implements ParallelState {
         
 
     /**
-     * Returns the name of the acoustic model behind this 
+     * Returns the FeatureStream of the acoustic model behind this 
      * ParallelHMMStateState.
      *
-     * @return the name of the acoustic model
+     * @return the FeatureStream of the acoustic model
      */
-    public String getModelName() {
-	return modelName;
+    public FeatureStream getFeatureStream() {
+	return stream;
     }
 
     
@@ -111,8 +111,7 @@ implements ParallelState {
      * @return the name of this ParallelHMMStateState
      */
     public String getName() {
-	String name = super.getName();
-	return name + "." + modelName;
+	return (super.getName() + "." + stream.getName());
     }
 
 
