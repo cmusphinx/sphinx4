@@ -28,17 +28,10 @@ import edu.cmu.sphinx.util.Timer;
 import java.io.IOException;
 
 /**
- * Filters an input power spectrum through a bank of mel-filters. 
- * The number of mel-filters in the bank is controlled by the
- * SphinxProperty:
- * <p>
- * <code>edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank.numberFilters</code>
- * <p>
- * which defaults to 40.
- * <p>
+ * Filters an input power spectrum through a bank of number of mel-filters. 
  * The output is an array of filtered values, typically called mel-spectrum,
  * each corresponding to the result of filtering the input spectrum
- *  through an individual filter.
+ * through an individual filter.
  * Therefore, the length of the output array is equal to the number
  * of filters created.
  * <p>
@@ -58,7 +51,7 @@ import java.io.IOException;
  * the mel scale emphasizes the lower frequencies. In general,
  * the mel frequency can be calculated from the linear frequency by:
  * <p>
- * <code>Mel(linearFrequency) = 1125 * log(1 + linearFrequency/700)</code>
+ * <code>Mel(linearFrequency) = 2595 * log(1 + linearFrequency/700)</code>
  * <p>
  * The minimum frequency has a default value of 130Hz, while 
  * the maximum frequency has a default value of 6800Hz.
@@ -76,6 +69,14 @@ import java.io.IOException;
  * information above 6800Hz that can be used for improving separation
  * between models. Particularly for very noisy channels,
  * maximum frequency of around 5000Hz may help cut off the noise.
+ * <p>
+ * Typical values for the constants defining the filter bank are: 
+ * <table width="80%" border="1">
+ * <tr><td><b>Sample rate (Hz)</b></td><td><b>16000</b></td><td><b>11025</b></td><td><b>8000</b></td></tr>
+ * <tr><td>number of filters</td><td>40</td><td>36</td><td>31</td></tr>
+ * <tr><td>minimum frequency (Hz)</td><td>130</td><td>130</td><td>200</td></tr>
+ * <tr><td>maximum frequency (Hz)</td><td>6800</td><td>5400</td><td>3500</td></tr>
+ * </table>
  * <p>
  * Davis and Mermelstein showed that Mel-frequency cepstral
  * coefficients are good for speech recognition.
