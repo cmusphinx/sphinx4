@@ -112,12 +112,10 @@ public class CmnFeatureExtractorTest implements DataSource {
 	    line = reader.readLine();
 
 	    if (start) { // start segment
-		frame = SegmentEndPointSignal.createSegmentStartSignal
-		    (cepstrumFrame);
+		frame = SegmentEndPointSignal.getStartSignal(cepstrumFrame);
 		start = false;
 	    } else if (line == null) { // end segment
-                frame = SegmentEndPointSignal.createSegmentEndSignal
-                    (cepstrumFrame);
+                frame = SegmentEndPointSignal.getEndSignal(cepstrumFrame);
             } else { // middle
                 frame = cepstrumFrame;
             }

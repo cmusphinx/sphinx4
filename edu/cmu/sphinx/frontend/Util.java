@@ -131,13 +131,11 @@ public class Util {
      *
      * @throws java.lang.ArrayIndexOutOfBoundsException
      */
-    public static double[] byteToDoubleArray
-	(byte[] byteArray, int offset, int length)
-	throws ArrayIndexOutOfBoundsException {
-
-	if (0 < length && (offset + length) <= byteArray.length) {
-	    int doubleLength = length / 2;
-	    double[] doubleArray = new double[doubleLength];
+    public static double[] byteToDoubleArray (byte[] byteArray, int offset, int length) throws ArrayIndexOutOfBoundsException {
+        
+        if (0 < length && (offset + length) <= byteArray.length) {
+            int doubleLength = length / 2;
+            double[] doubleArray = new double[doubleLength];
 	    int temp;
 	    for (int i = offset, j = 0; j < doubleLength ; 
 		 j++, temp = 0x00000000) {

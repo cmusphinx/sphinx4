@@ -11,8 +11,8 @@ import java.util.Vector;
 
 
 /**
- * A DoubleAudioFrameSource converts data from an InputStream into
- * DoubleAudioFrames. One would obtain the DoubleAudioFrames using
+ * A StreamAudioSource converts data from an InputStream into
+ * DoubleAudioFrame(s). One would obtain the DoubleAudioFrames using
  * the <code>read()</code> method. It will make sure that the
  * returned DoubleAudioFrame can be made into exactly N windows.
  * The size of the windows and the window shift is specified by
@@ -24,7 +24,7 @@ import java.util.Vector;
  * will be used in the next frame (which is obtained by the next call to
  * <code>read()</code>).
  */
-public class DoubleAudioFrameSource implements DataSource {
+public class StreamAudioSource implements DataSource {
 
     /**
      * The name of the SphinxProperty which indicates if the produced
@@ -61,20 +61,29 @@ public class DoubleAudioFrameSource implements DataSource {
 
 
     /**
-     * Constructs an AudioSource with the given InputStream.
+     * Constructs a StreamAudioSource with the given InputStream.
      *
      * @param audioStream the InputStream where audio data comes from
      */
-    public DoubleAudioFrameSource(InputStream audioStream) {
-
+    public StreamAudioSource(InputStream audioStream) {
 	getSphinxProperties();
 
 	this.audioStream = audioStream;
 	this.samplesBuffer = new byte[frameSizeInBytes * 2];
-	this.totalBytesRead = 0;
-	this.overflowBuffer = new byte[frameSizeInBytes];
-	this.overflowBytes = 0;
-	this.queue = new Queue();
+        this.overflowBuffer = new byte[frameSizeInBytes];
+        this.queue = new Queue();
+        reset();
+    }
+
+
+    /**
+     * Resets this StreamAudioSource as if it never read from the
+     * InputStream.
+     */
+    public void reset() {
+        this.totalBytesRead = 0;
+        this.overflowBytes = 0;
+        queue.clear();
     }
 
 
@@ -99,18 +108,18 @@ public class DoubleAudioFrameSource implements DataSource {
 
 
     /**
-     * Returns the InputStream from which this DoubleAudioFrameSource reads.
+     * Sets the InputStream from which this StreamAudioSource reads.
      *
-     * @return the InputStream from which audio data comes
+     * @param inputStream the InputStream from which audio data comes
      */
-    public InputStream getInputStream() {
-	return audioStream;
+    public void setInputStream(InputStream inputStream) {
+	this.audioStream = inputStream;
     }
 
     
     /**
      * Reads and returns the next DoubleAudioFrame from the InputStream of
-     * AudioFrameSource, return null if no data is read and end of file
+     * StreamAudioSource, return null if no data is read and end of file
      * is reached.
      *
      * @return the next DoubleAudioFrame or <code>null</code> if none is
@@ -129,13 +138,11 @@ public class DoubleAudioFrameSource implements DataSource {
 
 	} else if (bytesRead == 0) {
 
-	    return SegmentEndPointSignal.createSegmentStartSignal
-		(readNextFrame());
+	    return SegmentEndPointSignal.getStartSignal(readNextFrame());
 
 	} else if (bytesRead + frameSizeInBytes >= SEGMENT_MAX_BYTES) {
 
-	    return SegmentEndPointSignal.createSegmentEndSignal
-		(readNextFrame());
+	    return SegmentEndPointSignal.getEndSignal(readNextFrame());
 
 	} else {
 
@@ -174,8 +181,10 @@ public class DoubleAudioFrameSource implements DataSource {
 	// if read bytes do not fill a frame, copy them to overflow buffer
 	// after the previously stored overlap samples
 	if (totalInBuffer < windowSizeInBytes) {
-            samplesToOverflowBuffer();
+
+            samplesToOverflowBuffer(0, overflowBytes, totalInBuffer);
 	    return null;
+
 	} else {
 	    int occupiedElements = Util.getOccupiedElements
 		(totalInBuffer, windowSizeInBytes, windowShiftInBytes);
@@ -184,17 +193,14 @@ public class DoubleAudioFrameSource implements DataSource {
 
 		// assign samples which don't fill an entire frame to 
 		// overflow buffer for use on next pass
-		
 		int offset = occupiedElements - 
                     (windowSizeInBytes - windowShiftInBytes);
 
-		overflowBytes = totalInBuffer - offset;
+                samplesToOverflowBuffer(offset, 0, (totalInBuffer - offset));
 
-		System.arraycopy
-		    (samplesBuffer, offset, overflowBuffer, 0, overflowBytes);
 		totalInBuffer = occupiedElements;
 
-		// TODO: set "prior" for the next read
+		// set "prior" for the next read
 		short prior = Util.bytesToShort(samplesBuffer, offset - 2);
 		queue.push(new PreemphasisPriorSignal(prior));
 	    }
@@ -225,21 +231,27 @@ public class DoubleAudioFrameSource implements DataSource {
 	if (overflowBytes > 0) {
 	    System.arraycopy(overflowBuffer, 0, samplesBuffer, 0,
 			     overflowBytes);
-	    totalInBuffer += overflowBytes;
+	    totalInBuffer = overflowBytes;
 	    overflowBytes = 0;
 	}
     }
 
 
     /**
-     * Appends the first totalInBuffer bytes in samplesBuffer to
-     * overflowBuffer. Increments overflowBytes by totalInBuffer.
+     * Copies from the samplesBuffer at the specified position, to
+     * the overflowBuffer at the specified position.
+     *
+     * @param samplesPos where to start in the samplesBuffer
+     * @param overflowPos where to start in the overflowBuffer
+     * @param length how many bytes to copy
      */
-    private void samplesToOverflowBuffer() {
+    private void samplesToOverflowBuffer(int samplesPos, int overflowPos,
+                                         int length) {
         if (totalInBuffer > 0) {
-            System.arraycopy(samplesBuffer, 0, overflowBuffer, overflowBytes,
-                             totalInBuffer);
-            overflowBytes += totalInBuffer;
+            System.arraycopy(samplesBuffer, samplesPos,
+                             overflowBuffer, overflowPos,
+                             length);
+            overflowBytes = overflowPos + length;
         }
     }
 
@@ -273,7 +285,7 @@ public class DoubleAudioFrameSource implements DataSource {
 
 class Queue {
 
-    private Vector queue = new Vector();
+    Vector queue = new Vector();
 
     public void push(Data data) {
 	queue.add(data);
@@ -285,5 +297,9 @@ class Queue {
 
     public boolean isEmpty() {
 	return queue.isEmpty();
+    }
+
+    public void clear() {
+        queue.clear();
     }
 }

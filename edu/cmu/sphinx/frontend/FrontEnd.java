@@ -19,7 +19,28 @@ import javax.sound.sampled.AudioSystem;
 
 
 /**
- * Pre-processes the input audio into Features. 
+ * Pre-processes the input audio into Features. The FrontEnd is composed
+ * of a series of processors that are added by the <pre>addProcessor()</pre>
+ * method. The input to the FrontEnd can be an InputStream (which contains
+ * audio data), in which case
+ * the method <pre>setInputStream()</pre> will be used. Alternatively, the
+ * input can also be a file containing a list of audio files, in which case
+ * the method <pre>setBatchFile()</pre> will be used. A typical sequence
+ * of method calls to use the FrontEnd is: <pre>
+ * FrontEnd frontend = new FrontEnd();
+ * frontend.addProcessor(...a processor...);
+ * // add other processors
+ * 
+ * frontend.setInputStream(...InputStream created from a file...);
+ * OR
+ * frontend.setBatchFile(...a batch file containing a list of audio files...);
+ *
+ * frontend.run();
+ * </pre>
+ *
+ * The processors will be executed in the order that they are added. The
+ * first processor must take <b><code>DoubleAudioFrame</code></b> as
+ * input, and the last processor must output <b><code>Features</code></b>. 
  */
 public class FrontEnd implements DataSource, Runnable {
 
@@ -42,12 +63,9 @@ public class FrontEnd implements DataSource, Runnable {
 	"edu.cmu.sphinx.frontend.bytesPerAudioFrame";
 
 
-    private InputMode inputMode;
     private int samplesPerAudioFrame;
     private List processors = null;
-    private InputStream audioInputStream;
     private DataSource audioFrameSource;
-    private String batchFile;
     private List queue;
 
 
@@ -77,7 +95,7 @@ public class FrontEnd implements DataSource, Runnable {
      * Links all the added processors together by calling
      * <code>setSource()</code> on each processor.
      */
-    public void linkProcessors() {
+    private void linkProcessors() {
 	DataSource predecessor = null;
 	ListIterator iterator = processors.listIterator();
 
@@ -95,9 +113,7 @@ public class FrontEnd implements DataSource, Runnable {
      * @param inputStream the source of audio input
      */
     public void setInputStream(InputStream inputStream) {
-        this.inputMode = InputMode.STREAM;
-	this.audioInputStream = inputStream;
-	this.audioFrameSource = new DoubleAudioFrameSource(inputStream);
+	this.audioFrameSource = new StreamAudioSource(inputStream);
     }
 
 
@@ -105,10 +121,11 @@ public class FrontEnd implements DataSource, Runnable {
      * Sets the input as a file that contains a list of audio files.
      *
      * @param batchFile a file that contains a list of audio files
+     *
+     * @throws IOException if there is a file I/O problem
      */
-    public void setBatchFile(String batchFile) {
-        this.inputMode = InputMode.BATCH;
-        this.batchFile = batchFile;
+    public void setBatchFile(String batchFile) throws IOException {
+        this.audioFrameSource = new BatchFileAudioSource(batchFile);
     }
 
 
@@ -131,6 +148,8 @@ public class FrontEnd implements DataSource, Runnable {
      * Starts the FrontEnd.
      */
     public void run() {
+
+        linkProcessors();
 
 	// set the data source of the first processor 
 	PullingProcessor first = (PullingProcessor) processors.get(0);
@@ -158,6 +177,8 @@ public class FrontEnd implements DataSource, Runnable {
 	}
     }
 }
+
+
 
 
 /**

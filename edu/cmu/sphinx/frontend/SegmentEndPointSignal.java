@@ -28,7 +28,7 @@ public class SegmentEndPointSignal implements Signal {
      *
      * @param frameData the first audio frame in the segment
      */
-    public static SegmentEndPointSignal createSegmentStartSignal(Data dataFrame) {
+    public static SegmentEndPointSignal getStartSignal(Data dataFrame) {
 	return (new SegmentEndPointSignal(true, false, dataFrame));
     }
 
@@ -39,7 +39,7 @@ public class SegmentEndPointSignal implements Signal {
      *
      * @param frameData the last audio frame in the segment
      */
-    public static SegmentEndPointSignal createSegmentEndSignal(Data dataFrame) {
+    public static SegmentEndPointSignal getEndSignal(Data dataFrame) {
 	return (new SegmentEndPointSignal(false, true, dataFrame));
     }
 
@@ -51,7 +51,7 @@ public class SegmentEndPointSignal implements Signal {
      * @param frameData the first, which is also the last, audio frame
      *    in the segment
      */
-    public static SegmentEndPointSignal createSegmentStartEndSignal(Data dataFrame) {
+    public static SegmentEndPointSignal getStartEndSignal(Data dataFrame) {
 	return (new SegmentEndPointSignal(true, true, dataFrame));
     }
 

@@ -35,6 +35,8 @@ public class PreemphasizerTest {
 	    System.out.println("Usage: java FrontEnd <filename>");
 	}
 
+        boolean batchMode = Boolean.getBoolean
+            ("test.frontend.PreemphasizerTest.batchMode");
         boolean dumpValues = Boolean.getBoolean
             ("test.frontend.PreemphasizerTest.dumpValues");
         boolean dumpTimes = Boolean.getBoolean
@@ -46,10 +48,13 @@ public class PreemphasizerTest {
 	FrontEnd frontend = new FrontEnd();
 
 	frontend.addProcessor(preemphasizer);
-	frontend.linkProcessors();
-
+	
 	try {
-	    frontend.setInputStream(new FileInputStream(argv[0]));
+            if (batchMode) {
+                frontend.setBatchFile(argv[0]);
+            } else {
+                frontend.setInputStream(new FileInputStream(argv[0]));
+            }
 	    frontend.run();
 	} catch (Exception e) {
 	    e.printStackTrace();

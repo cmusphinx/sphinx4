@@ -22,6 +22,8 @@ public class HammingWindowerTest {
 	    System.out.println("Usage: java FrontEnd <filename>");
 	}
 
+        boolean batchMode = Boolean.getBoolean
+            ("tests.frontend.HammingWindowerTest.batchMode");
         boolean dumpValues = Boolean.getBoolean
             ("tests.frontend.HammingWindowerTest.dumpValues");
         boolean dumpTimes = Boolean.getBoolean
@@ -35,10 +37,14 @@ public class HammingWindowerTest {
 	FrontEnd frontend = new FrontEnd();
       	frontend.addProcessor(preemphasizer);
         frontend.addProcessor(cepstrumProducer);
-	frontend.linkProcessors();
 
 	try {
-	    frontend.setInputStream(new FileInputStream(argv[0]));
+            if (batchMode) {
+                frontend.setBatchFile(argv[0]);
+            } else {
+                frontend.setInputStream(new FileInputStream(argv[0]));
+            }
+
 	    frontend.run();
             
             if (dumpTimes) {
