@@ -166,8 +166,9 @@ public class Live {
      * Start recording.
      */
     public boolean startRecording() {
-        getDecoder().getMicrophone().clear();
-        return getDecoder().getMicrophone().startRecording();
+        Microphone microphone = getDecoder().getMicrophone();
+        microphone.clear();
+        return microphone.startRecording();
     }
 
     /**
@@ -181,7 +182,17 @@ public class Live {
      * Plays the last recorded utterance.
      */
     public void playUtterance() {
-        (new PlaybackThread()).start();
+        // (new PlaybackThread()).start();
+        if (lastResult != null) {
+            if (lastResult.getUtterance() == null) {
+                System.out.println("Last Result has no Utterance");
+            } else {
+                byte[] audio = lastResult.getUtterance().getAudio();
+                audioPlayer.play
+                    (audio, decoder.getMicrophone().getAudioFormat());
+                System.out.println("Finished playing utterance.");
+            }
+        }
     }
 
 
@@ -222,7 +233,7 @@ public class Live {
                 decoder.initialize
 		    (new Microphone("mic", decoderName,
 				    decoder.getSphinxProperties()));
-            }
+            }            
         } catch (LineUnavailableException lue) {
             // if the audio line is unavailable for some reason
             String errorMessage = "Cannot change to " + decoderName;
