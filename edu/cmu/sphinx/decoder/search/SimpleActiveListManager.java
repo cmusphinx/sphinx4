@@ -26,13 +26,32 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * A list of ActiveLists.  Different token types are placed in different lists..
+ * A list of ActiveLists. Different token types are placed in different lists.
  *
  * This class is not thread safe and should only be used by  a single
  * thread.
  *
  */
 public class SimpleActiveListManager implements ActiveListManager  {
+
+    private static final String PROP_PREFIX
+        = "edu.cmu.sphinx.decoder.search.SimpleActiveListManager.";
+
+    /**
+     * This property is used in the Iterator returned by the
+     * getNonEmittingListIterator() method. When the Iterator.next() method
+     * is called, this property determines whether the lists prior to
+     * that returned by next() are empty (they should be empty).
+     * If they are not empty, an Error will be thrown.
+     */
+    public static final String PROP_CHECK_PRIOR_LISTS_EMPTY
+        = PROP_PREFIX + "checkPriorListsEmpty";
+
+    /**
+     * The default value of PROP_CHECK_PRIOR_LISTS_EMPTY.
+     */
+    public static final boolean PROP_CHECK_PRIOR_LISTS_EMPTY_DEFAULT = false;
+
 
     private Class[] searchStateOrder;
     private Class[] nonEmittingClasses;
@@ -42,6 +61,7 @@ public class SimpleActiveListManager implements ActiveListManager  {
     private ActiveList emittingActiveList;
 
     private SphinxProperties props;
+    private boolean checkPriorLists;
 
 
     /**
@@ -55,6 +75,10 @@ public class SimpleActiveListManager implements ActiveListManager  {
                                    Class[] searchStateOrder) {
         this.props = props;
         this.searchStateOrder = searchStateOrder;
+
+        checkPriorLists = props.getBoolean
+            (PROP_CHECK_PRIOR_LISTS_EMPTY,
+             PROP_CHECK_PRIOR_LISTS_EMPTY_DEFAULT);
 
         emittingClass = searchStateOrder[searchStateOrder.length - 1];
         nonEmittingClasses = new Class[searchStateOrder.length - 1];
@@ -214,7 +238,9 @@ public class SimpleActiveListManager implements ActiveListManager  {
         }
 
         public Object next() {
-            checkPriorLists();
+            if (checkPriorLists) {
+                checkPriorLists();
+            }
             stateClass = nonEmittingClasses[listPtr++];
             list = (ActiveList) listMap.get(stateClass);
             return list;
