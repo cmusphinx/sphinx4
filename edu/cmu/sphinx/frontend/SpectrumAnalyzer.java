@@ -55,6 +55,7 @@ SpectrumSource {
 	createWeightFft(numberFftPoints, false);
         initComplexArrays();
         weightFftTimesFrom2 = new Complex();
+	tempComplex = new Complex();
     }
 
 
