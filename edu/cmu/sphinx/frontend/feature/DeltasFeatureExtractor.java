@@ -32,13 +32,30 @@ import java.util.Vector;
 
 
 /**
- * Extracts features from a block of cepstrum (in the form of Data objects).
- * This FeatureExtractor expects Data objects that are MelFrequency 
- * cepstral coefficients (MFCC).
- *
- * <p>The Sphinx properties that affect this processor are: <pre>
- * edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor.windowSize
- * </pre>
+ * Computes the delta and double delta of input cepstrum.
+ * The output data is a FloatData object with a float array
+ * of size three times the original cepstrum. They are
+ * usually called features. Figure 1 shows the arrangement
+ * of the output feature data array:
+ * <p>
+ * <img src="doc-files/feature.jpg">
+ * <br><b>Figure 1: Layout of the returned features.</b>
+ * <p>Suppose that the original cepstrum has a length of N,
+ * the first N elements of the feature is just the original
+ * cepstrum, the second N elements is the delta of the cepstrum,
+ * and the last N elements is the double delta of the cepstrum.
+ * <p>
+ * Figure 2 below shows pictorially the computation of the
+ * delta and double delta of a cepstrum, using
+ * the last 3 cepstra and the next 3 cepstra.
+ * <img src="doc-files/deltas.jpg">
+ * <br><b>Figure 2: Delta and double delta vector computation.</b>
+ * <p>Refering to Figure 2, the delta is computed by subtracting
+ * the cepstrum that is two behind of the current cepstrum, from the
+ * cepstrum that is two ahead of the current cepstrum.
+ * The computation of the double delta is more complex, involving
+ * the cepstra that are one and three behind and after the current
+ * cepstrum.
  */
 public class DeltasFeatureExtractor extends BaseDataProcessor {
 
