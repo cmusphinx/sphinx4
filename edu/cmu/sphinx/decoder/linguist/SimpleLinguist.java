@@ -114,13 +114,13 @@ public class SimpleLinguist implements  Linguist {
      */
     public void initialize(String context, LanguageModel languageModel,
                         Grammar grammar, AcousticModel[] models) {
-        assert models.length == 1;
 
         this.props = SphinxProperties.getSphinxProperties(context);
         this.grammar = grammar;
-        this.acousticModel = models[0];
         this.logMath = LogMath.getLogMath(context);
         this.languageModel = languageModel;
+
+        setAcousticModels(models);
 
         logOne = logMath.getLogOne();
 
@@ -162,12 +162,32 @@ public class SimpleLinguist implements  Linguist {
         // these things, so release them so that resources can be
         // reclaimed.
 
-        acousticModel = null;
+        freeAcousticModels();
         nodeStateMap = null;
         arcPool = null;
 
         StatisticsVariable.dumpAll();
     }
+
+
+    /**
+     * Sets the acoustic model(s) used.
+     *
+     * @param models the acoustic models to use
+     */
+    protected void setAcousticModels(AcousticModel[] models) {
+        assert models.length == 1;
+        this.acousticModel = models[0];
+    }
+
+
+    /**
+     * Frees the acoustic model(s) used.
+     */
+    protected void freeAcousticModels() {
+        acousticModel = null;
+    }
+
 
     /**
      * 
@@ -194,6 +214,24 @@ public class SimpleLinguist implements  Linguist {
     }
 
     /**
+     * Returns the logMath used.
+     *
+     * @return the logMath used.
+     */
+    public LogMath getLogMath() {
+        return logMath;
+    }
+
+    /**
+     * Returns the log value of the silence insertion probability.
+     *
+     * @return the log value of the silence insertion probability
+     */
+    public double getLogSilenceInsertionProbability() {
+        return logSilenceInsertionProbability;
+    }
+
+    /**
      * Retrieves the language model for this linguist
      *
      * @return the language model (or null if there is none)
@@ -211,7 +249,6 @@ public class SimpleLinguist implements  Linguist {
         return initialSentenceHMMState;
     }
 
-
     /**
      * Compiles the grammar into a sentence hmm.  A GrammarJob is
      * created for the initial grammar node and added to the
@@ -220,7 +257,6 @@ public class SimpleLinguist implements  Linguist {
      * grammar node is expanded and attached to the tails. GrammarJobs
      * for the successors are added to the grammar job queue.
      */
-
     protected Collection compileGrammar() {
         List gstateList = new ArrayList();
 
@@ -373,7 +409,7 @@ public class SimpleLinguist implements  Linguist {
      * and exit points for the grammar node and for connecting up the
      * grammar nodes to each other.
      */
-    class GState {
+    protected class GState {
         private GrammarNode node;
         private Set rightContexts = new HashSet();
         private Set leftContexts = new HashSet();
@@ -389,7 +425,7 @@ public class SimpleLinguist implements  Linguist {
          *
          * @param node the grammar node
          */
-        GState(GrammarNode node) {
+        protected GState(GrammarNode node) {
             this.node = node;
             nodeStateMap.put(node, this);
         }
@@ -419,7 +455,7 @@ public class SimpleLinguist implements  Linguist {
                         startingContexts.addAll(gstate.getStartingContexts());
                     }
                 } else {
-                    int maxSize = acousticModel.getRightContextSize();
+                    int maxSize = getRightContextSize();
                     GrammarWord word = node.getWord();
                     Pronunciation[] prons = word.getPronunciations();
                     for (int i = 0; i < prons.length; i++) {
@@ -442,7 +478,7 @@ public class SimpleLinguist implements  Linguist {
          * the pronunciation
          */
         private UnitContext getStartingContext(Pronunciation pronunciation) {
-            int maxSize = acousticModel.getRightContextSize();
+            int maxSize = getRightContextSize();
             Unit[] units = pronunciation.getUnits();
             int actualSize = Math.min(units.length, maxSize);
             Unit[] context = new Unit[actualSize];
@@ -462,7 +498,7 @@ public class SimpleLinguist implements  Linguist {
         Collection getEndingContexts() {
             Collection endingContexts = new HashSet();
             if (!node.isEmpty()) {
-                int maxSize = acousticModel.getLeftContextSize();
+                int maxSize = getLeftContextSize();
                 GrammarWord word = node.getWord();
                 Pronunciation[] prons = word.getPronunciations();
                 for (int i = 0; i < prons.length; i++) {
@@ -758,7 +794,7 @@ public class SimpleLinguist implements  Linguist {
             Unit[] units = left.getUnits();
             if (units.length > 0) {
                 return (getRightContextSize(units[0]) <
-                        acousticModel.getRightContextSize());
+                        getRightContextSize());
             }
             return false;
         }
@@ -861,8 +897,7 @@ public class SimpleLinguist implements  Linguist {
 
             Unit[] units = pronunciation.getUnits();
 
-            int fanOutPoint = units.length -
-                acousticModel.getRightContextSize();
+            int fanOutPoint = units.length - getRightContextSize();
 
             if (fanOutPoint < 0) {
                 fanOutPoint = 0;
@@ -1066,7 +1101,7 @@ public class SimpleLinguist implements  Linguist {
             if (true && unit.isFiller()) {
                 return 0;
             } else {
-                return acousticModel.getLeftContextSize();
+                return getLeftContextSize();
             }
         }
 
@@ -1081,11 +1116,27 @@ public class SimpleLinguist implements  Linguist {
             if (true && unit.isFiller()) {
                 return 0;
             } else {
-                return acousticModel.getRightContextSize();
+                return getRightContextSize();
             }
         }
 
-
+        /**
+         * Returns the size of the left context.
+         *
+         * @return the size of the left context
+         */
+        protected int getLeftContextSize() {
+            return acousticModel.getLeftContextSize();
+        }
+        
+        /**
+         * Returns the size of the right context.
+         *
+         * @return the size of the right context
+         */
+        protected int getRightContextSize() {
+            return acousticModel.getRightContextSize();
+        }
 
         /**
          * Generates the next left context based upon a previous
@@ -1097,7 +1148,7 @@ public class SimpleLinguist implements  Linguist {
         UnitContext generateNextLeftContext(UnitContext
                 prevLeftContext, Unit unit) {
             Unit[] prevUnits = prevLeftContext.getUnits();
-            int maxSize = acousticModel.getLeftContextSize();
+            int maxSize = getLeftContextSize();
             int curSize = prevUnits.length;
             int actSize = Math.min(maxSize, curSize);
             Unit[] leftUnits = new Unit[actSize];
@@ -1295,7 +1346,7 @@ public class SimpleLinguist implements  Linguist {
          *
          * @return the state that was attached
          */
-        private void attachState(SentenceHMMState prevState,
+        protected void attachState(SentenceHMMState prevState,
                 SentenceHMMState nextState, double logAcousticProbability,
                 double logLanguageProbablity, double logInsertionProbablity) {
 
