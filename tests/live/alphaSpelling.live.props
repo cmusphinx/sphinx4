@@ -76,7 +76,6 @@ edu.cmu.sphinx.frontend.useAcousticModelProperties = true
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth = 2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth = 1E-150
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.decoder.search.FastActiveList
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=7.0
 edu.cmu.sphinx.decoder.linguist.Linguist.autoLoopSilence=false
 edu.cmu.sphinx.decoder.linguist.Linguist.compositeThreshold=10000
@@ -94,8 +93,10 @@ edu.cmu.sphinx.search.validateResults=false
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.SimpleLinguist
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.WordListGrammar
+edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
+
 
 ############################################################
 # 
