@@ -25,7 +25,6 @@ import java.util.Vector;
  *
  * @see Cepstrum
  * @see Feature
- * @see FeatureFrame
  */
 public class FeatureExtractor extends DataProcessor implements
 FeatureSource {
@@ -64,62 +63,20 @@ FeatureSource {
     private int currentPosition;
     private int window;
     private int jp1, jp2, jp3, jf1, jf2, jf3;
-    private PeekableQueue peekableQueue;
     private boolean segmentStart;
     private boolean segmentEnd;
-    private int featureID;
+    private IDGenerator featureID;
 
     private CepstrumSource predecessor;
     private List outputQueue;
-
-
-    /**
-     * Implements an input queue that allows "peek"-ing as well as
-     * actually reading.
-     */
-    private class PeekableQueue {
-        
-        private Vector queue = new Vector();
-
-        /**
-         * Constructs a default PeekableQueue.
-         */
-        public PeekableQueue() {
-            queue = new Vector();
-        };
-
-
-        /**
-         * Remove the next element in the queue. If there are no elements
-         * in the queue, it will return getSource().read().
-         */
-        public Cepstrum removeNext() throws IOException {
-            if (queue.size() > 0) {
-                return (Cepstrum) queue.remove(0);
-            } else {
-                return predecessor.getCepstrum();
-            }
-        }
-
-        /**
-         * Peek the next element in the queue without actually removing it.
-         */
-        public Cepstrum peekNext() throws IOException {
-            if (queue.size() > 0) {
-                return (Cepstrum) queue.get(0);
-            } else {
-                Cepstrum next = predecessor.getCepstrum();
-                queue.add(next);
-                return next;
-            }
-        }
-    }
             
 
     /**
      * Constructs a default FeatureExtractor.
      *
+     * @param name the name of this FeatureExtractor
      * @param context the context of the SphinxProperties to use
+     * @param predecessor the CepstrumSource to get Cepstrum from
      */
     public FeatureExtractor(String name, String context,
                             CepstrumSource predecessor) {
@@ -127,30 +84,20 @@ FeatureSource {
 	initSphinxProperties();
         this.predecessor = predecessor;
 	cepstraBuffer = new float[cepstraBufferSize][];
-        peekableQueue = new PeekableQueue();
         outputQueue = new Vector();
+        featureID = new IDGenerator();
         reset();
     }
 
 
     /**
-     *
+     * Resets the FeatureExtractor to be ready to read the next segment
+     * of data. 
      */
-    public void reset() {
+    private void reset() {
         segmentStart = false;
         segmentEnd = false;
-        featureID = 0;
-    }
-
-
-    /**
-     * Returns the next valid feature ID, incrementing the ID
-     * by one.
-     *
-     * @return the next valid feature ID
-     */
-    private int getNextFeatureID() {
-        return featureID++;
+        featureID.reset();
     }
 
 
@@ -168,9 +115,7 @@ FeatureSource {
 
 
     /**
-     * Returns the next Feature object, which is a FeatureFrame
-     * produced by this FeatureExtractor. It can also be
-     * other Feature type objects, such as EndPointSignal.FRAME_START.
+     * Returns the next Feature object produced by this FeatureExtractor.
      *
      * @return the next available Feature object, returns null if no
      *     Feature object is available
@@ -188,26 +133,24 @@ FeatureSource {
             if (segmentEnd) {
                 segmentEnd = false;
                 outputQueue.add(new Feature(Signal.SEGMENT_END,
-                                            getNextFeatureID()));
+                                            featureID.getNextID()));
             } else {
-
-                Cepstrum input = (Cepstrum) peekableQueue.peekNext();
+                Cepstrum input = predecessor.getCepstrum();
                 
                 if (input == null) {
                     return null;
                 } else {
                     if (input.hasContent()) {
-                        
-                        int numberFeatures = readCepstra(featureBlockSize);
+                        // "featureBlockSize-1" since first Cepstrum already read
+                        int numberFeatures = readCepstra(featureBlockSize - 1,
+                                                         input);
                         if (numberFeatures > 0) {
                             computeFeatures(numberFeatures);
                         }
                     } else if (input.getSignal().equals(Signal.SEGMENT_START)) {
-                        
-                        input = (Cepstrum) peekableQueue.removeNext();
                         segmentStart = true;
                         outputQueue.add(new Feature(input.getSignal(),
-                                                    getNextFeatureID()));
+                                                    featureID.getNextID()));
                     }
                 }
             }
@@ -234,25 +177,28 @@ FeatureSource {
      *
      * @throws java.io.IOException if there is an error reading Cepstrum
      */
-    private int readCepstra(int numberCepstra) throws IOException {
+    private int readCepstra(int numberCepstra, Cepstrum firstCepstrum) throws
+    IOException {
 
         int residualVectors = 0;
         int cepstraRead = 0;
 
-        // replicate the first cepstrum if segment start
+        // replicate the first cepstrum of a segment
         if (segmentStart) {
-            Cepstrum firstCepstrum = (Cepstrum) peekableQueue.removeNext();
             residualVectors -= setStartCepstrum(firstCepstrum);
             segmentStart = false;
             cepstraRead++;
-            featureID = 0;
+            featureID.reset();
+        } else if (firstCepstrum.hasContent()) {
+            addCepstrumData(firstCepstrum.getCepstrumData());
+            cepstraRead++;
         }
 
         boolean done = false;
 
         // read the cepstra
         while (!done && cepstraRead < numberCepstra) {
-            Cepstrum cepstrum = peekableQueue.removeNext();
+            Cepstrum cepstrum = predecessor.getCepstrum();
             if (cepstrum != null) {
                 if (cepstrum.hasContent()) {
                     // just a cepstra
@@ -277,7 +223,8 @@ FeatureSource {
 
     /**
      * Replicate the given cepstrum into the first window+1
-     * number of frames in the cepstraBuffer.
+     * number of frames in the cepstraBuffer. This is the first cepstrum
+     * in the segment.
      *
      * @param cepstrum the Cepstrum to replicate
      *
@@ -421,7 +368,36 @@ FeatureSource {
             jp3 %= cepstraBufferSize;
         }
 
-        return (new Feature(feature, getNextFeatureID()));
+        return (new Feature(feature, featureID.getNextID()));
+    }
+}
+
+
+/**
+ * An ID generator that gives out integer IDs and checks for overflow.
+ */ 
+class IDGenerator {
+    
+    private int id = 0;
+    
+    /**
+     * Returns the next valid ID, checks for integer overflow.
+     *
+     * @return the next valid ID, goes back to zero if overflow
+     */
+    public int getNextID() {
+        if (id == Integer.MAX_VALUE) {
+            return (id = 0);
+        } else {
+            return id++;
+        }
+    }
+
+    /**
+     * Resets the ID to zero.
+     */
+    public void reset() {
+        id = 0;
     }
 }
 
