@@ -82,6 +82,7 @@ public class Token implements Scoreable {
     private SearchState searchState;
 
     private int location;
+    private Object appObject;
 
     private static Set predecessorClasses = null;
 
@@ -361,13 +362,18 @@ public class Token implements Scoreable {
      * @return the string representation of this object
      */
     public String toString() {
+        String appString = "";
+
+        if (appObject != null) {
+            appString = " " + appObject.toString();
+        }
         return
                 numFmt.format(getFrameNumber()) + " " +
                 scoreFmt.format(getScore()) + " " +
                 scoreFmt.format(getAcousticScore()) + " " +
                 scoreFmt.format(getLanguageScore()) + " " +
                 scoreFmt.format(getInsertionProbability())
-                + " " + getSearchState();
+                + " " + getSearchState() + appString;
     }
 
 
@@ -507,5 +513,23 @@ public class Token implements Scoreable {
      */
     protected static DecimalFormat getNumberFormat() {
         return numFmt;
+    }
+
+    /**
+     * Returns the application object
+     *
+     * @return the application object
+     */
+    public Object getAppObject() {
+        return appObject;
+    }
+
+    /**
+     * Sets the application object
+     *
+     * @param obj the application object
+     */
+    public void setAppObject(Object obj) {
+        appObject = obj;
     }
 }
