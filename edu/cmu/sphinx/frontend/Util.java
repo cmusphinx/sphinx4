@@ -6,6 +6,8 @@ package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 
 
@@ -422,5 +424,19 @@ public class Util {
         }
 
         return audioTime;
+    }
+
+
+    /**
+     * Saves the given bytes to the given binary file.
+     *
+     * @param data the bytes to save
+     * @param filename the binary file name
+     */
+    public static void bytesToFile(byte[] data, String filename) throws
+                                     IOException {
+        FileOutputStream file = new FileOutputStream(filename);
+        file.write(data);
+        file.close();
     }
 }
