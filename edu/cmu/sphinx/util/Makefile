@@ -17,3 +17,6 @@ include ${TOP}/build/Makefile.config
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 
 all:: ${CLASSES} ${STUBS} ${DATA}
+
+ra: all
+	$(JAVA_CMD) edu.cmu.sphinx.util.ResultAnalyzer
