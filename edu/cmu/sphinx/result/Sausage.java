@@ -106,13 +106,64 @@ public class Sausage implements ConfidenceResult {
      * @see edu.cmu.sphinx.result.ConfidenceResult#getBestHypothesis()
      */
     public Path getBestHypothesis() {
+        return getBestHypothesis(true);
+    }
+    
+    /**
+     * Get the best hypothesis path discarding any filler words.
+	 * @return the best path without fillers
+     */
+    public Path getBestHypothesisNoFiller() {
+        return getBestHypothesis(false);
+    }
+    
+    /**
+     * Get the best hypothesis path optionally discarding any filler words.
+	 * @param wantFiller whether to keep filler words
+	 * @return the best path 
+     */     
+    protected Path getBestHypothesis(boolean wantFiller) {
         WordResultPath path = new WordResultPath();
         Iterator i = confusionSetIterator();
         while (i.hasNext()) {
             ConfusionSet cs = (ConfusionSet)i.next();
-            path.add(cs.getBestHypothesis());
+            WordResult wr = cs.getBestHypothesis();
+            if (wantFiller || !wr.isFiller()) {
+                path.add(cs.getBestHypothesis());
+            }
         }
         return path;
+    }
+    
+    /**
+     * Remove all filler words from the sausage. Also removes confusion sets
+     * that might've been emptied in the process of removing fillers.
+     *
+     */
+    public void removeFillers() {
+        Iterator c = confusionSetIterator();
+        while (c.hasNext()) {
+            ConfusionSet cs = (ConfusionSet)c.next();
+            Iterator j = cs.keySet().iterator();
+            while (j.hasNext()) {
+                Double p = (Double)j.next();
+                Set words = (Set)cs.get(p);
+                Iterator w = words.iterator();
+                while (w.hasNext()) {
+                    WordResult word = (WordResult)w.next();
+                    if (word.isFiller()) {
+                        w.remove();
+                    }
+                }
+                if (words.size() == 0) {
+                    j.remove();
+                }
+            }
+            if (cs.size() == 0) {
+                c.remove();
+            }
+        }
+   
     }
     
     /**
@@ -158,6 +209,18 @@ public class Sausage implements ConfidenceResult {
         return (ConfusionSet)confusionSets.get(pos);
     }
     
+    public int countWordHypotheses() {
+        int count = 0;
+        Iterator i = confusionSetIterator();
+        while (i.hasNext()) {
+            Iterator j = ((ConfusionSet)i.next()).keySet().iterator();
+            while (j.hasNext()) {
+                count += ((Set)j.next()).size();
+            }
+        }
+        return count;
+    }
+        
     /**
      * size of this sausage in word slots.
      * 
