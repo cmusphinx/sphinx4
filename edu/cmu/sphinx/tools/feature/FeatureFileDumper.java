@@ -161,19 +161,28 @@ public class FeatureFileDumper {
      *                the ascii output file
      */
     public void dumpAscii(String outputFile) throws IOException {
-        PrintStream ps = new PrintStream(new FileOutputStream(outputFile), true);
-        ps.print(getNumberDataPoints());
-        ps.print(' ');
+	PrintStream ps = new PrintStream(new FileOutputStream(outputFile), true);
+	ps.print(getNumberDataPoints());
+	ps.print(' ');
 
-        for (Iterator i = allFeatures.iterator(); i.hasNext();) {
-            double[] feature = (double[]) i.next();
-            for (int d = 0; d < feature.length; d++) {
-                ps.print(feature[d]);
-                ps.print(' ');
-            }
-        }
+	for (Iterator i = allFeatures.iterator(); i.hasNext();) {
+	    Object data = i.next();
+	    if (data instanceof double[]) {
+		double[] feature = (double[]) data;
+		for (int d = 0; d < feature.length; d++) {
+		    ps.print(feature[d]);
+		    ps.print(' ');
+		}
+	    } else if (data instanceof float[]) {
+		float[] feature = (float[]) data;
+		for (int d = 0; d < feature.length; d++) {
+		    ps.print(feature[d]);
+		    ps.print(' ');
+		}
+	    }
+	}
 
-        ps.close();
+	ps.close();
     }
 
     /**
