@@ -109,6 +109,7 @@ public class Microphone extends DataProcessor implements AudioSource {
     private volatile boolean closed = false;
     private boolean tracing = false;
     private boolean closeAudioBetweenUtterances = true;
+    private boolean keepAudioReference = true;
 
     private static Logger logger = Logger.getLogger
         ("edu.cmu.sphinx.frontend.Microphone");
@@ -155,6 +156,10 @@ public class Microphone extends DataProcessor implements AudioSource {
         sampleSizeInBits = getSphinxProperties().getInt
             (FrontEnd.PROP_BITS_PER_SAMPLE, 
              FrontEnd.PROP_BITS_PER_SAMPLE_DEFAULT);
+
+        keepAudioReference = getSphinxProperties().getBoolean
+            (FrontEnd.PROP_KEEP_AUDIO_REFERENCE,
+             FrontEnd.PROP_KEEP_AUDIO_REFERENCE_DEFAULT);
     }
 
 
@@ -221,8 +226,11 @@ public class Microphone extends DataProcessor implements AudioSource {
                 audioLine.start();
                 printMessage("started recording");
 
-                currentUtterance = new Utterance("Microphone", getContext());
-                
+                if (keepAudioReference) {
+                    currentUtterance = new Utterance
+                        ("Microphone", getContext());
+                }
+
                 audioList.add(new Audio(Signal.UTTERANCE_START));
                                 
                 while (getRecording() && !getClosed()) {
@@ -282,8 +290,11 @@ public class Microphone extends DataProcessor implements AudioSource {
             e.printStackTrace();
             return null;
         }
-        
-        utterance.add(data);
+
+        if (keepAudioReference) {
+            utterance.add(data);
+        }
+
         double[] samples = Util.bytesToSamples
             (data, 0, data.length, sampleSizeInBits/8, signed);
         
