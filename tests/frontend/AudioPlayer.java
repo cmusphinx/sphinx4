@@ -16,12 +16,12 @@ import javax.sound.sampled.SourceDataLine;
  */
 public class AudioPlayer {
 
-    private AudioFormat defaultFormat = // default format is 8khz
-    new AudioFormat(8000f, 16, 1, true, true);
-
     private SourceDataLine line;
 
-    
+
+    /**
+     * Constructs a default AudioPlayer.
+     */
     public AudioPlayer() {}
 
 
@@ -30,14 +30,15 @@ public class AudioPlayer {
      *
      * @param audio the audio data to play
      */
-    public void play(byte[] audio) {
-        openLine(defaultFormat);
-        line.start();
-        line.write(audio, 0, audio.length);
-        line.drain();
-        line.stop();
-        line.close();
-        line = null;
+    public void play(byte[] audio, AudioFormat format) {
+        if (openLine(format)) {
+            line.start();
+            line.write(audio, 0, audio.length);
+            line.drain();
+            line.stop();
+            line.close();
+            line = null;
+        }
     }
 
     
@@ -46,10 +47,13 @@ public class AudioPlayer {
      *
      * @param format the format for the audio
      *
+     * @return true if the audio line is successfully opened
+     *         false if the audio line cannot be opened
+     *
      * @throws UnsupportedOperationException if the line cannot be opened with
      *     the given format
      */
-    private void openLine(AudioFormat format) {
+    private boolean openLine(AudioFormat format) {
         if (line != null) {
             line.close();
         }
@@ -57,8 +61,10 @@ public class AudioPlayer {
         try {
             line = (SourceDataLine) AudioSystem.getLine(info);
             line.open(format);
+            return true;
         } catch(LineUnavailableException lue) {
             lue.printStackTrace();
+            return false;
         }   
     }
 }
