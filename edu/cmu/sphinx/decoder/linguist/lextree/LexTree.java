@@ -21,6 +21,7 @@ import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
 
 import java.util.HashMap;
@@ -77,6 +78,12 @@ class LexTree {
     private void addWords(Collection words) {
         for (Iterator i = words.iterator(); i.hasNext(); ) {
             String word = (String) i.next();
+
+            // don't add the 'start' tag
+            if (word.equals(Dictionary.SENTENCE_START_SPELLING)) {
+                continue;
+            }
+
             Pronunciation[] pronunciations =
                 dictionary.getPronunciations(word, null);
             if (pronunciations == null) {
@@ -458,6 +465,28 @@ class LexTree {
          */
         public String toString() {
             return "WordLexNode: " + pronunciation.toString();
+        }
+
+        /**
+         * Determines if this node marks the beginning of a sentence
+         *
+         * @return true if this node markes the  beginning of a sentence
+         *
+         */
+        public boolean isSentenceStart() {
+            return pronunciation.getWord().
+                equals(Dictionary.SENTENCE_START_SPELLING);
+        }
+
+        /**
+         * Determines if this node marks the end of a sentence
+         *
+         * @return true if this node marks the end of a sentence
+         *
+         */
+        public boolean isSentenceEnd() {
+            return pronunciation.getWord().
+                equals(Dictionary.SENTENCE_END_SPELLING);
         }
     }
 
