@@ -18,6 +18,8 @@ import edu.cmu.sphinx.frontend.CepstrumSource;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.Signal;
 
+import edu.cmu.sphinx.frontend.util.EnergyPlotter;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.IOException;
@@ -184,6 +186,19 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
 
 
     /**
+     * The SphinxProperty that specifies whether to print out the
+     * energy values, and the speech and utterance endpoints.
+     */
+    public static final String PROP_PLOT_ENERGY = PROP_PREFIX + "plotEnergy";
+   
+
+    /**
+     * The default value for PROP_PLOT_ENERGY.
+     */
+    public static final boolean PROP_PLOT_ENERGY_DEFAULT = false;
+
+
+    /**
      * If energy is greater than startHigh for startWindow frames,
      * speech has started.
      */
@@ -240,6 +255,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
      */
     private Cepstrum lastSpeechEndFrame;
 
+    private boolean plotEnergy;    // print the energy values to stdout
     private boolean inSpeech;       // are we in a speech region?
     private float lastEnergy;       // previous energy value
     private int location;           // which part of hill are we at?
@@ -248,6 +264,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
     private int endLowFrames;       // # of frames with energy < endLow
     private int numSpeechSegments;  // # of speech segments in this utterance
     private int numCepstra;         // # of Cepstra in this Utterance
+    private EnergyPlotter plotter;  // for plotting energy to System.out
 
 
     /**
@@ -270,6 +287,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
         setProperties();
         this.predecessor = predecessor;
         this.outputQueue = new LinkedList();
+        plotter = new EnergyPlotter(20);
         reset();
     }
 
@@ -295,6 +313,9 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
             = properties.getInt(PROP_END_OFFSET, PROP_END_OFFSET_DEFAULT);
         maxDropout
             = properties.getInt(PROP_MAX_DROPOUT, PROP_MAX_DROPOUT_DEFAULT);
+        plotEnergy
+            = properties.getBoolean(PROP_PLOT_ENERGY, 
+                                    PROP_PLOT_ENERGY_DEFAULT);
     }
 
 
@@ -364,6 +385,10 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
             cepstrum = (Cepstrum) outputQueue.removeLast();
         } else {
             cepstrum = null;
+        }
+        
+        if (plotEnergy) {
+            plotter.plot(cepstrum);
         }
 
         getTimer().stop();
