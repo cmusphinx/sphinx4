@@ -141,7 +141,7 @@ public class MelFilterbank extends DataProcessor {
      *
      * @return the closest frequency bin
      *
-     * @throw IllegalArgumentException
+     * @throws IllegalArgumentException
      */
     private double setToNearestFrequencyBin(double inFreq, double stepFreq)
 	throws IllegalArgumentException {
@@ -163,7 +163,7 @@ public class MelFilterbank extends DataProcessor {
      * @param minFreq lowest frequency in the range of interest
      * @param maxFreq highest frequency in the range of interest
      *
-     * @throw IllegalArgumentException
+     * @throws IllegalArgumentException
      */
     private void buildFilterbank(int numberDftPoints, 
 				 int numberFilters, 

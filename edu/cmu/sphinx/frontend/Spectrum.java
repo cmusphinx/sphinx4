@@ -15,7 +15,7 @@ public class Spectrum implements Data {
     /**
      * Constructs a Spectrum with the given spectra data.
      *
-     * @params spectraData a frame's spectral data
+     * @param spectraData a frame's spectral data
      */
     public Spectrum(double[] spectraData) {
 	this.spectraData = spectraData;
