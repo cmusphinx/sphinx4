@@ -44,6 +44,7 @@ import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
 import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMState;
 import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMStateArc;
+import edu.cmu.sphinx.decoder.linguist.simple.HMMStateState;
 import edu.cmu.sphinx.decoder.linguist.simple.UnitState;
 import edu.cmu.sphinx.decoder.linguist.simple.WordState;
 
@@ -216,7 +217,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	while (iterator.hasNext()) {
 	    Token token = (Token) iterator.next();
             SentenceHMMState state = (SentenceHMMState) token.getSearchState();
-	    if (state.getColor() == Color.GREEN) {
+	    if (isGreenState(state)) {
 		double logNewScore = (float) 
 		    (token.getWorkingScore() / bushderbyEta);
 		if (false) {
@@ -227,6 +228,25 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	    }
 	}
     }
+
+
+    /**
+     * Returns true if the given SentenceHMMState is considered a GREEN
+     * state by Bushderby.
+     *
+     * @param state the SentenceHMMState to be tested
+     *
+     * @return true if the given SearchState is a GREEN state, false otherwise
+     */
+    private boolean isGreenState(SentenceHMMState state) {
+	boolean green = ((state.getColor() == Color.GREEN) ||
+			 (state instanceof HMMStateState));
+	if (green) {
+	    state.setColor(Color.GREEN);
+	}
+	return green;
+    }
+
 
 
     /**
@@ -280,7 +300,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		arc.getInsertionProbability();
 	    
 	    boolean firstToken = (getBestToken(nextState) == null);
-	    boolean greenToken = (nextState.getColor() == Color.GREEN);
+	    boolean greenToken = isGreenState(nextState);
 
 	    double logWorkingScore =  firstToken ? getLogMath().getLogZero() :
 		getBestToken(nextState).getWorkingScore();
