@@ -19,6 +19,7 @@ package edu.cmu.sphinx.knowledge.language.large;
  */
 class UnigramProbability {
 
+    private int wordID;
     private float logProbability;
     private float logBackoff;
     private int firstBigramEntry;
@@ -30,8 +31,9 @@ class UnigramProbability {
      * @param backoff the backoff probability
      * @param firstBigramEntry the first bigram entry
      */
-    public UnigramProbability(float logProbability, float logBackoff, 
-                       int firstBigramEntry) {
+    public UnigramProbability(int wordID, float logProbability, 
+			      float logBackoff, int firstBigramEntry) {
+	this.wordID = wordID;
         this.logProbability = logProbability;
         this.logBackoff = logBackoff;
         this.firstBigramEntry = firstBigramEntry;
@@ -44,6 +46,16 @@ class UnigramProbability {
      */
     public String toString() {
         return "Prob: " + logProbability + " " + logBackoff;
+    }
+
+
+    /**
+     * Returns the word ID of this unigram
+     *
+     * @return the word ID of this unigram
+     */
+    public int getWordID() {
+	return wordID;
     }
 
 

@@ -656,7 +656,7 @@ class BinaryLoader {
             float logBackoff = logMath.log10ToLog(unigramBackoff);
             
             unigrams[i] = new UnigramProbability
-                (logProbability, logBackoff, firstBigramEntry);
+                (unigramID, logProbability, logBackoff, firstBigramEntry);
 	}
 
         return unigrams;

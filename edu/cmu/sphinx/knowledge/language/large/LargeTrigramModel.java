@@ -158,7 +158,7 @@ public class LargeTrigramModel implements LanguageModel {
             } else if (words[i].equals(Dictionary.SENTENCE_END_SPELLING)) {
                 this.endWordID = i;
             }
-            unigramIDMap.put(words[i], (new Integer(i)));
+            unigramIDMap.put(words[i], unigrams[i]);
         }
     }
     
@@ -211,16 +211,17 @@ public class LargeTrigramModel implements LanguageModel {
      */
     private float getUnigramProbability(WordSequence wordSequence) {
         String unigram = wordSequence.getWord(0);
-        Integer unigramID = (Integer) unigramIDMap.get(unigram);
-        if (unigramID == null) {
+        UnigramProbability unigramProb = 
+	    (UnigramProbability) unigramIDMap.get(unigram);
+        if (unigramProb == null) {
             unigram = "<unk>";
-            unigramID = (Integer) unigramIDMap.get(unigram);
-            if (unigramID == null) {
+            unigramProb = (UnigramProbability) unigramIDMap.get(unigram);
+            if (unigramProb == null) {
                 throw new Error("Unigram not in LM: " + unigram);
             }
         }
-        UnigramProbability probability = unigrams[unigramID.intValue()];
-        return probability.getLogProbability();
+        // UnigramProbability probability = unigrams[unigramID.intValue()];
+        return unigramProb.getLogProbability();
     }
 
 
@@ -244,11 +245,12 @@ public class LargeTrigramModel implements LanguageModel {
      * @return the ID of the word
      */
     private final int getWordID(String word) {
-        Integer integer = (Integer) unigramIDMap.get(word.toLowerCase());
-        if (integer == null) {
+	UnigramProbability probability = 
+	    (UnigramProbability) unigramIDMap.get(word.toLowerCase());
+        if (probability == null) {
             throw new IllegalArgumentException("No word ID: " + word);
         } else {
-            return integer.intValue();
+            return probability.getWordID();
         }
     }
 
