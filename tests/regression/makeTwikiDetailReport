@@ -218,7 +218,6 @@ function dumpTest(testName) {
    printf("|%s", sentences);
    correctSentences = get(testName, F_CORRECT_SENTENCES);
    sentencesWithErrors = sentences - correctSentences;
-   printf("|%s", sentencesWithErrors);
    printf("|%s", getPercent(sentencesWithErrors, sentences));
    printf("|\n");
 }
@@ -246,7 +245,6 @@ function dumpTitle(  i) {
     printf("| *%s* ", "Substitutions (%) (#)");
     printf("| *%s* ", "Word Error Rate (%)");
     printf("| *%s* ", "Num Sentences");
-    printf("| *%s* ", "Sentences with Errors");
     printf("| *%s* ", "Sentence Error Rate");
     printf("|\n");
 }
