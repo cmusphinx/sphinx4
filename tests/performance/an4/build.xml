@@ -141,33 +141,6 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
         </java>
     </target>
 
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * an4_words_trigram                                      * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="an4_words_trigram"
-	    description="AN4 words test set with a trigram language model">
-        <java classpath="${classes_dir}"
-	      classname="${batch_main}"
-	      fork="true">
-            <jvmarg value="-ea"/>
-            <jvmarg value="-${jit}"/>   
-            <jvmarg value="-ms${initial_heap_size}"/>
-            <jvmarg value="-mx${maximum_heap_size}"/> 
-            <jvmarg value="-Xprof"/>
-            <jvmarg value="-Xloggc:${gc_log_file}"/>
-            <sysproperty key="batch[skip]" value="${skip}"/> 
-		     <sysproperty key="linguist" value="lexTreeLinguist"/>	
-            <sysproperty key="languageWeight"   value="16.0"/>
-            <sysproperty key="dictionary[allowMissingWords]"   value="false"/>
-            <sysproperty key="ngramLanguageModel[location]>"
-               value="an4_words.trigram.lm"/>
-            <sysproperty key="wordInsertionProbability"  value="1.0E-20"/>
-            <arg value="${config}"/> 
-            <arg value="an4_words.batch"/> 
-        </java>
-    </target>
 
 
 
@@ -720,6 +693,25 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
 	      <arg value="an4.props"/>
 	      <arg value="reference.txt"/>
 	      <arg value="hypothesis.txt"/>
+        </java>
+    </target>
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * --> 
+    <!-- * an4_words_trigram                                      * --> 
+    <!-- *                                                        * --> 
+    <!-- ********************************************************** --> 
+    <target name="an4_words_trigram"
+            description="trigram decode of an4 words using the word pruning breadth first search manager ">
+       <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="batch[skip]" 	value="${skip}"/> 
+            <arg value="an4_words_trigram.config.xml"/> 
+            <arg value="an4_words.batch"/> 
         </java>
     </target>
 
