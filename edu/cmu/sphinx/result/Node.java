@@ -550,7 +550,7 @@ public class Node {
     /**
      * @param viterbiScore The viterbiScore to set.
      */
-    public void setViterbiScore(double bestForwardScore) {
-        this.viterbiScore = bestForwardScore;
+    public void setViterbiScore(double viterbiScore) {
+        this.viterbiScore = viterbiScore;
     }
 }
