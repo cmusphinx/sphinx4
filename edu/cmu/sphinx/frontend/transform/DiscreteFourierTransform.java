@@ -51,10 +51,10 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * represents the strength of that frequency at that point in time:
  * <p>
  * <br><img src="doc-files/139o.jpg">
- * <b>Figure 1: The audio signal of the utterance "one three nine oh".</b>
+ * <br><b>Figure 1: The audio signal of the utterance "one three nine oh".</b>
  * <p>
  * <br><img src="doc-files/139ospectrum.jpg">
- * <b>Figure 2: The spectrogram of the utterance "one three nine oh" in Figure 1.</b>
+ * <br><b>Figure 2: The spectrogram of the utterance "one three nine oh" in Figure 1.</b>
  */
 public class DiscreteFourierTransform extends BaseDataProcessor {
 
