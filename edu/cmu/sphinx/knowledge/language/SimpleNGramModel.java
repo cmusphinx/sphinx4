@@ -363,11 +363,6 @@ public class SimpleNGramModel implements LanguageModel {
                     String word = tok.nextToken().toLowerCase();
                     vocabulary.add(word);
                     int wordID = dictionary.getWordID(word);
-                    if (wordID == Dictionary.UNKNOWN_WORD_ID &&
-                        !word.equals("<unk>")) {
-                        throw new Error
-                            ("LM Word \"" + word + "\" not in dictionary.");
-                    }
                     wordList.add(new Integer(wordID));
                 }
                 WordSequence wordSequence = 
