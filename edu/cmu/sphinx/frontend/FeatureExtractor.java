@@ -37,14 +37,14 @@ public class FeatureExtractor extends DataProcessor {
      * which is 39 by default.
      */
     public static final String PROP_FEATURE_LENGTH =
-	"edu.cmu.sphinx.frontend.feature.length";
+	"edu.cmu.sphinx.frontend.featureExtractor.featureLength";
 
     /**
      * The name of the SphinxProperty for the window of the FeatureExtractor,
      * which has a default value of 3.
      */
     public static final String PROP_FEATURE_WINDOW =
-	"edu.cmu.sphinx.frontend.feature.windowSize";
+	"edu.cmu.sphinx.frontend.featureExtractor.windowSize";
 
 
     private static final int LIVEBUFBLOCKSIZE = 256;
@@ -104,9 +104,11 @@ public class FeatureExtractor extends DataProcessor {
 
     /**
      * Constructs a default FeatureExtractor.
+     *
+     * @param context the context of the SphinxProperties to use
      */
-    public FeatureExtractor() {
-	getSphinxProperties();
+    public FeatureExtractor(String context) {
+	initSphinxProperties(context);
 	cepstraBuffer = new float[LIVEBUFBLOCKSIZE][];
         setTimer(Timer.getTimer("", "FeatureExtractor"));
         fcTimer = Timer.getTimer("", "featComp");
@@ -117,9 +119,9 @@ public class FeatureExtractor extends DataProcessor {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void getSphinxProperties() {
-	// TODO : specify the context
-	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
+    private void initSphinxProperties(String context) {
+	setSphinxProperties(context);
+	SphinxProperties properties = getSphinxProperties();
 	featureLength = properties.getInt(PROP_FEATURE_LENGTH, 39);
 	window = properties.getInt(PROP_FEATURE_WINDOW, 3);
 	cepstrumLength = properties.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);

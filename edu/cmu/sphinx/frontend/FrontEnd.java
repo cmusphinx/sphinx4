@@ -73,13 +73,6 @@ public class FrontEnd implements DataSource, Runnable {
 	"edu.cmu.sphinx.frontend.bytesPerAudioFrame";
 
     /**
-     * The name of the SphinxProperty for the number of points in the FFT.
-     */
-    public static final String PROP_FFT_NPOINT =
-	"edu.cmu.sphinx.frontend.fftNPoint";
-
-
-    /**
      * The name of the SphinxProperty for the size of a cepstrum, which is
      * 13 by default.
      */
@@ -176,16 +169,16 @@ public class FrontEnd implements DataSource, Runnable {
 	DataProcessor last =
 	    (DataProcessor) processors.get(processors.size() - 1);
 	if (last != null) {
-	    try {
-                Data output = null;
-		do {
-		    output = last.read();
-
+            Data output = null;
+            do {
+                try {
+                    output = last.read();
+                    
                     if (output != null) {
                         if (output == EndPointSignal.SEGMENT_START ||
                             output == EndPointSignal.SEGMENT_END) {
                             queue.add(output);
-
+                            
                         } else if (output instanceof FeatureFrame) {
                             // add the Features in the FeatureFrame
                             // to the output queue
@@ -196,12 +189,11 @@ public class FrontEnd implements DataSource, Runnable {
                             }
                         }
                     }
-                    
-		} while (output != null);
-	    } catch (IOException ioe) {
-		ioe.printStackTrace();
-	    }
-	}
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }                
+            } while (output != null);
+        }
     }
 }
 

@@ -4,14 +4,9 @@
 
 package tests.frontend;
 
-import edu.cmu.sphinx.frontend.BatchFileAudioSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Preemphasizer;
-import edu.cmu.sphinx.frontend.StreamAudioSource;
-import edu.cmu.sphinx.util.Timer;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 
 /**
  * Test program for the Preemphasizer.
@@ -19,38 +14,26 @@ import java.io.IOException;
 public class PreemphasizerTest {
 
     public static void main(String[] argv) {
-	if (argv.length < 1) {
-	    System.out.println("Usage: java FrontEnd <filename>");
+
+	if (argv.length < 3) {
+	    System.out.println
+                ("Usage: java testClass <testName> " +
+                 "<propertiesFile> <audiofilename>");
 	}
 
-        boolean batchMode = Boolean.getBoolean
-            ("test.frontend.PreemphasizerTest.batchMode");
-        boolean dumpValues = Boolean.getBoolean
-            ("test.frontend.PreemphasizerTest.dumpValues");
-        boolean dumpTimes = Boolean.getBoolean
-            ("test.frontend.PreemphasizerTest.dumpTimes");
+        try {
+            FrontEndTest fet = new FrontEndTest(argv[0], argv[1], argv[2]);
 
-	Preemphasizer preemphasizer = new Preemphasizer();
-	preemphasizer.setDump(dumpValues);
+            Preemphasizer preemphasizer = new Preemphasizer(argv[0]);
+            preemphasizer.setDump(true);
 
-	FrontEnd frontend = new FrontEnd();
+            FrontEnd fe = fet.getFrontEnd();
+            fe.addProcessor(preemphasizer);
 
-	frontend.addProcessor(preemphasizer);
-	
-	try {
-            if (batchMode) {
-                frontend.setAudioSource(new BatchFileAudioSource(argv[0]));
-            } else {
-                frontend.setAudioSource
-                    (new StreamAudioSource(new FileInputStream(argv[0])));
-            }
-	    frontend.run();
+            fet.run();
+
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
-
-        if (dumpTimes) {
-            Timer.dumpAll("");
-        }
     }
 }

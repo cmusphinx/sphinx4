@@ -4,6 +4,7 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
 
@@ -80,6 +81,38 @@ public abstract class DataProcessor implements DataSource {
      * Indicates whether to dump the processed Data
      */
     private boolean dump;
+
+
+    /**
+     * The SphinxProperties used by this DataProcessor
+     */
+    private SphinxProperties sphinxProperties = null;
+
+
+    /**
+     * Returns the SphinxProperties used by this DataProcessor.
+     *
+     * @return the SphinxProperties
+     */
+    public SphinxProperties getSphinxProperties() {
+        return sphinxProperties;
+    }
+
+
+    /**
+     * Sets the SphinxProperties used by this DataProcessor.
+     * This method is effective only on the first call. Each time this
+     * method is called, it will check if the actual SphinxProperties
+     * class variable is null, and will set it only if it is not null.
+     *
+     * @param context the context of the SphinxProperties to set
+     */
+    public void setSphinxProperties(String context) {
+        if (this.sphinxProperties == null) {
+            this.sphinxProperties = SphinxProperties.getSphinxProperties
+                (context);
+        }
+    }
 
 
     /**

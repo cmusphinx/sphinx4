@@ -18,26 +18,29 @@ public class SpectrumAnalyzer extends DataProcessor {
 
     /**
      * The name of the SphinxProperty for the number of points
-     * in the Fourier Transform.
+     * in the Fourier Transform, which is 256 by default.
      */
     public static final String PROP_NPOINT =
-	"edu.cmu.sphinx.frontend.fastFourierTransform.NPoint";
+	"edu.cmu.sphinx.frontend.fft.NPoint";
 
     private int windowSize;
     private int NPoint;
     private int log2N;
     private Complex[] Wk;
 
-    /**
-     * Constructs a default Spectrum Analyzer.
-     */
-    public SpectrumAnalyzer() {
 
-	getSphinxProperties();
+    /**
+     * Constructs a default Spectrum Analyzer with the given 
+     * SphinxProperties context.
+     *
+     * @param context the context of the SphinxProperties to use
+     */
+    public SpectrumAnalyzer(String context) {
+	initSphinxProperties(context);
 	computeLog2N();
 	createWk(NPoint, false);
-
     }
+
 
     /**
      * Process data, creating the power spectrum from an input
@@ -113,9 +116,10 @@ public class SpectrumAnalyzer extends DataProcessor {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void getSphinxProperties() {
+    private void initSphinxProperties(String context) {
 
-	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
+        setSphinxProperties(context);
+	SphinxProperties properties = getSphinxProperties();
 
         int sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);
 
@@ -132,7 +136,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * 511 are symmetrical with the ones between 1 and 255. Therefore,
 	 * we need only return values between 0 and 255.
 	 */
-	NPoint = properties.getInt(FrontEnd.PROP_FFT_NPOINT, 512);
+	NPoint = properties.getInt(PROP_NPOINT, 512);
     }
 
 

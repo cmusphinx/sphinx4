@@ -7,7 +7,6 @@ The following table shows the times of running Sphinx 3 once on
             Function     Total  Count   Average
          preemphasis    0.0053 000020    0.0003
        HammingWindow    0.0060 000475    0.0000
- Spec+MelSpec+MelCep    2.3661 000475    0.0050
    SpectrumMagnitude    0.4369 000475    0.0009
          MelSpectrum    0.0143 000475    0.0000
          MelCepstrum    0.0359 000475    0.0001
@@ -24,7 +23,6 @@ The following table shows the times of running Sphinx 3 50 times on
             Function     Total  Count   Average
          preemphasis    0.2231 001020    0.0002
        HammingWindow    0.3040 024225    0.0000
- Spec+MelSpec+MelCep  119.9472 024225    0.0050
    SpectrumMagnitude   21.6765 024225    0.0009
          MelSpectrum    0.7030 024225    0.0000
          MelCepstrum    1.7599 024225    0.0001

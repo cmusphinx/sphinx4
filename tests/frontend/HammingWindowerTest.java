@@ -4,55 +4,37 @@
 
 package tests.frontend;
 
-import edu.cmu.sphinx.frontend.BatchFileAudioSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.Preemphasizer;
-import edu.cmu.sphinx.frontend.StreamAudioSource;
 import edu.cmu.sphinx.frontend.Windower;
-import edu.cmu.sphinx.util.Timer;
-
-import java.io.FileInputStream;
+import edu.cmu.sphinx.frontend.Preemphasizer;
 
 
 /**
- * Test program for the HammingWindow
+ * Test program for the HammingWindower.
  */
 public class HammingWindowerTest {
 
     public static void main(String[] argv) {
-	if (argv.length < 1) {
-	    System.out.println("Usage: java FrontEnd <filename>");
+
+	if (argv.length < 3) {
+	    System.out.println
+                ("Usage: java testClass <testName> " +
+                 "<propertiesFile> <audiofilename>");
 	}
 
-        boolean batchMode = Boolean.getBoolean
-            ("tests.frontend.HammingWindowerTest.batchMode");
-        boolean dumpValues = Boolean.getBoolean
-            ("tests.frontend.HammingWindowerTest.dumpValues");
-        boolean dumpTimes = Boolean.getBoolean
-            ("tests.frontend.HammingWindowerTest.dumpTimes");
+        try {
+            FrontEndTest fet = new FrontEndTest(argv[0], argv[1], argv[2]);
 
-        Preemphasizer preemphasizer = new Preemphasizer();
+            Preemphasizer preemphasizer = new Preemphasizer(argv[0]);
+            Windower hammingWindow = new Windower(argv[0]);
+            hammingWindow.setDump(true);
 
-        Windower hammingWindow = new Windower();
-        hammingWindow.setDump(dumpValues);
-        
-	FrontEnd frontend = new FrontEnd();
-      	frontend.addProcessor(preemphasizer);
-        frontend.addProcessor(hammingWindow);
+            FrontEnd fe = fet.getFrontEnd();
+            fe.addProcessor(preemphasizer);
+            fe.addProcessor(hammingWindow);
 
-	try {
-            if (batchMode) {
-                frontend.setAudioSource(new BatchFileAudioSource(argv[0]));
-            } else {
-                frontend.setAudioSource
-                    (new StreamAudioSource(new FileInputStream(argv[0])));
-            }
+            fet.run();
 
-	    frontend.run();
-            
-            if (dumpTimes) {
-                Timer.dumpAll();
-            }
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}

@@ -243,7 +243,7 @@ public class StreamAudioSource implements DataSource {
 	}
     }
 
-
+        
     /**
      * Copies from the samplesBuffer at the specified position, to
      * the overflowBuffer at the specified position.

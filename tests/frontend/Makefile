@@ -23,23 +23,23 @@ cmnFeatExt: all
 	sh ./testCmnFeatExt.sh
 
 preemphasizer: all
-	@chmod +x testPreemphasizer.sh
-	sh ./testPreemphasizer.sh
+	@chmod +x testFrontEnd.sh
+	sh ./testFrontEnd.sh preemphasis PreemphasizerTest
 
 hammingWindow: all
-	@chmod +x testHammingWindow.sh
-	sh ./testHammingWindow.sh
+	@chmod +x testFrontEnd.sh
+	sh ./testFrontEnd.sh hammingWindow HammingWindowerTest
 
 spectrumAnalyzer: all
-	@chmod +x testSpectrumAnalyzer.sh
-	sh ./testSpectrumAnalyzer.sh
+	@chmod +x testFrontEnd.sh
+	sh ./testFrontEnd.sh spectrum SpectrumAnalyzerTest
 
 alltests: all
 	(cd $(TOP); $(MAKE))
-	@$(MAKE) preemphasizer
-	@$(MAKE) hammingWindow
-	@$(MAKE) spectrumAnalyzer
-	@$(MAKE) cmnFeatExt
+	@$(MAKE) -s preemphasizer
+	@$(MAKE) -s hammingWindow
+	@$(MAKE) -s spectrumAnalyzer
+	@$(MAKE) -s cmnFeatExt
 
 clean::
 	rm -f *.out *.diff

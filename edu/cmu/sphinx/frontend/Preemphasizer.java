@@ -31,13 +31,6 @@ import java.io.IOException;
  */
 public class Preemphasizer extends DataProcessor {
 
-    /**
-     * The name of the SphinxProperty which indicates if the preemphasized
-     * AudioFrames should be dumped. The default value of this
-     * SphinxProperty is false.
-     */
-    public static final String PROP_DUMP =
-	"edu.cmu.sphinx.frontend.preemphasis.dump";
 
     /**
      * The name of the SphinxProperty for preemphasis factor/alpha, which
@@ -54,9 +47,11 @@ public class Preemphasizer extends DataProcessor {
 
     /**
      * Constructs a default Preemphasizer.
+     *
+     * @param the context of SphinxProperty this Preemphasizer uses
      */
-    public Preemphasizer() {
-	getSphinxProperties();
+    public Preemphasizer(String context) {
+        initSphinxProperties(context);
         setTimer(Timer.getTimer("", "Preemphasizer"));
     }
 
@@ -64,10 +59,9 @@ public class Preemphasizer extends DataProcessor {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void getSphinxProperties() {
-	// TODO : specify the context
-	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
-
+    private void initSphinxProperties(String context) {
+	setSphinxProperties(context);
+        SphinxProperties properties = getSphinxProperties();
 	preemphasisFactor = properties.getFloat
 	    (PROP_PREEMPHASIS_FACTOR, (float) 0.97);
     }
