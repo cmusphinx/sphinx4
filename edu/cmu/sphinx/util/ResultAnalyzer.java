@@ -4,6 +4,7 @@
 package edu.cmu.sphinx.util;
 
 import java.util.List;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.text.DecimalFormat;
@@ -49,6 +50,8 @@ public class ResultAnalyzer {
     public void analyze(String ref, String hyp) {
 	List refList = stringToList(ref);
 	List hypList = stringToList(hyp);
+	String filteredRef = toString(refList);
+	String filteredHyp = toString(hypList);
 
 	hypOutput = new StringBuffer();
 	refOutput = new StringBuffer();
@@ -72,10 +75,31 @@ public class ResultAnalyzer {
 
 	if (verbose) {
 	    System.out.println();
-	    System.out.println("REF: " + refOutput);
-	    System.out.println("HYP: " + hypOutput);
+	    System.out.println("REF:       " + filteredRef);
+	    System.out.println("HYP:       " + filteredHyp);
+	    System.out.println("ALIGN_REF: " + refOutput);
+	    System.out.println("ALIGN_HYP: " + hypOutput);
+	    System.out.println();
 	    showResults();
 	}
+    }
+
+    /**
+     * convert the list of words back to a space separated string
+     *
+     * @param list the list of words
+     * @return a space separated string
+     */
+    private String toString(List list) {
+	StringBuffer sb = new StringBuffer();
+
+	for (Iterator i = list.iterator(); i.hasNext(); ) {
+	    sb.append(i.next());
+	    if (i.hasNext()) {
+		sb.append(" ");
+	    }
+	}
+	return sb.toString();
     }
 
 
