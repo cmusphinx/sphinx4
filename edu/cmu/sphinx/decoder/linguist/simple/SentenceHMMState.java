@@ -55,7 +55,6 @@ public class  SentenceHMMState implements Serializable, SearchState  {
 
     private transient Map arcs;
     private transient SentenceHMMState parent;
-    private transient String signature;
     private transient String cachedName;
     private transient String fullName;
     private transient SentenceHMMStateArc[] successorArray;
@@ -471,14 +470,7 @@ public class  SentenceHMMState implements Serializable, SearchState  {
      * @return the signature
      */
     public String getSignature() {
-	/*
-	System.out.println("getsig : " + signature + " name " +
-		getName());
-	*/
-	if (signature == null) {
-	    signature = getFullName();
-	}
-	return signature;
+        return getFullName();
     }
 
 
