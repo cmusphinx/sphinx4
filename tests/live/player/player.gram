@@ -1,0 +1,37 @@
+#JSGF V1.0;
+
+grammar player;
+
+<polite> = [pretty] please | [oh] mighty computer;
+
+<prevIndex> = ([go back to the] previous [index]) {prevIndex};
+<repeatIndex> = (repeat [that] 
+		| play (it | that)) {repeatIndex} [again | one more time] [sam];
+<nextIndex> = (skip [that] | [go to the] next [index]) {nextIndex};
+
+<backup> = ([go] back) {backup};
+<forward> = ([go] forward) {forward};
+
+<slow> = slow [down] {slow};
+<normal> = [(play | go) at] normal speed {normal};
+<fast> = speed up {fast};
+
+<play> = (play | resume | go [on] | ok) {play};
+<pause> = ((wait | hold [on]) [a (second | minute)] | pause) {pause};
+
+<stop> = stop {stop};
+
+<mute> = (shut up | mute | let me hear you | speak to me | unmute) {mute};
+
+<quieter> = (quieter | turn it down) {quieter};
+
+<louder> = (louder | turn it up) {louder};
+
+public <command> = <polite>* 
+		   (<prevIndex> | <repeatIndex> | <nextIndex> 
+	           | <backup> | <forward>
+		   | <slow> | <normal> | <fast> 
+		   | <play> | <pause> | <stop> 
+		   | <mute> | <quieter> | <louder>
+                   ) <polite>*;
+
