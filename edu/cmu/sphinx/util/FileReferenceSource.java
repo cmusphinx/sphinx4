@@ -1,0 +1,68 @@
+/*
+ * Copyright 1999-2002 Carnegie Mellon University.  
+ * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ * 
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * WARRANTIES.
+ *
+ */
+package edu.cmu.sphinx.util;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+import java.util.List;
+import java.util.LinkedList;
+
+/**
+ * A source of reference texts.
+ */
+public class FileReferenceSource implements ReferenceSource {
+
+    private List references;
+
+    /**
+     * Constructs a ReferenceSource from a reference file.
+     *
+     * @param file the reference file
+     */
+    public FileReferenceSource(String file) throws IOException {
+        references = new LinkedList();
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            if (!line.startsWith(";;")) {
+                int fromIndex = 0;
+                boolean isSilence = false;
+                for (int i = 0; i < 6; i++) {
+                    if (i == 2) {
+                        String type = line.substring(fromIndex);
+                        if (type.startsWith("inter_segment_gap")) {
+                            isSilence = true;
+                            break;
+                        }
+                    }
+                    fromIndex = line.indexOf(" ", fromIndex) + 1;
+                }
+                if (!isSilence) {
+                    String reference = line.substring(fromIndex).trim();
+                    // System.out.println("REF: " + reference);
+                    references.add(reference);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns a list of reference text.
+     *
+     * @return a list of reference text
+     */
+    public List getReferences() {
+        return references;
+    }
+}
