@@ -169,6 +169,13 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
     private DataSource dataSource;        // source of data to decode
     private FeatureSource featureSource;  // the end of the pipeline
     private boolean useAcousticModelProperties;
+
+    // configuration information
+    private String filterBankClass;
+    private String cepstrumProducerClass;
+    private String endPointerClass;
+    private String cmnClass;
+    private String featureExtractorClass;
     
 
     /**
@@ -330,11 +337,11 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
      * @return the appropriate Filterbank
      */
     private Filterbank getFilterbank(SpectrumSource predecessor) {
-	String path = null;
 	try {
-	    path = getSphinxProperties().getString
+	    filterBankClass = getSphinxProperties().getString
 		(PROP_FILTERBANK, "edu.cmu.sphinx.frontend.mfc.MelFilterbank");
-	    Filterbank bank = (Filterbank) Class.forName(path).newInstance();
+	    Filterbank bank = (Filterbank) 
+		Class.forName(filterBankClass).newInstance();
 	    bank.initialize("Filterbank", getContext(), getCorrectProperties(),
 			    predecessor);
 	    return bank;
@@ -354,13 +361,12 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
      * @return the appropriate CepstrumProducer
      */
     private CepstrumProducer getCepstrumProducer(SpectrumSource predecessor) {
-	String path = null;
 	try {
-	    path = getSphinxProperties().getString
+	    cepstrumProducerClass = getSphinxProperties().getString
 		(PROP_CEPSTRUM_PRODUCER,
 		 "edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer");
-	    CepstrumProducer producer = 
-		(CepstrumProducer) Class.forName(path).newInstance();
+	    CepstrumProducer producer = (CepstrumProducer)
+		Class.forName(cepstrumProducerClass).newInstance();
 	    producer.initialize("CepstrumProducer", getContext(), 
 				getCorrectProperties(), predecessor);
 	    return producer;
@@ -378,9 +384,10 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
      * @param predecessor the predecessor of this Endpointer
      */
     private CepstrumSource getEndpointer(CepstrumSource predecessor) {
-        String path = getSphinxProperties().getString(PROP_ENDPOINTER, null);
+	endPointerClass = getSphinxProperties().getString
+	    (PROP_ENDPOINTER, null);
 
-        if (path != null) {
+        if (endPointerClass != null) {
 	    CepstrumSource endpointer = null;
 
 	    /*
@@ -405,15 +412,15 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
      */
     private CepstrumSource getCMN(CepstrumSource predecessor) throws 
 	IOException {
-	String path = getSphinxProperties().getString
+	cmnClass = getSphinxProperties().getString
 	    (PROP_CMN, "edu.cmu.sphinx.frontend.BatchCMN");
 
 	CepstrumSource cmn = null;
 
-	if (path.equals("edu.cmu.sphinx.frontend.LiveCMN")) {
+	if (cmnClass.equals("edu.cmu.sphinx.frontend.LiveCMN")) {
 	    cmn = new LiveCMN("LiveCMN", getContext(), 
 			      getCorrectProperties(), predecessor);
-	} else if (path.equals("edu.cmu.sphinx.frontend.BatchCMN")) {
+	} else if (cmnClass.equals("edu.cmu.sphinx.frontend.BatchCMN")) {
 	    cmn = new BatchCMN("BatchCMN", getContext(), 
 			       getCorrectProperties(), predecessor);
 	}
@@ -431,12 +438,12 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
      */
     private FeatureExtractor getFeatureExtractor(CepstrumSource predecessor) 
 	throws IOException {
-        String path = getSphinxProperties().getString
+        featureExtractorClass = getSphinxProperties().getString
             (PROP_FEATURE_EXTRACTOR, 
 	     "edu.cmu.sphinx.frontend.DeltasFeatureExtractor");
         try {
-	    FeatureExtractor extractor =
-                (FeatureExtractor) Class.forName(path).newInstance();
+	    FeatureExtractor extractor = (FeatureExtractor) 
+		Class.forName(featureExtractorClass).newInstance();
             extractor.initialize("FeatureExtractor", getContext(),
 				 getCorrectProperties(), predecessor);
             return extractor;
@@ -594,6 +601,28 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
         getTimer().stop();
 
         return featureFrame;
+    }
+
+
+    /**
+     * Returns a description of this FrontEnd.
+     *
+     * @return a description of this FrontEnd
+     */
+    public String toString() {
+	String description = ("FrontEnd: " + getName() + "\n");
+	description += ("------------------\n");
+	description += ("Context          = " + getContext() + "\n");
+	description += ("AM               = " + amName + "\n");
+	description += ("Preemphasizer    = Preemphasizer\n");
+	description += ("Windower         = Windower\n");
+	description += ("FFT              = SpectrumAnalyzer\n");
+	description += ("Filterbank       = " + filterBankClass + "\n");
+	description += ("CepstrumProducer = " + cepstrumProducerClass + "\n");
+	description += ("Endpointer       = " + endPointerClass + "\n");
+	description += ("CMN              = " + cmnClass + "\n");
+	description += ("FeatureExtractor = " + featureExtractorClass + "\n");
+	return description;
     }
 
 }
