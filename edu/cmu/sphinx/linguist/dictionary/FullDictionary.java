@@ -13,6 +13,9 @@ package edu.cmu.sphinx.linguist.dictionary;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -75,9 +78,8 @@ public class FullDictionary implements Dictionary {
     private boolean allowMissingWords;
     private boolean createMissingWords;
     private String wordReplacement;
-    private String wordDictionaryFile;
-    private String fillerDictionaryFile;
-    private String location;
+    private URL wordDictionaryFile;
+    private URL fillerDictionaryFile;
     private boolean allocated = false;
     
     
@@ -94,10 +96,10 @@ public class FullDictionary implements Dictionary {
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
-        registry.register(PROP_LOCATION, PropertyType.STRING);
-        registry.register(PROP_DICTIONARY, PropertyType.STRING);
-        registry.register(PROP_FILLER_DICTIONARY, PropertyType.STRING);
-        registry.register(PROP_ADD_SIL_ENDING_PRONUNCIATION, PropertyType.BOOLEAN);
+        registry.register(PROP_DICTIONARY, PropertyType.RESOURCE);
+        registry.register(PROP_FILLER_DICTIONARY, PropertyType.RESOURCE);
+        registry.register(PROP_ADD_SIL_ENDING_PRONUNCIATION, 
+                          PropertyType.BOOLEAN);
         registry.register(PROP_WORD_REPLACEMENT, PropertyType.STRING);
         registry.register(PROP_ALLOW_MISSING_WORDS, PropertyType.BOOLEAN);
         registry.register(PROP_CREATE_MISSING_WORDS, PropertyType.BOOLEAN);
@@ -110,11 +112,8 @@ public class FullDictionary implements Dictionary {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        location = ps.getString(PROP_LOCATION, PROP_LOCATION_DEFAULT);
-        wordDictionaryFile = ps.getString(PROP_DICTIONARY,
-                PROP_DICTIONARY_DEFAULT);
-        fillerDictionaryFile = ps.getString(Dictionary.PROP_FILLER_DICTIONARY,
-                PROP_FILLER_DICTIONARY_DEFAULT);
+        wordDictionaryFile = ps.getResource(PROP_DICTIONARY);
+        fillerDictionaryFile = ps.getResource(PROP_FILLER_DICTIONARY);
         addSilEndingPronunciation = ps.getBoolean(
                 PROP_ADD_SIL_ENDING_PRONUNCIATION,
                 PROP_ADD_SIL_ENDING_PRONUNCIATION_DEFAULT);
@@ -140,20 +139,19 @@ public class FullDictionary implements Dictionary {
      */
     public void allocate() throws IOException {
         
-        if (!allocated ) {
+        if (!allocated) {
             loadTimer = Timer.getTimer("DictionaryLoad");
             loadTimer.start();
             // NOTE: "location" can be null here, in which case the
             // "wordDictionaryFile" and "fillerDictionaryFile" should
             // contain the full path to the Dictionaries.
-            logger.info("Loading dictionary from: ");
-            logger.info(location + "/" + wordDictionaryFile);
-            wordDictionary = loadDictionary(StreamFactory.getInputStream(location,
-                    wordDictionaryFile), false);
-            logger.info("Loading filler dictionary from: ");
-            logger.info(location + "/" + fillerDictionaryFile);
-            fillerDictionary = loadDictionary(StreamFactory.getInputStream(
-                    location, fillerDictionaryFile), true);
+            logger.info("Loading dictionary from: " + wordDictionaryFile);
+            wordDictionary = 
+                loadDictionary(wordDictionaryFile.openStream(), false);
+            logger.info("Loading filler dictionary from: " + 
+                        fillerDictionaryFile);
+            fillerDictionary = 
+                loadDictionary(fillerDictionaryFile.openStream(), true);
             loadTimer.stop();
             allocated = true;
         }

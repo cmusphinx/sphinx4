@@ -16,6 +16,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import java.net.URL;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -82,9 +85,8 @@ public class FastDictionary implements Dictionary {
     private boolean allowMissingWords;
     private boolean createMissingWords;
     private String wordReplacement;
-    private String wordDictionaryFile;
-    private String fillerDictionaryFile;
-    private String location;
+    private URL wordDictionaryFile;
+    private URL fillerDictionaryFile;
 
     // -------------------------------
     // working data
@@ -102,13 +104,12 @@ public class FastDictionary implements Dictionary {
      *      edu.cmu.sphinx.util.props.Registry)
      */
     public void register(String name, Registry registry)
-            throws PropertyException {
+        throws PropertyException {
         this.name = name;
-        registry.register(PROP_LOCATION, PropertyType.STRING);
-        registry.register(PROP_DICTIONARY, PropertyType.STRING);
-        registry.register(PROP_FILLER_DICTIONARY, PropertyType.STRING);
+        registry.register(PROP_DICTIONARY, PropertyType.RESOURCE);
+        registry.register(PROP_FILLER_DICTIONARY, PropertyType.RESOURCE);
         registry.register(PROP_ADD_SIL_ENDING_PRONUNCIATION,
-                PropertyType.BOOLEAN);
+                          PropertyType.BOOLEAN);
         registry.register(PROP_WORD_REPLACEMENT, PropertyType.STRING);
         registry.register(PROP_ALLOW_MISSING_WORDS, PropertyType.BOOLEAN);
         registry.register(PROP_CREATE_MISSING_WORDS, PropertyType.BOOLEAN);
@@ -122,11 +123,10 @@ public class FastDictionary implements Dictionary {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        location = ps.getString(PROP_LOCATION, PROP_LOCATION_DEFAULT);
-        wordDictionaryFile = ps.getString(PROP_DICTIONARY,
-                PROP_DICTIONARY_DEFAULT);
-        fillerDictionaryFile = ps.getString(Dictionary.PROP_FILLER_DICTIONARY,
-                PROP_FILLER_DICTIONARY_DEFAULT);
+        
+        wordDictionaryFile = ps.getResource(PROP_DICTIONARY);
+        fillerDictionaryFile = ps.getResource(PROP_FILLER_DICTIONARY);
+
         addSilEndingPronunciation = ps.getBoolean(
                 PROP_ADD_SIL_ENDING_PRONUNCIATION,
                 PROP_ADD_SIL_ENDING_PRONUNCIATION_DEFAULT);
@@ -160,21 +160,14 @@ public class FastDictionary implements Dictionary {
 
             loadTimer.start();
 
-            // NOTE: "location" can be null here, in which case the
-            // "wordDictionaryFile" and "fillerDictionaryFile" should
-            // contain the full path to the Dictionaries.
+            logger.info("Loading dictionary from: " + wordDictionaryFile);
 
-            logger.info("Loading dictionary from: ");
-            logger.info(location + "/" + wordDictionaryFile);
+            loadDictionary(wordDictionaryFile.openStream(), false);
 
-            loadDictionary(StreamFactory.getInputStream(location,
-                    wordDictionaryFile), false);
+            logger.info("Loading filler dictionary from: " +
+                        fillerDictionaryFile);
 
-            logger.info("Loading filler dictionary from: ");
-            logger.info(location + "/" + fillerDictionaryFile);
-
-            loadDictionary(StreamFactory.getInputStream(location,
-                    fillerDictionaryFile), true);
+            loadDictionary(fillerDictionaryFile.openStream(), true);
 
             loadTimer.stop();
         }
