@@ -201,6 +201,7 @@ public class ParallelRecognizer implements Configurable {
             batchManager.stop();
         } catch (IOException io) {
             System.err.println("I/O error during decoding: " + io.getMessage());
+	    io.printStackTrace();
         }
         recognizer.deallocate();
         System.out.println("\nBatchDecoder: All files decoded\n");
