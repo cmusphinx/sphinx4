@@ -755,7 +755,9 @@ public class Recognizer {
                 acousticModelName) throws IOException {
             FeatureFrame ff = 
                   fe.getFeatureFrame(numberFeatures, acousticModelName);
-            monitorSignals(ff);
+            if (ff != null) {
+                monitorSignals(ff);
+            }
             return ff;
         }
 
