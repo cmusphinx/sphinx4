@@ -37,7 +37,7 @@ import edu.cmu.sphinx.util.Timer;
  * Y[i] = X[i] - (X[i-1] * preemphasisFactor)
  * </code>
  * <p>
- * where 'i' denotes time)
+ * where 'i' denotes time.
  * <p>
  * The preemphasis factor has a value defined by the field {@link
  * #PROP_PREEMPHASIS_FACTOR}, with default defined by {@link

@@ -13,7 +13,7 @@
 package edu.cmu.sphinx.frontend.frequencywarp;
 
 /**
- * Defines various frequency warping functions.
+ * Defines the Bark frequency warping function.
  *
  * @author <a href="mailto:rsingh@cs.cmu.edu">rsingh</a>
  * @version 1.0
@@ -22,7 +22,7 @@ public class FrequencyWarper {
     
 
     /**
-     * Default constructor. No arguments are needed.
+     * Default null constructor. No fields to be initialized.
      */
     public FrequencyWarper (){}
 
