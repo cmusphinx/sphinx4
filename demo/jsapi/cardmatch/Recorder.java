@@ -21,18 +21,22 @@ public interface Recorder {
 
     /**
      * Starts recording.
+     *
+     * @return <code>true</code> if the recording was started properly
      */
     public boolean startRecording();
 
     /**
      * Stops recording.
+     *
+     * @return <code>true</code> if the recording was started properly
      */
     public boolean stopRecording();
 
     /**
      * Returns true if this Recorder is recording.
      *
-     * @return true if this Recorder is recording
+     * @return <code>true</code> if this Recorder is recording
      */
     public boolean isRecording();
 }
