@@ -55,6 +55,12 @@ BEGIN {
     F_CORRECT_SENTENCES = 16;
     F_HEAP_SIZE = 17;
     F_LOAD_AVERAGE = 18;
+    F_ACTUAL_UTTERANCES = 19;
+    F_FOUND_UTTERANCES = 20;
+    F_GAP_INSERTIONS = 21;
+    F_AVG_RESPONSE_TIME = 22;
+    F_MAX_RESPONSE_TIME = 23;
+    F_MIN_RESPONSE_TIME = 24;
 
     "./getHostname" | getline machine
 }
@@ -81,6 +87,16 @@ $1 == "test"  && $4 == machine && $5 == "s4" {
 }
 
 
+$1 == "live_test" && $4 == machine && $5 == "s4" {
+    liveTestCount[$F_TEST_NAME] = liveTestCount[$F_TEST_NAME] + 1;
+    testData[$F_TEST_NAME liveTestCount[$F_TEST_NAME]] = $0;
+    if (lastLiveTestDate != $F_DATE) {
+	lastLiveTestDate = $F_DATE;
+	lastLiveTestCount = 0;
+    }
+    lastLiveTestData[lastLiveTestCount++] = $F_TEST_NAME "|" liveTestCount[$F_TEST_NAME];
+}
+
 
 $1 == "system"  && $2 == machine {
     machineDescription = $0;
@@ -104,7 +120,7 @@ function updateData(testName, testCount) {
 ####
 # returns the word error rate for the given test
 #
-function getWER(testName, testCount,     _errors, _words) {
+function getWER(testName, testCount, _errors, _words) {
     updateData(testName, testCount);
     _errors = data[F_INSERTIONS] + data[F_DELETIONS] + data[F_SUBSTITUTIONS];
     _words = data[F_WORDS];
@@ -148,7 +164,7 @@ function getHeap(testName, testCount) {
 
 ## Finds the last reported WER
 
-function getLastGoodWER(testName, count,   wer) {
+function getLastGoodWER(testName, count, wer) {
     do {
       wer = getWER(testName, count);
       count--;
@@ -276,6 +292,59 @@ function getRunStatus(testName, count) {
 }
 
 
+function getGapInsertionStatus(testName, testCount) {
+    updateData(testName, testCount);
+    gapInsertion = data[F_GAP_INSERTION];
+    if (gapInsertion == "") {
+	gapInsertion = "N/A";
+    }
+    return "<td>" gapInsertion "</td>";
+}
+
+
+function getUtteranceRatioStatus(testName, testCount) {
+    updateData(testName, testCount);
+    actualUtterances = data[F_ACTUAL_UTTERANCES];
+    foundUtterances = data[F_FOUND_UTTERANCES];
+    if (actualUtterances > 0) {
+        ratio = foundUtterances / actualUtterances;
+    }
+    if (ratio == "") {
+	ratio = "N/A";
+    }
+    return "<td>" ratio "</td>";
+}
+
+
+function getAvgResponseTimeStatus(testName, testCount) {
+    updateData(testName, testCount);
+    avgResponseTime = data[F_AVG_RESPONSE_TIME];
+    if (avgResponseTime == "") {
+	avgResponseTime = "N/A";
+    }
+    return "<td>" avgResponseTime "</td>";
+}
+
+
+function getMaxResponseTimeStatus(testName, testCount) {
+    updateData(testName, testCount);
+    maxResponseTime = data[F_MAX_RESPONSE_TIME];
+    if (maxResponseTime == "") {
+	maxResponseTime = "N/A";
+    }
+    return "<td>" maxResponseTime "</td>";
+}
+
+
+function getMinResponseTimeStatus(testName, testCount) {
+    updateData(testName, testCount);
+    minResponseTime = data[F_MIN_RESPONSE_TIME];
+    if (minResponseTime == "") {
+	minResponseTime = "N/A";
+    }
+    return "<td>" minResponseTime "</td>";
+}
+
 
 function printSingleTest(testName, testCount) {
     updateData(testName, testCount);
@@ -295,6 +364,37 @@ function printSingleTest(testName, testCount) {
     print "</tr>"
 }
 
+
+function printSingleLiveTest(testName, testCount) {
+    updateData(testName, testCount);
+    date = data[F_DATE];
+    runTime = data[F_PROC_TIME];
+    status = getRunStatus(testName, testCount);
+    accuracy = getAccuracyStatus(testName, testCount);
+    speed = getSpeedStatus(testName, testCount);
+    heap = getHeapStatus(testName, testCount);
+    gapInsertion = getGapInsertionStatus(testName, testCount);
+    utteranceRatio = getUtteranceRatioStatus(testName, testCount);
+    avgResponseTime = getAvgResponseTimeStatus(testName, testCount);
+    maxResponseTime = getMaxResponseTimeStatus(testName, testCount);
+    minResponseTime = getMinResponseTimeStatus(testName, testCount);
+
+    print "<tr>"
+    print "<td>" dateAnchor(date)  "</td>"
+    print status;
+    print accuracy;
+    print speed;
+    print heap;
+    print "<td>" fmtTime(runTime)"</td>";
+    print gapInsertion;
+    print utteranceRatio;
+    print avgResponseTime;
+    print maxResponseTime;
+    print minResponseTime;
+    print "</tr>"
+}
+
+
 function printLongSingleTest(testName, testCount) {
     updateData(testName, testCount);
     date = data[F_DATE];
@@ -309,6 +409,32 @@ function printLongSingleTest(testName, testCount) {
     print accuracy;
     print speed;
     print heap;
+    print "</tr>";
+}
+
+
+function printLongSingleLiveTest(testName, testCount) {
+
+    updateData(testName, testCount);
+    date = data[F_DATE];
+    status = getRunStatus(testName, testCount);
+    accuracy = getAccuracyStatus(testName, testCount);
+    speed = getSpeedStatus(testName, testCount);
+    heap = getHeapStatus(testName, testCount);
+    gapInsertion = getGapInsertionStatus(testName, testCount);
+    utteranceRatio = getUtteranceRatioStatus(testName, testCount);
+    avgResponseTime = getAvgResponseTimeStatus(testName, testCount);
+
+    print "<tr>";
+    print "<td>" dateAnchor(date)  "</td>";
+    print "<td><a href=#" testName ">" testName  "</a></td>";
+    print status;
+    print accuracy;
+    print speed;
+    print heap;
+    print gapInsertion;
+    print utteranceRatio;
+    print avgResponseTime;
     print "</tr>";
 }
 
@@ -338,21 +464,56 @@ function printTestResults(testName) {
     print "</td>";
     print "</tr>";
     print "<tr>";
-      print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
-      print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
-      print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
-      print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
-      print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
-      print "<td valign=top bgcolor=#ccffff><b>Test Time<br> </b></td>";
-
-      for (i = 1; i <= testCount[testName]; i++) {
-         printSingleTest(testName, i);
-      }
+    print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Test Time<br> </b></td>";
+    
+    for (i = 1; i <= testCount[testName]; i++) {
+	printSingleTest(testName, i);
+    }
     print "</tr>";
     print "<tbody>";
     print "</table>";
     print "<br>";
 }
+
+
+function printLiveTestResults(testName) {
+    print("<br><br>");
+    print("<a name=" testName "></a>");
+    print "<table align=center cellpadding=2 cellspacing=2 border=1 width=60%>";
+    print "<tbody>";
+    print "<tr align=center>";
+    print "<td valign=top rowspan=1 colspan=11 bgcolor=#ccccff>";
+    print "<big><b>" testName "</b></big>";
+    print "<br>"
+    print "</td>";
+    print "</tr>";
+    print "<tr>";
+    print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Test Time<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Gap Insertion Rate<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Utterance Ratio<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Avg Response Time<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Max Response Time<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Min Response Time<br> </b></td>";
+    
+    for (i = 1; i <= liveTestCount[testName]; i++) {
+	printSingleLiveTest(testName, i);
+    }
+    print "</tr>";
+    print "<tbody>";
+    print "</table>";
+    print "<br>";
+}
+
 
 ####
 # Prints summary info
@@ -624,6 +785,44 @@ function printLatestTestResults(  _testName, _testCount) {
     print "<br>";
 }
 
+
+# prints the latest live tests
+
+function printLatestLiveTestResults(  _testName, _testCount) {
+    print("<br><br>");
+    print("<a name=latest_live_results></a>");
+    print "<table align=center cellpadding=2 cellspacing=2 border=1 width=80%>";
+    print "<tbody>";
+    print "<tr align=center>";
+    print "<td valign=top rowspan=1 colspan=9 bgcolor=#ccccff>";
+    print "<big><b>" "Latest Live Test Results" "</b></big>";
+    print "<br>"
+    print "</td>";
+    print "</tr>";
+    print "<tr>";
+    print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Test Name<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Gap Insertion Rate<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Utterance Ratio<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Avg Response Time<br> </b></td>";
+
+    for (i = 0; i < lastLiveTestCount; i++) {
+        split(lastLiveTestData[i], thisData);
+	_testName = thisData[1];
+	_testCount = thisData[2];
+	printLongSingleLiveTest(_testName, _testCount);
+    }
+    print "</tr>";
+    print "<tbody>";
+    print "</table>";
+    print "<br>";
+}
+
+
 # prints the table of contents
 
 function printTOC() {
@@ -646,17 +845,16 @@ function printTOC() {
 function printHeaderTable() {
     print "<table align=center cellpadding=2 cellspacing=2 border=0 width=100%>";
     print("<tr>");
-
-	print("<td valign=top bgcolor=#ddddff>\n");
-	   printTOC();
-	print("</td>\n");
-
-	print("<td valign=top>\n");
-	    printMachineDescription();
-	    printMetrics();
-	    printKey();
-	print("</td>\n");
-
+    print("<td valign=top bgcolor=#ddddff>\n");
+    printTOC();
+    print("</td>\n");
+    
+    print("<td valign=top>\n");
+    printMachineDescription();
+    printMetrics();
+    printKey();
+    print("</td>\n");
+    
     print("</tr>");
     print("</table>")
 }
@@ -667,9 +865,13 @@ END {
     printTitle();
     printHeaderTable()
     printLatestTestResults();
+    printLatestLiveTestResults();
     printDetailedTestTitle();
     for (i in testCount) {
         printTestResults(i);
+    }
+    for (i in liveTestCount) {
+	printLiveTestResults(i);
     }
     printBuildHistory();
     printFooter();
