@@ -35,10 +35,12 @@ import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collections;
 
 
 
@@ -79,6 +81,20 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     public final static String PROP_SHOW_TOKEN_COUNT =
 	PROP_PREFIX + "showTokenCount";
 
+
+    /**
+     * A sphinx property that defines the size of the word beam. i.e.
+     * that maximum number of words propagated per frame. Note that a
+     * zero value indicates that all words should be propagated.
+     */
+    public final static String PROP_MAX_WORDS_PER_FRAME =
+        PROP_PREFIX + "maxWordsPerFrame";
+
+    /**
+     * The default value for the PROP_MAX_WORDS_PER_FRAME property
+     */
+    public final static int PROP_MAX_WORDS_PER_FRAME_DEFAULT = 0;
+
     /**
      * The default value for the PROP_SHOW_TOKEN_COUNT property
      */
@@ -105,6 +121,9 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
     private boolean showTokenCount;
     private Map bestTokenMap;
+    private List wordList;
+
+    private int maxWordsPerFrame;
 
 
     /**
@@ -123,6 +142,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	this.pruner = pruner;
 	this.props = SphinxProperties.getSphinxProperties(context);
 	this.logMath = LogMath.getLogMath(context);
+        this.maxWordsPerFrame = 200;
 
 	scoreTimer = Timer.getTimer(context, "Score");
 	pruneTimer = Timer.getTimer(context, "Prune");
@@ -135,6 +155,11 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	tokensCreated = 
             StatisticsVariable.getStatisticsVariable(props.getContext(),
 		    "tokensCreated");
+
+        maxWordsPerFrame = props.getInt(PROP_MAX_WORDS_PER_FRAME,
+                    PROP_MAX_WORDS_PER_FRAME_DEFAULT);
+
+        System.out.println("maxWordsPerFrame " +maxWordsPerFrame);
 
 	showTokenCount = props.getBoolean(PROP_SHOW_TOKEN_COUNT, false);
     }
@@ -245,7 +270,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     protected void growBranches() {
 
 	growTimer.start();
-        bestTokenMap = new HashMap(activeList.size() * 10);;
+        bestTokenMap = new HashMap(activeList.size() * 10);
 
         ActiveList oldActiveList = activeList;
 
@@ -253,6 +278,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	resultList = new LinkedList();
 
 	activeList = activeList.createNew();
+        wordList = new ArrayList(oldActiveList.size() / 10);
 		
 	while (oldListIterator.hasNext()) {
 	    Token token = (Token) oldListIterator.next();
@@ -261,6 +287,9 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
                 collectSuccessorTokens(token);
             }
 	}
+
+        pruneWords();
+        growWords();
 	growTimer.stop();
     }
 
@@ -375,7 +404,9 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
                 setBestToken(newToken, nextState);
 
-                if (!newToken.isEmitting()) {
+                if (newToken.isWord() && wordList != null) {
+                    wordList.add(newToken);
+                } else if (!newToken.isEmitting()) {
                     collectSuccessorTokens(newToken);
                 } else {
                     if (firstToken) {
@@ -385,6 +416,33 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
                     }
                 }
 	    } 
+        }
+    }
+
+    /**
+     * Prune the words collected in the wordlist based upon the
+     * maxWordsPerFrame size
+     */
+    private void pruneWords() {
+        if (maxWordsPerFrame > 0 && maxWordsPerFrame < wordList.size()) {
+            if (false) {
+                System.out.println("Pruning away " + (wordList.size() -
+                            maxWordsPerFrame) + " words.");
+            }
+            Collections.sort(wordList, Token.COMPARATOR);
+	    wordList = wordList.subList(0, maxWordsPerFrame);
+        }
+    }
+
+    /**
+     * Grow the remaining word tokens onto the active list
+     */
+    private void growWords() {
+        List oldWordList = wordList;
+        wordList = null;
+
+        for (Iterator i = oldWordList.iterator(); i.hasNext(); ) {
+            collectSuccessorTokens((Token) i.next());
         }
     }
 
