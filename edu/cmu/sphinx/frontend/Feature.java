@@ -186,4 +186,34 @@ public class Feature extends Data {
             return feature;
         }
     }
+
+    /**
+     * Determines if the given object is equal to this object
+     *
+     * @param o the object to test
+     * @return <code>true</code> if the object is equal to this
+     */
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        } else if (o instanceof Feature) {
+            Feature other = (Feature) o;
+            return (featureData == other.featureData);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Generate a hashcode for an object
+     *
+     * @return the hashcode
+     */
+    public int hashCode() {
+        int result = 17;
+        for (int i = 0; i < featureData.length; i++) {
+            result = 37 * result + Float.floatToIntBits(featureData[i]);
+        }
+        return result;
+    }
 }
