@@ -21,7 +21,7 @@
     <property name="languageWeight"            value="8"/>
     <property name="silenceInsertionProbability" value="1"/>
     <property name="skip"     value="0"/>
-    <property name="logLevel"     value="WARNING"/>
+    <property name="logLevel"     value="OFF"/>
     
     <property name="linguist"   value="flatLinguist"/>
     <property name="frontend"   value="mfcFrontEnd"/>
@@ -54,12 +54,14 @@
     <component name="connectedDigitsRecognizer" 
                           type="edu.cmu.sphinx.recognizer.Recognizer">
         <property name="decoder" value="digitsDecoder"/>
+        <!--
         <propertylist name="monitors">
             <item>accuracyTracker </item>
             <item>speedTracker </item>
             <item>memoryTracker </item>
             <item>recognizerMonitor </item>
         </propertylist>
+        -->
     </component>
     
     <!-- ******************************************************** -->

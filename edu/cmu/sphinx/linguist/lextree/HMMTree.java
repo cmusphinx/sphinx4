@@ -12,9 +12,15 @@
 
 package edu.cmu.sphinx.linguist.lextree;
 
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.Utilities;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
@@ -24,15 +30,9 @@ import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.linguist.util.HMMPool;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.HashSet;
+import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.Utilities;
 
 
 /**
@@ -78,8 +78,6 @@ class HMMTree {
         Timer.start("Create HMMTree");
         compile();
         Timer.stop("Create HMMTree");
-        Node.dumpNodeInfo();
-        dumpTree();
     }
 
 

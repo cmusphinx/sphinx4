@@ -29,8 +29,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+import edu.cmu.sphinx.util.SphinxLogFormatter;
 
 /**
  * Manages the configuration for the system. The configuration manager provides
@@ -71,6 +76,13 @@ public class ConfigurationManager {
      * @see java.util.logging.Level
      */
     public final static String PROP_COMMON_LOG_LEVEL = "logLevel";
+    
+    /**
+     * A common property (used by all components) that sets the tersness
+     * of the log output
+     * 
+     */
+    public final static String PROP_COMMON_LOG_TERSE = "logTerse";
 
     private Map symbolTable = new LinkedHashMap();
     private Map rawPropertyMap;
@@ -93,7 +105,7 @@ public class ConfigurationManager {
         rawPropertyMap = loader(url);
         applySystemProperties(rawPropertyMap, globalProperties);
         configureLogger();
-        
+
         // we can't config the configuration manager with itself so we
         // do some of these config items manually.
 
@@ -339,7 +351,7 @@ public class ConfigurationManager {
      *                the name of the property
      * @return the property value or null if it doesn't exist.
      */
-     String getMyGlobalProperty(String key) {
+    String getMyGlobalProperty(String key) {
         return globalLookup("${" + key + "}");
     }
 
@@ -355,10 +367,10 @@ public class ConfigurationManager {
             throws PropertyException {
         registry.register(PROP_COMMON_LOG_LEVEL, PropertyType.STRING);
     }
-    
+
     /**
      * Configure the logger
-     *
+     *  
      */
     private void configureLogger() {
         LogManager logManager = LogManager.getLogManager();
@@ -368,18 +380,33 @@ public class ConfigurationManager {
         props.setProperty("handlers", "java.util.logging.ConsoleHandler");
         props.setProperty("java.util.logging.ConsoleHandler.level", "FINEST");
         props.setProperty("java.util.logging.ConsoleHandler.formatter",
-              "edu.cmu.sphinx.util.SphinxLogFormatter");
+                "edu.cmu.sphinx.util.SphinxLogFormatter");
 
         try {
             props.store(bos, "");
             bos.close();
-            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+            ByteArrayInputStream bis = new ByteArrayInputStream(bos
+                    .toByteArray());
             logManager.readConfiguration(bis);
             bis.close();
         } catch (IOException ioe) {
-            System.err.println("Can't configure logger, using default configuration");
+            System.err
+                    .println("Can't configure logger, using default configuration");
         }
-        
+        // Now we find the SphinxLogFormatter that the log manager created
+        // and configure it.
+        Logger rootLogger = LogManager.getLogManager().getLogger("");
+        Handler[] handlers = rootLogger.getHandlers();
+        for (int i = 0; i < handlers.length; i++) {
+            if (handlers[i] instanceof ConsoleHandler) {
+                if (handlers[i].getFormatter() instanceof SphinxLogFormatter) {
+                    SphinxLogFormatter slf = (SphinxLogFormatter) handlers[i]
+                            .getFormatter();
+                    slf.setTerse("true"
+                           .equals(getMyGlobalProperty(PROP_COMMON_LOG_TERSE)));
+                }
+            }
+        }
     }
 
     /**
@@ -466,9 +493,10 @@ public class ConfigurationManager {
         out.println("</head>");
         out.println("<body>");
     }
-    
+
     /**
      * Retrieves the global log level
+     * 
      * @return the global log level
      */
     String getGlobalLogLevel() {
@@ -478,6 +506,7 @@ public class ConfigurationManager {
         }
         return level;
     }
+
     /**
      * Dumps the footer for HTML output
      * 

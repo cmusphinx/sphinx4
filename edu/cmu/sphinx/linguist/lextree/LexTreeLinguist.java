@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.Linguist;
@@ -246,6 +247,7 @@ public class LexTreeLinguist implements Linguist {
     // property sheet
     // ------------------------------------
     private String name;
+    private Logger logger;
     private boolean fullWordHistories = true;
     private boolean addFillerWords = false;
     private boolean generateUnitStates = false;
@@ -305,6 +307,7 @@ public class LexTreeLinguist implements Linguist {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        logger = ps.getLogger();
         acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL,
                 AcousticModel.class);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
@@ -429,7 +432,7 @@ public class LexTreeLinguist implements Linguist {
         sentenceStartWordArray = new Word[1];
         sentenceStartWordArray[0] = dictionary.getSentenceStartWord();
         
-        hmmPool = new HMMPool(acousticModel);
+        hmmPool = new HMMPool(acousticModel, logger);
 
         hmmTree = new HMMTree(hmmPool, dictionary, languageModel,
                 addFillerWords, languageWeight);

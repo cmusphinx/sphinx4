@@ -312,7 +312,7 @@ public void deallocate() {
                 if (createMissingWords) {
                     word = createWord(text, null, false);
                 } else {
-                    System.out.println("FastDictionary: Missing word: " + text);
+                    logger.warning("FastDictionary: Missing word: " + text);
                 }
             }
         } else if (object instanceof String) { // first lookup for this string

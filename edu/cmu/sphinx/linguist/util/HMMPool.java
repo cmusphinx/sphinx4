@@ -14,6 +14,8 @@ package edu.cmu.sphinx.linguist.util;
 
 
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
@@ -36,13 +38,15 @@ public class HMMPool {
     private Unit[] unitTable;
     private HMM hmmTable[][];
     private int numCIUnits;
+    private Logger logger;
 
     /**
      * Constructs a HMMPool object.
      *
      * @param model  the model to use for the pool
      */
-    public HMMPool(AcousticModel model) {
+    public HMMPool(AcousticModel model, Logger logger) {
+        this.logger = logger;
         int maxCIUnits = 0;
         this.model = model;
         Timer.start("buildHmmPool");
@@ -60,7 +64,7 @@ public class HMMPool {
         for (Iterator i = model.getContextIndependentUnitIterator();
                 i.hasNext();) {
             Unit unit = (Unit) i.next();
-            // System.out.println("CI unit " + unit);
+            logger.fine("CI unit " + unit);
             if (unit.getBaseID() > maxCIUnits) {
                 maxCIUnits = unit.getBaseID();
             }
@@ -75,7 +79,9 @@ public class HMMPool {
             Unit unit = hmm.getUnit();
             int id = getID(unit);
             unitTable[id] = unit;
-            // System.out.println("Unit " + unit + " id " + id);
+            if (logger.isLoggable(Level.FINER)) {
+                logger.finer("Unit " + unit + " id " + id);
+            }
         }
 
 
@@ -135,8 +141,8 @@ public class HMMPool {
         Unit unit = Unit.getUnit(centralUnit.getName(), centralUnit.isFiller(),
                 context);
 
-        if (false) {
-            System.out.println("Missing " + getUnitNameFromID(id) 
+        if (logger.isLoggable(Level.FINER)) {
+            logger.finer("Missing " + getUnitNameFromID(id) 
                     + " returning " + unit);
         }
         return unit;
@@ -291,12 +297,12 @@ public class HMMPool {
      * Dumps out info about this pool
      */
     public void dumpInfo() {
-        System.out.println("Max CI Units " + numCIUnits);
-        System.out.println("Unit table size " + unitTable.length);
+        logger.info("Max CI Units " + numCIUnits);
+        logger.info("Unit table size " + unitTable.length);
 
-        if (false) {
+        if (logger.isLoggable(Level.FINER)) {
             for (int i = 0; i < unitTable.length; i++) {
-                System.out.println("" + i + " " + unitTable[i]);
+                logger.finer("" + i + " " + unitTable[i]);
             }
         }
     }

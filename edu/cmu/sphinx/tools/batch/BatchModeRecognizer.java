@@ -22,6 +22,7 @@ import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
+import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.BatchItem;
 import edu.cmu.sphinx.util.BatchManager;
 import edu.cmu.sphinx.util.PooledBatchManager;
@@ -49,6 +50,9 @@ import edu.cmu.sphinx.util.props.Registry;
  * Sphinx-4 Configuration Management</a>. For information about the
  * batch file, refer to the <a href="../../../../../index.html#batch_files">
  * batch file description</a>.
+ * 
+ * This class will send recognition results to the logger if the log level is
+ * set to INFO.
  *
  */
 public class BatchModeRecognizer implements Configurable {
@@ -195,26 +199,29 @@ public class BatchModeRecognizer implements Configurable {
      */
     public void decode(String batchFile) {
         BatchItem batchItem;
+        int count = 0;
         try {
             recognizer.allocate();
             setBatchFile(batchFile);
 
             batchManager.start();
-            System.out.println("\nBatchDecoder: decoding files in "
+            logger.info("BatchDecoder: decoding files in "
                     + batchManager.getFilename());
-            System.out.println();
         
             while ((batchItem = batchManager.getNextItem()) != null) {
                 InputStream is = setInputStream(batchItem.getFilename());
-                recognizer.recognize(batchItem.getTranscript());
+                Result result = recognizer.recognize(batchItem.getTranscript());
+                logger.info("File  : " + batchItem.getFilename());
+                logger.info("Result: " + result);
                 is.close();
+                count++;
             }
             batchManager.stop();
         } catch (IOException io) {
-            System.err.println("I/O error during decoding: " + io.getMessage());
+            logger.severe("I/O error during decoding: " + io.getMessage());
         }
         recognizer.deallocate();
-        System.out.println("\nBatchDecoder: All files decoded\n");
+        logger.info("BatchDecoder: " + count + " files decoded");
     }
     
     
@@ -267,7 +274,6 @@ public class BatchModeRecognizer implements Configurable {
             return;
         } catch (PropertyException e) {
             System.err.println("Error during initialization: \n  " + e);
-            e.printStackTrace();
             return;
         }
 

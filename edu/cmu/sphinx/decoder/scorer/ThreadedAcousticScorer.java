@@ -15,6 +15,7 @@ package edu.cmu.sphinx.decoder.scorer;
 import java.io.IOException;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.logging.Logger;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
@@ -107,6 +108,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     private int numThreads;         // number of threads in use
     private int minScoreablesPerThread; // min scoreables sent to a thread
     private boolean keepData;       // scoreables keep feature or not
+    private Logger logger;
 
     private Mailbox mailbox;        // sync between caller and threads
     private Semaphore semaphore;    // join after call
@@ -118,7 +120,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#allocate()
      */
     public void allocate() throws IOException {
-        System.out.println("# of scoring threads: " + numThreads);
+        logger.info("# of scoring threads: " + numThreads);
 
         // if we only have one thread, then we'll score the
         // states in the calling thread and we won't need any
@@ -166,6 +168,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        logger = ps.getLogger();
         this.frontEnd = (FrontEnd) ps.getComponent(PROP_FRONTEND,
                 FrontEnd.class);
         boolean cpuRelative = ps.getBoolean(PROP_IS_CPU_RELATIVE,

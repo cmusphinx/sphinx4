@@ -18,6 +18,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.props.Configurable;
@@ -64,6 +67,7 @@ public abstract class Grammar implements Configurable {
     // Configuration data
     // -----------------------------
     private String name;
+    private Logger logger;
     private boolean showGrammar;
     private boolean optimizeGrammar = true;
     private Dictionary dictionary;
@@ -92,6 +96,7 @@ public abstract class Grammar implements Configurable {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        logger = ps.getLogger();
         showGrammar = ps.getBoolean(PROP_SHOW_GRAMMAR,
                 PROP_SHOW_GRAMMAR_DEFAULT);
         optimizeGrammar = ps.getBoolean(PROP_OPTIMIZE_GRAMMAR,
@@ -124,7 +129,7 @@ public abstract class Grammar implements Configurable {
         if (showGrammar) {
             dumpGrammar("grammar.gdl");
             dumpRandomSentences("sentences.txt", 100);
-            System.out.println("Total number of nodes " + grammarNodes.size());
+            logger.info("Total number of nodes " + grammarNodes.size());
         }
     }
 
@@ -151,15 +156,17 @@ public abstract class Grammar implements Configurable {
      *  
      */
     public void dumpStatistics() {
-        int successorCount = 0;
-        System.out.println("Num nodes : " + getNumNodes());
-        for (Iterator i = grammarNodes.iterator(); i.hasNext();) {
-            GrammarNode node = (GrammarNode) i.next();
-            successorCount += node.getSuccessors().length;
+        if (logger.isLoggable(Level.INFO)) {
+            int successorCount = 0;
+            logger.info("Num nodes : " + getNumNodes());
+            for (Iterator i = grammarNodes.iterator(); i.hasNext();) {
+                GrammarNode node = (GrammarNode) i.next();
+                successorCount += node.getSuccessors().length;
+            }
+            logger.info("Num arcs  : " + successorCount);
+            logger.info("Avg arcs  : "
+                    + ((float) successorCount / getNumNodes()));
         }
-        System.out.println("Num arcs  : " + successorCount);
-        System.out.println("Avg arcs  : "
-                + ((float) successorCount / getNumNodes()));
     }
 
     /**
@@ -185,7 +192,7 @@ public abstract class Grammar implements Configurable {
             }
             out.close();
         } catch (IOException ioe) {
-            System.out.println("Can't write random sentences to " + path + " "
+            logger.severe("Can't write random sentences to " + path + " "
                     + ioe);
         }
     }
@@ -340,7 +347,7 @@ public abstract class Grammar implements Configurable {
             add(node);
         } else {
             node = createGrammarNode(identity, false);
-            System.out.println("Can't find pronunciation for " + word);
+            logger.warning("Can't find pronunciation for " + word);
         }
         return node;
     }

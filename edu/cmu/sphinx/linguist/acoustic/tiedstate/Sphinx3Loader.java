@@ -333,10 +333,10 @@ public class Sphinx3Loader implements Loader {
      */
     private void loadModelFiles(String modelName) throws FileNotFoundException,
             IOException, ZipException {
-        logger.info("Loading Sphinx3 acoustic model: " + modelName);
-        logger.info("    Path      : " + location);
-        logger.info("    modellName: " + model);
-        logger.info("    dataDir   : " + dataDir);
+        logger.config("Loading Sphinx3 acoustic model: " + modelName);
+        logger.config("    Path      : " + location);
+        logger.config("    modellName: " + model);
+        logger.config("    dataDir   : " + dataDir);
         // load the acoustic properties file (am.props),
         // create a different URL depending on the data format
         URL url = null;
@@ -495,8 +495,7 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
         ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
                 '#', false);
         Pool pool = new Pool(path);
-        logger.info("Loading density file from: ");
-        logger.info(path);
+        logger.fine("Loading density file from: " + path);
         est.expectString("param");
         numStates = est.getInt("numStates");
         numStreams = est.getInt("numStreams");
@@ -880,8 +879,7 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
             (inputStream, '#', false);
     	Pool pool = new Pool(path);
 
-	logger.info("Loading HMM file from: ");
-	logger.info(path);
+	logger.fine("Loading HMM file from: " + path);
 
 	est.expectString(MODEL_VERSION);
 
@@ -1077,8 +1075,7 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
      */
     private Pool loadMixtureWeightsAscii(String path, float floor)
             throws FileNotFoundException, IOException {
-        logger.info("Loading mixture weights from: ");
-        logger.info(path);
+        logger.fine("Loading mixture weights from: " + path);
         int numStates;
         int numStreams;
         int numGaussiansPerState;
@@ -1130,8 +1127,7 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
      private Pool loadMixtureWeightsBinary(String path,
                                     float floor) 
         throws FileNotFoundException, IOException {
-	logger.info("Loading mixture weights from: " );
-	logger.info(path);
+	logger.fine("Loading mixture weights from: " + path );
 
 	int numStates;
 	int numStreams;
@@ -1191,8 +1187,7 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
     protected Pool loadTransitionMatricesAscii(String path)
             throws FileNotFoundException, IOException {
         InputStream inputStream = StreamFactory.getInputStream(location, path);
-	logger.info("Loading transition matrices from: ");
-        logger.info(path);
+	logger.fine("Loading transition matrices from: " + path);
         int numMatrices;
         int numStates;
         Pool pool = new Pool(path);
@@ -1201,7 +1196,7 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
         est.expectString("tmat");
         numMatrices = est.getInt("numMatrices");
         numStates = est.getInt("numStates");
-	logger.info("with " + numMatrices + " and " + numStates + 
+	logger.fine("with " + numMatrices + " and " + numStates + 
 		    " states, in " + (sparseForm ? "sparse" : "dense") +
 		    " form");
 	
@@ -1250,8 +1245,7 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
      */
     protected Pool loadTransitionMatricesBinary(String path)
         throws FileNotFoundException, IOException {        
-	logger.info("Loading transition matrices from: ");
-	logger.info( path);
+	logger.fine("Loading transition matrices from: " + path);
 	int numMatrices;
 	int numStates;
         int numRows;
@@ -1306,7 +1300,7 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
     private Pool createDummyMatrixPool(String name) {
         Pool pool = new Pool(name);
         float[][] matrix = new float[vectorLength][vectorLength];
-        logger.info("creating dummy matrix pool " + name);
+        logger.fine("creating dummy matrix pool " + name);
         for (int i = 0; i < vectorLength; i++) {
             for (int j = 0; j < vectorLength; j++) {
                 if (i == j) {
@@ -1328,7 +1322,7 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
      * @return the pool with the vector
      */
     private Pool createDummyVectorPool(String name) {
-        logger.info("creating dummy vector pool " + name);
+        logger.fine("creating dummy vector pool " + name);
         Pool pool = new Pool(name);
         float[] vector = new float[vectorLength];
         for (int i = 0; i < vectorLength; i++) {

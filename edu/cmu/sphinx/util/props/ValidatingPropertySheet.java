@@ -500,8 +500,9 @@ class ValidatingPropertySheet implements PropertySheet {
      * @see edu.cmu.sphinx.util.props.PropertySheet#getLogger()
      */
     public Logger getLogger() throws PropertyException {
-        Logger logger = Logger.getLogger(className + "."
-             + registry.getOwner().getName());
+//        Logger logger = Logger.getLogger(className + "."
+//             + registry.getOwner().getName());
+        Logger logger = Logger.getLogger(registry.getOwner().getName());
         Level level = getLogLevel();
         logger.setLevel(level);
         return logger;
