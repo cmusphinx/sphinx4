@@ -63,6 +63,8 @@ your environment to use JSAPI.
     <!-- ********************************************************** -->
     <target name="all"
 	    depends="make_lib_dir,
+	             check_jsapi_jar.isPresent,
+                     issue_jsapi_warning,
 	             compile_sphinx_demos"
 	    description="Compiles and jars the demos"/>
 
@@ -80,10 +82,8 @@ your environment to use JSAPI.
 	             compile_sphinx_jsgf,
 	             compile_zipcity,
                      compile_sphinx_wavfile,
-                     compile_sphinx_transcriber,
-	             check_jsapi_jar.isPresent,
-                     issue_jsapi_warning"
-	    description="Compiles Sphinx-4 demos that do not use JSAPI"/>
+                     compile_sphinx_transcriber"
+	    description="Compiles Sphinx-4 demos"/>
 
     <target name="compile_sphinx_helloworld">
     	<mkdir dir="${classes_dir}/demo/sphinx/helloworld"/>
@@ -132,7 +132,7 @@ your environment to use JSAPI.
 	     compress="true"/>
     </target>
 
-    <target name="compile_sphinx_dialog">
+    <target name="compile_sphinx_dialog" if="jsapi_jar.isPresent">
     	<mkdir dir="${classes_dir}/demo/sphinx/dialog"/>
 	<javac debug="true"
 	       source="1.4"
@@ -162,7 +162,7 @@ your environment to use JSAPI.
 	     compress="true"/>
     </target>
 
-    <target name="compile_sphinx_jsgf">
+    <target name="compile_sphinx_jsgf" if="jsapi_jar.isPresent">
     	<mkdir dir="${classes_dir}/demo/sphinx/jsgf"/>
 	<javac debug="true"
 	       source="1.4"
