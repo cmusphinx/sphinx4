@@ -13,7 +13,7 @@ import java.io.IOException;
 public interface DataSource {
 
     /**
-     * Reads the next Data object produced by this DataSource.
+     * Returns the next Data object produced by this DataSource.
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
