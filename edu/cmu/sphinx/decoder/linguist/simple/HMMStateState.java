@@ -27,6 +27,7 @@ import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
 public class HMMStateState extends SentenceHMMState 
     implements Serializable, HMMSearchState {
     private HMMState hmmState;
+    private boolean isEmitting;
 
     /**
      * Creates a HMMStateState
@@ -39,6 +40,7 @@ public class HMMStateState extends SentenceHMMState
 		parent,
 		hmmState.getState()); 
 	this.hmmState = hmmState;
+        this.isEmitting = hmmState.isEmitting();
     }
 
     /**
@@ -56,7 +58,7 @@ public class HMMStateState extends SentenceHMMState
      * @return true if the state is an emitting state
      */
     public boolean isEmitting() {
-	return hmmState.isEmitting();
+	return isEmitting;
     }
 
     /**
