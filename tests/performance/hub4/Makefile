@@ -44,6 +44,9 @@ EXTRA_JAVA_FLAGS=$(PROFILE_FLAGS) $(LOG_GC_FLAGS) $(LOG) $(GC_FLAGS) $(DEBUG_FLA
 
 HUB4_DIR=/lab/speech/sphinx4/data/hub4/eval99/supervised
 
+BATCH=$(HUB4_DIR)/f0_hub4.batch
+
+
 ##########################################################################
 
 include ${TOP}/build/Makefile.config
@@ -93,10 +96,14 @@ hub4_flat_unigram:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
 	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.flat.props \
-        $(HUB4_DIR)/f0_hub4.batch
+        $(BATCH)
 
 hub4_trigram:
 	$(MAKE) hub4_trigram_wpbfsm
+
+hub4_trigram_f1:
+	$(MAKE) BATCH=$(HUB4_DIR)/f1_hub4.batch hub4_trigram_wpbfsm
+
 
 
 # #########################################################
@@ -105,14 +112,12 @@ hub4_trigram:
 hub4_flat_unigram_original:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.flat.props \
-        $(HUB4_DIR)/f0_hub4.batch
+	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.flat.props  $(BATCH)
 
 hub4_trigram_original:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props \
-        $(HUB4_DIR)/f0_hub4.batch
+	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props $(BATCH)
 
 hub4_trigram_quick:
 	$(JAVA_CMD) \
@@ -142,14 +147,14 @@ hub4_trigram_wpbfsm:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
 	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.wpbfsm.props   \
-        $(HUB4_DIR)/f0_hub4.batch
+	$(BATCH)
 
 hub4_trigram_test:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
    -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.fullWordHistories=false \
 	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props \
-        $(HUB4_DIR)/f0_hub4.batch
+	$(BATCH)
 
 btest:
 	$(JAVA_CMD) \
