@@ -125,6 +125,7 @@ public class BaseRecognizer extends BaseEngine
             states = setEngineState(CLEAR_ALL_STATE, newState);
         }
         postEngineAllocated(states[0], states[1]);
+        handleAllocate();        
     }
 
     /**
@@ -152,6 +153,7 @@ public class BaseRecognizer extends BaseEngine
       // Go in to the DEALLOCATED state.
       states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
       postEngineDeallocated(states[0], states[1]);
+      handleDeallocate();
     }
 
 
