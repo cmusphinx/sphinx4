@@ -62,6 +62,7 @@ public class SimpleNGramModel implements LanguageModel {
     private int lineNumber;
     private BufferedReader reader;
     private String fileName;
+    private boolean allocated = false;
 
     /*
      * (non-Javadoc)
@@ -86,6 +87,12 @@ public class SimpleNGramModel implements LanguageModel {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+
+
+        if (allocated) {
+            throw new PropertyException(this, null, 
+                    "Can't change properties after allocation");
+        }
         format = ps.getString(PROP_FORMAT, PROP_FORMAT_DEFAULT);
         location = ps.getString(PROP_LOCATION, PROP_LOCATION_DEFAULT);
         unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT,
@@ -104,6 +111,7 @@ public class SimpleNGramModel implements LanguageModel {
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#allocate()
      */
     public void allocate() throws IOException {
+        allocated = true;
         load(format, location, unigramWeight, dictionary);
         if (desiredMaxDepth > 0) {
             if (desiredMaxDepth < maxNGram) {
@@ -118,6 +126,7 @@ public class SimpleNGramModel implements LanguageModel {
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
      */
     public void deallocate() {
+        allocated = false;
     }
 
     /*

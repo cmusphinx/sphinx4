@@ -140,7 +140,8 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         loader = (Loader) ps.getComponent(PROP_LOADER, Loader.class);
-        useComposites = ps.getBoolean(PROP_USE_COMPOSITES, PROP_USE_COMPOSITES_DEFAULT);
+        useComposites = 
+            ps.getBoolean(PROP_USE_COMPOSITES, PROP_USE_COMPOSITES_DEFAULT);
         logger = ps.getLogger();
     }
 

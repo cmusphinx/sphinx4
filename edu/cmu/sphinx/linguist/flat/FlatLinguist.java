@@ -177,10 +177,9 @@ public class FlatLinguist implements Linguist, Configurable {
         showCompilationProgress = ps.getBoolean(
                 PROP_SHOW_COMPILATION_PROGRESS,
                 PROP_SHOW_COMPILATION_PROGRESS_DEFAULT);
-        spreadWordProbabilitiesAcrossPronunciations = ps
-                .getBoolean(
-                        PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS,
-                        PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS_DEFAULT);
+        spreadWordProbabilitiesAcrossPronunciations = ps.getBoolean(
+                PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS,
+                PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS_DEFAULT);
     }
 
     /**
