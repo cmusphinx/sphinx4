@@ -142,4 +142,11 @@ public class SimpleWordResult implements WordResult {
         return null;
     }
 
+    
+    /**
+     * @see edu.cmu.sphinx.result.WordResult#isFiller()
+     */
+    public boolean isFiller() {
+        return word.isFiller() || word.toString().equals("<noop>");
+    }
 }

@@ -87,5 +87,12 @@ public interface WordResult {
      * Returns a string representation of this object
      */
     public String toString();
+    
+    /**
+     * Does this word result represent a filler token?
+     * 
+     * @return true if this is a filler
+     */
+    public boolean isFiller();
 }
 
