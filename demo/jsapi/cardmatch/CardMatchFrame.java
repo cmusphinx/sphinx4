@@ -96,7 +96,7 @@ public class CardMatchFrame extends JFrame {
     /**
      * Updates the card panel.
      */
-    public void updateCardPanel() {
+    private void updateCardPanel() {
         cardPanel.removeAll();
         // add the check-boxes
         for (Iterator i = cards.iterator(); i.hasNext(); ) {
@@ -106,6 +106,20 @@ public class CardMatchFrame extends JFrame {
         invalidate();
         validate();
         repaint();
+    }
+
+    /**
+     * Starts a new game
+     *
+     * @param game the game to start over
+     */
+    public void startNewGame(final Game game) {
+	SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+		game.startOver();
+		updateCardPanel();
+            }
+	});
     }
 
 

@@ -114,7 +114,7 @@ public class Game {
     public void turnCard(String cardID) {
         Card card = getCard(cardID);
         if (card != null && !card.isMatched()) {
-            card.setSelected(!card.isSelected());
+            card.setSelected(true);
             if (card1 == null) {
                 card1 = card;
             } else {

@@ -199,11 +199,15 @@ public class CardMatch implements Recorder {
 
     /**
      * Speaks the given string of text.
+     *
+     * @param text the text to speak
      */
     private void speak(String text) {
         if (useVoice && voice != null) {
             voice.speak(text);
-        }
+        } else {
+	    System.out.println("Speak: " + text);
+	}
     }
 
 
@@ -267,10 +271,9 @@ public class CardMatch implements Recorder {
 
                 if (tag != null) {
                     if (tag.equals("new_game")) {
-                        game.startOver();
                         goodGuessIndex = 0;
                         badGuessIndex = 0;
-                        cardMatchFrame.updateCardPanel();
+			cardMatchFrame.startNewGame(game);
                         speak("New game. You can guess now.");
                     } else {
                         // or it tag is "1", "2" ... "6"

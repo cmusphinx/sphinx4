@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -63,10 +64,14 @@ public class Card {
      *
      * @param select whether to select this Card or not
      */
-    public void setSelected(boolean selected) {
+    public void setSelected(final boolean selected) {
         if (!isMatched()) {
             if (toggleButton != null) {
-                toggleButton.setSelected(selected);
+		SwingUtilities.invokeLater( new Runnable() {
+		    public void run() {
+			toggleButton.setSelected(selected);
+		    }
+		});
             }
         }
     }
@@ -85,10 +90,14 @@ public class Card {
      *
      * @param matched true if it has already been match, false otherwise
      */
-    public void setMatched(boolean matched) {
+    public void setMatched(final boolean matched) {
         this.isMatched = matched;
         if (toggleButton != null) {
-            toggleButton.setSelected(matched);
+	    SwingUtilities.invokeLater( new Runnable() {
+		public void run() {
+		    toggleButton.setSelected(matched);
+		}
+	    });
         }
     }
 

@@ -50,6 +50,7 @@ edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
 edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
 edu.cmu.sphinx.frontend.windowShiftInMs = 10
 edu.cmu.sphinx.frontend.windower.alpha = 0.46
+edu.cmu.sphinx.frontend.util.Microphone.closeAudioBetweenUtterances = false
 
 
 ############################################################
@@ -59,7 +60,7 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 ############################################################
 
 demo.jsapi.cardmatch.numberOfCards = 6
-demo.jsapi.cardmatch.useVoice = false
+demo.jsapi.cardmatch.useVoice = true
 demo.jsapi.cardmatch.imageFiles = ./willie.gif ./paul.gif ./philip.gif
 demo.jsapi.cardmatch.JSGFGrammar.path=./CardMatch.gram
 
