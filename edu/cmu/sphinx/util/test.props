@@ -1,0 +1,23 @@
+// [[[copyright]]]
+//
+// this is a test SphinxProperties file
+//
+
+flare=low
+gravity=1.2
+lgravity=1.9
+craters=1000000
+tracing=Enabled
+
+io.flare=none at all
+io.gravity=99.99
+io.lgravity=999.999
+io.craters=1
+
+phobus.flare=reallly high
+phobus.gravity=.001
+phobus.lgravity=.00001
+phobus.craters=14
+phobus.tracing=on
+
+statistics.loops=on

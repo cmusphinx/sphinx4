@@ -33,6 +33,11 @@ public class SphinxProperties {
      * from the URL, the properties object itself
      */
     private static Map contextPool = new HashMap();
+
+    // This empty SphinxProperties is used when a request is made for
+    // a SphinxProperties from a context that does not exist.
+    // It allows the application to continue with getXXX calls (which
+    // will supply the inline default values).
     private static SphinxProperties EMPTY_SPHINX_PROPERTIES = 
 		new SphinxProperties();
 
@@ -340,7 +345,7 @@ public class SphinxProperties {
 	    // an empty context
 	    SphinxProperties.initContext("sun", null);
 	    // an populated context
-	    SphinxProperties.initContext("moon", new URL("file:./moon.props"));
+	    SphinxProperties.initContext("moon", new URL("file:./test.props"));
     	} catch (IOException ioe) {
 	    System.out.println("ioe " + ioe);
 	}
@@ -348,9 +353,6 @@ public class SphinxProperties {
 	SphinxProperties sun = SphinxProperties.getSphinxProperties("sun");
 	SphinxProperties moon = SphinxProperties.getSphinxProperties("moon");
 	SphinxProperties star = SphinxProperties.getSphinxProperties("star");
-	if (star != null) {
-	    System.out.println("Unexpected star props!");
-	}
 
 	System.out.println("sun flare " +sun.getString("flare", "high"));
 	System.out.println("moon flare " + moon.getString("flare", "high"));
