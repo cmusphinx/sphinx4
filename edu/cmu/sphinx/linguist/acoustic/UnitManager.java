@@ -28,8 +28,8 @@ public class  UnitManager implements Configurable  {
     /**
      * The name for the silence unit
      */
-    public static String SILENCE_NAME = "SIL";
-    private static int SILENCE_ID = 1;
+    public final static String SILENCE_NAME = "SIL";
+    private final static int SILENCE_ID = 1;
 
     /**
      * The silence unit

@@ -24,7 +24,7 @@ public class SpeechEventWrapper extends SpeechEvent {
     /**
      * Use an id that won't be confused with JSAPI event ids.
      */
-    protected static int WRAPPER_ID = -25468;
+    protected final static int WRAPPER_ID = -25468;
     
     /**
      * The wrapped event.
