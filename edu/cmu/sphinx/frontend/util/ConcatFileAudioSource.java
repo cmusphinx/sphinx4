@@ -14,13 +14,16 @@ package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.Audio;
 import edu.cmu.sphinx.frontend.AudioSource;
+import edu.cmu.sphinx.frontend.FrontEnd;
 
 import edu.cmu.sphinx.util.BatchFile;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.SequenceInputStream;
 
@@ -123,15 +126,37 @@ public class ConcatFileAudioSource implements AudioSource {
      */
     public static final int PROP_MAX_SILENCE_DEFAULT = 3;
 
+    /**
+     * The SphinxProperty that specifies the name of the transcript file.
+     * If this property is set, a transcript file will be created.
+     * No transcript file will be created if this property is not set.
+     */
+    public static final String PROP_TRANSCRIPT_FILE = 
+        PROP_PREFIX + "transcriptFile";
+
+    /**
+     * The default value of PROP_TRANSCRIPT_FILE.
+     */
+    public static final String PROP_TRANSCRIPT_FILE_DEFAULT = null;
+
+
+    private static final String GAP_LABEL = "inter_segment_gap";
+
 
     private boolean addRandomSilence;
+    private boolean createTranscript;
     private int skip;
     private int maxSilence;
     private int silenceCount;
+    private int bytesPerSecond;
+    private long totalBytes;
+    private long silenceFileLength;
     private String silenceFileName = null;
     private String nextFile = null;
+    private String context;
     private StreamAudioSource streamAudioSource;
     private List referenceList;
+    private FileWriter transcript;
 
 
     /**
@@ -146,14 +171,36 @@ public class ConcatFileAudioSource implements AudioSource {
                                  SphinxProperties props, String batchFile)
         throws IOException {
 
+        this.context = context;
+
+        String transcriptFile = props.getString
+            (PROP_TRANSCRIPT_FILE, PROP_TRANSCRIPT_FILE_DEFAULT);
+        if (transcriptFile != null) {
+            transcript = new FileWriter(transcriptFile);
+        }
+
+        int sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE,
+                                      FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
+        int bitsPerSample = props.getInt
+            (FrontEnd.PROP_BITS_PER_SAMPLE,
+             FrontEnd.PROP_BITS_PER_SAMPLE_DEFAULT);
+        
+        bytesPerSecond = sampleRate * (bitsPerSample / 8);
+
         addRandomSilence = props.getBoolean
             (PROP_ADD_RANDOM_SILENCE, PROP_ADD_RANDOM_SILENCE_DEFAULT);
         maxSilence = props.getInt(PROP_MAX_SILENCE, PROP_MAX_SILENCE_DEFAULT);
         skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
         silenceFileName = 
             props.getString(PROP_SILENCE_FILE, PROP_SILENCE_FILE_DEFAULT);
-        int startFile = props.getInt(PROP_START_FILE, PROP_START_FILE_DEFAULT);
-        int totalFiles = props.getInt(PROP_TOTAL_FILES, PROP_TOTAL_FILES_DEFAULT);
+        
+        File silenceFile = new File(silenceFileName);
+        silenceFileLength = silenceFile.length();
+
+        int startFile = props.getInt(PROP_START_FILE, 
+                                     PROP_START_FILE_DEFAULT);
+        int totalFiles = props.getInt(PROP_TOTAL_FILES, 
+                                      PROP_TOTAL_FILES_DEFAULT);
 
         if (batchFile == null) {
             throw new Error("BatchFile cannot be null!");
@@ -187,6 +234,19 @@ public class ConcatFileAudioSource implements AudioSource {
     public List getReferences() {
         return referenceList;
     }
+    
+    /**
+     * Returns the audio time in seconds represented by the given
+     * number of bytes.
+     *
+     * @param the number of bytes
+     *
+     * @return the audio time
+     */
+    private float getSeconds(long bytes) {
+        return ((float) bytes/bytesPerSecond);
+    }
+    
 
     /**
      * The work of the concatenating of the audio files are
@@ -202,7 +262,8 @@ public class ConcatFileAudioSource implements AudioSource {
         private Random silenceRandom;
         private BufferedReader reader;
 
-        InputStreamEnumeration(String batchFile, int startFile, int totalFiles)
+        InputStreamEnumeration(String batchFile, int startFile, 
+                               int totalFiles)
             throws IOException {
             this.totalFiles = totalFiles;
             reader = new BufferedReader(new FileReader(batchFile));
@@ -252,6 +313,15 @@ public class ConcatFileAudioSource implements AudioSource {
                                     " to a FileInputStream");
                 }
             }
+
+            // close the transcript file no more files
+            if (stream == null && transcript != null) {
+                try {
+                    transcript.close();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
             return stream;
         }
         
@@ -263,32 +333,15 @@ public class ConcatFileAudioSource implements AudioSource {
          */
         public String readNext() {
             if (!inSilence) {
-                try {
-                    if (0 <= totalFiles &&
-                        totalFiles <= referenceList.size()) {
-                        return null;
-                    }
-                    String next = reader.readLine();
-                    if (next != null) {
-                        referenceList.add(BatchFile.getReference(next));
-                        next = BatchFile.getFilename(next);
-                        for (int i = 1; i < skip; i++) {
-                            reader.readLine();
-                        }
-                        if (silenceFileName != null && maxSilence > 0) {
-                            silenceCount = getSilenceCount();
-                            inSilence = true;
-                        }
-                    }
-                    return next;
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                    throw new Error("Problem reading from batch file");
-                }
+                return readNextAudioFile();       
             } else {
+                // return the silence file
                 String next = null;
                 if (silenceCount > 0) {
                     next = silenceFileName;
+                    if (transcript != null) {
+                        writeSilenceToTranscript();
+                    }
                     silenceCount--;
                     if (silenceCount <= 0) {
                         inSilence = false;
@@ -299,11 +352,81 @@ public class ConcatFileAudioSource implements AudioSource {
         }
 
         /**
+         * Returns the next audio file.
+         *
+         * @return the name of the next audio file
+         */
+        private String readNextAudioFile() {
+            try {
+                if (0 <= totalFiles &&
+                    totalFiles <= referenceList.size()) {
+                    return null;
+                }
+                String next = reader.readLine();
+                if (next != null) {
+                    String reference = BatchFile.getReference(next);
+                    referenceList.add(reference);
+                    next = BatchFile.getFilename(next);
+                    for (int i = 1; i < skip; i++) {
+                        reader.readLine();
+                    }
+                    if (silenceFileName != null && maxSilence > 0) {
+                        silenceCount = getSilenceCount();
+                        inSilence = true;
+                    }
+                    if (transcript != null) {
+                        writeTranscript(next, reference);
+                    }
+                }
+                return next;
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                throw new Error("Problem reading from batch file");
+            }
+        }
+
+        /**
+         * Writes the transcript file.
+         *
+         * @param fileName the name of the decoded file
+         * @param reference the reference text
+         */
+        private void writeTranscript(String fileName, String reference) {
+            try {
+                File file = new File(fileName);
+                float start = getSeconds(totalBytes);
+                totalBytes += file.length();
+                float end = getSeconds(totalBytes);
+                transcript.write(context + " 1 " + fileName + " " + start +
+                                 " " + end + " <> " + reference + "\n");
+                transcript.flush();
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
+
+        /**
+         * Writes silence to the transcript file.
+         */
+        private void writeSilenceToTranscript() {
+            try {
+                float start = getSeconds(totalBytes);
+                totalBytes += silenceFileLength;
+                float end = getSeconds(totalBytes);
+                transcript.write(context + " 1 " + GAP_LABEL + " " +
+                                 start + " " + end + " <>\n");
+                transcript.flush();
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
+
+        /**
          * Returns how many times the silence file should be added between
          * utterances.
          *
-         * @return the number of times the silence file should be added between
-         *    utterances
+         * @return the number of times the silence file should be added 
+         *    between utterances
          */
         private int getSilenceCount() {
             if (addRandomSilence) {
