@@ -62,9 +62,9 @@ public class Transcriber {
 	    boolean done = false;
 	    while (!done) {
 		/*
-		 * This method will return when the end of speech
-		 * is reached. Note that the endpointer will determine
-		 * the end of speech.
+		 * This while loop will terminate after the last utterance
+		 * in the audio file has been decoded, in which case the
+		 * recognizer will return null.
 		 */ 
 		Result result = recognizer.recognize();
 		if (result != null) {
