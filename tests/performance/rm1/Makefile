@@ -1,4 +1,4 @@
-# Copyright 1999-2002 Carnegie Mellon University.  
+# Copyrigh 1999-2002 Carnegie Mellon University.  
 # Portions Copyright 2002 Sun Microsystems, Inc.  
 # Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
 # All Rights Reserved.  Use is subject to license terms.
@@ -90,6 +90,21 @@ rm1_bigram:
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.bigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
+rm1_bigram_lex:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.bigram.props ./rm1.batch
+
+rm1_unigram_lex:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.unigram.props ./rm1.batch
+
+rm1_trigram_lex:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.trigram.props ./rm1.batch
+
 rm1_flat_unigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
@@ -121,3 +136,11 @@ rm1_trigram_fst:
     -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.decoder.linguist.FSTGrammar.path=./rm1.bigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
+
+run_batch:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=$(WHICH_BATCH)\
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=$(TOTAL_BATCHES)\
+        -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+        $(PARSED_EXTRA_OPTIONS) \
+        edu.cmu.sphinx.decoder.BatchDecoder $(PROPS) $(BATCH_FILE) 
