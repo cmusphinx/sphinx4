@@ -42,6 +42,8 @@ public class HelloWorld {
                 url = HelloWorld.class.getResource("helloworld.config.xml");
             }
 
+            System.out.println("Loading...");
+
             ConfigurationManager cm = new ConfigurationManager(url);
 
 	    Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
