@@ -52,6 +52,45 @@ public class SenoneSequence implements Serializable {
 	return senones;
     }
 
+    /**
+     * Returns the hashCode for this object
+     *
+     * @return  the object hashcode
+     */
+    public int hashCode() {
+        int hashCode = 31;
+        for (int i = 0; i < senones.length; i++) {
+            hashCode =  hashCode * 91 + senones[i].hashCode();
+        }
+        return hashCode;
+    }
+
+    /**
+     * Returns true if the objects are equal
+     *
+     * @return true  if the objects are equal
+     */
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else {
+            if (o instanceof SenoneSequence) {
+                SenoneSequence other = (SenoneSequence) o;
+                if (senones.length != other.senones.length) {
+                    return false;
+                } else {
+                    for (int i = 0; i < senones.length; i++) {
+                        if (!senones[i].equals(other.senones[i])) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
 
     /**
      * Dumps this senone sequence
