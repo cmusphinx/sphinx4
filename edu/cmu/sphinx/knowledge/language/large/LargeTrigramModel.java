@@ -30,6 +30,7 @@ import java.io.Reader;
 
 import java.net.URL;
 
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 
@@ -241,9 +242,6 @@ public class LargeTrigramModel implements LanguageModel {
         String firstWord = wordSequence.getWord(0).toLowerCase();
         String secondWord = wordSequence.getWord(1).toLowerCase();
 
-        System.out.println("getBigramProbability(): " + 
-                           firstWord + " " + secondWord);
-
         if (numberBigrams == 0 || firstWord == null) {
             return getUnigramProbability(wordSequence.getNewest());
         }
@@ -257,9 +255,6 @@ public class LargeTrigramModel implements LanguageModel {
         int numberBigramFollowers = 
             unigrams[firstWordID+1].getFirstBigramEntry() -
             unigrams[firstWordID].getFirstBigramEntry();
-
-        System.out.println(unigrams[firstWordID].getFirstBigramEntry() + " " +
-                           unigrams[firstWordID+1].getFirstBigramEntry());
 
         int secondWordID = getWordID(secondWord);
 
@@ -349,7 +344,7 @@ public class LargeTrigramModel implements LanguageModel {
 
         if ((followers = isBigramLoaded(firstWordID)) == null) {
 
-            System.out.println("loading bfs");
+            System.out.println("Loading BigramFollowers from disk");
 
             int firstBigramEntry = unigrams[firstWordID].getFirstBigramEntry();
             int numberFollowers = 
@@ -360,19 +355,15 @@ public class LargeTrigramModel implements LanguageModel {
 
                 long position = (long) (bigramOffset + 
                                         (firstBigramEntry * BYTES_PER_BIGRAM));
-                long size = (long) (numberFollowers + 1) * BYTES_PER_BIGRAM;
-
-                System.out.println("Pos: " + position + ", size: " + size);
+                int size = (numberFollowers + 1) * BYTES_PER_BIGRAM;
 
                 try {
                     assert ((position + size) <= fileChannel.size());
-                    MappedByteBuffer buffer = fileChannel.map
-                        (FileChannel.MapMode.READ_ONLY, position, size);
+                    ByteBuffer buffer = loadBigramBuffer(position, size);
                     if (!bigEndian) {
                         buffer.order(ByteOrder.LITTLE_ENDIAN);
                     }
                     followers = new BigramFollowers(buffer, numberFollowers);
-                    followers.load();
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                     throw new Error("Error loading bigram followers");
@@ -382,6 +373,29 @@ public class LargeTrigramModel implements LanguageModel {
         }
 
         return followers;
+    }
+
+
+    /**
+     * Loads the contents of the memory-mapped file starting at the 
+     * given position and for the given size, into a byte buffer.
+     * This method is implemented because MappedByteBuffer.load()
+     * does not work properly.
+     *
+     * @param position the starting position in the file
+     * @param size the number of bytes to load
+     *
+     * @return the laoded ByteBuffer
+     */
+    private ByteBuffer loadBigramBuffer(long position, int size) throws
+    IOException {
+        ByteBuffer bb = ByteBuffer.allocate(size);
+        fileChannel.position(position);
+        int bytesRead = fileChannel.read(bb);
+        if (bytesRead != size) {
+            throw new IOException("Insufficient bytes read.");
+        }
+        return bb;
     }
 
 

@@ -12,7 +12,7 @@
 
 package edu.cmu.sphinx.knowledge.language.large;
 
-import java.nio.MappedByteBuffer;
+import java.nio.ByteBuffer;
 
 
 /**
@@ -25,7 +25,7 @@ import java.nio.MappedByteBuffer;
  */
 public class BigramFollowers {
     
-    private MappedByteBuffer bigramBuffer;
+    private ByteBuffer bigramBuffer;
     private int numberFollowers;
 
 
@@ -35,7 +35,7 @@ public class BigramFollowers {
      *
      * @param bigramsOnDisk the MappedByteBuffer with bigrams on disk
      */
-    public BigramFollowers(MappedByteBuffer bigramsOnDisk,
+    public BigramFollowers(ByteBuffer bigramsOnDisk,
                            int numberFollowers) {
         this.bigramBuffer = bigramsOnDisk;
         this.numberFollowers = numberFollowers;
@@ -45,19 +45,22 @@ public class BigramFollowers {
     /**
      * Loads all bigram followers from disk to physical memory.
      */
+    /*
     public final void load() {
         bigramBuffer.load();
     }
-
+    */
 
     /**
      * Tells whether or not the bigrams are loaded into memory
      *
      * @return true if its likely that the bigrams are loaded
      */
+    /*
     public final boolean isLoaded() {
         return bigramBuffer.isLoaded();
     }
+    */
 
 
     /**
