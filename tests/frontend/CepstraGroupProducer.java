@@ -32,6 +32,7 @@ extends DataProcessor implements CepstrumSource {
     private CepstrumSource predecessor;
     private List cepstraGroupList = new LinkedList();
     private List cepstraList = new LinkedList();
+    private long firstSampleNumber = -1;
 
 
     /**
@@ -66,7 +67,8 @@ extends DataProcessor implements CepstrumSource {
                 float[] data = new float[1];
                 data[0] = cepstrum.getCepstrumData()[0];
                 copy = new Cepstrum(data, cepstrum.getUtterance(),
-                                    cepstrum.getCollectTime());
+                                    cepstrum.getCollectTime(),
+                                    firstSampleNumber);
             }
 
             cepstraList.add(copy);

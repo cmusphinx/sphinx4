@@ -30,6 +30,7 @@ public abstract class CepstrumMonitor
 extends DataProcessor implements CepstrumSource {
 
     private CepstrumSource predecessor;
+    private long firstSampleNumber;
 
 
     /**
@@ -64,7 +65,8 @@ extends DataProcessor implements CepstrumSource {
                 float[] data = new float[1];
                 data[0] = cepstrum.getCepstrumData()[0];
                 copy = new Cepstrum(data, cepstrum.getUtterance(),
-                                    cepstrum.getCollectTime());
+                                    cepstrum.getCollectTime(),
+                                    firstSampleNumber);
             }
             cepstrumMonitored(copy);
         }
