@@ -66,8 +66,8 @@ BEGIN {
 		    }
 		} else {
 		    if (arry[1] == "Utterances:") {
-			actualUtterances = arry[2];
-			foundUtterances = arry[3];
+			actualUtterances = arry[3];
+			foundUtterances = arry[5];
 		    } else if (arry[1] == "Gap" && arry[2] == "Insertions:") {
 			gapInsertions = arry[3];
 		    } else if (arry[1] == "Response") {
