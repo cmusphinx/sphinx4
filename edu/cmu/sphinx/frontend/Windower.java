@@ -50,13 +50,49 @@ import java.util.Arrays;
 public class Windower extends DataProcessor implements AudioSource {
 
 
+    private static final String PROP_PREFIX
+        = "edu.cmu.sphinx.frontend.Windower.";
+
+
+    /**
+     * The SphinxProperty name for window size in milliseconds.
+     */
+    public static final String PROP_WINDOW_SIZE_MS
+        = PROP_PREFIX + "windowSizeInMs";
+
+
+    /**
+     * The default value for PROP_WINDOW_SIZE_MS.
+     */
+    public static final float PROP_WINDOW_SIZE_MS_DEFAULT = 25.625f;
+
+
+    /**
+     * The SphinxProperty name for window shift in milliseconds,
+     * which has a default value of 10F.
+     */
+    public static final String PROP_WINDOW_SHIFT_MS
+        = PROP_PREFIX + "windowShiftInMs";
+
+
+    /**
+     * The default value for PROP_WINDOW_SHIFT_MS.
+     */
+    public static final float PROP_WINDOW_SHIFT_MS_DEFAULT = 10;
+
+    
     /**
      * The name of the SphinxProperty for the alpha value of the Window,
      * which has a default value of 0.46 (double), which is the value for the
      * HammingWindow.
      */
-    private static final String PROP_ALPHA =
-	FrontEnd.PROP_PREFIX + "windower.alpha";
+    public static final String PROP_ALPHA = PROP_PREFIX + "alpha";
+
+
+    /**
+     * The default value for PROP_ALPHA.
+     */
+    public static final double PROP_ALPHA_DEFAULT = 0.46;
 
 
     private AudioSource predecessor;     // the previous processor
@@ -96,11 +132,12 @@ public class Windower extends DataProcessor implements AudioSource {
     private void setProperties() {
 	SphinxProperties props = getSphinxProperties();
 
-        int sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
+        int sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE,
+                                      FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
         float windowSizeInMs = props.getFloat
-            (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
+            (PROP_WINDOW_SIZE_MS, PROP_WINDOW_SIZE_MS_DEFAULT);
         float windowShiftInMs = props.getFloat
-            (FrontEnd.PROP_WINDOW_SHIFT_MS, 10.0F);
+            (PROP_WINDOW_SHIFT_MS, PROP_WINDOW_SHIFT_MS_DEFAULT);
 
         windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);
         windowShift = Util.getSamplesPerShift(sampleRate, windowShiftInMs);
@@ -111,7 +148,8 @@ public class Windower extends DataProcessor implements AudioSource {
      * Creates the Hamming Window.
      */
     private void createWindow() {
-        double alpha = getSphinxProperties().getDouble(PROP_ALPHA, 0.46);
+        double alpha = getSphinxProperties().getDouble
+            (PROP_ALPHA, PROP_ALPHA_DEFAULT);
 	this.hammingWindow = new double[windowSize];
 	if (windowSize > 1){
 	    double oneMinusAlpha = (1 - alpha);

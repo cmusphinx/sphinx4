@@ -81,7 +81,8 @@ public class PLPFilter {
 	
 	if (centerFreqInHz < DFTFrequenciesInHz[0] || 
 	    centerFreqInHz > DFTFrequenciesInHz[numDFTPoints-1]) {
-	    throw new IllegalArgumentException("Center frequency for PLP filter out of range");
+	    throw new IllegalArgumentException
+                ("Center frequency for PLP filter out of range");
 	}
 
 	filterCoefficients = new double[numDFTPoints];
@@ -118,7 +119,9 @@ public class PLPFilter {
 	throws IllegalArgumentException {
 
 	if (spectrum.length != numDFTPoints){
-	    throw new IllegalArgumentException("Mismatch in no. of DFT points "+spectrum.length+" in spectrum and in filter "+numDFTPoints);
+	    throw new IllegalArgumentException
+                ("Mismatch in no. of DFT points " + spectrum.length +
+                 " in spectrum and in filter "+numDFTPoints);
 	}
 
 	double output = 0.0;

@@ -43,32 +43,51 @@ import java.io.IOException;
 public class LiveCMN extends DataProcessor implements CepstrumSource {
 
 
+    private static final String PROP_PREFIX
+        = "edu.cmu.sphinx.frontend.cmn.live.";
+
+
     /**
-     * The name of the SphinxProperty for the initial cepstral mean,
-     * which has a default value of 12.0F.
+     * The name of the SphinxProperty for the initial cepstral mean.
      * This is a front-end dependent magic number.
      */
-    private static final String PROP_INITIAL_MEAN = FrontEnd.PROP_PREFIX +
-	"cmn.live.initialCepstralMean";
+    public static final String PROP_INITIAL_MEAN
+        = PROP_PREFIX + "initialCepstralMean";
+
+
+    /**
+     * The default value for PROP_INITIAL_MEAN.
+     */
+    public static final float PROP_INITIAL_MEAN_DEFAULT = 12.0f;
     
     
     /**
-     * The name of the SphinxProperty for the CMN window size,
-     * which has a default value of 500.
+     * The name of the SphinxProperty for the live CMN window size.
      */
-    private static final String PROP_CMN_WINDOW = FrontEnd.PROP_PREFIX +
-	"cmn.live.windowSize";
+    public static final String PROP_CMN_WINDOW = PROP_PREFIX + "windowSize";
+
+
+    /**
+     * The default value for PROP_CMN_WINDOW.
+     */
+    public static final int PROP_CMN_WINDOW_DEFAULT = 500;
     
 
     /**
-     * The name of the SphinxProperty for the CMN shifting window,
-     * which has a default value of 800.
+     * The name of the SphinxProperty for the CMN shifting window.
      * The shifting window specifies how many cepstrum after which
      * we re-calculate the cepstral mean.
      */
-    private static final String PROP_CMN_SHIFT_WINDOW = FrontEnd.PROP_PREFIX +
-	"cmn.live.shiftWindow";
-    
+    public static final String PROP_CMN_SHIFT_WINDOW
+        = PROP_PREFIX + "shiftWindow";
+
+
+    /**
+     * The default value of PROP_CMN_SHIFT_WINDOW.
+     */
+    public static final int PROP_CMN_SHIFT_WINDOW_DEFAULT = 800;
+
+ 
 
     private float[] currentMean;   // array of current means
     private float[] sum;           // array of current sums
@@ -128,10 +147,14 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      */
     private void setProperties() {
 	SphinxProperties props = getSphinxProperties();
-	initialMean = props.getFloat(PROP_INITIAL_MEAN, 12.0f);
-	cmnWindow = props.getInt(PROP_CMN_WINDOW, 500);
-	cmnShiftWindow = props.getInt(PROP_CMN_SHIFT_WINDOW, 800);
-	cepstrumLength = props.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
+	initialMean = props.getFloat(PROP_INITIAL_MEAN,
+                                     PROP_INITIAL_MEAN_DEFAULT);
+	cmnWindow = props.getInt(PROP_CMN_WINDOW,
+                                 PROP_CMN_WINDOW_DEFAULT);
+	cmnShiftWindow = props.getInt(PROP_CMN_SHIFT_WINDOW,
+                                      PROP_CMN_SHIFT_WINDOW_DEFAULT);
+	cepstrumLength = props.getInt(FrontEnd.PROP_CEPSTRUM_SIZE,
+                                      FrontEnd.PROP_CEPSTRUM_SIZE_DEFAULT);
     }
 	
 

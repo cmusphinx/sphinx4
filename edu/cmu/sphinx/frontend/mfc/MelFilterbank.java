@@ -32,28 +32,47 @@ import java.io.IOException;
  */
 public class MelFilterbank extends DataProcessor implements Filterbank {
 
+
+    private static final String PROP_PREFIX = "edu.cmu.sphinx.frontend.mel.";
+
+
     /**
      * The name of the Sphinx Property for the number of filters in
      * the filterbank.
      */
-    public static final String PROP_NUMBER_FILTERS = FrontEnd.PROP_PREFIX +
-	"mel.numFilters";
+    public static final String PROP_NUMBER_FILTERS = PROP_PREFIX +"numFilters";
+
+
+    /**
+     * The default value for PROP_NUMBER_FILTERS.
+     */
+    public static final int PROP_NUMBER_FILTERS_DEFAULT = 40;
 
 
     /**
      * The name of the Sphinx Property for the minimum frequency
      * covered by the filterbank.
      */
-    public static final String PROP_MIN_FREQ = FrontEnd.PROP_PREFIX +
-	"mel.minfreq";
+    public static final String PROP_MIN_FREQ = PROP_PREFIX + "minfreq";
+
+
+    /**
+     * The default value of PROP_MIN_FREQ.
+     */
+    public static final int PROP_MIN_FREQ_DEFAULT = 130;
 
 
     /**
      * The name of the Sphinx Property for the maximum frequency
      * covered by the filterbank.
      */
-    public static final String PROP_MAX_FREQ = FrontEnd.PROP_PREFIX +
-	"mel.maxfreq";
+    public static final String PROP_MAX_FREQ = PROP_PREFIX + "maxfreq";
+
+
+    /**
+     * The default value of PROP_MAX_FREQ.
+     */
+    public static final int PROP_MAX_FREQ_DEFAULT = 6800;
 
 
     private int sampleRate;

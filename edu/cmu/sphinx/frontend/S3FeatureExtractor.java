@@ -41,25 +41,34 @@ import java.util.Vector;
 public class S3FeatureExtractor extends DataProcessor 
     implements FeatureExtractor {
 
+
     /**
      * The name of the SphinxProperty for the window of the
      * S3FeatureExtractor, which has a default value of 3.
      */
-    private static final String PROP_FEATURE_WINDOW =
+    public static final String PROP_FEATURE_WINDOW =
 	FeatureExtractor.PROP_PREFIX + "windowSize";
-    
+
+
     /**
-     * The name of the SphinxProperty for the feature type to compute.
+     * The default value of PROP_FEATURE_WINDOW.
      */
-    private static final String PROP_FEATURE_TYPE =
-	FeatureExtractor.PROP_PREFIX + "featureType";
+    public static final int PROP_FEATURE_WINDOW_DEFAULT = 3;
+    
 
     /**
      * The name of the SphinxProperty for the size of the circular
      * Cepstra buffer, which has a default value of 256.
      */
-    private static final String PROP_CEP_BUFFER_SIZE =
+    public static final String PROP_CEPSTRUM_BUFFER_SIZE =
 	FeatureExtractor.PROP_PREFIX + "cepstraBufferSize";
+
+
+    /**
+     * The default value of PROP_CEPSTRUM_BUFFER_SIZE.
+     */
+    public static final int PROP_CEPSTRUM_BUFFER_SIZE_DEFAULT = 256;
+
 
     private int featureBlockSize = 25;
     private int featureLength;
@@ -141,12 +150,15 @@ public class S3FeatureExtractor extends DataProcessor
      */
     private void setProperties() {
 	SphinxProperties properties = getSphinxProperties();
-	featureLength = properties.getInt(PROP_FEATURE_LENGTH, 39);
-	window = properties.getInt(PROP_FEATURE_WINDOW, 3);
+	featureLength = properties.getInt(PROP_FEATURE_LENGTH,
+                                          PROP_FEATURE_LENGTH_DEFAULT);
+	window = properties.getInt(PROP_FEATURE_WINDOW, 
+                                   PROP_FEATURE_WINDOW_DEFAULT);
 	cepstrumLength = properties.getInt
-	    (FrontEnd.PROP_PREFIX + FrontEnd.PROP_CEPSTRUM_SIZE, 13);
-        cepstraBufferSize = properties.getInt(PROP_CEP_BUFFER_SIZE, 256);
-        cepstraBufferEdge = cepstraBufferSize - 8;
+	    (FrontEnd.PROP_CEPSTRUM_SIZE, FrontEnd.PROP_CEPSTRUM_SIZE_DEFAULT);
+        cepstraBufferSize = properties.getInt
+            (PROP_CEPSTRUM_BUFFER_SIZE, PROP_CEPSTRUM_BUFFER_SIZE_DEFAULT);
+        cepstraBufferEdge = cepstraBufferSize - (window * 2 + 2);
     }
 
 

@@ -35,8 +35,19 @@ import java.io.IOException;
 public class StreamCepstrumSource extends DataProcessor implements
 CepstrumSource {
 
-    private final static String PROP_BINARY =
-	FrontEnd.PROP_PREFIX + "StreamCepstrumSource.binary";
+
+    /**
+     * The SphinxProperty specifying whether the input is in binary.
+     */
+    public final static String PROP_BINARY
+        = "edu.cmu.sphinx.frontend.util.StreamCepstrumSource.binary";
+
+
+    /**
+     * The default value for PROP_BINARY.
+     */
+    public final static boolean PROP_BINARY_DEFAULT = true;
+
 
     private boolean binary;
     private ExtendedStreamTokenizer est;  // for ASCII files
@@ -99,8 +110,9 @@ CepstrumSource {
      */
     private void initSphinxProperties() {
 	SphinxProperties properties = getSphinxProperties();
-	cepstrumLength = properties.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
-	binary = properties.getBoolean(PROP_BINARY, true);
+	cepstrumLength = properties.getInt
+            (FrontEnd.PROP_CEPSTRUM_SIZE, FrontEnd.PROP_CEPSTRUM_SIZE_DEFAULT);
+	binary = properties.getBoolean(PROP_BINARY, PROP_BINARY_DEFAULT);
     }
 
 

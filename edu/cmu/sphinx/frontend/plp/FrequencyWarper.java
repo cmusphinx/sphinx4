@@ -1,3 +1,4 @@
+
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -18,7 +19,6 @@ package edu.cmu.sphinx.frontend.plp;
  * @author <a href="mailto:rsingh@cs.cmu.edu">rsingh</a>
  * @version 1.0
  */
-
 public class FrequencyWarper {
     
 

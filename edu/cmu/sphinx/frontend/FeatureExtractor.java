@@ -24,17 +24,26 @@ import java.io.IOException;
  */
 public interface FeatureExtractor extends FeatureSource {
 
+
     /**
      * Property prefix for the FeatureExtractor.
      */
     public static final String PROP_PREFIX = 
-	FrontEnd.PROP_PREFIX + "featureExtractor.";
+	"edu.cmu.sphinx.frontend.FeatureExtractor.";
+
     
     /**
      * The SphinxProperty name for the length of a Feature.
      */
     public static final String PROP_FEATURE_LENGTH =
 	PROP_PREFIX + "featureLength";
+
+
+    /**
+     * The default value of PROP_FEATURE_LENGTH.
+     */
+    public static final int PROP_FEATURE_LENGTH_DEFAULT = 39;
+
 
     /**
      * Initializes this FeatureExtractor with the appropriate name,

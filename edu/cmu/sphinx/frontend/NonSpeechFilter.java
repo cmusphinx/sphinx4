@@ -83,8 +83,23 @@ import java.util.*;
  */
 public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
 
-    private static final String PROP_PREFIX = 
-	FrontEnd.PROP_PREFIX + "NonSpeechFilter.";
+    private static final String PROP_PREFIX 
+        = "edu.cmu.sphinx.frontend.NonSpeechFilter.";
+
+
+    /**
+     * The SphinxProperty that controls whether to merge discontiguous
+     * speech segments in an utterance.
+     */
+    public static final String PROP_MERGE_SPEECH_SEGMENTS
+        = PROP_PREFIX + "mergeSpeechSegments";
+
+
+    /**
+     * The default value for PROP_MERGE_SPEECH_SEGMENTS.
+     */
+    public static final boolean PROP_MERGE_SPEECH_SEGMENTS_DEFAULT = true;
+
 
     /**
      * Controls whether to merge multiple speech segments within an
@@ -114,7 +129,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
                            CepstrumSource predecessor) throws IOException {
         super(name, context, props);
 	this.mergeSpeechSegments = getSphinxProperties().getBoolean
-	    (PROP_PREFIX + "mergeSpeechSegments", true);
+	    (PROP_MERGE_SPEECH_SEGMENTS, PROP_MERGE_SPEECH_SEGMENTS_DEFAULT);
         this.discardMode = true;
         this.predecessor = predecessor;
         this.inputBuffer = new LinkedList();

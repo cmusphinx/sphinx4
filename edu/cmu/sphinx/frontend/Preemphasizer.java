@@ -38,12 +38,19 @@ import java.io.IOException;
  */
 public class Preemphasizer extends DataProcessor implements AudioSource {
 
+
     /**
      * The name of the SphinxProperty for preemphasis factor/alpha, which
      * has a default value of 0.97F.
      */
-    private static final String PROP_PREEMPHASIS_FACTOR = 
-	FrontEnd.PROP_PREFIX + "preemphasis.factor";
+    public static final String PROP_PREEMPHASIS_FACTOR = 
+	"edu.cmu.sphinx.frontend.Preemphasizer.factor";
+
+
+    /**
+     * The default value of PROP_PREEMPHASIS_FACTOR.
+     */
+    public static final float PROP_PREEMPHASIS_FACTOR_DEFAULT = 0.97f;
     
 
     private float preemphasisFactor;
@@ -72,7 +79,7 @@ public class Preemphasizer extends DataProcessor implements AudioSource {
      */
     private void setProperties() {
         preemphasisFactor = getSphinxProperties().getFloat
-	    (PROP_PREEMPHASIS_FACTOR, (float) 0.97);
+	    (PROP_PREEMPHASIS_FACTOR, PROP_PREEMPHASIS_FACTOR_DEFAULT);
     }
 
 

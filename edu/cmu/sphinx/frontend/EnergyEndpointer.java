@@ -66,8 +66,114 @@ import java.util.*;
  */
 public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
 
+
     private static final String PROP_PREFIX = 
     "edu.cmu.sphinx.frontend.EnergyEndpointer.";
+
+
+    /**
+     * The SphinxProperty for the energy level which is a lower bound
+     * threshold at the energy is considered as speech.
+     */
+    public static final String PROP_START_LOW = PROP_PREFIX + "startLow";
+
+
+    /**
+     * The default value for PROP_START_LOW.
+     */
+    public static final float PROP_START_LOW_DEFAULT = 0.0f;
+        
+
+    /**
+     * The SphinxProperty for the starting energy level if stayed above
+     * for more that PROP_START_WINDOW frames, the signal is considered speech.
+     */
+    public static final String PROP_START_HIGH = PROP_PREFIX + "startHigh";
+    
+
+    /**
+     * The default value for PROP_START_HIGH.
+     */
+    public static final float PROP_START_HIGH_DEFAULT = 0.0f;
+       
+
+    /**
+     * The SphinxProperty for the number of frames staying about
+     * PROP_START_HIGH energy levels for the signal to be considered speech.
+     */
+    public static final String PROP_START_WINDOW = PROP_PREFIX + "startWindow";
+
+    
+    /**
+     * The default value for PROP_START_WINDOW.
+     */
+    public static final int PROP_START_WINDOW_DEFAULT = 5;
+
+
+    /**
+     * The SphinxProperty for the number frames before the energy 
+     * level goes above PROP_START_LOW that is consider start of speech.
+     */
+    public static final String PROP_START_OFFSET = PROP_PREFIX + "startOffset";
+
+    
+    /**
+     * The default value for PROP_START_OFFSET.
+     */
+    public static final int PROP_START_OFFSET_DEFAULT = 5;
+
+
+    /**
+     * The SphinxProperty for the ending energy level, below which
+     * the signal is considered non-speech.
+     */
+    public static final String PROP_END_LOW = PROP_PREFIX + "endLow";
+
+
+    /**
+     * The default value for PROP_END_LOW.
+     */
+    public static final float PROP_END_LOW_DEFAULT = 0.0f;
+
+
+    /**
+     * The SphinxProperty for the number of frames the energy level
+     * stayed below PROP_END_LOW level, for the signal to be considered
+     * end of speech.
+     */
+    public static final String PROP_END_WINDOW = PROP_PREFIX + "endWindow";
+
+
+    /**
+     * The default value for PROP_END_WINDOW.
+     */
+    public static final int PROP_END_WINDOW_DEFAULT = 30;
+
+
+    /**
+     * The SphinxProperty for the number of frames after energy goes
+     * below PROP_END_LOW level that is considered the end of speech.
+     */
+    public static final String PROP_END_OFFSET = PROP_PREFIX + "endOffset";
+
+
+    /**
+     * The default value for PROP_END_OFFSET.
+     */
+    public static final int PROP_END_OFFSET_DEFAULT = 10;
+
+
+    /**
+     * The SphinxProperty that specifies how many frames is a spike
+     * away from speech for it to be considered part of speech.
+     */
+    public static final String PROP_MAX_DROPOUT = PROP_PREFIX + "maxDropout";
+
+
+    /**
+     * The default value for PROP_MAX_DROPOUT.
+     */
+    public static final int PROP_MAX_DROPOUT_DEFAULT = 10;
 
 
     /**
@@ -99,15 +205,9 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
      */
     private int maxDropout;
     
-    /**
-     * noSpeechTimeout is the number of non-speech frames before it is
-     * considered as the end of utterance.
-     */
-    private int noSpeechTimeout;
 
     private float startLow;   // lower bound for the start window
-    private float startHigh;  // upper bound for the start window
-    
+    private float startHigh;  // upper bound for the start window    
     private float endLow;     // lower bound for the end window
 
     // location values: below startLow, between low and high, above high
@@ -172,18 +272,22 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
      */
     private void setProperties() {
         SphinxProperties properties = getSphinxProperties();
-
-        startLow = properties.getFloat(PROP_PREFIX + "startLow", 0.0f);
-        startHigh = properties.getFloat(PROP_PREFIX + "startHigh", 0.0f);
-        startWindow = properties.getInt(PROP_PREFIX + "startWindow", 5);
-        startOffset = properties.getInt(PROP_PREFIX + "startOffset", 5);
-
-        endLow = properties.getFloat(PROP_PREFIX + "endLow", 0.0f);
-        endWindow = properties.getInt(PROP_PREFIX + "endWindow", 30);
-        endOffset = properties.getInt(PROP_PREFIX + "endOffset", 10);
-        maxDropout = properties.getInt(PROP_PREFIX + "maxDropout", 10);
-        noSpeechTimeout = properties.getInt
-	    (PROP_PREFIX + "noSpeechTimeout", 0);
+        startLow
+            = properties.getFloat(PROP_START_LOW, PROP_START_LOW_DEFAULT);
+        startHigh
+            = properties.getFloat(PROP_START_HIGH, PROP_START_HIGH_DEFAULT);
+        startWindow
+            = properties.getInt(PROP_START_WINDOW, PROP_START_WINDOW_DEFAULT);
+        startOffset
+            = properties.getInt(PROP_START_OFFSET, PROP_START_OFFSET_DEFAULT);
+        endLow
+            = properties.getFloat(PROP_END_LOW, PROP_END_LOW_DEFAULT);
+        endWindow
+            = properties.getInt(PROP_END_WINDOW, PROP_END_WINDOW_DEFAULT);
+        endOffset
+            = properties.getInt(PROP_END_OFFSET, PROP_END_OFFSET_DEFAULT);
+        maxDropout
+            = properties.getInt(PROP_MAX_DROPOUT, PROP_MAX_DROPOUT_DEFAULT);
     }
 
 

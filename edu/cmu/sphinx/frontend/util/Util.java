@@ -14,6 +14,7 @@
 package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.Windower;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
@@ -391,9 +392,9 @@ public class Util {
 
         if (frameNumber >= 0) {
             float windowSizeInMs = properties.getFloat
-                (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
+                (Windower.PROP_WINDOW_SIZE_MS, 25.625F);
             float windowShiftInMs = properties.getFloat
-                (FrontEnd.PROP_WINDOW_SHIFT_MS, 10.0F);
+                (Windower.PROP_WINDOW_SHIFT_MS, 10.0F);
             
             // calculate audio time in milliseconds
             audioTime = frameNumber * windowShiftInMs + windowSizeInMs;

@@ -83,7 +83,8 @@ CepstrumProducer {
     private void setProperties() {
 	SphinxProperties props = getSphinxProperties();
         numberPLPFilters = props.getInt(PLPFilterbank.PROP_NUMBER_FILTERS, 40);
-        cepstrumSize = props.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
+        cepstrumSize = props.getInt
+            (FrontEnd.PROP_CEPSTRUM_SIZE, FrontEnd.PROP_CEPSTRUM_SIZE_DEFAULT);
 	// Just hardcoding this for now
 	LPCOrder = 14;
     }

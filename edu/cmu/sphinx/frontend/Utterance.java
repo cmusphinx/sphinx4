@@ -54,13 +54,17 @@ public class Utterance {
         // get the Sphinx properties
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 
-        bitsPerSample = props.getInt(FrontEnd.PROP_BITS_PER_SAMPLE, 16);
-        sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
+        bitsPerSample = props.getInt(FrontEnd.PROP_BITS_PER_SAMPLE,
+                                     FrontEnd.PROP_BITS_PER_SAMPLE_DEFAULT);
+        sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE,
+                                  FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
         
         float windowSizeInMs = props.getFloat
-	    (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
+            (Windower.PROP_WINDOW_SIZE_MS, 
+             Windower.PROP_WINDOW_SIZE_MS_DEFAULT);
         float windowShiftInMs = props.getFloat
-            (FrontEnd.PROP_WINDOW_SHIFT_MS, 10.0F);
+            (Windower.PROP_WINDOW_SHIFT_MS,
+             Windower.PROP_WINDOW_SHIFT_MS_DEFAULT);
         
         windowSizeInBytes = Util.getSamplesPerWindow
             (sampleRate, windowSizeInMs) * 2;

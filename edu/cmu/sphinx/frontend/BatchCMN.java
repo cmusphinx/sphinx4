@@ -85,7 +85,7 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
      */
     private void setProperties() {
 	cepstrumLength = getSphinxProperties().getInt
-	    (FrontEnd.PROP_PREFIX + FrontEnd.PROP_CEPSTRUM_SIZE, 13);
+	    (FrontEnd.PROP_CEPSTRUM_SIZE, FrontEnd.PROP_CEPSTRUM_SIZE_DEFAULT);
     }
 	
 

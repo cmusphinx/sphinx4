@@ -129,7 +129,8 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 
 	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 	useAcousticModelProperties = props.getBoolean
-	    (FrontEnd.PROP_USE_ACOUSTIC_MODEL_PROPERTIES, true);
+	    (FrontEnd.PROP_USE_ACOUSTIC_MODEL_PROPERTIES,
+             FrontEnd.PROP_USE_ACOUSTIC_MODEL_PROPERTIES_DEFAULT);             
 	
 	setSphinxProperties(getCorrectProperties());
 
@@ -243,7 +244,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
             // if we are filtering out the non-speech regions,
             // initialize a non-speech filter
             boolean filterNonSpeech = getSphinxProperties().getBoolean
-                (PROP_FILTER_NON_SPEECH, false);
+                (PROP_FILTER_NON_SPEECH, PROP_FILTER_NON_SPEECH_DEFAULT);
             if (filterNonSpeech) {
                 CepstrumSource nonSpeechFilter = 
                     getNonSpeechFilter(lastCepstrumSource);
@@ -276,7 +277,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 	try {
 	    SphinxProperties props = getSphinxProperties();
 	    filterBankClass = props.getString
-		(PROP_FILTERBANK, "edu.cmu.sphinx.frontend.mfc.MelFilterbank");
+		(PROP_FILTERBANK, PROP_FILTERBANK_DEFAULT);
 	    Filterbank bank = (Filterbank) 
 		Class.forName(filterBankClass).newInstance();
 	    bank.initialize("Filterbank", getContext(), props, predecessor);
@@ -300,8 +301,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 	try {
 	    SphinxProperties props = getSphinxProperties();
 	    cepstrumProducerClass = props.getString
-		(PROP_CEPSTRUM_PRODUCER,
-		 "edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer");
+		(PROP_CEPSTRUM_PRODUCER, PROP_CEPSTRUM_PRODUCER_DEFAULT);
 	    CepstrumProducer producer = (CepstrumProducer)
 		Class.forName(cepstrumProducerClass).newInstance();
 	    producer.initialize("CepstrumProducer", getContext(), 
@@ -364,8 +364,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
     private CepstrumSource getCMN(CepstrumSource predecessor) throws 
 	IOException {
 	SphinxProperties props = getSphinxProperties();
-	cmnClass = props.getString
-	    (PROP_CMN, "edu.cmu.sphinx.frontend.BatchCMN");
+	cmnClass = props.getString(PROP_CMN, PROP_CMN_DEFAULT);
 
 	CepstrumSource cmn = null;
 	if (cmnClass.equals("edu.cmu.sphinx.frontend.LiveCMN")) {
@@ -391,8 +390,8 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 	throws IOException {
 	SphinxProperties props = getSphinxProperties();
         featureExtractorClass = props.getString
-	    (PROP_FEATURE_EXTRACTOR, 
-	     "edu.cmu.sphinx.frontend.DeltasFeatureExtractor");
+	    (PROP_FEATURE_EXTRACTOR, PROP_FEATURE_EXTRACTOR_DEFAULT);
+
         try {
 	    FeatureExtractor extractor = (FeatureExtractor) 
 		Class.forName(featureExtractorClass).newInstance();
