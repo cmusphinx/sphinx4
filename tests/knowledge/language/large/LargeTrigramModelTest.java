@@ -81,14 +81,16 @@ class LargeTrigramModelTest {
         
         while ((input = reader.readLine()) != null) {
 
-            StringTokenizer st = new StringTokenizer(input);
-            List list = new ArrayList();
-            while (st.hasMoreTokens()) {
-                String tok = (String) st.nextToken();
-                list.add(tok.trim());
-            }
-            WordSequence wordSequence = new WordSequence(list);
-            wordSequences.add(wordSequence);
+	    if (!input.equals("<START_UTT>") && !input.equals("<END_UTT>")) {
+		StringTokenizer st = new StringTokenizer(input);
+		List list = new ArrayList();
+		while (st.hasMoreTokens()) {
+		    String tok = (String) st.nextToken().toLowerCase();
+		    list.add(tok.trim());
+		}
+		WordSequence wordSequence = new WordSequence(list);
+		wordSequences.add(wordSequence);
+	    }	    
         }
 
         int[] logScores = new int[wordSequences.size()];
