@@ -31,6 +31,7 @@
 ./runTest ../performance/tidigits tidigits_wordlist_quick          -Dskip=5 tidigits_wordlist
 ./runTest ../performance/tidigits tidigits_flat_unigram_quick      -Dskip=5 tidigits_flat_unigram
 ./runTest ../performance/tidigits tidigits_flat_unigram_fst_quick  -Dskip=5 tidigits_flat_unigram_fst
+./runTest ../performance/tidigits tidigits_jsgf  -Dskip=5 tidigits_jsgf
 
 ./runTest ../performance/an4 an4_words_wordlist
 ./runTest ../performance/an4 an4_words_unigram
