@@ -52,16 +52,17 @@ runTests="runTests_"$testType
 # Since the scripts just came out of CVS, they may not
 # be executable yet.  So make them executable
 #
-scripts="getTime getHostname mailReport makeReport parseS4Output regressionTest\
-	runTest s4_align s4_align_sum collectMetrics \
-	getTime makeWebpage pushChanges pushReport whatsNew \
-	cvs_history updateLog finalizeLog \
-	s4_align s4_align_sum \
-        runTests_friday runTests_monday runTests_nightly \
-        runTests_quick runTests_saturday runTests_sunday \
-        runTests_thursday runTests_tuesday runTests_wednesday \
-	makeTestDetailReport pushAllTestReports getJavaVersion \
-	makeTestSummaryReport makeTestReports waitForFile"
+scripts="getTime getHostname mailReport makeReport \
+    parseS4Output parseS4LiveOutput regressionTest\
+    runTest runLiveTest s4_align s4_align_sum collectMetrics \
+    getTime makeWebpage pushChanges pushReport whatsNew \
+    cvs_history updateLog finalizeLog \
+    s4_align s4_align_sum \
+    runTests_friday runTests_monday runTests_nightly \
+    runTests_quick runTests_saturday runTests_sunday \
+    runTests_thursday runTests_tuesday runTests_wednesday \
+    makeTestDetailReport pushAllTestReports getJavaVersion \
+    makeTestSummaryReport makeTestReports waitForFile"
 
 chmod +x $scripts
 
