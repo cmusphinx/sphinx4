@@ -235,13 +235,14 @@ public class Token implements Scoreable {
      * @return the score for the feature
      */
     public float calculateScore(Feature feature) {
-        assert searchState.isEmitting() : "Attempting to score non-scoreable token: " + searchState;
+        assert searchState.isEmitting() 
+            : "Attempting to score non-scoreable token: " + searchState;
         HMMSearchState hmmSearchState = (HMMSearchState) searchState;
         HMMState hmmState = hmmSearchState.getHMMState();
         float score = hmmState.getScore(feature);
         this.logTotalScore += score;
         this.logAcousticScore = score;
-        return score;
+        return logTotalScore;
     }
 
     /**
