@@ -294,7 +294,7 @@ public class Lattice {
      * @return an ID for the Node
      */
     private String getNodeID(Token token) {
-	return Integer.toString(token.hashCode());
+        return Integer.toString(token.hashCode());
     }
 
     /**
@@ -832,18 +832,40 @@ public class Lattice {
         return sorted;
     }
     
+    
     /**
-     * Compute the utterance-level posterior for every node in the lattice, i.e. the 
-     * probability that this node occurs on any path through the lattice. Uses a 
-     * forward-backward algorithm specific to the nature of non-looping left-to-right 
-     * lattice structures.
+     * Compute the utterance-level posterior for every node in the lattice, 
+     * i.e. the probability that this node occurs on any path through the 
+     * lattice. Uses a forward-backward algorithm specific to the nature of
+     * non-looping left-to-right lattice structures.
      * 
-     * Node posteriors can be retrieved by calling getPosterior() on Node objects.
+     * Node posteriors can be retrieved by calling getPosterior() on Node 
+     * objects.
      * 
-     * @param languageModelWeight the language model weight that was used in generating 
-     *        the scores in the lattic.e
+     * @param languageModelWeight the language model weight that was used
+     *        in generating the scores in the lattice
      */
-    public void computeNodePosteriors(float languageModelWeight) {      
+    public void computeNodePosteriors(float languageModelWeight) {
+        computeNodePosteriors(languageModelWeight, false);
+    }
+
+
+    /**
+     * Compute the utterance-level posterior for every node in the lattice, 
+     * i.e. the probability that this node occurs on any path through the 
+     * lattice. Uses a forward-backward algorithm specific to the nature of
+     * non-looping left-to-right lattice structures.
+     * 
+     * Node posteriors can be retrieved by calling getPosterior() on Node 
+     * objects.
+     * 
+     * @param languageModelWeight the language model weight that was used
+     *        in generating the scores in the lattice
+     * @param useAcousticScoresOnly use only the acoustic scores to compute
+     *               the posteriors, ignore the language weight and scores
+     */
+    public void computeNodePosteriors(float languageModelWeight,
+                                      boolean useAcousticScoresOnly) {      
         //forward
         initialNode.setForwardScore(LogMath.getLogOne());
         List sortedNodes = sortNodes();
@@ -855,7 +877,8 @@ public class Lattice {
             for (Iterator i = currentEdges.iterator();i.hasNext();) {
                 Edge edge = (Edge)i.next();
                 double forwardProb = edge.getFromNode().getForwardScore();
-                forwardProb += computeEdgeScore(edge, languageModelWeight);
+                forwardProb += computeEdgeScore
+                    (edge, languageModelWeight, useAcousticScoresOnly);
                 edge.getToNode().setForwardScore
                     (logMath.addAsLinear
                      ((float)forwardProb,
@@ -873,7 +896,8 @@ public class Lattice {
             for (Iterator i = currentEdges.iterator();i.hasNext();) {
                 Edge edge = (Edge)i.next();
                 double backwardProb = edge.getToNode().getBackwardScore();
-                backwardProb += computeEdgeScore(edge, languageModelWeight);
+                backwardProb += computeEdgeScore
+                    (edge, languageModelWeight, useAcousticScoresOnly);
                 edge.getFromNode().setBackwardScore
                     (logMath.addAsLinear((float)backwardProb,
                         (float)edge.getFromNode().getBackwardScore()));
@@ -898,9 +922,14 @@ public class Lattice {
      *
      * @return the score of an edge
      */
-    private double computeEdgeScore(Edge edge, float languageModelWeight) {
-        return (edge.getAcousticScore()/languageModelWeight +
-                edge.getLMScore());
+    private double computeEdgeScore(Edge edge, float languageModelWeight,
+                                    boolean useAcousticScoresOnly) {
+        if (useAcousticScoresOnly) {
+            return edge.getAcousticScore();
+        } else {
+            return (edge.getAcousticScore()/languageModelWeight +
+                    edge.getLMScore());
+        }
     }
 
 
