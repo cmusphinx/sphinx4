@@ -23,6 +23,9 @@ import edu.cmu.sphinx.util.props.Registry;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.LinkedList;
+
 
 /**
  * Computes confidences for the highest scoring path in a Result.
@@ -133,52 +136,58 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
 
         ConfidenceResult sausage = (ConfidenceResult) s;
         WordResultPath mapPath = new WordResultPath();
-        Token mapToken = result.getBestToken();
+        List wordTokens = getWordTokens(result.getBestToken());
 
-        /* start with the last slot */
-        int slot = sausage.size() - 1;
+        /* start with the first slot */
+        int slot = 0;
 
-        while (mapToken != null) {
+        Iterator i = wordTokens.iterator();
 
-            /* find a word token */
-            while (!mapToken.isWord()) {
-                mapToken = mapToken.getPredecessor();
+        while (i.hasNext()) {
+            Token token = (Token) i.next();            
+            String word = token.getWord().getSpelling();
+            WordResult wr = null;
+            ConfusionSet cs = null;
+            
+            /* track through all the slots to find the word */
+            while (slot < sausage.size() && wr == null) {
+                cs = sausage.getConfusionSet(slot);
+                wr = cs.getWordResult(word);
+                if (wr == null) {
+                    slot++;
+                }
             }
-
-            /* if a word is found */
-            if (mapToken != null) {
-                String word = mapToken.getWord().getSpelling();
-                WordResult wr = null;
-                ConfusionSet cs = null;
-
-                /* track through all the slots to find the word */
-                while (slot >= 0 && wr == null) {
-                    cs = sausage.getConfusionSet(slot);
-                    wr = cs.getWordResult(word);
-                    if (wr == null) {
-                        if (slot > 0) {
-                            slot--;
-                        } else if (slot == 0) {
-                            break;
-                        }
-                    }
-                }
-                if (wr != null) {
-                    mapPath.add(0, wr);
-                } else {
-                    cs.dump("Slot " + slot);
-                    throw new Error
-                        ("Can't find WordResult in ConfidenceResult slot " +
-                         slot + " for word " + word);
-                }
-                slot--;
-                mapToken = mapToken.getPredecessor();
+            if (wr != null) {
+                mapPath.add(wr);
             } else {
-                break;
+                cs.dump("Slot " + slot);
+                throw new Error
+                    ("Can't find WordResult in ConfidenceResult slot " +
+                     slot + " for word " + word);
             }
+            slot++;
         }
 
         return (new MAPConfidenceResult(sausage, mapPath));
+    }
+
+    /**
+     * Returns all the word tokens ending at the given token as a List.
+     *
+     * @param lastToken the last token in the token chain
+     *
+     * @return a list of word tokens in order of appearance
+     */
+    private List getWordTokens(Token lastToken) {
+        List wordTokens = new LinkedList();
+        Token token = lastToken;
+        while (token != null) {
+            if (token.isWord()) {
+                wordTokens.add(0, token);
+            }
+            token = token.getPredecessor();
+        }
+        return wordTokens;
     }
 
     /**
