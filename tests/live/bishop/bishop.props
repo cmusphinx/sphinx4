@@ -83,8 +83,9 @@ edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.NullGr
 ############################################################
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.PartitionActiveList
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.buildWordLattice=false
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=900
-edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-150
+edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-90
 
 
 ############################################################
@@ -93,7 +94,7 @@ edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-150
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
+edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 0.1
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-16
 edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7.0
 
