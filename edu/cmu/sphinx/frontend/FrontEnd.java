@@ -13,6 +13,7 @@ import java.nio.ShortBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Vector;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 
@@ -20,7 +21,7 @@ import javax.sound.sampled.AudioSystem;
 /**
  * Pre-processes the input audio into Features. 
  */
-public class FrontEnd implements Runnable {
+public class FrontEnd implements DataSource, Runnable {
 
     /**
      * The name of the SphinxProperty for window size (in samples).
@@ -45,6 +46,7 @@ public class FrontEnd implements Runnable {
     private List processors = null;
     private InputStream audioInputStream;
     private DataSource audioFrameSource;
+    private List queue;
 
 
     /**
@@ -52,6 +54,7 @@ public class FrontEnd implements Runnable {
      */
     public FrontEnd() {
 	processors = new LinkedList();
+        queue = new Vector();
     }
 
 
@@ -85,8 +88,7 @@ public class FrontEnd implements Runnable {
 
 
     /**
-     * Sets the source of audio input to this front-end, and connects
-     * it to the first processor.
+     * Sets the source of audio input to this front-end.
      *
      * @param inputStream the source of audio input
      */
@@ -97,10 +99,24 @@ public class FrontEnd implements Runnable {
 
 
     /**
+     * Returns a Feature produced by this FrontEnd.
+     *
+     * @return a Feature
+     */
+    public Data read() {
+        Object data = queue.get(0);
+        if (data != null) {
+            return (Feature) data;
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
      * Starts the FrontEnd.
      */
     public void run() {
-	Data output;
 
 	// set the data source of the first processor 
 	PullingProcessor first = (PullingProcessor) processors.get(0);
@@ -112,35 +128,23 @@ public class FrontEnd implements Runnable {
 	    (PullingProcessor) processors.get(processors.size() - 1);
 	if (last != null) {
 	    try {
+                Data output = null;
 		do {
-		    // System.out.println("reading...");
-		    output = last.read();
-		    // System.out.println("...read");
+		    output =  last.read();
+                    
+                    // add the features to the output queue
+                    if (output != null && output instanceof FeatureFrame) {
+                        FeatureFrame frame = (FeatureFrame) output;
+                        Feature[] features = (Feature[]) frame.getData();
+                        for (int i = 0; i < features.length; i++) {
+                            queue.add(features[i]);
+                        }
+                    }
+                    
 		} while (output != null);
 	    } catch (IOException ioe) {
 		ioe.printStackTrace();
 	    }
-	}
-    }
-
-
-    /**
-     * Test program for running the FrontEnd.
-     */
-    public static void main(String[] argv) {
-	if (argv.length < 1) {
-	    System.out.println("Usage: java FrontEnd <filename>");
-	}
-	FrontEnd frontEnd = new FrontEnd();
-	frontEnd.addProcessor(new Preemphasizer());
-	frontEnd.addProcessor(new CepstrumProducer());
-	frontEnd.linkProcessors();
-
-	try {
-	    frontEnd.setInputStream(new FileInputStream(argv[0]));
-	    frontEnd.run();
-	} catch (Exception e) {
-	    e.printStackTrace();
 	}
     }
 }

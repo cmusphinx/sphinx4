@@ -160,7 +160,6 @@ public class FeatureExtractor extends PullingProcessor {
 	}
 
 	// create the Features
-	int numberFeatures = 0;
 	int totalFeatures = cepstra.length + residualVectors;
 	Feature[] features = new Feature[totalFeatures];
 
