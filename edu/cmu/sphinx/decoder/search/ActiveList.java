@@ -27,13 +27,16 @@ import java.util.List;
  */
 public interface ActiveList {
 
+    private final static String PROP_PREFIX
+        = "edu.cmu.sphinx.decoder.search.ActiveList.";
+
 
     /**
      * property that sets the desired (or target) size for this
      * active list.  This is sometimes referred to as the beam size
      */
     public final static String PROP_ABSOLUTE_BEAM_WIDTH  =
-	"edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth";
+        PROP_PREFIX + "absoluteBeamWidth";
 
     /**
      * The default value for the PROP_ABSOLUTE_BEAM_WIDTH property
@@ -46,8 +49,8 @@ public interface ActiveList {
      * relativeBeamWidth * maximumScore will be pruned from the list
      */
 
-    public final static String PROP_RELATIVE_BEAM_WIDTH =
-	"edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth";
+    public final static String PROP_RELATIVE_BEAM_WIDTH
+        = PROP_PREFIX + "relativeBeamWidth";
 
     /**
      * The default value for the PROP_RELATIVE_BEAM_WIDTH property
@@ -64,8 +67,8 @@ public interface ActiveList {
      * (disabled).
      */
 
-    public final static String PROP_STRICT_PRUNING =
-	"edu.cmu.sphinx.decoder.search.ActiveList.strictPruning";
+    public final static String PROP_STRICT_PRUNING
+	= PROP_PREFIX + "strictPruning";
 
     /**
      * The default for the PROP_STRICT_PRUNING property

@@ -49,6 +49,13 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      */
     public final static String PROP_NUM_THREADS = PROP_PREFIX + "numThreads";
 
+
+    /**
+     * The default value for PROP_NUM_THREADS.
+     */
+    public final static int PROP_NUM_THREADS_DEFAULT = 1;
+
+
     /**
      * A sphinx property name that controls whether the number of
      * available CPUs on the system is used when determining the
@@ -63,14 +70,27 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     public final static String PROP_IS_CPU_RELATIVE = 
         PROP_PREFIX + "isCpuRelative";
 
+
+    /**
+     * The default value for PROP_IS_CPU_RELATIVE.
+     */
+    public final static boolean PROP_IS_CPU_RELATIVE_DEFAULT = false;
+
+
     /**
      * A Sphinx Property name that controls the minimum number of
      * scoreables sent to a thread. This is used to prevent over threading
      * of the scoring that could happen if the number of threads is
      * high compared to the size of the activelist. The default is 50
      */
-    public final static String PROP_MIN_SCOREABLES_PER_THREAD  =
-        PROP_PREFIX + "minScoreablesPerThread";
+    public final static String PROP_MIN_SCOREABLES_PER_THREAD
+        = PROP_PREFIX + "minScoreablesPerThread";
+
+
+    /**
+     * The default value for PROP_MIN_SCOREABLES_PER_THREAD.
+     */
+    public final static int PROP_MIN_SCOREABLES_PER_THREAD_DEFAULT = 50;
 
 
     private FrontEnd frontEnd;		// where features come from
@@ -98,11 +118,14 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     public void initialize(String context, FrontEnd frontEnd) {
 	this.frontEnd = frontEnd;
 	this.props = SphinxProperties.getSphinxProperties(context);
-	boolean cpuRelative =  props.getBoolean(PROP_IS_CPU_RELATIVE, false);
 
-	numThreads =  props.getInt(PROP_NUM_THREADS, 1);
+	boolean cpuRelative =  props.getBoolean(PROP_IS_CPU_RELATIVE,
+                                                PROP_IS_CPU_RELATIVE_DEFAULT);
+
+	numThreads =  props.getInt(PROP_NUM_THREADS, PROP_NUM_THREADS_DEFAULT);
 	minScoreablesPerThread =  
-            props.getInt(PROP_MIN_SCOREABLES_PER_THREAD, 50);
+            props.getInt(PROP_MIN_SCOREABLES_PER_THREAD,
+                         PROP_MIN_SCOREABLES_PER_THREAD_DEFAULT);
 
 	if (cpuRelative) {
 	    numThreads += Runtime.getRuntime().availableProcessors();
