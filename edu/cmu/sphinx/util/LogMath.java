@@ -283,6 +283,11 @@ public final class LogMath {
 	return (source * inverseNaturalLogBase);
     }
 
+    /**
+     * Converts the given log value into a base Math.E log value.
+     *
+     * @param logValue the log value to convert
+     */
     public final double logToLn(double logValue) {
         return logValue * naturalLogBase;
     }
