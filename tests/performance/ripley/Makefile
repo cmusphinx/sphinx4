@@ -94,6 +94,41 @@ ripley_trigram_ep:
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./ripley.trigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./ripley.props /lab/speech/sphinx4/data/medialab/mit.batch
 
+ripley_trigram_ep_test:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	-Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.decoder.search.PartitionActiveList\
+	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1400 \
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80 \
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
+	-Dedu.cmu.sphinx.frontend.endpoint.SingleThresholdEndpointer.energyThreshold=4.6\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=5\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=6\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=5\
+	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true\
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./ripley.trigram.lm \
+	edu.cmu.sphinx.decoder.BatchDecoder ./ripley.props /lab/speech/sphinx4/data/medialab/mit.batch
+
+ripley_trigram_ep_beamfinder:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	-Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.decoder.search.PartitionActiveList\
+	   -Dedu.cmu.sphinx.util.BeamFinder.enable=true\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=8000\
+   -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-200 \
+	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager\
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
+	-Dedu.cmu.sphinx.frontend.endpoint.SingleThresholdEndpointer.energyThreshold=4.6\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=5\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=6\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=5\
+	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager \
+	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true\
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./ripley.trigram.lm \
+	edu.cmu.sphinx.decoder.BatchDecoder ./ripley.props /lab/speech/sphinx4/data/medialab/mit.batch
+
 
 ripley_simple_trigram_ep:
 	$(JAVA_CMD) \
