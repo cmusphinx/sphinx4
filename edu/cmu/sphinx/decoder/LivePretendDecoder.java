@@ -73,7 +73,6 @@ public class LivePretendDecoder {
     public final static int PROP_ALIGN_INTERVAL_DEFAULT = -1;
 
 
-    private int sampleRate;
     private int alignInterval;
     private int numUtterances;
     private int numUtteranceStart;
@@ -122,10 +121,7 @@ public class LivePretendDecoder {
             = props.getString(PROP_HYPOTHESIS_TRANSCRIPT,
                               PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT);
         hypothesisTranscript = new FileWriter(hypothesisFile);
-        
-        sampleRate = props.getInt(FrontEndFactory.PROP_SAMPLE_RATE,
-                                  FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
-        alignInterval = props.getInt(PROP_ALIGN_INTERVAL, 
+	alignInterval = props.getInt(PROP_ALIGN_INTERVAL, 
                                      PROP_ALIGN_INTERVAL_DEFAULT);
 
         decoder = new Decoder(context);
@@ -178,7 +174,7 @@ public class LivePretendDecoder {
             resultList.add(resultText);
             
             hypothesisTranscript.write
-                (result.getTimedBestResult(false, true, sampleRate) +"\n");
+                (result.getTimedBestResult(false, true) +"\n");
             hypothesisTranscript.flush();
             
             if (alignInterval > 0 && (numUtterances % alignInterval == 0)) {
@@ -315,18 +311,6 @@ public class LivePretendDecoder {
      */
     private Timer getAlignTimer() {
         return Timer.getTimer(context, "Align");
-    }
-
-    /**
-     * Returns the time in seconds given the sample number and sample rate.
-     *
-     * @param sampleNumber the sample number
-     * @param sampleRate the sample rate
-     *
-     * @return the time in seconds
-     */
-    private static float getSeconds(long sampleNumber, int sampleRate) {
-        return ((float) (sampleNumber / sampleRate));
     }
 
     /**
