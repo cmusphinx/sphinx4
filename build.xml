@@ -219,14 +219,14 @@ jsapi.exe from the lib directory.
     <!-- ********************************************************** -->
     <target name="all"
 	    description="Build everything">
-	<antcall target="create_wsj_tidigits_model_classes"/>
+	<antcall target="create_all_model_classes"/>
 	<antcall target="compile_src"/>
 	<mkdir dir="${build_model_dir}"/>
 	<move todir="${build_model_dir}">
 	      <fileset dir="${classes_dir}/edu/cmu/sphinx/model/acoustic"/>
 	</move>
-	<antcall target="create_wsj_tidigits_models"/>
-	<antcall target="delete_wsj_tidigits_model_classes"/>
+	<antcall target="create_all_models"/>
+	<antcall target="delete_all_model_classes"/>
 	<antcall target="jars"/>
 	<antcall target="demos"/>
 	<echo message="Build complete."/>
@@ -341,7 +341,7 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
 
-    <target name="create_wsj_tidigits_model_classes"
+    <target name="create_all_model_classes"
 	    description="Creates all the model class files.">
 	<antcall target="create_my_model_classes">
 	    <param name="my_model_name" value="${wsj_name}"/>
@@ -354,10 +354,13 @@ jsapi.exe from the lib directory.
         </antcall>
     </target>
 
-    <target name="delete_wsj_tidigits_model_classes"
+    <target name="delete_all_model_classes"
             description="Deletes the WSJ and TIDIGITS model classes.">
 	<antcall target="delete_my_model_classes">
 	    <param name="my_model_name" value="${wsj_name}"/>
+        </antcall>
+	<antcall target="delete_my_model_classes">
+	    <param name="my_model_name" value="${wsj_8kHz_name}"/>
         </antcall>
 	<antcall target="delete_my_model_classes">
 	    <param name="my_model_name" value="${tidigits_name}"/>
@@ -419,7 +422,7 @@ jsapi.exe from the lib directory.
     <!-- * Builds the TIDIGITS and WSJ acoustic model files.      * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <target name="create_wsj_tidigits_models"
+    <target name="create_all_models"
 	    description="Creates the WSJ and TIDIGITS acoustic model JARS.">
         <antcall target="create_my_model">
 	    <param name="my_model_data_dir" value="${wsj_data_dir}"/>
