@@ -1,3 +1,6 @@
+Sphinx-4 Release Steps
+----------------------
+
 1) Prepare the distribution
     - update the version number in SphinxHelp.java
     - update the README with release information
@@ -29,10 +32,18 @@
     - java -mx312m -jar bin/HelloNGram.jar
     - java -jar bin/ZipCity.jar
     - java -jar bin/AudioTool.jar
+    - java -jar bin/Transcriber.jar
+    - java -jar bin/WavFile.jar
+    - java -mx200m -jar bin/Dialog.jar
+    - java -mx200m -jar bin/JSGFDemo.jar
+    - java -jar bin/FeatureValueDemo.jar
+    - java -jar bin/LiveConnectDemo.jar    
+    
     - check libs for proper output:
         - cd lib
         - java -jar TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
         - java -jar WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
+	- java -jar WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.jar
         - java -jar sphinx4.jar
     - Go through index.html, click through the links to make sure they are
       not broken. (or use 'linklint /@')
@@ -49,10 +60,18 @@
     - java -mx312m -jar bin/HelloNGram.jar
     - java -jar bin/ZipCity.jar
     - java -jar bin/AudioTool.jar
+    - java -jar bin/Transcriber.jar
+    - java -jar bin/WavFile.jar
+    - java -mx200m -jar bin/Dialog.jar
+    - java -mx200m -jar bin/JSGFDemo.jar
+    - java -jar bin/FeatureValueDemo.jar
+    - java -jar bin/LiveConnectDemo.jar
+
     - check libs for proper output:
         - cd lib
         - java -jar TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
         - java -jar WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
+	- java -jar WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.jar
         - java -jar sphinx4.jar
     - cd tests/live
        be sure to test the playback for live and live-ep
