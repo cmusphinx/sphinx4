@@ -542,10 +542,21 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** --> 
     <target name="deploy"
-            description="Deploys the bin.zip and src.zip files.">
+            depends="check_jsapi_jar.isPresent,issue_jsapi_error"
+            description="Deploys the bin.zip and src.zip files."
+	    if="jsapi_jar.isPresent">
 	<delete dir="${deploy_dir}"/>
 	<antcall target="deploy_bin_zip"/>
 	<antcall target="deploy_src_zip"/>
+    </target>
+
+    <target name="issue_jsapi_error"
+            unless="jsapi_jar.isPresent">
+        <echo>
+Cannot find lib/jsapi.jar needed to deploy Sphinx-4.
+Please go to the "lib" directory and run jsapi.sh or jsapi.exe
+to setup JSAPI.
+        </echo>
     </target>
 
 
