@@ -59,6 +59,17 @@ import java.util.Map;
  */
 public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 
+    // Error message displayed when we don't get an UTTERANCE_START initially
+    private static final String NO_UTTERANCE_START_ERROR =
+	"I must receive a Feature with the UTTERANCE_START Signal before " +
+	"I receive any other Features.";
+
+    // Error message displayed when we get too many UTTERANCE_START Signals
+    private static final String TOO_MANY_UTTERANCE_START_ERROR =
+	"I cannot receive a Feature with the UTTERANCE_START Signal in " +
+	"the middle of an utterance, i.e., before I receive an UTTERANCE_END.";
+
+
     private static Map frontends = new HashMap();
 
     private String amName;                // Acoustic model name
@@ -74,6 +85,9 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
     private String cmnClass;
     private String featureExtractorClass;
     
+    // state of this frontend
+    private boolean inUtterance;
+
 
     /**
      * Constructs a default SimpleFrontEnd.
@@ -101,6 +115,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 		    DataSource dataSource) throws IOException {
 	super(name, context);
 	this.amName = amName;
+	this.inUtterance = false;
         processors = new HashMap();
         frontends.put(context, this);
         setDataSource(dataSource);
@@ -472,8 +487,26 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 		    feature.setType(amName);
 		}
                 features[i++] = feature;
-                if (feature.hasSignal(Signal.UTTERANCE_END)) {
-                    break;
+		
+		if (!inUtterance) {
+		    if (feature.hasSignal(Signal.UTTERANCE_START)) {
+			inUtterance = true;
+		    } else {
+			throw new Error
+			    ("SimpleFrontEnd, named " + getName() + ": " +
+			     NO_UTTERANCE_START_ERROR);
+		    }
+		} else {
+		    if (feature.hasSignal(Signal.UTTERANCE_END)) {
+			inUtterance = false;
+			break;
+		    } else if (feature.hasSignal(Signal.UTTERANCE_START)) {
+			/*
+			throw new Error
+			    ("SimpleFrontEnd, named " + getName() + ": " +
+			     TOO_MANY_UTTERANCE_START_ERROR);
+			*/
+		    }
                 }
             } else {
                 break;
