@@ -39,7 +39,7 @@ edu.cmu.sphinx.knowledge.acoustic.useComposites=true
 ############################################################
 
 edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel
-edu.cmu.sphinx.knowledge.language.LanguageModel.location=/lab/speech/sphinx4/data/medialab/mit.flat_unigram.lm
+edu.cmu.sphinx.knowledge.language.LanguageModel.location=/lab/speech/sphinx4/data/medialab/language_models/mit.flat_unigram.lm
 edu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=0.7
 
 
