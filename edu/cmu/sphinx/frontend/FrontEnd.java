@@ -190,7 +190,9 @@ public interface FrontEnd {
      *
      * @param name the name of this FrontEnd
      * @param context the context of this FrontEnd
-     * @param dataSource the place to pull data from
+     * @param dataSource the place to pull data from, or null if no
+     *     DataSource yet, in which case it should be set later on by
+     *     the <code>setDataSource()</code> method
      */
     public void initialize(String name, String context, DataSource dataSource)
         throws IOException;
