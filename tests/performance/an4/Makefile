@@ -233,7 +233,7 @@ an4_plus_trigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
-	-Dedu.cmu.sphinx.model.language.location=an4_plus.arpa \
+	-Dedu.cmu.sphinx.model.language.location=an4_plus.trigram.lm \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
