@@ -193,6 +193,7 @@ an4_spelling_journey_fst:
         -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false\
 	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=6000 \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
 	 -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false\
 	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-200 \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-55\
@@ -317,3 +318,10 @@ an4_spelled_out:
 	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_spelled_out.wordlist\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
+
+########################################################
+# Runs all the tests from a batch file using qsub
+########################################################
+
+batch:
+	qsub  -o batch.out -e batch.err run_an4_tests
