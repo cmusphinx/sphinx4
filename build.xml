@@ -573,6 +573,7 @@ jsapi.exe from the lib directory.
    	         includes="demo.xml,index.html,license.terms,README,lib/**,bin/*.jar,demo/**,doc-files/**,javadoc/**,doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html"
 		 excludes="lib/jsapi.jar"/>
 	</copy>
+	<delete dir="${deploy_dir}/sphinx4-${version}/lib/jsapi"/>
 	<jar destfile="${deploy_dir}/sphinx4-bin-${version}.zip"
 	     basedir="${deploy_dir}"
 	     includes="sphinx4-${version}/**"
