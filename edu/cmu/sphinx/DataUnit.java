@@ -1,3 +1,7 @@
+/**
+ * [[[copyright]]]
+ */
+
 package edu.cmu.sphinx;
 
 /**
