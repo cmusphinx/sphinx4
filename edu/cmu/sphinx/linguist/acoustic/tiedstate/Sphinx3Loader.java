@@ -52,9 +52,7 @@ import edu.cmu.sphinx.util.props.Registry;
  *
  * {@link #PROP_DATA_LOCATION PROP_DATA_LOCATION}. For the sake of 
  * explanation, we will refer to this directory as "continuous" from here on.
- * The files in this directory can be in ASCII or binary format,
- * and the format is specified by the property
- * {@link #PROP_FORMAT PROP_FORMAT}.
+ * The files in this directory can be in ASCII or binary format.
  * There is also the model definition file, which normally end in
  * ".mdef" and is usually in ASCII. Its location is specified by the property
  * {@link #PROP_MODEL PROP_MODEL}.
