@@ -288,7 +288,9 @@ jsapi.exe from the lib directory.
 	     manifest="${src_dir}/edu/cmu/sphinx/sphinx4.manifest"
 	     compress="true"
 	     includes="edu/**,com/**"
-             excludes="edu/cmu/sphinx/tools/**,com/sun/taglet/**"
+             excludes="edu/cmu/sphinx/tools/**,
+	               edu/cmu/sphinx/model/**,
+	               com/sun/taglet/**"
 	     basedir="${classes_dir}"/>
     </target>
 
