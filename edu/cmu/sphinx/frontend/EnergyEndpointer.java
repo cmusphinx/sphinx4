@@ -261,7 +261,6 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
         if (cepstrum != null) {
             numCepstra++;
             if (cepstrum.hasContent()) {
-                System.out.println("eep: " + cepstrum.getEnergy());
                 // Call a different method to handle the Cepstrum
                 // depending on its energy level.
                 if (cepstrum.getEnergy() < startLow || 
