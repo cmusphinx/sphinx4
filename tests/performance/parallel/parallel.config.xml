@@ -27,8 +27,8 @@
     <!-- batch tool configuration                                 -->
     <!-- ******************************************************** -->   
     
-    <component name="batch" 
-               type="edu.cmu.sphinx.research.parallel.ParallelBatchRecognizer">
+    <component name="parallel" 
+               type="edu.cmu.sphinx.research.parallel.ParallelRecognizer">
         <property name="recognizer" value="parallelRecognizer"/>
         <propertylist name="inputSource">
 	    <item>mfcStreamDataSource</item>
@@ -38,7 +38,7 @@
 
     
     <!-- ******************************************************** -->
-    <!-- The connectedDigitsRecognizer configuration              -->
+    <!-- The ParallelRecognizer configuration                     -->
     <!-- ******************************************************** --> 
     
     <component name="parallelRecognizer" 
@@ -63,16 +63,11 @@
     
     <component name="searchManager" 
         type="edu.cmu.sphinx.research.parallel.ParallelSearchManager">
-        <property name="logMath" value="logMath"/>
         <property name="linguist" value="parallelLinguist"/>
         <property name="scorer" value="parallelScorer"/>
 	<property name="featureScorePruner" value="featureScorePruner"/>
 	<property name="combinedScorePruner" value="combinedScorePruner"/>
         <property name="activeListFactory" value="activeList"/>
-	<propertylist name="acousticModels">
-	    <item>mfcAcousticModel</item>
-	    <item>plpAcousticModel</item>
-	</propertylist>
     </component>
         
     <component name="activeList" 
@@ -96,10 +91,6 @@
     
     <component name="parallelScorer" 
                type="edu.cmu.sphinx.research.parallel.ParallelAcousticScorer">
-        <propertylist name="frontends">
-            <item>mfcFrontEnd</item>
-	    <item>plpFrontEnd</item>
-	</propertylist>
     </component>
     
 
@@ -108,10 +99,10 @@
     <!-- ******************************************************** -->
     
     <component name="parallelLinguist" 
-                type="edu.cmu.sphinx.research.parallel.ParallelSimpleLinguist">
-        <propertylist name="acousticModels">
-	    <item>mfcAcousticModel</item>
-	    <item>plpAcousticModel</item>
+               type="edu.cmu.sphinx.research.parallel.ParallelSimpleLinguist">
+        <propertylist name="featureStreams">
+	    <item>mfcFeatureStream</item>
+	    <item>plpFeatureStream</item>
 	</propertylist>
         <property name="logMath" value="logMath"/>
         <property name="grammar" value="wordListGrammar"/>
@@ -122,6 +113,20 @@
         <property name="languageWeight" value="${languageWeight}"/>
     </component>
     
+    <component name="mfcFeatureStream"
+               type="edu.cmu.sphinx.research.parallel.FeatureStream">
+	<property name="acousticModel" value="mfcAcousticModel"/>
+	<property name="frontEnd" value="mfcFrontEnd"/>
+	<property name="eta" value="0.5"/>
+    </component>
+
+    <component name="plpFeatureStream"
+               type="edu.cmu.sphinx.research.parallel.FeatureStream">
+	<property name="acousticModel" value="plpAcousticModel"/>
+	<property name="frontEnd" value="plpFrontEnd"/>
+	<property name="eta" value="0.5"/>
+    </component>
+
 
     <!-- ******************************************************** -->
     <!-- The Grammar  configuration                               -->
@@ -259,10 +264,10 @@
         type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"/>
     
     <component name="plpFilterBank"
-        type="edu.cmu.sphinx.frotnend.frequencywarp.PLPFrequencyFilterBank"/>
+        type="edu.cmu.sphinx.frontend.frequencywarp.PLPFrequencyFilterBank"/>
 
     <component name="plpCepstrumProducer"
-        type="edu.cmu.sphinx.frotnend.frequencywarp.PLPCepstrumProducer"/>
+        type="edu.cmu.sphinx.frontend.frequencywarp.PLPCepstrumProducer"/>
     
     <component name="plpBatchCMN" 
                type="edu.cmu.sphinx.frontend.feature.BatchCMN"/>
@@ -277,25 +282,25 @@
     
     <component name="accuracyTracker" 
                 type="edu.cmu.sphinx.instrumentation.AccuracyTracker">
-        <property name="recognizer" value="connectedDigitsRecognizer"/>
+        <property name="recognizer" value="parallelRecognizer"/>
         <property name="showAlignedResults" value="false"/>
         <property name="showRawResults" value="false"/>
     </component>
     
     <component name="memoryTracker" 
                 type="edu.cmu.sphinx.instrumentation.MemoryTracker">
-        <property name="recognizer" value="connectedDigitsRecognizer"/>
+        <property name="recognizer" value="parallelRecognizer"/>
     </component>
     
     <component name="speedTracker" 
                 type="edu.cmu.sphinx.instrumentation.SpeedTracker">
-        <property name="recognizer" value="connectedDigitsRecognizer"/>
-        <property name="frontend" value="${frontend}"/>
+        <property name="recognizer" value="parallelRecognizer"/>
+        <property name="frontend" value="mfcFrontEnd"/>
     </component>
     
     <component name="recognizerMonitor" 
                 type="edu.cmu.sphinx.instrumentation.RecognizerMonitor">
-        <property name="recognizer" value="connectedDigitsRecognizer"/>
+        <property name="recognizer" value="parallelRecognizer"/>
         <propertylist name="allocatedMonitors">
             <item>linguistStats
             </item>
@@ -304,7 +309,7 @@
     
     <component name="linguistStats" 
                 type="edu.cmu.sphinx.linguist.util.LinguistStats">
-        <property name="linguist" value="${linguist}"/>
+        <property name="linguist" value="parallelLinguist"/>
     </component>
 
     
