@@ -47,7 +47,7 @@ public interface SearchManager {
     public void start();
 
     /**
-     * Performs recognition. Processes nore more than the given number
+     * Performs recognition. Processes no more than the given number
      * of frames before returning. This method returns a partial
      * result after nFrames have been processed, or a final result if
      * recognition completes while processing frames.  If a final
@@ -58,11 +58,8 @@ public interface SearchManager {
      * @param nFrames the maximum number of frames to process. A
      * final result may be returned before all nFrames are processed.
      *
-     * @return the recognition result. The result may be a partial or
-     * a final result.
-     *
-     * QUESTION: How do we bail out of this if no frames are
-     * arriving? 
+     * @return the recognition result, the result may be a partial or
+     * a final result; or return null if no frames are arrived
      */
     public Result recognize(int nFrames);
 
