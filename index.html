@@ -661,14 +661,35 @@ d:\work\sphinx4&gt;ant clean
 <h2><a name="demos_faq">Troubleshooting</a></h2>
 
 <ol>
-<li>Why do the demos not work on my Linux machine running Java 1.4.2 or lower?
+<li>Why do the demos not work on my Linux machine?
    <ul>
       <li>
-      We have seen some Linux machines have problems interacting with the
-      system audio device using JDK 1.4.2 or lower. For example, the demos
-      hang when it is trying to access the audio device. If you
-      encounter such problems, try JDK 1.5.0.
-      </li>
+      There seems to be a significant difference in how different
+      versions of the JDK determine which audio resources are
+      available on Linux.  This difference seems to affect different
+      machines in different ways. We are working with the Java Sound
+      folks to get to the root cause of the problem.  In the mean
+      time, if you are having trouble getting the demos to work on
+      your Linux box try the following:
+      <ul>
+        <li> Try a native sound recording application (such as
+        gnome-sound-recorder) to ensure that you can actually capture
+        audio on your system.
+        </li>
+        <li> Try the <a
+        href="javadoc/edu/cmu/sphinx/tools/audio/doc-files/HowToRunAudioTool.html">AudioTool</a>
+        demo to see if you can record audio from a Java application.
+        </li>
+        <li>
+          Check to see if any sound daemons like esd, gstreamer or
+          artsd are running. These daemons may have exclusive access to the
+          sound device. If any of these are running, kill them
+          and try running again.
+        </li>
+        <li>
+         Try switching to another version of the JDK. If JDK 1.4 doesn't
+         work, try 1.5 and vice versa.
+         </li>
    </ul>
 </li>
 </ol>
