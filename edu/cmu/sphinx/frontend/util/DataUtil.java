@@ -17,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
 
 
