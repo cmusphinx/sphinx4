@@ -142,8 +142,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 	SphinxProperties sphinxProperties = 
 	    SphinxProperties.getSphinxProperties(getContext());
 	return (PropertiesResolver.resolve
-		(sphinxProperties, getAcousticProperties(),
-		 getContext() + ".frontend"));
+		(sphinxProperties, getAcousticProperties(), getName()));
     }
 
 
