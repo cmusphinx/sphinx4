@@ -65,7 +65,7 @@ edu.cmu.sphinx.frontend.sampleRate = 16000
 #
 ############################################################
 
-edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400
+edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=200
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-200
 edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.FastActiveList
 edu.cmu.sphinx.search.SimpleDigitLinguist.isConnectedDigitGrammar=true
