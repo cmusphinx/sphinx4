@@ -16,11 +16,10 @@
 
     <property name="logLevel" value="WARNING"/>
     
-    <property name="absoluteBeamWidth"  value="800"/>
-    <property name="relativeBeamWidth"  value="1E-150"/>
-    <property name="wordInsertionProbability" value="1E-26"/>
-    <property name="languageWeight"     value="7"/>
-    <property name="silenceInsertionProbability"  value="1"/>
+    <property name="absoluteBeamWidth"  value="-1"/>
+    <property name="relativeBeamWidth"  value="1E-80"/>
+    <property name="wordInsertionProbability" value="1E-36"/>
+    <property name="languageWeight"     value="8"/>
     
     <property name="frontend" value="epFrontEnd"/>
     <property name="recognizer" value="recognizer"/>
@@ -90,8 +89,6 @@
         <property name="acousticModel" value="wsj"/>
         <property name="wordInsertionProbability" 
                 value="${wordInsertionProbability}"/>
-        <property name="silenceInsertionProbability" 
-                value="${silenceInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
     </component>
         
