@@ -70,7 +70,7 @@ edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.search.parallel.FeatureScorePruner.absoluteBeamWidth=2000
 edu.cmu.sphinx.search.parallel.FeatureScorePruner.relativeBeamWidth=1E-200
 
-edu.cmu.sphinx.search.parallel.CombinedScorePruner.absoluteBeamWidth=40
+edu.cmu.sphinx.search.parallel.CombinedScorePruner.absoluteBeamWidth=30
 edu.cmu.sphinx.search.parallel.CombinedScorePruner.relativeBeamWidth=1E-200
 
 edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-26
