@@ -26,7 +26,7 @@ public class TrigramProbability {
     /**
      * Constructs a TrigramProbability
      *
-     * @param wordID the ID of the second word in a bigram
+     * @param wordID the ID of the third word in a trigram
      * @param probabilityID the index into the probability array
      */
     public TrigramProbability(int wordID, int probabilityID) {
@@ -36,9 +36,9 @@ public class TrigramProbability {
 
     
     /**
-     * Returns the second word ID of this bigram
+     * Returns the third word ID of this trigram
      *
-     * @return the second word ID
+     * @return the third word ID
      */ 
     public int getWordID() {
         return wordID;
