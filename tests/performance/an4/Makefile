@@ -128,7 +128,7 @@ an4_spelling_trigram:
 # using an FST created from the trigram LM based on spelling of words from AN4.
 
 an4_spelling_fst:
-        $(JAVA_CMD) \
+	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
 	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400 \
 	-Dedu.cmu.sphinx.search.Dictionary.allowMissingWords=true \
@@ -136,7 +136,7 @@ an4_spelling_fst:
         -Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
         -Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_spelling.arpa \
+	-Dedu.cmu.sphinx.search.ArpaGrammar.path= \
         tests.decoder.BatchDecoder wsjDigits.props ./an4_spelling.batch
 
 
@@ -146,6 +146,13 @@ an4_spelling_fst:
 # "Journey to the Center of the Earth". 
 
 an4_spelling_journey_trigram:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=./an4_spelling.arpa \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_spelling.alphalist \
+        tests.decoder.BatchDecoder ./wsjDigits.props ./an4_spelling.batch
+
 
 
 # Tests the spelled-out words from AN4,
@@ -153,6 +160,16 @@ an4_spelling_journey_trigram:
 # from "Journey to the Center of the Earth". 
 
 an4_spelling_journey_fst:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400 \
+	-Dedu.cmu.sphinx.search.Dictionary.allowMissingWords=true \
+        -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+        -Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
+        -Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
+	-Dedu.cmu.sphinx.search.ArpaGrammar.path= \
+        tests.decoder.BatchDecoder wsjDigits.props ./an4_spelling.batch
 
 
 
