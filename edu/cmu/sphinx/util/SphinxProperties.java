@@ -55,6 +55,10 @@ public class SphinxProperties {
     private Properties props;	// the actual properties
     private Properties shadowProps; // actuall requested properties
     private String contextName;	// name of the associated context
+    private boolean warnIfNoProperty = false;
+
+    private final static String PROP_WARN_NO_PROPERTY =
+        "edu.cmu.sphinx.util.SphinxProperties.warnIfPropertyNotDefined";
 
 
     /**
@@ -114,6 +118,8 @@ public class SphinxProperties {
 	if (sp == null) {
 	    sp = EMPTY_SPHINX_PROPERTIES;
 	}
+
+        sp.warnIfNoProperty = sp.getBoolean(PROP_WARN_NO_PROPERTY, false);
 	return sp;
     }
 
@@ -458,10 +464,11 @@ public class SphinxProperties {
     private void warnNoProperty(String propertyName, String defaultValue) {
 	// print out the warning only if the property has never been
 	// searched for
-	if (!shadowProps.containsKey(propertyName)) {
-	    System.out.println("WARNING: no property, " + propertyName + "\n" +
-			       "         using the default value " + 
-			       defaultValue);
+	if (warnIfNoProperty && !shadowProps.containsKey(propertyName)) {
+	    System.out.println("WARNING: no property, " 
+                    + propertyName + "\n" 
+                    + "         using the default value " 
+                    + defaultValue);
 	}
     }
 
