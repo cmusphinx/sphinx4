@@ -20,7 +20,7 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 #
 ############################################################
 
-edu.cmu.sphinx.model.acoustic.names = aurora_mfc aurora_plp
+edu.cmu.sphinx.model.acoustic.names = aurora_plp
 
 edu.cmu.sphinx.model.acoustic.aurora_mfc.format = sphinx3.ascii
 edu.cmu.sphinx.model.acoustic.aurora_mfc.location = /lab/speech/sphinx4/data/aurora2_model
@@ -45,6 +45,9 @@ edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 #
 ############################################################
 
+edu.cmu.sphinx.frontend.sampleRate = 8000
+edu.cmu.sphinx.frontend.useAcousticModelProperties = true
+
 edu.cmu.sphinx.frontend.featureExtractor = edu.cmu.sphinx.frontend.DeltasFeatureExtractor
 edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
 edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
@@ -63,13 +66,15 @@ edu.cmu.sphinx.frontend.cmn = edu.cmu.sphinx.frontend.BatchCMN
 edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-200
 
+edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
+
 edu.cmu.sphinx.search.parallel.FeatureScorePruner.absoluteBeamWidth=2000
 edu.cmu.sphinx.search.parallel.FeatureScorePruner.relativeBeamWidth=1E-200
 
 edu.cmu.sphinx.search.parallel.CombinedScorePruner.absoluteBeamWidth=2000
 edu.cmu.sphinx.search.parallel.CombinedScorePruner.relativeBeamWidth=1E-200
 
-edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-36
+edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-26
 edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1
 edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.search.Linguist.validateSentenceHMM=false
@@ -97,7 +102,7 @@ edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false
 ############################################################
 
 edu.cmu.sphinx.search.WordListGrammar.isLooping = true
-# edu.cmu.sphinx.search.WordListGrammar.path = ./digits.wordlist
+edu.cmu.sphinx.search.WordListGrammar.path = ./digits.wordlist
 
 
 ############################################################
@@ -109,13 +114,8 @@ edu.cmu.sphinx.search.WordListGrammar.isLooping = true
 edu.cmu.sphinx.search.Recognizer.dumpFrontEnd = true
 
 edu.cmu.sphinx.search.Recognizer.acousticScorer = edu.cmu.sphinx.search.parallel.ParallelAcousticScorer
-# edu.cmu.sphinx.search.Recognizer.acousticScorer = edu.cmu.sphinx.search.ThreadedAcousticScorer
 edu.cmu.sphinx.search.Recognizer.linguist = edu.cmu.sphinx.search.parallel.ParallelLinguist
 edu.cmu.sphinx.search.Recognizer.grammar = edu.cmu.sphinx.search.WordListGrammar
 edu.cmu.sphinx.search.Recognizer.searchManager = edu.cmu.sphinx.search.parallel.ParallelSearchManager
-
-# edu.cmu.sphinx.search.Recognizer.searchManager = edu.cmu.sphinx.search.BreadthFirstSearchManager
-edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
-
 edu.cmu.sphinx.search.Recognizer.linguistProcessors = edu.cmu.sphinx.util.GDLDumper
 

@@ -91,4 +91,22 @@ tidigits_quick_parallel:
 aurora:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.util.GDLDumper.skipHMMs=false\
+	-Dedu.cmu.sphinx.frontend.sampleRate=8000\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ../aurora/aurora.batch
+
+
+
+aurora.testa.N1_SNR20:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-16\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR20.batch
+
+
+aurora.testa.N1_SNR20.static:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-46\
+	-Dedu.cmu.sphinx.search.Recognizer.acousticScorer=edu.cmu.sphinx.search.ThreadedAcousticScorer \
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist \
+	-Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.BreadthFirstSearchManager \
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR20.batch
+
