@@ -91,6 +91,9 @@ class BinaryLoader {
 
     private int[] trigramSegmentTable;
 
+    private float languageWeight;
+    private float wip;
+
     private float[] bigramProbTable;
     private float[] trigramBackoffTable;
     private float[] trigramProbTable;
@@ -101,13 +104,7 @@ class BinaryLoader {
     private boolean bigEndian = true;
     private boolean applyLanguageWeightAndWip;
 
-    private Timer headerTimer;
-    private Timer unigramTimer;
-    private Timer uwTimer;
-    private Timer tablesTimer;
-    private Timer stringTimer;
 
-    
     /**
      * Creates a simple ngram model from the data at the URL. The
      * data should be an ARPA format
@@ -239,13 +236,11 @@ class BinaryLoader {
             (PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP,
              PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP_DEFAULT);
 
-        headerTimer = Timer.getTimer(context, "HeaderRead");
-        unigramTimer = Timer.getTimer(context, "UnigramRead");
-        uwTimer = Timer.getTimer(context, "ApplyUW");
-        tablesTimer = Timer.getTimer(context, "TablesRead");
-        stringTimer = Timer.getTimer(context, "StringRead");
-
         logMath = LogMath.getLogMath(context);
+
+        languageWeight = 9.5f;
+        wip = logMath.linearToLog(0.7);
+
         loadBinary(location);
     }
     
@@ -361,8 +356,6 @@ class BinaryLoader {
 
         skipBigramsTrigrams(stream);
 
-        tablesTimer.start();
-
 	// read the bigram probabilities table
 	if (numberBigrams > 0) {
             this.bigramProbTable = readFloatTable(stream, bigEndian);
@@ -378,10 +371,6 @@ class BinaryLoader {
                                                trigramSegTableSize);
         }
 
-        tablesTimer.stop();
-
-        stringTimer.start();
-
 	// read word string names
         int wordsStringLength = readInt(stream, bigEndian);
         if (wordsStringLength <= 0) {
@@ -390,18 +379,8 @@ class BinaryLoader {
 
         // read the string of all words
         this.words = readWords(stream, wordsStringLength, numberUnigrams);
-            
-        stringTimer.stop();
-
-        uwTimer.start();
-
+        
         applyUnigramWeight();
-
-        if (applyLanguageWeightAndWip) {
-            applyLanguageWeightAndWip();
-        }
-
-        uwTimer.stop();
 
         fis.close();
         stream.close();
@@ -416,8 +395,6 @@ class BinaryLoader {
      * @param the data stream of the LM file
      */
     private void readHeader(DataInputStream stream) throws IOException {
-        headerTimer.start();
-
 	int headerLength = readInt(stream, bigEndian);
 
 	if (headerLength != (DARPA_LM_HEADER.length() + 1)) { // not big-endian
@@ -491,8 +468,6 @@ class BinaryLoader {
 	if ((numberTrigrams = readInt(stream, bigEndian)) < 0) {
 	    throw new Error("Bad number of trigrams: " + numberTrigrams);
 	}
-
-        headerTimer.stop();
     }
 
     
@@ -537,44 +512,20 @@ class BinaryLoader {
         float p2 = logUniform + logNotUnigramWeight;
 
         for (int i = 0; i < numberUnigrams; i++) {
-            if (i != startWordID) {
-                float p1 = unigrams[i].getLogProbability() + logUnigramWeight;
-                unigrams[i].setLogProbability(logMath.addAsLinear(p1, p2));
-            }
-        }
-    }
-
-
-    /**
-     * Applies the language weight and the word insertion probability to 
-     * the probabilities and backoff weights.
-     */
-    private void applyLanguageWeightAndWip() {
-
-        float languageWeight = 9.5f;
-        float wip = logMath.linearToLog(0.7);
-        
-        // apply to the unigram probabilities
-        for (int i = 0; i < numberUnigrams; i++) {
             UnigramProbability unigram = unigrams[i];
-            unigram.setLogProbability
-                (unigram.getLogProbability() * languageWeight + wip);
-            unigram.setLogBackoff(unigram.getLogBackoff() * languageWeight);
-        }
+            float p1 = unigram.getLogProbability();
+            if (i != startWordID) {
+                p1 += logUnigramWeight;    
+                p1 = logMath.addAsLinear(p1, p2);
+            }
 
-        // apply to the bigram probabilities
-        for (int i = 0; i < bigramProbTable.length; i++) {
-            bigramProbTable[i] = bigramProbTable[i] * languageWeight + wip;
-        }
+            if (applyLanguageWeightAndWip) {
+                p1 = p1 * languageWeight + wip;
+                unigram.setLogBackoff
+                    (unigram.getLogBackoff() * languageWeight);
+            }
 
-        // apply to the trigram probabilities
-        for (int i = 0; i < trigramProbTable.length; i++) {
-            trigramProbTable[i] = trigramProbTable[i] * languageWeight + wip;
-        }
-
-        // apply to the trigram backoff weights
-        for (int i = 0; i < trigramBackoffTable.length; i++) {
-            trigramBackoffTable[i] = trigramBackoffTable[i] * languageWeight;
+            unigram.setLogProbability(p1);
         }
     }
 
@@ -592,11 +543,21 @@ class BinaryLoader {
 	if (numProbs <= 0 || numProbs > 65536) {
 	    throw new Error("Bad probabilities table size: " + numProbs);
 	}
+
 	float[] probTable = new float[numProbs];
-	for (int i = 0; i < numProbs; i++) {
-	    probTable[i] = logMath.log10ToLog(readFloat(stream, bigEndian));
-	}
-        
+
+        if (applyLanguageWeightAndWip) {
+            for (int i = 0; i < numProbs; i++) {
+                probTable[i] = logMath.log10ToLog(readFloat(stream, bigEndian))
+                    * languageWeight + wip;
+            }
+        } else {
+            for (int i = 0; i < numProbs; i++) {
+                probTable[i] = 
+                    logMath.log10ToLog(readFloat(stream, bigEndian));
+            }
+        }
+            
 	return probTable;
     }
 
@@ -640,10 +601,8 @@ class BinaryLoader {
                                               boolean bigEndian)
     throws IOException {
 
-        unigramTimer.start();
-
         UnigramProbability[] unigrams = new UnigramProbability[numberUnigrams];
-                                  
+
 	for (int i = 0; i < numberUnigrams; i++) {
 
 	    // read unigram ID, unigram probability, unigram backoff weight
@@ -665,8 +624,6 @@ class BinaryLoader {
             unigrams[i] = new UnigramProbability
                 (unigramID, logProbability, logBackoff, firstBigramEntry);
 	}
-
-        unigramTimer.stop();
 
         return unigrams;
     }
