@@ -37,7 +37,7 @@ GC_FLAGS = -ms1g -mx1g
 #PROFILE2_FLAGS= -Xrunhprof:file=log.txt
 PROFILE2_FLAGS= -Xrunhprof:cpu=samples,file=log.txt
 
-DEBUG_FLAGS=
+DEBUG_FLAGS= 
 #EXTRA_JAVA_FLAGS=$(LOG_GC_FLAGS) $(LOG)
 EXTRA_JAVA_FLAGS=$(PROFILE_FLAGS) $(LOG_GC_FLAGS) $(LOG) $(GC_FLAGS) $(DEBUG_FLAGS)
 
@@ -101,7 +101,7 @@ an4_words_fst:
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_words.fst \
+	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_words.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
 
@@ -126,7 +126,8 @@ an4_spelling_trigram:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150 \
-    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false\
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=8.0 \
     -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.model.language.format=arpa \
     -Dedu.cmu.sphinx.model.language.location=./an4_spelling.trigram.lm \
@@ -140,6 +141,7 @@ an4_spelling_trigram:
 
 an4_spelling_fst:
 	$(JAVA_CMD) \
+	-Dtests.decoder.BatchDecoder.skip=20\
         -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
 	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400 \
 	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150 \
@@ -147,6 +149,8 @@ an4_spelling_fst:
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_spelling.trigram.fst \
 	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=true\
+        -Dedu.cmu.sphinx.search.Dictionary.wordReplacement=foo \
+	-Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
 
@@ -176,7 +180,7 @@ an4_spelling_journey_fst:
         -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
 	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400 \
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_spelling_journey.fst \
+	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_spelling_journey.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder an4.props ./an4_spelling.batch
 
 
@@ -216,7 +220,7 @@ an4_full_fst:
         -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
 	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400 \
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_full.fst \
+	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_full.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
 
@@ -258,7 +262,7 @@ an4_plus_fst:
         -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
 	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400 \
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_plus.fst \
+	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_plus.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
 
