@@ -7,7 +7,7 @@
     <!-- * Where to find things...                                * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <path id="extra_libs">
+    <path id="libs">
         <fileset dir="lib" includes="**/jsapi.jar"/>
     </path>
     <property name="src_dir"		value="."/>
@@ -24,11 +24,20 @@
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="all"
-	    depends="compile_src,javadoc,jars"
+	    depends="check_jsapi_jar.isPresent,compile_src,jars"
 	    description="Build everything">
 	<echo message="Build complete."/>
     </target>
 
+    <target name="check_jsapi_jar.isPresent">
+        <available file="lib/jsapi.jar" property="jsapi_jar.isPresent"/>
+        <fail unless="jsapi_jar.isPresent">
+
+Cannot find lib/jsapi.jar needed to build Sphinx-4.  Please
+extract it by running jsapi.sh or jsapi.exe from the lib
+directory.
+        </fail>
+    </target>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -37,7 +46,6 @@
     <!-- ********************************************************** -->
     <target name="compile_src"
 	    description="Build just the srcs">
-        <copy file="lib/jsapi.jar" todir="${lib_dir}"/>
 	<mkdir dir="${classes_dir}"/>
 	<javac debug="true"
 	       source="1.4"
@@ -46,7 +54,7 @@
 	       includes="edu/**,com/**"
 	       excludes="edu/cmu/sphinx/research/parallel/**"
 	       destdir="${classes_dir}">
-	    <classpath refid="extra_libs"/>
+	    <classpath refid="libs"/>
 	</javac>
     </target>
 
@@ -66,10 +74,10 @@
 
     <target name="sphinx4_jar" 
 	    depends="compile_src"
-	    description="Create ${lib_dir}/freetts.jar">
+	    description="Create ${lib_dir}/sphinx4.jar">
         <mkdir dir="${lib_dir}"/>
         <jar destfile="${sphinx4_jar}" 
-	     manifest="${src_dir}/edu/cmu/sphinx/sphinx4.Manifest"
+	     manifest="${src_dir}/edu/cmu/sphinx/sphinx4.manifest"
 	     compress="true">
             <fileset dir="${classes_dir}" />
         </jar>
@@ -94,7 +102,7 @@
 		 windowtitle="${javadoc_desc}"
                  doctitle="${javadoc_desc}"
                  access="private">
-	    <classpath refid="extra_libs"/>
+	    <classpath refid="libs"/>
         </javadoc>
     </target>
 

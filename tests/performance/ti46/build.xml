@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="none" name="TI46 Tests">
+<description>
+This file is used to run the TI46 performance tests.
+</description>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Where to find things...                                * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <property name="top_dir"		value="../../.."/>
+    <path id="libs">
+        <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
+    </path>
+    <property name="build_dir"		value="${top_dir}/bld"/>
+    <property name="classes_dir"	value="${build_dir}/classes"/>
+    <property name="lib_dir"            value="${build_dir}/lib"/>
+
+    <property name="batch_main"               
+	      value="edu.cmu.sphinx.decoder.BatchDecoder"/>
+
+    <target name="set_skip_quick"
+            if="mode">
+        <property name="skip" value="5"/>
+    </target>
+    <target name="set_skip_none"
+            unless="mode">
+        <property name="skip" value="0"/>
+    </target>
+    <target name="set_skip"
+            depends="set_skip_quick,
+                     set_skip_none">
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * ti46_wordlist                                          * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="ti46_wordlist"
+            depends="set_skip"
+	    description="TI46 test set with a word list language model">
+        <echo message="${classes_dir}"/>
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-server"/>   
+            <jvmarg value="-ms16m"/>
+            <jvmarg value="-mx16m"/> 
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value=""/>
+            <arg value="ti46.props"/> 
+            <arg value="ti46.batch"/> 
+        </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * ti46_flat_unigram                                      * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="ti46_flat_unigram"
+            depends="set_skip"
+	    description="TI46 test set with a flat unigram language model">
+        <echo message="${classes_dir}"/>
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-server"/>   
+            <jvmarg value="-ms16m"/>
+            <jvmarg value="-mx16m"/> 
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value=""/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
+                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                         value="ti46.flat_unigram.lm"/>
+            <arg value="ti46.props"/> 
+            <arg value="ti46.batch"/> 
+        </java>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * ti46_flat_unigram_fst                                  * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="ti46_flat_unigram_fst"
+            depends="set_skip"
+	    description="TI46 test set with a flat unigram fst language model">
+        <echo message="${classes_dir}"/>
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-server"/>   
+            <jvmarg value="-ms16m"/>
+            <jvmarg value="-mx16m"/> 
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value=""/>
+            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
+                         value="edu.cmu.sphinx.decoder.linguist.FSTGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.knowledge.linguist.FSTGrammar.path"
+                         value="ti46.flat_unigram.fst"/>
+            <arg value="ti46.props"/> 
+            <arg value="ti46.batch"/> 
+        </java>
+    </target>
+</project>
