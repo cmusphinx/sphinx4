@@ -15,7 +15,6 @@
 
 regressionDir=`pwd`
 
-echo regressionDir is $regressionDir while pwd is `pwd`
 ###################
 # Since the scripts just came out of CVS, they may not
 # be executable yet.  So make them executable
