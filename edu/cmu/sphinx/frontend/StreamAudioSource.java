@@ -19,31 +19,14 @@ import java.util.Arrays;
  * <pre>
  * edu.cmu.sphinx.frontend.bytesPerAudio
  * </pre>
- * The maximum size of a segment of speech is given by:
- * <pre>
- * edu.cmu.sphinx.frontend.streamAudioSource.segmentMaxBytes
- * </pre>
  *
  * @see BatchFileAudioSource
  */
 public class StreamAudioSource extends DataProcessor implements AudioSource {
 
-    /**
-     * The name of the SphinxProperty which specifies the maximum
-     * number of bytes in a segment of speech.
-     * The default value is 2,000,000.
-     */
-    public static final String PROP_SEGMENT_MAX_BYTES =
-    "edu.cmu.sphinx.frontend.streamAudioSource.segmentMaxBytes";
-    
-
     private InputStream audioStream;
 
-    private int segmentMaxBytes;
     private int frameSizeInBytes;
-
-    private byte[] samplesBuffer;
-    private int totalBytesRead;
     
     private boolean streamEndReached = false;
     private boolean segmentEndSent = false;
@@ -62,7 +45,6 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
         super(name, context);
 	initSphinxProperties();
         setInputStream(audioStream);
-	samplesBuffer = new byte[frameSizeInBytes];
     }
 
 
@@ -70,16 +52,12 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
      * Reads the parameters needed from the static SphinxProperties object.
      */
     private void initSphinxProperties() {
-	SphinxProperties properties = getSphinxProperties();
-
-        frameSizeInBytes = properties.getInt
+        frameSizeInBytes = getSphinxProperties().getInt
 	    (FrontEnd.PROP_BYTES_PER_AUDIO_FRAME, 4000);
 
         if (frameSizeInBytes % 2 == 1) {
             frameSizeInBytes++;
         }
-
-        segmentMaxBytes = properties.getInt(PROP_SEGMENT_MAX_BYTES, 2000000);
     }
 
 
@@ -93,7 +71,6 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
         streamEndReached = false;
         segmentEndSent = false;
         segmentStarted = false;
-        totalBytesRead = 0;
     }
 
     
@@ -120,15 +97,8 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
             }
         } else {
             if (!segmentStarted) {
-                
                 segmentStarted = true;
                 output = new Audio(Signal.SEGMENT_START);
-                
-            } else if (totalBytesRead >= segmentMaxBytes) {
-                
-                segmentStarted = false;
-                output = new Audio(Signal.SEGMENT_END);
-                segmentEndSent = true;
                 
             } else {
                 output = readNextFrame();
@@ -155,6 +125,8 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
 	int read = 0;
 	int totalRead = 0;
         final int bytesToRead = frameSizeInBytes;
+        byte[] samplesBuffer = new byte[frameSizeInBytes];
+
 	do {
 	    read = audioStream.read
 		(samplesBuffer, totalRead, bytesToRead - totalRead);
@@ -169,12 +141,8 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
             return null;
         }
 
-        this.totalBytesRead += totalRead;
-
         // pad and shrink incomplete frames
         if (totalRead < bytesToRead) {
-            Arrays.fill(samplesBuffer, totalRead,
-                        samplesBuffer.length, (byte) 0);
             totalRead = (totalRead % 2 == 0) ? totalRead + 2 : totalRead + 3;
             streamEndReached = true;
             audioStream.close();
