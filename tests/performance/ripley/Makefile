@@ -84,6 +84,9 @@ ripley_trigram:
 
 ripley_trigram_ep:
 	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+	-Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-160 \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=5\
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=6\
@@ -91,3 +94,31 @@ ripley_trigram_ep:
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true\
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=/lab/speech/sphinx4/data/medialab/language_models/mit.trigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./ripley.props /lab/speech/sphinx4/data/medialab/mit.batch
+
+
+ripley_trigram_ep_5:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.sdecoder.linguist.Linguist.languageWeight=6\
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=5\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=6\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=5\
+	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true\
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=/lab/speech/sphinx4/data/medialab/language_models/mit.trigram.lm.5 \
+	edu.cmu.sphinx.decoder.BatchDecoder ./ripley.props /lab/speech/sphinx4/data/medialab/mit.batch.5
+
+
+
+ripley_trigram_ep_2_lw16:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
+	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
+	-Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-160 \
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=5\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=6\
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=5\
+	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true\
+	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=/lab/speech/sphinx4/data/medialab/language_models/mit.trigram.lm.2 \
+	edu.cmu.sphinx.decoder.BatchDecoder ./ripley.props /lab/speech/sphinx4/data/medialab/mit.batch.2
+
