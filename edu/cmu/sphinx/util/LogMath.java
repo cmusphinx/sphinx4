@@ -15,6 +15,10 @@ package edu.cmu.sphinx.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.io.Serializable;
+import java.io.ObjectInputStream;
+import java.io.IOException;
+
 /**
  * Provides a set of methods for performing simple math in
  * the log domain.  The logarithmic base can be set by the
@@ -24,7 +28,7 @@ import java.util.Map;
  * </code><br>
  * 
  */
-public final class LogMath {
+public final class LogMath implements Serializable {
 
     static Map contextMap = new HashMap();
 
@@ -43,10 +47,10 @@ public final class LogMath {
 	= "edu.cmu.sphinx.util.LogMath.logBase";
 
     private double logBase = 1.0001;
-    private double naturalLogBase;
-    private double inverseNaturalLogBase;
-    private double logZero;
-    private double theAddTable[];
+    private transient double naturalLogBase;
+    private transient double inverseNaturalLogBase;
+    private transient double logZero;
+    private transient double theAddTable[];
 
      /**
       * Creates a log math with the given base
@@ -84,6 +88,26 @@ public final class LogMath {
       */
      private LogMath(double base) {
 	 logBase = base;
+	 init();
+     }
+
+    /**
+     * De-serializes the non-transient fields to the given stream
+     *
+     * @param s the stream to read the object from
+     *
+     * @throws IOException if an error occurs during the read.
+     */
+    private void readObject(ObjectInputStream s) 
+	throws IOException, ClassNotFoundException {
+	s.defaultReadObject();
+	init();
+    }
+
+     /**
+      * Initializes this log math
+      */
+     private void init() {
 	 naturalLogBase = Math.log(logBase);
 	 inverseNaturalLogBase = 1.0/naturalLogBase;
 
