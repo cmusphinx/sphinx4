@@ -487,7 +487,7 @@ public class LexTreeLinguist implements  Linguist {
      * An initial state in the search space. It is non-emitting
      * and most likely has UnitSearchStates as successors
      */
-    class LexTreeInitialState extends LexTreeState {
+    public class LexTreeInitialState extends LexTreeState {
         private LexTree.NonLeafLexNode node;
 
 
@@ -562,7 +562,7 @@ public class LexTreeLinguist implements  Linguist {
     /**
      * Represents a unit in the search space
      */
-    class LexTreeUnitState extends LexTreeState implements UnitSearchState {
+    public class LexTreeUnitState extends LexTreeState implements UnitSearchState {
         int unitID;
 
 
@@ -700,7 +700,7 @@ public class LexTreeLinguist implements  Linguist {
     /**
      * Represents a HMM state in the search space
      */
-    class LexTreeHMMState extends LexTreeState implements HMMSearchState {
+    public class LexTreeHMMState extends LexTreeState implements HMMSearchState {
         private HMMState hmmState;
 
         /**
@@ -931,7 +931,7 @@ public class LexTreeLinguist implements  Linguist {
     /**
      * Represents a word state in the search space
      */
-    class LexTreeWordState extends LexTreeState implements WordSearchState {
+    public class LexTreeWordState extends LexTreeState implements WordSearchState {
         private LexTree.WordLexNode wordLexNode;
 
         /**
