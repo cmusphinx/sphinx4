@@ -389,13 +389,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
         }
         
         if (plotEnergy) {
-            if (cepstrum.getEnergy() < 0) {
-                plotEnergy = false;
-                System.out.println("Stop plotting energy values " +
-                                   "since negative energy is detected.");
-            } else {
-                plotter.plot(cepstrum);
-            }
+            plotter.plot(cepstrum);
         }
 
         getTimer().stop();
