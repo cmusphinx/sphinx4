@@ -16,12 +16,18 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.StringTokenizer;
 import java.util.prefs.Preferences;
 
 import javax.sound.sampled.AudioFormat;
@@ -80,6 +86,62 @@ public class AudioTool {
             prefs.put(FILENAME_PREFERENCE, filename);
         } 
     }
+
+    /**
+     */
+    static public void populateAudio(String filename) {
+        try {
+            AudioData newAudio = Utils.readAudioFile(filename);
+            if (newAudio == null) {
+                newAudio = Utils.readRawFile(filename);
+            }
+            audio.setAudioData(newAudio.getAudioData());
+            player.play(audioPanel.getSelectionStart(),
+                        audioPanel.getSelectionEnd());
+        } catch (IOException e) {
+            /* just ignore bad files. */
+        }
+    }
+    
+    /**
+     */
+    static public void getAudioFromFile(String filename) throws IOException {
+        /* Supports alignment data.  The format of the alignment file
+         * is as follows:
+         *
+         * input filename                String
+         * number of (time tag) lines    int
+         * time tag                      float String
+         * time tag                      float String
+         * time tag                      float String
+         * ...
+         *
+         * Times are in seconds.
+         */
+        if (filename.endsWith(".align")) {
+            BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(filename)));
+
+            populateAudio(reader.readLine());
+            
+            int numPoints = Integer.parseInt(reader.readLine());
+            float[] times = new float[numPoints];
+            String[] labels = new String[numPoints];
+            for (int i = 0; i < numPoints; i++) {
+                StringTokenizer tokenizer = new StringTokenizer(
+                    reader.readLine());
+                while (tokenizer.hasMoreTokens()) {
+                    times[i] = Float.parseFloat(tokenizer.nextToken());
+                    labels[i] = tokenizer.nextToken();
+                }
+            }
+            audioPanel.setLabels(times, labels);
+            
+            reader.close();
+        } else {
+            populateAudio(filename);
+        }
+    }
     
     /**
      * Creates the menu bar.
@@ -87,9 +149,6 @@ public class AudioTool {
     private static void createMenuBar(JFrame jframe) {
         JMenuBar menuBar = new JMenuBar();
         jframe.setJMenuBar(menuBar);
-        
-
-
 
         JMenu menu = new JMenu("File");
         menuBar.add(menu);
@@ -103,19 +162,7 @@ public class AudioTool {
                         return;
                     }
                     try {
-                        URL url;
-                        if (filename.indexOf(":") == -1) {
-                            url = new URL("file:" + filename);
-                        } else {
-                            url = new URL(filename );
-                        }
-                        AudioData newAudio = Utils.readAudioFile(url);
-                        if (newAudio == null) {
-                            newAudio = Utils.readRawFile(url);
-                        }
-                        audio.setAudioData(newAudio.getAudioData());
-                        player.play(audioPanel.getSelectionStart(),
-                                    audioPanel.getSelectionEnd());
+                        getAudioFromFile(filename);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -203,6 +250,7 @@ public class AudioTool {
                 }
             });
         menu.add(menuItem);
+
         
         
         menuItem = new JMenuItem("Record Start/Stop");
@@ -247,6 +295,9 @@ public class AudioTool {
 
         try {
             URL url;
+            if (args.length > 0) {
+                filename = args[0];
+            }
             if (args.length == 2) {
                 url = new File(args[1]).toURI().toURL();
             } else {
@@ -256,25 +307,13 @@ public class AudioTool {
             SphinxProperties props =
                 SphinxProperties.getSphinxProperties(CONTEXT);
             float windowSizeInMs = props.getFloat
-		("sfe;" + RaisedCosineWindower.PROP_WINDOW_SIZE_MS,
+		(RaisedCosineWindower.PROP_WINDOW_SIZE_MS,
 		 RaisedCosineWindower.PROP_WINDOW_SIZE_MS_DEFAULT);
             float windowShiftInMs = props.getFloat
-		("sfe;" + RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
+		(RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
                  RaisedCosineWindower.PROP_WINDOW_SHIFT_MS_DEFAULT);
 
-            if (args.length > 0) {
-                if (args[0].indexOf(":") == -1) {
-                    url = new URL("file:" + args[0]);
-                } else {
-                    url = new URL(args[0]);
-                }
-                audio = Utils.readAudioFile(url);
-                if (audio == null) {
-                    audio = Utils.readRawFile(url);
-                }
-            } else {
-                audio = new AudioData();
-            }
+            audio = new AudioData();
 
 	    final JFrame jframe = new JFrame("AudioTool");
             fileChooser = new JFileChooser();
@@ -300,10 +339,12 @@ public class AudioTool {
             player = new AudioPlayer(audio);
             player.start();
             
+            getAudioFromFile(filename);
+            
             jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setContentPane(scroller);
             jframe.pack();
-            //jframe.setSize(640,540);
+            jframe.setSize(640,540);
             jframe.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();

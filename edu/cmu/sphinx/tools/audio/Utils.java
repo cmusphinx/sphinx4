@@ -12,12 +12,11 @@
 
 package edu.cmu.sphinx.tools.audio;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.FileOutputStream;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioFormat;
@@ -168,14 +167,16 @@ public class Utils {
      * null.  Otherwise, it converts the data into a 16kHz 16-bit signed
      * PCM big endian clip.
      *
-     * @param url the URL of the audio data
+     * @param filename the file containing audio data
      * @return the audio data or null if the audio cannot be parsed
      */
-    static public AudioData readAudioFile(URL url)
-        throws MalformedURLException, IOException {
+    static public AudioData readAudioFile(String filename) throws IOException {
         try {
-            AudioInputStream ais = AudioSystem.getAudioInputStream(url);
+            BufferedInputStream stream = new BufferedInputStream(
+                new FileInputStream(filename));
+            AudioInputStream ais = AudioSystem.getAudioInputStream(stream);
             AudioFormat format = ais.getFormat();
+            stream.close();
             return new AudioData(ais);
         } catch (UnsupportedAudioFileException e) {
             return null;
@@ -186,17 +187,17 @@ public class Utils {
      * Reads the given stream in as 16kHz 16-bit signed PCM big endian
      * audio data and returns an audio clip.
      *
-     * @param url the URL of the raw audio data
+     * @param filename the file containing audio data
      * @return the audio data or null if the audio cannot be parsed
      */
-    static public AudioData readRawFile(URL url)
-        throws MalformedURLException, IOException {
+    static public AudioData readRawFile(String filename)
+        throws IOException {
+        FileInputStream stream = new FileInputStream(filename);
         AudioFormat format = new AudioFormat(16000.0f, // sample rate
                                              16,       // sample size
                                              1,        // channels (1 == mono)
                                              true,     // signed
                                              true);    // big endian
-        InputStream stream = url.openStream();
         short[] audioData = RawReader.readAudioData(stream, format);
         stream.close();
         return new AudioData(audioData, 16000.0f);
@@ -223,5 +224,5 @@ public class Utils {
         }
         outputStream.flush();
         outputStream.close();
-    }    
+    }
 }

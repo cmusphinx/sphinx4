@@ -34,6 +34,8 @@ import javax.swing.event.ChangeListener;
 public class AudioPanel extends JPanel 
     implements MouseMotionListener, MouseListener {
     private AudioData audio;    
+    private float[] labelTimes;
+    private String[] labels;
     private float xScale;
     private float yScale;
     private int xDragStart = 0;
@@ -55,6 +57,8 @@ public class AudioPanel extends JPanel
                       float scaleX,
                       float scaleY) {
         this.audio = audioData;
+        labelTimes = new float[0];
+        labels = new String[0];
         this.xScale = scaleX;
         this.yScale = scaleY;
         
@@ -69,8 +73,15 @@ public class AudioPanel extends JPanel
 		    int width = (int)(audio.getAudioData().length * xScale);
 		    int height = (int) ((1 << 16) * yScale);
 
-		    setPreferredSize(new Dimension(width, height));
+                    labelTimes = new float[0];
+                    labels = new String[0];
+
+                    setSelectionStart(-1);
+                    setSelectionEnd(-1);
+                    
+                    setPreferredSize(new Dimension(width, height));
 		    Dimension sz = getSize();
+
                     revalidate();
 		    repaint(0, 0, 0, sz.width, sz.height);
 		}
@@ -82,6 +93,15 @@ public class AudioPanel extends JPanel
         requestFocus();
     }
 
+    /**
+     * Sets the labels to be used when drawing this panel.
+     */
+    public void setLabels(float[] labelTimes, String[] labels) {
+        this.labelTimes = labelTimes;
+        this.labels = labels;
+        repaint();
+    }
+    
     /**
      * Repaints the component with the given Graphics.
      *
@@ -146,6 +166,17 @@ public class AudioPanel extends JPanel
         }
 	g.setColor(Color.RED);
         g.drawPolyline(x, y, length);
+
+        /**
+         * Now draw the labels.
+         */
+        for (int i = 0; i < labelTimes.length; i++) {
+            pos = (int) (xScale
+                         * labelTimes[i]
+                         * audio.getAudioFormat().getSampleRate());
+            g.drawLine(pos, 0, pos, sz.height - 1);
+            g.drawString(labels[i], pos + 5, sz.height - 5);
+        }                
     }
 
     /**
