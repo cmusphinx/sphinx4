@@ -280,7 +280,12 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
 	for (int i = job.getStart(); i < end; i++) {
             Scoreable scoreable = (Scoreable) iterator.next();
-	    if (scoreable.getFrameNumber() != curFeature.getID()) {
+
+            // since we are potentially doing somethigns such as frame
+            // skipping and grow skipping, this check can become
+            // troublesome. Thus it is currently disabled.
+
+	    if (false && scoreable.getFrameNumber() != curFeature.getID()) {
 		throw new Error
 		    ("Frame number mismatch: Token: " + 
 		     scoreable.getFrameNumber() +
