@@ -431,7 +431,7 @@ public class SausageMaker implements ConfidenceScorer {
         interWordCluster(clusters);
         //System.out.println("final clusters");
         //printClusters(clusters);
-        Sausage sausage = new Sausage(clusters.size(), lattice.getLogMath());
+        Sausage sausage = new Sausage(clusters.size());
         ListIterator c1 = clusters.listIterator();
         while (c1.hasNext()) {
             HashSet seenWords = new HashSet();
@@ -452,7 +452,7 @@ public class SausageMaker implements ConfidenceScorer {
                 sausage.addWordHypothesis(index,swr);
             }
         }
-        sausage.fillInBlanks();
+        sausage.fillInBlanks(lattice.getLogMath());
         return sausage;
     }
     

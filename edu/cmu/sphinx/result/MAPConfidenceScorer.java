@@ -95,7 +95,7 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
         // s.dumpAISee("mapSausage.gdl", "MAP Sausage");
 
         ConfidenceResult sausage = (ConfidenceResult) s;
-        WordResultPath mapPath = new WordResultPath(result.getLogMath());
+        WordResultPath mapPath = new WordResultPath();
         Token mapToken = result.getBestToken();
 
         /* start with the last slot */

@@ -27,8 +27,6 @@ import edu.cmu.sphinx.util.LogMath;
  */
 public class WordResultPath extends Vector implements Path {
 
-    private LogMath logMath;
-
     /**
      * Constructs a WordResultPath with the given list of WordResults
      * and LogMath.
@@ -36,23 +34,20 @@ public class WordResultPath extends Vector implements Path {
      * @param wordResult the list of WordResults
      * @param logMath the LogMath used for the scores
      */
-    WordResultPath(List wordResults, LogMath logMath) {
-        this(logMath);
+    WordResultPath(List wordResults) {
         this.addAll(wordResults);
     }
-    
-    /**
-     * Simple constructor
-     */
-    public WordResultPath(LogMath logMath) {
-        this.logMath = logMath;
-    }
 
+    /**
+     * Constructs an empty WordResultPath.
+     */
+    WordResultPath() {}
+    
     /**
      * @see edu.cmu.sphinx.result.Path#getScore()
      */
     public double getScore() {
-        double score = logMath.getLogOne();
+        double score = LogMath.getLogOne();
         Iterator i = iterator();
         while (i.hasNext()) {
             WordResult wr = (WordResult)i.next();
@@ -65,7 +60,7 @@ public class WordResultPath extends Vector implements Path {
      * @see edu.cmu.sphinx.result.Path#getConfidence()
      */
     public double getConfidence() {
-        double confidence = logMath.getLogOne();
+        double confidence = LogMath.getLogOne();
         Iterator i = iterator();
         while (i.hasNext()) {
             WordResult wr = (WordResult)i.next();
@@ -80,7 +75,13 @@ public class WordResultPath extends Vector implements Path {
      * @return the LogMath of the scores
      */
     public LogMath getLogMath() {
-        return logMath;
+        Iterator i = iterator();
+        if (i.hasNext()) {
+            WordResult wr = (WordResult) i.next();
+            return wr.getLogMath();
+        } else {
+            return null;
+        }
     }
 
     /**
