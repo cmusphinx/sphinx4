@@ -13,17 +13,11 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.decoder.linguist.*;
-import edu.cmu.sphinx.decoder.linguist.simple.*;
-import edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist;
-
 import java.util.AbstractMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
+
+import edu.cmu.sphinx.util.SphinxProperties;
 
 /**
  * A list of ActiveLists. Different token types are placed in different lists.

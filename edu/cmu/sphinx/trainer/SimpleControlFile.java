@@ -12,23 +12,16 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.InputStream;
 import java.io.IOException;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Iterator;
-import java.util.LinkedList;
-
-import java.util.logging.Level;
+import java.util.List;
 import java.util.logging.Logger;
+
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.util.SphinxProperties;
 
 /**
  * Provides mechanisms for accessing a next utterance's file name

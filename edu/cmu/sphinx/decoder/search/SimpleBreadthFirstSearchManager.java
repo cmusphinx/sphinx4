@@ -15,35 +15,24 @@ package edu.cmu.sphinx.decoder.search;
 
 // a test search manager.
 
-import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.language.LanguageModel;
-import edu.cmu.sphinx.knowledge.dictionary.Word;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import edu.cmu.sphinx.decoder.linguist.Linguist;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
+import edu.cmu.sphinx.decoder.linguist.WordSearchState;
+import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.decoder.search.Pruner;
-import edu.cmu.sphinx.decoder.search.SearchManager;
-import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.decoder.search.ActiveList;
-import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
-import edu.cmu.sphinx.decoder.linguist.Linguist;
-import edu.cmu.sphinx.decoder.linguist.SearchState;
-import edu.cmu.sphinx.decoder.linguist.WordSearchState;
-import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
-import java.util.Collection;
 
 
 

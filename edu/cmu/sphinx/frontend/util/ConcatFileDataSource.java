@@ -12,17 +12,6 @@
  */
 package edu.cmu.sphinx.frontend.util;
 
-import edu.cmu.sphinx.frontend.BaseDataProcessor;
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
-import edu.cmu.sphinx.frontend.Signal;
-
-import edu.cmu.sphinx.util.BatchFile;
-import edu.cmu.sphinx.util.ReferenceSource;
-import edu.cmu.sphinx.util.SphinxProperties;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,11 +19,19 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.SequenceInputStream;
-
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
+import edu.cmu.sphinx.frontend.BaseDataProcessor;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataProcessingException;
+import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.FrontEndFactory;
+import edu.cmu.sphinx.util.BatchFile;
+import edu.cmu.sphinx.util.ReferenceSource;
+import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**

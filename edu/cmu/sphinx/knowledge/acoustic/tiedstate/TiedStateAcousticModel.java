@@ -11,31 +11,26 @@
  */
 
 package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.acoustic.HMM;
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
-import edu.cmu.sphinx.knowledge.acoustic.Context;
-import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
-
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.Context;
+import edu.cmu.sphinx.knowledge.acoustic.HMM;
+import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
+import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
 
 /**
  * Represents the generic interface to the Acoustic 

@@ -13,7 +13,6 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import java.util.List;
 
 /**
  * Provides a mechanism for pruning a set of StateTokens

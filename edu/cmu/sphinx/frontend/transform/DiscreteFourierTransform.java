@@ -18,12 +18,8 @@ import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DoubleData;
-
 import edu.cmu.sphinx.util.Complex;
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
-
-import java.io.IOException;
 
 /**
  * Computes the Fourier Transform (FT) of an input sequence, using 

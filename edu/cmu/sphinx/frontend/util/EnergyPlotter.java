@@ -14,13 +14,11 @@
 
 package edu.cmu.sphinx.frontend.util;
 
+import java.util.Arrays;
+
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.Signal;
-
 import edu.cmu.sphinx.util.SphinxProperties;
-
-import java.util.Arrays;
 
 
 /**

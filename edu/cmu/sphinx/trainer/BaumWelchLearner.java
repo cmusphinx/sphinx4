@@ -12,40 +12,33 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataEndSignal;
-import edu.cmu.sphinx.frontend.DataStartSignal;
-import edu.cmu.sphinx.frontend.DataProcessor;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
-import edu.cmu.sphinx.frontend.Signal;
-import edu.cmu.sphinx.frontend.util.StreamDataSource;
-import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
-
-import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerAcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.tiedstate.SenoneHMMState;
-import edu.cmu.sphinx.knowledge.acoustic.tiedstate.SenoneHMM;
-import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerScore;
-import edu.cmu.sphinx.knowledge.acoustic.HMM;
-import edu.cmu.sphinx.knowledge.acoustic.HMMState;
-
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Utilities;
-
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.IOException;
-
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
-
-import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataProcessingException;
+import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.DataStartSignal;
+import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.FrontEndFactory;
+import edu.cmu.sphinx.frontend.Signal;
+import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
+import edu.cmu.sphinx.frontend.util.StreamDataSource;
+import edu.cmu.sphinx.knowledge.acoustic.HMM;
+import edu.cmu.sphinx.knowledge.acoustic.HMMState;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.SenoneHMM;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.SenoneHMMState;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerScore;
+import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Utilities;
 
 
 /**

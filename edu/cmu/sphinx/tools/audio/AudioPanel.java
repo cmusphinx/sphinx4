@@ -12,26 +12,20 @@
 
 package edu.cmu.sphinx.tools.audio;
 
-import java.io.IOException;
-
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import javax.swing.JPanel;
-import javax.swing.JViewport;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 
-import javax.sound.sampled.AudioFormat;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Provides an interface to view and play back various forms

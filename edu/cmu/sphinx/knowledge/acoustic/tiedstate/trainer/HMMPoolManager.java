@@ -13,19 +13,23 @@
 
 package edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer;
 
-import edu.cmu.sphinx.knowledge.acoustic.tiedstate.*;
-import edu.cmu.sphinx.knowledge.acoustic.HMM;
-import edu.cmu.sphinx.knowledge.acoustic.HMMState;
-
-import java.util.logging.Logger;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.FloatData;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.knowledge.acoustic.HMMState;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.GaussianMixture;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.HMMManager;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.Loader;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.MixtureComponent;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.Pool;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.SenoneHMM;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.SenoneHMMState;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel;
 import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**

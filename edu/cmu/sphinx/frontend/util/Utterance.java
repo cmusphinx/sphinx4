@@ -12,12 +12,11 @@
 
 package edu.cmu.sphinx.frontend.util;
 
-import javax.sound.sampled.AudioFormat;
-
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
+
+import javax.sound.sampled.AudioFormat;
 
 
 /**

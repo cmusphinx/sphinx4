@@ -12,10 +12,9 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerScore;
-
 import java.io.IOException;
+
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerScore;
 
 
 /**

@@ -14,10 +14,6 @@ package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-
 /**
  * Defines the Transcript Graph
  */

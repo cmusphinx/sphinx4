@@ -13,17 +13,12 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Collections;
-import java.util.LinkedList;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.StatisticsVariable;
+
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.decoder.scorer.Scoreable;
+import edu.cmu.sphinx.util.SphinxProperties;
 
 /**
  * An active list that does absolute beam with pruning by partitioning 

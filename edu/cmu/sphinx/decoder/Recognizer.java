@@ -12,41 +12,31 @@
 
 package edu.cmu.sphinx.decoder;
 
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataProcessor;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
-import edu.cmu.sphinx.frontend.Signal;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory;
-
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FastDictionary;
-
-import edu.cmu.sphinx.knowledge.language.LanguageModel;
-import edu.cmu.sphinx.knowledge.language.LanguageModelFactory;
-
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Utilities;
-
-import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.result.ResultListener;
-
-import edu.cmu.sphinx.decoder.search.Pruner;
-import edu.cmu.sphinx.decoder.search.SearchManager;
-import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
 import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.decoder.linguist.LinguistProcessor;
+import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
+import edu.cmu.sphinx.decoder.search.Pruner;
+import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.decoder.search.SimplePruner;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.StringTokenizer;
+import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.FrontEndFactory;
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.FastDictionary;
+import edu.cmu.sphinx.knowledge.language.LanguageModel;
+import edu.cmu.sphinx.knowledge.language.LanguageModelFactory;
+import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.result.ResultListener;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Utilities;
 
 
 /**

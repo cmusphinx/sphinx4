@@ -12,7 +12,6 @@
 
 package edu.cmu.sphinx.util;
 
-import java.util.Iterator;
 import java.io.IOException;
 
 

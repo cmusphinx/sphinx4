@@ -13,21 +13,19 @@
 
 package edu.cmu.sphinx.frontend.util;
 
+
+import java.text.DecimalFormat;
+import java.util.logging.Logger;
+
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.frontend.Signal;
-import edu.cmu.sphinx.frontend.DataStartSignal;
-
 import edu.cmu.sphinx.util.SphinxProperties;
-
-import java.io.IOException;
-import java.text.DecimalFormat;
-
-import java.util.logging.Logger;
 
 
 /**

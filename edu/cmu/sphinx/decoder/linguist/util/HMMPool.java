@@ -13,19 +13,14 @@
 package edu.cmu.sphinx.decoder.linguist.util;
 
 
-import edu.cmu.sphinx.knowledge.acoustic.HMM;
-import edu.cmu.sphinx.knowledge.acoustic.HMMState;
-import edu.cmu.sphinx.knowledge.acoustic.HMMStateArc;
-import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.Context;
-import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
-import edu.cmu.sphinx.util.Timer;
-
 import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
+
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.HMM;
+import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
+import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.util.Timer;
 
 
 /**

@@ -11,17 +11,15 @@
  */
 
 package edu.cmu.sphinx.decoder.linguist.simple;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.decoder.linguist.GrammarNode;
-import edu.cmu.sphinx.decoder.linguist.GrammarArc;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
+import edu.cmu.sphinx.decoder.linguist.GrammarArc;
+import edu.cmu.sphinx.decoder.linguist.GrammarNode;
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
 import edu.cmu.sphinx.knowledge.dictionary.Word;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.ArrayList;
 
 /**
  * Manages a particular point in a grammar. The GrammarPoint is used

@@ -12,14 +12,12 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Iterator;
-
-import java.util.logging.Level;
+import java.util.LinkedList;
 import java.util.logging.Logger;
+
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
 /**
  * Provides mechanism for handling a simple utterance.

@@ -11,20 +11,19 @@
  */
 
 package edu.cmu.sphinx.decoder.linguist;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.knowledge.language.LanguageModel;
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
-import edu.cmu.sphinx.knowledge.dictionary.Word;
-
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.FileOutputStream;
-import java.util.Set;
-import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
+
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
+import edu.cmu.sphinx.knowledge.language.LanguageModel;
+import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**

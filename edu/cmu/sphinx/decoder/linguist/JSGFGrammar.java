@@ -13,17 +13,11 @@
 
 package edu.cmu.sphinx.decoder.linguist;
 
-import com.sun.speech.engine.recognition.BaseRecognizer;
-
-import edu.cmu.sphinx.decoder.linguist.Grammar;
-import edu.cmu.sphinx.decoder.linguist.GrammarNode;
-
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
 import java.net.MalformedURLException;
-import java.util.Map;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.speech.EngineException;
 import javax.speech.recognition.GrammarException;
@@ -38,6 +32,8 @@ import javax.speech.recognition.RuleParse;
 import javax.speech.recognition.RuleSequence;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
+
+import com.sun.speech.engine.recognition.BaseRecognizer;
 
 
 

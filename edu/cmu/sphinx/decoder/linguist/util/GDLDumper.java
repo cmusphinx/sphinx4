@@ -11,27 +11,20 @@
  */
 package edu.cmu.sphinx.decoder.linguist.util;
 
-import edu.cmu.sphinx.util.Utilities;
-
-import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
-import edu.cmu.sphinx.decoder.linguist.SearchState;
-import edu.cmu.sphinx.decoder.linguist.WordSearchState;
-import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
-import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
-import edu.cmu.sphinx.decoder.linguist.LinguistProcessor;
-import edu.cmu.sphinx.decoder.linguist.Linguist;
-
 import java.io.PrintStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Iterator;
 
+import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
+import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
+import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.Utilities;
 
 
 

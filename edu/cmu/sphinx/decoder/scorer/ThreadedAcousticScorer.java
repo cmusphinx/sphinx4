@@ -12,18 +12,15 @@
 
 package edu.cmu.sphinx.decoder.scorer;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.io.IOException;
 
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataStartSignal;
+import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Signal;
-
 import edu.cmu.sphinx.util.SphinxProperties;
 
 

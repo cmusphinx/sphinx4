@@ -13,20 +13,10 @@
 
 package edu.cmu.sphinx.research.distributed.client;
 
-import edu.cmu.sphinx.frontend.DataProcessingException;
-
-import edu.cmu.sphinx.util.SphinxProperties;
-
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 
-import java.net.Socket;
+import edu.cmu.sphinx.frontend.DataProcessingException;
 
 
 

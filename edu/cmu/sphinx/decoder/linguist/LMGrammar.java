@@ -13,19 +13,16 @@
 
 package edu.cmu.sphinx.decoder.linguist;
 
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import edu.cmu.sphinx.knowledge.dictionary.Word;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.knowledge.language.WordSequence;
-import edu.cmu.sphinx.decoder.linguist.Grammar;
-import edu.cmu.sphinx.decoder.linguist.GrammarNode;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.Iterator;
-import java.util.ArrayList;
+import edu.cmu.sphinx.util.Timer;
 
 
 /**

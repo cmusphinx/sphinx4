@@ -12,19 +12,17 @@
 
 package edu.cmu.sphinx.result;
 
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.FloatData;
-import edu.cmu.sphinx.frontend.util.Utterance;
-import edu.cmu.sphinx.decoder.linguist.WordSearchState;
-import edu.cmu.sphinx.decoder.search.ActiveList;
-import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
-import edu.cmu.sphinx.knowledge.dictionary.Word;
-
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ArrayList;
+import java.util.List;
+
+import edu.cmu.sphinx.decoder.search.ActiveList;
+import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
+import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.FloatData;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 
 /**
  * Provides recognition results. Results can be partial or final. A

@@ -12,11 +12,6 @@
 
 package edu.cmu.sphinx.tools.audio;
 
-import javax.sound.sampled.AudioFormat;
-
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 
 /**
  * Downsamples an audio clip.

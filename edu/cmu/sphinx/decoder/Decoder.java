@@ -12,30 +12,21 @@
 
 package edu.cmu.sphinx.decoder;
 
-import edu.cmu.sphinx.frontend.Data;
+import java.io.IOException;
+import java.text.DecimalFormat;
+
+import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.SignalListener;
-
 import edu.cmu.sphinx.frontend.util.DataUtil;
-import edu.cmu.sphinx.frontend.util.Utterance;
-
-import edu.cmu.sphinx.decoder.search.Token;
-
+import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.result.ResultListener;
+import edu.cmu.sphinx.util.BeamFinder;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.BeamFinder;
-
-import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.result.ResultListener;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Iterator;
-import java.text.DecimalFormat;
 
 
 /**

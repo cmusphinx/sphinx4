@@ -12,18 +12,15 @@
 
 package edu.cmu.sphinx.decoder.linguist.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
 import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.Utilities;
-
-
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collections;
-import java.util.Random;
 
 /**
  *  Gets successors from a linguist and times them

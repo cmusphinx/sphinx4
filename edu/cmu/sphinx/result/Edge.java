@@ -12,11 +12,8 @@
  */
 package edu.cmu.sphinx.result;
 
-import edu.cmu.sphinx.result.Lattice;
-
-import java.io.IOException;
 import java.io.FileWriter;
-import java.io.Writer;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 

@@ -13,13 +13,6 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Collections;
-import java.util.LinkedList;
-
-import edu.cmu.sphinx.decoder.scorer.Scoreable;
 
 /**
  * Partitions a list of tokens according to the token score.

@@ -13,16 +13,13 @@
 
 package edu.cmu.sphinx.frontend.util;
 
-import edu.cmu.sphinx.frontend.window.RaisedCosineWindower;
-
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Utilities;
-
-import java.io.DataInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.text.DecimalFormat;
+
+import edu.cmu.sphinx.frontend.window.RaisedCosineWindower;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Utilities;
 
 
 /**

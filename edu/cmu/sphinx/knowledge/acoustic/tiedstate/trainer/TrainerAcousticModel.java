@@ -11,25 +11,15 @@
  */
 
 package edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer;
-import edu.cmu.sphinx.knowledge.acoustic.tiedstate.*;
-
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.acoustic.HMM;
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
-import edu.cmu.sphinx.knowledge.acoustic.Context;
-import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel;
-
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.util.StringTokenizer;
+
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.Loader;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.Saver;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
 
 /**
  * Represents the generic interface to the Acoustic 

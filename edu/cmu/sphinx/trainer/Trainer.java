@@ -12,19 +12,15 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.Utilities;
-
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
-
 import java.io.IOException;
-
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**

@@ -12,15 +12,11 @@
 
 package edu.cmu.sphinx.tools.audio;
 
-import java.awt.image.BufferedImage;
 import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.image.ImageObserver;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-
-import java.net.URL;
-
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.util.List;
 
 import javax.swing.JPanel;

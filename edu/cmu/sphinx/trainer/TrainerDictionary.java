@@ -12,12 +12,12 @@
 
 package edu.cmu.sphinx.trainer;
 
+import java.io.IOException;
+
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
-import edu.cmu.sphinx.knowledge.dictionary.WordClassification;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import java.io.IOException;
 
 /**
  * Dummy trainer dictionary.

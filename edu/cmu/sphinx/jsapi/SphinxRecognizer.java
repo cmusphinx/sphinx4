@@ -14,11 +14,8 @@ package edu.cmu.sphinx.jsapi;
 
 
 import javax.speech.AudioException;
-import javax.speech.EngineStateError;
 import javax.speech.EngineException;
-import javax.speech.recognition.Rule;
-
-import java.util.Vector;
+import javax.speech.EngineStateError;
 
 import com.sun.speech.engine.recognition.BaseRecognizer;
 

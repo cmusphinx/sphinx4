@@ -13,38 +13,23 @@
 
 package edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer;
 
-import edu.cmu.sphinx.knowledge.acoustic.tiedstate.*;
-import edu.cmu.sphinx.knowledge.acoustic.*;
+import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.ZipException;
 
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.Loader;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.Pool;
+import edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel;
+import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StreamFactory;
-import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.Utilities;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.OutputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipException;
 
 
 /**

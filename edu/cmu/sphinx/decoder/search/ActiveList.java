@@ -12,13 +12,10 @@
  */
 
 package edu.cmu.sphinx.decoder.search;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.decoder.scorer.Scoreable;
-
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import edu.cmu.sphinx.util.SphinxProperties;
 
 /**
  * An active list is maintained as a sorted list

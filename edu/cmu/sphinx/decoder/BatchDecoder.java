@@ -12,28 +12,20 @@
 
 package edu.cmu.sphinx.decoder;
 
-import edu.cmu.sphinx.frontend.DataProcessor;
-import edu.cmu.sphinx.frontend.util.StreamDataSource;
-
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.NISTAlign;
-import edu.cmu.sphinx.util.Utilities;
-import edu.cmu.sphinx.util.BatchItem;
-import edu.cmu.sphinx.util.BatchManager;
-import edu.cmu.sphinx.util.SimpleBatchManager;
-import edu.cmu.sphinx.util.PooledBatchManager;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.IOException;
-
+import java.io.InputStream;
 import java.net.URL;
 
-import java.util.List;
-import java.util.Iterator;
-import java.util.StringTokenizer;
+import edu.cmu.sphinx.frontend.util.StreamDataSource;
+import edu.cmu.sphinx.util.BatchItem;
+import edu.cmu.sphinx.util.BatchManager;
+import edu.cmu.sphinx.util.NISTAlign;
+import edu.cmu.sphinx.util.PooledBatchManager;
+import edu.cmu.sphinx.util.SimpleBatchManager;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
 
 
 /**

@@ -12,14 +12,12 @@
 
 package edu.cmu.sphinx.util;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.logging.Level;
-
-import java.io.Serializable;
-import java.io.ObjectInputStream;
-import java.io.IOException;
 
 
 /**

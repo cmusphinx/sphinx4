@@ -11,12 +11,8 @@
  */
 package edu.cmu.sphinx.result;
 
-import edu.cmu.sphinx.result.Lattice;
-
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.Set;
-import java.util.HashSet;
 
 /**
  * Class used to collapse all equivalent paths in a Lattice.  Results in a

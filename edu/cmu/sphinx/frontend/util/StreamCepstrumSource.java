@@ -13,6 +13,11 @@
 
 package edu.cmu.sphinx.frontend.util;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
@@ -21,18 +26,9 @@ import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FrontEndFactory;
-import edu.cmu.sphinx.frontend.Signal;
-
-import edu.cmu.sphinx.frontend.util.DataUtil;
-
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
+import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
-
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.InputStream;
-import java.io.IOException;
 
 
 /**

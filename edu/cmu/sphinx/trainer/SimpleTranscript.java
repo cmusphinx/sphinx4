@@ -14,10 +14,8 @@ package edu.cmu.sphinx.trainer;
 
 
 import java.util.StringTokenizer;
-import java.util.Iterator;
 
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
 
 /**
  * Provides mechanisms for accessing a transcription.

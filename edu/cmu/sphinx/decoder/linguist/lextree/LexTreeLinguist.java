@@ -12,49 +12,32 @@
 
 package edu.cmu.sphinx.decoder.linguist.lextree;
 
-import edu.cmu.sphinx.decoder.linguist.Linguist;
-import edu.cmu.sphinx.decoder.linguist.Grammar;
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.Word;
-import edu.cmu.sphinx.decoder.linguist.SearchState;
-import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
-import edu.cmu.sphinx.decoder.linguist.WordSearchState;
-import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
-import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
-import edu.cmu.sphinx.decoder.linguist.util.LinguistTimer;
-import edu.cmu.sphinx.decoder.linguist.util.HMMPool;
-
-import edu.cmu.sphinx.knowledge.acoustic.HMM;
-import edu.cmu.sphinx.knowledge.acoustic.HMMState;
-import edu.cmu.sphinx.knowledge.acoustic.HMMStateArc;
-import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.Context;
-import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
-import edu.cmu.sphinx.knowledge.language.LanguageModel;
-import edu.cmu.sphinx.knowledge.language.WordSequence;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.StatisticsVariable;
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.Utilities;
-import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
-
-
-import java.io.IOException;
-
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Comparator;
+
+import edu.cmu.sphinx.decoder.linguist.Grammar;
+import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
+import edu.cmu.sphinx.decoder.linguist.Linguist;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
+import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
+import edu.cmu.sphinx.decoder.linguist.WordSearchState;
+import edu.cmu.sphinx.decoder.linguist.util.HMMPool;
+import edu.cmu.sphinx.decoder.linguist.util.LinguistTimer;
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.HMM;
+import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
+import edu.cmu.sphinx.knowledge.acoustic.HMMState;
+import edu.cmu.sphinx.knowledge.acoustic.HMMStateArc;
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
+import edu.cmu.sphinx.knowledge.language.LanguageModel;
+import edu.cmu.sphinx.knowledge.language.WordSequence;
+import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
 
 /**
  * A linguist that organizes the search space in a lex tree

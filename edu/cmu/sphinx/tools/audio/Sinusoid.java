@@ -12,7 +12,6 @@
 
 package edu.cmu.sphinx.tools.audio;
 
-import javax.sound.sampled.AudioFormat;
 
 /**
  * A 16bit, linear SIGNED_PCM, big endian, sinusoid with a

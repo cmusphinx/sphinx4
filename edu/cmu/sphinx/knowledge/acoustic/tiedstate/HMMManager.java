@@ -12,17 +12,16 @@
  */
 
 package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
-import edu.cmu.sphinx.knowledge.acoustic.HMM;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
-
-import java.util.HashMap;
-import java.util.logging.Logger;
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import edu.cmu.sphinx.knowledge.acoustic.HMM;
+import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
 
 
 

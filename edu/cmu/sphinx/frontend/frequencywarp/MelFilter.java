@@ -13,9 +13,6 @@
 
 package edu.cmu.sphinx.frontend.frequencywarp;
 
-import edu.cmu.sphinx.util.SphinxProperties;
-
-import java.io.IOException;
 
 /**
  * Defines a triangular mel-filter.

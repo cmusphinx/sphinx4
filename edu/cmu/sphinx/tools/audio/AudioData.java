@@ -13,15 +13,12 @@
 package edu.cmu.sphinx.tools.audio;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Vector;
 
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioFormat.Encoding;
+import javax.sound.sampled.AudioInputStream;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Represents a 16bit, SIGNED_PCM, big endian audio clip with a

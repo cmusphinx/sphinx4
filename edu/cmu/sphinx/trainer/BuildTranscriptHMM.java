@@ -12,18 +12,16 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import java.util.Map;
+
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 import edu.cmu.sphinx.knowledge.acoustic.HMM;
 import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.acoustic.tiedstate.SenoneHMM;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
 import edu.cmu.sphinx.util.LogMath;
-
-import java.util.StringTokenizer;
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * This class builds an HMM from a transcript, at increasing levels of

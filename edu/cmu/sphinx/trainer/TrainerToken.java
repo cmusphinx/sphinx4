@@ -13,10 +13,9 @@
 package edu.cmu.sphinx.trainer;
 
 
-import edu.cmu.sphinx.decoder.search.*;
-import edu.cmu.sphinx.frontend.*;
-
 import java.util.Collection;
+
+import edu.cmu.sphinx.frontend.Data;
 
 /**
  * Provides mechanisms for handling tokens in the trainer.

@@ -12,37 +12,26 @@
 
 package edu.cmu.sphinx.decoder;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.SignalListener;
-
 import edu.cmu.sphinx.frontend.util.ConcatFileDataSource;
-
 import edu.cmu.sphinx.result.Result;
-
-import edu.cmu.sphinx.util.BatchFile;
-import edu.cmu.sphinx.util.FileReferenceSource;
 import edu.cmu.sphinx.util.GapInsertionDetector;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.ReferenceSource;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.Utilities;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.FileWriter;
-
-import java.net.URL;
-
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.StringTokenizer;
 
 
 /**

@@ -12,30 +12,25 @@
 
 package edu.cmu.sphinx.knowledge.dictionary;
 
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.acoustic.Context;
-import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.StreamFactory;
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-
-import java.io.InputStream;
 import java.io.IOException;
-
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.logging.Logger;
+
+import edu.cmu.sphinx.knowledge.acoustic.Context;
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.StreamFactory;
+import edu.cmu.sphinx.util.Timer;
 
 
 /**

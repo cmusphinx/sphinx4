@@ -11,15 +11,26 @@
 */
 package edu.cmu.sphinx.result;
 
-import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
-import edu.cmu.sphinx.decoder.linguist.WordSearchState;
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.util.LogMath;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import java.util.*;
-import java.io.*;
+import edu.cmu.sphinx.decoder.linguist.WordSearchState;
+import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
+import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
 /**
  * Provides recognition lattice results. Lattices are created from Results

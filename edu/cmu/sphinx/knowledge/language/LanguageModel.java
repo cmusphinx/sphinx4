@@ -12,12 +12,12 @@
 
 package edu.cmu.sphinx.knowledge.language;
 
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.LogMath;
-import java.util.List;
-import java.util.Set;
 import java.io.IOException;
+import java.util.Set;
+
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**

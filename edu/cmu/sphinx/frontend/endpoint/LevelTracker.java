@@ -13,19 +13,16 @@
 
 package edu.cmu.sphinx.frontend.endpoint;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.Signal;
-
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.LogMath;
-
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**

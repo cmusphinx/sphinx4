@@ -15,13 +15,6 @@ package edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer;
 
 import edu.cmu.sphinx.util.LogMath;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.util.Map;
-
 /**
  * Used to accumulate data for updating of models.
  */

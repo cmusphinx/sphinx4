@@ -12,17 +12,15 @@
  */
 
 package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
-import edu.cmu.sphinx.knowledge.acoustic.HMMState;
-import edu.cmu.sphinx.knowledge.acoustic.HMM;
-import edu.cmu.sphinx.knowledge.acoustic.HMMStateArc;
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.knowledge.acoustic.HMM;
+import edu.cmu.sphinx.knowledge.acoustic.HMMState;
+import edu.cmu.sphinx.knowledge.acoustic.HMMStateArc;
 import edu.cmu.sphinx.util.LogMath;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.io.Serializable;
+import edu.cmu.sphinx.util.Utilities;
 
 /**
  * Represents a single state in an HMM

@@ -12,8 +12,6 @@
 
 package edu.cmu.sphinx.trainer;
 
-import java.util.Set;
-import java.util.HashSet;
 
 /**
  * Indicates stages during training. The numbers prepended to the

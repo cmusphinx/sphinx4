@@ -14,16 +14,10 @@
 package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
 
 import edu.cmu.sphinx.knowledge.acoustic.HMM;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
 import edu.cmu.sphinx.knowledge.acoustic.HMMState;
-
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.util.Utilities;
-import java.io.Serializable;
-
-
-import java.util.List;
-import java.util.ArrayList;
 /**
  * Represents a hidden-markov-model. An HMM consists of a unit
  * (context dependent or independent), a transition matrix from state

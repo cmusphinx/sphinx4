@@ -13,24 +13,17 @@
 
 package edu.cmu.sphinx.decoder.linguist;
 
-import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.decoder.linguist.Grammar;
-import edu.cmu.sphinx.decoder.linguist.GrammarArc;
-import edu.cmu.sphinx.decoder.linguist.GrammarNode;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.dictionary.Word;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 
 /**
  * Loads a grammar from a file in 'arpa' grammar format.

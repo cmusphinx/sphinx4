@@ -13,7 +13,6 @@
 package edu.cmu.sphinx.trainer;
 
 
-import java.util.Iterator;
 
 /**
  * Provides mechanisms for reading a control file (or a pair control

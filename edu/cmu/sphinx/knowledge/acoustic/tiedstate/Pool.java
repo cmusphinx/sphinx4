@@ -14,12 +14,11 @@
 package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Used to pool shared objects in the acoustic model

@@ -13,25 +13,21 @@
 
 package edu.cmu.sphinx.decoder.linguist.lextree;
 
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.Word;
-
-import edu.cmu.sphinx.knowledge.acoustic.HMM;
-import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.Utilities;
-import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.language.LanguageModel;
-import edu.cmu.sphinx.knowledge.language.WordSequence;
-import edu.cmu.sphinx.decoder.linguist.util.HMMPool;
-
-
-import java.util.HashMap;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import edu.cmu.sphinx.decoder.linguist.util.HMMPool;
+import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
+import edu.cmu.sphinx.knowledge.language.LanguageModel;
+import edu.cmu.sphinx.knowledge.language.WordSequence;
+import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.Utilities;
 
 
 /**
