@@ -308,12 +308,6 @@ public class LargeTrigramModel implements LanguageModel {
 		loadedBigramBuffer.put(new Integer(firstWordID), followers);
 	    }
             bigram = followers.findBigram(secondWordID);
-            if (bigram == null) {
-                System.out.println("did not find bigram in bigramBuffer: " +
-                                   numberBigramBuffer);
-            }
-        } else {
-            System.out.println("unigram has no bigram");
         }
 
         return bigram;
@@ -406,11 +400,7 @@ public class LargeTrigramModel implements LanguageModel {
 
 	BigramProbability bigram = findBigram(firstWordID, secondWordID);
 
-        if (bigram == null) {
-            System.out.println("Did not find bigram! " + 
-                               loader.getWords()[firstWordID] + " " +
-                               loader.getWords()[secondWordID]);
-        } else if (bigram != null) {
+        if (bigram != null) {
 
             int numberTrigrams = 0, size = 0;
             long position = 0;
