@@ -57,6 +57,16 @@ public interface LanguageModel {
 
 
     /**
+     * The Sphinx Property specifying the unigram weight
+     */
+    public final static String PROP_UNIGRAM_WEIGHT = PROP_PREFIX + ".unigramWeight";
+
+    /**
+     * The default value for PROP_UNIGRAM_WEIGHT
+     */
+    public final static float PROP_UNIGRAM_WEIGHT_DEFAULT = 1.0f;
+
+    /**
      * Initializes this LanguageModel
      *
      * @param context the context to associate this linguist with

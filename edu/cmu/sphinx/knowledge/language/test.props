@@ -1,6 +1,9 @@
 edu.cmu.sphinx.knowledge.language.LanguageModel.location=alphabet.arpaformat
+edu.cmu.sphinx.knowledge.language.LanguageModel.location=/lab/speech/sphinx4/data/rm1/lists/RM.2880.trigram.arpa
+edu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=0.0
 # edu.cmu.sphinx.knowledge.language.location=an4_spelling.trigram.lm
-edu.cmu.sphinx.knowledge.language.languageWeight=10
+edu.cmu.sphinx.knowledge.language.languageWeight=8.5
+edu.cmu.sphinx.util.LogMath.logBase=1.0003
 edu.cmu.sphinx.util.LogMath.logBase=10
 edu.cmu.sphinx.util.LogMath.useAddTable=false
 

@@ -84,11 +84,13 @@ public class SimpleNGramModel implements LanguageModel {
             (LanguageModel.PROP_FORMAT, LanguageModel.PROP_FORMAT_DEFAULT);
         String location = props.getString
             (LanguageModel.PROP_LOCATION, LanguageModel.PROP_LOCATION_DEFAULT);
+        float unigramWeight = props.getFloat
+            (LanguageModel.PROP_UNIGRAM_WEIGHT, LanguageModel.PROP_UNIGRAM_WEIGHT_DEFAULT);
         
         map = new HashMap();
         vocabulary = new HashSet();
         logMath = LogMath.getLogMath(context);
-        load(format, location);
+        load(format, location, unigramWeight);
     }
     
     
@@ -102,6 +104,12 @@ public class SimpleNGramModel implements LanguageModel {
      * Called after a recognition
      */
     public void stop() {
+    }
+
+    /**
+     * apply the unigram weight to the set of unigrams
+     */
+    private void applyUnigramWeight(float weight) {
     }
     
     /**
@@ -272,13 +280,16 @@ public class SimpleNGramModel implements LanguageModel {
      *
      * @param format the format of the model
      * @param location the location of the model
+     * @param unigramWeight the unigram weight
      * 
      * @throws IOException if an error occurs while loading
      */
-    private void load(String format, String location) throws
+    private void load(String format, String location, float unigramWeight) throws
     FileNotFoundException, IOException {
         
         String line;
+        double logUnigramWeight = logMath.linearToLog(unigramWeight);
+        double inverseLogUnigramWeight = logMath.linearToLog(1.0 - unigramWeight);
         
         if (!format.equals("arpa")) {
             throw new IOException("Loading of " + format + 
@@ -311,6 +322,10 @@ public class SimpleNGramModel implements LanguageModel {
                 break;
             }
         }
+
+        int numUnigrams = ((Integer) ngramList.get(0)).intValue() - 1;
+        double logUniformProbability = logMath.linearToLog(1.0 / numUnigrams);
+
         
         for (int index = 0; index < ngramList.size(); index++) { 
             int ngram = index + 1;
@@ -334,7 +349,17 @@ public class SimpleNGramModel implements LanguageModel {
                 if (tok.hasMoreTokens()) {
                     log10Backoff = Double.parseDouble(tok.nextToken());
                 }
-                put(wordSequence, log10Prob, log10Backoff);
+
+                double logProb = logMath.log10ToLog(log10Prob);
+                double logBackoff = logMath.log10ToLog(log10Backoff);
+
+                // Apply unigram weights if this is a unigram probability
+                if (ngram == 1) {
+                    double p1 = logProb + logUnigramWeight;
+                    double p2 = logUniformProbability + inverseLogUnigramWeight;
+                    logProb = logMath.addAsLinear(p1, p2);
+                }
+                put(wordSequence, logProb, logBackoff);
             }
             
             if (index < ngramList.size() - 1) {
@@ -352,19 +377,17 @@ public class SimpleNGramModel implements LanguageModel {
      * Puts the probability into the map
      * 
      * @param wordSequence the tag for the prob.
-     * @param log10Prob the probability in log base 10
-     * @param log10Backoff the backoff probability in log base 10
+     * @param logProb the probability in log math base 
+     * @param logBackoff the backoff probability in log math base 
      */
     private void put(WordSequence wordSequence, 
-            double log10Prob, double log10Backoff) {
+            double logProb, double logBackoff) {
 
         if (false) {
             System.out.println("Putting " + wordSequence + " p " +
-                    log10Prob + " b " + log10Backoff);
+                    logProb + " b " + logBackoff);
         }
-        map.put(wordSequence, new Probability(
-                  logMath.log10ToLog(log10Prob), 
-                  logMath.log10ToLog(log10Backoff)));
+        map.put(wordSequence, new Probability(logProb, logBackoff));
     }
     
     /**
@@ -459,12 +482,11 @@ public class SimpleNGramModel implements LanguageModel {
         while ((input = reader.readLine()) != null) {
             StringTokenizer st = new StringTokenizer(input);
             List list = new ArrayList();
-            WordSequence wordSequence = new WordSequence();
             while (st.hasMoreTokens()) {
                 String tok = (String) st.nextToken();
-                wordSequence = wordSequence.addWord(
-                        tok.toLowerCase(), sm.getMaxDepth());
+                list.add(tok);
             }
+            WordSequence wordSequence = new WordSequence(list);
             System.out.println("Probability of " + wordSequence + " is: " +
                sm.getProbability(wordSequence) + "(" 
                + logMath.logToLn(sm.getProbability(wordSequence)) + ")");
