@@ -227,18 +227,18 @@ public interface Linguist {
 
 
     /**
-     * Property to control whether or not the linguist may omit
-     * unit states.   When this property is true the linguist may
+     * Property to control whether or not the linguist will generate
+     * unit states.   When this property is false the linguist may
      * omit UnitSearchState states.  For some search algorithms 
      * this will allow for a faster search with more compact results.
      */
-    public final static String PROP_OMIT_UNIT_STATES
+    public final static String PROP_GENERATE_UNIT_STATES
         = PROP_PREFIX + "generateUnitStates";
 
     /**
-     * The default value for PROP_OMIT_UNIT_STATES
+     * The default value for PROP_GENERATE_UNIT_STATES
      */
-    public final static boolean PROP_OMIT_UNIT_STATES_DEFAULT = true;
+    public final static boolean PROP_GENERATE_UNIT_STATES_DEFAULT = false;
 
 
     /**
