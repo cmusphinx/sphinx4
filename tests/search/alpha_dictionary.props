@@ -40,6 +40,7 @@ edu.cmu.sphinx.frontend.cepstrumSize = 13
 #
 ############################################################
 
-edu.cmu.sphinx.search.dictionaryPath=/lab/speech/sphinx3j/data/wsj/alpha.dict
-edu.cmu.sphinx.search.fillerDictionaryPath=/lab/speech/sphinx3j/data/wsj/etc/fillerdict
-edu.cmu.sphinx.search.SimpleLinguist.isMultiDigitGrammar=true
+edu.cmu.sphinx.search.dictionaryPath = /lab/speech/sphinx3j/data/wsj/alpha.dict
+edu.cmu.sphinx.search.fillerDictionaryPath = /lab/speech/sphinx3j/data/wsj/etc/fillerdict
+edu.cmu.sphinx.search.SimpleLinguist.isMultiDigitGrammar = true
+edu.cmu.sphinx.search.dictionary.addSilEndingPronunciation = true
