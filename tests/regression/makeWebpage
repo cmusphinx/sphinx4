@@ -1033,6 +1033,9 @@ function printTOC() {
     for (i in liveTestCount) {
 	print("<li><a href=#" i ">"  i "</a></li>") | "sort";
     }
+    for (i in rejectionTestCount) {
+	print("<li><a href=#" i ">"  i "</a></li>") | "sort";
+    }
     close("sort");
     print("</ul>");
     print("</ul>");
