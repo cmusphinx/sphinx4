@@ -360,6 +360,12 @@ public class SimpleNGramModel implements LanguageModel {
                     float p1 = logProb + logUnigramWeight;
                     float p2 = logUniformProbability + inverseLogUnigramWeight;
                     logProb = logMath.addAsLinear(p1, p2);
+                    if (false) {
+                        System.out.println("p1 " + p1 + " p2 " +p2 + " luw "
+                                + logUnigramWeight + " iluw "+
+                                inverseLogUnigramWeight + " lup " +
+                                logUniformProbability + " logprog " + logProb);
+                    }
                 }
                 put(wordSequence, logProb, logBackoff);
             }
