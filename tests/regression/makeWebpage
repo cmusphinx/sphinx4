@@ -68,6 +68,10 @@ $1 == "system"  && $2 == machine {
     machineDescription = $0;
 }
 
+$1 == "metrics"   {
+    metrics = $0;
+}
+
 
 #####
 # updates the data array with info for the given test
@@ -143,26 +147,26 @@ function getSpeedStatus(testName, count, _slowThreshold, _fastThreshold) {
   prevSpeed = getSpeed(testName, count - 1);
 
   if (thisSpeed == "N/A") {
-      return "<td bgcolor=#ffcccc>" "N/A" "%</td>";
+      return "<td bgcolor=#ffcccc>" "N/A" " X Realtime</td>";
   }
 
   if (prevSpeed == "N/A") {
-      return "<td>" thisSpeed "%</td>";
+      return "<td>" thisSpeed " X Realtime</td>";
   }
 
   if (thisSpeed == prevSpeed) {
-      return "<td>" thisSpeed "%</td>";
+      return "<td>" thisSpeed " X Realtime</td>";
   }
 
   _slowThreshold = prevSpeed + prevSpeed * .0;
   _fastThreshold = prevSpeed - prevSpeed * .0;
 
   if (thisSpeed > _slowThreshold) {
-      return "<td bgcolor=#ffcccc>" thisSpeed "X Realtime</td>";
+      return "<td bgcolor=#ffcccc>" thisSpeed " X Realtime</td>";
   }
 
   if (thisSpeed  < _fastThreshold) {
-      return "<td bgcolor=#99ff99>" thisSpeed "X Realtime</td>";
+      return "<td bgcolor=#99ff99>" thisSpeed " X Realtime</td>";
   }
   return "OK";
 }
@@ -211,6 +215,7 @@ function fmtTime(seconds) {
 }
 
 function printTestResults(testName) {
+    print("<br><br>");
     print "<table align=center cellpadding=2 cellspacing=2 border=1 width=80%>";
     print "<tbody>";
     print "<tr align=center>";
@@ -337,6 +342,40 @@ function printMachineDescription() {
     print("</table>");
 }
 
+
+# echo "metrics|$fileCount|$javaFileCount|$classCount|$lineCount|$packageCount|"
+function printMetrics() {
+    split(metrics, data);
+
+    print("<br><br>");
+    print("<table cellpadding=2 cellspacing=2 border=0 width=50%");
+    print("align=center>");
+    print("<tbody>");
+    print("<tr align=center>");
+    print("<td rowspan=1 colspan=2 bgcolor=#ccccff><big><b>");
+    print(" Sphinx 4 Metrics  <br>");
+    print("</b></big></td>");
+    print(" </tr>");
+    print(" <tr>");
+    print(" <td ><b>Number of files </b></td> <td> " data[2] " </td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>Number of source files </b></td> <td >" data[3] " </td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>Number of classes</b></td> <td >" data[4] "</td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>Source lines of code</b></td> <td >" data[5] "</td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>Packages </b></td> <td >" data[6] "</td>");
+    print(" </tr>");
+    print("</tbody>");
+    print("</table>");
+
+}
+
 function printHeader() {
     print "<html>";
     print "<head>";
@@ -380,6 +419,7 @@ END {
     print("<html>");
     printHeader();
     printTitle();
+    printMetrics();
     for (i in testCount) {
         printTestResults(i);
     }
