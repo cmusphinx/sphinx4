@@ -75,6 +75,7 @@ your environment to use JSAPI.
     <target name="compile_sphinx_demos"
 	    depends="compile_sphinx_helloworld,
 	             compile_sphinx_hellodigits,
+		     compile_sphinx_hellongram,
 	             compile_zipcity,
 	             check_jsapi_jar.isPresent,
 	             check_jsapi_jar.isPresent,
