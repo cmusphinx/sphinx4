@@ -179,27 +179,95 @@ public class FastActiveList implements ActiveList  {
      * @return a (possible new) active list
      */
     public ActiveList purge() {
-	int count = 0;
-	Collections.sort(tokenList, Token.COMPARATOR);
 
-	if (tokenList.size() > 0) {
-	    Token bestToken = (Token) tokenList.get(0);
-	    float highestScore = bestToken.getScore();
-	    float pruneScore = highestScore + relativeBeamWidth;
+        float highestScore = 0.0f;
+        float pruneScore = 0.0f;
+        int pruned = 0;
 
-	    for (Iterator i = tokenList.iterator();
-		    i.hasNext() && count < absoluteBeamWidth; count++) {
-		Token token = (Token) i.next();
-		if (token.getScore() <= pruneScore) {
-		    break;
-		}
-	    }
-	    tokenList = tokenList.subList(0, count);
-	}
+        // if the absolute beam is zero, this means there
+        // should be no constraint on the abs beam size at all
+        // so we will only be relative beam pruning, which means
+        // that we don't have to sort the list
+
+        if (absoluteBeamWidth <= 0) {
+            if (tokenList.size() > 0) {
+                highestScore = getBestScore();
+                pruneScore = highestScore + relativeBeamWidth;
+                List newList = new ArrayList(tokenList.size());
+
+                for (Iterator i = tokenList.iterator(); i.hasNext();) {
+                    Token token = (Token) i.next();
+                    if (token.getScore() > pruneScore) {
+                        newList.add(token);
+                    } else {
+                        pruned++;
+                    }
+                }
+                tokenList = newList;
+            }
+        } else {
+
+        // if we have an absolute beam, then we will 
+        // need to sort the tokens to apply the beam
+            int count = 0;
+            Collections.sort(tokenList, Token.COMPARATOR);
+
+            if (tokenList.size() > 0) {
+                Token bestToken = (Token) tokenList.get(0);
+                highestScore = bestToken.getScore();
+                pruneScore = highestScore + relativeBeamWidth;
+
+                for (Iterator i = tokenList.iterator();
+                        i.hasNext() && count < absoluteBeamWidth; count++) {
+                    Token token = (Token) i.next();
+                    if (token.getScore() <= pruneScore) {
+                        break;
+                    }
+                }
+                pruned = tokenList.size() - count;
+                tokenList = tokenList.subList(0, count);
+            }
+        }
+
+        if (false) {
+            System.out.println("BestScore " + highestScore 
+                    + " PruneScore " + pruneScore  
+                    + " Count " + tokenList.size()
+                    + " Pruned " + pruned);
+        }
+
+        if (false) {
+            Collections.sort(tokenList, Token.COMPARATOR);
+            for (Iterator i = tokenList.iterator(); i.hasNext(); ) {
+                Token t = (Token) i.next();
+                System.out.println(t);
+            }
+        }
 	return this;
     }
 
 
+    /**
+     * Returns the best score in the token list
+     *
+     * @return the best score
+     */
+    // TODO: it would be nice if the active list could maintain the high
+    // score in the list
+
+
+    private float getBestScore() {
+        float bestScore = -Float.MAX_VALUE;
+        int count = 0;
+        for (Iterator i = tokenList.iterator(); i.hasNext(); ) {
+            Token token = (Token) i.next();
+            if (token.getScore() > bestScore) {
+                bestScore = token.getScore();
+            }
+            count++;
+        }
+        return bestScore;
+    }
 
 
     /**
