@@ -224,6 +224,10 @@ public class Live {
      *                name of the recognizer to use
      */
     public void setDecoder(String recognizerName) throws IOException {
+
+        liveFrame.setDecoderComboBoxEnabled(false);
+        liveFrame.setNewTestFileButtonEnabled(false);
+
         String changeMessage = "Changing to " + recognizerName + 
             " recognizer ...\n";
         info(changeMessage);
@@ -261,6 +265,9 @@ public class Live {
             liveFrame.setMessage("Error trying to use " + recognizerName);
         }
         info("... done changing\n");
+
+        liveFrame.setDecoderComboBoxEnabled(true);
+        liveFrame.setNewTestFileButtonEnabled(true);
     }
 
     /**
