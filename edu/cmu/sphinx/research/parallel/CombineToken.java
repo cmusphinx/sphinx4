@@ -98,7 +98,7 @@ public class CombineToken extends Token {
     public void addAll(List tokenList) {
         for (Iterator i = tokenList.iterator(); i.hasNext(); ) {
             ParallelToken token = (ParallelToken) i.next();
-            tokens.put(token.getModelName(), token);
+            tokens.put(token.getFeatureStream(), token);
         }
     }
 
@@ -136,8 +136,8 @@ public class CombineToken extends Token {
      *
      * @return the parallel token of the given parallel stream
      */
-    public ParallelToken getParallelToken(String parallelStreamName) {
-        return (ParallelToken) tokens.get(parallelStreamName);
+    public ParallelToken getParallelToken(FeatureStream stream) {
+        return (ParallelToken) tokens.get(stream);
     }
 
 
