@@ -1,0 +1,53 @@
+version 0.1
+same_sized_models yes
+n_state 3
+tmat_skip no
+AA
+AE
+AH
+AO
+AW
+AX
+AXR
+AY
+B
+CH
+D
+DD
+DH
+DX
+EH
+ER
+EY
+F
+G
+HH
+IH
+IX
+IY
+JH
+K
+KD
+L
+M
+N
+NG
+OW
+OY
+P
+PD
+R
+S
+SH
+SIL
+T
+TD
+TH
+TS
+UH
+UW
+V
+W
+Y
+Z
+ZH

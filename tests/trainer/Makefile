@@ -24,9 +24,10 @@ FILES = $(shell echo *.java)
 SUBDIRS =
 
 
-GCSPY_FLAGS= -client -Xport3000 -Xverbose -Xwait
+#GCSPY_FLAGS= -client -Xport3000 -Xverbose -Xwait
 PROFILE_FLAGS= $(GCSPY_FLAGS)
 PROFILE_FLAGS= -Xprof -server
+PROFILE_FLAGS= -server
 
 #LOG_GC_FLAGS=  -Xloggc:gc.txt
 GC_FLAGS = -ms256m -mx1g
@@ -50,6 +51,13 @@ default: trainer
 
 trainer:
 	$(JAVA_CMD) \
+	edu.cmu.sphinx.trainer.Trainer trainer.props
+
+init:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.trainer.Trainer.initialStage=_00_INITIALIZATION \
+	-Dedu.cmu.sphinx.trainer.Trainer.finalStage=_00_INITIALIZATION \
+	-Dedu.cmu.sphinx.knowledge.acoustic.location=c:\\cygwin\\home\\egouvea\\sphinx\\SourceForge\\sphinx4\\tests\\trainer \
 	edu.cmu.sphinx.trainer.Trainer trainer.props
 
 copy:
