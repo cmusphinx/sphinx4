@@ -116,6 +116,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- ********************************************************** --> 
     <target name="hub4_trigram_live"
             description="Live mode unsupervised HUB-4 tests">
+        <fail message="WARNING: This test is not working yet!"/>
         <java classpath="${classpath}"
 	      classname="${live_main}"
 	      fork="true">
