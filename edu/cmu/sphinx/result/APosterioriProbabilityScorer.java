@@ -13,6 +13,8 @@ package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.decoder.search.Token;
 
+import edu.cmu.sphinx.util.LogMath;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,7 +29,8 @@ import java.util.Map;
 public class APosterioriProbabilityScorer {
 
     private Result result;
-    private float totalLikelihoodScore;
+    private LogMath logMath;
+    private float logTotalLikelihoodScore;
     private Map pathScoreMap;
 
     /**
@@ -38,8 +41,9 @@ public class APosterioriProbabilityScorer {
      */
     public APosterioriProbabilityScorer(Result result) {
 	this.result = result;
+        this.logMath = result.getLogMath();
 	this.pathScoreMap = new HashMap();
-	totalLikelihoodScore = calculateTotalLikelihoodScore(result);
+	logTotalLikelihoodScore = calculateTotalLikelihoodScore(result);
     }
 
     /**
@@ -54,9 +58,10 @@ public class APosterioriProbabilityScorer {
      * @return the a posteriori probability of the given token
      */
     public float getScore(Token token) {
-	float tokenPathScores = calculateTokenPathScores(token);
-	System.out.println("Token paths: " + tokenPathScores);
-	return tokenPathScores / totalLikelihoodScore;
+	float logTokenPathScores = calculateTokenPathScores(token);
+	// System.out.println("Token paths: " + logTokenPathScores);
+	return (float) logMath.logToLinear
+            (logTokenPathScores - logTotalLikelihoodScore);
     }
 
     /**
@@ -69,7 +74,7 @@ public class APosterioriProbabilityScorer {
      * tree that pass through the given token
      */
     private float calculateTokenPathScores(Token token) {
-	float totalPathScore = 0.0f;
+	float logTotalPathScore = logMath.getLogZero();
 
 	// iterator through all paths to check if the path passes through
 	// the given token
@@ -78,12 +83,13 @@ public class APosterioriProbabilityScorer {
 	    if (isTokenOnPath(token, path)) {
 		// System.out.println("token on path");
 		Float pathScore = (Float) pathScoreMap.get(path);
-		totalPathScore += pathScore.floatValue();
+		logTotalPathScore = logMath.addAsLinear
+                    (logTotalPathScore, pathScore.floatValue());
 	    } else {
 		// System.out.println("token not on path");
 	    }
 	}
-	return totalPathScore;
+	return logTotalPathScore;
     }
 
     /**
@@ -118,16 +124,16 @@ public class APosterioriProbabilityScorer {
      * token tree of the given Result
      */
     private float calculateTotalLikelihoodScore(Result result) {
-	float totalScore = 0.0f;
+	float logTotalScore = logMath.getLogZero();
 	for (Iterator i = result.getResultTokens().iterator(); i.hasNext(); ) {
 	    Token token = (Token) i.next();
-	    float pathScore = calculatePathLikelihoodScore(token);
-	    totalScore += pathScore;
-	    pathScoreMap.put(token, new Float(pathScore));
+	    float logPathScore = calculatePathLikelihoodScore(token);
+	    logTotalScore = logMath.addAsLinear(logTotalScore, logPathScore);
+	    pathScoreMap.put(token, new Float(logPathScore));
 	}
 	System.out.println("All Paths (" + result.getResultTokens().size() +
-			   "): " + totalScore);
-	return totalScore;
+			   "): " + logTotalScore);
+	return logTotalScore;
     }
 
     /**
@@ -141,11 +147,13 @@ public class APosterioriProbabilityScorer {
      * given token
      */
     private float calculatePathLikelihoodScore(Token token) {
-	float totalAcousticScore = 0.0f;
+        float logTotalAcousticScore = logMath.getLogZero();
 	while (token != null) {
-	    totalAcousticScore += token.getAcousticScore();
+            // System.out.println(token.getAcousticScore());
+            logTotalAcousticScore = logMath.addAsLinear
+                (logTotalAcousticScore, token.getAcousticScore());
 	    token = token.getPredecessor();
-	}
-	return totalAcousticScore;
+        }
+	return logTotalAcousticScore;
     }
 }
