@@ -211,9 +211,12 @@ public abstract class DataProcessor {
 		if (data.hasSignal(Signal.UTTERANCE_START)) {
 		    inUtterance = true;
                 } else if (data.hasSignal(Signal.UTTERANCE_END)) {
-                    throw new Error(getName() + ": too many UTTERANCE_END.");
+                    throw new Error
+                        (getName() + 
+                         ": UTTERANCE_END when not in an utterance.");
 		} else {
-		    throw new Error(getName() + ": no UTTERANCE_START");
+		    throw new Error(getName() + 
+                                    ": data without UTTERANCE_START");
 		}
 	    }
 	} else {
