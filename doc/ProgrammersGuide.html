@@ -37,7 +37,7 @@ WARRANTIES.
   <p>
   This tutorial shows you how to write Sphinx-4 applications. We will
   start with an overview of the Sphinx-4 system, with just enough depth
-  so that you can use to build applications, but without the full-blown
+  to understand how to build Sphinx-4 applications, but without the full-blown
   details. After that, we will use the Hello World!
   demo as an example to show how a simple application can be written.
   We will then proceed to a more complex example. Consequently,
@@ -56,9 +56,23 @@ WARRANTIES.
   <li><a href="#helloWorld">Simple Example - Hello World!</a>
      <ul>
      <li><a href="#helloCodeWalk">Code Walk - HelloWorld.java</a></li>
-     <li><a href="#helloConfigWalk">Configuration File Walk - helloworld.config.xml</a></li>
+     <li><a href="#helloConfigWalk">Configuration File Walk - helloworld.config.xml</a>
+       <ul>
+         <li><a href="#recognizer">Recognizer</a></li>
+	 <li><a href="#decoder">Decoder</a></li>
+	 <li><a href="#linguist">Linguist</a></li>
+	 <li><a href="#frontend">Front End</a></li>
+	 <li><a href="#instrumentation">Instrumentation</a></li>
+       </ul>
+     </li>
      <li><a href="#buildFileWalk">Build File Walk - build.xml</a></li>
      </ul>
+  </li>
+  <br>
+  <li><a href="#helloNGram">More Complex Example - Hello NGram</a>
+      <ul>
+          <li><a href="#ngramCodeWalk">Code Walk - HelloNGram.java</a></li>
+      </ul>
   </li>
   </ol>
 
@@ -67,8 +81,8 @@ WARRANTIES.
   <a name="sphinx4basics"><h2>1. Overview of Sphinx-4</h2></a>
 
   <p>
-  In this section, we will provide an overview of the Sphinx-4 system,
-  starting from an overview of HMM-based recognizers. We will highlight
+  In this section, we will provide an overview of Sphinx-4,
+  starting with an introduction of HMM-based recognizers. We will highlight
   in <s4keyword>red</s4keyword> those keywords that are critical to 
   understanding Sphinx-4.
   </p>
@@ -78,12 +92,12 @@ WARRANTIES.
   <p>
   Sphinx-4 is an HMM-based speech recognizer. <s4keyword>HMM</s4keyword>
   stands for Hidden Markov Models, which is a type of statistical model.
-  In HMM-based systems,
+  In HMM-based speech recognizers,
   each unit of sound (usually called a phoneme) is represented by a statistical
   model that represents the distribution of all the evidence (data) for
   that phoneme. This is called the <s4keyword>acoustic model</s4keyword> 
-  for that phoneme.
-  The speech signals are first transformed into a sequence of vectors
+  for that phoneme. When creating an acoustic model,
+  the speech signals are first transformed into a sequence of vectors
   that represent certain characteristics of the signal, and the
   parameters of the acoustic model are then estimated using these vectors
   (usually called <s4keyword>features</s4keyword>). This process is called 
@@ -107,20 +121,21 @@ WARRANTIES.
   <s4keyword>search</s4keyword> problem, and in the case of HMM-based 
   recognizers, a graph search problem. The graph represents all possible
   sequences of phonemes in the entire <s4keyword>language</s4keyword>
-  of the task under consideration. The graph is typically a very large
-  HMM, composed of the HMMs of sound units concatenated in a guided manner,
+  of the task under consideration. The graph is typically
+  composed of the HMMs of sound units concatenated in a guided manner,
   as specified by the <s4keyword>grammar</s4keyword> of the task. 
   As an example, lets look at a simple search graph that decodes the words
-  "one" and "two":
+  "one" and "two". It is composed of the HMMs of the sounds units of the
+  words "one" and "two":
   </p>
 
   <img src="1-2-searchgraph.jpg">
 
   <p>
   Constructing the above graph requires knowledge from various sources.
-  It will require a <s4keyword>dictionary</s4keyword>, which maps the word
+  It requires a <s4keyword>dictionary</s4keyword>, which maps the word
   "one" to the phonemes W, AX and N, and the word "two" to T and OO.
-  It will require the acoustic model to obtain the HMMs for the phonemes
+  It requires the acoustic model to obtain the HMMs for the phonemes
   W, AX, N, T and OO. In Sphinx-4, the task of constructing this search graph
   is done by the <s4keyword>linguist</s4keyword>.
   </p>
@@ -180,8 +195,9 @@ WARRANTIES.
   </center>
 
   <p>
-  When the recognizer starts up, it constructs the front end, the decoder,
-  and the linguist according to the configuration specified by the user.
+  When the recognizer starts up, it constructs the front end (which generates
+  features from speech), the decoder, and the linguist (which generates 
+  the search graph) according to the configuration specified by the user.
   These components will in turn construct their own subcomponents. For example,
   the linguist will construct the acoustic model, the dictionary,
   and the language model. It will use the knowledge from these three
@@ -226,7 +242,8 @@ WARRANTIES.
   Each surviving paths will 
   then be expanded to the next states, where a new token will be created 
   for each next state. The process repeats itself until no more feature 
-  vectors can be obtained from the front end. This usually means that there
+  vectors can be obtained from the front end for scoring. This usually 
+  means that there
   is no more input speech data. At that point, we look at all paths 
   that have reached the final exit state,
   and return the highest scoring path as the result to the application.
@@ -267,6 +284,17 @@ WARRANTIES.
   </p>
 
   <pre>
+/*
+ * Copyright 1999-2004 Carnegie Mellon University.
+ * Portions Copyright 2004 Sun Microsystems, Inc.
+ * Portions Copyright 2004 Mitsubishi Electronic Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ *
+ */
 package demo.sphinx.helloworld;
 
 import edu.cmu.sphinx.frontend.util.Microphone;
@@ -376,13 +404,14 @@ public class HelloWorld {
   at the configuration file next),
   we perform a <a href="../javadoc/edu/cmu/sphinx/util/props/ConfigurationManager.html#lookup(java.lang.String)"><code>lookup()</code></a> of these components
   in the ConfigurationManager to obtain these components. The <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html#allocate()"><code>allocate()</code></a> method of the Recognizer is then called to allocate the resources
-  need for the recognizer.
+  need for the recognizer. The Microphone class is used for capturing live
+  audio from the system audio device.
   </p>
   
   <p>
   Once all the necessary components are created, we can start running the demo.
-  We first ask the Microphone to
-  <a href="../javadoc/edu/cmu/sphinx/frontend/util/Microphone.html#startRecording()"><code>startRecording</code></a>, i.e., we turn on the microphone.
+  The program first turns on the Microphone 
+  (<a href="../javadoc/edu/cmu/sphinx/frontend/util/Microphone.html#startRecording()"><code>microphone.startRecording()</code></a>).
   After the microphone is turned on successfully, the demo goes into a
   loop that tries to recognize what the user is saying, using the
   <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html#recognize()"><code>Recognizer.recognize()</code></a> method. Note that endpointing 
@@ -420,7 +449,11 @@ public class HelloWorld {
 
   <h3><a name="helloConfigWalk">Configuration File Walk - helloworld.config.xml</a></h3>
 
-  We will look at each section of the config file in depth.
+  In this section, we will explain the various Sphinx-4 components that
+  are used for the Hello World! demo, as specified in the configuration file.
+  We will look at each section of the config file in depth. If you want
+  to learn about the format of these configuration files, please refer
+  to the document <a href="../javadoc/edu/cmu/sphinx/util/props/doc-files/ConfigurationManagement.html">Sphinx-4 Configuration Management</a>.
 
 <pre>
     &lt;!-- ******************************************************** --&gt;
@@ -442,6 +475,8 @@ public class HelloWorld {
 The above lines defines frequently tuned properties. They are located at the
 top of the configuration file so that they can be edited quickly.
 
+<h4><a name="recognizer">Recognizer</a></h4>
+
 <pre>
     &lt;!-- ******************************************************** --&gt;
     &lt;!-- word recognizer configuration                            --&gt;
@@ -458,13 +493,16 @@ top of the configuration file so that they can be edited quickly.
 </pre>
 
 The above lines define the recognizer component that performs speech
-recognition. It defines the name of the recognizer, and the class of
-the recognizer (<code>edu.cmu.sphinx.recognizer.Recognizer</code>).
+recognition. It defines the name and class of the recognizer. 
 This is the class that any application should interact with.
 If you look at the <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html">javadoc of the Recognizer class</a>, you will see that it has two
-properties, 'decoder' and 'monitors'. The configuration file is where
-the value of these properties are defined. The 'decoder' property
-is set to the component called 'decoder':
+properties, 'decoder' and 'monitors'. This configuration file is where
+the value of these properties are defined.
+
+<h4><a name="decoder">Decoder</a></h4>
+
+The 'decoder' property of the recognizer is set to the component 
+called 'decoder':
 
 <pre>
     &lt;component name="decoder" type="edu.cmu.sphinx.decoder.Decoder"&gt;
@@ -472,8 +510,8 @@ is set to the component called 'decoder':
     &lt;/component&gt;
 </pre>
 
-The decoder component is defined to be of the class
-<code>edu.cmu.sphinx.decoder.Decoder</code>. Its property 'searchManager'
+The decoder component is defined to be of class
+<code><a href="../javadoc/edu/cmu/sphinx/decoder/Decoder.html">edu.cmu.sphinx.decoder.Decoder</a></code>. Its property 'searchManager'
 is set to the component 'searchManager':
 
 <pre>
@@ -488,14 +526,15 @@ is set to the component 'searchManager':
 </pre>
 
 The searchManager is of class
-<code>edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager</code>.
-This class performs a simple breadth first search of the search graph
-during the decoding process to find the best path, and its usually used
-for small to medium sized vocabulary decoding. The logMath property is the
+<code><a href="../javadoc/edu/cmu/sphinx/decoder/search/SimpleBreadthFirstSearchManager.html">edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager</a></code>.
+This class performs a simple breadth-first search through the search graph
+during the decoding process to find the best path. This search manager 
+is suitable for small to medium sized vocabulary decoding.
+The logMath property is the
 log math that is used for calculation of scores during the search process.
-It is defined as having the log base of 1.0001. Note that usually the
-same log base should be used for arithmetic in all components, and therefore
-there usually should only be one logMath definition:
+It is defined as having the log base of 1.0001. Note that typically the
+same log base should be used throughout all components, and therefore
+there should only be one logMath definition:
 
 <pre>
     &lt;component name="logMath" type="edu.cmu.sphinx.util.LogMath"&gt;
@@ -504,23 +543,27 @@ there usually should only be one logMath definition:
     &lt;/component&gt;
 </pre>
 
-The linguist is set to the component 'flatLinguist' (which we will look at
-later), which again is suitable for small to medium sized vocabulary decoding.
-The pruner is set to the 'trivialPruner':
+The linguist of the searchManager is set to the component 'flatLinguist' 
+(which we will look at later), which again is suitable for small to medium 
+sized vocabulary decoding. The pruner is set to the 'trivialPruner':
 
 <pre>
     &lt;component name="trivialPruner" 
                 type="edu.cmu.sphinx.decoder.pruner.SimplePruner"/&gt;
 </pre>
 
-which is of the <code>edu.cmu.sphinx.decoder.pruner.SimplePruner</code>.
+which is of class <code><a href="../javadoc/edu/cmu/sphinx/decoder/pruner/SimplePruner.html">edu.cmu.sphinx.decoder.pruner.SimplePruner</a></code>.
 This pruner performs simple absolute beam and relative beam pruning
 based on the scores of the tokens.
 
-The scorer of the searchManager is set to threadedScorer, which is of class
-<code>edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer</code>.
+The scorer of the searchManager is set to the component 'threadedScorer',
+which is of class
+<code><a href="../javadoc/edu/cmu/sphinx/decoder/scorer/ThreadedAcousticScorer.html">edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer</a></code>.
 It can use multiple threads (usually one per CPU) to score the tokens 
-in the active list. It is defined as follows:
+in the active list. Scoring is one of the most time-consuming step of the
+decoding process. Tokens can be scored independently of each other, 
+so using multiple CPUs will definitely speed things up.
+The threadedScorer is defined as follows:
 
 <pre>
     &lt;component name="threadedScorer" 
@@ -538,7 +581,7 @@ For details about the other properties of the threadedScorer, please refer to
 <a href="../javadoc/edu/cmu/sphinx/decoder/scorer/ThreadedAcousticScorer.html">javadoc for ThreadedAcousticScorer</a>.
 
 Finally, the activeListFactory property of the searchManager is set to
-the component activeList, which is defined as follows:
+the component 'activeList', which is defined as follows:
 
 <pre>
     &lt;component name="activeList" 
@@ -549,19 +592,20 @@ the component activeList, which is defined as follows:
     &lt;/component&lt;
 </pre>
 
-It is of the class <code>edu.cmu.sphinx.decoder.search.PartitionActiveListFactory</code>. It uses a partitioning algorithm to select the top N highest scoring
+It is of class <code><a href="../javadoc/edu/cmu/sphinx/decoder/search/PartitionActiveListFactory.html">edu.cmu.sphinx.decoder.search.PartitionActiveListFactory</a></code>. 
+It uses a partitioning algorithm to select the top N highest scoring
 tokens when performing absolute beam pruning. The 'logMath' property
 specifies the log math used for score calculation, which is the same
 LogMath used in the searchManager. The property 'absoluteBeamWidth'
 is set to the value given at the very top of the configuration file using
 <code>${absoluteBeamWidth}</code>. The same is for 'relativeBeamWidth'.
 
-<br>
+<h4><a name="linguist">Linguist</a></h4>
+
 Now lets look at the flatLinguist component (a component inside the
 searchManager). The linguist is the component that generates the search
 graph using the guidance from the grammar, and knowledge from the dictionary,
 acoustic model, and language model.
-
 
 <pre>
     &lt;!-- ******************************************************** --&gt;
@@ -591,6 +635,9 @@ component called 'jsgfGrammar', which is a BNF-style grammar:
     &lt;/component&gt;
 </pre>
 
+JSGF grammars are defined in <a href="http://java.sun.com/products/java-media/speech/">JSAPI</a>. The class that translates JSGF into a form that 
+Sphinx-4 understands is <code>
+<a href="../javadoc/edu/cmu/sphinx/jsapi/JSGFGrammar.html">edu.cmu.sphinx.jsapi.JSGFGrammar</a></code>.
 The property 'baseGrammarURL' specifies the URL of the directory where
 JSGF grammar files are to be found. The 'grammarName' property specifies
 the grammar to use when creating the search graph. 'logMath' is the same
@@ -615,9 +662,8 @@ the acoustic model:
 As you can see, it is using the dictionary inside the Wall Street journal
 acoustic model. The main dictionary for words is
 <code>dict/cmudict.0.6d</code>, and the dictionary for filler words
-like "BREATH" and "LIP_SMACK", which are not real words but random noises
-in between words, is <code>dict/fillerdict</code>. For details about
-the other properties, please refer to the
+like "BREATH" and "LIP_SMACK" is <code>dict/fillerdict</code>. 
+For details about the other properties, please refer to the
 <a href="../javadoc/edu/cmu/sphinx/linguist/dictionary/FastDictionary.html">javadoc for FastDictionary</a>.
 
 <p>
@@ -649,7 +695,7 @@ The component 'wsj', the Wall Street Journal (WSJ) acoustic model is defined
 above. The WSJ models, which contains about 129000 words, are usually 
 suitable for general purpose speech recognition. It is a tied-state acoustic
 model, and because the models are arranged in Sphinx-3 format, it is loaded
-by the <code>Sphinx3Loader</code>. The loader uses the same logMath as
+by the <code><a href="../javadoc/edu/cmu/sphinx/linguist/acoustic/tiedstate/Sphinx3Loader.html">Sphinx3Loader</a></code>. The loader uses the same logMath as
 all other components. The format of the model is binary, and the
 URL location of the model is specified. For details about the other
 properties, please refer to the <a href="../javadoc/edu/cmu/sphinx/linguist/acoustic/tiedstate/Sphinx3Loader.html">javadoc for Sphinx3Loader</a>.
@@ -668,6 +714,8 @@ You can tune your system accordingly:
 <tr><td>Large (64000 words - HUB4)</td><td>0.2</td><td>10.5</td></tr>
 </table>
 </p>
+
+<h4><a name="frontend">Front End</a></h4>
 
 The last big piece in the configuration file is the front end. There are 
 two different front ends listed in the configuration file: 'frontend' and
@@ -774,12 +822,12 @@ the default:
     &lt;/component&gt;
 </pre>
 
-Lets explain some of the properties set here that have different values
+Lets explain some of the properties set here that have values different
 from the default. The property <a href="../javadoc/edu/cmu/sphinx/frontend/endpoint/SpeechClassifier.html#PROP_THRESHOLD">'threshold'</a> of the 
-SpeechClassifier specifies the minimum different between the input signal
+SpeechClassifier specifies the minimum difference between the input signal
 level and the background signal level in order that the input signal is
 classified as speech. Therefore, the smaller this number, the more sensitive
-is the endpointer, and vice versa. The property <a href="../javadoc/edu/cmu/sphinx/frontend/endpoint/SpeechMarker.html#PROP_SPEECH_TRAILER">'speechTrailer'</a> of the SpeechMarker specifies the length of non-speech signal to be included after the end of speech to make sure that no speech signal is lost. Here, it is
+the endpointer, and vice versa. The property <a href="../javadoc/edu/cmu/sphinx/frontend/endpoint/SpeechMarker.html#PROP_SPEECH_TRAILER">'speechTrailer'</a> of the SpeechMarker specifies the length of non-speech signal to be included after the end of speech to make sure that no speech signal is lost. Here, it is
 set at 50 milliseconds. The property <a href="../javadoc/edu/cmu/sphinx/frontend/util/Microphone.html#PROP_BYTES_PER_READ">'bytesPerRead'</a> of the
 Microphone specifies the number of bytes of each read from the system audio
 device. The value specified here is 320 bytes, which is 160 samples given a
@@ -790,11 +838,13 @@ meaning that the system audio device will not be released between utterances.
 This is set as so because on certain systems (Linux for one), closing and 
 reopening the audio does not work too well.
 
-<p>
-Finally, we will explain the various monitors. These monitors are components
+
+<h4><a name="instrumentation">Instrumentation</a></h4>
+
+Finally, we will explain the various monitors which make up the 
+<a href="../javadoc/edu/cmu/sphinx/instrumentation/package-summary.html">instrumentation package</a>. These monitors are components
 of the recognizer (see above). They are responsible for tracking the 
 accuracy, speed and memory usage of Sphinx-4. 
-</p>
 
 <pre>
     &lt;component name="accuracyTracker" 
@@ -850,7 +900,7 @@ straightforward. Lets look at the top part of the build.xml file:
 It defines several variables, e.g., the top level Sphinx-4 directory,
 the build directory, the classes directory, and the libraries directory.
 It also defines the <codE>run.classpath</code> path ID, which includes
-the classes directory and the <code>jsapi.jar</code> library, latter of
+the classes directory and the <code>jsapi.jar</code> library, the latter of
 which is needed for interpreting JSGF grammars in the Hello World! demo.
 
 <p>Now lets take a look at the "run" target:</p>
@@ -868,15 +918,27 @@ which is needed for interpreting JSGF grammars in the Hello World! demo.
     &lt;/target&gt;
 </pre>
 
-This defines an Ant target called "run". It first makes sure that the
-"all" target, which compiles the hello world demo code, is run.
-It then executes the class <code>demo.sphinx.helloworld.HelloWorld</code>
-which contains a main() method as you can see above. It also forks a separate
-process to run the Hello World! demo, with a maximum heap of 128MB.
+This defines an Ant target called "run". It first runs the "all" target, 
+which compiles the hello world demo code. It then executes the class 
+<code>demo.sphinx.helloworld.HelloWorld</code>
+which contains a main() method as you have seen above. It also forks a separate
+process to run the Hello World! demo, with a maximum heap size of 128MB.
 The classpath is defined by the Ant path ID "run.classpath", which is defined
-at the top of the build.xml file. The configuration file 
+at the top of the build.xml file. Finally, the configuration file 
 <code>helloworld.config.xml</code> is fed as an argument to the HelloWorld
 class.
+
+<p>
+This concludes the walkthrough of the simple Hello World! example.
+To recap the following things were done to create the Hello World! demo:
+
+<ol>
+   <li>Write the code - HelloWorld.java</li>
+   <li>Create a configuration file that specifies how Sphinx-4 should be
+       configured - helloworld.config.xml</li>
+   <li>Create the build.xml file that include the Ant run targets</li>
+</ol>
+</p>
 
   </font>
 </body>
