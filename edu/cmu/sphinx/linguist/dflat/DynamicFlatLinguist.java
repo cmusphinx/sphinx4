@@ -112,9 +112,16 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         = 1.0;
     
 
+    /**
+     * Sphinx property for the probability of inserting a CI phone in
+     * the out-of-grammar ci phone loop
+     */
     public static final String PROP_PHONE_INSERTION_PROBABILITY
         = "phoneInsertionProbability";
 
+    /**
+     * Default value for PROP_PHONE_INSERTION_PROBABILITY
+     */
     public static final double PROP_PHONE_INSERTION_PROBABILITY_DEFAULT = 1.0;
 
     /**
