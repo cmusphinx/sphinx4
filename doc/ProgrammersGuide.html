@@ -628,7 +628,7 @@ component called 'jsgfGrammar', which is a BNF-style grammar:
 
 <pre>
     &lt;component name="jsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar"&gt;
-        &lt;property name="baseGrammarURL" value="file:./"/&gt;
+        &lt;property name="grammarLocation" value="file:./"/&gt;
         &lt;property name="dictionary" value="dictionary"/&gt;
         &lt;property name="grammarName" value="digits"/&gt;
 	&lt;property name="logMath" value="logMath"/&gt;
@@ -638,7 +638,7 @@ component called 'jsgfGrammar', which is a BNF-style grammar:
 JSGF grammars are defined in <a href="http://java.sun.com/products/java-media/speech/">JSAPI</a>. The class that translates JSGF into a form that 
 Sphinx-4 understands is <code>
 <a href="../javadoc/edu/cmu/sphinx/jsapi/JSGFGrammar.html">edu.cmu.sphinx.jsapi.JSGFGrammar</a></code>.
-The property 'baseGrammarURL' specifies the URL of the directory where
+The property 'grammarLocation' specifies the URL of the directory where
 JSGF grammar files are to be found. The 'grammarName' property specifies
 the grammar to use when creating the search graph. 'logMath' is the same
 log math as the other components. The 'dictionary' is the component
