@@ -82,7 +82,6 @@ public class AudioTool {
     static float zoom;
     
     private static JMenuItem saveMenuItem;
-    private static JMenuItem saveAsMenuItem;
 
     private static JButton playButton;
     private static JButton zoomInButton;
@@ -207,22 +206,6 @@ public class AudioTool {
 
 
     /**
-     * Enables menu items for saving file.
-     */
-    private static void saveEnable() {
-	saveMenuItem.setEnabled(true);
-	saveAsMenuItem.setEnabled(true);
-    }
-
-    /**
-     * Enables menu items for saving file.
-     */
-    private static void saveDisable() {
-	saveMenuItem.setEnabled(false);
-	saveAsMenuItem.setEnabled(false);
-    }
-
-    /**
      * Creates the menu bar.
      */
     private static void createMenuBar(JFrame jframe) {
@@ -257,7 +240,7 @@ public class AudioTool {
                     if ((filename != null) && (filename.length() > 0)) {
                         try {
                             Utils.writeRawFile(audio, filename);
-			    saveDisable();
+			    saveMenuItem.setEnabled(false);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -266,10 +249,9 @@ public class AudioTool {
             });
         menu.add(saveMenuItem);
         
-        saveAsMenuItem = new JMenuItem("Save As...");
-        saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke("control V"));
-	saveAsMenuItem.setEnabled(false);
-        saveAsMenuItem.addActionListener(new ActionListener() {
+        menuItem = new JMenuItem("Save As...");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke("control V"));
+        menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     getFilename("Save As...", JFileChooser.SAVE_DIALOG);
                     if ((filename == null) || (filename.length() == 0)) {
@@ -277,13 +259,13 @@ public class AudioTool {
                     }
                     try {
                         Utils.writeRawFile(audio, filename);
-			saveDisable();
+			saveMenuItem.setEnabled(false);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             });
-        menu.add(saveAsMenuItem);
+        menu.add(menuItem);
         
         menuItem = new JMenuItem("Quit");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control Q"));
@@ -388,7 +370,7 @@ public class AudioTool {
                             System.exit(-1);
                         }
                         recorder.start();
-			saveEnable();
+			saveMenuItem.setEnabled(true);
                     } else {
                         recording = false;
                         audio.setAudioData(recorder.stop());
