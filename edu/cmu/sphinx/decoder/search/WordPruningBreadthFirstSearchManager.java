@@ -16,6 +16,8 @@ package edu.cmu.sphinx.decoder.search;
 // a test search manager.
 
 import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.result.Lattice;
+import edu.cmu.sphinx.result.LatticeOptimizer;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
@@ -28,14 +30,9 @@ import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
+import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 
 
@@ -103,6 +100,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
     private boolean showTokenCount;
     private Map bestTokenMap;
+    private AlternateHypothesisManager loserManager;
 
 
     /**
@@ -185,6 +183,13 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
         result = new Result(activeList, resultList, currentFrameNumber, done);
 
+        if (done == true) {
+            Lattice lattice = new Lattice(result, loserManager);
+            lattice.dumpAISee("c:\\testme\\lattice.gdl","Original lattice");
+            LatticeOptimizer latticeOptimizer = new LatticeOptimizer(lattice);
+            latticeOptimizer.optimize();
+            lattice.dumpAISee("c:\\testme\\lattice_opt.gdl","optimized lattice");
+        }
         if (showTokenCount) {
             showTokenCount();
         }
@@ -213,6 +218,8 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
         try {
             activeBucket = new SimpleActiveListManager(props);
+            loserManager = new AlternateHypothesisManager();
+
             //ActiveList newActiveList = (ActiveList)
             Class.forName( props.getString(PROP_ACTIVE_LIST_TYPE,
                     PROP_ACTIVE_LIST_TYPE_DEFAULT)).newInstance();
@@ -249,7 +256,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
         growTimer.start();
         resultList = new LinkedList();
-        bestTokenMap = new HashMap(activeList.size() * 10);;
+        bestTokenMap = new HashMap(activeList.size() * 10);
 
         Iterator iterator = activeList.iterator();
         while (iterator.hasNext()) {
@@ -318,7 +325,12 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         return (Token) bestTokenMap.put(state, token);
     }
 
-
+    protected Token getWordPredecessor(Token token) {
+        while (token != null && !token.isWord()) {
+            token = token.getPredecessor();
+        }
+        return token;
+    }
 
     /**
      * Collects the next set of emitting tokens from a token 
@@ -360,13 +372,12 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             Token bestToken = getBestToken(nextState);
             boolean firstToken = bestToken == null ;
 
-            if (firstToken || bestToken.getScore() <= logEntryScore) {
-                Token newToken = new Token(token, nextState,
-                        logEntryScore, 
+            if (firstToken || bestToken.getScore() < logEntryScore) {
+                Token newToken = new Token(getWordPredecessor(token), nextState,
+                        logEntryScore,
                         arc.getLanguageProbability(),
                         arc.getInsertionProbability(),
                         currentFrameNumber);
-
                 tokensCreated.value++;
 
                 setBestToken(newToken, nextState);
@@ -374,7 +385,14 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                     activeBucket.add(newToken);
                 } else {
                     activeBucket.replace(bestToken, newToken);
+                    if (newToken.isWord()) {
+                        loserManager.changeSuccessor(newToken,bestToken);
+                        loserManager.addAlternatePredecessor(newToken,bestToken.getPredecessor());
+                    }
                 }
+            } else {
+                if (nextState instanceof WordSearchState)
+                    loserManager.addAlternatePredecessor(bestToken, getWordPredecessor(token));
             }
         }
     }
