@@ -6,6 +6,19 @@ Release Date:  XXXX
 
 -------------------------------------------------------------------
 
+PBL - 9/22/04 
+    Improved performance of the DynamicFlatLinguist
+
+    Upgraded the simple FlatLinguist to work properly with the
+    WordPruningBreadthFirstSearchManager
+
+    Fixed some problems with the PartitionActiveList that would allow
+    incorrect tokens to be removed from the list during a replace.
+
+PBL - 9/15/04
+    Added scripts and instructions for building a WSJ5k language model
+    from LDC data.
+
 PPK - 9/13/04
     Completed confidence scores based on posterior probabilities.
     The MAPConfidenceScorer returns the confidence scores of best path
