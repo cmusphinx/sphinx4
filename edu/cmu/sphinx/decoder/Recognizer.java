@@ -191,23 +191,23 @@ public class Recognizer {
     public final static boolean PROP_DUMP_MEMORY_INFO_DEFAULT = false;
 
 
-    private SphinxProperties props;       // sphinx properties
+    protected SphinxProperties props;       // sphinx properties
 
-    private AcousticScorer scorer;        // used to score the active list
-    private FrontEnd frontend;            // frontend audio preprocessor
-    private Linguist linguist;            // provides grammar/language info
-    private Pruner pruner;                // used to prune the active list
-    private SearchManager searchManager;  // drives the search
-    private LanguageModel languageModel;  // the language model
-    private Grammar grammar;              // the grammar
+    protected AcousticScorer scorer;        // used to score the active list
+    protected FrontEnd frontend;            // frontend audio preprocessor
+    protected Linguist linguist;            // provides grammar/language info
+    protected Pruner pruner;                // used to prune the active list
+    protected SearchManager searchManager;  // drives the search
+    protected LanguageModel languageModel;  // the language model
+    protected Grammar grammar;              // the grammar
 
-    private int featureBlockSize = 50;    // the feature blocksize
+    protected int featureBlockSize = 50;    // the feature blocksize
 
-    private Vector resultsListeners = new Vector();
+    protected Vector resultsListeners = new Vector();
 
-    private boolean dumpMemoryInfo;
-    private boolean dumpSentenceHMM;
-    private boolean dumpFrontEnd;
+    protected boolean dumpMemoryInfo;
+    protected boolean dumpSentenceHMM;
+    protected boolean dumpFrontEnd;
 
 
     /**
@@ -313,9 +313,6 @@ public class Recognizer {
     /**
      * Decodes an utterance.
      *
-     * @param timer the Timer to use
-     * @param ref the reference input
-     *
      * @return the decoded Result
      */
     public Result recognize() {
@@ -363,7 +360,7 @@ public class Recognizer {
      * @param context the context of interest
      * @param dataSource the source of data to decode
      */
-    private FrontEnd getFrontEnd(String context, DataSource dataSource) {
+    protected FrontEnd getFrontEnd(String context, DataSource dataSource) {
         String path = null;
         try {
             path = props.getString(PROP_FRONT_END, PROP_FRONT_END_DEFAULT);
@@ -393,7 +390,7 @@ public class Recognizer {
      *
      * @return the AcousticModel(s) used by this Recognizer
      */
-    private AcousticModel[] getAcousticModels(String context)
+    protected AcousticModel[] getAcousticModels(String context)
 	throws IOException {
 	List modelNames = AcousticModel.getNames(context);
 	AcousticModel[] models;
@@ -419,7 +416,7 @@ public class Recognizer {
      *
      * @return the grammar
      */
-    private Grammar getGrammar(LanguageModel languageModel) {
+    protected Grammar getGrammar(LanguageModel languageModel) {
         String path = null;
         try {
             path = props.getString(PROP_GRAMMAR, PROP_GRAMMAR_DEFAULT);
@@ -443,11 +440,11 @@ public class Recognizer {
     /**
      * Returns an initialized grammar based upon sphinx properties
      *
-     * @param refText the reference sentence
+     * @param referenceText the reference sentence
      *
      * @return the grammar
      */
-    private Grammar getGrammar(String referenceText) {
+    protected Grammar getGrammar(String referenceText) {
         String path = null;
         try {
             path = props.getString(PROP_GRAMMAR,
@@ -474,11 +471,11 @@ public class Recognizer {
      *
      * @param languageModel the language model
      * @param grammar the grammar 
-     * @param acousticModel the acoustic model
+     * @param models the acoustic models
      *
      * @return the linguist
      */
-    private Linguist getLinguist(LanguageModel languageModel,
+    protected Linguist getLinguist(LanguageModel languageModel,
 				 Grammar grammar,
 				 AcousticModel[] models) {
         try {
@@ -509,7 +506,7 @@ public class Recognizer {
      *
      * @param linguist the linguist
      */
-    private void runLinguistProcessors(Linguist linguist) {
+    protected void runLinguistProcessors(Linguist linguist) {
 	String processors = props.getString(PROP_LINGUIST_PROCESSORS,
                                             PROP_LINGUIST_PROCESSORS_DEFAULT);
 	if (processors != null) {
@@ -548,7 +545,7 @@ public class Recognizer {
      *
      * @return an AcousticScorer
      */ 
-    private AcousticScorer getAcousticScorer(FrontEnd frontend) {
+    protected AcousticScorer getAcousticScorer(FrontEnd frontend) {
 	String path = null;
         try {
             path = props.getString
@@ -580,7 +577,7 @@ public class Recognizer {
      *
      * @return a SearchManager
      */
-    private SearchManager getSearchManager(Linguist linguist,
+    protected SearchManager getSearchManager(Linguist linguist,
 					   AcousticScorer scorer,
 					   Pruner pruner) {
         String path = null;
@@ -609,7 +606,7 @@ public class Recognizer {
      *
      * @param result the new result
      */
-    private void fireResultListeners(Result result) {
+    protected void fireResultListeners(Result result) {
         Vector copy = (Vector) resultsListeners.clone();
 
         for (Iterator i = copy.iterator(); i.hasNext(); ) {
@@ -642,7 +639,7 @@ public class Recognizer {
      *
      * @param what an additional info string
      */
-    private void dumpMemoryInfo(String what) {
+    protected void dumpMemoryInfo(String what) {
         if (dumpMemoryInfo) {
             Utilities.dumpMemoryInfo(what);
         }
