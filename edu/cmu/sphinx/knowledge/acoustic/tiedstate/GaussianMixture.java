@@ -24,7 +24,7 @@ import java.io.Serializable;
  *
  * All scores and weights are maintained in LogMath log base
  */
-class GaussianMixture implements Senone, Serializable {
+public class GaussianMixture implements Senone, Serializable {
     // these data element in a senone may be shared with other senones
     // and therefore should not be written to.
     private float[] logMixtureWeights;			

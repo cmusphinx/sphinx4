@@ -33,7 +33,7 @@ import java.io.Serializable;
  // senones by sharing intermediate results for these subcomponents?
  //  ]]]
 
-class MixtureComponent implements Serializable {
+public class MixtureComponent implements Serializable {
     private float[]   mean;
     /**
      * Mean after transformed by the adaptation parameters.

@@ -270,7 +270,6 @@ public class TiedStateAcousticModel implements AcousticModel {
      * @throws IOException if the model could not be loaded
      * @throws FileNotFoundException if the model does not exist
      *
-     * @see #getAcousticModel
      */
     public void initialize(String name, String context)
  	throws IOException, FileNotFoundException {
