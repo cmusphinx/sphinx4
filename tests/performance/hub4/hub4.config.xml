@@ -34,13 +34,6 @@
                 type="edu.cmu.sphinx.tools.batch.BatchModeRecognizer">
         <property name="recognizer" value="${recognizer}"/>
         <property name="inputSource" value="streamDataSource"/>
-        <propertylist name="monitors">
-            <item>accuracyTracker </item>
-            <item>speedTracker </item>
-            <item>memoryTracker </item>
-            <item>recognizerMonitor </item>
-            <item>beamFinder </item>
-        </propertylist>
     </component>
     
     <!-- ******************************************************** -->
@@ -51,11 +44,6 @@
                 type="edu.cmu.sphinx.tools.live.LiveModeRecognizer">
         <property name="recognizer" value="${recognizer}"/>
         <property name="inputSource" value="concatDataSource"/>
-        <propertylist name="monitors">
-            <item>speedTracker </item>
-            <item>memoryTracker </item>
-            <item>recognizerMonitor </item>
-        </propertylist>
     </component>
     
     <!-- ******************************************************** -->
@@ -65,6 +53,13 @@
     <component name="wordRecognizer" 
                           type="edu.cmu.sphinx.recognizer.Recognizer">
         <property name="decoder" value="decoder"/>
+        <propertylist name="monitors">
+            <item>accuracyTracker </item>
+            <item>speedTracker </item>
+            <item>memoryTracker </item>
+            <item>recognizerMonitor </item>
+            <item>beamFinder </item>
+        </propertylist>
     </component>
     
     <!-- ******************************************************** -->

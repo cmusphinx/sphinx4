@@ -57,10 +57,6 @@ public class LiveModeRecognizer implements Configurable {
      */
     public final static String PROP_INPUT_SOURCE = "inputSource";
     /**
-     * Sphinx property that specifies the set of monitors
-     */
-    public final static String PROP_MONITORS = "monitors";
-    /**
      * SphinxProperty specifying whether to print out the gap insertion errors.
      */
     public static final String PROP_SHOW_GAP_INSERTIONS = "showGapInsertions";
@@ -129,7 +125,6 @@ public class LiveModeRecognizer implements Configurable {
         registry.register(PROP_SKIP, PropertyType.INT);
         registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
         registry.register(PROP_INPUT_SOURCE, PropertyType.COMPONENT);
-        registry.register(PROP_MONITORS, PropertyType.COMPONENT_LIST);
         registry.register(PROP_SHOW_GAP_INSERTIONS, PropertyType.BOOLEAN);
         registry.register(PROP_ALIGN_INTERVAL, PropertyType.INT);
         registry.register(PROP_HYPOTHESIS_TRANSCRIPT, PropertyType.STRING);
@@ -155,11 +150,6 @@ public class LiveModeRecognizer implements Configurable {
         alignInterval = ps.getInt(PROP_ALIGN_INTERVAL,
                 PROP_ALIGN_INTERVAL_DEFAULT);
 
-        // just be referencing the monitors causes them to be created.234
-        // they will monitor the system based upon how they are configured.
-
-        ps.getComponentList(PROP_MONITORS, Configurable.class);
-        
         referenceSource = dataSource;
     }
 

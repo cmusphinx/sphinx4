@@ -34,12 +34,6 @@
 	    <item>mfcStreamDataSource</item>
 	    <item>plpStreamDataSource</item>
 	</propertylist>
-        <propertylist name="monitors">
-            <item>accuracyTracker </item>
-            <item>speedTracker </item>
-            <item>memoryTracker </item>
-            <item>recognizerMonitor </item>
-        </propertylist>
     </component>
 
     
@@ -50,6 +44,12 @@
     <component name="parallelRecognizer" 
                type="edu.cmu.sphinx.recognizer.Recognizer">
         <property name="decoder" value="parallelDecoder"/>
+        <propertylist name="monitors">
+            <item>accuracyTracker </item>
+            <item>speedTracker </item>
+            <item>memoryTracker </item>
+            <item>recognizerMonitor </item>
+        </propertylist>
     </component>
     
 

@@ -33,9 +33,6 @@
                 type="edu.cmu.sphinx.tools.batch.BatchModeRecognizer">
         <property name="recognizer" value="connectedDigitsRecognizer"/>
         <property name="inputSource" value="streamDataSource"/>
-        <propertylist name="monitors">
-            <item>accuracyTracker </item>
-        </propertylist>
     </component>
     
     <!-- ******************************************************** -->
@@ -45,6 +42,9 @@
     <component name="connectedDigitsRecognizer" 
                           type="edu.cmu.sphinx.recognizer.Recognizer">
         <property name="decoder" value="digitsDecoder"/>
+        <propertylist name="monitors">
+            <item>accuracyTracker </item>
+        </propertylist>
     </component>
     
     <!-- ******************************************************** -->

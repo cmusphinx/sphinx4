@@ -63,6 +63,12 @@ public class Recognizer implements Configurable {
      */
     public final static String PROP_DECODER = "decoder";
     
+    /**
+     * Property name for the set of monitors for this recognizer
+     */
+    public final static String PROP_MONITORS = "monitors";
+    
+    
     private String name;
     private Decoder decoder;
     private RecognizerState currentState  = RecognizerState.DEALLOCATED;
@@ -76,12 +82,14 @@ public class Recognizer implements Configurable {
     public void register(String name, Registry registry) throws PropertyException {
         this.name = name;
         registry.register(PROP_DECODER, PropertyType.COMPONENT);
+        registry.register(PROP_MONITORS, PropertyType.COMPONENT_LIST);
     }
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         decoder = (Decoder) ps.getComponent(PROP_DECODER, Decoder.class);
+        ps.getComponentList(PROP_MONITORS, Configurable.class);
     }
 
     /**

@@ -21,6 +21,7 @@
     <property name="silenceInsertionProbability"  value="1"/>
     
     <property name="frontend" value="frontEnd"/>
+    <property name="recognizer" value="recognizer"/>
     <property name="showCreations" value="true"/>
     
     
@@ -30,7 +31,7 @@
     
     <component name="cardMatch" 
                 type="demo.jsapi.cardmatch.CardMatch">
-        <property name="recognizer" value="recognizer"/>
+        <property name="recognizer" value="${recognizer}"/>
         <property name="microphone" value="microphone"/>
         <property name="grammar" value="jsgfGrammar"/>
         <property name="useVoice" value="false"/>
@@ -50,6 +51,12 @@
     <component name="recognizer" 
                           type="edu.cmu.sphinx.recognizer.Recognizer">
         <property name="decoder" value="decoder"/>
+        <propertylist name="monitors">
+            <item>accuracyTracker </item>
+            <item>speedTracker </item>
+            <item>memoryTracker </item>
+            <item>recognizerMonitor </item>
+        </propertylist>
     </component>
     
     <!-- ******************************************************** -->
@@ -299,20 +306,16 @@
                 type="edu.cmu.sphinx.instrumentation.RecognizerMonitor">
         <property name="recognizer" value="${recognizer}"/>
         <propertylist name="allocatedMonitors">
-            <item>linguistStats </item>
             <item>configMonitor </item>
         </propertylist>
     </component>
     
     <component name="configMonitor" 
                     type="edu.cmu.sphinx.instrumentation.ConfigMonitor">
-        <property name="showConfig" value="true"/>
+        <property name="showConfig" value="false"/>
     </component>
     
-    <component name="linguistStats" 
-                type="edu.cmu.sphinx.linguist.util.LinguistStats">
-        <property name="linguist" value="${linguist}"/>
-    </component>
+    
     
     <!-- ******************************************************* -->
     <!--  Miscellaneous components                               -->

@@ -96,11 +96,6 @@ public class BatchModeRecognizer implements Configurable {
      */
     public final static String PROP_INPUT_SOURCE = "inputSource";
 
-    /**
-     * Sphinx property that specifies the set of monitors
-     */
-    public final static String PROP_MONITORS = "monitors";
-
 
     // -------------------------------
     // Configuration data
@@ -130,7 +125,6 @@ public class BatchModeRecognizer implements Configurable {
         registry.register(PROP_USE_POOLED_BATCH_MANAGER, PropertyType.BOOLEAN);
         registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
         registry.register(PROP_INPUT_SOURCE, PropertyType.COMPONENT);
-        registry.register(PROP_MONITORS, PropertyType.COMPONENT_LIST);
     }
 
     /*
