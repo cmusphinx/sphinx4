@@ -16,10 +16,18 @@ import java.io.Serializable;
  * audio, preemphasized audio data, cepstra, etc.. Signals
  * can be used to indicate events like beginning/end of audio
  * segment, data dropped, quality changed, etc..
+ *
+ * <p><b>IMPORTANT:</b>
+ * Subclass of Data that are assumed to contain actual data by default.
+ * Therefore, calling <code>Data.getSignal()</code> will return
+ * <code>Signal.CONTENT</code>. The programmer must override this behavior
+ * with the constructor.
+ *
+ * @see Signal
  */
 public class Data implements Serializable {
 
-    private Signal signal = null;
+    private Signal signal = Signal.CONTENT;
 
     /**
      * Constructs a Data object with the given Signal.
@@ -46,6 +54,11 @@ public class Data implements Serializable {
      * checks whether <code>getSignal()</code> returns
      * <code>Signal.CONTENT</code>.
      *
+     * Subclass of Data that are assumed to contain actual data by default.
+     * Therefore, this will return <code>Signal.CONTENT</code> unless the
+     * Data subclass constructor calls the <code>Data(Signal)</code>
+     * constructor.
+     *
      * @return true if it has content, false otherwise
      */
     public boolean hasContent() {
@@ -59,6 +72,10 @@ public class Data implements Serializable {
      * @return true if it has a SEGMENT_END Signal, false otherwise
      */
     public boolean hasSegmentEndSignal() {
-        return (getSignal().equals(Signal.SEGMENT_END));
+        if (getSignal() == null) {
+            return false;
+        } else {
+            return (getSignal().equals(Signal.SEGMENT_END));
+        }
     }
 }

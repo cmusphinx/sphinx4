@@ -76,7 +76,10 @@ CepstrumSource {
      * Constructs a default CepstralMeanNormalizer with the given
      * SphinxProperties context.
      *
+     * @param name the name of this CepstralMeanNormalizer
      * @param context the context of the SphinxProperties to use
+     * @param predecessor the CepstrumSource from which this normalizer
+     *    obtains Cepstrum to normalize
      */
     public CepstralMeanNormalizer(String name, String context,
                                   CepstrumSource predecessor) {

@@ -14,9 +14,10 @@ public class Cepstrum extends Data {
 
     /**
      * Constructs a Cepstrum with the given cepstrum data.
+     *
+     * @param cepstrumData the cepstrum data
      */
     public Cepstrum(float[] cepstrumData) {
-        super(Signal.CONTENT);
 	this.cepstrumData = cepstrumData;
     }
 

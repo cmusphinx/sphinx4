@@ -18,6 +18,8 @@ public class Feature extends Data {
      * Constructs a Feature with the given feature data.
      *
      * @param featureData the feature data points
+     * @param ID the ID of this Feature with respect to the current
+     *    speech segment.
      */
     public Feature(float[] featureData, int ID) {
         super(Signal.CONTENT);
@@ -30,6 +32,8 @@ public class Feature extends Data {
      * Constructs a Feature with the given Signal.
      *
      * @param signal the Signal this Feature carries
+     * @param ID the ID of this Feature with respect to the current
+     *    speech segment.
      */
     public Feature(Signal signal, int ID) {
         super(signal);

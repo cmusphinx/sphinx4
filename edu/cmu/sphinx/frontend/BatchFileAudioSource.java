@@ -14,11 +14,11 @@ import java.io.IOException;
  * A BatchFileAudioSource takes a file (called batch file onwards)
  * that contains a list of audio files,
  * and converts the audio data in each of the audio files into
- * Audio(s). One would obtain the Audios using
- * the <code>read()</code> method. This class uses the StreamAudioSource
+ * Audio objects. One would obtain the Audio objects using
+ * the <code>getAudio()</code> method. This class uses the StreamAudioSource
  * class. In fact, it converts each audio file in the batch file into
  * an InputStream, and sets it to the InputStream of StreamAudioSource.
- * Its read() method then calls StreamAudioSource.read().
+ * Its getAudio() method then calls StreamAudioSource.getAudio().
  * The only difference is that BatchFileAudiosource
  * takes a batch file, whereas StreamAudioSource takes an InputStream.
  *
@@ -38,8 +38,11 @@ AudioSource {
 
 
     /**
-     * Constructs a BatchFileAudioSource with the given InputStream.
+     * Constructs a BatchFileAudioSource with the given name,
+     * context and batch file.
      *
+     * @param name the name of this BatchFileAudioSource
+     * @param context the context of this BatchFileAudioSource
      * @param batchFile contains a list of the audio files
      *
      * @throws java.io.IOException if error opening the batch file
@@ -74,8 +77,8 @@ AudioSource {
 
     
     /**
-     * Reads and returns the next Audio. 
-     * Returns null if all the data in all the files have been read.
+     * Returns the next Audio object. 
+     * Returns null if all the audio data in all the files have been read.
      *
      * @return the next Audio or <code>null</code> if no more is
      *     available

@@ -18,7 +18,6 @@ public class Audio extends Data {
      * @param audioSamples the audio samples for this Audio
      */
     public Audio(double[] audioSamples) {
-        super(Signal.CONTENT);
 	this.audioSamples = audioSamples;
     }
 
