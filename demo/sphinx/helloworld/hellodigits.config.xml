@@ -186,7 +186,8 @@
     </component>
     
     <component name="fft" 
-            type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"/>
+            type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform">
+    </component>
     
     <component name="melFilterBank" 
         type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank">
@@ -203,8 +204,6 @@
        
     <component name="microphone" 
                type="edu.cmu.sphinx.frontend.util.Microphone">
-        <property name="bytesPerRead" value="320"/>
-        <property name="closeBetweenUtterances" value="false"/>
     </component>
 
     
