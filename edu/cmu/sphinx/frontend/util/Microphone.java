@@ -50,6 +50,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * data as Data objects.
  */
 public class Microphone extends BaseDataProcessor {
+
     /**
      * SphinxProperty for the sample rate of the data.
      */
@@ -64,37 +65,27 @@ public class Microphone extends BaseDataProcessor {
      * Sphinx property that specifies whether or not the microphone
      * will release the audio between utterances.  On certain systems
      * (linux for one), closing and reopening the audio does not work
-     * too well.
+     * too well. The default is false for Linux systems, true for others.
      */
     public final static String PROP_CLOSE_BETWEEN_UTTERANCES =
 	"closeBetweenUtterances";
 
     /**
-     * The default value for the PROP_CLOSE_BETWEEN_UTTERANCES
-     * property.
+     * The Sphinx property that specifies the number of milliseconds of
+     * audio data to read each time from the underlying Java Sound audio 
+     * device.
      */
-    public final static boolean PROP_CLOSE_BETWEEN_UTTERANCES_DEFAULT = true;
+    public final static String PROP_MSEC_PER_READ = "msecPerRead";
 
     /**
-     * The Sphinx property that specifies the number of bytes to
-     * read each time from the underlying Java Sound audio device.
+     * The default value of PROP_MSEC_PER_READ.
      */
-    public final static String PROP_BYTES_PER_READ
-        = "bytesPerRead";
-
-    /**
-     * The default value of PROP_BYTES_PER_READ. The current default
-     * is 320 bytes. Assuming that the sample rate is 16kHz and it is
-     * 2 bytes per samples, 320 bytes corresponds to 10 milliseconds
-     * of audio.
-     */
-    public final static int PROP_BYTES_PER_READ_DEFAULT = 320;
+    public final static int PROP_MSEC_PER_READ_DEFAULT = 10;
 
     /**
      * SphinxProperty for the number of bits per value.
      */
-    public static final String PROP_BITS_PER_SAMPLE =
-        "bitsPerSample";
+    public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
 
     /**
      * Default value for PROP_BITS_PER_SAMPLE.
@@ -102,11 +93,20 @@ public class Microphone extends BaseDataProcessor {
     public static final int PROP_BITS_PER_SAMPLE_DEFAULT = 16;
 
     /**
+     * Property specifying the number of channels.
+     */
+    public static final String PROP_CHANNELS = "channels";
+
+    /**
+     * Default value for PROP_CHANNELS.
+     */
+    public static final int PROP_CHANNELS_DEFAULT = 1;
+
+    /**
      * The Sphinx property that specifies whether to keep the audio
      * data of an utterance around until the next utterance is recorded.
      */
-    public final static String PROP_KEEP_LAST_AUDIO
-        = "keepLastAudio";
+    public final static String PROP_KEEP_LAST_AUDIO = "keepLastAudio";
 
     /**
      * The default value of PROP_KEEP_AUDIO.
@@ -120,7 +120,7 @@ public class Microphone extends BaseDataProcessor {
     private AudioFormat audioFormat;
     private int sampleRate;
     private int sampleSizeInBytes;
-    private int channels = 1;
+    private int channels;
     private boolean signed = true;
     private boolean bigEndian = true;
 
@@ -142,6 +142,7 @@ public class Microphone extends BaseDataProcessor {
 
     private long totalSamplesRead;
     private int frameSizeInBytes;
+    private int msecPerRead;
 
     private volatile boolean started = false;
     private volatile boolean recording = false;
@@ -158,12 +159,14 @@ public class Microphone extends BaseDataProcessor {
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
      *      edu.cmu.sphinx.util.props.Registry)
      */
-    public void register(String name, Registry registry) throws PropertyException {
+    public void register(String name, Registry registry)
+        throws PropertyException {
         super.register(name, registry);
         registry.register(PROP_SAMPLE_RATE, PropertyType.INT);
 	registry.register(PROP_CLOSE_BETWEEN_UTTERANCES, PropertyType.BOOLEAN);
-        registry.register(PROP_BYTES_PER_READ, PropertyType.INT);
+        registry.register(PROP_MSEC_PER_READ, PropertyType.INT);
         registry.register(PROP_BITS_PER_SAMPLE, PropertyType.INT);
+        registry.register(PROP_CHANNELS, PropertyType.INT);
         registry.register(PROP_KEEP_LAST_AUDIO, PropertyType.BOOLEAN);
     }
 
@@ -176,26 +179,35 @@ public class Microphone extends BaseDataProcessor {
         super.newProperties(ps);
         logger = ps.getLogger();
 
-        sampleRate = ps.getInt
-            (PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
+        sampleRate = ps.getInt(PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
         
 	closeBetweenUtterances = ps.getBoolean
-            (PROP_CLOSE_BETWEEN_UTTERANCES,
-             PROP_CLOSE_BETWEEN_UTTERANCES_DEFAULT);
-
-        frameSizeInBytes = ps.getInt
-            (PROP_BYTES_PER_READ, PROP_BYTES_PER_READ_DEFAULT);
-
-        if (frameSizeInBytes % 2 == 1) {
-            frameSizeInBytes++;
-        }
-
+            (PROP_CLOSE_BETWEEN_UTTERANCES, getCloseBetweenUtterances());
+        
         sampleSizeInBytes = ps.getInt
             (PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT)/8;
+
+        msecPerRead = ps.getInt(PROP_MSEC_PER_READ, 
+                                PROP_MSEC_PER_READ_DEFAULT);
+
+        channels = ps.getInt(PROP_CHANNELS, PROP_CHANNELS_DEFAULT);
 
         keepDataReference = ps.getBoolean
             (PROP_KEEP_LAST_AUDIO, PROP_KEEP_LAST_AUDIO_DEFAULT);
     }
+
+
+    /**
+     * Returns whether the audio line should be closed between utterances.
+     * It should not be closed if the underlying operating system is Linux.
+     *
+     * @return whether the audio line should be closed between utterances
+     */
+    private final static boolean getCloseBetweenUtterances() {
+        return (System.getProperty("os.name").toLowerCase().indexOf("linux")
+                == -1);
+    }
+
 
     /**
      * Constructs a Microphone with the given InputStream.
@@ -205,22 +217,9 @@ public class Microphone extends BaseDataProcessor {
     public void initialize() {
         super.initialize();
         audioFormat = new AudioFormat
-            ((float) sampleRate, sampleSizeInBytes * 8, channels,
-             signed, bigEndian);
+            ((float) sampleRate, sampleSizeInBytes * 8, 
+             channels, signed, bigEndian);
         audioList = new DataList();
-    }
-
-
-
-    /**
-     * Calculate the sleep time in milliseconds.
-     *
-     * @return the sleep time in milliseconds
-     */
-    private int getSleepTime() {
-        float samplesPerFrame = frameSizeInBytes / sampleSizeInBytes;
-        float timePerFrameInSecs = samplesPerFrame / (float) sampleRate;
-        return (int) (timePerFrameInSecs * 1000 * 0.8);
     }
 
 
@@ -268,17 +267,19 @@ public class Microphone extends BaseDataProcessor {
                 }
 
                 audioList.add(new DataStartSignal());
+                logger.info("DataStartSignal added");
                                 
-                while (audioLine.isActive()) {
+                while (recording) {
 		    audioList.add(readData(currentUtterance));
                 }
 
                 long duration = (long)
-                    (((double)totalSamplesRead/(double)sampleRate) * 1000.0);
+                    (((double)totalSamplesRead/
+                      (double)audioStream.getFormat().getSampleRate())*1000.0);
 
                 audioList.add(new DataEndSignal(duration));
-                
-                // audioLine.stop();
+                logger.info("DataEndSignal ended");
+
 		if (closeBetweenUtterances) {
                     audioLine.close();
                     logger.info("Audio line closed.");
@@ -302,6 +303,7 @@ public class Microphone extends BaseDataProcessor {
             }
         }
     }
+
 
     /**
      * Reads one frame of audio data, and adds it to the given Utterance.
@@ -341,7 +343,9 @@ public class Microphone extends BaseDataProcessor {
         double[] samples = DataUtil.bytesToValues
             (data, 0, data.length, sampleSizeInBytes, signed);
         
-        return (new DoubleData(samples, sampleRate, collectTime,
+        return (new DoubleData(samples, 
+                               (int) audioStream.getFormat().getSampleRate(),
+                               collectTime,
                                firstSampleNumber));
     }
 
@@ -417,15 +421,14 @@ public class Microphone extends BaseDataProcessor {
                               "audio format for conversion");
                 return false;
             } else {
-                logger.info("accepting " + nativeFormat + 
-                            " as natively supported format");
+                logger.warning("accepting " + nativeFormat + 
+                               " as natively supported format");
                 info = new DataLine.Info(TargetDataLine.class, nativeFormat);
                 doConversion = true;
             }
         } else {
             doConversion = false;
         }
-
 
         // Obtain and open the line and stream.
         try {
@@ -446,8 +449,20 @@ public class Microphone extends BaseDataProcessor {
                 }
             } else {
                 audioStream = new AudioInputStream(audioLine);
-            }                
+            }
+
+            /* Set the frame size depending on the sample rate. */
+            frameSizeInBytes = sampleSizeInBytes *
+                (int) (((float) msecPerRead)/1000.f * 
+                       ((float) audioStream.getFormat().getSampleRate()));
+            if (frameSizeInBytes % 2 == 1) {
+                frameSizeInBytes++;
+            }
+            logger.info("Frame size: " + frameSizeInBytes + " bytes");
+
+            /* open the audio line */
             audioLine.open();
+
             return true;
         } catch (LineUnavailableException ex) {
             audioLine = null;
