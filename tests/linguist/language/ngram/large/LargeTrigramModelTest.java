@@ -68,8 +68,10 @@ public class LargeTrigramModelTest {
 
         String context = "test";
         SphinxProperties.initContext(context, new URL(propsPath));
+        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
+
         Dictionary dictionary = new FastDictionary(context);
-        LargeTrigramModel lm = new LargeTrigramModel(context, dictionary);
+        LargeTrigramModel lm = new LargeTrigramModel(props, dictionary);
 
         LogMath logMath = LogMath.getLogMath("test");
 

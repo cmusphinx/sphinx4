@@ -83,7 +83,8 @@ public class MemoryTest {
 	
         SphinxProperties.initContext(context, new URL(propsPath));
         dictionary = new FastDictionary(context);
-        lm = new LargeTrigramModel(context, dictionary);
+        lm = new LargeTrigramModel
+            (SphinxProperties.getSphinxProperties(context), dictionary);
         printScores = Boolean.getBoolean("printScores");
 
         InputStream stream = new FileInputStream(testFile);

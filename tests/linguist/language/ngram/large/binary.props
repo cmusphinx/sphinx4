@@ -1,7 +1,6 @@
-edu.cmu.sphinx.linguist.acoustic.location=/lab/speech/sphinx4/data/wsj
+edu.cmu.sphinx.linguist.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 edu.cmu.sphinx.linguist.dictionary.Dictionary.allowMissingWords=true
 edu.cmu.sphinx.linguist.dictionary.Dictionary.createMissingWords=true
-edu.cmu.sphinx.linguist.dictionary.Dictionary.useAcousticModelLocation=true
 edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath=dict/cmudict.0.6d
 edu.cmu.sphinx.linguist.dictionary.Dictionary.fillerPath=dict/fillerdict
 

@@ -16,7 +16,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- * Properties common to all tests                         * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <property name="top_dir"		value="../../../.."/>
+    <property name="top_dir"		value="../../../../.."/>
     <path id="libs">
         <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
     </path>
