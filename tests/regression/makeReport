@@ -1,3 +1,4 @@
+#!/bin/sh
 # Copyright 1999-2002 Carnegie Mellon University.  
 # Portions Copyright 2002 Sun Microsystems, Inc.  
 # Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
@@ -59,6 +60,7 @@ BEGIN {
 $1 == "build" && $4 == machine {
     finalBuildRecord = $0;
     buildRecord = 1;
+    buildDate = $2;
 }
 
 # final test has only the tests from the last build

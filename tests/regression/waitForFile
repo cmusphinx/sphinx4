@@ -1,4 +1,4 @@
-
+#!/bin/sh
 # Copyright 1999-2002 Carnegie Mellon University.  
 # Portions Copyright 2002 Sun Microsystems, Inc.  
 # Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
@@ -16,7 +16,15 @@
 #
 
 
+regressionDir=.
+startWaitTime=`$regressionDir/getTime`
+
 until test -f $1
 do
      sleep 3
 done
+
+endWaitTime=`$regressionDir/getTime`
+totalWaitTime=`expr $endWaitTime - $startWaitTime`
+
+echo "waitForFile $1: waited for $totalWaitTime seconds"
