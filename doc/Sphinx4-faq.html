@@ -74,6 +74,7 @@ WARRANTIES.
 <li><a href="#regression_data">Where can I get the audio data used in the regression tests?</a></li>
 <li><a href="#result">How do I use the Result object?</a></li>
 <li><a href="#speaker_identification">Does Sphinx-4 support speaker identification?</a></li>
+<li><a href="#confidence_scores">How can I obtain confidence scores for the recognition result?</a></li>
 </ul>
 
 <b>Acoustic & Language Models</b>
@@ -528,6 +529,19 @@ microphone (e.g., a USB headset) on my machine?</b></a>
     To learn more about speaker identification:
     <a href="http://www.speech.cs.cmu.edu/comp.speech/Section6/Q6.6.html">
     http://www.speech.cs.cmu.edu/comp.speech/Section6/Q6.6.html</a>
+    </blockquote>
+
+
+<a name="confidence_scores"><b>How can I obtain confidence scores for the recognition result?</b></a>
+
+    <blockquote>
+    Some experimental work has been done to support confidence scores.
+    As this work is still experimental, please use it with precaution.
+    Please refer to the <a href="../demo/sphinx/confidence/README.html">
+    Confidence Score Demo</a> for example code of how to do this.
+    <i>Note that currently this only works for configurations using the
+    <b>LexTreeLinguist</b> and the <b>WordPruningBreadthFirstSearchManager</b>
+    </i>.
     </blockquote>
 
 
