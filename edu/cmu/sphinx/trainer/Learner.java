@@ -12,9 +12,10 @@
 
 package edu.cmu.sphinx.trainer;
 
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.knowledge.acoustic.TrainerScore;
 
-import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.knowledge.acoustic.*;
+import java.io.IOException;
 
 
 /**
@@ -22,14 +23,6 @@ import edu.cmu.sphinx.knowledge.acoustic.*;
  * and input data.
  */
 public interface  Learner {
-
-    /**
-     * Initializes the Learner with the proper context and frontend.
-     *
-     * @param context the context to use
-     * @param frontend the FrontEnd to use
-     */
-    public void initialize(String context, FrontEnd frontend);
 
     /**
      * Starts the Learner.
@@ -49,9 +42,16 @@ public interface  Learner {
     public void initializeComputation(SentenceHMM sentenceHMM);
 
     /**
-     * Gets posterior probabilities for a given state.
+     * Sets the learner to use a utterance.
      *
-     * @param stateID state ID number, relative to the sentence HMM
+     * @param utterance the utterance
+     *
+     * @throws IOException
      */
-    public double getScore(int stateID);
+    public void setUtterance(Utterance utterance) throws IOException;
+
+    /**
+     * Gets posterior probabilities for a given state.
+     */
+    public TrainerScore getScore();
 }

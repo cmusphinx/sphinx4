@@ -14,14 +14,13 @@ package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 import edu.cmu.sphinx.knowledge.acoustic.TrainerAcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.TrainerScore;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
 
 import java.io.IOException;
 import java.util.List;
-//import java.util.Vector;
 import java.util.Iterator;
-//import java.util.StringTokenizer;
 
 
 /**
@@ -55,8 +54,7 @@ public class SimpleTrainManager implements TrainManager {
      * Constructor for the class.
      */
     public SimpleTrainManager(String context) {
-	learner = new BaumWelchLearner();
-	controlFile = new SimpleControlFile();
+	controlFile = new SimpleControlFile(context);
     }
 
     /**
@@ -160,7 +158,7 @@ public class SimpleTrainManager implements TrainManager {
       * @param context the context of this TrainManager
       */
     public void initializeModels(String context) throws IOException {
-
+	TrainerScore score;
         props = SphinxProperties.getSphinxProperties(context);
         dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
                                           PROP_DUMP_MEMORY_INFO_DEFAULT);
@@ -169,10 +167,20 @@ public class SimpleTrainManager implements TrainManager {
         
         models = getAcousticModels(context);
 	for (int m = 0; m < models.length; m++) {
-		models[m].initialize();
+	    models[m].initialize();
+
+	    Learner learner = new FlatInitializerLearner(props);
+	    for (controlFile.startUtteranceIterator();
+		 controlFile.hasMoreUtterances(); ) {
+		Utterance utterance = controlFile.nextUtterance();
+		learner.setUtterance(utterance);
+		while ((score = learner.getScore()) != null) {
+		    models[m].accumulate(score);
+		}
+	    }
+	    models[m].normalize();
 	}
         dumpMemoryInfo("acoustic model");
-
     }
 
 

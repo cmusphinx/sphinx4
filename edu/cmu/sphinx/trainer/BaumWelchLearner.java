@@ -12,31 +12,16 @@
 
 package edu.cmu.sphinx.trainer;
 
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.knowledge.acoustic.TrainerScore;
 
-import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.knowledge.acoustic.*;
-import edu.cmu.sphinx.decoder.scorer.*;
-import edu.cmu.sphinx.decoder.search.*;
-
-import java.util.Collection;
+import java.io.IOException;
 
 /**
  * Provides mechanisms for computing statistics given a set of states
  * and input data.
  */
 public class BaumWelchLearner implements Learner {
-
-    private FrontEnd frontEnd;
-
-    /**
-     * Initializes the Learner with the proper context and frontend.
-     *
-     * @param context the context to use
-     * @param frontend the FrontEnd to use
-     */
-    public void initialize(String context, FrontEnd frontend){
-        this.frontEnd = frontend;
-    }
 
     /**
      * Starts the Learner.
@@ -59,12 +44,22 @@ public class BaumWelchLearner implements Learner {
     }
 
     /**
+     * Sets the learner to use a utterance.
+     *
+     * @param utterance the utterance
+     *
+     * @throws IOException
+     */
+    public void setUtterance(Utterance utterance) throws IOException {
+    }
+
+    /**
      * Gets posterior probabilities for a given state.
      *
      * @param stateID state ID number, relative to the sentence HMM
      */
-    public double getScore(int stateID){
-        return 0;
+    public TrainerScore getScore(){
+        return null;
     }
 
     //    private void forwardPass() {

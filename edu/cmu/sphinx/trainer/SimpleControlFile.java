@@ -59,6 +59,15 @@ public class SimpleControlFile implements ControlFile {
         Logger.getLogger("edu.cmu.sphinx.trainer.SimpleControlFile");
 
     /**
+     * Constructor for the class.
+     *
+     * @param context the context to use
+     */
+    public SimpleControlFile(String context) {
+	initialize(context);
+    }
+
+    /**
      * Initializes the SimpleControlFile with the proper context.
      *
      * @param context the context to use

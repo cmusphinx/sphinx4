@@ -128,7 +128,7 @@ public class Trainer {
      * Prints debugging info.
      */
     private void printAll() {
-	//	trainManager.train();
+	trainManager.train();
     }
 
     /**
