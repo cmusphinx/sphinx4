@@ -73,7 +73,8 @@ import java.util.*;
  * speech unless it is contiguously more than <code>endWindow</code>
  * frames from speech.
  */
-public class EnergyEndpointer extends DataProcessor implements Endpointer {
+public class EnergyEndpointer extends DataProcessor 
+    implements CepstralEndpointer {
 
 
     private static final String PROP_PREFIX = 

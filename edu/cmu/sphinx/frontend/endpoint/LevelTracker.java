@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Implements a level tracking endpointer invented by Bent Schmidt Nielsen.
  */
-public class LevelTracker extends DataProcessor implements AudioSource {
+public class LevelTracker extends DataProcessor implements AudioEndpointer {
 
     public static final String PROP_PREFIX = 
         "edu.cmu.sphinx.frontend.endpoint.LevelTracker.";
@@ -97,14 +97,14 @@ public class LevelTracker extends DataProcessor implements AudioSource {
 
     /**
      * Initializes an Endpointer with the given name, context,
-     * and CepstrumSource predecessor.
+     * and AudioSource predecessor.
      *
      * @param name the name of this EnergyEndpointer
      * @param context the context of the SphinxProperties this
-     *    EnergyEndpointer uses
+     *    EnergyEndpointer use
      * @param props the SphinxProperties to read properties from
-     * @param predecessor the CepstrumSource where this EnergyEndpointer
-     *    gets Cepstrum from
+     * @param predecessor the AudioSource where this EnergyEndpointer
+     *    gets Audio from
      *
      * @throws java.io.IOException
      */

@@ -13,9 +13,9 @@
 
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.frontend.endpoint.Endpointer;
+import edu.cmu.sphinx.frontend.endpoint.AudioEndpointer;
+import edu.cmu.sphinx.frontend.endpoint.CepstralEndpointer;
 import edu.cmu.sphinx.frontend.endpoint.NonSpeechFilter;
-import edu.cmu.sphinx.frontend.endpoint.LevelTracker;
 
 import edu.cmu.sphinx.frontend.util.StubAudioSource;
 import edu.cmu.sphinx.frontend.util.StubCepstrumSource;
@@ -78,7 +78,7 @@ import java.util.logging.Logger;
  * @see Windower
  */
 public class CepstrumExtractor extends DataProcessor 
-implements CepstrumSource {
+    implements CepstrumSource {
 
     private String amName;                     // Acoustic model name
     private Map processors;                    // all frontend modules
@@ -191,12 +191,12 @@ implements CepstrumSource {
      */
     private void initialize(CepstrumSource cepstrumSource) throws IOException {
 
-	Endpointer endpointer = getCepstralEndpointer(cepstrumSource);
-        	
+	CepstrumSource endpointer = getCepstralEndpointer(cepstrumSource);
+        
 	if (endpointer != null) { // if we're using an endpointer
             addProcessor((DataProcessor) endpointer);
 	    lastCepstrumSource = endpointer;
-
+            
             // if we are filtering out the non-speech regions,
             // initialize a non-speech filter
             boolean filterNonSpeech = getSphinxProperties().getBoolean
@@ -235,22 +235,26 @@ implements CepstrumSource {
      *
      * @return an audio-based endpointer or null
      */
-    private AudioSource getAudioEndpointer(AudioSource predecessor) 
+    private AudioEndpointer getAudioEndpointer(AudioSource predecessor) 
         throws IOException {
+        AudioEndpointer endpointer = null;
         String endpointerName = getEndpointerName();
-        if (endpointerName == null) {
-            return null;
-        } else {
-            if (!endpointerName.equals
-                ("edu.cmu.sphinx.frontend.endpoint.LevelTracker")) {
-                return null;
-            } else {
-                LevelTracker tracker = new LevelTracker();
-                tracker.initialize("LevelTracker", getContext(), 
-                                   getSphinxProperties(), predecessor);
-                return tracker;
+        if (endpointerName != null) {
+            try {
+                Class epClass = Class.forName(endpointerName);
+                Class aepInterface = Class.forName
+                    ("edu.cmu.sphinx.frontend.endpoint.AudioEndpointer");
+                if (aepInterface.isAssignableFrom(epClass)) {
+                    endpointer = (AudioEndpointer) epClass.newInstance();
+                    endpointer.initialize("Endpointer", getContext(),
+                                          getSphinxProperties(), predecessor);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Error("Can't create Endpointer " + e);
             }
         }
+        return endpointer;
     }
 
 
@@ -304,20 +308,19 @@ implements CepstrumSource {
      *
      * @param predecessor the predecessor of this Endpointer
      */
-    private Endpointer getCepstralEndpointer(CepstrumSource predecessor) 
+    private CepstralEndpointer getCepstralEndpointer(CepstrumSource predecessor) 
 	throws IOException {
         try {
-            Endpointer endpointer = null;
+            CepstralEndpointer endpointer = null;
             String endPointerClass = getEndpointerName();
             
             if (endPointerClass != null) {
-                
                 Class epClass = Class.forName(endPointerClass);
-                Class cepClass = Class.forName
-                    ("edu.cmu.sphinx.frontend.endpoint.Endpointer");
-
-                if (cepClass.isAssignableFrom(epClass)) {
-                    endpointer = (Endpointer) epClass.newInstance();
+                Class cepInterface = Class.forName
+                    ("edu.cmu.sphinx.frontend.endpoint.CepstralEndpointer");
+                
+                if (cepInterface.isAssignableFrom(epClass)) {
+                    endpointer = (CepstralEndpointer) epClass.newInstance();
                     endpointer.initialize("Endpointer", getContext(), 
                                           getSphinxProperties(), predecessor);
                 }
