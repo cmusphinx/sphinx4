@@ -17,6 +17,7 @@
 
 options {
     JAVA_UNICODE_ESCAPE = true;
+    STATIC=false;
 }
 
 PARSER_BEGIN(JSGFParser)
