@@ -30,6 +30,13 @@ PROFILE_FLAGS= -Xprof
 LOG_GC_FLAGS=  -Xloggc:gc.txt
 GC_FLAGS = -ms128m -mx1g
 GC_FLAGS = -ms512m -mx1500m -XX:NewSize=300m  -XX:MaxNewSize=300m
+GC_FLAGS = -ms1000m -mx1500m -XX:NewSize=100m  -XX:MaxNewSize=100m -XX:+UseParNewGC -XX:-UseConcMarkSweepGC 
+GC_FLAGS = -ms1000m -mx1500m -XX:NewSize=200m  -XX:MaxNewSize=200m
+GC_FLAGS = -ms1000m -mx1500m -XX:NewSize=300m  -XX:MaxNewSize=300m
+
+LOG_GC_FLAGS=
+PROFILE_FLAGS=
+
 #GC_FLAGS = -ms128m -mx3048m
 
 
@@ -94,6 +101,40 @@ hub4_trigram:
 	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props \
         $(HUB4_DIR)/f0_hub4.batch
 
+hub4_trigram_quick:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props quick.batch
+
+hub4_trigram_wpbfsm_quick:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.wpbfsm.props  quick.batch
+
+hub4_trigram_wpbfsm_test:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.wpbfsm.props  test2.batch
+
+hub4_trigram_wpbfsm:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.wpbfsm.props   \
+        $(HUB4_DIR)/f0_hub4.batch
+
+hub4_trigram_test:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+   -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.fullWordHistories=false \
+	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props \
+        $(HUB4_DIR)/f0_hub4.batch
+
+btest:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props  $(BATCH)
+
+       # Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-70 \
 
 run_batch:
 	$(JAVA_CMD) \

@@ -1,8 +1,4 @@
-set edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability  .2
-
 /lab/speech/sphinx4/data/hub4/eval99/supervised/bn99en_1.25.f0.raw  seeking to isolate china is clearly unworkable most important choosing isolation over engagement would not make the world safer it would make it more dangerous
-
-set edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight 11
-go
-set edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight 8
-go
+/lab/speech/sphinx4/data/hub4/eval99/supervised/bn99en_1.8.f0.raw  with villages in kosovo going up in smoke nato defense ministers in
+/lab/speech/sphinx4/data/hub4/eval99/supervised/bn99en_1.11.f0.raw  today we took some important steps to ensure that mr milosevic knows that his indiscriminate use of force is unacceptable
+/lab/speech/sphinx4/data/hub4/eval99/supervised/bn99en_1.14.f0.raw  britain and france will conduct practice air strikes on bombing ranges just across the border from kosovo in neighboring albania and macedonia

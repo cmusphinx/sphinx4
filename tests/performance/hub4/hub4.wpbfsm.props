@@ -49,6 +49,15 @@ edu.cmu.sphinx.knowledge.language.large.BinaryLoader.applyLanguageWeightAndWip=f
 #
 ############################################################
 
+edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
+edu.cmu.sphinx.frontend.cepstrumSize = 13
+edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
+edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
+edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
+edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
+edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
+edu.cmu.sphinx.frontend.windowShiftInMs = 10
+edu.cmu.sphinx.frontend.windower.alpha = 0.46
 
 
 ############################################################
@@ -73,10 +82,8 @@ edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
 ############################################################
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.PartitionActiveList
-edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=20000
-edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-160
 #edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-60
-edu.cmu.sphinx.util.BeamFinder.enable=true
+edu.cmu.sphinx.util.BeamFinder.enable=false
 
 
 ############################################################
@@ -91,7 +98,7 @@ edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = .2
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = .1
 edu.cmu.sphinx.decoder.linguist.Linguist.addFillerWords=true
 edu.cmu.sphinx.decoder.linguist.Linguist.fillerInsertionProbability=.1
-edu.cmu.sphinx.decoder.linguist.Linguist.generateUnitState=false
+edu.cmu.sphinx.decoder.linguist.Linguist.generateUnitStates=false
 
 ############################################################
 # 
@@ -119,10 +126,22 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=false
 #
 # Use the number of available CPUS for scoring:
 #
-edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=false
-edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=1
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=true
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=0
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
 
 edu.cmu.sphinx.decoder.BatchDecoder.showPropertiesAtStart=true
+
+
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.buildWordLattice=false
+edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager
 edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.wantUnigramSmear=true
-edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.unigramSmearWeight=.5
+edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.unigramSmearWeight=1
+edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.fullWordHistories=true
+
+edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=30000
+edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-60
+edu.cmu.sphinx.decoder.search.ActiveListManager.relativeWordBeamWidth=1E-30
+edu.cmu.sphinx.decoder.search.ActiveListManager.absoluteWordBeamWidth=20
+edu.cmu.sphinx.decoder.Decoder.showBestToken=false
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.growSkipInterval=6
