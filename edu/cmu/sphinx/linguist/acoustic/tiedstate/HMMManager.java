@@ -26,7 +26,10 @@ import edu.cmu.sphinx.linguist.acoustic.Unit;
 
 
 /**
- * Manages the HMMS. HMMs are grouped by word position
+ * Manages HMMs. 
+ * This HMMManager groups {@link edu.cmu.sphinx.linguist.acoustic.HMM HMMs}
+ * together by their 
+ * {@link edu.cmu.sphinx.linguist.acoustic.HMMPosition position} with the word.
  */
 public class HMMManager {
 

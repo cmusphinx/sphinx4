@@ -21,12 +21,13 @@ import java.io.Serializable;
 
 /**
  * Represents a composite senone. A composite senone consists of a set
- * of all possible senones for a given state. CompositeSenones are
+ * of all possible {@link Senone senones} for a given state.
+ * CompositeSenones are
  * used when the exact context of a senone is not known. The
  * CompositeSenone represents all the possible senones.
- *
- * This class currently only needs to be public for testing purposes
- *
+ * <p>
+ * This class currently only needs to be public for testing purposes.
+ * <p>
  * Note that all scores are maintained in LogMath log base
  */
 public class CompositeSenone implements Senone, Serializable {

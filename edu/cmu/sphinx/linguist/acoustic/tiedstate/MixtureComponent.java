@@ -22,11 +22,11 @@ import java.io.Serializable;
 /**
  * Defines the set of shared elements for a GaussianMixture. Since
  * these elements are potentially shared by a number of
- * GaussianMixtures, these elements should not be written to. The
+ * {@link GaussianMixture GaussianMixtures},
+ * these elements should not be written to. The
  * GaussianMixture defines a single probability density function along
- * with a set of adaptation parameters 
- *
- *
+ * with a set of adaptation parameters.
+ * <p>
  * Note that all scores and weights are in LogMath log base
  */
  // [[[ QFSE: Since many of the subcomponents of a

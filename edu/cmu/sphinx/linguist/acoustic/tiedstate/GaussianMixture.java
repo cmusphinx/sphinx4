@@ -18,11 +18,11 @@ import java.io.Serializable;
 
 /**
  * 
- * Represents a concrete implementation of a simple senone. A simple
- * senone is a set of probability density functions implemented  as a
- * gaussian mixture.
- *
- * All scores and weights are maintained in LogMath log base
+ * Represents a concrete implementation of a simple {@link Senone senone}.
+ * A simple senone is a set of probability density functions implemented
+ * as a gaussian mixture.
+ * <p>
+ * All scores and weights are maintained in LogMath log base.
  */
 public class GaussianMixture implements Senone, Serializable {
     // these data element in a senone may be shared with other senones

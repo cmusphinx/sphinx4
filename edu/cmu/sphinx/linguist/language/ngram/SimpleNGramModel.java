@@ -38,7 +38,7 @@ import edu.cmu.sphinx.util.Timer;
 
 /**
  * An ascii ARPA language model loader. This loader makes no attempt
- * to optimize storage, so it can only load very small language models
+ * to optimize storage, so it can only load very small language models.
  * <p>
  * Note that all probabilites in the grammar are stored in LogMath log
  * base format. Language Probabilties in the language model file are

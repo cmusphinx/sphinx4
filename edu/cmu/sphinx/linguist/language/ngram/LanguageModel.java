@@ -22,8 +22,8 @@ import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**
- * Represents the generic interface to an N-Gram language model
- *
+ * Represents the generic interface to an N-Gram language model.
+ * <p>
  * Note that all probabilities are in LogMath log base, except as
  * otherwise noted.
  */
