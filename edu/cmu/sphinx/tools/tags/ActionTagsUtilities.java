@@ -202,6 +202,9 @@ public class ActionTagsUtilities {
      * RuleParse instance.  This can be useful for debugging ECMAScript
      * tags in a grammar.
      *
+     * @param ruleParse the RuleParse containing RuleTags with embedded
+     * ECMAScript
+     *
      * @return a printable String containing the flattened parse tree
      * of a RuleParse instance.
      */
@@ -279,8 +282,7 @@ public class ActionTagsUtilities {
      * The method that actually does all the work.  This is a recursive
      * method that continually appends ECMAScript to the script passed in.
      *
-     * @param ruleParse the RuleParse containing RuleTags with embedded
-     * ECMAScript
+     * @param rule the Rule containing RuleTags with embedded ECMAScript
      * @param script the ECMAScript as it is appears so far
      * @param parseTree the flattened parse tree as it appears so far
      * @param indent the indentation to make the generated ECMAScript look
