@@ -87,13 +87,26 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      * is, the maximum number of words propagated per frame. Note that a
      * zero value indicates that all words should be propagated.
      */
-    public final static String PROP_MAX_WORDS_PER_FRAME =
-        PROP_PREFIX + "maxWordsPerFrame";
+    public final static String PROP_ABSOLUTE_WORD_BEAM_WIDTH =
+        PROP_PREFIX + "absoluteWordBeamWidth";
 
     /**
-     * The default value for the PROP_MAX_WORDS_PER_FRAME property
+     * The default value for the PROP_ABSOLUTE_WORD_BEAM_WIDTH  property
      */
-    public final static int PROP_MAX_WORDS_PER_FRAME_DEFAULT = 0;
+    public final static int PROP_ABSOLUTE_WORD_BEAM_WIDTH_DEFAULT = 0;
+
+    /**
+     * Property that sets the minimum score relative to the maximum
+     * score in the word list for pruning.  Words with a score less than
+     * relativeBeamWidth * maximumScore will be pruned from the list
+     */
+    public final static String PROP_RELATIVE_WORD_BEAM_WIDTH =
+        PROP_PREFIX + "relativeWordBeamWidth";
+
+    /**
+     * The default value for the PROP_RELATIVE_WORD_BEAM_WIDTH  property
+     */
+    public final static double PROP_RELATIVE_WORD_BEAM_WIDTH_DEFAULT = 0.0;
 
     /**
      * The default value for the PROP_SHOW_TOKEN_COUNT property
@@ -123,7 +136,8 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     private Map bestTokenMap;
     private List wordList;
 
-    private int maxWordsPerFrame;
+    private int absoluteWordBeamWidth;
+    private float logRelativeWordBeamWidth;
 
 
     /**
@@ -142,7 +156,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	this.pruner = pruner;
 	this.props = SphinxProperties.getSphinxProperties(context);
 	this.logMath = LogMath.getLogMath(context);
-        this.maxWordsPerFrame = 200;
+        this.absoluteWordBeamWidth = 200;
 
 	scoreTimer = Timer.getTimer(context, "Score");
 	pruneTimer = Timer.getTimer(context, "Prune");
@@ -156,10 +170,13 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
             StatisticsVariable.getStatisticsVariable(props.getContext(),
 		    "tokensCreated");
 
-        maxWordsPerFrame = props.getInt(PROP_MAX_WORDS_PER_FRAME,
-                    PROP_MAX_WORDS_PER_FRAME_DEFAULT);
+        absoluteWordBeamWidth = props.getInt(PROP_ABSOLUTE_WORD_BEAM_WIDTH,
+                    PROP_ABSOLUTE_WORD_BEAM_WIDTH_DEFAULT);
 
-        System.out.println("maxWordsPerFrame " +maxWordsPerFrame);
+        double relativeWordBeamWidth = 
+               props.getDouble(PROP_RELATIVE_WORD_BEAM_WIDTH,
+                    PROP_RELATIVE_WORD_BEAM_WIDTH_DEFAULT);
+	logRelativeWordBeamWidth = logMath.linearToLog(relativeWordBeamWidth);
 
 	showTokenCount = props.getBoolean(PROP_SHOW_TOKEN_COUNT, false);
     }
@@ -420,15 +437,27 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      * Prune the words collected in the wordlist based upon the
      * maxWordsPerFrame size
      */
-    private void pruneWords() {
-        if (maxWordsPerFrame > 0 && maxWordsPerFrame < wordList.size()) {
-            if (false) {
-                System.out.println("Pruning away " + (wordList.size() -
-                            maxWordsPerFrame) + " words.");
-            }
+    public void pruneWords() {
+	if (absoluteWordBeamWidth > 0 && wordList.size() > 0) {
             Collections.sort(wordList, Token.COMPARATOR);
-	    wordList = wordList.subList(0, maxWordsPerFrame);
-        }
+
+	    Token bestToken = (Token) wordList.get(0);
+	    float highestScore = bestToken.getScore();
+	    float pruneScore = highestScore + logRelativeWordBeamWidth;
+            int count = 0;
+
+	    for (Iterator i = wordList.iterator();
+		    i.hasNext() && count < absoluteWordBeamWidth; count++) {
+		Token token = (Token) i.next();
+		if (token.getScore() <= pruneScore) {
+		    break;
+		}
+	    }
+            if (false) {
+                System.out.println("Words: "+ wordList.size() + " to " + count);
+            }
+	    wordList = wordList.subList(0, count);
+	}
     }
 
     /**
