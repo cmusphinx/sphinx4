@@ -87,9 +87,31 @@ tidigits_quick:
 	$(JAVA_CMD)  \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.showTokenCount=false\
+
+tidigits_flat_unigram:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.SimpleBreadthFirstSearchManager \
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+      -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=./tidigits.flat_unigram.lm\
 	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
 
 
+tidigits_flat_unigram_quick:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
+        -Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.SimpleBreadthFirstSearchManager \
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+      -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=./tidigits.flat_unigram.lm\
+	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
+
+
+##########################################################
+# Older tests of historical interest only
+##########################################################
 
 # tidigits_quick but with endpointing
 
