@@ -43,7 +43,12 @@ import java.util.StringTokenizer;
 /**
  * This is a simple dictionary that reads in the sphinx3 format
  * dictionary. In this dictionary there is only one possible
- * pronunciation per word.
+ * pronunciation per word. This is called the FastDictionary
+ * because the loading is fast. When loaded the dictionary just
+ * loads each line of the dictionary into the hash table, assuming
+ * that most words are not going to be used. Only when a word is
+ * actually used is its pronunciations massaged into an array of
+ * pronunciations. 
  */
 public class FastDictionary implements Dictionary {
 
