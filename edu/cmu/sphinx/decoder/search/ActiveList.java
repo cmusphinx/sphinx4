@@ -27,7 +27,11 @@ import java.util.List;
  */
 public interface ActiveList {
 
-    private final static String PROP_PREFIX
+
+    /**
+     * Prefix string for all ActiveList properties.
+     */
+    public final static String PROP_PREFIX
         = "edu.cmu.sphinx.decoder.search.ActiveList.";
 
 
