@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+   Sphinx-4 Configuration file
+-->
+
+<!-- ******************************************************** -->
+<!--  an4 configuration file                             -->
+<!-- ******************************************************** -->
+
+<config>        
+    
+        
+    
+    <!-- ******************************************************** -->
+    <!-- The Grammar  configuration                               -->
+    <!-- ******************************************************** -->
+            
+    <component name="jsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar">
+        <property name="dictionary" value="dictionary"/>
+        <property name="grammarLocation" value="."/>
+        <property name="grammarName" value="test"/>
+	<property name="logMath" value="logMath"/>
+	<property name="showGrammar" value="true"/>
+
+    </component>
+    
+        
+    <!-- ******************************************************** -->
+    <!-- The Dictionary configuration                            -->
+    <!-- ******************************************************** -->
+
+    <component name="dictionary"
+          type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
+        <property name="dictionaryPath"
+	 value="resource:/edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model!/edu/cmu/sphinx/model/acoustic/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/>
+        <property name="fillerPath" 
+	 value="resource:/edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model!/edu/cmu/sphinx/model/acoustic/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict"/>
+        <property name="addSilEndingPronunciation" value="false"/>
+        <property name="allowMissingWords" value="false"/>
+        <property name="unitManager" value="unitManager"/>
+    </component>
+
+    
+    <!-- ******************************************************** -->
+    <!-- The unit manager configuration                           -->
+    <!-- ******************************************************** -->
+
+    <component name="unitManager" 
+        type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
+
+    
+    <!-- ******************************************************* -->
+    <!--  Miscellaneous components                               -->
+    <!-- ******************************************************* -->
+    
+    <component name="logMath" type="edu.cmu.sphinx.util.LogMath">
+        <property name="logBase" value="1.0001"/>
+        <property name="useAddTable" value="true"/>
+    </component>
+    
+</config>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
