@@ -71,7 +71,7 @@ public class LinguistTimer {
         for (int runs = 0; runs < numRuns; runs++) {
             int level = 0;
             List activeList = new ArrayList();
-            activeList.add(linguist.getInitialSearchState());
+            activeList.add(linguist.getSearchGraph().getInitialState());
             linguist.start();
             for (int i = 0; i < numFrames; i++) {
                 List oldList = activeList;

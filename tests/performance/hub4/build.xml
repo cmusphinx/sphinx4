@@ -59,7 +59,8 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
 			 value="${skip}"/> 
             <arg value="hub4.wpbfsm.props"/> 
-            <arg value="/lab/speech/sphinx4/data/hub4/eval99/supervised/f0_hub4.batch"/> 
+            <!-- <arg value="/lab/speech/sphinx4/data/hub4/eval99/supervised/f0_hub4.batch"/> -->
+            <arg value="quick.batch"/> 
         </java>
     </target>
 

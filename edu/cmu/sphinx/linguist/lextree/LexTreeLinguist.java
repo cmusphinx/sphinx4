@@ -19,6 +19,7 @@ import java.util.List;
 
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.Linguist;
+import edu.cmu.sphinx.linguist.SearchGraph;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.SearchStateArc;
 import edu.cmu.sphinx.linguist.UnitSearchState;
@@ -224,18 +225,7 @@ public class LexTreeLinguist implements  Linguist {
     public final static boolean PROP_MAINTAIN_SEPARATE_WORD_RC_DEFAULT = true;
 
 
-    /**
-     * An array of classes that represents the order 
-     * in which the states will be returned.
-     */
-    private final static Class[] searchStateOrder = {
-        LexTreeNonEmittingHMMState.class,
-        LexTreeWordState.class,
-        LexTreeEndWordState.class,
-        LexTreeEndUnitState.class,
-        LexTreeUnitState.class,
-        LexTreeHMMState.class
-    };
+
 
     private final static SearchStateArc[] EMPTY_ARC = new SearchStateArc[0];
 
@@ -267,17 +257,9 @@ public class LexTreeLinguist implements  Linguist {
 
     private Word sentenceEndWord;
     private Word[] sentenceStartWordArray;
+    private SearchGraph searchGraph;
 
-    /**
-     * Returns an array of classes that represents the order 
-     * in which the states will be returned.
-     *
-     * @return an array of classes that represents the order 
-     *     in which the states will be returned
-     */
-    public Class[] getSearchStateOrder() {
-        return searchStateOrder;
-    }
+
 
 
     /**
@@ -365,6 +347,14 @@ public class LexTreeLinguist implements  Linguist {
         }
     }
 
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.linguist.Linguist#getSearchGraph()
+     */
+    public SearchGraph getSearchGraph() {
+        return searchGraph;
+    }
+
+
     /**
      * 
      * Called before a recognition
@@ -431,7 +421,7 @@ public class LexTreeLinguist implements  Linguist {
      *
      * @return the initial language state
      */
-    public SearchState getInitialSearchState() {
+    private  SearchState getInitialSearchState() {
         InitialWordNode node = hmmTree.getInitialNode();
         return new LexTreeWordState(node, node.getParent(),
               WordSequence.getWordSequence(sentenceStartWordArray).trim
@@ -456,10 +446,56 @@ public class LexTreeLinguist implements  Linguist {
         Timer.stop("compile");
         // Now that we are all done, dump out some interesting
         // information about the process
+        
+        searchGraph = new LexTreeSearchGraph(getInitialSearchState());
 
         Timer.dumpAll();
     }
+    
+    /**
+     * An array of classes that represents the order 
+     * in which the states will be returned.
+     */
+    private final static Class[] searchStateOrder = {
+        LexTreeNonEmittingHMMState.class,
+        LexTreeWordState.class,
+        LexTreeEndWordState.class,
+        LexTreeEndUnitState.class,
+        LexTreeUnitState.class,
+        LexTreeHMMState.class
+    };
+    
+    class LexTreeSearchGraph implements SearchGraph {
+        /**
+         * An array of classes that represents the order 
+         * in which the states will be returned.
+         */
 
+        private SearchState initialState;
+        
+        /**
+         * Constructs a  search graph with the given initial state
+         * @param initialState the initial state
+         */
+        LexTreeSearchGraph(SearchState initialState) {
+            this.initialState = initialState;
+        }
+
+        /* (non-Javadoc)
+         * @see edu.cmu.sphinx.linguist.SearchGraph#getInitialState()
+         */
+        public SearchState getInitialState() {
+            return initialState;
+        }
+
+        /* (non-Javadoc)
+         * @see edu.cmu.sphinx.linguist.SearchGraph#getSearchStateOrder()
+         */
+        public Class[] getSearchStateOrder() {
+            return searchStateOrder;
+        }
+    }
+    
 
 
     /**
@@ -1462,4 +1498,6 @@ public class LexTreeLinguist implements  Linguist {
         return hmmTree.getHMMNodes(endNode);
     }
 }
+
+
 

@@ -23,6 +23,7 @@ import java.util.Set;
 
 import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.linguist.SearchState;
+import edu.cmu.sphinx.linguist.SearchGraph;
 import edu.cmu.sphinx.linguist.SearchStateArc;
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
@@ -77,28 +78,12 @@ public class FlatLinguist implements  Linguist {
     public final static boolean PROP_DUMP_GSTATES_DEFAULT = false;
 
 
-    /**
-     * An array of classes that represents the order 
-     * in which the states will be returned.
-     */
-    private final static Class[] searchStateOrder = {
-        NonEmittingHMMState.class,
-        BranchState.class,
-        GrammarState.class,
-        PronunciationState.class,
-        ExtendedUnitState.class,
-        HMMStateState.class
-    };
-
-
     private SphinxProperties props;
 
     private Grammar grammar;            
-    private SentenceHMMState initialSentenceHMMState;
     private LanguageModel languageModel;
     private AcousticModel acousticModel;
     private LogMath logMath;
-
 
     private float logWordInsertionProbability;
     private float logSilenceInsertionProbability;
@@ -110,7 +95,7 @@ public class FlatLinguist implements  Linguist {
     private StatisticsVariable totalStates;
     private StatisticsVariable totalArcs;
     private StatisticsVariable actualArcs;
-
+    private SearchGraph searchGraph;
 
     private Map nodeStateMap = new HashMap();
     private Map arcPool = new HashMap();
@@ -128,14 +113,12 @@ public class FlatLinguist implements  Linguist {
 
 
     /**
-     * Returns an array of classes that represents the order 
-     * in which the states will be returned.
+     * Returns the search graph 
      *
-     * @return an array of classes that represents the order 
-     *     in which the states will be returned
+     * @return the search graph
      */
-    public Class[] getSearchStateOrder() {
-        return searchStateOrder;
+    public SearchGraph getSearchGraph() {
+        return searchGraph;
     }
 
 
@@ -303,16 +286,6 @@ public class FlatLinguist implements  Linguist {
 
 
     /**
-     * Retrieves initial search state
-     * 
-     * @return the set of initial search state
-     */
-    public SearchState getInitialSearchState() {
-        return initialSentenceHMMState;
-    }
-
-
-    /**
      * Compiles the grammar into a sentence hmm.  A GrammarJob is
      * created for the initial grammar node and added to the
      * GrammarJob queue. While there are jobs left on the grammar job
@@ -370,12 +343,9 @@ public class FlatLinguist implements  Linguist {
         }
         Timer.stop("  connectNodes");
 
-
-        // now find the starting state and attach it to the
-        // initialSentenceHMMState.
-
-        // get the starting state
-        initialSentenceHMMState = findStartingState();
+        SentenceHMMState initialState = findStartingState();
+        
+        searchGraph = new FlatSearchGraph(initialState);
 
         Timer.stop("compile");
         // Now that we are all done, dump out some interesting
@@ -390,7 +360,7 @@ public class FlatLinguist implements  Linguist {
                 gstate.dumpInfo();
             }
         }
-        return SentenceHMMState.collectStates(initialSentenceHMMState);
+        return SentenceHMMState.collectStates(initialState);
     }
 
 
@@ -476,6 +446,51 @@ public class FlatLinguist implements  Linguist {
         return (GState) nodeStateMap.get(node);
     }
 
+
+
+    /**
+     * The search graph that is produced by the flat linguist.
+     */
+    private final static Class[] searchStateOrder = {
+            NonEmittingHMMState.class,
+            BranchState.class,
+            GrammarState.class,
+            PronunciationState.class,
+            ExtendedUnitState.class,
+            HMMStateState.class
+        };
+    
+    class FlatSearchGraph implements SearchGraph {
+        /**
+         * An array of classes that represents the order 
+         * in which the states will be returned.
+         */
+
+        private SearchState initialState;
+        
+        /**
+         * Constructs a flast search graph with the given initial state
+         * @param initialState the initial state
+         */
+        FlatSearchGraph(SearchState initialState) {
+            this.initialState = initialState;
+        }
+
+        /* (non-Javadoc)
+         * @see edu.cmu.sphinx.linguist.SearchGraph#getInitialState()
+         */
+        public SearchState getInitialState() {
+            return initialState;
+        }
+
+        /* (non-Javadoc)
+         * @see edu.cmu.sphinx.linguist.SearchGraph#getSearchStateOrder()
+         */
+        public Class[] getSearchStateOrder() {
+            return searchStateOrder;
+        }
+    }
+    
     /**
      * This is a nested class that is used to manage the construction
      * of the states in a grammar node.  There is one GState created

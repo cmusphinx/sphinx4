@@ -71,7 +71,7 @@ public class LinguistDumper implements LinguistProcessor  {
 	try {
 	    FileOutputStream fos = new FileOutputStream(fileName);
 	    PrintStream out = new PrintStream(fos);
-	    dumpSearchGraph(out, linguist.getInitialSearchState());
+	    dumpSearchGraph(out, linguist.getSearchGraph().getInitialState());
 	    out.close();
 	} catch (FileNotFoundException fnfe) {
 	    System.out.println("Can't dump to file " 

@@ -284,25 +284,16 @@ public interface Linguist {
 
 
     /**
-     * Retrieves initial search state
+     * Retrieves search graph
      * 
-     * @return the set of initial search state
+     * @return the search graph
      */
-    public SearchState getInitialSearchState();
+    public SearchGraph getSearchGraph();
+
 
 
     /**
-     * Returns an array of classes that represents the order 
-     * in which the states will be returned.
-     *
-     * @return an array of classes that represents the order 
-     *     in which the states will be returned
-     */
-    public Class[] getSearchStateOrder();
-
-
-    /**
-     * Called before a recognitino
+     * Called before a recognition
      */
     public void start();
 

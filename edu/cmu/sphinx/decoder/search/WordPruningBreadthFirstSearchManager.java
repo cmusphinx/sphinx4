@@ -350,13 +350,13 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
         try {
             skewMap = new HashMap();
-            stateOrder = linguist.getSearchStateOrder();
+            stateOrder = linguist.getSearchGraph().getSearchStateOrder();
             activeBucket = new SimpleActiveListManager(props, stateOrder);
             if (buildWordLattice) {
                 loserManager = new AlternateHypothesisManager(props);
             }
 
-            SearchState state = linguist.getInitialSearchState();
+            SearchState state = linguist.getSearchGraph().getInitialState();
             
             activeList = (ActiveList)
                 Class.forName

@@ -317,7 +317,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 		PROP_ACTIVE_LIST_TYPE_DEFAULT)).newInstance();
 	    newActiveList.setProperties(props);
 
-	    SearchState state = linguist.getInitialSearchState();
+	    SearchState state = linguist.getSearchGraph().getInitialState();
 
 	    newActiveList.add(new Token(state, currentFrameNumber));
 	    activeList = newActiveList;

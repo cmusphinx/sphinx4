@@ -43,7 +43,7 @@ public class LinguistStats implements LinguistProcessor {
         List queue = new LinkedList();
         Set visitedStates = new HashSet();
         int stateCount = 0;
-        queue.add(linguist.getInitialSearchState());
+        queue.add(linguist.getSearchGraph().getInitialState());
         while (queue.size() > 0) {
             SearchState state = (SearchState) queue.remove(0);
             if (!visitedStates.contains(state)) {

@@ -104,7 +104,7 @@ public interface LanguageModel {
 	    	
 
     /**
-     * Called before a recognitino
+     * Called before a recognition
      */
     public void start();
 
