@@ -101,7 +101,7 @@
     <!-- ******************************************************** -->
     
     <component name="jsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar">
-        <property name="baseGrammarURL" value="file:./"/>
+        <property name="grammarLocation" value="file:./"/>
         <property name="dictionary" value="dictionary"/>
         <property name="grammarName" value="player.player"/>
         <property name="logMath" value="logMath"/>

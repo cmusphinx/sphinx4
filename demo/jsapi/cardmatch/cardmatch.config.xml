@@ -30,7 +30,7 @@
     <!-- ******************************************************** -->   
     
     <component name="cardMatch" 
-                type="demo.jsapi.cardmatch.CardMatch">
+               type="demo.jsapi.cardmatch.CardMatch">
         <property name="recognizer" value="${recognizer}"/>
         <property name="microphone" value="microphone"/>
         <property name="grammar" value="jsgfGrammar"/>
@@ -121,10 +121,9 @@
         
     <component name="jsgfGrammar" 
                 type="edu.cmu.sphinx.jsapi.JSGFGrammar">
-        <property name="baseGrammarURL" value="file:./"/>
+        <property name="grammarLocation" value="file:./"/>
         <property name="dictionary" value="dictionary"/>
-        <property name="grammarName" value="cardmatch"/>
-         
+        <property name="grammarName" value="cardmatch"/>         
         <property name="logMath" value="logMath"/>
     </component>
     

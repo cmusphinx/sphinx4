@@ -104,4 +104,25 @@ your environment to use JSAPI.
 	     compress="true"/>
     </target>
 
+    <target name="compile_sphinx_hellongram">
+	<mkdir dir="${classes_dir}/demo/sphinx/hellongram"/>
+	<javac debug="true"
+	       source="1.4"
+	       deprecation="true"
+	       srcdir="${src_dir}/demo/sphinx/hellongram"
+	       destdir="${classes_dir}">
+	    <classpath refid="libs"/>
+	</javac>
+	<copy file="${src_dir}/demo/sphinx/hellongram/digits.lm"
+	      todir="${classes_dir}/demo/sphinx/hellongram"/>
+	<copy file="${src_dir}/demo/sphinx/hellongram/hellongram.config.xml"
+	      todir="${classes_dir}/demo/sphinx/hellongram"/>
+	<mkdir dir="${bin_dir}"/>
+        <jar destfile="${bin_dir}/HelloNGram.jar" 
+	     manifest="${src_dir}/demo/sphinx/hellongram/hellongram.Manifest"
+	     basedir="${classes_dir}"
+	     includes="demo/sphinx/hellongram/**"
+	     filesonly="true"
+	     compress="true"/>
+    </target>
 </project>
