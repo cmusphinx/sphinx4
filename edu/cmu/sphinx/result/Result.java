@@ -397,7 +397,7 @@ public class Result {
         StringBuffer sb = new StringBuffer();
 
         // get to the first emitting token
-        while (token != null & !token.isEmitting()) {
+        while (token != null && !token.isEmitting()) {
             token = token.getPredecessor();
         }
 
