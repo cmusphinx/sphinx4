@@ -283,7 +283,7 @@ function dumpTitle(  i) {
     }
 
     for (i = 0; i < systemCount; i++) {
-	detailLink = "AutoGen" mode title systemLinkName[systemName[i]] "_" machine ".html";
+	detailLink = "regressionReports/AutoGen" mode title systemLinkName[systemName[i]] "_" machine ".html";
         printf("<th> <a href=\"%s\">%s</a>", detailLink, systemTitle[systemName[i]]);
     }
     printf("<th> %s ", systemTitle["s4"]); 
