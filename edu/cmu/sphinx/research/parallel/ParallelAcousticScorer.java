@@ -102,11 +102,8 @@ public class ParallelAcousticScorer implements AcousticScorer {
 	    for (Iterator i = stateTokenList.iterator(); i.hasNext(); ) {
 		ParallelToken token = (ParallelToken) i.next();
                 if (!token.isPruned()) {
-                    ParallelHMMStateState hmmStateState = 
-                        (ParallelHMMStateState)token.getSearchState();
                     if (feature.hasContent()) {
-                        float score = hmmStateState.getScore(feature);
-                        token.applyScore(score, feature);
+                        token.calculateScore(feature);
                     } else {
                         System.out.println("non-content feature " +
                                            feature + " id " + feature.getID());
