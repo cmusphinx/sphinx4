@@ -264,7 +264,13 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 	int end = job.getStart() + job.getSize();
 	for (int i = job.getStart(); i < end && i < scoreables.length; i++) {
             Scoreable scoreable = scoreables[i];
-            scoreable.calculateScore(curFeature);
+	    if (scoreable.getFrameNumber() != curFeature.getID()) {
+		throw new Error
+		    ("Frame number mismatch: Token: " + 
+		     scoreable.getFrameNumber() +
+		     "  Feature: " + curFeature.getID());
+	    } 
+	    scoreable.calculateScore(curFeature);
 	}
     }
 
