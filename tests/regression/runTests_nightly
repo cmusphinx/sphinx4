@@ -43,6 +43,8 @@
 ./runTest ../performance/rm1 rm1_bigram_quick             -Dskip=5 rm1_bigram
 ./runTest ../performance/rm1 rm1_trigram_quick            -Dskip=5 rm1_trigram
 
+./runTest ../performance/wsj5k wsj5k_trigram
+
 ./runLiveTest ../performance/tidigits tidigits_wordlist_live_quick  -Dskip=5 tidigits_wordlist_live
 ./runLiveTest ../performance/an4 an4_words_bigram_live
 
