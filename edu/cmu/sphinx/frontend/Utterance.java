@@ -52,18 +52,15 @@ public class Utterance {
         audioBuffer = new Vector();
 
         // get the Sphinx properties
-        SphinxProperties properties = 
-            SphinxProperties.getSphinxProperties(context);
+        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 
-        bitsPerSample = properties.getInt
-	    (FrontEnd.PROP_PREFIX + FrontEnd.PROP_BITS_PER_SAMPLE, 16);
-        sampleRate = properties.getInt
-	    (FrontEnd.PROP_PREFIX + FrontEnd.PROP_SAMPLE_RATE, 16000);
+        bitsPerSample = props.getInt(FrontEnd.PROP_BITS_PER_SAMPLE, 16);
+        sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
         
-        float windowSizeInMs = properties.getFloat
-            (FrontEnd.PROP_PREFIX + FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
-        float windowShiftInMs = properties.getFloat
-            (FrontEnd.PROP_PREFIX + FrontEnd.PROP_WINDOW_SHIFT_MS, 10.0F);
+        float windowSizeInMs = props.getFloat
+	    (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
+        float windowShiftInMs = props.getFloat
+            (FrontEnd.PROP_WINDOW_SHIFT_MS, 10.0F);
         
         windowSizeInBytes = Util.getSamplesPerWindow
             (sampleRate, windowSizeInMs) * 2;

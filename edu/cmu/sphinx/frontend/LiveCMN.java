@@ -48,7 +48,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * which has a default value of 12.0F.
      * This is a front-end dependent magic number.
      */
-    private static final String PROP_INITIAL_MEAN = 
+    private static final String PROP_INITIAL_MEAN = FrontEnd.PROP_PREFIX +
 	"cmn.live.initialCepstralMean";
     
     
@@ -56,7 +56,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * The name of the SphinxProperty for the CMN window size,
      * which has a default value of 500.
      */
-    private static final String PROP_CMN_WINDOW = 
+    private static final String PROP_CMN_WINDOW = FrontEnd.PROP_PREFIX +
 	"cmn.live.windowSize";
     
 
@@ -66,7 +66,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * The shifting window specifies how many cepstrum after which
      * we re-calculate the cepstral mean.
      */
-    private static final String PROP_CMN_SHIFT_WINDOW =
+    private static final String PROP_CMN_SHIFT_WINDOW = FrontEnd.PROP_PREFIX +
 	"cmn.live.shiftWindow";
     
 
@@ -86,16 +86,16 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      *
      * @param name the name of this LiveCMN
      * @param context the context of the SphinxProperties to use
-     * @param acousticProps the SphinxProperties to read acoustic properties
+     * @param sphinxProps the SphinxProperties to read acoustic properties
      * @param predecessor the CepstrumSource from which this normalizer
      *    obtains Cepstrum to normalize
      *
      * @throws IOException if an I/O error occurs
      */
-    public LiveCMN(String name, String context, SphinxProperties acousticProps,
+    public LiveCMN(String name, String context, SphinxProperties sphinxProps,
 		   CepstrumSource predecessor)
         throws IOException {
-        super(name, context, acousticProps);
+        super(name, context, sphinxProps);
         setProperties();
 	initMeansSums();
         this.predecessor = predecessor;
@@ -127,11 +127,11 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * Reads the parameters needed from the static SphinxProperties object.
      */
     private void setProperties() {
-	initialMean = getFloatAcousticProperty(PROP_INITIAL_MEAN, 12.0f);
-	cmnWindow = getIntAcousticProperty(PROP_CMN_WINDOW, 500);
-	cmnShiftWindow = getIntAcousticProperty(PROP_CMN_SHIFT_WINDOW, 800);
-	cepstrumLength = getSphinxProperties().getInt
-            (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
+	SphinxProperties props = getSphinxProperties();
+	initialMean = props.getFloat(PROP_INITIAL_MEAN, 12.0f);
+	cmnWindow = props.getInt(PROP_CMN_WINDOW, 500);
+	cmnShiftWindow = props.getInt(PROP_CMN_SHIFT_WINDOW, 800);
+	cepstrumLength = props.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
     }
 	
 

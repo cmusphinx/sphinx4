@@ -36,21 +36,24 @@ public class MelFilterbank extends DataProcessor implements Filterbank {
      * The name of the Sphinx Property for the number of filters in
      * the filterbank.
      */
-    public static final String PROP_NUMBER_FILTERS = "mel.numFilters";
+    public static final String PROP_NUMBER_FILTERS = FrontEnd.PROP_PREFIX +
+	"mel.numFilters";
 
 
     /**
      * The name of the Sphinx Property for the minimum frequency
      * covered by the filterbank.
      */
-    public static final String PROP_MIN_FREQ = "mel.minfreq";
+    public static final String PROP_MIN_FREQ = FrontEnd.PROP_PREFIX +
+	"mel.minfreq";
 
 
     /**
      * The name of the Sphinx Property for the maximum frequency
      * covered by the filterbank.
      */
-    public static final String PROP_MAX_FREQ = "mel.maxfreq";
+    public static final String PROP_MAX_FREQ = FrontEnd.PROP_PREFIX +
+	"mel.maxfreq";
 
 
     private int sampleRate;
@@ -117,11 +120,13 @@ public class MelFilterbank extends DataProcessor implements Filterbank {
      * Reads the properties.
      */
     public void setProperties() {
-        sampleRate = getIntAcousticProperty(FrontEnd.PROP_SAMPLE_RATE, 16000);
-        minFreq = getDoubleAcousticProperty(PROP_MIN_FREQ, 130);
-        maxFreq = getDoubleAcousticProperty(PROP_MAX_FREQ, 6800);
-        numberFilters = getIntAcousticProperty(PROP_NUMBER_FILTERS, 40);
-        numberFftPoints = getIntAcousticProperty
+	SphinxProperties props = getSphinxProperties();
+
+        sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
+        minFreq = props.getDouble(PROP_MIN_FREQ, 130);
+        maxFreq = props.getDouble(PROP_MAX_FREQ, 6800);
+        numberFilters = props.getInt(PROP_NUMBER_FILTERS, 40);
+        numberFftPoints = props.getInt
 	    (SpectrumAnalyzer.PROP_NUMBER_FFT_POINTS, 512);
     }
 

@@ -13,6 +13,8 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.frontend.util.PropertiesResolver;
+
 import edu.cmu.sphinx.model.acoustic.AcousticModel;
 
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -75,7 +77,6 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
     private Map processors;               // all frontend modules
     private DataSource dataSource;        // source of data to decode
     private FeatureSource featureSource;  // the end of the pipeline
-    private boolean useAcousticModelProperties;
 
     // configuration information
     private String filterBankClass;
@@ -108,15 +109,13 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      * @param dataSource the source of data
      */
     public SimpleFrontEnd(String name, String context, String amName,
-		    DataSource dataSource) throws IOException {
+			  DataSource dataSource) throws IOException {
 	super(name, context);
 	this.amName = amName;
         processors = new HashMap();
         frontends.put(context, this);
         setDataSource(dataSource);
-	useAcousticModelProperties = getSphinxProperties().getBoolean
-	    (PROP_PREFIX + "useAcousticModelProperties", true);
-	setAcousticProperties(getCorrectProperties());
+	setSphinxProperties(getCorrectProperties());
 
         // add other data types here if necessary
 
@@ -132,22 +131,19 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 
 
     /**
-     * Returns the appropriate SphinxProperties to use based on the
-     * "useAcousticModelProperties" property.
+     * Returns the appropriate SphinxProperties by combining the
+     * acoustic model properties and the default properties.
      *
      * @return the appropriate SphinxProperties
      *
      * @throws java.io.IOException if an I/O error occurred
      */
     private SphinxProperties getCorrectProperties() throws IOException {
-	SphinxProperties props = null;
-	if (useAcousticModelProperties) {
-	    props = getAcousticProperties();
-	}
-	if (props == null) {
-	    props = getSphinxProperties();
-	}
-	return props;
+	SphinxProperties sphinxProperties = 
+	    SphinxProperties.getSphinxProperties(getContext());
+	return (PropertiesResolver.resolve
+		(sphinxProperties, getAcousticProperties(),
+		 getContext() + ".frontend"));
     }
 
 
@@ -183,7 +179,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 
         // initialize all the frontend processors
 
-	SphinxProperties props = getCorrectProperties();
+	SphinxProperties props = getSphinxProperties();
 
         Preemphasizer preemphasizer = new Preemphasizer
             ("Preemphasizer", getContext(), props, audioSource);
@@ -246,12 +242,12 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      */
     private Filterbank getFilterbank(SpectrumSource predecessor) {
 	try {
-	    filterBankClass = getStringAcousticProperty
+	    SphinxProperties props = getSphinxProperties();
+	    filterBankClass = props.getString
 		(PROP_FILTERBANK, "edu.cmu.sphinx.frontend.mfc.MelFilterbank");
 	    Filterbank bank = (Filterbank) 
 		Class.forName(filterBankClass).newInstance();
-	    bank.initialize("Filterbank", getContext(), getCorrectProperties(),
-			    predecessor);
+	    bank.initialize("Filterbank", getContext(), props, predecessor);
 	    return bank;
 	} catch (Exception e) {
 	    e.printStackTrace();
@@ -270,13 +266,14 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      */
     private CepstrumProducer getCepstrumProducer(SpectrumSource predecessor) {
 	try {
-	    cepstrumProducerClass = getStringAcousticProperty
+	    SphinxProperties props = getSphinxProperties();
+	    cepstrumProducerClass = props.getString
 		(PROP_CEPSTRUM_PRODUCER,
 		 "edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer");
 	    CepstrumProducer producer = (CepstrumProducer)
 		Class.forName(cepstrumProducerClass).newInstance();
 	    producer.initialize("CepstrumProducer", getContext(), 
-				getCorrectProperties(), predecessor);
+				props, predecessor);
 	    return producer;
 	} catch (Exception e) {
 	    e.printStackTrace();
@@ -291,19 +288,19 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      *
      * @param predecessor the predecessor of this Endpointer
      */
-    private CepstrumSource getEndpointer(CepstrumSource predecessor) {
-	endPointerClass = getSphinxProperties().getString
-	    (PROP_ENDPOINTER, null);
+    private CepstrumSource getEndpointer(CepstrumSource predecessor) 
+	throws IOException {
+	SphinxProperties props = getSphinxProperties();
+
+	endPointerClass = props.getString(PROP_ENDPOINTER, null);
 
         if (endPointerClass != null) {
 	    CepstrumSource endpointer = null;
 
-	    /*
             EnergyEndpointer energyEndpointer = new EnergyEndpointer
-                ("EnergyEndpointer", context, melCepstrum);
+                ("EnergyEndpointer", getContext(), props, predecessor);
             NonSpeechFilter nonSpeechFilter = new NonSpeechFilter
-                ("NonSpeechFilter", context, energyEndpointer);
-	    */
+                ("NonSpeechFilter", getContext(), props, energyEndpointer);
 
 	    return endpointer;
         } else {
@@ -320,17 +317,15 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      */
     private CepstrumSource getCMN(CepstrumSource predecessor) throws 
 	IOException {
-	cmnClass = getSphinxProperties().getString
+	SphinxProperties props = getSphinxProperties();
+	cmnClass = props.getString
 	    (PROP_CMN, "edu.cmu.sphinx.frontend.BatchCMN");
 
 	CepstrumSource cmn = null;
-
 	if (cmnClass.equals("edu.cmu.sphinx.frontend.LiveCMN")) {
-	    cmn = new LiveCMN("LiveCMN", getContext(), 
-			      getCorrectProperties(), predecessor);
+	    cmn = new LiveCMN("LiveCMN", getContext(), props, predecessor);
 	} else if (cmnClass.equals("edu.cmu.sphinx.frontend.BatchCMN")) {
-	    cmn = new BatchCMN("BatchCMN", getContext(), 
-			       getCorrectProperties(), predecessor);
+	    cmn = new BatchCMN("BatchCMN", getContext(), props, predecessor);
 	}
 	return cmn;
     }
@@ -346,13 +341,14 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      */
     private FeatureExtractor getFeatureExtractor(CepstrumSource predecessor) 
 	throws IOException {
-        featureExtractorClass = getSphinxProperties().getString
-            (PROP_FEATURE_EXTRACTOR, 
+	SphinxProperties props = getSphinxProperties();
+        featureExtractorClass = props.getString
+	    (PROP_FEATURE_EXTRACTOR, 
 	     "edu.cmu.sphinx.frontend.DeltasFeatureExtractor");
         try {
 	    FeatureExtractor extractor = (FeatureExtractor) 
 		Class.forName(featureExtractorClass).newInstance();
-            extractor.initialize("FeatureExtractor", getContext(),
+            extractor.initialize("FeatureExtractor", getContext(), props,
 				 predecessor);
             return extractor;
         } catch (Exception e) {
@@ -521,8 +517,6 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 	description += ("------------------\n");
 	description += ("Context          = " + getContext() + "\n");
 	description += ("AM               = " + amName + "\n");
-	description += ("useAMProperties  = " +
-			useAcousticModelProperties+"\n");
 	description += ("DataSource       = " +
 			dataSource.getClass().getName() + "\n");
 	description += ("Preemphasizer    = Preemphasizer\n");

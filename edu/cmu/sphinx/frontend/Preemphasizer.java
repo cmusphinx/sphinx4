@@ -43,7 +43,7 @@ public class Preemphasizer extends DataProcessor implements AudioSource {
      * has a default value of 0.97F.
      */
     private static final String PROP_PREEMPHASIS_FACTOR = 
-    FrontEnd.PROP_PREFIX + "preemphasis.factor";
+	FrontEnd.PROP_PREFIX + "preemphasis.factor";
     
 
     private float preemphasisFactor;

@@ -81,10 +81,9 @@ CepstrumProducer {
      * Reads the properties.
      */
     private void setProperties() {
-        numberPLPFilters = getIntAcousticProperty
-	    (PLPFilterbank.PROP_NUMBER_FILTERS, 40);
-        cepstrumSize = getSphinxProperties().getInt
-	    (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
+	SphinxProperties props = getSphinxProperties();
+        numberPLPFilters = props.getInt(PLPFilterbank.PROP_NUMBER_FILTERS, 40);
+        cepstrumSize = props.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
 	// Just hardcoding this for now
 	LPCOrder = 14;
     }

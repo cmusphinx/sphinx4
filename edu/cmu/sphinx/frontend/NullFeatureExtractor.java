@@ -40,11 +40,12 @@ FeatureExtractor {
      *
      * @param name the name of this NullFeatureExtractor
      * @param context the context
+     * @param props the SphinxProperties to use
      * @param predecessor the CepstrumSource to get Cepstrum from
      */
-    public void initialize(String name, String context,
+    public void initialize(String name, String context, SphinxProperties props,
 			   CepstrumSource predecessor) {
-        super.initialize(name, context, null);
+        super.initialize(name, context, props);
         this.predecessor = predecessor;
 	this.featureID = new IDGenerator();
     }

@@ -30,7 +30,8 @@ SpectrumSource {
      * The name of the SphinxProperty for the number of points
      * in the Fourier Transform, which is 512 by default.
      */
-    public static final String PROP_NUMBER_FFT_POINTS = "fft.numberFftPoints";
+    public static final String PROP_NUMBER_FFT_POINTS = FrontEnd.PROP_PREFIX + 
+	"fft.numberFftPoints";
 
     private AudioSource predecessor;
 
@@ -60,9 +61,9 @@ SpectrumSource {
      * @throws IOException if an I/O error occurs
      */
     public SpectrumAnalyzer(String name, String context, 
-			    SphinxProperties acousticProps,
+			    SphinxProperties sphinxProps,
                             AudioSource predecessor) throws IOException {
-        super(name, context, acousticProps);
+        super(name, context, sphinxProps);
 	setProperties();
         this.predecessor = predecessor;
 	computeLogBase2(this.numberFftPoints);
@@ -166,8 +167,9 @@ SpectrumSource {
      */
     private void setProperties() {
 
-        int sampleRate = getIntAcousticProperty
-	    (FrontEnd.PROP_SAMPLE_RATE, 16000);
+	SphinxProperties props = getSphinxProperties();
+
+        int sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
 
 	/**
 	 * Number of points in the FFT. By default, the value is 512,
@@ -177,10 +179,10 @@ SpectrumSource {
 	 * 511 are symmetrical with the ones between 1 and 254. Therefore,
 	 * we need only return values between 0 and 255.
 	 */
-	numberFftPoints = getIntAcousticProperty(PROP_NUMBER_FFT_POINTS, 512);
+	numberFftPoints = props.getInt(PROP_NUMBER_FFT_POINTS, 512);
 
-        float windowSizeInMs = getSphinxProperties().getFloat
-            (FrontEnd.PROP_PREFIX + FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
+        float windowSizeInMs = props.getFloat
+            (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
 
 	windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);
     }

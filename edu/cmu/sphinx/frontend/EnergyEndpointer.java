@@ -159,7 +159,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     public EnergyEndpointer(String name, String context, 
 			    SphinxProperties props,
                             CepstrumSource predecessor) throws IOException {
-        super(name, context);
+        super(name, context, props);
         setProperties();
         this.predecessor = predecessor;
         this.outputQueue = new LinkedList();

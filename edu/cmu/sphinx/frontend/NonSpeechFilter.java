@@ -112,7 +112,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
      */
     public NonSpeechFilter(String name, String context, SphinxProperties props,
                            CepstrumSource predecessor) throws IOException {
-        super(name, context);
+        super(name, context, props);
 	this.mergeSpeechSegments = getSphinxProperties().getBoolean
 	    (PROP_PREFIX + "mergeSpeechSegments", true);
         this.discardMode = false;

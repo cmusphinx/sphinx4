@@ -94,12 +94,13 @@ public class Windower extends DataProcessor implements AudioSource {
      *    SphinxProperties object
      */
     private void setProperties() {
-        int sampleRate = getIntAcousticProperty
-	    (FrontEnd.PROP_SAMPLE_RATE, 16000);
-        float windowSizeInMs = getSphinxProperties().getFloat
-            (FrontEnd.PROP_PREFIX + FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
-        float windowShiftInMs = getSphinxProperties().getFloat
-            (FrontEnd.PROP_PREFIX + FrontEnd.PROP_WINDOW_SHIFT_MS, 10.0F);
+	SphinxProperties props = getSphinxProperties();
+
+        int sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
+        float windowSizeInMs = props.getFloat
+            (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
+        float windowShiftInMs = props.getFloat
+            (FrontEnd.PROP_WINDOW_SHIFT_MS, 10.0F);
 
         windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);
         windowShift = Util.getSamplesPerShift(sampleRate, windowShiftInMs);

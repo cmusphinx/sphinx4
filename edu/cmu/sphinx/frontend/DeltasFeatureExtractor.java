@@ -45,20 +45,20 @@ FeatureExtractor {
      * DeltasFeatureExtractor, which has a default value of 3.
      */
     private static final String PROP_FEATURE_WINDOW =
-    FeatureExtractor.PROP_PREFIX + "windowSize";
+	FeatureExtractor.PROP_PREFIX + "windowSize";
     
     /**
      * The name of the SphinxProperty for the feature type to compute.
      */
     private static final String PROP_FEATURE_TYPE =
-    FeatureExtractor.PROP_PREFIX + "featureType";
+	FeatureExtractor.PROP_PREFIX + "featureType";
 
     /**
      * The name of the SphinxProperty for the size of the circular
      * Cepstra buffer, which has a default value of 256.
      */
     private static final String PROP_CEP_BUFFER_SIZE =
-    FeatureExtractor.PROP_PREFIX + "cepstraBufferSize";
+	FeatureExtractor.PROP_PREFIX + "cepstraBufferSize";
 
 
     private int featureBlockSize = 25;
@@ -94,11 +94,13 @@ FeatureExtractor {
      *
      * @param name the name of this DeltasFeatureExtractor
      * @param context the context of interest
+     * @param props the SphinxProperties to use
      * @param predecessor the CepstrumSource to get Cepstrum from
      */
-    public DeltasFeatureExtractor(String name, String context,
+    public DeltasFeatureExtractor(String name, String context, 
+				  SphinxProperties props,
 				  CepstrumSource predecessor) {
-	initialize(name, context, predecessor);
+	initialize(name, context, props, predecessor);
     }
 
     
@@ -107,11 +109,12 @@ FeatureExtractor {
      *
      * @param name the name of this DeltasFeatureExtractor
      * @param context the context of interest
+     * @param props the SphinxProperties to use
      * @param predecessor the CepstrumSource to get Cepstrum from
      */
-    public void initialize(String name, String context,
+    public void initialize(String name, String context, SphinxProperties props,
 			   CepstrumSource predecessor) {
-	super.initialize(name, context, null);
+	super.initialize(name, context, props);
         setProperties();
         this.predecessor = predecessor;
         cepstraBuffer = new float[cepstraBufferSize][];

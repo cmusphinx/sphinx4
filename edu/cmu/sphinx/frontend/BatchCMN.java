@@ -44,14 +44,13 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
      *
      * @param name the name of this BatchCMN
      * @param context the context of the SphinxProperties to use
-     * @param acousticProps the SphinxProperties to read acoustic properties
+     * @param sphinxProps the SphinxProperties to read acoustic properties
      * @param predecessor the CepstrumSource from which this normalizer
      *    obtains Cepstrum to normalize
      */
-    public BatchCMN(String name, String context,
-		    SphinxProperties acousticProps,
+    public BatchCMN(String name, String context, SphinxProperties sphinxProps,
 		    CepstrumSource predecessor) {
-        super(name, context, acousticProps);
+        super(name, context, sphinxProps);
 	setProperties();
         sums = new float[cepstrumLength];
         this.predecessor = predecessor;
