@@ -128,7 +128,6 @@ public class RawRecorder {
         ByteArrayOutputStream out;
         
         public ByteArrayOutputStream stopRecording() {
-            System.out.println("Stop speaking.");
             try {
                 synchronized (lock) {
                     done = true;
@@ -143,8 +142,6 @@ public class RawRecorder {
             byte[] data = new byte[microphone.getBufferSize()];
             out = new ByteArrayOutputStream();
 
-            System.out.println("Start speaking.");
-        
             try {
                 microphone.flush();
                 microphone.start();

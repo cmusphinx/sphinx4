@@ -63,6 +63,14 @@ java -jar bin/AudioTool.jar
 </pre>
 
 <p>
+You can record audio by pressing the "Record" button.  When you do so,
+the label of the "Record" button will change to "Stop."  At this
+time, you can speak into the microphone.  To stop recording, press the
+"Stop" button.  When you do so, the label of the "Stop" button will
+change to "Record" and the tool will play back and display the audio
+you just recorded.
+
+<p>
 You can play the displayed waveform by selecting a region to play, and then
 pressing the "Play" button. You can enlarge or shrink the waveform and
 spectrogram by clicking the "Zoom In" and "Zoom Out" buttons.
@@ -75,6 +83,64 @@ If you are running Linux and have problems with the audio,
 please read the 
 <a href="../../../../../../../doc/Sphinx4-faq.html#microphone_linux">
 Linux JavaSound</a> section.
+
+<p>
+You can also run AudioTool with a single command line option of 
+"-dumpMixers" to dump information about the audio system settings
+that are specific to your machine:
+</p>
+
+<pre>
+java -jar bin/AudioTool.jar -dumpMixers
+Mixer[0]: "Java Sound Audio Engine"
+    Description: Software mixer and synthesizer
+    SourceLineInfo (e.g., speakers):
+        PCM_SIGNED, -1.0 Hz, 8 bit, mono, audio data
+        PCM_UNSIGNED, -1.0 Hz, 8 bit, mono, audio data
+        PCM_SIGNED, -1.0 Hz, 8 bit, stereo, audio data
+        PCM_UNSIGNED, -1.0 Hz, 8 bit, stereo, audio data
+        PCM_SIGNED, -1.0 Hz, 16 bit, mono, little-endian, audio data
+        PCM_SIGNED, -1.0 Hz, 16 bit, mono, big-endian, audio data
+        PCM_SIGNED, -1.0 Hz, 16 bit, stereo, little-endian, audio data
+        PCM_SIGNED, -1.0 Hz, 16 bit, stereo, big-endian, audio data
+        PCM_SIGNED, -1.0 Hz, 8 bit, mono, audio data
+        PCM_UNSIGNED, -1.0 Hz, 8 bit, mono, audio data
+        PCM_SIGNED, -1.0 Hz, 8 bit, stereo, audio data
+        PCM_UNSIGNED, -1.0 Hz, 8 bit, stereo, audio data
+        PCM_SIGNED, -1.0 Hz, 16 bit, mono, little-endian, audio data
+        PCM_SIGNED, -1.0 Hz, 16 bit, mono, big-endian, audio data
+        PCM_SIGNED, -1.0 Hz, 16 bit, stereo, little-endian, audio data
+        PCM_SIGNED, -1.0 Hz, 16 bit, stereo, big-endian, audio data
+    TargetLineInfo (e.g., microphones):
+        none
+Mixer[1]: "Mac OS X,CoreAudio,Audio hardware"
+    Description: No details available
+    SourceLineInfo (e.g., speakers):
+        none
+    TargetLineInfo (e.g., microphones):
+        PCM_SIGNED, 44100.0 Hz, 8 bit, mono, audio data
+        PCM_UNSIGNED, 44100.0 Hz, 8 bit, mono, audio data
+        PCM_SIGNED, 44100.0 Hz, 16 bit, mono, big-endian, audio data
+        PCM_SIGNED, 44100.0 Hz, 16 bit, mono, little-endian, audio data
+        PCM_SIGNED, 44100.0 Hz, 8 bit, stereo, audio data
+        PCM_UNSIGNED, 44100.0 Hz, 8 bit, stereo, audio data
+        PCM_SIGNED, 44100.0 Hz, 16 bit, stereo, big-endian, audio data
+        PCM_SIGNED, 44100.0 Hz, 16 bit, stereo, little-endian, audio data
+Mixer[2]: ""
+    Description: No details available
+    SourceLineInfo (e.g., speakers):
+        none
+    TargetLineInfo (e.g., microphones):
+        PCM_SIGNED, 44100.0 Hz, 8 bit, mono, audio data
+        PCM_UNSIGNED, 44100.0 Hz, 8 bit, mono, audio data
+        PCM_SIGNED, 44100.0 Hz, 16 bit, mono, big-endian, audio data
+        PCM_SIGNED, 44100.0 Hz, 16 bit, mono, little-endian, audio data
+        PCM_SIGNED, 44100.0 Hz, 8 bit, stereo, audio data
+        PCM_UNSIGNED, 44100.0 Hz, 8 bit, stereo, audio data
+        PCM_SIGNED, 44100.0 Hz, 16 bit, stereo, big-endian, audio data
+        PCM_SIGNED, 44100.0 Hz, 16 bit, stereo, little-endian, audio data
+</pre>
+
 </p>
 
     <hr>

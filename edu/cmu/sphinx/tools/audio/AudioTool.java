@@ -26,6 +26,15 @@ import java.util.StringTokenizer;
 import java.util.prefs.Preferences;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.Port;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.TargetDataLine;
+
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -84,9 +93,47 @@ public class AudioTool {
     private static JMenuItem saveMenuItem;
 
     private static JButton playButton;
+    private static JButton recordButton;
     private static JButton zoomInButton;
     private static JButton zoomOutButton;
     private static JButton zoomResetButton;
+
+    /**
+     * Dumps the information about a line.
+     */
+    private static void dumpLineInfo(String indent,
+                                     Line.Info[] lineInfo) {
+        if ((lineInfo == null) || (lineInfo.length == 0)) {
+            System.out.println(indent + "none");
+        }
+        for (int i = 0; i < lineInfo.length; i++) {
+            AudioFormat[] formats = ((DataLine.Info) lineInfo[i]).getFormats();
+            for (int j = 0; j < formats.length; j++) {
+                System.out.println(indent + formats[j]);
+            }
+        }
+    }
+    
+    /**
+     * Lists all the available audio devices.
+     */
+    private static void dumpMixers() {
+        Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
+        
+        for (int i = 0; i < mixerInfo.length; i++) {
+            Mixer mixer = AudioSystem.getMixer(mixerInfo[i]);
+            System.out.println("Mixer[" + i + "]: \""
+                               + mixerInfo[i].getName() + "\"");
+            System.out.println("    Description: "
+                               + mixerInfo[i].getDescription());
+
+            System.out.println("    SourceLineInfo (e.g., speakers):");
+            dumpLineInfo("        ", mixer.getSourceLineInfo());
+            
+            System.out.println("    TargetLineInfo (e.g., microphones):");
+            dumpLineInfo("        ", mixer.getTargetLineInfo());
+        }
+    }
 
     /**
      * Gets a filename.
@@ -370,10 +417,12 @@ public class AudioTool {
                             System.exit(-1);
                         }
                         recorder.start();
+                        recordButton.setText("Stop");
 			saveMenuItem.setEnabled(true);
                     } else {
                         recording = false;
                         audio.setAudioData(recorder.stop());
+                        recordButton.setText("Record");
                         player.play(audioPanel.getSelectionStart(),
                                     audioPanel.getSelectionEnd());
                     }
@@ -401,6 +450,39 @@ public class AudioTool {
                                 audioPanel.getSelectionEnd());
 		}
 	    });
+
+        recordButton = new JButton("Record");
+        recordButton.setEnabled(true);
+        recordButton.addActionListener(new ActionListener() {
+                // [[[WDW - FIXME: this and any other duplicate
+                // buttons should be handled via a shared Action.]]]
+                //
+                public void actionPerformed(ActionEvent evt) {
+                    if (!recording) {
+                        recording = true;
+                        try {
+                            recorder = new RawRecorder(
+                                new AudioFormat(16000.0f, // sample rate
+                                                16,       // sample size
+                                                1,        // chan. (1 == mono)
+                                                true,     // signed
+                                                true));   // big endian
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            System.exit(-1);
+                        }
+                        recorder.start();
+                        recordButton.setText("Stop");
+			saveMenuItem.setEnabled(true);
+                    } else {
+                        recording = false;
+                        audio.setAudioData(recorder.stop());
+                        recordButton.setText("Record");
+                        player.play(audioPanel.getSelectionStart(),
+                                    audioPanel.getSelectionEnd());
+                    }
+                }
+            });
 
         zoomInButton = new JButton("Zoom In");
         zoomInButton.setEnabled(true);
@@ -433,6 +515,7 @@ public class AudioTool {
 		}
 	    });
 
+        buttonPanel.add(recordButton);
         buttonPanel.add(playButton);
         buttonPanel.add(zoomInButton);
         buttonPanel.add(zoomOutButton);
@@ -456,6 +539,11 @@ public class AudioTool {
         filename = prefs.get(FILENAME_PREFERENCE, "untitled.raw");
         file = new File(filename);
 
+        if ((args.length == 1) && (args[0].equals("-dumpMixers"))) {
+            dumpMixers();
+            System.exit(0);
+        }
+        
         try {
             URL url;
             if (args.length > 0) {
