@@ -76,6 +76,7 @@ WARRANTIES.
         <li><a href="#download_and_install">Downloading and Installing</a></li>
 	<li><a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">Acoustic Models</a></li>
 	<li><a href="#language_models">Language Models</a></li>
+	<li><a href="#create_javadocs">Creating Javadocs</a></li>
       </ul>
 
       <h3>Demos</h3>
@@ -132,40 +133,45 @@ WARRANTIES.
   <br>&nbsp;
   <li><a name="capabilities"><b>Capabilities</b></a>
 
+      <p>
+      (<b>NOTE:</b> The links in this section point to local files created by
+      javadoc. Please follow the instructions on Creating Javadocs 
+      to create these links.)
+
       <p>Discrete and continous speech.  
 
-      <p>Generalized pluggable <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/frontend/package-summary.html"><b>front end</b></a> 
+      <p>Generalized pluggable <a href="./javadoc/edu/cmu/sphinx/frontend/package-summary.html"><b>front end</b></a> 
          architecture.
          Includes pluggable implementations of
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/frontend/filter/Preemphasizer.html">preemphasis</a>,
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/frontend/window/RaisedCosineWindower.html">Hamming window</a>,
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/frontend/transform/DiscreteFourierTransform.html">FFT</a>,
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/frontend/frequencywarp/MelFrequencyFilterBank.html">Mel frequency filter bank</a>,
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/frontend/transform/DiscreteCosineTransform.html">discrete cosine transform</a>,
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/frontend/feature/BatchCMN.html">cepstral mean normalization</a>, and
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/frontend/feature/DeltasFeatureExtractor.html">feature extraction</a> of cepstra,
+	 <a href="./javadoc/edu/cmu/sphinx/frontend/filter/Preemphasizer.html">preemphasis</a>,
+	 <a href="./javadoc/edu/cmu/sphinx/frontend/window/RaisedCosineWindower.html">Hamming window</a>,
+	 <a href="./javadoc/edu/cmu/sphinx/frontend/transform/DiscreteFourierTransform.html">FFT</a>,
+	 <a href="./javadoc/edu/cmu/sphinx/frontend/frequencywarp/MelFrequencyFilterBank.html">Mel frequency filter bank</a>,
+	 <a href="./javadoc/edu/cmu/sphinx/frontend/transform/DiscreteCosineTransform.html">discrete cosine transform</a>,
+	 <a href="./javadoc/edu/cmu/sphinx/frontend/feature/BatchCMN.html">cepstral mean normalization</a>, and
+	 <a href="./javadoc/edu/cmu/sphinx/frontend/feature/DeltasFeatureExtractor.html">feature extraction</a> of cepstra,
 	 delta cepstra, double delta cepstra features.
 
-      <p>Generalized pluggable <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/knowledge/language/package-summary.html"><b>language model</b></a> architecture.  Includes
+      <p>Generalized pluggable <a href="./javadoc/edu/cmu/sphinx/knowledge/language/package-summary.html"><b>language model</b></a> architecture.  Includes
          pluggable language model support for
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/knowledge/language/SimpleNGramModel.html">ASCII</a> and 
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/knowledge/language/large/LargeTrigramModel.html">binary</a>
+	 <a href="./javadoc/edu/cmu/sphinx/knowledge/language/SimpleNGramModel.html">ASCII</a> and 
+	 <a href="./javadoc/edu/cmu/sphinx/knowledge/language/large/LargeTrigramModel.html">binary</a>
 	 versions of unigram, bigram, trigram, 
-	 Java Speech API <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/jsapi/JSGFGrammar.html">JSGF</a>, and 
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/decoder/linguist/FSTGrammar.html">FST grammars</a>.  
+	 Java Speech API <a href="./javadoc/edu/cmu/sphinx/jsapi/JSGFGrammar.html">JSGF</a>, and 
+	 <a href="./javadoc/edu/cmu/sphinx/decoder/linguist/FSTGrammar.html">FST grammars</a>.  
 
-      <p>Generalized <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/knowledge/acoustic/package-summary.html"><b>acoustic model</b></a> 
+      <p>Generalized <a href="./javadoc/edu/cmu/sphinx/knowledge/acoustic/package-summary.html"><b>acoustic model</b></a> 
          architecture. Includes pluggable support for 
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/knowledge/acoustic/tiedstate/Sphinx3Loader.html">Sphinx-3 acoustic models</a>.
+	 <a href="./javadoc/edu/cmu/sphinx/knowledge/acoustic/tiedstate/Sphinx3Loader.html">Sphinx-3 acoustic models</a>.
 
-      <p>Generalized <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/decoder/search/package-summary.html"><b>search management</b></a>.
+      <p>Generalized <a href="./javadoc/edu/cmu/sphinx/decoder/search/package-summary.html"><b>search management</b></a>.
          Includes pluggable support for
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/decoder/search/SimpleBreadthFirstSearchManager.html">breadth first</a> and 
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/decoder/search/WordPruningBreadthFirstSearchManager.html">word pruning</a> searches.
+	 <a href="./javadoc/edu/cmu/sphinx/decoder/search/SimpleBreadthFirstSearchManager.html">breadth first</a> and 
+	 <a href="./javadoc/edu/cmu/sphinx/decoder/search/WordPruningBreadthFirstSearchManager.html">word pruning</a> searches.
 
       <p>Speech tools. Includes tools for 
-         <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/tools/audio/package-summary.html">displaying waveforms and spectrograms</a> and
-	 <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/tools/feature/package-summary.html">generating features from audio</a>.
+         <a href="./javadoc/edu/cmu/sphinx/tools/audio/package-summary.html">displaying waveforms and spectrograms</a> and
+	 <a href="./javadoc/edu/cmu/sphinx/tools/feature/package-summary.html">generating features from audio</a>.
 
   </li>
 
@@ -308,6 +314,22 @@ set path=( $path $ANT_HOME/bin )
 
 </li>
 
+
+<br>&nbsp;
+
+<li><a name="create_javadocs"><b>Creating Javadocs</b></a>
+
+<p>
+If you want to build the javadocs, go to the top level directory ("sphinx4"),
+and type:
+</p>
+<pre>ant javadoc</pre>
+<p>This will build javadocs from public classes, displaying only the public methods and fields. In general, this is all the information you will need. If you need more details, such as private or protected classes, you can generate the corresponding javadoc by doing, for example:
+</p>
+<pre>ant -Daccess=private javadoc</pre>
+
+</li>
+
 </ul>
 
 <hr>
@@ -384,16 +406,12 @@ int, only an integer can be used as the value for this property.
 
 <h2>Sphinx-4 for Application Developers</h2>
 <ul>
-  <li><a name="architecture_and_api1"><b>Architecture and API</b></a>
-      <p>The architecture and API can be found in the 
-         <a href="javadoc/index.html">javadoc documentation</a>.
-</p>
-<p>If the previous link failed, please build the javadocs. In fact, rebuilding javadocs something you should do every time there is a major change in your code. To build the javadoc, go to the top level directory ("sphinx4"), and type:
-</p>
-<pre>ant javadoc</pre>
-<p>This will build javadocs from public classes, displaying only the public methods and fields. In general, this is all the information you will need. If you need more details, such as private or protected classes, you can generate the corresponding javadoc by doing, for example:
-</p>
-<pre>ant -Daccess=private javadoc</pre>
+  <li>
+     <a name="architecture_and_api1"><b>Architecture and API</b></a>
+     <p>The architecture and API can be found in the 
+        <a href="javadoc/index.html">javadoc documentation</a>.</p>
+     <p>If the previous is broken, please build the javadocs using the
+        instructions in <a href="#create_javadocs">Creating Javadocs</a>.
   </li>
   <br>&nbsp;
 
@@ -411,6 +429,11 @@ int, only an integer can be used as the value for this property.
   <li><a name="architecture_and_api2"><b>Architecture and API</b></a>
       <p>The architecture and API can be found in the 
          <a href="javadoc/index.html">javadoc documentation</a>.
+      <p>If the previous link is broken, please build the javadocs using
+         the instructions in the <a href="#create_javadocs">
+	 Creating Javadocs</a>. In fact, rebuilding javadocs
+	 is something you should do every time there is a major change
+	 in your code.
   </li>
 
   <br>&nbsp;
