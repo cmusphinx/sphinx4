@@ -18,7 +18,7 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 ############################################################
 
 edu.cmu.sphinx.model.acoustic.format = sphinx3.ascii
-edu.cmu.sphinx.model.acoustic.location = /lab/speech/sphinx3j/data/connected_digits
+edu.cmu.sphinx.model.acoustic.location = /lab/speech/sphinx4/data/connected_digits
 edu.cmu.sphinx.model.acoustic.definition_file = wdclean.500.mdef
 edu.cmu.sphinx.model.acoustic.data_location = wdclean.cd_continuous_8gau
 edu.cmu.sphinx.model.acoustic.FeatureVectorLength = 39
@@ -30,7 +30,7 @@ edu.cmu.sphinx.model.acoustic.FeatureVectorLength = 39
 #
 ############################################################
 
-edu.cmu.sphinx.frontend.MelCepstrumFileProducer.file = /lab/speech/sphinx3j/data/connected_digits/sample_feature_files/FAC_1473533A.08.dbw.mfc.ascii
+edu.cmu.sphinx.frontend.MelCepstrumFileProducer.file = /lab/speech/sphinx4/data/connected_digits/sample_feature_files/FAC_1473533A.08.dbw.mfc.ascii
 edu.cmu.sphinx.frontend.cepstrumSize = 13
 
 
@@ -40,6 +40,6 @@ edu.cmu.sphinx.frontend.cepstrumSize = 13
 #
 ############################################################
 
-edu.cmu.sphinx.search.Dictionary.dictionaryPath=/lab/speech/sphinx3j/data/connected_digits/train.dict
-edu.cmu.sphinx.search.Dictionary.fillerPath=/lab/speech/sphinx3j/data/connected_digits/fillerdict
+edu.cmu.sphinx.search.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/connected_digits/train.dict
+edu.cmu.sphinx.search.Dictionary.fillerPath=/lab/speech/sphinx4/data/connected_digits/fillerdict
 edu.cmu.sphinx.search.SimpleLinguist.isMultiDigitGrammar=true
