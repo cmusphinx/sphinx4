@@ -66,13 +66,12 @@ public class GDLLatticeTest {
             Lattice lattice = 
                 GDLLatticeFactory.getLattice(latticeGDL, dictionary);
             lattice.setLogMath(logMath);
-            lattice.dumpAISee("new.gdl", "New GDL");
+            lattice.dumpAISee("newLattice.gdl", "New Lattice");
 
             SausageMaker sm = new SausageMaker(lattice);
             Sausage s = sm.makeSausage();
 
-            lattice.dumpAISee("mapLattice.gdl", "MAP Lattice");
-            s.dumpAISee("mapSausage.gdl", "MAP Sausage");
+            s.dumpAISee("newSausage.gdl", "New Sausage");
         } catch (IOException e) {
             System.err.println("Problem when loading MAPConfidenceTest: " + e);
             e.printStackTrace();
