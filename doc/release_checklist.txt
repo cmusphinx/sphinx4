@@ -23,7 +23,7 @@ Sphinx-4 Release Steps
     - release it to sourceforge with  'scripts/deployZipCity.sh'
 
 3) Test the Binary Distribution:
-    - jar xvf sphinx4-bin-1.0.zip
+    - jar xvf sphinx4-1.0-bin.zip
     - cd lib
     - chmod a+x jsapi.sh, ./jsapi.sh or ./jsapi.exe
     - cd ..
@@ -49,7 +49,7 @@ Sphinx-4 Release Steps
       not broken. (or use 'linklint /@')
 
 4) Test the Source Distribution:
-    - jar xvf sphinx4-src-1.0.zip
+    - jar xvf sphinx4-1.0-src.zip
     - cd lib
     - chmod a+x jsapi.sh, ./jsapi.sh or ./jsapi.exe
     - cd ..
