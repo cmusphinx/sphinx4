@@ -43,4 +43,12 @@ public interface  Scoreable {
      * @return the normalized score
      */
     public float normalizeScore(float maxScore);
+
+
+    /**
+     * Returns the frame number that this Scoreable should be scored against.
+     *
+     * @return the frame number that this Scoreable should be scored against.
+     */
+    public int getFrameNumber();
 }
