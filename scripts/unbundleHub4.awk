@@ -74,6 +74,7 @@ $1 != ";;"  {
             transcript = transcript " " $i;
         }
     }
+    transcript = tolower(transcript);
 
 
     audioName = directory source "." audioCount "." speechClass ".raw";
