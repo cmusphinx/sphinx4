@@ -538,9 +538,6 @@ jsapi.exe from the lib directory.
 	<delete file="${lib_dir}/sphinx4.jar"/>
 	<delete file="${lib_dir}/${wsj_name}.jar"/>
 	<delete file="${lib_dir}/${tidigits_name}.jar"/>
-	<delete>
-	    <fileset dir="${bin_dir}" includes="*.jar"/>
-        </delete>
     </target>
 
 
