@@ -16,7 +16,7 @@
     <!-- ******************************************************** --> 
     
     <property name="absoluteBeamWidth"         value="-1"/>
-    <property name="relativeBeamWidth"         value="1E-200"/>
+    <property name="relativeBeamWidth"         value="1E-90"/>
     <property name="wordInsertionProbability"  value="1E-36"/>
     <property name="languageWeight"            value="8"/>
     <property name="silenceInsertionProbability" value="1"/>
