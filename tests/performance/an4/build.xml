@@ -32,12 +32,10 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <property name="maximum_heap_size"  value="512m"/>
     <property name="jit"                value="server"/>
     <property name="gc_log_file"        value="gc.txt"/>
-
     <property name="batch_main"               
-	      value="edu.cmu.sphinx.decoder.BatchDecoder"/>
-
-    <property name="live_main"               
-	      value="edu.cmu.sphinx.decoder.LivePretendDecoder"/>
+	      value="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"/>
+    <property name="config" value="an4.config.xml"/>
+    <property name="batch" value="an4.batch"/>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -53,21 +51,15 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.SimpleWordListGrammar.path"
-                         value="an4_words.wordlist"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability"
-                         value="1.0E-25"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth"
-                         value="1E-250"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="grammarPath" value="an4_words.wordlist"/>
+            <sysproperty key="wordInsertionProbability" value="1.0E-25"/>
+            <sysproperty key="relativeBeamWidth" value="1.0E-250"/>
+            <sysproperty key="languageWeight" value="10"/>
+            <arg value="${config}"/> 
             <arg value="an4_words.batch"/> 
         </java>
     </target>
@@ -90,15 +82,12 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="grammar" value="lmGrammar"/> 
+            <sysproperty key="ngramLanguageModel[location]"
                          value="an4_words.flat_unigram.lm"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+            <arg value="${config}"/> 
             <arg value="an4_words.batch"/> 
         </java>
     </target>
@@ -121,15 +110,12 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="grammar" value="lmGrammar"/> 
+            <sysproperty key="ngramLanguageModel[location]"
                          value="an4_words.unigram.lm"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+            <arg value="${config}"/> 
             <arg value="an4_words.batch"/> 
         </java>
     </target>
@@ -152,15 +138,12 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="grammar" value="lmGrammar"/> 
+            <sysproperty key="ngramLanguageModel[location]"
                          value="an4_words.bigram.lm"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+            <arg value="${config}"/> 
             <arg value="an4_words.batch"/> 
         </java>
     </target>
@@ -183,116 +166,20 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="16.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
-                         value="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.NullGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.dictionary.Dictionary.allowMissingWords"
-                         value="false"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                         value="an4_words.trigram.lm"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability"
-                         value="1.0E-20"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+		     <sysproperty key="linguist" value="lexTreeLinguist"/>	
+            <sysproperty key="languageWeight"   value="16.0"/>
+            <sysproperty key="dictionary[allowMissingWords]"   value="false"/>
+            <sysproperty key="ngramLanguageModel[location]>"
+               value="an4_words.trigram.lm"/>
+            <sysproperty key="wordInsertionProbability"  value="1.0E-20"/>
+            <arg value="${config}"/> 
             <arg value="an4_words.batch"/> 
         </java>
     </target>
 
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * an4_words_trigram_flat                                 * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="an4_words_trigram_flat"
-	    description="AN4 words test set with a trigram language model and flat dynamic linquist">
-        <java classpath="${classes_dir}"
-	      classname="${batch_main}"
-	      fork="true">
-            <jvmarg value="-ea"/>
-            <jvmarg value="-${jit}"/>   
-            <jvmarg value="-ms${initial_heap_size}"/>
-            <jvmarg value="-mx${maximum_heap_size}"/> 
-            <jvmarg value="-Xprof"/>
-            <jvmarg value="-Xloggc:${gc_log_file}"/>
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="16"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
-                         value="edu.cmu.sphinx.linguist.flat.FlatDynamicLinguist"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.NullGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.dictionary.Dictionary.allowMissingWords"
-                         value="true"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                         value="an4_words.trigram.lm"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth"
-                         value="-1"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth"
-                         value="1E-80"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth"
-                         value="1E-40"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability"
-                         value=".2"/>
-            <arg value="an4.props"/> 
-            <arg value="an4_words.batch"/> 
-        </java>
-    </target>
 
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * an4_full_trigram_flat                                  * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="an4_full_trigram_flat"
-	    description="AN4 full test set with a trigram language model and flat dynamic linquist">
-        <java classpath="${classes_dir}"
-	      classname="${batch_main}"
-	      fork="true">
-            <jvmarg value="-ea"/>
-            <jvmarg value="-${jit}"/>   
-            <jvmarg value="-ms${initial_heap_size}"/>
-            <jvmarg value="-mx${maximum_heap_size}"/> 
-            <jvmarg value="-Xprof"/>
-            <jvmarg value="-Xloggc:${gc_log_file}"/>
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="16"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
-                         value="edu.cmu.sphinx.linguist.flat.FlatDynamicLinguist"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.NullGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.dictionary.Dictionary.allowMissingWords"
-                         value="true"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                         value="an4_words.trigram.lm"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth"
-                         value="-1"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth"
-                         value="1E-80"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth"
-                         value="1E-40"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability"
-                         value=".2"/>
-            <arg value="an4.props"/> 
-            <arg value="an4_full.batch"/> 
-        </java>
-    </target>
+
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -310,17 +197,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="an4_words.flat_unigram.fst"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="languageWeight"  value="10.0"/>
+            <sysproperty key="grammar" value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" value="an4_words.flat_unigram.fst"/>
+            <arg value="${config}"/> 
             <arg value="an4_words.batch"/> 
         </java>
     </target>
@@ -341,17 +224,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="an4_words.unigram.fst"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="languageWeight"  value="10.0"/>
+            <sysproperty key="grammar" value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" value="an4_words.unigram.fst"/>
+            <arg value="${config}"/> 
             <arg value="an4_words.batch"/> 
         </java>
     </target>
@@ -372,17 +251,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="an4_words.bigram.fst"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="languageWeight"  value="10.0"/>
+            <sysproperty key="grammar" value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" value="an4_words.bigram.fst"/>
+            <arg value="${config}"/> 
             <arg value="an4_words.batch"/> 
         </java>
     </target>
@@ -403,17 +278,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="an4_words.trigram.fst"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="languageWeight"  value="10.0"/>
+            <sysproperty key="grammar" value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" value="an4_words.trigram.fst"/>
+            <arg value="${config}"/> 
             <arg value="an4_words.batch"/> 
         </java>
     </target>
@@ -432,17 +303,15 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.SimpleWordListGrammar.path"
-                         value="an4_spelling.wordlist"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth"
-                         value="1E-250"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="grammarPath" value="an4_spelling.wordlist"/>
+            <sysproperty key="wordInsertionProbability" value="1.0E-25"/>
+            <sysproperty key="relativeBeamWidth" value="1.0E-250"/>
+            <sysproperty key="languageWeight" value="10"/>
+            <arg value="${config}"/> 
             <arg value="an4_spelling.batch"/> 
         </java>
     </target>
@@ -465,15 +334,12 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="grammar" value="lmGrammar"/> 
+            <sysproperty key="ngramLanguageModel[location]"
                          value="an4_spelling.flat_unigram.lm"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+            <arg value="${config}"/> 
             <arg value="an4_spelling.batch"/> 
         </java>
     </target>
@@ -496,15 +362,12 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="grammar" value="lmGrammar"/> 
+            <sysproperty key="ngramLanguageModel[location]"
                          value="an4_spelling.unigram.lm"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+            <arg value="${config}"/> 
             <arg value="an4_spelling.batch"/> 
         </java>
     </target>
@@ -527,15 +390,12 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="grammar" value="lmGrammar"/> 
+            <sysproperty key="ngramLanguageModel[location]"
                          value="an4_spelling.bigram.lm"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+            <arg value="${config}"/> 
             <arg value="an4_spelling.batch"/> 
         </java>
     </target>
@@ -556,17 +416,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="an4_spelling.flat_unigram.fst"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="languageWeight"  value="10.0"/>
+            <sysproperty key="grammar" value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" value="an4_spelling.flat_unigram.fst"/>
+            <arg value="${config}"/> 
             <arg value="an4_spelling.batch"/> 
         </java>
     </target>
@@ -587,17 +443,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="an4_spelling.unigram.fst"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="languageWeight"  value="10.0"/>
+            <sysproperty key="grammar" value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" value="an4_spelling.unigram.fst"/>
+            <arg value="${config}"/> 
             <arg value="an4_spelling.batch"/> 
         </java>
     </target>
@@ -618,17 +470,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="an4_spelling.bigram.fst"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="languageWeight"  value="10.0"/>
+            <sysproperty key="grammar" value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" value="an4_spelling.bigram.fst"/>
+            <arg value="${config}"/> 
             <arg value="an4_spelling.batch"/> 
         </java>
     </target>
@@ -649,17 +497,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="an4_spelling.trigram.fst"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="languageWeight"  value="10.0"/>
+            <sysproperty key="grammar" value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" value="an4_spelling.trigram.fst"/>
+            <arg value="${config}"/> 
             <arg value="an4_spelling.batch"/> 
         </java>
     </target>
@@ -678,19 +522,14 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.SimpleWordListGrammar.path"
-                         value="an4_full.wordlist"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth"
-                         value="1E-250"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="grammarPath" value="an4_full.wordlist"/>
+            <sysproperty key="relativeBeamWidth" value="1.0E-250"/>
+            <sysproperty key="languageWeight" value="10"/>
+            <arg value="${config}"/> 
             <arg value="an4_full.batch"/> 
         </java>
     </target>
@@ -713,15 +552,12 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="grammar" value="lmGrammar"/> 
+            <sysproperty key="ngramLanguageModel[location]"
                          value="an4_full.flat_unigram.lm"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+            <arg value="${config}"/> 
             <arg value="an4_full.batch"/> 
         </java>
     </target>
@@ -744,15 +580,12 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="grammar" value="lmGrammar"/> 
+            <sysproperty key="ngramLanguageModel[location]"
                          value="an4_full.unigram.lm"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+            <arg value="${config}"/> 
             <arg value="an4_full.batch"/> 
         </java>
     </target>
@@ -775,15 +608,12 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="grammar" value="lmGrammar"/> 
+            <sysproperty key="ngramLanguageModel[location]"
                          value="an4_full.bigram.lm"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+            <arg value="${config}"/> 
             <arg value="an4_full.batch"/> 
         </java>
     </target>
@@ -804,17 +634,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="an4_full.flat_unigram.fst"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="languageWeight"  value="10.0"/>
+            <sysproperty key="grammar" value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" value="an4_full.flat_unigram.fst"/>
+            <arg value="${config}"/> 
             <arg value="an4_full.batch"/> 
         </java>
     </target>
@@ -835,17 +661,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="an4_full.unigram.fst"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="languageWeight"  value="10.0"/>
+            <sysproperty key="grammar" value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" value="an4_full.unigram.fst"/>
+            <arg value="${config}"/> 
             <arg value="an4_full.batch"/> 
         </java>
     </target>
@@ -866,17 +688,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="an4_full.bigram.fst"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="languageWeight"  value="10.0"/>
+            <sysproperty key="grammar" value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" value="an4_full.bigram.fst"/>
+            <arg value="${config}"/> 
             <arg value="an4_full.batch"/> 
         </java>
     </target>
@@ -897,17 +715,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xprof"/>
             <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                         value="10.0"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="an4_full.trigram.fst"/>
-            <arg value="an4.props"/> 
+            <sysproperty key="languageWeight"  value="10.0"/>
+            <sysproperty key="grammar" value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" value="an4_full.trigram.fst"/>
+            <arg value="${config}"/> 
             <arg value="an4_full.batch"/> 
         </java>
     </target>

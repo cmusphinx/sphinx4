@@ -34,10 +34,13 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <property name="gc_log_file"        value="gc.txt"/>
 
     <property name="batch_main"               
-	      value="edu.cmu.sphinx.decoder.BatchDecoder"/>
+	      value="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"/>
 
     <property name="live_main"               
-	      value="edu.cmu.sphinx.decoder.LivePretendDecoder"/>
+	      value="edu.cmu.sphinx.tools.live.LiveModeRecognizer"/>
+	      
+    <property name="config" value="hub4.config.xml"/>
+   <property name="batch" value="/lab/speech/sphinx4/data/hub4/eval99/supervised/f0_hub4.batch"/> 
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -56,17 +59,15 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <arg value="hub4.wpbfsm.props"/> 
-            <!-- <arg value="/lab/speech/sphinx4/data/hub4/eval99/supervised/f0_hub4.batch"/> -->
-            <arg value="quick.batch"/> 
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
-    <!-- * hub4_trigram                                           * -->
+    <!-- * hub4_trigram_pooled                                    * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="hub4_trigram_pooled"
@@ -81,16 +82,10 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-    	   <sysproperty key="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative"
-	   		value="false"/> 
-    	   <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.usePooledBatchManager"
-	   		value="true"/> 
-            <arg value="hub4.wpbfsm.props"/> 
-            <arg value="/lab/speech/sphinx4/data/hub4/eval99/supervised/f0_hub4.batch"/> 
+            <sysproperty key="batch[skip]" 					value="${skip}"/> 
+            <sysproperty key="batch[usePooledBatchManager]" value="true"/>
+            <arg value="${config}"/> 
+            <arg value="${batch}"/>
         </java>
     </target>
 
@@ -111,10 +106,12 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <arg value="hub4.flat.props"/> 
-            <arg value="/lab/speech/sphinx4/data/hub4/eval99/supervised/f0_hub4.batch"/> 
+            <sysproperty key="batch[skip]" 					
+            		value="${skip}"/> 
+            <sysproperty key="lexTreeLinguist[languageModel]" 
+            		value="flatUnigramModel"/>
+            <arg value="${config}"/> 
+            <arg value="${batch}"/>
         </java>
     </target>
 
@@ -127,69 +124,19 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <target name="hub4_trigram_live"
             description="Live mode unsupervised HUB-4 tests">
         <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/> 
-             <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.referenceTranscript"
-                          value="/lab/speech/sphinx4/data/hub4/eval99/bn99en_1.stm"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer"
-                          value="50"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.endpoint.LevelTracker.debug"
-                          value="false"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.keepAudioReference"
-                          value="false"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile"
-                          value="/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold"
-                          value="10"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.bytesPerAudioFrame"
-                          value="320"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature"
-                          value="true"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.cmn"
-                          value="edu.cmu.sphinx.frontend.LiveCMN"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType"
-                          value="edu.cmu.sphinx.decoder.search.SortingActiveList"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.endpointer"
-                          value="edu.cmu.sphinx.frontend.endpoint.LevelTracker"/>
-             <arg value="./hub4.wpbfsm.props"/>
-             <arg value="/lab/speech/sphinx4/data/hub4/eval99/unsupervised/bn99en_1.batch"/>
-        </java>
-    </target>
-
-<!-- ********************************************************** -->
-<!-- * Test Targets                                           * -->
-<!-- ********************************************************** -->
-
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * hub4_trigram_test                                      * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="hub4_trigram_test"
-	    description="supervised mode, hub4 f0 trigram evaluation">
-        <java classpath="${classes_dir}"
-	      classname="${batch_main}"
+	      classname="${live_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <arg value="hub4.wpbfsm.props"/> 
-            <arg value="test.batch"/> 
+            <sysproperty key="live[skip]" value="${skip}"/> 
+            <sysproperty key="concatDataSource[skip]" value="${skip}"/> 
+            <sysproperty key="speedTracker[showResponseTime]" value="true"/> 
+            <sysproperty key="frontend" value="mfcLiveFrontEnd"/> 
+            <arg value="${config}"/> 
         </java>
     </target>
 </project>

@@ -29,15 +29,17 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <property name="logger_props"       value=""/>  
 
     <property name="initial_heap_size"  value="128m"/>
-    <property name="maximum_heap_size"  value="512m"/>
+    <property name="maximum_heap_size"  value="500m"/>
     <property name="jit"                value="server"/>
     <property name="gc_log_file"        value="gc.txt"/>
 
     <property name="batch_main"               
-	      value="edu.cmu.sphinx.decoder.BatchDecoder"/>
+	      value="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"/>
 
     <property name="live_main"               
 	      value="edu.cmu.sphinx.decoder.LivePretendDecoder"/>
+    <property name="config" value="rm1.config.xml"/>
+    <property name="batch" value="rm1.batch"/>
 
     <!-- ********************************************************** --> 
     <!-- *                                                        * --> 
@@ -47,29 +49,27 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <target name="rm1_bigram"
             description="rm1 bigram">
         <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability"
-                          value=".1"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                          value="16"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth"
-                          value="1E-80"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                          value="rm1.bigram.lm"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth"
-                          value="1000"/>
-             <arg value="./rm1.clex.props"/>
-             <arg value="./rm1.batch"/>
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+
+			<sysproperty key="absoluteBeamWidth"    value="1000"/>
+			<sysproperty key="relativeBeamWidth"    value="1E-80"/>
+			<sysproperty key="languageWeight"    	value="16"/>
+			<sysproperty key="wordInsertionProbability"    	value="0.1"/>
+            <sysproperty key="linguist" 			value="lexTreeLinguist"/>
+            <sysproperty key="ngramLanguageModel[location]"
+                         value="rm1.bigram.lm"/>
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="2"/>
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -80,26 +80,25 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <!-- ********************************************************** --> 
     <target name="rm1_bigram_fst"
             description="FST version of rm1 bigram">
+
         <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                          value="./rm1.bigram.fst"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                          value="10.0"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                          value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <arg value="./rm1.props"/>
-             <arg value="./rm1.batch"/>
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+            
+            <sysproperty key="grammar" 				value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]" 	value="rm1.bigram.fst"/>
+			<sysproperty key="languageWeight"    	value="10"/>
+			
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -108,32 +107,30 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <!-- * rm1_flat_unigram                                       * --> 
     <!-- *                                                        * --> 
     <!-- ********************************************************** --> 
-    <target name="rm1_flat_unigram"
-            description="flat unigram decode of rm1">
-        <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                          value="9.5"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth"
-                          value="1E-70"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                          value="rm1.flat_unigram.lm"/>
-             <sysproperty key="edu.cmu.sphinx.util.BeamFinder.enable"
-                          value="false"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth"
-                          value="1600"/>
-             <arg value="./rm1.clex.props"/>
-             <arg value="./rm1.batch"/>
+    <target name="rm1_flat_unigram"  description="flat unigram decode of rm1">
+
+ 	    <java classpath="${classes_dir}" classname="${batch_main}" fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+
+			<sysproperty key="absoluteBeamWidth"    		value="1600"/>
+			<sysproperty key="relativeBeamWidth"    		value="1E-70"/>
+			<sysproperty key="languageWeight"    			value="9.5"/>
+			<sysproperty key="wordInsertionProbability"    	value="0.1"/>
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+ 
+            <sysproperty key="linguist" 			value="lexTreeLinguist"/>
+            <sysproperty key="ngramLanguageModel[location]"
+                         value="rm1.flat_unigram.lm"/>
+
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -145,25 +142,23 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <target name="rm1_flat_unigram_fst"
             description="flat unigram fst version of the rm1 decode">
         <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                          value="./rm1.flat_unigram.fst"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                          value="10.0"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                          value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <arg value="./rm1.props"/>
-             <arg value="./rm1.batch"/>
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+            
+            <sysproperty key="grammar" 				value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]"  value="rm1.flat_unigram.fst"/>
+			<sysproperty key="languageWeight"    	value="10"/>
+			
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -174,30 +169,28 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <!-- ********************************************************** --> 
     <target name="rm1_trigram"
             description="trigram decode of rm1">
-        <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability"
-                          value=".1"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                          value="20.0"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth"
-                          value="1E-115"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                          value="rm1.trigram.lm"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth"
-                          value="1400"/>
-             <arg value="./rm1.clex.props"/>
-             <arg value="./rm1.batch"/>
+ 	    <java classpath="${classes_dir}" classname="${batch_main}" fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+
+			<sysproperty key="absoluteBeamWidth"    		value="1400"/>
+			<sysproperty key="relativeBeamWidth"    		value="1E-115"/>
+			<sysproperty key="languageWeight"    			value="20"/>
+			<sysproperty key="wordInsertionProbability"    	value="0.1"/>
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="3"/>
+ 
+            <sysproperty key="linguist" 			value="lexTreeLinguist"/>
+            <sysproperty key="ngramLanguageModel[location]"
+                         value="rm1.trigram.lm"/>
+
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -209,30 +202,26 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <target name="rm1_unigram"
             description="unigram decode of rm1">
         <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                          value="15"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth"
-                          value="1E-210"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                          value="rm1.flat_unigram.lm"/>
-             <sysproperty key="edu.cmu.sphinx.util.BeamFinder.enable"
-                          value="true"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth"
-                          value="2600"/>
-             <arg value="./rm1.clex.props"/>
-             <arg value="./rm1.batch"/>
-        </java>
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+			<sysproperty key="absoluteBeamWidth"    value="2600"/>
+			<sysproperty key="relativeBeamWidth"    value="1E-200"/>
+			<sysproperty key="languageWeight"    	value="15"/>
+			<sysproperty key="wordInsertionProbability"    	value="0.1"/>
+            <sysproperty key="linguist" 			value="lexTreeLinguist"/>
+            <sysproperty key="ngramLanguageModel[location]"  value="rm1.unigram.lm"/>
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
+        </java>      
     </target>
 
     <!-- ********************************************************** --> 
@@ -243,25 +232,23 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <target name="rm1_unigram_fst"
             description="unigram fst decode of rm1">
         <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                          value="./rm1.unigram.fst"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                          value="10.0"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                          value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <arg value="./rm1.props"/>
-             <arg value="./rm1.batch"/>
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+            
+            <sysproperty key="grammar" 				value="fstGrammar"/> 
+            <sysproperty key="fstGrammar[path]"  value="rm1.unigram.fst"/>
+			<sysproperty key="languageWeight"    	value="10"/>
+			
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -272,26 +259,24 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <!-- ********************************************************** --> 
     <target name="rm1_flat_unigram_simple"
             description="flat unigram decode of rm1 using the simple linguist">
-        <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                          value="edu.cmu.sphinx.linguist.language.ngram.large.SimpleNGramModel"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                          value="8"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                          value="rm1.flat_unigram.lm"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <arg value="./rm1.props"/>
-             <arg value="./rm1.batch"/>
+         <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+            <sysproperty key="ngramLanguageModel[location]"  
+            		value="rm1.flat_unigram.lm"/>
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+			<sysproperty key="languageWeight"    	value="8"/>
+			
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -302,28 +287,24 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <!-- ********************************************************** --> 
     <target name="rm1_unigram_simple"
             description="unigram decode of rm1 using the simple linguist">
-        <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                          value="edu.cmu.sphinx.linguist.language.ngram.large.SimpleNGramModel"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
-                          value="1"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                          value="7"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                          value="rm1.unigram.lm"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <arg value="./rm1.props"/>
-             <arg value="./rm1.batch"/>
+         <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+            <sysproperty key="ngramLanguageModel[location]"  
+            		value="rm1.unigram.lm"/>
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+			<sysproperty key="languageWeight"    	value="7"/>
+			
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -334,24 +315,23 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <!-- ********************************************************** --> 
     <target name="rm1_bigram_simple"
             description="bigram decode of rm1 using the simple linguist">
-        <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                          value="edu.cmu.sphinx.linguist.language.ngram.large.SimpleNGramModel"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                          value="rm1.bigram.lm"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <arg value="./rm1.props"/>
-             <arg value="./rm1.batch"/>
+         <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+            <sysproperty key="ngramLanguageModel[location]"  
+            		value="rm1.bigram.lm"/>
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="2"/>
+			
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -363,36 +343,32 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <target name="rm1_bigram_beamfinder"
             description="beamfinder for rm1 bigram">
         <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability"
-                          value=".1"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                          value="16"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth"
-                          value="1E-200"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                          value="rm1.bigram.lm"/>
-             <sysproperty key="edu.cmu.sphinx.util.BeamFinder.enable"
-                          value="true"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth"
-                          value="3000"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.Decoder.showBestToken"
-                          value="false"/>
-             <arg value="./rm1.clex.props"/>
-             <arg value="./rm1.batch"/>
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+
+			<sysproperty key="absoluteBeamWidth"    value="3000"/>
+			<sysproperty key="relativeBeamWidth"    value="1E-200"/>
+			<sysproperty key="languageWeight"    	value="16"/>
+			<sysproperty key="wordInsertionProbability"    	value="0.1"/>
+			<sysproperty key="beamFinder[enable]"    	value="true"/>
+            <sysproperty key="linguist" 			value="lexTreeLinguist"/>
+            <sysproperty key="ngramLanguageModel[location]"
+                         value="rm1.bigram.lm"/>
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="2"/>
+            <sysproperty key="decoder[featureBlockSize]" value="1"/>
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
-
+    
     <!-- ********************************************************** --> 
     <!-- *                                                        * --> 
     <!-- * rm1_trigram_beamfinder                                 * --> 
@@ -401,33 +377,29 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <target name="rm1_trigram_beamfinder"
             description="beam finder for rm1 trigram">
         <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability"
-                          value=".1"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                          value="27.0"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth"
-                          value="1E-200"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                          value="rm1.trigram.lm"/>
-             <sysproperty key="edu.cmu.sphinx.util.BeamFinder.enable"
-                          value="true"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth"
-                          value="4000"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.maxWordsPerFrame"
-                          value="70"/>
-             <arg value="./rm1.clex.props"/>
-             <arg value="./rm1.batch"/>
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+
+			<sysproperty key="absoluteBeamWidth"    value="4000"/>
+			<sysproperty key="relativeBeamWidth"    value="1E-200"/>
+			<sysproperty key="languageWeight"    	value="27"/>
+			<sysproperty key="wordInsertionProbability"    	value="0.1"/>
+			<sysproperty key="beamFinder[enable]"    	value="true"/>
+            <sysproperty key="linguist" 			value="lexTreeLinguist"/>
+            <sysproperty key="ngramLanguageModel[location]"
+                         value="rm1.trigram.lm"/>
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="3"/>
+            <sysproperty key="decoder[featureBlockSize]" value="1"/>
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -438,24 +410,31 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <!-- ********************************************************** --> 
     <target name="rm1_trigram_wpbfsm"
             description="trigram decode of rm1 using the word pruning breadth first search manager ">
-        <java classpath="${classes_dir}"
-              classname="${batch_main}"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.Linguist.languageWeight"
-                          value="20.0"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                          value="rm1.bigram.lm"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <arg value="./rm1.wpbfsm.props"/>
-             <arg value="./rm1.batch"/>
+       <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" 			value="${skip}"/> 
+
+			<sysproperty key="absoluteBeamWidth"    value="2000"/>
+			<sysproperty key="relativeBeamWidth"    value="1E-200"/>
+			<sysproperty key="absoluteWordBeamWidth"    value="22"/>
+			<sysproperty key="relativeWordBeamWidth"    value="1E-80"/>
+			<sysproperty key="languageWeight"    	value="20"/>
+			<sysproperty key="wordInsertionProbability"    	value="0.2"/>
+            <sysproperty key="linguist" 			value="lexTreeLinguist"/>
+            <sysproperty key="decoder[searchManager]" value="wordPruningSearchManager"/>
+            <sysproperty key="ngramLanguageModel[location]"
+                         value="rm1.trigram.lm"/>
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="3"/>
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 </project>

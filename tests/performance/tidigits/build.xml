@@ -33,10 +33,11 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
     <property name="jit"                value="server"/>
 
     <property name="batch_main"               
-	      value="edu.cmu.sphinx.decoder.BatchDecoder"/>
-
+	      value="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"/>
+    <property name="config" value="tidigits.config.xml"/>
+    <property name="batch" value="tidigits.batch"/>
     <property name="live_main"               
-	      value="edu.cmu.sphinx.decoder.LivePretendDecoder"/>
+	      value="edu.cmu.sphinx.tools.live.LiveModeRecognizer"/>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -54,10 +55,9 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <arg value="tidigits.props"/> 
-            <arg value="tidigits.batch"/> 
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -77,17 +77,12 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar" 
 			 value="edu.cmu.sphinx.jsapi.JSGFGrammar"/> 
-            <sysproperty
-                key="edu.cmu.sphinx.jsapi.JSGFGrammar.baseGrammarURL"
-                value="file:./"/>
-            <sysproperty key="edu.cmu.sphinx.jsapi.JSGFGrammar.grammarName" 
-			 value="tidigits"/> 
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
+			<sysproperty key="flatLinguist[grammar]" value="jsgfGrammar"/>
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <arg value="tidigits.props"/> 
-            <arg value="tidigits.batch"/> 
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -107,18 +102,10 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
-                         value="1"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                         value="tidigits.flat_unigram.lm"/>
-            <arg value="tidigits.props"/> 
-            <arg value="tidigits.batch"/> 
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="flatLinguist[grammar]" value="lmGrammar"/>
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -138,14 +125,10 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
-                         value="tidigits.flat_unigram.fst"/>
-            <arg value="tidigits.props"/> 
-            <arg value="tidigits.batch"/> 
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+   			<sysproperty key="flatLinguist[grammar]" value="fstGrammar"/>
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -165,20 +148,10 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
-                         value="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
-                         value="1"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                         value="tidigits.flat_unigram.lm"/>
-            <arg value="tidigits.props"/> 
-            <arg value="tidigits.batch"/> 
+             <sysproperty key="batch[skip]" value="${skip}"/> 
+			 <sysproperty key="linguist" value="lexTreeLinguist"/>				
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
 
@@ -197,22 +170,14 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
-                         value="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
-                         value="2"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                         value="tidigits.bigram.lm"/>
-            <arg value="tidigits.props"/> 
-            <arg value="tidigits.batch"/> 
-        </java>
+			 value="${logger_props}"/>            
+             <sysproperty key="batch[skip]" value="${skip}"/> 
+			 <sysproperty key="linguist" value="lexTreeLinguist"/>	
+             <sysproperty key="ngramLanguageModel[location]" value ="tidigits.bigram.lm"/>		
+             <sysproperty key="ngramLanguageModel[maxDepth]" value ="2"/>		
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
+         </java>
     </target>
 
     <!-- ********************************************************** -->
@@ -231,55 +196,15 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
-                         value="2"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                         value="tidigits.bigram.lm"/>
-            <arg value="tidigits.props"/> 
-            <arg value="tidigits.batch"/> 
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="flatLinguist[grammar]" value="lmGrammar"/>
+             <sysproperty key="ngramLanguageModel[maxDepth]" value ="2"/>	
+             <sysproperty key="ngramLanguageModel[location]" value ="tidigits.bigram.lm"/>	
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
         </java>
     </target>
-
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * tidigits_bigram_flat                                   * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="tidigits_bigram_flat"
-	    description="TIDIGITS test set with a bigram language model and the flat linguist">
-        <java classpath="${classes_dir}"
-	      classname="${batch_main}"
-	      fork="true">
-            <jvmarg value="-ea"/>
-            <jvmarg value="-${jit}"/>   
-            <jvmarg value="-ms${initial_heap_size}"/>
-            <jvmarg value="-mx${maximum_heap_size}"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
-                         value="edu.cmu.sphinx.linguist.flat.FlatLinguist"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
-                         value="2"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                         value="tidigits.bigram.lm"/>
-            <arg value="tidigits.props"/> 
-            <arg value="tidigits.batch"/> 
-        </java>
-    </target>
-
-
+    
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * tidigits_trigram_lex                                   * -->
@@ -295,22 +220,14 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
-                         value="3"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
-                         value="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                         value="tidigits.trigram.lm"/>
-            <arg value="tidigits.props"/> 
-            <arg value="tidigits.batch"/> 
-        </java>
+			 value="${logger_props}"/>            
+             <sysproperty key="batch[skip]" value="${skip}"/> 
+			 <sysproperty key="linguist" value="lexTreeLinguist"/>	
+             <sysproperty key="ngramLanguageModel[location]" value ="tidigits.trigram.lm"/>		
+             <sysproperty key="ngramLanguageModel[maxDepth]" value ="3"/>		
+            <arg value="${config}"/> 
+            <arg value="${batch}"/> 
+         </java>
     </target>
 
     <!-- ********************************************************** --> 
@@ -324,34 +241,19 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <arg line="-f reference.txt hypothesis.txt transcript.txt"/>
         </exec>
         <java classpath="${classes_dir}"
-              classname="edu.cmu.sphinx.decoder.LivePretendDecoder"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-	     <sysproperty key="edu.cmu.sphinx.frontend.FrontEndFactory.pipelines"
-	                  value="mfc_ep"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.alignInterval"
-                          value="870"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileDataSource.silenceFile"
-                          value="/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileDataSource.skip"
-                          value="${skip}" />
-             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileDataSource.batchFile"
-                          value="tidigits.batch" />
-             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileDataSource.transcriptFile"
-                          value="reference.txt" />
-             <sysproperty key="edu.cmu.sphinx.frontend.util.StreamDataSource.bytesPerRead"
-                          value="320"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature"
-                          value="true"/>
-             <arg value="tidigits.props"/>
+	      classname="${live_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="live[skip]" value="${skip}"/> 
+            <sysproperty key="concatDataSource[skip]" value="${skip}"/> 
+            <sysproperty key="speedTracker[showResponseTime]" value="true"/> 
+            <sysproperty key="frontend" value="mfcLiveFrontEnd"/> 
+            <arg value="${config}"/> 
         </java>
     </target>
 
@@ -366,7 +268,7 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <arg line="-f reference.txt hypothesis.txt transcript.txt"/>
         </exec>
         <java classpath="${classes_dir}"
-	      classname="edu.cmu.sphinx.decoder.LivePretendDecoder"
+	      classname="${live_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
             <jvmarg value="-${jit}"/>   
@@ -374,25 +276,14 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="java.util.logging.config.file"
 			 value="${logger_props}"/>
-	    <sysproperty key="edu.cmu.sphinx.frontend.FrontEndFactory.pipelines"
-	                  value="mfc_ep"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileDataSource.skip"
-                         value="${skip}"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileDataSource.transcriptFile"
-                         value="reference.txt"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileDataSource.silenceFile"
-                         value="/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw"/>
-	    <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileDataSource.batchFile"
+            <sysproperty key="live[skip]" value="${skip}"/> 
+            <sysproperty key="concatDataSource[skip]" value="${skip}"/> 
+            <sysproperty key="concatDataSource[skip]" value="${skip}"/> 
+            <sysproperty key="concatDataSource[batchFile]" 
 	                 value="../an4/an4_words.batch"/>
-            <sysproperty key="edu.cmu.sphinx.frontend.util.StreamDataSource.bytesPerRead"
-                         value="320"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature"
-                         value="true"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.hypothesisTranscript"
-                         value="hypothesis.txt"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.LivePretendDecoder.alignInterval"
-                         value="870"/>
-            <arg value="tidigits.props"/>
+            <sysproperty key="frontend" value="mfcLiveFrontEnd"/> 
+            <sysproperty key="speedTracker[showResponseTime]" value="true"/> 
+            <arg value="${config}"/> 
         </java>
     </target>
 </project>
