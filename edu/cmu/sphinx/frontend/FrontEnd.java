@@ -47,7 +47,7 @@ import java.util.Map;
  */
 public class FrontEnd extends DataProcessor {
 
-    private static Map frontends = new HashMap(); 
+    private static Map frontends = new HashMap();
 
     
     /**
@@ -135,6 +135,7 @@ public class FrontEnd extends DataProcessor {
     public static final String PROP_LIVE_CMN = PROP_PREFIX + "cmn.live";
     
     
+    private Map processors;
     private AudioSource audioSource;
     private FeatureSource featureSource;
     private boolean liveCMN = false;
@@ -153,8 +154,8 @@ public class FrontEnd extends DataProcessor {
         
         frontends.put(context, this);
 
-        String endpointer = getSphinxProperties().getString
-            (PROP_ENDPOINTER, "none");
+        // add all the processors to the hashmap
+        processors = new HashMap();
 
         liveCMN = getSphinxProperties().getBoolean(PROP_LIVE_CMN, false);
 
@@ -177,16 +178,26 @@ public class FrontEnd extends DataProcessor {
 
         CepstrumSource cepstrumSource = melCepstrum;
 
+        // initialize the endpointer
+
+        String endpointer = getSphinxProperties().getString
+            (PROP_ENDPOINTER, "none");
+
         if (endpointer.equals("edu.cmu.sphinx.frontend.EnergyEndpointer")) {
-            cepstrumSource = createEnergyEndpointer(context, melCepstrum);
+            cepstrumSource = (CepstrumSource) addProcessor
+                (createEnergyEndpointer(context, melCepstrum));
         }
+
+        // initialize the CMN and FeatureExtractor
 
         CepstrumSource cmn = null;
 
         if (liveCMN) {
-            cmn = new LiveCMN("LiveCMN", context, cepstrumSource);
+            cmn = (CepstrumSource) addProcessor
+                (new LiveCMN("LiveCMN", context, cepstrumSource));
         } else {
-            cmn = new BatchCMN("BatchCMN", context, cepstrumSource);
+            cmn = (CepstrumSource) addProcessor
+                (new BatchCMN("BatchCMN", context, cepstrumSource));
         }
 
         FeatureExtractor extractor = new FeatureExtractor
@@ -194,6 +205,13 @@ public class FrontEnd extends DataProcessor {
 
         setAudioSource(audioSource);
         setFeatureSource(extractor);
+
+        addProcessor(preemphasizer);
+        addProcessor(windower);
+        addProcessor(spectrumAnalyzer);
+        addProcessor(melFilterbank);
+        addProcessor(melCepstrum);
+        addProcessor(extractor);
     }
 
 
@@ -206,8 +224,8 @@ public class FrontEnd extends DataProcessor {
      *
      * @return the endpointer which is a CepstrumSource
      */
-    private CepstrumSource createEnergyEndpointer(String context,
-                                                  CepstrumSource predecessor) 
+    private NonSpeechFilter createEnergyEndpointer(String context,
+                                                   CepstrumSource predecessor) 
     throws IOException {
         EnergyEndpointer energyEndpointer = new EnergyEndpointer
             ("EnergyEndpointer", context, predecessor);
@@ -230,6 +248,36 @@ public class FrontEnd extends DataProcessor {
             return (FrontEnd) frontend;
         } else {
             return null;
+        }
+    }
+
+
+    /**
+     * Adds the given DataProcessor into the list of processors,
+     * with the name of the processor as key.
+     *
+     * @param processor the DataProcessor to add
+     *
+     * @return the added DataProcessor
+     */
+    private DataProcessor addProcessor(DataProcessor processor) {
+        processors.put(processor.getName(), processor);
+        return processor;
+    }
+
+
+    /**
+     * Returns the DataProcessor in the FrontEnd with the given name.
+     *
+     * @return the DataProcessor with the given name, or null if no
+     *    such DataProcessor
+     */
+    public DataProcessor getProcessor(String processorName) {
+        Object object = processors.get(processorName);
+        if (object == null) {
+            return null;
+        } else {
+            return (DataProcessor) object;
         }
     }
 
