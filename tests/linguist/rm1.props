@@ -115,10 +115,13 @@ edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-10
 #edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80
-edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=10.0
 
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist
 edu.cmu.sphinx.decoder.Decoder.showErrorToken=false
 edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
+edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=6
+edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel
+edu.cmu.sphinx.knowledge.language.LanguageModel.location=rm1.flat_unigram.lm 
+
