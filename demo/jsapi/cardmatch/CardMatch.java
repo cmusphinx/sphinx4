@@ -94,7 +94,8 @@ public class CardMatch implements Recorder {
      *
      * @param context the properties context
      */
-    public CardMatch(String context) throws IOException {
+    public CardMatch(String context) 
+        throws InstantiationException, IOException {
 
         System.out.println("   Loading decoder...");
 	
