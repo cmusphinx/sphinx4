@@ -62,14 +62,14 @@ public class BigramFollowers {
             mid = (start + end)/2;
             int midWordID = getWordID(mid);
             // System.out.println("mid is: " + mid + ", ID: " + midWordID);
-            if (midWordID == secondWordID) {
-                bigram = getBigramProbability(mid);
-                break;
-            } else if (midWordID < secondWordID) {
+	    if (midWordID < secondWordID) {
                 start = mid + 1;
             } else if (midWordID > secondWordID) {
                 end = mid;
-            }
+            } else {
+		bigram = getBigramProbability(mid);
+                break;
+	    }
         }
         return bigram;
     }
