@@ -266,7 +266,7 @@ public class CardMatch implements Recorder {
 	    CardMatch cardMatch = new CardMatch(context);
 
 	} catch (Exception e) {
-	    e.printStackTrace();
+            System.err.println("Error: " + e.getMessage());
 	}
     }
 }

@@ -42,7 +42,6 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="all"
             description="Compiles all the tests.">
-	    <mkdir dir="${classes_dir}/tests/knowledge/dictionary/"/>
 	    <javac debug="true"
 	           source="1.4"
 		   deprecation="true"
@@ -64,6 +63,8 @@ NOTE:  Before running the tests, you must have already built
 	          classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
 		  fork="true"
 		  maxmemory="128m">
+                <sysproperty key="java.util.logging.config.file"
+                             value="cardmatch.props"/>
 		  <arg value="cardmatch.props"/>
 	    </java>
     </target>
@@ -94,6 +95,8 @@ NOTE:  Before running the tests, you must have already built
 		               value="true"/>
 		  <sysproperty key="edu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments"
 		               value="false"/>
+                  <sysproperty key="java.util.logging.config.file"
+                             value="cardmatch.props"/>
 	    </java>
     </target>
 
