@@ -63,7 +63,7 @@ NOTE:  Before running the tests, you must have already built
 		  fork="true"
 		  maxmemory="128m">
 		  <arg value="spectrogram.props"/>
-                  <arg value="man.tc.zb.wav.raw"/>
+                  <arg value="an229-msjm-b.raw"/>
             </java>
     </target>
 
