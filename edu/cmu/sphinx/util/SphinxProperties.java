@@ -6,6 +6,7 @@ package edu.cmu.sphinx.util;
 import java.net.URL;
 import java.util.Properties;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -117,6 +118,15 @@ public class SphinxProperties {
      */
     public String getContext() {
 	return contextName;
+    }
+
+    /**
+     * Prints this property list out to the specified output stream
+     *
+     * @param out an output stream.
+     */
+    public void list(PrintStream out) {
+	props.list(out);
     }
 
 
