@@ -411,6 +411,7 @@ public class Microphone extends DataProcessor implements AudioSource {
          */
         public void clear() {
             utterances.clear();
+            currentUtterance = null;
         }
         
         
