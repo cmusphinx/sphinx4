@@ -58,8 +58,9 @@ public class FeatureFileDumper {
     /**
      * Constructs a FeatureFileDumper.
      * 
-     * @param propsFile
-     *                the Sphinx properties file
+     * @param cm
+     *                the Sphinx configuration manager
+     * @param inputAudioFile the name of the input file 
      * @param inputAudioFile
      *                the input audio file
      */

@@ -242,7 +242,7 @@ public class FlatLinguist implements Linguist, Configurable {
     /**
      * Returns the log silence insertion probability.
      *
-     * @retun the log silence insertion probability.
+     * @return the log silence insertion probability.
      */
     public float getLogSilenceInsertionProbability() {
         return logSilenceInsertionProbability;
