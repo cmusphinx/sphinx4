@@ -609,7 +609,7 @@ to setup JSAPI.
 	     <fileset dir="." includes="demo/**"/>
 	     <fileset dir="." includes="doc-files/**"/>
 	     <fileset dir="." includes="javadoc/**"/>
-	     <fileset dir="." includes="doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html"/>
+	     <fileset dir="." includes="doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html,doc/Sphinx4-faq.html,doc/UsingSphinxTrainModels.html"/>
 	</copy>
 	<delete dir="${deploy_dir}/sphinx4-${version}/lib/jsapi"/>
 	<jar destfile="${deploy_dir}/sphinx4-${version}-bin.zip"
