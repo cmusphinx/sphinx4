@@ -166,21 +166,19 @@ public class PartitionActiveListFactory implements ActiveListFactory {
         public void replace(Token oldToken, Token newToken) {
             if (oldToken != null) {
                 int location = oldToken.getLocation();
-                if (tokenList[location] != oldToken) {
-                    System.out.println("PartitionActiveList: replace "
-                            + oldToken
-                            + " not where it should have been.  New "
-                            + newToken + " location is " + location + " found "
-                            + tokenList[location]);
-                }
-                tokenList[location] = newToken;
-                newToken.setLocation(location);
-                if (bestToken == null
-                        || newToken.getScore() > bestToken.getScore()) {
-                    bestToken = newToken;
+                // check to see if the old token is still in the list
+                if (location != -1 && tokenList[location] == oldToken) {
+                    tokenList[location] = newToken;
+                    newToken.setLocation(location);
+                    oldToken.setLocation(-1);
+                } else {
+                    add(newToken);
                 }
             } else {
                 add(newToken);
+            }
+            if (bestToken == null || newToken.getScore() > bestToken.getScore()) {
+                bestToken = newToken;
             }
         }
 
