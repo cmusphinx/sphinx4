@@ -20,7 +20,8 @@ regressionDir=`pwd`
 # be executable yet.  So make them executable
 #
 scripts="getTime mailReport makeReport parseLog regressionTest\
-	runAllTests runTest s4_align s4_align_sum"
+	runAllTests runTest s4_align s4_align_sum collectMetrics \
+	getTime makeWebpage pushChanges pushReport whatsNew"
 
 chmod +x $scripts
 
@@ -31,8 +32,6 @@ rootDir=../../
 date=`date +%Y-%m-%d`
 time=`date +%T`
 
-echo $date > .startDate
-echo $time > .startTime
 
 #############################
 # Log the metrics
@@ -40,6 +39,8 @@ echo $time > .startTime
 # Collect the metrics first, before we muddy up the work space
 #
 cd $regressionDir
+echo $date > .startDate
+echo $time > .startTime
 ./collectMetrics >> $logPath
 
 ##########################
@@ -101,3 +102,4 @@ $regressionDir/mailReport
 # Generate the regression test web page
 #################################A
 $regressionDir/pushReport
+$regressionDir/pushChanges

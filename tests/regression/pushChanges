@@ -14,7 +14,7 @@
 #
 
 
-./makeWebpage < regression.log > regression_report.html
-sscp regression_report.html
-sshh mv regression_report.html /home/groups/c/cm/cmusphinx/htdocs
-
+date=`cat .startDate`
+./whatsNew $date > $date.html
+sscp $date.html
+sshh mv $date.html /home/groups/c/cm/cmusphinx/htdocs
