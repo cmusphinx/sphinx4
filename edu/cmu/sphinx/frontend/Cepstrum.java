@@ -88,6 +88,10 @@ public class Cepstrum extends Data {
      * @return a string representation of this Cepstrum
      */
     public String toString() {
-        return (Util.floatArrayToString(cepstrumData));
+	if (cepstrumData != null) {
+	    return ("Cepstrum: " + Util.floatArrayToString(cepstrumData));
+	} else {
+	    return ("Cepstrum: " + getSignal().toString());
+	}
     }
 }

@@ -71,7 +71,11 @@ public class Audio extends Data implements Cloneable {
      * @return a string representation of this Audio
      */
     public String toString() {
-        return Util.doubleArrayToString(audioSamples);
+	if (audioSamples != null) {
+	    return ("Audio: " + Util.doubleArrayToString(audioSamples));
+	} else {
+	    return ("Audio: " + getSignal().toString());
+	}
     }
 
 

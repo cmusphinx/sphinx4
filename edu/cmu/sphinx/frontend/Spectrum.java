@@ -71,6 +71,10 @@ public class Spectrum extends Data {
      * @return a string representation of this Spectrum
      */ 
     public String toString() {
-        return (Util.doubleArrayToString(spectraData));
+	if (spectraData != null) {
+	    return ("Spectrum: " + Util.doubleArrayToString(spectraData));
+	} else {
+	    return ("Spectrum: " + getSignal().toString());
+	}
     }                
 }
