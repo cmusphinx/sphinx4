@@ -17,11 +17,13 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -31,6 +33,7 @@ import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.linguist.WordSearchState;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.util.LogMath;
 
 /**
  * Provides recognition lattice results. Lattices are created from Results
@@ -53,12 +56,13 @@ public class Lattice {
     protected double logBase;
     protected Set edges;
     protected Map nodes;
+    protected LogMath logMath;
+    
     AlternateHypothesisManager loserManager;
 
     {
         edges = new HashSet();
         nodes = new HashMap();
-        logBase = Math.exp(1);
     }
 
     /**
@@ -76,7 +80,7 @@ public class Lattice {
      * @param result the result to convert into a lattice
      */
     public Lattice(Result result) {
-        this.logBase = result.getLogMath().getLogBase();
+        this.logMath = result.getLogMath();
         
         terminalNode = addNode("-1",Dictionary.SENTENCE_END_SPELLING, -1, -1);
 
@@ -146,6 +150,8 @@ public class Lattice {
             Token predecessor = token.getPredecessor();
             if (predecessor != null) {
                 processToken(newNode, predecessor);
+            } else {
+                initialNode = newNode;
             }
             /*
             else {
@@ -444,7 +450,7 @@ public class Lattice {
         }
         out.println("initialNode: " + initialNode.getId());
         out.println("terminalNode: " + terminalNode.getId());
-        out.println("logBase: " + logBase);
+        out.println("logBase: " + logMath.getLogBase());
         out.flush();
     }
 
@@ -486,7 +492,7 @@ public class Lattice {
         //System.err.println( "\tRemoving " + n );
         nodes.remove(n.getId());
 
-        assert checkConsistancy();
+        assert checkConsistency();
     }
 
     /**
@@ -516,7 +522,7 @@ public class Lattice {
         }
         removeNodeAndEdges(n);
 
-        assert checkConsistancy();
+        assert checkConsistency();
     }
 
     /**
@@ -565,16 +571,25 @@ public class Lattice {
      * @return the log base
      */
     public double getLogBase() {
-        return logBase;
+        return logMath.getLogBase();
     }
 
+    /**
+     * @return Returns the logMath object used in this lattice.
+     */
+    public LogMath getLogMath() {
+        return logMath;
+    }
+    
     /**
      * Edge scores are usually log-likelyhood.  Set the log base.
      *
      * @param p_logBase
      */
     public void setLogBase(double p_logBase) {
-        logBase = p_logBase;
+        //TODO: can this be discarded? It's just used for reading text files. Otherwise
+        //need to be able to create LogMath object on the fly.
+        //logMath.setLogBase(p_logBase);
     }
 
     /**
@@ -615,8 +630,8 @@ public class Lattice {
         }
         return l;
     }
-
-    boolean checkConsistancy() {
+    
+    boolean checkConsistency() {
         for (Iterator i = nodes.values().iterator(); i.hasNext();) {
             Node n = (Node) i.next();
             for (Iterator j = n.fromEdges.iterator(); j.hasNext();) {
@@ -650,7 +665,77 @@ public class Lattice {
         return true;
     }
 
-
+    protected void sortHelper(Node n, List sorted, Set visited) {
+        if (visited.contains(n)) {
+            return;
+        }
+        visited.add(n);
+        Iterator e = n.getToEdges().iterator();
+        while (e.hasNext()) {
+            sortHelper(((Edge)e.next()).getToNode(),sorted,visited);
+        }
+        sorted.add(n);
+    }
+    
+    public List sortNodes() {
+        Vector sorted = new Vector(nodes.size());
+        sortHelper(initialNode,sorted,new HashSet());
+        Collections.reverse(sorted);
+        return sorted;
+    }
+    
+    /**
+     * Compute the utterance-level posterior for every node in the lattice, i.e. the 
+     * probability that this node occurs on any path through the lattice. Uses a 
+     * forward-backward algorithm specific to the nature of non-looping left-to-right 
+     * lattice structures.
+     * 
+     * Node posteriors can be retrieved by calling getPosterior() on Node objects.
+     * 
+     */
+    public void computeNodePosteriors() {      
+        //forward
+        initialNode.setForwardScore(LogMath.getLogOne());
+        List sortedNodes = sortNodes();
+        assert sortedNodes.get(0) == initialNode;
+        ListIterator n = sortedNodes.listIterator();
+        while (n.hasNext()) {            
+            Node currentNode = (Node)n.next();
+            Collection currentEdges = currentNode.getToEdges();
+            for (Iterator i = currentEdges.iterator();i.hasNext();) {
+                Edge edge = (Edge)i.next();
+                double forwardProb = edge.getFromNode().getForwardScore();
+                forwardProb += edge.getAcousticScore() + edge.getLMScore();
+                edge.getToNode().setForwardScore(logMath.addAsLinear((float)forwardProb,
+                        (float)edge.getToNode().getForwardScore()));
+            }
+        }
+        
+        //backward
+        terminalNode.setBackwardScore(LogMath.getLogOne());
+        assert sortedNodes.get(sortedNodes.size()-1) == terminalNode;
+        n = sortedNodes.listIterator(sortedNodes.size()-1);
+        while (n.hasPrevious()) {            
+            Node currentNode = (Node)n.previous();
+            Collection currentEdges = currentNode.getToEdges();
+            for (Iterator i = currentEdges.iterator();i.hasNext();) {
+                Edge edge = (Edge)i.next();
+                double backwardProb = edge.getToNode().getBackwardScore();
+                backwardProb += edge.getAcousticScore() + edge.getLMScore();
+                edge.getFromNode().setBackwardScore(logMath.addAsLinear((float)backwardProb,
+                        (float)edge.getFromNode().getBackwardScore()));
+            }
+        }
+        
+        //inner
+        double normalizationFactor = terminalNode.getForwardScore();
+        for(Iterator i=nodes.values().iterator();i.hasNext();) {
+            Node node = (Node)i.next();
+            node.setPosterior((node.getForwardScore() + node.getBackwardScore())
+                    - normalizationFactor);
+        }
+    }
+     
     /**
      * Self test for Lattices.  Test loading, saving, dynamically creating
      * and optimizing Lattices

@@ -13,6 +13,7 @@ package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.result.Lattice;
 import edu.cmu.sphinx.result.Edge;
+import edu.cmu.sphinx.util.LogMath;
 
 import java.util.StringTokenizer;
 import java.util.Iterator;
@@ -34,7 +35,10 @@ public class Node {
     protected int endTime = -1;
     protected Vector fromEdges;
     protected Vector toEdges;
-
+    protected double forwardScore;
+    protected double backwardScore;
+    protected double posterior;
+    
     {
         fromEdges = new Vector();
         toEdges = new Vector();
@@ -65,6 +69,9 @@ public class Node {
         this.word = word;
         this.beginTime = beginTime;
         this.endTime = endTime;
+        this.forwardScore = LogMath.getLogZero();
+        this.backwardScore = LogMath.getLogZero();
+        this.posterior = LogMath.getLogZero();
     }
 
     /**
@@ -274,7 +281,8 @@ public class Node {
      */
     void dumpAISee(FileWriter f) throws IOException {
         f.write("node: { title: \"" + id + "\" label: \""
-                + getWord() + ":" + getId() + "[" + getBeginTime() + "," + getEndTime() + "]\" }\n");
+                + getWord() + "[" + getBeginTime() + "," + getEndTime() + 
+                " p:" + getPosterior() + "]\" }\n");
     }
 
     /**
@@ -283,7 +291,9 @@ public class Node {
      * @throws IOException
      */
     void dump(PrintWriter f) throws IOException {
-        f.println("node: " + id + " " + word);
+        f.println("node: " + id + " " + word + 
+                //" a:" + getForwardProb() + " b:" + getBackwardProb()
+                " p:" + getPosterior());
     }
 
     /**
@@ -297,5 +307,48 @@ public class Node {
         String label = tokens.nextToken();
 
         lattice.addNode(id, label, 0, 0);
+    }
+    /**
+     * @return Returns the backwardScore.
+     */
+    public double getBackwardScore() {
+        return backwardScore;
+    }
+    /**
+     * @param backwardScore The backwardScore to set.
+     */
+    public void setBackwardScore(double backwardScore) {
+        this.backwardScore = backwardScore;
+    }
+    /**
+     * @return Returns the forwardScore.
+     */
+    public double getForwardScore() {
+        return forwardScore;
+    }
+    /**
+     * @param forwardScore The forwardScore to set.
+     */
+    public void setForwardScore(double forwardScore) {
+        this.forwardScore = forwardScore;
+    }
+    /**
+     * @return Returns the posterior probability of this node.
+     */
+    public double getPosterior() {
+        return posterior;
+    }
+    /**
+     * @param posterior The node posterior probability to set.
+     */
+    public void setPosterior(double posterior) {
+        this.posterior = posterior;
+    }
+    
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return id.hashCode();
     }
 }
