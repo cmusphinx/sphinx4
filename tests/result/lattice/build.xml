@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="all" name="Dictionary tests.">
+
+<description>
+This file is used to run the dictionary tests.
+
+NOTE:  Before running the tests, you must have already built 
+       the sphinx-4 sources by typing "ant" in the top level 
+       sphinx4 directory.
+
+</description>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Properties common to all tests                         * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+
+    <property name="maximum_heap_size"  value="256m"/>
+    <property name="top_dir"		value="../../.."/>
+    <property name="build_dir"		value="${top_dir}/bld"/>
+    <property name="classes_dir"	value="${build_dir}/classes"/>
+    <property name="lib_dir"            value="${top_dir}/lib"/>
+
+    <path id="run.classpath">
+	<pathelement location="${lib_dir}/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
+	<pathelement location="${lib_dir}/jsapi.jar"/>
+        <pathelement path="${classes_dir}"/>
+    </path>
+			
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * The 'none' target.                                     * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="none">
+            <echo>Type 'ant -projecthelp' for possible targets.</echo>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Compile all the test code.                             * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="all"
+            description="Compiles all the tests.">
+	    <mkdir dir="${classes_dir}/tests/result/lattice/"/>
+	    <javac debug="true"
+	           source="1.4"
+		   deprecation="true"
+		   destdir="${classes_dir}"
+		   classpath="${classes_dir}:${lib_dir}/jsapi.jar"
+		   srcdir="."/>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs all the tests.                                    * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="alltests"
+            description="Runs all the tests."
+	    depends="token_graph_dump,lattice_dump">
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs the token graph dump test.                        * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="token_graph_dump"
+	    description="Runs the token graph dump test."
+	    depends="all">
+	    <java classname="tests.result.lattice.TokenGraphDumpTest"
+		  fork="true">
+		  <classpath refid="run.classpath"/>
+		  <jvmarg value="-mx${maximum_heap_size}"/>
+	    </java>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs the lattice dump test.                        * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="lattice_dump"
+	    description="Runs the lattice dump test."
+	    depends="all">
+	    <java classname="tests.result.lattice.LatticeDumpTest"
+		  fork="true">
+		  <classpath refid="run.classpath"/>
+		  <jvmarg value="-mx${maximum_heap_size}"/>
+	          <sysproperty key="wordPruningSearchManager[keepAllTokens]"
+		               value="false"/>
+	    </java>
+    </target>
+
+</project>
