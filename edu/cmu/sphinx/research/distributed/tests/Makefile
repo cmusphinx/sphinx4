@@ -42,4 +42,4 @@ runclient:
 runserver:
 	$(JAVA_CMD) \
 	edu.cmu.sphinx.research.distributed.server.ServerDecoder \
-	tidigits.props
+	server_tidigits.props
