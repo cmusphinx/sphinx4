@@ -28,10 +28,10 @@ GCSPY_FLAGS= -client -Xport3000 -Xverbose -Xwait
 PROFILE_FLAGS= $(GCSPY_FLAGS)
 PROFILE_FLAGS= -Xprof -server
 
-LOG_GC_FLAGS=  -Xloggc:gc.txt
+#LOG_GC_FLAGS=  -Xloggc:gc.txt
 GC_FLAGS = -ms256m -mx1g
 
-# LOGGER_PROPERTIES=trainer.props
+LOGGER_PROPERTIES=trainer.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
 DEBUG_FLAGS=
@@ -50,4 +50,10 @@ default: trainer
 
 trainer:
 	$(JAVA_CMD) \
+	edu.cmu.sphinx.trainer.Trainer trainer.props
+
+copy:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.trainer.Trainer.initialStage=_90_CP_MODEL \
+	-Dedu.cmu.sphinx.trainer.Trainer.finalStage=_90_CP_MODEL \
 	edu.cmu.sphinx.trainer.Trainer trainer.props
