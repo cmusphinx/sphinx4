@@ -10,7 +10,7 @@
  *
  */
 
-package demo.sphinx.helloworld;
+package demo.sphinx.hellongram;
 
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.recognizer.Recognizer;

@@ -16,14 +16,15 @@
 
     <property name="logLevel" value="WARNING"/>
     
-    <property name="absoluteBeamWidth"  value="-1"/>
+    <property name="absoluteBeamWidth"  value="2000"/>
     <property name="relativeBeamWidth"  value="1E-80"/>
     <property name="wordInsertionProbability" value="1E-36"/>
+    <property name="silenceInsertionProbability" value="1"/>
     <property name="languageWeight"     value="8"/>
     
     <property name="frontend" value="frontEnd"/>
     <property name="recognizer" value="recognizer"/>
-    <property name="showCreations" value="false"/>
+    <property name="showCreations" value="true"/>
     
     
     <!-- ******************************************************** -->
@@ -68,12 +69,12 @@
                 type="edu.cmu.sphinx.decoder.pruner.SimplePruner"/>
     
     <component name="threadedScorer" 
-                type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer">
+               type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer">
         <property name="frontend" value="${frontend}"/>
         <property name="isCpuRelative" value="true"/>
         <property name="numThreads" value="0"/>
         <property name="minScoreablesPerThread" value="10"/>
-        <property name="scoreablesKeepFeature" value="true"/>
+        <property name="scoreablesKeepFeature" value="false"/>
     </component>
     
     <!-- ******************************************************** -->
@@ -105,7 +106,7 @@
 	          value="resource:/demo.sphinx.hellongram.HelloNGram!/demo/sphinx/hellongram/hellongram.trigram.lm"/>
         <property name="logMath" value="logMath"/>
         <property name="dictionary" value="dictionary"/>
-        <property name="maxDepth" value="1"/>
+        <property name="maxDepth" value="3"/>
         <property name="unigramWeight" value=".7"/>
     </component>
            
@@ -146,7 +147,7 @@
     <!-- ******************************************************** -->
     <!-- The live frontend configuration                          -->
     <!-- ******************************************************** -->
-    <component name="epFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
+    <component name="frontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
             <item>microphone </item>
             <item>speechClassifier </item>

@@ -1,0 +1,2 @@
+Main-Class: demo.sphinx.hellongram.HelloNGram
+Class-Path: ../lib/sphinx4.jar ../../lib/jsapi.jar
