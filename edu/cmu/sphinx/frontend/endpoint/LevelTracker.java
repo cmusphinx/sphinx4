@@ -157,10 +157,9 @@ public class LevelTracker extends DataProcessor implements AudioSource {
         if (level < background) {
             level = background;
         }
-        if (level - background > threshold) {
-            // if it is speech, add it to the outputQueue
-            outputQueue.add(audio);
-        }
+        boolean isSpeech = (level - background > threshold);
+        audio.setSpeech(isSpeech);
+        outputQueue.add(audio);
     }
 
     /**
@@ -174,9 +173,7 @@ public class LevelTracker extends DataProcessor implements AudioSource {
      */
     public Audio getAudio() throws IOException {
         Audio audio = null;
-        if (outputQueue.size() > 0) {
-            audio = (Audio) outputQueue.remove(0);
-        } else {
+        if (outputQueue.size() == 0) {
             audio = predecessor.getAudio();
             if (audio != null) {
                 if (audio.hasContent()) {
@@ -184,10 +181,10 @@ public class LevelTracker extends DataProcessor implements AudioSource {
                 } else {
                     outputQueue.add(audio);
                 }
-                if (outputQueue.size() > 0) {
-                    audio = (Audio) outputQueue.remove(0);
-                }
             }
+        }
+        if (outputQueue.size() > 0) {
+            audio = (Audio) outputQueue.remove(0);
         }
         return audio;
     }
