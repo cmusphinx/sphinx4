@@ -225,6 +225,16 @@ public interface Linguist {
 
 
     /**
+     * Returns an array of classes that represents the order 
+     * in which the states will be returned.
+     *
+     * @return an array of classes that represents the order 
+     *     in which the states will be returned
+     */
+    public Class[] getSearchStateOrder();
+
+
+    /**
      * Called before a recognitino
      */
     public void start();
