@@ -124,6 +124,7 @@ live-free: all
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
+	-Dedu.cmu.sphinx.frontend.util.Microphone.sleepTime=100 \
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager \
 	tests.live.Live decoders.list
 
@@ -147,6 +148,7 @@ live-free-voice: all
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
+	-Dedu.cmu.sphinx.frontend.util.Microphone.sleepTime=100 \
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager \
 	tests.live.Live decoders.list
 
