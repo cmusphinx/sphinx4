@@ -341,9 +341,7 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     public void startRecognition() {
         if (grammarHasChanged()) {
-            System.out.println("Grammar has changed...");
             stateSet = compileGrammar();
-            System.out.println("recompiled.");
             totalStates.value = stateSet.size();
         }
     }

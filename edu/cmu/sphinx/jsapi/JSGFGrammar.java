@@ -301,7 +301,7 @@ public class JSGFGrammar extends Grammar {
      * @throws IOException if an error occurs while loading or
      * compiling the grammar
      */
-    public void loadJSGF(String grammarName) throws IOException{
+    public void loadJSGF(String grammarName) throws IOException {
         this.grammarName = grammarName;
         loadGrammar = true;
         commitChanges();
