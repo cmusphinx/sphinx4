@@ -180,6 +180,17 @@ public interface FrontEnd {
 
 
     /**
+     * Initializes this FrontEnd.
+     *
+     * @param name the name of this FrontEnd
+     * @param context the context of this FrontEnd
+     * @param dataSource the place to pull data from
+     */
+    public void initialize(String name, String context, DataSource dataSource)
+        throws IOException;
+
+
+    /**
      * Returns the next N feature (of the given acoustic model) 
      * produced by this FrontEnd, in a FeatureFrame object.
      * The number of Features return maybe less than N, in which
