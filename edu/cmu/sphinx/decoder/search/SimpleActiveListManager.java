@@ -163,12 +163,7 @@ public class SimpleActiveListManager implements ActiveListManager  {
      * @param token the token to add
      */
     public void add(Token token) {
-        ActiveList activeList;
-        if (token.isEmitting()) {
-            activeList = emittingActiveList;
-        } else {
-            activeList = findListFor(token.getSearchState().getClass());
-        }
+        ActiveList activeList = findListFor(token);
         if (activeList == null) {
             throw new Error("Cannot find ActiveList for " + 
                             token.getSearchState().getClass());
