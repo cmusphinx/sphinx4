@@ -80,6 +80,18 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     public final static boolean PROP_SHOW_TOKEN_COUNT_DEFAULT = false;
 
 
+    /**
+     * Sphinx property for checking if the order of states is valid.
+     */
+    public final static String PROP_CHECK_STATE_ORDER = 
+        PROP_PREFIX + "checkStateOrder";
+
+    /**
+     * The default value of the PROP_CHECK_STATE_ORDER property.
+     */
+    public final static boolean PROP_CHECK_STATE_ORDER_DEFAULT = false;
+
+
     private Linguist linguist;		// Provides grammar/language info
     private Pruner pruner;		// used to prune the active list
     private AcousticScorer scorer;	// used to score the active list
@@ -100,6 +112,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     private StatisticsVariable tokensCreated;
 
     private boolean showTokenCount;
+    private boolean checkStateOrder;
     private Map bestTokenMap;
     private AlternateHypothesisManager loserManager;
     private Class[] stateOrder;
@@ -134,7 +147,10 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                 StatisticsVariable.getStatisticsVariable(props.getContext(),
                         "tokensCreated");
 
-        showTokenCount = props.getBoolean(PROP_SHOW_TOKEN_COUNT, false);
+        showTokenCount = props.getBoolean(PROP_SHOW_TOKEN_COUNT, 
+                                          PROP_SHOW_TOKEN_COUNT_DEFAULT);
+        checkStateOrder = props.getBoolean(PROP_CHECK_STATE_ORDER,
+                                           PROP_CHECK_STATE_ORDER_DEFAULT);
     }
 
 
@@ -369,7 +385,9 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             for (int j = 0; j <= i; j++) {
                 if (stateOrder[j] == toClass) {
                     throw new Error("IllegalState order: from " + 
+                                    fromState.getClass().getName() + " " +
                                     fromState.toPrettyString() + " to " + 
+                                    toState.getClass().getName() + " " +
                                     toState.toPrettyString());
                 }
             }
@@ -409,7 +427,9 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             SearchStateArc arc = arcs[i];
             SearchState nextState = arc.getState();
 
-            //checkStateOrder(state, nextState);
+            if (checkStateOrder) {
+                checkStateOrder(state, nextState);
+            }
 
             // We're actually multiplying the variables, but since
             // these come in log(), multiply gets converted to add
