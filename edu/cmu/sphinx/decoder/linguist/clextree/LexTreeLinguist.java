@@ -280,8 +280,8 @@ public class LexTreeLinguist implements  Linguist {
      * @return the initial language state
      */
     public SearchState getInitialSearchState() {
-        WordNode node = hmmTree.getInitialNode();
-        return new LexTreeWordState(node,
+        InitialWordNode node = hmmTree.getInitialNode();
+        return new LexTreeWordState(node, node.getParent(),
               WordSequence.getWordSequence(sentenceStartWordArray).trim
                (languageModel.getMaxDepth() - 1), logOne);
     }
@@ -504,7 +504,8 @@ public class LexTreeLinguist implements  Linguist {
 		 Node nextNode = (Node) iter.next();
                //  System.out.println("           " + nextNode);
                  if (nextNode instanceof WordNode) {
-                     arcs[i] = createWordStateArc((WordNode) nextNode);
+                     arcs[i] = createWordStateArc((WordNode) nextNode, 
+                             (HMMNode) getNode());
                  } else {
                      arcs[i] = createUnitStateArc((HMMNode) nextNode);
                  }
@@ -520,7 +521,8 @@ public class LexTreeLinguist implements  Linguist {
           *
           * @return the search state for the wordNode
           */
-         private SearchStateArc createWordStateArc(WordNode wordNode) {
+         private SearchStateArc createWordStateArc(WordNode wordNode,
+                 HMMNode lastUnit) {
 	      // System.out.println("CWSA " + wordNode);
             float logProbability = logOne;
             Word nextWord = wordNode.getWord();
@@ -536,7 +538,7 @@ public class LexTreeLinguist implements  Linguist {
                 logProbability = languageModel.getProbability(nextWordSequence);
             }
 
-            return new LexTreeWordState(wordNode,
+            return new LexTreeWordState(wordNode, lastUnit,
                 nextWordSequence.trim(languageModel.getMaxDepth() - 1), 
                 logProbability);
          }
@@ -803,6 +805,8 @@ public class LexTreeLinguist implements  Linguist {
     public class LexTreeWordState extends LexTreeState 
         implements WordSearchState {
 
+        private HMMNode lastNode;
+
         /**
          * Constructs a LexTreeWordState
          *
@@ -814,10 +818,11 @@ public class LexTreeLinguist implements  Linguist {
          * @param logProbability the probability of this word occuring
          *
          */
-        LexTreeWordState(WordNode wordNode,
+        LexTreeWordState(WordNode wordNode, HMMNode lastNode,
                WordSequence wordSequence, float logProability) {
 
             super(wordNode, wordSequence, logProability, logOne, logOne);
+            this.lastNode = lastNode;
         }
 
         /**
@@ -838,6 +843,32 @@ public class LexTreeLinguist implements  Linguist {
              return getPronunciation().getWord().equals(sentenceEndWord);
          }
 
+        /**
+         * Generate a hashcode for an object
+         *
+         * @return the hashcode
+         */
+        public int hashCode() {
+            return super.hashCode() * 41 + lastNode.hashCode();
+        }
+
+        /**
+         * Determines if the given object is equal to this object
+         * 
+         * @param o the object to test
+         * @return <code>true</code> if the object is equal to this
+         */
+        public boolean equals(Object o) {
+            if (o == this) {
+                return true;
+            } else if (o instanceof LexTreeWordState) {
+                LexTreeWordState other = (LexTreeWordState) o;
+                return  super.equals(o) && lastNode == other.lastNode;
+            } else {
+                return false;
+            }
+        }
+
          /**
           * Returns the list of successors to this state
           *
@@ -850,7 +881,7 @@ public class LexTreeLinguist implements  Linguist {
              if (wordNode.getWord() != sentenceEndWord) {
                  int index = 0;
                  List list = new ArrayList();
-                 Collection baseList  = wordNode.getRC();
+                 Collection baseList  = lastNode.getRC();
                  Unit left = wordNode.getLastUnit();
 
                  for (Iterator i = baseList.iterator(); i.hasNext(); ) {
