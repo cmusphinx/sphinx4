@@ -44,7 +44,9 @@ public class SphinxProperties {
 
     private URL url;		// URL associated with the properties
     private Properties props;	// the actual properties
+    private Properties shadowProps; // actuall requested properties
     private String contextName;	// name of the associated context
+
 
     /**
      * Initialize a particular context. There can be multiple contexts
@@ -96,6 +98,7 @@ public class SphinxProperties {
 	this.contextName = contextName;
 	this.url = url;
 	props = new Properties();
+	shadowProps = new Properties();
 	if (url != null) {
 	    props.load(url.openStream());
 	}
@@ -108,6 +111,7 @@ public class SphinxProperties {
 	this.contextName = null;
 	this.url = null;
 	props = new Properties();
+	shadowProps = new Properties();
     }
 
 
@@ -126,7 +130,7 @@ public class SphinxProperties {
      * @param out an output stream.
      */
     public void list(PrintStream out) {
-	props.list(out);
+	shadowProps.list(out);
     }
 
 
@@ -144,6 +148,13 @@ public class SphinxProperties {
 	value = System.getProperty(propertyName);
 	if  (value == null) {
 	    value = props.getProperty(propertyName, defaultValue);
+	}
+	if (false) {
+	    System.out.println(" na " + propertyName
+		    + " va " + value);
+	}
+	if (value != null) {
+	    shadowProps.setProperty(propertyName, value);
 	}
 	return value;
     }
