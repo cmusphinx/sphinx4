@@ -13,49 +13,24 @@
 
 package edu.cmu.sphinx.research.bushderby;
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Collections;
-
-import edu.cmu.sphinx.knowledge.language.LanguageModel;
-import edu.cmu.sphinx.knowledge.language.WordSequence;
-import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
-
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.StatisticsVariable;
-
-import edu.cmu.sphinx.result.Result;
-
-import edu.cmu.sphinx.decoder.linguist.Color;
-import edu.cmu.sphinx.decoder.linguist.Linguist;
-import edu.cmu.sphinx.decoder.linguist.SearchState;
-import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
-import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
-import edu.cmu.sphinx.decoder.linguist.WordSearchState;
-import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMState;
-import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMStateArc;
+import edu.cmu.sphinx.decoder.linguist.*;
 import edu.cmu.sphinx.decoder.linguist.simple.HMMStateState;
+import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMStateArc;
 import edu.cmu.sphinx.decoder.linguist.simple.UnitState;
 import edu.cmu.sphinx.decoder.linguist.simple.WordState;
-
-import edu.cmu.sphinx.decoder.search.Pruner;
-import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.decoder.search.ActiveList;
-
-import edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager;
-
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
+import edu.cmu.sphinx.decoder.search.ActiveList;
+import edu.cmu.sphinx.decoder.search.Pruner;
+import edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager;
+import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.language.LanguageModel;
+import edu.cmu.sphinx.knowledge.language.WordSequence;
+import edu.cmu.sphinx.util.SphinxProperties;
+
+import java.util.*;
 
 
 
@@ -217,7 +192,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 
 	while (iterator.hasNext()) {
 	    Token token = (Token) iterator.next();
-            SentenceHMMState state = (SentenceHMMState) token.getSearchState();
+            SearchState state = token.getSearchState();
 	    if (isGreenState(state)) {
 		float logNewScore = (float) 
 		    (token.getWorkingScore() / bushderbyEta);
@@ -239,6 +214,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      *
      * @return true if the given SearchState is a GREEN state, false otherwise
      */
+    /*
     private boolean isGreenState(SentenceHMMState state) {
 	boolean green = ((state.getColor() == Color.GREEN) ||
 			 (state instanceof HMMStateState));
@@ -247,11 +223,16 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	}
 	return green;
     }
+    */
+    private boolean isGreenState(SearchState state) {
+        return state instanceof HMMStateState;
+    }
+
 
 
 
     /**
-     * Collects the next set of emitting tokens from a token 
+     * Collects the next set of emitting tokens from a token
      * and accumulates them in the active or result lists
      *
      * @param token  the token to collect successors from
@@ -270,9 +251,8 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	    return;
 	}
 
-	SentenceHMMState state = (SentenceHMMState) token.getSearchState();
-	SentenceHMMStateArc[] arcs = 
-            (SentenceHMMStateArc[]) state.getSuccessors();
+	SearchState state = token.getSearchState();
+	SearchStateArc[] arcs = state.getSuccessors();
 
 	// For each successor
 	// calculate the entry score for the token based upon the
@@ -284,8 +264,8 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	// othewise recursively collect the new tokens successors.
 	
 	for (int i = 0; i < arcs.length; i++) {
-	    SentenceHMMStateArc arc = arcs[i];
-	    SentenceHMMState nextState = (SentenceHMMState) arc.getState();
+	    SearchStateArc arc = arcs[i];
+	    SearchState nextState = arc.getState();
 
 	    if (filterSuccessors && !isValidTransition(token, nextState)) {
 		continue;
@@ -306,8 +286,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	    float logWorkingScore =  firstToken ? getLogMath().getLogZero() :
 		getBestToken(nextState).getWorkingScore();
 
-	    if (firstToken ||  nextState.isFanIn() ||
-		getBestToken(nextState).getScore() <= logCurrentScore) {
+	    if (firstToken || getBestToken(nextState).getScore() <= logCurrentScore) {
 		
 		// we may want to create  green tokens all the time
 		if (greenToken || 
@@ -341,7 +320,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 			    collectSuccessorTokens(newToken, 
                                                    delayedExpansionList);
 			}
-                    } else if (firstToken || nextState.isFanIn()) {
+                    } else if (firstToken) {
                         getActiveList().add(newToken);
                     } else {
 			getActiveList().replace(oldBestToken, newToken); 
@@ -387,7 +366,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      * @return true if the transition is valid
      *
      */
-    private boolean isValidTransition(Token token, SentenceHMMState nextState) {
+    private boolean isValidTransition(Token token, SearchState nextState) {
 	Unit prevUnit;
 	Unit thisUnit;
 	Unit[] thisLC;
@@ -528,9 +507,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      * Given a linguist and an arc to the next token, determine a
      * language probability for the next state
      *
-     * @param linguist  the linguist to use, null if there is no
-     * linguist, in which case, the language probability for the
-     * SentenceHMMStateArc will be used.
+     * @param token the next token
      *
      * @param arc the arc to the next state
      *
@@ -538,10 +515,10 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      * state (in LogMath log domain)
      */
     private float getLanguageProbability(Token token, 
-					 SentenceHMMStateArc arc) {
+					 SearchStateArc arc) {
 	float logProbability = arc.getLanguageProbability();
-	if (languageModel != null && arc.getNextState() instanceof WordState) {
-	    WordState state = (WordState) arc.getNextState();
+	if (languageModel != null && arc.getState() instanceof WordState) {
+	    WordState state = (WordState) arc.getState();
 	    int depth = languageModel.getMaxDepth();
 	    String word = state.getWord().getSpelling();
 
