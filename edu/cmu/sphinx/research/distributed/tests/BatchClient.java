@@ -14,6 +14,7 @@
 package edu.cmu.sphinx.research.distributed.tests;
 
 import edu.cmu.sphinx.research.distributed.client.ClientFrontEnd;
+import edu.cmu.sphinx.research.distributed.client.ClientFrontEndImpl;
 
 import edu.cmu.sphinx.util.BatchFile;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -75,7 +76,7 @@ public class BatchClient {
         this.batchFile = batchFile;
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 	skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
-        clientFrontEnd = new ClientFrontEnd();
+        clientFrontEnd = new ClientFrontEndImpl();
         clientFrontEnd.initialize("BatchClient", context);
         decodeTimer = Timer.getTimer(context, "BatchClientDecode");
         aligner = new NISTAlign();
