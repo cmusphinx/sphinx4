@@ -73,4 +73,19 @@ public class Audio extends Data {
     public String toString() {
         return Util.doubleArrayToString(audioSamples);
     }
+
+
+    /**
+     * Returns a duplicate of this Audio object.
+     */
+    public Audio duplicate() {
+	if (hasContent()) {
+	    double[] newSamples = new double[audioSamples.length];
+	    System.arraycopy(audioSamples, 0, newSamples, 0,
+			     audioSamples.length);
+	    return (new Audio(newSamples, getUtterance()));
+	} else {
+	    return (new Audio(getSignal()));
+	}
+    }
 }
