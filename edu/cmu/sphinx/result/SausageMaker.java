@@ -140,6 +140,80 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
     }
 
     /**
+     * Returns true if the two given clusters has time overlaps.
+     * Given clusters A and B, they overlap if and only if:
+     * the latest begin time of any node in B is before 
+     * the earliest end time of any node in A,
+     * and the latest begin time of any node in A is before the
+     * earliest end time of any node in B.
+     *
+     * @param cluster1 the first cluster to examine
+     * @param cluster2 the second cluster to examine
+     *
+     * @return true if the clusters has overlap, false if they don't
+     */
+    private boolean hasOverlap(List cluster1, List cluster2) {
+        int latestBeginTime1 = getLatestBeginTime(cluster1);
+        int earliestEndTime1 = getEarliestEndTime(cluster1);
+        int latestBeginTime2 = getLatestBeginTime(cluster2);
+        int earliestEndTime2 = getEarliestEndTime(cluster2);
+
+        if (latestBeginTime1 < earliestEndTime2 &&
+            latestBeginTime2 < earliestEndTime1) {
+            return true;
+        } else if (latestBeginTime2 < earliestEndTime1 &&
+                   latestBeginTime1 < earliestEndTime2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Returns the latest begin time of all nodes in the given cluster.
+     *
+     * @param cluster the cluster to examine
+     *
+     * @return the latest begin time
+     */
+    private int getLatestBeginTime(List cluster) {
+        if (cluster.size() == 0) {
+            return -1;
+        }
+        int startTime = 0;
+        Iterator i = cluster.iterator();
+        while (i.hasNext()) {
+            Node n = (Node)i.next();
+            if (n.getBeginTime() > startTime) {
+                startTime = n.getBeginTime();
+            }
+        }
+        return startTime;
+    }
+
+    /**
+     * Returns the earliest end time of all nodes in the given cluster.
+     *
+     * @param cluster the cluster to examine
+     *
+     * @return the earliest end time
+     */
+    private int getEarliestEndTime(List cluster) {
+        if (cluster.size() == 0) {
+            return -1;
+        }
+        int endTime = Integer.MAX_VALUE;
+        Iterator i = cluster.iterator();
+        while (i.hasNext()) {
+            Node n = (Node)i.next();
+            if (n.getEndTime() < endTime) {
+                endTime = n.getEndTime();
+            }
+        }
+        return endTime;
+    }
+
+    /**
      * Perform one inter word clustering step of the algorithm
      * 
      * @param clusters the current cluster set
@@ -158,7 +232,7 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
             while (j.hasNext()) {
                 List c2 = (List)j.next();
                 double sim = interClusterDistance(c1,c2);
-                if (sim > maxSim) {
+                if (sim > maxSim && hasOverlap(c1,c2)) {
                     maxSim = sim;
                     toBeMerged1 = c1;
                     toBeMerged2 = c2;
@@ -168,6 +242,8 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         if (toBeMerged1 != null) {
             clusters.remove(toBeMerged2);
             toBeMerged1.addAll(toBeMerged2);
+            System.out.println("interWordClusterStep");
+            printClusters(clusters);
             return true;
         }
         return false;
@@ -454,6 +530,8 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         if (toBeMerged1 != null) {
             clusters.remove(toBeMerged2);
             toBeMerged1.addAll(toBeMerged2);
+            System.out.println("intraWordClusterStep");
+            printClusters(clusters);
             return true;
         }
         return false;
@@ -484,6 +562,7 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         intraWordCluster(clusters);
         interWordCluster(clusters);
         Collections.sort(clusters,new ClusterComparator());
+        printClusters(clusters);
         Sausage sausage = new Sausage(clusters.size());
         ListIterator c1 = clusters.listIterator();
         while (c1.hasNext()) {
