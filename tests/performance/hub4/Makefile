@@ -26,8 +26,6 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
 
 
-PROFILE_FLAGS= -Xprof 
-LOG_GC_FLAGS=  -Xloggc:gc.txt
 GC_FLAGS = -ms128m -mx1g
 GC_FLAGS = -ms512m -mx1500m -XX:NewSize=300m  -XX:MaxNewSize=300m
 GC_FLAGS = -ms1000m -mx1500m -XX:NewSize=100m  -XX:MaxNewSize=100m -XX:+UseParNewGC -XX:-UseConcMarkSweepGC 
@@ -35,6 +33,8 @@ GC_FLAGS = -ms1000m -mx1500m -XX:NewSize=200m  -XX:MaxNewSize=200m
 GC_FLAGS = -ms1000m -mx1500m -XX:NewSize=300m  -XX:MaxNewSize=300m
 
 LOG_GC_FLAGS=
+LOG_GC_FLAGS=  -Xloggc:gc.txt
+PROFILE_FLAGS= -Xprof 
 PROFILE_FLAGS=
 
 #GC_FLAGS = -ms128m -mx3048m

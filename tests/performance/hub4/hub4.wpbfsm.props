@@ -131,17 +131,20 @@ edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=0
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
 
 edu.cmu.sphinx.decoder.BatchDecoder.showPropertiesAtStart=true
+edu.cmu.sphinx.decoder.Decoder.showBestToken=false
 
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.buildWordLattice=false
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager
 edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.wantUnigramSmear=true
-edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.unigramSmearWeight=1
 edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.fullWordHistories=true
 
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=30000
-edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-60
-edu.cmu.sphinx.decoder.search.ActiveListManager.relativeWordBeamWidth=1E-30
-edu.cmu.sphinx.decoder.search.ActiveListManager.absoluteWordBeamWidth=20
-edu.cmu.sphinx.decoder.Decoder.showBestToken=false
+edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-65
+edu.cmu.sphinx.decoder.search.ActiveListManager.relativeWordBeamWidth=1E-40
+edu.cmu.sphinx.decoder.search.ActiveListManager.absoluteWordBeamWidth=40
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.growSkipInterval=6
+edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.unigramSmearWeight=1
+
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.acousticLookaheadFrames=1
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.keepAllTokens=true
