@@ -243,15 +243,12 @@
 
     <component name="liveCMN" 
                type="edu.cmu.sphinx.frontend.feature.LiveCMN"/>
-    
-    
+        
     <component name="featureExtraction" 
                type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/>
     
     <component name="microphone" 
-               type="edu.cmu.sphinx.frontend.util.Microphone">
-        <property name="closeBetweenUtterances" value="false"/>
-    </component>
+               type="edu.cmu.sphinx.frontend.util.Microphone"/>
 
     <component name="dataDumper" 
         type="edu.cmu.sphinx.frontend.util.DataDumper"/>
