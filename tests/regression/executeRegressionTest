@@ -55,7 +55,7 @@ runTests="runTests_"$testType
 scripts="getTime mailReport makeReport parseS4Output regressionTest\
 	runTest s4_align s4_align_sum collectMetrics \
 	getTime makeWebpage pushChanges pushReport whatsNew \
-	cvs_history updateLog \
+	cvs_history updateLog finalizeLog \
 	runTests_an4 runTests_an4_full runTests_an4_plus \
 	runTests_an4_spelling runTests_an4_words runTests_quick \
 	runTests_rm1 runTests_standard runTests_ti46 \
@@ -139,6 +139,11 @@ fi
 cd $regressionDir
 echo "build|$date|$time|$machine|$who|make|$status|$totalBuildTime|$totalRunTime|$testType|" | $regressionDir/updateLog
 
+#############################
+# All log updates are done so finalize the log
+#############################
+cd $regressionDir
+./finalizeLog
 
 #################################
 # Generate the email notification

@@ -23,9 +23,6 @@
 
 
 logBase=regression.log
+interimLog=interim.log
 
-scvs update regression.log
-
-cat >> $logBase
-
-scvs commit -m "regression_test" $logBase
+cat >> $interimLog
