@@ -385,6 +385,7 @@ public class Live {
                     liveFrame.exitSpeakingMode();
                 }
             } else {
+                liveFrame.setNextButtonEnabled(true);
                 while (decoder.getMicrophone().getRecording()) {
                     try {
                         System.out.println("Live: decoding");
