@@ -269,10 +269,13 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * @return the best scoring scoreable in the job
      */
     private Scoreable scoreScoreables(ScoreableJob job) {
+        if (job.getSize() <= 0) {
+            return null;
+        }
 	Scoreable[] scoreables = job.getScoreables();
-        Scoreable best = null;
-        float logBestScore = -Float.MAX_VALUE;
+        Scoreable best = scoreables[0];
 	int end = job.getStart() + job.getSize();
+        
 	for (int i = job.getStart(); i < end && i < scoreables.length; i++) {
             Scoreable scoreable = scoreables[i];
 	    if (scoreable.getFrameNumber() != curFeature.getID()) {
@@ -281,9 +284,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 		     scoreable.getFrameNumber() +
 		     "  Feature: " + curFeature.getID());
 	    } 
-	    float logCurScore = scoreable.calculateScore(curFeature);
-            if (logCurScore > logBestScore) {
-                logBestScore = logCurScore;
+	    if (scoreable.calculateScore(curFeature) > best.getScore()) {
                 best = scoreable;
             }
 	}
