@@ -79,6 +79,7 @@ public class LiveDecoder extends Decoder {
             this.microphone = microphone;
             super.initialize(microphone);
             if (hasEnergyEndpointer()) {
+                //TODO: this doesn't work anymore
                 insertEnergyEndpointViewer();
             }
         }
@@ -96,6 +97,17 @@ public class LiveDecoder extends Decoder {
      * to the CepstraPanel of the LiveFrame for plotting. 
      */
     private void insertEnergyEndpointViewer() {
+
+        // BUG: TODO: This code assumes that the frontend is a
+        // SimpleFrontEnd which is not a valid assumption. This code
+        // should be refactored to either not depend on the FrontEnd
+        // implementation, or if necessary, define the FrontEnd and
+        // set the front end explicitly. 
+        // Until then, it is disabled.
+
+        if (true) {             // disable this code
+            return;
+        }
         SimpleFrontEnd frontend = (SimpleFrontEnd) 
 	    getRecognizer().getFrontEnd();
 
