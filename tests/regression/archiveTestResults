@@ -1,0 +1,67 @@
+#!/bin/sh
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This script archives files generated during the regression tests, so
+# that failed tests can be more easily verified.
+#
+# This script should be run from the regression test directory
+#
+# usage: archiveTestResults [testType]
+#
+# Only the first argument is considered, the remaining are ignored.
+#
+# where testType is either:
+#
+# 	standard
+#	quick
+#  	an4
+#       an4_full
+#       an4_plus
+#       an4_spelling
+#       an4_words
+#       rm1
+#       ti46
+#       tidigits
+#
+# more tests can be added by adding a script called runTests_XXX to
+# the regression test directory, where XXX is the name of the new test.
+#
+
+
+regressionDir=`pwd`
+
+testType=${1:-standard}
+
+echo archiveTestResults $testType
+
+testDir=../
+
+#############################
+# Define file names
+#############################
+
+cd $regressionDir
+machine=`./getHostname`
+archiveDir=/lab/speech/sphinx4/regressionArchive/
+archiveFile=${archiveDir}/${testType}.${machine}.zip
+
+###########################
+# then we build the archive
+###########################
+cd $testDir
+
+if [ ! -d $archiveDir ]; then
+   mkdir $archiveDir
+fi
+/bin/rm -f $archiveFile
+find . -name '*.out' -mtime -7 -print | zip $archiveFile -@
+find . -name 'hs*.log' -print | zip $archiveFile -@
+find . -name 'gc.txt' -print | zip $archiveFile -@
+

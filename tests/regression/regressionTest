@@ -47,6 +47,11 @@ chmod +x executeRegressionTest
 
 ./executeRegressionTest $*
 
+# archive the interesting files (.out, .log etc)
+
+chmod +x archiveTestResults
+./archiveTestResults $*
+
 # clean up 
 
 cd $originalDir
