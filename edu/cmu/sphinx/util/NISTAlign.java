@@ -677,7 +677,7 @@ public class NISTAlign {
                 // have no idea what the heck this code is doing.  I'm
                 // just doing a transliteration.
                 //
-		penalty = penaltyTable[i][j-1] + DELETION_PENALTY;                                                                    
+		penalty = penaltyTable[i][j-1] + INSERTION_PENALTY;                                                                    
 		if (penalty < minPenalty) {
 		    minPenalty = penalty;
 		    penaltyTable[i][j] = penalty;
