@@ -25,6 +25,9 @@ import java.awt.Image;
 import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.awt.Graphics;
+import java.awt.FontMetrics;
+import java.awt.Font;
+import java.awt.geom.Rectangle2D;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -51,6 +53,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 /**
  * A simple demonstration application for Sphinx-4, suitable for use
@@ -58,19 +61,18 @@ import javax.swing.SwingUtilities;
  * and shows the city/state associated with the code.
  */
 public class ZipCity extends JFrame {
-    private ZipDatabase zipDB;
-    private ZipRecognizer zipRecognizer;
+    private final static Color backgroundColor = new Color(0x42, 0x42, 0x42);
+    private final static Color NORM_COLOR = new Color(0x72, 0x72, 0x82);
+    private final static Color HIGHLIGHT_COLOR = new Color(0xAA, 0xBB, 0x33);
+    private final static Font labelFont = new Font("SanSerif", Font.BOLD, 16);
 
     private JTextField messageTextField;
-    private JTextField zipField;
-    private JTextField cityField;
     private JButton speakButton;
-    private Color backgroundColor = new Color(0xff, 0xff, 0xff);
-    private final static Color NORM_COLOR = new Color(0x22, 0x88, 0x33);
-    private final static Color HIGHLIGHT_COLOR = Color.red;
     private JPanel mapPanel;
-    private JPanel imagePanel;
+
     private ZipInfo currentInfo;
+    private ZipRecognizer zipRecognizer;
+    private ZipDatabase zipDB;
 
     /**
      * Constructs a ZipCity with the given title.
@@ -80,15 +82,12 @@ public class ZipCity extends JFrame {
      */
     public ZipCity() {
         super("ZipCity - a Sphinx-4 WebStart Demo");
-        setSize(800, 580);
+        setSize(900, 480);
         setDefaultLookAndFeelDecorated(true);
         setApplicationIcon();
-        imagePanel = createImagePanel();
-        getContentPane().add(createMainPanel(), BorderLayout.NORTH);
-        getContentPane().add(imagePanel, BorderLayout.CENTER);
-        getContentPane().add(createMessagePanel(), BorderLayout.SOUTH);
-        
         mapPanel = createMapPanel();
+        getContentPane().add(createMainPanel(), BorderLayout.SOUTH);
+        getContentPane().add(mapPanel, BorderLayout.CENTER);
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -112,14 +111,13 @@ public class ZipCity extends JFrame {
     }
 
 
-    public void replaceImageWithMap() {
+    /**
+     * Updates the map
+     */
+    public void updateMap() {
         SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    getContentPane().remove(imagePanel);
-                    getContentPane().add(mapPanel, BorderLayout.CENTER);
-                    validate();
-                    repaint();
-                    //mapPanel.repaint();
+                    mapPanel.repaint();
                 }
         });
                
@@ -133,9 +131,9 @@ public class ZipCity extends JFrame {
         try {
             setMessage("Loading zip codes...");
             zipDB = new ZipDatabase();
+            updateMap();
 
-
-            setMessage("Loading recognizer...");
+            setMessage("Loading recognizer...(apologies to Alaska and Hawaii)");
             zipRecognizer = new ZipRecognizer();
 
             setMessage("Starting recognizer...");
@@ -147,9 +145,8 @@ public class ZipCity extends JFrame {
                 }
             });
 
-            setMessage("ZipCity Version 1.0");
+            setMessage("ZipCity Version 2.0 - Ready");
             speakButton.setEnabled(true);
-            replaceImageWithMap();
         } catch (Throwable e) {
             setMessage("Error: " + e.getMessage());
         }
@@ -166,20 +163,13 @@ public class ZipCity extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (zip == null) {
-                    zipField.setText("????");
-                    cityField.setText("");
-                    currentInfo = null;
                     setMessage("I didn't understand what you said");
                 } else {
-                    zipField.setText(zip);
                     if (zipInfo == null) {
-                        cityField.setText("<Unknown>");
-                        currentInfo = null;
-                        setMessage("Can't find that zip code in the database");
+                        setMessage("Can't find " + zip  + " in the database");
                     } else {
                         String location = zipInfo.getCity() + ", " 
                             + zipInfo.getState();
-                        cityField.setText(location);
                         setMessage("");
                         currentInfo = zipInfo;
                     }
@@ -190,23 +180,6 @@ public class ZipCity extends JFrame {
         });
     }
 
-    /** 
-     * Returns an ImageIcon, or null if the path was invalid. 
-     *
-     * @param path the path to the image resource.
-     * @param description a description of the resource
-     *
-     * @return the image icon or null if the resource could not be
-     * found.
-     */
-    protected ImageIcon createImageIcon(String path, String description) {
-        URL imgURL = ZipCity.class.getResource(path);
-        if (imgURL != null) {
-            return new ImageIcon(imgURL, description);
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Sets the application icon. The image icon is visible when the
@@ -279,61 +252,54 @@ public class ZipCity extends JFrame {
         speakButton.setEnabled(false);
         speakButton.setMnemonic('s');
         mainPanel.add(speakButton);
-        zipField = addLabeledTextField(mainPanel, "Zip Code: ", 4);
-        cityField = addLabeledTextField(mainPanel, "Location: ", 20);
+        mainPanel.add(createMessagePanel());
         return mainPanel;
     }
 
-    /**
-     * Adds a labeled text field to the given panel
-     *
-     * @param panel the panel to receive the new text field
-     * @param labelName the label for the text field
-     * @param size the size (in character cells) of the text field
-     *
-     * @return the added text field
-     */
-    private JTextField addLabeledTextField(JPanel panel, 
-                    String labelName, int size) {
-        JLabel label = new JLabel(labelName);
-        JTextField field = new JTextField(size);
-        field.setEditable(false);
-        Box box = Box.createHorizontalBox();
-        box.add(label);
-        box.add(field);
-        panel.add(box);
-        return field;
-    }
 
     /**
-     * Creates an image panel with the sphinx-4 logo image
+     * Creates the map panel
+     *
+     * @return the map panel
      */
-    private JPanel createImagePanel() {
-        JPanel panel = getJPanel(new FlowLayout());
-        JLabel imageLabel = new JLabel(createImageIcon("s4.jpg", "s4-logo"));
-        panel.add(imageLabel);
-        return panel;
-    }
-
     private JPanel createMapPanel() {
         return new MapPanel();
     }
 
+    /**
+     * A panel that draws a map of the US based upon the
+     * zip code database
+     */
     class MapPanel extends JPanel {
 
-        private final static float MIN_LAT = 23;
+        private final static float MIN_LAT = 24;
         private final static float MAX_LAT = 50;
         private final static float MAX_LONG = 125;
         private final static float MIN_LONG = 65;
         private final static float RANGE_LAT = MAX_LAT - MIN_LAT;
         private final static float RANGE_LONG = MAX_LONG - MIN_LONG;
+        private final static int NORMAL_SIZE = 2;
+        private final static int HIGHLIGHT_SIZE = 10;
 
-
-        MapPanel() {
-            setBackground(backgroundColor);
-        }
+        private final static int WIDTH_OFFSET = 10;
+        private final static int HEIGHT_OFFSET = 8;
+        private final static int MARGIN = 10;
         private Graphics g; 
         private Dimension size;
+
+
+        /**
+         * Creates the map panel
+         */
+        MapPanel() {
+            setFont(labelFont);
+            setBackground(backgroundColor);
+        }
+
+
+        /**
+         * Updates the map
+         */
         public void paintComponent(Graphics graphics) {
             g = graphics;
             size = getSize();
@@ -342,38 +308,106 @@ public class ZipCity extends JFrame {
                 g.setColor(NORM_COLOR);
                 for (Iterator i = zipDB.iterator();  i.hasNext(); ) {
                     ZipInfo zi = (ZipInfo) i.next();
-                    plot(zi, 2);
+                    plot(zi, false);
                 }
                 if (currentInfo != null) {
                     g.setColor(HIGHLIGHT_COLOR);
-                    plot(currentInfo, 10);
+                    plot(currentInfo, true);
                 }
 
             }
         }
 
-        void plot(ZipInfo zi, int size) {
+        /**
+         * Plots a zip info with given size
+         *
+         * @param zi the zip info to plot
+         * @param size the size of the plotted point
+         *
+         */
+        void plot(ZipInfo zi, boolean highlight) {
             //System.out.println("ll " + zi.getLongitude() + " " +
             //       zi.getLatitude());
             int x = mapx(zi.getLongitude());
             int y = mapy(zi.getLatitude());
-            plot(x,y, size);
+            if (highlight) {
+                drawZipInfo(x, y, zi);
+                plot(x,y, HIGHLIGHT_SIZE);
+            } else {
+                plot(x,y, NORMAL_SIZE);
+            }
         }
 
+        /**
+         * Draws the zip info on the map
+         *
+         * @param x the x position of the point
+         * @param y the y position of the point
+         * @param zi the zip info
+         */
+
+
+        void drawZipInfo(int x, int y, ZipInfo zi) {
+            String label = zi.getCity() + ", " + zi.getState() + " " +
+                zi.getZip();
+            Dimension d = getStringDimension(g, label);
+            int xpos = x - WIDTH_OFFSET;
+            int ypos = y - d.height / 2;
+
+            if (xpos + d.width + MARGIN > size.width) {
+                xpos -= (xpos + d.width - size.width) + MARGIN;
+            }
+            g.drawString(label, xpos, ypos);
+        }
+
+        /**
+         * plot a point with the given pixel size
+         *
+         * @param x the x position of the point
+         * @param y the y position of the point
+         * @param size the size of the point
+         */
         void plot(int x, int y, int size) {
             // System.out.println("Plot : " + x + " " + y);
             // g.drawRect(x, y, size, size);
              g.fillOval(x, y, size, size);
         }
 
+        /**
+         * Maps the given x position to the map panel
+         * @param x the x position
+         *
+         * @return the x position mapped onto the map panel
+         */
         private int mapx(float x) {
             return size.width - 
                 (int) (size.width * (x - MIN_LONG) / RANGE_LONG);
         }
 
+        /**
+         * Maps the given y position to the map panel
+         * @param x the y position
+         *
+         * @return the y position mapped onto the map panel
+         */
         private int mapy(float y)  {
             return size.height - 
                 (int) (size.height * (y - MIN_LAT) / RANGE_LAT);
+        }
+
+
+        /**
+         * Gets the width and height in pixels of the given string
+         *
+         * @param g the current graphics context
+         * @param s the string of interest
+         * @return the dimension, in pixels of the string
+         */
+        private Dimension getStringDimension(Graphics g, String s) {
+            FontMetrics fm = g.getFontMetrics();
+            Rectangle2D r2d = fm.getStringBounds(s, g);
+            return new Dimension((int) (r2d.getWidth() + .5),
+                                 (int) (r2d.getHeight() + .5));
         }
     }
 
@@ -386,9 +420,12 @@ public class ZipCity extends JFrame {
     private JPanel createMessagePanel() {
         JPanel messagePanel = getJPanel(new BorderLayout());
         messageTextField = new JTextField
-            ("Please wait while I'm loading...");
+            ("Please wait while I'm loading...", 40);
         messageTextField.setBackground(backgroundColor);
+        messageTextField.setForeground(HIGHLIGHT_COLOR);
         messageTextField.setEditable(false);
+        messageTextField.setBorder(new EmptyBorder(1,1,1,1));
+        messageTextField.setFont(labelFont);
         messagePanel.add(messageTextField, BorderLayout.CENTER);
         return messagePanel;
     }
