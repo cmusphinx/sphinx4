@@ -23,12 +23,9 @@ SUBDIRS =
 #
 ##########################################################################
 
-GC_FLAGS = -ms128m -mx512m
-HEAP_DUMP = -Xrunhprof:heap=dump,cpu=samples
-LOG_GC_FLAGS = -Xloggc:gc.txt
-PROFILE_FLAGS = -Xprof
+GC_FLAGS= -ms128m -mx512m
 
-EXTRA_JAVA_FLAGS = $(GC_FLAGS) $(HEAP_DUMP) $(LOG_GC_FLAGS) $(PROFILE_FLAGS)
+EXTRA_JAVA_FLAGS= $(GC_FLAGS)
 
 
 ##########################################################################
