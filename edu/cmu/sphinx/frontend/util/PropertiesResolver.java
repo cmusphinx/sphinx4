@@ -14,8 +14,6 @@
 package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
-
 import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.util.Enumeration;
@@ -79,9 +77,9 @@ public class PropertiesResolver {
 	    // should start with "edu.cmu.sphinx.frontend.", otherwise
 	    // throws an Error.
 
-	    if (propName.startsWith(AcousticModel.PROP_PREFIX)) {
+	    if (propName.startsWith(FrontEnd.ACOUSTIC_PROP_PREFIX)) {
 		String suffix = propName.substring
-		    (AcousticModel.PROP_PREFIX.length());
+		    (FrontEnd.ACOUSTIC_PROP_PREFIX.length());
 		key = FrontEnd.PROP_PREFIX + suffix;
 	    } else if (!propName.startsWith(FrontEnd.PROP_PREFIX)) {
 		throw new Error("Acoustic property name does not start with " +
