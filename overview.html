@@ -1,6 +1,91 @@
-<!-- just a place holder -->
-
 <body>
-Sphinx-4 - a speech recognition system written entirely in the
+Sphinx-4 is a speech recognition system written entirely in the
 Java(TM) programming language.
+
+<p>
+The diagram below shows the general architecture of Sphinx-4, followed by
+a description of each block:
+<p><img src="doc-files/architecture.gif">
+<br><i>Figure 1: Architecture diagram of Sphinx-4.</i>
+
+<p>
+
+<table border="1">
+
+<tr>
+<td valign="top">Recognizer</td>
+<td>Contains the main components of Sphinx-4, which are
+the front end, the linguist, and the decoder. The application interacts
+with the Sphinx-4 system mainly via the Recognizer.</td>
+</tr>
+
+<tr>
+<td valign="top">Audio</td>
+<td>The data to be decoded. This is audio in most systems,
+but it can also be configured to accept other forms of data,
+e.g., spectral or cepstral data.</td>
+</tr>
+
+<tr>
+<td valign="top">Front End</td>
+<td>Performs digital signal processing (DSP) on the incoming data.</td>
+</tr>
+
+<tr>
+<td valign="top">Feature</td>
+<td>The output of the front end are features, 
+which are used for decoding in the rest of the system.</td>
+</tr>
+
+<tr>
+<td valign="top">Linguist</td>
+<td>Embodies the linguistic knowledge of the system, which are
+the acoustic model, the dictionary, and the language model.
+The linguist produces a search graph structure on which the search manager
+performs search using different algorithms.</td>
+</tr>
+
+<tr>
+<td valign="top">Search Graph</td>
+<td>The graph structure produced by the linguist according
+to certain criteria (e.g., the grammar), using knowledge from the dictionary,
+the acoustic model, and the language model.</td>
+</tr>
+
+<tr>
+<td valign="top">Decoder</td>
+<td>Contains the components necessary for decoding, e.g.,
+the search algorithm (search manager), the feature scorer and the pruner.</td>
+</tr>
+
+<tr>
+<td valign="top">Search Manager</td>
+<td>Performs search using certain algorithm used, e.g.,
+breadth-first search, best-first search, depth-first search, etc..</td>
+</tr>
+
+<tr>
+<td valign="top">Active List</td>
+<td>A list of tokens representing all the states in the
+search graph that are active in the current feature frame.</td>
+</tr>
+
+<tr>
+<td valign="top">Scorer</td>
+<td>Scores the current feature frame against all the active
+states in the ActiveList.</td>
+</tr>
+
+<tr>
+<td valign="top">Pruner</td>
+<td>Prunes the active list according to certain strategies.</td>
+</tr>
+
+<tr>
+<td valign="top">Result</td>
+<td>The decoded result, which usually contains the N-best results.</td>
+</tr>
+
+</table>
+
 </body>
