@@ -187,6 +187,7 @@ public class Microphone extends BaseDataProcessor {
     private int audioBufferSize = 160000;
     private volatile boolean recording = false;
     private volatile boolean utteranceEndReached = true;
+    private RecordingThread recorder;
 
     // Configuration data
 
@@ -277,7 +278,8 @@ public class Microphone extends BaseDataProcessor {
        
         if (!AudioSystem.isLineSupported(info)) {
             logger.info(desiredFormat + " not supported");
-            AudioFormat nativeFormat = getNativeAudioFormat(desiredFormat);
+            AudioFormat nativeFormat
+                = DataUtil.getNativeAudioFormat(desiredFormat);
             if (nativeFormat == null) {
                 logger.severe("couldn't find suitable target audio format");
                 return;
@@ -413,23 +415,28 @@ public class Microphone extends BaseDataProcessor {
             return false;
         }
 	utteranceEndReached = false;
-	recording = true;
 	if (audioLine.isRunning()) {
 	    logger.severe("Whoops: audio line is running");
 	}
-	RecordingThread recorder = new RecordingThread("Microphone");
+        assert (recorder == null);
+	recorder = new RecordingThread("Microphone");
 	recorder.start();
+	recording = true;
 	return true;
     }
 
 
     /**
-     * Stops recording audio.
+     * Stops recording audio. This method does not return until recording
+     * has been stopped and all data has been read from the audio line.
      */
     public synchronized void stopRecording() {
         if (audioLine != null) {
+            if (recorder != null) {
+                recorder.stopRecording();
+                recorder = null;
+            }
             recording = false;
-	    audioLine.stop();
         }
     }
 
@@ -439,9 +446,10 @@ public class Microphone extends BaseDataProcessor {
      */
     class RecordingThread extends Thread {
 
-        private boolean endOfStream = false;
+        private boolean done = false;
         private volatile boolean started = false;
         private long totalSamplesRead = 0;
+        private Object lock = new Object();
 
         /**
          * Creates the thread with the given name
@@ -461,6 +469,23 @@ public class Microphone extends BaseDataProcessor {
             waitForStart();
         }
 
+        /**
+         * Stops the thread. This method does not return until recording
+         * has actually stopped, and all the data has been read from
+         * the audio line.
+         */
+        public void stopRecording() {
+            audioLine.stop();
+            try {
+                synchronized (lock) {
+                    while (!done) {
+                        lock.wait();
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
         /**
          * Implements the run() method of the Thread class.
@@ -479,9 +504,10 @@ public class Microphone extends BaseDataProcessor {
 	    logger.info("DataStartSignal added");
 	    try {
 		audioLine.start();
-		while (!endOfStream) {
+		while (!done) {
                     Data data = readData(currentUtterance);
 		    if (data == null) {
+                        done = true;
 			break;
 		    }
 		    audioList.add(data);
@@ -492,6 +518,7 @@ public class Microphone extends BaseDataProcessor {
                 }
 	    } catch (IOException ioe) {
                 logger.warning("IO Exception " + ioe.getMessage());
+                ioe.printStackTrace();
 	    } 
 	    long duration = (long)
 		(((double)totalSamplesRead/
@@ -500,6 +527,10 @@ public class Microphone extends BaseDataProcessor {
 	    audioList.add(new DataEndSignal(duration));
 	    logger.info("DataEndSignal ended");
 	    logger.info("stopped recording");	    
+
+            synchronized (lock) {
+                lock.notify();
+            }
 	}
 
         /**
@@ -550,7 +581,6 @@ public class Microphone extends BaseDataProcessor {
                             + " bytes from audio stream.");
             }
             if (numBytesRead <= 0) {
-                endOfStream = true;
                 return null;
             }
             int sampleSizeInBytes = 
@@ -613,50 +643,6 @@ public class Microphone extends BaseDataProcessor {
         }
         return finalSamples;
     }        
-
-    /**
-     * Returns a native audio format that has the same encoding, number
-     * of channels, endianness and sample size as the given format,
-     * and a sample rate that is larger than the given sample rate.
-     *
-     * @return a suitable native audio format
-     */
-    private static AudioFormat getNativeAudioFormat(AudioFormat format) {
-        // try to do sample rate conversion
-        Line.Info[] lineInfos = AudioSystem.getTargetLineInfo
-            (new Line.Info(TargetDataLine.class));
-
-        AudioFormat nativeFormat = null;
-
-        // find a usable target line
-        for (int i = 0; i < lineInfos.length; i++) {
-            
-            AudioFormat[] formats = 
-                ((TargetDataLine.Info)lineInfos[i]).getFormats();
-            
-            for (int j = 0; j < formats.length; j++) {
-                
-                // for now, just accept downsampling, not checking frame
-                // size/rate (encoding assumed to be PCM)
-                
-                AudioFormat thisFormat = formats[j];
-                if (thisFormat.getEncoding() == format.getEncoding()
-                    && thisFormat.isBigEndian() == format.isBigEndian()
-                    && thisFormat.getSampleSizeInBits() == 
-                    format.getSampleSizeInBits()
-                    && thisFormat.getSampleRate() > format.getSampleRate()) {
-                    nativeFormat = thisFormat;
-                    break;
-                }
-            }
-            if (nativeFormat != null) {
-                //no need to look through remaining lineinfos
-                break;
-            }
-        }
-        return nativeFormat;
-    }
-
 
 
     /**
