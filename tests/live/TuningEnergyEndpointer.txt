@@ -1,0 +1,26 @@
+How to Tune the EnergyEndpointer Parameters                 
+===========================================                 
+							9/8/2003
+							Philip Kwok
+
+This document describes how to tune the EnergyEndpointer parameters using the live demo.
+
+When you run "make live-ep", you will see an energy graph at the bottom. The horizontal lines in graph tell you the energy level. The bottom line is energy 0, the one above it is 1, the one above that is 2, etc.. You can determine the EnergyEndpointer parameters by looking at the energy graph.
+
+There are 3 energy values you need to tune:
+
+1. edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow
+
+This is the value that you think an utterance is starting.
+
+2. edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh
+   (maybe edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow)
+
+If the energy level is at or above startHigh for startWindow frames, you're sure it is in an utterance. The parameter startWindow can usually stay untouched.
+
+3. edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow
+   (maybe edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow)
+
+If the energy level stayed below endLow for endWindow frames, an utterance is considered to have ended. Again endWindow can usually stay untouched. You can usually set endLow to the same value as startLow.
+
+So these three energy values maybe different on your machine (or recording environment) than the defaults. You can find then out by looking at energy graph. If these values are set correctly, you should see a yellow line at where the endpointer thinks is the start of utterance, and a red line at where the endpointer thinks is the end of utterance.
