@@ -362,7 +362,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                     currentFrameNumber++;
                     done = !scoreTokens();
                 } while (!done
-                        && (growSkipInterval > 1 && ((currentFrameNumber % growSkipInterval) == 0)));
+                        && (growSkipInterval > 1 && 
+                            ((currentFrameNumber % growSkipInterval) == 0)));
                 if (!done) {
                     bestTokenMap = createBestTokenMap();
                     // prune and grow the emitting list

@@ -31,6 +31,12 @@ public interface HMM {
      */
     public Unit getUnit();
 
+    /**
+     * Gets the  base unit associated with this HMM
+     *
+     * @return the unit associated with this HMM
+     */
+    public Unit getBaseUnit();
 
     /**
      * Retrieves the hmm state 

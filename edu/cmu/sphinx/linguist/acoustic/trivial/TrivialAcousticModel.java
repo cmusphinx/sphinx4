@@ -147,7 +147,6 @@ public class TrivialAcousticModel implements AcousticModel {
      public Iterator getHMMIterator() {
          return hmmMap.values().iterator();
      }
-
      /**
       * Returns an iterator that can be used to iterate through all
       * the CI units in the acoustic model
@@ -226,6 +225,7 @@ class TrivialHMM implements HMM {
     Unit unit;
     HMMPosition position;
     HMMState[] hmmStates;
+    private Unit baseUnit;
 
     /**
      * Creates a trivial hmm
@@ -237,6 +237,7 @@ class TrivialHMM implements HMM {
         this.unit = unit;
         this.position = position;
         hmmStates = new HMMState[NUM_STATES];
+        baseUnit = Unit.getUnit(unit.getName());
 
         for (int i = 0; i < hmmStates.length; i++) {
             boolean finalState = i == hmmStates.length - 1;
@@ -252,6 +253,16 @@ class TrivialHMM implements HMM {
     public Unit getUnit() {
         return unit;
     }
+
+    /**
+     * Gets the  base unit associated with this HMM
+     *
+     * @return the unit associated with this HMM
+     */
+    public Unit getBaseUnit() {
+	return baseUnit;
+    }
+
 
     /**
      * Retrieves the hmm state 
