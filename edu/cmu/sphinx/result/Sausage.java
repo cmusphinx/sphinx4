@@ -51,6 +51,17 @@ public class Sausage {
     }
     
     /**
+     * Get an iterator for the sausage. The iterator will return
+     * SortedMaps, which are confusion sets mapping Double posteriors
+     * to Sets of word Strings.
+     * 
+     * @return an iterator that steps through confusion sets
+     */
+    public Iterator iterator() {
+        return confusionSets.iterator();
+    }
+    
+    /**
      * Adds skip elements for each word slot in which the word posteriors do not
      * add up to linear 1.
      * 
