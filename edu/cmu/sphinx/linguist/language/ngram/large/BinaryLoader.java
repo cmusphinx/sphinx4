@@ -14,9 +14,14 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.util.LogMath;
@@ -78,7 +83,7 @@ class BinaryLoader {
      * @param unigramWeight the unigram weight
      * @throws IOException if an I/O error occurs
      */
-    public  BinaryLoader(String format, String location,
+    public  BinaryLoader(String format, URL location,
             boolean applyLanguageWeightAndWip, LogMath logMath,
             float languageWeight, double wip, float unigramWeight)
             throws IOException {
@@ -254,11 +259,10 @@ class BinaryLoader {
      * @param location
      *                the location of the language model
      */
-    private void loadBinary(String location) throws IOException {
+    private void loadBinary(URL location) throws IOException {
 
-        FileInputStream fis = new FileInputStream(location);
-        DataInputStream stream = new DataInputStream(new BufferedInputStream(
-                fis));
+        DataInputStream stream = new DataInputStream
+            (new BufferedInputStream(location.openStream()));
 
         // read standard header string-size; set bigEndian flag
         readHeader(stream);
@@ -311,10 +315,14 @@ class BinaryLoader {
             applyLanguageWeight(trigramBackoffTable, languageWeight);
         }
 
-        fis.close();
         stream.close();
 
-        file = new RandomAccessFile(location, "r");
+        try {
+            URI uri = new URI(location.toString());
+            file = new RandomAccessFile(new File(uri), "r");
+        } catch (URISyntaxException urise) {
+            urise.printStackTrace();
+        }
     }
 
     /**
