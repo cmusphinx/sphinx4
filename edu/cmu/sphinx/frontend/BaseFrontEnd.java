@@ -101,7 +101,8 @@ public class BaseFrontEnd extends CepstrumExtractor implements FrontEnd {
      * @param context the context of this SimpleFrontEnd
      * @param dataSource the place to pull data from
      */
-    public void initialize(String name, String context, DataSource dataSource)
+    public void initialize(String name, String context, 
+                           DataSource dataSource)
         throws IOException {
         initialize(name, context, 
                    SphinxProperties.getSphinxProperties(context),
@@ -134,9 +135,19 @@ public class BaseFrontEnd extends CepstrumExtractor implements FrontEnd {
 	    lastCepstrumSource = cmn;
 	}
 
-        FeatureExtractor extractor = getFeatureExtractor(lastCepstrumSource);
-        this.featureSource = extractor;
+        FeatureExtractor extractor = 
+            getFeatureExtractor(lastCepstrumSource);
+
 	addProcessor((DataProcessor) extractor);
+        
+        FrameDropper frameDropper = getFrameDropper(extractor);
+        
+        if (frameDropper == null) {
+            this.featureSource = extractor;
+        } else {
+            this.featureSource = frameDropper;
+            addProcessor((DataProcessor) frameDropper);
+        }
     }
 
 
@@ -170,7 +181,8 @@ public class BaseFrontEnd extends CepstrumExtractor implements FrontEnd {
      *
      * @return the FeatureExtractor
      */
-    private FeatureExtractor getFeatureExtractor(CepstrumSource predecessor) 
+    private FeatureExtractor getFeatureExtractor
+        (CepstrumSource predecessor) 
 	throws IOException {
         try {
 	    FeatureExtractor extractor = (FeatureExtractor) 
@@ -181,6 +193,31 @@ public class BaseFrontEnd extends CepstrumExtractor implements FrontEnd {
         } catch (Exception e) {
             e.printStackTrace();
             throw new Error("Can't create FeatureExtractor: " + e);
+        }
+    }
+
+
+    /**
+     * Returns the FrameDropper, if applicable, or null if the
+     * BaseFrontEnd is not configured to drop frames.
+     *
+     * @param predecessor the FeatureSource from which this
+     *    FrameDropper reads Features
+     *
+     * @return a FrameDropper or null
+     */
+    private FrameDropper getFrameDropper(FeatureSource predecessor)
+        throws IOException {
+        int dropEveryNthFrame = getSphinxProperties().getInt
+            (FrameDropper.PROP_DROP_EVERY_NTH_FRAME,
+             FrameDropper.PROP_DROP_EVERY_NTH_FRAME_DEFAULT);
+        if (dropEveryNthFrame > 1) {
+            System.out.println("FrameDropper drops one out of every " + 
+                               dropEveryNthFrame + " frame(s)");
+            return (new FrameDropper("FrameDropper", getContext(),
+                                     getSphinxProperties(), predecessor));
+        } else {
+            return null;
         }
     }
 
