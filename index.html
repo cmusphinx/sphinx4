@@ -637,7 +637,9 @@ d:\work\sphinx4&gt;ant clean
   First of all, make sure that you have built Sphinx-4 already.
   To do so, go to the top level and type:
   <pre>ant all</pre>
-
+  <p>
+  You also need to make sure you have the appropriate acoustic model(s)
+  installed. More details below.
   <p>
   The Sphinx-4 regression tests have different directories for the
   different tasks. The directory sphinx4/tests/performance contains 
@@ -650,14 +652,52 @@ d:\work\sphinx4&gt;ant clean
 
   <p>
   <b>Isolated Digits</b>
+
+  <p>
+  Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary TIDIGITS models</a>.
+  <br>
+  Then in properties file,
+  <br><code>sphinx4/tests/performance/ti46/tidigits.props</code>
+  <br>make sure that you set the line
+  <br><code>tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location</code>
+  <br>to point to the URL of downloaded binary TIDIGITS models.
+
+  <p>
+  You also need to prepare a batch file called <code>ti46.batch</code>,
+  by following instructions in the <a href="#batch_files">Batch Files</a>
+  section. There is already one in the TI46 test directory, but it will
+  not work for you, since the paths to test files will not match your setup.
+
+  <p>
+  To run the tests:
+
   <pre>
   % cd sphinx4/tests/performance/ti46
   % ant -projecthelp      # to see a list of possible targets
   % ant ti46_wordlist
-</pre>
+  </pre>
 
   <p>
   <b>Connected Digits</b>
+
+  <p>
+  Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary TIDIGITS models</a>.
+  <br>
+  Then in properties file,
+  <br><code>sphinx4/tests/performance/ti46/tidigits.props</code>
+  <br>make sure that you set the line
+  <br><code>tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location</code>
+  <br>to point to the URL of downloaded binary TIDIGITS models.
+
+  <p>
+  You also need to prepare a batch file called <code>tidigits.batch</code>,
+  by following instructions in the <a href="#batch_files">Batch Files</a>
+  section. There is already one in the TIDIGITS test directory, but it will
+  not work for you, since the paths to test files will not match your setup.
+
+  <p>
+  To run the tests:
+
   <pre>
   % cd sphinx4/tests/performance/tidigits
   % ant -projecthelp      # to see a list of possible targets
@@ -666,6 +706,21 @@ d:\work\sphinx4&gt;ant clean
 
   <p>
   <b>Small Vocabulary</b>
+
+  <p>
+  The Wall Street Journal (WSJ) models are already included as part of
+  the CVS source tree. Therefore, you do not need to download them separately.
+  You also do not need to change anything in the properties file.
+
+  <p>
+  You also need to prepare a batch file called <code>an4.batch</code>,
+  by following instructions in the <a href="#batch_files">Batch Files</a>
+  section. There is already one in the AN4 test directory, but it will
+  not work for you, since the paths to test files will not match your setup.
+
+  <p>
+  To run the tests:
+
   <pre>
   % cd sphinx4/tests/performance/an4
   % ant -projecthelp      # to see a list of possible targets
@@ -674,6 +729,27 @@ d:\work\sphinx4&gt;ant clean
   
   <p>
   <b>Medium Vocabulary</b>
+
+  <p>
+  Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary RM1 models</a>.
+  <br>
+  Then in properties files:
+  <br><code>sphinx4/tests/performance/rm1/rm1.props</code>,
+  <br><code>sphinx4/tests/performance/rm1/rm1.clex.props</code>, and
+  <br><code>sphinx4/tests/performance/rm1/rm1.wpbfsm.props</code>,
+  <br>make sure that you set the line
+  <br><code>rm1;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location</code>
+  <br>to point to the URL of the downloaded binary RM1 models.
+
+  <p>
+  You also need to prepare a batch file called <code>rm1.batch</code>,
+  by following instructions in the <a href="#batch_files">Batch Files</a>
+  section. There is already one in the RM1 test directory, but it will
+  not work for you, since the paths to test files will not match your setup.
+
+  <p>
+  To run the tests:
+
   <pre>
   % cd sphinx4/tests/performance/rm1
   % ant -projecthelp      # to see a list of possible targets
@@ -682,6 +758,14 @@ d:\work\sphinx4&gt;ant clean
 
   <p>
   <b>Large Vocabulary</b>
+
+  <p>
+  The HUB-4 models are currently unavailable, and therefore you currently
+  will not be able to run this test.
+
+  <p>
+  To run the test:
+
   <pre>
   % cd tests/performance/hub4
   % ant -projecthelp      # to see a list of possible targets
