@@ -116,7 +116,7 @@ tidigits_very_quick:
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
 	-Dtests.search.Decoder.showPartialResults=false \
-	-Dtests.search.Decoder.showBestToken=false \
+	-Dedu.cmu.sphinx.decoder.Decoder.showBestToken=false \
 	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
 
 
@@ -128,8 +128,8 @@ tidigits_super_quick:
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
-	-Dtests.search.Decoder.showPartialResults=false \
-	-Dtests.search.Decoder.showBestToken=false \
+	-Dedu.cmu.sphinx.decoder.Decoder.showPartialResults=false \
+	-Dedu.cmu.sphinx.decoder.Decoder.showBestToken=false \
 	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
 
 
