@@ -128,8 +128,8 @@ public class RaisedCosineWindower extends BaseDataProcessor {
 
     private double alpha;                // the window alpha value
     private double[] cosineWindow;       // the raised consine window
-    private int windowSize;              // size of each window
     private int windowShift;             // the window size
+    private int sampleRate;              // sample rate of the data
     private List outputQueue;            // cache for output windows
     private DoubleBuffer overflowBuffer; // cache for overlapped audio regions
     private long currentCollectTime;
@@ -151,7 +151,6 @@ public class RaisedCosineWindower extends BaseDataProcessor {
 	setProperties(props);
 	createWindow();
         outputQueue = new LinkedList();
-        overflowBuffer = new DoubleBuffer(windowSize);
     }
 
 
@@ -159,22 +158,8 @@ public class RaisedCosineWindower extends BaseDataProcessor {
      * Reads the parameters needed from the static SphinxProperties object.
      */
     private void setProperties(SphinxProperties props) {
-
         alpha = props.getDouble
             (getName(), PROP_ALPHA, PROP_ALPHA_DEFAULT);
-
-        int sampleRate = props.getInt
-            (getName(), FrontEndFactory.PROP_SAMPLE_RATE,
-             FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
-
-        float windowSizeInMs = props.getFloat
-            (getName(), PROP_WINDOW_SIZE_MS, PROP_WINDOW_SIZE_MS_DEFAULT);
-        
-        float windowShiftInMs = props.getFloat
-            (getName(), PROP_WINDOW_SHIFT_MS, PROP_WINDOW_SHIFT_MS_DEFAULT);
-        
-        windowSize = DataUtil.getSamplesPerWindow(sampleRate, windowSizeInMs);
-        windowShift = DataUtil.getSamplesPerShift(sampleRate, windowShiftInMs);
     }
 
 
@@ -182,14 +167,30 @@ public class RaisedCosineWindower extends BaseDataProcessor {
      * Creates the Hamming Window.
      */
     private void createWindow() {
+
+        float windowSizeInMs = getSphinxProperties().getFloat
+            (getName(), PROP_WINDOW_SIZE_MS, PROP_WINDOW_SIZE_MS_DEFAULT);
+        
+        float windowShiftInMs = getSphinxProperties().getFloat
+            (getName(), PROP_WINDOW_SHIFT_MS, PROP_WINDOW_SHIFT_MS_DEFAULT);
+        
+        int windowSize =
+            DataUtil.getSamplesPerWindow(sampleRate, windowSizeInMs);
+        
+        windowShift = DataUtil.getSamplesPerShift(sampleRate, windowShiftInMs);
+
        	this.cosineWindow = new double[windowSize];
-	if (windowSize > 1){
+
+	if (cosineWindow.length > 1){
 	    double oneMinusAlpha = (1 - alpha);
-	    for (int i = 0; i < windowSize; i++) {
+	    for (int i = 0; i < cosineWindow.length; i++) {
 		cosineWindow[i] = oneMinusAlpha - alpha *
-		    Math.cos(2 * Math.PI * i / ((double) windowSize - 1.0));
+		    Math.cos(2 * Math.PI * i / 
+                             ((double) cosineWindow.length - 1.0));
 	    }
 	}
+
+        overflowBuffer = new DoubleBuffer(windowSize);
     }
 
 
@@ -217,6 +218,11 @@ public class RaisedCosineWindower extends BaseDataProcessor {
                     if (currentFirstSampleNumber == -1) {
                         currentFirstSampleNumber = data.getFirstSampleNumber();
                     }
+                    if (cosineWindow == null ||
+                        sampleRate != data.getSampleRate()) {
+                        sampleRate = data.getSampleRate();
+                        createWindow();
+                    }
                     // process the Data, and output the windows
                     process(data);
                 } else {
@@ -237,7 +243,8 @@ public class RaisedCosineWindower extends BaseDataProcessor {
         if (outputQueue.size() > 0) {
             Data output = (Data) outputQueue.remove(0);
             if (output instanceof DoubleData) {
-                assert ((DoubleData) output).getValues().length == windowSize;
+                assert ((DoubleData) output).getValues().length == 
+                    cosineWindow.length;
             }
             return output;
         } else {
@@ -266,7 +273,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
         Data utteranceEnd = null;
         
         // read in more Data if we have under one window's length of data
-        while (length < windowSize) {
+        while (length < cosineWindow.length) {
             Data next = getPredecessor().getData();
             if (next instanceof DoubleData) {
                 dataList.add(next);
@@ -322,8 +329,9 @@ public class RaisedCosineWindower extends BaseDataProcessor {
      * with zeros, and then apply the Hamming window to it.
      */
     private void processUtteranceEnd() {
-        overflowBuffer.padWindow(windowSize);
-        applyRaisedCosineWindow(overflowBuffer.getBuffer(), windowSize);
+        overflowBuffer.padWindow(cosineWindow.length);
+        applyRaisedCosineWindow
+            (overflowBuffer.getBuffer(), cosineWindow.length);
         overflowBuffer.reset();
     }
 
@@ -346,18 +354,19 @@ public class RaisedCosineWindower extends BaseDataProcessor {
 
 	// if no windows can be created but there is some data,
 	// pad it with zeros
-	if (length < windowSize) {
-	    double[] padded = new double[windowSize];
-	    Arrays.fill(padded, 0);
+	if (length < cosineWindow.length) {
+	    double[] padded = new double[cosineWindow.length];
+            Arrays.fill(padded, 0);
 	    System.arraycopy(in, 0, padded, 0, length);
 	    in = padded;
 	    windowCount = 1;
 	} else {
-	    windowCount = getWindowCount(length, windowSize, windowShift);
+	    windowCount = getWindowCount
+                (length, cosineWindow.length, windowShift);
 	}
 
         // create all the windows at once, not individually, saves time
-        double[][] windows = new double[windowCount][windowSize];
+        double[][] windows = new double[windowCount][cosineWindow.length];
 
         int windowStart = 0;
 
@@ -366,13 +375,14 @@ public class RaisedCosineWindower extends BaseDataProcessor {
             double[] myWindow = windows[i];
             
             // apply the Hamming Window function to the window of data
-            for (int w = 0, s = windowStart; w < windowSize; s++, w++) {
+            for (int w = 0, s = windowStart; w < myWindow.length; s++, w++) {
                 myWindow[w] = in[s] * cosineWindow[w];
             }
             
             // add the frame to the output queue
-            outputQueue.add(new DoubleData(myWindow, currentCollectTime,
-                                           currentFirstSampleNumber));
+            outputQueue.add(new DoubleData
+                            (myWindow, sampleRate, 
+                             currentCollectTime, currentFirstSampleNumber));
             currentFirstSampleNumber += windowShift;
         }
 
