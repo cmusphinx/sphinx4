@@ -44,7 +44,11 @@ public class HMMState implements Serializable {
 	this.hmm = hmm;
 	this.state = which;
 	this.isEmitting = ((hmm.getTransitionMatrix().length - 1) != state);
-	Utilities.objectTracker("HMMState", objectCount++);
+        if (isEmitting) {
+            SenoneSequence ss = hmm.getSenoneSequence();
+            senone = ss.getSenones()[state];
+        }
+        Utilities.objectTracker("HMMState", objectCount++);
     }
 
     /**
@@ -74,7 +78,7 @@ public class HMMState implements Serializable {
      * @return the acoustic score for this state.
      */
     public float getScore(Feature feature) {
-        return getSenone().getScore(feature);
+        return senone.getScore(feature);
     }
 
 
@@ -87,7 +91,7 @@ public class HMMState implements Serializable {
      */
     public float[] calculateComponentScore(Feature feature) {
 	SenoneSequence ss = hmm.getSenoneSequence();
-	return ss.getSenones()[state].calculateComponentScore(feature);
+	return senone.calculateComponentScore(feature);
     }
 
 
@@ -97,10 +101,6 @@ public class HMMState implements Serializable {
      * @return the senone for this state.
      */
     public Senone getSenone() {
-        if (senone == null) {
-            SenoneSequence ss = hmm.getSenoneSequence();
-            senone = ss.getSenones()[state];
-        }
         return senone;
     }
 
@@ -142,7 +142,6 @@ public class HMMState implements Serializable {
     // TODO: We may have non-emitting entry states as well.
     public final boolean isEmitting() {
 	return isEmitting;
-	// return !isExitState();
     }
 
 
