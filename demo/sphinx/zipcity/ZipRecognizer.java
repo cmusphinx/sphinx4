@@ -65,8 +65,13 @@ public class ZipRecognizer implements Runnable {
     /**
      * Turns on the microphone and starts recognition
      */
-    public void microphoneOn() {
-        new Thread(this).start();
+    public boolean  microphoneOn() {
+        if (microphone.getAudioFormat() == null) {
+            return false;
+        } else {
+            new Thread(this).start();
+            return true;
+        }
     }
 
     /**

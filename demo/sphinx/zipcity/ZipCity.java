@@ -82,7 +82,7 @@ public class ZipCity extends JFrame {
      */
     public ZipCity() {
         super("ZipCity - a Sphinx-4 WebStart Demo");
-        setSize(900, 480);
+        setSize(900, 520);
         setDefaultLookAndFeelDecorated(true);
         setApplicationIcon();
         mapPanel = createMapPanel();
@@ -103,8 +103,12 @@ public class ZipCity extends JFrame {
             public void actionPerformed(ActionEvent ae) {
                 if (speakButton.isEnabled()) {
                     speakButton.setEnabled(false);
-                    zipRecognizer.microphoneOn();
-                    setMessage("Speak a zip code ...");
+                    if (zipRecognizer.microphoneOn()) {
+                        setMessage("Speak a zip code ...");
+                    } else {
+                        setMessage(
+                        "Sorry, can't find the microphone on your computer.");
+                    }
                 }
             }
         });
