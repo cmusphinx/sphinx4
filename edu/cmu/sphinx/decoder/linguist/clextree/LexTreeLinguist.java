@@ -149,7 +149,7 @@ public class LexTreeLinguist implements  Linguist {
     private boolean generateUnitStates = false;
     private boolean wantUnigramSmear = true;
     private float unigramSmearWeight = 1.0f;
-    private float unigramSmearOffset = .5E6f;
+    private float unigramSmearOffset = .0f;
 
     private Word sentenceEndWord;
     private Word[] sentenceStartWordArray;
