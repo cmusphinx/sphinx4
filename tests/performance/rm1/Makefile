@@ -11,8 +11,6 @@
 # Makefile for all the RM1 tests.
 #
 
-# test commit notification changes.
-
 # Relative path to the top of the source tree
 TOP = ../../..
 PACKAGE_PATH = tests/performance/rm1
