@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Groups Cepstra of an single Utterance together into a CepstraGroup.
- * It reads in Cepstra from its predecessor, groups them together,
- * and returns the same Cepstra in the getCepstrum() method unmodified.
+ * Monitors the Cepstra that passes through this Monitor.
+ * The exact monitoring work to be done should be specified
+ * in the abstract method "cepstrumMonitored()".
  */
 public abstract class CepstrumMonitor 
 extends DataProcessor implements CepstrumSource {
@@ -35,7 +35,7 @@ extends DataProcessor implements CepstrumSource {
 
     /**
      * Override this method to specify what should be done when
-     * a CepstraGroup is produced.
+     * a Cepstrum is monitored.
      */
     public abstract void cepstrumMonitored(Cepstrum ceptrum);
 
