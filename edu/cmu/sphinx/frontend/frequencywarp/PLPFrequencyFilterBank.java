@@ -127,11 +127,6 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
      */
     private void setProperties(SphinxProperties props) {
 
-	sampleRate = props.getInt
-            (getName(),
-             FrontEndFactory.PROP_SAMPLE_RATE,
-             FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
-
         minFreq = props.getDouble
             (getName(), PROP_MIN_FREQ, PROP_MIN_FREQ_DEFAULT);
 
@@ -257,8 +252,10 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
 
 	double[] in = input.getValues();
         
-        if (criticalBandFilter == null) {
+        if (criticalBandFilter == null || 
+            sampleRate != input.getSampleRate()) {
             numberFftPoints = (in.length - 1) * 2;
+            sampleRate = input.getSampleRate();
             buildCriticalBandFilterbank();
             buildEqualLoudnessScalingFactors();
 
@@ -281,7 +278,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
 	}
 
 	DoubleData output = new DoubleData
-            (outputPLPSpectralArray,
+            (outputPLPSpectralArray, input.getSampleRate(),
              input.getCollectTime(), input.getFirstSampleNumber());
 
         return output;

@@ -216,7 +216,7 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
 	double[] cepstrumDouble = LPC.getData(cepstrumSize);
 
 	DoubleData cepstrum = new DoubleData
-            (cepstrumDouble, input.getCollectTime(),
+            (cepstrumDouble, input.getSampleRate(), input.getCollectTime(),
              input.getFirstSampleNumber());
         
         return cepstrum;

@@ -18,7 +18,7 @@ import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
@@ -162,10 +162,6 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
         super.initialize((name == null ? "MelFrequencyFilterBank" : name),
                          frontEnd, props, predecessor);
 
-        sampleRate = props.getInt
-            (getName(), FrontEndFactory.PROP_SAMPLE_RATE,
-             FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
-
         minFreq = props.getDouble
             (getName(), PROP_MIN_FREQ, PROP_MIN_FREQ_DEFAULT);
 
@@ -244,7 +240,7 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
      */
     private void buildFilterbank(int numberFftPoints, 
 				 int numberFilters, 
-				 double minFreq, 
+                                 double minFreq, 
 				 double maxFreq) 
 	throws IllegalArgumentException {
 	double minFreqMel;
@@ -333,8 +329,9 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
 
 	double[] in = input.getValues();
 
-        if (filter == null) {
+        if (filter == null || sampleRate != input.getSampleRate()) {
             numberFftPoints = (in.length - 1) * 2;
+            sampleRate = input.getSampleRate();
             buildFilterbank(numberFftPoints, numberFilters, minFreq, maxFreq);
         } else if (in.length != ((numberFftPoints >> 1) + 1)) {
                 throw new IllegalArgumentException
@@ -352,7 +349,8 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
 	}
 
 	DoubleData outputMelSpectrum = new DoubleData
-            (output, input.getCollectTime(), input.getFirstSampleNumber());
+            (output, sampleRate, input.getCollectTime(), 
+             input.getFirstSampleNumber());
 
         return outputMelSpectrum;
     }
