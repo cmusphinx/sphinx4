@@ -12,6 +12,7 @@
 
 package edu.cmu.sphinx.knowledge.language;
 
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.util.LogMath;
 import java.util.List;
 import java.util.Set;
@@ -95,7 +96,8 @@ public interface LanguageModel {
      *
      * @throws IOException if an error occurs while loading the model
      */
-    public void initialize(String context) throws IOException;
+    public void initialize(String context, Dictionary dictionary) 
+        throws IOException;
 	    	
 
     /**

@@ -12,6 +12,8 @@
 
 package edu.cmu.sphinx.knowledge.language;
 
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import java.io.IOException;
@@ -49,7 +51,8 @@ public class LanguageModelFactory {
      *
      * @return a language model (or null)
      */
-    public static LanguageModel createLanguageModel(String context) {
+    public static LanguageModel createLanguageModel(String context, 
+                                                    Dictionary dictionary) {
 	String path =  "";
 	try {
 
@@ -61,7 +64,7 @@ public class LanguageModelFactory {
 
 	   if (path != null) {
 	       lm = (LanguageModel) Class.forName(path).newInstance();
-	       lm.initialize(context);
+	       lm.initialize(context, dictionary);
 	   }
            Timer.stop("createLanguageModel");
 	   return lm;
