@@ -432,7 +432,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         curTokensScored.value = 0;
 
         skewMap = new HashMap();
-        activeListManager.setNumStateOrder(searchGraph.getNumStateOrder());
+        numStateOrder = searchGraph.getNumStateOrder();
+        activeListManager.setNumStateOrder(numStateOrder);
         if (buildWordLattice) {
             loserManager = new AlternateHypothesisManager(maxLatticeEdges);
         }
@@ -723,12 +724,19 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * Checks that the given two states are in legitimate order.
      */
     private void checkStateOrder(SearchState fromState, SearchState toState) {
+        if (fromState.getOrder() == numStateOrder - 1) {
+            return;
+        }
+
         if (fromState.getOrder() > toState.getOrder()) {
             throw new Error("IllegalState order: from "
                     + fromState.getClass().getName() + " "
-                    + fromState.toPrettyString() + " to "
+                    + fromState.toPrettyString() 
+                    + " order: " + fromState.getOrder() 
+                    + " to "
                     + toState.getClass().getName() + " "
-                    + toState.toPrettyString());
+                    + toState.toPrettyString()
+                    + " order: " + toState.getOrder());
         }
     }
 
