@@ -133,8 +133,10 @@ public class SimpleControlFile implements ControlFile {
 	    utteranceLine.replaceFirst("^.*/", "").replaceFirst("\\..*$", "");
 	String transcriptLine = (String) transcriptFileIterator.next();
 	// Finds out if the audio file name is part of the transcript line
-	assert transcriptLine.matches(".* \\(" + utteranceFilename + "\\)$") :
-	    "File name in transcript and control file have to match";
+	assert transcriptLine.matches(".*[ \t]\\(" + utteranceFilename + "\\)$") :
+	    "File name in transcript \"" + transcriptLine + 
+            "\" and control file \"" + utteranceFilename + 
+	    "\" have to match.";
 	// Removes the filename from the transcript line.
 	// The transcript line is of the form:
 	//    She washed her dark suit (st002)
