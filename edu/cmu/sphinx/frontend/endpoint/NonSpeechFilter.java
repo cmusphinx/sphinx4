@@ -251,7 +251,8 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
                 discardMode = true;
                 next = new Cepstrum(Signal.UTTERANCE_END);
             } else if (discardMode) {
-                while (next.getSignal() != Signal.SPEECH_START &&
+                while (next != null && 
+                       next.getSignal() != Signal.SPEECH_START &&
                        next.getSignal() != Signal.SPEECH_END) {
                     next = readCepstrum();
                 }
