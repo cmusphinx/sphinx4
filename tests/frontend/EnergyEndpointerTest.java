@@ -5,10 +5,12 @@
 package tests.frontend;
 
 import edu.cmu.sphinx.frontend.Cepstrum;
+import edu.cmu.sphinx.frontend.CepstrumSource;
 import edu.cmu.sphinx.frontend.EnergyEndpointer;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.MelCepstrumProducer;
 import edu.cmu.sphinx.frontend.MelFilterbank;
+import edu.cmu.sphinx.frontend.NonSpeechFilter;
 import edu.cmu.sphinx.frontend.Preemphasizer;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.SpectrumAnalyzer;
@@ -50,6 +52,13 @@ public class EnergyEndpointerTest {
                 ("MelCepstrumProducer", testName, melFilterbank);
 	    EnergyEndpointer endpointer = new EnergyEndpointer
                 ("EnergyEndpointer", testName, melCepstrum);
+            NonSpeechFilter nonSpeechFilter = new NonSpeechFilter
+                ("NonSpeechFilter", testName, endpointer);
+
+            CepstrumSource finalSource = endpointer;
+            if (Boolean.getBoolean("removeNonSpeech")) {
+                finalSource = nonSpeechFilter;
+            }
 
             CepstraViewer cepstraViewer = new CepstraViewer("EndpointerTest");
             cepstraViewer.show();
@@ -60,7 +69,7 @@ public class EnergyEndpointerTest {
             Cepstrum cepstrum = null;
 
             do {
-                cepstrum = endpointer.getCepstrum();
+                cepstrum = finalSource.getCepstrum();
                 if (cepstrum != null) {
                     cepstraList.add(cepstrum);
                     Signal signal = cepstrum.getSignal();
