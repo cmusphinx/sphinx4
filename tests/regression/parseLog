@@ -73,7 +73,8 @@ BEGIN {
 END {
     testName = ARGV[1];
     gsub(/.out/, "", testName);
-    "date +%D" | getline date;
+    # "date +%D" | getline date;
+    "date +%Y-%m-%d" | getline date;
     "date +%T" | getline time;
     "hostname" | getline machine;
     "uptime" | getline uptime;
