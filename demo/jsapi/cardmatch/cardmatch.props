@@ -28,7 +28,7 @@ wsj;edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.l
 wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
 
 wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.format=sphinx3.binary
-wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location = file:./../../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 
 wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
 wsj;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.data_location = cd_continuous_8gau
@@ -118,7 +118,7 @@ edu.cmu.sphinx.linguist.Linguist.autoLoopSilences=false
 # Dictionary properties
 #
 ############################################################
-edu.cmu.sphinx.linguist.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+edu.cmu.sphinx.linguist.dictionary.Dictionary.location = file:./../../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath = dict/cmudict.0.6d
 edu.cmu.sphinx.linguist.dictionary.Dictionary.fillerPath = dict/fillerdict
 edu.cmu.sphinx.linguist.dictionary.Dictionary.wordReplacement=<sil>
