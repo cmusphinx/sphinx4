@@ -200,11 +200,6 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
                 if (location == BELOW_START_LOW) {
                     if (inputBuffer.size() > 0) {
                         lastFrameBelowStartLow = (Cepstrum) inputBuffer.get(0);
-                        /*
-                        System.out.println
-                            ("set lastFrameBelowStartLow, e = " + 
-                             lastFrameBelowStartLow.getEnergy());
-                             */
                     }
                 }
                 location = BETWEEN_START_LOW_HIGH;
@@ -214,9 +209,6 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
                 if (location == BELOW_START_LOW) {
                     if (inputBuffer.size() > 0) {
                         lastFrameBelowStartLow = (Cepstrum) inputBuffer.get(0);
-                        System.out.println
-                            ("set lastFrameBelowStartLow, e = " + 
-                             lastFrameBelowStartLow.getEnergy());
                     }
                 }
 
