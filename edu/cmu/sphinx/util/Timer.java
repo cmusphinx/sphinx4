@@ -165,6 +165,15 @@ public class Timer {
     }
 
     /**
+     * Returns true if the timer has started.
+     *
+     * @return true if the timer has started; false otherwise
+     */
+    public boolean isStarted() {
+        return (startTime > 0L);
+    }
+
+    /**
      * Starts the timer running.
      */
     public void start() {
