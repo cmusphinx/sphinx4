@@ -123,6 +123,20 @@ public class Pronunciation implements Serializable {
      * @return a string of this Pronunciation
      */
     public String toString() {
+	String result = (word + "(");
+	for (int i = 0; i < units.length; i++) {
+	    result += (units[i] + " ");
+	}
+        result += ")";
+        return result;
+    }
+
+    /**
+     * Returns a detailed string representation of this Pronunication.
+     *
+     * @return a string of this Pronunciation
+     */
+    public String toDetailedString() {
 	String result = (word + " ");
 	for (int i = 0; i < units.length; i++) {
 	    result += (units[i] + " ");
