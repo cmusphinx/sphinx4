@@ -3,11 +3,13 @@
 <project basedir="." default="none" name="TI46 Tests">
 <description>
 This file is used to run the TI46 performance tests.
+Run ant with -Dskip=5 to do the standard 'quick' version of a test.
+Run ant with -Dlogger_props=ti46.props to turn on the logging.
 </description>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
-    <!-- * Where to find things...                                * -->
+    <!-- * Properties common to all tests                         * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <property name="top_dir"		value="../../.."/>
@@ -18,21 +20,16 @@ This file is used to run the TI46 performance tests.
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="${build_dir}/lib"/>
 
+    <property name="skip"               value="0"/>
+    <property name="logger_props"       value=""/>  
+
+    <property name="initial_heap_size"  value="16m"/>
+    <property name="maximum_heap_size"  value="16m"/>
+    <property name="jit"                value="server"/>
+
     <property name="batch_main"               
 	      value="edu.cmu.sphinx.decoder.BatchDecoder"/>
 
-    <target name="set_skip_quick"
-            if="mode">
-        <property name="skip" value="5"/>
-    </target>
-    <target name="set_skip_none"
-            unless="mode">
-        <property name="skip" value="0"/>
-    </target>
-    <target name="set_skip"
-            depends="set_skip_quick,
-                     set_skip_none">
-    </target>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -40,20 +37,18 @@ This file is used to run the TI46 performance tests.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="ti46_wordlist"
-            depends="set_skip"
 	    description="TI46 test set with a word list language model">
-        <echo message="${classes_dir}"/>
         <java classpath="${classes_dir}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
-            <jvmarg value="-server"/>   
-            <jvmarg value="-ms16m"/>
-            <jvmarg value="-mx16m"/> 
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
 			 value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
-			 value=""/>
+			 value="${logger_props}"/>
             <arg value="ti46.props"/> 
             <arg value="ti46.batch"/> 
         </java>
@@ -65,20 +60,18 @@ This file is used to run the TI46 performance tests.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="ti46_flat_unigram"
-            depends="set_skip"
 	    description="TI46 test set with a flat unigram language model">
-        <echo message="${classes_dir}"/>
         <java classpath="${classes_dir}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
-            <jvmarg value="-server"/>   
-            <jvmarg value="-ms16m"/>
-            <jvmarg value="-mx16m"/> 
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
 			 value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
-			 value=""/>
+			 value="${logger_props}"/>
             <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
                          value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
@@ -96,20 +89,18 @@ This file is used to run the TI46 performance tests.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="ti46_flat_unigram_fst"
-            depends="set_skip"
 	    description="TI46 test set with a flat unigram fst language model">
-        <echo message="${classes_dir}"/>
         <java classpath="${classes_dir}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
-            <jvmarg value="-server"/>   
-            <jvmarg value="-ms16m"/>
-            <jvmarg value="-mx16m"/> 
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
 			 value="${skip}"/> 
             <sysproperty key="java.util.logging.config.file"
-			 value=""/>
+			 value="${logger_props}"/>
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
                          value="edu.cmu.sphinx.decoder.linguist.FSTGrammar"/>
             <sysproperty key="edu.cmu.sphinx.knowledge.linguist.FSTGrammar.path"
