@@ -21,12 +21,13 @@ import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.frontend.util.DataUtil;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
@@ -77,103 +78,92 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * @see Data
  */
 public class RaisedCosineWindower extends BaseDataProcessor {
-    
-    /**
-     * SphinxProperty prefix for this RaisedCosineWindower.
-     */
-    public static final String PROP_PREFIX
-        = "edu.cmu.sphinx.frontend.window.RaisedCosineWindower.";
-
-
     /**
      * The SphinxProperty name for window size in milliseconds.
      */
-    public static final String PROP_WINDOW_SIZE_MS
-        = PROP_PREFIX + "windowSizeInMs";
-
-
+    public static final String PROP_WINDOW_SIZE_MS = "windowSizeInMs";
     /**
      * The default value for PROP_WINDOW_SIZE_MS.
      */
     public static final float PROP_WINDOW_SIZE_MS_DEFAULT = 25.625f;
-
-
     /**
-     * The SphinxProperty name for window shift in milliseconds,
-     * which has a default value of 10F.
+     * The SphinxProperty name for window shift in milliseconds, which has a
+     * default value of 10F.
      */
-    public static final String PROP_WINDOW_SHIFT_MS
-        = PROP_PREFIX + "windowShiftInMs";
-
-
+    public static final String PROP_WINDOW_SHIFT_MS = "windowShiftInMs";
     /**
      * The default value for PROP_WINDOW_SHIFT_MS.
      */
     public static final float PROP_WINDOW_SHIFT_MS_DEFAULT = 10;
-
-    
     /**
-     * The name of the SphinxProperty for the alpha value of the Window,
-     * which has a default value of 0.46 (double), which is the value for the
+     * The name of the SphinxProperty for the alpha value of the Window, which
+     * has a default value of 0.46 (double), which is the value for the
      * RaisedCosineWindow.
      */
-    public static final String PROP_ALPHA = PROP_PREFIX + "alpha";
-
+    public static final String PROP_ALPHA = "alpha";
+    
 
     /**
      * The default value for PROP_ALPHA.
      */
     public static final double PROP_ALPHA_DEFAULT = 0.46;
-
-
-    private double alpha;                // the window alpha value
-    private double[] cosineWindow;       // the raised consine window
-    private int windowShift;             // the window size
-    private int sampleRate;              // sample rate of the data
-    private List outputQueue;            // cache for output windows
+    private double alpha; // the window alpha value
+    private double[] cosineWindow; // the raised consine window
+    private int windowSize; // size of each window
+    private int windowShift; // the window size
+    private List outputQueue; // cache for output windows
     private DoubleBuffer overflowBuffer; // cache for overlapped audio regions
     private long currentCollectTime;
     private long currentFirstSampleNumber;
+    private float windowSizeInMs;
+    private float windowShiftInMs;
+    private int sampleRate = 0;
 
-
-    /**
-     * Initializes this RaisedCosineWindower.
-     *
-     * @param name         the name of this RaisedCosineWindower
-     * @param frontEnd     the front end this RaisedCosineWindower belongs to
-     * @param props        the properties of this RaisedCosineWindower
-     * @param predecessor  the predecessor DataProcessor
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
      */
-    public void initialize(String name, String frontEnd,
-                           SphinxProperties props, DataProcessor predecessor) {
-        super.initialize((name == null ? "RaisedCosineWindow" : name),
-                         frontEnd, props, predecessor);
-	setProperties(props);
-	createWindow();
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_ALPHA, PropertyType.DOUBLE);
+        registry.register(PROP_WINDOW_SIZE_MS, PropertyType.FLOAT);
+        registry.register(PROP_WINDOW_SHIFT_MS, PropertyType.FLOAT);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        alpha = ps.getDouble(PROP_ALPHA, PROP_ALPHA_DEFAULT);
+        windowSizeInMs = ps.getFloat(PROP_WINDOW_SIZE_MS,
+                PROP_WINDOW_SIZE_MS_DEFAULT);
+        windowShiftInMs = ps.getFloat(PROP_WINDOW_SHIFT_MS,
+                PROP_WINDOW_SHIFT_MS_DEFAULT);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
+     */
+    public void initialize() {
+        super.initialize();
+
+        // createWindow();
         outputQueue = new LinkedList();
     }
-
-
-    /**
-     * Reads the parameters needed from the static SphinxProperties object.
-     */
-    private void setProperties(SphinxProperties props) {
-        alpha = props.getDouble
-            (getName(), PROP_ALPHA, PROP_ALPHA_DEFAULT);
-    }
-
+    
 
     /**
      * Creates the Hamming Window.
      */
     private void createWindow() {
-
-        float windowSizeInMs = getSphinxProperties().getFloat
-            (getName(), PROP_WINDOW_SIZE_MS, PROP_WINDOW_SIZE_MS_DEFAULT);
-        
-        float windowShiftInMs = getSphinxProperties().getFloat
-            (getName(), PROP_WINDOW_SHIFT_MS, PROP_WINDOW_SHIFT_MS_DEFAULT);
-        
         int windowSize =
             DataUtil.getSamplesPerWindow(sampleRate, windowSizeInMs);
         
