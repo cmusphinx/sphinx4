@@ -23,6 +23,7 @@ import edu.cmu.sphinx.util.Utilities;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import java.net.URL;
 
@@ -96,9 +97,8 @@ class NioBinaryLoader {
     private float[] trigramBackoffTable;
     private float[] trigramProbTable;
 
-    private FileInputStream fis;
-    private FileChannel fileChannel;
-    private MappedByteBuffer bb;
+    private RandomAccessFile file;
+
     private boolean bigEndian = true;
     private boolean applyLanguageWeightAndWip;
 
@@ -315,17 +315,18 @@ class NioBinaryLoader {
      * @return the loaded ByteBuffer
      */
     public ByteBuffer loadBuffer(long position, int size) throws IOException {
-        // assert ((position + size) <= fileChannel.size());
-        // loadTimer.start();
-        ByteBuffer buffer = ByteBuffer.allocate(size);
-        fileChannel.position(position);
-        int bytesRead = fileChannel.read(buffer);
-        if (bytesRead != size) {
-            throw new IOException("Insufficient bytes read.");
+        file.seek(position);
+        byte[] bytes = new byte[size];
+        if (file.read(bytes) != size) {
+            throw new IOException("Incorrect number of bytes read.");
         }
-        buffer.order(bb.order());
-        // loadTimer.stop();
-        return buffer;
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+	if (!bigEndian) {
+	    bb.order(ByteOrder.LITTLE_ENDIAN);
+	} else {
+            bb.order(ByteOrder.BIG_ENDIAN);
+        }
+        return bb;
     }
 
 
@@ -352,9 +353,9 @@ class NioBinaryLoader {
      */
     private void loadBinary(String location) throws IOException {
 
-        fis = new FileInputStream(location);
-	fileChannel = fis.getChannel();
-        bb = fileChannel.map
+        FileInputStream fis = new FileInputStream(location);
+	FileChannel fileChannel = fis.getChannel();
+        MappedByteBuffer bb = fileChannel.map
             (FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
 
 	// read standard header string-size; set bigEndian flag
@@ -503,6 +504,8 @@ class NioBinaryLoader {
         }
 
         uwTimer.stop();
+
+        file = new RandomAccessFile(location, "r");
     }
     
     
