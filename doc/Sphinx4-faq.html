@@ -253,10 +253,18 @@ WARRANTIES.
         out-of-grammar detection.
         <p>
         The FlatLinguist and the DynamicFlatLinguist can be configured
-        to detect out-of-grammar utterances. To do so, set the
-        <i>addOutOfGrammarBranch</i> property to <b>true</b> and the
-        <i>outOfGrammarProbability</i> to a small value (typical
-        values of 1E-20 suffice).
+        to detect out-of-grammar utterances. To do so, set the following
+	properties of either linguists:
+	<ul>
+	<li><i>addOutOfGrammarBranch</i> property to <b>true</b></li>
+        <li><i>outOfGrammarProbability</i> to a small value (e.g.
+	1E-20), a smaller probability makes it less likely to be recognized
+	as out-of-grammar </li>
+	<li><i>phoneInsertionProbability</i> to a small value (e.g. 1E-10)</li>
+	<li><i>phoneLoopAcousticModel</i> to the acoustic model you are using,
+	typically the Wall Street Journal (WSJ) model. WSJ has a wide
+	enough range of phones to ensure that rejection works well </li>
+	</ul>
         <p>
         When configured this way, the search will look for
         out-of-grammar utterances. If an out of grammar utterance is
