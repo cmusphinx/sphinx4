@@ -285,4 +285,13 @@ class TokenRank {
     float getRelativeRank() {
         return relativeRank;
     }
+
+    /**
+     * Returns the string representation of this object
+     *
+     * @return the string representation of this object
+     */
+    public String toString() {
+        return "Rank[" + absoluteRank +"," + relativeRank + "]";
+    }
 }
