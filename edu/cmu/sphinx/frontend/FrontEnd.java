@@ -146,7 +146,8 @@ public class FrontEnd implements DataSource, Runnable {
 
 
     /**
-     * Returns a FeatureFrame, EndPointSignal.SEGMENT_START, or
+     * Returns the next Data object produced by the FrontEnd, which
+     * can be a FeatureFrame, EndPointSignal.SEGMENT_START, or
      * EndPointSignal.SEGMENT_END signals produced by this FrontEnd.
      * Return null if no Data available
      *
@@ -158,7 +159,7 @@ public class FrontEnd implements DataSource, Runnable {
             if (queue.size() == 0) {
                 return null;
             } else {
-                Object data = queue.get(0);
+                Object data = queue.remove(0);
                 if (data == null) {
                     return null;
                 } else {
