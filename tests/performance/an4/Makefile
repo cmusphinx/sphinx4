@@ -28,7 +28,7 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
 PROFILE_FLAGS= -Xprof 
 LOG_GC_FLAGS=  -Xloggc:gc.txt
-GC_FLAGS = -ms128m -mx1g 
+GC_FLAGS = -ms128m -mx512m
 
 
 DEBUG_FLAGS= 
@@ -375,4 +375,28 @@ bush_test2:
 	-Dedu.cmu.sphinx.decoder.linguist.WordListGrammar.addSilenceWord=false \
 	-Dedu.cmu.sphinx.decoder.Linguist.wordInsertionProbability=1.0E-25\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
+
+#################################################
+# Binary loader test target
+#################################################
+binary:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.knowledge.acoustic.location=file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip \
+    -Dedu.cmu.sphinx.knowledge.acoustic.format=sphinx3.binary \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
+    -Dedu.cmu.sphinx.knowledge.language.location=./an4_words.unigram.lm\
+    edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_words.batch
+
+ascii:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.knowledge.acoustic.location=file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.ascii.zip \
+    -Dedu.cmu.sphinx.knowledge.acoustic.format=sphinx3.ascii \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
+    -Dedu.cmu.sphinx.knowledge.language.location=./an4_words.unigram.lm\
+    edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_words.batch
+
 
