@@ -11,7 +11,7 @@
  */
 
 
-package edu.cmu.sphinx.frontend.plp;
+package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.frontend.Cepstrum;
 import edu.cmu.sphinx.frontend.CepstrumSource;
@@ -26,14 +26,13 @@ import java.io.IOException;
 
 
 /**
- * Produces PLPCepstrum data from a file.
+ * Produces MelCepstrum data from a file.
  */
-public class PLPCepstrumFileProducer extends DataProcessor implements
+public class CepstrumFileProducer extends DataProcessor implements
 CepstrumSource {
 
     private final static String PROP_CEPSTRUM_FILE =
-    FrontEnd.PROP_PREFIX + "PLPCepstrumFileProducer.file";
-
+	FrontEnd.PROP_PREFIX + "CepstrumFileProducer.file";
 
     private String path;
     private ExtendedStreamTokenizer est;
@@ -43,14 +42,14 @@ CepstrumSource {
 
 
     /**
-     * Constructs a PLPCepstrumFileProducer that reads
-     * PLPCepstrum data from the given path.
+     * Constructs a CepstrumFileProducer that reads
+     * MelCepstrum data from the given path.
      *
      * @param context the context for the producer
      *
      * @throws IOException if an error occurs while reading the data
      */
-    public PLPCepstrumFileProducer(String name, String context) throws
+    public CepstrumFileProducer(String name, String context) throws
     IOException {
 	super(name, context);
 	initSphinxProperties();
@@ -72,7 +71,7 @@ CepstrumSource {
 
 
     /**
-     * Returns the next Cepstrum object, which is the PLP cepstrum of the
+     * Returns the next Cepstrum object, which is the mel cepstrum of the
      * input frame. However, it can also be other Cepstrum objects
      * like a EndPointSignal.
      *
