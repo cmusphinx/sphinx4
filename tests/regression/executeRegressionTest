@@ -29,8 +29,16 @@ logPath=$regressionDir/$logBase
 rootDir=../../
 #rootDir=/home/plamere/s4test/
 
+#############################
+# Log the metrics
+#############################
+# Collect the metrics first, before we muddy up the work space
+#
+cd $regressionDir
+./collectMetrics >> $logPath
+
 ##########################
-# first we build the world
+# then we build the world
 ##########################
 cd $rootDir
 date=`date +%D`
@@ -58,7 +66,7 @@ cd $regressionDir
 
 if [ $status = "OK" ]; then
    startRunTime=`$regressionDir/getTime`
-   $regressionDir/runAllTests
+   # $regressionDir/runAllTests
    endRunTime=`$regressionDir/getTime`
    # totalRunTime=$((endRunTime - startRunTime)) // a bash-ism
    totalRunTime=`expr $endRunTime - $startRunTime`
@@ -71,6 +79,8 @@ fi
 # Log the build information
 #############################
 echo "build|$date|$time|$machine|$who|make|$status|$totalBuildTime|$totalRunTime|" >> $logPath
+
+
 
 #############################
 # checkin the log
