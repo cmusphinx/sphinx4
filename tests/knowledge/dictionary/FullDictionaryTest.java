@@ -84,7 +84,9 @@ public class FullDictionaryTest {
 	    System.out.println("Different # pronunciations for " + word);
 	} else {
 	    for (int i = 0; i < p1.length; i++) {
-		compareUnits(word, p1[i].getUnits(), p2[i].getUnits());
+		System.out.println(p1[i].toString());
+                System.out.println(p2[i].toString());
+                compareUnits(word, p1[i].getUnits(), p2[i].getUnits());
 	    }
 	}
     }
@@ -95,7 +97,27 @@ public class FullDictionaryTest {
 	    System.out.println("Different # units for " + word);
 	} else {
 	    for (int i = 0; i < u1.length; i++) {
-		if (!u1[i].getName().equals(u2[i].getName())) {
+                String errorMessage = "";
+                if (u1[i] == null) {
+                    errorMessage = ("Unit " + i + " of word `" + word + 
+                                    "' in FastDictionary is null. ");
+                }
+                if (u2[i] == null) {
+                    errorMessage += ("Unit " + i + " of word `" + word + 
+                                     "' in FullDictionary is null.");
+                }
+                if (errorMessage.length() > 0) { 
+                    throw new Error(errorMessage);
+                }
+                String name1 = u1[i].getName();
+                String name2 = u2[i].getName();
+                if (name1 == null) {
+                    throw new Error("No name for " + u1);
+                }
+                if (name2 == null) {
+                    throw new Error("No name for " + u2);
+                }
+                if (!name1.equals(name2)) {
 		    System.out.println("Mismatched units " +
 			    u1[i].getName() + " and " +
 			    u2[i].getName());
