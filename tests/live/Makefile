@@ -96,6 +96,7 @@ live-free: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=12 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=9 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=8 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow=50 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=true \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	tests.live.Live decoders.list
