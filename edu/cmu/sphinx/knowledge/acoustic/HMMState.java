@@ -29,6 +29,7 @@ public class HMMState implements Serializable {
     private int state;
     HMMStateArc[] arcs;
     private boolean isEmitting;
+    private Senone senone;
 
     private static int objectCount;
 
@@ -73,8 +74,7 @@ public class HMMState implements Serializable {
      * @return the acoustic score for this state.
      */
     public float getScore(Feature feature) {
-	SenoneSequence ss = hmm.getSenoneSequence();
-	return ss.getSenones()[state].getScore(feature);
+        return getSenone().getScore(feature);
     }
 
 
@@ -97,8 +97,11 @@ public class HMMState implements Serializable {
      * @return the senone for this state.
      */
     public Senone getSenone() {
-	SenoneSequence ss = hmm.getSenoneSequence();
-	return ss.getSenones()[state];
+        if (senone == null) {
+            SenoneSequence ss = hmm.getSenoneSequence();
+            senone = ss.getSenones()[state];
+        }
+        return senone;
     }
 
 
