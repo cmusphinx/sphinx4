@@ -260,7 +260,7 @@ an4_full_fst:
         -Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist \
         -Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.SimpleBreadthFirstSearchManager \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1E-25 \
-	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=20.0 \
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
 	-Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_full.trigram.fst \
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
