@@ -33,7 +33,7 @@ public final class LogMath {
     // This is a rollback to the old slow way until
     // the fast way is fixed.
 
-    private final static boolean OLD_AND_SLOW_ADD = true;
+    private final static boolean OLD_AND_SLOW_ADD = false;
 
     /**
      * Sphinx3 property to get the Log base
@@ -292,7 +292,12 @@ public final class LogMath {
 	if (OLD_AND_SLOW_ADD) {
 	    return addTableActualComputation(index);
 	} else {
-	    return theAddTable[(int)(index)];
+	    int intIndex = (int) Math.rint(index);
+	    if (intIndex  < 0 || intIndex  >= theAddTable.length) {
+		return 0.0;
+	    } else {
+		return theAddTable[intIndex];
+	    }
 	}
     }
 
