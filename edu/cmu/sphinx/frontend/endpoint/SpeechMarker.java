@@ -300,6 +300,11 @@ public class SpeechMarker extends BaseDataProcessor {
         while (speechTime < startSpeechTime) {
             Data next = readData();
             sendToQueue(next);
+
+            if (next == null) {
+                return false;
+            }
+
             if (next instanceof SpeechClassifiedData) {
                 if (!((SpeechClassifiedData) next).isSpeech()) {
                     return false;
