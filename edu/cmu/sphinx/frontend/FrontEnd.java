@@ -47,11 +47,11 @@ import java.util.Vector;
  * <p>
  * <b>The Pull Model of the Front End</b>
  * <p>
- * The front end uses a pull model. To obtain output fron the front end,
+ * The front end uses a pull model. To obtain output from the front end,
  * one would call the method:
  * <p>
  * <code>
- * FrontEnd frontend = ... // obtain the front end from FrontEndFactory
+ * FrontEnd frontend = ... // see how to obtain the front end below
  * <br>Data output = frontend.getData();
  * </code>
  * <p>
@@ -128,6 +128,23 @@ import java.util.Vector;
  * <code>
  * SphinxProperties properties = ... // pass in from outside
  * <br>FrontEnd frontend = FrontEndFactory.getFrontEnd("mfcc", properties);
+ * </code>
+ * <p>
+ * <b>Example code:</b>
+ * <p>
+ * The code below summarizes the above, and show how one would normally
+ * initialize the front end, assuming that it is called "mfcc" in the
+ * Sphinx properties file, and that the input data comes from the 
+ * microphone:
+ * <code>
+ * // obtaining the front end and setting its data source
+ * <br>SphinxProperties properties = ... // passed in externally
+ * <br>FrontEnd frontend = FrontEndFactory.getFrontEnd("mfcc", properties);
+ * <br>DataProcessor microphone = new Microphone();
+ * <br>microphone.initialize(...);
+ * <br>
+ * <br>// start getting data from the front end
+ * <br>Data output = frontend.getData();
  * </code>
  */
 public class FrontEnd extends BaseDataProcessor {
