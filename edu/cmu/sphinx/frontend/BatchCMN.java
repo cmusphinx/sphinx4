@@ -133,7 +133,7 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
                     }
                     cepstraList.add(input);
 
-                } else if (input.hasUtteranceEndSignal()) {
+                } else if (input.hasSignal(Signal.UTTERANCE_END)) {
                     cepstraList.add(input);
                     break;
                 } else { // UTTERANCE_START

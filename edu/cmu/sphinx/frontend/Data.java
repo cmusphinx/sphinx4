@@ -99,15 +99,15 @@ public class Data implements Serializable {
 
 
     /**
-     * Returns true if this Data has a UTTERANCE_END Signal in it.
+     * Returns true if this Data has the given Signal
      *
      * @return true if it has a UTTERANCE_END Signal, false otherwise
      */
-    public boolean hasUtteranceEndSignal() {
+    public boolean hasSignal(Signal signal) {
         if (getSignal() == null) {
             return false;
         } else {
-            return (getSignal().equals(Signal.UTTERANCE_END));
+            return (getSignal().equals(signal));
         }
     }
 }

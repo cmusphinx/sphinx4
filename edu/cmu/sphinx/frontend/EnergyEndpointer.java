@@ -424,7 +424,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
             for (ListIterator iterator = outputQueue.listIterator(index);
                  i < startOffset && iterator.hasNext(); i++) {
                 Cepstrum cepstrum = (Cepstrum) iterator.next();
-                if (cepstrum.getSignal().equals(Signal.UTTERANCE_START)) {
+                if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
                     break;
                 }
             }
@@ -441,7 +441,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
             System.out.println("Cannot find lastStartLowFrame");
             for (ListIterator i = outputQueue.listIterator(); i.hasNext();) {
                 Cepstrum cepstrum = (Cepstrum) i.next();
-                if (cepstrum.getSignal().equals(Signal.UTTERANCE_START)) {
+                if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
                     index = outputQueue.indexOf(cepstrum);
                 }
             }

@@ -145,7 +145,7 @@ public class Windower extends DataProcessor implements AudioSource {
                     process(input);
                     output = getWindow();
 
-                } else if (input.hasUtteranceEndSignal()) {
+                } else if (input.hasSignal(Signal.UTTERANCE_END)) {
                     // end of utterance handling
                     processUtteranceEnd();
                     output = getWindow();

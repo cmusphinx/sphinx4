@@ -88,7 +88,7 @@ public class Preemphasizer extends DataProcessor implements AudioSource {
         if (input != null) {
             if (input.hasContent()) {
                 applyPreemphasis(input);
-            } else if (input.hasUtteranceEndSignal()) {
+            } else if (input.hasSignal(Signal.UTTERANCE_END)) {
                 prior = 0;
             }
         }

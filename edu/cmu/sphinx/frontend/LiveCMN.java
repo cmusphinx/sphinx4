@@ -147,7 +147,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
         if (input != null) {
             if (input.hasContent()) {
                 normalize(input);
-            } else if (input.hasUtteranceEndSignal()) {
+            } else if (input.hasSignal(Signal.UTTERANCE_END)) {
                 updateMeanSumBuffers();
             }
         }

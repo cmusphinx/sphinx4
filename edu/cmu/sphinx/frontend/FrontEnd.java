@@ -340,7 +340,7 @@ public class FrontEnd extends DataProcessor {
             feature = featureSource.getFeature();
             if (feature != null) {
                 features[i++] = feature;
-                if (feature.hasUtteranceEndSignal()) {
+                if (feature.hasSignal(Signal.UTTERANCE_END)) {
                     break;
                 }
             } else {

@@ -218,7 +218,7 @@ FeatureSource {
                     // just a cepstra
                     addCepstrumData(cepstrum.getCepstrumData());
                     cepstraRead++;
-                } else if (cepstrum.hasUtteranceEndSignal()) {
+                } else if (cepstrum.hasSignal(Signal.UTTERANCE_END)) {
                     // end of segment cepstrum
                     segmentEnd = true;
                     residualVectors += replicateLastCepstrum();
