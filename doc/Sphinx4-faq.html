@@ -63,7 +63,7 @@ WARRANTIES.
 
 <ul>
 <li><a href="#write_app">I want to add speech recognition to my application. Where do I start?</a></li>
-<li><a href="#decode_wav">How can I decode .wav files?</a></li>
+<li><a href="#decode_wav">How can I decode/transcribe .wav files?</a></li>
 <li><a href="#partial_results">How can I get the recognizer to return partial results while a recognition is in process?</a></li>
 <li><a href="#n_best_list">How can I get the N-Best list?</a></li>
 <li><a href="#out_of_grammar">How can I detect and ignore out-of-grammar utterances?</a></li>
@@ -72,6 +72,7 @@ WARRANTIES.
 <li><a href="#8k_audio">Can I use Sphinx-4 to recognize 8khz audio?</a></li>
 <li><a href="#regression_data">Where can I get the audio data used in the regression tests?</a></li>
 <li><a href="#result">How do I use the Result object?</a></li>
+<li><a href="#speaker_verification">Does Sphinx-4 support speaker identification?</a></li>
 </ul>
 
 <b>Acoustic & Language Models</b>
@@ -79,6 +80,7 @@ WARRANTIES.
 <ul>
 <li><a href="#train_am">How can I train my own acoustic models?</b></a></li>
 <li><a href="#sphinxtrain_models">How do I use models trained by SphinxTrain in Sphinx-4?</a></li>
+<li><a href="#sphinxtrain_feats">Does the Sphinx-4 front end generate the same features as the SphinxTrain wave2feat program?</a></li>
 <li><a href="#create_lm">How can I create my own language models?</a></li>
 <li><a href="#create_binary_lm">I've created by own language model. How do I create the binary (DMP) form?</a></li>
 <li><a href="#create_dict">How can I create my own dictionary?</a></li>
@@ -264,7 +266,7 @@ WARRANTIES.
     </blockquote>
 
 
-<a name="decode_wav"> <b> How can I decode .wav files?</b></a>
+<a name="decode_wav"> <b> How can I decode/transcribe .wav files?</b></a>
 
     <blockquote>
       Take a look at the <a
@@ -374,13 +376,20 @@ WARRANTIES.
 <a name="8k_audio"> <b>Can I use Sphinx-4 to recognize 8khz audio?</b></a>
 
     <blockquote>
-    The current acoustic models that ship with Sphinx-4 are trained on
-    16khz data. You can use 8khz input but you will not get very good
-    recognition accuracy.
-    <p>
-    Since a number of people have asked about using 8khz audio input,
-    we are looking at training a set of 8khz models. Stay tuned, we'll
-    let you know when the new models are available.
+    Yes. In your configuration file, specify the 8kHz Wall Street Journal
+    models, and tell the front end that your models are 8kHz:
+    <pre>
+&lt;component name="wsj"
+    type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.Model"&gt;
+    &lt;property name="loader" value="8kLoader"&gt;
+    ...
+&lt;/component&gt;
+
+&lt;component name="8kLoader"&gt;
+    type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.ModelLoader"&gt;
+    ...
+&lt;/component&gt;
+    </pre>
     </blockquote>
 
 
@@ -445,6 +454,18 @@ WARRANTIES.
     </blockquote>
 
 
+<a name="speaker_verification"><b>Does Sphinx-4 support speaker identification?</b></a>
+
+    <blockquote>
+    Sphinx-4 currently does not support speaker identification, which is the
+    process of identifying who is speaking. However, the architecture of
+    Sphinx-4 is flexible enough for someone to add such capabilities.
+    To learn more about speaker verification:
+    <a href="http://www.speech.cs.cmu.edu/comp.speech/Section6/Q6.6.html">
+    http://www.speech.cs.cmu.edu/comp.speech/Section6/Q6.6.html</a>
+    </blockquote>
+
+
 <a name="train_am"> <b> How can I train my own acoustic models?</b></a>
 
     <blockquote>
@@ -461,6 +482,30 @@ WARRANTIES.
     SphinxTrain Models in Sphinx-4</a>.
     </blockquote>
 
+
+<a name="sphinxtrain_feats"> <b> Does the Sphinx-4 front end generate the same features as the SphinxTrain wave2feat program? </b> </a>
+
+    <blockquote>
+    The features that SphinxTrain generate are called cepstrum.
+    Cepstrum are usually 13-dimensional. The features that Sphinx-4 generates
+    are more than cepstrum. It is 39-dimensional, and consists of
+    the cepstrum, the delta of the cepstrum, and the double delta of
+    the cepstrum (thus 3X the size). To make Sphinx-4 generate the same
+    cepstrum as SphinxTrain wave2feat, you should remove the last two
+    steps in the front end, so that it looks like:
+    <pre>
+    &lt;component name="mfcFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd"&gt;
+        &lt;propertylist name="pipeline"&gt;
+	    &lt;item&gt;streamDataSource&lt;/item&gt;
+	    &lt;item&gt;premphasizer&lt;/item&gt;
+	    &lt;item&gt;windower&lt;/item&gt;
+	    &lt;item&gt;fft&lt;/item&gt;
+	    &lt;item&gt;melFilterBank&lt;/item&gt;
+	    &lt;item&gt;dct&lt;/item&gt;
+	&lt;/propertylist&gt;
+    &lt;/component&gt;
+    </pre>
+    </blockquote>
 
 <a name="create_lm"> <b> How can I create my own language models?</b></a>
 
