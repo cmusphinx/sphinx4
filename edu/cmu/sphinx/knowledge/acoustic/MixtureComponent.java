@@ -128,6 +128,24 @@ class MixtureComponent implements Serializable {
     }
 
     /**
+     * Returns the mean for this component.
+     *
+     * @return the mean
+     */
+    protected float[] getMean(){
+	return mean;
+    }
+
+    /**
+     * Returns the variance for this component.
+     *
+     * @return the variance
+     */
+    protected float[] getVariance(){
+	return variance;
+    }
+
+    /**
      * Returns a score for the given feature based upon this mixture
      * component, and calculates it if not already calculated. Note
      * that this method is not thread safe and should be externally
