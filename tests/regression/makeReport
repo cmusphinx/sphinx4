@@ -66,6 +66,7 @@ BEGIN {
 $1 == "build" && $4 == machine {
     finalBuildRecord = $0;
     buildRecord = 1;
+    buildLiveRecord = 1;
     buildDate = $2;
 }
 
@@ -83,6 +84,13 @@ $1 == "test"  && $4 == machine && $5 == "s4" {
     testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
     testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
     finalTest[$F_TEST_NAME] = 1;
+}
+
+$1 == "live_test" && buildLiveRecord == 1 {
+    buildLiveRecord = 0;
+    for (i in finalLiveTest) {
+	delete finalLiveTest[i];
+    }
 }
 
 $1 == "live_test" && $4 == machine && $5 == "s4" {
