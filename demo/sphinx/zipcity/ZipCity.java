@@ -18,39 +18,52 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 
-import java.io.File;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Image;
+import java.awt.LayoutManager;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 /**
- * A simple HelloDigits demo showing a simple speech application 
- * built using Sphinx-4. This application uses the Sphinx-4 endpointer,
- * which automatically segments incoming audio into utterances and silences.
+ * A simple demonstration application for Sphinx-4 (suitable for use
+ * as a WebStart application. ZipCity listens for spoken US zip codes 
+ * and shows the city/state associated with the code.
  */
-
 public class ZipCity extends JFrame {
-    private boolean debug = true;
-    private Color backgroundColor = new Color(0xff, 0xff, 0xff);
+    private ZipDatabase zipDB;
+    private ZipRecognizer zipRecognizer;
+
     private JTextField messageTextField;
     private JTextField zipField;
     private JTextField cityField;
     private JButton speakButton;
-
-    private ZipDatabase zipDB;
-    private ZipRecognizer zipRecognizer;
+    private Color backgroundColor = new Color(0xff, 0xff, 0xff);
 
     /**
      * Constructs a ZipCity with the given title.
@@ -74,6 +87,7 @@ public class ZipCity extends JFrame {
             }
         });
 
+        // when the 'speak' button is pressed, enable recognition
         speakButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 if (speakButton.isEnabled()) {
@@ -85,6 +99,10 @@ public class ZipCity extends JFrame {
         });
     }
 
+    /**
+     * Perform any needed initializations and then enable the 'speak'
+     * button, allowing recognition to proceed
+     */
     public void go() {
         try {
         setMessage("Loading zip codes...");
@@ -105,6 +123,12 @@ public class ZipCity extends JFrame {
         }
     }
 
+    /**
+     * Update the display with the new zip code information. The
+     * zip info is retrieved and if available disabled on the gui
+     *
+     * @param zip the zip code (in the form XXXX)
+     */
     private void updateForm(final String zip) {
         final ZipInfo zipInfo = zipDB.lookup(zip);
         SwingUtilities.invokeLater(new Runnable() {
@@ -124,20 +148,27 @@ public class ZipCity extends JFrame {
         });
     }
 
-    /** Returns an ImageIcon, or null if the path was invalid. */
+    /** 
+     * Returns an ImageIcon, or null if the path was invalid. 
+     *
+     * @param path the path to the image resource.
+     * @param description a description of the resource
+     *
+     * @return the image icon or null if the resource could not be
+     * found.
+     */
     protected ImageIcon createImageIcon(String path, String description) {
         java.net.URL imgURL = ZipCity.class.getResource(path);
         if (imgURL != null) {
             return new ImageIcon(imgURL, description);
         } else {
-            System.err.println("Couldn't find file: " + path);
             return null;
         }
     }
 
     /**
-     * Sets the application icon
-     * @param path the path to the image
+     * Sets the application icon. The image icon is visible when the
+     * application is iconified.
      */
     private void setApplicationIcon() {
         URL url = ZipCity.class.getResource("s4.jpg");
@@ -145,18 +176,6 @@ public class ZipCity extends JFrame {
         setIconImage(image);
     }
 
-
-    /**
-     * Prints out a debug message on System.out, if the 'debug' private
-     * class variable is set to true.
-     *
-     * @param message the debug message to print
-     */
-    private void debugMessage(String message) {
-        if (debug) {
-            System.out.println(message);
-        }
-    }
 
     /**
      * Sets the message to be displayed at the bottom of the Frame.
@@ -228,6 +247,15 @@ public class ZipCity extends JFrame {
         return mainPanel;
     }
 
+    /**
+     * Adds a labeled text field to the given panel
+     *
+     * @param panel the panel to receive the new text field
+     * @param labelName the label for the text field
+     * @param size the size (in character cells) of the text field
+     *
+     * @return the added text field
+     */
     private JTextField addLabeledTextField(JPanel panel, 
                     String labelName, int size) {
         JLabel label = new JLabel(labelName);
@@ -240,6 +268,9 @@ public class ZipCity extends JFrame {
         return field;
     }
 
+    /**
+     * Creates an image panel with the sphinx-4 logo image
+     */
     private JPanel createImagePanel() {
         JPanel panel = getJPanel(new FlowLayout());
         JLabel imageLabel = new JLabel(createImageIcon("s4.jpg", "s4-logo"));
@@ -263,6 +294,15 @@ public class ZipCity extends JFrame {
         return messagePanel;
     }
 
+
+
+    /**
+     * The main program for zip city.  Creates the ZipCity frame,
+     * displays it, and  runs it.
+     *
+     * @param args program arguments (none necessary or required for
+     * zipcity)
+     */
     public static void main(String[] args) {
         ZipCity zipCity = new ZipCity();
         zipCity.setVisible(true);

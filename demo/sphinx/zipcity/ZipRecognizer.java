@@ -18,7 +18,6 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 
-import java.io.File;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -32,9 +31,7 @@ import java.util.StringTokenizer;
 
 
 /**
- * A simple HelloDigits demo showing a simple speech application 
- * built using Sphinx-4. This application uses the Sphinx-4 endpointer,
- * which automatically segments incoming audio into utterances and silences.
+ * Manages the speech recognition for zip city
  */
 public class ZipRecognizer implements Runnable {
     private Microphone microphone;
@@ -44,6 +41,11 @@ public class ZipRecognizer implements Runnable {
     private Object lock = new Object();
     private boolean recognizing = false;
 
+    /**
+     * Creates the ZipRecognizer.
+     *
+     * @throws IOException if an error occurs while loading resources
+     */
     public ZipRecognizer() throws IOException {
         try  {
             URL url = this.getClass().getResource("zipcity.config.xml");
@@ -60,25 +62,41 @@ public class ZipRecognizer implements Runnable {
         }
     }
 
+    /**
+     * Turns on the microphone and starts recognition
+     */
     public void microphoneOn() {
         new Thread(this).start();
     }
 
+    /**
+     * Turns off the microphone, ending the current recognition in
+     * progress
+     */
     public void microphoneOff() {
         microphone.stopRecording();
     }
 
+    /**
+     * Allocates resources necessary for recognition.
+     */
     public void startup() throws IOException {
         done = false;
         recognizer.allocate();
     }
 
+    /**
+     * Releases recognition resources
+     */
     public void shutdown() {
         done = true;
         microphoneOff();
         recognizer.deallocate();
     }
 
+    /**
+     * Performs a single recognition
+     */
     public void run() {
         microphone.clear();
         microphone.startRecording();
@@ -114,12 +132,6 @@ public class ZipRecognizer implements Runnable {
         return sb.toString();
     }
 
-    /**
-     * looks up the digit for a word
-     * 
-     * @param word the digit word
-     * @return digit the digit form of the word (or null)
-     */
     private static Map digitMap = new HashMap();
 
     static {
@@ -136,18 +148,40 @@ public class ZipRecognizer implements Runnable {
         digitMap.put("nine",        "9");
     }
 
+    /**
+     * looks up the digit for a word
+     * 
+     * @param word the digit word
+     * @return digit the digit form of the word (or null)
+     */
     private String lookupDigit(String word) {
         return (String) digitMap.get(word);
     }
 
+    /**
+     * Adds a listener that is called whenever a new zip code
+     * is recognized
+     *
+     * @param zipListener the zip code listener
+     */
    public synchronized void addZipListener(ZipListener zipListener) {
        zipListeners.add(zipListener);
    }
 
+    /**
+     * Removes a previously added zip listener
+     *
+     * @param zipListener the zip code listener
+     */
    public synchronized void removeZipListener(ZipListener zipListener) {
        zipListeners.remove(zipListener);
    }
 
+   /**
+    * Invoke all added zip listeners
+    *
+    * @param zipcode the recognized zip code
+    */
    private synchronized void fireListeners(String zipcode) {
        for (Iterator i = zipListeners.iterator(); i.hasNext(); ) {
            ZipListener zl = (ZipListener) i.next();
@@ -193,7 +227,14 @@ public class ZipRecognizer implements Runnable {
     }
 }
 
+
+/**
+ * An interface for zip listeners
+ */
 interface ZipListener {
+    /**
+     * Invoked when a new zip code is recognized
+     */
     void notify(String zipcode);
 }
 
