@@ -190,27 +190,28 @@ public class BatchModeRecognizer implements Configurable {
      * @throws IOException
      *                 if there is an I/O error processing the batch file
      */
-    public void decode() throws IOException {
+    public void decode(String batchFile) {
         BatchItem batchItem;
-        batchManager.start();
-        System.out.println("\nBatchDecoder: decoding files in "
-                + batchManager.getFilename());
-        System.out.println();
+        try {
+            recognizer.allocate();
+            setBatchFile(batchFile);
+
+            batchManager.start();
+            System.out.println("\nBatchDecoder: decoding files in "
+                    + batchManager.getFilename());
+            System.out.println();
         
-        recognizer.allocate();
-        
-        while ((batchItem = batchManager.getNextItem()) != null) {
-            InputStream is = setInputStream(batchItem.getFilename());
-            recognizer.recognize(batchItem.getTranscript());
-            is.close();
+            while ((batchItem = batchManager.getNextItem()) != null) {
+                InputStream is = setInputStream(batchItem.getFilename());
+                recognizer.recognize(batchItem.getTranscript());
+                is.close();
+            }
+            batchManager.stop();
+        } catch (IOException io) {
+            System.err.println("I/O error during decoding: " + io.getMessage());
         }
-        
         recognizer.deallocate();
-        
         System.out.println("\nBatchDecoder: All files decoded\n");
-        batchManager.stop();
-
-
     }
     
     
@@ -272,12 +273,6 @@ public class BatchModeRecognizer implements Configurable {
             return;
         }
 
-        try {
-            bmr.setBatchFile(batchFile);
-            bmr.decode();
-        } catch (IOException ioe) {
-            System.err
-                    .println("I/O error during decoding: " + ioe.getMessage());
-        }
+        bmr.decode(batchFile);
     }
 }
