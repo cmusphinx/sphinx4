@@ -1,0 +1,14 @@
+# SET OF VARIABLES USED FOR THESE MODELS
+
+set exptname = WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz
+set vector_length = 13
+set dictionary = $base_dir/lists/cmudict.0.6d
+set fillerdict = $base_dir/lists/fillerdict
+set statesperhmm = 3
+set skipstate = no
+set gaussiansperstate = 8
+set feature = 1s_c_d_dd
+set n_tied_states = 4000
+set agc = none
+set cmn = current
+set varnorm = no
