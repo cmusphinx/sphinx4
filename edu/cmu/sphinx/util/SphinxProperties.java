@@ -456,6 +456,8 @@ public class SphinxProperties {
      * @param defaultValue the default value used
      */
     private void warnNoProperty(String propertyName, String defaultValue) {
+	// print out the warning only if the property has never been
+	// searched for
 	if (!shadowProps.containsKey(propertyName)) {
 	    System.out.println("WARNING: no property, " + propertyName + "\n" +
 			       "         using the default value " + 
