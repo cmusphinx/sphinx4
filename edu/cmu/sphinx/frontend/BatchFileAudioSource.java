@@ -30,6 +30,8 @@ import java.util.Vector;
  * /home/user1/data/talking.au
  * ...
  * </pre>
+ *
+ * @see StreamAudioSource
  */
 public class BatchFileAudioSource implements DataSource {
 

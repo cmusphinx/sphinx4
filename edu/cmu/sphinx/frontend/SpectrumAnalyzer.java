@@ -31,7 +31,7 @@ public class SpectrumAnalyzer extends DataProcessor {
     /**
      * Constructs a default Spectrum Analyzer.
      */
-    public void SpectrumAnalyzer() {
+    public SpectrumAnalyzer() {
 
 	getSphinxProperties();
 	computeLog2N();
@@ -50,7 +50,7 @@ public class SpectrumAnalyzer extends DataProcessor {
      * @throws java.lang.IllegalArgumentException
      *
      */
-    private Spectrum process (DoubleAudioFrame input) 
+    private Spectrum process (AudioFrame input) 
 	throws IllegalArgumentException {
 
 	/**
@@ -60,9 +60,11 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * we incur in aliasing. If it's greater, we pad the input
 	 * sequence with zeros.
 	 */
-	double[] in = input.getData();
+	double[] in = input.getAudioSamples();
 	if (in.length != windowSize) {
-	    throw new IllegalArgumentException("Window size is incorrect");
+	    throw new IllegalArgumentException
+               ("Window size is incorrect: in.length == " + in.length +
+                 ", windowSize == " + windowSize);
 	}
 	Complex[] inputSeq = new Complex[NPoint];
 	if (NPoint < windowSize) {
@@ -96,7 +98,13 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * Return the power spectrum
 	 */
 	Spectrum output = new Spectrum(outputSpectrum);
-	return output;
+	
+        if (getDump()) {
+            System.out.println(Util.dumpDoubleArray
+                               (outputSpectrum, "SPEC_MAGNITUDE"));
+        }
+
+        return output;
     }
 
 
@@ -317,16 +325,16 @@ public class SpectrumAnalyzer extends DataProcessor {
 
 	Data input = getSource().read();
         
-        if (input instanceof DoubleAudioFrame) {
+        if (input instanceof AudioFrame) {
 
-            input = process((DoubleAudioFrame) input);
-
-        } else if (input instanceof EndPointSignal) {
-	    // At this point - or in the call immediatelly preceding
-	    // this -, we should have created a cepstrum frame with
-	    // whatever data came last, even if we had less than
-	    // windowSize of data.
-	}
+            input = process((AudioFrame) input);
+        }
+        
+        // At this point - or in the call immediatelly preceding
+        // this -, we should have created a cepstrum frame with
+        // whatever data came last, even if we had less than
+        // windowSize of data.
+        
 	return input;
     }	
 

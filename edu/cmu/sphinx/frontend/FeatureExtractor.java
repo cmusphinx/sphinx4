@@ -24,6 +24,11 @@ import java.util.Vector;
  * edu.cmu.sphinx.frontend.feature.length
  * edu.cmu.sphinx.frontend.feature.windowSize
  * </pre>
+ *
+ * @see Cepstrum
+ * @see CepstrumFrame
+ * @see Feature
+ * @see FeatureFrame
  */
 public class FeatureExtractor extends DataProcessor {
 
@@ -54,6 +59,8 @@ public class FeatureExtractor extends DataProcessor {
     private int jp1, jp2, jp3, jf1, jf2, jf3;
     private InputQueue inputQueue;
     private Timer fcTimer;
+    private boolean segmentStart;
+    private boolean segmentEnd;
 
 
     /**
@@ -125,6 +132,9 @@ public class FeatureExtractor extends DataProcessor {
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
+     *
+     * @see Feature
+     * @see FeatureFrame
      */
     public Data read() throws IOException {
         Data input = inputQueue.removeNext();
@@ -134,25 +144,35 @@ public class FeatureExtractor extends DataProcessor {
             return null;
             
         } else {
-            
-            boolean segmentStart = false;
-            
-            if (input == EndPointSignal.SEGMENT_START) {
-                // it must be a SegmentStartSignal
-                segmentStart = true;
-                input = inputQueue.removeNext();
+
+            if (input instanceof CepstrumFrame) {
+                Data nextFrame = inputQueue.peekNext();
+                
+                segmentEnd = (nextFrame == EndPointSignal.SEGMENT_END);
+                
+                Data featureFrame =
+                    process((CepstrumFrame) input, segmentStart, segmentEnd);
+                
+                segmentStart = false;
+                segmentEnd = false;
+                
+                return featureFrame;
+
+            } else if (input instanceof EndPointSignal) {
+                
+                EndPointSignal signal = (EndPointSignal) input;
+
+                if (signal.equals(EndPointSignal.SEGMENT_START)) {
+                    segmentStart = true;
+                    return input;
+                } else if (signal.equals(EndPointSignal.SEGMENT_END)) {
+                    return input;
+                } else {
+                    return read();
+                }
+            } else {
+                return read();
             }
-            
-            Data nextFrame = inputQueue.peekNext();
-            
-            boolean segmentEnd = (nextFrame == EndPointSignal.SEGMENT_END);
-            
-            // absorb the SegmentEndSignal
-            if (segmentEnd) {
-                inputQueue.removeNext();
-            }
-            
-            return process((CepstrumFrame) input, segmentStart, segmentEnd);
         }
     }	
 

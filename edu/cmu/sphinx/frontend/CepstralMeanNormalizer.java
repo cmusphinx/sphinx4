@@ -27,6 +27,9 @@ import java.util.ListIterator;
  * far by the number of input cepstrum. After obtaining the mean,
  * the sum is exponentially by multiplying it by the ratio: <pre>
  * cmnWindow/(cmnWindow + number of frames since the last recalculation)</pre>
+ *
+ * @see Cepstrum
+ * @see CepstrumFrame
  */
 public class CepstralMeanNormalizer extends DataProcessor {
 
@@ -104,10 +107,12 @@ public class CepstralMeanNormalizer extends DataProcessor {
     /**
      * Returns the next Data object, which is a normalized CepstrumFrame
      * produced by this class. However, it can also be other Data objects
-     * like a SegmentEndPointSignal.
+     * like a EndPointSignal.SEGMENT_START.
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
+     *
+     * @see CepstrumFrame
      */
     public Data read() throws IOException {
 	
@@ -116,8 +121,12 @@ public class CepstralMeanNormalizer extends DataProcessor {
         if (input instanceof CepstrumFrame) {
             return process((CepstrumFrame) input);
         
-        } else if (input == EndPointSignal.SEGMENT_END) {
-            updateMeanSumBuffers();
+        } else if (input instanceof EndPointSignal) {
+            
+            EndPointSignal signal = (EndPointSignal) input;
+            if (signal.equals(EndPointSignal.SEGMENT_END)) {
+                updateMeanSumBuffers();
+            }
             return input;
 
         } else {

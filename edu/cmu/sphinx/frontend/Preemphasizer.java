@@ -27,6 +27,7 @@ import java.io.IOException;
  *
  * Other Data objects are passed along unchanged through this Preemphasizer.
  *
+ * @see AudioFrame
  */
 public class Preemphasizer extends DataProcessor {
 
@@ -79,6 +80,8 @@ public class Preemphasizer extends DataProcessor {
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
+     *
+     * @see AudioFrame
      */
     public Data read() throws IOException {
 

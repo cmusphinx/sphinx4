@@ -37,6 +37,8 @@ import java.util.Vector;
  * <p>The Sphinx property that affects this processor is: <pre>
  * edu.cmu.sphinx.frontend.windower.alpha
  * </pre>
+ *
+ * @see AudioFrame
  */
 public class Windower extends DataProcessor {
 
@@ -111,6 +113,8 @@ public class Windower extends DataProcessor {
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
+     *
+     * @see AudioFrame
      */
     public Data read() throws IOException {
 

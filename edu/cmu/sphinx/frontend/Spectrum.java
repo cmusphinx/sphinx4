@@ -13,7 +13,7 @@ public class Spectrum implements Data {
 
 
     /**
-     * Constructs a Spectrum with the given cepstra data.
+     * Constructs a Spectrum with the given spectra data.
      */
     public Spectrum(double[] spectraData) {
 	this.spectraData = spectraData;
@@ -25,7 +25,7 @@ public class Spectrum implements Data {
      *
      * @return the spectrum data
      */
-    public double[] getData() {
+    public double[] getSpectrumData() {
 	return spectraData;
     }
 }

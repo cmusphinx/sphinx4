@@ -23,6 +23,8 @@ import java.util.Vector;
  * </pre>The audio samples that do not fit into the current frame
  * will be used in the next frame (which is obtained by the next call to
  * <code>read()</code>).
+ *
+ * @see BatchFileAudioSource
  */
 public class StreamAudioSource implements DataSource {
 

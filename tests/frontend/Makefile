@@ -30,10 +30,15 @@ hammingWindow: all
 	@chmod +x testHammingWindow.sh
 	sh ./testHammingWindow.sh
 
+spectrumAnalyzer: all
+	@chmod +x testSpectrumAnalyzer.sh
+	sh ./testSpectrumAnalyzer.sh
+
 alltests: all
 	(cd $(TOP); $(MAKE))
 	@$(MAKE) preemphasizer
 	@$(MAKE) hammingWindow
+	@$(MAKE) spectrumAnalyzer
 	@$(MAKE) cmnFeatExt
 
 clean::

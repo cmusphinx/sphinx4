@@ -145,16 +145,17 @@ public class FrontEnd implements DataSource, Runnable {
 
 
     /**
-     * Returns a Feature produced by this FrontEnd.
+     * Returns a Feature, EndPointSignal.SEGMENT_START, or
+     * EndPointSignal.SEGMENT_END signals produced by this FrontEnd.
      *
      * @return a Feature
      */
     public Data read() {
         Object data = queue.get(0);
-        if (data != null) {
-            return (Feature) data;
-        } else {
+        if (data == null) {
             return null;
+        } else {
+            return (Data) data;
         }
     }
 
@@ -179,13 +180,20 @@ public class FrontEnd implements DataSource, Runnable {
                 Data output = null;
 		do {
 		    output = last.read();
-                    
-                    // add the Features in the FeatureFrame to the output queue
-                    if (output != null && output instanceof FeatureFrame) {
-                        Feature[] features = 
-                            ((FeatureFrame) output).getFeatures();
-                        for (int i = 0; i < features.length; i++) {
-                            queue.add(features[i]);
+
+                    if (output != null) {
+                        if (output == EndPointSignal.SEGMENT_START ||
+                            output == EndPointSignal.SEGMENT_END) {
+                            queue.add(output);
+
+                        } else if (output instanceof FeatureFrame) {
+                            // add the Features in the FeatureFrame
+                            // to the output queue
+                            Feature[] features = 
+                                ((FeatureFrame) output).getFeatures();
+                            for (int i = 0; i < features.length; i++) {
+                                queue.add(features[i]);
+                            }
                         }
                     }
                     
