@@ -22,6 +22,9 @@
 # S4 code will be checked out here. WARNING: This directory will be 
 # completely removed when done 
 
+testType=${1:-$TEST_NAME}
+testType=${testType:-standard}
+
 testDir=./regressionTestDirectory
 
 originalDir=`pwd`
@@ -39,7 +42,7 @@ chmod +x executeRegressionTest
 
 # run the tests
 
-./executeRegressionTest $*
+./executeRegressionTest $testType
 
 # clean up 
 
