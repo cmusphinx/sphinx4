@@ -199,7 +199,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- * GDL Lattice test                                       * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <target name="gdl_lattice"
+    <target name="gdl_lattice_to_sausage"
 	    description="Runs the GDL Lattice Test"
 	    depends="all">
 	    <java classname="tests.result.lattice.GDLLatticeTest"
