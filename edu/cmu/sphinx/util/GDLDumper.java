@@ -116,7 +116,7 @@ public class GDLDumper extends LinguistDumper  {
      */
 
     private String getColor(SentenceHMMState state) {
-	String color = "black";
+	String color = "lightred";
 	if (state.isFinalState()) {
 	    color = "magenta";
 	} else if (state instanceof UnitState) {
