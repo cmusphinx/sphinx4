@@ -36,9 +36,9 @@ public class Feature implements Data {
     /**
      * Returns a String representation of this Feature.
      *
-     * @returns the String representation
+     * @return the String representation
      */
     public String toString() {
-        return Util.dumpFloatArray(featureData, "FEATURE");
+        return "FEATURE " + Util.floatArrayToString(featureData);
     }
 }

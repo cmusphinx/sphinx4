@@ -126,7 +126,7 @@ public class Preemphasizer extends DataProcessor {
         getTimer().stop();
 
 	if (getDump()) {
-	    System.out.println(Util.dumpDoubleArray(in, "PREEMPHASIS"));
+	    System.out.println("PREEMPHASIS " + Util.doubleArrayToString(in));
 	}
 
 	return input;

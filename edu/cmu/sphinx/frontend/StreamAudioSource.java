@@ -52,6 +52,7 @@ public class StreamAudioSource implements DataSource {
     private byte[] samplesBuffer;
     private int totalInBuffer;
     private int totalBytesRead;
+    private boolean streamEndReached = false;
 
     /**
      * The buffer that contains the overflow samples.
@@ -125,6 +126,7 @@ public class StreamAudioSource implements DataSource {
      */
     public void setInputStream(InputStream inputStream) {
 	this.audioStream = inputStream;
+        streamEndReached = false;
     }
 
     
@@ -146,6 +148,10 @@ public class StreamAudioSource implements DataSource {
 	    
             return (Data) outputQueue.remove(0);
 
+        } else if (streamEndReached) {
+           
+            return null;
+
 	} else if (totalBytesRead == SEGMENT_NOT_STARTED) {
 
             totalBytesRead = 0;
@@ -158,13 +164,22 @@ public class StreamAudioSource implements DataSource {
 
 	} else {
 
-	    return readNextFrame();
+	    Data nextFrame = readNextFrame();
+            streamEndReached = (nextFrame == null);
+            
+            if (streamEndReached) {
+                audioStream.close();
+                return EndPointSignal.SEGMENT_END;
+            } else {
+                return nextFrame;
+            }
 	}
     }
 
 
     /**
-     * Reads the next AudioFrame from the input stream.
+     * Returns the next AudioFrame from the input stream, or null if
+     * there is none available
      *
      * @return a AudioFrame
      *
@@ -221,7 +236,8 @@ public class StreamAudioSource implements DataSource {
 		(samplesBuffer, 0, totalInBuffer);
             
 	    if (dump) {
-		Util.dumpDoubleArray(audioFrame, "FRAME_SOURCE");
+		System.out.println
+                    ("FRAME_SOURCE " + Util.doubleArrayToString(audioFrame));
 	    }
 
 	    return (new AudioFrame(audioFrame));

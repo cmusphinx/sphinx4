@@ -28,4 +28,14 @@ public class Cepstrum implements Data {
     public float[] getCepstrumData() {
 	return cepstrumData;
     }
+
+
+    /**
+     * Returns a string representation of this Cepstrum.
+     *
+     * @return a string representation of this Cepstrum
+     */
+    public String toString() {
+        return ("MEL_CEPSTRUM   " + Util.floatArrayToString(cepstrumData));
+    }
 }

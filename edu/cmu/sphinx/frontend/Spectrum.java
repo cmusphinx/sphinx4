@@ -30,4 +30,14 @@ public class Spectrum implements Data {
     public double[] getSpectrumData() {
 	return spectraData;
     }
+
+    
+    /**
+     * Returns a string representation of this Spectrum.
+     *
+     * @return a string representation of this Spectrum
+     */ 
+    public String toString() {
+        return ("SPEC_MAGNITUDE " + Util.doubleArrayToString(spectraData));
+    }                
 }

@@ -112,8 +112,6 @@ public class CepstralMeanNormalizer extends DataProcessor {
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
-     *
-     * @see CepstrumFrame
      */
     public Data read() throws IOException {
 	

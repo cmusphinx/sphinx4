@@ -9,15 +9,13 @@ import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Vector;
 
 
 /**
  * Extracts Features from a block of Cepstrum. This FeatureExtractor
  * expects Cepstrum that are MelFrequency cepstral coefficients (MFCC).
- * This FeatureExtractor takes in a CepstrumFrame and outputs a 
+ * This FeatureExtractor takes in multiple Cepstrum(a) and outputs a 
  * FeatureFrame. This is a 1-to-1 processor.
  *
  * <p>The Sphinx properties that affect this processor are: <pre>
@@ -26,7 +24,6 @@ import java.util.Vector;
  * </pre>
  *
  * @see Cepstrum
- * @see CepstrumFrame
  * @see Feature
  * @see FeatureFrame
  */
@@ -49,7 +46,7 @@ public class FeatureExtractor extends DataProcessor {
 
     private static final int LIVEBUFBLOCKSIZE = 256;
     private static final int BUFFER_EDGE = LIVEBUFBLOCKSIZE - 8;
-    
+
     private int featureLength;
     private int cepstrumLength;
     private float[][] cepstraBuffer;
@@ -142,35 +139,26 @@ public class FeatureExtractor extends DataProcessor {
         Data input = inputQueue.removeNext();
         
         if (input == null) {
-            
+
             return null;
             
         } else {
-
-            if (input instanceof CepstrumFrame) {
-                Data nextFrame = inputQueue.peekNext();
-                
-                segmentEnd = (nextFrame == EndPointSignal.SEGMENT_END);
-                
-                Data featureFrame =
-                    process((CepstrumFrame) input, segmentStart, segmentEnd);
-                
-                segmentStart = false;
-                segmentEnd = false;
-                
-                return featureFrame;
-
-            } else if (input instanceof EndPointSignal) {
+            if (input instanceof EndPointSignal) {
                 
                 EndPointSignal signal = (EndPointSignal) input;
 
-                if (signal.equals(EndPointSignal.SEGMENT_START)) {
+                if (signal.equals(EndPointSignal.FRAME_START)) {
+
+                    Data featureFrame = process(readCepstra());
+                    segmentStart = false;
+                    segmentEnd = false;
+                    return featureFrame;
+ 
+                } else if (signal.equals(EndPointSignal.SEGMENT_START)) {
                     segmentStart = true;
                     return input;
-                } else if (signal.equals(EndPointSignal.SEGMENT_END)) {
-                    return input;
                 } else {
-                    return read();
+                    return input;
                 }
             } else {
                 return read();
@@ -179,65 +167,86 @@ public class FeatureExtractor extends DataProcessor {
     }	
 
 
+    /**
+     * Returns the total number of features that should result from
+     * the read Cepstra. This method is called after an
+     * EndPointSignal.FRAME_START is read. It will read all the
+     * Cepstrum in between the read EndPointSignal.FRAME_START and
+     * the next EndPointSignal.FRAME_END, and insert these Cepstrum
+     * into the cepstraBuffer.
+     *
+     * @returns the number of features that should result from the
+     * read Cepstrum
+     *
+     * @throws java.io.IOException if there is an error reading Cepstrum
+     */
+    private int readCepstra() throws IOException {
+
+        int totalFeatures = 0;
+        int residualVectors = 0;
+
+        Data firstFrame = inputQueue.peekNext();
+
+        if (firstFrame instanceof Cepstrum) {
+
+            // replicate the first cepstrum if segment start
+            if (segmentStart) {
+                replicateFirstFrame((Cepstrum) inputQueue.removeNext());
+                residualVectors -= window;
+            }
+
+            // read and copy all the middle Cepstrum
+            totalFeatures += readMiddleCepstra();
+
+            // is the next frame EndPointSignal.SEGMENT_END ?
+            Data nextFrame = inputQueue.peekNext();
+
+            if (nextFrame instanceof EndPointSignal) {
+                
+                EndPointSignal signal = (EndPointSignal) nextFrame;
+                
+                if (signal.equals(EndPointSignal.SEGMENT_END)) {
+                    
+                    // if it is, replicate the last cepstrum
+                    replicateLastFrame();
+                    residualVectors += window;
+                }
+            }
+        }
+
+        return totalFeatures + residualVectors;
+    }
+
 
     /**
-     * Converts the given input CepstrumFrame into a FeatureFrame.
+     * Reads all the cepstra until we hit the next EndPointSignal.
+     * Returns the number of cepstra read. The last EndPointSignal is
+     * removed from the inputQueue.
      *
-     * @param input a CepstrumFrame
+     * @return the number of cepstra read
      *
-     * @return a FeatureFrame
+     * @throws java.io.IOException if error reading the cepstra
      */
-    private FeatureFrame process(CepstrumFrame cepstrumFrame,
-                                 boolean startSegment, boolean endSegment) {
-
-        getTimer().start();
-
-	Cepstrum[] cepstra = cepstrumFrame.getCepstra();
-	assert(cepstra.length < LIVEBUFBLOCKSIZE);
-
-	int residualVectors = 0;
-
-	if (startSegment) {
-            replicateFirstFrame(cepstra[0]);
-	    residualVectors -= window;
-	}
-
-	// copy (the reference of) all the input cepstrum to our cepstraBuffer
-	for (int i = 0; i < cepstra.length; i++) {
-	    this.cepstraBuffer[bufferPosition++] =
-                cepstra[i].getCepstrumData();
-            if (bufferPosition == LIVEBUFBLOCKSIZE) {
-                bufferPosition = 0;
-            }
-	}
-
-	if (endSegment) {
-            replicateLastFrame(cepstra);
-	    residualVectors += window;
-	}
-
-
-	// create the Features
-        fcTimer.start();
-
-        int totalFeatures = cepstra.length + residualVectors;
-        Feature[] features = new Feature[totalFeatures];
-
-	for (int i = 0; i < totalFeatures; i++) {
+    private int readMiddleCepstra() throws IOException {
+        
+        int totalCepstra = 0;
+        Data nextFrame = null;
+        
+        while (!((nextFrame = inputQueue.removeNext())
+                 instanceof EndPointSignal)) {
             
-            features[i] = computeNextFeature();
-            
-            if (getDump()) {
-                System.out.println(Util.dumpFloatArray
-                                   (features[i].getFeatureData(), "FEATURE"));
+            if (nextFrame instanceof Cepstrum) {
+                Cepstrum cepstrum = (Cepstrum) nextFrame;
+                cepstraBuffer[bufferPosition++] = cepstrum.getCepstrumData();
+                totalCepstra++;
+                
+                if (bufferPosition == LIVEBUFBLOCKSIZE) {
+                    bufferPosition = 0;
+                }
             }
-	}
+        }
 
-        fcTimer.stop();
-
-        getTimer().stop();
-
-        return (new FeatureFrame(features));
+        return totalCepstra;
     }
 
 
@@ -274,24 +283,55 @@ public class FeatureExtractor extends DataProcessor {
      * Replicate the last frame into the last window number of frames in
      * the cepstraBuffer.
      */
-    private void replicateLastFrame(Cepstrum[] cepstra) {
-        float[] last;
-        if (cepstra.length > 0) {
-            last = cepstra[cepstra.length-1].getCepstrumData();
-        } else {
-            last = this.cepstraBuffer[bufferPosition - 1];
+    private void replicateLastFrame() {
+
+        if (bufferPosition >= 0) {
+         
+            float[] last = this.cepstraBuffer[bufferPosition - 1];
+            
+            if (bufferPosition + window < LIVEBUFBLOCKSIZE) {
+                Arrays.fill(cepstraBuffer, bufferPosition, 
+                            bufferPosition + window, last);
+            } else {
+                for (int i = 0; i < window; i++) {
+                    this.cepstraBuffer[bufferPosition++] = last;
+                    bufferPosition %= LIVEBUFBLOCKSIZE;
+                }
+            }
+        }            
+    }
+
+
+    /**
+     * Converts the Cepstrum data in the cepstraBuffer into a FeatureFrame.
+     *
+     * @param the number of Features that will be produced
+     *
+     * @return a FeatureFrame
+     */
+    private FeatureFrame process(int totalFeatures) {
+
+        getTimer().start();
+
+        assert(0 < totalFeatures && totalFeatures < LIVEBUFBLOCKSIZE);
+
+	// create the Features
+
+        Feature[] features = new Feature[totalFeatures];
+
+	for (int i = 0; i < totalFeatures; i++) {
+            features[i] = computeNextFeature();
+	}
+
+        FeatureFrame featureFrame = new FeatureFrame(features);
+
+        getTimer().stop();
+        
+        if (getDump()) {
+            System.out.println(featureFrame.toString());
         }
         
-        if (bufferPosition + window < LIVEBUFBLOCKSIZE) {
-            Arrays.fill(cepstraBuffer, bufferPosition, 
-                        bufferPosition + window, last);
-        } else {
-            for (int i = 0; i < window; i++) {
-                this.cepstraBuffer[bufferPosition++] = last;
-                bufferPosition %= LIVEBUFBLOCKSIZE;
-            }
-        }
-            
+        return featureFrame;
     }
 
 

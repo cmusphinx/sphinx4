@@ -30,4 +30,14 @@ public class MelSpectrum implements Data {
     public double[] getMelSpectrumData() {
 	return melSpectralData;
     }
+
+
+    /**
+     * Returns a string representation of this MelSpectrum.
+     *
+     * @return a string representation of this MelSpectrum
+     */
+    public String toString() {
+        return "MEL_SPECTRUM   " + Util.doubleArrayToString(melSpectralData);
+    }
 }

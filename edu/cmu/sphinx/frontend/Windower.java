@@ -172,7 +172,7 @@ public class Windower extends DataProcessor {
         double[][] windows = new double[windowCount][windowSize];
 
         // send a Signal indicating start of frame
-        outputQueue.add(EndPointSignal.SEGMENT_START);
+        outputQueue.add(EndPointSignal.FRAME_START);
 
         for (int windowStart = 0, i = 0; i < windowCount;
              windowStart += windowShift, i++) {
@@ -193,11 +193,11 @@ public class Windower extends DataProcessor {
 
             if (getDump()) {
                 System.out.println
-                    (Util.dumpDoubleArray(myWindow, "HAMMING_WINDOW"));
+                    ("HAMMING_WINDOW " + Util.doubleArrayToString(myWindow));
             }
         }
 
         // send a Signal indicating end of frame
-        outputQueue.add(EndPointSignal.SEGMENT_END);
+        outputQueue.add(EndPointSignal.FRAME_END);
     }
 }

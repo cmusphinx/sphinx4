@@ -18,19 +18,39 @@ public class Util {
 
 
     /**
-     * DecimalFormat object to be used by dump***() methods.
+     * DecimalFormat object to be used by all the methods.
      */
     private static DecimalFormat format = new DecimalFormat();
     
 
-    /**
-     * The number format to be used by dump***() methods.
-     */
-    private static int numberFormat = SCIENTIFIC;
-
     private static int decimalIntegerDigits = 10;
     private static int decimalFractionDigits = 5;
-    private static int scientificDecimalDigits = 9;
+
+    private static int floatScientificFractionDigits = 8;
+    private static int doubleScientificFractionDigits = 16;
+
+
+    /**
+     * The number format to be used by *ArrayToString() methods.
+     * The default is scientific.
+     */
+    private static int dumpFormat = SCIENTIFIC;
+
+
+    /**
+     * Static initialization of dumpFormat
+     */
+    static {
+        String formatProperty = System.getProperty("frontend.util.dumpformat",
+                                                   "SCIENTIFIC");
+        if (formatProperty.compareToIgnoreCase("DECIMAL") == 0) {
+            dumpFormat = DECIMAL;
+        } else if (formatProperty.compareToIgnoreCase("HEXADECIMAL") == 0) {
+            dumpFormat = HEXADECIMAL;
+        } else if (formatProperty.compareToIgnoreCase("SCIENTIFIC") == 0) {
+            dumpFormat = SCIENTIFIC;
+        }
+    }
 
 
     /**
@@ -133,9 +153,9 @@ public class Util {
 
 
     /**
-     * Converts a byte array into a double array. Since a byte is 8-bits,
-     * and a short is 64-bits. Each two consecutive bytes in the byte array
-     * are converted into a double, and becomes the next element in the double
+     * Converts a byte array into a double array. Each two consecutive
+     * bytes in the byte array are converted into a double, and
+     * becomes the next element in the double
      * array. As a result, the returned double array will be half in
      * length than the byte array. If the length of the byte array is odd,
      * the length of the double array will be
@@ -151,7 +171,9 @@ public class Util {
      *
      * @throws java.lang.ArrayIndexOutOfBoundsException
      */
-    public static double[] byteToDoubleArray (byte[] byteArray, int offset, int length) throws ArrayIndexOutOfBoundsException {
+    public static double[] byteToDoubleArray(byte[] byteArray,
+                                             int offset, int length)
+        throws ArrayIndexOutOfBoundsException {
         
         if (0 < length && (offset + length) <= byteArray.length) {
             int doubleLength = length / 2;
@@ -191,14 +213,30 @@ public class Util {
     }
 
 
-    public static String dumpDoubleCScientific(double number, int fraction) {
+    /**
+     * Returns the string representation of the given double value in
+     * normalized scientific notation. The <code>fractionDigits</code>
+     * argument gives the number of decimal digits in the fraction
+     * portion. For example, if <code>fractionDigits</code> is 4, then
+     * the 123450 will be "1.2345e+05". There will always be two digits
+     * in the exponent portion, and a plus or minus sign before the
+     * exponent.
+     *
+     * @param number the double to convert
+     * @param fractionDigits the number of digits in the fraction part,
+     *    e.g., 4 in "1.2345e+05".
+     *
+     * @return the string representation of the double in scientific
+     *    notation
+     */
+    private static String doubleToScientificString(double number,
+                                                   int fractionDigits) {
         String formatter = "0.";
-        for (int i = 0; i < fraction; i++) {
+        for (int i = 0; i < fractionDigits; i++) {
             formatter += "0";
         }
         formatter += "E00";
 
-        DecimalFormat format = new DecimalFormat();
         format.applyPattern(formatter);
         String formatted = format.format(number);
 
@@ -213,15 +251,16 @@ public class Util {
 
 
     /**
-     * Dumps the given short array as a line to stdout.
-     * The dump will be in the form:
-     * <pre>description data[0] data[1] ... data[data.length]</pre>
+     * Returns the string representation of the given short array.
+     * The string will be in the form:
+     * <pre>data.length data[0] data[1] ... data[data.length-1]</pre>
      *
-     * @param data the short array to dump
-     * @param description some comment notes
+     * @param data the short array to convert
+     *
+     * @return a string representation of the short array
      */
-    public static String dumpShortArray(short[] data, String description) {
-        String dump = (description + " " + data.length);
+    public static String shortArrayToString(short[] data) {
+        String dump = String.valueOf(data.length);
 	for (int i = 0; i < data.length; i++) {
 	    dump += (" " + data[i]);
 	}
@@ -230,26 +269,41 @@ public class Util {
 
 
     /**
-     * Dumps the given double array as a string.
-     * The dump will be in the form:
-     * <pre>description data[0] data[1] ... data[data.length]</pre>where
-     * <code>data[i]</code> is formatted by the method
-     * <code>Util.formatDouble(data[i], 9, 5)</code>.
+     * Returns the given double array as a string.
+     * The string will be in the form:
+     * <pre>data.length data[0] data[1] ... data[data.length-1]</pre>where
+     * <code>data[i]</code>.
+     *
+     * The doubles can be written as decimal, hexadecimal,
+     * or scientific notation. In decimal notation, it is formatted by the
+     * method <code>Util.formatDouble(data[i], 10, 5)</code>. Use
+     * the System property <code>"frontend.util.dumpformat"</code> to
+     * control the dump format (permitted values are "decimal",
+     * "hexadecimal", and "scientific".
      *
      * @param data the double array to dump
-     * @param description some comment notes
      *
-     * @return a string of the dump
+     * @return a string representation of the double array
      */
-    public static String dumpDoubleArray(double[] data, String description) {
-        return dumpDoubleArray(data, description, numberFormat);
+    public static String doubleArrayToString(double[] data) {
+        return doubleArrayToString(data, dumpFormat);
     }
 
 
-    private static String dumpDoubleArray(double[] data,
-                                          String description,
-                                          int format) {
-        String dump = (description + " " + data.length);
+    /**
+     * Returns the given double array as a string.
+     * The dump will be in the form:
+     * <pre>data.length data[0] data[1] ... data[data.length-1]</pre>where
+     * <code>data[i]</code> is formatted by the method
+     * <code>Util.formatDouble(data[i], 10, 5)</code>.
+     *
+     * @param data the double array to dump
+     * @param format either HEXADECIMAL, SCIENTIFIC or DECIMAL
+     *
+     * @return a string representation of the double array
+     */
+    private static String doubleArrayToString(double[] data, int format) {
+        String dump = String.valueOf(data.length);
 
         for (int i = 0; i < data.length; i++) {
             if (format == DECIMAL) {
@@ -260,8 +314,8 @@ public class Util {
                 long binary = Double.doubleToRawLongBits(data[i]);
                 dump += (" 0x" + Long.toHexString(binary));
             } else if (format == SCIENTIFIC) {
-                dump += (" " + dumpDoubleCScientific
-                         (data[i], scientificDecimalDigits));
+                dump += (" " + doubleToScientificString
+                         (data[i], doubleScientificFractionDigits));
             }
         }
         return dump;
@@ -269,29 +323,38 @@ public class Util {
 
 
     /**
-     * Dumps the given float array as a string.
+     * Returns the given float array as a string. The string is of the
+     * form:
+     * <pre>data.length data[0] data[1] ... data[data.length-1]</pre>
+     *
+     * The floats can be written as decimal, hexadecimal,
+     * or scientific notation. In decimal notation, it is formatted by the
+     * method <code>Util.formatDouble(data[i], 10, 5)</code>. Use
+     * the System property <code>"frontend.util.dumpformat"</code> to
+     * control the dump format (permitted values are "decimal",
+     * "hexadecimal", and "scientific".
      *
      * @param data the float array to dump
-     * @param name name of the array
      *
      * @return a string of the given float array
      */
-    public static String dumpFloatArray(float[] data, String name) {
-        return dumpFloatArray(data, name, numberFormat);
+    public static String floatArrayToString(float[] data) {
+        return floatArrayToString(data, dumpFormat);
     }
 
 
     /**
-     * Dumps the given float array as a string.
+     * Returns the given float array as a string. The string is of the
+     * form:
+     * <pre>data.length data[0] data[1] ... data[data.length-1]</pre>
      *
      * @param data the float array to dump
-     * @param name name of the array
+     * @param format either DECIMAL, HEXADECIMAL or SCIENTIFIC
      *
      * @return a string of the given float array
      */
-    private static String dumpFloatArray(float[] data, String name, 
-                                        int format) {
-        String dump = (name + " " + data.length);
+    private static String floatArrayToString(float[] data, int format) {
+        String dump = String.valueOf(data.length);
 
         for (int i = 0; i < data.length; i++) {
 
@@ -303,8 +366,8 @@ public class Util {
                 int binary = Float.floatToRawIntBits(data[i]);
                 dump += (" 0x" + Integer.toHexString(binary));
             } else if (format == SCIENTIFIC) {
-                dump += (" " + dumpDoubleCScientific
-                         ((double) data[i], scientificDecimalDigits));
+                dump += (" " + doubleToScientificString
+                         ((double) data[i], floatScientificFractionDigits));
             }
         }
         return dump;

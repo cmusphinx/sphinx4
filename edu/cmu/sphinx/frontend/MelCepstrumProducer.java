@@ -130,13 +130,14 @@ public class MelCepstrumProducer extends DataProcessor {
         float[] cepstrumData = applyMelCosine(melspectrum);
 
         getTimer().stop();
-	
+
+	Cepstrum cepstrum = new Cepstrum(cepstrumData);
+
         if (getDump()) {
-            System.out.println(Util.dumpFloatArray(cepstrumData,
-                                                   "MEL_CEPSTRUM   "));
+            System.out.println(cepstrum.toString());
         }
 
-        return (new Cepstrum(cepstrumData));
+        return cepstrum;
     }
 
     

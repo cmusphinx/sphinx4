@@ -86,15 +86,16 @@ public class BatchFileAudioSource implements DataSource {
         Data frame = streamAudioSource.read();
         if (frame != null) {
             return frame;
-        }
-
-        // if we reached the end of the current file, go to the next one
-        String nextFile = reader.readLine();
-        if (nextFile != null) {
-            fileSetStream(nextFile);
-            return streamAudioSource.read();
         } else {
-            reader.close();
+            // if we reached the end of the current file,
+            // go to the next one
+            String nextFile = reader.readLine();
+            if (nextFile != null) {
+                fileSetStream(nextFile);
+                return read();
+            } else {
+                reader.close();
+            }
         }
 
         return null;

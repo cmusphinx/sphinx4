@@ -34,7 +34,7 @@ public class FeatureFrame implements Data {
     /**
      * Returns a String representation of this FeatureFrame.
      *
-     * @returns the String representation
+     * @return the String representation
      */
     public String toString() {
         String result = "FEATURE_FRAME ";
