@@ -82,8 +82,18 @@ class UnigramProbability {
      *
      * @param probability  the new log probability of this unigram
      */
-    public void setLogProbability(float probability) {
-        logProbability = probability;
+    public void setLogProbability(float logProbability) {
+        this.logProbability = logProbability;
+    }
+
+
+    /**
+     * Sets the log backoff weight.
+     *
+     * @param backoff the new log backoff weight
+     */
+    public void setLogBackoff(float logBackoff) {
+        this.logBackoff = logBackoff;
     }
 }
 
