@@ -12,12 +12,9 @@
 
 package edu.cmu.sphinx.util;
 
-import java.util.Map;
-import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.net.URL;
-import java.io.IOException;
+import java.util.Map;
 
 /**
  * Represents a named value. A StatisticsVariable may be used to 
@@ -27,7 +24,7 @@ import java.io.IOException;
  * Statistics can be dumped as a whole or by context.
  */
  public class StatisticsVariable {
-     private static Map contextPool = new HashMap();
+     private static Map pool = new HashMap();
 
      /**
       * the value of this StatisticsVariable. It can be manipulated
@@ -36,7 +33,7 @@ import java.io.IOException;
      public  double value;		
 
      private String name;		// the name of this value
-     private String contextName;	// the context for this statistic
+     private String owner;	         // the owner for this statistic
      private boolean enabled;		// if true this var is enabled
 
      /**
@@ -45,23 +42,17 @@ import java.io.IOException;
       * created. If the context does not currently exist, it is
       * created.
       *
-      * @param contextName the name of the context
+      * @param owner the name of the context
       * @param statName  the name of the StatisticsVariable
       *
       * @return the StatisticsVariable with the given name and context
       */
-     static public StatisticsVariable getStatisticsVariable(
-     				String contextName, String statName) {
-         Map context = (Map) contextPool.get(contextName);
-	 if (context == null) {
-	    context = new LinkedHashMap();
-	    contextPool.put(contextName, context);
-	 }
+     static public StatisticsVariable getStatisticsVariable(String statName) {
 
-	 StatisticsVariable stat = (StatisticsVariable) context.get(statName);
+	 StatisticsVariable stat = (StatisticsVariable) pool.get(statName);
 	 if (stat == null) {
-	     stat = new StatisticsVariable(contextName, statName);
-	     context.put(statName, stat);
+	     stat = new StatisticsVariable(statName);
+	     pool.put(statName, stat);
 	 }
 	 return stat;
      }
@@ -71,14 +62,12 @@ import java.io.IOException;
       * Gets the StatisticsVariable with the given name for the given
       * instance and context. This is a convenience function.
       *
-      * @param contextName the name of the context
       * @param instanceName the instance name of creator
       * @param statName  the name of the StatisticsVariable
       */
      static public StatisticsVariable getStatisticsVariable(
-	     String contextName, String instanceName, String statName) {
-	 return getStatisticsVariable(contextName, 
-		 instanceName + "." + statName);
+	      String instanceName, String statName) {
+	 return getStatisticsVariable(instanceName + "." + statName);
      }
 
      /**
@@ -86,52 +75,28 @@ import java.io.IOException;
       *
       * @param contextName the context of interest
       */
-     static public void dumpAll(String contextName) {
-	Map context = (Map) contextPool.get(contextName);
-	if (context != null) {
-	     System.out.println(" ========= statistics for " +
-		     contextName + "=======");
-	    for (Iterator i = context.values().iterator(); i.hasNext(); ) {
-		StatisticsVariable stats = (StatisticsVariable) i.next();
-		stats.dump();
-	    }
-	}
+     static public void dumpAll() {
+         System.out.println(" ========= statistics  " + "=======");
+         for (Iterator i = pool.values().iterator(); i.hasNext(); ) {
+             StatisticsVariable stats = (StatisticsVariable) i.next();
+             stats.dump();
+         }
      }
 
-     /**
-      * Dumps all of the known StatisticsVariables
-      */
-     static public void dumpAll() {
-	for (Iterator i = contextPool.keySet().iterator(); i.hasNext(); ) {
-	    String context = (String) i.next();
-	    dumpAll(context);
-	}
-     }
 
      /**
       * Resets all of the StatisticsVariables in the given context
       *
       * @param contextName the context of interest
       */
-     static public void resetAll(String contextName) {
-	Map context = (Map) contextPool.get(contextName);
-	if (context != null) {
-	    for (Iterator i = context.values().iterator(); i.hasNext(); ) {
-		StatisticsVariable stats = (StatisticsVariable) i.next();
-		stats.reset();
-	    }
-	}
+     static public void resetAll() {
+        for (Iterator i = pool.values().iterator(); i.hasNext(); ) {
+    	    StatisticsVariable stats = (StatisticsVariable) i.next();
+    	    stats.reset();
+        }
      }
 
-     /**
-      * Resets all of the known StatisticsVariables
-      */
-     static public void resetAll() {
-	for (Iterator i = contextPool.keySet().iterator(); i.hasNext(); ) {
-	    String context = (String) i.next();
-	    resetAll(context);
-	}
-     }
+
 
      /**
       * Contructs a StatisticsVariable with the given name and context
@@ -140,23 +105,11 @@ import java.io.IOException;
       * 	StatisticsVariable
       * @param statName the name of this StatisticsVariable
       */
-     private StatisticsVariable(String contextName, String statName) {
-	 SphinxProperties props = 
-	     SphinxProperties.getSphinxProperties(contextName);
-	 this.enabled = props.getBoolean("statistics", statName, true);
-         this.contextName = contextName;
+     private StatisticsVariable(String statName) {
 	 this.name = statName;
 	 this.value = 0.0;
      }
 
-     /**
-      * Retrieves the name of the context for this StatisticsVariable
-      *
-      * @return the name of the context
-      */
-     public String getContextName() {
-     	return contextName;
-     }
 
      /**
       * Retrieves the name of this StatisticsVariable
@@ -223,11 +176,6 @@ import java.io.IOException;
       * Some simple tests for the StatisticsVariable
       */
      public static void main(String[] args) {
-	try {
-	    SphinxProperties.initContext("main", new URL("file:./test.props"));
-	 } catch (IOException ioe) {
-	     System.out.println("Can't load main moon props");
-	 }
 	 StatisticsVariable loops =
 	     StatisticsVariable.getStatisticsVariable("main", "loops");
 	 StatisticsVariable sum =
@@ -244,15 +192,15 @@ import java.io.IOException;
 	 leg.setValue(2);
 	 finger.setValue(10);
 
-	StatisticsVariable.dumpAll("main");
-	StatisticsVariable.dumpAll("body");
+	StatisticsVariable.dumpAll();
+	StatisticsVariable.dumpAll();
 
 	for (int i = 0; i < 1000; i++) {
 	    loops.value ++;
 	    sum.value += i;
 	}
 
-	StatisticsVariable.dumpAll("main");
+	StatisticsVariable.dumpAll();
 
 
 	 StatisticsVariable loopsAlias =
