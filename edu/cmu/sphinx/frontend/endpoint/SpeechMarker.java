@@ -21,11 +21,14 @@ import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.Signal;
-
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
+import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
@@ -53,19 +56,12 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * the accounting starts all over again.
  */
 public class SpeechMarker extends BaseDataProcessor {
-
     /**
-     * The prefix for all the properties of this SpeechMarker.
-     */
-    public static final String PROP_PREFIX = 
-        "edu.cmu.sphinx.frontend.endpoint.SpeechMarker.";
-
-    /**
-     * The SphinxProperty for the minimum amount of time in speech
+     * The SphinxP roperty for the minimum amount of time in speech
      * (in milliseconds) to be considered as utterance start.
      */
     public static final String PROP_START_SPEECH = 
-        PROP_PREFIX + "startSpeech";
+        "startSpeech";
 
     /**
      * The default value of PROP_START_SPEECH.
@@ -76,7 +72,7 @@ public class SpeechMarker extends BaseDataProcessor {
      * The SphinxProperty for the amount of time in silence
      * (in milliseconds) to be considered as utterance end.
      */
-    public static final String PROP_END_SILENCE = PROP_PREFIX + "endSilence";
+    public static final String PROP_END_SILENCE = "endSilence";
 
     /**
      * The default value of PROP_END_SILENCE.
@@ -88,7 +84,7 @@ public class SpeechMarker extends BaseDataProcessor {
      * before speech start to be included as speech data.
      */
     public static final String PROP_SPEECH_LEADER = 
-        PROP_PREFIX + "speechLeader";
+        "speechLeader";
 
     /**
      * The default value of PROP_SPEECH_LEADER.
@@ -100,7 +96,7 @@ public class SpeechMarker extends BaseDataProcessor {
      * after speech ends to be included as speech data.
      */
     public static final String PROP_SPEECH_TRAILER = 
-        PROP_PREFIX + "speechTrailer";
+        "speechTrailer";
 
     /**
      * The default value of PROP_SPEECH_TRAILER.
@@ -115,43 +111,43 @@ public class SpeechMarker extends BaseDataProcessor {
     private int speechLeader;
     private int speechTrailer;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_START_SPEECH, PropertyType.INT);
+        registry.register(PROP_END_SILENCE, PropertyType.INT);
+        registry.register(PROP_SPEECH_LEADER, PropertyType.INT);
+        registry.register(PROP_SPEECH_TRAILER, PropertyType.INT);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        startSpeechTime = ps.getInt (PROP_START_SPEECH, PROP_START_SPEECH_DEFAULT);
+        endSilenceTime = ps.getInt (PROP_END_SILENCE, PROP_END_SILENCE_DEFAULT);
+        speechLeader = ps.getInt (PROP_SPEECH_LEADER, PROP_SPEECH_LEADER_DEFAULT);
+        speechTrailer = ps.getInt (PROP_SPEECH_TRAILER, PROP_SPEECH_TRAILER_DEFAULT);
+    }
 
     /**
-     * Initializes this SpeechMarker with the given name, front end,
-     * properties, and AudioSource predecessor.
+     * Initializes this SpeechMarker 
      *
-     * @param name        the name of this SpeechMarker, if it is null,
-     *                    the name "SpeechMarker" will be given
-     * @param frontEnd    the front end this SpeechMarker belongs to
-     * @param props       the SphinxProperties to read properties from
-     * @param predecessor the DataProcessor this SpeechMarker gets Data from
      */
-    public void initialize(String name, String frontEnd, 
-                           SphinxProperties props, DataProcessor predecessor) {
-        super.initialize((name == null ? "SpeechMarker" : name),
-                         frontEnd, props, predecessor);
+    public void initialize() {
+        super.initialize();
         this.outputQueue = new ArrayList();
-        setProperties(props);
         reset();
     }
 
-    /**
-     * Sets the properties for this SpeechMarker.
-     */
-    private void setProperties(SphinxProperties props) {
-
-        startSpeechTime = props.getInt
-            (getName(), PROP_START_SPEECH, PROP_START_SPEECH_DEFAULT);
-        
-        endSilenceTime = props.getInt
-            (getName(), PROP_END_SILENCE, PROP_END_SILENCE_DEFAULT);
-        
-        speechLeader = props.getInt
-            (getName(), PROP_SPEECH_LEADER, PROP_SPEECH_LEADER_DEFAULT);
-
-        speechTrailer = props.getInt
-            (getName(), PROP_SPEECH_TRAILER, PROP_SPEECH_TRAILER_DEFAULT);
-    }
 
     /**
      * Resets this SpeechMarker to a starting state.

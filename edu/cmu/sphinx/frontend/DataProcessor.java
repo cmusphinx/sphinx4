@@ -10,64 +10,56 @@
  *
  * @see FrontEnd
  */
-
-
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.util.SphinxProperties;
-
+import edu.cmu.sphinx.util.props.Configurable;
 
 /**
- * A processor that performs a signal processing function.
- * Since a DataProcessor usually belongs to a particular front end
- * pipeline, you can name the pipeline it belongs to in the
- * {@link #initialize(String,String,SphinxProperties,DataProcessor) initialize}
- * method. (Note, however, that it is
- * not always the case that a DataProcessor belongs to a particular
- * pipeline. For example, the
- * {@link edu.cmu.sphinx.frontend.util.Microphone Microphone} class
- * is a DataProcessor, but it usually does not belong to any particular
- * pipeline.
+ * A processor that performs a signal processing function. Since a
+ * DataProcessor usually belongs to a particular front end pipeline, you can
+ * name the pipeline it belongs to in the
+ * {@link #initialize() initialize}
+ * method. (Note, however, that it is not always the case that a DataProcessor
+ * belongs to a particular pipeline. For example, the
+ * {@link edu.cmu.sphinx.frontend.util.Microphone Microphone}class is a
+ * DataProcessor, but it usually does not belong to any particular pipeline.
  * <p>
- * Each DataProcessor usually have a predecessor as well. This is
- * the previous DataProcessor in the pipeline. Again, not all
- * DataProcessors have predecessors.
+ * Each DataProcessor usually have a predecessor as well. This is the previous
+ * DataProcessor in the pipeline. Again, not all DataProcessors have
+ * predecessors.
  * <p>
- * Calling {@link #getData() getData} will return the processed Data object.
+ * Calling {@link #getData() getData}will return the processed Data object.
  */
-public interface DataProcessor {
+public interface DataProcessor extends Configurable {
+    /**
+     * Initializes this DataProcessor. This is typically called after the
+     * DataProcessor has been configured.
+     * 
+     * @param commonConfig
+     *                configuration data that is used by many data processors
+     */
+    public void initialize();
 
     /**
-     * Initializes this DataProcessor.
-     *
-     * @param name the name of this DataProcessor
-     * @param frontEndName the front end this DataProcessor belongs to
-     * @param sphinxProperties the SphinxProperties to use
-     * @param predecessor the predecessor of this DataProcessor
-     */
-    public void initialize(String name, String frontEndName,
-                           SphinxProperties sphinxProperties,
-                           DataProcessor predecessor);
-    
-    /**
      * Returns the processed Data output.
-     *
-     * @return an Data object that has been processed by this DataProcessor 
-     *
-     * @throws DataProcessingException if a data processor error occurs
+     * 
+     * @return an Data object that has been processed by this DataProcessor
+     * 
+     * @throws DataProcessingException
+     *                 if a data processor error occurs
      */
     public abstract Data getData() throws DataProcessingException;
 
     /**
      * Returns the name of this DataProcessor.
-     *
+     * 
      * @return the name of this DataProcessor
      */
     public String getName();
 
     /**
      * Returns the predecessor DataProcessor.
-     *
+     * 
      * @return the predecessor
      */
     public DataProcessor getPredecessor();
@@ -75,8 +67,9 @@ public interface DataProcessor {
     /**
      * Sets the predecessor DataProcessor. This method allows dynamic
      * reconfiguration of the front end.
-     *
-     * @param predecessor the new predecessor of this DataProcessor
+     * 
+     * @param predecessor
+     *                the new predecessor of this DataProcessor
      */
     public void setPredecessor(DataProcessor predecessor);
 }

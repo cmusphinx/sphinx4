@@ -20,11 +20,13 @@ import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.Signal;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
@@ -92,17 +94,12 @@ import edu.cmu.sphinx.util.SphinxProperties;
  */
 public class NonSpeechDataFilter extends BaseDataProcessor {
 
-    private static final String PROP_PREFIX 
-        = "edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter.";
-
-
     /**
-     * The SphinxProperty that controls whether to merge discontiguous
+     * The Sphinx Property that controls whether to merge discontiguous
      * speech segments in an utterance.
      */
     public static final String PROP_MERGE_SPEECH_SEGMENTS
-        = PROP_PREFIX + "mergeSpeechSegments";
-
+        = "mergeSpeechSegments";
 
     /**
      * The default value for PROP_MERGE_SPEECH_SEGMENTS.
@@ -130,27 +127,35 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
     private int numberSpeechSamples;
     private int sampleRate;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_MERGE_SPEECH_SEGMENTS, PropertyType.BOOLEAN);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        this.mergeSpeechSegments = ps.getBoolean
+	    (PROP_MERGE_SPEECH_SEGMENTS, PROP_MERGE_SPEECH_SEGMENTS_DEFAULT);
+    }
 
     /**
-     * Constructs an NonSpeechDataFilter with the given name, context,
-     * and DataSource predecessor.
+     * Initializes this data processor
      *
-     * @param name        the name of this NonSpeechDataFilter, if this is
-     *                    null, the name "NonSpeechDataFilter" will be given
-     * @param frontEnd    the front end this NonSpeechDataFilter is in
-     * @param props       the SphinxProperties to read properties from
-     * @param predecessor the DataProcessor where this NonSpeechDataFilter
-     *                    gets Data from
      */
-    public void initialize(String name, String frontEnd,
-                           SphinxProperties props, DataProcessor predecessor) {
-        super.initialize((name == null ? "NonSpeechDataFilter" : name),
-                         frontEnd, props, predecessor);
-	
-        this.mergeSpeechSegments = props.getBoolean
-	    (getName(), PROP_MERGE_SPEECH_SEGMENTS,
-             PROP_MERGE_SPEECH_SEGMENTS_DEFAULT);
-        
+    public void initialize() {
+        super.initialize();
         this.discardMode = true;
         this.inSpeech = false;
         this.inputBuffer = new LinkedList();

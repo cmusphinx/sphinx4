@@ -13,10 +13,14 @@
 
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.util.SphinxProperties;
-
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
+
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 /**
  * FrontEnd is a wrapper class for the chain of front end processors.
@@ -121,6 +125,7 @@ import java.util.Vector;
  * <p>
  * <b>Obtaining a Front End</b>
  * <p>
+ * TODO FIX THIS DOCUMENTATION
  * A front end is obtained through the
  * {@link edu.cmu.sphinx.frontend.FrontEndFactory}. You will call the 
  * {@link edu.cmu.sphinx.frontend.FrontEndFactory#getFrontEnd(edu.cmu.sphinx.util.SphinxProperties,String) getFrontEnd} factory method. Continuing the above example,
@@ -150,41 +155,64 @@ import java.util.Vector;
  * <br>Data output = frontend.getData();
  * </code>
  */
-public class FrontEnd extends BaseDataProcessor {
-
-    private DataProcessor first;
-    private DataProcessor last;
-
-    private Vector signalListeners = new Vector();
-
+public class FrontEnd extends BaseDataProcessor  {
 
     /**
-     * Constructs a FrontEnd with the given first and last DataProcessors,
-     * which encloses a chain of DataProcessors.
-     *
-     * @param firstProcessor first processor in the processor chain
-     * @param lastProcessor last processor in the processor chain
+     * the name of the property list of all the components of
+     * the frontend pipe line
      */
-    public FrontEnd(DataProcessor firstProcessor,
-                    DataProcessor lastProcessor) {
-        this.first = firstProcessor;
-        this.last = lastProcessor;
+    public static String PROP_PIPELINE = "pipeline";
+    
+    
+    // ----------------------------
+    // Confiugration data
+    // -----------------------------
+    private List frontEndList;
+    
+    private DataProcessor first;
+    private DataProcessor last;
+    private Vector signalListeners = new Vector();
+
+    
+
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry) throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_PIPELINE, PropertyType.COMPONENT_LIST);
     }
 
 
-    /**
-     * Initializes this Front End.
-     *
-     * @param name         the name of this front end
-     * @param frontEndName the name of the front-end pipeline this
-     *                     front end is in
-     * @param props        the SphinxProperties to use
-     * @param predecessor  the predecessor of this Front End
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
-    public void initialize(String name, String frontEndName,
-                           SphinxProperties props,
-                           DataProcessor predecessor) {
-        super.initialize(name, frontEndName, props, predecessor);
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        frontEndList = ps.getComponentList(PROP_PIPELINE, DataProcessor.class);
+        
+        for (Iterator i = frontEndList.iterator(); i.hasNext(); ) {
+            DataProcessor dp = (DataProcessor) i.next();
+            dp.setPredecessor(last);
+            if (first == null) {
+                first = dp;
+            }
+            last = dp;
+        }
+        initialize();
+    }
+    
+
+ 
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
+     */
+    public void initialize() {
+        super.initialize();
+        for (Iterator i = frontEndList.iterator(); i.hasNext(); ) {
+            DataProcessor dp = (DataProcessor) i.next();
+            dp.initialize();
+        }
     }
 
 
@@ -231,27 +259,6 @@ public class FrontEnd extends BaseDataProcessor {
     }
 
     
-    /**
-     * Finds the DataProcessor with the given name.
-     *
-     * @param processorName the name of the DataProcessor to find
-     *
-     * @return the DataProcessor with the given name, or null if no
-     *         DataProcessor with the given name was found
-     */
-    public DataProcessor findDataProcessor(String processorName) {
-        DataProcessor current = last;
-        while (current != null) {
-            if (current.getName().equals(processorName)) {
-                return current;
-            } else {
-                current = current.getPredecessor();
-            }
-        }
-        return null;
-    }
-
-
     /**
      * Add a listener to be called when a signal is detected.
      *
@@ -305,4 +312,5 @@ public class FrontEnd extends BaseDataProcessor {
         }
         return (getName() + " {" + description + "}");
     }
+
 }
