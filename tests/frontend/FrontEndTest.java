@@ -16,6 +16,7 @@ package tests.frontend;
 
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.FeatureFrame;
+import edu.cmu.sphinx.frontend.SimpleFrontEnd;
 import edu.cmu.sphinx.util.Timer;
 
 
@@ -40,12 +41,12 @@ public class FrontEndTest {
             ProcessorTest fet = new ProcessorTest
                 (testName, propertiesFile, audioFile);
 
-            FrontEnd fe = new FrontEnd("FrontEnd", testName, 
-                                       fet.getAudioSource());
+            FrontEnd fe = new SimpleFrontEnd("FrontEnd", testName, 
+					     fet.getAudioSource());
             
             FeatureFrame featureFrame = null;
             do {
-                featureFrame = fe.getFeatureFrame(25);
+                featureFrame = fe.getFeatureFrame(25, null);
             } while (featureFrame != null);
 
             if (fet.getDumpTimes()) {

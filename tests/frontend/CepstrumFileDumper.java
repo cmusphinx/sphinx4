@@ -32,6 +32,7 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.FeatureExtractor;
 import edu.cmu.sphinx.frontend.FeatureFrame;
+import edu.cmu.sphinx.frontend.SimpleFrontEnd;
 import edu.cmu.sphinx.frontend.StreamAudioSource;
 
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -76,7 +77,7 @@ public class CepstrumFileDumper {
 		("BatchFileAudioSource", context,
 		 (new FileInputStream(inputAudioFile)), inputAudioFile);
 
-	    frontend = new FrontEnd("frontend", context, audioSource);
+	    frontend = new SimpleFrontEnd("frontend", context, audioSource);
 
 	    allFeatures = new LinkedList();
 	    getAllFeatures();
@@ -93,7 +94,7 @@ public class CepstrumFileDumper {
     private void getAllFeatures() throws IOException {
 	Feature feature = null;
 	FeatureFrame frame = null;
-	while ((frame = frontend.getFeatureFrame(1)) != null) {
+	while ((frame = frontend.getFeatureFrame(1, null)) != null) {
 	    feature = frame.getFeatures()[0];
 	    if (feature.hasContent()) {
 		allFeatures.add(feature);
