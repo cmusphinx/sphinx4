@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.SignalListener;
@@ -301,6 +302,9 @@ public class Decoder {
                     public void signalOccurred(Signal signal) {
                         if (signal instanceof DataStartSignal) {
                             getDecoderTimer().start(signal.getTime());
+                        } else if (signal instanceof DataEndSignal) {
+                            DataEndSignal endSignal = (DataEndSignal) signal;
+                            audioTime = (float)(endSignal.getDuration()/1000f);
                         }
                     }
                 });
@@ -562,7 +566,6 @@ public class Decoder {
      */
     protected void calculateTimes(Result result) {
         processingTime = getDecoderTimer().getCurTime() / 1000.f;
-        audioTime = getAudioTime(result);
 	cumulativeProcessingTime += processingTime;
 	cumulativeAudioTime += audioTime;
     }
@@ -662,11 +665,13 @@ public class Decoder {
      *
      * @param result the result
      */
+    /*
     public float getAudioTime(Result result) {
         return DataUtil.getAudioTime
             (result.getFrameNumber(),
              SphinxProperties.getSphinxProperties(context));
     }
+    */
 
     /**
      * Resets the speed statistics of this decoder.
