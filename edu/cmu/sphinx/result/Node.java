@@ -30,10 +30,34 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * Nodes are part of Lattices.  The represent theories that words were spoken over a given time.
+ * <p>
+ * A node is part of Lattices, representing the theory that a word was spoken
+ * over a given period of time. A node also has a set of entering and leaving
+ * {@link edu.cmu.sphinx.result.Edge edges}, connecting it to other nodes.
+ * One can get and set the beginning and end frames of the word via the
+ * getBeginTime and getEndTime methods. When setting these times, the beginning
+ * time must be earlier or equal to the end time, otherwise an error will
+ * be thrown.
+ * </p>
+ *
+ * <p>
+ * The posterior probability of any word in a word lattice is the probability
+ * that the node representing that word occurs on any path through the 
+ * lattice. It is usually computed as the ratio of the total likelihood scores
+ * of all paths through the lattice that pass through the node,
+ * to the total likelihood score of all paths through the lattice.
+ * Path scores are usually computed using the acoustic likelihoods of the
+ * nodes, although language scores can also be incorporated. The posterior
+ * probabilities of an entire lattice is usually computed efficiently
+ * using the Forward-Backward Algorithm. Refer to the 
+ * {@link edu.cmu.sphinx.result.Lattice#computeNodePosteriors
+ * computeNodePosteriors} method in the Lattice class for details.
+ * </p>
  */
 public class Node {
-    private static int nodeCount = 0; // used to generate unique IDs for new Nodes.
+
+    // used to generate unique IDs for new Nodes.
+    private static int nodeCount = 0; 
 
     private String id;
     private Word word;
@@ -290,7 +314,9 @@ public class Node {
     }
 
     /**
-     * Sets the frame number when the word began.
+     * Sets the frame number when the word began. The begin time must be
+     * not be later than the time returned by the getEndTime() method,
+     * otherwise an error will be thrown.
      *
      * @param beginTime the frame number when the word began
      */
@@ -313,7 +339,9 @@ public class Node {
     }
 
     /**
-     * Sets the frame number when the words ended.
+     * Sets the frame number when the words ended. The end time must not be
+     * earlier than the time returned by the getEndTime() method, otherwise
+     * an error will be thrown.
      *
      * @param endTime the frame number when the word ended
      */
@@ -376,37 +404,61 @@ public class Node {
 
         lattice.addNode(id, label, 0, 0);
     }
+
     /**
+     * Returns the backward score, which is calculated during the computation
+     * of the posterior score for this node.
+     *
      * @return Returns the backwardScore.
      */
     public double getBackwardScore() {
         return backwardScore;
     }
+
     /**
+     * Sets the backward score for this node.
+     *
      * @param backwardScore The backwardScore to set.
      */
     public void setBackwardScore(double backwardScore) {
         this.backwardScore = backwardScore;
     }
+
     /**
+     * Returns the forward score, which is calculated during the computation
+     * of the posterior score for this node.
+     *
      * @return Returns the forwardScore.
      */
     public double getForwardScore() {
         return forwardScore;
     }
+
     /**
+     * Sets the backward score for this node.
+     *
      * @param forwardScore The forwardScore to set.
      */
     public void setForwardScore(double forwardScore) {
         this.forwardScore = forwardScore;
     }
+
     /**
+     * Returns the posterior probability of this node.
+     * Refer to the javadocs for this class for a description of
+     * posterior probabilities.
+     *
      * @return Returns the posterior probability of this node.
      */
     public double getPosterior() {
         return posterior;
     }
+
     /**
+     * Sets the posterior probability of this node.
+     * Refer to the javadocs for this class for a description of posterior
+     * probabilities.
+     *
      * @param posterior The node posterior probability to set.
      */
     public void setPosterior(double posterior) {
@@ -490,7 +542,7 @@ public class Node {
             if (n.equals(node)) {
                 return true;
             }
-            if (isAncestorHelper(n.getChildNodes(),node, seenNodes)) {                
+            if (isAncestorHelper(n.getChildNodes(),node, seenNodes)) {
                 return true;
             }
         }
@@ -564,24 +616,37 @@ public class Node {
     }
     
     /**
+     * Returns the best predecessor for this node.
+     *
      * @return Returns the bestPredecessor.
      */
     public Node getBestPredecessor() {
         return bestPredecessor;
     }
+
     /**
+     * Sets the best predecessor of this node.
+     *
      * @param bestPredecessor The bestPredecessor to set.
      */
     public void setBestPredecessor(Node bestPredecessor) {
         this.bestPredecessor = bestPredecessor;
     }
+
     /**
+     * Returns the Viterbi score for this node. The Viterbi score is usually
+     * computed during the speech recognition process.
+     *
      * @return Returns the viterbiScore.
      */
     public double getViterbiScore() {
         return viterbiScore;
     }
+
     /**
+     * Sets the Viterbi score for this node. The Viterbi score is usually
+     * computed during the speech recognition process.
+     *
      * @param viterbiScore The viterbiScore to set.
      */
     public void setViterbiScore(double viterbiScore) {
