@@ -7,6 +7,7 @@ Sphinx-4 1.0 Release Steps
      demo/jsapi/dialog
      demo/jsapi/jsgf
      demo/jsapi/tags
+     demo/sphinx/confidence
      demo/sphinx/hellodigits
      demo/sphinx/hellongram
      demo/sphinx/helloworld
