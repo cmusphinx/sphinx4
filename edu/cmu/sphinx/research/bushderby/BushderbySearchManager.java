@@ -1,3 +1,4 @@
+
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -10,7 +11,7 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.search;
+package edu.cmu.sphinx.research.bushderby;
 
 import java.util.List;
 import java.util.LinkedList;
@@ -33,11 +34,17 @@ import edu.cmu.sphinx.util.StatisticsVariable;
 
 import edu.cmu.sphinx.result.Result;
 
+import edu.cmu.sphinx.decoder.linguist.Color;
+import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
 import edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc;
+import edu.cmu.sphinx.decoder.linguist.UnitState;
+import edu.cmu.sphinx.decoder.linguist.WordState;
 
+import edu.cmu.sphinx.decoder.search.Pruner;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.decoder.search.ActiveList;
+
 import edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager;
 
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
@@ -113,7 +120,6 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	bushderbyEta = props.getDouble(PROP_BUSHDERBY_ETA, 
 				       PROP_BUSHDERBY_ETA_DEFAULT);
 	
-	System.out.println("bushderby is " + enableBushderby);
 	System.out.println("bushderbyEta is " + bushderbyEta);
 
 	filterSuccessors 
@@ -541,7 +547,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		logProbability = (float) languageModel.getProbability(wordList);
 	    }
 	}
-	return logProbability * languageWeight;
+	return logProbability * getLanguageWeight();
     }
 
 
