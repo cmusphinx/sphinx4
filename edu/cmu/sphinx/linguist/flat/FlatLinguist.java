@@ -154,10 +154,10 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         // hookup to all of the components
+        setupAcousticModel(ps);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
         grammar = (Grammar) ps.getComponent(PROP_GRAMMAR, Grammar.class);
-        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL,
-                AcousticModel.class);
+        
         // get the rest of the configuration data
         logWordInsertionProbability = logMath.linearToLog(ps.getDouble(
                 PROP_WORD_INSERTION_PROBABILITY,
@@ -182,6 +182,18 @@ public class FlatLinguist implements Linguist, Configurable {
                         PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS,
                         PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS_DEFAULT);
     }
+
+    /**
+     * Sets up the acoustic model.
+     *
+     * @param ps the PropertySheet from which to obtain the acoustic model
+     */
+    protected void setupAcousticModel(PropertySheet ps)
+        throws PropertyException {
+        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL,
+                                                        AcousticModel.class);
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -196,8 +208,8 @@ public class FlatLinguist implements Linguist, Configurable {
      * @see edu.cmu.sphinx.linguist.Linguist#allocate()
      */
     public void allocate() throws IOException {
+        allocateAcousticModel();
         grammar.allocate();
-        acousticModel.allocate();
         totalStates = StatisticsVariable.getStatisticsVariable(getName(),
                 "totalStates");
         totalArcs = StatisticsVariable.getStatisticsVariable(getName(),
@@ -209,6 +221,14 @@ public class FlatLinguist implements Linguist, Configurable {
         nodeStateMap = null;
         arcPool = null;
     }
+
+    /**
+     * Allocates the acoustic model.
+     */
+    protected void allocateAcousticModel() throws IOException {
+        acousticModel.allocate();
+    }
+
     /*
      * (non-Javadoc)
      * 
