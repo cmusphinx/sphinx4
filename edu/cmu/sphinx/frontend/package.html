@@ -19,6 +19,17 @@
 Provides a set of high level classes and interfaces that are used 
 to perform digital signal processing for speech recognition.
 
+<p>
+The front end is modeled as a series of data processors, each of 
+which performs a specific signal processing function on the incoming
+data. Therefore, the incoming data is transformed as it passes through
+each data processor. A high-level design of the front end looks like:
+<p>
+<img src="doc-files/frontend.jpg">
+<p>
+For more detailed explanation, please refer to the <a href="FrontEnd.html">
+FrontEnd class documentation</a>.
+
 <!--
 <h2>Package Specification</h2>
 
