@@ -2,12 +2,12 @@ decoders = isolatedDigits connectedDigits alphaSpelling
 
 # isolatedDigits decoder
 isolatedDigits.name = Isolated Digits
-isolatedDigits.propertiesFile = ../performance/ti46/ti46.props
+isolatedDigits.propertiesFile = ./ti46.props
 isolatedDigits.testFile = ./isolatedDigits.test
 
 # connectedDigits
 connectedDigits.name = Connected Digits
-connectedDigits.propertiesFile = ../performance/tidigits/tidigits.props
+connectedDigits.propertiesFile = ./tidigits.props
 connectedDigits.testFile = ./connectedDigits.test
 
 # alphaSpelling
