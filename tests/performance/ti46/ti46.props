@@ -21,7 +21,7 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 ############################################################
 
 edu.cmu.sphinx.model.acoustic.format = sphinx3.ascii
-edu.cmu.sphinx.model.acoustic.location = /lab/speech/sphinx4/data/tidigits_model
+edu.cmu.sphinx.model.acoustic.location = file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.ascii.zip
 edu.cmu.sphinx.model.acoustic.definition_file = wd_dependent_phone.500.mdef
 edu.cmu.sphinx.model.acoustic.data_location = wd_dependent_phone.cd_continuous_8gau
 edu.cmu.sphinx.model.acoustic.properties_file = am.props
