@@ -204,7 +204,11 @@ public class StreamCepstrumSource extends BaseDataProcessor {
             data = new DataEndSignal(duration);
 
             try {
-                binaryStream.close();
+                if (binary) {
+                    binaryStream.close();
+                } else {
+                    est.close();
+                }
                 curPoint++;
             } catch (IOException ioe) {
                 throw new DataProcessingException
