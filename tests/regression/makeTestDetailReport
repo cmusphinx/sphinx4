@@ -9,9 +9,9 @@
 # WARRANTIES.
 #
 # This script parses the regression log and outputs a detailed
-# regression report suitable for a twiki
+# regression html report 
 #
-# usage: ./makeTwikiDetailReport regression.log listoftests.list
+# usage: ./makeTestDetailReport regression.log listoftests.list
 #     machine typeOfResults  title recognizer 
 #
 # Field definitions: 
@@ -59,7 +59,7 @@ BEGIN {
 
     NOT_AVAILABLE = "n/a";
 
-# usage makeTwikiDetailReport log test.list machine mode title system
+# usage makeTestDetailReport log test.list machine mode title system
     testList = ARGV[2];
     machine = ARGV[3];
     mode = ARGV[4];
@@ -211,23 +211,23 @@ function getPercent(num, denom) {
 
 function dumpTest(testName) {
    if (testName == "") {
-       printf("| | | | | | | | | |\n");
+       printf("<tr/>\n");
        return;
    }
-   printf("|<font color=#018888> %s </font>", testName);
-   printf("|%s", getSpeed(testName));
+   printf("<tr> <td> <font color=#018888> %s </font></td>", testName);
+   printf("<td>%s", getSpeed(testName));
    words = get(testName, F_WORDS);
-   printf("|%s", words);
-   printf("|%s", getPercent(get(testName, F_INSERTIONS), words));
-   printf("|%s", getPercent(get(testName, F_DELETIONS), words));
-   printf("|%s", getPercent(get(testName, F_SUBSTITUTIONS), words));
-   printf("|%s", getAccuracy(testName));
+   printf("<td>%s", words);
+   printf("<td>%s", getPercent(get(testName, F_INSERTIONS), words));
+   printf("<td>%s", getPercent(get(testName, F_DELETIONS), words));
+   printf("<td>%s", getPercent(get(testName, F_SUBSTITUTIONS), words));
+   printf("<td>%s", getAccuracy(testName));
    sentences = get(testName, F_SENTENCES);
-   printf("|%s", sentences);
+   printf("<td>%s", sentences);
    correctSentences = get(testName, F_CORRECT_SENTENCES);
    sentencesWithErrors = sentences - correctSentences;
-   printf("|%s", getPercent(sentencesWithErrors, sentences));
-   printf("|\n");
+   printf("<td>%s", getPercent(sentencesWithErrors, sentences));
+   printf("</tr>\n");
 }
 
 
@@ -242,19 +242,20 @@ function dumpTitle(  i) {
         machineName = machine;
     }
 
-    printf("|   *%s [[Sphinx4.%s][%s]] for %s*  ||||||||||\n", \
-        modeTitle[mode], title, title, systemTitle[whichSystem]);
+    printf("<tr bgcolor=lightblue> <th colspan=9>%s" \
+       "%s for %s</tr>\n", \
+        modeTitle[mode], title, systemTitle[whichSystem]);
 
-    printf("| *%s %s* ", "Test run on", machineName);
-    printf("| *%s* ", "Speed (RT)");
-    printf("| *%s* ", "Num Words");
-    printf("| *%s* ", "Insertions (%) (#)");
-    printf("| *%s* ", "Deletions (%) (#)");
-    printf("| *%s* ", "Substitutions (%) (#)");
-    printf("| *%s* ", "Word Error Rate (%)");
-    printf("| *%s* ", "Num Sentences");
-    printf("| *%s* ", "Sentence Error Rate");
-    printf("|\n");
+    printf("<tr bgcolor=lightblue> <th> %s %s ", "Test run on", machineName);
+    printf("<th> %s ", "Speed (RT)");
+    printf("<th> %s ", "Num Words");
+    printf("<th> %s ", "Insertions (%) (#)");
+    printf("<th> %s ", "Deletions (%) (#)");
+    printf("<th> %s ", "Substitutions (%) (#)");
+    printf("<th> %s ", "Word Error Rate (%)");
+    printf("<th> %s ", "Num Sentences");
+    printf("<th> %s ", "Sentence Error Rate");
+    printf("</tr>\n");
 }
 
 END {
@@ -267,22 +268,24 @@ END {
 	}
     }
 
+    printf("<table cellpadding=1 cellspacing=0 border=1 width=90% align=center>\n");
+
+    printf("<tbody>\n");
+
     dumpTitle();
     for (i = 0; i < totalTestCount; i++) {
         dumpTest(testOrder[i]);
     }
-
-# Make the page read-only so people do not try to edit these pages
+    printf("</tbody>\n");
+    printf("</table>\n");
 
     print "<small>"
-    printf("_This table is automatically generated. ");
+    print "<center>"
+    printf("<i>This table is automatically generated. ");
     printf("Do not edit this by hand. ");
-    printf("Last updated on %s at %s._\n", date, time);
+    printf("Last updated on %s at %s.</i>\n", date, time);
+    print "</center>"
     print "</small>"
-    print "<!--";
-    print "Set DENYTOPICCHANGE=Main.SphinxGroup SphinxGroup";
-    print "  -->";
-
 }
 
 '  $*

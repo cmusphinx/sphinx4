@@ -9,7 +9,7 @@
 # WARRANTIES.
 #
 #
-# This is the main updateTwikiReport script. This script should be run on
+# This is the main updateTestReport script. This script should be run on
 # demand, when new entry warranty it.  The following functions are performed:
 #
 # 	Retrieves the S4 regression from sourceforge
@@ -17,7 +17,7 @@
 #	puts the log result back into the sourceforge repository
 #
 #
-# usage: updateTwikiReport hostname (up to the first "dot")
+# usage: updateTestReport hostname (up to the first "dot")
 #
 
 # S4 code will be checked out here. WARNING: This directory will be 
@@ -53,8 +53,8 @@ scripts="getTime getHostname mailReport makeReport parseS4Output regressionTest\
 	getTime makeWebpage pushChanges pushReport whatsNew \
 	cvs_history updateLog finalizeLog \
 	s4_align s4_align_sum whatsNew \
-	makeTwikiDetailReport pushAllTwikiReports \
-	makeTwikiSummaryReport makeTwikiReports waitForFile"
+	makeTestDetailReport pushAllTestReports \
+	makeTestSummaryReport makeTestReports waitForFile"
 
 chmod +x $scripts
 
@@ -72,10 +72,10 @@ $regressionDir/pushReport
 $regressionDir/pushChanges
 
 ###############################
-# Generate the twiki results
+# Generate the test results
 #################################
 cd $regressionDir
-$regressionDir/pushAllTwikiReports
+$regressionDir/pushAllTestReports
 
 # clean up 
 

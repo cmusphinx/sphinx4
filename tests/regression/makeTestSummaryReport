@@ -9,9 +9,9 @@
 # WARRANTIES.
 #
 # This script parses the regression log and outputs a summary
-# regression report suitable for a twiki
+# regression report 
 #
-# usage: ./makeTwikiSummaryReport regression.log listoftests.list
+# usage: ./makeTestSummaryReport regression.log listoftests.list
 #     machine typeOfResults  title 
 #
 # Field definitions: 
@@ -212,7 +212,8 @@ function getDate(testName, systemName) {
 
 function dumpTest(testName,  _j) {
    if (testName == "") {
-       printf("| | | | | | | | |\n");
+       printf("<tr> <td colspan=8> </td> </tr>\n");
+       # printf("| | | | | | | | |\n");
        return;
    }
    bestTime = 10000;
@@ -236,27 +237,27 @@ function dumpTest(testName,  _j) {
        }
    }
 
-   printf("|<font color=#018888> %s </font>", testName);
+   printf("<tr> <td> <font color=#018888> %s </font></td>", testName);
    for (_j = 0; _j < systemCount; _j++) {
        speed = getSpeed(testName, systemName[_j]);
        if (speed == bestTime) {
-           printf("| <font color=green> %s </font>", speed);
+           printf("<td> <font color=green> %s </font></td>", speed);
        } else {
-           printf("| %s ", speed);
+           printf("<td> %s </td>", speed);
        }
    }
    for (_j = 0; _j < systemCount; _j++) {
        wer = getAccuracy(testName, systemName[_j]);
 
        if (wer == bestWER) {
-           printf("| <font color=green> %s </font>", wer);
+           printf("<td> <font color=green> %s </font></td>", wer);
        } else {
-           printf("| %s ", wer);
+           printf("<td> %s </td>", wer);
        }
    }
    testDate = getDate(testName, "s4");
-   printf("| %s ", testDate);
-   printf("|\n");
+   printf("<td> %s </td>", testDate);
+   printf("</tr>\n");
 }
 
 
@@ -271,26 +272,30 @@ function dumpTitle(  i) {
         machineName = machine;
     }
 
-    printf("|   *%s %s on %s*  ||||||||\n", modeTitle[mode], title, machineName);
-    printf("| *&nbsp;* | *Speed (RT)*  ||| *WER (%)* ||| *Date* |\n");
+    printf("<tr> <th bgcolor=lightblue colspan=8>%s %s on %s\n</th></tr>\n", \
+        modeTitle[mode], title, machineName);
+    printf("<tr bgcolor=lightblue> <th> &nbsp; </th> <th colspan=3>Speed (RT) <th colspan=3>WER (%) <th> Date</tr>\n");
 
 
-    printf("| *%s* ", "Test");
+    printf("<tr bgcolor=lightblue><th> %s ", "Test");
     for (i = 0; i < systemCount; i++) {
-        printf("| *%s* ", systemTitle[systemName[i]]);
+        printf("<th> %s ", systemTitle[systemName[i]]);
     }
 
     for (i = 0; i < systemCount; i++) {
-	detailLink = "Regression.AutoGen" mode title systemLinkName[systemName[i]] "_" machine;
-        printf("| *[[%s][%s]]* ", detailLink, systemTitle[systemName[i]]);
+	detailLink = "AutoGen" mode title systemLinkName[systemName[i]] "_" machine ".html";
+        printf("<th> <a href=\"%s\">%s</a>", detailLink, systemTitle[systemName[i]]);
     }
-    printf("| *%s* ", systemTitle["s4"]); 
-    printf("|\n");
+    printf("<th> %s ", systemTitle["s4"]); 
+    printf("</tr>\n");
 }
 
 END {
     # If test list is any then we synthesize the test order
 
+    printf("<table cellpadding=0 cellspacing=0 border=1 width=90% align=center>\n");
+
+    printf("<tbody>\n");
     if (testList == "any") {
 	totalTestCount = 0;
         for (i in tests) {
@@ -302,18 +307,16 @@ END {
     for (i = 0; i < totalTestCount; i++) {
         dumpTest(testOrder[i]);
     }
-
-# Make the page read-only so people do not try to edit these pages
+    printf("</tbody>\n");
+    printf("</table>\n");
 
     print "<small>"
-    printf("_This table is automatically generated. ");
+    print "<center>"
+    printf("<i>This table is automatically generated. ");
     printf("Do not edit this by hand. ");
-    printf("Last updated on %s at %s._\n", date, time);
+    printf("Last updated on %s at %s.</i>\n", date, time);
+    print "</center>"
     print "</small>"
-    print "<!--";
-    print "Set DENYTOPICCHANGE=Main.SphinxGroup SphinxGroup";
-    print "  -->";
-
 }
 
 '  $*

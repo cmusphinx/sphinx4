@@ -1,0 +1,37 @@
+#!/bin/sh
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This script generates all of the test detailed and
+# summary reports for a particular test
+#
+# usage: makeTestReports testName
+
+log=regression.log
+
+# the 'dots' in the hostname can mess things up for the twik so
+# lets just use the left most name
+
+machine=`./getHostname`
+
+./makeTestSummaryReport $log $1.list this latest $1 > AutoGenlatest$1_$machine.html
+./makeTestSummaryReport $log $1.list this fastest $1 > AutoGenfastest$1_$machine.html 
+./makeTestSummaryReport $log $1.list this best $1 > AutoGenbest$1_$machine.html
+
+./makeTestDetailReport $log $1.list this latest $1 s4 > AutoGenlatest$1SphinxFour_$machine.html
+./makeTestDetailReport $log $1.list this fastest $1 s4 > AutoGenfastest$1SphinxFour_$machine.html 
+./makeTestDetailReport $log $1.list this best $1 s4 > AutoGenbest$1SphinxFour_$machine.html
+
+./makeTestDetailReport $log $1.list this latest $1 s3 > AutoGenlatest$1SphinxThree_$machine.html
+./makeTestDetailReport $log $1.list this fastest $1 s3 > AutoGenfastest$1SphinxThree_$machine.html 
+./makeTestDetailReport $log $1.list this best $1 s3 > AutoGenbest$1SphinxThree_$machine.html
+
+./makeTestDetailReport $log $1.list this latest $1 s3.3 > AutoGenlatest$1SphinxThreeThree_$machine.html
+./makeTestDetailReport $log $1.list this fastest $1 s3.3 > AutoGenfastest$1SphinxThreeThree_$machine.html 
+./makeTestDetailReport $log $1.list this best $1 s3.3 > AutoGenbest$1SphinxThreeThree_$machine.html

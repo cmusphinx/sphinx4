@@ -55,20 +55,19 @@ executeRegressionTest - the main test program
 finalizeLog - updates the regression.log file and upload it to the cvs tree.
 getHostname - gets the current hostname, up to the first dot
 getTime  - gets the time in seconds since the epoch
-installTwikiPage - installs a page in the sourceforge twiki
 mailReport - mails a summary report to the mailing list
 makeReport - creates the test summary report
-makeTwikiDetailReport - creates the detailed twiki test tables
-makeTwikiReports - creates all detailed and summary reports
-makeTwikiSummaryReport - creates the summary twiki test tables 
+makeTestDetailReport - creates the detailed test test tables
+makeTestReports - creates all detailed and summary reports
+makeTestSummaryReport - creates the summary test tables 
 makeWebpage - creates the regression_report summary web page
 mangueira_weekly_test_schedule.crontab - crontab entries for mangueira
 parseS4Output - generates a regression.log entry from s4 output
 profile - example ".profile" to be placed in the user's home directory.
-pushAllTwikiReports - publishes all twiki reports to the web
+pushAllTestReports - publishes all test reports to the web
 pushChanges - publishes the 'what has changed' pages to the web
 pushReport - publishes the regression report summary web page
-pushTwikiReports - pushes a set of twiki reports to the web
+pushTestReports - pushes a set of test reports to the web
 regression.log - the test log database
 regressionTest - the toplevel test, performs minimal work then calls
 executeRegressionTest
@@ -85,7 +84,7 @@ runTests_wednesday - runs a set of tests
 s4_align - prepares log files to run NIST's align
 s4_align_sum - runs and extracts the relevant info from NIST's align program.
 updateLog - updates the regression.log in CVS
-updateTwikiReport - updates the twiki pages without running experiments
+updateTestReport - updates the test pages without running experiments
 waitForFile - waits for the current file to appear
 whatsNew - generates the 'what has changed' web pages
 
