@@ -19,8 +19,9 @@ package edu.cmu.sphinx.frontend;
  */
 public class Feature extends Data {
 
-    private float[] featureData = null;
-    private int ID;
+    private float[] featureData = null;  // the feature data
+    private String type;                 // acoustic model name
+    private int ID;                      // which feature in the utterance
 
 
     /**
@@ -31,9 +32,7 @@ public class Feature extends Data {
      *    speech segment.
      */
     public Feature(float[] featureData, int ID) {
-        super(Signal.CONTENT);
-	this.featureData = featureData;
-        this.ID = ID;
+	this(featureData, ID, null);
     }
 
 
@@ -48,6 +47,7 @@ public class Feature extends Data {
     public Feature(float[] featureData, int ID, Utterance utterance) {
         super(utterance);
         this.featureData = featureData;
+	this.type = null;
         this.ID = ID;
     }
 
@@ -87,6 +87,21 @@ public class Feature extends Data {
 
 
     /**
+     * Returns the type of this Feature. It should normally be the name
+     * of the acoustic model used, because it is used to identify which
+     * acoustic model this Feature should be aligned with in the decoder.
+     * It can also return null, meaning that it has no type name. This
+     * would mean that there is only one acoustic model in the decoder.
+     *
+     * @return the type name of this Feature, or null if it does not
+     *    have a type name.
+     */
+    public String getType() {
+	return type;
+    }
+
+
+    /**
      * Returns the audio data that corresponds to this Feature.
      * Note that this method only returns that particular window of
      * audio data that this Feature corresponds to, not the audio data
@@ -106,6 +121,21 @@ public class Feature extends Data {
         } else {
             return getUtterance().getAudio(getID());
         }
+    }
+
+
+    /**
+     * Sets the type name of this Feature. It should be the name
+     * of the acoustic model used. This is the only mutable field in
+     * this class. It can only be set once, subsequent calls to this
+     * method have no effect.
+     *
+     * @param type the type name of this Feature
+     */
+    public void setType(String type) {
+	if (this.type != null) {
+	    this.type = type;
+	}
     }
 
 
