@@ -83,13 +83,11 @@ public abstract class DataProcessor {
      * @param context the context of this DataProcessor
      */
     public void initialize(String name, String context) {
-	if (sphinxProperties == null) {
-	    this.name = name;
-	    this.context = context;
-	    this.timer = Timer.getTimer(context, name);
-	    this.sphinxProperties = 
-		SphinxProperties.getSphinxProperties(context);
-	}
+	this.name = name;
+	this.context = context;
+	this.timer = Timer.getTimer(context, name);
+	this.sphinxProperties = 
+	    SphinxProperties.getSphinxProperties(context);
     }
 
 
