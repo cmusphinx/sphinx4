@@ -36,6 +36,9 @@ public class SocketCepstrumSource implements CepstrumSource {
     private static final float UTTERANCE_END = Float.MIN_VALUE;
     
     private int cepstrumLength = 13;
+    
+    // BUG: should use window size and shift to calculate sample number
+    private long firstSampleNumber = -1;
 
     private boolean inUtterance;
 
@@ -69,7 +72,8 @@ public class SocketCepstrumSource implements CepstrumSource {
             if (firstValue == UTTERANCE_START) {
                 inUtterance = true;
                 return (new Cepstrum(Signal.UTTERANCE_START,
-                                     System.currentTimeMillis()));
+                                     System.currentTimeMillis(),
+                                     firstSampleNumber));
             } else {
                 throw new IllegalStateException
                     ("No UTTERANCE_START read from socket: " + firstValue +
@@ -79,7 +83,8 @@ public class SocketCepstrumSource implements CepstrumSource {
             if (firstValue == UTTERANCE_END) {
                 inUtterance = false;
                 return (new Cepstrum(Signal.UTTERANCE_END,
-                                     System.currentTimeMillis()));
+                                     System.currentTimeMillis(),
+                                     firstSampleNumber));
             } else if (firstValue == UTTERANCE_START) {
                 throw new IllegalStateException
                     ("Too many UTTERANCE_STARTs.");
@@ -91,7 +96,7 @@ public class SocketCepstrumSource implements CepstrumSource {
                 for (int i = 1; i < cepstrumLength; i++) {
                     data[i] = dataReader.readFloat();
                 }
-                return (new Cepstrum(data, timeStamp));
+                return (new Cepstrum(data, timeStamp, firstSampleNumber));
             }
         }
     }
