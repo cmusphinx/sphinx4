@@ -36,7 +36,15 @@ import java.util.logging.Logger;
 /**
  * Pre-processes the audio into Cepstra. The CepstrumExtractor consists
  * of a series of processors. The CepstrumExtractor connects all the processors
- * by the input and output points.
+ * by the input and output points. The list of processors are:
+ *
+ * <p>AudioEndpointer (if specified in properties file)
+ * <br>Preemphasizer
+ * <br>Windower
+ * <br>SpectrumAnalyzer (FFT)
+ * <br>FilterBank
+ * <br>CepstrumProducer
+ * <br>CepstralEndpointer (if specified in properties file)
  * 
  * <p>The input to the CepstrumExtractor is a DataSource object.
  * For an audio stream, the <code>StreamAudioSource</code> should be used. The 
@@ -45,6 +53,7 @@ import java.util.logging.Logger;
  *
  * <p>Currently, this CepstrumExtractor can also take Cepstrum objects as
  * input using the StreamCepstrumSource implementation of DataSource.
+ * In that case, the only processor will be CepstralEndpointer (if specified).
  *
  * <p>For each utterance, this CepstrumExtractor expects either Audio or
  * Cepstrum frames (or objects) in the following sequence: <code>
@@ -66,14 +75,12 @@ import java.util.logging.Logger;
  *
  * <p>The output of the CepstrumExtractor are Cepstra.
  *
- * <p>This CepstrumExtractor contains all the "standard" frontend
- * processors like Preemphasizer, HammingWindower, SpectrumAnalyzer, ..., etc.
- *
  * @see AudioSource
- * @see BatchCMN
- * @see LiveCMN
  * @see CepstrumProducer
+ * @see CepstrumSource
+ * @see DataSource
  * @see Filterbank
+ * @see Preemphasizer
  * @see SpectrumAnalyzer
  * @see Windower
  */
