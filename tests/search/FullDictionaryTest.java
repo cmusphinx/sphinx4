@@ -16,6 +16,10 @@ import edu.cmu.sphinx.util.SphinxProperties;
 
 import edu.cmu.sphinx.search.Dictionary;
 import edu.cmu.sphinx.search.FullDictionary;
+import edu.cmu.sphinx.search.FastDictionary;
+import edu.cmu.sphinx.search.Pronunciation;
+import edu.cmu.sphinx.model.acoustic.Unit;
+import edu.cmu.sphinx.util.Timer;
 
 import java.io.File;
 
@@ -30,6 +34,8 @@ public class FullDictionaryTest {
 
 
     private String context = "FullDictionaryTest";
+    private Dictionary fastDictionary;
+    private Dictionary fullDictionary;
 
 
     /**
@@ -43,10 +49,59 @@ public class FullDictionaryTest {
         SphinxProperties.initContext
             (context, new URL
              ("file://" + pwd + File.separatorChar + propertiesFile));
+	Timer fullTimer = Timer.getTimer("FullDictionaryTest", "fullTimer");
+	Timer fastTimer = Timer.getTimer("FullDictionaryTest", "fastTimer");
         
-        Dictionary dictionary = new FullDictionary(context);
-        dictionary.dump();
+	// some loading timings
+
+	for (int i = 0; i < 3; i++) {
+	    fastTimer.start();
+	    fastDictionary = new FastDictionary(context);
+	    fastTimer.stop();
+
+	    fullTimer.start();
+	    fullDictionary = new FullDictionary(context);
+	    fullTimer.stop();
+
+	    Timer.dumpAll();
+	}
+
+	// some lookup comparisons
+
+	comparePronunciations("cat");
+	comparePronunciations("dog");
+	comparePronunciations("tomato");
     }
+
+    private void comparePronunciations(String word) {
+	Pronunciation p1[] = fastDictionary.getPronunciations(word, null);
+	Pronunciation p2[] = fullDictionary.getPronunciations(word, null);
+
+	if (p1.length != p2.length) {
+	    System.out.println("Different # pronunciations for " + word);
+	} else {
+	    for (int i = 0; i < p1.length; i++) {
+		compareUnits(word, p1[i].getUnits(), p2[i].getUnits());
+	    }
+	}
+    }
+
+    private void compareUnits(String word, Unit[] u1,
+	    Unit[] u2) {
+	if (u1.length != u2.length) {
+	    System.out.println("Different # units for " + word);
+	} else {
+	    for (int i = 0; i < u1.length; i++) {
+		if (!u1[i].getName().equals(u2[i].getName())) {
+		    System.out.println("Mismatched units " +
+			    u1[i].getName() + " and " +
+			    u2[i].getName());
+		}
+	    }
+	}
+    }
+
+
 
 
     /**
