@@ -104,7 +104,7 @@ public final class LogMath {
      * was successful. if not, then an overflow occured, in which case
      * we can signal or just return MAX_VALUE ]
      */
-    public double multiply(double val1, double val2) {
+    public final double multiply(double val1, double val2) {
 	return val1 + val2;
     }
 
@@ -145,7 +145,7 @@ public final class LogMath {
      * say, return the summation of all terms in a given vector, if 
      * efficiency becomes an issue.
      */
-    public double add(double val1, double val2) {
+    public final double add(double val1, double val2) {
 	double highestValue;
 	double difference;
 
@@ -177,7 +177,7 @@ public final class LogMath {
      *
      * @return the value pointed to by index
      */
-    private double addTable(double index) {
+    private final double addTable(double index) {
 	double innerSummation;
 
 	innerSummation = logToLinear(index);
@@ -212,7 +212,7 @@ public final class LogMath {
      * <br>[[[ TODO: This is a very slow way to do this ]]]
      * [[[ TODO: need to have some overflow underflow checks ]]]
      */
-    public double subtract(double minuend, double
+    public final double subtract(double minuend, double
 	    subtrahend) throws IllegalArgumentException {
 
 	if (minuend < subtrahend) {
@@ -278,7 +278,7 @@ public final class LogMath {
      *
      * @return the value in log domain
      */
-    public double linearToLog(double linearValue) {
+    public final double linearToLog(double linearValue) {
 	if (linearValue < 0.0) {
 	    throw new IllegalArgumentException(
 		    "linearToLog: param must be >= 0");
@@ -298,7 +298,7 @@ public final class LogMath {
      *
      * @return the value in the linear domain
      */
-    public double logToLinear(double logValue) {
+    public final double logToLinear(double logValue) {
 	return Math.pow(logBase, logValue);
     }
 
@@ -307,14 +307,14 @@ public final class LogMath {
      *
      * @return zero value in the log domain
      */
-    public double getLogZero() {
+    public final double getLogZero() {
 	return logZero;
     }
 
     /**
      * Returns the actual log base.
      */
-    public double getLogBase() {
+    public final double getLogBase() {
 	return logBase;
     }
 
