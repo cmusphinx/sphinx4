@@ -42,6 +42,6 @@ classCount=`find $rootDir -name "*.java" | xargs grep class | wc -l`
 lineCount=`find $rootDir -name "*.java" | xargs egrep "[{;]" | wc -l`
 
 #### package count
-packageCount=`find ../.. -name "*.java" -exec cat {} \; | grep package | sort -u | wc -l`
+packageCount=`find ../.. -name "*.java" -exec cat {} \; | grep "^package" | sort -u | wc -l`
 
 echo "metrics|$fileCount|$javaFileCount|$classCount|$lineCount|$packageCount|"
