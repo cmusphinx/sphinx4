@@ -61,23 +61,25 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * sequence with zeros.
 	 */
 	double[] in = input.getAudioSamples();
+
 	if (in.length != windowSize) {
 	    throw new IllegalArgumentException
                ("Window size is incorrect: in.length == " + in.length +
                  ", windowSize == " + windowSize);
 	}
+
 	Complex[] inputSeq = new Complex[NPoint];
 	if (NPoint < windowSize) {
 	    for (int i = 0; i < NPoint; i++) {
-		inputSeq[i]= new Complex((double) in[i]);
+		inputSeq[i]= new Complex(in[i]);
 	    }
 	    for (int i = NPoint; i < windowSize; i++) {
 		inputSeq[i % NPoint].addComplex(inputSeq[i % NPoint],
-						new Complex((double) in[i]));
+						new Complex(in[i]));
 	    }
 	} else {
 	    for (int i = 0; i < windowSize; i++) {
-		inputSeq[i] = new Complex((double) in[i]);
+		inputSeq[i] = new Complex(in[i]);
 	    }
 	    for (int i = windowSize; i < NPoint; i++) {
 		inputSeq[i] = new Complex();
@@ -87,7 +89,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	/**
 	 * Create output sequence.
 	 */
-	double[] outputSpectrum = new double[NPoint];
+	double[] outputSpectrum = new double[NPoint >> 1];
 
 	/**
 	 * Start Fast Fourier Transform recursion
@@ -120,9 +122,17 @@ public class SpectrumAnalyzer extends DataProcessor {
         float windowSizeInMs = properties.getFloat
             (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
 
-        windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);
+	windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);
 
-	NPoint = properties.getInt(FrontEnd.PROP_FFT_NPOINT, 256);
+	/**
+	 * Number of points in the FFT. By default, the value is 512,
+	 * which means that we compute 512 values around a circle in the
+	 * complex plane. Complex conjugate pairs will yield the same
+	 * power, therefore the power produced by indices 256 through
+	 * 511 are symmetrical with the ones between 1 and 255. Therefore,
+	 * we need only return values between 0 and 255.
+	 */
+	NPoint = properties.getInt(FrontEnd.PROP_FFT_NPOINT, 512);
     }
 
 
@@ -135,8 +145,9 @@ public class SpectrumAnalyzer extends DataProcessor {
      *
      */
     private void computeLog2N() throws IllegalArgumentException {
-	for (int k = NPoint, log2N = 0; k > 1; k >>= 1, log2N++) {
-	    if (((k % 2) != 0) || (NPoint < 0)) {
+	this.log2N = 0;
+	for (int k = this.NPoint; k > 1; k >>= 1, this.log2N++) {
+	    if (((k % 2) != 0) || (this.NPoint < 0)) {
 		throw new IllegalArgumentException("Not a power of 2");
 	    }
 	}
@@ -161,8 +172,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	/**
 	 * Wk will have N/2 complex elements.
 	 */
-	// Complex[]
-        Wk = new Complex[N>>1];
+        Wk = new Complex[N >> 1];
 	/**
 	 * For the inverse FFT,
 	 * w = 2 * PI / N;
@@ -171,7 +181,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	if (invert == true){
 	    w = -w;
 	}
-	for (int k = 0; k < N / 2; k++) {
+	for (int k = 0; k < (N / 2); k++) {
 	    Wk[k] = new Complex(Math.cos (w * k), Math.sin (w * k));
 	}
     }
@@ -233,13 +243,13 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 * Compute energy ("float") for each frequency point
 	 * from the fft ("complex")
 	 */
-	if ((log2N & 1) == 0){
-	    for (int i = 0; i < NPoint; i++){
-		output[i] = to[i].squaredMagnitudeComplex(); 
+	if ((this.log2N & 1) == 0){
+	    for (int i = 0; i < (NPoint >> 1); i++){
+		output[i] = from[i].squaredMagnitudeComplex(); 
 	    }
 	} else {
-	    for (int i = 0; i < NPoint; i++){
-		output[i] = from[i].squaredMagnitudeComplex();
+	    for (int i = 0; i < (NPoint >> 1); i++){
+		output[i] = to[i].squaredMagnitudeComplex();
 	    }
 	}
 	return;
@@ -263,15 +273,15 @@ public class SpectrumAnalyzer extends DataProcessor {
      * @param currentDistance the "distance" between elements in the butterfly
      */
     private void butterflyStage(Complex[] from, 
-			   Complex[] to, 
-			   int NPoint, 
-			   int currentDistance)
+				Complex[] to, 
+				int NPoint,
+				int currentDistance)
     {
 	int ndx1From;
 	int ndx2From;
 	int ndx1To;
 	int ndx2To;
-	int ndxWk = 0;
+	int ndxWk;
 	Complex wkTimesF2 = new Complex();
 
 	if (currentDistance > 0){
@@ -280,6 +290,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 		ndx2From = s + currentDistance;
 		ndx1To = s;
 		ndx2To = s + (NPoint >> 1);
+		ndxWk = 0;
 		while (ndxWk < (NPoint >> 1)) {
 		    /**
 		     * <b>wkTimesF2 = Wk[k] * from[ndx2From]</b>
@@ -309,7 +320,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	     * the total number of points remains the same, and
 	     * the <i>currentDistance</i> is divided by 2.
 	     */
-	    butterflyStage(to, from, NPoint, currentDistance >> 1);
+	    butterflyStage(to, from, NPoint, (currentDistance >> 1));
 	}
 	return;
     }

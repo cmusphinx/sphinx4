@@ -107,7 +107,7 @@ public class Complex {
      */
     public void scaleComplex(Complex a, double b) {
 	this.real = a.real / b;
-	this.imaginary = a.real / b;
+	this.imaginary = a.imaginary / b;
     }
 
     /**
