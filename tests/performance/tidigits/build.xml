@@ -323,6 +323,9 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
     <!-- ********************************************************** --> 
     <target name="tidigits_wordlist_live"
             description="Live mode TIDIGITS test.">
+        <exec executable="rm"> 
+            <arg line="-f reference.txt hypothesis.txt transcript.txt"/>
+        </exec>
         <java classpath="${classes_dir}"
               classname="edu.cmu.sphinx.decoder.LivePretendDecoder"
               fork="true">
@@ -371,6 +374,9 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
     <!-- ********************************************************** -->
     <target name="tidigits_an4_words_rejection_live"
 	    description="TIDIGITS live with AN4 test set">
+        <exec executable="rm"> 
+            <arg line="-f reference.txt hypothesis.txt transcript.txt"/>
+        </exec>
         <java classpath="${classes_dir}"
 	      classname="edu.cmu.sphinx.decoder.LivePretendDecoder"
 	      fork="true">
