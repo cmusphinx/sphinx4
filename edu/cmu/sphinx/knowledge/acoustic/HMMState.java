@@ -79,6 +79,19 @@ public class HMMState implements Serializable {
 
 
     /**
+     * Gets the scores for each mixture component in this HMM state
+     *
+     * @param feature the feature to be scored
+     *
+     * @return the acoustic scores for the components of this state.
+     */
+    public float[] calculateComponentScore(Feature feature) {
+	SenoneSequence ss = hmm.getSenoneSequence();
+	return ss.getSenones()[state].calculateComponentScore(feature);
+    }
+
+
+    /**
      * Determines if two HMMStates are equal
      *
      * @param other the state to compare this one to
