@@ -1,4 +1,4 @@
-decoders = isolatedDigits connectedDigits
+decoders = bishop helpinghand isolatedDigits connectedDigits alphaSpelling
 
 # isolatedDigits decoder
 isolatedDigits.name = Isolated Digits
@@ -14,3 +14,13 @@ connectedDigits.testFile = ./connectedDigits.test
 alphaSpelling.name=Alpha Spelling
 alphaSpelling.propertiesFile = ./alphaSpelling.live.props
 alphaSpelling.testFile = ../performance/an4/an4_spelled_out.wordlist
+
+# helpinghand
+helpinghand.name=Helping Hand
+helpinghand.propertiesFile = ./helpinghand/helpinghand.props
+helpinghand.testFile = ./helpinghand/helpinghand.test
+
+# bishop
+bishop.name=Bishop
+bishop.propertiesFile = ./bishop/bishop.props
+bishop.testFile = ./bishop/bishop.test
