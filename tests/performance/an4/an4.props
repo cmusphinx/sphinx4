@@ -41,6 +41,7 @@ edu.cmu.sphinx.knowledge.acoustic.useComposites=true
 
 edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
 edu.cmu.sphinx.frontend.cepstrumSize = 13
+edu.cmu.sphinx.frontend.featureExtractor = edu.cmu.sphinx.frontend.LiveFeatureExtractor
 edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
 edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
 edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
