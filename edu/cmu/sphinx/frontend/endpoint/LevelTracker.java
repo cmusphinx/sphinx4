@@ -82,7 +82,10 @@ public class LevelTracker extends BaseDataProcessor {
     /**
      * The SphinxProperty specifying the threshold. If the current signal
      * level is greater than the background level by this threshold,
-     * then the current signal is marked as speech.
+     * then the current signal is marked as speech. Therefore,
+     * a lower threshold will make the endpointer more sensitive,
+     * that is, mark more audio as speech. A higher threshold will
+     * make the endpointer less sensitive, that is, mark less audio as speech.
      */
     public static final String PROP_THRESHOLD = PROP_PREFIX + "threshold";
 
