@@ -64,7 +64,7 @@ ci:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.trainer.Trainer.initialStage=_10_CI_TRAIN \
 	-Dedu.cmu.sphinx.trainer.Trainer.finalStage=_10_CI_TRAIN \
-	-Dedu.cmu.sphinx.knowledge.acoustic.location=\\lab\\speech\\sphinx4\\data\\save \
+	-Dedu.cmu.sphinx.knowledge.acoustic.location=${PATH_SEP}lab${PATH_SEP}speech${PATH_SEP}sphinx4${PATH_SEP}data${PATH_SEP}save \
 	edu.cmu.sphinx.trainer.Trainer trainer.props
 
 copy:
