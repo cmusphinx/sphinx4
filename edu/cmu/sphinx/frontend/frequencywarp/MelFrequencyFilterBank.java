@@ -28,10 +28,44 @@ import edu.cmu.sphinx.util.Timer;
 import java.io.IOException;
 
 /**
- * Filters an input power spectrum through a mel filterbank. The
- * filters in the filterbank are placed in the frequency axis so as to
+ * Filters an input power spectrum through a bank of mel-filters. 
+ * The number of mel-filters in the bank is controlled by the
+ * SphinxProperty:
+ * <p>
+ * <code>edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank.numberFilters</code>
+ * <p>
+ * which defaults to 40.
+ * <p>
+ * The output is an array of filtered values, each corresponding to the
+ * result of filtering the input spectrum through an individual filter.
+ * Therefore, the length of the output array is equal to the number
+ * of filters created.
+ * <p>
+ * The filters in the filter bank are placed in the frequency axis so as to
  * mimic the critical band, representing different perceptual effect
- * at different frequency bands. 
+ * at different frequency bands. Pictorially, the filter bank looks like:
+ * <p>
+ * <img src="doc-files/melfilterbank.jpg">
+ * <br><center><b>Figure 1: A Mel-filter bank.</b></center>
+ * <p>
+ * The minimum frequency has a default value of 130Hz, while 
+ * the maximum frequency has a default value of 6800Hz.
+ * These frequencies depend on the channel and the sampling frequency
+ * that you are using. For telephone speech, since the telephone channel
+ * corresponds to a bandpass filter with cutoff frequencies of 
+ * around 300Hz and 3700Hz, using limits wider than these would waste
+ * bandwidth. For clean speech, the minimum frequency should be higher 
+ * than about 100Hz, since there's no speech information below it.
+ * Furthermore, by setting the lower frequency above 50/60Hz,
+ * we get rid of the hum resulting from the AC power, if present.
+ * <p>
+ * The maximum frequency has to be lower than the Nyquist frequency,
+ * that is, half the sampling rate. Furthermore, there isn't much
+ * information above 6800Hz that can be used for improving separation
+ * between models. Particularly for very noisy channels,
+ * maximum frequency of around 5000Hz may help cut off the noise.
+ *
+ * @see MelFilter
  */
 public class MelFrequencyFilterBank extends BaseDataProcessor {
 

@@ -18,8 +18,28 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import java.io.IOException;
 
 /**
- * Define a filter used by the MelFilterbank class.  MelFilterbank
- * uses this class to create filters and operate on them.  
+ * Defines a triangular mel-filter.
+ * The {@link edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank}
+ * creates mel-filters and filters spectrum data using the method
+ * {@link #filterOutput(double[]) filterOutput}.
+ * <p>
+ * A mel-filter is a bandpass filter with a triangular shape,
+ * with the area of the triangle equals to 1.
+ * When a mel-filter is constructed, the parameters <code>leftEdge</code>,
+ * <code>rightEdge</code>, <code>centerFreq</code>, <code>initialFreq</code>, 
+ * and <code>deltaFreq</code> are given to the constructor. 'deltaFreq'
+ * is the magnitude of each frequency bin, and is defined as:
+ * <br><code>deltaFreq = (sample rate / number of FFT points)</code>
+ * <p>
+ * 'initialFreq' is the first frequency bin in the spectrum that
+ * this mel-filter will perform filtering. Note that the number
+ * of frequency bins is the number of FFT points. Figure 1 below
+ * shows pictorially what the other parameters mean.
+ * <p>
+ * <img src="doc-files/melfilter.jpg">
+ * <br><center><b>Figure 1: A triangular mel-filter.</b></center>
+ *
+ * @see MelFrequencyFilterBank
  */
 public class MelFilter {
 
