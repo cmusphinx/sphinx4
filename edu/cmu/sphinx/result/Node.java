@@ -35,15 +35,15 @@ public class Node {
     protected String word;
     protected int beginTime = -1;
     protected int endTime = -1;
-    protected Vector fromEdges;
-    protected Vector toEdges;
+    protected Vector enteringEdges;
+    protected Vector leavingEdges;
     protected double forwardScore;
     protected double backwardScore;
     protected double posterior;
     
     {
-        fromEdges = new Vector();
-        toEdges = new Vector();
+        enteringEdges = new Vector();
+        leavingEdges = new Vector();
         nodeCount++;
     }
 
@@ -104,7 +104,7 @@ public class Node {
      * could be found.
      */
     public Edge getEdgeToNode(Node n) {
-        for (Iterator j = toEdges.iterator(); j.hasNext();) {
+        for (Iterator j = leavingEdges.iterator(); j.hasNext();) {
             Edge e = (Edge) j.next();
             if (e.getToNode() == n) {
                 return e;
@@ -132,7 +132,7 @@ public class Node {
      * could be found.
      */
     public Edge getEdgeFromNode(Node n) {
-        for (Iterator j = fromEdges.iterator(); j.hasNext();) {
+        for (Iterator j = enteringEdges.iterator(); j.hasNext();) {
             Edge e = (Edge) j.next();
             if (e.getFromNode() == n) {
                 return e;
@@ -147,11 +147,11 @@ public class Node {
      * @param n
      * @return true if this Node has Edges from the same Nodes as n
      */
-    protected boolean hasEquivalentFromEdges(Node n) {
-        if (fromEdges.size() != n.getFromEdges().size()) {
+    protected boolean hasEquivalentEnteringEdges(Node n) {
+        if (enteringEdges.size() != n.getEnteringEdges().size()) {
             return false;
         }
-        for (Iterator i = fromEdges.iterator(); i.hasNext();) {
+        for (Iterator i = enteringEdges.iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
             Node fromNode = e.getFromNode();
             if (!n.hasEdgeFromNode(fromNode)) {
@@ -167,11 +167,11 @@ public class Node {
      * @param n the node of interest
      * @return true if this Node has all Edges to the sames Nodes as n
      */
-    public boolean hasEquivalentToEdges(Node n) {
-        if (toEdges.size() != n.getToEdges().size()) {
+    public boolean hasEquivalentLeavingEdges(Node n) {
+        if (leavingEdges.size() != n.getLeavingEdges().size()) {
             return false;
         }
-        for (Iterator i = toEdges.iterator(); i.hasNext();) {
+        for (Iterator i = leavingEdges.iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
             Node toNode = e.getToNode();
             if (!n.hasEdgeToNode(toNode)) {
@@ -186,8 +186,8 @@ public class Node {
      *
      * @return Edges from this Node
      */
-    public Collection getFromEdges() {
-        return fromEdges;
+    public Collection getEnteringEdges() {
+        return enteringEdges;
     }
 
     /**
@@ -195,8 +195,8 @@ public class Node {
      *
      * @return Edges to this Node
      */
-    public Collection getToEdges() {
-        return toEdges;
+    public Collection getLeavingEdges() {
+        return leavingEdges;
     }
 
     /**
@@ -205,7 +205,7 @@ public class Node {
      * @param e
      */
     protected void addFromEdge(Edge e) {
-        fromEdges.add(e);
+        enteringEdges.add(e);
     }
 
     /**
@@ -214,7 +214,7 @@ public class Node {
      * @param e
      */
     protected void addToEdge(Edge e) {
-        toEdges.add(e);
+        leavingEdges.add(e);
     }
 
     /**
@@ -222,8 +222,8 @@ public class Node {
      *
      * @param e
      */
-    protected void removeFromEdge(Edge e) {
-        fromEdges.remove(e);
+    protected void removeEnteringEdge(Edge e) {
+        enteringEdges.remove(e);
     }
 
     /**
@@ -231,8 +231,8 @@ public class Node {
      *
      * @param e the edge to remove
      */
-    public void removeToEdge(Edge e) {
-        toEdges.remove(e);
+    public void removeLeavingEdge(Edge e) {
+        leavingEdges.remove(e);
     }
 
     /**
@@ -271,6 +271,12 @@ public class Node {
         return endTime;
     }
 
+    /**
+     * Returns a description of this Node that contains the word, the
+     * start time, and the end time.
+     *
+     * @return a description of this Node
+     */
     public String toString() {
         return "Node(" + word + "," + getBeginTime() + "|" + getEndTime() + ")";
     }
@@ -363,10 +369,15 @@ public class Node {
     public boolean equals(Object obj) {
         return id.equals(((Node)obj).getId());
     }
-    
+
+    /**
+     * Calculates the begin time of this node, in the event that the
+     * begin time was not specified. The begin time is the latest of the
+     * end times of its predecessor nodes.
+     */
     public void calculateBeginTime() {
         beginTime = 0;
-        Iterator e = fromEdges.iterator();
+        Iterator e = enteringEdges.iterator();
         while (e.hasNext()) {
             Edge edge = (Edge)e.next();
             if (edge.getFromNode().getEndTime() > beginTime) {
@@ -382,7 +393,7 @@ public class Node {
      */
     public List getChildNodes() {
         LinkedList childNodes = new LinkedList();
-        Iterator e = toEdges.iterator();
+        Iterator e = leavingEdges.iterator();
         while (e.hasNext()) {
             Edge edge = (Edge)e.next();
             childNodes.add(edge.getToNode());

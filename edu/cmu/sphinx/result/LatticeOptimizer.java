@@ -132,11 +132,11 @@ public class LatticeOptimizer {
     protected boolean optimizeNodeForward(Node n) {
         assert lattice.hasNode(n);
 
-        Vector toEdges = new Vector(n.getToEdges());
-        for (int j = 0; j < toEdges.size(); j++) {
-            Edge e = (Edge) toEdges.elementAt(j);
-            for (int k = j + 1; k < toEdges.size(); k++) {
-                Edge e2 = (Edge) toEdges.elementAt(k);
+        Vector leavingEdges = new Vector(n.getLeavingEdges());
+        for (int j = 0; j < leavingEdges.size(); j++) {
+            Edge e = (Edge) leavingEdges.elementAt(j);
+            for (int k = j + 1; k < leavingEdges.size(); k++) {
+                Edge e2 = (Edge) leavingEdges.elementAt(k);
 
                 /*
                  * If these are not the same edge, and they point to
@@ -174,7 +174,7 @@ public class LatticeOptimizer {
         // if they have different number of "from" edges they are not equivalent
         // or if there is a "from" edge with no match then the nodes are not
         // equivalent
-        return n1.hasEquivalentFromEdges(n2);
+        return n1.hasEquivalentEnteringEdges(n2);
     }
 
     /**
@@ -202,7 +202,7 @@ public class LatticeOptimizer {
         Node n1 = e1.getToNode();
         Node n2 = e2.getToNode();
 
-        assert n1.hasEquivalentFromEdges(n1);
+        assert n1.hasEquivalentEnteringEdges(n1);
         assert n1.getWord().equals(n2.getWord());
 
         // merge the scores of e1 and e2 into e1
@@ -212,7 +212,7 @@ public class LatticeOptimizer {
                                           e2.getLMScore()));
 
         // add n2's edges to n1
-        for (Iterator i = n2.getToEdges().iterator(); i.hasNext();) {
+        for (Iterator i = n2.getLeavingEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
             e2 = n1.getEdgeToNode( e.getToNode() );
             if ( e2 == null ) {
@@ -288,22 +288,20 @@ public class LatticeOptimizer {
     }
 
     /**
-     * Look for 2 "from" edges from equivalent nodes.  Replace the edges
+     * Look for 2 entering edges from equivalent nodes.  Replace the edges
      * with one edge to one new node that is a merge of the equivalent nodes
-     *
-     * nodes are equivalent if they have equivalent to edges, and the same label
-     *
-     * merged nodes have a union of "from" and "to" edges
+     * Nodes are equivalent if they have equivalent to edges, and the same 
+     * label. Merged nodes have a union of entering and leaving edges
      *
      * @param n
      * @return true if Node n required opimizing backwards
      */
     protected boolean optimizeNodeBackward(Node n) {
-        Vector fromEdges = new Vector(n.getFromEdges());
-        for (int j = 0; j < fromEdges.size(); j++) {
-            Edge e = (Edge) fromEdges.elementAt(j);
-            for (int k = j + 1; k < n.getFromEdges().size(); k++) {
-                Edge e2 = (Edge) fromEdges.elementAt(k);
+        Vector enteringEdges = new Vector(n.getEnteringEdges());
+        for (int j = 0; j < enteringEdges.size(); j++) {
+            Edge e = (Edge) enteringEdges.elementAt(j);
+            for (int k = j + 1; k < n.getEnteringEdges().size(); k++) {
+                Edge e2 = (Edge) enteringEdges.elementAt(k);
 
                 /*
                  * If these are not the same edge, and they point to
@@ -341,7 +339,7 @@ public class LatticeOptimizer {
 
         // if they have different number of "to" edges they are not equivalent
         // or if there is a "to" edge with no match then the nodes are not equiv
-        return n1.hasEquivalentToEdges(n2);
+        return n1.hasEquivalentLeavingEdges(n2);
     }
 
     /**
@@ -382,7 +380,7 @@ public class LatticeOptimizer {
         Node n1 = e1.getFromNode();
         Node n2 = e2.getFromNode();
 
-        assert n1.hasEquivalentToEdges(n2);
+        assert n1.hasEquivalentLeavingEdges(n2);
         assert n1.getWord().equals(n2.getWord());
 
         // merge the scores of e1 and e2 into e1
@@ -392,7 +390,7 @@ public class LatticeOptimizer {
                                           e2.getLMScore()));
 
         // add n2's "from" edges to n1
-        for (Iterator i = n2.getFromEdges().iterator(); i.hasNext();) {
+        for (Iterator i = n2.getEnteringEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
             e2 = n1.getEdgeFromNode( e.getFromNode() );
             if ( e2 == null ) {
@@ -425,8 +423,8 @@ public class LatticeOptimizer {
                 } else if (n == lattice.getTerminalNode()) {
 
                 } else {
-                    if (n.getToEdges().size() == 0
-                            || n.getFromEdges().size() == 0) {
+                    if (n.getLeavingEdges().size() == 0
+                        || n.getEnteringEdges().size() == 0) {
                         lattice.removeNodeAndEdges(n);
                         removeHangingNodes();
                         return;

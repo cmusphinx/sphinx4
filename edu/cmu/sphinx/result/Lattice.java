@@ -175,8 +175,16 @@ public class Lattice {
     /**
      * Process the given path token, which contains the acoustic and
      * language scores between the token refered to by 'thisNode' and the
-     * predecessor of the given path token.
+     * predecessor of the given path token. The given path token will be
+     * converted to an edge in the lattice, and the word token which is the
+     * predecessor of the path token will be converted to a node in the 
+     * lattice.
      *
+     * @param thisNode since we are processing the token tree backwards,
+     *     thisNode will be the 'toNode' of the Edge created from the given
+     *     path token
+     * @param token the path token that contains the acoustic and language
+     *     scores
      */
     protected void processToken(Node thisNode, Token token) {
 
@@ -546,15 +554,15 @@ public class Lattice {
     protected void removeNodeAndEdges(Node n) {
 
         //System.err.println("Removing node " + n + " and associated edges");
-        for (Iterator i = n.getToEdges().iterator(); i.hasNext();) {
+        for (Iterator i = n.getLeavingEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) (i.next());
-            e.getToNode().removeFromEdge(e);
+            e.getToNode().removeEnteringEdge(e);
             //System.err.println( "\tRemoving " + e );
             edges.remove(e);
         }
-        for (Iterator i = n.getFromEdges().iterator(); i.hasNext();) {
+        for (Iterator i = n.getEnteringEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) (i.next());
-            e.getFromNode().removeToEdge(e);
+            e.getFromNode().removeLeavingEdge(e);
             //System.err.println( "\tRemoving " + e );
             edges.remove(e);
         }
@@ -581,9 +589,9 @@ public class Lattice {
      */
     protected void removeNodeAndCrossConnectEdges(Node n) {
         System.err.println("Removing node " + n + " and cross connecting edges");
-        for (Iterator i = n.getFromEdges().iterator(); i.hasNext();) {
+        for (Iterator i = n.getEnteringEdges().iterator(); i.hasNext();) {
             Edge ei = (Edge) (i.next());
-            for (Iterator j = n.getToEdges().iterator(); j.hasNext();) {
+            for (Iterator j = n.getLeavingEdges().iterator(); j.hasNext();) {
                 Edge ej = (Edge) (j.next());
                 addEdge(ei.getFromNode(), ej.getToNode(),
                         ei.getAcousticScore(), ei.getLMScore());
@@ -692,7 +700,7 @@ public class Lattice {
         if (n == terminalNode) {
             l.add(p);
         } else {
-            for (Iterator i = n.getToEdges().iterator(); i.hasNext();) {
+            for (Iterator i = n.getLeavingEdges().iterator(); i.hasNext();) {
                 Edge e = (Edge) i.next();
                 l.addAll(allPathsFrom(p, e.getToNode()));
             }
@@ -703,23 +711,26 @@ public class Lattice {
     boolean checkConsistency() {
         for (Iterator i = nodes.values().iterator(); i.hasNext();) {
             Node n = (Node) i.next();
-            for (Iterator j = n.fromEdges.iterator(); j.hasNext();) {
+            for (Iterator j = n.getEnteringEdges().iterator(); j.hasNext();) {
                 Edge e = (Edge) j.next();
                 if (!hasEdge(e)) {
-                    throw new Error("Lattice has NODE with missing FROM edge: " + n + "," + e);
+                    throw new Error("Lattice has NODE with missing FROM edge: "
+                                    + n + "," + e);
                 }
             }
-            for (Iterator j = n.toEdges.iterator(); j.hasNext();) {
+            for (Iterator j = n.getLeavingEdges().iterator(); j.hasNext();) {
                 Edge e = (Edge) j.next();
                 if (!hasEdge(e)) {
-                    throw new Error("Lattice has NODE with missing TO edge: " + n + "," + e);
+                    throw new Error("Lattice has NODE with missing TO edge: " +
+                                    n + "," + e);
                 }
             }
         }
         for (Iterator i = edges.iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
             if (!hasNode(e.getFromNode())) {
-                throw new Error("Lattice has EDGE with missing FROM node: " + e);
+                throw new Error("Lattice has EDGE with missing FROM node: " +
+                                e);
             }
             if (!hasNode(e.getToNode())) {
                 throw new Error("Lattice has EDGE with missing TO node: " + e);
@@ -739,7 +750,7 @@ public class Lattice {
             return;
         }
         visited.add(n);
-        Iterator e = n.getToEdges().iterator();
+        Iterator e = n.getLeavingEdges().iterator();
         while (e.hasNext()) {
             sortHelper(((Edge)e.next()).getToNode(),sorted,visited);
         }
@@ -777,13 +788,16 @@ public class Lattice {
         ListIterator n = sortedNodes.listIterator();
         while (n.hasNext()) {            
             Node currentNode = (Node)n.next();
-            Collection currentEdges = currentNode.getToEdges();
+            Collection currentEdges = currentNode.getLeavingEdges();
             for (Iterator i = currentEdges.iterator();i.hasNext();) {
                 Edge edge = (Edge)i.next();
                 double forwardProb = edge.getFromNode().getForwardScore();
-                forwardProb += edge.getAcousticScore()/languageModelWeight + edge.getLMScore();
-                edge.getToNode().setForwardScore(logMath.addAsLinear((float)forwardProb,
-                        (float)edge.getToNode().getForwardScore()));
+                forwardProb += edge.getAcousticScore()/languageModelWeight +
+                    edge.getLMScore();
+                edge.getToNode().setForwardScore
+                    (logMath.addAsLinear
+                     ((float)forwardProb,
+                      (float)edge.getToNode().getForwardScore()));
             }
         }
         
@@ -793,12 +807,14 @@ public class Lattice {
         n = sortedNodes.listIterator(sortedNodes.size()-1);
         while (n.hasPrevious()) {            
             Node currentNode = (Node)n.previous();
-            Collection currentEdges = currentNode.getToEdges();
+            Collection currentEdges = currentNode.getLeavingEdges();
             for (Iterator i = currentEdges.iterator();i.hasNext();) {
                 Edge edge = (Edge)i.next();
                 double backwardProb = edge.getToNode().getBackwardScore();
-                backwardProb += edge.getAcousticScore()/languageModelWeight + edge.getLMScore();
-                edge.getFromNode().setBackwardScore(logMath.addAsLinear((float)backwardProb,
+                backwardProb += edge.getAcousticScore()/languageModelWeight +
+                    edge.getLMScore();
+                edge.getFromNode().setBackwardScore
+                    (logMath.addAsLinear((float)backwardProb,
                         (float)edge.getFromNode().getBackwardScore()));
             }
         }
