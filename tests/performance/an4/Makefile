@@ -116,7 +116,7 @@ an4_spelling_unigram:
 
 an4_spelling_trigram:
 	$(JAVA_CMD) \
-        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.model.language.location=./an4_spelling.arpa \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_spelling.alphalist \
@@ -190,7 +190,7 @@ an4_full_trigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
-	-Dedu.cmu.sphinx.model.language.location= \
+	-Dedu.cmu.sphinx.model.language.location=an4_full.arpa \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_full.wordlist \
         tests.decoder.BatchDecoder ./an4.props ./an4_full.batch
 

@@ -1,4 +1,4 @@
-hi#########################################################
+###########################################################
 #
 # Global logging properties
 #
@@ -67,10 +67,9 @@ edu.cmu.sphinx.frontend.sampleRate = 16000
 ############################################################
 
 edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.TreeActiveList
-edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-56
 edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.search.Linguist.validateSentenceHMM=false
-edu.cmu.sphinx.search.Linguist.compositeThreshold=100000
+edu.cmu.sphinx.search.Linguist.compositeThreshold=100
 edu.cmu.sphinx.model.acoustic.useComposites=false
 edu.cmu.sphinx.search.validateResults=false
 
@@ -90,7 +89,6 @@ edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar
 #
 ############################################################
 
-#edu.cmu.sphinx.search.Dictionary.dictionaryPath=./test.dic
 edu.cmu.sphinx.search.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d-c.txt
 edu.cmu.sphinx.search.Dictionary.fillerPath=/lab/speech/sphinx4/data/wsj/dict/fillerdict
 
@@ -119,7 +117,7 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 # WordListGrammar properties
 #
 ############################################################
-edu.cmu.sphinx.search.WordListGrammar.isLooping = true
+edu.cmu.sphinx.search.WordListGrammar.isLooping=true
 
 
 ############################################################
@@ -128,7 +126,7 @@ edu.cmu.sphinx.search.WordListGrammar.isLooping = true
 #
 ############################################################
 
-edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-25
+edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-56
 edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-100
 edu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true
