@@ -46,7 +46,6 @@ public class CepstraPanel extends JPanel {
                     if (cepstra[i].getEnergy() < lowestEnergy) {
                         lowestEnergy = cepstra[i].getEnergy();
                     }
-                    System.out.println(cepstra[i].getEnergy());
                 }
             }
             y0Pixel = getHeight();
