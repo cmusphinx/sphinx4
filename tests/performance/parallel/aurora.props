@@ -20,21 +20,28 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 #
 ############################################################
 
-edu.cmu.sphinx.model.acoustic.names = aurora_mfc aurora_plp
+edu.cmu.sphinx.model.acoustic.names = mfc plp
 
-edu.cmu.sphinx.model.acoustic.aurora_mfc.format = sphinx3.ascii
-edu.cmu.sphinx.model.acoustic.aurora_mfc.location = /lab/speech/sphinx4/data/aurora2_model
-edu.cmu.sphinx.model.acoustic.aurora_mfc.definition_file = mfc.500.mdef
-edu.cmu.sphinx.model.acoustic.aurora_mfc.data_location = mfc.cd_continuous_8gau
-edu.cmu.sphinx.model.acoustic.aurora_mfc.properties_file = mfc.am.props
-edu.cmu.sphinx.model.acoustic.aurora_mfc.FeatureVectorLength = 39
+edu.cmu.sphinx.model.acoustic.mfc.format = sphinx3.ascii
+edu.cmu.sphinx.model.acoustic.mfc.location = /lab/speech/sphinx4/data/aurora2_model
+edu.cmu.sphinx.model.acoustic.mfc.definition_file = mfc.500.mdef
+edu.cmu.sphinx.model.acoustic.mfc.data_location = mfc.cd_continuous_8gau
+edu.cmu.sphinx.model.acoustic.mfc.properties_file = mfc.am.props
+edu.cmu.sphinx.model.acoustic.mfc.FeatureVectorLength = 39
 
-edu.cmu.sphinx.model.acoustic.aurora_plp.format = sphinx3.ascii
-edu.cmu.sphinx.model.acoustic.aurora_plp.FeatureVectorLength = 39
-edu.cmu.sphinx.model.acoustic.aurora_plp.location = /lab/speech/sphinx4/data/aurora2_model
-edu.cmu.sphinx.model.acoustic.aurora_plp.definition_file = plp.500.mdef
-edu.cmu.sphinx.model.acoustic.aurora_plp.data_location = plp.cd_continuous_8gau
-edu.cmu.sphinx.model.acoustic.aurora_plp.properties_file = plp.am.props
+edu.cmu.sphinx.model.acoustic.mfc2.format = sphinx3.ascii
+edu.cmu.sphinx.model.acoustic.mfc2.location = /lab/speech/sphinx4/data/aurora2_model
+edu.cmu.sphinx.model.acoustic.mfc2.definition_file = mfc.500.mdef
+edu.cmu.sphinx.model.acoustic.mfc2.data_location = mfc.cd_continuous_8gau
+edu.cmu.sphinx.model.acoustic.mfc2.properties_file = mfc.am.props
+edu.cmu.sphinx.model.acoustic.mfc2.FeatureVectorLength = 39
+
+edu.cmu.sphinx.model.acoustic.plp.format = sphinx3.ascii
+edu.cmu.sphinx.model.acoustic.plp.FeatureVectorLength = 39
+edu.cmu.sphinx.model.acoustic.plp.location = /lab/speech/sphinx4/data/aurora2_model
+edu.cmu.sphinx.model.acoustic.plp.definition_file = plp.500.mdef
+edu.cmu.sphinx.model.acoustic.plp.data_location = plp.cd_continuous_8gau
+edu.cmu.sphinx.model.acoustic.plp.properties_file = plp.am.props
 
 edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
@@ -117,3 +124,4 @@ edu.cmu.sphinx.search.Recognizer.linguist = edu.cmu.sphinx.search.parallel.Paral
 edu.cmu.sphinx.search.Recognizer.grammar = edu.cmu.sphinx.search.SimpleWordListGrammar
 edu.cmu.sphinx.search.Recognizer.searchManager = edu.cmu.sphinx.search.parallel.ParallelSearchManager
 edu.cmu.sphinx.search.Recognizer.linguistProcessors = edu.cmu.sphinx.util.GDLDumper
+edu.cmu.sphinx.util.GDLDumper.skipHMMs = false

@@ -119,7 +119,6 @@ aurora.testa.N1_SNR20:
 aurora.testa.N1_SNR20.prune:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doCombinePruning=true\
-	-Dedu.cmu.sphinx.search.parallel.CombinedScorePruner.absoluteBeamWidth=10\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-16\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR20.batch
 
@@ -147,7 +146,7 @@ aurora.testa.N1_SNR15:
 aurora.testa.N1_SNR15.prune:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doCombinePruning=true\
-	-Dedu.cmu.sphinx.search.parallel.CombinedScorePruner.absoluteBeamWidth=10\
+	-Dedu.cmu.sphinx.search.parallel.CombinedScorePruner.absoluteBeamWidth=30\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-16\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR15.batch
 
@@ -156,7 +155,7 @@ aurora.testa.N1_SNR15.unit:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-16\
 	-Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.parallel.UnitSearchManager\
-	-Dedu.cmu.sphinx.search.parallel.ParallelLinguist.tokenStackCapacity=5\
+	-Dedu.cmu.sphinx.search.parallel.ParallelSimpleLinguist.tokenStackCapacity=2\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR15.batch
 
 
@@ -197,22 +196,29 @@ aurora.testa.N1_SNR10.prune:
 
 aurora.testa.N1_SNR5.baseline:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.5\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-5\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora_mfc.props ./batchfiles/aurora.testa.N1_SNR5.batch
 
 
 aurora.testa.N1_SNR5:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.5\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-5\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR5.batch
 
 
 aurora.testa.N1_SNR5.prune:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doCombinePruning=true\
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-1\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-5\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR5.batch
 
+
+aurora.testa.N1_SNR5.unit:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-5\
+	-Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.parallel.UnitSearchManager\
+	-Dedu.cmu.sphinx.search.parallel.ParallelSimpleLinguist.tokenStackCapacity=2\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR5.batch
 
 
 ##########################################################################
@@ -224,21 +230,119 @@ aurora.testa.N1_SNR5.prune:
 
 aurora.testa.N1_SNR0.baseline:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=2\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora_mfc.props ./batchfiles/aurora.testa.N1_SNR0.batch
 
 
 aurora.testa.N1_SNR0:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=2\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR0.batch
 
 
 aurora.testa.N1_SNR0.prune:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doPruning=true\
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doCombinePruning=true\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=2\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR0.batch
+
+
+aurora.testa.N1_SNR0.unit.baseline:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
+	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doCombinePruning=true\
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.parallel.ParallelLinguist\
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar\
+	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true\
+	-Dedu.cmu.sphinx.search.WordListGrammar.path=./digits.wordlist\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR0.batch
+
+
+aurora.testa.N1_SNR0.word.mfc.only:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
+	-Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.parallel.ParallelSearchManager\
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.parallel.ParallelWordLinguist\
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar\
+	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.mfc.eta=0.7\
+	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.plp.eta=0.3\
+	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true\
+	-Dedu.cmu.sphinx.search.WordListGrammar.path=./digits.wordlist\
+	-Dedu.cmu.sphinx.search.parallel.ParallelWordLinguist.tokenStackCapacity=1\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR0.batch
+
+
+aurora.testa.N1_SNR0.word.mfc.stack:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
+	-Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.parallel.WordSearchManager\
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.parallel.ParallelWordLinguist\
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar\
+	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true\
+	-Dedu.cmu.sphinx.search.WordListGrammar.path=./digits.wordlist\
+	-Dedu.cmu.sphinx.search.parallel.ParallelWordLinguist.tokenStackCapacity=1\
+	-Dedu.cmu.sphinx.search.parallel.WordSearchManager.mfc.eta=0.65\
+	-Dedu.cmu.sphinx.search.parallel.WordSearchManager.plp.eta=0.35\
+	-Dedu.cmu.sphinx.search.parallel.WordSearchManager.sameCombineTime=false\
+	-Dedu.cmu.sphinx.search.parallel.WordSearchManager.timeDifference=0\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR0.batch
+
+
+aurora.testa.N1_SNR0.word.mfc+mfc.stack:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
+	-Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.parallel.WordSearchManager\
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.parallel.ParallelWordLinguist\
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar\
+	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true\
+	-Dedu.cmu.sphinx.search.WordListGrammar.path=./digits.wordlist\
+	-Dedu.cmu.sphinx.search.parallel.ParallelWordLinguist.tokenStackCapacity=3\
+	-Dedu.cmu.sphinx.search.parallel.WordSearchManager.sameCombineTime=true\
+	-Dedu.cmu.sphinx.search.parallel.WordSearchManager.timeDifference=0\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR0.batch
+
+
+aurora.testa.N1_SNR0.word:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
+	-Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.parallel.WordSearchManager\
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.parallel.ParallelWordLinguist\
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar\
+	-Dedu.cmu.sphinx.search.parallel.WordSearchManager.mfc.eta=0.5\
+	-Dedu.cmu.sphinx.search.parallel.WordSearchManager.plp.eta=0.5\
+	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true\
+	-Dedu.cmu.sphinx.search.WordListGrammar.path=./digits.wordlist\
+	-Dedu.cmu.sphinx.search.parallel.ParallelWordLinguist.tokenStackCapacity=1\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR20.batch
+
+
+aurora.testa.N1_SNR0.word.true:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
+	-Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.parallel.WordSearchManager\
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.parallel.ParallelWordLinguist\
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar\
+	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true\
+	-Dedu.cmu.sphinx.search.WordListGrammar.path=./digits.wordlist\
+	-Dedu.cmu.sphinx.search.parallel.ParallelWordLinguist.tokenStackCapacity=15\
+	-Dedu.cmu.sphinx.search.parallel.WordSearchManager.sameCombineTime=true\
+	-Dedu.cmu.sphinx.search.parallel.WordSearchManager.timeDifference=30\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR0.batch
+
+
+
+aurora.testa.N1_SNR0.unit:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
+	-Dedu.cmu.sphinx.search.parallel.UnitSearchManager.doCombinePruning=true\
+	-Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.parallel.UnitSearchManager\
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.parallel.ParallelLinguist\
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar\
+	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=true\
+	-Dedu.cmu.sphinx.search.WordListGrammar.path=./digits.wordlist\
+	-Dedu.cmu.sphinx.search.parallel.ParallelLinguist.tokenStackCapacity=1\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR0.batch
+
 
 
 ##########################################################################
@@ -250,20 +354,20 @@ aurora.testa.N1_SNR0.prune:
 
 aurora.testa.N1_SNR-5.baseline:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora_mfc.props ./batchfiles/aurora.testa.N1_SNR-5.batch
 
 
 aurora.testa.N1_SNR-5:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR-5.batch
 
 
 aurora.testa.N1_SNR-5.prune:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doPruning=true\
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR-5.batch
 
 
