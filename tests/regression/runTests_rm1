@@ -15,6 +15,9 @@
 # target for the test.
 
 
-./runTest ../performance/rm1 
+./runTest ../performance/rm1  rm1_unigram
+./runTest ../performance/rm1  rm1_bigram
+./runTest ../performance/rm1  rm1_trigram
+./runTest ../performance/rm1  rm1_fst
 
 touch ./.testDone

@@ -16,6 +16,7 @@ twikidir=/home/groups/c/cm/cmusphinx/twiki/data/Sphinx4
 ./makeTwikiReports IsolatedDigitsResults
 ./makeTwikiReports ConnectedDigitsResults
 ./makeTwikiReports SmallVocabResults
+./makeTwikiReports MediumVocabResults
 
 tar cvf twikireports.tar AutoGen*.txt
 sscp twikireports.tar
