@@ -231,13 +231,13 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
             numUttEnds = 0;
             numUttStarts++;
             if (numUttStarts > 1) {
-                throw new Error("Too many utterance starts");
+                // throw new Error("Too many utterance starts");
             }
         } else if (audio.hasSignal(Signal.UTTERANCE_END)) {
             numUttStarts = 0;
             numUttEnds++;
             if (numUttEnds > 1) {
-                throw new Error("Too many utterance ends");
+                // throw new Error("Too many utterance ends");
             }
         }
     }
