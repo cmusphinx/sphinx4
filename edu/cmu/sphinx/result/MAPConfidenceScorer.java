@@ -50,12 +50,24 @@ public class MAPConfidenceScorer implements ConfidenceScorer {
             if (mapToken != null) {
                 ConfusionSet cs = sausage.getConfusionSet(slot);
                 String word = mapToken.getWord().getSpelling();
-                WordResult wr = cs.getWordResult(word);
-                if (wr != null) {
-                    mapPath.add(0, wr);
+                WordResult wr = null;
+
+                /*
+                 * NOTE: since there is no Word for <noop>,
+                 * we check for <unk> instead
+                 */
+                while (slot >= 0 &&
+                       (((wr = cs.getWordResult(word)) == null) &&
+                        ((wr = cs.getWordResult("<unk>")) != null))) {
                     slot--;
+                    cs = sausage.getConfusionSet(slot);
+                }
+                if (wr != null) {
+                    System.out.println("Confidence for " + word + ": " +
+                                       wr.getConfidence());
+                    mapPath.add(0, wr);
                 } else {
-                    throw new Error("Can't find WordResult in ConfidenceResult slot " +
+                    throw new Error("Can't find WordResult in ConfidenceResu[Blt slot " +
                                     slot + " for word " + word);
                 }
                 mapToken = mapToken.getPredecessor();
