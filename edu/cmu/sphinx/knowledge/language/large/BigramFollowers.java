@@ -13,14 +13,16 @@
 package edu.cmu.sphinx.knowledge.language.large;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 
 /**
  * The bigram followers of the word "the" are "apple", "orange", 
  * and "pear" in the following bigrams:
- * <code>the apple
- * the orange
- * the pear
+ * <code>
+ * <b>the apple
+ * <b>the orange
+ * <b>the pear
  * </code>
  */
 public class BigramFollowers {
@@ -30,10 +32,10 @@ public class BigramFollowers {
 
 
     /**
-     * Constructs a BigramFollowers object with the given
-     * MappedByteBuffer.
+     * Constructs a BigramFollowers object with the given ByteBuffer.
      *
-     * @param bigramsOnDisk the MappedByteBuffer with bigrams on disk
+     * @param bigramsOnDisk the ByteBuffer with bigrams
+     * @param numberFollowers the number of bigram follows in the ByteBuffer
      */
     public BigramFollowers(ByteBuffer bigramsOnDisk,
                            int numberFollowers) {
@@ -50,14 +52,19 @@ public class BigramFollowers {
      * @return the BigramProbability of the given second word
      */
     public BigramProbability findBigram(int secondWordID) {
+
+        // System.out.println("Looking for: " + secondWordID);
+
         int mid, start = 0, end = numberFollowers;
         BigramProbability bigram = null;
 
         while ((end - start) > 0) {
             mid = (start + end)/2;
-            int midWordID = getWordID(mid);            
+            int midWordID = getWordID(mid);
+            // System.out.println("mid is: " + mid + ", ID: " + midWordID);
             if (midWordID == secondWordID) {
                 bigram = getBigramProbability(mid);
+                break;
             } else if (midWordID < secondWordID) {
                 start = mid + 1;
             } else if (midWordID > secondWordID) {
@@ -104,16 +111,31 @@ public class BigramFollowers {
 
 
     /**
+     * Returns true if the bigramBuffer is big-endian.
+     *
+     * @return true if the bigramBuffer is big-endian, false if little-endian
+     */
+    private final boolean isBigEndian() {
+        return (bigramBuffer.order() == ByteOrder.BIG_ENDIAN);
+    }
+
+
+    /**
      * Reads the next two bytes from the buffer's current position as an
      * integer.
      *
      * @return the next two bytes as an integer
      */
     private final int readTwoBytesAsInt() {
-        int value = 0x00000000;
-        value |= bigramBuffer.get();
-        value <<= 8;
-        value |= bigramBuffer.get();
+        int value = (0x000000ff & bigramBuffer.get());
+        if (isBigEndian()) {
+            value <<= 8;
+            value |= (0x000000ff & bigramBuffer.get());
+        } else {
+            int second = (0x000000ff & bigramBuffer.get());
+            second <<= 8;
+            value |= second;
+        }
         return value;
     }
 
