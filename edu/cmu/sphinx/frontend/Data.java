@@ -113,10 +113,10 @@ public class Data implements Serializable, Cloneable {
      *    false otherwise
      */
     public boolean hasSignal(Signal signal) {
-        if (getSignal() == null) {
-            return false;
-        } else {
+        if (getSignal() != null) {
             return (getSignal().equals(signal));
+        } else {
+            return false;
         }
     }
 
