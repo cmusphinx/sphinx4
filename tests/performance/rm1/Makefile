@@ -57,7 +57,7 @@ include ${TOP}/build/Makefile.config
 
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 
-all:: rm1_unigram rm1_bigram rm1_trigram rm1_fst rm1_wordpair
+all::
 
 ngram: rm1_unigram rm1_bigram rm1_trigram
 
