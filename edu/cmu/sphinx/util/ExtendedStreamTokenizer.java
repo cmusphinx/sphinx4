@@ -66,6 +66,18 @@ public class ExtendedStreamTokenizer {
 	reader.close();
     }
 
+
+    /**
+     * Specifies that all the characters between low and hi incluseive
+     * are whitespace characters
+     *
+     * @param low  the low end of the range
+     * @param hi the high end of the range
+     */
+    public void whitespaceChars(int low, int hi) {
+	st.whitespaceChars(low, hi);
+    }
+
     /**
      * Gets the next word from the tokenizer
      *
