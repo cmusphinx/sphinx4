@@ -14,6 +14,7 @@
 
 BEGIN {
     done = 0;
+    hasData = 0;
 }
 
 $1 == "#" && $3 == "Summary" && $4 == "statistics" {
@@ -22,6 +23,7 @@ $1 == "#" && $3 == "Summary" && $4 == "statistics" {
 
 
 done == 0 && $1 == "Words:" && $3 == "Matches:" {
+   hasData = 1;
    words[FILENAME] = $2;
    lines[FILENAME]++;
 }
@@ -48,28 +50,30 @@ done == 1 && $1 == "Words:" && $3 == "Matches:" {
 
 
 END {
-    printf("%6.6s %6.6s %6.6s %7.7s %6.6s %s\n", \
-        "Lines", "Words", "Errors", "WER%", "xRT", "File");
-    printf("=============================================================\n");
-    for (i in words) {
-        sumWords += words[i];
-        sumErrors += errors[i];
-        sumLines += lines[i];
-        sumAudio += audioTime[i];
-        sumProc += procTime[i];
-        if (words[i] > 0) {
-            wer = (errors[i]/words[i]) * 100.0;
-            speed = procTime[i]/audioTime[i];
-            printf("%6d %6d %6d %6.2f%% %6.2f %s\n",  \
-                lines[i], words[i], errors[i], wer, speed, i);
+    if (hasData == 1) {
+        printf("%6.6s %6.6s %6.6s %7.7s %6.6s %s\n", \
+            "Lines", "Words", "Errors", "WER%", "xRT", "File");
+        printf("=============================================================\n");
+        for (i in words) {
+            sumWords += words[i];
+            sumErrors += errors[i];
+            sumLines += lines[i];
+            sumAudio += audioTime[i];
+            sumProc += procTime[i];
+            if (words[i] > 0) {
+                wer = (errors[i]/words[i]) * 100.0;
+                speed = procTime[i]/audioTime[i];
+                printf("%6d %6d %6d %6.2f%% %6.2f %s\n",  \
+                    lines[i], words[i], errors[i], wer, speed, i);
+            }
         }
-    }
-    printf("=============================================================\n");
-    if (sumWords != 0 && sumAudio != 0) {
-        wer = (sumErrors/sumWords) * 100.0;
-        sumSpeed = sumProc/sumAudio;
-        printf("%6d %6d %6d %6.2f%% %6.2f %s\n",  \
-            sumLines, sumWords, sumErrors, wer, sumSpeed, "total");
+        printf("=============================================================\n");
+        if (sumWords != 0 && sumAudio != 0) {
+            wer = (sumErrors/sumWords) * 100.0;
+            sumSpeed = sumProc/sumAudio;
+            printf("%6d %6d %6d %6.2f%% %6.2f %s\n",  \
+                sumLines, sumWords, sumErrors, wer, sumSpeed, "total");
+        }
     }
 }
 
