@@ -1,0 +1,20 @@
+# runTest directory target
+
+base=$PWD
+log=$base/regression.log
+
+directory=$1
+target=$2
+rawOutput=$target.out
+alignOutput=$directory/$target.align
+
+cd $directory
+if make $target > $rawOutput
+then
+  status="OK";
+else
+  status="FAILED";
+fi
+
+$base/s4_align_sum $rawOutput > $alignOutput
+$base/parseLog $rawOutput $alignOutput $status >>  $log

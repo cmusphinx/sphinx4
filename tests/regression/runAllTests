@@ -1,0 +1,4 @@
+runTest /home/plamere/s4test an4_words_unigram
+runTest /home/plamere/s4test an4_words_trigram
+runTest /home/plamere/s4test an4_words_fst
+runTest /home/plamere/s4test an4_words_fail

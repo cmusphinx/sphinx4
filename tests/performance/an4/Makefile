@@ -84,11 +84,11 @@ an4_words_unigram:
 bush_test:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
-    -Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=20000 \
     -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushderby=true \
-    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.bushderbyEta=2 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.bushderbyEta=1 \
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch

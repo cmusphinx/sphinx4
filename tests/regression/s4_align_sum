@@ -1,0 +1,19 @@
+s4_align $* | awk '
+
+$2 == "SUMMARY" {
+  printOn = 1;
+}
+
+$1 == "CONFUSION" {
+  printOn = 0;
+}
+
+{
+    if (printOn) {
+        print $0;
+    }
+}
+'
+
+
+
