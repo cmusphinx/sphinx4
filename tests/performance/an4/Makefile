@@ -180,7 +180,7 @@ an4_spelling_journey_fst:
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
         -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false\
-	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
 	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-200 \
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
@@ -240,7 +240,7 @@ an4_full_fst:
 an4_plus_unigram:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
-	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
@@ -254,14 +254,30 @@ an4_plus_unigram:
 an4_plus_trigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
-	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.model.language.location=an4_plus.trigram.lm \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
+# Tests the 105 words and letters from AN4, using a trigram LM
+# created from full AN4 plus the 100 most common words
+# in English.
+
+an4_plus_trigram_quick:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=50\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=an4_plus.trigram.lm \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
+        edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
 
 # Tests the 105 words and letters from AN4, using an FST created from
@@ -272,7 +288,7 @@ an4_plus_fst:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_plus.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
