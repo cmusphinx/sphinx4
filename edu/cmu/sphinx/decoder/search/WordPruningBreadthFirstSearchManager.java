@@ -441,7 +441,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             float bestScore = -Float.MAX_VALUE;
             for (Iterator i = activeList.iterator(); i.hasNext(); ) {
                 Token t = (Token) i.next();
-                Token p = t.getPredecessor();
+                Token p = getLastEmittingToken(t);
                 float delta = 0;
                 if (p != null ) {
                     delta = t.getAcousticScore() - p.getAcousticScore();
@@ -465,6 +465,23 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         } else {
             growBranches();
         }
+    }
+
+
+    /**
+     * Given a token find the most recent predecessor emitting token
+     *
+     * @param t the token to start searching from
+     *
+     * @return the most recent emitting token, or null
+     */
+    protected Token getLastEmittingToken(Token t) {
+        while ((t = t.getPredecessor()) != null) {
+            if (t.isEmitting()) {
+                break;
+            }
+        }
+        return t;
     }
 
 
