@@ -87,20 +87,16 @@ public class Lattice {
             loserManager.purge();
         }
 
-        for (Iterator it = result.getResultTokens().iterator(); it.hasNext();) {
-            Token token = (Token) (it.next());
-
-            // skip the last </s> word
-            /*
-            while (!token.isWord()) {
+        for (Iterator i = result.getResultTokens().iterator(); i.hasNext();) {
+            Token token = (Token) (i.next());
+            while (token != null && !token.isWord()) {
                 token = token.getPredecessor();
             }
-            System.out.println
-                ("First word is " + token.getWord().getSpelling());
-            
-            token = token.getPredecessor();
-            */
-            processToken(terminalNode, token);
+            if (token == null) {
+                throw new Error("Token chain does not end with </s>.");
+            }
+            assert token.getWord().isSentenceEndWord();
+            processToken(terminalNode, token.getPredecessor());
         }
 
         if (result == null) {
