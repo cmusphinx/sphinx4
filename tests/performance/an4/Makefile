@@ -261,7 +261,9 @@ an4_plus_trigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-26\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-5 \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=15.0 \
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=1000 \
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
@@ -277,9 +279,11 @@ an4_plus_trigram_quick:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=50\
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-36\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-26\
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=500 \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.model.language.location=an4_plus.trigram.lm \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \

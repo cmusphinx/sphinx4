@@ -135,7 +135,7 @@ edu.cmu.sphinx.search.WordListGrammar.addSilenceWord=true
 #
 ############################################################
 
-edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
+edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=800
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150
 edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
