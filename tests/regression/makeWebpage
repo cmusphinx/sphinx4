@@ -37,19 +37,20 @@ BEGIN {
     F_DATE = 2;
     F_TIME = 3;
     F_MACHINE = 4;
-    F_TEST_NAME = 5;
-    F_WHO = 6;
-    F_STATUS = 7;
-    F_AUDIO_TIME = 8;
-    F_PROC_TIME = 9;
-    F_WORDS = 10;
-    F_INSERTIONS = 11;
-    F_DELETIONS = 12;
-    F_SUBSTITUTIONS = 13;
-    F_SENTENCES = 14;
-    F_CORRECT_SENTENCES = 15;
-    F_HEAP_SIZE = 16;
-    F_LOAD_AVERAGE = 17;
+    F_SYSTEM = 5;
+    F_TEST_NAME = 6;
+    F_WHO = 7;
+    F_STATUS = 8;
+    F_AUDIO_TIME = 9;
+    F_PROC_TIME = 10;
+    F_WORDS = 11;
+    F_INSERTIONS = 12;
+    F_DELETIONS = 13;
+    F_SUBSTITUTIONS = 14;
+    F_SENTENCES = 15;
+    F_CORRECT_SENTENCES = 16;
+    F_HEAP_SIZE = 17;
+    F_LOAD_AVERAGE = 18;
 
     "hostname" | getline machine
 }
@@ -60,8 +61,8 @@ $1 == "build" && $4 == machine {
 }
 
 $1 == "test"  && $4 == machine {
-    testCount[$5] = testCount[$5] + 1;
-    testData[$5 testCount[$5]] = $0;
+    testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
+    testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
 }
 
 $1 == "system"  && $2 == machine {
@@ -216,7 +217,7 @@ function fmtTime(seconds) {
 
 function printTestResults(testName) {
     print("<br><br>");
-    print "<table align=center cellpadding=2 cellspacing=2 border=1 width=80%>";
+    print "<table align=center cellpadding=2 cellspacing=2 border=1 width=60%>";
     print "<tbody>";
     print "<tr align=center>";
     print "<td valign=top rowspan=1 colspan=4 bgcolor=#ccccff>";
@@ -410,6 +411,10 @@ function printTitle() {
     print "<div align=center>Sphinx 4 regression tests are run nightly.";
     print "Results are";
     print "posted here.<br>";
+
+    "date" | getline theDate;
+
+    print  "<br><i> Report generated on " theDate "</i><br>";
     print "</div>";
     print "<br>";
 }
