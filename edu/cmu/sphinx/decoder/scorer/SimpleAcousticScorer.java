@@ -55,42 +55,60 @@ public class SimpleAcousticScorer implements AcousticScorer {
     public void start() {
     }
 
+
+    /**
+     * Checks to see if a FeatureFrame is null or if there are Features in it.
+     *
+     * @param ff the FeatureFrame to check
+     *
+     * @return false if the given FeatureFrame is null or if there
+     * are no Features in the FeatureFrame; true otherwise.
+     */
+    private boolean hasFeatures(FeatureFrame ff) {
+        if (ff == null) {
+            System.out.println("SimpleAcousticScorer: FeatureFrame is null");
+            return false;
+        }
+        if (ff.getFeatures() == null) {
+            System.out.println
+                ("SimpleAcousticScorer: no features in FeatureFrame");
+            return false;
+        }
+        return true;
+    }
+
+
     /**
      * Scores the given set of states
      *
      * @param scoreableList a list containing scoreable objects to
      * be scored
      *
-     * @return true if there are more features available
+     * @return true if there was a Feature available to score
+     *         false if there was no more Feature available to score
      */
-
-
     public boolean calculateScores(List scoreableList) {
 
 	FeatureFrame ff;
 
 	try {
-	    // TODO: fix the 'modelName', set to null
 	    ff = frontEnd.getFeatureFrame(1, null);
 	    Feature feature;
-            
 
-	    if (ff == null) {
-		System.out.println("FeatureFrame is null");
-		return false;
-	    }
-
-
-	    if (ff.getFeatures() == null) {
-		System.out.println("features array is null ");
-		return false;
-	    }
+	    if (!hasFeatures(ff)) {
+                return false;
+            }
 
 	    feature = ff.getFeatures()[0];
 
 	    if (feature.getSignal() == Signal.UTTERANCE_START) {
-		return true; //calculateScores(stateTokenList);
+                ff = frontEnd.getFeatureFrame(1, null);
+                if (!hasFeatures(ff)) {
+                    return false;
+                }
+                feature = ff.getFeatures()[0];
 	    }
+
 	    if (feature.getSignal() == Signal.UTTERANCE_END) {
 		return false;
 	    }
