@@ -55,20 +55,13 @@ public class HelloWorld {
 
 		while (true) {
 		    System.out.println
-			("Start speaking. " + 
-			 "Press Ctrl-C or say 'good bye' to quit.");
+			("Start speaking. Press Ctrl-C to quit.");
 
 		    Result result = recognizer.recognize();
 		    
 		    if (result != null) {
 			String resultText = result.getBestResultNoFiller();
 			System.out.println("You said: " + resultText + "\n");
-
-			if (resultText.equals("good bye")) {
-			    microphone.stopRecording();
-			    recognizer.deallocate();
-			    System.exit(0);
-			}
 		    } else {
 			System.out.println("I can't hear what you said.\n");
 		    }
