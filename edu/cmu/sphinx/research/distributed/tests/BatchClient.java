@@ -13,10 +13,9 @@
 
 package edu.cmu.sphinx.research.distributed.tests;
 
-import edu.cmu.sphinx.decoder.BatchDecoder;
-
 import edu.cmu.sphinx.research.distributed.client.ClientFrontEnd;
 
+import edu.cmu.sphinx.util.BatchFile;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.NISTAlign;
@@ -29,12 +28,30 @@ import java.net.URL;
 
 import java.text.DecimalFormat;
 
+import java.util.Iterator;
+
 
 /**
  * A client-side BatchDecoder. It talks to a ServerDeocder to decode
  * a list of files in a batch file.
  */
-public class BatchClient extends BatchDecoder {
+public class BatchClient {
+
+    private final static String PROP_PREFIX = 
+	"edu.cmu.sphinx.research.distributed.tests.BatchClient.";
+
+
+    /**
+     * The SphinxProperty name for how many files to skip for every decode.
+     */
+    public final static String PROP_SKIP = PROP_PREFIX + "skip";
+
+    
+    /**
+     * The default value for the property PROP_SKIP.
+     */
+    public final static int PROP_SKIP_DEFAULT = 0;
+
 
     private static DecimalFormat timeFormat = new DecimalFormat("0.00");
 
@@ -42,6 +59,10 @@ public class BatchClient extends BatchDecoder {
 
     private Timer decodeTimer;
     private long cumulativeProcessingTime = 0;
+    
+    private String context;
+    private String batchFile;
+    private int skip;
 
     private NISTAlign aligner;
 
@@ -50,8 +71,10 @@ public class BatchClient extends BatchDecoder {
      * Constructs a BatchClient with the given name and context.
      */
     public BatchClient(String context, String batchFile) throws IOException {
-        super(context, batchFile, false);
+        this.context = context;
+        this.batchFile = batchFile;
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
+	skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
         clientFrontEnd = new ClientFrontEnd();
         clientFrontEnd.initialize("BatchClient", context);
         decodeTimer = Timer.getTimer(context, "BatchClientDecode");
@@ -64,7 +87,26 @@ public class BatchClient extends BatchDecoder {
      */
     public void decode() throws IOException {
         clientFrontEnd.connect();
-        super.decode();
+
+	int curCount = skip;
+        System.out.println("\nBatchDecoder: decoding files in " + batchFile);
+        System.out.println("----------");
+
+	for (Iterator i = BatchFile.getLines(batchFile).iterator();
+             i.hasNext();) {
+	    String line = (String) i.next();
+            String file = BatchFile.getFilename(line);
+	    String reference = BatchFile.getReference(line);
+
+	    if (++curCount >= skip) {
+		curCount = 0;
+		decodeFile(file, reference);
+	    }
+        }
+
+        System.out.println("\nBatchDecoder: All files decoded\n");
+        Timer.dumpAll(context);
+	
         clientFrontEnd.close();
     }
 
