@@ -72,7 +72,7 @@ public class SimpleFrontEnd extends BaseFrontEnd {
         if (useAcousticModelProperties) {
 	    props = (PropertiesResolver.resolve
                      (props, getAcousticProperties(context, amName), 
-                      context + "." + getName()));
+                      context + "." + name));
         }
 
         super.initialize(name, context, props, amName, dataSource);
