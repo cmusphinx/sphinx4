@@ -186,14 +186,26 @@ public class Live {
      */
     public void playUtterance() {
         Microphone microphone = getDecoder().getMicrophone();
-        byte[] audio = microphone.getUtterance().getAudio();
-        if (audio != null) {
-            audioPlayer.play
-                (audio, microphone.getAudioFormat());
+        if (microphone.getUtterance() != null) {
+            liveFrame.setMessage("Playing back...");
+            byte[] audio = microphone.getUtterance().getAudio();
+            if (audio != null) {
+                audioPlayer.play
+                    (audio, microphone.getAudioFormat());
+            }
+            liveFrame.setMessage("Playing back...finished");
+        } else {
+            liveFrame.setMessage
+                ("Cannot play utterance: it wasn't saved.");
         }
-        System.out.println("Finished playing utterance.");
     }
 
+    /**
+     * Returns true if the current decoder keeps the audio.
+     */
+    public boolean canPlayUtterance() {
+        return (getDecoder().getMicrophone().getUtterance() != null);
+    }
 
     /**
      * Resets the statistics in the NISTAlign of the current Decoder.
