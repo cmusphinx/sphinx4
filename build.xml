@@ -38,10 +38,10 @@
     <!-- * Determine which sources should be compiled depending   * -->
     <!-- * on the availability of lib/jsapi.jar.  This creates a  * -->
     <!-- * property called "patternset_to_compile" and sets its   * -->
-    <!-- * val to either "all" or "no_jsapi", which refers to the * -->
-    <!-- * name of a patternset.  The value of srcs_to_compile    * -->
-    <!-- * will be used in the javac target as a patternset       * -->
-    <!-- * refid.                                                 * -->
+    <!-- * val to either "all_files" or "no_jsapi", which refers  * -->
+    <!-- * to the name of a patternset. The value of              * -->
+    <!-- * srcs_to_compile will be used in the javac target as a  * -->
+    <!-- * patternset refid.                                      * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
 
@@ -52,7 +52,7 @@
       -->
 
 
-    <patternset id="all" 
+    <patternset id="all_files" 
                 includes="edu/**,com/**"
                 excludes="edu/cmu/sphinx/research/distributed/**,
 		edu/cmu/sphinx/research/bushderby/**,
@@ -79,7 +79,7 @@
              
     <target name="set_patternset_to_compile">
         <condition property="patternset_to_compile"
-                   value="all">
+                   value="all_files">
             <available file="lib/jsapi.jar"/>
         </condition>
         <condition property="patternset_to_compile"
