@@ -49,10 +49,10 @@ all:: ${CLASSES} ${STUBS}
 
 live: all
 	$(JAVA_CMD) \
-	-DshowEnergyPanel=false \
 	-DshowPartialResults=true \
 	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
 	tests.live.Live decoders.list
+
 
 
 
@@ -63,13 +63,14 @@ live: all
 
 live-ep: all
 	$(JAVA_CMD) \
+	-DepMode=true \
 	-DshowPartialResults=true \
-	-Dedu.cmu.sphinx.frontend.endpoint.AudioFilter.mergeSpeechSegments=true\
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.LevelTracker \
 	-Dedu.cmu.sphinx.frontend.bytesPerAudioFrame=320 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
 	tests.live.Live decoders.list
+
 
 
 
@@ -87,157 +88,11 @@ live-free: all
 	-Dedu.cmu.sphinx.frontend.bytesPerAudioFrame=320 \
 	-Dedu.cmu.sphinx.frontend.keepAudioReference=false \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.LevelTracker \
-	-Dedu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=12\
+	-Dedu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=15\
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager \
 	tests.live.Live decoders.list
 
-
-
-# Runs the LiveDemo with the "Alpha Spelling" test loaded first.
-
-live-alpha: all
-	$(JAVA_CMD) \
-	-DfirstDecoder="Alpha Spelling" \
-	-DshowPartialResults=true \
-	-Dedu.cmu.sphinx.frontend.bytesPerAudioFrame=320 \
-	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
-	-Dedu.cmu.sphinx.frontend.endpoint.AudioFilter.mergeSpeechSegments=true\
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.LevelTracker \
-	tests.live.Live decoders.list
-
-
-
-############################################################################
-#
-# Below are old make targets that use the EnergyEndpointer
-#
-############################################################################
-
-
-# Runs the default LiveDemo with endpointing
-# In this mode, you click "Speak" to start recording, and the
-# endpointer will figure out when the utterance has ended, and terminates
-# recognition automatically.
-
-live-ep-sunray: all
-	$(JAVA_CMD) \
-	-DshowEnergyPanel=false \
-	-DshowPartialResults=true \
-	-Dedu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments=false \
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=8 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=11 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=8 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
-	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
-	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager \
-	tests.live.Live decoders.list
-
-
-
-# Runs the default LiveDemo with endpointing
-# In this mode, you click "Speak" to start recording, and the
-# endpointer will figure out when the utterance has ended, and terminates
-# recognition automatically.
-
-live-ep-cube: all
-	$(JAVA_CMD) \
-	-DshowEnergyPanel=false \
-	-DshowPartialResults=true \
-	-Dedu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments=false \
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=7 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=10 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=7 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
-	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
-	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager \
-	tests.live.Live decoders.list
-
-
-
-# Runs the default LiveDemo with endpointing
-# In this mode, you click "Speak" to start recording, and the
-# endpointer will figure out when the utterance has ended, and terminates
-# recognition automatically.
-
-live-ep-voice: all
-	$(JAVA_CMD) \
-	-DshowEnergyPanel=false \
-	-DshowPartialResults=true \
-	-Dedu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments=false \
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=3 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=4 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=3 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
-	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
-	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager \
-	tests.live.Live decoders.list
-
-
-live-free-sunray: all
-	$(JAVA_CMD) \
-	-DhandsFree=true \
-	-Dedu.cmu.sphinx.frontend.keepAudioReference=false \
-	-Dedu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments=false \
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=9 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=12 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=9 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow=40 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
-	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
-	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
-	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
-	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager \
-	tests.live.Live decoders.list
-
-
-live-free-cube: all
-	$(JAVA_CMD) \
-	-DhandsFree=true \
-	-Dedu.cmu.sphinx.frontend.keepAudioReference=false \
-	-Dedu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments=false \
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=7 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=10 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=7 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow=40 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
-	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
-	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
-	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
-	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager \
-	tests.live.Live decoders.list
-
-
-#
-# "live-free" run target for SunLabs local machine voice.east
-#
-live-free-voice: all
-	$(JAVA_CMD) \
-	-DhandsFree=true \
-	-Dedu.cmu.sphinx.frontend.keepAudioReference=false \
-	-Dedu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments=false \
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=3 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=4 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=3 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow=40 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
-	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
-	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
-	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
-	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager \
-	tests.live.Live decoders.list
 
 
