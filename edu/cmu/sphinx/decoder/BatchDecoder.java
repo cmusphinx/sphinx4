@@ -312,15 +312,24 @@ public class BatchDecoder {
         String context = "batch";
         String propertiesFile = argv[0];
         String batchFile = argv[1];
+        BatchDecoder decoder;
 
         try {
             URL url = new File(propertiesFile).toURI().toURL();
             SphinxProperties.initContext (context, url);
-            BatchDecoder decoder = new BatchDecoder(context, batchFile);
-            decoder.decode();
+            decoder = new BatchDecoder(context, batchFile);
 
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            System.err.println("I/O error during initialization: \n   " 
+                    + ioe.getMessage());
+            return;
+        }
+
+        try {
+            decoder.decode();
+        } catch (IOException ioe) {
+            System.err.println("I/O error during decoding: " + 
+                    ioe.getMessage());
         }
     }
 }
