@@ -59,6 +59,17 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
     }
 
     /**
+     * Creates a UnitState with the given unit and HMM position.
+     *
+     * @param unit the unit associated with this state
+     * @param position the HMM position of this unit
+     */
+    public UnitState(Unit unit, HMMPosition position) {
+        this.unit = unit;
+        this.position = position;
+    }
+
+    /**
      * Gets the unit associated with this state
      *
      * @return the unit
