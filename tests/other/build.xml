@@ -18,7 +18,6 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <property name="top_dir"		value="../.."/>
     <property name="classes_dir"	value="${top_dir}/classes"/>
-    <property name="live_demo"          value="tests.live.Live"/>
 
 
     <!-- ********************************************************** -->
