@@ -81,22 +81,30 @@
         <property name="growSkipInterval" value="0"/>
         <property name="checkStateOrder" value="false"/>
         <property name="buildWordLattice" value="false"/>
-        <property name="acousticLookaheadFrames" value="2.5"/>
+        <property name="acousticLookaheadFrames" value="1.7"/>
         <property name="relativeBeamWidth" value="1E-80"/>
     </component>
     
     
+    
+    <component name="activeListManager" 
+             type="edu.cmu.sphinx.decoder.search.SimpleActiveListManager">
+        <propertylist name="activeListFactories">
+            <item>activeList</item>
+            <item>wordActiveList</item>
+            <item>wordActiveList</item>
+            <item>activeList</item>
+            <item>activeList</item>
+            <item>activeList</item>
+        </propertylist> 
+    </component>
+
+
     <component name="activeList" 
              type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
         <property name="logMath" value="logMath"/>
         <property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
         <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
-    </component>
-    
-    <component name="activeListManager" 
-             type="edu.cmu.sphinx.decoder.search.SimpleActiveListManager">
-        <property name="activeListFactory" value="activeList"/>
-        <property name="wordActiveListFactory" value="wordActiveList"/>
     </component>
     
     <component name="wordActiveList" 
@@ -146,6 +154,7 @@
         <property name="silenceInsertionProbability" 
                 value="${silenceInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
+        <property name="cacheSize" value="20000"/>
     </component>
     
     
@@ -311,6 +320,7 @@
     <component name="configMonitor" 
                 type="edu.cmu.sphinx.instrumentation.ConfigMonitor">
         <property name="showConfig" value="true"/>
+        <property name="saveConfigAsXML" value="true"/>
     </component>
     
     <component name="beamFinder" 

@@ -394,19 +394,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="batch[skip]" 	value="${skip}"/> 
-
-            <sysproperty key="absoluteBeamWidth"    value="1200"/>
-            <sysproperty key="relativeBeamWidth"    value="1E-100"/>
-            <sysproperty key="absoluteWordBeamWidth"    value="22"/>
-            <sysproperty key="relativeWordBeamWidth"    value="1E-50"/>
-            <sysproperty key="languageWeight"    	value="20"/>
-            <sysproperty key="wordInsertionProbability"    	value="0.2"/>
-            <sysproperty key="linguist" 			value="lexTreeLinguist"/>
-            <sysproperty key="decoder[searchManager]" value="wordPruningSearchManager"/>
-            <sysproperty key="ngramLanguageModel[location]"
-                         value="rm1.trigram.lm"/>
-            <sysproperty key="ngramLanguageModel[maxDepth]" value="3"/>
-            <arg value="${config}"/> 
+            <arg value="rm1_trigram_fast.config.xml"/> 
             <arg value="${batch}"/> 
         </java>
     </target>
