@@ -15,7 +15,7 @@ PACKAGE_PATH = edu/cmu/sphinx/knowledge/language
 FILES = $(shell echo *.java)
 
 # List any sub directories that need to be built
-SUBDIRS = 
+SUBDIRS = large
 
 EXTRA_JAVA_FLAGS = -ms1g -mx2g
 
