@@ -263,6 +263,18 @@ public class Utilities {
 		((0x00ff0000 & integer) >> 8) |
 		((0xff000000 & integer) >> 24));
     }
+
+    
+    /**
+     * Byte-swaps the given float to the other endian. That is, if this
+     * float is big-endian, it becomes little-endian, and vice-versa.
+     *
+     * @param floatValue the float to swap
+     */
+    public static float swapFloat(float floatValue) {
+        return Float.intBitsToFloat
+            (swapInteger(Float.floatToRawIntBits(floatValue)));
+    }
 }
 
   
