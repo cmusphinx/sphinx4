@@ -50,7 +50,7 @@ fi
 #
 scripts="getTime getHostname mailReport makeReport parseS4Output regressionTest\
 	runTest s4_align s4_align_sum collectMetrics \
-	getTime makeWebpage pushChanges pushReport whatsNew \
+	getTime makeWebpage pushChanges pushReport getJavaVersion \
 	cvs_history updateLog finalizeLog \
 	s4_align s4_align_sum whatsNew \
 	makeTestDetailReport pushAllTestReports \

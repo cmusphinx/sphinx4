@@ -56,11 +56,11 @@ scripts="getTime getHostname mailReport makeReport parseS4Output regressionTest\
 	runTest s4_align s4_align_sum collectMetrics \
 	getTime makeWebpage pushChanges pushReport whatsNew \
 	cvs_history updateLog finalizeLog \
-	s4_align s4_align_sum whatsNew \
+	s4_align s4_align_sum \
         runTests_friday runTests_monday runTests_nightly \
         runTests_quick runTests_saturday runTests_sunday \
         runTests_thursday runTests_tuesday runTests_wednesday \
-	makeTestDetailReport pushAllTestReports \
+	makeTestDetailReport pushAllTestReports getJavaVersion \
 	makeTestSummaryReport makeTestReports waitForFile"
 
 chmod +x $scripts
@@ -69,6 +69,8 @@ rootDir=../../
 #rootDir=/home/plamere/s4test/
 date=`date +%Y-%m-%d`
 time=`date +%T`
+uptime=`uptime`
+javaVersion=`./getJavaVersion`
 
 
 #############################
@@ -132,6 +134,14 @@ else
    echo build failure - tests not run
    totalRunTime="N/A"
 fi
+
+#############################
+# Log the environment  information
+# (This should be done before the build info)
+#############################
+cd $regressionDir
+echo "environment|$date|$machine|$JAVA_HOME|$javaVersion|$uptime|" | $regressionDir/updateLog
+
 
 #############################
 # Log the build information

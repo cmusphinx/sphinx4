@@ -59,19 +59,20 @@ BEGIN {
     "./getHostname" | getline machine
 }
 
+$1 == "environment" {
+    environment[$3] = $0;
+}
+
 $1 == "build" && $4 == machine {
     buildCount = buildCount + 1;
     buildData[buildCount] = $0;
+    testEnv[buildCount] = environment[machine];
 }
 
-$1 == "TEST_CHANGE"  && $2 == "tag_changes_with_machine" {
-    tagChangesWithMachine = 1;
-}
 
 $1 == "test"  && $4 == machine && $5 == "s4" {
     testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
     testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
-    testMode[$F_TEST_NAME testCount[$F_TEST_NAME]] = tagChangesWithMachine;
     if (lastTestDate != $F_DATE) {
         lastTestDate = $F_DATE;
 	lastTestCount = 0;
@@ -90,11 +91,7 @@ $1 == "metrics"   {
 }
 
 function dateAnchor(date) {
-    if (tagWithMachine) {
-        return "<a href=\"" machine "_" date ".html\">" date "</a>";
-    } else {
-        return "<a href=\"" date ".html\">" date "</a>";
-    }
+    return "<a href=\"" date ".html\">" date "</a>";
 }
 
 #####
@@ -102,7 +99,6 @@ function dateAnchor(date) {
 #
 function updateData(testName, testCount) {
     split(testData[testName testCount], data);
-    tagWithMachine = testMode[testName testCount];
 }
 
 ####
@@ -366,14 +362,21 @@ function printBuildHistory() {
    print "<table cellpadding=2 cellspacing=2 border=1 width=80% align=center>";
    print "<tbody>";
    print "<tr align=center>";
-   print "<td valign=top rowspan=1 colspan=6";
-   print "    bgcolor=#ccccff><big><b>Build History<br>";
+   print "<td valign=top rowspan=1 colspan=7";
+   print "    bgcolor=#ccccff><big><b>Test History<br>";
    print "</b></big></td> </tr>";
    print "<tr>";
    print "<td valign=top bgcolor=#99ffff align=center><b>Date<br>";
    print "</b></td>";
+
    print "<td valign=top bgcolor=#99ffff align=center><b>Test Name<br>";
    print "</b></td>";
+
+   print "<td valign=top bgcolor=#99ffff align=center><b>Java Version<br>";
+   print "</b></td>";
+   print "<td valign=top bgcolor=#99ffff align=center><b>Uptime<br>";
+   print "</b></td>";
+
    print "<td valign=top bgcolor=#99ffff align=center><b>Build Time<br>";
    print "</b></td>";
    print "<td valign=top bgcolor=#99ffff align=center><b>Test";
@@ -385,10 +388,13 @@ function printBuildHistory() {
 
    for (i = 1; i <= buildCount; i++) {
         split(buildData[i], data);
+        split(testEnv[i], envData);
 
         print("<tr>");
         print "<td>" dateAnchor(data[2]) "</td>";
         print "<td>" data[10] "</td>";
+        print "<td>" envData[5] "</td>";
+        print "<td>" envData[6] "</td>";
 	print "<td>" fmtTime(data[8]) "</td>";
 	print "<td>" fmtTime(data[9]) "</td>";
 

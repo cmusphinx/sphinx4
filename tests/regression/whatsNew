@@ -16,12 +16,11 @@ sub getPreviousVersion {
 }
 
 $queryDate = $ARGV[0];
-$machine = `./getHostname`
 $viewCVS = "http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/cmusphinx/";
 
 print "<html>\n";
 print "<head>";
-print "<title>Sphinx 4 Source Changes for $machine on $queryDate </title>";
+print "<title>Sphinx 4 Source Changes on $queryDate </title>";
 print "</head>";
 print "<body>";
 
@@ -85,7 +84,7 @@ print "    align=center bgcolor=#ccccff>";
 print "<tbody>";
 print "<tr>";
 print "<td valign=top align=center><br>";
-print "<big><b>Software Environment for $machine on $queryDate";
+print "<big><b>Software Environment on $queryDate";
 print "</b></big><br>";
 print "<br>";
 print "</td>";

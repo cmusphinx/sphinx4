@@ -79,6 +79,9 @@ $1 == "test"  && $4 == machine && $5 == "s4" {
     finalTest[$F_TEST_NAME] = 1;
 }
 
+$1 == "environment" && $3 == machine  {
+    javaVersion = $5;
+}
 
 #####
 # updates the data array with info for the given test
@@ -293,6 +296,10 @@ END {
 	print "    Average Heap (MB) "  getHeapStatus(i);
 	printf("\n");
     }
+    print ""
+    print "Java Version: ";
+    print ""
+    print javaVersion;
     print ""
     print ""
     print "Complete test details at: ";
