@@ -28,7 +28,8 @@
     <property name="deploy_dir"		value="deploy"/>
     <path id="libs">
         <pathelement path="${classes_dir}"/>
-	<pathelement location="${top_dir}/lib/jsapi.jar"/>
+	<pathelement location="${lib_dir}/sphinx4.jar"/>
+	<pathelement location="${lib_dir}/jsapi.jar"/>
     </path>
 
 
