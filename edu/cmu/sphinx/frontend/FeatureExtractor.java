@@ -247,13 +247,18 @@ public class FeatureExtractor extends PullingProcessor {
 	    residualVectors += window;
 	}
 
+
 	// create the Features
 
         int totalFeatures = cepstra.length + residualVectors;
-        
+        float[][] features = new float[totalFeatures][featureLength];
+
 	for (int i = 0; i < totalFeatures; i++) {
-	    float[] feature = computeNextFeature();
+            float[] feature = features[i];
+	    
+            computeNextFeature(feature);
             outputQueue.add(feature);
+            
             if (getDump()) {
                 Util.dumpFloatArray(feature, "FEATURE");
             }
@@ -266,7 +271,7 @@ public class FeatureExtractor extends PullingProcessor {
     /**
      * Computes the next feature. Advances the pointers as well.
      */
-    private float[] computeNextFeature() {
+    private void computeNextFeature(float[] feature) {
 	float[] mfc3f = cepstraBuffer[jf3++];
 	float[] mfc2f = cepstraBuffer[jf2++];
 	float[] mfc1f = cepstraBuffer[jf1++];
@@ -274,8 +279,6 @@ public class FeatureExtractor extends PullingProcessor {
 	float[] mfc1p = cepstraBuffer[jp1++];
 	float[] mfc2p = cepstraBuffer[jp2++];
 	float[] mfc3p = cepstraBuffer[jp3++];
-	
-	float[] feature = new float[featureLength];
 	
 	// CEP; copy all the cepstrum data except for the first one
 	int j = cepstrumLength - 1;
@@ -304,7 +307,5 @@ public class FeatureExtractor extends PullingProcessor {
             jp2 %= LIVEBUFBLOCKSIZE;
             jp3 %= LIVEBUFBLOCKSIZE;
         }
-
-        return feature;
     }
 }

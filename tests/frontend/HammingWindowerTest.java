@@ -4,9 +4,9 @@
 
 package tests.frontend;
 
-import edu.cmu.sphinx.frontend.CepstrumProducer;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Preemphasizer;
+import edu.cmu.sphinx.frontend.SlicingWindower;
 import edu.cmu.sphinx.util.Timer;
 
 import java.io.FileInputStream;
@@ -30,13 +30,13 @@ public class HammingWindowerTest {
             ("tests.frontend.HammingWindowerTest.dumpTimes");
 
         Preemphasizer preemphasizer = new Preemphasizer();
-        
-        CepstrumProducer cepstrumProducer = new CepstrumProducer();
-        cepstrumProducer.setDump(dumpValues);
 
+        SlicingWindower hammingWindow = new SlicingWindower();
+        hammingWindow.setDump(dumpValues);
+        
 	FrontEnd frontend = new FrontEnd();
       	frontend.addProcessor(preemphasizer);
-        frontend.addProcessor(cepstrumProducer);
+        frontend.addProcessor(hammingWindow);
 
 	try {
             if (batchMode) {

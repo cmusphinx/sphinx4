@@ -86,20 +86,19 @@ public class Preemphasizer extends PullingProcessor {
     public Data read() throws IOException {
 
 	Data input = getSource().read();
-        Data output = input;
-
+        
         if (input instanceof DoubleAudioFrame) {
 
-            output = process((DoubleAudioFrame) input);
+            input = process((DoubleAudioFrame) input);
 
 	} else if (input instanceof PreemphasisPriorSignal) {
 
 	    PreemphasisPriorSignal signal = (PreemphasisPriorSignal) input;
 	    prior = (double) signal.getPrior();
-	    output = read();
+	    input = read();
 	}
 
-        return output;
+        return input;
     }	
 
 
