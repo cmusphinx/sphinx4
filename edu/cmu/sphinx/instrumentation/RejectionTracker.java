@@ -14,6 +14,7 @@ package edu.cmu.sphinx.instrumentation;
 
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.RecognizerState;
+import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.props.Configurable;
@@ -28,7 +29,8 @@ import edu.cmu.sphinx.util.props.Registry;
  */
 public class RejectionTracker implements Configurable,
                                          ResultListener,
-                                         Resetable {
+                                         Resetable,
+					 StateListener {
 
     /**
      * A Sphinx property that defines which recognizer to monitor
@@ -183,21 +185,36 @@ public class RejectionTracker implements Configurable,
                     numCorrectInGrammarUtterances++;
                 }
             }
-            if (showSummary) {
-                float correctPercent = ((float)
-                    (numCorrectOutOfGrammarUtterances +
-                     numCorrectInGrammarUtterances)) /
-                    ((float) numUtterances) * 100f;
-                System.out.println
-                    ("   Rejection Accuracy: " + correctPercent + "%");
-            }
-            if (showDetails) {
-                System.out.println
-                    ("   Correct OOG: " + numCorrectOutOfGrammarUtterances +
-                     "   False OOG: " + numFalseOutOfGrammarUtterances +
-                     "   Correct IG: " + numCorrectInGrammarUtterances +
-                     "   False IG: " + numFalseInGrammarUtterances);
-            }
+	    printStats();
         }
+    }
+
+    private void printStats() {
+	if (showSummary) {
+	    float correctPercent = ((float)
+				    (numCorrectOutOfGrammarUtterances +
+				     numCorrectInGrammarUtterances)) /
+		((float) numUtterances) * 100f;
+	    System.out.println
+		("   Rejection Accuracy: " + correctPercent + "%");
+	}
+	if (showDetails) {
+	    System.out.println
+		("   Correct OOG: " + numCorrectOutOfGrammarUtterances +
+		 "   False OOG: " + numFalseOutOfGrammarUtterances +
+		 "   Correct IG: " + numCorrectInGrammarUtterances +
+		 "   False IG: " + numFalseInGrammarUtterances);
+	}
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.recognizer.StateListener#statusChanged(edu.cmu.sphinx.recognizer.RecognizerState)
+     */
+    public void statusChanged(RecognizerState status) {
+        if (status.equals(RecognizerState.DEALLOCATED)) {
+	    printStats();
+	}
     }
 }
