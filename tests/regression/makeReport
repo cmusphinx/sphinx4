@@ -13,19 +13,20 @@
 #   2) date
 #   3) time
 #   4) machine
-#   5) testName 
-#   6) who 
-#   7) status
-#   8) audioTime 
-#   9) procTime 
-#   0) words 
-#  11) insertions 
-#  12) deletions 
-#  13) substitutions 
-#  14) sentences 
-#  15) correctSentences 
-#  16) heapSize 
-#  17) loadAverage 
+#   5) machine
+#   6) System
+#   7) who 
+#   8) status
+#   9) audioTime 
+#   10) procTime 
+#   11) words 
+#  12) insertions 
+#  13) deletions 
+#  14) substitutions 
+#  15) sentences 
+#  16) correctSentences 
+#  17) heapSize 
+#  18) loadAverage 
 
 nawk '
 
@@ -35,28 +36,30 @@ BEGIN {
     F_DATE = 2;
     F_TIME = 3;
     F_MACHINE = 4;
-    F_TEST_NAME = 5;
-    F_WHO = 6;
-    F_STATUS = 7;
-    F_AUDIO_TIME = 8;
-    F_PROC_TIME = 9;
-    F_WORDS = 10;
-    F_INSERTIONS = 11;
-    F_DELETIONS = 12;
-    F_SUBSTITUTIONS = 13;
-    F_SENTENCES = 14;
-    F_CORRECT_SENTENCES = 15;
-    F_HEAP_SIZE = 16;
-    F_LOAD_AVERAGE = 17;
+    F_SYSTEM = 5;
+    F_TEST_NAME = 6;
+    F_WHO = 7;
+    F_STATUS = 8;
+    F_AUDIO_TIME = 9;
+    F_PROC_TIME = 10;
+    F_WORDS = 11;
+    F_INSERTIONS = 12;
+    F_DELETIONS = 13;
+    F_SUBSTITUTIONS = 14;
+    F_SENTENCES = 15;
+    F_CORRECT_SENTENCES = 16;
+    F_HEAP_SIZE = 17;
+    F_LOAD_AVERAGE = 18;
 
 }
 
+{ print $F_TEST_NAME }
 $1 == "build" {
     finalBuildRecord = $0;
 }
 $1 == "test" {
-    testCount[$5] = testCount[$5] + 1;
-    testData[$5 testCount[$5]] = $0;
+    testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
+    testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
 }
 
 #####
@@ -171,6 +174,19 @@ function getRunStatus(testName) {
     return data[F_STATUS];
 }
 
+function fmtTime(seconds) {
+    if (seconds == "N/A") {
+	return seconds;
+    }
+    hours = int(seconds / 3600);
+    seconds -= hours * 3600;
+
+    mins = int(seconds / 60);
+    seconds -= mins * 60;
+
+    return sprintf("%02.2d:%02.2d:%02.2d", hours, mins, seconds);
+}
+
 ####
 # Prints summary info
 #
@@ -179,8 +195,8 @@ function printSummaryInfo() {
     print "Host:             " data[4]
     print "Date:             " data[2]
     print "Build Status:     " data[7]
-    print "Build Time:       " data[8] " Secs"
-    print "Run Time:         " data[9] " Secs"
+    print "Build Time:       " fmtTime(data[8])
+    print "Run Time:         " fmtTime(data[9])
     print ""
     print ""
 }
