@@ -35,11 +35,17 @@ import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
+
 import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.linguist.flat.*;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -69,14 +75,10 @@ import java.util.HashSet;
  */
 public class ParallelSimpleLinguist extends FlatLinguist {
 
-    private static final String PROP_PREFIX = 
-        "edu.cmu.sphinx.research.parallel.ParallelSimpleLinguist.";
-
     /**
      * The sphinx property that specifies the height of the token stacks.
      */
-    public static final String PROP_STACK_CAPACITY = 
-        PROP_PREFIX + "tokenStackCapacity";
+    public static final String PROP_STACK_CAPACITY = "tokenStackCapacity";
 
     /**
      * The default value for the property PROP_STACK_CAPACITY, which is 0.
@@ -87,13 +89,17 @@ public class ParallelSimpleLinguist extends FlatLinguist {
      * The sphinx property that specifies the level at which the parallel
      * states tie. Values can be "unit" or "state".
      */
-    public static final String PROP_TIE_LEVEL =
-        PROP_PREFIX + "tieLevel";
+    public static final String PROP_TIE_LEVEL = "tieLevel";
 
     /**
      * The default value for the property PROP_TIE_LEVEL, which is "unit".
      */
     public static final String PROP_TIE_LEVEL_DEFAULT = "unit";
+
+    /**
+     * Property that specifies the acoustic models used.
+     */
+    public static final String PROP_ACOUSTIC_MODELS = "acousticModels";
 
 
     private AcousticModel[] acousticModels;
@@ -103,39 +109,35 @@ public class ParallelSimpleLinguist extends FlatLinguist {
     private String tieLevel;
 
 
-    /**
-     * Creates a tree linguist associated with the given context
+    /*
+     * (non-Javadoc)
      *
-     * @param context        the context to associate this linguist with
-     * @param languageModel  the language model
-     * @param dictionary     the dictionary used
-     * @param grammar        the grammar used
-     * @param models         the acoustic models used
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
      */
-    public void initialize(String context, LanguageModel languageModel,
-			   Dictionary dictionary, Grammar grammar,
-			   AcousticModel[] models) {
-        
-        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-
-        this.tokenStackCapacity = props.getInt
-            (PROP_STACK_CAPACITY, PROP_STACK_CAPACITY_DEFAULT);
-        this.tieLevel = props.getString
-            (PROP_TIE_LEVEL, PROP_TIE_LEVEL_DEFAULT);
-
-        super.initialize(context, languageModel, dictionary, grammar, models);
-	this.acousticModels = models;
-	
-        System.out.println("Finished ParallelSimpleLinguist initialize()");
+    public void register(String name, Registry registry)
+        throws PropertyException {
+        super.register(name, registry);
+        registry.register(PROP_STACK_CAPACITY, PropertyType.INT);
+        registry.register(PROP_TIE_LEVEL, PropertyType.STRING);
+        registry.register(PROP_ACOUSTIC_MODELS, PropertyType.COMPONENT_LIST);
     }
 
-    /**
-     * Sets the acoustic model(s) used.
+
+    /*
+     * (non-Javadoc)
      *
-     * @param models the acoustic models to use
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
-    protected void setAcousticModels(AcousticModel[] models) {
-        this.acousticModels = models;
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        tokenStackCapacity = ps.getInt(PROP_STACK_CAPACITY,
+                                       PROP_STACK_CAPACITY_DEFAULT);
+        tieLevel = ps.getString(PROP_TIE_LEVEL, PROP_TIE_LEVEL_DEFAULT);
+        List modelsList = ps.getComponentList
+            (PROP_ACOUSTIC_MODELS, AcousticModel.class);
+        acousticModels = new AcousticModel[modelsList.size()];
+        modelsList.toArray(acousticModels);
     }
 
 

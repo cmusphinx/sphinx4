@@ -18,6 +18,12 @@ import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
+
 import java.util.Comparator;
 
 /**
@@ -27,40 +33,7 @@ import java.util.Comparator;
  */
 public class CombinedScorePruner extends TokenScorePruner {
 
-    private static final String PROP_PREFIX = 
-    "edu.cmu.sphinx.research.parallel.CombinedScorePruner.";
-
-    private static final String PROP_ABSOLUTE_BEAM_WIDTH =
-    PROP_PREFIX + "absoluteBeamWidth";
-
-    private static final int PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT = 2000;
-
-    private static final String PROP_RELATIVE_BEAM_WIDTH =
-    PROP_PREFIX + "relativeBeamWidth";
-
-    private static final double PROP_RELATIVE_BEAM_WIDTH_DEFAULT = 0;
-    
     private static Comparator tokenComparator = null;
-
-
-    /**
-     * Initializes this Pruner with the given context.
-     *
-     * @param context the context to use
-     */
-    public void initialize(String context) {
-        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        setAbsoluteBeamWidth(props.getInt(PROP_ABSOLUTE_BEAM_WIDTH,
-                                          PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT));
-        System.out.println("CombinedScorePruner abw: " + 
-                           getAbsoluteBeamWidth());
-        LogMath logMath = LogMath.getLogMath(context);
-        double linearRelativeBeamWidth =
-            props.getDouble(PROP_RELATIVE_BEAM_WIDTH,
-                            PROP_RELATIVE_BEAM_WIDTH_DEFAULT);
-        setRelativeBeamWidth
-            ((float) logMath.linearToLog(linearRelativeBeamWidth));
-    }
 
 
     /**

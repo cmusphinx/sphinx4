@@ -27,39 +27,7 @@ import java.util.Comparator;
  */
 public class FeatureScorePruner extends TokenScorePruner {
 
-    private static final String PROP_PREFIX = 
-    "edu.cmu.sphinx.research.parallel.FeatureScorePruner.";
-
-    private static final String PROP_ABSOLUTE_BEAM_WIDTH =
-    PROP_PREFIX + "absoluteBeamWidth";
-
-    private static final int PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT = 2000;
-
-    private static final String PROP_RELATIVE_BEAM_WIDTH =
-    PROP_PREFIX + "relativeBeamWidth";
-
-    private static final double PROP_RELATIVE_BEAM_WIDTH_DEFAULT = 0;
-
     private static Comparator tokenComparator = null;
-
-   
-    /**
-     * Initializes this Pruner with the given context.
-     *
-     * @param context the context to use
-     */
-    public void initialize(String context) {
-        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        setAbsoluteBeamWidth(props.getInt(PROP_ABSOLUTE_BEAM_WIDTH,
-                                          PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT));
-        LogMath logMath = LogMath.getLogMath(context);
-        double linearRelativeBeamWidth =
-            props.getDouble(PROP_RELATIVE_BEAM_WIDTH, 
-                            PROP_RELATIVE_BEAM_WIDTH_DEFAULT);
-        setRelativeBeamWidth
-            ((float) logMath.linearToLog(linearRelativeBeamWidth));
-    }
-
 
     /**
      * Returns the score that we use to compare this ParallelToken with

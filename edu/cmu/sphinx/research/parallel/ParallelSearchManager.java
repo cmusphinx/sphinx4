@@ -13,7 +13,6 @@
 package edu.cmu.sphinx.research.parallel;
 
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
-import edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory;
 
 import edu.cmu.sphinx.result.Result;
 
@@ -21,6 +20,7 @@ import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.scorer.Scoreable;
 
 import edu.cmu.sphinx.decoder.search.ActiveList;
+import edu.cmu.sphinx.decoder.search.ActiveListFactory;
 import edu.cmu.sphinx.decoder.search.SearchManager;
 
 import edu.cmu.sphinx.decoder.pruner.Pruner;
@@ -39,6 +39,14 @@ import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
+
+import java.io.IOException;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,28 +61,14 @@ import java.util.Map;
 public class ParallelSearchManager implements SearchManager {
 
     /**
-     * The sphinx property prefix for all property names of this class.
-     */
-    public static final String PROP_PREFIX =
-	"edu.cmu.sphinx.research.parallel.ParallelSearchManager.";
-
-    /**
      * The sphinx property name for the active list type.
      */
-    public static final String PROP_ACTIVE_LIST_TYPE =
-	PROP_PREFIX + "activeListType";
+    public static final String PROP_ACTIVE_LIST_FACTORY = "activeListFactory";
 
-    /**
-     * The default ActiveList type, which is the SimpleActiveList
-     */
-    public static final String PROP_ACTIVE_LIST_TYPE_DEFAULT =
-        "edu.cmu.sphinx.decoder.search.SimpleActiveList";
-    
     /**
      * The sphinx property name for whether to do feature pruning.
      */
-    public static final String PROP_DO_FEATURE_PRUNING =
-	PROP_PREFIX + "doFeaturePruning";
+    public static final String PROP_DO_FEATURE_PRUNING = "doFeaturePruning";
 
     /**
      * The default value for whether to do feature pruning, which is false.
@@ -84,16 +78,20 @@ public class ParallelSearchManager implements SearchManager {
     /**
      * The sphinx property name for whether to do combine pruning.
      */
-    public static final String PROP_DO_COMBINE_PRUNING =
-	PROP_PREFIX + "doCombinePruning";
+    public static final String PROP_DO_COMBINE_PRUNING = "doCombinePruning";
 
     /**
      * The default value for whether to do combine pruning, which is false.
      */
     public static final boolean PROP_DO_COMBINE_PRUNING_DEFAULT = false;
 
+    /**
+     * The sphinx property for the list of acoustic models to use.
+     */
+    public static final String PROP_ACOUSTIC_MODELS = "acousticModels";
 
-    private SphinxProperties props;
+
+    private String name;
     private Linguist linguist;
     private AcousticScorer scorer;
     private Pruner featureScorePruner;
@@ -101,6 +99,7 @@ public class ParallelSearchManager implements SearchManager {
     private ScoreCombiner featureScoreCombiner;
 
     private int currentFrameNumber;           // the current frame number
+    private ActiveListFactory activeListFactory;
     private ActiveList combinedActiveList;    // ActiveList for common states
     private ActiveList delayedExpansionList;  // for tokens at CombineStates
     private List resultList;
@@ -115,61 +114,91 @@ public class ParallelSearchManager implements SearchManager {
     private boolean doCombinePruning;
 
 
-    /**
-     * Initializes this ParallelSearchManager with the given context,
-     * linguist, scorer, and pruner. Note that the given pruner is unused
-     * in this ParallelSearchManager, since we use the FeatureScorePruner
-     * and the CombinedScorePruner.
-     *
-     * @param context the context to use
-     * @param linguist the Linguist to use
-     * @param scorer the AcousticScorer to use
-     * @param pruner the Pruner to use
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
      */
-    public void initialize(String context, Linguist linguist,
-			   AcousticScorer scorer, Pruner pruner) {
-	this.props = SphinxProperties.getSphinxProperties(context);
-	this.linguist = linguist;
+    public void register(String name, Registry registry)
+        throws PropertyException {
+        this.name = name;
+        registry.register(PROP_ACTIVE_LIST_FACTORY, PropertyType.COMPONENT);
+        registry.register(PROP_DO_FEATURE_PRUNING, PropertyType.BOOLEAN);
+        registry.register(PROP_DO_COMBINE_PRUNING, PropertyType.BOOLEAN);
+    }
+
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        this.linguist = linguist;
 	this.scorer = scorer;
 
-	this.doFeaturePruning = props.getBoolean
+	activeListFactory = (ActiveListFactory) ps.getComponent
+            (PROP_ACTIVE_LIST_FACTORY, ActiveListFactory.class);
+
+	this.doFeaturePruning = ps.getBoolean
 	    (PROP_DO_FEATURE_PRUNING, PROP_DO_FEATURE_PRUNING_DEFAULT);
 
-	this.doCombinePruning = props.getBoolean
+	this.doCombinePruning = ps.getBoolean
 	    (PROP_DO_COMBINE_PRUNING, PROP_DO_COMBINE_PRUNING_DEFAULT);
 
 	if (doFeaturePruning) {
-	    this.featureScorePruner = new FeatureScorePruner();
-	    this.featureScorePruner.initialize(context);
-	}
+	    featureScorePruner = new FeatureScorePruner();
+            featureScorePruner.newProperties(ps);
+        }
 	if (doCombinePruning) {
-	    this.combinedScorePruner = new CombinedScorePruner();
-	    this.combinedScorePruner.initialize(context);
+	    combinedScorePruner = new CombinedScorePruner();
+	    combinedScorePruner.newProperties(ps);
 	}
 	
-	this.featureScoreCombiner = new FeatureScoreCombiner();
+        featureScoreCombiner = new FeatureScoreCombiner();
 
-	this.scoreTimer = Timer.getTimer(context, "Score");
-	this.pruneTimer = Timer.getTimer(context, "Prune");
-	this.growTimer = Timer.getTimer(context, "Grow");
-
+        scoreTimer = Timer.getTimer("Score");
+        pruneTimer = Timer.getTimer("Prune");
+        growTimer = Timer.getTimer("Grow");
+        
         bestTokenMap = new HashMap();
-	        
+        
         // initialize the FeatureStreams for the separate models
-        Collection models = AcousticModelFactory.getNames(props);
-        assert (models.size() > 0);
+        List models = ps.getComponentList
+            (PROP_ACOUSTIC_MODELS, AcousticModel.class);
 
 	float defaultEta = 1.f/models.size();
 
         for (Iterator i = models.iterator(); i.hasNext();) {
             String modelName = (String) i.next();
-            float eta = props.getFloat(PROP_PREFIX + modelName + ".eta",
-				       defaultEta);
+            float eta = ps.getFloat(modelName + ".eta",
+                                    defaultEta);
             FeatureStream stream = 
                 FeatureStream.getFeatureStream(modelName);
             stream.setEta(eta);
             System.out.println("Eta for " + modelName + " is: " + eta);
         }
+    }
+
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
+     */
+    public void allocate() throws IOException {
+        linguist.allocate();
+        featureScorePruner.allocate();
+        combinedScorePruner.allocate();
+        scorer.allocate();
+    }
+    
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see edu.cmu.sphinx.util.props.Configurable#getName()
+     */
+    public String getName() {
+        return name;
     }
 
 
@@ -189,16 +218,16 @@ public class ParallelSearchManager implements SearchManager {
      * Prepares the SearchManager for recognition.  This method must
      * be called before <code> recognize </code> is called.
      */
-    public void start() {
+    public void startRecognition() {
 	currentFrameNumber = 0;
-	linguist.start();
+	linguist.startRecognition();
         if (doFeaturePruning) {
-            featureScorePruner.start();
+            featureScorePruner.startRecognition();
 	}
 	if (doCombinePruning) {
-            combinedScorePruner.start();
+            combinedScorePruner.startRecognition();
         }
-	scorer.start();
+	scorer.startRecognition();
 	createInitialLists();
     }
 
@@ -210,16 +239,8 @@ public class ParallelSearchManager implements SearchManager {
      */
     private void createInitialLists() {
 
-	String activeListName =
-	    props.getString(PROP_ACTIVE_LIST_TYPE, 
-                            PROP_ACTIVE_LIST_TYPE_DEFAULT);
-	    
-	try {
-            // initialize the combined ActiveList
-	    Class activeListClass = Class.forName(activeListName);
-	    
-	    combinedActiveList = getActiveList(activeListClass, props);
-            delayedExpansionList = getActiveList(activeListClass, props);
+	    combinedActiveList = activeListFactory.newInstance();
+            delayedExpansionList = activeListFactory.newInstance();
 
 	    SentenceHMMState firstState = (SentenceHMMState)
                 linguist.getSearchGraph().getInitialState();
@@ -233,7 +254,7 @@ public class ParallelSearchManager implements SearchManager {
 
             for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
                 FeatureStream stream = (FeatureStream) i.next();
-                stream.setActiveList(getActiveList(activeListClass, props));
+                stream.setActiveList(activeListFactory.newInstance());
 
                 // add the first ParallelTokens to the CombineToken
                 ParallelToken token = new ParallelToken
@@ -248,7 +269,7 @@ public class ParallelSearchManager implements SearchManager {
 	    calculateCombinedScore(firstToken);
             growCombineToken(firstToken);
             printActiveLists();
-            
+            /*
 	} catch (ClassNotFoundException cnfe) {
 	    throw new Error("ActiveList class, " + activeListName +
 			    "not found");
@@ -256,24 +277,9 @@ public class ParallelSearchManager implements SearchManager {
 	    throw new Error("Cannot access " + activeListName);
 	} catch (InstantiationException ise) {
 	    throw new Error("Cannot instantiate " + activeListName);
-	}
+            } */
     }
 
-    /**
-     * Returns an ActiveList of the given class with the given properties.
-     *
-     * @param activeListClass the ActiveList class
-     * @param props the properties of the Active List
-     *
-     * @return a new ActiveList
-     */
-    private ActiveList getActiveList(Class activeListClass, 
-                                     SphinxProperties props) 
-        throws InstantiationException, IllegalAccessException {
-        ActiveList activeList = (ActiveList) activeListClass.newInstance();
-        activeList.setProperties(props);
-        return activeList;
-    }
 
     /**
      * Performs recognition. Processes no more than the given number
@@ -398,8 +404,8 @@ public class ParallelSearchManager implements SearchManager {
         printActiveLists();
 
         resultList = new LinkedList();
-        combinedActiveList = combinedActiveList.createNew();
-	delayedExpansionList = delayedExpansionList.createNew();
+        combinedActiveList = activeListFactory.newInstance();
+	delayedExpansionList = activeListFactory.newInstance();
 
         // grow each ActiveList (we have one ActiveList for each stream)
 	for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
@@ -407,7 +413,7 @@ public class ParallelSearchManager implements SearchManager {
 
             // create a new ActiveList for the next frame
             ActiveList oldActiveList = stream.getActiveList();
-            stream.setActiveList(oldActiveList.createNew());
+            stream.setActiveList(activeListFactory.newInstance());
             
 	    growActiveList(oldActiveList);
 	}
@@ -788,16 +794,29 @@ public class ParallelSearchManager implements SearchManager {
      * Performs post-recognition cleanup. This method should be called
      * after recognize returns a final result.
      */
-    public void stop() {
-	scorer.stop();
+    public void stopRecognition() {
+	scorer.stopRecognition();
         if (doFeaturePruning) {
-            featureScorePruner.stop();
+            featureScorePruner.stopRecognition();
 	}
 	if (doCombinePruning) {
-            combinedScorePruner.stop();
+            combinedScorePruner.stopRecognition();
         }
-	linguist.stop();
+	linguist.stopRecognition();
         bestTokenMap = new HashMap();
     }
+
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see edu.cmu.sphinx.decoder.search.SearchManager#deallocate()
+     */
+    public void deallocate() {
+        scorer.deallocate();
+        featureScorePruner.deallocate();
+        combinedScorePruner.deallocate();
+        linguist.deallocate();
+    }    
 }
 

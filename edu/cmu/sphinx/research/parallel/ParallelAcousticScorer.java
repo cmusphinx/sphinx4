@@ -17,7 +17,6 @@ import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.frontend.Signal;
 
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
@@ -25,10 +24,16 @@ import edu.cmu.sphinx.decoder.scorer.Scoreable;
 
 import edu.cmu.sphinx.decoder.search.Token;
 
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import java.io.IOException;
 
@@ -39,31 +44,39 @@ import java.io.IOException;
  */
 public class ParallelAcousticScorer implements AcousticScorer {
 
-    private SphinxProperties props;
-
-
     /**
-     * Initializes this SimpleAcousticScorer with the given
-     * context and FrontEnd.
+     * Property that defines the frontends to retrieve features from
      *
-     * @param context the context to use
-     * @param frontend the FrontEnd to use
      */
-    public void initialize(String context, FrontEnd frontend) {
-        this.props = SphinxProperties.getSphinxProperties(context);
+    public static String PROP_FRONTENDS = "frontends";
+
+    private String name;
+    private Map frontEnds;
+
+
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry)
+        throws PropertyException {
+        this.name = name;
+        registry.register(PROP_FRONTENDS, PropertyType.COMPONENT_LIST);
     }
 
-    /**
-     * Starts the scorer
+
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
-    public void start() {
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        frontEnds = new HashMap();
+        List frontEndList = (List) ps.getComponent
+            (PROP_FRONTENDS, FrontEnd.class);
+        for (Iterator i = frontEndList.iterator(); i.hasNext(); ) {
+            FrontEnd fe = (FrontEnd) i.next();
+            frontEnds.put(fe.getName(), fe);
+        }
     }
 
-    /**
-     * Performs post-recognition cleanup. 
-     */
-    public void stop() {
-    }
 
     /**
      * Scores the given set of Tokens. All Tokens in the given
@@ -87,7 +100,7 @@ public class ParallelAcousticScorer implements AcousticScorer {
         assert modelName != null;
 	
 	try {
-	    FrontEnd frontEnd = FrontEndFactory.getFrontEnd(props, modelName);
+	    FrontEnd frontEnd = (FrontEnd) frontEnds.get(modelName);
 	    Data data = frontEnd.getData();
 	 
 	    if (data == null) {
@@ -120,9 +133,6 @@ public class ParallelAcousticScorer implements AcousticScorer {
                 }
 	    }
 	    return bestScoreable;
-	} catch (InstantiationException ie) {
-	    ie.printStackTrace();
-	    return null;
 	} catch (DataProcessingException dpe) {
             dpe.printStackTrace();
             return null;
@@ -147,4 +157,40 @@ public class ParallelAcousticScorer implements AcousticScorer {
 	}
 	return modelName;
     }
+
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see edu.cmu.sphinx.util.props.Configurable#getName()
+     */
+    public String getName() {
+        return name;
+    }
+
+
+    /**
+     * Allocates resources for this scorer
+     *
+     */
+    public void allocate() throws IOException {}
+
+
+    /**
+     * Deallocates resouces for this scorer
+     *
+     */
+    public void deallocate() {}
+
+
+    /**
+     * starts the scorer
+     */
+    public void startRecognition() {}
+
+
+    /**
+     * stops the scorer
+     */
+    public void stopRecognition() {}
 }
