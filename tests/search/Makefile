@@ -43,9 +43,6 @@ FSTGrammarTestSmall: all
 -Dedu.cmu.sphinx.search.FSTGrammar.path=/lab/speech/sphinx4/data/fst/digits.fst\
     tests.search.FSTGrammarTest FSTGrammarTest.props
 
-heapActiveListTest: all
-	$(JAVA_CMD) tests.search.HeapActiveListTest
-
 
 #################################################################
 # loads a large model. 
