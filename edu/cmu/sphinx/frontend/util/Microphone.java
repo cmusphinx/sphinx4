@@ -118,6 +118,7 @@ public class Microphone extends BaseDataProcessor {
      * Parameters for audioFormat
      */
     private AudioFormat audioFormat;
+    private AudioFormat nativeAudioFormat;
     private AudioFormat finalAudioFormat;
     private int sampleRate;
     private int sampleSizeInBytes;
@@ -151,6 +152,7 @@ public class Microphone extends BaseDataProcessor {
 
     private boolean closeBetweenUtterances = true;
     private boolean keepDataReference = true;
+    private DataLine.Info info;
 
     private Logger logger;
     
@@ -183,7 +185,7 @@ public class Microphone extends BaseDataProcessor {
         sampleRate = ps.getInt(PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
         
 	closeBetweenUtterances = ps.getBoolean
-            (PROP_CLOSE_BETWEEN_UTTERANCES, getCloseBetweenUtterances());
+            (PROP_CLOSE_BETWEEN_UTTERANCES, true);
         
         sampleSizeInBytes = ps.getInt
             (PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT)/8;
@@ -197,22 +199,6 @@ public class Microphone extends BaseDataProcessor {
             (PROP_KEEP_LAST_AUDIO, PROP_KEEP_LAST_AUDIO_DEFAULT);
     }
 
-
-    /**
-     * Returns whether the audio line should be closed between utterances.
-     * It should not be closed if the underlying operating system is Linux.
-     *
-     * @return whether the audio line should be closed between utterances
-     */
-    private final static boolean getCloseBetweenUtterances() {
-	return true;
-	/*
-        return (System.getProperty("os.name").toLowerCase().indexOf("linux")
-                == -1);
-	*/
-    }
-
-
     /**
      * Constructs a Microphone with the given InputStream.
      *
@@ -220,11 +206,104 @@ public class Microphone extends BaseDataProcessor {
      */
     public void initialize() {
         super.initialize();
-        audioFormat = new AudioFormat
-            ((float) sampleRate, sampleSizeInBytes * 8, 
-             channels, signed, bigEndian);
+
+        audioFormat = new AudioFormat((float) sampleRate, 
+                sampleSizeInBytes * 8, channels, signed, bigEndian);
+
 	finalAudioFormat = audioFormat;
         audioList = new DataList();
+        nativeAudioFormat = null;
+
+        info = new DataLine.Info(TargetDataLine.class, audioFormat);
+        if (!AudioSystem.isLineSupported(info)) {
+            logger.info(audioFormat + " not supported");
+            nativeAudioFormat = getNativeAudioFormat(audioFormat);
+            
+            if (nativeAudioFormat == null) {
+                logger.severe("couldn't find suitable target audio format " +
+                              "for conversion");
+            } else {
+                info = new DataLine.Info(TargetDataLine.class, 
+                        nativeAudioFormat);
+                doConversion = true;
+            }
+        } else {
+            doConversion = false;
+        }
+
+        // Obtain and open the line and stream.
+        try {
+            audioLine = (TargetDataLine) AudioSystem.getLine(info);
+            finalAudioFormat = info.getFormats()[0];
+        } catch (LineUnavailableException e) {
+            logger.severe("microphone unavailable " + e.getMessage());
+        }
+    }
+
+    /**
+     * Opens the audio capturing device so that it will be ready
+     * for capturing audio. Attempts to create a converter if the
+     * requested audio format is not directly available.
+     *
+     * @return true if the audio capturing device is opened successfully;
+     *     false otherwise
+     */
+    private boolean open() {
+        if (audioLine != null) {
+            if (!audioLine.isOpen()) {
+                if (doConversion) {
+                    audioStream = getConvertingStream();
+                } else {
+                    audioStream = new AudioInputStream(audioLine);
+                }
+
+                /* Set the frame size depending on the sample rate. */
+                frameSizeInBytes = sampleSizeInBytes *
+                    (int) (((float) msecPerRead) / 1000.f * 
+                           ((float) audioStream.getFormat().getSampleRate()));
+                if (frameSizeInBytes % 2 == 1) {
+                    frameSizeInBytes++;
+                }
+                logger.info("Frame size: " + frameSizeInBytes + " bytes");
+
+                /* open the audio line */
+                logger.info("open");
+                try {
+                    audioLine.open(finalAudioFormat, audioBufferSize);
+                    return true;
+                } catch (LineUnavailableException e) {
+                    logger.severe("Can't open microphine " + e.getMessage());
+                    return false;
+                }
+            } 
+            return true;
+        } else {
+            logger.severe("Can't find microphone");
+            return false;
+        }
+    }
+
+    /**
+     * Gets a stream that converts from the natively supprted format
+     * to the desired format
+     *
+     * @return an audio stream of the desired format
+     */
+    private AudioInputStream getConvertingStream() {
+        AudioInputStream convertingStream = null;
+        try {
+            convertingStream  = AudioSystem.getAudioInputStream
+                    (audioFormat, new AudioInputStream(audioLine));
+            logger.info ("Converting from " + nativeAudioFormat.getSampleRate()
+                        + "Hz to " + audioFormat.getSampleRate() + "Hz");
+        } catch (IllegalArgumentException e) {
+            logger.info
+                ("Using native format: Cannot convert from " +
+                 nativeAudioFormat.getSampleRate() + "Hz to " + 
+                 audioFormat.getSampleRate() + "Hz");
+            convertingStream = nativelySupportedStream;
+        }
+        return convertingStream;
     }
 
 
@@ -260,9 +339,7 @@ public class Microphone extends BaseDataProcessor {
 	if (recording) {
 	    return false;
 	}
-        if (audioLine == null) {
-	    open();
-	}
+        open();
 	utteranceEndReached = false;
 	recording = true;
 	if (audioLine.isRunning()) {
@@ -279,8 +356,8 @@ public class Microphone extends BaseDataProcessor {
      */
     public synchronized void stopRecording() {
         if (audioLine != null) {
-	    audioLine.stop();
             recording = false;
+	    audioLine.stop();
         }
     }
 
@@ -319,8 +396,9 @@ public class Microphone extends BaseDataProcessor {
 		    }
 		    audioList.add(data);
 		}
+                audioStream.close();
 	    } catch (IOException ioe) {
-		ioe.printStackTrace();
+                logger.warning("IO Exception " + ioe.getMessage());
 	    }
 	    
 	    long duration = (long)
@@ -329,27 +407,7 @@ public class Microphone extends BaseDataProcessor {
 	    
 	    audioList.add(new DataEndSignal(duration));
 	    logger.info("DataEndSignal ended");
-
-	    if (closeBetweenUtterances) {
-		closeAudioLine();
-	    }
 	    logger.info("stopped recording");	    
-	}
-
-	private void closeAudioLine() {
-	    audioLine.close();
-	    logger.info("Audio line closed.");
-	    try {
-		audioStream.close();
-		    logger.info("Audio stream closed.");
-		    if (doConversion) {
-			nativelySupportedStream.close();
-			logger.info("Native stream closed.");
-		    }                        
-	    } catch(IOException e) {
-		logger.warning("IOException closing audio streams");
-	    }
-	    audioLine = null;
 	}
     }
 
@@ -359,33 +417,26 @@ public class Microphone extends BaseDataProcessor {
      *
      * @return an Data object containing the audio data
      */
-    private Data readData(Utterance utterance) {
+    private Data readData(Utterance utterance) throws IOException {
         // Read the next chunk of data from the TargetDataLine.
         byte[] data = new byte[frameSizeInBytes];
         long collectTime = System.currentTimeMillis();
         long firstSampleNumber = totalSamplesRead;
 
-        try {
-            int numBytesRead = audioStream.read(data, 0, data.length);
-            logger.info("Read " + numBytesRead + " bytes from audio stream.");
-	    if (numBytesRead <= 0) {
-		return null;
-	    }
-            totalSamplesRead += (numBytesRead / sampleSizeInBytes);
-
-            if (numBytesRead != frameSizeInBytes) {
-                numBytesRead = (numBytesRead % 2 == 0) ?
-                    numBytesRead + 2 : numBytesRead + 3;
-                
-                byte[] shrinked = new byte[numBytesRead];
-                System.arraycopy(data, 0, shrinked, 0, numBytesRead);
-                data = shrinked;
-            }
-        } catch(IOException e) {
-            audioLine.stop();
-            audioLine = null;
-            e.printStackTrace();
+        int numBytesRead = audioStream.read(data, 0, data.length);
+        logger.info("Read " + numBytesRead + " bytes from audio stream.");
+        if (numBytesRead <= 0) {
             return null;
+        }
+        totalSamplesRead += (numBytesRead / sampleSizeInBytes);
+
+        if (numBytesRead != frameSizeInBytes) {
+            numBytesRead = (numBytesRead % 2 == 0) ?
+                numBytesRead + 2 : numBytesRead + 3;
+            
+            byte[] shrinked = new byte[numBytesRead];
+            System.arraycopy(data, 0, shrinked, 0, numBytesRead);
+            data = shrinked;
         }
 
         if (keepDataReference) {
@@ -446,82 +497,6 @@ public class Microphone extends BaseDataProcessor {
         return nativeFormat;
     }
 
-    /**
-     * Opens the audio capturing device so that it will be ready
-     * for capturing audio. Attempts to create a converter if the
-     * requested audio format is not directly available.
-     *
-     * @return true if the audio capturing device is opened successfully;
-     *     false otherwise
-     */
-    private boolean open() {
-	if (audioLine != null) {
-	    return true;
-	}
-
-        DataLine.Info info = new DataLine.Info
-	    (TargetDataLine.class, audioFormat);
-
-        AudioFormat nativeFormat = null;        
-        if (!AudioSystem.isLineSupported(info)) {
-            logger.info(audioFormat + " not supported");
-                        
-            nativeFormat = getNativeAudioFormat(audioFormat);
-            
-            if (nativeFormat == null) {
-                logger.severe("couldn't find suitable target audio format " +
-                              "for conversion");
-                return false;
-            } else {
-                info = new DataLine.Info(TargetDataLine.class, nativeFormat);
-                doConversion = true;
-            }
-        } else {
-            doConversion = false;
-        }
-
-        // Obtain and open the line and stream.
-        try {
-            audioLine = (TargetDataLine) AudioSystem.getLine(info);
-            if (doConversion) {
-                try {
-                    nativelySupportedStream = new AudioInputStream(audioLine);
-                    audioStream = AudioSystem.getAudioInputStream
-                        (audioFormat, nativelySupportedStream);
-                    logger.info
-                        ("Converting from " + nativeFormat.getSampleRate() + 
-                         "Hz to " + audioFormat.getSampleRate() + "Hz");
-                } catch (IllegalArgumentException e) {
-                    logger.info
-                        ("Using native format: Cannot convert from " +
-                         nativeFormat.getSampleRate() + "Hz to " + 
-                         audioFormat.getSampleRate() + "Hz");
-                    audioStream = nativelySupportedStream;
-                }
-            } else {
-                audioStream = new AudioInputStream(audioLine);
-            }
-
-            /* Set the frame size depending on the sample rate. */
-            frameSizeInBytes = sampleSizeInBytes *
-                (int) (((float) msecPerRead)/1000.f * 
-                       ((float) audioStream.getFormat().getSampleRate()));
-            if (frameSizeInBytes % 2 == 1) {
-                frameSizeInBytes++;
-            }
-            logger.info("Frame size: " + frameSizeInBytes + " bytes");
-
-            /* open the audio line */
-	    finalAudioFormat = info.getFormats()[0];
-            audioLine.open(finalAudioFormat, audioBufferSize);
-
-            return true;
-        } catch (LineUnavailableException ex) {
-            audioLine = null;
-            ex.printStackTrace();
-            return false;
-        }
-    }
 
 
     /**
