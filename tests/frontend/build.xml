@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="none" name="Front End Tests">
+
+<description>
+This file is used to run the front end tests.
+
+NOTE:  Before running the tests, you must have already built 
+       the sphinx-4 sources by typing "ant" in the top level 
+       sphinx4 directory.
+</description>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Properties common to all tests                         * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <property name="top_dir"		value="../.."/>
+    <path id="libs">
+        <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
+    </path>
+    <property name="build_dir"		value="${top_dir}/bld"/>
+    <property name="classes_dir"	value="${top_dir}/classes"/>
+    <property name="lib_dir"            value="${build_dir}/lib"/>
+
+    <property name="skip"               value="0"/>
+    <property name="logger_props"       value=""/>  
+
+    <property name="initial_heap_size"  value="128m"/>
+    <property name="maximum_heap_size"  value="128m"/>
+    <property name="jit"                value="server"/>
+
+    
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs all front-end module tests                        * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="alltests"
+	    description="Runs all front-end module tests">
+	    <antcall target="preemphasizer"/>
+	    <antcall target="hammingWindow"/>
+	    <antcall target="spectrumAnalyzer"/>
+	    <antcall target="melspectrum"/>
+	    <antcall target="melcepstrum"/>
+	    <antcall target="liveCMN"/>
+	    <antcall target="featureExtractor"/>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * chmod +x testFrontEnd.sh                               * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="chmodTestFrontEnd"
+	    description="Make the testFrontEnd.sh script executable.">
+	    <exec executable="chmod">
+	    <arg line="+x testFrontEnd.sh"/>
+	    </exec>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * preemphasizer test                                     * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="preemphasizer"
+	    description="Tests the Preemphasizer">
+	    <antcall target="chmodTestFrontEnd"/>
+	    <exec executable="testFrontEnd.sh">
+	    <arg line="preemphasis PreemphasizerTest"/>
+	    </exec>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Hamming Windower test                                  * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="hammingWindow"
+	    description="Tests the Hamming windower">
+	    <antcall target="chmodTestFrontEnd"/>
+	    <exec executable="testFrontEnd.sh">
+	    <arg line="hammingWindow HammingWindowerTest"/>
+	    </exec>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Spectrum Analyzer test                                 * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="spectrumAnalyzer"
+	    description="Tests the Spectrum Analyzer">
+	    <antcall target="chmodTestFrontEnd"/>
+	    <exec executable="testFrontEnd.sh">
+	    <arg line="spectrum SpectrumAnalyzerTest"/>
+	    </exec>
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * MelFilterbank test                                     * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="melspectrum"
+	    description="Tests the MelFilterbank">
+	    <antcall target="chmodTestFrontEnd"/>
+	    <exec executable="testFrontEnd.sh">
+	    <arg line="melspectrum MelFilterbankTest"/>
+	    </exec>
+    </target>
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * -->
+    <!-- * MelCepstrumProducer test                               * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="melcepstrum"
+            description="Tests the MelCepstrumProducer">
+            <antcall target="chmodTestFrontEnd"/>
+            <exec executable="testFrontEnd.sh">
+            <arg line="melcepstrum MelCepstrumTest"/>
+	    </exec>
+    </target>
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * -->
+    <!-- * Live CMN test                                          * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="liveCMN"
+            description="Tests the Live CMN">
+            <antcall target="chmodTestFrontEnd"/>
+            <exec executable="testFrontEnd.sh">
+            <arg line="cmn CMNTest"/>
+	    </exec>
+    </target>
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * -->
+    <!-- * DeltasFeatureExtractor test                            * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="featureExtractor"
+            description="Tests the FeatureExtractor">
+            <antcall target="chmodTestFrontEnd"/>
+            <exec executable="testFrontEnd.sh">
+            <arg line="features FeatureExtractorTest"/>
+	    </exec>
+    </target>
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * -->
+    <!-- * Converts audio into a binary cepstra file              * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="dumpBinaryCepstra"
+            description="Converts audio into a binary cepstra file">
+	    <java classpath="${classes_dir}"
+		  classname="tests.frontend.CepstrumFileDumper">
+		  <arg value="cepstra_dump.props"/>
+		  <arg value="${inputFile}"/>
+		  <arg value="${outputFile}"/>
+		  <arg value="binary"/>
+	    </java>
+    </target>
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * -->
+    <!-- * Converts audio into an ascii cepstra file              * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="dumpAsciiCepstra"
+            description="Converts audio into an ASCII cepstra file">
+	    <java classpath="${classes_dir}"
+		  classname="tests.frontend.CepstrumFileDumper">
+		  <arg value="cepstra_dump.props"/>
+		  <arg value="${inputFile}"/>
+		  <arg value="${outputFile}"/>
+		  <arg value="ascii"/>
+	    </java>
+    </target>
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * -->
+    <!-- * Converts a list of audio files into binary cepstra     * -->
+    <!-- * files.                                                 * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="batchDumpBinaryCepstra"
+            description="Converts a list of audio files into binary cepstra.">
+	    <java classpath="${classes_dir}"
+		  classname="tests.frontend.BatchWaveToCepstrum">
+		  <arg value="cepstra_dump.props"/>
+		  <arg value="/lab/speech/sphinx4/data/medialab/mit.batch.2"/>
+		  <arg value="outDir"/>
+		  <arg value="mfcc"/>
+		  <arg value="binary"/>
+	    </java>
+    </target>
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * -->
+    <!-- * Runs the parallel front end test.                      * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="parallelFrontEnd"
+            description="Runs the parallel front end test.">
+	    <java classpath="${classes_dir}"
+		  classname="tests.frontend.ParallelFrontEndTest">
+		  <arg value="ParallelFrontEnd"/>
+		  <arg value="parallel-tidigits.props"/>
+		  <arg value="19990601-114739-00000001.raw"/>
+	    </java>
+    </target>
+
+</project>

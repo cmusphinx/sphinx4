@@ -156,9 +156,10 @@ dump_ascii_cepstra: all
 
 batch_dump_binary_cepstra: all
 	$(JAVA_CMD) \
-	tests.frontend.BatchCepstrumToWave \
+	tests.frontend.BatchWaveToCepstrum \
 	cepstra_dump.props \
-	/lab/speech/sphinx4/data/medialab/speech1/session2/mfcc \
+	/lab/speech/sphinx4/data/medialab/mit.batch.2 \
+	outDir \
 	mfcc \
 	binary
 
