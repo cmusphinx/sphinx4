@@ -69,7 +69,9 @@ public class Node {
     }
 
     /**
-     * Get a unique ID for a new Node.  Used when creating a Lattice from a .LAT file
+     * Get a unique ID for a new Node.
+     * Used when creating a Lattice from a .LAT file
+     *
      * @return
      */
     protected static String getNextNodeId() {
@@ -79,7 +81,7 @@ public class Node {
     /**
      * Test if a node has an Edge to a Node
      * @param n
-     * @return
+     * @return unique Node ID
      */
     protected boolean hasEdgeToNode(Node n) {
         for( Iterator j=toEdges.iterator(); j.hasNext(); ) {
@@ -95,7 +97,7 @@ public class Node {
      * Test is a Node has an Edge from a Node
      *
      * @param n
-     * @return
+     * @return true if this node has an Edge from n
      */
     protected boolean hasEdgeFromNode(Node n) {
         for( Iterator j=fromEdges.iterator(); j.hasNext(); ) {
@@ -111,7 +113,7 @@ public class Node {
      * Test if a Node has all Edges from the same Nodes and another Node.
      *
      * @param n
-     * @return
+     * @return true if this Node has Edges from the same Nodes as n
      */
     protected boolean hasEquivalentFromEdges(Node n) {
         if( fromEdges.size() != n.getFromEdges().size() ) {
@@ -131,7 +133,7 @@ public class Node {
      * Test if a Node has all Edges to the same Nodes and another Node.
      *
      * @param n
-     * @return
+     * @return true if this Node has all Edges to the sames Nodes as n
      */
     public boolean hasEquivalentToEdges(Node n) {
         if( toEdges.size() != n.getToEdges().size() ) {
@@ -150,7 +152,7 @@ public class Node {
     /**
      * Get the Edges from this Node
      *
-     * @return
+     * @return Edges from this Node
      */
     public Collection getFromEdges() {
         return fromEdges;
@@ -159,7 +161,7 @@ public class Node {
     /**
      * Get the Edges to this Node
      *
-     * @return
+     * @return Edges to this Node
      */
     public Collection getToEdges() {
         return toEdges;
@@ -202,9 +204,9 @@ public class Node {
     }
 
     /**
-     * Get this unique ID associated with this Node
+     * Get the ID associated with this Node
      *
-     * @return
+     * @return the ID
      */
     public String getId() {
         return id;
@@ -213,7 +215,7 @@ public class Node {
     /**
      * Get the word associated with this Node
      *
-     * @return
+     * @return the word
      */
     public String getWord() {
         return word;
@@ -222,7 +224,7 @@ public class Node {
     /**
      * Get the time when the word began
      *
-     * @return
+     * @return the begin time
      */
     public int getBeginTime() {
         return beginTime;
@@ -231,7 +233,7 @@ public class Node {
     /**
      * Get the time when the word ends
      *
-     * @return
+     * @return the end time
      */
     public int getEndTime() {
         return endTime;
@@ -248,7 +250,8 @@ public class Node {
      * @throws IOException
      */
     void dumpAISee(FileWriter f) throws IOException {
-        f.write( "node: { title: \"" + id + "\" label: \"" + getWord() + "\" }\n" );
+        f.write( "node: { title: \"" + id + "\" label: \""
+                + getWord() + "\" }\n" );
     }
 
     /**
@@ -270,6 +273,6 @@ public class Node {
         String id = tokens.nextToken();
         String label = tokens.nextToken();
 
-        Node node = lattice.addNode(id,label,0,0);
+        lattice.addNode(id,label,0,0);
     }
 }

@@ -21,7 +21,8 @@ import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
 /**
- * Edges are part of Lattices.  They connect Nodes, and contain the score associated with that sequence.
+ * Edges are part of Lattices.  They connect Nodes, and contain the score
+ * associated with that sequence.
  */
 public class Edge {
     protected double acousticScore;
@@ -30,13 +31,16 @@ public class Edge {
     protected Node toNode;
 
     /**
-     * Create an Edge from fromNode to toNode with acoustic and Language Model scores.
+     * Create an Edge from fromNode to toNode with acoustic and
+     * Language Model scores.
+     *
      * @param fromNode
      * @param toNode
      * @param acousticScore
      * @param lmScore
      */
-    protected Edge( Node fromNode, Node toNode, double acousticScore, double lmScore ) {
+    protected Edge( Node fromNode, Node toNode,
+                    double acousticScore, double lmScore ) {
         this.acousticScore = acousticScore;
         this.lmScore = lmScore;
         this.fromNode = fromNode;
@@ -44,7 +48,8 @@ public class Edge {
     }
 
     public String toString() {
-        return "Edge(" + fromNode + "-->" + toNode + "[" + acousticScore + "," + lmScore + "])";
+        return "Edge(" + fromNode + "-->" + toNode + "[" + acousticScore
+                + "," + lmScore + "])";
     }
 
     /**
@@ -77,7 +82,8 @@ public class Edge {
      * @throws IOException
      */
     void dump(PrintWriter f) throws IOException {
-        f.println( "edge: " + fromNode.getId() + " " + toNode.getId() + " " + acousticScore + " " + lmScore );
+        f.println( "edge: " + fromNode.getId() + " " + toNode.getId() + " "
+                    + acousticScore + " " + lmScore );
     }
 
     /**
@@ -86,7 +92,8 @@ public class Edge {
      * @throws IOException
      */
     void dumpAISee(FileWriter f) throws IOException {
-        f.write( "edge: { sourcename: \"" + fromNode.getId() + "\" targetname: \"" + toNode.getId() + "\" }\n" );
+        f.write( "edge: { sourcename: \"" + fromNode.getId()
+                + "\" targetname: \"" + toNode.getId() + "\" }\n" );
     }
 
     /**

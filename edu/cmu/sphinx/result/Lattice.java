@@ -20,12 +20,15 @@ import java.util.*;
 import java.io.*;
 
 /**
- * Provides recognition lattice results. Lattices are created from Results which can be partial or final.
+ * Provides recognition lattice results. Lattices are created from Results
+ * which can be partial or final.
  *
- * Lattices describe all theories considered by the Recognizer that have not been pruned out.  Lattices
- * are a directed graph containing Nodes and Edges.  A Node that correponda to a theory that a word was
- * spoken over a particular period of time.  An Edge that corresponds to the score of one word following another.
- * The usual result transcript is the sequence of Nodes though the Lattice with the best scoring path.
+ * Lattices describe all theories considered by the Recognizer that have not
+ * been pruned out.  Lattices are a directed graph containing Nodes and Edges.
+ * A Node that correponda to a theory that a word was spoken over a particular
+ * period of time.  An Edge that corresponds to the score of one word following
+ * another.  The usual result transcript is the sequence of Nodes though the
+ * Lattice with the best scoring path.
  *
  * Lattices are a useful tool for analyzing "alternate results".
  *
@@ -53,8 +56,8 @@ public class Lattice {
     /**
      * Create a Lattice from a Result.
      *
-     * The Lattice is created from the Token tree referenced by the Result.  The Lattice is
-     * then optimized to all collapse equivalent paths.
+     * The Lattice is created from the Token tree referenced by the Result.
+     * The Lattice is then optimized to all collapse equivalent paths.
      *
      * @param result
      */
@@ -65,9 +68,11 @@ public class Lattice {
         Node thisNode;
         double thisAcousticScore=0.0;
         double thisLMScore=0.0;
-        for( Iterator it = result.getResultTokens().iterator(); it.hasNext(); ) {
+        for( Iterator it=result.getResultTokens().iterator(); it.hasNext(); ) {
             thisNode=terminalNode;
-            for( Token token = (Token)(it.next()); token != null; token = token.getPredecessor() ) {
+            for( Token token = (Token)(it.next());
+                 token != null;
+                 token = token.getPredecessor() ) {
                 if( token.getSentenceHMMState() instanceof WordState ) {
                     Node newNode;
                     if( hasNode(token) ) {
@@ -78,11 +83,11 @@ public class Lattice {
                     }
                     thisAcousticScore = token.getScore();
                     thisLMScore = 0.0f;
-                    Edge thisEdge = addEdge( newNode,thisNode,thisAcousticScore,thisLMScore );
+                    addEdge( newNode,thisNode,thisAcousticScore,thisLMScore );
                     thisNode = newNode;
                 }
             }
-            Edge edge = addEdge(initialNode,thisNode,thisAcousticScore,thisLMScore);
+            addEdge(initialNode,thisNode,thisAcousticScore,thisLMScore);
         }
     }
 
@@ -98,7 +103,7 @@ public class Lattice {
             System.err.println( "Loading from " + fileName );
 
             // load the nodes
-            LineNumberReader in = new LineNumberReader( new FileReader( fileName ) );
+            LineNumberReader in=new LineNumberReader(new FileReader(fileName));
             String line;
             while( (line=in.readLine()) != null ) {
                 StringTokenizer tokens = new StringTokenizer(line);
@@ -121,7 +126,8 @@ public class Lattice {
                         setLogBase( Double.parseDouble( tokens.nextToken() ) );
                     }
                     else {
-                        throw new Error( "SYNTAX ERROR: " + fileName + "[" + in.getLineNumber() + "] " + line );
+                        throw new Error( "SYNTAX ERROR: " + fileName +
+                                "[" + in.getLineNumber() + "] " + line );
                     }
                 }
             }
@@ -133,7 +139,8 @@ public class Lattice {
     }
 
     /**
-     * Add an edge from fromNode to toNode.  This method creates the Edge object and does all the connecting
+     * Add an edge from fromNode to toNode.  This method creates the Edge
+     * object and does all the connecting
      *
      * @param fromNode
      * @param toNode
@@ -141,7 +148,8 @@ public class Lattice {
      * @param lmScore
      * @return the new Edge
      */
-    public Edge addEdge(Node fromNode, Node toNode, double acousticScore, double lmScore) {
+    public Edge addEdge(Node fromNode, Node toNode,
+                        double acousticScore, double lmScore) {
         Edge e = new Edge(fromNode,toNode,acousticScore,lmScore);
         return addEdge(e, fromNode, toNode);
     }
@@ -151,7 +159,7 @@ public class Lattice {
      * @param fromNode
      * @param e
      * @param toNode
-     * @return
+     * @return the new Edge
      */
     protected Edge addEdge(Edge e, Node fromNode, Node toNode) {
         fromNode.addToEdge( e );
@@ -161,7 +169,8 @@ public class Lattice {
     }
 
     /**
-     * Add a Node that represents the theory that a given word was spoken over a given period of time.
+     * Add a Node that represents the theory that a given word was spoken
+     * over a given period of time.
      *
      * @param word
      * @param beginTime
@@ -175,7 +184,8 @@ public class Lattice {
     }
 
     /**
-     * Add a Node with a given ID that represents the theory that a given word was spoken over a given period of time.
+     * Add a Node with a given ID that represents the theory that a
+     * given word was spoken over a given period of time.
      * This method is used when loading Lattices from .LAT files.
      *
      * @param word
@@ -190,8 +200,9 @@ public class Lattice {
     }
 
     /**
-     * Add a Node corresponding to a Token from the result Token tree.  Usually, the Token should
-     * reference a sentenceHMMState that is a WordState, although other Tokens may be used for debugging.
+     * Add a Node corresponding to a Token from the result Token tree.
+     * Usually, the Token should reference a sentenceHMMState that is a
+     * WordState, although other Tokens may be used for debugging.
      * @param token
      * @return the new Node
      */
@@ -207,7 +218,8 @@ public class Lattice {
     }
 
     /**
-     * Test to see if the Lattice already contains a Node corresponding to a given Token.
+     * Test to see if the Lattice already contains a Node corresponding
+     * to a given Token.
      *
      * @param token
      * @return true if yes
@@ -270,7 +282,9 @@ public class Lattice {
 
     /**
      * Get a copy of the Collection of all Nodes.
-     * Used by LatticeOptimizer to avoid Concurrent modification of the nodes list.
+     * Used by LatticeOptimizer to avoid Concurrent modification of the
+     * nodes list.
+     *
      * @return a copy of the collection of Nodes
      */
     protected Collection getCopyOfNodes() {
@@ -313,8 +327,8 @@ public class Lattice {
     }
 
     /**
-     * Dump the Lattice in the form understood by AiSee (a graph visualization tool).
-     * See http://www.AbsInt.com
+     * Dump the Lattice in the form understood by AiSee
+     * (a graph visualization tool).  See http://www.AbsInt.com
      *
      * @param fileName
      * @param title
@@ -379,7 +393,8 @@ public class Lattice {
     }
 
     /**
-     * Dump the Lattice as a .LAT file.  Used to save Lattices as ASCII files for testing and experimentation.
+     * Dump the Lattice as a .LAT file.  Used to save Lattices as
+     * ASCII files for testing and experimentation.
      *
      * @param file
      */
@@ -393,7 +408,8 @@ public class Lattice {
     }
 
     /**
-     * Remove a Node and all Edges connected to it.  Also remove those Edges from all connected Nodes.
+     * Remove a Node and all Edges connected to it.  Also remove those
+     * Edges from all connected Nodes.
      *
      * @param n
      */
@@ -432,18 +448,20 @@ public class Lattice {
      */
     protected void removeNodeAndCrossConnectEdges(Node n) {
         System.err.println("Removing node " + n + " and cross connecting edges");
-        for( Iterator i=n.getFromEdges().iterator(); i.hasNext(); ) {
-            Edge ei = (Edge)(i.next());
-            for( Iterator j=n.getToEdges().iterator(); j.hasNext(); ) {
-                Edge ej = (Edge)(j.next());
-                Edge newEdge = addEdge( ei.getFromNode(), ej.getToNode(), ei.getAcousticScore(), ei.getLMScore() );
+        for (Iterator i = n.getFromEdges().iterator(); i.hasNext();) {
+            Edge ei = (Edge) (i.next());
+            for (Iterator j = n.getToEdges().iterator(); j.hasNext();) {
+                Edge ej = (Edge) (j.next());
+                addEdge(ei.getFromNode(), ej.getToNode(),
+                        ei.getAcousticScore(), ei.getLMScore());
             }
         }
         removeNodeAndEdges(n);
     }
 
     /**
-     * Get the initialNode for this Lattice.  This corresponds usually to the <s> symbol
+     * Get the initialNode for this Lattice.  This corresponds usually to
+     * the <s> symbol
      *
      * @return the initial Node
      */
@@ -452,7 +470,8 @@ public class Lattice {
     }
 
     /**
-     * Set the initialNode for this Lattice.  This corresponds usually to the <s> symbol
+     * Set the initialNode for this Lattice.  This corresponds usually to
+     * the <s> symbol
      *
      * @param p_initialNode
      */
@@ -461,7 +480,8 @@ public class Lattice {
     }
 
     /**
-     * Get the terminalNode for this Lattice.  This corresponds usually to the </s> symbol
+     * Get the terminalNode for this Lattice.  This corresponds usually to
+     * the </s> symbol
      *
      * @return the initial Node
      */
@@ -470,7 +490,8 @@ public class Lattice {
     }
 
     /**
-     * Set the terminalNode for this Lattice.  This corresponds usually to the </s> symbol
+     * Set the terminalNode for this Lattice.  This corresponds usually to
+     * the </s> symbol
      *
      * @param p_terminalNode
      */
@@ -537,7 +558,8 @@ public class Lattice {
     }
 
     /**
-     * Self test for Lattices.  Test loading, saving, dynamically creating and optimizing Lattices
+     * Self test for Lattices.  Test loading, saving, dynamically creating
+     * and optimizing Lattices
      *
      * @param args
      */
