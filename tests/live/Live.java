@@ -223,11 +223,18 @@ public class Live {
      *                name of the recognizer to use
      */
     public void setDecoder(String recognizerName) throws IOException {
-        String changeMessage = "Changing to " + recognizerName + " recognizer\n";
+        String changeMessage = "Changing to " + recognizerName + 
+            " recognizer\n";
         info(changeMessage);
         liveFrame.setMessage(changeMessage);
 
-        LiveRecognizer nextRecognizer = (LiveRecognizer) recognizers.get(recognizerName);
+        if (currentRecognizer != null) {
+            currentRecognizer.deallocate();
+            currentRecognizer = null;
+        }
+
+        LiveRecognizer nextRecognizer = 
+            (LiveRecognizer) recognizers.get(recognizerName);
         if (nextRecognizer.allocate()) {
             // if the decoder switch is successful
             currentRecognizer = nextRecognizer;
