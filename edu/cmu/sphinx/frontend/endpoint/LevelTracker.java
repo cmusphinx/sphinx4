@@ -202,6 +202,7 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
             }
             double rootMeanSquare = Math.sqrt
                 ((double)sumOfSquares/samples.length);
+            rootMeanSquare = Math.max(rootMeanSquare, 1);
             return (LogMath.log10((float)rootMeanSquare) * 20);
         }
         
