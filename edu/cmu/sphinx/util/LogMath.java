@@ -39,6 +39,7 @@ public final class LogMath {
     private double naturalLogBase;
     private double inverseNaturalLogBase;
     private double logZero;
+    private double theAddTable[];
 
      /**
       * Creates a log math with the given base
@@ -69,7 +70,8 @@ public final class LogMath {
      }
 
      /**
-      * create a log math class 
+      * Create a log math class. Also create the addTable table, which
+      * depends on the log base.
       *
       * @param base the log base
       */
@@ -86,6 +88,25 @@ public final class LogMath {
 	 logZero = -Double.MAX_VALUE;
 
 	 // System.out.println("Logz is " + logZero);
+
+	 // Now create the addTable table.
+
+	 // First decide number of elements.
+	 int entriesInTheAddTable = 65536;
+	 double innerSummation;
+
+	 theAddTable = new double[entriesInTheAddTable];
+	 for (int index = 0; index < entriesInTheAddTable; index++) {
+	     // This loop implements the expression:
+	     //
+	     // log( 1.0 + power(base, index))
+	     //
+	     // needed to add two numbers in the log domain.
+
+	     innerSummation = logToLinear(-index);
+	     innerSummation += 1.0f;
+	     theAddTable[index] = linearToLog(innerSummation);
+	 }
      }
 
 
@@ -188,12 +209,32 @@ public final class LogMath {
      *
      * @return the value pointed to by index
      */
-    private final double addTable(double index) {
+    private final double addTableActualComputation(double index) {
 	double innerSummation;
 
 	innerSummation = logToLinear(index);
 	innerSummation += 1.0f;
 	return linearToLog(innerSummation);
+    }
+
+    /**
+     * Function used by add() internally. It returns the difference
+     * between the highest number and the total summation of two numbers.
+     *
+     * Considering the expression (in which we assume natural log)
+     *
+     * <p><b>log(a + b) = log(a) + log(1 + exp(log(b) - log(a)))</b></p>
+     *
+     * the current function returns the second term of the right hand
+     * side of the equality above, generalized for the case of any log
+     * base. This function is contructed as a table lookup.
+     *
+     * @param index the index into the addTable
+     *
+     * @return the value pointed to by index
+     */
+    private final double addTable(double index) {
+	return theAddTable[(int)(-index)];
     }
 
     /**
