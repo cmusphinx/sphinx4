@@ -22,6 +22,7 @@ import edu.cmu.sphinx.frontend.util.Util;
 public class Audio extends Data implements Cloneable {
 
     private double[] audioSamples;
+    private boolean isSpeech = true;
 
 
     /**
@@ -63,6 +64,27 @@ public class Audio extends Data implements Cloneable {
      */
     public double[] getSamples() {
 	return audioSamples;
+    }
+
+
+    /**
+     * Marks this Audio object as speech or not.
+     *
+     * @param isSpeech true for speech, false for non-speech
+     */
+    public void setSpeech(boolean isSpeech) {
+        this.isSpeech = isSpeech;
+    }
+
+
+    /**
+     * Returns true if this Audio represents speech, false if not.
+     * All Audio is speech by default.
+     *
+     * @return true if this is speech, false otherwise
+     */
+    public boolean isSpeech() {
+        return isSpeech;
     }
 
 
