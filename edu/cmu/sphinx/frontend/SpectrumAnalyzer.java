@@ -33,6 +33,8 @@ public class SpectrumAnalyzer extends DataProcessor {
     private Complex[] from;
     private Complex[] to;
 
+    private Complex wkTimesF2; // = new Complex();
+
     /**
      * Constructs a default Spectrum Analyzer with the given 
      * SphinxProperties context.
@@ -45,6 +47,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	createWk(NPoint, false);
         setTimer(Timer.getTimer(context, "SpectrumAnalyzer"));
         initComplexArrays();
+        wkTimesF2 = new Complex();
     }
 
 
@@ -95,14 +98,17 @@ public class SpectrumAnalyzer extends DataProcessor {
 	}
 
 	// Complex[] inputSeq = new Complex[NPoint];
-	
+
+	Complex tempComplex = new Complex();
+
         if (NPoint < windowSize) {
 	    for (int i = 0; i < NPoint; i++) {
 		inputSeq[i].set(in[i], 0.0f);
 	    }
 	    for (int i = NPoint; i < windowSize; i++) {
+                tempComplex.set(in[i], 0.0f);
 		inputSeq[i % NPoint].addComplex(inputSeq[i % NPoint],
-						new Complex(in[i]));
+						tempComplex);
 	    }
 	} else {
 	    for (int i = 0; i < windowSize; i++) {
@@ -312,7 +318,9 @@ public class SpectrumAnalyzer extends DataProcessor {
 	int ndx1To;
 	int ndx2To;
 	int ndxWk;
-	Complex wkTimesF2 = new Complex();
+
+	// Complex wkTimesF2 = new Complex();
+        wkTimesF2.reset();
 
 	if (currentDistance > 0) {
 
