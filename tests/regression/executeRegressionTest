@@ -122,8 +122,8 @@ if [ $status = "OK" ]; then
 	      rm -f $regressionDir/.testDone;
 	      echo qsub $regressionDir/$runTests; 
 	      qsub $regressionDir/$runTests; 
-	      echo waitForFile $regressionDir/testDone;
-	      waitForFile $regressionDir/testDone;;
+	      echo waitForFile $regressionDir/.testDone;
+	      waitForFile $regressionDir/.testDone;;
    esac
 
    endRunTime=`$regressionDir/getTime`
