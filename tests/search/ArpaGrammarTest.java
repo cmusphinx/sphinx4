@@ -30,10 +30,16 @@ public class ArpaGrammarTest {
 	    SphinxProperties.initContext (context, new URL ("file://" 
 			       + pwd + File.separatorChar + argv[0])); 
 	    Dictionary dictionary = new FullDictionary(context);
+
+
             Grammar grammar = new ArpaGrammar();
 
 	    grammar.initialize(context, dictionary);
 	    grammar.dump();
+	    System.out.println("Num nodes loaded is " +
+		    grammar.getNumNodes());
+
+	    System.out.println("done");
         } catch (Exception e) {
             e.printStackTrace();
         }
