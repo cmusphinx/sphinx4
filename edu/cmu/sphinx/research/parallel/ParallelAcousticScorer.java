@@ -104,7 +104,7 @@ public class ParallelAcousticScorer implements AcousticScorer {
 	    Scoreable bestScoreable = null;
 	    for (Iterator i = scoreableList.iterator(); i.hasNext(); ) {
                 Scoreable scoreable = (Scoreable) i.next();
-                float logScore =  scoreable.calculateScore(data, false);
+                float logScore =  scoreable.calculateScore(data, false, 1.0f);
                 if (logScore > logMaxScore) {
                     logMaxScore = logScore;
 		    bestScoreable = scoreable;
