@@ -41,8 +41,6 @@ cd $regressionDir
 # then we build the world
 ##########################
 cd $rootDir
-date=`date +%D`
-time=`date +%T`
 machine=`hostname`
 who=`whoami`
 
@@ -78,6 +76,8 @@ fi
 #############################
 # Log the build information
 #############################
+date=`date +%Y-%m-%d`
+time=`date +%T`
 echo "build|$date|$time|$machine|$who|make|$status|$totalBuildTime|$totalRunTime|" >> $logPath
 
 
