@@ -264,7 +264,7 @@ function dumpTitle(  i) {
         machineName = machine;
     }
 
-    printf("<tr bgcolor=lightblue> <th colspan=9>%s" \
+    printf("<tr bgcolor=lightblue> <th colspan=10>%s" \
        "%s for %s</tr>\n", \
         modeTitle[mode], title, systemTitle[whichSystem]);
 
