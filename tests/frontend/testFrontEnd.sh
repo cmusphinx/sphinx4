@@ -21,7 +21,7 @@ ${JAVA_HOME}/bin/java -cp ../../classes \
  frontend.props \
  19990601-114739-00000001.raw > $REF_FILE.out
 
-diff $REF_FILE.s3 $REF_FILE.out > $REF_FILE.diff
+diff $REF_FILE.s4 $REF_FILE.out > $REF_FILE.diff
 
 
 # print out the results
