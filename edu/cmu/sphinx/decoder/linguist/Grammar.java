@@ -108,7 +108,7 @@ public abstract class  Grammar {
         }
 
         if (showGrammar) {
-            dumpGrammar("optimized.gdl");
+            dumpGrammar("grammar.gdl");
             dumpRandomSentences("sentences.txt", 100);
         }
 	this.dictionary = null;
@@ -206,13 +206,19 @@ public abstract class  Grammar {
      * Dump a set of random sentences that fit this grammar
      *
      * @param path the name of the file to dump the sentences to
-     * @param count the number of sentences to dump
+     * @param count dumps no more than this. May dump less than this
+     * depending upon the number of uniqe sentences in the grammar.
      */
     public void dumpRandomSentences(String path, int count) {
         try {
+            Set set = new HashSet();
             PrintWriter out = new PrintWriter(new FileOutputStream(path));
             for (int i = 0; i < count; i++) {
-                out.println(getRandomSentence());
+                String s = getRandomSentence();
+                if (!set.contains(s)) {
+                    set.add(s);
+                    out.println(s);
+                }
             }
             out.close();
         } catch (IOException ioe) {
