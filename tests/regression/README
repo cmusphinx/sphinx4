@@ -49,17 +49,22 @@ README - this file
 SmallVocabResults.list - the list of make targets for SmallVocab tests
 collectMetrics - collects the source metrics
 cvs_history - collects the cvs history
+debris_weekly_test_schedule.crontab - weekly schedule for debris.
 dummyTests - a set of dummy tets
 executeRegressionTest - the main test program
+finalizeLog - updates the regression.log file and upload it to the cvs tree.
+getHostname - gets the current hostname, up to the first dot
 getTime  - gets the time in seconds since the epoch
 installTwikiPage - installs a page in the sourceforge twiki
 mailReport - mails a summary report to the mailing list
 makeReport - creates the test summary report
 makeTwikiDetailReport - creates the detailed twiki test tables
+makeTwikiReports - creates all detailed and summary reports
 makeTwikiSummaryReport - creates the summary twiki test tables 
 makeWebpage - creates the regression_report summary web page
 mangueira_weekly_test_schedule.crontab - crontab entries for mangueira
 parseS4Output - generates a regression.log entry from s4 output
+profile - example ".profile" to be placed in the user's home directory.
 pushAllTwikiReports - publishes all twiki reports to the web
 pushChanges - publishes the 'what has changed' pages to the web
 pushReport - publishes the regression report summary web page
@@ -68,16 +73,19 @@ regression.log - the test log database
 regressionTest - the toplevel test, performs minimal work then calls
 executeRegressionTest
 runTest - runs a single test
-runTests_an4 - runs a set of tests
-runTests_an4_full - runs a set of tests
-runTests_an4_plus - runs a set of tests
-runTests_an4_spelling - runs a set of tests
-runTests_an4_words - runs a set of tests
+runTests_friday - runs a set of tests
+runTests_monday - runs a set of tests
+runTests_nightly - runs a set of tests
 runTests_quick - runs a set of tests
-runTests_rm1 - runs a set of tests
-runTests_standard - runs a set of tests
-runTests_ti46 - runs a set of tests
-runTests_tidigits - runs a set of tests
+runTests_saturday - runs a set of tests
+runTests_sunday - runs a set of tests
+runTests_thursday - runs a set of tests
+runTests_tuesday - runs a set of tests
+runTests_wednesday - runs a set of tests
+s4_align - prepares log files to run NIST's align
+s4_align_sum - runs and extracts the relevant info from NIST's align program.
 updateLog - updates the regression.log in CVS
-debris_weekly_test_schedule.crontab - weekly schedule for debris.
+updateTwikiReport - updates the twiki pages without running experiments
+waitForFile - waits for the current file to appear
 whatsNew - generates the 'what has changed' web pages
+
