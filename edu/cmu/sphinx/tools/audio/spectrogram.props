@@ -1,0 +1,15 @@
+############################################################
+# 
+# FrontEnd properties
+#
+############################################################
+
+edu.cmu.sphinx.frontend.FrontEndFactory.pipelines=sfe
+
+sfe;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=3
+sfe;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+sfe;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+sfe;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+
+sfe;edu.cmu.sphinx.frontend.window.RaisedCosineWindower.windowSizeInMs=5
+sfe;edu.cmu.sphinx.frontend.window.RaisedCosineWindower.windowShiftInMs=1
