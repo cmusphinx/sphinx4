@@ -396,7 +396,7 @@ bush_test2:
     -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushderby=true \
     -Dedu.cmu.sphinx.search.ActiveList.strictPruning=true \
-    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.bushderbyEta=1 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.bushderbyEta=.5 \
 -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.search.SimpleActiveList \
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
