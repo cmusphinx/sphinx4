@@ -66,6 +66,7 @@ live-ep: all
 	-DshowPartialResults=true \
 	-Dedu.cmu.sphinx.frontend.endpoint.AudioFilter.mergeSpeechSegments=true\
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.LevelTracker \
+	-Dedu.cmu.sphinx.frontend.bytesPerAudioFrame=320 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
 	tests.live.Live decoders.list
@@ -83,6 +84,7 @@ live-ep: all
 live-free: all
 	$(JAVA_CMD) \
 	-DhandsFree=true \
+	-Dedu.cmu.sphinx.frontend.bytesPerAudioFrame=320 \
 	-Dedu.cmu.sphinx.frontend.keepAudioReference=false \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.LevelTracker \
 	-Dedu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=12\
@@ -99,6 +101,7 @@ live-alpha: all
 	$(JAVA_CMD) \
 	-DfirstDecoder="Alpha Spelling" \
 	-DshowPartialResults=true \
+	-Dedu.cmu.sphinx.frontend.bytesPerAudioFrame=320 \
 	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
 	-Dedu.cmu.sphinx.frontend.endpoint.AudioFilter.mergeSpeechSegments=true\
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.LevelTracker \
