@@ -93,7 +93,7 @@ edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=7.0
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dictionary
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = fillerdict
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=true
 
 
 ############################################################
