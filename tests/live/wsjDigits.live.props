@@ -73,7 +73,7 @@ edu.cmu.sphinx.frontend.sampleRate = 16000
 ############################################################
 
 edu.cmu.sphinx.search.ActiveList.targetSize=2000
-edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.HeapActiveList
+edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.FastActiveList
 edu.cmu.sphinx.search.SimpleDigitLinguist.isConnectedDigitGrammar=true
 edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-56
 #edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-76
