@@ -18,6 +18,7 @@ import edu.cmu.sphinx.frontend.DataSource;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.NISTAlign;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -76,8 +77,31 @@ public class BatchDecoder {
      */
     public BatchDecoder(String context, String batchFile) throws IOException {
 	this.context = context;
-
 	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
+        init(props, batchFile);
+    }
+
+    /**
+     * Constructs a BatchDecoder.
+     *
+     * @param props the sphinx properties to use
+     * @param batchFile the file that contains a list of files to decode
+     */
+    public BatchDecoder(SphinxProperties props, String batchFile) 
+        throws IOException {
+            init(props, batchFile);
+    }
+
+    /**
+     * Common intialization code
+     *
+     * @param props the sphinx properties
+     * 
+     * @param batchFile the batch file
+     */
+    private void init(SphinxProperties props, String batchFile) 
+                                throws IOException {
+        context = props.getContext();
 	inputDataType = props.getString(PROP_INPUT_TYPE, "audio");
 	skip = props.getInt(PROP_SKIP, 0);
 	whichBatch = props.getInt(PROP_WHICH_BATCH, 0);
@@ -95,7 +119,6 @@ public class BatchDecoder {
 	}
 
 	decoder = new Decoder(context, dataSource);
-
         this.batchFile = batchFile;
     }
 
@@ -133,6 +156,25 @@ public class BatchDecoder {
         System.out.println("\nBatchDecoder: All files decoded\n");
         Timer.dumpAll(context);
 	decoder.showSummary();
+    }
+
+
+    /**
+     * Returns the set of batch results
+     *
+     * @return a batch result representing the set of runs for this
+     * batch decoder.
+     */
+
+    public BatchResults getBatchResults() {
+        NISTAlign align = decoder.getNISTAlign();
+        return new BatchResults(
+                align.getTotalWords(),
+                align.getTotalSentences(),
+                align.getTotalSubstitutions(),
+                align.getTotalInsertions(),
+                align.getTotalDeletions(),
+                align.getTotalSentencesWithErrors());
     }
 
 
@@ -233,8 +275,8 @@ public class BatchDecoder {
 
         try {
             SphinxProperties.initContext
-                (context, new URL("file://" + pwd + 
-                                  File.separatorChar + propertiesFile));
+                (context, new URL("file://" + pwd +  "/"
+                                   + propertiesFile));
 
             BatchDecoder decoder = new BatchDecoder(context, batchFile);
             decoder.decode();
