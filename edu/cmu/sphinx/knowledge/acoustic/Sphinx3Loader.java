@@ -250,13 +250,14 @@ class Sphinx3Loader implements Loader {
         // load the acoustic properties file (am.props), 
 	// create a different URL depending on the data format
 
-        String url = null;
+        URL url = null;
         String format = StreamFactory.resolve(location);
 
         if (format.equals(StreamFactory.ZIP_FILE)) {
-            url = "jar:" + location + "!/" + propsFile;
+            url = new URL("jar:" + location + "!/" + propsFile);
         } else {
-            url = "file:" + location + "/" + propsFile;
+            File file = new File(location, propsFile);
+            url = file.toURI().toURL();
         }
 
 	if (modelName == null) {
@@ -384,9 +385,9 @@ class Sphinx3Loader implements Loader {
      * @throws IOException if an error occurs while loading the data
      */
     private SphinxProperties loadAcousticPropertiesFile(String context,
-                                                        String url)
+                                                        URL url)
         throws FileNotFoundException, IOException {
-        SphinxProperties.initContext(context, new URL(url));
+        SphinxProperties.initContext(context, url);
         return (SphinxProperties.getSphinxProperties(context));
     }
 
