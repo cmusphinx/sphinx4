@@ -15,3 +15,9 @@ include ${TOP}/build/Makefile.config
 # Any extra actions to perform when cleaning
 clean::
 	rm -rf $(CLASS_DEST_DIR)
+
+
+# a quick and dirty implementation
+
+javadocs:
+	$(JAVADOC) -d $(DOC_DEST) -quiet -subpackages edu -source 1.4
