@@ -24,56 +24,56 @@ import java.util.Arrays;
 
 /**
  * Plots positive energy values of Cepstrum to stdout. 
- * An exception will be thrown if the given energy is negative.
+ * For negative energy value, a "-" will be printed out.
  * The plots look like the following, one line per Cepstrum. The
  * energy value for that particular Cepstrum is printed at the end of
  * the line.
  * <p>
  * <code>
-<br>......7
-<br>......7
+<br>+......7
+<br>+......7
 <br>Cepstrum: SPEECH_START
-<br>......7
-<br>.......8
-<br>......7
-<br>.......8
-<br>.......8
-<br>........9
-<br>............14
-<br>...........13
-<br>...........13
-<br>...........13
-<br>.............15
-<br>.............15
-<br>..............16
-<br>..............16
-<br>..............16
-<br>.............15
-<br>............14
-<br>............14
-<br>............14
-<br>............14
-<br>.............15
-<br>..............16
-<br>...............17
-<br>...............17
-<br>...............17
-<br>...............17
-<br>...............17
-<br>...............17
-<br>..............16
-<br>.............15
-<br>............14
-<br>............14
-<br>............14
-<br>...........13
-<br>........9
-<br>.......8
-<br>......7
-<br>......7
-<br>......7
+<br>+......7
+<br>+.......8
+<br>+......7
+<br>+.......8
+<br>+.......8
+<br>+........9
+<br>+............14
+<br>+...........13
+<br>+...........13
+<br>+...........13
+<br>+.............15
+<br>+.............15
+<br>+..............16
+<br>+..............16
+<br>+..............16
+<br>+.............15
+<br>+............14
+<br>+............14
+<br>+............14
+<br>+............14
+<br>+.............15
+<br>+..............16
+<br>+...............17
+<br>+...............17
+<br>+...............17
+<br>+...............17
+<br>+...............17
+<br>+...............17
+<br>+..............16
+<br>+.............15
+<br>+............14
+<br>+............14
+<br>+............14
+<br>+...........13
+<br>+........9
+<br>+.......8
+<br>+......7
+<br>+......7
+<br>+......7
 <br>Cepstrum: SPEECH_END
-<br>......7
+<br>+......7
 </code>
  */
 public class EnergyPlotter {
@@ -128,7 +128,7 @@ public class EnergyPlotter {
                 plot[plot.length - 1] = (char) ('0' + (energy - 10));
             }
         }
-        return (new String(plot));
+        return ("+" + new String(plot));
     }
 
     
@@ -152,17 +152,15 @@ public class EnergyPlotter {
 
     /**
      * Returns the corresponding plot String for the given energy value.
-     * The energy value must be positive, otherwise an 
-     * IllegalArgumentException will be thrown.
+     * The energy value should be positive or zero. If its negative,
+     * It will output the string "-".
      *
      * @return energy the energy value
      */
     private String getPlot(int energy) {
         if (energy < 0) {
-            throw new IllegalArgumentException
-                ("Negative energy encountered: " + energy);
-        }
-        if (energy <= maxEnergy) {
+            return "-";
+        } else if (energy <= maxEnergy) {
             return plots[energy];
         } else {
             return getPlotString(energy);
