@@ -319,9 +319,6 @@ public class LexTreeLinguist implements  Linguist {
         private LexTree.UnitLexNode central;
         private LexTree.UnitLexNode right;
         private WordSequence wordSequence;
-        private float logLanguageProbability;
-        private float logAcousticProbability;
-        private float logInsertionProbability;
 
         /**
          * Creates a LexTreeState.
@@ -341,14 +338,10 @@ public class LexTreeLinguist implements  Linguist {
          * of entering this state.  This is a combination of insertion
          * and language probability.
          */
-        LexTreeState(
-                int leftID,
-                LexTree.UnitLexNode central,
-                LexTree.UnitLexNode right,
-                WordSequence wordSequence,
-                float logLanguageProbability,
-                float logAcousticProbability,
-                float logInsertionProbability) {
+        LexTreeState(int leftID,
+                     LexTree.UnitLexNode central,
+                     LexTree.UnitLexNode right,
+                     WordSequence wordSequence) {
 
             if (leftID == 0) {
                 leftID = silenceID;
@@ -368,10 +361,6 @@ public class LexTreeLinguist implements  Linguist {
             this.central = central;
             this.right = right;
             this.wordSequence = wordSequence;
-            this.logLanguageProbability = logLanguageProbability *
-                languageWeight;
-            this.logAcousticProbability = logAcousticProbability;
-            this.logInsertionProbability = logInsertionProbability;
         }
 
 
@@ -452,10 +441,7 @@ public class LexTreeLinguist implements  Linguist {
           *
           * @return the log probability
           */
-         public float getProbability() {
-             return logLanguageProbability + logAcousticProbability +
-                 logInsertionProbability;
-         }
+        public abstract float getProbability();
 
          /**
           * Gets the language probability of entering this state
@@ -463,7 +449,7 @@ public class LexTreeLinguist implements  Linguist {
           * @return the log probability
           */
          public float getLanguageProbability() {
-             return logLanguageProbability;
+             return logOne;
           }
 
          /**
@@ -472,7 +458,7 @@ public class LexTreeLinguist implements  Linguist {
           * @return the log probability
           */
          public float getAcousticProbability() {
-             return logAcousticProbability;
+             return logOne;
          }
 
          /**
@@ -481,7 +467,7 @@ public class LexTreeLinguist implements  Linguist {
           * @return the log probability
           */
          public float getInsertionProbability() {
-             return logInsertionProbability;
+             return logOne;
          }
 
          /**
@@ -590,9 +576,17 @@ public class LexTreeLinguist implements  Linguist {
         LexTreeInitialState(LexTree.NonLeafLexNode node) {
             super(silenceID, null, null, 
                   (WordSequence.getWordSequence(sentenceStartWordArray).trim
-                   (languageModel.getMaxDepth() - 1)),
-                  logOne, logOne, logOne);
+                   (languageModel.getMaxDepth() - 1)));
             this.node = node;
+        }
+
+        /**
+         * Gets the composite probability of entering this state
+         *
+         * @return the log probability
+         */
+        public float getProbability() {
+            return logOne;
         }
 
         /**
@@ -657,7 +651,7 @@ public class LexTreeLinguist implements  Linguist {
     public class LexTreeUnitState extends LexTreeState 
     implements UnitSearchState {
         int unitID;
-
+        float logInsertionProbability;
 
         /**
          * Constructs a LexTreeUnitState
@@ -677,9 +671,11 @@ public class LexTreeLinguist implements  Linguist {
                LexTree.UnitLexNode central, LexTree.UnitLexNode right,
                WordSequence wordSequence, float languageProbability) {
 
-            super(leftID, central, right, wordSequence,
-                    logOne, logOne, 
-                    calculateInsertionProbability(central));
+            super(leftID, central, right, wordSequence);
+
+            logInsertionProbability = 
+                calculateInsertionProbability(getCentral());
+
             int rightID;
 
             if (leftID == 0) {
@@ -709,6 +705,19 @@ public class LexTreeLinguist implements  Linguist {
                 System.out.println("Created LexTreeUnit state for " + this
                         + " prob is " + languageProbability);
             }
+        }
+
+         /**
+          * Gets the composite probability of entering this state
+          *
+          * @return the log probability
+          */
+        public final float getProbability() {
+            return logInsertionProbability;
+        }
+
+        public float getInsertionProbability() {
+            return logInsertionProbability;
         }
 
         /**
@@ -807,6 +816,8 @@ public class LexTreeLinguist implements  Linguist {
     implements HMMSearchState {
     
         private HMMState hmmState;
+        private int hashCode = -1;
+        private float logAcousticProbability;
 
         /**
          * Constructs a LexTreeHMMState
@@ -830,9 +841,22 @@ public class LexTreeLinguist implements  Linguist {
         LexTreeHMMState(int leftID, LexTree.UnitLexNode central, 
                LexTree.UnitLexNode right, WordSequence wordSequence, 
                HMMState hmmState, float probability) {
-            super(leftID, central, right, wordSequence, logOne, 
-                     probability, logOne);
+            super(leftID, central, right, wordSequence);
+            this.logAcousticProbability = probability;
             this.hmmState = hmmState;
+        }
+
+        /**
+         * Gets the composite probability of entering this state
+         *
+          * @return the log probability
+          */
+        public final float getProbability() {
+            return logAcousticProbability;
+        }
+
+        public float getAcousticProbability() {
+            return logAcousticProbability;
         }
 
         /**
@@ -859,7 +883,10 @@ public class LexTreeLinguist implements  Linguist {
          * @return the hashcode
          */
         public int hashCode() {
-            return super.hashCode() * 29 + hmmState.getState();
+            if (hashCode == -1) {
+                hashCode = super.hashCode() * 29 + hmmState.getState();
+            }
+            return hashCode;
         }
 
         /**
@@ -939,8 +966,6 @@ public class LexTreeLinguist implements  Linguist {
                     // this by making the right context be null
 
                         nextStates = new SearchStateArc[1];
-
-
                         nextStates[0] = new LexTreeUnitState(
                                 nextLeftID, nextCentral,  null,
                                 getWordSequence(), logOne);
@@ -952,7 +977,6 @@ public class LexTreeLinguist implements  Linguist {
                         float languageProbability =
                             nextCentral.getProbability() -
                             getCentral().getProbability();
-
 
                         for (int i = 0; i < nodes.length; i++) {
                             LexTree.LexNode nextRight = nodes[i];
@@ -977,16 +1001,22 @@ public class LexTreeLinguist implements  Linguist {
                 nextStates = new SearchStateArc[arcs.length];
                 for (int i = 0; i < arcs.length; i++) {
                     HMMStateArc arc = arcs[i];
-                    if (arc.getHMMState().isEmitting()) {
-                        nextStates[i] = new LexTreeHMMState
-                            (getLeftID(), getCentral(), getRight(),
-                             getWordSequence(),
-                             arc.getHMMState(), arc.getLogProbability());
+                    HMMState state = arc.getHMMState();
+                    if (state.isEmitting()) {
+                        if (state == hmmState) {
+                            logAcousticProbability = arc.getLogProbability();
+                            nextStates[i] = this;
+                        } else {
+                            nextStates[i] = new LexTreeHMMState
+                                (getLeftID(), getCentral(), getRight(),
+                                 getWordSequence(),
+                                 state, arc.getLogProbability());
+                        }
                     } else {
                         nextStates[i] = new LexTreeNonEmittingHMMState
                             (getLeftID(), getCentral(), getRight(),
-                             getWordSequence(),
-                             arc.getHMMState(), arc.getLogProbability());
+                             getWordSequence(), state,
+                             arc.getLogProbability());
                     }
                 }
             }
@@ -1086,6 +1116,7 @@ public class LexTreeLinguist implements  Linguist {
     public class LexTreeWordState extends LexTreeState 
         implements WordSearchState {
         private LexTree.WordLexNode wordLexNode;
+        private float logLanguageProbability;
 
         /**
          * Constructs a LexTreeWordState
@@ -1113,15 +1144,28 @@ public class LexTreeLinguist implements  Linguist {
                LexTree.UnitLexNode right, 
                WordSequence wordSequence,
                LexTree.WordLexNode wordLexNode,
-               float logProability) {
+               float logProbability) {
 
-            super(leftID, central, right, wordSequence,
-                    logProability, logOne, logOne);
+            super(leftID, central, right, wordSequence);
             this.wordLexNode = wordLexNode;
             if (wordLexNode == null) {
                 throw new Error("Null WordLexNode while creating: " +
                                 wordSequence.toString());
             }
+            logLanguageProbability = logProbability * languageWeight;
+        }
+
+        /**
+         * Gets the composite probability of entering this state
+         *
+         * @return the log probability
+         */
+        public float getProbability() {
+            return logLanguageProbability;
+        }
+
+        public float getLanguageProbability() {
+            return logLanguageProbability;
         }
 
         /**
@@ -1229,7 +1273,8 @@ public class LexTreeLinguist implements  Linguist {
         }
 
          public String toString() {
-             return " Word:" + wordLexNode.getPronunciation() + " " + super.toString();
+             return " Word:" + wordLexNode.getPronunciation() + " " + 
+                 super.toString();
          }
 
          /**
