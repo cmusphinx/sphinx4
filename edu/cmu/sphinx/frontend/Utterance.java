@@ -54,6 +54,8 @@ public class Utterance {
 
     /**
      * Adds an audio frame into this Utterance.
+     *
+     * @param audio the audio frame to add
      */
     public void add(byte[] audio) {
         synchronized (audioBuffer) {
