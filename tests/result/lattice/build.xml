@@ -175,4 +175,22 @@ NOTE:  Before running the tests, you must have already built
 	    </java>
     </target>
 
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs the Live MAP Confidence test.                     * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="live_confidence"
+	    description="Runs the MAP Confidence test."
+	    depends="all">
+	    <java classname="tests.result.lattice.LiveMAPConfidenceTest"
+		  fork="true">
+		  <classpath refid="run.classpath"/>
+		  <jvmarg value="-ea"/>
+		  <jvmarg value="-mx${maximum_heap_size}"/>
+		  <sysproperty key="frontend" value="epFrontEnd"/>
+	    </java>
+    </target>
+
 </project>

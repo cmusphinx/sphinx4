@@ -219,7 +219,7 @@
     <!-- ******************************************************** -->
     <component name="epFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
-            <item>streamDataSource </item>
+            <item>microphone </item>
             <item>speechClassifier </item>
             <item>speechMarker </item>
             <item>nonSpeechDataFilter </item>
@@ -228,7 +228,7 @@
             <item>fft </item>
             <item>melFilterBank </item>
             <item>dct </item>
-            <item>batchCMN </item>
+            <item>liveCMN </item>
             <item>featureExtraction </item>
         </propertylist>
     </component>
@@ -332,6 +332,8 @@
     <component name="confidenceScorer"
                type="edu.cmu.sphinx.result.MAPConfidenceScorer">
         <property name="languageWeight" value="${languageWeight}"/>
+	<property name="dumpLattice" value="true"/>
+	<property name="dumpSausage" value="true"/>
     </component>
 
 </config>
