@@ -84,12 +84,12 @@ public class SimpleLinguist implements  Linguist {
      * in which the states will be returned.
      */
     private final static Class[] searchStateOrder = {
-        HMMStateState.class,
         NonEmittingHMMState.class,
         BranchState.class,
+        GrammarState.class,
         PronunciationState.class,
         ExtendedUnitState.class,
-        GrammarState.class
+        HMMStateState.class
     };
 
 
