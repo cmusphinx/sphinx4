@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.StringTokenizer;
@@ -64,7 +66,7 @@ public class FastDictionary implements Dictionary {
     private boolean createMissingWords;
     private String wordReplacement;
     private final static String FILLER_TAG=  "-F-";
-    private List fillerWords;
+    private Set fillerWords;
 
 
     /**
@@ -136,7 +138,7 @@ public class FastDictionary implements Dictionary {
         }
 
 	Timer loadTimer = Timer.getTimer(context, "DictionaryLoad");
-        fillerWords = new ArrayList();
+        fillerWords = new HashSet();
 
 	loadTimer.start();
 
@@ -200,6 +202,7 @@ public class FastDictionary implements Dictionary {
                 word = word.toLowerCase();
                 if (isFillerDict) {
                     dictionary.put(word, (FILLER_TAG + line));
+                    fillerWords.add(word);
                 } else {
                     dictionary.put(word, line);
                 }
@@ -302,9 +305,6 @@ public class FastDictionary implements Dictionary {
             boolean isFiller) {
         Word word = new Word(text, pronunciation, isFiller);
         dictionary.put(text, word);
-        if (isFiller) {
-            fillerWords.add(word);
-        }
         return word;
     }
 
@@ -407,7 +407,13 @@ public class FastDictionary implements Dictionary {
      * @return an array (possibly empty) of all filler words
      */
     public Word[] getFillerWords() {
-        return (Word[]) fillerWords.toArray(new Word[fillerWords.size()]);
+        Word[] fillerWordArray = new Word[fillerWords.size()];
+        int index = 0;
+        for (Iterator i = fillerWords.iterator(); i.hasNext(); ) {
+            String spelling = (String) i.next();
+            fillerWordArray[index++] = getWord(spelling);
+        }
+        return fillerWordArray;
     }
 
     /**
