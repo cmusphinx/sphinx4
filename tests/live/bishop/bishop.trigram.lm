@@ -1,3 +1,4 @@
+FRONTMOST
 #############################################################################
 ## Copyright (c) 1996, Carnegie Mellon University, Cambridge University,
 ## Ronald Rosenfeld and Philip Clarkson
@@ -45,15 +46,15 @@ p_3     wd_1 wd_2 wd_3
 end of data mark: \end\
 
 \data\
-ngram 1=171
-ngram 2=791
-ngram 3=1533
+ngram 1=162
+ngram 2=747
+ngram 3=1444
 
 \1-grams:
 -3.7839 <UNK>	0.0000
 -0.8280 </s>	-2.6692
 -0.8285 <s>	-1.1650
--3.7839 I	-0.2250
+-3.7839 i	-0.2250
 -1.9630 a	-1.0814
 -3.7839 about	-0.2242
 -3.2988 above	-0.1737
@@ -74,24 +75,21 @@ ngram 3=1533
 -3.7839 being	-0.2169
 -3.4749 below	-0.1781
 -2.8217 between	-0.2170
--3.7839 bisecting	-0.1788
 -3.0769 bit	-0.2779
 -3.7839 blocking	-0.1788
 -3.7839 board	-0.1552
 -2.5998 bottom	-0.3207
--3.2988 bottommost	-0.2782
 -3.7839 bunch	-0.2174
 -3.4749 but	-0.2107
 -2.8728 by	-0.5307
 -2.4537 centre	-0.3162
--3.4749 centred	-0.1876
--3.4749 centremost	-0.1562
+-3.4749 centered	-0.1876
 -3.2988 close	-0.3187
 -3.7839 closer	-0.2169
 -2.5998 closest	-0.7439
 -3.7839 cluster	-0.2174
--3.0769 colour	-0.3519
--3.7839 colours	-0.2228
+-3.0769 color	-0.3519
+-3.7839 colors	-0.2228
 -3.2988 column	-0.6503
 -1.3461 cone	-1.0214
 -2.0200 cones	-0.7466
@@ -114,7 +112,6 @@ ngram 3=1533
 -3.7839 frame	-0.2228
 -3.0769 from	-0.3849
 -1.9434 front	-0.6385
--1.7589 frontmost	-2.1708
 -3.0769 further	-0.1669
 -2.4335 furthest	-0.8257
 -1.1198 green	-1.6012
@@ -135,7 +132,6 @@ ngram 3=1533
 -3.2988 kinda	-0.3247
 -2.9308 last	-0.3544
 -1.7425 left	-0.5647
--1.6267 leftmost	-1.5030
 -3.7839 line	-0.1907
 -3.0769 little	-0.3196
 -3.7839 lone	-0.1907
@@ -170,7 +166,6 @@ ngram 3=1533
 -3.2988 rear	-0.6503
 -3.7839 rectangle	-0.2239
 -1.7803 right	-0.4896
--1.6825 rightmost	-1.6832
 -2.5998 row	-0.6423
 -2.5718 screen	-0.7337
 -3.7839 second	-0.2247
@@ -184,7 +179,6 @@ ngram 3=1533
 -3.4749 sitting	-0.4008
 -3.7839 slightly	-0.2169
 -3.7839 somewhat	-0.2163
--3.4749 sorta	-0.2158
 -3.7839 south	-0.2249
 -3.7839 still	-0.2189
 -2.8728 surrounded	-0.9537
@@ -204,11 +198,9 @@ ngram 3=1533
 -2.5455 three	-0.9116
 -1.7345 to	-1.6863
 -2.6620 top	-0.1657
--3.1738 topmost	-0.2625
 -3.7839 touching	-0.2223
 -2.8217 towards	-0.9537
 -2.1961 two	-0.7746
--3.7839 unisolated	-0.1932
 -3.4749 up	-0.1547
 -3.0769 upper	-0.5212
 -3.2988 uppermost	-0.2941
@@ -232,11 +224,9 @@ ngram 3=1533
 -0.9408 <s> back -1.0588
 -3.3426 <s> blocking 0.0714
 -2.5333 <s> centre -0.1714
--3.3426 <s> centred -0.0555
--3.3426 <s> centremost -0.0555
+-3.3426 <s> centered -0.0555
 -3.3426 <s> cone -0.1033
 -1.9494 <s> front -1.0582
--0.9671 <s> frontmost 0.0430
 -3.3426 <s> further -0.1170
 -3.3426 <s> furthest -0.0223
 -1.6941 <s> green 0.5160
@@ -247,7 +237,6 @@ ngram 3=1533
 -3.3426 <s> isolated -0.0555
 -2.8681 <s> it's -0.1425
 -1.9951 <s> left -1.0060
--0.8630 <s> leftmost -0.6330
 -3.3426 <s> lonely -0.0555
 -2.5801 <s> lower -0.1756
 -3.3426 <s> middle -0.1379
@@ -259,13 +248,11 @@ ngram 3=1533
 -3.3426 <s> one -0.1443
 -1.4053 <s> purple -0.8458
 -3.3426 <s> right -0.1485
--0.8887 <s> rightmost -0.4409
 -3.3426 <s> south 0.0714
 -0.6334 <s> the -0.2892
 -2.8681 <s> there's -0.1006
 -1.7453 <s> this -0.0129
 -2.8681 <s> top -0.0588
--3.3426 <s> topmost 0.0022
 -3.3426 <s> two 0.0460
 -3.3426 <s> west 0.0714
 -0.3932 I am 0.0714
@@ -287,7 +274,6 @@ ngram 3=1533
 -0.3932 adjoining purple -0.1261
 -0.3932 after the -0.1519
 -0.1078 all the -0.4316
--0.6942 almost bisecting 0.0714
 -0.6942 almost in 0.3656
 -0.9953 alone at 1.0505
 -0.5208 alone in 0.1983
@@ -306,9 +292,7 @@ ngram 3=1533
 -0.7782 and in -0.7518
 -2.0165 and it's -0.0634
 -2.0165 and kinda -0.0907
--2.0165 and leftmost 0.1353
 -2.0165 and one -0.1520
--2.0165 and sorta -0.0555
 -2.0165 and the -0.1486
 -2.0165 and there's -0.1409
 -0.4771 and to -0.1839
@@ -339,7 +323,6 @@ ngram 3=1533
 -0.5191 back purple -0.4973
 -2.5751 back right -0.0258
 -2.5751 back top -0.1145
--2.5751 back unisolated 0.0714
 -1.0286 behind a -0.0180
 -1.3167 behind and 0.1474
 -1.7912 behind another 0.3235
@@ -354,7 +337,6 @@ ngram 3=1533
 -1.3475 between purples 0.2475
 -1.3475 between the -0.1486
 -0.5382 between two -0.3520
--0.3932 bisecting the -0.1533
 -1.0922 bit further -0.1170
 -0.6177 bit to 0.6412
 -1.0922 bit towards 0.8464
@@ -370,8 +352,6 @@ ngram 3=1533
 -1.5973 bottom the -0.1360
 -1.5973 bottom to 0.8086
 -1.5973 bottom touching 0.0714
--0.3958 bottommost cone -0.1864
--0.8703 bottommost green -0.0251
 -0.3932 bunch of -0.1366
 -0.6942 but on 0.8676
 -0.6942 but to 0.8086
@@ -391,10 +371,8 @@ ngram 3=1533
 -0.7404 centre purple -0.0219
 -1.7356 centre that's -0.0978
 -1.7356 centre to 0.8086
--0.6942 centred and 0.0225
--0.6942 centred green -0.0251
--0.6942 centremost green -0.0251
--0.6942 centremost purple -0.0063
+-0.6942 centered and 0.0225
+-0.6942 centered green -0.0251
 -0.8703 close right -0.0641
 -0.3958 close to 0.8235
 -0.3932 closer to 0.8086
@@ -403,10 +381,10 @@ ngram 3=1533
 -1.5693 closest the -0.1427
 -0.1347 closest to 0.2443
 -0.3932 cluster of -0.1437
--0.3296 colour </s> 2.2137
--1.0922 colour one -0.1443
--1.0922 colour shades -0.1170
--0.3932 colours it's -0.0287
+-0.3296 color </s> 2.2137
+-1.0922 color one -0.1443
+-1.0922 color shades -0.1170
+-0.3932 colors it's -0.0287
 -0.1078 column of -0.1802
 -0.5744 cone </s> 0.7836
 -2.8310 cone I 0.0714
@@ -499,7 +477,6 @@ ngram 3=1533
 -0.7975 front green -0.2859
 -1.4695 front in 0.7039
 -2.2321 front left -0.0467
--1.7576 front leftmost 1.2997
 -0.4964 front of -0.2720
 -2.2321 front on 0.8676
 -1.2368 front one -0.1323
@@ -508,9 +485,6 @@ ngram 3=1533
 -2.2321 front right -0.1424
 -2.2321 front row 0.2724
 -2.2321 front to 0.8086
--0.2771 frontmost green -1.0366
--0.3351 frontmost purple -0.9659
--2.4185 frontmost rightmost 0.1371
 -1.0922 further back -0.1420
 -1.0922 further behind 0.0982
 -1.0922 further green -0.1269
@@ -561,14 +535,13 @@ ngram 3=1533
 -0.6301 is a -0.9010
 -2.1994 is another -0.0911
 -2.1994 is at 1.0505
--2.1994 is centred -0.0555
+-2.1994 is centered -0.0555
 -2.1994 is close 0.0696
 -1.4369 is closest 0.1408
 -2.1994 is furthest -0.1302
 -0.9611 is green -0.5101
 -2.1994 is highest 0.2475
 -0.8519 is in -0.4350
--1.7249 is leftmost -0.1511
 -2.1994 is lowest -0.1157
 -1.7249 is on 0.7002
 -2.1994 is one -0.1375
@@ -603,7 +576,6 @@ ngram 3=1533
 -0.7270 it's on 0.2430
 -1.8984 it's one -0.1375
 -1.8984 it's purple 0.1684
--1.8984 it's sorta -0.0555
 -0.6021 it's the -0.1556
 -1.8984 it's to 0.8086
 -0.6942 just above -0.0907
@@ -638,13 +610,6 @@ ngram 3=1533
 -1.9601 left there's 0.1262
 -2.4346 left to 0.8086
 -2.4346 left top -0.1145
--2.4346 left topmost -0.1073
--2.5455 leftmost </s> 2.4933
--2.5455 leftmost and -0.1410
--0.3198 leftmost green -1.0376
--2.0710 leftmost one -0.3106
--0.3134 leftmost purple -1.1146
--2.5455 leftmost the -0.1507
 -0.3932 line green -0.1525
 -0.2829 little bit 0.0741
 -0.3932 lone green -0.0251
@@ -727,7 +692,7 @@ ngram 3=1533
 -2.4346 one almost -0.0555
 -2.4346 one and -0.1494
 -1.6721 one closest 0.1408
--1.4393 one colour 0.0010
+-1.4393 one color 0.0010
 -2.4346 one down 0.0714
 -1.9601 one face 0.0714
 -2.4346 one green -0.0251
@@ -812,11 +777,6 @@ ngram 3=1533
 -2.4018 right there 0.5867
 -2.4018 right to 0.8086
 -2.4018 right two -0.1053
--2.4901 rightmost </s> 2.4933
--2.4901 rightmost behind -0.1109
--2.4901 rightmost front -0.1369
--0.3116 rightmost green -1.0937
--0.3116 rightmost purple -1.0611
 -0.7881 row </s> 1.9479
 -0.2041 row of -0.4247
 -1.5973 row on 0.8676
@@ -858,8 +818,6 @@ ngram 3=1533
 -0.2198 sitting alone 0.0701
 -0.3932 slightly to 0.8086
 -0.3932 somewhat in 0.3656
--0.6942 sorta at 1.0505
--0.6942 sorta to 0.8086
 -0.3932 south east -0.0555
 -0.3932 still on 0.8676
 -0.0512 surrounded by 0.0749
@@ -884,9 +842,7 @@ ngram 3=1533
 -2.6998 the behind 0.1373
 -3.1743 the board 0.0714
 -1.7810 the bottom 0.2455
--2.4117 the bottommost 0.0764
 -1.7019 the centre 0.0591
--3.1743 the centremost -0.0555
 -3.1743 the close -0.0907
 -2.1790 the closest 0.5684
 -2.6998 the column 0.3370
@@ -897,7 +853,6 @@ ngram 3=1533
 -3.1743 the farthest -0.0555
 -3.1743 the first 0.0714
 -1.3497 the front 0.4151
--1.8268 the frontmost 1.5155
 -1.8268 the furthest -0.2458
 -0.8945 the green 0.0894
 -2.6998 the group -0.0010
@@ -907,7 +862,6 @@ ngram 3=1533
 -3.1743 the it's -0.0287
 -1.9359 the last 0.1174
 -0.8889 the left -0.2126
--1.6049 the leftmost 0.6654
 -3.1743 the lone 0.0714
 -1.7810 the lower 0.1275
 -1.4008 the lowest -0.1660
@@ -923,7 +877,6 @@ ngram 3=1533
 -1.0821 the purple -0.2933
 -2.6998 the rear 0.3370
 -0.9237 the right -0.0115
--1.8268 the rightmost -0.3317
 -2.3650 the row -0.2730
 -1.5769 the screen 0.1004
 -2.6998 the shadow 0.0714
@@ -932,7 +885,6 @@ ngram 3=1533
 -3.1743 the third 0.0714
 -2.4117 the three -0.1322
 -1.8779 the top -0.0314
--2.6998 the topmost 0.0701
 -2.4117 the two 0.2429
 -2.1790 the upper 0.2155
 -2.4117 the uppermost 0.0764
@@ -970,22 +922,18 @@ ngram 3=1533
 -1.5393 top on 0.8676
 -1.5393 top purple 0.1684
 -0.7768 top right -0.2412
--0.9953 topmost and -0.1494
--0.9953 topmost on 0.8676
--0.5208 topmost purple -0.1736
 -0.3932 touching two 0.0112
 -0.0458 towards the -0.0257
 -1.9730 two </s> 2.4933
 -1.9730 two adjoining 0.0714
--1.9730 two colour -0.1170
--1.9730 two colours 0.0714
+-1.9730 two color -0.1170
+-1.9730 two colors 0.0714
 -0.5006 two green -0.9043
 -1.9730 two greens -0.0555
 -1.9730 two left -0.1488
 -1.4985 two other 0.0714
 -0.4337 two purple -0.5391
 -0.9777 two shades -0.0053
--0.3932 unisolated purple 0.1684
 -0.6942 up </s> 2.4933
 -0.6942 up from 0.1206
 -0.6177 upper left -0.2664
@@ -1023,11 +971,9 @@ ngram 3=1533
 -0.9383 </s> <s> back 
 -3.4728 </s> <s> blocking 
 -2.2480 </s> <s> centre 
--3.4728 </s> <s> centred 
--3.4728 </s> <s> centremost 
+-3.4728 </s> <s> centered 
 -3.4728 </s> <s> cone 
 -1.9469 </s> <s> front 
--0.9692 </s> <s> frontmost 
 -3.4728 </s> <s> further 
 -3.4728 </s> <s> furthest 
 -1.6917 </s> <s> green 
@@ -1038,7 +984,6 @@ ngram 3=1533
 -3.4728 </s> <s> isolated 
 -2.9279 </s> <s> it's 
 -1.9927 </s> <s> left 
--0.8642 </s> <s> leftmost 
 -3.4728 </s> <s> lonely 
 -2.6696 </s> <s> lower 
 -3.4728 </s> <s> middle 
@@ -1050,13 +995,11 @@ ngram 3=1533
 -3.4728 </s> <s> one 
 -1.4029 </s> <s> purple 
 -3.4728 </s> <s> right 
--0.8900 </s> <s> rightmost 
 -3.4728 </s> <s> south 
 -0.6331 </s> <s> the 
 -2.9279 </s> <s> there's 
 -1.7428 </s> <s> this 
 -2.9279 </s> <s> top 
--3.4728 </s> <s> topmost 
 -3.4728 </s> <s> two 
 -3.4728 </s> <s> west 
 -0.5259 </s> green </s> 
@@ -1069,18 +1012,14 @@ ngram 3=1533
 -0.2682 <s> back green 
 -2.5345 <s> back left 
 -0.3751 <s> back purple 
--2.5345 <s> back unisolated 
 -0.5259 <s> blocking the 
 -1.2249 <s> centre and 
 -1.2249 <s> centre green 
 -0.4217 <s> centre purple 
--0.5259 <s> centred green 
--0.5259 <s> centremost purple 
+-0.5259 <s> centered green 
 -0.5259 <s> cone to 
 -0.0458 <s> front green 
 -1.5259 <s> front purple 
--0.2580 <s> frontmost green 
--0.3590 <s> frontmost purple 
 -0.5259 <s> further back 
 -0.5259 <s> furthest back 
 -1.2362 <s> green </s> 
@@ -1102,8 +1041,6 @@ ngram 3=1533
 -0.8269 <s> it's below 
 -1.4801 <s> left of 
 -0.0512 <s> left purple 
--0.2870 <s> leftmost green 
--0.3229 <s> leftmost purple 
 -0.5259 <s> lonely green 
 -1.0030 <s> lower green 
 -0.4581 <s> lower left 
@@ -1122,23 +1059,17 @@ ngram 3=1533
 -2.0700 <s> purple surrounded 
 -2.0700 <s> purple to 
 -0.5259 <s> right front 
--0.2825 <s> rightmost green 
--0.3283 <s> rightmost purple 
 -0.5259 <s> south east 
 -2.2969 <s> the back 
--2.0387 <s> the bottommost 
 -2.2969 <s> the centre 
--2.8419 <s> the centremost 
 -2.0387 <s> the closest 
 -1.5378 <s> the cone 
 -1.4709 <s> the front 
--1.4129 <s> the frontmost 
 -1.5378 <s> the furthest 
 -0.5166 <s> the green 
 -2.8419 <s> the isolated 
 -2.8419 <s> the last 
 -2.2969 <s> the left 
--1.2020 <s> the leftmost 
 -2.8419 <s> the lone 
 -1.6170 <s> the lower 
 -1.3160 <s> the lowest 
@@ -1149,10 +1080,8 @@ ngram 3=1533
 -2.0387 <s> the only 
 -0.6825 <s> the purple 
 -2.8419 <s> the right 
--1.4709 <s> the rightmost 
 -2.2969 <s> the the 
 -2.8419 <s> the top 
--2.2969 <s> the topmost 
 -2.2969 <s> the uppermost 
 -0.8269 <s> there's three 
 -0.8269 <s> there's two 
@@ -1162,7 +1091,6 @@ ngram 3=1533
 -0.6021 <s> this purple 
 -0.8269 <s> top purple 
 -0.8269 <s> top right 
--0.5259 <s> topmost purple 
 -0.5259 <s> two purple 
 -0.5259 <s> west green 
 -0.5259 I am talking 
@@ -1189,7 +1117,6 @@ ngram 3=1533
 -0.5259 adjoining purple cones 
 -0.5259 after the two 
 -0.1998 all the way 
--0.5259 almost bisecting the 
 -0.5259 almost in the 
 -0.5259 alone at the 
 -0.2820 alone in the 
@@ -1211,9 +1138,7 @@ ngram 3=1533
 -0.0669 and in front 
 -0.5259 and it's on 
 -0.5259 and kinda towards 
--0.5259 and leftmost purple 
 -0.5259 and one green 
--0.5259 and sorta to 
 -0.5259 and the last 
 -0.5259 and there's one 
 -0.0322 and to the 
@@ -1232,7 +1157,6 @@ ngram 3=1533
 -0.4771 at the bottom 
 -1.1570 at the centre 
 -1.7020 at the left 
--1.7020 at the rightmost 
 -1.7020 at the top 
 -1.1570 at the very 
 -0.8269 away from us 
@@ -1265,7 +1189,6 @@ ngram 3=1533
 -2.1887 back purple one 
 -0.5259 back right </s> 
 -0.5259 back top corner 
--0.5259 back unisolated purple 
 -0.4581 behind a purple 
 -1.0030 behind a row 
 -0.8269 behind and in 
@@ -1278,7 +1201,6 @@ ngram 3=1533
 -0.7641 behind it there's 
 -0.8269 behind that green 
 -0.8269 behind that one 
--1.3040 behind the frontmost 
 -1.3040 behind the green 
 -1.3040 behind the one 
 -0.7591 behind the purple 
@@ -1292,7 +1214,6 @@ ngram 3=1533
 -0.5259 between the last 
 -1.2249 between two green 
 -0.0969 between two purple 
--0.5259 bisecting the entire 
 -0.5259 bit further than 
 -0.2820 bit to the 
 -0.5259 bit towards the 
@@ -1308,8 +1229,6 @@ ngram 3=1533
 -0.5259 bottom the lowest 
 -0.5259 bottom to the 
 -0.5259 bottom touching two 
--0.2820 bottommost cone </s> 
--0.5259 bottommost green cone 
 -0.5259 bunch of green 
 -0.5259 but on the 
 -0.5259 but to the 
@@ -1333,25 +1252,22 @@ ngram 3=1533
 -1.1280 centre purple no 
 -0.5259 centre that's the 
 -0.5259 centre to the 
--0.5259 centred and to 
--0.5259 centred green cone 
--0.5259 centremost green cone 
--0.5259 centremost purple cone 
+-0.5259 centered and to 
+-0.5259 centered green cone 
 -0.5259 close right hand 
 -0.8269 close to a 
 -0.8269 close to the 
 -0.5259 closer to the 
 -0.2820 closest green one 
 -0.5259 closest purple one 
--0.5259 closest the leftmost 
 -1.5673 closest to that 
 -0.2632 closest to the 
 -0.4393 closest to us 
 -0.5259 cluster of cones 
--0.1998 colour </s> <s> 
--0.5259 colour one the 
--0.5259 colour shades furthest 
--0.5259 colours it's the 
+-0.1998 color </s> <s> 
+-0.5259 color one the 
+-0.5259 color shades furthest 
+-0.5259 colors it's the 
 -1.0030 column of three 
 -0.4581 column of two 
 -0.0060 cone </s> <s> 
@@ -1385,7 +1301,7 @@ ngram 3=1533
 -0.0835 cone in the 
 -0.7782 cone is a 
 -2.0030 cone is another 
--2.0030 cone is centred 
+-2.0030 cone is centered 
 -0.6990 cone is green 
 -0.8751 cone is in 
 -1.4581 cone is on 
@@ -1483,7 +1399,6 @@ ngram 3=1533
 -0.5259 from us </s> 
 -0.5259 from you </s> 
 -0.0458 front </s> <s> 
--1.1280 front and sorta 
 -0.3248 front and to 
 -0.5259 front corner </s> 
 -0.5259 front far in 
@@ -1492,8 +1407,6 @@ ngram 3=1533
 -0.4581 front in front 
 -1.0030 front in the 
 -0.5259 front left </s> 
--0.8269 front leftmost green 
--0.8269 front leftmost purple 
 -1.0651 front of a 
 -0.3424 front of it 
 -1.8683 front of purple 
@@ -1510,11 +1423,6 @@ ngram 3=1533
 -0.5259 front right corner 
 -0.5259 front row of 
 -0.5259 front to the 
--0.0406 frontmost green </s> 
--1.1461 frontmost green cone 
--0.0881 frontmost purple </s> 
--0.7871 frontmost purple cone 
--0.5259 frontmost rightmost green 
 -0.5259 further back of 
 -0.5259 further behind it 
 -0.5259 further green cones 
@@ -1594,7 +1502,7 @@ ngram 3=1533
 -0.5259 green that's to 
 -0.5259 green the last 
 -0.5259 green to the 
--0.8269 green two colours 
+-0.8269 green two colors 
 -0.8269 green two shades 
 -0.5259 green upper right 
 -0.5259 greens </s> <s> 
@@ -1659,7 +1567,7 @@ ngram 3=1533
 -0.3979 is a purple 
 -0.5259 is another purple 
 -0.5259 is at the 
--0.5259 is centred and 
+-0.5259 is centered and 
 -0.5259 is close to 
 -0.1998 is closest to 
 -0.5259 is furthest away 
@@ -1669,11 +1577,9 @@ ngram 3=1533
 -1.3710 is green to 
 -0.5259 is highest on 
 -0.0512 is in the 
--0.8269 is leftmost </s> 
--0.8269 is leftmost the 
 -0.5259 is lowest on 
 -0.2820 is on the 
--0.5259 is one colour 
+-0.5259 is one color 
 -1.0030 is purple cone 
 -0.4581 is purple it's 
 -0.5259 is rather lonely 
@@ -1706,7 +1612,6 @@ ngram 3=1533
 -0.8269 it this purple 
 -0.5259 it two shades 
 -0.5259 it's a green 
--0.5259 it's almost bisecting 
 -0.8269 it's also facing 
 -0.8269 it's also the 
 -0.5259 it's below another 
@@ -1715,9 +1620,8 @@ ngram 3=1533
 -0.8269 it's near two 
 -0.5259 it's not the 
 -0.0792 it's on the 
--0.5259 it's one colour 
+-0.5259 it's one color 
 -0.5259 it's purple </s> 
--0.5259 it's sorta at 
 -1.4290 it's the farthest 
 -1.4290 it's the green 
 -0.6258 it's the lowest 
@@ -1770,16 +1674,6 @@ ngram 3=1533
 -0.2820 left there's a 
 -0.5259 left to the 
 -0.5259 left top corner 
--0.5259 left topmost on 
--0.5259 leftmost </s> <s> 
--0.5259 leftmost and closest 
--0.0332 leftmost green </s> 
--1.2304 leftmost green cone 
--2.3584 leftmost green one 
--0.2820 leftmost one of 
--0.0680 leftmost purple </s> 
--0.8846 leftmost purple cone 
--0.5259 leftmost the only 
 -0.5259 line green two 
 -1.2249 little bit further 
 -0.6799 little bit to 
@@ -1890,7 +1784,6 @@ ngram 3=1533
 -1.0107 of the midline 
 -2.1387 of the purple 
 -1.3355 of the right 
--2.1387 of the rightmost 
 -2.1387 of the row 
 -0.4367 of the screen 
 -2.1387 of the table 
@@ -1930,8 +1823,8 @@ ngram 3=1533
 -0.5259 one almost in 
 -0.5259 one and there's 
 -0.1998 one closest to 
--0.3248 one colour </s> 
--1.1280 one colour one 
+-0.3248 one color </s> 
+-1.1280 one color one 
 -0.5259 one down </s> 
 -0.8269 one face </s> 
 -0.8269 one face showing 
@@ -1974,7 +1867,7 @@ ngram 3=1533
 -0.2820 only cone </s> 
 -0.5259 only green cones 
 -0.5259 only left on 
--0.4581 only one colour 
+-0.4581 only one color 
 -1.0030 only one face 
 -0.5259 only purple one 
 -0.2820 opposite it </s> 
@@ -2094,13 +1987,6 @@ ngram 3=1533
 -0.5259 right there are 
 -0.5259 right to the 
 -0.5259 right two shades 
--0.5259 rightmost </s> <s> 
--0.5259 rightmost behind a 
--0.5259 rightmost front purple 
--0.0145 rightmost green </s> 
--1.7663 rightmost green cone 
--0.0611 rightmost purple </s> 
--0.9402 rightmost purple cone 
 -0.0969 row </s> <s> 
 -1.5259 row of cones 
 -1.5259 row of green 
@@ -2117,7 +2003,6 @@ ngram 3=1533
 -0.5259 second from the 
 -0.5259 see </s> <s> 
 -0.5259 see left green 
--0.5259 shade it's sorta 
 -0.2820 shades </s> <s> 
 -0.5259 shades furthest to 
 -0.5259 shades on it 
@@ -2154,8 +2039,6 @@ ngram 3=1533
 -0.8269 sitting alone in 
 -0.5259 slightly to the 
 -0.5259 somewhat in the 
--0.5259 sorta at the 
--0.5259 sorta to the 
 -0.5259 south east green 
 -0.5259 still on the 
 -1.4290 surrounded by a 
@@ -2213,8 +2096,6 @@ ngram 3=1533
 -1.5259 the bottom the 
 -1.5259 the bottom to 
 -1.5259 the bottom touching 
--0.4581 the bottommost cone 
--1.0030 the bottommost green 
 -0.8019 the centre </s> 
 -1.6051 the centre and 
 -1.6051 the centre behind 
@@ -2224,7 +2105,6 @@ ngram 3=1533
 -1.6051 the centre of 
 -1.6051 the centre that's 
 -1.6051 the centre to 
--0.5259 the centremost green 
 -0.5259 the close right 
 -0.5830 the closest green 
 -1.1280 the closest purple 
@@ -2246,7 +2126,6 @@ ngram 3=1533
 -1.4123 the front green 
 -1.1541 the front in 
 -1.9573 the front left 
--1.4123 the front leftmost 
 -1.9573 the front of 
 -1.9573 the front on 
 -1.4123 the front one 
@@ -2255,9 +2134,6 @@ ngram 3=1533
 -1.9573 the front right 
 -1.9573 the front row 
 -1.9573 the front to 
--0.9352 the frontmost green 
--0.1761 the frontmost purple 
--1.4801 the frontmost rightmost 
 -1.4801 the furthest away 
 -0.3522 the furthest back 
 -1.4801 the furthest green 
@@ -2297,11 +2173,6 @@ ngram 3=1533
 -1.8730 the left there's 
 -2.4180 the left to 
 -2.4180 the left top 
--2.4180 the left topmost 
--1.7020 the leftmost and 
--0.5740 the leftmost green 
--1.1570 the leftmost one 
--0.2730 the leftmost purple 
 -0.5259 the lone green 
 -1.5259 the lower bottom 
 -1.5259 the lower green 
@@ -2384,10 +2255,6 @@ ngram 3=1533
 -2.3832 the right there 
 -2.3832 the right to 
 -2.3832 the right two 
--1.4801 the rightmost </s> 
--1.4801 the rightmost behind 
--1.4801 the rightmost front 
--0.1761 the rightmost purple 
 -0.0969 the row of 
 -0.1627 the screen </s> 
 -1.1850 the screen and 
@@ -2406,8 +2273,6 @@ ngram 3=1533
 -1.4290 the top left 
 -1.4290 the top on 
 -0.8840 the top right 
--0.8269 the topmost and 
--0.8269 the topmost purple 
 -0.4581 the two green 
 -1.0030 the two purple 
 -0.5830 the upper left 
@@ -2460,7 +2325,6 @@ ngram 3=1533
 -1.1461 to the front 
 -2.5171 to the it's 
 -0.4114 to the left 
--2.5171 to the leftmost 
 -2.5171 to the lower 
 -2.5171 to the middle 
 -1.9722 to the midline 
@@ -2481,9 +2345,6 @@ ngram 3=1533
 -0.5259 top purple </s> 
 -0.4581 top right corner 
 -1.0030 top right purple 
--0.5259 topmost and leftmost 
--0.5259 topmost on the 
--0.2820 topmost purple cone 
 -0.5259 touching two green 
 -1.4801 towards the back 
 -0.9352 towards the front 
@@ -2493,8 +2354,8 @@ ngram 3=1533
 -0.9352 towards the right 
 -0.5259 two </s> <s> 
 -0.5259 two adjoining purple 
--0.5259 two colour shades 
--0.5259 two colours it's 
+-0.5259 two color shades 
+-0.5259 two colors it's 
 -0.0792 two green cones 
 -1.6051 two green ones 
 -1.6051 two green the 
@@ -2508,7 +2369,6 @@ ngram 3=1533
 -0.5830 two shades </s> 
 -1.1280 two shades on 
 -1.1280 two shades that's 
--0.5259 unisolated purple </s> 
 -0.5259 up </s> <s> 
 -0.5259 up from the 
 -0.2820 upper left hand 
@@ -2534,7 +2394,6 @@ ngram 3=1533
 -1.6051 which is furthest 
 -1.6051 which is green 
 -0.8019 which is in 
--1.0601 which is leftmost 
 -1.6051 which is slightly 
 -1.6051 which is the 
 -0.5259 which we just 
@@ -2545,7 +2404,7 @@ ngram 3=1533
 -1.0030 with the green 
 -1.0030 with the purple 
 -1.0030 with the shadow 
--1.0030 with two colour 
+-1.0030 with two color 
 -1.0030 with two green 
 -1.0030 with two shades 
 -0.5259 you </s> <s> 

@@ -1,16 +1,30 @@
-decoders = alphaSpelling connectedDigits isolatedDigits   
+decoders = bishop player jsgf alphaSpelling connectedDigits isolatedDigits   
 # connectedDigits
 connectedDigits.name = Connected Digits
-connectedDigits.configFile = tidigits.config.xml
-connectedDigits.testFile = ./connectedDigits.test
+connectedDigits.configFile = tidigits/tidigits.config.xml
+connectedDigits.testFile = tidigits/connectedDigits.test
 
 # isolatedDigits decoder
 isolatedDigits.name = Isolated Digits
-isolatedDigits.configFile = ti46.config.xml
-isolatedDigits.testFile = ./isolatedDigits.test
+isolatedDigits.configFile = ti46/ti46.config.xml
+isolatedDigits.testFile = ti46/isolatedDigits.test
 
 # alphaSpelling
 alphaSpelling.name = Alpha Spelling
-alphaSpelling.configFile = alphaSpelling.config.xml
-alphaSpelling.testFile = ../performance/an4/an4_spelled_out.wordlist
+alphaSpelling.configFile = spelling/alphaSpelling.config.xml
+alphaSpelling.testFile =  spelling/alphaSpelling.test
 
+# bishop
+bishop.name=Bishop
+bishop.configFile = ./bishop/bishop.config.xml
+bishop.testFile = ./bishop/bishop.test
+
+# CommandAndControl
+jsgf.name=CommandAndControl
+jsgf.configFile=./jsgf/jsgf.config.xml
+jsgf.testFile=./jsgf/hello.test
+
+# CommandAndControl
+player.name=Player
+player.configFile=./player/player.config.xml
+player.testFile=./player/player.test

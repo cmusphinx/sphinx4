@@ -414,10 +414,18 @@ public class Live {
         }
     }
 
+    /**
+     * Issues a warning
+     * @param msg the warning
+     */
     private void warn(String msg) {
         System.err.println("Warning: " + msg);
     }
 
+    /**
+     * A recognizer container, associates a recognizer name, config file
+     * test file utterance, along with the statistics and microphone control
+     */
     class LiveRecognizer {
         private String name;
         private String testFile;
@@ -431,6 +439,12 @@ public class Live {
         private List referenceList;
         private Iterator iterator;
 
+        /**
+         * Creates a new live recognizer
+         * @param name the name of the recognizer
+         * @param configName the config file for the recognizer
+         * @param testFile the test utterance file
+         */
         LiveRecognizer(String name, String configName, String testFile)  {
             this.name = name;
             this.testFile = testFile;
@@ -438,36 +452,50 @@ public class Live {
             allocated = false;
         }
 
+        /**
+         * Gets the name of this recognizer
+         * @return the name of this recognizer
+         */
         String getName() {
             return name;
         }
 
+        /**
+         * Gets the test file in use by this recognizer
+         * @return the test file
+         */
         String getTestFile() {
             return testFile;
         }
 
+        /**
+         * Allocates this recognizer
+         * @return
+         */
         boolean allocate() {
             try {
-                URL url = new File(configName).toURI().toURL();
-                cm = new ConfigurationManager(url);
-                recognizer = (Recognizer) cm.lookup("recognizer");
-                microphone = (Microphone) cm.lookup("microphone");
-                speedTracker = (SpeedTracker) cm.lookup("speedTracker");
-                aligner = ((AccuracyTracker) cm.lookup("accuracyTracker")).getAligner();
-                recognizer.allocate();
-                setTestFile(testFile);
-                
-                recognizer.addResultListener(new ResultListener() {
-                    public void newResult(Result result) {
-                        if (!result.isFinal() && showPartialResults) {
-                            showPartialResult(result);
+                if (!allocated) {
+                    URL url = new File(configName).toURI().toURL();
+                    cm = new ConfigurationManager(url);
+                    recognizer = (Recognizer) cm.lookup("recognizer");
+                    microphone = (Microphone) cm.lookup("microphone");
+                    speedTracker = (SpeedTracker) cm.lookup("speedTracker");
+                    aligner = ((AccuracyTracker) cm.lookup("accuracyTracker")).getAligner();
+                    recognizer.allocate();
+                    setTestFile(testFile);
+                    
+                    recognizer.addResultListener(new ResultListener() {
+                        public void newResult(Result result) {
+                            if (!result.isFinal() && showPartialResults) {
+                                showPartialResult(result);
+                            }
+                            if (result.isFinal()) {
+                                updateLiveFrame(currentRecognizer.getAligner());
+                            }
                         }
-                        if (result.isFinal()) {
-                            updateLiveFrame(currentRecognizer.getAligner());
-                        }
-                    }
-                });
-                allocated = true;
+                    });
+                    allocated = true;
+                }
 
             } catch (InstantiationException e) {
                 warn("Can't create recognizer from " + configName + " " + e);
@@ -479,6 +507,11 @@ public class Live {
             return allocated;
         }
         
+        
+        /**
+         * Deallocates this recognizer
+         *
+         */
         void deallocate() {
             if (allocated) {
                 recognizer.deallocate();
@@ -487,19 +520,36 @@ public class Live {
         }
 
 
+        /**
+         * Retrieves the microphone object in use by this recognizer
+         * @return the microphone
+         */
         Microphone getMicrophone() {
             return microphone;
         }
         
 
+        /**
+         * Returns the actual recognizer 
+         * @return the recognizer
+         */
         Recognizer getRecognizer() {
             return recognizer;
         }
 
+        /**
+         * Determines if this recognzier has been allocated
+         * @return true if the recognizer has been allocated
+         */
         boolean isAllocated() {
             return allocated;
         }
 
+        
+        /**
+         * Gets the aligner (which tracks accuracy statistics)
+         * @return the aligner used by this recognizer
+         */
         NISTAlign getAligner() {
             return aligner;
         }
@@ -522,6 +572,10 @@ public class Live {
             return speedTracker.getSpeed();
         }
         
+        /**
+         * Resets the speed statistics
+         *
+         */
         public void resetSpeed() {
             speedTracker.reset();
         }
@@ -532,7 +586,7 @@ public class Live {
          * If there is no utterance in the file at all, it will return 
          * an empty string.
          *
-         * @param the next utterance in the test file; if no utterance,
+         * @return the next utterance in the test file; if no utterance,
          *    it will return an empty string
          */
         public String getNextReference() {
@@ -549,6 +603,10 @@ public class Live {
             return next;
         }
         
+        /**
+         * Sets the file of test utterances to be the given file
+         * @param testFile the name of the test file
+         */
         void setTestFile(String testFile)  {
             try {
                 this.testFile = testFile;
