@@ -246,5 +246,19 @@ public class ExtendedStreamTokenizer {
 	}
 	return fVal;
     }
+
+     /**
+      * Skip any carriage returns.
+      */
+     public void skipwhite() throws IOException {
+	 String next = null;
+
+	 while (!isEOF()) {
+	     if ((next = getString())  != null) {
+		 unget(next);
+		 break;
+	     }
+	 }
+     }
 }
 
