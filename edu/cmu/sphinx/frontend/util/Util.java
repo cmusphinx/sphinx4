@@ -191,8 +191,8 @@ public class Util {
      * @return the string representation of the double in scientific
      *    notation
      */
-    private static String doubleToScientificString(double number,
-                                                   int fractionDigits) {
+    public static String doubleToScientificString(double number,
+						  int fractionDigits) {
         String formatter = "0.";
         for (int i = 0; i < fractionDigits; i++) {
             formatter += "0";
