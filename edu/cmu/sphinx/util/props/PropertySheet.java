@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.util.props;
 import java.util.List;
 import java.util.logging.Logger;
+import java.io.PrintStream;
 /**
  * A property sheet defines a collection of properties for a single component
  * in the system.
@@ -57,6 +58,16 @@ public interface PropertySheet {
      * @return the value
      */
     String getString(String name, String defaultValue) throws PropertyException;
+
+    /**
+     * Sets the raw property to the given name
+     * 
+     * @param name
+     *            the simple property name
+     * @param value
+     *            the value for the property
+     */
+    public void setRaw(String key, Object val) throws PropertyException ;
     /**
      * Gets the value associated with this name
      * 
@@ -176,4 +187,11 @@ public interface PropertySheet {
      * @throws PropertyException if an error occurs
      */
     Logger getLogger() throws PropertyException;
+
+    /**
+     * Dumps this sheet to the given stream
+     *
+     * @param out the print stream to dump the sheet on
+     */
+    public void dump(PrintStream out);
 }

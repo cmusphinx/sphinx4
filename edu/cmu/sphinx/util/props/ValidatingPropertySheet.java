@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.PrintStream;
+
 /**
  * An implementation of the property sheet that validates the properties
  * against a registry.
@@ -119,7 +121,7 @@ class ValidatingPropertySheet implements PropertySheet {
      *             if the property is not a registered property or the value is
      *             not of the proper type.
      */
-    void setRaw(String key, Object val) throws PropertyException {
+    public void setRaw(String key, Object val) throws PropertyException {
         PropertyType type = registry.lookup(key);
         if (type == null) {
             throw new PropertyException(registry.getOwner(), key,
@@ -443,20 +445,47 @@ class ValidatingPropertySheet implements PropertySheet {
                 sb.append("\" value=\"");
                 sb.append(value);
                 sb.append("\"/>\n");
-            } else if (obj instanceof String[]) {
-                String[] values = (String[]) obj;
+            } else if (obj instanceof List) {
+                List  values = (List) obj;
                 sb.append("<list name=\"");
                 sb.append(names[j]);
                 sb.append("\">\n");
-                for (int k = 0; k < values.length; k++) {
+                for (int k = 0; k < values.size(); k++) {
                     sb.append("    <item>");
-                    sb.append(values[k]);
+                    sb.append((String) values.get(k));
                     sb.append("</item>\n");
                 }
                 sb.append("</list>\n");
             }
         }
         return sb.toString();
+    }
+
+    /*
+     * Dumps the property sheet to the given stream
+     * 
+     * @param out the stream
+     */
+    public void dump(PrintStream out) {
+        String[] names = getNames();
+        for (int j = 0; j < names.length; j++) {
+            Object obj;
+            try {
+                obj = getRaw(names[j]);
+            } catch (PropertyException e) {
+                obj = "ERROR(not set)";
+            }
+            if (obj instanceof String) {
+                out.println("  " + names[j] + ": " + obj);
+            } else if (obj instanceof List) {
+                List values = (List) obj;
+                out.print("  " + names[j] + ": " );
+                for (int k = 0; k < values.size(); k++) {
+                    out.println("        " + (String) values.get(k));
+                }
+                out.println();
+            }
+        }
     }
     
     /**
