@@ -270,9 +270,10 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     protected void growBranches() {
         growTimer.start();
         Iterator iterator = activeList.iterator();
+        float relativeBeamThreshold = activeList.getBeamThreshold();
         while (iterator.hasNext()) {
             Token token = (Token) iterator.next();
-            collectSuccessorTokens(token);
+            collectSuccessorTokens(token, relativeBeamThreshold);
         }
         growTimer.stop();
     }
@@ -403,13 +404,19 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      * @param token  the token to collect successors from
      * be immediately expaned are placed. Null if we should always
      * expand all nodes.
+     *
+     * @param threshold the minimum score the token must have in order
+     *    for it to be grown
      */
-    protected void collectSuccessorTokens(Token token) {
+    protected void collectSuccessorTokens(Token token, float threshold) {
 
         // If this is a final state, add it to the final list
 
         if (token.isFinal()) {
             resultList.add(getWordPredecessor(token));
+            return;
+        }
+        if (token.getScore() < threshold) {
             return;
         }
 
@@ -437,6 +444,10 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             // We're actually multiplying the variables, but since
             // these come in log(), multiply gets converted to add
             float logEntryScore = token.getScore() +  arc.getProbability();
+
+            if (logEntryScore < threshold) {
+                continue;
+            }
 
             Token bestToken = getBestToken(nextState);
             boolean firstToken = bestToken == null ;
