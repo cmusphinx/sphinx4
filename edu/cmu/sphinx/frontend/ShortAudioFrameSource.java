@@ -99,21 +99,12 @@ public class ShortAudioFrameSource implements DataSource {
 
 	if (!queue.isEmpty()) {
 	    return queue.pop();
-	} else if (bytesRead == 0 ||
-		   bytesRead + frameSizeInBytes >= SEGMENT_MAX_BYTES) {
-
-	    // cases when we are at the start and end of segment
-	    Data frame = readNextFrame();
-	    Data prior = queue.pop();
-	    queue.push(frame);
-	    if (prior != null) {
-		queue.push(prior);
-	    }
-	    if (bytesRead == 0) {
-		return SegmentEndPointSignal.createSegmentStartSignal();
-	    } else {
-		return SegmentEndPointSignal.createSegmentEndSignal();
-	    }
+	} else if (bytesRead == 0) {
+	    return SegmentEndPointSignal.createSegmentStartSignal
+		(readNextFrame());
+	} else if (bytesRead + frameSizeInBytes >= SEGMENT_MAX_BYTES) {
+	    return SegmentEndPointSignal.createSegmentEndSignal
+		(readNextFrame());
 	} else {
 	    return readNextFrame();
 	}

@@ -74,7 +74,7 @@ public class Preemphasizer extends PullingProcessor {
 	    return read();
 	} else if (input instanceof SegmentEndPointSignal) {
 	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
-	    return read();
+	    return process(signal.getData());
 	} else if (input instanceof ShortAudioFrame) {
 	    return process(input);
 	} else {

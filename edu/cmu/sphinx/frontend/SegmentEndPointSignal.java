@@ -11,9 +11,14 @@ package edu.cmu.sphinx.frontend;
 public class SegmentEndPointSignal implements Signal {
 
     private boolean isStart;
+    private boolean isEnd;
+    private Data dataFrame;
 
-    private SegmentEndPointSignal(boolean isStart) {
+
+    private SegmentEndPointSignal(boolean isStart, boolean isEnd, Data dataFrame) {
 	this.isStart = isStart;
+	this.isEnd = isEnd;
+	this.dataFrame = dataFrame;
     }
 
 
@@ -23,8 +28,8 @@ public class SegmentEndPointSignal implements Signal {
      *
      * @param frameData the first audio frame in the segment
      */
-    public static SegmentEndPointSignal createSegmentStartSignal() {
-	return (new SegmentEndPointSignal(true));
+    public static SegmentEndPointSignal createSegmentStartSignal(Data dataFrame) {
+	return (new SegmentEndPointSignal(true, false, dataFrame));
     }
 
 
@@ -34,8 +39,20 @@ public class SegmentEndPointSignal implements Signal {
      *
      * @param frameData the last audio frame in the segment
      */
-    public static SegmentEndPointSignal createSegmentEndSignal() {
-	return (new SegmentEndPointSignal(false));
+    public static SegmentEndPointSignal createSegmentEndSignal(Data dataFrame) {
+	return (new SegmentEndPointSignal(false, true, dataFrame));
+    }
+
+
+    /**
+     * Constructs a SegmentEndPointSignal indicating both segment start
+     * and end with the given audio frame.
+     *
+     * @param frameData the first, which is also the last, audio frame
+     *    in the segment
+     */
+    public static SegmentEndPointSignal createSegmentStartEndSignal(Data dataFrame) {
+	return (new SegmentEndPointSignal(true, true, dataFrame));
     }
 
 
@@ -57,6 +74,16 @@ public class SegmentEndPointSignal implements Signal {
      * @return true of false
      */
     public boolean isEnd() {
-	return !isStart;
+	return isEnd;
+    }
+
+
+    /**
+     * Returns the Data object associated with this SegmentEndPointSignal.
+     *
+     * @return a Data object
+     */
+    public Data getData() {
+	return dataFrame;
     }
 }
