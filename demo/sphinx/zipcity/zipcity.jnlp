@@ -15,7 +15,8 @@
     </information>
 
     <resources>
-        <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
+        <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"
+            max-heap-size="200m"/>
         <jar href="ZipCity.jar" main="true"/>
         <jar href="sphinx4.jar" main="false"/>
         <jar href="jsapi.jar" main="false"/>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0" 
-      codebase="http://ojojo/zipcity" 
+    codebase="http://cmusphinx.sourceforge.net/sphinx4/zipcity" 
       href="zipcity.jnlp">
     <information>
         <title>Zip City</title>
         <vendor>Sun Microsystems, Inc.</vendor>
-        <homepage href="http://ojojo/zipcity"/>
+        <homepage href="http://cmusphinx.sourceforge.net/sphinx4/zipcity"/>
         <icon href="s4.jpg"/>
         <description>A webstart demonstration of Sphinx-4</description>
         <description kind="short">
@@ -15,7 +15,8 @@
     </information>
 
     <resources>
-        <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
+        <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"
+            initial-heap-size="200m"/>
         <jar href="ZipCity.jar" main="true"/>
         <jar href="sphinx4.jar" main="false"/>
         <jar href="jsapi.jar" main="false"/>
