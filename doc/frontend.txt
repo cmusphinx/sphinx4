@@ -12,9 +12,9 @@ Table Of Contents
 
 0.   Premise
 1.   Requirements
-2.   The Design
-3.   Appendix
-
+2.   The Design - outdated
+3.   Appendix - outdated
+4.   Unresolved questions from 4/18 F2F
 
 
 
@@ -473,3 +473,48 @@ public class PullingFrontEnd implements SignalReader, Runnable {
     public Signal getFeature() {...};
     ...
 }
+
+
+4.   Unresolved questions from 4/18 F2F
+=======================================
+
+- How do we represent missing/dropped data?
+
+- Can the pipeline as we have it now communicate the fact that data was 
+dropped?
+
+- How can SearchManager find out the timing info  of each Feature Frame?
+
+- How do we make sure that the FrontEnd returns Features that match the 
+size/shape of  the features used to create the acoustic models?
+
+- If the current feature index is 100, and I call getFeature(101) , does 
+getFeature block  until the feature comes in? How do I unblock if I wish 
+to abort?
+
+-What will be the easiest way to send the output of any DataProcessor to 
+a file for  testing/debugging?
+
+- Can I easily create a pipeline that gets its data from a file of a 
+particular Data type  (such as CepstrumData for instance)?
+
+- How can I get the AudioData that corresponds to a particular feature 
+or set of features?
+
+- How do I flush the FrontEnd?
+
+- How does flushing affect the Feature cache (do flushed features get 
+into the cache?)
+
+- Can we define the *exact* policy of what happens when a DataProcessor 
+encounters  Data that is not an EndPoint signal and is not of the 
+expected type?
+
+- The current FrontEnd has a notion of FRAME_START and FRAME_END 
+signals. Do  we no longer need these?
+
+- Does the FrontEnd need to be reset ever?
+
+- It looks like the callee is responsible for determining the size of 
+the data returned. Is this the optimal approach, or would it be better 
+to have the caller request data of a particular size.
