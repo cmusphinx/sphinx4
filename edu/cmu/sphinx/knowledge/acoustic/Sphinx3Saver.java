@@ -22,9 +22,9 @@ import edu.cmu.sphinx.util.Utilities;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -41,7 +42,6 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipException;
-
 
 
 /**
@@ -66,6 +66,8 @@ class Sphinx3Saver implements Saver {
 
     private final static int BYTE_ORDER_MAGIC = 0x11223344;
 
+    private String checksum;
+    boolean doCheckSum;
     public final static String MODEL_VERSION = "0.3";
 
     private final static int CONTEXT_SIZE = 1;
@@ -130,6 +132,10 @@ class Sphinx3Saver implements Saver {
 	senonePool = loader.getSenonePool();
         contextIndependentUnits = new LinkedHashMap();
 	acousticProperties = loader.getModelProperties();
+	// TODO: read checksum from props;
+	checksum = "no";
+        doCheckSum =  (checksum != null && checksum.equals("yes"));
+	swap = false;
 
         // do the actual acoustic model loading
         saveModelFiles(modelName, props);
@@ -402,41 +408,42 @@ class Sphinx3Saver implements Saver {
      */
     private void saveDensityFileBinary(Pool pool, String path, boolean append) 
         throws FileNotFoundException, IOException {
-	/*
+	
 	int token_type;
 	int numStates;
 	int numStreams;
 	int numGaussiansPerState;
         Properties props = new Properties();
-        int blockSize = 0;
+	int checkSum = 0;
 
 	logger.info("Saving density file to: " );
 	logger.info(path);
 
-        DataOutputStream dos = readS3BinaryHeader(location, path, props, 
+	props.setProperty("version", DENSITY_FILE_VERSION);
+	props.setProperty("chksum0", checksum);
+
+        DataOutputStream dos = writeS3BinaryHeader(location, path, props, 
 						  append);
 
-        String version = props.getProperty("version");
-        boolean doCheckSum;
+	numStates = pool.getFeature(NUM_SENONES, -1);
+	numStreams = pool.getFeature(NUM_STREAMS, -1);
+	numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
 
-        if (version == null || !version.equals(DENSITY_FILE_VERSION)) {
-            throw new IOException("Unsupported version in " + path);
-        }
+        writeInt(dos, numStates);
+        writeInt(dos, numStreams);
+        writeInt(dos, numGaussiansPerState);
 
-        String checksum = props.getProperty("chksum0");
-        doCheckSum =  (checksum != null && checksum.equals("yes"));
-
-        numStates = readInt(dos);
-        numStreams = readInt(dos);
-        numGaussiansPerState = readInt(dos);
-
-
-        int[] vectorLength = new int[numStreams];
+        int rawLength = 0;
+	int[] vectorLength = new int[numStreams];
         for (int i = 0; i < numStreams; i++) {
-            vectorLength[i] = readInt(dos);
+	    vectorLength[i] = this.vectorLength;
+            writeInt(dos, vectorLength[i]);
+	    rawLength += numGaussiansPerState * numStates * vectorLength[i];
         }
 
-        int rawLength = readInt(dos);
+        assert numStreams == 1;
+        assert rawLength == numGaussiansPerState * numStates * this.vectorLength;
+	writeInt(dos, rawLength);
 
         //System.out.println("Nstates " + numStates);
         //System.out.println("Nstreams " + numStreams);
@@ -444,33 +451,25 @@ class Sphinx3Saver implements Saver {
         //System.out.println("vectorLength " + vectorLength.length);
         //System.out.println("rawLength " + rawLength);
 
-        for (int i = 0;  i < numStreams; i++) {
-            blockSize += vectorLength[i];
-        }
-
-
-        assert rawLength == numGaussiansPerState * blockSize * numStates;
-        assert numStreams == 1;
-
-	pool.setFeature(NUM_SENONES, numStates);
-	pool.setFeature(NUM_STREAMS, numStreams);
-	pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
-
         int r = 0;
 	for (int i = 0; i < numStates; i++) {
             for (int j = 0; j < numStreams; j++) {
                 for (int k = 0; k < numGaussiansPerState; k++) {
-                    float[] density = readFloatArray(dos, vectorLength[j]);
-                    floorData(density, floor);
-                    pool.put(i * numGaussiansPerState + k, density);
+		    int id = i * numStreams * numGaussiansPerState + 
+			j * numGaussiansPerState + k;
+		    float[] density = (float [])pool.get(id);
+		    // Do checksum here?
+                    writeFloatArray(dos, density);
 		}
 	    }
 	}
-
-        int checkSum = readInt(dos);
+	if (doCheckSum) {
+	    assert doCheckSum = false: "Checksum not supported";
+	}
+	// S3 requires some number here....
+	writeInt(dos, checkSum);
         // BUG: not checking the check sum yet.
         dos.close();
-	*/
     }
 
 
@@ -490,40 +489,26 @@ class Sphinx3Saver implements Saver {
 
     private DataOutputStream writeS3BinaryHeader(String location, String
             path, Properties props, boolean append) throws IOException {
+
         OutputStream outputStream = 
 	    StreamFactory.getOutputStream(location, path, append);
-        DataOutputStream dos = new DataOutputStream(new
-                BufferedOutputStream(outputStream));
-	/*
-        String id = writeWord(dos);
-        if (!id.equals("s3")) {
-            throw new IOException("Not proper s3 binary file " +
-                    location + path);
-        }
+	if (doCheckSum) {
+	    assert false: "Checksum not supported";
+	}
+	DataOutputStream dos = 
+	    new DataOutputStream(new BufferedOutputStream(outputStream));
 
-        String name;
-        while ((name = readWord(dos)) != null) {
-            if (!name.equals("endhdr")) {
-                String value = readWord(dos);
-                props.setProperty(name, value);
-            } else {
-                break;
-            }
-        }
+        writeWord(dos, "s3\n");
 
-        int byteOrderMagic = dos.readInt();
+	for (Enumeration e = props.keys(); e.hasMoreElements(); ) {
+	    String name = (String) e.nextElement();
+	    String value = props.getProperty(name);
+	    writeWord(dos, name + " " + value + "\n");
+	}
+	writeWord(dos, "endhdr\n");
 
-        if (byteOrderMagic == BYTE_ORDER_MAGIC) {
-            // System.out.println("Not swapping " + path);
-            swap = false;
-        } else if (byteSwap(byteOrderMagic) == BYTE_ORDER_MAGIC) {
-            // System.out.println("SWAPPING " + path);
-            swap = true;
-        } else {
-            throw new IOException("Corrupt S3 file " + location + path);
-        }
+        writeInt(dos, BYTE_ORDER_MAGIC);
 
-	*/
         return dos;
     }
 
@@ -970,51 +955,47 @@ class Sphinx3Saver implements Saver {
         throws FileNotFoundException, IOException {
 	logger.info("Saving mixture weights to: " );
 	logger.info(path);
-	/*
+	
 	int numStates;
 	int numStreams;
 	int numGaussiansPerState;
-        int numValues;
         Properties props = new Properties();
+	int checkSum = 0;
 
-        DataOutputStream dos = readS3BinaryHeader(location, path, props, 
+	props.setProperty("version", MIXW_FILE_VERSION);
+	if (doCheckSum) {
+	    props.setProperty("chksum0", checksum);
+	}
+
+        DataOutputStream dos = writeS3BinaryHeader(location, path, props, 
 						  append);
 
-        String version = props.getProperty("version");
-        boolean doCheckSum;
+	numStates = pool.getFeature(NUM_SENONES, -1);
+	numStreams = pool.getFeature(NUM_STREAMS, -1);
+	numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
 
-        if (version == null || !version.equals(MIXW_FILE_VERSION)) {
-            throw new IOException("Unsupported version in " + path);
-        }
+        writeInt(dos, numStates);
+        writeInt(dos, numStreams);
+        writeInt(dos, numGaussiansPerState);
 
-        String checksum = props.getProperty("chksum0");
-        doCheckSum =  (checksum != null && checksum.equals("yes"));
-
-    	Pool pool = new Pool(path);
-
-	numStates = readInt(dos);
-	numStreams = readInt(dos);
-	numGaussiansPerState = readInt(dos);
-	numValues = readInt(dos);
-
-        assert numValues == numStates * numStreams * numGaussiansPerState;
         assert numStreams == 1;
 
-
-	pool.setFeature(NUM_SENONES, numStates);
-	pool.setFeature(NUM_STREAMS, numStreams);
-	pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
+        int rawLength = numGaussiansPerState * numStates * numStreams;
+	writeInt(dos, rawLength);
 
 	for (int i = 0; i < numStates; i++) {
-	    float[] logMixtureWeight = readFloatArray(dos,numGaussiansPerState);
-            normalize(logMixtureWeight);
-            floorData(logMixtureWeight, floor);
-            convertToLogMath(logMixtureWeight);
-	    pool.put(i, logMixtureWeight);
+	    float[] mixtureWeight = new float[numGaussiansPerState];
+	    float[] logMixtureWeight = (float[]) pool.get(i);
+	    convertFromLogMath(logMixtureWeight, mixtureWeight);
+
+	    writeFloatArray(dos, mixtureWeight);
 	}
+	if (doCheckSum) {
+	    assert doCheckSum = false: "Checksum not supported";
+	    // writeInt(dos, checkSum);
+	}
+
         dos.close();
-	return pool;
-	*/
     }
 
 
@@ -1058,7 +1039,6 @@ class Sphinx3Saver implements Saver {
 	for (int i = 0; i < numMatrices; i++) {
 	    pw.println("tmat [" + i + "]");
 
-	    float tmatEntry;
 	    tmat = (float [][])pool.get(i);
 	    for (int j = 0; j < numStates ; j++) {
 		for (int k = 0; k < numStates ; k++) {
@@ -1114,7 +1094,7 @@ class Sphinx3Saver implements Saver {
     private void saveTransitionMatricesBinary(Pool pool, String path, 
 					      boolean append)
         throws FileNotFoundException, IOException {
-	/*
+
         boolean sparseForm = acousticProperties.getBoolean
 	    (AcousticModel.PROP_SPARSE_FORM, 
 	     AcousticModel.PROP_SPARSE_FORM_DEFAULT);
@@ -1124,95 +1104,62 @@ class Sphinx3Saver implements Saver {
 	int numStates;
         int numRows;
         int numValues;
-
-
         Properties props = new Properties();
+
+	int checkSum = 0;
+
+	props.setProperty("version", TMAT_FILE_VERSION);
+	if (doCheckSum) {
+	    props.setProperty("chksum0", checksum);
+	}
+
+
         DataOutputStream dos = writeS3BinaryHeader(location, path, props, 
 						   append);
 
-        String version = props.getProperty("version");
-        boolean doCheckSum;
 
-        if (version == null || !version.equals(TMAT_FILE_VERSION)) {
-            throw new IOException("Unsupported version in " + path);
-        }
+	numMatrices = pool.size();
+	assert numMatrices > 0;
+	writeInt(dos, numMatrices);
 
-        String checksum = props.getProperty("chksum0");
-        doCheckSum =  (checksum != null && checksum.equals("yes"));
+	float[][] tmat = (float [][])pool.get(0);
+	numStates = tmat[0].length;
+	numRows = numStates - 1;
 
-    	Pool pool = new Pool(path);
+	writeInt(dos, numRows);
+	writeInt(dos, numStates);
+        numValues = numStates * numRows * numMatrices;
+	writeInt(dos, numValues);
 
-	numMatrices = readInt(dos);
-	numRows = readInt(dos);
-	numStates = readInt(dos);
-	numValues = readInt(dos);
-
-        assert numValues == numStates * numRows * numMatrices;
 
 	for (int i = 0; i < numMatrices; i++) {
-	    float[][] tmat = new float[numStates][];
-            // last row should be zeros
-            tmat[numStates -1] = new float[numStates];
-            convertToLogMath(tmat[numStates-1]);
+	    float[] logTmatRow;
+	    float[] tmatRow;
+
+	    tmat = (float [][])pool.get(i);
+
+	    // Last row should be all zeroes
+	    logTmatRow = tmat[numStates - 1];
+	    tmatRow = new float[logTmatRow.length];
+
+	    for (int j = 0; j < numStates; j++) {
+		assert tmatRow[j] == 0.0f;
+	    }
 
 	    for (int j = 0; j < numRows; j++) {
-                tmat[j] = readFloatArray(dos, numStates);
-                nonZeroFloor(tmat[j], 0f);
-                normalize(tmat[j]);
-                convertToLogMath(tmat[j]);
+		logTmatRow = tmat[j];
+		tmatRow = new float[logTmatRow.length];
+		convertFromLogMath(logTmatRow, tmatRow);
+                writeFloatArray(dos, tmatRow);
 	    }
-	    pool.put(i, tmat);
+	}
+	if (doCheckSum) {
+	    assert doCheckSum = false: "Checksum not supported";
+	    // writeInt(dos, checkSum);
 	}
 	dos.close();
-	return pool;
-	*/
     }
 
-
-    /**
-     * Creates a pool with a single identity matrix in it.
-     *
-     * @param name the name of the pool
-     *
-     * @return the pool with the matrix
-     */
-    private Pool createDummyMatrixPool(String name) {
-    	Pool pool = new Pool(name);
-	float[][] matrix = new float[vectorLength][vectorLength];
-	logger.info("creating dummy matrix pool " + name);
-
-	for (int i = 0; i < vectorLength; i++) {
-	    for (int j = 0; j < vectorLength; j++) {
-		if (i == j) {
-		    matrix[i][j] = 1.0F;
-		} else {
-		    matrix[i][j] = 0.0F;
-		}
-	    }
-	}
-
-	pool.put(0, matrix);
-	return pool;
-    }
-
-    /**
-     * Creates a pool with a single zero vector in it.
-     *
-     * @param name the name of the pool
-     *
-     * @return the pool with the vector
-     */
-    private Pool createDummyVectorPool(String name) {
-	logger.info("creating dummy vector pool " + name);
-    	Pool pool = new Pool(name);
-	float[] vector = new float[vectorLength];
-
-	for (int i = 0; i < vectorLength; i++) {
-	    vector[i] = 0.0f;
-	}
-	pool.put(0, vector);
-	return pool;
-    }
 
     /**
      * Returns the properties of the saved AcousticModel.
