@@ -152,7 +152,7 @@ aurora.testa.N1_SNR15:
 
 aurora.testa.N1_SNR10:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-8\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-12\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR10.batch
 
 
@@ -166,7 +166,7 @@ aurora.testa.N1_SNR10:
 
 aurora.testa.N1_SNR5:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-8\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-12\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR5.batch
 
 
@@ -192,7 +192,7 @@ aurora.testa.N1_SNR0:
 ##########################################################################
 
 
-aurora.testa.N1_SNR0:
+aurora.testa.N1_SNR-5:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR-5.batch
