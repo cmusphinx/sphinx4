@@ -44,6 +44,6 @@ public class DataStartSignal extends Signal {
      * @return the string "DataStartSignal"
      */
     public String toString() {
-        return "DataStartSignal";
+        return "DataStartSignal: creation time: " + getTime();
     }
 }
