@@ -82,7 +82,9 @@ public class ZipCity extends JFrame {
         
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                zipRecognizer.shutdown();
+                if (zipRecognizer != null) {
+                    zipRecognizer.shutdown();
+                }
                 System.exit(0);
             }
         });
@@ -122,8 +124,8 @@ public class ZipCity extends JFrame {
 
             setMessage("ZipCity Version 1.0");
             speakButton.setEnabled(true);
-        } catch (IOException ioe) {
-            setMessage("Error: " + ioe.getMessage());
+        } catch (Throwable e) {
+            setMessage("Error: " + e.getMessage());
         }
     }
 
