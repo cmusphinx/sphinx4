@@ -58,8 +58,15 @@ alltests: all
 
 live: all
 	(cd $(TOP); $(MAKE))
-	${JAVA_HOME}/bin/java -cp ../../classes \
+	$(JAVA_CMD) -cp ../../classes \
 	tests.frontend.MicrophoneTest
+
+# endpointing for the tidigits data set
+ep-tidigits: all
+	$(JAVA_CMD) \
+	-Dtests.frontend.energyEndpointer.batchMode=true \
+	tests.frontend.EnergyEndpointerTest \
+	energyEndpointer ../decoder/tiDigits.props ../decoder/tidigits.batch
 
 clean::
 	rm -f *.out *.diff

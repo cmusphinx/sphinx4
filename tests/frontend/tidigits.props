@@ -1,0 +1,76 @@
+############################################################
+#
+# Global logging properties
+#
+############################################################
+
+handlers= java.util.logging.ConsoleHandler
+
+# This is the overall default logging level
+.level= WARN
+
+# Tracing level for the console
+java.util.logging.ConsoleHandler.level = WARN
+java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
+
+
+############################################################
+# Log base for probabilities
+############################################################
+edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+
+
+############################################################
+#
+# Acoustic model properties
+#
+############################################################
+
+edu.cmu.sphinx.model.acoustic.format = sphinx3.ascii
+edu.cmu.sphinx.model.acoustic.location = /lab/speech/sphinx3j/data/tidigits_model
+edu.cmu.sphinx.model.acoustic.definition_file = wd_dependent_phone.500.mdef
+edu.cmu.sphinx.model.acoustic.data_location = wd_dependent_phone.cd_continuous_8gau
+edu.cmu.sphinx.model.acoustic.properties_file = am.props
+edu.cmu.sphinx.model.acoustic.FeatureVectorLength = 39
+edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+
+
+############################################################
+# 
+# FrontEnd properties
+#
+############################################################
+
+edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
+edu.cmu.sphinx.frontend.cepstrumSize = 13
+edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
+edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
+edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
+edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
+edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
+edu.cmu.sphinx.frontend.windowShiftInMs = 10
+edu.cmu.sphinx.frontend.windower.alpha = 0.46
+edu.cmu.sphinx.frontend.useAcousticModelProperties = true
+
+edu.cmu.sphinx.frontend.endpointer.energy.startLow = 2
+edu.cmu.sphinx.frontend.endpointer.energy.startHigh = 6
+edu.cmu.sphinx.frontend.endpointer.energy.endLow = 2
+edu.cmu.sphinx.frontend.endpointer.energy.endHigh = 6
+edu.cmu.sphinx.frontend.endpointer.energy.startWindow = 10
+edu.cmu.sphinx.frontend.endpointer.energy.endWindow = 20
+
+
+# the following properties are effective only if 'useAcousticModelProperties'
+# is false
+
+edu.cmu.sphinx.frontend.mel.numFilters = 40
+edu.cmu.sphinx.frontend.mel.minfreq = 130
+edu.cmu.sphinx.frontend.mel.maxfreq = 6800
+edu.cmu.sphinx.frontend.fft.numberFftPoints = 512
+edu.cmu.sphinx.frontend.cmn.live.initialCepstralMean = 12
+edu.cmu.sphinx.frontend.cmn.live.windowSize = 500
+edu.cmu.sphinx.frontend.cmn.live.shiftWindow = 800
+edu.cmu.sphinx.frontend.sampleRate = 16000
+
+
+

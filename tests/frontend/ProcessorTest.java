@@ -71,7 +71,7 @@ public class ProcessorTest {
             audioSource =
                 (new StreamAudioSource
                  ("StreamAudioSource", context,
-                  (new FileInputStream(audioSourceFile))));
+                  (new FileInputStream(audioSourceFile)), audioSourceFile));
         }
     }
 
