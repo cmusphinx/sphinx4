@@ -34,8 +34,14 @@ public class SpectrumAnalyzer extends PullingProcessor {
      * Constructs a default Spectrum Analyzer.
      */
     public SpectrumAnalyzer(float[] input, float[] output) {
+	getSphinxProperties();
 	computeLog2N(NPoint);
 	createWk(NPoint, false);
+
+	/**
+	 * EVERYTHING BEYOND THIS POINT SHOULD ACTUALLY BE "PROCESS"
+	 */
+
 	/**
 	 * Create complex input sequence equivalent to the real
 	 * input sequence.
@@ -101,6 +107,7 @@ public class SpectrumAnalyzer extends PullingProcessor {
 	for (int k = N, log2N = 0; k > 1; k >>= 1, log2N++) {
 	    if (((k % 2) != 0) || (N < 0)) {
 		/* Break horribly.
+		 * Maybe throw an exception? Which? 
 		 */
 	    }
 	}
@@ -242,7 +249,7 @@ public class SpectrumAnalyzer extends PullingProcessor {
 		ndx2From = s + currentStage;
 		ndx1To = s;
 		ndx2To = s + (NPoint >> 1);
-		while (ndxWk < (NPoint >> 1) {
+		while (ndxWk < (NPoint >> 1)) {
 		    /**
 		     * <b>wkTimesF2 = Wk[k] * from[ndx2From]</b>
 		     */
