@@ -79,7 +79,7 @@ public class AudioTool {
     static RawRecorder recorder;
     static boolean recording = false;
     static Preferences prefs;
-    static float zoom;
+    static float zoom = 1.0f;
     
     private static JMenuItem saveMenuItem;
 
