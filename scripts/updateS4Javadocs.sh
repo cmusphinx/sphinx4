@@ -5,7 +5,7 @@
 JAVA_HOME=/lab/speech/java/j2sdk1.4.2
 export JAVA_HOME
 
-PUSH_DEST=/home/groups/c/cm/cmusphinx/htdocs/sphinx4
+PUSH_DEST=/home/groups/c/cm/cmusphinx/htdocs/sphinx4/
 export PUSH_DEST
 
 DOC_DEST=javadoc
@@ -23,7 +23,7 @@ cd sphinx4
 ant javadoc
 gtar cf /tmp/sphinx4docs.tar -C ${DOC_DEST} .
 ${HOME}/bin/sscp /tmp/sphinx4docs.tar
-${HOME}/bin/sshh tar xf -m sphinx4docs.tar -C ${PUSH_DEST}/javadoc
+${HOME}/bin/sshh tar -mxf sphinx4docs.tar -C ${PUSH_DEST}/javadoc
 for file in `cat $COPY_LIST`; do
 ${HOME}/bin/sshh mkdir -p `dirname ${PUSH_DEST}/$file`
 scp $file shell.sourceforge.net:${PUSH_DEST}/$file
