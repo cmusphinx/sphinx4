@@ -72,7 +72,7 @@ public class Windower implements Processor {
 	    double oneMinusAlpha = (1 - ALPHA);
 	    for (int i = 0; i < windowSize; i++) {
 		window[i] = oneMinusAlpha - ALPHA *
-		    Math.cos(2 * PI * i / ((double) windowSize - 1.0));
+		    Math.cos(2 * Math.PI * i / ((double) windowSize - 1.0));
 	    }
 	}
     }

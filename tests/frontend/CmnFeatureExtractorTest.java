@@ -15,6 +15,7 @@ import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.SegmentEndPointSignal;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.Util;
+import edu.cmu.sphinx.util.Timer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -38,6 +39,8 @@ public class CmnFeatureExtractorTest implements DataSource {
     private FeatureExtractor featureExtractor;
     private boolean start = true;
     private String line;
+    private boolean dumpValues;
+    private boolean dumpTimes;
 
 
     /**
@@ -48,11 +51,17 @@ public class CmnFeatureExtractorTest implements DataSource {
      */
     public CmnFeatureExtractorTest(String cepstrumFile) throws IOException {
 	this.reader = new BufferedReader(new FileReader(cepstrumFile));
-	cmn = new CepstralMeanNormalizer();
+	
+        dumpValues = Boolean.getBoolean
+            ("tests.frontend.CmnFeatureExtractorTest.dumpValues");
+        dumpTimes = Boolean.getBoolean
+            ("tests.frontend.CmnFeatureExtractorTest.dumpTimes");
+        
+        cmn = new CepstralMeanNormalizer();
 	cmn.setSource(this);
 	featureExtractor = new FeatureExtractor();
 	featureExtractor.setSource(cmn);
-	featureExtractor.setDump(true);
+	featureExtractor.setDump(dumpValues);
         start = true;
     }
 
@@ -68,6 +77,10 @@ public class CmnFeatureExtractorTest implements DataSource {
 	do {
 	    result = featureExtractor.read();
         } while (result != null);
+
+        if (dumpTimes) {
+            Timer.dumpAll("");
+        }
     }
 
 

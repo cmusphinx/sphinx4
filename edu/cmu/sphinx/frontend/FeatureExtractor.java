@@ -77,14 +77,10 @@ public class FeatureExtractor extends PullingProcessor {
 	Data input = getSource().read();
         Data output = input;
 
-        getTimer().start();
-
 	if (input instanceof SegmentEndPointSignal ||
 	    input instanceof CepstrumFrame) {
 	    output = process(input);
 	}
-
-        getTimer().stop();
 
         return output;
     }	
@@ -98,6 +94,8 @@ public class FeatureExtractor extends PullingProcessor {
      * @return a FeatureFrame
      */
     private Data process(Data input) {
+
+        getTimer().start();
 	
 	CepstrumFrame cepstrumFrame;
 	SegmentEndPointSignal signal = null;
@@ -144,7 +142,9 @@ public class FeatureExtractor extends PullingProcessor {
 	// copy (the reference of) all the input cepstrum to our cepstraBuffer 
 	for (int i = 0; i < cepstra.length; i++) {
 	    this.cepstraBuffer[bufferPosition++] = cepstra[i].getData();
-	    bufferPosition %= LIVEBUFBLOCKSIZE;
+            if (bufferPosition == LIVEBUFBLOCKSIZE) {
+                bufferPosition = 0;
+            }
 	}
 
 	if (endSegment) {
@@ -168,14 +168,15 @@ public class FeatureExtractor extends PullingProcessor {
 	}
 
 	// create the Features
-	int totalFeatures = cepstra.length + residualVectors;
-	Feature[] features = new Feature[totalFeatures];
+	Feature[] features = new Feature[cepstra.length + residualVectors];
 
-	for (int i = 0; i < totalFeatures; i++) {
+	for (int i = 0; i < features.length; i++) {
 	    features[i] = computeNextFeature();
 	}
 
 	FeatureFrame featureFrame = new FeatureFrame(features);
+
+        getTimer().stop();
 
 	if (getDump()) {
 	    Util.dumpFeatureFrame(featureFrame);
@@ -197,6 +198,7 @@ public class FeatureExtractor extends PullingProcessor {
 	float[] mfc3f = this.cepstraBuffer[jf3++];
 	float[] mfc2f = this.cepstraBuffer[jf2++];
 	float[] mfc1f = this.cepstraBuffer[jf1++];
+        float[] current = this.cepstraBuffer[currentPosition++];
 	float[] mfc1p = this.cepstraBuffer[jp1++];
 	float[] mfc2p = this.cepstraBuffer[jp2++];
 	float[] mfc3p = this.cepstraBuffer[jp3++];
@@ -205,33 +207,31 @@ public class FeatureExtractor extends PullingProcessor {
 	
 	// CEP; copy all the cepstrum data except for the first one
 	int j = cepstrumLength - 1;
-	System.arraycopy
-	    (this.cepstraBuffer[currentPosition], 1, feature, 0, j);
+	System.arraycopy(current, 1, feature, 0, j);
 	
 	// DCEP: mfc[2] - mfc[-2]
-	for (int k = 1; k < cepstrumLength; k++) {
+	for (int k = 1; k < mfc2f.length; k++) {
 	    feature[j++] = (mfc2f[k] - mfc2p[k]);
 	}
 	
 	// POW: C0, DC0, D2C0
-	feature[j++] = this.cepstraBuffer[currentPosition][0];
+	feature[j++] = current[0];
 	feature[j++] = mfc2f[0] - mfc2p[0];
 	feature[j++] = (mfc3f[0] - mfc1p[0]) - (mfc1f[0] - mfc3p[0]);
 	
 	// D2CEP: (mfc[3] - mfc[-1]) - (mfc[1] - mfc[-3])
-	for (int k = 1; k < cepstrumLength; k++) {
+	for (int k = 1; k < mfc3f.length; k++) {
 	    feature[j++] = (mfc3f[k] - mfc1p[k]) - (mfc1f[k] - mfc3p[k]);
 	}
 
 	jf3 %= LIVEBUFBLOCKSIZE;
 	jf2 %= LIVEBUFBLOCKSIZE;
 	jf1 %= LIVEBUFBLOCKSIZE;
+        currentPosition %= LIVEBUFBLOCKSIZE;
 	jp1 %= LIVEBUFBLOCKSIZE;
 	jp2 %= LIVEBUFBLOCKSIZE;
 	jp3 %= LIVEBUFBLOCKSIZE;
-	currentPosition++;
-	currentPosition %= LIVEBUFBLOCKSIZE;
 
-	return (new Feature(feature));
+        return (new Feature(feature));
     }
 }

@@ -9,7 +9,9 @@ if [ -f features.diff ]; then
         rm -f features.diff
 fi
 
-${JAVA_HOME}/bin/java -cp ../../classes tests.frontend.CmnFeatureExtractorTest cepstra.s3 > features.out
+${JAVA_HOME}/bin/java -cp ../../classes \
+ -Dtests.frontend.CmnFeatureExtractorTest.dumpValues=true \
+ tests.frontend.CmnFeatureExtractorTest cepstra.s3 > features.out
 
 diff features.s3 features.out > features.diff
 

@@ -9,7 +9,9 @@ if [ -f preemphasis.diff ]; then
 fi
 
 
-${JAVA_HOME}/bin/java -cp ../../classes tests.frontend.PreemphasizerTest 19990601-114739-00000001.raw > preemphasis.out
+${JAVA_HOME}/bin/java -cp ../../classes \
+ -Dtest.frontend.PreemphasizerTest.dumpValues=true \
+ tests.frontend.PreemphasizerTest 19990601-114739-00000001.raw > preemphasis.out
 
 diff preemphasis.s3 preemphasis.out > preemphasis.diff
 

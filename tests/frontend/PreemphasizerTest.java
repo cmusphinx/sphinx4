@@ -16,6 +16,7 @@ import edu.cmu.sphinx.frontend.Preemphasizer;
 import edu.cmu.sphinx.frontend.SegmentEndPointSignal;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.Util;
+import edu.cmu.sphinx.util.Timer;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -34,8 +35,13 @@ public class PreemphasizerTest {
 	    System.out.println("Usage: java FrontEnd <filename>");
 	}
 
+        boolean dumpValues = Boolean.getBoolean
+            ("test.frontend.PreemphasizerTest.dumpValues");
+        boolean dumpTimes = Boolean.getBoolean
+            ("test.frontend.PreemphasizerTest.dumpTimes");
+
 	Preemphasizer preemphasizer = new Preemphasizer();
-	preemphasizer.setDump(true);
+	preemphasizer.setDump(dumpValues);
 
 	FrontEnd frontend = new FrontEnd();
 
@@ -48,5 +54,9 @@ public class PreemphasizerTest {
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
+
+        if (dumpTimes) {
+            Timer.dumpAll("");
+        }
     }
 }

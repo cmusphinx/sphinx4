@@ -5,6 +5,8 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.ListIterator;
@@ -44,7 +46,10 @@ public class CepstrumProducer extends PullingProcessor {
 	getSphinxProperties();
 	window = new DoubleAudioFrame(windowSize);
 
+        setTimer(Timer.getTimer("", "HammingWindow"));
+
 	hammingWindower = new Windower();
+        
 	// fastFourierTransformer = new FastFourierTransformer();
     }
 
@@ -112,9 +117,14 @@ public class CepstrumProducer extends PullingProcessor {
 				 window.getData(), 0, windowSize);
 		
 		// apply hamming window
+                getTimer().start();
 		hammingWindower.process(window);
-		Util.dumpDoubleArray(window.getData(), "HAMMING_WINDOW");
-		
+                getTimer().stop();
+
+                if (getDump()) {
+                    Util.dumpDoubleArray(window.getData(), "HAMMING_WINDOW");
+		}
+
 		// apply FFT
 		// cepstra[i] = (Cepstrum) fastFourierTransformer.process(window);
 	    }

@@ -81,8 +81,6 @@ public class Preemphasizer extends PullingProcessor {
 	Data input = getSource().read();
         Data output = input;
 
-        getTimer().start();
-
 	if (input instanceof SegmentEndPointSignal) {
 	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
 	    signal.setData(process(signal.getData()));
@@ -94,8 +92,6 @@ public class Preemphasizer extends PullingProcessor {
 	} else if (input instanceof ShortAudioFrame) {
 	    output = process(input);
 	}
-
-        getTimer().stop();
 
         return output;
     }	
@@ -118,6 +114,8 @@ public class Preemphasizer extends PullingProcessor {
 	// for loop below, we can just start at the end of the array
 	// to calculate the preemphasis in-place.
 
+        getTimer().start();
+
 	short[] in = ((ShortAudioFrame) input).getData();
 	double[] out = new double[in.length];
 
@@ -133,6 +131,8 @@ public class Preemphasizer extends PullingProcessor {
 		out[i] = (double) in[i];
 	    }
 	}
+
+        getTimer().stop();
 
 	if (getDump()) {
 	    Util.dumpDoubleArray(out, "PREEMPHASIS");

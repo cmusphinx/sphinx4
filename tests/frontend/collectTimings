@@ -1,0 +1,13 @@
+#!/bin/sh
+
+${JAVA_HOME}/bin/java -cp ../../classes \
+ -Dtest.frontend.PreemphasizerTest.dumpTimes=true \
+ tests.frontend.PreemphasizerTest 19990601-114739-00000001.raw
+
+${JAVA_HOME}/bin/java -cp ../../classes \
+ -Dtests.frontend.HammingWindowerTest.dumpTimes=true \
+ tests.frontend.HammingWindowerTest 19990601-114739-00000001.raw
+
+${JAVA_HOME}/bin/java -cp ../../classes \
+ -Dtests.frontend.CmnFeatureExtractorTest.dumpTimes=true \
+ tests.frontend.CmnFeatureExtractorTest cepstra.s3

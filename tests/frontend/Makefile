@@ -26,9 +26,14 @@ preemphasizer: all
 	@chmod +x testPreemphasizer.sh
 	sh ./testPreemphasizer.sh
 
+hammingWindow: all
+	@chmod +x testHammingWindow.sh
+	sh ./testHammingWindow.sh
+
 alltests: all
 	(cd $(TOP); $(MAKE))
 	@$(MAKE) preemphasizer
+	@$(MAKE) hammingWindow
 	@$(MAKE) cmnFeatExt
 
 clean::

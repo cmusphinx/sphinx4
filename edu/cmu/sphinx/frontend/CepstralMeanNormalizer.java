@@ -97,14 +97,10 @@ public class CepstralMeanNormalizer extends PullingProcessor {
         Data input = getSource().read();
         Data output = input;
 
-        getTimer().start();
-
 	if (input instanceof SegmentEndPointSignal ||
 	    input instanceof CepstrumFrame) {
 	    output = process(input);
 	}
-
-        getTimer().stop();
 
         return output;
     }	
@@ -122,6 +118,8 @@ public class CepstralMeanNormalizer extends PullingProcessor {
      */
     private Data process(Data input) {
 	
+        getTimer().start();
+
 	CepstrumFrame cepstrumFrame;
 	SegmentEndPointSignal signal = null;
 
@@ -134,9 +132,7 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 
 	Cepstrum[] cepstra = cepstrumFrame.getData();
 
-	if (cepstra.length <= 0) {
-	    return cepstrumFrame;
-	} else {
+	if (cepstra.length > 0) {
 
 	    normalize(cepstra);
 	    
@@ -151,6 +147,8 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	    }
 	}
 	
+        getTimer().stop();
+
 	return input;
     }
 
@@ -181,14 +179,14 @@ public class CepstralMeanNormalizer extends PullingProcessor {
     private void updateMeanSumBuffers() {
 	// update the currentMean buffer with the sum buffer
 	sf = (float) (1.0/numberFrame);
-	for (int i = 0; i < cepstrumLength; i++) {
+	for (int i = 0; i < currentMean.length; i++) {
 	    currentMean[i] = sum[i] * sf;
 	}
 
 	// decay the sum buffer exponentially
 	if (numberFrame >= cmnShiftWindow) {
 	    sf = cmnWindow * sf;
-	    for (int i = 0; i < cepstrumLength; i++) {
+	    for (int i = 0; i < sum.length; i++) {
 		sum[i] *= sf;
 	    }
 	    numberFrame = cmnWindow;
