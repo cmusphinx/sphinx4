@@ -29,7 +29,7 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <property name="logger_props"       value=""/>  
 
     <property name="initial_heap_size"  value="384m"/>
-    <property name="maximum_heap_size"  value="512m"/>
+    <property name="maximum_heap_size"  value="1500m"/>
     <property name="jit"                value="server"/>
     <property name="gc_log_file"        value="gc.txt"/>
 
@@ -166,4 +166,31 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
         </java>
     </target>
 
+<!-- ********************************************************** -->
+<!-- * Test Targets                                           * -->
+<!-- ********************************************************** -->
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * hub4_trigram_test                                      * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="hub4_trigram_test"
+	    description="supervised mode, hub4 f0 trigram evaluation">
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
+			 value="${skip}"/> 
+            <arg value="hub4.wpbfsm.props"/> 
+            <arg value="test.batch"/> 
+        </java>
+    </target>
 </project>
