@@ -23,6 +23,7 @@ public class NGramBuffer {
     private int numberNGrams;
     private int position;
     private boolean bigEndian;
+    private boolean used;
 
 
     /**
@@ -46,6 +47,16 @@ public class NGramBuffer {
      */
     public byte[] getBuffer() {
 	return buffer;
+    }
+
+
+    /**
+     * Returns the size of the buffer in bytes.
+     *
+     * @return the size of the buffer in bytes
+     */
+    public int getSize() {
+        return buffer.length;
     }
 
 
@@ -125,4 +136,24 @@ public class NGramBuffer {
         }
     }
 
+
+    /**
+     * Returns true if this buffer was used in the last utterance.
+     *
+     * @return true if this buffer was used in the last utterance
+     */
+    public boolean getUsed() {
+        return used;
+    }
+
+
+    /**
+     * Sets whether this buffer was used in the last utterance
+     *
+     * @param used true if this buffer was used in the last utterance,
+     *             false otherwise
+     */
+    public void setUsed(boolean used) {
+        this.used = used;
+    }
 }
