@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.ListIterator;
 
 
-/*
- * Apply Cepstral Mean Normalization (CMN) to the set of input MFC frames, 
- * by subtracting the mean of the input from each frame.
+/**
+ * Apply Cepstral Mean Normalization (CMN) to the set of input MFC frames. 
+ * It subtracts the mean of the input from each frame.
  */
 public class CepstralMeanNormalizer extends PullingProcessor {
 
@@ -83,8 +83,8 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	
 
     /**
-     * Reads the next Data object, which is a CepstrumFrame
-     * produced by this CepstrumProducer.
+     * Reads the next Data object, which is a normalized CepstrumFrame
+     * produced by this class.
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
@@ -140,6 +140,7 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 		updateMeanSumBuffers();
 	    }
 	}
+	
 	return input;
     }
 
