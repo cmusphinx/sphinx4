@@ -1,0 +1,572 @@
+#JSGF V1.0;
+
+/**
+ * Importable JSGF Grammar to parse integer expressions
+ *
+ * When result events are used with the ECMATagsParser, the resulting 
+ * feature/value pairs can be used to determine the actual number 
+ * spoken by the user.
+ *
+ * Copyright 1999 Sun Microsystems 
+ *
+ * @author Willie Walker
+ */
+grammar small_integers;
+
+/** 
+ * Zero.  The value will be set to the String "0".
+ *
+ * @example zero
+ * @example oh
+ */
+public <int0> = (zero | oh) ;
+
+/** 
+ * Ten.  The value will be set to the String "10".
+ *
+ * @example ten
+ */
+public <int10> = ten ;
+
+/** 
+ * Hundred.  The value will be set to the String "100".
+ *
+ * @example hundred
+ */
+public <int100> = hundred ;
+
+/** 
+ * Thousand.  The value will be set to the String "1000".
+ *
+ * @example thousand
+ */
+public <int1000> = thousand ;
+
+/** 
+ * Million.  The value will be set to the String "1000000".
+ *
+ * @example million
+ */
+public <int1000000> = million ;
+
+/** 
+ * Billion.  The value will be set to the String "1000000000".
+ *
+ * @example billion
+ */
+public <int1000000000>	= billion ;
+
+/**
+ * The numbers 1 through 9.  The value will be set to the
+ * String of the number spoken (e.g., "1").
+ */
+public <int1to9> = 
+	one 	 
+    	| two 	 
+    	| three  
+    	| four   
+        | five	 
+        | six	 
+        | seven	 
+        | eight	 
+        | nine  ;
+
+/**
+ * The numbers 0 through 9.  The value will be set to the
+ * String of the number spoken (e.g., "1").
+ */
+public <int0to9> = ( <int0> | <int1to9> ) ; 
+
+/**
+ * The numbers 01 through 09.  The value will be set to the
+ * String of the number spoken (e.g., "1").  This rule is to be used
+ * to compose other rules (e.g., "nine oh nine").
+ *
+ * @example oh one
+ */
+public <int01to09> = <int0> <int1to9> ;
+
+/**
+ * The numbers 11 through 19.  The value feature will be set to the
+ * String of the number spoken (e.g., "11").
+ * 
+ * @example eleven
+ * @example twelve
+ * @example thirteen
+ */
+public <int11to19> = 
+	eleven	  	 
+    	| twelve	 
+    	| thirteen  	 
+    	| fourteen  	 
+    	| fifteen	 
+    	| sixteen   	 
+    	| seventeen 	 
+    	| eighteen 	 
+    	| nineteen	;
+
+/**
+ * The numbers 20, 30, 40, etc., through 90.  The value will 
+ * be set to the String of the number spoken (e.g., "40").
+ *
+ * @example twenty
+ * @example thirty
+ * @example fourty
+ */
+public <tens> = 
+	twenty	   	 
+        | thirty	 
+        | forty		 
+        | fifty		 
+        | sixty		 
+        | seventy	 
+        | eighty	 
+        | ninety	;
+
+/**
+ * The numbers 21 through 99.  The value will 
+ * be set to the String of the number spoken (e.g., "76").
+ *
+ * @example twenty five
+ * @example thirty two
+ * @example fourty nine
+ */
+<int20to99> = 
+	( 
+	    <tens> 
+	    [<int1to9> ] 
+	) 
+	;
+
+/**
+ * The numbers 10 through 99.  The value feature will 
+ * be set to the String of the number spoken (e.g., "76").
+ *
+ * @example eleven
+ * @example twenty five
+ * @example thirty two
+ * @example fourty nine
+ */
+public <int10to99> = ( <int10> | <int11to19> | <int20to99> ) 
+	;
+
+/**
+ * The numbers 1 through 99.  The value feature will 
+ * be set to the String of the number spoken (e.g., "76").
+ *
+ * @example two
+ * @example eleven
+ * @example twenty five
+ * @example thirty two
+ * @example fourty nine
+ */
+public <int1to99> = ( <int1to9> | <int10to99> ) 
+	;
+
+/**
+ * The numbers 0 through 99.  The value feature will be set to the
+ * String of the number spoken (e.g., "9").
+ *
+ * @example zero
+ * @example seven
+ * @example fourty two
+ */
+public <int0to99> = ( <int0> | <int1to99> ) 
+	;
+
+/**
+ * The numbers 01 through 99.  The value feature will be set to the
+ * String of the number spoken (e.g., "9").  This rule is to be used
+ * to compose other rules (e.g., "nine oh nine" and "nine ninety eight").
+ *
+ * @example oh one
+ * @example zero seven
+ * @example fourty two
+ */
+<int01to99> = ( <int01to09> | <int10to99> ) 
+	;
+
+/**
+ * The numbers 100, 200, 300, etc., through 900.  The value will 
+ * be set to the String of the number spoken (e.g., "300").
+ *
+ * @example a hundred
+ * @example one hundred
+ * @example five hundred
+ */
+<int1to9hundreds> = 
+	(
+	    ( a  | <int1to9>  ) 
+	    <int100> 
+	) 
+	;
+
+/**
+ * The numbers 101 through 999.  The value feature will 
+ * be set to the String of the number spoken (e.g., "330").
+ * This rule handles some of the shortcut methods for referring
+ * to the numbers 101 through 999.
+ *
+ * @example one oh nine
+ * @example one ten
+ * @example five eleven
+ * @example five thirty six
+ */
+<int101to999> = 
+	( <int1to9> 
+	    ( <int01to09> 
+	    | <int10> 
+	    | <int11to19> 
+	    | <int20to99> 
+	    )
+	) 
+	;
+
+/**
+ * The numbers 100 through 999.  The value feature will 
+ * be set to the String of the number spoken (e.g., "330").
+ * This rule handles some of the traditional methods for referring
+ * to the numbers 100 through 999.
+ *
+ * @example one hundred and one
+ * @example one hundred and ten
+ * @example five hundred eleven
+ * @example five hundred and thirty six
+ */
+<int100to999> = 
+	(
+	    <int1to9hundreds> 
+	    [[and] <int1to99> ] 
+	) 
+	;
+
+/**
+ * The numbers 1 through 999.  The value feature will 
+ * be set to the String of the number spoken (e.g., "330").
+ * This rule incorporates the shortcut and traditional methods.
+ *
+ * @example thirty two
+ * @example one oh nine
+ * @example one ten
+ * @example five eleven
+ * @example five thirty six
+ * @example one hundred and one
+ * @example one hundred and ten
+ * @example five hundred eleven
+ * @example five hundred and thirty six
+ */
+<int1to999> = 
+	( <int1to99> 
+	| <int100to999> 
+	| <int101to999> 
+	)
+	;    
+
+/**
+ * The number 1000.  The value will be set to the String "1000".
+ *
+ * @example ten hundred
+ */
+<int10hundred> = ( ten hundred ) ; 
+
+/**
+ * The numbers 1100, 1200, etc., through 1900.  The value will 
+ * be set to the String of the number spoken (e.g., "1500").
+ * This rule handles some of the shortcut methods for referring
+ * to the numbers 1100 through 1900.
+ *
+ * @example eleven hundred
+ * @example fifteen hundred
+ */
+<int11to19hundreds> = 
+	( <int11to19> hundred ) 
+	;
+
+/**
+ * The numbers 2100, 1200, etc., through 9900.  The value will 
+ * be set to the String of the number spoken (e.g., "3500").
+ * This rule handles some of the shortcut methods for referring
+ * to the numbers 2100 through 9900.
+ *
+ * @example twenty one hundred
+ * @example eighty six hundred
+ */
+<int21to99hundreds> = 
+	( <tens> <int1to9> hundred ) 
+	;
+
+/**
+ * The numbers 2100, 1200, etc., through 9900.  The value feature will 
+ * be set to the String of the number spoken (e.g., "3500").
+ * This rule handles some of the shortcut methods for referring
+ * to the numbers 2100 through 9900.
+ *
+ * @example twenty one hundred
+ * @example eighty six hundred
+ */
+<int10to99hundreds> = 
+	( <int10hundred> 
+	| <int11to19hundreds> 
+	| <int21to99hundreds> 
+	) 
+	;
+
+/**
+ * The numbers 1000 through 9999.  The value feature will 
+ * be set to the String of the number spoken (e.g., "3537").
+ * This rule uses some of the shortcut methods for referring
+ * to the numbers 1000 through 9900.
+ *
+ * @example twenty one hundred and thirty five
+ * @example eighty six hundred thirty seven
+ */
+<int1000to9999>	= 
+    	( 
+	    <int10to99hundreds> 
+	    [[and] <int1to99> ] 
+	)
+	;
+
+/**
+ * The numbers 1000 through 9999.  The value feature will 
+ * be set to the String of the number spoken (e.g., "3537").
+ * This rule uses some more shortcut methods for referring
+ * to the numbers 1000 through 9999.
+ *
+ * @example twenty one thirty five
+ * @example eighty six and thirty seven
+ * @example twenty one oh nine
+ */
+<int1000to9999b> = 
+	( <int10to99> [hundred] [and] <int01to99> ) 
+	;
+
+/**
+ * The numbers 1000, 2000, 3000, etc., through 999000.  The value
+ * will be set to the String of the number spoken (e.g., "3000").
+ *
+ * @example a thousand
+ * @example three thousand
+ * @example six hundred ninety five thousand
+ */
+<int1to999thousands> = 
+	(
+           ( a  | <int1to999>  )
+           <int1000> 
+        ) 
+	;
+
+/**
+ * The numbers 1000 through 999999.  The value
+ * will be set to the String of the number spoken (e.g., "3936").
+ *
+ * @example a thousand and ten
+ * @example three thousand six hundred thirty five
+ * @example six hundred and ninety five thousand and five hundred and fifteen
+ */
+<int1000to999999> = 
+    	( 
+	    <int1to999thousands> 
+	    [[and] <int1to999> ]
+	) 
+	;
+
+/**
+ * The numbers 1 through 999999.  The value
+ * will be set to the String of the number spoken (e.g., "3936").
+ *
+ * @example a thousand and ten
+ * @example three thousand six hundred thirty five
+ * @example six hundred and ninety five thousand and five hundred and fifteen
+ */
+<int1to999999> = 
+	( <int1to99> 
+    	| <int100to999> 
+    	| <int101to999> 
+    	| <int1000to9999>
+    	| <int1000to9999b>
+    	| <int1000to999999> 
+    	) 
+	;
+
+/**
+ * The numbers 1000000, 2000000, 3000000, etc., through 999000000.  The 
+ * value will be set to the String of the number spoken (e.g., "3000000").
+ *
+ * @example a million
+ * @example three million
+ * @example six hundred ninety five million
+ */
+<int1to999millions> =
+    	(
+	    ( a  | <int1to999>  ) 
+	    <int1000000>
+        ) 
+	;
+
+/**
+ * The numbers 1000000 through 999999999.  The value
+ * will be set to the String of the number spoken (e.g., "3936786").
+ *
+ * @example a million and ten
+ * @example three million six hundred thirty five thousand and ten
+ * @example six hundred and ninety five million and five hundred fifteen
+ */
+<int1000000to999999999> = 
+	( 
+	    <int1to999millions> 
+	    [[and] <int1to999999>  ]
+	) 
+	;
+
+/**
+ * The numbers 1 through 999999999.  The value
+ * will be set to the String of the number spoken (e.g., "3936").
+ *
+ * @example a thousand and ten
+ * @example three thousand six hundred thirty five
+ * @example six hundred and ninety five million and five hundred and fifteen
+ */
+<int1to999999999> = 
+	( <int1to999999> 
+	| <int1000000to999999999> 
+	) 
+	;
+
+/**
+ * The numbers 1000000000, 2000000000, 3000000000, etc., through 
+ * 999000000000.  The value 
+ * will be set to the String of the number spoken 
+ * (e.g., "3000000000").
+ *
+ * @example a billion
+ * @example three billion
+ * @example six hundred ninety five billion
+ */
+<int1to999billions> = 
+	(
+	    ( a  | <int1to999>  ) 
+	    <int1000000000>
+	) 
+	;
+
+/**
+ * The numbers 1000000000 through 999999999999.  The value
+ * will be set to the String of the number spoken (e.g., "3936978654").
+ *
+ * @example a billion and ten
+ * @example three billion six hundred thirty five
+ * @example six hundred and ninety five billion and five hundred and fifteen
+ */
+<int1000000000to999999999999> = 
+    	( 
+	    <int1to999billions> 
+	    [[and] <int1to999999999>  ]
+	) 
+	;
+
+/**
+ * The numbers 1 through 999999999999.  The value
+ * will be set to the String of the number spoken (e.g., "3936").
+ *
+ * @example a thousand and ten
+ * @example three thousand six hundred thirty five
+ * @example six hundred and ninety five thousand and five hundred and fifteen
+ */
+<int1to999999999999> = 
+	( <int1to999999999> 
+	| <int1000000000to999999999999> 
+	) 
+	;
+
+/**
+ * A sequence of numbers.  The value will either be set to the number spoken.
+ *
+ * @example one
+ * @example one six seven three
+ */
+public <spellInt> = 
+        (
+	    ( <int0to9>  )+
+	) 
+	;
+
+/**
+ * The numbers 0 through 999999999999.  The value 
+ * feature will be set to the String of the number spoken (e.g., "3936").
+ * This rule includes the ability to spell out a number via the individual
+ * numbers that make it up.
+ *
+ * @example a thousand and ten
+ * @example three thousand six hundred thirty five
+ * @example six hundred and ninety five thousand and five hundred and fifteen
+ * @example three nine three six
+ */
+public <integer> = 
+	( <int0> 
+	| <int1to999999> 
+	| <spellInt> 
+	) 
+	;
+
+/*
+public <integer> = 
+	( <int0> 
+	| <int1to999999999999> 
+	| <spellInt> 
+	) 
+	;
+*/
+
+public <fraction> =
+	((one | a) sixteenth) 			
+    	| ((one | a) eighth) 			
+    	| (three sixteenths) 			
+    	| ((one | a) (fourth | quarter))	
+    	| (five sixteenths) 			
+    	| (three eighths) 			
+    	| (seven sixteenths) 			
+    	| ((one | a) half) 			
+    	| (nine sixteenths) 			
+    	| (five eighths) 			
+    	| (eleven sixteenths) 			
+    	| (three (fourths | quarters)) 		
+    	| (thirteen sixteenths) 		
+    	| (seven eighths) 			
+    	| (fifteen sixteenths) 			;
+
+public <spellDecimal> = 
+	( dot | point )
+        (
+	    ( <int0to9>  
+	    )+
+	) 
+	;
+
+<decimal> = ( and <fraction> | <spellDecimal> ) ;
+
+public <number> = 
+    	<integer> [<decimal> ]
+	;
+
+public <percent> = 
+    	(
+    	    ( <int0to99> | <spellInt> ) 
+	    [<decimal> ] 
+	    [percent | points]
+	)
+	;
+
+/**
+ * Utility to say a dollar amount.
+ *
+ * @example one hundred thousand dollars
+ * @example two hundred fifty five and sixty three cents
+ */
+public <dollarAmount> =
+    	(
+    	    <integer>  [dollars | bucks] 
+	    [and <int0to99>  [cents]]
+	) 
+	; 
+
