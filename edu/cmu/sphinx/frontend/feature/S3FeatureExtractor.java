@@ -251,8 +251,6 @@ public class S3FeatureExtractor extends BaseDataProcessor {
      * 
      * @param totalFeatures
      *                the number of Features that will be produced
-     * 
-     * @return a FeatureFrame
      */
     private void computeFeatures(int totalFeatures) {
         getTimer().start();
