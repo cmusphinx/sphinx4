@@ -31,12 +31,6 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -235,53 +229,5 @@ public class MicrophoneTest extends JFrame {
                 }
             }
         }
-    }
-}
-
-
-class AudioPlayer {
-
-    private AudioFormat defaultFormat = // default format is 8khz
-    new AudioFormat(8000f, 16, 1, true, true);
-
-    private SourceDataLine line;
-
-
-    /**
-     * Plays the given byte array audio to the System's audio device.
-     *
-     * @param audio the audio data to play
-     */
-    public void play(byte[] audio) {
-        openLine(defaultFormat);
-        // read chunks from a stream and write them to a source data line 
-        line.start();
-        line.write(audio, 0, audio.length);
-        line.drain();
-        line.stop();
-        line.close();
-        line = null;
-    }
-
-    
-    /**
-     * Opens the audio
-     *
-     * @param format the format for the audio
-     *
-     * @throws UnsupportedOperationException if the line cannot be opened with
-     *     the given format
-     */
-    private void openLine(AudioFormat format) {
-        if (line != null) {
-            line.close();
-        }
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-        try {
-            line = (SourceDataLine) AudioSystem.getLine(info);
-            line.open(format);
-        } catch(LineUnavailableException lue) {
-            lue.printStackTrace();
-        }   
     }
 }
