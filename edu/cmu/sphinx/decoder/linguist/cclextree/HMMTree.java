@@ -66,7 +66,6 @@ class HMMTree {
      */
     HMMTree(HMMPool pool, Dictionary dictionary, LanguageModel lm,
             boolean addFillerWords, float languageWeight) {
-        System.out.println("Prototype code!");
         this.hmmPool = pool;
         this.dictionary = dictionary;
         this.lm = lm;
