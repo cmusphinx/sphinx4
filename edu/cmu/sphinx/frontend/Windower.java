@@ -14,10 +14,9 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * The Window, <i>W</i> of length <i>N</i> (usually the window size)
  * is given by the following:
  * <pre>
- * W(n) = (1-a) - (a * cos((2*PI*n)/(N - 1))) </pre> where:
+ * W(n) = (1-a) - (a * cos((2*Math.PI*n)/(N - 1))) </pre> where:
  * <br><b>a</b> is commonly known as the "alpha" value, it defaults to 0.46,
  * the value for the HammingWindow, which is commonly used.
- * <br><b>PI</b> is 3.14159265358979323846
  */
 public class Windower implements Processor {
 
@@ -35,9 +34,9 @@ public class Windower implements Processor {
     public static final String PROP_DUMP =
 	"edu.cmu.sphinx.frontend.window.dump";
 
+
     private double[] window;
     private int windowSize;
-    private static final double PI = 3.14159265358979323846;
     private double ALPHA;
     private boolean dump;
 
