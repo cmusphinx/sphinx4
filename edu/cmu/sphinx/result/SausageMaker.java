@@ -24,44 +24,7 @@ import java.util.ListIterator;
 import java.util.Vector;
 
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
-import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
-
-class ClusterComparator implements Comparator {
-    
-    /**
-     * Compares to clusters according to their topological relationship. Relies
-     * on strong assumptions about the possible constituents of clusters which
-     * will only be valid during the sausage creation process.
-     * 
-     * @param o1 the first cluster (must be a List)
-     * @param o2 the second cluster (must be a List)
-     */
-    public int compare(Object o1, Object o2) {
-        List cluster1 = (List) o1;
-        List cluster2 = (List) o2;
-        Iterator i = cluster1.iterator();
-        while (i.hasNext()) {
-            Node n1 = (Node)i.next();
-            Iterator i2 = cluster2.iterator();
-            while (i2.hasNext()) {
-                Node n2 = (Node)i2.next();
-                if (n1.isAncestorOf(n2)) {
-                    return -1;
-                } else if (n2.isAncestorOf(n1)) {
-                    return 1;
-                }
-            }
-        }
-        return 0;
-    }
-}
-
 
 /**
  * <p>
@@ -79,48 +42,7 @@ class ClusterComparator implements Comparator {
  * @author pgorniak
  *
  */
-public class SausageMaker implements ConfidenceScorer, Configurable {
-    
-    /**
-     * Sphinx property that defines the language model weight.
-     */
-    public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
-
-    /**
-     * The default value for the PROP_LANGUAGE_WEIGHT property
-     */
-    public final static float PROP_LANGUAGE_WEIGHT_DEFAULT  = 1.0f;
-    
-    private String name;
-    private float languageWeight;
-    
-    protected Lattice lattice;
-    
-    /**
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
-    public void register(String name, Registry registry)
-        throws PropertyException {
-        this.name = name;
-        registry.register(PROP_LANGUAGE_WEIGHT, PropertyType.FLOAT);
-    }
-
-
-    /**
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
-    public void newProperties(PropertySheet ps) throws PropertyException {
-        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT,
-                                     PROP_LANGUAGE_WEIGHT_DEFAULT);
-    }
-
-    /**
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
-    public String getName() {
-        return name;
-    }
+public class SausageMaker extends AbstractSausageMaker {
 
     /**
      * Construct an empty sausage maker
@@ -145,36 +67,6 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
      */
     protected void interWordCluster(List clusters) {
         while(interWordClusterStep(clusters));
-    }
-
-    /**
-     * Returns true if the two given clusters has time overlaps.
-     * Given clusters A and B, they overlap if and only if:
-     * the latest begin time of any node in B is before 
-     * the earliest end time of any node in A,
-     * and the latest begin time of any node in A is before the
-     * earliest end time of any node in B.
-     *
-     * @param cluster1 the first cluster to examine
-     * @param cluster2 the second cluster to examine
-     *
-     * @return true if the clusters has overlap, false if they don't
-     */
-    private boolean hasOverlap(List cluster1, List cluster2) {
-        int latestBeginTime1 = getLatestBeginTime(cluster1);
-        int earliestEndTime1 = getEarliestEndTime(cluster1);
-        int latestBeginTime2 = getLatestBeginTime(cluster2);
-        int earliestEndTime2 = getEarliestEndTime(cluster2);
-
-        if (latestBeginTime1 < earliestEndTime2 &&
-            latestBeginTime2 < earliestEndTime1) {
-            return true;
-        } else if (latestBeginTime2 < earliestEndTime1 &&
-                   latestBeginTime1 < earliestEndTime2) {
-            return true;
-        } else {
-            return false;
-        }
     }
     
     /**
@@ -227,18 +119,18 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
      * @param clusters the current cluster set
      */
     protected boolean interWordClusterStep(List clusters) {
-        List toBeMerged1 = null;
-        List toBeMerged2 = null;
+        Cluster toBeMerged1 = null;
+        Cluster toBeMerged2 = null;
         double maxSim = Double.NEGATIVE_INFINITY;
         ListIterator i = clusters.listIterator();
         while (i.hasNext()) {
-            List c1 = (List)i.next();
+            Cluster c1 = (Cluster)i.next();
             if (!i.hasNext()) {
                 break;
             }
             ListIterator j = clusters.listIterator(i.nextIndex());
             while (j.hasNext()) {
-                List c2 = (List)j.next();
+                Cluster c2 = (Cluster)j.next();
                 double sim = interClusterDistance(c1,c2);
                 if (sim > maxSim && hasOverlap(c1,c2)) {
                     maxSim = sim;
@@ -249,7 +141,7 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         }
         if (toBeMerged1 != null) {
             clusters.remove(toBeMerged2);
-            toBeMerged1.addAll(toBeMerged2);
+            toBeMerged1.add(toBeMerged2);
             return true;
         }
         return false;
@@ -309,68 +201,22 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
     }
     
     /**
-     * Return the total probability mass of the subcluster of nodes of the given
-     * cluster that all have the given word as their word.
-     * 
-     * @param cluster the cluster to subcluster from
-     * @param word the word to subcluster by
-     * @return the log probability mass of the subcluster formed by the word
-     */
-    protected double wordSubClusterProbability(List cluster, String word) {
-        return clusterProbability(makeWordSubCluster(cluster,word));
-    }
-    
-    /**
-     * Calculate the sum of posteriors in this cluster.
-     * 
-     * @param cluster the cluster to sum over
-     * @return the probability sum
-     */
-    protected double clusterProbability(List cluster) {
-        float p = LogMath.getLogZero();
-        Iterator i = cluster.iterator();
-        while (i.hasNext()) {
-            p = lattice.getLogMath().addAsLinear(p,(float)((Node)i.next()).getPosterior());
-        }
-        return p;
-    }
-    
-    /**
-     * Form a subcluster by extracting all nodes corresponding to a given word.
-     * 
-     * @param cluster the parent cluster
-     * @param word the word to cluster by
-     * @return the subcluster.
-     */
-    protected List makeWordSubCluster(List cluster, String word) {
-        Vector sub = new Vector();
-        Iterator i = cluster.iterator();
-        while (i.hasNext()) {
-            Node n = (Node)i.next();
-            if (n.getWord().getSpelling().equals(word)) {
-                sub.add(n);
-            }
-        }
-        return sub;
-    }
-    
-    /**
      * Calculate the distance between two clusters
      * 
-     * @param cluster1 the first cluster
-     * @param cluster2 the second cluster
+     * @param c1 the first cluster
+     * @param c2 the second cluster
      * @return the inter cluster similarity, or Double.NEGATIVE_INFINITY if 
      *         these clusters should never be clustered together.
      */
-    protected double interClusterDistance(List cluster1, List cluster2) {
-        if (areClustersInRelation(cluster1,cluster2)) {
+    protected double interClusterDistance(Cluster c1, Cluster c2) {
+        if (areClustersInRelation(c1,c2)) {
             return Double.NEGATIVE_INFINITY;
         }
         float totalSim = LogMath.getLogZero();
         float wordPairCount = (float)0.0;
         HashSet wordsSeen1 = new HashSet();
         
-        Iterator i1 = cluster1.iterator();
+        Iterator i1 = c1.iterator();
         while (i1.hasNext()) {
             Node node1 = (Node)i1.next();
             String word1 = node1.getWord().getSpelling();
@@ -379,7 +225,7 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
             }
             wordsSeen1.add(word1);
             HashSet wordsSeen2 = new HashSet();
-            Iterator i2 = cluster2.iterator();
+            Iterator i2 = c2.iterator();
             while (i2.hasNext()) {
                 Node node2 = (Node)i2.next();
                 String word2 = node2.getWord().getSpelling();
@@ -389,8 +235,8 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
                 wordsSeen2.add(word2);
                 float sim = (float)computePhoneticSimilarity(node1,node2);
                 sim = lattice.getLogMath().linearToLog(sim);
-                sim += wordSubClusterProbability(cluster1,word1);
-                sim += wordSubClusterProbability(cluster2,word2);
+                sim += wordSubClusterProbability(c1,word1);
+                sim += wordSubClusterProbability(c2,word2);
                 totalSim = lattice.getLogMath().addAsLinear(totalSim,sim);
                 wordPairCount++;
             }
@@ -407,7 +253,7 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
      * @param cluster2 the second cluster
      * @return true if the clusters are related
      */
-    protected boolean areClustersInRelation(List cluster1, List cluster2) {
+    protected boolean areClustersInRelation(Cluster cluster1, Cluster cluster2) {
         Iterator i = cluster1.iterator();
         while (i.hasNext()) {
             Iterator j = cluster2.iterator();
@@ -430,7 +276,7 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
      * @return The intra cluster distance, or Double.NEGATIVE_INFINITY if the clusters
      *         should never be clustered together.
      */
-    protected double intraClusterDistance(List cluster1, List cluster2) {
+    protected double intraClusterDistance(Cluster cluster1, Cluster cluster2) {
         double maxSim = Double.NEGATIVE_INFINITY;
         Iterator i1 = cluster1.iterator();
         while (i1.hasNext()) {
@@ -444,20 +290,7 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
                 if (node1.hasAncestralRelationship(node2)) {
                     return Double.NEGATIVE_INFINITY;
                 }
-                double overlap = 0.0;
-                if (node1.getBeginTime() <= node2.getBeginTime() &&
-                        node1.getEndTime() >= node2.getBeginTime()) {
-                    overlap = node1.getEndTime() - node2.getBeginTime();
-                    if (node1.getEndTime() > node2.getEndTime()) {
-                        overlap -= node2.getEndTime() - node1.getEndTime(); 
-                    }
-                } else if(node2.getBeginTime() <= node1.getBeginTime() &&
-                        node2.getEndTime() >= node1.getBeginTime()) {
-                    overlap = node2.getEndTime() - node1.getBeginTime();                    
-                    if (node2.getEndTime() > node1.getEndTime()) {
-                        overlap -= node1.getEndTime() - node2.getEndTime(); 
-                    }
-                }
+                double overlap = getOverlap(node1,node2);
                 if (overlap > 0.0) {
                     overlap = lattice.getLogMath().logToLinear((float)overlap);
                     overlap += node1.getPosterior() + node2.getPosterior();
@@ -468,33 +301,6 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
             }
         }        
         return maxSim;
-    }
-    
-    /**
-     * print out a cluster for debugging
-     * 
-     * @param cluster
-     */
-    protected void printCluster(List cluster) {
-        ListIterator j = cluster.listIterator();
-        while (j.hasNext()) {
-            System.out.print(" " + j.next());                
-        }
-	System.out.println();
-    }
-    
-    /**
-     * print out a list of clusters for debugging
-     * 
-     * @param clusters
-     */
-    protected void printClusters(List clusters) {
-        ListIterator i = clusters.listIterator();
-        while (i.hasNext()) {
-            System.out.print("----cluster " + i.nextIndex() + " : ");
-            printCluster((List)i.next());
-        }
-        System.out.println("----");
     }
     
     /**
@@ -513,18 +319,18 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
      * @return did two clusters get merged?
      */
     protected boolean intraWordClusterStep(List clusters) {
-        List toBeMerged1 = null;
-        List toBeMerged2 = null;
+        Cluster toBeMerged1 = null;
+        Cluster toBeMerged2 = null;
         double maxSim = Double.NEGATIVE_INFINITY;
         ListIterator i = clusters.listIterator();
         while (i.hasNext()) {
-            List c1 = (List)i.next();
+            Cluster c1 = (Cluster)i.next();
             if (!i.hasNext()) {
                 break;
             }
             ListIterator j = clusters.listIterator(i.nextIndex());
             while (j.hasNext()) {
-                List c2 = (List)j.next();
+                Cluster c2 = (Cluster)j.next();
                 double sim = intraClusterDistance(c1,c2);
                 if (sim > maxSim) {
                     maxSim = sim;
@@ -535,7 +341,7 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
         }
         if (toBeMerged1 != null) {
             clusters.remove(toBeMerged2);
-            toBeMerged1.addAll(toBeMerged2);
+            toBeMerged1.add(toBeMerged2);
             return true;
         }
         return false;
@@ -547,43 +353,19 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
      * @return the sausage producing by collapsing the lattice.
      */
     public Sausage makeSausage() {
-
-        Vector clusters = new Vector(lattice.getNodes().size());
+        List clusters = new Vector(lattice.getNodes().size());
         Collection nodes = lattice.nodes.values();
         Iterator i = nodes.iterator();
         while(i.hasNext()) {
-            Vector bucket = new Vector(1);
-            bucket.add(i.next());
+            Node n = (Node)i.next();
+            n.cacheDescendants();
+            Cluster bucket = new Cluster(n);
             clusters.add(bucket);
         }
         intraWordCluster(clusters);
         interWordCluster(clusters);
-
         clusters = topologicalSort(clusters);
-
-        Sausage sausage = new Sausage(clusters.size());
-        ListIterator c1 = clusters.listIterator();
-        while (c1.hasNext()) {
-            HashSet seenWords = new HashSet();
-            int index = c1.nextIndex();
-            List cluster = ((List)c1.next());
-            Iterator c2 = cluster.iterator();
-            while (c2.hasNext()) {
-                Node node = (Node)c2.next();
-                Word word = node.getWord();
-                if (seenWords.contains(word.getSpelling())) {
-                    continue;
-                }
-                seenWords.add(word.getSpelling());
-                SimpleWordResult swr = new SimpleWordResult
-                    (node,
-                     wordSubClusterProbability(cluster,word.getSpelling()),
-                     lattice.getLogMath());
-                sausage.addWordHypothesis(index,swr);
-            }
-        }
-        sausage.fillInBlanks(lattice.getLogMath());
-        return sausage;
+        return sausageFromClusters(clusters);
     }
     
     /**
@@ -598,7 +380,7 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
     }
 
     /**
-     * Topologically sort the clusters. Note that this is a brunt force
+     * Topologically sort the clusters. Note that this is a brute force
      * sort by removing the min cluster from the list of clusters,
      * since Collections.sort() does not work in all cases.
      *
@@ -606,11 +388,11 @@ public class SausageMaker implements ConfidenceScorer, Configurable {
      *
      * @return a topologically sorted list of clusters
      */
-    private Vector topologicalSort(Vector clusters) {
+    private List topologicalSort(List clusters) {
         Comparator comparator = new ClusterComparator();
         Vector sorted = new Vector(clusters.size());
         while (clusters.size() > 0) {
-            List cluster = (List) Collections.min(clusters, comparator);
+            Cluster cluster = (Cluster) Collections.min(clusters, comparator);
             clusters.remove(cluster);
             sorted.add(cluster);
         }
