@@ -325,7 +325,7 @@ public class ParallelSearchManager implements SearchManager {
         debugPrint("Frame: " + currentFrameNumber);
 	boolean moreTokens = score();
         if (moreTokens) {
-	    // prune();
+	    prune();
 	    grow();
 	    currentFrameNumber++;
 	}
