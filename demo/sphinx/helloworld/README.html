@@ -39,46 +39,14 @@
     <font face="Arial" size="2">      
       <p>
       This is a simple command line program that shows how to
-      write a simple Sphinx-4 application that recognizes connected
-      digits, using a BNF-style grammar. You can run it in two modes:
-      with or without endpointing. When you run the demo without endpointing,
-      the following will appear:
+      write a simple Sphinx-4 application that recognizes simple sentences
+      using a BNF-style grammar. When you run the demo, you will
+      see the following:
       </p>
       <pre>
-Say any digit(s): e.g. "two oh oh four", "three six five".
-Start speaking. Press ENTER when you finish speaking.
 
-You said: one two three four
-
-Start speaking. Press ENTER when you finish speaking.
-
-You said: four two one one four
-
-Start speaking. Press ENTER when you finish speaking.
       </pre>
-      <p>
-      It expects you to say a sequence of digits, and press ENTER when you
-      finish speaking. The recognition results will then be shown, 
-      and you will be prompted to say another sequence of digits. 
-      When you want to quit the demo, simply press Ctrl-C.
-      </p>
-      <p>
-      When you run the demo with endpointing, you do not have to press
-      ENTER when you finish speaking. The endpointer will automatically
-      detect the end of an utterance:
-      Say any digit(s): e.g. "two oh oh four", "three six five".
-      </p>
-      <pre>
-Say any digit(s): e.g. "two oh oh four", "three six five".
-Start speaking. Press Ctrl-C to quit.
 
-You said: one two three four
-
-Start speaking. Press Ctrl-C to quit.
-
-You said: four five six nine
-
-Start speaking. Press Ctrl-C to quit.
       </pre>
       <h3>Building</h3>
       <p>To build this demo, merely type the following in a shell from
@@ -88,36 +56,46 @@ Start speaking. Press Ctrl-C to quit.
 	 </ul>
       </p>
       <p>
-      Doing so will create <code>bld/bin/HelloWorld.jar</code> and 
-      <code>bld/bin/HelloDigits.jar</code> under the 
+      Doing so will create <code>bld/bin/HelloWorld.jar</code> under the
       top level directory.  You can run the demo using <code>java -jar</code> 
       (see "Running" below).
       </p>
       <h3>Running</h3>
       <p>
       First make sure that you have
-      <a href="../../../javadoc/edu/cmu/sphinx/jsapi/doc-files/jsapi_setup.html">JSAPI setup</a> correctly. Then, make sure that all the Sphinx-4 classes 
+      <a href="../../../doc/jsapi_setup.html">JSAPI setup</a> correctly.
+      Then, make sure that all the Sphinx-4 classes 
       are built. Go to the top level directory (sphinx4) and type:
       </p>
       <code>
       ant all
       </code>
       <p>
-      To run the demo without the endpointer, go to the <b>top level 
-      directory</b> and type: 
+      To run the demo, type:
       </p>
-      <code>sphinx4> java -jar bld/bin/HelloWorld.jar</code>
+      <code>sphinx4> java -mx256m -jar bld/bin/HelloWorld.jar</code>
       <p>
-      To run this demo with the endpointer, go to the <b>top level 
-      directory</b> and type:
-      </p>
-      <code>
-      <br>sphinx4> java -jar bld/bin/HelloDigits.jar</code>
-      </code>
-      <p>
-      <font color="FF0000"><b>NOTE:</b></font> Make sure that you are using
+      Make sure that you give it a large enough heap by putting in "-mx256m".
+      <br><font color="FF0000"><b>NOTE:</b></font> Make sure that you are using
       Java<sup>TM</sup> 2 SDK, Standard Edition, v1.4 or higher.
       </p>
+      <p>
+      The list of allowable sentences in this demo are:
+      </p>
+      <pre>
+      Hello Bhiksha
+      Hello Evandro
+      Hello Paul
+      Hello Philip
+      Hello Rita
+      Hello Will
+      Good morning Bhiksha
+      Good morning Evandro
+      Good morning Paul
+      Good morning Philip
+      Good morning Rita
+      Good morning Will
+      </pre>
     </font>
     <hr>
 Copyright 1999-2004 Carnegie Mellon University.
