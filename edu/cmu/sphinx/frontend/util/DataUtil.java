@@ -118,7 +118,7 @@ public class DataUtil {
 
 
     /**
-     * Converts a byte array into an array of doubles.
+     * Converts a big-endian byte array into an array of doubles.
      * Each consecutive bytes in the byte array are converted into a double, 
      * and becomes the next element in the double array. The size of the
      * returned array is (length/bytesPerValue). 
@@ -144,35 +144,25 @@ public class DataUtil {
         throws ArrayIndexOutOfBoundsException {
 
         if (0 < length && (offset + length) <= byteArray.length) {
-            int doubleLength = length/bytesPerValue;
-            double[] doubleArray = new double[doubleLength];
-
-            if (bytesPerValue == 2) { 
+            assert (length % bytesPerValue == 0);
+            double[] doubleArray = new double[length/bytesPerValue];
+            
+            int i = offset;
+            
+            for (int j = 0; j < doubleArray.length; j++) {
+                int val = (int) byteArray[i++];
                 if (!signedData) {
-                    for (int i = offset, j = 0; j < doubleLength; j++) {
-                        int temp = (int) byteArray[i++];
-                        temp = (temp << 8);
-                        temp |= (int) (0x000000FF & byteArray[i++]);
-                        doubleArray[j] = (double) temp;
-                    }
-                } else {
-                    for (int i = offset, j = 0; j < doubleLength; j++) {
-                        short temp = (short) (byteArray[i++] << 8);
-                        temp |= (short) (0x00FF & byteArray[i++]);
-                        doubleArray[j] = (double) temp;
-                    }
+                    val &= 0xff; // remove the sign extension
                 }
-            } else if (bytesPerValue == 1) {
-                for (int i = offset; i < doubleLength; i++) {
-                    doubleArray[i] = (double) byteArray[i];
+                for (int c = 1; c < bytesPerValue; c++) {
+                    int temp = (int) byteArray[i++] & 0xff;
+                    val = (val << 8) + temp;
                 }
-            } else {
-                throw new Error
-                    ("Unsupported bytes per sample: " + bytesPerValue);
+
+                doubleArray[j] = (double) val;
             }
 
             return doubleArray;
-
 	} else {
 	    throw new ArrayIndexOutOfBoundsException
 		("offset: " + offset + ", length: " + length
@@ -199,37 +189,33 @@ public class DataUtil {
      *
      * @throws java.lang.ArrayIndexOutOfBoundsException
      */
-    public static final double[] littleEndianBytesToValues(byte[] data, 
+    public static final double[] littleEndianBytesToValues(byte[] data,
                                                            int offset, 
                                                            int length, 
-                                                           int bytesPerValue,
-                                                           boolean signed)
+                                                           int bytesPerValue, 
+                                                           boolean signedData)
         throws ArrayIndexOutOfBoundsException {
 
         if (0 < length && (offset + length) <= data.length) {
+            assert (length % bytesPerValue == 0);
             double[] doubleArray = new double[length/bytesPerValue];
+            
+            int i = offset + bytesPerValue - 1;
+            
+            for (int j = 0; j < doubleArray.length; j++) {
+                int val = (int) data[i--];
+                if (!signedData) {
+                    val &= 0xff; // remove the sign extension
+                }
+                for (int c = 1; c < bytesPerValue; c++) {
+                    int temp = (int) data[i--] & 0xff;
+                    val = (val << 8) + temp;
+                }
 
-            if (bytesPerValue == 2) {
-                if (signed) {
-                    for (int i = offset, j = 0; i < length; j++) {
-                        short temp = (short) ((0x000000FF & data[i++]) | 
-                                              (data[i++] << 8));
-                        doubleArray[j] = (double) temp;
-                    }
-                } else {
-                    for (int i = offset, j = 0; i < length; j++) {
-                        int temp = (int) ((0x000000FF & data[i++]) | 
-                                          (data[i++] << 8));
-                        doubleArray[j] = (double) temp;
-                    }
-                }
-            } else if (bytesPerValue == 1) {
-                for (int i = 0; i < doubleArray.length; i++) {
-                    doubleArray[i] = data[i];
-                }
-            } else {
-                throw new Error
-                    ("Unsupported bytesPerValue: " + bytesPerValue);
+                // advance 'i' to the last byte of the next value
+                i += (bytesPerValue * 2);
+
+                doubleArray[j] = (double) val;
             }
 
             return doubleArray;
