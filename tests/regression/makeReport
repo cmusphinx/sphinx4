@@ -56,11 +56,23 @@ BEGIN {
 
 $1 == "build" && $4 == machine {
     finalBuildRecord = $0;
+    buildRecord = 1;
+}
+
+# final test has only the tests from the last build
+#
+
+$1 == "test" && buildRecord == 1 {
+    buildRecord = 0;
+    for (i in finalTest) {
+        delete finalTest[i];
+    }
 }
 
 $1 == "test"  && $4 == machine && $5 == "s4" {
     testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
     testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
+    finalTest[$F_TEST_NAME] = 1;
 }
 
 
@@ -192,25 +204,41 @@ function fmtTime(seconds) {
 #
 function printSummaryInfo() {
     split(finalBuildRecord, data);
-    print "Host:             " data[4]
-    print "Date:             " data[2]
-    print "Build Status:     " data[7]
-    print "Build Time:       " fmtTime(data[8])
-    print "Run Time:         " fmtTime(data[9])
-    print ""
-    print ""
+    buildDate = data[2];
+    print "Host:             " data[4];
+    print "Date:             " data[2];
+    print "Build Status:     " data[7];
+    print "Build Time:       " fmtTime(data[8]);
+    print "Run Time:         " fmtTime(data[9]);
+    print "Test Name:        " data[10];
+    print "";
+    print "";
+}
+
+###########################
+# Determines if the given test was on the same day as the
+# most recent build
+#
+
+function isNewTest(testName) {
+    updateData(testName, testCount[testName]);
+    _date = data[F_DATE];
+    if (_date == buildDate) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 END {
 
-    "date" | getline date
     print ""
-    print "Sphinx 4 Regression Test Summary for " date
+    print "Sphinx 4 Regression Test Summary for " buildDate
     print "================================================================="
     printSummaryInfo();
 
-    for (i in testCount) {
-        print i;
+    for (i in finalTest) {
+	print i;
 	print "    Status            "  getRunStatus(i);
 	print "    Accuracy (WER %)  "  getAccuracyStatus(i);
 	print "    Time (X Realtime) "  getTimeStatus(i);
