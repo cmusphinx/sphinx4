@@ -56,10 +56,9 @@ public class ExtendedStreamTokenizer {
      * Constructs an ExtendedStreamTokenizer from the given InputStream
      *
      * @param inputStream the source of the data
-     * @param eolIsSignificant true if eol is significant
      */
-    public ExtendedStreamTokenizer(InputStream inputStream, boolean eolIsSignificant) {
-        this(new InputStreamReader(inputStream), eolIsSignificant);
+    public ExtendedStreamTokenizer(InputStream inputStream) {
+        this(new InputStreamReader(inputStream), false);
     }
 
 
