@@ -150,7 +150,6 @@ your environment to use JSAPI.
 
     <target name="init">
         <available property="keystore.exists" file="tempKeystore"/>
-        <mkdir dir="${dst}"/>
         <tstamp/>
     </target>
 

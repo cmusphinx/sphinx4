@@ -36,7 +36,6 @@ public class  Unit {
     * @param name the name of the unit
     * @param filler <code>true</code> if the unit is a filler unit
     * @param id the base id for the unit
-    * @param baseUnit the base id for the unit
     */
     Unit(String name, boolean filler, int id) {
 	this.name = name;
@@ -56,7 +55,6 @@ public class  Unit {
     * @param baseUnit the base id for the unit
     * @param filler <code>true</code> if the unit is a filler unit
     * @param context the context for this unit
-    * @param id the base id for the unit
     */
     Unit(Unit baseUnit, boolean filler, Context context) {
         this.baseUnit = baseUnit;
