@@ -180,19 +180,21 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
                 readInitialFrames();
             } else {
                 Audio audio = readAudio();
-                if (audio.hasContent()) {
-                    sendToQueue(audio);
-                    if (!audio.isSpeech()) {
-                        inSpeech = !(readEndFrames(audio));
+                if (audio != null) {
+                    if (audio.hasContent()) {
+                        sendToQueue(audio);
+                        if (!audio.isSpeech()) {
+                            inSpeech = !(readEndFrames(audio));
+                        }
+                    } else if (audio.hasSignal(Signal.UTTERANCE_END)) {
+                        sendToQueue(new Audio(Signal.SPEECH_END, 
+                                              audio.getCollectTime(),
+                                              audio.getFirstSampleNumber()));
+                        sendToQueue(audio);
+                        inSpeech = false;
+                    } else if (audio.hasSignal(Signal.UTTERANCE_START)) {
+                        throw new Error("Got UTTERANCE_START while in speech");
                     }
-                } else if (audio.hasSignal(Signal.UTTERANCE_END)) {
-                    sendToQueue(new Audio(Signal.SPEECH_END, 
-                                          audio.getCollectTime(),
-                                          audio.getFirstSampleNumber()));
-                    sendToQueue(audio);
-                    inSpeech = false;
-                } else if (audio.hasSignal(Signal.UTTERANCE_START)) {
-                    throw new Error("Got UTTERANCE_START while in speech");
                 }
             }
         }
