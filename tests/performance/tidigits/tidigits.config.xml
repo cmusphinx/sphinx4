@@ -22,7 +22,8 @@
     <property name="silenceInsertionProbability" value="1"/>
     <property name="skip"     value="0"/>
     <property name="logLevel"     value="WARNING"/>
-    
+
+    <property name="recognizer" value="connectedDigitsRecognizer"/>
     <property name="linguist"   value="flatLinguist"/>
     <property name="frontend"   value="mfcFrontEnd"/>
     
@@ -32,7 +33,7 @@
     
     <component name="batch" 
                 type="edu.cmu.sphinx.tools.batch.BatchModeRecognizer">
-        <property name="recognizer" value="connectedDigitsRecognizer"/>
+        <property name="recognizer" value="${recognizer}"/>
         <propertylist name="inputDataProcessors">
 	    <item>streamDataSource</item>
 	</propertylist>
@@ -44,7 +45,7 @@
     
     <component name="live" 
                 type="edu.cmu.sphinx.tools.live.LiveModeRecognizer">
-        <property name="recognizer" value="connectedDigitsRecognizer"/>
+        <property name="recognizer" value="${recognizer}"/>
         <property name="inputSource" value="concatDataSource"/>
     </component>
     
@@ -373,33 +374,33 @@
     
     <component name="accuracyTracker" 
                 type="edu.cmu.sphinx.instrumentation.AccuracyTracker">
-        <property name="recognizer" value="connectedDigitsRecognizer"/>
+        <property name="recognizer" value="${recognizer}"/>
         <property name="showAlignedResults" value="false"/>
         <property name="showRawResults" value="false"/>
     </component>
 
     <component name="rejectionTracker" 
                 type="edu.cmu.sphinx.instrumentation.RejectionTracker">
-        <property name="recognizer" value="rejectionRecognizer"/>
+        <property name="recognizer" value="${recognizer}"/>
         <property name="showSummary" value="true"/>
         <property name="showDetails" value="true"/>
     </component>
     
     <component name="memoryTracker" 
                 type="edu.cmu.sphinx.instrumentation.MemoryTracker">
-        <property name="recognizer" value="connectedDigitsRecognizer"/>
+        <property name="recognizer" value="${recognizer}"/>
     </component>
     
     <component name="speedTracker" 
                 type="edu.cmu.sphinx.instrumentation.SpeedTracker">
-        <property name="recognizer" value="connectedDigitsRecognizer"/>
+        <property name="recognizer" value="${recognizer}"/>
         <property name="frontend" value="${frontend}"/>
         <property name="showTimers" value="true"/>
     </component>
     
     <component name="recognizerMonitor" 
                 type="edu.cmu.sphinx.instrumentation.RecognizerMonitor">
-        <property name="recognizer" value="connectedDigitsRecognizer"/>
+        <property name="recognizer" value="${recognizer}"/>
         <propertylist name="allocatedMonitors">
             <item>linguistStats</item>
             <!-- <item>linguistDumper</item> -->

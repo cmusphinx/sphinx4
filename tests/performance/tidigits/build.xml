@@ -358,7 +358,7 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="batch[count]" value="${count}"/>
-            <sysproperty key="batch[recognizer]" value="rejectionRecognizer"/>
+            <sysproperty key="recognizer" value="rejectionRecognizer"/>
 	    <sysproperty key="flatLinguist[addOutOfGrammarBranch]"
 	                 value="true"/>
             <arg value="${config}"/> 
