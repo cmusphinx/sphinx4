@@ -106,6 +106,19 @@ public class CompositeSenone implements Senone, Serializable {
 
 
     /**
+     * Calculate scores for each component in the senone's
+     * distribution. Not yet implemented.
+     *
+     * @param feature the current feature
+     *
+     * @return the score for the feature in LogMath
+     */
+    public float[] calculateComponentScore(Feature feature) {
+	assert false: "Not implemented!";
+	return null;
+    }
+
+    /**
      * Returns the set of senones that compose this composite senone.
      * This method is only needed for unit testing.
      *

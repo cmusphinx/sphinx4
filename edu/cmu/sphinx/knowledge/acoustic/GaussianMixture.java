@@ -95,7 +95,6 @@ class GaussianMixture implements Senone, Serializable {
      *
      * @return the score, in logMath log base, for the feature
      */
-
     public float calculateScore(Feature feature) {
 	float logTotal = logMath.getLogZero();
 	for (int i = 0; i < mixtureComponents.length; i++) {
@@ -108,6 +107,26 @@ class GaussianMixture implements Senone, Serializable {
 	}
 
 	return logTotal;
+    }
+
+    /**
+     * Calculates the scores for each component in the senone.
+     *
+     * @param feature the feature to score
+     *
+     * @return the LogMath log scores for the feature, one for each component
+     */
+    public float[] calculateComponentScore(Feature feature) {
+	float[] logComponentScore = new float[mixtureComponents.length];
+	for (int i = 0; i < mixtureComponents.length; i++) {
+	    // In linear form, this would be:
+	    //
+	    // Total += Mixture[i].score * MixtureWeight[i]
+	    logComponentScore[i] = mixtureComponents[i].getScore(feature)+
+		 logMixtureWeights[i];
+	}
+
+	return logComponentScore;
     }
 
     /**

@@ -34,6 +34,18 @@ public interface Senone extends Serializable {
 
 
     /**
+     * Calculates the component scores for the mixture components in
+     * this senone based upon the given feature.
+     *
+     * @param feature	the feature vector to score this senone
+     * 			against
+     *
+     * @return 		the scores for this senone in LogMath log base
+     */
+    public float[] calculateComponentScore(Feature feature);
+
+
+    /**
      * Dumps a senone
      *
      * @param msg an annotation for the dump
