@@ -41,6 +41,7 @@ import java.util.Iterator;
  */
 public class BatchDecoder {
 
+
     private final static String PROP_PREFIX = 
 	"edu.cmu.sphinx.decoder.BatchDecoder.";
 
@@ -117,27 +118,8 @@ public class BatchDecoder {
      * @param batchFile the file that contains a list of files to decode
      */
     public BatchDecoder(String context, String batchFile) throws IOException {
-        this(context, batchFile, true);
-    }
-
-    
-    /**
-     * Constructs a BatchDeocder with the given context, batch file,
-     * and a boolean indicating whether to initialize the decoder.
-     *
-     * @param context the context of this BatchDecoder
-     * @param batchFile the file that contains a list of files to decode
-     * @param initDecoder indicates whether to initialize the decoder 
-     */
-    protected BatchDecoder(String context, String batchFile, 
-                           boolean initDecoder) throws IOException {
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        if (initDecoder) {
-            init(props, batchFile);
-        } else {
-            initSphinxProperties(props);
-            this.batchFile = batchFile;
-        }
+        init(props, batchFile);
     }
 
 
@@ -207,64 +189,7 @@ public class BatchDecoder {
 
         System.out.println("\nBatchDecoder: All files decoded\n");
         Timer.dumpAll(context);
-	getDecoder().showSummary();
-    }
-
-
-    /**
-     * Returns the Decoder.
-     */
-    protected Decoder getDecoder() {
-        return decoder;
-    }
-
-
-    /**
-     * Returns the set of batch results
-     *
-     * @return a batch result representing the set of runs for this
-     * batch decoder.
-     */
-
-    public BatchResults getBatchResults() {
-        NISTAlign align = decoder.getNISTAlign();
-        return new BatchResults(
-                align.getTotalWords(),
-                align.getTotalSentences(),
-                align.getTotalSubstitutions(),
-                align.getTotalInsertions(),
-                align.getTotalDeletions(),
-                align.getTotalSentencesWithErrors());
-    }
-
-
-
-    /**
-     * Gets the set of lines from the file
-     *
-     * @param file the name of the file 
-     */
-    List getLines(String file) throws IOException {
-	List list = BatchFile.getLines(file);
-
-	if (totalBatches > 1) {
-	    int linesPerBatch = list.size() / totalBatches;
-	    if (linesPerBatch < 1) {
-		linesPerBatch = 1;
-	    }
-	    if (whichBatch >= totalBatches) {
-		whichBatch = totalBatches - 1;
-	    }
-	    int startLine = whichBatch * linesPerBatch;
-	    // last batch needs to get all remaining lines
-	    if (whichBatch == (totalBatches - 1)) {
-		list = list.subList(startLine, list.size());
-	    } else {
-		list = list.subList(startLine, startLine +
-			linesPerBatch);
-	    }
-	}
-	return list;
+	decoder.showSummary();
     }
 
 
@@ -287,11 +212,56 @@ public class BatchDecoder {
 	    ((StreamCepstrumSource) dataSource).setInputStream(is, bigEndian);
 	}
 
-        // usually 25 features in one audio frame
-        // but it doesn't really matter what this number is
-        getDecoder().decode(ref);
+        decoder.decode(ref);
     }
 
+
+    /**
+     * Returns the set of batch results
+     *
+     * @return a batch result representing the set of runs for this
+     * batch decoder.
+     */
+
+    public BatchResults getBatchResults() {
+        NISTAlign align = decoder.getNISTAlign();
+        return new BatchResults(align.getTotalWords(),
+                                align.getTotalSentences(),
+                                align.getTotalSubstitutions(),
+                                align.getTotalInsertions(),
+                                align.getTotalDeletions(),
+                                align.getTotalSentencesWithErrors());
+    }
+
+
+
+    /**
+     * Gets the set of lines from the file
+     *
+     * @param file the name of the file 
+     */
+    private List getLines(String file) throws IOException {
+	List list = BatchFile.getLines(file);
+
+	if (totalBatches > 1) {
+	    int linesPerBatch = list.size() / totalBatches;
+	    if (linesPerBatch < 1) {
+		linesPerBatch = 1;
+	    }
+	    if (whichBatch >= totalBatches) {
+		whichBatch = totalBatches - 1;
+	    }
+	    int startLine = whichBatch * linesPerBatch;
+	    // last batch needs to get all remaining lines
+	    if (whichBatch == (totalBatches - 1)) {
+		list = list.subList(startLine, list.size());
+	    } else {
+		list = list.subList(startLine, startLine +
+			linesPerBatch);
+	    }
+	}
+	return list;
+    }
 
 
     /**
