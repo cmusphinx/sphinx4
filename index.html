@@ -73,7 +73,8 @@ WARRANTIES.
 
       <h3>Installation</h3>
       <ul>
-        <li><a href="#download_and_install">Downloading and Installing</a></li>
+        <li><a href="#download_and_install">Required software</a></li>
+        <li><a href="#source">Sphinx-4 source</a></li>
 	<li><a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">Acoustic Models</a></li>
 	<li><a href="#language_models">Language Models</a></li>
 	<li><a href="#create_javadocs">Creating Javadocs</a></li>
@@ -225,9 +226,9 @@ WARRANTIES.
 
 <ul>
 
-<li><a name="download_and_install"><b>Downloading and Installing</b></a>
+<li><a name="download_and_install"><b>Required software</b></a>
 
-      <p>Sphinx-4 has been build and tested on the Solaris<sup> <font
+      <p>Sphinx-4 has been built and tested on the Solaris<sup> <font
       size="-1">TM</font></sup> Operating Environment, Mac OS X, Linux
       and Win32 operating systems. Running, building, and testing 
       Sphinx-4 requires additional software. Before you start, 
@@ -237,12 +238,12 @@ WARRANTIES.
   <li><b>Java 2 SDK, Standard Edition, v1.4</b> or better. 
       Go to <a href="http://java.sun.com">java.sun.com</a>,
       and select "J2SE". Download the latest version. At the time of writing,
-      the latest version is 1.4.2.
+      the latest release version is 1.4.2.
       </li>
 
   <br>
-  <li><b>Ant 1.6.0</b> or better, available at <a
-  href="http://ant.apache.org">ant.apache.org</a>. The site has a manual with instructions on how to download, install, and use ant. The gist of it, just to get started:
+  <li><b>Ant 1.5.3</b> or better, available at <a
+  href="http://ant.apache.org">ant.apache.org</a>. At the time of writing, the latest version is 1.6.0. The site has a manual with instructions on how to download, install, and use ant. The gist of it, just to get started:
   <ul>
   <li> On <a href="http://ant.apache.org">ant.apache.org</a> click on
   "binary distributions" under "Download", on the left-hand side.
@@ -288,7 +289,7 @@ set path=( $path $ANT_HOME/bin )
   </li>
   </ul>
   </li>
-  <li> Installation of ant is completed.</li>
+  <li> Installation of ant is complete.</li>
   </ul>
   </li>
 
@@ -308,7 +309,47 @@ set path=( $path $ANT_HOME/bin )
 
 <br>&nbsp;
 
+      <li><a name="source"><b>Sphinx-4 source distribution</b></a>
+	<br>&nbsp;
+	<ul>
+	  <li><a name="cvs"><b>Instructions for retrieving code from the cvs trees</b></a>
+	    <p>The Sphinx-4 code is located at sourceforge.net as open source. Please follow the instructions below to retrieve it.</p>
+	    <ul>
+	      <li>Make sure that you set the environment variable CVS_RSH to
+		ssh. See the <a href="#faq">troubleshooting</a> section for more
+		details.
+	      </li>
 
+	      <li>Get the code from sourceforge.net. If you are a
+	      developer in the cmusphinx project, then do:
+	      </li>
+
+	    <ul>
+	      <li>
+		<pre>cvs -d:ext:cvs.sourceforge.net:/cvsroot/cmusphinx co sphinx4</pre>
+	      </li>
+	    </ul>
+	  <li>If you are not a developer, you have to get the code
+	  anonymously. When prompted for a password, simply hit
+	  &lt;ENTER&gt;:
+	  </li>
+	<ul>
+	  <li>
+	    <pre>cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx login</pre>
+	  </li>
+	  <li>
+	    <pre>cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx co sphinx4</pre>
+	  </li>
+	</ul>
+      </li>
+    </ul>
+    </li>
+      <li><b>Instructions for retrieving code from a release package.</b>
+	<p>There are no release packages avaibable at this time for Sphinx-4.</p>
+      </li>
+    </ul>
+    </li>
+<br>
 <li><a name="language_models"><b>Language Models</b></a>
 
 </li>
@@ -369,12 +410,14 @@ to be used without the need to recompile code.
 </p>
 <p>How do you know property names, and what their default values are?
 The Java platform has a tool named Javadoc, which extracts information
-from comments in the source code and creates a set of html files
-documenting the API and the constants in the code. You can visit the
+from comments in the source code and creates a set of local html files
+documenting the <a href="./javadoc">API</a> and the <a
+href="./javadoc/constant-values.html">constants</a> in the code. If
+you have access to the web, you can visit the
 <a
 href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/constant-values.html">
 constant field values page</a> or the <a
-href="http://cmusphinx.sourceforge.net/sphinx4/javadoc">API page</a>.
+href="http://cmusphinx.sourceforge.net/sphinx4/javadoc">API page</a> located at sourceforge.net.
 </p>
 <p>For each class, the properties are defined as constant
 fields. The page displays the type of variable, whether an int or float or
@@ -438,8 +481,7 @@ int, only an integer can be used as the value for this property.
   <br>&nbsp;
 
   <li><a name="how_build"><b>Building Sphinx-4</b></a>
-      <p>The prerequisites for building Sphinx-4 are as follows:
-      <br>&nbsp;
+      <p>The prerequisites for building Sphinx-4 are as follows. See section <a href="#download_and_install">Required software</a> for instructions on how to obtain the software listed below.</p>
       <ul>
          <li><b>Sphinx-4 Source Distribution</b>. We recommend that you
 	     download the cvs source tree from SourceForge. 
@@ -453,25 +495,24 @@ int, only an integer can be used as the value for this property.
              where you installed the SDK.
          </li><br>
          <li><b>Apache Ant 1.5.3</b> or
-             better.  After you install ant, sure the "ant" command is in
+             better.  After you install ant, make sure the "ant" command is in
              your path.  Visit the <a href="http://ant.apache.org/">Apache
              Ant site</a> to get ant.
          </li><br>
       </ul>
-    <p>To build Sphinx-4, merely type the following in a command prompt 
-       situated at the top level Sphinx-4 directory:
+    <p>To build Sphinx-4, from a command prompt, make sure you have changed to the directory where you installed Sphinx-4 (usually, a simple "cd sphinx4" will do), and merely type the following:</p>
       <ul>
          <p><code>ant</code>
       </ul>
     <p>This executes the <a href="http://ant.apache.org/">Apache Ant</a>
-       command to build the FreeTTS classes, voices, demos, and jar files.
+       command to build the Sphinx-4 classes, demos, and jar files.
        The output will be placed under the <code>bld</code> directory.
 
     <p>We have also provided a number of ant targets for convenience:
     <ul>
        <p><code>ant clean</code>: deletes all the output from the build 
           to give you a fresh start
-       <br><code>ant javadoc</code>: builds the javadoc documentation and
+       <br><a href="#create_javadocs"><code>ant javadoc</code></a>: builds the javadoc documentation and
           places the results in the <code>javadoc</code> directory
     </ul>
   </li>
@@ -481,9 +522,11 @@ int, only an integer can be used as the value for this property.
   <li><a name="batch_tests"><b>Running the Batch Tests</b></a>
 
   <p>In order to run the batch regression tests, you will need to have
-     any or all of the following test data (unless otherwise noted, 
-     must be acquired from external sources, mostly from the
-     <a href="http://www.ldc.upenn.edu">Language Data Consortium (LDC)</a>:
+  any or all of the following test data. The links will lead you to an
+  outside site where you can acquire them. Data from the <a
+  href="http://www.ldc.upenn.edu">Language Data Consortium (LDC)</a>
+  are available from a fee. Data from other sources may be free.
+  </p>
      <ul>
      <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S9">TI46</a> - isolated speech</li>
      <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S10">TIDIGITS</a> - connected digits</li>
@@ -496,7 +539,7 @@ int, only an integer can be used as the value for this property.
   <p>
   The Sphinx-4 regression tests have different directories for the
   different tasks. The directory sphinx4/tests/performance contains 
-  directories named ti46, tidigits, an4, rm1, hub4 and some other tests. 
+  directories named ti46, tidigits, an4, rm1, hub4, and some other tests. 
   Each of these directories contains a build.xml with targets specific 
   to the particular task. The build.xml allows you to run a number of 
   different tests. Type:
