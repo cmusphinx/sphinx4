@@ -224,6 +224,7 @@ function fmtTime(seconds) {
 
 function printTestResults(testName) {
     print("<br><br>");
+    print("<a name=" testName "></a>");
     print "<table align=center cellpadding=2 cellspacing=2 border=1 width=60%>";
     print "<tbody>";
     print "<tr align=center>";
@@ -274,6 +275,7 @@ function printSummaryInfo() {
 #
 
 function printBuildHistory() {
+   print("<a name=build_history></a>");
    print "<table cellpadding=2 cellspacing=2 border=1 width=60% align=center>";
    print "<tbody>";
    print "<tr align=center>";
@@ -319,9 +321,10 @@ function printBuildHistory() {
 
 function printMachineDescription() {
     split(machineDescription, data);
+    "date" | getline theDate;
 
     print("<br><br>");
-    print("<table cellpadding=2 cellspacing=2 border=0 width=50%");
+    print("<table cellpadding=2 cellspacing=2 border=0 width=90%");
     print("align=center>");
     print("<tbody>");
     print("<tr align=center>");
@@ -330,6 +333,11 @@ function printMachineDescription() {
     print("</b></big></td>");
     print(" </tr>");
     print(" <tr>");
+    print(" <td ><b>Test Date </b></td> <td> " theDate " </td></tr>");
+    print(" <tr><td ><b>Test Details </b></td> <td> " )
+    print("<a href=http://cmusphinx.sourceforge.net/cgi-bin/twiki/view/Sphinx4/?topic=TaskStatus> Sphinx 4 Twiki</a></td>");
+    print(" </tr>");
+
     print(" <td ><b>CPUs </b></td> <td> " data[3] " </td>");
     print(" </tr>");
     print(" <tr>");
@@ -355,10 +363,11 @@ function printMachineDescription() {
 
 # "metrics|$date|$fileCount|$javaFileCount|$classCount|$lineCount|$packageCount|"
 function printMetrics() {
+   print("<a name=metrics></a>");
     split(metrics, data);
 
     print("<br><br>");
-    print("<table cellpadding=2 cellspacing=2 border=0 width=50%");
+    print("<table cellpadding=2 cellspacing=2 border=0 width=90%");
     print("align=center>");
     print("<tbody>");
     print("<tr align=center>");
@@ -404,8 +413,6 @@ function printFooter() {
 
 
 function printKey() {
-    print("<hr>");
-    print("</table>");
     print "<br>";
     print("<table cellpadding=2 cellspacing=2 border=0 ");
     print("align=center>");
@@ -433,31 +440,53 @@ function printTitle() {
     print "</tr>";
     print "</tbody>";
     print "</table>";
-
     print "<br>";
-    print "<div align=center>Sphinx 4 regression tests are run nightly.";
-    print "Results are";
-    print "posted here.<br>";
+}
 
-    "date" | getline theDate;
 
-    print  "<br><i> Report generated on " theDate "</i><br>";
-    print "</div>";
-    print "<br>";
+# prints the table of contents
+
+function printTOC() {
+    print("<h2> Table of Contents</h2>");
+    # print("<small>");
+    print("<ul>");
+    print("<li><a href=#build_history> Build History </a></li>");
+    for (i in testCount) {
+	print("<li><a href=#" i ">Test "  i "</a></li>") | "sort";
+    }
+    close("sort");
+    print("</ul>");
+    # print("</small>");
+}
+
+function printHeaderTable() {
+    print "<table align=center cellpadding=2 cellspacing=2 border=0 width=100%>";
+    print("<tr>");
+
+	print("<td valign=top bgcolor=#ddddff>\n");
+	   printTOC();
+	print("</td>\n");
+
+	print("<td valign=top>\n");
+	    printMachineDescription();
+	    printMetrics();
+	    printKey();
+	print("</td>\n");
+
+    print("</tr>");
+    print("</table>")
 }
 
 END {
     print("<html>");
     printHeader();
     printTitle();
-    printMetrics();
+    printHeaderTable()
     for (i in testCount) {
         printTestResults(i);
     }
 
     printBuildHistory();
-    printMachineDescription();
-    printKey();
     printFooter();
 }
 
