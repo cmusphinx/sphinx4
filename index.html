@@ -252,15 +252,87 @@ WARRANTIES.
 	  <br>
           <li><a href="http://cmusphinx.sourceforge.net/MediumVocabResults.html">
               Medium Vocabulary (RM1)</a>: Extends the vocabulary
-	      to approximately 1000 words.
+	      to approximately 1,000 words.
+          </li>
+	  <br>
+          <li><a href="http://cmusphinx.sourceforge.net/MediumVocabResults.html">
+              Medium Vocabulary (WSJ5K)</a>: Extends the vocabulary
+	      to approximately 5,000 words.
           </li>
 	  <br>
           <li><a href="http://cmusphinx.sourceforge.net/LargeVocabResults.html">
+              Medium Vocabulary (WSJ20K)</a>: Extends the vocabulary
+	      to approximately 20,000 words.
+          </li>
+
+	  <br>
+          <li><a href="http://cmusphinx.sourceforge.net/LargeVocabResults.html">
               Large Vocabulary (HUB4)</a>: Extends the vocabulary
-	      to approximately 64000 words.
+	      to approximately 64,000 words.
           </li>
       </ul>
   </li>
+
+<p>
+The following table compares the performance of Sphinx 3.3 with Sphinx-4.
+<p>
+
+
+<table border="1" cellspacing="0" cellpadding="1"> <tr><th bgcolor="#e0e8FF">
+<strong>Test</strong> </th><th bgcolor="#e0e8FF"> <strong>S3.3 WER</strong> </th><th
+bgcolor="#e0e8FF"> <strong>S4 WER</strong> </th><th bgcolor="#e0e8FF"> <strong>S3.3 RT</strong>
+</th><th bgcolor="#e0e8ff"> <strong>S4 RT(1)</strong> </th><th bgcolor="#e0e8ff"> <strong>S4 RT
+(2)</strong> </th><th bgcolor="#e0e8ff"> <strong>Vocabulary Size</strong> </th><th
+bgcolor="#e0e8ff"> <strong>Language Model</strong> </th></tr>
+
+<tr><th bgcolor="#F0F8FF"> <strong>TI46</strong> </th><td align="right">   1.217  </td><td
+align="right">   0.168  </td><td align="right">   0.14  </td><td align="right">   .03  </td><td
+align="right">   .02 </td><td align="right">   11  </td><td>  isolated digits recognition
+</td></tr>
+
+<tr><th bgcolor="#F0F8FF"> <strong>TIDIGITS</strong> </th><td align="right">   0.661  </td><td
+align="right">   0.549  </td><td align="right">   0.16  </td><td align="right">   0.07  </td><td
+align="right">   0.05  </td><td align="right">   11  </td><td>  continuous digits   </td></tr>
+
+<tr><th bgcolor="#F0F8FF"> <strong>AN4</strong> </th><td align="right">   1.300  </td><td
+align="right">   1.192  </td><td align="right">   0.38  </td><td align="right">   0.25  </td><td
+align="right">   0.20  </td><td align="right">   79  </td><td>  trigram  </td></tr>
+
+<tr><th bgcolor="#F0F8FF"> <strong>RM1</strong> </th><td align="right">   2.746  </td><td
+align="right">   2.739  </td><td align="right">   0.50  </td><td align="right">   0.50  </td><td
+align="right">   0.40  </td><td align="right">   1,000  </td><td>  trigram  </td></tr>
+
+
+<tr><th bgcolor="#F0F8FF"> <strong>WSJ5K</strong> </th><td align="right">   7.323  </td><td
+align="right">   7.174  </td><td align="right">     1.36  </td><td align="right">   1.22
+</td><td align="right">   0.96 </td><td align="right">   5,000  </td><td>  trigram </td></tr>
+
+<tr><th bgcolor="#F0F8FF"> <strong>HUB4</strong> </th><td align="right">   18.845  </td><td
+align="right">    18.878  </td><td align="right">   3.06  </td><td align="right">   ~4.4
+</td><td align="right">   3.8  </td><td align="right">   60,000  </td><td>  trigram </td></tr>
+
+</table>
+<p />
+Note that performance work on the HUB4 test is not complete
+<p />
+<p />
+Key:
+<ul>
+<li> <strong>WER</strong> - Word error rate (%) (lower is better)
+</li>
+<li> <strong>RT</strong> - Real Time - Ratio of processing time to audio time - (lower is better)
+</li>
+
+<li> <strong>S3.3 RT</strong> - Results for a single or dual CPU configuration
+</li>
+<li> <strong>S4 RT(1)</strong> - Results on a single-CPU configuration
+</li>
+<li> <strong>S4 RT(2)</strong> - Results for a dual-CPU configuration
+</li>
+</ul>
+
+<p>
+This data was collected on a dual CPU UltraSPARC-III running at 1015 MHz with 2G of memory.
 </ul>
 
 <hr>
