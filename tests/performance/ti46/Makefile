@@ -37,21 +37,24 @@ DEBUG_FLAGS=
 EXTRA_JAVA_FLAGS=$(PROFILE_FLAGS) $(LOG_GC_FLAGS) $(LOG) $(GC_FLAGS) $(DEBUG_FLAGS)
 
 ##########################################################################
+# 
+# check the MODE setting. If invoked with MODE=quick, run a quick
+# version of the test (5 times quicker)
+# 
+# example:      make MODE=quick an4_words_wordlist
+#
+#
+
+ifeq ($(MODE),quick)
+  SKIP = 5
+else
+  SKIP = 0
+endif
 
 include ${TOP}/build/Makefile.config
 
-SKIP=0
 
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
-
-#
-# Makes all of the tests
-#
-
-all:: 
-	$(MAKE) ti46_wordlist
-	$(MAKE) ti46_flat_unigram
-	$(MAKE) ti46_flat_unigram_fst
 
 
 #
@@ -64,45 +67,23 @@ ti46_wordlist:
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
 #
-# a quick form of ti46_wordlist
-#
-
-ti46_wordlist_quick:
-	$(MAKE) SKIP=5 ti46_wordlist
-
-#
 # ti46 with an ARPA format flat unigram
 #
 ti46_flat_unigram:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
-        -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
-	-Dedu.cmu.sphinx.model.language.format=arpa \
-	-Dedu.cmu.sphinx.model.language.location=./ti46.flat_unigram.lm\
-	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
-
-#
-# a quick form 
-#
-ti46_flat_unigram_quick:
-	$(MAKE) SKIP=5 ti46_flat_unigram
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+    -Dedu.cmu.sphinx.model.language.location=./ti46.flat_unigram.lm\
+    edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
 #
 # ti46 with and FST format flat unigram
 #
 ti46_flat_unigram_fst:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
-	-Dedu.cmu.sphinx.search.FSTGrammar.path=./ti46.flat_unigram.fst \
-	edu.cmu.sphinx.decoder.BatchDecoder ./ti46.props ./ti46.batch
-
-
-#
-# a quick form 
-#
-
-ti46_flat_unigram_fst_quick:
-	$(MAKE) SKIP=5 ti46_flat_unigram_fst
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+    -Dedu.cmu.sphinx.search.FSTGrammar.path=./ti46.flat_unigram.fst \
+    edu.cmu.sphinx.decoder.BatchDecoder ./ti46.props ./ti46.batch
 

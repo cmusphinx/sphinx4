@@ -71,6 +71,7 @@ edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.search.Linguist.validateSentenceHMM=false
 edu.cmu.sphinx.search.validateResults=false
+edu.cmu.sphinx.model.language.format=arpa 
 
 
 ############################################################
