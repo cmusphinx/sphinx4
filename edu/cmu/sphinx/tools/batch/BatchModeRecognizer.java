@@ -69,6 +69,15 @@ public class BatchModeRecognizer implements Configurable {
      * The default value for the property PROP_SKIP.
      */
     public final static int PROP_SKIP_DEFAULT = 0;
+    
+    /**
+     * The SphinxProperty name for how many utterances to process
+     */
+    public final static String PROP_COUNT = "count";
+    /**
+     * The default value for the property PROP_COUNT.
+     */
+    public final static int PROP_COUNT_DEFAULT = 1000000;
 
     /**
      * The SphinxProperty that specified which batch job is to be run.
@@ -121,10 +130,10 @@ public class BatchModeRecognizer implements Configurable {
     // -------------------------------
     // Configuration data
     // --------------------------------
-
     private String name;
     private List inputDataProcessors;
     private int skip;
+    private int totalCount;
     private int whichBatch;
     private int totalBatches;
     private boolean usePooledBatchManager;
@@ -142,6 +151,7 @@ public class BatchModeRecognizer implements Configurable {
             throws PropertyException {
         this.name = name;
         registry.register(PROP_SKIP, PropertyType.INT);
+        registry.register(PROP_COUNT, PropertyType.INT);
         registry.register(PROP_WHICH_BATCH, PropertyType.INT);
         registry.register(PROP_TOTAL_BATCHES, PropertyType.INT);
         registry.register(PROP_USE_POOLED_BATCH_MANAGER, PropertyType.BOOLEAN);
@@ -158,6 +168,10 @@ public class BatchModeRecognizer implements Configurable {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         skip = ps.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
+        totalCount = ps.getInt(PROP_COUNT, PROP_COUNT_DEFAULT);
+        if (totalCount <= 0) {
+            totalCount = Integer.MAX_VALUE;
+        }
         whichBatch = ps.getInt(PROP_WHICH_BATCH, PROP_WHICH_BATCH_DEFAULT);
         totalBatches = ps
                 .getInt(PROP_TOTAL_BATCHES, PROP_TOTAL_BATCHES_DEFAULT);
@@ -212,10 +226,10 @@ public class BatchModeRecognizer implements Configurable {
             logger.info("BatchDecoder: decoding files in "
                     + batchManager.getFilename());
         
-            while ((batchItem = batchManager.getNextItem()) != null) {
+            while (count < totalCount && 
+                        (batchItem = batchManager.getNextItem()) != null) {
                 setInputStream(batchItem.getFilename());
-                Result result = 
-                    recognizer.recognize(batchItem.getTranscript());
+                Result result = recognizer.recognize(batchItem.getTranscript());
                 logger.info("File  : " + batchItem.getFilename());
                 logger.info("Result: " + result);
                 count++;
