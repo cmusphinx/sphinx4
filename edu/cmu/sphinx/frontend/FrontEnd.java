@@ -19,12 +19,116 @@ import java.util.Iterator;
 import java.util.Vector;
 
 /**
- * A wrapper for the chain of front end processors. It is created by
- * passing in the first and last DataProcessor in the chain to the
- * constructor. Calling <code>setDataSource()</code> or
- * <code>setPredecessor()</code> on the FrontEnd will set the data
- * source from which the front end reads the data to perform signal
- * processing.
+ * FrontEnd is a wrapper class for the chain of front end processors.
+ * It provides methods for manipulating and navigating the processors.
+ * <p>
+ * The front end is modeled as a series of data processors,
+ * each of which performs a specific signal processing function.
+ * For example, a processor performs Fast-Fourier Transform (FFT)
+ * on input data, another processor performs high-pass filtering.
+ * Figure 1 below describes how the front end looks like:
+ * <p>
+ * <center>
+ * <img src="doc-files/frontend.jpg">
+ * <br><b>Figure 1: The Sphinx4 front end.</b>
+ * </center>
+ * <p>
+ * Each such data processor implements the 
+ * {@link edu.cmu.sphinx.frontend.DataProcessor} interface. Objects that 
+ * implements the {@link edu.cmu.sphinx.frontend.Data} interface
+ * enters and exits the front end, and go between the processors in the
+ * front end.
+ * The input data to the front end is typically audio data, but this
+ * front end allows any input type. Similarly, the output data is typically
+ * features, but this front end allows any output type. You can configure
+ * the front end to accept any input type and return any output type.
+ * We will describe the configuration of the front end in more detail
+ * below.
+ * <p>
+ * <b>The Pull Model of the Front End</b>
+ * <p>
+ * The front end uses a pull model. To obtain output fron the front end,
+ * one would call the method:
+ * <p>
+ * <code>
+ * FrontEnd frontend = ... // obtain the front end from FrontEndFactory
+ * <br>Data output = frontend.getData();
+ * </code>
+ * <p>
+ * Calling {@link #getData() getData} on the front end would in turn 
+ * call the getData() method on the last DataProcessor, which in turn
+ * calls the getData()
+ * method on the second last DataProcessor, and so on, until the getData()
+ * method on the first DataProcessor is called, which reads Data objects
+ * from the input. The input to the front end is actually another
+ * DataProcessor. Note that the input DataProcessor is not part of the
+ * front end and is not shown in the figure above.
+ * One common input DataProcessor is the 
+ * {@link edu.cmu.sphinx.frontend.util.Microphone}, which implements
+ * the DataProcessor interface. The input DataProcessor (e.g., Microphone)
+ * is given to the front end via the 
+ * {@link #setDataSource(edu.cmu.sphinx.frontend.DataProcessor) setDataSource}
+ * method:
+ * <p>
+ * <code>
+ * DataProcessor microphone = new Microphone();
+ * <br>microphone.initialize(...);
+ * <br>frontend.setDataSource(microphone);
+ * </code>
+ * <p>
+ * Another common input DataProcessor is the
+ * {@link edu.cmu.sphinx.frontend.util.StreamDataSource}.
+ * It turns a Java {@link java.io.InputStream} into Data objects. 
+ * It is usually used in
+ * batch mode decoding.
+ * <p>
+ * <b>Configuring the front end</b>
+ * <p>
+ * The front end must be configured through the Sphinx properties file.
+ * For details about how about properties files, refer to the 
+ * <a href="">Sphinx-4 Properties File Guide</a>.
+ *
+ * Current state-of-the-art front ends generate features that contain
+ * Mel-frequency cepstral coefficients (MFCC). To specify such a front end
+ * (called a 'pipeline') in Sphinx-4, insert the following lines 
+ * in the Sphinx properties file:
+ * <p>
+ * <code>
+ * edu.cmu.sphinx.frontend.FrontEndFactory.pipelines = mfcc
+ * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.nStages = 7
+ * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class = {@link edu.cmu.sphinx.frontend.filter.Preemphasizer edu.cmu.sphinx.frontend.filter.Preemphasizer}
+ * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class = {@link edu.cmu.sphinx.frontend.window.RaisedCosineWindower edu.cmu.sphinx.frontend.window.RaisedCosineWindower}
+ * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class = {@link edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform}
+ * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class = {@link edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank}
+ * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class = {@link edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform}
+ * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class = {@link edu.cmu.sphinx.frontend.feature.BatchCMN edu.cmu.sphinx.frontend.feature.BatchCMN}}
+ * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class = {@link edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor}
+ * </code>
+ * <p>
+ * Note: In this example, 'mfcc' becomes the name of the front end.
+ * <p>
+ * Sphinx-4 also allows you to:
+ * <ul>
+ * <li>specify multiple front end pipelines</li>
+ * <li>specify multiple instance of the same DataProcessor in the same
+ *     pipeline</li>
+ * </ul>
+ * <p>
+ * For details on how to do this, refer to the "Front End" section in the
+ * <a href="">Sphinx-4 Properties File Guide</a>.
+ * <p>
+ * <b>Obtaining a Front End</b>
+ * <p>
+ * A front end is obtained through the
+ * {@link edu.cmu.sphinx.frontend.FrontEndFactory}. You will call the 
+ * {@link edu.cmu.sphinx.frontend.FrontEndFactory#getFrontEnd(String, edu.cmu.sphinx.util.SphinxProperties) getFrontEnd} factory method. Continuing the above example,
+ * if the name of the front end as specified in the properties file is
+ * "mfcc":
+ * <p>
+ * <code>
+ * SphinxProperties properties = ... // pass in from outside
+ * <br>FrontEnd frontend = FrontEndFactory.getFrontEnd("mfcc", properties);
+ * </code>
  */
 public class FrontEnd extends BaseDataProcessor {
 
@@ -129,8 +233,7 @@ public class FrontEnd extends BaseDataProcessor {
 
 
     /**
-     * Add a listener to be called when a feature with non-content
-     * signal is detected.
+     * Add a listener to be called when a signal is detected.
      *
      * @param listener the listener to be added
      */
@@ -140,7 +243,7 @@ public class FrontEnd extends BaseDataProcessor {
 
 
     /**
-     * Removes a listener for features with non-content signals.
+     * Removes a listener for signals.
      *
      * @param listener the listener to be removed
      */
@@ -150,7 +253,7 @@ public class FrontEnd extends BaseDataProcessor {
 
 
     /**
-     * Fire all listeners for features with non-content signals.
+     * Fire all listeners for signals.
      *
      * @param feature the feature with non-content signal
      */

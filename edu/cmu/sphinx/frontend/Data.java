@@ -19,8 +19,8 @@ package edu.cmu.sphinx.frontend;
  * data, or be a signal (e.g., utterance start, utterance end, speech start,
  * speech end).
  * 
- * @see DoubleData
- * @see Signal
+ * @see Data
+ * @see FrontEnd
  */
 public interface Data {
 
