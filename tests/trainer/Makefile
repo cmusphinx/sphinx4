@@ -27,7 +27,6 @@ SUBDIRS =
 #GCSPY_FLAGS= -client -Xport3000 -Xverbose -Xwait
 PROFILE_FLAGS= $(GCSPY_FLAGS)
 PROFILE_FLAGS= -Xprof -server
-PROFILE_FLAGS= -server
 
 #LOG_GC_FLAGS=  -Xloggc:gc.txt
 GC_FLAGS = -ms256m -mx1g

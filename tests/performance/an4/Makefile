@@ -21,7 +21,7 @@ FILES = $(shell echo *.java)
 # List any sub directories that need to be built
 SUBDIRS =
 
-# LOGGER_PROPERTIES=tiDigits.props
+# LOGGER_PROPERTIES=an4.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
 

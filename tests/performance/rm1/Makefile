@@ -236,7 +236,7 @@ rm1_flat_unigram_lex_min:
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.lex.props ./rm1.batch
 
 
-rm1_bigram_test:
+rm1_bigram_old_test:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
         -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
