@@ -226,7 +226,7 @@ function dumpTitle(  i) {
     }
 
     for (i = 0; i < systemCount; i++) {
-	detailLink = "AutoGen" mode title systemLinkName[systemName[i]] "_" machine;
+	detailLink = "Regression.AutoGen" mode title systemLinkName[systemName[i]] "_" machine;
         printf("| *[[%s][%s]]* ", detailLink, systemTitle[systemName[i]]);
     }
     printf("|\n");

@@ -20,4 +20,4 @@ twikidir=/home/groups/c/cm/cmusphinx/twiki/data/Sphinx4
 
 tar cf twikireports.tar AutoGen*.txt
 sscp twikireports.tar
-sshh '(cd /home/groups/c/cm/cmusphinx/twiki/data/Sphinx4; tar xf ~/twikireports.tar; chgrp cmusphinx `ls AutoGen*`;)'
+sshh '(cd /home/groups/c/cm/cmusphinx/twiki/data/Regression; tar xf ~/twikireports.tar; chgrp cmusphinx `ls AutoGen*`;)'
