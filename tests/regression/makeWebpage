@@ -178,27 +178,7 @@ function getLastGoodWER(testName, count, wer) {
 function getAccuracyStatus(testName, count) {
   thisWER = getWER(testName, count);
   prevWER = getLastGoodWER(testName, count - 1);
-
-  if (thisWER == "N/A") {
-      return "<td bgcolor=#ffcccc>" "N/A" "</td>";
-  }
-
-  if (prevWER == "N/A") {
-      return "<td>" thisWER "</td>";
-  }
-
-  if (thisWER == prevWER) {
-      return "<td>" thisWER "</td>";
-  }
-
-  if (thisWER > prevWER) {
-      return "<td bgcolor=#ffcccc>" thisWER "</td>";
-  }
-
-  if (thisWER < prevWER) {
-      return "<td bgcolor=#99ff99>" thisWER "</td>";
-  }
-  return "<td>" thisWER "</td>";
+  return getLessIsBetterMetricStatus(thisWER, prevWER);
 }
 
 ## Finds the last reported speed
@@ -219,32 +199,7 @@ function getLastGoodSpeed(testName, count,  speed) {
 function getSpeedStatus(testName, count, _slowThreshold, _fastThreshold) {
   thisSpeed = getSpeed(testName, count);
   prevSpeed = getLastGoodSpeed(testName, count - 1);
-
-  if (thisSpeed == "N/A") {
-      return "<td bgcolor=#ffcccc>" "N/A" "</td>";
-  }
-
-  if (prevSpeed == "N/A") {
-      return "<td>" thisSpeed "</td>";
-  }
-
-  if (thisSpeed == prevSpeed) {
-      return "<td>" thisSpeed "</td>";
-  }
-
-  _slowThreshold = prevSpeed + prevSpeed * .1;
-  _fastThreshold = prevSpeed - prevSpeed * .1;
-
-  # print "thresh", _slowThreshold, _fastThreshold, thisSpeed;
-
-  if (thisSpeed > _slowThreshold) {
-      return "<td bgcolor=#ffcccc>" thisSpeed "</td>";
-  }
-
-  if (thisSpeed  < _fastThreshold) {
-      return "<td bgcolor=#99ff99>" thisSpeed "</td>";
-  }
-  return "<td>" thisSpeed "</td>";
+  return getLessIsBetterThresholdMetricStatus(thisSpeed, prevSpeed, 0.1);
 }
 
 ####
@@ -253,28 +208,7 @@ function getSpeedStatus(testName, count, _slowThreshold, _fastThreshold) {
 function getHeapStatus(testName, count, _minThreshold, _maxThreshold) {
   thisHeap = getHeap(testName, count);
   prevHeap = getHeap(testName, count - 1);
-
-  if (thisHeap == "N/A") {
-      return "<td bgcolor=#ffcccc>" "N/A" "</td>";
-  }
-
-  if (prevHeap == "N/A") {
-      return "<td>" thisHeap "</td> ";
-  }
-
-  _maxThreshold = prevHeap + prevHeap * .1;
-  _minThreshold = prevHeap - prevHeap * .1;
-
-  if (thisHeap > _maxThreshold) {
-      # return "<td bgcolor=#ffcccc>" thisHeap "</td>";
-      return "<td bgcolor=#ffffff>" thisHeap "</td>";
-  }
-
-  if (thisHeap  < _minThreshold) {
-      # return "<td bgcolor=#99ff99>" thisHeap "</td>";
-      return "<td bgcolor=#ffffff>" thisHeap "</td>";
-  }
-  return "<td>" thisHeap "</td>";
+  return getLessIsBetterThresholdMetricStatus(thisHeap, prevHeap, 0.1);
 }
 
 ####
@@ -298,20 +232,7 @@ function getRunStatus(testName, count) {
 function getGapInsertionRateStatus(testName, testCount) {
     thisGapRate = getGapInsertionRate(testName, testCount);
     prevGapRate = getGapInsertionRate(testName, testCount - 1);
-
-    if (thisGapRate == "N/A") {
-	return "<td bgcolor=#ffcccc>N/A</td>";
-    }
-    if (prevGapRate == "N/A") {
-	return "<td>" thisGapRate "</td>";
-    }
-    if (thisGapRate < prevGapRate) {
-	return "<td bgcolor=#99ff99>" thisGapRate "</td>";
-    }
-    if (thisGapRate > prevGapRate) {
-	return "<td bgcolor=#ffcccc>" thisGapRate "</td>";
-    }
-    return "<td>" thisGapRate "</td>";
+    return getLessIsBetterMetricStatus(thisGapRate, prevGapRate);
 }
 
 function getGapInsertionRate(testName, testCount) {
@@ -381,21 +302,21 @@ function distFromOne(x) {
 function getAvgResponseTimeStatus(testName, testCount) {
     thisAvgTime = getResponseTime(testName, testCount, F_AVG_RESPONSE_TIME);
     prevAvgTime = getResponseTime(testName, testCount-1, F_AVG_RESPONSE_TIME);
-    return getResponseTimeStatus(thisAvgTime, prevAvgTime);
+    return getLessIsBetterThresholdMetricStatus(thisAvgTime, prevAvgTime, 0.1);
 }
 
 
 function getMaxResponseTimeStatus(testName, testCount) {
     thisMaxTime = getResponseTime(testName, testCount, F_MAX_RESPONSE_TIME);
     prevMaxTime = getResponseTime(testName, testCount-1, F_MAX_RESPONSE_TIME);
-    return getResponseTimeStatus(thisMaxTime, prevMaxTime);
+    return getLessIsBetterThresholdMetricStatus(thisMaxTime, prevMaxTime, 0.1);
 }
 
 
 function getMinResponseTimeStatus(testName, testCount) {
     thisMinTime = getResponseTime(testName, testCount, F_MIN_RESPONSE_TIME);
     prevMinTime = getResponseTime(testName, testCount-1, F_MIN_RESPONSE_TIME);
-    return getResponseTimeStatus(thisMinTime, prevMinTime);
+    return getLessIsBetterThresholdMetricStatus(thisMinTime, prevMinTime, 0.1);
 }
 
 function getResponseTime(testName, testCount, INDEX) {
@@ -408,22 +329,40 @@ function getResponseTime(testName, testCount, INDEX) {
     return responseTime;
 }
 
-function getResponseTimeStatus(thisResponseTime, prevResponseTime) {
-    if (thisResponseTime == "N/A") {
+function getLessIsBetterMetricStatus(thisMetric, prevMetric) {
+    if (thisMetric == "N/A") {
 	return "<td bgcolor=#ffcccc>" "N/A" "</td>";
     }
-    if (prevResponseTime == "N/A") {
-	return "<td>" thisResponseTime"</td>";
+    if (prevMetric == "N/A") {
+	return "<td>" thisMetric"</td>";
     }
-    if (thisResponseTime > prevResponseTime) {
-	return "<td bgcolor=#ffcccc>" thisResponseTime "</td>";
+    if (thisMetric > prevMetric) {
+	return "<td bgcolor=#ffcccc>" thisMetric "</td>";
     }
-    if (thisResponseTime < prevResponseTime) {
-	return "<td bgolor=#99ff99>" thisResponseTime "</td>";
+    if (thisMetric < prevMetric) {
+	return "<td bgolor=#99ff99>" thisMetric "</td>";
     }
-    return "<td>" thisResponseTime "</td>";
+    return "<td>" thisMetric "</td>";
 }
 
+function getLessIsBetterThresholdMetricStatus(thisMetric, prevMetric, threshold) {
+    if (thisMetric == "N/A") {
+	return "<td bgcolor=#ffcccc>" "N/A" "</td>";
+    }
+    if (prevMetric == "N/A") {
+	return "<td>" thisMetric"</td>";
+    }
+    prevMetricPlusTenPercent = prevMetric * (1.0 + threshold);
+    prevMetricMinusTenPercent = prevMetric * (1.0 - threshold);
+
+    if (thisMetric > prevMetricPlusTenPercent) {
+	return "<td bgcolor=#ffcccc>" thisMetric "</td>";
+    }
+    if (thisMetric < prevMetricMinusTenPercent) {
+	return "<td bgcolor=#99ff99>" thisMetric "</td>";
+    }
+    return "<td>" thisMetric "</td>";
+}
 
 
 function printSingleTest(testName, testCount) {
