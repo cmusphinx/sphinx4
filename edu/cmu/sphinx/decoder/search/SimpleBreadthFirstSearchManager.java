@@ -260,17 +260,24 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      *
      * @param nFrames the number of frames to recognize
      *
-     * @return the current result
+     * @return the current result or null if there is no Result (due
+     *    to the lack of frames to recognize)
      */
     public Result recognize(int nFrames) {
 	boolean done = false;
-	Result result;
+        boolean noData = false;
+        Result result = null;
 
         for (int i = 0; i < nFrames && !done; i++) {
 	    done = recognize();
-	}
-	result = new Result(activeList, resultList, currentFrameNumber, done);
-
+            if (done && currentFrameNumber <= 0) {
+                noData = true;
+            }
+        }
+        if (!noData) {
+            result = new Result
+                (activeList, resultList, currentFrameNumber, done);
+        }
 	if (showTokenCount) {
 	    showTokenCount();
 	}
