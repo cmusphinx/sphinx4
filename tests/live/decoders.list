@@ -1,37 +1,16 @@
-decoders = bishop connectedDigits player isolatedDigits alphaSpelling jsgf
+decoders = alphaSpelling connectedDigits isolatedDigits   
+# connectedDigits
+connectedDigits.name = Connected Digits
+connectedDigits.configFile = tidigits.config.xml
+connectedDigits.testFile = ./connectedDigits.test
 
 # isolatedDigits decoder
 isolatedDigits.name = Isolated Digits
-isolatedDigits.propertiesFile = ./ti46.props
+isolatedDigits.configFile = ti46.config.xml
 isolatedDigits.testFile = ./isolatedDigits.test
 
-# connectedDigits
-connectedDigits.name = Connected Digits
-connectedDigits.propertiesFile = ./tidigits.props
-connectedDigits.testFile = ./connectedDigits.test
-
 # alphaSpelling
-alphaSpelling.name=Alpha Spelling
-alphaSpelling.propertiesFile = ./alphaSpelling.live.props
+alphaSpelling.name = Alpha Spelling
+alphaSpelling.configFile = alphaSpelling.config.xml
 alphaSpelling.testFile = ../performance/an4/an4_spelled_out.wordlist
-
-# helpinghand
-helpinghand.name=Helping Hand
-helpinghand.propertiesFile = ./helpinghand/helpinghand.props
-helpinghand.testFile = ./helpinghand/helpinghand.test
-
-# bishop
-bishop.name=Bishop
-bishop.propertiesFile = ./bishop/bishop.props
-bishop.testFile = ./bishop/bishop.test
-
-# CommandAndControl
-jsgf.name=CommandAndControl
-jsgf.propertiesFile=./jsgf/jsgf.props
-jsgf.testFile=./jsgf/hello.test
-
-# CommandAndControl
-player.name=Player
-player.propertiesFile=./player/player.props
-player.testFile=./player/player.test
 

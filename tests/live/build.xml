@@ -73,10 +73,9 @@ NOTE:  Before running the tests, you must have already built
 	    <java classname="${live_demo}"
 	          classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
 		  fork="true"
-		  maxmemory="512m">
+		  maxmemory="312m">
 		  <sysproperty key="showPartialResults" value="true"/>
-                  <sysproperty key="edu.cmu.sphinx.frontend.FrontEndFactory.pipelines"
-                               value="mfc"/>
+		  <sysproperty key="frontend" value="mfcFrontEnd"/>
 		  <arg value="decoders.list"/>
                   <jvmarg value="-server"/>   
 	    </java>
@@ -97,10 +96,11 @@ NOTE:  Before running the tests, you must have already built
 	    <java classname="${live_demo}"
 	          classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
 		  fork="true"
-		  maxmemory="512m">
+		  maxmemory="312m">
                  <jvmarg value="-server"/>   
 		  <sysproperty key="epMode" value="true"/>
 		  <sysproperty key="showPartialResults" value="true"/>
+		  <sysproperty key="frontend" value="epFrontEnd"/>
 		  <arg value="decoders.list"/>
 	    </java>
     </target>
@@ -124,17 +124,15 @@ NOTE:  Before running the tests, you must have already built
 	    <java classname="${live_demo}"
 	          classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
 		  fork="true"
-		  maxmemory="512m">
+		  maxmemory="312m">
                   <jvmarg value="-server"/>   
 		  <sysproperty key="handsFree" value="true"/>
                  <sysproperty key="java.util.logging.config.file"
                               value="tidigits.props"/>
+		  <sysproperty key="frontend" value="epFrontEnd"/>
 		  <sysproperty key="showPartialResults" value="true"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.util.Microphone.keepLastAudio"
-		               value="false"/>
+		  <sysproperty key="microphone[keepLastAudio]" value="false"/>
 		  <arg value="decoders.list"/>
 	    </java>
     </target>
-
-
 </project>

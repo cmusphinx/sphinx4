@@ -462,11 +462,7 @@ public class LiveFrame extends JFrame {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             String testFile = chooser.getSelectedFile().getName();
             testFileField.setText(testFile);
-            try {
-                live.getDecoder().setTestFile(testFile);
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
+            live.setTestFile(testFile);
         }
         live.setCurrentDirectory(chooser.getCurrentDirectory());
     }
@@ -671,7 +667,7 @@ public class LiveFrame extends JFrame {
         nextButton = new JButton("Next");
         nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                setReferenceLabel(live.getDecoder().getNextReference());
+                setReferenceLabel(live.getNextReference());
                 setRecognitionLabel("");
             }
         });

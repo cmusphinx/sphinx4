@@ -72,7 +72,7 @@ public class AudioPlayer {
             line.open(format);
             return true;
         } catch(LineUnavailableException lue) {
-            lue.printStackTrace();
+            System.err.println("Can't open line " + lue);
             return false;
         }   
     }

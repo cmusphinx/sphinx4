@@ -12,12 +12,18 @@
 
 package tests.live;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -25,10 +31,14 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.swing.DefaultComboBoxModel;
 
 import edu.cmu.sphinx.frontend.util.Microphone;
+import edu.cmu.sphinx.instrumentation.AccuracyTracker;
+import edu.cmu.sphinx.instrumentation.SpeedTracker;
+import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.NISTAlign;
-import edu.cmu.sphinx.util.SphinxProperties;
-
+import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.PropertyException;
 
 /**
  * The live decoder main program. This class contains the control logic.
@@ -36,22 +46,24 @@ import edu.cmu.sphinx.util.SphinxProperties;
 public class Live {
 
     private static DecimalFormat timeFormat = new DecimalFormat("0.00");
-    private DefaultComboBoxModel decoderNameList;
-    private Map decoders;
+    private DefaultComboBoxModel recognizerNameList;
+    private Map recognizers;
 
     private AudioPlayer audioPlayer = null; // for play the recording
-    private LiveDecoder decoder = null;     // for decoding, obviously
+    private LiveRecognizer currentRecognizer = null;
     private LiveFrame liveFrame = null;
     private Result lastResult = null;
     private File currentDirectory = null;
 
     private boolean showPartialResults = false;
-    private boolean handsFree;              // uses endpointer
+    private boolean handsFree; // uses endpointer
+    private boolean epMode;
 
     /**
      * Main program.
-     *
-     * @param argv first argument should be the decoder list file
+     * 
+     * @param argv
+     *                first argument should be the decoder list file
      */
     public static void main(String[] argv) {
         if (argv.length < 1) {
@@ -70,24 +82,25 @@ public class Live {
         }
     }
 
-
     /**
-     * Constructs a Live program with the given file that lists
-     * all the available decoders. The first decoder listed in
-     * the file will be created.
-     *
-     * @param decodersFile a file listing all the available decoders
+     * Constructs a Live program with the given file that lists all the
+     * available decoders. The first decoder listed in the file will be
+     * created.
+     * 
+     * @param decodersFile
+     *                a file listing all the available decoders
      */
-    public Live(String decoderListFile) throws 
-        InstantiationException, IOException, LineUnavailableException {
+    public Live(String decoderListFile) throws InstantiationException,
+            IOException, LineUnavailableException {
         String pwd = System.getProperty("user.dir");
         currentDirectory = new File(pwd);
 
         showPartialResults = Boolean.getBoolean("showPartialResults");
         handsFree = Boolean.getBoolean("handsFree");
-        
-        decoderNameList = new DefaultComboBoxModel();
-        decoders = new HashMap();
+        epMode = Boolean.getBoolean("epMode");
+
+        recognizerNameList = new DefaultComboBoxModel();
+        recognizers = new HashMap();
 
         // parse the decoder's list
         parseDecoderListFile(decoderListFile);
@@ -105,38 +118,34 @@ public class Live {
      */
     private void initializeFirstDecoder() {
         // initialize the first decoder
-        if (decoderNameList.getSize() > 0) {
+        if (recognizerNameList.getSize() > 0) {
             String firstDecoder = System.getProperty("firstDecoder");
             if (firstDecoder == null) {
-                firstDecoder = (String) decoderNameList.getElementAt(0);
+                firstDecoder = (String) recognizerNameList.getElementAt(0);
             }
-            info("Initializing first decoder: "  + firstDecoder + " ...\n");
+            info("Initializing first decoder: " + firstDecoder + " ...\n");
             liveFrame.setDecoderComboBox(firstDecoder);
             info("... done initializing\n");
         }
     }
 
-
     /**
      * Returns the LiveFrame.
-     *
+     * 
      * @return the LiveFrame
      */
     public LiveFrame getLiveFrame() {
         return liveFrame;
     }
 
-
     /**
-     * Terminates this Live object, terminates all Microphones owned
-     * by the LiveDecoders.
+     * Terminates this Live object, terminates all Microphones owned by the
+     * LiveDecoders.
      */
     public void terminate() {
-        for (Iterator i = decoders.values().iterator(); i.hasNext();) {
-            LiveDecoder decoder = (LiveDecoder) i.next();
-            if (decoder.getMicrophone() != null) {
-                decoder.getMicrophone().terminate();
-            }
+        for (Iterator i = recognizers.values().iterator(); i.hasNext();) {
+            LiveRecognizer lr = (LiveRecognizer) i.next();
+            lr.deallocate();
         }
     }
 
@@ -150,167 +159,135 @@ public class Live {
 
     /**
      * Start recording.
-     *
+     * 
      * @return true if recording started successfully, false if it did not
      */
     public boolean startRecording() {
-        Microphone microphone = getDecoder().getMicrophone();
-        microphone.clear();
-        return microphone.startRecording();
+        currentRecognizer.getMicrophone().clear();
+        return currentRecognizer.getMicrophone().startRecording();
     }
 
     /**
      * Stop recording.
      */
     public void stopRecording() {
-        getDecoder().getMicrophone().stopRecording();
+        currentRecognizer.getMicrophone().stopRecording();
     }
 
+    public String getNextReference() {
+        return currentRecognizer.getNextReference();
+    }
     /**
      * Plays the last recorded utterance.
      */
     public void playUtterance() {
-        Microphone microphone = getDecoder().getMicrophone();
+        Microphone microphone = currentRecognizer.getMicrophone();
         if (microphone.getUtterance() != null) {
             liveFrame.setMessage("Playing back...");
             byte[] audio = microphone.getUtterance().getAudio();
             if (audio != null) {
-                audioPlayer.play
-                    (audio, microphone.getAudioFormat());
+                audioPlayer.play(audio, microphone.getAudioFormat());
             }
             liveFrame.setMessage("Playing back...finished");
         } else {
-            liveFrame.setMessage
-                ("Cannot play utterance: it wasn't saved.");
+            liveFrame.setMessage("Cannot play utterance: it wasn't saved.");
         }
     }
 
     /**
      * Returns true if the current decoder keeps the audio.
-     *
+     * 
      * @return true if the current decoder kept the last utterance
      */
     public boolean canPlayUtterance() {
-        return (getDecoder().getMicrophone().getUtterance() != null);
+        return currentRecognizer.getMicrophone().getUtterance() != null;
     }
 
     /**
      * Resets the statistics in the NISTAlign of the current Decoder.
      */
     public void resetStatistics() {
-        NISTAlign aligner = getDecoder().getNISTAlign();
-        aligner.resetTotals();
-        getDecoder().resetSpeed();
-        updateLiveFrame(aligner);
+        currentRecognizer.getAligner().resetTotals();
+        currentRecognizer.resetSpeed();
+        updateLiveFrame(currentRecognizer.getAligner());
+    }
+    
+    public void setTestFile(String testFile) {
+        currentRecognizer.setTestFile(testFile);
     }
 
     /**
-     * Make a new named decoder
-     *
-     * @param name    the name of the decoder to make
+     * Sets the current recognizer to the one with the given name.
+     * 
+     * @param recognizerName
+     *                name of the recognizer to use
      */
-    public LiveDecoder makeDecoder(String name)
-        throws InstantiationException, IOException, LineUnavailableException {
-        return new LiveDecoder(name, this);
-    }
-
-    /**
-     * Returns the Decoder that is currently in use.
-     *
-     * @return the decoder that is currently in use
-     */
-    public LiveDecoder getDecoder() {
-        return decoder;
-    }
-
-
-    /**
-     * Sets the current Decoder to the one with the given name.
-     *
-     * @param decoderName name of the Decoder to use 
-     */
-    public void setDecoder(String decoderName) throws IOException {
-        String changeMessage = "Changing to " + decoderName + " decoder\n";
+    public void setDecoder(String recognizerName) throws IOException {
+        String changeMessage = "Changing to " + recognizerName + " recognizer\n";
         info(changeMessage);
         liveFrame.setMessage(changeMessage);
 
-        try {
-            decoder = getDecoder(decoderName);
-            if (!decoder.isInitialized()) {
-                Microphone microphone = new Microphone();
-                microphone.initialize
-                    ("Microphone", null, decoder.getSphinxProperties(), null);
-                decoder.initialize(microphone);
-            }            
-        } catch (LineUnavailableException lue) {
-            // if the audio line is unavailable for some reason
-            String errorMessage = "Cannot change to " + decoderName;
-            liveFrame.setMessage(errorMessage);
-            lue.printStackTrace();
-            return;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
+        LiveRecognizer nextRecognizer = (LiveRecognizer) recognizers.get(recognizerName);
+        if (nextRecognizer.allocate()) {
+            // if the decoder switch is successful
+            currentRecognizer = nextRecognizer;
+            liveFrame.setTestFile(currentRecognizer.getTestFile());
+            liveFrame.setReferenceLabel(currentRecognizer.getNextReference());
+            liveFrame.setMessage("Using " + recognizerName + " recognizer");
 
-        // if the decoder switch is successful
-        liveFrame.setTestFile(getDecoder().getTestFile());
-        liveFrame.setReferenceLabel(getDecoder().getNextReference());
-        liveFrame.setMessage("Using " + decoderName + " decoder");
-        
+        } else {
+            liveFrame.setMessage("Error trying to use " + recognizerName);
+        }
         info("... done changing\n");
     }
 
-
     /**
      * Returns the DefaultComboBoxList that stores all the decoder names.
-     *
+     * 
      * @return the DefaultComboBoxList that stores all the decoder names
      */
     public DefaultComboBoxModel getDecoderList() {
-        return decoderNameList;
+        return recognizerNameList;
     }
-
 
     /**
      * Returns the current directory.
-     *
+     * 
      * @return the current directory
      */
     public File getCurrentDirectory() {
         return currentDirectory;
     }
 
-
     /**
      * Sets the current directory.
-     *
-     * @param currentDirectory sets the current directory
+     * 
+     * @param currentDirectory
+     *                sets the current directory
      */
     public void setCurrentDirectory(File currentDirectory) {
         this.currentDirectory = currentDirectory;
     }
 
-
     /**
      * Prints an info message to System.out.
-     *
-     * @param message the message to print
+     * 
+     * @param message
+     *                the message to print
      */
     private void info(String message) {
         System.out.print(message);
     }
 
-
     /**
-     * Parses the given list of decoders, and create a
-     * SynthesizerProperties for each of them. Also creates
-     * all the LiveDecoders.
-     *
-     * @param decoderListFile a file listing all the available decoders
+     * Parses the given list of decoders, and create a SynthesizerProperties
+     * for each of them. Also creates all the LiveDecoders.
+     * 
+     * @param decoderListFile
+     *                a file listing all the available decoders
      */
-    private void parseDecoderListFile(String decoderListFile) throws 
-        InstantiationException, IOException, LineUnavailableException {
+    private void parseDecoderListFile(String decoderListFile)
+            throws  IOException,  LineUnavailableException {
 
         info("Parsing file " + decoderListFile + " ");
 
@@ -318,41 +295,35 @@ public class Live {
         properties.load(new FileInputStream(decoderListFile));
 
         String decoderLine = properties.getProperty("decoders");
-        String[] decoders = decoderLine.split(" ");
+        String[] recognizerNames = decoderLine.split("\\s+");
 
-        for (int i = 0; i < decoders.length; i++) {
+        for (int i = 0; i < recognizerNames.length; i++) {
 
-            // name of the decoder
-            String decoderName = properties.getProperty(decoders[i] + ".name");
-            if (decoderName == null) {
-                throw new NullPointerException
-                    ("No name for decoder " + decoders[i]);
+            // name of the recognizer
+            String recognizerName = properties.getProperty(recognizerNames[i]
+                    + ".name");
+            if (recognizerName == null) {
+                throw new NullPointerException("No name for recognizer "
+                        + recognizerNames[i]);
             }
 
-            // properties file
-            String propertiesFile = properties.getProperty
-                (decoders[i] + ".propertiesFile");
-            if (propertiesFile == null) {
-                throw new NullPointerException
-                    ("No properties file for decoder " + decoders[i]);
+            // cofnig file
+            String configFile = properties.getProperty(recognizerNames[i]
+                    + ".configFile");
+            if (configFile == null) {
+                throw new NullPointerException("No config file for recognizer "
+                        + recognizerNames[i]);
             }
 
-            // initialize the SphinxProperty object
-            SphinxProperties.initContext(decoderName, 
-                                         (new File(propertiesFile)).toURL());
-            
             // transcript file
-            String testFile = properties.getProperty
-                (decoders[i] + ".testFile");
-            
-            // add the name of the decoder to the decoderNameList
-            decoderNameList.addElement(decoderName);
-            
-            // create the LiveDecoders and a Microphone for each of them 
-            LiveDecoder decoder = getDecoder(decoderName);
-            decoder.setTestFile(testFile);
-            decoder.setShowPartialResults(showPartialResults);
-            
+            String testFile = properties.getProperty(recognizerNames[i]
+                    + ".testFile");
+
+            // add the name of the decoder to the recognizerNameList
+            recognizerNameList.addElement(recognizerName);
+
+            recognizers.put(recognizerName, new LiveRecognizer(recognizerName,
+                    configFile, testFile));
             info(".");
         }
 
@@ -361,57 +332,47 @@ public class Live {
 
 
     /**
-     * Return a Decoder with the given name and decoder properties.
-     *
-     * @param decoderName the name of the Decoder
-     *
-     * @return the requested Decoder
-     */
-    private LiveDecoder getDecoder(String decoderName) throws 
-        InstantiationException, IOException, LineUnavailableException {
-        
-        // obtain the decoder
-        LiveDecoder decoder = null;
-        if ((decoder = (LiveDecoder) decoders.get(decoderName)) == null) {
-            decoder = makeDecoder(decoderName);
-            decoders.put(decoderName, decoder);
-        }
-
-        return decoder;
-    }
-
-
-    /**
      * Updates the LiveFrame with the statistics in the given NISTAlign.
-     *
-     * @param aligner the NISTAlign to get statistics from
+     * 
+     * @param aligner
+     *                the NISTAlign to get statistics from
      */
     private void updateLiveFrame(NISTAlign aligner) {
         liveFrame.setRecognitionLabel(aligner.getHypothesis());
-        
+
         float wordAccuracy = (aligner.getTotalWordAccuracy() * 100);
         liveFrame.setWordAccuracyLabel(wordAccuracy + "%");
-                
+
         float sentenceAccuracy = (aligner.getTotalSentenceAccuracy() * 100);
         liveFrame.setSentenceAccuracyLabel(sentenceAccuracy + "%");
 
         String speedLabel = "N/A";
         String cumulativeSpeedLabel = "N/A";
 
-	speedLabel = (timeFormat.format(decoder.getSpeed()) + " X RT");
-	cumulativeSpeedLabel = 
-	    (timeFormat.format(decoder.getCumulativeSpeed()) + " X RT");
+        speedLabel = (timeFormat.format(currentRecognizer.getSpeed()) + " X RT");
+        cumulativeSpeedLabel = (timeFormat.format(currentRecognizer.getCumulativeSpeed()) + " X RT");
 
+        
         liveFrame.setSpeedLabel(speedLabel);
         liveFrame.setCumulativeSpeedLabel(cumulativeSpeedLabel);
+    }
+    
+
+    /**
+     * Shows the given partial Result.
+     *
+     * @param result the partial Result to show
+     */
+    protected void showPartialResult(Result result) {
+        getLiveFrame().setRecognitionLabel(result.toString());
     }
 
 
     /**
-     * Does decoding in a separate thread so that it does not
-     * block the calling thread. It will automatically update
-     * the GUI components once the decoding is completed. This
-     * is analogous to the "Control" components in the MVC model.
+     * Does decoding in a separate thread so that it does not block the calling
+     * thread. It will automatically update the GUI components once the
+     * decoding is completed. This is analogous to the "Control" components in
+     * the MVC model.
      */
     class DecodingThread extends Thread {
 
@@ -426,38 +387,184 @@ public class Live {
          * Implements the run() method of this thread.
          */
         public void run() {
+            Microphone microphone = currentRecognizer.getMicrophone();
+            Recognizer recognizer = currentRecognizer.getRecognizer();
+            
             if (handsFree) {
-                while (decoder.getMicrophone().hasMoreData()) {
-                    try {
-                        System.out.println("Live: decoding ...");
-                        lastResult = decoder.decode();
-                        decoder.setReferenceText(liveFrame.getReference());
-                        if (lastResult != null) {
-                            decoder.showFinalResult(lastResult);
-                        }
-                        System.out.println("Live: ... decoded");
-                        updateLiveFrame(decoder.getNISTAlign());
-                    } catch (NullPointerException npe) {
-                        npe.printStackTrace();
-                    }
+                while (microphone.hasMoreData()) {
+                    recognizer.recognize(liveFrame.getReference());
                 }
                 liveFrame.setDecoderComboBoxEnabled(true);
             } else {
-                lastResult = decoder.decode(liveFrame.getReference());
-                if (Boolean.getBoolean("epMode")) {
-                    getDecoder().getMicrophone().stopRecording();
+                lastResult = recognizer.recognize(liveFrame.getReference());
+
+                if (epMode) {
+                    microphone.stopRecording();
                     System.out.println("Speaker turned off.");
                     liveFrame.setMessage("Speaker turned off.");
                 }
-                updateLiveFrame(decoder.getNISTAlign());
-                liveFrame.setDecoderComboBoxEnabled(true);
+
             }
             liveFrame.setSpeakButtonEnabled(true);
             liveFrame.setStopButtonEnabled(false);
             liveFrame.setNextButtonEnabled(true);
             liveFrame.setPlayButtonEnabled(true);
+            liveFrame.setDecoderComboBoxEnabled(true);
             System.out.println("DecodingThread completed.");
         }
     }
 
+    private void warn(String msg) {
+        System.err.println("Warning: " + msg);
+    }
+
+    class LiveRecognizer {
+        private String name;
+        private String testFile;
+        private String configName;
+        private ConfigurationManager cm;
+        private Recognizer recognizer;
+        private Microphone microphone;
+        private SpeedTracker speedTracker;
+        private NISTAlign aligner;
+        private boolean allocated;
+        private List referenceList;
+        private Iterator iterator;
+
+        LiveRecognizer(String name, String configName, String testFile)  {
+            this.name = name;
+            this.testFile = testFile;
+            this.configName = configName;
+            allocated = false;
+        }
+
+        String getName() {
+            return name;
+        }
+
+        String getTestFile() {
+            return testFile;
+        }
+
+        boolean allocate() {
+            try {
+                URL url = new File(configName).toURI().toURL();
+                cm = new ConfigurationManager(url);
+                recognizer = (Recognizer) cm.lookup("recognizer");
+                microphone = (Microphone) cm.lookup("microphone");
+                speedTracker = (SpeedTracker) cm.lookup("speedTracker");
+                aligner = ((AccuracyTracker) cm.lookup("accuracyTracker")).getAligner();
+                recognizer.allocate();
+                setTestFile(testFile);
+                
+                recognizer.addResultListener(new ResultListener() {
+                    public void newResult(Result result) {
+                        if (!result.isFinal() && showPartialResults) {
+                            showPartialResult(result);
+                        }
+                        if (result.isFinal()) {
+                            updateLiveFrame(currentRecognizer.getAligner());
+                        }
+                    }
+                });
+                allocated = true;
+
+            } catch (InstantiationException e) {
+                warn("Can't create recognizer from " + configName + " " + e);
+            } catch (PropertyException pe) {
+                warn("Can't configure recognizer " + pe);
+            } catch (IOException ioe) {
+                warn("Can't allocate recognizer " + ioe);
+            }
+            return allocated;
+        }
+        
+        void deallocate() {
+            if (allocated) {
+                recognizer.deallocate();
+                allocated = false;
+            }
+        }
+
+
+        Microphone getMicrophone() {
+            return microphone;
+        }
+        
+
+        Recognizer getRecognizer() {
+            return recognizer;
+        }
+
+        boolean isAllocated() {
+            return allocated;
+        }
+
+        NISTAlign getAligner() {
+            return aligner;
+        }
+
+        /**
+         * Returns the cumulative speed of this recognizer as a fraction of real time.
+         * 
+         * @return the cumulative speed of this recognizer
+         */
+        public float getCumulativeSpeed() {
+            return speedTracker.getCumulativeSpeed();
+        }
+        
+        /**
+         * Returns the current speed of this recognizer as a fraction of real time.
+         * 
+         * @return the current speed of this recognizer
+         */
+        public float getSpeed() {
+            return speedTracker.getSpeed();
+        }
+        
+        public void resetSpeed() {
+            speedTracker.reset();
+        }
+        
+        /**
+         * Returns the next utterance in the test file. If its at the last
+         * utterance already, it will cycle back to the first utterance.
+         * If there is no utterance in the file at all, it will return 
+         * an empty string.
+         *
+         * @param the next utterance in the test file; if no utterance,
+         *    it will return an empty string
+         */
+        public String getNextReference() {
+            if (iterator == null || !iterator.hasNext()) {
+                iterator = referenceList.listIterator();
+            }
+            String next = "";
+            if (iterator.hasNext()) {
+                next = (String) iterator.next();
+                if (next == null) {
+                    next = "";
+                }
+            }
+            return next;
+        }
+        
+        void setTestFile(String testFile)  {
+            try {
+                this.testFile = testFile;
+                referenceList = new ArrayList();
+                BufferedReader reader = new BufferedReader(new FileReader(testFile));
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    referenceList.add(line);
+                }
+                iterator = referenceList.listIterator();
+                reader.close();
+            } catch (FileNotFoundException e) {
+                warn("Can't find  file " + e);
+            } catch (IOException e) {
+                warn("Can't read  file " + e);
+            }
+        }
+    }
 }
