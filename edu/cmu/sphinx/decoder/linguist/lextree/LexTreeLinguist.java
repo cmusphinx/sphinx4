@@ -146,6 +146,26 @@ public class LexTreeLinguist implements  Linguist {
      * Called before a recognition
      */
     public void start() {
+        // property getters are here in 'start' to allow changing
+        // of these properties on the fly
+        logWordInsertionProbability = logMath.linearToLog
+            (props.getDouble
+             (Linguist.PROP_WORD_INSERTION_PROBABILITY,
+              Linguist.PROP_WORD_INSERTION_PROBABILITY_DEFAULT));
+
+        logSilenceInsertionProbability = logMath.linearToLog
+            (props.getDouble
+             (Linguist.PROP_SILENCE_INSERTION_PROBABILITY,
+              Linguist.PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT));
+
+        logUnitInsertionProbability = logMath.linearToLog
+            (props.getDouble
+             (Linguist.PROP_UNIT_INSERTION_PROBABILITY,
+              Linguist.PROP_UNIT_INSERTION_PROBABILITY_DEFAULT));
+
+        languageWeight = props.getFloat(PROP_LANGUAGE_WEIGHT,
+                                        PROP_LANGUAGE_WEIGHT_DEFAULT);
+
 	languageModel.start();
     }
 
