@@ -13,13 +13,13 @@
 
 package edu.cmu.sphinx.result;
 
-import edu.cmu.sphinx.result.Result;
+import java.util.EventListener;
 
 /**
  *  The listener interface for being informed when new results are
  *  generated.
  */
-public interface ResultListener {
+public interface ResultListener extends EventListener {
     /**
      * Method called when a new result is generated
      *
