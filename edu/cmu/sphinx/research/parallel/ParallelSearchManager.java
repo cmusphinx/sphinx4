@@ -45,38 +45,45 @@ import java.util.Map;
  */
 public class ParallelSearchManager implements SearchManager {
 
-    // The sphinx property prefix for all property names of this class.
-    private static final String PROP_PREFIX =
+    /**
+     * The sphinx property prefix for all property names of this class.
+     */
+    public static final String PROP_PREFIX =
 	"edu.cmu.sphinx.research.parallel.ParallelSearchManager.";
 
-    // The sphinx property name for the active list type.
-    private static final String PROP_ACTIVE_LIST_TYPE =
+    /**
+     * The sphinx property name for the active list type.
+     */
+    public static final String PROP_ACTIVE_LIST_TYPE =
 	PROP_PREFIX + "activeListType";
 
-    // The default ActiveList type, which is the SimpleActiveList
-    private static final String PROP_ACTIVE_LIST_TYPE_DEFAULT =
-	"edu.cmu.sphinx.decoder.search.SimpleActiveList";
-
-    // The sphinx property name for the language weight.
-    private static final String PROP_LANGUAGE_WEIGHT =
-        PROP_PREFIX + "languageWeight";
-
-    // The default language weight value, which is 1.0.
-    private static final float PROP_LANGUAGE_WEIGHT_DEFAULT = 1.0f;
-
-    // The sphinx property name for whether to do feature pruning.
-    private static final String PROP_DO_FEATURE_PRUNING =
+    /**
+     * The default ActiveList type, which is the SimpleActiveList
+     */
+    public static final String PROP_ACTIVE_LIST_TYPE_DEFAULT =
+        "edu.cmu.sphinx.decoder.search.SimpleActiveList";
+    
+    /**
+     * The sphinx property name for whether to do feature pruning.
+     */
+    public static final String PROP_DO_FEATURE_PRUNING =
 	PROP_PREFIX + "doFeaturePruning";
 
-    // The default value for whether to do feature pruning, which is false.
-    private static final boolean PROP_DO_FEATURE_PRUNING_DEFAULT = false;
+    /**
+     * The default value for whether to do feature pruning, which is false.
+     */
+    public static final boolean PROP_DO_FEATURE_PRUNING_DEFAULT = false;
 
-    // The sphinx property name for whether to do combine pruning.
-    private static final String PROP_DO_COMBINE_PRUNING =
+    /**
+     * The sphinx property name for whether to do combine pruning.
+     */
+    public static final String PROP_DO_COMBINE_PRUNING =
 	PROP_PREFIX + "doCombinePruning";
 
-    // The default value for whether to do combine pruning, which is false.
-    private static final boolean PROP_DO_COMBINE_PRUNING_DEFAULT = false;
+    /**
+     * The default value for whether to do combine pruning, which is false.
+     */
+    public static final boolean PROP_DO_COMBINE_PRUNING_DEFAULT = false;
 
 
     private SphinxProperties props;
@@ -88,9 +95,6 @@ public class ParallelSearchManager implements SearchManager {
 
     private int currentFrameNumber;           // the current frame number
     private ActiveList combinedActiveList;    // ActiveList for common states
-    private Map featureStreams;               // the list of ActiveList(s), one
-                                              // for each type of model
-
     private ActiveList delayedExpansionList;  // for tokens at CombineStates
     private List resultList;
 
@@ -100,8 +104,6 @@ public class ParallelSearchManager implements SearchManager {
     private Timer pruneTimer;
     private Timer growTimer;
 
-    private LogMath logMath;
-    private float languageWeight;
     private boolean doFeaturePruning;
     private boolean doCombinePruning;
 
@@ -144,13 +146,8 @@ public class ParallelSearchManager implements SearchManager {
 	this.pruneTimer = Timer.getTimer(context, "Prune");
 	this.growTimer = Timer.getTimer(context, "Grow");
 
-        this.logMath = LogMath.getLogMath(context);
-        this.languageWeight = props.getFloat(PROP_LANGUAGE_WEIGHT,
-                                             PROP_LANGUAGE_WEIGHT_DEFAULT);
-
         bestTokenMap = new HashMap();
-	featureStreams = new HashMap();
-        
+	        
         // initialize the FeatureStreams for the separate models
         List models = AcousticModel.getNames(context);
         assert (models.size() > 0);
@@ -161,8 +158,9 @@ public class ParallelSearchManager implements SearchManager {
             String modelName = (String) i.next();
             float eta = props.getFloat(PROP_PREFIX + modelName + ".eta",
 				       defaultEta);
-            FeatureStream stream = new FeatureStream(modelName, eta);
-            featureStreams.put(modelName, stream);
+            FeatureStream stream = 
+                FeatureStream.getFeatureStream(modelName);
+            stream.setEta(eta);
             System.out.println("Eta for " + modelName + " is: " + eta);
         }
     }
@@ -174,7 +172,7 @@ public class ParallelSearchManager implements SearchManager {
      * @param message the debug message to print
      */
     private void debugPrint(String message) {
-	if (false) {
+	if (true) {
 	    System.out.println(message);
 	}
     }
@@ -213,50 +211,36 @@ public class ParallelSearchManager implements SearchManager {
             // initialize the combined ActiveList
 	    Class activeListClass = Class.forName(activeListName);
 	    
-	    // initialize the ActiveLists for the separate models
-            for (Iterator i = featureStreams.values().iterator(); 
-                 i.hasNext();) {
-                FeatureStream stream = (FeatureStream) i.next();
-                stream.activeList = 
-                    (ActiveList) activeListClass.newInstance();
-                stream.activeList.setProperties(props);
-            }
-
-	    combinedActiveList = (ActiveList)activeListClass.newInstance();
-	    combinedActiveList.setProperties(props);
-
-	    delayedExpansionList = (ActiveList)activeListClass.newInstance();
-	    delayedExpansionList.setProperties(props);
+	    combinedActiveList = getActiveList(activeListClass, props);
+            delayedExpansionList = getActiveList(activeListClass, props);
 
 	    SentenceHMMState firstState = (SentenceHMMState)
                 linguist.getInitialSearchState();
-	    assert !firstState.isEmitting();
 
             // create the first token and grow it, its first parameter
             // is null because it has no predecessor
             CombineToken firstToken = new CombineToken
                 (null, firstState, currentFrameNumber);
 
-            // add the first ParallelTokens to the CombineToken
-            for (Iterator i = featureStreams.values().iterator();
-                 i.hasNext();) {
+            setBestToken(firstState, firstToken);
+
+            for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
                 FeatureStream stream = (FeatureStream) i.next();
+                stream.setActiveList(getActiveList(activeListClass, props));
+
+                // add the first ParallelTokens to the CombineToken
                 ParallelToken token = new ParallelToken
-                    (stream.name, firstState, stream.eta, currentFrameNumber);
+                    (firstState, stream, currentFrameNumber);
 		token.setLastCombineTime(currentFrameNumber);
-                firstToken.addParallelToken(stream.name, token);
+                firstToken.addParallelToken(stream, token);
             }
 
             // grow the first CombineToken until we've reach emitting states
             resultList = new LinkedList();
 
 	    calculateCombinedScore(firstToken);
-
-            // System.out.println(firstToken.toString());
-
             growCombineToken(firstToken);
-
-	    debugPrint("CombinedActiveList: " + combinedActiveList.size());
+            printActiveLists();
             
 	} catch (ClassNotFoundException cnfe) {
 	    throw new Error("ActiveList class, " + activeListName +
@@ -268,6 +252,21 @@ public class ParallelSearchManager implements SearchManager {
 	}
     }
 
+    /**
+     * Returns an ActiveList of the given class with the given properties.
+     *
+     * @param activeListClass the ActiveList class
+     * @param props the properties of the Active List
+     *
+     * @return a new ActiveList
+     */
+    private ActiveList getActiveList(Class activeListClass, 
+                                     SphinxProperties props) 
+        throws InstantiationException, IllegalAccessException {
+        ActiveList activeList = (ActiveList) activeListClass.newInstance();
+        activeList.setProperties(props);
+        return activeList;
+    }
 
     /**
      * Performs recognition. Processes no more than the given number
@@ -306,6 +305,7 @@ public class ParallelSearchManager implements SearchManager {
      */
     private boolean recognize() {
         debugPrint("-----");
+        debugPrint("Frame: " + currentFrameNumber);
 	boolean moreTokens = score();
         if (moreTokens) {
 	    prune();
@@ -327,12 +327,12 @@ public class ParallelSearchManager implements SearchManager {
 	scoreTimer.start();
 	debugPrint("Scoring");
 	boolean moreFeatures = false;
-	for (Iterator i = featureStreams.values().iterator(); i.hasNext();) {
+	for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
             FeatureStream stream = (FeatureStream) i.next();
 	    moreFeatures =
-                scorer.calculateScores(stream.activeList.getTokens());
+                scorer.calculateScores(stream.getActiveList().getTokens());
 	}
-	debugPrint("done Scoring");
+	debugPrint(" done Scoring");
 	scoreTimer.stop();
 	return moreFeatures;
     }
@@ -348,20 +348,32 @@ public class ParallelSearchManager implements SearchManager {
         debugPrint("Pruning");
 
 	if (doFeaturePruning) {
-	    for (Iterator i = featureStreams.values().iterator(); 
-		 i.hasNext();) {
+	    for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
 		FeatureStream stream = (FeatureStream) i.next();	
-		debugPrint(" ActiveList, " + stream.name + ": " +
-                           stream.activeList.size());
-		stream.activeList = 
-		    featureScorePruner.prune(stream.activeList);
-		debugPrint(" ActiveList, " + stream.name + ": " + 
-                           stream.activeList.size());
+		debugPrint(" ActiveList, " + stream.getName() + ": " +
+                           stream.getActiveList().size());
+		stream.setActiveList
+                    (featureScorePruner.prune(stream.getActiveList()));
+		debugPrint(" ActiveList, " + stream.getName() + ": " + 
+                           stream.getActiveList().size());
 	    }
 	}
 
-	debugPrint("done Pruning");
+	debugPrint(" done Pruning");
         pruneTimer.stop();
+    }
+
+
+    /**
+     * Prints all the active lists.
+     */
+    private void printActiveLists() {
+        debugPrint(" CombinedActiveList: " + combinedActiveList.size());
+        for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
+            FeatureStream stream = (FeatureStream) i.next();	
+            debugPrint(" ActiveList, " + stream.getName() + ": " +
+                       stream.getActiveList().size());
+        }
     }
 
 
@@ -375,27 +387,21 @@ public class ParallelSearchManager implements SearchManager {
 	growTimer.start();
 
 	debugPrint("Growing");
+        printActiveLists();
 
         resultList = new LinkedList();
-
-        // renew the combinedActiveList
         combinedActiveList = combinedActiveList.createNew();
-
-	// clear the delayedExpansionList
 	delayedExpansionList = delayedExpansionList.createNew();
 
         // grow each ActiveList (we have one ActiveList for each stream)
-	for (Iterator i = featureStreams.values().iterator(); i.hasNext();) {
+	for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
             FeatureStream stream = (FeatureStream) i.next();
 
             // create a new ActiveList for the next frame
-            ActiveList oldActiveList = stream.activeList;
-            stream.activeList = oldActiveList.createNew();
+            ActiveList oldActiveList = stream.getActiveList();
+            stream.setActiveList(oldActiveList.createNew());
             
 	    growActiveList(oldActiveList);
-
-	    debugPrint(" ActiveList," + stream.name + ": " + 
-		       stream.activeList.size());
 	}
 
         // now expand the delayedExpansionList, which contains the
@@ -403,6 +409,12 @@ public class ParallelSearchManager implements SearchManager {
         // to RED states (i.e., feature stream states to shared states)
 
 	growDelayedExpansionList();
+
+	debugPrint(" done Growing");
+
+	growTimer.stop();
+
+        printActiveLists();
     }
 
     /**
@@ -432,10 +444,6 @@ public class ParallelSearchManager implements SearchManager {
 		growCombineToken(token);
 	    }
 	}
-
-	debugPrint("done Growing");
-
-	growTimer.stop();
     }
 
 
@@ -496,10 +504,11 @@ public class ParallelSearchManager implements SearchManager {
 	    SearchStateArc arc = arcs[i];
 	    SentenceHMMState nextState = (SentenceHMMState) arc.getState();
 	    
-	    float logEntryScore = token.getScore() +  arc.getProbability();
+	    float logEntryScore = token.getScore() + arc.getProbability();
+            Token oldNextToken = getBestToken(nextState);
 
-	    boolean firstToken = getBestToken(nextState) == null ||
-                getBestToken(nextState).getFrameNumber() != nextFrameNumber;
+	    boolean firstToken = oldNextToken == null ||
+                oldNextToken.getFrameNumber() != nextFrameNumber;
 
             // RED states are the unsplitted states, or the non-feature
             // stream states
@@ -508,45 +517,43 @@ public class ParallelSearchManager implements SearchManager {
             
             if (nextState.getColor() == Color.RED) {
 
+                CombineToken nextToken;
+
                 if (firstToken) {
                     // if this is the first incoming ParallelToken, 
                     // create a CombineToken and set it as the best
                     // (and only) CombineToken of the state
-
-                    CombineToken newToken = new CombineToken
+                    nextToken = new CombineToken
                         (token, nextState, nextFrameNumber);
-                    setBestToken(nextState, newToken);
-                    delayedExpansionList.add(newToken);
+                    setBestToken(nextState, nextToken);
+                    delayedExpansionList.add(nextToken);
+                } else {
+                    // get the combine token at the next state
+                    nextToken = (CombineToken) getBestToken(nextState);
                 }
 
-                assert (getBestToken(nextState).getFrameNumber() ==
-                        nextFrameNumber);
+                assert (oldNextToken.getFrameNumber() == nextFrameNumber);
 
-                // get the combine token at the next state
-                CombineToken nextToken  
-                    = (CombineToken) getBestToken(nextState);
-
-                ParallelToken oldNextToken = 
-                    nextToken.getParallelToken(token.getModelName());
+                ParallelToken oldParallelToken = 
+                    nextToken.getParallelToken(token.getFeatureStream());
 
                 // if this is the first token, or if this score is
                 // greater than the old one in the next CombineToken
                 // add this token or replace the old one with this token
 
-                if (firstToken || oldNextToken == null ||
-                    oldNextToken.getScore() <= logEntryScore) {
+                if (oldParallelToken == null ||
+                    oldParallelToken.getScore() <= logEntryScore) {
 
                     ParallelToken newToken = new ParallelToken
                         (token,
                          nextState,
-                         token.getEta(),
                          logEntryScore,
                          token.getCombinedScore(),
                          nextFrameNumber,
 			 token.getLastCombineTime());
 
                     // add this ParallelToken to the CombineToken.
-                    nextToken.addParallelToken(newToken.getModelName(),
+                    nextToken.addParallelToken(newToken.getFeatureStream(),
 					       newToken);
                 }
             } else if (nextState.getColor() == Color.GREEN) {
@@ -557,7 +564,6 @@ public class ParallelSearchManager implements SearchManager {
                     ParallelToken newToken = new ParallelToken
                         (token,
                          nextState,
-                         token.getEta(), 
                          logEntryScore,
                          token.getCombinedScore(), 
                          nextFrameNumber,
@@ -610,10 +616,11 @@ public class ParallelSearchManager implements SearchManager {
      * @param token the CombineToken to grow
      */
     private void growCombineToken(CombineToken token) {
-        
+        System.out.println("Entering growCombineToken");
 	// If this is a final state, add it to the result list.
 	if (token.isFinal()) {
 	    resultList.add(token);
+            System.out.println("FINAL RESULT found!");
 	}
 
         int nextFrameNumber = token.getFrameNumber();
@@ -621,8 +628,8 @@ public class ParallelSearchManager implements SearchManager {
 	// make sure that this state is non-emitting
 	assert !token.isEmitting();
 
-	SearchState state = (SentenceHMMState) token.getSearchState();
-	SearchStateArc[] arcs = (SentenceHMMStateArc[]) state.getSuccessors();
+	SearchState state = (SearchState) token.getSearchState();
+	SearchStateArc[] arcs = (SearchStateArc[]) state.getSuccessors();
 
 	// expand into each successor states
 	for (int a = 0; a < arcs.length; a++) {
@@ -630,8 +637,11 @@ public class ParallelSearchManager implements SearchManager {
 	    SentenceHMMStateArc arc = (SentenceHMMStateArc) arcs[a];
 	    SentenceHMMState nextState = (SentenceHMMState) arc.getState();
 
-	    boolean firstToken = getBestToken(nextState) == null ||
-		getBestToken(nextState).getFrameNumber() != nextFrameNumber;
+            Token oldNextToken = getBestToken(nextState);
+
+	    boolean firstToken = 
+                (oldNextToken == null ||
+                 oldNextToken.getFrameNumber() != nextFrameNumber);
 
             // RED states are the unsplitted states, or the non-feature
             // stream states
@@ -640,10 +650,9 @@ public class ParallelSearchManager implements SearchManager {
 
             if (nextState.getColor() == Color.RED) {
                 
-                float logEntryScore = token.getScore() +  arc.getProbability();
+                float logEntryScore = token.getScore() + arc.getProbability();
 
-                if (firstToken || 
-                    getBestToken(nextState).getScore() <= logEntryScore) {
+                if (firstToken || oldNextToken.getScore() <= logEntryScore) {
                     
                     // create the next CombineToken for a RED state
                     CombineToken nextToken = new CombineToken
@@ -665,10 +674,9 @@ public class ParallelSearchManager implements SearchManager {
             } else if (nextState.getColor() == Color.GREEN) {
 
                 ParallelState pState = (ParallelState) nextState;
-                assert pState.getModelName() != null;
-
+                
                 ParallelToken parallelToken = token.getParallelToken
-                    (pState.getModelName());
+                    (pState.getFeatureStream());
 
                 // we continue into a GREEN/feature stream state only
                 // if there is a ParallelToken for that feature stream
@@ -677,32 +685,21 @@ public class ParallelSearchManager implements SearchManager {
 		    
 		    float logEntryScore = arc.getProbability() + 
 			parallelToken.getFeatureScore();
-		    
-		    ParallelToken oldNextToken = (ParallelToken) 
-			getBestToken(nextState);
-		    
+		    ParallelToken oldToken = (ParallelToken)oldNextToken;
+
 		    if (firstToken || 
-			oldNextToken.getFeatureScore() <= logEntryScore) {
+                        oldToken.getFeatureScore() <= logEntryScore) {
 			
 			ParallelToken nextToken = new ParallelToken
 			    (parallelToken, 
 			     nextState,
-			     parallelToken.getEta(),
-			     logEntryScore, parallelToken.getCombinedScore(),
+			     logEntryScore,
+                             parallelToken.getCombinedScore(),
 			     nextFrameNumber,
 			     parallelToken.getLastCombineTime());
-			
+
                         // replace the oldBestToken with this new token
-                        /*
-			if (oldNextToken != null) {
-                            Util.printTokenReplace
-                                (oldNextToken.getScore(),
-                                 oldNextToken.getFrameNumber(),
-                                 nextToken.getScore(),
-                                 nextToken.getFrameNumber());
-                        }
-                        */
-			if (nextToken.isEmitting()) {
+			if (nextState.isEmitting()) {
 			    // call the replaceParallelToken method
 			    replaceParallelToken(nextState, nextToken);
 			    combinedActiveList.add(nextToken);
@@ -739,13 +736,12 @@ public class ParallelSearchManager implements SearchManager {
             ParallelToken newParallelToken = new ParallelToken
                 (pToken,
                  (SentenceHMMState) newToken.getSearchState(),
-                 pToken.getEta(),
                  pToken.getFeatureScore() + transitionScore,
                  pToken.getCombinedScore(),
                  pToken.getFrameNumber(),
 		 pToken.getLastCombineTime());
             
-            newToken.addParallelToken(newParallelToken.getModelName(),
+            newToken.addParallelToken(newParallelToken.getFeatureStream(),
 				      newParallelToken);
         }
     }
@@ -765,29 +761,17 @@ public class ParallelSearchManager implements SearchManager {
         ParallelToken oldToken = (ParallelToken) getBestToken(state);
         setBestToken(state, newToken);
         if (oldToken != null) {
-            assert (oldToken.getModelName() == newToken.getModelName());
+            assert (oldToken.getFeatureStream() == 
+                    newToken.getFeatureStream());
         }
 
-	// debugPrint(newToken.getModelName());
-
-        ActiveList activeList = getActiveList(newToken.getModelName());
+        ActiveList activeList = newToken.getFeatureStream().getActiveList();
         assert activeList != null;
         activeList.replace(oldToken, newToken);
         
         if (oldToken != null) {
             oldToken.setPruned(true);
         }
-    }
-
-
-    /**
-     * Returns the appropriate ActiveList for the given state.
-     *
-     * @param state the SentenceHMMState
-     */
-    private ActiveList getActiveList(String modelName) {
-        FeatureStream stream = (FeatureStream) featureStreams.get(modelName);
-        return stream.activeList;
     }
 
 
@@ -804,7 +788,7 @@ public class ParallelSearchManager implements SearchManager {
             combinedScorePruner.stop();
         }
 	linguist.stop();
-        bestTokenMap.clear();
+        bestTokenMap = new HashMap();
     }
 }
 
