@@ -114,17 +114,25 @@ public class Preemphasizer extends PullingProcessor {
 	// for loop below, we can just start at the end of the array
 	// to calculate the preemphasis in-place.
 
-        getTimer().start();
-
 	short[] in = ((ShortAudioFrame) input).getData();
 	double[] out = new double[in.length];
 
-	if (preemphasisFactor != 0.0) {
+        getTimer().start();
+
+	if (in.length > 1 && preemphasisFactor != 0.0) {
+
 	    // do preemphasis
-	    out[0] = (double) in[0] - preemphasisFactor * prior;
+            double current;
+            double previous = (double) in[0];
+            
+	    out[0] = previous - preemphasisFactor * prior;
+
 	    for (int i = 1; i < out.length; i++) {
-		out[i] = (double) in[i] - preemphasisFactor * (double) in[i-1];
+                current = (double) in[i];
+		out[i] = current - preemphasisFactor * previous;
+                previous = current;
 	    }
+
 	} else {
 	    // just convert sample from short to double
 	    for (int i = 0; i < out.length; i++) {

@@ -142,7 +142,7 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	    }
 
 	    // if this is the end of the segment, shift the buffers
-	    if (input instanceof SegmentEndPointSignal && signal.isEnd()) {
+	    if (signal != null && signal.isEnd()) {
 		updateMeanSumBuffers();
 	    }
 	}
@@ -161,13 +161,21 @@ public class CepstralMeanNormalizer extends PullingProcessor {
     private void normalize(Cepstrum[] cepstra) {
 	// do the mean normalization
 	for (int i = 0; i < cepstra.length; i++) {
-	    float[] cepstrum = cepstra[i].getData();
-	    for (int j = 0; j < cepstrum.length; j++) {
-		sum[j] += cepstrum[j];
-		cepstrum[j] -= currentMean[j];
-	    }
+            normalizeCepstrum(cepstra[i].getData());
 	    ++numberFrame;
 	}
+    }
+
+
+    /**
+     * Normalize the given cepstrum (in the form of float[]) using
+     * the sum and currentMean arrays.
+     */
+    private void normalizeCepstrum(float[] cepstrum) {
+        for (int j = 0; j < cepstrum.length; j++) {
+            sum[j] += cepstrum[j];
+            cepstrum[j] -= currentMean[j];
+        }
     }
 
 
@@ -177,8 +185,10 @@ public class CepstralMeanNormalizer extends PullingProcessor {
      * with numberFrames.
      */
     private void updateMeanSumBuffers() {
+
 	// update the currentMean buffer with the sum buffer
 	sf = (float) (1.0/numberFrame);
+
 	for (int i = 0; i < currentMean.length; i++) {
 	    currentMean[i] = sum[i] * sf;
 	}
