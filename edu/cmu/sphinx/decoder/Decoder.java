@@ -240,6 +240,16 @@ public class Decoder {
 
 
     /**
+     * Returns the SphinxProperties of this Decoder.
+     *
+     * @return the SphinxProperties
+     */
+    public SphinxProperties getSphinxProperties() {
+	return SphinxProperties.getSphinxProperties(getContext());
+    }
+
+
+    /**
      * Forced alignment of an utterance.
      *
      * @param timer the Timer to use
