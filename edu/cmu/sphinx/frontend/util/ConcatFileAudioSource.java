@@ -154,6 +154,7 @@ public class ConcatFileAudioSource implements AudioSource {
     private String silenceFileName = null;
     private String nextFile = null;
     private String context;
+    private String transcriptFile;
     private StreamAudioSource streamAudioSource;
     private List referenceList;
     private FileWriter transcript;
@@ -173,7 +174,7 @@ public class ConcatFileAudioSource implements AudioSource {
 
         this.context = context;
 
-        String transcriptFile = props.getString
+        transcriptFile = props.getString
             (PROP_TRANSCRIPT_FILE, PROP_TRANSCRIPT_FILE_DEFAULT);
         if (transcriptFile != null) {
             transcript = new FileWriter(transcriptFile);
@@ -233,6 +234,15 @@ public class ConcatFileAudioSource implements AudioSource {
      */
     public List getReferences() {
         return referenceList;
+    }
+
+    /**
+     * Returns the transcript file name.
+     *
+     * @return the transcript file name
+     */
+    public String getTranscriptFile() {
+        return transcriptFile;
     }
     
     /**
