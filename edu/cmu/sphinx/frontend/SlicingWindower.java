@@ -37,11 +37,17 @@ import java.util.Vector;
  * W(n) = (1-a) - (a * cos((2*Math.PI*n)/(N - 1))) </pre> where:
  * <br><b>a</b> is commonly known as the "alpha" value, it defaults to 0.46,
  * the value for the HammingWindow, which is commonly used.
+ *
+ * <p>The Sphinx property that affects this processor is: <pre>
+ * edu.cmu.sphinx.frontend.window.alpha
+ * </pre>
  */
 public class SlicingWindower extends PullingProcessor {
 
     /**
-     * The name of the SphinxProperty for the alpha value of the Window.
+     * The name of the SphinxProperty for the alpha value of the Window,
+     * which has a default value of 0.46 (double), which is the value for the
+     * HammingWindow.
      */
     public static final String PROP_ALPHA =
 	"edu.cmu.sphinx.frontend.window.alpha";

@@ -8,7 +8,7 @@ import java.io.IOException;
 
 
 /**
- * A DataSource provides Data objects to be read by other objects.
+ * A DataSource produces Data objects to be read by other objects.
  */
 public interface DataSource {
 

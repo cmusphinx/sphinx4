@@ -39,15 +39,14 @@ public class Preemphasizer extends PullingProcessor {
 	"edu.cmu.sphinx.frontend.preemphasis.dump";
 
     /**
-     * The name of the SphinxProperty for preemphasis factor/alpha.
+     * The name of the SphinxProperty for preemphasis factor/alpha, which
+     * has a default values of 0.97F.
      */
     public static final String PROP_PREEMPHASIS_FACTOR =
 	"edu.cmu.sphinx.frontend.preemphasis.factor";
     
 
     private float preemphasisFactor;
-    private int windowSize;
-    private int windowShift;
     // TODO: somehow get the prior from the frontend
     private double prior;
 
@@ -70,8 +69,6 @@ public class Preemphasizer extends PullingProcessor {
 
 	preemphasisFactor = properties.getFloat
 	    (PROP_PREEMPHASIS_FACTOR, (float) 0.97);
-	windowSize = properties.getInt(FrontEnd.PROP_WINDOW_SIZE, 205);
-	windowShift = properties.getInt(FrontEnd.PROP_WINDOW_SHIFT, 80);
     }
 
 

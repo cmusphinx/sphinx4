@@ -280,10 +280,10 @@ public class Util {
      * @param featureFrame the FeatureFrame to dump
      */
     public static void dumpFeatureFrame(FeatureFrame featureFrame) {
-	Feature[] features = featureFrame.getData();
+	float[][] features = featureFrame.getData();
 	System.out.println("FEATURE_FRAME " + features.length);
-	for (int i = 0; i < features.length; i++) {
-	    dumpFloatArray(features[i].getData(), "FEATURE");
+        for (int i = 0; i < features.length; i++) {
+	    dumpFloatArray(features[i], "FEATURE");
 	}
     }
 

@@ -5,28 +5,28 @@
 package edu.cmu.sphinx.frontend;
 
 /**
- * Represents an array of Feature.
+ * Represents an array of Features as a two-dimensional float array.
  */
 public class FeatureFrame implements Data {
 
-    private Feature[] features;
+    private float[][] features;
 
     /**
-     * Constructs a FeatureFrame with the given Feature array
+     * Constructs a FeatureFrame with the given 2D float array
      *
      * @param features the Feature array
      */
-    public FeatureFrame(Feature[] features) {
+    public FeatureFrame(float[][] features) {
 	this.features = features;
     }
 
 
     /**
-     * Returns the feature data.
+     * Returns the feature frame data.
      *
-     * @return the feature data
+     * @return the feature frame data
      */
-    public Feature[] getData() {
+    public float[][] getData() {
 	return features;
     }
 }

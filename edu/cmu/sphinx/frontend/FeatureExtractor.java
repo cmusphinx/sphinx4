@@ -8,7 +8,6 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
@@ -17,21 +16,29 @@ import java.util.Vector;
 /**
  * Extracts Features from a block of Cepstrum. This FeatureExtractor
  * expects Cepstrum that are MelFrequency cepstral coefficients (MFCC).
- * This FeatureExtractor takes in a CepstrumFrame and outputs Features.
+ * This FeatureExtractor takes in a CepstrumFrame and outputs a 
+ * FeatureFrame. This is a 1-to-1 processor.
+ *
+ * <p>The Sphinx properties that affect this processor are: <pre>
+ * edu.cmu.sphinx.frontend.feature.length
+ * edu.cmu.sphinx.frontend.feature.windowSize
+ * </pre>
  */
 public class FeatureExtractor extends PullingProcessor {
 
     /**
-     * The name of the SphinxProperty for the length of a Feature.
+     * The name of the SphinxProperty for the length of a Feature,
+     * which is 39 by default.
      */
     public static final String PROP_FEATURE_LENGTH =
-	"edu.cmu.sphinx.frontend.featureLength";
+	"edu.cmu.sphinx.frontend.feature.length";
 
     /**
-     * The name of the SphinxProperty for the window of the FeatureExtractor.
+     * The name of the SphinxProperty for the window of the FeatureExtractor,
+     * which has a default value of 3.
      */
     public static final String PROP_FEATURE_WINDOW =
-	"edu.cmu.sphinx.frontend.featureWindow";
+	"edu.cmu.sphinx.frontend.feature.windowSize";
 
 
     private static final int LIVEBUFBLOCKSIZE = 256;
@@ -45,7 +52,7 @@ public class FeatureExtractor extends PullingProcessor {
     private int window;
     private int jp1, jp2, jp3, jf1, jf2, jf3;
     private InputQueue inputQueue;
-    private List outputQueue;
+    private Timer fcTimer;
 
 
     /**
@@ -94,8 +101,8 @@ public class FeatureExtractor extends PullingProcessor {
 	getSphinxProperties();
 	cepstraBuffer = new float[LIVEBUFBLOCKSIZE][];
         setTimer(Timer.getTimer("", "FeatureExtractor"));
+        fcTimer = Timer.getTimer("", "featComp");
         inputQueue = new InputQueue();
-        outputQueue = new Vector();
     }
 
 
@@ -113,79 +120,54 @@ public class FeatureExtractor extends PullingProcessor {
 
 
     /**
-     * Reads the next Data object, which is a Feature
+     * Reads the next Data object, which is a FeatureFrame
      * produced by this FeatureExtractor.
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
      */
     public Data read() throws IOException {
-        Feature feature = getFeature();
-        if (feature != null) {
-            return feature;
-        } else {
-
-            Data input = inputQueue.removeNext();
+        Data input = inputQueue.removeNext();
+        
+        if (input == null) {
             
-            if (input == null) {
-
-                return null;
-
-            } else {
-
-                boolean segmentStart = false;
-
-                if (input instanceof SegmentEndPointSignal) {
-                    // it must be a SegmentStartSignal
-                    segmentStart = true;
-                    input = inputQueue.removeNext();
-                }
-
-                Data nextFrame = inputQueue.peekNext();
-                
-                boolean segmentEnd =
-                    (nextFrame instanceof SegmentEndPointSignal);
-                
-                // absorb the SegmentEndSignal
-                if (segmentEnd) {
-                    inputQueue.removeNext();
-                }
-
-                process((CepstrumFrame) input, segmentStart, segmentEnd);
-                return getFeature();
+            return null;
+            
+        } else {
+            
+            boolean segmentStart = false;
+            
+            if (input instanceof SegmentEndPointSignal) {
+                // it must be a SegmentStartSignal
+                segmentStart = true;
+                input = inputQueue.removeNext();
             }
+            
+            Data nextFrame = inputQueue.peekNext();
+            
+            boolean segmentEnd =
+                (nextFrame instanceof SegmentEndPointSignal);
+            
+            // absorb the SegmentEndSignal
+            if (segmentEnd) {
+                inputQueue.removeNext();
+            }
+            
+            return process((CepstrumFrame) input, segmentStart, segmentEnd);
         }
     }	
 
 
-    /**
-     * Returns the next Feature in the outputQueue.
-     *
-     * @return the next Feature in the outputQueue
-     */
-    private Feature getFeature() {
-        synchronized (outputQueue) {
-            if (outputQueue.size() > 0) {
-                float[] featureData = (float[]) outputQueue.remove(0);
-                return (new Feature(featureData));
-            } else {
-                return null;
-            }
-        }
-    }
-
-
-    private Timer fcTimer = Timer.getTimer("", "featComp");
-
 
     /**
-     * Converts the given input CepstrumFrame into a Features. The
-     * Features are cached in the outputQueue.
+     * Converts the given input CepstrumFrame into a FeatureFrame.
      *
      * @param input a CepstrumFrame
+     *
+     * @return a FeatureFrame
      */
-    private void process(CepstrumFrame cepstrumFrame,
-                         boolean startSegment, boolean endSegment) {
+    private FeatureFrame process(CepstrumFrame cepstrumFrame,
+                                 boolean startSegment, boolean endSegment) {
 
         getTimer().start();
 
@@ -262,8 +244,6 @@ public class FeatureExtractor extends PullingProcessor {
             float[] feature = features[i];
 
             computeNextFeature(feature);
-
-            outputQueue.add(feature);
             
             if (getDump()) {
                 Util.dumpFloatArray(feature, "FEATURE");
@@ -273,6 +253,8 @@ public class FeatureExtractor extends PullingProcessor {
         fcTimer.stop();
 
         getTimer().stop();
+
+        return (new FeatureFrame(features));
     }
 
 

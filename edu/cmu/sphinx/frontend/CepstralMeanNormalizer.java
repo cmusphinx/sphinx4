@@ -15,31 +15,37 @@ import java.util.ListIterator;
 /**
  * Apply Cepstral Mean Normalization (CMN) to the set of input MFC frames,
  * that is, a CepstrumFrame. It subtracts the mean of the input from
- * each frame.
+ * each frame. The Sphinx properties that affect this processor are: <pre>
+ * edu.cmu.sphinx.frontend.cmn.initialCepstralMean
+ * edu.cmu.sphinx.frontend.cmn.windowSize
+ * edu.cmu.sphinx.frontend.cmn.shiftWindow </pre>
  */
 public class CepstralMeanNormalizer extends PullingProcessor {
 
 
     /**
-     * The name of the SphinxProperty for the initial cepstral mean.
+     * The name of the SphinxProperty for the initial cepstral mean,
+     * which has a default value of 12.0F.
      * This is a front-end dependent magic number.
      */
     public static final String PROP_INITIAL_MEAN =
-	"edu.cmu.sphinx.frontend.initialCepstralMean";
+	"edu.cmu.sphinx.frontend.cmn.initialCepstralMean";
 
     /**
-     * The name of the SphinxProperty for the CMN window.
+     * The name of the SphinxProperty for the CMN window size,
+     * which has a default value of 500.
      */
     public static final String PROP_CMN_WINDOW =
-	"edu.cmu.sphinx.frontend.cmnWindow";
+	"edu.cmu.sphinx.frontend.cmn.windowSize";
 
     /**
-     * The name of the SphinxProperty for the CMN shifting window.
+     * The name of the SphinxProperty for the CMN shifting window,
+     * which has a default value of 800.
      * The shifting window specifies how many frames after which
      * the window is shifted.
      */
     public static final String PROP_CMN_SHIFT_WINDOW =
-	"edu.cmu.sphinx.frontend.cmnShiftWindow";
+	"edu.cmu.sphinx.frontend.cmn.shiftWindow";
 
 
     private float initialMean;
@@ -47,7 +53,6 @@ public class CepstralMeanNormalizer extends PullingProcessor {
     private int numberFrame;
     private float[] currentMean;
     private float[] sum;
-    private float[] temp;
     private int cmnShiftWindow;
     private int cmnWindow;
 
@@ -72,7 +77,6 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	currentMean = new float[cepstrumLength];
 	currentMean[0] = initialMean;
 	sum = new float[cepstrumLength];
-        temp = new float[cepstrumLength];
     }
 
 
@@ -194,11 +198,9 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	// update the currentMean buffer with the sum buffer
 	float sf = (float) (1.0/numberFrame);
 
-        System.arraycopy(sum, 0, temp, 0, sum.length);
+        System.arraycopy(sum, 0, currentMean, 0, sum.length);
 
-        multiplyArray(temp, sf);
-
-        System.arraycopy(temp, 0, currentMean, 0, temp.length);
+        multiplyArray(currentMean, sf);
 
 	// decay the sum buffer exponentially
 	if (numberFrame >= cmnShiftWindow) {
