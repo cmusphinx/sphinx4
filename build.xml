@@ -190,7 +190,7 @@ jsapi.exe from the lib directory.
 		 overview="${src_dir}/overview.html"
 		 windowtitle="${javadoc_desc}"
                  doctitle="${javadoc_desc}"
-                 access="private">
+                 access="public">
             <link href="http://java.sun.com/products/java-media/speech/forDevelopers/jsapi-doc"
                   offline="true"
                   packagelistLoc="lib/jsapi" />
