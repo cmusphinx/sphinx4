@@ -77,7 +77,8 @@ public class CepstrumFileDumper {
 		("BatchFileAudioSource", context,
 		 (new FileInputStream(inputAudioFile)), inputAudioFile);
 
-	    frontend = new SimpleFrontEnd("frontend", context, audioSource);
+	    frontend = new SimpleFrontEnd();
+            frontend.initialize("frontend", context, audioSource);
 
 	    allFeatures = new LinkedList();
 	    getAllFeatures();

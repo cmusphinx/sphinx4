@@ -45,8 +45,8 @@ public class ParallelFrontEndTest {
             ProcessorTest fet = new ProcessorTest
                 (testName, propertiesFile, audioFile);
 
-            FrontEnd fe = new ParallelFrontEnd
-		("ParallelFrontEnd", testName, fet.getAudioSource());
+            FrontEnd fe = new ParallelFrontEnd();
+            fe.initialize("ParallelFrontEnd", testName, fet.getAudioSource());
            
 	    System.out.println(fe.toString());
 

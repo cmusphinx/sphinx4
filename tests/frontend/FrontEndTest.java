@@ -41,8 +41,8 @@ public class FrontEndTest {
             ProcessorTest fet = new ProcessorTest
                 (testName, propertiesFile, audioFile);
 
-            FrontEnd fe = new SimpleFrontEnd("FrontEnd", testName, 
-					     fet.getAudioSource());
+            FrontEnd fe = new SimpleFrontEnd();
+            fe.initialize("FrontEnd", testName, fet.getAudioSource());
             
             FeatureFrame featureFrame = null;
             do {
