@@ -226,6 +226,8 @@ public class SimpleTrainManager implements TrainManager {
 	TranscriptGraph transcriptGraph;
 	TrainerScore[] score;
 	TrainerScore[] nextScore;
+	float minimumImprovement;
+	int maxIteration;
 
 	if (learner == null) {
 	    loadModels(context);
@@ -234,33 +236,51 @@ public class SimpleTrainManager implements TrainManager {
         dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
                                           PROP_DUMP_MEMORY_INFO_DEFAULT);
         
+	minimumImprovement = props.getFloat(PROP_MINIMUM_IMPROVEMENT,
+					    PROP_MINIMUM_IMPROVEMENT_DEFAULT);
+	maxIteration = props.getInt(PROP_MAXIMUM_ITERATION,
+				    PROP_MAXIMUM_ITERATION_DEFAULT);
+
         dumpMemoryInfo("TrainManager start");
 
         assert models != null;
         models = getTrainerAcousticModels(context);
 	for (int m = 0; m < models.length; m++) {
+	    float logLikelihood;
+	    float lastLogLikelihood = Float.MAX_VALUE;
+	    float relativeImprovement = 100.0f;
 	    learner = new BaumWelchLearner(props);
 
-	    for (controlFile.startUtteranceIterator();
-		 controlFile.hasMoreUtterances(); ) {
-		Utterance utterance = controlFile.nextUtterance();
-		uttGraph = 
-		    new UtteranceHMMGraph(context, utterance, models[m]);
-		learner.setUtterance(utterance);
-		learner.setGraph(uttGraph);
-		nextScore = null;
-		while ((score = learner.getScore()) != null) {
-		    for (int i = 0; i < score.length; i++) {
-			if (i > 0) {
-			    models[m].accumulate(score[i], nextScore);
-			} else {
-			    models[m].accumulate(score[i]);
+	    for (int iteration = 0; 
+		 (iteration < maxIteration) && 
+		     (relativeImprovement > minimumImprovement);
+		 iteration++) {
+		for (controlFile.startUtteranceIterator();
+		     controlFile.hasMoreUtterances(); ) {
+		    Utterance utterance = controlFile.nextUtterance();
+		    uttGraph = 
+			new UtteranceHMMGraph(context, utterance, models[m]);
+		    learner.setUtterance(utterance);
+		    learner.setGraph(uttGraph);
+		    nextScore = null;
+		    while ((score = learner.getScore()) != null) {
+			for (int i = 0; i < score.length; i++) {
+			    if (i > 0) {
+				models[m].accumulate(score[i], nextScore);
+			    } else {
+				models[m].accumulate(score[i]);
+			    }
 			}
+			nextScore = score;
 		    }
-		    nextScore = score;
 		}
+		logLikelihood = models[m].normalize();
+		if (iteration > 0) {
+		    relativeImprovement = (logLikelihood - lastLogLikelihood) /
+			lastLogLikelihood * 100.0f;
+		}
+		lastLogLikelihood = logLikelihood;
 	    }
-	    models[m].normalize();
 	}
     }
 

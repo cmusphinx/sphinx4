@@ -57,7 +57,7 @@ public interface UtteranceGraph {
     /**
      * Gets the index of a particular node in the graph.
      *
-     * @param the node
+     * @param node the node
      *
      * @return the index
      */

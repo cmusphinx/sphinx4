@@ -29,6 +29,29 @@ public interface TrainManager{
 	"edu.cmu.sphinx.trainer.Trainer.";
 
     /**
+     * The minimum relative improvement of the log likelihood
+     * associated with the training data.
+     */
+    public final static String
+	PROP_MINIMUM_IMPROVEMENT = PROP_PREFIX + "minimumImprovement";
+
+    /**
+     * Default value for minimumImprovement.
+     */
+    public final static float PROP_MINIMUM_IMPROVEMENT_DEFAULT = 0.2f;
+
+    /**
+     * The maximum number of iterations.
+     */
+    public final static String PROP_MAXIMUM_ITERATION =
+	PROP_PREFIX + "maximumIteration";
+
+    /**
+     * The default value for maximumIteration.
+     */
+    public final static int PROP_MAXIMUM_ITERATION_DEFAULT = 15;
+
+    /**
      * Starts the TrainManager.
      */
     public void start();
