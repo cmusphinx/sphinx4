@@ -16,6 +16,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
 import edu.cmu.sphinx.frontend.DataProcessor;
@@ -112,7 +115,7 @@ public class BatchModeRecognizer implements Configurable {
     /**
      * The sphinx property that specifies the input source
      */
-    public final static String PROP_INPUT_SOURCE = "inputSource";
+    public final static String PROP_INPUT_DATA_PROCESSORS = "inputDataProcessors";
 
 
     // -------------------------------
@@ -120,7 +123,7 @@ public class BatchModeRecognizer implements Configurable {
     // --------------------------------
 
     private String name;
-    private DataProcessor dataSource;
+    private List inputDataProcessors;
     private int skip;
     private int whichBatch;
     private int totalBatches;
@@ -143,7 +146,8 @@ public class BatchModeRecognizer implements Configurable {
         registry.register(PROP_TOTAL_BATCHES, PropertyType.INT);
         registry.register(PROP_USE_POOLED_BATCH_MANAGER, PropertyType.BOOLEAN);
         registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
-        registry.register(PROP_INPUT_SOURCE, PropertyType.COMPONENT);
+        registry.register(PROP_INPUT_DATA_PROCESSORS, 
+                          PropertyType.COMPONENT_LIST);
     }
 
     /*
@@ -161,8 +165,8 @@ public class BatchModeRecognizer implements Configurable {
                 PROP_USE_POOLED_BATCH_MANAGER_DEFAULT);
         recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER,
                 Recognizer.class);
-        dataSource = (DataProcessor) ps.getComponent(PROP_INPUT_SOURCE,
-                DataProcessor.class);
+        inputDataProcessors = (List) ps.getComponentList
+            (PROP_INPUT_DATA_PROCESSORS, DataProcessor.class);
     }
 
     /*
@@ -209,11 +213,11 @@ public class BatchModeRecognizer implements Configurable {
                     + batchManager.getFilename());
         
             while ((batchItem = batchManager.getNextItem()) != null) {
-                InputStream is = setInputStream(batchItem.getFilename());
-                Result result = recognizer.recognize(batchItem.getTranscript());
+                setInputStream(batchItem.getFilename());
+                Result result = 
+                    recognizer.recognize(batchItem.getTranscript());
                 logger.info("File  : " + batchItem.getFilename());
                 logger.info("Result: " + result);
-                is.close();
                 count++;
             }
             batchManager.stop();
@@ -231,17 +235,20 @@ public class BatchModeRecognizer implements Configurable {
      * @return the InputStream representing the filename
      * @throws IOException if an error occurs
      */
-    private InputStream setInputStream(String filename) throws IOException {
-        InputStream is = new FileInputStream(filename);
-        if (dataSource instanceof StreamDataSource) {
-            ((StreamDataSource) dataSource).setInputStream(is, filename);
-        } else if (dataSource instanceof StreamCepstrumSource) {
-            boolean isBigEndian = Utilities
+    private void setInputStream(String filename) throws IOException {
+        for (Iterator i = inputDataProcessors.iterator(); i.hasNext(); ) {
+            DataProcessor dataSource = (DataProcessor) i.next();
+            InputStream is = new FileInputStream(filename);
+            if (dataSource instanceof StreamDataSource) {
+                ((StreamDataSource) dataSource).setInputStream(is, filename);
+            } else if (dataSource instanceof StreamCepstrumSource) {
+                boolean isBigEndian = Utilities
                     .isCepstraFileBigEndian(filename);
-            StreamCepstrumSource cepstrumSource = (StreamCepstrumSource) dataSource;
-            cepstrumSource.setInputStream(is, isBigEndian);
+                StreamCepstrumSource cepstrumSource =
+                    (StreamCepstrumSource) dataSource;
+                cepstrumSource.setInputStream(is, isBigEndian);
+            }
         }
-        return is;
     }
 
     /**

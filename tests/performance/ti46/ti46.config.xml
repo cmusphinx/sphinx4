@@ -28,7 +28,9 @@
     <component name="batch" 
 		type="edu.cmu.sphinx.tools.batch.BatchModeRecognizer">
         <property name="recognizer" value="isolatedDigitsRecognizer"/>
-        <property name="inputSource" value="streamDataSource"/>
+        <propertylist name="inputDataProcessors">
+	    <item>streamDataSource</item>
+	</propertylist>
     </component>
     
     <!-- ******************************************************** -->

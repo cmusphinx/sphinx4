@@ -10,6 +10,7 @@ NOTE:  Before running the tests, you must have already built
 
 Run ant with -Dskip=5 to do the standard 'quick' version of a test.
 Run ant with -Dlogger_props=tidigits.props to turn on the logging.
+Run ant with -Dbatch=test.batch to test the batch file test.batch.
 </description>
 
     <!-- ********************************************************** -->
@@ -33,7 +34,7 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
     <property name="jit"                value="server"/>
 
     <property name="batch_main"               
-	      value="edu.cmu.sphinx.research.parallel.ParallelRecognizer"/>
+	      value="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"/>
     <property name="config" value="parallel.config.xml"/>
     <property name="batch" value="batchfiles/aurora.testa.N1_SNR10.batch"/>
 
@@ -52,7 +53,7 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-${jit}"/>
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/>
-	    <sysproperty key="parallel[skip]" value="${skip}"/>
+	    <sysproperty key="batch[skip]" value="${skip}"/>
             <arg value="${config}"/> 
             <arg value="${batch}"/> 
         </java>
@@ -67,7 +68,7 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
     <target name="mfc"
 	    description="AURORA 2 tests using MFC.">
         <java classpath="${classes_dir}"
-	      classname="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"
+	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
             <jvmarg value="-${jit}"/>   

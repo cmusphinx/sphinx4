@@ -27,10 +27,10 @@
     <!-- batch tool configuration                                 -->
     <!-- ******************************************************** -->   
     
-    <component name="parallel" 
-               type="edu.cmu.sphinx.research.parallel.ParallelRecognizer">
+    <component name="batch"
+               type="edu.cmu.sphinx.tools.batch.BatchModeRecognizer">
         <property name="recognizer" value="parallelRecognizer"/>
-        <propertylist name="dataSources">
+        <propertylist name="inputDataProcessors">
 	    <item>mfcStreamDataSource</item>
 	    <item>plpStreamDataSource</item>
 	</propertylist>
