@@ -219,8 +219,8 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	boolean more = scoreTokens(); // score emitting tokens
         if (more) {
 	    pruneBranches(); 		// eliminate poor branches
-            growBranches(); 	        // extend remaining branches
 	    currentFrameNumber++;
+            growBranches(); 	        // extend remaining branches
 	}
         return !more;
     }

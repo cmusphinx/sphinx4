@@ -292,7 +292,7 @@ public class Token implements Scoreable {
         }
         this.logTotalScore += logScore;
         this.logAcousticScore = logScore;
-        // this.feature = feature;
+        this.feature = feature;
     }
 
     /**
