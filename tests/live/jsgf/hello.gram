@@ -1,14 +1,14 @@
 #JSGF V1.0;
 /**
- * JSGF Grammar for CardMatch example
+ * Simple JSGF Grammar
  */
 
 grammar jsgf.hello;
 
+public <main> = (hello | goodnight) [to the] <someone>;
 
-public <main> = <simple> | <other>;
-public <simple> = hello world ;
-public <other> = hello <someone> ;
-
-<someone> = (universe | planet | sun | moon | stars | solar system);
-
+<someone> = room | moon | cow jumping over the moon | light 
+          | red balloon | bears | chairs | kittens | mittens 
+          | clocks | socks | little house | mouse | comb 
+          | brush | nobody | mush | old lady whispering hush 
+          | stars | air | noises everywhere | world;
