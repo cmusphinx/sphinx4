@@ -44,8 +44,22 @@
     <!-- * refid.                                                 * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
+
+
+    <!-- TODO - we are excluding a number of packages temporarily
+      from the build. This is a step along the road to refactoring
+      the system. The excluded packages have not yet been refactored
+      -->
+
+
     <patternset id="all" 
-                includes="edu/**,com/**"/>
+                includes="edu/**,com/**"
+                excludes="edu/cmu/sphinx/research/**,
+                edu/cmu/sphinx/trainer/**,
+                edu/cmu/sphinx/tools/audio/**,
+                edu/cmu/sphinx/tools/feature/**,
+                edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**"
+                />
 
     <patternset id="edu" 
                 includes="edu/**"
