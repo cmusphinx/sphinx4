@@ -396,7 +396,7 @@ function getRejectionAccuracyStatus(testName) {
     }
     updateData(testName, count);
 
-    return ( data[F_CORRECT_OOG] + data[F_CORRECT_IG] ) / data[F_SENTENCES];
+    return ( data[F_CORRECT_OOG] + data[F_CORRECT_IG] ) * 100 / data[F_SENTENCES] ;
 }
 
 ####
