@@ -59,10 +59,8 @@ END {
 
 
 function dumpProps() {
-    print "             <sysproperty key=\"java.util.logging.config.file\"";
-    print "                          value=\"${logger_props}\"/>";
-    print "             <sysproperty key=\"edu.cmu.sphinx.decoder.BatchDecoder.skip\""; ;
-    print "                          value=\"${skip}\"/> ";
+    sysprops["java.util.logging.config.file"] = "${logger_props}";
+    sysprops["edu.cmu.sphinx.decoder.BatchDecoder.skip"] = "${skip}";
     for (i in sysprops) {
         print "             <sysproperty key=\"" i "\"";
         print "                          value=\"" sysprops[i] "\"/>";
