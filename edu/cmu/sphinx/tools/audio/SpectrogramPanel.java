@@ -12,6 +12,7 @@
 
 package edu.cmu.sphinx.tools.audio;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -159,7 +160,8 @@ public class SpectrogramPanel extends JPanel {
                     spectrogram.setRGB(i, maxYIndex - j, pixel);
                 }
             }
-            repaint(new Rectangle(width, height));
+	    Dimension sz = getSize();
+	    repaint(0, 0, 0, sz.width - 1, sz.height - 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -185,7 +187,16 @@ public class SpectrogramPanel extends JPanel {
      * @param g The <code>Graphics</code> to draw on.
      */
     public void paint(Graphics g) {
-        if(spectrogram != null) {
+	/**
+	 * Fill in the whole image with white.
+	 */
+	Dimension sz = getSize();
+
+	g.setColor(Color.WHITE);
+	g.fillRect(0, 0, sz.width - 1, sz.height - 1);
+        
+	if(spectrogram != null) {
+
             g.drawImage(spectrogram, 0, 0, (ImageObserver) null);
         }
     }
