@@ -133,69 +133,143 @@ class HMMPoolManager {
      * @param score the TrainerScore
      */
     protected void accumulate(TrainerScore score) {
-	int senoneID = score.getSenoneID();
+	accumulate(score, null);
+    }
+
+    /**
+     * Accumulate the TrainerScore into the buffers.
+     *
+     * @param score the TrainerScore
+     * @param nextScore the TrainerScore for the next time frame
+     */
+    protected void accumulate(TrainerScore score, TrainerScore[] nextScore) {
+	int senoneID;
+	HMMState state = score.getState();
+	if (state == null) {
+	    senoneID = score.getSenoneID();
+	} else {
+	    senoneID = senonePool.indexOf(state.getSenone());
+	}
 	Feature feature = score.getFeature();
 	float prob = score.getScore();
-	accumulateMean(senoneID, feature, prob);
-	accumulateVariance(senoneID, feature, prob);
-	accumulateMixture(senoneID, prob);
-	accumulateTransition(senoneID, prob);
+	accumulateMean(senoneID, score);
+	accumulateVariance(senoneID, score);
+	accumulateMixture(senoneID, score);
+	accumulateTransition(senoneID, score, nextScore);
     }
 
     /**
      * Accumulate the means.
      */
-    private void accumulateMean(int senone, Feature feature, float logProb) {
+    private void accumulateMean(int senone, TrainerScore score) {
 	if (senone == TrainerAcousticModel.ALL_MODELS) {
-	    for (int i = 0; i < meansBufferPool.size(); i++) {
-		accumulateMean(i, feature, logProb);
+	    for (int i = 0; i < senonePool.size(); i++) {
+		accumulateMean(i, score);
 	    }
 	} else {
-	    // TODO: case where we have > 1 gaussians: senone isn't
-	    // enough, we need to add info to the TrainerScore
-	    Buffer buffer = (Buffer) meansBufferPool.get(senone);
-	    float[] data = feature.getFeatureData();
-	    float prob = (float) logMath.logToLinear(logProb);
-	    buffer.accumulate(data, prob);
+	    GaussianMixture gaussian = 
+		(GaussianMixture) senonePool.get(senone);
+	    MixtureComponent[] mix = gaussian.getMixtureComponents();
+	    for (int i = 0; i < mix.length; i++) {
+		float[] mean = mix[i].getMean();
+		int indexMean = meansPool.indexOf(mean);
+		Buffer buffer = (Buffer) meansBufferPool.get(indexMean);
+		float[] feature = score.getFeature().getFeatureData();
+		float[] data = new float[feature.length];
+		float prob = score.getComponentGamma()[i];
+		prob = (float) logMath.logToLinear(prob);
+		for (int j = 0; j < data.length; j++) {
+		    data[j] = feature[j] * prob;
+		}
+		buffer.accumulate(data, prob);
+	    }
 	}
     }
 
     /**
      * Accumulate the variance.
      */
-    private void accumulateVariance(int senone, Feature feature, 
-				    float logProb) {
+    private void accumulateVariance(int senone, TrainerScore score) {
 	if (senone == TrainerAcousticModel.ALL_MODELS) {
-	    for (int i = 0; i < varianceBufferPool.size(); i++) {
-		accumulateVariance(i, feature, logProb);
+	    for (int i = 0; i < senonePool.size(); i++) {
+		accumulateVariance(i, score);
 	    }
 	} else {
-	    // TODO: case where we have > 1 gaussians: senone isn't
-	    // enough, we need to add info to the TrainerScore
-	    Buffer buffer = (Buffer) varianceBufferPool.get(senone);
-	    float prob = (float) logMath.logToLinear(logProb);
-	    float[] data = feature.getFeatureData();
-	    float[] dataSquared = new float[data.length];
-	    for (int i = 0; i < data.length; i++) {
-		dataSquared[i] = data[i] * data[i];
+	    GaussianMixture gaussian = 
+		(GaussianMixture) senonePool.get(senone);
+	    MixtureComponent[] mix = gaussian.getMixtureComponents();
+	    for (int i = 0; i < mix.length; i++) {
+		float[] mean = mix[i].getMean();
+		float[] variance = mix[i].getVariance();
+		int indexVariance = variancePool.indexOf(variance);
+		Buffer buffer = 
+		    (Buffer) varianceBufferPool.get(indexVariance);
+		float[] feature = score.getFeature().getFeatureData();
+		float[] data = new float[feature.length];
+		float prob = score.getComponentGamma()[i];
+		prob = (float) logMath.logToLinear(prob);
+		for (int j = 0; j < data.length; j++) {
+		    data[j] = (feature[j] - mean[j]);
+		    data[j] *= data[j] * prob;
+		}
+		buffer.accumulate(data, prob);
 	    }
-	    buffer.accumulate(dataSquared, prob);
 	}
     }
+
 
     /**
      * Accumulate the mixture weights.
      */
-    private void accumulateMixture(int senone, float prob) {
+    private void accumulateMixture(int senone, TrainerScore score) {
+	// The index into the senone pool and the mixture weight pool
+	// is the same
 	if (senone == TrainerAcousticModel.ALL_MODELS) {
-	    for (int i = 0; i < mixtureWeightsBufferPool.size(); i++) {
-		accumulateMixture(i, prob);
+	    for (int i = 0; i < senonePool.size(); i++) {
+		accumulateMixture(i, score);
 	    }
 	} else {
 	    Buffer buffer = (Buffer) mixtureWeightsBufferPool.get(senone);
 	    float[] mixw = (float [])mixtureWeightsPool.get(senone);
 	    for (int i = 0; i < mixw.length; i++) {
+		float prob = score.getComponentGamma()[i];
 		buffer.logAccumulate(prob, i, logMath);
+	    }
+	}
+    }
+
+    /**
+     * Accumulate transitions from a given state.
+     *
+     * @param indexState the state index
+     * @param score the score information
+     */
+    private void accumulateStateTransition(int indexState, TrainerScore score, 
+					   TrainerScore[] nextScore) {
+	HMMState state = score.getState();
+	HMM hmm = state.getHMM();
+	float[][] matrix = hmm.getTransitionMatrix();
+	int indexMatrix = matrixPool.indexOf(matrix);
+	Buffer[] bufferArray = 
+	    (Buffer []) matrixBufferPool.get(indexMatrix);
+	for (int i = 0; i < nextScore.length; i++) {
+	    HMMState nextState = nextScore[i].getState();
+	    int indexNextState = nextState.getState();
+	    HMM nextHmm = nextState.getHMM();
+	    if (hmm != nextHmm) {
+		continue;
+	    }
+	    if (matrix[indexState][indexNextState] != 
+		logMath.getLogZero()) {
+		float alpha = score.getAlpha();
+		float beta = nextScore[i].getBeta();
+		float transitionProb = 
+		    hmm.getTransitionProbability(indexState, 
+						 indexNextState);
+		float outputProb = nextScore[i].getScore();
+		float prob = alpha + beta + transitionProb + outputProb;
+		bufferArray[indexState].
+		    logAccumulate(prob, indexNextState, logMath);
 	    }
 	}
     }
@@ -203,21 +277,17 @@ class HMMPoolManager {
     /**
      * Accumulate the transition probabilities.
      */
-    private void accumulateTransition(int senone, float prob) {
-	if (senone == TrainerAcousticModel.ALL_MODELS) {
-	    for (int i = 0; i < matrixBufferPool.size(); i++) {
-		accumulateTransition(i, prob);
+    private void accumulateTransition(int indexHmm, TrainerScore score,
+				      TrainerScore[] nextScore) {
+	if (indexHmm == TrainerAcousticModel.ALL_MODELS) {
+	    // Need to review this call, so that this can be used for
+	    // initialization.
+	    for (int i = 0; i < senonePool.size(); i++) {
+		accumulateStateTransition(i, score, nextScore);
 	    }
 	} else {
-	    Buffer[] bufferArray = (Buffer []) matrixBufferPool.get(senone);
-	    float[][] matrix = (float [][])matrixPool.get(senone);
-	    for (int i = 0; i < bufferArray.length; i++) {
-		for (int j = 0; j < bufferArray.length; j++) {
-		    if (matrix[i][j] != logMath.getLogZero()) {
-			bufferArray[i].logAccumulate(prob, j, logMath);
-		    }
-		}
-	    }
+	    HMMState state = score.getState();
+	    accumulateStateTransition(state.getState(), score, nextScore);
 	}
     }
 

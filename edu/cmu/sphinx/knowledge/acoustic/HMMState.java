@@ -92,6 +92,17 @@ public class HMMState implements Serializable {
 
 
     /**
+     * Gets the senone for this HMM state
+     *
+     * @return the senone for this state.
+     */
+    public Senone getSenone() {
+	SenoneSequence ss = hmm.getSenoneSequence();
+	return ss.getSenones()[state];
+    }
+
+
+    /**
      * Determines if two HMMStates are equal
      *
      * @param other the state to compare this one to

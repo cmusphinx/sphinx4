@@ -269,6 +269,17 @@ public class TrainerAcousticModel extends AcousticModel {
      * Accumulate the current TrainerScore into the buffers.
      *
      * @param trainerScore the TrainerScore
+     * @param nextTrainerScore the TrainerScore in the next frame
+     */
+    public void accumulate(TrainerScore trainerScore, 
+			   TrainerScore[] nextTrainerScore) {
+	hmmPoolManager.accumulate(trainerScore, nextTrainerScore);
+    }
+
+    /**
+     * Accumulate the current TrainerScore into the buffers.
+     *
+     * @param trainerScore the TrainerScore
      */
     public void accumulate(TrainerScore trainerScore) {
 	hmmPoolManager.accumulate(trainerScore);

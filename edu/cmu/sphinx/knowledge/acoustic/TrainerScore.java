@@ -29,6 +29,7 @@ public class TrainerScore {
     private float logGamma;
     private float[] logComponentGamma;
     private float[] logComponentProb;
+    static private float logLikelihood;
 
     /**
      * Creates a new buffer
@@ -176,6 +177,15 @@ public class TrainerScore {
     }
 
     /**
+     * Retrieves the utterance's log likelihood
+     *
+     * @return the log likelihood
+     */
+    static public float getLogLikelihood() {
+	return logLikelihood;
+    }
+
+    /**
      * Retrieves the a posteriori probability.
      *
      * @return the a posteriori log probability
@@ -191,6 +201,15 @@ public class TrainerScore {
      */
     public float[] getComponentGamma() {
 	return logComponentGamma;
+    }
+
+    /**
+     * Sets the overall likelihood.
+     *
+     * @param likelihood the log likelihood of the whole utterance
+     */
+    static public void setLogLikelihood(float likelihood) {
+	logLikelihood = likelihood;
     }
 
     /**
