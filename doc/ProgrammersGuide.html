@@ -37,14 +37,14 @@ WARRANTIES.
 
   <p>
   This tutorial shows you how to write Sphinx-4 applications.
-  We will use the Hello Digits
+  We will use the HelloDigits
   demo as an example to show how a simple application can be written.
   We will then proceed to a more complex example. Consequently,
-  this tutorial into the following parts:
+  this tutorial is divided into the following parts:
   </p>
 
   <ol>
-  <li><a href="#hellodigits">Simple Example - Hello Digits</a>
+  <li><a href="#hellodigits">Simple Example - HelloDigits</a>
      <ul>
      <li><a href="#helloCodeWalk">Code Walk - HelloDigits.java</a></li>
      <li><a href="#helloConfigWalk">Configuration File Walk - hellodigits.config.xml</a>
@@ -52,29 +52,31 @@ WARRANTIES.
          <li><a href="#recognizer">Recognizer</a></li>
 	 <li><a href="#decoder">Decoder</a></li>
 	 <li><a href="#linguist">Linguist</a></li>
+	 <li><a href="#acoustic">Acoustic Model</a></li>
 	 <li><a href="#frontend">Front End</a></li>
 	 <li><a href="#instrumentation">Instrumentation</a></li>
        </ul>
      </li>
-     <li><a href="#buildFileWalk">Build File Walk - build.xml</a></li>
      </ul>
   </li>
   <br>
-  <li><a href="#helloNGram">More Complex Example - Hello NGram</a>
-      <ul>
-          <li><a href="#ngramCodeWalk">Code Walk - HelloNGram.java</a></li>
-      </ul>
+  <li><a href="#hellongram">More Complex Example - Hello NGram</a>
+     <ul>
+     <li><a href="#ngramCodeWalk">Code Walk - HelloNGram.java</a></li>
+     <li><a href="#ngramFile">N-Gram Language Model</a></li>
+     <li><a href="#ngramConfigWalk">Configuration File Walk - hellongram.config.xml</a></li>
+     </ul>
   </li>
   </ol>
 
   <hr>  
 
-  <h2><a name="hellodigits">1. Simple Example - Hello Digits</a></h2>
+  <h2><a name="hellodigits">1. Simple Example - HelloDigits</a></h2>
 
   <p>
-  We will look at a very simple speech application written using
-  Sphinx-4, our Hello Digits demo. This application recognizes connected
-  digits. As you will see, the code is very simple. The tricky part is
+  We will look at a very simple Sphinx-4 speech application,
+  the HelloDigits demo. This application recognizes connected
+  digits. As you will see, the code is very simple. The harder part is
   understanding the configuration, but we will guide you through every step
   of it. Lets look at the code first.
   </p>
@@ -82,13 +84,13 @@ WARRANTIES.
   <h3><a name="helloCodeWalk">Code Walk - HelloDigits.java</a></h3>
 
   <p>
-  All the source code of the Hello Digits demo is in one short file
+  All the source code of the HelloDigits demo is in one short file
   <code>sphinx4/demo/sphinx/hellodigits/HelloDigits.java</code>:
   </p>
 
   <pre>
 /*
- * Copyright 1999-2004 Carnegie Mellon University.
+ * Copyright 2004 Carnegie Mellon University.
  * Portions Copyright 2004 Sun Microsystems, Inc.
  * Portions Copyright 2004 Mitsubishi Electric Research Laboratories.
  * All Rights Reserved.  Use is subject to license terms.
@@ -210,30 +212,24 @@ public class HelloDigits {
   file internally. Since the configuration file specifies the components 
   <code>"recognizer"</code> and <code>"microphone"</code> (we will look
   at the configuration file next),
-  we perform a <a href="../javadoc/edu/cmu/sphinx/util/props/ConfigurationManager.html#lookup(java.lang.String)"><code>lookup()</code></a> of these components
+  we perform a <a href="../javadoc/edu/cmu/sphinx/util/props/ConfigurationManager.html#lookup(java.lang.String)"><code>lookup()</code></a>
   in the ConfigurationManager to obtain these components. The <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html#allocate()"><code>allocate()</code></a> method of the Recognizer is then called to allocate the resources
   need for the recognizer. The Microphone class is used for capturing live
-  audio from the system audio device.
-  </p>
-
-  <p>
-  We then create a thread that listens to the ENTER key (ASCII value 10).
-  Whenever the ENTER key is pressed, the method 
-  <code>microphone.stopRecording()</code> will be called.
+  audio from the system audio device. Both the Recognizer and the Microphone
+  is configured as specified in the configuration file.
   </p>
   
   <p>
   Once all the necessary components are created, we can start running the demo.
-  The program enters a loop that repeats the following.
   The program first turns on the Microphone 
   (<a href="../javadoc/edu/cmu/sphinx/frontend/util/Microphone.html#startRecording()"><code>microphone.startRecording()</code></a>).
-  After the microphone is turned on successfully, tries to recognize what 
-  the user is saying, using the
+  After the microphone is turned on successfully,
+  the program enters a loop that repeats the following. It tries to recognize 
+  what the user is saying, using the
   <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html#recognize()"><code>Recognizer.recognize()</code></a> method. Recognition stops when
-  the user hits the ENTER key, at which point the microphone is turned off,
-  and recognition stops when there is no more data left.
-  Once an utterance is recognized, the recognized text,
-  which is returned by the method
+  the user stops speaking, which is detected by the endpointer built into
+  the front end by configuration. Once an utterance is recognized, 
+  the recognized text, which is returned by the method
   <a href="../javadoc/edu/cmu/sphinx/result/Result.html#getBestResultNoFiller()"><code>Result.getBestResultNoFiller()</code></a>, is printed out. 
   If the Recognizer recognized nothing (i.e., <code>result</code> is
   null), then it will print out a message saying that. Finally, if the
@@ -262,13 +258,20 @@ public class HelloDigits {
   now explain in depth.
   </p>
 
-  <h3><a name="helloConfigWalk">Configuration File Walk - hellodigits.config.xml</a></h3>
+<h3><a name="helloConfigWalk">Configuration File Walk - hellodigits.config.xml</a></h3>
 
-  In this section, we will explain the various Sphinx-4 components that
-  are used for the Hello Digits demo, as specified in the configuration file.
-  We will look at each section of the config file in depth. If you want
-  to learn about the format of these configuration files, please refer
-  to the document <a href="../javadoc/edu/cmu/sphinx/util/props/doc-files/ConfigurationManagement.html">Sphinx-4 Configuration Management</a>.
+<p>
+In this section, we will explain the various Sphinx-4 components that
+are used for the HelloDigits demo, as specified in the configuration file.
+We will look at each section of the config file in depth. If you want
+to learn about the format of these configuration files, please refer
+to the document <a href="../javadoc/edu/cmu/sphinx/util/props/doc-files/ConfigurationManagement.html">Sphinx-4 Configuration Management</a>.
+</p>
+
+<p>
+The lines below define the frequently tuned properties. They are located at the
+top of the configuration file so that they can be edited quickly.
+</p>
 
 <pre>
     &lt;!-- ******************************************************** --&gt;
@@ -287,10 +290,16 @@ public class HelloDigits {
     &lt;property name="showCreations" value="false"/&gt;
 </pre>
 
-The above lines defines frequently tuned properties. They are located at the
-top of the configuration file so that they can be edited quickly.
-
 <h4><a name="recognizer">Recognizer</a></h4>
+
+<p>
+The lines below define the recognizer component that performs speech
+recognition. It defines the name and class of the recognizer, Recognizer.
+This is the class that any application should interact with.
+If you look at the <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html">javadoc of the Recognizer class</a>, you will see that it has two
+properties, 'decoder' and 'monitors'. This configuration file is where
+the value of these properties are defined.
+</p>
 
 <pre>
     &lt;!-- ******************************************************** --&gt;
@@ -307,17 +316,14 @@ top of the configuration file so that they can be edited quickly.
     &lt;/component&gt;
 </pre>
 
-The above lines define the recognizer component that performs speech
-recognition. It defines the name and class of the recognizer. 
-This is the class that any application should interact with.
-If you look at the <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html">javadoc of the Recognizer class</a>, you will see that it has two
-properties, 'decoder' and 'monitors'. This configuration file is where
-the value of these properties are defined.
+<p>
+We will explain the monitors later. For now, lets look at the decoder.
+</p>
 
 <h4><a name="decoder">Decoder</a></h4>
 
 The 'decoder' property of the recognizer is set to the component 
-called 'decoder':
+called 'decoder', which is defined as:
 
 <pre>
     &lt;component name="decoder" type="edu.cmu.sphinx.decoder.Decoder"&gt;
@@ -325,9 +331,9 @@ called 'decoder':
     &lt;/component&gt;
 </pre>
 
-The decoder component is defined to be of class
+The decoder component is of class
 <code><a href="../javadoc/edu/cmu/sphinx/decoder/Decoder.html">edu.cmu.sphinx.decoder.Decoder</a></code>. Its property 'searchManager'
-is set to the component 'searchManager':
+is set to the component 'searchManager', defined as:
 
 <pre>
     &lt;component name="searchManager" 
@@ -349,7 +355,7 @@ The logMath property is the
 log math that is used for calculation of scores during the search process.
 It is defined as having the log base of 1.0001. Note that typically the
 same log base should be used throughout all components, and therefore
-there should only be one logMath definition:
+there should only be one logMath definition in a configuration file:
 
 <pre>
     &lt;component name="logMath" type="edu.cmu.sphinx.util.LogMath"&gt;
@@ -410,7 +416,7 @@ the component 'activeList', which is defined as follows:
 It is of class <code><a href="../javadoc/edu/cmu/sphinx/decoder/search/PartitionActiveListFactory.html">edu.cmu.sphinx.decoder.search.PartitionActiveListFactory</a></code>. 
 It uses a partitioning algorithm to select the top N highest scoring
 tokens when performing absolute beam pruning. The 'logMath' property
-specifies the log math used for score calculation, which is the same
+specifies the logMath used for score calculation, which is the same
 LogMath used in the searchManager. The property 'absoluteBeamWidth'
 is set to the value given at the very top of the configuration file using
 <code>${absoluteBeamWidth}</code>. The same is for 'relativeBeamWidth'.
@@ -423,10 +429,6 @@ graph using the guidance from the grammar, and knowledge from the dictionary,
 acoustic model, and language model.
 
 <pre>
-    &lt;!-- ******************************************************** --&gt;
-    &lt;!-- The linguist  configuration                              --&gt;
-    &lt;!-- ******************************************************** --&gt;
-    
     &lt;component name="flatLinguist" 
                 type="edu.cmu.sphinx.linguist.flat.FlatLinguist"&gt;
         &lt;property name="logMath" value="logMath"/&gt;
@@ -438,18 +440,19 @@ acoustic model, and language model.
     &lt;/component&gt;
 </pre>
 
-It uses the log math that we've seen already. The grammar used is the
+It also uses the logMath that we've seen already. The grammar used is the
 component called 'jsgfGrammar', which is a BNF-style grammar:
 
 <pre>
     &lt;component name="jsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar"&gt;
-        &lt;property name="grammarLocation" value="/demo/sphinx/hellodigits"/&gt;
+        &lt;property name="grammarLocation" value="resource:/demo.sphinx.helloworld.HelloWorld!/demo/sphinx/hellodigits/"/&gt;
         &lt;property name="dictionary" value="dictionary"/&gt;
         &lt;property name="grammarName" value="digits"/&gt;
 	&lt;property name="logMath" value="logMath"/&gt;
     &lt;/component&gt;
 </pre>
 
+<p>
 JSGF grammars are defined in <a href="http://java.sun.com/products/java-media/speech/">JSAPI</a>. The class that translates JSGF into a form that 
 Sphinx-4 understands is <code>
 <a href="../javadoc/edu/cmu/sphinx/jsapi/JSGFGrammar.html">edu.cmu.sphinx.jsapi.JSGFGrammar</a></code>.
@@ -458,34 +461,50 @@ If it is a URL, it specifies the URL of the directory where JSGF grammar files
 are to be found. Otherwise, it is interpreted as resource locator. 
 In our example, the HelloDigits demo is being deployed as a JAR file.
 The 'grammarLocation' property is therefore used to specify 
-the location of the resource "digits.gram" within the JAR file. Note that 
-it is not necessary to name the JAR file within which to search. The system 
-searches all the relevant JAR files. The 'grammarName' property 
-specifies the grammar to use when creating the search graph. 'logMath' is the 
-same log math as the other components. The 'dictionary' is the component
-that maps words to their phonemes. It is almost always the dictionary of the
+the location of the resource 
+<a href="../demo/sphinx/hellodigits/digits.gram">digits.gram</a>
+within the JAR file. Note that it is not necessary to the JAR file 
+within which to search. The system searches the JAR file in which the class 
+<code>demo.sphinx.helloworld.HelloWorld</code> resides. 
+The 'grammarName' property specifies the grammar to use when creating 
+the search graph. 'logMath' is the same log math as the other components. 
+The 'dictionary' is the component that maps words to their phonemes. 
+It is almost always the dictionary of the
 acoustic model, which lists all the words that were used to trained 
 the acoustic model:
+</p>
 
 <pre>
     &lt;component name="dictionary" 
         type="edu.cmu.sphinx.linguist.dictionary.FastDictionary"&gt;
-        &lt;property name="location" 
-                value="file:./../../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/&gt;
-        &lt;property name="dictionaryPath" value= "dict/cmudict.0.6d"/&gt;
-        &lt;property name="fillerPath" value="dict/fillerdict"/&gt;
+        &lt;property name="dictionaryPath" value="resource:/edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/dictionary"/&gt;
+        &lt;property name="fillerPath" value="resource:/edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/fillerdict"/&gt;
         &lt;property name="addSilEndingPronunciation" value="false"/&gt;
         &lt;property name="wordReplacement" value="&lt;sil&gt;"/&gt;
         &lt;property name="allowMissingWords" value="true"/&gt;
     &lt;/component&gt;
 </pre>
 
-As you can see, it is using the dictionary inside the Wall Street journal
-acoustic model. The main dictionary for words is
-<code>dict/cmudict.0.6d</code>, and the dictionary for filler words
-like "BREATH" and "LIP_SMACK" is <code>dict/fillerdict</code>. 
+<p>
+The locations of these dictionary files are specified using the Sphinx-4
+resource mechanism. In short, this mechanism locates the JAR file in which
+a class resides, and looks into that JAR file for the desired resource.
+The syntax is:
+<pre>
+resource:/{name of class to locate the JAR file}!{location in the JAR file of the desired resource}
+</pre>
+Take the 'dictionaryPath' property, for example. The "name of class to locate
+the JAR file" is "<code>edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz</code>", while the "location in the JAR file of the desired resource" is "<code>/edu/cmu/sphinx/model/acoustic/dictionary</code>".
+The dictionary for filler words like "BREATH" and "LIP_SMACK" is the file 
+<code>fillerdict</code>. 
+</p>
+
+<p>
 For details about the other properties, please refer to the
 <a href="../javadoc/edu/cmu/sphinx/linguist/dictionary/FastDictionary.html">javadoc for FastDictionary</a>.
+</p>
+
+<h4><a name="acoustic">Acoustic Model</a></h4>
 
 <p>
 The next important property of the flatLinguist is the acoustic model,
@@ -493,33 +512,36 @@ which is defined as:
 </p>
 
 <pre>
-    &lt;component name="wsj" 
-      type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel"&gt;
+    &lt;component name="tidigits" 
+      type="edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz"&gt;
         &lt;property name="loader" value="sphinx3Loader"/&gt;
     &lt;/component&gt;
-    
-    &lt;component name="sphinx3Loader" 
-           type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader"&gt;
-        &lt;property name="logMath" value="logMath"/&gt;
-        &lt;property name="isBinary" value="true"/&gt;
-        &lt;property name="location" 
-                value="file:./../../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/&gt;
-        &lt;property name="definition_file" 
-                value="etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef"/&gt;
-        &lt;property name="data_location" 
-                value="cd_continuous_8gau"/&gt;
-        &lt;property name="properties_file" value="am.props"/&gt;
+
+    &lt;component name="sphinx3Loader"
+               type="edu.cmu.sphinx.model.acoustic.TIDIGITSLoader"&gt;
+        &gt;property name="logMath" value="logMath"/&gt;
     &lt;/component&gt;
 </pre>
 
-The component 'wsj', the Wall Street Journal (WSJ) acoustic model is defined
-above. The WSJ models, which contains about 129000 words, are usually 
-suitable for general purpose speech recognition. It is a tied-state acoustic
-model, and because the models are arranged in Sphinx-3 format, it is loaded
-by the <code><a href="../javadoc/edu/cmu/sphinx/linguist/acoustic/tiedstate/Sphinx3Loader.html">Sphinx3Loader</a></code>. The loader uses the same logMath as
-all other components. The format of the model is binary, and the
-URL location of the model is specified. For details about the other
-properties, please refer to the <a href="../javadoc/edu/cmu/sphinx/linguist/acoustic/tiedstate/Sphinx3Loader.html">javadoc for Sphinx3Loader</a>.
+<p>
+'tidigits' stands for the TIDIGITS acoustic models. In Sphinx-4,
+different acoustic models are represented by classes that implement the
+<a href="../javadoc/edu/cmu/sphinx/linguist/acoustic/AcousticModel.html">
+AcousticModel</a> interface. The implementation class, together with the
+actual model data files, are packaged in a JAR file, which is included
+in the classpath of the Sphinx-4 application. This JAR file for the TIDIGITS
+models is called <code>TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code>,
+and is in the <code>sphinx4/lib</code> directory. Inside this JAR file
+is a class called <code>edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz</code>, which implements the AcousticModel interface.
+This class will automatically load up all the actual model data files when
+it is loaded. The loader of this AcousticModel is called 
+<code>TIDIGITSLoader</code>, and it also is inside the JAR file. 
+As a programmer, all you need to do is to specify the class of the 
+AcousticModel, and the loader of the AcousticModel, as shown above 
+(note that if you are using the TIDIGITS model in other applications, 
+these lines should be the same, except that you might have called your 
+'logMath' component something else).
+</p>
 
 The next properties of the flatLinguist are the 'wordInsertionProbability'
 and 'languageWeight'. These properties are usually for fine tuning the
@@ -691,73 +713,432 @@ accuracy, speed and memory usage of Sphinx-4.
     &lt;/component&gt;
 </pre>
 
+<p>
 The various knobs of these monitors mainly control whether statistical
 information about accuracy, speed and memory usage should be printed out.
 Moreover, the monitors monitor the behavior of a recognizer,
 so they need a reference to the recognizer that they are monitoring.
+</p>
+
+<hr>
 
 
-<p><h3><a name="buildFileWalk">Build File Walk - build.xml</a></h3></p>
-
-The last piece of the puzzle of the Hello Digits demo is the build.xml
-file, which defines Ant targets for running the demo. For details about
-writing the build.xml file, please refer to the 
-<a href="http://ant.apache.org/manual/index.html">Ant documentation</a>.
-The file <code>demo/sphinx/hellodigits/build.xml</code> is pretty
-straightforward. Lets look at the top part of the build.xml file:
-
-<pre>
-    &lt;property name="top_dir"		value="../../.."/&gt;
-    &lt;property name="build_dir"		value="${top_dir}/bld"/&gt;
-    &lt;property name="classes_dir"	value="${build_dir}/classes"/&gt;
-    &lt;property name="lib_dir"            value="${build_dir}/lib"/&gt;
-
-    &lt;path id="run.classpath"&gt;
-        &lt;pathelement path="${classes_dir}"/&gt;
-	&lt;pathelement location="${top_dir}/lib/jsapi.jar"/&gt;
-    &lt;/path&gt;
-</pre>
-
-It defines several variables, e.g., the top level Sphinx-4 directory,
-the build directory, the classes directory, and the libraries directory.
-It also defines the <codE>run.classpath</code> path ID, which includes
-the classes directory and the <code>jsapi.jar</code> library, the latter of
-which is needed for interpreting JSGF grammars in the Hello Digits demo.
-
-<p>Now lets take a look at the "run" target:</p>
-
-<pre>
-    &lt;target name="run"
-	    description="Runs the hello world demo."
-	    depends="all"&gt;
-	    &lt;java classname="demo.sphinx.hellodigits.HelloDigits"
-	          fork="true"
-		  maxmemory="128m"&gt;
-		  &lt;classpath refid="run.classpath"/&gt;
-		  &lt;arg value="hellodigits.config.xml"/&gt;
-	    &lt;/java&gt;
-    &lt;/target&gt;
-</pre>
-
-This defines an Ant target called "run". It first runs the "all" target, 
-which compiles the hello world demo code. It then executes the class 
-<code>demo.sphinx.hellodigits.HelloDigits</code>
-which contains a main() method as you have seen above. It also forks a separate
-process to run the Hello Digits demo, with a maximum heap size of 128MB.
-The classpath is defined by the Ant path ID "run.classpath", which is defined
-at the top of the build.xml file. Finally, the configuration file 
-<code>hellodigits.config.xml</code> is fed as an argument to the HelloDigits
-class.
+<h2><a name="hellongram">1. More Complex Example - HelloNGram</a></h2>
 
 <p>
-This concludes the walkthrough of the simple Hello Digits example.
-To recap the following things were done to create the Hello Digits demo:
-<ol>
-   <li>Write the code - HelloDigits.java</li>
-   <li>Create a configuration file that specifies how Sphinx-4 should be
-       configured - hellodigits.config.xml</li>
-   <li>Create the build.xml file that include the Ant run targets</li>
-</ol>
+HelloDigits uses a very small vocabulary and a guided grammar.
+What if you want to use a larger vocabulary, and there is no guided
+grammar for your application? One way to do it would be to use
+what is known as a language model, which describes the probability
+of occurrence of a series of words. The HelloNGram demo shows you how to
+do this with Sphinx-4.
+</p>
+
+<h3><a name="ngramCodeWalk">Code Walk - HelloNGram.java</a></h3>
+
+<p>
+The source code for the HelloNGram demo is exactly the same as that of
+the HelloDigits demo, except for the names of the demo class. The demo
+runs exactly the same way: it keeps listening to and recognizes what you
+say, and when it was detected the end of an utterance, it will show the
+recognition result.
+</p>
+
+  <h3><a name="ngramFile">N-Gram Language Model</a></h3>
+
+  <p>
+  Sphinx-4 supports the n-gram language model (both ascii and binary versions)
+  generated by the <a href="http://www.speech.cs.cmu.edu/SLM_info.html">
+  Carnegie Mellon University Statistical Language Modeling toolkit</a>.
+  The <a href="../demo/sphinx/hellongram/lm.train.txt">input file</a> is a list
+  of sample utterances. Using the occurrence of words and sequences of words
+  in this input file, a language model can be trained. The resulting
+  trigram language model file is <a href="../demo/sphinx/hellongram/hellongram.trigram.lm">hellongram.trigram.lm</a>.
+  </p>
+
+  <h3><a name="ngramConfigWalk">Configuration File Walk - hellongram.config.xml</a></h3>
+
+  In this section, we will explain the various Sphinx-4 components that
+  are used for the HelloNGram demo, as specified in the configuration file.
+  We will look at each section of the config file in depth. If you want
+  to learn about the format of these configuration files, please refer
+  to the document <a href="../javadoc/edu/cmu/sphinx/util/props/doc-files/ConfigurationManagement.html">Sphinx-4 Configuration Management</a>.
+
+<pre>
+    &lt;!-- ******************************************************** --&gt;
+    &lt;!-- frequently tuned properties                              --&gt;
+    &lt;!-- ******************************************************** --&gt; 
+
+    &lt;property name="absoluteBeamWidth"  value="500"/&gt;
+    &lt;property name="relativeBeamWidth"  value="1E-80"/&gt;
+    &lt;property name="absoluteWordBeamWidth" value="20"/&gt;
+    &lt;property name="relativeWordBeamWidth" value="1E-60"/&gt;
+    &lt;property name="wordInsertionProbability" value="1E-16"/&gt;
+    &lt;property name="languageWeight" value="7.0"/&gt;
+    &lt;property name="silenceInsertionProbability" value=".1"/&gt;
+    &lt;property name="frontend" value="epFrontEnd"/&gt;
+    &lt;property name="recognizer" value="recognizer"/&gt;
+    &lt;property name="showCreations" value="false"/&gt;
+</pre>
+
+The above lines defines frequently tuned properties. They are located at the
+top of the configuration file so that they can be edited quickly.
+
+<h4><a name="recognizer">Recognizer</a></h4>
+
+<pre>
+    &lt;component name="recognizer" 
+               type="edu.cmu.sphinx.recognizer.Recognizer"&gt;
+        &lt;property name="decoder" value="decoder"/&gt;
+        &lt;propertylist name="monitors"&gt;
+            &lt;item&gt;accuracyTracker &lt;/item&gt;
+            &lt;item&gt;speedTracker &lt;/item&gt;
+            &lt;item&gt;memoryTracker &lt;/item&gt;
+            &lt;item&gt;recognizerMonitor &lt;/item&gt;
+        &lt;/propertylist&gt;
+    &lt;/component&gt;
+</pre>
+
+The above lines define the recognizer component that performs speech
+recognition. It defines the name and class of the recognizer. 
+This is the class that any application should interact with.
+If you look at the <a href="../javadoc/edu/cmu/sphinx/recognizer/Recognizer.html">javadoc of the Recognizer class</a>, you will see that it has two
+properties, 'decoder' and 'monitors'. This configuration file is where
+the value of these properties are defined.
+
+<h4><a name="decoder">Decoder</a></h4>
+
+The 'decoder' property of the recognizer is set to the component 
+called 'decoder':
+
+<pre>
+    &lt;component name="decoder" type="edu.cmu.sphinx.decoder.Decoder"&gt;
+        &lt;property name="searchManager" value="wordPruningSearchManager"/&gt;
+        &lt;property name="featureBlockSize" value="50"/&gt;
+    &lt;/component&gt;
+</pre>
+
+The decoder component is defined to be of class
+<code><a href="../javadoc/edu/cmu/sphinx/decoder/Decoder.html">edu.cmu.sphinx.decoder.Decoder</a></code>. Its property 'searchManager'
+is set to the component 'wordPruningSearchManager':
+
+<pre>
+    &lt;component name="wordPruningSearchManager" 
+              type="edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager"&gt;
+        &lt;property name="logMath" value="logMath"/&gt;
+        &lt;property name="linguist" value="lexTreeLinguist"/&gt;
+        &lt;property name="pruner" value="trivialPruner"/&gt;
+        &lt;property name="scorer" value="threadedScorer"/&gt;
+        &lt;property name="activeListManager" value="activeListManager"/&gt;
+        &lt;property name="growSkipInterval" value="0"/&gt;
+        &lt;property name="checkStateOrder" value="false"/&gt;
+        &lt;property name="buildWordLattice" value="false"/&gt;
+        &lt;property name="acousticLookaheadFrames" value="1.7"/&gt;
+        &lt;property name="relativeBeamWidth" value="${relativeBeamWidth}"/&gt;
+    &lt;/component&gt;
+</pre>
+
+The searchManager is of class
+<code><a href="../javadoc/edu/cmu/sphinx/decoder/search/WordPruningBreadthFirstSearchManager.html">edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager</a></code>. It is better than the SimpleBreadthFirstSearchManager 
+for larger vocabulary recognition. This class also performs a simple 
+breadth-first search through the search graph, but at each frame it also 
+prunes the different types of states separately. The logMath property is the
+log math that is used for calculation of scores during the search process.
+It is defined as having the log base of 1.0001. Note that typically the
+same log base should be used throughout all components, and therefore
+there should only be one logMath definition:
+
+<pre>
+    &lt;component name="logMath" type="edu.cmu.sphinx.util.LogMath"&gt;
+        &lt;property name="logBase" value="1.0001"/&gt;
+        &lt;property name="useAddTable" value="true"/&gt;
+    &lt;/component&gt;
+</pre>
+
+The linguist of the searchManager is set to the component 'lexTreeLinguist' 
+(which we will look at later), which again is suitable for large vocabulary
+recognition. The pruner is set to the 'trivialPruner':
+
+<pre>
+    &lt;component name="trivialPruner" 
+                type="edu.cmu.sphinx.decoder.pruner.SimplePruner"/&gt;
+</pre>
+
+which is of class <code><a href="../javadoc/edu/cmu/sphinx/decoder/pruner/SimplePruner.html">edu.cmu.sphinx.decoder.pruner.SimplePruner</a></code>.
+This pruner performs simple absolute beam and relative beam pruning
+based on the scores of the tokens.
+
+The scorer of the searchManager is set to the component 'threadedScorer',
+which is of class
+<code><a href="../javadoc/edu/cmu/sphinx/decoder/scorer/ThreadedAcousticScorer.html">edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer</a></code>.
+It can use multiple threads (usually one per CPU) to score the tokens 
+in the active list. Scoring is one of the most time-consuming step of the
+decoding process. Tokens can be scored independently of each other, 
+so using multiple CPUs will definitely speed things up.
+The threadedScorer is defined as follows:
+
+<pre>
+    &lt;component name="threadedScorer" 
+                type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer"&gt;
+        &lt;property name="frontend" value="${frontend}"/&gt;
+        &lt;property name="isCpuRelative" value="true"/&gt;
+        &lt;property name="numThreads" value="0"/&gt;
+        &lt;property name="minScoreablesPerThread" value="10"/&gt;
+        &lt;property name="scoreablesKeepFeature" value="true"/&gt;
+    &lt;/component&gt;
+</pre>
+
+The 'frontend' property is the front end from which features are obtained.
+For details about the other properties of the threadedScorer, please refer to
+<a href="../javadoc/edu/cmu/sphinx/decoder/scorer/ThreadedAcousticScorer.html">javadoc for ThreadedAcousticScorer</a>.
+
+Finally, the 'activeListManager' property of the wordPruningSearchManager
+is set to the component 'activeListManager', which is defined as follows:
+
+<pre>
+    &lt;component name="activeListManager" 
+             type="edu.cmu.sphinx.decoder.search.SimpleActiveListManager"&gt;
+        &propertylist name="activeListFactories"&gt;
+	    &lt;item&gt;standardActiveListFactory&lt;/item&gt;
+	    &lt;item&gt;wordActiveListFactory&lt;/item&gt;
+	    &lt;item&gt;wordActiveListFactory&lt;/item&gt;
+	    &lt;item&gt;standardActiveListFactory&lt;/item&gt;
+	    &lt;item&gt;standardActiveListFactory&lt;/item&gt;
+	    &lt;item&gt;standardActiveListFactory&lt;/item&gt;
+	&lt;/propertylist&gt;
+    &lt;/component&gt;
+    
+    &lt;component name="standardActiveListFactory" 
+             type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
+        &lt;property name="logMath" value="logMath"/>
+        &lt;property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
+        &lt;property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
+    &lt;/component&gt;
+    
+    &lt;component name="wordActiveListFactory" 
+             type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
+        &lt;property name="logMath" value="logMath"/>
+        &lt;property name="absoluteBeamWidth" value="${absoluteWordBeamWidth}"/>
+        &lt;property name="relativeBeamWidth" value="${relativeWordBeamWidth}"/>
+    &lt;/component&gt;
+</pre>
+
+The SimpleActiveListManager is of class <code><a href="../javadoc/edu/cmu/sphinx/decoder/search/SimpleActiveListManager.html">edu.cmu.sphinx.decoder.search.SimpleActiveListManager</a></code>. 
+Since the word-pruning search manager performs pruning on different
+search state types separately, we need a different active list for each
+state type. Therefore, you see different active list factories being listed
+in the SimpleActiveListManager, one for each type. So how do we know which
+active list factory is for which state type? It depends on the 'search order'
+as returned by the search graph (which in this case is generated by the 
+LexTreeLinguist). The search state order and active list factory used here are:
+<p>
+<table border="1">
+<tr><td><b>State Type</b></td><td><b>ActiveListFactory</b></td></tr>
+<tr><td>LexTreeNonEmittingHMMState</td><td>standardActiveListFactory</td></tr>
+<tr><td>LexTreeWordState</td><td>wordActiveListFactory</td></tr>
+<tr><td>LexTreeEndWordState</td><td>wordActiveListFactory</td></tr> 
+<tr><td>LexTreeEndUnitState</td><td>standardActiveListFactory</td></tr>
+<tr><td>LexTreeUnitState</td><td>standardActiveListFactory</td></tr>
+<tr><td>LexTreeHMMState</td><td>standardActiveListFactory</td></tr>
+</table>
+</p>
+
+There are two types of active list factories used here, the standard and 
+the word. If you look at the 'frequently tuned properties' above, you will
+find that the word active list has a much smaller beam size than
+the standard active list. The beam size for the word active list is set
+by 'absoluteWordBeamWidth' and 'relativeWordBeamWidth', while the beam size
+for the standard active list is set by 'absoluteBeamWidth' and
+'relativeBeamWidth'. The SimpleActiveListManager allows us
+to control the beam size of different types of states.
+
+<h4><a name="linguist">Linguist</a></h4>
+
+Lets look at the 'lexTreeLinguist' (a component inside
+the wordPruningSearchManager). The linguist is the component that generates 
+the search graph using the guidance from the grammar, and knowledge from 
+the dictionary, acoustic model, and language model.
+
+<pre>
+    &lt;component name="lexTreeLinguist" 
+               type="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist"&gt;
+        &lt;property name="logMath" value="logMath"/&gt;
+        &lt;property name="acousticModel" value="wsj"/&gt;
+        &lt;property name="languageModel" value="trigramModel"/&gt;
+        &lt;property name="dictionary" value="dictionary"/&gt;
+        &lt;property name="addFillerWords" value="false"/&gt;
+        &lt;property name="fillerInsertionProbability" value="1E-10"/&gt;
+        &lt;property name="generateUnitStates" value="false"/&gt;
+        &lt;property name="wantUnigramSmear" value="true"/&gt;
+        &lt;property name="unigramSmearWeight" value="1"/&gt;
+        &lt;property name="wordInsertionProbability" 
+                  value="${wordInsertionProbability}"/&gt;
+        &lt;property name="silenceInsertionProbability" 
+                  value="${silenceInsertionProbability}"/&gt;
+        &lt;property name="languageWeight" value="${languageWeight}"/&gt;
+    &lt;/component&gt;
+</pre>
+
+<p>
+For details about the LexTreeLinguist, please refer to the 
+<a href="../javadoc/edu/cmu/sphinx/linguist/lextree/LexTreeLinguist.html">
+Javadocs of the LexTreeLinguist</a>. In general, the LexTreeLinguist is the one
+to use for large vocabulary speech recognition, and the FlatLinguist is the
+one to use for small vocabulary speech recognition. The LexTreeLinguist
+has a lot of properties that can be set, but the ones that are must be set are
+the 'logMath', the 'acousticModel', the 'languageModel', and the 'dictionary'.
+These properties are the necessary sources of information for the 
+LexTreeLinguist to build the search graph. The rest of the properties are
+for controlling the speed and accuracy performance of the linguist, 
+and you can read more about them in the Javadocs of the LexTreeLinguist.
+</p>
+
+<h4>Acoustic Model</h4>
+
+<p>
+The 'acousticModel' is where the LexTreeLinguist obtains the HMM for the
+words or units. For the HelloNGram demo, it is defined as:
+</p>
+
+<pre>
+    &lt;component name="wsj"
+               type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"&gt;
+        &lt;property name="loader" value="wsjLoader"/&gt;
+    &lt;/component&gt;
+    
+    &lt;component name="wsjLoader" type="edu.cmu.sphinx.model.acoustic.WSJLoader"&gt;
+        &lt;property name="logMath" value="logMath"/&gt;
+    &lt;/component&gt;
+</pre>
+
+<p>
+'wsj' stands for the Wall Street Journal acoustic models. In Sphinx-4,
+different acoustic models are represented by classes that implement the
+<a href="../javadoc/edu/cmu/sphinx/linguist/acoustic/AcousticModel.html">
+AcousticModel</a> interface. The implementation class, together with the
+actual model data files, are packaged in a JAR file, which is included
+in the classpath of the Sphinx-4 application. The JAR file for the WSJ
+models is called <code>WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code>,
+and is in the <code>sphinx4/lib</code> directory. Inside this JAR file
+is a class called <code>edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz</code>, which implements the AcousticModel interface.
+This class will automatically load up all the actual model data files when
+it is loaded. The loader of this AcousticModel is called 
+<code>WSJLoader</code>, and it also is inside the JAR file. As a programmer,
+all you need to do is to specify the class of the AcousticModel, and the
+loader of the AcousticModel, as shown above (note that if you are using
+the WSJ model in other applications, these lines should be the same,
+except that you might have called your 'logMath' component something else).
+</p>
+
+<h4>Language Model</h4>
+
+The 'languageModel' component of the lexTreeLinguist is called the
+'trigramModel', because it is a trigram language model. It is defined
+as follows:
+
+<pre>
+    &lt;component name="trigramModel" 
+        type="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"&gt;
+        &lt;property name="location" 
+            value="resource:/demo.sphinx.hellongram.HelloNGram!/demo/sphinx/hellongram/hellongram.trigram.lm"/&gt;
+        &lt;property name="logMath" value="logMath"/&gt;
+        &lt;property name="dictionary" value="dictionary"/&gt;
+        &lt;property name="maxDepth" value="3"/&gt;
+        &lt;property name="unigramWeight" value=".7"/&gt;
+    &lt;/component&gt;
+</pre>
+
+<p>
+The language model is generated by the CMU Statistical Language Modeling
+Toolkit. It is in text format, which can be loaded by the 
+<a href="../javadoc/edu/cmu/sphinx/linguist/language/ngram/SimpleNGramModel.html">SimpleNGramModel</a> class. For this class, you also need to specify
+the dictionary that you are using, which is the same as the one used by
+the lexTreeLinguist. Same for 'logMath' (note that the same logMath
+component should be used throughout the system). The 'maxDepth' property
+is 3, since this is a trigram language model. The 'unigramWeight' should
+normally be set to 0.7.
+</p>
+
+<h4>Dictionary</h4>
+
+<p>
+The last important component of the LexTreeLinguist is the 
+'dictionary', which is defined as follows:
+</p>
+
+<pre>
+    &lt;component name="dictionary" 
+        type="edu.cmu.sphinx.linguist.dictionary.FastDictionary"&gt;
+        &lt;property name="dictionaryPath" value=
+                  value="resource:/edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/dict/cmudict.0.6d"/&gt;
+        &lt;property name="fillerPath"
+	          value="resource:/edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/dict/fillerdict"/&gt;
+        &lt;property name="addSilEndingPronunciation" value="false"/&gt;
+        &lt;property name="wordReplacement" value="&lt;sil&gt;"/&gt;
+    &lt;/component&gt;
+</pre>
+
+<p>
+As you might realize, it is using the dictionary inside the JAR file of the
+Wall Street journal acoustic model. The main dictionary for words is the
+<code>edu/cmu/sphinx/model/acoustic/dict/cmudict.0.6d</code> file
+inside the JAR file, and the dictionary for filler words
+like "BREATH" and "LIP_SMACK" is 
+<code>edu/cmu/sphinx/model/acoustic/dict/fillerdict</code>. You can 
+inspect the contents of a JAR file by (assuming your JAR file is called
+myJar.jar) <pre>jar tvf myJar.jar</pre>
+You can see the contents of the WSJ JAR file by:
+<pre>
+sphinx4> jar tvf lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
+     0 Fri May 07 10:50:26 EDT 2004 META-INF/
+   219 Fri May 07 10:50:24 EDT 2004 META-INF/MANIFEST.MF
+     0 Fri May 07 10:50:20 EDT 2004 edu/
+     0 Fri May 07 10:50:20 EDT 2004 edu/cmu/
+     0 Fri May 07 10:50:20 EDT 2004 edu/cmu/sphinx/
+     0 Fri May 07 10:50:20 EDT 2004 edu/cmu/sphinx/model/
+     0 Fri May 07 10:50:24 EDT 2004 edu/cmu/sphinx/model/acoustic/
+   262 Fri May 07 10:50:16 EDT 2004 edu/cmu/sphinx/model/acoustic/WSJLoader.class
+   688 Fri May 07 10:50:16 EDT 2004 edu/cmu/sphinx/model/acoustic/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.class
+     0 Fri May 07 10:50:24 EDT 2004 edu/cmu/sphinx/model/acoustic/cd_continuous_8gau/
+     0 Fri May 07 10:50:24 EDT 2004 edu/cmu/sphinx/model/acoustic/dict/
+     0 Fri May 07 10:50:22 EDT 2004 edu/cmu/sphinx/model/acoustic/etc/
+  1492 Fri May 07 10:50:22 EDT 2004 edu/cmu/sphinx/model/acoustic/README
+5175518 Fri May 07 10:50:22 EDT 2004 edu/cmu/sphinx/model/acoustic/cd_continuous_8gau/means
+132762 Fri May 07 10:50:24 EDT 2004 edu/cmu/sphinx/model/acoustic/cd_continuous_8gau/mixture_weights
+  2410 Fri May 07 10:50:24 EDT 2004 edu/cmu/sphinx/model/acoustic/cd_continuous_8gau/transition_matrices
+5175518 Fri May 07 10:50:22 EDT 2004 edu/cmu/sphinx/model/acoustic/cd_continuous_8gau/variances
+   353 Fri May 07 10:50:24 EDT 2004 edu/cmu/sphinx/model/acoustic/dict/alpha.dict
+4718935 Fri May 07 10:50:24 EDT 2004 edu/cmu/sphinx/model/acoustic/dict/cmudict.0.6d
+   373 Fri May 07 10:50:22 EDT 2004 edu/cmu/sphinx/model/acoustic/dict/digits.dict
+   204 Fri May 07 10:50:22 EDT 2004 edu/cmu/sphinx/model/acoustic/dict/fillerdict
+5654967 Fri May 07 10:50:24 EDT 2004 edu/cmu/sphinx/model/acoustic/etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
+  2641 Fri May 07 10:50:22 EDT 2004 edu/cmu/sphinx/model/acoustic/etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.ci.mdef
+   375 Fri May 07 10:50:22 EDT 2004 edu/cmu/sphinx/model/acoustic/etc/variables.def
+  1797 Fri May 07 10:50:22 EDT 2004 edu/cmu/sphinx/model/acoustic/license.terms
+   719 Fri May 07 10:50:24 EDT 2004 edu/cmu/sphinx/model/acoustic/model.props
+</pre>
+The locations of the dictionary files with the JAR file are specified 
+using the Sphinx-4 resource mechanism. In short, this mechanism locates 
+the JAR file in which a class resides, and looks into that JAR file for 
+the desired resource. The general syntax is:
+<pre>
+resource:/{name of class to locate the JAR file}!{location in the JAR file of the desired resource}
+</pre>
+Take the 'dictionaryPath' property, for example. The "name of class to locate
+the JAR file" is "<code>edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz</code>", while the "location in the JAR file of the desired resource" is "<code>/edu/cmu/sphinx/model/acoustic/dict/cmudict.0.6d</code>". This
+gives the string: <code>"resource:/edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/dict/cmudict.0.6d"</code>.
+</p>
+
+<p>
+For details about the other properties, please refer to the
+<a href="../javadoc/edu/cmu/sphinx/linguist/dictionary/FastDictionary.html">javadoc for FastDictionary</a>.
+</p>
+
+<p>
+The rest of the configuration file, which includes the front end configuration
+and the configuration of the monitors, are the same as in the HelloDigits
+demo. Therefore, please refer to those sections for explanations.
+This concludes the walkthrough of the simple HelloNGram example.
 </p>
 
   </font>
