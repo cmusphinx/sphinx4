@@ -60,9 +60,19 @@ all:: ${CLASSES} ${STUBS}
 
 
 
-# Runs the default LiveDemo
+# Runs the default LiveDemo, without endpointing
 
 live: all
+	$(JAVA_CMD) \
+	-DshowPartialResults=true \
+	-Dedu.cmu.sphinx.frontend.cmn.live=true \
+	tests.live.Live decoders.list
+
+
+
+# Runs the default LiveDemo with endpointing
+
+live-ep: all
 	$(JAVA_CMD) \
 	-DshowPartialResults=true \
 	-Dedu.cmu.sphinx.frontend.cmn.live=true \
