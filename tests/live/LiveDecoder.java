@@ -69,7 +69,6 @@ public class LiveDecoder extends Decoder {
         this.live = live;
         referenceList = new LinkedList();
     }
-
     
     /**
      * Initializes this LiveDecoder.
@@ -78,74 +77,8 @@ public class LiveDecoder extends Decoder {
         if (!isInitialized()) {
             this.microphone = microphone;
             super.initialize(microphone);
-            if (hasEnergyEndpointer()) {
-                //TODO: this doesn't work anymore
-                insertEnergyEndpointViewer();
-            }
         }
     }
-
-
-    /**
-     * Inserts an EnergyEndpoint viewer, called CepstraGroupProducer.
-     * This is a FrontEnd processor that is positioned after the
-     * EnergyEndpointer, and before the NonSpeechFilter. It "watches" the
-     * endpointed Cepstra coming out of the EnergyEndpointer, and
-     * plots the speech energy levels and speech endpoints.
-     * It is so called because this processor groups the watched
-     * Cepstra together to form a CepstraGroup, and feeds the CepstraGroup
-     * to the CepstraPanel of the LiveFrame for plotting. 
-     */
-    private void insertEnergyEndpointViewer() {
-
-        // BUG: TODO: This code assumes that the frontend is a
-        // SimpleFrontEnd which is not a valid assumption. This code
-        // should be refactored to either not depend on the FrontEnd
-        // implementation, or if necessary, define the FrontEnd and
-        // set the front end explicitly. 
-        // Until then, it is disabled.
-
-        if (true) {             // disable this code
-            return;
-        }
-        SimpleFrontEnd frontend = (SimpleFrontEnd) 
-	    getRecognizer().getFrontEnd();
-
-        CepstrumSource predecessor = (CepstrumSource) frontend.getProcessor
-            ("Endpointer");
-
-        if (Boolean.getBoolean("showEnergyPanel")) {
-            // create the viewer
-            CepstrumSource monitor = new CepstrumMonitor
-                ("CepstrumMonitor", getContext(), predecessor) {
-                    
-                    // Implements the abstract cepstrumMonitor()
-                    // of CepstrumMonitor. Here, it updates the 
-                    // CepstraPanel of the LiveFrame with the cepstrum.
-                    public void cepstrumMonitored(Cepstrum cepstrum) {
-                        CepstraPanel panel =
-                            live.getLiveFrame().getCepstraPanel();
-                        if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
-                            panel.clearCepstra();
-                        }
-                        panel.addCepstrum(cepstrum);
-                    }
-                };
-            
-            predecessor = monitor;
-        }
-        
-        // are we filtering out the non-speech regions?
-        boolean filterNonSpeech = SphinxProperties.getSphinxProperties
-            (getContext()).getBoolean(FrontEnd.PROP_FILTER_NON_SPEECH, true);
-
-        if (filterNonSpeech) {
-            NonSpeechFilter filter = (NonSpeechFilter) frontend.getProcessor
-                ("NonSpeechFilter");
-            filter.setPredecessor(predecessor);
-        }
-    }
-
 
     /**
      * Returns true if this LiveDecoder has some sort of endpointer.
@@ -153,22 +86,10 @@ public class LiveDecoder extends Decoder {
      * @return true if this LiveDecoder has some sort of endpointer
      */
     public boolean hasEndpointer() {
-        return hasEnergyEndpointer();
-    }
-
-
-    /**
-     * Returns whether this LiveDecoder has an endpointer.
-     *
-     * @return true if this LiveDecoder has an endpointer, false otherwise
-     */
-    private boolean hasEnergyEndpointer() {
         String endpointer = 
             SphinxProperties.getSphinxProperties(getContext()).getString
             (FrontEnd.PROP_ENDPOINTER, null);
-        return (endpointer != null &&
-                endpointer.equals
-                ("edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer"));
+        return (endpointer != null);
     }
     
     /**
@@ -189,7 +110,6 @@ public class LiveDecoder extends Decoder {
         return microphone;
     }
 
-
     /**
      * Returns the name of the test file.
      *
@@ -198,7 +118,6 @@ public class LiveDecoder extends Decoder {
     public String getTestFile() {
         return testFile;
     }
-
 
     /**
      * Sets the test file.
@@ -215,7 +134,6 @@ public class LiveDecoder extends Decoder {
         }
         iterator = referenceList.listIterator();
     }
-
 
     /**
      * Returns the next utterance in the test file. If its at the last
@@ -240,7 +158,6 @@ public class LiveDecoder extends Decoder {
         return next;
     }
 
-
     /**
      * Shows the given partial Result.
      *
@@ -249,7 +166,6 @@ public class LiveDecoder extends Decoder {
     protected void showPartialResult(Result result) {
         live.getLiveFrame().setRecognitionLabel(result.toString());
     }
-
 
     /**
      * Returns the audio time for the result.
