@@ -79,6 +79,7 @@ your environment to use JSAPI.
 	    depends="compile_sphinx_helloworld,
 	             compile_sphinx_hellodigits,
 		     compile_sphinx_hellongram,
+		     compile_sphinx_confidence,
 	             compile_jsapi_dialog,
 	             compile_jsapi_jsgf,
 	             compile_zipcity,
@@ -359,4 +360,31 @@ your environment to use JSAPI.
     <signjar jar="bld/zipcity/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar" 
         alias="unknown" storepass="public" keystore="tempKeystore" />
   </target>
+
+
+  <target name="compile_sphinx_confidence">
+      <mkdir dir="${classes_dir}/demo/sphinx/confidence"/>
+      <javac debug="true"
+             source="1.4"
+	     listfiles="true"
+	     deprecation="true"
+	     srcdir="${src_dir}"
+	     destdir="${classes_dir}"
+	     includes="demo/sphinx/confidence/**">
+	     <classpath refid="libs"/>
+      </javac>
+      <copy file="${src_dir}/demo/sphinx/confidence/config.xml"
+            todir="${classes_dir}/demo/sphinx/confidence"/>
+      <copy file="${src_dir}/demo/sphinx/confidence/confidence.trigram.lm"
+            todir="${classes_dir}/demo/sphinx/confidence"/>
+      <mkdir dir="${bin_dir}"/>
+      <jar destfile="${bin_dir}/Confidence.jar"
+           manifest="${src_dir}/demo/sphinx/confidence/confidence.Manifest"
+	   basedir="${classes_dir}"
+	   includes="demo/sphinx/confidence/**"
+	   filesonly="true"
+	   compress="true"/>
+  </target>
+
+
 </project>
