@@ -95,6 +95,7 @@ public class Microphone extends DataProcessor implements AudioSource {
     private TargetDataLine audioLine = null;
     private LineListener lineListener = new MicrophoneLineListener();
     private List audioList;
+    private Utterance currentUtterance;
 
     private int frameSizeInBytes;
     private volatile boolean started = false;
@@ -174,6 +175,16 @@ public class Microphone extends DataProcessor implements AudioSource {
 
 
     /**
+     * Returns the current Utterance.
+     *
+     * @return the current Utterance
+     */
+    public Utterance getUtterance() {
+        return currentUtterance;
+    }
+
+
+    /**
      * Prints the given message to System.out.
      *
      * @param message the message to print
@@ -210,6 +221,8 @@ public class Microphone extends DataProcessor implements AudioSource {
 		if (tracing) {
 		    printMessage("started recording");
 		}
+
+                currentUtterance = new Utterance("Microphone", getContext());
                                 
                 while (getRecording() && !getClosed()) {
 		    if (tracing) {
@@ -228,6 +241,8 @@ public class Microphone extends DataProcessor implements AudioSource {
                         System.arraycopy(data, 0, shrinked, 0, numBytesRead);
                         data = shrinked;
                     }
+
+                    currentUtterance.add(data);
 
                     double[] samples = Util.bytesToSamples
                         (data, 0, data.length, sampleSizeInBits/8, signed);
