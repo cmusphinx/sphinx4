@@ -174,6 +174,11 @@ $regressionDir/pushReport
 # $regressionDir/pushChanges
 
 ###############################
+# Generate the system description web page
+#################################A
+$regressionDir/pushSystemDescription
+
+###############################
 # Generate the test results
 #################################
 cd $regressionDir

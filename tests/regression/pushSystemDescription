@@ -1,0 +1,29 @@
+#!/bin/sh
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This script generates and pushes the system description to the web
+#
+# usage: pushSystemDescription
+
+# To receive email reports about regression tests, add your email
+# address to the list of recipients
+#
+
+# the 'dots' in the hostname can mess things up for the twik so
+# lets just use the left most name
+
+hostName=`./getHostname`
+
+systemName=system_description_$hostName.html
+
+./makeSystempage < regression.log > $systemName
+sscp $systemName
+sshh mv $systemName /home/groups/c/cm/cmusphinx/htdocs
+

@@ -1,0 +1,95 @@
+#!/bin/sh
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This script parses the regression log and outputs an HTML summary
+#
+# usage: makeSystempage < regression.log
+#
+
+
+gawk '
+
+BEGIN {
+    FS = "|"
+
+    "./getHostname" | getline machine
+}
+
+$1 == "environment" && $3 == machine {
+    environment = $0;
+}
+
+$1 == "system"  && $2 == machine {
+    machineDescription = $0;
+}
+
+
+function printMachineDescription() {
+    split(machineDescription, data);
+    split(environment, envData);
+    javaHome = envData[4];
+    javaVersion = envData[5];
+    uptime = envData[6];
+    "date" | getline theDate;
+
+    print("<br><br>");
+    print("<table cellpadding=2 cellspacing=2 border=1 width=90%");
+    print("align=center>");
+    print("<tbody>");
+    print("<tr align=center>");
+    print("<td rowspan=1 colspan=2 bgcolor=lightblue><big><b>");
+    print("   System description: " machine "<br>");
+    print("</b></big></td>");
+    print(" </tr>");
+    print(" <tr>");
+    print(" <td ><b>Latest update </b></td> <td> " theDate " </td></tr>");
+
+    print(" <td ><b>CPUs </b></td> <td> " data[3] " </td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>Architecture </b></td> <td >" data[7] " </td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>Clock Speed </b></td> <td >" data[5] "MHz</td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>Memory </b></td> <td >" data[6] "MB</td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>Cache </b></td> <td >" data[4] "MB</td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>OS </b></td> <td >" data[8] "</td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>JAVA_HOME </b></td> <td >" javaHome "</td>");
+    print(" </tr>");
+
+    print(" <tr>");
+      print(" <td ><b>Java Version </b></td> <td >" javaVersion "</td>");
+    print(" </tr>");
+
+    print(" <tr>");
+      print(" <td ><b>Uptime</b></td> <td >" uptime "</td>");
+    print(" </tr>");
+        
+    print("</tbody>");
+    print("</table>");
+}
+
+
+
+
+END {
+    printMachineDescription();
+}
+
+'  $*
+
