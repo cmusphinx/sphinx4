@@ -1,11 +1,32 @@
 Sphinx-4 Speech Recognition System
 -------------------------------------------------------------------
 
-Version:       XXXX
-Release Date:  XXXX
+Version:       1.0Beta
+Release Date:  September 2004
 
 -------------------------------------------------------------------
 
+New Features:
+-------------
+    - Confidence scoring
+    - Dynamic grammars
+    - Low bandwidth acoustic model
+    - Out-of-grammar utterance rejection
+    - More demonstration programs
+    - WSJ5K Language model
+
+
+Improvements
+------------
+    - Better control over microphone selection
+    - JSGF limitations removed
+    - Improved performance for large, perplex JSGF grammars
+    - Added Filler support for JSGF Grammars
+    - Lots of bug fixes
+
+
+Detailed Changes
+----------------
 PBL - 9/22/04 
     Improved performance of the DynamicFlatLinguist
 
