@@ -174,7 +174,7 @@ public class JSGFGrammar extends Grammar {
     /**
      * Sphinx property that defines the location of the JSGF grammar file.
      */
-    public final static String PROP_BASE_GRAMMAR_URL = "baseGrammarURL";
+    public final static String PROP_BASE_GRAMMAR_URL = "grammarLocation";
 
 
     /**
