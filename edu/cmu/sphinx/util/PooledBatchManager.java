@@ -24,7 +24,7 @@ import java.io.FileFilter;
 import java.net.InetAddress;
 import java.util.List;
 
-/*
+/**
  * A simple implementation of the batch manager suitable for single
  * threaded batch processing
  *
@@ -76,6 +76,9 @@ public class PooledBatchManager implements BatchManager {
      * available
      *
      * @return the next available batch item
+     *
+     * @throws IOException if an I/O error occurs while reading the
+     * next item from the batch file.
      */
     public BatchItem getNextItem() throws IOException {
         lock();

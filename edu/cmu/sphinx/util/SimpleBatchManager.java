@@ -20,7 +20,7 @@ import java.io.FileReader;
 
 
 
-/*
+/**
  * A simple implementation of the batch manager suitable for single
  * threaded batch processing
  *
@@ -33,6 +33,15 @@ public class SimpleBatchManager implements BatchManager {
     private int curItem;
     private List items;
 
+    /**
+     * Constructs a SimpleBatchManager object.
+     *
+     * @param filename      the name of the batch file
+     * @param skip          number of records to skip between items
+     * @param whichBatch    which chunk of the batch should we process
+     * @param totalBatches  the total number of chuncks that the batch
+     *                      is divided into.
+     */
     public SimpleBatchManager(String filename,
             int skip, int whichBatch, int totalBatches) {
         this.batchFile = filename;
@@ -55,6 +64,9 @@ public class SimpleBatchManager implements BatchManager {
      * available
      *
      * @return the next available batch item
+     *
+     * @throws IOException if an I/O error occurs while getting the
+     * next item from the batch file.
      */
     public BatchItem getNextItem() throws IOException {
         if (curItem >= items.size()) {

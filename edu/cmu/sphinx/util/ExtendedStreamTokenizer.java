@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.ArrayList;
 
 
+/**
+ * A class that provides a mechanism for tokenizing a stream
+ */
 public class ExtendedStreamTokenizer {
     private String path;
     private StreamTokenizer st;
@@ -111,6 +114,8 @@ public class ExtendedStreamTokenizer {
 
     /**
      * Closes the tokenizer
+     *
+     * @throws IOException if an error occurs while closing the stream
      */
     public void close() throws IOException {
 	reader.close();
@@ -143,6 +148,8 @@ public class ExtendedStreamTokenizer {
 
     /**
      * Gets the next word from the tokenizer
+     *
+     * @return the next word
      *
      * @throws StreamCorruptedException if the word does not match
      * @throws IOException if an error occurs while loading the data
@@ -355,6 +362,9 @@ public class ExtendedStreamTokenizer {
 
      /**
       * Skip any carriage returns.
+      *
+      * @throws IOException if an error occurs while reading data from
+      * the stream.
       */
      public void skipwhite() throws IOException {
 	 String next = null;

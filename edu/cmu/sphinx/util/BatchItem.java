@@ -13,7 +13,7 @@
 package edu.cmu.sphinx.util;
 
 
-/*
+/**
  * Provides a standard interface to for a single decode in a batch of
  * decodes
  *
