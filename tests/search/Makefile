@@ -38,14 +38,21 @@ ArpaGrammarTestTiny: all
 
 ArpaGrammarTestSmall: all
 	$(JAVA_CMD)  \
--Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx3j/data/FST.small\
+-Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx3j/data/fst/digits.fst\
     tests.search.ArpaGrammarTest ArpaGrammarTest.props
+
+#################################################################
+# loads a large model. 
+ArpaGrammarTestLarge: all
+	$(JAVA_CMD)  \
+-Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx3j/data/fst/5721_word_vocab.FST \
+	tests.search.ArpaGrammarTest ArpaGrammarTest.props
 
 
 #################################################################
 # loads a huge model. Don't expect this to finish anytime soon
 ArpaGrammarTestMega: all
 	$(JAVA_CMD)  \
--Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx3j/data/language_model.arpaformat.FST.ascii\
+-Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx3j/data/fst/language_model.arpaformat.FST.ascii\
 	tests.search.ArpaGrammarTest ArpaGrammarTest.props
 
