@@ -86,7 +86,7 @@ import java.util.Vector;
  * <p>
  * The front end must be configured through the Sphinx properties file.
  * For details about configuring the front end, refer to the 
- * <a href="../../../../../doc/FrontEndProperties.html">
+ * <a href="doc-files/FrontEndProperties.html">
  * Guide to Specifying the Front End</a>.
  *
  * Current state-of-the-art front ends generate features that contain
@@ -116,7 +116,7 @@ import java.util.Vector;
  * </ul>
  * <p>
  * For details on how to do this, refer to the 
- * <a href="../../../../../doc/FrontEndProperties.html">
+ * <a href="doc-files/FrontEndProperties.html">
  * Guide to Specifying the Front End</a>.
  * <p>
  * <b>Obtaining a Front End</b>
