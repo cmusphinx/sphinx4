@@ -67,7 +67,7 @@ all:: ${CLASSES} ${STUBS}
 an4_words_unigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist \
-        tests.decoder.BatchDecoder ./wsjDigits.props ./an4_words.batch
+        tests.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
 
 
@@ -80,7 +80,7 @@ an4_words_trigram:
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.model.language.location=./an4_words.arpa \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist \
-        tests.decoder.BatchDecoder ./wsjDigits.props ./an4_words.batch
+        tests.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
 
 
@@ -96,8 +96,8 @@ an4_words_fst:
         -Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
         -Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_words.arpa \
-        tests.decoder.BatchDecoder wsjDigits.props ./an4_words.batch
+	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_words.fst \
+        tests.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
 
 
@@ -107,7 +107,7 @@ an4_words_fst:
 an4_spelling_unigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_spelling.alphalist \
-        tests.decoder.BatchDecoder ./wsjDigits.props ./an4_spelling.batch
+        tests.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
 
 
@@ -120,7 +120,7 @@ an4_spelling_trigram:
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.model.language.location=./an4_spelling.arpa \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_spelling.alphalist \
-        tests.decoder.BatchDecoder ./wsjDigits.props ./an4_spelling.batch
+        tests.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
 
 
@@ -136,8 +136,8 @@ an4_spelling_fst:
         -Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
         -Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path= \
-        tests.decoder.BatchDecoder wsjDigits.props ./an4_spelling.batch
+	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_spelling.fst \
+        tests.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
 
 
@@ -149,9 +149,9 @@ an4_spelling_journey_trigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
-	-Dedu.cmu.sphinx.model.language.location=./an4_spelling.arpa \
+	-Dedu.cmu.sphinx.model.language.location=./an4_spelling_journey.arpa \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_spelling.alphalist \
-        tests.decoder.BatchDecoder ./wsjDigits.props ./an4_spelling.batch
+        tests.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
 
 
@@ -168,8 +168,8 @@ an4_spelling_journey_fst:
         -Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
         -Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
-	-Dedu.cmu.sphinx.search.ArpaGrammar.path= \
-        tests.decoder.BatchDecoder wsjDigits.props ./an4_spelling.batch
+	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_spelling_journey.fst \
+        tests.decoder.BatchDecoder an4.props ./an4_spelling.batch
 
 
 
@@ -177,6 +177,9 @@ an4_spelling_journey_fst:
 # whose vocabulary is all words from AN4 and the 26 letters in the alphabet.
 
 an4_full_unigram:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_full.wordlist \
+        tests.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
 
 
@@ -184,6 +187,12 @@ an4_full_unigram:
 # created from the words and spelled-out words of AN4.
 
 an4_full_trigram:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location= \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_full.wordlist \
+        tests.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
 
 
@@ -191,6 +200,16 @@ an4_full_trigram:
 # a trigram LM using the words and spelled-out words of AN4.
 
 an4_full_fst:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400 \
+	-Dedu.cmu.sphinx.search.Dictionary.allowMissingWords=true \
+        -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+        -Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
+        -Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
+	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_full.fst \
+        tests.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
 
 
@@ -199,6 +218,9 @@ an4_full_fst:
 # in English.
 
 an4_plus_unigram:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
+        tests.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
 
 
@@ -207,6 +229,12 @@ an4_plus_unigram:
 # in English.
 
 an4_plus_trigram:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=an4_plus.arpa \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
+        tests.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
 
 
@@ -215,6 +243,17 @@ an4_plus_trigram:
 # in English.
 
 an4_plus_fst:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400 \
+	-Dedu.cmu.sphinx.search.Dictionary.allowMissingWords=true \
+        -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+        -Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
+        -Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
+	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_plus.fst \
+        tests.decoder.BatchDecoder ./an4.props ./an4_full.batch
+
 
 
 
