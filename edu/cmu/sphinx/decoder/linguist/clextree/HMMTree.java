@@ -42,7 +42,7 @@ import java.util.HashSet;
  */
 class HMMTree {
     private HMMPool hmmPool;
-    private WordNode initialNode;
+    private InitialWordNode initialNode;
     private Dictionary dictionary;
 
     private LanguageModel lm;
@@ -164,7 +164,6 @@ class HMMTree {
      */
     private void freeze() {
         entryPointTable.freeze();
-        Node.freezeAllNodes();
         hmmPool = null;
         dictionary = null;
         lm = null;
@@ -308,7 +307,7 @@ class HMMTree {
      *
      * @return the initial lex node
      */
-    WordNode getInitialNode() {
+    InitialWordNode getInitialNode() {
         return initialNode;
     }
 
@@ -421,6 +420,11 @@ class HMMTree {
          * eliminate some fields
          */
         void freeze() {
+            for (Iterator i = unitToEntryPointMap.values().iterator();
+                    i.hasNext(); ) {
+                Node node = (Node) i.next();
+                node.freeze();
+            }
             singleUnitWords = null;
             rcSet = null;
         }
@@ -515,8 +519,7 @@ class HMMTree {
 			    singleUnitWords.get(j);
 
 			if (p.getWord() == dictionary.getSentenceStartWord()) {
-                            wordNode = new WordNode(p, tailNode);
-			    initialNode = wordNode;
+                            initialNode = new InitialWordNode(p, tailNode);
 			} else {
                             wordNode = (WordNode) tailNode.addSuccessor(p);
                         }
@@ -571,11 +574,22 @@ class HMMTree {
  * Represents a node in the HMM Tree
  */
 
+// For large vocabularies we may create millions of these objects,
+// therefore they are extremely space sensitive. So we want to make
+// these objects as small as possible.  The requirements for these
+// objects when building the tree of nodes is very different from once
+// we have built it. When building, we need to easily add successor
+// nodes and quickly identify duplicate children nodes. After the tree
+// is build we just need to quickly identify successors.  We want the
+// flexibility of a map to manage successors at startup, but we don't
+// want the space penalty (at least 5 32 bit fields per map), instead
+// we'd like an array.  To support this dual mode, we manage the
+// successors in an Object which can either be a Map or a List
+// depending upon whether the node has been frozen or not.
 class Node {
     private static int nodeCount = 0;
-    // private Map successors; // the set of successors
-    private static Map successorsPerNode = new HashMap();
-    private Collection frozenSuccessors = null;
+    private static Map wordNodeMap = new HashMap();
+    private Object successors = null;
 
     /**
      * Creates a node
@@ -588,21 +602,6 @@ class Node {
             }
         }
     }
-
-
-    static void freezeAllNodes() {
-        // Utilities.dumpMemoryInfo("Before Freeze");
-        System.out.println("Freezing " +
-                successorsPerNode.keySet().size() + " nodes");
-        for (Iterator i = successorsPerNode.keySet().iterator(); i.hasNext();) {
-            Node node = (Node) i.next();
-            node.freeze();
-        }
-        successorsPerNode = null;
-        // Utilities.dumpMemoryInfo("After Freeze");
-    }
-
-
 
     /**
      * Given an object get the set of successors for this object
@@ -634,23 +633,29 @@ class Node {
      * @return the successor map
      */
     private Map getSuccessorMap() {
-        Map successorMap = (Map) successorsPerNode.get(this);
-        if (successorMap == null) {
-            successorMap = new HashMap();
-            successorsPerNode.put(this, successorMap);
+        if (successors == null) {
+            successors = new HashMap();
         }
-        return successorMap;
+
+        assert successors instanceof Map;
+        return (Map) successors;
     }
 
 
     /**
      * Freeze the node. Convert the successor map into an array list
      */
-    private void freeze() {
-        frozenSuccessors = new ArrayList();
-        for (Iterator i = getSuccessorMap().values().iterator();
-                i.hasNext(); ) {
-            frozenSuccessors.add(i.next());
+    void freeze() {
+        if (successors instanceof Map) {
+            Map map = getSuccessorMap();
+            List frozenSuccessors = new ArrayList();
+            successors = null; // avoid recursive death spiral
+            for (Iterator i = map.values().iterator(); i.hasNext();) {
+                Node node = (Node) i.next();
+                frozenSuccessors.add(node);
+                node.freeze();
+            }
+            successors = frozenSuccessors;
         }
     }
 
@@ -672,7 +677,6 @@ class Node {
         } else {
             child = matchingChild;
         }
-        assert frozenSuccessors == null;
         return child;
     }
 
@@ -691,13 +695,29 @@ class Node {
         WordNode child = null;
         WordNode matchingChild = (WordNode) getSuccessor(pronunciation);
         if (matchingChild == null) {
-            child = new WordNode(pronunciation, (HMMNode) this);
+            child = getWordNode(pronunciation);
             putSuccessor(pronunciation, child);
         } else {
             child = matchingChild;
         }
-        assert frozenSuccessors == null;
         return child;
+    }
+
+
+    /**
+     * Gets a word node associated with the pronunciation.
+     *
+     * @param p the pronunciation
+     *
+     * @return the word node
+     */
+    private WordNode getWordNode(Pronunciation p) {
+        WordNode node = (WordNode) wordNodeMap.get(p);
+        if (node == null) {
+            node = new WordNode(p);
+            wordNodeMap.put(p, node);
+        } 
+        return node;
     }
 
 
@@ -720,10 +740,8 @@ class Node {
             child = matchingChild;
         }
 
-        assert frozenSuccessors == null;
         return child;
     }
-
 
     /**
      * Returns the successors for this node
@@ -731,8 +749,8 @@ class Node {
      * @return the set of successor nodes
      */
     Collection getSuccessors() {
-        if (frozenSuccessors != null) {
-            return frozenSuccessors;
+        if (successors instanceof List) {
+            return (List) successors;
         } else {
             return getSuccessorMap().values();
         }
@@ -747,7 +765,6 @@ class Node {
     public String toString() {
         return "Node ";
     }
-
 }
 
 
@@ -757,7 +774,6 @@ class Node {
  */
 class WordNode extends Node {
     private Pronunciation pronunciation;
-    private HMMNode parent;
 
     /**
      * Creates a word node
@@ -765,9 +781,8 @@ class WordNode extends Node {
      * @param pronunciation the pronunciation to wrap in this node
      * @param parent the parent node
      */
-    WordNode(Pronunciation pronunciation, HMMNode parent) {
+    WordNode(Pronunciation pronunciation) {
         this.pronunciation = pronunciation;
-        this.parent = parent;
     }
 
 
@@ -789,14 +804,6 @@ class WordNode extends Node {
         return pronunciation;
     }
 
-    /**
-     * Gets the set of possible next units for this node
-     *
-     * @return the set of next units
-     */
-    Collection getRC() {
-        return parent.getRC();
-    }
 
     /**
      * Gets the last unit for this word
@@ -819,16 +826,6 @@ class WordNode extends Node {
 
 
     /**
-     * Gets the parent of this word node
-     *
-     * @return the parent
-     */
-    HMMNode getParent() {
-        return parent;
-    }
-
-
-    /**
      * Returns a string representation for this object
      *
      * @return a string representation
@@ -836,6 +833,37 @@ class WordNode extends Node {
     public String toString() {
         return "WordNode " + pronunciation;
     }
+}
+
+
+/**
+ * A class that represents the initial word in the search space.
+ * It is treated specially because we need to keep track of the
+ * context as well. The context is embodied in the parent node
+ */
+class InitialWordNode extends WordNode {
+    HMMNode parent;
+
+    /**
+     * Creates an InitialWordNode 
+     *
+     * @param pronunciation the pronunciation
+     * @param parent the parent node
+     */
+    InitialWordNode(Pronunciation pronunciation, HMMNode parent) {
+        super(pronunciation);
+        this.parent = parent;
+    }
+
+    /**
+     * Gets the parent for this word node
+     *
+     * @return the parent
+     */
+    HMMNode getParent() {
+        return parent;
+    }
+
 }
 
 /**
