@@ -417,35 +417,4 @@ public class Util {
         file.close();
     }
 
-
-    /**
-     * Reads a float from the given DataInputStream, where the data is in
-     * little endian.
-     *
-     * @param dataStream the DataInputStream to read from
-     *
-     * @return a float
-     */
-    public static float readLittleEndianFloat(DataInputStream dataStream) 
-	throws IOException {
-	return Float.intBitsToFloat(readLittleEndianInt(dataStream));
-    }
-
-
-    /**
-     * Reads a little-endian integer from the given DataInputStream.
-     *
-     * @param dataStream the DataInputStream to read from
-     *
-     * @return an integer
-     */
-    public static int readLittleEndianInt(DataInputStream dataStream)
-	throws IOException {
-	int bits = 0x00000000;
-	for (int shift = 0; shift < 32; shift += 8) {
-	    int byteRead = (0x000000ff & dataStream.readByte());
-	    bits |= (byteRead << shift);
-	}
-	return bits;
-    }
 }

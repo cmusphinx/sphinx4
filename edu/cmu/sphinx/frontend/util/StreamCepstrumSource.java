@@ -21,6 +21,7 @@ import edu.cmu.sphinx.frontend.Signal;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
+import edu.cmu.sphinx.util.Utilities;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -78,9 +79,12 @@ CepstrumSource {
 	    binaryStream = new DataInputStream(new BufferedInputStream(is));
 	    if (bigEndian) {
 		numPoints = binaryStream.readInt();
+		System.out.println("BigEndian");
 	    } else {
-		numPoints = Util.readLittleEndianInt(binaryStream);
+		numPoints = Utilities.readLittleEndianInt(binaryStream);
+		System.out.println("LittleEndian");
 	    }
+	    System.out.println("Frames: " + numPoints/cepstrumLength);
 	} else {
 	    est = new ExtendedStreamTokenizer(is, false);
 	    numPoints = est.getInt("num_frames");
@@ -130,7 +134,7 @@ CepstrumSource {
 			vectorCepstrum[i] = binaryStream.readFloat();
 		    } else {
 			vectorCepstrum[i] = 
-			    Util.readLittleEndianFloat(binaryStream);
+			    Utilities.readLittleEndianFloat(binaryStream);
 		    }
 		} else {
 		    vectorCepstrum[i] = est.getFloat("cepstrum data");
@@ -140,7 +144,7 @@ CepstrumSource {
 
 	    // System.out.println("Read: " + curPoint);
 	    data  = new Cepstrum(vectorCepstrum);
-	    // System.out.println("CP " + data);
+	    // System.out.println(data);
 	}
 	return data;
     }
