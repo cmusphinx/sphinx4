@@ -81,6 +81,7 @@ tidigits_flat_unigram:
     -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=1 \
     -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./tidigits.flat_unigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
 
@@ -95,4 +96,59 @@ tidigits_flat_unigram_fst:
     -Dedu.cmu.sphinx.decoder.linguist.FSTGrammar.path=./tidigits.flat_unigram.fst \
     edu.cmu.sphinx.decoder.BatchDecoder ./tidigits.props ./tidigits.batch
 
+
+
+##########################################################################
+#
+# Low-level Test targets - the following targets are used for internal
+# decoder testing and are not generally useful, nor are they
+# maintained. Use at your risk
+#
+##########################################################################
+# tidigits with and flat unigram and lex linguist
+
+tidigits_flat_unigram_lex:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist \
+    -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=1 \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./tidigits.flat_unigram.lm\
+    edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
+
+# tidigits with and bigram and lex linguist
+
+tidigits_bigram_lex:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=2 \
+    -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./tidigits.bigram.lm\
+    edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
+
+# tidigits with flat linguist and bigram
+
+tidigits_bigram:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=2 \
+    -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./tidigits.bigram.lm\
+    edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
+
+# tidigits with and trigram and lex linguist
+
+tidigits_trigram_lex:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=3 \
+    -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist \
+    -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./tidigits.trigram.lm\
+    edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
 
