@@ -45,6 +45,7 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.Line;
 
 
 /**
@@ -87,9 +88,17 @@ public class Microphone extends DataProcessor implements AudioSource {
     private boolean bigEndian = true;
 
     /**
+     * Variables for performing format conversion from a 
+     * hardware supported format to the speech recognition audio format
+     */
+    private boolean doConversion = false;
+    private AudioInputStream nativelySupportedStream;
+
+    /**
      * The audio capturing device.
      */
     private TargetDataLine audioLine = null;
+    private AudioInputStream audioStream = null;
     private LineListener lineListener = new MicrophoneLineListener();
     private List audioList;
     private Utterance currentUtterance;
@@ -210,28 +219,32 @@ public class Microphone extends DataProcessor implements AudioSource {
 		    printMessage("Whoops: line is running");
 		}
                 audioLine.start();
-		if (tracing) {
-		    printMessage("started recording");
-		}
+                printMessage("started recording");
 
                 currentUtterance = new Utterance("Microphone", getContext());
                                 
                 while (getRecording() && !getClosed()) {
-		    if (tracing) {
-			printMessage("reading ...");
-		    }
+                    printMessage("reading ...");
                                         
                     // Read the next chunk of data from the TargetDataLine.
                     byte[] data = new byte[frameSizeInBytes];
-                    int numBytesRead = audioLine.read(data, 0, data.length);
-                    
-                    if (numBytesRead != frameSizeInBytes) {
-                        numBytesRead = (numBytesRead % 2 == 0) ?
-                            numBytesRead + 2 : numBytesRead + 3;
+                    int numBytesRead = 0;
+                    try {
+                        numBytesRead = audioStream.read(data, 0, data.length);
                         
-                        byte[] shrinked = new byte[numBytesRead];
-                        System.arraycopy(data, 0, shrinked, 0, numBytesRead);
-                        data = shrinked;
+                        if (numBytesRead != frameSizeInBytes) {
+                            numBytesRead = (numBytesRead % 2 == 0) ?
+                                numBytesRead + 2 : numBytesRead + 3;
+                            
+                            byte[] shrinked = new byte[numBytesRead];
+                            System.arraycopy(data, 0, shrinked, 0, numBytesRead);
+                            data = shrinked;
+                        }
+                    } catch(IOException e) {
+                        audioLine.stop();
+                        audioLine = null;
+                        e.printStackTrace();
+                        return;
                     }
 
                     currentUtterance.add(data);
@@ -241,10 +254,8 @@ public class Microphone extends DataProcessor implements AudioSource {
                     
                     audioList.add(new Audio(samples));
 
-		    if (tracing) {
-			printMessage(
-			    "recorded 1 frame (" + numBytesRead + ") bytes");
-		    }
+                    printMessage(
+                                 "recorded 1 frame (" + numBytesRead + ") bytes");
                 }
 
                 audioList.add(new Audio(Signal.UTTERANCE_END));
@@ -252,55 +263,132 @@ public class Microphone extends DataProcessor implements AudioSource {
                 audioLine.stop();
 		if (closeAudioBetweenUtterances) {
                     audioLine.close();
+                    try {
+                        audioStream.close();
+                        if (doConversion) {
+                            nativelySupportedStream.close();
+                        }
+                    } catch(IOException e) {
+                        logger.warning("IOException closing audio streams");
+                    }
 		    audioLine = null;
 		}
                 
-		if (tracing) {
-		    printMessage("stopped recording");
-		}
+                printMessage("stopped recording");
                 
             } else {
-		if (tracing) {
-		    printMessage("Unable to open line");
-		}
+                printMessage("Unable to open line");
             }
         }
     }
 
+    /**
+     * Returns a suitable native audio format.
+     *
+     * @return a suitable native audio format
+     */
+    private AudioFormat getNativeAudioFormat() {
+        // try to do sample rate conversion
+        Line.Info[] lineInfos = AudioSystem.getTargetLineInfo
+            (new Line.Info(TargetDataLine.class));
+
+        AudioFormat nativeFormat = null;
+
+        // find a usable target line
+        for (int i = 0; i < lineInfos.length; i++) {
+            
+            AudioFormat[] formats = 
+                ((TargetDataLine.Info)lineInfos[i]).getFormats();
+            
+            for (int j = 0; j < formats.length; j++) {
+                
+                // for now, just accept downsampling, not checking frame
+                // size/rate (encoding assumed to be PCM)
+                
+                AudioFormat format = formats[j];
+                if (format.getEncoding() == audioFormat.getEncoding()
+                    && format.getChannels() == audioFormat.getChannels()
+                    && format.isBigEndian() == audioFormat.isBigEndian()
+                    && format.getSampleSizeInBits() == 
+                    audioFormat.getSampleSizeInBits()
+                    && format.getSampleRate() > audioFormat.getSampleRate()) {
+                    nativeFormat = format;
+                    break;
+                }
+            }
+            if (nativeFormat != null) {
+                //no need to look through remaining lineinfos
+                break;
+            }
+        }
+        return nativeFormat;
+    }
 
     /**
      * Opens the audio capturing device so that it will be ready
-     * for capturing audio.
+     * for capturing audio. Attempts to create a converter if the
+     * requested audio format is not directly available.
      *
      * @return true if the audio capturing device is opened successfully;
      *     false otherwise
      */
     private boolean open() {
-
 	if (audioLine != null) {
 	    return true;
 	}
 
         DataLine.Info info = new DataLine.Info
             (TargetDataLine.class, audioFormat);
-        
+
+        AudioFormat nativeFormat = null;        
         if (!AudioSystem.isLineSupported(info)) {
-            logger.severe(audioFormat + " not supported");
-            return false;
+            logger.warning(audioFormat + " not supported");
+            printMessage(audioFormat + " not supported");
+            
+            nativeFormat = getNativeAudioFormat();
+            
+            if (nativeFormat == null) {
+                logger.severe("couldn't find suitable target " +
+                              "audio format for conversion");
+                return false;
+            } else {
+                printMessage("accepting " + nativeFormat + 
+                             " as natively supported format");
+                info = new DataLine.Info(TargetDataLine.class, nativeFormat);
+                doConversion = true;
+            }
+        } else {
+            doConversion = false;
         }
 
 
-        // Obtain and open the line.
+        // Obtain and open the line and stream.
         try {
             audioLine = (TargetDataLine) AudioSystem.getLine(info);
             audioLine.addLineListener(lineListener);
-            audioLine.open(audioFormat);
+            if (doConversion) {
+                try {
+                    nativelySupportedStream = new AudioInputStream(audioLine);
+                    audioStream = AudioSystem.getAudioInputStream
+                        (audioFormat, nativelySupportedStream);
+                } catch (IllegalArgumentException e) {
+                    logger.severe("couldn't construct converter " +
+                                  "from native audio format");
+                    audioLine.close();
+                    audioLine = null;
+                    e.printStackTrace();
+                    return false;
+                }
+            } else {
+                audioStream = new AudioInputStream(audioLine);
+            }                
+            audioLine.open();
             return true;
         } catch (LineUnavailableException ex) {
             audioLine = null;
             ex.printStackTrace();
             return false;
-        }        
+        }
     }
 
 
