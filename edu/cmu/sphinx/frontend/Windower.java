@@ -25,7 +25,7 @@ import java.util.Arrays;
  * The number of resulting windows depends on the window
  * size and the window shift (commonly known as frame size and frame
  * shift in speech world). The Window will be applied to each such
- * window. Since the <code>read()</code> method will return a window,
+ * window. Since the <code>getAudio()</code> method will return a window,
  * and multiple windows are created for each Audio, this
  * is a 1-to-many processor.
  *
@@ -54,7 +54,7 @@ public class Windower extends DataProcessor implements AudioSource {
      * HammingWindow.
      */
     private static final String PROP_ALPHA =
-    FrontEnd.PROP_PREFIX + "windower.alpha";
+	FrontEnd.PROP_PREFIX + "windower.alpha";
 
 
     private AudioSource predecessor;     // the previous processor
