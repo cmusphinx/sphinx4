@@ -346,7 +346,8 @@ class LexTree {
         void addWord(Pronunciation p) {
             LexNode next = (LexNode) getNextNodesMap().get(p);
             if (next != null) {
-                throw new Error("Duplicate pronunciation " + p);
+                System.out.println("Duplicate pronunciation for " + p
+                        + " dropped");
             } else {
                 getNextNodesMap().put(p, new WordLexNode(p));
             }
