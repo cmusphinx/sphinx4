@@ -125,13 +125,6 @@ public class Trainer {
     }
 
     /**
-     * Prints debugging info.
-     */
-    private void printAll() {
-	trainManager.train();
-    }
-
-    /**
      * Process this stage.
      * 
      * @param context this trainer's context
@@ -160,24 +153,24 @@ public class Trainer {
 		*/
 		try {
 		    if (stage.equals(Stage._00_INITIALIZATION)) {
-			System.out.println("Initializing");
-			((SimpleTrainManager)
-			 trainManager).initializeModels(context);
+			System.out.println("00 - Initializing");
+			trainManager.initializeModels(context);
 			System.out.println("Saving");
-			((SimpleTrainManager)
-			 trainManager).saveModels(context);
+			trainManager.saveModels(context);
 		    } else if (stage.equals(Stage._10_CI_TRAIN)) {
-			((SimpleTrainManager)
-			 trainManager).trainContextIndependentModels(context);
+			System.out.println("01 - CI train");
+			trainManager.trainContextIndependentModels(context);
 			System.out.println("Saving");
-			((SimpleTrainManager)
-			 trainManager).saveModels(context);
+			trainManager.saveModels(context);
 		    } else if (stage.equals(Stage._20_UNTIED_CD_TRAIN)) {
+			System.out.println("02 - Untied CD train");
 		    } else if (stage.equals(Stage._30_STATE_PRUNING)) {
+			System.out.println("03 - State pruning");
 		    } else if (stage.equals(Stage._40_TIED_CD_TRAIN)) {
+			System.out.println("04 - Tied CD train");
 		    } else if (stage.equals(Stage._90_CP_MODEL)) {
 			System.out.println("Copying");
-			((SimpleTrainManager)trainManager).copyModels(context);
+			trainManager.copyModels(context);
 		    } else {
 			assert false : "stage not implemented";
 		    }
@@ -216,7 +209,6 @@ public class Trainer {
                                    + propertiesFile));
 
             Trainer trainer = new Trainer(context);
-	    trainer.printAll();
 	    trainer.processStages(context);
         } catch (IOException ioe) {
             ioe.printStackTrace();
