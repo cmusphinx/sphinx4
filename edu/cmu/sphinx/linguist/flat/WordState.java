@@ -58,6 +58,15 @@ public class WordState extends SentenceHMMState {
 	return "Word";
     }
 
+    /**
+     * Returns the state order for this state type
+     *
+     * @return the state order
+     */
+    public int getOrder() {
+        return 0;
+    }
+
 }
 
 

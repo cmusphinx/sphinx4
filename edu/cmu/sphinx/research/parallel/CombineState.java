@@ -39,6 +39,15 @@ public class CombineState extends SentenceHMMState {
      */
     public String getTypeLabel() {
 	return "Combine";
+    } 
+
+    /**
+     * Returns the state order for this state type
+     *
+     * @return the state order
+     */
+    public int getOrder() {
+        return 0;
     }
 }
 

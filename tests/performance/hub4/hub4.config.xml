@@ -89,6 +89,7 @@
         <property name="growSkipInterval" value="8"/>
         <property name="linguist" value="lexTreeLinguist"/>
         <property name="checkStateOrder" value="false"/>
+        <property name="keepAllTokens" value="true"/>
     </component>
 
     <!-- ************************************************** -->
@@ -248,6 +249,11 @@
             <item>liveCMN </item>
             <item>featureExtraction </item>
         </propertylist>
+    </component>
+
+    <component name="frameDropper"
+    type="edu.cmu.sphinx.frontend.feature.FrameDropper">
+        <property name="dropEveryNthFrame" value="2"/>
     </component>
 
     <component name="concatDataSource" 

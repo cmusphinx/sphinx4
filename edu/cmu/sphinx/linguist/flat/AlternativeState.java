@@ -52,6 +52,15 @@ public class AlternativeState extends SentenceHMMState
     public String getTypeLabel() {
 	return "Alt";
     }
+
+    /**
+     * Returns the state order for this state type
+     *
+     * @return the state order
+     */
+    public int getOrder() {
+        return 0;
+    }
 }
 
 

@@ -85,6 +85,15 @@ public class HMMStateState extends SentenceHMMState
      */
     private HMMStateState() {
     }
+
+    /**
+     * Returns the state order for this state type
+     *
+     * @return the state order
+     */
+    public int getOrder() {
+        return 5;
+    }
 }
 
 

@@ -415,9 +415,6 @@ public class FlatLinguist implements Linguist, Configurable {
     /**
      * The search graph that is produced by the flat linguist.
      */
-    private final static Class[] searchStateOrder = {NonEmittingHMMState.class,
-            BranchState.class, GrammarState.class, PronunciationState.class,
-            ExtendedUnitState.class, HMMStateState.class};
     class FlatSearchGraph implements SearchGraph {
         /**
          * An array of classes that represents the order in which the states
@@ -444,10 +441,10 @@ public class FlatLinguist implements Linguist, Configurable {
         /*
          * (non-Javadoc)
          * 
-         * @see edu.cmu.sphinx.linguist.SearchGraph#getSearchStateOrder()
+         * @see edu.cmu.sphinx.linguist.SearchGraph#getNumStateOrder()
          */
-        public Class[] getSearchStateOrder() {
-            return searchStateOrder;
+        public int getNumStateOrder() {
+            return 6;
         }
     }
     /**

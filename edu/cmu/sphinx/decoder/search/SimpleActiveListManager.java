@@ -62,10 +62,7 @@ public class SimpleActiveListManager implements ActiveListManager {
     private List activeListFactories;
     private int absoluteWordBeam;
     private double relativeWordBeam;
-    private ActiveList emittingActiveList;
-
-    private Class[] searchStateOrder;
-    private AbstractMap listMap = new HashMap();
+    private ActiveList[] currentActiveLists;
 
     /*
      * (non-Javadoc)
@@ -107,45 +104,25 @@ public class SimpleActiveListManager implements ActiveListManager {
     /*
      * (non-Javadoc)
      * 
-     * @see edu.cmu.sphinx.decoder.search.ActiveListManager#setStateOrder(java.lang.Class[])
+     * @see edu.cmu.sphinx.decoder.search.ActiveListManager#setNumStateOrder(java.lang.Class[])
      */
-    public void setStateOrder(Class[] searchStateOrder) {
+    public void setNumStateOrder(int numStateOrder) {
         // check to make sure that we have the correct
         // number of active list factories for the given searc states
-        this.searchStateOrder = searchStateOrder;
+        currentActiveLists = new ActiveList[numStateOrder];
 
         if (activeListFactories.size() == 0) {
             logger.severe("No active list factories configured");
-            dumpStateOrder();
             throw new Error("No active list factories configured");
         }
-        if (activeListFactories.size() != searchStateOrder.length) {
-            logger.warning("Need " + searchStateOrder.length + 
+        if (activeListFactories.size() != currentActiveLists.length) {
+            logger.warning("Need " + currentActiveLists.length + 
                     " active list factories, found " +
                     activeListFactories.size());
-            dumpStateOrder();
         }
         createActiveLists();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.decoder.search.ActiveListManager#getStateOrder()
-     */
-    public Class[] getStateOrder() {
-        return searchStateOrder;
-    }
-
-    /*
-     * Dumps the state order for this list manager
-     */
-    public void dumpStateOrder() {
-        for (int i = 0; i < searchStateOrder.length; i++) {
-            logger.warning("State " + i + ": " +
-                    searchStateOrder[i].getName());
-        }
-    }
 
     /**
      * Creates the emitting and non-emitting active lists. When creating the
@@ -154,20 +131,14 @@ public class SimpleActiveListManager implements ActiveListManager {
      */
     private void createActiveLists() {
         int nlists = activeListFactories.size();
-        for (int i = 0; i < searchStateOrder.length; i++) {
+        for (int i = 0; i < currentActiveLists.length; i++) {
             int which = i;
             if (which >= nlists) {
                 which = nlists - 1;
             }
             ActiveListFactory alf = 
                     (ActiveListFactory) activeListFactories.get(which);
-            ActiveList activeList = alf.newInstance();
-
-            if (i < searchStateOrder.length - 1) {
-                listMap.put(searchStateOrder[i], activeList);
-            } else {
-                emittingActiveList = activeList;
-            }
+            currentActiveLists[i] = alf.newInstance();
         }
     }
 
@@ -187,12 +158,15 @@ public class SimpleActiveListManager implements ActiveListManager {
         activeList.add(token);
     }
 
+    /**
+     * Given a token find the active list associated with the token
+     * type
+     *
+     * @param token
+     * @return the active list
+     */
     private ActiveList findListFor(Token token) {
-        if (token.isEmitting()) {
-            return emittingActiveList;
-        } else {
-            return (ActiveList) listMap.get(token.getSearchState().getClass());
-        }
+        return currentActiveLists[token.getSearchState().getOrder()];
     }
 
 
@@ -218,8 +192,8 @@ public class SimpleActiveListManager implements ActiveListManager {
      * @return the emitting ActiveList
      */
     public ActiveList getEmittingList() {
-        ActiveList list = emittingActiveList;
-        emittingActiveList = list.newInstance();
+        ActiveList list = currentActiveLists[currentActiveLists.length - 1];
+        currentActiveLists[currentActiveLists.length - 1] = list.newInstance();
         return list;
     }
 
@@ -235,24 +209,21 @@ public class SimpleActiveListManager implements ActiveListManager {
 
     private class NonEmittingListIterator implements Iterator {
         private int listPtr;
-        private Class stateClass;
-        private ActiveList list;
 
         public NonEmittingListIterator() {
-            listPtr = 0;
+            listPtr = -1;
         }
 
         public boolean hasNext() {
-            return (listPtr < searchStateOrder.length - 1);
+            return listPtr + 1 < currentActiveLists.length - 1;
         }
 
         public Object next() {
+            listPtr++;
             if (checkPriorLists) {
                 checkPriorLists();
             }
-            stateClass = searchStateOrder[listPtr++];
-            list = (ActiveList) listMap.get(stateClass);
-            return list;
+            return currentActiveLists[listPtr];
         }
 
         /**
@@ -260,18 +231,17 @@ public class SimpleActiveListManager implements ActiveListManager {
          */
         private void checkPriorLists() {
             for (int i = 0; i < listPtr; i++) {
-                ActiveList activeList = (ActiveList) 
-                                listMap.get(searchStateOrder[i]);
+                ActiveList activeList = currentActiveLists[i];
                 if (activeList.size() > 0) {
-                    throw new Error("At " + searchStateOrder[listPtr]
-                            + ". List for " + searchStateOrder[i]
-                            + " should not have tokens.");
+                    throw new Error("At while processing state order"
+                            + listPtr + ", state order " + i + " not empty");
                 }
             }
         }
 
         public void remove() {
-            listMap.put(stateClass, list.newInstance());
+            currentActiveLists[listPtr] = 
+                currentActiveLists[listPtr].newInstance();
         }
     }
 
@@ -279,9 +249,8 @@ public class SimpleActiveListManager implements ActiveListManager {
      * Outputs debugging info for this list manager
      */
     public void dump() {
-        dumpList(emittingActiveList);
-        for (Iterator i = listMap.values().iterator(); i.hasNext();) {
-            ActiveList al = (ActiveList) i.next();
+        for (int i = 0; i < currentActiveLists.length; i++) {
+            ActiveList al = currentActiveLists[i];
             dumpList(al);
         }
     }

@@ -88,16 +88,11 @@ public interface ActiveListManager extends Configurable {
     public void dump();
     
     /**
-     * Sets the search state order for this manager
-     * @param searchStateOrder the search state order
+     * Sets the total number of state types to be managed
+     * @param numStateOrder the total number of state types
      */
-    public void setStateOrder( Class[] searchStateOrder);
+    public void setNumStateOrder(int numStateOrder);
     
-    /**
-     * Retrieves the search state order for this manager
-     * @return the search state order
-     */
-    public Class[] getStateOrder();
 
 }
 

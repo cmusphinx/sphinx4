@@ -228,7 +228,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private List resultList; // the current set of results
     private Map bestTokenMap;
     private AlternateHypothesisManager loserManager;
-    private Class[] stateOrder;
+    private int numStateOrder;
     // private TokenTracker tokenTracker;
     // private TokenTypeTracker tokenTypeTracker;
     private Map skewMap;
@@ -405,11 +405,11 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     private Map createBestTokenMap() {
         // int mapSize = activeList.size() * 10;
-        int mapSize = activeList.size() * 2;
+        int mapSize = activeList.size() * 4;
         if (mapSize == 0) {
             mapSize = 1;
         }
-        return new HashMap(mapSize, 0.5F);
+        return new HashMap(mapSize, 0.3F);
     }
 
     /**
@@ -432,8 +432,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         curTokensScored.value = 0;
 
         skewMap = new HashMap();
-        stateOrder = searchGraph.getSearchStateOrder();
-        activeListManager.setStateOrder(stateOrder);
+        activeListManager.setNumStateOrder(searchGraph.getNumStateOrder());
         if (buildWordLattice) {
             loserManager = new AlternateHypothesisManager(maxLatticeEdges);
         }
@@ -649,8 +648,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * @param state
      *                the state
      * 
-     * @return the previous best token for the given state, or null if no
-     *         previous best token
      */
     protected void setBestToken(Token token, SearchState state) {
         Object key = getStateKey(state);
@@ -717,33 +714,12 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * Checks that the given two states are in legitimate order.
      */
     private void checkStateOrder(SearchState fromState, SearchState toState) {
-        Class fromClass = fromState.getClass();
-        Class toClass = toState.getClass();
-
-        // first, find where in stateOrder is the fromState
-        int i = 0;
-        for (; i < stateOrder.length; i++) {
-            if (stateOrder[i] == fromClass) {
-                break;
-            }
-        }
-
-        // We are assuming that the last state in the state order
-        // is an emitting state. We assume that emitting states can
-        // expand to any state type. So if (i == (stateOrder.length)),
-        // which means that fromState is an emitting state, we don't
-        // do any checks.
-
-        if (i < (stateOrder.length - 1)) {
-            for (int j = 0; j <= i; j++) {
-                if (stateOrder[j] == toClass) {
-                    throw new Error("IllegalState order: from "
-                            + fromState.getClass().getName() + " "
-                            + fromState.toPrettyString() + " to "
-                            + toState.getClass().getName() + " "
-                            + toState.toPrettyString());
-                }
-            }
+        if (fromState.getOrder() > toState.getOrder()) {
+            throw new Error("IllegalState order: from "
+                    + fromState.getClass().getName() + " "
+                    + fromState.toPrettyString() + " to "
+                    + toState.getClass().getName() + " "
+                    + toState.toPrettyString());
         }
     }
 

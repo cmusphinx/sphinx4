@@ -34,7 +34,7 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 /**
  * Represents a single state in an SentenceHMM
  */
-public class  SentenceHMMState implements Serializable, SearchState  {
+public abstract class  SentenceHMMState implements Serializable, SearchState  {
     private final static int MASK_IS_FINAL 		= 0x1;
     private final static int MASK_COLOR_RED 		= 0x2;
     private final static int MASK_PROCESSED 		= 0x4;
@@ -701,5 +701,12 @@ public class  SentenceHMMState implements Serializable, SearchState  {
 	}
 	return visitedStates;
     }
+
+     /**
+      * Returns the order of this particular state
+      *
+      * @return the state order for this state
+      */
+    abstract public int getOrder();
 }
 

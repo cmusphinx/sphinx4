@@ -75,6 +75,15 @@ public class PronunciationState extends SentenceHMMState implements
      */
     private PronunciationState() {
     }
+
+    /**
+     * Returns the state order for this state type
+     *
+     * @return the state order
+     */
+    public int getOrder() {
+        return 3;
+    }
 }
 
 

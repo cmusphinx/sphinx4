@@ -51,7 +51,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
         <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
-            <jvmarg value="-ea"/>
+            <jvmarg value="-da"/>
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
@@ -76,6 +76,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
+            <jvmarg value="-Xloggc:${gc_log_file}"/>
             <sysproperty key="batch[skip]" 					value="${skip}"/> 
             <sysproperty key="batch[usePooledBatchManager]" value="true"/>
             <sysproperty key="threadedScorer[isCpuRelative]" value="false"/>

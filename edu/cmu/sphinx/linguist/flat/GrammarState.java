@@ -54,6 +54,15 @@ public class GrammarState extends SentenceHMMState implements
     public String getTypeLabel() {
 	return "Gram";
     }
+
+    /**
+     * Returns the state order for this state type
+     *
+     * @return the state order
+     */
+    public int getOrder() {
+        return 2;
+    }
 }
 
 

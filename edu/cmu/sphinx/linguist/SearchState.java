@@ -69,4 +69,11 @@ public interface  SearchState {
       * @return the lex tree state
       */
      Object getLexState();
+
+     /**
+      * Returns the order of this particular state
+      *
+      * @return the state order for this state
+      */
+     int getOrder();
 }

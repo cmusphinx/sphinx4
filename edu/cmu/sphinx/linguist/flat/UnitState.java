@@ -151,6 +151,14 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
     public boolean isUnit() {
 	return true;
     }
+    /**
+     * Returns the state order for this state type
+     *
+     * @return the state order
+     */
+    public int getOrder() {
+        return 4;
+    }
 }
 
 

@@ -487,14 +487,6 @@ public class LexTreeLinguist implements Linguist {
         searchGraph = new LexTreeSearchGraph(getInitialSearchState());
     }
 
-    /**
-     * An array of classes that represents the order in which the states will
-     * be returned.
-     */
-    private final static Class[] searchStateOrder = {
-            LexTreeNonEmittingHMMState.class, LexTreeWordState.class,
-            LexTreeEndWordState.class, LexTreeEndUnitState.class,
-            LexTreeUnitState.class, LexTreeHMMState.class};
 
     class LexTreeSearchGraph implements SearchGraph {
         /**
@@ -528,8 +520,8 @@ public class LexTreeLinguist implements Linguist {
          * 
          * @see edu.cmu.sphinx.linguist.SearchGraph#getSearchStateOrder()
          */
-        public Class[] getSearchStateOrder() {
-            return searchStateOrder;
+        public int getNumStateOrder() {
+            return 6;
         }
     }
 
@@ -544,7 +536,7 @@ public class LexTreeLinguist implements Linguist {
      * This is an abstract class, subclasses must implement the getSuccessorss
      * method.
      */
-    class LexTreeState implements SearchState, SearchStateArc {
+    abstract class LexTreeState implements SearchState, SearchStateArc {
         private Node node;
         private WordSequence wordSequence;
         float currentSmearTerm;
@@ -891,14 +883,15 @@ public class LexTreeLinguist implements Linguist {
                 arcCache.put(this, arcs);
             }
         }
+
+        abstract public int getOrder();
     }
 
     /**
      * Represents a unit in the search space
      */
     public class LexTreeEndUnitState extends LexTreeState
-            implements
-                UnitSearchState {
+            implements UnitSearchState {
 
         float logLanguageProbability;
         float logInsertionProbability;
@@ -1017,14 +1010,17 @@ public class LexTreeLinguist implements Linguist {
         public String toString() {
             return super.toString() + " EndUnit";
         }
+
+        public int getOrder() {
+            return 3;
+        }
     }
 
     /**
      * Represents a unit in the search space
      */
     public class LexTreeUnitState extends LexTreeState
-            implements
-                UnitSearchState {
+            implements UnitSearchState {
 
         private float logInsertionProbability;
         private float logLanguageProbability;
@@ -1145,6 +1141,10 @@ public class LexTreeLinguist implements Linguist {
          */
         public float getLanguageProbability() {
             return logLanguageProbability;
+        }
+
+        public int getOrder() {
+            return 4;
         }
     }
 
@@ -1332,6 +1332,10 @@ public class LexTreeLinguist implements Linguist {
         public String toString() {
             return super.toString() + " hmm:" + hmmState;
         }
+
+        public int getOrder() {
+            return 5;
+        }
     }
 
     /**
@@ -1356,6 +1360,10 @@ public class LexTreeLinguist implements Linguist {
                 float probability, Node parentNode) {
             super(hmmNode, wordSequence, smearTerm, smearProb, hmmState,
                     logOne, logOne, probability, parentNode);
+        }
+
+        public int getOrder() {
+            return 0;
         }
     }
 
@@ -1496,6 +1504,9 @@ public class LexTreeLinguist implements Linguist {
             }
             return arcs;
         }
+        public int getOrder() {
+            return 1;
+        }
     }
 
     /**
@@ -1528,6 +1539,10 @@ public class LexTreeLinguist implements Linguist {
                     logProbability);
         }
 
+        public int getOrder() {
+            return 2;
+        }
+
     }
 
     /**
@@ -1539,15 +1554,17 @@ public class LexTreeLinguist implements Linguist {
      * @return the insertion probability
      */
     private float calculateInsertionProbability(UnitNode unitNode) {
-        float logInsertionProbability = logUnitInsertionProbability;
-        if (unitNode.getBaseUnit().isSilence()) {
-            logInsertionProbability = logSilenceInsertionProbability;
-        } else if (unitNode.getBaseUnit().isFiller()) {
-            logInsertionProbability = logFillerInsertionProbability;
-        } else if (unitNode.getPosition().isWordBeginning()) {
-            logInsertionProbability += logWordInsertionProbability;
+        int type =  unitNode.getType();
+
+        if (type == UnitNode.SIMPLE_UNIT) {
+            return logUnitInsertionProbability;
+        } else if (type == UnitNode.WORD_BEGINNING_UNIT) {
+            return logUnitInsertionProbability + logWordInsertionProbability;
+        } else if (type == UnitNode.SILENCE_UNIT) {
+            return logSilenceInsertionProbability;
+        } else { // must be filler
+            return logFillerInsertionProbability;
         }
-        return logInsertionProbability;
     }
 
     /**

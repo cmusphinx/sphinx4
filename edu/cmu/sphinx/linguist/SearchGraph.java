@@ -22,13 +22,13 @@ public interface SearchGraph {
      * @return the set of initial search state
      */
     SearchState getInitialState();
+
     /**
-     * Returns an array of classes that represents the order 
-     * in which the states will be returned.
+     * Returns the number of different state types maintained
+     * in the search graph
      *
-     * @return an array of classes that represents the order 
-     *     in which the states will be returned
+     * @return the number of different state types
      */
-    Class[] getSearchStateOrder();
+    int getNumStateOrder();
     
 }
