@@ -288,9 +288,13 @@ public class Node {
      * @throws IOException
      */
     void dumpAISee(FileWriter f) throws IOException {
+        String posterior = "" + getPosterior();
+        if (getPosterior() == LogMath.getLogZero()) {
+            posterior = "log zero";
+        }
         f.write("node: { title: \"" + id + "\" label: \""
                 + getWord() + "[" + getBeginTime() + "," + getEndTime() + 
-                " p:" + getPosterior() + "]\" }\n");
+                " p:" + posterior + "]\" }\n");
     }
 
     /**
