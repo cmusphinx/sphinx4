@@ -281,7 +281,9 @@ public class Decoder {
             recognizer.addResultListener(new ResultListener() {
                     public void newResult(Result result) {
                         if (result.isFinal()) {
-                            getDecoderTimer().stop();
+                            if (getDecoderTimer().isStarted()) {
+                                getDecoderTimer().stop();
+                            }
                         }
                         beamFinder.process(result);
                         if (showPartialResults) {
