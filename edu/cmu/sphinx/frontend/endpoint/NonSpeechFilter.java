@@ -132,6 +132,8 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
      * @param props the SphinxProperties to read properties from
      * @param predecessor the CepstrumSource where this NonSpeechFilter
      *    gets Cepstrum from
+     *
+     * @throws IOException if an I/O error occurs
      */
     public NonSpeechFilter(String name, String context, SphinxProperties props,
                            CepstrumSource predecessor) throws IOException {

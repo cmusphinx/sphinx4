@@ -49,6 +49,7 @@ public class PropertiesResolver {
      *
      * @param sphinxProperties the SphinxProperties from the properties file
      * @param acousticProperties the properties from the AcousticModel
+     * @param newContext the context of the merged SphinxProperties
      *
      * @return a new SphinxProperties containing the resolved properties
      */

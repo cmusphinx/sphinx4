@@ -62,7 +62,7 @@ import java.util.logging.Logger;
  * Audio or Cepstrum
  * ...
  * Signal.UTTERANCE_END
- *
+ * </code>
  * <p>Any other sequence will cause this CepstrumExtractor to throw errors.
  *
  * <p>If the front end gets a null frame OUTSIDE an utterance, 
@@ -99,6 +99,8 @@ public class CepstrumExtractor extends DataProcessor
      * @param name the name of this SimpleFrontEnd
      * @param context the context of this SimpleFrontEnd
      * @param dataSource the place to pull data from
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String context, DataSource dataSource)
         throws IOException {
@@ -118,6 +120,8 @@ public class CepstrumExtractor extends DataProcessor
      * @param amName the name of the acoustic model
      * @param dataSource the source of data; can be null, in which
      *    case the setDataSource() method must be called later
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String context, 
                            SphinxProperties props,
@@ -373,6 +377,8 @@ public class CepstrumExtractor extends DataProcessor
 
     /**
      * Returns the DataProcessor in the CepstrumExtractor with the given name.
+     *
+     * @param processorName the name of the processor to return
      *
      * @return the DataProcessor with the given name, or null if no
      *    such DataProcessor

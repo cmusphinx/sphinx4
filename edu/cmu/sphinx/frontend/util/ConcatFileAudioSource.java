@@ -44,6 +44,48 @@ import java.util.Random;
  * <pre>edu.cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile</pre>
  * to a audio file for silence. By default, no silence is added.
  * Moreover, one can also specify how many files to skip for every file read.
+ * <p>
+ * The constructor of ConcatFileAudioSource takes the name of a transcript
+ * file, in HUB-4 style. This is the file to write the transcription to.
+ * A sample HUB-4 transcript looks like:
+ * <pre>
+ * bn99en_1 1 peter_jennings 0.806084 7.079850 <o,f4,male> Tonight this 
+ * Thursday big pressure on the Clinton administration to do something about 
+ * the latest killing in Yugoslavia
+ * bn99en_1 1 peter_jennings 7.079850 14.007608 <o,fx,male> Airline passengers
+ * and outrageous behavior at thirty thousand feet What can an airline do 
+ * ...
+ * bn99en_1 1 inter_segment_gap 23.097000 28.647000 <o,fx,>
+ * ...
+ * </pre>
+ * The format of each line is:
+ * test_set_name category speaker_name start_time_in_seconds
+ * end_time_in_seconds <category,hub4_focus_conditions,speaker_sex> transcript
+ * <p>
+ * In our example above,
+ * <br>test_set_name is "bn99en_1"
+ * <br>category is "1"
+ * <br>speaker_name is "peter_jennings"
+ * <br>start_time_in_seconds is "0.806084"
+ * <br>end_time_in_seconds is "7.079850"
+ * <br>category is "o" for "Overall"
+ * <br>hub4_focus_conditions is:
+ * <br>    "f0" for "Baseline//Broadcast//Speech"
+ * <br>    "f1" for "Spontaneous//Broadcast//Speech"
+ * <br>    "f2" for "Speech Over//Telephone//Channels"
+ * <br>    "f3" for "Speech in the//Presence of//Background Music"
+ * <br>    "f4" for "Speech Under//Degraded//Acoustic Conditions"
+ * <br>    "f5" for "Speech from//Non-Native//Speakers"
+ * <br>    "fx" for "All other speech"
+ * <br>speaker_sex is "male"
+ * <br>transcript is "Tonight this Thursday big pressure on the Clinton 
+ * administration to do something about the latest killing in Yugoslavia
+ * <p>
+ * The ConcatFileAudioSource will produce such a transcript if the name
+ * of the file to write to is supplied in the constructor. This transcript
+ * file will be used in detected gap insertion errors, because it accurately
+ * describes the "correct" sequence of speech and silences in the 
+ * concatenated version of the audio files.
  */
 public class ConcatFileAudioSource implements AudioSource, ReferenceSource {
 
@@ -168,6 +210,9 @@ public class ConcatFileAudioSource implements AudioSource, ReferenceSource {
      * @param context the context used
      * @param props the SphinxProperties to use
      * @param batchFile the file containing a list of audio files to read from
+     * @param transcriptFile the file to write the transcription to
+     *
+     * @throws IOException if an I/O error occurs
      */
     public ConcatFileAudioSource(String name, String context,
                                  SphinxProperties props,

@@ -133,6 +133,8 @@ public class AudioFilter extends DataProcessor implements AudioSource {
      * @param props the SphinxProperties to read properties from
      * @param predecessor the AudioSource where this AudioFilter
      *    gets Audio from
+     *
+     * @throws IOException if an I/O error occurs
      */
     public AudioFilter(String name, String context, SphinxProperties props,
                        AudioSource predecessor) throws IOException {

@@ -244,7 +244,7 @@ public class Util {
 
 
     /**
-     * Convert the two bytes starting at the given offset to a short
+     * Convert the two bytes starting at the given offset to a short.
      *
      * @param byteArray the byte array
      * @param offset where to start
@@ -495,9 +495,11 @@ public class Util {
      *
      * @param data the bytes to save
      * @param filename the binary file name
+     *
+     * @throw IOException if an I/O error occurs
      */
-    public static void bytesToFile(byte[] data, String filename) throws
-                                     IOException {
+    public static void bytesToFile(byte[] data, String filename) 
+        throws IOException {
         FileOutputStream file = new FileOutputStream(filename);
         file.write(data);
         file.close();

@@ -78,9 +78,16 @@ import java.util.Arrays;
  */
 public class EnergyPlotter {
 
+    /**
+     * The maximum level of energy for which a plot string will be
+     * preconstructed.
+     */
     public static final String PROP_MAX_ENERGY =
-    "edu.cmu.sphinx.frontend.util.EnergyPlotter.maxEnergy";
+        "edu.cmu.sphinx.frontend.util.EnergyPlotter.maxEnergy";
 
+    /**
+     * The default value of PROP_MAX_ENERGY.
+     */
     public static final int PROP_MAX_ENERGY_DEFAULT = 20;
 
 

@@ -31,6 +31,8 @@ public interface Filterbank extends SpectrumSource {
      * @param props the SphinxProperties to read properties from
      * @param predecessor the SpectrumSource from which Spectra to filter
      *    are obtained
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String context,
 			   SphinxProperties props,

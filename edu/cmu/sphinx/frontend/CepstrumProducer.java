@@ -30,6 +30,8 @@ public interface CepstrumProducer extends CepstrumSource {
      * @param context the relevant context to use
      * @param props the SphinxProperties to read properties from
      * @param predecessor where to get the Spectrum objects
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String context,
 			   SphinxProperties props,

@@ -266,6 +266,8 @@ SpectrumSource {
      *
      * @return the next available Spectrum object, returns null if no
      *     Spectrum object is available
+     *
+     * @throws IOException if an I/O error occurs
      */
     public Spectrum getSpectrum() throws IOException {
 

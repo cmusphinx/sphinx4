@@ -124,6 +124,8 @@ public class MelFilterbank extends DataProcessor implements Filterbank {
      * @param context the context of this MelFilterbank
      * @param props the SphinxProperties object to read properties from
      * @param predecessor the predecessor of this MelFilterbank
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String context,
 			   SphinxProperties props,

@@ -14,7 +14,7 @@
 package edu.cmu.sphinx.frontend.plp;
 
 /**
- * Defines various frequency warping functions
+ * Defines various frequency warping functions.
  *
  * @author <a href="mailto:rsingh@cs.cmu.edu">rsingh</a>
  * @version 1.0

@@ -44,7 +44,7 @@ public class Feature extends Data {
 
 
     /**
-     * Constructs a Feature with the given featureData, ID, and utterance
+     * Constructs a Feature with the given featureData, ID, and utterance.
      *
      * @param featureData the feature data
      * @param ID the Id of this Feature with respect to the current
@@ -97,6 +97,8 @@ public class Feature extends Data {
      * with respect to the utterance. Feature IDs start at 0.
      *
      * @return the ID
+     *
+     * @see #setID
      */
     public int getID() {
         return ID;
@@ -112,6 +114,8 @@ public class Feature extends Data {
      *
      * @return the type name of this Feature, or null if it does not
      *    have a type name.
+     *
+     * @see #setType
      */
     public String getType() {
 	return type;
@@ -145,6 +149,8 @@ public class Feature extends Data {
      * Sets the ID of this Feature.
      *
      * @param id the ID
+     *
+     * @see #getID
      */
     public void setID(int id) {
         this.ID = id;
@@ -158,6 +164,8 @@ public class Feature extends Data {
      * method have no effect.
      *
      * @param type the type name of this Feature
+     *
+     * @see #getType
      */
     public void setType(String type) {
 	if (this.type == null) {
@@ -203,7 +211,8 @@ public class Feature extends Data {
     }
 
     /**
-     * Determines if the given object is equal to this object
+     * Determines if the given object is equal to this object.
+     * Overrides Object.equals.
      *
      * @param o the object to test
      * @return <code>true</code> if the object is equal to this
@@ -220,7 +229,8 @@ public class Feature extends Data {
     }
 
     /**
-     * Generate a hashcode for an object
+     * Generate a hashcode for an object.
+     * Overrides Object.hashCode.
      *
      * @return the hashcode
      */

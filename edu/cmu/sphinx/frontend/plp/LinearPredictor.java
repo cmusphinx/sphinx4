@@ -9,6 +9,9 @@
 
 package edu.cmu.sphinx.frontend.plp;
 
+/**
+ * TODO: Describe this LinearPredictor.
+ */
 public class LinearPredictor {
     public int order;
     public int cepstrumOrder;
@@ -18,6 +21,11 @@ public class LinearPredictor {
     public double[] cepstra;
     public double[] bilinearCepstra;
 
+    /**
+     * Constructs a LinearPredictor with the given order.
+     *
+     * @param order the order of the LinearPredictor
+     */
     public LinearPredictor(int order){
 	this.order = order;
 

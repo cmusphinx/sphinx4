@@ -24,6 +24,8 @@ public interface FeatureFrameSource {
     /**
      * Returns the next N FeatureFrames produced by this FeatureFrameSource.
      *
+     * @param numberFrames  the number of features to return
+     *
      * @return the next N FeatureFrames, returns null if no
      *     FeatureFrame object is available
      *

@@ -76,7 +76,7 @@ public class Microphone extends DataProcessor implements AudioSource {
 
     /**
      * The default value for the PROP_CLOSE_AUDIO_BETWEEN_UTTERANCES
-     * property
+     * property.
      */
     public final static boolean
 	PROP_CLOSE_AUDIO_BETWEEN_UTTERANCES_DEFAULT = true;
@@ -141,6 +141,8 @@ public class Microphone extends DataProcessor implements AudioSource {
      * @param name the name of this Microphone
      * @param context the context of this Microphone
      * @param props the SphinxProperties to read properties from
+     *
+     * @throws IOException if an I/O error occurs
      */
     public Microphone(String name, String context, SphinxProperties props) 
 	throws IOException {
@@ -154,6 +156,8 @@ public class Microphone extends DataProcessor implements AudioSource {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
+     *
+     * @param props a SphinxProperties object specifying the properties values
      */
     public void setProperties(SphinxProperties props) {
 
@@ -561,7 +565,7 @@ public class Microphone extends DataProcessor implements AudioSource {
 
     /**
      * Returns true if this Microphone is currently
-     * in a recording state; false otherwise
+     * in a recording state, false otherwise.
      *
      * @return true if recording, false if not recording
      */ 

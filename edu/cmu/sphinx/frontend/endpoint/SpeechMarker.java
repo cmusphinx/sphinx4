@@ -56,6 +56,9 @@ import java.util.ListIterator;
  */
 public class SpeechMarker extends DataProcessor implements AudioSource {
 
+    /**
+     * The prefix for all the properties of this SpeechMarker.
+     */
     public static final String PROP_PREFIX = 
         "edu.cmu.sphinx.frontend.endpoint.SpeechMarker.";
 

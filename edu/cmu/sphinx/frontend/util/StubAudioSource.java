@@ -64,7 +64,7 @@ public class StubAudioSource implements AudioSource {
     /**
      * Sets the real AudioSource.
      *
-     * @return the real AudioSource
+     * @param newAudioSource the new AudioSource
      */
     public void setAudioSource(AudioSource newAudioSource) {
         this.realSource = newAudioSource;

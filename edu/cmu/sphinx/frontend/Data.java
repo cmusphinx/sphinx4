@@ -145,7 +145,9 @@ public class Data implements Serializable, Cloneable {
 
 
     /**
-     * Returns true if this Data has the given Signal
+     * Returns true if this Data has the given Signal.
+     *
+     * @param signal  the Signal type to check
      *
      * @return true if this Data object has the given Signal,
      *    false otherwise

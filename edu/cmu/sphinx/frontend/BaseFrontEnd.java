@@ -46,6 +46,7 @@ import java.util.logging.Logger;
  * Audio or Cepstrum
  * ...
  * Signal.UTTERANCE_END
+ * </code>
  *
  * <p>Any other sequence will cause this BaseFrontEnd to throw errors.
  *
@@ -95,11 +96,13 @@ public class BaseFrontEnd extends CepstrumExtractor implements FrontEnd {
 
 
     /**
-     * Constructs a default SimpleFrontEnd.
+     * Constructs a default BaseFrontEnd.
      *
-     * @param name the name of this SimpleFrontEnd
-     * @param context the context of this SimpleFrontEnd
+     * @param name the name of this BaseFrontEnd
+     * @param context the context of this BaseFrontEnd
      * @param dataSource the place to pull data from
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String context, 
                            DataSource dataSource)
@@ -120,6 +123,8 @@ public class BaseFrontEnd extends CepstrumExtractor implements FrontEnd {
      * @param amName the name of the acoustic model
      * @param dataSource the source of data; can be null, in which
      *    case the setDataSource() method must be called later
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String context, 
                            SphinxProperties props,
@@ -226,8 +231,12 @@ public class BaseFrontEnd extends CepstrumExtractor implements FrontEnd {
      * Returns the BaseFrontEnd with the given context, or null 
      * if there is no BaseFrontEnd with that context.
      *
+     * @param context the context of the FrontEnd to get
+     *
      * @return the BaseFrontEnd with the given context, or null if there
      *    is no BaseFrontEnd with that context
+     *
+     * @throws IOException if an I/O error occurs
      */
     public static FrontEnd getFrontEnd(String context) {
         Object frontend = frontends.get(context);
@@ -258,9 +267,13 @@ public class BaseFrontEnd extends CepstrumExtractor implements FrontEnd {
      * Consequently, the size of the FeatureFrame will be less than N.
      *
      * @param numberFeatures the number of Features to return
+     * @param acousticModelName the name of the acoustic model for each
+     *   the returned features are for
      *
      * @return the next N number of Features in a FeatureFrame, or null
      *    if no more FeatureFrames available
+     *
+     * @throws IOException if an I/O error occurs
      *
      * @see FeatureFrame
      */

@@ -88,6 +88,8 @@ CepstrumSource {
      * @param is the InputStream to read cepstral data from
      * @param bigEndian true if the InputStream data is in big-endian,
      *     false otherwise
+     *
+     * @throw IOException if an I/O error occurs
      */
     public void setInputStream(InputStream is, boolean bigEndian) 
 	throws IOException {	
@@ -140,6 +142,8 @@ CepstrumSource {
      *
      * @return the next available Cepstrum object, returns null if no
      *     Cepstrum object is available
+     *
+     * @throw IOException if an I/O error occurs
      */
     public Cepstrum getCepstrum() throws IOException {
 

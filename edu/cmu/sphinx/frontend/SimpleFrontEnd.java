@@ -45,6 +45,8 @@ public class SimpleFrontEnd extends BaseFrontEnd {
      * @param name the name of this SimpleFrontEnd
      * @param context the context of this SimpleFrontEnd
      * @param dataSource the place to pull data from
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String context, DataSource dataSource)
         throws IOException {
@@ -60,6 +62,8 @@ public class SimpleFrontEnd extends BaseFrontEnd {
      * @param context the context of interest
      * @param amName the name of the acoustic model
      * @param dataSource the source of data
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String context, String amName,
                            DataSource dataSource) throws IOException {
@@ -81,6 +85,10 @@ public class SimpleFrontEnd extends BaseFrontEnd {
 
     /**
      * Returns the properties of the relevant acoustic model.
+     *
+     * @param context the context of the acoustic properties
+     * @param amName  the acoustic model name of the returned acoustic 
+     *                properties
      *
      * @return the properties of the relevant acoustic model
      *

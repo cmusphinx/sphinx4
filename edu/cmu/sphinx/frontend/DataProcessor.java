@@ -63,7 +63,7 @@ public abstract class DataProcessor {
 
     
     /**
-     * Constructs a default DataProcessor
+     * Constructs a default DataProcessor.
      */
     public DataProcessor() {}
 
@@ -132,6 +132,8 @@ public abstract class DataProcessor {
      * Returns the SphinxProperties used by this DataProcessor.
      *
      * @return the SphinxProperties
+     *
+     * @see #setSphinxProperties
      */
     public final SphinxProperties getSphinxProperties() {
 	if (sphinxProperties != null) {
@@ -146,6 +148,8 @@ public abstract class DataProcessor {
      * Sets the SphinxProperties to use.
      *
      * @param sphinxProperties the SphinxProperties to use
+     *
+     * @see #getSphinxProperties
      */
     public void setSphinxProperties(SphinxProperties sphinxProperties) {
 	this.sphinxProperties = sphinxProperties;
@@ -166,6 +170,8 @@ public abstract class DataProcessor {
      * Determine whether to dump the output for debug purposes.
      *
      * @return true to dump, false to not dump
+     *
+     * @see #setDump
      */
     public final boolean getDump() {
 	return this.dump;
@@ -176,6 +182,8 @@ public abstract class DataProcessor {
      * Set whether we should dump the output for debug purposes.
      *
      * @param dump true to dump the output; false otherwise
+     *
+     * @see #getDump
      */
     public void setDump(boolean dump) {
 	this.dump = dump;

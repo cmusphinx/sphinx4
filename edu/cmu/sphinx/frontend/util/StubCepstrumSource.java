@@ -64,7 +64,7 @@ public class StubCepstrumSource implements CepstrumSource {
     /**
      * Sets the real CepstrumSource.
      *
-     * @return the real CepstrumSource
+     * @param newCepstrumSource the new CepstrumSource
      */
     public void setCepstrumSource(CepstrumSource newCepstrumSource) {
             this.realSource = newCepstrumSource;

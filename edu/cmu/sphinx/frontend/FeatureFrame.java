@@ -21,7 +21,7 @@ public class FeatureFrame {
     private Feature[] features = null;
 
     /**
-     * Constructs a FeatureFrame with the given array of Features
+     * Constructs a FeatureFrame with the given array of Features.
      *
      * @param features the Feature array
      */
@@ -31,7 +31,7 @@ public class FeatureFrame {
 
 
     /**
-     * Returns the array of Features
+     * Returns the array of Features.
      *
      * @return the array of Features
      */

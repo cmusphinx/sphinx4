@@ -166,9 +166,11 @@ public class Utterance {
 
 
     /**
-     * Returns the audio samples of the given feature.
+     * Returns the audio samples of the feature with the given ID.
      *
-     * @return the audio samples
+     * @param frameNumber ID of the feature which audio is returned
+     *
+     * @return the audio samples of the feature with the given ID
      *
      * @throws IllegalArgumentException if one or both of the featureIDs
      *    is (are) less than zero
@@ -186,6 +188,8 @@ public class Utterance {
      *
      * @param firstFeatureID the ID of the first feature
      * @param lastFeatureID the ID of the last feature
+     *
+     * @return the audio samples of the feature with the given ID
      *
      * @throws IllegalArgumentException if the firstFeatureID is greater
      *    than the lastFeatureID
@@ -225,7 +229,7 @@ public class Utterance {
 
 
     /**
-     * Returns the amount of time (in seconds) this Utterance lasts
+     * Returns the amount of time (in seconds) this Utterance lasts.
      *
      * @return how long is this utterance
      */

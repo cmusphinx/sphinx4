@@ -31,14 +31,12 @@ public class PLPFilter {
     private int numDFTPoints;
 
     /**
-     * <code>centerFreqInHertz</code> specifies the center frequency of
-     * the filter in Hertz;
+     * The center frequency of the filter in Hertz.
      */
     public double centerFreqInHz;
 
     /**
-     * <code>centerFreqInBark</code> specifies the center frequency of
-     * the filter in Bark;
+     * The center frequency of the filter in Bark.
      */
     public double centerFreqInBark;
 

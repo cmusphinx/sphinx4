@@ -231,6 +231,8 @@ public interface FrontEnd {
      * @param dataSource the place to pull data from, or null if no
      *     DataSource yet, in which case it should be set later on by
      *     the <code>setDataSource()</code> method
+     *
+     * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String context, DataSource dataSource)
         throws IOException;
@@ -243,6 +245,8 @@ public interface FrontEnd {
      * case the last Feature will contain a Signal.UTTERANCE_END signal.
      *
      * @param numberFeatures the number of FeatureFrames to return
+     * @param acousticModelName the name of the acoustic model for which
+     *                          features are returned
      *
      * @return N number of FeatureFrames, or null
      *    if no more FeatureFrames available
