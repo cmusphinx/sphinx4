@@ -43,15 +43,18 @@ public class PLPFilter {
     public double centerFreqInBark;
 
     /**
-     * Constructs a PLP filter around a given center frequency.<br>
+     * Constructs a PLP filter around a given center frequency.
+     *
      * Defines a filter according to the following equation 
-     * (all frequencies in the equation are Bark frequencies):<br>
+     * (all frequencies in the equation are Bark frequencies):
+     *
+     * <code>
      * Filter(f) = 0 if f < -2.5 <br>
      *           = 10^(-(f+0.5)) if -2.5 <= f <= -0.5 <br>
      *           = 1  if -0.5 <= f <= 0.5 <br>
      *           = 10^(2.5(f-0.5)) if 0.5 <= f <= 1.3 <br>
      *           = 0 if f > 1.3 <br>
-     *
+     * </code>
      * The current implementation assumes that the calling routine passes in
      * an array of frequencies, one for each of the DFT points in the
      * spectrum of the frame of speech to be filtered. This is used in

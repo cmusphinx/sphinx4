@@ -105,7 +105,7 @@ public class LinearPredictor {
 
     /**
      * Computes LPC Cepstra from the AR predictor parameters and alpha
-     * using a recursion invented by Oppenheim et. al.
+     * using a recursion invented by Oppenheim et al.
      *
      * @param ceporder is the order of the LPC cepstral vector to be 
      *        computed. The literature shows the optimal value of
