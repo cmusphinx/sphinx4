@@ -69,6 +69,7 @@ your environment to use JSAPI.
     <!-- Sphinx-4 (non-JSAPI) demos -->
     <target name="compile_sphinx_demos"
 	    depends="compile_sphinx_helloworld,
+	             compile_sphinx_hellongram,
 	             check_jsapi_jar.isPresent"
 	    description="Compiles Sphinx-4 demos that do not use JSAPI"/>
 
@@ -113,7 +114,7 @@ your environment to use JSAPI.
 	       destdir="${classes_dir}">
 	    <classpath refid="libs"/>
 	</javac>
-	<copy file="${src_dir}/demo/sphinx/hellongram/digits.lm"
+	<copy file="${src_dir}/demo/sphinx/hellongram/hellongram.trigram.lm"
 	      todir="${classes_dir}/demo/sphinx/hellongram"/>
 	<copy file="${src_dir}/demo/sphinx/hellongram/hellongram.config.xml"
 	      todir="${classes_dir}/demo/sphinx/hellongram"/>
@@ -125,4 +126,5 @@ your environment to use JSAPI.
 	     filesonly="true"
 	     compress="true"/>
     </target>
+
 </project>
