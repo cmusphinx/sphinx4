@@ -331,7 +331,7 @@
 
     <component name="confidenceScorer"
                type="edu.cmu.sphinx.result.MAPConfidenceScorer">
-        <property name="languageWeight" value="7.0f"/>
+        <property name="languageWeight" value="${languageWeight}"/>
     </component>
 
 </config>

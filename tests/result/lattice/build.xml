@@ -100,6 +100,7 @@ NOTE:  Before running the tests, you must have already built
 		  <jvmarg value="-mx${maximum_heap_size}"/>
 	          <sysproperty key="wordPruningSearchManager[keepAllTokens]"
 		               value="false"/>
+		  <arg value="left.wav"/>
 	    </java>
     </target>
 
@@ -152,6 +153,7 @@ NOTE:  Before running the tests, you must have already built
 		  <classpath refid="run.classpath"/>
 		  <jvmarg value="-ea"/>
 		  <jvmarg value="-mx${maximum_heap_size}"/>
+		  <arg value="left.wav"/>
 	    </java>
     </target>
 
@@ -169,6 +171,7 @@ NOTE:  Before running the tests, you must have already built
 		  <classpath refid="run.classpath"/>
 		  <jvmarg value="-ea"/>
 		  <jvmarg value="-mx${maximum_heap_size}"/>
+		  <arg value="left.wav"/>
 	    </java>
     </target>
 
