@@ -235,7 +235,9 @@ public class FlatLinguist implements Linguist, Configurable {
      * @see edu.cmu.sphinx.linguist.Linguist#deallocate()
      */
     public void deallocate() {
-        acousticModel.deallocate();
+        if (acousticModel != null) {
+            acousticModel.deallocate();
+        }
         grammar.deallocate();
     }
     /**
