@@ -28,6 +28,10 @@ import java.io.IOException;
 
 /**
  * Drops certain feature frames, usually to speed up decoding.
+ * For example, if you 'dropEveryNthFrame' is set to 2, it will drop
+ * every other feature frame. If you set 'replaceNthWithPrevious' to 3,
+ * then you replace with 3rd frame with the 2nd frame, the 6th frame
+ * with the 5th frame, etc..
  */
 public class FrameDropper extends BaseDataProcessor {
     
