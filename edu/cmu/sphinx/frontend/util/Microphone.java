@@ -120,7 +120,6 @@ public class Microphone extends BaseDataProcessor {
     private DataLine.Info info;
     private DataList audioList;
     private Logger logger;
-    private Object startLock = new Object();
     private TargetDataLine audioLine = null;
     private Utterance currentUtterance;
     private boolean bigEndian = true;
@@ -346,17 +345,10 @@ public class Microphone extends BaseDataProcessor {
 	}
 	RecordingThread recorder = new RecordingThread("Microphone");
 	recorder.start();
-
-        synchronized (startLock) {
-            try {
-                startLock.wait();
-            } catch (InterruptedException ie) {
-                ie.printStackTrace();
-            }
-        }
-
 	return true;
     }
+
+
 
 
     /**
@@ -376,12 +368,23 @@ public class Microphone extends BaseDataProcessor {
     class RecordingThread extends Thread {
 
         private boolean endOfStream = false;
-        private boolean started = false;
+        private volatile boolean started = false;
         private long totalSamplesRead = 0;
 
         public RecordingThread(String name) {
             super(name);
         }
+
+
+        /**
+         * Starts the thread, and waits for recorder to be ready
+         */
+        public void start() {
+            started = false;
+            super.start();
+            waitForStart();
+        }
+
 
         /**
          * Implements the run() method of the Thread class.
@@ -423,6 +426,25 @@ public class Microphone extends BaseDataProcessor {
 	}
 
         /**
+         * Waits for the recorder to start
+         */
+        private synchronized void  waitForStart() {
+            // note that in theory we coulde use a LineEvent START
+            // to tell us when the microphone is ready, but we have
+            // found that some javasound implementations do not always
+            // issue this event when a line  is opened, so this is a
+            // WORKAROUND.
+
+            try {
+                while (!started) {
+                    wait();
+                }
+            } catch (InterruptedException ie) {
+                logger.warning("wait was interrupted");
+            }
+        }
+
+        /**
          * Reads one frame of audio data, and adds it to the given Utterance.
          *
          * @return an Data object containing the audio data
@@ -435,11 +457,11 @@ public class Microphone extends BaseDataProcessor {
             
             int numBytesRead = audioStream.read(data, 0, data.length);
 
-            // release the startLock so that startRecording can return
+            //  notify the waiters upon start
             if (!started) {
-                synchronized (startLock) {
-                    startLock.notifyAll();
+                synchronized (this) {
                     started = true;
+                    notifyAll();
                 }
             }
 
