@@ -178,9 +178,12 @@ public class LargeTrigramModel implements LanguageModel {
 	loadedBigramBuffers = new BigramBuffer[unigrams.length];
 
         maxDepth = props.getInt(LanguageModel.PROP_MAX_DEPTH,
-                                LanguageModel.PROP_MAX_DEPTH_DEFAULT);        
+                                LanguageModel.PROP_MAX_DEPTH_DEFAULT);
+     
         if (maxDepth == LanguageModel.PROP_MAX_DEPTH_DEFAULT) {
             maxDepth = loader.getMaxDepth();
+        } else if (maxDepth == 0) {
+            throw new Error("Invalid LM max-depth: " + maxDepth);
         }
 
         System.out.println("# of unigrams: " + loader.getNumberUnigrams());
