@@ -85,9 +85,9 @@ BEGIN {
     systemCount = 3;
 
 
-    modeTitle["latest"] =  "Latest detailed results for ";
-    modeTitle["fastest"] = "Fastest detailed results for ";
-    modeTitle["best"] =    "Most accurate detailed results for ";
+    modeTitle["latest"] =  "Latest detailed ";
+    modeTitle["fastest"] = "Fastest detailed ";
+    modeTitle["best"] =    "Most accurate detailed ";
 
     # read in the test list
 
@@ -229,7 +229,8 @@ function dumpTitle(  i) {
         machineName = machine;
     }
 
-    printf("|   *%s %s*  ||||||||||\n", modeTitle[mode], title);
+    printf("|   *%s %s for %s*  ||||||||||\n", modeTitle[mode], \
+        title, systemTitle[whichSystem]);
 
     printf("| *%s %s* ", "Test run on", machineName);
     printf("| *%s* ", "Speed (RT)");

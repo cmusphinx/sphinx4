@@ -34,7 +34,9 @@ scripts="getTime mailReport makeReport parseLog regressionTest\
 	runTests_an4 runTests_an4_full runTests_an4_plus \
 	runTests_an4_spelling runTests_an4_words runTests_quick \
 	runTests_rm1 runTests_standard runTests_ti46 \
-	runTests_tidigits s4_align s4_align_sum whatsNew"
+	runTests_tidigits s4_align s4_align_sum whatsNew \
+	installTwikiPage makeTwikiDetailReport \
+	makeTwikiSummaryReport pushTwikiReports"
 
 chmod +x $scripts
 
@@ -110,3 +112,9 @@ $regressionDir/mailReport
 #################################A
 $regressionDir/pushReport
 $regressionDir/pushChanges
+
+###############################
+# Generate the twiki results
+#################################
+cd $regressionDir
+$regressionDir/pushAllTwikiReports

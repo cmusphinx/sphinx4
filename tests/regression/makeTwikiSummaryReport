@@ -79,6 +79,10 @@ BEGIN {
     systemTitle["s4"] = "Sphinx 4";
     systemCount = 3;
 
+    systemLinkName["s3"] = "SphinxThree";
+    systemLinkName["s3.3"] = "SphinxThreeThree";
+    systemLinkName["s4"] = "SphinxFour";
+
 
     modeTitle["latest"] =  "Latest results for ";
     modeTitle["fastest"] = "Fastest results for ";
@@ -211,7 +215,8 @@ function dumpTitle(  i) {
     }
 
     for (i = 0; i < systemCount; i++) {
-        printf("| *%s* ", systemTitle[systemName[i]]);
+	detailLink = "AutoGen" mode title systemLinkName[systemName[i]];
+        printf("| *[[%s][%s]]* ", detailLink, systemTitle[systemName[i]]);
     }
     printf("|\n");
 }

@@ -13,15 +13,37 @@
 # address to the list of recipients
 #
 
-./makeTwikiSummaryReport regression.log $1.list this latest $1 > AutoGenLatest$1.txt
-./makeTwikiSummaryReport regression.log $1.list this fastest $1 > AutoGenFastest$1.txt 
-./makeTwikiSummaryReport regression.log $1.list this best $1 > AutoGenBest$1.txt
+log=regression.log
+./makeTwikiSummaryReport $log $1.list this latest $1 > AutoGenlatest$1.txt
+./makeTwikiSummaryReport $log $1.list this fastest $1 > AutoGenfastest$1.txt 
+./makeTwikiSummaryReport $log $1.list this best $1 > AutoGenbest$1.txt
 
-sscp AutoGenLatest$1.txt
-sscp AutoGenFastest$1.txt
-sscp AutoGenBest$1.txt
+./makeTwikiDetailReport $log $1.list this latest $1 s4 > AutoGenlatest$1SphinxFour.txt
+./makeTwikiDetailReport $log $1.list this fastest $1 s4 > AutoGenfastest$1SphinxFour.txt 
+./makeTwikiDetailReport $log $1.list this best $1 s4 > AutoGenbest$1SphinxFour.txt
 
-sshh mv AutoGenLatest$1.txt /home/groups/c/cm/cmusphinx/twiki/data/Sphinx4
-sshh mv AutoGenFastest$1.txt /home/groups/c/cm/cmusphinx/twiki/data/Sphinx4
-sshh mv AutoGenBest$1.txt /home/groups/c/cm/cmusphinx/twiki/data/Sphinx4
+./makeTwikiDetailReport $log $1.list this latest $1 s3 > AutoGenlatest$1SphinxThree.txt
+./makeTwikiDetailReport $log $1.list this fastest $1 s3 > AutoGenfastest$1SphinxThree.txt 
+./makeTwikiDetailReport $log $1.list this best $1 s3 > AutoGenbest$1SphinxThree.txt
+
+./makeTwikiDetailReport $log $1.list this latest $1 s3.3 > AutoGenlatest$1SphinxThreeThree.txt
+./makeTwikiDetailReport $log $1.list this fastest $1 s3.3 > AutoGenfastest$1SphinxThreeThree.txt 
+./makeTwikiDetailReport $log $1.list this best $1 s3.3 > AutoGenbest$1SphinxThreeThree.txt
+
+
+installTwikiPage AutoGenlatest$1.txt
+installTwikiPage AutoGenfastest$1.txt
+installTwikiPage AutoGenbest$1.txt
+
+installTwikiPage AutoGenlatest$1SphinxFour.txt
+installTwikiPage AutoGenfastest$1SphinxFour.txt
+installTwikiPage AutoGenbest$1SphinxFour.txt
+
+installTwikiPage AutoGenlatest$1SphinxThree.txt
+installTwikiPage AutoGenfastest$1SphinxThree.txt
+installTwikiPage AutoGenbest$1SphinxThree.txt
+
+installTwikiPage AutoGenlatest$1SphinxThreeThree.txt
+installTwikiPage AutoGenfastest$1SphinxThreeThree.txt
+installTwikiPage AutoGenbest$1SphinxThreeThree.txt
 
