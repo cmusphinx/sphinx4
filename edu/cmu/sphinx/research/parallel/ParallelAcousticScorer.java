@@ -13,10 +13,10 @@
 package edu.cmu.sphinx.research.parallel;
 
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
-import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.Token;
 
 import java.util.Iterator;
+import java.util.List;
 
 import java.io.IOException;
 
@@ -56,14 +56,14 @@ public class ParallelAcousticScorer implements AcousticScorer {
 
     /**
      * Scores the given set of Tokens. All Tokens in the given
-     * ActiveList are assumed to belong to the same acoustic model.
+     * list are assumed to belong to the same acoustic model.
      *
      * @param stateTokenList a list containing StateToken objects to
      * be scored
      *
      * @return true if there are more features available
      */
-    public boolean calculateScores(ActiveList stateTokenList) {
+    public boolean calculateScores(List stateTokenList) {
 
 	FeatureFrame ff;
 
@@ -124,11 +124,11 @@ public class ParallelAcousticScorer implements AcousticScorer {
 
     /**
      * Returns the acoustic model name of the Tokens in the given
-     * ActiveList.
+     * list .
      *
      * @return the acoustic model name of the Tokens
      */
-    private String getModelName(ActiveList activeList) {
+    private String getModelName(List activeList) {
 	String modelName = null;
 	if (activeList.size() > 0) {
 	    Iterator i = activeList.iterator();

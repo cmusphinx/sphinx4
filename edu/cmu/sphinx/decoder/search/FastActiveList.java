@@ -215,23 +215,13 @@ public class FastActiveList implements ActiveList  {
     }
 
     /**
-     * Gets the set of all tokens
+     * Gets the list of all tokens
      *
-     * @return the set of tokens
+     * @return the list of tokens
      */
-    public Token[] getTokens() {
-	return (Token[]) tokenList.toArray(new Token[tokenList.size()]);
+    public List getTokens() {
+        return tokenList;
     }
-
-    /**
-     * Gets the set of all tokens
-     *
-     * @return the set of tokens
-     */
-    public Scoreable[] getScoreables() {
-	return (Scoreable[]) tokenList.toArray(new Scoreable[tokenList.size()]);
-    }
-
 
 
     /**

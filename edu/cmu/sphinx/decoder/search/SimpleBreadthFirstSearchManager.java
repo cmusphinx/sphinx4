@@ -276,7 +276,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     protected boolean  scoreTokens() {
 	boolean moreTokens;
 	scoreTimer.start();
-        moreTokens = scorer.calculateScores(activeList);
+        moreTokens = scorer.calculateScores(activeList.getTokens());
 	scoreTimer.stop();
 
 	curTokensScored.value += activeList.size();

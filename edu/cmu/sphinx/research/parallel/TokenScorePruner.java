@@ -94,8 +94,7 @@ public abstract class TokenScorePruner implements Pruner {
 
 	ActiveList newList = activeList.createNew();
 
-	Token[] tokens = activeList.getTokens();
-        List tokenList = Arrays.asList(tokens);
+        List tokenList = activeList.getTokens();
         Collections.sort(tokenList, getTokenComparator());
 
         if (tokenList.size() > 0) {

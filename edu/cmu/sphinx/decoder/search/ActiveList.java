@@ -159,18 +159,11 @@ public interface ActiveList {
 
 
     /**
-     * Gets the set of all tokens
+     * Gets the list of all tokens
      *
      * @return the set of tokens
      */
-    public Token[] getTokens();
-
-    /**
-     * Gets the set of all scoreables
-     *
-     * @return the set of tokens
-     */
-    public Scoreable[] getScoreables();
+    public List getTokens();
 
 }
 

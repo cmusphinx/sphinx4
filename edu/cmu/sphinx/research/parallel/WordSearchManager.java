@@ -365,7 +365,8 @@ public class WordSearchManager implements SearchManager {
 	boolean moreFeatures = false;
 	for (Iterator i = featureStreams.values().iterator(); i.hasNext();) {
             FeatureStream stream = (FeatureStream) i.next();
-	    moreFeatures = scorer.calculateScores(stream.activeList);
+	    moreFeatures =
+                scorer.calculateScores(stream.activeList.getTokens());
 	}
 	debugPrint("done Scoring");
 	scoreTimer.stop();

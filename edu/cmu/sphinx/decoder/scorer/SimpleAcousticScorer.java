@@ -13,14 +13,13 @@
 package edu.cmu.sphinx.decoder.scorer;
 
 import java.util.Iterator;
+import java.util.List;
 import java.io.IOException;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.Signal;
-import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
-import edu.cmu.sphinx.decoder.search.ActiveList;
 
 
 /**
@@ -66,7 +65,7 @@ public class SimpleAcousticScorer implements AcousticScorer {
      */
 
 
-    public boolean calculateScores(ActiveList scoreableList) {
+    public boolean calculateScores(List scoreableList) {
 
 	FeatureFrame ff;
 

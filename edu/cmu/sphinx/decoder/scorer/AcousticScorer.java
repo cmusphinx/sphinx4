@@ -14,7 +14,6 @@
 package edu.cmu.sphinx.decoder.scorer;
 
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.decoder.search.ActiveList;
 
 import java.util.List;
 
@@ -48,7 +47,7 @@ public interface AcousticScorer {
      * @return true if there are more features in this utterance,
      * otherwise false.
      */
-    public boolean calculateScores(ActiveList scorableList);
+    public boolean calculateScores(List scorableList);
 
     /**
      * stops the scorer

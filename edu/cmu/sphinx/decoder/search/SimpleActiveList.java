@@ -221,17 +221,8 @@ public class SimpleActiveList implements ActiveList  {
      *
      * @return the set of tokens
      */
-    public Token[] getTokens() {
-	return (Token[]) tokenList.toArray(new Token[tokenList.size()]);
-    }
-
-    /**
-     * Gets the set of all tokens
-     *
-     * @return the set of tokens
-     */
-    public Scoreable[] getScoreables() {
-	return (Scoreable[]) tokenList.toArray(new Scoreable[tokenList.size()]);
+    public List getTokens() {
+        return tokenList;
     }
 
 

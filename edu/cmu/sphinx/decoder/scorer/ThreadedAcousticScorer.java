@@ -14,13 +14,13 @@
 package edu.cmu.sphinx.decoder.scorer;
 
 import java.util.Iterator;
+import java.util.List;
 import java.io.IOException;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.decoder.search.ActiveList;
 
 
 /**
@@ -138,7 +138,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      *
      * @return true if there are more features available
      */
-    public boolean calculateScores(ActiveList scoreableList) {
+    public boolean calculateScores(List scoreableList) {
 
 	FeatureFrame ff;
 
@@ -171,7 +171,8 @@ public class ThreadedAcousticScorer implements AcousticScorer {
                 throw new Error("Can't score non-content feature");
             }
 
-	    Scoreable[] scoreables = scoreableList.getScoreables();
+	    Scoreable[] scoreables = (Scoreable[]) scoreableList.toArray(new
+                    Scoreable[scoreableList.size()]);
 
 	    if (numThreads > 1) {
 		int nThreads = numThreads;
