@@ -203,6 +203,7 @@ jsapi.exe from the lib directory.
     <target name="javadoc" 	    
 	    depends="handle_jsapi"
 	    description="Generate javadoc, optionally with '-Daccess=private'">
+	<delete dir="${javadoc_dir}"/>
         <mkdir dir="${javadoc_dir}"/>
         <javadoc sourcepath="${src_dir}"
 	         source="1.4"
