@@ -17,7 +17,7 @@ package edu.cmu.sphinx.util;
  */
 
 public class SphinxHelp {
-    private final static String VERSION = "0.80";
+    private final static String VERSION = "0.1 alpha";
 
     /**
      * The main entry point
