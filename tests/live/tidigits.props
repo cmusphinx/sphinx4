@@ -24,11 +24,10 @@ edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory.models=tidigits
 tidigits;edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel
 
 tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.format = sphinx3.binary
-tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
-tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.definition_file = wd_dependent_phone.500.mdef
-tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.data_location = wd_dependent_phone.cd_continuous_8gau
+tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location = file:./../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
+tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.data_location = cd_continuous_8gau
 tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
-tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
 
 edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
@@ -90,9 +89,9 @@ edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=7.0
 #
 ############################################################
 
-edu.cmu.sphinx.linguist.dictionary.Dictionary.location =  file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
-edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath = dictionary
-edu.cmu.sphinx.linguist.dictionary.Dictionary.fillerPath = fillerdict
+edu.cmu.sphinx.linguist.dictionary.Dictionary.location = file:./../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath = dict/cmudict.0.6d
+edu.cmu.sphinx.linguist.dictionary.Dictionary.fillerPath = dict/fillerdict
 edu.cmu.sphinx.linguist.dictionary.Dictionary.addSilEndingPronunciation=true
 
 
