@@ -3,3 +3,7 @@ rm1_unigram
 rm1_bigram
 rm1_trigram
 rm1_fst
+rm1onrm1_flatunigram
+rm1onrm1_unigram
+rm1onrm1_bigram
+rm1onrm1_trigram
