@@ -38,25 +38,40 @@ import java.util.ListIterator;
  * Slices up a Data object into a number of overlapping
  * windows (usually refered to as "frames" in the speech world).
  * In order to minimize the signal discontinuities at the boundaries
- * of each frame, a raised cosine windowing function to each frame.
- *
+ * of each frame, we multiply each frame with a raised cosine
+ * windowing function.
+ * <p>
  * The number of resulting windows depends on the window
  * size and the window shift (commonly known as frame size and frame
- * shift in speech world). The Window will be applied to each such
+ * shift in speech world). Figure 1 shows the relationship between 
+ * the original data stream, the window size, the window shift,
+ * and the windows returned:
+ * <p>
+ * <img src="doc-files/framing.jpg">
+ * <br><b>Figure 1: Relationship between original data, window size,
+ * window shift, and the windows returned.</b>
+ * <p>
+ * The raised cosine window function will be applied to each such
  * window. Since the <code>getData()</code> method will return a window,
  * and multiple windows are created for each Data object, this
- * is a 1-to-many processor.
- * <p>
- * A window (which is a Data object) is returned each time
- * <code>getData()</code> is called.
+ * is a 1-to-many processor. Also note that the returned windows should
+ * have the same number of data points as the windowing function.
  * <p>
  * The applied windowing function, <i>W</i> of length <i>N</i>
- * (usually the window size) is given by the following formula:
+ * (the window size) is given by the following formula:
  * <pre>
- * W(n) = (1-a) - (a * cos((2*Math.PI*n)/(N - 1)))
+ * W(n) = (1-a) - (a * cos((2 * Math.PI * n)/(N - 1)))
  * </pre> where:
  * <br><b>a</b> is commonly known as the "alpha" value, it defaults to 0.46,
- * the value for the HammingWindow, which is commonly used.
+ * the value for the Hamming Window.
+ * <p>
+ * Figure 2 below shows the Hamming Window function (a = 0.46),
+ * using our default window size of 25.625 ms and assuming 
+ * a sample rate of 16kHz, thus giving 410 samples per window:
+ * <p>
+ * <img src="doc-files/hamming-window.gif">
+ * <br><b>Figure 2: The Hamming window function.</b>
+ * <p>
  * If alpha is 0.5, it is known as a HanningWindow.
  * </pre>
  *
