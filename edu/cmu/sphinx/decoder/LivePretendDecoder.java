@@ -19,6 +19,7 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.result.Result;
 
 import edu.cmu.sphinx.util.BatchFile;
+import edu.cmu.sphinx.util.GapInsertionDetector;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.NISTAlign;
@@ -68,10 +69,12 @@ public class LivePretendDecoder {
     private int sampleRate;
     private String context;
     private String batchFile;
+    private String hypothesisFile;
     private Decoder decoder;
     private FileWriter hypothesisTranscript;
     private SphinxProperties props;
     private ConcatFileAudioSource dataSource;
+    private GapInsertionDetector gapInsertionDetector;
 
 
     /**
@@ -100,13 +103,13 @@ public class LivePretendDecoder {
         dataSource = new ConcatFileAudioSource
             ("ConcatFileAudioSource", context, props, batchFile);
         decoder = new Decoder(context, dataSource);
-        String transcriptFile 
+        hypothesisFile 
             = props.getString(PROP_HYPOTHESIS_TRANSCRIPT,
                               PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT);
-        if (transcriptFile != null) {
+        if (hypothesisFile != null) {
             sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE,
                                       FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
-            hypothesisTranscript = new FileWriter(transcriptFile);
+            hypothesisTranscript = new FileWriter(hypothesisFile);
         }
     }
 
@@ -131,12 +134,20 @@ public class LivePretendDecoder {
             
             if (hypothesisTranscript != null) {
                 hypothesisTranscript.write
-                    (result.getTimedBestResult(false, true) + "\n");
+                    (result.getTimedBestResult(false, true, sampleRate) +"\n");
                 hypothesisTranscript.flush();
             }
         }
 
         alignResults(resultList, dataSource.getReferences());
+
+        Timer gapTimer = Timer.getTimer(context, "GapInsertionDetector");
+        gapTimer.start();
+        GapInsertionDetector gid = new GapInsertionDetector
+            (dataSource.getTranscriptFile(), hypothesisFile);
+        System.out.println("# of gap insertion errors: " + gid.detect());
+        gapTimer.stop();
+
         Timer.dumpAll(context);
         decoder.showSummary();
     }
@@ -162,6 +173,13 @@ public class LivePretendDecoder {
 
     }
 
+    /**
+     * Saves the aligned hypothesis and reference text to the aligned
+     * text file.
+     *
+     * @param hypothesis the aligned hypothesis text
+     * @param reference the aligned reference text
+     */
     private void saveAlignedText(String hypothesis, String reference) {
         try {
             FileWriter writer = new FileWriter("align.txt");
