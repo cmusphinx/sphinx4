@@ -101,15 +101,20 @@ WARRANTIES.
 		<li><a href="javadoc/edu/cmu/sphinx/frontend/doc-files/FrontEndFAQ.html#decode_cepstra">Decoding cepstra</a></li>
 		<li><a href="javadoc/edu/cmu/sphinx/frontend/doc-files/FrontEndFAQ.html#enable_endpointer">Enabling the endpointer</a></li>
 	    </ul>
-	<li><a href="#batch_tests">Running the Batch Tests</a></li>
+	<li><a href="#batch_tests">Running the Regression Tests</a></li>
 	    <ul>
-	       <li><a href="#isolated_digits_test">Isolated Digits</a>
-	       <li><a href="#connected_digits_test">Connected Digits</a>
-	       <li><a href="#small_vocab_test">Small Vocabulary</a>
-	       <li><a href="#medium_vocab_test">Medium Vocabulary</a>
-	       <li><a href="#large_vocab_test">Large Vocabulary</a>
-	       <li><a href="#batch_files">Batch Files</a></li>
-	       <li><a href="#input_files">Input Audio/Cepstral Files</a></li>
+	       <li><a href="#isolated_digits_test">Isolated Digits</a>, 
+	           <a href="#connected_digits_test">Connected Digits</a>
+	       <li><a href="#small_vocab_test">Small Vocabulary</a>, 
+	           <a href="#medium_vocab_test">Medium Vocabulary</a>, 
+	           <a href="#large_vocab_test">Large Vocabulary</a>
+	    </ul>
+	</li>
+	<li><a href="#setup_test">Setting up a Regression Test</a>
+	    <ul>
+	       <li><a href="#batch_files">Batch Files</a>
+	       <li><a href="#input_files">Input Audio/Cepstral Files</a>
+	       <li><a href="#an4_walkthrough">Example: Setting up AN4 tests</a>
 	    </ul>
 	</li>
 	<li><a href="#acoustic_models">Acoustic Model Package</a></li>
@@ -584,7 +589,7 @@ d:\work\sphinx4&gt;ant clean
 
 <br>&nbsp;
 
-<li><a name="batch_tests"><b>Running the Batch Tests</b></a>
+<li><a name="batch_tests"><b>Running the Regression Tests</b></a>
 
   <p>
   Sphinx-4 contains a number of regression tests using common speech databases.
@@ -751,6 +756,31 @@ d:\work\sphinx4&gt;ant clean
 
   </li>
 
+<br>&nbsp;
+
+
+<li><a name="setup_test"><b>Setting up a Regression Test</b></a>
+
+<p>
+Each batch mode regression test consists of the following components:
+<ul>
+<li><a href="#input_files">Test data</a> - the audio or cepstral data to 
+    perform the test on. This is usually some well known database such as 
+    TIDIGITS or HUB-4. Alternatively, it can also be data that you recorded on
+    your own.
+<li><a href="#batch_files">Batch File</a> - this text file lists the location 
+    of all the test files, as well as the transcription of the test file.
+<li>Acoustic model & Dictionary
+<li>Configuration file - specifies the configuration of the system you use to
+    test the data.
+<li>Grammar file - this can either be a word list file, N-gram language
+    model, or a BNF-style grammar file (such as JSGF).
+<li><a href="javadoc/edu/cmu/sphinx/tools/batch/BatchModeRecognizer.html">
+    Batch-mode Recognizer</a> - this is the Sphinx-4 batch-mode recognizer.
+</ul>
+
+<p>To learn about how to setup a regression test, take a look at the
+<a href="#an4_walkthrough">walkthrough of setting up the AN4 tests</a>.
 
 <p>
 <br><a name="batch_files"><b>Batch Files</b></a>
@@ -803,9 +833,130 @@ byte order can be automatically detected.
 </p>
 
 
+<p>
+<br><a name="an4_walkthrough"><b>Walkthrough of Setting up the AN4 Tests</b></a>
+<p>
+To illustrate the process of setting up a regression test, lets use AN4,
+an existing test, as an example. The following steps were used to create
+the AN4 tests.
+
+<p>
+<ol>
+<li><b>Create a test directory</b> - the various files for each test set 
+    (e.g., config file, batch file, grammar files, etc..) should reside
+    in its own directory, normally under <code>tests/performance</code>.
+    For example, the AN4 tests reside in <code>tests/performance/an4</code>.
+<p>
+<li><b>Obtain and convert the test database</b> - the AN4 test database 
+    is downloaded
+    from the <a href="http://www.speech.cs.cmu.edu/databases/an4/">AN4 website</a> (choose "Raw audio (.raw) format, big endian byte order").
+    The downloaded tarball is then unpacked into a directory of your choice,
+    which in our case is <code>/lab/speech/sphinx4/data/an4</code>.
+    Since the AN4 test data
+    already comes in raw audio format, no conversion is necessary.
+    However, other test databases might require conversion to raw audio.
+    For example, the TIDIGITS test files are in SPHERE format, so it is 
+    necessary to convert them to raw audio format before it can be read by
+    the Sphinx-4 front end. This is usually accomplished by using the
+    program <code>sox</code> on UNIX platforms.
+<p>
+<li><b>Create a batch file</b> - a test database usually comes with a 
+    transcript (i.e., the actual text of the speech data) of all the 
+    test files. Using the transcript file, a 
+    <a href="#batch_files">batch file</a> is created,
+    listing the location of the test files and their corresponding transcript.
+    For example, our <code>tests/performance/an4/an4_full.batch</code>
+    file looks like:
+<pre>
+/lab/speech/sphinx4/data/an4/an4_clstk/fash/an251-fash-b.raw yes
+/lab/speech/sphinx4/data/an4/an4_clstk/fash/an253-fash-b.raw go
+/lab/speech/sphinx4/data/an4/an4_clstk/fash/an254-fash-b.raw yes
+/lab/speech/sphinx4/data/an4/an4_clstk/fash/an255-fash-b.raw u m n y h six
+...
+</pre>
+    All batch files should reside in the test directory, in this case
+    <code>tests/performance/an4</code>.
+<p>
+<li><b>Acoustic model & Dictionary</b> - we are using the Wall Street Journal
+    (WSJ) models for the AN4 test, which is already included in this
+    distribution. We only had to specify its URL location (relative to the
+    test directory) in the configuration file. In this example, the acoustic
+    model and the dictionary location should be 
+    <code>file:./../../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip</code>
+<p>
+<li><b>Creating the config & grammar files</b> - 
+    In order to create your own configuration file, you must first understand 
+    the <a href="javadoc/edu/cmu/sphinx/util/props/doc-files/ConfigurationManagement.html">Sphinx-4 configuration management</a> system.
+    The AN4 config file is
+    <code>tests/performance/an4/an4.config.xml</code>, please take a look
+    at it. This file describes how the batch-mode recognizer and 
+    its various sub-components should be configured. Note that this
+    file also contains configurations for the live-mode recognizer,
+    which is not the subject of interest of this walkthrough.
+    In the following we will refer to components in the config file
+    using <code>highlights</code>.
+    <p>
+    In an4.config.xml, the batch-mode recognizer is called <code>batch</code>.
+    It uses the Recognizer called <code>wordRecognizer</code>,
+    which contains the <code>decoder</code>, as well as
+    various monitors that keeps track of recognition accuracy, speed, and
+    memory. The <code>decoder</code> contains the <code>searchManager</code>,
+    which in turn contains the <code>linguist</code>, the <code>pruner</code>,
+    the <code>scorer</code>, and the <code>activeList</code>.
+    Refer to the <a href="javadoc/index.html">Javadoc</a> (go to bottom
+    of the page) for a description of each of these components.
+    The linguist used is the <code>flatLinguist</code>,
+    and the grammar of the <code>flatLinguist</code> is either the
+    <code>wordListGrammar</code>, which is a file with a list of words, e.g.,
+<pre>
+AND
+APOSTROPHE
+APRIL
+AREA
+AUGUST
+CODE
+</pre>
+    the <code>lmGrammar</code> (i.e., N-gram language model), or 
+    <code>fstGrammar</code> (i.e., finite state tranducer grammar).
+    The <code>lmGrammar</code> uses a language model file (text-based for AN4)
+    generated by the <a href="http://www.speech.cs.cmu.edu/SLM_info.html">CMU
+    Statistical Language Modeling (SLM) Toolkit</a>. 
+
+    The <code>flatLinguist</code> also
+    specifies the acoustic model used, and in this case it is the WSJ models.
+    The location and format of the WSJ model, as well as the location of 
+    the various files in the model, are also specified.
+    The <code>scorer</code> contains the front end,
+    which is called <code>mfcFrontEnd</code> since it produces MFCC features.
+<p>
+<li><b>Creating a build.xml for Ant</b> - a file called <code>build.xml</code>
+    is necessary to run Ant. This file is the Ant version of the Makefile
+    in Make. All Ant targets are listed in this file.
+    For details on how to write this file, refer to the documentation
+    at <a href="http://ant.apache.org/">http://ant.apache.org/</a>.
+    Lets use the first Ant target, <code>an4_words_wordlist</code>, as an
+    example. This Ant target invokes the <code>java</code> command
+    on the class <code>edu.cmu.sphinx.tools.batch.BatchModeRecognizer</code>.
+    This class takes a configuration file (<code>an4.config.xml</code>)
+    and a batch file (<code>an4_words.batch</code>) as arguments.
+    This class looks for the component named <code>batch</code>
+    in the configuration file. The configuration manager will create this
+    component (and its subcomponents). Therefore, the component 
+    <code>edu.cmu.sphinx.tools.batch.BatchModeRecognizer</code> should always
+    be named <code>"batch"</code> in the config.xml file.
+
+    Other AN4 Ant targets are created similarly.
+<p>
+<li><b>Setup Complete</b> - At this point, we have completed the setup
+    of the AN4 tests. You can now run the AN4 tests by following instructions
+    in <a href="#small_vocab_test">small vocabulary tests</a>.
+
+</ol>
+
 </li>
 
 <br>&nbsp;
+
 
 <li><a name="acoustic_models"><b>Acoustic Models</b></a>
 
