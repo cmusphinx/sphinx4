@@ -21,7 +21,7 @@ testType=${1:-full}
 # are used for testing the regression tests
 #
 
-if [ $testType == "quick" ]; then
+if [ $testType = "quick" ]; then
     runTests="runQuickTests";
 else
     runTests="runAllTests";
@@ -83,6 +83,7 @@ cd $regressionDir
 
 if [ $status = "OK" ]; then
    startRunTime=`$regressionDir/getTime`
+   echo running tests from $regressionDir/$runTests
    $regressionDir/$runTests
    endRunTime=`$regressionDir/getTime`
    # totalRunTime=$((endRunTime - startRunTime)) // a bash-ism
