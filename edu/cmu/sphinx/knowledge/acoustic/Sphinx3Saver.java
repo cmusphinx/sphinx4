@@ -297,7 +297,8 @@ class Sphinx3Saver implements Saver {
 	    }
 
 	    Senone senone = new GaussianMixture( 
-	      logMath, (float[]) mixtureWeightsPool.get(i), mixtureComponents);
+	      logMath, (float[]) mixtureWeightsPool.get(i), 
+              mixtureComponents, i);
 
 	    pool.put(i, senone);
 	}

@@ -289,7 +289,7 @@ class ModelInitializerLoader implements Loader {
 
 	    Senone senone = new GaussianMixture( 
 	      logMath, (float[]) mixtureWeightsPool.get(state), 
-	      mixtureComponents);
+	      mixtureComponents, state);
 
 	    pool.put(state, senone);
 	}

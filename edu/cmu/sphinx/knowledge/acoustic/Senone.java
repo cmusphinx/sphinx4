@@ -46,6 +46,14 @@ public interface Senone extends Serializable {
 
 
     /**
+     * Gets the ID for this senone
+     *
+     * @return the senone id
+     */
+    public long getID();
+
+
+    /**
      * Dumps a senone
      *
      * @param msg an annotation for the dump

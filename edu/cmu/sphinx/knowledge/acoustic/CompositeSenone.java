@@ -27,6 +27,7 @@ import java.io.Serializable;
  * Note that all scores are maintained in LogMath log base
  */
 public class CompositeSenone implements Senone, Serializable {
+    private final static int MAX_SENONES = 20000;
     private Senone[] senones;
 
     transient volatile private Feature logLastFeatureScored;
@@ -126,5 +127,57 @@ public class CompositeSenone implements Senone, Serializable {
      */
     public Senone[] getSenones() {
 	return senones;
+    }
+
+    /**
+     * Determines if two objects are equal
+     *
+     * @param o the object to compare to this.
+     *
+     * @return true if the objects are equal
+     */
+    public boolean equals(Object o) {
+        if (!(o instanceof Senone)) {
+            return false;
+        }
+        Senone other = (Senone) o;
+        return this.getID() == other.getID();
+    }
+
+
+    /**
+     * Returns the hashcode for this object
+     *
+     * @return the hashcode
+     */
+    public int hashCode() {
+        long id = getID();
+        int high = (int) ((id >> 32) & 0xffffffff);
+        int low = (int) (id & 0xffffffff);
+        return high + low;
+    }
+
+    /**
+     * Gets the ID for this senone
+     *
+     * @return the senone id
+     */
+    public long getID() {
+        long factor = 1L;
+        long id = 0L;
+        for (int i = 0; i < senones.length; i++) {
+            id += senones[i].getID() * (factor);
+            factor = factor * MAX_SENONES;
+        }
+        return id;
+    }
+
+    /**
+     * Retrieves a string form of this object
+     *
+     * @return the string representation of this object
+     */
+    public String toString() {
+        return "senone id: " + getID();
     }
 }

@@ -29,6 +29,7 @@ class GaussianMixture implements Senone, Serializable {
     // and therefore should not be written to.
     private float[] logMixtureWeights;			
     private MixtureComponent[] mixtureComponents;	
+    private long id;
 
     transient volatile private Feature logLastFeatureScored;
     transient volatile private float logLastScore;
@@ -45,13 +46,14 @@ class GaussianMixture implements Senone, Serializable {
      * senone
      */
     public GaussianMixture(LogMath logMath, float[] logMixtureWeights, 
-    		MixtureComponent[] mixtureComponents) {
+    		MixtureComponent[] mixtureComponents, long id) {
 
 	assert mixtureComponents.length == logMixtureWeights.length;
 
 	this.logMath = logMath;
 	this.mixtureComponents = mixtureComponents;
 	this.logMixtureWeights = logMixtureWeights;
+        this.id = id;
     }
 
 
@@ -86,6 +88,53 @@ class GaussianMixture implements Senone, Serializable {
 	    logLastFeatureScored = feature;
 	}
 	return logScore;
+    }
+
+
+    /**
+     * Determines if two objects are equal
+     *
+     * @param o the object to compare to this.
+     *
+     * @return true if the objects are equal
+     */
+    public boolean equals(Object o) {
+        if (!(o instanceof Senone)) {
+            return false;
+        }
+        Senone other = (Senone) o;
+        return this.getID() == other.getID();
+    }
+
+
+    /**
+     * Returns the hashcode for this object
+     *
+     * @return the hashcode
+     */
+    public int hashCode() {
+        long id = getID();
+        int high = (int) ((id >> 32) & 0xffffffff);
+        int low = (int) (id & 0xffffffff);
+        return high + low;
+    }
+
+    /**
+     * Gets the ID for this senone
+     *
+     * @return the senone id
+     */
+    public long getID() {
+        return id;
+    }
+
+    /**
+     * Retrieves a string form of this object
+     *
+     * @return the string representation of this object
+     */
+    public String toString() {
+        return "senone id: " + getID();
     }
 
     /**
