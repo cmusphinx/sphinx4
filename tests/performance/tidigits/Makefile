@@ -1,5 +1,10 @@
 # [[[copyright]]] 
 #
+# "tidigits" refers to the:
+#
+# "NIST CD-ROM Version of the Texas Instruments-developed Studio Quality
+# Speaker-Independent Connected-Digit Corpus".
+#
 # Makefile for all the TIDIGITS tests.
 #
 
