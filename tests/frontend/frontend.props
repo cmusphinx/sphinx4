@@ -4,18 +4,26 @@
 #
 ############################################################
 
-edu.cmu.sphinx.frontend.sampleRate = 8000
-edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
-edu.cmu.sphinx.frontend.windowShiftInMs = 10
-edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
-edu.cmu.sphinx.frontend.cepstrumSize = 13
-edu.cmu.sphinx.frontend.cmn.initialCepstralMean = 12
-edu.cmu.sphinx.frontend.cmn.windowSize = 500
-edu.cmu.sphinx.frontend.cmn.shiftWindow = 800
-edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
-edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
-edu.cmu.sphinx.frontend.featureExtractor.copiesOfFirstLastFeature = 3
-edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
-edu.cmu.sphinx.frontend.fft.numberFftPoints = 256
-edu.cmu.sphinx.frontend.windower.alpha = 0.46
-edu.cmu.sphinx.frontend.useAcousticModelProperties = false
+edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+
+edu.cmu.sphinx.frontend.FrontEndFactory.sampleRate = 8000
+edu.cmu.sphinx.frontend.feature.LiveCMN.cmnWindow = 500
+edu.cmu.sphinx.frontend.feature.LiveCMN.shiftWindow = 800
+edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints = 256
+
+edu.cmu.sphinx.frontend.FrontEndFactory.pipelines=mfc
+
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class=edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.feature.LiveCMN
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor
+
+
+edu.cmu.sphinx.frontend.util.DataDumper.enable=true
+edu.cmu.sphinx.frontend.util.DataDumper.outputFormat=0.00000000E00
+edu.cmu.sphinx.frontend.util.DataDumper.outputSignals=false
+
+edu.cmu.sphinx.frontend.util.StreamDataSource.bytesPerRead=4000

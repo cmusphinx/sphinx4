@@ -48,13 +48,23 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="all"
             description="Compiles all the tests.">
-            <mkdir dir="${classes_dir}/tests/knowledge/dictionary/"/>
+            <mkdir dir="${classes_dir}/tests/frontend/"/>
             <javac debug="true"
                    source="1.4"
                    deprecation="true"
                    destdir="${classes_dir}"
                    classpath="${classes_dir}"
                    srcdir="."/>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Deletes all build output and *~ file droppings         * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="clean" description="Delete all build output">
+        <delete dir="${classes_dir}/tests/frontend/"/>
     </target>
 
     
@@ -84,7 +94,7 @@ NOTE:  Before running the tests, you must have already built
 	    description="Make the testFrontEnd.sh script executable.">
 	    <exec executable="chmod">
 	    <arg line="+x testFrontEnd.sh"/>
-	    </exec>
+ 	    </exec>
     </target>
 
     <!-- ********************************************************** -->
@@ -96,7 +106,7 @@ NOTE:  Before running the tests, you must have already built
 	    description="Tests the Preemphasizer">
 	    <antcall target="chmodTestFrontEnd"/>
 	    <exec executable="testFrontEnd.sh">
-	    <arg line="preemphasis PreemphasizerTest"/>
+	    <arg line="preemphasis 1"/>
 	    </exec>
     </target>
 
@@ -109,7 +119,7 @@ NOTE:  Before running the tests, you must have already built
 	    description="Tests the Hamming windower">
 	    <antcall target="chmodTestFrontEnd"/>
 	    <exec executable="testFrontEnd.sh">
-	    <arg line="hammingWindow HammingWindowerTest"/>
+	    <arg line="hammingWindow 2"/>
 	    </exec>
     </target>
 
@@ -122,7 +132,7 @@ NOTE:  Before running the tests, you must have already built
 	    description="Tests the Spectrum Analyzer">
 	    <antcall target="chmodTestFrontEnd"/>
 	    <exec executable="testFrontEnd.sh">
-	    <arg line="spectrum SpectrumAnalyzerTest"/>
+	    <arg line="spectrum 3"/>
 	    </exec>
     </target>
 
@@ -135,7 +145,7 @@ NOTE:  Before running the tests, you must have already built
 	    description="Tests the MelFilterbank">
 	    <antcall target="chmodTestFrontEnd"/>
 	    <exec executable="testFrontEnd.sh">
-	    <arg line="melspectrum MelFilterbankTest"/>
+	    <arg line="melspectrum 4"/>
 	    </exec>
     </target>
 
@@ -148,7 +158,7 @@ NOTE:  Before running the tests, you must have already built
             description="Tests the MelCepstrumProducer">
             <antcall target="chmodTestFrontEnd"/>
             <exec executable="testFrontEnd.sh">
-            <arg line="melcepstrum MelCepstrumTest"/>
+            <arg line="melcepstrum 5"/>
 	    </exec>
     </target>
 
@@ -161,7 +171,7 @@ NOTE:  Before running the tests, you must have already built
             description="Tests the Live CMN">
             <antcall target="chmodTestFrontEnd"/>
             <exec executable="testFrontEnd.sh">
-            <arg line="cmn CMNTest"/>
+            <arg line="cmn 6"/>
 	    </exec>
     </target>
 
@@ -174,73 +184,8 @@ NOTE:  Before running the tests, you must have already built
             description="Tests the FeatureExtractor">
             <antcall target="chmodTestFrontEnd"/>
             <exec executable="testFrontEnd.sh">
-            <arg line="features FeatureExtractorTest"/>
+            <arg line="features 7"/>
 	    </exec>
-    </target>
-
-    <!-- ********************************************************** --> 
-    <!-- *                                                        * -->
-    <!-- * Converts audio into a binary cepstra file              * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="dumpBinaryCepstra"
-            description="Converts audio into a binary cepstra file">
-	    <java classpath="${classes_dir}"
-		  classname="tests.frontend.CepstrumFileDumper">
-		  <arg value="cepstra_dump.props"/>
-		  <arg value="${inputFile}"/>
-		  <arg value="${outputFile}"/>
-		  <arg value="binary"/>
-	    </java>
-    </target>
-
-    <!-- ********************************************************** --> 
-    <!-- *                                                        * -->
-    <!-- * Converts audio into an ascii cepstra file              * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="dumpAsciiCepstra"
-            description="Converts audio into an ASCII cepstra file">
-	    <java classpath="${classes_dir}"
-		  classname="tests.frontend.CepstrumFileDumper">
-		  <arg value="cepstra_dump.props"/>
-		  <arg value="${inputFile}"/>
-		  <arg value="${outputFile}"/>
-		  <arg value="ascii"/>
-	    </java>
-    </target>
-
-    <!-- ********************************************************** --> 
-    <!-- *                                                        * -->
-    <!-- * Converts a list of audio files into binary cepstra     * -->
-    <!-- * files.                                                 * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="batchDumpBinaryCepstra"
-            description="Converts a list of audio files into binary cepstra.">
-	    <java classpath="${classes_dir}"
-		  classname="tests.frontend.BatchWaveToCepstrum">
-		  <arg value="cepstra_dump.props"/>
-		  <arg value="/lab/speech/sphinx4/data/medialab/mit.batch.2"/>
-		  <arg value="outDir"/>
-		  <arg value="mfcc"/>
-		  <arg value="binary"/>
-	    </java>
-    </target>
-
-    <!-- ********************************************************** --> 
-    <!-- *                                                        * -->
-    <!-- * Runs the parallel front end test.                      * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="parallelFrontEnd"
-            description="Runs the parallel front end test.">
-	    <java classpath="${classes_dir}"
-		  classname="tests.frontend.ParallelFrontEndTest">
-		  <arg value="ParallelFrontEnd"/>
-		  <arg value="parallel-tidigits.props"/>
-		  <arg value="19990601-114739-00000001.raw"/>
-	    </java>
     </target>
 
 </project>
