@@ -79,7 +79,7 @@ time=`date +%T`
 cd $regressionDir
 machine=`./getHostname`
 echo $date > .startDate
-echo $time > .startTime
+echo $time > .startTimeOfDay
 ./collectMetrics | $regressionDir/updateLog
 
 ##########################

@@ -95,7 +95,7 @@ BEGIN {
 
     # read in the date and time when the test was started
     getline date < ".startDate";
-    getline time < ".startTime";
+    getline time < ".startTimeOfDay";
 
     # read in the test list
 
@@ -118,7 +118,7 @@ $F_TEST == "test"  && ($F_MACHINE == machine || machine == "any") \
     } else if (mode == "fastest") {
         speed = getSpeedFromLine($0);
 	if (speed != NOT_AVAILABLE) {
-	    if (!(tag in bestSpeed) || speed < bestSpeed[tag]) {
+	    if (!(tag in bestSpeed) || speed <= bestSpeed[tag]) {
 	        bestSpeed[tag] = speed;
 		testData[tag] = $0;
 	    }
@@ -126,7 +126,7 @@ $F_TEST == "test"  && ($F_MACHINE == machine || machine == "any") \
     } else if (mode == "best") {
         accuracy = getAccuracyFromLine($0);
 	if (accuracy != NOT_AVAILABLE) {
-	    if (!(tag in bestAccuracy) || accuracy < bestAccuracy[tag]) {
+	    if (!(tag in bestAccuracy) || accuracy <= bestAccuracy[tag]) {
 	        bestAccuracy[tag] = accuracy;
 		testData[tag] = $0;
 	    }
@@ -211,6 +211,10 @@ function getDate(testName, systemName) {
 #
 
 function dumpTest(testName,  _j) {
+   if (testName == "") {
+       printf("| | | | | | | | |\n");
+       return;
+   }
    bestTime = 10000;
    bestWER = 10000;
    for (_j = 0; _j < systemCount; _j++) {

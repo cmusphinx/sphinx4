@@ -95,7 +95,7 @@ BEGIN {
 
     # read in the date and time when the test was started
     getline date < ".startDate";
-    getline time < ".startTime";
+    getline time < ".startTimeOfDay";
 
     # read in the test list
 
@@ -210,6 +210,10 @@ function getPercent(num, denom) {
 #
 
 function dumpTest(testName) {
+   if (testName == "") {
+       printf("| | | | | | | | | |\n");
+       return;
+   }
    printf("|<font color=#018888> %s </font>", testName);
    printf("|%s", getSpeed(testName));
    words = get(testName, F_WORDS);
