@@ -79,11 +79,10 @@ WARRANTIES.
 
       <h3>Installation</h3>
       <ul>
-        <li><a href="#download_and_install">Required software</a></li>
+        <li><a href="#download_and_install">Required Software</a></li>
         <li><a href="#source">Downloading Sphinx-4</a></li>
         <li><a href="#how_build">Building Sphinx-4</a></li>
 	<li><a href="#create_javadocs">Creating Javadocs</a></li>
-	<li><a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">Downloading Acoustic Models</a></li>
 	<li><a href="#faq">Troubleshooting</a></li>
       </ul>
 
@@ -132,8 +131,8 @@ WARRANTIES.
       <br>
       <font size="-1">
       <b>NOTE</b>: This page contains links to javadocs that need to be
-      created. To reach these links, you should either follow instructions in
-      <a href="#create_javadocs">Creating Javadocs</a>, or view this page
+      created. If the links are broken, you should either follow instructions 
+      in <a href="#create_javadocs">Creating Javadocs</a>, or view this page
       online at <a href="http://cmusphinx.sourceforge.net/sphinx4/">
       http://cmusphinx.sourceforge.net/sphinx4/</a>.
       </font>
@@ -189,7 +188,7 @@ WARRANTIES.
 	 <a href="./javadoc/edu/cmu/sphinx/linguist/language/ngram/large/LargeTrigramModel.html">binary</a>
 	 versions of unigram, bigram, trigram, 
 	 <a href="./javadoc/edu/cmu/sphinx/jsapi/JSGFGrammar.html">Java Speech API Grammar Format (JSGF)</a>, and 
-	 <a href="./javadoc/edu/cmu/sphinx/linguist/language/grammar/FSTGrammar.html">FST grammars</a>.  
+	 <a href="./javadoc/edu/cmu/sphinx/linguist/language/grammar/FSTGrammar.html">ARPA-format FST grammars</a>.  
 
       <p>Generalized <a href="./javadoc/edu/cmu/sphinx/linguist/acoustic/package-summary.html"><b>acoustic model</b></a> 
          architecture. Includes pluggable support for 
@@ -206,7 +205,7 @@ WARRANTIES.
 
       <p>
       (<b>NOTE:</b> The links in this section point to local files created by
-      javadoc. Please follow the instructions on 
+      javadoc. If they are broken, please follow the instructions on 
       <a href="#create_javadocs">Creating Javadocs</a> to create these links.)
   </li>
 
@@ -215,7 +214,7 @@ WARRANTIES.
       <p>Sphinx-4 is a very flexible system capable of performing many
          different types of recognition tasks.  As such, it is
          difficult to characterize the performance and accuracy of
-         Sphinx-4 with just a few simple numbers such as speech and
+         Sphinx-4 with just a few simple numbers such as speed and
          accuracy.  Instead, we regularly run regression tests on
          Sphinx-4 to determine how it performs under a variety of
          tasks.  These tasks and their latest results are as follows
@@ -270,7 +269,7 @@ WARRANTIES.
 
 <ul>
 
-<li><a name="download_and_install"><b>Required software</b></a>
+<li><a name="download_and_install"><b>Required Software</b></a>
 
       <p>Sphinx-4 has been built and tested on the Solaris<sup> <font
       size="-1">TM</font></sup> Operating Environment, Mac OS X, Linux
@@ -281,12 +280,15 @@ WARRANTIES.
 <ul>
   <li><b>Java 2 SDK, Standard Edition, v1.4</b> or better. 
       Go to <a href="http://java.sun.com">java.sun.com</a>,
-      and select "J2SE". Download the latest version.
+      and select "J2SE". At the time of writing, the latest release
+      version is 1.4.2, which is the one we recommend.
       </li>
 
   <br>
-  <li><b>Ant 1.5.3</b> or better, available at <a
-  href="http://ant.apache.org">ant.apache.org</a>. At the time of writing, the latest version is 1.6.0. The site has a manual with instructions on how to download, install, and use ant. The gist of it, just to get started:
+  <li><b>Ant 1.6.0</b> or better, available at <a
+  href="http://ant.apache.org">ant.apache.org</a>. The site has a manual 
+  with instructions on how to download, install, and use ant. 
+  The gist of it, just to get started:
   <ul>
   <li> On <a href="http://ant.apache.org">ant.apache.org</a> click on
   "binary distributions" under "Download", on the left-hand side.
@@ -357,7 +359,7 @@ setenv JAVA_HOME /usr/java/j2sdk1.4.2
 <br>&nbsp;
 
   <li>
-  <a name="source"><b>Sphinx-4 source distribution</b></a>
+  <a name="source"><b>Downloading Sphinx-4</b></a>
   <br>&nbsp;
       <ul>
       <li>
@@ -381,8 +383,8 @@ setenv JAVA_HOME /usr/java/j2sdk1.4.2
       <code>jar</code> command which is in the <code>bin</code> directory of
       your Java installation:
       <pre>
-jar xvf bin.zip
-jar xvf src.zip</pre>
+jar xvf sphinx4-bin-{version}.zip
+jar xvf sphinx4-src-{version}.zip</pre>
       </p>
       <p>
       If you downloaded sphinx4-bin-{version}.zip, a directory called
@@ -428,15 +430,18 @@ jar xvf src.zip</pre>
 
   <li><a name="how_build"><b>Building Sphinx-4</b></a>
       <p>
-      You must download the sphinx4-src-{version}.zip in order to be able to
+      Since the sphinx4-bin-{version}.zip distribution does not contain
+      the source code, you must download the sphinx4-src-{version}.zip, or
+      retrieved the code from SourceForge using CVS, in order to be able to
       build from the sources. The software required for building Sphinx-4 are 
-      listed in the <a href="#download_and_install">Required software</a> 
+      listed in the <a href="#download_and_install">Required Software</a> 
       section.
       </p>
       <p>
-      To build Sphinx-4, from a command prompt, make sure you have changed to 
+      To build Sphinx-4, at the command prompt changed to 
       the directory where you installed Sphinx-4 (usually, a simple 
-      "cd sphinx4" will do), and merely type the following:
+      "cd sphinx4" will do). Set your <code>JAVA_HOME</code> environment
+      variable as described above. Then type the following:
       </p>
       <pre>ant</pre>
     <p>
@@ -456,9 +461,10 @@ jar xvf src.zip</pre>
 
 <p>
 The javadocs have already been built if you downloaded the 
-sphinx4-bin-{version}.zip. In order to build the javadocs yourself, you need 
-to download the sphinx4-src-{version}.zip instead. To build the javadocs, 
-go to the top level directory ("sphinx4" or "sphinx4-src-{version}"), and type:
+sphinx4-bin-{version}.zip. In order to build the javadocs yourself, you must 
+download the sphinx4-src-{version}.zip distribution instead. To build the 
+javadocs, go to the top level directory ("sphinx4" or 
+"sphinx4-src-{version}"), and type:
 </p>
 <pre>ant javadoc</pre>
 <p>This will build javadocs from public classes, displaying only the public methods and fields. In general, this is all the information you will need. If you need more details, such as private or protected classes, you can generate the corresponding javadoc by doing, for example:
@@ -494,8 +500,7 @@ go to the top level directory ("sphinx4" or "sphinx4-src-{version}"), and type:
 
   <br>  
 
-  <li>How can I update the code in the the current working copy that I
-  have?
+  <li>How can I update the code in the current working copy that I have?
     <ul>
 
       <li>If you are using CVS, you can do a "cvs update -d". The
@@ -613,9 +618,6 @@ d:\work\sphinx4&gt;ant clean
       <li>
       <a href="demo/sphinx/hellongram/README.html">Hello N-Gram Demo</a>: a command line application using an N-gram language model for speech recognition
       </li>
-      <li>
-      <a href="tests/live/README.html">Live Demo</a>: shows the basic speech recognition capabilites via a graphical user interface
-      </li>
     </ul>
   </p>
   <p>
@@ -657,6 +659,8 @@ d:\work\sphinx4&gt;ant clean
 
   <p>
   Sphinx-4 contains a number of regression tests using common speech databases.
+  Again, you have to download the source distribution or downloaded the
+  source tree using CVS in order to get the regression tests directory.
   In order to run the batch regression tests, you will need to have
   any or all of the following test data. The links will lead you to an
   outside site where you can acquire them. Data from the <a
@@ -675,7 +679,7 @@ d:\work\sphinx4&gt;ant clean
   <p>
   First of all, make sure that you have built Sphinx-4 already.
   To do so, go to the top level and type:
-  <pre>ant all</pre>
+  <pre>ant</pre>
   <p>
   You also need to make sure you have the appropriate acoustic model(s)
   installed. More details below.
@@ -774,13 +778,13 @@ d:\work\sphinx4&gt;ant clean
   <a name="medium_vocab_test"><br><b>Medium Vocabulary</b></a>
 
   <p>
-  Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary RM1 models</a>.
+  Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary RM1 model</a> file, called
+  <code>RM1_13dCep_16k_40mel_130Hz_6800Hz.jar</code>.
   <br>
-  Then in properties file,
-  <code>sphinx4/tests/performance/rm1/rm1.config.xml</code>,
-  find the component called <code>sphinx3Loader</code>
-  and change the <code>location</code> property to point to the URL of
-  the downloaded binary RM1 models.
+  Then in the build file for the RM1 tests,
+  <code>sphinx4/tests/performance/rm1/build.xml</code>,
+  changed the <code>classpath</code> property of the build file to point to
+  the location of your <code>RM1_13dCep_16k_40mel_130Hz_6800Hz.jar</code>.
   <p>
   You must have the RM1 test data, available from the 
   <a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S3B">LDC RM1</a> website.
@@ -804,8 +808,25 @@ d:\work\sphinx4&gt;ant clean
   <a name="large_vocab_test"><br><b>Large Vocabulary</b></a>
 
   <p>
-  The HUB-4 models are currently unavailable, and therefore you currently
-  will not be able to run this test.
+  Make sure that you have downloaded the
+  <a href="">binary HUB4 model</a> file, which is called
+  <code>HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.jar</code>. Then, in the build
+  file for the HUB4 tests, <code>sphinx4/tests/performance/hub4/build.xml
+  </code>, changed the <code>classpath</code> property of the build file to 
+  point to the location of your 
+  <code>HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.jar</code>.
+  </p>
+
+  <p>
+  You must have the HUB4 test data, available from the 
+  <a href="http://wave.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC2000S88">LDC HUB4</a> website.
+  </p>
+
+  <p>
+  You also need to prepare a batch file, which is currently called
+  <code>f0_hub4.batch</code> in the build.xml file, by following instructions
+  in the <a href="#batch_files">Batch Files</a> section.
+  </p>
 
   <p>
   To run the test:
@@ -876,7 +897,7 @@ summary of the results is reported.
 <p><a name="input_files"><b>Input Audio/Cepstral Files</b></a>
 
 <p>The audio files used by Sphinx-4 can contain raw audio or cepstra,
-which is a form of encoding speech. The Java platform has support for
+which is a form of encoded speech. The Java platform has support for
 other data formats, such as MS WAV or Sun's au, but, provided as is,
 Sphinx-4 can handle only raw data.
 </p>
@@ -901,7 +922,7 @@ byte order can be automatically detected.
 <br><a name="an4_walkthrough"><b>Walkthrough of Setting up the AN4 Tests</b></a>
 <p>
 To illustrate the process of setting up a regression test, lets use AN4,
-an existing test, as an example. The following steps were used to create
+an existing test, as an example. Use the following steps to create
 the AN4 tests.
 
 <p>
@@ -911,10 +932,10 @@ the AN4 tests.
     in its own directory, normally under <code>tests/performance</code>.
     For example, the AN4 tests reside in <code>tests/performance/an4</code>.
 <p>
-<li><b>Obtain and convert the test database</b> - the AN4 test database 
-    is downloaded
-    from the <a href="http://www.speech.cs.cmu.edu/databases/an4/">AN4 website</a> (choose "Raw audio (.raw) format, big endian byte order").
-    The downloaded tarball is then unpacked into a directory of your choice,
+<li><b>Obtain and convert the test database</b> - download the AN4 test 
+    database from the <a href="http://www.speech.cs.cmu.edu/databases/an4/">
+    AN4 website</a> (choose "Raw audio (.raw) format, big endian byte order").
+    Unpack the downloaded tarball into a directory of your choice,
     which in our case is <code>/lab/speech/sphinx4/data/an4</code>.
     Since the AN4 test data
     already comes in raw audio format, no conversion is necessary.
@@ -924,10 +945,10 @@ the AN4 tests.
     the Sphinx-4 front end. This is usually accomplished by using the
     program <code>sox</code> on UNIX platforms.
 <p>
-<li><b>Create a batch file</b> - a test database usually comes with a 
+<li><b>Create a batch file</b> - a test database usually contains a 
     transcript (i.e., the actual text of the speech data) of all the 
-    test files. Using the transcript file, a 
-    <a href="#batch_files">batch file</a> is created,
+    test files. Using the transcript file, create a
+    <a href="#batch_files">batch file</a>,
     listing the location of the test files and their corresponding transcript.
     For example, our <code>tests/performance/an4/an4_full.batch</code>
     file looks like:
@@ -941,14 +962,22 @@ the AN4 tests.
     All batch files should reside in the test directory, in this case
     <code>tests/performance/an4</code>.
 <p>
-<li><b>Acoustic model & Dictionary</b> - we are using the Wall Street Journal
-    (WSJ) models for the AN4 test, which is already included in this
-    distribution. We only had to specify its URL location (relative to the
-    test directory) in the configuration file. In this example, the acoustic
-    model and the dictionary location should be 
-    <code>file:./../../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip</code>
+<li><b>Acoustic model & Dictionary</b> - use the Wall Street Journal (WSJ) 
+    models for the AN4 test, which is already included as a JAR file
+    in the binary distribution (sphinx4-bin-{version}.zip). If you downloaded
+    the source distribution, building it by running <code>ant</code>
+    at the top level directory will create the JAR file for the WSJ model.
+    The JAR file should be included in the classpath of the application
+    you are deploying. In this case, the WSJ JAR file 
+    (<code>lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code>) is included
+    in the java command line inside the build.xml run file. We also need
+    to specify in the config file (see the next item below) 
+    the acoustic model class we are using, which in this case is
+    <code>edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz
+    </code>. The dictionary is also specified in the config file using
+    the resource mechanism of Sphinx-4.
 <p>
-<li><b>Creating the config & grammar files</b> - 
+<li><b>Creating the config file & grammar files</b> - 
     In order to create your own configuration file, you must first understand 
     the <a href="javadoc/edu/cmu/sphinx/util/props/doc-files/ConfigurationManagement.html">Sphinx-4 configuration management</a> system.
     The AN4 config file is
@@ -1024,88 +1053,53 @@ CODE
 
 <li><a name="acoustic_models"><b>Acoustic Models</b></a>
 
-<p>The model package, as provided in the <a
-href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">download
-page</a>, contains the acoustic model, the language model, and the
-dictionary. Sphinx-4 can handle model packages provided as a directory
-structure or the corresponding compressed archived zip or jar file. A
-jar file is a zip file with some additional rules. For example, it has
-to have a file named MANIFEST in it.
+<p>
+The two main acoustic models that are used by Sphinx-4, TIDIGITS and
+Wall Street Journal, are already included in the <code>"lib"</code>
+directory of the binary distribution. For the source distribution, you will
+build it when you type <code>ant</code> at the top level directory. 
+Our regression tests also uses the RM1 and HUB4 models,
+which are available for download separately on the download page.
+Sphinx-4 can handle model packages provided as a jar file. 
 </p>
 <p>
-The files in the model package can be in binary or ASCII
-format. Additionally, the dictionary and language model files are not
-required to be in the package. You can specify their locations. But
-the files that make up the acoustic model are required. These files
-are named "means", "variances", "transition_matrices",
-"mixture_weights", and model definition. The first four have to be in
-the same directory in the acoustic model packages. For the sake of
-explanation, we will refer to this directory as "continuous" from here
-on. The last one normally end in ".mdef". Therefore, an example of
-directory structure in an acoustic model package is as follows.
+Each acoustic model implements the 
+<a href="javadoc/edu/cmu/sphinx/linguist/acoustic/AcousticModel.html">
+AcousticModel interface</a>. For example, the WSJ models are wrapped by
+a class called <code>edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz</code>, which implements the AcousticModel interface.
+This implementation class is in the JAR file of the models, together
+with the actual data files of the model. This way, two simple steps are
+need to use a particular acoustic model:
 </p>
+<ol>
+<li>Include the JAR file in your classpath.</li>
+<li>Specify the model implementation class in the config file.</li>
+</ol>
+<p>
+You can find out the model implementation class of a JAR file using the
+<code>java -jar</code> command. For example, you can find out the model
+class of the WSJ model by:
 <pre>
-acoustic_model
-   |
-   + acoustic_model.mdef
-   |
-   + continuous
-        |
-        + means
-        + variances
-        + mixture_weights
-        + transition_matrices
+sphinx4>java -jar lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
+
+Wall Street Journal acoustic models
+Class: edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz
+        Is Binary: true
+        Sparse Form: false
+        Filters: 40
+        Vector Length: 39
+	Gaussians: 8
+	Model Definition: etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
+	Data Location: cd_continuous_8gau
+	Feature Type: cepstra_delta_doubledelta
+	Sample Rate: 16000
+	Description: Wall Street Journal acoustic models
+	Number Fft Points: 512
+	Max Freq: 6800
+	Min Freq.: 130
 </pre>
-<p>
-It is not the goal of this documentation to provide an explanation
-about the concept of HMMs. The explanation below is superficial, and
-provided only in a way that the files in the acoustic model package
-make sense.
-</p>
-<p>
-An HMM models a process using a sequence of states. Associated with
-each state, there is a probability density function. A popular choice
-for this function is a Gaussian mixture, that is, a summation of
-Gaussians. As you may recall, a single Gaussian is defined by a mean
-and a variance, or, in the case of a multidimensional Gaussian, by a
-mean vector and a covariance matrix, or, under some simplifying
-assumptions, a variance vector. The "means" and "variances" files in the
-"continuous" directory contain exactly this: a table in which each line
-contains a mean vector or a variance vector. The dimension of these
-vectors is the same as the incoming data, the encoded speech
-signal. The Gaussian mixture is a summation of Gaussians, with
-different weights for different Gaussians. The "mixture_weights" file
-contains this: each line contains the weights for a combination of
-Gaussians.
-</p>
-<p>
-The HMM is a model with a set of states. The transitions between
-states have an associated probability. These probabilities make up the
-transition matrices stored in the "transition_matrices" file.
-</p>
-<p>
-The files in the "continuous" directory are, therefore, tables, or
-pools, or means, variances, mixture weights, and transition
-probabilities.
-</p>
-<p>
-The dictionary is a file that maps words to their phonetic
-transcriptions, that is, it maps words to sequences of phonemes.
-</p>
-<p>
-The language model contains information about probabilities of words
-in a language. These probabilities could be for individual words or
-for sequences of two or three words.
-</p>
-<p>
-The model definition file in a way ties everything together. If the
-recognition system models phonemes, there is an HMM for each
-phoneme. The model definition file has one line for each phoneme. The
-phoneme could be in a context or context independent. Each line,
-therefore, identifies a unique HMM. This line has the phoneme
-identification, the non-required left or right context, the index of a
-transition matrix, and, for each state, the index of a mean vector, a
-variance vector, and a set of mixture weights.
+The print out also includes details about how the model was trained, but
+this is not important for the average user.
 </p>
 
 </li>
