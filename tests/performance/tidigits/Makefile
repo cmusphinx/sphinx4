@@ -147,6 +147,7 @@ tidigits_super_quick_align:
 ##########################################################################
 
 
+
 # The TIDIGITS test, but uses the TreeLinguist instead of the FlatLinguist
 
 tidigits_tree:
@@ -189,33 +190,121 @@ tidigits_super_quick_tree:
 
 
 
+
+##########################################################################
+#
+# TIDIGITS tests using the Wall Street Journal acoustic models
+#
+##########################################################################
+
+
+
+# A quick version of the TIDIGITS test using the WSJ acoustic
+# models
+
+wsj_tidigits_quick:
+	$(JAVA_CMD) \
+	-Dtests.decoder.BatchDecoder.skip=5\
+	tests.decoder.BatchDecoder wsjDigits.props \
+	./tidigits.batch
+
+
+
+# A very quick version of the TIDIGITS test using the WSJ acoustic
+# models
+
+wsj_tidigits_super_quick:
+	$(JAVA_CMD) \
+	-Dtests.decoder.BatchDecoder.skip=200\
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false\
+	tests.decoder.BatchDecoder wsjDigits.props \
+	./tidigits.batch
+
+
+
+# A very quick version of the TIDIGITS test using the WSJ acoustic
+# models and the tree linguist
+
+wsj_tidigits_super_quick_tree:
+	$(JAVA_CMD) \
+	-Dtests.decoder.BatchDecoder.skip=200\
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.TreeLinguist\
+	-Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushterbi=false\
+	tests.decoder.BatchDecoder wsjDigits.props \
+	./tidigits.batch
+
+
+
+# A very quick version of the TIDIGITS test using the WSJ acoustic
+# models and the tree linguist
+#
+# Experimental bushderbi algorithm
+
+wsj_tidigits_super_quick_bush:
+	$(JAVA_CMD) \
+	-Dtests.decoder.BatchDecoder.skip=200\
+	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.TreeLinguist\
+	-Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushterbi=true\
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-100 \
+	tests.decoder.BatchDecoder wsjDigits.props \
+	./tidigits.batch
+
+
+
+# A very quick version of TIDIGITS test using the TreeLinguist and an FST.
+
+wsj_tidigits_super_quick_tree_fst:
+	$(JAVA_CMD) \
+	-Dtests.decoder.BatchDecoder.skip=200\
+	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.TreeLinguist\
+	-Dedu.cmu.sphinx.model.acoustic.useComposites=false\
+	-Dedu.cmu.sphinx.search.Linguist.joinPronunciations=true \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar\
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=800\
+	-Dedu.cmu.sphinx.search.Dictionary.wordReplacement=lollapalooza\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-100 \
+	-Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx4/data/fst/digits.fst \
+        -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
+	tests.decoder.BatchDecoder wsjDigits.props \
+	./tidigits.batch
+
+
+
+
 ##########################################################################
 #
 # Miscellaneous tests
 #
 ##########################################################################
 
+
+
 prune_test:
 	$(JAVA_CMD) \
 	-Dtests.decoder.BatchDecoder.skip=200\
-        -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
 	-Dtests.search.Decoder.showPartialResults=false \
 	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=1000000\
 	-Dtests.search.Decoder.showBestToken=false \
 	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1e-100\
-	tests.decoder.BatchDecoder tiDigits.props \
+	tests.decoder.BatchDecoder tidigits.props \
 	./tidigits.batch
 
 prune_test2:
 	$(JAVA_CMD) \
 	-Dtests.decoder.BatchDecoder.skip=5\
-        -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=false\
 	-Dtests.search.Decoder.showPartialResults=false \
 	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=1000000\
 	-Dtests.search.Decoder.showBestToken=false \
 	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1e-100\
-	tests.decoder.BatchDecoder tiDigits.props \
+	tests.decoder.BatchDecoder tidigits.props \
 	./tidigits.batch
 
