@@ -12,6 +12,7 @@
 
 package edu.cmu.sphinx.decoder;
 
+import edu.cmu.sphinx.frontend.util.BatchFileAudioSource;
 import edu.cmu.sphinx.frontend.util.ConcatFileAudioSource;
 import edu.cmu.sphinx.frontend.DataSource;
 import edu.cmu.sphinx.frontend.Feature;
@@ -21,10 +22,12 @@ import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.result.Result;
 
 import edu.cmu.sphinx.util.BatchFile;
+import edu.cmu.sphinx.util.FileReferenceSource;
 import edu.cmu.sphinx.util.GapInsertionDetector;
+import edu.cmu.sphinx.util.NISTAlign;
+import edu.cmu.sphinx.util.ReferenceSource;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.Utilities;
 
 import java.io.File;
@@ -54,6 +57,17 @@ public class LivePretendDecoder {
      */
     public final static String PROP_PREFIX = 
 	"edu.cmu.sphinx.decoder.LivePretendDecoder.";
+
+    /**
+     * SphinxProperty specifying the DataSource class.
+     */
+    public final static String PROP_DATA_SOURCE = PROP_PREFIX + "dataSource";
+
+    /**
+     * The default value of PROP_DATA_SOURCE.
+     */
+    public final static String PROP_DATA_SOURCE_DEFAULT =
+        "edu.cmu.sphinx.frontend.util.BatchFileAudioSource";
 
     /**
      * SphinxProperty specifying the transcript file.
@@ -96,17 +110,20 @@ public class LivePretendDecoder {
     private int alignInterval;
     private int numUtterances;
     private int numUtteranceStart;
+
     private long maxResponseTime;
     private long minResponseTime;
     private long totalResponseTime;
+
     private String context;
     private String batchFile;
     private String hypothesisFile;
     private String referenceFile;
+
     private Decoder decoder;
     private FileWriter hypothesisTranscript;
     private SphinxProperties props;
-    private ConcatFileAudioSource dataSource;
+    private ReferenceSource referenceSource;
     private GapInsertionDetector gapInsertionDetector;
 
 
@@ -118,9 +135,10 @@ public class LivePretendDecoder {
      */
     public LivePretendDecoder(String context, String batchFile) 
         throws IOException {
-        props = SphinxProperties.getSphinxProperties(context);
         this.context = context;
-        init(props, batchFile);
+        this.props = SphinxProperties.getSphinxProperties(context);
+        this.batchFile = batchFile;
+        init(props);
     }
 
     /**
@@ -130,15 +148,9 @@ public class LivePretendDecoder {
      * 
      * @param batchFile the batch file
      */
-    private void init(SphinxProperties props, String batchFile) 
-        throws IOException {
-        this.batchFile = batchFile;
+    private void init(SphinxProperties props) throws IOException {
         referenceFile = props.getString(PROP_REFERENCE_TRANSCRIPT,
                                         PROP_REFERENCE_TRANSCRIPT_DEFAULT);
-        dataSource = new ConcatFileAudioSource
-            ("ConcatFileAudioSource", context, props, 
-             batchFile, referenceFile);
-        decoder = new Decoder(context, dataSource);
         hypothesisFile 
             = props.getString(PROP_HYPOTHESIS_TRANSCRIPT,
                               PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT);
@@ -148,6 +160,9 @@ public class LivePretendDecoder {
                                   FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
         alignInterval = props.getInt(PROP_ALIGN_INTERVAL, 
                                      PROP_ALIGN_INTERVAL_DEFAULT);
+
+        decoder = new Decoder(context, getDataSource());
+
         maxResponseTime = Long.MIN_VALUE;
         minResponseTime = Long.MAX_VALUE;
         
@@ -168,6 +183,38 @@ public class LivePretendDecoder {
                     }
                 }
             });
+    }
+
+    /**
+     * Returns the appropriate DataSource object.
+     *
+     * @return the appropriate DataSource object
+     */
+    private DataSource getDataSource() throws IOException {
+
+        DataSource dataSource = null;
+        String dataSourceClass = props.getString
+            (PROP_DATA_SOURCE, PROP_DATA_SOURCE_DEFAULT);
+
+        // if its the BatchFileAudioSource
+        if (dataSourceClass.equals(PROP_DATA_SOURCE_DEFAULT)) {
+            dataSource = new BatchFileAudioSource
+                ("BatchFileAudioSource", context, batchFile);
+            referenceSource = new FileReferenceSource(referenceFile);
+
+        } else if (dataSourceClass.equals
+                   ("edu.cmu.sphinx.frontend.util.ConcatFileAudioSource")) {
+            ConcatFileAudioSource source = new ConcatFileAudioSource
+                ("ConcatFileAudioSource", context, props, 
+                 batchFile, referenceFile);
+            dataSource = source;
+            referenceSource = source;
+
+        } else {
+            throw new Error("Unsupported DataSource: " + dataSourceClass);
+        }
+
+        return dataSource;
     }
 
     /**
@@ -195,7 +242,7 @@ public class LivePretendDecoder {
             
             if (alignInterval > 0 && (numUtterances % alignInterval == 0)) {
                 // perform alignment if the property 'alignInterval' is set
-                List references = dataSource.getReferences();
+                List references = referenceSource.getReferences();
                 List section =
                     references.subList(startReference, references.size());
                 alignResults(resultList, section);
@@ -205,7 +252,7 @@ public class LivePretendDecoder {
         }
 
         // perform alignment on remaining results
-        List references = dataSource.getReferences();
+        List references = referenceSource.getReferences();
         List section = references.subList(startReference, references.size());
         if (resultList.size() > 0 || section.size() > 0) {
             alignResults(resultList, section);
@@ -226,7 +273,7 @@ public class LivePretendDecoder {
 
         assert numUtteranceStart == numUtterances;
 
-        int actualUtterances = dataSource.getReferences().size();
+        int actualUtterances = referenceSource.getReferences().size();
         float avgResponseTime =
             (float) totalResponseTime / (numUtteranceStart * 1000);
         
