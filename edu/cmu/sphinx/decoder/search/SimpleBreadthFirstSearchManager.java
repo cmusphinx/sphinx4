@@ -128,6 +128,22 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     public final static boolean PROP_WANT_ENTRY_PRUNING_DEFAULT = false;
 
 
+    /**
+     * A sphinx property that controls the number of frames processed
+     * for every time the decode growth step is skipped. Setting this
+     * property to zero disables grow skipping.  Setting this number
+     * to a small integer will increase the speed of the decoder but
+     * will also decrease its accuracy. The higher the number, the
+     * less often the grow code is skipped.
+     */
+    public final static String PROP_GROW_SKIP_INTERVAL = PROP_PREFIX +
+                    "growSkipInterval";
+    /**
+     * The default value for the PROP_GROW_SKIP_INTERVAL property.
+     */
+    public final static int PROP_GROW_SKIP_INTERVAL_DEFAULT = 0;
+
+
 
     private Linguist linguist;		// Provides grammar/language info
     private Pruner pruner;		// used to prune the active list
@@ -165,6 +181,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
     private float threshold;
     private float wordThreshold;
+    private int growSkipInterval = 0;
 
     /**
      * Initializes this BreadthFirstSearchManager with the given
@@ -209,6 +226,8 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
         absoluteWordBeamWidth = props.getInt(PROP_ABSOLUTE_WORD_BEAM_WIDTH,
                     PROP_ABSOLUTE_WORD_BEAM_WIDTH_DEFAULT);
+        growSkipInterval = props.getInt(PROP_GROW_SKIP_INTERVAL,
+                    PROP_GROW_SKIP_INTERVAL_DEFAULT);
 
         double relativeWordBeamWidth = 
                props.getDouble(PROP_RELATIVE_WORD_BEAM_WIDTH,
@@ -280,7 +299,10 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
         if (more) {
 	    pruneBranches(); 		// eliminate poor branches
 	    currentFrameNumber++;
-            growBranches(); 	        // extend remaining branches
+            if (growSkipInterval == 0 || 
+                    (currentFrameNumber % growSkipInterval) != 0) {
+                growBranches(); 	        // extend remaining branches
+            }
 	}
         return !more;
     }
