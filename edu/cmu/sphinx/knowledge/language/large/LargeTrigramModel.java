@@ -88,6 +88,9 @@ public class LargeTrigramModel implements LanguageModel {
 
     private BinaryLoader loader;
 
+    private int bigramMisses;
+    private int trigramMisses;
+
 
     /**
      * Creates a simple ngram model from the data at the URL. The
@@ -272,10 +275,10 @@ public class LargeTrigramModel implements LanguageModel {
         BigramProbability bigram = findBigram(firstWordID, secondWordID);
 
         if (bigram != null) {
-            // System.out.println("Found bigram!");
             return bigramProbTable[bigram.getProbabilityID()];
         } else {
             // System.out.println("Didn't find bigram");
+            bigramMisses++;
             return (unigrams[firstWordID].getLogBackoff() + 
                     unigrams[secondWordID].getLogProbability());
         }
@@ -344,6 +347,7 @@ public class LargeTrigramModel implements LanguageModel {
             // System.out.println("Found trigram!");
 	    score = trigramProbTable[trigram.getProbabilityID()];
 	} else {
+            trigramMisses++;
 	    BigramProbability bigram = findBigram(firstWordID, secondWordID);
 	    if (bigram != null) {
 		score = trigramBackoffTable[bigram.getBackoffID()] +
@@ -542,5 +546,28 @@ public class LargeTrigramModel implements LanguageModel {
 	return followers;
     }
 
+    
+    /**
+     * Returns the number of times when a bigram is queried, but there
+     * is no bigram in the LM (in which case it uses the backoff 
+     * probabilities).
+     *
+     * @return the number of bigram misses
+     */
+    public int getBigramMisses() {
+        return bigramMisses;
+    }
+
+
+    /**
+     * Returns the number of times when a trigram is queried, but there
+     * is no trigram in the LM (in which case it uses the backoff 
+     * probabilities).
+     *
+     * @return the number of bigram misses
+     */
+    public int getTrigramMisses() {
+        return trigramMisses;
+    }
 }
 
