@@ -72,7 +72,7 @@ public class Token implements Scoreable {
     }
 
     private Token predecessor;
-    // private Feature feature;
+    private Feature feature;
     private int frameNumber;
     private float logTotalScore;
     private float logLanguageScore;
@@ -212,7 +212,7 @@ public class Token implements Scoreable {
      * Returns the feature for this Token.
      */
     public Feature getFeature() {
-        return null; // feature;
+        return feature;
     }
 
     /**
