@@ -1,0 +1,2 @@
+Main-Class: edu.cmu.sphinx.util.SphinxHelp
+Class-Path: jsapi.jar
