@@ -14,12 +14,15 @@ import javax.sound.sampled.SourceDataLine;
 /**
  * Plays audio data to the System's audio device.
  */
-class AudioPlayer {
+public class AudioPlayer {
 
     private AudioFormat defaultFormat = // default format is 8khz
     new AudioFormat(8000f, 16, 1, true, true);
 
     private SourceDataLine line;
+
+    
+    public AudioPlayer() {}
 
 
     /**
