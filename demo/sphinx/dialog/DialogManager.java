@@ -115,7 +115,7 @@ public class DialogManager implements Configurable {
      * maintains a set of dialog nodes. When a new node is added the
      * application specific beh
      *
-     * @param the name of the node
+     * @param name the name of the node
      * @param behavior the application specified behavior for the node
      */
     public void addNode(String name, DialogNodeBehavior behavior) {
@@ -258,7 +258,7 @@ public class DialogManager implements Configurable {
      * @parma s the message
      */
     private void trace(String s) {
-        System.out.println("Trace: " + s);
+        logger.info(s);
     }
 
     /**
@@ -451,7 +451,7 @@ class DialogNodeBehavior {
                     sb.append(" ");
                 }
             }
-            tagString = sb.toString();
+            tagString = sb.toString().trim();
         }
         return tagString;
     }
@@ -472,15 +472,13 @@ class DialogNodeBehavior {
  * grammar upon entry into the node
  */
 class NewGrammarDialogNodeBehavior extends DialogNodeBehavior {
-    private String grammarName;
 
     /**
      * creates a  NewGrammarDialogNodeBehavior 
      *
      * @param grammarName the grammar name
      */
-    public NewGrammarDialogNodeBehavior(String grammarName) {
-        this.grammarName = grammarName;
+    public NewGrammarDialogNodeBehavior() {
     }
 
     /**
@@ -488,15 +486,16 @@ class NewGrammarDialogNodeBehavior extends DialogNodeBehavior {
      */
     public void onEntry() throws IOException {
         super.onEntry();
-        getGrammar().loadJSGF(grammarName);
+        getGrammar().loadJSGF(getGrammarName());
     }
 
     /**
-     * Returns the name of the grammar
+     * Returns the name of the grammar. The name of the grammar is the same as
+     * the name of the node
      *
      * @return the grammar name
      */
     public String getGrammarName() {
-        return grammarName;
+        return getName();
     }
 }

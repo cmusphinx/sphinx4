@@ -10,4 +10,5 @@ public <command> =      read next message       { read } |
                         delete message          { delete } |
                         reply to message        { reply } |
                         compose new message     { new } |
-                        [go to] main menu       { dialog_menu } ;
+                        [go to [the]] main menu { goto_menu } |
+                        get help                    { help } ;

@@ -1,0 +1,28 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for dialog manager example
+ */
+
+grammar phone;
+
+public <phone> =     call (philip | phil) { phil } |
+                     call (will | willie) { will } |
+                     call paul { paul } |
+                     call (james | jim) { james } |
+                     call bhiksha { bhiksha } |
+                     call evandro { evandro } |
+                     call rita { rita } |
+                     call pedro { pedro } |
+                     call peter { peter } |
+                     call (joe | joseph)  { joe } |
+                     call (richard | rich) { richard } |
+                     call ravi { ravi } |
+                     call arthur { arthur } |
+                     call karl { karl } |
+                     call steve { steve } |
+                     call glen { glen } |
+                     call nicole { nicole } |
+
+                  get help                 { help } |
+                  [go to [the]] main menu  { goto_menu } ;

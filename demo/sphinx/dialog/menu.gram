@@ -6,8 +6,10 @@
 
 grammar menu;
 
-public <command> =      read email      { dialog_email } |
-                        play games      { dialog_games } |
-                        read news       { dialog_news } |
-                        listen to music { dialog_music } |
-                        watch movies    { dialog_movies } ;
+public <command> =      read email      { goto_email } |
+                        play games      { goto_games } |
+                        read news       { goto_news } |
+                        listen to music { goto_music } |
+                        watch movies    { goto_movies } |
+                        make a phone call { goto_phone } |
+                        get help            { help } ;

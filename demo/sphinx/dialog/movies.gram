@@ -9,7 +9,8 @@ grammar movies;
 public <movies> =     watch lord of the rings { lotr } | 
                       watch the magnificent seven { m7 } |
                       watch two thousand one a space odyssey { 2001 } |
-                      watch the matrix { matrix } |
-                      watch finding nemo { finding nemo } |
-                      watch farenheit nine one one { f 9/11 } |
-                      [go to] main menu    { dialog_menu } ;
+                      watch the matrix     { matrix } |
+                      watch finding nemo   { finding nemo } |
+                      watch spider man     { spiderman } |
+                      get help                 { help } |
+                      [go to [the]] main menu    { goto_menu } ;

@@ -11,4 +11,5 @@ public <command> =      read the boston globe { globe } |
                         read the nashua telegraph { nashua  } |
                         read the mercury news { merculry } |
                         read the new york times {nyt  } |
-                        [go to] main menu       { dialog_menu } ;
+                        get help                    { help } |
+                        [go to [the]] main menu       { goto_menu } ;

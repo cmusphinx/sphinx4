@@ -9,6 +9,12 @@ grammar games;
 public <command> =      play doom { doom } |
                         play quake { quake } |
                         play chess { chess  } |
+                        play unreal tournament { unreal  } |
                         play monopoly { monopoly } |
+                        play checkers { checkers } |
+                        play hack { hack } |
+                        play rogue { rogue } |
+                        play adventure { adventure } |
                         play go fish  {fish  } |
-                        [go to] main menu       { dialog_menu } ;
+                        get help                    { help } |
+                        [go to [the]] main menu       { goto_menu } ;

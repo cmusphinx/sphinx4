@@ -6,11 +6,11 @@
 
 grammar music;
 
-public <music> =      play london symphony carmina burana { carmina } |
-                      play london symphony eighteen twelve overture { 1812 } |
-                      play shine down forty five { 45 } |
-                      play led zeppelin rambling on {lz ramblin } |
-                      play jimmy  smith the cat {js cat } |
-                      play the who tommy {who tommy } |
-                      play emerson lake and palmer tarus {elp tarkus } |
-                      [go to] main menu       { dialog_menu } ;
+public <music> =      listen to eighteen twelve overture { 1812 } |
+                      listen to shine down forty five { 45 } |
+                      listen to led zeppelin rambling on {zep ramblin } |
+                      listen to jimmy smith the cat {js cat } |
+                      listen to the who tommy {who tommy } |
+                      listen to emerson lake and palmer tank  {elp tank  } |
+                      get help                    { help } |
+                      [go to [the]] main menu       { goto_menu } ;
