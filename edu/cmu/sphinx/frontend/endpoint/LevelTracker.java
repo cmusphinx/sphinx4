@@ -260,7 +260,7 @@ public class LevelTracker extends DataProcessor implements AudioEndpointer {
                     */
                     audio.setSpeech(false);
                     if (audio.hasContent()) {
-                        assert audio.getSamples().length == frameLength;
+                        assert audio.getSamples().length <= frameLength;
                         classify(audio);
                     } else {
                         outputQueue.add(audio);
