@@ -123,6 +123,34 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     public final static int PROP_GROW_SKIP_INTERVAL_DEFAULT = 0;
 
 
+    /**
+     * A sphinx property that controls the amount of simple acoustic
+     * lookahead performed.  Setting the property to zero (the
+     * default) disables simple acoustic lookahead. The lookahead need
+     * not be an integer.
+     */
+    public final static String PROP_ACOUSTIC_LOOKAHEAD_FRAMES = PROP_PREFIX +
+                    "acousticLookaheadFrames";
+
+    /**
+     * The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property.
+     */
+    public final static float PROP_ACOUSTIC_LOOKAHEAD_FRAMES_DEFAULT = 0F;
+
+    /**
+     * A sphinx property that controls whether or not we keep all
+     * tokens.  If this is set to false, only word tokens are
+     * retained, otherwise all tokens are retained.
+     * 
+     */
+    public final static String PROP_KEEP_ALL_TOKENS = PROP_PREFIX +
+                    "keepAllTokens";
+
+    /**
+     * The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property.
+     */
+    public final static boolean PROP_KEEP_ALL_TOKENS_DEFAULT = false;
+
     
 
     private Linguist linguist;		// Provides grammar/language info
@@ -148,6 +176,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     private boolean checkStateOrder;
     private boolean buildWordLattice;
     private boolean allowSinglePathThroughHMM = false;
+    private boolean keepAllTokens = false;
 
     private Map bestTokenMap;
     private AlternateHypothesisManager loserManager;
@@ -159,6 +188,8 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     private TokenTracker tokenTracker;
     private int growSkipInterval = 0;
     private Map skewMap;
+    private float relativeBeamWidth;
+    private float acousticLookaheadFrames = 0.0f;
     
 
 
@@ -197,11 +228,22 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                                            PROP_CHECK_STATE_ORDER_DEFAULT);
         buildWordLattice = props.getBoolean(PROP_BUILD_WORD_LATTICE,
                                             PROP_BUILD_WORD_LATTICE_DEFAULT);
+        acousticLookaheadFrames = props.getFloat(PROP_ACOUSTIC_LOOKAHEAD_FRAMES,
+                                    PROP_ACOUSTIC_LOOKAHEAD_FRAMES_DEFAULT);
+
+        keepAllTokens = props.getBoolean(PROP_KEEP_ALL_TOKENS,
+                                            PROP_KEEP_ALL_TOKENS_DEFAULT);
 
         growSkipInterval = props.getInt(PROP_GROW_SKIP_INTERVAL,
                     PROP_GROW_SKIP_INTERVAL_DEFAULT);
 
         tokenTracker = new TokenTracker();
+
+	double linearRelativeBeamWidth  
+	    = props.getDouble(ActiveList.PROP_RELATIVE_BEAM_WIDTH, 
+			      ActiveList.PROP_RELATIVE_BEAM_WIDTH_DEFAULT);
+        this.relativeBeamWidth = 
+                logMath.linearToLog(linearRelativeBeamWidth);
     }
 
 
@@ -250,7 +292,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                     pruneBranches();
 
                     resultList = new LinkedList();
-                    growBranches();
+                    growEmittingBranches();
                         // prune and grow the non-emitting lists
                         // activeBucket.dump();
                     growNonEmittingLists();
@@ -349,12 +391,80 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         while (iterator.hasNext()) {
             Token token = (Token) iterator.next();
             if (token.getScore() >= relativeBeamThreshold && skewPrune(token)) {
-                collectSuccessorTokens(token, relativeBeamThreshold);
+                collectSuccessorTokens(token);
             }
         }
         growTimer.stop();
 
         // activeBucket.dump();
+    }
+
+    /**
+     * Grows the emitting branches. This version applies a simple
+     * acoustic lookahead based upon the current acoustic score.
+     */
+    protected void growEmittingBranchesOld() {
+        if (acousticLookaheadFrames > 0F) {
+            growTimer.start();
+            float bestScore = -Float.MAX_VALUE;
+            for (Iterator i = activeList.iterator(); i.hasNext(); ) {
+                Token t = (Token) i.next();
+                float score = t.getScore() 
+                    + t.getAcousticScore() * acousticLookaheadFrames;
+                if (score > bestScore) {
+                    bestScore = score;
+                }
+                t.setWorkingScore(score);
+            }
+            float relativeBeamThreshold = bestScore + relativeBeamWidth;
+
+            for (Iterator i = activeList.iterator(); i.hasNext(); ) {
+                Token t = (Token) i.next();
+                if (t.getWorkingScore() >= relativeBeamThreshold) {
+                    collectSuccessorTokens(t);
+                }
+            }
+            growTimer.stop();
+        } else {
+            growBranches();
+        }
+    }
+
+    /**
+     * Grows the emitting branches. This version applies a simple
+     * acoustic lookahead based upon the rate of change in the 
+     * current acoustic score.
+     */
+    protected void growEmittingBranches() {
+        if (acousticLookaheadFrames > 0F) {
+            growTimer.start();
+            float bestScore = -Float.MAX_VALUE;
+            for (Iterator i = activeList.iterator(); i.hasNext(); ) {
+                Token t = (Token) i.next();
+                Token p = t.getPredecessor();
+                float delta = 0;
+                if (p != null ) {
+                    delta = t.getAcousticScore() - p.getAcousticScore();
+                }
+                float score = t.getScore() + 
+                    (t.getAcousticScore() + delta) * acousticLookaheadFrames;
+                if (score > bestScore) {
+                    bestScore = score;
+                }
+                t.setWorkingScore(score);
+            }
+            float relativeBeamThreshold = bestScore + relativeBeamWidth;
+
+            for (Iterator i = activeList.iterator(); i.hasNext(); ) {
+                Token t = (Token) i.next();
+                if (t.getWorkingScore() >= relativeBeamThreshold) {
+                    collectSuccessorTokens(t);
+                }
+            }
+            growTimer.stop();
+        } else {
+            growBranches();
+        }
     }
 
 
@@ -425,7 +535,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
 
     long tokenSum = 0;
-    int count = 0;
+    int tokenCount = 0;
     /**
      * Keeps track of and reports statistics about the number of
      * active states
@@ -435,11 +545,11 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     private void monitorStates(ActiveList activeList) {
 
         tokenSum += activeList.size();
-        count++;
+        tokenCount++;
 
-        if ((count % 100) == 0) {
+        if ((tokenCount % 100) == 0) {
             System.out.println("Tokens: " + activeList.size() + 
-                " avg " + (tokenSum / count));
+                " avg " + (tokenSum / tokenCount));
         }
     }
 
@@ -449,6 +559,8 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      * Removes unpromising branches from the active list
      *
      */
+
+
     protected void pruneBranches() {
         pruneTimer.start();
         activeList =  pruner.prune(activeList);
@@ -513,19 +625,22 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
 
     /**
-     * Return the predecessor token for the given token.  Non-word
-     * tokens are skipped.
+     * Find the best token to use as a predecessor token given a
+     * candidate predecessor. The predecessor is the most recent word
+     * token unless keepAllTokens is set, in which case, the
+     * predecessor is always the candidate predecessor.
      *
      * @param token the token of interest
      *
      * @return the immediate successor word token
      */
     protected Token getWordPredecessor(Token token) {
-        if (false) {    // DEBUG: see all predecessors
+        if (keepAllTokens) {    
             return token; 
-        }
-        while (token != null && !token.isWord()) {
-            token = token.getPredecessor();
+        } else {
+            while (token != null && !token.isWord()) {
+                token = token.getPredecessor();
+            }
         }
         return token;
     }
@@ -597,10 +712,8 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      * be immediately expaned are placed. Null if we should always
      * expand all nodes.
      *
-     * @param threshold the minimum score the token must have in order
-     *    for it to be grown
      */
-    protected void collectSuccessorTokens(Token token, float threshold) {
+    protected void collectSuccessorTokens(Token token) {
 
         tokenTracker.add(token);
 
@@ -611,13 +724,9 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             return;
         }
 
-        if (token.getScore() < threshold) {
-            return;
-        }
-
         SearchState state = token.getSearchState();
         SearchStateArc[] arcs = state.getSuccessors();
-        Token wordPredecessor = getWordPredecessor(token);
+        Token predecessor = getWordPredecessor(token);
         
         // For each successor
         // calculate the entry score for the token based upon the
@@ -645,7 +754,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             boolean firstToken = bestToken == null ;
 
             if (firstToken || bestToken.getScore() < logEntryScore) {
-                Token newBestToken = new Token(wordPredecessor,
+                Token newBestToken = new Token(predecessor,
                                                nextState,
                                                logEntryScore,
                                                arc.getLanguageProbability(),
@@ -674,9 +783,9 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             } else {
                 if (buildWordLattice && 
                     nextState instanceof WordSearchState)  {
-                    if (wordPredecessor != null) {
+                    if (predecessor != null) {
                         loserManager.addAlternatePredecessor
-                            (bestToken, wordPredecessor);
+                            (bestToken, predecessor);
                     }
                 }
             }
@@ -777,36 +886,6 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         }
         return keep;
     }
-
-    private boolean skewPruneAll(Token t) {
-        boolean keep = true;
-        SearchState ss = t.getSearchState();
-        if (SKEW > 0 && ss instanceof SearchState) {
-            Token lastToken = (Token) skewMap.get(ss);
-            if (lastToken != null) {
-                int lastFrame = lastToken.getFrameNumber();
-                if (t.getFrameNumber() - lastFrame > SKEW ||
-                        t.getScore() > lastToken.getScore()) {
-                    keep = true;
-                } else {
-                    if (false) {
-                        System.out.println("Dropped " 
-                                + t + " in favor of " + lastToken);
-                    }
-                    keep = false;
-                }
-
-            } else {
-                keep = true;
-            }
-
-            if (keep) {
-                skewMap.put(ss, t);
-            }
-        }
-        return keep;
-    }
-
 
     /**
      * Counts all the tokens in the active list (and displays them).
