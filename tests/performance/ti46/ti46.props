@@ -19,15 +19,15 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.models=tidigits
+edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory.models=tidigits
 
-tidigits;edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel
-tidigits;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.format = sphinx3.binary
-tidigits;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
-tidigits;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.definition_file = wd_dependent_phone.500.mdef
-tidigits;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.data_location = wd_dependent_phone.cd_continuous_8gau
-tidigits;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
-tidigits;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
+tidigits;edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel
+tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.format = sphinx3.binary
+tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.definition_file = wd_dependent_phone.500.mdef
+tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.data_location = wd_dependent_phone.cd_continuous_8gau
+tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
+tidigits;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
 
 edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
@@ -68,12 +68,12 @@ edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.location =  file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dictionary
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = fillerdict
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
+edu.cmu.sphinx.linguist.dictionary.Dictionary.location =  file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath = dictionary
+edu.cmu.sphinx.linguist.dictionary.Dictionary.fillerPath = fillerdict
+edu.cmu.sphinx.linguist.dictionary.Dictionary.addSilEndingPronunciation=false
 
-edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth=1 
+edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth=1 
 
 
 ############################################################
@@ -101,12 +101,12 @@ edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.isLooping = false
-edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path = ./ti46.wordlist
+edu.cmu.sphinx.linguist.language.grammar.SimpleWordListGrammar.isLooping = false
+edu.cmu.sphinx.linguist.language.grammar.SimpleWordListGrammar.path = ./ti46.wordlist
 
-edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-56
-edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
-edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight = 7.0
+edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability = 1.0E-56
+edu.cmu.sphinx.linguist.Linguist.silenceInsertionProbability = 1.0
+edu.cmu.sphinx.linguist.Linguist.languageWeight = 7.0
 
 
 ############################################################
@@ -116,7 +116,7 @@ edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight = 7.0
 ############################################################
 
 edu.cmu.sphinx.decoder.Recognizer.dumpFrontEnd = false
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist
-edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.linguist.flat.FlatLinguist
+edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.linguist.language.grammar.SimpleWordListGrammar
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
 

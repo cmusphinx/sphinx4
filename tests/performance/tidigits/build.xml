@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project basedir="." default="none" name="TIDIGITS Tests">
+<project basedir="." default="tidigits_wordlist" name="TIDIGITS Tests">
 <description>
 This file is used to run the TIDIGITS performance tests.
 
@@ -109,13 +109,13 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
 			 value="${logger_props}"/>
             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
 			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
                          value="1"/> 
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
                          value="tidigits.flat_unigram.lm"/>
             <arg value="tidigits.props"/> 
             <arg value="tidigits.batch"/> 
@@ -141,8 +141,8 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
 			 value="${skip}"/> 
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.decoder.linguist.FSTGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.linguist.FSTGrammar.path"
+                         value="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path"
                          value="tidigits.flat_unigram.fst"/>
             <arg value="tidigits.props"/> 
             <arg value="tidigits.batch"/> 
@@ -167,15 +167,15 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
 			 value="${logger_props}"/>
             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
 			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
-                         value="edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist"/>
+                         value="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist"/>
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
                          value="1"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
                          value="tidigits.flat_unigram.lm"/>
             <arg value="tidigits.props"/> 
             <arg value="tidigits.batch"/> 
@@ -200,15 +200,15 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
 			 value="${logger_props}"/>
             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
 			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
-                         value="edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+                         value="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
                          value="2"/>
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
                          value="tidigits.bigram.lm"/>
             <arg value="tidigits.props"/> 
             <arg value="tidigits.batch"/> 
@@ -233,13 +233,13 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
 			 value="${logger_props}"/>
             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
 			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
                          value="2"/>
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
                          value="tidigits.bigram.lm"/>
             <arg value="tidigits.props"/> 
             <arg value="tidigits.batch"/> 
@@ -252,7 +252,7 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="tidigits_bigram_flat"
-	    description="TIDIGITS test set with a bigram language model and the flat dynamic linguist">
+	    description="TIDIGITS test set with a bigram language model and the flat linguist">
         <java classpath="${classes_dir}"
 	      classname="${batch_main}"
 	      fork="true">
@@ -264,49 +264,16 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
 			 value="${logger_props}"/>
             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
 			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
-                         value="edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+                         value="edu.cmu.sphinx.linguist.flat.FlatLinguist"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
                          value="2"/>
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
                          value="tidigits.bigram.lm"/>
-            <arg value="tidigits.props"/> 
-            <arg value="tidigits.batch"/> 
-        </java>
-    </target>
-
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * tidigits_flat_unigram_flat                             * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="tidigits_flat_unigram_flat"
-	    description="TIDIGITS test set with a flat unigram language model and the flat dynamic linguist">
-        <java classpath="${classes_dir}"
-	      classname="${batch_main}"
-	      fork="true">
-            <jvmarg value="-ea"/>
-            <jvmarg value="-${jit}"/>   
-            <jvmarg value="-ms${initial_heap_size}"/>
-            <jvmarg value="-mx${maximum_heap_size}"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
-			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
-                         value="edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
-                         value="2"/>
-            <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
-                         value="tidigits.flat_unigram.lm"/>
             <arg value="tidigits.props"/> 
             <arg value="tidigits.batch"/> 
         </java>
@@ -331,15 +298,15 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
 			 value="${logger_props}"/>
             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip" 
 			 value="${skip}"/> 
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass"
-                         value="edu.cmu.sphinx.knowledge.language.SimpleNGramModel"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.maxDepth"
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
+                         value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.maxDepth"
                          value="3"/>
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.linguist"
-                         value="edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist"/>
+                         value="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist"/>
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                         value="edu.cmu.sphinx.decoder.linguist.LMGrammar"/>
-            <sysproperty key="edu.cmu.sphinx.knowledge.language.LanguageModel.location"
+                         value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
+            <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
                          value="tidigits.trigram.lm"/>
             <arg value="tidigits.props"/> 
             <arg value="tidigits.batch"/> 

@@ -20,18 +20,18 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.models=aurora
-aurora;edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel
+edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory.models=aurora
+aurora;edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel
 
-aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.format = sphinx3.ascii
-aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
+aurora;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.format = sphinx3.ascii
+aurora;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
 aurora;edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
-aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/aurora/models3st.zip
-aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.definition_file = etc/mfcclean_forbushderby.500.mdef
-aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.data_location = mfcclean_forbushderby_cd_continuous_8gau
-aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
-aurora;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.useComposites=false
+aurora;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/aurora/models3st.zip
+aurora;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.definition_file = etc/mfcclean_forbushderby.500.mdef
+aurora;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.data_location = mfcclean_forbushderby_cd_continuous_8gau
+aurora;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
+aurora;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.useComposites=false
 
 
 ############################################################
@@ -71,10 +71,10 @@ edu.cmu.sphinx.frontend.sampleRate = 16000
 ############################################################
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.SortingActiveList
-edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
-edu.cmu.sphinx.decoder.linguist.Linguist.validateSentenceHMM=false
-edu.cmu.sphinx.decoder.linguist.Linguist.compositeThreshold=100000
-edu.cmu.sphinx.knowledge.acoustic.useComposites=false
+edu.cmu.sphinx.linguist.Linguist.silenceInsertionProbability = 1.0
+edu.cmu.sphinx.linguist.Linguist.validateSentenceHMM=false
+edu.cmu.sphinx.linguist.Linguist.compositeThreshold=100000
+edu.cmu.sphinx.linguist.acoustic.useComposites=false
 edu.cmu.sphinx.decoder.search.validateResults=false
 
 
@@ -84,8 +84,8 @@ edu.cmu.sphinx.decoder.search.validateResults=false
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.simple.StaticLinguist
-edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.WordListGrammar
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.linguist.simple.StaticLinguist
+edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.linguist.language.grammar.WordListGrammar
 edu.cmu.sphinx.decoder.Recognizer.dumpMemoryInfo=false
 edu.cmu.sphinx.decoder.Recognizer.dumpSentenceHMM=false
 
@@ -96,11 +96,11 @@ edu.cmu.sphinx.decoder.Recognizer.dumpSentenceHMM=false
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/aurora/models3st.zip
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dict/dict
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = dict/fillerdict
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.wordReplacement=<sil>
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true
+edu.cmu.sphinx.linguist.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/aurora/models3st.zip
+edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath = dict/dict
+edu.cmu.sphinx.linguist.dictionary.Dictionary.fillerPath = dict/fillerdict
+edu.cmu.sphinx.linguist.dictionary.Dictionary.wordReplacement=<sil>
+edu.cmu.sphinx.linguist.dictionary.Dictionary.allowMissingWords=true
 
 
 ############################################################
@@ -128,8 +128,8 @@ edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minTokensPerThread=10
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.WordListGrammar.isLooping=true
-edu.cmu.sphinx.decoder.linguist.WordListGrammar.addSilenceWord=true
+edu.cmu.sphinx.linguist.language.grammar.WordListGrammar.isLooping=true
+edu.cmu.sphinx.linguist.language.grammar.WordListGrammar.addSilenceWord=true
 
 
 ############################################################
@@ -142,12 +142,12 @@ edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-250
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=7.0
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=true
-edu.cmu.sphinx.decoder.linguist.Linguist.expandInterNodeContexts=true
-edu.cmu.sphinx.decoder.linguist.Linguist.showSentenceHMM=false
-edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-26
-edu.cmu.sphinx.decoder.linguist.Linguist.autoLoopSilence=false
+edu.cmu.sphinx.linguist.dictionary.Dictionary.addSilEndingPronunciation=true
+edu.cmu.sphinx.linguist.Linguist.expandInterNodeContexts=true
+edu.cmu.sphinx.linguist.Linguist.showSentenceHMM=false
+edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability = 1.0E-26
+edu.cmu.sphinx.linguist.Linguist.autoLoopSilence=false
 edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false
 
 edu.cmu.sphinx.decoder.search.validateResults=false
-edu.cmu.sphinx.decoder.linguist.Linguist.showCompilationProgress=false
+edu.cmu.sphinx.linguist.Linguist.showCompilationProgress=false

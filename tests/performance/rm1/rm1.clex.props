@@ -23,19 +23,19 @@ edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 # Acoustic model properties
 #
 ############################################################
-edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.models=rm1
-rm1;edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel
+edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory.models=rm1
+rm1;edu.cmu.sphinx.linguist.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel
 
-rm1;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
+rm1;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.FeatureVectorLength = 39
 
-rm1;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.format = sphinx3.binary
-rm1;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/rm1_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+rm1;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.format = sphinx3.binary
+rm1;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.location = file:/lab/speech/sphinx4/data/rm1_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
 
-rm1;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.definition_file = etc/RM1_clean_13dCep_16k_40mel_130Hz_6800Hz.1800.mdef
-rm1;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.data_location = cd_continuous_8gau
-rm1;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
+rm1;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.definition_file = etc/RM1_clean_13dCep_16k_40mel_130Hz_6800Hz.1800.mdef
+rm1;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.data_location = cd_continuous_8gau
+rm1;edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel.properties_file = am.props
 
-edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel 
+edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass=edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel 
 
 
 ############################################################
@@ -64,7 +64,7 @@ mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.fronten
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.NullGrammar
+edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.linguist.language.grammar.NullGrammar
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
 
 
@@ -86,11 +86,11 @@ edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.wantEntryPruning=false
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = .1
-edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-10
-edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=9.0
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist
-edu.cmu.sphinx.decoder.linguist.Linguist.generateUnitStates=false
+edu.cmu.sphinx.linguist.Linguist.silenceInsertionProbability = .1
+edu.cmu.sphinx.linguist.Linguist.wordInsertionProbability = 1.0E-10
+edu.cmu.sphinx.linguist.Linguist.languageWeight=9.0
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.linguist.lextree.LexTreeLinguist
+edu.cmu.sphinx.linguist.Linguist.generateUnitStates=false
 
 
 ############################################################
@@ -99,11 +99,11 @@ edu.cmu.sphinx.decoder.linguist.Linguist.generateUnitStates=false
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/rm1_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = dict/RM.dictionary
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = dict/fillerdict
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true
+edu.cmu.sphinx.linguist.dictionary.Dictionary.location = file:/lab/speech/sphinx4/data/rm1_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
+edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath = dict/RM.dictionary
+edu.cmu.sphinx.linguist.dictionary.Dictionary.fillerPath = dict/fillerdict
+edu.cmu.sphinx.linguist.dictionary.Dictionary.addSilEndingPronunciation=false
+edu.cmu.sphinx.linguist.dictionary.Dictionary.allowMissingWords=true
 
 
 ############################################################
@@ -123,12 +123,12 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=true
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=0
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
-edu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=.7
-#edu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=1
+edu.cmu.sphinx.linguist.language.ngram.LanguageModel.unigramWeight=.7
+#edu.cmu.sphinx.linguist.language.ngram.LanguageModel.unigramWeight=1
 
 edu.cmu.sphinx.decoder.BatchDecoder.showPropertiesAtStart=true
 
 #edu.cmu.sphinx.decoder.Recognizer.acousticScorer=edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer
-#edu.cmu.sphinx.decoder.Recognizer.linguistProcessors=edu.cmu.sphinx.decoder.linguist.util.LinguistStats
+#edu.cmu.sphinx.decoder.Recognizer.linguistProcessors=edu.cmu.sphinx.linguist.util.LinguistStats
 edu.cmu.sphinx.decoder.Decoder.showBestToken=false
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.growSkipInterval=0
