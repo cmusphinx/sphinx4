@@ -13,7 +13,8 @@
 package edu.cmu.sphinx.knowledge.language;
 
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
+import edu.cmu.sphinx.knowledge.dictionary.FastDictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -344,7 +345,6 @@ public class SimpleNGramModel implements LanguageModel {
         int numUnigrams = ((Integer) ngramList.get(0)).intValue() - 1;
         // -log(x) = log(1/x)
         float logUniformProbability = -logMath.linearToLog(numUnigrams);
-
         
         for (int index = 0; index < ngramList.size(); index++) { 
             int ngram = index + 1;
@@ -358,15 +358,21 @@ public class SimpleNGramModel implements LanguageModel {
                 float log10Prob = Float.parseFloat(tok.nextToken());
                 float log10Backoff = 0.0f;
 
+                // construct the WordSequence for this N-Gram
                 List wordList = new ArrayList(maxNGram);
                 for (int j = 0; j < ngram; j++) {
                     String word = tok.nextToken().toLowerCase();
                     vocabulary.add(word);
-                    int wordID = dictionary.getWordID(word);
-                    wordList.add(new Integer(wordID));
+                    Word wordObject = dictionary.getWord(word);
+                    if (wordObject == null) {
+                        wordObject = Word.UNKNOWN;
+                    }
+                    wordList.add(wordObject);
                 }
+
                 WordSequence wordSequence = 
                     WordSequence.getWordSequence(wordList);
+
                 if (tok.hasMoreTokens()) {
                     log10Backoff = Float.parseFloat(tok.nextToken());
                 }
@@ -504,7 +510,7 @@ public class SimpleNGramModel implements LanguageModel {
 
         Timer.start("LM Load");
         SphinxProperties.initContext(context, new URL(propsPath));
-        Dictionary dictionary = new FullDictionary(context);
+        Dictionary dictionary = new FastDictionary(context);
         SimpleNGramModel sm = new SimpleNGramModel(context, dictionary);
         Timer.stop("LM Load");
 
@@ -524,8 +530,7 @@ public class SimpleNGramModel implements LanguageModel {
             List list = new ArrayList();
             while (st.hasMoreTokens()) {
                 String tok = (String) st.nextToken();
-                Integer wordID = new Integer(dictionary.getWordID(tok));
-                list.add(wordID);
+                list.add(dictionary.getWord(tok));
             }
             WordSequence wordSequence = WordSequence.getWordSequence(list);
             System.out.println
@@ -541,15 +546,15 @@ public class SimpleNGramModel implements LanguageModel {
         Timer timer = Timer.getTimer(context, "lookup trigram");
         
         List list1 = new ArrayList();
-        int[] wordID1 = { dictionary.getWordID("t"), 
-                          dictionary.getWordID("h"), 
-                          dictionary.getWordID("e") };
-        WordSequence ws1 = WordSequence.getWordSequence(wordID1);
+        Word[] word1 = { dictionary.getWord("t"),
+                         dictionary.getWord("h"),
+                         dictionary.getWord("e") };
+        WordSequence ws1 = WordSequence.getWordSequence(word1);
 
-        int[] wordID2 = { dictionary.getWordID("a"),
-                          dictionary.getWordID("l"), 
-                          dictionary.getWordID("q") };
-        WordSequence ws2 = WordSequence.getWordSequence(wordID2);
+        Word[] word2 = { dictionary.getWord("a"),
+                         dictionary.getWord("l"),
+                         dictionary.getWord("q") };
+        WordSequence ws2 = WordSequence.getWordSequence(word2);
         
         for (int i = 0; i < 1000000; i++) {
             timer.start();
