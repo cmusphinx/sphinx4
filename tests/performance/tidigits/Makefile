@@ -51,6 +51,11 @@ ifeq ($(MODE),quick)
 else
   SKIP = 0
 endif
+
+ifeq ($(MODE), super_quick)
+  SKIP = 100
+endif
+
 include ${TOP}/build/Makefile.config
 
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
@@ -185,6 +190,7 @@ tidigits_trigram_lex:
 
 tidigits_wordlist_live:
 	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer=50 \
 	-Dedu.cmu.sphinx.frontend.util.ConcatFileAudioSource.transcriptFile=transcript.txt\
 	-Dedu.cmu.sphinx.frontend.util.ConcatFileAudioSource.skip=$(SKIP)\
 	-Dedu.cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile=/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw \
