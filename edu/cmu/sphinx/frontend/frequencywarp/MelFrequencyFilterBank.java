@@ -50,14 +50,15 @@ import java.io.IOException;
  * <img src="doc-files/melfilterbank.jpg">
  * <br><center><b>Figure 1: A Mel-filter bank.</b></center>
  * <p>
- * As you might notice in the above figure, the triangles are of
- * decreasing height and increasing width. The distance at the base
+ * As you might notice in the above figure, the distance at the base
  * from the center to the left edge is different from the center to
  * the right edge. This is due to the mel-frequency scale,
  * which is a non-linear scale that models the non-linear human
  * hearing behavior. As can be inferred from the figure, filtering with
- * the mel scale emphasizes the lower frequencies.
- * The area under each triangle is equal to 1.
+ * the mel scale emphasizes the lower frequencies. In general,
+ * the mel frequency can be calculated from the linear frequency by:
+ * <p>
+ * <code>Mel(linearFrequency) = 1125 * log(1 + linearFrequency/700)</code>
  * <p>
  * The minimum frequency has a default value of 130Hz, while 
  * the maximum frequency has a default value of 6800Hz.
