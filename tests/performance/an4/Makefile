@@ -66,7 +66,10 @@ all:: ${CLASSES} ${STUBS}
 
 an4_words_unigram:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
+    -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
+    -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
+    -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
 	tests.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
 
@@ -102,7 +105,7 @@ an4_words_fst:
 
 an4_spelling_unigram:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-35\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-26\
 	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_spelling.alphalist\
 	tests.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
