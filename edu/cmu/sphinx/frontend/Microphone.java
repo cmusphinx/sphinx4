@@ -55,8 +55,10 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
     private int frameSizeInBytes;
     private volatile boolean recording = false;
     private volatile boolean closed = false;
-
     private boolean keepAudioReference = true;
+
+    private static Logger logger = Logger.getLogger
+    ("edu.cmu.sphinx.frontend.Microphone");
 
 
     /**
@@ -100,7 +102,7 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
      * @param message the message to print
      */
     private void printMessage(String message) {
-        System.out.println("Microphone: " + message);
+        logger.info("Microphone: " + message);
     }
 
 
@@ -210,7 +212,7 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
             (TargetDataLine.class, audioFormat);
         
         if (!AudioSystem.isLineSupported(info)) {
-            printMessage(audioFormat + " not supported");
+            logger.severe(audioFormat + " not supported");
             return false;
         }
 
@@ -221,7 +223,7 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
             return true;
         } catch (LineUnavailableException ex) {
             audioLine = null;
-            printMessage("Line unavailable");
+            ex.printStackTrace();
             return false;
         }        
     }

@@ -4,6 +4,8 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.util.SphinxProperties;
+
 import java.text.DecimalFormat;
 
 
@@ -391,5 +393,34 @@ public class Util {
     public static int getSamplesPerShift(int sampleRate,
                                          float windowShiftInMs) {
         return (int) (((float) sampleRate) * windowShiftInMs / 1000);
+    }
+
+
+    /**
+     * Returns the total amount of audio time (in seconds) represented by
+     * the first frame to given frame.
+     *
+     * @param frameNumber the given frame
+     * @param properties the SphinxProperties object where information
+     *    about window shift, window size, etc., can be retrieved
+     *
+     * @return the total audio time in seconds
+     */
+    public static float getAudioTime(int frameNumber, 
+                                     SphinxProperties properties) {
+        float audioTime = 0.0f;
+
+        if (frameNumber >= 1) {
+            float windowSizeInMs = properties.getFloat
+                (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
+            float windowShiftInMs = properties.getFloat
+                (FrontEnd.PROP_WINDOW_SHIFT_MS, 10.0F);
+
+            // calculate audio time in milliseconds
+            audioTime = (frameNumber - 1) * windowShiftInMs + windowSizeInMs;
+            audioTime /= 1000;
+        }
+
+        return audioTime;
     }
 }
