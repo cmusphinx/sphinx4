@@ -1,4 +1,4 @@
-testDir=/home/plamere/regressionTest
+testDir=./regressionTestDirectory
 
 mkdir -p $testDir
 cd $testDir
