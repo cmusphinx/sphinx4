@@ -12,11 +12,9 @@ package edu.cmu.sphinx.frontend;
 public class SegmentEndPointSignal implements Signal {
 
     private boolean isStart;
-    private Data frameData;
 
-    private SegmentEndPointSignal(boolean isStart, Data frameData) {
+    private SegmentEndPointSignal(boolean isStart) {
 	this.isStart = isStart;
-	this.frameData = frameData;
     }
 
 
@@ -26,8 +24,8 @@ public class SegmentEndPointSignal implements Signal {
      *
      * @param frameData the first audio frame in the segment
      */
-    public static SegmentEndPointSignal createSegmentStartSignal(Data frameData) {
-	return (new SegmentEndPointSignal(true, frameData));
+    public static SegmentEndPointSignal createSegmentStartSignal() {
+	return (new SegmentEndPointSignal(true));
     }
 
 
@@ -37,8 +35,8 @@ public class SegmentEndPointSignal implements Signal {
      *
      * @param frameData the last audio frame in the segment
      */
-    public static SegmentEndPointSignal createSegmentEndSignal(Data frameData) {
-	return (new SegmentEndPointSignal(false, frameData));
+    public static SegmentEndPointSignal createSegmentEndSignal() {
+	return (new SegmentEndPointSignal(false));
     }
 
 
@@ -61,15 +59,5 @@ public class SegmentEndPointSignal implements Signal {
      */
     public boolean isEnd() {
 	return !isStart;
-    }
-
-
-    /**
-     * Returns the audio frame associated with this SegmentEndPointSignal
-     *
-     * @return an audio frame
-     */
-    public Data getData() {
-	return frameData;
     }
 }

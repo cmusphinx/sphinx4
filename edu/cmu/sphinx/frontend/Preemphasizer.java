@@ -5,6 +5,7 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
+import java.io.IOException;
 
 
 /**
@@ -59,10 +60,14 @@ public class Preemphasizer extends PullingProcessor {
      *
      * @return a DoubleAudioFrame of data with pre-emphasis filter applied
      */
-    public Data process(Data input) {
-	if (input instanceof SegmentEndPointSignal) {
+    public Data process(Data input) throws IOException {
+	if (input instanceof PreemphasisPriorSignal) {
+	    PreemphasisPriorSignal signal = (PreemphasisPriorSignal) input;
+	    prior = signal.getPrior();
+	    return read();
+	} else if (input instanceof SegmentEndPointSignal) {
 	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
-	    return preemphasize((ShortAudioFrame) signal.getData());
+	    return read();
 	} else if (input instanceof ShortAudioFrame) {
 	    return preemphasize((ShortAudioFrame) input);
 	} else {
@@ -94,7 +99,7 @@ public class Preemphasizer extends PullingProcessor {
 	    }
 	}
 
-	// Util.dumpDoubleArray(out, "PREEMPHASIS");
+	Util.dumpDoubleArray(out, "PREEMPHASIS");
 
 	return (new DoubleAudioFrame(out));
     }

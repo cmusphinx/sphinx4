@@ -74,6 +74,8 @@ public class Util {
      * discarded.
      *
      * @param byteArray a byte array
+     * @param offset which bytes to start from
+     * @param length how many bytes to convert
      *
      * @return a short array, or <code>null</code> if byteArray is of zero
      *    length
@@ -98,6 +100,23 @@ public class Util {
 		("offset: " + offset + ", length: " + length
 		 + ", array length: " + byteArray.length);
 	}
+    }
+
+
+    /**
+     * Convert the two bytes starting at the given offset to a short
+     *
+     * @param byteArray the byte array
+     * @param offset where to start
+     *
+     * @return a short
+     */
+    public static short bytesToShort(byte[] byteArray, int offset)
+	throws ArrayIndexOutOfBoundsException {
+	short result = (short) 
+	    ((byteArray[offset++] << 8) |
+	     (0x000000FF & byteArray[offset]));
+	return result;
     }
 
 
