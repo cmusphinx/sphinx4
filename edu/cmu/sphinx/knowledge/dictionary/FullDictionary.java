@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -48,7 +49,6 @@ public class FullDictionary implements Dictionary {
     private boolean addSilEndingPronunciation;
     private boolean allowMissingWords;
     private String wordReplacement;
-    private int wordID;
 
     /**
      * Constructs a FullDictionary using the given context.
@@ -113,7 +113,6 @@ public class FullDictionary implements Dictionary {
 
 	Timer loadTimer = Timer.getTimer(context, "DictionaryLoad");
 
-        wordID = 1;
 	loadTimer.start();
 
         // NOTE: "location" can be null here, in which case the 
@@ -124,6 +123,7 @@ public class FullDictionary implements Dictionary {
                        (location, wordDictionaryFile), false);
         loadDictionary(StreamFactory.getInputStream
                        (location, fillerDictionaryFile), true);
+        createWords();
 	loadTimer.stop();
     }
     
@@ -161,8 +161,6 @@ public class FullDictionary implements Dictionary {
             Unit[] unitsArray = (Unit[]) units.toArray
                 (new Unit[units.size()]);
             
-            int thisWordID = getNextWordID(word);
-
             List pronunciations = (List) dictionary.get(word);
 
             if (pronunciations == null) {
@@ -170,7 +168,7 @@ public class FullDictionary implements Dictionary {
             }
 
             Pronunciation pronunciation = new Pronunciation
-                (word, thisWordID, unitsArray, null, null, 1.0f);
+                (unitsArray, null, null, 1.0f);
 
             pronunciations.add(pronunciation);
             
@@ -180,28 +178,38 @@ public class FullDictionary implements Dictionary {
                 Unit[] unitsArray2 = (Unit[]) units.toArray
                     (new Unit[units.size()]);
                 Pronunciation pronunciation2 = new Pronunciation
-                    (word, thisWordID, unitsArray2, null, null, 1.0f);
+                    (unitsArray2, null, null, 1.0f);
                 pronunciations.add(pronunciation2);
             }
 
             dictionary.put(word, pronunciations);
         }
+        inputStream.close();
         est.close();
     }
 
+
     /**
-     * Returns an appropriate word ID for the given word.
-     *
-     * @return an appropriate ID for the given word
+     * Converts the spelling/Pronunciations mappings in the dictionary
+     * into spelling/Word mappings.
      */
-    private int getNextWordID(String word) {
-        int id = getWordID(word);
-        if (id == Dictionary.UNKNOWN_WORD_ID) {
-            return wordID++;
-        } else {
-            return id;
+    private void createWords() {
+        Set spellings = dictionary.keySet();
+        for (Iterator s = spellings.iterator(); s.hasNext();) {
+            String spelling = (String) s.next();
+            List pronunciations = (List) dictionary.get(spelling);
+            Pronunciation[] pros = new Pronunciation[pronunciations.size()];
+            for (int i = 0; i < pros.length; i++) {
+                pros[i] = (Pronunciation) pronunciations.get(i);
+            }
+            Word word = new Word(spelling, pros);
+            for (int i = 0; i < pros.length; i++) {
+                pros[i].setWord(word);
+            }
+            dictionary.put(spelling, word);
         }
     }
+
 
     /**
      * Gets  a context independent unit.  There should only be one
@@ -241,113 +249,64 @@ public class FullDictionary implements Dictionary {
         return word;
     }
 
-    /**
-     * Returns the ID of the given word.
-     *
-     * @return the ID of the given word, or UNKNOWN_WORD_ID if the word is not
-     *    in the dictionary.
-     */
-    public int getWordID(String word) {
-        if (word.equals(SENTENCE_START_SPELLING)) {
-            return SENTENCE_START_ID;
-        } else if (word.equals(SENTENCE_END_SPELLING)) {
-            return SENTENCE_END_ID;
-        } else if (word.equals(SILENCE_SPELLING)) {
-            return SILENCE_ID;
-        }
-        List pronunciations = (List) dictionary.get(word.toLowerCase());
-        if (pronunciations != null) {
-            Pronunciation pron = (Pronunciation) pronunciations.get(0);
-            return pron.getWordID();
-        } else {
-            return UNKNOWN_WORD_ID;
-        }
-    }
 
     /**
-     * Retrieves the pronunciations for a particular word based upon
-     * its classification.
+     * Returns a Word object based on the spelling and its classification.
      *
      * @param text the spelling of the word of interest.
-     * @param wordClassification the classification of the word
-     * (typically part of speech classification)  or null if all word
-     * classifications are acceptable. The word classification must be
-     * one of the set returned by <code>
-     * getPossibleWordClassifications </code>
      *
-     * @return an array of zero or more
-     * <code>Pronunciation</code> objects.
+     * @return a Word object
      *
-     * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
+     * @see edu.cmu.sphinx.knowledge.dictionary.Word
      */
-    public Pronunciation[] getPronunciations(String text,
-            WordClassification wordClassification) {
-        return getPronunciations(text, wordClassification, null);
+    public Word getWord(String text) {
+        
+        text = text.toLowerCase();
+        Word word = (Word) dictionary.get(text);
+        
+        if (word == null) {
+            if (wordReplacement != null) {
+                word = (Word) dictionary.get(wordReplacement);
+                System.out.println("Replacing " + text + " with " +
+                                   wordReplacement);
+                if (word == null) {
+                    System.out.println("Replacement word " +
+                                       wordReplacement + " not found!");
+                }
+            } else if (allowMissingWords) {
+                System.out.println("FullDictionary: Missing word: " + text);
+                return null;
+            }
+        }
+        return word;
     }
-
 
     /**
-     * Retrieves the pronunciations for a particular word based upon
-     * its classification and tag.
+     * Returns the sentence start word.
      *
-     * @param text the spelling of the word of interest.
-     * @param wordClassification the classification of the word
-     * (typically part of speech classification)  or null if all word
-     * classifications are acceptable. The word classification must be
-     * one of the set returned by <code>
-     * getPossibleWordClassifications </code>
-     * @param tag a tag used to distinguish one homograph from
-     * another.
-     *
-     * @return an array of zero or more
-     * <code>Pronunciation</code> objects.
-     *
-     * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
+     * @return the sentence start word
      */
-    public Pronunciation[] getPronunciations(String text,
-            WordClassification wordClassification, String tag) {
-        
-	text = text.toLowerCase();
-        List pronounceList = (List) dictionary.get(text);
-        
-	// not found in the dictionary, return an empty list
-
-	// BUG: need to deal with providing pronunciations for words
-	// that are not in the dictionary. For now, we will just
-	// return null, which will almost certainly cause a NPE at a
-	// higher level.
-
-
-	if (pronounceList == null && wordReplacement != null) {
-	    pronounceList = (List) dictionary.get(wordReplacement);
-	    System.out.println("Replacing " + text + " with " +
-		    wordReplacement);
-	    if (pronounceList == null) {
-		System.out.println("Replacement word " +
-			wordReplacement + " not found!");
-	    }
-	} else if (pronounceList == null && allowMissingWords) {
-	    System.out.println("Missing word: " + text);
-	    return null;
-	} 
-	
-	if (pronounceList == null) {
-	    throw new Error("Can't find pronunciation for '" + text
-                            + "' in dictionary "  );
-	}
-
-        Pronunciation[] pronunciations =
-            new Pronunciation[pronounceList.size()];
-
-        // populate the Pronunications array
-        int p = 0;
-        for (Iterator i = pronounceList.iterator(); i.hasNext(); p++) {
-            pronunciations[p] = (Pronunciation) i.next();
-        }
-
-        return pronunciations;
+    public Word getSentenceStartWord() {
+        return getWord(SENTENCE_START_SPELLING);
     }
 
+    /**
+     * Returns the sentence end word.
+     *
+     * @return the sentence end word
+     */
+    public Word getSentenceEndWord() {
+        return getWord(SENTENCE_END_SPELLING);
+    }
+
+    /**
+     * Returns the silence word.
+     *
+     * @return the silence word
+     */
+    public Word getSilenceWord() {
+        return getWord(SILENCE_SPELLING);
+    }
 
     /**
      * Returns the set of all possible word classifications for this
@@ -371,18 +330,16 @@ public class FullDictionary implements Dictionary {
         String result = "";
 
         for (Iterator i = sorted.keySet().iterator(); i.hasNext();) {
-            String word = (String) i.next();
-            List pronunciations = (List) sorted.get(word);
+            Word word = (Word) i.next();
+            Pronunciation[] pronunciations = word.getPronunciations(null);
             result += (word + "\n");
-            for (Iterator p = pronunciations.iterator(); p.hasNext();) {
-                Pronunciation pronunciation = (Pronunciation) p.next();
-                result += ("   " + pronunciation.toString() + "\n");
+            for (int p = 0; p < pronunciations.length; p++) {
+                result += ("   " + pronunciations[p].toString() + "\n");
             }
         }
 
         return result;
     }
-
 
     /**
      * Dumps this FullDictionary to System.out.

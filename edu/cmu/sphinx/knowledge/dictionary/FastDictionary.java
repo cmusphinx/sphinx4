@@ -62,7 +62,6 @@ public class FastDictionary implements Dictionary {
     private boolean addSilEndingPronunciation;
     private boolean allowMissingWords;
     private String wordReplacement;
-    private int wordID;
     private final static String FILLER_TAG=  "-F-";
 
 
@@ -141,7 +140,7 @@ public class FastDictionary implements Dictionary {
 
 	logger.info("Loading dictionary from: ");
         logger.info(location + "/" + wordDictionaryFile);
-        
+
         loadDictionary
             (StreamFactory.getInputStream(location, wordDictionaryFile), 
              false);
@@ -188,32 +187,16 @@ public class FastDictionary implements Dictionary {
 	    // TODO: throw an exception if spaceIndex == -1 ?
 	    String word = line.substring(0, spaceIndex);
 	    word = word.toLowerCase();
-            int wordID = getNextWordID(word);
 	    if (isFillerDict) {
-		dictionary.put(word, (wordID + " " + FILLER_TAG + line));
+		dictionary.put(word, (FILLER_TAG + line));
 	    } else {
-		dictionary.put(word, (wordID + " " + line));
+		dictionary.put(word, line);
 	    }
 	}
 
 	br.close();
 	isr.close();
-    }
-
-    /**
-     * Returns a word ID given a word.
-     *
-     * @return a suitable ID for the given word
-     */
-    private int getNextWordID(String word) {
-        String line = (String)dictionary.get(word);
-        if (line == null) {
-            return wordID++;
-        } else {
-            int spaceIndex = line.indexOf(" ");
-            String idString = line.substring(0, spaceIndex);
-            return Integer.parseInt(idString);
-        }
+        inputStream.close();
     }
 
     /**
@@ -231,89 +214,60 @@ public class FastDictionary implements Dictionary {
     }
 
     /**
-     * Returns the ID of the given word.
+     * Returns the sentence start word.
      *
-     * @return the ID of the given word, or UNKNOWN_WORD_ID if the
-     *    word is not in the dictionary
+     * @return the sentence start word
      */
-    public int getWordID(String word) {
-        if (word.equals(SENTENCE_START_SPELLING)) {
-            return SENTENCE_START_ID;
-        } else if (word.equals(SENTENCE_END_SPELLING)) {
-            return SENTENCE_END_ID;
-        } else if (word.equals(SILENCE_SPELLING)) {
-            return SILENCE_ID;
-        }
-        Pronunciation[] prons = getPronunciations(word, null);
-        if (prons == null) {
-            return UNKNOWN_WORD_ID;
-        } else {
-            return prons[0].getWordID();
-        }
+    public Word getSentenceStartWord() {
+        return getWord(SENTENCE_START_SPELLING);
     }
 
     /**
-     * Retrieves the pronunciations for a particular word based upon
-     * its classification.
+     * Returns the sentence end word.
      *
-     * @param text the spelling of the word of interest.
-     * @param wordClassification the classification of the word
-     * (typically part of speech classification)  or null if all word
-     * classifications are acceptable. The word classification must be
-     * one of the set returned by <code>
-     * getPossibleWordClassifications </code>
-     *
-     * @return an array of zero or more
-     * <code>Pronunciation</code> objects.
-     *
-     * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
+     * @return the sentence end word
      */
-    public Pronunciation[] getPronunciations(String text,
-            WordClassification wordClassification) {
-        return getPronunciations(text, wordClassification, null);
+    public Word getSentenceEndWord() {
+        return getWord(SENTENCE_END_SPELLING);
     }
 
+    /**
+     * Returns the silence word.
+     *
+     * @return the silence word
+     */
+    public Word getSilenceWord() {
+        return getWord(SILENCE_SPELLING);
+    }    
 
     /**
-     * Retrieves the pronunciations for a particular word based upon
-     * its classification and tag.
+     * Returns a Word object based on the spelling and its classification.
      *
      * @param text the spelling of the word of interest.
-     * @param wordClassification the classification of the word
-     * (typically part of speech classification)  or null if all word
-     * classifications are acceptable. The word classification must be
-     * one of the set returned by <code>
-     * getPossibleWordClassifications </code>
-     * @param tag a tag used to distinguish one homograph from
-     * another.
      *
-     * @return an array of zero or more
-     * <code>Pronunciation</code> objects.
+     * @return a Word object
      *
-     * @see edu.cmu.sphinx.knowledge.dictionary.Pronunciation
+     * @see edu.cmu.sphinx.knowledge.dictionary.Word
      */
-    public Pronunciation[] getPronunciations(String text,
-                     WordClassification wordClassification, String tag) {
-        
-	Pronunciation[] pronunciations = null;
+    public Word getWord(String text) {
+        Word word = null;
 	text = text.toLowerCase();
 
 	Object object = dictionary.get(text);
 
 	if (object == null) {  // deal with 'not found' case
 	    if (wordReplacement != null) {
-		return getPronunciations(wordReplacement,
-			wordClassification, tag);
+		return getWord(wordReplacement);
 	    } else if (allowMissingWords) {
-		System.out.println("Missing word: " + text);
+		System.out.println("FastDictionary: Missing word: " + text);
 		return null;
 	    }
 	} else if (object instanceof String) { // first lookup for this string
-	    pronunciations = processEntry(text);
-	} else if (object instanceof Pronunciation[]) {
-	    pronunciations = (Pronunciation[]) object;
+	    word = processEntry(text);
+	} else if (object instanceof Word) {
+	    word = (Word) object;
 	}
-	return pronunciations;
+	return word;
     }
 
 
@@ -324,7 +278,7 @@ public class FastDictionary implements Dictionary {
      * actually used is its pronunciations massaged into an array of
      * pronunciations.
      */
-    private Pronunciation[] processEntry(String word) {
+    private Word processEntry(String word) {
 	List pList = new LinkedList();
 	String line = null;
 	int count = 0;
@@ -338,7 +292,7 @@ public class FastDictionary implements Dictionary {
 	    line = (String) dictionary.get(lookupWord);
 	    if (line != null) {
 		StringTokenizer st = new StringTokenizer(line);
-                int wordID = Integer.parseInt(st.nextToken());
+
 		String tag = st.nextToken();
 		boolean isFiller = tag.startsWith(FILLER_TAG);
 		int unitCount = st.countTokens();
@@ -357,15 +311,21 @@ public class FastDictionary implements Dictionary {
                     units = silUnits;
 		}
                 pList.add
-                    (new Pronunciation(word, wordID, units, null, null, 1.f));
+                    (new Pronunciation(units, null, null, 1.f));
             }
 	} while (line != null);
 
         Pronunciation[] pronunciations = new Pronunciation[pList.size()];
         pList.toArray(pronunciations);
+        
+        Word wordObject = new Word(word, pronunciations);
+        
+        for (int i = 0; i < pronunciations.length; i++) {
+            pronunciations[i].setWord(wordObject);
+        }
 
-	dictionary.put(word, pronunciations);
-	return pronunciations;
+	dictionary.put(word, wordObject);
+	return wordObject;
     }
 
 
