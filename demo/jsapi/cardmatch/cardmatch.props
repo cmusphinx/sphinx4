@@ -58,9 +58,10 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 #
 ############################################################
 
-demo.jsapi.CardMatch.numberOfCards = 6
-demo.jsapi.CardMatch.imageFiles = ./willie.gif ./paul.gif ./philip.gif
-demo.jsapi.CardMatch.JSGFGrammar.path=./CardMatch.gram
+demo.jsapi.cardmatch.numberOfCards = 6
+demo.jsapi.cardmatch.useVoice = false
+demo.jsapi.cardmatch.imageFiles = ./willie.gif ./paul.gif ./philip.gif
+demo.jsapi.cardmatch.JSGFGrammar.path=./CardMatch.gram
 
 
 ############################################################
@@ -69,7 +70,7 @@ demo.jsapi.CardMatch.JSGFGrammar.path=./CardMatch.gram
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.grammar=demo.jsapi.CardMatch.JSGFGrammar
+edu.cmu.sphinx.decoder.Recognizer.grammar=demo.jsapi.cardmatch.JSGFGrammar
 
 
 ############################################################
@@ -125,3 +126,5 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
 edu.cmu.sphinx.search.ThreadedAcousticScorer.isCpuRelative=true
 edu.cmu.sphinx.search.ThreadedAcousticScorer.numThreads=-1
 edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
+
+edu.cmu.sphinx.decoder.Decoder.showPartialResults=false
