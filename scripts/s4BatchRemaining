@@ -1,6 +1,25 @@
-#!/usr/bin/bash
-# 
-# Shows the batches that are still running. This is useful when trying
-# to figure out who the stragglers are after a batch run.
+gawk '
 
-grep -cl Summary tests/Results/*.out | grep ":0" | sed 's/:0//g'
+FILENAME != lastFileName && lastFileName != "" {
+    if (!foundEnd) {
+        print lastFileName, inProcess;
+    }
+    foundEnd = 0;
+}
+
+$1 == "Processing:" {
+    inProcess = $2;
+}
+
+$3 == "Summary" && $4 == "statistics" {
+    foundEnd = 1;
+}
+
+{ lastFileName = FILENAME }
+
+END {
+    if (!foundEnd) {
+        print lastFileName, inProcess;
+    }
+}
+' tests/Results/*.out
