@@ -15,6 +15,8 @@ public class Feature implements Data {
 
     /**
      * Constructs a Feature with the given feature data.
+     *
+     * @param featureData the feature data points
      */
     public Feature(float[] featureData) {
 	this.featureData = featureData;
@@ -28,5 +30,15 @@ public class Feature implements Data {
      */
     public float[] getFeatureData() {
 	return featureData;
+    }
+
+
+    /**
+     * Returns a String representation of this Feature.
+     *
+     * @returns the String representation
+     */
+    public String toString() {
+        return Util.dumpFloatArray(featureData, "FEATURE");
     }
 }

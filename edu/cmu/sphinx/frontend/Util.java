@@ -12,6 +12,26 @@ import java.text.DecimalFormat;
  */
 public class Util {
 
+    private static final int HEXADECIMAL = 1;
+    private static final int SCIENTIFIC = 2;
+    private static final int DECIMAL = 3;
+
+
+    /**
+     * DecimalFormat object to be used by dump***() methods.
+     */
+    private static DecimalFormat format = new DecimalFormat();
+    
+
+    /**
+     * The number format to be used by dump***() methods.
+     */
+    private static int numberFormat = SCIENTIFIC;
+
+    private static int decimalIntegerDigits = 10;
+    private static int decimalFractionDigits = 5;
+    private static int scientificDecimalDigits = 9;
+
 
     /**
      * Uninstantiable class.
@@ -171,6 +191,27 @@ public class Util {
     }
 
 
+    public static String dumpDoubleCScientific(double number, int fraction) {
+        String formatter = "0.";
+        for (int i = 0; i < fraction; i++) {
+            formatter += "0";
+        }
+        formatter += "E00";
+
+        DecimalFormat format = new DecimalFormat();
+        format.applyPattern(formatter);
+        String formatted = format.format(number);
+
+        int index = formatted.indexOf('E');
+        if (formatted.charAt(index+1) != '-') {
+            return formatted.substring(0, index+1) + "+" +
+                formatted.substring(index+1);
+        } else {
+            return formatted;
+        }
+    }
+
+
     /**
      * Dumps the given short array as a line to stdout.
      * The dump will be in the form:
@@ -183,31 +224,6 @@ public class Util {
         String dump = (description + " " + data.length);
 	for (int i = 0; i < data.length; i++) {
 	    dump += (" " + data[i]);
-	}
-        return dump;
-    }
-	
-
-
-    /**
-     * Dumps the given double array as a string.
-     * The dump will be in the form:
-     * <pre>description data[0] data[1] ... data[data.length]</pre>where
-     * <code>data[i]</code> is formatted by the method
-     * <code>Util.formatDouble(data[i], 9, 5)</code>.
-     *
-     * @param data the double array to dump
-     * @param description some comment notes
-     * @param integerDigits the number of digits in the integer portion
-     * @param fractionDigits the number of digits in the fraction portion
-     *
-     * @return a string of the dump
-     */
-    public static String dumpDoubleArray(double[] data, String description,
-                                         int integerDigits, int fractionDigits) {
-	String dump = (description + " " + data.length);
-	for (int i = 0; i < data.length; i++) {
-	    dump += (" " + formatDouble(data[i], integerDigits, fractionDigits));
 	}
         return dump;
     }
@@ -226,7 +242,72 @@ public class Util {
      * @return a string of the dump
      */
     public static String dumpDoubleArray(double[] data, String description) {
-        return dumpDoubleArray(data, description, 15, 5);
+        return dumpDoubleArray(data, description, numberFormat);
+    }
+
+
+    private static String dumpDoubleArray(double[] data,
+                                          String description,
+                                          int format) {
+        String dump = (description + " " + data.length);
+
+        for (int i = 0; i < data.length; i++) {
+            if (format == DECIMAL) {
+                dump += (" " + formatDouble
+                         (data[i], decimalIntegerDigits,
+                          decimalFractionDigits));
+            } else if (format == HEXADECIMAL) {
+                long binary = Double.doubleToRawLongBits(data[i]);
+                dump += (" 0x" + Long.toHexString(binary));
+            } else if (format == SCIENTIFIC) {
+                dump += (" " + dumpDoubleCScientific
+                         (data[i], scientificDecimalDigits));
+            }
+        }
+        return dump;
+    }        
+
+
+    /**
+     * Dumps the given float array as a string.
+     *
+     * @param data the float array to dump
+     * @param name name of the array
+     *
+     * @return a string of the given float array
+     */
+    public static String dumpFloatArray(float[] data, String name) {
+        return dumpFloatArray(data, name, numberFormat);
+    }
+
+
+    /**
+     * Dumps the given float array as a string.
+     *
+     * @param data the float array to dump
+     * @param name name of the array
+     *
+     * @return a string of the given float array
+     */
+    private static String dumpFloatArray(float[] data, String name, 
+                                        int format) {
+        String dump = (name + " " + data.length);
+
+        for (int i = 0; i < data.length; i++) {
+
+            if (format == DECIMAL) {
+                dump += (" " + formatDouble
+                         ((double) data[i],
+                          decimalIntegerDigits, decimalFractionDigits));
+            } else if (format == HEXADECIMAL) {
+                int binary = Float.floatToRawIntBits(data[i]);
+                dump += (" 0x" + Integer.toHexString(binary));
+            } else if (format == SCIENTIFIC) {
+                dump += (" " + dumpDoubleCScientific
+                         ((double) data[i], scientificDecimalDigits));
+            }
+        }
+        return dump;
     }
 
 
@@ -248,20 +329,15 @@ public class Util {
      */
     public static String formatDouble(double number, int integerDigits,
 				      int fractionDigits) {
-        String formatter = "";
-	for (int i = 0; i < integerDigits; i++) {
-	    formatter += "#";
-	}
-	formatter += ".";
+        String formatter = "0.";
 	for (int i = 0; i < fractionDigits; i++) {
-	    formatter += "#";
+	    formatter += "0";
 	}
 
-	DecimalFormat format = new DecimalFormat();
 	format.applyPattern(formatter);
 	String formatted = format.format(number);
 
-	// pad preceding spaces and trailing zeroes
+	// pad preceding spaces before the number
 	int dotIndex = formatted.indexOf('.');
 	if (dotIndex == -1) {
 	    formatted += ".";
@@ -272,46 +348,7 @@ public class Util {
 	    result += " ";
 	}
 	result += formatted;
-	int fractionLength = formatted.length() - dotIndex - 1;
-	for (int i = fractionLength; i < fractionDigits; i++) {
-	    result += "0";
-	}
 	return result;
-    }
-
-
-    /**
-     * Dumps the given float array as a string.
-     *
-     * @param data the float array to dump
-     * @param name name of the array
-     *
-     * @return a string of the given float array
-     */
-    public static String dumpFloatArray(float[] data, String name) {
-        String dump = (name + " " + data.length);
-        for (int i = 0; i < data.length; i++) {
-            dump += (" " + formatDouble
-			     ((new Float(data[i])).doubleValue(), 9, 5));
-        }
-        return dump;
-    }
-
-
-    /**
-     * Dumps the given FeatureFrame as a string.
-     *
-     * @param featureFrame the FeatureFrame to dump
-     *
-     * @return a string dump of the given FeatureFrame
-     */
-    public static String dumpFeatureFrame(FeatureFrame featureFrame) {
-	Feature[] features = featureFrame.getFeatures();
-	String dump = ("FEATURE_FRAME " + features.length + "\n");
-        for (int i = 0; i < features.length; i++) {
-	    dump += dumpFloatArray(features[i].getFeatureData(), "FEATURE");
-	}
-        return dump;
     }
 
 
