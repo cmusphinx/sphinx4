@@ -28,7 +28,7 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 NO_CONTEXT_FLAGS= -Dedu.cmu.sphinx.model.acoustic.useComposites=false -Dedu.cmu.sphinx.model.acoustic.useCDUnits=false
 
 
-PROFILE_FLAGS= -Xprof -server
+PROFILE_FLAGS= -Xprof -server 
 #PROFILE_FLAGS=  -Xprof
 #PROFILE_FLAGS=  -Xrunhprof:file=dump.hprof,format=b
 LOG_GC_FLAGS=  -Xloggc:gc.txt
@@ -44,7 +44,7 @@ HEAP_DUMP =   -Xrunhprof:heap=dump,cpu=samples
 #GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 #GC_FLAGS= -ms1g -XX:+UseConcMarkSweepGC -XX:-UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 
-GC_FLAGS = -ms128m -mx2g
+GC_FLAGS = -ms128m  -mx1g
 
 #PROFILE2_FLAGS= -Xrunhprof:file=log.txt
 PROFILE2_FLAGS= -Xrunhprof:cpu=samples,file=log.txt
@@ -99,6 +99,22 @@ large_bigram:
 	$(JAVA_CMD)  \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
 	-Dedu.cmu.sphinx.model.language.location=large.bigram \
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch
+
+large_bigram_fst:
+	$(JAVA_CMD)  \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+        -Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
+	-Dedu.cmu.sphinx.search.FSTGrammar.path=./RM.2845.bigram.fst.ascii \
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch
+
+large_trigram_fst:
+	$(JAVA_CMD)  \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+        -Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
+	-Dedu.cmu.sphinx.search.FSTGrammar.path=./RM.2845.trigram.fst.ascii \
 	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch
 
 
@@ -162,3 +178,68 @@ tiny_static:
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=2000\
         -Dedu.cmu.sphinx.util.LinguistDumper.filename=tiny_static.gdl \
         edu.cmu.sphinx.decoder.BatchDecoder tiny_static.props small.batch
+
+an4_words_fst:
+	$(JAVA_CMD) \
+        edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
+
+tiny_fst:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.search.FSTGrammar.path=./tiny.fst\
+	-Dedu.cmu.sphinx.search.Recognizer.linguistProcessors=edu.cmu.sphinx.util.GDLDumper \
+	-Dedu.cmu.sphinx.util.LinguistDumper.filename=tiny_fst.gdl\
+        edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_tiny.batch
+
+tiny2:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.search.FSTGrammar.path=./tiny.fst\
+        -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel\
+        -Dedu.cmu.sphinx.model.language.format=arpa\
+	-Dedu.cmu.sphinx.search.Recognizer.linguistProcessors=edu.cmu.sphinx.util.GDLDumper \
+        -Dedu.cmu.sphinx.model.language.location=small.unigram \
+	-Dedu.cmu.sphinx.util.LinguistDumper.filename=tiny.gdl\
+        edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_tiny.batch
+
+
+an4_words_trigram:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=0.8 \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=16.0 \
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=./an4_words.trigram.lm\
+	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
+
+an4_words_trigram2:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1E-30 \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+        -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_words.trigram.fst\
+	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
+
+#	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist \
+#       -Dedu.cmu.sphinx.search.FSTGrammar.path=./tiny.fst\
+#	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+
+an4_full_fst:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1E-25 \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+	-Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_full.trigram.fst \
+	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
+
+an4_plus_fst:
+	$(JAVA_CMD) \
+        -Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1E-25 \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+	-Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_plus.trigram.fst \
+	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch

@@ -111,7 +111,7 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 
 
 edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1
-edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1E-10
+edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1E-6
 edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250
 edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=11.0
