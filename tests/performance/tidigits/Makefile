@@ -196,4 +196,5 @@ tidigits_wordlist_live:
 	-Dedu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=16 \
 	-Dedu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature=true \
 	-Dedu.cmu.sphinx.decoder.LivePretendDecoder.hypothesisTranscript=hypothesis.txt \
+	-Dedu.cmu.sphinx.decoder.LivePretendDecoder.alignInterval=870 \
 	edu.cmu.sphinx.decoder.LivePretendDecoder tidigits.props tidigits.batch
