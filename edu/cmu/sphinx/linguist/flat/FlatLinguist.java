@@ -282,6 +282,9 @@ public class FlatLinguist implements Linguist, Configurable {
         nodeStateMap = new HashMap();
         arcPool = new HashMap();
         allocateAcousticModel();
+        if (addOutOfGrammarBranch) {
+            outOfGrammarLinguist.allocate();
+	}
         grammar.allocate();
         totalStates = StatisticsVariable.getStatisticsVariable(getName(),
                 "totalStates");
