@@ -16,6 +16,8 @@
 # target for the test.
 
 
+./getTime >.startTime
+
 ./runTest ../performance/tidigits tidigits_super_quick
 
 touch ./.testDone

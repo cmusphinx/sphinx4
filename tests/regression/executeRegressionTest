@@ -107,7 +107,6 @@ totalBuildTime=`expr $endBuildTime - $startBuildTime`
 cd $regressionDir
 
 if [ $status = "OK" ]; then
-   startRunTime=`$regressionDir/getTime`
    echo running tests from $regressionDir/$runTests
 
    case $batchMode in
@@ -126,6 +125,7 @@ if [ $status = "OK" ]; then
 	      $regressionDir/waitForFile $regressionDir/.testDone;;
    esac
 
+   startRunTime=`cat $regressionDir/.startTime`
    endRunTime=`$regressionDir/getTime`
    totalRunTime=`expr $endRunTime - $startRunTime`
 else
