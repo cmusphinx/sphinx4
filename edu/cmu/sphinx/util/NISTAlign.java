@@ -901,15 +901,19 @@ public class NISTAlign {
      * @return a space separated string
      */
     private String toString(LinkedList list) {
-	StringBuffer sb = new StringBuffer();
-        ListIterator iterator = list.listIterator();
-        while (iterator.hasNext()) {
-	    sb.append(iterator.next());
-	    if (iterator.hasNext()) {
-		sb.append(" ");
-	    }
-	}
-	return sb.toString();
+        if (list != null) {
+            StringBuffer sb = new StringBuffer();
+            ListIterator iterator = list.listIterator();
+            while (iterator.hasNext()) {
+                sb.append(iterator.next());
+                if (iterator.hasNext()) {
+                    sb.append(" ");
+                }
+            }
+            return sb.toString();
+        } else {
+            return "";
+        }
     }
 
     /**
