@@ -317,23 +317,23 @@ WARRANTIES.
   <ul>
   <li> Windows
   <pre>
-set ANT_HOME=c:\ant
-set PATH=%PATH%;%ANT_HOME%\bin
 set JAVA_HOME=c:\j2sdk1.4.2
+set ANT_HOME=c:\ant
+set PATH=%PATH%;%ANT_HOME%\bin;%JAVA_HOME%\bin
 </pre>
   </li>
   <li> Unix (bash)
   <pre>
-export ANT_HOME=/usr/local/ant
-export PATH=${PATH}:${ANT_HOME}/bin
 export JAVA_HOME=/usr/java/j2sdk1.4.2
+export ANT_HOME=/usr/local/ant
+export PATH=${PATH}:${ANT_HOME}/bin:${JAVA_HOME}/bin
 </pre>
   </li>
   <li> Unix (csh)
   <pre>
-setenv ANT_HOME /usr/local/ant
-setenv PATH ${PATH}:/${ANT_HOME}/bin
 setenv JAVA_HOME /usr/java/j2sdk1.4.2
+setenv ANT_HOME /usr/local/ant
+setenv PATH ${PATH}:${ANT_HOME}/bin:${JAVA_HOME}/bin
 </pre>
   </li>
   </ul>
@@ -456,8 +456,9 @@ jar xvf sphinx4-{version}-src.zip</pre>
       <p>
       To build Sphinx-4, at the command prompt change to 
       the directory where you installed Sphinx-4 (usually, a simple 
-      "cd sphinx4" will do). Set your <code>JAVA_HOME</code> environment
-      variable as described above. Then type the following:
+      "cd sphinx4" will do). Set your <code>JAVA_HOME</code>,
+      <code>ANT_HOME</code> and <code>PATH</code> environment variables 
+      as described above. Then type the following:
       </p>
       <pre>ant</pre>
     <p>
