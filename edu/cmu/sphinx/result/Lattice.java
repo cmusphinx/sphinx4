@@ -677,6 +677,11 @@ public class Lattice {
         sorted.add(n);
     }
     
+    /**
+     * Topologically sort the nodes in this lattice.
+     * 
+     * @return Topologically sorted list of nodes in this lattice.
+     */
     public List sortNodes() {
         Vector sorted = new Vector(nodes.size());
         sortHelper(initialNode,sorted,new HashSet());
