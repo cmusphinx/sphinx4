@@ -24,9 +24,8 @@ import java.net.URL;
 
 
 /**
- * A simple HelloWorld demo showing a simple speech application 
- * built using Sphinx-4. This application uses the Sphinx-4 endpointer,
- * which automatically segments incoming audio into utterances and silences.
+ * A version of the HelloWorld demo that does not use endpointing.
+ * Instead, the user will press ENTER to signal the end of speech.
  */
 public class HelloWorld {
 
@@ -45,42 +44,65 @@ public class HelloWorld {
             ConfigurationManager cm = new ConfigurationManager(url);
 
 	    Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
-	    Microphone microphone = (Microphone) cm.lookup("microphone");
+	    final Microphone microphone = 
+                (Microphone) cm.lookup("microphone");
 
 
             // allocate the resource necessary for the recognizer
             recognizer.allocate();
 
-            // the microphone will keep recording until the program exits
-	    if (microphone.startRecording()) {
-
-		System.out.println
-		    ("Say any digit(s): e.g. \"two oh oh four\", " +
-		     "\"three six five\".");
-
-		while (true) {
-		    System.out.println
-			("Start speaking. Press Ctrl-C to quit.");
-
-                    //
-                    // This method will return when the end of speech
-                    // is reached. Note that the endpointer will determine
-                    // the end of speech.
-                    // 
-		    Result result = recognizer.recognize();
-		    
-		    if (result != null) {
-			String resultText = result.getBestResultNoFiller();
-			System.out.println("You said: " + resultText + "\n");
-		    } else {
-			System.out.println("I can't hear what you said.\n");
+            //
+            // This thread is used to listen for the ENTER key,
+            // which when pressed will stop the microphone.
+            //
+	    Thread t = new Thread() {
+		    public void run() {
+			try {
+			    while (true) {
+				if (System.in.read() == 10) {
+				    microphone.stopRecording();
+				}
+			    }			    
+			} catch (IOException ioe) {
+			    ioe.printStackTrace();
+			    System.exit(1);
+			}
 		    }
-		}
-	    } else {
-		System.out.println("Cannot start microphone.");
-		recognizer.deallocate();
-		System.exit(1);
-	    }
+		};                    
+	    t.start();
+
+	    System.out.println
+		("Say any digit(s): e.g. \"two oh oh four\", " +
+		 "\"three six five\".");
+
+	    //
+            // The program now enters a loop to keep listening for audio,
+            // and decodes the recorded audio.
+            //
+            while (true) {
+		if (microphone.startRecording()) {
+                    System.out.println
+			("Start speaking. " +
+			 "Press ENTER when you finish speaking.");
+                    
+                    // 
+                    // this method returns when the ENTER key is pressed,
+                    // which stops the microphone
+                    //
+		    Result result = recognizer.recognize();
+                    
+                    if (result != null) {
+                        String resultText = result.getBestResultNoFiller();
+                        System.out.println("You said: " + resultText + "\n");
+                    } else {
+                        System.out.println("I can't hear what you said.\n");
+                    }                    
+                } else {
+                    System.out.println("Cannot start microphone.");
+                    recognizer.deallocate();
+                    System.exit(1);
+                }
+            }
         } catch (IOException e) {
             System.err.println("Problem when loading HelloWorld: " + e);
             e.printStackTrace();
