@@ -59,6 +59,16 @@ public class EndPointSignal implements Signal {
 
 
     /**
+     * Returns a hash code value for this EndPointSignal.
+     *
+     * @return a hash code value for this EndPointSignal
+     */
+    public int hashCode() {
+        return toString.hashCode();
+    }
+
+
+    /**
      * Returns the name of this EndPointSignal.
      *
      * @return the name of this EndPointSignal
