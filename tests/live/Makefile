@@ -22,7 +22,7 @@ EXTRA_JAVA_FLAGS= -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 # LOGGER_PROPERTIES=tiDigits.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
-PROFILE_FLAGS = -Xprof
+PROFILE_FLAGS = 
 LOG_GC_FLAGS = -Xloggc:gc.txt
 
 GC_FLAGS = -ms128m -mx512m
@@ -65,7 +65,7 @@ live-ep: all
 	$(JAVA_CMD) \
 	-DshowPartialResults=true \
 	-Dedu.cmu.sphinx.frontend.endpoint.AudioFilter.mergeSpeechSegments=true\
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.LvelTracker \
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.LevelTracker \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2 \
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true \
 	tests.live.Live decoders.list
