@@ -240,7 +240,7 @@ public class Token implements Scoreable {
         float score = hmmState.getScore(feature);
         this.logTotalScore += score;
         this.logAcousticScore = score;
-        this.feature = feature;
+        // this.feature = feature;
         return score;
     }
 
