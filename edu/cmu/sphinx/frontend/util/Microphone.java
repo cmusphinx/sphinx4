@@ -508,7 +508,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      *
      * @throws java.io.IOException
      */
-    public synchronized Audio getAudio() throws IOException {
+    public Audio getAudio() throws IOException {
 
         getTimer().start();
 
