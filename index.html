@@ -57,23 +57,34 @@ WARRANTIES.
       <td width="5%"><br>
       </td>
 
-      <td valign="top"><br><br>
-      <h3>General Information - (this page is currently under development)</h3>
+      <td valign="top"><br>
+      <h3>(this page is currently under development)</h3>
+      <h3>General Information</h3>
       <ul>
         <li><a href="#what_is_sphinx4">Introduction</a></li>
         <li><a href="#capabilities">Capabilities</a></li>
         <li><a href="#speed_and_accuracy">Performance</a></li>
-        <li><a href="#download_and_install">Downloading and Installing</a></li>
-        <li><a href="#configuration">Configuration</a></li>
       </ul>
 
-      <h3>How Do I Use It: Sphinx-4 for Speech Application Developers</h3>
+      <h3>Installation</h3>
+      <ul>
+        <li><a href="#download_and_install">Downloading and Installing</a></li>
+	<li><a href="#acoustic_models">Acoustic Models</a></li>
+	<li><a href="#language_models">Language Models</a></li>
+      </ul>
+
+      <h3>Demos</h3>
+      <ul>
+	<li><a href="#demos">Demos</a></li>
+      </ul>
+
+      <h3>Using Sphinx-4 (for Application Developers)</h3>
       <ul>
         <li><a href="#architecture_and_api1">Architecture and API</a></li>
-        <li><a href="#demos">Demos</a></li>
+	<li><a href="#configuration">Configuration</a></li>
       </ul>
 
-      <h3>How Do I Change It: Sphinx-4 for Speech Engine Developers</h3>
+      <h3>Changing Sphinx-4 (for Speech Engine Developers)</h3>
       <ul>
         <li><a href="#architecture_and_api2">Architecture and API</a></li>
         <li><a href="#how_build">Building Sphinx-4</a></li>
@@ -164,8 +175,15 @@ WARRANTIES.
           </li>
       </ul>
   </li>
-  <br>&nbsp;
-  <li><a name="download_and_install"><b>Downloading and Installing</b></a>
+</ul>
+
+<hr>
+
+<h2>Installation</h2>
+
+<ul>
+
+<li><a name="download_and_install"><b>Downloading and Installing</b></a>
 
       <p>Include notes on acoustic model and language model files.
 </p>
@@ -249,7 +267,49 @@ the latest version is 1.4.2.
 </ul>
 
   </li>
+
+<br>
+
+<li><a name="acoustic_models"><b>Acoustic Models</b></a>
+
+<br>
+
+</li>
+
+<li><a name="language_models"><b>Language Models</b></a>
+
+</li>
+
+</ul>
+
+<hr>
+
+<h2>Demos</h2>
+
+  <p>Sphinx-4 contains a number of demo programs:
+    <ul>
+      <li><a href="tests/live/README.html">Live Demo</a>: shows the basic speech recognition capabilites via a graphical user interface</li>
+    </ul>
+  </li>
+
+
+<hr>
+
+<h2>Using Sphinx-4 (for Application Developers)</h2>
+<ul>
+  <li><a name="architecture_and_api1"><b>Architecture and API</b></a>
+      <p>The architecture and API can be found in the 
+         <a href="javadoc/index.html">javadoc documentation</a>.
+</p>
+<p>If the previous link failed, please build the javadocs. In fact, rebuilding javadocs something you should do every time there is a major change in your code. To build the javadoc, go to the top level directory ("sphinx4"), and type:
+</p>
+<pre>ant javadoc</pre>
+<p>This will build javadocs from public classes, displaying only the public methods and fields. In general, this is all the information you will need. If you need more details, such as private or protected classes, you can generate the corresponding javadoc by doing, for example:
+</p>
+<pre>ant -Daccess=private javadoc</pre>
+  </li>
   <br>&nbsp;
+
   <li><a name="configuration"><b>Configuration</b></a>
 <p>The system behavior is determined by SphinxProperties, which make use, and therefore are similar in nature, to the Java Platform Properties class. The SphinxProperties can be defined at command line, but in general it is defined from a file with extension ".props". Properties defined in
 the props file are overridden by properties defined as command line
@@ -300,35 +360,12 @@ contains the type of constant that can be used. So, if this field is
 int, only an integer can be used as the value for this property.
 </p>
   </li>
+
 </ul>
 
 <hr>
 
-<h2>How Do I Use It:  Sphinx-4 for Speech Application Developers</h2>
-<ul>
-  <li><a name="architecture_and_api1"><b>Architecture and API</b></a>
-      <p>The architecture and API can be found in the 
-         <a href="javadoc/index.html">javadoc documentation</a>.
-</p>
-<p>If the previous link failed, please build the javadocs. In fact, rebuilding javadocs something you should do every time there is a major change in your code. To build the javadoc, go to the top level directory ("sphinx4"), and type:
-</p>
-<pre>ant javadoc</pre>
-<p>This will build javadocs from public classes, displaying only the public methods and fields. In general, this is all the information you will need. If you need more details, such as private or protected classes, you can generate the corresponding javadoc by doing, for example:
-</p>
-<pre>ant -Daccess=private javadoc</pre>
-  </li>
-  <br>&nbsp;
-  <li><a name="demos"><b>Demos</b></a>
-      <p>Sphinx-4 contains a number of demo programs:
-      <ul>
-          <li><a href="tests/live/README.html">Live Demo</a></li>
-      </ul>
-  </li>
-</ul>
-
-<hr>
-
-<h2>How Do I Change It:  Sphinx-4 for Speech Engine Developers</h2>
+<h2>Changing Sphinx-4 for Speech Engine Developers</h2>
 <p>All the source is available under a <a href="license.terms">BSD Style</a>
    license.  You can download it, build it, and modify it to your 
    heart's content.
