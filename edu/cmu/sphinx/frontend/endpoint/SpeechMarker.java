@@ -23,8 +23,8 @@ import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DataStartSignal;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.frontend.Signal;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 
 
@@ -114,7 +114,6 @@ public class SpeechMarker extends BaseDataProcessor {
     private int endSilenceTime;
     private int speechLeader;
     private int speechTrailer;
-    private int sampleRate;
 
 
     /**
@@ -152,10 +151,6 @@ public class SpeechMarker extends BaseDataProcessor {
 
         speechTrailer = props.getInt
             (getName(), PROP_SPEECH_TRAILER, PROP_SPEECH_TRAILER_DEFAULT);
-
-        sampleRate = props.getInt
-            (getName(), FrontEndFactory.PROP_SAMPLE_RATE,
-             FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
     }
 
     /**
@@ -238,7 +233,8 @@ public class SpeechMarker extends BaseDataProcessor {
      * @return the amount of audio data in milliseconds
      */
     public int getAudioTime(SpeechClassifiedData audio) {
-        return (int) (audio.getValues().length * 1000.0f / sampleRate);
+        return (int) 
+            (audio.getValues().length * 1000.0f / audio.getSampleRate());
     }
         
     /**
