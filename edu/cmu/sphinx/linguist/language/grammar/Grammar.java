@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
@@ -225,6 +228,31 @@ public abstract class Grammar implements Configurable {
         } catch (IOException ioe) {
             logger.severe("Can't write random sentences to " + path + " "
                     + ioe);
+        }
+    }
+
+
+    /**
+     * Dump a set of random sentences that fit this grammar
+     * 
+     * @param count
+     *                dumps no more than this. May dump less than this
+     *                depending upon the number of uniqe sentences in the
+     *                grammar.
+     */
+    public void dumpRandomSentences(int count) {
+        Set set = new HashSet();
+        for (int i = 0; i < count; i++) {
+            String s = getRandomSentence();
+            if (!set.contains(s)) {
+                set.add(s);
+            }
+        }
+        List sampleList = new ArrayList(set);
+        Collections.sort(sampleList);
+
+        for (Iterator i = sampleList.iterator(); i.hasNext(); ) {
+            System.out.println(i.next());
         }
     }
 
