@@ -5,17 +5,12 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.SphinxProperties;
-import java.io.FileInputStream;
+import edu.cmu.sphinx.util.Timer;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.ShortBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
 
 
 /**
@@ -80,25 +75,28 @@ public class FrontEnd implements DataSource, Runnable {
     "edu.cmu.sphinx.frontend.cepstrumSize";
     
 
-    private int samplesPerAudioFrame;
+    private String context;
     private List processors = null;
     private DataSource audioFrameSource;
     private List queue;
-
+    private Timer timer;
+    
 
     /**
      * Constructs a default FrontEnd.
      */
-    public FrontEnd() {
+    public FrontEnd(String context) {
+        this.context = context;
 	processors = new LinkedList();
         queue = new Vector();
+        timer = Timer.getTimer(context, "FrontEnd");
     }
 
 
     /**
      * Adds the given processor to the list of processors.
      *
-     * @param processorClass the name of the processor Class
+     * @param processor the DataProcessor to add
      */
     public void addProcessor(DataProcessor processor) {
 	if (processors == null) {
@@ -148,23 +146,33 @@ public class FrontEnd implements DataSource, Runnable {
 
 
     /**
-     * Returns a Feature, EndPointSignal.SEGMENT_START, or
+     * Returns a FeatureFrame, EndPointSignal.SEGMENT_START, or
      * EndPointSignal.SEGMENT_END signals produced by this FrontEnd.
+     * Return null if no Data available
      *
-     * @return a Feature
+     * @return a Data object, which is usually a FeatureFrame, or null
+     *    if no Data available
      */
     public Data read() {
-        Object data = queue.get(0);
-        if (data == null) {
-            return null;
-        } else {
-            return (Data) data;
+        synchronized (queue) {
+            if (queue.size() == 0) {
+                return null;
+            } else {
+                Object data = queue.get(0);
+                if (data == null) {
+                    return null;
+                } else {
+                    return (Data) data;
+                }
+            }
         }
     }
 
 
     /**
-     * Starts the FrontEnd.
+     * Executes the FrontEnd. When this FrontEnd is used to create a
+     * Thread, calling <code>Thread.start()</code> causes this method
+     * to be executed in that Thread.
      */
     public void run() {
 
@@ -178,61 +186,41 @@ public class FrontEnd implements DataSource, Runnable {
 
 	DataProcessor last =
 	    (DataProcessor) processors.get(processors.size() - 1);
+
+        timer.start();
+
 	if (last != null) {
             Data output = null;
             do {
                 try {
                     output = last.read();
-                    
                     if (output != null) {
-                        if (output == EndPointSignal.SEGMENT_START ||
-                            output == EndPointSignal.SEGMENT_END) {
-                            queue.add(output);
-                            
-                        } else if (output instanceof FeatureFrame) {
-                            // add the Features in the FeatureFrame
-                            // to the output queue
-                            Feature[] features = 
-                                ((FeatureFrame) output).getFeatures();
-                            for (int i = 0; i < features.length; i++) {
-                                queue.add(features[i]);
-                            }
-                        }
+                        handleData(output);
                     }
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                 }                
             } while (output != null);
         }
+
+        timer.stop();
     }
-}
 
-
-
-
-/**
- * Contains constants to indicate the input mode of the Frontend.
- */
-class InputMode {
-
-
-    private final String name;
-    
-    private InputMode(String name) {
-        this.name = name;
-    }
-    
-    public String toString() {
-        return name;
-    }
 
     /**
-     * Indicates that the input is from an InputStream.
+     * Handles an incoming Data object.
      */
-    public static final InputMode STREAM = new InputMode("stream");
-    
-    /**
-     * Indicates that the input is from a batch file.
-     */
-    public static final InputMode BATCH = new InputMode("batch");
+    private void handleData(Data input) {
+
+        if (input instanceof EndPointSignal) {
+            EndPointSignal signal = (EndPointSignal) input;
+            if (signal.equals(EndPointSignal.SEGMENT_START) ||
+                signal.equals(EndPointSignal.SEGMENT_END)) {
+                queue.add(input);
+            }
+
+        } else if (input instanceof FeatureFrame) {
+            queue.add(input);
+        }
+    }
 }
