@@ -61,23 +61,63 @@ public class ParallelLinguist implements Linguist {
     private static final String PROP_PREFIX = 
 	"edu.cmu.sphinx.research.parallel.ParallelLinguist.";
 
-    private static final String PROP_ADD_SELF_LOOP_WORD_END_SIL =
+
+    /**
+     * SphinxProperty specifying whether to add a self-looping word end
+     * silence.
+     */
+    public static final String PROP_ADD_SELF_LOOP_WORD_END_SIL =
 	PROP_PREFIX + "addSelfLoopWordEndSilence";
 
-    private static final String PROP_TIE_LEVEL =
-	PROP_PREFIX + "tieLevel";
 
-    private static final String PROP_TOKEN_STACK_CAPACITY = 
+    /**
+     * The default value of PROP_ADD_SELF_LOOP_WORD_END_SIL.
+     */
+    public static final boolean PROP_ADD_SELF_LOOP_WORD_END_SIL_DEFAULT = true;
+
+
+    /**
+     * The SphinxProperty for the level at which parallel streams tie.
+     */
+    public static final String PROP_TIE_LEVEL = PROP_PREFIX + "tieLevel";
+
+
+    /**
+     * The default value of PROP_TIE_LEVEL.
+     */
+    public static final String PROP_TIE_LEVEL_DEFAULT = "unit";
+
+
+    /**
+     * The SphinxProeprty for the size of the token stack.
+     */
+    public static final String PROP_TOKEN_STACK_CAPACITY = 
         PROP_PREFIX + "tokenStackCapacity";
 
-    private static final int PROP_TOKEN_STACK_CAPACITY_DEFAULT = 0;
 
-    private static final double PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT = 
+    /**
+     * The default value of PROP_TOKEN_STACK_CAPACITY.
+     */
+    public static final int PROP_TOKEN_STACK_CAPACITY_DEFAULT = 0;
+
+
+    /**
+     * The default value of PROP_SILENCE_INSERTION_PROBABILITY.
+     */
+    public static final double PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT = 
         1.0;
 
-    private static final double PROP_UNIT_INSERTION_PROBABILITY_DEFAULT = 1.0;
 
-    private static final double PROP_WORD_INSERTION_PROBABILITY_DEFAULT = 1.0;
+    /**
+     * The default value of PROP_UNIT_INSERTION_PROBABILITY.
+     */
+    public static final double PROP_UNIT_INSERTION_PROBABILITY_DEFAULT = 1.0;
+
+
+    /**
+     * The default value of PROP_WORD_INSERTION_PROBABILITY.
+     */
+    public static final double PROP_WORD_INSERTION_PROBABILITY_DEFAULT = 1.0;
 
 
     private String context;
@@ -130,9 +170,9 @@ public class ParallelLinguist implements Linguist {
                              PROP_WORD_INSERTION_PROBABILITY_DEFAULT));
 
 	addSelfLoopWordEndSilence =
-	    props.getBoolean(PROP_ADD_SELF_LOOP_WORD_END_SIL, true);
-	tieLevel =
-	    props.getString(PROP_TIE_LEVEL, "word");
+	    props.getBoolean(PROP_ADD_SELF_LOOP_WORD_END_SIL,
+                             PROP_ADD_SELF_LOOP_WORD_END_SIL_DEFAULT);
+	tieLevel = props.getString(PROP_TIE_LEVEL, PROP_TIE_LEVEL_DEFAULT);
         tokenStackCapacity = props.getInt
             (PROP_TOKEN_STACK_CAPACITY, PROP_TOKEN_STACK_CAPACITY_DEFAULT);
 
