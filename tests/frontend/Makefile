@@ -154,4 +154,4 @@ parallel_frontend: all
 	tests.frontend.ParallelFrontEndTest \
 	ParallelFrontEnd \
 	parallel-tidigits.props \
-	19990601-114739-0000001.raw
+	19990601-114739-00000001.raw
