@@ -25,6 +25,6 @@
 ./getTime >.startTime
 
 ./runTest ../performance/rm1 rm1_bigram_quick     MODE=quick rm1_bigram
-./runTest ../performance/rm1 rm1_bigram_fst       MODE=quick rm1_bigram_fst
+./runTest ../performance/rm1 rm1_bigram_fst_quick MODE=quick rm1_bigram_fst
 
 touch ./.testDone
