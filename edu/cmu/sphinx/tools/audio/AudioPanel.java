@@ -38,6 +38,7 @@ public class AudioPanel extends JPanel
     private String[] labels;
     private float xScale;
     private float yScale;
+    private float originalXScale;
     private int xDragStart = 0;
     private int xDragEnd = 0;
     protected int selectionStart = -1;
@@ -61,6 +62,7 @@ public class AudioPanel extends JPanel
         labels = new String[0];
         this.xScale = scaleX;
         this.yScale = scaleY;
+	this.originalXScale = this.xScale;
         
 	int width = (int) (audio.getAudioData().length * xScale);
 	int height = (int) ((1 << 16) * yScale);
@@ -101,7 +103,45 @@ public class AudioPanel extends JPanel
         this.labels = labels;
         repaint();
     }
+
+    /**
+     * Readjust scroll bar.
+     */
+    private void adjustBar() {
+	int width = (int) (audio.getAudioData().length * xScale);
+	int height = (int) ((1 << 16) * yScale);
+
+        setPreferredSize(new Dimension(width, height));
+	revalidate();
+    }
     
+    /**
+     * Zoom the image in.
+     */
+    public void zoomIn() {
+	xScale *= 2.0f;
+	adjustBar();
+	repaint();
+    }
+
+    /**
+     * Zoom the image out.
+     */
+    public void zoomOut() {
+	xScale /= 2.0f;
+	adjustBar();
+	repaint();
+    }
+
+    /**
+     * Resets the image to the original size
+     */
+    public void resetSize() {
+	xScale = originalXScale;
+	adjustBar();
+	repaint();
+    }
+
     /**
      * Repaints the component with the given Graphics.
      *
@@ -171,7 +211,7 @@ public class AudioPanel extends JPanel
          * Now draw the labels.
          */
         for (int i = 0; i < labelTimes.length; i++) {
-            pos = (int) (xScale
+            pos = (int) (xScale 
                          * labelTimes[i]
                          * audio.getAudioFormat().getSampleRate());
             g.drawLine(pos, 0, pos, sz.height - 1);

@@ -251,6 +251,43 @@ public class AudioTool {
 
 
 
+        menu = new JMenu("View");
+        menuBar.add(menu);
+        
+        menuItem = new JMenuItem("Zoom In");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke('>'));
+        menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    audioPanel.zoomIn();
+		    spectrogramPanel.zoomIn();
+                }
+            });
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Zoom Out");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke('<'));
+        menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    audioPanel.zoomOut();
+		    spectrogramPanel.zoomOut();
+                }
+            });
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Original Size");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke('!'));
+        menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    audioPanel.resetSize();
+		    spectrogramPanel.resetSize();
+                }
+            });
+        menu.add(menuItem);
+
+
+
+
+
         menu = new JMenu("Audio");
         menuBar.add(menu);
         
@@ -336,14 +373,13 @@ public class AudioTool {
             /* Scale the width according to the size of the
              * spectrogram.
              */
-            
             float windowShiftInSamples = windowShiftInMs
                 * audio.getAudioFormat().getSampleRate() / 1000.0f;
             audioPanel = new AudioPanel(audio,
                                         1.0f / windowShiftInSamples,
                                         0.004f);
             spectrogramPanel = new SpectrogramPanel(frontEnd, dataSource, audio);
-            
+
             JPanel panel = new JPanel();
             panel.setLayout(new BorderLayout());
             panel.add(audioPanel, BorderLayout.NORTH);
