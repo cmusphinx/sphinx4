@@ -17,17 +17,59 @@ import java.io.IOException;
 
 import edu.cmu.sphinx.util.props.Configurable;
 
-
-
-/**
- * Provides language model services. 
+/*
+ * The linguist is responsible for representing and managing the search space
+ * for the decoder.  The role of the linguist is to provide, upon request,
+ * the search graph that is to be used by the decoder.  The linguist is a
+ * generic interface that provides language model services. 
  *
+ * The lifecycle of a linguist is as follows:
+ * <ul>
+ * <li> The linguist is created by the configuration manager
+ * <li> The linguist is given an opportunity to register its
+ * properties via the <code>register</code>
+ * <li>  The linguist is give a new set of properties via the
+ * <code>newProperties</code> call.  A well written linguist should be
+ * prepared to respond to <code>newProperties</code> call a any time
+ * <li> The <code>allocate</code> method is called. During this call
+ * the linguist generally allocates resources such as acoustic and
+ * language models. This can often take a significant amount of time.
+ * A well-written linguist will be able to deal with multiple calls to
+ * <code>allocate</code>. This can happen if a linguist is shared by
+ * multiple search managers.
+ * <li> The <code>getSearchGraph</code> method is called by the search
+ * to retrieve the search graph that is used to guide the
+ * decoding/search.  This method is typically called at the beginning
+ * of each recognition. The linguist should endeavor to return the
+ * search graph as quickly as possible to reduce any recognition
+ * latency.  Some linguists will pre-generate the search graph in the
+ * <code>allocate</code> method, and only need to return a reference
+ * to the search graph, while other linguists may dynamically generate
+ * the search graph on each call.  Also note that some linguists may
+ * change the search graph between calls so a search manager should
+ * always get a new search graph before the start of each recognition.
+ * <li> The <code>startRecognition</code>method is called just before
+ * recognition starts. This gives the linguist the opportunity to
+ * prepare for the recognition task.  Some linguists may keep caches
+ * of search states that need to be primed or flushed. Note however
+ * that if a linguist depends on <code>startRecognition</code> or
+ * <code>stopRecognition</code> it is likely to not be a reentrant
+ * linguist which could limit its usefulness in some multi-threaded
+ * environments.
+ * <li> The <code>stopRecognition</code>method is called just after
+ * recognition completes. This gives the linguist the opportunity to
+ * cleanup after the recognition task.  Some linguists may keep caches
+ * of search states that need to be primed or flushed. Note however
+ * that if a linguist depends on <code>startRecognition</code> or
+ * <code>stopRecognition</code> it is likely to not be a reentrant
+ * linguist which could limit its usefulness in some multi-threaded
+ * environments.
+ * </ul>
  */
 public interface Linguist extends Configurable {
 
     // TODO sort out all of these props. Are the all necessary?
     // should the all be here at this level?
-    
     
     /**
       * Word insertion probability property
@@ -109,20 +151,6 @@ public interface Linguist extends Configurable {
 
 
     /**
-     * Property to control whether pronunciations subtrees are
-     * re-joined to reduce fan-out
-     */
-    public final static String PROP_JOIN_PRONUNCIATIONS
-        =  "joinPronunciations";
-
-
-    /**
-     * The default value for PROP_JOIN_PRONUNCIATIONS.
-     */
-    public final static boolean PROP_JOIN_PRONUNCIATIONS_DEFAULT = false;
-
-
-    /**
      * Property that controls whether word probabilities are spread
      * across all pronunciations.
      */
@@ -152,19 +180,6 @@ public interface Linguist extends Configurable {
     public final static boolean PROP_ADD_FILLER_WORDS_DEFAULT = false;
 
 
-    /**
-     * Property to control whether silence units are automatically
-     * looped to allow for longer silences
-     */
-    public final static String PROP_AUTO_LOOP_SILENCES = 
-	"autoLoopSilences";
-
-
-    /**
-     * The default value for PROP_AUTO_LOOP_SILENCES.
-     */
-    public final static boolean PROP_AUTO_LOOP_SILENCES_DEFAULT = false;
-
 
     /**
      * Property to control the the dumping of the search space
@@ -191,20 +206,6 @@ public interface Linguist extends Configurable {
      */
     public final static boolean PROP_VALIDATE_SEARCH_SPACE_DEFAULT = false;
 
-
-    /**
-     * Property to control whether contexts are considered across
-     * grammar node boundaries
-     */
-    public final static String PROP_EXPAND_INTER_NODE_CONTEXTS
-        = "expandInterNodeContexts";
-
-
-    /**
-     * The default value for PROP_EXPAND_INTER_NODE_CONTEXTS.
-     */
-    public final static boolean PROP_EXPAND_INTER_NODE_CONTEXTS_DEFAULT
-        = false;
 
 
     /**
@@ -287,7 +288,6 @@ public interface Linguist extends Configurable {
      * @throws IOException if an IO error occurs
      */
     public void allocate() throws IOException;
-    
     
     /**
      * Deallocates the linguist
