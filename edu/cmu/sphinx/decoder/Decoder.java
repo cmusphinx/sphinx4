@@ -14,6 +14,7 @@ package edu.cmu.sphinx.decoder;
 
 import edu.cmu.sphinx.frontend.DataSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.frontend.util.Util;
 import edu.cmu.sphinx.frontend.Utterance;
 import edu.cmu.sphinx.decoder.search.Token;
@@ -277,6 +278,9 @@ public class Decoder {
             recognizer = new Recognizer(context, dataSource);
             recognizer.addResultListener(new ResultListener() {
 		public void newResult(Result result) {
+                    if (result.isFinal()) {
+                        getDecoderTimer().stop();
+                    }
                     beamFinder.process(result);
 		    if (showPartialResults) {
 			showPartialResult(result);
@@ -284,6 +288,14 @@ public class Decoder {
 
                     if (showPartialActualResults) {
                         showPartialActualResults(result);
+                    }
+		}
+	    });
+
+            recognizer.addSignalListener(new SignalListener() {
+		public void newSignal(Signal signal) {
+                    if (signal == Signal.UTTERANCE_START) {
+                        getDecoderTimer().start();
                     }
 		}
 	    });
@@ -315,10 +327,7 @@ public class Decoder {
      * @return the decoded Result object
      */
     public Result decode() {
-	Timer timer = getTimer();
-        timer.start();  // start the timer
 	Result result = recognizer.recognize();
-        timer.stop();  // stop the timer
         return result;
     }
 
@@ -334,14 +343,10 @@ public class Decoder {
         Result result;
         currentReferenceText = ref;
 
-	Timer timer = getTimer();
-        timer.start();  // start the timer
 
 	result = recognizer.recognize();
 
-        timer.stop();  // stop the timer
-
-	showFinalResult(result, timer);
+	showFinalResult(result);
 
         return result;
     }
@@ -387,17 +392,13 @@ public class Decoder {
      */
     public Result align(String ref) throws IOException {
 	Result result;
-	Timer timer = getTimer();
         currentReferenceText = ref;
 
-        timer.start();  // start the timer
 
 	recognizer.forcedAligner(context, ref);
 	result = recognizer.recognize();
 
-        timer.stop();  // stop the timer
-
-	showFinalResult(result, timer);
+	showFinalResult(result);
 
 
         return result;
@@ -408,7 +409,7 @@ public class Decoder {
      *
      * @return the decoding timer
      */
-    public Timer getTimer() {
+    public Timer getDecoderTimer() {
         return Timer.getTimer(context, "Decode");
     }
 
@@ -482,7 +483,8 @@ public class Decoder {
      *
      * @param result the recognition result
      */
-    public void showFinalResult(Result result, Timer timer) {
+    public void showFinalResult(Result result) {
+        Timer timer = getDecoderTimer();
 	boolean match = true;
 	Token bestToken = result.getBestToken();
         
