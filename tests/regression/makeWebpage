@@ -292,11 +292,14 @@ function getRunStatus(testName, count) {
 }
 
 
-function getGapInsertionStatus(testName, testCount) {
+function getGapInsertionRateStatus(testName, testCount) {
     updateData(testName, testCount);
-    gapInsertion = data[F_GAP_INSERTION];
+    gapInsertion = data[F_GAP_INSERTIONS];
+    totalWords = data[F_WORDS];
     if (gapInsertion == "") {
 	gapInsertion = "N/A";
+    } else if (totalWords > 0) {
+	gapInsertion = (gapInsertion / totalWords) * 100;
     }
     return "<td>" gapInsertion "</td>";
 }
@@ -373,7 +376,7 @@ function printSingleLiveTest(testName, testCount) {
     accuracy = getAccuracyStatus(testName, testCount);
     speed = getSpeedStatus(testName, testCount);
     heap = getHeapStatus(testName, testCount);
-    gapInsertion = getGapInsertionStatus(testName, testCount);
+    gapInsertion = getGapInsertionRateStatus(testName, testCount);
     utteranceRatio = getUtteranceRatioStatus(testName, testCount);
     avgResponseTime = getAvgResponseTimeStatus(testName, testCount);
     maxResponseTime = getMaxResponseTimeStatus(testName, testCount);
@@ -389,8 +392,8 @@ function printSingleLiveTest(testName, testCount) {
     print gapInsertion;
     print utteranceRatio;
     print avgResponseTime;
-    print maxResponseTime;
     print minResponseTime;
+    print maxResponseTime;
     print "</tr>"
 }
 
@@ -421,7 +424,7 @@ function printLongSingleLiveTest(testName, testCount) {
     accuracy = getAccuracyStatus(testName, testCount);
     speed = getSpeedStatus(testName, testCount);
     heap = getHeapStatus(testName, testCount);
-    gapInsertion = getGapInsertionStatus(testName, testCount);
+    gapInsertion = getGapInsertionRateStatus(testName, testCount);
     utteranceRatio = getUtteranceRatioStatus(testName, testCount);
     avgResponseTime = getAvgResponseTimeStatus(testName, testCount);
 
@@ -493,17 +496,21 @@ function printLiveTestResults(testName) {
     print "</td>";
     print "</tr>";
     print "<tr>";
-    print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Test Time<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Gap Insertion Rate<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Utterance Ratio<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Avg Response Time<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Max Response Time<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Min Response Time<br> </b></td>";
+    print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Date<br> </b></td>";
+    print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Run Status<br> </b></td>";
+    print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
+    print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
+    print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
+    print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Test Time<br> </b></td>";
+    print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Gap Insertion Rate (%)<br> </b></td>";
+    print "<td valign=top rowspan=2 bgcolor=#ccffff><b>Utterance Ratio<br> </b></td>";
+    print "<td valign=top rowspan=1 colspan=3 bgcolor=#ccffff><b>Response Time (s)<br> </b></td>";
+    print "</tr>";
+    print "<tr>";
+    print "<td valign=top bgcolor=#ccffff><b>Avg<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Min<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Max<br> </b></td>";
+    print "</tr>";
     
     for (i = 1; i <= liveTestCount[testName]; i++) {
 	printSingleLiveTest(testName, i);
@@ -806,9 +813,9 @@ function printLatestLiveTestResults(  _testName, _testCount) {
     print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Gap Insertion Rate<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Gap Insertion Rate (%)<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Utterance Ratio<br> </b></td>";
-    print "<td valign=top bgcolor=#ccffff><b>Avg Response Time<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Avg Response Time (s)<br> </b></td>";
 
     for (i = 0; i < lastLiveTestCount; i++) {
         split(lastLiveTestData[i], thisData);
