@@ -31,6 +31,8 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <property name="batch_main"               
 	      value="edu.cmu.sphinx.decoder.BatchDecoder"/>
 
+    <property name="live_main"               
+	      value="edu.cmu.sphinx.decoder.LivePretendDecoder"/>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
