@@ -221,6 +221,29 @@ public class ConfigurationManager {
         return null;
     }
 
+
+    /**
+     * Sets the property of the given component to the given value.
+     * Component must be an exisiting, instantiatied component
+     *
+     * @param component an existing component
+     * @param prop the property name
+     * @param value the new value.
+     */
+    public void setProperty(String component, String prop, String value) 
+            throws PropertyException {
+        Symbol symbol = (Symbol) symbolTable.get(component);
+        if (symbol != null) {
+            PropertySheet ps = symbol.getPropertySheet();
+            Configurable c = symbol.getObject();
+            ps.setRaw(prop, value);
+            c.newProperties(ps);
+        } else {
+            throw new PropertyException(null, prop,
+                "Can't find component " + component);
+        }
+    }
+
     /**
      * Saves the current configuration to the given file
      * 
@@ -417,43 +440,55 @@ public class ConfigurationManager {
         System.out.println(" ============ config ============= ");
         String[] allNames = getInstanceNames(Object.class);
         for (int i = 0; i < allNames.length; i++) {
-            Symbol symbol = (Symbol) symbolTable.get(allNames[i]);
-
-            System.out.println(symbol.getName() + ":");
-
-            Registry registry = symbol.getRegistry();
-            Collection propertyNames = registry.getRegisteredProperties();
-            PropertySheet properties = symbol.getPropertySheet();
-
-            for (Iterator j = propertyNames.iterator(); j.hasNext();) {
-                String propName = (String) j.next();
-                System.out.print("    " + propName + " = ");
-                Object obj;
-                try {
-                    obj = properties.getRaw(propName);
-                } catch (PropertyException e) {
-                    // this exception can occcur if a global name
-                    // can't be resolved ...
-                    obj = "[Unresolved!]";
-                }
-                if (obj instanceof String) {
-                    System.out.println(obj);
-                } else if (obj instanceof List) {
-                    List l = (List) obj;
-                    for (Iterator k = l.iterator(); k.hasNext();) {
-                        System.out.print(k.next());
-                        if (k.hasNext()) {
-                            System.out.print(", ");
-                        }
-                    }
-                    System.out.println();
-                } else {
-                    System.out.println("[DEFAULT]");
-                }
-            }
-            System.out.println();
+            showConfig(allNames[i]);
         }
+    }
 
+
+    /**
+     * Show the configuration for the compnent with the given name
+     *
+     * @param name the component name
+     */
+    public void showConfig(String name) {
+        Symbol symbol = (Symbol) symbolTable.get(name);
+
+        if (symbol == null)  {
+            System.out.println("No component: " + name);
+            return;
+        }
+        System.out.println(symbol.getName() + ":");
+
+        Registry registry = symbol.getRegistry();
+        Collection propertyNames = registry.getRegisteredProperties();
+        PropertySheet properties = symbol.getPropertySheet();
+
+        for (Iterator j = propertyNames.iterator(); j.hasNext();) {
+            String propName = (String) j.next();
+            System.out.print("    " + propName + " = ");
+            Object obj;
+            try {
+                obj = properties.getRaw(propName);
+            } catch (PropertyException e) {
+                // this exception can occcur if a global name
+                // can't be resolved ...
+                obj = "[Unresolved!]";
+            }
+            if (obj instanceof String) {
+                System.out.println(obj);
+            } else if (obj instanceof List) {
+                List l = (List) obj;
+                for (Iterator k = l.iterator(); k.hasNext();) {
+                    System.out.print(k.next());
+                    if (k.hasNext()) {
+                        System.out.print(", ");
+                    }
+                }
+                System.out.println();
+            } else {
+                System.out.println("[DEFAULT]");
+            }
+        }
     }
 
     // TODO: some experimental dumping functions, dump the config
