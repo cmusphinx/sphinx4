@@ -68,6 +68,34 @@ public class Utilities {
         return result;
     }
 
+    /**
+     * Pads with spaces or truncates the given int to guarantee that it is
+     * exactly the desired length.
+     *
+     * @param val the val to be padded
+     * @param minLength the desired length of the string
+     *
+     * @return a string of length conntaining string
+     * padded with whitespace or truncated
+     */
+    public static String pad(int val, int minLength) {
+        return pad("" + val, minLength);
+    }
+
+    /**
+     * Pads with spaces or truncates the given double to guarantee that it is
+     * exactly the desired length.
+     *
+     * @param val the val to be padded
+     * @param minLength the desired length of the string
+     *
+     * @return a string of length conntaining string
+     * padded with whitespace or truncated
+     */
+    public static String pad(double val, int minLength) {
+        return pad("" + val, minLength);
+    }
+
     
     /**
      * Dumps padded text. This is a simple tool for helping dump text 
