@@ -40,6 +40,30 @@ public interface FrontEnd {
      */
     public static final int PROP_SAMPLE_RATE_DEFAULT = 16000;
 
+
+    /**
+     * The SphinxProperty specifying whether the input data is big-endian.
+     */
+    public static final String PROP_BIG_ENDIAN_DATA 
+        = PROP_PREFIX + "bigEndianData";
+
+
+    /**
+     * The default value for PROP_IS_DATA_BIG_ENDIAN.
+     */
+    public static final boolean PROP_BIG_ENDIAN_DATA_DEFAULT = true;
+
+
+    /**
+     * The SphinxProperty specifying whether the input data is signed.
+     */
+    public static final String PROP_SIGNED_DATA = PROP_PREFIX + "signedData";
+
+
+    /**
+     * The default value of PROP_SIGNED_DATA.
+     */
+    public static final boolean PROP_SIGNED_DATA_DEFAULT = false;
     
     /**
      * The SphinxProperty name for the number of bits per sample.
@@ -52,6 +76,20 @@ public interface FrontEnd {
      * The default value for PROP_BITS_PER_SAMPLE.
      */
     public static final int PROP_BITS_PER_SAMPLE_DEFAULT = 16;
+
+
+
+    /**
+     * The SphinxProperty for the number of bytes per Audio object.
+     */
+    public final static String PROP_BYTES_PER_AUDIO_FRAME
+        = PROP_PREFIX + "bytesPerAudioFrame";
+
+
+    /**
+     * The default value for PROP_BYTES_PER_AUDIO_FRAME.
+     */
+    public final static int PROP_BYTES_PER_AUDIO_FRAME_DEFAULT = 4000;
 
 
     /**
