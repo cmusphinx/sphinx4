@@ -90,7 +90,7 @@ edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar
 #
 ############################################################
 
-edu.cmu.sphinx.search.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d-c.txt
+edu.cmu.sphinx.search.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d-a.txt
 edu.cmu.sphinx.search.Dictionary.fillerPath=/lab/speech/sphinx4/data/wsj/dict/fillerdict
 
 
@@ -128,11 +128,9 @@ edu.cmu.sphinx.search.WordListGrammar.isLooping=true
 #
 ############################################################
 
-edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-56
-edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
-edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-100
-edu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true
-edu.cmu.sphinx.search.Linguist.showCompilationProgress=true
+edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-25
+edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400
 edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true
-edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
-edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight = 8.0
+edu.cmu.sphinx.search.Dictionary.allowMissingWords=true
+
+
