@@ -122,7 +122,7 @@ public class MelFilter {
 	for (int i = 0; i < this.weight.length; i++) {
 	    indexSpectrum = this.initialFreqIndex + i;
 	    if (indexSpectrum < spectrum.length) {
-		output = spectrum[indexSpectrum] * this.weight[i];
+		output += spectrum[indexSpectrum] * this.weight[i];
 	    }
 	}
 	return output;

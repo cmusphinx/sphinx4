@@ -20,7 +20,7 @@ public class MelCepstrumProducer extends DataProcessor {
      * The name of the SphinxProperty for the number of mel-filters.
      */
     public static final String PROP_NUM_MEL_FILTERS =
-	"edu.cmu.sphinx.melcepstrum.filters";
+	"edu.cmu.sphinx.frontend.mel.numFilters";
 
     
     private int cepstrumSize;
@@ -86,8 +86,8 @@ public class MelCepstrumProducer extends DataProcessor {
 
 	Data input = getSource().read();
         
-        if (input instanceof Spectrum) {
-            input = process((Spectrum) input);
+        if (input instanceof MelSpectrum) {
+            input = process((MelSpectrum) input);
         }
 
 	return input;
@@ -102,11 +102,11 @@ public class MelCepstrumProducer extends DataProcessor {
      *
      * @return a mel Cepstrum frame
      */
-    private Cepstrum process(Spectrum input) throws IllegalArgumentException {
+    private Cepstrum process(MelSpectrum input) throws IllegalArgumentException {
 
         getTimer().start();
 
-        double[] melspectrum = input.getSpectrumData();
+        double[] melspectrum = input.getMelSpectrumData();
 
         if (melspectrum.length != numberMelFilters) {
             throw new IllegalArgumentException
