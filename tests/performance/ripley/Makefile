@@ -29,7 +29,7 @@ PROFILE_FLAGS= $(GCSPY_FLAGS)
 PROFILE_FLAGS= -Xprof -server
 
 LOG_GC_FLAGS=  -Xloggc:gc.txt
-GC_FLAGS = -ms384m -mx512m
+GC_FLAGS = -ms256m -mx512m
 
 # LOGGER_PROPERTIES=tidigits.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
@@ -49,7 +49,7 @@ EXTRA_JAVA_FLAGS=$(PROFILE_FLAGS) $(LOG_GC_FLAGS) $(LOG) $(GC_FLAGS) $(DEBUG_FLA
 #
 
 ifeq ($(MODE),quick)
-  SKIP = 5
+  SKIP = 20
 else
   SKIP = 0
 endif
@@ -59,7 +59,7 @@ ifeq ($(MODE),super_quick)
 endif
 
 ifeq ($(HEAP),large)
-GC_FLAGS = -ms512m -mx1024m
+GC_FLAGS = -ms256m -mx512m
 endif
 
 include ${TOP}/build/Makefile.config
@@ -84,7 +84,8 @@ ripley_trigram:
 
 ripley_trigram_ep:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.decoder.search.SelectActiveList\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	-Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.decoder.search.PartitionActiveList\
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager \
         -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
 	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
