@@ -12,6 +12,8 @@
 
 package edu.cmu.sphinx.trainer;
 
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,10 +27,12 @@ public class TranscriptHMMGraph extends Graph implements TranscriptGraph {
     /**
      * Constructor for class. Creates lists of edges and nodes.
      */
-    public TranscriptHMMGraph(String context, Transcript transcript) {
+    public TranscriptHMMGraph(String context, Transcript transcript,
+			      AcousticModel acousticModel) {
 	super();
 	BuildTranscriptHMM builder = 
-	    new BuildTranscriptHMM(context, transcript);
+	    new BuildTranscriptHMM(context, transcript, acousticModel);
+	// Copies the graph created with BuildTranscriptHMM into this Graph.
 	copyGraph(builder.getGraph());
     }
 

@@ -53,6 +53,11 @@ public class NodeType {
     public static final NodeType PHONE = new NodeType("PHONE");
 
     /**
+     * NodeType to indicate the node contains a word.
+     */
+    public static final NodeType STATE = new NodeType("STATE");
+
+    /**
      * Constructs a NodeType with the given name.
      */
     protected NodeType(String name) {

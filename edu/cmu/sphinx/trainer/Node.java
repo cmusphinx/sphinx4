@@ -29,8 +29,13 @@ public class Node {
     private String nodeId;
 
     /**
-     * The type of node, such as a dummy node or node represented by a
-     * specific type of symbol
+     * Object contained in this mode. Typically, an HMM state, a
+     * senone.
+     */
+    private Object object;
+
+    /** The type of node, such as a dummy node or node represented by
+     * a specific type of symbol
      */
     private NodeType nodeType;
 
@@ -57,6 +62,7 @@ public class Node {
         outgoingEdges = new ArrayList();
 	this.nodeId = nodeSymbol;
 	this.nodeType = nodeType;
+	this.object = null;
     }
 
     /**
@@ -69,9 +75,29 @@ public class Node {
     }
 
     /**
+     * Assign an object to this node.
+     *
+     * @param object the object to assign
+     */
+    public void setObject(Object object) {
+	this.object = object;
+    }
+
+    /**
+     * Retrieves the object associated with this node.
+     *
+     * @return the object
+     */
+    public Object getObject() {
+	return object;
+    }
+
+    /**
      * Method to add an incoming edge.
      * Note that we do not check if the destination node of the
      * incoming edge is identical to this node
+     *
+     * @param edge the incoming edge
      */
     public void addIncomingEdge(Edge edge){
         incomingEdges.add(edge);
@@ -86,13 +112,17 @@ public class Node {
 
     /**
      * Whether there are more incoming edges.
+     *
+     * @return if true, there are more incoming edges
      */
     public boolean hasMoreIncomingEdges() {
 	return incomingEdgeIterator.hasNext();
     }
 
     /**
-     * The next incoming edge.
+     * Returns the next incoming edge to this node.
+     *
+     * @return the next edge incoming edge
      */
     public Edge nextIncomingEdge() {
 	return (Edge) incomingEdgeIterator.next();
@@ -111,6 +141,8 @@ public class Node {
      * Method to add an outgoing edge.
      * Note that we do not check if the source node of the outgoing
      * edge is identical to this node
+     *
+     * @param edge the outgoing edge
      */
     public void addOutgoingEdge(Edge edge){
         outgoingEdges.add(edge);
@@ -125,13 +157,17 @@ public class Node {
 
     /**
      * Whether there are more outgoing edges.
+     *
+     * @return if true, there are more outgoing edges
      */
     public boolean hasMoreOutgoingEdges() {
 	return outgoingEdgeIterator.hasNext();
     }
 
     /**
-     * The next outgoing edge.
+     * Returns the next outgoing edge from this node.
+     *
+     * @return the next outgoing edge
      */
     public Edge nextOutgoingEdge() {
 	return (Edge) outgoingEdgeIterator.next();
@@ -148,6 +184,8 @@ public class Node {
 
     /**
      * Method to check the type of a node.
+     *
+     * @return if true, this node is of the type specified
      */
     public boolean isType(String type){
         return (type.equals(this.nodeType.toString()));
@@ -155,13 +193,18 @@ public class Node {
 
     /**
      * Returns type of a node.
+     *
+     * @return returns the type of this node
      */
     public NodeType getType() {
         return nodeType;
     }
 
     /**
-     * Returns the ID of a node.
+     * Returns the ID of a node. Typically, a string representing a
+     * word or a phoneme.
+     *
+     * @return this node's ID
      */
     public String getID() {
         return nodeId;

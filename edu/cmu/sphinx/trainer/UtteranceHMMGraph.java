@@ -12,6 +12,8 @@
 
 package edu.cmu.sphinx.trainer;
 
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,7 +26,8 @@ public class UtteranceHMMGraph extends Graph implements UtteranceGraph {
     /**
      * Constructor for class UtteranceHMMGraph.
      */
-    public UtteranceHMMGraph(String context, Utterance utterance) {
+    public UtteranceHMMGraph(String context, Utterance utterance, 
+			     AcousticModel acousticModel) {
 	super();
 	Transcript currentTranscript;
 	Graph transcriptGraph;
@@ -33,7 +36,8 @@ public class UtteranceHMMGraph extends Graph implements UtteranceGraph {
 	    /* The transcript object has a pointer to its own dictionary 
 	     */
 	    Transcript transcript = utterance.nextTranscript();
-	    transcriptGraph = new TranscriptHMMGraph(context, transcript);
+	    transcriptGraph = new TranscriptHMMGraph(context, transcript,
+						     acousticModel);
 	    add(transcriptGraph);
 	}
     }

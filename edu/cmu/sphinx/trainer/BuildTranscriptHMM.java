@@ -14,6 +14,11 @@ package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.HMM;
+import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.util.LogMath;
 
 import java.util.StringTokenizer;
 import java.util.Map;
@@ -27,6 +32,7 @@ public class BuildTranscriptHMM {
     private Map dictionaryMap;
     private String context;
     private TrainerDictionary dictionary;
+    private AcousticModel acousticModel;
 
     /**
      * Constructor for class BuildTranscriptHMM. When called, this
@@ -34,8 +40,10 @@ public class BuildTranscriptHMM {
      * detail, subsequently mapping from a word graph to a phone
      * graph, to a state graph.
      */
-    public BuildTranscriptHMM(String context, Transcript transcript) {
+    public BuildTranscriptHMM(String context, Transcript transcript, 
+			      AcousticModel acousticModel) {
 
+	this.acousticModel = acousticModel;
 	wordGraph = buildWordGraph(transcript);
 	assert wordGraph.validate() : "Word graph not validated";
 	phonemeGraph = buildPhonemeGraph(wordGraph);
@@ -44,8 +52,8 @@ public class BuildTranscriptHMM {
 	    buildContextDependentPhonemeGraph(phonemeGraph);
 	assert contextDependentPhoneGraph.validate() : 
 	    "Context dependent graph not validated";
-	hmmGraph = buildHMM(contextDependentPhoneGraph);
-	//	assert hmmGraph.validate() : "HMM graph not validated";
+	hmmGraph = buildHMMGraph(contextDependentPhoneGraph);
+	assert hmmGraph.validate() : "HMM graph not validated";
     }
     
     /**
@@ -61,18 +69,22 @@ public class BuildTranscriptHMM {
      * Build a word graph from this transcript
      */
     private Graph buildWordGraph(Transcript transcript){
-        Graph wordGraph;
-	dictionary = (TrainerDictionary) transcript.getDictionary();
+        Graph graph;
+	Dictionary transcriptDict = transcript.getDictionary();
+	// Make sure the dictionary is a TrainerDictionary before we cast
+	assert 
+	    transcriptDict.getClass().getName().endsWith("TrainerDictionary");
+	dictionary = (TrainerDictionary) transcriptDict;
 
 	transcript.startWordIterator();
         int numWords = transcript.numberOfWords();
 	/* Shouldn't node and edge be part of the graph class? */
 
         /* The wordgraph must always begin with the <s> */
-        wordGraph = new Graph();
+        graph = new Graph();
 	Node initialNode = new Node(NodeType.UTTERANCE_BEGIN);
-	wordGraph.addNode(initialNode);
-	wordGraph.setInitialNode(initialNode);
+	graph.addNode(initialNode);
+	graph.setInitialNode(initialNode);
 	
         if (transcript.isExact()) {
 	    Node prevNode = initialNode;
@@ -82,19 +94,19 @@ public class BuildTranscriptHMM {
 	        Node wordNode = new Node(NodeType.WORD, 
 						    transcript.nextWord());
 		/* Link the new node into the graph */
-		wordGraph.linkNodes(prevNode, wordNode);
+		graph.linkNodes(prevNode, wordNode);
 		
 		prevNode = wordNode;
 	    }
 	    /* All words are done. Just add the </s> */
 	    Node wordNode = new Node(NodeType.UTTERANCE_END);
-	    wordGraph.linkNodes(prevNode, wordNode);
-	    wordGraph.setFinalNode(wordNode);
+	    graph.linkNodes(prevNode, wordNode);
+	    graph.setFinalNode(wordNode);
 	} else {
 	    /* Begin the utterance with a loopy silence */
 	    Node silLoopBack = 
 		new Node(NodeType.SILENCE_WITH_LOOPBACK);
-	    wordGraph.linkNodes(initialNode, silLoopBack);
+	    graph.linkNodes(initialNode, silLoopBack);
 	    
 	    Node prevNode = initialNode;
 
@@ -111,9 +123,9 @@ public class BuildTranscriptHMM {
 		// Create node at the beginning of the word
 		Node dummyWordBeginNode = new Node(NodeType.DUMMY);
 		// Allow the silence to be skipped
-		wordGraph.linkNodes(prevNode, dummyWordBeginNode);
+		graph.linkNodes(prevNode, dummyWordBeginNode);
 		// Link the latest silence to the dummy too
-		wordGraph.linkNodes(silLoopBack, dummyWordBeginNode);
+		graph.linkNodes(silLoopBack, dummyWordBeginNode);
 		// Add word ending dummy node
 	        Node dummyWordEndNode = new Node(NodeType.DUMMY);
 		// Update prevNode
@@ -124,24 +136,24 @@ public class BuildTranscriptHMM {
 			wordAlternate += "(" + i + ")";
 		    }
 	            pronNode[i] = new Node(NodeType.WORD, wordAlternate);
-		    wordGraph.linkNodes(dummyWordBeginNode, pronNode[i]);
-	            wordGraph.linkNodes(pronNode[i], dummyWordEndNode);
+		    graph.linkNodes(dummyWordBeginNode, pronNode[i]);
+	            graph.linkNodes(pronNode[i], dummyWordEndNode);
 		}
 
 		/* Add silence */
 	        silLoopBack = new
 		    Node(NodeType.SILENCE_WITH_LOOPBACK);
-	        wordGraph.linkNodes(dummyWordEndNode, silLoopBack);
+	        graph.linkNodes(dummyWordEndNode, silLoopBack);
 
             }
 	    Node wordNode = new Node(NodeType.UTTERANCE_END);
 	    // Link previous node, a dummy word end node
-	    wordGraph.linkNodes(prevNode, wordNode);
+	    graph.linkNodes(prevNode, wordNode);
 	    // Link also the previous silence node
-	    wordGraph.linkNodes(silLoopBack, wordNode);
-	    wordGraph.setFinalNode(wordNode);
+	    graph.linkNodes(silLoopBack, wordNode);
+	    graph.setFinalNode(wordNode);
 	}
-        return wordGraph;
+        return graph;
     }
 
 
@@ -170,7 +182,10 @@ public class BuildTranscriptHMM {
 		// PHONE.
 		if (node.getType().equals(NodeType.WORD)) {
 		    String word = node.getID();
-		    Graph pronunciationGraph = dictionary.getWordGraph(word);
+		    // "false" means graph won't have additional dummy
+		    // nodes surrounding the word
+		    Graph pronunciationGraph = 
+			dictionary.getWordGraph(word, false);
 		    phonemeGraph.insertGraph(pronunciationGraph, node);
 		    notTraversed = true;
 		    break;
@@ -198,9 +213,85 @@ public class BuildTranscriptHMM {
     /**
      * Convert the phoneme graph to an HMM
      */
-    public Graph buildHMM (Graph PhonemeGraph)
+    public Graph buildHMMGraph(Graph cdGraph)
     {
-	// TODO: Much is missing here
-         return new Graph();
+	boolean notTraversed = false;
+	Graph hmmGraph = new Graph();
+
+	hmmGraph.copyGraph(cdGraph);
+
+	// We have to go through all this shebang again to avoid a
+	// "ConcurrentModificationException".We mark what had already
+	// been done by replacing the node type from "PHONE" to
+	// "STATE".
+	do {
+	    // Repeat the loop until we encounter a PHONE. Should do
+	    // the same for SILENCE?
+	    for (cdGraph.startNodeIterator(); 
+		 cdGraph.hasMoreNodes(); ) {
+		Node node = cdGraph.nextNode();
+		// If a word already got converted, the node type is
+		// STATE.
+		System.out.println(node.getID());
+		if (node.getType().equals(NodeType.PHONE)) {
+		    Unit unit = acousticModel.lookupUnit(node.getID());
+		    HMM hmm = acousticModel.lookupNearestHMM(unit, 
+			     HMMPosition.UNDEFINED);
+		    Graph modelGraph = buildModelGraph(hmm);
+		    modelGraph.printGraph();
+		    modelGraph.validate();
+		    cdGraph.insertGraph(modelGraph, node);
+		    notTraversed = true;
+		    break;
+		}
+		// If we traversed everything, we'll reach this and
+		// then leave.
+		notTraversed = false; 
+	    }
+	} while (notTraversed);
+	return hmmGraph;
+    }
+
+    /**
+     * Build a graph given an HMM.
+     *
+     * @param hmm the HMM
+     *
+     * @return the graph
+     */
+    private Graph buildModelGraph(HMM hmm) {
+	Graph graph = new Graph();
+	Node prevNode;
+	Node stateNode;
+	float[][] tmat = hmm.getTransitionMatrix();
+
+	prevNode = new Node(NodeType.DUMMY);
+	graph.addNode(prevNode);
+	graph.setInitialNode(prevNode);
+
+	for (int i = 0; i < hmm.getOrder(); i++) {
+	    /* create a new node for the next hmmState */
+	    stateNode = new Node(NodeType.STATE, hmm.getUnit().getName());
+	    stateNode.setObject(hmm.getState(i));
+	    graph.addNode(stateNode);
+	    /* Link the new node into the graph */
+	    if (i == 0) {
+		graph.linkNodes(prevNode, stateNode);
+	    }
+	    for (int j = 0; j <= i; j++) {
+		System.out.println("TMAT: " + j + " " + i + " " + tmat[j][i]);
+		if (tmat[j][i] != LogMath.getLogZero()) {
+		    // j + 1 to account for the initial dummy node
+		    graph.linkNodes(graph.getNode(j + 1), stateNode);
+		}
+	    }
+	    prevNode = stateNode;
+	}
+	/* All words are done. Just add the final dummy */
+	stateNode = new Node(NodeType.DUMMY);
+	graph.linkNodes(prevNode, stateNode);
+	graph.setFinalNode(stateNode);
+
+	return graph;
     }
 }

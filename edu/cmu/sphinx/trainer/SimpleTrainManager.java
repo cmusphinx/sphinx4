@@ -242,7 +242,8 @@ public class SimpleTrainManager implements TrainManager {
 	    for (controlFile.startUtteranceIterator();
 		 controlFile.hasMoreUtterances(); ) {
 		Utterance utterance = controlFile.nextUtterance();
-		uttGraph = new UtteranceHMMGraph(context, utterance);
+		uttGraph = 
+		    new UtteranceHMMGraph(context, utterance, models[m]);
 		learner.setUtterance(utterance);
 		learner.setGraph(uttGraph);
 		while ((score = learner.getScore()) != null) {

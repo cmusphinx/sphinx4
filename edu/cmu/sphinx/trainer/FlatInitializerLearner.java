@@ -86,8 +86,6 @@ public class FlatInitializerLearner implements Learner {
     /**
      * Initializes the Learner with the proper context and frontend.
      *
-     * @param utterance the current utterance
-     *
      * @throws IOException
      */
     private void initialize() throws IOException  {
@@ -161,7 +159,7 @@ public class FlatInitializerLearner implements Learner {
      *
      * @return a feature frame
      *
-     * @throw IOException
+     * @throws IOException
      */
     private boolean getFeature() {
 	FeatureFrame ff;

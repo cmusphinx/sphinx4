@@ -82,11 +82,23 @@ public class Graph {
     }
 
     /**
+     * Get node at the specified position in the list. The order is
+     * the same in which the nodes were entered.
+     *
+     * @param index index of item to retun
+     *
+     * @return the item 
+     */
+    public Node getNode(int index) {
+	return (Node) nodes.get(index);
+    }
+
+    /**
      * Returns whether the given node is the initial node in this graph.
      *
      * @param node the node we want to compare
      *
-     * @returns if true, the node is the initial node
+     * @return if true, the node is the initial node
      */
     public boolean isInitialNode(Node node) {
 	return node == initialNode;
@@ -97,7 +109,7 @@ public class Graph {
      *
      * @param node the node we want to compare
      *
-     * @returns if true, the node is the final node
+     * @return if true, the node is the final node
      */
     public boolean isFinalNode(Node node) {
 	return node == finalNode;
@@ -227,6 +239,7 @@ public class Graph {
     public void insertGraph(Graph graph, Node node) {
 	// Make sure the node belongs to the graph
 	assert isNodeInGraph(node) : "Node not in graph";
+	assert graph != null: "Graph not defined";
 	for (graph.startNodeIterator();
 	     graph.hasMoreNodes(); ) {
 	    addNode(graph.nextNode());
