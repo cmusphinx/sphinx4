@@ -32,6 +32,7 @@ edu.cmu.sphinx.knowledge.acoustic.data_location = 6000senones/hub4opensrc.cd_con
 edu.cmu.sphinx.knowledge.acoustic.properties_file = am.props
 edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel 
 edu.cmu.sphinx.knowledge.language.LanguageModel.location=./hub4.flat_unigram.lm
+edu.cmu.sphinx.knowledge.language.LanguageModel.unigramWeight=1
 
 ############################################################
 # 
@@ -71,8 +72,9 @@ edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
 ############################################################
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.FastActiveList
-edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=3000
-edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-90
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.maxWordsPerFrame = 200
+edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
+edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80
 
 
 ############################################################
