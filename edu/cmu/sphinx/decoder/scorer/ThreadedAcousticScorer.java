@@ -276,11 +276,10 @@ public class ThreadedAcousticScorer implements AcousticScorer {
         }
 
         Scoreable best = job.getFirst();
-        int i = 0;
+        List scoreables = job.getScoreables();
 
-	for (ListIterator iterator = job.getListIterator();
-             i < job.getSize(); i++) {
-            Scoreable scoreable = (Scoreable) iterator.next();
+	for (int i = job.getStart(); i < job.getSize(); i++) {
+            Scoreable scoreable = (Scoreable) scoreables.get(i);
 	    if (scoreable.getFrameNumber() != curFeature.getID()) {
 		throw new Error
 		    ("Frame number mismatch: Token: " + 
@@ -467,8 +466,8 @@ class ScoreableJob {
      *
      * @return the list of scoreables
      */
-    ListIterator getListIterator() {
-	return scoreables.listIterator(start);
+    List getScoreables() {
+        return scoreables;
     }
 
     /**
