@@ -52,7 +52,7 @@ public class SimpleLinguistTest {
      * Dumps the SentenceHMM
      */
     public void dumpSentenceHMM() {
-	simpleLinguist.getInitialState().dump();
+	simpleLinguist.getInitialState().dumpAll();
     }
 
     
