@@ -103,10 +103,10 @@ public class LexTreeLinguist implements  Linguist {
      */
     private final static Class[] searchStateOrder = {
         LexTreeInitialState.class,
-        LexTreeHMMState.class,
         LexTreeNonEmittingHMMState.class,
+        LexTreeWordState.class,
         LexTreeUnitState.class,
-        LexTreeWordState.class
+        LexTreeHMMState.class
     };
 
 
