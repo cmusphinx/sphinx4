@@ -36,12 +36,14 @@ import java.io.IOException;
  * <p>
  * which defaults to 40.
  * <p>
- * The output is an array of filtered values, each corresponding to the
- * result of filtering the input spectrum through an individual filter.
+ * The output is an array of filtered values, typically called mel-spectrum,
+ * each corresponding to the result of filtering the input spectrum
+ *  through an individual filter.
  * Therefore, the length of the output array is equal to the number
  * of filters created.
  * <p>
- * The filters in the filter bank are placed in the frequency axis so as to
+ * The triangular mel-filters in the filter bank are placed 
+ * in the frequency axis so as to
  * mimic the critical band, representing different perceptual effect
  * at different frequency bands. Pictorially, the filter bank looks like:
  * <p>
@@ -52,8 +54,10 @@ import java.io.IOException;
  * decreasing height and increasing width. The distance at the base
  * from the center to the left edge is different from the center to
  * the right edge. This is due to the mel-frequency scale,
- * which is a nonlinear scale that models the behavior of the 
- * human auditory system. The area under each triangle is equal to 1.
+ * which is a non-linear scale that models the non-linear human
+ * hearing behavior. As can be inferred from the figure, filtering with
+ * the mel scale emphasizes the lower frequencies.
+ * The area under each triangle is equal to 1.
  * <p>
  * The minimum frequency has a default value of 130Hz, while 
  * the maximum frequency has a default value of 6800Hz.
