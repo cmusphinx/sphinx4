@@ -87,7 +87,7 @@ import java.util.Vector;
  * The front end must be configured through the Sphinx properties file.
  * For details about configuring the front end, refer to the 
  * <a href="doc-files/FrontEndProperties.html">
- * Sphinx-4 Front End Properties Guide</a>.
+ * Guide to Specifying the Front End</a>.
  *
  * Current state-of-the-art front ends generate features that contain
  * Mel-frequency cepstral coefficients (MFCC). To specify such a front end
@@ -117,7 +117,7 @@ import java.util.Vector;
  * <p>
  * For details on how to do this, refer to the 
  * <a href="doc-files/FrontEndProperties.html">
- * Sphinx-4 Front End Properties Guide</a>.
+ * Guide to Specifying the Front End</a>.
  * <p>
  * <b>Obtaining a Front End</b>
  * <p>
