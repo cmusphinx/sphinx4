@@ -120,11 +120,11 @@ public class SimpleAcousticScorer implements AcousticScorer {
             float logMaxScore = - Float.MAX_VALUE;
 	    for (Iterator i = scoreableList.iterator(); i.hasNext(); ) {
                 Scoreable scoreable = (Scoreable) i.next();
-		if (scoreable.getFrameNumber() != curFeature.getID()) {
+		if (scoreable.getFrameNumber() != feature.getID()) {
 		    throw new Error
 			("Frame number mismatch: Token: " + 
 			 scoreable.getFrameNumber() +
-			 "  Feature: " + curFeature.getID());
+			 "  Feature: " + feature.getID());
 		}
                 float logScore =  scoreable.calculateScore(feature);
                 if (logScore > logMaxScore) {
