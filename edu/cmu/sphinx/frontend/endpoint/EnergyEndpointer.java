@@ -114,7 +114,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     /**
      * The default value for PROP_START_WINDOW.
      */
-    public static final int PROP_START_WINDOW_DEFAULT = 5;
+    public static final int PROP_START_WINDOW_DEFAULT = 3;
 
 
     /**
