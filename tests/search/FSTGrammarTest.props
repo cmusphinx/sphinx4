@@ -10,7 +10,7 @@ handlers= java.util.logging.ConsoleHandler
 java.util.logging.ConsoleHandler.level = ALL
 java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
 
-
+edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
 
 ############################################################
@@ -19,7 +19,6 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 #
 ############################################################
 
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = ./FSTGrammarTest.dic
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = ./FSTGrammarTest.dic
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.wordReplacement = pittsburgh
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = ./filler.dic
