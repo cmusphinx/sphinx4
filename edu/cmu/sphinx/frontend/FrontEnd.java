@@ -69,8 +69,10 @@ public class FrontEnd extends DataProcessor {
     /**
      * The SphinxProperty for sample rate in Hertz (i.e.,
      * number of times per second), which has a default value of 8000.
+     *
+     * NOTE: this property should not have PROP_PREFIX in front of it!
      */
-    public static final String PROP_SAMPLE_RATE = PROP_PREFIX + "sampleRate";
+    public static final String PROP_SAMPLE_RATE = "sampleRate";
 
 
     /**
