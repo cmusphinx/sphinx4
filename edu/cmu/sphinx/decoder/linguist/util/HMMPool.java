@@ -38,11 +38,12 @@ import java.util.HashMap;
  */
 public class HMMPool {
     private AcousticModel model;
-    private int maxCIUnits = 0;
     private Unit[] unitTable;
     private HMM hmmTable[][];
+    private int numCIUnits;
 
     public HMMPool(AcousticModel model) {
+        int maxCIUnits = 0;
         this.model = model;
         Timer.start("buildHmmPool");
 
@@ -64,9 +65,9 @@ public class HMMPool {
             }
         }
 
-        maxCIUnits++;
+        numCIUnits = maxCIUnits + 1;
 
-        unitTable = new Unit[maxCIUnits * maxCIUnits * maxCIUnits];
+        unitTable = new Unit[numCIUnits * numCIUnits * numCIUnits];
 
         for (Iterator i = model.getHMMIterator(); i.hasNext(); ) {
             HMM hmm = (HMM) i.next();
@@ -95,6 +96,14 @@ public class HMMPool {
         Timer.stop("buildHmmPool");
     }
 
+    /**
+     * Returns the number of CI units
+     * 
+     * @return the number of CI Units
+     */
+    public int getNumCIUnits() {
+        return numCIUnits;
+    }
 
     /**
      * Gets the unit for the given id
@@ -171,8 +180,8 @@ public class HMMPool {
         if (unitTable[unitID].isSilence()) {
             return unitID;
         } else {
-            return unitID * (maxCIUnits * maxCIUnits)
-                  + (leftID * maxCIUnits) 
+            return unitID * (numCIUnits * numCIUnits)
+                  + (leftID * numCIUnits) 
                   + rightID ;
         }
     }
@@ -186,7 +195,7 @@ public class HMMPool {
      * context)
      */
     private int getLeftUnitID(int id) {
-        return (id / maxCIUnits) % maxCIUnits;
+        return (id / numCIUnits) % numCIUnits;
     }
 
     /**
@@ -198,7 +207,7 @@ public class HMMPool {
      * context)
      */
     private int getRightUnitID(int id) {
-        return id % maxCIUnits;
+        return id % numCIUnits;
     }
 
     /**
@@ -209,14 +218,14 @@ public class HMMPool {
      * @return the central unit id 
      */
     private int getCentralUnitID(int id) {
-        return id / (maxCIUnits * maxCIUnits);
+        return id / (numCIUnits * numCIUnits);
     }
 
     /**
      * Dumps out info about this pool
      */
     public void dumpInfo() {
-        System.out.println("Max CI Units " + maxCIUnits);
+        System.out.println("Max CI Units " + numCIUnits);
         System.out.println("Unit table size " + unitTable.length);
 
         if (false) {
