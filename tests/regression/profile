@@ -6,6 +6,9 @@
 # SourceForge downloads (so that sphinx4 will be located in
 # $(SF_ROOT)/sphinx4
 #
+# You may also want to set the correct version of the j2sdk that you are
+# using (e.g. j2sdk1.4.0 instead of j2sdk1.1.1_01)
+#
 PATH=$PATH:"$(HOME)/bin:/bin:/usr/bin:/usr/local/bin:/lab/speech/java/j2sdk1.4.1_01/bin:/usr/local/PBS/bin:/lab/speech/bin:/usr/ucb/:."
 export PATH
 CVS_RSH=ssh
