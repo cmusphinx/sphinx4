@@ -155,4 +155,21 @@ NOTE:  Before running the tests, you must have already built
 	    </java>
     </target>
 
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs the MAP Confidence test.                          * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="map_confidence"
+	    description="Runs the MAP Confidence test."
+	    depends="all">
+	    <java classname="tests.result.lattice.MAPConfidenceTest"
+		  fork="true">
+		  <classpath refid="run.classpath"/>
+		  <jvmarg value="-ea"/>
+		  <jvmarg value="-mx${maximum_heap_size}"/>
+	    </java>
+    </target>
+
 </project>
