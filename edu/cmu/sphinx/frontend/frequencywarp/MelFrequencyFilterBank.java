@@ -19,7 +19,6 @@ import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FrontEndFactory;
-import edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
@@ -175,13 +174,6 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
 
         numberFilters = props.getInt
             (getName(), PROP_NUMBER_FILTERS, PROP_NUMBER_FILTERS_DEFAULT);
-
-        numberFftPoints = props.getInt
-	    (getName(),
-             DiscreteFourierTransform.PROP_NUMBER_FFT_POINTS,
-             DiscreteFourierTransform.PROP_NUMBER_FFT_POINTS_DEFAULT);
-
-	buildFilterbank(numberFftPoints, numberFilters, minFreq, maxFreq);
     }
 
 
@@ -341,11 +333,14 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
 
 	double[] in = input.getValues();
 
-	if (in.length != ((numberFftPoints >> 1) + 1)) {
-	    throw new IllegalArgumentException
-               ("Window size is incorrect: in.length == " + in.length +
-                 ", numberFftPoints == " + ((numberFftPoints>>1)+1));
-	}
+        if (filter == null) {
+            numberFftPoints = (in.length - 1) * 2;
+            buildFilterbank(numberFftPoints, numberFilters, minFreq, maxFreq);
+        } else if (in.length != ((numberFftPoints >> 1) + 1)) {
+                throw new IllegalArgumentException
+                    ("Window size is incorrect: in.length == " + in.length +
+                     ", numberFftPoints == " + ((numberFftPoints>>1)+1));
+        }
 
 	double[] output = new double[numberFilters];
 
