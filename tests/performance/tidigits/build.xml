@@ -286,4 +286,26 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <arg value="${config}"/> 
         </java>
     </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * tidigits_simple                                        * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="tidigits_simple"
+	    description="TIDIGITS with the simplest config file">
+        <java classpath="${classes_dir}"
+	      classname="${batch_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="batch[skip]" value="${skip}"/> 
+            <arg value="simple.config.xml"/> 
+            <arg value="${batch}"/> 
+        </java>
+    </target>
 </project>
