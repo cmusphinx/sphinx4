@@ -171,11 +171,8 @@ public class Sphinx3Loader implements Loader {
      * Mixture weight floor default value.
      */
     public final static float PROP_MW_FLOOR_DEFAULT = 1e-7f;
-    /**
-     * The logger for this class
-     */
-    private static Logger logger = //TODO fixme get a real logger here.
-    Logger.getLogger("AcousticModel");
+
+
     protected final static String NUM_SENONES = "num_senones";
     protected final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
     protected final static String NUM_STREAMS = "num_streams";
@@ -208,6 +205,7 @@ public class Sphinx3Loader implements Loader {
     // Configuration variables
     // --------------------------------------
     private String name;
+    private Logger logger;
     private boolean binary;
     private boolean sparseForm;
     private int vectorLength;
@@ -247,6 +245,7 @@ public class Sphinx3Loader implements Loader {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        logger = ps.getLogger();
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
         binary = ps.getBoolean(PROP_IS_BINARY, PROP_IS_BINARY_DEFAULT);
 	sparseForm = ps.getBoolean(PROP_SPARSE_FORM, PROP_SPARSE_FORM_DEFAULT);

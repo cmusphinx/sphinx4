@@ -110,20 +110,12 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
      */
     protected final static String TIMER_LOAD = "AM_Load";
 
-
-    // -----------------------------
-    // The data logger
-    // -----------------------------
-    /**
-     * The logger for this class
-     */
-    private static Logger logger =  //TODO - logger fix me
-        Logger.getLogger("edu.cmu.sphinx.linguist.acoustic.tiedstate.AcousticModel");
-
+    
     // -----------------------------
     // Configured variables
     // -----------------------------
     protected String name;
+    private  Logger logger;
     protected Loader loader;
     private boolean useComposites = false;
 
@@ -149,6 +141,7 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
     public void newProperties(PropertySheet ps) throws PropertyException {
         loader = (Loader) ps.getComponent(PROP_LOADER, Loader.class);
         useComposites = ps.getBoolean(PROP_USE_COMPOSITES, PROP_USE_COMPOSITES_DEFAULT);
+        logger = ps.getLogger();
     }
 
     /**

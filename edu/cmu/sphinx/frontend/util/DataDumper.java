@@ -61,8 +61,7 @@ public class DataDumper extends BaseDataProcessor {
     private boolean enable;
     private boolean outputSignals;
     private DecimalFormat formatter;
-    private static Logger logger = Logger
-            .getLogger("edu.cmu.sphinx.frontend.util.DataDumper");
+    private  Logger logger;
 
     /*
      * (non-Javadoc)
@@ -84,6 +83,7 @@ public class DataDumper extends BaseDataProcessor {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
+        logger = ps.getLogger();
         enable = ps.getBoolean(PROP_ENABLE, PROP_ENABLE_DEFAULT);
         String format = ps.getString(PROP_OUTPUT_FORMAT,
                 PROP_OUTPUT_FORMAT_DEFAULT);

@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.logging.Logger;
 
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
@@ -122,6 +123,7 @@ public class BatchModeRecognizer implements Configurable {
     private boolean usePooledBatchManager;
     private BatchManager batchManager;
     private Recognizer recognizer;
+    private Logger logger;
 
     /*
      * (non-Javadoc)
@@ -146,6 +148,7 @@ public class BatchModeRecognizer implements Configurable {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        logger = ps.getLogger();
         skip = ps.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
         whichBatch = ps.getInt(PROP_WHICH_BATCH, PROP_WHICH_BATCH_DEFAULT);
         totalBatches = ps

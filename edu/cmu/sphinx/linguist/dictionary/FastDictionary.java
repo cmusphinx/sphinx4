@@ -72,16 +72,12 @@ import edu.cmu.sphinx.util.props.Registry;
  */
 public class FastDictionary implements Dictionary {
 
-    /**
-     * The logger for this class
-     */
-    private static Logger logger = Logger
-            .getLogger("edu.cmu.sphinx.linguist.dictionary.FastDictionary");
 
     // -------------------------------
     // Configuration data
     // --------------------------------
     private String name;
+    private Logger logger;
     private boolean addSilEndingPronunciation;
     private boolean allowMissingWords;
     private boolean createMissingWords;
@@ -125,6 +121,7 @@ public class FastDictionary implements Dictionary {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        logger = ps.getLogger();
         location = ps.getString(PROP_LOCATION, PROP_LOCATION_DEFAULT);
         wordDictionaryFile = ps.getString(PROP_DICTIONARY,
                 PROP_DICTIONARY_DEFAULT);

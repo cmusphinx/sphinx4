@@ -163,8 +163,7 @@ public class Microphone extends BaseDataProcessor {
     private boolean closeBetweenUtterances = true;
     private boolean keepDataReference = true;
 
-    private static Logger logger = Logger.getLogger
-        ("edu.cmu.sphinx.frontend.util.Microphone");
+    private  Logger logger;
     
     /*
      * (non-Javadoc)
@@ -189,6 +188,7 @@ public class Microphone extends BaseDataProcessor {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
+        logger = ps.getLogger();
 
         sampleRate = ps.getInt
             (PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);

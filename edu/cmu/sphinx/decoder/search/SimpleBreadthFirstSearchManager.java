@@ -19,6 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
@@ -120,6 +122,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private ActiveList activeList; // the list of active tokens
     private List resultList; // the current set of results
     private LogMath logMath;
+    private Logger logger;
+    
     // ------------------------------------
     // monitoring data
     // ------------------------------------
@@ -174,6 +178,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        logger = ps.getLogger();
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
         linguist = (Linguist) ps.getComponent(PROP_LINGUIST, Linguist.class);
         pruner = (Pruner) ps.getComponent(PROP_PRUNER, Pruner.class);
@@ -312,10 +317,10 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
             collectSuccessorTokens(token);
         }
         growTimer.stop();
-        if (false) { // TODO convert to use the logger
+        if (logger.isLoggable(Level.FINE)) {  
             int hmms = activeList.size();
             totalHmms += hmms;
-            System.out.println("Frame: " + currentFrameNumber + " Hmms: "
+            logger.fine("Frame: " + currentFrameNumber + " Hmms: "
                     + hmms + "  total " + totalHmms);
         }
     }
@@ -339,8 +344,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         curTokensScored.value += activeList.size();
         totalTokensScored.value += activeList.size();
         tokensPerSecond.value = totalTokensScored.value / getTotalTime();
-        if (false) {
-            System.out.println(currentFrameNumber + " " + activeList.size()
+        if (logger.isLoggable(Level.FINE)) {
+            logger.fine(currentFrameNumber + " " + activeList.size()
                     + " " + curTokensScored.value + " "
                     + (int) tokensPerSecond.value);
         }
@@ -378,8 +383,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      */
     protected Token getBestToken(SearchState state) {
         Token best = (Token) bestTokenMap.get(state);
-        if (false && best != null) {
-            System.out.println("BT " + best + " for state " + state);
+        if (logger.isLoggable(Level.FINER) && best != null) {
+            logger.finer("BT " + best + " for state " + state);
         }
         return best;
     }
@@ -473,24 +478,26 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      * expensive operation.
      */
     private void showTokenCount() {
-        Set tokenSet = new HashSet();
-        for (Iterator i = activeList.iterator(); i.hasNext();) {
-            Token token = (Token) i.next();
-            while (token != null) {
-                tokenSet.add(token);
-                token = token.getPredecessor();
+        if (logger.isLoggable(Level.INFO)) {
+            Set tokenSet = new HashSet();
+            for (Iterator i = activeList.iterator(); i.hasNext();) {
+                Token token = (Token) i.next();
+                while (token != null) {
+                    tokenSet.add(token);
+                    token = token.getPredecessor();
+                }
             }
-        }
-        System.out.println("Token Lattice size: " + tokenSet.size());
-        tokenSet = new HashSet();
-        for (Iterator i = resultList.iterator(); i.hasNext();) {
-            Token token = (Token) i.next();
-            while (token != null) {
-                tokenSet.add(token);
-                token = token.getPredecessor();
+            logger.info("Token Lattice size: " + tokenSet.size());
+            tokenSet = new HashSet();
+            for (Iterator i = resultList.iterator(); i.hasNext();) {
+                Token token = (Token) i.next();
+                while (token != null) {
+                    tokenSet.add(token);
+                    token = token.getPredecessor();
+                }
             }
+            logger.info("Result Lattice size: " + tokenSet.size());
         }
-        System.out.println("Result Lattice size: " + tokenSet.size());
     }
 
     /**

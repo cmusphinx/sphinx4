@@ -35,6 +35,10 @@ public class SphinxLogFormatter extends Formatter {
 
     private static DateFormat DATE_FORMATTER = new
 	SimpleDateFormat("hh:mm.SSS");
+    
+//    public SphinxLogFormatter() {
+//        System.out.println("Sphinx3 Log Formatter here!");
+//    }
 
     /**
      * Formats the given log record and return the formatted string.

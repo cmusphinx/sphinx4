@@ -9,7 +9,6 @@ NOTE:  Before running the tests, you must have already built
        sphinx4 directory.
 
 Run ant with -Dskip=5 to do the standard 'quick' version of a test.
-Run ant with -Dlogger_props=tidigits.props to turn on the logging.
 </description>
 
     <!-- ********************************************************** -->
@@ -26,7 +25,6 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
     <property name="lib_dir"            value="${build_dir}/lib"/>
 
     <property name="skip"               value="0"/>
-    <property name="logger_props"       value="tidigits.props"/>  
 
     <property name="initial_heap_size"  value="128m"/>
     <property name="maximum_heap_size"  value="128m"/>
@@ -53,8 +51,6 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
             <sysproperty key="batch[skip]" value="${skip}"/> 
             <arg value="${config}"/> 
             <arg value="${batch}"/> 
@@ -78,8 +74,6 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar" 
 			 value="edu.cmu.sphinx.jsapi.JSGFGrammar"/> 
 			<sysproperty key="flatLinguist[grammar]" value="jsgfGrammar"/>
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
             <sysproperty key="batch[skip]" value="${skip}"/> 
             <arg value="${config}"/> 
             <arg value="${batch}"/> 
@@ -100,8 +94,6 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
             <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="flatLinguist[grammar]" value="lmGrammar"/>
             <arg value="${config}"/> 
@@ -123,8 +115,6 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
             <sysproperty key="batch[skip]" value="${skip}"/> 
    			<sysproperty key="flatLinguist[grammar]" value="fstGrammar"/>
             <arg value="${config}"/> 
@@ -146,8 +136,6 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
              <sysproperty key="batch[skip]" value="${skip}"/> 
 			 <sysproperty key="linguist" value="lexTreeLinguist"/>				
             <arg value="${config}"/> 
@@ -169,8 +157,6 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>            
              <sysproperty key="batch[skip]" value="${skip}"/> 
 			 <sysproperty key="linguist" value="lexTreeLinguist"/>	
              <sysproperty key="ngramLanguageModel[location]" value ="tidigits.bigram.lm"/>		
@@ -194,8 +180,6 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
             <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="flatLinguist[grammar]" value="lmGrammar"/>
              <sysproperty key="ngramLanguageModel[maxDepth]" value ="2"/>	
@@ -219,8 +203,6 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>            
              <sysproperty key="batch[skip]" value="${skip}"/> 
 			 <sysproperty key="linguist" value="lexTreeLinguist"/>	
              <sysproperty key="ngramLanguageModel[location]" value ="tidigits.trigram.lm"/>		
@@ -247,8 +229,6 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx512m"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
             <sysproperty key="live[skip]" value="${skip}"/> 
             <sysproperty key="concatDataSource[skip]" value="${skip}"/> 
             <sysproperty key="speedTracker[showResponseTime]" value="true"/> 
@@ -274,8 +254,6 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx256m"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
             <sysproperty key="live[skip]" value="${skip}"/> 
             <sysproperty key="concatDataSource[skip]" value="${skip}"/> 
             <sysproperty key="concatDataSource[skip]" value="${skip}"/> 
@@ -301,8 +279,6 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
-            <sysproperty key="java.util.logging.config.file"
-			 value="${logger_props}"/>
             <sysproperty key="batch[skip]" value="${skip}"/> 
             <arg value="simple.config.xml"/> 
             <arg value="${batch}"/> 

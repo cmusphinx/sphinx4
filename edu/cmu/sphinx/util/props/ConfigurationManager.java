@@ -12,6 +12,8 @@
  */
 package edu.cmu.sphinx.util.props;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,6 +29,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
 
 /**
  * Manages the configuration for the system. The configuration manager provides
@@ -60,6 +64,14 @@ public class ConfigurationManager {
      */
     public final static boolean PROP_SHOW_CREATIONS_DEFAULT = false;
 
+    /**
+     * A common property (used by all components) that sets the log level for
+     * the component.
+     * 
+     * @see java.util.logging.Level
+     */
+    public final static String PROP_COMMON_LOG_LEVEL = "logLevel";
+
     private Map symbolTable = new LinkedHashMap();
     private Map rawPropertyMap;
     private Map globalProperties = new HashMap();
@@ -77,13 +89,15 @@ public class ConfigurationManager {
      *  
      */
     public ConfigurationManager(URL url) throws IOException, PropertyException {
+
         rawPropertyMap = loader(url);
         applySystemProperties(rawPropertyMap, globalProperties);
-
+        configureLogger();
+        
         // we can't config the configuration manager with itself so we
         // do some of these config items manually.
 
-        showCreations = "true".equals(getMyProperty(PROP_SHOW_CREATIONS));
+        showCreations = "true".equals(getMyGlobalProperty(PROP_SHOW_CREATIONS));
     }
 
     /**
@@ -168,6 +182,7 @@ public class ConfigurationManager {
                     Configurable configurable = (Configurable) cls
                             .newInstance();
                     Registry registry = new Registry(configurable);
+                    registerCommonProperties(registry);
                     configurable.register(name, registry);
                     ValidatingPropertySheet propertySheet = new ValidatingPropertySheet(
                             this, registry, rpd);
@@ -324,8 +339,47 @@ public class ConfigurationManager {
      *                the name of the property
      * @return the property value or null if it doesn't exist.
      */
-    private String getMyProperty(String key) {
+     String getMyGlobalProperty(String key) {
         return globalLookup("${" + key + "}");
+    }
+
+    /**
+     * Registers the properties commont to all components
+     * 
+     * @param registry
+     *                a component registry
+     * @throws PropertyException
+     *                 if an error occurs while registering the properties.
+     */
+    private void registerCommonProperties(Registry registry)
+            throws PropertyException {
+        registry.register(PROP_COMMON_LOG_LEVEL, PropertyType.STRING);
+    }
+    
+    /**
+     * Configure the logger
+     *
+     */
+    private void configureLogger() {
+        LogManager logManager = LogManager.getLogManager();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        Properties props = new Properties();
+        props.setProperty(".level", "FINEST");
+        props.setProperty("handlers", "java.util.logging.ConsoleHandler");
+        props.setProperty("java.util.logging.ConsoleHandler.level", "FINEST");
+        props.setProperty("java.util.logging.ConsoleHandler.formatter",
+              "edu.cmu.sphinx.util.SphinxLogFormatter");
+
+        try {
+            props.store(bos, "");
+            bos.close();
+            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+            logManager.readConfiguration(bis);
+            bis.close();
+        } catch (IOException ioe) {
+            System.err.println("Can't configure logger, using default configuration");
+        }
+        
     }
 
     /**
@@ -377,8 +431,8 @@ public class ConfigurationManager {
 
     // TODO: some experimental dumping functions, dump the config
     // as HTML and as GDL. These should probably be moved out to
-    // the config monitor. 
-    
+    // the config monitor.
+
     // TODO this dumping code is not done yet.
 
     /**
@@ -412,7 +466,18 @@ public class ConfigurationManager {
         out.println("</head>");
         out.println("<body>");
     }
-
+    
+    /**
+     * Retrieves the global log level
+     * @return the global log level
+     */
+    String getGlobalLogLevel() {
+        String level = getMyGlobalProperty(ConfigurationManager.PROP_COMMON_LOG_LEVEL);
+        if (level == null) {
+            level = Level.WARNING.getName();
+        }
+        return level;
+    }
     /**
      * Dumps the footer for HTML output
      * 

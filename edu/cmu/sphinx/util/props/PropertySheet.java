@@ -12,6 +12,7 @@
  */
 package edu.cmu.sphinx.util.props;
 import java.util.List;
+import java.util.logging.Logger;
 /**
  * A property sheet defines a collection of properties for a single component
  * in the system.
@@ -163,5 +164,16 @@ public interface PropertySheet {
      * 
      * @return the property manager
      */
-    ConfigurationManager getPropertyManager();
+    ConfigurationManager getPropertyManager() throws PropertyException;
+    
+    
+    /**
+     * Returns a logger to use for this configurable component.
+     * The logger can be configured with the property: 'logLevel' -
+     * The default logLevel value is define by the global property 
+     * 'defaultLogLevel' (which defaults to WARNING).
+     * @return the logger for this component
+     * @throws PropertyException if an error occurs
+     */
+    Logger getLogger() throws PropertyException;
 }

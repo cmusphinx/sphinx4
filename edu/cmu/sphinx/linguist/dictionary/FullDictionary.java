@@ -70,6 +70,7 @@ public class FullDictionary implements Dictionary {
     // configuration variables
     // ----------------------------------
     private String name;
+    private  Logger logger;
     private boolean addSilEndingPronunciation;
     private boolean allowMissingWords;
     private boolean createMissingWords;
@@ -83,11 +84,6 @@ public class FullDictionary implements Dictionary {
     private Map wordDictionary;
     private Map fillerDictionary;
     private Timer loadTimer;
-    /**
-     * The logger for this class
-     */
-    private static Logger logger = // TODO fix this
-    Logger.getLogger("FullDictionary");
 
     /*
      * (non-Javadoc)
@@ -113,6 +109,7 @@ public class FullDictionary implements Dictionary {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        logger = ps.getLogger();
         location = ps.getString(PROP_LOCATION, PROP_LOCATION_DEFAULT);
         wordDictionaryFile = ps.getString(PROP_DICTIONARY,
                 PROP_DICTIONARY_DEFAULT);

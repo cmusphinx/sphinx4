@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  * An implementation of the property sheet that validates the properties
  * against a registry.
@@ -27,6 +29,7 @@ class ValidatingPropertySheet implements PropertySheet {
     private ConfigurationManager cm;
     private Map properties = new HashMap();
     private Registry registry;
+    private String className;
     private final static List EMPTY = new ArrayList();
     /**
      * Creates a buildable property sheet
@@ -46,6 +49,7 @@ class ValidatingPropertySheet implements PropertySheet {
         // for each property in the raw property data, check that it
         // is a registered property, and that it is of the proper type.
         Map raw = rpd.getProperties();
+        className = rpd.getClassName();
         for (Iterator i = raw.keySet().iterator(); i.hasNext();) {
             String key = (String) i.next();
             Object val = raw.get(key);
@@ -466,6 +470,41 @@ class ValidatingPropertySheet implements PropertySheet {
         return val.startsWith("${");
     }
 
+    /**
+     * Gets the log level for this component
+     * @return the log level
+     */
+    private Level getLogLevel()  throws PropertyException {
+        Level level = null;
+        
+        String levelName = getString(ConfigurationManager.PROP_COMMON_LOG_LEVEL,
+                cm.getGlobalLogLevel());
+                
 
+        if (levelName == null) {
+            level  = Level.WARNING;
+        } else {
+            try {
+                level = Level.parse(levelName);
+            } catch (IllegalArgumentException e) {
+                throw new PropertyException(registry.getOwner(), 
+                    ConfigurationManager.PROP_COMMON_LOG_LEVEL,
+                    "Bad 'level' specifier " + levelName);
+            }
+        }
+        return level;
+    }
+    
+   
+    /* (non-Javadoc)
+     * @see edu.cmu.sphinx.util.props.PropertySheet#getLogger()
+     */
+    public Logger getLogger() throws PropertyException {
+        Logger logger = Logger.getLogger(className + "."
+             + registry.getOwner().getName());
+        Level level = getLogLevel();
+        logger.setLevel(level);
+        return logger;
+    }
 
 }

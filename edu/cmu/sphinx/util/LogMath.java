@@ -41,20 +41,21 @@ public final class LogMath implements Configurable {
      */
     public final static String PROP_USE_ADD_TABLE = "useAddTable";
     /**
-     * The logger for this class
-     */
-    private static Logger logger = Logger
-            .getLogger("edu.cmu.sphinx.util.LogMath");
-    /**
      * Default value for whether we use the old, slow (but correct) method of
      * performing the LogMath.add by doing the actual computation.
      */
     public final static boolean PROP_USE_ADD_TABLE_DEFAULT = true;
     private static float logZero = -Float.MAX_VALUE;
     private static float logOne = 0.0f;
+    
+    // -------------------------------
+    // Configuration data
+    // ------------------------------
     private float logBase;
     private boolean useAddTable;
     private String name;
+    private Logger logger;
+    
     private transient float naturalLogBase;
     private transient float inverseNaturalLogBase;
     private transient float theAddTable[];
@@ -80,6 +81,7 @@ public final class LogMath implements Configurable {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        logger = ps.getLogger();
         logBase = ps.getFloat(PROP_LOG_BASE, PROP_LOG_BASE_DEFAULT);
         useAddTable = ps.getBoolean(PROP_USE_ADD_TABLE,
                 PROP_USE_ADD_TABLE_DEFAULT);
