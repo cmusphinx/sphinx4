@@ -64,9 +64,14 @@ $1 == "build" && $4 == machine {
     buildData[buildCount] = $0;
 }
 
+$1 == "TEST_CHANGE"  && $2 == "tag_changes_with_machine" {
+    tagChangesWithMachine = 1;
+}
+
 $1 == "test"  && $4 == machine && $5 == "s4" {
     testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
     testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
+    testMode[$F_TEST_NAME testCount[$F_TEST_NAME]] = tagChangesWithMachine;
     if (lastTestDate != $F_DATE) {
         lastTestDate = $F_DATE;
 	lastTestCount = 0;
@@ -85,7 +90,11 @@ $1 == "metrics"   {
 }
 
 function dateAnchor(date) {
-    return "<a href=\"" date ".html\">" date "</a>";
+    if (tagWithMachine) {
+        return "<a href=\"" machine "_" date ".html\">" date "</a>";
+    } else {
+        return "<a href=\"" date ".html\">" date "</a>";
+    }
 }
 
 #####
@@ -93,6 +102,7 @@ function dateAnchor(date) {
 #
 function updateData(testName, testCount) {
     split(testData[testName testCount], data);
+    tagWithMachine = testMode[testName testCount];
 }
 
 ####

@@ -19,7 +19,8 @@
 
 
 date=`cat .startDate`
-./whatsNew $date > $date.html
-sscp $date.html
-sshh mv $date.html /home/groups/c/cm/cmusphinx/htdocs
+machine=`.getHostname`
+./whatsNew $date > $machine_$date.html
+sscp $machine_$date.html
+sshh mv $machine_$date.html /home/groups/c/cm/cmusphinx/htdocs
 sshh '(cd /home/groups/c/cm/cmusphinx/htdocs; chgrp -f cmusphinx `ls`; chmod -f g+w `ls`;)'
