@@ -385,10 +385,10 @@ public class BatchModeRecognizer implements Configurable {
         });
         ci.addAlias("recognize", "rec");
 
-	ci.add("reset", new CommandInterface() {
+	ci.add("statsReset", new CommandInterface() {
 	     public String execute(CommandInterpreter ci, String[] args) {
                  if (args.length != 1) {
-                    ci.putResponse("Usage: reset");
+                    ci.putResponse("Usage: statsReset");
                  } else {
                     recognizer.resetMonitors();
                 }
@@ -469,6 +469,75 @@ public class BatchModeRecognizer implements Configurable {
             }
         });
         ci.addAlias("batchNext", "bn");
+
+	ci.add("batchAll", new CommandInterface() {
+	     public String execute(CommandInterpreter ci, String[] args) {
+                 if (args.length != 1) {
+                    ci.putResponse("Usage: batchAll");
+                 } else {
+                    try {
+                        if (curBatchItem == null) {
+                            batchManager.start();
+                        }
+
+                        while (true) {
+                            curBatchItem = batchManager.getNextItem();
+                            // if we reach the end  bail out
+
+                            if (curBatchItem == null) {
+                                return "";
+                            }
+                            String audioFile = curBatchItem.getFilename();
+                            String transcript = curBatchItem.getTranscript();
+                            setInputStream(audioFile);
+                            Result result = recognizer.recognize(transcript);
+                        }
+                    } catch (IOException io) {
+                        ci.putResponse("I/O error during decoding: " +
+                            io.getMessage());
+                    }
+                }
+                return "";
+           }
+            public String getHelp() {
+                return "recognize all of the remaining batch items";
+            }
+        });
+
+	ci.add("batchReset", new CommandInterface() {
+	     public String execute(CommandInterpreter ci, String[] args) {
+                 if (args.length != 1) {
+                    ci.putResponse("Usage: batchReset");
+                 } else {
+                    try {
+                        batchManager.start();
+                    } catch (IOException ioe) {
+                        ci.putResponse("trouble reseting batch");
+                    }
+                }
+                return "";
+           }
+           public String getHelp() {
+               return "reset the batch to the beginning";
+           }
+        });
+	ci.add("batchLoad", new CommandInterface() {
+	     public String execute(CommandInterpreter ci, String[] args) {
+                 if (args.length != 2) {
+                    ci.putResponse("Usage: batchReset batchfile");
+                 } else {
+                    try {
+                        setBatchFile(args[1]);
+                    } catch (IOException ioe) {
+                        ci.putResponse("Can't load " + args[1] + " " + ioe);
+                    }
+                }
+                return "";
+           }
+           public String getHelp() {
+               return "reset the batch to the beginning";
+           }
+        });
     }
 
     public void shell(String batchfile) {
