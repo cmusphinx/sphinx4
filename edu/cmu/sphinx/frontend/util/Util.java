@@ -18,6 +18,7 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
 
+import java.io.DataInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -414,5 +415,23 @@ public class Util {
         FileOutputStream file = new FileOutputStream(filename);
         file.write(data);
         file.close();
+    }
+
+
+    /**
+     * Reads a float from the given DataInputStream, where the data is in
+     * little endian.
+     *
+     * @param dataStream the DataInputStream to read from
+     *
+     * @return a float
+     */
+    public static float readLittleEndianFloat(DataInputStream dataStream) 
+	throws IOException {
+	int bits = 0;
+	for (int shift = 0; shift < 32; shift += 8) {
+	    bits |= ((dataStream.readByte() & 0xff) << shift);
+	}
+	return Float.intBitsToFloat(bits);
     }
 }
