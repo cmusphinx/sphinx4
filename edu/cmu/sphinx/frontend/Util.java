@@ -60,59 +60,6 @@ public class Util {
 
 
     /**
-     * Returns the number of windows in the given array, given the windowSize
-     * and windowShift.
-     *
-     * @param arraySize the size of the array
-     * @param windowSize the window size
-     * @param windowShift the window shift
-     *
-     * @return the number of windows
-     */
-    public static int getWindowCount(int arraySize, int windowSize,
-				     int windowShift) {
-	if (arraySize < windowSize) {
-	    return 0;
-	} else {
-	    int windowCount = 1;
-	    for (int windowEnd = windowSize;
-		 windowEnd + windowShift <= arraySize;
-		 windowEnd += windowShift) {
-		windowCount++;
-	    }
-	    return windowCount;
-	}
-    }
-
-
-    /**
-     * Given an array size, a window size, and a window shift, return
-     * the number of elements of the array that the window(s) occupy. For
-     * example, if the array is of size 10, the window size is 3, and the
-     * window shift is 2, then the total number of elements occupied equals
-     * <code>2 + 2 + 2 + 3 = 9</code>.
-     *
-     * @param arraySize the length of the array
-     * @param windowSize the window size
-     * @param windowShift the window shift
-     *
-     * @return the number of occupied array elements
-     */
-    public static int getOccupiedElements(int arraySize, int windowSize,
-					  int windowShift) {
-	if (arraySize < windowSize) {
-	    return 0;
-	} else {
-	    int windowEnd = windowSize;
-	    while ((windowEnd + windowShift) <= arraySize) {
-		windowEnd += windowShift;
-	    }
-	    return windowEnd;
-	}
-    }
-
-
-    /**
      * Converts a byte array into a short array. Since a byte is 8-bits,
      * and a short is 16-bits, the returned short array will be half in
      * length than the byte array. If the length of the byte array is odd,

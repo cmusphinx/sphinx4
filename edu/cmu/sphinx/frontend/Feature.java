@@ -10,7 +10,7 @@ package edu.cmu.sphinx.frontend;
  */
 public class Feature extends Data {
 
-    private float[] featureData;
+    private float[] featureData = null;
     private int ID;
 
 
@@ -69,6 +69,10 @@ public class Feature extends Data {
      * @return the String representation
      */
     public String toString() {
-        return Util.floatArrayToString(featureData);
+        if (featureData != null) {
+            return Util.floatArrayToString(featureData);
+        } else {
+            return getSignal().toString();
+        }
     }
 }

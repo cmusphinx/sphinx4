@@ -228,8 +228,7 @@ public class Windower extends DataProcessor implements AudioSource {
      */
     private int applyHammingWindow(double[] in, int length) {
 
-        int windowCount = Util.getWindowCount
-            (length, windowSize, windowShift);
+        int windowCount = getWindowCount(length, windowSize, windowShift);
 
         // create all the windows at once, not individually, saves time
         double[][] windows = new double[windowCount][windowSize];
@@ -255,6 +254,32 @@ public class Windower extends DataProcessor implements AudioSource {
         }
 
         return windowStart;
+    }
+
+
+    /**
+     * Returns the number of windows in the given array, given the windowSize
+     * and windowShift.
+     *
+     * @param arraySize the size of the array
+     * @param windowSize the window size
+     * @param windowShift the window shift
+     *
+     * @return the number of windows
+     */
+    private static int getWindowCount(int arraySize, int windowSize,
+                                      int windowShift) {
+        if (arraySize < windowSize) {
+            return 0;
+        } else {
+            int windowCount = 1;
+            for (int windowEnd = windowSize;
+                 windowEnd + windowShift <= arraySize;
+                 windowEnd += windowShift) {
+                windowCount++;
+            }
+            return windowCount;
+        }
     }
 }
 
@@ -311,6 +336,9 @@ class DoubleBuffer {
      * @return the resulting number of elements in this DoubleBuffer
      */
     public int append(double[] src, int srcPos, int length) {
+        if (occupancy + length > buffer.length) {
+            length = buffer.length - occupancy;
+        }
         System.arraycopy(src, srcPos, buffer, occupancy, length);
         occupancy += length;
         return occupancy;

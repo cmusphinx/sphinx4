@@ -17,17 +17,18 @@ public class Signal implements Serializable {
     /**
      * Signal to indicate data present.
      */
-    public static final Signal CONTENT = new Signal("content");
+    public static final Signal CONTENT = new Signal("CONTENT");
 
     /**
      * Signal to indicate the end of a speech segment.
      */
-    public static final Signal SEGMENT_END = new Signal("segmentEnd");
+    public static final Signal SEGMENT_END = new Signal("SEGMENT_END");
 
     /**
      * Signal to indicate the start of a speech segment.
      */
-    public static final Signal SEGMENT_START = new Signal("segmentStart");
+    public static final Signal SEGMENT_START = new Signal("SEGMENT_START");
+
 
     /**
      * Constructs a Signal with the given name.

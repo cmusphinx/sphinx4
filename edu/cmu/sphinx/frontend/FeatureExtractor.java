@@ -95,9 +95,11 @@ FeatureSource {
      * of data. 
      */
     private void reset() {
-        segmentStart = false;
+        segmentStart = true;
         segmentEnd = false;
         featureID.reset();
+        bufferPosition = 0;
+        currentPosition = 0;
     }
 
 
@@ -141,7 +143,8 @@ FeatureSource {
                     return null;
                 } else {
                     if (input.hasContent()) {
-                        // "featureBlockSize-1" since first Cepstrum already read
+                        // "featureBlockSize-1" since first Cepstrum
+                        // already read
                         int numberFeatures = readCepstra(featureBlockSize - 1,
                                                          input);
                         if (numberFeatures > 0) {

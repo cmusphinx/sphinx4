@@ -7,6 +7,7 @@ package edu.cmu.sphinx.frontend;
 import edu.cmu.sphinx.util.SphinxProperties;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 
 /**
@@ -170,21 +171,18 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
 
         this.totalBytesRead += totalRead;
 
-        byte[] finalBuffer = samplesBuffer;
-
-        // shrink smaller frames
+        // pad and shrink incomplete frames
         if (totalRead < bytesToRead) {
-            int finalBufferSize = (totalRead % 2 == 0) ? totalRead + 2:
-                totalRead + 3;
-            finalBuffer = new byte[finalBufferSize];
-            System.arraycopy(samplesBuffer, 0, finalBuffer, 0, totalRead);
+            Arrays.fill(samplesBuffer, totalRead,
+                        samplesBuffer.length, (byte) 0);
+            totalRead = (totalRead % 2 == 0) ? totalRead + 2 : totalRead + 3;
             streamEndReached = true;
             audioStream.close();
         }
 
         // turn it into an Audio
         Audio audio = new Audio
-            (Util.byteToDoubleArray(finalBuffer, 0, finalBuffer.length));
+            (Util.byteToDoubleArray(samplesBuffer, 0, totalRead));
         
         if (getDump()) {
             System.out.println("FRAME_SOURCE " + audio.toString());

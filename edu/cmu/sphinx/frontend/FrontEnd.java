@@ -179,9 +179,11 @@ public class FrontEnd extends DataProcessor {
         int i = 0;
         do {
             feature = featureSource.getFeature();
-            features[i++] = feature;
-            if (feature.hasSegmentEndSignal()) {
-                break;
+            if (feature != null) {
+                features[i++] = feature;
+                if (feature.hasSegmentEndSignal()) {
+                    break;
+                }
             }
         } while (i < numberFeatures);
 

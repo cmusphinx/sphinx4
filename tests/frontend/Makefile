@@ -56,6 +56,11 @@ alltests: all
 	@$(MAKE) -s cmn
 	@$(MAKE) -s featureExtractor
 
+live: all
+	(cd $(TOP); $(MAKE))
+	${JAVA_HOME}/bin/java -cp ../../classes \
+	tests.frontend.LiveAudioSourceTest
+
 clean::
 	rm -f *.out *.diff
 
