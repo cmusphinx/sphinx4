@@ -6,6 +6,13 @@ To get the performance of the Sphinx 3j frontend:
 
 The following 3 tables show the times of running the Sphinx 3
 frontend 50 times on 0601/114739-hiker/19990601-114739-00000001.
+Sphinx 3 was compiled using the following gcc compiler:
+
+sunlabs 379 =>gcc -v 
+Reading specs from /pkg/gnu/lib/gcc-lib/sparc-sun-solaris2.6/2.95.3/specs
+gcc version 2.95.3 20010315 (release)
+
+
 
 2-CPU 360MHz sparcv9 512MB (argus)
 ==================================

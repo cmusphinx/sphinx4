@@ -27,13 +27,15 @@ public class SpectrumAnalyzer extends DataProcessor {
     private int windowSize;
     private int NPoint;
     private int log2N;
-    private Complex[] Wk;
 
+    private Complex[] Wk;
     private Complex[] inputSeq;
     private Complex[] from;
     private Complex[] to;
 
-    private Complex wkTimesF2; // = new Complex();
+    private Complex wkTimesF2;
+    private Complex tempComplex;
+
 
     /**
      * Constructs a default Spectrum Analyzer with the given 
@@ -45,9 +47,9 @@ public class SpectrumAnalyzer extends DataProcessor {
 	initSphinxProperties(context);
 	computeLog2N();
 	createWk(NPoint, false);
-        setTimer(Timer.getTimer(context, "SpectrumAnalyzer"));
         initComplexArrays();
         wkTimesF2 = new Complex();
+        setTimer(Timer.getTimer(context, "SpectrumAnalyzer"));
     }
 
 
@@ -97,10 +99,6 @@ public class SpectrumAnalyzer extends DataProcessor {
                  ", windowSize == " + windowSize);
 	}
 
-	// Complex[] inputSeq = new Complex[NPoint];
-
-	Complex tempComplex = new Complex();
-
         if (NPoint < windowSize) {
 	    for (int i = 0; i < NPoint; i++) {
 		inputSeq[i].set(in[i], 0.0f);
@@ -147,6 +145,8 @@ public class SpectrumAnalyzer extends DataProcessor {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
+     *
+     * @param context the context of the SphinxProperties used
      */
     private void initSphinxProperties(String context) {
 
@@ -246,8 +246,6 @@ public class SpectrumAnalyzer extends DataProcessor {
 		    int NPoint,
 		    boolean invert) {
 
-	// Complex[] from = new Complex[NPoint];
-	// Complex[] to = new Complex[NPoint];
 	double divisor;
 
 	/**
@@ -267,7 +265,6 @@ public class SpectrumAnalyzer extends DataProcessor {
 	 */
 	for (int i = 0; i < NPoint; i++){
 	    to[i].reset();
-	    from[i].reset();
 	    from[i].scaleComplex(input[i], divisor);
 	}
 	/**
@@ -290,6 +287,7 @@ public class SpectrumAnalyzer extends DataProcessor {
 	}
 	return;
     }
+
 
     /**
      * Compute one stage in the FFT butterfly. The name "butterfly"
@@ -319,9 +317,6 @@ public class SpectrumAnalyzer extends DataProcessor {
 	int ndx2To;
 	int ndxWk;
 
-	// Complex wkTimesF2 = new Complex();
-        wkTimesF2.reset();
-
 	if (currentDistance > 0) {
 
             int twiceCurrentDistance = 2 * currentDistance;
@@ -345,8 +340,8 @@ public class SpectrumAnalyzer extends DataProcessor {
 		     * <b>to[ndx2To] = from[ndx1From] - wkTimesF2</b>
 		     */
 		    to[ndx2To].subtractComplex(from[ndx1From], wkTimesF2);
-		    ndx1From += twiceCurrentDistance; //(2 * currentDistance);
-		    ndx2From += twiceCurrentDistance; //(2 * currentDistance);
+		    ndx1From += twiceCurrentDistance;
+		    ndx2From += twiceCurrentDistance;
 		    ndx1To += currentDistance;
 		    ndx2To += currentDistance;
 		    ndxWk += currentDistance;
