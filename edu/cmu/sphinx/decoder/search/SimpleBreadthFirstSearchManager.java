@@ -52,11 +52,14 @@ import java.util.Set;
 
 public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
+    private final static String PROP_PREFIX =
+	"edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.";
+    
     /**
      * Sphinx property that defines the type of active list to use
      */
     public final static String PROP_ACTIVE_LIST_TYPE =
-	"edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType";
+	PROP_PREFIX + "activeListType";
 
     /**
      * The default value for the PROP_ACTIVE_LIST_TYPE property
@@ -69,7 +72,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      * Sphinx property that defines the language weight for the search
      */
     public final static String PROP_LANGUAGE_WEIGHT  =
-	"edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight";
+	PROP_PREFIX + "languageWeight";
 
     /**
      * The default value for the PROP_LANGUAGE_WEIGHT property
@@ -82,7 +85,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      * list after every frame.
      */
     public final static String PROP_SHOW_TOKEN_COUNT =
-	"edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.showTokenCount";
+	PROP_PREFIX + "showTokenCount";
 
     /**
      * The default value for the PROP_SHOW_TOKEN_COUNT property
@@ -103,6 +106,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     private Timer scoreTimer;
     private Timer pruneTimer;
     private Timer growTimer;
+
     private StatisticsVariable totalTokensScored;
     private StatisticsVariable curTokensScored;
     private StatisticsVariable tokensCreated;
@@ -145,6 +149,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
 	showTokenCount = props.getBoolean(PROP_SHOW_TOKEN_COUNT, false);
     }
+
 
     /**
      * Called at the start of recognition. Gets the search manager
@@ -436,4 +441,115 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	    System.out.println(msg);
 	}
     }
+
+
+    /**
+     * Returns the Linguist.
+     *
+     * @return the Linguist
+     */
+    public Linguist getLinguist() {
+	return linguist;
+    }
+    
+
+    /**
+     * Returns the Pruner.
+     *
+     * @return the Pruner
+     */
+    public Pruner getPruner() {
+	return pruner;
+    }
+    
+
+    /**
+     * Returns the AcousticScorer.
+     *
+     * @return the AcousticScorer
+     */
+    public AcousticScorer getAcousticScorer() {
+	return scorer;
+    }
+
+
+    /**
+     * Returns the LogMath used.
+     *
+     * @return the LogMath used
+     */
+    public LogMath getLogMath() {
+	return logMath;
+    }
+
+
+    /**
+     * Returns the SphinxProperties used.
+     *
+     * @return the SphinxProperties used
+     */
+    public SphinxProperties getSphinxProperties() {
+	return props;
+    }
+    
+
+    /**
+     * Returns the ActiveList.
+     *
+     * @return the ActiveList
+     */
+    public ActiveList getActiveList() {
+	return activeList;
+    }
+    
+
+    /**
+     * Sets the ActiveList.
+     *
+     * @param activeList the new ActiveList
+     */
+    public void setActiveList(ActiveList activeList) {
+	this.activeList = activeList;
+    }
+    
+
+    /**
+     * Returns the result list.
+     *
+     * @return the result list
+     */
+    public List getResultList() {
+	return resultList;
+    }
+    
+
+    /**
+     * Sets the result list.
+     *
+     * @param resultList the new result list
+     */
+    public void setResultList(List list) {
+	this.resultList = resultList;
+    }
+ 
+
+    /**
+     * Returns the Timer for growing.
+     *
+     * @return the Timer for growing
+     */
+    public Timer getGrowTimer() {
+	return growTimer;
+    }
+
+
+    /**
+     * Returns the tokensCreated StatisticsVariable.
+     *
+     * @return the tokensCreated StatisticsVariable.
+     */
+    public StatisticsVariable getTokensCreated() {
+	return tokensCreated;
+    }
+    
 }
