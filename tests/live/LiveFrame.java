@@ -283,7 +283,7 @@ public class LiveFrame extends JFrame {
                 public void run() {
                     speakButton.setEnabled(enabled);
                     nextButton.setEnabled(enabled);
-                    playButton.setEnabled(enabled);
+                    playButton.setEnabled(live.canPlayUtterance());
                 }
             });
     }
