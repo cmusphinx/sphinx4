@@ -75,7 +75,7 @@ public class PropertiesDumper {
         for (Iterator i = list.iterator(); i.hasNext(); ) {
             String key = (String) i.next();
             String value = (String) props.get(key);
-            result += ("\n\t" + getReadableForm(key) + ": " + value);
+            result += ("\n\t" + key + ": " + value);
         }
         result += "\n";
         return result;
