@@ -65,9 +65,14 @@
         type="edu.cmu.sphinx.research.parallel.ParallelSearchManager">
         <property name="logMath" value="logMath"/>
         <property name="linguist" value="parallelLinguist"/>
-        <property name="pruner" value="trivialPruner"/>
         <property name="scorer" value="parallelScorer"/>
+	<property name="featureScorePruner" value="featureScorePruner"/>
+	<property name="combinedScorePruner" value="combinedScorePruner"/>
         <property name="activeListFactory" value="activeList"/>
+	<propertylist name="acousticModels">
+	    <item>mfcAcousticModel</item>
+	    <item>plpAcousticModel</item>
+	</propertylist>
     </component>
         
     <component name="activeList" 
@@ -76,9 +81,18 @@
         <property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
         <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
     </component>
-    
-    <component name="trivialPruner" 
-               type="edu.cmu.sphinx.decoder.pruner.SimplePruner"/>
+
+    <component name="featureScorePruner"
+               type="edu.cmu.sphinx.research.parallel.FeatureScorePruner">
+	<property name="absoluteBeamWidth" value="2000"/>
+	<property name="relativeBeamWidth" value="1E-200"/>
+    </component>
+
+    <component name="combinedScorePruner"
+               type="edu.cmu.sphinx.research.parallel.CombinedScorePruner">
+	<property name="absoluteBeamWidth" value="2000"/>
+	<property name="relativeBeamWidth" value="1E-200"/>
+    </component>
     
     <component name="parallelScorer" 
                type="edu.cmu.sphinx.research.parallel.ParallelAcousticScorer">
@@ -86,10 +100,6 @@
             <item>mfcFrontEnd</item>
 	    <item>plpFrontEnd</item>
 	</propertylist>
-        <property name="isCpuRelative" value="true"/>
-        <property name="numThreads" value="0"/>
-        <property name="minScoreablesPerThread" value="10"/>
-        <property name="scoreablesKeepFeature" value="true"/>
     </component>
     
 
