@@ -155,7 +155,13 @@ public class Edge {
      * @return true if the Edges are equivalent; false otherwise
      */
     public boolean isEquivalent(Edge other) {
-        return ((acousticScore == other.getAcousticScore() &&
+        /*
+         * TODO: Figure out why there would be minute differences
+         * in the acousticScore. Therefore, the equality of the acoustic
+         * score is judge based on whether the difference is bigger than 1.
+         */
+        double diff = Math.abs(acousticScore) * 0.00001;
+        return ((Math.abs(acousticScore - other.getAcousticScore()) <= diff &&
                  lmScore == other.getLMScore()) &&
                 (fromNode.isEquivalent(other.getFromNode()) &&
                  toNode.isEquivalent(other.getToNode())));
