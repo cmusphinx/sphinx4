@@ -250,6 +250,7 @@ public class SphinxProperties {
 	    value = defaultValue;
 	}
 	if (value != null) {
+            value = value.trim();
 	    shadowProps.setProperty(propertyName, value);
 	}
 	return value;
