@@ -20,6 +20,8 @@ import edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A list of ActiveLists.  Different token types are placed in different lists..
@@ -31,6 +33,7 @@ import java.util.HashMap;
 public class SimpleActiveListManager implements ActiveListManager  {
 
     private Class[] listOrder;
+    private Set knownStateTypes;
     private AbstractMap listMap = new HashMap();
     private SphinxProperties props;
     private int listPtr = 0;
@@ -49,6 +52,12 @@ public class SimpleActiveListManager implements ActiveListManager  {
                                    Class[] searchStateOrder) {
         this.props = props;
         this.listOrder = searchStateOrder;
+        this.knownStateTypes = new HashSet();
+
+        // add the search state class to the map
+        for (int i = 0; i < searchStateOrder.length; i++) {
+            knownStateTypes.add(searchStateOrder[i]);
+        }
 
         absoluteWordBeamWidth = props.getInt
             (PROP_ABSOLUTE_WORD_BEAM_WIDTH,
@@ -76,10 +85,12 @@ public class SimpleActiveListManager implements ActiveListManager  {
      * @param token the token to add
      */
     public void add(Token token) {
-        assert isKnownType(token);
 
         Class type = token.getSearchState().getClass();
-        
+
+        // check if the search state type is known
+        assert (knownStateTypes.contains(type));
+
         ActiveList activeList = findListFor(type);
         if (activeList == null) {
             FastActiveList newActiveList;
@@ -93,15 +104,6 @@ public class SimpleActiveListManager implements ActiveListManager  {
             listMap.put(type, activeList);
         }
         activeList.add(token);
-    }
-
-    private boolean isKnownType(Token token) {
-        for (int i = 0; i<listOrder.length;i++) {
-            if (token.getSearchState().getClass() == listOrder[i]) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private ActiveList findListFor(Token token) {
