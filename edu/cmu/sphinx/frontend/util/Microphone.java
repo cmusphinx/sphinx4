@@ -96,6 +96,17 @@ public class Microphone extends DataProcessor implements AudioSource {
      */
     public final static boolean PROP_SLEEP_BETWEEN_AUDIO_DEFAULT = false;
 
+    /**
+     * The Sphinx property that specifies whether debug statements should
+     * be printed.
+     */
+    public final static String PROP_DEBUG = PROP_PREFIX + "debug";
+
+    /**
+     * The default value of PROP_DEBUG.
+     */
+    public final static boolean PROP_DEBUG_DEFAULT = false;
+
 
     /**
      * Parameters for audioFormat
@@ -129,7 +140,7 @@ public class Microphone extends DataProcessor implements AudioSource {
     private volatile boolean started = false;
     private volatile boolean recording = false;
     private volatile boolean closed = false;
-    private boolean tracing = false;
+    private boolean debug = false;
     private boolean closeAudioBetweenUtterances = true;
     private boolean keepAudioReference = true;
     private boolean sleepBetweenAudio = false;
@@ -176,20 +187,22 @@ public class Microphone extends DataProcessor implements AudioSource {
             frameSizeInBytes++;
         }
 
-        sampleSizeInBytes = getSphinxProperties().getInt
+        sampleSizeInBytes = properties.getInt
             (FrontEnd.PROP_BITS_PER_SAMPLE, 
              FrontEnd.PROP_BITS_PER_SAMPLE_DEFAULT) / 8;
 
-        keepAudioReference = getSphinxProperties().getBoolean
+        keepAudioReference = properties.getBoolean
             (FrontEnd.PROP_KEEP_AUDIO_REFERENCE,
              FrontEnd.PROP_KEEP_AUDIO_REFERENCE_DEFAULT);
         
-        sleepBetweenAudio = getSphinxProperties().getBoolean
+        sleepBetweenAudio = properties.getBoolean
             (PROP_SLEEP_BETWEEN_AUDIO, PROP_SLEEP_BETWEEN_AUDIO_DEFAULT);
 
         if (sleepBetweenAudio) {
             sleepTime = getSleepTime();
         }
+
+        debug = properties.getBoolean(PROP_DEBUG, PROP_DEBUG_DEFAULT);
     }
 
     /**
@@ -236,7 +249,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      * @param message the message to print
      */
     private void printMessage(String message) {
-	if (tracing) {
+	if (debug) {
 	    System.out.println("Microphone: " + message);
 	}
     }
@@ -536,6 +549,8 @@ public class Microphone extends DataProcessor implements AudioSource {
 
         getTimer().stop();
 
+        signalCheck(output);
+
         return output;
     }
 
@@ -661,7 +676,11 @@ class AudioList {
             }
         } catch (InterruptedException ie) {
             ie.printStackTrace();
-        }        
-        return list.remove(index);
+        }
+        Object obj = list.remove(index);
+        if (obj == null) {
+            System.out.println("AudioList is returning null.");
+        }
+        return obj;
     }
 }
