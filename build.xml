@@ -320,6 +320,10 @@ jsapi.exe from the lib directory.
 	    <param name="my_model_name" value="${model_name}"/>
         </antcall>
 	<antcall target="compile_src"/>
+	<mkdir dir="${build_model_dir}"/>
+	<move todir="${build_model_dir}/${model_name}">
+	      <fileset dir="${classes_dir}/edu/cmu/sphinx/model/acoustic/${model_name}"/>
+	</move>
 	<antcall target="create_my_model">
 	    <param name="my_model_data_dir" value="${model_data_dir}"/>
 	    <param name="my_model_name" value="${model_name}"/>
