@@ -23,7 +23,7 @@ NOTE:  Before running the tests, you must have already built
 
     <path id="run.classpath">
         <pathelement path="${classes_dir}"/>
-	<pathelement location="${top_dir}/lib/jsapi.jar"/>
+	<pathelement location="${lib_dir}/jsapi.jar"/>
         <pathelement location="${lib_dir}/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
     </path>
 
@@ -49,7 +49,7 @@ NOTE:  Before running the tests, you must have already built
 	           source="1.4"
 		   deprecation="true"
 		   destdir="${classes_dir}"
-		   classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
+		   classpath="${classes_dir}:${lib_dir}/jsapi.jar"
 		   srcdir="."/>
     </target>
 
