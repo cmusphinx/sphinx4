@@ -8,16 +8,16 @@
 
 <p>
 The main design goal of the Sphinx-4 front end is flexibility.
-Therefore, the front end is modeled as a pipeline of data processors.
-The entire composition of the front end pipeline is configured
+Therefore, the front end is modeled as a pipeline of data processors,
+and the entire composition of the pipeline can be configured
 from the Sphinx properties file. Multiple instances of the same 
-data processor should be allowed in the same front end, each with
-possibly a different set of properties. Moreover, more than one front end
-should be allowed in the system.
+data processor is allowed in the same front end, the properties of
+which can be configured differently. Moreover, there can be more than
+one front end in the system.
 
 <p>
-To achieve all these goals, the following scheme is devised to specify
-the front end. Lets work with the example of a standard 
+To enable all these capabilities, the following scheme is devised to specify
+the front end in the properties file. Lets work with the example of a standard 
 Mel Frequency Cepstral Coefficients (MFCC) front end,
 followed by an explanation:
 
@@ -106,9 +106,9 @@ to search for properties:
 
 <ol>
 
-<li>If the front end data processor has a name, then the front end looks in the SphinxProperty object using the property string: <pre> &lt;data processor name&gt; + ";" + &lt;property name&gt;</pre> e.g., <pre>dft_2;edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints</pre>
+<li>If the front end data processor has a name, then the front end looks in the SphinxProperty object using the property string: <pre> &lt;data processor name&gt; + ";" + &lt;property name&gt;</pre> e.g., <code>dft_2;edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform.numberFftPoints</code><p>If it can't find a value using this property string, it will look in the SphinxProperty object using the property name (without the data processor name).
 
-<li>If the front end data processor has no name, it just looks in the SphinxProperty object using the property name.
+<li>If the front end data processor has no name (or its name is null), it will look in the SphinxProperty object using just the property name.
 
 </ol>
 

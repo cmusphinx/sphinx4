@@ -33,8 +33,9 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * ...). The delta is the first order derivative and the double delta
  * (a.k.a. delta delta) is the second order derivative of the original
  * cepstrum.  They help model the speech signal dynamics.  The output
- * data is a FloatData object with a float array of size three times
- * the original cepstrum, formed by the concantenation of cepstra,
+ * data is a {@link FloatData FloatData} object with a float array of
+ * size three times
+ * the original cepstrum, formed by the concatenation of cepstra,
  * delta cepstra, and double delta cepstra. The output is the feature
  * vector used by the decoder. Figure 1 shows the arrangement of the
  * output feature data array:

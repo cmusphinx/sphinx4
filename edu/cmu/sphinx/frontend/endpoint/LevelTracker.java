@@ -44,7 +44,8 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * as speech. Otherwise, it is marked as non-speech.
  *
  * <p>The second and third step of this endpointer are documented in the
- * classes SpeechMarker and DataFilter.
+ * classes {@link SpeechMarker SpeechMarker} and 
+ * {@link NonSpeechDataFilter NonSpeechDataFilter}.
  *
  * @see SpeechMarker
  */

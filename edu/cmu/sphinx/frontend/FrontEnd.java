@@ -85,7 +85,7 @@ import java.util.Vector;
  * <b>Configuring the front end</b>
  * <p>
  * The front end must be configured through the Sphinx properties file.
- * For details about how about properties files, refer to the 
+ * For details about configuring the front end, refer to the 
  * <a href="doc-files/FrontEndProperties.html">
  * Sphinx-4 Front End Properties Guide</a>.
  *
@@ -115,7 +115,7 @@ import java.util.Vector;
  *     pipeline</li>
  * </ul>
  * <p>
- * For details on how to do this, refer to the "Front End" section in the
+ * For details on how to do this, refer to the 
  * <a href="doc-files/FrontEndProperties.html">
  * Sphinx-4 Front End Properties Guide</a>.
  * <p>
@@ -144,6 +144,7 @@ import java.util.Vector;
  * <br>FrontEnd frontend = FrontEndFactory.getFrontEnd(sphinxProperties, "mfcc");
  * <br>DataProcessor microphone = new Microphone();
  * <br>microphone.initialize(...);
+ * <br>frontend.setDataSource(microphone);
  * <br>
  * <br>// start getting data from the front end
  * <br>Data output = frontend.getData();

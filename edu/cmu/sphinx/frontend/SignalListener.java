@@ -15,7 +15,7 @@ package edu.cmu.sphinx.frontend;
 
 /**
  *  The listener interface for being informed when a
- *  signal is generated
+ *  {@link Signal Signal} is generated.
  */
 public interface SignalListener {
     /**

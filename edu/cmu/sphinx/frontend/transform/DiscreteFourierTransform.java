@@ -50,10 +50,10 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * and the horizontal axis represents time. The darkness of the shade
  * represents the strength of that frequency at that point in time:
  * <p>
- * <img src="doc-files/139o.jpg">
+ * <br><img src="doc-files/139o.jpg">
  * <b>Figure 1: The audio signal of the utterance "one three nine oh".</b>
  * <p>
- * <img src="doc-files/139ospectrum.jpg">
+ * <br><img src="doc-files/139ospectrum.jpg">
  * <b>Figure 2: The spectrogram of the utterance "one three nine oh" in Figure 1.</b>
  */
 public class DiscreteFourierTransform extends BaseDataProcessor {

@@ -18,9 +18,22 @@ import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**
- * DataProcessor contains the common elements of all frontend data
- * processors, namely the name, context, predecessor, timers, and
- * SphinxProperties.
+ * A processor that performs a signal processing function.
+ * Since a DataProcessor usually belongs to a particular front end
+ * pipeline, you can name the pipeline it belongs to in the
+ * {@link #initialize(String,String,SphinxProperties,DataProcessor) initialize}
+ * method. (Note, however, that it is
+ * not always the case that a DataProcessor belongs to a particular
+ * pipeline. For example, the
+ * {@link edu.cmu.sphinx.frontend.util.Microphone Microphone} class
+ * is a DataProcessor, but it usually does not belong to any particular
+ * pipeline.
+ * <p>
+ * Each DataProcessor usually have a predecessor as well. This is
+ * the previous DataProcessor in the pipeline. Again, not all
+ * DataProcessors have predecessors.
+ * <p>
+ * Calling {@link #getData() getData} will return the processed Data object.
  */
 public interface DataProcessor {
 

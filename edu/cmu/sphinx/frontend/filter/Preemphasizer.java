@@ -41,18 +41,8 @@ import edu.cmu.sphinx.util.Timer;
  * <p>
  * The preemphasis factor normally has a value of 0.97. 
  * <p>
- * The figure below shows an signal plotted in time:
- * <p>
- * The figure below shows the corresponding preemphasized signal
- * plotted in time:
- * <p>
- * The relevant SphinxProperty for this Preemphasizer is:
- * <pre>
- * edu.cmu.sphinx.frontend.filter.Preemphasizer.factor
- * </pre>
- *
  * Other Data objects are passed along unchanged through this Preemphasizer.
- *
+ * <p>
  * Preemphasize emphasizes the high frequency components, because
  * they usually contain much less energy than lower frequency components,
  * even though they are still important for speech recognition.

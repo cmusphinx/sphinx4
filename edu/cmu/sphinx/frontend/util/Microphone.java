@@ -42,9 +42,9 @@ import edu.cmu.sphinx.util.SphinxProperties;
 /**
  * A Microphone captures audio data from the system's underlying
  * audio input systems. Converts these audio data into Data
- * objects. The Microphone should be run in a separate thread.
- * When the method <code>startRecording()</code> is called, it will
- * start capturing audio, and stops when <code>stopRecording()</code>
+ * objects. When the method <code>startRecording()</code> is called,
+ * a new thread will be created and used to capture
+ * audio, and will stop when <code>stopRecording()</code>
  * is called. Calling <code>getData()</code> returns the captured audio
  * data as Data objects.
  */
