@@ -33,8 +33,15 @@ import edu.cmu.sphinx.util.LogMath;
  * @author pgorniak
  *
  */
-public class SausageMaker {
+public class SausageMaker implements ConfidenceScorer {
     protected Lattice lattice;
+    
+    /**
+     * Construct an empty sausage maker
+     *
+     */
+    public SausageMaker() {
+    }
     
     /**
      * Construct a sausage maker
@@ -444,5 +451,18 @@ public class SausageMaker {
         }
         sausage.fillInBlanks(lattice.logMath);
         return sausage;
+    }
+    
+    /**
+     * @see edu.cmu.sphinx.result.ConfidenceScorer#score(edu.cmu.sphinx.result.Result)
+     */
+    public ConfidenceResult score(Result result) {
+        lattice = new Lattice(result);
+        LatticeOptimizer lop = new LatticeOptimizer(lattice);
+        lop.optimize();
+        //TODO: the following currently does not return a valid sausage, because
+        //      we here need the language model weight to compute posteriors.
+        //lattice.computeNodePosteriors(lmw);
+        return makeSausage();
     }
 }
