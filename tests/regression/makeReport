@@ -109,8 +109,8 @@ $1 == "live_test" && buildLiveRecord == 1 {
 }
 
 $1 == "live_test" && $4 == machine && $5 == "s4" {
-    liveTestCount[$F_TEST_NAME] = liveTestCount[$F_TEST_NAME] + 1;
-    testData[$F_TEST_NAME liveTestCount[$F_TEST_NAME]] = $0;
+    testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
+    testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
     finalLiveTest[$F_TEST_NAME] = 1;
 }
 
@@ -119,7 +119,7 @@ $1 == "environment" && $3 == machine  {
     javaVersion = $5;
 }
 
-$1 == "rejection_test" && buildRecord == 1 {
+$1 == "rejection_test" && buildRejectionRecord == 1 {
     buildRejectionRecord = 0;
     for (i in finalRejectionTest) {
 	delete finalRejectionTest[i];
@@ -127,8 +127,8 @@ $1 == "rejection_test" && buildRecord == 1 {
 }
 
 $1 == "rejection_test" && $4 == machine && $5 == "s4" {
-    rejectionTestCount[$F_TEST_NAME] = rejectionTestCount[$F_TEST_NAME] + 1;
-    testData[$F_TEST_NAME rejectionTestCount[$F_TEST_NAME]] = $0;
+    testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
+    testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
     finalRejectionTest[$F_TEST_NAME] = 1;
 }
 
@@ -189,9 +189,6 @@ function getHeap(testName, testCount) {
 function getAccuracyStatus(testName) {
 
     count = testCount[testName];
-    if (count == "") {
-	count = liveTestCount[testName];
-    }
 
     thisWER = getWER(testName, count);
     prevWER = getWER(testName, count - 1);
@@ -205,9 +202,6 @@ function getAccuracyStatus(testName) {
 function getTimeStatus(testName, _slowThreshold, _fastThreshold) {
 
   count = testCount[testName];
-  if (count == "") {
-      count = liveTestCount[testName];
-  }
 
   thisTime = getTime(testName, count);
   prevTime = getTime(testName, count - 1);
@@ -220,9 +214,7 @@ function getTimeStatus(testName, _slowThreshold, _fastThreshold) {
 #
 function getHeapStatus(testName, _minThreshold, _maxThreshold) {
     count = testCount[testName];
-    if (count == "") {
-	count = liveTestCount[testName];
-    }
+
     thisHeap = getHeap(testName, count);
     prevHeap = getHeap(testName, count - 1);
 
@@ -234,9 +226,6 @@ function getHeapStatus(testName, _minThreshold, _maxThreshold) {
 #
 function getRunStatus(testName) {
     count = testCount[testName];
-    if (count == "") {
-	count = liveTestCount[testName];
-    }
     updateData(testName, count);
     return data[F_STATUS];
 }
@@ -260,9 +249,7 @@ function fmtTime(seconds) {
 #
 function getGapInsertionRateStatus(testName) {
     count = testCount[testName];
-    if (count == "") {
-	count = liveTestCount[testName];
-    }
+
     thisGapRate = getGapInsertionRate(testName, count);
     prevGapRate = getGapInsertionRate(testName, count - 1);
 
@@ -286,9 +273,7 @@ function getGapInsertionRate(testName, testCount) {
 #
 function getUtteranceRatioStatus(testName) {
     count = testCount[testName];
-    if (count == "") {
-	count = liveTestCount[testName];
-    }
+
     thisRatio = getUtteranceRatio(testName, count);
     prevRatio = getUtteranceRatio(testName, count - 1);
 
@@ -336,9 +321,7 @@ function distFromOne(x) {
 #
 function getAvgResponseTimeStatus(testName) {
     count = testCount[testName];
-    if (count == "") {
-	count = liveTestCount[testName];
-    }
+
     thisTime = getAvgResponseTime(testName, count);
     prevTime = getAvgResponseTime(testName, count - 1);
 
@@ -391,9 +374,7 @@ function getLessIsBetterThresholdMetricStatus(thisMetric, prevMetric, threshold)
 
 function getRejectionAccuracyStatus(testName) {
     count = testCount[testName];
-    if (count == "") {
-	count = rejectionTestCount[testName];
-    }
+
     updateData(testName, count);
 
     return ( data[F_CORRECT_OOG] + data[F_CORRECT_IG] ) * 100 / data[F_SENTENCES] ;
