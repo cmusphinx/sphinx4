@@ -104,8 +104,8 @@ an4_words_trigram:
 
 an4_words_fst:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-65\
--Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-36\
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
 	-Dedu.cmu.sphinx.decoder.search.Decoder.showErrorToken=false\
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0\
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_words.trigram.fst \
@@ -223,13 +223,10 @@ an4_full_trigram:
 
 an4_full_fst:
 	$(JAVA_CMD) \
-        -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-36\
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_full.trigram.fst \
-        edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
-# -Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
-# -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
 
 
