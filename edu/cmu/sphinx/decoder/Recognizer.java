@@ -342,7 +342,7 @@ public class Recognizer {
         do {
             result = searchManager.recognize(featureBlockSize);
             fireResultListeners(result);
-        } while (!result.isFinal());
+        } while (result != null && !result.isFinal());
 
         searchManager.stop();
         dumpMemoryInfo("recognize");
