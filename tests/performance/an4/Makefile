@@ -79,10 +79,13 @@ an4_words_unigram:
 
 an4_words_trigram:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
-	-Dedu.cmu.sphinx.model.language.format=arpa \
-	-Dedu.cmu.sphinx.model.language.location=./an4_words.arpa \
 	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist \
+    -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
+    -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
+    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.model.language.format=arpa \
+    -Dedu.cmu.sphinx.model.language.location=./an4_words.trigram.lm \
 	tests.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
 
@@ -106,6 +109,8 @@ an4_words_fst:
 an4_spelling_unigram:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-26\
+    -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
 	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_spelling.alphalist\
 	tests.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
