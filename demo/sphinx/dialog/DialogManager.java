@@ -453,7 +453,7 @@ class DialogNodeBehavior {
         if (ruleParse != null) {
             String[] tags = ruleParse.getTags();
             StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < tags.length; i++) {
+            for (int i = 0; tags != null && i < tags.length; i++) {
                 sb.append(tags[i]);
                 if (i < tags.length -1) {
                     sb.append(" ");
