@@ -15,6 +15,7 @@ package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.frontend.endpoint.Endpointer;
 import edu.cmu.sphinx.frontend.endpoint.NonSpeechFilter;
+import edu.cmu.sphinx.frontend.endpoint.LevelTracker;
 
 import edu.cmu.sphinx.frontend.util.StubAudioSource;
 import edu.cmu.sphinx.frontend.util.StubCepstrumSource;
@@ -150,8 +151,16 @@ implements CepstrumSource {
 
 	SphinxProperties props = getSphinxProperties();
 
+        AudioSource lastAudioSource = audioSource;
+        AudioSource audioEndpointer = getAudioEndpointer(audioSource);
+
+        if (audioEndpointer != null) {
+            lastAudioSource = audioEndpointer;
+            System.out.println("Using audio endpointer");
+        }
+ 
         Preemphasizer preemphasizer = new Preemphasizer
-            ("Preemphasizer", getContext(), props, audioSource);
+            ("Preemphasizer", getContext(), props, lastAudioSource);
 
         Windower windower = new Windower
             ("HammingWindow", getContext(), props, preemphasizer);
@@ -182,7 +191,7 @@ implements CepstrumSource {
      */
     private void initialize(CepstrumSource cepstrumSource) throws IOException {
 
-	Endpointer endpointer = getEndpointer(cepstrumSource);
+	Endpointer endpointer = getCepstralEndpointer(cepstrumSource);
         	
 	if (endpointer != null) { // if we're using an endpointer
             addProcessor((DataProcessor) endpointer);
@@ -216,6 +225,32 @@ implements CepstrumSource {
      */
     public Cepstrum getCepstrum() throws IOException {
         return lastCepstrumSource.getCepstrum();
+    }
+
+
+    /**
+     * Returns an audio-based endpointer, if any.
+     *
+     * @param predecessor the AudioSource to perform endpointing
+     *
+     * @return an audio-based endpointer or null
+     */
+    private AudioSource getAudioEndpointer(AudioSource predecessor) 
+        throws IOException {
+        String endpointerName = getEndpointerName();
+        if (endpointerName == null) {
+            return null;
+        } else {
+            if (!endpointerName.equals
+                ("edu.cmu.sphinx.frontend.endpoint.LevelTracker")) {
+                return null;
+            } else {
+                LevelTracker tracker = new LevelTracker();
+                tracker.initialize("LevelTracker", getContext(), 
+                                   getSphinxProperties(), predecessor);
+                return tracker;
+            }
+        }
     }
 
 
@@ -269,19 +304,25 @@ implements CepstrumSource {
      *
      * @param predecessor the predecessor of this Endpointer
      */
-    private Endpointer getEndpointer(CepstrumSource predecessor) 
+    private Endpointer getCepstralEndpointer(CepstrumSource predecessor) 
 	throws IOException {
         try {
             Endpointer endpointer = null;
             String endPointerClass = getEndpointerName();
             
             if (endPointerClass != null) {
-                endpointer = (Endpointer)
-                    Class.forName(getEndpointerName()).newInstance();
                 
-                endpointer.initialize("Endpointer", getContext(), 
-                                      getSphinxProperties(), predecessor);
+                Class epClass = Class.forName(endPointerClass);
+                Class cepClass = Class.forName
+                    ("edu.cmu.sphinx.frontend.endpoint.Endpointer");
+
+                if (cepClass.isAssignableFrom(epClass)) {
+                    endpointer = (Endpointer) epClass.newInstance();
+                    endpointer.initialize("Endpointer", getContext(), 
+                                          getSphinxProperties(), predecessor);
+                }
             }
+
             return endpointer;
         } catch (Exception e) {
             e.printStackTrace();
