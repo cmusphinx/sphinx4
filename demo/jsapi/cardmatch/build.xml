@@ -82,21 +82,13 @@ NOTE:  Before running the tests, you must have already built
 	          classpath="${classes_dir}:${top_dir}/lib/jsapi.jar"
 		  fork="true"
 		  maxmemory="128m">
-		  <arg value="cardmatch.props"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.bytesPerAudioFrame"
-		               value="320"/>
+		  <sysproperty key="edu.cmu.sphinx.frontend.FrontEndFactory.pipelines"
+		               value="mfc_ep"/>
 		  <sysproperty key="demo.jsapi.cardmatch.doEndpointing"
 		               value="true"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.endpointer"
-		               value="edu.cmu.sphinx.frontend.endpoint.LevelTracker"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold"
-		               value="15"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.filterNonSpeech"
-		               value="true"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.endpoint.NonSpeechFilter.mergeSpeechSegments"
-		               value="false"/>
                   <sysproperty key="java.util.logging.config.file"
                              value="cardmatch.props"/>
+		  <arg value="cardmatch.props"/>
 	    </java>
     </target>
 

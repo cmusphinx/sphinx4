@@ -22,8 +22,6 @@ edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 ############################################################
 
 
-
-
 edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.models=wsj
 wsj;edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory.class=edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel
 
@@ -46,18 +44,31 @@ wsj;edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.useCompos
 #
 ############################################################
 
-edu.cmu.sphinx.frontend.useAcousticModelProperties = true
-edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
-edu.cmu.sphinx.frontend.cepstrumSize = 13
-edu.cmu.sphinx.frontend.cmn = edu.cmu.sphinx.frontend.LiveCMN
-edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
-edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
-edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
-edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
-edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
-edu.cmu.sphinx.frontend.windowShiftInMs = 10
-edu.cmu.sphinx.frontend.windower.alpha = 0.46
+edu.cmu.sphinx.frontend.util.Microphone.bytesPerRead=320
 edu.cmu.sphinx.frontend.util.Microphone.closeAudioBetweenUtterances=true
+
+edu.cmu.sphinx.frontend.FrontEndFactory.pipelines=mfc
+
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=7
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class=edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.feature.LiveCMN
+mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor
+
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=8
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.endpoint.LevelTracker
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.filter.Preemphasizer
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class=edu.cmu.sphinx.frontend.window.RaisedCosineWindower
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class=edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveCMN
+mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.8.class=edu.cmu.sphinx.frontend.feature.LiveFeatureExtractor
+
+mfc_ep;edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=13
 
 
 ############################################################
