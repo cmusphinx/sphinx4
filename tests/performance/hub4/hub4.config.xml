@@ -157,7 +157,7 @@
         <property name="logMath" value="logMath"/>
         <property name="dictionary" value="dictionary"/>
         <property name="location"
-                  value="file:/lab/speech/sphinx4/data/hub4_model/language_model.arpaformat.DMP"/>
+                  value="/lab/speech/sphinx4/data/hub4_model/language_model.arpaformat.DMP"/>
     </component>
 
     <!-- ************************************************** -->
