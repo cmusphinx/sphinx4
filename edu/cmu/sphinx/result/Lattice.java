@@ -927,8 +927,7 @@ public class Lattice {
         if (useAcousticScoresOnly) {
             return edge.getAcousticScore();
         } else {
-            return (edge.getAcousticScore()/languageModelWeight +
-                    edge.getLMScore());
+            return (edge.getAcousticScore() + edge.getLMScore())/languageModelWeight;
         }
     }
 
