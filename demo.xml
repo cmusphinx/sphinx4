@@ -78,6 +78,7 @@ your environment to use JSAPI.
 		     compile_sphinx_hellongram,
 	             compile_zipcity,
                      compile_sphinx_wavfile,
+                     compile_sphinx_transcriber,
 	             check_jsapi_jar.isPresent,
                      issue_jsapi_warning"
 	    description="Compiles Sphinx-4 demos that do not use JSAPI"/>
@@ -175,6 +176,32 @@ your environment to use JSAPI.
 	      manifest="${src_dir}/demo/sphinx/wavfile/wavfile.Manifest"
 	      basedir="${classes_dir}"
 	      includes="demo/sphinx/wavfile/**"
+	      filesonly="true"
+	      compress="true"/>
+    </target>
+
+    <target name="compile_sphinx_transcriber">
+         <mkdir dir="${classes_dir}/demo/sphinx/transcriber"/>
+	 <javac debug="true"
+	        source="1.4"
+		listfiles="true"
+		deprecation="true"
+		srcdir="${src_dir}"
+		includes="demo/sphinx/transcriber/**"
+		destdir="${classes_dir}">
+	     <classpath refid="libs"/>
+	 </javac>
+	 <copy file="${src_dir}/demo/sphinx/transcriber/config.xml"
+	       todir="${classes_dir}/demo/sphinx/transcriber"/>
+	 <copy file="${src_dir}/demo/sphinx/transcriber/10001-90210-01803.wav"
+	       todir="${classes_dir}/demo/sphinx/transcriber"/>
+	 <copy file="${src_dir}/demo/sphinx/transcriber/digits.gram"
+	       todir="${classes_dir}/demo/sphinx/transcriber"/>
+	 <mkdir dir="${bin_dir}"/>
+	 <jar destfile="${bin_dir}/Transcriber.jar"
+	      manifest="${src_dir}/demo/sphinx/transcriber/transcriber.Manifest"
+	      basedir="${classes_dir}"
+	      includes="demo/sphinx/transcriber/**"
 	      filesonly="true"
 	      compress="true"/>
     </target>
