@@ -15,6 +15,7 @@ package edu.cmu.sphinx.knowledge.acoustic;
 
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.util.LogMath;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -124,16 +125,13 @@ public class HMMState implements Serializable {
      * @return the set of successor state arcs
      */
     public HMMStateArc[] getSuccessors() {
-	// These will be states that have non-zero probab
-	// TODO: Not too efficient, probably better to maintain
-	// HMMStates internally instead of constructing these on the
-	// fly
 	if (arcs == null) {
 	    List list = new ArrayList();
 	    float[][] transitionMatrix = hmm.getTransitionMatrix();
 
+            // dumpMatrix("arc", transitionMatrix);
 	    for (int i = 0; i < transitionMatrix.length; i++) {
-		if (transitionMatrix[state][i] != 0.0) {
+		 if (transitionMatrix[state][i] > LogMath.getLogZero()) {
 		    HMMStateArc arc = new HMMStateArc(hmm.getState(i),
 				    transitionMatrix[state][i]);
 		    list.add(arc);
@@ -142,6 +140,23 @@ public class HMMState implements Serializable {
 	    arcs = (HMMStateArc[]) list.toArray(new HMMStateArc[list.size()]);  
 	}
 	return arcs;
+    }
+
+
+    /**
+     * Dumps out a matrix
+     *
+     * @param title the title for the dump
+     * @param matrix the matrix to dump
+     */
+    private void dumpMatrix(String title, float[][] matrix) {
+        System.out.println(" -- " + title + " --- ");
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                System.out.print(" " + matrix[i][j]);
+            }
+            System.out.println();
+        }
     }
 
     /**
