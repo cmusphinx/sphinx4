@@ -21,18 +21,18 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 PROFILE_FLAGS= -Xprof -server
 LOG_GC_FLAGS=  -Xloggc:gc.txt
  GC_FLAGS=  -XX:+PrintGCDetails
+GC_FLAGS = -ms1g -mx1g
 # GC_FLAGS=  -XX:+UseConcMarkSweepGC
 #GC_FLAGS=  -XX:+UseParallelGC
 #GC_FLAGS= -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+PrintGCDetails
 HEAP_DUMP =   -Xrunhprof:heap=dump,cpu=samples
 #GC_FLAGS= -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+PrintGCDetails -XX:+TraceGen1Time
 
-# GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
+#GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=50m -XX:MaxNewSize=50m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 
 #GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 #GC_FLAGS= -ms1g -XX:+UseConcMarkSweepGC -XX:-UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 
-GC_FLAGS = -ms1g -mx1g
 
 #PROFILE2_FLAGS= -Xrunhprof:file=log.txt
 PROFILE2_FLAGS= -Xrunhprof:cpu=samples,file=log.txt
@@ -96,7 +96,7 @@ an4_words_trigram:
 an4_words_fst:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.model.acoustic.useComposites=false\
-	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400 \
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000 \
 	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150 \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
@@ -141,17 +141,21 @@ an4_spelling_trigram:
 
 an4_spelling_fst:
 	$(JAVA_CMD) \
-	-Dtests.decoder.BatchDecoder.skip=20\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
         -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
-	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false\
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=6000 \
+	 -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true\
 	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150 \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-65\
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=./an4_spelling.trigram.fst \
-	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=true\
-        -Dedu.cmu.sphinx.search.Dictionary.wordReplacement=foo \
+	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false\
+        -Dedu.cmu.sphinx.search.Dictionary.wordReplacement=\<sil\> \
 	-Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
+
 
 
 
@@ -177,9 +181,18 @@ an4_spelling_journey_trigram:
 
 an4_spelling_journey_fst:
 	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
         -Dedu.cmu.sphinx.model.acoustic.useComposites=false\
-	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false\
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=6000 \
+	 -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false\
+	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-200 \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-55\
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
 	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.ArpaGrammar \
+	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false\
+        -Dedu.cmu.sphinx.search.Dictionary.wordReplacement=\<sil\> \
+	-Dedu.cmu.sphinx.search.Linguist.showCompilationProgress=true \
 	-Dedu.cmu.sphinx.search.ArpaGrammar.path=an4_spelling_journey.trigram.fst \
         edu.cmu.sphinx.decoder.BatchDecoder an4.props ./an4_spelling.batch
 
