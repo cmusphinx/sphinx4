@@ -18,8 +18,6 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.Signal;
-import edu.cmu.sphinx.frontend.parallel.ParallelFrontEnd;
-import edu.cmu.sphinx.frontend.SimpleFrontEnd;
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.dictionary.FastDictionary;
