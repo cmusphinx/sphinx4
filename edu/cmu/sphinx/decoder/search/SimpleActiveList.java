@@ -41,7 +41,6 @@ public class SimpleActiveList implements ActiveList  {
     private int absoluteBeamWidth = 2000;
     private float relativeBeamWidth;
     private StatisticsVariable tokens;
-    private static Comparator tokenComparator = getTokenComparator();
 
     // when the list is changed these things should be
     // changed/updated as well
@@ -184,7 +183,7 @@ public class SimpleActiveList implements ActiveList  {
      */
     public ActiveList purge() {
 	int count = 0;
-	Collections.sort(tokenList, tokenComparator);
+	Collections.sort(tokenList, Token.COMPARATOR);
 
 	if (tokenList.size() > 0) {
 	    Token bestToken = (Token) tokenList.get(0);
@@ -233,29 +232,6 @@ public class SimpleActiveList implements ActiveList  {
      */
     public final int size() {
 	return tokenList.size();
-    }
-
-    /**
-     * Returns a token comparator that is used to order tokens in
-     * descending order
-     *
-     * @return a token comparator
-     */
-    private static Comparator getTokenComparator() {
-	return new Comparator() {
-	    public int compare(Object o1, Object o2) {
-		Token t1 = (Token) o1;
-		Token t2 = (Token) o2;
-
-		if (t1.getScore() > t2.getScore()) {
-		    return -1;
-		} else if (t1.getScore() ==  t2.getScore()) {
-		    return 0;
-		} else {
-		    return 1;
-		}
-	    }
-	};
     }
 }
 
