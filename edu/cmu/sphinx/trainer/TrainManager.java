@@ -23,6 +23,12 @@ import edu.cmu.sphinx.knowledge.acoustic.*;
 public interface TrainManager{
 
     /**
+     * Prefix for SphinxProperties in this file.
+     */
+    public final static String PROP_PREFIX = 
+	"edu.cmu.sphinx.trainer.Trainer.";
+
+    /**
      * Initializes the TrainManager with the proper context.
      *
      * @param context the context to use
@@ -44,4 +50,5 @@ public interface TrainManager{
      * Do the train.
      */
     public void train();
+
 }

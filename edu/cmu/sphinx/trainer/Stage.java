@@ -12,6 +12,9 @@
 
 package edu.cmu.sphinx.trainer;
 
+import java.util.Set;
+import java.util.HashSet;
+
 /**
  * Indicates stages during training. The numbers prepended to the
  * names indicate the order in which they are performed. Consecutive
@@ -53,6 +56,12 @@ public class Stage {
 	new Stage("_40_TIED_CD_TRAIN");
 
     /**
+     * Copy models, possibly changing format.
+     */
+    public static final Stage _90_CP_MODEL = 
+	new Stage("_90_CP_MODEL");
+
+    /**
      * Constructs a Stage with the given name.
      */
     protected Stage(String name) {
@@ -66,9 +75,24 @@ public class Stage {
      *
      * @return true if they are the same, false otherwise
      */
-    public boolean equals(Stage nodeType) {
-        if (nodeType != null) {
-            return toString().equals(nodeType.toString());
+    public boolean equals(Stage stage) {
+        if (stage != null) {
+            return toString().equals(stage.toString());
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns true if the given String is equal to this Stage's name.
+     *
+     * @param stage the Stage to compare
+     *
+     * @return true if they are the same, false otherwise
+     */
+    public boolean equals(String stage) {
+        if (stage != null) {
+            return toString().equals(stage);
         } else {
             return false;
         }

@@ -19,6 +19,8 @@ import edu.cmu.sphinx.util.Utilities;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.HashSet;
 
 import java.io.IOException;
 
@@ -67,6 +69,8 @@ public class Trainer {
     private String finalStage;
     private boolean isStageActive = false;
     private List StageList = new LinkedList();
+    private Set StageNames = new HashSet();
+
     private TrainManager trainManager;
 
 
@@ -102,46 +106,76 @@ public class Trainer {
 				       PROP_INITIAL_STAGE_DEFAULT);
 	finalStage = props.getString(PROP_FINAL_STAGE, 
 				       PROP_FINAL_STAGE_DEFAULT);
-	StageList.add(Stage._00_INITIALIZATION);
-	StageList.add(Stage._10_CI_TRAIN);
-	StageList.add(Stage._20_UNTIED_CD_TRAIN);
-	StageList.add(Stage._30_STATE_PRUNING);
-	StageList.add(Stage._40_TIED_CD_TRAIN);
+	addStage(Stage._00_INITIALIZATION);
+	addStage(Stage._10_CI_TRAIN);
+	addStage(Stage._20_UNTIED_CD_TRAIN);
+	addStage(Stage._30_STATE_PRUNING);
+	addStage(Stage._40_TIED_CD_TRAIN);
+	addStage(Stage._90_CP_MODEL);
+    }
+
+    /**
+     * Add Stage to a list of stages.
+     *
+     * @param stage the Stage to add
+     */
+    private void addStage(Stage stage) {
+	StageList.add(stage);
+	StageNames.add(stage.toString());
     }
 
     /**
      * Prints debugging info.
      */
     private void printAll() {
-	trainManager.train();
+	//	trainManager.train();
     }
 
     /**
      * Process this stage.
      * 
-     * @param stage the stage to process.
+     * @param context this trainer's context
      */
-    private void processStages() {
-	if (!(StageList.contains(initialStage) && 
-	    StageList.contains(finalStage))) {
+    private void processStages(String context) {
+	if (!(StageNames.contains(initialStage) && 
+	    StageNames.contains(finalStage))) {
 	    return;
 	}
 	for (Iterator iterator = StageList.iterator();
 	     iterator.hasNext();) {
 	    Stage stage = (Stage) iterator.next();
 	    if (!isStageActive) {
-		if (initialStage.equals(stage)) {
+		if (initialStage.equals(stage.toString())) {
 		    isStageActive = true;
 		}
 	    }
 	    if (isStageActive) {
 		/*
 		 * Not sure of an elegant way to do it. For each
-		 * stage, it should call a different method.
+		 * stage, it should call a different method.  Switch
+		 * would be a good solution, but it works with int,
+		 * and stage is of type Stage.
 		 *
 		 * run();
 		*/
-		if (finalStage.equals(stage)) {
+		try {
+		    if (stage.equals(Stage._00_INITIALIZATION)) {
+		    } else if (stage.equals(Stage._10_CI_TRAIN)) {
+		    } else if (stage.equals(Stage._20_UNTIED_CD_TRAIN)) {
+		    } else if (stage.equals(Stage._30_STATE_PRUNING)) {
+		    } else if (stage.equals(Stage._40_TIED_CD_TRAIN)) {
+		    } else if (stage.equals(Stage._90_CP_MODEL)) {
+			System.out.println("Copying");
+			((SimpleTrainManager)trainManager).copyModels(context);
+		    } else {
+			assert false : "stage not implemented";
+		    }
+		} catch (IOException ioe) {
+		    ioe.printStackTrace();
+		    throw new Error("IOE: Can't finish trainer " + ioe, ioe);
+		}
+
+		if (finalStage.equals(stage.toString())) {
 		    isStageActive = false;
 		}
 	    }
@@ -172,7 +206,7 @@ public class Trainer {
 
             Trainer trainer = new Trainer(context);
 	    trainer.printAll();
-	    trainer.processStages();
+	    trainer.processStages(context);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
