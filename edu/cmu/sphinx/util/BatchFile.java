@@ -33,13 +33,31 @@ public class BatchFile {
      * @return a List of the lines in a batch file
      */
     public static List getLines(String batchFile) throws IOException {
+        return getLines(batchFile, 0);
+    }
+
+    /**
+     * Returns a List of the lines in a batch file.
+     *
+     * @param batchFile the batch file to read
+     * @param skip the number of lines to skip between items
+     *
+     * @return a List of the lines in a batch file
+     */
+    public static List getLines(String batchFile, int skip) throws IOException {
+        int curCount = skip;
 	List list = new ArrayList();
 	BufferedReader reader = new BufferedReader(new FileReader(batchFile));
 
 	String line = null;
 
 	while ((line = reader.readLine()) != null) {
-	    list.add(line);
+            if (line.length() > 0) {
+                if (++curCount >= skip) {
+                    list.add(line);
+                    curCount = 0;
+                }
+            }
 	}
 	reader.close();
         return list;
