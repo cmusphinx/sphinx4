@@ -227,9 +227,9 @@ rm1_bigram_clex_smear:
         -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16 \
    -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1000 \
 	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
-   -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.wantUnigramSmear=true \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wantUnigramSmear=true \
    -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.fullWordHistories=true \
-   -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.unigramSmearWeight=.150 \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.unigramSmearWeight=.150 \
    -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80 \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
 
@@ -251,8 +251,8 @@ rm1_trigram_clex_smear:
        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=20.0 \
    -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000 \
    -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-115 \
-   -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.wantUnigramSmear=true \
-   -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.unigramSmearWeight=.150 \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wantUnigramSmear=true \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.unigramSmearWeight=.150 \
 	-Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1\
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
 
@@ -264,8 +264,8 @@ rm1_trigram_clex_smear_best:
    -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=8000 \
    -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-140 \
    -Dedu.cmu.sphinx.util.BeamFinder.enable=false\
-   -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.wantUnigramSmear=false \
-   -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.unigramSmearWeight=.150 \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wantUnigramSmear=false \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.unigramSmearWeight=.150 \
   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1 \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
 
@@ -276,8 +276,8 @@ rm1_trigram_clex_bf:
        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=24.0 \
    -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=8000 \
    -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-145 \
-   -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.wantUnigramSmear=true \
-   -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.unigramSmearWeight=1 \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wantUnigramSmear=true \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.unigramSmearWeight=1 \
   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1 \
    -Dedu.cmu.sphinx.util.BeamFinder.enable=true\
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.clex.props ./rm1.batch
@@ -289,8 +289,8 @@ rm1_trigram_clex_smear_fast:
        -Dedu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=24.0 \
    -Dedu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000 \
    -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-130 \
-   -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.wantUnigramSmear=true \
-   -Dedu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.unigramSmearWeight=1 \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wantUnigramSmear=true \
+   -Dedu.cmu.sphinx.decoder.linguist.Linguist.unigramSmearWeight=1 \
    -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-120 \
    -Dedu.cmu.sphinx.util.BeamFinder.enable=false\
   -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=.1 \
