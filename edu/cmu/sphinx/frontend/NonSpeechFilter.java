@@ -24,6 +24,17 @@ import java.util.*;
  */
 public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
 
+    private static final String PROP_PREFIX = 
+    FrontEnd.PROP_PREFIX + "NonSpeechFilter.";
+
+    /**
+     * Controls whether to merge multiple speech segments within an
+     * Utterance to one big speech segment, with the boundaries being
+     * the start of the first speech segment, and the end of the
+     * last speech segment.
+     */
+    private boolean mergeSpeechSegments;
+
     private CepstrumSource predecessor;
     private List inputBuffer;
 
@@ -43,6 +54,17 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
         super(name, context);
         this.predecessor = predecessor;
         this.inputBuffer = new LinkedList();
+    }
+
+
+    /**
+     * Reads the parameters needed from the static SphinxProperties object.
+     *
+     * @throws IOException if there is an error reading the parameters
+     */
+    private void initSphinxProperties() throws IOException {
+        mergeSpeechSegments = getSphinxProperties().getBoolean
+            (PROP_PREFIX + "mergeSpeechSegments", true);
     }
 
 

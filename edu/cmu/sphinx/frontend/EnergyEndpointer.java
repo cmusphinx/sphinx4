@@ -21,13 +21,6 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     private static final String PROP_PREFIX = 
     "edu.cmu.sphinx.frontend.EnergyEndpointer.";
 
-    /**
-     * Controls whether to merge multiple speech segments within an
-     * Utterance to one big speech segment, with the boundaries being
-     * the start of the first speech segment, and the end of the
-     * last speech segment. 
-     */
-    private boolean mergeSpeechSegments;
 
     /**
      * If energy is greater than startHigh for startWindow frames,
@@ -131,19 +124,16 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     private void initSphinxProperties() throws IOException {
         SphinxProperties properties = getSphinxProperties();
 
-        mergeSpeechSegments = properties.getBoolean
-            (PROP_PREFIX + "mergeSpeechSegments", false);
-
         startLow = properties.getFloat(PROP_PREFIX + "startLow", 0.0f);
         startHigh = properties.getFloat(PROP_PREFIX + "startHigh", 0.0f);
+        startWindow = properties.getInt(PROP_PREFIX + "startWindow", 5);
+        startOffset = properties.getInt(PROP_PREFIX + "startOffset", 5);
+
         endLow = properties.getFloat(PROP_PREFIX + "endLow", 0.0f);
         endHigh = properties.getFloat(PROP_PREFIX + "endHigh", 0.0f);
-
-        startWindow = properties.getInt(PROP_PREFIX + "startWindow", 0);
-        startOffset = properties.getInt(PROP_PREFIX + "startOffset", 0);
-        endWindow = properties.getInt(PROP_PREFIX + "endWindow", 0);
-        endOffset = properties.getInt(PROP_PREFIX + "endOffset", 0);
-        maxDropout = properties.getInt(PROP_PREFIX + "maxDropout", 0);
+        endWindow = properties.getInt(PROP_PREFIX + "endWindow", 30);
+        endOffset = properties.getInt(PROP_PREFIX + "endOffset", 10);
+        maxDropout = properties.getInt(PROP_PREFIX + "maxDropout", 10);
         noSpeechTimeout = properties.getInt
             (PROP_PREFIX + "noSpeechTimeout", 0);
     }
@@ -359,22 +349,6 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
         
         insertSpeechStart();
 
-        // insert a SPEECH_START either if this is the first speech
-        // segment or, if we are not merging the speech segments
-        /*
-        if (numSpeechSegments == 0 || !mergeSpeechSegments) {
-            insertSpeechStart();
-        }
-        */
-
-        // if we are merging the speech segments in an utterance
-        // and there are already other speech segments in this utterance,
-        // remove the last SPEECH_END Cepstrum
-        /*
-        if (mergeSpeechSegments && numSpeechSegments > 0) {
-            removeLastSpeechEnd();
-        }
-        */
         setLastStartLowFrame(null);
         inSpeech = true;
         endLowFrames = 0;
