@@ -14,6 +14,7 @@
 package edu.cmu.sphinx.decoder.search;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Collections;
@@ -40,13 +41,14 @@ public class PartitionActiveList implements ActiveList  {
 
     private SphinxProperties props = null;
     private LogMath logMath;
+    private int size = 0;
     private int absoluteBeamWidth;
     private float relativeBeamWidth;
 
     // when the list is changed these things should be
     // changed/updated as well
 
-    private List tokenList = new ArrayList(absoluteBeamWidth);
+    private Token[] tokenList;
     private Partitioner partitioner = new Partitioner();
 
 
@@ -90,6 +92,8 @@ public class PartitionActiveList implements ActiveList  {
 	this.absoluteBeamWidth = props.getInt
             (PROP_ABSOLUTE_BEAM_WIDTH, 
              PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT);
+
+        this.tokenList = new Token[absoluteBeamWidth];
 
 	double linearRelativeBeamWidth  
 	    = props.getDouble(PROP_RELATIVE_BEAM_WIDTH, 
@@ -152,8 +156,26 @@ public class PartitionActiveList implements ActiveList  {
      * @param token the token to add
      */
     public void add(Token token) {
-	token.setLocation(tokenList.size());
-	tokenList.add(token);
+        if (size < tokenList.length) {
+            tokenList[size] = token;
+            token.setLocation(size);
+            size++;
+        } else {
+            // token array too small, double the capacity
+            doubleCapacity();
+            add(token);
+        }
+    }
+
+
+    /**
+     * Doubles the capacity of the Token array.
+     */
+    private void doubleCapacity() {
+        // expand the token list
+        Token[] newList = new Token[tokenList.length * 2];
+        System.arraycopy(tokenList, 0, newList, 0, size);
+        tokenList = newList;        
     }
 
 
@@ -172,13 +194,13 @@ public class PartitionActiveList implements ActiveList  {
 
             // BUG:CHeck:
 
-            if (tokenList.get(location) != oldToken) {
+            if (tokenList[location] != oldToken) {
                 System.out.println("PartitionActiveList: replace " +
                         oldToken + " not where it should have been.  New " 
                         + newToken + " location is " + location 
-                        + " found " + tokenList.get(location));
+                        + " found " + tokenList[location]);
             }
-	    tokenList.set(location, newToken);
+	    tokenList[location] = newToken;
 	    newToken.setLocation(location);
 	} else {
 	    add(newToken);
@@ -205,68 +227,40 @@ public class PartitionActiveList implements ActiveList  {
      */
     public ActiveList purge() {
 
-        float highestScore = 0.0f;
-        float pruneScore = 0.0f;
-        int pruned = 0;
-
         // if the absolute beam is zero, this means there
         // should be no constraint on the abs beam size at all
         // so we will only be relative beam pruning, which means
         // that we don't have to sort the list
 
         if (absoluteBeamWidth <= 0) {
-            if (tokenList.size() > 0) {
-                highestScore = getBestScore();
-                pruneScore = highestScore + relativeBeamWidth;
-                ArrayList newList = new ArrayList(tokenList.size());
-
-                for (Iterator i = tokenList.iterator(); i.hasNext();) {
-                    Token token = (Token) i.next();
-                    if (token.getScore() > pruneScore) {
-                        newList.add(token);
-                    } else {
-                        pruned++;
-                    }
-                }
-                tokenList = newList;
+            if (size > 0) {
+                float pruneScore = getBestScore() + relativeBeamWidth;
+                Token[] newList = new Token[size];
+                relativeBeamPruning(pruneScore, size, newList);
             }
         } else {
 
-        // if we have an absolute beam, then we will 
-        // need to sort the tokens to apply the beam
-
-            if (tokenList.size() > 0) {
-
-                if (tokenList.size() > absoluteBeamWidth) {
-                    
-                    Token[] tokens = (Token[]) 
-                    tokenList.toArray(new Token[tokenList.size()]);
-                    
+            // if we have an absolute beam, then we will 
+            // need to sort the tokens to apply the beam
+            
+            if (size > 0) {
+                if (size > absoluteBeamWidth) {
+                                 
                     // "r" is the index of the last element in the partition
-                    int r = partitioner.partition(tokens, absoluteBeamWidth);
+                    int r = partitioner.partition
+                        (tokenList, size, absoluteBeamWidth);
                     
-                    highestScore = partitioner.getBestToken().getScore();
-                    pruneScore = highestScore + relativeBeamWidth;
+                    float highestScore = partitioner.getBestToken().getScore();
+                    float pruneScore = highestScore + relativeBeamWidth;
 
-                    tokenList = new ArrayList(absoluteBeamWidth);
+                    Token[] newList = new Token[absoluteBeamWidth];
 
-                    for (int i = 0; i <= r; i++) {
-                        Token token = tokens[i];
-                        if (token.getScore() > pruneScore) {
-                            tokenList.add(token);
-                        }
-                    }
+                    relativeBeamPruning(pruneScore, r, newList);
                 } else {
-                    pruneScore = getBestScore() + relativeBeamWidth;
-                    Iterator i = tokenList.iterator();
-                    List newList = new ArrayList(absoluteBeamWidth);
-                    while (i.hasNext()) {
-                        Token token = (Token) i.next();
-                        if (token.getScore() > pruneScore) {
-                            newList.add(token);
-                        }
-                    }
-                    tokenList = newList;
+                    float pruneScore = getBestScore() + relativeBeamWidth;
+                    Token[] newList = new Token[absoluteBeamWidth];
+
+                    relativeBeamPruning(pruneScore, size, newList);
                 }
             }
         }
@@ -276,23 +270,38 @@ public class PartitionActiveList implements ActiveList  {
 
 
     /**
+     * Perform relative pruning on the current token array.
+     *
+     * @param pruneScore the relative pruning score
+     * @param n the first N tokens to perform relative pruning on
+     * @param newList the new token array to put the surviving tokens
+     */
+    private void relativeBeamPruning(float pruneScore, int n, 
+                                     Token[] newList) {
+        int survivingTokens = 0;
+        for (int i = 0; i < n; i++) {
+            Token token = tokenList[i];
+            if (token.getScore() > pruneScore) {
+                newList[survivingTokens++] = token;
+            }
+        }
+        size = survivingTokens;
+        tokenList = newList;
+    }
+
+
+    /**
      * Returns the best score in the token list
      *
      * @return the best score
      */
-    // TODO: it would be nice if the active list could maintain the high
-    // score in the list
-
-
     private float getBestScore() {
         float bestScore = -Float.MAX_VALUE;
-        int count = 0;
-        for (Iterator i = tokenList.iterator(); i.hasNext(); ) {
-            Token token = (Token) i.next();
+        for (int i = 0; i < size; i++) {
+            Token token = tokenList[i];
             if (token.getScore() > bestScore) {
                 bestScore = token.getScore();
             }
-            count++;
         }
         return bestScore;
     }
@@ -304,7 +313,7 @@ public class PartitionActiveList implements ActiveList  {
      * @return the iterator for this token list
      */
     public Iterator iterator() {
-	return tokenList.iterator();
+	return (new TokenArrayIterator(tokenList));
     }
 
     /**
@@ -313,7 +322,7 @@ public class PartitionActiveList implements ActiveList  {
      * @return the list of tokens
      */
     public List getTokens() {
-        return tokenList;
+        return Arrays.asList(tokenList).subList(0, size);
     }
 
 
@@ -323,7 +332,39 @@ public class PartitionActiveList implements ActiveList  {
      * @return the size of the active list
      */
     public final int size() {
-	return tokenList.size();
+	return size;
     }
 }
 
+class TokenArrayIterator implements Iterator {
+
+    private Token[] tokenArray;
+    private int pos;
+
+    TokenArrayIterator(Token[] tokenArray) {
+        this.tokenArray = tokenArray;
+        this.pos = 0;
+    }
+
+
+    /**
+     * Returns true if the iteration has more tokens.
+     */
+    public boolean hasNext() {
+        return (pos < tokenArray.length && tokenArray[pos] != null);
+    }
+
+    /**
+     * Returns the next token in the iteration.
+     */
+    public Object next() {
+        return tokenArray[pos++];
+    }
+
+    /**
+     * Unimplemented, throws an Error if called.
+     */
+    public void remove() {
+        throw new Error("TokenArrayIterator.remove() unimplemented");
+    }
+}
