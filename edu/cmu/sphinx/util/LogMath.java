@@ -91,9 +91,39 @@ public final class LogMath {
 
 	 // Now create the addTable table.
 
-	 // First decide number of elements.
-	 int entriesInTheAddTable = 65536;
+	 // summation needed in the loop
 	 double innerSummation;
+
+	 // First decide number of elements.
+	 int entriesInTheAddTable;
+	 final int veryLargeNumberOfEntries = 150000;
+
+	 // To decide size of table, take into account that a base of
+	 // 1.0001 or 1.0003 converts probabilities, which are numbers
+	 // less than 1, into integers.  Therefore, a good
+	 // approximation for the smallest number in the table is an
+	 // index that maps into 0.5: indices higher than that would
+	 // map to less than 0.5, therefore they would be mapped to 0
+	 // as integers. Since the table implements the expression
+	 //
+	 // log( 1.0 + power(base, index))
+	 //
+	 // then the highest index would be:
+	 //
+	 // topIndex = - ln(power(logBase, 0.5) - 1) / ln(logBase)
+	 //
+	 // where ln could be any log base. If we use logBase as the
+	 // log base, the denominator becomes 1.
+
+	 entriesInTheAddTable = linearToLog(Math.power(logbase, 0.5) - 1);
+
+	 // We reach this max if the log base is 1.00007. The closer
+	 // you get to 1, the higher the number of entries in the
+	 // table.
+
+	 if (entriesInTheTable > veryLargeNumberOfEntries) {
+	     entriesInTheAddTable = veryLargeNumberOfEntries;
+	 }
 
 	 theAddTable = new double[entriesInTheAddTable];
 	 for (int index = 0; index < entriesInTheAddTable; index++) {
