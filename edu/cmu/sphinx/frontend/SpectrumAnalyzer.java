@@ -60,7 +60,7 @@ SpectrumSource {
 			    SphinxProperties props,
                             AudioSource predecessor) throws IOException {
         super(name, context);
-	setProperties(props);
+	setProperties(props, FrontEnd.ACOUSTIC_PROP_PREFIX);
         this.predecessor = predecessor;
 	computeLogBase2(this.numberFftPoints);
 	createWeightFft(numberFftPoints, false);
@@ -162,10 +162,12 @@ SpectrumSource {
      * Reads the parameters needed from the static SphinxProperties object.
      *
      * @param props the SphinxProperties used
+     * @param prefix the prefix used for properties in this SphinxProperties
      */
-    public void setProperties(SphinxProperties props) {
+    public void setProperties(SphinxProperties props, String prefix) {
 
-        int sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
+        int sampleRate = props.getInt
+	    (prefix + FrontEnd.PROP_SAMPLE_RATE, 16000);
 
 	/**
 	 * Number of points in the FFT. By default, the value is 512,
@@ -175,7 +177,7 @@ SpectrumSource {
 	 * 511 are symmetrical with the ones between 1 and 254. Therefore,
 	 * we need only return values between 0 and 255.
 	 */
-	numberFftPoints = props.getInt(PROP_NUMBER_FFT_POINTS, 512);
+	numberFftPoints = props.getInt(prefix + PROP_NUMBER_FFT_POINTS, 512);
 
         float windowSizeInMs = getSphinxProperties().getFloat
             (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);

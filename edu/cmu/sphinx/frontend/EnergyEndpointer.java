@@ -160,7 +160,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
 			    SphinxProperties props,
                             CepstrumSource predecessor) throws IOException {
         super(name, context);
-        setProperties(props);
+        setProperties();
         this.predecessor = predecessor;
         this.outputQueue = new LinkedList();
         reset();
@@ -169,10 +169,8 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param props the SphinxProperties to read properties from
      */
-    public void setProperties(SphinxProperties props) {
+    private void setProperties() {
         SphinxProperties properties = getSphinxProperties();
 
         startLow = properties.getFloat(PROP_PREFIX + "startLow", 0.0f);
@@ -185,7 +183,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
         endOffset = properties.getInt(PROP_PREFIX + "endOffset", 10);
         maxDropout = properties.getInt(PROP_PREFIX + "maxDropout", 10);
         noSpeechTimeout = properties.getInt
-            (PROP_PREFIX + "noSpeechTimeout", 0);
+	    (PROP_PREFIX + "noSpeechTimeout", 0);
     }
 
 

@@ -13,6 +13,8 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.model.acoustic.AcousticModel;
+
 import java.io.IOException;
 
 
@@ -31,8 +33,6 @@ public interface FrontEnd {
     /**
      * The SphinxProperty name for sample rate in Hertz (i.e.,
      * number of times per second), which has a default value of 8000.
-     *
-     * NOTE: this property should not have PROP_PREFIX in front of it!
      */
     public static final String PROP_SAMPLE_RATE = "sampleRate";
 
@@ -42,44 +42,40 @@ public interface FrontEnd {
      * FrontEnd should use the properties from the AcousticModel.
      */
     public static final String PROP_USE_ACOUSTIC_MODEL_PROPS =
-	PROP_PREFIX + "useAcousticModelProperties";
+	"useAcousticModelProperties";
 
     
     /**
      * The SphinxProperty name for the number of bits per sample.
      */
-    public static final String PROP_BITS_PER_SAMPLE = 
-	PROP_PREFIX + "bitsPerSample";
+    public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
 
 
     /**
      * The SphinxProperty name for the number of bytes per frame.
      */
     public static final String PROP_BYTES_PER_AUDIO_FRAME = 
-	PROP_PREFIX + "bytesPerAudioFrame";
+	"bytesPerAudioFrame";
 
 
     /**
      * The SphinxProperty name for window size in milliseconds.
      */
-    public static final String PROP_WINDOW_SIZE_MS = 
-	PROP_PREFIX + "windowSizeInMs";
+    public static final String PROP_WINDOW_SIZE_MS = "windowSizeInMs";
 
 
     /**
      * The SphinxProperty name for window shift in milliseconds,
      * which has a default value of 10F.
      */
-    public static final String PROP_WINDOW_SHIFT_MS =
-	PROP_PREFIX + "windowShiftInMs";
+    public static final String PROP_WINDOW_SHIFT_MS = "windowShiftInMs";
 
     
     /**
      * The SphinxProperty name for the size of a cepstrum, which is
      * 13 by default.
      */
-    public static final String PROP_CEPSTRUM_SIZE = 
-	PROP_PREFIX + "cepstrumSize";
+    public static final String PROP_CEPSTRUM_SIZE = "cepstrumSize";
 
 
     /**
@@ -87,14 +83,13 @@ public interface FrontEnd {
      * should retain a reference to the original raw audio bytes. The
      * default value is true.
      */
-    public static final String PROP_KEEP_AUDIO_REFERENCE =
-	PROP_PREFIX + "keepAudioReference";
+    public static final String PROP_KEEP_AUDIO_REFERENCE ="keepAudioReference";
 
     
     /**
      * The SphinxProperty name that specifies the Filterbank class.
      */
-    public static final String PROP_FILTERBANK = PROP_PREFIX + "filterbank";
+    public static final String PROP_FILTERBANK = "filterbank";
 
 
     /**
@@ -107,20 +102,27 @@ public interface FrontEnd {
     /**
      * The SphinxProperty name that specifies the Endpointer class.
      */
-    public static final String PROP_ENDPOINTER = PROP_PREFIX + "endpointer";
+    public static final String PROP_ENDPOINTER = "endpointer";
 
 
     /**
      * The SphinxProperty name that specifies the CMN class.
      */
-    public static final String PROP_CMN = PROP_PREFIX + "cmn";
+    public static final String PROP_CMN = "cmn";
 
 
     /**
      * The SphinxProperty name that specifies the FeatureExtractor class.
      */
-    public static final String PROP_FEATURE_EXTRACTOR = 
-	PROP_PREFIX + "featureExtractor";
+    public static final String PROP_FEATURE_EXTRACTOR = "featureExtractor";
+
+
+    /**
+     * Returns the prefix for acoustic model properties.
+     *
+     * @return the prefix for acoustic model properties
+     */
+    public static final String ACOUSTIC_PROP_PREFIX = AcousticModel.PROP_PREFIX;
 
 
     /**

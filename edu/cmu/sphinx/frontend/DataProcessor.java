@@ -13,8 +13,6 @@
 
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.model.acoustic.AcousticModel;
-
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
@@ -99,8 +97,10 @@ public abstract class DataProcessor {
      * Sets the properties of this DataProcessor.
      *
      * @param properties the new properties
+     * @param propertyPrefix the prefix to use before property names
      */
-    public void setProperties(SphinxProperties properties) {
+    public void setProperties(SphinxProperties properties, 
+			      String propertyPrefix) {
 	// does nothing
     }
 

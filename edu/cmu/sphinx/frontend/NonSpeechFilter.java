@@ -113,24 +113,14 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
     public NonSpeechFilter(String name, String context, SphinxProperties props,
                            CepstrumSource predecessor) throws IOException {
         super(name, context);
-        setProperties(props);
+	this.mergeSpeechSegments = getSphinxProperties().getBoolean
+	    (PROP_PREFIX + "mergeSpeechSegments", true);
         this.discardMode = false;
         this.predecessor = predecessor;
         this.inputBuffer = new LinkedList();
     }
 
 
-    /**
-     * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param props the SphinxProperties to read properties from
-     */
-    public void setProperties(SphinxProperties props) {
-        mergeSpeechSegments = getSphinxProperties().getBoolean
-            (PROP_PREFIX + "mergeSpeechSegments", true);
-    }
-
-    
     /**
      * Sets the predecessor.
      *

@@ -38,27 +38,27 @@ import java.io.IOException;
  */
 public class PLPFilterbank extends DataProcessor implements Filterbank {
 
-    public static final String PROP_PREFIX = "edu.cmu.sphinx.frontend.plp";
+    public static final String PROP_PREFIX = "edu.cmu.sphinx.frontend.plp.";
 
     /**
      * The name of the Sphinx Property for the number of filters in
      * the filterbank.
      */
-    public static final String PROP_NUMBER_FILTERS = PROP_PREFIX+".numFilters";
+    public static final String PROP_NUMBER_FILTERS = "numFilters";
 
 
     /**
      * The name of the Sphinx Property for the minimum frequency
      * covered by the filterbank.
      */
-    public static final String PROP_MIN_FREQ = PROP_PREFIX + ".minfreq";
+    public static final String PROP_MIN_FREQ = "minfreq";
 
 
     /**
      * The name of the Sphinx Property for the maximum frequency
      * covered by the filterbank.
      */
-    public static final String PROP_MAX_FREQ = PROP_PREFIX + ".maxfreq";
+    public static final String PROP_MAX_FREQ = "maxfreq";
 
 
     private int sampleRate;
@@ -99,7 +99,7 @@ public class PLPFilterbank extends DataProcessor implements Filterbank {
     public void initialize(String name, String context, SphinxProperties props,
 			   SpectrumSource predecessor) throws IOException {
         super.initialize(name, context);
-	setProperties(props);
+	setProperties(props, FrontEnd.ACOUSTIC_PROP_PREFIX);
         this.predecessor = predecessor;
 	buildCriticalBandFilterbank();
 	buildEqualLoudnessScalingFactors();
@@ -110,14 +110,15 @@ public class PLPFilterbank extends DataProcessor implements Filterbank {
      * Reads the parameters needed from the static SphinxProperties object.
      *
      * @param props the SphinxProperties to read properties from
+     * @param prefix the prefix to use for properties in this SphinxProperties
      */
-    public void setProperties(SphinxProperties props) {
-        sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
-        minFreq = props.getDouble(PROP_MIN_FREQ, 130);
-        maxFreq = props.getDouble(PROP_MAX_FREQ, 6800);
-        numberFilters = props.getInt(PROP_NUMBER_FILTERS, 40);
+    public void setProperties(SphinxProperties props, String prefix) {
+        sampleRate = props.getInt(prefix + FrontEnd.PROP_SAMPLE_RATE, 16000);
+        minFreq = props.getDouble(prefix + PROP_MIN_FREQ, 130);
+        maxFreq = props.getDouble(prefix + PROP_MAX_FREQ, 6800);
+        numberFilters = props.getInt(prefix + PROP_NUMBER_FILTERS, 40);
         numberFftPoints = props.getInt
-	    (SpectrumAnalyzer.PROP_NUMBER_FFT_POINTS, 512);
+	    (prefix + SpectrumAnalyzer.PROP_NUMBER_FFT_POINTS, 512);
     }
 
 

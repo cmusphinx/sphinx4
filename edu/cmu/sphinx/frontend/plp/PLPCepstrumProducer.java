@@ -83,7 +83,9 @@ CepstrumProducer {
      * @param props the SphinxProperties to read properties from
      */
     public void setProperties(SphinxProperties props) {
-        numberPLPFilters = props.getInt(PLPFilterbank.PROP_NUMBER_FILTERS, 40);
+        numberPLPFilters = props.getInt
+	    (PLPFilterbank.PROP_PREFIX + PLPFilterbank.PROP_NUMBER_FILTERS,
+	     40);
         cepstrumSize = getSphinxProperties().getInt
 	    (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
 	// Just hardcoding this for now

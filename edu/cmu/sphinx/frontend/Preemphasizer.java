@@ -62,17 +62,15 @@ public class Preemphasizer extends DataProcessor implements AudioSource {
     public Preemphasizer(String name, String context, SphinxProperties props,
 			 AudioSource predecessor) {
         super(name, context);
-        setProperties(props);
+        setProperties();
         this.predecessor = predecessor;
     }
 
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param props the SphinxProperties object to read parameters from
      */
-    public void setProperties(SphinxProperties props) {
+    private void setProperties() {
         preemphasisFactor = getSphinxProperties().getFloat
 	    (PROP_PREEMPHASIS_FACTOR, (float) 0.97);
     }

@@ -116,7 +116,7 @@ FeatureExtractor {
 			   SphinxProperties props,
 			   CepstrumSource predecessor) {
 	super.initialize(name, context);
-        setProperties(props);
+        setProperties();
         this.predecessor = predecessor;
         cepstraBuffer = new float[cepstraBufferSize][];
         outputQueue = new Vector();
@@ -140,11 +140,8 @@ FeatureExtractor {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param props the SphinxProperties to read properties from
      */
-    public void setProperties(SphinxProperties props) {
-	// props is actually not used here
+    private void setProperties() {
 	SphinxProperties properties = getSphinxProperties();
 	featureLength = properties.getInt(PROP_FEATURE_LENGTH, 39);
 	window = properties.getInt(PROP_FEATURE_WINDOW, 3);

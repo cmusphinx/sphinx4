@@ -96,7 +96,7 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
 		   CepstrumSource predecessor)
         throws IOException {
         super(name, context);
-        setProperties(props);
+        setProperties(props, FrontEnd.ACOUSTIC_PROP_PREFIX);
 	initMeansSums();
         this.predecessor = predecessor;
     }
@@ -127,12 +127,12 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      * Reads the parameters needed from the static SphinxProperties object.
      *
      * @param props the SphinxProperties to read properties from
+     * @param prefix the prefix to use for properties in this SphinxProperties
      */
-    public void setProperties(SphinxProperties props) {
-	initialMean = props.getFloat(PROP_INITIAL_MEAN, 12.0f);
-	cmnWindow = props.getInt(PROP_CMN_WINDOW, 500);
-	cmnShiftWindow = props.getInt(PROP_CMN_SHIFT_WINDOW, 800);
-
+    public void setProperties(SphinxProperties props, String prefix) {
+	initialMean = props.getFloat(prefix + PROP_INITIAL_MEAN, 12.0f);
+	cmnWindow = props.getInt(prefix + PROP_CMN_WINDOW, 500);
+	cmnShiftWindow = props.getInt(prefix + PROP_CMN_SHIFT_WINDOW, 800);
 	cepstrumLength = getSphinxProperties().getInt
             (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
     }

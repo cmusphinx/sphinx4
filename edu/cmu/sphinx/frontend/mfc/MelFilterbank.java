@@ -19,6 +19,7 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Spectrum;
 import edu.cmu.sphinx.frontend.SpectrumAnalyzer;
 import edu.cmu.sphinx.frontend.SpectrumSource;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.IOException;
@@ -102,10 +103,11 @@ public class MelFilterbank extends DataProcessor implements Filterbank {
      * @param props the SphinxProperties object to read properties from
      * @param predecessor the predecessor of this MelFilterbank
      */
-    public void initialize(String name, String context, SphinxProperties props,
+    public void initialize(String name, String context,
+			   SphinxProperties props,
 			   SpectrumSource predecessor) throws IOException {
         super.initialize(name, context);
-	setProperties(props);
+	setProperties(props, FrontEnd.ACOUSTIC_PROP_PREFIX);
         this.predecessor = predecessor;
 	buildFilterbank(numberFftPoints, numberFilters, minFreq, maxFreq);
     }
@@ -115,14 +117,16 @@ public class MelFilterbank extends DataProcessor implements Filterbank {
      * Reads the parameters needed from the static SphinxProperties object.
      *
      * @param props the SphinxProperties to read properties from
+     * @param prefix the property prefix to use for properties in
+     *    this SphinxProperties object
      */
-    public void setProperties(SphinxProperties props) {
-        sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
-        minFreq = props.getDouble(PROP_MIN_FREQ, 130);
-        maxFreq = props.getDouble(PROP_MAX_FREQ, 6800);
-        numberFilters = props.getInt(PROP_NUMBER_FILTERS, 40);
+    public void setProperties(SphinxProperties props, String prefix) {
+        sampleRate = props.getInt(prefix + FrontEnd.PROP_SAMPLE_RATE, 16000);
+        minFreq = props.getDouble(prefix + PROP_MIN_FREQ, 130);
+        maxFreq = props.getDouble(prefix + PROP_MAX_FREQ, 6800);
+        numberFilters = props.getInt(prefix + PROP_NUMBER_FILTERS, 40);
         numberFftPoints = props.getInt
-            (SpectrumAnalyzer.PROP_NUMBER_FFT_POINTS, 512);
+            (prefix + SpectrumAnalyzer.PROP_NUMBER_FFT_POINTS, 512);
     }
 
 
