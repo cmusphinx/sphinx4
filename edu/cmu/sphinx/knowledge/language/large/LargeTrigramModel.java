@@ -169,9 +169,11 @@ public class LargeTrigramModel implements LanguageModel {
      * Called before a recognition
      */
     public void start() {
+        /*
         loadedBigramBuffer.clear();
         loadedTrigramBuffer.clear();
         trigramCache.clear();
+        */
     }
     
     /**
@@ -306,10 +308,12 @@ public class LargeTrigramModel implements LanguageModel {
             // and then find the bigram with the secondWord
             BigramBuffer followers = (BigramBuffer) 
 		loadedBigramBuffer.get(new Integer(firstWordID));
+
 	    if (followers == null) {
                 followers = loadBigramBuffer(firstWordID, numberBigramBuffer);
 		loadedBigramBuffer.put(new Integer(firstWordID), followers);
 	    }
+
             bigram = followers.findBigram(secondWordID);
         }
 
@@ -329,9 +333,6 @@ public class LargeTrigramModel implements LanguageModel {
             return getBigramProbability(wordSequence.getNewest());
         }
 
-        int firstWordID = getWordID(wordSequence.getWord(0));
-        int secondWordID = getWordID(wordSequence.getWord(1));
-        
         TrigramProbability trigram = 
 	    (TrigramProbability) trigramCache.get(wordSequence);
         if (trigram != null) {
@@ -348,6 +349,10 @@ public class LargeTrigramModel implements LanguageModel {
 	    score = trigramProbTable[trigram.getProbabilityID()];
 	} else {
             trigramMisses++;
+            
+            int firstWordID = getWordID(wordSequence.getWord(0));
+            int secondWordID = getWordID(wordSequence.getWord(1));
+            
 	    BigramProbability bigram = findBigram(firstWordID, secondWordID);
 	    if (bigram != null) {
 		score = trigramBackoffTable[bigram.getBackoffID()] +
@@ -433,8 +438,8 @@ public class LargeTrigramModel implements LanguageModel {
                                        loader.getLogBigramSegmentSize()] +
                     nextBigram.getFirstTrigramEntry();
                 
-                position = (long) (loader.getTrigramOffset() + 
-                                   (firstTrigramEntry * BYTES_PER_TRIGRAM));
+                position = (loader.getTrigramOffset() + 
+                            (long) (firstTrigramEntry * BYTES_PER_TRIGRAM));
                 
                 numberTrigrams = nextFirstTrigramEntry - firstTrigramEntry;
                 size = numberTrigrams * BYTES_PER_TRIGRAM;
