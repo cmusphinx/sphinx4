@@ -57,8 +57,25 @@ AudioSource {
 
         String firstFile = reader.readLine();
         if (firstFile != null) {
-            fileSetStream(firstFile);
+            fileSetStream(getFirstToken(firstFile));
         }
+    }
+
+
+    /**
+     * Returns the first token in the given line of text.
+     *
+     * @param text the text to tokenize
+     *
+     * @return the first token
+     */
+    public String getFirstToken(String text) {
+        text = text.trim();
+        int spaceIndex = text.indexOf(" ");
+        if (spaceIndex > -1) {
+            text = text.substring(0, spaceIndex);
+        }
+        return text;
     }
 
 
@@ -72,7 +89,7 @@ AudioSource {
      */
     private void fileSetStream(String audioFile) throws IOException {
         streamAudioSource.setInputStream
-            (new FileInputStream(audioFile + ".raw"), audioFile);
+            (new FileInputStream(audioFile), audioFile);
     }
 
     
@@ -101,7 +118,7 @@ AudioSource {
                 // go to the next one
                 String nextFile = reader.readLine();
                 if (nextFile != null) {
-                    fileSetStream(nextFile);
+                    fileSetStream(getFirstToken(nextFile));
                     return getAudio();
                 } else {
                     reader.close();
