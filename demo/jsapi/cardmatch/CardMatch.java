@@ -255,7 +255,7 @@ public class CardMatch implements Recorder, Configurable {
      * @return <code>true</code> if this Recorder is recording
      */
     public boolean isRecording() {
-        return microphone.getRecording();
+        return microphone.isRecording();
     }
 
     /**
