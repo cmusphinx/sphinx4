@@ -59,7 +59,7 @@ public interface  SearchState {
      /**
       * Gets the word history for this state
       *
-      * @param the word history
+      * @return the word history
       */
      WordSequence getWordHistory();
 

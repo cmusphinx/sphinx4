@@ -701,7 +701,7 @@ public class Recognizer {
     /**
      * Fire all listeners for features with non-content signals.
      *
-     * @param signal the feature with non-content signal
+     * @param feature the feature with non-content signal
      */
     protected void fireSignalFeatureListeners(Feature feature) {
         Vector copy = (Vector) signalFeatureListeners.clone();
