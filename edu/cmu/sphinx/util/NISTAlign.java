@@ -384,12 +384,10 @@ public class NISTAlign {
      * @see #printNISTSentenceSummary
      */
     public void printSentenceSummary() {
-        System.out.println();
         System.out.println("REF:       " + toString(referenceWords));
         System.out.println("HYP:       " + toString(hypothesisWords));
         System.out.println("ALIGN_REF: " + toString(alignedReferenceWords));
         System.out.println("ALIGN_HYP: " + toString(alignedHypothesisWords));
-        System.out.println();
     }
 
     /**

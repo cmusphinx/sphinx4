@@ -118,6 +118,35 @@ public class Decoder {
     public final static boolean PROP_SHOW_PARTIAL_ACTUAL_RESULTS_DEFAULT = 
         false;
 
+    /**
+     * A SphinxProperty name for a boolean property, that when set to
+     * true will cause the decoder to show detailed statistics
+     */
+    public final static String PROP_SHOW_DETAILED_STATISTICS  =
+	PROP_PREFIX + "showDetailedStatistics";
+
+
+    /**
+     * The default value for the property PROP_SHOW_PARTIAL_ACTUAL_RESULTS.
+     */
+    public final static boolean PROP_SHOW_DETAILED_STATISTICS_DEFAULT = 
+        false;
+
+    /**
+     * A SphinxProperty name for a boolean property, that when set to
+     * true will cause the decoder to show the score of the hypothesis
+     */
+    public final static String PROP_SHOW_HYPOTHESIS_SCORE  =
+	PROP_PREFIX + "showHypothesisScore";
+
+
+    /**
+     * The default value for the property PROP_SHOW_HYPOTHESIS_SCORE
+     */
+    public final static boolean PROP_SHOW_HYPOTHESIS_SCORE_DEFAULT =
+        false;
+
+
 
 
     private static DecimalFormat memFormat = new DecimalFormat("0.00 Mb");
@@ -144,7 +173,10 @@ public class Decoder {
     private boolean showBestToken = false;
     private boolean showErrorToken = false;
     private boolean showActualToken = false;
-    private boolean showPartialActualResults;;
+    private boolean showPartialActualResults = false;
+    private boolean showDetailedStatistics = false;
+    private boolean showHypothesisScore = false;
+
     private BeamFinder beamFinder;
 
     private boolean findResult = true;
@@ -213,6 +245,13 @@ public class Decoder {
 	showActualToken =
 	    props.getBoolean(PROP_SHOW_ACTUAL_TOKEN,
                              PROP_SHOW_ACTUAL_TOKEN_DEFAULT);
+	showDetailedStatistics =
+	    props.getBoolean(PROP_SHOW_DETAILED_STATISTICS,
+                             PROP_SHOW_DETAILED_STATISTICS_DEFAULT);
+
+	showHypothesisScore =
+	    props.getBoolean(PROP_SHOW_HYPOTHESIS_SCORE,
+                             PROP_SHOW_HYPOTHESIS_SCORE_DEFAULT);
 
         recognizer = null;        // first initialize it to null
         aligner = null;
@@ -448,12 +487,16 @@ public class Decoder {
 	Token bestToken = result.getBestToken();
         
 	if (currentReferenceText != null) {
+            System.out.println();
             match = aligner.align(currentReferenceText,
                     result.getBestResultNoFiller());
             aligner.printSentenceSummary();
+            System.out.println("RAW:       " + result.toString());
+            System.out.println();
             aligner.printTotalSummary();
 	} else {
-            System.out.println("FINAL Result: " + result.toString());
+            System.out.println("FINAL Result: " 
+                    + result.getBestResultNoFiller());
 	}
 
 	if (showBestToken || (!match && showErrorToken)) {
@@ -464,27 +507,30 @@ public class Decoder {
         }
 
 
-	if (bestToken == null) {
-	    System.out.print("   HypScore: NONE");
-	} else {
-	    System.out.print("   HypScore: "
-			+ result.getBestToken().getScore());
-	}
-	if (!match) {
-	    Token matchingToken = result.findToken(currentReferenceText);
-	    if (matchingToken != null) {
-		System.out.print(
-			"  ActScore: " + matchingToken.getScore());
-		if (showActualToken) {
-		    System.out.println("\n\n Token path for actual result");
-		    matchingToken.dumpTokenPath();
-		}
-	    } else {
-		System.out.print("  ActScore: NONE");
-	    }
-	}
+        if (showHypothesisScore) {
+            if (bestToken == null) {
+                System.out.print("   HypScore: NONE");
+            } else {
+                System.out.print("   HypScore: "
+                            + result.getBestToken().getScore());
+            }
 
-	System.out.println();
+            if (!match) {
+                Token matchingToken = result.findToken(currentReferenceText);
+                if (matchingToken != null) {
+                    System.out.print(
+                            "  ActScore: " + matchingToken.getScore());
+                    if (showActualToken) {
+                        System.out.println("\n\n Token path for actual result");
+                        matchingToken.dumpTokenPath();
+                    }
+                } else {
+                    System.out.print("  ActScore: NONE");
+                }
+            }
+
+            System.out.println();
+        }
 
         processingTime = timer.getCurTime() / 1000.f;
         audioTime = getAudioTime(result);
@@ -494,8 +540,10 @@ public class Decoder {
 	showAudioUsage();
 	showMemoryUsage();
         beamFinder.showLatestResult();
-	StatisticsVariable.dumpAll(context);
-        System.out.println("--------------");
+        if (showDetailedStatistics) {
+            StatisticsVariable.dumpAll(context);
+        }
+        System.out.println();
     }
 
 
