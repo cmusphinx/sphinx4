@@ -7,13 +7,18 @@
  */
 package com.sun.taglet;
 
-import com.sun.javadoc.*;
+import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.Doc;
+import com.sun.javadoc.RootDoc;
+import com.sun.javadoc.Tag;
 
-import com.sun.tools.doclets.*;
-import com.sun.tools.doclets.standard.*;
-import com.sun.tools.doclets.standard.tags.*;
+import com.sun.tools.doclets.Taglet;
+import com.sun.tools.doclets.DirectoryManager;
 
-import java.util.*;
+//import com.sun.tools.doclets.standard.*;
+//import com.sun.tools.doclets.standard.tags.*;
+
+import java.util.Map;
 
 public class HrefTaglet implements Taglet {
 
@@ -94,40 +99,30 @@ public class HrefTaglet implements Taglet {
      * seems to be broken.
      */
     public String toString(Tag tag) {
-        return null;
+        if (tag.holder() instanceof RootDoc) {
+            RootDoc doc = (RootDoc) tag.holder();
+            ClassDoc classDoc = doc.classNamed(tag.text());
+            if (classDoc != null) {
+                try {
+                    return "href=\"" +
+                        DirectoryManager.getPathToPackage(
+                            classDoc.containingPackage(),
+                            classDoc.name())
+                        + ".html\"";
+                } catch (Exception e) {
+                    System.err.println(
+                        NAME + " tag text does not refer to a valid classref: "
+                        + tag.text());
+                }
+            }
+        }
+        return "";
     }
 
     /**
-     * Returns null to force the taglet infrastructure to call
-     * the more sophisticated toString method below.  FIXME: this
-     * seems to be broken.
      */
     public String toString(Tag[] tags) {
         return null;
-    }
-
-    public String toString(Tag tag, Doc doc, HtmlStandardWriter writer) {
-        return null;
-        
-        //StringBuffer result = new StringBuffer("href=\""+
-        //    writer.relativepath);
-        //ClassDoc classDoc = writer.configuration().root.classNamed(tag.text());
-        //if (classDoc == null) {
-        //    //Handle bad link here.
-        //}
-        //try {
-        //    result.append(
-        //        DirectoryManager.getPathToPackage(
-        //            classDoc.containingPackage(),
-        //            classDoc.name() + ".html"));
-        //    result.append("\"");
-        //    return result.toString();
-        //} catch (Exception e) {
-        //    System.err.println(
-        //        "@href tag text does not refer to a valid classref: "
-        //        + tag.text());
-        //    return "";
-        //}
     }
 
     public static void main(String[] args) {
