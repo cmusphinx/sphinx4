@@ -370,7 +370,15 @@ public class JSGFGrammar extends Grammar {
         GrammarGraph result = (GrammarGraph) ruleNameStack.get(initialRuleName
                 .getRuleName());
 
-        if (result != null) { // its a recursive call
+        // TODO: tail-recursion broken
+        // temporarily disable this check
+        // this check was also matching NULL rules which was causing bad grammars
+        // to be generated in rules that used the NULL production.  Obviously, this
+        // has to be thought out a bit more, so in the mean time, we'll disable this
+        // check (which disables the support for tail end recursion).
+
+        if (false && result != null) { // its a recursive call
+            //System.out.println("Found on rulestack: " + initialRuleName.getRuleName() + " " + result);
             return result;
         } else {
             result = new GrammarGraph();
