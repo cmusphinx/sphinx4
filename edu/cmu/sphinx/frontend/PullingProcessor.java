@@ -8,9 +8,53 @@ import edu.cmu.sphinx.util.Timer;
 
 
 /**
- * A PullingProcessor reads a Data object from a DataSource, and processes
- * it. This way, it produces another Data object that can be read
- * by another object. Therefore, it is a <code>DataSource</code>.
+ * A PullingProcessor reads a Data object from a DataSource, processes
+ * it and returns either the same Data object (in which case the
+ * PullingProcessor is called a <i>filter</i>), or another Data object (in
+ * which case the PullingProcessor is called a <i>translator</i>).
+ * This Data object is then read by another object via the
+ * <code>read()</code> method. Therefore, it is a <code>DataSource</code>.
+ *
+ * <p>A series of PullingProcessors chained together produces a processing
+ * pipeline, with each PullingProcessor having a different processing
+ * function. PullingProcessors are chained together by the <pre>
+ * PullingProcesor.setSource(DataSource) </pre>
+ * method. This is possible because each PullingProcessor is also
+ * a <code>DataSource</code>. Therefore, to chain three PullingProcessors,
+ * A, B and C, with B reading the product of A, and C reading the product
+ * of B, one would do: <pre>
+ * PullingProcessor A = new PullingProcessor();
+ * PullingProcessor B = new PullingProcessor();
+ * PullingProcessor C = new PullingProcessor();
+ * B.setSource(A);
+ * C.setSource(B);</pre>
+ *
+ * Continuing this example, to trigger the chain of processing, one would
+ * call: <pre>
+ * Data result;
+ * do {
+ *     result = C.read();
+ * } while (result != null); </pre>
+ * The <code>read()</code> method of <code>C</code> should call the 
+ * <code>read()</code> method of <code>B</code>, which should call the
+ * <code>read()</code> method of <code>A</code>. The filtering/translating
+ * is also done in the <code>read()</code> method. For example, the
+ * <code>read()</code> method of <code>B</code> might look like: <pre>
+ * public Data read() {
+ *
+ *     // getSource() returns A
+ *     Data input = getSource().read();
+ *
+ *     // process() is the filter/translation method
+ *     // which returns a Data object
+ *     return process(input); 
+ * } </pre>
+ *
+ * Note that a PullingProcessor might be reading different types of
+ * <code>Data</code> objects from its source. As a result, the
+ * <code>process()</code> method should handle each Data type differently.
+ * For more detailed examples, please look at the code of the different
+ * subclasses of PullingProcessors.
  *
  * <p>PullingProcessor implements the methods that allow you
  * to get/set the source to "pull" from, but leaves it to the subclass
@@ -36,6 +80,10 @@ public abstract class PullingProcessor implements DataSource {
      * Indicates whether to dump the processed Data
      */
     private boolean dump;
+
+
+    // make this un-instantiable from outside
+    private PullingProcessor() {}
 
 
     /**

@@ -78,8 +78,8 @@ public class StreamAudioSource implements DataSource {
 
 
     /**
-     * Resets this StreamAudioSource as if it never read from the
-     * InputStream.
+     * Resets this StreamAudioSource into a state ready to read the
+     * current InputStream.
      */
     public void reset() {
         this.totalBytesRead = SEGMENT_NOT_STARTED;

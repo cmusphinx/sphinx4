@@ -22,8 +22,8 @@ import java.io.IOException;
  * edu.cmu.sphinx.frontend.preemphasis.factor
  * </pre>
  * This Preemphasizer also processes the PreemphasisPriorSignal signal.
- * This type of signal contain the value of prior sample, used in applying
- * preemphasis.
+ * This type of signal contain the value of the previous sample, which
+ * is used in applying preemphasis.
  *
  * Other Data objects are passed along unchanged through this Preemphasizer.
  *
