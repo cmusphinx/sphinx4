@@ -22,7 +22,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     </path>
     <property name="build_dir"		value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
-    <property name="classpath"          value="${classes_dir}:/lab/speech/sphinx4/data/RM1_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
+    <property name="classpath"          value="${classes_dir}:/lab/speech/sphinx4/data/RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
 
     <property name="skip"               value="0"/>
     <property name="logger_props"       value=""/>  
