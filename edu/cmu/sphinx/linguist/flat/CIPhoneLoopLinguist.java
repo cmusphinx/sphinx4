@@ -49,8 +49,8 @@ import java.util.Map;
  * This loop is used in the static flat linguist for detecting
  * out-of-grammar utterances. A 'phoneInsertionProbability' will be added
  * to the score each time a new phone is entered. To obtain the all-phone
- * loop, simply called the method {@link #createNew() createNew}
- * which returns the first SentenceHMMState of the phone loop graph.
+ * search graph loop, simply called the method 
+ * {@link #getSearchGraph() getSearchGraph}.
  */
 public class CIPhoneLoopLinguist implements Linguist, Configurable {
 
