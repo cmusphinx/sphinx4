@@ -15,9 +15,8 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FastDictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 
 import java.io.IOException;
 import java.util.Set;
@@ -240,15 +239,15 @@ public abstract class  Grammar {
 	    alternatives[i] = new GrammarWord[alts[i].length];
 	    for (int j = 0; j < alts[i].length; j++) {
 
-		Pronunciation[] pronunciation =
-		    getDictionary().getPronunciations(alts[i][j], null);
+                Word word = getDictionary().getWord(alts[i][j]);
+		Pronunciation[] pronunciation = word.getPronunciations(null);
 
 		if (pronunciation == null) {
 		    alternatives = EMPTY_ALTERNATIVE;
 		    break;
 		} else {
-		    alternatives[i][j] = new GrammarWord (alts[i][j],
-			 getDictionary().getPronunciations(alts[i][j], null));
+		    alternatives[i][j] = new GrammarWord 
+                        (alts[i][j], pronunciation);
 		}
 	    }
 	}
@@ -269,7 +268,7 @@ public abstract class  Grammar {
 	GrammarNode node = null;
         GrammarWord[][] alternatives = EMPTY_ALTERNATIVE;
 	Pronunciation[] pronunciation =
-	    getDictionary().getPronunciations(word, null);
+	    getDictionary().getWord(word).getPronunciations(null);
 
 	if (pronunciation != null) {
 	    alternatives = new GrammarWord[1][];
