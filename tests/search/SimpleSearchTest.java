@@ -6,6 +6,7 @@ package tests.search;
 
 import edu.cmu.sphinx.model.acoustic.AcousticModel;
 
+import edu.cmu.sphinx.search.ActiveList;
 import edu.cmu.sphinx.search.Dictionary;
 import edu.cmu.sphinx.search.Linguist;
 import edu.cmu.sphinx.search.SimpleLinguist;
@@ -177,9 +178,9 @@ class SimplePruner implements Pruner {
      * @param stateTokenList a list containing StateToken objects to
      * be scored
      */
-    public List prune(List stateTokenList) {
+    public ActiveList prune(ActiveList stateTokenList) {
 	int startSize = stateTokenList.size();
-	for (Iterator i = stateTokenList.listIterator(); i.hasNext();) {
+	for (Iterator i = stateTokenList.iterator(); i.hasNext();) {
 	    Token token = (Token) i.next();
 	    if (token.getScore() < minScore) {
 		i.remove();
@@ -217,7 +218,7 @@ class SimpleAcousticScorer implements AcousticScorer {
      * @param stateTokenList a list containing StateToken objects to
      * be scored
      */
-    public boolean  calculateScores(List stateTokenList) {
+    public boolean  calculateScores(ActiveList stateTokenList) {
 	for (Iterator i = stateTokenList.iterator(); i.hasNext(); ) {
 	    Token token = (Token) i.next();
 	    assert(token.isEmitting());
