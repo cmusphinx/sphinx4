@@ -125,6 +125,13 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     public static final double PROP_PHONE_INSERTION_PROBABILITY_DEFAULT = 1.0;
 
     /**
+     * Sphinx property for the acoustic model to use to build the phone loop
+     * that detects out of grammar utterances.
+     */
+    public final static String PROP_PHONE_LOOP_ACOUSTIC_MODEL
+        = "phoneLoopAcousticModel";
+
+    /**
      * Sphinx property that defines the name of the logmath to be used by this
      * search manager.
      */
@@ -137,6 +144,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     // -----------------------------------
     private Grammar grammar;
     private AcousticModel acousticModel;
+    private AcousticModel phoneLoopAcousticModel;
     private LogMath logMath;
     private UnitManager unitManager;
     // ------------------------------------
@@ -201,6 +209,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         registry.register(PROP_ADD_OUT_OF_GRAMMAR_BRANCH, PropertyType.BOOLEAN);
         registry.register(PROP_OUT_OF_GRAMMAR_PROBABILITY, PropertyType.DOUBLE);
         registry.register(PROP_PHONE_INSERTION_PROBABILITY, PropertyType.DOUBLE);
+        registry.register(PROP_PHONE_LOOP_ACOUSTIC_MODEL, PropertyType.COMPONENT);
     }
     /*
      * (non-Javadoc)
@@ -240,6 +249,11 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         logPhoneInsertionProbability = logMath.linearToLog
             (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY,
                           PROP_PHONE_INSERTION_PROBABILITY_DEFAULT));
+        if (addOutOfGrammarBranch) {
+            phoneLoopAcousticModel = (AcousticModel)
+                ps.getComponent(PROP_PHONE_LOOP_ACOUSTIC_MODEL,
+                                AcousticModel.class);
+        }
     }
 
     /**
@@ -294,6 +308,9 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
      */
     protected void allocateAcousticModel() throws IOException {
         acousticModel.allocate();
+        if (addOutOfGrammarBranch) {
+            phoneLoopAcousticModel.allocate();
+        }
     }
 
     /*
@@ -1458,9 +1475,10 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             initialState.addArc(new GrammarState(grammar.getInitialNode()));
             // add an out-of-grammar branch if configured to do so
             if (addOutOfGrammarBranch) {
-                OutOfGrammarGraph oogg = new OutOfGrammarGraph(acousticModel,
-                        logOutOfGrammarBranchProbability,
-                        logPhoneInsertionProbability);
+                OutOfGrammarGraph oogg = new OutOfGrammarGraph
+                    (phoneLoopAcousticModel,
+                     logOutOfGrammarBranchProbability,
+                     logPhoneInsertionProbability);
 
                 initialState.addArc(oogg.getOutOfGrammarGraph());
             }
