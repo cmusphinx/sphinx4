@@ -35,12 +35,10 @@
     <!-- ********************************************************** -->
 
     <property name="wsj_name" value="WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
-    <property name="wsj_loader_name" value="WSJLoader"/>
     <property name="wsj_data_dir" value="models/acoustic/wsj"/>
 
     <property name="tidigits_name"
               value="TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
-    <property name="tidigits_loader_name" value="TIDIGITSLoader"/>
     <property name="tidigits_data_dir" value="models/acoustic/tidigits"/>
 
 
@@ -320,17 +318,14 @@ jsapi.exe from the lib directory.
             description="Generates an acoustic model JAR from a Sphinx-3 model directory.">
         <antcall target="create_my_model_classes">
 	    <param name="my_model_name" value="${model_name}"/>
-	    <param name="my_loader_name" value="${model_loader_name}"/>
         </antcall>
 	<antcall target="compile_src"/>
 	<antcall target="create_my_model">
 	    <param name="my_model_data_dir" value="${model_data_dir}"/>
 	    <param name="my_model_name" value="${model_name}"/>
-	    <param name="my_model_loader_name" value="${model_loader_name}"/>
         </antcall>
 	<antcall target="delete_my_model_classes">
 	    <param name="my_model_name" value="${model_name}"/>
-	    <param name="my_loader_name" value="${model_loader_name}"/>
         </antcall>
     </target>
 
@@ -350,7 +345,6 @@ jsapi.exe from the lib directory.
             description="Creates the WSJ model class files.">
 	<antcall target="create_my_model_classes">
 	    <param name="my_model_name" value="${wsj_name}"/>
-	    <param name="my_loader_name" value="${wsj_loader_name}"/>
         </antcall>
     </target>
 
@@ -358,7 +352,6 @@ jsapi.exe from the lib directory.
             description="Creates the TIDIGITS model class files.">
 	<antcall target="create_my_model_classes">
 	    <param name="my_model_name" value="${tidigits_name}"/>
-	    <param name="my_loader_name" value="${tidigits_loader_name}"/>
         </antcall>
     </target>
 
@@ -366,33 +359,49 @@ jsapi.exe from the lib directory.
             description="Deletes the WSJ and TIDIGITS model classes.">
 	<antcall target="delete_my_model_classes">
 	    <param name="my_model_name" value="${wsj_name}"/>
-	    <param name="my_loader_name" value="${wsj_loader_name}"/>
         </antcall>
 	<antcall target="delete_my_model_classes">
 	    <param name="my_model_name" value="${tidigits_name}"/>
-	    <param name="my_loader_name" value="${tidigits_loader_name}"/>
         </antcall>
     </target>
 
     <target name="delete_my_model_classes"
             description="Deletes the class files of a model.">
-	<delete file="${model_class_dir}/${my_model_name}.java"/>
-	<delete file="${model_class_dir}/${my_loader_name}.java"/>
+	<delete dir="${model_class_dir}/${my_model_name}/"/>
     </target>
 
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Creates the Model.java and ModelLoader.java for a      * -->
+    <!-- * particular acoustic model.                             * -->
+    <!-- * param: 'my_model_name'                                 * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
     <target name="create_my_model_classes"
             description="Creates the model class files.">
-        <copy file="models/acoustic/model.template"
-	      tofile="${model_class_dir}/${my_model_name}.java"/>
-	<replace file="${model_class_dir}/${my_model_name}.java"
-	         value="${my_model_name}">
-	    <replacetoken>TemplateModel</replacetoken>
+	<mkdir dir="${model_class_dir}/${my_model_name}/"/>
+        <copy file="${model_class_dir}/TiedStateAcousticModel.java"
+	      tofile="${model_class_dir}/${my_model_name}/Model.java"/>
+	<replace file="${model_class_dir}/${my_model_name}/Model.java"
+	         value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
+	    <replacetoken>package edu.cmu.sphinx.linguist.acoustic.tiedstate</replacetoken>
 	</replace>
-        <copy file="models/acoustic/loader.template"
-	      tofile="${model_class_dir}/${my_loader_name}.java"/>
-	<replace file="${model_class_dir}/${my_loader_name}.java"
-	         value="${my_loader_name}">
-	    <replacetoken>TemplateLoader</replacetoken>
+	<replace file="${model_class_dir}/${my_model_name}/Model.java"
+	         value="Model">
+	    <replacetoken>TiedStateAcousticModel</replacetoken>
+	</replace>
+
+	<mkdir dir="${model_class_dir}/${my_model_name}/"/>
+        <copy file="${model_class_dir}/Sphinx3Loader.java"
+	      tofile="${model_class_dir}/${my_model_name}/ModelLoader.java"/>
+	<replace file="${model_class_dir}/${my_model_name}/ModelLoader.java"
+	     value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
+	    <replacetoken>package edu.cmu.sphinx.linguist.acoustic.tiedstate</replacetoken>
+	</replace>
+	<replace file="${model_class_dir}/${my_model_name}/ModelLoader.java"
+	         value="ModelLoader">
+	    <replacetoken>Sphinx3Loader</replacetoken>
 	</replace>
     </target>
 
@@ -418,7 +427,6 @@ jsapi.exe from the lib directory.
         <antcall target="create_my_model">
 	    <param name="my_model_data_dir" value="${wsj_data_dir}"/>
 	    <param name="my_model_name" value="${wsj_name}"/>
-	    <param name="my_model_loader_name" value="${wsj_loader_name}"/>
         </antcall>
     </target>
 
@@ -433,8 +441,6 @@ jsapi.exe from the lib directory.
 	<antcall target="create_my_model">
 	    <param name="my_model_data_dir" value="${tidigits_data_dir}"/>
 	    <param name="my_model_name" value="${tidigits_name}"/>
-	    <param name="my_model_loader_name"
-	           value="${tidigits_loader_name}"/>
         </antcall>
     </target>
 
@@ -442,32 +448,34 @@ jsapi.exe from the lib directory.
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Builds an acoustic model JAR.                          * -->
+    <!-- * params: 'my_model_name' and 'my_model_data_dir'        * -->
+    <!-- * 1) Copies everything in 'my_model_data_dir' to         * -->
+    <!-- *    ${build_model_dir}/${my_model_name}.                * -->
+    <!-- * 2) Jars up the ${build_model_dir}/${my_model_name} dir * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="create_my_model"
             depends="compile_src"
 	    description="Creates an acoustic model JAR.">	    
-	<delete includeEmptyDirs="true">
-            <fileset dir="${build_model_dir}" includes="**"
-	             excludes="**/*.class"/>
-        </delete>
-        <copy todir="${build_model_dir}">
+
+        <copy todir="${build_model_dir}/${my_model_name}">
 	      <fileset dir="${my_model_data_dir}"/>
         </copy>
+
 	<jar destfile="${lib_dir}/${my_model_name}.jar">
 	     <fileset dir="${build_dir}/models"
-	         includes="edu/cmu/sphinx/model/acoustic/${my_model_name}.class,edu/cmu/sphinx/model/acoustic/${my_model_loader_name}.class"/>
+	      includes="edu/cmu/sphinx/model/acoustic/${my_model_name}/*.class"/>
              <fileset dir="${build_dir}/models"
-	              includes="edu/cmu/sphinx/model/acoustic/**"
-		      excludes="edu/cmu/sphinx/model/acoustic/*.class"/>
+	          includes="edu/cmu/sphinx/model/acoustic/${my_model_name}/**"
+		  excludes="edu/cmu/sphinx/model/acoustic/${my_model_name}/*.class"/>
              <manifest>
 	        <attribute name="Main-Class"
-		    value="edu.cmu.sphinx.model.acoustic.${my_model_name}"/>
+		 value="edu.cmu.sphinx.model.acoustic.${my_model_name}/Model"/>
 		<attribute name="Class-Path" value="sphinx4.jar"/>
              </manifest>
         </jar>
 	<delete includeEmptyDirs="true">
-            <fileset dir="${build_model_dir}" includes="**"
+            <fileset dir="${build_model_dir}/${my_model_name}" includes="**"
 	             excludes="**/*.class"/>
         </delete>
     </target>
