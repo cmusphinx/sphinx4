@@ -26,5 +26,6 @@
 
 ./runTest ../performance/an4 an4_words_flat_unigram
 ./runTest ../performance/an4 an4_words_flat_unigram_fst
+./runTest ../performance/hub4 hub4_trigram
 
 touch ./.testDone
