@@ -79,8 +79,8 @@ public class BatchDecoder {
 
 	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 	inputDataType = props.getString(PROP_INPUT_TYPE, "audio");
-	int skip = props.getInt(PROP_SKIP, 0);
-	whichBatch = props.getInt(PROP_WHICH_BATCH, 1);
+	skip = props.getInt(PROP_SKIP, 0);
+	whichBatch = props.getInt(PROP_WHICH_BATCH, 0);
 	totalBatches = props.getInt(PROP_TOTAL_BATCHES, 1);
 
 	if (inputDataType.equals("audio")) {
