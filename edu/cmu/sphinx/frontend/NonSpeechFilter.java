@@ -63,15 +63,15 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
         if (cepstrum != null) {
             if (cepstrum.getSignal().equals(Signal.UTTERANCE_START)) {
                 Cepstrum utteranceStart = cepstrum;
-                // remove all the Cepstrum from UTTERANCE_START
+                // read (and discard) all the Cepstrum from UTTERANCE_START
                 // until we hit a SPEECH_START
-                readUtil(Signal.SPEECH_START);
+                readUntil(Signal.SPEECH_START);
                 cepstrum = utteranceStart;
                 
             } else if (cepstrum.getSignal().equals(Signal.SPEECH_END)) {
-                // remove all the Cepstrum from SPEECH_END
+                // read (and discard) all the Cepstrum from SPEECH_END
                 // until we hit a UTTERANCE_END
-                cepstrum = readUtil(Signal.UTTERANCE_END);
+                cepstrum = readUntil(Signal.UTTERANCE_END);
             }
         }
 
@@ -89,7 +89,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
      *
      * @return the last Cepstrum removed
      */
-    private Cepstrum readUtil(Signal signal) throws IOException {
+    private Cepstrum readUntil(Signal signal) throws IOException {
         Cepstrum cepstrum = null;
         do {
             cepstrum = predecessor.getCepstrum();
