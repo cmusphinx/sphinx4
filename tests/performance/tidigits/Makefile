@@ -74,8 +74,6 @@ all::
 #
 ##########################################################################
 
-
-
 # The full TIDGITS test.  Takes a long long time to run
 
 tidigits:
@@ -324,4 +322,15 @@ prune_test2:
 	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1e-100\
 	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props \
 	./tidigits.batch
+
+
+
+
+# This test target is used to test for decoding from cepstra files.
+# "one.batch" should contain a list of cepstra files.
+
+decode_cepstra:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.inputDataType=cepstrum \
+	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props one.batch
 
