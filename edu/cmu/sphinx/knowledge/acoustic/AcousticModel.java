@@ -76,22 +76,6 @@ public class AcousticModel {
 
 
     /**
-     * The save format for the acoustic model data. Current supported
-     * formats are:
-     *
-     *  sphinx3_ascii
-     *  sphinx3_binary
-     */
-    public final static String PROP_FORMAT_SAVE = PROP_PREFIX + "format.save";
-
-
-    /**
-     * The default value of PROP_FORMAT_SAVE.
-     */
-    public final static String PROP_FORMAT_SAVE_DEFAULT = "sphinx3.binary";
-
-
-    /**
      * The directory where the acoustic model data can be found.
      */
     public final static String PROP_LOCATION = PROP_PREFIX + "location";
@@ -235,9 +219,22 @@ public class AcousticModel {
 
 
     /**
+     * Transition probability floor.
+     */
+    public final static String PROP_TP_FLOOR = PROP_PREFIX + 
+	"transitionProbabilityFloor";
+
+
+    /**
+     * transition probability floor default value.
+     */
+    public final static float PROP_TP_FLOOR_DEFAULT = 0.0001f;
+
+
+    /**
      * Model load timer
      */
-    private final static String TIMER_LOAD = "AM_Load";
+    protected final static String TIMER_LOAD = "AM_Load";
 
 
     /**
@@ -247,13 +244,13 @@ public class AcousticModel {
 	    Logger.getLogger(PROP_PREFIX + "AcousticModel");
 
 
-    private String name;
-    private String context;
-    private Loader loader;
+    protected String name;
+    protected String context;
+    protected Loader loader;
     private boolean useComposites = false;
 
-    transient private SphinxProperties props;
-    transient private Timer loadTimer;
+    transient protected SphinxProperties props;
+    transient protected Timer loadTimer;
     transient private Map compositeSenoneSequenceCache = new HashMap();
 
 
@@ -339,7 +336,7 @@ public class AcousticModel {
      *
      * @return the key
      */
-    private static String getModelKey(String name, String context) {
+    protected static String getModelKey(String name, String context) {
 	if (name == null) {
 	    return context;
 	} else {
@@ -424,7 +421,13 @@ public class AcousticModel {
 	throws IOException, FileNotFoundException {
 	this(null, context);
     }
-
+    
+    /**
+     * Null constructor, just because we have another class that
+     * extends this one.
+     */
+    protected AcousticModel() {
+    }
 
     /**
      * Returns the name of this AcousticModel, or null if it has no name.
@@ -779,7 +782,7 @@ public class AcousticModel {
      * @throws IOException if the model could not be loaded
      * @throws FileNotFoundException if the model does not exist
      */
-    private void load() throws IOException, FileNotFoundException {
+    protected void load() throws IOException, FileNotFoundException {
 	String formatProp = PROP_FORMAT;
 	if (name != null) {
 	    formatProp = PROP_PREFIX + name + ".format";
@@ -798,36 +801,9 @@ public class AcousticModel {
 
     
     /**
-     * Saves the acoustic model with a given name and format
-     *
-     * @param name the name of the acoustic model
-     *
-     * @throws IOException if the model could not be loaded
-     * @throws FileNotFoundException if the model does not exist
-     */
-    public void save(String name) throws IOException, FileNotFoundException {
-	Saver saver;
-
-	String formatProp = PROP_FORMAT_SAVE;
-	if (name != null) {
-	    formatProp = PROP_PREFIX + name + ".format.save";
-	}
-	String format = props.getString(formatProp, PROP_FORMAT_SAVE_DEFAULT);
-
-        if (format.equals("sphinx3.ascii")) {
-            saver = new Sphinx3Saver(name, props, false, loader);
-        } else if (format.equals("sphinx3.binary")) {
-            saver = new Sphinx3Saver(name, props, true, loader);
-        }  else { // add new saving code here.
-            saver = null;
-            logger.severe("Unsupported acoustic model format " + format);
-	}
-    }
-
-    /**
      * Dumps information about this model to the logger
      */
-    private void logInfo() {
+    protected void logInfo() {
         if (loader != null) {
             loader.logInfo();
         }
