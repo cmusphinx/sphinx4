@@ -12,7 +12,7 @@ GTAR=/pkg/gnu/bin/tar
 
 ##########################################################################
 
-PUSH_DEST = /home/groups/c/cm/cmusphinx/htdocs/sphinx3j
+PUSH_DEST = /home/groups/c/cm/cmusphinx/htdocs/sphinx4
 include ${TOP}/build/Makefile.config
 
 # Any extra actions to perform when cleaning
@@ -34,11 +34,11 @@ javadocs_private:
 
 push_javadocs:
 	$(MAKE) javadocs
-	$(GTAR) cfC /tmp/sphinx3jdocs.tar $(DOC_DEST) .
-	sscp /tmp/sphinx3jdocs.tar
-	sshh tar xfC sphinx3jdocs.tar $(PUSH_DEST)
-	rm /tmp/sphinx3jdocs.tar
+	$(GTAR) cfC /tmp/sphinx4docs.tar $(DOC_DEST) .
+	sscp /tmp/sphinx4docs.tar
+	sshh tar xfC sphinx4docs.tar $(PUSH_DEST)
+	rm /tmp/sphinx4docs.tar
 
 stest:
-	$(GTAR) cfC /tmp/sphinx3jdocs.tar $(DOC_DEST) .
-	$(GTAR) xfC /tmp/sphinx3jdocs.tar /home/plamere/stest
+	$(GTAR) cfC /tmp/sphinx4docs.tar $(DOC_DEST) .
+	$(GTAR) xfC /tmp/sphinx4docs.tar /home/plamere/stest

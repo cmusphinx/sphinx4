@@ -29,3 +29,7 @@ connected-grammar: all
 
 search: all
 	$(JAVA_CMD) tests.search.SimpleSearchTest simple_search.props
+
+alpha-dict: all
+	$(JAVA_CMD) tests.search.AlphaDictionaryTest alpha_dictionary.props
+
