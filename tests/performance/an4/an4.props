@@ -146,4 +146,4 @@ edu.cmu.sphinx.search.Linguist.autoLoopSilence=false
 edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false
 
 edu.cmu.sphinx.search.validateResults=false
-edu.cmu.sphinx.search.Linguist.showCompilationProgress=true
+edu.cmu.sphinx.search.Linguist.showCompilationProgress=false
