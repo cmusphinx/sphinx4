@@ -12,10 +12,8 @@
 package edu.cmu.sphinx.util;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,17 +32,7 @@ import java.util.StringTokenizer;
  */
 public class GapInsertionDetector {
 
-    /**
-     * SphinxProperty specifying whether to print out the gap
-     * insertion errors.
-     */
-    public static final String PROP_SHOW_GAP_INSERTIONS =
-        "edu.cmu.sphinx.util.GapInsertionDetector.showGapInsertions";
 
-    /**
-     * Default value for PROP_SHOW_GAP_INSERTIONS.
-     */
-    public static final boolean PROP_SHOW_GAP_INSERTIONS_DEFAULT = false;
     
     private ReferenceFile referenceFile;
     private HypothesisFile hypothesisFile;
@@ -58,14 +46,13 @@ public class GapInsertionDetector {
      *
      * @param referenceFile the file of references
      * @param hypothesisFile the file of hypotheses
+     * @param showGapInsertions if true show gap insertions.
      */
-    public GapInsertionDetector
-        (SphinxProperties props, String referenceFile, String hypothesisFile)
+    public GapInsertionDetector(String referenceFile, String hypothesisFile,
+             boolean showGapInsertions)
         throws IOException {
         this.referenceFile = new ReferenceFile(referenceFile);
         this.hypothesisFile = new HypothesisFile(hypothesisFile);
-        showGapInsertions = props.getBoolean
-            (PROP_SHOW_GAP_INSERTIONS, PROP_SHOW_GAP_INSERTIONS_DEFAULT);
     }
 
     /**
@@ -150,23 +137,17 @@ public class GapInsertionDetector {
      */
     public static void main(String[] argv) {
 
-        if (argv.length < 3) {
-            System.out.println("Usage: java GapInsertionDetector <propsFile>" +
+        if (argv.length < 2) {
+            System.out.println("Usage: java GapInsertionDetector " +
                                "<referenceFile> <hypothesisFile>");
         } 
         try {
             String context = "gid";
-            String propsFile = argv[0];
-            String referenceFile = argv[1];
-            String hypothesisFile = argv[2];
+            String referenceFile = argv[0];
+            String hypothesisFile = argv[1];
 
-            String pwd = System.getProperty("user.dir");
-            SphinxProperties.initContext
-                (context, new URL("file://" + pwd + File.separatorChar + 
-                                  propsFile));
             GapInsertionDetector gid = new GapInsertionDetector
-                (SphinxProperties.getSphinxProperties(context),
-                 referenceFile, hypothesisFile);
+                (referenceFile, hypothesisFile, true);
             System.out.println("# of gap insertions: " + gid.detect());
         } catch (Exception e) {
             e.printStackTrace();
