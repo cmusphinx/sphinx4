@@ -32,13 +32,14 @@ import edu.cmu.sphinx.util.LogMath;
 
 public class Sausage implements ConfidenceResult {
     protected List confusionSets;
+    private LogMath logMath;
     
     /**
      * Construct a new sausage.
      * 
      * @param size The number of word slots in the sausage
      */
-    public Sausage(int size) {
+    public Sausage(int size, LogMath logMath) {
         confusionSets = new Vector(size);
         for (int i=0;i<size;i++) {
             confusionSets.add(new ConfusionSet());
@@ -95,8 +96,9 @@ public class Sausage implements ConfidenceResult {
         getConfusionSet(position).addWordHypothesis(word);
     }
 
-    public void addWordHypothesis(int position, String word, double confidence) {
-        WordResult wr = new SimpleWordResult(word, confidence);
+    public void addWordHypothesis(int position, String word, 
+                                  double confidence) {
+        WordResult wr = new SimpleWordResult(word, confidence, logMath);
         addWordHypothesis(position,wr);
     }
     
@@ -104,7 +106,7 @@ public class Sausage implements ConfidenceResult {
      * @see edu.cmu.sphinx.result.ConfidenceResult#getBestHypothesis()
      */
     public Path getBestHypothesis() {
-        WordResultPath path = new WordResultPath();
+        WordResultPath path = new WordResultPath(logMath);
         Iterator i = confusionSetIterator();
         while (i.hasNext()) {
             ConfusionSet cs = (ConfusionSet)i.next();
