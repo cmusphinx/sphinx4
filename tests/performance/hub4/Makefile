@@ -188,3 +188,26 @@ merl:
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
 	edu.cmu.sphinx.decoder.BatchDecoder ./merl.props   \
 	$(MERL_BATCH)
+
+
+##########################################################################
+#
+# Live mode unsupervised HUB-4 tests.
+#
+##########################################################################
+
+hub4_trigram_live:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.frontend.endpoint.SpeechMarker.speechTrailer=50 \
+	-Dedu.cmu.sphinx.frontend.bytesPerAudioFrame=320 \
+	-Dedu.cmu.sphinx.frontend.keepAudioReference=false \
+	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
+	-Dedu.cmu.sphinx.frontend.featureExtractor=edu.cmu.sphinx.frontend.LiveFeatureExtractor \
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.LevelTracker \
+	-Dedu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=10 \
+	-Dedu.cmu.sphinx.frontend.endpoint.LevelTracker.debug=false \
+	-Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType=edu.cmu.sphinx.decoder.search.SortingActiveList \
+	-Dedu.cmu.sphinx.frontend.util.ConcatFileAudioSource.silenceFile=/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw \
+	-Dedu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature=true \
+	-Dedu.cmu.sphinx.decoder.LivePretendDecoder.referenceTranscript=/lab/speech/sphinx4/data/hub4/eval99/bn99en_1.stm \
+	edu.cmu.sphinx.decoder.LivePretendDecoder ./hub4.wpbfsm.props /lab/speech/sphinx4/data/hub4/eval99/unsupervised/bn99en_1.batch
