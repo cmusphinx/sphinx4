@@ -292,6 +292,7 @@ public class GrammarNode implements Serializable {
             visitedNodes.add(this);
 	    out.println("   node: { title: "  + getGDLID(this) +  
 			" label: "+ getGDLLabel(this) + 
+                        " shape: " + getGDLShape(this) +
 			" color: " + getGDLColor(this) + "}");
             GrammarArc[] arcs = getSuccessors();
             for (int i = 0; i < arcs.length; i++) {
@@ -327,6 +328,17 @@ public class GrammarNode implements Serializable {
     String getGDLLabel(GrammarNode node) {
 	String label = node.isEmpty() ? "" : node.getWord().getSpelling();
         return "\"" + label + "\"";
+    }
+
+    /**
+     * Given a node, returns a GDL shape for the node
+     *
+     * @param node the node 
+     *
+     * @return a gdl shape for the node
+     */
+    String getGDLShape(GrammarNode node) {
+	return node.isEmpty() ? "circle" : "box";
     }
 
 
