@@ -55,7 +55,7 @@ import java.util.*;
  * When the energy level is above <code>startHigh</code> for
  * <code>startWindow</code> number of frames, then speech has started.
  * Speech start will be <code>startOffset</code> number of frames
- * before speech went above <code>startLow</code>.
+ * before speech went to or above <code>startLow</code>.
  *
  * <p>When the energy level is below <code>endLow</code> for
  * <code>endWindow</code> number of frames, then speech has ended.
@@ -287,7 +287,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
         setProperties();
         this.predecessor = predecessor;
         this.outputQueue = new LinkedList();
-        plotter = new EnergyPlotter(20);
+        plotter = new EnergyPlotter(props);
         reset();
     }
 
@@ -413,7 +413,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
                 if (cepstrum.getEnergy() < startLow || 
                     cepstrum.getEnergy() < endLow) {
                     processLowEnergyCepstrum(cepstrum);
-                } else if (startLow < cepstrum.getEnergy() &&
+                } else if (startLow <= cepstrum.getEnergy() &&
                            cepstrum.getEnergy() <= startHigh) {
                     processMediumEnergyCepstrum(cepstrum);
                 } else if (cepstrum.getEnergy() > startHigh) {
@@ -436,6 +436,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
             // If we in a speech segment, but encounters a low energy
             // cepstrum, this can be the end of the speech segment.
             // This can be confirmed by (endLowFrames > endWindow).
+
             if (endLowFrames == endOffset) {
                 endOffsetFrame = cepstrum;
             } else if (endLowFrames > endWindow) {
@@ -447,7 +448,6 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
                 startHighFrames = 0;
             }
             startLowFrames++;
-                
         }
 
         if (cepstrum.getEnergy() < startLow) {
@@ -462,14 +462,16 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
      * @param cepstrum the medium energy Cepstrum to process
      */
     private void processMediumEnergyCepstrum(Cepstrum cepstrum) {
-        if (location == BELOW_START_LOW) {
+        if (location == BELOW_START_LOW && !inSpeech) {
             if (lastStartLowFrame != null) {
                 // If we are below startLow, and lastStartLowFrame
                 // was not null, we just had a dropout (or spike).
                 // If the dropout was longer than maxDropout,
                 // then the lastStartLowFrame should be reset.
+
                 if (maxDropout < startLowFrames &&
                     outputQueue.size() > 0) {
+                    // first cepstrum in outputQueue is the most recent
                     setLastStartLowFrame((Cepstrum) outputQueue.getFirst());
                 }
             } else { // if lastStartLowFrame == null
@@ -477,6 +479,7 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
                     // if this is the first frame
                     setLastStartLowFrame(cepstrum);
                 } else if (numCepstra > 1) {
+                    // first cepstrum in outputQueue is the most recent
                     setLastStartLowFrame((Cepstrum) outputQueue.getFirst());
                 }
             }
@@ -498,9 +501,9 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
                 setLastStartLowFrame((Cepstrum) outputQueue.getFirst());
             }
         }
-        
         // if energy is greater than startHigh for 
         // more than startWindow frames
+
         if (startHighFrames > startWindow) {
             if (!inSpeech) {
                 speechStart();
@@ -568,7 +571,9 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
         int index = outputQueue.indexOf(lastStartLowFrame);
 
         // Go back startOffset frames, but check if we have hit
-        // an UTTERANCE_START, in which case we should stop going back.
+        // an UTTERANCE_START or SPEECH_END, in which case we should
+        // stop going back.
+        
         if (index > -1) {
             int i = 0;
             for (ListIterator iterator = outputQueue.listIterator(index);
@@ -594,10 +599,12 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
                 ("No frames under startLow so far, " +
                  "will insert SPEECH_START right after UTTERANCE_START.");
             
-            for (ListIterator i = outputQueue.listIterator(); i.hasNext();) {
+            int c = 0;
+            for (ListIterator i = outputQueue.listIterator(); 
+                 i.hasNext(); c++) {
                 Cepstrum cepstrum = (Cepstrum) i.next();
                 if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
-                    index = outputQueue.indexOf(cepstrum);
+                    index = c;
                 }
             }
         }
