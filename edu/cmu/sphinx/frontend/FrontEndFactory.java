@@ -70,15 +70,15 @@ public class FrontEndFactory {
     /**
      * Returns a front end with the given name.
      *
-     * @param name the name of the acoustic model to get
      * @param props the SphinxProperty to use
+     * @param name the name of the front end to get
      *
      * @return the last DataProcessor of the front end with the given name
      *
      * @throws InstantiationException if there is an error initializing
      *                                a new front end
      */
-    public static FrontEnd getFrontEnd(String name, SphinxProperties props)
+    public static FrontEnd getFrontEnd(SphinxProperties props, String name)
         throws InstantiationException {
         String[] frontEndNames = getFrontEndNames(props);
         boolean exists = false;

@@ -68,7 +68,7 @@ public class ClientFrontEndImpl implements ClientFrontEnd {
         streamAudioSource = new StreamDataSource();
         streamAudioSource.initialize("StreamDataSource", null, props, null);
 
-        frontend = FrontEndFactory.getFrontEnd("client", props);
+        frontend = FrontEndFactory.getFrontEnd(props, "client");
         frontend.setDataSource(streamAudioSource);
 
         serverAddress = props.getString(PROP_SERVER, PROP_SERVER_DEFAULT);

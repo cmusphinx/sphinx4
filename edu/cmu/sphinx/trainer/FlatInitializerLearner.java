@@ -120,7 +120,7 @@ public class FlatInitializerLearner implements Learner {
 	    FrontEnd fe = null;
 	    for (Iterator i = names.iterator(); i.hasNext(); ) {
 		String name = (String) i.next();
-		fe = FrontEndFactory.getFrontEnd(name, props);
+		fe = FrontEndFactory.getFrontEnd(props, name);
 	    }
 	    return fe;
         } catch (InstantiationException ie) {

@@ -146,7 +146,7 @@ public class BaumWelchLearner implements Learner {
 	    assert names.size() == 1;
 	    for (Iterator i = names.iterator(); i.hasNext();) {
 		String feName = (String) i.next();
-		fe = FrontEndFactory.getFrontEnd(feName, props);
+		fe = FrontEndFactory.getFrontEnd(props, feName);
 	    }
 	    return fe;
         } catch (InstantiationException ie) {

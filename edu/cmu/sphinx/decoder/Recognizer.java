@@ -396,7 +396,7 @@ public class Recognizer {
         assert frontEndNames.size() == 1;
         for (Iterator i = frontEndNames.iterator(); i.hasNext(); ) {
             String frontEndName = (String) i.next();
-            frontEnd = FrontEndFactory.getFrontEnd(frontEndName, props);
+            frontEnd = FrontEndFactory.getFrontEnd(props, frontEndName);
             if (frontEnd == null) {
                 throw new Error
                     ("Cannot initialize front end: " + frontEndName);
