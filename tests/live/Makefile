@@ -102,5 +102,4 @@ live-alpha: all
 	-DshowPartialResults=true \
 	-Dedu.cmu.sphinx.frontend.cmn.live=true \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
-	-D
 	tests.live.Live decoders.list
