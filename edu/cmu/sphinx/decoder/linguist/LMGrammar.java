@@ -15,6 +15,7 @@ package edu.cmu.sphinx.decoder.linguist;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.knowledge.language.WordSequence;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
@@ -94,6 +95,8 @@ public class LMGrammar extends Grammar {
             throw new Error("No sentence start found in language model");
         }
 
+        System.out.println("In LMGrammar");
+
         for (Iterator i = nodes.iterator(); i.hasNext(); ) {
             GrammarNode prevNode = (GrammarNode) i.next();
 
@@ -104,17 +107,21 @@ public class LMGrammar extends Grammar {
 
             for (Iterator j = nodes.iterator(); j.hasNext(); ) {
                 GrammarNode nextNode = (GrammarNode) j.next();
-                WordSequence wordSequence = new WordSequence( 
-                        prevNode.getWord().getSpelling(),
-                        nextNode.getWord().getSpelling());
+                String prevWord = prevNode.getWord().getSpelling();
+                String nextWord = nextNode.getWord().getSpelling();
+                int[] wordIDs = 
+                    {getDictionary().getWordID(prevWord),
+                     getDictionary().getWordID(nextWord)};
 
-                float logProbability = 
-                    languageModel.getProbability(wordSequence);
+                float logProbability = languageModel.getProbability
+                    (WordSequence.getWordSequence(wordIDs));
 
                 prevNode.add(nextNode,  logProbability);
 
             }
         }
+        System.out.println("Out of LMGrammar");
+
         Timer.stop("LMGrammar.create");
 	return firstNode;
     }
