@@ -128,7 +128,6 @@ public class LexTreeLinguist implements  Linguist {
     private HMMPool hmmPool;
     private HMMTree hmmTree;
     private Dictionary dictionary;
-    private final static SearchStateArc[] EMPTY_ARC = new SearchStateArc[0];
     
     private float logOne;
     private int silenceID;
@@ -279,9 +278,10 @@ public class LexTreeLinguist implements  Linguist {
      * @return the initial language state
      */
     public SearchState getInitialSearchState() {
-        return new LexTreeState(hmmTree.getInitialNode(),
+        WordNode node = hmmTree.getInitialNode();
+        return new LexTreeWordState(node,
               WordSequence.getWordSequence(sentenceStartWordArray).trim
-               (languageModel.getMaxDepth() - 1), logOne, logOne, logOne);
+               (languageModel.getMaxDepth() - 1), logOne);
     }
 
 
@@ -519,7 +519,7 @@ public class LexTreeLinguist implements  Linguist {
           * @return the search state for the wordNode
           */
          private SearchStateArc createWordStateArc(WordNode wordNode) {
-	     // System.out.println("CWSA " + wordNode);
+	      // System.out.println("CWSA " + wordNode);
             float logProbability = logOne;
             Word nextWord = wordNode.getWord();
             WordSequence nextWordSequence = wordSequence;
@@ -548,7 +548,7 @@ public class LexTreeLinguist implements  Linguist {
           *
           * @return the search state
           */
-         private SearchStateArc createUnitStateArc(HMMNode hmmNode) {
+         SearchStateArc createUnitStateArc(HMMNode hmmNode) {
 	     // System.out.println("CUSA " + hmmNode);
              float insertionProbability =
                  calculateInsertionProbability(hmmNode);
@@ -834,6 +834,33 @@ public class LexTreeLinguist implements  Linguist {
           */
          public boolean isFinal() {
              return getPronunciation().getWord().equals(sentenceEndWord);
+         }
+
+         /**
+          * Returns the list of successors to this state
+          *
+          * @return a list of SearchState objects
+          */
+         public SearchStateArc[] getSuccessors() {
+             SearchStateArc[] arcs = null;
+             int index = 0;
+             List list = new ArrayList();
+             WordNode wordNode = (WordNode) getNode();
+             Collection baseList  = wordNode.getRC();
+             Unit left = wordNode.getLastUnit();
+
+             for (Iterator i = baseList.iterator(); i.hasNext(); ) {
+                 Unit base = (Unit) i.next();
+                 Collection epList = hmmTree.getEntryPoint(left, base);
+                 list.addAll(epList);
+             }
+
+             arcs = new SearchStateArc[list.size()];
+             for (Iterator i = list.iterator(); i.hasNext(); ) {
+                 HMMNode node = (HMMNode) i.next();
+                 arcs[index++] = createUnitStateArc(node);
+             }
+             return arcs;
          }
     }
 

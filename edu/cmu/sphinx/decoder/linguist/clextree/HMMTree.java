@@ -42,7 +42,7 @@ import java.util.HashSet;
  */
 class HMMTree {
     private HMMPool hmmPool;
-    private Node initialNode;
+    private WordNode initialNode;
     private Dictionary dictionary;
 
     private LanguageModel lm;
@@ -50,7 +50,6 @@ class HMMTree {
     private boolean addSilenceWord = true; // TODO: Property for this?
     private Set entryPoints = new HashSet();
     private Set exitPoints = new HashSet();
-    private Set wordSet = new HashSet();
     private Set allWords = null;
     private EntryPointTable entryPointTable;
     private boolean debug = false;
@@ -79,6 +78,21 @@ class HMMTree {
     }
 
 
+
+    /**
+     * Given a base unit and a left context, return the
+     * set of entry points into the lex tree
+     *
+     * @param lc the left context
+     * @param base the center unit
+     *
+     * @return the set of entry points
+     */
+    public Collection getEntryPoint(Unit lc, Unit base) {
+        EntryPoint ep = entryPointTable.getEntryPoint(base);
+        return ep.getEntryPointsFromLeftContext(lc).getSuccessors();
+    }
+
     /**
      * Compiles the vocabulary into an HMM Tree
      */
@@ -86,13 +100,8 @@ class HMMTree {
         collectEntryAndExitUnits();
         entryPointTable = new EntryPointTable(entryPoints);
         addWords();
-
 	entryPointTable.createEntryPointMaps();
-	connectWords();
         freeze();
-        hmmPool = null;
-        dictionary = null;
-        lm = null;
     }
 
     /**
@@ -147,51 +156,6 @@ class HMMTree {
         }
     }
 
-    /**
-     * Connects all of the words to the beginning of the lex tree
-     */
-    private void connectWords() {
-	for (Iterator i = wordSet.iterator(); i.hasNext(); ) {
-	    WordNode wordNode = (WordNode) i.next();
-            // don't connect the sentence ending word
-            if (wordNode.getWord() != dictionary.getSentenceEndWord()) {
-                connectWordToStart(wordNode);
-            } 
-	}
-    }
-
-    /**
-     * Connects a single word to the beginning of the lex tree
-     *
-     * @param word the word to connect.
-     */
-    private void connectWordToStart(WordNode word) {
-    // we have a word represented by the given tail node. This word 
-    // needs to connect up with all of the possible entry points, 
-    // while respecting the left and base context.
-
-    // NOTE: there is likely some large opportunity for sharing here
-    // that will greatly reduce memory requirements. Coming soon
-	int count = 0;
-	Unit lc = word.getLastUnit();
-	for (Iterator i = word.getRC().iterator(); i.hasNext(); ) {
-	    Unit nextBase = (Unit) i.next();
-	    EntryPoint ep = entryPointTable.getEntryPoint(nextBase);
-	    Node entryPointNode = ep.getEntryPointsFromLeftContext(lc);
-
-	    for (Iterator j = entryPointNode.getSuccessors().iterator(); 
-		    j.hasNext(); ) {
-		HMMNode epNode = (HMMNode) j.next();
-		word.addSuccessor(epNode);
-		count++;
-	    }
-	}
-	if (false) {
-	    System.out.println("    Added " + count + " tails to " 
-		+ word.getPronunciation());
-	}
-    }
-
 
     /**
      * Called after the lex tree is built. Frees all temporary
@@ -199,8 +163,13 @@ class HMMTree {
      * the lex tree.
      */
     private void freeze() {
-        // TODO: write me
-        // This is an opportunity for space optimizing 
+        entryPointTable.freeze();
+        hmmPool = null;
+        dictionary = null;
+        lm = null;
+        entryPoints = null;
+        exitPoints = null;
+        allWords = null;
     }
 
     /**
@@ -293,7 +262,7 @@ class HMMTree {
                 HMMNode actualTailNode = 
 		    (HMMNode) penultimateNode.addSuccessor(hmm);
                 actualTailNode.addRC(rc);
-                wordSet.add(actualTailNode.addSuccessor(pronunciation));
+                actualTailNode.addSuccessor(pronunciation);
             }
         } else {
 	    ep.addSingleUnitWord(pronunciation);
@@ -338,9 +307,7 @@ class HMMTree {
      *
      * @return the initial lex node
      */
-    Node getInitialNode() {
-        EntryPoint ep = entryPointTable.getEntryPoint(Unit.SILENCE);
-        // return ep.getEntryPointsFromLeftContext(Unit.SILENCE);
+    WordNode getInitialNode() {
         return initialNode;
     }
 
@@ -390,6 +357,15 @@ class HMMTree {
 	    }
 	}
 
+        /**
+         * Freezes the entry point table
+         */
+	void freeze() {
+	    for (Iterator i = entryPoints.values().iterator(); i.hasNext(); ) {
+		EntryPoint ep = (EntryPoint) i.next();
+		ep.freeze();
+	    }
+	}
 
         /**
          * Dumps the entry point table
@@ -437,6 +413,16 @@ class HMMTree {
 	Node getEntryPointsFromLeftContext(Unit leftContext) {
 	    return (Node) unitToEntryPointMap.get(leftContext);
 	}
+
+
+        /**
+         * Once we have built the full entry point we can
+         * eliminate some fields
+         */
+        void freeze() {
+            singleUnitWords = null;
+            rcSet = null;
+        }
 
         /**
          * Gets the base node for this entry point
@@ -534,7 +520,6 @@ class HMMTree {
                             wordNode = (WordNode) tailNode.addSuccessor(p);
                         }
                         nodeCount++;
-                        wordSet.add(wordNode);
 		    }
 		}
 	    }
@@ -558,8 +543,6 @@ class HMMTree {
 	    }
 	}
 
-
-
         /**
          * Dumps the entry point
          */
@@ -581,7 +564,6 @@ class HMMTree {
 	    System.out.println();
 	}
     }
-
 }
 
 /**
@@ -749,6 +731,25 @@ class WordNode extends Node {
     Unit getLastUnit() {
 	Unit[] units = pronunciation.getUnits();
 	return units[units.length - 1];
+    }
+
+    /**
+     * Returns the successors for this node
+     *
+     * @return the set of successor nodes
+     */
+    Collection getSuccessors() {
+        throw new Error("Not supported");
+    }
+
+
+    /**
+     * Gets the parent of this word node
+     *
+     * @return the parent
+     */
+    HMMNode getParent() {
+        return parent;
     }
 
 
