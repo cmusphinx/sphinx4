@@ -127,6 +127,16 @@ public class Feature extends Data {
 
 
     /**
+     * Sets the ID of this Feature.
+     *
+     * @param id the ID
+     */
+    public void setID(int id) {
+        this.ID = id;
+    }
+
+
+    /**
      * Sets the type name of this Feature. It should be the name
      * of the acoustic model used. This is the only mutable field in
      * this class. It can only be set once, subsequent calls to this
@@ -150,10 +160,28 @@ public class Feature extends Data {
      */
     public String toString() {
         if (featureData != null) {
-            return ("Feature: " + ID + ", data: " + getType());
-	    // + Util.floatArrayToString(featureData));
+            // return ("Feature: " + ID + ", data: " + getType());
+	    return (ID + " " + Util.floatArrayToString(featureData));
         } else {
             return ("Feature: " + getSignal().toString());
+        }
+    }
+
+
+    /**
+     * Returns a duplicate of this Feature object.
+     *
+     * @return a duplicate of this Feature object
+     */
+    public Object clone() {
+        if (hasContent()) {
+            Feature feature = (Feature) super.clone();
+            float[] newData = (float[]) featureData.clone();
+            feature.featureData = newData;
+            return feature;
+        } else {
+            Feature feature = (Feature) super.clone();
+            return feature;
         }
     }
 }
