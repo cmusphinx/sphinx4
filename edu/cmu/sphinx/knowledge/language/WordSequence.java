@@ -214,7 +214,8 @@ public class WordSequence {
 
 
     /**
-     * Returns a string represntation of this word sequence
+     * Returns a string represntation of this word sequence. The format is:
+     * [this][is][a].
      *
      * @return the string
      */
@@ -227,6 +228,25 @@ public class WordSequence {
 	}
 	return sb.toString();
     }
+
+    
+    /**
+     * Returns an English text form of this word sequence,
+     * e.g., "this is a".
+     *
+     * @return the English text form
+     */
+    public String toText() {
+	StringBuffer sb = new StringBuffer(50);
+	for (int i = 0; i < words.length; i++) {
+	    if (i != 0) {
+		sb.append(" ");
+	    }
+	    sb.append(words[i]);
+	}
+	return sb.toString();
+    }
+
 
     /**
      * Calculates the hashcode for this object
