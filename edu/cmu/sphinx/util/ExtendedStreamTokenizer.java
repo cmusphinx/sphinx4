@@ -106,7 +106,7 @@ public class ExtendedStreamTokenizer {
 	st = new StreamTokenizer(reader);
 	st.resetSyntax();
 	st.whitespaceChars(0, 32);
-	st.wordChars(33, 127);
+	st.wordChars(33, 255);
 	st.eolIsSignificant(eolIsSignificant);
 	putbackList = new ArrayList();
     }        
