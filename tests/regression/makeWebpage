@@ -148,28 +148,28 @@ function getSpeedStatus(testName, count, _slowThreshold, _fastThreshold) {
   prevSpeed = getSpeed(testName, count - 1);
 
   if (thisSpeed == "N/A") {
-      return "<td bgcolor=#ffcccc>" "N/A" " X Realtime</td>";
+      return "<td bgcolor=#ffcccc>" "N/A" "</td>";
   }
 
   if (prevSpeed == "N/A") {
-      return "<td>" thisSpeed " X Realtime</td>";
+      return "<td>" thisSpeed "</td>";
   }
 
   if (thisSpeed == prevSpeed) {
-      return "<td>" thisSpeed " X Realtime</td>";
+      return "<td>" thisSpeed "</td>";
   }
 
-  _slowThreshold = prevSpeed + prevSpeed * .0;
-  _fastThreshold = prevSpeed - prevSpeed * .0;
+  _slowThreshold = prevSpeed + prevSpeed * .1;
+  _fastThreshold = prevSpeed - prevSpeed * .1;
 
   if (thisSpeed > _slowThreshold) {
-      return "<td bgcolor=#ffcccc>" thisSpeed " X Realtime</td>";
+      return "<td bgcolor=#ffcccc>" thisSpeed "</td>";
   }
 
   if (thisSpeed  < _fastThreshold) {
-      return "<td bgcolor=#99ff99>" thisSpeed " X Realtime</td>";
+      return "<td bgcolor=#99ff99>" thisSpeed "</td>";
   }
-  return "OK";
+      return "<td>" thisSpeed "</td>";
 }
 
 ####
@@ -228,8 +228,8 @@ function printTestResults(testName) {
     print "<tr>";
       print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
       print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
-      print "<td valign=top bgcolor=#ccffff><b>Accuracy (WER)<br> </b></td>";
-      print "<td valign=top bgcolor=#ccffff><b>Speed<br> </b></td>";
+      print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
+      print "<td valign=top bgcolor=#ccffff><b>Speed (X Realtime)<br> </b></td>";
 
       for (i = 1; i <= testCount[testName]; i++) {
          printSingleTest(testName, i);
@@ -237,7 +237,6 @@ function printTestResults(testName) {
     print "</tr>";
     print "<tbody>";
     print "</table>";
-    print "<br>";
     print "<br>";
 }
 
@@ -393,6 +392,24 @@ function printFooter() {
     print "</html>";
 }
 
+
+function printKey() {
+    print("<hr>");
+    print("</table>");
+    print "<br>";
+    print("<table cellpadding=2 cellspacing=2 border=0 ");
+    print("align=center>");
+    print("<tr align=center>");
+    print("<td rowspan=1 colspan=2 bgcolor=#ccccff><big><b>");
+    print(" Color Key <br>"); print("</b></big></td>");
+    print("<tbody>");
+    print  "<tr><td bgcolor=#99ff99> Improved result </td>";
+    print "<td bgcolor=#ffcccc> Degraded result </td> </tr>";
+    print("</tbody>");
+    print("</table>");
+    print "<br>";
+}
+
 function printTitle() {
     print "<table cellpadding=0 cellspacing=0 border=0 width=100%";
     print "    align=center bgcolor=#ccccff>";
@@ -430,6 +447,7 @@ END {
 
     printBuildHistory();
     printMachineDescription();
+    printKey();
     printFooter();
 }
 
