@@ -17,7 +17,7 @@
     
     <property name="absoluteBeamWidth" 		value="100"/>
     <property name="wordInsertionProbability" 	value="1E-56"/>
-    <property name="silenceInsertionProbability	value="1"/>
+    <property name="silenceInsertionProbability"	value="1"/>
     <property name="languageWeight" 	value="7"/>
     
     
