@@ -16,7 +16,7 @@ package tests.frontend;
 
 import edu.cmu.sphinx.frontend.LiveCMN;
 import edu.cmu.sphinx.frontend.Feature;
-import edu.cmu.sphinx.frontend.FeatureExtractor;
+import edu.cmu.sphinx.frontend.DeltasFeatureExtractor;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer;
 import edu.cmu.sphinx.frontend.mfc.MelFilterbank;
@@ -59,7 +59,7 @@ public class FeatureExtractorTest {
             
 	    LiveCMN cmn = new LiveCMN
                 ("CMN", testName, melCepstrum);
-            FeatureExtractor extractor = new FeatureExtractor
+            DeltasFeatureExtractor extractor = new DeltasFeatureExtractor
                 ("FeatureExtractor", testName, cmn);
 
             extractor.setDump(fet.getDump());
