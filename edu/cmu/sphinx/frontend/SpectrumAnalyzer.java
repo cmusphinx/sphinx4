@@ -43,7 +43,6 @@ SpectrumSource {
 
     private AudioSource predecessor;
 
-    private int windowSize;
     private int numberFftPoints;
     private int logBase2NumberFftPoints;
 
@@ -121,25 +120,19 @@ SpectrumSource {
 	 */
 	double[] in = input.getSamples();
 
-	if (in.length != windowSize) {
-	    throw new IllegalArgumentException
-               ("Window size is incorrect: in.length == " + in.length +
-                 ", windowSize == " + windowSize);
-	}
-
-        if (numberFftPoints < windowSize) {
+        if (numberFftPoints < in.length) {
             int i = 0;
 	    for (; i < numberFftPoints; i++) {
 		inputFrame[i].set(in[i], 0.0f);
 	    }
-	    for (; i < windowSize; i++) {
+	    for (; i < in.length; i++) {
                 tempComplex.set(in[i], 0.0f);
 		inputFrame[i % numberFftPoints].addComplex
 		    (inputFrame[i % numberFftPoints], tempComplex);
 	    }
 	} else {
             int i = 0;
-	    for (; i < windowSize; i++) {
+	    for (; i < in.length; i++) {
 		inputFrame[i].set(in[i], 0.0f);
 	    }
 	    for (; i < numberFftPoints; i++) {
@@ -176,11 +169,7 @@ SpectrumSource {
      * Reads the parameters needed from the static SphinxProperties object.
      */
     private void setProperties() {
-
 	SphinxProperties props = getSphinxProperties();
-
-        int sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE,
-                                      FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
 
 	/**
 	 * Number of points in the FFT. By default, the value is 512,
@@ -192,12 +181,6 @@ SpectrumSource {
 	 */
 	numberFftPoints = props.getInt(PROP_NUMBER_FFT_POINTS,
                                        PROP_NUMBER_FFT_POINTS_DEFAULT);
-
-        float windowSizeInMs = props.getFloat
-            (Windower.PROP_WINDOW_SIZE_MS, 
-             Windower.PROP_WINDOW_SIZE_MS_DEFAULT);
-
-	windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);
     }
 
 
@@ -289,7 +272,7 @@ SpectrumSource {
         // At this point - or in the call immediatelly preceding
         // this -, we should have created a cepstrum frame with
         // whatever data came last, even if we had less than
-        // windowSize of data.
+        // window size of data.
         
         getTimer().stop();
 	
