@@ -16,7 +16,7 @@ Overview:
 
 This document contains the minutes for the meetings held to review
 the FrontEnd and Acoustic Model implementations as well as design
-the search portion of Sphinx 3J.  Like the first face-to-face, this
+the search portion of Sphinx 4.  Like the first face-to-face, this
 was a very productive two days.
 
 
@@ -24,17 +24,17 @@ Floating Point Investigation:
 ----------------------------
 
 As part of the FrontEnd testing, Philip and Evandro noticed slight
-discrepancies between Sphinx 3 and Sphinx 3J.  To determine the source
+discrepancies between Sphinx 3 and Sphinx 4.  To determine the source
 of the problem, Philip conducted a study of the differences between
 floating point operations in C vs. the Java programming language.  
-The summary of his study is in sphinx3j/doc/floatingpoint.txt.
+The summary of his study is in sphinx4/doc/floatingpoint.txt.
 
 
 Front End Review:
 ----------------
 
 Philip described the interfaces to the FrontEnd, along with some
-initial performance comparisons between Sphinx 3 and Sphinx 3J.
+initial performance comparisons between Sphinx 3 and Sphinx 4.
 
 There were a few comments on the implementation:
 
@@ -62,7 +62,7 @@ There were a few comments on the implementation:
      interface should be a FeatureFrame (an array of Features).
 
 For the initial performance comparison, things were looking pretty
-good for Sphinx 3J:  The Sphinx 3J front end was running about 10% 
+good for Sphinx 4:  The Sphinx 4 front end was running about 10% 
 faster than Sphinx 3.  The FFT module, which is where the FrontEnd
 spends about 99% of its time, was running about 17% faster than the
 Sphinx 3 FFT module.  This is great news, especially given that the
@@ -126,13 +126,13 @@ distributed a copy of "Token Passing:  a Simple Conceptual Model for
 Connected Speech Recognition Systems," by S.J. Young et al.
 
 Write-ups of the discussions regarding the search have been placed in
-sphinx3j/doc/search.txt and sphinx3j/doc/Architecture.{sdw,pdf}.
+sphinx4/doc/search.txt and sphinx4/doc/Architecture.{sdw,pdf}.
 
 
 Ping Pong Tournament:
 --------------------
 
-We held the first Sphinx 3J Ping Pong Tournament.  The format was
+We held the first Sphinx 4 Ping Pong Tournament.  The format was
 single elimination, with the initial match ups designed to let us play
 someone we hadn't played before.  The results are as follows:
 

@@ -1,7 +1,7 @@
 This file documents the performance of the Sphinx 3 frontend.
-To get the performance of the Sphinx 3j frontend:
+To get the performance of the Sphinx 4 frontend:
 
-1. Go to sphinx3j/tests/frontend
+1. Go to sphinx4/tests/frontend
 2. Type ./collectBatchTimings
 
 The following 3 tables show the times of running the Sphinx 3

@@ -1,12 +1,12 @@
-Sphinx3j Acoustic Model
+Sphinx4 Acoustic Model
 
 This document describes the requirements, interfaces and high level
-design for the Acoustic Model of Sphinx3j. There are some questions
+design for the Acoustic Model of Sphinx4. There are some questions
 embedded in this document. They are marked as follows:
 
   - [[[QFSE - this marks a "Question For Speech Expert"]]]
   - [[[QFJE - this marks a "Question For Java Expert"]]]
-  - [[[QFSA - this marks a "Question For the Sphinx3j Architect"]]]
+  - [[[QFSA - this marks a "Question For the Sphinx4 Architect"]]]
 
 Acoustic Model Requirements  Version 0.2
 ----------------------------------------
@@ -186,7 +186,7 @@ that provide the overall interface to the AcousticModel.
 
 /**
  * Represents the generic interface to the Acoustic 
- * Model for sphinx3j
+ * Model for sphinx4
  */
 public class AcousticModel {
 

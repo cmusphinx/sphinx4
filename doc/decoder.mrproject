@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project xmlns="http://mrproject.codefactory.se/format/project/1" name="Sphinx 3J" company="Sun/CMU/MERL" manager="Willie Walker">
+<project xmlns="http://mrproject.codefactory.se/format/project/1" name="Sphinx 4" company="Sun/CMU/MERL" manager="Willie Walker">
   <tasks>
     <task id="13" name="Face To Face" start="20020221T000000" end="20020420T000000" percent-complete="0" note="">
       <predecessors/>

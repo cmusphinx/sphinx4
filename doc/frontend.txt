@@ -1,4 +1,4 @@
-Sphinx 3j Front-End Design
+Sphinx 4 Front-End Design
 ==========================
 						Philip Kwok
 						3/6/2002

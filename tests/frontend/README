@@ -1,4 +1,4 @@
-Sphinx 3j FrontEnd Tests
+Sphinx 4 FrontEnd Tests
 ========================
 
 Typing "gmake alltests" should run the frontend tests.

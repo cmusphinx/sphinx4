@@ -1,8 +1,8 @@
-Sphinx 3J Search:
+Sphinx 4 Search:
 ----------------
 
 This document contains the requirements and design of the overall
-search for Sphinx 3J.  Please refer to the Architecture.{sdw,pdf}
+search for Sphinx 4.  Please refer to the Architecture.{sdw,pdf}
 document for drawings of the overall architecture.  Contained in this
 document are the following:
 
