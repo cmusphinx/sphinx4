@@ -61,8 +61,19 @@ public class SphinxProperties {
     private String contextName;	// name of the associated context
     private boolean warnIfNoProperty = false;
 
-    private final static String PROP_WARN_NO_PROPERTY =
+
+    /**
+     * SphinxProperty specifying whether a warning message should be
+     * printed out if a queried property is not defined.
+     */
+    public final static String PROP_WARN_NO_PROPERTY =
         "edu.cmu.sphinx.util.SphinxProperties.warnIfPropertyNotDefined";
+
+
+    /**
+     * The default value of PROP_WARN_NO_PROPERTY.
+     */
+    public final static boolean PROP_WARN_NO_PROPERTY_DEFAULT = false;
 
 
     /**
