@@ -31,8 +31,7 @@ public class WordResultPath extends Vector implements Path {
      * Constructs a WordResultPath with the given list of WordResults
      * and LogMath.
      *
-     * @param wordResult the list of WordResults
-     * @param logMath the LogMath used for the scores
+     * @param wordResults the list of WordResults
      */
     WordResultPath(List wordResults) {
         this.addAll(wordResults);
