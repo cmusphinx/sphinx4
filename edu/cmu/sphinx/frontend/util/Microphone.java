@@ -26,6 +26,8 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.Line;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineEvent;
 
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
@@ -271,10 +273,19 @@ public class Microphone extends BaseDataProcessor {
             logger.info("Final format: " + finalFormat);
             info = new DataLine.Info(TargetDataLine.class, finalFormat);
             audioLine = (TargetDataLine) AudioSystem.getLine(info);
+
+            // add a line listener that just traces
+            // the line states
+            audioLine.addLineListener(new LineListener() {
+                    public  void update(LineEvent event) {
+                        logger.info("line listener " + event);
+                    }
+            });
         } catch (LineUnavailableException e) {
             logger.severe("microphone unavailable " + e.getMessage());
         }
     }
+
 
     /**
      * Opens the audio capturing device so that it will be ready
@@ -431,7 +442,6 @@ public class Microphone extends BaseDataProcessor {
 	    audioList.add(new DataStartSignal());
 	    logger.info("DataStartSignal added");
 	    try {
-		audioLine.flush();
 		audioLine.start();
 		while (!endOfStream) {
                     Data data = readData(currentUtterance);
@@ -440,11 +450,13 @@ public class Microphone extends BaseDataProcessor {
 		    }
 		    audioList.add(data);
 		}
-                audioStream.close();
+                audioLine.flush();
+                if (closeBetweenUtterances) {
+                    audioStream.close();
+                }
 	    } catch (IOException ioe) {
                 logger.warning("IO Exception " + ioe.getMessage());
-	    }
-	    
+	    } 
 	    long duration = (long)
 		(((double)totalSamplesRead/
 		  (double)audioStream.getFormat().getSampleRate())*1000.0);
@@ -494,7 +506,7 @@ public class Microphone extends BaseDataProcessor {
                 }
             }
 
-            if (logger.isLoggable(Level.INFO)) {
+            if (logger.isLoggable(Level.FINE)) {
                 logger.info("Read " + numBytesRead 
                         + " bytes from audio stream.");
             }
