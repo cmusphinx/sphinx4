@@ -9,6 +9,7 @@ NOTE:  Before running the tests, you must have already built
        sphinx4 directory.
 
 Run ant with -Dskip=5 to do the standard 'quick' version of a test.
+Run ant with -Dcount=5 to only do the first five utterances of a test.
 </description>
 
     <!-- ********************************************************** -->
@@ -25,6 +26,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <property name="lib_dir"            value="${build_dir}/lib"/>
 
     <property name="skip"               value="0"/>
+    <property name="count"               value="0"/>
 
     <property name="initial_heap_size"  value="128m"/>
     <property name="maximum_heap_size"  value="128m"/>
@@ -52,6 +54,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="batch[count]" value="${count}"/> 
             <arg value="${config}"/> 
             <arg value="${batch}"/> 
         </java>
@@ -75,6 +78,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
 			 value="edu.cmu.sphinx.jsapi.JSGFGrammar"/> 
 			<sysproperty key="flatLinguist[grammar]" value="jsgfGrammar"/>
             <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="batch[count]" value="${count}"/> 
             <arg value="${config}"/> 
             <arg value="${batch}"/> 
         </java>
@@ -95,6 +99,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="batch[count]" value="${count}"/> 
             <sysproperty key="flatLinguist[grammar]" value="lmGrammar"/>
             <arg value="${config}"/> 
             <arg value="${batch}"/> 
@@ -116,6 +121,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="batch[count]" value="${count}"/> 
    			<sysproperty key="flatLinguist[grammar]" value="fstGrammar"/>
             <arg value="${config}"/> 
             <arg value="${batch}"/> 
@@ -137,6 +143,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
              <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="batch[count]" value="${count}"/> 
 			 <sysproperty key="linguist" value="lexTreeLinguist"/>				
             <arg value="${config}"/> 
             <arg value="${batch}"/> 
@@ -158,6 +165,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
              <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="batch[count]" value="${count}"/> 
 			 <sysproperty key="linguist" value="lexTreeLinguist"/>	
              <sysproperty key="ngramLanguageModel[location]" value ="tidigits.bigram.lm"/>		
              <sysproperty key="ngramLanguageModel[maxDepth]" value ="2"/>		
@@ -181,6 +189,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="batch[count]" value="${count}"/> 
             <sysproperty key="flatLinguist[grammar]" value="lmGrammar"/>
              <sysproperty key="ngramLanguageModel[maxDepth]" value ="2"/>	
              <sysproperty key="ngramLanguageModel[location]" value ="tidigits.bigram.lm"/>	
@@ -204,6 +213,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
              <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="batch[count]" value="${count}"/> 
 			 <sysproperty key="linguist" value="lexTreeLinguist"/>	
              <sysproperty key="ngramLanguageModel[location]" value ="tidigits.trigram.lm"/>		
              <sysproperty key="ngramLanguageModel[maxDepth]" value ="3"/>		
@@ -230,6 +240,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx512m"/> 
             <sysproperty key="live[skip]" value="${skip}"/> 
+            <sysproperty key="batch[count]" value="${count}"/> 
             <sysproperty key="concatDataSource[skip]" value="${skip}"/> 
             <sysproperty key="speedTracker[showResponseTime]" value="true"/> 
             <sysproperty key="frontend" value="mfcLiveFrontEnd"/> 
@@ -280,6 +291,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="batch[skip]" value="${skip}"/> 
+            <sysproperty key="batch[count]" value="${count}"/> 
             <arg value="simple.config.xml"/> 
             <arg value="${batch}"/> 
         </java>
