@@ -181,15 +181,8 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             }
         }
 
-        result = new Result(activeList, resultList, currentFrameNumber, done);
+        result = new Result(loserManager, activeList, resultList, currentFrameNumber, done);
 
-        if (done == true) {
-            Lattice lattice = new Lattice(result, loserManager);
-            lattice.dumpAISee("c:\\testme\\lattice.gdl","Original lattice");
-            LatticeOptimizer latticeOptimizer = new LatticeOptimizer(lattice);
-            latticeOptimizer.optimize();
-            lattice.dumpAISee("c:\\testme\\lattice_opt.gdl","optimized lattice");
-        }
         if (showTokenCount) {
             showTokenCount();
         }
@@ -345,7 +338,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         // If this is a final state, add it to the final list
 
         if (token.isFinal()) {
-            resultList.add(token);
+            resultList.add(getWordPredecessor(token));
             return;
         }
 
