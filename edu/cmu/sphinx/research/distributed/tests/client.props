@@ -1,0 +1,36 @@
+###########################################################
+#
+# Global logging properties
+#
+############################################################
+
+handlers= java.util.logging.ConsoleHandler
+
+# This is the overall default logging level
+.level= WARN
+
+# Tracing level for the console
+java.util.logging.ConsoleHandler.level = WARN
+java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
+
+edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+
+
+############################################################
+# 
+# FrontEnd properties
+#
+############################################################
+
+edu.cmu.sphinx.frontend.useAcousticModelProperties = false
+edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
+edu.cmu.sphinx.frontend.cepstrumSize = 13
+edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
+edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
+edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
+edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
+edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
+edu.cmu.sphinx.frontend.windowShiftInMs = 10
+edu.cmu.sphinx.frontend.windower.alpha = 0.46
+
+edu.cmu.sphinx.research.distributed.client.ClientFrontEnd.server = glottis.east
