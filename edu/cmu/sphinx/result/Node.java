@@ -30,8 +30,8 @@ public class Node {
 
     protected String id;
     protected String word;
-    protected int beginTime;
-    protected int endTime;
+    protected int beginTime = -1;
+    protected int endTime = -1;
     protected Vector fromEdges;
     protected Vector toEdges;
 
@@ -245,18 +245,18 @@ public class Node {
     }
 
     /**
-     * Get the time when the word began
+     * Get the frame number when the word began
      *
-     * @return the begin time
+     * @return the begin frame number, or -1 if the frame number is unknown
      */
     public int getBeginTime() {
         return beginTime;
     }
 
     /**
-     * Get the time when the word ends
+     * Get the frame number when the word ends
      *
-     * @return the end time
+     * @return the end time, or -1 if the frame number if is unknown
      */
     public int getEndTime() {
         return endTime;
