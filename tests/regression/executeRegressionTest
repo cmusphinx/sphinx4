@@ -61,7 +61,7 @@ scripts="getTime getHostname mailReport makeReport \
     runTests_friday runTests_monday runTests_nightly \
     runTests_quick runTests_saturday runTests_sunday \
     runTests_thursday runTests_tuesday runTests_wednesday \
-    makeTestDetailReport pushAllTestReports getJavaVersion \
+    runTests_live makeTestDetailReport pushAllTestReports getJavaVersion \
     makeTestSummaryReport makeTestReports waitForFile pushDocCheck"
 
 chmod +x $scripts

@@ -76,6 +76,7 @@ runTests_friday - runs a set of tests
 runTests_monday - runs a set of tests
 runTests_nightly - runs a set of tests
 runTests_quick - runs a set of tests
+runTests_live - runs a the live tests
 runTests_saturday - runs a set of tests
 runTests_sunday - runs a set of tests
 runTests_thursday - runs a set of tests
