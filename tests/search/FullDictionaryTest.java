@@ -14,11 +14,11 @@ package tests.search;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
-import edu.cmu.sphinx.search.Dictionary;
-import edu.cmu.sphinx.search.FullDictionary;
-import edu.cmu.sphinx.search.FastDictionary;
-import edu.cmu.sphinx.search.Pronunciation;
-import edu.cmu.sphinx.model.acoustic.Unit;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
+import edu.cmu.sphinx.knowledge.dictionary.FastDictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.util.Timer;
 
 import java.io.File;

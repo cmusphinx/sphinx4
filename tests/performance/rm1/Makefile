@@ -63,7 +63,7 @@ rm1_flat_unigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
         -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7 \
-        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.location=rm1.flat_unigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
@@ -71,14 +71,14 @@ rm1_unigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
         -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7 \
-        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.location=rm1.unigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
 rm1_bigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.location=rm1.bigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
@@ -86,7 +86,7 @@ rm1_flat_unigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./rm1.flat_unigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
@@ -94,7 +94,7 @@ rm1_unigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./rm1.unigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
@@ -102,7 +102,7 @@ rm1_bigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./rm1.bigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
@@ -110,6 +110,6 @@ rm1_trigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./rm1.bigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch

@@ -12,24 +12,24 @@
 
 package tests.search;
 
-import edu.cmu.sphinx.search.ActiveList;
-import edu.cmu.sphinx.search.HeapActiveList;
-import edu.cmu.sphinx.search.Token;
+import edu.cmu.sphinx.decoder.search.ActiveList;
+import edu.cmu.sphinx.decoder.search.HeapActiveList;
+import edu.cmu.sphinx.decoder.search.Token;
 
 
 public class HeapActiveListTest {
 
     public static void main(String[] argv) {
 
-        ActiveList activeList = new HeapActiveList(6);
-        Token token1 = new Token(null, null, 9.0f, 0.0f, 0.0f, 0);
-        Token token2 = new Token(null, null, 4.0f, 0.0f, 0.0f, 0);
-        Token token3 = new Token(null, null, 7.0f, 0.0f, 0.0f, 0);
-        Token token4 = new Token(null, null, 6.0f, 0.0f, 0.0f, 0);
-        Token token5 = new Token(null, null, 10.0f, 0.0f, 0.0f, 0);
-        Token token6 = new Token(null, null, 8.0f, 0.0f, 0.0f, 0);
-        Token token7 = new Token(null, null, 5.0f, 0.0f, 0.0f, 0);
-        Token token8 = new Token(null, null, 11.5f, 0.0f, 0.0f, 0);
+        ActiveList activeList = new edu.cmu.sphinx.decoder.search.HeapActiveList(6);
+        edu.cmu.sphinx.decoder.search.Token token1 = new edu.cmu.sphinx.decoder.search.Token(null, null, 9.0f, 0.0f, 0.0f, 0);
+        edu.cmu.sphinx.decoder.search.Token token2 = new edu.cmu.sphinx.decoder.search.Token(null, null, 4.0f, 0.0f, 0.0f, 0);
+        edu.cmu.sphinx.decoder.search.Token token3 = new edu.cmu.sphinx.decoder.search.Token(null, null, 7.0f, 0.0f, 0.0f, 0);
+        edu.cmu.sphinx.decoder.search.Token token4 = new edu.cmu.sphinx.decoder.search.Token(null, null, 6.0f, 0.0f, 0.0f, 0);
+        edu.cmu.sphinx.decoder.search.Token token5 = new edu.cmu.sphinx.decoder.search.Token(null, null, 10.0f, 0.0f, 0.0f, 0);
+        edu.cmu.sphinx.decoder.search.Token token6 = new edu.cmu.sphinx.decoder.search.Token(null, null, 8.0f, 0.0f, 0.0f, 0);
+        edu.cmu.sphinx.decoder.search.Token token7 = new edu.cmu.sphinx.decoder.search.Token(null, null, 5.0f, 0.0f, 0.0f, 0);
+        edu.cmu.sphinx.decoder.search.Token token8 = new edu.cmu.sphinx.decoder.search.Token(null, null, 11.5f, 0.0f, 0.0f, 0);
 
         activeList.add(token1);
         activeList.add(token2);
@@ -42,7 +42,7 @@ public class HeapActiveListTest {
 
         System.out.println(activeList.toString());
 
-        Token token9 = new Token(null, null, 6.5f, 0.0f, 0.0f, 0);
+        edu.cmu.sphinx.decoder.search.Token token9 = new edu.cmu.sphinx.decoder.search.Token(null, null, 6.5f, 0.0f, 0.0f, 0);
 
         activeList.replace(token5, token9);
 

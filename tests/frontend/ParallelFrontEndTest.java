@@ -17,7 +17,7 @@ import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.parallel.ParallelFrontEnd;
 
-import edu.cmu.sphinx.model.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 
 import edu.cmu.sphinx.util.Timer;
 

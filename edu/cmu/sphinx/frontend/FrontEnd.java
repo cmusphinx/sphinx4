@@ -13,7 +13,7 @@
 
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.model.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 
 import java.io.IOException;
 

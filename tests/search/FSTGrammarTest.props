@@ -19,8 +19,8 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 #
 ############################################################
 
-edu.cmu.sphinx.search.Dictionary.dictionaryPath = ./FSTGrammarTest.dic
-edu.cmu.sphinx.search.Dictionary.dictionaryPath = ./FSTGrammarTest.dic
-edu.cmu.sphinx.search.Dictionary.wordReplacement = pittsburgh
-edu.cmu.sphinx.search.Dictionary.fillerPath = ./filler.dic
-edu.cmu.sphinx.search.FSTGrammar.path=./FSTGrammarTest.gram
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = ./FSTGrammarTest.dic
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = ./FSTGrammarTest.dic
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.wordReplacement = pittsburgh
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = ./filler.dic
+edu.cmu.sphinx.decoder.linguist.FSTGrammar.path=./FSTGrammarTest.gram

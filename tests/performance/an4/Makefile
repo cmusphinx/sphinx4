@@ -87,9 +87,9 @@ an4_words_wordlist:
 # grammar whose vocabulary is just the spoken words from AN4.
 an4_words_flat_unigram:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
     -Dedu.cmu.sphinx.model.language.location=./an4_words.flat_unigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_words.batch
 
@@ -97,9 +97,9 @@ an4_words_flat_unigram:
 # grammar whose vocabulary is just the spoken words from AN4.
 an4_words_unigram:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
     -Dedu.cmu.sphinx.model.language.location=./an4_words.unigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_words.batch
 
@@ -107,9 +107,9 @@ an4_words_unigram:
 # grammar whose vocabulary is just the spoken words from AN4.
 an4_words_bigram:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
     -Dedu.cmu.sphinx.model.language.location=./an4_words.bigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_words.batch
 
@@ -121,7 +121,7 @@ an4_words_flat_unigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_words.flat_unigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
@@ -132,7 +132,7 @@ an4_words_unigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_words.unigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
@@ -143,7 +143,7 @@ an4_words_bigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_words.bigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
@@ -154,7 +154,7 @@ an4_words_trigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_words.trigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
@@ -178,9 +178,9 @@ an4_spelling_wordlist:
 # grammar whose vocabulary is just the spoken words from AN4.
 an4_spelling_flat_unigram:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
     -Dedu.cmu.sphinx.model.language.location=./an4_spelling.flat_unigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_spelling.batch
 
@@ -188,9 +188,9 @@ an4_spelling_flat_unigram:
 # grammar whose vocabulary is just the spoken words from AN4.
 an4_spelling_unigram:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
     -Dedu.cmu.sphinx.model.language.location=./an4_spelling.unigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_spelling.batch
 
@@ -198,9 +198,9 @@ an4_spelling_unigram:
 # grammar whose vocabulary is just the spoken words from AN4.
 an4_spelling_bigram:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
     -Dedu.cmu.sphinx.model.language.location=./an4_spelling.bigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_spelling.batch
 
@@ -212,7 +212,7 @@ an4_spelling_flat_unigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_spelling.flat_unigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
@@ -223,7 +223,7 @@ an4_spelling_unigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_spelling.unigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
@@ -234,7 +234,7 @@ an4_spelling_bigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_spelling.bigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
@@ -245,7 +245,7 @@ an4_spelling_trigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_spelling.trigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_spelling.batch
 
@@ -268,9 +268,9 @@ an4_full_wordlist:
 # grammar whose vocabulary is just the spoken words from AN4.
 an4_full_flat_unigram:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
     -Dedu.cmu.sphinx.model.language.location=./an4_full.flat_unigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_full.batch
 
@@ -278,9 +278,9 @@ an4_full_flat_unigram:
 # grammar whose vocabulary is just the spoken words from AN4.
 an4_full_unigram:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
     -Dedu.cmu.sphinx.model.language.location=./an4_full.unigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_full.batch
 
@@ -288,9 +288,9 @@ an4_full_unigram:
 # grammar whose vocabulary is just the spoken words from AN4.
 an4_full_bigram:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
     -Dedu.cmu.sphinx.model.language.location=./an4_full.bigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder an4.props an4_full.batch
 
@@ -302,7 +302,7 @@ an4_full_flat_unigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_full.flat_unigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
@@ -313,7 +313,7 @@ an4_full_unigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_full.unigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
@@ -324,7 +324,7 @@ an4_full_bigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_full.bigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
@@ -335,7 +335,7 @@ an4_full_trigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./an4_full.trigram.fst\
     edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 

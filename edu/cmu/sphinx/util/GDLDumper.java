@@ -13,10 +13,10 @@ package edu.cmu.sphinx.util;
 
 import edu.cmu.sphinx.util.Utilities;
 
-import edu.cmu.sphinx.search.SentenceHMMState;
-import edu.cmu.sphinx.search.SentenceHMMStateArc;
-import edu.cmu.sphinx.search.LinguistProcessor;
-import edu.cmu.sphinx.search.Linguist;
+import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
+import edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc;
+import edu.cmu.sphinx.decoder.linguist.LinguistProcessor;
+import edu.cmu.sphinx.decoder.linguist.Linguist;
 
 import java.io.PrintStream;
 import java.io.FileNotFoundException;
@@ -26,12 +26,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import edu.cmu.sphinx.search.WordState;
-import edu.cmu.sphinx.search.UnitState;
-import edu.cmu.sphinx.search.GrammarState;
-import edu.cmu.sphinx.search.HMMStateState;
-import edu.cmu.sphinx.search.AlternativeState;
-import edu.cmu.sphinx.search.PronunciationState;
+import edu.cmu.sphinx.decoder.linguist.WordState;
+import edu.cmu.sphinx.decoder.linguist.UnitState;
+import edu.cmu.sphinx.decoder.linguist.GrammarState;
+import edu.cmu.sphinx.decoder.linguist.HMMStateState;
+import edu.cmu.sphinx.decoder.linguist.AlternativeState;
+import edu.cmu.sphinx.decoder.linguist.PronunciationState;
 
 import edu.cmu.sphinx.util.LogMath;
 
@@ -113,11 +113,11 @@ public class GDLDumper extends LinguistDumper  {
      * @param level the level of the state
      */
     protected void startDumpNode(PrintStream out, 
-                                 SentenceHMMState state, int level) {
+                                 edu.cmu.sphinx.decoder.linguist.SentenceHMMState state, int level) {
         
         boolean skipHMMs = getProperties().getBoolean(PROP_SKIP_HMMS, true);
 
-	if (skipHMMs && (state instanceof HMMStateState)) {
+	if (skipHMMs && (state instanceof edu.cmu.sphinx.decoder.linguist.HMMStateState)) {
 	} else {
 	    String color = getColor(state);
 	    String shape = "box";
@@ -144,21 +144,21 @@ public class GDLDumper extends LinguistDumper  {
      * @return its color
      */
 
-    private String getColor(SentenceHMMState state) {
+    private String getColor(edu.cmu.sphinx.decoder.linguist.SentenceHMMState state) {
 	String color = "lightred";
 	if (state.isFinalState()) {
 	    color = "magenta";
-	} else if (state instanceof UnitState) {
+	} else if (state instanceof edu.cmu.sphinx.decoder.linguist.UnitState) {
 	    color = "green";
-	} else if (state instanceof WordState) {
+	} else if (state instanceof edu.cmu.sphinx.decoder.linguist.WordState) {
 	    color = "lightblue";
-	} else if (state instanceof GrammarState) {
+	} else if (state instanceof edu.cmu.sphinx.decoder.linguist.GrammarState) {
 	    color = "lightred";
-	} else if (state instanceof HMMStateState) {
+	} else if (state instanceof edu.cmu.sphinx.decoder.linguist.HMMStateState) {
 	    color = "orange";
-	} else if (state instanceof AlternativeState) {
+	} else if (state instanceof edu.cmu.sphinx.decoder.linguist.AlternativeState) {
 	    color = "purple";
-	} else if (state instanceof PronunciationState) {
+	} else if (state instanceof edu.cmu.sphinx.decoder.linguist.PronunciationState) {
 	    color = "darkcyan";
 	}
 	return color;
@@ -171,7 +171,7 @@ public class GDLDumper extends LinguistDumper  {
      * @param state the state to dump
      * @param level the level of the state
      */
-    protected void endDumpNode(PrintStream out, SentenceHMMState state, 
+    protected void endDumpNode(PrintStream out, edu.cmu.sphinx.decoder.linguist.SentenceHMMState state,
 	    int level) {
     }
 
@@ -183,8 +183,8 @@ public class GDLDumper extends LinguistDumper  {
      * @param arc the arc to dump
      * @param level the level of the state
      */
-    protected void dumpArc(PrintStream out, SentenceHMMState from, 
-                           SentenceHMMStateArc arc, int level) {
+    protected void dumpArc(PrintStream out, edu.cmu.sphinx.decoder.linguist.SentenceHMMState from,
+                           edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc arc, int level) {
 
         boolean skipHMMs = getProperties().getBoolean(PROP_SKIP_HMMS, true);
         boolean dumpArcLabels = 
@@ -193,12 +193,12 @@ public class GDLDumper extends LinguistDumper  {
         LogMath logMath = LogMath.getLogMath(getProperties().getContext());
 
         String color = getArcColor(arc);
-	SentenceHMMState nextState = arc.getNextState();
+	edu.cmu.sphinx.decoder.linguist.SentenceHMMState nextState = arc.getNextState();
 
 	if (skipHMMs) {
-	    if (nextState instanceof HMMStateState) {
+	    if (nextState instanceof edu.cmu.sphinx.decoder.linguist.HMMStateState) {
 		return;
-	    } else if (from instanceof HMMStateState) {
+	    } else if (from instanceof edu.cmu.sphinx.decoder.linguist.HMMStateState) {
 		from = from.getParent();
 	    }
 	}
@@ -255,7 +255,7 @@ public class GDLDumper extends LinguistDumper  {
      * arc (green), acoustic arc (red), insertion arc(blue), flat arc
      * (black) or a combo (purple).
      */
-    private String getArcColor(SentenceHMMStateArc arc) {
+    private String getArcColor(edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc arc) {
         String color = null;
         if (arc.getLanguageProbability() != 0.0) {
             color = "green";

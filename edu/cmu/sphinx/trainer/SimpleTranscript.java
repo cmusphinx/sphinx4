@@ -14,7 +14,7 @@ package edu.cmu.sphinx.trainer;
 
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.model.acoustic.*;
+import edu.cmu.sphinx.knowledge.acoustic.*;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 

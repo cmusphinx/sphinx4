@@ -16,8 +16,7 @@ import edu.cmu.sphinx.frontend.DataSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.util.Util;
 import edu.cmu.sphinx.frontend.Utterance;
-import edu.cmu.sphinx.search.Recognizer;
-import edu.cmu.sphinx.search.Token;
+import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
@@ -339,8 +338,8 @@ public class Decoder {
                     " ===========================");
         System.out.println("  Reference string: ["
                     + currentReferenceText + "]");
-        Token bestToken = result.getBestActiveToken();
-        Token bestMatching = 
+        edu.cmu.sphinx.decoder.search.Token bestToken = result.getBestActiveToken();
+        edu.cmu.sphinx.decoder.search.Token bestMatching =
             result.getBestActiveParitalMatchingToken(currentReferenceText);
 
         if (bestToken != null && bestMatching == bestToken) {
@@ -371,7 +370,7 @@ public class Decoder {
      */
     protected void showFinalResult(Result result, Timer timer) {
 	boolean match = true;
-	Token bestToken = result.getBestToken();
+	edu.cmu.sphinx.decoder.search.Token bestToken = result.getBestToken();
 
 	if (currentReferenceText != null) {
 	    match = aligner.align(currentReferenceText, result.toString());
@@ -396,7 +395,7 @@ public class Decoder {
 			+ result.getBestToken().getScore());
 	}
 	if (!match) {
-	    Token  matchingToken = result.findToken(currentReferenceText);
+	    edu.cmu.sphinx.decoder.search.Token  matchingToken = result.findToken(currentReferenceText);
 	    if (matchingToken != null) {
 		System.out.print(
 			"  ActScore: " + matchingToken.getScore());

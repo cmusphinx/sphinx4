@@ -78,9 +78,9 @@ tidigits_wordlist:
 
 tidigits_flat_unigram:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+    -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
     -Dedu.cmu.sphinx.model.language.location=./tidigits.flat_unigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
 
@@ -91,7 +91,7 @@ tidigits_flat_unigram:
 tidigits_flat_unigram_fst:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar\
+    -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.FSTGrammar\
     -Dedu.cmu.sphinx.search.FSTGrammar.path=./tidigits.flat_unigram.fst \
     edu.cmu.sphinx.decoder.BatchDecoder ./tidigits.props ./tidigits.batch
 

@@ -15,7 +15,7 @@ package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.frontend.util.PropertiesResolver;
 
-import edu.cmu.sphinx.model.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;

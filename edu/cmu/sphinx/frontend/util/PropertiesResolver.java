@@ -14,7 +14,7 @@
 package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.model.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
@@ -75,7 +75,7 @@ public class PropertiesResolver {
 	    String key = propName;
 	    
 	    // Reconstruct the key if the acoustic properties start
-	    // with "edu.cmu.sphinx.model.acoustic.". The new key
+	    // with "edu.cmu.sphinx.knowledge.acoustic.". The new key
 	    // should start with "edu.cmu.sphinx.frontend.", otherwise
 	    // throws an Error.
 

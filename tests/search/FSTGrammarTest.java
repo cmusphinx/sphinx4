@@ -14,10 +14,10 @@ package tests.search;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
-import edu.cmu.sphinx.search.Dictionary;
-import edu.cmu.sphinx.search.FullDictionary;
-import edu.cmu.sphinx.search.Grammar;
-import edu.cmu.sphinx.search.FSTGrammar;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
+import edu.cmu.sphinx.decoder.linguist.Grammar;
+import edu.cmu.sphinx.decoder.linguist.FSTGrammar;
 
 import java.io.File;
 
@@ -41,7 +41,7 @@ public class FSTGrammarTest {
 	    Dictionary dictionary = new FullDictionary(context);
 
 
-            Grammar grammar = new FSTGrammar();
+            edu.cmu.sphinx.decoder.linguist.Grammar grammar = new edu.cmu.sphinx.decoder.linguist.FSTGrammar();
 
 	    grammar.initialize(context, null, dictionary);
 	    grammar.dump();

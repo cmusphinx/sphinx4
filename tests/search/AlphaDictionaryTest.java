@@ -14,8 +14,8 @@ package tests.search;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
-import edu.cmu.sphinx.search.Dictionary;
-import edu.cmu.sphinx.search.FullDictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
 
 import java.io.File;
 

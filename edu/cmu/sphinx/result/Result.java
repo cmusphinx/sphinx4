@@ -14,10 +14,8 @@
 package edu.cmu.sphinx.result;
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.Utterance;
-import edu.cmu.sphinx.search.ActiveList;
-import edu.cmu.sphinx.search.Token;
-import edu.cmu.sphinx.search.FrameStatistics;
-import edu.cmu.sphinx.search.Path;
+import edu.cmu.sphinx.decoder.search.ActiveList;
+import edu.cmu.sphinx.decoder.search.Token;
 
 import  java.util.List;
 import  java.util.Iterator;
@@ -85,7 +83,7 @@ public class Result {
      *
      * @return a list containing the active tokens for this result
      *
-     * @see edu.cmu.sphinx.search.Token
+     * @see edu.cmu.sphinx.decoder.search.Token
      */
     public ActiveList getActiveTokens() {
 	return activeList;
@@ -106,7 +104,7 @@ public class Result {
      *
      * @return a list containing the final result tokens for this result
      *
-     * @see edu.cmu.sphinx.search.Token
+     * @see edu.cmu.sphinx.decoder.search.Token
      */
     public List getResultTokens() {
 	return resultList;
@@ -128,10 +126,10 @@ public class Result {
      *
      * @return the best scoring token or null
      */
-    public Token getBestToken() {
-	Token bestToken = null;
+    public edu.cmu.sphinx.decoder.search.Token getBestToken() {
+	edu.cmu.sphinx.decoder.search.Token bestToken = null;
 	for (Iterator i = resultList.iterator(); i.hasNext(); ) {
-	    Token token = (Token) i.next();
+	    edu.cmu.sphinx.decoder.search.Token token = (edu.cmu.sphinx.decoder.search.Token) i.next();
 	    if (bestToken == null || token.getScore() > bestToken.getScore()) {
 		bestToken = token;
 	    }
@@ -144,10 +142,10 @@ public class Result {
      *
      * @return the best scoring token or null
      */
-    public Token getBestActiveToken() {
-	Token bestToken = null;
+    public edu.cmu.sphinx.decoder.search.Token getBestActiveToken() {
+	edu.cmu.sphinx.decoder.search.Token bestToken = null;
 	for (Iterator i = activeList.iterator(); i.hasNext(); ) {
-	    Token token = (Token) i.next();
+	    edu.cmu.sphinx.decoder.search.Token token = (edu.cmu.sphinx.decoder.search.Token) i.next();
 	    if (bestToken == null || token.getScore() > bestToken.getScore()) {
 		bestToken = token;
 	    }
@@ -162,10 +160,10 @@ public class Result {
      * @param text the string to search for
      * @return the token at the head of the branch or null 
      */
-    public Token findToken(String text) {
+    public edu.cmu.sphinx.decoder.search.Token findToken(String text) {
 	text = text.trim();
 	for (Iterator i = resultList.iterator(); i.hasNext(); ) {
-	    Token token = (Token) i.next();
+	    edu.cmu.sphinx.decoder.search.Token token = (edu.cmu.sphinx.decoder.search.Token) i.next();
 	    if (text.equals(token.getWordPathNoSilences())) {
 		return token;
 	    }
@@ -184,7 +182,7 @@ public class Result {
         List list = new ArrayList();
 	text = text.trim();
 	for (Iterator i = activeList.iterator(); i.hasNext(); ) {
-	    Token token = (Token) i.next();
+	    edu.cmu.sphinx.decoder.search.Token token = (edu.cmu.sphinx.decoder.search.Token) i.next();
 	    if (text.startsWith(token.getWordPathNoSilences())) {
                 list.add(token);
 	    }
@@ -198,11 +196,11 @@ public class Result {
      *
      * @param text the text to match
      */
-    public Token getBestActiveParitalMatchingToken(String text) {
+    public edu.cmu.sphinx.decoder.search.Token getBestActiveParitalMatchingToken(String text) {
         List matchingList = findPartialMatchingTokens(text);
-	Token bestToken = null;
+	edu.cmu.sphinx.decoder.search.Token bestToken = null;
 	for (Iterator i = matchingList.iterator(); i.hasNext(); ) {
-	    Token token = (Token) i.next();
+	    edu.cmu.sphinx.decoder.search.Token token = (edu.cmu.sphinx.decoder.search.Token) i.next();
 	    if (bestToken == null || token.getScore() > bestToken.getScore()) {
 		bestToken = token;
 	    }
@@ -218,7 +216,7 @@ public class Result {
      * element per frame or <code>null</code> if no frame statistics
      * are available.
      */
-    public FrameStatistics[] getFrameStatistics() {
+    public edu.cmu.sphinx.result.FrameStatistics[] getFrameStatistics() {
 	return null;	// [[[ TBD:  write me ]]]
     }
 
@@ -231,7 +229,7 @@ public class Result {
      * @return an array containing at most <code>numBestPaths</code>
      * paths.
      */
-    public Path[] getBestPaths(int numBestPaths) {
+    public edu.cmu.sphinx.result.Path[] getBestPaths(int numBestPaths) {
 	return null;	// [[[ TBD:  write me ]]]
     }
 
@@ -264,7 +262,7 @@ public class Result {
         Feature[] features = null;
 
         // find the best token, and then trace back for all the features
-        Token token = getBestToken();
+        edu.cmu.sphinx.decoder.search.Token token = getBestToken();
         if (token != null) {
             List featureList = new LinkedList();
             do {
@@ -290,7 +288,7 @@ public class Result {
      */
     public Utterance getUtterance() {
         Utterance utterance = null;
-        Token token = getBestToken();
+        edu.cmu.sphinx.decoder.search.Token token = getBestToken();
 
         if (token != null) {
             // first trace back to a token that has a Feature
@@ -316,7 +314,7 @@ public class Result {
      * @return the string of the best result, removing any silences
      */
     public String getBestResultNoSilences() {
-        Token token = getBestToken();
+        edu.cmu.sphinx.decoder.search.Token token = getBestToken();
         if (token == null) {
             return "";
         } else {
@@ -329,7 +327,7 @@ public class Result {
      * Returns a string representation of this object
      */
     public String toString() {
-	Token token = getBestToken();
+	edu.cmu.sphinx.decoder.search.Token token = getBestToken();
 	if (token == null) {
 	    return "";
 	} else {
@@ -361,7 +359,7 @@ public class Result {
     public boolean validate() {
 	boolean valid = true;
 	for (Iterator i = activeList.iterator(); i.hasNext(); ) {
-	    Token token = (Token) i.next();
+	    edu.cmu.sphinx.decoder.search.Token token = (edu.cmu.sphinx.decoder.search.Token) i.next();
 	    if (!token.validate()) {
 		valid = false;
 		token.dumpTokenPath();

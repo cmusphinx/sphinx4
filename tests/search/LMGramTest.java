@@ -14,10 +14,10 @@ package tests.search;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
-import edu.cmu.sphinx.search.LMGrammar;
-import edu.cmu.sphinx.search.Grammar;
-import edu.cmu.sphinx.model.language.LanguageModel;
-import edu.cmu.sphinx.model.language.LanguageModelFactory;
+import edu.cmu.sphinx.decoder.linguist.LMGrammar;
+import edu.cmu.sphinx.decoder.linguist.Grammar;
+import edu.cmu.sphinx.knowledge.language.LanguageModel;
+import edu.cmu.sphinx.knowledge.language.LanguageModelFactory;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 
@@ -41,7 +41,7 @@ public class LMGramTest {
     public LMGramTest(String propertiesFile) throws Exception {
         
         LanguageModel languageModel;
-        Grammar grammar;
+        edu.cmu.sphinx.decoder.linguist.Grammar grammar;
 
         String pwd = System.getProperty("user.dir");
         SphinxProperties.initContext
@@ -58,7 +58,7 @@ public class LMGramTest {
 
         Utilities.dumpMemoryInfo("before grammar load");
         gramTimer.start();
-        grammar = new LMGrammar();
+        grammar = new edu.cmu.sphinx.decoder.linguist.LMGrammar();
         grammar.initialize(props.getContext(), languageModel, null);
         gramTimer.stop();
         Utilities.dumpMemoryInfo("after grammar load");

@@ -13,8 +13,8 @@
 package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.search.Token;
-import edu.cmu.sphinx.search.WordState;
+import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.decoder.linguist.WordState;
 
 import java.util.*;
 import java.io.*;
@@ -70,10 +70,10 @@ public class Lattice {
         double thisLMScore=0.0;
         for( Iterator it=result.getResultTokens().iterator(); it.hasNext(); ) {
             thisNode=terminalNode;
-            for( Token token = (Token)(it.next());
+            for( edu.cmu.sphinx.decoder.search.Token token = (edu.cmu.sphinx.decoder.search.Token)(it.next());
                  token != null;
                  token = token.getPredecessor() ) {
-                if( token.getSentenceHMMState() instanceof WordState ) {
+                if( token.getSentenceHMMState() instanceof edu.cmu.sphinx.decoder.linguist.WordState ) {
                     Node newNode;
                     if( hasNode(token) ) {
                         newNode = getNode( token );
@@ -206,10 +206,10 @@ public class Lattice {
      * @param token
      * @return the new Node
      */
-    protected Node addNode(Token token) {
+    protected Node addNode(edu.cmu.sphinx.decoder.search.Token token) {
         String word;
-        if( token.getSentenceHMMState() instanceof WordState) {
-            word = ((WordState)(token.getSentenceHMMState())).getWord().getSpelling();
+        if( token.getSentenceHMMState() instanceof edu.cmu.sphinx.decoder.linguist.WordState) {
+            word = ((edu.cmu.sphinx.decoder.linguist.WordState)(token.getSentenceHMMState())).getWord().getSpelling();
         }
         else {
             word = token.getSentenceHMMState().toString();
@@ -225,7 +225,7 @@ public class Lattice {
      * @return true if yes
      */
 
-    protected boolean hasNode(Token token) {
+    protected boolean hasNode(edu.cmu.sphinx.decoder.search.Token token) {
         return hasNode( Integer.toString(token.hashCode()));
     }
 
@@ -256,7 +256,7 @@ public class Lattice {
      * @param token
      * @return the Node
      */
-    protected Node getNode( Token token ) {
+    protected Node getNode( edu.cmu.sphinx.decoder.search.Token token ) {
         return getNode( Integer.toString(token.hashCode()) );
     }
 
