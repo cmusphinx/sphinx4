@@ -53,9 +53,10 @@ import edu.cmu.sphinx.util.LogMath;
  * analyzing "alternate results".
  * </p>
  * <p>
- * The creation of a Lattice depends on a Result that has a collapsed
- * {@link edu.cmu.sphinx.decoder.search.Token}
- * tree and an AlternativeHypothesisManager. This is what 'collapsed' means.
+ * A Lattice can be created from a Result that has a full token tree
+ * (with its corresponding AlternativeHypothesisManager), as well as from a 
+ * collapsed {@link edu.cmu.sphinx.decoder.search.Token}
+ * tree and its AlternativeHypothesisManager. This is what 'collapsed' means.
  * Normally, between two word tokens is a series of tokens for other types
  * of states, such as unit or HMM states. Using 'W' for word tokens,
  * 'U' for unit tokens, 'H' for HMM tokens, a token chain can look like:
