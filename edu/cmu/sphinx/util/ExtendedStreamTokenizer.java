@@ -127,6 +127,16 @@ public class ExtendedStreamTokenizer {
 
 
     /**
+     * Gets the current line number
+     *
+     * @return the line number
+     */
+    public int getLineNumber() {
+	return st.lineno();
+    }
+
+
+    /**
      * Loads a word from the tokenizer and ensures that it
      * matches 'expecting'
      *
@@ -199,7 +209,11 @@ public class ExtendedStreamTokenizer {
 	double dVal = 0.0;
 	try {
 	    String val = getString();
-	    dVal =  Double.parseDouble(val);
+	    if (val.equals("inf")) {
+		dVal = Double.POSITIVE_INFINITY;
+	    } else {
+		dVal =  Double.parseDouble(val);
+	    }
 	} catch (NumberFormatException nfe) {
 	    corrupt("while parsing double " + name);
 	}
@@ -222,7 +236,11 @@ public class ExtendedStreamTokenizer {
 	float fVal = 0.0F;
 	try {
 	    String val = getString();
-	    fVal =  Float.parseFloat(val);
+	    if (val.equals("inf")) {
+		fVal = Float.POSITIVE_INFINITY;
+	    } else {
+		fVal =  Float.parseFloat(val);
+	    }
 	} catch (NumberFormatException nfe) {
 	    corrupt("while parsing float " + name);
 	}
