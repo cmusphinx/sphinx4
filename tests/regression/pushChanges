@@ -22,4 +22,4 @@ date=`cat .startDate`
 ./whatsNew $date > $date.html
 sscp $date.html
 sshh mv $date.html /home/groups/c/cm/cmusphinx/htdocs
-sshh '(cd /home/groups/c/cm/cmusphinx/htdocs; chgrp cmusphinx `ls`; chmod g+w `ls`;)'
+sshh '(cd /home/groups/c/cm/cmusphinx/htdocs; chgrp -f cmusphinx `ls`; chmod -f g+w `ls`;)'
