@@ -21,13 +21,14 @@ WARRANTIES.
 
 <body bgcolor="white">
   <center>
-    <table bgcolor="#bbbae2" border="0" width="100%">
+    <table bgcolor="#99CBFF" border="0" width="100%">
       <tbody>
         <tr>
 	  <td align="center" width="100%">
-            <h2><i>Sphinx-4</i> - A speech recognizer written
-                entirely in the Java<sup><font size="-1">TM</font></sup> 
-	        programming language</h2>
+	    <h1><i>Sphinx-4</i><br><font size="+1">
+	    A speech recognizer written entirely in the 
+	    Java<sup><font size="-1">TM</font></sup> 
+	    programming language</font></h1>
 	  </td>
         </tr>
       </tbody>
@@ -39,14 +40,18 @@ WARRANTIES.
   <table border="0" width="100%">
     <tbody>
       <tr>
-        <td bgcolor="#eeeeff" valign="top" width="20%">
-          <center><b><font>Sphinx-4 Links</font></b></center>
-          <b><font size="-1"><br>
-          <a href="http://sourceforge.net/projects/cmusphinx">Project Page</a><br>
-          <a href="https://sourceforge.net/forum/?group_id=1094">Forums</a><br>
-          <a href="http://sourceforge.net/project/showfiles.php?group_id=1904">
-          Download</a> <br>
-          <a href="http://sourceforge.net/cvs/?group_id=1904">CVS Repository</a> <br>
+        <td bgcolor="#F0F8FF" valign="top" width="20%">
+          <br>
+	  <b><font>Sphinx-4 Links</font></b>
+          <p>
+	  <b><font size="-1">
+	  SourceForge
+	  <li><a href="http://sourceforge.net/projects/cmusphinx">Project Page</a>
+          <li><a href="https://sourceforge.net/forum/?group_id=1094">Forums</a>
+          <li><a href="http://sourceforge.net/project/showfiles.php?group_id=1904">Download</a>
+          <li><a href="http://sourceforge.net/cvs/?group_id=1904">CVS Repository</a>
+	  <p>
+	  <a href="http://cmusphinx.org">CMU Sphinx</a>
       <hr>
           <center><a href="http://www.sourceforge.net">
           <img src="http://sourceforge.net/sflogo.php?group_id=1904&amp;type=1"
@@ -58,7 +63,7 @@ WARRANTIES.
       </td>
 
       <td valign="top"><br>
-      <h3>(this page is currently under development)</h3>
+      <font size="+1">(this page is currently under development)</font>
       <h3>General Information</h3>
       <ul>
         <li><a href="#what_is_sphinx4">Introduction</a></li>
@@ -78,17 +83,26 @@ WARRANTIES.
 	<li><a href="#demos">Demos</a></li>
       </ul>
 
-      <h3>Using Sphinx-4 (for Application Developers)</h3>
+      <h3>Sphinx-4 for Users</h3>
       <ul>
-        <li><a href="#architecture_and_api1">Architecture and API</a></li>
-	<li><a href="#configuration">Configuration</a></li>
+	<li><a href="#configuration">Configuration (Sphinx Properties)</a></li>
+	<li><a href="doc/FrontEnd.html">Front End</a></li>
+	<li><a href="doc/Grammars.html">Specifying Grammars</a></li>
       </ul>
 
-      <h3>Modifying Sphinx-4 (for Speech Engine Developers)</h3>
+      <h3>Sphinx-4 for Application Developers</h3>
+      <ul>
+        <li><a href="#architecture_and_api1">Architecture and API</a></li>
+      </ul>
+
+      <h3>Sphinx-4 for Speech Engine Developers</h3>
       <ul>
         <li><a href="#architecture_and_api2">Architecture and API</a></li>
         <li><a href="#how_build">Building Sphinx-4</a></li>
       </ul>
+
+      <p>
+
       </td>
     </tr>
   </tbody>
@@ -225,10 +239,9 @@ WARRANTIES.
   <ul>
   <li> Windows
   <pre>
-
 set ANT_HOME=c:\ant
 set PATH=%PATH%;%ANT_HOME%\bin
-</pre>
+  </pre>
   </li>
   <li> Unix (bash)
   <pre>
@@ -295,22 +308,11 @@ the latest version is 1.4.2.
 
 <hr>
 
-<h2>Using Sphinx-4 (for Application Developers)</h2>
-<ul>
-  <li><a name="architecture_and_api1"><b>Architecture and API</b></a>
-      <p>The architecture and API can be found in the 
-         <a href="javadoc/index.html">javadoc documentation</a>.
-</p>
-<p>If the previous link failed, please build the javadocs. In fact, rebuilding javadocs something you should do every time there is a major change in your code. To build the javadoc, go to the top level directory ("sphinx4"), and type:
-</p>
-<pre>ant javadoc</pre>
-<p>This will build javadocs from public classes, displaying only the public methods and fields. In general, this is all the information you will need. If you need more details, such as private or protected classes, you can generate the corresponding javadoc by doing, for example:
-</p>
-<pre>ant -Daccess=private javadoc</pre>
-  </li>
-  <br>&nbsp;
+<h2>Sphinx-4 for Users</h2>
 
-  <li><a name="configuration"><b>Configuration</b></a>
+<ul>
+
+  <li><a name="configuration"><b>Configuration (Sphinx Properties)</b></a>
 <p>The system behavior is determined by SphinxProperties, which make use, and therefore are similar in nature, to the Java Platform Properties class. The SphinxProperties can be defined at command line, but in general it is defined from a file with extension ".props". Properties defined in
 the props file are overridden by properties defined as command line
 arguments when you run the program.
@@ -360,6 +362,25 @@ contains the type of constant that can be used. So, if this field is
 int, only an integer can be used as the value for this property.
 </p>
   </li>
+</ul>
+
+
+<hr>
+
+<h2>Sphinx-4 for Application Developers</h2>
+<ul>
+  <li><a name="architecture_and_api1"><b>Architecture and API</b></a>
+      <p>The architecture and API can be found in the 
+         <a href="javadoc/index.html">javadoc documentation</a>.
+</p>
+<p>If the previous link failed, please build the javadocs. In fact, rebuilding javadocs something you should do every time there is a major change in your code. To build the javadoc, go to the top level directory ("sphinx4"), and type:
+</p>
+<pre>ant javadoc</pre>
+<p>This will build javadocs from public classes, displaying only the public methods and fields. In general, this is all the information you will need. If you need more details, such as private or protected classes, you can generate the corresponding javadoc by doing, for example:
+</p>
+<pre>ant -Daccess=private javadoc</pre>
+  </li>
+  <br>&nbsp;
 
 </ul>
 
