@@ -39,7 +39,6 @@ public class ZipDatabase {
         String input;
         // parses entries of the form:
         // 03064,NH,NASHUA
-        // sometimes the state is missing
         try {
             while  ((input = br.readLine()) != null) {
                 line++;
@@ -58,7 +57,6 @@ public class ZipDatabase {
             br.close();
         }
     }
-
 
     /**
      * Looks up the city associated with the given zip code
@@ -165,6 +163,11 @@ class ZipInfo {
         return state;
     }
 
+    /**
+     * Returns a string representation of this object
+     *
+     * @return a string representation of this object
+     */
     public String toString() {
         return "Zip: " + getZip() +
               " City: " + getCity() +

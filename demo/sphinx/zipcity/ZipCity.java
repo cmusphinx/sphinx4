@@ -51,7 +51,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 /**
- * A simple demonstration application for Sphinx-4 (suitable for use
+ * A simple demonstration application for Sphinx-4, suitable for use
  * as a WebStart application. ZipCity listens for spoken US zip codes 
  * and shows the city/state associated with the code.
  */
@@ -105,19 +105,23 @@ public class ZipCity extends JFrame {
      */
     public void go() {
         try {
-        setMessage("Loading zip codes...");
+            setMessage("Loading zip codes...");
             zipDB = new ZipDatabase();
+
             setMessage("Loading recognizer...");
             zipRecognizer = new ZipRecognizer();
+
             setMessage("Starting recognizer...");
             zipRecognizer.startup();
-            setMessage("Ready ...");
-            speakButton.setEnabled(true);
+
             zipRecognizer.addZipListener(new ZipListener() {
                 public void notify(String zip) {
                     updateForm(zip);
                 }
             });
+
+            setMessage("Ready ...");
+            speakButton.setEnabled(true);
         } catch (IOException ioe) {
             setMessage("Error: " + ioe.getMessage());
         }
@@ -133,15 +137,21 @@ public class ZipCity extends JFrame {
         final ZipInfo zipInfo = zipDB.lookup(zip);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                zipField.setText(zip);
-                if (zipInfo == null) {
-                    cityField.setText("<Unknown>");
-                    setMessage("Can't find that zip code in the database");
+                if (zip == null) {
+                    zipField.setText("????");
+                    cityField.setText("");
+                    setMessage("I didn't understand what you said");
                 } else {
-                    String location = zipInfo.getCity() + ", " 
-                        + zipInfo.getState();
-                    cityField.setText(location);
-                    setMessage("");
+                    zipField.setText(zip);
+                    if (zipInfo == null) {
+                        cityField.setText("<Unknown>");
+                        setMessage("Can't find that zip code in the database");
+                    } else {
+                        String location = zipInfo.getCity() + ", " 
+                            + zipInfo.getState();
+                        cityField.setText(location);
+                        setMessage("");
+                    }
                 }
                 speakButton.setEnabled(true);
             }
@@ -158,7 +168,7 @@ public class ZipCity extends JFrame {
      * found.
      */
     protected ImageIcon createImageIcon(String path, String description) {
-        java.net.URL imgURL = ZipCity.class.getResource(path);
+        URL imgURL = ZipCity.class.getResource(path);
         if (imgURL != null) {
             return new ImageIcon(imgURL, description);
         } else {
@@ -176,7 +186,6 @@ public class ZipCity extends JFrame {
         setIconImage(image);
     }
 
-
     /**
      * Sets the message to be displayed at the bottom of the Frame.
      *
@@ -189,7 +198,6 @@ public class ZipCity extends JFrame {
             }
         });
     }
-
 
     /**
      * Enables or disables the "Speak" button.
@@ -204,7 +212,6 @@ public class ZipCity extends JFrame {
         });
     }
 
-
     /**
      * Returns a JPanel with the given layout and custom background color.
      *
@@ -218,7 +225,6 @@ public class ZipCity extends JFrame {
         return panel;
     }
 
-
     /**
      * Returns a JPanel with the custom background color.
      *
@@ -229,7 +235,6 @@ public class ZipCity extends JFrame {
         panel.setBackground(backgroundColor);
         return panel;
     }
-
 
     /**
      * Constructs the main Panel of this LiveFrame.
@@ -293,8 +298,6 @@ public class ZipCity extends JFrame {
         messagePanel.add(messageTextField, BorderLayout.CENTER);
         return messagePanel;
     }
-
-
 
     /**
      * The main program for zip city.  Creates the ZipCity frame,

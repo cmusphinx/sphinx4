@@ -12,6 +12,8 @@
 
 package demo.sphinx.zipcity;
 
+
+
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
@@ -19,16 +21,16 @@ import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.StringTokenizer;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Manages the speech recognition for zip city
@@ -37,9 +39,6 @@ public class ZipRecognizer implements Runnable {
     private Microphone microphone;
     private Recognizer recognizer; 
     private List zipListeners = new ArrayList();
-    private boolean done;
-    private Object lock = new Object();
-    private boolean recognizing = false;
 
     /**
      * Creates the ZipRecognizer.
@@ -81,7 +80,6 @@ public class ZipRecognizer implements Runnable {
      * Allocates resources necessary for recognition.
      */
     public void startup() throws IOException {
-        done = false;
         recognizer.allocate();
     }
 
@@ -89,7 +87,6 @@ public class ZipRecognizer implements Runnable {
      * Releases recognition resources
      */
     public void shutdown() {
-        done = true;
         microphoneOff();
         recognizer.deallocate();
     }
@@ -107,6 +104,8 @@ public class ZipRecognizer implements Runnable {
             if (resultText.length() > 0) {
                 String zip = convertResultToZip(resultText);
                 fireListeners(zip);
+            } else {
+                fireListeners(null);
             }
         }
     }
@@ -188,43 +187,6 @@ public class ZipRecognizer implements Runnable {
            zl.notify(zipcode);
        }
    }
-    /**
-     * Main method for running the HelloDigits demo.
-     */
-    public static void main(String[] args) throws IOException {
-        final ZipDatabase zipDB = new ZipDatabase();
-        BufferedReader br = 
-            new BufferedReader(new InputStreamReader(System.in));
-
-        ZipRecognizer zipRecognizer = new ZipRecognizer();
-        zipRecognizer.addZipListener(new ZipListener() {
-                public void notify(String zip) {
-                    System.out.println("Zipcode is " + zip);
-                    ZipInfo zipInfo = zipDB.lookup(zip);
-                    if (zipInfo == null) {
-                        System.out.println("Can't find city at zipcode " + zip);
-                    } else {
-                        System.out.println("Zip  : " + zip);
-                        System.out.println("City : " + zipInfo.getCity());
-                        System.out.println("State: " + zipInfo.getState());
-                    }
-                }
-            });
-        System.out.println(" Starting ...");
-        zipRecognizer.startup();
-        System.out.println(" Ready ...");
-        while (true) {
-            System.out.print("hit return to speak (q to quit): ");
-
-            if (br.readLine().equals("q")) {
-                break;
-            }
-            zipRecognizer.microphoneOn();
-        }
-        System.out.println(" Stopping ...");
-        zipRecognizer.shutdown();
-        System.out.println(" Done");
-    }
 }
 
 
