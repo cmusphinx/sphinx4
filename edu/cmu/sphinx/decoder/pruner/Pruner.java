@@ -14,18 +14,19 @@
 package edu.cmu.sphinx.decoder.pruner;
 
 import edu.cmu.sphinx.decoder.search.ActiveList;
+import edu.cmu.sphinx.util.props.Configurable;
 
 
 /**
  * Provides a mechanism for pruning a set of StateTokens
  *
  */
-public interface Pruner {
+public interface Pruner extends Configurable {
 
     /**
      * Starts the pruner
      */
-    public void start();
+    public void startRecognition();
 
 
     /**
@@ -52,7 +53,18 @@ public interface Pruner {
     /**
      * Performs post-recognition cleanup. 
      */
-    public void stop();
+    public void stopRecognition();
+
+
+    /**
+     * Allocates resources necessary for this pruner
+     */
+    public void allocate();
+    
+    /**
+     * Deallocates resources necessary for this pruner
+     */
+    public void deallocate();
 }
 
 

@@ -13,30 +13,34 @@
 
 package edu.cmu.sphinx.decoder.scorer;
 
-import edu.cmu.sphinx.frontend.FrontEnd;
-
+import java.io.IOException;
 import java.util.List;
+
+import edu.cmu.sphinx.util.props.Configurable;
 
 /**
  * Provides a mechanism for scoring a set of HMM states
  *
  */
-public interface AcousticScorer {
-
-
+public interface AcousticScorer  extends Configurable {
+    
     /**
-     * Initializes this AcousticScorer with the given FrontEnd.
+     * Allocates resources for this scorer
      *
-     * @param context the context to use
-     * @param frontend the FrontEnd to use
      */
-    public void initialize(String context, FrontEnd frontend);
-
+    public void allocate() throws IOException;
+    
+    
+    /**
+     * Deallocates resouces for this scorer
+     *
+     */
+    public void deallocate();
 
     /**
      * starts the scorer
      */
-    public void start();
+    public void startRecognition();
 
     /**
      * Scores the given set of states
@@ -52,7 +56,7 @@ public interface AcousticScorer {
     /**
      * stops the scorer
      */
-    public void stop();
+    public void stopRecognition();
 }
 
 

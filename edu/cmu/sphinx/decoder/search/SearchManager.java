@@ -13,10 +13,10 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import edu.cmu.sphinx.linguist.Linguist;
+import java.io.IOException;
+
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.decoder.pruner.*;
-import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
+import edu.cmu.sphinx.util.props.Configurable;
 
 /**
  * Provides the main interface for the recognizer.  To performn
@@ -26,19 +26,19 @@ import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
  * obtained, <code> terminate </code> should be called. 
  *
  */
-public interface SearchManager {
-
-    /**
-     * Initializes this SearchManager with the given context,
-     * Linguist, AcousticScorer, and Pruner.
+public interface SearchManager extends Configurable {    
+   /**
+     * Allocates the resources necessary for this search
      *
-     * @param context the context to use
-     * @param linguist the Linguist to use
-     * @param scorer the AcousticScorer to use
-     * @param pruner the Pruner to use
      */
-    public void initialize(String context, Linguist linguist,
-			   AcousticScorer scorer, Pruner pruner);
+    public void allocate() throws IOException ;
+    
+    
+    /**
+     * Deallocates resources necessary for this search
+     *
+     */
+    public void deallocate();
 
     /**
      * Prepares the SearchManager for recognition.  This method must
@@ -46,7 +46,7 @@ public interface SearchManager {
      * <code> start </code>  and <code> stop </code>  are called
      * bracketing an utterance.
      */
-    public void start();
+    public void startRecognition();
 
     /**
      * Performs recognition. Processes no more than the given number
@@ -69,7 +69,7 @@ public interface SearchManager {
      * Performs post-recognition cleanup. This method should be called
      * after recognize returns a final result.
      */
-    public void stop();
+    public void stopRecognition();
 }
 
 
