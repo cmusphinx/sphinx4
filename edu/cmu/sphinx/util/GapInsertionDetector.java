@@ -53,10 +53,12 @@ public class GapInsertionDetector {
         int gaps = 0;
         boolean done = false;
         ReferenceUtterance reference = referenceFile.nextUtterance();
+        String log = "";
         while (!done) {
             HypothesisWord word = hypothesisFile.nextWord();
             if (word != null) {
-                
+                boolean hasGapError = false;
+
                 // go to the relevant reference utterance
                 while (reference != null &&
                        reference.getEndTime() < word.getStartTime()) {
@@ -66,26 +68,42 @@ public class GapInsertionDetector {
                 // 'reference' should be the relevant one now
                 if (reference != null) {
                     if (reference.isSilenceGap()) {
-                        gaps++;
+                        hasGapError = true;
                     } else {
                         while (reference.getEndTime() < word.getEndTime()) {
                             reference = referenceFile.nextUtterance();
                             if (reference == null ||
                                 reference.isSilenceGap()) {
-                                gaps++;
+                                hasGapError = true;
                                 break;
                             }
                         }
                     }
                 } else {
                     // if no more reference words, this is a gap insertion
+                    hasGapError = true;
+                }
+
+                if (hasGapError) {
                     gaps++;
+                    log += "GapInsError: Utterance: " + 
+                        hypothesisFile.getUtteranceCount() + 
+                        " Word: " + word.getText() + " (" + 
+                        word.getStartTime() + "," + word.getEndTime() + "). ";
+                    if (reference != null) {
+                        assert reference.isSilenceGap();
+                        log += ("Reference: <sil> (" + 
+                                reference.getStartTime() + "," +
+                                reference.getEndTime() + ")");
+                    }
+                    log += "\n";
                 }
             } else {
                 done = true;
             }
         }
         totalGapInsertions += gaps;
+        System.out.println(log);
         return gaps;
     }
 }
@@ -191,6 +209,7 @@ class HypothesisFile {
     
     private BufferedReader reader;
     private Iterator iterator;
+    private int utteranceCount = 0;
 
     /**
      * Creates a HypothesisFile from the given file.
@@ -226,10 +245,20 @@ class HypothesisFile {
     private HypothesisUtterance nextUtterance() throws IOException {
         String line = reader.readLine();
         if (line != null) {
+            utteranceCount++;
             return new HypothesisUtterance(line);
         } else {
             return null;
         }
+    }
+
+    /**
+     * Returns the utterance count.
+     *
+     * @return the utterance count
+     */
+    public int getUtteranceCount() {
+        return utteranceCount;
     }
 }
 
