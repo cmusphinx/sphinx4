@@ -315,7 +315,7 @@ a) Rita pointed out some problems with depth first search in
 her slides. They *only* happen if senone scores can be greater than
 1.0.  If one could assure that all senone scores are no greater than
 1.0 (by putting a ceiling on the scores, for instance), then one could
-perform breadth first search very simply indeed, without any
+perform depth first search very simply indeed, without any
 replication of states of any sort. One only needs to worry a bit about
 termination logic (i.e. keep expanding all current paths *even* after
 one of the paths has hit the terminating state for the final frame,
