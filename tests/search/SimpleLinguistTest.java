@@ -24,6 +24,7 @@ public class SimpleLinguistTest {
 
 
     private String context = "SimpleLinguistTest";
+    private SimpleLinguist simpleLinguist;
 
 
     /**
@@ -38,12 +39,30 @@ public class SimpleLinguistTest {
             (context, new URL
              ("file://" + pwd + File.separatorChar + propertiesFile));
         
-        Linguist simpleLinguist = new SimpleLinguist
+        simpleLinguist = new SimpleLinguist
             (context, AcousticModel.getAcousticModel(context));
+	dumpGrammar();
+	dumpSentenceHMM();
 
+    }
+
+
+    /**
+     * Dumps the SentenceHMM
+     */
+    public void dumpSentenceHMM() {
+	simpleLinguist.getInitialState().dump();
+    }
+
+
+    /**
+     * Dumps the grammar 
+     */
+    public void dumpGrammar() {
         System.out.print
             (((SimpleLinguist) simpleLinguist).getGrammar().toString());
     }
+
 
 
     /**
