@@ -60,7 +60,6 @@ public class FeatureFileDumper {
      * 
      * @param cm
      *                the Sphinx configuration manager
-     * @param inputAudioFile the name of the input file 
      * @param inputAudioFile
      *                the input audio file
      */
