@@ -96,7 +96,6 @@ ripley_trigram_eep:
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true\
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2\
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true\
-	-Dedu.cmu.sphinx.decoder.linguist.Linguist.addFillerWords=true\
 	-Dedu.cmu.sphinx.decoder.linguist.Linguist.fillerInsertionProbability=.1\
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./ripley.trigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./ripley.props /lab/speech/sphinx4/data/medialab/mit.batch
@@ -117,7 +116,6 @@ ripley_trigram_lep:
 	-Dedu.cmu.sphinx.frontend.endpoint.AudioFilter.mergeSpeechSegments=true\
 	-Dedu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2\
 	-Dedu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true\
-	-Dedu.cmu.sphinx.decoder.linguist.Linguist.addFillerWords=true\
 	-Dedu.cmu.sphinx.decoder.linguist.Linguist.fillerInsertionProbability=.1\
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./ripley.trigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./ripley.props /lab/speech/sphinx4/data/medialab/mit.batch

@@ -94,6 +94,7 @@ edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 0.1
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-16
 edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=22
+edu.cmu.sphinx.decoder.linguist.Linguist.addFillerWords=true
 
 
 ############################################################
