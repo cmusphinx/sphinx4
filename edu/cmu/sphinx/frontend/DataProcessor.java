@@ -58,6 +58,10 @@ public abstract class DataProcessor {
      */
     private SphinxProperties sphinxProperties;
 
+
+    // true if processing Data objects within an Utterance
+    private boolean inUtterance;
+
     
     /**
      * Constructs a default DataProcessor
@@ -168,5 +172,39 @@ public abstract class DataProcessor {
      */
     public String toString() {
         return name;
+    }
+
+
+    /**
+     * Does sanity check on whether the Signals UTTERANCE_START and
+     * UTTERANCE_END are in sequence. Throws an Error if:
+     * <ol>
+     * <li> We have not received an UTTERANCE_START Signal before
+     *      receiving an Signal/Data.
+     * <li> We received an UTTERANCE_START after an UTTERANCE_START
+     *      without an intervening UTTERANCE_END;
+     * </ol>
+     *
+     * @throws Error if the UTTERANCE_START and UTTERANCE_END signals
+     *    are not in sequence
+     */
+    protected void signalCheck(Data data) {
+	if (!inUtterance) {
+	    if (data != null) {
+		if (data.hasSignal(Signal.UTTERANCE_START)) {
+		    inUtterance = true;
+		} else {
+		    throw new Error(getName() + ": no UTTERANCE_START");
+		}
+	    }
+	} else {
+	    if (data == null) {
+		throw new Error(getName() + ": null data");
+	    } else if (data.hasSignal(Signal.UTTERANCE_END)) {
+                inUtterance = false;
+            } else if (data.hasSignal(Signal.UTTERANCE_START)) {
+		throw new Error(getName() + ": too many UTTERANCE_START");
+            }
+        }
     }
 }
