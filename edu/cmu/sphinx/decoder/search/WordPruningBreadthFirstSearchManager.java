@@ -31,8 +31,11 @@ import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.Linguist;
+import edu.cmu.sphinx.linguist.acoustic.HMM;
+import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.SearchGraph;
 import edu.cmu.sphinx.linguist.SearchState;
+import edu.cmu.sphinx.linguist.UnitSearchState;
 import edu.cmu.sphinx.linguist.SearchStateArc;
 import edu.cmu.sphinx.linguist.WordSearchState;
 import edu.cmu.sphinx.linguist.WordSequence;
@@ -226,7 +229,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private Map bestTokenMap;
     private AlternateHypothesisManager loserManager;
     private Class[] stateOrder;
-    private TokenTracker tokenTracker;
+    // private TokenTracker tokenTracker;
+    // private TokenTypeTracker tokenTypeTracker;
     private Map skewMap;
 
     /*
@@ -303,7 +307,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
      */
     public void allocate() throws IOException {
-        tokenTracker = new TokenTracker();
+        // tokenTracker = new TokenTracker();
+        // tokenTypeTracker = new TokenTypeTracker();
 
         scoreTimer = Timer.getTimer("Score");
         pruneTimer = Timer.getTimer("Prune");
@@ -359,7 +364,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             // System.out.println("Frame " + currentFrameNumber);
             // score the emitting list
 
-            tokenTracker.startFrame();
+            // tokenTracker.startFrame();
             activeList = activeListManager.getEmittingList();
             if (activeList != null) {
                 do {
@@ -380,13 +385,14 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                     growNonEmittingLists();
                 }
             }
-            tokenTracker.stopFrame();
+            // tokenTracker.stopFrame();
         }
 
         result = new Result(loserManager, activeList, resultList,
                 currentFrameNumber, done);
 
-        if (showTokenCount) {
+       // tokenTypeTracker.show();
+       if (showTokenCount) {
             showTokenCount();
         }
         return result;
@@ -441,15 +447,15 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         bestTokenMap = new HashMap();
         growBranches();
         growNonEmittingLists();
-        tokenTracker.setEnabled(false);
-        tokenTracker.startUtterance();
+        // tokenTracker.setEnabled(false);
+        // tokenTracker.startUtterance();
     }
 
     /**
      * Local cleanup for this search manager
      */
     protected void localStop() {
-        tokenTracker.stopUtterance();
+        // tokenTracker.stopUtterance();
     }
 
     /**
@@ -589,8 +595,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         tokenCount++;
 
         if ((tokenCount % 1000) == 0) {
-            System.out.println("   Average Tokens/State: "
-                    + (tokenSum / tokenCount));
+            logger.info("Average Tokens/State: " + (tokenSum / tokenCount));
         }
     }
 
@@ -754,7 +759,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     protected void collectSuccessorTokens(Token token) {
 
-        tokenTracker.add(token);
+        // tokenTracker.add(token);
+        // tokenTypeTracker.add(token);
 
         // If this is a final state, add it to the final list
 
@@ -1379,6 +1385,83 @@ class WordStats {
 }
 
 /**
+ * A tool for tracking the types tokens created and placed in the beam
+ *
+ * TODO: Develop a mechanism  for adding trackers such as these in a
+ * more general fashion.
+ */
+class TokenTypeTracker {
+    // keep track of the various types of states
+
+    private int numWords;
+    private int numUnits;
+    private int numHMMs;
+    private int numOthers;
+    private int numHMMBegin;
+    private int numHMMEnd;
+    private int numHMMSingle;
+    private int numHMMInternal;
+    private int numTokens;
+
+    /**
+     * Adds a token to this tracker. Records statistics about
+     * the type of token.
+     *
+     * @param t the token to track
+     */
+    void add(Token t) {
+        numTokens++;
+        SearchState s = t.getSearchState();
+
+        if (s instanceof WordSearchState) {
+            numWords++;
+        } else if (s instanceof UnitSearchState) {
+            numUnits++;
+        } else if (s instanceof HMMSearchState) {
+            numHMMs++;
+            HMM hmm = ((HMMSearchState)s).getHMMState().getHMM();
+            if (hmm.getPosition() == HMMPosition.BEGIN) {
+                numHMMBegin++;
+            } else if (hmm.getPosition() == HMMPosition.END) {
+                numHMMEnd++;
+            } else if (hmm.getPosition() == HMMPosition.SINGLE) {
+                numHMMSingle++;
+            } else if (hmm.getPosition() == HMMPosition.INTERNAL) {
+                numHMMInternal++;
+            }
+        } else {
+            numOthers++;
+        }
+    }
+
+    /**
+     * Shows the accumulated statistics
+     */
+    void show() {
+        System.out.println("TotalTokens: " + numTokens);
+        System.out.println("      Words: " + numWords + pc(numWords));
+        System.out.println("      Units: " + numUnits + pc(numUnits));
+        System.out.println("      HMM-b: " + numHMMBegin + pc(numHMMBegin));
+        System.out.println("      HMM-e: " + numHMMEnd + pc(numHMMEnd));
+        System.out.println("      HMM-s: " + numHMMSingle + pc(numHMMSingle));
+        System.out.println("      HMM-i: " + numHMMInternal +
+                pc(numHMMInternal));
+        System.out.println("     Others: " + numOthers + pc(numOthers));
+    }
+
+    /**
+     * Utility method for generating iteger percents
+     * @param num the value to be converted into percent
+     * @return a string representation as a percent
+     */
+    private String pc(int num) {
+         int percent = ((100 * num) / numTokens);
+         return " (" + percent + "%)";
+    }
+}
+
+
+/**
  * This debugging class is used to track the number of active tokens per state
  */
 
@@ -1390,6 +1473,7 @@ class TokenTracker {
     private int utteranceStateCount;
     private int utteranceMaxStates;
     private int utteranceSumStates;
+
 
     /**
      * Enables or disables the token tracker
