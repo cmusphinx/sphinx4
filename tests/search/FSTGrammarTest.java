@@ -4,7 +4,7 @@
  * Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
  * All Rights Reserved.  Use is subject to license terms.
  * 
- * See the file "license.terms" for information on usage and
+ * See the file "license.terms" for information on u and
  * redistribution of this file, and for a DISCLAIMER OF ALL 
  * WARRANTIES.
  *
@@ -17,7 +17,7 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.search.Dictionary;
 import edu.cmu.sphinx.search.FullDictionary;
 import edu.cmu.sphinx.search.Grammar;
-import edu.cmu.sphinx.search.ArpaGrammar;
+import edu.cmu.sphinx.search.FSTGrammar;
 
 import java.io.File;
 
@@ -25,10 +25,10 @@ import java.net.URL;
 
 
 /**
- * A test for the ArpaGrammar class 
+ * A test for the FSTGrammar class 
  */
-public class ArpaGrammarTest {
-    private static String context = "ArpaGrammar";
+public class FSTGrammarTest {
+    private static String context = "FSTGrammar";
 
     /**
      * Main method of this Test.
@@ -41,7 +41,7 @@ public class ArpaGrammarTest {
 	    Dictionary dictionary = new FullDictionary(context);
 
 
-            Grammar grammar = new ArpaGrammar();
+            Grammar grammar = new FSTGrammar();
 
 	    grammar.initialize(context, null, dictionary);
 	    grammar.dump();

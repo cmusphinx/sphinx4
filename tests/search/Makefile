@@ -41,13 +41,13 @@ search: all
 alpha-dict: all
 	$(JAVA_CMD) tests.search.AlphaDictionaryTest alpha_dictionary.props
 
-ArpaGrammarTestTiny: all
-	$(JAVA_CMD) tests.search.ArpaGrammarTest ArpaGrammarTest.props
+FSTGrammarTestTiny: all
+	$(JAVA_CMD) tests.search.FSTGrammarTest FSTGrammarTest.props
 
-ArpaGrammarTestSmall: all
+FSTGrammarTestSmall: all
 	$(JAVA_CMD)  \
--Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx4/data/fst/digits.fst\
-    tests.search.ArpaGrammarTest ArpaGrammarTest.props
+-Dedu.cmu.sphinx.search.FSTGrammar.path=/lab/speech/sphinx4/data/fst/digits.fst\
+    tests.search.FSTGrammarTest FSTGrammarTest.props
 
 heapActiveListTest: all
 	$(JAVA_CMD) tests.search.HeapActiveListTest
@@ -64,16 +64,16 @@ LMGramTest_an4:
 
 #################################################################
 # loads a large model. 
-ArpaGrammarTestLarge: all
+FSTGrammarTestLarge: all
 	$(JAVA_CMD)  \
--Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx4/data/fst/5721_word_vocab.FST \
-	tests.search.ArpaGrammarTest ArpaGrammarTest.props
+-Dedu.cmu.sphinx.search.FSTGrammar.path=/lab/speech/sphinx4/data/fst/5721_word_vocab.FST \
+	tests.search.FSTGrammarTest FSTGrammarTest.props
 
 
 #################################################################
 # loads a huge model. Don't expect this to finish anytime soon
-ArpaGrammarTestMega: all
+FSTGrammarTestMega: all
 	$(JAVA_CMD)  \
--Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx4/data/fst/language_model.arpaformat.FST.ascii\
-	tests.search.ArpaGrammarTest ArpaGrammarTest.props
+-Dedu.cmu.sphinx.search.FSTGrammar.path=/lab/speech/sphinx4/data/fst/language_model.arpaformat.FST.ascii\
+	tests.search.FSTGrammarTest FSTGrammarTest.props
 
