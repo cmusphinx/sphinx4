@@ -87,6 +87,7 @@ class BinaryLoader {
     private int numberBigrams;
     private int numberTrigrams;
     private int logBigramSegmentSize;
+    private int startWordID;
 
     private int[] trigramSegmentTable;
 
@@ -99,6 +100,10 @@ class BinaryLoader {
     private boolean bigEndian = true;
     private boolean applyLanguageWeightAndWip;
 
+    private Timer headerTimer;
+    private Timer unigramTimer;
+    private Timer uwTimer;
+    private Timer tablesTimer;
     private Timer stringTimer;
 
     
@@ -233,6 +238,10 @@ class BinaryLoader {
             (PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP,
              PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP_DEFAULT);
 
+        headerTimer = Timer.getTimer(context, "HeaderRead");
+        unigramTimer = Timer.getTimer(context, "UnigramRead");
+        uwTimer = Timer.getTimer(context, "ApplyUW");
+        tablesTimer = Timer.getTimer(context, "TablesRead");
         stringTimer = Timer.getTimer(context, "StringRead");
 
         logMath = LogMath.getLogMath(context);
@@ -301,7 +310,7 @@ class BinaryLoader {
      */
     public ByteBuffer loadBuffer(long position, int size) 
 	throws IOException {
-	assert ((position + size) <= fileChannel.size());
+        // assert ((position + size) <= fileChannel.size());
         ByteBuffer bb = ByteBuffer.allocate(size);
         fileChannel.position(position);
         int bytesRead = fileChannel.read(bb);
@@ -343,6 +352,8 @@ class BinaryLoader {
             (new BufferedInputStream(fis));
 	
 	// read standard header string-size; set bigEndian flag
+
+        headerTimer.start();
 	
 	int headerLength = readInt(stream, bigEndian);
 
@@ -350,14 +361,14 @@ class BinaryLoader {
 	    headerLength = Utilities.swapInteger(headerLength);
 	    if (headerLength == (DARPA_LM_HEADER.length() + 1)) {
 		bigEndian = false;
-                System.out.println("Little-endian");
+                // System.out.println("Little-endian");
 	    } else {
 		throw new Error
 		    ("Bad binary LM file magic number: " + headerLength +
 		     ", not an LM dumpfile?");
 	    }
 	} else {
-            System.out.println("Big-endian");
+            // System.out.println("Big-endian");
         }
 
 	// read and verify standard header string
@@ -370,11 +381,8 @@ class BinaryLoader {
 	}
 
 	// read LM filename string size and string
-	
-	int fileNameLength = readInt(stream, bigEndian);
-	for (int i = 0; i < fileNameLength; i++) {
-	    readByte(stream);
-	}
+        int fileNameLength = readInt(stream, bigEndian);
+        bytesRead += stream.skipBytes(fileNameLength);
 
 	numberUnigrams = 0;
 	logBigramSegmentSize = LOG2_BIGRAM_SEGMENT_SIZE_DEFAULT;
@@ -382,8 +390,9 @@ class BinaryLoader {
 	// read version number, if present. it must be <= 0.
 
 	int version = readInt(stream, bigEndian);
-	System.out.println("Version: " + version);
-	if (version <= 0) { // yes, its the version number
+	// System.out.println("Version: " + version);
+	
+        if (version <= 0) { // yes, its the version number
 	    readInt(stream, bigEndian); // read and skip timestamp
 	    
 	    // read and skip format description
@@ -392,9 +401,7 @@ class BinaryLoader {
 		if ((formatLength = readInt(stream, bigEndian)) == 0) {
 		    break;
 		}
-		for (int i = 0; i < formatLength; i++) {
-		    readByte(stream);
-                }
+                bytesRead += stream.skipBytes(formatLength);
 	    }
 
 	    // read log bigram segment size if present
@@ -416,22 +423,27 @@ class BinaryLoader {
 	    throw new Error("Bad number of unigrams: " + numberUnigrams +
 			    ", must be > 0.");
 	}
-	System.out.println("# of unigrams: " + numberUnigrams);
+	// System.out.println("# of unigrams: " + numberUnigrams);
 
 	numberBigrams = readInt(stream, bigEndian);
 	if (numberBigrams < 0) {
 	    throw new Error("Bad number of bigrams: " + numberBigrams);
 	}
-	System.out.println("# of bigrams: " + numberBigrams);
+	// System.out.println("# of bigrams: " + numberBigrams);
 
 	numberTrigrams = readInt(stream, bigEndian);
 	if (numberTrigrams < 0) {
 	    throw new Error("Bad number of trigrams: " + numberTrigrams);
 	}
-	System.out.println("# of trigrams: " + numberTrigrams);
+	// System.out.println("# of trigrams: " + numberTrigrams);
+
+        headerTimer.stop();
+
+        unigramTimer.start();
 
 	unigrams = readUnigrams(stream, numberUnigrams+1, bigEndian);
 
+        unigramTimer.stop();
 
 	// skip all the bigram entries, the +1 is the sentinel at the end
 	if (numberBigrams > 0) {
@@ -453,6 +465,8 @@ class BinaryLoader {
             bytesRead += bytesToSkip;
 	}
 
+        tablesTimer.start();
+
 	// read the bigram probabilities table
 	if (numberBigrams > 0) {
             this.bigramProbTable = readFloatTable(stream, bigEndian);
@@ -467,32 +481,32 @@ class BinaryLoader {
                                                trigramSegTableSize);
         }
 
+        tablesTimer.stop();
+
+        stringTimer.start();
+
 	// read word string names
         int wordsStringLength = readInt(stream, bigEndian);
         if (wordsStringLength <= 0) {
             throw new Error("Bad word string size: " + wordsStringLength);
         }
 
-        // stringTimer.start();
-
         // read the string of all words
-        String wordsString = 
-            readString(stream, wordsStringLength).toLowerCase();
-        
-        // break up string just read into words
-        this.words = wordsString.split("\0");
+        this.words =
+            readWords(stream, wordsStringLength, numberUnigrams);
+            //wordsString.split("\0");
 
-        if (words.length != numberUnigrams) {
-            throw new Error("Bad # of words: " + words.length);
-        }
+        stringTimer.stop();
 
-        // stringTimer.stop();
+        uwTimer.start();
 
         applyUnigramWeight();
 
         if (applyLanguageWeightAndWip) {
             applyLanguageWeightAndWip();
         }
+
+        uwTimer.stop();
 
         fis.close();
         stream.close();
@@ -518,7 +532,7 @@ class BinaryLoader {
         float p2 = logUniform + logNotUnigramWeight;
 
         for (int i = 0; i < numberUnigrams; i++) {
-            if (!words[i].equals(Dictionary.SENTENCE_START_SPELLING)) {
+            if (i != startWordID) {
                 float p1 = unigrams[i].getLogProbability() + logUnigramWeight;
                 unigrams[i].setLogProbability(logMath.addAsLinear(p1, p2));
             }
@@ -559,7 +573,7 @@ class BinaryLoader {
         }
     }
 
-
+    
     /**
      * Reads the probability table from the given DataInputStream.
      *
@@ -633,7 +647,7 @@ class BinaryLoader {
             if (i != (numberUnigrams - 1)) {
                 assert (unigramID == i);
             }
-            
+                        
             float unigramProbability = readFloat(stream, bigEndian);
 	    float unigramBackoff = readFloat(stream, bigEndian);
 	    int firstBigramEntry = readInt(stream, bigEndian);
@@ -714,14 +728,54 @@ class BinaryLoader {
     private final String readString(DataInputStream stream, int length)
         throws IOException {
         StringBuffer buffer = new StringBuffer();
+        byte[] bytes = new byte[length];
+        bytesRead += stream.read(bytes);
         
+        for (int i = 0; i < length; i++) {
+            buffer.append((char)bytes[i]);
+        }
+        return buffer.toString();
+    }
+
+
+    /**
+     * Reads a series of consecutive Strings from the given stream.
+     * 
+     * @param stream the DataInputStream to read from
+     * @param length the total length in bytes of all the Strings
+     * @param numberUnigrams the number of String to read
+     *
+     * @return an array of the Strings read
+     */
+    private final String[] readWords(DataInputStream stream, 
+                                     int length,
+                                     int numberUnigrams)
+    throws IOException {
+        String[] words = new String[numberUnigrams];
+        
+        StringBuffer buffer = new StringBuffer();
         byte[] bytes = new byte[length];
         bytesRead += stream.read(bytes);
 
+        int s = 0;
         for (int i = 0; i < length; i++) {
-            buffer.append((char)bytes[i]);
-	}
-        return buffer.toString();
+            char c = (char)bytes[i];
+            bytesRead++;
+            if (c == '\0') {
+                // if its the end of a string, add it to the 'words' array
+                words[s] = buffer.toString().toLowerCase();
+                buffer = new StringBuffer();
+                if (words[s].equals(Dictionary.SENTENCE_START_SPELLING)) {
+                    startWordID = s;
+                }
+                s++;
+            } else {
+                buffer.append(c);
+            }
+        }
+        assert (s == numberUnigrams);
+        return words;
     }
+
 }
 
