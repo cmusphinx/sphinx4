@@ -337,6 +337,25 @@ function getAvgResponseTime(testName, testCount) {
     return avgResponseTime;    
 }
 
+
+function getRejectionAccuracy(testName, testCount) {
+    updateData(testName, testCount);
+    ra = (data[F_CORRECT_OOG] + data[F_CORRECT_IG]);
+    if (ra == "" || ra == 0) {
+	return "N/A";
+    } else {
+	return (ra * 100 / data[F_SENTENCES]);
+    }
+}
+
+
+function getRejectionAccuracyStatus(testName) {
+    thisRA = getRejectionAccuracy(testName, testCount[testName]);
+    prevRA = getRejectionAccuracy(testName, testCount[testName] - 1);
+    return getMoreIsBetterMetricStatus(thisRA, prevRA);
+}
+
+
 function getLessIsBetterMetricStatus(thisMetric, prevMetric) {
     if (thisMetric == "N/A") {
 	return "N/A";
@@ -372,12 +391,20 @@ function getLessIsBetterThresholdMetricStatus(thisMetric, prevMetric, threshold)
     return "OK - " thisMetric "";
 }
 
-function getRejectionAccuracyStatus(testName) {
-    count = testCount[testName];
-
-    updateData(testName, count);
-
-    return ( data[F_CORRECT_OOG] + data[F_CORRECT_IG] ) * 100 / data[F_SENTENCES] ;
+function getMoreIsBetterMetricStatus(thisMetric, prevMetric) {
+    if (thisMetric == "N/A") {
+	return "N/A";
+    }
+    if (prevMetric == "N/A") {
+	return "OK - " thisMetric "";
+    }
+    if (thisMetric < prevMetric) {
+	return "REGRESSED - decreased from " prevMetric " to " thisMetric "";
+    }
+    if (thisMetric > prevMetric) {
+	return "IMPROVED  - increased from " prevMetric " to " thisMetric "";
+    }
+    return "OK - " thisMetric ""
 }
 
 ####
