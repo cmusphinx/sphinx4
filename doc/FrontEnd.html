@@ -35,7 +35,8 @@
       <p>
         <h3>Table of Contents</h3>
 	<ul>
-	<li><a href="#create_cepstra">Creating Cepstra from Audio</a></li>
+	<li><a href="#create_cepstra">Creating MFC Cepstrum/PLP Cepstrum/Spectrum from Audio
+	    </a></li>
 	<li><a href="#decode_cepstra">Decoding from Cepstra</a></li>
 	<li><a href="../javadoc/edu/cmu/sphinx/frontend/doc-files/FrontEndProperties.html">Configuring the Front End</a></li>
 	<li><a href="#enable_endpointer">Enabling the Endpointer</a></li>
@@ -43,18 +44,18 @@
       <p>
       <hr>
 
-      <h3><a name="create_cepstra">Creating Cepstra from Audio</a></h3>
+      <h3><a name="create_cepstra">Creating MFC Cepstrum/PLP Cepstrum/Spectrum from Audio</a></h3>
 
       There is a program called FeatureFileDumper that turns an audio file
       into binary cepstra file using the front end.
-      To create MFCC cepstra using this program,
+      To create MFCC cepstrum using this program,
       go to the
       <code>edu/cmu/sphinx/tools/feature</code> directory,
       and type:
       <p>
       <code>ant -Dinput="input file" -Doutput="output file" cepstra_producer</code>
       <p>
-      To create a binary PLP cepstra file using this program, type:
+      To create a binary PLP cepstrum file using this program, type:
       <p>
       <code>ant -Dinput="input file" -Doutput="output file" plp_producer</code>
       <p>
@@ -62,6 +63,14 @@
       <p>
       <code>ant -Dinput="input file" -Doutput="output file" spectra_producer
       </code>
+
+      <p>
+      As you might notice by comparing the files cepstra_dump.props
+      and spectra_dump.props in the "edu/cmu/sphinx/tools/feature" directory,
+      the only difference in setup between dumping different types of
+      features is in the sequence of data processors as specified in the
+      properties file. If you give it a difference data processor sequence,
+      it will give you different output.
 
       <p>
       <b>Binary File Format</b>
@@ -79,14 +88,33 @@
 
       <p>
       This normally applies to batch mode decoding using the BatchDecoder.
-      To decode from cepstra files, you should set the sphinx property as:
-      <code>edu.cmu.sphinx.decoder.BatchDecoder.inputDataType = cepstrum</code>
+      There are two important steps in order to decode from cepstra files:
       
+      <ol>
+      
+      <li>Set the sphinx property as:
+      <code>edu.cmu.sphinx.decoder.BatchDecoder.inputDataType = cepstrum</code>
+      <p>
       Setting this property to "audio" (the default) simply decodes 
       from audio files.
-
       <p>
       <b>NOTE:</b> <i>Other input data types are not supported yet.</i>
+
+      </li>
+
+      <li>
+      Change the front end pipeline to skip the preemphasis,
+      windowing, MFCC, and DCT steps. The resulting pipeline should look like:
+      <p>
+      <code>
+      edu.cmu.sphinx.frontend.FrontEndFactory.pipelines=mfc
+      <br>mfc;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=2
+      <br>mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class=edu.cmu.sphinx.frontend.feature.BatchCMN (or LiveCMN)
+      <br>mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class=edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor
+      </code>
+      </li>
+
+      </ol>      
 
       <hr>
 
