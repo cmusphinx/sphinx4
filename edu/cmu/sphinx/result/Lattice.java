@@ -148,8 +148,7 @@ public class Lattice {
      * @param result the result to convert into a lattice
      */
     public Lattice(Result result) {
-	this();
-	this.logMath = result.getLogMath();
+	this(result.getLogMath());
 	visitedWordTokens = new HashSet();
         loserManager = result.getAlternateHypothesisManager();
         if (loserManager != null) {
