@@ -16,6 +16,25 @@
     <property name="lib_dir"            value="${build_dir}/lib"/>
     <property name="javadoc_dir"	value="${build_dir}/javadoc"/>
     <property name="javadoc_zip"	value="javadoc.zip"/>
+    <!-- Load the environment -->
+    <property environment="env"/>
+    <!-- Complicated way of doing a "if... else"                 -->
+    <!-- Check if the environment variable is set. If it is, set -->
+    <!-- the local variable to the same value.                   -->
+    <condition property="EXTERNAL_JSAPI_LOCATION" 
+               value="${env.EXTERNAL_JSAPI_LOCATION}">
+        <isset property="env.EXTERNAL_JSAPI_LOCATION"/>
+    </condition>
+    <!-- If environment variable is not set, set the local       -->
+    <!-- variable to a default value.                            -->
+    <condition property="EXTERNAL_JSAPI_LOCATION" 
+               value="/lab/speech/sphinx4/lib/jsapi.jar">
+        <not>
+             <isset property="env.EXTERNAL_JSAPI_LOCATION"/>
+        </not>
+    </condition>
+    <available file="${EXTERNAL_JSAPI_LOCATION}" 
+               property="jsapi_default.isPresent"/>
 
 
     <!-- ********************************************************** -->
@@ -29,7 +48,8 @@
 	<echo message="Build complete."/>
     </target>
 
-    <target name="check_jsapi_jar.isPresent">
+    <target name="check_jsapi_jar.isPresent"
+            depends="copy_jsapi_jar">
         <available file="lib/jsapi.jar" property="jsapi_jar.isPresent"/>
         <fail unless="jsapi_jar.isPresent">
 
@@ -37,6 +57,10 @@ Cannot find lib/jsapi.jar needed to build Sphinx-4.  Please
 extract it by running jsapi.sh or jsapi.exe from the lib
 directory.
         </fail>
+    </target>
+
+    <target name="copy_jsapi_jar" if="jsapi_default.isPresent">
+        <copy file="${EXTERNAL_JSAPI_LOCATION}" tofile="lib/jsapi.jar"/>
     </target>
 
     <!-- ********************************************************** -->
