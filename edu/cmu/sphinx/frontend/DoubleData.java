@@ -19,6 +19,7 @@ package edu.cmu.sphinx.frontend;
 public class DoubleData implements Data, Cloneable {
 
     private double[] values;
+    private int sampleRate;
     private long firstSampleNumber;
     private long collectTime;
 
@@ -28,17 +29,29 @@ public class DoubleData implements Data, Cloneable {
      * and first sample number.
      *
      * @param values the data values
+     * @param sampleRate the sample rate of the data
      * @param collectTime the time at which this data is collected
      * @param firstSampleNumber the position of the first sample in the
      *                          original data
      */
-    public DoubleData(double[] values,
+    public DoubleData(double[] values, int sampleRate,
                       long collectTime, long firstSampleNumber) {
         this.values = values;
+        this.sampleRate = sampleRate;
         this.collectTime = collectTime;
         this.firstSampleNumber = firstSampleNumber;
     }
 
+    /**
+     * Returns a string that describes this DoubleData.
+     *
+     * @returns a string that describes this DoubleData
+     */
+    public String toString() {
+        return ("DoubleData: " + sampleRate + "Hz, first sample #: " +
+                firstSampleNumber + ", collect time: " + collectTime);
+    }
+        
 
     /**
      * Returns the values of this DoubleData object.
@@ -47,6 +60,16 @@ public class DoubleData implements Data, Cloneable {
      */
     public double[] getValues() {
         return values;
+    }
+
+
+    /**
+     * Returns the sample rate of the data.
+     *
+     * @return the sample rate of the data
+     */
+    public int getSampleRate() {
+        return sampleRate;
     }
 
     
