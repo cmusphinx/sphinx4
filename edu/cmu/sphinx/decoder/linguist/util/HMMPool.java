@@ -60,6 +60,7 @@ public class HMMPool {
         for (Iterator i = model.getContextIndependentUnitIterator();
                 i.hasNext();) {
             Unit unit = (Unit) i.next();
+            // System.out.println("CI unit " + unit);
             if (unit.getBaseID() > maxCIUnits) {
                 maxCIUnits = unit.getBaseID();
             }
@@ -88,7 +89,7 @@ public class HMMPool {
             for (int j = 1 ; j < unitTable.length; j++) {
                 Unit unit = unitTable[j];
                 if (unit == null) {
-                    unit = unitTable[getCentralUnitID(j)];
+                    unit = synthesizeUnit(j);
                 }
                 if (unit != null) {
                     hmmTable[index][j] = 
@@ -98,6 +99,47 @@ public class HMMPool {
             }
         }
         Timer.stop("buildHmmPool");
+    }
+
+    /**
+     * Given a unit ID, generate a full context dependent unit that
+     * will allow us to look for a suitable hmm
+     *
+     * @param id the unit id
+     *
+     * @return a context dependent unit for the ID
+     */
+    private Unit synthesizeUnit(int id) {
+        int centralID = getCentralUnitID(id);
+        int leftID = getLeftUnitID(id);
+        int rightID = getRightUnitID(id);
+
+        if (centralID == 0 || leftID == 0 || rightID == 0) {
+            return null;
+        }
+
+        Unit centralUnit = unitTable[centralID];
+        Unit leftUnit = unitTable[leftID];
+        Unit rightUnit = unitTable[rightID];
+
+        assert centralUnit != null;
+        assert leftUnit != null;
+        assert rightUnit != null;
+
+        Unit[] lc = new Unit[1];
+        Unit[] rc = new Unit[1];
+        lc[0] = leftUnit;
+        rc[0] = rightUnit;
+        LeftRightContext context = LeftRightContext.get(lc, rc);
+
+        Unit unit = Unit.getUnit(centralUnit.getName(), centralUnit.isFiller(),
+                context);
+
+        if (false) {
+            System.out.println("Missing " + getUnitNameFromID(id) 
+                    + " returning " + unit);
+        }
+        return unit;
     }
 
     /**
@@ -223,6 +265,26 @@ public class HMMPool {
      */
     private int getCentralUnitID(int id) {
         return id / (numCIUnits * numCIUnits);
+    }
+
+    /**
+     * Given an ID, build up a name for display
+     *
+     * @return the name baed on the ID
+     */
+    private String getUnitNameFromID(int id) {
+        int centralID = getCentralUnitID(id);
+        int leftID = getLeftUnitID(id);
+        int rightID = getRightUnitID(id);
+
+        String cs = unitTable[centralID] == null ? "(" + centralID+")" :
+            unitTable[centralID].toString();
+        String ls = unitTable[leftID] == null ? ("(" + leftID + ")") :
+            unitTable[leftID].toString();
+        String rs = unitTable[rightID] == null ? "(" + rightID +  ")" :
+            unitTable[rightID].toString();
+
+        return cs + "[" + ls + "," + rs +"]";
     }
 
     /**
