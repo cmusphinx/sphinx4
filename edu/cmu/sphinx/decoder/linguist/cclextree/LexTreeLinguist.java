@@ -1016,7 +1016,7 @@ public class LexTreeLinguist implements  Linguist {
                     if (arc.getHMMState().isEmitting()) {
                         // if its a self loop and the prob. matches
                         // reuse the state
-                        if (false && arc.getHMMState()  == hmmState &&
+                        if (arc.getHMMState()  == hmmState &&
                             logAcousticProbability == arc.getLogProbability()) {
                             nextStates[i] = this;
                         } else {
