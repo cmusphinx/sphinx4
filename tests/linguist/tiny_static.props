@@ -132,5 +132,5 @@ edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.filterSuccessors=true
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=7.0
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=true
 
-edu.cmu.sphinx.decoder.Recognizer.linguistProcessors=edu.cmu.sphinx.util.GDLDumper
+edu.cmu.sphinx.decoder.Recognizer.linguistProcessors=edu.cmu.sphinx.decoder.linguist.util.GDLDumper
 edu.cmu.sphinx.util.LinguistDumper.filename=tiny_static.gdl

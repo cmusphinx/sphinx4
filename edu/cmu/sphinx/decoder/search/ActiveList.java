@@ -14,6 +14,7 @@
 package edu.cmu.sphinx.decoder.search;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -163,6 +164,13 @@ public interface ActiveList {
      * @return the set of tokens
      */
     public Token[] getTokens();
+
+    /**
+     * Gets the set of all scoreables
+     *
+     * @return the set of tokens
+     */
+    public Scoreable[] getScoreables();
 
 }
 

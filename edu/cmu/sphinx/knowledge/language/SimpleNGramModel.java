@@ -81,7 +81,7 @@ public class SimpleNGramModel implements LanguageModel {
         this.props = SphinxProperties.getSphinxProperties(context);
         
         String format = props.getString
-            (LanguageModel.PROP_FORMAT, "sphinx4.v1");
+            (LanguageModel.PROP_FORMAT, "arpa");
         String location = props.getString
             (LanguageModel.PROP_LOCATION, ".");
         

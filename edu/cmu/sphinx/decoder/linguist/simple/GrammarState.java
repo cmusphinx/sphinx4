@@ -10,10 +10,11 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.decoder.linguist.simple;
 
 import java.io.Serializable;
 
+import edu.cmu.sphinx.decoder.linguist.GrammarNode;
 
 /**
  * Represents a non-emitting sentence hmm state

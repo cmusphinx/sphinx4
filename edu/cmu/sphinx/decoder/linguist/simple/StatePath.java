@@ -10,10 +10,8 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.decoder.linguist.simple;
 
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
-import edu.cmu.sphinx.decoder.linguist.ContextBucket;
 
 
 /**

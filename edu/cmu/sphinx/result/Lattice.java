@@ -14,7 +14,7 @@ package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.decoder.linguist.WordState;
+import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 
 import java.util.*;
 import java.io.*;
@@ -73,7 +73,7 @@ public class Lattice {
             for( Token token = (Token)(it.next());
                  token != null;
                  token = token.getPredecessor() ) {
-                if( token.getSentenceHMMState() instanceof WordState ) {
+                if( token.getSearchState() instanceof WordSearchState ) {
                     Node newNode;
                     if( hasNode(token) ) {
                         newNode = getNode( token );
@@ -201,18 +201,19 @@ public class Lattice {
 
     /**
      * Add a Node corresponding to a Token from the result Token tree.
-     * Usually, the Token should reference a sentenceHMMState that is a
-     * WordState, although other Tokens may be used for debugging.
+     * Usually, the Token should reference a search state that is a
+     * WordSearchState, although other Tokens may be used for debugging.
      * @param token
      * @return the new Node
      */
     protected Node addNode(Token token) {
         String word;
-        if( token.getSentenceHMMState() instanceof WordState) {
-            word = ((WordState)(token.getSentenceHMMState())).getWord().getSpelling();
+        if( token.getSearchState() instanceof WordSearchState) {
+            word = ((WordSearchState)(token.getSearchState()))
+                .getPronunciation().getWord();
         }
         else {
-            word = token.getSentenceHMMState().toString();
+            word = token.getSearchState().toString();
         }
         return addNode(word,0,0);
     }

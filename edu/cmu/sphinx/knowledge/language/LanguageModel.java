@@ -26,7 +26,8 @@ import java.io.IOException;
  */
 public interface LanguageModel {
 
-    public final static String PROP_PREFIX = "edu.cmu.sphinx.knowledge.language";
+    public final static String PROP_PREFIX =
+        "edu.cmu.sphinx.knowledge.language.LanguageModel";
     public final static String PROP_FORMAT = PROP_PREFIX + ".format";
     public final static String PROP_LOCATION = PROP_PREFIX + ".location";
 

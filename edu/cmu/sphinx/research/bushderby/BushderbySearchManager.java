@@ -36,10 +36,14 @@ import edu.cmu.sphinx.result.Result;
 
 import edu.cmu.sphinx.decoder.linguist.Color;
 import edu.cmu.sphinx.decoder.linguist.Linguist;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc;
-import edu.cmu.sphinx.decoder.linguist.UnitState;
-import edu.cmu.sphinx.decoder.linguist.WordState;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
+import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
+import edu.cmu.sphinx.decoder.linguist.WordSearchState;
+import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMState;
+import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMStateArc;
+import edu.cmu.sphinx.decoder.linguist.simple.UnitState;
+import edu.cmu.sphinx.decoder.linguist.simple.WordState;
 
 import edu.cmu.sphinx.decoder.search.Pruner;
 import edu.cmu.sphinx.decoder.search.Token;
@@ -209,7 +213,8 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 
 	while (iterator.hasNext()) {
 	    Token token = (Token) iterator.next();
-	    if (token.getSentenceHMMState().getColor() == Color.GREEN) {
+            SentenceHMMState state = (SentenceHMMState) token.getSearchState();
+	    if (state.getColor() == Color.GREEN) {
 		double logNewScore = (float) 
 		    (token.getWorkingScore() / bushderbyEta);
 		if (false) {
@@ -248,8 +253,9 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	    nextFrameNumber++;
 	}
 
-	SentenceHMMState state = token.getSentenceHMMState();
-	SentenceHMMStateArc[] arcs = state.getSuccessorArray();
+	SentenceHMMState state = (SentenceHMMState) token.getSearchState();
+	SentenceHMMStateArc[] arcs = 
+            (SentenceHMMStateArc[]) state.getSuccessors();
 
 	// For each successor
 	    // calculate the entry score for the token based upon the
@@ -262,7 +268,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 
 	 for (int i = 0; i < arcs.length; i++) {
 	    SentenceHMMStateArc arc = arcs[i];
-	    SentenceHMMState nextState = arc.getNextState();
+	    SentenceHMMState nextState = (SentenceHMMState) arc.getState();
 
 	    if (filterSuccessors && !isValidTransition(token, nextState)) {
 		continue;
@@ -277,15 +283,15 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		arc.getAcousticProbability() + 
 		arc.getInsertionProbability();
 	    
-	    boolean firstToken = nextState.getBestToken() == null ||
-		nextState.getBestToken().getFrameNumber() != nextFrameNumber;
+	    boolean firstToken = getBestToken(nextState) == null ||
+		getBestToken(nextState).getFrameNumber() != nextFrameNumber;
 	    boolean greenToken = nextState.getColor() == Color.GREEN;
 
 	    double logWorkingScore =  firstToken ? getLogMath().getLogZero() :
-		nextState.getBestToken().getWorkingScore();
+		getBestToken(nextState).getWorkingScore();
 
 	    if (firstToken ||  nextState.isFanIn() ||
-		nextState.getBestToken().getScore() <= logCurrentScore) {
+		getBestToken(nextState).getScore() <= logCurrentScore) {
 		
 		// we may want to create  green tokens all the time
 		if (greenToken || 
@@ -303,7 +309,8 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 
 		    newToken = collapseToken(newToken);
 
-		    Token oldBestToken = nextState.setBestToken(newToken);
+		    Token oldBestToken = getBestToken(nextState);
+		    setBestToken(newToken, nextState);
 
 		    if (!newToken.isEmitting()) {
 			if (greenToken && delayedExpansionList != null) {
@@ -338,7 +345,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 
 
 	    if (greenToken) {
-		Token bestToken = nextState.getBestToken();
+		Token bestToken = getBestToken(nextState);
 		if (bestToken != null) {
 		    logWorkingScore =  getLogMath().addAsLinear(
                             logWorkingScore, 
@@ -493,8 +500,8 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      */
     private Unit getPreviousUnit(Token token) {
 	while (token != null) {
-	    if (token.getSentenceHMMState() instanceof UnitState) {
-		return ((UnitState) token.getSentenceHMMState()).getUnit();
+	    if (token.getSearchState() instanceof UnitSearchState) {
+		return ((UnitSearchState) token.getSearchState()).getUnit();
 	    }
 	    token = token.getPredecessor();
 	}
@@ -527,12 +534,12 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		List wordList = new ArrayList(depth);
 		wordList.add(word);
 		while (token != null && wordList.size() < depth) {
-		    if (token.getSentenceHMMState() 
-				    instanceof WordState) {
-			WordState prevWord =
-			    (WordState) token.getSentenceHMMState();
+		    if (token.getSearchState() 
+				    instanceof WordSearchState) {
+			WordSearchState prevWord =
+			    (WordSearchState) token.getSearchState();
 			String prevSpelling =
-			    prevWord.getWord().getSpelling();
+			    prevWord.getPronunciation().getWord();
 			if (isWord(prevSpelling)) {
 			    wordList.add(prevSpelling);
 			}
@@ -547,7 +554,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		logProbability = (float) languageModel.getProbability(wordList);
 	    }
 	}
-	return logProbability * getLanguageWeight();
+	return logProbability;
     }
 
 

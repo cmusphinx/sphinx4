@@ -12,6 +12,9 @@
 
 package edu.cmu.sphinx.decoder.search;
 
+
+// a test search manager.
+
 import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
@@ -25,18 +28,18 @@ import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc;
 import edu.cmu.sphinx.decoder.linguist.Linguist;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+
 
 
 /**
@@ -67,17 +70,6 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     public final static String PROP_ACTIVE_LIST_TYPE_DEFAULT =
 	"edu.cmu.sphinx.decoder.search.SimpleActiveList";
 
-
-    /**
-     * Sphinx property that defines the language weight for the search
-     */
-    public final static String PROP_LANGUAGE_WEIGHT  =
-	PROP_PREFIX + "languageWeight";
-
-    /**
-     * The default value for the PROP_LANGUAGE_WEIGHT property
-     */
-    public final static float PROP_LANGUAGE_WEIGHT_DEFAULT  = 1.0f;
 
     /**
      * A sphinx property than, when set to <code>true</code> will
@@ -111,8 +103,8 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     private StatisticsVariable curTokensScored;
     private StatisticsVariable tokensCreated;
 
-    private float languageWeight;
     private boolean showTokenCount;
+    private Map bestTokenMap;
 
 
     /**
@@ -143,9 +135,6 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	tokensCreated = 
             StatisticsVariable.getStatisticsVariable(props.getContext(),
 		    "tokensCreated");
-
-        languageWeight = props.getFloat(PROP_LANGUAGE_WEIGHT,
-                PROP_LANGUAGE_WEIGHT_DEFAULT);
 
 	showTokenCount = props.getBoolean(PROP_SHOW_TOKEN_COUNT, false);
     }
@@ -225,7 +214,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 		PROP_ACTIVE_LIST_TYPE_DEFAULT)).newInstance();
 	    newActiveList.setProperties(props);
 
-	    SentenceHMMState state = linguist.getInitialState();
+	    SearchState state = linguist.getInitialSearchState();
 
 	    newActiveList.add(new Token(state, currentFrameNumber));
 	    activeList = newActiveList;
@@ -256,6 +245,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     protected void growBranches() {
 
 	growTimer.start();
+        bestTokenMap = new HashMap(activeList.size() * 10);;
 
         ActiveList oldActiveList = activeList;
 
@@ -307,6 +297,31 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     }
 
     /**
+     * Gets the best token for this state
+     *
+     * @param state the state of interest
+     *
+     * @return the best token
+     */
+    protected Token getBestToken(SearchState state) {
+        Token token =  (Token) bestTokenMap.get(state);
+        return (Token) bestTokenMap.get(state);
+    }
+
+    /**
+     * Sets the best token for a given state
+     *
+     * @param token the best token
+     *
+     * @param state the state
+     */
+    protected void setBestToken(Token token, SearchState state) {
+        bestTokenMap.put(state, token);
+    }
+
+
+
+    /**
      * Collects the next set of emitting tokens from a token 
      * and accumulates them in the active or result lists
      *
@@ -316,61 +331,48 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      * expand all nodes.
      */
     protected void collectSuccessorTokens(Token token) {
-	int nextFrameNumber = token.getFrameNumber();
 
 	// If this is a final state, add it to the final list
 
 	if (token.isFinal()) {
 	    resultList.add(token);
-            return;
+            return; 
 	}
 
-	// we only bump counter if we are finishing up an emitting
-	// state
-
-	if (token.isEmitting()) {
-	    nextFrameNumber++;
-	}
-
-	SentenceHMMState state = token.getSentenceHMMState();
-	SentenceHMMStateArc[] arcs = state.getSuccessorArray();
+	SearchState state = token.getSearchState();
+	SearchStateArc[] arcs = state.getSuccessors();
 
 	// For each successor
 	    // calculate the entry score for the token based upon the
 	    // predecessor token score and the transition probabilities
 	    // if the score is better than the best score encountered for
-	    // the SentenceHMMState and frame then create a new token, add
-	    // it to the lattice and the SentenceHMMState. 
+	    // the SearchState and frame then create a new token, add
+	    // it to the lattice and the SearchState. 
 	    // If the token is an emitting token add it to the list,
 	    // othewise recursively collect the new tokens successors.
 
 	 for (int i = 0; i < arcs.length; i++) {
-	    SentenceHMMStateArc arc = arcs[i];
-	    SentenceHMMState nextState = arc.getNextState();
+	    SearchStateArc arc = arcs[i];
+	    SearchState nextState = arc.getState();
 
-	    float logLanguageProbability = getLanguageProbability(token, arc);
 	    // We're actually multiplying the variables, but since
 	    // these come in log(), multiply gets converted to add
-	    float logEntryScore = token.getScore() +  
-			        logLanguageProbability +
-				arc.getAcousticProbability() + 
-				arc.getInsertionProbability();
+	    float logEntryScore = token.getScore() +  arc.getProbability();
 
+            Token bestToken = getBestToken(nextState);
+	    boolean firstToken = bestToken == null ;
 
-	    boolean firstToken = nextState.getBestToken() == null ||
-		nextState.getBestToken().getFrameNumber() != nextFrameNumber;
-
-	    if (firstToken ||
-                    nextState.getBestToken().getScore()<=logEntryScore) {
-
-                Token newToken = new Token( token, nextState,
+	    if (firstToken || bestToken.getScore() <= logEntryScore) {
+                Token newToken = new Token(token, nextState,
                         logEntryScore, 
-                        logLanguageProbability, arc.getInsertionProbability(), 
-                        nextFrameNumber);
+                        arc.getLanguageProbability(),
+                        arc.getInsertionProbability(),
+                        currentFrameNumber);
 
                 tokensCreated.value++;
 
-                Token oldBestToken = nextState.setBestToken(newToken);
+
+                setBestToken(newToken, nextState);
 
                 if (!newToken.isEmitting()) {
                     collectSuccessorTokens(newToken);
@@ -378,7 +380,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
                     if (firstToken) {
                         activeList.add(newToken);
                     } else {
-                        activeList.replace(oldBestToken, newToken); 
+                        activeList.replace(bestToken, newToken); 
                     }
                 }
 	    } 
@@ -386,19 +388,6 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     }
 
 
-    /**
-     * Given a linguist and an arc to the next token, determine a
-     * language probability for the next state
-     *
-     * @param token the current token
-     * @param arc the arc to the next state
-     *
-     * @return the language probability in the LogMath log domain
-     */
-    private float getLanguageProbability(Token token, SentenceHMMStateArc arc) {
-	float logProbability = arc.getLanguageProbability();
-	return logProbability * languageWeight;
-    }
 
     /**
      * Counts all the tokens in the active list (and displays them).
@@ -538,15 +527,5 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      */
     public StatisticsVariable getTokensCreated() {
 	return tokensCreated;
-    }
-
-
-    /**
-     * Returns the language weight.
-     *
-     * @return the language weight
-     */
-    public float getLanguageWeight() {
-        return languageWeight;
     }
 }

@@ -14,7 +14,7 @@
 package edu.cmu.sphinx.research.parallel;
 
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
+import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMState;
 
 
 /**

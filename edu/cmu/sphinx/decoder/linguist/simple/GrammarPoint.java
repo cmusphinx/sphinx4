@@ -10,9 +10,11 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.decoder.linguist.simple;
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.decoder.linguist.*;
+import edu.cmu.sphinx.decoder.linguist.GrammarNode;
+import edu.cmu.sphinx.decoder.linguist.GrammarWord;
+import edu.cmu.sphinx.decoder.linguist.GrammarArc;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
 
 import java.util.List;

@@ -10,7 +10,7 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.decoder.linguist.simple;
 
 import edu.cmu.sphinx.knowledge.acoustic.HMM;
 import edu.cmu.sphinx.knowledge.acoustic.HMMState;
@@ -27,13 +27,20 @@ import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.decoder.linguist.GrammarNode;
+import edu.cmu.sphinx.decoder.linguist.GrammarArc;
+import edu.cmu.sphinx.decoder.linguist.GrammarWord;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
+import edu.cmu.sphinx.decoder.linguist.Grammar;
+import edu.cmu.sphinx.decoder.linguist.Linguist;
+import edu.cmu.sphinx.decoder.linguist.util.LinguistTimer;
 
 
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -63,7 +70,7 @@ public class SimpleLinguist implements  Linguist {
      * the gstates are dumped.
      */
     public final static String PROP_DUMP_GSTATES =
-        "edu.cmu.sphinx.decoder.linguist.SimpleLinguist.dumpGstates";
+        "edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist.dumpGstates";
     /**
      * The default value for the PROP_DUMP_GSTATES property
      */
@@ -99,6 +106,7 @@ public class SimpleLinguist implements  Linguist {
     private boolean spreadWordProbabilitiesAcrossPronunciations;
     private double logOne;
     private boolean dumpGStates;
+    private float languageWeight;
 
     // just for detailed debugging
     private final boolean tracing = false;
@@ -134,8 +142,12 @@ public class SimpleLinguist implements  Linguist {
         logUnitInsertionProbability =  logMath.linearToLog(
             props.getDouble(Linguist.PROP_UNIT_INSERTION_PROBABILITY, 1.0));
 
+
+        languageWeight = props.getFloat(PROP_LANGUAGE_WEIGHT,
+                PROP_LANGUAGE_WEIGHT_DEFAULT);
+
         showSentenceHMM = 
-            props.getBoolean(Linguist.PROP_SHOW_SENTENCE_HMM, false);
+            props.getBoolean(Linguist.PROP_SHOW_SEARCH_SPACE, false);
 
         dumpGStates = props.getBoolean(PROP_DUMP_GSTATES,
                     PROP_DUMP_GSTATES_DEFAULT);
@@ -167,6 +179,10 @@ public class SimpleLinguist implements  Linguist {
         arcPool = null;
 
         StatisticsVariable.dumpAll();
+        if (false) {
+            LinguistTimer lt = new LinguistTimer(this, false);
+            lt.timeLinguist(10, 500, 1000);
+        }
     }
 
 
@@ -203,10 +219,12 @@ public class SimpleLinguist implements  Linguist {
      * Called after a recognition
      */
     public void stop() {
+        /*
         for (Iterator i = stateSet.iterator(); i.hasNext(); ) {
             SentenceHMMState state = (SentenceHMMState) i.next();
             state.clear();
         }
+        */
 
         if (languageModel != null) {
             languageModel.stop();
@@ -240,14 +258,16 @@ public class SimpleLinguist implements  Linguist {
         return null;
     }
 
+
     /**
-     * Retrieves initial SentenceHMMState
+     * Retrieves initial search state
      * 
-     * @return the set of initial SentenceHMMState
+     * @return the set of initial search state
      */
-    public SentenceHMMState getInitialState() {
+    public SearchState getInitialSearchState() {
         return initialSentenceHMMState;
     }
+
 
     /**
      * Compiles the grammar into a sentence hmm.  A GrammarJob is
@@ -385,7 +405,8 @@ public class SimpleLinguist implements  Linguist {
 
         SentenceHMMStateArc arc =
             new SentenceHMMStateArc(nextState, logAcousticProbability,
-                logLanguageProbability, logInsertionProbability);
+                logLanguageProbability * languageWeight, 
+                logInsertionProbability);
 
 
         SentenceHMMStateArc pooledArc = (SentenceHMMStateArc) arcPool.get(arc);
@@ -1473,10 +1494,9 @@ public class SimpleLinguist implements  Linguist {
                 for (Iterator j = epList.iterator(); j.hasNext(); ) {
                     SentenceHMMState state = (SentenceHMMState) j.next();
                     System.out.println("      Arcs from: " + state);
-                    SentenceHMMStateArc[] arcs = state.getSuccessorArray();
+                    SearchStateArc[] arcs = state.getSuccessors();
                     for (int k = 0; k < arcs.length; k++) {
-                        System.out.println("          " 
-                                + arcs[k].getNextState());
+                        System.out.println("          " + arcs[k].getState());
                     }
                 }
             }

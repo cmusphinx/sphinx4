@@ -20,14 +20,12 @@ import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.decoder.search.ActiveList;
-import edu.cmu.sphinx.decoder.linguist.HMMStateState;
 
 
 /**
- * A test acoustic scorer that pretends to score tokens until
- * a certain number of frames have been processed
+ * An acoustic scorer that breaks the scoring up into a configurable
+ * number of separate threads.
  *
  * All scores are maintained in LogMath log base
  */
@@ -67,12 +65,12 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
     /**
      * A Sphinx Property name that controls the minimum number of
-     * tokens sent to a thread. This is used to prevent over threading
+     * scoreables sent to a thread. This is used to prevent over threading
      * of the scoring that could happen if the number of threads is
      * high compared to the size of the activelist. The default is 50
      */
-    public final static String PROP_MIN_TOKENS_PER_THREAD  =
-        PROP_PREFIX + "minTokensPerThread";
+    public final static String PROP_MIN_SCOREABLES_PER_THREAD  =
+        PROP_PREFIX + "minScoreablesPerThread";
 
 
     private FrontEnd frontEnd;		// where features come from
@@ -81,7 +79,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     private Semaphore semaphore;	// join after call
     private Feature curFeature;		// current feature being processed
     private int numThreads;		// number of threads in use
-    private int minTokensPerThread;	// min tokens sent to a thread
+    private int minScoreablesPerThread;	// min scoreables sent to a thread
 
 
     /**
@@ -103,7 +101,8 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 	boolean cpuRelative =  props.getBoolean(PROP_IS_CPU_RELATIVE, false);
 
 	numThreads =  props.getInt(PROP_NUM_THREADS, 1);
-	minTokensPerThread =  props.getInt(PROP_MIN_TOKENS_PER_THREAD, 50);
+	minScoreablesPerThread =  
+            props.getInt(PROP_MIN_SCOREABLES_PER_THREAD, 50);
 
 	if (cpuRelative) {
 	    numThreads += Runtime.getRuntime().availableProcessors();
@@ -134,12 +133,12 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     /**
      * Scores the given set of states
      *
-     * @param stateTokenList a list containing StateToken objects to
+     * @param scoreableList a list containing scoreable objects to
      * be scored
      *
      * @return true if there are more features available
      */
-    public boolean calculateScores(ActiveList stateTokenList) {
+    public boolean calculateScores(ActiveList scoreableList) {
 
 	FeatureFrame ff;
 
@@ -162,37 +161,42 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 	    curFeature  = ff.getFeatures()[0];
 
 	    if (curFeature.getSignal() == Signal.UTTERANCE_START) {
-		return true; //calculateScores(stateTokenList);
+		return true; 
 	    }
 	    if (curFeature.getSignal() == Signal.UTTERANCE_END) {
 		return false;
 	    }
 
-	    Token[] tokens = stateTokenList.getTokens();
+            if (!curFeature.hasContent()) {
+                throw new Error("Can't score non-content feature");
+            }
+
+	    Scoreable[] scoreables = scoreableList.getScoreables();
 
 	    if (numThreads > 1) {
 		int nThreads = numThreads;
-		int tokensPerThread = (tokens.length
+		int scoreablesPerThread = (scoreables.length
 			+ (numThreads - 1)) / numThreads;
-		if (tokensPerThread < minTokensPerThread) {
-		    tokensPerThread = minTokensPerThread;
-		    nThreads = (tokens.length + (tokensPerThread - 1))
-			/ tokensPerThread;
+		if (scoreablesPerThread < minScoreablesPerThread) {
+		    scoreablesPerThread = minScoreablesPerThread;
+		    nThreads = (scoreables.length + (scoreablesPerThread - 1))
+			/ scoreablesPerThread;
 		}
 
 		semaphore.setCount(nThreads);
 
 		for (int i = 0; i < nThreads; i++) {
-		    TokenJob job = new TokenJob(tokens,
-			    i * tokensPerThread, tokensPerThread);
+		    ScoreableJob job = new ScoreableJob(scoreables,
+			    i * scoreablesPerThread, scoreablesPerThread);
 			mailbox.post(job);
 		}
 
 		semaphore.pend();
 
 	    } else {
-		TokenJob job = new TokenJob(tokens, 0, tokens.length);
-		scoreTokens(job);
+		ScoreableJob job = new ScoreableJob(scoreables, 0,
+                        scoreables.length);
+		scoreScoreables(job);
 	    }
 	} catch (IOException ioe) {
 	    System.out.println("IO Exception " + ioe);
@@ -209,33 +213,22 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     }
 
     /**
-     * Scores a token
+     * Scores a scoreable
      *
-     * @param token the token
+     * @param scoreable the scoreable
      */
-    private void scoreTokens(TokenJob job) {
-	Token[] tokens = job.getTokens();
+    private void scoreScoreables(ScoreableJob job) {
+	Scoreable[] scoreables = job.getScoreables();
 	int end = job.getStart() + job.getSize();
-	for (int i = job.getStart(); i < end && i < tokens.length; i++) {
-
-            Token token = tokens[i];
-
-	    HMMStateState hmmStateState = (HMMStateState)
-		token.getSentenceHMMState();
-
-	    if (curFeature.hasContent()) {
-		float logScore = hmmStateState.getScore(curFeature);
-		token.applyScore(logScore, curFeature);
-	    } else {
-		System.out.println("non-content feature " +
-		    curFeature + " id " + curFeature.getID());
-	    }
+	for (int i = job.getStart(); i < end && i < scoreables.length; i++) {
+            Scoreable scoreable = scoreables[i];
+            scoreable.calculateScore(curFeature);
 	}
     }
 
 
     /**
-     * A scoring thread waits for a new token to arrive
+     * A scoring thread waits for a new scoreable to arrive
      * at the mailbox, scores it, and notifies when its done
      * by posting to the semaphore
      */
@@ -248,13 +241,13 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 	}
 
 	/**
-	 * Waits for a token job and scores the token 
+	 * Waits for a scoreable job and scores the scoreable 
 	 * in the job, signally back when done
 	 */
 	public void run() {
 	    while (true) {
-		TokenJob tokenJob = mailbox.pend();
-		scoreTokens(tokenJob);
+		ScoreableJob scoreableJob = mailbox.pend();
+		scoreScoreables(scoreableJob);
 		semaphore.post();
 	    }
 	}
@@ -264,45 +257,46 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
 
 /**
- * Mailbox class allows a set of threads to communicate a single token
+ * Mailbox class allows a set of threads to communicate a single
+ * scoreable
  * job
  */
 class Mailbox {
 
-    private TokenJob curTokenJob;
+    private ScoreableJob curScoreableJob;
 
     /**
-     * Posts a token to the mail box. The caller will block
+     * Posts a scoreable to the mail box. The caller will block
      * until the mailbox is empty and will then notify
      * any waiters
      */
-    synchronized void post(TokenJob tokenJob) {
-      while (curTokenJob != null) {
+    synchronized void post(ScoreableJob scoreableJob) {
+      while (curScoreableJob != null) {
 	  try {
 	      wait();
 	  } catch (InterruptedException ioe) {}
       }
-      curTokenJob = tokenJob;
+      curScoreableJob = scoreableJob;
       notifyAll();
     }
 
     /**
-     * Waits for a token to arrive in the mailbox and returns it.
-     * This will block the caller until a token arrives
+     * Waits for a scoreable to arrive in the mailbox and returns it.
+     * This will block the caller until a scoreable arrives
      *
-     * @return the next token
+     * @return the next scoreable
      */
-    synchronized TokenJob pend() {
-	TokenJob returnTokenJob;
-	while (curTokenJob == null) {
+    synchronized ScoreableJob pend() {
+	ScoreableJob returnScoreableJob;
+	while (curScoreableJob == null) {
 	  try {
 	      wait();
 	  } catch (InterruptedException ioe) {}
 	}
-	returnTokenJob = curTokenJob;
-	curTokenJob = null;
+	returnScoreableJob = curScoreableJob;
+	curScoreableJob = null;
 	notifyAll();
-	return returnTokenJob;
+	return returnScoreableJob;
     }
 }
 
@@ -346,23 +340,23 @@ class Semaphore {
 }
 
 /**
- * Represent a set of tokens to be scored
+ * Represent a set of scoreables to be scored
  */
-class TokenJob {
+class ScoreableJob {
 
-    private Token[] tokens;
+    private Scoreable[] scoreables;
     private int start;
     private int size;
 
     /**
-     * Creates a token job
+     * Creates a scoreable job
      *
-     * @param tokenList the list of tokens
+     * @param scoreableList the list of scoreables
      * @param start the starting point for this job
-     * @param size the number of tokens in this job
+     * @param size the number of scoreables in this job
      */
-    TokenJob(Token[] tokens, int start, int size) {
-	this.tokens = tokens;
+    ScoreableJob(Scoreable[] scoreables, int start, int size) {
+	this.scoreables = scoreables;
 	this.start = start;
 	this.size = size;
     }
@@ -377,21 +371,21 @@ class TokenJob {
     }
 
     /**
-     * Gets the number of tokens in this job
+     * Gets the number of scoreables in this job
      *
-     * @return the number of tokens in this job
+     * @return the number of scoreables in this job
      */
     int getSize() {
 	return size;
     }
 
     /**
-     * Gets the entire list of tokens
+     * Gets the entire list of scoreables
      *
-     * @return the list of tokens
+     * @return the list of scoreables
      */
-    Token[] getTokens() {
-	return tokens;
+    Scoreable[] getScoreables() {
+	return scoreables;
     }
 
     /**
@@ -400,7 +394,7 @@ class TokenJob {
      * @return the string representation
      */
     public String toString() {
-	return "List size " + tokens.length + " start " 
+	return "List size " + scoreables.length + " start " 
 	    + start + " size " + size;
     }
 }

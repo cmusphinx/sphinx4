@@ -21,7 +21,6 @@ import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.search.ActiveList;
-import edu.cmu.sphinx.decoder.linguist.HMMStateState;
 
 
 /**
@@ -60,14 +59,14 @@ public class SimpleAcousticScorer implements AcousticScorer {
     /**
      * Scores the given set of states
      *
-     * @param stateTokenList a list containing StateToken objects to
+     * @param scoreableList a list containing scoreable objects to
      * be scored
      *
      * @return true if there are more features available
      */
 
 
-    public boolean calculateScores(ActiveList stateTokenList) {
+    public boolean calculateScores(ActiveList scoreableList) {
 
 	FeatureFrame ff;
 
@@ -97,31 +96,23 @@ public class SimpleAcousticScorer implements AcousticScorer {
 		return false;
 	    }
 
-            float[] logScores = new float[stateTokenList.size()];
-            int which= 0;
+            if (!feature.hasContent()) {
+                throw new Error("trying to score non-content feature");
+            }
+
             float logMaxScore = - Float.MAX_VALUE;
-	    for (Iterator i = stateTokenList.iterator(); i.hasNext(); ) {
-		Token token = (Token) i.next();
-		edu.cmu.sphinx.decoder.linguist.HMMStateState hmmStateState = (edu.cmu.sphinx.decoder.linguist.HMMStateState)
-		    token.getSentenceHMMState();
-		if (feature.hasContent()) {
-                    float logScore =  hmmStateState.getScore(feature);
-                    if (logScore > logMaxScore) {
-                        logMaxScore = logScore;
-                    }
-		    logScores[which++] = logScore;
-		} else {
-		    System.out.println("non-content feature " +
-			feature + " id " + feature.getID());
-		}
+	    for (Iterator i = scoreableList.iterator(); i.hasNext(); ) {
+                Scoreable scoreable = (Scoreable) i.next();
+                float logScore =  scoreable.calculateScore(feature);
+                if (logScore > logMaxScore) {
+                    logMaxScore = logScore;
+                }
 	    }
-            which = 0;
-	    for (Iterator i = stateTokenList.iterator(); i.hasNext(); ) {
-		Token token = (Token) i.next();
-                if (normalizeScores) {
-                    token.applyScore(logScores[which++] - logMaxScore, feature);
-                } else {
-                    token.applyScore(logScores[which++], feature);
+
+            if (normalizeScores) {
+                for (Iterator i = scoreableList.iterator(); i.hasNext(); ) {
+                    Scoreable scoreable = (Scoreable) i.next();
+                    scoreable.normalizeScore(logMaxScore);
                 }
 	    }
 	} catch (IOException ioe) {

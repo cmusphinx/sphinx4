@@ -11,7 +11,9 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.decoder.linguist.simple;
+
+import edu.cmu.sphinx.decoder.linguist.GrammarWord;
 
 
 import java.io.Serializable;

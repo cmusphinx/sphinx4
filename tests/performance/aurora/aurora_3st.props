@@ -81,7 +81,7 @@ edu.cmu.sphinx.decoder.search.validateResults=false
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.StaticLinguist
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.simple.StaticLinguist
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.WordListGrammar
 edu.cmu.sphinx.decoder.Recognizer.dumpMemoryInfo=false
 edu.cmu.sphinx.decoder.Recognizer.dumpSentenceHMM=false

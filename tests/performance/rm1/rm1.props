@@ -68,9 +68,6 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.FastActiveList
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
-edu.cmu.sphinx.decoder.linguist.Linguist.showSentenceHMM=false
-edu.cmu.sphinx.decoder.linguist.Linguist.validateSentenceHMM=false
-edu.cmu.sphinx.decoder.search.validateResults=false
 
 
 ############################################################
@@ -107,9 +104,9 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
 #
 # Use the number of available CPUS for scoring:
 #
-edu.cmu.sphinx.scorer.ThreadedAcousticScorer.isCpuRelative=false
-edu.cmu.sphinx.scorer.ThreadedAcousticScorer.numThreads=1
-edu.cmu.sphinx.scorer.ThreadedAcousticScorer.minTokensPerThread=10
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=false
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=1
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
 
 
 
@@ -118,11 +115,10 @@ edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-10
 #edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-250
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=7.0
+edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=7.0
 
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.SimpleLinguist
-edu.cmu.sphinx.knowledge.language.format=arpa
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist
 edu.cmu.sphinx.decoder.Decoder.showErrorToken=false
 edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager

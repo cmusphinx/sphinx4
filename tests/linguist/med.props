@@ -123,6 +123,6 @@ edu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sph
 edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist
 edu.cmu.sphinx.knowledge.language.format=arpa
 edu.cmu.sphinx.knowledge.language.location=med.bigram
-edu.cmu.sphinx.util.LinguistDumper.filename=small.gdl
+edu.cmu.sphinx.decoder.linguist.util.LinguistDumper.filename=small.gdl
 edu.cmu.sphinx.util.SphinxProperties.warnIfPropertyNotDefined=false
 edu.cmu.sphinx.decoder.Decoder.showErrorToken=false

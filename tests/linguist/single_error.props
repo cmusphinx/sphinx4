@@ -131,8 +131,8 @@ edu.cmu.sphinx.decoder.Recognizer.featureBlockSize=5
 edu.cmu.sphinx.decoder.Recognizer.acousticScorer=edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer
 
 edu.cmu.sphinx.decoder.Recognizer.linguistProcessors=edu.cmu.sphinx.util.GDLDumper
-edu.cmu.sphinx.util.LinguistDumper.filename=single.gdl
+edu.cmu.sphinx.decoder.linguist.util.LinguistDumper.filename=single.gdl
 edu.cmu.sphinx.util.SphinxProperties.warnIfPropertyNotDefined=false
-edu.cmu.sphinx.util.GDLDumper.skipHMMs=true
-edu.cmu.sphinx.util.GDLDumper.verticalLayout=true
-edu.cmu.sphinx.util.GDLDumper.dumpArcLabels=true
+edu.cmu.sphinx.decoder.linguist.util.GDLDumper.skipHMMs=true
+edu.cmu.sphinx.decoder.linguist.util.GDLDumper.verticalLayout=true
+edu.cmu.sphinx.decoder.linguist.util.GDLDumper.dumpArcLabels=true

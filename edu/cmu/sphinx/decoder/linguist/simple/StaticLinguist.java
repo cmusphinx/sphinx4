@@ -10,7 +10,7 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.decoder.linguist.simple;
 
 import edu.cmu.sphinx.knowledge.acoustic.HMM;
 import edu.cmu.sphinx.knowledge.acoustic.HMMState;
@@ -25,8 +25,15 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.decoder.linguist.*;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.decoder.linguist.GrammarNode;
+import edu.cmu.sphinx.decoder.linguist.GrammarArc;
+import edu.cmu.sphinx.decoder.linguist.GrammarWord;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
+import edu.cmu.sphinx.decoder.linguist.Grammar;
+import edu.cmu.sphinx.decoder.linguist.Linguist;
+import edu.cmu.sphinx.decoder.linguist.Color;
 
 
 import java.util.HashMap;
@@ -60,7 +67,7 @@ public class StaticLinguist implements  Linguist {
             Logger.getLogger("edu.cmu.sphinx.decoder.linguist.StaticLinguist");
     private final static boolean singlePass = false;
     public final static String PROP_IS_FLAT_SENTENCE_HMM = 
-        "edu.cmu.sphinx.decoder.linguist.StaticLinguist.isFlatSentenceHMM";
+        "edu.cmu.sphinx.decoder.linguist.simple.StaticLinguist.isFlatSentenceHMM";
 
     private SphinxProperties props;
 
@@ -143,10 +150,10 @@ public class StaticLinguist implements  Linguist {
         compositeThreshold = 
             props.getInt(Linguist.PROP_COMPOSITE_THRESHOLD, 1000);
         showSentenceHMM = 
-            props.getBoolean(Linguist.PROP_SHOW_SENTENCE_HMM, false);
+            props.getBoolean(Linguist.PROP_SHOW_SEARCH_SPACE, false);
 
         validateSentenceHMM = 
-            props.getBoolean(Linguist.PROP_VALIDATE_SENTENCE_HMM, false);
+            props.getBoolean(Linguist.PROP_VALIDATE_SEARCH_SPACE, false);
 
         joinPronunciations = 
             props.getBoolean(Linguist.PROP_JOIN_PRONUNCIATIONS, false);
@@ -189,28 +196,6 @@ public class StaticLinguist implements  Linguist {
      * Called before a recognition
      */
     public void start() {
-
-        for (Iterator i = stateSet.iterator(); i.hasNext(); ) {
-            SentenceHMMState state = (SentenceHMMState) i.next();
-            state.clear();
-        }
-
-
-        // BUG CHECK
-        // it looks like some states may not be cleared, so lets
-        // check ...
-
-        if (false) {
-            SentenceHMMState.visitStates(new SentenceHMMStateVisitor() {
-                public boolean visit(SentenceHMMState state) {
-                    if (state.getBestToken() != null) {
-                       System.out.println("Failed to clear state " + state);
-                    }
-                    return false;
-                }
-            }, initialSentenceHMMState, false);
-        } // END BUG CHECK 
-        
         if (languageModel != null) {
             languageModel.start();
         }
@@ -241,6 +226,15 @@ public class StaticLinguist implements  Linguist {
      */
     public SentenceHMMState getInitialState() {
         return initialSentenceHMMState;
+    }
+
+    /**
+     * Retrieves initial search state
+     * 
+     * @return the set of initial search state
+     */
+    public SearchState getInitialSearchState() {
+        return null;
     }
 
 
@@ -1018,9 +1012,10 @@ public class StaticLinguist implements  Linguist {
         if (state.getNumSuccessors() == 0) {
             System.out.println(sb);
         } else {
-            SentenceHMMStateArc[] arcs = state.getSuccessorArray();
+            SearchStateArc[] arcs = state.getSuccessors();
             for (int i = 0; i< arcs.length; i++) {
-                dumpState(padBuffer, arcs[i].getNextState(), force);
+                dumpState(padBuffer, (SentenceHMMState) 
+                        arcs[i].getState(), force);
                 padBuffer = getPadBuffer(curSize);
             }
         }

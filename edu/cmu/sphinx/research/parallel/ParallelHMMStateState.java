@@ -19,8 +19,8 @@ import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.TokenStack;
 import edu.cmu.sphinx.decoder.search.ArrayTokenStack;
 
-import edu.cmu.sphinx.decoder.linguist.HMMStateState;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
+import edu.cmu.sphinx.decoder.linguist.simple.HMMStateState;
+import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMState;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -121,7 +121,7 @@ implements ParallelState {
      * Clears/resets any accumulated state or history
      */
     public void clear() {
-        super.clear();
+        // super.clear();  BUG: fix me
         if (tokenStack != null) {
             tokenStack.clear();
         }

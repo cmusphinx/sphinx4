@@ -67,14 +67,9 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=200
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-200
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.FastActiveList
-edu.cmu.sphinx.decoder.linguist.SimpleDigitLinguist.isConnectedDigitGrammar=true
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-36
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
-edu.cmu.sphinx.decoder.linguist.Linguist.showSentenceHMM=false
-edu.cmu.sphinx.decoder.linguist.Linguist.validateSentenceHMM=false
-edu.cmu.sphinx.decoder.linguist.Linguist.compositeThreshold=10000
-edu.cmu.sphinx.decoder.search.validateResults=false
-edu.cmu.sphinx.knowledge.language.format=arpa
+edu.cmu.sphinx.decoder.linguist.Linguist.showSearchSpace=false
 
 
 ############################################################
@@ -105,7 +100,7 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
 #
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=true
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=0
-edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minTokensPerThread=10
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
 
 ############################################################
 #
@@ -123,16 +118,16 @@ edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path = ./tidigits.wordlist
 ############################################################
 
 edu.cmu.sphinx.decoder.Recognizer.dumpFrontEnd = false
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.SimpleLinguist
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar
 
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=8.0
+edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=8.0
 edu.cmu.sphinx.decoder.Decoder.showErrorToken=false
 edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
 
-edu.cmu.sphinx.decoder.Recognizer.linguistProcessors=edu.cmu.sphinx.util.GDLDumper
-edu.cmu.sphinx.util.GDLDumper.skipHMMs=true
-edu.cmu.sphinx.util.GDLDumper.verticalLayout=true
-edu.cmu.sphinx.util.GDLDumper.dumpArcLabels=true
-edu.cmu.sphinx.util.LinguistDumper.filename=tidigits.gdl
+edu.cmu.sphinx.decoder.Recognizer.linguistProcessors=edu.cmu.sphinx.decoder.linguist.util.GDLDumper
+edu.cmu.sphinx.decoder.linguist.util.LinguistDumper.filename=tidigits.gdl
+edu.cmu.sphinx.decoder.linguist.util.GDLDumper.skipHMMs=true
+edu.cmu.sphinx.decoder.linguist.util.GDLDumper.verticalLayout=true
+edu.cmu.sphinx.decoder.linguist.util.GDLDumper.dumpArcLabels=true

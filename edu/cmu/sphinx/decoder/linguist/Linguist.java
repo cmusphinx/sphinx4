@@ -14,7 +14,6 @@
 package edu.cmu.sphinx.decoder.linguist;
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
 
 
@@ -50,10 +49,22 @@ public interface Linguist {
 
     /**
       * Property to control whether or not alternative states are
-      * inserted into the sentence hmm or not.
+      * inserted into the search space
       */
     public final static String PROP_INSERT_ALTERNATIVE_STATES
 		= PROP_PREFIX + "insertAlternativeStates";
+
+    /**
+     * Sphinx property that defines the language weight for the search
+     */
+    public final static String PROP_LANGUAGE_WEIGHT  =
+	PROP_PREFIX + "languageWeight";
+
+    /**
+     * The default value for the PROP_LANGUAGE_WEIGHT property
+     */
+    public final static float PROP_LANGUAGE_WEIGHT_DEFAULT  = 1.0f;
+
 
     /**
      * Property to control the maximum number of right contexts to
@@ -85,16 +96,16 @@ public interface Linguist {
 	"autoLoopSilences";
 
     /**
-     * Property to control the the dumping of the sentence HMM
+     * Property to control the the dumping of the search space
      */
-    public final static String PROP_SHOW_SENTENCE_HMM = PROP_PREFIX +
-	"showSentenceHMM";
+    public final static String PROP_SHOW_SEARCH_SPACE = PROP_PREFIX +
+	"showSearchSpace";
 
     /**
-     * Property to control the the validating of the sentence HMM
+     * Property to control the the validating of the search space
      */
-    public final static String PROP_VALIDATE_SENTENCE_HMM = PROP_PREFIX +
-	"validateSentenceHMM";
+    public final static String PROP_VALIDATE_SEARCH_SPACE = PROP_PREFIX +
+	"validateSearchSpace";
 
     /**
      * Property to control whether contexts are considered across
@@ -106,7 +117,7 @@ public interface Linguist {
     /**
      * Property to control whether compilation progress is displayed
      * on stdout. If this property is true, a 'dot' is displayed for
-     * every 1000 sentence hmm states added to the SentenceHMM
+     * every 1000 search states added to the search space
      */
     public final static String PROP_SHOW_COMPILATION_PROGRESS = PROP_PREFIX +
 	"showCompilationProgress";
@@ -126,12 +137,13 @@ public interface Linguist {
 			   Grammar grammar,
 			   AcousticModel[] models) ;
 
+
     /**
-     * Retrieves initial SentenceHMMState
+     * Retrieves initial search state
      * 
-     * @return the set of initial SentenceHMMState
+     * @return the set of initial search state
      */
-    public SentenceHMMState getInitialState();
+    public SearchState getInitialSearchState();
 
 
     /**

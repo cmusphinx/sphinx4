@@ -10,18 +10,17 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.decoder.linguist.simple;
 
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
 import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
-import edu.cmu.sphinx.decoder.linguist.PronunciationState;
+import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
 
 /**
  * Represents a unit in an SentenceHMMS
  * 
  */
-public class UnitState extends SentenceHMMState {
+public class UnitState extends SentenceHMMState implements UnitSearchState {
     private Unit unit;
     private transient StatePath tail;
     private HMMPosition position = HMMPosition.INTERNAL;

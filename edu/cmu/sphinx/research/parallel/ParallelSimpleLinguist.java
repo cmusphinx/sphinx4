@@ -30,6 +30,8 @@ import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.decoder.linguist.*;
+import edu.cmu.sphinx.decoder.linguist.simple.*;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
 
 

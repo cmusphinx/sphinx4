@@ -16,14 +16,12 @@ import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
-import edu.cmu.sphinx.decoder.linguist.FinalSearchState;
 import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
-import edu.cmu.sphinx.decoder.linguist.LinguistTimer;
+import edu.cmu.sphinx.decoder.linguist.util.LinguistTimer;
 
 import edu.cmu.sphinx.knowledge.acoustic.HMM;
 import edu.cmu.sphinx.knowledge.acoustic.HMMState;
@@ -73,7 +71,6 @@ public class LexTreeLinguist implements  Linguist {
 
     private SphinxProperties props;
 
-    private SentenceHMMState initialSentenceHMMState;
     private LanguageModel languageModel;
     private AcousticModel acousticModel;
     private LogMath logMath;
@@ -199,15 +196,6 @@ public class LexTreeLinguist implements  Linguist {
      */
     public LanguageModel getLanguageModel() {
         return null;
-    }
-
-    /**
-     * Retrieves initial SentenceHMMState
-     * 
-     * @return the set of initial SentenceHMMState
-     */
-    public SentenceHMMState getInitialState() {
-        return initialSentenceHMMState;
     }
 
 

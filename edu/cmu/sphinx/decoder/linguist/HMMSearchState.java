@@ -1,4 +1,3 @@
-
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -13,19 +12,17 @@
 
 package edu.cmu.sphinx.decoder.linguist;
 
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
+import edu.cmu.sphinx.knowledge.acoustic.HMMState;
 
 /**
- * a visitor interface
+ * Represents a single hmm state in a language search space
  */
-interface SentenceHMMStateVisitor {
+public interface  HMMSearchState extends SearchState {
     /**
-     * Method called when a state is visited by the vistor
+     * Gets the hmm state 
      *
-     * @param the state that is being visited
-     *
-     * @return true if the visiting should be terminated
+     * @return the hmm state
      */
-     public boolean visit(SentenceHMMState state);
-}
+     HMMState getHMMState();
 
+}

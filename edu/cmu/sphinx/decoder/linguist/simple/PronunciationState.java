@@ -11,17 +11,18 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
-import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
+package edu.cmu.sphinx.decoder.linguist.simple;
+
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 
 
 /**
  * Represents a pronunciation in an SentenceHMMS
  * 
  */
-public class PronunciationState extends SentenceHMMState {
+public class PronunciationState extends SentenceHMMState implements
+    WordSearchState  {
     private Pronunciation pronunciation;
     private String prettyLabel;
 

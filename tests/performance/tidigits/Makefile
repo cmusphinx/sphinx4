@@ -81,7 +81,7 @@ tidigits_flat_unigram:
     -Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
     -Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
-    -Dedu.cmu.sphinx.knowledge.language.location=./tidigits.flat_unigram.lm\
+    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./tidigits.flat_unigram.lm\
     edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
 
 

@@ -21,10 +21,12 @@ import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.linguist.Color;
 import edu.cmu.sphinx.decoder.linguist.Linguist;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 import edu.cmu.sphinx.decoder.search.Pruner;
 import edu.cmu.sphinx.decoder.search.SearchManager;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc;
+import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMState;
+import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMStateArc;
 import edu.cmu.sphinx.decoder.search.Token;
 
 import edu.cmu.sphinx.util.LogMath;
@@ -223,7 +225,8 @@ public class ParallelSearchManager implements SearchManager {
 	    delayedExpansionList = (ActiveList)activeListClass.newInstance();
 	    delayedExpansionList.setProperties(props);
 
-	    SentenceHMMState firstState = linguist.getInitialState();
+	    SentenceHMMState firstState = (SentenceHMMState)
+                linguist.getInitialSearchState();
 	    assert !firstState.isEmitting();
 
             // create the first token and grow it, its first parameter
@@ -480,20 +483,24 @@ public class ParallelSearchManager implements SearchManager {
 	    nextFrameNumber++;
 	}
 
-	SentenceHMMState state = token.getSentenceHMMState();
-	SentenceHMMStateArc[] arcs = state.getSuccessorArray();
+	SentenceHMMState state = (SentenceHMMState) token.getSearchState();
+	SearchStateArc[] arcs = state.getSuccessors();
 
 	// expand into each successor states
 	for (int i = 0; i < arcs.length; i++) {
 
-	    SentenceHMMStateArc arc = arcs[i];
-	    SentenceHMMState nextState = arc.getNextState();
+	    SearchStateArc arc = arcs[i];
+	    SentenceHMMState nextState = (SentenceHMMState) arc.getState();
 	    
-	    float currentScore = token.getScore() + 
-                getTransitionScore(token, arc);
+	    float logEntryScore = token.getScore() +  arc.getProbability();
+
                 
-	    boolean firstToken = nextState.getBestToken() == null ||
-		nextState.getBestToken().getFrameNumber() != nextFrameNumber;
+            // BUG: no getBestToken anymore, use a local hash
+
+	    // boolean firstToken = nextState.getBestToken() == null ||
+            // nextState.getBestToken().getFrameNumber() != nextFrameNumber;
+
+            boolean firstToken = false;
 
             // RED states are the unsplitted states, or the non-feature
             // stream states
@@ -509,16 +516,19 @@ public class ParallelSearchManager implements SearchManager {
 
                     CombineToken newToken = new CombineToken
                         (token, nextState, nextFrameNumber);
-                    nextState.setBestToken(newToken);
+                    // nextState.setBestToken(newToken);
+                    // FIX ME
                     delayedExpansionList.add(newToken);
                 }
 
-                assert (nextState.getBestToken().getFrameNumber() ==
-                        nextFrameNumber);
+                // assert (nextState.getBestToken().getFrameNumber() ==
+                        // nextFrameNumber);
 
                 // get the combine token at the next state
-                CombineToken nextToken = 
-                    (CombineToken) nextState.getBestToken();
+                CombineToken nextToken =  null;
+                // BUG: fix me Was 
+                // CombineToken nextToken  
+                //      = (CombineToken) nextState.getBestToken();
 
                 ParallelToken oldNextToken = 
                     nextToken.getParallelToken(token.getModelName());
@@ -528,13 +538,13 @@ public class ParallelSearchManager implements SearchManager {
                 // add this token or replace the old one with this token
 
                 if (firstToken || oldNextToken == null ||
-                    oldNextToken.getScore() <= currentScore) {
+                    oldNextToken.getScore() <= logEntryScore) {
 
                     ParallelToken newToken = new ParallelToken
                         (token,
                          nextState,
                          token.getEta(),
-                         currentScore,
+                         logEntryScore,
                          token.getCombinedScore(),
                          nextFrameNumber,
 			 token.getLastCombineTime());
@@ -546,13 +556,13 @@ public class ParallelSearchManager implements SearchManager {
             } else if (nextState.getColor() == Color.GREEN) {
                 
                 if (firstToken || 
-                    nextState.getBestToken().getScore() <= currentScore) {
+                    getBestToken(nextState).getScore() <= logEntryScore) {
                     
                     ParallelToken newToken = new ParallelToken
                         (token,
                          nextState,
                          token.getEta(), 
-                         currentScore,
+                         logEntryScore,
                          token.getCombinedScore(), 
                          nextFrameNumber,
 			 token.getLastCombineTime());
@@ -574,6 +584,15 @@ public class ParallelSearchManager implements SearchManager {
 	}
     }
 
+    // BUG fix me
+    Token getBestToken(SearchState state) {
+        return null;    
+    }
+
+    // BUG fix me
+    void setBestToken(SearchState state, Token token) {
+    }
+
 
     /**
      * Grows the given CombineToken and puts any results into the given
@@ -593,19 +612,17 @@ public class ParallelSearchManager implements SearchManager {
 	// make sure that this state is non-emitting
 	assert !token.isEmitting();
 
-	SentenceHMMState state = token.getSentenceHMMState();
-	SentenceHMMStateArc[] arcs = state.getSuccessorArray();
+	SearchState state = (SentenceHMMState) token.getSearchState();
+	SearchStateArc[] arcs = (SentenceHMMStateArc[]) state.getSuccessors();
 
 	// expand into each successor states
 	for (int a = 0; a < arcs.length; a++) {
 
-	    SentenceHMMStateArc arc = arcs[a];
-	    SentenceHMMState nextState = arc.getNextState();
+	    SentenceHMMStateArc arc = (SentenceHMMStateArc) arcs[a];
+	    SentenceHMMState nextState = (SentenceHMMState) arc.getState();
 
-	    float transitionScore = getTransitionScore(token, arc);
-
-	    boolean firstToken = nextState.getBestToken() == null ||
-		nextState.getBestToken().getFrameNumber() != nextFrameNumber;
+	    boolean firstToken = getBestToken(nextState) == null ||
+		getBestToken(nextState).getFrameNumber() != nextFrameNumber;
 
             // RED states are the unsplitted states, or the non-feature
             // stream states
@@ -614,24 +631,24 @@ public class ParallelSearchManager implements SearchManager {
 
             if (nextState.getColor() == Color.RED) {
                 
-                float currentScore = transitionScore + token.getScore();
+                float logEntryScore = token.getScore() +  arc.getProbability();
 
                 if (firstToken || 
-                    nextState.getBestToken().getScore() <= currentScore) {
+                    getBestToken(nextState).getScore() <= logEntryScore) {
                     
                     // create the next CombineToken for a RED state
                     CombineToken nextToken = new CombineToken
                         (token, nextState, nextFrameNumber);
 
                     // propagate the combined score unchanged
-                    nextToken.setScore(currentScore);
+                    nextToken.setScore(logEntryScore);
 
                     // propagate the individual ParallelTokens, taking
                     // into account the new transition score
                     transitionParallelTokens
-                        (token, nextToken, transitionScore);
+                        (token, nextToken, arc.getProbability());
                     
-                    nextState.setBestToken(nextToken);
+                    setBestToken(nextState, nextToken);
 
                     // finally grow the new CombineToken
                     growCombineToken(nextToken);
@@ -649,21 +666,20 @@ public class ParallelSearchManager implements SearchManager {
 
 		if (parallelToken != null) {
 		    
-		    float currentScore = transitionScore + 
+		    float logEntryScore = arc.getProbability() + 
 			parallelToken.getFeatureScore();
 		    
 		    ParallelToken oldNextToken = (ParallelToken) 
-			nextState.getBestToken();
+			getBestToken(nextState);
 		    
 		    if (firstToken || 
-			oldNextToken.getFeatureScore() <= currentScore) {
+			oldNextToken.getFeatureScore() <= logEntryScore) {
 			
 			ParallelToken nextToken = new ParallelToken
 			    (parallelToken, 
 			     nextState,
 			     parallelToken.getEta(),
-			     currentScore,
-			     parallelToken.getCombinedScore(),
+			     logEntryScore, parallelToken.getCombinedScore(),
 			     nextFrameNumber,
 			     parallelToken.getLastCombineTime());
 			
@@ -713,7 +729,7 @@ public class ParallelSearchManager implements SearchManager {
             ParallelToken pToken = (ParallelToken) i.next();
             ParallelToken newParallelToken = new ParallelToken
                 (pToken,
-                 newToken.getSentenceHMMState(),
+                 (SentenceHMMState) newToken.getSearchState(),
                  pToken.getEta(),
                  pToken.getFeatureScore() + transitionScore,
                  pToken.getCombinedScore(),
@@ -726,20 +742,6 @@ public class ParallelSearchManager implements SearchManager {
     }
 
 
-    /**
-     * Returns the transition score of the given token into the
-     * given SentenceHMMStateArc.
-     *
-     * @param token the transitioning token
-     * @param arc the SentenceHMMStateArc the token is transitioning into
-     *
-     * @return the transition score
-     */
-    private float getTransitionScore(Token token, SentenceHMMStateArc arc) {
-        return getLanguageProbability(token, arc) +
-            arc.getAcousticProbability() + arc.getInsertionProbability();
-    }
-
 
     /**
      * Replaces the token in the given SentenceHMMState with 
@@ -751,7 +753,8 @@ public class ParallelSearchManager implements SearchManager {
      */
     private void replaceParallelToken(SentenceHMMState state,
                                       ParallelToken newToken) {
-        ParallelToken oldToken = (ParallelToken) state.setBestToken(newToken);
+        ParallelToken oldToken = (ParallelToken) getBestToken(state);
+        setBestToken(state, newToken);
         if (oldToken != null) {
             assert (oldToken.getModelName() == newToken.getModelName());
         }
@@ -776,22 +779,6 @@ public class ParallelSearchManager implements SearchManager {
     private ActiveList getActiveList(String modelName) {
         FeatureStream stream = (FeatureStream) featureStreams.get(modelName);
         return stream.activeList;
-    }
-
-
-    /**
-     * Given a linguist and an arc to the next token, determine a
-     * language probability for the next state
-     *
-     * @param linguist  the linguist to use, null if there is no
-     * linguist, in which case, the language probability for the
-     * SentenceHMMStateArc will be used.
-     *
-     * @param arc the arc to the next state
-     */
-    private float getLanguageProbability(Token token,
-                                         SentenceHMMStateArc arc) {
-	return arc.getLanguageProbability() * languageWeight;
     }
 
 

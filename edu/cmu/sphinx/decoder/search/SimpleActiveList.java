@@ -23,6 +23,7 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
 
 /**
  * An active list that tries to be simple and correct. This type of
@@ -222,6 +223,15 @@ public class SimpleActiveList implements ActiveList  {
      */
     public Token[] getTokens() {
 	return (Token[]) tokenList.toArray(new Token[tokenList.size()]);
+    }
+
+    /**
+     * Gets the set of all tokens
+     *
+     * @return the set of tokens
+     */
+    public Scoreable[] getScoreables() {
+	return (Scoreable[]) tokenList.toArray(new Scoreable[tokenList.size()]);
     }
 
 

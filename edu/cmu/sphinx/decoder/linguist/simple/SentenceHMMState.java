@@ -10,35 +10,29 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.decoder.linguist.simple;
 
 
 import java.util.List;
 import java.util.Iterator;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Comparator;
 import java.util.TreeSet;
-import java.util.Collection;
 import java.io.Serializable;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.StreamCorruptedException;
-import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.decoder.linguist.WordState;
+
+import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
+import edu.cmu.sphinx.decoder.linguist.Color;
+import edu.cmu.sphinx.decoder.linguist.GrammarWord;
 
 /**
  * Represents a single state in an SentenceHMM
  */
-public class  SentenceHMMState implements Serializable {
+public class  SentenceHMMState implements Serializable, SearchState  {
     private final static int MASK_IS_FINAL 		= 0x1;
     private final static int MASK_COLOR_RED 		= 0x2;
     private final static int MASK_PROCESSED 		= 0x4;
@@ -65,7 +59,6 @@ public class  SentenceHMMState implements Serializable {
     private transient String cachedName;
     private transient String fullName;
     private transient SentenceHMMStateArc[] successorArray;
-    private transient Token bestToken;
 
 
     /**
@@ -92,29 +85,6 @@ public class  SentenceHMMState implements Serializable {
 	stateNumber = globalStateNumber--;
     }
 
-
-
-    /**
-     * Validates this SentenceHMM
-     *
-     * @return true if the SentenceHMM is valid, otherwise, returns
-     * false.
-     */
-    public boolean validate() {
-	return true;
-    }
-
-
-
-    /**
-     * Determines if this state has been 'processed'. The meaning of
-     * 'processed' is not defined here, but is up to the higher levels
-     *
-     * @return true if the state has been processed.
-     */
-    public boolean isProcessed() {
-	return (fields & MASK_PROCESSED) == MASK_PROCESSED;
-    }
 
     /**
      * Determines if this state marks the beginning of a word
@@ -226,6 +196,17 @@ public class  SentenceHMMState implements Serializable {
     }
 
     /**
+     * Determines if this state has been 'processed'. The meaning of
+     * 'processed' is not defined here, but is up to the higher levels
+     *
+     * @return true if the state has been processed.
+     */
+    public boolean isProcessed() {
+	return (fields & MASK_PROCESSED) == MASK_PROCESSED;
+    }
+
+
+    /**
      * Reset process flags for this state and all successor states
      */
     public void resetAllProcessed() {
@@ -247,16 +228,6 @@ public class  SentenceHMMState implements Serializable {
     }
 
     /**
-     * Get the next successor states and their probababilities
-     *
-     * @return the arcs to the successor states
-     */
-    // FIXME
-     Collection getSuccessors() {
-	return arcs.values();
-    }
-
-    /**
      * Gets the number of successors
      *
      * @return the number of successors
@@ -265,23 +236,33 @@ public class  SentenceHMMState implements Serializable {
 	return arcs.size();
     }
 
-
     /**
-     * Gets an array of successors. This allocates the array as
-     * necessary. Any future adds of successors will invalidate this
-     * array (and set it to null). IN general we build up the tree
-     * first before we start getting successors, so this gives us
-     * better performance in the decoder.
+     * Gets a successor to this search state
      *
-     * @return the array of successor arcs
+     * @param the successor index
+     *
+     * @return the set of successors
      */
-    public SentenceHMMStateArc[] getSuccessorArray() {
+     public SearchStateArc[]  getSuccessors() {
+         return (SearchStateArc[]) getSuccessorArray();
+     }
+
+
+
+     /**
+      * Returns the succesors as SentenceHMMStateArc 
+      *
+      * @return the successors
+      */
+     private SentenceHMMStateArc[] getSuccessorArray() {
 	if (successorArray == null) {
 	    successorArray = new SentenceHMMStateArc[arcs.size()];
 	    arcs.values().toArray(successorArray);
 	}
 	return successorArray;
-    }
+     }
+
+
 
 
     /**
@@ -289,37 +270,10 @@ public class  SentenceHMMState implements Serializable {
      *
      * @param arc the arc to remove
      */
-    public void deleteSuccessor(SentenceHMMStateArc arc) {
-	getSuccessors().remove(arc);
+    void deleteSuccessor(SentenceHMMStateArc arc) {
+	arcs.remove(arc);
     }
 
-
-    /**
-     * Returns the best token associated with this sentence state
-     *
-     * @return the token
-     */
-    public final Token getBestToken() {
-	return bestToken;
-    }
-
-    /**
-     * Sets the best token associated with this sentence state
-     *
-     * @param token  the token
-     *
-     * @return the previous best token
-     */
-    public final Token setBestToken(Token token) {
-	Token oldBestToken = bestToken;
-	bestToken = token;
-        if (oldBestToken != null && oldBestToken.getFrameNumber() ==
-                token.getFrameNumber()) {
-            return oldBestToken;
-        } else {
-            return null;
-        }
-    }
 
 
     /**
@@ -345,7 +299,8 @@ public class  SentenceHMMState implements Serializable {
      * @param arc the arc to the next state
      */
     private void rawConnect(SentenceHMMStateArc arc) {
- 	arcs.put(arc.getNextState().getValueSignature(), arc);
+        SentenceHMMState state = (SentenceHMMState) arc.getState();
+ 	arcs.put(state.getValueSignature(), arc);
     }
 
 
@@ -363,7 +318,7 @@ public class  SentenceHMMState implements Serializable {
      * 
      * @return true if this is a final state
      */
-    public boolean isFinalState() {
+    public boolean isFinal() {
 	return (fields & MASK_IS_FINAL) == MASK_IS_FINAL;
     }
 
@@ -385,12 +340,6 @@ public class  SentenceHMMState implements Serializable {
     }
 
 
-    /**
-     * Clears/resets any accumulated state or history
-     */
-    public void clear() {
-	bestToken = null;
-    }
 
 
     /**
@@ -422,25 +371,14 @@ public class  SentenceHMMState implements Serializable {
      */
     private void dump() {
 	System.out.println(" ----- " + getTitle() + " ---- ");
-	for (Iterator i = getSuccessors().iterator(); i.hasNext(); ) {
-	    SentenceHMMStateArc arc = (SentenceHMMStateArc) i.next();
-	    System.out.println("   -> " + arc.getNextState().getTitle());
+        for (int i = 0; i < getSuccessors().length; i++) {
+	    SentenceHMMStateArc arc = (SentenceHMMStateArc) getSuccessors()[i];
+	    System.out.println("   -> " +
+                    arc.getState().toPrettyString());
 	}
     }
 
 
-    /**
-     * Remove the best token from this SentenceHMMState and all its
-     * succeeding SentenceHMMStates.
-     */
-    public void resetAll() {
-	visitStates(new SentenceHMMStateVisitor() {
-		public boolean visit(SentenceHMMState state) {
-		    state.clear();
-		    return false;
-		}
-	    }, this, false);
-    }
 
 
     /**
@@ -448,11 +386,7 @@ public class  SentenceHMMState implements Serializable {
      *
      */
     public void validateAll() {
-	ValidatorVisitor vv = new ValidatorVisitor();
-	visitStates(vv, this, false);
-	if (vv.isOK()) {
-	    System.out.println(" *** SentenceHMM is valid ***");
-	}
+        // TODO fix me
     }
 
 
@@ -487,20 +421,30 @@ public class  SentenceHMMState implements Serializable {
 	    sb.append(getName());
 
 	    String base =  (isEmitting() ? "*" : "") + getName()
-		+ getWhich() + (isFinalState() ? "!" : "");
+		+ getWhich() + (isFinal() ? "!" : "");
 
 	    if (parent != null) {
 		sb.append("_");
 		sb.append(parent.toString());
 	    }
 
-	    if (isFinalState()) {
+	    if (isFinal()) {
 		sb.append("!");
 	    }
 	    cachedName = sb.toString();
 	}
 	return cachedName;
     }
+
+    /*
+      * Returns a pretty version of the string representation 
+      * for this object
+      *
+      * @return a pretty string
+      */
+     public String toPrettyString() {
+         return toString();
+     }
 
 
     /**
@@ -656,200 +600,6 @@ public class  SentenceHMMState implements Serializable {
     }
 
 
-    /**
-     * Writes out a binary representation of the SentenceHMM graph that
-     * is headed by the given state.
-     *
-     * @param path the name of the file to be written
-     *
-     * @param initialState the head of the graph
-     */
-    public static void exportBinaryRepresentation(String path,
-	    SentenceHMMState initialState) {
-
-    // we handle the object references manually otherwise we'd have to
-    // deal with a stack overflow as even very small sentence hmms are
-    // dumped out.
-
-	try {
-	    FileOutputStream out = new FileOutputStream(path);
-	    ObjectOutputStream s = new ObjectOutputStream(out);
-
-	   // collect up all the state into a list
-	    Set states = collectStates(initialState);
-
-	    Map stateMap = new HashMap();
-	    for (Iterator i = states.iterator(); i.hasNext(); ) {
-		SentenceHMMState state = (SentenceHMMState) i.next();
-		stateMap.put(state.getSignature(), state);
-	    }
-
-	    System.out.println("Export " + states.size() + " states");
-
-	   // set all the state numbers 
-	    int count = 0;
-
-	    for (Iterator i = states.iterator(); i.hasNext(); ) {
-		SentenceHMMState state = (SentenceHMMState) i.next();
-		state.setStateNumber(count++);
-	    }
-
-	    s.writeInt(BINARY_VERSION_NUMBER);
-	    // write out the initial state number
-	    s.writeInt(initialState.getStateNumber());
-
-	    // write the number of states
-	    s.writeInt(states.size());
-
-	   // write all the states out 
-
-	    for (Iterator i = states.iterator(); i.hasNext(); ) {
-		SentenceHMMState state = (SentenceHMMState) i.next();
-		s.writeObject(state);
-	    }
-
-	    // write all the parts of the sentence hmm that refer
-	    // to other sentence hmms
-
-	    // a state needs to have its parent set before we hook up
-	    // the arcs (to get a valid signature) so we do this in
-	    // two passes.
-
-	    for (Iterator i = states.iterator(); i.hasNext(); ) {
-		SentenceHMMState state = (SentenceHMMState) i.next();
-		s.writeInt(state.getStateNumber());
-
-		if (state.getParent() == null) {
-		    s.writeInt(-1);
-		} else {
-		    SentenceHMMState parent = state.getParent();
-
-		    // due to path folding and such, it is possible
-		    // for a states parent to not actually be in the
-		    // sentence hmm graph. If this is the case, then
-		    // the parents statenumber will be negative (since
-		    // we've just assigned positive state numbers to
-		    // the in-graph states.  If we find such a state,
-		    // we are guaranteed to find an identical in-graph
-		    // state so we substitute. This has a nice affect
-		    // of making loaded binary graphs a bit cleaner.
-
-		    if (parent.getStateNumber() < 0) {
-			parent = (SentenceHMMState)
-			    stateMap.get(parent.getSignature());
-		    }
-		    s.writeInt(parent.getStateNumber());
-		}
-	    }
-
-	    for (Iterator i = states.iterator(); i.hasNext(); ) {
-		SentenceHMMState state = (SentenceHMMState) i.next();
-		s.writeInt(state.getStateNumber());
-
-		SentenceHMMStateArc[] arcs = state.getSuccessorArray();
-		s.writeInt(arcs.length);
-		for (int j = 0; j < arcs.length; j++) {
-		    s.writeInt(arcs[j].getNextState().getStateNumber());
-		    s.writeFloat(arcs[j].getAcousticProbability());
-		    s.writeFloat(arcs[j].getLanguageProbability());
-		    s.writeFloat(arcs[j].getInsertionProbability());
-		}
-	    }
-	    s.flush();
-	    s.close();
-	} catch (IOException ioe) {
-	    System.out.println("IOE " + ioe);
-	}
-    }
-
-    // we handle the object references manually otherwise we'd have to
-    // deal with a stack overflow as even very small sentence hmms are
-    // dumped out.
-
-    /**
-     * Reads in a binary representation of the SentenceHMM graph
-     * previous written by exportBinaryRepresentation
-     *
-     * @param path the name of the file to be written
-     *
-     * @return the state that forms the head of the graph
-     */
-    public static SentenceHMMState importBinaryRepresentation(String path) {
-	SentenceHMMState initialState = null;
-
-	try {
-	    FileInputStream in = new FileInputStream(path);
-	    ObjectInputStream s = new ObjectInputStream(in);
-
-	    int binaryVersionNumber = s.readInt();
-
-	    if (binaryVersionNumber  != BINARY_VERSION_NUMBER) {
-		throw new StreamCorruptedException("bad version number");
-	    }
-	    int initialStateNumber = s.readInt();
-	    int numStates = s.readInt();
-
-	    System.out.println("Importing " + numStates + " states");
-
-	    SentenceHMMState[] states = new SentenceHMMState[numStates];
-
-	    // read the states
-
-	    for (int i = 0; i < numStates; i++) {
-		SentenceHMMState state = (SentenceHMMState) s.readObject();
-		states[state.getStateNumber()] = state;
-	    }
-
-	    // Read the parents 
-
-	    for (int i = 0; i < numStates; i++) {
-		int stateNumber = s.readInt();
-
-		SentenceHMMState state = states[i];
-
-		int parentState = s.readInt();
-		if (parentState != -1) {
-		    SentenceHMMState parent = states[parentState];
-		    if (parent == null) {
-			System.out.println("NULL parent for " + state);
-		    }
-		    state.setParent(parent);
-		}
-	    }
-
-	    // read in all of the arcs
-
-	    for (int i = 0; i < numStates; i++) {
-		int stateNumber = s.readInt();
-
-		SentenceHMMState state = states[i];
-
-		int arcsLength = s.readInt();
-
-		for (int j = 0; j < arcsLength; j++) {
-		    int arcStateNumber = s.readInt();
-		    float acousticProb = s.readFloat();
-		    float languageProb = s.readFloat();
-		    float insertionProb = s.readFloat();
-		    SentenceHMMState arcState = states[arcStateNumber];
-		    SentenceHMMStateArc arc = new SentenceHMMStateArc(arcState,
-			    acousticProb, languageProb, insertionProb);
-		    state.rawConnect(arc);
-		}
-	    }
-	    s.close();
-
-	    initialState = states[initialStateNumber];
-
-	} catch (IOException ioe) {
-	    System.out.println("IOE " + ioe);
-	} catch (ClassNotFoundException cnf) {
-	    System.out.println("CNF " + cnf);
-	}
-	return initialState;
-    }
-
-
 
     /**
      * Sets the color for this node
@@ -915,7 +665,7 @@ public class  SentenceHMMState implements Serializable {
 	    SentenceHMMStateArc[] successors = state.getSuccessorArray();
 	    for (int i = 0; i < successors.length; i++) {
 		SentenceHMMStateArc arc = successors[i];
-		SentenceHMMState nextState = arc.getNextState();
+		SentenceHMMState nextState = (SentenceHMMState) arc.getState();
 		if (!visitedStates.contains(nextState)) {
 		    queue.add(nextState);
 		}
@@ -923,56 +673,5 @@ public class  SentenceHMMState implements Serializable {
 	}
 	return visitedStates;
     }
-
-    /**
-     * Serializes the non-transient fields to the given stream
-     *
-     * @param s the stream to write the object to
-     *
-     * @throws java.io.IOException if an error occurs during the write.
-     */
-    private void writeObject(ObjectOutputStream s) throws IOException {
-	s.defaultWriteObject();
-    }
-
-    /**
-     * De-serializes the non-transient fields to the given stream
-     *
-     * @param s the stream to read the object from
-     *
-     * @throws java.io.IOException if an error occurs during the read.
-     */
-    private void readObject(ObjectInputStream s)
-	throws IOException, ClassNotFoundException {
-	s.defaultReadObject();
-	this.arcs = new LinkedHashMap();
-    }
-
 }
-
-
-/**
- * A state visitor that validates states
- */
-class ValidatorVisitor implements SentenceHMMStateVisitor {
-    private boolean allOK = true;
-
-
-    public boolean visit(SentenceHMMState state) {
-	if (!state.validate()) {
-	    allOK = false;
-	}
-	return false;
-    }
-
-    /**
-     * Determines if all states validated properly
-     *
-     * @return true if all states were valid
-     */
-    public boolean isOK() {
-	return allOK;
-    }
-}
-
 

@@ -13,18 +13,19 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.decoder.linguist.simple;
 
 import edu.cmu.sphinx.knowledge.acoustic.HMMState;
 import edu.cmu.sphinx.frontend.Feature;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import java.io.Serializable;
+import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
 
 /**
  * Represents a hmmState in an SentenceHMMS
  * 
  */
-public class HMMStateState extends SentenceHMMState implements Serializable {
+public class HMMStateState extends SentenceHMMState 
+    implements Serializable, HMMSearchState {
     private HMMState hmmState;
 
     /**

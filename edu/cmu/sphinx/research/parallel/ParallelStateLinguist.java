@@ -22,21 +22,23 @@ import edu.cmu.sphinx.knowledge.acoustic.Unit;
 
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 
-import edu.cmu.sphinx.decoder.linguist.AlternativeState;
+import edu.cmu.sphinx.decoder.linguist.simple.AlternativeState;
 import edu.cmu.sphinx.decoder.linguist.Color;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
 import edu.cmu.sphinx.decoder.linguist.GrammarArc;
 import edu.cmu.sphinx.decoder.linguist.GrammarNode;
-import edu.cmu.sphinx.decoder.linguist.GrammarState;
+import edu.cmu.sphinx.decoder.linguist.simple.GrammarState;
 import edu.cmu.sphinx.decoder.linguist.GrammarWord;
-import edu.cmu.sphinx.decoder.linguist.HMMStateState;
+import edu.cmu.sphinx.decoder.linguist.simple.HMMStateState;
 import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
-import edu.cmu.sphinx.decoder.linguist.PronunciationState;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc;
-import edu.cmu.sphinx.decoder.linguist.UnitState;
-import edu.cmu.sphinx.decoder.linguist.WordState;
+import edu.cmu.sphinx.decoder.linguist.simple.PronunciationState;
+import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMState;
+import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMStateArc;
+import edu.cmu.sphinx.decoder.linguist.simple.UnitState;
+import edu.cmu.sphinx.decoder.linguist.simple.WordState;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -145,7 +147,7 @@ public class ParallelStateLinguist implements Linguist {
      *
      * @return the initial SentenceHMMState
      */
-    public SentenceHMMState getInitialState() {
+    public SearchState getInitialSearchState() {
 	return initialState;
     }
 
@@ -157,7 +159,7 @@ public class ParallelStateLinguist implements Linguist {
         // clear out all the SentenceHMMStates
         for (Iterator i = allStates.iterator(); i.hasNext(); ) {
             SentenceHMMState state = (SentenceHMMState) i.next();
-            state.clear();
+            // state.clear(); BUG Fix me
         }
     }
 
@@ -608,8 +610,7 @@ public class ParallelStateLinguist implements Linguist {
 	    HMMStateArc selfTransition = getSelfTransition(hmmState);
 	    
 	    if (selfTransition != null) {
-		double selfTransitionScore = 
-		    logMath.linearToLog(selfTransition.getProbability());
+		double selfTransitionScore = selfTransition.getLogProbability();
 		// connect the next combining state to this HMMState
 		attachState(lastState, firstHMMState, 
 			    selfTransitionScore, 0.0, 0.0);
@@ -637,7 +638,7 @@ public class ParallelStateLinguist implements Linguist {
 		
 		// connect lastState and this HMMStateState
 		attachState(lastState, hmmStateState,
-			    logMath.linearToLog(arc.getProbability()),
+			    arc.getLogProbability(),
 			    0.0, 0.0);
 
 		// connect this HMMStateState and the combineState
@@ -648,7 +649,7 @@ public class ParallelStateLinguist implements Linguist {
 		
 		if (selfTransition != null) {
 		    double selfTransitionScore = 
-			logMath.linearToLog(selfTransition.getProbability());
+			selfTransition.getLogProbability();
 		    // connect the next combining state to this HMMState
 		    attachState(combineState, hmmStateState,
 				selfTransitionScore, 0.0, 0.0);
@@ -689,7 +690,7 @@ public class ParallelStateLinguist implements Linguist {
 
 		// this is a self-transition
 		attachState(hmmStateState, hmmStateState,
-			    logMath.linearToLog(arcs[i].getProbability()),
+			    arcs[i].getLogProbability(),
 			    0.0,
 			    0.0);
 
@@ -713,7 +714,7 @@ public class ParallelStateLinguist implements Linguist {
 		nextState.setColor(Color.GREEN);
 
 		attachState(hmmStateState, nextState, 
-			    logMath.linearToLog(arcs[i].getProbability()),
+			    arcs[i].getLogProbability(),
 			    0.0,
 			    0.0);
 

@@ -15,13 +15,15 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
+import edu.cmu.sphinx.knowledge.acoustic.HMMState;
 import edu.cmu.sphinx.knowledge.acoustic.Context;
 import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
 import edu.cmu.sphinx.util.Utilities;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
-import edu.cmu.sphinx.decoder.linguist.HMMStateState;
-import edu.cmu.sphinx.decoder.linguist.PronunciationState;
-import edu.cmu.sphinx.decoder.linguist.UnitState;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
+import edu.cmu.sphinx.decoder.linguist.WordSearchState;
+import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
+import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
 
 import java.util.List;
 import java.text.DecimalFormat;
@@ -36,7 +38,7 @@ import java.util.ArrayList;
  * All scores are maintained in LogMath log base
  *
  */
-public class Token {
+public class Token implements Scoreable {
 
     private final static boolean COMBINE_BRANCHES = true;
     private final static String SILENCE = "<sil>";
@@ -65,7 +67,7 @@ public class Token {
     private float logInsertionProbability;
     private float logAcousticScore;
     private double logWorkingScore;
-    private SentenceHMMState sentenceHMMState;
+    private SearchState searchState;
 
     private int location;
 
@@ -88,13 +90,13 @@ public class Token {
      *
      */
     public Token(Token predecessor,
-                 SentenceHMMState state,
+                 SearchState state,
                  float logTotalScore,
                  float logLanguageScore,
                  float logInsertionProbability,
                  int frameNumber) {
 	this.predecessor = predecessor;
-	this.sentenceHMMState = state;
+	this.searchState = state;
 	this.logTotalScore = logTotalScore;
 	this.logLanguageScore = logLanguageScore;
 	this.logInsertionProbability = logInsertionProbability;
@@ -107,14 +109,14 @@ public class Token {
     /**
      * Creates the initial token with the given word history depth
      *
-     * @param state the SentenceHMMState associated with this token
+     * @param state the SearchState associated with this token
      *
      * @param the depth of the word history to keep track of in this
      * lattice. If depth is 0, no word history will be maintained.
      *
      * @param frameNumber the frame number for this token
      */
-    public Token(SentenceHMMState state, int frameNumber) {
+    public Token(SearchState state, int frameNumber) {
 	this(null, state, 0.0f, 0.0f, 0.0f, frameNumber);
     }
 
@@ -157,6 +159,42 @@ public class Token {
      */
     public float getScore() { 
 	return logTotalScore;
+    }
+
+    /**
+     * Calculates a score against the given feature. The score can be
+     * retreived with get score
+     *
+     * @param feature the feature to be scored
+     *
+     * @return the score for the feature
+     */
+    public float calculateScore(Feature feature) {
+        if (searchState instanceof HMMSearchState) {
+            HMMSearchState hmmSearchState = (HMMSearchState) searchState;
+            HMMState hmmState = hmmSearchState.getHMMState();
+            float logScore = hmmState.getScore(feature);
+            logTotalScore += logScore;
+            logAcousticScore = logScore;
+            return logScore;
+        } else {
+            System.out.println("SS: " + searchState);
+            throw new Error ("Attempting to score non-scoreable token");
+        }
+    }
+
+
+    /**
+     * Normalizes a previously calculated score
+     *
+     * @param maxLogScore the score to normalize this score with
+     *
+     * @return the normalized score
+     */
+    public float normalizeScore(float maxLogScore) {
+        logTotalScore -= maxLogScore;
+        logAcousticScore -= maxLogScore;
+        return logTotalScore;
     }
 
 
@@ -237,12 +275,12 @@ public class Token {
     }
 
     /**
-     * Returns the SentenceHMMState associated with this token
+     * Returns the SearchState associated with this token
      *
-     * @return the sentenceHMMState 
+     * @return the searchState 
      */
-    public SentenceHMMState getSentenceHMMState() {
-	return sentenceHMMState;
+    public SearchState getSearchState() {
+	return searchState;
     }
 
     /**
@@ -253,7 +291,7 @@ public class Token {
      * emitting state
      */
     public boolean isEmitting() {
-	return sentenceHMMState.isEmitting();
+	return searchState.isEmitting();
     }
 
     /**
@@ -263,19 +301,8 @@ public class Token {
      * final state
      */
     public boolean isFinal() {
-	return sentenceHMMState.isFinalState();
+	return searchState.isFinal();
     }
-
-    /**
-     * Sets this token to be a final token
-     *
-     * @param state the new final emitting state
-     */
-    public void setFinal(boolean state) {
-	sentenceHMMState.setFinalState(state);
-    }
-
-
 
     /**
      * Retrieves the string representation of this object
@@ -287,7 +314,7 @@ public class Token {
             numFmt.format(getFrameNumber()) + " " +
             scoreFmt.format(getScore()) + " " +
             scoreFmt.format(getAcousticScore())
-            + " " + getSentenceHMMState();
+            + " " + getSearchState();
     }
 
 
@@ -314,7 +341,7 @@ public class Token {
 	for (int i = list.size() - 1; i >= 0; i--) {
 	    token = (Token) list.get(i);
             if (includeHMMStates || 
-                (! (token.getSentenceHMMState() instanceof HMMStateState))) {
+                (! (token.getSearchState() instanceof HMMSearchState))) {
                 System.out.println("  " + token);
             }
 	}
@@ -324,22 +351,27 @@ public class Token {
     /**
      * returns the string of words leading up to this token
      *
+     * @param wantSilences if true, silences are added
+     *
      * @return the word path
      */
-    public String getWordPath() {
+    public String getWordPath(boolean wantSilences) {
 	StringBuffer sb = new StringBuffer();
 	Token token = this;
 
 	while (token != null) {
-	    if (token.getSentenceHMMState() instanceof PronunciationState) {
-		PronunciationState pronunciationState  =
-		    (PronunciationState) token.getSentenceHMMState();
-		sb.insert(0, pronunciationState.getPronunciation().getWord());
-		sb.insert(0, " ");
+	    if (token.getSearchState() instanceof WordSearchState) {
+		WordSearchState wordState  =
+		    (WordSearchState) token.getSearchState();
+                String word = wordState.getPronunciation().getWord();
+                if (wantSilences || !silenceSet.contains(word)) {
+                    sb.insert(0, word);
+                    sb.insert(0, " ");
+                }
 	    }
 	    token = token.getPredecessor();
 	}
-	return sb.toString();
+	return sb.toString().trim();
     }
 
     /**
@@ -349,24 +381,17 @@ public class Token {
      * @return the string of words
      */
     public String getWordPathNoSilences() {
-	StringBuffer sb = new StringBuffer();
-	Token token = this;
+        return getWordPath(false);
+    }
 
-	while (token != null) {
-	    if (token.getSentenceHMMState() instanceof PronunciationState) {
-                PronunciationState pronunciationState  =
-		    (PronunciationState) token.getSentenceHMMState();
-		String word = pronunciationState.getPronunciation().getWord();
-                if (!silenceSet.contains(word)) {
-		    sb.insert(0, word);
-		    if (token.getPredecessor() != null) {
-			sb.insert(0, " ");
-		    }
-		}
-	    }
-	    token = token.getPredecessor();
-	}
-	return sb.toString().trim();
+    /**
+     * Returns the string of words for this token, with embedded
+     * silences
+     *
+     * @return the string of words
+     */
+    public String getWordPath() {
+        return getWordPath(true);
     }
 
 
@@ -404,94 +429,10 @@ public class Token {
      *
      * @return true if the token and its predecessors are valid
      */
-    public boolean validate() {
-        // BUG: fix this
-        Boolean valid = null;
-
-	if (valid == null) {
-	    valid = Boolean.TRUE;
-	    
-	    // checks to see if the left context for any unit tokens
-	    // matches the actual left context.
-
-
-	    if (getSentenceHMMState() instanceof UnitState) {
-                UnitState unitState = (UnitState) getSentenceHMMState();
-		Context context  = unitState.getUnit().getContext();
-		if (context instanceof LeftRightContext) {
-		    LeftRightContext lrContext = (LeftRightContext)
-			context;
-
-		    Unit[] lc = lrContext.getLeftContext();
-
-		    // collect the actual LC
-
-		    if (lc != null) {
-			Unit[] actualLC = Unit.getEmptyContext(lc.length);
-			int count = lc.length;
-
-			Token prev = getPredecessor();
-			while (count > 0) {
-			    if (prev == null) {
-				break;
-			    }
-
-			    if (prev.getSentenceHMMState() 
-                                instanceof UnitState) {
-				UnitState prevUnitState =
-				    (UnitState) prev.getSentenceHMMState();
-				Unit cdUnit = prevUnitState.getUnit();
-				Unit ciUnit = new Unit(cdUnit.getName(),
-					    cdUnit.isFiller());
-				actualLC[--count] = ciUnit;
-			    }
-			    prev = prev.getPredecessor();
-			}
-			if (!Unit.isContextMatch(lc, actualLC)) {
-			    System.out.println("TokenValidate: Left context "
-				    + "doesn't match previous: " + this);
-
-			    valid = Boolean.FALSE;
-
-			    System.out.println("Expected: " +
-				    LeftRightContext.getContextName(lc) +
-				    " got " +
-				    LeftRightContext.getContextName(actualLC));
-			} else {
-			    // System.out.println("Token is valid " + this);
-			}
-		    }
-		}
-
-		// if we are a unit, make sure that our predecessor's
-		// (if we have one) right context starts with this
-		// unit
-		Token prev = getPredecessor();
-		if (prev != null) {
-		    Unit[] rc = null; // FIXME
-		    if (rc != null && rc.length > 0) {
-			if
-			    (!rc[0].getName().equals(
-					 unitState.getUnit().getName())) {
-			    System.out.println("TokenValidate: Right " +
-				"context doesn't match " + this);
-			    valid = Boolean.FALSE;
-			}
-		    }
-		}
-	    }
-	    if (valid == Boolean.TRUE) {
-		Token prev = getPredecessor();
-		if (prev != null) {
-		    if (!prev.validate()) {
-			valid = Boolean.FALSE;
-		    }
-		}
-	    }
-	} 
-
-	return valid.booleanValue();
+    public boolean validate()  {
+        return true;
     }
+
 
 
     /**

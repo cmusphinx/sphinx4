@@ -10,9 +10,10 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.decoder.linguist.simple;
 
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
+import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
 
 /**
  * Represents a transition in a sentence HMM. Each transition is
@@ -21,7 +22,7 @@ import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
  *
  * All probabilities are in the LogMath log domain
  */
-public class SentenceHMMStateArc {
+public class SentenceHMMStateArc implements SearchStateArc {
     private SentenceHMMState nextState;
     private float logAcousticProbability;
     private float logLanguageProbability;
@@ -87,12 +88,24 @@ public class SentenceHMMStateArc {
 
 
     /**
-     * Retrieves the next sentence HMM state
+     * Retrieves the next state
+     *
+     * @return the next state
+     */
+    public SearchState getState() {
+	return nextState;
+    }
+
+
+    /**
+     * For backwards compatibility
+     *
+     * Returns the next state as a SentenceHMSMtate
      *
      * @return the next state
      */
     public SentenceHMMState getNextState() {
-	return nextState;
+        return (SentenceHMMState) getState();
     }
 
     /**
@@ -126,4 +139,15 @@ public class SentenceHMMStateArc {
     public float getInsertionProbability() {
 	return logInsertionProbability;
     }
+
+
+     /**
+      * Gets the composite probability of entering this state
+      *
+      * @return the log probability
+      */
+     public float getProbability() {
+         return logLanguageProbability + logAcousticProbability +
+             logInsertionProbability;
+     }
 }

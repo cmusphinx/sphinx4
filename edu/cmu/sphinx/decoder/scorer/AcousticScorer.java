@@ -42,13 +42,13 @@ public interface AcousticScorer {
     /**
      * Scores the given set of states
      *
-     * @param stateTokenList a list containing StateToken objects to
+     * @param stateTokenList a list containing Scorable objects to
      * be scored
      *
      * @return true if there are more features in this utterance,
      * otherwise false.
      */
-    public boolean calculateScores(ActiveList stateTokenList);
+    public boolean calculateScores(ActiveList scorableList);
 
     /**
      * stops the scorer

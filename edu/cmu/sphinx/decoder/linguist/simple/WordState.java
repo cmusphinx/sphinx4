@@ -11,9 +11,9 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.decoder.linguist.simple;
 
-import edu.cmu.sphinx.decoder.linguist.AlternativeState;
+import edu.cmu.sphinx.decoder.linguist.GrammarWord;
 
 /**
  * Represents a word in an SentenceHMMS

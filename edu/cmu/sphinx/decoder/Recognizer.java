@@ -26,7 +26,6 @@ import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.decoder.search.Pruner;
 import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
 import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.decoder.linguist.LinguistProcessor;
@@ -406,11 +405,6 @@ public class Recognizer {
 				   languageModel, grammar, models);
 
 	    runLinguistProcessors(newLinguist);
-	    if (dumpSentenceHMM) {
-		SentenceHMMState.exportBinaryRepresentation(
-		    props.getContext() + "-SentenceHMM.bin",
-		    newLinguist.getInitialState());
-	    }
             return newLinguist;
         } catch (ClassNotFoundException fe) {
             throw new Error("Can't create linguist", fe);

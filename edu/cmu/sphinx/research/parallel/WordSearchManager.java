@@ -25,10 +25,11 @@ import edu.cmu.sphinx.decoder.linguist.Color;
 import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.decoder.search.Pruner;
 import edu.cmu.sphinx.decoder.search.SearchManager;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
-import edu.cmu.sphinx.decoder.linguist.SentenceHMMStateArc;
+import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMState;
+import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMStateArc;
+import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.decoder.linguist.WordState;
+import edu.cmu.sphinx.decoder.linguist.simple.WordState;
 
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -251,7 +252,8 @@ public class WordSearchManager implements SearchManager {
 	    delayedExpansionList = (ActiveList)activeListClass.newInstance();
 	    delayedExpansionList.setProperties(props);
 
-	    SentenceHMMState firstState = linguist.getInitialState();
+	    SentenceHMMState firstState = 
+                (SentenceHMMState) linguist.getInitialSearchState();
 	    assert !firstState.isEmitting();
 
             // create the first token and grow it, its first parameter
@@ -522,8 +524,9 @@ public class WordSearchManager implements SearchManager {
 	    nextFrameNumber++;
 	}
 
-	SentenceHMMState state = token.getSentenceHMMState();
-	SentenceHMMStateArc[] arcs = state.getSuccessorArray();
+	SentenceHMMState state = (SentenceHMMState) token.getSearchState();
+	SentenceHMMStateArc[] arcs = (SentenceHMMStateArc[]) 
+            state.getSuccessors();
 
 	// expand into each successor states
 	for (int i = 0; i < arcs.length; i++) {
@@ -531,11 +534,11 @@ public class WordSearchManager implements SearchManager {
 	    SentenceHMMStateArc arc = arcs[i];
 	    SentenceHMMState nextState = arc.getNextState();
 	    
-	    float currentScore = token.getScore() + 
-                getTransitionScore(token, arc);
+	    float currentScore = token.getScore() +
+                arc.getProbability();
                 
-	    boolean firstToken = nextState.getBestToken() == null ||
-		nextState.getBestToken().getFrameNumber() != nextFrameNumber;
+	    boolean firstToken = getBestToken(nextState) == null ||
+		getBestToken(nextState).getFrameNumber() != nextFrameNumber;
 
             // RED states are the unsplitted states, or the non-feature
             // stream states
@@ -551,16 +554,16 @@ public class WordSearchManager implements SearchManager {
 
                     CombineToken newToken = new CombineToken
                         (token, nextState, nextFrameNumber);
-                    nextState.setBestToken(newToken);
+                    setBestToken(nextState, newToken);
                     delayedExpansionList.add(newToken);
                 }
 
-                assert (nextState.getBestToken().getFrameNumber() ==
+                assert (getBestToken(nextState).getFrameNumber() ==
                         nextFrameNumber);
 
                 // get the combine token at the next state
                 CombineToken nextToken = 
-                    (CombineToken) nextState.getBestToken();
+                    (CombineToken) getBestToken(nextState);
 
                 ParallelToken oldToken = nextToken.getParallelToken
                     (token.getModelName());
@@ -643,8 +646,9 @@ public class WordSearchManager implements SearchManager {
 	// make sure that this state is non-emitting
 	assert !token.isEmitting();
 
-	SentenceHMMState state = token.getSentenceHMMState();
-	SentenceHMMStateArc[] arcs = state.getSuccessorArray();
+	SentenceHMMState state = (SentenceHMMState) token.getSearchState();
+	SentenceHMMStateArc[] arcs = 
+            (SentenceHMMStateArc[]) state.getSuccessors();
 
 	// expand into each successor states
 	for (int a = 0; a < arcs.length; a++) {
@@ -652,7 +656,7 @@ public class WordSearchManager implements SearchManager {
 	    SentenceHMMStateArc arc = arcs[a];
 	    SentenceHMMState nextState = arc.getNextState();
 
-	    float transitionScore = getTransitionScore(token, arc);
+	    float transitionScore = arc.getProbability();
 
             // RED states are the unsplitted states, or the non-feature
             // stream states
@@ -661,14 +665,14 @@ public class WordSearchManager implements SearchManager {
 
             if (nextState.getColor() == Color.RED) {
 		
-		boolean firstToken = nextState.getBestToken() == null ||
-		    nextState.getBestToken().getFrameNumber() != 
+		boolean firstToken = getBestToken(nextState) == null ||
+		    getBestToken(nextState).getFrameNumber() != 
 		    nextFrameNumber;
                 
                 float currentScore = transitionScore + token.getScore();
 
                 if (firstToken || 
-                    nextState.getBestToken().getScore() <= currentScore) {
+                    getBestToken(nextState).getScore() <= currentScore) {
 
                     // create the next CombineToken for a RED state
                     CombineToken nextToken = new CombineToken
@@ -682,7 +686,7 @@ public class WordSearchManager implements SearchManager {
                     transitionParallelTokens
                         (token, nextToken, transitionScore);
                     
-                    nextState.setBestToken(nextToken);
+                    setBestToken(nextState, nextToken);
 
                     // finally grow the new CombineToken
                     growCombineToken(nextToken);
@@ -769,7 +773,7 @@ public class WordSearchManager implements SearchManager {
             ParallelToken pToken = (ParallelToken) i.next();
             ParallelToken newParallelToken = new ParallelToken
                 (pToken,
-                 newToken.getSentenceHMMState(),
+                 (SentenceHMMState) newToken.getSearchState(),
                  pToken.getEta(),
                  pToken.getFeatureScore() + transitionScore,
                  pToken.getCombinedScore(),
@@ -781,20 +785,6 @@ public class WordSearchManager implements SearchManager {
         }
     }
 
-
-    /**
-     * Returns the transition score of the given token into the
-     * given SentenceHMMStateArc.
-     *
-     * @param token the transitioning token
-     * @param arc the SentenceHMMStateArc the token is transitioning into
-     *
-     * @return the transition score
-     */
-    private float getTransitionScore(Token token, SentenceHMMStateArc arc) {
-        return getLanguageProbability(token, arc) +
-            arc.getAcousticProbability() + arc.getInsertionProbability();
-    }
 
     /**
      * Replace the old token with the new token in the ActiveList 
@@ -828,7 +818,8 @@ public class WordSearchManager implements SearchManager {
      */
     private void replaceParallelToken(SentenceHMMState state,
                                       ParallelToken newToken) {
-        ParallelToken oldToken = (ParallelToken) state.setBestToken(newToken);
+        ParallelToken oldToken = (ParallelToken) getBestToken(state);
+        setBestToken(state, newToken);
 	replaceParallelToken(oldToken, newToken);
     }
 
@@ -844,21 +835,15 @@ public class WordSearchManager implements SearchManager {
     }
 
 
-    /**
-     * Given a linguist and an arc to the next token, determine a
-     * language probability for the next state
-     *
-     * @param linguist  the linguist to use, null if there is no
-     * linguist, in which case, the language probability for the
-     * SentenceHMMStateArc will be used.
-     *
-     * @param arc the arc to the next state
-     */
-    private float getLanguageProbability(Token token,
-                                         SentenceHMMStateArc arc) {
-	return arc.getLanguageProbability() * languageWeight;
+
+    // BUG fix me
+    Token getBestToken(SearchState state) {
+        return null;    
     }
 
+    // BUG fix me
+    void setBestToken(SearchState state, Token token) {
+    }
 
     /**
      * Performs post-recognition cleanup. This method should be called

@@ -10,7 +10,7 @@
  *
  */
 
-package edu.cmu.sphinx.decoder.linguist;
+package edu.cmu.sphinx.decoder.linguist.simple;
 
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
