@@ -51,16 +51,17 @@ SpectrumSource {
      *
      * @param name the name of this SpectrumAnalyzer
      * @param context the context of the SphinxProperties to use
-     * @param props the SphinxProperties object to read properties from
+     * @param acousticProps the SphinxProperties object to read 
+     *    acoustic properties from
      * @param predecessor the AudioSource from which to get Audio objects
      *
      * @throws IOException if an I/O error occurs
      */
     public SpectrumAnalyzer(String name, String context, 
-			    SphinxProperties props,
+			    SphinxProperties acousticProps,
                             AudioSource predecessor) throws IOException {
-        super(name, context);
-	setProperties(props, FrontEnd.ACOUSTIC_PROP_PREFIX);
+        super(name, context, acousticProps);
+	setProperties();
         this.predecessor = predecessor;
 	computeLogBase2(this.numberFftPoints);
 	createWeightFft(numberFftPoints, false);
@@ -160,14 +161,11 @@ SpectrumSource {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param props the SphinxProperties used
-     * @param prefix the prefix used for properties in this SphinxProperties
      */
-    public void setProperties(SphinxProperties props, String prefix) {
+    private void setProperties() {
 
-        int sampleRate = props.getInt
-	    (prefix + FrontEnd.PROP_SAMPLE_RATE, 16000);
+        int sampleRate = getIntAcousticProperty
+	    (FrontEnd.PROP_SAMPLE_RATE, 16000);
 
 	/**
 	 * Number of points in the FFT. By default, the value is 512,
@@ -177,10 +175,10 @@ SpectrumSource {
 	 * 511 are symmetrical with the ones between 1 and 254. Therefore,
 	 * we need only return values between 0 and 255.
 	 */
-	numberFftPoints = props.getInt(prefix + PROP_NUMBER_FFT_POINTS, 512);
+	numberFftPoints = getIntAcousticProperty(PROP_NUMBER_FFT_POINTS, 512);
 
         float windowSizeInMs = getSphinxProperties().getFloat
-            (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
+            (FrontEnd.PROP_PREFIX + FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
 
 	windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);
     }

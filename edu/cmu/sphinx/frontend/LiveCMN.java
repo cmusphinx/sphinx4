@@ -86,17 +86,17 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
      *
      * @param name the name of this LiveCMN
      * @param context the context of the SphinxProperties to use
-     * @param props the SphinxProperties to read properties from
+     * @param acousticProps the SphinxProperties to read acoustic properties
      * @param predecessor the CepstrumSource from which this normalizer
      *    obtains Cepstrum to normalize
      *
      * @throws IOException if an I/O error occurs
      */
-    public LiveCMN(String name, String context, SphinxProperties props,
+    public LiveCMN(String name, String context, SphinxProperties acousticProps,
 		   CepstrumSource predecessor)
         throws IOException {
-        super(name, context);
-        setProperties(props, FrontEnd.ACOUSTIC_PROP_PREFIX);
+        super(name, context, acousticProps);
+        setProperties();
 	initMeansSums();
         this.predecessor = predecessor;
     }
@@ -125,14 +125,11 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param props the SphinxProperties to read properties from
-     * @param prefix the prefix to use for properties in this SphinxProperties
      */
-    public void setProperties(SphinxProperties props, String prefix) {
-	initialMean = props.getFloat(prefix + PROP_INITIAL_MEAN, 12.0f);
-	cmnWindow = props.getInt(prefix + PROP_CMN_WINDOW, 500);
-	cmnShiftWindow = props.getInt(prefix + PROP_CMN_SHIFT_WINDOW, 800);
+    public void setProperties() {
+	initialMean = getFloatAcousticProperty(PROP_INITIAL_MEAN, 12.0f);
+	cmnWindow = getIntAcousticProperty(PROP_CMN_WINDOW, 500);
+	cmnShiftWindow = getIntAcousticProperty(PROP_CMN_SHIFT_WINDOW, 800);
 	cepstrumLength = getSphinxProperties().getInt
             (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
     }

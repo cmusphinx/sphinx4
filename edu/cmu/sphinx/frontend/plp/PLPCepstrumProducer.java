@@ -70,22 +70,19 @@ CepstrumProducer {
      */
     public void initialize(String name, String context, SphinxProperties props,
 			   SpectrumSource predecessor) throws IOException {
-        super.initialize(name, context);
-	setProperties(props);
+        super.initialize(name, context, props);
+	setProperties();
         this.predecessor = predecessor;
         computeCosine();
     }
 
 
     /**
-     * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param props the SphinxProperties to read properties from
+     * Reads the properties.
      */
-    public void setProperties(SphinxProperties props) {
-        numberPLPFilters = props.getInt
-	    (PLPFilterbank.PROP_PREFIX + PLPFilterbank.PROP_NUMBER_FILTERS,
-	     40);
+    private void setProperties() {
+        numberPLPFilters = getIntAcousticProperty
+	    (PLPFilterbank.PROP_NUMBER_FILTERS, 40);
         cepstrumSize = getSphinxProperties().getInt
 	    (FrontEnd.PROP_CEPSTRUM_SIZE, 13);
 	// Just hardcoding this for now

@@ -75,8 +75,8 @@ public class Windower extends DataProcessor implements AudioSource {
      */
     public Windower(String name, String context, SphinxProperties props,
 		    AudioSource predecessor) throws IOException {
-        super(name, context);
-	setProperties(props, FrontEnd.ACOUSTIC_PROP_PREFIX);
+        super(name, context, props);
+	setProperties();
         this.predecessor = predecessor;
 	createWindow();
         outputQueue = new Vector();
@@ -91,14 +91,13 @@ public class Windower extends DataProcessor implements AudioSource {
      * @param the property prefix to use for properties in this
      *    SphinxProperties object
      */
-    public void setProperties(SphinxProperties props, String propertyPrefix) {
-
-        int sampleRate = props.getInt
-	    (propertyPrefix + "sampleRate", 16000);
+    public void setProperties() {
+        int sampleRate = getIntAcousticProperty
+	    (FrontEnd.PROP_SAMPLE_RATE, 16000);
         float windowSizeInMs = getSphinxProperties().getFloat
-            (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
+            (FrontEnd.PROP_PREFIX + FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
         float windowShiftInMs = getSphinxProperties().getFloat
-            (FrontEnd.PROP_WINDOW_SHIFT_MS, 10.0F);
+            (FrontEnd.PROP_PREFIX + FrontEnd.PROP_WINDOW_SHIFT_MS, 10.0F);
 
         windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);
         windowShift = Util.getSamplesPerShift(sampleRate, windowShiftInMs);

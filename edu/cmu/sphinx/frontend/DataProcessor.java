@@ -57,6 +57,12 @@ public abstract class DataProcessor {
     private SphinxProperties sphinxProperties;
 
 
+    /**
+     * The acoustic model properties used by this DataProcessor
+     */
+    private SphinxProperties acousticProperties;
+
+
     // true if processing Data objects within an Utterance
     private boolean inUtterance;
 
@@ -68,13 +74,26 @@ public abstract class DataProcessor {
 
 
     /**
-     * Constructs a DataProcessor of the given name and at the given context. 
-     *
+     * Constructs a DataProcessor with the given name and context.
+     * 
      * @param name the name of this DataProcessor
      * @param context the context of this DataProcessor
      */
     public DataProcessor(String name, String context) {
-	initialize(name, context);
+	initialize(name, context, null);
+    }
+
+
+    /**
+     * Constructs a DataProcessor of the given name and at the given context. 
+     *
+     * @param name the name of this DataProcessor
+     * @param context the context of this DataProcessor
+     * @param acousticProperties the acoustic properties used
+     */
+    public DataProcessor(String name, String context, 
+			 SphinxProperties acousticProperties) {
+	initialize(name, context, acousticProperties);
     }
 
     
@@ -84,24 +103,14 @@ public abstract class DataProcessor {
      * @param name the name of this DataProcessor
      * @param context the context of this DataProcessor
      */
-    public void initialize(String name, String context) {
+    public void initialize(String name, String context, 
+			   SphinxProperties acousticProperties) {
 	this.name = name;
 	this.context = context;
+	this.acousticProperties = acousticProperties;
 	this.timer = Timer.getTimer(context, name);
 	this.sphinxProperties = 
 	    SphinxProperties.getSphinxProperties(context);
-    }
-
-
-    /**
-     * Sets the properties of this DataProcessor.
-     *
-     * @param properties the new properties
-     * @param propertyPrefix the prefix to use before property names
-     */
-    public void setProperties(SphinxProperties properties, 
-			      String propertyPrefix) {
-	// does nothing
     }
 
 
@@ -206,5 +215,126 @@ public abstract class DataProcessor {
 		throw new Error(getName() + ": too many UTTERANCE_START");
             }
         }
+    }
+
+
+    /**
+    * Returns true if this FrontEnd DataProcessor should use acoustic
+     * model properties. This is a convenience method that basically
+     * calls FrontEnd.useAcousticModelProperties().
+     *
+     * @return true if this DataProcessor should use acoustic model
+     *    properties, false otherwise
+     */
+    private boolean useAcousticModelProperties() {
+        return getSphinxProperties().getBoolean
+            (FrontEnd.PROP_PREFIX + "useAcousticModelProperties", true);
+    }
+
+
+    /**
+     * Returns the properties of the AcousticModel with the
+     * same context is returned (or null if no such AcousticModel,
+     * or if the AcousticModel has no properties).
+     *
+     * @return the properties of the AcousticModel
+     */
+    private SphinxProperties getAcousticProperties() {
+	return acousticProperties;
+    }
+
+
+    /**
+     * Returns the given acoustic property with the given name.
+     * If no such acoustic property is found, returns the frontend
+     * property with the same name.
+     *
+     * @param propertyName the name of the acoustic property
+     * @param defaultValue the value to return if the property is not
+     *    found
+     */
+    public double getDoubleAcousticProperty(String propertyName, 
+                                            double defaultValue) {
+        if (useAcousticModelProperties()) {
+            return getAcousticProperties().getDouble
+                (FrontEnd.ACOUSTIC_PROP_PREFIX + propertyName,
+		 getSphinxProperties().getDouble
+		 (FrontEnd.PROP_PREFIX + propertyName, defaultValue));
+        } else {
+            return getSphinxProperties().getDouble
+                (FrontEnd.PROP_PREFIX + propertyName, defaultValue);
+        }
+        
+    }
+    
+
+    /**
+     * Returns the given acoustic property with the given name.
+     * If no such acoustic property is found, returns the frontend
+     * property with the same name.
+     *
+     * @param propertyName the name of the acoustic property
+     * @param defaultValue the value to return if the property is not
+     *    found
+     */
+    public float getFloatAcousticProperty(String propertyName,
+                                          float defaultValue) {
+        if (useAcousticModelProperties()) {
+            return getAcousticProperties().getFloat
+                (FrontEnd.ACOUSTIC_PROP_PREFIX + propertyName,
+		 getSphinxProperties().getFloat
+		 (FrontEnd.PROP_PREFIX + propertyName, defaultValue));
+        } else {
+            return getSphinxProperties().getFloat
+                (FrontEnd.PROP_PREFIX + propertyName, defaultValue);
+        }
+        
+    }
+
+
+    /**
+     * Returns the given acoustic property with the given name.
+     * If no such acoustic property is found, returns the frontend
+     * property with the same name.
+     *
+     * @param propertyName the name of the acoustic property
+     * @param defaultValue the value to return if the property is not
+     *    found
+     */
+    public int getIntAcousticProperty(String propertyName,
+                                      int defaultValue) {
+        if (useAcousticModelProperties()) {
+            return getAcousticProperties().getInt
+                (FrontEnd.ACOUSTIC_PROP_PREFIX + propertyName, 
+		 getSphinxProperties().getInt
+		 (FrontEnd.PROP_PREFIX + propertyName, defaultValue));
+        } else {
+            return getSphinxProperties().getInt
+                (FrontEnd.PROP_PREFIX + propertyName, defaultValue);
+        }
+        
+    }
+
+
+    /**
+     * Returns the given acoustic property with the given name.
+     * If no such acoustic property is found, returns the frontend
+     * property with the same name.
+     *
+     * @param propertyName the name of the acoustic property
+     * @param defaultValue the value to return if the property is not
+     *    found
+     */
+    public boolean getBooleanAcousticProperty(String propertyName, 
+                                              boolean defaultValue) {
+        if (useAcousticModelProperties()) {
+            return getAcousticProperties().getBoolean
+                (FrontEnd.ACOUSTIC_PROP_PREFIX + propertyName,
+		 getSphinxProperties().getBoolean
+		 (FrontEnd.PROP_PREFIX + propertyName, defaultValue));
+        } else {
+            return getSphinxProperties().getBoolean
+                (FrontEnd.PROP_PREFIX + propertyName, defaultValue);
+        }        
     }
 }

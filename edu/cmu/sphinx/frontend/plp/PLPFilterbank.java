@@ -98,8 +98,8 @@ public class PLPFilterbank extends DataProcessor implements Filterbank {
      */
     public void initialize(String name, String context, SphinxProperties props,
 			   SpectrumSource predecessor) throws IOException {
-        super.initialize(name, context);
-	setProperties(props, FrontEnd.ACOUSTIC_PROP_PREFIX);
+        super.initialize(name, context, props);
+	setProperties();
         this.predecessor = predecessor;
 	buildCriticalBandFilterbank();
 	buildEqualLoudnessScalingFactors();
@@ -107,18 +107,17 @@ public class PLPFilterbank extends DataProcessor implements Filterbank {
 
 
     /**
-     * Reads the parameters needed from the static SphinxProperties object.
-     *
-     * @param props the SphinxProperties to read properties from
-     * @param prefix the prefix to use for properties in this SphinxProperties
+     * Reads the parameters.
      */
-    public void setProperties(SphinxProperties props, String prefix) {
-        sampleRate = props.getInt(prefix + FrontEnd.PROP_SAMPLE_RATE, 16000);
-        minFreq = props.getDouble(prefix + PROP_MIN_FREQ, 130);
-        maxFreq = props.getDouble(prefix + PROP_MAX_FREQ, 6800);
-        numberFilters = props.getInt(prefix + PROP_NUMBER_FILTERS, 40);
-        numberFftPoints = props.getInt
-	    (prefix + SpectrumAnalyzer.PROP_NUMBER_FFT_POINTS, 512);
+    private void setProperties() {
+	SphinxProperties sphinxProps = getSphinxProperties();
+
+        sampleRate = getIntAcousticProperty(FrontEnd.PROP_SAMPLE_RATE, 16000);
+        minFreq = getDoubleAcousticProperty(PROP_MIN_FREQ, 130);
+        maxFreq = getDoubleAcousticProperty(PROP_MAX_FREQ, 6800);
+        numberFilters = getIntAcousticProperty(PROP_NUMBER_FILTERS, 40);
+        numberFftPoints = getIntAcousticProperty
+	    (SpectrumAnalyzer.PROP_NUMBER_FFT_POINTS, 512);
     }
 
 

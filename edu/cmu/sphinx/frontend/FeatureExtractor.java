@@ -42,12 +42,10 @@ public interface FeatureExtractor extends FeatureSource {
      *
      * @param name the name of this FeatureExtractor
      * @param context the context of interest
-     * @param props the SphinxProperties to read properties from
      * @param predecessor where to obtain cepstra objects
      *
      * @throws java.io.IOException
      */
     public void initialize(String name, String context,
-			   SphinxProperties props,
 			   CepstrumSource predecessor);
 }

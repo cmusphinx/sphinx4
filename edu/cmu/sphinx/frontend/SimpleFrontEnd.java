@@ -357,7 +357,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 	    FeatureExtractor extractor = (FeatureExtractor) 
 		Class.forName(featureExtractorClass).newInstance();
             extractor.initialize("FeatureExtractor", getContext(),
-				 getCorrectProperties(), predecessor);
+				 predecessor);
             return extractor;
         } catch (Exception e) {
             e.printStackTrace();

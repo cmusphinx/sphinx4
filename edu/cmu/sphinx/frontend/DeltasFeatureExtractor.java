@@ -94,13 +94,11 @@ FeatureExtractor {
      *
      * @param name the name of this DeltasFeatureExtractor
      * @param context the context of interest
-     * @param props the SphinxProperties to read properties from
      * @param predecessor the CepstrumSource to get Cepstrum from
      */
     public DeltasFeatureExtractor(String name, String context,
-				  SphinxProperties props,
 				  CepstrumSource predecessor) {
-	initialize(name, context, props, predecessor);
+	initialize(name, context, predecessor);
     }
 
     
@@ -109,13 +107,11 @@ FeatureExtractor {
      *
      * @param name the name of this DeltasFeatureExtractor
      * @param context the context of interest
-     * @param props the SphinxProperties to read properties from
      * @param predecessor the CepstrumSource to get Cepstrum from
      */
     public void initialize(String name, String context,
-			   SphinxProperties props,
 			   CepstrumSource predecessor) {
-	super.initialize(name, context);
+	super.initialize(name, context, null);
         setProperties();
         this.predecessor = predecessor;
         cepstraBuffer = new float[cepstraBufferSize][];
@@ -145,7 +141,8 @@ FeatureExtractor {
 	SphinxProperties properties = getSphinxProperties();
 	featureLength = properties.getInt(PROP_FEATURE_LENGTH, 39);
 	window = properties.getInt(PROP_FEATURE_WINDOW, 3);
-	cepstrumLength = properties.getInt(FrontEnd.PROP_CEPSTRUM_SIZE, 13);
+	cepstrumLength = properties.getInt
+	    (FrontEnd.PROP_PREFIX + FrontEnd.PROP_CEPSTRUM_SIZE, 13);
         cepstraBufferSize = properties.getInt(PROP_CEP_BUFFER_SIZE, 256);
         cepstraBufferEdge = cepstraBufferSize - 8;
     }
