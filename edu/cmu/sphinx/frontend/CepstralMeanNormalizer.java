@@ -11,13 +11,14 @@ import java.io.IOException;
 
 
 /**
- * Apply Cepstral Mean Normalization (CMN) to the set of input MFC frames,
- * that is, a CepstrumFrame. It subtracts the mean of all the input so far
- * from each cepstrum. The Sphinx properties that affect this processor
+ * Apply Cepstral Mean Normalization (CMN) to a Cepstrum.
+ * It subtracts the mean of all the input so far
+ * from the cepstrum. The Sphinx properties that affect this processor
  * are: <pre>
  * edu.cmu.sphinx.frontend.cmn.initialCepstralMean
  * edu.cmu.sphinx.frontend.cmn.windowSize
  * edu.cmu.sphinx.frontend.cmn.shiftWindow </pre>
+ *
  * The mean of all the input cepstrum so far is not recalculated
  * for each cepstrum. This mean is recalculated after
  * <code>edu.cmu.sphinx.frontend.cmn.shiftWindow</code> cepstra.
@@ -27,7 +28,6 @@ import java.io.IOException;
  * cmnWindow/(cmnWindow + number of frames since the last recalculation)</pre>
  *
  * @see Cepstrum
- * @see CepstrumFrame
  */
 public class CepstralMeanNormalizer extends DataProcessor {
 
@@ -106,7 +106,7 @@ public class CepstralMeanNormalizer extends DataProcessor {
 	
 
     /**
-     * Returns the next Data object, which is a normalized CepstrumFrame
+     * Returns the next Data object, which is a normalized Cepstrum
      * produced by this class. However, it can also be other Data objects
      * like a EndPointSignal.SEGMENT_START.
      *
@@ -118,16 +118,27 @@ public class CepstralMeanNormalizer extends DataProcessor {
     public Data read() throws IOException {
 	
         Data input = getSource().read();
-        
-        if (input instanceof CepstrumFrame) {
-            return process((CepstrumFrame) input);
+
+        if (input instanceof Cepstrum) {
+            return process((Cepstrum) input);
         
         } else if (input instanceof EndPointSignal) {
             
             EndPointSignal signal = (EndPointSignal) input;
-            if (signal.equals(EndPointSignal.SEGMENT_END)) {
+
+            if (signal.equals(EndPointSignal.FRAME_END)) {
+                
+                // Shift buffers down if we have more 
+                // than cmnShiftWindow frames
+                
+                if (numberFrame > cmnShiftWindow) {
+                    updateMeanSumBuffers();
+                }
+
+            } else if (signal.equals(EndPointSignal.SEGMENT_END)) {
                 updateMeanSumBuffers();
             }
+
             return input;
 
         } else {
@@ -137,68 +148,27 @@ public class CepstralMeanNormalizer extends DataProcessor {
 
 
     /**
-     * Normalizes the given CepstrumFrame, which is an array of Cepstrum.
-     * Returns the same CepstrumFrame, but with its cepstra normalized.
-     * It is assumed that all Cepstrum in the CepstrumFrame are of the same
-     * length.
+     * Returns the given Cepstrum, normalized.
      *
-     * @param input a CepstrumFrame
+     * @param input a Cepstrum
      *
-     * @return a normalized CepstrumFrame
+     * @return a normalized Cepstrum
      */
-    private Data process(CepstrumFrame cepstrumFrame) {
+    private Data process(Cepstrum cepstrumObject) {
 	
         getTimer().start();
 
-        if (cepstrumFrame != null) {
-
-            Cepstrum[] cepstra = cepstrumFrame.getCepstra();
-            
-            if (cepstra.length > 0) {
-
-                normTimer.start();
-                normalize(cepstra);
-                normTimer.stop();
-
-                // Shift buffers down if we have more than 
-                // cmnShiftWindow frames
-                if (numberFrame > cmnShiftWindow) {
-                    updateMeanSumBuffers();
-                }
-            }
-	}
-	
-        getTimer().stop();
-
-	return cepstrumFrame;
-    }
-
-
-    /**
-     * Normalize the given array of Cepstrum.
-     *
-     * @param cepstra the array of Cepstrum to normalize
-     */
-    private void normalize(Cepstrum[] cepstra) {
-	// do the mean normalization
-        int cepstraLength = cepstra.length;
-	for (int i = 0; i < cepstraLength; i++) {
-            normalizeCepstrum(cepstra[i].getCepstrumData());
-        }
-        numberFrame += cepstra.length;
-    }
-
-
-    /**
-     * Normalize the given cepstrum (in the form of float[]) using
-     * the sum and currentMean arrays.
-     */
-    private void normalizeCepstrum(float[] cepstrum) {
-        int cepstrumLength = cepstrum.length;
-        for (int j = 0; j < cepstrumLength; j++) {
+        float[] cepstrum = cepstrumObject.getCepstrumData();
+        for (int j = 0; j < cepstrum.length; j++) {
             sum[j] += cepstrum[j];
             cepstrum[j] -= currentMean[j];
         }
+
+        numberFrame++;
+
+        getTimer().stop();
+
+	return cepstrumObject;
     }
 
 
@@ -208,6 +178,8 @@ public class CepstralMeanNormalizer extends DataProcessor {
      * with numberFrames.
      */
     private void updateMeanSumBuffers() {
+        
+        getTimer().start();
 
         if (numberFrame > 0) {
             // update the currentMean buffer with the sum buffer
@@ -223,6 +195,8 @@ public class CepstralMeanNormalizer extends DataProcessor {
                 numberFrame = cmnWindow;
             }
         }
+
+        getTimer().stop();
     }
 
 
