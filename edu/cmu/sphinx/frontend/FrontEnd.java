@@ -136,10 +136,10 @@ import java.util.Vector;
  * initialize the front end, assuming that it is called "mfcc" in the
  * Sphinx properties file, and that the input data comes from the 
  * microphone:
+ * <p>
  * <code>
  * // obtaining the front end and setting its data source
- * <br>SphinxProperties properties = ... // passed in externally
- * <br>FrontEnd frontend = FrontEndFactory.getFrontEnd("mfcc", properties);
+ * <br>FrontEnd frontend = FrontEndFactory.getFrontEnd("mfcc", sphinxProperties);
  * <br>DataProcessor microphone = new Microphone();
  * <br>microphone.initialize(...);
  * <br>
