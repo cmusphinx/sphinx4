@@ -13,6 +13,9 @@
 package edu.cmu.sphinx.decoder;
 
 import edu.cmu.sphinx.frontend.StreamAudioSource;
+import edu.cmu.sphinx.frontend.StreamCepstrumSource;
+import edu.cmu.sphinx.frontend.DataSource;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
@@ -20,21 +23,40 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.io.IOException;
+
 import java.net.URL;
+
 import java.util.StringTokenizer;
 
 
 /**
- * A live decoder.
+ * Decodes a batch file containing a list of files to decode.
+ * The files can be either audio files or cepstral files, but defaults
+ * to audio files. To decode cepstral files, set the Sphinx property
+ * <code> edu.cmu.sphinx.decoder.BatchDecoder.inputDataType = cepstrum </code>
  */
 public class BatchDecoder {
 
-    public final static String PROP_SKIP = "edu.cmu.sphinx.decoder.BatchDecoder.skip";
-    private StreamAudioSource audioSource;
+    private final static String PROP_PREFIX = 
+	"edu.cmu.sphinx.decoder.BatchDecoder.";
+
+    /**
+     * The SphinxProperty name for how many files to skip.
+     */
+    public final static String PROP_SKIP = PROP_PREFIX + "skip";
+
+    /**
+     * The SphinxProperty name for the input data type.
+     */
+    public final static String PROP_INPUT_TYPE = PROP_PREFIX+"inputDataType";
+
+    private DataSource dataSource;
     private Decoder decoder;
     private String batchFile;
     private String context;
+    private String inputDataType;
     private int skip;
 
 
@@ -46,11 +68,24 @@ public class BatchDecoder {
      */
     public BatchDecoder(String context, String batchFile) throws IOException {
 	this.context = context;
+
 	SphinxProperties props = SphinxProperties.getSphinxProperties(context);
+	inputDataType = props.getString(PROP_INPUT_TYPE, "audio");
 	skip = props.getInt(PROP_SKIP, 0);
-        audioSource = new StreamAudioSource
-            ("batchAudioSource", context, null, null);
-        decoder = new Decoder(context, audioSource);
+
+	if (inputDataType.equals("audio")) {
+	    dataSource = new StreamAudioSource
+		("batchAudioSource", context, null, null);
+	} else if (inputDataType.equals("cepstrum")) {
+	    dataSource = new StreamCepstrumSource
+		("batchCepstrumSource", context);
+	} else {
+	    throw new Error("Unsupported data type: " + inputDataType + "\n" +
+			    "Only audio and cepstrum are supported\n");
+	}
+
+	decoder = new Decoder(context, dataSource);
+
         this.batchFile = batchFile;
     }
 
@@ -104,7 +139,13 @@ public class BatchDecoder {
 
         System.out.println("\nDecoding: " + file);
 
-        audioSource.setInputStream(new FileInputStream(file), file);
+	InputStream is = new FileInputStream(file);
+
+	if (inputDataType.equals("audio")) {
+	    ((StreamAudioSource) dataSource).setInputStream(is, file);
+	} else if (inputDataType.equals("cepstrum")) {
+	    ((StreamCepstrumSource) dataSource).setInputStream(is);
+	}
 
         // usually 25 features in one audio frame
         // but it doesn't really matter what this number is

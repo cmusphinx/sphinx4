@@ -12,7 +12,7 @@
 
 package edu.cmu.sphinx.decoder;
 
-import edu.cmu.sphinx.frontend.AudioSource;
+import edu.cmu.sphinx.frontend.DataSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Util;
 import edu.cmu.sphinx.frontend.Utterance;
@@ -37,7 +37,6 @@ public class Decoder {
     /**
      * Base property name for the decoder properties
      */
-
     private  final static String PROP_PREFIX = 
 	"edu.cmu.sphinx.decoder.Decoder.";
 
@@ -99,11 +98,11 @@ public class Decoder {
      * Constructs a live mode Decoder.
      *
      * @param context the context of this Decoder
-     * @param audioSource the source of audio of this Decoder
+     * @param dataSource the source of audio of this Decoder
      */
-    public Decoder(String context, AudioSource audioSource) throws
+    public Decoder(String context, DataSource dataSource) throws
     IOException {
-        this(context, audioSource, true);
+        this(context, dataSource, true);
     }
 
 
@@ -122,7 +121,7 @@ public class Decoder {
     
 
     /**
-     * Constructs a Decoder with the given context and AudioSource,
+     * Constructs a Decoder with the given context and DataSource,
      * specifying whether to initialize all the components 
      * at construction time.
      * This is to avoid having several Decoders fully loaded but
@@ -131,11 +130,11 @@ public class Decoder {
      * the FrontEnd, AcousticModel, SentenceHMM, etc..
      *
      * @param context the context of this Decoder
-     * @param audioSource the source of audio of this Decoder
+     * @param dataSource the source of audio of this Decoder
      * @param initialize indicate whether to fully load this Decoder 
      */
     private Decoder(String context,
-                    AudioSource audioSource,
+                    DataSource dataSource,
                     boolean initialize) throws IOException {
                         
         this.context = context;
@@ -154,7 +153,7 @@ public class Decoder {
         aligner = null;
 
         if (initialize) {
-            initialize(audioSource);
+            initialize(dataSource);
         }
     }
 
@@ -166,11 +165,11 @@ public class Decoder {
      * of this Decoder. This method does nothing if this Decoder has
      * already been initialized.
      *
-     * @param audioSource the AudioSource this Decoder should use
+     * @param dataSource the DataSource this Decoder should use
      */
-    public void initialize(AudioSource audioSource) throws IOException {
+    public void initialize(DataSource dataSource) throws IOException {
         if (recognizer == null) {
-            recognizer = new Recognizer(context, audioSource);
+            recognizer = new Recognizer(context, dataSource);
             recognizer.addResultListener(new ResultListener() {
 		public void newResult(Result result) {
 		    if (showPartialResults) {
