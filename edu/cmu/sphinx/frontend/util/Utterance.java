@@ -12,9 +12,7 @@
 
 package edu.cmu.sphinx.frontend.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.io.ByteArrayOutputStream;
 
 import javax.sound.sampled.AudioFormat;
 
@@ -25,11 +23,7 @@ import javax.sound.sampled.AudioFormat;
 public class Utterance {
 
     private String name;
-    private List audioBuffer;
-    private boolean flattened = false;
-    private byte[] flattenedAudio = null;
-    private int next = 0;
-    private int totalBytes = 0;
+    private ByteArrayOutputStream audioBuffer;
     private AudioFormat audioFormat;
     
 
@@ -43,7 +37,7 @@ public class Utterance {
     public Utterance(String name, AudioFormat format) {
         this.name = name;
         this.audioFormat = format;
-        audioBuffer = new ArrayList();
+        this.audioBuffer = new ByteArrayOutputStream();
     }
 
     /**
@@ -71,44 +65,8 @@ public class Utterance {
      */
     public void add(byte[] audio) {
         synchronized (audioBuffer) {
-            totalBytes += audio.length;
-            audioBuffer.add(audio);
-            setFlattened(false);
+            audioBuffer.write(audio, 0, audio.length);
         }
-    }
-
-    /**
-     * Returns the next audio frame.
-     *
-     * @return the next audio frame
-     */
-    public byte[] getNext() {
-        synchronized (audioBuffer) {
-            if (0 <= next && next < audioBuffer.size()) {
-                return (byte[]) audioBuffer.get(next++);
-            } else {
-                return null;
-            }
-        }
-    }
-
-    /**
-     * Flattens the data in this Utterance to one flat array.
-     */
-    private void flatten() {
-        synchronized (audioBuffer) {
-	    if (flattenedAudio == null || !isFlattened()) {
-		flattenedAudio = new byte[totalBytes];
-		int start = 0;
-		for (Iterator i = audioBuffer.iterator(); i.hasNext(); ) {
-		    byte[] current = (byte[]) i.next();
-		    System.arraycopy(current, 0, flattenedAudio, start, 
-				     current.length);
-		    start += current.length;
-		}
-		setFlattened(true);
-	    }
-	}
     }
 
     /**
@@ -117,8 +75,7 @@ public class Utterance {
      * @return the complete audio stream
      */
     public byte[] getAudio() {
-        flatten();
-        return flattenedAudio;
+        return audioBuffer.toByteArray();
     }
 
     /**
@@ -127,23 +84,8 @@ public class Utterance {
      * @return how long is this utterance
      */
     public float getAudioTime() {
-        byte[] audio = getAudio();
-        return ((float) audio.length) /
+        return ((float) audioBuffer.size()) /
             (audioFormat.getSampleRate() * 
              audioFormat.getSampleSizeInBits()/8);
-    }
-    
-    /**
-     * Returns true if all the audio data is flattened to one flat
-     * audio array.
-     *
-     * @return true if all the audio data is flattened to one array
-     */
-    private synchronized boolean isFlattened() {
-        return flattened;
-    }
-
-    private synchronized void setFlattened(boolean flattened) {
-        this.flattened = flattened;
     }
 }
