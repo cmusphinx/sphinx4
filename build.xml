@@ -216,8 +216,17 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="all"
-	    depends="compile_src,jars,demos,create_models"
 	    description="Build everything">
+	<antcall target="create_wsj_tidigits_model_classes"/>
+	<antcall target="compile_src"/>
+	<mkdir dir="${build_model_dir}"/>
+	<move todir="${build_model_dir}">
+	      <fileset dir="${classes_dir}/edu/cmu/sphinx/model/acoustic"/>
+	</move>
+	<antcall target="create_wsj_tidigits_models"/>
+	<antcall target="delete_wsj_tidigits_model_classes"/>
+	<antcall target="jars"/>
+	<antcall target="demos"/>
 	<echo message="Build complete."/>
     </target>
 
@@ -228,7 +237,7 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="compile_src"
-	    depends="handle_jsapi,create_model_classes"
+	    depends="handle_jsapi"
 	    description="Build just the srcs">
 	<mkdir dir="${classes_dir}"/>
 	<javac debug="true"
@@ -239,11 +248,6 @@ jsapi.exe from the lib directory.
             <patternset refid="${patternset_to_compile}"/>
 	    <classpath refid="libs"/>
 	</javac>
-	<mkdir dir="${build_model_dir}"/>
-	<move todir="${build_model_dir}">
-	      <fileset dir="${classes_dir}/edu/cmu/sphinx/model/acoustic"/>
-	</move>
-	<antcall target="delete_model_classes"/>
     </target>
 
 
@@ -321,6 +325,10 @@ jsapi.exe from the lib directory.
 	    <param name="my_model_name" value="${model_name}"/>
 	    <param name="my_model_loader_name" value="${model_loader_name}"/>
         </antcall>
+	<antcall target="delete_my_model_classes">
+	    <param name="my_model_name" value="${model_name}"/>
+	    <param name="my_loader_name" value="${model_loader_name}"/>
+        </antcall>
     </target>
 
 
@@ -330,17 +338,9 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
 
-    <target name="create_model_classes"
+    <target name="create_wsj_tidigits_model_classes"
             depends="create_wsj_model_classes,create_tidigits_model_classes"
 	    description="Creates all the model class files.">
-    </target>
-
-    <target name="delete_model_classes"
-            description="Deletes all the model class files.">
-	<delete file="${model_class_dir}/${wsj_name}.java"/>
-	<delete file="${model_class_dir}/${wsj_loader_name}.java"/>
-	<delete file="${model_class_dir}/${tidigits_name}.java"/>
-	<delete file="${model_class_dir}/${tidigits_loader_name}.java"/>
     </target>
 
     <target name="create_wsj_model_classes"
@@ -357,6 +357,24 @@ jsapi.exe from the lib directory.
 	    <param name="my_model_name" value="${tidigits_name}"/>
 	    <param name="my_loader_name" value="${tidigits_loader_name}"/>
         </antcall>
+    </target>
+
+    <target name="delete_wsj_tidigits_model_classes"
+            description="Deletes the WSJ and TIDIGITS model classes.">
+	<antcall target="delete_my_model_classes">
+	    <param name="my_model_name" value="${wsj_name}"/>
+	    <param name="my_loader_name" value="${wsj_loader_name}"/>
+        </antcall>
+	<antcall target="delete_my_model_classes">
+	    <param name="my_model_name" value="${tidigits_name}"/>
+	    <param name="my_loader_name" value="${tidigits_loader_name}"/>
+        </antcall>
+    </target>
+
+    <target name="delete_my_model_classes"
+            description="Deletes the class files of a model.">
+	<delete file="${model_class_dir}/${my_model_name}.java"/>
+	<delete file="${model_class_dir}/${my_loader_name}.java"/>
     </target>
 
     <target name="create_my_model_classes"
@@ -381,7 +399,7 @@ jsapi.exe from the lib directory.
     <!-- * Builds all the acoustic model files.                   * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <target name="create_models"
+    <target name="create_wsj_tidigits_models"
             depends="create_wsj_model,create_tidigits_model"
             description="Creates all the acoustic model JARS.">
     </target>
