@@ -54,6 +54,12 @@ BEGIN {
     F_CORRECT_SENTENCES = 16;
     F_HEAP_SIZE = 17;
     F_LOAD_AVERAGE = 18;
+    F_ACTUAL_UTTERANCES = 19;
+    F_FOUND_UTTERANCES = 20;
+    F_GAP_INSERTIONS = 21;
+    F_AVG_RESPONSE_TIME = 22;
+    F_MAX_RESPONSE_TIME = 23;
+    F_MIN_RESPONSE_TIME = 24;
     "./getHostname" | getline machine
 }
 
@@ -77,6 +83,12 @@ $1 == "test"  && $4 == machine && $5 == "s4" {
     testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
     testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
     finalTest[$F_TEST_NAME] = 1;
+}
+
+$1 == "live_test" && $4 == machine && $5 == "s4" {
+    liveTestCount[$F_TEST_NAME] = liveTestCount[$F_TEST_NAME] + 1;
+    testData[$F_TEST_NAME liveTestCount[$F_TEST_NAME]] = $0;
+    finalLiveTest[$F_TEST_NAME] = 1;
 }
 
 $1 == "environment" && $3 == machine  {
@@ -139,13 +151,19 @@ function getHeap(testName, testCount) {
 # returns the accuracy status for the given test
 #
 function getAccuracyStatus(testName) {
-  thisWER = getWER(testName, testCount[testName]);
-  prevWER = getWER(testName, testCount[testName] - 1);
 
+    count = testCount[testName];
+    if (count == "") {
+	count = liveTestCount[testName];
+    }
+
+  thisWER = getWER(testName, count);
+  prevWER = getWER(testName, count - 1);
+	
   if (thisWER == "N/A") {
       return "N/A";
   }
-
+	    
   if (prevWER == "N/A") {
       return "OK - " thisWER "";
   }
@@ -170,8 +188,14 @@ function getAccuracyStatus(testName) {
 # returns the speed status for the given test
 #
 function getTimeStatus(testName, _slowThreshold, _fastThreshold) {
-  thisTime = getTime(testName, testCount[testName]);
-  prevTime = getTime(testName, testCount[testName] - 1);
+
+  count = testCount[testName];
+  if (count == "") {
+      count = liveTestCount[testName];
+  }
+
+  thisTime = getTime(testName, count);
+  prevTime = getTime(testName, count - 1);
 
   if (thisTime == "N/A") {
       return "N/A";
@@ -204,8 +228,12 @@ function getTimeStatus(testName, _slowThreshold, _fastThreshold) {
 # returns the heap average for the given test
 #
 function getHeapStatus(testName, _minThreshold, _maxThreshold) {
-  thisHeap = getHeap(testName, testCount[testName]);
-  prevHeap = getHeap(testName, testCount[testName] - 1);
+    count = testCount[testName];
+    if (count == "") {
+	count = liveTestCount[testName];
+    }
+    thisHeap = getHeap(testName, count);
+    prevHeap = getHeap(testName, count - 1);
 
   if (thisHeap == "N/A") {
       return "N/A";
@@ -234,7 +262,11 @@ function getHeapStatus(testName, _minThreshold, _maxThreshold) {
 # return the status of the test
 #
 function getRunStatus(testName) {
-    updateData(testName, testCount[testName]);
+    count = testCount[testName];
+    if (count == "") {
+	count = liveTestCount[testName];
+    }
+    updateData(testName, count);
     return data[F_STATUS];
 }
 
@@ -249,6 +281,118 @@ function fmtTime(seconds) {
     seconds -= mins * 60;
 
     return sprintf("%02.2d:%02.2d:%02.2d", hours, mins, seconds);
+}
+
+
+####
+# Returns the status of gap insertion rate
+#
+function getGapInsertionRateStatus(testName) {
+    count = testCount[testName];
+    if (count == "") {
+	count = liveTestCount[testName];
+    }
+    thisGapRate = getGapInsertionRate(testName, count);
+    prevGapRate = getGapInsertionRate(testName, count - 1);
+
+    if (thisGapRate == "N/A") {
+	return "N/A";
+    }
+    if (prevGapRate == "N/A") {
+	return "OK - " thisGapRate "";
+    }    
+    if (thisGapRate > prevGapRate) {
+	return "REGRESSED - increased from " prevGapRate " to " thisGapRate "";
+    }    
+    if (prevGapRate < thisGapRate) {
+	return "IMPROVED  - decreased from " prevGapRate " to " thisGapRate "";
+    }
+
+    return "OK - " thisGapRate "";
+}
+
+function getGapInsertionRate(testName, testCount) {
+    updateData(testName, testCount);
+    gapInsertion = data[F_GAP_INSERTIONS];
+    totalWords = data[F_WORDS];
+    if (gapInsertion == "") {
+	gapInsertion = "N/A";
+    } else if (totalWords > 0) {
+	gapInsertion = (gapInsertion / totalWords) * 100;
+    }
+    return gapInsertion;
+}
+
+####
+# Returns the status of the utterance ratio
+#
+function getUtteranceRatioStatus(testName) {
+    count = testCount[testName];
+    if (count == "") {
+	count = liveTestCount[testName];
+    }
+    thisRatio = getUtteranceRatio(testName, count);
+    prevRatio = getUtteranceRatio(testName, count - 1);
+
+    if (thisRatio == "N/A") {
+	return "N/A";
+    }
+    if (prevRatio == "N/A") {
+	return "OK - " thisRatio "";
+    }
+    if (thisRatio != prevRatio) {
+	return "CHANGED - from " prevRatio " to " thisRatio "";
+    }
+    return "OK - " thisRatio "";
+}
+
+function getUtteranceRatio(testName, testCount) {
+    updateData(testName, testCount);
+    actualUtterances = data[F_ACTUAL_UTTERANCES];
+    foundUtterances = data[F_FOUND_UTTERANCES];
+    if (actualUtterances > 0) {
+	ratio = foundUtterances / actualUtterances;
+    }
+    if (ratio == "") {
+	ratio = "N/A";
+    }
+    return ratio;
+}
+
+
+####
+# Returns the status of average response time
+#
+function getAvgResponseTimeStatus(testName) {
+    count = testCount[testName];
+    if (count == "") {
+	count = liveTestCount[testName];
+    }
+    thisTime = getAvgResponseTime(testName, count);
+    prevTime = getAvgResponseTime(testName, count - 1);
+    
+    if (thisTime == "N/A") {
+        return "N/A";
+    }
+    if (prevTime == "N/A") {
+	return "OK - " thisTime "";
+    }
+    if (thisTime > prevTime) {
+	return "REGRESSED - increased from " prevTime " to " thisTime "";
+    }
+    if (prevTime < thisTime) {
+	return "IMPROVED  - decreased from " prevTime " to " thisTime "";
+    }
+    return "OK - " thisTime "";
+}
+
+function getAvgResponseTime(testName, testCount) {
+    updateData(testName, testCount);
+    avgResponseTime = data[F_AVG_RESPONSE_TIME];
+    if (avgResponseTime == "") {
+	avgResponseTime = "N/A";
+    }
+    return avgResponseTime;    
 }
 
 ####
@@ -293,12 +437,25 @@ END {
 
     for (i in finalTest) {
 	print i;
-	print "    Status            "  getRunStatus(i);
-	print "    Accuracy (WER %)  "  getAccuracyStatus(i);
-	print "    Time (X Realtime) "  getTimeStatus(i);
-	print "    Average Heap (MB) "  getHeapStatus(i);
+	print "    Status                "  getRunStatus(i);
+	print "    Accuracy (WER %)      "  getAccuracyStatus(i);
+	print "    Time (X Realtime)     "  getTimeStatus(i);
+	print "    Average Heap (MB)     "  getHeapStatus(i);
 	printf("\n");
     }
+
+    for (i in finalLiveTest) {
+	print i;
+	print "    Status                "  getRunStatus(i);
+	print "    Accuracy (WER %)      "  getAccuracyStatus(i);
+	print "    Time (X Realtime)     "  getTimeStatus(i);
+	print "    Average Heap (MB)     "  getHeapStatus(i);
+	print "    Gap Insertion (%)     "  getGapInsertionRateStatus(i);
+	print "    Utterance Ratio       "  getUtteranceRatioStatus(i);
+	print "    Avg Response Time (s) "  getAvgResponseTimeStatus(i);
+	printf("\n");
+    }
+
     print ""
     print ""
     print "Complete test details at: ";
