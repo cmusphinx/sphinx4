@@ -33,7 +33,6 @@ import java.util.List;
 public class BatchCMN extends DataProcessor implements CepstrumSource {
 
     private float[] sums;           // array of current sums
-    private int cepstrumLength;     // length of a Cepstrum
     private CepstrumSource predecessor;
     private List cepstraList;
     private int numberDataCepstra;
@@ -52,8 +51,7 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
     public BatchCMN(String name, String context, SphinxProperties sphinxProps,
 		    CepstrumSource predecessor) {
         super(name, context, sphinxProps);
-	setProperties();
-        sums = new float[cepstrumLength];
+        sums = null;
         this.predecessor = predecessor;
         cepstraList = new LinkedList();
     }
@@ -74,20 +72,12 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
      * Initializes the sums array and clears the cepstra list.
      */
     private void reset() {
-        Arrays.fill(sums, 0.0f);
+        // Arrays.fill(sums, 0.0f);
+        sums = null; // clears the sums array
 	cepstraList.clear();
 	numberDataCepstra = 0;
     }
 
-
-    /**
-     * Reads the parameters needed from the static SphinxProperties object.
-     */
-    private void setProperties() {
-	cepstrumLength = getSphinxProperties().getInt
-	    (FrontEnd.PROP_CEPSTRUM_SIZE, FrontEnd.PROP_CEPSTRUM_SIZE_DEFAULT);
-    }
-	
 
     /**
      * Returns the next Cepstrum object, which is a normalized Cepstrum
@@ -142,6 +132,16 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
                 if (input.hasContent()) {
                     numberDataCepstra++;
                     float[] cepstrumData = input.getCepstrumData();
+                    if (sums == null) {
+                        sums = new float[cepstrumData.length];
+                    } else {
+                        if (sums.length != cepstrumData.length) {
+                            throw new Error
+                                ("Inconsistent cepstrum lengths: sums: " +
+                                 sums.length + ", cepstrum: " + 
+                                 cepstrumData.length);
+                        }
+                    }
 		    // add the cepstrum data to the sums
                     for (int j = 0; j < cepstrumData.length; j++) {
                         sums[j] += cepstrumData[j];
