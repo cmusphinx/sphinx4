@@ -608,6 +608,9 @@ to setup JSAPI.
 	<delete dir="${deploy_dir}/sphinx4-${version}/tests/frontend"/>
 	<delete dir="${deploy_dir}/sphinx4-${version}/tests/linguist"/>
 	<delete dir="${deploy_dir}/sphinx4-${version}/tests/other"/>
+	<delete dir="${deploy_dir}/sphinx4-${version}/tests/performance/parallel"/>
+	<delete dir="${deploy_dir}/sphinx4-${version}/tests/performance/wsj20k"/>
+	<delete dir="${deploy_dir}/sphinx4-${version}/tests/performance/wsj5k"/>
 	<delete dir="${deploy_dir}/sphinx4-${version}/tests/search"/>
 	<delete dir="${deploy_dir}/sphinx4-${version}/tests/trainer"/>
 	<delete file="${deploy_dir}/sphinx4-${version}/lib/jsapi.jar"/>
