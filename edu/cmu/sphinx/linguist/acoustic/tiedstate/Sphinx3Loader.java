@@ -557,7 +557,11 @@ public class Sphinx3Loader implements Loader {
         }
         senonePool = createSenonePool(distFloor, varianceFloor);
         // load the HMM model file
-        loadHMMPool(useCDUnits, getClass().getResourceAsStream(model),
+        InputStream modelStream = getClass().getResourceAsStream(model);
+        if (modelStream == null) {
+            throw new IOException("can't find model " + model);
+        }
+        loadHMMPool(useCDUnits, modelStream,
                     location + File.separator + model);
     }
 
@@ -824,6 +828,10 @@ public class Sphinx3Loader implements Loader {
 
         // System.out.println("resource: " + path + ", " + getClass());
         InputStream inputStream = getClass().getResourceAsStream(path);
+
+        if (inputStream == null) {
+            throw new IOException("Can't open " + path);
+        }
         DataInputStream dis = new DataInputStream(new BufferedInputStream(
                 inputStream));
         String id = readWord(dis);
@@ -1057,9 +1065,9 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *                 if an error occurs while loading the data
      */
-            protected Pool loadHMMPool(boolean useCDUnits,
-                             InputStream inputStream,
-                             String path) 
+    protected Pool loadHMMPool(boolean useCDUnits,
+                     InputStream inputStream,
+                     String path) 
             throws FileNotFoundException, IOException {
 	int token_type;
 	int numBase;
