@@ -205,6 +205,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                     resultList = new LinkedList();
                     growBranches();
                     // prune and grow the non-emitting lists
+		    // activeBucket.dump();
                     growNonEmittingLists();
                 }
             }
@@ -287,6 +288,11 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         growTimer.start();
         Iterator iterator = activeList.iterator();
         float relativeBeamThreshold = activeList.getBeamThreshold();
+	if (false) {
+	   System.out.println("thresh : " + relativeBeamThreshold + " bs " +
+			   activeList.getBestScore() + " tok " +
+			   activeList.getBestToken());
+	}
         while (iterator.hasNext()) {
             Token token = (Token) iterator.next();
             if (token.getScore() >= relativeBeamThreshold) {
@@ -435,6 +441,10 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             return;
         }
 
+        if (token.getScore() < threshold) {
+            return;
+        }
+
         SearchState state = token.getSearchState();
         SearchStateArc[] arcs = state.getSuccessors();
         Token wordPredecessor = getWordPredecessor(token);
@@ -460,9 +470,6 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             // these come in log(), multiply gets converted to add
             float logEntryScore = token.getScore() +  arc.getProbability();
 
-            if (logEntryScore < threshold) {
-                continue;
-            }
 
             Token bestToken = getBestToken(nextState);
             boolean firstToken = bestToken == null ;
