@@ -18,6 +18,9 @@ SUBDIRS = edu tests
 JSAPI_DIRS = com demo/jsapi
 GTAR=/bin/tar
 
+EXTERNAL_JSAPI_LOCATION = /lab/speech/sphinx4/jsapi.jar
+JSAPI_DEST= ${TOP}/lib/jsapi.jar
+
 ##########################################################################
 
 ####################    frontend.jar deploy macros    ####################
@@ -45,6 +48,13 @@ UTIL_CLASSES = \
 ##########################################################################
 
 PUSH_DEST = /home/groups/c/cm/cmusphinx/htdocs/sphinx4
+
+#
+# Augment the 'all' target with a fetch of the jsapi.jar
+#
+
+all:: $(JSAPI_DEST)
+
 include ${TOP}/build/Makefile.config
 
 #
@@ -61,6 +71,9 @@ clean::
 
 javadocs:
 	$(JAVADOC) -d $(DOC_DEST) -quiet -subpackages edu -exclude edu.cmu.sphinx.jsapi -source 1.4
+
+
+
 
 
 #
@@ -112,3 +125,46 @@ frontend.jar:
 	chmod a+x $(FRONT_END_JAR_STAGING_AREA)/frontend.jar; \
 	mv $(FRONT_END_JAR_STAGING_AREA)/frontend.jar .; \
 	rm -rf $(FRONT_END_JAR_STAGING_AREA); )
+
+# #############################################
+# Targets to get jsapi.jar
+# ############################################
+# the lib/jsapi.jar file requires the user to click through a license 
+# agreement, thus it cannot be distributed in unpacked form. This set of
+# targets will allow nightly builds to  work despite the fact that the 
+# jsapi.jar  is not included in the distribution.  If the jsapi.jar
+# is already in the proper place (the lib directory), nothing needs to
+# be done. However, if it is not there, an attempt is made to copy it
+# from EXTERNAL_JSAPI_LOCATION (currently /lab/speech/sphinx4/jsapi.jar). 
+# If it is not
+# there, then an error message is displayed indicating that the jsapi.jar
+# needs to be unpacked in the lib directory.  For our test systems 
+# we need to install jsapi.jar in /lab/speech/sphinx4/jsapi.jar
+
+
+#
+# copy in the jsapi.jar if it doesn't exist
+# 
+$(JSAPI_DEST): 
+	@$(MAKE) fetch_jsapi
+
+
+#
+# if the jsapi.jar isn't in the EXTERNAL_JSAPI_LOCATION then
+# issue some unpacking instructions
+# 
+fetch_jsapi: $(EXTERNAL_JSAPI_LOCATION)
+	@cp $(EXTERNAL_JSAPI_LOCATION) $(JSAPI_DEST)
+
+#
+# Issue the unpacking instructions
+# 
+$(EXTERNAL_JSAPI_LOCATION):
+	@echo ""
+	@echo "Cannot find lib/jsapi.jar needed to build Sphinx-4.  Please"
+	@echo "extract it by running jsapi.sh or jsapi.exe from the lib"
+	@echo "directory."
+	@echo ""
+
+# ##########################################################
+
