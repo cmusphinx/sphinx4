@@ -42,7 +42,7 @@ import edu.cmu.sphinx.util.Timer;
  * base format. Language Probabilties in the language model file are
  * stored in log 10  base. They are converted to the LogMath logbase.
  */
-class LargeTrigramModelTest {
+public class LargeTrigramModelTest {
 
     public static void main(String[] args) throws Exception {
 
