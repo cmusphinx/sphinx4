@@ -32,7 +32,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="all"
             description="Compiles all the tests.">
-	    <mkdir dir="${classes_dir}/tests/knowledge/language/"/>
+	    <mkdir dir="${classes_dir}/tests/knowledge/dictionary/"/>
 	    <javac debug="true"
 	           source="1.4"
 		   deprecation="true"
