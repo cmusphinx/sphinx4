@@ -190,6 +190,9 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     private Map skewMap;
     private float relativeBeamWidth;
     private float acousticLookaheadFrames = 0.0f;
+
+    private long tokenSum = 0;
+    private int tokenCount = 0;
     
 
 
@@ -551,8 +554,6 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     }
 
 
-    long tokenSum = 0;
-    int tokenCount = 0;
     /**
      * Keeps track of and reports statistics about the number of
      * active states
@@ -564,9 +565,9 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         tokenSum += activeList.size();
         tokenCount++;
 
-        if ((tokenCount % 100) == 0) {
-            System.out.println("Tokens: " + activeList.size() + 
-                " avg " + (tokenSum / tokenCount));
+        if ((tokenCount % 1000) == 0) {
+            System.out.println("   Average Tokens/State: " +
+                (tokenSum / tokenCount));
         }
     }
 
