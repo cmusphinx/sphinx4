@@ -921,16 +921,14 @@ public class JSGFParser implements JSGFParserConstants {
 
   final private boolean jj_2_1(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
-    boolean retval = !jj_3_1();
-    jj_save(0, xla);
-    return retval;
+    try { return !jj_3_1(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(0, xla); }
   }
 
   final private boolean jj_3_1() {
     if (jj_scan_token(29)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
 
@@ -944,8 +942,18 @@ public class JSGFParser implements JSGFParserConstants {
   private boolean jj_semLA;
   private int jj_gen;
   final private int[] jj_la1 = new int[26];
-  final private int[] jj_la1_0 = {0x800000,0x4000,0x10008000,0x800000,0x800000,0x20000000,0x80e000,0x8000,0x0,0x0,0x10a1e000,0x81e000,0x10a1e000,0x50000,0x10a1e000,0x40000000,0x40000000,0x400000,0x40000000,0x40000000,0x400000,0x400000,0x10a1e000,0x400000,0xa1e000,0x20000000,};
-  final private int[] jj_la1_1 = {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x2,0x54,0x0,0x50,0x0,0x0,0x8,0x8,0x0,0x8,0x8,0x0,0x0,0x50,0x0,0x0,0x0,};
+  static private int[] jj_la1_0;
+  static private int[] jj_la1_1;
+  static {
+      jj_la1_0();
+      jj_la1_1();
+   }
+   private static void jj_la1_0() {
+      jj_la1_0 = new int[] {0x800000,0x4000,0x10008000,0x800000,0x800000,0x20000000,0x80e000,0x8000,0x0,0x0,0x10a1e000,0x81e000,0x10a1e000,0x50000,0x10a1e000,0x40000000,0x40000000,0x400000,0x40000000,0x40000000,0x400000,0x400000,0x10a1e000,0x400000,0xa1e000,0x20000000,};
+   }
+   private static void jj_la1_1() {
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x2,0x54,0x0,0x50,0x0,0x0,0x8,0x8,0x0,0x8,0x8,0x0,0x0,0x50,0x0,0x0,0x0,};
+   }
   final private JJCalls[] jj_2_rtns = new JJCalls[1];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
@@ -1032,6 +1040,8 @@ public class JSGFParser implements JSGFParserConstants {
     throw generateParseException();
   }
 
+  static private final class LookaheadSuccess extends java.lang.Error { }
+  final private LookaheadSuccess jj_ls = new LookaheadSuccess();
   final private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {
       jj_la--;
@@ -1048,7 +1058,9 @@ public class JSGFParser implements JSGFParserConstants {
       while (tok != null && tok != jj_scanpos) { i++; tok = tok.next; }
       if (tok != null) jj_add_error_token(kind, i);
     }
-    return (jj_scanpos.kind != kind);
+    if (jj_scanpos.kind != kind) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
+    return false;
   }
 
   final public Token getNextToken() {
@@ -1091,8 +1103,8 @@ public class JSGFParser implements JSGFParserConstants {
         jj_expentry[i] = jj_lasttokens[i];
       }
       boolean exists = false;
-      for (java.util.Enumeration enum = jj_expentries.elements(); enum.hasMoreElements();) {
-        int[] oldentry = (int[])(enum.nextElement());
+      for (java.util.Enumeration e = jj_expentries.elements(); e.hasMoreElements();) {
+        int[] oldentry = (int[])(e.nextElement());
         if (oldentry.length == jj_expentry.length) {
           exists = true;
           for (int i = 0; i < jj_expentry.length; i++) {
@@ -1109,7 +1121,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
   }
 
-  final public ParseException generateParseException() {
+  public ParseException generateParseException() {
     jj_expentries.removeAllElements();
     boolean[] la1tokens = new boolean[40];
     for (int i = 0; i < 40; i++) {
