@@ -1,0 +1,69 @@
+#!/usr/bin/perl
+
+sub getPreviousVersion {
+    local($version) = @_;
+    ($major, $minor) = split(/\./, $version);
+    $newVersion = $major . "." . ($minor -1);
+}
+
+$queryDate = $ARGV[0];
+$viewCVS = "http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/cmusphinx/";
+
+print "<html>\n";
+print "<head>";
+print "<title>Sphinx 4 Source Changes for $queryDate </title>";
+print "</head>";
+print "<body>";
+
+print "<table cellpadding=0 cellspacing=0 border=0 width=100%";
+print "    align=center bgcolor=#ccccff>";
+print "<tbody>";
+print "<tr>";
+print "<td valign=top align=center><br>";
+print "<big><big><b>Sphinx 4 Source Changes for $queryDate";
+print "</b></big></big><br>";
+print "<br>";
+print "</td>";
+print "</tr>";
+print "</tbody>";
+print "</table>";
+print "<br>";
+print "</div>";
+print "<br>";
+
+open(HIST, "cvs_history $queryDate | ");
+
+# print start_table({-border=>''});
+print "<table align=center cellpadding=2 cellspacing=2 border=1 width=80%>\n";
+
+print "<tr align=CENTER,valign=TOP, bgcolor=#ccccff>";
+print "<th> Path </th>";
+print "<th> File </th>";
+print "<th> Version </th>";
+print "<th> Who </th>";
+
+while (<HIST>) {
+    ($op, $date, $time, $lines, $who, $version, $file, $path, $foo,
+    $bar) = split(/\s+/, $_);
+    $fullPath = $path . "/" . $file;
+    $versionURL = $viewCVS . $path . "/" . $file . "?rev=" . $version . 
+	 "&content-type=text/vnd.viewcvs-markup";
+
+    $diffURL = $viewCVS . $path . "/" . $file . ".diff?r1=" . $version
+        . "&r2=" . getPreviousVersion($version);
+
+    print "<tr align=left valign=top>";
+    print "<td> $path </td>";
+    print "<td> <a href=$versionURL>" . $file . "</a></td>"; 
+    print "<td> <a href=$diffURL> $version</a> </td>";
+    print "<td> $who </td>";
+    print "</tr>";
+}
+print "</table>\n";
+
+print "<UL>" ;
+print  "<li> Click File to show source code</li>" ;
+print  "<li> Click Version to show changes made since last version</li>";
+print "</UL>" ;
+print "</body";
+print "</html>\n";

@@ -28,6 +28,8 @@ logBase=regression.log
 logPath=$regressionDir/$logBase
 rootDir=../../
 #rootDir=/home/plamere/s4test/
+date=`date +%Y-%m-%d`
+time=`date +%T`
 
 #############################
 # Log the metrics
@@ -76,8 +78,6 @@ fi
 #############################
 # Log the build information
 #############################
-date=`date +%Y-%m-%d`
-time=`date +%T`
 echo "build|$date|$time|$machine|$who|make|$status|$totalBuildTime|$totalRunTime|" >> $logPath
 
 
