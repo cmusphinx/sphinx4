@@ -115,8 +115,6 @@ public class Windower extends DataProcessor implements AudioSource {
      * @param props        the properties of this Windower
      * @param predecessor  the predecessor AudioSource
      *
-     * @param context the context of the SphinxProperties this Windower uses
-     *
      * @throws IOException if an I/O error occurs
      */
     public Windower(String name, String context, SphinxProperties props,

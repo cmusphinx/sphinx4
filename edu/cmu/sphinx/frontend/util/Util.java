@@ -496,7 +496,7 @@ public class Util {
      * @param data the bytes to save
      * @param filename the binary file name
      *
-     * @throw IOException if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     public static void bytesToFile(byte[] data, String filename) 
         throws IOException {
