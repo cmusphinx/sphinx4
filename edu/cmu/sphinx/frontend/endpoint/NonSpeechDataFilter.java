@@ -33,64 +33,49 @@ import edu.cmu.sphinx.util.props.Registry;
  * Given a sequence of Data, filters out the non-speech regions.
  * The sequence of Data should have the speech and non-speech regions
  * marked out by the SpeechStartSignal and SpeechEndSignal, using
- * and endpointer.
- *
- * A sequence of Data for an Utterance should look like:
- *
- * <pre>
- * DataStartSignal (non-speech Data)
- * SpeechStartSignal (speech Data) SpeechEndSignal (non-speech Data)
- * DataEndSignal
- * </pre>
- * or
- * <pre>
- * DataStartSignal (non-speech Data)
- * SpeechStartSignal (speech Data) SpeechEndSignal (non-speech Data)
- * SpeechStartSignal (speech Data) SpeechEndSignal (non-speech Data)
- * ...
- * DataEndSignal
- * </pre>
- * In the first case, where there is only one speech region, the
- * first non-speech region will be removed, and the SpeechStartSignal
- * Signal will be removed. The ending SpeechEndSignal and non-speech
- * region will be removed as well.
- *
- * <p>The second case is a little more complicated. If the SphinxProperty
- * <pre>
- * edu.cmu.sphinx.frontend.DataFilter.mergeSpeechSegments </pre>
+ * the {@link SpeechMarker SpeechMarker}. Such a sequence of Data 
+ * for an utterance should look like one of the following two:
+ * <p>
+ * <b>Case 1: Only one speech region</b>
+ * <p>In the first case, the data stream has only one speech region:
+ * <p><img src="doc-files/one-region.gif">
+ * <br><i>Figure 1: A data stream with only one speech region</i>.
+ * <p>After filtering, the non-speech regions are removed, and becomes:
+ * <p><img src="doc-files/one-region-filtered.gif">
+ * <br><i>Figure 2: A data stream with only on speech region 
+ * after filtering.</i>
+ * <p>
+ * <br><b>Case 2: Multiple speech regions</b>
+ * <p>
+ * We will use the example of a data stream with two speech regions
+ * to illustrate the case of a data stream with multiple speech regions:
+ * <p><img src="doc-files/two-regions.gif">
+ * <br><i>Figure 3: A data stream with two speech regions.</i>
+ * <p>
+ * This case is more complicated than one speech region.
+ * If the property <b><code>mergeSpeechSegments</code></b>
  * is set to true (the default),
  * all the Data from the first SpeechStartSignal to the last SpeechEndSignal
  * will be considered as one Utterance, and enclosed by a pair of
- * DataStartSignal and DataEndSignal. The first and last non-speech
- * regions, as well as all SpeechStartSignal and SpeechEndSignal,
- * will obviously be removed. This gives:
- * <pre>
- * DataStartSignal
- * (speech Data) (non-speech Data)
- * (speech Data) (non-speech Data)
- * ...
- * DataEndSignal
- * </pre>
- *
- * <p>On the other hand, if <code>mergeSpeechSegments</code> is set to
- * false, then each:
- * <pre>
- * SpeechStartSignal (speech Data) SpeechEndSignal (non-speech Data)
- * </pre>
- * will become:
- * <pre>
- * DataStartSignal (speech Data) DataEndSignal
- * </pre>
- * that is, the SpeechStartSignal replaced by DataStartSignal, 
+ * DataStartSignal and DataEndSignal. All non-speech
+ * regions, as well as all SpeechStartSignals and SpeechEndSignals,
+ * are removed from the stream. This gives:
+ * <p>
+ * <img src="doc-files/two-regions-merge.gif">
+ * <br><i>Figure 4: A data stream with two speech regions after filtering,
+ * when <b>mergeSpeechSegments</b> is set to <b>true</b>. Note that all
+ * SpeechStartSignals and SpeechEndSignals are removed.</i>
+ * <p>
+ * On the other hand, if <b><code>mergeSpeechSegments</code></b> is set to
+ * false, then each speech region will become its own data stream.
+ * Pictorially, our data stream with two speech regions becomes:
+ * <p><img src="doc-files/two-regions-nonmerge.gif">
+ * <br><i>Figure 5: A data stream with two speech regions after filtering,
+ * when <b>mergeSpeechSegments</b> is set to <b>false</b>.</i>
+ * <p>
+ * That is, the SpeechStartSignal replaced by DataStartSignal, 
  * the SpeechEndSignal replaced by DataEndSignal, and the non-speech
- * region removed. Also, the first DataStartSignal and last
- * DataEndSignal in the original stream will be removed as well.
- * This will give:
- * <pre>
- * DataStartSignal (speech Data) DataEndSignal
- * DataStartSignal (speech Data) DataEndSignal
- * ...
- * </pre>
+ * regions are removed.
  */
 public class NonSpeechDataFilter extends BaseDataProcessor {
 
