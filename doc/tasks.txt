@@ -1,0 +1,187 @@
+Sphinx 3J Task List:
+-------------------
+
+Note:  You should always write unit tests for your code, usually
+       at the same time (and maybe even before) you write your code.
+
+
+EXISTING SPHINX 3 CODEBASE:
+--------------------------
+
+Task			Description		Owner		Deadline
+----			-----------		-----		--------
+
+Update to latest.	Update the cmusphinx	Evandro,
+			sphinx3 repository to	Rita
+			contain the 'latest'
+			code.
+
+Performance and data	As part of the		Evandro,
+gathering.		testing and performance	Rita,
+			gathering for Sphinx	Paul,
+			3J, update Sphinx 3	Philip
+			to give us data/numbers
+			for comparison.
+
+
+FRONT END:
+----------
+
+Task			Description		Owner		Deadline
+----			-----------		-----		--------
+
+Front End Reqts.	Develop a list of	Philip		
+			requirements for the
+			front end.
+
+Design Front End	Design the overall	Philip		
+			layout and interfaces
+			to the front end.
+
+Implement Front End	Implement most of	Philip		
+			the front end 
+			and its processors.
+			This includes gathering
+			metrics.  Leave the 
+			harder math (e.g., FHT) 
+			to Evandro.
+
+Front End Tests		Write unit tests to	Philip
+			check data flow between
+			front end processors.
+
+Front End Math		Implement the math	Evandro		
+			behind the front
+			end.  Include code to
+			gather metrics.
+
+Front End Math Tests	Write unit tests for	Philip,		
+			the math in the various	Evandro
+			front end processors.
+			This will include 
+			comparing at least the
+			cepstral calculations
+			between Sphinx 3/3J.
+
+ACOUSTIC MODEL:
+--------------
+
+Task			Description		Owner		Deadline
+----			-----------		-----		--------
+
+Acoustic Model Reqts.	Develop a list of	Paul		
+			requirements for the
+			acoustic model.
+
+Design Acoustic Model	Design the overall
+			layout and interfaces
+			to the acoustic	model.
+
+Implement Acoustic	Implement most of the	Paul		
+Model			acoustic model.  Leave
+			the harder math to
+			Evandro (e.g., the
+			Feature to Senone
+			scores).
+
+Isolated Word Data	Generate Sphinx 3	Rita
+			models for isolated
+			word task.
+
+Connected Digits Data	Generate Sphinx 3	Rita
+			models for connected
+			digits task.
+
+Command and Control	Generate Sphinx 3	Rita
+Data			models for command
+			and control task.
+
+Dictation Data		Generate Sphinx 3	Rita
+			models for large
+			vocabulary dictation
+			task.
+
+Read Sphinx 3 Training	Write utilities to	Paul
+Data			read in Sphinx 3
+			populate a Sphinx 3j
+			acoustic model.
+
+Acoustic Model Tests	Write unit tests for	Paul
+			the acoustic model
+			data structures (e.g.,
+			check parameter typing).
+
+Acoustic Model Data	Write unit tests for	Paul		
+Utility Tests		the utilities that 
+			read in the Sphinx 3
+			training data and
+			populate a Sphinx 3j
+			acoustic model.
+
+Acoustic Model Math	Implement the scoring	Evandro		
+			math behind the 
+			acoustic model.
+
+Acoustic Model Scoring	Write unit tests for	Paul,		
+Tests			the scoring math	Evandro
+			behind the acoustic
+			model.  This will
+			include comparing
+			scores between
+			Sphinx 3/3J.
+
+
+DECODER/SEARCH:
+--------------
+
+NOTES:  Expectations from the design for this include a definition of
+        the search, the search space, and post processing the search
+	space to produce recognition results.  I suspect the search
+	space and results may pop out as a separate set of subtasks.
+
+Task			Description		Owner		Deadline
+----			-----------		-----		--------
+
+Decoder/Search Reqts	Develop a list of	Bhiksha,
+			requirements for the	Peter
+			decoder/search.		
+						
+
+Design Decoder/Search	Design the overall	Bhiksha,
+			layout of the decoder/	Peter
+			search.			
+						
+Implement Decode/Search Implement the decoder/	Evandro,
+			search.			Paul,
+						Philip
+
+Decoder/Search Tests	Unit tests for the	Evandro,
+			decoder/search.		Paul,
+						Philip
+
+LANGUAGE MODEL:
+--------------
+
+NOTES:  At a minimum, we want to support both context free grammars
+        for command and control and n-gram grammars for dictation.
+        This task may also be highly driven by the Decoder/Search.
+
+Task			Description		Owner		Deadline
+----			-----------		-----		--------
+
+Language Model Reqts.	Develop a list of	Bhiksha,
+			requirements for the	Peter
+			language model(s).
+
+Design Language Model	Design the overall	Bhiksha,
+			layout and interfaces	Peter
+			to the language model.
+
+Implement Language	Implement the language	Evandro,
+Model			model(s).		Paul,
+						Philip
+
+Language Model Tests	Unit tests for the	Evandro,
+			language model.		Paul,
+						Philip
+
