@@ -37,8 +37,58 @@ WARRANTIES.
   </table>
   </font>
 
+<p>
+
+<b>General</b>
 <ul>
-    <li> <b>Who created Sphinx-4?</b> </li>
+<li><a href="#who_created">Who created Sphinx-4?</a></li>
+<li><a href="#questions">I have a question about Sphinx-4. How can I get it answered?</a></li>
+<li><a href="#contact">How can I contact the Sphinx-4 team?</a></li>
+<li><a href="#which_dist">Which Sphinx-4 distribution should I use?<a></li>
+</ul>
+
+<b>Java</b>
+<ul>
+<li><a href="#performance">How well does Sphinx-4 perform compared to other speech recognizers?</li>
+<li><a href="#java_slow">Isn't the Java Platform too slow to be used for speech recognition?</a></li>
+<li><a href="#support_jsapi">Does Sphinx-4 support the Java Speech API (JSAPI)?</a></li>
+<li><a href="#learn_jsgf">Where can I learn more about the Java Speech Grammar Format (JSGF)?</a></li>
+<li><a href="#write_app">I want to add speech recognition to my application. Where do I start?</a></li>
+<li><a href="#j2me">Can I use Sphinx-4 in a J2ME device such as a phone or a PDA?</a></li>
+<li><a href="#prior_1.4">Why can't I use Java versions prior to 1.4?</a></li>
+<li><a href="#microphone_linux">I am having microphone troubles under linux. What can I do?</a></li>
+<li><a href="#java_tts">Where can I find a speech synthesizer for the Java platform?</a></li>
+</ul>
+
+<b>Sphinx-4</b>
+
+<ul>
+<li><a href="#decode_wav">How can I decode .wav files?</a></li>
+<li><a href="#partial_results">How can I get the recognizer to return partial results while a recognition is in process?</a></li>
+<li><a href="#n_best_list">How can I get the N-Best list?</a></li>
+<li><a href="#out_of_grammar">How can I detect and ignore out-of-grammar utterances?</a></li>
+<li><a href="#change_grammars">How can I change my language models or grammars at runtime?</a></li>
+<li><a href="#word_spotting">How can I perform word-spotting?</a></li>
+<li><a href="#8k_audio">Can I use Sphinx-4 to recognize 8khz audio?</a></li>
+<li><a href="#regression_data">Where can I get the audio data used in the regression tests?</a></li>
+<li><a href="#result">How do I use the Result object?</a></li>
+</ul>
+
+<b>Acoustic & Language Models</b>
+
+<ul>
+<li><a href="#train_am">How can I train my own acoustic models?</b></a></li>
+<li><a href="#sphinxtrain_models">How do I use models trained by SphinxTrain in Sphinx-4?</a></li>
+<li><a href="#create_lm">How can I create my own language models?</a></li>
+<li><a href="#create_binary_lm">I've created by own language model. How do I create the binary (DMP) form?</a></li>
+<li><a href="#create_dict">How can I create my own dictionary?</a></li>
+</ul>
+
+<hr>
+
+<p>
+
+<a name="who_created"><b>Who created Sphinx-4?</b> </a>
 
     <blockquote>
     Sphinx-4 was created via a joint collaboration between the Sphinx group
@@ -49,8 +99,7 @@ WARRANTIES.
     (MIT).
     </blockquote>
 
-    <li> <b>I have a question about Sphinx-4. How can I get it
-    answered?</b></li>
+<a name="questions"> <b>I have a question about Sphinx-4. How can I get it answered?</b></a>
     <blockquote>
         First, check this FAQ, 
         many questions are answered here. If your question is not in
@@ -61,15 +110,15 @@ WARRANTIES.
         questions.
     </blockquote>
 
-    <li> <b>How can I contact the Sphinx-4 team?</b> </li>
+<a name="contact"> <b>How can I contact the Sphinx-4 team?</b> </a>
 
     <blockquote>
     You can contact the Sphinx-4 team by sending email to 
     <i>cmusphinx-contacts at sourceforge dot net. </i>
     </blockquote>
 
-    <li> <b>How well does Sphinx-4 perform compared to other speech
-    recognizers?</b> </li>
+<a name="performance"> <b>How well does Sphinx-4 perform compared to other speech
+    recognizers?</b> </a>
 
     <blockquote>
     Comparing speech recognizers is often difficult. Speed and
@@ -79,8 +128,8 @@ WARRANTIES.
     href="../index.html#speed_and_accuracy">Sphinx-4 Performance Comparison</a>
     </blockquote>
 
-    <li> <b> Isn't the Java Platform too slow to be used for speech
-    recognition?</b></li>
+<a name="java_slow"> <b> Isn't the Java Platform too slow to be used for speech
+    recognition?</b></a>
 
     <blockquote>
       No, rumors of the poor performance of the Java platform are
@@ -94,8 +143,7 @@ WARRANTIES.
         programming language to its native-C counterpart.
     </blockquote>
 
-    <li> <a name="which_dist"><b>Which Sphinx-4 distribution should I
-    use?</b></a></li>
+<a name="which_dist"><b>Which Sphinx-4 distribution should I use?</b></a></a>
     <blockquote>
 
     Download the binary distribution if:
@@ -119,7 +167,7 @@ WARRANTIES.
 
     </blockquote>
 
-    <li> <b>Does Sphinx-4 support the Java Speech API (JSAPI)?</b></li>
+<a name="support_jsapi"> <b>Does Sphinx-4 support the Java Speech API (JSAPI)?</b></a>
     <blockquote>
        Currently, Sphinx-4 does not support the full Java Speech API.
        Instead, Sphinx-4 uses lower-level <a
@@ -130,8 +178,18 @@ WARRANTIES.
        grammars.
     </blockquote>
 
-    <li> <b>I want to add speech recognition to my application. Where
-    do I start?</b></li>
+
+<a name="learn_jsgf"> <b> Where can I learn more about the <b> Java Speech
+    Grammar Format</b> (JSGF)? </b></a>
+
+    <blockquote>
+       A complete description of the JSGF can be found in the <a
+       href="http://java.sun.com/products/java-media/speech/forDevelopers/JSGF/">
+       JSGF Grammar Format Specification</a>
+    </blockquote>
+
+
+<a name="write_app"> <b>I want to add speech recognition to my application. Where do I start?</b></a>
 
     <blockquote>
     First, look at the sourcecode for <a href="../index.html#demos">Sphinx-4
@@ -140,8 +198,8 @@ WARRANTIES.
     Guide</a> for description of how to write a Sphinx-4 application.
     </blockquote>
 
-    <li> <b>Can I use Sphinx-4 in a J2ME device such as a phone or a
-    PDA?</b></li>
+<a name="j2me"> <b>Can I use Sphinx-4 in a J2ME device such as a phone or a
+    PDA?</b></a>
 
     <blockquote>
        Probably not. Sphinx-4 requires version 1.4 of the Java
@@ -153,7 +211,7 @@ WARRANTIES.
        for Sphinx-4.
     </blockquote>
 
-    <li> <b> Why can't I use Java versions prior to 1.4? </b></li>
+<a name="prior_1.4"> <b> Why can't I use Java versions prior to 1.4? </b></a>
 
     <blockquote>
        Sphinx-4 uses many language and API features of version 1.4 of
@@ -162,45 +220,8 @@ WARRANTIES.
        facility.
     </blockquote>
 
-    <li> <b> How can I decode .wav files?</b></li>
 
-    <blockquote>
-      Take a look at the <a
-      href="../demo/sphinx/helloworld/README.html">Hello Wave Demo</a>
-      program a  command line
-      application that transcribes audio in a '.wav' file.  Additionally, the
-      <a
-      href="../demo/sphinx/transcriber/README.html">Transcriber Demo</a> demonstrates how Sphinx-4 can be used to
-      transcribe a continuous audio file with multiple utterances. <i> Note
-      that this demo is not avaiable in the current release</i>
-    </blockquote>
-
-
-    <li> <b>How can I get the recognizer to return partial results
-    while a recognition is in process?</b></li>
-
-    <blockquote>
-    It is possible to configure Sphinx-4 to generate partial results,
-    that is, to inform you periodically as to what it thinks is the
-    best possible hypothesis so far, even before the user has stopped
-    speaking.
-    <p>
-    To get this information, add a result listener to the recognizer.
-    Your listener will receive a result (which may or not be a final
-    result). The hypothesis text can be extracted from the text.
-    <p>
-    There is a good example of this in sphinx4/tests/live/Live.java
-
-    You can control how often the result listener is fired by setting
-    the configuration variable <i>'featureBlockSize'</i> in the decoder. 
-    The default setting of 50 indicates that the listener will be 
-    called after every 50 frames.
-    Since each frame represents 10MS of speech, the listener is called
-    every 500ms.
-    </blockquote>
-
-    <li> <b> I am having microphone troubles under linux. What can I
-    do?</b></li>
+<a name="microphone_linux"> <b> I am having microphone troubles under linux. What can I do?</b></a>
 
     <blockquote>
       There seems to be a significant difference in how different
@@ -231,7 +252,56 @@ WARRANTIES.
          </li>
     </blockquote>
 
-    <li> <b>How can I get the N-Best list?</b></li>
+
+<a name="java_tts"> <b> Where can I find a speech synthesizer for the Java
+    platform?</b></a>
+    <blockquote>
+       The <a href="http://www.sunlabs.com/research/speech/">Speech
+       Integration group</a> of Sun Labs has
+       released <a href="http://freetts.sourceforge.net">FreeTTS</a>, a speech synthesis system
+       written in the Java programming language.
+    </blockquote>
+
+
+<a name="decode_wav"> <b> How can I decode .wav files?</b></a>
+
+    <blockquote>
+      Take a look at the <a
+      href="../demo/sphinx/helloworld/README.html">Hello Wave Demo</a>
+      program a  command line
+      application that transcribes audio in a '.wav' file.  Additionally, the
+      <a
+      href="../demo/sphinx/transcriber/README.html">Transcriber Demo</a> demonstrates how Sphinx-4 can be used to
+      transcribe a continuous audio file with multiple utterances. <i> Note
+      that this demo is not avaiable in the current release</i>
+    </blockquote>
+
+
+<a name="partial_results"> <b>How can I get the recognizer to return partial results
+    while a recognition is in process?</b></a>
+
+    <blockquote>
+    It is possible to configure Sphinx-4 to generate partial results,
+    that is, to inform you periodically as to what it thinks is the
+    best possible hypothesis so far, even before the user has stopped
+    speaking.
+    <p>
+    To get this information, add a result listener to the recognizer.
+    Your listener will receive a result (which may or not be a final
+    result). The hypothesis text can be extracted from the text.
+    <p>
+    There is a good example of this in sphinx4/tests/live/Live.java
+
+    You can control how often the result listener is fired by setting
+    the configuration variable <i>'featureBlockSize'</i> in the decoder. 
+    The default setting of 50 indicates that the listener will be 
+    called after every 50 frames.
+    Since each frame represents 10MS of speech, the listener is called
+    every 500ms.
+    </blockquote>
+
+
+<a name="n_best_list"> <b>How can I get the N-Best list?</b></a>
 
     <blockquote>
         The method 'Results.getResultTokens()' returns a list of all
@@ -245,8 +315,8 @@ WARRANTIES.
         however, we will be providing some shortly.
     </blockquote>
 
-    <li> <b>How can I detect and ignore out-of-grammar
-    utterances?</b></li>
+<a name="out_of_grammar"> <b>How can I detect and ignore out-of-grammar
+    utterances?</b></a>
     <blockquote>
         An out-of-grammar utterance occurs when a speaker says
         something that is not represented by the speech grammar.
@@ -280,7 +350,7 @@ WARRANTIES.
         </code>
     </blockquote>
 
-    <li> <b>How can I change my language models or grammars at runtime?</b></li>
+<a name="change_grammars"> <b>How can I change my language models or grammars at runtime?</b></a>
 
     <blockquote>
         The <a
@@ -294,13 +364,13 @@ WARRANTIES.
         by an application.
     </blockquote>
 
-    <li> <b>How can I perform word-spotting?</b></li>
+<a name="word_spotting"> <b>How can I perform word-spotting?</b></a>
 
     <blockquote>
       There is no support for word-spotting right now. 
     </blockquote>
 
-    <li> <b>Can I use Sphinx-4 to recognize 8khz audio?</b></li>
+<a name="8k_audio"> <b>Can I use Sphinx-4 to recognize 8khz audio?</b></a>
 
     <blockquote>
     The current acoustic models that ship with Sphinx-4 are trained on
@@ -313,8 +383,8 @@ WARRANTIES.
     </blockquote>
 
 
-    <li> <b>Where can I get the audio data used in the regression
-    tests?</b></li>
+<a name="regression_data"> <b>Where can I get the audio data used in the regression
+    tests?</b></a>
 
     <blockquote>
     Much of the data audio data used in the regression tests is
@@ -322,7 +392,7 @@ WARRANTIES.
     </blockquote>
 
 
-    <li> <b> How do I use the <b>Result</b> object? </b></li>
+<a name="result"> <b> How do I use the <b>Result</b> object? </b></a>
 
     <blockquote>
     A search result typically consists of a number of hypothesis. Each
@@ -373,7 +443,8 @@ WARRANTIES.
 
     </blockquote>
 
-    <li> <b> How can I train my own acoustic models?</b></li>
+
+<a name="train_am"> <b> How can I train my own acoustic models?</b></a>
 
     <blockquote>
         Sphinx-4 loads Sphinx-3 acoustic models. These can be trained
@@ -381,7 +452,16 @@ WARRANTIES.
         <a href="http://www.speech.cs.cmu.edu/SphinxTrain/"> SphinxTrain</a>
     </blockquote>
 
-    <li> <b> How can I create my own language models?</b></li>
+
+<a name="sphinxtrain_models"> <b> How do I use models trained by SphinxTrain in Sphinx-4? </b> </a>
+
+    <blockquote>
+    Please refer to the document <a href="UsingSphinxTrainModels.html">Using
+    SphinxTrain Models in Sphinx-4</a>.
+    </blockquote>
+
+
+<a name="create_lm"> <b> How can I create my own language models?</b></a>
 
     <blockquote>
      N-Gram language models can be created with the  <a
@@ -392,7 +472,7 @@ WARRANTIES.
      language model 
     </blockquote>
 
-    <li> <b> How can I create my own dictionary?</b></li>
+<a name="create_dict"> <b> How can I create my own dictionary?</b></a>
 
     <blockquote>
     Sphinx-4 currentl supports dictionaries in the CMU dictionary
@@ -440,17 +520,8 @@ WARRANTIES.
     for a word.
     </blockquote>
 
-    <li> <b> Where can I learn more about the <b> Java Speech
-    Grammar Format</b> (JSGF)? </b></li>
 
-    <blockquote>
-       A complete description of the JSGF can be found in the <a
-       href="http://java.sun.com/products/java-media/speech/forDevelopers/JSGF/">
-       JSGF Grammar Format Specification</a>
-    </blockquote>
-
-    <li> <b> I've created by own language model. How do I create the
-    binary (DMP) form?</b></li>
+<a name="create_binary_lm"> <b> I've created by own language model. How do I create the binary (DMP) form?</b></a>
 
     <blockquote>
     The tool lm3g2dmp generates a DMP file from an LM in Arpa format
@@ -477,22 +548,7 @@ WARRANTIES.
     is different from the DMP format, and therefore cannot be read by Sphinx-4.
     </blockquote>
 
-    <li> <b> Where can I find a speech synthesizer for the Java
-    platform?</b></li>
-    <blockquote>
-       The <a href="http://www.sunlabs.com/research/speech/">Speech
-       Integration group</a> of Sun Labs has
-       released <a href="http://freetts.sourceforge.net">FreeTTS</a>, a speech synthesis system
-       written in the Java programming language.
-    </blockquote>
 
-    <li> <b> How do I use models trained by SphinxTrain in Sphinx-4? </b> </li>
-
-    <blockquote>
-    Please refer to the document <a href="UsingSphinxTrainModels.html">Using
-    SphinxTrain Models in Sphinx-4</a>.
-    </blockquote>
-</ul>
 
 <hr>
 Last update on June 30, 2004.<br>
