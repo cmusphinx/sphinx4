@@ -1,4 +1,4 @@
-decoders = isolatedDigits connectedDigits alphaSpelling
+decoders = isolatedDigits connectedDigits
 
 # isolatedDigits decoder
 isolatedDigits.name = Isolated Digits
