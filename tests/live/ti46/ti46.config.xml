@@ -97,13 +97,13 @@
 
     
     <component name="acousticModel"
-               type="edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz">
+               type="edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model">
         <property name="loader" value="sphinx3Loader"/>
         <property name="unitManager" value="unitManager"/>
     </component>
 
     <component name="sphinx3Loader"
-               type="edu.cmu.sphinx.model.acoustic.TIDIGITSLoader">
+               type="edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.ModelLoader">
         <property name="logMath" value="logMath"/>
         <property name="unitManager" value="unitManager"/>
     </component>
@@ -112,9 +112,9 @@
     <component name="dictionary"
                type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
         <property name="dictionaryPath" 
-	 value="resource:/edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/dictionary"/>
+	 value="resource:/edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model!/edu/cmu/sphinx/model/acoustic/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/dictionary"/>
         <property name="fillerPath" 
-	 value="resource:/edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz!/edu/cmu/sphinx/model/acoustic/fillerdict"/>
+	 value="resource:/edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model!/edu/cmu/sphinx/model/acoustic/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="unitManager" value="unitManager"/>
     </component>

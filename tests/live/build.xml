@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project basedir="." default="none" name="Run the live demo app.">
+<project basedir="." default="all" name="Run the live demo app.">
 
 <description>
 This file is used to run the live demo app.

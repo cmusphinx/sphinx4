@@ -130,7 +130,7 @@
     <!-- ************************************************** -->
 
     <component name="hub4"
-        type="edu.cmu.sphinx.model.acoustic.HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz">
+        type="edu.cmu.sphinx.model.acoustic.HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.Model">
         <property name="loader" value="sphinx3Loader"/>
         <property name="unitManager" value="unitManager"/>
     </component>
@@ -140,7 +140,7 @@
     <!-- ************************************************** -->
 
     <component name="sphinx3Loader"
-               type="edu.cmu.sphinx.model.acoustic.HUB4Loader">
+               type="edu.cmu.sphinx.model.acoustic.HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.ModelLoader">
         <property name="logMath" value="logMath"/>
         <property name="unitManager" value="unitManager"/>
     </component>
@@ -178,8 +178,8 @@
 
     <component name="dictionary"
           type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
-        <property name="dictionaryPath" value="resource:/edu.cmu.sphinx.model.acoustic.HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz!/edu/cmu/sphinx/model/acoustic/cmudict.06d"/>
-        <property name="fillerPath" value="resource:/edu.cmu.sphinx.model.acoustic.HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz!/edu/cmu/sphinx/model/acoustic/fillerdict"/>
+        <property name="dictionaryPath" value="resource:/edu.cmu.sphinx.model.acoustic.HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.Model!/edu/cmu/sphinx/model/acoustic/HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz/cmudict.06d"/>
+        <property name="fillerPath" value="resource:/edu.cmu.sphinx.model.acoustic.HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.Model!/edu/cmu/sphinx/model/acoustic/HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="allowMissingWords" value="false"/>
         <property name="unitManager" value="unitManager"/>
