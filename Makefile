@@ -13,7 +13,7 @@ TOP = .
 # List any sub directories that need to be built.  Start with generic
 # packages going toward specialized.  That is, if one package depends
 # on another, put the dependent package later in the list.
-SUBDIRS = com edu tests  demo
+SUBDIRS = com edu tests  
 
 GTAR=/bin/tar
 EXTERNAL_JSAPI_LOCATION=/lab/speech/sphinx4/lib/jsapi.jar
