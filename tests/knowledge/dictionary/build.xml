@@ -61,7 +61,7 @@ NOTE:  Before running the tests, you must have already built
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
-    <!-- * Runs the alpha-dictionary test.                              * -->
+    <!-- * Runs the alpha-dictionary test.                        * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="alpha-dict"
