@@ -50,6 +50,7 @@ public final class LogMath implements Serializable {
     private transient double naturalLogBase;
     private transient double inverseNaturalLogBase;
     private transient double logZero;
+    private transient double logOne;
     private transient double theAddTable[];
 
      /**
@@ -117,6 +118,7 @@ public final class LogMath implements Serializable {
 
 	 // logZero = Math.log(Double.MIN_VALUE);
 	 logZero = -Double.MAX_VALUE;
+         logOne = 0.0;
 
 	 // System.out.println("Logz is " + logZero);
 
@@ -480,6 +482,15 @@ public final class LogMath implements Serializable {
      */
     public final double getLogZero() {
 	return logZero;
+    }
+
+    /**
+     * Returns the one value in the log domain
+     *
+     * @return one value in the log domain
+     */
+    public final double getLogOne() {
+	return logOne;
     }
 
     /**
