@@ -26,9 +26,10 @@ public final class LogMath {
     public final static String PROP_LOG_BASE 
 	= "edu.cmu.sphinx.util.LogMath.logBase";
 
-     private double logBase = 1.0001;
-     private double inverseNaturalLogBase;
-     private double logZero;
+    private double logBase = 1.0001;
+    private double naturalLogBase;
+    private double inverseNaturalLogBase;
+    private double logZero;
 
      /**
       * Creates a log math with the given base
@@ -65,7 +66,8 @@ public final class LogMath {
       */
      private LogMath(double base) {
 	 logBase = base;
-	 inverseNaturalLogBase = 1.0/Math.log(logBase);;
+	 naturalLogBase = Math.log(logBase);
+	 inverseNaturalLogBase = 1.0/naturalLogBase;
 
 	 // [[[ TODO: probably not right way to get logZero ]]]
 	 // EBG: Probably the right way is just to assign 
@@ -281,6 +283,10 @@ public final class LogMath {
 	return (source * inverseNaturalLogBase);
     }
 
+    public final double logToLn(double logValue) {
+        return logValue * naturalLogBase;
+    }
+
 
     /**
      * Converts the value from linear domain to log domain
@@ -310,7 +316,8 @@ public final class LogMath {
      * @return the value in the linear domain
      */
     public final double logToLinear(double logValue) {
-	return Math.pow(logBase, logValue);
+	// return Math.pow(logBase, logValue);
+	return Math.exp(logToLn(logValue));
     }
 
     /**
