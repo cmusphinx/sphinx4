@@ -86,6 +86,39 @@ public class AcousticModel {
     private final static String PROP_USE_COMPOSITES = PROP_PREFIX +
 	"useComposites";
 
+    /**
+     * Mixture component score floor.
+     */
+    public final static String PROPS_MC_FLOOR = PROP_PREFIX + 
+	"MixtureComponentScoreFloor";
+
+    /**
+     * Mixture component score floor default value.
+     */
+    public final static float PROPS_MC_FLOOR_DEFAULT = 0.0f;
+
+    /**
+     * Variance floor.
+     */
+    public final static String PROPS_VARIANCE_FLOOR = PROP_PREFIX + 
+	"varianceFloor";
+
+    /**
+     * Variance floor default value.
+     */
+    public final static float PROPS_VARIANCE_FLOOR_DEFAULT = 0.0001f;
+
+    /**
+     * Mixture weight floor.
+     */
+    public final static String PROPS_MW_FLOOR = PROP_PREFIX + 
+	"mixtureWeightFloor";
+
+    /**
+     * Mixture weight floor default value.
+     */
+    public final static float PROPS_MW_FLOOR_DEFAULT = 1e-7f;
+
 
     /**
      * model load timer

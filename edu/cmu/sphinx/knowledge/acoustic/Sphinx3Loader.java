@@ -68,12 +68,6 @@ class Sphinx3Loader implements Loader {
     private final static String FILLER = "filler";
     private final static String SILENCE_CIPHONE  = "SIL";
 
-    private final static String PROPS_MC_FLOOR =
-    		AcousticModel.PROP_PREFIX + "MixtureComponentScoreFloor";
-    private final static String PROPS_VARIANCE_FLOOR =
-	    	AcousticModel.PROP_PREFIX + "varianceFloor";
-    private final static String PROPS_MW_FLOOR = 
-		AcousticModel.PROP_PREFIX + "mixtureWeightFloor";
     private final static String PROPS_VECTOR_LENGTH = 
                 AcousticModel.PROP_PREFIX + "FeatureVectorLength";
     private final static String PROPS_AM_PROPERTIES_FILE = 
@@ -191,9 +185,14 @@ class Sphinx3Loader implements Loader {
 	propsFile = props.getString(prefix + "properties_file",
 				    DEFAULT_AM_PROPS_FILE);
 
-	float distFloor = props.getFloat(PROPS_MC_FLOOR, 0.0F);
-        float mixtureWeightFloor = props.getFloat(PROPS_MW_FLOOR, 1E-7f);
-        float varianceFloor = props.getFloat(PROPS_VARIANCE_FLOOR, .0001f);
+	float distFloor = props.getFloat(AcousticModel.PROPS_MC_FLOOR, 
+					 AcousticModel.PROPS_MC_FLOOR_DEFAULT);
+        float mixtureWeightFloor = 
+	    props.getFloat(AcousticModel.PROPS_MW_FLOOR, 
+			   AcousticModel.PROPS_MW_FLOOR_DEFAULT);
+        float varianceFloor = 
+	    props.getFloat(AcousticModel.PROPS_VARIANCE_FLOOR, 
+			   AcousticModel.PROPS_VARIANCE_FLOOR_DEFAULT);
 
 	logger.info("Loading Sphinx3 acoustic model: " + modelName);
 	logger.info("    Path      : " + location);
@@ -477,7 +476,7 @@ class Sphinx3Loader implements Loader {
             for (int j = 0; j < numStreams; j++) {
                 for (int k = 0; k < numGaussiansPerState; k++) {
                     float[] density = readFloatArray(dis, vectorLength[j]);
-                    nonZeroFloor(density, floor);
+                    floorData(density, floor);
                     pool.put(i * numGaussiansPerState + k, density);
 		}
 	    }
@@ -633,6 +632,7 @@ class Sphinx3Loader implements Loader {
         return val;
     }
 
+    // Do we need the method nonZeroFloor??
     /**
      * If a data point is non-zero and below 'floor' make
      * it equal to floor (don't floor zero values though).
@@ -643,6 +643,21 @@ class Sphinx3Loader implements Loader {
     private void nonZeroFloor(float[] data, float floor) {
         for (int i = 0; i < data.length; i++) {
             if (data[i] != 0.0 && data[i] < floor) {
+                data[i] = floor;
+            }
+        }
+    }
+
+    /**
+     * If a data point is below 'floor' make
+     * it equal to floor.
+     *
+     * @param data the data to floor
+     * @param floor the floored value
+     */
+    private void floorData(float[] data, float floor) {
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] < floor) {
                 data[i] = floor;
             }
         }
@@ -1006,7 +1021,7 @@ class Sphinx3Loader implements Loader {
 	for (int i = 0; i < numStates; i++) {
 	    float[] logMixtureWeight = readFloatArray(dis,numGaussiansPerState);
             normalize(logMixtureWeight);
-            nonZeroFloor(logMixtureWeight, floor);
+            floorData(logMixtureWeight, floor);
             convertToLogMath(logMixtureWeight);
 	    pool.put(i, logMixtureWeight);
 	}
