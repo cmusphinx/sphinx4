@@ -38,11 +38,11 @@ CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 all:: ${CLASSES} ${STUBS}
 
 run:
-	$(JAVA_CMD) demo.jsapi.CardMatch.CardMatch cardmatch.props
+	$(JAVA_CMD) demo.jsapi.cardmatch.CardMatch cardmatch.props
 
 run-ep:
 	$(JAVA_CMD) \
-	-Ddemo.jsapi.CardMatch.doEndpointing=true \
+	-Ddemo.jsapi.cardmatch.doEndpointing=true \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=9 \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=12 \
@@ -50,8 +50,8 @@ run-ep:
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startWindow=8 \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.frontend.NonSpeechFilter.mergeSpeechSegments=false \
-	demo.jsapi.CardMatch.CardMatch \
+	demo.jsapi.cardmatch.CardMatch \
 	cardmatch.props
 
 grammarTest:
-	$(JAVA_CMD) demo.jsapi.CardMatch.JSGFGrammarTest cardmatch.props
+	$(JAVA_CMD) demo.jsapi.cardmatch.JSGFGrammarTest cardmatch.props
