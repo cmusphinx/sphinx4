@@ -222,6 +222,7 @@ tidigits_quick_flat_no_context:
 wsj_tidigits_quick:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1E-26 \
 	edu.cmu.sphinx.decoder.BatchDecoder wsjDigits.props \
 	./tidigits.batch
 
