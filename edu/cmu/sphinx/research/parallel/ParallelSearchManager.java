@@ -76,6 +76,11 @@ public class ParallelSearchManager implements SearchManager {
     public static final boolean PROP_DO_FEATURE_PRUNING_DEFAULT = false;
 
     /**
+     * The sphinx property for the feature score pruner.
+     */
+    public static final String PROP_FEATURE_SCORE_PRUNER = "featureScorePruner";
+
+    /**
      * The sphinx property name for whether to do combine pruning.
      */
     public static final String PROP_DO_COMBINE_PRUNING = "doCombinePruning";
@@ -84,6 +89,12 @@ public class ParallelSearchManager implements SearchManager {
      * The default value for whether to do combine pruning, which is false.
      */
     public static final boolean PROP_DO_COMBINE_PRUNING_DEFAULT = false;
+
+    /**
+     * The sphinx property for the combined score pruner.
+     */
+    public static final String PROP_COMBINED_SCORE_PRUNER = 
+        "combinedScorePruner";
 
     /**
      * The sphinx property for the list of acoustic models to use.
@@ -145,12 +156,12 @@ public class ParallelSearchManager implements SearchManager {
 	    (PROP_DO_COMBINE_PRUNING, PROP_DO_COMBINE_PRUNING_DEFAULT);
 
 	if (doFeaturePruning) {
-	    featureScorePruner = new FeatureScorePruner();
-            featureScorePruner.newProperties(ps);
+	    featureScorePruner = (FeatureScorePruner) ps.getComponent
+                (PROP_FEATURE_SCORE_PRUNER, FeatureScorePruner.class);
         }
 	if (doCombinePruning) {
-	    combinedScorePruner = new CombinedScorePruner();
-	    combinedScorePruner.newProperties(ps);
+	    combinedScorePruner = (CombinedScorePruner) ps.getComponent
+                (PROP_COMBINED_SCORE_PRUNER, CombinedScorePruner.class);
 	}
 	
         featureScoreCombiner = new FeatureScoreCombiner();
@@ -238,46 +249,37 @@ public class ParallelSearchManager implements SearchManager {
      * ActiveList to do the overall pruning.
      */
     private void createInitialLists() {
-
-	    combinedActiveList = activeListFactory.newInstance();
-            delayedExpansionList = activeListFactory.newInstance();
-
-	    SentenceHMMState firstState = (SentenceHMMState)
-                linguist.getSearchGraph().getInitialState();
-
-            // create the first token and grow it, its first parameter
-            // is null because it has no predecessor
-            CombineToken firstToken = new CombineToken
-                (null, firstState, currentFrameNumber);
-
-            setBestToken(firstState, firstToken);
-
-            for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
-                FeatureStream stream = (FeatureStream) i.next();
-                stream.setActiveList(activeListFactory.newInstance());
-
-                // add the first ParallelTokens to the CombineToken
-                ParallelToken token = new ParallelToken
-                    (firstState, stream, currentFrameNumber);
-		token.setLastCombineTime(currentFrameNumber);
-                firstToken.addParallelToken(stream, token);
-            }
-
-            // grow the first CombineToken until we've reach emitting states
-            resultList = new LinkedList();
-
-	    calculateCombinedScore(firstToken);
-            growCombineToken(firstToken);
-            printActiveLists();
-            /*
-	} catch (ClassNotFoundException cnfe) {
-	    throw new Error("ActiveList class, " + activeListName +
-			    "not found");
-	} catch (IllegalAccessException iae) {
-	    throw new Error("Cannot access " + activeListName);
-	} catch (InstantiationException ise) {
-	    throw new Error("Cannot instantiate " + activeListName);
-            } */
+        
+        combinedActiveList = activeListFactory.newInstance();
+        delayedExpansionList = activeListFactory.newInstance();
+        
+        SentenceHMMState firstState = (SentenceHMMState)
+            linguist.getSearchGraph().getInitialState();
+        
+        // create the first token and grow it, its first parameter
+        // is null because it has no predecessor
+        CombineToken firstToken = new CombineToken
+            (null, firstState, currentFrameNumber);
+        
+        setBestToken(firstState, firstToken);
+        
+        for (Iterator i = FeatureStream.iterator(); i.hasNext();) {
+            FeatureStream stream = (FeatureStream) i.next();
+            stream.setActiveList(activeListFactory.newInstance());
+            
+            // add the first ParallelTokens to the CombineToken
+            ParallelToken token = new ParallelToken
+                (firstState, stream, currentFrameNumber);
+            token.setLastCombineTime(currentFrameNumber);
+            firstToken.addParallelToken(stream, token);
+        }
+        
+        // grow the first CombineToken until we've reach emitting states
+        resultList = new LinkedList();
+        
+        calculateCombinedScore(firstToken);
+        growCombineToken(firstToken);
+        printActiveLists();
     }
 
 
