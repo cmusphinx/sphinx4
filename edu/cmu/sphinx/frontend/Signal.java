@@ -48,6 +48,11 @@ public class Signal implements Serializable {
      */
     public static final Signal SPEECH_END = new Signal("SPEECH_END");
 
+    /**
+     * Signal to indicate the end of data.
+     */
+    public static final Signal END_OF_DATA = new Signal("END_OF_DATA");
+
 
     /**
      * Constructs a Signal with the given name.
