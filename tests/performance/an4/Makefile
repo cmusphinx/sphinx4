@@ -75,6 +75,7 @@ all:: ${CLASSES} ${STUBS}
 an4_words_unigram:
 	$(JAVA_CMD) \
     -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
+    -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
@@ -86,6 +87,7 @@ an4_words_unigram:
 an4_words_trigram:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
@@ -202,6 +204,7 @@ an4_full_trigram:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.model.language.location=an4_full.trigram.lm \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_full.wordlist \
@@ -229,6 +232,7 @@ an4_plus_unigram:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
         edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_full.batch
 
@@ -243,6 +247,7 @@ an4_plus_trigram:
         -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.model.language.location=an4_plus.trigram.lm \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_plus.wordlist \
