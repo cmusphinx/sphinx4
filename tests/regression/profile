@@ -6,7 +6,7 @@
 # SourceForge downloads (so that sphinx4 will be located in
 # $(SF_ROOT)/sphinx4
 #
-PATH=$PATH:"/usr0/egouvea/bin:/bin:/usr/bin:/usr/local/bin:/lab/speech/java/j2sdk1.4.1_01/bin:/usr/local/PBS/bin:/lab/speech/bin:/usr/ucb/:."
+PATH=$PATH:"$(HOME)/bin:/bin:/usr/bin:/usr/local/bin:/lab/speech/java/j2sdk1.4.1_01/bin:/usr/local/PBS/bin:/lab/speech/bin:/usr/ucb/:."
 export PATH
 CVS_RSH=ssh
 export CVS_RSH
