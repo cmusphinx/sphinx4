@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ********************************************************** -->
+<!-- *                                                        * -->
+<!-- * Apache Ant build file used to build the Sphinx-4 demos.* -->
+<!-- * To build the demos, just type the following:           * -->
+<!-- *                                                        * -->
+<!-- *     ant -buildfile demo.xml                            * -->
+<!-- *                                                        * -->
+<!-- * For more information:  http://ant.apache.org/          * -->
+<!-- *                                                        * -->
+<!-- ********************************************************** -->
+
+<project basedir="." default="all" name="Sphinx-4">
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Where to find things...                                * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+
+    <property name="version"		value="1_2_0"/>
+    <property name="src_dir"		value="."/>
+    <property name="build_dir"		value="bld"/>
+    <property name="classes_dir"	value="${build_dir}/classes"/>
+    <property name="lib_dir"            value="${build_dir}/lib"/>
+    <property name="bin_dir"            value="${build_dir}/bin"/>
+    <property name="deploy_dir"		value="deploy"/>
+    <path id="libs">
+        <pathelement path="${classes_dir}"/>
+	<pathelement location="${top_dir}/lib/jsapi.jar"/>
+    </path>
+
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Checks for the presence of jsapi.jar.                  * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="check_jsapi_jar.isPresent">
+        <available file="lib/jsapi.jar" property="jsapi_jar.isPresent"/>
+        <fail unless="jsapi_jar.isPresent">
+
+Cannot find lib/jsapi.jar.  Will not build JSAPI demos.  
+See docs/jsapi_setup.html for information on setting up 
+your environment to use JSAPI.
+        </fail>
+    </target>
+
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Builds just the demos (using package names for the     * -->
+    <!-- * demos would have made this easier).                    * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="all"
+	    depends="make_lib_dir,
+	             compile_sphinx_demos"
+	    description="Compiles and jars the demos"/>
+
+    <target name="make_lib_dir">
+	<mkdir dir="${lib_dir}"/>
+    </target>
+
+
+    <!-- Sphinx-4 (non-JSAPI) demos -->
+    <target name="compile_sphinx_demos"
+	    depends="compile_sphinx_helloworld,
+	             compile_sphinx_hellodigits,
+	             check_jsapi_jar.isPresent"
+	    description="Compiles Sphinx-4 demos that do not use JSAPI"/>
+
+    <target name="compile_sphinx_helloworld">
+	<mkdir dir="${classes_dir}/demo/sphinx/helloworld"/>
+	<javac debug="true"
+	       source="1.4"
+	       deprecation="true"
+	       srcdir="${src_dir}/demo/sphinx/helloworld"
+	       destdir="${classes_dir}">
+	    <classpath refid="libs"/>
+	</javac>
+	<copy file="${src_dir}/demo/sphinx/helloworld/digits.gram"
+	      todir="${classes_dir}/demo/sphinx/helloworld"/>
+	<copy file="${src_dir}/demo/sphinx/helloworld/hello.config.xml"
+	      todir="${classes_dir}/demo/sphinx/helloworld"/>
+	<mkdir dir="${bin_dir}"/>
+        <jar destfile="${bin_dir}/HelloWorld.jar" 
+	     manifest="${src_dir}/demo/sphinx/helloworld/helloworld.Manifest"
+	     basedir="${classes_dir}"
+	     includes="demo/sphinx/helloworld/**"
+	     excludes="**/HelloDigits.class"
+	     filesonly="true"
+	     compress="true"/>
+    </target>
+
+    <target name="compile_sphinx_hellodigits">
+	<mkdir dir="${classes_dir}/demo/sphinx/helloworld"/>
+	<javac debug="true"
+	       source="1.4"
+	       deprecation="true"
+	       srcdir="${src_dir}/demo/sphinx/helloworld"
+	       destdir="${classes_dir}">
+	    <classpath refid="libs"/>
+	</javac>
+	<copy file="${src_dir}/demo/sphinx/helloworld/digits.gram"
+	      todir="${classes_dir}/demo/sphinx/helloworld"/>
+	<copy file="${src_dir}/demo/sphinx/helloworld/hellodigits.config.xml"
+	      todir="${classes_dir}/demo/sphinx/helloworld"/>
+	<mkdir dir="${bin_dir}"/>
+        <jar destfile="${bin_dir}/HelloDigits.jar" 
+	     manifest="${src_dir}/demo/sphinx/helloworld/hellodigits.Manifest"
+	     basedir="${classes_dir}"
+	     includes="demo/sphinx/helloworld/**"
+	     excludes="**/HelloWorld.class"
+	     filesonly="true"
+	     compress="true"/>
+    </target>
+
+</project>
