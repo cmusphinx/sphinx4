@@ -13,17 +13,19 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * less susceptible to finite precision effects later in the signal
  * processing. The Preemphasizer takes a ShortAudioFrame as input
  * and outputs a DoubleAudioFrame.
- *
  */
-public class Preemphasizer implements Processor {
+public class Preemphasizer extends PullingProcessor {
 
     private static final String PROP_PREEMPHASIS_FACTOR =
 	"edu.cmu.sphinx.frontend.preemphasisFactor";
     private static final String PROP_PREEMPHASIS_PRIOR =
 	"edu.cmu.sphinx.frontend.preemphasisPrior";
 
-    private double preemphasisFactor;
-    private double prior;
+    private float preemphasisFactor;
+    private int windowSize;
+    private int windowShift;
+    // TODO: somehow get the prior from the frontend
+    private short prior;
 
 
     /**
@@ -41,9 +43,10 @@ public class Preemphasizer implements Processor {
 	// TODO : specify the context
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
 
-	preemphasisFactor = properties.getDouble
-	    (PROP_PREEMPHASIS_FACTOR, 0.97);
-	preemphasisFactor = properties.getDouble(PROP_PREEMPHASIS_PRIOR, 0);
+	preemphasisFactor = properties.getFloat
+	    (PROP_PREEMPHASIS_FACTOR, (float) 0.97);
+	windowSize = properties.getInt(FrontEnd.PROP_WINDOW_SIZE, 205);
+	windowShift = properties.getInt(FrontEnd.PROP_WINDOW_SHIFT, 80);
     }
 
 
@@ -57,9 +60,18 @@ public class Preemphasizer implements Processor {
      * @return a DoubleAudioFrame of data with pre-emphasis filter applied
      */
     public Data process(Data input) {
-
-	ShortAudioFrame audioDataFrame = (ShortAudioFrame) input;
-
+	if (input instanceof SegmentEndPointSignal) {
+	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
+	    return preemphasize((ShortAudioFrame) signal.getData());
+	} else if (input instanceof ShortAudioFrame) {
+	    return preemphasize((ShortAudioFrame) input);
+	} else {
+	    return input;
+	}
+    }
+    
+    
+    private DoubleAudioFrame preemphasize(ShortAudioFrame audioDataFrame) {
 	// NOTE:
 	// It will not be necessary to allocate this extra double[]
 	// if we started off with a double[]. In the pre-emphasis
@@ -71,9 +83,9 @@ public class Preemphasizer implements Processor {
 
 	if (preemphasisFactor != 0.0) {
 	    // do preemphasis
-	    out[0] = (double) in[0] - preemphasisFactor * prior;
+	    out[0] = (double) in[0] - preemphasisFactor * (double) prior;
 	    for (int i = 1; i < out.length; i++) {
-		out[i] = (double) in[i] - preemphasisFactor * in[i-1];
+		out[i] = (double) in[i] - preemphasisFactor * (double) in[i-1];
 	    }
 	} else {
 	    // just convert sample from short to double
@@ -81,6 +93,8 @@ public class Preemphasizer implements Processor {
 		out[i] = (double) in[i];
 	    }
 	}
+
+	// Util.dumpDoubleArray(out, "PREEMPHASIS");
 
 	return (new DoubleAudioFrame(out));
     }

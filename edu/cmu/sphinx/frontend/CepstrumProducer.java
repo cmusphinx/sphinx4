@@ -8,6 +8,7 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import java.util.List;
 import java.util.ListIterator;
 
+
 /**
  * Translates audio into speech cepstra. The Cepstra producer takes a
  * DoubleAudioFrame as input, and outputs a CepstraFrame (which is an
@@ -18,12 +19,8 @@ import java.util.ListIterator;
  * Each of these frames now become a Cepstrum. All these frames together
  * give a CepstrumFrame.
  */
-public class CepstrumProducer implements Processor {
+public class CepstrumProducer extends PullingProcessor {
 
-    private static final String PROP_FRAME_SIZE =
-	"edu.cmu.sphinx.frontend.frameSize";
-    private static final String PROP_FRAME_SHIFT =
-	"edu.cmu.sphinx.frontend.frameShift";
     private static final String PROP_CEPSTRUM_SIZE =
 	"edu.cmu.sphinx.frontend.cepstrumSize";
 
@@ -58,8 +55,8 @@ public class CepstrumProducer implements Processor {
 	// TODO : specify the context
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
 
-	frameSize = properties.getInt(PROP_FRAME_SIZE, 410);
-	frameShift = properties.getInt(PROP_FRAME_SHIFT, 160);
+	frameSize = properties.getInt(FrontEnd.PROP_WINDOW_SIZE, 410);
+	frameShift = properties.getInt(FrontEnd.PROP_WINDOW_SHIFT, 160);
 	cepstrumSize = properties.getInt(PROP_CEPSTRUM_SIZE, 13);
     }
 	
@@ -80,7 +77,7 @@ public class CepstrumProducer implements Processor {
 	    template = new DoubleAudioFrame(samples.length);
 	}
 
-	int frameCount = FrontEnd.getFrameCount
+	int frameCount = Util.getWindowCount
 	    (samples.length, frameSize, frameShift);
 	Cepstrum[] cepstra = new Cepstrum[frameCount];
 
