@@ -1,0 +1,23 @@
+#!/pkg/gnu/bin/gawk -f
+#!/usr/bin/awk -f 
+# usage:
+#     s4Progress 
+#
+# This script will report batch progress
+
+
+# ------------- Summary statistics ----------- 
+
+BEGIN {
+    "ls -1 tests/Completed | wc -l" | getline completed;
+    "ls -1 tests/InProcess | wc -l" | getline inProcess;
+    "ls -1 tests/ToRun | wc -l" | getline toRun;
+
+    sum = completed + inProcess + toRun;
+    percentComplete = completed / sum * 100;
+    printf("\n");
+    printf("\n");
+    printf(" ========================= Progress =========================\n");
+    printf(" Total Tests: %d   Remaining: %d ", sum, toRun);
+    printf(" Complete: %4d  (%d%%) \n\n",  completed, percentComplete);
+}

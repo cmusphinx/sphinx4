@@ -1,3 +1,7 @@
 #!/usr/bin/bash
-while true; do s4BatchSummary $1/*; sleep 10; done
+while true; do 
+s4BatchProgress
+s4BatchSummary tests/Results/*; 
+sleep 10; 
+done
 
