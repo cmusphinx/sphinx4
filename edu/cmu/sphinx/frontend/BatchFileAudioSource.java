@@ -4,13 +4,10 @@
 
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.util.SphinxProperties;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Vector;
 
 
 /**
@@ -35,7 +32,6 @@ import java.util.Vector;
  */
 public class BatchFileAudioSource implements DataSource {
 
-    private String batchFile;
     private BufferedReader reader;
     private StreamAudioSource streamAudioSource = null;
 
@@ -43,10 +39,11 @@ public class BatchFileAudioSource implements DataSource {
     /**
      * Constructs a BatchFileAudioSource with the given InputStream.
      *
-     * @param audioStream the InputStream where audio data comes from
+     * @param batchFile contains a list of the audio files
+     *
+     * @throws java.io.IOException if error opening the batch file
      */
     public BatchFileAudioSource(String batchFile) throws IOException {
-        this.batchFile = batchFile;
         reader = new BufferedReader(new FileReader(batchFile));
         streamAudioSource = new StreamAudioSource(null);
 
@@ -62,6 +59,8 @@ public class BatchFileAudioSource implements DataSource {
      * the InputStream of the streamAudioSource.
      *
      * @param audioFile the file containing audio data
+     *
+     * @throws java.io.IOException if error setting the stream
      */
     private void fileSetStream(String audioFile) throws IOException {
         streamAudioSource.setInputStream
@@ -94,6 +93,8 @@ public class BatchFileAudioSource implements DataSource {
         if (nextFile != null) {
             fileSetStream(nextFile);
             return streamAudioSource.read();
+        } else {
+            reader.close();
         }
 
         return null;
