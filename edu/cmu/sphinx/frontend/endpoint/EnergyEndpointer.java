@@ -615,7 +615,10 @@ public class EnergyEndpointer extends DataProcessor
         System.out.println("Inserting SPEECH_START, startHighFrames: " +
                            startHighFrames);
         */
-        outputQueue.add(index, (new Cepstrum(Signal.SPEECH_START)));
+        assert (index - 1 >= 0);
+        Cepstrum next = (Cepstrum) outputQueue.get(index - 1);
+        outputQueue.add(index, (new Cepstrum(Signal.SPEECH_START,
+                                             next.getCollectTime())));
     }
 
     
@@ -628,7 +631,10 @@ public class EnergyEndpointer extends DataProcessor
         if (index < 0) {
             index = 0;
         }
-        lastSpeechEndFrame = new Cepstrum(Signal.SPEECH_END);
+        assert (index + 1 < outputQueue.size());
+        Cepstrum previous = (Cepstrum) outputQueue.get(index + 1);
+        lastSpeechEndFrame = 
+            new Cepstrum(Signal.SPEECH_END, previous.getCollectTime());
         outputQueue.add(index, lastSpeechEndFrame);
     }
 

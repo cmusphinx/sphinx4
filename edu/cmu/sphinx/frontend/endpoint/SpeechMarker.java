@@ -186,7 +186,8 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
                         inSpeech = !(readEndFrames(audio));
                     }
                 } else if (audio.hasSignal(Signal.UTTERANCE_END)) {
-                    sendToQueue(new Audio(Signal.SPEECH_END));
+                    sendToQueue(new Audio(Signal.SPEECH_END, 
+                                          audio.getCollectTime()));
                     sendToQueue(audio);
                     inSpeech = false;
                 } else if (audio.hasSignal(Signal.UTTERANCE_START)) {
@@ -326,6 +327,7 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
      * to the outputQueue.
      */
     private void addSpeechStart() {
+        long lastCollectTime = 0;
         int silenceLength = 0;
         ListIterator i = outputQueue.listIterator(outputQueue.size()-1);
 
@@ -338,6 +340,7 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
                 } else {
                     silenceLength += getAudioTime(current);
                 }
+                lastCollectTime = current.getCollectTime();
             } else if (current.hasSignal(Signal.UTTERANCE_START)) {
                 i.next(); // put the SPEECH_START after the UTTERANCE_START
                 break;
@@ -346,8 +349,11 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
             }
         }
 
+        if (speechLeader > 0) {
+            assert lastCollectTime != 0;
+        }
         // add the SPEECH_START
-        i.add(new Audio(Signal.SPEECH_START));
+        i.add(new Audio(Signal.SPEECH_START, lastCollectTime));
     }
 
     /**
@@ -396,7 +402,8 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
                     if (next.isSpeech()) {
                         // if we have hit speech again, then the current
                         // speech should end
-                        sendToQueue(new Audio(Signal.SPEECH_END));
+                        sendToQueue(new Audio(Signal.SPEECH_END,
+                                              next.getCollectTime()));
                         sendToQueue(next);
                         speechEndAdded = true;
                         break;
@@ -405,7 +412,8 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
                         sendToQueue(next);
                     }
                 } else if (next.hasSignal(Signal.UTTERANCE_END)) {
-                    sendToQueue(new Audio(Signal.SPEECH_END));
+                    sendToQueue(new Audio(Signal.SPEECH_END,
+                                          next.getCollectTime()));
                     sendToQueue(next);
                     speechEndAdded = true;
                 } else {
@@ -415,13 +423,16 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
         }
 
         if (!speechEndAdded) {
-            // iterator from the end of speech and read till we
+            // iterate from the end of speech and read till we
             // have 'speechTrailer' amount of non-speech, and
             // then add an SPEECH_END
             ListIterator i = outputQueue.listIterator(originalLast);
+            long nextCollectTime = 0;
             silenceLength = 0;
+
             while (silenceLength < speechTrailer && i.hasNext()) {
                 Audio next = (Audio) i.next();
+                nextCollectTime = next.getCollectTime();
                 if (next.hasSignal(Signal.UTTERANCE_END)) {
                     i.previous();
                     break;
@@ -430,7 +441,11 @@ public class SpeechMarker extends DataProcessor implements AudioSource {
                     silenceLength += getAudioTime(next);
                 }
             }
-            i.add(new Audio(Signal.SPEECH_END));
+            
+            if (speechTrailer > 0) {
+                assert nextCollectTime != 0;
+            }
+            i.add(new Audio(Signal.SPEECH_END, nextCollectTime));
         }
 
         // System.out.println("Speech ended !!!");

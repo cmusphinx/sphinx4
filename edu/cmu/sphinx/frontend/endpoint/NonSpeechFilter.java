@@ -260,7 +260,8 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
                     // Cepstrum, and return an UTTERANCE_START instead
                     inSpeech = true;
                     discardMode = false;
-                    next = new Cepstrum(Signal.UTTERANCE_START);
+                    next = new Cepstrum(Signal.UTTERANCE_START,
+                                        cepstrum.getCollectTime());
                 }
             } else if (cepstrum.hasSignal(Signal.SPEECH_END)) {
                 if (!inSpeech) {
@@ -280,7 +281,8 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
                     // discarding Cepstrum, and return an UTTERANCE_END instead
                     inSpeech = false;
                     discardMode = true;
-                    next = new Cepstrum(Signal.UTTERANCE_END);
+                    next = new Cepstrum(Signal.UTTERANCE_END,
+                                        cepstrum.getCollectTime());
                 }
             } else if (discardMode) {
                 while (next != null && 

@@ -134,7 +134,7 @@ CepstrumProducer {
             if (input.hasContent()) {
                 output = process(input);
             } else {
-                output = new Cepstrum(input.getSignal());
+                output = new Cepstrum(input.getSignal(), input.getCollectTime());
             }
         }
 
@@ -179,7 +179,7 @@ CepstrumProducer {
         float[] cepstrumCepstrum = applyMelCosine(melspectrum);
 
 	Cepstrum cepstrum = new Cepstrum
-            (cepstrumCepstrum, input.getUtterance());
+            (cepstrumCepstrum, input.getUtterance(), input.getCollectTime());
 
         if (getDump()) {
             System.out.println("MEL_CEPSTRUM   " + cepstrum.toString());

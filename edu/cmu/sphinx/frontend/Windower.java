@@ -103,6 +103,7 @@ public class Windower extends DataProcessor implements AudioSource {
     private List outputQueue;            // cache for output windows
     private DoubleBuffer overflowBuffer; // cache for overlapped audio regions
     private Utterance currentUtterance;  // the current Utterance
+    private long currentCollectTime;
 
 
     /**
@@ -217,6 +218,7 @@ public class Windower extends DataProcessor implements AudioSource {
     private void process(Audio input) throws IOException {
 
         currentUtterance = input.getUtterance();
+        currentCollectTime = input.getCollectTime();
 
 	double[] in = input.getSamples();
         int length = overflowBuffer.getOccupancy() + in.length;
@@ -332,7 +334,8 @@ public class Windower extends DataProcessor implements AudioSource {
             }
             
             // add the frame to the output queue
-            outputQueue.add(new Audio(myWindow, currentUtterance));
+            outputQueue.add(new Audio(myWindow, currentUtterance, 
+                                      currentCollectTime));
 
             if (getDump()) {
                 System.out.println

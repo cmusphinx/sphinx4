@@ -274,7 +274,8 @@ public class AudioFilter extends DataProcessor implements AudioSource {
                     // Audio, and return an UTTERANCE_START instead
                     inSpeech = true;
                     discardMode = false;
-                    next = new Audio(Signal.UTTERANCE_START);
+                    next = new Audio
+                        (Signal.UTTERANCE_START, audio.getCollectTime());
                 }
             } else if (audio.hasSignal(Signal.SPEECH_END)) {
                 if (!inSpeech) {
@@ -294,7 +295,8 @@ public class AudioFilter extends DataProcessor implements AudioSource {
                     // discarding Audio, and return an UTTERANCE_END instead
                     inSpeech = false;
                     discardMode = true;
-                    next = new Audio(Signal.UTTERANCE_END);
+                    next = new Audio
+                        (Signal.UTTERANCE_END, audio.getCollectTime());
                 }
             } else if (discardMode) {
                 while (next != null && 

@@ -270,14 +270,16 @@ public class Microphone extends DataProcessor implements AudioSource {
                         ("Microphone", getContext());
                 }
 
-                audioList.add(new Audio(Signal.UTTERANCE_START));
+                audioList.add(new Audio(Signal.UTTERANCE_START,
+                                        System.currentTimeMillis()));
                                 
                 while (getRecording() && !getClosed()) {
                     printMessage("reading ...");
                     audioList.add(readAudio(currentUtterance));
                 }
 
-                audioList.add(new Audio(Signal.UTTERANCE_END));
+                audioList.add(new Audio(Signal.UTTERANCE_END,
+                                        System.currentTimeMillis()));
                 
                 audioLine.stop();
 		if (closeAudioBetweenUtterances) {
@@ -309,6 +311,8 @@ public class Microphone extends DataProcessor implements AudioSource {
     private Audio readAudio(Utterance utterance) {
         // Read the next chunk of data from the TargetDataLine.
         byte[] data = new byte[frameSizeInBytes];
+        long collectTime = System.currentTimeMillis();
+
         try {
             int numBytesRead = audioStream.read(data, 0, data.length);
             
@@ -337,7 +341,7 @@ public class Microphone extends DataProcessor implements AudioSource {
         double[] samples = Util.bytesToSamples
             (data, 0, data.length, sampleSizeInBits/8, signed);
         
-        return (new Audio(samples));
+        return (new Audio(samples, collectTime));
     }
 
     /**

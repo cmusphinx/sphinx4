@@ -74,7 +74,7 @@ public class LiveFeatureExtractor extends DataProcessor
 
     private int cepstraBufferSize;
     private int cepstraBufferEdge;
-    private float[][] cepstraBuffer;
+    private Cepstrum[] cepstraBuffer;
 
     private int bufferPosition;
     private int currentPosition;
@@ -82,7 +82,7 @@ public class LiveFeatureExtractor extends DataProcessor
     private int jp1, jp2, jp3, jf1, jf2, jf3;
     private IDGenerator featureID;
 
-    private boolean hasUtteranceEnd;
+    private long utteranceEndTime;
 
     private CepstrumSource predecessor;
     private List outputQueue;
@@ -124,7 +124,7 @@ public class LiveFeatureExtractor extends DataProcessor
 	super.initialize(name, context, props);
         setProperties();
         this.predecessor = predecessor;
-        cepstraBuffer = new float[cepstraBufferSize][];
+        cepstraBuffer = new Cepstrum[cepstraBufferSize];
         outputQueue = new Vector();
         featureID = new IDGenerator();
         reset();
@@ -178,24 +178,27 @@ public class LiveFeatureExtractor extends DataProcessor
             Cepstrum input = predecessor.getCepstrum();
             if (input != null) {
                 if (input.hasContent()) {
-                    addCepstrumData(input.getCepstrumData());
+                    addCepstrum(input);
                     computeFeatures(1);
                 } else if (input.hasSignal(Signal.UTTERANCE_START)) {
-                    hasUtteranceEnd = false;
+                    utteranceEndTime = -1;
                     outputQueue.add(new Feature(Signal.UTTERANCE_START,
-                                                IDGenerator.NON_ID));
+                                                IDGenerator.NON_ID,
+                                                input.getCollectTime()));
                     featureID.reset();
                     Cepstrum start = predecessor.getCepstrum();
                     int n = processFirstCepstrum(start);
                     computeFeatures(n);
-                    if (hasUtteranceEnd) {
-                        outputQueue.add(getUtteranceEndFeature());
+                    if (utteranceEndTime >= 0) {
+                        outputQueue.add
+                            (getUtteranceEndFeature(utteranceEndTime));
                     }
                 } else if (input.hasSignal(Signal.UTTERANCE_END)) {
                     // when the UTTERANCE_END is right at the boundary
                     int n = replicateLastCepstrum();
                     computeFeatures(n);
-                    outputQueue.add(getUtteranceEndFeature());
+                    outputQueue.add
+                        (getUtteranceEndFeature(input.getCollectTime()));
                 }
             }
         }
@@ -210,8 +213,9 @@ public class LiveFeatureExtractor extends DataProcessor
     /**
      * Returns a new Feature with the UTTERANCE_END Signal.
      */
-    private Feature getUtteranceEndFeature() {
-        return (new Feature(Signal.UTTERANCE_END, IDGenerator.NON_ID));
+    private Feature getUtteranceEndFeature(long collectTime) {
+        return (new Feature
+                (Signal.UTTERANCE_END, IDGenerator.NON_ID, collectTime));
     }
 
     /**
@@ -226,7 +230,7 @@ public class LiveFeatureExtractor extends DataProcessor
     private int processFirstCepstrum(Cepstrum cepstrum) throws IOException {
 
         if (cepstrum.hasSignal(Signal.UTTERANCE_END)) {
-            outputQueue.add(getUtteranceEndFeature());
+            outputQueue.add(getUtteranceEndFeature(cepstrum.getCollectTime()));
             return 0;
         } else if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
             throw new Error("Too many UTTERANCE_START");
@@ -238,8 +242,7 @@ public class LiveFeatureExtractor extends DataProcessor
 
             currentUtterance = cepstrum.getUtterance();
 
-            Arrays.fill(cepstraBuffer, 0, window+1, 
-                        cepstrum.getCepstrumData());
+            Arrays.fill(cepstraBuffer, 0, window+1, cepstrum);
         
             bufferPosition = window + 1;
             bufferPosition %= cepstraBufferSize;
@@ -247,17 +250,17 @@ public class LiveFeatureExtractor extends DataProcessor
             currentPosition %= cepstraBufferSize;
 
             int numberFeatures = 1;
-            hasUtteranceEnd = false;
+            utteranceEndTime = -1;
             
             for (int i = 0; i < window; i++) {
                 Cepstrum next = predecessor.getCepstrum();
                 if (next != null) {
                     if (next.hasContent()) {
                         // just a cepstra
-                        addCepstrumData(next.getCepstrumData());
+                        addCepstrum(next);
                     } else if (next.hasSignal(Signal.UTTERANCE_END)) {
                         // end of segment cepstrum
-                        hasUtteranceEnd = true;
+                        utteranceEndTime = next.getCollectTime();
                         replicateLastCepstrum();
                         numberFeatures += i;
                         break;
@@ -290,8 +293,8 @@ public class LiveFeatureExtractor extends DataProcessor
     /**
      * Adds the given Cepstrum to the cepstraBuffer.
      */
-    private void addCepstrumData(float[] cepstrumData) {
-        cepstraBuffer[bufferPosition++] = cepstrumData;
+    private void addCepstrum(Cepstrum cepstrum) {
+        cepstraBuffer[bufferPosition++] = cepstrum;
         bufferPosition %= cepstraBufferSize;
     }
 
@@ -304,7 +307,7 @@ public class LiveFeatureExtractor extends DataProcessor
      */
     private int replicateLastCepstrum() {
 
-        float[] last = null;
+        Cepstrum last = null;
 
         if (bufferPosition > 0) {
             last = this.cepstraBuffer[bufferPosition - 1];
@@ -315,7 +318,7 @@ public class LiveFeatureExtractor extends DataProcessor
         }
         
         for (int i = 0; i < window; i++) {
-            addCepstrumData(last);
+            addCepstrum(last);
         }
 
         return window;
@@ -358,15 +361,17 @@ public class LiveFeatureExtractor extends DataProcessor
      */
     private Feature computeNextFeature() {
 
+        Cepstrum currentCepstrum = cepstraBuffer[currentPosition++];
+
         float[] feature = new float[featureLength];
 
-	float[] mfc3f = cepstraBuffer[jf3++];
-	float[] mfc2f = cepstraBuffer[jf2++];
-	float[] mfc1f = cepstraBuffer[jf1++];
-        float[] current = cepstraBuffer[currentPosition++];
-	float[] mfc1p = cepstraBuffer[jp1++];
-	float[] mfc2p = cepstraBuffer[jp2++];
-	float[] mfc3p = cepstraBuffer[jp3++];
+	float[] mfc3f = cepstraBuffer[jf3++].getCepstrumData();
+	float[] mfc2f = cepstraBuffer[jf2++].getCepstrumData();
+	float[] mfc1f = cepstraBuffer[jf1++].getCepstrumData();
+        float[] current = currentCepstrum.getCepstrumData();
+	float[] mfc1p = cepstraBuffer[jp1++].getCepstrumData();
+	float[] mfc2p = cepstraBuffer[jp2++].getCepstrumData();
+	float[] mfc3p = cepstraBuffer[jp3++].getCepstrumData();
 	
 	// CEP; copy all the cepstrum data
 	int j = cepstrumLength;
@@ -392,7 +397,8 @@ public class LiveFeatureExtractor extends DataProcessor
             jp3 %= cepstraBufferSize;
         }
 
-        return (new Feature(feature, featureID.getNextID(), currentUtterance));
+        return (new Feature(feature, featureID.getNextID(), currentUtterance, 
+                            currentCepstrum.getCollectTime()));
     }
 }
 

@@ -76,7 +76,7 @@ public class S3FeatureExtractor extends DataProcessor
 
     private int cepstraBufferSize;
     private int cepstraBufferEdge;
-    private float[][] cepstraBuffer;
+    private Cepstrum[] cepstraBuffer;
 
     private int bufferPosition;
     private int currentPosition;
@@ -126,7 +126,7 @@ public class S3FeatureExtractor extends DataProcessor
 	super.initialize(name, context, props);
         setProperties();
         this.predecessor = predecessor;
-        cepstraBuffer = new float[cepstraBufferSize][];
+        cepstraBuffer = new Cepstrum[cepstraBufferSize];
         outputQueue = new Vector();
         featureID = new IDGenerator();
         reset();
@@ -182,7 +182,7 @@ public class S3FeatureExtractor extends DataProcessor
 		return null;
 	    } else {
 		if (input.hasContent()) {
-		    addCepstrumData(input.getCepstrumData());
+		    addCepstrum(input);
 		    if (segmentStart) {
 			currentUtterance = input.getUtterance();
 			// we must have at least (window * 2 + 1)
@@ -201,13 +201,15 @@ public class S3FeatureExtractor extends DataProcessor
 		} else if (input.hasSignal(Signal.UTTERANCE_START)) {
 		    segmentStart = true;
 		    outputQueue.add(new Feature(Signal.UTTERANCE_START,
-						IDGenerator.NON_ID));
+						IDGenerator.NON_ID,
+                                                input.getCollectTime()));
 		    
 		} else if (input.hasSignal(Signal.UTTERANCE_END)) {
 		    // when the UTTERANCE_END is right at the boundary
 		    replicateOutputFeature(lastFeature);
 		    outputQueue.add(new Feature(Signal.UTTERANCE_END,
-						IDGenerator.NON_ID));
+						IDGenerator.NON_ID,
+                                                input.getCollectTime()));
 		}
             }
         }
@@ -233,7 +235,7 @@ public class S3FeatureExtractor extends DataProcessor
 	// read the first window cepstra
 	for (; readCepstra < window; readCepstra++) {
 	    Cepstrum cepstrum = predecessor.getCepstrum();
-	    addCepstrumData(cepstrum.getCepstrumData());
+	    addCepstrum(cepstrum);
 	}
 
         bufferPosition = window + 1;
@@ -260,7 +262,7 @@ public class S3FeatureExtractor extends DataProcessor
 	// read the next window number of cepstra
 	for (; readCepstra < (window * 2); readCepstra++) {
 	    Cepstrum cepstrum = predecessor.getCepstrum();
-	    addCepstrumData(cepstrum.getCepstrumData());
+	    addCepstrum(cepstrum);
 	}
 
 	// if this utterance has too few cepstra, throw an 
@@ -289,8 +291,8 @@ public class S3FeatureExtractor extends DataProcessor
     /**
      * Adds the given Cepstrum to the cepstraBuffer.
      */
-    private void addCepstrumData(float[] cepstrumData) {
-        cepstraBuffer[bufferPosition++] = cepstrumData;
+    private void addCepstrum(Cepstrum cepstrum) {
+        cepstraBuffer[bufferPosition++] = cepstrum;
         bufferPosition %= cepstraBufferSize;
     }
 
@@ -300,15 +302,17 @@ public class S3FeatureExtractor extends DataProcessor
      */
     private Feature computeNextFeature() {
 
+        Cepstrum currentCepstrum = cepstraBuffer[currentPosition++];
+
         float[] feature = new float[featureLength];
 
-	float[] mfc3f = cepstraBuffer[jf3++];
-	float[] mfc2f = cepstraBuffer[jf2++];
-	float[] mfc1f = cepstraBuffer[jf1++];
-        float[] current = cepstraBuffer[currentPosition++];
-	float[] mfc1p = cepstraBuffer[jp1++];
-	float[] mfc2p = cepstraBuffer[jp2++];
-	float[] mfc3p = cepstraBuffer[jp3++];
+	float[] mfc3f = cepstraBuffer[jf3++].getCepstrumData();
+	float[] mfc2f = cepstraBuffer[jf2++].getCepstrumData();
+	float[] mfc1f = cepstraBuffer[jf1++].getCepstrumData();
+        float[] current = currentCepstrum.getCepstrumData();
+	float[] mfc1p = cepstraBuffer[jp1++].getCepstrumData();
+	float[] mfc2p = cepstraBuffer[jp2++].getCepstrumData();
+	float[] mfc3p = cepstraBuffer[jp3++].getCepstrumData();
 	
 	// CEP; copy all the cepstrum data
 	int j = cepstrumLength;
@@ -334,7 +338,8 @@ public class S3FeatureExtractor extends DataProcessor
             jp3 %= cepstraBufferSize;
         }
 
-        return (new Feature(feature, featureID.getNextID(), currentUtterance));
+        return (new Feature(feature, featureID.getNextID(), currentUtterance,
+                            currentCepstrum.getCollectTime()));
     }
 }
 

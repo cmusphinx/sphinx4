@@ -71,9 +71,11 @@ FeatureExtractor {
 	    if (input.hasContent()) {
 		output = new Feature(input.getCepstrumData(),
 				     featureID.getNextID(),
-				     input.getUtterance());
+				     input.getUtterance(),
+                                     input.getCollectTime());
 	    } else if (input.getSignal() != null) {
-		output = new Feature(input.getSignal(), featureID.NON_ID);
+		output = new Feature(input.getSignal(), featureID.NON_ID,
+                                     input.getCollectTime());
 	    }
 	}
 

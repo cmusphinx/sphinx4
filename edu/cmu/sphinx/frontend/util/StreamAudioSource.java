@@ -139,28 +139,28 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
 
         if (streamEndReached) {
             if (!utteranceEndSent) {
-                output = new Audio(Signal.UTTERANCE_END);
+                output = new Audio
+                    (Signal.UTTERANCE_END, System.currentTimeMillis());
                 utteranceEndSent = true;
             }
         } else {
             if (!utteranceStarted) {
                 utteranceStarted = true;
-                output = new Audio(Signal.UTTERANCE_START);
+                output = new Audio
+                    (Signal.UTTERANCE_START, System.currentTimeMillis());
             } else {
                 if (audioStream != null) {
                     output = readNextFrame();
                     if (output == null) {
                         if (!utteranceEndSent) {
-                            output = new Audio(Signal.UTTERANCE_END);
+                            output = new Audio(Signal.UTTERANCE_END,
+                                               System.currentTimeMillis());
                             utteranceEndSent = true;
                         }
                     }
                 }
             }
         }
-
-	// System.out.println("SAS: " + output);
-	// signalCheck(output);
 
         getTimer().stop();
 
@@ -183,6 +183,7 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
 	int totalRead = 0;
         final int bytesToRead = frameSizeInBytes;
         byte[] samplesBuffer = new byte[frameSizeInBytes];
+        long collectTime = System.currentTimeMillis();
 
 	do {
 	    read = audioStream.read
@@ -222,9 +223,9 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
 
         if (keepAudioReference) {
             currentUtterance.add(samplesBuffer);
-            audio = new Audio(doubleAudio, currentUtterance);
+            audio = new Audio(doubleAudio, currentUtterance, collectTime);
         } else {
-            audio = new Audio(doubleAudio);
+            audio = new Audio(doubleAudio, collectTime);
         }
 
         if (getDump()) {

@@ -129,16 +129,19 @@ CepstrumSource {
 	Cepstrum data = null;
 
 	if (curPoint == -1) {
-	    data = new Cepstrum(Signal.UTTERANCE_START);
+	    data = new Cepstrum
+                (Signal.UTTERANCE_START, System.currentTimeMillis());
 	    curPoint++;
 	} else if (curPoint == numPoints) {
-            data = new Cepstrum(Signal.UTTERANCE_END);
+            data = new Cepstrum
+                (Signal.UTTERANCE_END, System.currentTimeMillis());
 	    binaryStream.close();
 	    curPoint++;
 	} else if (curPoint > numPoints) {
             data = null;
 	} else {
-	    float[] vectorCepstrum = new float[cepstrumLength];
+            float[] vectorCepstrum = new float[cepstrumLength];
+            long collectTime = System.currentTimeMillis();
 
 	    for (int i = 0; i < cepstrumLength; i++) {
 		if (binary) {
@@ -155,7 +158,7 @@ CepstrumSource {
 	    }
 
 	    // System.out.println("Read: " + curPoint);
-	    data  = new Cepstrum(vectorCepstrum);
+	    data  = new Cepstrum(vectorCepstrum, collectTime);
 	    // System.out.println(data);
 	}
 	return data;
