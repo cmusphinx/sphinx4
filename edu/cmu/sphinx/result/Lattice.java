@@ -40,11 +40,11 @@ public class Lattice {
     protected Node initialNode;
     protected double logBase;
     protected Node terminalNode;
-    protected Vector edges;
-    protected HashMap nodes;
+    protected Map edges;
+    protected Map nodes;
     AlternateHypothesisManager loserManager;
     {
-        edges=new Vector();
+        edges=new HashMap();
         nodes=new HashMap();
         logBase = Math.exp(1);
     }
@@ -202,21 +202,12 @@ public class Lattice {
      */
     public Edge addEdge(Node fromNode, Node toNode,
                         double acousticScore, double lmScore) {
-        Edge e = new Edge(fromNode,toNode,acousticScore,lmScore);
-        return addEdge(e, fromNode, toNode);
-    }
-
-    /**
-     * Add add an Edge and connect the "to" and "from" Nodes.
-     * @param fromNode
-     * @param e
-     * @param toNode
-     * @return the new Edge
-     */
-    protected Edge addEdge(Edge e, Node fromNode, Node toNode) {
-        fromNode.addToEdge( e );
-        toNode.addFromEdge( e );
-        addEdge( e );
+        String edgeId = fromNode.id + toNode.id;
+        Edge e = (Edge)edges.get(edgeId);
+        if (e == null) {
+            e = new Edge(fromNode,toNode,acousticScore,lmScore);
+            edges.put(edgeId,e);
+        }
         return e;
     }
 
@@ -267,7 +258,7 @@ public class Lattice {
         else {
             word = token.getSearchState().toString();
         }
-        return addNode(word,0,0);
+        return addNode(Integer.toString(token.hashCode()),word,0,0);
     }
 
     /**
@@ -353,16 +344,7 @@ public class Lattice {
         return nodes.values();
     }
 
-    /**
-     * Add an Edge to the set of all Edges.
-     *
-     * @param e
-     */
-    protected void addEdge(Edge e) {
-        edges.add(e);
-    }
-
-    /**
+     /**
      * Remove an Edge from the set of all Edges.
      * @param e
      */
@@ -376,7 +358,7 @@ public class Lattice {
      * @return the set of all edges
      */
     public Collection getEdges() {
-        return edges;
+        return edges.values();
     }
 
     /**
@@ -413,7 +395,7 @@ public class Lattice {
             for( Iterator i= nodes.values().iterator(); i.hasNext(); ) {
                 ((Node)(i.next())).dumpAISee( f );
             }
-            for( Iterator i= edges.iterator(); i.hasNext(); ) {
+            for( Iterator i= edges.values().iterator(); i.hasNext(); ) {
                 ((Edge)(i.next())).dumpAISee( f );
             }
             f.write( "}\n");
@@ -436,7 +418,7 @@ public class Lattice {
         for (Iterator i = nodes.values().iterator(); i.hasNext();) {
             ((Node) (i.next())).dump(out);
         }
-        for (Iterator i = edges.iterator(); i.hasNext();) {
+        for (Iterator i = edges.values().iterator(); i.hasNext();) {
             ((Edge) (i.next())).dump(out);
         }
         out.println("initialNode: " + initialNode.getId() );
