@@ -213,7 +213,7 @@ public class Lattice {
      *
      * @param token the word-ending token to collapse
      */
-    public void collapseWordToken(Token token) {
+    private void collapseWordToken(Token token) {
         if (visitedWordTokens.contains(token)) {
             return;
         }
