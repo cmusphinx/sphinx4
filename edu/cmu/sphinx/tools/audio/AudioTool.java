@@ -103,14 +103,26 @@ public class AudioTool {
      */
     private static void dumpLineInfo(String indent,
                                      Line.Info[] lineInfo) {
-        if ((lineInfo == null) || (lineInfo.length == 0)) {
-            System.out.println(indent + "none");
-        }
-        for (int i = 0; i < lineInfo.length; i++) {
-            AudioFormat[] formats = ((DataLine.Info) lineInfo[i]).getFormats();
-            for (int j = 0; j < formats.length; j++) {
-                System.out.println(indent + formats[j]);
+        int numDumped = 0;
+        
+        if (lineInfo != null) {
+            for (int i = 0; i < lineInfo.length; i++) {
+                if (lineInfo[i] instanceof DataLine.Info) {
+                    AudioFormat[] formats =
+                        ((DataLine.Info) lineInfo[i]).getFormats();
+                    for (int j = 0; j < formats.length; j++) {
+                        System.out.println(indent + formats[j]);
+                    }
+                    numDumped++;
+                } else if (lineInfo[i] instanceof Port.Info) {
+		    System.out.println(indent + lineInfo[i]);
+                    numDumped++;
+                }
             }
+        }
+
+        if (numDumped == 0) {
+            System.out.println(indent + "none");
         }
     }
     
