@@ -141,6 +141,8 @@ public class Confidence {
 
     /**
      * Prints out the word and its confidence score.
+     *
+     * @param wr the WordResult to print
      */
     private static void printWordConfidence(WordResult wr) {
         String word = wr.getPronunciation().getWord().getSpelling();
