@@ -12,6 +12,8 @@
 
 package demo.jsapi.cardmatch;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -23,25 +25,47 @@ import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
 
-import edu.cmu.sphinx.decoder.Decoder;
+import demo.jsapi.cardmatch.CardMatchFrame;
+import demo.jsapi.cardmatch.Game;
+import demo.jsapi.cardmatch.Recorder;
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.jsapi.JSGFGrammar;
+import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.util.SphinxProperties;
-
-
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 /**
  * A recording device.
  */
-public class CardMatch implements Recorder {
+public class CardMatch implements Recorder, Configurable {
 
-    private static final String PROP_PREFIX = "demo.jsapi.cardmatch.";
+    /**
+     * The sphinx property for the recognizer to use
+     */
+
+    public static final String PROP_RECOGNIZER = "recognizer";
+
+    /**
+     * The sphinx property for the microphone to use
+     */
+
+    public static final String PROP_MICROPHONE = "microphone";
+
+    /**
+     * The sphinx property for the grammar to use
+     */
+
+    public static final String PROP_GRAMMAR = "grammar";
 
     /**
      * The SphinxProperty for the number of cards in this game.
      */
-    public static final String PROP_NUM_CARDS = PROP_PREFIX + "numberOfCards";
+    public static final String PROP_NUM_CARDS = "numberOfCards";
 
     /**
      * The default value of PROP_NUM_CARDS.
@@ -51,8 +75,8 @@ public class CardMatch implements Recorder {
     /**
      * The SphinxProperty for the image files.
      */
-    public static final String PROP_IMAGE_FILES = PROP_PREFIX + "imageFiles";
-    
+    public static final String PROP_IMAGE_FILES = "imageFiles";
+
     /**
      * The default value of PROP_IMAGE_FILES.
      */
@@ -61,8 +85,7 @@ public class CardMatch implements Recorder {
     /**
      * The SphinxProperty specifying whether to do endpointing.
      */
-    public static final String PROP_DO_ENDPOINTING =
-        PROP_PREFIX + "doEndpointing";
+    public static final String PROP_DO_ENDPOINTING = "doEndpointing";
 
     /**
      * The default value of PROP_DO_ENDPOINTING.
@@ -72,75 +95,115 @@ public class CardMatch implements Recorder {
     /**
      * The SphinxProperty specifying whether to use a voice.
      */
-    public static final String PROP_USE_VOICE = PROP_PREFIX + "useVoice";
+    public static final String PROP_USE_VOICE = "useVoice";
 
     /**
      * The default value of PROP_USE_VOICE.
      */
     public static final boolean PROP_USE_VOICE_DEFAULT = false;
 
-
-    private Decoder decoder;
+    // ------------------------------
+    // Configuration data
+    // ------------------------------
+    private String name;
+    private Recognizer recognizer;
     private Microphone microphone;
+    private JSGFGrammar grammar;
+    private List imageFiles;
+    private boolean doEndpointing;
+    private boolean useVoice;
+    private int numberOfCards;
+
     private CardMatchFrame cardMatchFrame;
 
-    private RuleGrammar ruleGrammar;
-    private boolean doEndpointing;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry)
+            throws PropertyException {
+        this.name = name;
+        registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
+        registry.register(PROP_GRAMMAR, PropertyType.COMPONENT);
+        registry.register(PROP_MICROPHONE, PropertyType.COMPONENT);
 
+        registry.register(PROP_DO_ENDPOINTING, PropertyType.BOOLEAN);
+        registry.register(PROP_USE_VOICE, PropertyType.BOOLEAN);
+
+        registry.register(PROP_NUM_CARDS, PropertyType.INT);
+        registry.register(PROP_IMAGE_FILES, PropertyType.STRING_LIST);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER,
+                Recognizer.class);
+        grammar = (JSGFGrammar) ps
+                .getComponent(PROP_GRAMMAR, JSGFGrammar.class);
+        microphone = (Microphone) ps.getComponent(PROP_MICROPHONE,
+                Microphone.class);
+
+        doEndpointing = ps.getBoolean(PROP_DO_ENDPOINTING,
+                PROP_DO_ENDPOINTING_DEFAULT);
+        useVoice = ps.getBoolean(PROP_USE_VOICE, PROP_USE_VOICE_DEFAULT);
+
+        numberOfCards = ps.getInt(PROP_NUM_CARDS, PROP_NUM_CARDS_DEFAULT);
+        imageFiles = ps.getStrings(PROP_IMAGE_FILES);
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getName()
+     */
+    public String getName() {
+        return name;
+    }
 
     /**
-     * Constructs a default CardMatch object.
-     *
-     * @param context the properties context
+     * Starts the card game
+     *  
      */
-    public CardMatch(String context) 
-        throws InstantiationException, IOException {
-
-        System.out.println("   Loading decoder...");
-	
-	decoder = new Decoder(context);
-        SphinxProperties props = decoder.getSphinxProperties();
-
-        doEndpointing = props.getBoolean(PROP_DO_ENDPOINTING,
-                                         PROP_DO_ENDPOINTING_DEFAULT);
-
-        boolean useVoice = props.getBoolean(PROP_USE_VOICE,
-                                            PROP_USE_VOICE_DEFAULT);
+    public void go() {
+        try {
+            System.out.println("Loading recognizer ...");
+            recognizer.allocate();
+            System.out.println("Here we go ...");
+            Game game = new Game(numberOfCards, imageFiles);
+            cardMatchFrame = new CardMatchFrame("Card Match", this, game, useVoice);
         
-	microphone = new Microphone();
-        microphone.initialize("mic", null, props, null);
+            // add a listener for closing this JFrame and quitting the program
+            cardMatchFrame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    recognizer.deallocate();
+                    System.exit(0);
+                }
+            });
+            
+            cardMatchFrame.setVisible(true);
+        } catch (IOException e) {
+            System.err.println("Can't load recognizer " + e);
+        }
 
-	decoder.initialize();
-        decoder.getRecognizer().getFrontEnd().setDataSource(microphone);
-
-        System.out.println("   Initialized Decoder");
-
-        int numberOfCards = props.getInt
-            (PROP_NUM_CARDS, PROP_NUM_CARDS_DEFAULT);
-        String[] imageFiles = getImageFiles(props);
-        System.out.println("   Parsed image files");
-
-        Game game = new Game(numberOfCards, imageFiles);
-        System.out.println("   Created and shuffled cards");
-
-	cardMatchFrame = new CardMatchFrame("Card Match", this, game, useVoice);
-	cardMatchFrame.setVisible(true);
-
-        JSGFGrammar grammar = (JSGFGrammar)decoder.getRecognizer().getGrammar();
-        ruleGrammar = grammar.getRuleGrammar();
-        System.out.println("   Loaded Grammar");
-        System.out.println("   Here we go ...");
     }
 
     /**
      * Returns an array of all the image file names.
-     *
-     * @param props the SphinxProperties to get the file names from
-     *
+     * 
+     * @param props
+     *                the SphinxProperties to get the file names from
+     * 
      * @return an array of all the image file names
      */
-    private String[] getImageFiles(SphinxProperties props) {
-        String files = props.getString(PROP_IMAGE_FILES, null);
+    private String[] getImageFiles(String files) {
+
         if (files == null) {
             throw new IllegalStateException("No image files");
         } else {
@@ -156,43 +219,40 @@ public class CardMatch implements Recorder {
         }
     }
 
-
     /**
      * Starts recording.
-     *
-     * @return <code>true</code>  if recording started successfully.
+     * 
+     * @return <code>true</code> if recording started successfully.
      */
     public boolean startRecording() {
-	// drain();
+        // drain();
         microphone.clear();
-	boolean started = microphone.startRecording();
+        boolean started = microphone.startRecording();
         if (started) {
             (new DecodingThread()).start();
         } else {
-	    System.out.println("Not started!");
-	}
+            System.out.println("Not started!");
+        }
         return started;
     }
 
-
     /**
      * Stops recording.
-     *
+     * 
      * @return <code>true</code> if the recording was stopped properly
      */
     public boolean stopRecording() {
-	microphone.stopRecording();
-	return true;
+        microphone.stopRecording();
+        return true;
     }
-
 
     /**
      * Returns true if this Recorder is recording.
-     *
-     * @return <code>true</code>  if this Recorder is recording
+     * 
+     * @return <code>true</code> if this Recorder is recording
      */
     public boolean isRecording() {
-	return microphone.getRecording();
+        return microphone.getRecording();
     }
 
     /**
@@ -203,12 +263,11 @@ public class CardMatch implements Recorder {
         // decoder.getRecognizer().getFrontEnd().drain();
     }
 
-
     /**
-     * Does decoding in a separate thread so that it does not
-     * block the calling thread. It will automatically update
-     * the GUI components once the decoding is completed. This
-     * is analogous to the "Control" components in the MVC model.
+     * Does decoding in a separate thread so that it does not block the calling
+     * thread. It will automatically update the GUI components once the
+     * decoding is completed. This is analogous to the "Control" components in
+     * the MVC model.
      */
     class DecodingThread extends Thread {
 
@@ -216,8 +275,8 @@ public class CardMatch implements Recorder {
          * Runs this DecodingThread.
          */
         public void run() {
-            Result result = decoder.decode();
-            
+            Result result = recognizer.recognize();
+
             if (doEndpointing) {
                 microphone.stopRecording();
             }
@@ -233,15 +292,14 @@ public class CardMatch implements Recorder {
 
     /**
      * Returns the tag for the given result text.
-     *
-     * @param resultText the result text
-     *
+     * 
+     * @param resultText
+     *                the result text
+     * 
      * @return the tag associated with the result
      */
     private String getResultTag(String resultText) {
         try {
-            JSGFGrammar grammar = 
-                (JSGFGrammar)decoder.getRecognizer().getGrammar();
             RuleGrammar ruleGrammar = grammar.getRuleGrammar();
             RuleParse ruleParse = ruleGrammar.parse(resultText, null);
             if (ruleParse != null) {
@@ -256,24 +314,27 @@ public class CardMatch implements Recorder {
             return null;
         }
     }
-
     /**
      * Main method for running the CardMatch application.
      */
-    public static void main(String[] argv) {
-	try {
-	    String propertiesFile = argv[0];
-	    String pwd = System.getProperty("user.dir");
-	    String context = "CardMatch";
-
-	    SphinxProperties.initContext
-		(context, new URL
-		 ("file://" + pwd + File.separatorChar + propertiesFile));
-	    
-	    CardMatch cardMatch = new CardMatch(context);
-
-	} catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-	}
+    public static void main(String[] args) {
+        try {
+            URL url;
+            if (args.length > 0) {
+                url = new File(args[0]).toURI().toURL();
+            } else {
+                url = CardMatch.class.getResource("cardmatch.config.xml");
+            }
+            ConfigurationManager cm = new ConfigurationManager(url);
+            CardMatch cardMatch = (CardMatch) cm.lookup("cardMatch");
+            cardMatch.go();
+        } catch (IOException e) {
+            System.err.println("Problem when loading cardmatch: " + e);
+        } catch (PropertyException e) {
+            System.err.println("Problem configuring cardmatch: " + e);
+        } catch (InstantiationException e) {
+            System.err.println("Problem creating cardmatch: " + e);
+        }
     }
+
 }

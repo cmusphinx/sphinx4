@@ -31,7 +31,7 @@ public class Game {
      * @param numberOfCards the number of cards to use in the game
      * @param imageFile the array of image file for the cards
      */
-    public Game(int numberOfCards, String[] imageFiles) {
+    public Game(int numberOfCards, List imageFiles) {
         cards = createCards(numberOfCards, imageFiles);
         startOver();
     }
@@ -55,11 +55,11 @@ public class Game {
      *
      * @return a list of cards
      */
-    private List createCards(int numberOfCards, String[] imageFiles) {
+    private List createCards(int numberOfCards, List imageFiles) {
         List list = new LinkedList();
         for (int i = 0; i < numberOfCards; i++) {
-            int whichImage = i % imageFiles.length;
-            Card card = new Card(imageFiles[whichImage]);
+            int whichImage = i % imageFiles.size();
+            Card card = new Card((String) imageFiles.get(whichImage));
             list.add(card);
         }
         return list;

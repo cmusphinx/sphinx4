@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project basedir="." default="none" name="The cardmatch demo.">
+<project basedir="." default="all" name="The cardmatch demo.">
 
 <description>
 This file is used to run the cardmatch demo.
@@ -71,7 +71,7 @@ NOTE:  Before running the tests, you must have already built
                 <classpath refid="run.classpath"/>
 		<sysproperty key="java.util.logging.config.file"
                              value="cardmatch.props"/>
-		  <arg value="cardmatch.props"/>
+		  <arg value="cardmatch.config.xml"/>
 	    </java>
     </target>
 
@@ -88,13 +88,11 @@ NOTE:  Before running the tests, you must have already built
 	          fork="true"
 		  maxmemory="128m">
 		  <classpath refid="run.classpath"/>
-		  <sysproperty key="edu.cmu.sphinx.frontend.FrontEndFactory.pipelines"
-		               value="mfc_ep"/>
-		  <sysproperty key="demo.jsapi.cardmatch.doEndpointing"
-		               value="true"/>
+		  <sysproperty key="frontend" value="epFrontEnd"/>
+		  <sysproperty key="cardMatch[doEndpointing]" value="true"/>
                   <sysproperty key="java.util.logging.config.file"
                              value="cardmatch.props"/>
-		  <arg value="cardmatch.props"/>
+		  <arg value="cardmatch.config.xml"/>
 	    </java>
     </target>
 
