@@ -27,32 +27,38 @@ import java.io.Serializable;
 public class HMMPosition implements Serializable {
     private static Map map = new LinkedHashMap();
     private String name;
+    private int index;
 
 
     /**
      * HMM is at the beginning position of the word
      */
-    public static HMMPosition BEGIN = new HMMPosition("b");
+    public static HMMPosition BEGIN = new HMMPosition("b", 0);
 
     /**
      * HMM is at the end position of the word
      */
-    public static HMMPosition END = new HMMPosition("e");
+    public static HMMPosition END = new HMMPosition("e", 1);
 
     /**
      * HMM is at the beginning and the end of the word
      */
-    public static HMMPosition SINGLE = new HMMPosition("s");
+    public static HMMPosition SINGLE = new HMMPosition("s", 2);
 
     /**
      * HMM is completely internal to the word
      */
-    public static HMMPosition INTERNAL  = new HMMPosition("i");
+    public static HMMPosition INTERNAL  = new HMMPosition("i", 3);
 
     /**
      * HMM is at an undefined position n the word
      */
-    public static HMMPosition UNDEFINED  = new HMMPosition("-");
+    public static HMMPosition UNDEFINED  = new HMMPosition("-", 4);
+
+    /**
+     * The maximum number of HMM positions
+     */
+    public final static int MAX_POSITIONS = 5;
 
 
     /**
@@ -60,8 +66,9 @@ public class HMMPosition implements Serializable {
      *
      * @param rep the representation for this position
      */
-    private HMMPosition(String rep) {
+    private HMMPosition(String rep, int index) {
 	this.name = rep;
+        this.index = index;
 	map.put(rep, this);
     }
 
@@ -75,6 +82,18 @@ public class HMMPosition implements Serializable {
      */
     public static HMMPosition lookup(String rep) {
 	return (HMMPosition) map.get(rep);
+    }
+
+
+    /**
+     * Returns the index for this position.  Each HMMPosition
+     * maintains a unique index. This allows arrays of hmm positions
+     * to be easily maintained
+     *
+     * @return the index
+     */
+    public int getIndex() {
+        return index;
     }
 
     /**
