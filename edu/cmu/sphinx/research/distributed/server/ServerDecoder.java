@@ -19,6 +19,7 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -138,6 +139,9 @@ public class ServerDecoder extends BaseServer {
                     String resultString = result.getBestResultNoSilences();
                     sendLine(resultString);
                 }
+            } catch (EOFException eofe) {
+                System.out.println("RecognitionHandler: EOF reached");
+                return;
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
