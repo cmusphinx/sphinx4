@@ -46,14 +46,6 @@ edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
 edu.cmu.sphinx.frontend.windowShiftInMs = 10
 edu.cmu.sphinx.frontend.windower.alpha = 0.46
 
-edu.cmu.sphinx.frontend.mel.numFilters = 40
-edu.cmu.sphinx.frontend.mel.minfreq = 130
-edu.cmu.sphinx.frontend.mel.maxfreq = 6800
-edu.cmu.sphinx.frontend.fft.numberFftPoints = 512
-edu.cmu.sphinx.frontend.cmn.live.initialCepstralMean = 12
-edu.cmu.sphinx.frontend.cmn.live.windowSize = 500
-edu.cmu.sphinx.frontend.cmn.live.shiftWindow = 800
-edu.cmu.sphinx.frontend.sampleRate = 16000
 
 ############################################################
 # 
@@ -63,11 +55,11 @@ edu.cmu.sphinx.frontend.sampleRate = 16000
 
 edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=400
 edu.cmu.sphinx.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.search.FastActiveList
-edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-56
+edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-16
 edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.search.Linguist.validateSentenceHMM=false
-edu.cmu.sphinx.search.Linguist.compositeThreshold=100
+edu.cmu.sphinx.search.Linguist.compositeThreshold=10000
 edu.cmu.sphinx.search.validateResults=false
 
 
@@ -118,6 +110,8 @@ edu.cmu.sphinx.search.WordListGrammar.path = ../performance/ti46/digits.wordlist
 
 edu.cmu.sphinx.search.Recognizer.dumpFrontEnd=true
 edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist
-edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=true
+edu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar
-
+edu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true
+edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=true
+edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
