@@ -720,6 +720,15 @@ public class Lattice {
     public LogMath getLogMath() {
         return logMath;
     }
+
+    /**
+     * Sets the LogMath to use.
+     *
+     * @param logMath the LogMath to use
+     */
+    public void setLogMath(LogMath logMath) {
+        this.logMath = logMath;
+    }
     
     /**
      * Edge scores are usually log-likelyhood.  Set the log base.
@@ -813,6 +822,9 @@ public class Lattice {
             return;
         }
         visited.add(n);
+        if (n == null) {
+            throw new Error("Node is null");
+        }
         Iterator e = n.getLeavingEdges().iterator();
         while (e.hasNext()) {
             sortHelper(((Edge)e.next()).getToNode(),sorted,visited);
