@@ -21,7 +21,7 @@ NOTE:  Before running the tests, you must have already built
         <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
     </path>
     <property name="build_dir"		value="${top_dir}/bld"/>
-    <property name="classes_dir"	value="${top_dir}/classes"/>
+    <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="${build_dir}/lib"/>
 
     <property name="skip"               value="0"/>
@@ -39,6 +39,16 @@ NOTE:  Before running the tests, you must have already built
               value="tests.knowledge.language.large.UtteranceTest"/>    
     <property name="memory_test"
               value="tests.knowledge.language.large.MemoryTest"/>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * The 'none' target.                                     * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="none">
+            <echo>Type 'ant -projecthelp' for possible targets.</echo>
+    </target>
 
 
     <!-- ********************************************************** -->

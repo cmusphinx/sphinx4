@@ -21,8 +21,18 @@ NOTE:  Before running the tests, you must have already built
         <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
     </path>
     <property name="build_dir"		value="${top_dir}/bld"/>
-    <property name="classes_dir"	value="${top_dir}/classes"/>
+    <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="${build_dir}/lib"/>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * The 'none' target.                                     * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="none">
+            <echo>Type 'ant -projecthelp' for possible targets.</echo>
+    </target>
 
 
     <!-- ********************************************************** -->

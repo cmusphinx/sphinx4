@@ -17,7 +17,18 @@ NOTE:  Before running the tests, you must have already built
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <property name="top_dir"		value="../.."/>
-    <property name="classes_dir"	value="${top_dir}/classes"/>
+    <property name="build_dir"          value="${top_dir}/bld"/>
+    <property name="classes_dir"	value="${build_dir}/classes"/>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * The 'none' target.                                     * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="none">
+            <echo>Type 'ant -projecthelp' for possible targets.</echo>
+    </target>
 
 
     <!-- ********************************************************** -->
