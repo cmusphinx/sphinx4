@@ -57,8 +57,6 @@ mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class=edu.cmu.sphinx.fronten
 mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.frontend.feature.LiveCMN
 mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor
 mfc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.8.class=edu.cmu.sphinx.frontend.feature.FrameDropper
-mfc;edu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2
-mfc;edu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true
 
 
 mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.nStages=9
@@ -71,9 +69,10 @@ mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class=edu.cmu.sphinx.fron
 mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class=edu.cmu.sphinx.frontend.feature.LiveCMN
 mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.8.class=edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor
 mfc_ep;edu.cmu.sphinx.frontend.FrontEndFactory.stage.9.class=edu.cmu.sphinx.frontend.feature.FrameDropper
-mfc_ep;edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=13
-mfc_ep;edu.cmu.sphinx.frontend.FrameDropper.dropEveryNthFrame=2
-mfc_ep;edu.cmu.sphinx.frontend.FrameDropper.replaceNthWithPrevious=true
+
+edu.cmu.sphinx.frontend.endpoint.LevelTracker.threshold=13
+edu.cmu.sphinx.frontend.feature.FrameDropper.dropEveryNthFrame=2
+edu.cmu.sphinx.frontend.feature.FrameDropper.replaceNthWithPrevious=true
 
 
 ############################################################
