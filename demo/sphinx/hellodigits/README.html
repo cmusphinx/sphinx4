@@ -56,14 +56,16 @@ You said: four five six nine
 Start speaking. Press Ctrl-C to quit.
       </pre>
       <h3>Building</h3>
-      <p>To build this demo, merely type the following in a shell from
+      <p>Check the <code>bin</code> directory to see if it has the
+         <code>HelloDigits.jar</code> file. If not, you need to build it.
+	 To build this demo, merely type the following in a shell from
          any directory in the Sphinx-4 hierarchy:
 	 <ul>
 	 <code>ant -find demo.xml</code>
 	 </ul>
       </p>
       <p>
-      Doing so will create <code>bld/bin/HelloDigits.jar</code> under the 
+      Doing so will create <code>bin/HelloDigits.jar</code> under the 
       top level directory.  You can run the demo using <code>java -jar</code> 
       (see "Running" below).
       </p>
@@ -80,7 +82,7 @@ Start speaking. Press Ctrl-C to quit.
       To run the demo, go to the <b>top level directory</b> and type: 
       </p>
       <code>
-      <br>sphinx4> java -jar bld/bin/HelloDigits.jar</code>
+      <br>sphinx4> java -jar bin/HelloDigits.jar</code>
       </code>
       <p>
       <font color="FF0000"><b>NOTE:</b></font> Make sure that you are using
