@@ -229,6 +229,25 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     public void stopRecognition() {
     }
+
+    /**
+     * Returns the LogMath used.
+     *
+     * @return the logMath used
+     */
+    public LogMath getLogMath() {
+        return logMath;
+    }
+
+    /**
+     * Returns the log silence insertion probability.
+     *
+     * @retun the log silence insertion probability.
+     */
+    public float getLogSilenceInsertionProbability() {
+        return logSilenceInsertionProbability;
+    }
+
     /**
      * Compiles the grammar into a sentence hmm. A GrammarJob is created for
      * the initial grammar node and added to the GrammarJob queue. While there
