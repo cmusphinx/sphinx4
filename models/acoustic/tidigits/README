@@ -1,0 +1,54 @@
+README
+======
+
+Models in this directory were trained with the 
+
+"NIST CD-ROM Version of the Texas Instruments-developed Studio Quality
+Speaker-Independent Connected-Digit Corpus".
+
+
+Contents of this directory:
+
+am.props
+--------
+
+Properties file containing the parameters used to train the acoustic model.
+
+wd_dependent_phone.500.mdef
+---------------------------
+Model definition file (ascii) which lists senone-ids and
+HMM compositions
+
+wd_dependent_phone.cd_continuous_4gau/
+--------------------------------------
+
+Directory containing one set of context-dependent acoustic models
+(means, variances, transition_matrices, mixture_weights),
+and the corresponding subvector-quantized models file (ascii)
+with 200 codewords.
+
+wd_dependent_phone.cd_continuous_8gau/
+--------------------------------------
+
+Directory containing one set of context-dependent acoustic models
+(means, variances, transition_matrices, mixture_weights),
+and the corresponding subvector-quantized models file (ascii)
+with 200 codewords.
+
+dictionary
+----------
+The training dictionary
+
+fillerdict
+-----------
+The training filler words dictionary
+
+unigram.lm
+----------
+ARPA format (ascii) unigram language model for the task.
+
+
+Acknowledgments
+===============
+
+This acoustic model is trained from the TIDIGITS corpus, which is the "NIST CD-ROM Version of the Texas Instruments-developed Studio Quality Speaker-Independent Connected-Digit Corpus". 

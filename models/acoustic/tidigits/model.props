@@ -1,0 +1,25 @@
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+
+description = TIDIGITS acoustic models
+
+isBinary = true
+featureType = cepstra_delta_doubledelta
+vectorLength = 39
+sparseForm = false
+
+numberFftPoints = 512
+filters = 40
+gaussians = 8
+maxFreq = 6800
+minFreq. = 130
+sampleRate = 16000
+
+dataLocation = wd_dependent_phone.cd_continuous_8gau
+modelDefinition = wd_dependent_phone.500.mdef
