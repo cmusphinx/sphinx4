@@ -1,4 +1,5 @@
 /*
+   LanguageState initialState = getInitialLanguageState();
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
  * Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
@@ -41,6 +42,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -159,6 +161,8 @@ public class LexTreeLinguist implements  Linguist {
         arcPool = null;
 
         StatisticsVariable.dumpAll();
+
+        testLinguist(5000, 2000);
     }
 
     /**
@@ -193,6 +197,11 @@ public class LexTreeLinguist implements  Linguist {
     }
 
 
+    /**
+     * retrieves the initial language state
+     *
+     * @return the initial language state
+     */
     public LanguageState getInitialLanguageState() {
         return new LexTreeInitialState(lexTree.getInitialNode());
     }
@@ -207,8 +216,6 @@ public class LexTreeLinguist implements  Linguist {
      * for the successors are added to the grammar job queue.
      */
     protected Collection compileGrammar() {
-        List gstateList = new ArrayList();
-
         Timer.start("compile");
 
         Timer.start("buildHmmPool");
@@ -249,6 +256,8 @@ public class LexTreeLinguist implements  Linguist {
         private LexTree.UnitLexNode left;
         private LexTree.UnitLexNode central;
         private LexTree.UnitLexNode right;
+
+
 
 
         /**
@@ -344,7 +353,19 @@ public class LexTreeLinguist implements  Linguist {
           *
           * @return a list of LanguageState objects
           */
-         abstract public List getSuccessors() ;
+         abstract public LanguageState[] getSuccessors() ;
+
+         /**
+          * Returns the string representation of this object
+          *
+          * @return the string representation
+          */
+        public String toString() {
+            String pos = central == null ? "" 
+                : central.getPosition().toString();
+            return central + "[" + left +
+                   "," + right +"]@" + pos;
+        }
     }
 
     /**
@@ -370,8 +391,9 @@ public class LexTreeLinguist implements  Linguist {
          *
          * @return a successor
          */
-        public List getSuccessors(){
+        public LanguageState[] getSuccessors(){
             List list = new ArrayList();
+
 
             LexTree.LexNode[] nodes = node.getNextNodes();
 
@@ -398,7 +420,17 @@ public class LexTreeLinguist implements  Linguist {
                                 (LexTree.UnitLexNode) rightNodes[j]));
                 }
             }
-            return list;
+            System.out.println("LTIS: return " + list.size() + " nodes.");
+            // since this only called once, it doesn't have to be too
+            // fast, so we can create the array of successors from the
+            // list
+            return (LanguageState[]) 
+                list.toArray(new LanguageState[list.size()]);
+        }
+
+
+        public String toString() {
+            return super.toString() + " initial";
         }
     }
 
@@ -435,6 +467,14 @@ public class LexTreeLinguist implements  Linguist {
 
             unitID = hmmPool.buildID(
                         central.getID(), leftID, right.getID());
+
+            if (false) {
+                System.out.println("Left id " + leftID + " node " + left);
+                System.out.println("central id " + central + " node " +
+                        central.getID());
+                System.out.println("right id " + right + " node " +
+                        right.getID());
+            }
         }
 
         /**
@@ -454,14 +494,14 @@ public class LexTreeLinguist implements  Linguist {
          *
          * @return the list of successors for this state
          */
-        public List getSuccessors() {
-            List list = new ArrayList(1);
+        public LanguageState[] getSuccessors() {
+            LanguageState[] nextStates   = new LanguageState[1];
             HMMPosition position = getCentral().getPosition();
             HMM hmm = hmmPool.getHMM(unitID, position);
 
-            list.add(new LexTreeHMMState(getLeft(), getCentral(),
-                    getRight(), hmm.getInitialState(), logOne));
-            return null;
+            nextStates[0] = new LexTreeHMMState(getLeft(), getCentral(),
+                    getRight(), hmm.getInitialState(), logOne);
+            return nextStates;
         }
 
         /**
@@ -481,6 +521,10 @@ public class LexTreeLinguist implements  Linguist {
                 logInsertionProbability += logWordInsertionProbability;
             }
             return logInsertionProbability;
+        }
+
+        public String toString() {
+            return super.toString() + " unit";
         }
     }
 
@@ -531,14 +575,13 @@ public class LexTreeLinguist implements  Linguist {
          *
          * @return the list of sucessor states
          */
-        public List getSuccessors() {
-            List list = null;
+        public LanguageState[] getSuccessors() {
+            LanguageState[] nextStates;
 
             // if this is an exit state, we are transitioning to a
             // new unit or to a word end.
 
             if (hmmState.isExitState()) {
-                list = new ArrayList();
 
                 // if this hmm  state is the last state of the last
                 // unit of a word, then all next nodes must be word
@@ -546,6 +589,7 @@ public class LexTreeLinguist implements  Linguist {
 
                 if (getCentral().isWordEnd()) {
                     LexTree.LexNode[] nodes = getCentral().getNextNodes();
+                    nextStates = new LanguageState[nodes.length];
                     for (int i = 0; i < nodes.length; i++) {
                         LexTree.LexNode node = nodes[i];
 
@@ -554,10 +598,9 @@ public class LexTreeLinguist implements  Linguist {
                         }
                 // BUG: we are not incorporating language
                 // probabilities into the search yet.
-                        list.add(new LexTreeWordState(getLeft(), getCentral(), 
-                                    getRight(), (LexTree.WordLexNode) node,
-                                    0.0f));
-
+                        nextStates[i] = new LexTreeWordState(getLeft(), 
+                                getCentral(), getRight(), 
+                                (LexTree.WordLexNode) node, 0.0f);
                     }
                 } else {
 
@@ -569,17 +612,23 @@ public class LexTreeLinguist implements  Linguist {
                     LexTree.UnitLexNode nextLeft = getCentral();
                     LexTree.UnitLexNode nextCentral = getRight();
 
-                    LexTree.LexNode[] nodes = nextCentral.getNextNodes();
+                    LexTree.LexNode[] nodes = getNextUnits(nextCentral);
+
+                    nextStates = new LanguageState[nodes.length];
 
                     for (int i = 0; i < nodes.length; i++) {
                         LexTree.LexNode nextRight = nodes[i];
 
                         if (! (nextRight instanceof LexTree.UnitLexNode)) {
-                            throw new Error("Corrupt lex tree (unit) ");
+                            System.out.println("next right " + nextRight);
+                            System.out.println("central is " +
+                                    getCentral());
+
+                            throw new Error("Corrupt lex tree (hmm) ");
                         }
 
-                        list.add(new LexTreeUnitState(nextLeft, nextCentral, 
-                                    (LexTree.UnitLexNode) nextRight));
+                        nextStates[i] = new LexTreeUnitState(nextLeft, 
+                                nextCentral, (LexTree.UnitLexNode) nextRight);
                     }
                 }
             } else {
@@ -587,16 +636,16 @@ public class LexTreeLinguist implements  Linguist {
                 // just go through the next set of successors
 
                 HMMStateArc[] arcs = hmmState.getSuccessors();
-                list = new ArrayList(arcs.length);
+                nextStates = new LanguageState[arcs.length];
                 for (int i = 0; i < arcs.length; i++) {
                     HMMStateArc arc = arcs[i];
-                    list.add(new LexTreeHMMState(getLeft(),
+                    nextStates[i] = new LexTreeHMMState(getLeft(),
                                 getCentral(), getRight(),
                                 arc.getHMMState(),
-                                arc.getProbability()));
+                                arc.getProbability());
                 }
             }
-            return list;
+            return nextStates;
         }
 
          /**
@@ -604,6 +653,10 @@ public class LexTreeLinguist implements  Linguist {
           */
          public boolean isEmitting() {
              return hmmState.isEmitting();
+         }
+
+         public String toString() {
+             return super.toString() + " hmm:" +  hmmState;
          }
     }
 
@@ -666,27 +719,31 @@ public class LexTreeLinguist implements  Linguist {
          *
          * @return the list of successor states
          */
-        public List getSuccessors() {
-            List list = null;
+        public LanguageState[] getSuccessors() {
 
             LexTree.UnitLexNode nextLeft = getCentral();
             LexTree.UnitLexNode nextCentral = getRight();
 
-            LexTree.LexNode[] nodes = nextCentral.getNextNodes();
+            LexTree.LexNode[] nextNodes = getNextUnits(nextCentral);
+            LanguageState[] nextStates = new LanguageState[nextNodes.length];
 
-            for (int i = 0; i < nodes.length; i++) {
-                LexTree.LexNode nextRight = nodes[i];
+            for (int i = 0; i < nextNodes.length; i++) {
+                LexTree.LexNode nextRight = nextNodes[i];
 
                 if (! (nextRight instanceof LexTree.UnitLexNode)) {
+                    System.out.println("nextRight " + nextRight);
                     throw new Error("Corrupt lex tree (unit) ");
                 }
-
-                list.add(new LexTreeUnitState(nextLeft, nextCentral, 
-                            (LexTree.UnitLexNode) nextRight));
+                nextStates[i] = new LexTreeUnitState(nextLeft, nextCentral, 
+                            (LexTree.UnitLexNode) nextRight);
             }
-            return list;
+            return nextStates;
         }
 
+         public String toString() {
+             return super.toString() + " word:" +
+                 wordLexNode.getPronunciation();
+         }
     }
 
     /**
@@ -703,6 +760,66 @@ public class LexTreeLinguist implements  Linguist {
             return lexTree.getInitialNode().getNextNodes();
         } else {
             return unitNode.getNextNodes();
+        }
+    }
+
+
+    /**
+     *  tests the linguist
+     */
+    public void testLinguist(int numFrames, int maxBeam) {
+        // this test invokes the linguist using access patterns that
+        // are similar to a real search. It allows for timing and
+        // profiling of the linguist, independent of the search
+        // or scoring
+        Timer frameTimer = Timer.getTimer(props.getContext(),
+                "frameTimer");
+        Timer totalTimer = Timer.getTimer(props.getContext(),
+                "totalTimer");
+        List activeList = new ArrayList();
+        int level = 0;
+        LanguageState initialState = getInitialLanguageState();
+        activeList.add(initialState);
+
+        totalTimer.start();
+        start();
+
+        for (int i = 0; i < numFrames; i++) {
+            List oldList = activeList;
+            activeList = new ArrayList(maxBeam * 10);
+
+            frameTimer.start();
+            for (int j = 0; j < oldList.size(); j++) {
+                LanguageState nextStates = (LanguageState) oldList.get(j);
+                testExpandState(level, activeList, nextStates);
+            }
+            frameTimer.stop();
+
+            System.out.println(" === frame " + i + " of " 
+                    + numFrames + " ====");
+            System.out.println(" ActiveList size " + activeList.size());
+             Collections.shuffle(activeList);
+            if (activeList.size() > maxBeam) {
+                activeList = activeList.subList(0, maxBeam);
+            }
+        }
+        stop();
+        totalTimer.stop();
+        Timer.dumpAll();
+    }
+
+    private void testExpandState(int level, List activeList, LanguageState ls) {
+        // System.out.println(Utilities.pad(level) + "Expanding  " +ls);
+        LanguageState[] newStates = ls.getSuccessors();
+
+        for (int i = 0; i < newStates.length; i++) {
+            LanguageState ns = newStates[i];
+            if (ns.isEmitting()) {
+        // System.out.println(Utilities.pad(level) + "Added emitting " +ns);
+                activeList.add(ns);
+            } else {
+                testExpandState(level + 1, activeList, ns);
+            }
         }
     }
 }

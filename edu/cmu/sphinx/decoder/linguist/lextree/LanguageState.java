@@ -23,9 +23,9 @@ public interface  LanguageState {
      *
      * @param the successor index
      *
-     * @return a successor
+     * @return the set of successors
      */
-     List getSuccessors();
+     LanguageState[]  getSuccessors();
 
      /**
       * Determines if this is an emitting state

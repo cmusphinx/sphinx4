@@ -410,6 +410,10 @@ class LexTree {
             return position == HMMPosition.BEGIN || 
                    position == HMMPosition.SINGLE;
         }
+
+        public String toString() {
+            return getUnit().getName();
+        }
     }
 
 
@@ -453,7 +457,7 @@ class LexTree {
          * @param the string representation
          */
         public String toString() {
-            return pronunciation.toString();
+            return "WordLexNode: " + pronunciation.toString();
         }
     }
 

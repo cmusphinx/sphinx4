@@ -100,6 +100,17 @@ class HMMPool {
      */
     HMM getHMM(int unitID, HMMPosition position) {
         Unit unit = getUnit(unitID);
+
+        if (unit == null) {
+            System.out.println("Can't find unit at position " + unitID);
+            int id = getLeftUnitID(unitID);
+            System.out.println("Left " + id + " unit " + getUnit(id));
+            id = getCentralUnitID(unitID);
+            System.out.println("central " + id + " unit " + getUnit(id));
+            id = getRightUnitID(unitID);
+            System.out.println("right " + id + " unit " + getUnit(id));
+
+        }
         assert unit != null;
         return model.lookupNearestHMM(unit, position);
     }
@@ -151,9 +162,17 @@ class HMMPool {
      * @return the id for the context dependent unit
      */
     int buildID(int unitID, int leftID, int rightID) {
-        return unitID * (maxCIUnits * maxCIUnits)
-              + (leftID * maxCIUnits) 
-              + rightID ;
+        // special case ... if the unitID is assoicated with
+        // silence than we have no context ... so use the CI
+        // form
+
+        if (unitTable[unitID].isSilence()) {
+            return unitID;
+        } else {
+            return unitID * (maxCIUnits * maxCIUnits)
+                  + (leftID * maxCIUnits) 
+                  + rightID ;
+        }
     }
 
     /**
