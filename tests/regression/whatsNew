@@ -40,6 +40,8 @@ print "<br>";
 print "</div>";
 print "<br>";
 
+
+print "<br>";
 open(HIST, "cvs_history $queryDate | ");
 
 # print start_table({-border=>''});
@@ -76,5 +78,39 @@ print "<UL>" ;
 print  "<li> Click File to show source code</li>" ;
 print  "<li> Click Version to show changes made since last version</li>";
 print "</UL>" ;
+
+print "<table cellpadding=0 cellspacing=0 border=0 width=100%";
+print "    align=center bgcolor=#ccccff>";
+print "<tbody>";
+print "<tr>";
+print "<td valign=top align=center><br>";
+print "<big><b>Software Environment on $queryDate";
+print "</b></big><br>";
+print "<br>";
+print "</td>";
+print "</tr>";
+print "</tbody>";
+print "</table>";
+print "<br>";
+print "</div>";
+print "<br>";
+
+$javaCmd = $ENV{'JAVA_HOME'} . "/bin/java -version 2>&1";
+
+$javaVersion = `$javaCmd`;
+$uptime = `uptime`;
+
+print "<table align=center cellpadding=2 cellspacing=2 border=1 width=80%>\n";
+print "<tr align=left valign=top>";
+print "<th> JAVA_HOME";
+print "<td> $ENV{'JAVA_HOME'}";
+print "<tr>";
+print "<th> Java Version";
+print "<td> $javaVersion";
+print "<tr>";
+print "<th> Uptime";
+print "<td> $uptime";
+print "</table>\n";
+
 print "</body";
 print "</html>\n";
