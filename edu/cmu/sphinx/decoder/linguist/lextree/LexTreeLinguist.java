@@ -59,6 +59,42 @@ import java.util.Comparator;
  */
 public class LexTreeLinguist implements  Linguist {
 
+    /**
+     * Prefix for search.Linguist.LexTreeLinguist  SphinxProperties.
+     */
+    private final static String PROP_PREFIX =
+	"edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist.";
+
+
+    /**
+      * A sphinx property that determines whether or not full word
+      * histories are used to determine when two states are equal.
+      */
+    public final static String PROP_FULL_WORD_HISTORIES
+        = PROP_PREFIX + "fullWordHistories";
+
+    /**
+     * The default value for PROP_FULL_WORD_HISTORIES
+     */
+    public final static boolean PROP_FULL_WORD_HISTORIES_DEFAULT = true;
+
+    /**
+      * A sphinx property that determines whether or not the linguist
+      * will maintain separate right context for word states. If this
+      * property is set to true (the default), distinct word states
+      * are maintained for all possible right contexts during the
+      * search. This yields a correct search. When set to false, the
+      * linguist will treat words with different right contexts as
+      * equivalent.
+      */
+    public final static String PROP_MAINTAIN_SEPARATE_WORD_RC
+        = PROP_PREFIX + "maintainSeparateWordRC";
+
+    /**
+     * The default value for PROP_MAINTAIN_SEPARATE_WORD_RC
+     */
+    public final static boolean PROP_MAINTAIN_SEPARATE_WORD_RC_DEFAULT = true;
+
     private SphinxProperties props;
 
     private LanguageModel languageModel;
@@ -82,6 +118,7 @@ public class LexTreeLinguist implements  Linguist {
     private int silenceID;
     private LexTree.WordLexNode finalNode;
     private boolean fullWordHistories = true;
+    private boolean maintainSeparateRightContextsForWords = false;
     
 
     /**
@@ -100,6 +137,14 @@ public class LexTreeLinguist implements  Linguist {
         this.acousticModel = models[0];
         this.logMath = LogMath.getLogMath(context);
         this.languageModel = languageModel;
+
+        this.fullWordHistories =
+            props.getBoolean(PROP_FULL_WORD_HISTORIES,
+                    PROP_FULL_WORD_HISTORIES_DEFAULT);
+
+        this.maintainSeparateRightContextsForWords =
+                    props.getBoolean(PROP_MAINTAIN_SEPARATE_WORD_RC,
+                    PROP_MAINTAIN_SEPARATE_WORD_RC_DEFAULT);
 
         // System.out.println("LM Max depth is " + languageModel.getMaxDepth());
 
@@ -1170,8 +1215,12 @@ public class LexTreeLinguist implements  Linguist {
         // so we can reduce the number of word states (especially for
         // one unit words) by eliminating the lef it (by setting it to
         // 0).
+
+        LexTree.UnitLexNode right = maintainSeparateRightContextsForWords
+            ? curState.getRight() : null;
+
         return new LexTreeWordState(0,
-            curState.getCentral(), curState.getRight(), 
+            curState.getCentral(), right, 
             wordSequence.trim(languageModel.getMaxDepth() - 1), 
             nextWord, logProbability);
     }
@@ -1186,7 +1235,8 @@ public class LexTreeLinguist implements  Linguist {
     private SearchStateArc getEndWord() {
         if (endWord == null) {
             float logProbability = 0.0f;
-            endWord = new LexTreeWordState(0, null, null, new WordSequence(), finalNode, logProbability);
+            endWord = new LexTreeWordState(0, null, null, 
+                    new WordSequence(), finalNode, logProbability);
         }
         return endWord;
     }
