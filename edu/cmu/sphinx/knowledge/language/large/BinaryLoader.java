@@ -15,6 +15,8 @@ package edu.cmu.sphinx.knowledge.language.large;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 
+import edu.cmu.sphinx.decoder.linguist.Linguist;
+
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
@@ -241,8 +243,12 @@ class BinaryLoader {
 
         logMath = LogMath.getLogMath(context);
 
-        languageWeight = 9.5f;
-        wip = logMath.linearToLog(0.7);
+        languageWeight = props.getFloat(Linguist.PROP_LANGUAGE_WEIGHT, 
+                                        Linguist.PROP_LANGUAGE_WEIGHT_DEFAULT);
+
+        wip = (float) props.getDouble
+            (Linguist.PROP_WORD_INSERTION_PROBABILITY,
+             Linguist.PROP_WORD_INSERTION_PROBABILITY_DEFAULT);
 
         loadBinary(location);
     }
@@ -349,12 +355,21 @@ class BinaryLoader {
 	// read the bigram probabilities table
 	if (numberBigrams > 0) {
             this.bigramProbTable = readFloatTable(stream, bigEndian);
+            applyLanguageWeight(bigramProbTable, languageWeight);
+            applyWip(bigramProbTable, wip);
 	}
 
 	// read the trigram backoff weight table and trigram prob table
 	if (numberTrigrams > 0) {
 	    trigramBackoffTable = readFloatTable(stream, bigEndian);
-	    trigramProbTable = readFloatTable(stream, bigEndian);
+            trigramProbTable = readFloatTable(stream, bigEndian);
+
+            if (applyLanguageWeightAndWip) {
+                applyLanguageWeight(trigramProbTable, languageWeight);
+                applyWip(trigramProbTable, wip);
+                applyLanguageWeight(trigramBackoffTable, languageWeight);
+            }
+
             int bigramSegmentSize = 1 << logBigramSegmentSize;
             int trigramSegTableSize = ((numberBigrams+1)/bigramSegmentSize)+1;
             trigramSegmentTable = readIntTable(stream, bigEndian, 
@@ -508,18 +523,22 @@ class BinaryLoader {
         float logNotUnigramWeight = logMath.linearToLog(1.0f - unigramWeight);
         float logUniform = logMath.linearToLog(1.0f/(numberUnigrams));
 
+        float logWip = logMath.linearToLog(wip);
+
         float p2 = logUniform + logNotUnigramWeight;
 
         for (int i = 0; i < numberUnigrams; i++) {
             UnigramProbability unigram = unigrams[i];
+
             float p1 = unigram.getLogProbability();
+
             if (i != startWordID) {
                 p1 += logUnigramWeight;    
                 p1 = logMath.addAsLinear(p1, p2);
             }
 
             if (applyLanguageWeightAndWip) {
-                p1 = p1 * languageWeight + wip;
+                p1 = p1 * languageWeight + logWip;
                 unigram.setLogBackoff
                     (unigram.getLogBackoff() * languageWeight);
             }
@@ -527,6 +546,28 @@ class BinaryLoader {
             unigram.setLogProbability(p1);
         }
     }
+
+
+    /**
+     * Apply the language weight to the given array of probabilities.
+     */
+    private void applyLanguageWeight(float[] logProbabilities, 
+                                     float languageWeight) {
+        for (int i = 0; i < logProbabilities.length; i++) {
+            logProbabilities[i] = logProbabilities[i] * languageWeight;
+        }
+    }
+
+
+    /**
+     * Apply the WIP to the given array of probabilities.
+     */
+    private void applyWip(float[] logProbabilities, float wip) {
+        float logWip = logMath.linearToLog(wip);
+        for (int i = 0; i < logProbabilities.length; i++) {
+            logProbabilities[i] = logProbabilities[i] + logWip;
+        }
+    }   
 
     
     /**
@@ -545,16 +586,8 @@ class BinaryLoader {
 
 	float[] probTable = new float[numProbs];
 
-        if (applyLanguageWeightAndWip) {
-            for (int i = 0; i < numProbs; i++) {
-                probTable[i] = logMath.log10ToLog(readFloat(stream, bigEndian))
-                    * languageWeight + wip;
-            }
-        } else {
-            for (int i = 0; i < numProbs; i++) {
-                probTable[i] = 
-                    logMath.log10ToLog(readFloat(stream, bigEndian));
-            }
+        for (int i = 0; i < numProbs; i++) {
+            probTable[i] = logMath.log10ToLog(readFloat(stream, bigEndian));
         }
             
 	return probTable;
