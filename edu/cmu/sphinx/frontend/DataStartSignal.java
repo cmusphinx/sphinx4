@@ -38,4 +38,12 @@ public class DataStartSignal extends Signal {
         super(time);
     }
 
+    /**
+     * Returns the string "DataStartSignal".
+     *
+     * @return the string "DataStartSignal"
+     */
+    public String toString() {
+        return "DataStartSignal";
+    }
 }

@@ -35,4 +35,13 @@ public class SpeechStartSignal extends Signal {
     public SpeechStartSignal(long time) {
         super(time);
     }
+
+    /**
+     * Returns the string "SpeechStartSignal".
+     *
+     * @return the string "SpeechStartSignal"
+     */
+    public String toString() {
+        return "SpeechStartSignal";
+    }
 }

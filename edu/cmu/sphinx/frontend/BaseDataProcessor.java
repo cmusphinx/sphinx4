@@ -137,4 +137,13 @@ public abstract class BaseDataProcessor implements DataProcessor {
     public void setPredecessor(DataProcessor predecessor) {
         this.predecessor = predecessor;
     }
+
+    /**
+     * Returns the name of this BaseDataProcessor.
+     *
+     * @return the name of this BaseDataProcessor
+     */
+    public String toString() {
+        return name;
+    }
 }

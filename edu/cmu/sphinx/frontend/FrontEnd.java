@@ -161,4 +161,25 @@ public class FrontEnd extends BaseDataProcessor {
             listener.signalOccurred(signal);
         }
     }
+
+    
+    /**
+     * Returns a description of this FrontEnd in the format:
+     * <front end name> {<DataProcessor1>, <DataProcessor2> ... 
+     * <DataProcessorN>}
+     *
+     * @return a description of this FrontEnd
+     */
+    public String toString() {
+        String description = "";
+        DataProcessor current = last;
+        while (current != null) {
+            description = (current.getName() + description);
+            current = current.getPredecessor();
+            if (current != null) {
+                description = (", " + description);
+            }
+        }
+        return (getName() + " {" + description + "}");
+    }
 }

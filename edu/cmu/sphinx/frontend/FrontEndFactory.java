@@ -81,8 +81,8 @@ public class FrontEndFactory {
      *
      * @return the last DataProcessor of the front end with the given name
      *
-     * @throw InstantiationException if there is an error initializing
-     *                               a new front end
+     * @throws InstantiationException if there is an error initializing
+     *                                a new front end
      */
     public static FrontEnd getFrontEnd(String name, SphinxProperties props)
         throws InstantiationException {

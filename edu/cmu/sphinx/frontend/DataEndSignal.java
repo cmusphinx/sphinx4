@@ -37,4 +37,13 @@ public class DataEndSignal extends Signal {
     public DataEndSignal(long time) {
         super(time);
     }
+
+    /**
+     * Returns the string "DataEndSignal".
+     *
+     * @return the string "DataEndSignal"
+     */
+    public String toString() {
+        return "DataEndSignal";
+    }
 }
