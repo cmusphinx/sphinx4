@@ -36,17 +36,17 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 
 edu.cmu.sphinx.frontend.fft.numberFftPoints = 512
 
-edu.cmu.sphinx.frontend.filterbank = edu.cmu.sphinx.frontend.mfc.MelFilterbank
-edu.cmu.sphinx.frontend.mel.numFilters = 40
-edu.cmu.sphinx.frontend.mel.minfreq = 130
-edu.cmu.sphinx.frontend.mel.maxfreq = 6800
-edu.cmu.sphinx.frontend.cepstrumProducer = edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer
+# edu.cmu.sphinx.frontend.filterbank = edu.cmu.sphinx.frontend.mfc.MelFilterbank
+# edu.cmu.sphinx.frontend.mel.numFilters = 40
+# edu.cmu.sphinx.frontend.mel.minfreq = 130
+# edu.cmu.sphinx.frontend.mel.maxfreq = 6800
+# edu.cmu.sphinx.frontend.cepstrumProducer = edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer
 
-# edu.cmu.sphinx.frontend.filterbank = edu.cmu.sphinx.frontend.plp.PLPFilterbank
-# edu.cmu.sphinx.frontend.plp.numFilters = 40
-# edu.cmu.sphinx.frontend.plp.minfreq = 130
-# edu.cmu.sphinx.frontend.plp.maxfreq = 6800
-# edu.cmu.sphinx.frontend.cepstrumProducer = edu.cmu.sphinx.frontend.plp.PLPCepstrumProducer
+edu.cmu.sphinx.frontend.filterbank = edu.cmu.sphinx.frontend.plp.PLPFilterbank
+edu.cmu.sphinx.frontend.plp.numFilters = 40
+edu.cmu.sphinx.frontend.plp.minfreq = 130
+edu.cmu.sphinx.frontend.plp.maxfreq = 6800
+edu.cmu.sphinx.frontend.cepstrumProducer = edu.cmu.sphinx.frontend.plp.PLPCepstrumProducer
 
 edu.cmu.sphinx.frontend.cmn = none
 

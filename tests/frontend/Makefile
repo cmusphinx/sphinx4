@@ -135,11 +135,12 @@ dump_binary_cepstra: all
 	binary
 
 dump_ascii_cepstra: all
-        $(JAVA_CMD) \
-        tests.frontend.CepstrumFileDumper \
-        cepstra_dump.props \
+	$(JAVA_CMD) \
+	tests.frontend.CepstrumFileDumper \
+	cepstra_dump.props \
 	$(INPUT_FILE) \
 	$(OUTPUT_FILE) \
-        binary
+	ascii
+
 
 
