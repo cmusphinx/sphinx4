@@ -13,12 +13,7 @@
 
 package edu.cmu.sphinx.research.distributed.client;
 
-import edu.cmu.sphinx.frontend.AudioSource;
-import edu.cmu.sphinx.frontend.Cepstrum;
-import edu.cmu.sphinx.frontend.CepstrumExtractor;
-import edu.cmu.sphinx.frontend.Signal;
-
-import edu.cmu.sphinx.frontend.util.StreamAudioSource;
+import edu.cmu.sphinx.frontend.DataProcessingException;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
@@ -115,7 +110,7 @@ public interface ClientFrontEnd {
      *
      * @return the result string
      */
-    public String decode(InputStream is, String streamName) throws IOException;
-
+    public String decode(InputStream is, String streamName)
+        throws DataProcessingException, IOException;
 }
 

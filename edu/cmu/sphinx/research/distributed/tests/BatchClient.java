@@ -16,6 +16,8 @@ package edu.cmu.sphinx.research.distributed.tests;
 import edu.cmu.sphinx.research.distributed.client.ClientFrontEnd;
 import edu.cmu.sphinx.research.distributed.client.ClientFrontEndImpl;
 
+import edu.cmu.sphinx.frontend.DataProcessingException;
+
 import edu.cmu.sphinx.util.BatchFile;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
@@ -70,6 +72,11 @@ public class BatchClient {
 
     /**
      * Constructs a BatchClient with the given name and context.
+     *
+     * @param context the context to use
+     * @param batchFile the batch file to decode
+     *
+     * @throws IOException if an I/O error occurred
      */
     public BatchClient(String context, String batchFile) throws IOException {
         this.context = context;
@@ -85,8 +92,11 @@ public class BatchClient {
 
     /**
      * Decodes the batch of audio files
+     *
+     * @throws DataProcessingException if a data processing error occurs
+     * @throws IOException if an I/O error occurs
      */
-    public void decode() throws IOException {
+    public void decode() throws DataProcessingException, IOException {
         clientFrontEnd.connect();
 
 	int curCount = skip;
@@ -117,8 +127,12 @@ public class BatchClient {
      *
      * @param file the file to decode
      * @param reference the reference string (or null if not available)
+     *
+     * @throws DataProcessingException if a data processing error occurs
+     * @throws IOException if an I/O error occurs
      */
-    public void decodeFile(String file, String reference) throws IOException {
+    public void decodeFile(String file, String reference)
+        throws DataProcessingException, IOException {
 
         InputStream is = new FileInputStream(file);
 
@@ -169,6 +183,8 @@ public class BatchClient {
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
+        } catch (DataProcessingException dpe) {
+            dpe.printStackTrace();
         }
     }
 

@@ -59,7 +59,8 @@ public class ServerDecoder extends BaseServer {
      */
     public void initDecoder(String context) throws IOException {
         // using null as the DataSource will still initialize the decoder
-        decoder = new Decoder(context, null);
+        decoder = new Decoder(context);
+        decoder.initialize();
     }
 
 
@@ -112,7 +113,7 @@ public class ServerDecoder extends BaseServer {
                     writer = new PrintWriter(socket.getOutputStream(), true);
 
                     decoder.getRecognizer().getFrontEnd().setDataSource
-                        (new SocketCepstrumSource(socket));
+                        (new SocketDataSource(socket));
 
                 } catch (IOException ioe) {
                     ioe.printStackTrace();

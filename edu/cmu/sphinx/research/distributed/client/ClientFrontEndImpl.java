@@ -13,12 +13,16 @@
 
 package edu.cmu.sphinx.research.distributed.client;
 
-import edu.cmu.sphinx.frontend.AudioSource;
-import edu.cmu.sphinx.frontend.Cepstrum;
-import edu.cmu.sphinx.frontend.CepstrumExtractor;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataStartSignal;
+import edu.cmu.sphinx.frontend.DataProcessingException;
+import edu.cmu.sphinx.frontend.DoubleData;
+import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.frontend.Signal;
 
-import edu.cmu.sphinx.frontend.util.StreamAudioSource;
+import edu.cmu.sphinx.frontend.util.StreamDataSource;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
@@ -38,8 +42,7 @@ import java.net.Socket;
 /**
  * An implementation of the ClientFrontEnd interface.
  */
-public class ClientFrontEndImpl extends CepstrumExtractor 
-implements ClientFrontEnd {
+public class ClientFrontEndImpl implements ClientFrontEnd {
 
 
     private BufferedReader reader;
@@ -49,7 +52,8 @@ implements ClientFrontEnd {
     private int serverPort;
     private Socket socket;
 
-    private StreamAudioSource streamAudioSource;
+    private StreamDataSource streamAudioSource;
+    private FrontEnd frontend;
 
     private boolean inUtterance = false;
 
@@ -62,9 +66,12 @@ implements ClientFrontEnd {
      */
     public void initialize(String name, String context) throws IOException {
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        streamAudioSource = new StreamAudioSource
-            ("StreamAudioSource", context, null, null);
-        super.initialize(name, context, streamAudioSource);
+
+        streamAudioSource = new StreamDataSource();
+        streamAudioSource.initialize("StreamDataSource", null, props, null);
+
+        frontend = FrontEndFactory.getFrontEnd("client", props);
+        frontend.setDataSource(streamAudioSource);
 
         serverAddress = props.getString(PROP_SERVER, PROP_SERVER_DEFAULT);
         serverPort = props.getInt(PROP_PORT, PROP_PORT_DEFAULT);
@@ -104,10 +111,10 @@ implements ClientFrontEnd {
      * @return the result string
      */
     public String decode(InputStream is, String streamName) 
-        throws IOException {
+        throws DataProcessingException, IOException {
         sendRecognition();
         streamAudioSource.setInputStream(is, streamName);
-        sendCepstrum();
+        sendData();
         String result = readResult();
         return result;
     }
@@ -149,34 +156,34 @@ implements ClientFrontEnd {
     /**
      * Sends all the available cepstra to the back-end server.
      */
-    private void sendCepstrum() throws IOException {
-        Cepstrum cepstrum = null;
+    private void sendData() throws DataProcessingException, IOException {
+        Data cepstrum = null;
         do {
-            cepstrum = getCepstrum();
+            cepstrum = frontend.getData();
             if (cepstrum != null) {
                 if (!inUtterance) {
-                    if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
+                    if (cepstrum instanceof DataStartSignal) {
                         inUtterance = true;
-                        dataWriter.writeFloat(Float.MAX_VALUE);
+                        dataWriter.writeDouble(Double.MAX_VALUE);
                         dataWriter.flush();
                     } else {
                         throw new IllegalStateException
-                            ("No UTTERANCE_START read");
+                            ("No DataStartSignal read");
                     }
                 } else {
-                    if (cepstrum.hasContent()) {
+                    if (cepstrum instanceof DoubleData) {
                         // send the cepstrum data
-                        float[] data = cepstrum.getCepstrumData();
+                        double[] data = ((DoubleData) cepstrum).getValues();
                         for (int i = 0; i < data.length; i++) {
-                            dataWriter.writeFloat(data[i]);
+                            dataWriter.writeDouble(data[i]);
                         }
-                    } else if (cepstrum.hasSignal(Signal.UTTERANCE_END)) {
-                        // send an UTTERANCE_END
-                        dataWriter.writeFloat(Float.MIN_VALUE);
+                    } else if (cepstrum instanceof DataEndSignal) {
+                        // send a DataEndSignal
+                        dataWriter.writeDouble(Double.MIN_VALUE);
                         inUtterance = false;
-                    } else if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
+                    } else if (cepstrum instanceof DataStartSignal) {
                         throw new IllegalStateException
-                            ("Too many UTTERANCE_STARTs");
+                            ("Too many DataStartSignals.");
                     }
                     dataWriter.flush();
                 }
