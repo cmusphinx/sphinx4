@@ -22,7 +22,7 @@ import javax.swing.event.ChangeListener;
 
 /**
  * Represents a 16bit, SIGNED_PCM, big endian audio clip with a
- * sample rate specified in AudioFormat.
+ * sample rate specified by AudioFormat.
  */
 public class AudioData {
     protected AudioFormat format;
@@ -40,7 +40,7 @@ public class AudioData {
 				      1,     // mono
 				      true,  // signed
 				      true); // big endian
-        shorts = null;
+        shorts = new short[0];
     }
     
     /**
@@ -89,14 +89,12 @@ public class AudioData {
     }
 
     /**
-     * Sets the audio data.
+     * Sets the audio data and notifies all ChangeListeners.
      *
      * @param data the new SIGNED_PCM 16 bit big endian samples
      */
     public void setAudioData(short[] data) {
         this.shorts = data;
-        selectionStart = -1;
-        selectionEnd = -1;
         fireStateChanged();
     }
     
@@ -125,90 +123,6 @@ public class AudioData {
      */
     public void removeChangeListener(ChangeListener listener) {
 	listeners.remove(listener);
-    }
-
-    /**
-     * Returns the index of the sample representing the start of the
-     * selection.  -1 means the very beginning.
-     *
-     * @return the start of the selection
-     * @see #crop
-     * @see #getSelectionEnd
-     */
-    public int getSelectionStart() {
-        return selectionStart;
-    }
-    
-    /**
-     * Sets the index of the sample of representing the start of the
-     * selection.  -1 means the very beginning.
-     *
-     * @param newStart the new selection start
-     * @see #crop
-     * @see #setSelectionEnd
-     */
-    public void setSelectionStart(int newStart) {
-        selectionStart = newStart;
-        if (selectionEnd != -1) {
-            if (selectionEnd < selectionStart) {
-                selectionEnd = selectionStart;
-            }
-        }
-        fireStateChanged();
-    }
-    
-    /**
-     * Returns the index of the sample representing the end of the
-     * selection.  -1 means the very end.
-     *
-     * @return the end of the selection
-     * @see #crop
-     * @see #getSelectionStart
-     */
-    public int getSelectionEnd() {
-        return selectionEnd;
-    }
-    
-    /**
-     * Sets the index of the sample of representing the end of the
-     * selection.  -1 means the very end.
-     *
-     * @param newStart the new selection end
-     * @see #crop
-     * @see #setSelectionStart
-     */
-    public void setSelectionEnd(int newEnd) {
-        selectionEnd = newEnd;
-        if (selectionEnd != -1) {
-            if (selectionStart > selectionEnd) {
-                selectionStart = selectionEnd;
-            }
-        }
-        fireStateChanged();
-    }
-
-    /**
-     * Crops the audio data between the start and end selections.
-     * All audio data outside the region will be permanently lost.
-     * The selection will be reset to the very beginning and very
-     * end of the cropped clip.
-     *
-     * @see #getSelectionStart
-     * @see #getSelectionEnd
-     */
-    public void crop() {
-        selectionStart = Math.max(0, selectionStart);
-        if (selectionEnd == -1) {
-            selectionEnd = shorts.length;
-        }
-        short[] newShorts = new short[selectionEnd - selectionStart];
-        for (int i = 0; i < (selectionEnd - selectionStart); i++) {
-            newShorts[i] = shorts[i + selectionStart];
-        }
-        selectionStart = -1;
-        selectionEnd = -1;
-        shorts = newShorts;
-        fireStateChanged();
     }
     
     /**

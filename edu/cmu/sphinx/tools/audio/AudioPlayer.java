@@ -23,19 +23,25 @@ import javax.sound.sampled.SourceDataLine;
 public class AudioPlayer extends Thread {
     private AudioData audio;
     private SourceDataLine line = null;
+    private int selectionStart;
+    private int selectionEnd;
     
     /**
      * Creates a new AudioPlayer for the given AudioData.
      */
     public AudioPlayer(AudioData audio) {
         this.audio = audio;
+        selectionStart = 0;
+        selectionEnd = audio.getAudioData().length;
     }
 
     /**
      * Notifies the AudioPlayer thread to play the audio.
      */
-    public void play() {
+    public void play(int selectionStart, int selectionEnd) {
         synchronized(audio) {
+            this.selectionStart = selectionStart;
+            this.selectionEnd = selectionEnd;
             audio.notify();
         }
     }
@@ -50,10 +56,10 @@ public class AudioPlayer extends Thread {
                     audio.wait();
                     AudioFormat format = audio.getAudioFormat();
                     short[] data = audio.getAudioData();
-                    int selectionStart = Math.max(0,audio.getSelectionStart());
-                    int selectionEnd = audio.getSelectionEnd();
-                    if (selectionEnd == -1) {
-                        selectionEnd = data.length;
+                    int start = Math.max(0, selectionStart);
+                    int end = selectionEnd;
+                    if (end == -1) {
+                        end = data.length;
                     }
                     
                     DataLine.Info info =
@@ -64,8 +70,8 @@ public class AudioPlayer extends Thread {
                     line.start();
 
                     byte[] frame = new byte[2];
-                    for (int i = selectionStart;
-			 i < selectionEnd && i < data.length; i++) {
+                    for (int i = start;
+			 i < end && i < data.length; i++) {
                         Utils.toBytes(data[i], frame, true);
                         line.write(frame, 0, frame.length);
                     }

@@ -13,31 +13,28 @@
 package edu.cmu.sphinx.tools.audio;
 
 import java.awt.BorderLayout;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.prefs.Preferences;
 
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
+
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataEndSignal;
-import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
-import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.frontend.window.RaisedCosineWindower;
 import edu.cmu.sphinx.util.SphinxProperties;
 
@@ -47,207 +44,173 @@ import edu.cmu.sphinx.util.SphinxProperties;
  */
 public class AudioTool {
     static final String CONTEXT = "AudioTool";
-    static SphinxProperties props;
-    static float windowSizeInMs;
-    static float windowShiftInMs;
-    static float windowShiftInSamples;
-    static AudioData audio = null;
-    static SpectrogramPanel spectrogram;
-
+    static final String PREFS_CONTEXT = "/edu/cmu/sphinx/tools/audio/"
+                                        + CONTEXT;
+    static final String FILENAME_PREFERENCE = "filename";
+    static AudioData audio;
+    static JFrame jframe;
+    static AudioPanel audioPanel;
+    static SpectrogramPanel spectrogramPanel;
+    static JFileChooser fileChooser;
+    static String filename;
+    static File file = null;
+    static AudioPlayer player;
+    static RawRecorder recorder;
+    static boolean recording = false;
+    static Preferences prefs;
+    
     /**
-     * Attempts to read an audio file using the Java Sound APIs.  If
-     * this file isn't a typical audio file, then this returns a
-     * null.  Otherwise, it converts the data into a 16kHz 16-bit signed
-     * PCM big endian clip.
+     * Gets a filename.
      */
-    static private AudioData readAudioFile(URL url)
-        throws MalformedURLException, IOException {
-        try {
-            AudioInputStream ais = AudioSystem.getAudioInputStream(url);
-            AudioFormat format = ais.getFormat();
-            return new AudioData(ais);
-        } catch (UnsupportedAudioFileException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Reads the given stream in as 16kHz 16-bit signed PCM audio data
-     * and returns an audio clip.
-     */
-    static private AudioData readRawFile(URL url)
-        throws MalformedURLException, IOException {
-        AudioFormat format = new AudioFormat(16000.0f, // sample rate
-                                             16,       // sample size
-                                             1,        // channels (1 == mono)
-                                             true,     // signed
-                                             true);    // big endian
-        InputStream stream = url.openStream();
-        short[] audioData = RawReader.readAudioData(stream, format);
-        stream.close();
-        return new AudioData(audioData, 16000.0f);
-    }
-
-    static private void writeRawFile(JFrame jframe) {
-        System.out.println("saving");
-        FilenameDialog dialog = new FilenameDialog(
-            jframe, true, "Save as...");
-        dialog.setVisible(true);
-        String filename = dialog.getFilename();
-        if (filename.length() == 0) {
-            return;
-        }
+    static public void getFilename(String title, int type) {
+        int returnVal;
         
-        try {
-            FileOutputStream outputStream = new FileOutputStream(filename);
-            AudioFormat format = new AudioFormat(
-                16000.0f, // sample rate
-                16,       // sample size
-                1,        // channels (1 == mono)
-                true,     // signed
-                true);    // big endian
-            
-            RawWriter writer = new RawWriter(outputStream, format);
-            short[] samples = audio.getAudioData();
-            for (int i = 0; i < samples.length; i++) {
-                writer.writeSample(samples[i]);
-            }
-            outputStream.flush();
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        fileChooser.setDialogTitle(title);
+        fileChooser.setCurrentDirectory(file);
+        fileChooser.setDialogType(type);
+
+        if (type == JFileChooser.OPEN_DIALOG) {
+            returnVal = fileChooser.showOpenDialog(jframe);
+        } else {
+            returnVal = fileChooser.showSaveDialog(jframe);
         }
-    }
-
-    /**
-     * Whenever the audio changes, this creates a new front end and
-     * recreates the power spectrum for the audio.  It then manages
-     * a SpectrogramPanel with this new data.
-     */
-    static private void updateSpectrogram() {
-        try {
-            /*
-	     * Create a new front end and get the power spectrum.
-             */
-            AudioDataInputStream is = new AudioDataInputStream(audio);
-            StreamDataSource audioSource = new StreamDataSource();
-	    audioSource.initialize("StreamDataSource", null, props, null);
-	    audioSource.setInputStream(is, "live audio");
-
-	    Collection names = FrontEndFactory.getNames(props);
-	    assert (names.size() == 1);
-	    String feName = (String) names.iterator().next();
-
-            FrontEnd frontEnd = FrontEndFactory.getFrontEnd(feName, props);
-            frontEnd.setDataSource(audioSource);
-
-            /* Run through all the spectra one at a time and convert
-             * them to an log intensity value.
-             */
-            ArrayList intensitiesList = new ArrayList();
-            double maxIntensity = Double.MIN_VALUE;
-            Data spectrum = frontEnd.getData();
-            
-	    while (!(spectrum instanceof DataEndSignal)) {
-                if (spectrum instanceof DoubleData) {
-                    double[] spectrumData = ((DoubleData)spectrum).getValues();
-                    double[] intensities = new double[spectrumData.length];
-                    for (int i = 0; i < intensities.length; i++) {
-                        /*
-			 * A very small intensity is, for all intents
-                         * and purposes, the same as 0.
-                         */
-                        intensities[i] = Math.max(Math.log(spectrumData[i]),
-                                                  0.0);
-                        if (intensities[i] > maxIntensity) {
-                            maxIntensity = intensities[i];
-                        }
-                    }
-                    intensitiesList.add(intensities);
-		}
-		spectrum = frontEnd.getData();
-            }
-            is.close();
-
-            /* Now create or update the spectrogram.
-             */
-            if (spectrogram == null) {
-                spectrogram = new SpectrogramPanel(
-                    intensitiesList,
-                    maxIntensity,
-                    100.0);
-            } else {
-                spectrogram.setSpectrogram(
-                    intensitiesList,
-                    maxIntensity,
-                    60.0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            file = fileChooser.getSelectedFile();
+            filename = file.getAbsolutePath();
+            prefs.put(FILENAME_PREFERENCE, filename);
+        } 
     }
     
-
     /**
-     * Main method.
-     *
-     * @param argv argv[0] : SphinxProperties file
-     *             argv[1] : The name of an audio file
+     * Creates the menu bar.
      */
-    static public void main(String[] args) {
-        System.out.println("space = play");
-        System.out.println("shift = record (press to talk)");
-        System.out.println("c     = crop selection");
-        System.out.println("a     = select all");
-        System.out.println("s     = save raw 16kHz 16-bit signed PCM to file");
+    private static void createMenuBar(JFrame jframe) {
+        JMenuBar menuBar = new JMenuBar();
+        jframe.setJMenuBar(menuBar);
         
-        try {
-            URL url = new File(args[0]).toURI().toURL();
-            SphinxProperties.initContext(CONTEXT, url);
-            props = SphinxProperties.getSphinxProperties(CONTEXT);
-            windowSizeInMs = props.getFloat
-		("sfe;" + RaisedCosineWindower.PROP_WINDOW_SIZE_MS,
-		 RaisedCosineWindower.PROP_WINDOW_SIZE_MS_DEFAULT);
-            windowShiftInMs = props.getFloat
-		("sfe;" + RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
-                 RaisedCosineWindower.PROP_WINDOW_SHIFT_MS_DEFAULT);
-            
-            if (args[0].indexOf(":") == -1) {
-                url = new URL("file:" + args[1]);
-            } else {
-                url = new URL(args[0]);
-            }
-            
-            audio = readAudioFile(url);
-            if (audio == null) {
-                audio = readRawFile(url);
-            }
 
-	    final JFrame jframe = new JFrame("AudioTool");
 
-            /* Scale the width according to the size of the
-             * spectrogram.
-             */
-            windowShiftInSamples = windowShiftInMs
-                * audio.getAudioFormat().getSampleRate() / 1000.0f;
-            AudioPanel wavePanel = new AudioPanel(
-                audio, 1.0f / windowShiftInSamples, 0.004f);
-            updateSpectrogram();
 
-            JPanel panel = new JPanel();
-            panel.setLayout(new BorderLayout());
-            panel.add(wavePanel, BorderLayout.NORTH);
-            panel.add(spectrogram, BorderLayout.SOUTH);
-            
-	    JScrollPane scroller = new JScrollPane(panel);
+        JMenu menu = new JMenu("File");
+        menuBar.add(menu);
+        
+        JMenuItem menuItem = new JMenuItem("Open...");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke("control O"));
+        menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    getFilename("Open...", JFileChooser.OPEN_DIALOG);
+                    if ((filename == null) || (filename.length() == 0)) {
+                        return;
+                    }
+                    try {
+                        URL url;
+                        if (filename.indexOf(":") == -1) {
+                            url = new URL("file:" + filename);
+                        } else {
+                            url = new URL(filename );
+                        }
+                        AudioData newAudio = Utils.readAudioFile(url);
+                        if (newAudio == null) {
+                            newAudio = Utils.readRawFile(url);
+                        }
+                        audio.setAudioData(newAudio.getAudioData());
+                        player.play(audioPanel.getSelectionStart(),
+                                    audioPanel.getSelectionEnd());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Save");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
+        menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    if ((filename != null) && (filename.length() > 0)) {
+                        try {
+                            Utils.writeRawFile(audio, filename);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Save As...");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke("control V"));
+        menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    getFilename("Save As...", JFileChooser.SAVE_DIALOG);
+                    if ((filename == null) || (filename.length() == 0)) {
+                        return;
+                    }
+                    try {
+                        Utils.writeRawFile(audio, filename);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Quit");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke("control Q"));
+        menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    System.exit(0);
+                }
+            });
+        menu.add(menuItem);
 
-            final AudioPlayer player = new AudioPlayer(audio);
-            player.start();
-            
-            wavePanel.addKeyListener(new KeyListener() {
-                RawRecorder recorder;
-                public void keyPressed(KeyEvent evt) {
-                    if (evt.getKeyCode() == KeyEvent.VK_SHIFT) {
+
+
+        
+        menu = new JMenu("Edit");
+        menuBar.add(menu);
+        
+        menuItem = new JMenuItem("Select All");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke("control A"));
+        menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    audioPanel.selectAll();
+                }
+            });
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Crop");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
+        menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    audioPanel.crop();
+                }
+            });
+        menu.add(menuItem);
+        
+
+
+
+        menu = new JMenu("Audio");
+        menuBar.add(menu);
+        
+        menuItem = new JMenuItem("Play");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke("control P"));
+        menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    player.play(audioPanel.getSelectionStart(),
+                                audioPanel.getSelectionEnd());
+                }
+            });
+        menu.add(menuItem);
+        
+        
+        menuItem = new JMenuItem("Record Start/Stop");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke("control R"));
+        menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    if (!recording) {
+                        recording = true;
                         try {
                             recorder = new RawRecorder(
                                 new AudioFormat(16000.0f, // sample rate
@@ -260,36 +223,87 @@ public class AudioTool {
                             System.exit(-1);
                         }
                         recorder.start();
-                    }
-                }
-                public void keyReleased(KeyEvent evt) {
-                    if (evt.getKeyCode() == KeyEvent.VK_SHIFT) {
+                    } else {
+                        recording = false;
                         audio.setAudioData(recorder.stop());
-                        updateSpectrogram();
-                    }
-                }
-                public void keyTyped(KeyEvent evt) {
-                    if (evt.getKeyChar() == ' ') {
-                        player.play();
-                    } else if (evt.getKeyChar() == 'a') {
-                        System.out.println("clearing selection");
-                        audio.setSelectionStart(-1);
-                        audio.setSelectionEnd(-1);
-                        updateSpectrogram();
-                    } else if (evt.getKeyChar() == 'c') {
-                        System.out.println("cropping");
-                        audio.crop();
-                        updateSpectrogram();
-                    } else if (evt.getKeyChar() == 's') {
-                        writeRawFile(jframe);
+                        player.play(audioPanel.getSelectionStart(),
+                                    audioPanel.getSelectionEnd());
                     }
                 }
             });
+        menu.add(menuItem);        
+    }
+    
+    /**
+     * Main method.
+     *
+     * @param argv argv[0] : The name of an audio file
+     *             argv[1] : SphinxProperties file
+     */
+    static public void main(String[] args) {
+        prefs = Preferences.userRoot().node(PREFS_CONTEXT);
+        filename = prefs.get(FILENAME_PREFERENCE, "untitled.raw");
+        file = new File(filename);
+
+        try {
+            URL url;
+            if (args.length == 2) {
+                url = new File(args[1]).toURI().toURL();
+            } else {
+                url = AudioTool.class.getResource("spectrogram.props");
+            }
+            SphinxProperties.initContext(CONTEXT, url);
+            SphinxProperties props =
+                SphinxProperties.getSphinxProperties(CONTEXT);
+            float windowSizeInMs = props.getFloat
+		("sfe;" + RaisedCosineWindower.PROP_WINDOW_SIZE_MS,
+		 RaisedCosineWindower.PROP_WINDOW_SIZE_MS_DEFAULT);
+            float windowShiftInMs = props.getFloat
+		("sfe;" + RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
+                 RaisedCosineWindower.PROP_WINDOW_SHIFT_MS_DEFAULT);
+
+            if (args.length > 0) {
+                if (args[0].indexOf(":") == -1) {
+                    url = new URL("file:" + args[0]);
+                } else {
+                    url = new URL(args[0]);
+                }
+                audio = Utils.readAudioFile(url);
+                if (audio == null) {
+                    audio = Utils.readRawFile(url);
+                }
+            } else {
+                audio = new AudioData();
+            }
+
+	    final JFrame jframe = new JFrame("AudioTool");
+            fileChooser = new JFileChooser();
+            createMenuBar(jframe);
+            
+            /* Scale the width according to the size of the
+             * spectrogram.
+             */
+            float windowShiftInSamples = windowShiftInMs
+                * audio.getAudioFormat().getSampleRate() / 1000.0f;
+            audioPanel = new AudioPanel(audio,
+                                        1.0f / windowShiftInSamples,
+                                        0.004f);
+            spectrogramPanel = new SpectrogramPanel(props, audio);
+            
+            JPanel panel = new JPanel();
+            panel.setLayout(new BorderLayout());
+            panel.add(audioPanel, BorderLayout.NORTH);
+            panel.add(spectrogramPanel, BorderLayout.SOUTH);
+            
+	    JScrollPane scroller = new JScrollPane(panel);
+
+            player = new AudioPlayer(audio);
+            player.start();
             
             jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    jframe.setContentPane(scroller);
             jframe.pack();
-            jframe.setSize(640,540);
+            //jframe.setSize(640,540);
             jframe.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();

@@ -38,6 +38,8 @@ public class AudioPanel extends JPanel
     private float yScale;
     private int xDragStart = 0;
     private int xDragEnd = 0;
+    protected int selectionStart = -1;
+    protected int selectionEnd = -1;
 
     /**
      * Creates a new AudioPanel.  The scale factors represent how
@@ -69,6 +71,7 @@ public class AudioPanel extends JPanel
 
 		    setPreferredSize(new Dimension(width, height));
 		    Dimension sz = getSize();
+                    revalidate();
 		    repaint(0, 0, 0, sz.width, sz.height);
 		}
 	    });
@@ -116,16 +119,16 @@ public class AudioPanel extends JPanel
         /**
          * Now fill in the audio selection area as gray.
          */
-        index = Math.max(0, audio.getSelectionStart());
-        int selectionStart = (int) (index * xScale);
-        index = audio.getSelectionEnd();
+        index = Math.max(0, getSelectionStart());
+        int start = (int) (index * xScale);
+        index = getSelectionEnd();
         if (index == -1) {
             index = audioData.length - 1;
         }
-        int selectionEnd = (int) (index * xScale);
+        int end = (int) (index * xScale);
 	g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(selectionStart, 0,
-                   selectionEnd - selectionStart, sz.height - 1);
+        g.fillRect(start, 0,
+                   end - start, sz.height - 1);
 
         /* Now scale the audio data and draw it.
          */
@@ -166,6 +169,100 @@ public class AudioPanel extends JPanel
     }
 
     /**
+     * Returns the index of the sample representing the start of the
+     * selection.  -1 means the very beginning.
+     *
+     * @return the start of the selection
+     * @see #crop
+     * @see #getSelectionEnd
+     */
+    public int getSelectionStart() {
+        return selectionStart;
+    }
+    
+    /**
+     * Sets the index of the sample of representing the start of the
+     * selection.  -1 means the very beginning.
+     *
+     * @param newStart the new selection start
+     * @see #crop
+     * @see #setSelectionEnd
+     */
+    public void setSelectionStart(int newStart) {
+        selectionStart = newStart;
+        if (selectionEnd != -1) {
+            if (selectionEnd < selectionStart) {
+                selectionEnd = selectionStart;
+            }
+        }
+    }
+    
+    /**
+     * Returns the index of the sample representing the end of the
+     * selection.  -1 means the very end.
+     *
+     * @return the end of the selection
+     * @see #crop
+     * @see #getSelectionStart
+     */
+    public int getSelectionEnd() {
+        return selectionEnd;
+    }
+    
+    /**
+     * Sets the index of the sample of representing the end of the
+     * selection.  -1 means the very end.
+     *
+     * @param newStart the new selection end
+     * @see #crop
+     * @see #setSelectionStart
+     */
+    public void setSelectionEnd(int newEnd) {
+        selectionEnd = newEnd;
+        if (selectionEnd != -1) {
+            if (selectionStart > selectionEnd) {
+                selectionStart = selectionEnd;
+            }
+        }
+    }
+
+    /**
+     * Crops the audio data between the start and end selections.
+     * All audio data outside the region will be permanently lost.
+     * The selection will be reset to the very beginning and very
+     * end of the cropped clip.
+     *
+     * @see #getSelectionStart
+     * @see #getSelectionEnd
+     */
+    public void crop() {
+        short[] shorts = audio.getAudioData();
+        int start = Math.max(0, getSelectionStart());
+        int end = getSelectionEnd();
+        if (end == -1) {
+            end = shorts.length;
+        }
+        short[] newShorts = new short[end - start];
+        for (int i = 0; i < (end - start); i++) {
+            newShorts[i] = shorts[i + start];
+        }
+        
+        audio.setAudioData(newShorts);
+
+        setSelectionStart(-1);
+        setSelectionEnd(-1);
+    }
+
+    /**
+     * Clears the current selection.
+     */
+    public void selectAll() {
+        setSelectionStart(-1);
+        setSelectionEnd(-1);
+        repaint();
+    }
+    
+    /**
      * When the mouse is pressed, we update the selection in the
      * audio.
      *
@@ -173,8 +270,9 @@ public class AudioPanel extends JPanel
      */
     public void mousePressed(MouseEvent evt) {
 	xDragStart = Math.max(0, evt.getX());
-        audio.setSelectionStart((int) (xDragStart / xScale));
-        audio.setSelectionEnd((int) (xDragStart / xScale));
+        setSelectionStart((int) (xDragStart / xScale));
+        setSelectionEnd((int) (xDragStart / xScale));
+        repaint();
     }
 
     /**
@@ -185,11 +283,12 @@ public class AudioPanel extends JPanel
      */
     public void mouseDragged(MouseEvent evt) {
 	xDragEnd = evt.getX();
-        if (xDragEnd < (int) (audio.getSelectionStart() * xScale)) {
-            audio.setSelectionStart((int) (xDragEnd / xScale));
+        if (xDragEnd < (int) (getSelectionStart() * xScale)) {
+            setSelectionStart((int) (xDragEnd / xScale));
         } else {
-            audio.setSelectionEnd((int) (xDragEnd / xScale));
+            setSelectionEnd((int) (xDragEnd / xScale));
         }
+        repaint();
     }
 
     public void mouseReleased(MouseEvent evt) {}

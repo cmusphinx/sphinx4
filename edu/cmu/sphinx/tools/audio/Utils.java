@@ -12,10 +12,17 @@
 
 package edu.cmu.sphinx.tools.audio;
 
+import java.io.InputStream;
 import java.io.IOException;
+import java.io.FileOutputStream;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.AudioFormat.Encoding;
 
 public class Utils {
@@ -154,4 +161,67 @@ public class Utils {
 
         return shorts;
     }
+
+    /**
+     * Attempts to read an audio file using the Java Sound APIs.  If
+     * this file isn't a typical audio file, then this returns a
+     * null.  Otherwise, it converts the data into a 16kHz 16-bit signed
+     * PCM big endian clip.
+     *
+     * @param url the URL of the audio data
+     * @return the audio data or null if the audio cannot be parsed
+     */
+    static public AudioData readAudioFile(URL url)
+        throws MalformedURLException, IOException {
+        try {
+            AudioInputStream ais = AudioSystem.getAudioInputStream(url);
+            AudioFormat format = ais.getFormat();
+            return new AudioData(ais);
+        } catch (UnsupportedAudioFileException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Reads the given stream in as 16kHz 16-bit signed PCM big endian
+     * audio data and returns an audio clip.
+     *
+     * @param url the URL of the raw audio data
+     * @return the audio data or null if the audio cannot be parsed
+     */
+    static public AudioData readRawFile(URL url)
+        throws MalformedURLException, IOException {
+        AudioFormat format = new AudioFormat(16000.0f, // sample rate
+                                             16,       // sample size
+                                             1,        // channels (1 == mono)
+                                             true,     // signed
+                                             true);    // big endian
+        InputStream stream = url.openStream();
+        short[] audioData = RawReader.readAudioData(stream, format);
+        stream.close();
+        return new AudioData(audioData, 16000.0f);
+    }
+
+    /**
+     * Writes the given 16kHz 16-bit signed PCM audio clip to the
+     * given file as raw big endian data.
+     */
+    static public void writeRawFile(AudioData audio, String filename)
+        throws IOException {
+        
+        FileOutputStream outputStream = new FileOutputStream(filename);
+        AudioFormat format = new AudioFormat(
+            16000.0f, // sample rate
+            16,       // sample size
+            1,        // channels (1 == mono)
+            true,     // signed
+            true);    // big endian
+        RawWriter writer = new RawWriter(outputStream, format);
+        short[] samples = audio.getAudioData();
+        for (int i = 0; i < samples.length; i++) {
+            writer.writeSample(samples[i]);
+        }
+        outputStream.flush();
+        outputStream.close();
+    }    
 }

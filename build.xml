@@ -14,6 +14,7 @@
     <property name="build_dir"		value="bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="${build_dir}/lib"/>
+    <property name="bin_dir"            value="${build_dir}/bin"/>
     <property name="javadoc_dir"	value="javadoc"/>
     <property name="javadoc_check_dir"  value="${build_dir}/javadoc_check"/>
     <property name="javadoc_zip"	value="javadoc.zip"/>
@@ -157,7 +158,7 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="jars"
-	    depends="sphinx4_jar"
+	    depends="sphinx4_jar,audiotool_jar"
 	    description="Builds all the jar files"/>
 
 
@@ -170,8 +171,26 @@ jsapi.exe from the lib directory.
         <mkdir dir="${lib_dir}"/>
         <jar destfile="${sphinx4_jar}" 
 	     manifest="${src_dir}/edu/cmu/sphinx/sphinx4.manifest"
+	     compress="true"
+             excludes="edu/cmu/sphinx/tools/**">
+            <fileset dir="${classes_dir}"/>
+        </jar>
+    </target>
+
+    <!-- audiotool.jar -->
+    <property name="audiotool_jar" value="${bin_dir}/audiotool.jar"/>
+
+    <target name="audiotool_jar" 
+	    depends="compile_src"
+	    description="Create ${bin_dir}/audiotool.jar">
+        <mkdir dir="${bin_dir}"/>
+        <jar destfile="${audiotool_jar}" 
+	     manifest="${src_dir}/edu/cmu/sphinx/tools/audio/Manifest"
 	     compress="true">
-            <fileset dir="${classes_dir}" />
+            <fileset dir="${classes_dir}"
+		     includes="edu/cmu/sphinx/tools/audio/*"/>
+            <fileset dir="${src_dir}"
+		     includes="edu/cmu/sphinx/tools/audio/spectrogram.props"/>
         </jar>
     </target>
 

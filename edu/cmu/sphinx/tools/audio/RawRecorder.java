@@ -94,7 +94,7 @@ public class RawRecorder {
      *
      * @return the clip that was recorded since the last time start
      * was called
-     * @see start
+     * @see #start
      */
     public short[] stop() {
         synchronized (lock) {

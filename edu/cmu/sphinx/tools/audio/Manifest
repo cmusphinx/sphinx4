@@ -1,0 +1,2 @@
+Main-Class: edu.cmu.sphinx.tools.audio.AudioTool
+Class-Path: ../lib/sphinx4.jar
