@@ -68,7 +68,7 @@ live-ep: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=9 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=12 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=9 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=3 \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	tests.live.Live decoders.list
 
