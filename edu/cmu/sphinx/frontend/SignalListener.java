@@ -10,11 +10,20 @@
  *
  */
 
-
 package edu.cmu.sphinx.frontend;
 
+
 /**
- * A DataSource is the parent interface of all Sources.
+ *  The listener interface for being informed when a
+ *  signal is generated
  */
-public interface DataSource {
+public interface SignalListener {
+    /**
+     * Method called when a signal is detected
+     *
+     * @param signal the signal
+     *
+     */
+     public void signalOccurred(Signal signal);
 }
+

@@ -13,263 +13,147 @@
 
 package edu.cmu.sphinx.frontend;
 
-import java.io.IOException;
+import edu.cmu.sphinx.util.SphinxProperties;
 
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
- * A frontend where FeatureFrames can be obtained.
+ * A wrapper for the chain of front end processors. It is created by
+ * passing in the first and last DataProcessor in the chain to the
+ * constructor. Calling <code>setDataSource()</code> or
+ * <code>setPredecessor()</code> on the FrontEnd will set the data
+ * source from which the front end reads the data to perform signal
+ * processing.
  */
-public interface FrontEnd {
+public class FrontEnd extends BaseDataProcessor {
 
-    /**
-     * The prefix for all Frontend SphinxProperties names.
-     * Its value is currently <code>"edu.cmu.sphinx.frontend."</code>.
-     */
-    public static final String PROP_PREFIX = "edu.cmu.sphinx.frontend.";
+    private DataProcessor first;
+    private DataProcessor last;
 
-
-    /**
-     * The SphinxProperty name for sample rate in Hertz (i.e.,
-     * number of times per second), which has a default value of 8000.
-     */
-    public static final String PROP_SAMPLE_RATE = PROP_PREFIX + "sampleRate";
+    private Vector signalListeners = new Vector();
 
 
     /**
-     * The default value for PROP_SAMPLE_RATE.
+     * Constructs a FrontEnd with the given first and last DataProcessors,
+     * which encloses a chain of DataProcessors.
+     *
+     * @param firstProcessor first processor in the processor chain
+     * @param lastProcessor last processor in the processor chain
      */
-    public static final int PROP_SAMPLE_RATE_DEFAULT = 16000;
+    public FrontEnd(DataProcessor firstProcessor,
+                    DataProcessor lastProcessor) {
+        this.first = firstProcessor;
+        this.last = lastProcessor;
+    }
 
 
     /**
-     * The SphinxProperty specifying whether the input data is big-endian.
+     * Initializes this Front End.
+     *
+     * @param name         the name of this front end
+     * @param frontEndName the name of the front-end pipeline this
+     *                     front end is in
+     * @param props        the SphinxProperties to use
+     * @param predecessor  the predecessor of this Front End
      */
-    public static final String PROP_BIG_ENDIAN_DATA 
-        = PROP_PREFIX + "bigEndianData";
+    public void initialize(String name, String frontEndName,
+                           SphinxProperties props,
+                           DataProcessor predecessor) {
+        super.initialize(name, frontEndName, props, predecessor);
+    }
 
 
     /**
-     * The default value for PROP_IS_DATA_BIG_ENDIAN.
+     * Sets the source of data for this front end.
+     * It basically sets the predecessor of the first DataProcessor
+     * of this front end.
+     *
+     * @param dataSource the source of data 
      */
-    public static final boolean PROP_BIG_ENDIAN_DATA_DEFAULT = true;
+    public void setDataSource(DataProcessor dataSource) {
+        first.setPredecessor(dataSource);
+    }
 
 
     /**
-     * The SphinxProperty specifying whether the input data is signed.
+     * Returns the processed Data output, basically calls
+     * <code>getData()</code> on the last processor.
+     *
+     * @return an Data object that has been processed by this front end
      */
-    public static final String PROP_SIGNED_DATA = PROP_PREFIX + "signedData";
+    public Data getData() throws DataProcessingException {
+        Data data = last.getData();
+        
+        // fire the signal listeners if its a signal
+        if (data instanceof Signal) {
+            fireSignalListeners((Signal) data);
+        }
+
+        return data;
+    }
 
 
     /**
-     * The default value of PROP_SIGNED_DATA.
+     * Sets the source of data for this front end.
+     * It basically calls <code>setDataSource(dataSource)</code>.
+     *
+     * @param dataSource the source of data 
      */
-    public static final boolean PROP_SIGNED_DATA_DEFAULT = false;
-    
-    /**
-     * The SphinxProperty name for the number of bits per sample.
-     */
-    public static final String PROP_BITS_PER_SAMPLE
-        = PROP_PREFIX + "bitsPerSample";
-
-
-    /**
-     * The default value for PROP_BITS_PER_SAMPLE.
-     */
-    public static final int PROP_BITS_PER_SAMPLE_DEFAULT = 16;
-
-
-
-    /**
-     * The SphinxProperty for the number of bytes per Audio object.
-     */
-    public final static String PROP_BYTES_PER_AUDIO_FRAME
-        = PROP_PREFIX + "bytesPerAudioFrame";
-
-
-    /**
-     * The default value for PROP_BYTES_PER_AUDIO_FRAME.
-     */
-    public final static int PROP_BYTES_PER_AUDIO_FRAME_DEFAULT = 4000;
-
-
-    /**
-     * The SphinxProperty name for the size of a cepstrum, which is
-     * 13 by default.
-     */
-    public static final String PROP_CEPSTRUM_SIZE = PROP_PREFIX + 
-	"cepstrumSize";
-
-
-    /**
-     * The default value for PROP_CEPSTRUM_SIZE.
-     */
-    public static final int PROP_CEPSTRUM_SIZE_DEFAULT = 13;
-
-
-    /**
-     * The SphinxProperty name that indicates whether Features
-     * should retain a reference to the original raw audio bytes. The
-     * default value is true.
-     */
-    public static final String PROP_KEEP_AUDIO_REFERENCE = PROP_PREFIX +
-	"keepAudioReference";
-
-
-    /**
-     * The default value of PROP_KEEP_AUDIO_REFERENCE.
-     */
-    public static final boolean PROP_KEEP_AUDIO_REFERENCE_DEFAULT = true;
+    public void setPredecessor(DataProcessor dataSource) {
+        setDataSource(dataSource);
+    }
 
     
     /**
-     * The SphinxProperty name that specifies the Filterbank class.
-     */
-    public static final String PROP_FILTERBANK = PROP_PREFIX + "filterbank";
-
-
-    /**
-     * The default value of PROP_FILTERBANK.
-     */
-    public static final String PROP_FILTERBANK_DEFAULT
-        = "edu.cmu.sphinx.frontend.mfc.MelFilterbank";
-
-
-    /**
-     * The SphinxProperty name that specifies the CepstrumProducer class.
-     */
-    public static final String PROP_CEPSTRUM_PRODUCER
-        = PROP_PREFIX + "cepstrumProducer";
-
-
-    /**
-     * The default value of PROP_CEPSTRUM_PRODUCER.
-     */
-    public static final String PROP_CEPSTRUM_PRODUCER_DEFAULT
-        = "edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer";
-
-
-    /**
-     * The SphinxProperty name that specifies the Endpointer class.
-     */
-    public static final String PROP_ENDPOINTER = PROP_PREFIX + "endpointer";
-
-
-    /**
-     * The default value of PROP_ENDPOINTER.
-     */
-    public static final String PROP_ENDPOINTER_DEFAULT = null;
-
-
-    /**
-     * The SphinxProperty name that specifies whether to filter out
-     * the non-speech regions if an endpointer is used.
-     */
-    public static final String PROP_FILTER_NON_SPEECH
-        = PROP_PREFIX + "filterNonSpeech";
-
-
-    /**
-     * The default value of PROP_FILTER_NON_SPEECH.
-     */
-    public static final boolean PROP_FILTER_NON_SPEECH_DEFAULT = false;
-
-
-    /**
-     * The SphinxProperty name that specifies the CMN class.
-     */
-    public static final String PROP_CMN = PROP_PREFIX + "cmn";
-
-
-    /**
-     * The default value of PROP_CMN.
-     */
-    public static final String PROP_CMN_DEFAULT
-        = "edu.cmu.sphinx.frontend.BatchCMN";
-
-
-    /**
-     * The SphinxProperty name that specifies the FeatureExtractor class.
-     */
-    public static final String PROP_FEATURE_EXTRACTOR
-        = PROP_PREFIX + "featureExtractor";
-
-
-    /**
-     * The default value of PROP_FEATURE_EXTRACTOR.
-     */
-    public static final String PROP_FEATURE_EXTRACTOR_DEFAULT
-        = "edu.cmu.sphinx.frontend.DeltasFeatureExtractor";
-
-
-    /**
-     * The SphinxProperty name that specifies whether to use the
-     * properties from the acoustic model.
-     */
-    public static final String PROP_USE_ACOUSTIC_MODEL_PROPERTIES
-        = PROP_PREFIX + "useAcousticModelProperties";
-
-
-    /**
-     * The default value of PROP_USE_ACOUSTIC_MODEL_PROPERTIES.
-     */
-    public static final boolean PROP_USE_ACOUSTIC_MODEL_PROPERTIES_DEFAULT
-        = true;
-
-
-    /**
-     * The prefix for acoustic model properties.
-     */
-    public static final String ACOUSTIC_PROP_PREFIX
-	= "edu.cmu.sphinx.knowledge.acoustic.";
-
-
-    /**
-     * Initializes this FrontEnd.
+     * Finds the DataProcessor with the given name.
      *
-     * @param name the name of this FrontEnd
-     * @param context the context of this FrontEnd
-     * @param dataSource the place to pull data from, or null if no
-     *     DataSource yet, in which case it should be set later on by
-     *     the <code>setDataSource()</code> method
-     *
-     * @throws IOException if an I/O error occurs
+     * @param name the name of the DataProcessor to find
      */
-    public void initialize(String name, String context, DataSource dataSource)
-        throws IOException;
+    public DataProcessor findDataProcessor(String processorName) {
+        DataProcessor current = last;
+        while (current != null) {
+            if (current.getName().equals(processorName)) {
+                return current;
+            } else {
+                current = current.getPredecessor();
+            }
+        }
+        return null;
+    }
 
 
     /**
-     * Returns the next N feature (of the given acoustic model) 
-     * produced by this FrontEnd, in a FeatureFrame object.
-     * The number of Features return maybe less than N, in which
-     * case the last Feature will contain a Signal.UTTERANCE_END signal.
+     * Add a listener to be called when a feature with non-content
+     * signal is detected.
      *
-     * @param numberFeatures the number of FeatureFrames to return
-     * @param acousticModelName the name of the acoustic model for which
-     *                          features are returned
-     *
-     * @return N number of FeatureFrames, or null
-     *    if no more FeatureFrames available
-     *
-     * @see FeatureFrame
-     *
-     * @throws java.io.IOException if an I/O error occurred
+     * @param listener the listener to be added
      */
-    public FeatureFrame getFeatureFrame(int numberFeatures, 
-					String acousticModelName) 
-	throws IOException;
+    public void addSignalListener(SignalListener listener) {
+        signalListeners.add(listener);
+    }
 
 
     /**
-     * Sets the source of data for this FrontEnd.
+     * Removes a listener for features with non-content signals.
      *
-     * @param dataSource the source of data to decode
+     * @param listener the listener to be removed
      */
-    public void setDataSource(DataSource dataSource);
+    public void removeSignalListener(SignalListener listener) {
+        signalListeners.remove(listener);
+    }
 
 
     /**
-     * Drains all the data in this FrontEnd.
+     * Fire all listeners for features with non-content signals.
+     *
+     * @param feature the feature with non-content signal
      */
-    public void drain();
+    protected void fireSignalListeners(Signal signal) {
+        Vector copy = (Vector) signalListeners.clone();
+        for (Iterator i = copy.iterator(); i.hasNext(); ) {
+            SignalListener listener = (SignalListener) i.next();
+            listener.signalOccurred(signal);
+        }
+    }
 }
