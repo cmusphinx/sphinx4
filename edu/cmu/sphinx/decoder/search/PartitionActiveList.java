@@ -84,7 +84,7 @@ public class PartitionActiveList implements ActiveList  {
         this.relativeBeamWidth = old.relativeBeamWidth;
         int listSize = PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT;
         if (absoluteBeamWidth > 0) {
-            listSize = absoluteBeamWidth;
+            listSize = absoluteBeamWidth / 3;
         }
         this.tokenList = new Token[listSize];
     }
