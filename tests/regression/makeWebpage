@@ -66,7 +66,14 @@ $1 == "build" && $4 == machine {
 $1 == "test"  && $4 == machine && $5 == "s4" {
     testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
     testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
+    if (lastTestDate != $F_DATE) {
+        lastTestDate = $F_DATE;
+	lastTestCount = 0;
+    } 
+    lastTestData[lastTestCount++] = $F_TEST_NAME "|" testCount[$F_TEST_NAME];
 }
+
+
 
 $1 == "system"  && $2 == machine {
     machineDescription = $0;
@@ -208,6 +215,21 @@ function printSingleTest(testName, testCount) {
     print "</tr>"
 }
 
+function printLongSingleTest(testName, testCount) {
+    updateData(testName, testCount);
+    date = data[F_DATE];
+    status = getRunStatus(testName, testCount);
+    accuracy = getAccuracyStatus(testName, testCount);
+    speed = getSpeedStatus(testName, testCount);
+    print "<tr>";
+    print "<td>" dateAnchor(date)  "</td>";
+    print "<td><a href=#" testName ">" testName  "</a></td>";
+    print status;
+    print accuracy;
+    print speed;
+    print "</tr>";
+}
+
 
 function fmtTime(seconds) {
     if (seconds == "N/A") {
@@ -275,8 +297,9 @@ function printSummaryInfo() {
 #
 
 function printBuildHistory() {
+   print "<hr><br>"
    print("<a name=build_history></a>");
-   print "<table cellpadding=2 cellspacing=2 border=1 width=60% align=center>";
+   print "<table cellpadding=2 cellspacing=2 border=1 width=80% align=center>";
    print "<tbody>";
    print "<tr align=center>";
    print "<td valign=top rowspan=1 colspan=5";
@@ -443,6 +466,53 @@ function printTitle() {
     print "<br>";
 }
 
+function printDetailedTestTitle() {
+   print "<hr><br>"
+    print "<table cellpadding=0 cellspacing=0 border=0 width=100%";
+    print "    align=center bgcolor=#ccccff>";
+    print "<tbody>";
+    print "<tr>";
+    print "<td valign=top align=center>";
+    print "<big><b>Detailed Test Results"
+    print "</b></big>";
+    print "</td>";
+    print "</tr>";
+    print "</tbody>";
+    print "</table>";
+    print "<br>";
+}
+
+# prints the latest tests
+
+function printLatestTestResults(  _testName, _testCount) {
+    print("<br><br>");
+    print("<a name=latest_results></a>");
+    print "<table align=center cellpadding=2 cellspacing=2 border=1 width=80%>";
+    print "<tbody>";
+    print "<tr align=center>";
+    print "<td valign=top rowspan=1 colspan=5 bgcolor=#ccccff>";
+    print "<big><b>" "Latest Test Results" "</b></big>";
+    print "<br>"
+    print "</td>";
+    print "</tr>";
+    print "<tr>";
+    print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Test Name<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Word Error Rate<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
+
+    for (i = 0; i < lastTestCount; i++) {
+        split(lastTestData[i], thisData);
+	_testName = thisData[1];
+	_testCount = thisData[2];
+	printLongSingleTest(_testName, _testCount);
+    }
+    print "</tr>";
+    print "<tbody>";
+    print "</table>";
+    print "<br>";
+}
 
 # prints the table of contents
 
@@ -450,11 +520,15 @@ function printTOC() {
     print("<h2> Table of Contents</h2>");
     # print("<small>");
     print("<ul>");
+    print("<li><a href=#latest_results> Latest Results </a></li>");
     print("<li><a href=#build_history> Build History </a></li>");
+    print("<li>Detailed Test Results</li>");
+    print("<ul>");
     for (i in testCount) {
-	print("<li><a href=#" i ">Test "  i "</a></li>") | "sort";
+	print("<li><a href=#" i ">"  i "</a></li>") | "sort";
     }
     close("sort");
+    print("</ul>");
     print("</ul>");
     # print("</small>");
 }
@@ -482,10 +556,11 @@ END {
     printHeader();
     printTitle();
     printHeaderTable()
+    printLatestTestResults();
+    printDetailedTestTitle();
     for (i in testCount) {
         printTestResults(i);
     }
-
     printBuildHistory();
     printFooter();
 }
