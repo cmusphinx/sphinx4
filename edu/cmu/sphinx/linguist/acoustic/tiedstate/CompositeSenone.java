@@ -33,6 +33,7 @@ import java.io.Serializable;
 public class CompositeSenone implements Senone, Serializable {
     private final static int MAX_SENONES = 20000;
     private Senone[] senones;
+    private float weight;
 
     transient volatile private Data logLastDataScored;
     transient volatile private float logLastScore;
@@ -45,10 +46,11 @@ public class CompositeSenone implements Senone, Serializable {
     *
     * @return a composite senone
     */
-    public static  CompositeSenone create(Collection senoneCollection) {
+    public static  CompositeSenone create(Collection senoneCollection,
+            float weight) {
 	 return new CompositeSenone(
 	    (Senone[]) senoneCollection.toArray(
-		new Senone[senoneCollection.size()]));
+		new Senone[senoneCollection.size()]), weight);
      }
 
     /**
@@ -58,8 +60,10 @@ public class CompositeSenone implements Senone, Serializable {
      * @param senones the set of constiuent senones
      *
      */
-    public CompositeSenone(Senone[] senones) {
+    public CompositeSenone(Senone[] senones, float weight) {
 	this.senones = senones;
+        this.weight = weight;
+        System.out.print(" " + senones.length);
     }
 
 
@@ -83,30 +87,35 @@ public class CompositeSenone implements Senone, Serializable {
      *
      * @return the score for the feature in logmath log base
      */
+
+    private final static boolean wantMaxScore = true;
+
     public float getScore(Data feature) {
 	float logScore = -Float.MAX_VALUE;
 
 	if (feature == logLastDataScored) {
 	    logScore = logLastScore;
 	} else {
-	    /*
-	    for (int i = 0; i < senones.length; i++) {
-		float newScore = senones[i].getScore(feature);
-		if (newScore > score) {
-		    score = newScore;
-		}
-	    }
-	    */
+            if (wantMaxScore) {
+                for (int i = 0; i < senones.length; i++) {
+                    float newScore = senones[i].getScore(feature);
+                    if (newScore > logScore) {
+                        logScore = newScore;
+                    }
+                }
+            } else { // average score
+                float logCumulativeScore = 0.0f;
+                for (int i = 0; i < senones.length; i++) {
+                    logCumulativeScore += senones[i].getScore(feature);
+                }
+                logScore = logCumulativeScore / senones.length;
+            }
 
-	    float logCumulativeScore = 0.0f;
-	    for (int i = 0; i < senones.length; i++) {
-		logCumulativeScore += senones[i].getScore(feature);
-	    }
-	    logScore = logCumulativeScore / senones.length;
+
 	    logLastScore = logScore;
 	    logLastDataScored = feature;
 	}
-	return logScore;
+	return logScore + weight;
     }
 
 
