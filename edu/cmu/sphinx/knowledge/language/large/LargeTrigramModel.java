@@ -201,15 +201,19 @@ public class LargeTrigramModel implements LanguageModel {
      * Also finds the startWordID and endWordID.
      */
     private void buildUnigramIDMap(Dictionary dictionary) {
+        int missingWords = 0;
         String[] words = loader.getWords();
         for (int i = 0; i < words.length; i++) {
             Word word = dictionary.getWord(words[i]);
             if (word == null) {
-                System.out.println
-                    ("LargeTrigramModel: word `" + words[i]
-                     + "' is not in the dictionary.");
+                missingWords++;
             }
             unigramIDMap.put(word, unigrams[i]);
+        }
+
+        if (missingWords > 0) {
+            System.out.println("Warning: Dictionary is missing " + missingWords
+                + " words that are contained in the language model.");
         }
     }
     
