@@ -13,6 +13,7 @@
 package demo.jsapi.cardmatch;
 
 import edu.cmu.sphinx.decoder.Decoder;
+import edu.cmu.sphinx.decoder.linguist.JSGFGrammar;
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.SphinxProperties;
