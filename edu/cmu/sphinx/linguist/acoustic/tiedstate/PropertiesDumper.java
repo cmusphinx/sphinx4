@@ -25,6 +25,10 @@ public class PropertiesDumper {
 
     private Properties props;
 
+    /**
+     * Dumps the properties file 'model.props' that is in the same
+     * directory as this class.
+     */
     public static void main(String[] argv) {
         try {
             PropertiesDumper dumper = new PropertiesDumper("model.props");
@@ -38,6 +42,8 @@ public class PropertiesDumper {
     /**
      * Constructs a PropertiesDumper of the given acoustic model
      * properties file.
+     *
+     * @param propsFile the properties file to dump
      */
     public PropertiesDumper(String propsFile) throws IOException {
         props = new Properties();
@@ -47,13 +53,17 @@ public class PropertiesDumper {
     /**
      * Constructs a PropertiesDumper of the given acoustic model
      * properties.
+     *
+     * @param properties the Properties object to dump
      */
     public PropertiesDumper(Properties properties) throws IOException {
         props = properties;
     }
 
     /**
-     * Returns a string that describes this TiedStateAcousticModel.
+     * Returns a string of the properties.
+     *
+     * @return a string of the properties
      */
     public String toString() {
         String result = ((String) props.get("description")) + "\n";
@@ -68,6 +78,8 @@ public class PropertiesDumper {
 
     /**
      * Converts strings like "thisIsAString" into "This Is A String".
+     *
+     * @param original the original string
      *
      * @return a readable form of strings like "thisIsAString"
      */
