@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+# 
+# Shows the batches that are still running. This is useful when trying
+# to figure out who the stragglers are after a batch run.
+
+grep -cl Summary tests/Results/*.out | grep ":0" | sed 's/:0//g'
