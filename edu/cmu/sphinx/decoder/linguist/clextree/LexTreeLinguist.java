@@ -108,6 +108,8 @@ public class LexTreeLinguist implements  Linguist {
         LexTreeHMMState.class
     };
 
+    private final static SearchStateArc[] EMPTY_ARC = new SearchStateArc[0];
+
 
     private SphinxProperties props;
 
@@ -842,23 +844,26 @@ public class LexTreeLinguist implements  Linguist {
           * @return a list of SearchState objects
           */
          public SearchStateArc[] getSuccessors() {
-             SearchStateArc[] arcs = null;
-             int index = 0;
-             List list = new ArrayList();
+             SearchStateArc[] arcs = EMPTY_ARC;
              WordNode wordNode = (WordNode) getNode();
-             Collection baseList  = wordNode.getRC();
-             Unit left = wordNode.getLastUnit();
 
-             for (Iterator i = baseList.iterator(); i.hasNext(); ) {
-                 Unit base = (Unit) i.next();
-                 Collection epList = hmmTree.getEntryPoint(left, base);
-                 list.addAll(epList);
-             }
+             if (wordNode.getWord() != sentenceEndWord) {
+                 int index = 0;
+                 List list = new ArrayList();
+                 Collection baseList  = wordNode.getRC();
+                 Unit left = wordNode.getLastUnit();
 
-             arcs = new SearchStateArc[list.size()];
-             for (Iterator i = list.iterator(); i.hasNext(); ) {
-                 HMMNode node = (HMMNode) i.next();
-                 arcs[index++] = createUnitStateArc(node);
+                 for (Iterator i = baseList.iterator(); i.hasNext(); ) {
+                     Unit base = (Unit) i.next();
+                     Collection epList = hmmTree.getEntryPoint(left, base);
+                     list.addAll(epList);
+                 }
+
+                 arcs = new SearchStateArc[list.size()];
+                 for (Iterator i = list.iterator(); i.hasNext(); ) {
+                     HMMNode node = (HMMNode) i.next();
+                     arcs[index++] = createUnitStateArc(node);
+                 }
              }
              return arcs;
          }
