@@ -193,6 +193,11 @@ public class LexTreeLinguist implements  Linguist {
     }
 
 
+    public LanguageState getInitialLanguageState() {
+        return new LexTreeInitialState(lexTree.getInitialNode());
+    }
+
+
     /**
      * Compiles the grammar into a sentence hmm.  A GrammarJob is
      * created for the initial grammar node and added to the
@@ -201,7 +206,6 @@ public class LexTreeLinguist implements  Linguist {
      * grammar node is expanded and attached to the tails. GrammarJobs
      * for the successors are added to the grammar job queue.
      */
-
     protected Collection compileGrammar() {
         List gstateList = new ArrayList();
 
@@ -211,9 +215,8 @@ public class LexTreeLinguist implements  Linguist {
         hmmPool = new HMMPool(acousticModel);
         Timer.stop("buildHmmPool");
 
-        lexTree = new LexTree(hmmPool, dictionary, languageModel);
-
-
+        lexTree = new LexTree(hmmPool, dictionary,
+                languageModel.getVocabulary());
 
         hmmPool.dumpInfo();
 
@@ -226,492 +229,168 @@ public class LexTreeLinguist implements  Linguist {
         return null;
     }
 
-}
+    abstract class LexTreeState implements LanguageState {
+        private float logProbability;
+        private int thisUnitID;
+        private LexTree.UnitLexNode left, central, right;
 
 
+        LexTreeState(
+                LexTree.UnitLexNode left,
+                LexTree.UnitLexNode central,
+                LexTree.UnitLexNode right,
+                float logProbability) {
+            this.left = left;
+            this.central = central;
+            this.right = right;
+            this.logProbability = logProbability;
+        }
 
-/**
- * Represents the vocabulary as a lex tree
- */
-class LexTree {
-    LexNode initialNode;
-    HMMPool hmmPool;
-    Dictionary dictionary;
+         public  float getProbability() {
+            return logProbability;
+         }
 
-    /**
-     * Creates the lextree
-     *
-     * @param pool the pool of HMMs and units
-     * @param dictionary the dictionary containing the pronunciations
-     * @param languageModel contains the words
-     */
-    LexTree(HMMPool pool, Dictionary dictionary, LanguageModel languageModel) {
-        hmmPool = pool;
-        this.dictionary = dictionary;
+         /**
+          * Determines if this is an emitting state
+          */
+         public boolean isEmitting() {
+             return false;
+         }
 
-        Collection  words = languageModel.getVocabulary();
+         public LexTree.UnitLexNode getCentral() {
+             return central;
+         }
 
-        Utilities.dumpMemoryInfo("lextree before");
-        Timer.start("Create lextree");
-        initialNode = new LexNode();
-        addWords(words);
-        Timer.stop("Create lextree");
-        Utilities.dumpMemoryInfo("lextree after");
-        System.out.println("Added " + words.size() + " words");
-        dumpStats();
+         public LexTree.UnitLexNode getRight() {
+             return right;
+         }
+
+         public LexTree.UnitLexNode getLeft() {
+             return left;
+         }
+
+
+         abstract public List getSuccessors() ;
     }
 
     /**
-     * Adds the given collection of words to the lex tree
-     *
-     * @param words the collection of words
+     * An initial state in the search space. It is non-emitting
+     * and most likely has UnitLanguageStates as successors
      */
-    private void addWords(Collection words) {
-        for (Iterator i = words.iterator(); i.hasNext(); ) {
-            String word = (String) i.next();
-            Pronunciation[] pronunciations =
-                dictionary.getPronunciations(word, null);
-            if (pronunciations == null) {
-                System.out.println("Can't find pronunciation for '" +
-                        word + "' .. skipping it.");
-            } else {
-                for (int j = 0; j < pronunciations.length; j++) {
-                    addPronunciation(pronunciations[j]);
+    class LexTreeInitialState extends LexTreeState {
+        private LexTree.NonLeafLexNode node;
+
+
+        LexTreeInitialState(LexTree.NonLeafLexNode node) {
+            super(null, null, null, 0.0f);
+            this.node = node;
+        }
+
+        /**
+         * Gets a successor to this language state
+         *
+         * @param the successor index
+         *
+         * @return a successor
+         */
+        public List getSuccessors(){
+            List list = new ArrayList();
+
+            LexTree.LexNode[] nodes = node.getNextNodes();
+
+            for (int i = 0; i < nodes.length; i++) {
+                LexTree.LexNode node = nodes[i];
+
+                if (! (node instanceof LexTree.UnitLexNode)) {
+                    throw new Error("Corrupt lex tree");
+                }
+
+                LexTree.UnitLexNode leftNode = getCentral();
+                LexTree.UnitLexNode central = (LexTree.UnitLexNode) node;
+                LexTree.LexNode[] rightNodes = getNextUnits(central);
+
+                for (int j = 0; j < rightNodes.length; j++) {
+                    list.add(new LexTreeUnitState(leftNode, central, 
+                                (LexTree.UnitLexNode) rightNodes[j]));
                 }
             }
+
+            return list;
         }
     }
 
-    /**
-     * Adds the given pronunciation to the lex tree
-     *
-     * @param pronunciation the pronunciation
-     */
-    private void addPronunciation(Pronunciation pronunciation) {
-        LexNode node = initialNode;
-        Unit[] units = pronunciation.getUnits();
-        for (int i = 0; i < units.length; i++) {
-            node = node.addUnit(units[i]);
-        }
-        node.addWord(pronunciation);
-    }
 
-    /**
-     * Dumps the words that are in the lex tree
-     *
-     * @node the root of the tree to dump
-     */
-    void dumpWords(LexNode node) {
-        Collection nextNodes = node.getNext();
-        for (Iterator i = nextNodes.iterator(); i.hasNext(); ) {
-            LeafLexNode nextNode = (LeafLexNode) i.next();
-            if (nextNode instanceof WordLexNode) {
-                WordLexNode wln = (WordLexNode) nextNode;
-                System.out.println("Word: " +
-                        wln.getPronunciation().getWord());
+    class LexTreeUnitState extends LexTreeState {
+        int unitID;
+        LexTreeUnitState( LexTree.UnitLexNode left,
+               LexTree.UnitLexNode central, LexTree.UnitLexNode right) {
+            super(left, central, right, 0.0f);
+            int leftID;
+
+            if (left == null) {
+                leftID = hmmPool.getID(Unit.SILENCE);
             } else {
-                dumpWords((LexNode) nextNode);
+                leftID = left.getID();
             }
-        }
-    }
 
-    /**
-     * Dumps the tree
-     *
-     * @node the root of the tree to dump
-     */
-    void dumpTree(int level, LexNode node) {
-        Collection nextNodes = node.getNext();
-        for (Iterator i = nextNodes.iterator(); i.hasNext(); ) {
-            LeafLexNode nextNode = (LeafLexNode) i.next();
-            if (nextNode instanceof WordLexNode) {
-                WordLexNode wln = (WordLexNode) nextNode;
-                System.out.println(Utilities.pad(level * 1) 
-                   + "'" + wln.getPronunciation().getWord() + "'");
-            } else if (nextNode instanceof UnitLexNode) {
-                UnitLexNode uln = (UnitLexNode) nextNode;
-                System.out.println(Utilities.pad(level * 1) +
-                        uln.getUnit().getName());
-                dumpTree(level + 1, (LexNode) nextNode);
-            }
-        }
-    }
-
-    /**
-     * Collects stats for a subtree
-     *
-     * @node the root of the tree to collect the stats
-     */
-    void collectStats(int depth, TreeStats stats, LexNode node) {
-        if (depth > stats.maxDepth) {
-            stats.maxDepth = depth;
-        }
-        Collection nextNodes = node.getNext();
-        for (Iterator i = nextNodes.iterator(); i.hasNext(); ) {
-            stats.numBranches++;
-            LeafLexNode nextNode = (LeafLexNode) i.next();
-            if (nextNode instanceof WordLexNode) {
-                stats.numWords++;
-            } else if (nextNode instanceof UnitLexNode) {
-                stats.numUnits++;
-                collectStats(depth + 1, stats, (LexNode) nextNode);
-            }
-        }
-    }
-
-    /**
-     * Dumps the stats for this tree
-     */
-    void dumpStats() {
-        TreeStats stats = new TreeStats();
-        collectStats(0, stats, initialNode);
-        stats.dump();
-
-    }
-
-    /**
-     * Little class to track tree statistics
-     */
-    class TreeStats {
-        int numBranches = 0;
-        int numWords = 0;
-        int numUnits = 0;
-        int maxDepth = 0;
-
-        /**
-         * Dumps the tree stats
-         */
-        void dump() {
-            System.out.println(" =========== lex tree stats ======= ");
-            System.out.println(" Units       : " + numUnits);
-            System.out.println(" Words       : " + numWords);
-            System.out.println(" MaxDepth    : " + maxDepth);
-            System.out.println(" NumBranches : " + numBranches);
-            System.out.println(" AvgBranches : " + numBranches / numUnits);
-        }
-    }
-
-
-    /**
-     * A LexTree is made up of lex nodes. The simplest kind of lex
-     * node is a leaf lex node.  A leaf lex node has no successors
-     */
-    class LeafLexNode {
-    }
-
-
-    /**
-     * A lexNode is a non-leaf lex node. It has successors.
-     */
-    class LexNode extends LeafLexNode {
-        private Map nextNodes = new HashMap();
-
-        /**
-         * Get the set of successor lex nodes
-         *
-         * @return the collection of successors
-         */
-        Collection getNext() {
-            return nextNodes.values();
+            unitID = hmmPool.buildID(
+                        central.getID(), leftID, right.getID());
         }
 
-        /**
-         * Adds a unit to the set of succesors to this node. If a
-         * child representing this unit already exists then that child
-         * is returned, otherwise a new child node is created,
-         * added and returned.
-         *
-         * @param unit the unit to add
-         *
-         * @return the node representing the unit added
-         */
-        LexNode addUnit(Unit unit) {
-            assert !unit.isContextDependent();
-            UnitLexNode next = (UnitLexNode) nextNodes.get(unit);
-            if (next != null) {
-                assert next.getID() == hmmPool.getID(unit);
-                return next;
-            } else {
-                next = new UnitLexNode(unit);
-                nextNodes.put(unit, next);
-            }
-            return next;
-        }
 
-        /**
-         * Adds a word (represented as a pronunciation) to this node
-         *
-         * @param p the pronunciation to add
-         *
-         * @return the node representing the word
-         */
-        void addWord(Pronunciation p) {
-            LexNode next = (LexNode) nextNodes.get(p);
-            if (next != null) {
-                throw new Error("Duplicate pronunciation " + p);
-            } else {
-                nextNodes.put(p, new WordLexNode(p));
-            }
-        }
-    }
-
-
-    /**
-     * Represents a unit in a lex tree
-     */
-    class UnitLexNode extends LexNode {
-        int id;
-
-        /**
-         * Creates a UnitLexNode for the given unit
-         *
-         * @param unit the unit held by this node
-         */
-        UnitLexNode(Unit unit) {
-            id = hmmPool.getID(unit);
-        }
-
-        /**
-         * Gets the unit for this node
-         *
-         * @return the unit
-         */
         Unit getUnit() {
-            return hmmPool.getUnit(id);
+            return hmmPool.getUnit(unitID);
         }
 
-        /**
-         * Gets the unit ID 
-         *
-         * @return the unit id
-         */
-        int getID() {
-            return id;
-        }
-    }
+        public List getSuccessors() {
+            List list = new ArrayList(1);
+            HMMPosition position = getCentral().getPosition();
+            HMM hmm = hmmPool.getHMM(unitID, position);
 
-
-
-    /**
-     * An initial node (the head of the tree)
-     */
-    class InitialLexNode extends LexNode {
-    }
-
-
-
-    /**
-     * Represents a word in a lex tree. Words are always leaf nodes
-     */
-    class WordLexNode extends LeafLexNode {
-        private Pronunciation pronunciation;
-
-        /**
-         * Creates a node with the given pronunciation
-         *
-         * @param p the pronunciation
-         */
-        WordLexNode(Pronunciation p) {
-            this.pronunciation = p;
-        }
-
-
-        /**
-         * Returns the pronunciation for this node
-         *
-         * @param the pronunciation
-         */
-        Pronunciation getPronunciation() {
-            return pronunciation;
-        }
-
-        /**
-         * Returns a string representation of this object
-         *
-         * @param the string representation
-         */
-        public String toString() {
-            return pronunciation.toString();
+            list.add(new LexTreeHMMState(getLeft(), getCentral(),
+                    getRight(), hmm.getInitialState()));
+            return null;
         }
     }
 
-}
+    class LexTreeHMMState extends LexTreeState implements HMMLanguageState {
+        private HMMState hmmState;
 
-
-/**
- * The HMMPool provides the ability to manage units via small integer
- * IDs.  Context Independent units and context dependent units can
- * be converted to an ID. IDs can be used to quickly retrieve a unit
- * or an hmm associated with the unit.  This class operates under the
- * constraint that context sizes are exactly one, which is generally
- * only valid for large vocabulary tasks.
- */
-class HMMPool {
-    private AcousticModel model;
-    private int maxCIUnits = 0;
-    private Unit[] unitTable;
-    private Map unitMap;
-
-    HMMPool(AcousticModel model) {
-        this.model = model;
-
-        if (model.getLeftContextSize() != 1) {
-            throw new Error("LexTreeLinguist: Unsupported left context size");
+        LexTreeHMMState( LexTree.UnitLexNode left,
+               LexTree.UnitLexNode central, 
+               LexTree.UnitLexNode right, HMMState hmmState) {
+            super(left, central, right, 0.0f);
+            this.hmmState = hmmState;
         }
 
-        if (model.getRightContextSize() != 1) {
-            throw new Error("LexTreeLinguist: Unsupported right context size");
+
+        public HMMState getHMMState() {
+            return hmmState;
         }
 
-        // count CI units:
-
-        unitMap = new HashMap();
-        int curID = 1;
-        for (Iterator i = model.getContextIndependentUnitIterator();
-                i.hasNext();) {
-            Unit unit = (Unit) i.next();
-            unitMap.put(unit.getName(), new Integer(curID++));
+        public List getSuccessors() {
+            return null;
         }
-
-        maxCIUnits = curID;
-
-        unitTable = new Unit[maxCIUnits * maxCIUnits * maxCIUnits];
-
-        for (Iterator i = model.getHMMIterator(); i.hasNext(); ) {
-            HMM hmm = (HMM) i.next();
-            Unit unit = hmm.getUnit();
-            int id = getID(unit);
-            unitTable[id] = unit;
-            // System.out.println("Unit " + unit + " id " + id);
-        }
-    }
-
-
-    /**
-     * Gets the unit for the given id
-     *
-     * @param unitID the id for the unit
-     *
-     * @returns the unit associated with the ID
-     */
-    Unit getUnit(int unitID) {
-        return unitTable[unitID];
-    }
-
-
-    /**
-     * Given a unit id and a position, return the HMM
-     * associated with the unit/position
-     *
-     * @param unitID the id of the unit
-     * @param position the position within the word
-     *
-     * @return the hmm associated with the unit/position
-     */
-    HMM getHMM(int unitID, HMMPosition position) {
-        Unit unit = getUnit(unitID);
-        assert unit != null;
-        return model.lookupNearestHMM(unit, position);
     }
 
     /**
-     * given a unit return its ID
+     * Given a unit node, return the next set of units.  If the unit
+     * node marks the end of the word, then the next set of unit nodes
+     * are the set of beginning word units
      *
-     * @param unit the unit
+     * @param unitNode the unit node of interest
      *
-     * @return an ID
+     * @return an array of next unit nodes
      */
-    int getID(Unit unit) {
-        if (unit.isContextDependent()) {
-            LeftRightContext context = (LeftRightContext) unit.getContext();
-            assert context.getLeftContext().length == 1;
-            assert context.getRightContext().length == 1;
-            return buildID(
-                getSimpleUnitID(unit),
-                getSimpleUnitID(context.getLeftContext()[0]),
-                getSimpleUnitID(context.getRightContext()[0]));
+    private LexTree.LexNode[]  getNextUnits(LexTree.UnitLexNode unitNode) {
+        if (unitNode.isWordEnd()) {
+            return lexTree.getInitialNode().getNextNodes();
         } else {
-            return getSimpleUnitID(unit);
-        }
-    }
-
-    /**
-     * Returns a context independent ID
-     *
-     * @param unit the unit of interest
-     *
-     * @return the ID of the central unit (ignoring any context)
-     */
-    int getSimpleUnitID(Unit unit) {
-        Integer id = (Integer) unitMap.get(unit.getName());
-        if (id == null) {
-            throw new Error("Can't find " + unit + " in unitMap");
-        }
-        return  id.intValue();
-    }
-
-    /**
-     * Builds an id from the given unit and its left and right unit
-     * ids
-     *
-     * @param unitID the id of the central unit
-     * @param leftID the id of the left context unit
-     * @param rightID the id of the right context unit
-     *
-     * @return the id for the context dependent unit
-     */
-    int buildID(int unitID, int leftID, int rightID) {
-        return unitID * (maxCIUnits * maxCIUnits)
-              + (leftID * maxCIUnits) 
-              + rightID ;
-    }
-
-    /**
-     * Dumps out info about this pool
-     */
-    void dumpInfo() {
-        System.out.println("Max CI Units " + maxCIUnits);
-        System.out.println("Unit table size " + unitTable.length);
-        System.out.println("Unit map size " + unitMap.size());
-
-        if (false) {
-            for (int i = 0; i < unitTable.length; i++) {
-                System.out.println("" + i + " " + unitTable[i]);
-            }
+            return unitNode.getNextNodes();
         }
     }
 
 
 
-
-    /**
-     * A quick and dirty benchmark to get an idea how long
-     * the HMM lookups will take.  This experiment shows
-     * that on a 1GHZ sparc system, the lookup takes a little
-     * less than 1uSec.  This is probably fast enough.
-     */
-
-    static HMMPosition pos[] = {
-        HMMPosition.BEGIN, HMMPosition.END, HMMPosition.SINGLE,
-        HMMPosition.INTERNAL};
-
-   static int ids[] = { 9206, 9320, 9620, 9865, 14831, 15836 };
-
-    void benchmark() {
-        int nullCount = 0;
-        System.out.println("benchmarking ...");
-        Timer.start("hmmPoolBenchmark");
-
-        for (int i = 0; i < 1000000; i++) {
-            int id = ids[i % ids.length];
-            HMMPosition position = pos[i % pos.length];
-            HMM hmm = getHMM(id, position);
-            if (hmm == null) {
-                nullCount++;
-            }
-        }
-        Timer.stop("hmmPoolBenchmark");
-        System.out.println("null count " + nullCount);
-    }
 }
 
