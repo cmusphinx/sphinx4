@@ -1,0 +1,47 @@
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# Collects S4 metrics
+# 
+# Outputs the following metrics:
+#
+# fileCount - the number of files in the workspace
+# javaFileCount - the number of java files in the workspace
+# classCount - the number of java classes
+# lineCount - the number of source lines of java code
+# packageCount - the number packages
+#
+# Output Format:
+#
+# metrics|fileCount|javaFileCount|classCount|lineCount|packageCount|
+
+
+rootDir=../../
+
+
+#### count all of the files
+
+fileCount=`find $rootDir -type f | wc -l`
+
+#### count all of the java files
+
+javaFileCount=`find $rootDir -name "*.java" | wc -l`
+
+#### count all of the classes
+
+classCount=`find $rootDir -name "*.java" | xargs grep class | wc -l`
+
+#### count all of the lines of code
+
+lineCount=`find $rootDir -name "*.java" | xargs egrep "[{;]" | wc -l`
+
+#### package count
+packageCount=`find ../.. -name "*.java" -exec cat {} \; | grep package | sort -u | wc -l`
+
+echo "metrics|$fileCount|$javaFileCount|$classCount|$lineCount|$packageCount|"
