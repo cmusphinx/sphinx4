@@ -24,15 +24,15 @@ public class CepstrumProducer extends PullingProcessor {
     private static final String PROP_CEPSTRUM_SIZE =
 	"edu.cmu.sphinx.frontend.cepstrumSize";
 
-    private int frameSize;
-    private int frameShift;
+    private int windowSize;
+    private int windowShift;
     private int cepstrumSize;
 
     private Processor hammingWindower;
     private Processor fastFourierTransformer;
 
-    // a DoubleAudioFrame template for producing cepstrum
-    private DoubleAudioFrame template;
+    // a DoubleAudioFrame window for producing cepstrum
+    private DoubleAudioFrame window;
 
 
     /**
@@ -41,9 +41,9 @@ public class CepstrumProducer extends PullingProcessor {
     public CepstrumProducer() {
 
 	getSphinxProperties();
-	template = new DoubleAudioFrame(frameSize);
+	window = new DoubleAudioFrame(windowSize);
 
-	// hammingWindower = new HammingWindower();
+	hammingWindower = new HammingWindower();
 	// fastFourierTransformer = new FastFourierTransformer();
     }
 
@@ -55,8 +55,8 @@ public class CepstrumProducer extends PullingProcessor {
 	// TODO : specify the context
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
 
-	frameSize = properties.getInt(FrontEnd.PROP_WINDOW_SIZE, 410);
-	frameShift = properties.getInt(FrontEnd.PROP_WINDOW_SHIFT, 160);
+	windowSize = properties.getInt(FrontEnd.PROP_WINDOW_SIZE, 205);
+	windowShift = properties.getInt(FrontEnd.PROP_WINDOW_SHIFT, 80);
 	cepstrumSize = properties.getInt(PROP_CEPSTRUM_SIZE, 13);
     }
 	
@@ -69,31 +69,33 @@ public class CepstrumProducer extends PullingProcessor {
      * @return a CepstrumFrame
      */
     public Data process(Data input) {
+	
+	if (!(input instanceof DoubleAudioFrame)) {
+	    return input;
+	} else {
+	    DoubleAudioFrame audioDataFrame = (DoubleAudioFrame) input;
+	    double[] samples = audioDataFrame.getData();
+	    
+	    int windowCount = Util.getWindowCount
+		(samples.length, windowSize, windowShift);
+	    Cepstrum[] cepstra = new Cepstrum[windowCount];
+	    
+	    for (int i = 0, windowStart = 0; i < windowCount;
+		 i++, windowStart += windowShift) {
+		
+		// copy the frame into the window
+		System.arraycopy(samples, windowStart,
+				 window.getData(), 0, windowSize);
+		
+		// apply hamming window
+		hammingWindower.process(window);
+		Util.dumpDoubleArray(window.getData(), "HAMMING_WINDOW");
+		
+		// apply FFT
+		// cepstra[i] = (Cepstrum) fastFourierTransformer.process(window);
+	    }
 
-	DoubleAudioFrame audioDataFrame = (DoubleAudioFrame) input;
-	double[] samples = audioDataFrame.getData();
-
-	if (samples.length != template.getData().length) {
-	    template = new DoubleAudioFrame(samples.length);
+	    return (new CepstrumFrame(cepstra));
 	}
-
-	int frameCount = Util.getWindowCount
-	    (samples.length, frameSize, frameShift);
-	Cepstrum[] cepstra = new Cepstrum[frameCount];
-
-	for (int i = 0, frameStart = 0; i < frameCount;
-	     i++, frameStart += frameShift) {
-
-	    // copy the frame into the template
-	    System.arraycopy(samples, frameStart, template, 0, frameSize);
-
-	    // apply hamming window
-	    hammingWindower.process(template);
-
-	    // apply FFT
-	    cepstra[i] = (Cepstrum) fastFourierTransformer.process(template);
-	}
-
-	return (new CepstrumFrame(cepstra));
     }
 }

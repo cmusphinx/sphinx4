@@ -7,6 +7,7 @@ package edu.cmu.sphinx.frontend;
 import edu.cmu.sphinx.util.SphinxProperties;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Vector;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 
@@ -83,14 +84,26 @@ public class ShortAudioFrameSource implements DataSource {
      *     available
      */
     public Data read() throws IOException {
+
+	int bytesRead = totalBytesRead;
+
 	if (!queue.isEmpty()) {
 	    return queue.pop();
-	} else if (totalBytesRead == 0) {
-	    queue.push(readNextFrame());
-	    return SegmentEndPointSignal.createSegmentStartSignal();
-	} else if (totalBytesRead + frameSizeInBytes >= SEGMENT_MAX_BYTES) {
-	    queue.push(readNextFrame());
-	    return SegmentEndPointSignal.createSegmentEndSignal();
+	} else if (bytesRead == 0 ||
+		   bytesRead + frameSizeInBytes >= SEGMENT_MAX_BYTES) {
+
+	    // cases when we are at the start and end of segment
+	    Data frame = readNextFrame();
+	    Data prior = queue.pop();
+	    queue.push(frame);
+	    if (prior != null) {
+		queue.push(prior);
+	    }
+	    if (bytesRead == 0) {
+		return SegmentEndPointSignal.createSegmentStartSignal();
+	    } else {
+		return SegmentEndPointSignal.createSegmentEndSignal();
+	    }
 	} else {
 	    return readNextFrame();
 	}
@@ -204,19 +217,17 @@ public class ShortAudioFrameSource implements DataSource {
 
 class Queue {
 
-    private Data queue = null;
+    private Vector queue = new Vector();
 
     public void push(Data data) {
-	queue = data;
+	queue.add(data);
     }
 
     public Data pop() {
-	Data temp = queue;
-	queue = null;
-	return temp;
+	return (Data) queue.remove(0);
     }
 
     public boolean isEmpty() {
-	return (queue == null);
+	return queue.isEmpty();
     }
 }

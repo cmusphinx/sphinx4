@@ -66,7 +66,7 @@ public abstract class PullingProcessor implements DataSource, Processor {
      * @return a Data object
      */
     public Data read() throws IOException {
-	Data input = predecessorDataSource.read();
+	Data input = getSource().read();
 	return process(input);
     }
 }

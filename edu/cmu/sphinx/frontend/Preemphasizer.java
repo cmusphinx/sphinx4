@@ -52,6 +52,29 @@ public class Preemphasizer extends PullingProcessor {
 
 
     /**
+     * Reads the next Data object from this DataSource.
+     *
+     * @return the next available Data object, returns null if no
+     *     Data object is available
+     */
+    public Data read() throws IOException {
+	Data input = getSource().read();
+	if (input instanceof PreemphasisPriorSignal) {
+	    PreemphasisPriorSignal signal = (PreemphasisPriorSignal) input;
+	    prior = signal.getPrior();
+	    return read();
+	} else if (input instanceof SegmentEndPointSignal) {
+	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
+	    return read();
+	} else if (input instanceof ShortAudioFrame) {
+	    return process(input);
+	} else {
+	  return input;
+	}
+    }	
+
+
+    /**
      * Applies pre-emphasis filter to the given ShortAudioFrame.
      * If the preemphasis factor is zero, then the short input samples will
      * just be converted to double samples.
@@ -61,29 +84,14 @@ public class Preemphasizer extends PullingProcessor {
      * @return a DoubleAudioFrame of data with pre-emphasis filter applied
      */
     public Data process(Data input) throws IOException {
-	if (input instanceof PreemphasisPriorSignal) {
-	    PreemphasisPriorSignal signal = (PreemphasisPriorSignal) input;
-	    prior = signal.getPrior();
-	    return read();
-	} else if (input instanceof SegmentEndPointSignal) {
-	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
-	    return read();
-	} else if (input instanceof ShortAudioFrame) {
-	    return preemphasize((ShortAudioFrame) input);
-	} else {
-	    return input;
-	}
-    }
-    
-    
-    private DoubleAudioFrame preemphasize(ShortAudioFrame audioDataFrame) {
+
 	// NOTE:
 	// It will not be necessary to allocate this extra double[]
 	// if we started off with a double[]. In the pre-emphasis
 	// for loop below, we can just start at the end of the array
 	// to calculate the preemphasis in-place.
 
-	short[] in = audioDataFrame.getData();
+	short[] in = ((ShortAudioFrame) input).getData();
 	double[] out = new double[in.length];
 
 	if (preemphasisFactor != 0.0) {

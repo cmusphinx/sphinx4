@@ -42,8 +42,7 @@ public class FrontEnd {
     public FrontEnd() {
 	processors = new LinkedList();
 	processors.add(new Preemphasizer());
-	// processors.add(new CepstrumProducer());
-
+	processors.add(new CepstrumProducer());
 	linkProcessors();
     }
 
@@ -82,6 +81,9 @@ public class FrontEnd {
     }
 
 
+    /**
+     * Starts the FrontEnd.
+     */
     public void run() {
 	Data output;
 	PullingProcessor last =
@@ -96,18 +98,6 @@ public class FrontEnd {
 	    } catch (IOException ioe) {
 		ioe.printStackTrace();
 	    }
-	}
-    }
-
-
-    private void read() {
-	int i = 0;
-	try {
-	    while (audioFrameSource.read() != null) {
-		System.out.println("Read " + (i++) + " frame(s)");
-	    }
-	} catch (IOException ioe) {
-	    ioe.printStackTrace();
 	}
     }
 
