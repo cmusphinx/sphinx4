@@ -11,15 +11,15 @@
  */
 package edu.cmu.sphinx.result;
 
-import java.util.Iterator;
-
 public interface ConfidenceScorer {
 
     /**
-     * Returns an Iterator of the paths of this result with their
-     * confidence scores.
+     * Computes confidences for a Result and returns a ConfidenceResult,
+     * a compact representation of all the hypothesis contained in the
+     * result together with their per-word and per-path confidences.
      *
-     * @return an Iterator of the paths of this result
+     * @param result the result to compute confidences for
+     * @return a confidence result
      */
     public ConfidenceResult score(Result result);
 }
