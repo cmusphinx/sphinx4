@@ -21,7 +21,7 @@ import java.util.Vector;
  * is a one-to-many processor.
  *
  * <p>For each input DoubleAudioFrame, calling
- * <code>SlicingWindower.read()</code> will return the following
+ * <code>Windower.read()</code> will return the following
  * series of <code>Data</code> objects: <pre>
  * FrameEndPointSignal DoubleAudioFrame ... DoubleAudioFrame
  * FrameEndPointSignal </pre>
@@ -42,7 +42,7 @@ import java.util.Vector;
  * edu.cmu.sphinx.frontend.window.alpha
  * </pre>
  */
-public class SlicingWindower extends PullingProcessor {
+public class Windower extends DataProcessor {
 
     /**
      * The name of the SphinxProperty for the alpha value of the Window,
@@ -61,13 +61,13 @@ public class SlicingWindower extends PullingProcessor {
 
 
     /**
-     * Constructs a default SlicingWindower.
+     * Constructs a default Windower.
      */
-    public SlicingWindower() {
+    public Windower() {
 	getSphinxProperties();
 	createWindow();
         outputQueue = new Vector();
-        setTimer(Timer.getTimer("", "SlicingWindower"));
+        setTimer(Timer.getTimer("", "Windower"));
     }
 
 
@@ -90,7 +90,7 @@ public class SlicingWindower extends PullingProcessor {
         windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);
         windowShift = Util.getSamplesPerShift(sampleRate, windowShiftInMs);
 
-        ALPHA = properties.getDouble(SlicingWindower.PROP_ALPHA, 0.46);
+        ALPHA = properties.getDouble(Windower.PROP_ALPHA, 0.46);
     }
 
 
@@ -110,7 +110,7 @@ public class SlicingWindower extends PullingProcessor {
 
 
     /**
-     * Reads the next Data object, which is usually a window of the input
+     * Returns the next Data object, which is usually a window of the input
      * DoubleAudioFrame, with the Window function applied to it.
      *
      * @return the next available Data object, returns null if no
