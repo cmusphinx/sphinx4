@@ -52,12 +52,14 @@ while (<HIST>) {
     $diffURL = $viewCVS . $path . "/" . $file . ".diff?r1=" . $version
         . "&r2=" . getPreviousVersion($version);
 
-    print "<tr align=left valign=top>";
-    print "<td> $path </td>";
-    print "<td> <a href=$versionURL>" . $file . "</a></td>"; 
-    print "<td> <a href=$diffURL> $version</a> </td>";
-    print "<td> $who </td>";
-    print "</tr>";
+    if ($file ne "regression.log") {
+	print "<tr align=left valign=top>";
+	print "<td> $path </td>";
+	print "<td> <a href=$versionURL>" . $file . "</a></td>"; 
+	print "<td> <a href=$diffURL> $version</a> </td>";
+	print "<td> $who </td>";
+	print "</tr>";
+    }
 }
 print "</table>\n";
 
