@@ -3,6 +3,21 @@ Sphinx-4:
 
     http://cmusphinx.sourceforge.net/sphinx4
 
+In this release, we have provided the following new features and 
+improvements over the 0.1 alpha release:
+
+    - Confidence scoring
+    - Dynamic grammar support
+    - JSGF limitations removed
+    - Improved performance for large, perplex JSGF grammars
+    - Filler support for JSGF Grammars
+    - Out-of-grammar utterance rejection
+    - Narrow bandwidth acoustic model
+    - WSJ5K Language model
+    - More demonstration programs
+    - Better control over microphone selection
+    - Lots of bug fixes
+
 Sphinx-4 is a state-of-the-art, speaker-independent, continuous speech
 recognition system written entirely in the Java programming language.
 It was created via a joint collaboration between the Sphinx group at
@@ -29,7 +44,7 @@ Because it is written entirely in the Java programming language,
 Sphinx-4 can run on a variety of platforms without requiring any
 special compilation or changes.  We've tested Sphinx-4 on the
 following platforms with success: the Solaris 9 Operating System
-on the SPARC platform, Mac OS X 10.3.3, RedHat 9.0, Fedora Core 1, 
+on the SPARC platform, Mac OS X 10.3.5, RedHat 9.0, Fedora Core 1, 
 Microsoft Windows XP, and Microsoft Windows 2000. 
 
 Please give Sphinx-4 1.0 beta a try and post your questions,
