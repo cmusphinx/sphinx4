@@ -36,7 +36,11 @@ import java.io.IOException;
 
 
 /**
- * Produces MelCepstrum data from a file.
+ * Produces Mel-cepstrum data from an InputStream.
+ * To set the inputstream with cepstral data, use the
+ * {@link #setInputStream(InputStream,boolean) setInputStream} method,
+ * and then call {@link #getData} to obtain the Data objects that
+ * have cepstra data in it.
  */
 public class StreamCepstrumSource extends BaseDataProcessor {
 

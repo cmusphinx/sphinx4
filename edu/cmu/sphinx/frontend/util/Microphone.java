@@ -55,10 +55,7 @@ import javax.sound.sampled.Line;
  * objects. The Microphone should be run in a separate thread.
  * When the method <code>startRecording()</code> is called, it will
  * start capturing audio, and stops when <code>stopRecording()</code>
- * is called. An Utterance is created for all the audio captured
- * in between calls to <code>startRecording()</code> and
- * <code>stopRecording()</code>.
- * Calling <code>getData()</code> returns the captured audio
+ * is called. Calling <code>getData()</code> returns the captured audio
  * data as Data objects.
  */
 public class Microphone extends BaseDataProcessor {

@@ -32,8 +32,10 @@ import java.util.Arrays;
 
 /**
  * A StreamDataSource converts data from an InputStream into
- * Data objects. One would obtain the Data objects using
- * the <code>getData()</code> method.
+ * Data objects. One would call
+ * {@link #setInputStream(InputStream,String) setInputStream} to set
+ * the input stream, and call {@link #getData} to obtain the
+ * Data object.
  */
 public class StreamDataSource extends BaseDataProcessor {
 
