@@ -15,7 +15,11 @@
 # address to the list of recipients
 #
 
-hostName=`hostname`
+# the 'dots' in the hostname can mess things up for the twik so
+# lets just use the left most name
+
+hostName=`getHostname`
+
 reportName=regression_report_$hostName.html
 
 ./makeWebpage < regression.log > $reportName

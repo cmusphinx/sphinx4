@@ -53,7 +53,7 @@ BEGIN {
     F_CORRECT_SENTENCES = 16;
     F_HEAP_SIZE = 17;
     F_LOAD_AVERAGE = 18;
-    "hostname" | getline machine
+    "getHostname" | getline machine
 }
 
 $1 == "build" && $4 == machine {
