@@ -108,8 +108,8 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.addSilEndingPronunciation=false
 #
 # Use the number of available CPUS for scoring:
 
-edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=false
-edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=1
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=true
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=0
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
 
 
