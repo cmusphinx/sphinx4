@@ -53,6 +53,17 @@ class Pool {
     }
 
     /**
+     * returns the ID of a given object from the pool
+     *
+     * @param object the object
+     *
+     * @return the index
+     */
+    int indexOf(Object object) {
+	return pool.indexOf(object);
+    }
+
+    /**
      * Places the given object in the pool
      *
      * @param id a unique ID for this object
