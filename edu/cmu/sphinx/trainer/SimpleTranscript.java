@@ -16,14 +16,15 @@ package edu.cmu.sphinx.trainer;
 import java.util.StringTokenizer;
 import java.util.Iterator;
 
-import edu.cmu.sphinx.knowledge.dictionary.*;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
 
 /**
  * Provides mechanisms for accessing a transcription.
  */
 public class SimpleTranscript implements Transcript {
     private String transcript;              // the transcript
-    private Dictionary dictionary;          // the dictionary
+    private Dictionary dictionary;   // the dictionary
     boolean isExact;                        // is exact transcription?
     private boolean wasInitialized = false; // Has this object been initialized?
     private StringTokenizer words;          // string tokenizer for current transcription.

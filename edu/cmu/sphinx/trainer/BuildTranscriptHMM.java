@@ -12,7 +12,8 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.knowledge.dictionary.*;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
 
 import java.util.StringTokenizer;
 import java.util.Map;
@@ -22,63 +23,29 @@ public class BuildTranscriptHMM {
     private Graph wordGraph;
     private Graph phonemeGraph;
     private Graph contextDependentPhoneGraph;
-    private Graph sentenceHMMGraph;
-    private Dictionary dictionary;
+    private Graph hmmGraph;
     private Map dictionaryMap;
     private String context;
+    private TrainerDictionary dictionary;
 
     /**
-     * Constructor for class BuildTranscriptHMM.
-     * Currently this code sends rockets to the moon,
-     * populates remote planets
-     * and instantiates time travel.
-     * Also provides a cure for SARS.
-     */
-    public BuildTranscriptHMM(String context) {
-	// Well, so that it compiles....
-	this.dictionary = TrainerDictionary.getDictionary(context);
-    }
-    
-    /**
-     * Constructor for class BuildTranscriptHMM.
-     * Currently this code sends rockets to the moon,
-     * populates remote planets
-     * and instantiates time travel.
-     * Also provides a cure for SARS.
-     */
-    public BuildTranscriptHMM(String context, Utterance utterance) {
-	Transcript currentTranscript;
-	for (utterance.startTranscriptIterator();
-	     utterance.hasMoreTranscripts(); ) {
-	    /* The transcript object has a pointer to its own dictionary 
-	     */
-	    Transcript transcript = utterance.nextTranscript();
-	    // Well, so that it compiles....
-	    this.dictionary = TrainerDictionary.getDictionary(context);
-	    wordGraph = buildWordGraph(transcript);
-	    phonemeGraph = buildPhonemeGraph(wordGraph);
-	    contextDependentPhoneGraph = 
-		buildContextDependentPhonemeGraph(phonemeGraph);
-	    sentenceHMMGraph = buildHMM(contextDependentPhoneGraph);
-	}
-    }
-    
-    /**
-     * Constructor for class BuildTranscriptHMM.
-     * Currently this code sends rockets to the moon,
-     * populates remote planets
-     * and instantiates time travel.
-     * Also provides a cure for SARS.
+     * Constructor for class BuildTranscriptHMM. When called, this
+     * method creates graphs for the transcript at several levels of
+     * detail, subsequently mapping from a word graph to a phone
+     * graph, to a state graph.
      */
     public BuildTranscriptHMM(String context, Transcript transcript) {
 
-	// Well, so that it compiles....
-	this(context);
 	wordGraph = buildWordGraph(transcript);
+	assert wordGraph.validate() : "Word graph not validated";
 	phonemeGraph = buildPhonemeGraph(wordGraph);
+	assert phonemeGraph.validate() : "Phone graph not validated";
 	contextDependentPhoneGraph = 
 	    buildContextDependentPhonemeGraph(phonemeGraph);
-	sentenceHMMGraph = buildHMM(contextDependentPhoneGraph);
+	assert contextDependentPhoneGraph.validate() : 
+	    "Context dependent graph not validated";
+	hmmGraph = buildHMM(contextDependentPhoneGraph);
+	//	assert hmmGraph.validate() : "HMM graph not validated";
     }
     
     /**
@@ -87,7 +54,7 @@ public class BuildTranscriptHMM {
      * @return the graph.
      */
     public Graph getGraph() {
-	return sentenceHMMGraph;
+	return wordGraph;
     }
 
     /*
@@ -95,15 +62,16 @@ public class BuildTranscriptHMM {
      */
     private Graph buildWordGraph(Transcript transcript){
         Graph wordGraph;
-	// Dictionary dictionary = TrainerDictionary.getDictionary(context);
+	dictionary = (TrainerDictionary) transcript.getDictionary();
 
 	transcript.startWordIterator();
         int numWords = transcript.numberOfWords();
 	/* Shouldn't node and edge be part of the graph class? */
 
         /* The wordgraph must always begin with the <s> */
-        wordGraph = new TranscriptHMMGraph();
+        wordGraph = new Graph();
 	Node initialNode = new Node(NodeType.UTTERANCE_BEGIN);
+	wordGraph.addNode(initialNode);
 	wordGraph.setInitialNode(initialNode);
 	
         if (transcript.isExact()) {
@@ -113,7 +81,6 @@ public class BuildTranscriptHMM {
 	        /* create a new node for the next word */
 	        Node wordNode = new Node(NodeType.WORD, 
 						    transcript.nextWord());
-
 		/* Link the new node into the graph */
 		wordGraph.linkNodes(prevNode, wordNode);
 		
@@ -129,14 +96,9 @@ public class BuildTranscriptHMM {
 		new Node(NodeType.SILENCE_WITH_LOOPBACK);
 	    wordGraph.linkNodes(initialNode, silLoopBack);
 	    
-            /* But allow the initial silence to be skipped */
-	    Node dummyWordBeginNode = new Node(NodeType.DUMMY);
-	    wordGraph.linkNodes(initialNode, dummyWordBeginNode);
-	    
-            /* Link the silence to the dummy too */
-	    wordGraph.linkNodes(silLoopBack, dummyWordBeginNode);
-	    
-	    // So that it compiles....
+	    Node prevNode = initialNode;
+
+	    // Create links with words from the transcript
 	    for (transcript.startWordIterator();
 		 transcript.hasMoreWords(); ) {
 	        String word = transcript.nextWord();
@@ -145,17 +107,24 @@ public class BuildTranscriptHMM {
 		int numberOfPronunciations = pronunciations.length;
 		
 		Node[] pronNode = new Node[numberOfPronunciations];
-		for (int i = 0; i < numberOfPronunciations; i++){
-		    // TODO: pronunciationID() method is not correct. Fix
-	            pronNode[i] = new 
-			Node(NodeType.WORD, "nada");
-					// dictionary.pronunciationID(word,i));
-		    wordGraph.linkNodes(dummyWordBeginNode, pronNode[i]);
-		}
 
-		/* Add word ending dummy node */
+		// Create node at the beginning of the word
+		Node dummyWordBeginNode = new Node(NodeType.DUMMY);
+		// Allow the silence to be skipped
+		wordGraph.linkNodes(prevNode, dummyWordBeginNode);
+		// Link the latest silence to the dummy too
+		wordGraph.linkNodes(silLoopBack, dummyWordBeginNode);
+		// Add word ending dummy node
 	        Node dummyWordEndNode = new Node(NodeType.DUMMY);
+		// Update prevNode
+		prevNode = dummyWordEndNode;
 		for (int i = 0; i < numberOfPronunciations; i++){
+		    String wordAlternate = pronunciations[i].getWord();
+		    if (i > 0) {
+			wordAlternate += "(" + i + ")";
+		    }
+	            pronNode[i] = new Node(NodeType.WORD, wordAlternate);
+		    wordGraph.linkNodes(dummyWordBeginNode, pronNode[i]);
 	            wordGraph.linkNodes(pronNode[i], dummyWordEndNode);
 		}
 
@@ -164,14 +133,13 @@ public class BuildTranscriptHMM {
 		    Node(NodeType.SILENCE_WITH_LOOPBACK);
 	        wordGraph.linkNodes(dummyWordEndNode, silLoopBack);
 
-                /* But allow the silence to be skipped */
-	        dummyWordBeginNode = new Node(NodeType.DUMMY);
-	        wordGraph.linkNodes(dummyWordEndNode, dummyWordBeginNode);
-
-		wordGraph.linkNodes(silLoopBack, dummyWordBeginNode);
             }
 	    Node wordNode = new Node(NodeType.UTTERANCE_END);
-	    wordGraph.linkNodes(dummyWordBeginNode, wordNode);
+	    // Link previous node, a dummy word end node
+	    wordGraph.linkNodes(prevNode, wordNode);
+	    // Link also the previous silence node
+	    wordGraph.linkNodes(silLoopBack, wordNode);
+	    wordGraph.setFinalNode(wordNode);
 	}
         return wordGraph;
     }
@@ -182,35 +150,37 @@ public class BuildTranscriptHMM {
      */
     private Graph buildPhonemeGraph(Graph wordGraph) {
 	Edge edge;
+	boolean notTraversed = false;
+	Graph phonemeGraph = new Graph();
+	phonemeGraph.copyGraph(wordGraph);
 
-        for (wordGraph.startNodeIterator(); wordGraph.hasMoreNodes(); ) {
-	    Node node = wordGraph.nextNode();
-	    if (node.getType().equals(NodeType.WORD)) {
-	        String wordAndPronunciation = node.getID();
-		// So that it compiles...
-	        Graph pronunciationGraph = new TranscriptHMMGraph();
-		//  dictionary.getPronunciationGraph(wordAndPronunciation);
-		//  TODO: Redo as
-		//  wordGraph.expandNodeToGraph(node,
-		//  pronunciationGraph);
-	    	Node source = pronunciationGraph.getInitialNode();
-	        Node sink = pronunciationGraph.getFinalNode();
-
-	        for (node.startIncomingEdgeIterator(); 
-		     node.hasMoreIncomingEdges(); ) {
-	            edge = node.nextIncomingEdge();
-		    edge.setDestination(source);
-	        }
-		// Code for hasMoreOutputEdges not done. Should use iterator
-	        for (node.startOutgoingEdgeIterator(); 
-		     node.hasMoreOutgoingEdges(); ) {
-	            edge = node.nextOutgoingEdge();
-		    edge.setSource(sink);
-	        }
+	// We have to go through all this convoluted thing to avoid a
+	// "ConcurrentModificationException". The way we avoid is, we
+	// loop until we find a node that we want to replace with
+	// something more detailed. We get out of the loop, replace
+	// it, and start again. We're careful to mark what had already
+	// been done. In this case, we mark it by replace the node
+	// type from "WORD" to "PHONE".
+	do {
+	    // Repeat the loop until we encounter a WORD.
+	    for (phonemeGraph.startNodeIterator(); 
+		 phonemeGraph.hasMoreNodes(); ) {
+		Node node = phonemeGraph.nextNode();
+		// If a word already got converted, the node type is
+		// PHONE.
+		if (node.getType().equals(NodeType.WORD)) {
+		    String word = node.getID();
+		    Graph pronunciationGraph = dictionary.getWordGraph(word);
+		    phonemeGraph.insertGraph(pronunciationGraph, node);
+		    notTraversed = true;
+		    break;
+		}
+		// If we traversed everything, we'll reach this and
+		// then leave.
+		notTraversed = false; 
 	    }
-	}
-	// Is this right? Should we create a new graph inside this method?
-        return wordGraph;
+	} while (notTraversed);
+        return phonemeGraph;
     }
 
     /**
@@ -219,11 +189,10 @@ public class BuildTranscriptHMM {
      * phonemes in different contexts
      */
     public Graph buildContextDependentPhonemeGraph(Graph phonemeGraph) {
-	//        int maxLeftContext = dictionary.AcousticModel.maxAcousticLeftContext();
-        // int maxRightContext = dictionary.AcousticModel.maxAcousticRightContext();
-
-	// TODO: Dummy stub for now - return the original graph
-        return phonemeGraph;
+	// TODO: Dummy stub for now - return a copy of the original graph
+	Graph cdGraph = new Graph();
+	cdGraph.copyGraph(phonemeGraph);
+        return cdGraph;
     }
 
     /**
@@ -232,6 +201,6 @@ public class BuildTranscriptHMM {
     public Graph buildHMM (Graph PhonemeGraph)
     {
 	// TODO: Much is missing here
-         return new TranscriptHMMGraph();
+         return new Graph();
     }
 }

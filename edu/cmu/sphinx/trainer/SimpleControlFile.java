@@ -12,12 +12,8 @@
 
 package edu.cmu.sphinx.trainer;
 
-
-import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.knowledge.acoustic.*;
-import edu.cmu.sphinx.knowledge.dictionary.*;
-
 import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -85,7 +81,11 @@ public class SimpleControlFile implements ControlFile {
 
 	logger.info("Audio control file: " + this.audioFile);
 	logger.info("Transcript file: " + this.transcriptFile);
-	this.dictionary = new TrainerDictionary(context);
+	try {
+	    this.dictionary = new TrainerDictionary(context);
+	} catch (IOException ioe) {
+	    throw new Error("IOE: Can't open dictionary.", ioe);
+	}
 	this.wordSeparator = " \t\n\r\f"; // the white spaces
 	logger.info("Processing part " + this.currentPartition +
 		    " of " + this.numberOfPartitions);
@@ -127,9 +127,19 @@ public class SimpleControlFile implements ControlFile {
      * @return the next utterance.
      */
     public Utterance nextUtterance() {
-	Utterance utterance = new SimpleUtterance((String) audioFileIterator.next());
-	utterance.add((String) transcriptFileIterator.next(), dictionary,
-		      false, wordSeparator);
+	String utteranceLine = (String) audioFileIterator.next();
+	Utterance utterance = new SimpleUtterance(utteranceLine);
+	String utteranceFilename = 
+	    utteranceLine.replaceFirst("^.*/", "").replaceFirst("\\..*$", "");
+	String transcriptLine = (String) transcriptFileIterator.next();
+	// Finds out if the audio file name is part of the transcript line
+	assert transcriptLine.matches(".* \\(" + utteranceFilename + "\\)$") :
+	    "File name in transcript and control file have to match";
+	// Removes the filename from the transcript line.
+	// The transcript line is of the form:
+	//    She washed her dark suit (st002)
+	String transcript = transcriptLine.replaceFirst(" \\(.*\\)$", "");
+	utterance.add(transcript, dictionary, false, wordSeparator);
 	return utterance;
     }
 

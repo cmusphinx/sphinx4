@@ -63,4 +63,23 @@ public class Edge {
     public void setSource(Node node) {
 	this.sourceNode = node;
     }
+
+    /**
+     * Validate this edge. Checks if source and destination are
+     * non-null.
+     *
+     * @return if true, edge passed validation
+     */
+    public boolean validate() {
+	return ((sourceNode != null) && (destinationNode != null));
+    }
+
+    /**
+     * Prints out this edge.
+     */
+    public void print() {
+	System.out.print("ID: " + id);
+	System.out.print(" | " + sourceNode);
+	System.out.println(" | " + destinationNode);
+    }
 }

@@ -99,6 +99,15 @@ public class Node {
     }
 
     /**
+     * Returns the size of the incoming edges list.
+     *
+     * @return the number of incoming edges
+     */
+    public int incomingEdgesSize() {
+	return incomingEdges.size();
+    }
+
+    /**
      * Method to add an outgoing edge.
      * Note that we do not check if the source node of the outgoing
      * edge is identical to this node
@@ -129,6 +138,15 @@ public class Node {
     }
 
     /**
+     * Returns the size of the outgoing edges list.
+     *
+     * @return the number of outgoing edges
+     */
+    public int outgoingEdgesSize() {
+	return outgoingEdges.size();
+    }
+
+    /**
      * Method to check the type of a node.
      */
     public boolean isType(String type){
@@ -147,5 +165,45 @@ public class Node {
      */
     public String getID() {
         return nodeId;
+    }
+
+    /**
+     * Validade node. Checks if all nodes have at least one incoming
+     * and one outgoing edge.
+     *
+     * @return if true, node passed validation
+     */
+    public boolean validate() {
+	boolean passed = true;
+
+	if (isType("WORD") || isType("PHONE")) {
+	    if (nodeId == null) {
+		System.out.println("Content null in a WORD node.");
+		passed = false;
+	    }
+	}
+	if ((incomingEdgesSize() == 0) && (outgoingEdgesSize() == 0)) {
+	    System.out.println("Node not connected anywhere.");
+	    passed = false;
+	}
+	return passed;
+    }
+
+    /**
+     * Prints out this node.
+     */
+    public void print() {
+	System.out.print("ID: " + nodeId);
+	System.out.print(" Type: " + nodeType.toString() + " | ");
+	for (startIncomingEdgeIterator();
+	     hasMoreIncomingEdges();) {
+	    System.out.print(nextIncomingEdge() + " ");
+	}
+	System.out.print(" | ");
+	for (startOutgoingEdgeIterator();
+	     hasMoreOutgoingEdges();) {
+	    System.out.print(nextOutgoingEdge() + " ");
+	}
+	System.out.println();
     }
 }

@@ -169,7 +169,7 @@ public class SimpleTrainManager implements TrainManager {
 	for (int m = 0; m < models.length; m++) {
 	    models[m].initialize();
 
-	    Learner learner = new FlatInitializerLearner(props);
+	    learner = new FlatInitializerLearner(props);
 	    for (controlFile.startUtteranceIterator();
 		 controlFile.hasMoreUtterances(); ) {
 		Utterance utterance = controlFile.nextUtterance();
@@ -237,7 +237,7 @@ public class SimpleTrainManager implements TrainManager {
         assert models != null;
         models = getTrainerAcousticModels(context);
 	for (int m = 0; m < models.length; m++) {
-	    Learner learner = new BaumWelchLearner(props);
+	    learner = new BaumWelchLearner(props);
 
 	    for (controlFile.startUtteranceIterator();
 		 controlFile.hasMoreUtterances(); ) {

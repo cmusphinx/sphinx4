@@ -119,7 +119,7 @@ public class FlatInitializerLearner implements Learner {
         try {
             path = props.getString(PROP_FRONT_END, PROP_FRONT_END_DEFAULT);
             FrontEnd fe = (FrontEnd)Class.forName(path).newInstance();
-            fe.initialize("FrontEnd", context, dataSource);
+            fe.initialize("FlatInitFrontEnd", context, dataSource);
             return fe;
         } catch (ClassNotFoundException fe) {
             throw new Error("CNFE:Can't create front end " + path, fe);

@@ -82,6 +82,28 @@ public class Graph {
     }
 
     /**
+     * Returns whether the given node is the initial node in this graph.
+     *
+     * @param node the node we want to compare
+     *
+     * @returns if true, the node is the initial node
+     */
+    public boolean isInitialNode(Node node) {
+	return node == initialNode;
+    }
+
+    /**
+     * Returns whether the given node is the final node in this graph.
+     *
+     * @param node the node we want to compare
+     *
+     * @returns if true, the node is the final node
+     */
+    public boolean isFinalNode(Node node) {
+	return node == finalNode;
+    }
+
+    /**
      * Link two nodes.
      * If the source or destination nodes are not in the graph,
      * they are added to it. No check is performed to ensure that
@@ -109,14 +131,14 @@ public class Graph {
     /**
      * Add node to list of nodes.
      */
-    private void addNode(Node node) {
+    public void addNode(Node node) {
 	nodes.add(node);
     }
 
     /**
      * Add edge to list of nodes.
      */
-    private void addEdge(Edge edge) {
+    public void addEdge(Edge edge) {
 	edges.add(edge);
     }
 
@@ -178,19 +200,116 @@ public class Graph {
 
     /**
      * Copy a graph to the current graph object.
+     *
+     * @param graph the graph to copy from
      */
     public void copyGraph(Graph graph) {
 	// Make sure the current graph is empty
 	assert ((nodes.size() == 0) & (edges.size() == 0));
 	for (graph.startNodeIterator();
 	     graph.hasMoreNodes(); ) {
-	    nodes.add(graph.nextNode());
+	    addNode(graph.nextNode());
 	}
 	for (graph.startEdgeIterator();
 	     graph.hasMoreEdges(); ) {
-	    edges.add(graph.nextEdge());
+	    addEdge(graph.nextEdge());
 	}
 	setInitialNode(graph.getInitialNode());
 	setFinalNode(graph.getFinalNode());
+    }
+
+    /**
+     * Insert a graph in the current graph, replacing a particular node.
+     *
+     * @param graph the graph to insert
+     * @param node the node that this graph will replace
+     */
+    public void insertGraph(Graph graph, Node node) {
+	// Make sure the node belongs to the graph
+	assert isNodeInGraph(node) : "Node not in graph";
+	for (graph.startNodeIterator();
+	     graph.hasMoreNodes(); ) {
+	    addNode(graph.nextNode());
+	}
+	for (graph.startEdgeIterator();
+	     graph.hasMoreEdges(); ) {
+	    addEdge(graph.nextEdge());
+	}
+	Node initialNode = graph.getInitialNode();
+	for (node.startIncomingEdgeIterator();
+	     node.hasMoreIncomingEdges(); ) {
+	    Edge edge = node.nextIncomingEdge();
+	    edge.setDestination(initialNode);
+	    initialNode.addIncomingEdge(edge);
+	}
+	Node finalNode = graph.getFinalNode();
+	for (node.startOutgoingEdgeIterator();
+	     node.hasMoreOutgoingEdges(); ) {
+	    Edge edge = node.nextOutgoingEdge();
+	    edge.setSource(finalNode);
+	    finalNode.addOutgoingEdge(edge);
+	}
+	int index = nodes.indexOf(node);
+	nodes.remove(index);
+    }
+
+    /**
+     * Validate the graph. It checks out basics about the graph, such
+     * as whether all nodes have at least one incoming and outgoing
+     * edge, except for the initial and final.
+     *
+     * @return if true, graph validation passed
+     */
+    public boolean validate() {
+	boolean passed = true;
+	for (startNodeIterator();
+	     hasMoreNodes(); ) {
+	    Node node = nextNode();
+	    passed &= node.validate();
+	    int incoming = node.incomingEdgesSize();
+	    int outgoing = node.outgoingEdgesSize();
+	    if (incoming < 1) {
+		if (!isInitialNode(node)) {
+		    System.out.println("No incoming edge: " + node.toString());
+		    passed = false;
+		}
+	    }
+	    if (outgoing < 1) {
+		if (!isFinalNode(node)) {
+		    System.out.println("No outgoing edge: " + node.toString());
+		    passed = false;
+		}
+	    }
+	}
+	for (startEdgeIterator();
+	     hasMoreEdges(); ) {
+	    Edge edge = nextEdge();
+	    passed &= edge.validate();
+	}
+	return passed;
+    }
+
+    /**
+     * Prints out the graph. For debugging purposes.
+     */
+    public void printGraph() {
+	for (startNodeIterator();
+	     hasMoreNodes(); ) {
+	    Node node = nextNode();
+	    if (isInitialNode(node)) {
+		System.out.println("Initial Node");
+	    }
+	    if (isFinalNode(node)) {
+		System.out.println("Final Node");
+	    }
+	    System.out.println(node);
+	    node.print();
+	}
+	for (startEdgeIterator();
+	     hasMoreEdges(); ) {
+	    Edge edge = nextEdge();
+	    System.out.println(edge);
+	    edge.print();
+	}
     }
 }

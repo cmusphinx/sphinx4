@@ -12,7 +12,7 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.knowledge.dictionary.*;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
 import java.util.Collection;
 import java.util.LinkedList;

@@ -12,7 +12,7 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.knowledge.dictionary.*;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
 /**
  * Provides mechanisms for accessing an utterance.

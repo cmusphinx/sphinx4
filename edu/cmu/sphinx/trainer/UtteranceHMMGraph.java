@@ -22,17 +22,10 @@ import java.util.Iterator;
 public class UtteranceHMMGraph extends Graph implements UtteranceGraph {
 
     /**
-     * Constructor for class. Creates lists of edges and nodes.
-     */
-    public UtteranceHMMGraph() {
-	super();
-    }
-
-    /**
      * Constructor for class UtteranceHMMGraph.
      */
     public UtteranceHMMGraph(String context, Utterance utterance) {
-	this();
+	super();
 	Transcript currentTranscript;
 	Graph transcriptGraph;
 	for (utterance.startTranscriptIterator();

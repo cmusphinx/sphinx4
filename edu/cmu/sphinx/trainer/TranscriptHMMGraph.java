@@ -25,16 +25,8 @@ public class TranscriptHMMGraph extends Graph implements TranscriptGraph {
     /**
      * Constructor for class. Creates lists of edges and nodes.
      */
-    public TranscriptHMMGraph() {
-	super();
-    }
-
-
-    /**
-     * Constructor for class. Creates lists of edges and nodes.
-     */
     public TranscriptHMMGraph(String context, Transcript transcript) {
-	this();
+	super();
 	BuildTranscriptHMM builder = 
 	    new BuildTranscriptHMM(context, transcript);
 	copyGraph(builder.getGraph());
