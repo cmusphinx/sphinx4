@@ -10,15 +10,12 @@
         <predecessors/>
       </task>
     </task>
-    <task id="1" name="Sphinx 3 Decoder on Solaris" start="20020308T000000" end="20020320T000000" percent-complete="0" note="">
+    <task id="1" name="Sphinx 3 Decoder on Solaris" start="20020308T000000" end="20020319T000000" percent-complete="0" note="">
       <predecessors/>
       <task id="6" name="Latest Code Up on SourceForge" start="20020308T000000" end="20020319T000000" percent-complete="100" note="">
         <predecessors/>
       </task>
       <task id="56" name="Compile/Run on Solaris" start="20020308T000000" end="20020319T000000" percent-complete="100" note="">
-        <predecessors/>
-      </task>
-      <task id="7" name="Performance and Data Gathering" start="20020308T000000" end="20020320T000000" percent-complete="100" note="">
         <predecessors/>
       </task>
     </task>
@@ -29,19 +26,22 @@
       </task>
       <task id="21" name="Design" start="20020226T000000" end="20020227T000000" percent-complete="100" note="">
         <predecessors>
-          <predecessor id="10" predecessor-id="22" type="FS"/>
+          <predecessor id="6" predecessor-id="22" type="FS"/>
         </predecessors>
       </task>
       <task id="24" name="Implementation" start="20020227T000000" end="20020228T000000" percent-complete="100" note="">
         <predecessors>
-          <predecessor id="9" predecessor-id="21" type="FS"/>
+          <predecessor id="5" predecessor-id="21" type="FS"/>
         </predecessors>
       </task>
-      <task id="23" name="Tests" start="20020225T010000" end="20020228T000000" percent-complete="100" note="">
+      <task id="23" name="Test and Debug" start="20020225T000000" end="20020228T000000" percent-complete="100" note="">
         <predecessors/>
       </task>
     </task>
-    <task id="2" name="Front End" start="20020226T000000" end="20020413T010000" percent-complete="0" note="frontend.txt">
+    <task id="36" name="C vs. Java Floating Point" start="20020415T000000" end="20020424T000000" percent-complete="0" note="">
+      <predecessors/>
+    </task>
+    <task id="2" name="Front End" start="20020226T000000" end="20020424T000000" percent-complete="0" note="frontend.txt">
       <predecessors/>
       <task id="8" name="Requirements" start="20020226T000000" end="20020307T000000" percent-complete="100" note="">
         <predecessors/>
@@ -49,71 +49,90 @@
       <task id="9" name="Design" start="20020226T000000" end="20020307T000000" percent-complete="100" note="">
         <predecessors/>
       </task>
-      <task id="10" name="Implementation" start="20020307T000000" end="20020413T000000" percent-complete="0" note="">
-        <predecessors>
-          <predecessor id="8" predecessor-id="9" type="FS"/>
-        </predecessors>
-        <task id="12" name="Data Objects" start="20020307T000000" end="20020413T000000" percent-complete="0" note="">
+      <task id="12" name="Data" start="20020307T000000" end="20020413T000000" percent-complete="0" note="">
+        <predecessors/>
+        <task id="7" name="Implement" start="20020307T000000" end="20020413T000000" percent-complete="100" note="">
           <predecessors/>
         </task>
-        <task id="35" name="Data Flow" start="20020328T000000" end="20020330T000000" percent-complete="100" note="">
-          <predecessors/>
-        </task>
-        <task id="16" name="Preemphasis" start="20020307T000000" end="20020315T000000" percent-complete="100" note="">
-          <predecessors/>
-        </task>
-        <task id="17" name="FFT" start="20020401T000000" end="20020410T000000" percent-complete="0" note="">
-          <predecessors/>
-        </task>
-        <task id="58" name="Mel Filter Bank" start="20020410T000000" end="20020413T000000" percent-complete="0" note="">
-          <predecessors/>
-        </task>
-        <task id="18" name="Cepstral Extraction" start="20020410T000000" end="20020411T000000" percent-complete="100" note="">
-          <predecessors/>
-        </task>
-        <task id="15" name="Cepstral Mean Normalization" start="20020315T000000" end="20020316T000000" percent-complete="100" note="">
-          <predecessors/>
-        </task>
-        <task id="19" name="Feature Extraction" start="20020315T000000" end="20020319T000000" percent-complete="100" note="">
+        <task id="11" name="Test and Debug" start="20020307T000000" end="20020413T000000" percent-complete="100" note="">
           <predecessors/>
         </task>
       </task>
-      <task id="11" name="Tests" start="20020314T000000" end="20020413T010000" percent-complete="0" note="">
+      <task id="35" name="Data Flow" start="20020328T000000" end="20020330T000000" percent-complete="0" note="">
         <predecessors/>
-        <task id="14" name="Data and Data Flow" start="20020314T000000" end="20020413T000000" percent-complete="0" note="">
+        <task id="10" name="Implement" start="20020328T000000" end="20020330T000000" percent-complete="100" note="">
           <predecessors/>
         </task>
-        <task id="25" name="Preemphasis" start="20020404T000000" end="20020405T000000" percent-complete="100" note="">
-          <predecessors/>
-        </task>
-        <task id="26" name="FFT" start="20020404T000000" end="20020405T000000" percent-complete="100" note="">
-          <predecessors/>
-        </task>
-        <task id="59" name="Mel Filter Bank" start="20020410T000000" end="20020413T000000" percent-complete="0" note="">
-          <predecessors/>
-        </task>
-        <task id="34" name="Cepstral Mean Normalization" start="20020318T000000" end="20020320T000000" percent-complete="100" note="">
-          <predecessors/>
-        </task>
-        <task id="27" name="Cepstral Extraction" start="20020410T000000" end="20020413T000000" percent-complete="0" note="">
-          <predecessors/>
-        </task>
-        <task id="28" name="Feature Extraction" start="20020318T000000" end="20020320T000000" percent-complete="100" note="">
+        <task id="14" name="Test and Debug" start="20020328T000000" end="20020330T000000" percent-complete="100" note="">
           <predecessors/>
         </task>
       </task>
-      <task id="40" name="Performance" start="20020322T000000" end="20020413T000000" percent-complete="0" note="">
+      <task id="16" name="Preemphasis" start="20020307T000000" end="20020315T000000" percent-complete="0" note="">
         <predecessors/>
+        <task id="25" name="Implement" start="20020307T000000" end="20020315T000000" percent-complete="100" note="">
+          <predecessors/>
+        </task>
+        <task id="26" name="Test and Debug" start="20020307T000000" end="20020315T000000" percent-complete="100" note="">
+          <predecessors/>
+        </task>
+      </task>
+      <task id="17" name="FFT" start="20020401T000000" end="20020424T000000" percent-complete="0" note="">
+        <predecessors/>
+        <task id="27" name="Implement" start="20020401T000000" end="20020406T000000" percent-complete="100" note="">
+          <predecessors/>
+        </task>
+        <task id="28" name="Test and Debug" start="20020401T000000" end="20020424T000000" percent-complete="0" note="">
+          <predecessors/>
+        </task>
+        <task id="40" name="Performance" start="20020401T000000" end="20020413T000000" percent-complete="0" note="">
+          <predecessors/>
+        </task>
+      </task>
+      <task id="58" name="Mel Filter Bank" start="20020410T000000" end="20020424T000000" percent-complete="0" note="">
+        <predecessors/>
+        <task id="34" name="Implement" start="20020410T000000" end="20020415T000000" percent-complete="100" note="">
+          <predecessors/>
+        </task>
+        <task id="59" name="Test and Debug" start="20020410T000000" end="20020424T000000" percent-complete="0" note="">
+          <predecessors/>
+        </task>
+      </task>
+      <task id="18" name="Cepstral Extraction" start="20020410T000000" end="20020411T000000" percent-complete="0" note="">
+        <predecessors/>
+        <task id="61" name="Implement" start="20020410T000000" end="20020411T000000" percent-complete="100" note="">
+          <predecessors/>
+        </task>
+        <task id="62" name="Test and Debug" start="20020410T000000" end="20020411T000000" percent-complete="100" note="">
+          <predecessors/>
+        </task>
+      </task>
+      <task id="15" name="Cepstral Mean Normalization" start="20020318T000000" end="20020320T000000" percent-complete="0" note="">
+        <predecessors/>
+        <task id="63" name="Implement" start="20020318T000000" end="20020320T000000" percent-complete="100" note="">
+          <predecessors/>
+        </task>
+        <task id="64" name="Test and Debug" start="20020318T000000" end="20020320T000000" percent-complete="100" note="">
+          <predecessors/>
+        </task>
+      </task>
+      <task id="19" name="Feature Extraction" start="20020318T000000" end="20020320T000000" percent-complete="0" note="">
+        <predecessors/>
+        <task id="65" name="Implement" start="20020318T000000" end="20020320T000000" percent-complete="100" note="">
+          <predecessors/>
+        </task>
+        <task id="66" name="Test and Debug" start="20020318T000000" end="20020320T000000" percent-complete="100" note="">
+          <predecessors/>
+        </task>
       </task>
     </task>
-    <task id="3" name="Acoustic Model" start="20020228T000000" end="20020418T000000" percent-complete="0" note="">
+    <task id="3" name="Acoustic Model" start="20020228T000000" end="20020426T000000" percent-complete="0" note="">
       <predecessors/>
       <task id="29" name="Requirements" start="20020228T000000" end="20020305T000000" percent-complete="100" note="">
         <predecessors/>
       </task>
       <task id="30" name="Design" start="20020307T000000" end="20020314T000000" percent-complete="100" note="AcousticModelDesign.txt">
         <predecessors>
-          <predecessor id="7" predecessor-id="29" type="FS"/>
+          <predecessor id="4" predecessor-id="29" type="FS"/>
         </predecessors>
       </task>
       <task id="42" name="Data File Creation" start="20020312T000000" end="20020416T000000" percent-complete="0" note="">
@@ -121,7 +140,7 @@
         <task id="43" name="Isolated Word Data" start="20020415T000000" end="20020416T000000" percent-complete="0" note="">
           <predecessors/>
         </task>
-        <task id="44" name="Connected Digits Data" start="20020312T000000" end="20020313T000000" percent-complete="0" note="">
+        <task id="44" name="Connected Digits Data" start="20020312T000000" end="20020313T000000" percent-complete="100" note="">
           <predecessors/>
         </task>
         <task id="45" name="Command and Control Data" start="20020415T000000" end="20020416T000000" percent-complete="0" note="">
@@ -131,34 +150,35 @@
           <predecessors/>
         </task>
       </task>
-      <task id="31" name="Implementation" start="20020308T000000" end="20020418T000000" percent-complete="0" note="">
+      <task id="37" name="Data File Loading" start="20020322T000000" end="20020326T000000" percent-complete="0" note="">
         <predecessors/>
-        <task id="32" name="Framework" start="20020308T000000" end="20020322T000000" percent-complete="0" note="">
+        <task id="38" name="Implement" start="20020322T000000" end="20020326T000000" percent-complete="100" note="">
           <predecessors/>
         </task>
-        <task id="33" name="Data File Reading" start="20020322T000000" end="20020326T000000" percent-complete="0" note="">
-          <predecessors/>
-        </task>
-        <task id="36" name="Feature Scoring" start="20020415T000000" end="20020418T000000" percent-complete="0" note="AcousticMath.txt">
-          <predecessors>
-            <predecessor id="4" predecessor-id="33" type="FS"/>
-          </predecessors>
-        </task>
-      </task>
-      <task id="37" name="Tests" start="20020327T000000" end="20020418T000000" percent-complete="0" note="">
-        <predecessors/>
-        <task id="38" name="Data Model" start="20020327T000000" end="20020330T000000" percent-complete="0" note="">
-          <predecessors/>
-        </task>
-        <task id="39" name="Data File Reading" start="20020327T000000" end="20020330T000000" percent-complete="0" note="">
-          <predecessors/>
-        </task>
-        <task id="41" name="Feature Scoring" start="20020415T000000" end="20020418T000000" percent-complete="0" note="">
+        <task id="39" name="Test and Debug" start="20020322T000000" end="20020326T000000" percent-complete="100" note="">
           <predecessors/>
         </task>
       </task>
-      <task id="60" name="Performance" start="20020401T000000" end="20020418T000000" percent-complete="0" note="">
+      <task id="31" name="Framework" start="20020304T000000" end="20020413T000000" percent-complete="0" note="">
         <predecessors/>
+        <task id="32" name="Implement" start="20020304T000000" end="20020316T000000" percent-complete="100" note="">
+          <predecessors/>
+        </task>
+        <task id="33" name="Test and Debug" start="20020304T000000" end="20020413T000000" percent-complete="0" note="">
+          <predecessors/>
+        </task>
+      </task>
+      <task id="41" name="Feature Scoring" start="20020415T000000" end="20020426T000000" percent-complete="0" note="">
+        <predecessors/>
+        <task id="60" name="Implement" start="20020415T000000" end="20020417T000000" percent-complete="0" note="">
+          <predecessors/>
+        </task>
+        <task id="67" name="Test and Debug" start="20020415T000000" end="20020417T000000" percent-complete="0" note="">
+          <predecessors/>
+        </task>
+        <task id="68" name="Performance" start="20020422T000000" end="20020426T000000" percent-complete="0" note="">
+          <predecessors/>
+        </task>
       </task>
     </task>
     <task id="5" name="Language Model" start="20020315T000000" end="20020406T000000" percent-complete="0" note="">
@@ -217,20 +237,15 @@
     <resource id="8" name="All" group="4" type="1" units="100" email="" std-rate="100.000000" ovt-rate="200.000000"/>
   </resources>
   <allocations>
-    <allocation task-id="27" resource-id="2"/>
-    <allocation task-id="34" resource-id="2"/>
-    <allocation task-id="15" resource-id="2"/>
-    <allocation task-id="18" resource-id="2"/>
-    <allocation task-id="17" resource-id="2"/>
+    <allocation task-id="68" resource-id="1"/>
+    <allocation task-id="67" resource-id="1"/>
+    <allocation task-id="67" resource-id="3"/>
+    <allocation task-id="60" resource-id="3"/>
     <allocation task-id="56" resource-id="3"/>
     <allocation task-id="56" resource-id="4"/>
-    <allocation task-id="60" resource-id="1"/>
     <allocation task-id="40" resource-id="3"/>
     <allocation task-id="40" resource-id="2"/>
-    <allocation task-id="59" resource-id="3"/>
-    <allocation task-id="58" resource-id="3"/>
     <allocation task-id="38" resource-id="1"/>
-    <allocation task-id="36" resource-id="3"/>
     <allocation task-id="33" resource-id="1"/>
     <allocation task-id="32" resource-id="1"/>
     <allocation task-id="46" resource-id="4"/>
@@ -241,30 +256,15 @@
     <allocation task-id="44" resource-id="4"/>
     <allocation task-id="43" resource-id="1"/>
     <allocation task-id="43" resource-id="4"/>
-    <allocation task-id="35" resource-id="2"/>
     <allocation task-id="23" resource-id="1"/>
     <allocation task-id="24" resource-id="1"/>
     <allocation task-id="21" resource-id="1"/>
     <allocation task-id="22" resource-id="1"/>
     <allocation task-id="6" resource-id="3"/>
-    <allocation task-id="7" resource-id="3"/>
     <allocation task-id="6" resource-id="4"/>
-    <allocation task-id="7" resource-id="2"/>
-    <allocation task-id="7" resource-id="1"/>
     <allocation task-id="8" resource-id="2"/>
     <allocation task-id="9" resource-id="2"/>
-    <allocation task-id="12" resource-id="2"/>
-    <allocation task-id="16" resource-id="2"/>
-    <allocation task-id="17" resource-id="3"/>
-    <allocation task-id="19" resource-id="3"/>
-    <allocation task-id="19" resource-id="2"/>
-    <allocation task-id="14" resource-id="2"/>
-    <allocation task-id="25" resource-id="2"/>
-    <allocation task-id="26" resource-id="2"/>
-    <allocation task-id="26" resource-id="3"/>
-    <allocation task-id="27" resource-id="3"/>
     <allocation task-id="28" resource-id="2"/>
-    <allocation task-id="28" resource-id="3"/>
     <allocation task-id="29" resource-id="1"/>
     <allocation task-id="30" resource-id="1"/>
     <allocation task-id="39" resource-id="1"/>
@@ -296,5 +296,24 @@
     <allocation task-id="54" resource-id="2"/>
     <allocation task-id="55" resource-id="8"/>
     <allocation task-id="57" resource-id="8"/>
+    <allocation task-id="36" resource-id="2"/>
+    <allocation task-id="7" resource-id="2"/>
+    <allocation task-id="11" resource-id="2"/>
+    <allocation task-id="56" resource-id="2"/>
+    <allocation task-id="10" resource-id="2"/>
+    <allocation task-id="14" resource-id="2"/>
+    <allocation task-id="25" resource-id="2"/>
+    <allocation task-id="26" resource-id="2"/>
+    <allocation task-id="28" resource-id="3"/>
+    <allocation task-id="27" resource-id="3"/>
+    <allocation task-id="59" resource-id="3"/>
+    <allocation task-id="34" resource-id="3"/>
+    <allocation task-id="59" resource-id="2"/>
+    <allocation task-id="62" resource-id="2"/>
+    <allocation task-id="61" resource-id="2"/>
+    <allocation task-id="63" resource-id="2"/>
+    <allocation task-id="64" resource-id="2"/>
+    <allocation task-id="65" resource-id="2"/>
+    <allocation task-id="66" resource-id="2"/>
   </allocations>
 </project>
