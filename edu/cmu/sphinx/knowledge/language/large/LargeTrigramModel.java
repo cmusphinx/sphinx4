@@ -68,7 +68,7 @@ public class LargeTrigramModel implements LanguageModel {
     private SphinxProperties props;
     private LogMath logMath;
     private Set vocabulary;
-    private int maxNGram = 0;
+    private int maxNGram = 3;
 
     private int bytesRead = 0;
 
@@ -182,11 +182,11 @@ public class LargeTrigramModel implements LanguageModel {
      */
     private float getUnigramProbability(WordSequence wordSequence) {
         String unigram = wordSequence.getWord(0);
-        UnigramProbability probability = 
-            (UnigramProbability) unigramIDMap.get(unigram);
-        if (probability == null) {
+        Integer unigramID = (Integer) unigramIDMap.get(unigram);
+        if (unigramID == null) {
             throw new Error("Unigram not in LM: " + unigram);
         } else {
+            UnigramProbability probability = unigrams[unigramID.intValue()];
             return probability.getLogProbability();
         }
     }
@@ -467,13 +467,13 @@ public class LargeTrigramModel implements LanguageModel {
 	}
 	System.out.println("# of trigrams: " + numberTrigrams);
 
-	unigrams = readUnigrams(stream, numberUnigrams, bigEndian);
+	unigrams = readUnigrams(stream, numberUnigrams+1, bigEndian);
 
 
 	// skip all the bigram entries, the +1 is the sentinel at the end
 	if (numberBigrams > 0) {
             bigramOffset = bytesRead;
-            int bytesToSkip = (numberBigrams + 1) * 10;
+            int bytesToSkip = (numberBigrams + 1) * 8;
 	    stream.skipBytes(bytesToSkip);
             bytesRead += bytesToSkip;
 	}
@@ -481,7 +481,7 @@ public class LargeTrigramModel implements LanguageModel {
 	// skip all the trigram entries
 	if (numberTrigrams > 0) {
             trigramOffset = bytesRead;
-            int bytesToSkip = numberTrigrams * 6;
+            int bytesToSkip = numberTrigrams * 4;
 	    stream.skipBytes(bytesToSkip);
             bytesRead += bytesToSkip;
 	}
@@ -562,13 +562,12 @@ public class LargeTrigramModel implements LanguageModel {
 	     LanguageModel.PROP_UNIGRAM_WEIGHT_DEFAULT);
 
         float logUnigramWeight = logMath.linearToLog(unigramWeight);
-        float logNotUnigramWeight = logMath.linearToLog
-            (1.0f - unigrams.length);
-        float logUniform = logMath.linearToLog(1.0f/(unigrams.length - 1));
+        float logNotUnigramWeight = logMath.linearToLog(1.0f - unigramWeight);
+        float logUniform = logMath.linearToLog(1.0f/(numberUnigrams));
 
         float p2 = logUniform + logNotUnigramWeight;
 
-        for (int i = 0; i < unigrams.length; i++) {
+        for (int i = 0; i < numberUnigrams; i++) {
             if (!words[i].equals(Dictionary.SENTENCE_START_SPELLING)) {
                 float p1 = unigrams[i].getLogProbability() + logUnigramWeight;
                 unigrams[i].setLogProbability(logMath.addAsLinear(p1, p2));
@@ -588,7 +587,7 @@ public class LargeTrigramModel implements LanguageModel {
 	throws IOException {
 	int numProbs = readInt(stream, bigEndian);
 	if (numProbs <= 0 || numProbs > 65536) {
-	    throw new Error("Bad probabilities table size: "+ numProbs);
+	    throw new Error("Bad probabilities table size: " + numProbs);
 	}
 	float[] probTable = new float[numProbs];
 	for (int i = 0; i < numProbs; i++) {
@@ -640,8 +639,13 @@ public class LargeTrigramModel implements LanguageModel {
 
 	    // read unigram ID, unigram probability, unigram backoff weight
 	    int unigramID = readInt(stream, bigEndian);
-	    assert (unigramID == i);
 
+            // if we're not reading the sentinel unigram at the end,
+            // make sure that the unigram IDs are consecutive
+            if (i != (numberUnigrams - 1)) {
+                assert (unigramID == i);
+            }
+            
             float unigramProbability = readFloat(stream, bigEndian);
 	    float unigramBackoff = readFloat(stream, bigEndian);
 	    int firstBigramEntry = readInt(stream, bigEndian);
@@ -673,12 +677,12 @@ public class LargeTrigramModel implements LanguageModel {
      */
     private int readInt(DataInputStream stream, boolean bigEndian) 
     throws IOException {
-	int integer = stream.readInt();
         bytesRead += 4;
-        if (!bigEndian) {
-            integer = Utilities.swapInteger(integer);
+        if (bigEndian) {
+            return stream.readInt();
+        } else {
+            return Utilities.readLittleEndianInt(stream);
 	}
-        return integer;
     }
 
 
@@ -691,12 +695,12 @@ public class LargeTrigramModel implements LanguageModel {
      */
     private float readFloat(DataInputStream stream, boolean bigEndian)
     throws IOException {
-	float value = stream.readFloat();
         bytesRead += 4;
-        if (!bigEndian) {
-            value = Utilities.swapFloat(value);
+        if (bigEndian) {
+            return stream.readFloat();
+        } else {
+            return Utilities.readLittleEndianFloat(stream);
 	}
-        return value;
     }
 
 
