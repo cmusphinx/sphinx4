@@ -26,21 +26,12 @@ EXTRA_JAVA_FLAGS=-mx128m
 
 all:: ${CLASSES} ${STUBS}
 
-grammar: all
-	$(JAVA_CMD) tests.search.SimpleLinguistTest simple_search.props
-
-connected-grammar: all
-	$(JAVA_CMD) tests.search.SimpleLinguistTest ../decoder/multiDecoder.props
-
-search: all
-	$(JAVA_CMD) tests.search.SimpleSearchTest simple_search.props
-
 FSTGrammarTestTiny: all
 	$(JAVA_CMD) tests.search.FSTGrammarTest FSTGrammarTest.props
 
 FSTGrammarTestSmall: all
 	$(JAVA_CMD)  \
--Dedu.cmu.sphinx.search.FSTGrammar.path=/lab/speech/sphinx4/data/fst/digits.fst\
+	-Dedu.cmu.sphinx.decoder.linguist.FSTGrammar.path=/lab/speech/sphinx4/data/fst/digits.fst\
     tests.search.FSTGrammarTest FSTGrammarTest.props
 
 
@@ -48,7 +39,8 @@ FSTGrammarTestSmall: all
 # loads a large model. 
 FSTGrammarTestLarge: all
 	$(JAVA_CMD)  \
--Dedu.cmu.sphinx.search.FSTGrammar.path=/lab/speech/sphinx4/data/fst/5721_word_vocab.FST \
+	-Dedu.cmu.sphinx.decoder.linguist.FSTGrammar.path=/lab/speech/sphinx4/data/fst/5721_word_vocab.FST \
+	-Dedu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d \
 	tests.search.FSTGrammarTest FSTGrammarTest.props
 
 
@@ -56,7 +48,8 @@ FSTGrammarTestLarge: all
 # loads a huge model. Don't expect this to finish anytime soon
 FSTGrammarTestMega: all
 	$(JAVA_CMD)  \
--Dedu.cmu.sphinx.search.FSTGrammar.path=/lab/speech/sphinx4/data/fst/language_model.arpaformat.FST.ascii\
+	-Dedu.cmu.sphinx.decoder.linguist.FSTGrammar.path=/lab/speech/sphinx4/data/fst/language_model.arpaformat.FST.ascii \
+	-Dedu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d \
 	tests.search.FSTGrammarTest FSTGrammarTest.props
 
 
