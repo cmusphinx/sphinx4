@@ -46,8 +46,12 @@ public class CepstralMeanNormalizer extends PullingProcessor {
     private int numberFrame;
     private float[] currentMean;
     private float[] sum;
+    private float[] temp;
     private int cmnShiftWindow;
     private int cmnWindow;
+
+    private Timer normTimer;
+    private Timer updateTimer;
     
 
     /**
@@ -57,6 +61,8 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	getSphinxProperties();
 	initMeansSums();
         setTimer(Timer.getTimer("", "CMN"));
+        normTimer = Timer.getTimer("", "normTimer");
+        updateTimer = Timer.getTimer("", "updateTimer");
     }
 
 
@@ -67,6 +73,7 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	currentMean = new float[cepstrumLength];
 	currentMean[0] = initialMean;
 	sum = new float[cepstrumLength];
+        temp = new float[cepstrumLength];
     }
 
 
@@ -128,8 +135,12 @@ public class CepstralMeanNormalizer extends PullingProcessor {
             Cepstrum[] cepstra = cepstrumFrame.getData();
             
             if (cepstra.length > 0) {
-                
+
+                normTimer.start();
                 normalize(cepstra);
+                normTimer.stop();
+
+                updateTimer.start();
 
                 // Shift buffers down if we have more than 
                 // cmnShiftWindow frames
@@ -141,6 +152,8 @@ public class CepstralMeanNormalizer extends PullingProcessor {
                 if (signal != null && signal.isEnd()) {
                     updateMeanSumBuffers();
                 }
+
+                updateTimer.stop();
             }
 	}
 	
@@ -186,17 +199,29 @@ public class CepstralMeanNormalizer extends PullingProcessor {
 	// update the currentMean buffer with the sum buffer
 	float sf = (float) (1.0/numberFrame);
 
-	for (int i = 0; i < currentMean.length; i++) {
-	    currentMean[i] = sum[i] * sf;
-	}
+        System.arraycopy(sum, 0, temp, 0, sum.length);
+
+        multiplyArray(temp, sf);
+
+        System.arraycopy(temp, 0, currentMean, 0, temp.length);
 
 	// decay the sum buffer exponentially
 	if (numberFrame >= cmnShiftWindow) {
-	    sf = cmnWindow * sf;
-	    for (int i = 0; i < sum.length; i++) {
-		sum[i] *= sf;
-	    }
+            multiplyArray(sum, (sf * cmnWindow));
 	    numberFrame = cmnWindow;
 	}
+    }
+
+
+    /**
+     * Multiplies each element of the given array by the multiplier.
+     *
+     * @param array the array to multiply
+     * @param multipler the amount to multiply by
+     */
+    private static final void multiplyArray(float[] array, float multiplier) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] *= multiplier;
+        }
     }
 }

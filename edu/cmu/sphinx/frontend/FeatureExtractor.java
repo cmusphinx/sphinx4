@@ -177,7 +177,7 @@ public class FeatureExtractor extends PullingProcessor {
 	    residualVectors -= window;
 	}
 
-	// copy (the reference of) all the input cepstrum to our cepstraBuffer 
+	// copy (the reference of) all the input cepstrum to our cepstraBuffer
 	for (int i = 0; i < cepstra.length; i++) {
 	    this.cepstraBuffer[bufferPosition++] = cepstra[i].getData();
             if (bufferPosition == LIVEBUFBLOCKSIZE) {
@@ -207,13 +207,10 @@ public class FeatureExtractor extends PullingProcessor {
 
         int totalFeatures = cepstra.length + residualVectors;
         
-        float[] feature = null;
-        boolean dump = getDump();
-
 	for (int i = 0; i < totalFeatures; i++) {
-	    feature = computeNextFeature();
+	    float[] feature = computeNextFeature();
             outputQueue.add(feature);
-            if (dump) {
+            if (getDump()) {
                 Util.dumpFloatArray(feature, "FEATURE");
             }
 	}

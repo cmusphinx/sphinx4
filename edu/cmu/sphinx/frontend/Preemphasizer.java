@@ -14,8 +14,8 @@ import java.io.IOException;
  * Filters out the attenuation of audio data. Speech signals have an
  * attenuation of 20 dB/dec. Preemphasis flatten the signal to make it
  * less susceptible to finite precision effects later in the signal
- * processing. The Preemphasizer takes a ShortAudioFrame as input
- * and outputs a DoubleAudioFrame.
+ * processing. The Preemphasizer takes a DoubleAudioFrame as input
+ * and outputs the same DoubleAudioFrame, but with preemphasis applied.
  *
  * The SphinxProperties of this Preemphasizer are: <pre>
  * edu.cmu.sphinx.frontend.preemphasis.dump
@@ -26,7 +26,7 @@ public class Preemphasizer extends PullingProcessor {
 
     /**
      * The name of the SphinxProperty which indicates if the preemphasized
-     * ShortAudioFrames should be dumped. The default value of this
+     * DoubleAudioFrames should be dumped. The default value of this
      * SphinxProperty is false.
      */
     public static final String PROP_DUMP =
@@ -81,16 +81,21 @@ public class Preemphasizer extends PullingProcessor {
 	Data input = getSource().read();
         Data output = input;
 
-	if (input instanceof SegmentEndPointSignal) {
+        if (input instanceof DoubleAudioFrame) {
+
+            output = process(input);
+
+        } else if (input instanceof SegmentEndPointSignal) {
+
 	    SegmentEndPointSignal signal = (SegmentEndPointSignal) input;
 	    signal.setData(process(signal.getData()));
 	    output = signal;
+
 	} else if (input instanceof PreemphasisPriorSignal) {
+
 	    PreemphasisPriorSignal signal = (PreemphasisPriorSignal) input;
 	    prior = (double) signal.getPrior();
 	    output = read();
-	} else if (input instanceof ShortAudioFrame) {
-	    output = process(input);
 	}
 
         return output;
@@ -98,54 +103,40 @@ public class Preemphasizer extends PullingProcessor {
 
 
     /**
-     * Applies pre-emphasis filter to the given ShortAudioFrame.
-     * If the preemphasis factor is zero, then the short input samples will
-     * just be converted to double samples.
+     * Applies pre-emphasis filter to the given DoubleAudioFrame.
      *
-     * @param input a ShortAudioFrame of audio data
+     * @param input a DoubleAudioFrame of audio data
      *
      * @return a DoubleAudioFrame of data with pre-emphasis filter applied
      */
     private Data process(Data input) {
 
-	// NOTE:
-	// It will not be necessary to allocate this extra double[]
-	// if we started off with a double[]. In the pre-emphasis
-	// for loop below, we can just start at the end of the array
-	// to calculate the preemphasis in-place.
-
-	short[] in = ((ShortAudioFrame) input).getData();
-	double[] out = new double[in.length];
-
         getTimer().start();
 
+	double[] in = ((DoubleAudioFrame) input).getData();
+	
 	if (in.length > 1 && preemphasisFactor != 0.0) {
 
 	    // do preemphasis
             double current;
-            double previous = (double) in[0];
+            double previous = in[0];
             
-	    out[0] = previous - preemphasisFactor * prior;
+	    in[0] = previous - preemphasisFactor * prior;
 
-	    for (int i = 1; i < out.length; i++) {
+	    for (int i = 1; i < in.length; i++) {
                 current = (double) in[i];
-		out[i] = current - preemphasisFactor * previous;
+		in[i] = current - preemphasisFactor * previous;
                 previous = current;
 	    }
 
-	} else {
-	    // just convert sample from short to double
-	    for (int i = 0; i < out.length; i++) {
-		out[i] = (double) in[i];
-	    }
 	}
 
         getTimer().stop();
 
 	if (getDump()) {
-	    Util.dumpDoubleArray(out, "PREEMPHASIS");
+	    Util.dumpDoubleArray(in, "PREEMPHASIS");
 	}
 
-	return (new DoubleAudioFrame(out));
+	return input;
     }
 }

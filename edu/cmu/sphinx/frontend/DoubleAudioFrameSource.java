@@ -11,10 +11,10 @@ import java.util.Vector;
 
 
 /**
- * A ShortAudioFrameSource converts data from an InputStream into
- * ShortAudioFrames. One would obtain the ShortAudioFrames using
+ * A DoubleAudioFrameSource converts data from an InputStream into
+ * DoubleAudioFrames. One would obtain the DoubleAudioFrames using
  * the <code>read()</code> method. It will make sure that the
- * returned ShortAudioFrame can be made into exactly N windows.
+ * returned DoubleAudioFrame can be made into exactly N windows.
  * The size of the windows and the window shift is specified by
  * the SphinxProperties
  * <pre>
@@ -24,38 +24,49 @@ import java.util.Vector;
  * will be used in the next frame (which is obtained by the next call to
  * <code>read()</code>).
  */
-public class ShortAudioFrameSource implements DataSource {
+public class DoubleAudioFrameSource implements DataSource {
 
     /**
      * The name of the SphinxProperty which indicates if the produced
-     * ShortAudioFrames should be dumped. The default value of this
+     * DoubleAudioFrames should be dumped. The default value of this
      * SphinxProperty is false.
      */
     public static final String PROP_DUMP =
-	"edu.cmu.sphinx.frontend.shortAudioFrameSource.dump";
+	"edu.cmu.sphinx.frontend.doubleAudioFrameSource.dump";
 
     private static final int SEGMENT_MAX_BYTES = 2000000;
 
     private InputStream audioStream;
+
     private int frameSizeInBytes;
     private int windowSizeInBytes;
     private int windowShiftInBytes;
+
+    /**
+     * The buffer that contains the samples. "totalInBuffer" indicates
+     * the number of bytes in the samplesBuffer so far.
+     */
     private byte[] samplesBuffer;
     private int totalInBuffer;
     private int totalBytesRead;
+
+    /**
+     * The buffer that contains the overflow samples.
+     */
     private byte[] overflowBuffer;
     private int overflowBytes;
+
     private Queue queue;
     private boolean dump;
 
 
     /**
-     * Constructs an AudioSource with the given InputStream and frame size.
-     * Frame size refers to the number of audio samples in each frame.
+     * Constructs an AudioSource with the given InputStream.
      *
      * @param audioStream the InputStream where audio data comes from
      */
-    public ShortAudioFrameSource(InputStream audioStream) {
+    public DoubleAudioFrameSource(InputStream audioStream) {
+
 	getSphinxProperties();
 
 	this.audioStream = audioStream;
@@ -73,18 +84,22 @@ public class ShortAudioFrameSource implements DataSource {
     private void getSphinxProperties() {
 	// TODO : specify the context
 	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
-	windowSizeInBytes = properties.getInt
-	    (FrontEnd.PROP_WINDOW_SIZE, 205) * 2;
-	windowShiftInBytes = properties.getInt
+	
+        windowSizeInBytes = properties.getInt
+            (FrontEnd.PROP_WINDOW_SIZE, 205) * 2;
+	
+        windowShiftInBytes = properties.getInt
 	    (FrontEnd.PROP_WINDOW_SHIFT, 80) * 2;
-	frameSizeInBytes = properties.getInt
+	
+        frameSizeInBytes = properties.getInt
 	    (FrontEnd.PROP_BYTES_PER_AUDIO_FRAME, 4000);
-	dump = properties.getBoolean(PROP_DUMP, false);
+	
+        dump = properties.getBoolean(PROP_DUMP, false);
     }
 
 
     /**
-     * Returns the InputStream from which this ShortAudioFrameSource reads.
+     * Returns the InputStream from which this DoubleAudioFrameSource reads.
      *
      * @return the InputStream from which audio data comes
      */
@@ -94,11 +109,11 @@ public class ShortAudioFrameSource implements DataSource {
 
     
     /**
-     * Reads and returns the next ShortAudioFrame from the InputStream of
+     * Reads and returns the next DoubleAudioFrame from the InputStream of
      * AudioFrameSource, return null if no data is read and end of file
      * is reached.
      *
-     * @return the next ShortAudioFrame or <code>null</code> if none is
+     * @return the next DoubleAudioFrame or <code>null</code> if none is
      *     available
      *
      * @throws java.io.IOException
@@ -106,39 +121,42 @@ public class ShortAudioFrameSource implements DataSource {
     public Data read() throws IOException {
 
 	int bytesRead = totalBytesRead;
-
+        Data output = null;
+ 
 	if (!queue.isEmpty()) {
-	    return queue.pop();
+	    
+            return queue.pop();
+
 	} else if (bytesRead == 0) {
+
 	    return SegmentEndPointSignal.createSegmentStartSignal
 		(readNextFrame());
+
 	} else if (bytesRead + frameSizeInBytes >= SEGMENT_MAX_BYTES) {
+
 	    return SegmentEndPointSignal.createSegmentEndSignal
 		(readNextFrame());
+
 	} else {
+
 	    return readNextFrame();
 	}
     }
 
 
     /**
-     * Reads the next ShortAudioFrame from the input stream.
+     * Reads the next DoubleAudioFrame from the input stream.
      *
-     * @return a ShortAudioFrame
+     * @return a DoubleAudioFrame
      *
      * @throws java.io.IOException
      */
-    private ShortAudioFrame readNextFrame() throws IOException {
+    private DoubleAudioFrame readNextFrame() throws IOException {
 
 	totalInBuffer = 0;
 
 	// if there are previous samples, pre-pend them to input speech samps
-	if (overflowBytes > 0) {
-	    System.arraycopy(overflowBuffer, 0, samplesBuffer, 0,
-			     overflowBytes);
-	    totalInBuffer += overflowBytes;
-	    overflowBytes = 0;
-	}
+        overflowToSamplesBuffer();
 
 	// read one frame from the inputstream
 	readInputStream(frameSizeInBytes);
@@ -155,27 +173,21 @@ public class ShortAudioFrameSource implements DataSource {
 	
 	// if read bytes do not fill a frame, copy them to overflow buffer
 	// after the previously stored overlap samples
-
 	if (totalInBuffer < windowSizeInBytes) {
-	    System.arraycopy(samplesBuffer, 0, overflowBuffer, overflowBytes,
-			     totalInBuffer);
-	    overflowBytes += totalInBuffer;
+            samplesToOverflowBuffer();
 	    return null;
 	} else {
 	    int occupiedElements = Util.getOccupiedElements
 		(totalInBuffer, windowSizeInBytes, windowShiftInBytes);
-
-	    // System.out.println("totalInBuffer: " + totalInBuffer/2);
-	    // System.out.println("occupiedElements: " + occupiedElements/2);
 
 	    if (occupiedElements < totalInBuffer) {
 
 		// assign samples which don't fill an entire frame to 
 		// overflow buffer for use on next pass
 		
-		int offset = windowShiftInBytes * Util.getWindowCount
-		    (totalInBuffer, windowSizeInBytes, windowShiftInBytes);
-		// System.out.println("offset: " + offset/2);
+		int offset = occupiedElements - 
+                    (windowSizeInBytes - windowShiftInBytes);
+
 		overflowBytes = totalInBuffer - offset;
 
 		System.arraycopy
@@ -191,16 +203,44 @@ public class ShortAudioFrameSource implements DataSource {
 		samplesBuffer[totalInBuffer++] = 0;
 	    }
 
-	    // convert the byte[] into a ShortAudioFrame
-	    short[] audioFrame = Util.byteToShortArray
+	    // convert the byte[] into a DoubleAudioFrame
+	    double[] audioFrame = Util.byteToDoubleArray
 		(samplesBuffer, 0, totalInBuffer);
-
+            
 	    if (dump) {
-		Util.dumpShortArray(audioFrame, "FRAME_SOURCE");
+		Util.dumpDoubleArray(audioFrame, "FRAME_SOURCE");
 	    }
 
-	    return (new ShortAudioFrame(audioFrame));
+	    return (new DoubleAudioFrame(audioFrame));
 	}
+    }
+
+
+    /**
+     * Copies the overflow samples in the overflowBuffer to the
+     * beginning of the samplesBuffer.
+     * Increments totalInBuffer, and sets overflowBytes to zero.
+     */
+    private void overflowToSamplesBuffer() {
+	if (overflowBytes > 0) {
+	    System.arraycopy(overflowBuffer, 0, samplesBuffer, 0,
+			     overflowBytes);
+	    totalInBuffer += overflowBytes;
+	    overflowBytes = 0;
+	}
+    }
+
+
+    /**
+     * Appends the first totalInBuffer bytes in samplesBuffer to
+     * overflowBuffer. Increments overflowBytes by totalInBuffer.
+     */
+    private void samplesToOverflowBuffer() {
+        if (totalInBuffer > 0) {
+            System.arraycopy(samplesBuffer, 0, overflowBuffer, overflowBytes,
+                             totalInBuffer);
+            overflowBytes += totalInBuffer;
+        }
     }
 
 

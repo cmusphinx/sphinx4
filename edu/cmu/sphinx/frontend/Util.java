@@ -113,6 +113,48 @@ public class Util {
 
 
     /**
+     * Converts a byte array into a double array. Since a byte is 8-bits,
+     * and a short is 64-bits. Each two consecutive bytes in the byte array
+     * are converted into a double, and becomes the next element in the double
+     * array. As a result, the returned double array will be half in
+     * length than the byte array. If the length of the byte array is odd,
+     * the length of the double array will be
+     * <code>(byteArray.length - 1)/2</code>, i.e., the last byte is
+     * discarded.
+     *
+     * @param byteArray a byte array
+     * @param offset which byte to start from
+     * @param length how many bytes to convert
+     *
+     * @return a double array, or <code>null</code> if byteArray is of zero
+     *    length
+     *
+     * @throws java.lang.ArrayIndexOutOfBoundsException
+     */
+    public static double[] byteToDoubleArray
+	(byte[] byteArray, int offset, int length)
+	throws ArrayIndexOutOfBoundsException {
+
+	if (0 < length && (offset + length) <= byteArray.length) {
+	    int doubleLength = length / 2;
+	    double[] doubleArray = new double[doubleLength];
+	    int temp;
+	    for (int i = offset, j = 0; j < doubleLength ; 
+		 j++, temp = 0x00000000) {
+		temp = (int) (byteArray[i++] << 8);
+		temp |= (int) (0x000000FF & byteArray[i++]);
+		doubleArray[j] = (double) temp;
+	    }
+	    return doubleArray;
+	} else {
+	    throw new ArrayIndexOutOfBoundsException
+		("offset: " + offset + ", length: " + length
+		 + ", array length: " + byteArray.length);
+	}
+    }
+
+
+    /**
      * Convert the two bytes starting at the given offset to a short
      *
      * @param byteArray the byte array

@@ -42,10 +42,12 @@ public class FrontEnd implements DataSource, Runnable {
 	"edu.cmu.sphinx.frontend.bytesPerAudioFrame";
 
 
+    private InputMode inputMode;
     private int samplesPerAudioFrame;
     private List processors = null;
     private InputStream audioInputStream;
     private DataSource audioFrameSource;
+    private String batchFile;
     private List queue;
 
 
@@ -93,8 +95,20 @@ public class FrontEnd implements DataSource, Runnable {
      * @param inputStream the source of audio input
      */
     public void setInputStream(InputStream inputStream) {
+        this.inputMode = InputMode.STREAM;
 	this.audioInputStream = inputStream;
-	this.audioFrameSource = new ShortAudioFrameSource(inputStream);
+	this.audioFrameSource = new DoubleAudioFrameSource(inputStream);
+    }
+
+
+    /**
+     * Sets the input as a file that contains a list of audio files.
+     *
+     * @param batchFile a file that contains a list of audio files
+     */
+    public void setBatchFile(String batchFile) {
+        this.inputMode = InputMode.BATCH;
+        this.batchFile = batchFile;
     }
 
 
@@ -143,4 +157,32 @@ public class FrontEnd implements DataSource, Runnable {
 	    }
 	}
     }
+}
+
+
+/**
+ * Contains constants to indicate the input mode of the Frontend.
+ */
+class InputMode {
+
+
+    private final String name;
+    
+    private InputMode(String name) {
+        this.name = name;
+    }
+    
+    public String toString() {
+        return name;
+    }
+
+    /**
+     * Indicates that the input is from an InputStream.
+     */
+    public static final InputMode STREAM = new InputMode("stream");
+    
+    /**
+     * Indicates that the input is from a batch file.
+     */
+    public static final InputMode BATCH = new InputMode("batch");
 }
