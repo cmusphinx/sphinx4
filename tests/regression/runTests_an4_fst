@@ -15,21 +15,9 @@
 # where the test should be run from,  The third field is the make
 # target for the test.
 
-./runTest ../performance/an4 an4_words_unigram
-./runTest ../performance/an4 an4_words_trigram
 ./runTest ../performance/an4 an4_words_fst
-
-./runTest ../performance/an4 an4_spelling_unigram
-./runTest ../performance/an4 an4_spelling_trigram
-./runTest ../performance/an4 an4_spelling_journey_trigram
 ./runTest ../performance/an4 an4_spelling_journey_fst
-
-./runTest ../performance/an4 an4_full_unigram
-./runTest ../performance/an4 an4_full_trigram
 ./runTest ../performance/an4 an4_full_fst
-
-./runTest ../performance/an4 an4_plus_unigram
-./runTest ../performance/an4 an4_plus_trigram
 ./runTest ../performance/an4 an4_plus_fst
 
 

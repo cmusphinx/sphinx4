@@ -18,9 +18,9 @@
 
 ./runTest ../performance/an4 an4_plus_unigram
 ./runTest ../performance/an4 an4_plus_trigram
+./runTest ../performance/an4 an4_plus_fst
 
 # an4_plus_fst temporarily removed since it was taking too long to run
 #
-# ./runTest ../performance/an4 an4_plus_fst
 
 touch ./.testDone
