@@ -18,7 +18,7 @@ FILES = $(shell echo *.java)
 SUBDIRS = 
 
 PROFILE_FLAGS= -Xprof
-EXTRA_JAVA_FLAGS = $(PROFILE_FLAGS) -ms100m -mx200m
+EXTRA_JAVA_FLAGS = $(PROFILE_FLAGS) -ms1g -mx2g
 
 
 ##########################################################################
@@ -100,6 +100,6 @@ lm-utt-test:
 
 memory-test:
 	$(MAKE) all
-	$(JAVA_CMD) -ms25m -mx50m \
+	$(JAVA_HOME)/bin/java -XX:+TraceGen0Time -XX:+TraceGen1Time -ms125m -mx250m -cp '/lab/speech/ThirdPartySoftware/junit3.7/junit.jar:../../../../classes:' \
 	tests.knowledge.language.large.MemoryTest file:./binary.props /lab/speech/sphinx4/data/hub4_model/ngram.queried
 
