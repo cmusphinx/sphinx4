@@ -1,0 +1,8 @@
+/**
+ * JSGF Grammar for CardMatch example
+ */
+
+grammar hello;
+
+
+public <simple> = hello world ;

@@ -127,3 +127,7 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.numThreads=-1
 edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 
 edu.cmu.sphinx.decoder.Decoder.showPartialResults=false
+edu.cmu.sphinx.decoder.linguist.util.LinguistDumper.filename=sentenceHMM.gdl
+edu.cmu.sphinx.decoder.linguist.util.GDLDumper.skipHMMs=true
+edu.cmu.sphinx.decoder.linguist.util.GDLDumper.verticalLayout=true
+edu.cmu.sphinx.decoder.linguist.util.GDLDumper.dumpArcLabels=true

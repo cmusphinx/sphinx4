@@ -1,0 +1,17 @@
+grammar command;
+
+/**
+  * Basic command.
+  * @example please move the window
+  * @example open a file
+  */
+
+public <basicCmd> = <startPolite> <command> <endPolite>;
+
+<command> = <action> <object>;
+<action> = /10/ open |/2/ close |/1/ delete |/1/ move;
+<object> = [the | a] (window | file | menu);
+
+<startPolite> = (please | kindly | could you | oh  mighty  computer) *;
+<endPolite> = [ please | thanks | thank you ];
+

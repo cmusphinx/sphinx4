@@ -1,0 +1,126 @@
+#JSGF V1.0;
+
+/**
+ * Importable JSGF Grammar to parse date expressions.
+ *
+ * When result events are used with the ECMATagsParser, the resulting 
+ * feature/value pairs can be used to determine the actual date
+ * spoken by the user.
+ *
+ * Copyright 1999 Sun Microsystems 
+ *
+ * @author Willie Walker
+ */
+grammar com.sun.speech.app.babbleon.grammars.times;
+
+
+/**
+ * An absolute time.
+ *
+ * @example one oh clock
+ * @example twelve thirty seven pm
+ */
+public <absoluteTime> = 
+    ( <hour>  oh clock | <hour> [ <minute>  ] [ a m  | p m  ]);
+
+
+/**
+ * An integer referring to an hour.
+ *
+ * @example one
+ * @example seven
+ */
+<hour> = 
+    ( one 	
+    | two 	
+    | three 	
+    | four 	
+    | five 	
+    | six 	
+    | seven 	
+    | eight 	
+    | nine 	
+    | ten 	
+    | eleven 	
+    | twelve 	
+    );
+
+/** 
+ * A cardinal phrase that can be a date of a minute, so it is
+ * "one" through "59."
+ * 
+ * @example one
+ * @example three
+ * @example ten
+ * @example twenty seven
+ */
+<minute> = 
+    ( [oh] one 		
+    | [oh] two 		
+    | [oh] three 	
+    | [oh] four 	
+    | [oh] five 	
+    | [oh] six 		
+    | [oh] seven 	
+    | [oh] eight 	
+    | [oh] nine 	
+    | ten 		
+    | eleven 		
+    | twelve 		
+    | thirteen		
+    | fourteen		
+    | fifteen		
+    | sixteen	 	
+    | seventeen 	
+    | eighteen	 	
+    | nineteen	 	
+    | twenty	 	
+    | (twenty ( one 	
+              | two 	
+              | three 	
+              | four 	
+              | five 	
+              | six 	
+              | seven 	
+              | eight 	
+              | nine 	
+              )
+      )
+    | thirty	 	
+    | (thirty ( one 	
+              | two 	
+              | three 	
+              | four 	
+              | five 	
+              | six 	
+              | seven 	
+              | eight 	
+              | nine 	
+              )
+      )
+    | forty	 	
+    | (forty ( one 	
+              | two 	
+              | three 	
+              | four 	
+              | five 	
+              | six 	
+              | seven 	
+              | eight 	
+              | nine 	
+              )
+      )
+    | fifty	 	
+    | (fifty ( one 	
+              | two 	
+              | three 	
+              | four 	
+              | five 	
+              | six 	
+              | seven 	
+              | eight 	
+              | nine 	
+              )
+      )
+    );
+

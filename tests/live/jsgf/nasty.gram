@@ -1,0 +1,4 @@
+grammar nastygram;
+
+public <nasty> = ((cat* | dog* | mouse*)+)+;
+
