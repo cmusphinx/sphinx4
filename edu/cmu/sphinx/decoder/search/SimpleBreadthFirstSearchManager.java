@@ -329,8 +329,12 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      */
     protected void growBranches() {
 
+        int mapSize = activeList.size() * 10;
+        if (mapSize == 0) {
+            mapSize = 1;
+        }
         growTimer.start();
-        bestTokenMap = new HashMap(activeList.size() * 10);
+        bestTokenMap = new HashMap(mapSize);
 
         ActiveList oldActiveList = activeList;
 
