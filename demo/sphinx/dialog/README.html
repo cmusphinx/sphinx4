@@ -1,5 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-
+<html>
+<head>
 <!--
 
 /**
@@ -15,87 +16,98 @@
  */
 
 -->
-
-<html>
-  <head><title>Sphinx-4 Dialog Demo</title></head>
-  <style TYPE="text/css">
+  <title>Sphinx-4 Dialog Demo</title>
+  <style type="text/css">
   pre { font-size: medium; background: #f0f8ff; padding: 2mm; 
         border-style: ridge ; color: teal }
   code { font-size: medium; color: teal }
-  </style></head>
-  <body>
-    <font face="Times New Roman">
-     <center>
-     <table bgcolor="#99CCFF" width="100%">
-	<tr>
-	  <td align=center width="100%">
-	    <h1><i>Sphinx-4</i> Dialog  Demo</h1>
-	  </td>
-	</tr>
-      </table>
-    </center>
-    </font>
-
-    <font face="Arial" size="2">      
-      <p>
-      This is a simple command line program that shows how to
-      write a simple Sphinx-4 application that recognizes simple sentences
-      using a BNF-style grammar. When you run the demo, you will
-      see the following:
-      </p>
-      <pre>
-      </pre>
-
-      </pre>
-      <h3>Building</h3>
-      <p>
-      Check if the <code>bin</code> directory already has the
-      <code>Dialog.jar</code> file. If not, type the following in the top
-      level directory:
-      </p>
-      <code>ant -find demo.xml</code>
-      <h3>Running</h3>
-      <p>
-      First make sure that you have
-      <a href="../../../doc/jsapi_setup.html">JSAPI setup</a> correctly.
-      Then, to run the demo, type:
-      </p>
-      <code>sphinx4> java -mx256m -jar bin/Dialog.jar</code>
-      <p>
-      <font color="FF0000"><b>NOTE:</b></font>
-      <ol>
-      <li>
-      Make sure that you give it a large enough heap by putting in "-mx256m".
-      </li>
-      <li>
-      Make sure that you are using Java<sup>TM</sup> 2 SDK, Standard Edition, 
-      v1.4 or higher.
-      </li>
-      <li>
-      If you are running Linux and have problems with the audio,
-      please read the 
-      <a href="../../../index.html#demos_faq">Demo Troubleshooting</a> section.
-      </li>
-      <li>
-      If you have the source distribution, make sure that the JAR file
-      <code>lib/sphinx4.jar</code> is built. If not, go to the top level 
-      directory and type: <code>ant</code>
-      </li>
-      </ol>
-      </p>
-      <p>
-      The list of allowable sentences in this demo are:
-      </p>
-      <pre>
-      </pre>
-    </font>
-    <hr>
-Copyright 1999-2004 Carnegie Mellon University.
+  </style>
+</head>
+<body>
+<font face="Times New Roman">
+<center>
+<table bgcolor="#99ccff" width="100%">
+  <tbody>
+    <tr>
+      <td align="center" width="100%">
+      <h1><i>Sphinx-4</i> Dialog Demo</h1>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</font> <font face="Arial" size="2">
+<p> This is a simple command line program that demonstrates how to swap
+between multiple JSGF grammars.<br>
+</p>
+</font><font face="Arial" size="2">
+<p> </p>
+<pre>      </pre>
+<h3>Building</h3>
+<p> Check if the <code>bin</code> directory already has the <code>Dialog.jar</code>
+file. If not, type the following in the top level directory: </p>
+<code>ant -find demo.xml</code>
+<h3>Running</h3>
+<p> First make sure that you have <a
+ href="../../../doc/jsapi_setup.html">JSAPI setup</a> correctly. Then,
+to run the demo, type: </p>
+<code>sphinx4&gt; java -mx200m -jar bin/Dialog.jar</code>
+<p> <font color="#ff0000"><b>NOTE:</b></font> </p>
+<ol>
+  <li> Make sure that you give it a large enough heap by putting in
+"-mx200m". </li>
+  <li> Make sure that you are using Java<sup>TM</sup> 2 SDK, Standard
+Edition, v1.4 or higher. </li>
+  <li> If you are running Linux and have problems with the audio,
+please read the <a href="../../../index.html#demos_faq">Demo
+Troubleshooting</a> section. </li>
+  <li> If you have the source distribution, make sure that the JAR file
+    <code>lib/sphinx4.jar</code> is built. If not, go to the top level
+directory and type: <code>ant</code> </li>
+</ol>
+<p></p>
+<p><br>
+When the program runs, you will be presented with a menu of commands
+that can be spoken. Here is a sample run.&nbsp; The spoken commands are
+highlighed in <span style="color: rgb(0, 153, 0);">green.</span>&nbsp;
+Note that this is just a demonstration of the speech technology. This
+demo will not actually perform the command. Thus, when you say "play
+games / play adventure " no game will actually played, similarly, when
+you say "make a phone call / call paul" no phone call will be made.<br>
+<br>
+</p>
+<pre>Welcome to the Sphinx-4 Dialog Demo  - Version 1.0<br><br>Loading ....<br>Running  ....<br> ======== menu =======<br>  get help<br>  listen to music<br>  make a phone call<br>  play games<br>  read a book<br>  read email<br>  read news<br>  show stats<br>  watch movies<br> =================================<br><br><span
+ style="color: rgb(0, 153, 0);"> make a phone call</span><br><br> ======== phone =======<br>  call arthur<br>  call bhiksha<br>  call evandro<br>  call glen<br>  call james<br>  call jim<br>  call joe<br>  call joseph<br>  call karl<br>  call nicole<br>  call paul<br>  call pedro<br>  call peter<br>  call phil<br>  call ravi<br>  call rich<br>  call richard<br>  call rita<br>  call steve<br>  call will<br>  get help<br>  go to main menu<br>  go to the main menu<br>  main menu<br> =================================<br><br><span
+ style="color: rgb(0, 153, 0);"> call willie</span><br><br><br><span
+ style="color: rgb(0, 153, 0);"> call james</span><br
+ style="color: rgb(0, 153, 0);"><br style="color: rgb(0, 153, 0);"><br
+ style="color: rgb(0, 153, 0);"><span style="color: rgb(0, 153, 0);"> go to main menu</span><br>        <br> ======== menu =======<br>  get help <br>  listen to music<br>  make a phone call<br>  play games<br>  read a book<br>  read email<br>  read news<br>  show stats<br>  watch movies<br> =================================<br><br><span
+ style="color: rgb(0, 153, 0);"> read a book</span><br><br> ======== books =======<br>  get help<br>  go to main menu<br>  go to the main menu<br>  main menu<br>  read angels and demons<br>  read code and other laws of cyber space<br>  read eats shoots and leaves<br>  read effective java<br>  read harry potter and the goblet of fire<br>  read spoken language processing<br>  read the curious incident of the dog in the night time<br>  read the da vinci code<br>  read the future of ideas<br>  read the lord of the rings<br>  read the time travelers wife<br> =================================<br><br><span
+ style="color: rgb(0, 153, 0);"> read harry potter and the goblet of fire</span><br
+ style="color: rgb(0, 153, 0);"><br style="color: rgb(0, 153, 0);"><br
+ style="color: rgb(0, 153, 0);"><span style="color: rgb(0, 153, 0);"> read the curious incident of the dog in the night time</span><br
+ style="color: rgb(0, 153, 0);"><br style="color: rgb(0, 153, 0);"><br
+ style="color: rgb(0, 153, 0);"><span style="color: rgb(0, 153, 0);"> go to the main menu</span><br><br> ======== menu =======<br>  get help<br>  listen to music<br>  make a phone call<br>  play games<br>  read a book<br>  read email<br>  read news<br>  show stats<br>  watch movies<br> =================================<br><br><span
+ style="color: rgb(0, 153, 0);"> read news</span><br><br> ======== news =======<br>  get help<br>  go to main menu<br>  go to the main menu<br>  main menu<br>  read the boston globe<br>  read the chicago tribune<br>  read the daily mirror<br>  read the daily prophet<br>  read the guardian<br>  read the los angeles times<br>  read the nashua telegraph<br>  read the new york times<br>  read the san francisco chronicle<br>  read the san jose mercury news<br>  read the sun<br>  read the wall street journal<br>  read the washington post<br> =================================<br><br><span
+ style="color: rgb(0, 153, 0);"> read the wall street journal</span><br
+ style="color: rgb(0, 153, 0);"><br style="color: rgb(0, 153, 0);"><br
+ style="color: rgb(0, 153, 0);"><span style="color: rgb(0, 153, 0);"> read the washington post</span><br
+ style="color: rgb(0, 153, 0);"><br style="color: rgb(0, 153, 0);"><br
+ style="color: rgb(0, 153, 0);"><span style="color: rgb(0, 153, 0);"> go to main menu</span><br><br> ======== menu =======<br>  get help<br>  listen to music<br>  make a phone call<br>  play games<br>  read a book<br>  read email<br>  read news<br>  show stats<br>  watch movies<br> =================================<br><br><span
+ style="color: rgb(0, 153, 0);"> watch movies</span><br><br> ======== movies =======<br>  get help<br>  go to main menu<br>  go to the main menu<br>  main menu<br>  watch a beautiful mind<br>  watch chariots of fire<br>  watch chicago<br>  watch dances with wolves<br>  watch driving miss daisy<br>  watch finding nemo<br>  watch gladiator<br>  watch lord of the rings<br>  watch mystic river<br>  watch ordinary people<br>  watch platoon<br>  watch rain man<br>  watch shakespeare in love<br>  watch spider man<br>  watch star wars<br>  watch terms of endearment<br>  watch the empire strikes back<br>  watch the english patient<br>  watch the italian job<br>  watch the last emperor<br>  watch the magnificent seven<br>  watch the matrix<br>  watch the silence of the lambs<br>  watch titanic<br>  watch two thousand one a space odyssey<br>  watch unforgiven<br> =================================<br><br><span
+ style="color: rgb(0, 153, 0);"> watch two thousand one a space odyssey</span><br
+ style="color: rgb(0, 153, 0);"><br style="color: rgb(0, 153, 0);"><br
+ style="color: rgb(0, 153, 0);"><span style="color: rgb(0, 153, 0);"> watch the empire strikes back</span><br
+ style="color: rgb(0, 153, 0);"><br style="color: rgb(0, 153, 0);"><br
+ style="color: rgb(0, 153, 0);"><span style="color: rgb(0, 153, 0);"> go to the main menu</span><br><br> ======== menu =======<br>  get help<br>  listen to music<br>  make a phone call<br>  play games<br>  read a book<br>  read email<br>  read news<br>  show stats<br>  watch movies<br> =================================<br><br> show stats<br><br># ----------------------------- Timers----------------------------------------<br># Name          Count   CurTime   MinTime   MaxTime   AvgTime   TotTime<br>microphone      6192    0.0000s   0.0000s   0.1300s   0.0091s   56.5890s<br>nonSpeechDataFi 2647    0.0000s   0.0000s   5.4660s   0.0125s   33.1970s<br>premphasizer    2647    0.0000s   0.0000s   0.0010s   0.0000s   0.0070s<br>windower        2611    0.0010s   0.0000s   0.0330s   0.0001s   0.2800s<br>fft             2629    0.0000s   0.0000s   0.0130s   0.0003s   0.8560s<br>melFilterBank   2629    0.0000s   0.0000s   0.0040s   0.0000s   0.0580s<br>dct             2629    0.0000s   0.0000s   0.0040s   0.0000s   0.1050s<br>liveCMN         2629    0.0000s   0.0000s   0.0030s   0.0000s   0.0200s<br>featureExtracti 2557    0.0000s   0.0000s   0.0050s   0.0000s   0.0420s<br>AM_Load         1       13.3540s  13.3540s  13.3540s  13.3540s  13.3540s<br>DictionaryLoad  1       2.6900s   2.6900s   2.6900s   2.6900s   2.6900s<br>grammarLoad     1       0.1600s   0.1600s   0.1600s   0.1600s   0.1600s<br>compile         10      0.0260s   0.0260s   0.1910s   0.0932s   0.9320s<br>  createGStates 10      0.0000s   0.0000s   0.0350s   0.0041s   0.0410s<br>  collectContex 10      0.0000s   0.0000s   0.0090s   0.0046s   0.0460s<br>  expandStates  10      0.0260s   0.0210s   0.1780s   0.0807s   0.8070s<br>  connectNodes  10      0.0000s   0.0000s   0.0080s   0.0032s   0.0320s<br>scoring         2611    0.0000s   0.0000s   5.4680s   0.0229s   59.6950s<br>pruning         2593    0.0000s   0.0000s   0.0020s   0.0000s   0.0120s<br>growing         2611    0.0000s   0.0000s   0.0550s   0.0003s   0.8670s<br><br><br><br></pre>
+</font>
+<hr>Copyright 1999-2004 Carnegie Mellon University.
 <br>
 Portions Copyright 2002-2004 Sun Microsystems, Inc.
 <br>
 Portions Copyright 2002-2004 Mitsubishi Electric Research Laboratories.
 <br>
-All Rights Reserved. Usage is subject to <a href="../../../license.terms">license terms</a>.
-  </body>
+All Rights Reserved. Usage is subject to <a
+ href="../../../license.terms">license terms</a>.
+</body>
 </html>
