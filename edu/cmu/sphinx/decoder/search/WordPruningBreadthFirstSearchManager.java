@@ -159,11 +159,11 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     public Result recognize(int nFrames) {
         boolean done = false;
         Result result;
-	resultList = new LinkedList();
 
         for (int i = 0; i < nFrames && !done; i++) {
 	    // System.out.println("Frame " + currentFrameNumber);
             // score the emitting list
+
             activeList = activeBucket.getEmittingList();
             if (activeList != null) {
                 done = !scoreTokens();
@@ -172,6 +172,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
                     // prune and grow the emitting list
                     pruneBranches();
                     currentFrameNumber++;
+                    resultList = new LinkedList();
                     growBranches();
                     // prune and grow the non-emitting lists
                     growNonEmittingLists();
