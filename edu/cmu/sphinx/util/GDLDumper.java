@@ -11,10 +11,13 @@
  */
 package edu.cmu.sphinx.util;
 
+import edu.cmu.sphinx.frontend.util.Util;
+
 import edu.cmu.sphinx.search.SentenceHMMState;
 import edu.cmu.sphinx.search.SentenceHMMStateArc;
 import edu.cmu.sphinx.search.LinguistProcessor;
 import edu.cmu.sphinx.search.Linguist;
+
 import java.io.PrintStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -30,6 +33,9 @@ import edu.cmu.sphinx.search.HMMStateState;
 import edu.cmu.sphinx.search.AlternativeState;
 import edu.cmu.sphinx.search.PronunciationState;
 
+import edu.cmu.sphinx.util.LogMath;
+
+
 
 /**
  *  A linguist processor that dumps out the sentence hmm in GDL
@@ -37,10 +43,13 @@ import edu.cmu.sphinx.search.PronunciationState;
  */
 public class GDLDumper extends LinguistDumper  {
 
+    private static final String PROP_PREFIX =
+        "edu.cmu.sphinx.util.GDLDumper.";
 
-    private static final String PROP_SKIP_HMMS = 
-        "edu.cmu.sphinx.util.GDLDumper.skipHMMs"; 
-
+    private static final String PROP_SKIP_HMMS = PROP_PREFIX + "skipHMMs"; 
+    
+    private static final String PROP_DUMP_ARC_LABELS = 
+        PROP_PREFIX + "dumpArcLabels";
 
     /**
      * Creates a GDL dumper
@@ -165,6 +174,9 @@ public class GDLDumper extends LinguistDumper  {
                            SphinxProperties props) {
 
         boolean skipHMMs = props.getBoolean(PROP_SKIP_HMMS, true);
+        boolean dumpArcLabels = props.getBoolean(PROP_DUMP_ARC_LABELS,true);
+        
+        LogMath logMath = LogMath.getLogMath(props.getContext());
 
         String color = getArcColor(arc);
 	SentenceHMMState nextState = arc.getNextState();
@@ -175,11 +187,48 @@ public class GDLDumper extends LinguistDumper  {
 	    } else if (from instanceof HMMStateState) {
 		from = from.getParent();
 	    }
-	} 
-	out.println("   edge: { sourcename: " +
-	    qs(from.getSignature()) + " targetname: " +
-	    qs(nextState.getSignature()) + 
-            " color: " + color + "}");
+	}
+
+        String label = "";
+        if (dumpArcLabels) {
+            double acoustic = logMath.logToLinear
+                ((double) arc.getAcousticProbability());
+            double language = logMath.logToLinear
+                ((double) arc.getLanguageProbability());
+            double insert = logMath.logToLinear
+                ((double) arc.getInsertionProbability());
+
+            label = " label: " +
+                qs("(" + formatEdgeLabel(acoustic) +
+                   "," + formatEdgeLabel(language) +
+                   "," + formatEdgeLabel(insert) +
+                   ")");
+        }
+        out.println("   edge: { sourcename: " + qs(from.getSignature()) + 
+                    " targetname: " + qs(nextState.getSignature()) + 
+                    label +
+                    " color: " + color + "}");
+    }
+
+
+    /**
+     * Formats the given floating point number for edge labels.
+     *
+     * @param value the floating point value to format
+     */
+    private String formatEdgeLabel(double value) {
+        if (value == 1.0) {
+            return "1";
+        } else if (value == 0.0) {
+            return "0";
+        } else {
+            int maxStringLength = 5;
+            String stringValue = String.valueOf(value);
+            if (stringValue.length() > maxStringLength) {
+                stringValue = Util.doubleToScientificString(value, 3);
+            }
+            return stringValue;
+        }
     }
 
 
