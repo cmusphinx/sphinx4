@@ -9,7 +9,7 @@
 
 # Relative path to the "base" of the source tree
 TOP = ../../../../..
-PACKAGE_PATH = edu/cmu/sphinx/search/parallel
+PACKAGE_PATH = edu/cmu/sphinx/research/parallel
 
 # By default, build all of the .java files. 
 FILES = $(shell echo *.java)
