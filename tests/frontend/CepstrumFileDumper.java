@@ -119,7 +119,7 @@ public class CepstrumFileDumper {
     public void dumpBinary(String outputFile) throws IOException {
 	DataOutputStream outStream = new DataOutputStream
 	    (new FileOutputStream(outputFile));
-	outStream.writeFloat((float) getNumberDataPoints());
+	outStream.writeInt(getNumberDataPoints());
 
 	for (Iterator i = allFeatures.iterator(); i.hasNext();) {
 	    Feature feature = (Feature) i.next();
