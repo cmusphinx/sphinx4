@@ -110,8 +110,7 @@ public class PropertiesResolver {
 	    }
 	}
 
-        System.out.println("After pruning");
-        sphinxProps.list(System.out);
+        // sphinxProps.list(System.out);
 
 	// create and return the new SphinxProperties
 	SphinxProperties.initContext(newContext, sphinxProps);
