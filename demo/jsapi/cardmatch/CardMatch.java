@@ -107,8 +107,12 @@ public class CardMatch implements Recorder {
         boolean useVoice = props.getBoolean(PROP_USE_VOICE,
                                             PROP_USE_VOICE_DEFAULT);
         
-	microphone = new Microphone("mic", context, props);
-	decoder.initialize(microphone);
+	microphone = new Microphone();
+        microphone.initialize("mic", null, props, null);
+
+	decoder.initialize();
+        decoder.getRecognizer().getFrontEnd().setDataSource(microphone);
+
         System.out.println("   Initialized Decoder");
 
         int numberOfCards = props.getInt
@@ -120,7 +124,7 @@ public class CardMatch implements Recorder {
         System.out.println("   Created and shuffled cards");
 
 	cardMatchFrame = new CardMatchFrame("Card Match", this, game, useVoice);
-	cardMatchFrame.show();
+	cardMatchFrame.setVisible(true);
 
         JSGFGrammar grammar = (JSGFGrammar)decoder.getRecognizer().getGrammar();
         ruleGrammar = grammar.getRuleGrammar();
@@ -195,7 +199,8 @@ public class CardMatch implements Recorder {
      * Drains the frontend of any remaining audio
      */
     private void drain() {
-        decoder.getRecognizer().getFrontEnd().drain();
+        // TODO: implement FrontEnd.drain();
+        // decoder.getRecognizer().getFrontEnd().drain();
     }
 
 
