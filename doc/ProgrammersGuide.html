@@ -18,47 +18,36 @@ WARRANTIES.
 <html>
 
 <head>
-  <title>Sphinx-4 Programmer's Guide</title>
+  <title>Sphinx-4 Application Programmer's Guide</title>
    <style TYPE="text/css">
      pre { padding: 2mm; border-style: ridge; background: #f0f8ff; color: teal;}
      code {font-size: medium; color: teal}
-     s4keyword { color: red; font-weight: bold }
    </style>
 </head>
 
 <body>
-  <font face="Arial" size="2">
+  <font face="Arial">
   <table bgcolor="#99CCFF" width="100%">
     <tr>
       <td align=center width="100%">
-        <center><font face="Times New Roman"><h1>Sphinx-4 Programmer's Guide</h1></font></center>
+        <center><font face="Times New Roman"><h1>Sphinx-4 Application Programmer's Guide</h1></font></center>
       </td>
     </tr>
   </table>
 
   <p>
-  This tutorial shows you how to write Sphinx-4 applications. We will
-  start with an overview of the Sphinx-4 system, with just enough depth
-  to understand how to build Sphinx-4 applications, but without the full-blown
-  details. After that, we will use the Hello World!
+  This tutorial shows you how to write Sphinx-4 applications.
+  We will use the Hello Digits
   demo as an example to show how a simple application can be written.
   We will then proceed to a more complex example. Consequently,
   this tutorial into the following parts:
   </p>
 
   <ol>
-  <li><a href="#sphinx4basics">Overview of Sphinx-4</a>
+  <li><a href="#hellodigits">Simple Example - Hello Digits</a>
      <ul>
-     <li><a href="#hmmRecognizers">Overview of an HMM-based Speech Recognizer</a></li>
-     <li><a href="#architectureComponents">Sphinx-4 Architecture and Main Components</a></li>
-     <li><a href="#configuration">Sphinx-4 Configuration System</a></li>
-     </ul>
-  </li>
-  <br>
-  <li><a href="#helloWorld">Simple Example - Hello World!</a>
-     <ul>
-     <li><a href="#helloCodeWalk">Code Walk - HelloWorld.java</a></li>
-     <li><a href="#helloConfigWalk">Configuration File Walk - helloworld.config.xml</a>
+     <li><a href="#helloCodeWalk">Code Walk - HelloDigits.java</a></li>
+     <li><a href="#helloConfigWalk">Configuration File Walk - hellodigits.config.xml</a>
        <ul>
          <li><a href="#recognizer">Recognizer</a></li>
 	 <li><a href="#decoder">Decoder</a></li>
@@ -78,214 +67,25 @@ WARRANTIES.
   </li>
   </ol>
 
-  <hr>
-
-  <a name="sphinx4basics"><h2>1. Overview of Sphinx-4</h2></a>
-
-  <p>
-  In this section, we will provide an overview of Sphinx-4,
-  starting with an introduction of HMM-based recognizers. We will highlight
-  in <s4keyword>red</s4keyword> those keywords that are critical to 
-  understanding Sphinx-4.
-  </p>
-
-  <h3><a name="hmmRecognizers">Overview of an HMM-based Speech Recognition System</a></h3>
-
-  <p>
-  Sphinx-4 is an HMM-based speech recognizer. <s4keyword>HMM</s4keyword>
-  stands for Hidden Markov Models, which is a type of statistical model.
-  In HMM-based speech recognizers,
-  each unit of sound (usually called a phoneme) is represented by a statistical
-  model that represents the distribution of all the evidence (data) for
-  that phoneme. This is called the <s4keyword>acoustic model</s4keyword> 
-  for that phoneme. When creating an acoustic model,
-  the speech signals are first transformed into a sequence of vectors
-  that represent certain characteristics of the signal, and the
-  parameters of the acoustic model are then estimated using these vectors
-  (usually called <s4keyword>features</s4keyword>). This process is called 
-  training the acoustic models.
-  </p>
-
-  <p>
-  During speech recognition, features are derived from the 
-  incoming speech (we will use "speech" to mean the same thing as "audio")
-  in the same way as in the training process. The component of the recognizer
-  that generates these features is called the <s4keyword>front end</s4keyword>.
-  These live features are scored against the acoustic model.
-  The <s4keyword>score</s4keyword> obtained indicates how 
-  likely that a particular set of features (extracted from live
-  audio) belongs to the phoneme of the corresponding acoustic model.
-  </p>
-
-  <p>
-  The process of speech recognition is to find the best possible sequence
-  of words (or units) that will fit the given input speech. It is a 
-  <s4keyword>search</s4keyword> problem, and in the case of HMM-based 
-  recognizers, a graph search problem. The graph represents all possible
-  sequences of phonemes in the entire <s4keyword>language</s4keyword>
-  of the task under consideration. The graph is typically
-  composed of the HMMs of sound units concatenated in a guided manner,
-  as specified by the <s4keyword>grammar</s4keyword> of the task. 
-  As an example, lets look at a simple search graph that decodes the words
-  "one" and "two". It is composed of the HMMs of the sounds units of the
-  words "one" and "two":
-  </p>
-
-  <img src="1-2-searchgraph.jpg">
-
-  <p>
-  Constructing the above graph requires knowledge from various sources.
-  It requires a <s4keyword>dictionary</s4keyword>, which maps the word
-  "one" to the phonemes W, AX and N, and the word "two" to T and OO.
-  It requires the acoustic model to obtain the HMMs for the phonemes
-  W, AX, N, T and OO. In Sphinx-4, the task of constructing this search graph
-  is done by the <s4keyword>linguist</s4keyword>.
-  </p>
-
-  <p>
-  Usually, the search graph also has information about how likely certain
-  words will occur. This information is supplied by the
-  <s4keyword>language model</s4keyword>. Suppose that, in our example,
-  the probability of someone saying "one" (e.g., 0.8) is much higher than 
-  saying "two" (0.2). Then, in the above graph, the probability of the
-  transition between the entry node and the first node of the HMM for W
-  will be 0.8, while the probability of the transition between the entry
-  node and the first node of the HMM for T will be 0.2. The path to
-  "one" will consequently have a higher score.
-  </p>
-
-  <p>
-  Once this graph is constructed, the sequence of parametrized speech
-  signals (i.e., the features) is matched against different paths 
-  through the graph to find the best fit. 
-  The best fit is usually the least cost or highest
-  scoring path, depending on the implementation.
-  In Sphinx-4, the task of searching through the graph for the best path
-  is done by the <s4keyword>search manager</s4keyword>.
-  </p>
-
-  <p>
-  As you can see from the above graph, a lot of the nodes have self
-  transitions. This can lead to a very large number of possible paths
-  through the graph. As a result, finding the best possible path can
-  take a very long time. The purpose of the <s4keyword>pruner</s4keyword>
-  is to reduce the number of possible paths during the search,
-  using heuristics like pruning away the lowest scoring paths.
-  </p>
-
-  <p>
-  As we described earlier, the input speech signal is transformed into a
-  sequence of feature vectors. After the last feature vector is decoded,
-  we look at all the paths that have reached the final exit node 
-  (the red node). The path with the highest score is the best fit, and a 
-  <s4keyword>result</s4keyword> taking all the words of that path is returned.
-  </p>
-
-  <h3><a name="architectureComponents">Sphinx-4 Architecture and Main Components</a></h3>
-
-  <p>
-  In this section, we describe the main components of Sphinx-4, and how
-  they work together during the recognition process. First of all,
-  lets look at the architecture diagram of Sphinx-4. It contains almost
-  all the concepts (the words in red) that were introduced in the previous
-  section. There are a few additional concepts in the diagram, 
-  which we will explain promptly.
-  </p>
-
-  <center>
-  <img src="../doc-files/architecture.gif">
-  </center>
-
-  <p>
-  When the recognizer starts up, it constructs the front end (which generates
-  features from speech), the decoder, and the linguist (which generates 
-  the search graph) according to the configuration specified by the user.
-  These components will in turn construct their own subcomponents. For example,
-  the linguist will construct the acoustic model, the dictionary,
-  and the language model. It will use the knowledge from these three
-  components to contruct a search graph that is appropriate for the task. 
-  The decoder will construct the search manager,
-  which in turn constructs the scorer, the pruner, and the active list.
-  </p>
-
-  <p>
-  Most of these components represents interfaces. The search manager,
-  linguist, acoustic model, dictionary, language model, active list, scorer,
-  pruner, and search graph are all Java interfaces. There can
-  be different implementations of these interfaces. For example,
-  there are two different implementations of the search manager.
-  Then, how does the system know which implementation to use? It is specified
-  by the user via the configuration file, an XML-based file that is loaded 
-  by the <s4keyword>configuration manager</s4keyword>. In this configuration
-  file, the user can also specify the <s4keyword>properties</s4keyword>
-  of the implementations. One example of a property is the sample rate 
-  of the incoming speech data.
-  </p>
-
-  <p>
-  The <s4keyword>active list</s4keyword> is a component that requires 
-  explanation. Remember we mentioned that there can be many possible paths
-  through the search graph. Sphinx-4 currently implements a 
-  <s4keyword>token</s4keyword>-passing algorithm. Each time the search arrives
-  at the next state in the graph, a token is created. A token points to the 
-  previous token, as well as the next state. The active list keeps track of 
-  all the current active paths through the search graph by storing the last
-  token of each path. A token has the score of the path at that particular
-  point in the search. To perform pruning, we simply prune the tokens in the
-  active list.
-  </p>  
-
-  <p>
-  When the application asks the recognizer to perform recognition,
-  the search manager will ask the scorer to score each token in the
-  active list against the next feature vector obtained from the front end.
-  This gives a new score for each of the active paths. The pruner will then 
-  prune the tokens (i.e., active paths) using certain heuristics. 
-  Each surviving paths will 
-  then be expanded to the next states, where a new token will be created 
-  for each next state. The process repeats itself until no more feature 
-  vectors can be obtained from the front end for scoring. This usually 
-  means that there
-  is no more input speech data. At that point, we look at all paths 
-  that have reached the final exit state,
-  and return the highest scoring path as the result to the application.
-  </p>
-
-  <h3><a name="configuration">Sphinx-4 Configuration System</a></h3>
-
-  <p>
-  The performance of Sphinx-4 critically depends on your task and how
-  you configured Sphinx-4 to suit your task. For example, 
-  a large vocabulary task needs a different linguist than a small 
-  vocabulary task. Your system has to be configured differently
-  for the two tasks. This section will not tell you the exact configuration
-  for different tasks, which will be dealt with later. Instead, this section
-  will introduce you to the configuration mechanism of Sphinx-4, which is
-  via an XML-based configuration file. Please click on the document
-  <a href="../javadoc/edu/cmu/sphinx/util/props/doc-files/ConfigurationManagement.html">Sphinx-4 Configuration Management</a> to learn how to do this.
-  It is important that you read this document before you proceed.
-  </p>
-
   <hr>  
 
-  <h2><a name="helloWorld">2. Simple Example - Hello World!</a></h2>
+  <h2><a name="hellodigits">1. Simple Example - Hello Digits</a></h2>
 
   <p>
-  We will now look at a very simple speech application written using
-  Sphinx-4, our Hello World! demo. This application recognizes connected
+  We will look at a very simple speech application written using
+  Sphinx-4, our Hello Digits demo. This application recognizes connected
   digits. As you will see, the code is very simple. The tricky part is
   understanding the configuration, but we will guide you through every step
   of it. Lets look at the code first.
   </p>
 
-  <h3><a name="helloCodeWalk">Code Walk - HelloWorld.java</a></h3>
+  <h3><a name="helloCodeWalk">Code Walk - HelloDigits.java</a></h3>
 
   <p>
-  All the source code of the Hello World! demo is in one short file
-  <code>sphinx4/demo/sphinx/helloworld/HelloWorld.java</code>:
+  All the source code of the Hello Digits demo is in one short file
+  <code>sphinx4/demo/sphinx/hellodigits/HelloDigits.java</code>:
   </p>
 
-  <font face="Courier" size="3">
   <pre>
 /*
  * Copyright 1999-2004 Carnegie Mellon University.
@@ -299,10 +99,9 @@ WARRANTIES.
  *
  */
 
-package demo.sphinx.helloworld;
+package demo.sphinx.hellodigits;
 
 import edu.cmu.sphinx.frontend.util.Microphone;
-import edu.cmu.sphinx.jsapi.JSGFGrammar;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
@@ -314,13 +113,14 @@ import java.net.URL;
 
 
 /**
- * A version of the HelloWorld demo that does not use endpointing.
- * Instead, the user will press ENTER to signal the end of speech.
+ * A simple HelloDigits demo showing a simple speech application 
+ * built using Sphinx-4. This application uses the Sphinx-4 endpointer,
+ * which automatically segments incoming audio into utterances and silences.
  */
-public class HelloWorld {
+public class HelloDigits {
 
     /**
-     * Main method for running the HelloWorld demo.
+     * Main method for running the HelloDigits demo.
      */
     public static void main(String[] args) {
         try {
@@ -328,85 +128,61 @@ public class HelloWorld {
             if (args.length > 0) {
                 url = new File(args[0]).toURI().toURL();
             } else {
-                url = HelloWorld.class.getResource("helloworld.config.xml");
+                url = HelloDigits.class.getResource("hellodigits.config.xml");
             }
 
             ConfigurationManager cm = new ConfigurationManager(url);
 
 	    Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
-	    final Microphone microphone = 
-                (Microphone) cm.lookup("microphone");
+	    Microphone microphone = (Microphone) cm.lookup("microphone");
 
 
             /* allocate the resource necessary for the recognizer */
             recognizer.allocate();
 
-            /*
-             * This thread is used to listen for the ENTER key,
-             * which when pressed will stop the microphone.
-             */
-	    Thread t = new Thread() {
-		    public void run() {
-			try {
-			    while (true) {
-				if (System.in.read() == 10) {
-				    microphone.stopRecording();
-				}
-			    }			    
-			} catch (IOException ioe) {
-			    ioe.printStackTrace();
-			    System.exit(1);
-			}
-		    }
-		};                    
-	    t.start();
+            /* the microphone will keep recording until the program exits */
+	    if (microphone.startRecording()) {
 
-	    System.out.println
-		("Say any digit(s): e.g. \"two oh oh four\", " +
-		 "\"three six five\".");
+		System.out.println
+		    ("Say any digit(s): e.g. \"two oh oh four\", " +
+		         "\"three six five\".");
 
-	    /*
-             * The program now enters a loop to keep listening for audio,
-             * and decodes the recorded audio.
-             */
-            while (true) {
-		if (microphone.startRecording()) {
-                    System.out.println
-			("Start speaking. " +
-			 "Press ENTER when you finish speaking.");
-                    
-                    /* 
-                     * this method returns when the ENTER key is pressed,
-                     * which stops the microphone
-                     */
+		while (true) {
+		    System.out.println
+			("Start speaking. Press Ctrl-C to quit.\n");
+
+                    /*
+		     * This method will return when the end of speech
+		     * is reached. Note that the endpointer will determine
+		     * the end of speech.
+		     */ 
 		    Result result = recognizer.recognize();
-                    
-                    if (result != null) {
-                        String resultText = result.getBestResultNoFiller();
-                        System.out.println("You said: " + resultText + "\n");
-                    } else {
-                        System.out.println("I can't hear what you said.\n");
-                    }                    
-                } else {
-                    System.out.println("Cannot start microphone.");
-                    recognizer.deallocate();
-                    System.exit(1);
-                }
+			     
+	            if (result != null) {
+			String resultText = result.getBestResultNoFiller();
+			System.out.println("You said: " + resultText + "\n");
+	            } else {
+		        System.out.println("I can't hear what you said.\n");
+	            }
+		}
+            } else {
+	        System.out.println("Cannot start microphone.");
+		recognizer.deallocate();
+		System.exit(1);
             }
         } catch (IOException e) {
-            System.err.println("Problem when loading HelloWorld: " + e);
+            System.err.println("Problem when loading HelloDigits: " + e);
             e.printStackTrace();
         } catch (PropertyException e) {
-            System.err.println("Problem configuring HelloWorld: " + e);
+            System.err.println("Problem configuring HelloDigits: " + e);
             e.printStackTrace();
         } catch (InstantiationException e) {
-            System.err.println("Problem creating HelloWorld: " + e);
+            System.err.println("Problem creating HelloDigits: " + e);
             e.printStackTrace();
         }
     }
 }
 </pre>
-</font>
 
   <br>
   This demo imports several important classes in Sphinx-4:
@@ -486,10 +262,10 @@ public class HelloWorld {
   now explain in depth.
   </p>
 
-  <h3><a name="helloConfigWalk">Configuration File Walk - helloworld.config.xml</a></h3>
+  <h3><a name="helloConfigWalk">Configuration File Walk - hellodigits.config.xml</a></h3>
 
   In this section, we will explain the various Sphinx-4 components that
-  are used for the Hello World! demo, as specified in the configuration file.
+  are used for the Hello Digits demo, as specified in the configuration file.
   We will look at each section of the config file in depth. If you want
   to learn about the format of these configuration files, please refer
   to the document <a href="../javadoc/edu/cmu/sphinx/util/props/doc-files/ConfigurationManagement.html">Sphinx-4 Configuration Management</a>.
@@ -667,7 +443,7 @@ component called 'jsgfGrammar', which is a BNF-style grammar:
 
 <pre>
     &lt;component name="jsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar"&gt;
-        &lt;property name="grammarLocation" value="/demo/sphinx/helloworld"/&gt;
+        &lt;property name="grammarLocation" value="/demo/sphinx/hellodigits"/&gt;
         &lt;property name="dictionary" value="dictionary"/&gt;
         &lt;property name="grammarName" value="digits"/&gt;
 	&lt;property name="logMath" value="logMath"/&gt;
@@ -680,7 +456,7 @@ Sphinx-4 understands is <code>
 The property 'grammarLocation' can take two kinds of values. 
 If it is a URL, it specifies the URL of the directory where JSGF grammar files 
 are to be found. Otherwise, it is interpreted as resource locator. 
-In our example, the HelloWorld demo is being deployed as a JAR file.
+In our example, the HelloDigits demo is being deployed as a JAR file.
 The 'grammarLocation' property is therefore used to specify 
 the location of the resource "digits.gram" within the JAR file. Note that 
 it is not necessary to name the JAR file within which to search. The system 
@@ -923,11 +699,11 @@ so they need a reference to the recognizer that they are monitoring.
 
 <p><h3><a name="buildFileWalk">Build File Walk - build.xml</a></h3></p>
 
-The last piece of the puzzle of the Hello World! demo is the build.xml
+The last piece of the puzzle of the Hello Digits demo is the build.xml
 file, which defines Ant targets for running the demo. For details about
 writing the build.xml file, please refer to the 
 <a href="http://ant.apache.org/manual/index.html">Ant documentation</a>.
-The file <code>demo/sphinx/helloworld/build.xml</code> is pretty
+The file <code>demo/sphinx/hellodigits/build.xml</code> is pretty
 straightforward. Lets look at the top part of the build.xml file:
 
 <pre>
@@ -946,7 +722,7 @@ It defines several variables, e.g., the top level Sphinx-4 directory,
 the build directory, the classes directory, and the libraries directory.
 It also defines the <codE>run.classpath</code> path ID, which includes
 the classes directory and the <code>jsapi.jar</code> library, the latter of
-which is needed for interpreting JSGF grammars in the Hello World! demo.
+which is needed for interpreting JSGF grammars in the Hello Digits demo.
 
 <p>Now lets take a look at the "run" target:</p>
 
@@ -954,32 +730,32 @@ which is needed for interpreting JSGF grammars in the Hello World! demo.
     &lt;target name="run"
 	    description="Runs the hello world demo."
 	    depends="all"&gt;
-	    &lt;java classname="demo.sphinx.helloworld.HelloWorld"
+	    &lt;java classname="demo.sphinx.hellodigits.HelloDigits"
 	          fork="true"
 		  maxmemory="128m"&gt;
 		  &lt;classpath refid="run.classpath"/&gt;
-		  &lt;arg value="helloworld.config.xml"/&gt;
+		  &lt;arg value="hellodigits.config.xml"/&gt;
 	    &lt;/java&gt;
     &lt;/target&gt;
 </pre>
 
 This defines an Ant target called "run". It first runs the "all" target, 
 which compiles the hello world demo code. It then executes the class 
-<code>demo.sphinx.helloworld.HelloWorld</code>
+<code>demo.sphinx.hellodigits.HelloDigits</code>
 which contains a main() method as you have seen above. It also forks a separate
-process to run the Hello World! demo, with a maximum heap size of 128MB.
+process to run the Hello Digits demo, with a maximum heap size of 128MB.
 The classpath is defined by the Ant path ID "run.classpath", which is defined
 at the top of the build.xml file. Finally, the configuration file 
-<code>helloworld.config.xml</code> is fed as an argument to the HelloWorld
+<code>hellodigits.config.xml</code> is fed as an argument to the HelloDigits
 class.
 
 <p>
-This concludes the walkthrough of the simple Hello World! example.
-To recap the following things were done to create the Hello World! demo:
+This concludes the walkthrough of the simple Hello Digits example.
+To recap the following things were done to create the Hello Digits demo:
 <ol>
-   <li>Write the code - HelloWorld.java</li>
+   <li>Write the code - HelloDigits.java</li>
    <li>Create a configuration file that specifies how Sphinx-4 should be
-       configured - helloworld.config.xml</li>
+       configured - hellodigits.config.xml</li>
    <li>Create the build.xml file that include the Ant run targets</li>
 </ol>
 </p>
