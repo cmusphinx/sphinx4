@@ -36,7 +36,7 @@ public class MelFilter {
      *               frequency bins
      * @param samplingRate sampling frequency
      *
-     * @throw IllegalArgumentException
+     * @throws IllegalArgumentException
      *
      */
     public MelFilter(double leftEdge, 
