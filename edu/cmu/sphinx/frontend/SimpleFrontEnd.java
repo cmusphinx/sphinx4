@@ -225,9 +225,21 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 	CepstrumSource lastCepstrumSource = cepstrumProducer;
 	
 	CepstrumSource endpointer = getEndpointer(lastCepstrumSource);
+
 	if (endpointer != null) { // if we're using an endpointer
-	    addProcessor((DataProcessor) endpointer);
+            addProcessor((DataProcessor) endpointer);
 	    lastCepstrumSource = endpointer;
+
+            // if we are filtering out the non-speech regions,
+            // initialize a non-speech filter
+            boolean filterNonSpeech = getSphinxProperties().getBoolean
+                (PROP_FILTER_NON_SPEECH, false);
+            if (filterNonSpeech) {
+                CepstrumSource nonSpeechFilter = 
+                    getNonSpeechFilter(lastCepstrumSource);
+                addProcessor((DataProcessor) nonSpeechFilter);
+                lastCepstrumSource = nonSpeechFilter;
+            }
 	}
 
         CepstrumSource cmn = getCMN(lastCepstrumSource);
@@ -306,16 +318,29 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
 
         if (endPointerClass != null) {
 	    CepstrumSource endpointer = null;
-
             EnergyEndpointer energyEndpointer = new EnergyEndpointer
                 ("EnergyEndpointer", getContext(), props, predecessor);
-            NonSpeechFilter nonSpeechFilter = new NonSpeechFilter
-                ("NonSpeechFilter", getContext(), props, energyEndpointer);
 
 	    return endpointer;
         } else {
 	    return null;
 	}
+    }
+
+
+    /**
+     * Returns a filter that filters out regions of an Utterance that
+     * are marked as non-speech.
+     *
+     * @param predecessor the predecessor of this filter
+     *
+     * @return a NonSpeechFilter
+     */
+    private CepstrumSource getNonSpeechFilter(CepstrumSource predecessor)
+        throws IOException {
+        return (new NonSpeechFilter
+                ("NonSpeechFilter", getContext(), getSphinxProperties(), 
+                 predecessor));
     }
 
 

@@ -102,6 +102,15 @@ public interface FrontEnd {
     public static final String PROP_ENDPOINTER = PROP_PREFIX + "endpointer";
 
 
+
+    /**
+     * The SphinxProperty name that specifies whether to filter out
+     * the non-speech regions if an endpointer is used.
+     */
+    public static final String PROP_FILTER_NON_SPEECH = 
+        PROP_PREFIX + "filterNonSpeech";
+
+
     /**
      * The SphinxProperty name that specifies the CMN class.
      */
