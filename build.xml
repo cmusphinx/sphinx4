@@ -603,13 +603,18 @@ to setup JSAPI.
 	<copy todir="${deploy_dir}/sphinx4-${version}"
 	      includeEmptyDirs="false">
 	     <fileset dir="."
-             includes="demo.xml,index.html,license.terms,README,ANNOUNCE.txt"/>
+             includes="demo.xml,
+		      index.html,
+		      license.terms,
+		      README,
+		      RELEASE_NOTES,
+		      ANNOUNCE.txt"/>
 	     <fileset dir="." includes="lib/**" excludes="lib/jsapi.jar"/>
 	     <fileset dir="." includes="bin/*.jar"/>
 	     <fileset dir="." includes="demo/**"/>
 	     <fileset dir="." includes="doc-files/**"/>
 	     <fileset dir="." includes="javadoc/**"/>
-	     <fileset dir="." includes="doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html,doc/Sphinx4-faq.html,doc/UsingSphinxTrainModels.html"/>
+	     <fileset dir="." includes="doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html,doc/Sphinx4-faq.html,doc/UsingSphinxTrainModels.html,doc/Sphinx4Whitepaper.pdf"/>
 	</copy>
 	<delete dir="${deploy_dir}/sphinx4-${version}/lib/jsapi"/>
 	<jar destfile="${deploy_dir}/sphinx4-${version}-bin.zip"
