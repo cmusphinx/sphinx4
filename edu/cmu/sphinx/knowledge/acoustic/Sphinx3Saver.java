@@ -57,45 +57,45 @@ class Sphinx3Saver implements Saver {
     private static Logger logger = 
 	    Logger.getLogger(AcousticModel.PROP_PREFIX + "AcousticModel");
 
-    private final static String NUM_SENONES = "num_senones";
-    private final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
-    private final static String NUM_STREAMS = "num_streams";
+    protected final static String NUM_SENONES = "num_senones";
+    protected final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
+    protected final static String NUM_STREAMS = "num_streams";
 
-    private final static String FILLER = "filler";
-    private final static String SILENCE_CIPHONE  = "SIL";
+    protected final static String FILLER = "filler";
+    protected final static String SILENCE_CIPHONE  = "SIL";
 
-    private final static int BYTE_ORDER_MAGIC = 0x11223344;
+    protected final static int BYTE_ORDER_MAGIC = 0x11223344;
 
-    private String checksum;
+    protected String checksum;
     boolean doCheckSum;
     public final static String MODEL_VERSION = "0.3";
 
-    private final static int CONTEXT_SIZE = 1;
+    protected final static int CONTEXT_SIZE = 1;
 
 
-    private Pool meansPool;
-    private Pool variancePool;
-    private Pool matrixPool;
-    private Pool meanTransformationMatrixPool;
-    private Pool meanTransformationVectorPool;
-    private Pool varianceTransformationMatrixPool;
-    private Pool varianceTransformationVectorPool;
-    private Pool mixtureWeightsPool;
+    protected Pool meansPool;
+    protected Pool variancePool;
+    protected Pool matrixPool;
+    protected Pool meanTransformationMatrixPool;
+    protected Pool meanTransformationVectorPool;
+    protected Pool varianceTransformationMatrixPool;
+    protected Pool varianceTransformationVectorPool;
+    protected Pool mixtureWeightsPool;
 
-    private Pool senonePool;
-    private int vectorLength;
+    protected Pool senonePool;
+    protected int vectorLength;
 
-    private Map contextIndependentUnits;
-    private HMMManager hmmManager;
-    private LogMath logMath;
-    private SphinxProperties acousticProperties;
-    private boolean binary = false;
-    private String location;
-    private boolean swap;
+    protected Map contextIndependentUnits;
+    protected HMMManager hmmManager;
+    protected LogMath logMath;
+    protected SphinxProperties acousticProperties;
+    protected boolean binary = false;
+    protected String location;
+    protected boolean swap;
 
-    private final static String DENSITY_FILE_VERSION = "1.0";
-    private final static String MIXW_FILE_VERSION = "1.0";
-    private final static String TMAT_FILE_VERSION = "1.0";
+    protected final static String DENSITY_FILE_VERSION = "1.0";
+    protected final static String MIXW_FILE_VERSION = "1.0";
+    protected final static String TMAT_FILE_VERSION = "1.0";
 
 
     /**
@@ -178,11 +178,14 @@ class Sphinx3Saver implements Saver {
         float mixtureWeightFloor = 
 	    props.getFloat(AcousticModel.PROP_MW_FLOOR, 
 			   AcousticModel.PROP_MW_FLOOR_DEFAULT);
+        float transitionProbabilityFloor = 
+	    props.getFloat(AcousticModel.PROP_TP_FLOOR, 
+			   AcousticModel.PROP_TP_FLOOR_DEFAULT);
         float varianceFloor = 
 	    props.getFloat(AcousticModel.PROP_VARIANCE_FLOOR, 
 			   AcousticModel.PROP_VARIANCE_FLOOR_DEFAULT);
 
-	logger.info("Saving Sphinx3 acoustic model: " + modelName);
+	logger.info("Saving acoustic model: " + modelName);
 	logger.info("    Path      : " + location);
 	logger.info("    modellName: " + model);
 	logger.info("    dataDir   : " + dataDir);
@@ -490,7 +493,7 @@ class Sphinx3Saver implements Saver {
      * @throws IOException on error
      */
 
-    private DataOutputStream writeS3BinaryHeader(String location, String
+    protected DataOutputStream writeS3BinaryHeader(String location, String
             path, Properties props, boolean append) throws IOException {
 
         OutputStream outputStream = 
@@ -563,7 +566,7 @@ class Sphinx3Saver implements Saver {
      *
      * @throws IOException on error
      */
-    private void writeInt(DataOutputStream dos, int val) throws IOException {
+    protected void writeInt(DataOutputStream dos, int val) throws IOException {
         if (swap) {
             dos.writeInt(Utilities.swapInteger(val));
         } else {
@@ -581,7 +584,7 @@ class Sphinx3Saver implements Saver {
      * @throws IOException on error
      */
 
-    private void writeFloat(DataOutputStream dos, float val) 
+    protected void writeFloat(DataOutputStream dos, float val) 
 	throws IOException {
         if (swap) {
             dos.writeFloat(Utilities.swapFloat(val));
@@ -673,7 +676,7 @@ class Sphinx3Saver implements Saver {
      * @param in the data in log scale
      * @param out the data in linear scale
      */
-    private void convertFromLogMath(float[] in, float[] out) {
+    protected void convertFromLogMath(float[] in, float[] out) {
 	assert in.length == out.length;
         for (int i = 0; i < in.length; i++) {
             out[i] = (float)logMath.logToLinear(in[i]);
@@ -690,7 +693,7 @@ class Sphinx3Saver implements Saver {
      *
      * @throws IOException if an exception occurs
      */
-    private void writeFloatArray(DataOutputStream dos, float[] data)
+    protected void writeFloatArray(DataOutputStream dos, float[] data)
         throws IOException{
 
         for (int i = 0; i < data.length; i++) {
@@ -1014,7 +1017,7 @@ class Sphinx3Saver implements Saver {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException if an error occurs while saving the data
      */
-    private void saveTransitionMatricesAscii(Pool pool, String path, 
+    protected void saveTransitionMatricesAscii(Pool pool, String path, 
 					     boolean append)
         throws FileNotFoundException, IOException {
         OutputStream outputStream = StreamFactory.getOutputStream(location, 

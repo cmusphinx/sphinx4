@@ -241,9 +241,17 @@ public class TrainerAcousticModel extends AcousticModel {
 	String format = props.getString(formatProp, PROP_FORMAT_SAVE_DEFAULT);
 
         if (format.equals("sphinx3.ascii")) {
+	    logger.info("Sphinx-3 ASCII format");
             saver = new Sphinx3Saver(name, props, false, loader);
         } else if (format.equals("sphinx3.binary")) {
+	    logger.info("Sphinx-3 binary format");
             saver = new Sphinx3Saver(name, props, true, loader);
+        }  else if (format.equals("sphinx4.ascii")) {
+	    logger.info("Sphinx-4 ASCII format");
+            saver = new Sphinx4Saver(name, props, false, loader);
+        } else if (format.equals("sphinx4.binary")) {
+	    logger.info("Sphinx-4 binary format");
+            saver = new Sphinx4Saver(name, props, true, loader);
         }  else { // add new saving code here.
             saver = null;
             logger.severe("Unsupported acoustic model format " + format);

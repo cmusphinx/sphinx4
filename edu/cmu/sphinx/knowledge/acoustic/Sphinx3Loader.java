@@ -56,43 +56,43 @@ class Sphinx3Loader implements Loader {
     private static Logger logger = 
 	    Logger.getLogger(AcousticModel.PROP_PREFIX + "AcousticModel");
 
-    private final static String NUM_SENONES = "num_senones";
-    private final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
-    private final static String NUM_STREAMS = "num_streams";
+    protected final static String NUM_SENONES = "num_senones";
+    protected final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
+    protected final static String NUM_STREAMS = "num_streams";
 
-    private final static String FILLER = "filler";
-    private final static String SILENCE_CIPHONE  = "SIL";
+    protected final static String FILLER = "filler";
+    protected final static String SILENCE_CIPHONE  = "SIL";
 
-    private final static int BYTE_ORDER_MAGIC = 0x11223344;
+    protected final static int BYTE_ORDER_MAGIC = 0x11223344;
 
     public final static String MODEL_VERSION = "0.3";
 
-    private final static int CONTEXT_SIZE = 1;
+    protected final static int CONTEXT_SIZE = 1;
 
 
-    private Pool meansPool;
-    private Pool variancePool;
-    private Pool matrixPool;
-    private Pool meanTransformationMatrixPool;
-    private Pool meanTransformationVectorPool;
-    private Pool varianceTransformationMatrixPool;
-    private Pool varianceTransformationVectorPool;
-    private Pool mixtureWeightsPool;
+    protected Pool meansPool;
+    protected Pool variancePool;
+    protected Pool matrixPool;
+    protected Pool meanTransformationMatrixPool;
+    protected Pool meanTransformationVectorPool;
+    protected Pool varianceTransformationMatrixPool;
+    protected Pool varianceTransformationVectorPool;
+    protected Pool mixtureWeightsPool;
 
-    private Pool senonePool;
-    private int vectorLength;
+    protected Pool senonePool;
+    protected int vectorLength;
 
-    private Map contextIndependentUnits;
-    private HMMManager hmmManager;
-    private LogMath logMath;
-    private SphinxProperties acousticProperties;
-    private boolean binary = false;
-    private String location;
-    private boolean swap;
+    protected Map contextIndependentUnits;
+    protected HMMManager hmmManager;
+    protected LogMath logMath;
+    protected SphinxProperties acousticProperties;
+    protected boolean binary = false;
+    protected String location;
+    protected boolean swap;
 
-    private final static String DENSITY_FILE_VERSION = "1.0";
-    private final static String MIXW_FILE_VERSION = "1.0";
-    private final static String TMAT_FILE_VERSION = "1.0";
+    protected final static String DENSITY_FILE_VERSION = "1.0";
+    protected final static String MIXW_FILE_VERSION = "1.0";
+    protected final static String TMAT_FILE_VERSION = "1.0";
 
 
     /**
@@ -490,7 +490,7 @@ class Sphinx3Loader implements Loader {
      * @throws IOException on error
      */
 
-    private DataInputStream readS3BinaryHeader(String location, String
+    protected DataInputStream readS3BinaryHeader(String location, String
             path, Properties props) throws IOException {
 
         InputStream inputStream = StreamFactory.getInputStream(location, path);
@@ -591,7 +591,7 @@ class Sphinx3Loader implements Loader {
      *
      * @throws IOException on error
      */
-    private int readInt(DataInputStream dis) throws IOException {
+    protected int readInt(DataInputStream dis) throws IOException {
         if (swap) {
             return Utilities.readLittleEndianInt(dis);
         } else {
@@ -610,7 +610,7 @@ class Sphinx3Loader implements Loader {
      * @throws IOException on error
      */
 
-    private float readFloat(DataInputStream dis) throws IOException {
+    protected float readFloat(DataInputStream dis) throws IOException {
         float val;
         if (swap) {
             val =  Utilities.readLittleEndianFloat(dis);
@@ -628,7 +628,7 @@ class Sphinx3Loader implements Loader {
      * @param data the data to floor
      * @param floor the floored value
      */
-    private void nonZeroFloor(float[] data, float floor) {
+    protected void nonZeroFloor(float[] data, float floor) {
         for (int i = 0; i < data.length; i++) {
             if (data[i] != 0.0 && data[i] < floor) {
                 data[i] = floor;
@@ -656,7 +656,7 @@ class Sphinx3Loader implements Loader {
      *
      * @param data the data to normalize
      */
-    private void normalize(float[] data) {
+    protected void normalize(float[] data) {
         float sum = 0;
         for (int i = 0; i < data.length; i++) {
             sum += data[i];
@@ -690,7 +690,7 @@ class Sphinx3Loader implements Loader {
      */
     // linearToLog returns a float, so zero values in linear scale
     // should return -Float.MAX_VALUE.
-    private void convertToLogMath(float[] data) {
+    protected void convertToLogMath(float[] data) {
         for (int i = 0; i < data.length; i++) {
             data[i] = logMath.linearToLog(data[i]);
         }
@@ -708,7 +708,7 @@ class Sphinx3Loader implements Loader {
      *
      * @throws IOException if an exception occurs
      */
-    private float[] readFloatArray(DataInputStream dis, int size)
+    protected float[] readFloatArray(DataInputStream dis, int size)
         throws IOException{
         float[] data = new float[size];
 
@@ -731,7 +731,7 @@ class Sphinx3Loader implements Loader {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException if an error occurs while loading the data
      */
-    private Pool loadHMMPool(boolean useCDUnits,
+    protected Pool loadHMMPool(boolean useCDUnits,
                              InputStream inputStream,
                              String path) 
             throws FileNotFoundException, IOException {
@@ -903,7 +903,7 @@ class Sphinx3Loader implements Loader {
      * @return true if the given senone sequence IDs are the same,
      *         false otherwise
      */
-    private boolean sameSenoneSequence(int[] ssid1, int[] ssid2) {
+    protected boolean sameSenoneSequence(int[] ssid1, int[] ssid2) {
         if (ssid1.length == ssid2.length) {
             for (int i = 0; i < ssid1.length; i++) {
                 if (ssid1[i] != ssid2[i]) {
@@ -923,7 +923,7 @@ class Sphinx3Loader implements Loader {
      *
      * @return the senone sequence associated with the states
      */
-    private SenoneSequence getSenoneSequence(int[] stateid) {
+    protected SenoneSequence getSenoneSequence(int[] stateid) {
         Senone[] senones = new Senone[stateid.length];
         
         for (int i=0; i<stateid.length; i++){
@@ -1062,7 +1062,7 @@ class Sphinx3Loader implements Loader {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException if an error occurs while loading the data
      */
-    private Pool loadTransitionMatricesAscii(String path)
+    protected Pool loadTransitionMatricesAscii(String path)
         throws FileNotFoundException, IOException {
         InputStream inputStream = StreamFactory.getInputStream(location, path);
         boolean sparseForm = acousticProperties.getBoolean
@@ -1129,7 +1129,7 @@ class Sphinx3Loader implements Loader {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException if an error occurs while loading the data
      */
-    private Pool loadTransitionMatricesBinary(String path)
+    protected Pool loadTransitionMatricesBinary(String path)
         throws FileNotFoundException, IOException {
         boolean sparseForm = acousticProperties.getBoolean
 	    (AcousticModel.PROP_SPARSE_FORM, 

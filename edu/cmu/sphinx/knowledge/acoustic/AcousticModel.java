@@ -793,7 +793,12 @@ public class AcousticModel {
             loader = new Sphinx3Loader(name, props, false);
         } else if (format.equals("sphinx3.binary")) {
             loader = new Sphinx3Loader(name, props, true);
-        }  else { // add new loading code here.
+        }  else if (format.equals("sphinx4.ascii")) {
+	    logger.info("Sphinx 4 ASCII format");
+            loader = new Sphinx4Loader(name, props, false);
+        } else if (format.equals("sphinx4.binary")) {
+            loader = new Sphinx4Loader(name, props, true);
+	    }  else { // add new loading code here.
             loader = null;
             logger.severe("Unsupported acoustic model format " + format);
 	}
