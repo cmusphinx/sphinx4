@@ -39,6 +39,7 @@ public class FloatData implements Data, Cloneable {
     public FloatData(float[] values, int sampleRate,
                      long collectTime, long firstSampleNumber) {
         this.values = values;
+	this.sampleRate = sampleRate;
         this.collectTime = collectTime;
         this.firstSampleNumber = firstSampleNumber;
     }
