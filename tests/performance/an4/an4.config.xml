@@ -25,6 +25,7 @@
     <property name="linguist"           value="flatLinguist"/>
     <property name="recognizer"         value="wordRecognizer"/>
     <property name="grammar"            value="wordListGrammar"/>
+    <property name="frontend"   value="mfcFrontEnd"/>
     
     <!-- ******************************************************** -->
     <!-- batch tool configuration                                 -->
@@ -41,6 +42,22 @@
             <item>recognizerMonitor </item>
         </propertylist>
     </component>
+
+    <!-- ******************************************************** -->
+    <!-- Live Mode                                                -->
+    <!-- ******************************************************** -->   
+    
+    <component name="live" 
+                type="edu.cmu.sphinx.tools.live.LiveModeRecognizer">
+        <property name="recognizer" value="${recognizer}"/>
+        <property name="inputSource" value="concatDataSource"/>
+        <propertylist name="monitors">
+            <item>speedTracker </item>
+            <item>memoryTracker </item>
+            <item>recognizerMonitor </item>
+        </propertylist>
+    </component>
+    
     
     <!-- ******************************************************** -->
     <!-- word recognizer configuration                            -->
@@ -81,10 +98,11 @@
     
     <component name="threadedScorer" 
                 type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer">
-        <property name="frontend" value="mfcFrontEnd"/>
+        <property name="frontend" value="${frontend}"/>
         <property name="isCpuRelative" value="true"/>
         <property name="numThreads" value="0"/>
         <property name="minScoreablesPerThread" value="10"/>
+        <property name="scoreablesKeepFeature" value="true"/>
     </component>
     
     <!-- ******************************************************** -->
@@ -201,23 +219,52 @@
     
     <component name="mfcFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
-            <item>streamDataSource
-            </item>
-            <item>premphasizer
-            </item>
-            <item>windower
-            </item>
-            <item>fft
-            </item>
-            <item>melFilterBank
-            </item>
-            <item>dct
-            </item>
-            <item>cmn
-            </item>
-            <item>featureExtraction
-            </item>
+            <item>streamDataSource </item>
+            <item>premphasizer </item>
+            <item>windower </item>
+            <item>fft </item>
+            <item>melFilterBank </item>
+            <item>dct </item>
+            <item>batchCMN </item>
+            <item>featureExtraction </item>
         </propertylist>
+    </component>
+    
+    
+    <!-- ******************************************************** -->
+    <!-- The live frontend configuration                          -->
+    <!-- ******************************************************** -->
+    <component name="mfcLiveFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
+        <propertylist name="pipeline">
+            <item>concatDataSource </item>
+            <item>speechClassifier </item>
+            <item>speechMarker </item>
+            <item>nonSpeechDataFilter </item>
+            <item>premphasizer </item>
+            <item>windower </item>
+            <item>fft </item>
+            <item>melFilterBank </item>
+            <item>dct </item>
+            <item>liveCMN </item>
+            <item>featureExtraction </item>
+        </propertylist>
+    </component>
+
+    <!-- ******************************************************** -->
+    <!-- The frontend pipelines                                   -->
+    <!-- ******************************************************** -->
+    
+    <component name="speechClassifier" 
+                type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier">
+        <property name="threshold" value="16"/>
+    </component>
+    
+    <component name="nonSpeechDataFilter" 
+                type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter"/>
+    
+    <component name="speechMarker" 
+                type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" >
+        <property name="speechTrailer" value="50"/>
     </component>
     
     
@@ -238,8 +285,12 @@
     <component name="dct" 
             type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/>
     
-    <component name="cmn" 
+    <component name="batchCMN" 
                 type="edu.cmu.sphinx.frontend.feature.BatchCMN"/>
+
+    <component name="liveCMN" 
+                type="edu.cmu.sphinx.frontend.feature.LiveCMN"/>
+    
     
     <component name="featureExtraction" 
                 type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/>
@@ -247,6 +298,18 @@
     <component name="streamDataSource" 
                 type="edu.cmu.sphinx.frontend.util.StreamDataSource">
         <property name="sampleRate" value="16000"/>
+    </component>
+
+    <component name="concatDataSource" 
+                type="edu.cmu.sphinx.frontend.util.ConcatFileDataSource">
+        <property name="sampleRate" value="16000"/>
+        <property name="skip" value="${skip}"/>
+        <property name="transcriptFile" value="reference.txt"/>
+        <property name="silenceFile"
+         value="/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw"/>
+        <property name="bytesPerRead" value="320"/>
+        <property name="batchFile" value="an4_words.batch"/>
+        <property name="addRandomSilence" value="true"/>
     </component>
     
     <component name="cepstrumSource" 
@@ -256,8 +319,6 @@
     
     <component name="dataDumper" 
         type="edu.cmu.sphinx.frontend.util.DataDumper"/>
-    <component name="concatDataSource" 
-        type="edu.cmu.sphinx.frontend.util.ConcatDataSource"/>
     
     <!-- ******************************************************* -->
     <!--  monitors                                               -->
@@ -278,7 +339,7 @@
     <component name="speedTracker" 
                 type="edu.cmu.sphinx.instrumentation.SpeedTracker">
         <property name="recognizer" value="${recognizer}"/>
-        <property name="frontend" value="mfcFrontEnd"/>
+        <property name="frontend" value="${frontend}"/>
     </component>
     
     <component name="recognizerMonitor" 

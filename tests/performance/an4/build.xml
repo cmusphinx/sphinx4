@@ -34,6 +34,8 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <property name="gc_log_file"        value="gc.txt"/>
     <property name="batch_main"               
 	      value="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"/>
+    <property name="live_main"               
+	      value="edu.cmu.sphinx.tools.live.LiveModeRecognizer"/>
     <property name="config" value="an4.config.xml"/>
     <property name="batch" value="an4.batch"/>
 
@@ -737,39 +739,23 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
 	    <arg line="-f reference.txt hypothesis.txt transcript.txt"/>
 	</exec>
         <java classpath="${classes_dir}"
-              classname="edu.cmu.sphinx.decoder.LivePretendDecoder"
-              fork="true">
-             <jvmarg value="-ea"/>
-             <jvmarg value="-${jit}"/>   
-             <jvmarg value="-ms${initial_heap_size}"/>
-             <jvmarg value="-mx${maximum_heap_size}"/> 
-             <jvmarg value="-Xloggc:${gc_log_file}"/>
-	     <sysproperty key="edu.cmu.sphinx.frontend.FrontEndFactory.pipelines"
-	                  value="mfc_ep"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.BatchDecoder.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModelFactory.languageClass"
-                          value="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel"/>
-             <sysproperty key="edu.cmu.sphinx.linguist.language.ngram.LanguageModel.location"
-                          value="./an4_words.bigram.lm"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar"
-                          value="edu.cmu.sphinx.linguist.language.grammar.LMGrammar"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileDataSource.silenceFile"
-                          value="/lab/speech/sphinx4/data/tidigits/test/raw16k/silence1sec.raw"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileDataSource.skip"
-                          value="${skip}"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileDataSource.batchFile"
-                          value="an4_words.batch"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.util.ConcatFileDataSource.transcriptFile"
-                          value="reference.txt"/>
-             <sysproperty key="edu.cmu.sphinx.frontend.util.StreamDataSource.bytesPerRead"
-                          value="320"/>
-             <sysproperty key="java.util.logging.config.file"
-                          value="${logger_props}"/>
-             <sysproperty key="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.scoreablesKeepFeature"
-                          value="true"/>
-             <arg value="an4.props"/>
-             <arg value="an4_words.batch"/>
+	      classname="${live_main}"
+	      fork="true">
+            <jvmarg value="-ea"/>
+            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/> 
+            <sysproperty key="java.util.logging.config.file"
+			 value="${logger_props}"/>
+            <sysproperty key="live[skip]" value="${skip}"/> 
+            <sysproperty key="concatDataSource[skip]" value="${skip}"/> 
+            <sysproperty key="speedTracker[showResponseTime]" value="true"/> 
+            <sysproperty key="frontend" value="mfcLiveFrontEnd"/> 
+            <sysproperty key="grammar" value="lmGrammar"/> 
+            <sysproperty key="ngramLanguageModel[location]"
+                         value="an4_words.bigram.lm"/>
+            <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+            <arg value="${config}"/> 
         </java>
     </target>
 
