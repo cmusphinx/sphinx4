@@ -26,6 +26,7 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.Resetable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
@@ -38,6 +39,7 @@ public class SpeedTracker
         implements
             Configurable,
             ResultListener,
+            Resetable,
             StateListener,
             SignalListener {
     /**
@@ -192,6 +194,7 @@ public class SpeedTracker
             }
         }
     }
+
 
     /**
      * Shows the audio usage data

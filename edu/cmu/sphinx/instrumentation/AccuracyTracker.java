@@ -19,6 +19,7 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.Resetable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
@@ -31,6 +32,7 @@ public class AccuracyTracker
         implements
             Configurable,
             ResultListener,
+            Resetable,
             StateListener {
     /**
      * A Sphinx property that defines which recognizer to monitor
@@ -96,7 +98,7 @@ public class AccuracyTracker
     private boolean showAlignedResults;
     private boolean showRaw;
     
-    private NISTAlign aligner;
+    private NISTAlign aligner = new NISTAlign(false, false);
 
     /*
      * (non-Javadoc)
@@ -148,8 +150,18 @@ public class AccuracyTracker
         
         showRaw = ps.getBoolean(PROP_SHOW_RAW_RESULTS,
                 PROP_SHOW_RAW_RESULTS_DEFAULT);
-        
-        aligner = new NISTAlign(showResults, showAlignedResults);
+        aligner.setShowResults(showResults);
+        aligner.setShowAlignedResults(showAlignedResults);
+    }
+
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.instrumentation.Resetable
+     */
+    public void reset() {
+        aligner.resetTotals();
     }
 
     /*
