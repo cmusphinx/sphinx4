@@ -17,6 +17,7 @@ import edu.cmu.sphinx.frontend.AudioSource;
 import edu.cmu.sphinx.frontend.FrontEnd;
 
 import edu.cmu.sphinx.util.BatchFile;
+import edu.cmu.sphinx.util.ReferenceSource;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.BufferedReader;
@@ -44,7 +45,7 @@ import java.util.Random;
  * to a audio file for silence. By default, no silence is added.
  * Moreover, one can also specify how many files to skip for every file read.
  */
-public class ConcatFileAudioSource implements AudioSource {
+public class ConcatFileAudioSource implements AudioSource, ReferenceSource {
 
     /**
      * The prefix for the SphinxProperties in this class.
@@ -227,7 +228,8 @@ public class ConcatFileAudioSource implements AudioSource {
     }
 
     /**
-     * Returns a list of all reference text.
+     * Returns a list of all reference text. Implements the getReferences()
+     * method of ReferenceSource.
      *
      * @return a list of all reference text
      */
