@@ -25,9 +25,9 @@ import javax.speech.recognition.RuleParse;
 
 import edu.cmu.sphinx.decoder.Decoder;
 import edu.cmu.sphinx.frontend.util.Microphone;
+import edu.cmu.sphinx.jsapi.JSGFGrammar;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.jsapi.JSGFGrammar;
 
 
 
