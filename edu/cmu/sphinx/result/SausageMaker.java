@@ -26,13 +26,13 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
 
 /**
- * 
- * @author pgorniak
- *
  * The SausageMaker takes word lattices as input and turns them into sausages 
  * (Confusion Networks) according to Mangu, Brill and Stolcke, "Finding 
  * Consensus in Speech Recognition: word error minimization and other 
  * applicatiosn of confusion networks", Computer Speech and Language, 2000. 
+ * 
+ * @author pgorniak
+ *
  */
 public class SausageMaker {
     protected Lattice lattice;

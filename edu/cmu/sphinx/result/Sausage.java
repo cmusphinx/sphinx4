@@ -29,10 +29,10 @@ import java.util.Vector;
 import edu.cmu.sphinx.util.LogMath;
 
 /**
- * @author pgorniak
- *
  * A Sausage is a sequence of confusion sets, one for each position in an utterance. 
  * A confusion set is a set of words with their associated posteriors.
+ *
+ * @author pgorniak
  */
 
 public class Sausage {
