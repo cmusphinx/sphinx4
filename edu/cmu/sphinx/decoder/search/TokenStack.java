@@ -15,7 +15,8 @@ package edu.cmu.sphinx.decoder.search;
 
 
 /**
- * A SentenceHMMState in a parallel branch.
+ * A stack of tokens at a SentenceHMMState, allowing more than one path
+ * through the state.
  */
 public interface TokenStack {
 

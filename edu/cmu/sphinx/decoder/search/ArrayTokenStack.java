@@ -15,7 +15,7 @@ package edu.cmu.sphinx.decoder.search;
 
 
 /**
- * A SentenceHMMState in a parallel branch.
+ * An array implementation of TokenStack.
  */
 public class ArrayTokenStack implements TokenStack {
 
