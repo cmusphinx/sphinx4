@@ -17,11 +17,14 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StreamFactory;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.Utilities;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 
 import java.net.URI;
@@ -31,6 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.Map;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipException;
@@ -77,7 +81,7 @@ class Sphinx3Loader implements Loader {
     private final static String PROPS_SPARSE_FORM = 
                 AcousticModel.PROP_PREFIX + "sparseForm";
 
-    private final static String FILE_SEPARATOR = "/";
+    private final static int BYTE_ORDER_MAGIC = 0x11223344;
 
     /**
      * If true (default), instructs the loader to load context
@@ -108,6 +112,13 @@ class Sphinx3Loader implements Loader {
     private HMMManager hmmManager;
     private LogMath logMath;
     private SphinxProperties acousticProperties;
+    private boolean binary = false;
+    private String location;
+    private boolean swap;
+
+    private final static String DENSITY_FILE_VERSION = "1.0";
+    private final static String MIXW_FILE_VERSION = "1.0";
+    private final static String TMAT_FILE_VERSION = "1.0";
 
 
     /**
@@ -116,9 +127,14 @@ class Sphinx3Loader implements Loader {
      * @param modelName  the name of the model as specified in the
      *    props file.
      * @param props  the SphinxProperties object
+     * @param binary  if <code>true</code> the file is in binary
+     * format
      */
-    public Sphinx3Loader(String modelName, SphinxProperties props) throws 
+    public Sphinx3Loader(String modelName, SphinxProperties props, 
+            boolean binary) throws 
 	FileNotFoundException, IOException, ZipException {
+
+        this.binary = binary;
 	logMath = LogMath.getLogMath(props.getContext());
 
 	// extract the feature vector length
@@ -148,20 +164,6 @@ class Sphinx3Loader implements Loader {
 
 
     /**
-     * Loads the sphinx3 ascii model.
-     *
-     * @param props	the configuration property 
-     *
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
-     */
-    public Sphinx3Loader(SphinxProperties props) throws
-	FileNotFoundException, IOException, ZipException {
-	this(null, props);
-    }
-
-
-    /**
      * Loads the AcousticModel from a directory in the file system.
      *
      * @param modelName the name of the acoustic model; if null we just
@@ -171,7 +173,7 @@ class Sphinx3Loader implements Loader {
     private void loadModelFiles(String modelName, SphinxProperties props) 
 	throws FileNotFoundException, IOException, ZipException {
 
-	String prefix, location, model, dataDir, propsFile;
+	String prefix, model, dataDir, propsFile;
 
 	if (modelName == null) {
 	    prefix = AcousticModel.PROP_PREFIX;
@@ -185,15 +187,15 @@ class Sphinx3Loader implements Loader {
 	model = props.getString(prefix + "definition_file",
 				DEFAULT_MODEL_FILE);
 	dataDir = props.getString(prefix + "data_location", 
-				  DEFAULT_DATA_DIR) + FILE_SEPARATOR;
+				  DEFAULT_DATA_DIR) + "/";
 	propsFile = props.getString(prefix + "properties_file",
 				    DEFAULT_AM_PROPS_FILE);
 
 	float distFloor = props.getFloat(PROPS_MC_FLOOR, 0.0F);
-        float varianceFloor = props.getFloat(PROPS_VARIANCE_FLOOR, .0001f);
         float mixtureWeightFloor = props.getFloat(PROPS_MW_FLOOR, 1E-7f);
+        float varianceFloor = props.getFloat(PROPS_VARIANCE_FLOOR, .0001f);
 
-	logger.info("Loading Sphinx3 ascii acoustic model: " + modelName);
+	logger.info("Loading Sphinx3 acoustic model: " + modelName);
 	logger.info("    Path      : " + location);
 	logger.info("    modellName: " + model);
 	logger.info("    dataDir   : " + dataDir);
@@ -207,7 +209,7 @@ class Sphinx3Loader implements Loader {
         if (format.equals(StreamFactory.ZIP_FILE)) {
             url = "jar:" + location + "!/" + propsFile;
         } else {
-            url = "file:" + location + FILE_SEPARATOR + propsFile;
+            url = "file:" + location + "/" + propsFile;
         }
 
 	if (modelName == null) {
@@ -217,26 +219,28 @@ class Sphinx3Loader implements Loader {
 	}
 	acousticProperties = loadAcousticPropertiesFile(prefix, url);
 
-        // load the means, variance, mixture weights, and matrix files
-        String file = dataDir + "means.ascii";
 
-	meansPool = loadDensityFile
-            (StreamFactory.getInputStream(location, file),
-             file, -Float.MAX_VALUE);
+        if (binary) {
+            meansPool = loadDensityFileBinary(dataDir + "means",
+                    -Float.MAX_VALUE);
+            variancePool = loadDensityFileBinary(dataDir + "variances",
+                    varianceFloor);
+            mixtureWeightsPool = loadMixtureWeightsBinary(
+                dataDir + "mixture_weights", mixtureWeightFloor);
+           
+            matrixPool = loadTransitionMatricesBinary(
+                    dataDir + "transition_matrices");
 
-        file = dataDir + "variances.ascii";
-	variancePool = loadDensityFile
-            (StreamFactory.getInputStream(location, file),
-             file, varianceFloor);
-
-        file = dataDir + "mixture_weights.ascii";
-	mixtureWeightsPool = loadMixtureWeights
-            (StreamFactory.getInputStream(location, file),
-             file, mixtureWeightFloor);
-
-        file = dataDir + "transition_matrices.ascii";
-        matrixPool = loadTransitionMatrices
-            (StreamFactory.getInputStream(location, file), file);
+        } else  {
+            meansPool = loadDensityFileAscii(dataDir + "means.ascii",
+                    -Float.MAX_VALUE);
+            variancePool = loadDensityFileAscii(dataDir + "variances.ascii",
+                    varianceFloor);
+            mixtureWeightsPool = loadMixtureWeightsAscii(
+                    dataDir + "mixture_weights.ascii", mixtureWeightFloor);
+            matrixPool = loadTransitionMatricesAscii(
+                    dataDir + "transition_matrices.ascii");
+        }
 
 	senonePool = createSenonePool(distFloor);
 
@@ -339,8 +343,7 @@ class Sphinx3Loader implements Loader {
      * Loads the sphinx3 densityfile, a set of density arrays are
      * created and placed in the given pool.
      *
-     * @param inputStream the inputStream of the density file
-     * @param name the name of the data
+     * @param path the name of the data
      * @param floor the minimum density allowed
      *
      * @return a pool of loaded densities
@@ -348,17 +351,18 @@ class Sphinx3Loader implements Loader {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException if an error occurs while loading the data
      */
-    private Pool loadDensityFile(InputStream inputStream, String path,
-                                 float floor) 
+    private Pool loadDensityFileAscii(String path, float floor) 
         throws FileNotFoundException, IOException {
 	int token_type;
 	int numStates;
 	int numStreams;
 	int numGaussiansPerState;
 
+        InputStream inputStream = StreamFactory.getInputStream(location, path);
+
 	if (inputStream == null) {
 	    throw new FileNotFoundException("Error trying to read file "
-					    + path);
+                                        + location + path);
 	}
         // 'false' argument refers to EOL is insignificant
 	ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
@@ -393,6 +397,8 @@ class Sphinx3Loader implements Loader {
 		    if (density[k] < floor) {
 			density[k] = floor;
 		    }
+                 //   System.out.println(" " + i + " " + j + " " + k +
+                  //          " " + density[k]);
 		}
 		int id = i * numGaussiansPerState + j;
 		pool.put(id, density);
@@ -400,6 +406,311 @@ class Sphinx3Loader implements Loader {
 	}
 	est.close();
 	return pool;
+    }
+
+    /**
+     * Loads the sphinx3 densityfile, a set of density arrays are
+     * created and placed in the given pool.
+     *
+     * @param path the name of the data
+     * @param floor the minimum density allowed
+     *
+     * @return a pool of loaded densities
+     *
+     * @throws FileNotFoundException if a file cannot be found
+     * @throws IOException if an error occurs while loading the data
+     */
+    private Pool loadDensityFileBinary(String path, float floor) 
+        throws FileNotFoundException, IOException {
+	int token_type;
+	int numStates;
+	int numStreams;
+	int numGaussiansPerState;
+        Properties props = new Properties();
+        int blockSize = 0;
+
+        DataInputStream dis = readS3BinaryHeader(location, path, props);
+
+        String version = props.getProperty("version");
+        boolean doCheckSum;
+
+        if (version == null || !version.equals(DENSITY_FILE_VERSION)) {
+            throw new IOException("Unsupported version in " + path);
+        }
+
+        String checksum = props.getProperty("chksum0");
+        doCheckSum =  (checksum != null && checksum.equals("yes"));
+
+        numStates = readInt(dis);
+        numStreams = readInt(dis);
+        numGaussiansPerState = readInt(dis);
+
+
+        int[] vectorLength = new int[numStreams];
+        for (int i = 0; i < numStreams; i++) {
+            vectorLength[i] = readInt(dis);
+        }
+
+        int rawLength = readInt(dis);
+
+        //System.out.println("Nstates " + numStates);
+        //System.out.println("Nstreams " + numStreams);
+        //System.out.println("NgaussiansPerState " + numGaussiansPerState);
+        //System.out.println("vectorLength " + vectorLength.length);
+        //System.out.println("rawLength " + rawLength);
+
+        for (int i = 0;  i < numStreams; i++) {
+            blockSize += vectorLength[i];
+        }
+
+
+        assert rawLength == numGaussiansPerState * blockSize * numStates;
+        assert numStreams == 1;
+
+    	Pool pool = new Pool(path);
+	pool.setFeature(NUM_SENONES, numStates);
+	pool.setFeature(NUM_STREAMS, numStreams);
+	pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
+
+        int r = 0;
+	for (int i = 0; i < numStates; i++) {
+            for (int j = 0; j < numStreams; j++) {
+                for (int k = 0; k < numGaussiansPerState; k++) {
+                    float[] density = readFloatArray(dis, vectorLength[j]);
+                    nonZeroFloor(density, floor);
+                    pool.put(i * numGaussiansPerState + k, density);
+		}
+	    }
+	}
+
+        int checkSum = readInt(dis);
+        // BUG: not checking the check sum yet.
+        dis.close();
+        return pool;
+    }
+
+
+    /**
+     * Reads the S3 binary hearder from the given location+path. Adds
+     * header information to the given set of properties.
+     *
+     * @param location the location of the file
+     * @param path the name of the file
+     * @param props the properties
+     *
+     * @return the input stream positioned after the header
+     *
+     * @throws IOException on error
+     */
+
+    private DataInputStream readS3BinaryHeader(String location, String
+            path, Properties props) throws IOException {
+
+        InputStream inputStream = StreamFactory.getInputStream(location, path);
+        DataInputStream dis = new DataInputStream(new
+                BufferedInputStream(inputStream));
+
+        String id = readWord(dis);
+        if (!id.equals("s3")) {
+            throw new IOException("Not proper s3 binary file " +
+                    location + path);
+        }
+
+        String name;
+        while ((name = readWord(dis)) != null) {
+            if (!name.equals("endhdr")) {
+                String value = readWord(dis);
+                props.setProperty(name, value);
+            } else {
+                break;
+            }
+        }
+
+        int byteOrderMagic = dis.readInt();
+
+        if (byteOrderMagic == BYTE_ORDER_MAGIC) {
+            // System.out.println("Not swapping " + path);
+            swap = false;
+        } else if (byteSwap(byteOrderMagic) == BYTE_ORDER_MAGIC) {
+            // System.out.println("SWAPPING " + path);
+            swap = true;
+        } else {
+            throw new IOException("Corrupt S3 file " + location + path);
+        }
+
+        return dis;
+    }
+
+    /**
+     * Reads the next word (text separated by whitespace) from the
+     * given stream
+     *
+     * @param dis the input stream
+     *
+     * @return the next word
+     *
+     * @throws IOException on error
+     */
+    String readWord(DataInputStream dis) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        char c;
+
+        // skip leading whitespace
+        do {
+            c = readChar(dis);
+        } while(Character.isWhitespace(c));
+
+        // read the word
+
+        do {
+            sb.append(c);
+            c = readChar(dis);
+        } while (!Character.isWhitespace(c));
+        return sb.toString();
+    }
+
+
+    /**
+     * Reads a single char from the stream
+     *
+     * @param dis the stream to read
+     * @return the next character on the stream
+     *
+     * @throws IOException if an error occurs
+     */
+    private char readChar(DataInputStream dis) throws IOException {
+        return (char) dis.readByte();
+    }
+
+    /**
+     * swap a 32 bit word
+     *
+     * @param val the value to swap
+     *
+     * @return the swapped value
+     */
+    private int byteSwap(int val) {
+        return ((0xff & (val >>24)) | (0xff00 & (val >>8)) |
+         (0xff0000 & (val <<8)) | (0xff000000 & (val <<24)));
+    }
+
+    /**
+     * Read an integer from the input stream, byte-swapping as
+     * necessary
+     *
+     * @param dis the inputstream
+     *
+     * @return an integer value
+     *
+     * @throws IOException on error
+     */
+    private int readInt(DataInputStream dis) throws IOException {
+        if (swap) {
+            return Utilities.readLittleEndianInt(dis);
+        } else {
+            return dis.readInt();
+        }
+    }
+
+    /**
+     * Read a float from the input stream, byte-swapping as
+     * necessary
+     *
+     * @param dis the inputstream
+     *
+     * @return a floating pint value
+     *
+     * @throws IOException on error
+     */
+
+    private float readFloat(DataInputStream dis) throws IOException {
+        float val;
+        if (swap) {
+            val =  Utilities.readLittleEndianFloat(dis);
+        } else {
+            val =  dis.readFloat();
+        }
+        return val;
+    }
+
+    /**
+     * If a data point is non-zero and below 'floor' make
+     * it equal to floor (don't floor zero values though).
+     *
+     * @param data the data to floor
+     * @param floor the floored value
+     */
+    private void nonZeroFloor(float[] data, float floor) {
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] != 0.0 && data[i] < floor) {
+                data[i] = floor;
+            }
+        }
+    }
+
+    /**
+     * Normalize the given data
+     *
+     * @param data the data to normalize
+     */
+    private void normalize(float[] data) {
+        float sum = 0;
+        for (int i = 0; i < data.length; i++) {
+            sum += data[i];
+        }
+
+        if (sum != 0.0f) {
+            for (int i = 0; i < data.length; i++) {
+                 data[i] = data[i] / sum ;
+            }
+        }
+    }
+
+    /**
+     * Dump the data
+     *
+     * @param name the name of the data
+     * @param data the data itself
+     *
+     */
+    private void dumpData(String name, float[] data) {
+        System.out.println(" ----- " + name + " -----------");
+        for (int i = 0; i < data.length; i++) {
+            System.out.println(name + " " + i + ": " + data[i]);
+        }
+    }
+
+    /**
+     * Convert to log math
+     *
+     * @param data the data to normalize
+     */
+    private void convertToLogMath(float[] data) {
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (float) logMath.linearToLog(data[i]);
+        }
+    }
+
+
+    /**
+     * Reads the given number of floats from the stream and returns
+     * them in an array of floats
+     *
+     * @param dis the stream to read data from
+     * @param size the number of floats to read
+     *
+     * @return an array of size float elements
+     *
+     * @throws IOException if an exception occurs
+     */
+    private float[] readFloatArray(DataInputStream dis, int size)
+        throws IOException{
+        float[] data = new float[size];
+
+        for (int i = 0; i < size; i++) {
+            data[i] = readFloat(dis);
+        }
+        return data;
     }
 
     /**
@@ -583,7 +894,7 @@ class Sphinx3Loader implements Loader {
     /**
      * Loads the mixture weights
      *
-     * @param inputStream the inputStream of the mixture weight file
+     * @param path the path to the mixture weight file
      * @param floor the minimum mixture weight allowed
      *
      * @return a pool of mixture weights
@@ -591,7 +902,7 @@ class Sphinx3Loader implements Loader {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException if an error occurs while loading the data
      */
-    private Pool loadMixtureWeights(InputStream inputStream, String path,
+    private Pool loadMixtureWeightsAscii(String path,
                                     float floor) 
         throws FileNotFoundException, IOException {
 	logger.info("Loading mixture weights from: " );
@@ -601,6 +912,7 @@ class Sphinx3Loader implements Loader {
 	int numStreams;
 	int numGaussiansPerState;
 
+        InputStream inputStream = StreamFactory.getInputStream(location, path);
     	Pool pool = new Pool(path);
 	ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
             (inputStream, '#', false);
@@ -622,16 +934,78 @@ class Sphinx3Loader implements Loader {
 	    float[] logMixtureWeight = new float[numGaussiansPerState];
 
 	    for (int j = 0; j < numGaussiansPerState; j++) {
-		// mixtureWeight[j] = est.getFloat("mixwVal");
 		float val = est.getFloat("mixwVal");
 		if (val < floor) {
 		    val = floor;
 		}
-		logMixtureWeight[j] = (float) logMath.linearToLog(val);
+		logMixtureWeight[j] =  val;
+
 	    }
+            convertToLogMath(logMixtureWeight);
 	    pool.put(i, logMixtureWeight);
 	}
 	est.close();
+	return pool;
+    }
+
+    /**
+     * Loads the mixture weights (Binary)
+     *
+     * @param path the path to the mixture weight file
+     * @param floor the minimum mixture weight allowed
+     *
+     * @return a pool of mixture weights
+     *
+     * @throws FileNotFoundException if a file cannot be found
+     * @throws IOException if an error occurs while loading the data
+     */
+    private Pool loadMixtureWeightsBinary(String path,
+                                    float floor) 
+        throws FileNotFoundException, IOException {
+	logger.info("Loading mixture weights from: " );
+	logger.info(path);
+
+	int numStates;
+	int numStreams;
+	int numGaussiansPerState;
+        int numValues;
+        Properties props = new Properties();
+
+        DataInputStream dis = readS3BinaryHeader(location, path, props);
+
+        String version = props.getProperty("version");
+        boolean doCheckSum;
+
+        if (version == null || !version.equals(MIXW_FILE_VERSION)) {
+            throw new IOException("Unsupported version in " + path);
+        }
+
+        String checksum = props.getProperty("chksum0");
+        doCheckSum =  (checksum != null && checksum.equals("yes"));
+
+    	Pool pool = new Pool(path);
+
+	numStates = readInt(dis);
+	numStreams = readInt(dis);
+	numGaussiansPerState = readInt(dis);
+	numValues = readInt(dis);
+
+        assert numValues == numStates * numStreams * numGaussiansPerState;
+        assert numStreams == 1;
+
+
+	pool.setFeature(NUM_SENONES, numStates);
+	pool.setFeature(NUM_STREAMS, numStreams);
+	pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
+
+	for (int i = 0; i < numStates; i++) {
+	    float[] logMixtureWeight = readFloatArray(dis,numGaussiansPerState);
+            normalize(logMixtureWeight);
+            nonZeroFloor(logMixtureWeight, floor);
+            convertToLogMath(logMixtureWeight);
+	    pool.put(i, logMixtureWeight);
+	}
+        dis.close();
 	return pool;
     }
 
@@ -639,15 +1013,16 @@ class Sphinx3Loader implements Loader {
     /**
      * Loads the transition matrices
      *
-     * @param inputStream the InputStream to the transitions matrices
+     * @param path the path to the transitions matrices
      *
      * @return a pool of transition matrices
      *
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException if an error occurs while loading the data
      */
-    private Pool loadTransitionMatrices(InputStream inputStream, String path)
+    private Pool loadTransitionMatricesAscii(String path)
         throws FileNotFoundException, IOException {
+        InputStream inputStream = StreamFactory.getInputStream(location, path);
         boolean sparseForm 
 	    = acousticProperties.getBoolean(PROPS_SPARSE_FORM, true);
 	logger.info("Loading transition matrices from: ");
@@ -688,6 +1063,68 @@ class Sphinx3Loader implements Loader {
 	    pool.put(i, tmat);
 	}
 	est.close();
+	return pool;
+    }
+
+
+
+    /**
+     * Loads the transition matrices (Binary)
+     *
+     * @param path the path to the transitions matrices
+     *
+     * @return a pool of transition matrices
+     *
+     * @throws FileNotFoundException if a file cannot be found
+     * @throws IOException if an error occurs while loading the data
+     */
+    private Pool loadTransitionMatricesBinary(String path)
+        throws FileNotFoundException, IOException {
+        boolean sparseForm 
+	    = acousticProperties.getBoolean(PROPS_SPARSE_FORM, true);
+	logger.info("Loading transition matrices from: ");
+	logger.info( path);
+	int numMatrices;
+	int numStates;
+        int numRows;
+        int numValues;
+
+
+        Properties props = new Properties();
+        DataInputStream dis = readS3BinaryHeader(location, path, props);
+
+        String version = props.getProperty("version");
+        boolean doCheckSum;
+
+        if (version == null || !version.equals(TMAT_FILE_VERSION)) {
+            throw new IOException("Unsupported version in " + path);
+        }
+
+        String checksum = props.getProperty("chksum0");
+        doCheckSum =  (checksum != null && checksum.equals("yes"));
+
+    	Pool pool = new Pool(path);
+
+	numMatrices = readInt(dis);
+	numRows = readInt(dis);
+	numStates = readInt(dis);
+	numValues = readInt(dis);
+
+        assert numValues == numStates * numRows * numMatrices;
+
+	for (int i = 0; i < numMatrices; i++) {
+	    float[][] tmat = new float[numStates][];
+            // last row should be zeros
+            tmat[numStates -1] = new float[numStates];
+
+	    for (int j = 0; j < numRows; j++) {
+                tmat[j] = readFloatArray(dis, numStates);
+                nonZeroFloor(tmat[j], 0f);
+                normalize(tmat[j]);
+	    }
+	    pool.put(i, tmat);
+	}
+	dis.close();
 	return pool;
     }
 

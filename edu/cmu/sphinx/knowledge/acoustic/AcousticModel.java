@@ -42,7 +42,6 @@ public class AcousticModel {
 
     /**
      * Prefix for acoustic model SphinxProperties.
-     * Its current value is <code>"edu.cmu.sphinx.knowledge.acoustic.</code>.
      */
     public final static String PROP_PREFIX = "edu.cmu.sphinx.knowledge.acoustic.";
 
@@ -640,9 +639,10 @@ public class AcousticModel {
 	}
         String format = props.getString(formatProp, "sphinx4.v1");
 
-        if (format.equals("sphinx3.ascii") || 
-            format.equals("sphinx3.zip")) {
-            loader = new Sphinx3Loader(name, props);
+        if (format.equals("sphinx3.ascii")) {
+            loader = new Sphinx3Loader(name, props, false);
+        } else if (format.equals("sphinx3.binary")) {
+            loader = new Sphinx3Loader(name, props, true);
         }  else { // add new loading code here.
             loader = null;
             logger.severe("Unsupported acoustic model format " + format);
