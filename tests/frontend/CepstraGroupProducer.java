@@ -65,7 +65,8 @@ extends DataProcessor implements CepstrumSource {
                 // Here, though, we only need the first element (energy).
                 float[] data = new float[1];
                 data[0] = cepstrum.getCepstrumData()[0];
-                copy = new Cepstrum(data, cepstrum.getUtterance());
+                copy = new Cepstrum(data, cepstrum.getUtterance(),
+                                    cepstrum.getCollectTime());
             }
 
             cepstraList.add(copy);
