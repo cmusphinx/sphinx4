@@ -27,6 +27,7 @@ public class ExtendedStreamTokenizer {
     /**
      * Creates and returns a stream tokenizer that has
      * been properly configured to parse sphinx3 data
+     * This ExtendedStreamTokenizer has no comment characters.
      *
      * @param path the source of the data
      *
@@ -40,6 +41,7 @@ public class ExtendedStreamTokenizer {
     /**
      * Creates and returns a stream tokenizer that has
      * been properly configured to parse sphinx3 data
+     * This ExtendedStreamTokenizer has no comment characters.
      *
      * @param path the source of the data
      * @param eolIsSignificant if true eol is significant
@@ -56,8 +58,24 @@ public class ExtendedStreamTokenizer {
      * Constructs an ExtendedStreamTokenizer from the given InputStream
      *
      * @param inputStream the source of the data
+     * @param commentChar the comment character
+     * @param eolIsSignificant true if EOL is significant, false otherwise
      */
-    public ExtendedStreamTokenizer(InputStream inputStream, 
+    public ExtendedStreamTokenizer(InputStream inputStream, int commentChar, 
+                                   boolean eolIsSignificant) {
+        this(new InputStreamReader(inputStream), eolIsSignificant);
+        commentChar(commentChar);
+    }
+
+
+    /**
+     * Constructs an ExtendedStreamTokenizer from the given InputStream.
+     * This ExtendedStreamTokenizer has no comment characters.
+     *
+     * @param inputStream the source of the data
+     * @param eolIsSignificant true if EOL is significant, false otherwise
+     */
+    public ExtendedStreamTokenizer(InputStream inputStream,
                                    boolean eolIsSignificant) {
         this(new InputStreamReader(inputStream), eolIsSignificant);
     }
@@ -65,6 +83,7 @@ public class ExtendedStreamTokenizer {
 
     /**
      * Constructs an ExtendedStreamTokenizer from the given Reader.
+     * This ExtendedStreamTokenizer has no comment characters.
      *
      * @param reader the source of the data
      * @param eolIsSignificant true if eol is significant
@@ -77,7 +96,6 @@ public class ExtendedStreamTokenizer {
 	st.whitespaceChars(0, 32);
 	st.wordChars(33, 127);
 	st.eolIsSignificant(eolIsSignificant);
-	st.commentChar('#');
 	putbackList = new ArrayList();
     }        
 
@@ -100,6 +118,19 @@ public class ExtendedStreamTokenizer {
     public void whitespaceChars(int low, int hi) {
 	st.whitespaceChars(low, hi);
     }
+
+
+    /**
+     * Specified that the character argument starts a single-line comment.
+     * All characters from the comment character to the end of the line
+     * are ignored by this stream tokenizer. 
+     *
+     * @param ch the comment character
+     */
+    public void commentChar(int ch) {
+        st.commentChar(ch);
+    }
+
 
     /**
      * Gets the next word from the tokenizer
