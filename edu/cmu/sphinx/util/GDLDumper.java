@@ -160,6 +160,7 @@ public class GDLDumper extends LinguistDumper  {
     protected void dumpArc(PrintStream out, SentenceHMMState from, 
 	    	SentenceHMMStateArc arc, int level) {
 
+        String color = getArcColor(arc);
 	SentenceHMMState nextState = arc.getNextState();
 
 	if (skipHMMs) {
@@ -171,7 +172,45 @@ public class GDLDumper extends LinguistDumper  {
 	} 
 	out.println("   edge: { sourcename: " +
 	    qs(from.getSignature()) + " targetname: " +
-	    qs(nextState.getSignature()) + "}");
+	    qs(nextState.getSignature()) + 
+            " color: " + color + "}");
+    }
+
+
+    /**
+     * Returns a color based upon the type of arc
+     *
+     * @param arc the arc
+     *
+     * @return the color of the arc based on weather it is a language
+     * arc (green), acoustic arc (red), insertion arc(blue), flat arc
+     * (black) or a combo (purple).
+     */
+    private String getArcColor(SentenceHMMStateArc arc) {
+        String color = null;
+        if (arc.getLanguageProbability() != 0.0) {
+            color = "green";
+        }
+        if (arc.getAcousticProbability() != 0.0) {
+            if (color == null) {
+                color = "red";
+            } else {
+                color = "purple";
+            }
+        }
+        if (arc.getInsertionProbability() != 0.0) {
+            if (color == null) {
+                color = "blue";
+            } else {
+                color = "purple";
+            }
+        }
+
+        if (color == null) {
+            color = "black";
+        }
+
+        return color;
     }
 
 
