@@ -9,7 +9,6 @@
 #
 # This script parses the output of S4 and generates a log entry
 
-echo parseLog PATH IS  $PATH
 nawk '
 
 BEGIN {
@@ -87,6 +86,7 @@ END {
     printf(date  "|");
     printf(time  "|");
     printf(machine "|");
+    printf("s4" "|");
     printf(testName "|");
     printf(who "|");
     printf(status "|");
