@@ -15,7 +15,7 @@ package edu.cmu.sphinx.decoder.linguist.lextree;
 import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 import edu.cmu.sphinx.decoder.linguist.WordSearchState;
@@ -130,15 +130,15 @@ public class LexTreeLinguist implements  Linguist {
     private LexTree lexTree;
     private Dictionary dictionary;
     private final static SearchStateArc[] EMPTY_ARC = new SearchStateArc[0];
-    private final static int[] sentenceStartID 
-        = {Dictionary.SENTENCE_START_ID};
-
+    
     private float logOne;
     private int silenceID;
     private LexTree.WordLexNode finalNode;
     private boolean fullWordHistories = true;
     private boolean maintainSeparateRightContextsForWords = false;
-    
+
+    private Word sentenceEndWord;
+    private Word[] sentenceStartWordArray;
 
     /**
      * Returns an array of classes that represents the order 
@@ -184,6 +184,10 @@ public class LexTreeLinguist implements  Linguist {
 
         this.dictionary = dictionary;
 
+        sentenceEndWord = dictionary.getSentenceEndWord();
+        sentenceStartWordArray = new Word[1];
+        sentenceStartWordArray[0] = dictionary.getSentenceStartWord();
+        
         logOne = logMath.getLogOne();
 
 
@@ -216,8 +220,8 @@ public class LexTreeLinguist implements  Linguist {
         }
 
         finalNode = lexTree.findWordNode(Dictionary.SENTENCE_END_SPELLING);
-	
-	dictionary = null;
+
+        this.dictionary = null;
     }
 
     /**
@@ -286,7 +290,7 @@ public class LexTreeLinguist implements  Linguist {
         silenceID = hmmPool.getID(Unit.SILENCE);
 
         lexTree = new LexTree(hmmPool, dictionary,
-                languageModel.getVocabulary());
+                              languageModel.getVocabulary());
 
         hmmPool.dumpInfo();
 
@@ -586,8 +590,8 @@ public class LexTreeLinguist implements  Linguist {
          */
         LexTreeInitialState(LexTree.NonLeafLexNode node) {
             super(silenceID, null, null, 
-                  (WordSequence.getWordSequence
-                   (sentenceStartID).trim(languageModel.getMaxDepth()-1)),
+                  (WordSequence.getWordSequence(sentenceStartWordArray).trim
+                   (languageModel.getMaxDepth() - 1)),
                   logOne, logOne, logOne);
             this.node = node;
         }
@@ -1100,6 +1104,10 @@ public class LexTreeLinguist implements  Linguist {
             super(leftID, central, right, wordSequence,
                     logProability, logOne, logOne);
             this.wordLexNode = wordLexNode;
+            if (wordLexNode == null) {
+                throw new Error("Null WordLexNode while creating: " +
+                                wordSequence.toString());
+            }
         }
 
         /**
@@ -1127,7 +1135,7 @@ public class LexTreeLinguist implements  Linguist {
           */
          public boolean isFinal() {
              return wordLexNode.getPronunciation()
-                 .getWord().equals(Dictionary.SENTENCE_END_SPELLING);
+                 .getWord().equals(sentenceEndWord);
          }
 
 
@@ -1137,6 +1145,9 @@ public class LexTreeLinguist implements  Linguist {
          * @return the hashcode
          */
         public int hashCode() {
+            if (wordLexNode == null) {
+                throw new Error("No wordLexNode");
+            }
             return super.hashCode() * 31 + wordLexNode.hashCode();
         }
 
@@ -1212,10 +1223,12 @@ public class LexTreeLinguist implements  Linguist {
           * @return the pretty string representation
           */
          public String toPrettyString() {
+             String spelling =
+                 wordLexNode.getPronunciation().getWord().getSpelling();
              if (isFinal()) {
-                 return wordLexNode.getPronunciation().getWord();
+                 return spelling;
              } else {
-                 return wordLexNode.getPronunciation().getWord() 
+                 return spelling
                      + "[" + getCentral() + "," + getRight() + "]"; 
              }
          }
@@ -1274,7 +1287,7 @@ public class LexTreeLinguist implements  Linguist {
         float logProbability = logOne;
         if (!nextWord.isSilence()) {
             wordSequence = wordSequence.addWord
-                (nextWord.getPronunciation().getWordID(),
+                (nextWord.getPronunciation().getWord(),
                  languageModel.getMaxDepth());
             logProbability = languageModel.getProbability(wordSequence);
 

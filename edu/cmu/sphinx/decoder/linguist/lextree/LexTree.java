@@ -14,6 +14,7 @@
 package edu.cmu.sphinx.decoder.linguist.lextree;
 
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 
 import edu.cmu.sphinx.knowledge.acoustic.HMM;
 import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
@@ -35,11 +36,16 @@ import java.util.Map;
  * Represents the vocabulary as a lex tree
  */
 class LexTree {
+
     private NonLeafLexNode initialNode;
     private HMMPool hmmPool;
     private Dictionary dictionary;
     private Map nextNodesMap = new HashMap();
     private boolean addSilenceWord = true;
+
+    private Word sentenceStartWord;
+    private Word sentenceEndWord;
+    private Word silenceWord;
 
     /**
      * Creates the lextree
@@ -51,6 +57,9 @@ class LexTree {
     LexTree(HMMPool pool, Dictionary dictionary, Collection words) {
         hmmPool = pool;
         this.dictionary = dictionary;
+        this.sentenceStartWord = dictionary.getSentenceStartWord();
+        this.sentenceEndWord = dictionary.getSentenceEndWord();
+        this.silenceWord = dictionary.getSilenceWord();
 
         Utilities.dumpMemoryInfo("lextree before");
         Timer.start("Create lextree");
@@ -60,6 +69,7 @@ class LexTree {
         Timer.stop("Create lextree");
         Utilities.dumpMemoryInfo("lextree after");
         dumpStats();
+        this.dictionary = null;
     }
 
 
@@ -83,11 +93,11 @@ class LexTree {
             String word = (String) i.next();
 
             // don't add the 'start' tag
-            if (word.equals(Dictionary.SENTENCE_START_SPELLING)) {
+            if (word.equals(sentenceStartWord.getSpelling())) {
                 continue;
             }
 
-            if (word.equals(Dictionary.SILENCE_SPELLING)) {
+            if (word.equals(silenceWord.getSpelling())) {
                 addedSilence = true;
             }
             addWord(word);
@@ -101,17 +111,23 @@ class LexTree {
     /**
      * Adds a single word to the lex tree
      *
-     * @param word the word to add
+     * @param spelling the word to add
      */
-    private void addWord(String word) {
-        Pronunciation[] pronunciations =
-            dictionary.getPronunciations(word, null);
-        if (pronunciations == null) {
-            System.out.println("Can't find pronunciation for '" +
-                    word + "' .. skipping it.");
+    private void addWord(String spelling) {
+        Word word = dictionary.getWord(spelling);
+        if (word == null) {
+            System.out.println("LexTree: Can't find word in dictionary: " 
+                               + spelling + " (skipping it)");
         } else {
-            for (int i = 0; i < pronunciations.length; i++) {
-                addPronunciation(pronunciations[i]);
+            Pronunciation[] pronunciations =
+                word.getPronunciations(null);
+            if (pronunciations == null) {
+                System.out.println("LexTree: Can't find pronunciation for '" +
+                                   word + " (skipping it)");
+            } else {
+                for (int i = 0; i < pronunciations.length; i++) {
+                    addPronunciation(pronunciations[i]);
+                }
             }
         }
     }
@@ -155,7 +171,8 @@ class LexTree {
 
         if (node instanceof WordLexNode) {
             WordLexNode wordNode = (WordLexNode) node;
-            if (wordNode.getPronunciation().getWord().equals(word)) {
+            if (wordNode.getPronunciation().getWord().getSpelling().equals
+                (word)) {
                 return wordNode;
             } else {
                 return null;
@@ -540,8 +557,7 @@ class LexTree {
          *
          */
         public boolean isSentenceStart() {
-            return pronunciation.getWord().
-                equals(Dictionary.SENTENCE_START_SPELLING);
+            return pronunciation.getWord().equals(sentenceStartWord);
         }
 
         /**
@@ -551,8 +567,7 @@ class LexTree {
          *
          */
         public boolean isSentenceEnd() {
-            return pronunciation.getWord().
-                equals(Dictionary.SENTENCE_END_SPELLING);
+            return pronunciation.getWord().equals(sentenceEndWord);
         }
 
         /**
@@ -562,8 +577,7 @@ class LexTree {
          *
          */
         public boolean isSilence() {
-            return pronunciation.getWord().
-                equals(Dictionary.SILENCE_SPELLING);
+            return pronunciation.getWord().equals(silenceWord);
         }
     }
 
