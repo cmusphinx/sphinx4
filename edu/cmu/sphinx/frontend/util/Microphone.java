@@ -499,10 +499,10 @@ public class Microphone extends BaseDataProcessor {
      * @return true if the recording started successfully; false otherwise
      */
     public synchronized boolean startRecording() {
-	if (audioLine != null && audioLine.isActive()) {
-	    logger.severe("Whoops: audio line is still active.");
+	if (recording) {
 	    return false;
-	} else if (audioLine == null) {
+	}
+        if (audioLine == null) {
 	    open();
 	}
 	utteranceEndReached = false;
