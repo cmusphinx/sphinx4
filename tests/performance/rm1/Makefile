@@ -53,6 +53,10 @@ else
   SKIP = 0
 endif
 
+ifeq ($(HEAP),large)
+GC_FLAGS = -ms1024m -mx1600m
+endif
+
 include ${TOP}/build/Makefile.config
 
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
