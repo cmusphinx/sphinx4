@@ -68,6 +68,11 @@ ep-tidigits: all
 	$(JAVA_CMD) \
 	-Dtests.frontend.energyEndpointer.batchMode=true \
 	-DremoveNonSpeech=false \
+        -Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
+        -Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=2 \
+        -Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=6 \
+        -Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=2 \
+        -Dedu.cmu.sphinx.frontend.EnergyEndpointer.endHigh=6 \
 	tests.frontend.EnergyEndpointerTest \
 	energyEndpointer ../decoder/tiDigits.props ../decoder/tidigits.batch
 
@@ -75,6 +80,11 @@ ep-tidigits-quick: all
 	$(JAVA_CMD) \
 	-Dtests.frontend.energyEndpointer.batchMode=true \
 	-DremoveNonSpeech=false \
+        -Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
+        -Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=2 \
+        -Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=6 \
+        -Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=2 \
+        -Dedu.cmu.sphinx.frontend.EnergyEndpointer.endHigh=6 \
 	tests.frontend.EnergyEndpointerTest \
 	energyEndpointer ../decoder/tiDigits.props ../decoder/tidigits.batch
 
@@ -83,6 +93,11 @@ ep-one: all
 	-Dtests.frontend.energyEndpointer.batchMode=true \
 	-Dtests.frontend.energyEndpointer.dumpTimes=true \
 	-DremoveNonSpeech=false \
+        -Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
+        -Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=2 \
+        -Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=6 \
+        -Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=2 \
+        -Dedu.cmu.sphinx.frontend.EnergyEndpointer.endHigh=6 \
 	tests.frontend.EnergyEndpointerTest \
 	energyEndpointer ../decoder/tiDigits.props ./one.batch
 
@@ -92,10 +107,10 @@ ep-an4-spelling: all
 	-Dtests.frontend.energyEndpointer.dumpTimes=true \
 	-DremoveNonSpeech=false \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=2 \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=6 \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=2 \
-	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endHigh=6 \
+	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=6 \
+	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=9 \
+	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=6 \
+	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endHigh=9 \
 	tests.frontend.EnergyEndpointerTest \
 	energyEndpointer ../decoder/wsjDigits.props ../decoder/an4_spelling.batch
 
