@@ -84,7 +84,7 @@ END {
     # "date +%T" | getline time;
 
 
-    "getHostname" | getline machine;
+    "./getHostname" | getline machine;
     "uptime" | getline uptime;
     "whoami" | getline who;
 

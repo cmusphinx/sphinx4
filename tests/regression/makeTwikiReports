@@ -17,7 +17,7 @@ log=regression.log
 # the 'dots' in the hostname can mess things up for the twik so
 # lets just use the left most name
 
-machine=`getHostname`
+machine=`./getHostname`
 
 ./makeTwikiSummaryReport $log $1.list this latest $1 > AutoGenlatest$1_$machine.txt
 ./makeTwikiSummaryReport $log $1.list this fastest $1 > AutoGenfastest$1_$machine.txt 

@@ -18,7 +18,7 @@
 # the 'dots' in the hostname can mess things up for the twik so
 # lets just use the left most name
 
-hostName=`getHostname`
+hostName=`./getHostname`
 
 reportName=regression_report_$hostName.html
 

@@ -64,7 +64,7 @@ BEGIN {
     title = ARGV[5];
 
     if (machine == "this") {
-	"getHostname" | getline hostname;
+	"./getHostname" | getline hostname;
 	machine = hostname
     }
 

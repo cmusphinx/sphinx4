@@ -55,7 +55,7 @@ BEGIN {
     F_HEAP_SIZE = 17;
     F_LOAD_AVERAGE = 18;
 
-    "getHostname" | getline machine
+    "./getHostname" | getline machine
 }
 
 $1 == "build" && $4 == machine {
