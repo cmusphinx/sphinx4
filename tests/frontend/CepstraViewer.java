@@ -136,7 +136,12 @@ public class CepstraViewer extends JFrame {
     class CepstraPanel extends JPanel {
 
         private int pixelsPerYUnit = 10;
+        private int majorYInterval = 5;
         private int maxHeight = getHeight();
+
+        private Color majorYIntervalColor = Color.GRAY;
+        private Color minorYIntervalColor = Color.LIGHT_GRAY;
+
 
         /**
          * If the Cepstrum contains data,
@@ -194,13 +199,13 @@ public class CepstraViewer extends JFrame {
                 // draw the SPEECH_START and SPEECH_END
                 Signal signal = cepstrum.getSignal();
                 if (signal.equals(Signal.SPEECH_START)) {
-                    drawSpeechLine(x, Color.GREEN, g);
+                    drawSpeechLine(x, Color.ORANGE, g);
                 } else if (signal.equals(Signal.SPEECH_END)) {
                     drawSpeechLine(x, Color.RED, g);
                 } else if (signal.equals(Signal.UTTERANCE_START)) {
                     drawSpeechLine(x, Color.BLUE, g);
                 } else if (signal.equals(Signal.UTTERANCE_END)) {
-                    drawSpeechLine(x, Color.BLACK, g);
+                    drawSpeechLine(x, Color.GREEN, g);
                 }
             }
         }
@@ -227,10 +232,21 @@ public class CepstraViewer extends JFrame {
          * @param g the Graphics context to draw the grid
          */
         private void drawGrid(Graphics g) {
+            boolean atYInterval = false;
+
             Color oldColor = g.getColor();
-            g.setColor(Color.LIGHT_GRAY);
-            for (int y = getHeight(); y > 0 ; y -= pixelsPerYUnit) {
+            g.setColor(minorYIntervalColor);
+
+            for (int y = getHeight(), x = 0; y > 0; 
+                 y -= pixelsPerYUnit, x++) {
+                if (x == majorYInterval) {
+                    g.setColor(majorYIntervalColor);
+                }
                 g.drawLine(0, y, getWidth(), y);
+                if (x == majorYInterval) {
+                    g.setColor(minorYIntervalColor);
+                    x = 0;
+                }
             }
             g.setColor(oldColor);
         }
