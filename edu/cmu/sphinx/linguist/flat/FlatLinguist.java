@@ -37,14 +37,17 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarArc;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
+
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
+
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+
 /**
  * A simple form of the linguist. It makes the following simplifying
  * assumptions: 1) Zero or one word per grammar node 2) No fan-in allowed ever 3)
@@ -87,7 +90,42 @@ public class FlatLinguist implements Linguist, Configurable {
      * The default value for the PROP_DUMP_GSTATES property
      */
     public final static boolean PROP_DUMP_GSTATES_DEFAULT = false;
+
+    /**
+     * Sphinx property that specifies whether to add a branch for detecting
+     * out-of-grammar utterances.
+     */
+    public final static String PROP_ADD_OUT_OF_GRAMMAR_BRANCH
+        = "addOutOfGrammarBranch";
+
+    /**
+     * Default value of PROP_ADD_OUT_OF_GRAMMAR_BRANCH.
+     */
+    public final static boolean PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT = false;
+
+    /**
+     * Sphinx property that specifies whether to a branch for detecting
+     * out-of-grammar utterances that is parallel to the main search graph.
+     */
+    public final static String PROP_OUT_OF_GRAMMAR_LINGUIST
+        = "outOfGrammarLinguist";
+    
+    /**
+     * Sphinx property for the probability of entering the out-of-grammar
+     * branch.
+     */
+    public final static String PROP_OUT_OF_GRAMMAR_PROBABILITY
+        = "outOfGrammarProbability";
+
+    /**
+     * The default value for PROP_OUT_OF_GRAMMAR_PROBABILITY.
+     */
+    public final static double PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT
+        = 1.0;
+    
     private final static float logOne = LogMath.getLogOne();
+    
+    
     // ----------------------------------
     // Subcomponents that are configured
     // by the property sheet
@@ -96,6 +134,8 @@ public class FlatLinguist implements Linguist, Configurable {
     private AcousticModel acousticModel;
     private LogMath logMath;
     private UnitManager unitManager;
+    private Linguist outOfGrammarLinguist;
+
     // ------------------------------------
     // Data that is configured by the
     // property sheet
@@ -103,10 +143,13 @@ public class FlatLinguist implements Linguist, Configurable {
     private float logWordInsertionProbability;
     private float logSilenceInsertionProbability;
     private float logUnitInsertionProbability;
+    private float logOutOfGrammarBranchProbability;
+    private float logPhoneInsertionProbability;
     private boolean showSentenceHMM;
     private boolean showCompilationProgress = true;
     private boolean spreadWordProbabilitiesAcrossPronunciations;
     private boolean dumpGStates;
+    private boolean addOutOfGrammarBranch;
     private float languageWeight;
     // -----------------------------------
     // Data for monitoring performance
@@ -154,9 +197,15 @@ public class FlatLinguist implements Linguist, Configurable {
         registry.register(PROP_DUMP_GSTATES, PropertyType.BOOLEAN);
         registry.register(PROP_SHOW_COMPILATION_PROGRESS, PropertyType.BOOLEAN);
         registry.register(PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS,
-                PropertyType.BOOLEAN);
+                          PropertyType.BOOLEAN);
         registry.register(PROP_UNIT_MANAGER, PropertyType.COMPONENT);
+        registry.register(PROP_ADD_OUT_OF_GRAMMAR_BRANCH,
+                          PropertyType.BOOLEAN);
+        registry.register(PROP_OUT_OF_GRAMMAR_LINGUIST, PropertyType.COMPONENT);
+        registry.register(PROP_OUT_OF_GRAMMAR_PROBABILITY,
+                          PropertyType.DOUBLE);
     }
+
     /*
      * (non-Javadoc)
      * 
@@ -192,6 +241,16 @@ public class FlatLinguist implements Linguist, Configurable {
         spreadWordProbabilitiesAcrossPronunciations = ps.getBoolean(
                 PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS,
                 PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS_DEFAULT);
+        addOutOfGrammarBranch = ps.getBoolean
+            (PROP_ADD_OUT_OF_GRAMMAR_BRANCH,
+             PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT);
+        if (addOutOfGrammarBranch) {
+            outOfGrammarLinguist = (Linguist) ps.getComponent
+                (PROP_OUT_OF_GRAMMAR_LINGUIST, Linguist.class);
+            logOutOfGrammarBranchProbability = logMath.linearToLog
+                (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY,
+                              PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT));
+        }
     }
 
     /**
@@ -213,6 +272,7 @@ public class FlatLinguist implements Linguist, Configurable {
     public String getName() {
         return name;
     }
+
     /*
      * (non-Javadoc)
      * 
@@ -328,18 +388,29 @@ public class FlatLinguist implements Linguist, Configurable {
         }
         Timer.stop("  connectNodes");
         SentenceHMMState initialState = findStartingState();
+
+        // add an out-of-grammar branch if configured to do so
+        if (addOutOfGrammarBranch) {
+            SentenceHMMState firstBranchState = (SentenceHMMState)
+                outOfGrammarLinguist.getSearchGraph().getInitialState();
+            initialState.connect(getArc(firstBranchState, logOne, logOne,
+                                        logOutOfGrammarBranchProbability));
+        }
+
         searchGraph = new FlatSearchGraph(initialState);
         Timer.stop("compile");
         // Now that we are all done, dump out some interesting
         // information about the process
         if (dumpGStates) {
-            for (Iterator i = grammar.getGrammarNodes().iterator(); i.hasNext();) {
+            for (Iterator i = grammar.getGrammarNodes().iterator();
+                 i.hasNext();) {
                 GState gstate = getGState((GrammarNode) i.next());
                 gstate.dumpInfo();
             }
         }
         return SentenceHMMState.collectStates(initialState);
     }
+
     /**
      * Returns a new GState for the given GrammarNode.
      * 
@@ -348,6 +419,7 @@ public class FlatLinguist implements Linguist, Configurable {
     protected GState createGState(GrammarNode grammarNode) {
         return (new GState(grammarNode));
     }
+
     /**
      * Ensures that there is a starting path by adding an empty left context to
      * the strating gstate
