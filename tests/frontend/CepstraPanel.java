@@ -28,8 +28,13 @@ public class CepstraPanel extends JPanel {
     private Color majorYIntervalColor = Color.GRAY;
     private Color minorYIntervalColor = Color.LIGHT_GRAY;
 
+    private java.util.List cepstraList = new LinkedList();
+    private int cepstrumCount = 0;
+    private int repaintInterval = 
+        Integer.getInteger("repaintInterval", 20).intValue();
     private int lastEnergy = 0;
-    private Cepstrum[] cepstra = null;
+    private float lowestEnergy;
+
 
     /**
      * Sets the Cepstrum array to draw.
@@ -37,24 +42,58 @@ public class CepstraPanel extends JPanel {
      * @param cepstra the Cepstrum array to draw
      */
     public void setCepstra(Cepstrum[] cepstra) {
-        this.cepstra = cepstra;
+        cepstraList.clear();
         if (cepstra.length > 0) {
-            float lowestEnergy = cepstra[0].getEnergy();
+            lowestEnergy = cepstra[0].getEnergy();
             // find the cepstrum with the lowest energy
             for (int i = 0; i < cepstra.length; i++) {
+                cepstraList.add(cepstra[i]);
                 if (cepstra[i].hasContent()) {
                     if (cepstra[i].getEnergy() < lowestEnergy) {
                         lowestEnergy = cepstra[i].getEnergy();
                     }
                 }
             }
-            y0Pixel = getHeight();
-            if (lowestEnergy < 0) {
-                y0Pixel = getHeight() - 
-                    ((int) (lowestEnergy * -1) + 1) * pixelsPerYUnit;
-            }
+            recalculateY0();
         }
         repaint();
+    }
+
+    /**
+     * Adds the given Cepstrum to the list of Cepstra to draw.
+     *
+     * @param cepstrum the Cepstrum to be added
+     */
+    public void addCepstrum(Cepstrum cepstrum) {
+        synchronized (cepstraList) {
+            cepstraList.add(cepstrum);
+        }
+        if (cepstrum.hasContent()) {
+            if (cepstrum.getEnergy() < lowestEnergy) {
+                lowestEnergy = cepstrum.getEnergy();
+            }
+        }
+        cepstrumCount++;
+        if (cepstrumCount == repaintInterval) {
+            recalculateY0();
+            repaint();
+            cepstrumCount = 0;
+        }
+    }
+
+    private void recalculateY0() {
+        y0Pixel = getHeight();
+        if (lowestEnergy < 0) {
+            y0Pixel = getHeight() - 
+                ((int) (lowestEnergy * -1) + 1) * pixelsPerYUnit;
+        }
+    }
+
+    /**
+     * Clears the list of Cepstra to draw.
+     */
+    public void clearCepstra() {
+        cepstraList.clear();
     }
     
     /**
@@ -68,11 +107,14 @@ public class CepstraPanel extends JPanel {
         drawGrid(g);
         
         // draw the current CepstraGroup
-        if (cepstra != null) {
+        if (cepstraList.size() > 0) {
             int x = 1;
-            for (int i = 0; i < cepstra.length; i++) {
-                drawCepstrum(cepstra[i], g, x);
-                x += 2;
+            synchronized (cepstraList) {
+                for (Iterator i = cepstraList.iterator(); i.hasNext();) {
+                    Cepstrum cepstrum = (Cepstrum) i.next();
+                    drawCepstrum(cepstrum, g, x);
+                    x += 2;
+                }
             }
             setSize(x, maxHeight);
             setPreferredSize(getSize());
