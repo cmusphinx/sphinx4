@@ -1,0 +1,92 @@
+# converts an s4 target to a build xml target
+
+gawk '
+$1 ~ /:/ { 	
+	targetName = $1; 
+	gsub(/:/, "", targetName);
+	next;
+}
+
+$1 ~ /-D/ {
+    split($0, a, "=");
+    name = a[1];
+    value = a[2];
+
+    gsub(/-D/, "", name);
+    gsub(/\t/, "", name);
+    gsub(/\\/, "", value);
+
+    gsub(/ /, "", name);
+    gsub(/ /, "", value);
+
+    sysprops[name] = value;
+    next;
+}
+
+
+$1 ~ /JAVA_CMD/ {
+    next;
+}
+
+
+NF > 0 {
+    for (i = 2; i <= NF; i++) {
+        args[i] = $i;
+
+        gsub(/ /, "", args[i]);
+        gsub(/\t/, "", args[i]);
+    }
+}
+
+
+END {
+    print "    <!-- ********************************************************** --> ";
+    print "    <!-- *                                                        * --> ";
+    print "    <!-- * " targetName pad(55 - length(targetName)) "* --> ";
+    print "    <!-- *                                                        * --> ";
+    print "    <!-- ********************************************************** --> ";
+    print "    <target name=\"" targetName "\"";
+    print "            description=\"Write me!\">";
+    print "        <java classpath=\"${classes_dir}\"";
+    print "              classname=\"${batch_main}\"";
+    print "              fork=\"true\">";
+    dumpVMprops();
+    dumpProps();
+    dumpArgs();
+    print "        </java>";
+    print "    </target>";
+}
+
+
+function dumpProps() {
+    print "             <sysproperty key=\"java.util.logging.config.file\"";
+    print "                          value=\"${logger_props}\"/>";
+    print "             <sysproperty key=\"edu.cmu.sphinx.decoder.BatchDecoder.skip\""; ;
+    print "                          value=\"${skip}\"/> ";
+    for (i in sysprops) {
+        print "             <sysproperty key=\"" i "\"";
+        print "                          value=\"" sysprops[i] "\"/>";
+    }
+}
+
+function dumpArgs() {
+    for (i in args) {
+        print "             <arg value=\"" args[i] "\"/>";
+    }
+}
+
+
+function dumpVMprops() {
+    print "             <jvmarg value=\"-ea\"/>";
+    print "             <jvmarg value=\"-${jit}\"/>   ";
+    print "             <jvmarg value=\"-ms${initial_heap_size}\"/>";
+    print "             <jvmarg value=\"-mx${maximum_heap_size}\"/> ";
+    print "             <jvmarg value=\"-Xloggc:${gc_log_file}\"/>";
+}
+
+function pad(size) {
+ return substr("                                                                                ", 1, size);
+}
+
+' $*
+
