@@ -28,41 +28,89 @@ import edu.cmu.sphinx.util.LogMath;
 
 /**
  * Loads a grammar from a file in 'arpa' grammar format.
- * The ARPA format is like so: <br>
- <code> <br>
- I 2 <br>
- F 0 2.30259 <br>
- T 0 1 <unknown> <unknown> 2.30259 <br>
- T 0 4 wood wood 1.60951 <br>
- T 0 5 cindy cindy 1.60951 <br>
- T 0 6 pittsburgh pittsburgh 1.60951 <br>
- T 0 7 jean jean 1.60951 <br>
- F 1 2.89031 <br>
- T 1 0 , , 0.587725 <br>
- T 1 4 wood wood 0.58785 <br>
- F 2 3.00808 <br>
- T 2 0 , , 0.705491 <br>
- T 2 1 <unknown> <unknown> 0.58785 <br>
- F 3 2.30259 <br>
- T 3 0 <br>
- F 4 2.89031 <br>
- T 4 0 , , 0.587725 <br>
- T 4 6 pittsburgh pittsburgh 0.58785 <br>
- F 5 2.89031 <br>
- T 5 0 , , 0.587725 <br>
- T 5 7 jean jean 0.58785 <br>
- F 6 2.89031 <br>
- T 6 0 , , 0.587725 <br>
- T 6 5 cindy cindy 0.58785 <br>
- F 7 1.28093 <br>
- T 7 0 , , 0.454282 <br>
- T 7 4 wood wood 1.28093  <br>
- </code>
+ * The ARPA FST format is like so: <br>
+ <pre>
+ I 2
+ F 0 2.30259
+ T 0 1 &lt;unknown&gt; &lt;unknown&gt; 2.30259 
+ T 0 4 wood wood 1.60951 
+ T 0 5 cindy cindy 1.60951 
+ T 0 6 pittsburgh pittsburgh 1.60951 
+ T 0 7 jean jean 1.60951 
+ F 1 2.89031 
+ T 1 0 , , 0.587725 
+ T 1 4 wood wood 0.58785 
+ F 2 3.00808 
+ T 2 0 , , 0.705491 
+ T 2 1 &lt;unknown&gt; &lt;unknown&gt; 0.58785 
+ F 3 2.30259 
+ T 3 0 
+ F 4 2.89031 
+ T 4 0 , , 0.587725 
+ T 4 6 pittsburgh pittsburgh 0.58785 
+ F 5 2.89031 
+ T 5 0 , , 0.587725 
+ T 5 7 jean jean 0.58785 
+ F 6 2.89031 
+ T 6 0 , , 0.587725 
+ T 6 5 cindy cindy 0.58785 
+ F 7 1.28093 
+ T 7 0 , , 0.454282 
+ T 7 4 wood wood 1.28093  
+ </pre>
  *
- *
+ * <b>Key:</b>
+ <pre>
+I - initial node, so "I 2" means node 2 is the initial node
+F - final node, e.g., "F 0 2.30259" means that node 0 is a final node,
+    and the probability of finishing at node 0 is 2.30259 (in -ln)
+T - transition, "T 0 4 wood wood 1.60951" means "transitioning from
+    node 0 to node 4, the output is wood and the machine is now
+    in the node wood, and the probability associated with the
+    transition is 1.60951 (in -ln)". "T 6 0 , , 0.587725" is
+    a backoff transition, and the output is null (epsilon in
+    the picture), and the machine is now in the null node.
+</pre>
+ * <p>
  * Probabilities read in from the FST file are in negative natural log
- * format and are converted to the internal logMath log base
+ * format and are converted to the internal logMath log base.
+ * <p>
+ * As the FST file is read in, a Grammar object that is structurally
+ * equivalent to the FST is created. The steps of converting the FST file
+ * to a Grammar object are:
+ * <ol>
  *
+ * <li><b>Create all the Grammar nodes</b><br>
+ * Go through the entire FST file and for each word transition,
+ * take the destination node ID and create a grammar node using that ID.
+ * These nodes are kept in a hashtable to make sure they are created once
+ * for each ID. Therefore, we get one word per grammar node.</li>
+ *
+ * <br>
+ *
+ * <li><b>Create an end node for each Grammar node</b><br>
+ * This is end node is used for backoff transitions into the Grammar node,
+ * so that it will not go through the word itself, but instead go directly
+ * to the end of the word. Moreover, we also add
+ * an <b>optional</b> silence node between the grammar node and its end node.
+ * The result of this step on each grammar node (show in Figure 1 below
+ * as the circle with "word") is as follows. The end node is the empty 
+ * circle at the far right:
+ * <br><img src="doc-files/fst-end-node.jpg">
+ * <br><b>Figure 1: Addition of end node and the <i>optional</i> silence.</b>
+ * </li>
+ *
+ * <br>
+ *
+ * <li><b>Create the transitions</b><br>
+ * Read through the entire FST file, and for each line indicating
+ * a transition, connect up the corresponding Grammar nodes.
+ * Backoff transitions and null transitions (i.e., the ones
+ * that do not output a word) will be linked to the end node of a
+ * grammar node.
+ * </li>
+ *
+ * </ol>
  */
 public class FSTGrammar extends Grammar {
 
@@ -127,7 +175,8 @@ public class FSTGrammar extends Grammar {
         finalNode.setFinalNode(true);
 
 	// replace each word node with a pair of nodes, which
-	// consists of the word node and a new dummy node
+	// consists of the word node and a new dummy end node, which is
+        // for adding null or backoff transitions
 	maxNodeId = expandWordNodes(maxNodeId);
 
 	ExtendedStreamTokenizer tok = new ExtendedStreamTokenizer(path, true);
