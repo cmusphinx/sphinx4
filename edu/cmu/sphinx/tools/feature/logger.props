@@ -1,0 +1,14 @@
+############################################################
+#
+# Global logging properties
+#
+############################################################
+
+handlers= java.util.logging.ConsoleHandler
+
+# This is the overall default logging level
+.level= INFO
+
+# Tracing level for the console
+java.util.logging.ConsoleHandler.level = INFO
+java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
