@@ -1,3 +1,4 @@
+
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -133,7 +134,7 @@ class MixtureComponent implements Serializable {
     public float getScore(Feature feature) {
 
 	 float[] data = feature.getFeatureData();
-	 float logVal = 0.0f;
+	 // float logVal = 0.0f;
 	 float logDval = 0.0f;
 
 
@@ -144,9 +145,9 @@ class MixtureComponent implements Serializable {
 
 	 for (int i = 0; i < data.length; i++) {
 	     float logDiff = data[i] - meanTransformed[i];
-	     logVal += logDiff * logDiff * precisionTransformed[i];
+	     logDval += logDiff * logDiff * precisionTransformed[i];
 	 }
-	 logDval = -logVal / 2;
+	 // logDval = -logVal / 2;
 
 	 // At this point, we have the ln() of what we need, that is,
 	 // the argument of the exponential in the javadoc comment.
@@ -201,7 +202,7 @@ class MixtureComponent implements Serializable {
 	 // becomes a summation.
 	 for (int i = 0; i < variance.length; i++) {
 	     logPreComputedGaussianFactor += 
-			       logMath.linearToLog(precisionTransformed[i]);
+			       logMath.linearToLog(precisionTransformed[i] * -2);
 	     //	     variance[i] = 1.0f / (variance[i] * 2.0f);
 	 }
 
@@ -251,7 +252,7 @@ class MixtureComponent implements Serializable {
 	 * variance.
 	 */
 	precisionTransformed = new float[this.variance.length];
-	for (i = 0; i < this.varianceTransformationVector.length; i++) {
+        for (i = 0; i < this.varianceTransformationVector.length; i++) {
 	    float tmpVariance = 0.0f;
 	    for (j = 0; j < this.varianceTransformationMatrix[i].length; j++) {
 		tmpVariance += this.variance[j] 
@@ -261,7 +262,7 @@ class MixtureComponent implements Serializable {
 	    if (tmpVariance < varianceFloor) {
 		tmpVariance = varianceFloor;
 	    }
-	    this.precisionTransformed[i] = 1.0f	/ tmpVariance;
+	    precisionTransformed[i] = 1.0f / (-2.0f * tmpVariance);
 	}
     }
 }
