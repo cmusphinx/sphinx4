@@ -70,7 +70,7 @@ live-ep: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=8 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=11 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=8 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager \
@@ -92,7 +92,7 @@ live-ep-cube: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=7 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=10 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=7 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager \
@@ -114,7 +114,7 @@ live-ep-voice: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=3 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=4 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=3 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	-Dedu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager \
@@ -140,7 +140,7 @@ live-free: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=9 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=12 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=9 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow=40 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
@@ -161,7 +161,7 @@ live-free-cube: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=7 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=10 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=7 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow=40 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
@@ -185,7 +185,7 @@ live-free-voice: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=3 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=4 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=3 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=5 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endWindow=40 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.plotEnergy=false \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
@@ -207,6 +207,6 @@ live-alpha: all
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startLow=10 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startHigh=13 \
 	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.endLow=10 \
-	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=10 \
+	-Dedu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.startWindow=4 \
 	-Dedu.cmu.sphinx.frontend.filterNonSpeech=true \
 	tests.live.Live decoders.list
