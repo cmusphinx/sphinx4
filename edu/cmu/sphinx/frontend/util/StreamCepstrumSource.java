@@ -76,7 +76,12 @@ CepstrumSource {
 	this.bigEndian = bigEndian;
 	if (binary) {
 	    binaryStream = new DataInputStream(new BufferedInputStream(is));
-	    numPoints = binaryStream.readInt();
+	    if (bigEndian) {
+		numPoints = binaryStream.readInt();
+	    } else {
+		numPoints = Util.readLittleEndianInt(binaryStream);
+	    }
+	    System.out.println("Cepstral data points: " + numPoints);
 	} else {
 	    est = new ExtendedStreamTokenizer(is, false);
 	    numPoints = est.getInt("num_frames");
