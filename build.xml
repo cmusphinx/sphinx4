@@ -40,7 +40,7 @@
 	        excludes="edu/cmu/sphinx/research/parallel/**"/>
 
     <patternset id="no_jsapi" 
-                includes="edu/**"
+                includes="edu/**/*.java"
 	        excludes="com/**,
                           edu/cmu/sphinx/research/parallel/**,
                           edu/cmu/sphinx/jsapi/**,
@@ -205,12 +205,9 @@ jsapi.exe from the lib directory.
 	    depends="handle_jsapi"
 	    description="Generate javadoc, optionally with '-Daccess=private'">
         <mkdir dir="${javadoc_dir}"/>
-        <javadoc sourcepath="${src_dir}"
-	         source="1.4"
+        <javadoc source="1.4"
 		 additionalparam="-breakiterator"
 		 destdir="${javadoc_dir}" 
-		 packagenames="edu.*"
-                 excludepackagenames="edu.cmu.sphinx.trainer"
 		 overview="${src_dir}/overview.html"
 		 windowtitle="${javadoc_desc}"
                  doctitle="${javadoc_desc}"
@@ -218,6 +215,9 @@ jsapi.exe from the lib directory.
             <link href="http://java.sun.com/products/java-media/speech/forDevelopers/jsapi-doc"
                   offline="true"
                   packagelistLoc="lib/jsapi" />
+            <fileset dir="${src_dir}" defaultexcludes="yes">
+                  <patternset refid="${patternset_to_compile}"/>
+            </fileset>
 	    <classpath refid="libs"/>
         </javadoc>
     </target>

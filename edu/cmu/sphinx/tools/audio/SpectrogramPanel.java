@@ -65,7 +65,7 @@ public class SpectrogramPanel extends JPanel {
      * Creates a new SpectrogramPanel for the given AudioData.
      *
      * @param sphinxProps the SphinxProperties for setting up the front end
-     * @param audioDatathe AudioData
+     * @param audioData the AudioData
      */
     public SpectrogramPanel(SphinxProperties sphinxProps,
                             AudioData audioData) {

@@ -27,15 +27,13 @@ import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**
- * Computes a PLP cepstrum from a given PLP Spectrum.
+ * Computes the PLP cepstrum from a given PLP Spectrum.
  * The procedure has the following steps: <br>
  * 1. Compute the cube root of the PLP spectrum <br>
  * 2. Compute the IDCT of the cube-rooted PLP spectrum to get 
  *    autocorrelation values <br>
  * 3. Compute a linear prediction filter from the autocorrelation values <br>
  * 4. Compute the linear prediction cepstrum from the LP filter.<br>
- *
- * Created: Wed Dec 25 10:22:00 2002
  *
  * @author <a href="mailto:rsingh@cs.cmu.edu">rsingh</a>
  * @version 1.0
@@ -145,7 +143,7 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
 	double[] compressedspectrum = new double[inspectrum.length];
 
 	for (int i = 0; i < inspectrum.length; i++){
-	    compressedspectrum[i] = Math.pow(inspectrum[i], 0.33333333);
+	    compressedspectrum[i] = Math.pow(inspectrum[i], 1.0/3.0);
 	}
 	return compressedspectrum;
     }

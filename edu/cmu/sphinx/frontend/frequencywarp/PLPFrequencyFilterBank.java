@@ -27,13 +27,23 @@ import edu.cmu.sphinx.util.SphinxProperties;
  * Filters an input power spectrum through a PLP filterbank. The
  * filters in the filterbank are placed in the frequency axis so as to
  * mimic the critical band, representing different perceptual effect
- * at different frequency bands.
- * The filter outputs are also scaled for equal loudness preemphasis.
- *
- * Created: Tue Dec 24 17:56:39 2002
+ * at different frequency bands. The filter outputs are also scaled
+ * for equal loudness preemphasis. The filter shapes are defined by
+ * the {@link PLPFilter} class. Like the {@link
+ * MelFrequencyFilterBank}, this filter bank has characteristics
+ * defined by the {@link #PROP_NUMBER_FILTERS number of filters}, the
+ * {@link #PROP_MIN_FREQ minimum frequency}, and the {@link
+ * #PROP_MAX_FREQ maximum frequency}. Unlike the
+ * {@link MelFrequencyFilterBank}, the minimum and maximum frequencies here
+ * refer to the <b>center</b> frequencies of the filters located at
+ * the leftmost and rightmost positions, and not to the
+ * edges. Therefore, this filter bank spans a frequency range that
+ * goes beyond the limits suggested by the minimum and maximum
+ * frequencies.
  *
  * @author <a href="mailto:rsingh@cs.cmu.edu">rsingh</a>
  * @version 1.0
+ * @see PLPFilter
  */
 public class PLPFrequencyFilterBank extends BaseDataProcessor {
     

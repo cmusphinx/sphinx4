@@ -31,22 +31,26 @@ import edu.cmu.sphinx.util.Timer;
  * Therefore, the length of the output array is equal to the number
  * of filters created.
  * <p>
- * The triangular mel-filters in the filter bank are placed 
- * in the frequency axis so as to
- * mimic the critical band, representing different perceptual effect
- * at different frequency bands. Pictorially, the filter bank looks like:
+ * The triangular mel-filters in the filter bank are placed in the
+ * frequency axis so that each filter's center frequency follows the
+ * mel scale, in such a way that the filter bank mimics the critical
+ * band, which represents different perceptual effect at different
+ * frequency bands. Additionally, the edges are placed so that they
+ * coincide with the center frequencies in adjacent
+ * filters. Pictorially, the filter bank looks like:
  * <p>
  * <img src="doc-files/melfilterbank.jpg">
  * <br><center><b>Figure 1: A Mel-filter bank.</b></center>
  * <p>
  * As you might notice in the above figure, the distance at the base
  * from the center to the left edge is different from the center to
- * the right edge. This is due to the mel-frequency scale, which is a
- * non-linear scale that models the non-linear human hearing
- * behavior. As can be inferred from the figure, filtering with the
- * mel scale emphasizes the lower frequencies. A common model for the
- * relation between frequencies in mel and linear scales is as
- * follows:
+ * the right edge. Since the center frequencies follow the
+ * mel-frequency scale, which is a non-linear scale that models the
+ * non-linear human hearing behavior, the mel filter bank corresponds
+ * to a warping of the frequency axis. As can be inferred from the
+ * figure, filtering with the mel scale emphasizes the lower
+ * frequencies. A common model for the relation between frequencies in
+ * mel and linear scales is as follows:
  * <p>
  * <code>melFrequency = 2595 * log(1 + linearFrequency/700)</code>
  * <p>
@@ -72,17 +76,17 @@ import edu.cmu.sphinx.util.Timer;
  * Typical values for the constants defining the filter bank are: 
  * <table width="80%" border="1">
  * <tr><td><b>Sample rate (Hz)</b></td><td><b>16000</b></td><td><b>11025</b></td><td><b>8000</b></td></tr>
- * <tr><td>number of filters</td><td>40</td><td>36</td><td>31</td></tr>
- * <tr><td>minimum frequency (Hz)</td><td>130</td><td>130</td><td>200</td></tr>
- * <tr><td>maximum frequency (Hz)</td><td>6800</td><td>5400</td><td>3500</td></tr>
+ * <tr><td>{@link #PROP_NUMBER_FILTERS number of filters}</td><td>40</td><td>36</td><td>31</td></tr>
+ * <tr><td>{@link #PROP_MIN_FREQ minimum frequency} (Hz)</td><td>130</td><td>130</td><td>200</td></tr>
+ * <tr><td>{@link #PROP_MAX_FREQ maximum frequency} (Hz)</td><td>6800</td><td>5400</td><td>3500</td></tr>
  * </table>
  * <p>
  * Davis and Mermelstein showed that Mel-frequency cepstral
- * coefficients are good for speech recognition.
- * For details, see Davis and Mermelstein,
- * <i>Comparison of Parametric Representations for Monosyllable
- * Word Recognition in Continuously Spoken Sentences, IEEE
- * Transactions on Acoustic, Speech and Signal Processing, 1980</i>.
+ * coefficients present robust characteristics that are good for
+ * speech recognition.  For details, see Davis and Mermelstein,
+ * <i>Comparison of Parametric Representations for Monosyllable Word
+ * Recognition in Continuously Spoken Sentences, IEEE Transactions on
+ * Acoustic, Speech and Signal Processing, 1980</i>.
  * 
  * @see MelFilter
  */

@@ -1,8 +1,6 @@
 /**
  * Contains Linear Prediction Coefficent functions.
  *
- * Created: Wed Dec 25 11:06:02 2002
- *
  * @author <a href="mailto:rsingh@cs.cmu.edu">rsingh</a>
  * @version 1.0
  */
@@ -134,7 +132,7 @@ public class LinearPredictor {
      * using a recursion invented by Oppenheim et al. The literature
      * shows the optimal value of cepstral order to be:
      *
-     * <pre> 0.75 * LPCorder <= ceporder <= 1.25 * LPCorder</pre>
+     * <pre>0.75 * LPCorder <= ceporder <= 1.25 * LPCorder</pre>
      *
      * @param ceporder is the order of the LPC cepstral vector to be 
      *        computed.

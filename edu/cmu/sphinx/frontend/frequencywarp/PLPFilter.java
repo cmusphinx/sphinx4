@@ -15,13 +15,16 @@ package edu.cmu.sphinx.frontend.frequencywarp;
 
 
 /**
- * Define a filter used by the PLPFilterbank class.  PLPFilterbank
- * uses this class to create filters and operate on them.  
- *
- * Created: Tue Dec 24 17:56:39 2002
+ * Defines a filter used by the {@link PLPFrequencyFilterBank} class. The
+ * filter is defined by a function in the {@link #PLPFilter
+ * Constructor}. A set of equally spaced frequencies in a linear scale
+ * is passed to the constructor, which returns the weights for each of
+ * the frequency bins, such that the filter has the shape defined by
+ * this piecewise function in the bark scale.
  *
  * @author <a href="mailto:rsingh@cs.cmu.edu">rsingh</a>
  * @version 1.0
+ * @see PLPFrequencyFilterBank
  */
 public class PLPFilter {
     private double[] filterCoefficients;
@@ -40,16 +43,16 @@ public class PLPFilter {
     /**
      * Constructs a PLP filter around a given center frequency.
      *
-     * Defines a filter according to the following equation 
+     * Defines a filter according to the following equation, defined piecewise
      * (all frequencies in the equation are Bark frequencies):
      *
-     * <code>
+     * <pre>
      * Filter(f) = 0 if f < -2.5 <br>
      *           = 10^(-(f+0.5)) if -2.5 <= f <= -0.5 <br>
      *           = 1  if -0.5 <= f <= 0.5 <br>
      *           = 10^(2.5(f-0.5)) if 0.5 <= f <= 1.3 <br>
      *           = 0 if f > 1.3 <br>
-     * </code>
+     * </pre>
      * The current implementation assumes that the calling routine passes in
      * an array of frequencies, one for each of the DFT points in the
      * spectrum of the frame of speech to be filtered. This is used in
