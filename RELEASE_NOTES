@@ -5,6 +5,8 @@ Version:       XXXX
 Release Date:  XXXX
 
 -------------------------------------------------------------------
+PBL - 9/2/04
+    Fixed bug 995123 - JSAPI allocate/deallocate issues
 
 PPK - 8/25/04
     Fixed top level build.xml so that the various Java files for each
