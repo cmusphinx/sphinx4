@@ -98,10 +98,14 @@ q_rm1onrm1_flatunigram:
 #
 
 RM1_UNIGRAM_CMD = $(JAVA_CMD) \
+        -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10 \
+        -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=9 \
 	-Dedu.cmu.sphinx.model.language.location=RM.2845.unigram.arpa \
 	edu.cmu.sphinx.decoder.BatchDecoder
 
 RM1_UNIGRAM_QUICK_CMD = $(JAVA_CMD) \
+        -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10 \
+        -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=9 \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=8\
 	-Dedu.cmu.sphinx.model.language.location=RM.2845.unigram.arpa \
 	edu.cmu.sphinx.decoder.BatchDecoder
