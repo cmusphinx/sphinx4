@@ -149,6 +149,21 @@ public interface ActiveList {
     public void setProperties(SphinxProperties props);
 
 
+    /**
+     * Sets the absolute beam width.
+     *
+     * @param absoluteBeamWidth the absolute beam width
+     */
+    public void setAbsoluteBeamWidth(int absoluteBeamWidth);
+
+
+    /**
+     * Sets the relative beam width.
+     *
+     * @param relativeBeamWidth the linear relative beam width
+     */
+    public void setRelativeBeamWidth(double relativeBeamWidth);
+
 
     /**
      * Returns an iterator over the elements in this active list
@@ -171,6 +186,5 @@ public interface ActiveList {
      * @return the set of tokens
      */
     public List getTokens();
-
 }
 

@@ -85,13 +85,33 @@ public class SimpleActiveList implements ActiveList  {
 	    = props.getDouble(PROP_RELATIVE_BEAM_WIDTH,
                     PROP_RELATIVE_BEAM_WIDTH_DEFAULT);
 
-	LogMath logMath = LogMath.getLogMath(props.getContext());
-
-	this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
+        setRelativeBeamWidth(linearRelativeBeamWidth);
 
 	tokens = StatisticsVariable.getStatisticsVariable(props.getContext(),
 		    "tokensCreated");
     }
+
+
+    /**
+     * Sets the absolute beam width.
+     *
+     * @param absoluteBeamWidth the absolute beam width
+     */
+    public void setAbsoluteBeamWidth(int absoluteBeamWidth) {
+        this.absoluteBeamWidth = absoluteBeamWidth;
+    }
+
+
+    /**
+     * Sets the relative beam width.
+     *
+     * @param relativeBeamWidth the linear relative beam width
+     */
+    public void setRelativeBeamWidth(double relativeBeamWidth) {
+        LogMath logMath = LogMath.getLogMath(props.getContext());
+        this.relativeBeamWidth = logMath.linearToLog(relativeBeamWidth);
+    }
+
 
     /**
      * Creates a new version of this active list with

@@ -64,25 +64,6 @@ public class FastActiveList implements ActiveList  {
 	setProperties(props);
     }
 
-
-    /**
-     * Creates a FastActiveList with the given properties,
-     * absolute beam and relative beam.
-     *
-     * @param props the properties of the FastActiveList
-     * @param absoluteBeamWidth the absolute beam width
-     * @param relativeBeamWidth the relative beam width
-     */
-    public FastActiveList(SphinxProperties props, int absoluteBeamWidth,
-                          float relativeBeamWidth) {
-        this.props = props;
-        this.absoluteBeamWidth = absoluteBeamWidth;
-        this.relativeBeamWidth = 
-            LogMath.getLogMath(props.getContext()).linearToLog
-            (relativeBeamWidth);
-    }
-
-    
     /**
      * Returns the SphinxProperties of this list.
      *
@@ -107,12 +88,31 @@ public class FastActiveList implements ActiveList  {
 	double linearRelativeBeamWidth  
 	    = props.getDouble(PROP_RELATIVE_BEAM_WIDTH, 
 			      PROP_RELATIVE_BEAM_WIDTH_DEFAULT);
-
-	LogMath logMath = LogMath.getLogMath(props.getContext());
-
-	this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
-
+        
+        setRelativeBeamWidth(linearRelativeBeamWidth);
     }
+
+
+    /**
+     * Sets the absolute beam width.
+     *
+     * @param absoluteBeamWidth the absolute beam width
+     */
+    public void setAbsoluteBeamWidth(int absoluteBeamWidth) {
+        this.absoluteBeamWidth = absoluteBeamWidth;
+    }
+
+
+    /**
+     * Sets the relative beam width.
+     *
+     * @param relativeBeamWidth the linear relative beam width
+     */
+    public void setRelativeBeamWidth(double relativeBeamWidth) {
+        LogMath logMath = LogMath.getLogMath(props.getContext());
+        this.relativeBeamWidth = logMath.linearToLog(relativeBeamWidth);
+    }
+
 
     /**
      * Creates a new version of this active list with

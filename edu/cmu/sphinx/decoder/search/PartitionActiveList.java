@@ -56,6 +56,17 @@ public class PartitionActiveList implements ActiveList  {
     public PartitionActiveList() {
     }
 
+    /**
+     * Creates a new relaxed fit active list with the given target
+     * size
+     *
+     * @param props the sphinx properties
+     *
+     */
+    public PartitionActiveList(SphinxProperties props) {
+	setProperties(props);
+    }
+
 
     /**
      * Returns the SphinxProperties of this list.
@@ -103,7 +114,7 @@ public class PartitionActiveList implements ActiveList  {
      *
      * @param absoluteBeamWidth the absolute beam width
      */
-    public void setRelativeBeamWidth(float linearRelativeBeamWidth) {
+    public void setRelativeBeamWidth(double linearRelativeBeamWidth) {
         this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
     }
 
@@ -115,8 +126,7 @@ public class PartitionActiveList implements ActiveList  {
      * @return the new active list
      */
     public ActiveList createNew() {
-	PartitionActiveList newList = new PartitionActiveList();
-	newList.props = props;
+	PartitionActiveList newList = new PartitionActiveList(props);
 	newList.absoluteBeamWidth = absoluteBeamWidth;
 	newList.relativeBeamWidth = relativeBeamWidth;
 
