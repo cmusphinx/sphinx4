@@ -146,7 +146,7 @@ public class SimpleNGramModel implements LanguageModel {
                        
             } else {    // if the single word is not in the model at all
                 // then its zero likelihood that we'll use it   
-                logProbability = logMath.getLogZero();
+                logProbability = LogMath.getLogZero();
             }
         } else {
             logProbability = prob.logProbability;
@@ -545,7 +545,7 @@ public class SimpleNGramModel implements LanguageModel {
                 ("Probability of " + wordSequence + " is: " 
                  + sm.getProbability(wordSequence) + "(log(" 
                  + logMath.getLogBase() + ")), " +
-                 + logMath.logToLog(sm.getProbability(wordSequence),
+                 + LogMath.logToLog(sm.getProbability(wordSequence),
                                     logMath.getLogBase(), 10.f) + "(log10)");
             System.out.print("Enter words: ");
         }

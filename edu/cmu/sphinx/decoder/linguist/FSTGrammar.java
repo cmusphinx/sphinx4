@@ -24,6 +24,7 @@ import java.util.Set;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.dictionary.Word;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
+import edu.cmu.sphinx.util.LogMath;
 
 /**
  * Loads a grammar from a file in 'arpa' grammar format.
@@ -164,8 +165,8 @@ public class FSTGrammar extends Grammar {
 		    GrammarNode silenceNode =
 			createGrammarNode(++maxNodeId, 
                                 Dictionary.SILENCE_SPELLING);
-		    initialNode.add(silenceNode, getLogMath().getLogOne());
-		    silenceNode.add(initialNode, getLogMath().getLogOne());
+		    initialNode.add(silenceNode, LogMath.getLogOne());
+		    silenceNode.add(initialNode, LogMath.getLogOne());
 		}
 
 	    } else if (token.equals("T")) {
@@ -320,14 +321,14 @@ public class FSTGrammar extends Grammar {
 	    // if it has at least one word, then expand the node
 	    if (node.getNumAlternatives() > 0) {
 		GrammarNode endNode = createGrammarNode(++maxNodeID, false);
-		node.add(endNode, getLogMath().getLogOne());
+		node.add(endNode, LogMath.getLogOne());
 
                 // add an optional silence
                 if (addOptionalSilence) {
                     GrammarNode silenceNode = createGrammarNode
                         (++maxNodeID, silence);
-                    node.add(silenceNode, getLogMath().getLogOne());
-                    silenceNode.add(endNode, getLogMath().getLogOne());
+                    node.add(silenceNode, LogMath.getLogOne());
+                    silenceNode.add(endNode, LogMath.getLogOne());
                 }
 		expandedNodes.add(node);
 	    }

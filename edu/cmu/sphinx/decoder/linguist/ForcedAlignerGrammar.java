@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import edu.cmu.sphinx.util.LogMath;
+
 /**
  * Creates a grammar from a reference sentence. It is a constrained
  * grammar that represents the sentence only.
@@ -49,7 +51,7 @@ public class ForcedAlignerGrammar extends Grammar {
 	throws NoSuchMethodException {
 	GrammarNode initialNode = null;
 	GrammarNode finalNode = null;
-	final float logArcProbability = getLogMath().getLogOne();
+	final float logArcProbability = LogMath.getLogOne();
 	String nodeName;
 
 	StringTokenizer tok = new StringTokenizer(referenceText);

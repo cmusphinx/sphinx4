@@ -401,7 +401,7 @@ class HMMPoolManager {
 	for (int i = 0; i < stateVector.length; i++) {
 	    // Make sure we're not trying to accumulate in an invalid
 	    // transition.
-	    if (stateVector[i] != logMath.getLogZero()) {
+	    if (stateVector[i] != LogMath.getLogZero()) {
 		bufferArray[indexState].logAccumulate(value, i, logMath);
 	    }
 	}
@@ -615,7 +615,7 @@ class HMMPoolManager {
 		if (buffer.wasUsed()) {
 		    for (int k = 0; k < matrix[j].length; k++) {
 			float bufferValue = buffer.getValue(k);
-			if (bufferValue != logMath.getLogZero()) {
+			if (bufferValue != LogMath.getLogZero()) {
 			    assert matrix[j][k] != LogMath.getLogZero();
 			    if (bufferValue < logTransitionProbabilityFloor) {
 				buffer.setValue(k, 

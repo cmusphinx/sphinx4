@@ -58,7 +58,7 @@ public class  Unit {
      */
     public static Unit getUnit(String name, boolean filler, Context context) {
         Unit unit = null;
-        if (context.EMPTY_CONTEXT == context) {
+        if (Context.EMPTY_CONTEXT == context) {
             unit = (Unit) ciMap.get(name);
             if (unit == null) {
                 unit = createCIUnit(name, filler);

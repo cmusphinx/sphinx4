@@ -163,7 +163,7 @@ public class LexTreeLinguist implements  Linguist {
         sentenceStartWordArray = new Word[1];
         sentenceStartWordArray[0] = dictionary.getSentenceStartWord();
         
-        logOne = logMath.getLogOne();
+        logOne = LogMath.getLogOne();
 
 
         logWordInsertionProbability = logMath.linearToLog

@@ -35,6 +35,8 @@ import javax.speech.recognition.RuleToken;
 
 import com.sun.speech.engine.recognition.BaseRecognizer;
 
+import edu.cmu.sphinx.util.LogMath;
+
 
 
 /**
@@ -322,7 +324,7 @@ public class JSGFGrammar extends Grammar {
             }
             for (int i = 0; i < weights.length; i++) {
                 if (sum == 0.0f) {
-                    weights[i] = getLogMath().getLogZero();
+                    weights[i] = LogMath.getLogZero();
                 } else {
                     weights[i] = getLogMath().linearToLog(weights[i] / sum);
                 }

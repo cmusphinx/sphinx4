@@ -19,6 +19,7 @@ import java.util.List;
 
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
+import edu.cmu.sphinx.util.LogMath;
 
 
 /**
@@ -117,13 +118,13 @@ public class WordListGrammar extends Grammar {
 	GrammarNode wordNode = createGrammarNode(identity++, alternativeArray);
 	GrammarNode finalNode = createGrammarNode(identity++, true);
 
-	firstNode.add(wordNode, getLogMath().getLogOne());
-	firstNode.add(firstSilenceNode, getLogMath().getLogOne());
-	firstSilenceNode.add(wordNode, getLogMath().getLogOne());
+	firstNode.add(wordNode, LogMath.getLogOne());
+	firstNode.add(firstSilenceNode, LogMath.getLogOne());
+	firstSilenceNode.add(wordNode, LogMath.getLogOne());
 	if (isLooping) {
-	    wordNode.add(wordNode, getLogMath().getLogOne());
+	    wordNode.add(wordNode, LogMath.getLogOne());
 	}
-	wordNode.add(finalNode, getLogMath().getLogOne());
+	wordNode.add(finalNode, LogMath.getLogOne());
 
 	return firstNode;
     }

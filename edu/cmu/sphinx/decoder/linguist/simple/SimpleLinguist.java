@@ -160,7 +160,7 @@ public class SimpleLinguist implements  Linguist {
 
         setAcousticModels(models);
 
-        logOne = logMath.getLogOne();
+        logOne = LogMath.getLogOne();
 
 
         logWordInsertionProbability = logMath.linearToLog

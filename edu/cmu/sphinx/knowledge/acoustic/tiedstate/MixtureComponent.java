@@ -167,7 +167,7 @@ public class MixtureComponent implements Serializable {
 
 	 if (Float.isNaN(logDval)) {
 	     System.out.println("gs is Nan, converting to 0");
-	     logDval = logMath.getLogZero();
+	     logDval = LogMath.getLogZero();
 	 }
 
 	 if (logDval < distFloor) {

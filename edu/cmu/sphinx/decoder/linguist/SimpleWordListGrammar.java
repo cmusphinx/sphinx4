@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
+import edu.cmu.sphinx.util.LogMath;
 
 
 /**
@@ -108,16 +109,16 @@ public class SimpleWordListGrammar extends Grammar {
 	// now connect all the GrammarNodes together
 
 
-	initialNode.add(branchNode, getLogMath().getLogOne());
+	initialNode.add(branchNode, LogMath.getLogOne());
 	float branchScore = getLogMath().linearToLog
 	    (1.0/wordGrammarNodes.size());
 
 	for (Iterator i = wordGrammarNodes.iterator(); i.hasNext();) {
 	    GrammarNode wordNode = (GrammarNode) i.next();
 	    branchNode.add(wordNode, branchScore);
-            wordNode.add(finalNode, getLogMath().getLogOne());
+            wordNode.add(finalNode, LogMath.getLogOne());
             if (isLooping) {
-                wordNode.add(branchNode, getLogMath().getLogOne());
+                wordNode.add(branchNode, LogMath.getLogOne());
             } 
 	}
 

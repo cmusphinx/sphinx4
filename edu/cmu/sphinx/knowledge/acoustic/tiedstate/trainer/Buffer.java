@@ -207,7 +207,7 @@ class Buffer {
      */
     void logNormalizeToSum(LogMath logMath) {
 	assert isLog;
-	float logZero = logMath.getLogZero();
+	float logZero = LogMath.getLogZero();
 	float den = logZero;
 	for (int i = 0; i < numerator.length; i++) {
 	    if (numerator[i] != logZero) {

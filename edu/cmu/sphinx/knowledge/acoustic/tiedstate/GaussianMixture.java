@@ -145,7 +145,7 @@ public class GaussianMixture implements Senone, Serializable {
      * @return the score, in logMath log base, for the feature
      */
     public float calculateScore(Data feature) {
-	float logTotal = logMath.getLogZero();
+	float logTotal = LogMath.getLogZero();
 	for (int i = 0; i < mixtureComponents.length; i++) {
 	    // In linear form, this would be:
 	    //
