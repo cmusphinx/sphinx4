@@ -24,8 +24,8 @@ import java.net.URL;
 
 
 /**
- * A simple HelloDigits demo showing a simple speech application 
- * built using Sphinx-4.
+ * A version of the HelloWorld demo that does not use endpointing.
+ * Instead, the user will press ENTER to signal the end of speech.
  */
 public class HelloDigits {
 
@@ -47,8 +47,14 @@ public class HelloDigits {
 	    final Microphone microphone = 
                 (Microphone) cm.lookup("microphone");
 
+
+            // allocate the resource necessary for the recognizer
             recognizer.allocate();
 
+            //
+            // This thread is used to listen for the ENTER key,
+            // which when pressed will stop the microphone.
+            //
 	    Thread t = new Thread() {
 		    public void run() {
 			try {
@@ -68,13 +74,21 @@ public class HelloDigits {
 	    System.out.println
 		("Say any digit(s): e.g. \"two oh oh four\", " +
 		 "\"three six five\".");
-	    
+
+	    //
+            // The program now enters a loop to keep listening for audio,
+            // and decodes the recorded audio.
+            //
             while (true) {
 		if (microphone.startRecording()) {
                     System.out.println
 			("Start speaking. " +
 			 "Press ENTER when you finish speaking.");
                     
+                    // 
+                    // this method returns when the ENTER key is pressed,
+                    // which stops the microphone
+                    //
 		    Result result = recognizer.recognize();
                     
                     if (result != null) {

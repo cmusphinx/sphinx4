@@ -25,7 +25,8 @@ import java.net.URL;
 
 /**
  * A simple HelloWorld demo showing a simple speech application 
- * built using Sphinx-4.
+ * built using Sphinx-4. This application uses the Sphinx-4 endpointer,
+ * which automatically segments incoming audio into utterances and silences.
  */
 public class HelloWorld {
 
@@ -46,9 +47,13 @@ public class HelloWorld {
 	    Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
 	    Microphone microphone = (Microphone) cm.lookup("microphone");
 
+
+            // allocate the resource necessary for the recognizer
             recognizer.allocate();
 
+            // the microphone will keep recording until the program exits
 	    if (microphone.startRecording()) {
+
 		System.out.println
 		    ("Say any digit(s): e.g. \"two oh oh four\", " +
 		     "\"three six five\".");
@@ -57,6 +62,11 @@ public class HelloWorld {
 		    System.out.println
 			("Start speaking. Press Ctrl-C to quit.");
 
+                    //
+                    // This method will return when the end of speech
+                    // is reached. Note that the endpointer will determine
+                    // the end of speech.
+                    // 
 		    Result result = recognizer.recognize();
 		    
 		    if (result != null) {
