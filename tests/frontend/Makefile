@@ -71,6 +71,21 @@ ep-tidigits: all
 	tests.frontend.EnergyEndpointerTest \
 	energyEndpointer ../decoder/tiDigits.props ../decoder/tidigits.batch
 
+ep-tidigits-quick: all
+	$(JAVA_CMD) \
+	-Dtests.frontend.energyEndpointer.batchMode=true \
+	-DremoveNonSpeech=false \
+	tests.frontend.EnergyEndpointerTest \
+	energyEndpointer ../decoder/tiDigits.props ../decoder/tidigits.batch
+
+ep-one: all
+	$(JAVA_CMD) \
+	-Dtests.frontend.energyEndpointer.batchMode=true \
+	-Dtests.frontend.energyEndpointer.dumpTimes=true \
+	-DremoveNonSpeech=false \
+	tests.frontend.EnergyEndpointerTest \
+	energyEndpointer ../decoder/tiDigits.props ./one.batch
+
 clean::
 	rm -f *.out *.diff
 

@@ -19,7 +19,7 @@ import java.util.*;
 public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
 
     private static final String PROP_PREFIX = 
-    "edu.cmu.sphinx.frontend.energyEndpointer.";
+    "edu.cmu.sphinx.frontend.EnergyEndpointer.";
 
     /**
      * Controls whether to merge multiple speech segments within an
@@ -81,7 +81,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     /**
      * The last frame before speech went above startLow.
      */
-    private Cepstrum lastFrameBelowStartLow;
+    private Cepstrum lastStartLowFrame;
 
     /**
      * The frame when speech stayed below endLow for endOffset frames.
@@ -100,6 +100,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     private int startHighFrames;    // # of frames with energy > startHigh
     private int endLowFrames;       // # of frames with energy < endLow
     private int numSpeechSegments;  // # of speech segments in this utterance
+    private int numCepstra;         // # of Cepstra in this Utterance
 
 
     /**
@@ -157,9 +158,11 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
         inSpeech = false;
         lastEnergy = 0;
         location = BELOW_START_LOW;
+        startLowFrames = 0;
         startHighFrames = 0;
         endLowFrames = 0;
         numSpeechSegments = 0;
+        numCepstra = 0;
     }
 
 
@@ -189,7 +192,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
                 inputBuffer.addFirst(cepstrum);
                 // read ahead until we have reach the start of speech
                 while (cepstrum.getEnergy() < startHigh ||
-                       startHighFrames < startWindow) {
+                       startHighFrames <= startWindow) {
                     cepstrum = readCepstrum();
                     if (cepstrum != null) {
                         inputBuffer.addFirst(cepstrum);
@@ -223,17 +226,20 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     private Cepstrum readCepstrum() throws IOException {
         Cepstrum cepstrum = predecessor.getCepstrum();
 
-        if (cepstrum != null && cepstrum.hasContent()) {
-            // Call a different method to handle the Cepstrum
-            // depending on its energy level.
-            if (cepstrum.getEnergy() < startLow || 
-                cepstrum.getEnergy() < endLow) {
-                processLowEnergyCepstrum(cepstrum);
-            } else if (startLow < cepstrum.getEnergy() &&
-                       cepstrum.getEnergy() <= startHigh) {
-                processMediumEnergyCepstrum(cepstrum);
-            } else if (cepstrum.getEnergy() > startHigh) {
-                processHighEnergyCepstrum(cepstrum);
+        if (cepstrum != null) {
+            numCepstra++;
+            if (cepstrum.hasContent()) {
+                // Call a different method to handle the Cepstrum
+                // depending on its energy level.
+                if (cepstrum.getEnergy() < startLow || 
+                    cepstrum.getEnergy() < endLow) {
+                    processLowEnergyCepstrum(cepstrum);
+                } else if (startLow < cepstrum.getEnergy() &&
+                           cepstrum.getEnergy() <= startHigh) {
+                    processMediumEnergyCepstrum(cepstrum);
+                } else if (cepstrum.getEnergy() > startHigh) {
+                    processHighEnergyCepstrum(cepstrum);
+                }
             }
         }
             
@@ -274,20 +280,26 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
      */
     private void processMediumEnergyCepstrum(Cepstrum cepstrum) {
         if (location == BELOW_START_LOW) {
-            if (lastFrameBelowStartLow != null) {
-                // If we are below startLow, and lastFrameBelowStartLow
+            if (lastStartLowFrame != null) {
+                // If we are below startLow, and lastStartLowFrame
                 // was not null, we just had a dropout (or spike).
                 // If the dropout was longer than maxDropout,
-                // then the lastFrameBelowStartLow should be reset.
+                // then the lastStartLowFrame should be reset.
                 if (maxDropout < startLowFrames &&
                     inputBuffer.size() > 0) {
-                    lastFrameBelowStartLow = (Cepstrum) inputBuffer.getFirst();
+                    setLastStartLowFrame((Cepstrum) inputBuffer.getFirst());
                 }
-            } else if (inputBuffer.size() > 0) {
-                lastFrameBelowStartLow = (Cepstrum) inputBuffer.getFirst();
+            } else { // if lastStartLowFrame == null
+                if (numCepstra == 1) {
+                    // if this is the first frame
+                    setLastStartLowFrame(cepstrum);
+                } else if (numCepstra > 1) {
+                    setLastStartLowFrame((Cepstrum) inputBuffer.getFirst());
+                }
             }
         }
         startLowFrames = 0;
+        endLowFrames = 0;
         location = BETWEEN_START_LOW_HIGH;
     }
    
@@ -300,7 +312,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     private void processHighEnergyCepstrum(Cepstrum cepstrum) {
         if (location == BELOW_START_LOW) {
             if (inputBuffer.size() > 0) {
-                lastFrameBelowStartLow = (Cepstrum) inputBuffer.getFirst();
+                setLastStartLowFrame((Cepstrum) inputBuffer.getFirst());
             }
         }
         
@@ -321,12 +333,21 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
 
 
     /**
+     * Sets the lastStartLowFrame.
+     *
+     * @param cepstrum the Cepstrum that will be the lastStartLowFrame
+     */
+    private void setLastStartLowFrame(Cepstrum cepstrum) {
+        lastStartLowFrame = cepstrum;
+    }
+
+
+    /**
      * What happens when an UTTERANCE_START is encountered.
      */
     private void utteranceStart() {
         reset();
-        startLowFrames = 0;
-        lastFrameBelowStartLow = null;
+        setLastStartLowFrame(null);
         endOffsetFrame = null;
     }
 
@@ -335,21 +356,26 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
      * What happens when speech starts.
      */
     private void speechStart() {
+        
+        insertSpeechStart();
 
         // insert a SPEECH_START either if this is the first speech
         // segment or, if we are not merging the speech segments
+        /*
         if (numSpeechSegments == 0 || !mergeSpeechSegments) {
             insertSpeechStart();
         }
+        */
 
         // if we are merging the speech segments in an utterance
         // and there are already other speech segments in this utterance,
         // remove the last SPEECH_END Cepstrum
+        /*
         if (mergeSpeechSegments && numSpeechSegments > 0) {
             removeLastSpeechEnd();
         }
-
-        lastFrameBelowStartLow = null;
+        */
+        setLastStartLowFrame(null);
         inSpeech = true;
         endLowFrames = 0;
         endOffsetFrame = null;
@@ -373,7 +399,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
      */
     private void insertSpeechStart() {
         // "index" is where we should insert the SPEECH_START
-        int index = inputBuffer.indexOf(lastFrameBelowStartLow);
+        int index = inputBuffer.indexOf(lastStartLowFrame);
 
         // Go back startOffset frames, but check if we have hit
         // an UTTERANCE_START, in which case we should stop going back.
@@ -391,10 +417,18 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
 
         if (index >= inputBuffer.size()) {
             index = inputBuffer.size();
-        }
-        if (index < 0) {
-            System.out.println("Cannot find lastFrameBelowStartLow");
+        } else if (index < 0) {
+            // This probably means that there weren't any frames
+            // below startLow so far for this Utterance. We just
+            // go back and find the UTTERANCE_START.
             index = 0;
+            System.out.println("Cannot find lastStartLowFrame");
+            for (ListIterator i = inputBuffer.listIterator(); i.hasNext();) {
+                Cepstrum cepstrum = (Cepstrum) i.next();
+                if (cepstrum.getSignal().equals(Signal.UTTERANCE_START)) {
+                    index = inputBuffer.indexOf(cepstrum);
+                }
+            }
         }
         inputBuffer.add(index, (new Cepstrum(Signal.SPEECH_START)));
     }

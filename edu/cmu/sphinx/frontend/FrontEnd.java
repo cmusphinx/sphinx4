@@ -122,6 +122,13 @@ public class FrontEnd extends DataProcessor {
 
 
     /**
+     * The name of the SphinxProperty that specifies the endpointer.
+     * The default value is "none".
+     */
+    public static final String PROP_ENDPOINTER = PROP_PREFIX + "endpointer";
+
+
+    /**
      * The name of the SphinxProperty that decides whether we do live
      * mode CMN or batch mode CMN.
      */
@@ -146,6 +153,9 @@ public class FrontEnd extends DataProcessor {
         
         frontends.put(context, this);
 
+        String endpointer = getSphinxProperties().getString
+            (PROP_ENDPOINTER, "none");
+
         liveCMN = getSphinxProperties().getBoolean(PROP_LIVE_CMN, false);
 
         // initialize all the frontend processors
@@ -165,12 +175,18 @@ public class FrontEnd extends DataProcessor {
         MelCepstrumProducer melCepstrum = new MelCepstrumProducer
             ("MelCepstrum", context, melFilterbank);
 
+        CepstrumSource cepstrumSource = melCepstrum;
+
+        if (endpointer.equals("edu.cmu.sphinx.frontend.EnergyEndpointer")) {
+            cepstrumSource = createEnergyEndpointer(context, melCepstrum);
+        }
+
         CepstrumSource cmn = null;
 
         if (liveCMN) {
-            cmn = new LiveCMN("LiveCMN", context, melCepstrum);
+            cmn = new LiveCMN("LiveCMN", context, cepstrumSource);
         } else {
-            cmn = new BatchCMN("BatchCMN", context, melCepstrum);
+            cmn = new BatchCMN("BatchCMN", context, cepstrumSource);
         }
 
         FeatureExtractor extractor = new FeatureExtractor
@@ -178,6 +194,26 @@ public class FrontEnd extends DataProcessor {
 
         setAudioSource(audioSource);
         setFeatureSource(extractor);
+    }
+
+
+    /**
+     * Creates an energy-based endpointer using the given context
+     * and given predecessor.
+     *
+     * @param context the context to use
+     * @param predecessor the CepstrumSource to obtain Cepstra from
+     *
+     * @return the endpointer which is a CepstrumSource
+     */
+    private CepstrumSource createEnergyEndpointer(String context,
+                                                  CepstrumSource predecessor) 
+    throws IOException {
+        EnergyEndpointer energyEndpointer = new EnergyEndpointer
+            ("EnergyEndpointer", context, predecessor);
+        NonSpeechFilter nonSpeechFilter = new NonSpeechFilter
+            ("NonSpeechFilter", context, energyEndpointer);
+        return nonSpeechFilter;
     }
 
 

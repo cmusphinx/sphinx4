@@ -192,10 +192,14 @@ public class CepstraViewer extends JFrame {
                 }
             } else {
                 // draw the SPEECH_START and SPEECH_END
-                if (cepstrum.getSignal().equals(Signal.SPEECH_START)) {
+                Signal signal = cepstrum.getSignal();
+                if (signal.equals(Signal.SPEECH_START)) {
                     drawSpeechLine(x, Color.GREEN, g);
-                } else if (cepstrum.getSignal().equals(Signal.SPEECH_END)) {
+                } else if (signal.equals(Signal.SPEECH_END)) {
                     drawSpeechLine(x, Color.RED, g);
+                } else if (signal.equals(Signal.UTTERANCE_START) ||
+                           signal.equals(Signal.UTTERANCE_END)) {
+                    drawSpeechLine(x, Color.BLACK, g);
                 }
             }
         }

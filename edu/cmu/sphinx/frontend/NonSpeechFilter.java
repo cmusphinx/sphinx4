@@ -25,6 +25,8 @@ import java.util.*;
 public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
 
     private CepstrumSource predecessor;
+    private List inputBuffer;
+
 
     /**
      * Constructs an NonSpeechFilter with the given name, context,
@@ -40,6 +42,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
                             CepstrumSource predecessor) throws IOException {
         super(name, context);
         this.predecessor = predecessor;
+        this.inputBuffer = new LinkedList();
     }
 
 
@@ -56,22 +59,42 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
      */
     public Cepstrum getCepstrum() throws IOException {
         
-        Cepstrum cepstrum = predecessor.getCepstrum();
+        Cepstrum cepstrum = readCepstrum();
 
         getTimer().start();
 
         if (cepstrum != null) {
             if (cepstrum.getSignal().equals(Signal.UTTERANCE_START)) {
                 Cepstrum utteranceStart = cepstrum;
-                // read (and discard) all the Cepstrum from UTTERANCE_START
-                // until we hit a SPEECH_START
+
+                // Read (and discard) all the Cepstrum from UTTERANCE_START
+                // until we hit a SPEECH_START. The SPEECH_START is discarded.
                 readUntil(Signal.SPEECH_START);
                 cepstrum = utteranceStart;
                 
             } else if (cepstrum.getSignal().equals(Signal.SPEECH_END)) {
+
                 // read (and discard) all the Cepstrum from SPEECH_END
                 // until we hit a UTTERANCE_END
-                cepstrum = readUntil(Signal.UTTERANCE_END);
+                List cepstrumList = readUntil(Signal.SPEECH_START,
+                                              Signal.UTTERANCE_END);
+
+                Cepstrum lastCepstrum = (Cepstrum) cepstrumList.get
+                    (cepstrumList.size() - 1);
+
+                if (lastCepstrum != null) {
+                    if (lastCepstrum.getSignal().equals(Signal.SPEECH_START)) {
+                        // first remove the SPEECH_START, then add
+                        // all the Cepstra to the inputBuffer
+                        cepstrumList.remove(lastCepstrum);
+                        inputBuffer.addAll(cepstrumList);
+                        cepstrum = readCepstrum();
+
+                    } else if (lastCepstrum.getSignal().equals
+                               (Signal.UTTERANCE_END)) {
+                        cepstrum = lastCepstrum;
+                    }
+                }
             }
         }
 
@@ -79,6 +102,16 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
 
         return cepstrum;
     }
+
+
+    private Cepstrum readCepstrum() throws IOException {
+        if (inputBuffer.size() > 0) {
+            return (Cepstrum) inputBuffer.remove(0);
+        } else {
+            return predecessor.getCepstrum();
+        }
+    }
+
 
     /**
      * Remove from the end of this Queue all the Cepstrum,
@@ -92,8 +125,23 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
     private Cepstrum readUntil(Signal signal) throws IOException {
         Cepstrum cepstrum = null;
         do {
-            cepstrum = predecessor.getCepstrum();
+            cepstrum = readCepstrum();
         } while (cepstrum != null && !cepstrum.getSignal().equals(signal));
         return cepstrum;
+    }
+
+    private List readUntil(Signal signal1, Signal signal2) throws
+    IOException {
+        List cepstrumList = new LinkedList();
+        Cepstrum cepstrum = null;
+        do {
+            cepstrum = readCepstrum();
+            if (cepstrum != null) {
+                cepstrumList.add(cepstrum);
+            }
+        } while (cepstrum != null &&
+                 !cepstrum.getSignal().equals(signal1) &&
+                 !cepstrum.getSignal().equals(signal2));
+        return cepstrumList;
     }
 }

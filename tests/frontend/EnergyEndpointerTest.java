@@ -74,6 +74,10 @@ public class EnergyEndpointerTest {
                     cepstraList.add(cepstrum);
                     Signal signal = cepstrum.getSignal();
 
+                    // If this is the end of an Utterance, group all
+                    // the Cepstrum found so far together to create a
+                    // CepstrumGroup, and give it to the CepstraViewer.
+
                     if (signal != null && 
                         signal.equals(Signal.UTTERANCE_END)) {
 
