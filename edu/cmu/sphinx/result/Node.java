@@ -15,6 +15,8 @@ import edu.cmu.sphinx.result.Lattice;
 import edu.cmu.sphinx.result.Edge;
 import edu.cmu.sphinx.util.LogMath;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Iterator;
 import java.util.Vector;
@@ -270,7 +272,7 @@ public class Node {
     }
 
     public String toString() {
-        return "Node(" + id + ":" + word + ")";
+        return "Node(" + word + "," + getBeginTime() + "|" + getEndTime() + ")";
     }
 
     /**
@@ -350,5 +352,79 @@ public class Node {
      */
     public int hashCode() {
         return id.hashCode();
+    }
+    
+    
+    /**
+     * Assumes ids are unique node identifiers
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        return id.equals(((Node)obj).getId());
+    }
+    
+    public void calculateBeginTime() {
+        beginTime = 0;
+        Iterator e = fromEdges.iterator();
+        while (e.hasNext()) {
+            Edge edge = (Edge)e.next();
+            if (edge.getFromNode().getEndTime() > beginTime) {
+                beginTime = edge.getFromNode().getEndTime();
+            }
+        }
+    }
+        
+    /**
+     * Get the nodes at the other ends of outgoing edges of this node.
+     * 
+     * @return a list of child nodes
+     */
+    public List getChildNodes() {
+        LinkedList childNodes = new LinkedList();
+        Iterator e = toEdges.iterator();
+        while (e.hasNext()) {
+            Edge edge = (Edge)e.next();
+            childNodes.add(edge.getToNode());
+        }
+        return childNodes;
+    }
+    
+    protected boolean isAncestorHelper(List children, Node node) {
+        Iterator i = children.iterator();
+        while(i.hasNext()) {
+            Node n = (Node)i.next();
+            if (n.equals(node)) {
+                return true;
+            }
+            if (isAncestorHelper(n.getChildNodes(),node)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Check whether this node is an ancestor of another node.
+     * 
+     * @param node the Node to check
+     * @return whether this node is an ancestor of the passed in node.
+     */
+    public boolean isAncestorOf(Node node) {
+        if (this.equals(node)) {
+            return true; // node is its own ancestor
+        }
+        return isAncestorHelper(this.getChildNodes(),node);
+    }
+    
+    /**
+     * Check whether this node has an ancestral relationship with another node
+     * (i.e. either this node is an ancestor of the other node, or vice versa)
+     * 
+     * @param node the Node to check for a relationship
+     * @return whether a relationship exists
+     */
+    public boolean hasAncestralRelationship(Node node) {
+        return this.isAncestorOf(node) || node.isAncestorOf(this);
     }
 }
