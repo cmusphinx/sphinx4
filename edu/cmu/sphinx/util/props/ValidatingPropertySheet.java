@@ -370,7 +370,7 @@ class ValidatingPropertySheet implements PropertySheet {
                 }
             } catch (ClassNotFoundException cnfe) {
                 throw new PropertyException(registry.getOwner(),
-                    name, "Can't locate FromJarWithClass:/" + className);
+                    name, "Can't locate resource:/" + className);
             }
         } else {
             if (location.indexOf(":") == -1) {

@@ -169,7 +169,7 @@ public abstract class PropertyType {
      * <li> a URL such as http://www.cmu.edu/foo.zip
      * <li> a simple file location (e.g.  /lab/speech/data/wsj.jar)
      * <li> a resource in a jar file in the form:
-     * FromJarWithClass://FullyQualifiedClassName/resourceName
+     * resource:/FullyQualifiedClassName!resourceName
      * </ul>
      */
     public static PropertyType RESOURCE = new PropertyType("Resource") {
@@ -184,7 +184,7 @@ public abstract class PropertyType {
             if (obj instanceof String) {
                 String loc = (String) obj;
 
-                // First see if it is a FromJarWithClass resource
+                // First see if it is a resource
 
                 if (loc.toLowerCase().startsWith("resource:/")) {
                     return true;
