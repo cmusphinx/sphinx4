@@ -18,7 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +36,7 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
  *
  * Note that all probabilties are maintained in the LogMath log base
  */
-public class GrammarNode implements Serializable {
+public class GrammarNode {
 
     private int identity;			// the node id
     private boolean isFinal;			// is this the final node?

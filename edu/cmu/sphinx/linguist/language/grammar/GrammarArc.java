@@ -12,8 +12,6 @@
 
 package edu.cmu.sphinx.linguist.language.grammar;
 
-import java.io.Serializable;
-
 
 /**
  * Represents a single transition out of a grammar node. The grammar
@@ -23,7 +21,7 @@ import java.io.Serializable;
  *
  * Note that all probabilities are maintained in the LogMath log base
  */
-public class GrammarArc implements Serializable {
+public class GrammarArc {
     private GrammarNode grammarNode;
     private float logProbability;
 

@@ -200,7 +200,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private boolean showTokenCount;
     private boolean checkStateOrder;
     private boolean buildWordLattice;
-    private boolean allowSinglePathThroughHMM = false;
     private boolean keepAllTokens = false;
     private int growSkipInterval = 0;
     private float relativeBeamWidth;

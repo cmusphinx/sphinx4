@@ -12,7 +12,6 @@
 
 package edu.cmu.sphinx.linguist.flat;
 
-import java.io.Serializable;
 
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 
@@ -20,8 +19,7 @@ import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
  * Represents a non-emitting sentence hmm state
  * 
  */
-public class GrammarState extends SentenceHMMState implements
-        Serializable {
+public class GrammarState extends SentenceHMMState {
     private GrammarNode grammarNode;
 
     /**

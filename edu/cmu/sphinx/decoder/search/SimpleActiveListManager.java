@@ -16,6 +16,7 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
 import edu.cmu.sphinx.linguist.WordSearchState;
@@ -218,8 +219,12 @@ public class SimpleActiveListManager implements ActiveListManager {
             return listPtr + 1 < currentActiveLists.length - 1;
         }
 
-        public Object next() {
+        public Object next() throws NoSuchElementException {
             listPtr++;
+
+            if (listPtr >= currentActiveLists.length) {
+                throw new NoSuchElementException();
+            }
             if (checkPriorLists) {
                 checkPriorLists();
             }

@@ -246,18 +246,6 @@ public class SimpleNGramModel implements LanguageModel {
     }
 
     /**
-     * Gets the probability entry for the single word
-     * 
-     * @param string
-     *                the word of interest
-     * 
-     * @return the probability entry or null
-     */
-    private Probability getProb(String string) {
-        return (Probability) map.get(string);
-    }
-
-    /**
      * Converts a wordList to a string
      * 
      * @param wordList

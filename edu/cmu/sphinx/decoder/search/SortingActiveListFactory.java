@@ -100,7 +100,6 @@ public class SortingActiveListFactory implements ActiveListFactory {
         private final static int DEFAULT_SIZE = 1000;
         private int absoluteBeamWidth;
         private float logRelativeBeamWidth;
-        private boolean showSameScoreEdgeTokens = false;
         private Token bestToken;
         // when the list is changed these things should be
         // changed/updated as well

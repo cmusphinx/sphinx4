@@ -251,7 +251,7 @@ public class LexTreeLinguist implements Linguist {
     public final static int PROP_CACHE_SIZE_DEFAULT = 0;
 
     // just for detailed debugging
-    private final boolean tracing = false;
+    private final static boolean tracing = false;
     private final static SearchStateArc[] EMPTY_ARC = new SearchStateArc[0];
 
     // ----------------------------------

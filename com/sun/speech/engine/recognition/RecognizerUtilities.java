@@ -477,8 +477,8 @@ public class RecognizerUtilities {
 
     boolean elimVOID = true;
     boolean elimNULL = true;
-    if (args.length > 1) elimNULL = (new Boolean(args[1])).booleanValue();
-    if (args.length > 2) elimVOID = (new Boolean(args[2])).booleanValue();
+    if (args.length > 1) elimNULL = (Boolean.valueOf(args[1])).booleanValue();
+    if (args.length > 2) elimVOID = (Boolean.valueOf(args[2])).booleanValue();
 
     try {
       R = new BaseRecognizer();

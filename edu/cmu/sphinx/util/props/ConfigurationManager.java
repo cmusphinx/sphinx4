@@ -688,7 +688,6 @@ public class ConfigurationManager {
         out.println("</html>");
     }
 
-    String docBase = "http://cmusphinx.sourceforge.net/sphinx4/javadoc/";
 
     /**
      * Dumps the given component as HTML to the given stream

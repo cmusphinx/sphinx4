@@ -408,9 +408,6 @@ public class StreamFactory {
 					       String location,
 					       String file) throws 
     FileNotFoundException, IOException, ZipException {
-        if (location != null) {
-        } else {
-        }
         if (format.equals(ZIP_FILE)) {
 	    System.out.println("WARNING: overwriting ZIP or JAR file!");
             return StreamFactory.getOutputStream

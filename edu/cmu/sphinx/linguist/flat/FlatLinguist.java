@@ -186,7 +186,7 @@ public class FlatLinguist implements Linguist, Configurable {
     private StatisticsVariable actualArcs;
     private SearchGraph searchGraph;
     private transient int totalStateCounter = 0;
-    private final boolean tracing = false;
+    private final static boolean tracing = false;
     // ------------------------------------
     // Data used for building and maintaining
     // the search graph

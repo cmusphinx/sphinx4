@@ -15,6 +15,7 @@ package edu.cmu.sphinx.decoder.search;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -313,7 +314,10 @@ class TokenArrayIterator implements Iterator {
     /**
      * Returns the next token in the iteration.
      */
-    public Object next() {
+    public Object next() throws NoSuchElementException {
+        if (pos >= tokenArray.length) {
+            throw new NoSuchElementException();
+        }
         return tokenArray[pos++];
     }
 

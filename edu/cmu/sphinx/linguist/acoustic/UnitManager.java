@@ -34,7 +34,7 @@ public class  UnitManager implements Configurable  {
     /**
      * The silence unit
      */
-    public static Unit SILENCE =  
+    public final static Unit SILENCE =  
         new Unit(SILENCE_NAME, true, SILENCE_ID);
 
     private String name;

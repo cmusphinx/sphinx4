@@ -1113,9 +1113,6 @@ public class BaseRecognizer extends BaseEngine
                 //                                   imports[i].getRuleName());
                 String gname = imports[i].getFullGrammarName();
                 RuleGrammar GI = R.getRuleGrammar(gname);
-		if ((GI != null) && relo) {
-		  
-		}
                 if (GI == null) {
 		    URL grammarURL = gnameToURL(context,imports[i].getFullGrammarName());
 
