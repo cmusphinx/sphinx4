@@ -41,6 +41,7 @@ class MixtureComponent implements Serializable {
     private float[][] meanTransformationMatrix;
     private float[]   meanTransformationVector;
     private float[]   variance;
+    private float varianceFloor;
     /**
      * Precision is the inverse of the variance. This includes adaptation.
      */
@@ -63,7 +64,8 @@ class MixtureComponent implements Serializable {
      * @param variance  the variance for this PDF
      * @param varianceTransformationMatrix  var. transform matrix for this PDF
      * @param varianceTransformationVector var. transform vector for this PDF
-     * @param distFloor - the lowest score value
+     * @param distFloor the lowest score value
+     * @param varianceFloor the lowest value for the variance
      */
     public MixtureComponent(
 	LogMath logMath,
@@ -73,9 +75,8 @@ class MixtureComponent implements Serializable {
 	float[]   variance,
 	float[][] varianceTransformationMatrix,
 	float[]   varianceTransformationVector,
-	float distFloor)  {
-
-	int i, j; // indices for the matrices
+	float distFloor,
+	float varianceFloor)  {
 
 	assert variance.length == mean.length;
 
@@ -86,41 +87,7 @@ class MixtureComponent implements Serializable {
 	this.variance = variance;
 	this.varianceTransformationMatrix = varianceTransformationMatrix;
 	this.varianceTransformationVector = varianceTransformationVector;
-
-	/**
-	 * The transformed mean vector is given by:
-	 *
-	 * <p><b>M = A * m + B</b></p>
-	 *
-	 * where <b>M</b> and <b>m</b> are the mean vector after and
-	 * before transformation, respectively, and <b>A</b> and
-	 * <b>B</b> are the transformation matrix and vector,
-	 * respectively.
-	 */
-	meanTransformed = new float[this.mean.length];
-	for (i = 0; i < this.meanTransformationVector.length; i++) {
-	    float tmpMean = 0.0f;
-	    for (j = 0; j < this.meanTransformationMatrix[i].length; j++) {
-		tmpMean += this.mean[j] * this.meanTransformationMatrix[i][j];
-	    }
-	    this.meanTransformed[i] = tmpMean 
-		+ this.meanTransformationVector[i];
-	}
-	/**
-	 * We do analogously with the variance. In this case, we also
-	 * invert the variance, and work with precision instead of
-	 * variance.
-	 */
-	precisionTransformed = new float[this.variance.length];
-	for (i = 0; i < this.varianceTransformationVector.length; i++) {
-	    float tmpVariance = 0.0f;
-	    for (j = 0; j < this.varianceTransformationMatrix[i].length; j++) {
-		tmpVariance += this.variance[j] 
-		    * this.varianceTransformationMatrix[i][j];
-	    }
-	    this.precisionTransformed[i] = 1.0f
-		/ (tmpVariance + this.varianceTransformationVector[i]);
-	}
+	this.varianceFloor = varianceFloor;
 
 	logPreComputedGaussianFactor = precomputeDistance();
     }
@@ -203,6 +170,7 @@ class MixtureComponent implements Serializable {
 	     System.out.println("gs is Nan, converting to 0");
 	     logDval = logMath.getLogZero();
 	 }
+
 	 return logDval;
      }
 
@@ -223,7 +191,9 @@ class MixtureComponent implements Serializable {
       *
       * @return the precomputed distance
       */
-     private float precomputeDistance() {
+     protected float precomputeDistance() {
+	 // First, apply transformations
+	 transformStats();
 	 float logPreComputedGaussianFactor = 0.0f; // = log(1.0)
 	 // Compute the product of the elements in the Covariance
 	 // matrix's main diagonal. Covariance matrix is assumed
@@ -249,5 +219,50 @@ class MixtureComponent implements Serializable {
 	 // The sqrt above is a 0.5 multiplicative factor in log scale.
 	 return logPreComputedGaussianFactor * 0.5f;
      }
+
+    /**
+     * Applies transformations to means and variances.
+     */
+    private void transformStats() {
+	int i, j; // indices for the matrices
+
+	/**
+	 * The transformed mean vector is given by:
+	 *
+	 * <p><b>M = A * m + B</b></p>
+	 *
+	 * where <b>M</b> and <b>m</b> are the mean vector after and
+	 * before transformation, respectively, and <b>A</b> and
+	 * <b>B</b> are the transformation matrix and vector,
+	 * respectively.
+	 */
+	meanTransformed = new float[this.mean.length];
+	for (i = 0; i < this.meanTransformationVector.length; i++) {
+	    float tmpMean = 0.0f;
+	    for (j = 0; j < this.meanTransformationMatrix[i].length; j++) {
+		tmpMean += this.mean[j] * this.meanTransformationMatrix[i][j];
+	    }
+	    this.meanTransformed[i] = tmpMean 
+		+ this.meanTransformationVector[i];
+	}
+	/**
+	 * We do analogously with the variance. In this case, we also
+	 * invert the variance, and work with precision instead of
+	 * variance.
+	 */
+	precisionTransformed = new float[this.variance.length];
+	for (i = 0; i < this.varianceTransformationVector.length; i++) {
+	    float tmpVariance = 0.0f;
+	    for (j = 0; j < this.varianceTransformationMatrix[i].length; j++) {
+		tmpVariance += this.variance[j] 
+		    * this.varianceTransformationMatrix[i][j];
+	    }
+	    tmpVariance += this.varianceTransformationVector[i];
+	    if (tmpVariance < varianceFloor) {
+		tmpVariance = varianceFloor;
+	    }
+	    this.precisionTransformed[i] = 1.0f	/ tmpVariance;
+	}
+    }
 }
 
