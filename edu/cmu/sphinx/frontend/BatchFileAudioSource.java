@@ -43,9 +43,10 @@ public class BatchFileAudioSource implements DataSource {
      *
      * @throws java.io.IOException if error opening the batch file
      */
-    public BatchFileAudioSource(String batchFile) throws IOException {
+    public BatchFileAudioSource(String context, String batchFile)
+        throws IOException {
         reader = new BufferedReader(new FileReader(batchFile));
-        streamAudioSource = new StreamAudioSource(null);
+        streamAudioSource = new StreamAudioSource(context, null);
 
         String firstFile = reader.readLine();
         if (firstFile != null) {
@@ -87,14 +88,19 @@ public class BatchFileAudioSource implements DataSource {
         if (frame != null) {
             return frame;
         } else {
-            // if we reached the end of the current file,
-            // go to the next one
-            String nextFile = reader.readLine();
-            if (nextFile != null) {
-                fileSetStream(nextFile);
-                return read();
-            } else {
-                reader.close();
+
+            // assumes that the reader has already been opened
+            if (reader != null) {
+                // if we reached the end of the current file,
+                // go to the next one
+                String nextFile = reader.readLine();
+                if (nextFile != null) {
+                    fileSetStream(nextFile);
+                    return read();
+                } else {
+                    reader.close();
+                    reader = null;
+                }
             }
         }
 

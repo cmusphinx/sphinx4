@@ -41,8 +41,8 @@ public class Preemphasizer extends DataProcessor {
     
 
     private float preemphasisFactor;
-    // TODO: somehow get the prior from the frontend
     private double prior;
+    private int priorPosition;
 
 
     /**
@@ -60,8 +60,25 @@ public class Preemphasizer extends DataProcessor {
      * Reads the parameters needed from the static SphinxProperties object.
      */
     private void initSphinxProperties() {
-	preemphasisFactor = getSphinxProperties().getFloat
+        SphinxProperties properties = getSphinxProperties();
+	
+        preemphasisFactor = properties.getFloat
 	    (PROP_PREEMPHASIS_FACTOR, (float) 0.97);
+
+        int sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);
+
+        float windowSizeMs = properties.getFloat
+            (FrontEnd.PROP_WINDOW_SIZE_MS, 25.625F);
+
+        float windowShiftMs = properties.getFloat
+            (FrontEnd.PROP_WINDOW_SHIFT_MS, 10.0F);
+        
+        int windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeMs);
+        int windowShift = Util.getSamplesPerShift(sampleRate, windowShiftMs);
+
+        // prior position is the index from the end of the incoming AudioFrame
+        // that is right before the AudioFrame
+        priorPosition = windowSize - windowShift + 1;
     }
 
 
@@ -83,13 +100,7 @@ public class Preemphasizer extends DataProcessor {
 	Data input = getSource().read();
         
         if (input instanceof AudioFrame) {
-
             input = process((AudioFrame) input);
-
-	} else if (input instanceof PreemphasisPriorSignal) {
-	    PreemphasisPriorSignal signal = (PreemphasisPriorSignal) input;
-	    prior = (double) signal.getPrior();
-	    input = read();
 	}
 
         return input;
@@ -109,8 +120,13 @@ public class Preemphasizer extends DataProcessor {
 
 	double[] in = input.getAudioSamples();
 	
-	if (in.length > 1 && preemphasisFactor != 0.0) {
+        // set the prior value for the next AudioFrame
+        double nextPrior = prior;
+        if (in.length > priorPosition) {
+            nextPrior = in[in.length - priorPosition];
+        }
 
+	if (in.length > 1 && preemphasisFactor != 0.0) {
 	    // do preemphasis
             double current;
             double previous = in[0];
@@ -124,6 +140,8 @@ public class Preemphasizer extends DataProcessor {
 	    }
 	}
 
+        prior = nextPrior;
+        
         getTimer().stop();
 
 	if (getDump()) {

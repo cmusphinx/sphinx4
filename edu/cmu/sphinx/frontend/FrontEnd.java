@@ -216,15 +216,8 @@ public class FrontEnd implements DataSource, Runnable {
      * Handles an incoming Data object.
      */
     private void handleData(Data input) {
-
-        if (input instanceof EndPointSignal) {
-            EndPointSignal signal = (EndPointSignal) input;
-            if (signal.equals(EndPointSignal.SEGMENT_START) ||
-                signal.equals(EndPointSignal.SEGMENT_END)) {
-                queue.add(input);
-            }
-
-        } else if (input instanceof FeatureFrame) {
+        if (input instanceof Feature ||
+            input instanceof EndPointSignal) {
             queue.add(input);
         }
     }

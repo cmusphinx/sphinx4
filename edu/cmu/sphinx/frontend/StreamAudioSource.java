@@ -26,7 +26,7 @@ import java.util.Vector;
  *
  * @see BatchFileAudioSource
  */
-public class StreamAudioSource implements DataSource {
+public class StreamAudioSource extends DataProcessor {
 
     /**
      * The name of the SphinxProperty which indicates if the produced
@@ -60,7 +60,6 @@ public class StreamAudioSource implements DataSource {
     private byte[] overflowBuffer;
     private int overflowBytes;
 
-    private Vector outputQueue;
     private boolean dump;
 
 
@@ -69,13 +68,12 @@ public class StreamAudioSource implements DataSource {
      *
      * @param audioStream the InputStream where audio data comes from
      */
-    public StreamAudioSource(InputStream audioStream) {
-	getSphinxProperties();
-
+    public StreamAudioSource(String context, InputStream audioStream) {
+        super(context, "StreamAudioSource");
+	initSphinxProperties();
 	this.audioStream = audioStream;
 	this.samplesBuffer = new byte[frameSizeInBytes * 2];
         this.overflowBuffer = new byte[frameSizeInBytes];
-        this.outputQueue = new Vector();
         reset();
     }
 
@@ -87,16 +85,15 @@ public class StreamAudioSource implements DataSource {
     public void reset() {
         this.totalBytesRead = SEGMENT_NOT_STARTED;
         this.overflowBytes = 0;
-        outputQueue.clear();
     }
 
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void getSphinxProperties() {
+    private void initSphinxProperties() {
 	// TODO : specify the context
-	SphinxProperties properties = SphinxProperties.getSphinxProperties("");
+	SphinxProperties properties = getSphinxProperties();
 
         int sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE, 8000);
 
@@ -143,12 +140,8 @@ public class StreamAudioSource implements DataSource {
     public Data read() throws IOException {
 
         Data output = null;
- 
-	if (!outputQueue.isEmpty()) {
-	    
-            return (Data) outputQueue.remove(0);
 
-        } else if (streamEndReached) {
+        if (streamEndReached) {
            
             return null;
 
@@ -221,10 +214,6 @@ public class StreamAudioSource implements DataSource {
                 samplesToOverflowBuffer(offset, 0, (totalInBuffer - offset));
 
 		totalInBuffer = occupiedElements;
-
-		// set "prior" for the next read
-		short prior = Util.bytesToShort(samplesBuffer, offset - 2);
-		outputQueue.add(new PreemphasisPriorSignal(prior));
 	    }
 
 	    if (totalInBuffer % 2 == 1) {

@@ -133,18 +133,16 @@ public class CepstralMeanNormalizer extends DataProcessor {
                 if (numberFrame > cmnShiftWindow) {
                     updateMeanSumBuffers();
                 }
-
             } else if (signal.equals(EndPointSignal.SEGMENT_END)) {
                 updateMeanSumBuffers();
+                return input;
+            } else if (signal.equals(EndPointSignal.SEGMENT_START)) {
+                return input;
             }
-
-            return input;
-
-        } else {
-            return input;
         }
-    }	
-
+        return input;
+    }
+    
 
     /**
      * Returns the given Cepstrum, normalized.
