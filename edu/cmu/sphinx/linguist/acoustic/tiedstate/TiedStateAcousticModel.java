@@ -185,17 +185,35 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
       * @return a composite HMM
       */
      private HMM getCompositeHMM(Unit unit, HMMPosition position) {
-	 Unit ciUnit = Unit.getUnit(unit.getName(),
-		 unit.isFiller(), Context.EMPTY_CONTEXT);
 
-	 SenoneSequence compositeSequence = getCompositeSenoneSequence(unit);
 
-	 SenoneHMM contextIndependentHMM = (SenoneHMM) lookupNearestHMM(ciUnit,
-		 HMMPosition.UNDEFINED, true);
-	 float[][] tmat = contextIndependentHMM.getTransitionMatrix();
-	 return new SenoneHMM(unit, compositeSequence, tmat, position);
+         if (true) { // use a true composite
+             Unit ciUnit = Unit.getUnit(unit.getName(),
+                     unit.isFiller(), Context.EMPTY_CONTEXT);
+
+             SenoneSequence compositeSequence =
+                 getCompositeSenoneSequence(unit, position);
+
+             SenoneHMM contextIndependentHMM = (SenoneHMM) 
+                 lookupNearestHMM(ciUnit,
+                     HMMPosition.UNDEFINED, true);
+             float[][] tmat = contextIndependentHMM.getTransitionMatrix();
+             return new SenoneHMM(unit, compositeSequence, tmat, position);
+         } else { // BUG: just a test. use CI units instead of composites
+             Unit ciUnit = lookupUnit(unit.getName());
+
+             assert unit.isContextDependent();
+             if (ciUnit == null) {
+                 logger.severe("Can't find HMM for " + unit.getName());
+             }
+             assert ciUnit != null;
+             assert !ciUnit.isContextDependent();
+
+	     HMMManager mgr = loader.getHMMManager();
+             HMM hmm = mgr.get(HMMPosition.UNDEFINED, ciUnit);
+             return hmm;
+        }
      }
-
 
      /**
       * Given a unit, returns the HMM that best matches the given unit.
@@ -222,17 +240,15 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
 	     HMM hmm = mgr.get(position, unit);
 
 	     if (hmm != null) {
-	  // System.out.println("EXACT match for "  + unit + " at " +
-	  // position + " hmm is " + hmm);
 		 return hmm;
 	     }
 	     // no match, try a composite
 
 	     if (useComposites && hmm == null) {
 		 if (isComposite(unit)) {
+
 		     hmm = getCompositeHMM(unit, position);
 		     if (hmm != null) {
-			 //System.out.println("Adding composite unit " + hmm);
 			 mgr.put(hmm);
 		     }
 		 }
@@ -342,7 +358,8 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
       * @param unit the unit
       *
       */
-     public SenoneSequence getCompositeSenoneSequence(Unit unit) {
+     public SenoneSequence getCompositeSenoneSequence(Unit unit,
+             HMMPosition position) {
 	 Context context = unit.getContext();
 	 SenoneSequence compositeSenoneSequence = null;
 	 compositeSenoneSequence = (SenoneSequence)
@@ -365,13 +382,15 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
 	// collect all senone sequences that match the pattern
 	 for (Iterator i = getHMMIterator(); i.hasNext(); ) {
 	     SenoneHMM hmm = (SenoneHMM) i.next();
-	     Unit hmmUnit = hmm.getUnit();
-	     if (hmmUnit.isPartialMatch(unit.getName(), context)) {
-		 if (logger.isLoggable(Level.FINE)) {
-		    logger.fine("collected: " + hmm.getUnit().toString());
-		 }
-		 senoneSequenceList.add(hmm.getSenoneSequence());
-	     }
+             if (hmm.getPosition() == position) {
+                 Unit hmmUnit = hmm.getUnit();
+                 if (hmmUnit.isPartialMatch(unit.getName(), context)) {
+                     if (logger.isLoggable(Level.FINE)) {
+                        logger.fine("collected: " + hmm.getUnit().toString());
+                     }
+                     senoneSequenceList.add(hmm.getSenoneSequence());
+                 }
+            }
 	 }
 
 	 // couldn't find any matches, so at least include the CI unit
@@ -402,6 +421,7 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
 	 // sequences. For now lets assume the worst case.
 
 	 List compositeSenones = new ArrayList();
+         float logWeight = 0.0f;
 	 for (int i = 0; i < longestSequence; i++) {
 	     Set compositeSenoneSet = new HashSet();
 	     for (int j = 0; j < senoneSequenceList.size(); j++) {
@@ -412,7 +432,8 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
 		     compositeSenoneSet.add(senone);
 		 }
 	     }
-	     compositeSenones.add(CompositeSenone.create(compositeSenoneSet));
+	     compositeSenones.add(CompositeSenone.create(
+                         compositeSenoneSet, logWeight));
 	 }
 
 	 compositeSenoneSequence = SenoneSequence.create(compositeSenones);
