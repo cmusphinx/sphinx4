@@ -471,4 +471,5 @@ an4_words_bigram_live:
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.knowledge.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.LMGrammar\
 	-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./an4_words.bigram.lm\
+	-Dedu.cmu.sphinx.decoder.LivePretendDecoder.dataSource=edu.cmu.sphinx.frontend.util.ConcatFileAudioSource \
 	edu.cmu.sphinx.decoder.LivePretendDecoder an4.props an4_words.batch
