@@ -1,20 +1,23 @@
 /**
- * Copyright 2001 Sun Microsystems, Inc.
- * 
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
- * WARRANTIES.
+ * [[[copyright]]]
  */
 package edu.cmu.sphinx.util;
 
 import java.text.DecimalFormat;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 /**
- * Keeps track of execution times.
+ * Keeps track of execution times. This class provides methods that
+ * can be used for timing processes. The process to be timed should be
+ * bracketed by calls to timer.start() and timer.stop().  Repeated
+ * operations can be timed more than once. The timer will report the
+ * minimum, maximum, average and last time executed for all start/stop
+ * pairs when the timer.dump is called.
+ *
+ * Timers can be organized into groups called contexts. Timers in the
+ * same context can be dumped together.
  */
 public class Timer {
     private final static DecimalFormat timeFormatter 
@@ -114,6 +117,7 @@ public class Timer {
      * Creates a timer.
      *
      * @param name the name of the timer
+     * @param context the context that the timer is in.
      */
     private Timer(String name, String context) {
          this.name = name;
@@ -245,7 +249,7 @@ public class Timer {
 	System.out.println();
     }
     /**
-     * Shows brief timing stats. If 
+     * Shows brief timing stats. 
      *
      */
     private void showTimesShort() {
@@ -276,6 +280,11 @@ public class Timer {
     }
 
 
+    /**
+     * a simple set of tests for the Timer clas
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
 	System.out.println("Dump empty set");
 	Timer.dumpAll();
@@ -340,6 +349,11 @@ public class Timer {
 	Timer.dumpAll("garbage");
     }
 
+    /**
+     * Sleep for a while, while silently ignoring interrupts
+     *
+     * @param delay the time to sleep in milliseconds
+     */
     static void sleep(long delay) {
 	try {
 	    Thread.sleep(delay);

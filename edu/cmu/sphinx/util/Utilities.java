@@ -1,9 +1,5 @@
 /**
- * Copyright 2001 Sun Microsystems, Inc.
- * 
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
- * WARRANTIES.
+ * [[[copyright]]]
  */
 package edu.cmu.sphinx.util;
 
@@ -72,7 +68,6 @@ public class Utilities {
 	pw.print(pad(padding));
 	pw.println(string);
     }
-
 }
 
   

@@ -1,11 +1,4 @@
-# Copyright 2001 Sun Microsystems, Inc.
-# All Rights Reserved.  Use is subject to license terms.
-# 
-# See the file "license.terms" for information on usage and
-# redistribution of this file, and for a DISCLAIMER OF ALL 
-# WARRANTIES.
-#
-# @(#)Makefile	1.5 01/08/07
+# [[[copyright]]]
 
 # Relative path to the top of the source tree
 TOP = ../../../..
