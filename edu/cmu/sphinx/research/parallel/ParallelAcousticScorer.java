@@ -12,15 +12,20 @@
 
 package edu.cmu.sphinx.research.parallel;
 
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataStartSignal;
+import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.FeatureFrame;
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.frontend.Signal;
 
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.scorer.Scoreable;
 
 import edu.cmu.sphinx.decoder.search.Token;
+
+import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +40,7 @@ import java.io.IOException;
 public class ParallelAcousticScorer implements AcousticScorer {
 
     private FrontEnd frontEnd;
+    private SphinxProperties props;
 
 
     /**
@@ -46,8 +52,8 @@ public class ParallelAcousticScorer implements AcousticScorer {
      */
     public void initialize(String context, FrontEnd frontend) {
 	this.frontEnd = frontend;
+        this.props = SphinxProperties.getSphinxProperties(context);
     }
-
 
     /**
      * Starts the scorer
@@ -55,36 +61,11 @@ public class ParallelAcousticScorer implements AcousticScorer {
     public void start() {
     }
 
-
     /**
      * Performs post-recognition cleanup. 
      */
     public void stop() {
     }
-
-
-    /**
-     * Checks to see if a FeatureFrame is null or if there are Features in it.
-     *
-     * @param ff the FeatureFrame to check
-     *
-     * @return false if the given FeatureFrame is null or if there
-     * are no Features in the FeatureFrame; true otherwise.
-     */
-    private boolean hasFeatures(FeatureFrame ff) {
-        if (ff == null) {
-            System.out.println("ParallelAcousticScorer: FeatureFrame is null");
-            return false;
-        }
-        if (ff.getFeatures() == null) {
-            System.out.println
-                ("ParallelAcousticScorer: no features in FeatureFrame");
-            return false;
-        }
-        return true;
-    }
-
-
 
     /**
      * Scores the given set of Tokens. All Tokens in the given
@@ -105,45 +86,36 @@ public class ParallelAcousticScorer implements AcousticScorer {
                 ("ParallelAcousticScorer: modelName is null");
         }
         assert modelName != null;
+        frontEnd = FrontEndFactory.getFrontEnd(modelName, props);
         
-	FeatureFrame ff;
+	Data data;
 
 	try {
-	    ff = frontEnd.getFeatureFrame(1, modelName);
-	    Feature feature;
-
-	    if (!hasFeatures(ff)) {
+	    data = frontEnd.getData();
+	 
+	    if (data == null) {
                 return false;
             }
 
-	    feature = ff.getFeatures()[0];
-
-	    if (feature.getSignal() == Signal.UTTERANCE_START) {
-                ff = frontEnd.getFeatureFrame(1, modelName);
-                if (!hasFeatures(ff)) {
+	    if (data instanceof DataStartSignal) {
+                data = frontEnd.getData();
+                if (data == null) {
                     return false;
                 }
-                feature = ff.getFeatures()[0];
 	    }
 
-	    if (feature.getSignal() == Signal.UTTERANCE_END) {
+	    if (data instanceof DataEndSignal) {
 		return false;
 	    }
 
-            if (!feature.hasContent()) {
+            if (data instanceof Signal) {
                 throw new Error("trying to score non-content feature");
             }
 
             float logMaxScore = -Float.MAX_VALUE;
 	    for (Iterator i = scoreableList.iterator(); i.hasNext(); ) {
                 Scoreable scoreable = (Scoreable) i.next();
-		if (scoreable.getFrameNumber() != feature.getID()) {
-		    throw new Error
-			("Frame number mismatch: Token: " + 
-			 scoreable.getFrameNumber() +
-			 "  Feature: " + feature.getID());
-		}
-                float logScore =  scoreable.calculateScore(feature);
+                float logScore =  scoreable.calculateScore(data);
                 if (logScore > logMaxScore) {
                     logMaxScore = logScore;
                 }
@@ -151,7 +123,10 @@ public class ParallelAcousticScorer implements AcousticScorer {
 	} catch (IOException ioe) {
 	    System.out.println("IO Exception " + ioe);
 	    return false;
-	}
+	} catch (DataProcessingException dpe) {
+            dpe.printStackTrace();
+            return false;
+        }
         
 	return true;
     }
