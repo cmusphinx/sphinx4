@@ -36,6 +36,20 @@ import java.net.Socket;
 
 /**
  * A FrontEnd that runs on client applications.
+ * The main interface between the application and this ClientFrontEnd is
+ * the <b>decode(InputStream inputStream, String streamName)</b> method,
+ * which returns the decoded result as a String.
+ *
+ * <p>The method <b>connect()</b> should be called before <b>decode()</b>,
+ * and the method <b>close()</b> should be called after all decoding is done.
+ * Therefore, the correct sequence of calls is:
+ * <code>
+ * connect();
+ * decode(inputstream1, name1);
+ * ...
+ * decode(inputstreamN, nameN);
+ * close();
+ * </code>
  */
 public class ClientFrontEnd extends CepstrumExtractor {
 
