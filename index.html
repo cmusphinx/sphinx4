@@ -17,7 +17,10 @@ WARRANTIES.
 <head>
   <title>Sphinx-4 - A speech recognizer written entirely in the
  Java(TM) programming language</title>
-</head>
+<STYLE TYPE="text/css">
+  pre { font-size: medium; background: #f0f8ff; padding: 2mm; border-style: ridge ; color: teal}
+  code {font-size: medium; color: teal}
+</STYLE></head>
 
 <body bgcolor="white">
   <center>
@@ -34,7 +37,6 @@ WARRANTIES.
       </tbody>
     </table>
   </center>
-
   <font face="Arial" size="2">
 
   <table border="0" width="100%">
@@ -274,7 +276,7 @@ WARRANTIES.
   <pre>
 set ANT_HOME=c:\ant
 set PATH=%PATH%;%ANT_HOME%\bin
-  </pre>
+</pre>
   </li>
   <li> Unix (bash)
   <pre>
@@ -286,7 +288,6 @@ export PATH=${PATH}:${ANT_HOME}/bin
   <pre>
 setenv ANT_HOME /usr/local/ant
 set path=( $path $ANT_HOME/bin )
-
 </pre>
   </li>
   </ul>
@@ -324,25 +325,17 @@ set path=( $path $ANT_HOME/bin )
 
 	      <li>Get the code from sourceforge.net. If you are a
 	      developer in the cmusphinx project, then do:
+		<pre>% cvs -d:ext:cvs.sourceforge.net:/cvsroot/cmusphinx co sphinx4</pre>
 	      </li>
-
-	    <ul>
-	      <li>
-		<pre>cvs -d:ext:cvs.sourceforge.net:/cvsroot/cmusphinx co sphinx4</pre>
-	      </li>
-	    </ul>
 	  <li>If you are not a developer, you have to get the code
 	  anonymously. When prompted for a password, simply hit
 	  &lt;ENTER&gt;:
-	  </li>
-	<ul>
-	  <li>
-	    <pre>cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx login</pre>
-	  </li>
-	  <li>
-	    <pre>cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx co sphinx4</pre>
-	  </li>
-	</ul>
+
+	    <pre>
+% cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx login
+% cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx \
+co sphinx4
+</pre>
       </li>
     </ul>
     </li>
@@ -358,7 +351,7 @@ set path=( $path $ANT_HOME/bin )
 format. Language models provided with the acoustic model packages were
 created with the Carnegie Mellon University Statistical Language
 Modeling toolkit (CMU SLM toolkit), available <a
-href="http://www.speech.cs.cmu.edu/SLM_info.html">at CMU</a>.A manual
+href="http://www.speech.cs.cmu.edu/SLM_info.html">at CMU</a>. A manual
 is available there.</p>
 
 <p>The language model is created from a list of transcriptions. Given
@@ -366,7 +359,7 @@ a file with training transcription, the following script
 creates a list of words that appear in the transcriptions, then
 creates a bigram and a trigram LM files in the ARPA format. The file with extension ccs contains the context cues, and it is usually a list of words used as markers - beginning or end of speech etc.</p>
 
-<pre style="background: #CCCCCC; padding: 2mm; border-style: ridge">
+<pre>
 set task = RM
 
 # Location of the CMU SLM toolkit
@@ -498,14 +491,14 @@ and type:
       versions of OS, do:
         <ul>
           <li>
-            <pre>Unix (t)csh: setenv JAVA_HOME /lab/speech/java/j2sdk1.4.0</pre>
+            Unix (t)csh: <code>setenv JAVA_HOME /lab/speech/java/j2sdk1.4.0</code>
           </li>
           <li>
-            <pre>Unix (ba)sh: export JAVA_HOME='/lab/speech/java/jdk1.4.1_01'</pre>
+            Unix (ba)sh: <code>export JAVA_HOME='/lab/speech/java/jdk1.4.1_01'</code>
           </li>
 
           <li>
-            <pre>Windows/cygwin: export JAVA_HOME='c:/Progra~1/J2SDK_Forte/jdk1.4.0'</pre>
+            Windows/cygwin: <code>export JAVA_HOME='c:/Progra~1/J2SDK_Forte/jdk1.4.0'</code>
           </li>
         </ul>
       </li>
@@ -535,14 +528,14 @@ and type:
       full path. For the different versions of OS, do:
         <ul>
           <li>
-            <pre>Unix (t)csh: setenv CVS_RSH ssh</pre>
+            Unix (t)csh: <code>setenv CVS_RSH ssh</code>
 
           </li>
           <li>
-            <pre>Unix (ba)sh: export CVS_RSH='/usr/local/bin/ssh'</pre>
+            Unix (ba)sh: <code>export CVS_RSH='/usr/local/bin/ssh'</code>
           </li>
           <li>
-            <pre>Windows/cygwin: export CVS_RSH='ssh'</pre>
+            Windows/cygwin: <code>export CVS_RSH='ssh'</code>
           </li>
         </ul>
 
@@ -730,7 +723,7 @@ d:\work\sphinx4&gt;ant clean
   % cd sphinx4/tests/performance/ti46
   % ant -projecthelp      # to see a list of possible targets
   % ant ti46_wordlist
-  </pre>
+</pre>
 
   <p>
   <b>Connected Digits</b>
@@ -738,7 +731,7 @@ d:\work\sphinx4&gt;ant clean
   % cd sphinx4/tests/performance/tidigits
   % ant -projecthelp      # to see a list of possible targets
   % ant tidigits_flat_unigram
-  </pre>
+</pre>
 
   <p>
   <b>Small Vocabulary</b>
@@ -746,7 +739,7 @@ d:\work\sphinx4&gt;ant clean
   % cd sphinx4/tests/performance/an4
   % ant -projecthelp      # to see a list of possible targets
   % ant an4_words_unigram
-  </pre>
+</pre>
   
   <p>
   <b>Medium Vocabulary</b>
@@ -754,7 +747,7 @@ d:\work\sphinx4&gt;ant clean
   % cd sphinx4/tests/performance/rm1
   % ant -projecthelp      # to see a list of possible targets
   % ant rm1_bigram
-  </pre>
+</pre>
 
   <p>
   <b>Large Vocabulary</b>
@@ -762,7 +755,7 @@ d:\work\sphinx4&gt;ant clean
   % cd tests/performance/hub4
   % ant -projecthelp      # to see a list of possible targets
   % ant hub4_trigram
-  </pre>
+</pre>
 
   <p>
   <b>Customizing the regression test to your environment</b>
@@ -796,6 +789,5 @@ All Rights Reserved.  Usage is subject to
 <a href="../license.terms">license terms</a>.
 
 </font>
-
 </body>
 </html>
