@@ -84,6 +84,39 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
      * the search graph
      */
     public final static String PROP_ACOUSTIC_MODEL = "acousticModel";
+
+    /**
+     * Sphinx property that specifies whether to add a branch for detecting
+     * out-of-grammar utterances.
+     */
+    public final static String PROP_ADD_OUT_OF_GRAMMAR_BRANCH
+        = "addOutOfGrammarBranch";
+
+    /**
+     * Default value of PROP_ADD_OUT_OF_GRAMMAR_BRANCH.
+     */
+    public final static boolean PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT = false;
+
+    
+    /**
+     * Sphinx property for the probability of entering the out-of-grammar
+     * branch.
+     */
+    public final static String PROP_OUT_OF_GRAMMAR_PROBABILITY
+        = "outOfGrammarProbability";
+
+    /**
+     * The default value for PROP_OUT_OF_GRAMMAR_PROBABILITY.
+     */
+    public final static double PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT
+        = 1.0;
+    
+
+    public static final String PROP_PHONE_INSERTION_PROBABILITY
+        = "phoneInsertionProbability";
+
+    public static final double PROP_PHONE_INSERTION_PROBABILITY_DEFAULT = 1.0;
+
     /**
      * Sphinx property that defines the name of the logmath to be used by this
      * search manager.
@@ -108,6 +141,9 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     private float logUnitInsertionProbability;
     private float logFillerInsertionProbability;
     private float languageWeight;
+    private float logOutOfGrammarBranchProbability;
+    private float logPhoneInsertionProbability;
+    private boolean addOutOfGrammarBranch;
 
     // ------------------------------------
     // Data used for building and maintaining
@@ -117,6 +153,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     private String name;
     private Logger logger;
     private HMMPool hmmPool;
+    SearchStateArc outOfGrammarGraph;
 
     // this map is used to manage the set of follow on units for a
     // particular grammar node. It is used to select the set of
@@ -154,6 +191,9 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         registry.register(PROP_UNIT_MANAGER, PropertyType.COMPONENT);
         registry.register(PROP_FILLER_INSERTION_PROBABILITY,
                 PropertyType.DOUBLE);
+        registry.register(PROP_ADD_OUT_OF_GRAMMAR_BRANCH, PropertyType.BOOLEAN);
+        registry.register(PROP_OUT_OF_GRAMMAR_PROBABILITY, PropertyType.DOUBLE);
+        registry.register(PROP_PHONE_INSERTION_PROBABILITY, PropertyType.DOUBLE);
     }
     /*
      * (non-Javadoc)
@@ -184,6 +224,15 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
                 PROP_FILLER_INSERTION_PROBABILITY_DEFAULT));
         languageWeight = ps.getFloat(Linguist.PROP_LANGUAGE_WEIGHT,
                 PROP_LANGUAGE_WEIGHT_DEFAULT);
+        addOutOfGrammarBranch = ps.getBoolean
+            (PROP_ADD_OUT_OF_GRAMMAR_BRANCH,
+             PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT);
+        logOutOfGrammarBranchProbability = logMath.linearToLog
+            (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY,
+                          PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT));
+        logPhoneInsertionProbability = logMath.linearToLog
+            (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY,
+                          PROP_PHONE_INSERTION_PROBABILITY_DEFAULT));
     }
 
     /**
@@ -296,8 +345,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         searchGraph = new DynamicFlatSearchGraph();
     }
 
-
-
     /**
      * Initializes the unit maps for this linguist. There are two unit maps:
      * (a) nodeToNextUnitArrayMap contains an array of unit ids for all possible
@@ -378,7 +425,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     /**
      * The base search state for this dynamic flat linguist.
      */
-    abstract class FlatSearchState implements SearchState , SearchStateArc{
+    abstract class FlatSearchState implements SearchState , SearchStateArc {
         final static int ANY = 0;
 
         /**
@@ -815,6 +862,55 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
 
     }
 
+    class InitialState extends FlatSearchState {
+        private List nextArcs  = new ArrayList();
+
+
+        /**
+         * Gets the set of successors for this state
+         *
+         * @return the set of successors
+         */
+        public SearchStateArc[] getSuccessors() {
+            return (SearchStateArc[]) nextArcs .toArray(new
+                    SearchStateArc[nextArcs .size()]);
+        }
+
+        public void addArc(SearchStateArc arc) {
+            nextArcs.add(arc);
+        }
+
+        /**
+         * Returns a unique string representation of the state. This string is
+         * suitable (and typically used) for a label for a GDL node
+         *
+         * @return the signature
+         */
+        public String getSignature() {
+            return "initialState";
+        }
+
+
+        /**
+         * Returns the order of this state type among all of the search states
+         *
+         * @return the order
+         */
+        public int getOrder() {
+            return 1;
+        }
+
+
+        /**
+         * Returns a string representation of this object
+         *
+         * @return a string representation
+         */
+        public String toString() {
+            return getSignature();
+        }
+    }
+
     /**
      * This class representations a word punctuation in the search graph
      */
@@ -977,6 +1073,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             return gs;
         }
     }
+
 
     /**
      * Represents a unit (as an HMM) in the search graph
@@ -1350,8 +1447,19 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @see edu.cmu.sphinx.linguist.SearchGraph#getInitialState()
          */
         public SearchState getInitialState() {
-            return new GrammarState(grammar.getInitialNode());
+            InitialState initialState = new InitialState();
+            initialState.addArc(new GrammarState(grammar.getInitialNode()));
+            // add an out-of-grammar branch if configured to do so
+            if (addOutOfGrammarBranch) {
+                OutOfGrammarGraph oogg = new OutOfGrammarGraph(acousticModel,
+                        logOutOfGrammarBranchProbability,
+                        logPhoneInsertionProbability);
+
+                initialState.addArc(oogg.getOutOfGrammarGraph());
+            }
+            return initialState;
         }
+
 
         /*
          * (non-Javadoc)
