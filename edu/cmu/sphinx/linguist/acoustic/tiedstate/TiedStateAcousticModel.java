@@ -154,6 +154,7 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
     public void allocate() throws IOException {
         this.loadTimer = Timer.getTimer(TIMER_LOAD);
         loadTimer.start();
+        Unit.reset();
         loader.load();
         loadTimer.stop();
         logInfo();
