@@ -74,7 +74,7 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
      */
     private void reset() {
         Arrays.fill(sums, 0.0f);
-        cepstraList.clear();
+	cepstraList.clear();
     }
 
 
@@ -114,9 +114,12 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
             // and apply the cepstral mean
             if (readUtterance() > 0) {
                 normalizeList();
-                output = getCepstrum();
+                output = (Cepstrum) cepstraList.remove(0);//getCepstrum();
             }            
         }
+
+	// System.out.println("BatchCMN: " + output.toString());
+	// signalCheck(output);
 
         return output;
     }
@@ -141,6 +144,7 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
                 if (input.hasContent()) {
                     count++;
                     float[] cepstrumData = input.getCepstrumData();
+		    // add the cepstrum data to the sums
                     for (int j = 0; j < cepstrumData.length; j++) {
                         sums[j] += cepstrumData[j];
                     }
