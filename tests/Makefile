@@ -14,7 +14,7 @@ PACKAGE_PATH = tests
 # List any sub directories that need to be built.  Start with generic
 # packages going toward specialized.  That is, if one package depends
 # on another, put the dependent package later in the list.
-SUBDIRS = decoder frontend live other performance search
+SUBDIRS = decoder frontend knowledge live other performance search
 
 ##########################################################################
 
