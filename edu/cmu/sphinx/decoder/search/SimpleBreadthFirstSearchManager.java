@@ -432,18 +432,6 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
 
     /**
-     * Debugging tool
-     *
-     * @param msg the message
-     */
-    private void T(String msg) {
-	if (false)  {
-	    System.out.println(msg);
-	}
-    }
-
-
-    /**
      * Returns the Linguist.
      *
      * @return the Linguist
