@@ -27,7 +27,7 @@
 #  16) heapSize 
 #  17) loadAverage 
 
-gawk '
+nawk '
 
 BEGIN {
     FS = "|"
