@@ -154,7 +154,12 @@ class LexTree {
      * @param word the word of intereset
      */
     WordLexNode findWordNode(String word) {
-        return findWordNode(initialNode, word);
+        WordLexNode node = findWordNode(initialNode, word);
+        if (node == null) {
+            System.out.println
+                ("LexTree.findWordNode(): cannot find WordLexNode for "+word);
+        }
+        return node;
     }
 
     /**
