@@ -124,5 +124,5 @@ edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=1
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
 
 edu.cmu.sphinx.decoder.BatchDecoder.showPropertiesAtStart=true
-edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.wantUnigramSmear=true
-edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist.unigramSmearWeight=.5
+edu.cmu.sphinx.decoder.linguist.Linguist.wantUnigramSmear=true
+edu.cmu.sphinx.decoder.linguist.Linguist.unigramSmearWeight=.5
