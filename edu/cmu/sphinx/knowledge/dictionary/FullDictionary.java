@@ -51,6 +51,12 @@ public class FullDictionary implements Dictionary {
     private String wordReplacement;
 
     /**
+     * The logger for this class
+     */
+    private static Logger logger = 
+	    Logger.getLogger(PROP_PREFIX + "FullDictionary");
+
+    /**
      * Constructs a FullDictionary using the given context.
      * The context will give you the SphinxProperties that tells you
      * where the word and filler dictionaries are by the following
@@ -119,8 +125,12 @@ public class FullDictionary implements Dictionary {
         // "wordDictionaryFile" and "fillerDictionaryFile" should
         // contain the full path to the Dictionaries.
 
+	logger.info("Loading dictionary from: ");
+        logger.info(location + "/" + wordDictionaryFile);
         loadDictionary(StreamFactory.getInputStream
                        (location, wordDictionaryFile), false);
+	logger.info("Loading filler dictionary from: ");
+        logger.info(location + "/" + fillerDictionaryFile);
         loadDictionary(StreamFactory.getInputStream
                        (location, fillerDictionaryFile), true);
         createWords();
