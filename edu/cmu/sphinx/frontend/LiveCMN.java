@@ -95,7 +95,6 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
     private int numberFrame;       // total number of input Cepstrum
     private int cmnShiftWindow;    // # of Cepstrum to recalculate mean
     private int cmnWindow;
-    private int cepstrumLength;    // length of a Cepstrum
     private CepstrumSource predecessor;
 
 
@@ -116,7 +115,6 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
         throws IOException {
         super(name, context, sphinxProps);
         setProperties();
-	initMeansSums();
         this.predecessor = predecessor;
     }
 
@@ -133,9 +131,12 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
 
 
     /**
-     * Initializes the currentMean and sum arrays.
+     * Initializes the currentMean and sum arrays with the given cepstrum
+     * length.
+     *
+     * @param cepstrumLength the length of the cepstrum
      */
-    private void initMeansSums() {
+    private void initMeansSums(int cepstrumLength) {
 	currentMean = new float[cepstrumLength];
 	currentMean[0] = initialMean;
 	sum = new float[cepstrumLength];
@@ -153,8 +154,6 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
                                  PROP_CMN_WINDOW_DEFAULT);
 	cmnShiftWindow = props.getInt(PROP_CMN_SHIFT_WINDOW,
                                       PROP_CMN_SHIFT_WINDOW_DEFAULT);
-	cepstrumLength = props.getInt(FrontEnd.PROP_CEPSTRUM_SIZE,
-                                      FrontEnd.PROP_CEPSTRUM_SIZE_DEFAULT);
     }
 	
 
@@ -177,6 +176,9 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
 
         if (input != null) {
             if (input.hasContent()) {
+                if (sum == null) {
+                    initMeansSums(input.getCepstrumData().length);
+                }
                 normalize(input);
             } else if (input.hasSignal(Signal.UTTERANCE_END)) {
                 updateMeanSumBuffers();
@@ -198,6 +200,13 @@ public class LiveCMN extends DataProcessor implements CepstrumSource {
     private void normalize(Cepstrum cepstrumObject) {
 
         float[] cepstrum = cepstrumObject.getCepstrumData();
+
+        if (cepstrum.length != sum.length) {
+            throw new Error("Cepstrum length (" + cepstrum.length +
+                            ") not equal sum array length (" + 
+                            sum.length + ")");
+        }
+
         for (int j = 0; j < cepstrum.length; j++) {
             sum[j] += cepstrum[j];
             cepstrum[j] -= currentMean[j];
