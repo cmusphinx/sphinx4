@@ -80,32 +80,29 @@ import edu.cmu.sphinx.util.LogMath;
  * expecting. Normally, the task of collapsing the token tree is done
  * by the
  * {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}.
- * A collapsed token tree is structurally the same as
- * a lattice, except for the absence of alternative hypotheses.
  * A collapsed token tree can look like:
  * </p>
  * <pre>
- *             W
- *            / \
- *           P   P
- *          /     \
- * W - P - W       W
- *          \     /
- *           P   P
- *            \ /
- *             W
+ *                         "cat" - P - &lt;/s&gt;
+ *                        / 
+ *                       P
+ *                      /
+ * &lt;s&gt; - "a" - P - "big"
+ *                      \
+ *                       P
+ *                        \
+ *                         "dog" - P - &lt;/s&gt;
  * </pre>
  * <p>
  * When a Lattice is constructed from a Result, the above collapsed token tree 
- * will be converted into a Lattice that looks like
- * the following ('N' for {@link edu.cmu.sphinx.result.Node nodes},
- * and '-' for the {@link edu.cmu.sphinx.result.Edge edges}):
+ * together with the alternate hypothesis of "all" instead of "a",
+ * will be converted into a Lattice that looks like the following:
  * <pre>
- *       N
- *      / \
- * N - N   N
- *      \ /
- *       N
+ *       "a"           "cat"
+ *     /     \        /     \
+ * &lt;s&gt;          "big"         - &lt;/s&gt;
+ *     \     /        \     /
+ *      "all"          "dog"
  * </pre>
  * <p>
  * Initially, a lattice can have redundant nodes, i.e., nodes referring to
