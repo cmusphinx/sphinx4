@@ -163,7 +163,6 @@ public class Live {
      * @return true if recording started successfully, false if it did not
      */
     public boolean startRecording() {
-        currentRecognizer.getMicrophone().clear();
         return currentRecognizer.getMicrophone().startRecording();
     }
 
@@ -186,7 +185,8 @@ public class Live {
             liveFrame.setMessage("Playing back...");
             byte[] audio = microphone.getUtterance().getAudio();
             if (audio != null) {
-                audioPlayer.play(audio, microphone.getAudioFormat());
+                audioPlayer.play
+                    (audio, microphone.getUtterance().getAudioFormat());
             }
             liveFrame.setMessage("Playing back...finished");
         } else {
