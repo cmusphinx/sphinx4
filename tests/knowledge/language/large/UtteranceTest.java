@@ -61,9 +61,10 @@ import edu.cmu.sphinx.util.Timer;
  * java UtteranceTest <propertiesFile> <testFile> <outputFile>
  * </code>
  */
-class UtteranceTest {
+public class UtteranceTest {
 
     private BufferedReader reader;
+    private Dictionary dictionary;
     private LargeTrigramModel lm;
     private Timer timer;
     private PrintStream outStream = System.out;
@@ -83,7 +84,7 @@ class UtteranceTest {
 			 String testFile, String outFile) throws IOException {
 	
         SphinxProperties.initContext(context, new URL(propsPath));
-        Dictionary dictionary = new FastDictionary(context);
+        dictionary = new FastDictionary(context);
         lm = new LargeTrigramModel(context, dictionary);
         printScores = Boolean.getBoolean("printScores");
 
@@ -130,7 +131,7 @@ class UtteranceTest {
             List list = new ArrayList();
             while (st.hasMoreTokens()) {
                 String tok = (String) st.nextToken().toLowerCase();
-                list.add(tok);
+                list.add(dictionary.getWord(tok));
             }
             WordSequence wordSequence = WordSequence.getWordSequence(list);
 	    wordSequences.add(wordSequence);

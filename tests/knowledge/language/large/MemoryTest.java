@@ -61,9 +61,10 @@ import edu.cmu.sphinx.util.Timer;
  * java MemoryTest <propertiesFile> <testFile> <outputFile>
  * </code>
  */
-class MemoryTest {
+public class MemoryTest {
 
     private BufferedReader reader;
+    private Dictionary dictionary;
     private LargeTrigramModel lm;
     private Timer timer;
     private PrintStream outStream = System.out;
@@ -83,7 +84,7 @@ class MemoryTest {
                       String testFile, String outFile) throws IOException {
 	
         SphinxProperties.initContext(context, new URL(propsPath));
-        Dictionary dictionary = new FastDictionary(context);
+        dictionary = new FastDictionary(context);
         lm = new LargeTrigramModel(context, dictionary);
         printScores = Boolean.getBoolean("printScores");
 
@@ -135,7 +136,7 @@ class MemoryTest {
             List list = new ArrayList();
             while (st.hasMoreTokens()) {
                 String tok = (String) st.nextToken();
-                list.add(tok);
+                list.add(dictionary.getWord(tok));
             }
             WordSequence ws = WordSequence.getWordSequence(list);
             lm.getProbability(ws);
