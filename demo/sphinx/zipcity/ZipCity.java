@@ -401,7 +401,7 @@ public class ZipCity extends JFrame {
             } else {
                 x = mapx(zi.getLongitude());
                 y = mapy(zi.getLatitude());
-                plot(x,y, HIGHLIGHT_SIZE);
+                g.fillOval(x, y, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE);
             }
             int xpos = x - WIDTH_OFFSET;
             int ypos = y - d.height / 2;
