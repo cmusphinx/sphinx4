@@ -165,31 +165,10 @@ function getAccuracyStatus(testName) {
 	count = liveTestCount[testName];
     }
 
-  thisWER = getWER(testName, count);
-  prevWER = getWER(testName, count - 1);
-	
-  if (thisWER == "N/A") {
-      return "N/A";
-  }
-	    
-  if (prevWER == "N/A") {
-      return "OK - " thisWER "";
-  }
+    thisWER = getWER(testName, count);
+    prevWER = getWER(testName, count - 1);
 
-  if (thisWER == prevWER) {
-      return "OK - " thisWER "";
-  }
-
-  if (thisWER > prevWER) {
-      
-      return "REGRESSED - increased from " prevWER  " to " thisWER ""
-  }
-
-  if (thisWER < prevWER) {
-      return "IMPROVED  - decreased from " prevWER  " to " thisWER ""
-  }
-
-  return "OK - " thisWER "";
+    return getLessIsBetterMetricStatus(thisWER, prevWER);
 }
 
 ####
@@ -205,31 +184,7 @@ function getTimeStatus(testName, _slowThreshold, _fastThreshold) {
   thisTime = getTime(testName, count);
   prevTime = getTime(testName, count - 1);
 
-  if (thisTime == "N/A") {
-      return "N/A";
-  }
-
-  if (prevTime == "N/A") {
-      return "OK - " thisTime " ";
-  }
-
-  if (thisTime == prevTime) {
-      return "OK - " thisTime " ";
-  }
-
-  _slowThreshold = prevTime + prevTime * .1;
-  _fastThreshold = prevTime - prevTime * .1;
-
-  if (thisTime > _slowThreshold) {
-      return "REGRESSED - increased from " prevTime " to " \
-      	thisTime " " ;
-  }
-
-  if (thisTime  < _fastThreshold) {
-      return "IMPROVED  - decreased from " prevTime " to " \
-      	thisTime " ";
-  }
-  return "OK - " thisTime " ";
+  return getLessIsBetterThresholdMetricStatus(thisTime, prevTime, 0.1);
 }
 
 ####
@@ -243,27 +198,7 @@ function getHeapStatus(testName, _minThreshold, _maxThreshold) {
     thisHeap = getHeap(testName, count);
     prevHeap = getHeap(testName, count - 1);
 
-  if (thisHeap == "N/A") {
-      return "N/A";
-  }
-
-  if (prevHeap == "N/A") {
-      return "OK - " thisHeap " ";
-  }
-
-  _maxThreshold = prevHeap + prevHeap * .1;
-  _minThreshold = prevHeap - prevHeap * .1;
-
-  if (thisHeap > _maxThreshold) {
-      return "REGRESSED - increased from " prevHeap " to " \
-      	thisHeap " " ;
-  }
-
-  if (thisHeap  < _minThreshold) {
-      return "IMPROVED  - decreased from " prevHeap " to " \
-      	thisHeap " ";
-  }
-  return "OK - " thisHeap " ";
+    return getLessIsBetterThresholdMetricStatus(thisHeap, prevHeap, 0.1);
 }
 
 ####
@@ -303,20 +238,7 @@ function getGapInsertionRateStatus(testName) {
     thisGapRate = getGapInsertionRate(testName, count);
     prevGapRate = getGapInsertionRate(testName, count - 1);
 
-    if (thisGapRate == "N/A") {
-	return "N/A";
-    }
-    if (prevGapRate == "N/A") {
-	return "OK - " thisGapRate "";
-    }    
-    if (thisGapRate > prevGapRate) {
-	return "REGRESSED - increased from " prevGapRate " to " thisGapRate "";
-    }    
-    if (prevGapRate < thisGapRate) {
-	return "IMPROVED  - decreased from " prevGapRate " to " thisGapRate "";
-    }
-
-    return "OK - " thisGapRate "";
+    return getLessIsBetterMetricStatus(thisGapRate, prevGapRate);
 }
 
 function getGapInsertionRate(testName, testCount) {
@@ -348,25 +270,38 @@ function getUtteranceRatioStatus(testName) {
     if (prevRatio == "N/A") {
 	return "OK - " thisRatio "";
     }
-    if (thisRatio != prevRatio) {
-	return "CHANGED - from " prevRatio " to " thisRatio "";
+
+    thisDistFromOne = distFromOne(thisRatio);
+    prevDistFromOne = distFromOne(prevRatio);
+    
+    if (thisDistFromOne > prevDistFromOne) {
+	return "REGRESSED - increased from " prevRatio " to " thisRatio "";
+    }
+    if (thisDistFromOne < prevDistFromOne) {
+	return "IMPROVED  - decreased from " prevRatio " to " thisRatio "";
     }
     return "OK - " thisRatio "";
 }
 
 function getUtteranceRatio(testName, testCount) {
+    ratio = "N/A";
     updateData(testName, testCount);
     actualUtterances = data[F_ACTUAL_UTTERANCES];
     foundUtterances = data[F_FOUND_UTTERANCES];
     if (actualUtterances > 0) {
 	ratio = foundUtterances / actualUtterances;
     }
-    if (ratio == "") {
-	ratio = "N/A";
-    }
     return ratio;
 }
 
+function distFromOne(x) {
+    dist = x - 1.0;
+    if (dist >= 0) {
+	return dist;
+    } else if (dist < 0) {
+	return -dist;
+    }
+}
 
 ####
 # Returns the status of average response time
@@ -378,20 +313,8 @@ function getAvgResponseTimeStatus(testName) {
     }
     thisTime = getAvgResponseTime(testName, count);
     prevTime = getAvgResponseTime(testName, count - 1);
-    
-    if (thisTime == "N/A") {
-        return "N/A";
-    }
-    if (prevTime == "N/A") {
-	return "OK - " thisTime "";
-    }
-    if (thisTime > prevTime) {
-	return "REGRESSED - increased from " prevTime " to " thisTime "";
-    }
-    if (prevTime < thisTime) {
-	return "IMPROVED  - decreased from " prevTime " to " thisTime "";
-    }
-    return "OK - " thisTime "";
+
+    return getLessIsBetterThresholdMetricStatus(thisTime, prevTime, 0.1);
 }
 
 function getAvgResponseTime(testName, testCount) {
@@ -401,6 +324,41 @@ function getAvgResponseTime(testName, testCount) {
 	avgResponseTime = "N/A";
     }
     return avgResponseTime;    
+}
+
+function getLessIsBetterMetricStatus(thisMetric, prevMetric) {
+    if (thisMetric == "N/A") {
+	return "N/A";
+    }
+    if (prevMetric == "N/A") {
+	return "OK - " thisMetric "";
+    }
+    if (thisMetric > prevMetric) {
+	return "REGRESSED - increased from " prevMetric " to " thisMetric "";
+    }
+    if (thisMetric < prevMetric) {
+	return "IMPROVED  - decreased from " prevMetric " to " thisMetric "";
+    }
+    return "OK - " thisMetric ""
+}
+
+function getLessIsBetterThresholdMetricStatus(thisMetric, prevMetric, threshold) {
+    if (thisMetric == "N/A") {
+	return "N/A";
+    }
+    if (prevMetric == "N/A") {
+	return "OK - " thisMetric "";
+    }
+    prevMetricPlusTenPercent = prevMetric * (1.0 + threshold);
+    prevMetricMinusTenPercent = prevMetric * (1.0 - threshold);
+    
+    if (thisMetric > prevMetricPlusTenPercent) {
+	return "REGRESSED - increased from " prevMetric " to " thisMetric "";
+    }
+    if (thisMetric < prevMetricMinusTenPercent) {
+	return "IMPROVED  - decreased from " prevMetric " to " thisMetric "";
+    }
+    return "OK - " thisMetric "";
 }
 
 ####
