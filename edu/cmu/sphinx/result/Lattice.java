@@ -893,7 +893,8 @@ public class Lattice {
     /**
      * Computes the score of an edge.
      *
-     * @param the edge which score we want to compute
+     * @param edge the edge which score we want to compute
+     * @param languageModelWeight the language model weight to use
      *
      * @return the score of an edge
      */
