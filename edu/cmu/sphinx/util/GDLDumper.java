@@ -48,9 +48,12 @@ public class GDLDumper extends LinguistDumper  {
         "edu.cmu.sphinx.util.GDLDumper.";
 
     private static final String PROP_SKIP_HMMS = PROP_PREFIX + "skipHMMs"; 
+    private static final String PROP_VERTICAL_LAYOUT
+        = PROP_PREFIX + "verticalLayout"; 
     
     private static final String PROP_DUMP_ARC_LABELS = 
         PROP_PREFIX + "dumpArcLabels";
+
 
     /**
      * Creates a GDL dumper
@@ -76,11 +79,22 @@ public class GDLDumper extends LinguistDumper  {
      * @param out the output stream.
      */
     protected void startDump(PrintStream out) {
+        boolean verticalLayout =
+            getProperties().getBoolean(PROP_VERTICAL_LAYOUT, false);
+
 	out.println("graph: {");
 	out.println("    layout_algorithm: minbackward");
-	out.println("    orientation: left_to_right");
-	out.println("    manhatten_edges: yes");
+        if (verticalLayout) {
+            out.println("    orientation: top_to_bottom");
+            out.println("    manhatten_edges: no");
+            out.println("    splines: yes");
+        } else {
+            out.println("    orientation: left_to_right");
+            out.println("    manhatten_edges: yes");
+            out.println("    splines: no");
+        }
     }
+
 
     /**
      * Called at the end of the dump
@@ -99,10 +113,9 @@ public class GDLDumper extends LinguistDumper  {
      * @param level the level of the state
      */
     protected void startDumpNode(PrintStream out, 
-                                 SentenceHMMState state, int level,
-                                 SphinxProperties props) {
+                                 SentenceHMMState state, int level) {
         
-        boolean skipHMMs = props.getBoolean(PROP_SKIP_HMMS, true);
+        boolean skipHMMs = getProperties().getBoolean(PROP_SKIP_HMMS, true);
 
 	if (skipHMMs && (state instanceof HMMStateState)) {
 	} else {
@@ -117,7 +130,7 @@ public class GDLDumper extends LinguistDumper  {
 		    " label: " + qs(state.getPrettyName()) + 
 		    " color: " + color +
 		    " shape: " + shape + 
-		    " vertical_order: " + level +
+	//	    " vertical_order: " + level +
 		    "}");
 	}
     }
@@ -171,13 +184,13 @@ public class GDLDumper extends LinguistDumper  {
      * @param level the level of the state
      */
     protected void dumpArc(PrintStream out, SentenceHMMState from, 
-                           SentenceHMMStateArc arc, int level,
-                           SphinxProperties props) {
+                           SentenceHMMStateArc arc, int level) {
 
-        boolean skipHMMs = props.getBoolean(PROP_SKIP_HMMS, true);
-        boolean dumpArcLabels = props.getBoolean(PROP_DUMP_ARC_LABELS,true);
+        boolean skipHMMs = getProperties().getBoolean(PROP_SKIP_HMMS, true);
+        boolean dumpArcLabels = 
+            getProperties().getBoolean(PROP_DUMP_ARC_LABELS,true);
         
-        LogMath logMath = LogMath.getLogMath(props.getContext());
+        LogMath logMath = LogMath.getLogMath(getProperties().getContext());
 
         String color = getArcColor(arc);
 	SentenceHMMState nextState = arc.getNextState();
