@@ -13,12 +13,15 @@ package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.decoder.search.Token;
 
+import edu.cmu.sphinx.linguist.WordSearchState;
+
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -145,32 +148,36 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
             /* if a word is found */
             if (mapToken != null) {
                 String word = mapToken.getWord().getSpelling();
-                ConfusionSet cs = sausage.getConfusionSet(slot);
                 WordResult wr = null;
-
+                ConfusionSet cs = null;
+                
                 /*
                  * NOTE: since there is no Word for <noop>,
                  * we check for <unk> and <sil> instead
                  */
-                while (slot >= 0 &&
+                while (slot >= 0 && wr == null) {
+                    /*
                        (((wr = cs.getWordResult(word)) == null) &&
                         (((wr = cs.getWordResult("<unk>")) != null) ||
                          ((wr = cs.getWordResult("<sil>")) != null)))) {
-                    slot--;
+                    */
                     cs = sausage.getConfusionSet(slot);
+                    wr = cs.getWordResult(word);
+                    if (wr == null) {
+                        if (slot > 0) {
+                            slot--;
+                        } else if (slot == 0) {
+                            break;
+                        }
+                    }
                 }
                 if (wr != null) {
-                    /*
-                    System.out.println
-                        ("Confidence for " + word + ": " +
-                         wr.getConfidence() + " " +
-                         wr.getLogMath().logToLinear((float)wr.getConfidence()));
-                    */
                     mapPath.add(0, wr);
                 } else {
                     cs.dump("Slot " + slot);
-                    throw new Error("Can't find WordResult in ConfidenceResult slot " +
-                                    slot + " for word " + word);
+                    throw new Error
+                        ("Can't find WordResult in ConfidenceResult slot " +
+                         slot + " for word " + word);
                 }
                 slot--;
                 mapToken = mapToken.getPredecessor();
