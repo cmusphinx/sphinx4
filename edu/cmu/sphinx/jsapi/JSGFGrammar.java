@@ -17,6 +17,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.LinkedList;
 
 import javax.speech.EngineException;
 import javax.speech.recognition.GrammarException;
@@ -237,7 +239,7 @@ public class JSGFGrammar extends Grammar {
     // Configurable data
     // ---------------------
     private RuleGrammar ruleGrammar;
-    private Map ruleNameStack;
+    private RuleStack ruleStack;
     private Recognizer recognizer;
     private String grammarName;
     private URL baseURL = null;
@@ -374,22 +376,14 @@ public class JSGFGrammar extends Grammar {
     private GrammarGraph parseRuleName(RuleName initialRuleName)
             throws GrammarException {
         debugPrintln("parseRuleName: " + initialRuleName.toString());
-        GrammarGraph result = (GrammarGraph) ruleNameStack.get(initialRuleName
+        GrammarGraph result = (GrammarGraph) ruleStack.contains(initialRuleName
                 .getRuleName());
 
-        // TODO: tail-recursion broken
-        // temporarily disable this check
-        // this check was also matching NULL rules which was causing bad grammars
-        // to be generated in rules that used the NULL production.  Obviously, this
-        // has to be thought out a bit more, so in the mean time, we'll disable this
-        // check (which disables the support for tail end recursion).
-
-        if (false && result != null) { // its a recursive call
-            //System.out.println("Found on rulestack: " + initialRuleName.getRuleName() + " " + result);
+        if (result != null) { // its a recursive call
             return result;
         } else {
             result = new GrammarGraph();
-            ruleNameStack.put(initialRuleName.getRuleName(), result);
+            ruleStack.push(initialRuleName.getRuleName(), result);
         }
         RuleName ruleName = ruleGrammar.resolve(initialRuleName);
 
@@ -415,10 +409,12 @@ public class JSGFGrammar extends Grammar {
                         + ruleName.getRuleName());
             }
             GrammarGraph ruleResult = parseRule(rule);
-            result.getStartNode().add(ruleResult.getStartNode(), 0.0f);
-            ruleResult.getEndNode().add(result.getEndNode(), 0.0f);
-            ruleNameStack.remove(ruleName.getRuleName());
+            if (result != ruleResult) {
+                result.getStartNode().add(ruleResult.getStartNode(), 0.0f);
+                ruleResult.getEndNode().add(result.getEndNode(), 0.0f);
+            }
         }
+        ruleStack.pop();
         return result;
     }
 
@@ -448,7 +444,7 @@ public class JSGFGrammar extends Grammar {
 
         // if this can possibly occur more than once, add a loopback
 
-        if (count == RuleCount.ONCE_OR_MORE || count == RuleCount.ZERO_OR_MORE) {
+        if (count == RuleCount.ONCE_OR_MORE || count ==RuleCount.ZERO_OR_MORE) {
             newNodes.getEndNode().add(newNodes.getStartNode(), 0.0f);
         }
         return result;
@@ -579,7 +575,6 @@ public class JSGFGrammar extends Grammar {
      * @return a GrammarNode with the word in the given RuleToken
      */
     private GrammarGraph parseRuleToken(RuleToken ruleToken) {
-        debugPrintln("parseRuleToken: " + ruleToken.toString());
 
         GrammarNode node = createGrammarNode(ruleToken.getText());
         return new GrammarGraph(node, node);
@@ -623,7 +618,7 @@ public class JSGFGrammar extends Grammar {
             }
 
             recognizer.commitChanges();
-            ruleNameStack = new HashMap();
+            ruleStack = new RuleStack();
             newGrammar();
 
             firstNode = createGrammarNode("<sil>");
@@ -632,15 +627,23 @@ public class JSGFGrammar extends Grammar {
 
             // go through each rule and create a network of GrammarNodes
             // for each of them
+
             String[] ruleNames = ruleGrammar.listRuleNames();
             for (int i = 0; i < ruleNames.length; i++) {
                 String ruleName = ruleNames[i];
                 if (ruleGrammar.isRulePublic(ruleName)) {
-                    debugPrintln("New Rule: " + ruleName);
+                    String fullName = getFullRuleName(ruleName);
+                    GrammarGraph publicRuleGraph = new GrammarGraph();
+                    ruleStack.push(fullName, publicRuleGraph);
                     Rule rule = ruleGrammar.getRule(ruleName);
                     GrammarGraph graph = parseRule(rule);
-                    firstNode.add(graph.getStartNode(), 0.0f);
-                    graph.getEndNode().add(finalNode, 0.0f);
+                    ruleStack.pop();
+
+                    firstNode.add(publicRuleGraph.getStartNode(), 0.0f);
+                    publicRuleGraph.getEndNode().add(finalNode, 0.0f);
+                    publicRuleGraph.getStartNode().add(
+                                graph.getStartNode(), 0.0f);
+                    graph.getEndNode().add( publicRuleGraph.getEndNode(), 0.0f);
                 }
             }
             postProcessGrammar();
@@ -654,8 +657,20 @@ public class JSGFGrammar extends Grammar {
         } catch (MalformedURLException mue) {
             throw new IOException("bad base grammar url " + baseURL + " "
                     + mue);
-
         }
+    }
+
+    /**
+     * Gets the fully resolved rule name
+     *
+     * @param ruleName the partial name
+     * @return the fully resovled name
+     *
+     * @throws GrammarException 
+     */
+    private String getFullRuleName(String ruleName) throws GrammarException {
+        RuleName rname = ruleGrammar.resolve(new RuleName(ruleName));
+        return rname.getRuleName();
     }
 
 
@@ -739,6 +754,60 @@ public class JSGFGrammar extends Grammar {
          */
         GrammarNode getEndNode() {
             return endNode;
+        }
+    }
+
+
+    /**
+     * Manages a stack of grammar graphs that can be accessed by grammar name
+     */
+    class RuleStack {
+        private List stack;
+        private HashMap map;
+
+        /**
+         * Creates a name stack
+         */
+        public RuleStack() {
+            clear();
+        }
+
+        /**
+         * Pushes the grammar graph on the stack
+         */
+        public void push(String name, GrammarGraph g) {
+            stack.add(0, name);
+            map.put(name, g);
+        }
+
+        /**
+         * remove the top graph on the stack
+         */
+        public void pop() {
+            map.remove(stack.remove(0));
+        }
+
+        /**
+         * Checks to see if the stack contains a graph with the given name
+         *
+         * @param name  the graph name
+         * @return the grammar graph associated with the name if found,
+         * otherwise null
+         */
+        public GrammarGraph contains(String name) {
+            if (stack.contains(name)) {
+                return (GrammarGraph) (GrammarGraph) map.get(name);
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * Clears this name stack
+         */
+        public void clear() {
+            stack = new LinkedList();
+            map = new HashMap();
         }
     }
 }

@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import edu.cmu.sphinx.linguist.dictionary.Word;
@@ -105,6 +106,17 @@ public class GrammarNode implements Serializable {
         for (int i = 0; i < arcList.size(); i++) {
             GrammarArc arc = (GrammarArc) arcList.get(i);
             arcList.set(i, optimizeArc(arc));
+        }
+
+        // now remove all self-looping empty arcs
+
+        if (this.isEmpty()) {
+            for (ListIterator i = arcList.listIterator(); i.hasNext(); ) {
+                GrammarArc arc = (GrammarArc) i.next();
+                if (this == arc.getGrammarNode()) {
+                    i.remove();
+                }
+            }
         }
     }
 
@@ -210,6 +222,13 @@ public class GrammarNode implements Serializable {
      * @param logProbability the log probability of the transition occuring
      */
     public void add(GrammarNode node, float logProbability) {
+        // if we are an empty node, a loopback makes no sense.
+        // this construct can be generated when dealing with recursive
+        // grammars, so we check for them and toss them out.
+        //
+        if (isEmpty() && this == node) {
+            return;
+        }
         arcList.add(new GrammarArc(node, logProbability));
     }
 
