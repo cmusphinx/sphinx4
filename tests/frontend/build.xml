@@ -20,7 +20,7 @@ NOTE:  Before running the tests, you must have already built
         <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
     </path>
     <property name="build_dir"		value="${top_dir}/bld"/>
-    <property name="classes_dir"	value="${top_dir}/classes"/>
+    <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="${build_dir}/lib"/>
 
     <property name="skip"               value="0"/>
@@ -30,6 +30,33 @@ NOTE:  Before running the tests, you must have already built
     <property name="maximum_heap_size"  value="128m"/>
     <property name="jit"                value="server"/>
 
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * The 'none' target.                                     * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="none">
+            <echo>Type 'ant -projecthelp' for possible targets.</echo>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Compile all the test code.                             * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="all"
+            description="Compiles all the tests.">
+            <mkdir dir="${classes_dir}/tests/knowledge/dictionary/"/>
+            <javac debug="true"
+                   source="1.4"
+                   deprecation="true"
+                   destdir="${classes_dir}"
+                   classpath="${classes_dir}"
+                   srcdir="."/>
+    </target>
+
     
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -37,7 +64,8 @@ NOTE:  Before running the tests, you must have already built
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="alltests"
-	    description="Runs all front-end module tests">
+	    description="Runs all front-end module tests"
+	    depends="all">
 	    <antcall target="preemphasizer"/>
 	    <antcall target="hammingWindow"/>
 	    <antcall target="spectrumAnalyzer"/>
