@@ -13,11 +13,16 @@
 
 package edu.cmu.sphinx.frontend.util;
 
+import edu.cmu.sphinx.util.Utilities;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
-import edu.cmu.sphinx.util.Utilities;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.TargetDataLine;
 
 
 /**
@@ -454,4 +459,47 @@ public class DataUtil {
         file.close();
     }
 
+
+    /**
+     * Returns a native audio format that has the same encoding,
+     * endianness and sample size as the given format,
+     * and a sample rate that is larger than the given sample rate.
+     *
+     * @return a suitable native audio format
+     */
+    public static AudioFormat getNativeAudioFormat(AudioFormat format) {
+        // try to do sample rate conversion
+        Line.Info[] lineInfos = AudioSystem.getTargetLineInfo
+            (new Line.Info(TargetDataLine.class));
+
+        AudioFormat nativeFormat = null;
+
+        // find a usable target line
+        for (int i = 0; i < lineInfos.length; i++) {
+            
+            AudioFormat[] formats = 
+                ((TargetDataLine.Info)lineInfos[i]).getFormats();
+            
+            for (int j = 0; j < formats.length; j++) {
+                
+                // for now, just accept downsampling, not checking frame
+                // size/rate (encoding assumed to be PCM)
+                
+                AudioFormat thisFormat = formats[j];
+                if (thisFormat.getEncoding() == format.getEncoding()
+                    && thisFormat.isBigEndian() == format.isBigEndian()
+                    && thisFormat.getSampleSizeInBits() == 
+                    format.getSampleSizeInBits()
+                    && thisFormat.getSampleRate() > format.getSampleRate()) {
+                    nativeFormat = thisFormat;
+                    break;
+                }
+            }
+            if (nativeFormat != null) {
+                //no need to look through remaining lineinfos
+                break;
+            }
+        }
+        return nativeFormat;
+    }
 }
