@@ -370,7 +370,8 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
                         break;
                     }
                 }
-            } else if (signal != null && signal.equals(Signal.UTTERANCE_END)) {
+            } else if (signal != null && 
+                       signal.equals(Signal.UTTERANCE_END)) {
                 if (inSpeech) {
                     speechEnd();
                 }
@@ -388,7 +389,13 @@ public class EnergyEndpointer extends DataProcessor implements Endpointer {
         }
         
         if (plotEnergy) {
-            plotter.plot(cepstrum);
+            if (cepstrum.getEnergy() < 0) {
+                plotEnergy = false;
+                System.out.println("Stop plotting energy values " +
+                                   "since negative energy is detected.");
+            } else {
+                plotter.plot(cepstrum);
+            }
         }
 
         getTimer().stop();
