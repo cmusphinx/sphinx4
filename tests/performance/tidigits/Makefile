@@ -201,7 +201,7 @@ tidigits_quick_flat_no_context:
 	-Dtests.search.Decoder.showPartialResults=false \
 	-Dtests.search.Decoder.showBestToken=false \
 	-Dtests.search.Decoder.showErrorToken=true \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-1 \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=10E-1 \
 	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=true \
 	$(NO_CONTEXT_FLAGS) \
 	edu.cmu.sphinx.decoder.BatchDecoder tidigits.props tidigits.batch
