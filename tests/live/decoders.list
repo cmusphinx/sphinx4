@@ -1,4 +1,4 @@
-decoders = bishop helpinghand isolatedDigits connectedDigits alphaSpelling
+decoders = bishop isolatedDigits connectedDigits alphaSpelling
 
 # isolatedDigits decoder
 isolatedDigits.name = Isolated Digits
