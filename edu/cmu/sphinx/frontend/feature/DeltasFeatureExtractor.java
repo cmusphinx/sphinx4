@@ -24,7 +24,6 @@ import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.util.IDGenerator;
 import edu.cmu.sphinx.util.SphinxProperties;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -115,6 +114,8 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
 
     /**
      * Reads the parameters needed from the the static SphinxProperties object.
+     *
+     * @param props the SphinxProperties to read properties from
      */
     private void setProperties(SphinxProperties props) {
 	window = props.getInt(getFullPropertyName(PROP_FEATURE_WINDOW),
@@ -179,6 +180,9 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
      *
      * Returns the total number of features that should result from
      * the read Data.
+     *
+     * @param numberCepstra the number of Data objects to read
+     * @param firstCepstrum the first Data object
      *
      * @return the number of features that should be computed using
      *         the Data read
@@ -268,7 +272,9 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
 
 
     /**
-     * Adds the given Cepstrum to the cepstraBuffer.
+     * Adds the given DoubleData to the cepstraBuffer.
+     *
+     * @param cepstrum the DoubleData object to add
      */
     private void addCepstrum(DoubleData cepstrum) {
         cepstraBuffer[bufferPosition++] = cepstrum;
@@ -328,6 +334,8 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
 
     /**
      * Computes the next feature. Advances the pointers as well.
+     *
+     * @return the feature Data object computed
      */
     private Data computeNextFeature() {
 

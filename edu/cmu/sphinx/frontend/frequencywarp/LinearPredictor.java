@@ -42,6 +42,8 @@ public class LinearPredictor {
      * Returns the energy of the frame (alpha in the Levinson recursion)
      * Assumes the following sign convention:<br>
      * prediction(x[t]) = Sum_i {Ar[i] * x[t-i]}
+     *
+     * @param autocor
      */
     public double[] getARFilter(double[] autocor){
 	if (autocor[0] == 0) return null; /* No signal */
@@ -84,6 +86,8 @@ public class LinearPredictor {
      * @param RC double array of reflection coefficients. The RC array
      *        must begin at 1 (RC[0] is a dummy value)
      * @param lpcorder AR order desired
+     *
+     * @return AR parameters
      */
     public double[] reflectionCoeffsToARParameters(double[] RC, int lpcorder) {
 	double[][] tmp = new double[lpcorder+1][lpcorder+1];
@@ -116,8 +120,9 @@ public class LinearPredictor {
      * @param ceporder is the order of the LPC cepstral vector to be 
      *        computed. The literature shows the optimal value of
      *        order to be .75*LPCorder <= ceporder <= 1.25*LPCorder
+     *
+     * @return LPC cepstra
      */
-
     public  double[] getData(int ceporder) {
 	int i;
 	double sum;
@@ -165,8 +170,9 @@ public class LinearPredictor {
      *        good valued.
      * @param nbilincepstra is the number of bilinear cepstral values to
      *        be computed from the linear frequency cepstrum.
+     *
+     * @return a bi-linear frequency warped version of the LPC cepstrum
      */
-
     public double[] getBilinearCepstra(double warp, int nbilincepstra){
         double[][] g = new double[nbilincepstra][cepstrumOrder];
 

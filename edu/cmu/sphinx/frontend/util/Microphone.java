@@ -177,8 +177,9 @@ public class Microphone extends BaseDataProcessor {
      * Constructs a Microphone with the given InputStream.
      *
      * @param name the name of this Microphone
-     * @param context the context of this Microphone
+     * @param frontEnd the frontEnd this Microphone belongs to
      * @param props the SphinxProperties to read properties from
+     * @param predecessor the predecessor DataProcessor of this Microphone
      *
      * @throws IOException if an I/O error occurs
      */
@@ -197,7 +198,7 @@ public class Microphone extends BaseDataProcessor {
      *
      * @param props a SphinxProperties object specifying the properties values
      */
-    public void setProperties(SphinxProperties props) {
+    private void setProperties(SphinxProperties props) {
 
         sampleRate = props.getInt
             (getFullPropertyName(FrontEndFactory.PROP_SAMPLE_RATE),

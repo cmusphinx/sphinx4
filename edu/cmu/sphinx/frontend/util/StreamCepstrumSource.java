@@ -154,6 +154,8 @@ public class StreamCepstrumSource extends BaseDataProcessor {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
+     *
+     * @param props the SphinxProperties to read from
      */
     private void initSphinxProperties(SphinxProperties props) {
 	

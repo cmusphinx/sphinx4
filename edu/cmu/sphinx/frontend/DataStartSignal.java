@@ -22,9 +22,6 @@ package edu.cmu.sphinx.frontend;
  */
 public class DataStartSignal extends Signal {
 
-    String name;
-    String transcript;
-
     /**
      * Constructs a DataStartSignal.
      */
@@ -41,34 +38,4 @@ public class DataStartSignal extends Signal {
         super(time);
     }
 
-    /**
-     * Constructs a DataStartSignal with the given data name and transcript.
-     *
-     * @param name   the name of the data stream, can be the name of the 
-     *               file from which the data stream is created
-     * @param transcript   the transcript text of the data stream
-     */
-    public DataStartSignal(String name, String transcript) {
-        this();
-        this.name = name;
-        this.transcript = transcript;
-    }
-
-    /**
-     * Returns the name of this data stream.
-     *
-     * @return the name of this data stream
-     */
-    public String getStreamName() {
-        return name;
-    }
-
-    /**
-     * Returns the transcript text.
-     *
-     * @return the transcript text
-     */
-    public String getTranscript() {
-        return transcript;
-    }
 }

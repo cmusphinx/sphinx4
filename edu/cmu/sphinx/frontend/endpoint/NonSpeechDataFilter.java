@@ -194,6 +194,10 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
     /**
      * Handles the given Data in the case when mergeSpeechSegment
      * is true.
+     *
+     * @param audio the Data object to handle
+     *
+     * @throws DataProcessingException if a data processor error occurs
      */
     private Data handleMergingData(Data audio) throws DataProcessingException {
         Data next = audio;
@@ -237,6 +241,10 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
     /**
      * Handles the given Data in the case when mergeSpeechSegment
      * is false.
+     *
+     * @param audio the Data object to handle
+     *
+     * @throws DataProcessingException if a data processor error occurs
      */
     private Data handleNonMergingData(Data audio) throws 
         DataProcessingException {
@@ -300,6 +308,8 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
      * predecessor.
      *
      * @return the next available Data
+     *
+     * @throws DataProcessingException if a data processor error occurs
      */
     private Data readData() throws DataProcessingException {
         Data audio = null;
@@ -313,13 +323,10 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
 
 
     /**
-     * Read until we hit a Data of the two given Signal types.
-     *
-     * @param signal1 the first Signal type
-     * @param signal2 the second Signal type
+     * Read until we hit a SpeechStartSignal or DataEndSignal.
      *
      * @return a list of all the Data read,
-     *    including the last Data with the Signal
+     *         including the SpeechStartSignal or DataEndSignal
      */
     private List readUntilSpeechStartOrDataEnd() throws 
         DataProcessingException {

@@ -25,7 +25,6 @@ import edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
-import java.io.IOException;
 
 /**
  * Filters an input power spectrum through a PLP filterbank. The
@@ -117,6 +116,8 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
 
     /**
      * Reads the parameters.
+     *
+     * @param props the SphinxProperties to read from
      */
     private void setProperties(SphinxProperties props) {
 
@@ -289,7 +290,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
      * @return the next available Data object, returns null if no
      *         Data object is available
      *
-     * @throws IOException if there is a data processing error
+     * @throws DataProcessingException if there is a data processing error
      */
     public Data getData() throws DataProcessingException {
 

@@ -136,6 +136,12 @@ public class FrameDropper extends BaseDataProcessor {
         return feature;
     }
 
+    /**
+     * Read a Data object from the predecessor DataProcessor,
+     * and increment the ID count appropriately.
+     *
+     * @return the read Data object
+     */
     private Data readData() throws DataProcessingException {
         Data frame = getPredecessor().getData();
         if (frame != null) {

@@ -53,6 +53,8 @@ public abstract class BaseDataProcessor implements DataProcessor {
      * Returns the processed Data output.
      *
      * @return an Data object that has been processed by this DataProcessor 
+     *
+     * @throws DataProcessingException if a data processor error occurs
      */
     public abstract Data getData() throws DataProcessingException;
 

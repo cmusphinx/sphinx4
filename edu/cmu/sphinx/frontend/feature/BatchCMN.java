@@ -21,7 +21,6 @@ import edu.cmu.sphinx.frontend.DoubleData;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,7 +107,7 @@ public class BatchCMN extends BaseDataProcessor {
      *
      * @return the number cepstra (with Data) read
      *
-     * @throws IOException if an error occurred reading the Data
+     * @throws DataProcessingException if an error occurred reading the Data
      */
     private int readUtterance() throws DataProcessingException {
 

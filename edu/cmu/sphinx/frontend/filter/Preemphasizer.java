@@ -131,7 +131,7 @@ public class Preemphasizer extends BaseDataProcessor {
      * Applies pre-emphasis filter to the given Audio. The preemphasis
      * is applied in place.
      *
-     * @param input a Audio of audio data
+     * @param in   audio data
      */
     private void applyPreemphasis(double[] in) {
 

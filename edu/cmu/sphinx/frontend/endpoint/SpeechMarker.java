@@ -36,9 +36,10 @@ import java.util.ListIterator;
 
 
 /**
- * Converts a stream of Audio objects, marked as speech and non-speech,
- * into utterances. This is done by inserting SPEECH_START and
- * SPEECH_END signals into the stream.
+ * Converts a stream of SpeechClassifiedData objects, marked as 
+ * speech and non-speech, and mark out the regions that are considered speech.
+ * This is done by inserting SPEECH_START and SPEECH_END signals 
+ * into the stream.
  *
  * <p>The algorithm for inserting the two signals is as follows.
  *
@@ -235,9 +236,9 @@ public class SpeechMarker extends BaseDataProcessor {
 
     /**
      * Returns the amount of audio data in milliseconds in the 
-     * given Audio object.
+     * given SpeechClassifiedData object.
      *
-     * @param audio the Audio object
+     * @param audio the SpeechClassifiedData object
      *
      * @return the amount of audio data in milliseconds
      */
@@ -247,6 +248,8 @@ public class SpeechMarker extends BaseDataProcessor {
         
     /**
      * Read the starting frames until the utterance has started.
+     *
+     * @throws DataProcessingException if a data processing error occurs
      */
     private void readInitialFrames() throws DataProcessingException {
         int nonSpeechTime = 0;
@@ -292,10 +295,10 @@ public class SpeechMarker extends BaseDataProcessor {
     }
 
     /**
-     * Handles an Audio object that can possibly be the first in
+     * Handles an SpeechClassifiedData object that can possibly be the first in
      * an utterance. 
      *
-     * @param audio the Audio to handle
+     * @param audio the SpeechClassifiedData to handle
      *
      * @return true if utterance/speech has started for real, false otherwise
      */

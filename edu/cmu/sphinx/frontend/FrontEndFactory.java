@@ -28,7 +28,7 @@ import java.util.Map;
 
 
 /**
- * A frontend where FeatureFrames can be obtained.
+ * A factory class for FrontEnd objects.
  */
 public class FrontEndFactory {
 
@@ -120,6 +120,8 @@ public class FrontEndFactory {
      * </code>
      *
      * @param props the SphinxProperty to use
+     *
+     * @return the name of all available front ends
      */
     private static String[] getFrontEndNames(SphinxProperties props) {
         String pipelines = props.getString(PROP_PREFIX + "pipelines", "");
@@ -132,6 +134,8 @@ public class FrontEndFactory {
      *
      * @param name the name of the front end to load
      * @param props the SphinxProperty to use
+     *
+     * @return the FrontEnd with the given name
      */
     private static FrontEnd loadFrontEnd(String frontEndName,
                                          SphinxProperties props) {
@@ -189,6 +193,12 @@ public class FrontEndFactory {
     
     /**
      * Returns the class name from a fully-qualified class name.
+     * For example, given "edu.cmu.sphinx.frontend.FrontEndFactory",
+     * will return "FrontEndFactory".
+     *
+     * @param the fully-qualified class name
+     *
+     * @return just the class name
      */
     private static String getClassName(String fullName) {
         int periodIndex = fullName.lastIndexOf(".");

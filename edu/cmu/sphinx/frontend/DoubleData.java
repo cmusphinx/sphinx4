@@ -14,23 +14,7 @@
 package edu.cmu.sphinx.frontend;
 
 /**
- * Implements the base class for all Data objects that go between
- * DataSources. Subclass of Data contain will contain the actual
- * data. A Data object can also contain a Signal.
- * 
- * <p>Data can be event signals or just data to be processed, and they go
- * through the processors in the front-end pipeline. Data can be
- * audio, preemphasized audio data, cepstra, etc.. Signals
- * can be used to indicate events like beginning/end of audio
- * segment, data dropped, quality changed, etc..
- *
- * <p><b>IMPORTANT:</b>
- * Subclass of Data that are assumed to contain actual data by default.
- * Therefore, calling <code>Data.getSignal()</code> will return
- * <code>Signal.CONTENT</code>. The programmer must override this behavior
- * with the constructor.
- *
- * @see Signal
+ * A Data object that holds data of primitive type double.
  */
 public class DoubleData implements Data, Cloneable {
 

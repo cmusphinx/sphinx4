@@ -143,10 +143,10 @@ public class EnergyPlotter {
 
     
     /**
-     * Plots the energy values of the given Cepstrum to System.out.
-     * If the Cepstrum contains a signal, it prints the signal.
+     * Plots the energy values of the given Data to System.out.
+     * If the Data contains a signal, it prints the signal.
      *
-     * @param cepstrum the Cepstrum to plot
+     * @param cepstrum the Data to plot
      */
     public void plot(Data cepstrum) {
         if (cepstrum != null) {

@@ -109,6 +109,8 @@ public class LiveFeatureExtractor extends BaseDataProcessor {
 
     /**
      * Reads the parameters needed from the the static SphinxProperties object.
+     *
+     * @param props the SphinxProperties to read properties from
      */
     private void setProperties(SphinxProperties props) {
         window = props.getInt(getFullPropertyName(PROP_FEATURE_WINDOW),
@@ -229,7 +231,9 @@ public class LiveFeatureExtractor extends BaseDataProcessor {
     }
 
     /**
-     * Adds the given Cepstrum to the cepstraBuffer.
+     * Adds the given DoubleData object to the cepstraBuffer.
+     *
+     * @param cepstrum the DoubleData object to add
      */
     private void addCepstrum(DoubleData cepstrum) {
         cepstraBuffer[bufferPosition++] = cepstrum;
@@ -292,6 +296,8 @@ public class LiveFeatureExtractor extends BaseDataProcessor {
 
     /**
      * Computes the next feature. Advances the pointers as well.
+     *
+     * @return the feature Data computed
      */
     private Data computeNextFeature() {
 

@@ -141,6 +141,8 @@ public class LiveCMN extends BaseDataProcessor {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
+     *
+     * @param props the SphinxProperties to read properties from
      */
     private void setProperties(SphinxProperties props) {
 	initialMean = props.getDouble

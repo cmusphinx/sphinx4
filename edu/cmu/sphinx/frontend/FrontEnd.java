@@ -81,6 +81,8 @@ public class FrontEnd extends BaseDataProcessor {
      * <code>getData()</code> on the last processor.
      *
      * @return an Data object that has been processed by this front end
+     *
+     * @throws DataProcessingException if a data processor error occurs
      */
     public Data getData() throws DataProcessingException {
         Data data = last.getData();
@@ -109,6 +111,9 @@ public class FrontEnd extends BaseDataProcessor {
      * Finds the DataProcessor with the given name.
      *
      * @param name the name of the DataProcessor to find
+     *
+     * @return the DataProcessor with the given name, or null if no
+     *         DataProcessor with the given name was found
      */
     public DataProcessor findDataProcessor(String processorName) {
         DataProcessor current = last;

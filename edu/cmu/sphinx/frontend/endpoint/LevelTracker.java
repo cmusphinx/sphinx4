@@ -163,6 +163,8 @@ public class LevelTracker extends BaseDataProcessor {
 
     /**
      * Sets the properties for this LevelTracker.
+     *
+     * @param props the SphinxProperties to use
      */
     private void setProperties(SphinxProperties props) {
 
@@ -207,7 +209,7 @@ public class LevelTracker extends BaseDataProcessor {
      *
      * @return the next Data object, or null if none available
      *
-     * @throws java.io.IOException if an error occurred
+     * @throws DataProcessingException if a data processing error occurred
      *
      * @see Data
      */

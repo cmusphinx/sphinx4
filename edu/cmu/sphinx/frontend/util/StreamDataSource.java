@@ -109,9 +109,9 @@ public class StreamDataSource extends BaseDataProcessor {
      * Constructs a StreamDataSource with the given InputStream.
      *
      * @param name the name of this StreamDataSource
-     * @param context the context of this StreamDataSource
-     * @param dataStream the InputStream where audio data comes from
-     * @param streamName the name of the InputStream
+     * @param frontEnd the front end this StreamDataSource belongs to
+     * @param props the SphinxProperties to use
+     * @param predecessor the predecessor DataProcessor
      */
     public void initialize(String name, String frontEnd,
                            SphinxProperties props, DataProcessor predecessor) {
@@ -122,6 +122,8 @@ public class StreamDataSource extends BaseDataProcessor {
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
+     *
+     * @param props the SphinxProperties to read from
      */
     private void initSphinxProperties(SphinxProperties props) {
 

@@ -63,7 +63,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
      * Initializes this DiscreteFourierTransform.
      *
      * @param name      the name of this DiscreteFourierTransform
-     * @param frontend  the context of the SphinxProperties to use
+     * @param frontEnd  the context of the SphinxProperties to use
      * @param props     the SphinxProperties object to read properties from
      * @param predecessor the DataProcessor from which to get Data objects
      */

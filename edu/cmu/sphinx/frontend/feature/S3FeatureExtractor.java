@@ -108,6 +108,8 @@ public class S3FeatureExtractor extends BaseDataProcessor {
 
     /**
      * Reads the parameters needed from the the static SphinxProperties object.
+     *
+     * @param props the SphinxProperties to read properties from
      */
     private void setProperties(SphinxProperties props) {
 	window = props.getInt(getFullPropertyName(PROP_FEATURE_WINDOW), 
@@ -223,6 +225,8 @@ public class S3FeatureExtractor extends BaseDataProcessor {
 
     /**
      * Replicates the given feature, and add them to the outputQueue.
+     *
+     * @param feature the feature to replicate
      */
     private void replicateOutputFeature(DoubleData feature) {
 	for (int i = 0; i < window; i++) {
@@ -233,7 +237,9 @@ public class S3FeatureExtractor extends BaseDataProcessor {
 
 
     /**
-     * Adds the given Data to the cepstraBuffer.
+     * Adds the given DoubleData to the cepstraBuffer.
+     *
+     * @param cepstrum the DoubleData to add
      */
     private void addDoubleData(DoubleData cepstrum) {
         cepstraBuffer[bufferPosition++] = cepstrum;
@@ -243,6 +249,8 @@ public class S3FeatureExtractor extends BaseDataProcessor {
 
     /**
      * Computes the next feature. Advances the pointers as well.
+     *
+     * @return the Data computed
      */
     private Data computeNextFeature() {
 

@@ -29,6 +29,8 @@ public class DataProcessingException extends Exception {
     /**
      * Constructs a DataProcessingException with the specified
      * detailed message.
+     *
+     * @param message the detailed message
      */
     public DataProcessingException(String message) {
         super(message);
