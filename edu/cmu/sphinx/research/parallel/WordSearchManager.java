@@ -19,6 +19,8 @@ import edu.cmu.sphinx.result.Result;
 
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.search.ActiveList;
+import edu.cmu.sphinx.decoder.search.TokenStack;
+
 import edu.cmu.sphinx.decoder.linguist.Color;
 import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.decoder.search.Pruner;

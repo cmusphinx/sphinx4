@@ -17,6 +17,9 @@ import edu.cmu.sphinx.knowledge.acoustic.HMMState;
 
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.HeapActiveList;
+import edu.cmu.sphinx.decoder.search.TokenStack;
+import edu.cmu.sphinx.decoder.search.ArrayTokenStack;
+
 import edu.cmu.sphinx.decoder.linguist.HMMStateState;
 import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
 
@@ -70,7 +73,7 @@ implements ParallelState {
 	super(parent, hmmState);
 	this.modelName = modelName;
         if (tokenStackSize > 0) {
-            this.tokenStack = new TokenStackImpl(tokenStackSize);
+            this.tokenStack = new ArrayTokenStack(tokenStackSize);
         } else {
             this.tokenStack = null;
         }

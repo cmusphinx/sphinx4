@@ -13,6 +13,9 @@
 
 package edu.cmu.sphinx.research.parallel;
 
+import edu.cmu.sphinx.decoder.search.TokenStack;
+
+
 /**
  * A SentenceHMMState in a parallel branch.
  */

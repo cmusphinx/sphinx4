@@ -17,6 +17,9 @@ import edu.cmu.sphinx.knowledge.acoustic.Unit;
 
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.HeapActiveList;
+import edu.cmu.sphinx.decoder.search.TokenStack;
+import edu.cmu.sphinx.decoder.search.ArrayTokenStack;
+
 import edu.cmu.sphinx.decoder.linguist.HMMStateState;
 import edu.cmu.sphinx.decoder.linguist.PronunciationState;
 import edu.cmu.sphinx.decoder.linguist.SentenceHMMState;
@@ -72,7 +75,7 @@ public class ParallelUnitState extends edu.cmu.sphinx.decoder.linguist.UnitState
 	super(parent, which, unit);
 	this.modelName = modelName;
         if (tokenStackSize > 0) {
-            this.tokenStack = new TokenStackImpl(tokenStackSize);
+            this.tokenStack = new ArrayTokenStack(tokenStackSize);
         } else {
             this.tokenStack = null;
         }
