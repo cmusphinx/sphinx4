@@ -21,5 +21,5 @@ an4_full_unigram
 an4_full_bigram
 an4_full_flat_unigram_fst
 an4_full_unigram_fst
-an4_spelling_bigram_fst
+an4_full_bigram_fst
 an4_full_trigram_fst
