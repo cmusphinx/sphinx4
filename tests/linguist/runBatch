@@ -1,4 +1,4 @@
-#!/usr/dist/local/exe/bash
+#!/bin/bash
 
 case $# in
 	8) echo Running tests;;
