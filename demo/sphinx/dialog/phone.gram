@@ -6,6 +6,10 @@
 
 grammar phone;
 
+import <commands.standard_commands>;
+
+public <commands> = <standard_commands> ;
+
 public <phone> =     call (philip | phil) { phil } |
                      call (will | willie) { will } |
                      call paul { paul } |
@@ -22,7 +26,4 @@ public <phone> =     call (philip | phil) { phil } |
                      call karl { karl } |
                      call steve { steve } |
                      call glen { glen } |
-                     call nicole { nicole } |
-
-                  get help                 { help } |
-                  [go to [the]] main menu  { goto_menu } ;
+                     call nicole { nicole } ;

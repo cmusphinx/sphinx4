@@ -5,10 +5,13 @@
  */
 
 grammar email;
+import <commands.standard_commands>;
 
-public <command> =      read next message       { read } |
-                        delete message          { delete } |
-                        reply to message        { reply } |
-                        compose new message     { new } |
-                        [go to [the]] main menu { goto_menu } |
-                        get help                    { help } ;
+public <commands> = <standard_commands> ;
+
+public <command> =      read message             |
+                        delete message           |
+                        reply to message         |
+                        compose new message      |
+                        next   message           |
+                        previous message;

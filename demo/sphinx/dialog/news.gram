@@ -6,10 +6,20 @@
 
 grammar news;
 
-public <command> =      read the boston globe { globe } |
-                        read  the wall street journal  { wsj } |
-                        read the nashua telegraph { nashua  } |
-                        read the mercury news { merculry } |
-                        read the new york times {nyt  } |
-                        get help                    { help } |
-                        [go to [the]] main menu       { goto_menu } ;
+import <commands.standard_commands>;
+
+public <commands> = <standard_commands> ;
+
+public <read_news> =    read the boston globe  |
+                        read  the wall street journal   |
+                        read the nashua telegraph  |
+                        read the san jose mercury news  |
+                        read the new york times  |
+                        read the chicago tribune |
+                        read the los angeles times |
+                        read the san francisco chronicle |
+                        read the washington post |
+                        read the guardian |
+                        read the daily mirror |
+                        read the daily prophet |
+                        read the sun ;

@@ -5,19 +5,18 @@
  */
 
 grammar books;
+import <commands.standard_commands>;
 
-public <books> =     read the lord of the rings { lotr } | 
-                     read effective java
-                     read the awk programming language
-                     read spoken language processing
-                     read the future of ideas
-                     read code and other laws of cyber space
-                     read the da vinci code
-                     read angels and demons
-                     read the hobbit
-                     read eats shoots and leaves
-                     read harry potter and the goblet of fire
-                     read the curious incident of the dog in the night time
-                     read the time travelers wife
-                      get help                 { help } |
-                      [go to [the]] main menu    { goto_menu } ;
+public <books> =     read the lord of the rings  | 
+                     read effective java  |
+                     read spoken language processing | 
+                     read the future of ideas  |
+                     read code and other laws of cyber space |
+                     read the da vinci code |
+                     read angels and demons |
+                     read eats shoots and leaves |
+                     read harry potter and the goblet of fire |
+                     read the curious incident of the dog in the night time |
+                     read the time travelers wife;
+
+public <commands> = <standard_commands> ;

@@ -13,4 +13,6 @@ public <command> =      read email      { goto_email } |
                         listen to music { goto_music } |
                         watch movies    { goto_movies } |
                         make a phone call { goto_phone } |
+
+                        show stats          { stats } |
                         get help            { help } ;

@@ -6,11 +6,6 @@
 
 grammar music;
 
-public <music> =      listen to eighteen twelve overture { 1812 } |
-                      listen to shine down forty five { 45 } |
-                      listen to led zeppelin rambling on {zep ramblin } |
-                      listen to jimmy smith the cat {js cat } |
-                      listen to the who tommy {who tommy } |
-                      listen to emerson lake and palmer tank  {elp tank  } |
-                      get help                    { help } |
-                      [go to [the]] main menu       { goto_menu } ;
+import <commands.standard_commands>;
+
+public <commands> = <standard_commands> ;
