@@ -103,8 +103,13 @@ WARRANTIES.
 	    </ul>
 	<li><a href="#batch_tests">Running the Batch Tests</a></li>
 	    <ul>
-	    	<li><a href="#batch_files">Batch Files</a></li>
-		<li><a href="#input_files">Input Audio/Cepstral Files</a></li>
+	       <li><a href="#isolated_digits_test">Isolated Digits</a>
+	       <li><a href="#connected_digits_test">Connected Digits</a>
+	       <li><a href="#small_vocab_test">Small Vocabulary</a>
+	       <li><a href="#medium_vocab_test">Medium Vocabulary</a>
+	       <li><a href="#large_vocab_test">Large Vocabulary</a>
+	       <li><a href="#batch_files">Batch Files</a></li>
+	       <li><a href="#input_files">Input Audio/Cepstral Files</a></li>
 	    </ul>
 	</li>
 	<li><a href="#acoustic_models">Acoustic Model Package</a></li>
@@ -213,25 +218,34 @@ WARRANTIES.
               just one word at a time.  The vocabulary is merely the
               spoken digits from 0 through 9, with a single utterance
               containing just one digit.
+	      <br><i>(TI46 refers to the "NIST CD-ROM Version of the Texas
+	      Instruments-developed 46-Word Speaker-Dependent Isolated Word
+	      Speech Database".)</i>
           </li>
+	  <br>
           <li><a href="http://cmusphinx.sourceforge.net/ConnectedDigitsResults.html">
               Connected Digits (TIDIGITS)</a>: Extends the Isolated
               Digits test to recognize more than one word at a time
               (i.e., continuous speech).  The vocabulary is merely the
               spoken digits from 0 through 9, with a single utterance
-              containing a
-	      sequence of digits.
+              containing a sequence of digits.
+	      <br><i>(TIDIGITS refers to the "NIST CD-ROM Version of the Texas
+	      Instruments-developed Studio Quality Speaker-Independent
+	      Connected-Digit Corpus".)</i>
           </li>
+	  <br>
           <li><a href="http://cmusphinx.sourceforge.net/SmallVocabResults.html">
               Small Vocabulary (AN4)</a>: Extends the vocabulary
 	      to approximately 100 words, with input data ranging
 	      from speaking words as well as spelling words out
 	      letter by letter.
           </li>
+	  <br>
           <li><a href="http://cmusphinx.sourceforge.net/MediumVocabResults.html">
               Medium Vocabulary (RM1)</a>: Extends the vocabulary
 	      to approximately 1000 words.
           </li>
+	  <br>
           <li><a href="http://cmusphinx.sourceforge.net/LargeVocabResults.html">
               Large Vocabulary (HUB4)</a>: Extends the vocabulary
 	      to approximately 64000 words.
@@ -607,26 +621,23 @@ d:\work\sphinx4&gt;ant clean
   to list a help text with the possible targets.
 
   <p>
-  <br><b>Isolated Digits</b>
+  <a name="isolated_digits_test"><br><b>Isolated Digits</b></a>
 
   <p>
-  Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary TIDIGITS models</a>.
-  <br>
-  Then in configuration file,
-  <code>sphinx4/tests/performance/ti46/ti46.config.xml</code>,
-  find the component called <code>sphinx3Loader</code>
-  and change the <code>location</code> property to point to the URL of 
-  your downloaded binary TIDIGITS models.
-
+  The TIDIGITS models are already included as part of the distribution.
+  Therefore, you do not need to download them separately.
   <p>
-  You also need to prepare a batch file called <code>ti46.batch</code>,
-  by following instructions in the <a href="#batch_files">Batch Files</a>
-  section. There is already one in the TI46 test directory, but it will
-  not work for you, since the paths to test files will not match your setup.
-
+  You must have the TI46 test data, available from the
+  <a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S9">LDC TI46</a> website.
+  <p>
+  You need to edit the batch file called <code>ti46.batch</code>,
+  located in <code>tests/performance/ti46</code> directory.
+  You will need to change it such that
+  it matches where you stored the TI46 test files. Refer to the section
+  <a href="#batch_files">Batch Files</a> for detail about the format of
+  batch files.
   <p>
   To run the tests:
-
   <pre>
   % cd sphinx4/tests/performance/ti46
   % ant -projecthelp      # to see a list of possible targets
@@ -634,23 +645,21 @@ d:\work\sphinx4&gt;ant clean
   </pre>
 
   <p>
-  <br><b>Connected Digits</b>
+  <a name="connected_digits_test"><br><b>Connected Digits</b></a>
 
   <p>
-  Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary TIDIGITS models</a>.
-  <br>
-  Then in configuration file,
-  <code>sphinx4/tests/performance/ti46/tidigits.config.xml</code>,
-  find the component called <code>sphinx3Loader</code>
-  and change the <code>location</code> property to point to the URL of 
-  <br>to point to the URL of downloaded binary TIDIGITS models.
-
+  The TIDIGITS models are already included as part of the distribution.
+  Therefore, you do not need to download them separately.
   <p>
-  You also need to prepare a batch file called <code>tidigits.batch</code>,
-  by following instructions in the <a href="#batch_files">Batch Files</a>
-  section. There is already one in the TIDIGITS test directory, but it will
-  not work for you, since the paths to test files will not match your setup.
-
+  You must have the TIDIGITS test data, available from the 
+  <a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S10">LDC TIDIGITS</a> website.
+  <p>
+  You need to edit the batch file called <code>tidigits.batch</code>,
+  located in the <code>tests/performance/tidigits</code> directory.
+  You will need to change it such that
+  it matches where you stored the TIDIGITS test files. Refer to the section
+  <a href="#batch_files">Batch Files</a> for detail about the format of
+  batch files.
   <p>
   To run the tests:
 
@@ -661,21 +670,30 @@ d:\work\sphinx4&gt;ant clean
 </pre>
 
   <p>
-  <br><b>Small Vocabulary</b>
+  <a name="small_vocab_test"><br><b>Small Vocabulary</b></a>
 
   <p>
   The Wall Street Journal (WSJ) models are already included as part of
-  the CVS source tree. Therefore, you do not need to download them separately.
-  You also do not need to change anything in the properties file.
-
+  the distribution. Therefore, you do not need to download them separately.
   <p>
-  You also need to prepare a batch file called <code>an4.batch</code>,
-  by following instructions in the <a href="#batch_files">Batch Files</a>
-  section. There is already one in the AN4 test directory, but it will
-  not work for you, since the paths to test files will not match your setup.
-
+  Download the big endian raw audio format of the 
+  <a href="http://www.speech.cs.cmu.edu/databases/an4/">AN4 Database</a>.
+  Unpack it at a directory of your choice:
+  <pre>
+  % gunzip an4_raw.bigendian.tar.gz
+  % tar -xvf an4_raw.bigendian.tar
+</pre>
   <p>
-  To run the tests:
+  Then update the following batch files (located in the 
+  <code>tests/performance/an4</code>
+  directory), so that they match up with where you unpacked the AN4 data.
+  You probably just need to replace all instances of the string
+  <code>"/lab/speech/sphinx4/data"</code> inside these batch files.
+  Please refer to the <a href="#batch_files">Batch Files</a> section for 
+  details about batch files:
+  <p><code>an4_full.batch<br>an4_spelling.batch<br>an4_words.batch</code>
+  <p>
+  After you have updated the batch files, you can run the tests by:
 
   <pre>
   % cd sphinx4/tests/performance/an4
@@ -684,7 +702,7 @@ d:\work\sphinx4&gt;ant clean
 </pre>
   
   <p>
-  <br><b>Medium Vocabulary</b>
+  <a name="medium_vocab_test"><br><b>Medium Vocabulary</b></a>
 
   <p>
   Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary RM1 models</a>.
@@ -694,6 +712,9 @@ d:\work\sphinx4&gt;ant clean
   find the component called <code>sphinx3Loader</code>
   and change the <code>location</code> property to point to the URL of
   the downloaded binary RM1 models.
+  <p>
+  You must have the RM1 test data, available from the 
+  <a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S3B">LDC RM1</a> website.
 
   <p>
   You also need to prepare a batch file called <code>rm1.batch</code>,
@@ -711,7 +732,7 @@ d:\work\sphinx4&gt;ant clean
 </pre>
 
   <p>
-  <br><b>Large Vocabulary</b>
+  <a name="large_vocab_test"><br><b>Large Vocabulary</b></a>
 
   <p>
   The HUB-4 models are currently unavailable, and therefore you currently
@@ -721,27 +742,11 @@ d:\work\sphinx4&gt;ant clean
   To run the test:
 
   <pre>
-  % cd tests/performance/hub4
+  % cd sphinx4/tests/performance/hub4
   % ant -projecthelp      # to see a list of possible targets
   % ant hub4_trigram
 </pre>
 
-  <p>
-  <br><b>Customizing the regression test to your environment</b>
-  <p>
-  All the batch regression tests are driven by properties files (they end
-  with ".props") and batch files, which list all the files to test (they end
-  with ".batch"). See the <a href="#batch_files">Batch Files</a> section
-  for details. You need to change the directory paths within these
-  files to match your environment. Using TIDIGITS (tests/performance/tidigits/)
-  as an example, here are the things to change:
-  <ul>
-    <li>location of the acoustic model (in tidigits.props)</li>
-    <li>location of the dictionary (in tidigits.props)</li>
-    <li>the batch file (tidigits.batch) - We recommend that you create
-    your own batch file based on your test database. See the 
-    <a href="#batch_files">Batch File</a> section for details.</li>
-  </ul>
   <p>
 
   </li>
