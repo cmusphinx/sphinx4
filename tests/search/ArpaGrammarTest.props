@@ -1,0 +1,24 @@
+############################################################
+# Global logging properties
+############################################################
+handlers= java.util.logging.ConsoleHandler
+
+# This is the overall default logging level
+.level= SEVERE
+
+# Tracing level for the console
+java.util.logging.ConsoleHandler.level = ALL
+java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
+
+
+
+
+############################################################
+# 
+# Search properties
+#
+############################################################
+
+edu.cmu.sphinx.search.Dictionary.dictionaryPath = ./ArpaGrammarTest.dic
+edu.cmu.sphinx.search.Dictionary.fillerPath = ./filler.dic
+edu.cmu.sphinx.search.ArpaGrammar.path=./ArpaGrammarTest.gram

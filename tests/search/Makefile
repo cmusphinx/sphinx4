@@ -33,3 +33,19 @@ search: all
 alpha-dict: all
 	$(JAVA_CMD) tests.search.AlphaDictionaryTest alpha_dictionary.props
 
+ArpaGrammarTestTiny: all
+	$(JAVA_CMD) tests.search.ArpaGrammarTest ArpaGrammarTest.props
+
+ArpaGrammarTestSmall: all
+	$(JAVA_CMD)  \
+-Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx3j/data/FST.small\
+    tests.search.ArpaGrammarTest ArpaGrammarTest.props
+
+
+#################################################################
+# loads a huge model. Don't expect this to finish anytime soon
+ArpaGrammarTestMega: all
+	$(JAVA_CMD)  \
+-Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx3j/data/language_model.arpaformat.FST.ascii\
+	tests.search.ArpaGrammarTest ArpaGrammarTest.props
+
