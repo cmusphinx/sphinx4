@@ -73,7 +73,6 @@ public class LevelTracker extends DataProcessor implements AudioSource {
     private double level;
     private double background;
     private double threshold;
-    private List outputQueue;
     private int frameLength;
     private int lastAudioStart;
     private Audio lastAudio;
@@ -98,7 +97,6 @@ public class LevelTracker extends DataProcessor implements AudioSource {
                            AudioSource predecessor) throws IOException {
         super.initialize(name, context, props);
         this.predecessor = predecessor;
-        this.outputQueue = new LinkedList();
         reset();
         setProperties();
     }
@@ -159,7 +157,6 @@ public class LevelTracker extends DataProcessor implements AudioSource {
         }
         boolean isSpeech = (level - background > threshold);
         audio.setSpeech(isSpeech);
-        outputQueue.add(audio);
     }
 
     /**
@@ -172,19 +169,11 @@ public class LevelTracker extends DataProcessor implements AudioSource {
      * @see Audio
      */
     public Audio getAudio() throws IOException {
-        Audio audio = null;
-        if (outputQueue.size() == 0) {
-            audio = predecessor.getAudio();
-            if (audio != null) {
-                if (audio.hasContent()) {
-                    processIncomingAudio(audio);
-                } else {
-                    outputQueue.add(audio);
-                }
+        Audio audio = predecessor.getAudio();
+        if (audio != null) {
+            if (audio.hasContent()) {
+                processIncomingAudio(audio);
             }
-        }
-        if (outputQueue.size() > 0) {
-            audio = (Audio) outputQueue.remove(0);
         }
         return audio;
     }
