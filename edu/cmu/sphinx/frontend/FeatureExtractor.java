@@ -180,7 +180,7 @@ FeatureSource {
      * Returns the total number of features that should result from
      * the read Cepstra.
      *
-     * @returns the number of features that should be computed using
+     * @return the number of features that should be computed using
      *    the Cepstrum read
      *
      * @throws java.io.IOException if there is an error reading Cepstrum

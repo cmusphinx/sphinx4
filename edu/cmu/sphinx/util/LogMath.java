@@ -12,7 +12,7 @@ import java.util.Map;
  * SphinxProperty:
  * <br><code>
  * edu.cmu.sphinx.util.LogMath.logBase
- * </code></br>
+ * </code><br>
  * 
  */
 public final class LogMath {
@@ -110,23 +110,23 @@ public final class LogMath {
 
 
     /**
-     * Adds the two log values
+     * Adds the two log values.
      *
-     * This function makes use of the equality:
+     * <p>This function makes use of the equality:</p>
      *
-     * <b> log(a + b) = log(a) + log (1 + exp(log(b) - log(a))) </b>
+     * <p><b>log(a + b) = log(a) + log (1 + exp(log(b) - log(a)))</b></p>
      *
-     * which is derived from:
+     * <p>which is derived from:</p>
      *
-     * <b> a + b = a * (1 + (b / a)) </b>
+     * <p><b>a + b = a * (1 + (b / a))</b></p>
      *
-     * which in turns makes us of:
+     * <p>which in turns makes use of:</p>
      *
-     * <b> b / a = exp (log(b) - log(a)) </b>
+     * <p><b>b / a = exp (log(b) - log(a))</b></p>
      *
-     * Important to notice that <code>add(a, b)</code> is *not* the
+     * <p>Important to notice that <code>subtract(a, b)</code> is *not* the
      * same as <code>add(a, -b)</code>, since we're in the log domain,
-     * and -b is in fact the inverse.
+     * and -b is in fact the inverse.</p>
      *
      * Will check for underflow and
      * constrain values to be no lower than LOG_MIN_VALUE. 
@@ -134,12 +134,12 @@ public final class LogMath {
      * Will check for overflow and
      * constrain values to be no higher than LOG_MAX_VALUE. 
      *
-     * @param val1 value in log domain to multiply
-     * @param val2 value in log domain to multiply
+     * @param val1 value in log domain to add
+     * @param val2 value in log domain to add
      *
      * @return sum of val1 and val2 in the log domain
      *
-     * [[[ TODO: This is a very slow way to do this ]]]
+     * <br>[[[ TODO: This is a very slow way to do this ]]]
      * [[[ TODO: need to have some overflow underflow checks ]]]
      * [ EBG: maybe we should also have a function to add many numbers,
      * say, return the summation of all terms in a given vector, if 
@@ -164,13 +164,14 @@ public final class LogMath {
      * Function used by add() internally. It returns the difference
      * between the highest number and the total summation of two numbers.
      *
-     * In the expression (in which we assume natural log)
+     * Considering the expression (in which we assume natural log)
      *
-     * <b>log(a + b) = log(a) + log(1 + exp(log(b) - log(a)))</b>
+     * <p><b>log(a + b) = log(a) + log(1 + exp(log(b) - log(a)))</b></p>
      *
-     * this function returns the second term of the right hand side in the
-     * generalized case of any log base. This function can be contructed as
-     * a table, if table lookup is faster than actual computation.
+     * the current function returns the second term of the right hand
+     * side of the equality above, generalized for the case of any log
+     * base. This function can be contructed as a table, if table
+     * lookup is faster than actual computation.
      *
      * @param index the index into the addTable
      *
@@ -185,13 +186,13 @@ public final class LogMath {
     }
 
     /**
-     * Returns the difference between two log domain values
+     * Returns the difference between two log domain values.
      *
-     * Implementation is less efficient than add(), since we're less
+     * <p>Implementation is less efficient than add(), since we're less
      * likely to use this function, provided for completeness. Notice
      * however that the result only makes sense if the minuend is
      * higher than the subtrahend. Otherwise, we should return the log
-     * of a negative number.
+     * of a negative number.</p>
      *
      * Will check for underflow and
      * constrain values to be no lower than LOG_MIN_VALUE. 
@@ -208,7 +209,7 @@ public final class LogMath {
      *
      * @throws IllegalArgumentException
      *
-     * [[[ TODO: This is a very slow way to do this ]]]
+     * <br>[[[ TODO: This is a very slow way to do this ]]]
      * [[[ TODO: need to have some overflow underflow checks ]]]
      */
     public double subtract(double minuend, double
@@ -231,15 +232,16 @@ public final class LogMath {
     * If a source or result base is not supported, an
     * IllegalArgumentException will be thrown.
     *
-    * Taking advantage of the relation:
+    * <p>It takes advantage of the relation:</p>
     *
-    * <b>log_a(b) = log_c(b) / lob_c(a)</b>
+    * <p><b>log_a(b) = log_c(b) / lob_c(a)</b></p>
     *
-    * or:
+    * <p>or:</p>
     *
-    * <b>log_a(b) = log_c(b) * lob_a(c)</b>
+    * <p><b>log_a(b) = log_c(b) * lob_a(c)</b></p>
     *
-    * where <b>log_a(b)</b> is logarithm of b base a etc.
+    * <p>where <b>log_a(b)</b> is logarithm of <b>b</b> base <b>a</b>
+    * etc.</p>
     *
     * @param source log value whose base is sourceBase
     * @param sourceBase the base of the log the source
@@ -309,22 +311,25 @@ public final class LogMath {
 	return logZero;
     }
 
+    /**
+     * Returns the actual log base.
+     */
+    public double getLogBase() {
+	return logBase;
+    }
+
      /**
       * Returns the log (base 10) of value
       *
       * @param value the value to take the log of
       *
       * @return the log (base 10) of value
-      *
-      * [ EBG: Shouldn't we be using something like logToLog(value, base, 10)
-      * for this? ]
-      *
       */
+    // [ EBG: Shouldn't we be using something like logToLog(value, base, 10)
+    // for this? ]
      public static double log10(double value) {
 	  return (0.4342944819 * java.lang.Math.log(value));
 	  // If you want to get rid of the constant:
 	  // return ((1.0f / Math.log(10.0f)) * Math.log(value));
      }
 }
-
-

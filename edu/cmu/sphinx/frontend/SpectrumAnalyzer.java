@@ -179,7 +179,7 @@ SpectrumSource {
      * of 2 by computing its log base 2 and checking for
      * remainders.
      *
-     * @params numberFftPoints number of points in the FFT
+     * @param numberFftPoints number of points in the FFT
      *
      * @throws java.lang.IllegalArgumentException
      */
@@ -198,14 +198,14 @@ SpectrumSource {
 
     /**
      * Initializes the <b>weightFft[]</b> vector.
-     * <b>weightFft[k] = w ^ k</b>
+     * <p><b>weightFft[k] = w ^ k</b></p>
      * where:
-     * <b>w = exp(-2 * PI * i / N)</b>
-     * <b>i</b> is a complex number such that <b>i * i = -1</b>
+     * <p><b>w = exp(-2 * PI * i / N)</b></p>
+     * <p><b>i</b> is a complex number such that <b>i * i = -1</b>
      * and <b>N</b> is the number of points in the FFT.
-     * Since <b>w</b> is complex, this is the same as
-     * <b>Re(weightFft[k]) = cos ( -2 * PI * k / N)</b>
-     * <b>Im(weightFft[k]) = sin ( -2 * PI * k / N)</b>
+     * Since <b>w</b> is complex, this is the same as</p>
+     * <p><b>Re(weightFft[k]) = cos ( -2 * PI * k / N)</b></p>
+     * <p><b>Im(weightFft[k]) = sin ( -2 * PI * k / N)</b></p>
      *
      * @param numberFftPoints number of points in the FFT
      * @param invert whether it's direct (false) or inverse (true) FFT

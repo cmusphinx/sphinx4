@@ -45,9 +45,8 @@ public class MelFilterbank extends DataProcessor implements SpectrumSource {
     private int numberFftPoints;
     private int numberFilters;
 
-    /**
-     * Should these be float? It's not critical....
-     */
+    // Should these be float? It's not critical....
+
     private double minFreq;
     private double maxFreq;
 
