@@ -23,15 +23,19 @@ import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**
- * Applies a logarithm and then a Discrete Cosine Transform (DCT)
- * to the input data. This is usually used in the last stage of
- * converting a power spectrum into Mel-frequency cepstral coefficients.
- * The property 
- * <code>edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform.cepstrumLength</code>
- * refers to the dimensionality of the coefficients that are actually returned,
- * and defaults to 13. If the input is mel-spectrum, the first of these
- * 13 values is actually the energy value, while the rest are MFCC
- * (Mel-Frequency Cepstral Coefficient) values.
+ * Applies a logarithm and then a Discrete Cosine Transform (DCT) to
+ * the input data. The input data is normally the mel spectrum. It has
+ * been proven that, for a sequence of real numbers, the discrete
+ * cosine transform is equivalent to the discrete Fourier
+ * transform. Therefore, this class corresponds to the last stage of
+ * converting a signal to cepstra, defined as the inverse Fourier
+ * transform of the logarithm of the Fourier transform of a signal.
+ * The property {@link #PROP_CEPSTRUM_LENGTH} refers to the
+ * dimensionality of the coefficients that are actually returned,
+ * defaulting to {@link #PROP_CEPSTRUM_LENGTH_DEFAULT}. When the input
+ * is mel-spectrum, the vector returned is the MFCC (Mel-Frequency
+ * Cepstral Coefficient) vector, where the 0-th element is the energy
+ * value.
  */
 public class DiscreteCosineTransform extends BaseDataProcessor {
 
