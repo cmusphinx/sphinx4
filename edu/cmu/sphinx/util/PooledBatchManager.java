@@ -49,16 +49,17 @@ public class PooledBatchManager implements BatchManager {
      * @param filename the name of the batch file
      * @param skip items to skip between runs
      */
+
     public PooledBatchManager(String filename, int skip) {
         this.batchFile = filename;
         this.skip = skip;
     }
-
     /**
      * Starts processing the batch
      *
      */
     public void start() throws IOException {
+
         // redirect standard out to a file
         lock();
         try {
