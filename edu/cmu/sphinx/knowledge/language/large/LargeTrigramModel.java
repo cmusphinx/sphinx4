@@ -167,9 +167,9 @@ public class LargeTrigramModel implements LanguageModel {
      * Called before a recognition
      */
     public void start() {
-        loadedBigramBuffer.clear();
-        loadedTrigramBuffer.clear();
-        trigramCache.clear();
+	loadedBigramBuffer.clear();
+	loadedTrigramBuffer.clear();
+	trigramCache.clear();
     }
     
     /**
@@ -190,12 +190,12 @@ public class LargeTrigramModel implements LanguageModel {
      *
      */
     public float getProbability(WordSequence wordSequence) {
-        if (wordSequence.size() == 1) {
-            return getUnigramProbability(wordSequence);
+        if (wordSequence.size() == 3) {
+            return getTrigramProbability(wordSequence);
         } else if (wordSequence.size() == 2) {
             return getBigramProbability(wordSequence);
-	} else if (wordSequence.size() == 3) {
-	    return getTrigramProbability(wordSequence);
+	} else if (wordSequence.size() == 1) {
+	    return getUnigramProbability(wordSequence);
 	} else {
             throw new Error("Unsupported N-gram: " + wordSequence.size());
         }
