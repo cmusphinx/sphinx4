@@ -37,7 +37,6 @@
             <item>accuracyTracker </item>
             <item>speedTracker </item>
             <item>memoryTracker </item>
-            <item>recognizerMonitor </item>
         </propertylist>
     </component>
     
@@ -185,60 +184,51 @@
     <!-- ******************************************************** -->
     
     <component name="speechClassifier" 
-                type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier">
+               type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier">
         <property name="threshold" value="13"/>
     </component>
     
     <component name="nonSpeechDataFilter" 
-                type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter"/>
+               type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter"/>
     
     <component name="speechMarker" 
-                type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" >
+               type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" >
         <property name="speechTrailer" value="50"/>
     </component>
     
     
     <component name="premphasizer" 
-                type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
+               type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
     
     <component name="windower" 
-                type="edu.cmu.sphinx.frontend.window.RaisedCosineWindower">
+               type="edu.cmu.sphinx.frontend.window.RaisedCosineWindower">
     </component>
     
     <component name="fft" 
             type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"/>
     
     <component name="melFilterBank" 
-            type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank">
+        type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank">
     </component>
     
     <component name="dct" 
             type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/>
     
     <component name="batchCMN" 
-                type="edu.cmu.sphinx.frontend.feature.BatchCMN"/>
+               type="edu.cmu.sphinx.frontend.feature.BatchCMN"/>
 
     <component name="liveCMN" 
-                type="edu.cmu.sphinx.frontend.feature.LiveCMN"/>
-    
-    
+               type="edu.cmu.sphinx.frontend.feature.LiveCMN"/>
+        
     <component name="featureExtraction" 
-                type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/>
-    
-    <component name="streamDataSource" 
-                type="edu.cmu.sphinx.frontend.util.StreamDataSource">
-        <property name="sampleRate" value="16000"/>
-    </component>
-   
+               type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/>
+       
     <component name="microphone" 
-                type="edu.cmu.sphinx.frontend.util.Microphone">
+               type="edu.cmu.sphinx.frontend.util.Microphone">
         <property name="bytesPerRead" value="320"/>
         <property name="closeBetweenUtterances" value="false"/>
-	<property name="debug" value="false"/>
     </component>
 
-    <component name="dataDumper" 
-        type="edu.cmu.sphinx.frontend.util.DataDumper"/>
     
     <!-- ******************************************************* -->
     <!--  monitors                                               -->
@@ -265,20 +255,6 @@
 	<property name="showSummary" value="true"/>
 	<property name="showDetails" value="false"/>
     </component>
-    
-    <component name="recognizerMonitor" 
-                type="edu.cmu.sphinx.instrumentation.RecognizerMonitor">
-        <property name="recognizer" value="${recognizer}"/>
-        <propertylist name="allocatedMonitors">
-            <item>configMonitor </item>
-        </propertylist>
-    </component>
-    
-    <component name="configMonitor" 
-                    type="edu.cmu.sphinx.instrumentation.ConfigMonitor">
-        <property name="showConfig" value="false"/>
-    </component>
-    
     
     
     <!-- ******************************************************* -->
