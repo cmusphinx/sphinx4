@@ -225,6 +225,7 @@ public class SimpleTrainManager implements TrainManager {
 	UtteranceGraph uttGraph;
 	TranscriptGraph transcriptGraph;
 	TrainerScore[] score;
+	TrainerScore[] nextScore;
 
 	if (learner == null) {
 	    loadModels(context);
@@ -247,10 +248,16 @@ public class SimpleTrainManager implements TrainManager {
 		    new UtteranceHMMGraph(context, utterance, models[m]);
 		learner.setUtterance(utterance);
 		learner.setGraph(uttGraph);
+		nextScore = null;
 		while ((score = learner.getScore()) != null) {
 		    for (int i = 0; i < score.length; i++) {
-			models[m].accumulate(score[i]);
+			if (i > 0) {
+			    models[m].accumulate(score[i], nextScore);
+			} else {
+			    models[m].accumulate(score[i]);
+			}
 		    }
+		    nextScore = score;
 		}
 	    }
 	    models[m].normalize();

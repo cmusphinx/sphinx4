@@ -83,11 +83,12 @@ public class BaumWelchLearner implements Learner {
     private Object[] scoreArray;
     private int lastFeatureIndex;
     private int currentFeatureIndex;
-    float[] alphas;
-    float[] betas;
-    float[] outputProbs;
-    float[] componentScores;
-    float[] probCurrentFrame;
+    private float[] alphas;
+    private float[] betas;
+    private float[] outputProbs;
+    private float[] componentScores;
+    private float[] probCurrentFrame;
+    private float totalLogScore;
 
     /**
      * Constructor for this learner.
@@ -305,6 +306,10 @@ public class BaumWelchLearner implements Learner {
 	    scoreList.add(score);
 	    lastFeatureIndex++;
 	}
+	// Prepare for beta computation
+	for (int i = 0; i < probCurrentFrame.length; i++) {
+	    probCurrentFrame[i] = LogMath.getLogZero();
+	}
 	return scoreList.toArray();
     }
 
@@ -322,18 +327,26 @@ public class BaumWelchLearner implements Learner {
 	}
 	probCurrentFrame = new float[betas.length];
 	int indexFinalNode = graph.indexOf(graph.getFinalNode());
-	for (int i = 0; i < probCurrentFrame.length; i++) {
-	    probCurrentFrame[i] = LogMath.getLogZero();
-	}
 	// Overwrite in the right position
 	probCurrentFrame[indexFinalNode] = 0.0f;
 	currentFeatureIndex--;
 	if (currentFeatureIndex >= 0) {
+	    float logScore = LogMath.getLogZero();
 	    score = (TrainerScore []) scoreArray[currentFeatureIndex];
 	    assert score.length == betas.length;
 	    backwardPass(score);
 	    for (int i = 0; i < betas.length; i++) {
 		score[i].setGamma();
+		logScore = logMath.addAsLinear(logScore, score[i].getGamma());
+	    }
+	    if (currentFeatureIndex < lastFeatureIndex - 1) {
+		TrainerScore.setLogLikelihood(logScore);
+		totalLogScore = logScore;
+	    } else {
+		if (Math.abs(totalLogScore - logScore) > 1e-3) {
+		    System.out.println("WARNING: log probabilities differ: " +
+				       totalLogScore + " and " + logScore);
+		}
 	    }
 	    return score;
 	} else {
@@ -515,8 +528,7 @@ public class BaumWelchLearner implements Learner {
 		probCurrentFrame[indexNode] = 
 		    logMath.addAsLinear(probCurrentFrame[indexNode],
 					probNextFrame[indexNextNode] +
-					logTransitionProbability +
-					outputProbs[indexNextNode]);
+					logTransitionProbability);
 	    }
 	    score[indexNode].setBeta(probCurrentFrame[indexNode]);
 	}
