@@ -136,7 +136,6 @@ public class Microphone extends BaseDataProcessor {
      */
     private TargetDataLine audioLine = null;
     private AudioInputStream audioStream = null;
-    private LineListener lineListener = new MicrophoneLineListener();
     private DataList audioList;
     private Utterance currentUtterance;
 
@@ -204,8 +203,11 @@ public class Microphone extends BaseDataProcessor {
      * @return whether the audio line should be closed between utterances
      */
     private final static boolean getCloseBetweenUtterances() {
+	return true;
+	/*
         return (System.getProperty("os.name").toLowerCase().indexOf("linux")
                 == -1);
+	*/
     }
 
 
@@ -242,6 +244,43 @@ public class Microphone extends BaseDataProcessor {
         return currentUtterance;
     }
 
+
+    /**
+     * Starts recording audio. This method will return only
+     * when a START event is received, meaning that this Microphone
+     * has started capturing audio.
+     *
+     * @return true if the recording started successfully; false otherwise
+     */
+    public synchronized boolean startRecording() {
+	if (recording) {
+	    return false;
+	}
+        if (audioLine == null) {
+	    open();
+	}
+	utteranceEndReached = false;
+	recording = true;
+	if (audioLine.isRunning()) {
+	    logger.severe("Whoops: audio line is running");
+	}
+	RecordingThread recorder = new RecordingThread("Microphone");
+	recorder.start();
+	return true;
+    }
+
+
+    /**
+     * Stops recording audio.
+     */
+    public synchronized void stopRecording() {
+        if (audioLine != null) {
+            recording = false;
+	    audioLine.stop();
+        }
+    }
+
+
     /**
      * This Thread records audio, and caches them in an audio buffer.
      */
@@ -255,61 +294,58 @@ public class Microphone extends BaseDataProcessor {
          * Implements the run() method of the Thread class.
          * Records audio, and cache them in the audio buffer.
          */
-        public void run() {
-            
-            if (audioLine != null && audioLine.isOpen()) {
-		totalSamplesRead = 0;
-                logger.info("started recording");
-
-                if (keepDataReference) {
-                    currentUtterance 
-			= new Utterance("Microphone", audioFormat);
-                }
-
-                audioList.add(new DataStartSignal());
-                logger.info("DataStartSignal added");
-
-		try {
-		    while (recording || audioStream.available() > 0) {
-			Data data = readData(currentUtterance);
-			if (data == null) {
-			    break;
-			}
-			audioList.add(data);
+        public void run() {            
+	    totalSamplesRead = 0;
+	    logger.info("started recording");
+	    
+	    if (keepDataReference) {
+		currentUtterance = new Utterance("Microphone", audioFormat);
+	    }
+	    
+	    audioList.add(new DataStartSignal());
+	    logger.info("DataStartSignal added");
+	    try {
+		audioLine.flush();
+		audioLine.start();
+		while (recording || audioStream.available() > 0) {
+		    Data data = readData(currentUtterance);
+		    if (data == null) {
+			break;
 		    }
-		} catch (IOException ioe) {
-		    ioe.printStackTrace();
+		    audioList.add(data);
 		}
+	    } catch (IOException ioe) {
+		ioe.printStackTrace();
+	    }
+	    
+	    long duration = (long)
+		(((double)totalSamplesRead/
+		  (double)audioStream.getFormat().getSampleRate())*1000.0);
+	    
+	    audioList.add(new DataEndSignal(duration));
+	    logger.info("DataEndSignal ended");
+	    
+	    closeAudioLine();
+	    logger.info("stopped recording");	    
+	}
 
-                long duration = (long)
-                    (((double)totalSamplesRead/
-                      (double)audioStream.getFormat().getSampleRate())*1000.0);
-
-                audioList.add(new DataEndSignal(duration));
-                logger.info("DataEndSignal ended");
-
-		if (closeBetweenUtterances) {
-                    audioLine.close();
-                    logger.info("Audio line closed.");
-                    try {
-                        audioStream.close();
-                        logger.info("Audio stream closed.");
-                        if (doConversion) {
-                            nativelySupportedStream.close();
-                            logger.info("Native stream closed.");
-                        }                        
-                    } catch(IOException e) {
-                        logger.warning("IOException closing audio streams");
-                    }
-		    audioLine = null;
+	private void closeAudioLine() {
+	    if (closeBetweenUtterances) {
+		audioLine.close();
+		logger.info("Audio line closed.");
+		try {
+		    audioStream.close();
+		    logger.info("Audio stream closed.");
+		    if (doConversion) {
+			nativelySupportedStream.close();
+			logger.info("Native stream closed.");
+		    }                        
+		} catch(IOException e) {
+		    logger.warning("IOException closing audio streams");
 		}
-                
-		logger.info("stopped recording");
-                
-            } else {
-                logger.severe("Unable to open line");
-            }
-        }
+		audioLine = null;
+	    }
+	}
     }
 
 
@@ -442,7 +478,6 @@ public class Microphone extends BaseDataProcessor {
         // Obtain and open the line and stream.
         try {
             audioLine = (TargetDataLine) AudioSystem.getLine(info);
-            audioLine.addLineListener(lineListener);
             if (doConversion) {
                 try {
                     nativelySupportedStream = new AudioInputStream(audioLine);
@@ -491,51 +526,6 @@ public class Microphone extends BaseDataProcessor {
     }
 
 
-    /**
-     * Starts recording audio. This method will return only
-     * when a START event is received, meaning that this Microphone
-     * has started capturing audio.
-     *
-     * @return true if the recording started successfully; false otherwise
-     */
-    public synchronized boolean startRecording() {
-	if (recording) {
-	    return false;
-	}
-        if (audioLine == null) {
-	    open();
-	}
-	utteranceEndReached = false;
-	setRecording(true);
-	RecordingThread recorder = new RecordingThread("Microphone");
-	if (audioLine.isRunning()) {
-	    logger.severe("Whoops: audio line is running");
-	}
-	audioLine.start();
-	while (!started) {
-	    try {
-		wait();
-	    } catch (InterruptedException ie) {
-		ie.printStackTrace();
-	    }
-	}
-	recorder.start();
-	return true;
-    }
-
-
-    /**
-     * Stops recording audio.
-     */
-    public synchronized void stopRecording() {
-        if (audioLine != null) {
-	    audioLine.stop();
-            recording = false;
-            started = false;
-        }
-    }
-
-    
     /**
      * Reads and returns the next Data object from this
      * Microphone, return null if there is no more audio data.
@@ -593,41 +583,6 @@ public class Microphone extends BaseDataProcessor {
      */ 
     public boolean getRecording() {
         return recording;
-    }
-
-    
-    /**
-     * Sets whether this Microphone is in a recording state.
-     *
-     * @param recording true to set this Microphone
-     * in a recording state false to a non-recording state
-     */
-    private void setRecording(boolean recording) {
-        this.recording = recording;
-    }
-
-    /**
-     * Provides a LineListener for this Microphone
-     */
-    class MicrophoneLineListener implements LineListener {
-
-        /**
-         * Implements update() method of LineListener interface.
-         * Responds to the START line event by waking up all the
-         * threads that are waiting on the Microphone's monitor.
-         *
-         * @param event the LineEvent to handle
-         */
-        public void update(LineEvent event) {
-	    logger.info("LineEvent: " + event);
-	    LineEvent.Type eventType = event.getType();
-            if (eventType.equals(LineEvent.Type.START)) {
-                started = true;
-                synchronized (Microphone.this) {
-                    Microphone.this.notifyAll();
-                }
-            }
-        }
     }
 }
 
