@@ -324,7 +324,7 @@ public class Lattice {
                     } else if (type.equals("terminalNode:")) {
                         setTerminalNode(getNode(tokens.nextToken()));
                     } else if (type.equals("logBase:")) {
-                        setLogBase(Double.parseDouble(tokens.nextToken()));
+                        logBase = Double.parseDouble(tokens.nextToken());
                     } else {
                         throw new Error("SYNTAX ERROR: " + fileName +
                                 "[" + in.getLineNumber() + "] " + line);
@@ -730,17 +730,6 @@ public class Lattice {
         this.logMath = logMath;
     }
     
-    /**
-     * Edge scores are usually log-likelyhood.  Set the log base.
-     *
-     * @param p_logBase
-     */
-    public void setLogBase(double p_logBase) {
-        //TODO: can this be discarded? It's just used for reading text files. Otherwise
-        //need to be able to create LogMath object on the fly.
-        //logMath.setLogBase(p_logBase);
-    }
-
     /**
      * Dump all paths through this Lattice.  Used for debugging.
      */
