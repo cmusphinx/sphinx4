@@ -167,7 +167,7 @@
     <component name="dictionary" 
         type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
         <property name="location" 
-                value="file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
+                value="file:./../../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
         <property name="dictionaryPath" value= "dict/cmudict.0.6d"/>
         <property name="fillerPath" value="dict/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
@@ -200,7 +200,7 @@
         <property name="logMath" value="logMath"/>
         <property name="isBinary" value="true"/>
         <property name="location" 
-                value="file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
+                value="file:./../../../models/acoustic/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip"/>
         <property name="definition_file" 
                 value="etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef"/>
         <property name="data_location" 
