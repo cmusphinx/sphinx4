@@ -23,9 +23,13 @@ FILES = $(shell echo *.java)
 # List any sub directories that need to be built
 SUBDIRS =
 
+
+GCSPY_FLAGS= -client -Xport3000 -Xverbose -Xwait
+PROFILE_FLAGS= $(GCSPY_FLAGS)
 PROFILE_FLAGS= -Xprof -server
+
 LOG_GC_FLAGS=  -Xloggc:gc.txt
-GC_FLAGS = -ms256m -mx800m
+GC_FLAGS = -ms256m -mx1g
 
 # LOGGER_PROPERTIES=tidigits.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
@@ -59,6 +63,7 @@ rm1_flat_unigram:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
         -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7 \
+        -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.location=rm1.flat_unigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
