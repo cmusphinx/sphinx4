@@ -1,6 +1,4 @@
 # this is the ordered set of isolated digit tests
-ti46
-ti46_tree
-ti46_multi
-ti46_no_context
-ti46_multi_no_context
+ti46_wordlist
+ti46_flat_unigram
+ti46_flat_unigram_fst

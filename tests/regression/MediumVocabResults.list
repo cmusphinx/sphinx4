@@ -1,11 +1,16 @@
 # this is the ordered set of medium vocabulary tests
-rm1onwsj_flatunigram
-rm1onwsj_unigram
-rm1onwsj_unigram_quick
-rm1onwsj_bigram
-rm1onwsj_trigram
-rm1onwsj_fst
-rm1_flatunigram
+rm1_flat_unigram
 rm1_unigram
 rm1_bigram
-rm1_trigram
+
+rm1_flat_unigram_fst
+rm1_unigram_fst
+rm1_bigram_fst
+
+rm1_flat_unigram_quick
+rm1_unigram_quick
+rm1_bigram_quick
+
+rm1_flat_unigram_fst_quick
+rm1_unigram_fst_quick
+rm1_bigram_fst_quick

@@ -1,6 +1,8 @@
 # this is the ordered set of connected digits tests
-tidigits
-tidigits_quick
-tidigits_quick_flat
-tidigits_quick_flat_no_context
-wsj_tidigits_quick
+tidigits_wordlist_quick
+tidigits_flat_unigram_quick
+tidigits_flat_unigram_fst_quick
+tidigits_wordlist
+tidigits_flat_unigram
+tidigits_flat_unigram_fst
+
