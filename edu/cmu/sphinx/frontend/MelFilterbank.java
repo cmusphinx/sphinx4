@@ -131,6 +131,21 @@ public class MelFilterbank extends DataProcessor {
     }
 
     /**
+     * Sets the given frequency to the nearest frequency bin from the
+     * DFT.  The DFT can be thought of as a sampling of the actual
+     * spectrum of a signal. We use this function to find the sampling
+     * point of the spectrum that is closest to the given frequency.
+     *
+     * @param inFreq the input frequency
+     * @param stepFreq the distance between frequency bins
+     *
+     * @return the closest frequency bin
+     */
+    private double setToNearestFrequencyBin(double inFreq, double stepFreq) {
+	return stepFreq * Math.round (inFreq / stepFreq);
+    }
+
+    /**
      * Build a mel filterbank with the parameters given.
      * Each filter will be shaped as a triangle. The triangles overlap
      * so that they cover the whole frequency range requested. The edges
@@ -150,19 +165,15 @@ public class MelFilterbank extends DataProcessor {
 	double minFreqMel;
 	double maxFreqMel;
 	double deltaFreqMel;
-	double leftEdge;
-	double centerFreq;
-	double centerFreqMel;
-	double rightEdge;
-	double rightEdgeMel;
+	double[] leftEdge = new double[numberFilters];
+	double[] centerFreq = new double[numberFilters];
+	double[] rightEdge = new double[numberFilters];
+	double nextEdgeMel;
+	double nextEdge;
 	double initialFreqBin;
 	double deltaFreq;
 
 	this.filter = new MelFilter[numberFilters];
-
-	minFreqMel = linToMelFreq(minFreq);
-	maxFreqMel = linToMelFreq(maxFreq);
-	deltaFreqMel = (maxFreqMel - minFreqMel) / (numberFilters + 1);
 
 	/**
 	 * In fact, the ratio should be between <code>sampleRate /
@@ -180,24 +191,37 @@ public class MelFilterbank extends DataProcessor {
 	 * right edge of the filter to its left, and the left edge of
 	 * the filter to its right.
 	 */
-	leftEdge = minFreq;
-	centerFreqMel = minFreqMel + deltaFreqMel;
-	centerFreq = melToLinFreq(centerFreqMel);
+
+	minFreqMel = linToMelFreq(minFreq);
+	maxFreqMel = linToMelFreq(maxFreq);
+	deltaFreqMel = (maxFreqMel - minFreqMel) / (numberFilters + 1);
+
+	leftEdge[0] = setToNearestFrequencyBin(minFreq, deltaFreq);
+	nextEdgeMel = minFreqMel;
 	for (int i = 0; i < numberFilters; i++) {
-	    initialFreqBin = Math.round((leftEdge / deltaFreq)) * deltaFreq;
-	    rightEdgeMel = centerFreqMel + deltaFreqMel;
-	    rightEdge = melToLinFreq(rightEdgeMel);
-	    /**
-	     * Create the filter. The filter will need the frequencies
-	     * in the linear domain.
-	     */
-	    this.filter[i] = new MelFilter();
-	    this.filter[i].createMelFilter(leftEdge, centerFreq, rightEdge, 
-					   initialFreqBin, deltaFreq, 
-					   (sampleRate >> 1));
-	    leftEdge = centerFreq;
-	    centerFreq = rightEdge;
-	    centerFreqMel = rightEdgeMel;
+	    nextEdgeMel += deltaFreqMel;
+	    nextEdge = melToLinFreq(nextEdgeMel);
+	    centerFreq[i] = setToNearestFrequencyBin(nextEdge, deltaFreq);
+	    if (i > 0) {
+		rightEdge[i - 1] = centerFreq[i];
+	    }
+	    if (i < numberFilters - 1) {
+		leftEdge[i + 1] = centerFreq[i];
+	    }
+	}
+	nextEdgeMel = nextEdgeMel + deltaFreqMel;
+	nextEdge = melToLinFreq(nextEdgeMel);
+	rightEdge[numberFilters - 1] = 
+	    setToNearestFrequencyBin(nextEdge, deltaFreq);
+
+	for (int i = 0; i < numberFilters; i++) {
+	    initialFreqBin = setToNearestFrequencyBin(leftEdge[i], deltaFreq);
+	    if (initialFreqBin < leftEdge[i]) {
+		initialFreqBin += deltaFreq;
+	    }
+	    this.filter[i] = new MelFilter(leftEdge[i], centerFreq[i], 
+					   rightEdge[i], initialFreqBin, 
+					   deltaFreq);
 	}
     }
 
@@ -240,7 +264,7 @@ public class MelFilterbank extends DataProcessor {
 	
         if (getDump()) {
             System.out.println(Util.dumpDoubleArray
-                               (outputMelFilterbank, "MEL_SPECTRUM", 12, 5));
+                               (outputMelFilterbank, "MEL_SPECTRUM", 9, 5));
         }
 	outputMelSpectrum = new MelSpectrum(outputMelFilterbank);
         return outputMelSpectrum;

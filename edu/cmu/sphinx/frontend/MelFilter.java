@@ -19,9 +19,6 @@ public class MelFilter {
 
     private int initialFreqIndex;
 
-    public MelFilter() {
-    }
-
     /**
      * Constructs a filter from the parameters.
      *
@@ -41,12 +38,11 @@ public class MelFilter {
      * @param samplingRate sampling frequency
      *
      */
-    public void createMelFilter(double leftEdge, 
-				double centerFreq, 
-				double rightEdge, 
-				double initialFreq, 
-				double deltaFreq,
-				int samplingRate) {
+    public MelFilter(double leftEdge, 
+		     double centerFreq, 
+		     double rightEdge, 
+		     double initialFreq, 
+		     double deltaFreq) {
 
 	double filterHeight;
 	double leftSlope;
@@ -126,7 +122,7 @@ public class MelFilter {
 	for (int i = 0; i < this.weight.length; i++) {
 	    indexSpectrum = this.initialFreqIndex + i;
 	    if (indexSpectrum < spectrum.length) {
-		output += spectrum[indexSpectrum] * this.weight[i];
+		output = spectrum[indexSpectrum] * this.weight[i];
 	    }
 	}
 	return output;
