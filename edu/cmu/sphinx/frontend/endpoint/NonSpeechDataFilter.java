@@ -53,8 +53,13 @@ import edu.cmu.sphinx.util.props.Registry;
  * <br><i>Figure 3: A data stream with two speech regions.</i>
  * <p>
  * This case is more complicated than one speech region.
- * If the property <b><code>mergeSpeechSegments</code></b>
- * is set to true (the default),
+ * The property <b>mergeSpeechSegments</b> is very important
+ * in controlling the behavior of this filter. This property determines
+ * whether individual speech regions (and the non-speech regions between
+ * them) in an utterance should be merged into one big region, or
+ * whether the individual speech regions should be converted into
+ * individual utterances.
+ * If <b>mergeSpeechSegments</b> is set to true (the default),
  * all the Data from the first SpeechStartSignal to the last SpeechEndSignal
  * will be considered as one Utterance, and enclosed by a pair of
  * DataStartSignal and DataEndSignal. All non-speech
@@ -66,7 +71,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * when <b>mergeSpeechSegments</b> is set to <b>true</b>. Note that all
  * SpeechStartSignals and SpeechEndSignals are removed.</i>
  * <p>
- * On the other hand, if <b><code>mergeSpeechSegments</code></b> is set to
+ * On the other hand, if <b>mergeSpeechSegments</b> is set to
  * false, then each speech region will become its own data stream.
  * Pictorially, our data stream with two speech regions becomes:
  * <p><img src="doc-files/two-regions-nonmerge.gif">
@@ -81,7 +86,9 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
 
     /**
      * The Sphinx Property that controls whether to merge discontiguous
-     * speech segments in an utterance.
+     * speech segments (and the non-speech segments between them) 
+     * in an utterance into one big segment (true), or to treat the
+     * individual speech segments as individual utterances (false).
      */
     public static final String PROP_MERGE_SPEECH_SEGMENTS
         = "mergeSpeechSegments";

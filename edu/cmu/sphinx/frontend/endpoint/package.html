@@ -17,6 +17,16 @@
 <body bgcolor="white">
 
 Provides classes and interfaces used for speech endpointing.
+
+<p>
+The Sphinx-4 audio endpointer is composed of three data processors
+that carry out different functions:
+<p>
+<a href="SpeechClassifier.html">SpeechClassifier</a> - classifies chunks of audio into speech and non-speech.
+<p>
+<a href="SpeechMarker.html">SpeechMarker</a> - marks the audio stream into speech and non-speech regions, by inserting <a href="SpeechStartSignal.html">SpeechStartSignals</a> and <a href="SpeechEndSignal.html">SpeechEndSignals</a> into the data stream, while giving some 'cushion areas' around these regions.
+<p>
+<a href="NonSpeechDataFilter.html">NonSpeechDataFilter</a> - removes the non-speech regions from the audio.
 <p>
 
 <!--
