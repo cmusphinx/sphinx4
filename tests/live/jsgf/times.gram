@@ -11,7 +11,7 @@
  *
  * @author Willie Walker
  */
-grammar com.sun.speech.app.babbleon.grammars.times;
+grammar jsgf.times;
 
 
 /**

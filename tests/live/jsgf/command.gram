@@ -1,4 +1,4 @@
-grammar command;
+grammar jsgf.command;
 
 /**
   * Basic command.

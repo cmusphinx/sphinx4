@@ -59,7 +59,8 @@ edu.cmu.sphinx.frontend.util.Microphone.closeAudioBetweenUtterances=true
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.JSGFGrammar.path=jsgf/jsgf.gram
+edu.cmu.sphinx.decoder.linguist.JSGFGrammar.baseGrammarURL=file:./
+edu.cmu.sphinx.decoder.linguist.JSGFGrammar.grammarName=jsgf.importtest
 
 
 ############################################################

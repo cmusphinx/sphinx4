@@ -1,8 +1,13 @@
+#JSGF V1.0;
 /**
  * JSGF Grammar for CardMatch example
  */
 
-grammar hello;
+grammar jsgf.hello;
 
 
 public <simple> = hello world ;
+public <other> = hello <someone> ;
+
+<someone> = (universe | planet | sun);
+
