@@ -48,6 +48,10 @@ ArpaGrammarTestSmall: all
 -Dedu.cmu.sphinx.search.ArpaGrammar.path=/lab/speech/sphinx4/data/fst/digits.fst\
     tests.search.ArpaGrammarTest ArpaGrammarTest.props
 
+heapActiveListTest: all
+	$(JAVA_CMD) tests.search.HeapActiveListTest
+
+
 #################################################################
 # loads a large model. 
 ArpaGrammarTestLarge: all
