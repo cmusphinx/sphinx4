@@ -13,13 +13,13 @@ package edu.cmu.sphinx.frontend.plp;
  * TODO: Describe this LinearPredictor.
  */
 public class LinearPredictor {
-    public int order;
-    public int cepstrumOrder;
-    public double[] reflectionCoeffs;
-    public double[] ARParameters;
-    public double alpha;
-    public double[] cepstra;
-    public double[] bilinearCepstra;
+    private int order;
+    private int cepstrumOrder;
+    private double[] reflectionCoeffs;
+    private double[] ARParameters;
+    private double alpha;
+    private double[] cepstra;
+    private double[] bilinearCepstra;
 
     /**
      * Constructs a LinearPredictor with the given order.
@@ -79,13 +79,12 @@ public class LinearPredictor {
 
 
     /**
-     * Computes AR parameters from a given set of reflection coefficients
+     * Computes AR parameters from a given set of reflection coefficients.
      *
      * @param RC double array of reflection coefficients. The RC array
      *        must begin at 1 (RC[0] is a dummy value)
      * @param lpcorder AR order desired
      */
-
     public double[] reflectionCoeffsToARParameters(double[] RC, int lpcorder) {
 	double[][] tmp = new double[lpcorder+1][lpcorder+1];
 
