@@ -87,11 +87,14 @@ public class SimpleSearchTest {
 	searchManager.initialize();
 	Result result = null;
 
-	for (int i = 0; i < 100; i++) {
-	    result = searchManager.recognize(1);
-	    showActive(result);
-	    showResultSummary(result);
-	    // showResult(result);
+	for (int i = 0; i < 10; i++) {
+	    result = searchManager.recognize(20);
+	    if (result.isFinal()) {
+		showResult(result);
+		break;
+	    } else {
+		showResultSummary(result);
+	    }
 	}
 	searchManager.terminate();
     }
@@ -119,13 +122,14 @@ public class SimpleSearchTest {
      */
 
     public void showResultSummary(Result result) {
-	System.out.println(" -------------- results ---------------- ");
+	System.out.println(" -------------- results frame # " +
+		result.getFrameNumber() + " ---------------- ");
+
 	for (Iterator i = result.getResultTokens().iterator(); i.hasNext(); ) {
 	    Token token = (Token) i.next();
 	    assert(token.isFinal());
-	    System.out.println( "score: " + token.getScore() + 
-			" path: " + token.getWordPath() +
-			(token.isFinal() ? " final" : "") );
+	    System.out.println( "  score: " + token.getScore() + 
+			" path: " + token.getWordPath());
 	}
     }
 
@@ -158,6 +162,8 @@ public class SimpleSearchTest {
  * A simple pruner that doesn't really prune
  */
 class SimplePruner implements Pruner {
+
+    float minScore = 1E-20F;
     /**
      * Initializes the scorer
      */
@@ -171,8 +177,17 @@ class SimplePruner implements Pruner {
      * be scored
      */
     public void prune(List stateTokenList) {
+	int startSize = stateTokenList.size();
+	for (Iterator i = stateTokenList.listIterator(); i.hasNext();) {
+	    Token token = (Token) i.next();
+	    if (token.getScore() < minScore) {
+		i.remove();
+	    }
+	}
+
 	System.out.println("Pruner: " + stateTokenList.size() 
-		+ " tokens in activeList");
+		+ " tokens remaining after pruning " + (startSize -
+		stateTokenList.size()));
     }
 
 
@@ -185,6 +200,9 @@ class SimplePruner implements Pruner {
 
 
 class SimpleAcousticScorer implements AcousticScorer {
+    int maxFeatures = 1000;
+    int curFeature = 0;
+
     /**
      * Initializes the scorer
      */
@@ -197,11 +215,12 @@ class SimpleAcousticScorer implements AcousticScorer {
      * @param stateTokenList a list containing StateToken objects to
      * be scored
      */
-    public void calculateScores(List stateTokenList) {
+    public boolean  calculateScores(List stateTokenList) {
 	for (Iterator i = stateTokenList.iterator(); i.hasNext(); ) {
 	    Token token = (Token) i.next();
 	    assert(token.isEmitting());
 	}
+	return (curFeature++ < maxFeatures) ;
     }
 
     /**
