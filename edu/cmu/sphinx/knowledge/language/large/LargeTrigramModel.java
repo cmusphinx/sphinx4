@@ -321,7 +321,7 @@ public class LargeTrigramModel implements LanguageModel {
         }
 	
        	float score = 0.0f;
-	trigram = loadTrigram(wordSequence);
+	trigram = findTrigram(wordSequence);
 
 	if (trigram != null) {
 	    trigramCache.put(wordSequence, trigram);
@@ -347,7 +347,7 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @return a TrigramProbability of the given trigram
      */
-    private TrigramProbability loadTrigram(WordSequence wordSequence) {
+    private TrigramProbability findTrigram(WordSequence wordSequence) {
 	WordSequence oldest = wordSequence.getOldest();
 	TrigramBuffer trigramBuffer = 
 	    (TrigramBuffer)loadedTrigramBuffer.get(oldest);
