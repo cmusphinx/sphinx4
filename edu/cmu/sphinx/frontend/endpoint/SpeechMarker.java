@@ -33,13 +33,13 @@ import java.util.ListIterator;
 
 /**
  * Converts a stream of Audio objects, marked as speech and non-speech,
- * into utterances. This is done by inserting UTTERANCE_START and
- * UTTERANCE_END signals into the stream.
+ * into utterances. This is done by inserting SPEECH_START and
+ * SPEECH_END signals into the stream.
  */
-public class UtteranceMarker extends DataProcessor implements AudioSource {
+public class SpeechMarker extends DataProcessor implements AudioSource {
 
     public static final String PROP_PREFIX = 
-        "edu.cmu.sphinx.frontend.endpoint.UtteranceMarker.";
+        "edu.cmu.sphinx.frontend.endpoint.SpeechMarker.";
 
     /**
      * The SphinxProperty for the minimum amount of time in speech
@@ -51,7 +51,7 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
     /**
      * The default value of PROP_START_SPEECH.
      */
-    public static final int PROP_START_SPEECH_DEFAULT = 0;
+    public static final int PROP_START_SPEECH_DEFAULT = 200;
 
     /**
      * The SphinxProperty for the amount of time in silence
@@ -62,7 +62,7 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
     /**
      * The default value of PROP_END_SILENCE.
      */
-    public static final int PROP_END_SILENCE_DEFAULT = 0;
+    public static final int PROP_END_SILENCE_DEFAULT = 500;
 
     /**
      * The SphinxProperty for the amount of time (in milliseconds)
@@ -74,7 +74,7 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
     /**
      * The default value of PROP_SPEECH_LEADER.
      */
-    public static final int PROP_SPEECH_LEADER_DEFAULT = 200;
+    public static final int PROP_SPEECH_LEADER_DEFAULT = 100;
 
     /**
      * The SphinxProperty for the amount of time (in milliseconds)
@@ -100,14 +100,14 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
 
 
     /**
-     * Initializes this UtteranceMarker with the given name, context,
+     * Initializes this SpeechMarker with the given name, context,
      * and AudioSource predecessor.
      *
-     * @param name the name of this UtteranceMarker
+     * @param name the name of this SpeechMarker
      * @param context the context of the SphinxProperties this
-     *    UtteranceMarker uses
+     *    SpeechMarker uses
      * @param props the SphinxProperties to read properties from
-     * @param predecessor the AudioSource where this UtteranceMarker
+     * @param predecessor the AudioSource where this SpeechMarker
      *    gets Cepstrum from
      *
      * @throws java.io.IOException
@@ -122,7 +122,7 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
     }
 
     /**
-     * Sets the properties for this UtteranceMarker.
+     * Sets the properties for this SpeechMarker.
      */
     private void setProperties() {
         SphinxProperties props = getSphinxProperties();
@@ -140,7 +140,7 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
     }
 
     /**
-     * Resets this UtteranceMarker to a starting state.
+     * Resets this SpeechMarker to a starting state.
      */
     private void reset() {
         inUtterance = false;
@@ -193,16 +193,21 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
     private void readInitialFrames() throws IOException {
         while (!inUtterance) {
             Audio audio = predecessor.getAudio();
-            outputQueue.add(audio);
-            if (audio.isSpeech()) {
-                boolean speechStarted = handleFirstSpeech(audio);
-                if (speechStarted) {
-                    addUtteranceStart();
-                    inUtterance = true;
-                    break;
-                }
+            if (audio == null) {
+                return;
             } else {
                 outputQueue.add(audio);
+                if (audio.isSpeech()) {
+                    boolean speechStarted = handleFirstSpeech(audio);
+                    if (speechStarted) {
+                        // System.out.println("Speech started !!!");
+                        addUtteranceStart();
+                        inUtterance = true;
+                        break;
+                    }
+                } else {
+                    outputQueue.add(audio);
+                }
             }
         }
     }
@@ -217,6 +222,7 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
      */
     private boolean handleFirstSpeech(Audio audio) throws IOException {
         int speechTime = getAudioTime(audio);
+        // System.out.println("Entering handleFirstSpeech()");
         while (speechTime < startSpeechTime) {
             Audio next = predecessor.getAudio();
             outputQueue.add(next);
@@ -230,7 +236,7 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
     }
 
     /**
-     * Backtrack from the current position to add an UTTERANCE_START Signal
+     * Backtrack from the current position to add an SPEECH_START Signal
      * to the outputQueue.
      */
     private void addUtteranceStart() {
@@ -247,15 +253,15 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
                     silenceLength += getAudioTime(current);
                 }
             } else if (current.hasSignal(Signal.UTTERANCE_START)) {
-                throw new Error("Too many UTTERANCE_START");
+                break;
             } else if (current.hasSignal(Signal.UTTERANCE_END)) {
-                i.next(); // skip the UTTERANCE_END
+                i.next(); // skip the SPEECH_END
                 break;
             }
         }
 
-        // add the UTTERANCE_START
-        i.add(new Audio(Signal.UTTERANCE_START));
+        // add the SPEECH_START
+        i.add(new Audio(Signal.SPEECH_START));
     }
 
     /**
@@ -268,7 +274,7 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
      *    has not ended
      */
     private boolean readEndFrames(Audio audio) throws IOException {
-        ListIterator i = outputQueue.listIterator(outputQueue.size()-1);
+        int originalLast = outputQueue.size() - 1;
 
         int silenceLength = getAudioTime(audio);
 
@@ -291,7 +297,7 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
         while (silenceLength < speechTrailer) {
             Audio next = predecessor.getAudio();
             if (next.isSpeech()) {
-                outputQueue.add(new Audio(Signal.UTTERANCE_END));
+                outputQueue.add(new Audio(Signal.SPEECH_END));
                 outputQueue.add(next);
                 utteranceEndAdded = true;
                 break;
@@ -302,16 +308,20 @@ public class UtteranceMarker extends DataProcessor implements AudioSource {
         }
 
         if (!utteranceEndAdded) {
-            // iterator from the end of speech to add UTTERANCE_END
+            // iterator from the end of speech and read till we
+            // have 'speechTrailer' amount of non-speech, and
+            // then add an SPEECH_END
+            ListIterator i = outputQueue.listIterator(originalLast);
             silenceLength = 0;
             while (silenceLength < speechTrailer && i.hasNext()) {
                 Audio next = (Audio) i.next();
                 assert !next.isSpeech();
                 silenceLength += getAudioTime(next);
             }
-            outputQueue.add(new Audio(Signal.UTTERANCE_END));
+            outputQueue.add(new Audio(Signal.SPEECH_END));
         }
 
+        // System.out.println("Speech ended !!!");
         return true;
     }
 
