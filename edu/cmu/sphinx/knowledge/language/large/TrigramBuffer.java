@@ -31,18 +31,19 @@ public class TrigramBuffer extends NGramBuffer {
 
 
     /**
-     * Finds the trigram probabilities for the given third word in a trigram.
+     * Finds the trigram probability ID for the given third word in a trigram.
      *
      * @param thirdWordID the ID of the third word
      *
-     * @return the TrigramProbability of the given third word
+     * @return the Trigram Probability ID of the given third word
      */
-    public TrigramProbability findTrigram(int thirdWordID) {
+    public int findProbabilityID(int thirdWordID) {
 
         // System.out.println("Looking for: " + thirdWordID);
 
         int mid, start = 0, end = getNumberNGrams();
-        TrigramProbability trigram = null;
+        // TrigramProbability trigram = null;
+        int trigram = -1;
 
         while ((end - start) > 0) {
             mid = (start + end)/2;
@@ -52,7 +53,7 @@ public class TrigramBuffer extends NGramBuffer {
             } else if (midWordID > thirdWordID) {
                 end = mid;
             } else {
-		trigram = getTrigramProbability(mid);
+		trigram = getProbabilityID(mid);
                 break;
 	    }
         }
@@ -67,13 +68,9 @@ public class TrigramBuffer extends NGramBuffer {
      *
      * @return the TrigramProbability of the nth follower
      */
-    public final TrigramProbability getTrigramProbability(int nthFollower) {
+    public final int getProbabilityID(int nthFollower) {
         int nthPosition = nthFollower * LargeTrigramModel.BYTES_PER_TRIGRAM;
-        setPosition(nthPosition);
-
-        int wordID = readTwoBytesAsInt();
-        int probID = readTwoBytesAsInt();
-
-        return (new TrigramProbability(wordID, probID));
+        setPosition(nthPosition + 2); // the 2 is to skip the word ID
+        return readTwoBytesAsInt();
     }
 }

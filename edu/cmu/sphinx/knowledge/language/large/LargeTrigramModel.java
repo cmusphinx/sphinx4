@@ -213,7 +213,6 @@ public class LargeTrigramModel implements LanguageModel {
      * Called after a recognition
      */
     public void stop() {
-
         loadedTrigramBuffer = new HashMap();
         trigramCache = new HashMap();
 	bigramCache = new HashMap();
@@ -383,6 +382,37 @@ public class LargeTrigramModel implements LanguageModel {
 
 
     /**
+     * Loads the bigram followers of the given first word in a bigram from
+     * disk to memory. It actually loads (numberFollowers + 1) bigrams,
+     * since we need the first bigram of the next word to determine
+     * the number of trigrams of the last bigram.
+     *
+     * @param firstWordID ID of the first word
+     * @param numberFollowers the number of bigram followers this word has
+     *
+     * @return the bigram followers of the given word
+     */
+    private BigramBuffer loadBigramBuffer(int firstWordID, 
+					  int numberFollowers) {
+        BigramBuffer followers = null;
+	int firstBigramEntry = unigrams[firstWordID].getFirstBigramEntry();
+	int size = (numberFollowers + 1) * BYTES_PER_BIGRAM;
+	long position = (long) (loader.getBigramOffset() + 
+				(firstBigramEntry * BYTES_PER_BIGRAM));
+	try {
+	    byte[] buffer = loader.loadBuffer(position, size);
+	    followers = new BigramBuffer(buffer, numberFollowers + 1,
+					 loader.getBigEndian());
+	} catch (IOException ioe) {
+	    ioe.printStackTrace();
+	    throw new Error("Error loading bigram followers");
+	}
+	
+	return followers;
+    }
+
+
+    /**
      * Returns the number of bigram followers of a word.
      *
      * @param wordID the ID of the word
@@ -411,11 +441,12 @@ public class LargeTrigramModel implements LanguageModel {
 
 	if (probability == null) {
             float score = 0.0f;
-            TrigramProbability trigram = findTrigram(wordSequence);
-            
-            if (trigram != null) {
+
+            int trigramProbID = findTrigram(wordSequence);
+
+            if (trigramProbID != -1) {
                 trigramHit++;
-                score = trigramProbTable[trigram.getProbabilityID()];
+                score = trigramProbTable[trigramProbID];
             } else {
                 trigramMisses++;
                 BigramProbability bigram = 
@@ -442,9 +473,10 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @return a TrigramProbability of the given trigram
      */
-    private TrigramProbability findTrigram(WordSequence wordSequence) {
-        TrigramProbability trigram = null;
-        
+    private int findTrigram(WordSequence wordSequence) {
+
+        int trigram = -1;
+ 
         WordSequence oldest = wordSequence.getOldest();
         TrigramBuffer trigramBuffer = 
             (TrigramBuffer)loadedTrigramBuffer.get(oldest);
@@ -459,7 +491,7 @@ public class LargeTrigramModel implements LanguageModel {
             if (trigramBuffer != null) {
                 loadedTrigramBuffer.put(oldest, trigramBuffer);
                 int thirdWordID = getWordID(wordSequence.getWord(2));
-                trigram = trigramBuffer.findTrigram(thirdWordID);
+                trigram = trigramBuffer.findProbabilityID(thirdWordID);
             }
         }
 
@@ -592,37 +624,6 @@ public class LargeTrigramModel implements LanguageModel {
      */
     public LogMath getLogMath() {
         return this.logMath;
-    }
-
-
-    /**
-     * Loads the bigram followers of the given first word in a bigram from
-     * disk to memory. It actually loads (numberFollowers + 1) bigrams,
-     * since we need the first bigram of the next word to determine
-     * the number of trigrams of the last bigram.
-     *
-     * @param firstWordID ID of the first word
-     * @param numberFollowers the number of bigram followers this word has
-     *
-     * @return the bigram followers of the given word
-     */
-    private BigramBuffer loadBigramBuffer(int firstWordID, 
-					  int numberFollowers) {
-        BigramBuffer followers = null;
-	int firstBigramEntry = unigrams[firstWordID].getFirstBigramEntry();
-	int size = (numberFollowers + 1) * BYTES_PER_BIGRAM;
-	long position = (long) (loader.getBigramOffset() + 
-				(firstBigramEntry * BYTES_PER_BIGRAM));
-	try {
-	    byte[] buffer = loader.loadBuffer(position, size);
-	    followers = new BigramBuffer(buffer, numberFollowers + 1,
-					 loader.getBigEndian());
-	} catch (IOException ioe) {
-	    ioe.printStackTrace();
-	    throw new Error("Error loading bigram followers");
-	}
-	
-	return followers;
     }
 
     
