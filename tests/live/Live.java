@@ -229,6 +229,8 @@ public class Live {
         liveFrame.setMessage(changeMessage);
         liveFrame.setSpeakButtonEnabled(false);
         liveFrame.setNextButtonEnabled(false);
+        liveFrame.setPlayButtonEnabled(false);
+        liveFrame.setClearButtonEnabled(false);
 
         if (currentRecognizer != null) {
             currentRecognizer.deallocate();
@@ -250,6 +252,8 @@ public class Live {
             liveFrame.setRecognitionLabel("");
             liveFrame.setSpeakButtonEnabled(true);
             liveFrame.setNextButtonEnabled(true);
+            liveFrame.setPlayButtonEnabled(true);
+            liveFrame.setClearButtonEnabled(true);
             liveFrame.setMessage(recognizerName + ", press \"Speak\" to start");
 
         } else {
