@@ -77,8 +77,8 @@ public final class LogMath implements Serializable {
     private boolean useAddTable;
     private transient double naturalLogBase;
     private transient double inverseNaturalLogBase;
-    private transient double logZero;
-    private transient double logOne;
+    private transient static double logZero;
+    private transient static double logOne;
     private transient double theAddTable[];
     private transient double maxLogValue;
     private transient double minLogValue;
@@ -155,6 +155,7 @@ public final class LogMath implements Serializable {
 	     logger.info("Performing actual computation when adding logs");
 	 }
 	 naturalLogBase = Math.log(logBase);
+	 naturalLogBase = 0.000100012;
 	 inverseNaturalLogBase = 1.0/naturalLogBase;
 
 	 // [[[ TODO: probably not right way to get logZero ]]]
@@ -234,10 +235,8 @@ public final class LogMath implements Serializable {
 	     // PBL added this just to see how many entries really are
 	     // in the table
 
-	     if (false)  {
-		 System.out.println("LogAdd table has " + entriesInTheAddTable
+	     logger.info("LogAdd table has " + entriesInTheAddTable
 				    + " entries.");
-	     }
 
 	     theAddTable = new double[entriesInTheAddTable];
 	     for (int index = 0; index < entriesInTheAddTable; index++) {
@@ -246,9 +245,8 @@ public final class LogMath implements Serializable {
 		 // log( 1.0 + power(base, index))
 		 //
 		 // needed to add two numbers in the log domain.
-
 		 innerSummation = logToLinear(-index);
-		 innerSummation += 1.0f;
+		 innerSummation += 1.0;
 		 theAddTable[index] = linearToLog(innerSummation);
 	     }
 	 }
@@ -460,6 +458,9 @@ public final class LogMath implements Serializable {
 					       + sourceBase + " or " +
 					       resultBase);
 	}
+	if (logSource == logZero) {
+	    return logZero;
+	}
 	double lnSourceBase = Math.log(sourceBase);
 	double lnResultBase = Math.log(resultBase);
 
@@ -474,6 +475,9 @@ public final class LogMath implements Serializable {
      * @param logSource the number in base Math.E to convert
      */
     public final double lnToLog(double logSource) {
+	if (logSource == logZero) {
+	    return logZero;
+	}
 	return (logSource * inverseNaturalLogBase);
     }
 
@@ -484,16 +488,23 @@ public final class LogMath implements Serializable {
      * @param logSource the number in base Math.E to convert
      */
     public final double log10ToLog(double logSource) {
+	if (logSource == logZero) {
+	    return logZero;
+	}
 	return logToLog(logSource, 10.0, logBase);
     }
 
     /**
-     * Converts the given log value into a base Math.E log value.
+     * Converts the source, whose base is the LogBase of this LogMath,
+     * to a log value which is a number in base Math.E.
      *
-     * @param logValue the log value to convert
+     * @param logSource the number to convert to base Math.E
      */
-    public final double logToLn(double logValue) {
-        return logValue * naturalLogBase;
+    public final double logToLn(double logSource) {
+	if (logSource == logZero) {
+	    return logZero;
+	}
+        return logSource * naturalLogBase;
     }
 
 
