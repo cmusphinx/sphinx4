@@ -29,7 +29,7 @@ import java.util.ArrayList;
 /**
  * Manages the HMMS. HMMs are grouped by word position
  */
-class HMMManager {
+public class HMMManager {
 
     private List allHMMs = new ArrayList();
     private Map[] hmmsPerPosition = new Map[HMMPosition.MAX_POSITIONS];

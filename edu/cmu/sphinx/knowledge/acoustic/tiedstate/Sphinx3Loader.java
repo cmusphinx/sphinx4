@@ -55,7 +55,7 @@ import java.util.zip.ZipException;
  * Mixture weights and transition probabilities are maintained in logMath 
  * log base, 
  */
-class Sphinx3Loader implements Loader {
+public class Sphinx3Loader implements Loader {
 
     /**
      * The logger for this class

@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Used to pool shared objects in the acoustic model
  */
-class Pool {
+public class Pool {
     private String name;
     private List pool;
     private Map features = new HashMap();

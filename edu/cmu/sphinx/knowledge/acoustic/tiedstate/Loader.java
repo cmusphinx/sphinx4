@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Generic interface for a loader of acoustic models
  */
-interface Loader {
+public interface Loader {
     /**
      * Gets the pool of means for this loader
      *
