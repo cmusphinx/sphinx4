@@ -29,6 +29,6 @@ public class TrainerToken /* extends Token */ {
 
     private Node state;
     private boolean isEmitting;
-    private Feature dataVector;
+    private Data dataVector;
     private int timeStamp;
 }

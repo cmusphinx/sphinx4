@@ -12,19 +12,25 @@
 
 package edu.cmu.sphinx.trainer;
 
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataStartSignal;
+import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.FeatureFrame;
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.frontend.Signal;
-import edu.cmu.sphinx.frontend.util.StreamAudioSource;
+import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
-import edu.cmu.sphinx.frontend.DataSource;
 
 import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerAcousticModel;
 import edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer.TrainerScore;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,11 +73,11 @@ public class FlatInitializerLearner implements Learner {
 
 
     private FrontEnd frontEnd;
-    private DataSource dataSource;
+    private DataProcessor dataSource;
     private String context;
     private String inputDataType;
     private SphinxProperties props;
-    private Feature curFeature;
+    private Data curFeature;
 
     /**
      * Constructor for this learner.
@@ -89,16 +95,14 @@ public class FlatInitializerLearner implements Learner {
      * @throws IOException
      */
     private void initialize() throws IOException  {
-
 	inputDataType = props.getString(PROP_INPUT_TYPE, 
                                         PROP_INPUT_TYPE_DEFAULT);
-
 	if (inputDataType.equals("audio")) {
-	    dataSource = new StreamAudioSource
-		("batchAudioSource", context, null, null);
+	    dataSource = new StreamDataSource();
+	    dataSource.initialize("batchAudioSource", null, props, null);
 	} else if (inputDataType.equals("cepstrum")) {
-	    dataSource = new StreamCepstrumSource
-		("batchCepstrumSource", context);
+	    dataSource = new StreamCepstrumSource();
+	    dataSource.initialize("batchCepstrumSource", null, props, null);
 	} else {
 	    throw new Error("Unsupported data type: " + inputDataType + "\n" +
 			    "Only audio and cepstrum are supported\n");
@@ -115,19 +119,16 @@ public class FlatInitializerLearner implements Learner {
     protected FrontEnd getFrontEnd() {
         String path = null;
         try {
-            path = props.getString(PROP_FRONT_END, PROP_FRONT_END_DEFAULT);
-            FrontEnd fe = (FrontEnd)Class.forName(path).newInstance();
-            fe.initialize("FlatInitFrontEnd", context, dataSource);
-            return fe;
-        } catch (ClassNotFoundException fe) {
-            throw new Error("CNFE:Can't create front end " + path, fe);
+	    Collection names = FrontEndFactory.getNames(props);
+	    assert names.size() == 1;
+	    FrontEnd fe = null;
+	    for (Iterator i = names.iterator(); i.hasNext(); ) {
+		String name = (String) i.next();
+		fe = FrontEndFactory.getFrontEnd(name, props);
+	    }
+	    return fe;
         } catch (InstantiationException ie) {
             throw new Error("IE: Can't create front end " + path, ie);
-        } catch (IllegalAccessException iea) {
-            throw new Error("IEA: Can't create front end " + path, iea);
-        } catch (IOException ioe) {
-            throw new Error("IOE: Can't create front end " + path + " "
-                    + ioe, ioe);
         }
     }
 
@@ -147,7 +148,7 @@ public class FlatInitializerLearner implements Learner {
                                         PROP_INPUT_TYPE_DEFAULT);
 
         if (inputDataType.equals("audio")) {
-            ((StreamAudioSource) dataSource).setInputStream(is, file);
+            ((StreamDataSource) dataSource).setInputStream(is, file);
         } else if (inputDataType.equals("cepstrum")) {
             boolean bigEndian = Utilities.isCepstraFileBigEndian(file);
             ((StreamCepstrumSource) dataSource).setInputStream(is, bigEndian);
@@ -162,61 +163,35 @@ public class FlatInitializerLearner implements Learner {
      * @throws IOException
      */
     private boolean getFeature() {
-	FeatureFrame ff;
-
 	try {
-	    ff = frontEnd.getFeatureFrame(1, null);
+	    curFeature = frontEnd.getData();
 
-            if (!hasFeatures(ff)) {
+            if (curFeature == null) {
                 return false;
             }
 
-	    curFeature = ff.getFeatures()[0];
-
-	    if (curFeature.getSignal() == Signal.UTTERANCE_START) {
-                ff = frontEnd.getFeatureFrame(1, null);
-                if (!hasFeatures(ff)) {
+	    if (curFeature instanceof DataStartSignal) {
+                curFeature = frontEnd.getData();
+                if (curFeature == null) {
                     return false;
                 }
-                curFeature = ff.getFeatures()[0];
             }
 
-	    if (curFeature.getSignal() == Signal.UTTERANCE_END) {
+	    if (curFeature instanceof DataEndSignal) {
 		return false;
 	    }
 
-            if (!curFeature.hasContent()) {
+            if (curFeature instanceof Signal) {
                 throw new Error("Can't score non-content feature");
             }
 
-	} catch (IOException ioe) {
-	    System.out.println("IO Exception " + ioe);
-	    ioe.printStackTrace();
+	} catch (DataProcessingException dpe) {
+	    System.out.println("DataProcessingException " + dpe);
+	    dpe.printStackTrace();
 	    return false;
 	}
 
 	return true;
-    }
-
-    /**
-     * Checks to see if a FeatureFrame is null or if there are Features in it.
-     *
-     * @param ff the FeatureFrame to check
-     *
-     * @return false if the given FeatureFrame is null or if there
-     * are no Features in the FeatureFrame; true otherwise.
-     */
-    private boolean hasFeatures(FeatureFrame ff) {
-        if (ff == null) {
-            System.out.println("FlatInitializerLearner: FeatureFrame is null");
-            return false;
-        }
-        if (ff.getFeatures() == null) {
-            System.out.println
-                ("FlatInitializerLearner: no features in FeatureFrame");
-            return false;
-        }
-        return true;
     }
 
 

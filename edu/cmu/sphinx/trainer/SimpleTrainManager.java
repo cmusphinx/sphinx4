@@ -127,12 +127,18 @@ class SimpleTrainManager implements TrainManager {
 	    Collection modelList = AcousticModelFactory.getNames(props);
 	    for (Iterator i = modelList.iterator(); i.hasNext();) {
 		name = (String) i.next();
-		AcousticModel model = 
-                    AcousticModelFactory.getModel(props, name);
-                if (model instanceof  TrainerAcousticModel) {
-                    TrainerAcousticModel tmodel = (TrainerAcousticModel) model;
-		    tmodel.save(name);
-                }
+		try {
+		    AcousticModel model = 
+			AcousticModelFactory.getModel(props, name);
+		    if (model instanceof TrainerAcousticModel) {
+			TrainerAcousticModel tmodel =
+			    (TrainerAcousticModel) model;
+			tmodel.save(name);
+		    }
+		} catch (InstantiationException ie) {
+		    ie.printStackTrace();
+		    throw new IOException("InstantiationException occurred.");
+		}
 	    }
 	}
     }
@@ -210,11 +216,16 @@ class SimpleTrainManager implements TrainManager {
 
         for (Iterator i = modelNames.iterator(); i.hasNext();) {
             String modelName = (String) i.next();
-            AcousticModel model =
-                   AcousticModelFactory.getModel(props, modelName);
-            if (model instanceof TrainerAcousticModel) {
-                modelList.add(model);
-            }
+	    try {
+		AcousticModel model =
+		    AcousticModelFactory.getModel(props, modelName);
+		if (model instanceof TrainerAcousticModel) {
+		    modelList.add(model);
+		}
+	    } catch (InstantiationException ie) {
+		ie.printStackTrace();
+		throw new IOException("InstantiationException occurred.");
+	    }
         }
 	return (TrainerAcousticModel[]) 
             modelList.toArray(new TrainerAcousticModel[modelList.size()]);
