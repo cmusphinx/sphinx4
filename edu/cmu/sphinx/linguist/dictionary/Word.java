@@ -117,6 +117,23 @@ public class Word implements Serializable {
     }
 
     /**
+     * Get the highest probability pronunciation for a word
+     * 
+     * @return the highest probability pronunciation
+     */
+    public Pronunciation getMostLikelyPronunciation() {
+        float bestScore = Float.NEGATIVE_INFINITY;
+        Pronunciation best = null;
+        for (int i=0;i<pronunciations.length;i++) {
+            if (pronunciations[i].getProbability() > bestScore) {
+                bestScore = pronunciations[i].getProbability();
+                best = pronunciations[i];
+            }
+        }
+        return best;
+    }
+    
+    /**
      * Returns a string representation of this word, which is the spelling
      *
      * @return the spelling of this word
