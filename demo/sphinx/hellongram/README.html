@@ -59,37 +59,40 @@ Start speaking. Press Ctrl-C to quit.
       </p>
 
       <h3>Building</h3>
-      <p>Check the <code>bin</code> directory to see if it has the file
-         <code>HelloNGram.jar</code>. If not, you need to build the demo.
-         To build this demo, merely type the following in a shell at the
-	 top level directory:
-	 <ul>
-	 <code>ant demos</code>
-	 </ul>
+      <p>
+      Check the <code>bin</code> directory to see if it has the file
+      <code>HelloNGram.jar</code>. If not, type the following at the top level
+      directory:
       </p>
       <p>
-      Doing so will create <code>bin/HelloNGram.jar</code> under the 
-      top level directory.  You can run the demo using <code>java -jar</code> 
-      (see "Running" below).
+      <code>ant -find demo.xml</code>
       </p>
       <h3>Running</h3>
       <p>
       First make sure that you have
-      <a href="../../../doc/jsapi_setup.html">JSAPI setup</a> correctly. Then, make sure that all the Sphinx-4 classes 
-      are built. Go to the top level directory (sphinx4) and type:
-      </p>
-      <code>
-      ant
-      </code>
-      <p>
-      Use the sentences in the <a href="hellongram.test">test file</a>
-      to test the demo. To run the demo, type:
+      <a href="../../../doc/jsapi_setup.html">JSAPI setup</a> correctly. Then,
+      To run the demo, type:
       </p>
       <code>sphinx4> java -mx312m -jar bin/HelloNGram.jar</code>
       <p>
+      Use the sentences in the <a href="hellongram.test">test file</a>
+      to test the demo.
+      </p>
+      <p><font color="FF0000"><b>NOTE:</b></font> 
+      <ol>
+      <li>
       Make sure that you give it a large enough heap by putting in "-mx312m".
-      <br><font color="FF0000"><b>NOTE:</b></font> Make sure that you are using
-      Java<sup>TM</sup> 2 SDK, Standard Edition, v1.4 or higher.
+      </li>
+      <li>
+      Make sure that you are using Java<sup>TM</sup> 2 SDK, Standard Edition, 
+      v1.4 or higher.
+      </li>
+      <li>
+      If you have the source distribution, make sure that all the JAR file
+      <code>lib/sphinx4.jar</code> is built. If not, go to the top level 
+      directory and type: <code>ant</code>
+      </li>
+      </ol>
       </p>
     </font>
     <hr>

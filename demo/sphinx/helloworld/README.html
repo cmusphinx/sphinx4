@@ -66,36 +66,33 @@ Start speaking. Press Ctrl-C to quit.
       <h3>Building</h3>
       <p>
       Check if the <code>bin</code> directory already has the
-      <code>HelloWorld.jar</code> file. If not, you need to build the demo
-      to create that JAR.   
-      To build this demo, merely type the following in the top level directory:
-      <ul>
-	 <code>ant demos</code>
-      </ul>
+      <code>HelloWorld.jar</code> file. If not, type the following in the top
+      level directory:
       </p>
-      <p>
-      Doing so will create <code>bin/HelloWorld.jar</code> under the
-      top level directory.  You can run the demo using <code>java -jar</code> 
-      (see "Running" below).
-      </p>
+      <code>ant -find demo.xml</code>
       <h3>Running</h3>
       <p>
       First make sure that you have
       <a href="../../../doc/jsapi_setup.html">JSAPI setup</a> correctly.
-      Then, make sure that all the Sphinx-4 classes 
-      are built. Go to the top level directory (sphinx4) and type:
-      </p>
-      <code>
-      ant all
-      </code>
-      <p>
-      To run the demo, type:
+      Then, to run the demo, type:
       </p>
       <code>sphinx4> java -mx256m -jar bin/HelloWorld.jar</code>
       <p>
+      <font color="FF0000"><b>NOTE:</b></font>
+      <ol>
+      <li>
       Make sure that you give it a large enough heap by putting in "-mx256m".
-      <br><font color="FF0000"><b>NOTE:</b></font> Make sure that you are using
-      Java<sup>TM</sup> 2 SDK, Standard Edition, v1.4 or higher.
+      </li>
+      <li>
+      Make sure that you are using Java<sup>TM</sup> 2 SDK, Standard Edition, 
+      v1.4 or higher.
+      </li>
+      <li>
+      If you have the source distribution, make sure that all the JAR file
+      <code>lib/sphinx4.jar</code> is built. If not, go to the top level 
+      directory and type: <code>ant</code>
+      </li>
+      </ol>
       </p>
       <p>
       The list of allowable sentences in this demo are:
