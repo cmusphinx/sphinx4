@@ -40,3 +40,7 @@ binary:
 ngram-test:
 	$(MAKE) all
 	$(JAVA_CMD) edu.cmu.sphinx.knowledge.language.large.LargeTrigramModelTest file:./binary.props /lab/speech/sphinx4/data/hub4_model/random_ngrams.txt
+
+debug:
+	$(MAKE) all
+	$(JAVA_CMD) edu.cmu.sphinx.knowledge.language.large.LargeTrigramModelTest file:./binary.props ./ngram.out

@@ -42,7 +42,7 @@ public class BigramBuffer extends NGramBuffer {
      */
     public BigramProbability findBigram(int secondWordID) {
 
-        int mid, start = 0, end = getNumberNGrams();
+        int mid, start = 0, end = getNumberNGrams()-1;
         BigramProbability bigram = null;
 
         while ((end - start) > 0) {

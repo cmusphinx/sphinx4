@@ -67,7 +67,8 @@ public class NGramBuffer {
      * @return the word ID
      */
     public final int getWordID(int nthFollower) {
-        int nthPosition = nthFollower * (buffer.capacity()/numberNGrams);
+        int nthPosition = nthFollower * 
+            (buffer.capacity()/numberNGrams);
         buffer.position(nthPosition);
         return readTwoBytesAsInt();
     }

@@ -316,7 +316,9 @@ class BinaryLoader {
         int bytesRead = fileChannel.read(bb);
 	if (!bigEndian) {
 	    bb.order(ByteOrder.LITTLE_ENDIAN);
-	}
+	} else {
+            bb.order(ByteOrder.BIG_ENDIAN);
+        }
         if (bytesRead != size) {
             throw new IOException("Insufficient bytes read.");
         }

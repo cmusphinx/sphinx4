@@ -308,6 +308,12 @@ public class LargeTrigramModel implements LanguageModel {
 		loadedBigramBuffer.put(new Integer(firstWordID), followers);
 	    }
             bigram = followers.findBigram(secondWordID);
+            if (bigram == null) {
+                System.out.println("did not find bigram in bigramBuffer: " +
+                                   numberBigramBuffer);
+            }
+        } else {
+            System.out.println("unigram has no bigram");
         }
 
         return bigram;
@@ -332,6 +338,7 @@ public class LargeTrigramModel implements LanguageModel {
         TrigramProbability trigram = 
 	    (TrigramProbability) trigramCache.get(wordSequence);
         if (trigram != null) {
+            // System.out.println("Found trigram!");
             return trigramProbTable[trigram.getProbabilityID()];
         }
 	
@@ -340,6 +347,7 @@ public class LargeTrigramModel implements LanguageModel {
 
 	if (trigram != null) {
 	    trigramCache.put(wordSequence, trigram);
+            // System.out.println("Found trigram!");
 	    score = trigramProbTable[trigram.getProbabilityID()];
 	} else {
 	    BigramProbability bigram = findBigram(firstWordID, secondWordID);
@@ -398,7 +406,11 @@ public class LargeTrigramModel implements LanguageModel {
 
 	BigramProbability bigram = findBigram(firstWordID, secondWordID);
 
-        if (bigram != null) {
+        if (bigram == null) {
+            System.out.println("Did not find bigram! " + 
+                               loader.getWords()[firstWordID] + " " +
+                               loader.getWords()[secondWordID]);
+        } else if (bigram != null) {
 
             int numberTrigrams = 0, size = 0;
             long position = 0;
@@ -530,9 +542,8 @@ public class LargeTrigramModel implements LanguageModel {
 	long position = (long) (loader.getBigramOffset() + 
 				(firstBigramEntry * BYTES_PER_BIGRAM));
 	try {
-	    // System.out.println("Loading BigramBuffer from disk");
 	    ByteBuffer buffer = loader.loadBuffer(position, size);
-	    followers = new BigramBuffer(buffer, numberFollowers);
+	    followers = new BigramBuffer(buffer, numberFollowers + 1);
 	} catch (IOException ioe) {
 	    ioe.printStackTrace();
 	    throw new Error("Error loading bigram followers");
