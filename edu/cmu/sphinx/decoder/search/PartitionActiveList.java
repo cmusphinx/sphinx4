@@ -92,8 +92,12 @@ public class PartitionActiveList implements ActiveList  {
 	this.absoluteBeamWidth = props.getInt
             (PROP_ABSOLUTE_BEAM_WIDTH, 
              PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT);
-
-        this.tokenList = new Token[absoluteBeamWidth];
+        
+        int listSize = PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT;
+        if (absoluteBeamWidth > 0) {
+            listSize = absoluteBeamWidth;
+        }
+        this.tokenList = new Token[listSize];
 
 	double linearRelativeBeamWidth  
 	    = props.getDouble(PROP_RELATIVE_BEAM_WIDTH, 
