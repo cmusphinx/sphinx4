@@ -137,9 +137,27 @@ public class StreamFactory {
                                              String file) throws 
     FileNotFoundException, IOException, ZipException {
         InputStream stream = null;
+	String absoluteLocation;
+
+	// Create a url from the location, possibly relative path
+	URI uri = URI.create(location);
+	// Get the scheme and the path
+	String scheme = uri.getScheme();
+	String path = uri.getSchemeSpecificPart();
+	// Create a file with the path (aka scheme-specific part)
+	File relativeFile = new File(path);
+	// Make the path absolute and reconstruct the location, with
+	// the correct scheme
+	if (scheme == null) {
+	    absoluteLocation = relativeFile.getAbsolutePath();
+	} else {
+	    absoluteLocation = scheme + ":" + relativeFile.getAbsolutePath();
+	}
+
         if (format.equals(ZIP_FILE)) {
             try {
-                ZipFile zipFile = new ZipFile(new File(new URI(location)));
+                ZipFile zipFile = 
+		    new ZipFile(new File(new URI(absoluteLocation)));
                 ZipEntry entry = zipFile.getEntry(file);
                 if (entry != null) {
                     stream = zipFile.getInputStream(entry);
@@ -150,8 +168,9 @@ public class StreamFactory {
                                        use.getMessage());
             }
         } else if (format.equals(DIRECTORY)) {
-            if (location != null) {
-                stream = new FileInputStream(location + File.separator + file);
+            if (absoluteLocation != null) {
+                stream = new FileInputStream(absoluteLocation + 
+					     File.separator + file);
             } else {
                 stream = new FileInputStream(file);
             }
