@@ -1,0 +1,28 @@
+#!/bin/sh
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This script generates and pushes the DocCheck report
+#
+
+if ant -emacs javadoc_check 
+then
+    if [  -f bld/javadoc_check/index.html ]; then
+        (cd bld; tar cf ../doccheck.tar javadoc_check)
+        sscp doccheck.tar
+        sshh '(cd /home/groups/c/cm/cmusphinx/htdocs; tar xf ~/doccheck.tar; chgrp -R cmusphinx javadoc_check;)'
+
+        echo OK
+    else
+        echo Error: javadoc_check: no output produced
+        echo " This typically occurs if the DocCheck doclet is not installed"
+    fi
+else
+    echo Error: javadoc_check: command failed
+fi

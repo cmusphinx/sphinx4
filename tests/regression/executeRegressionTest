@@ -62,7 +62,7 @@ scripts="getTime getHostname mailReport makeReport \
     runTests_quick runTests_saturday runTests_sunday \
     runTests_thursday runTests_tuesday runTests_wednesday \
     makeTestDetailReport pushAllTestReports getJavaVersion \
-    makeTestSummaryReport makeTestReports waitForFile"
+    makeTestSummaryReport makeTestReports waitForFile pushDocCheck"
 
 chmod +x $scripts
 
@@ -103,6 +103,10 @@ endBuildTime=`$regressionDir/getTime`
 #totalBuildTime=$((endBuildTime - startBuildTime))
 totalBuildTime=`expr $endBuildTime - $startBuildTime`
 
+############################################
+# If the build succeeded, run the doc check
+###########################################
+$regressionDir/pushDocCheck
 
 #########################################
 # If the build succeeded, run the tests
