@@ -17,6 +17,7 @@ import edu.cmu.sphinx.knowledge.language.LanguageModel;
 
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 
 import java.io.BufferedInputStream;
@@ -31,6 +32,7 @@ import java.net.URL;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.nio.MappedByteBuffer;
 
 import java.nio.channels.FileChannel;
@@ -96,6 +98,8 @@ class BinaryLoader {
     private FileChannel fileChannel;
     private boolean bigEndian = true;
     private boolean applyLanguageWeightAndWip;
+
+    private Timer stringTimer;
 
     
     /**
@@ -228,7 +232,9 @@ class BinaryLoader {
         applyLanguageWeightAndWip = props.getBoolean
             (PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP,
              PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP_DEFAULT);
-        
+
+        stringTimer = Timer.getTimer(context, "StringRead");
+
         logMath = LogMath.getLogMath(context);
         loadBinary(location);
     }
@@ -467,23 +473,20 @@ class BinaryLoader {
             throw new Error("Bad word string size: " + wordsStringLength);
         }
 
+        // stringTimer.start();
+
         // read the string of all words
         String wordsString = 
             readString(stream, wordsStringLength).toLowerCase();
-
-        // first make sure string just read contains ucount words
-        int numberWords = 0;
-        for (int i = 0; i < wordsStringLength; i++) {
-            if (wordsString.charAt(i) == '\0') {
-                numberWords++;
-            }
-        }
-        if (numberWords != numberUnigrams) {
-            throw new Error("Bad # of words: " + numberWords);
-        }
-
+        
         // break up string just read into words
         this.words = wordsString.split("\0");
+
+        if (words.length != numberUnigrams) {
+            throw new Error("Bad # of words: " + words.length);
+        }
+
+        // stringTimer.stop();
 
         applyUnigramWeight();
 
@@ -637,7 +640,7 @@ class BinaryLoader {
 
             float logProbability = logMath.log10ToLog(unigramProbability);
             float logBackoff = logMath.log10ToLog(unigramBackoff);
-
+            
             unigrams[i] = new UnigramProbability
                 (logProbability, logBackoff, firstBigramEntry);
 	}
@@ -711,8 +714,12 @@ class BinaryLoader {
     private final String readString(DataInputStream stream, int length)
         throws IOException {
         StringBuffer buffer = new StringBuffer();
+        
+        byte[] bytes = new byte[length];
+        bytesRead += stream.read(bytes);
+
         for (int i = 0; i < length; i++) {
-            buffer.append((char)readByte(stream));
+            buffer.append((char)bytes[i]);
 	}
         return buffer.toString();
     }
