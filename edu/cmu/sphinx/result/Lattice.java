@@ -1,19 +1,20 @@
 
 /*
- * Copyright 1999-2002 Carnegie Mellon University.
- * Portions Copyright 2002 Sun Microsystems, Inc.
- * Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
- * All Rights Reserved.  Use is subject to license terms.
- *
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL
- * WARRANTIES.
- *
- */
+* Copyright 1999-2002 Carnegie Mellon University.
+* Portions Copyright 2002 Sun Microsystems, Inc.
+* Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+* All Rights Reserved.  Use is subject to license terms.
+*
+* See the file "license.terms" for information on usage and
+* redistribution of this file, and for a DISCLAIMER OF ALL
+* WARRANTIES.
+*
+*/
 package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
 import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 
@@ -41,7 +42,7 @@ public class Lattice {
     protected Node terminalNode;
     protected Vector edges;
     protected HashMap nodes;
-
+    AlternateHypothesisManager loserManager;
     {
         edges=new Vector();
         nodes=new HashMap();
@@ -92,6 +93,56 @@ public class Lattice {
         }
     }
 
+    /**
+     * Create a Lattice from a Result and a viterbiLoserMap.
+     *
+     * @param result
+     * @param loserManager
+     */
+    public Lattice( Result result, AlternateHypothesisManager loserManager ) {
+        initialNode = addNode("0", Dictionary.SENTENCE_START_SPELLING, 0,0);
+        terminalNode = addNode("-1", Dictionary.SENTENCE_END_SPELLING,0,0);
+        this.loserManager = loserManager;
+        loserManager.purge(1);
+
+        for (Iterator it=result.getResultTokens().iterator(); it.hasNext();) {
+            Token token = (Token)(it.next());
+            processToken(terminalNode, token);
+        }
+    }
+
+    protected void processToken(Node thisNode, Token token) {
+        double thisAcousticScore=0.0;
+        double thisLMScore=0.0;
+        if (token.isWord()) {
+            Node newNode;
+            if( hasNode(token) ) {
+                newNode = getNode( token );
+            }
+            else {
+                newNode = addNode( token );
+            }
+            thisAcousticScore = token.getScore();
+            thisLMScore = 0.0f;
+            addEdge( newNode,thisNode,thisAcousticScore,thisLMScore );
+            thisNode = newNode;
+        }
+
+        List list = loserManager.getAlternatePredecessors(token);
+        if (list != null) {
+            for (Iterator iter = list.iterator();iter.hasNext();) {
+                Token predecessor = (Token)iter.next();
+                processToken(thisNode, predecessor);
+            }
+        }
+        Token predecessor = token.getPredecessor();
+        if (predecessor != null) {
+            processToken(thisNode, predecessor);
+        }
+        if (predecessor==null) {
+            addEdge(initialNode,thisNode,thisAcousticScore,thisLMScore);
+        }
+    }
 
     /**
      * Create a Lattice from a LAT file.  LAT files are created by
@@ -211,7 +262,7 @@ public class Lattice {
         String word;
         if( token.getSearchState() instanceof WordSearchState) {
             word = ((WordSearchState)(token.getSearchState()))
-                .getPronunciation().getWord();
+                    .getPronunciation().getWord();
         }
         else {
             word = token.getSearchState().toString();
@@ -579,11 +630,11 @@ public class Lattice {
             lattice = new Lattice();
 
             /*
-             1 --> 2 -
+            1 --> 2 -
             /         \
-           0 --> 1 --> 4
+            0 --> 1 --> 4
             \     \   /
-             2 --> 3 -
+            2 --> 3 -
             */
 
             Node n0 = lattice.addNode("0","0",0,0);
@@ -619,11 +670,11 @@ public class Lattice {
         lo.optimize();
 
         /*
-                 2
-               /   \
+        2
+        /   \
         0 --> 1 --> 4
-         \     \   /
-          2 -->  3
+        \     \   /
+        2 -->  3
         */
 
         lattice.dumpAllPaths();

@@ -16,6 +16,8 @@ import edu.cmu.sphinx.result.Lattice;
 
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Class used to collapse all equivalent paths in a Lattice.  Results in a
@@ -26,6 +28,7 @@ import java.util.Vector;
 
 public class LatticeOptimizer {
     protected Lattice lattice;
+    protected Set removedNodes = new HashSet();
 
     /**
      * Create a new Lattice optimizer
@@ -64,6 +67,7 @@ public class LatticeOptimizer {
         //System.err.println("***");
         //lattice.dumpAllPaths();
         //System.err.println("***");
+
     }
 
     /**
@@ -190,32 +194,12 @@ public class LatticeOptimizer {
         assert n1.hasEquivalentFromEdges(n1);
         assert n1.getWord().equals(n2.getWord());
 
-        // create the new node with a new id and the same label
-        Node nprime =
-                lattice.addNode(n1.getWord(),n1.getBeginTime(),n1.getEndTime());
-
-        // add all the from edges (they should be the same in n1 and n2)
-        for (Iterator i = n1.getFromEdges().iterator(); i.hasNext();) {
-            Edge e = (Edge) i.next();
-            lattice.addEdge(
-                        e.getFromNode(), nprime,
-                        e.getAcousticScore(), e.getLMScore() );
-        }
-
-        // add n1's to edges
-        for (Iterator i = n1.getToEdges().iterator(); i.hasNext();) {
-            Edge e = (Edge) i.next();
-            lattice.addEdge(
-                        nprime, e.getToNode(),
-                        e.getAcousticScore(), e.getLMScore() );
-        }
-
         // add n2's to edges
         for (Iterator i = n2.getToEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
-            if (!nprime.hasEdgeToNode(e.getToNode())) {
+            if (!n1.hasEdgeToNode(e.getToNode())) {
                 lattice.addEdge(
-                            nprime, e.getToNode(),
+                            n1, e.getToNode(),
                             e.getAcousticScore(), e.getLMScore() );
             } else {
                 // if we got here then n1 and n2 had edges to the same node
@@ -226,9 +210,10 @@ public class LatticeOptimizer {
         }
 
         // remove n1 and n2 and all associated edges
-        lattice.removeNodeAndEdges(n1);
+        removedNodes.add(n2);
         lattice.removeNodeAndEdges(n2);
     }
+
 
     /**
      * Minimize the Lattice deterministic, so that no node
@@ -271,7 +256,9 @@ public class LatticeOptimizer {
             // search for a node that can be optimized
             for (Iterator i=lattice.getCopyOfNodes().iterator(); i.hasNext();) {
                 Node n = (Node) i.next();
-                moreChanges |= optimizeNodeBackward(n);
+                if (!removedNodes.contains(n)) {
+                    moreChanges |= optimizeNodeBackward(n);
+                }
             }
         }
     }
@@ -359,31 +346,14 @@ public class LatticeOptimizer {
         Node n1 = e1.getFromNode();
         Node n2 = e2.getFromNode();
 
-        assert n1.hasEquivalentToEdges(n1);
+        assert n1.hasEquivalentToEdges(n2);
         assert n1.getWord().equals(n2.getWord());
-
-        // create the new node with a new id and the same label
-        Node nprime = lattice.addNode(n1.getWord(),
-                                        n1.getBeginTime(),n1.getEndTime());
-
-        // add all the to edges (they should be the same in n1 and n2)
-        for (Iterator i = n1.getToEdges().iterator(); i.hasNext();) {
-            Edge e = (Edge) i.next();
-            lattice.addEdge( nprime, n,  e.getAcousticScore(), e.getLMScore() );
-        }
-
-        // add n1's from edges
-        for (Iterator i = n1.getFromEdges().iterator(); i.hasNext();) {
-            Edge e = (Edge) i.next();
-            lattice.addEdge( e.getFromNode(), nprime,
-                            e.getAcousticScore(), e.getLMScore() );
-        }
 
         // add n2's from edges
         for (Iterator i = n2.getFromEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
-            if (!nprime.hasEdgeFromNode(e.getFromNode())) {
-                lattice.addEdge( e.getFromNode(), nprime,
+            if (!n1.hasEdgeFromNode(e.getFromNode())) {
+                lattice.addEdge( e.getFromNode(), n1,
                                 e.getAcousticScore(), e.getLMScore() );
             } else {
                 // if we got here then n1 and n2 had edges to the same node
@@ -394,7 +364,7 @@ public class LatticeOptimizer {
         }
 
         // remove n1 and n2 and all associated edges
-        lattice.removeNodeAndEdges(n1);
+        removedNodes.add(n2);
         lattice.removeNodeAndEdges(n2);
     }
 
@@ -411,6 +381,7 @@ public class LatticeOptimizer {
             } else {
                 if (n.getToEdges().size() == 0
                         || n.getFromEdges().size() == 0) {
+                    removedNodes.add(n);
                     lattice.removeNodeAndEdges(n);
                     removeHangingNodes();
                     return;
