@@ -52,6 +52,16 @@ NOTE:  Before running the tests, you must have already built
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
+    <!-- * Deletes all build output and *~ file droppings         * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="clean" description="Delete all build output">
+            <delete dir="${classes_dir}/tests/live/"/>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
     <!-- * Runs the default LiveDemo, without endpointing.        * -->
     <!-- * In this mode, you will need to click "Speak" to start  * -->
     <!-- * recording, and then "Speak" again to stop recording.   * -->
