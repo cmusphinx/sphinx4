@@ -127,7 +127,7 @@ an4_words_trigram:
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=15.0 \
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
-	-Dedu.cmu.sphinx.model.language.location=./prunedLM/an4_words.trigram.lm \
+	-Dedu.cmu.sphinx.model.language.location=./an4_words.trigram.lm \
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
 
