@@ -101,7 +101,7 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.isLooping = true
+edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.isLooping = false
 edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path = ../performance/ti46/ti46.wordlist
 
 
