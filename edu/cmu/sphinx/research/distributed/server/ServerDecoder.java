@@ -18,8 +18,7 @@ import edu.cmu.sphinx.result.Result;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -74,7 +73,7 @@ public class ServerDecoder extends BaseServer {
         // the Socket to communicate with
         private Socket socket;
 
-        private BufferedReader reader;
+        private DataInputStream reader;
         private PrintWriter writer;
         
 
@@ -98,8 +97,7 @@ public class ServerDecoder extends BaseServer {
             this.socket = socket;
             if (socket != null) {
                 try {
-                    reader = new BufferedReader
-                        (new InputStreamReader(socket.getInputStream()));
+                    reader = new DataInputStream(socket.getInputStream());
                     writer = new PrintWriter(socket.getOutputStream(), true);
 
                     decoder.getRecognizer().getFrontEnd().setDataSource
@@ -132,13 +130,13 @@ public class ServerDecoder extends BaseServer {
          */
         public void run() {
             String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    if (line.equals("RECOGNITION")) {
-                        Result result = decoder.decode();
-                        String resultString = result.getBestResultNoSilences();
-                        sendLine(resultString);
-                    }
+            try {                
+                int recognition;
+                // "1" from the client signals a recognition request
+                while ((recognition = reader.readInt()) == 1) {
+                    Result result = decoder.decode();
+                    String resultString = result.getBestResultNoSilences();
+                    sendLine(resultString);
                 }
             } catch (IOException ioe) {
                 ioe.printStackTrace();
