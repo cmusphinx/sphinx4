@@ -392,9 +392,11 @@ public class Util {
 
         if (frameNumber >= 0) {
             float windowSizeInMs = properties.getFloat
-                (Windower.PROP_WINDOW_SIZE_MS, 25.625F);
+                (Windower.PROP_WINDOW_SIZE_MS, 
+                 Windower.PROP_WINDOW_SIZE_MS_DEFAULT);
             float windowShiftInMs = properties.getFloat
-                (Windower.PROP_WINDOW_SHIFT_MS, 10.0F);
+                (Windower.PROP_WINDOW_SHIFT_MS,
+                 Windower.PROP_WINDOW_SHIFT_MS_DEFAULT);
             
             // calculate audio time in milliseconds
             audioTime = frameNumber * windowShiftInMs + windowSizeInMs;
