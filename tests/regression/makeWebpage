@@ -73,6 +73,9 @@ $1 == "metrics"   {
     metrics = $0;
 }
 
+function dateAnchor(date) {
+    return "<a href=\"" date ".html\">" date "</a>";
+}
 
 #####
 # updates the data array with info for the given test
@@ -187,6 +190,7 @@ function getRunStatus(testName, count) {
 }
 
 
+
 function printSingleTest(testName, testCount) {
     updateData(testName, testCount);
     date = data[F_DATE];
@@ -194,7 +198,7 @@ function printSingleTest(testName, testCount) {
     accuracy = getAccuracyStatus(testName, testCount);
     speed = getSpeedStatus(testName, testCount);
     print "<tr>"
-    print "<td>" date "</td>"
+    print "<td>" dateAnchor(date)  "</td>"
     print status;
     print accuracy;
     print speed;
@@ -267,7 +271,7 @@ function printSummaryInfo() {
 #
 
 function printBuildHistory() {
-   print "<table cellpadding=2 cellspacing=2 border=1 width=80% align=center>";
+   print "<table cellpadding=2 cellspacing=2 border=1 width=60% align=center>";
    print "<tbody>";
    print "<tr align=center>";
    print "<td valign=top rowspan=1 colspan=4";
@@ -289,7 +293,7 @@ function printBuildHistory() {
         split(buildData[i], data);
 
         print("<tr>");
-        print "<td>" data[2] "</td>";
+        print "<td>" dateAnchor(data[2]) "</td>";
 	print "<td>" fmtTime(data[8]) "</td>";
 	print "<td>" fmtTime(data[9]) "</td>";
 
