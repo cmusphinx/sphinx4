@@ -15,6 +15,7 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.decoder.linguist.*;
 import edu.cmu.sphinx.decoder.linguist.simple.*;
 import edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist;
 
@@ -41,8 +42,6 @@ public class SimpleActiveListManager implements ActiveListManager  {
     private ActiveList emittingActiveList;
 
     private SphinxProperties props;
-    private int absoluteWordBeamWidth;
-    private double relativeWordBeamWidth;
 
 
     /**
@@ -57,41 +56,70 @@ public class SimpleActiveListManager implements ActiveListManager  {
         this.props = props;
         this.searchStateOrder = searchStateOrder;
 
-        this.absoluteWordBeamWidth = props.getInt
-            (PROP_ABSOLUTE_WORD_BEAM_WIDTH,
-             PROP_ABSOLUTE_WORD_BEAM_WIDTH_DEFAULT);
+        emittingClass = searchStateOrder[searchStateOrder.length - 1];
+        nonEmittingClasses = new Class[searchStateOrder.length - 1];
 
-        this.relativeWordBeamWidth = 
-            props.getDouble(PROP_RELATIVE_WORD_BEAM_WIDTH,
-                            PROP_RELATIVE_WORD_BEAM_WIDTH_DEFAULT);
+        // assign the non-emitting classes
+        for (int i = 0; i < nonEmittingClasses.length; i++) {
+            nonEmittingClasses[i] = searchStateOrder[i];
+        }
 
+        // create the emitting and non-emitting active lists
+        createActiveLists();
+    }
+
+    /**
+     * Creates the emitting and non-emitting active lists.
+     * When creating the non-emitting active lists, we will look
+     * at their respective beam widths (eg, word beam, unit beam, state beam).
+     */
+    private void createActiveLists() {
+    
         String activeListClass = props.getString
             (SimpleBreadthFirstSearchManager.PROP_ACTIVE_LIST_TYPE,
              SimpleBreadthFirstSearchManager.PROP_ACTIVE_LIST_TYPE_DEFAULT);
 
-        nonEmittingClasses = new Class[searchStateOrder.length - 1];
+        int absoluteWordBeam = props.getInt
+            (PROP_ABSOLUTE_WORD_BEAM_WIDTH,
+             PROP_ABSOLUTE_WORD_BEAM_WIDTH_DEFAULT);
 
-        for (int i = 0; i < nonEmittingClasses.length; i++) {
-            nonEmittingClasses[i] = searchStateOrder[i];
-            try {
+        double relativeWordBeam = 
+            props.getDouble(PROP_RELATIVE_WORD_BEAM_WIDTH,
+                            PROP_RELATIVE_WORD_BEAM_WIDTH_DEFAULT);
+
+        try {
+            Class wordSearchState = Class.forName
+                ("edu.cmu.sphinx.decoder.linguist.WordSearchState");
+            
+            emittingActiveList = 
+                (ActiveList)Class.forName(activeListClass).newInstance();
+            emittingActiveList.setProperties(props);
+            
+            for (int i = 0; i < nonEmittingClasses.length; i++) {
+                
                 ActiveList list = (ActiveList)
                     Class.forName(activeListClass).newInstance();
                 list.setProperties(props);
-                list.setAbsoluteBeamWidth(absoluteWordBeamWidth);
-                list.setRelativeBeamWidth(relativeWordBeamWidth);
-                listMap.put(nonEmittingClasses[i], list);
-            } catch (ClassNotFoundException fe) {
-                throw new Error("Can't create active list", fe);
-            } catch (InstantiationException ie) {
-                throw new Error("Can't create active list", ie);
-            } catch (IllegalAccessException iea) {
-                throw new Error("Can't create active list", iea);
-            }
-        }
 
-        emittingClass = searchStateOrder[searchStateOrder.length - 1];
-        emittingActiveList = new PartitionActiveList(props);
+                // figure out what type of token (word, unit, hmm...)
+                // goes into this ActiveList
+
+                if (wordSearchState.isAssignableFrom(nonEmittingClasses[i])) {
+                    list.setAbsoluteBeamWidth(absoluteWordBeam);
+                    list.setRelativeBeamWidth(relativeWordBeam);
+                }
+
+                listMap.put(nonEmittingClasses[i], list);
+            }
+        } catch (ClassNotFoundException fe) {
+            throw new Error("Can't create active list", fe);
+        } catch (InstantiationException ie) {
+            throw new Error("Can't create active list", ie);
+        } catch (IllegalAccessException iea) {
+            throw new Error("Can't create active list", iea);
+        }
     }
+
 
 
     /**
@@ -168,17 +196,6 @@ public class SimpleActiveListManager implements ActiveListManager  {
      * @return an Iterator of non-emitting ActiveLists
      */
     public Iterator getNonEmittingListIterator() {
-        /*
-        Class stateClass = nonEmittingClasses[listPtr];
-
-	ActiveList list = (ActiveList)listMap.remove(stateClass);
-        listMap.put(stateClass, list.createNew());
-
-	if ((++listPtr) >= nonEmittingClasses.length) {
-	    listPtr = 0;
-	}
-	return list;
-        */
         return (new NonEmittingListIterator());
     }
 
