@@ -39,9 +39,6 @@ import java.util.Vector;
  * edu.cmu.sphinx.frontend.FeatureExtractor.windowSize
  * edu.cmu.sphinx.frontend.FeatureExtractor.cepstraBufferSize
  * </pre>
- *
- * @see Cepstrum
- * @see Feature
  */
 public class DeltasFeatureExtractor extends BaseDataProcessor {
 

@@ -34,8 +34,6 @@ import java.util.Arrays;
  * A StreamDataSource converts data from an InputStream into
  * Data objects. One would obtain the Data objects using
  * the <code>getData()</code> method.
- *
- * @see BatchFileDataSource
  */
 public class StreamDataSource extends BaseDataProcessor {
 

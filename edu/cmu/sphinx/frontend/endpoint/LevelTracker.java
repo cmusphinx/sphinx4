@@ -50,7 +50,6 @@ import java.util.List;
  * classes SpeechMarker and DataFilter.
  *
  * @see SpeechMarker
- * @see DataFilter
  */
 public class LevelTracker extends BaseDataProcessor {
 

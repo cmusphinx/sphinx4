@@ -126,7 +126,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
      * Initializes this RaisedCosineWindower.
      *
      * @param name         the name of this RaisedCosineWindower
-     * @param frontend     the front end this RaisedCosineWindower belongs to
+     * @param frontEnd     the front end this RaisedCosineWindower belongs to
      * @param props        the properties of this RaisedCosineWindower
      * @param predecessor  the predecessor DataProcessor
      */

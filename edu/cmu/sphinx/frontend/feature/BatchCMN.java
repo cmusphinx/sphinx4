@@ -50,7 +50,7 @@ public class BatchCMN extends BaseDataProcessor {
      *
      * @param name        the name of this BatchCMN
      * @param frontEnd    the front end this BatchCMN belongs to
-     * @param sphinxProps the SphinxProperties to read properties from
+     * @param props       the SphinxProperties to read properties from
      * @param predecessor the DataProcessor from which this normalizer
      *                    obtains Data to normalize
      */

@@ -27,8 +27,7 @@ public interface DataProcessor {
      * Initializes this DataProcessor.
      *
      * @param name the name of this DataProcessor
-     * @param pipelineName the name of the front-end pipeline this
-     *                     DataProcessor is in
+     * @param frontEndName the front end this DataProcessor belongs to
      * @param sphinxProperties the SphinxProperties to use
      * @param predecessor the predecessor of this DataProcessor
      */

@@ -110,7 +110,7 @@ public class FrontEnd extends BaseDataProcessor {
     /**
      * Finds the DataProcessor with the given name.
      *
-     * @param name the name of the DataProcessor to find
+     * @param processorName the name of the DataProcessor to find
      *
      * @return the DataProcessor with the given name, or null if no
      *         DataProcessor with the given name was found
