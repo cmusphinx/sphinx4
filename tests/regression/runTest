@@ -11,15 +11,25 @@
 #
 # This script runs a particular test in the given directory
 #
-# usage: runTest directory makeTargetName
+# usage: runTest directory label [makeTargetName]
+#
+# Goes to the given directory and runts the test. The makeTargetName
+# is used to run the test if it is given, in its absence, the label
+# serves as the target name.  In either case, the label is used as the
+# label for the test in the regression log
 #
 
 base=`pwd`
 
 directory=$1
-target=$2
-rawOutput=$target.out
-alignOutput=$target.align
+shift
+label=$1
+shift
+
+target=${*:-"$label"}
+
+rawOutput=$label.out
+alignOutput=$label.align
 
 cd $directory
 if gmake $target > $base/$rawOutput
@@ -31,4 +41,4 @@ fi
 
 cd $base
 
-$base/parseS4Output $rawOutput $status | $base/updateLog
+$base/parseS4Output $rawOutput $label $status | $base/updateLog

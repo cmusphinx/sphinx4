@@ -10,7 +10,7 @@
 #
 # This script parses the output of S4 and generates a log entry
 #
-# usage: parseS4Output logfile [testStatus]
+# usage: parseS4Output logfile label [testStatus]
 #
 # if testStatus is not given, we assume that we are running
 # interactively and will generate an OK testStatus and will use the
@@ -21,21 +21,24 @@ gawk '
 
 BEGIN {
 
-    if (ARGC == 3) {
-	status = ARGV[2];
-	ARGV[2] = "";
+    if (ARGC == 4) {
+	status = ARGV[3];
+	ARGV[3] = "";
 	# use date/time that the test was started so we can
 	# more easily track down CVS history
 	getline date < ".startDate";
 	getline time < ".startTime";
-    } else if (ARGC == 2) {
+    } else if (ARGC == 3) {
         status = "OK";
 	"date +%Y-%m-%d" | getline date;
 	 "date +%T" | getline time;
     } else {
-        print "Usage: parseS4Output  logfile [status]"
+        print "Usage: parseS4Output  logfile label [status]"
 	exit
     }
+
+    testName = ARGV[2];
+    ARGV[2] = "";
 
 # Here is a sample of what we are parsing
 #
@@ -78,8 +81,6 @@ BEGIN {
 }
 
 END {
-    testName = ARGV[1];
-    gsub(/.out/, "", testName);
     # "date +%D" | getline date;
     #"date +%Y-%m-%d" | getline date;
     # "date +%T" | getline time;
