@@ -54,7 +54,7 @@ import java.util.Map;
  * @see SpectrumAnalyzer
  * @see Windower
  */
-public class FrontEnd extends DataProcessor {
+public class FrontEnd extends DataProcessor implements FeatureFrameSource {
 
     private static Map frontends = new HashMap();
 
@@ -67,7 +67,7 @@ public class FrontEnd extends DataProcessor {
 
 
     /**
-     * The SphinxProperty for sample rate in Hertz (i.e.,
+     * The SphinxProperty name for sample rate in Hertz (i.e.,
      * number of times per second), which has a default value of 8000.
      *
      * NOTE: this property should not have PROP_PREFIX in front of it!
@@ -76,7 +76,7 @@ public class FrontEnd extends DataProcessor {
 
 
     /**
-     * The SphinxProperty that specifies whether the
+     * The SphinxProperty name that specifies whether the
      * FrontEnd should use the properties from the AcousticModel.
      */
     public static final String PROP_USE_ACOUSTIC_MODEL_PROPS =
@@ -84,28 +84,28 @@ public class FrontEnd extends DataProcessor {
 
     
     /**
-     * The SphinxProperty for the number of bits per sample.
+     * The SphinxProperty name for the number of bits per sample.
      */
     public static final String PROP_BITS_PER_SAMPLE = 
 	PROP_PREFIX + "bitsPerSample";
 
 
     /**
-     * The SphinxProperty for the number of bytes per frame.
+     * The SphinxProperty name for the number of bytes per frame.
      */
     public static final String PROP_BYTES_PER_AUDIO_FRAME = 
 	PROP_PREFIX + "bytesPerAudioFrame";
 
 
     /**
-     * The SphinxProperty for window size in milliseconds.
+     * The SphinxProperty name for window size in milliseconds.
      */
     public static final String PROP_WINDOW_SIZE_MS = 
 	PROP_PREFIX + "windowSizeInMs";
 
 
     /**
-     * The SphinxProperty for window shift in milliseconds,
+     * The SphinxProperty name for window shift in milliseconds,
      * which has a default value of 10F.
      */
     public static final String PROP_WINDOW_SHIFT_MS =
@@ -113,7 +113,7 @@ public class FrontEnd extends DataProcessor {
 
     
     /**
-     * The SphinxProperty for the size of a cepstrum, which is
+     * The SphinxProperty name for the size of a cepstrum, which is
      * 13 by default.
      */
     public static final String PROP_CEPSTRUM_SIZE =
@@ -121,7 +121,7 @@ public class FrontEnd extends DataProcessor {
 
 
     /**
-     * The SphinxProperty that indicates whether Features
+     * The SphinxProperty name that indicates whether Features
      * should retain a reference to the original raw audio bytes. The
      * default value is true.
      */
@@ -130,28 +130,35 @@ public class FrontEnd extends DataProcessor {
 
     
     /**
-     * The SphinxProperty that specifies the Filterbank class.
+     * The SphinxProperty name that specifies the Filterbank class.
      */
     public static final String PROP_FILTERBANK = PROP_PREFIX + "filterbank";
 
 
     /**
-     * The SphinxProperty that specifies the CepstrumProducer class.
+     * The SphinxProperty name that specifies the CepstrumProducer class.
      */
     public static final String PROP_CEPSTRUM_PRODUCER = PROP_PREFIX +
 	"cepstrumProducer";
 
 
     /**
-     * The SphinxProperty that specifies the Endpointer class.
+     * The SphinxProperty name that specifies the Endpointer class.
      */
     public static final String PROP_ENDPOINTER = PROP_PREFIX + "endpointer";
 
 
     /**
-     * The SphinxProperty that specifies the CMN class.
+     * The SphinxProperty name that specifies the CMN class.
      */
     public static final String PROP_CMN = PROP_PREFIX + "cmn";
+
+
+    /**
+     * The SphinxProperty name that specifies the FeatureExtractor class.
+     */
+    public static final String PROP_FEATURE_EXTRACTOR = 
+	PROP_PREFIX + "featureExtractor";
 
 
     private Map processors;
@@ -187,19 +194,24 @@ public class FrontEnd extends DataProcessor {
 
         CepstrumSource cepstrumProducer = getCepstrumProducer(filterbank);
 
-	CepstrumSource preCMNSource = getEndpointer(cepstrumProducer);
+	CepstrumSource lastCepstrumSource = cepstrumProducer;
+	
+	CepstrumSource endpointer = getEndpointer(lastCepstrumSource);
 
-	if (preCMNSource == null) {
-	    preCMNSource = cepstrumProducer;
-	} else {
-	    addProcessor((DataProcessor) preCMNSource);
+	if (endpointer != null) { // if we're using an endpointer
+	    addProcessor((DataProcessor) endpointer);
+	    lastCepstrumSource = endpointer;
 	}
 
-        CepstrumSource cmn = getCMN(preCMNSource);
+        CepstrumSource cmn = getCMN(lastCepstrumSource);
 
-        FeatureExtractor extractor = new FeatureExtractor
-            ("FeatureExtractor", context, cmn);
+	if (cmn != null) { // if we're using a CMN
+	    addProcessor((DataProcessor) cmn);
+	    lastCepstrumSource = cmn;
+	}
 
+        FeatureExtractor extractor = getFeatureExtractor(lastCepstrumSource);
+	
         setAudioSource(audioSource);
         setFeatureSource(extractor);
 
@@ -208,8 +220,7 @@ public class FrontEnd extends DataProcessor {
 	addProcessor(spectrumAnalyzer);
 	addProcessor((DataProcessor) filterbank);
 	addProcessor((DataProcessor) cepstrumProducer);
-	addProcessor((DataProcessor) cmn);
-	addProcessor(extractor);
+	addProcessor((DataProcessor) extractor);
     }
 
 
@@ -306,6 +317,31 @@ public class FrontEnd extends DataProcessor {
 	    cmn = new BatchCMN("BatchCMN", getContext(), predecessor);
 	}
 	return cmn;
+    }
+
+
+    /**
+     * Returns the appropriate FeatureExtractor.
+     *
+     * @param predecessor the CepstrumSource of Cepstrum objects 
+     *    from which Features are extracted
+     *
+     * @return the FeatureExtractor
+     */
+    private FeatureExtractor getFeatureExtractor(CepstrumSource predecessor) 
+	throws IOException {
+        String path = getSphinxProperties().getString
+            (PROP_FEATURE_EXTRACTOR, 
+	     "edu.cmu.sphinx.frontend.DeltasFeatureExtractor");
+        try {
+	    FeatureExtractor extractor =
+                (FeatureExtractor) Class.forName(path).newInstance();
+            extractor.initialize("FeatureExtractor",getContext(), predecessor);
+            return extractor;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Error("Can't create FeatureExtractor: " + e);
+        }
     }
 
 
