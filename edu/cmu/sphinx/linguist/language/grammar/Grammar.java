@@ -89,6 +89,8 @@ public abstract class Grammar implements Configurable {
     private int identity = 0;
     private int maxIdentity = 0;
 
+
+
     /*
      * (non-Javadoc)
      * 
@@ -134,25 +136,13 @@ public abstract class Grammar implements Configurable {
      * Create the grammar
      */
     public void allocate() throws IOException {
+        dictionary.allocate();
+        newGrammar();
         Timer timer = Timer.getTimer("grammarLoad");
         timer.start();
-        dictionary.allocate();
-        grammarNodes = new HashSet();
         initialNode = createGrammar();
-        if (addSilenceWords) {
-            addSilenceWords();
-        }
-        if (optimizeGrammar) {
-            optimizeGrammar();
-        }
+        postProcessGrammar();
         timer.stop();
-        
-        dumpStatistics();
-        if (showGrammar) {
-            dumpGrammar("grammar.gdl");
-            dumpRandomSentences("sentences.txt", 100);
-            logger.info("Total number of nodes " + grammarNodes.size());
-        }
     }
 
     /**
@@ -171,6 +161,25 @@ public abstract class Grammar implements Configurable {
      */
     public GrammarNode getInitialNode() {
         return initialNode;
+    }
+
+    /**
+     * Perform the standard set of grammar post processing. This can
+     * include inserting silence nodes and optimizing out empty nodes
+     */
+    protected void postProcessGrammar() {
+        if (addSilenceWords) {
+            addSilenceWords();
+        }
+        if (optimizeGrammar) {
+            optimizeGrammar();
+        }
+        dumpStatistics();
+        if (showGrammar) {
+            dumpGrammar("grammar.gdl");
+            dumpRandomSentences("sentences.txt", 100);
+            logger.info("Total number of nodes " + grammarNodes.size());
+        }
     }
 
     /**
@@ -260,7 +269,7 @@ public abstract class Grammar implements Configurable {
      * Dumps the grammar
      */
     public void dumpGrammar(String name) {
-        initialNode.dumpGDL(name);
+        getInitialNode().dumpGDL(name);
     }
 
     /**
@@ -279,6 +288,16 @@ public abstract class Grammar implements Configurable {
      */
     public Set getGrammarNodes() {
         return grammarNodes;
+    }
+
+    /**
+     * Prepare to create a new grammar
+     */
+    protected void newGrammar() {
+        maxIdentity = 0;
+        identity = 0;
+        grammarNodes = new HashSet();
+        initialNode = null;
     }
 
     /**

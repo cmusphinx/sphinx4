@@ -180,6 +180,7 @@ public class FlatLinguist implements Linguist, Configurable {
     private Map arcPool;
     private transient Collection stateSet = null;
     private String name;
+    private GrammarNode initialGrammarState = null;
     /**
      * Returns the search graph
      * 
@@ -299,8 +300,6 @@ public class FlatLinguist implements Linguist, Configurable {
      * @see edu.cmu.sphinx.linguist.Linguist#allocate()
      */
     public void allocate() throws IOException {
-        nodeStateMap = new HashMap();
-        arcPool = new HashMap();
         allocateAcousticModel();
         grammar.allocate();
         totalStates = StatisticsVariable.getStatisticsVariable(getName(),
@@ -311,9 +310,9 @@ public class FlatLinguist implements Linguist, Configurable {
                 "actualArcs");
         stateSet = compileGrammar();
         totalStates.value = stateSet.size();
-        nodeStateMap = null;
-        arcPool = null;
     }
+
+
 
     /**
      * Allocates the acoustic model.
@@ -341,6 +340,12 @@ public class FlatLinguist implements Linguist, Configurable {
      * Called before a recognition
      */
     public void startRecognition() {
+        if (grammarHasChanged()) {
+            System.out.println("Grammar has changed...");
+            stateSet = compileGrammar();
+            System.out.println("recompiled.");
+            totalStates.value = stateSet.size();
+        }
     }
     /**
      * Called after a recognition
@@ -374,6 +379,9 @@ public class FlatLinguist implements Linguist, Configurable {
      * GrammarJobs for the successors are added to the grammar job queue.
      */
     protected Collection compileGrammar() {
+        initialGrammarState = grammar.getInitialNode();
+        nodeStateMap = new HashMap();
+        arcPool = new HashMap();
         List gstateList = new ArrayList();
         Timer.start("compile");
         // get the nodes from the grammar and create states
@@ -433,6 +441,8 @@ public class FlatLinguist implements Linguist, Configurable {
                 gstate.dumpInfo();
             }
         }
+        nodeStateMap = null;
+        arcPool = null;
         return SentenceHMMState.collectStates(initialState);
     }
 
@@ -458,6 +468,18 @@ public class FlatLinguist implements Linguist, Configurable {
         GState gstate = getGState(node);
         gstate.addLeftContext(UnitContext.SILENCE);
     }
+
+    /**
+     * Determines if the underlying grammar has changed since we last
+     * compiled the search graph
+     *
+     * @return true if the grammar has changed
+     */
+    private boolean grammarHasChanged() {
+        return initialGrammarState == null || 
+               initialGrammarState != grammar.getInitialNode();
+    }
+
     /**
      * Finds the starting state
      * 

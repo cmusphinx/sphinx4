@@ -184,12 +184,30 @@ import edu.cmu.sphinx.util.props.Registry;
  * are no rules that could possibly match no speech within a plus
  * operator or kleene star operator.
  * 
+ * <h3>Dynamic grammar behavior</h3>
+ * It is possible to modify the grammar of a running application. Some
+ * rules and notes:
+ * <ul>
+ *      <li> Unlike a JSAPI recognizer, the JSGF Grammar only maintains one
+ *      Rule Grammar. This restriction may be relaxed in the future.
+ *      <li> The grammar should not be modified while a recognition is
+ *      in process
+ *      <li> The call to JSGFGrammar.loadJSGF will load in a
+ *      completely new grammar, tossing any old grammars or changes.
+ *      No call to commitChanges is necessary (although such a call
+ *      would be harmless in this situation).
+ *      <li> RuleGrammars can be modified  via calls to
+ *      RuleGrammar.setEnabled and RuleGrammar.setRule). In order for
+ *      these changes to take place, JSGFGrammar.commitChanges must be
+ *      called after all grammar changes have been made.
+ * </ul>
  * <p>
  * <h3>Implementation Notes</h3>
  * <ol>
  * <li>All internal probabilities are maintained in LogMath log base.
  * </ol>
  */
+
 public class JSGFGrammar extends Grammar {
 
     /**
@@ -225,6 +243,9 @@ public class JSGFGrammar extends Grammar {
     private URL baseURL = null;
     private LogMath logMath;
 
+    private boolean loadGrammar = true;
+    private GrammarNode firstNode = null;
+
     /*
      * (non-Javadoc)
      * 
@@ -247,10 +268,11 @@ public class JSGFGrammar extends Grammar {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         baseURL = ps.getResource(PROP_BASE_GRAMMAR_URL);
-        grammarName = ps
-                .getString(PROP_GRAMMAR_NAME, PROP_GRAMMAR_NAME_DEFAULT);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
 
+        grammarName = ps
+                .getString(PROP_GRAMMAR_NAME, PROP_GRAMMAR_NAME_DEFAULT);
+        loadGrammar = true;
     }
 
     /**
@@ -272,51 +294,36 @@ public class JSGFGrammar extends Grammar {
     }
 
     /**
+     * The JSGF grammar specified by grammarName will be loaded from
+     * the base url (tossing out any previously loaded grammars)
+     *
+     * @param grammarName the name of the grammar
+     * @throws IOException if an error occurs while loading or
+     * compiling the grammar
+     */
+    public void loadJSGF(String grammarName) throws IOException{
+        this.grammarName = grammarName;
+        loadGrammar = true;
+        commitChanges();
+    }
+
+    /**
      * Creates the grammar.
      * 
      * @return the initial node of the Grammar
      */
     protected GrammarNode createGrammar() throws IOException {
+        commitChanges();
+        return firstNode;
+    }
 
-        ruleNameStack = new HashMap();
-        recognizer = new BaseRecognizer();
-
-        try {
-            recognizer.allocate();
-            ruleGrammar = recognizer.loadJSGF(baseURL, grammarName);
-            recognizer.commitChanges();
-            ruleGrammar.setEnabled(true);
-
-            GrammarNode firstNode = createGrammarNode("<sil>");
-            GrammarNode finalNode = createGrammarNode("<sil>");
-            finalNode.setFinalNode(true);
-
-            // go through each rule and create a network of GrammarNodes
-            // for each of them
-            String[] ruleNames = ruleGrammar.listRuleNames();
-            for (int i = 0; i < ruleNames.length; i++) {
-                String ruleName = ruleNames[i];
-                if (ruleGrammar.isRulePublic(ruleName)) {
-                    debugPrintln("New Rule: " + ruleName);
-                    Rule rule = ruleGrammar.getRule(ruleName);
-                    GrammarGraph graph = parseRule(rule);
-                    firstNode.add(graph.getStartNode(), 0.0f);
-                    graph.getEndNode().add(finalNode, 0.0f);
-                }
-            }
-            return firstNode;
-        } catch (EngineException ee) {
-            // ee.printStackTrace();
-            throw new IOException(ee.toString());
-        } catch (GrammarException ge) {
-            // ge.printStackTrace();
-            dumpGrammarException(ge);
-            throw new IOException("GrammarException: " + ge);
-        } catch (MalformedURLException mue) {
-            throw new IOException("bad base grammar url " + baseURL + " "
-                    + mue);
-
-        }
+    /**
+     * Returns the initial node for the grammar
+     * 
+     * @return the initial grammar node
+     */
+    public GrammarNode getInitialNode() {
+        return firstNode;
     }
 
     /**
@@ -600,6 +607,58 @@ public class JSGFGrammar extends Grammar {
             }
         }
     }
+
+    /**
+     *  Commit changes to all loaded grammars and all changes of
+     *  grammar since the last commitChange
+     */
+    public void commitChanges() throws IOException {
+        try {
+            if (loadGrammar) {
+                recognizer = new BaseRecognizer();
+                recognizer.allocate();
+                ruleGrammar = recognizer.loadJSGF(baseURL, grammarName);
+                ruleGrammar.setEnabled(true);
+                loadGrammar = false;
+            }
+
+            recognizer.commitChanges();
+            ruleNameStack = new HashMap();
+            newGrammar();
+
+            firstNode = createGrammarNode("<sil>");
+            GrammarNode finalNode = createGrammarNode("<sil>");
+            finalNode.setFinalNode(true);
+
+            // go through each rule and create a network of GrammarNodes
+            // for each of them
+            String[] ruleNames = ruleGrammar.listRuleNames();
+            for (int i = 0; i < ruleNames.length; i++) {
+                String ruleName = ruleNames[i];
+                if (ruleGrammar.isRulePublic(ruleName)) {
+                    debugPrintln("New Rule: " + ruleName);
+                    Rule rule = ruleGrammar.getRule(ruleName);
+                    GrammarGraph graph = parseRule(rule);
+                    firstNode.add(graph.getStartNode(), 0.0f);
+                    graph.getEndNode().add(finalNode, 0.0f);
+                }
+            }
+            postProcessGrammar();
+        } catch (EngineException ee) {
+            // ee.printStackTrace();
+            throw new IOException(ee.toString());
+        } catch (GrammarException ge) {
+            // ge.printStackTrace();
+            dumpGrammarException(ge);
+            throw new IOException("GrammarException: " + ge);
+        } catch (MalformedURLException mue) {
+            throw new IOException("bad base grammar url " + baseURL + " "
+                    + mue);
+
+        }
+    }
+
+
 
     /**
      * Debugging println
