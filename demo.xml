@@ -147,8 +147,10 @@ your environment to use JSAPI.
          <fileset dir="${src_dir}/demo/sphinx/dialog">
             <include name="**/*.gram"/>
             <include name="**/playlist.txt"/>
+            <include name="**/weather.lm"/>
          </fileset>
         </copy>
+
 	<copy file="${src_dir}/demo/sphinx/dialog/dialog.config.xml"
 	      todir="${classes_dir}/demo/sphinx/dialog"/>
         <jar destfile="${bin_dir}/Dialog.jar" 
