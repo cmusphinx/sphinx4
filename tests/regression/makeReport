@@ -60,6 +60,10 @@ BEGIN {
     F_AVG_RESPONSE_TIME = 22;
     F_MAX_RESPONSE_TIME = 23;
     F_MIN_RESPONSE_TIME = 24;
+    F_CORRECT_OOG = 25;
+    F_FALSE_OOG = 26;
+    F_CORRECT_IG = 27;
+    F_FALSE_IG = 28;
     "./getHostname" | getline machine
 }
 
@@ -67,6 +71,7 @@ $1 == "build" && $4 == machine {
     finalBuildRecord = $0;
     buildRecord = 1;
     buildLiveRecord = 1;
+    buildRejectionRecord = 1;
     buildDate = $2;
 }
 
@@ -102,6 +107,19 @@ $1 == "live_test" && $4 == machine && $5 == "s4" {
 $1 == "environment" && $3 == machine  {
     javaHome = $4;
     javaVersion = $5;
+}
+
+$1 == "rejection_test" && buildRecord == 1 {
+    buildRejectionRecord = 0;
+    for (i in finalRejectionTest) {
+	delete finalRejectionTest[i];
+    }
+}
+
+$1 == "rejection_test" && $4 == machine && $5 == "s4" {
+    rejectionTestCount[$F_TEST_NAME] = rejectionTestCount[$F_TEST_NAME] + 1;
+    testData[$F_TEST_NAME rejectionTestCount[$F_TEST_NAME]] = $0;
+    finalRejectionTest[$F_TEST_NAME] = 1;
 }
 
 #####
@@ -361,6 +379,16 @@ function getLessIsBetterThresholdMetricStatus(thisMetric, prevMetric, threshold)
     return "OK - " thisMetric "";
 }
 
+function getRejectionAccuracyStatus(testName) {
+    count = testCount[testName];
+    if (count == "") {
+	count = rejectionTestCount[testName];
+    }
+    updateData(testName, count);
+
+    return ( data[F_CORRECT_OOG] + data[F_CORRECT_IG] ) / data[F_SENTENCES];
+}
+
 ####
 # Prints summary info
 #
@@ -403,22 +431,31 @@ END {
 
     for (i in finalTest) {
 	print i;
-	print "    Status                "  getRunStatus(i);
-	print "    Accuracy (WER %)      "  getAccuracyStatus(i);
-	print "    Time (X Realtime)     "  getTimeStatus(i);
-	print "    Average Heap (MB)     "  getHeapStatus(i);
+	print "    Status                 "  getRunStatus(i);
+	print "    Accuracy (WER %)       "  getAccuracyStatus(i);
+	print "    Time (X Realtime)      "  getTimeStatus(i);
+	print "    Average Heap (MB)      "  getHeapStatus(i);
 	printf("\n");
     }
 
     for (i in finalLiveTest) {
 	print i;
-	print "    Status                "  getRunStatus(i);
-	print "    Accuracy (WER %)      "  getAccuracyStatus(i);
-	print "    Time (X Realtime)     "  getTimeStatus(i);
-	print "    Average Heap (MB)     "  getHeapStatus(i);
-	print "    Gap Insertion (%)     "  getGapInsertionRateStatus(i);
-	print "    Utterance Ratio       "  getUtteranceRatioStatus(i);
-	print "    Avg Response Time (s) "  getAvgResponseTimeStatus(i);
+	print "    Status                 "  getRunStatus(i);
+	print "    Accuracy (WER %)       "  getAccuracyStatus(i);
+	print "    Time (X Realtime)      "  getTimeStatus(i);
+	print "    Average Heap (MB)      "  getHeapStatus(i);
+	print "    Gap Insertion (%)      "  getGapInsertionRateStatus(i);
+	print "    Utterance Ratio        "  getUtteranceRatioStatus(i);
+	print "    Avg Response Time (s)  "  getAvgResponseTimeStatus(i);
+	printf("\n");
+    }
+
+    for (i in finalRejectionTest) {
+	print i;
+	print "    Status                 "  getRunStatus(i);
+	print "    Rejection Accuracy (%) "  getRejectionAccuracyStatus(i);
+	print "    Time (X Realtime)      "  getTimeStatus(i);
+	print "    Average Heap (MB)      "  getHeapStatus(i);
 	printf("\n");
     }
 

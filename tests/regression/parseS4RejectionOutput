@@ -80,8 +80,6 @@ BEGIN {
 	    } else if (arry[1] == "Sentences:") {
 	        sentences = arry[2];
 	        correctSentences = arry[4];
-            } else if (arry[1] == "Rejection" && arry[2] == "Accuracy:") {
-		rejectionAccuracy = arry[3];
             } else if (arry[1] == "Correct" && arry[2] == "OOG") {
 		correctOOG = arry[3];
 		falseOOG = arry[6];
@@ -124,9 +122,16 @@ END {
     printf(correctSentences "|");
     printf(heapSize "|");
     printf(loadAverage "|");
-    printf(rejectionAccuracy "|");
+    printf(actualUtterances "|");
+    printf(foundUtterances "|");
+    printf(gapInsertions "|");
+    printf(avgResponseTime "|");
+    printf(maxResponseTime "|");
+    printf(minResponseTime "|");
     printf(correctOOG "|");
     printf(falseOOG "|");
+    printf(correctIG "|");
+    printf(falseIG "|");
     printf("\n");
 }
 
