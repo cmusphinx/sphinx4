@@ -51,7 +51,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <sysproperty key="lexTreeLinguist[languageModel]" 
 			 value="bigramModel"/> 
             <arg value="wsj20k.config.xml"/> 
-            <arg value="/lab/speech/sphinx4/data/wsj0/wsj0/wsj20k.batch"/> 
+            <arg value="/lab/speech/sphinx4/data/wsj0/wsj0/wsj20k.e.batch"/> 
         </java>
     </target>
 
@@ -72,7 +72,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <sysproperty key="lexTreeLinguist[languageModel]" 
 			 value="trigramModel"/> 
             <arg value="wsj20k.config.xml"/> 
-            <arg value="/lab/speech/sphinx4/data/wsj0/wsj0/wsj20k.batch"/> 
+            <arg value="/lab/speech/sphinx4/data/wsj0/wsj0/wsj20k.e.batch"/> 
         </java>
     </target>
 
