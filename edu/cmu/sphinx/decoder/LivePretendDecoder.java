@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.FileWriter;
 
 import java.net.URL;
 
@@ -103,6 +104,8 @@ public class LivePretendDecoder {
         }
 
         alignResults(resultList, dataSource.getReferences());
+        Timer.dumpAll(context);
+        decoder.showSummary();
     }
 
     /**
@@ -112,14 +115,30 @@ public class LivePretendDecoder {
         System.out.println("Aligning results...");
         System.out.println("   Actual utterances: " + referenceList.size());
         
-        getAlignTimer().start();
         String hypothesis = listToString(hypothesisList);
         String reference = listToString(referenceList);
+        saveAlignedText(hypothesis, reference);
+
+        getAlignTimer().start();
         NISTAlign aligner = decoder.getNISTAlign();
         aligner.align(reference, hypothesis);
         getAlignTimer().stop();
 
+        System.out.println("...done aligning");
         aligner.printTotalSummary();
+
+    }
+
+    private void saveAlignedText(String hypothesis, String reference) {
+        try {
+            FileWriter writer = new FileWriter("align.txt");
+            writer.write(hypothesis);
+            writer.write("\n");
+            writer.write(reference);
+            writer.close();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
     
     /**
