@@ -225,6 +225,13 @@ public class Recognizer {
 
     /**
      * Constructs a Recognizer when the dataSource is not yet known.
+     * Only the following components are initialized:
+     *
+     * acoustic model
+     * language model
+     * grammar
+     * linguist
+     * pruner
      *
      * Some of the building blocks for the
      * decoder (currently the linguist and the grammar) are set via
