@@ -113,7 +113,7 @@ public class SimpleWordListGrammar extends Grammar {
 
 
 	initialNode.add(branchNode, getLogMath().getLogOne());
-	double branchScore = getLogMath().linearToLog
+	float branchScore = getLogMath().linearToLog
 	    (1.0/wordGrammarNodes.size());
 
 	for (Iterator i = wordGrammarNodes.iterator(); i.hasNext();) {

@@ -49,7 +49,7 @@ class MixtureComponent implements Serializable {
     private float[]   varianceTransformationVector;
 
     private float distFloor = -Float.MAX_VALUE; // TODO: config me
-    private double logPreComputedGaussianFactor;
+    private float logPreComputedGaussianFactor;
     private LogMath logMath;
 
     /**
@@ -147,7 +147,7 @@ class MixtureComponent implements Serializable {
      public float getScore(Feature feature) {
 	 float[] data = feature.getFeatureData();
 	 float logVal = 0.0f;
-	 double logDval = 0.0;
+	 float logDval = 0.0f;
 
 
 	 // First, compute the argument of the exponential function in
@@ -179,11 +179,11 @@ class MixtureComponent implements Serializable {
 
 	 // TODO: Need to use mean and variance transforms here
 
-	 if (Double.isNaN(logDval)) {
+	 if (Float.isNaN(logDval)) {
 	     System.out.println("gs is Nan, converting to 0");
 	     logDval = logMath.getLogZero();
 	 }
-	 return (float) logDval;
+	 return logDval;
      }
 
 
@@ -203,8 +203,8 @@ class MixtureComponent implements Serializable {
       *
       * @return the precomputed distance
       */
-     private double precomputeDistance() {
-	 double logPreComputedGaussianFactor = logMath.getLogOne();
+     private float precomputeDistance() {
+	 float logPreComputedGaussianFactor = 0.0f; // = log(1.0)
 	 // Compute the product of the elements in the Covariance
 	 // matrix's main diagonal. Covariance matrix is assumed
 	 // diagonal - independent dimensions. In log, the product
@@ -227,7 +227,7 @@ class MixtureComponent implements Serializable {
 	     - logPreComputedGaussianFactor;
 
 	 // The sqrt above is a 0.5 multiplicative factor in log scale.
-	 return logPreComputedGaussianFactor * 0.5;
+	 return logPreComputedGaussianFactor * 0.5f;
      }
 }
 

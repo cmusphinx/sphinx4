@@ -88,9 +88,9 @@ public class SimpleLinguist implements  Linguist {
     private LogMath logMath;
 
 
-    private double logWordInsertionProbability;
-    private double logSilenceInsertionProbability;
-    private double logUnitInsertionProbability;
+    private float logWordInsertionProbability;
+    private float logSilenceInsertionProbability;
+    private float logUnitInsertionProbability;
 
     private boolean showSentenceHMM;
     private boolean showCompilationProgress = true;
@@ -107,7 +107,7 @@ public class SimpleLinguist implements  Linguist {
     private transient Collection stateSet = null;
 
     private boolean spreadWordProbabilitiesAcrossPronunciations;
-    private double logOne;
+    private float logOne;
     private boolean dumpGStates;
     private float languageWeight;
 
@@ -256,7 +256,7 @@ public class SimpleLinguist implements  Linguist {
      *
      * @return the log value of the silence insertion probability
      */
-    public double getLogSilenceInsertionProbability() {
+    public float getLogSilenceInsertionProbability() {
         return logSilenceInsertionProbability;
     }
 
@@ -991,7 +991,7 @@ public class SimpleLinguist implements  Linguist {
 
             UnitState unitState = new ExtendedUnitState(parent, which, cdUnit);
 
-            double logInsertionProbability;
+            float logInsertionProbability;
 
             if (unitState.getUnit().isFiller()) {
                 logInsertionProbability = logSilenceInsertionProbability;
@@ -1270,7 +1270,7 @@ public class SimpleLinguist implements  Linguist {
                         parent, arcs[i].getHMMState());
 
                 SentenceHMMState existingState = getExistingState(newState);
-                double logProb = arcs[i].getLogProbability();
+                float logProb = arcs[i].getLogProbability();
 
                 if (existingState != null) {
                     attachState(tree, existingState, logProb, logOne,
@@ -1322,7 +1322,7 @@ public class SimpleLinguist implements  Linguist {
                     continue;
                 }
 
-                double probability = arcs[i].getProbability();
+                float probability = arcs[i].getProbability();
                 // adjust the language probability by the number of
                 // pronunciations. If there are 3 ways to say the
                 // word, then each pronunciation gets 1/3 of the total
@@ -1336,7 +1336,7 @@ public class SimpleLinguist implements  Linguist {
                     probability -= logMath.linearToLog(numPronunciations);
                 }
 
-                float fprob = (float) probability;
+                float fprob = probability;
                 for (Iterator keys = exitPoints.keySet().iterator(); 
                                                         keys.hasNext(); ) {
                     ContextPair contextPair = (ContextPair) keys.next();
@@ -1363,8 +1363,7 @@ public class SimpleLinguist implements  Linguist {
                 for (Iterator j = destList.iterator(); j.hasNext(); ) {
                     SentenceHMMState destState = (SentenceHMMState) j.next();
                     sourceState.connect( getArc(destState, 
-                                (float) logOne, logLangProb, (float)
-                                logOne));
+                                logOne, logLangProb, logOne));
                     exitConnections++;
                 }
             }
@@ -1389,12 +1388,12 @@ public class SimpleLinguist implements  Linguist {
          * @return the state that was attached
          */
         protected void attachState(SentenceHMMState prevState,
-                SentenceHMMState nextState, double logAcousticProbability,
-                double logLanguageProbablity, double logInsertionProbablity) {
+                SentenceHMMState nextState, float logAcousticProbability,
+                float logLanguageProbablity, float logInsertionProbablity) {
 
             prevState.connect(getArc(nextState, 
-                (float) logAcousticProbability, (float) logLanguageProbablity, 
-                (float) logInsertionProbablity));
+                logAcousticProbability, logLanguageProbablity, 
+                logInsertionProbablity));
 
             if (showCompilationProgress && totalStateCounter++ % 1000 == 0) {
                 System.out.print(".");

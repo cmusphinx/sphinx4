@@ -58,7 +58,7 @@ public class Token implements Scoreable {
     private float logLanguageScore;
     private float logInsertionProbability;
     private float logAcousticScore;
-    private double logWorkingScore;
+    private float logWorkingScore;
     private SearchState searchState;
 
     private int location;
@@ -197,7 +197,7 @@ public class Token implements Scoreable {
      *
      * @return the working score (in logMath log base)
      */
-    public double getWorkingScore() {
+    public float getWorkingScore() {
 	return logWorkingScore;
     }
 
@@ -207,7 +207,7 @@ public class Token implements Scoreable {
      *
      * @param logScore the working score (in logMath log base)
      */
-    public void setWorkingScore(double logScore) {
+    public void setWorkingScore(float logScore) {
 	logWorkingScore = logScore;
     }
 

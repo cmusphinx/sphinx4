@@ -99,9 +99,9 @@ public class StaticLinguist implements Linguist {
     private LogMath logMath;
 
 
-    private double logWordInsertionProbability;
-    private double logSilenceInsertionProbability;
-    private double logUnitInsertionProbability;
+    private float logWordInsertionProbability;
+    private float logSilenceInsertionProbability;
+    private float logUnitInsertionProbability;
 
     private int compositeThreshold;
     private boolean showSentenceHMM;
@@ -128,7 +128,7 @@ public class StaticLinguist implements Linguist {
     private transient int totalStateCounter = 0;
     private transient Collection stateSet = null;
     private transient int compositeCount = 0;
-    private double logOne;
+    private float logOne;
 
 
     /**
@@ -576,7 +576,7 @@ public class StaticLinguist implements Linguist {
         Pronunciation pronunciation = parent.getPronunciation();
         Unit[] units = pronunciation.getUnits();
         Unit[] lc = previous.getContext().getUnits();
-        double logInsertionProbability;
+        float logInsertionProbability;
 
         // if this is the first unit of the pronunciation, then its
         // the beginning of a new word so use the WIP, otherwise,
@@ -681,8 +681,8 @@ public class StaticLinguist implements Linguist {
         if (autoLoopSilences && unitState.getUnit().isSilence()) {
             totalAttachedStates.value++;
             finalState.connect(
-                new SentenceHMMStateArc(unitState, (float) logOne,
-                    (float) logOne, (float) logSilenceInsertionProbability));
+                new SentenceHMMStateArc(unitState, logOne,
+                    logOne, logSilenceInsertionProbability));
         }
         return new HMMTree(hmmTree, finalState);
     }
@@ -737,8 +737,8 @@ public class StaticLinguist implements Linguist {
      * @return the state that was attached
      */
     private SentenceHMMState attachState(SentenceHMMState parent,
-            SentenceHMMState nextState, double logAcousticProbability,
-            double logLanguageProbablity, double logInsertionProbablity) {
+            SentenceHMMState nextState, float logAcousticProbability,
+            float logLanguageProbablity, float logInsertionProbablity) {
 
         // check to see if the parent already has this node, if so,
         // then reuse it
@@ -764,9 +764,9 @@ public class StaticLinguist implements Linguist {
 
             totalAttachedStates.value++;
             parent.connect(new SentenceHMMStateArc(nextState,
-                (float) (logAcousticProbability), 
-                (float) (logLanguageProbablity), 
-                (float) (logInsertionProbablity)));
+                logAcousticProbability, 
+                logLanguageProbablity,
+                logInsertionProbablity));
         } else { 
             nextState = attachedState; 
         } 
@@ -791,13 +791,13 @@ public class StaticLinguist implements Linguist {
      *
      */
     private void  attachExistingState(SentenceHMMState parent,
-            SentenceHMMState nextState, double logAcousticProbability,
-            double logLanguageProbablity, double logInsertionProbablity) {
+            SentenceHMMState nextState, float logAcousticProbability,
+            float logLanguageProbablity, float logInsertionProbablity) {
 
         totalAttachedStates.value++;
         parent.connect(new SentenceHMMStateArc(nextState,
-            (float) (logAcousticProbability), (float) (logLanguageProbablity), 
-            (float) (logInsertionProbablity)));
+            logAcousticProbability, logLanguageProbablity, 
+            logInsertionProbablity));
 
         if (showCompilationProgress && totalStateCounter++ % 1000 == 0) {
             System.out.print(".");
@@ -960,7 +960,7 @@ public class StaticLinguist implements Linguist {
     * @param probability the probability of the transition to the new
     * GrammarState
     */
-    private void addJob(List tails, GrammarNode node, double probability) {
+    private void addJob(List tails, GrammarNode node, float probability) {
         grammarJob.add(new GrammarJob(tails, node, probability));
     }
 
@@ -1200,7 +1200,7 @@ class StatCollector implements SentenceHMMStateVisitor {
 class GrammarJob {
      List tails;                // list of SentenceHMMStates
      GrammarNode node;          // Grammar Node for this job
-     double logProbability;         // log probability of transitioning to node
+     float logProbability;         // log probability of transitioning to node
 
      /**
       * Creates a new GrammarJob
@@ -1214,7 +1214,7 @@ class GrammarJob {
       * @param logProbability the log probability of transitioning to the new
       * grammar state (in the log math log domain)
       */
-     GrammarJob(List tails, GrammarNode node, double logProbability) {
+     GrammarJob(List tails, GrammarNode node, float logProbability) {
          this.tails = tails;
          this.node = node;
          this.logProbability = logProbability;
@@ -1243,7 +1243,7 @@ class GrammarJob {
       *
       * @return the log probability of transitioning
       */
-     public double getProbability() {
+     public float getProbability() {
          return logProbability;
      }
 }

@@ -107,20 +107,20 @@ public class LexTreeLinguist implements  Linguist {
             throw new Error("LexTreeLinguist: Can't load dictionary", ioe);
         }
 
-        logOne = (float) logMath.getLogOne();
+        logOne = logMath.getLogOne();
 
 
-        logWordInsertionProbability = (float) logMath.linearToLog
+        logWordInsertionProbability = logMath.linearToLog
             (props.getDouble
              (Linguist.PROP_WORD_INSERTION_PROBABILITY,
               Linguist.PROP_WORD_INSERTION_PROBABILITY_DEFAULT));
 
-        logSilenceInsertionProbability = (float) logMath.linearToLog
+        logSilenceInsertionProbability = logMath.linearToLog
             (props.getDouble
              (Linguist.PROP_SILENCE_INSERTION_PROBABILITY,
               Linguist.PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT));
 
-        logUnitInsertionProbability =  (float) logMath.linearToLog
+        logUnitInsertionProbability = logMath.linearToLog
             (props.getDouble
              (Linguist.PROP_UNIT_INSERTION_PROBABILITY,
               Linguist.PROP_UNIT_INSERTION_PROBABILITY_DEFAULT));
@@ -1117,8 +1117,7 @@ public class LexTreeLinguist implements  Linguist {
             wordSequence = wordSequence.addWord(
                     nextWord.getPronunciation().getWord(),
                     languageModel.getMaxDepth());
-            logProbability = (float) 
-                languageModel.getProbability(wordSequence);
+            logProbability = languageModel.getProbability(wordSequence);
             if (false) {
                 System.out.println(wordSequence + " " + 
                         logMath.logToLinear(logProbability));

@@ -52,8 +52,8 @@ public final class LogMath implements Serializable {
      * Default value for the Log base
      */
 
-    public final static double PROP_LOG_BASE_DEFAULT 
-	= Math.E;
+    public final static float PROP_LOG_BASE_DEFAULT 
+	= (float) Math.E;
 
     /**
      * Sphinx property that controls whether we use the old, slow (but
@@ -73,16 +73,16 @@ public final class LogMath implements Serializable {
     public final static boolean PROP_USE_ADD_TABLE_DEFAULT
 	= true;
 
-    private static double logZero = -Double.MAX_VALUE;
-    private static double logOne = 0.0;
+    private static float logZero = -Float.MAX_VALUE;
+    private static float logOne = 0.0f;
 
-    private double logBase;
+    private float logBase;
     private boolean useAddTable;
-    private transient double naturalLogBase;
-    private transient double inverseNaturalLogBase;
-    private transient double theAddTable[];
-    private transient double maxLogValue;
-    private transient double minLogValue;
+    private transient float naturalLogBase;
+    private transient float inverseNaturalLogBase;
+    private transient float theAddTable[];
+    private transient float maxLogValue;
+    private transient float minLogValue;
 
      /**
       * Creates a log math with the given base
@@ -91,7 +91,7 @@ public final class LogMath implements Serializable {
       *
       * @param useTable use the addTable (true) or do computation (false)
       */
-     public static  LogMath getLogMath(double base, boolean useTable) {
+     public static  LogMath getLogMath(float base, boolean useTable) {
 	 return new LogMath(base, useTable);
      }
 
@@ -107,7 +107,7 @@ public final class LogMath implements Serializable {
 	 if (logMath == null) {
 	    SphinxProperties props = 
 		    SphinxProperties.getSphinxProperties(context);
-	    double base = props.getDouble(PROP_LOG_BASE, 
+	    float base = props.getFloat(PROP_LOG_BASE, 
 					  PROP_LOG_BASE_DEFAULT);
 	    boolean useTable = props.getBoolean(PROP_USE_ADD_TABLE, 
 						PROP_USE_ADD_TABLE_DEFAULT);
@@ -125,7 +125,7 @@ public final class LogMath implements Serializable {
       *
       * @param useTable use the addTable (true) or do computation (false)
       */
-     private LogMath(double base, boolean useTable) {
+     private LogMath(float base, boolean useTable) {
 	 logBase = base;
 	 useAddTable = useTable;
 	 init();
@@ -155,8 +155,8 @@ public final class LogMath implements Serializable {
 	 } else {
 	     logger.info("Performing actual computation when adding logs");
 	 }
-	 naturalLogBase = Math.log(logBase);
-	 inverseNaturalLogBase = 1.0/naturalLogBase;
+	 naturalLogBase = (float) Math.log(logBase);
+	 inverseNaturalLogBase = 1.0f / naturalLogBase;
 
 
 	 // When converting a number from/to linear, we need to make
@@ -164,18 +164,18 @@ public final class LogMath implements Serializable {
 	 // underflowing/overflowing.
 
 	 // We compute the max value by computing the log of the max
-	 // value that a double can contain.
+	 // value that a float can contain.
 	 maxLogValue = linearToLog(Double.MAX_VALUE);
 
 	 // We compute the min value by computing the log of the min
-	 // (absolute) value that a double can hold.
+	 // (absolute) value that a float can hold.
 	 minLogValue = linearToLog(Double.MIN_VALUE);
 
 	 if (useAddTable) {
 	     // Now create the addTable table.
 
 	     // summation needed in the loop
-	     double innerSummation;
+	     float innerSummation;
 
 	     // First decide number of elements.
 	     int entriesInTheAddTable;
@@ -206,7 +206,7 @@ public final class LogMath implements Serializable {
 	     // documentation
 
 	     entriesInTheAddTable = 
-		 (int) -Math.rint(linearToLog(logToLinear(0.5) - 1));
+		 (int) -Math.rint(linearToLog(logToLinear(0.5f) - 1));
 
 	     // We reach this max if the log base is 1.00007. The
 	     // closer you get to 1, the higher the number of entries
@@ -229,15 +229,15 @@ public final class LogMath implements Serializable {
 	     logger.info("LogAdd table has " + entriesInTheAddTable
 				    + " entries.");
 
-	     theAddTable = new double[entriesInTheAddTable];
+	     theAddTable = new float[entriesInTheAddTable];
 	     for (int index = 0; index < entriesInTheAddTable; index++) {
 		 // This loop implements the expression:
 		 //
 		 // log( 1.0 + power(base, index))
 		 //
 		 // needed to add two numbers in the log domain.
-		 innerSummation = logToLinear(-index);
-		 innerSummation += 1.0;
+		 innerSummation = (float) logToLinear(-index);
+		 innerSummation += 1.0f;
 		 theAddTable[index] = linearToLog(innerSummation);
 	     }
 	 }
@@ -273,10 +273,10 @@ public final class LogMath implements Serializable {
      *
      * @return sum of val1 and val2 in the log domain
      */
-    public final double addAsLinear(double logVal1, double logVal2) {
-	double logHighestValue;
-	double logDifference;
-	double returnValue;
+    public final float addAsLinear(float logVal1, float logVal2) {
+	float logHighestValue;
+	float logDifference;
+	float returnValue;
 
 	/*
 	 * [ EBG: maybe we should also have a function to add many
@@ -312,7 +312,7 @@ public final class LogMath implements Serializable {
      *
      * @return the value pointed to by index
      */
-    private final double addTableActualComputation(double index) {
+    private final float addTableActualComputation(float index) {
 	double logInnerSummation;
 
 	// Negate index, since the derivation of this formula implies
@@ -341,7 +341,7 @@ public final class LogMath implements Serializable {
      *
      * @throws IllegalArgumentException
      */
-    private final double addTable(double index) 
+    private final float addTable(float index) 
 	throws IllegalArgumentException {
 
 	if (!useAddTable) {
@@ -357,7 +357,7 @@ public final class LogMath implements Serializable {
 						   + "to be negative");
 	    }
 	    if (intIndex  >= theAddTable.length) {
-		return 0.0;
+		return 0.0f;
 	    } else {
 		return theAddTable[intIndex];
 	    }
@@ -395,7 +395,7 @@ public final class LogMath implements Serializable {
      * <p>This is a very slow way to do this, but this method should
      * rarely be used.</p>
      */
-    public final double subtractAsLinear(double logMinuend, double
+    public final float subtractAsLinear(float logMinuend, float
 	    logSubtrahend) throws IllegalArgumentException {
 	double logInnerSummation;
 	if (logMinuend < logSubtrahend) {
@@ -440,8 +440,8 @@ public final class LogMath implements Serializable {
     // Math.E. So maybe we should consider two functions logToLn and
     // lnToLog instead of a generic function like this??
     //
-    public static double logToLog(double logSource, 
-	    double sourceBase, double resultBase) 
+    public static float logToLog(float logSource, 
+	    float sourceBase, float resultBase) 
 	throws IllegalArgumentException {
 	if ((sourceBase <= 0) || (resultBase <= 0)) {
 	    throw new IllegalArgumentException("Trying to take log of "
@@ -452,8 +452,8 @@ public final class LogMath implements Serializable {
 	if (logSource == logZero) {
 	    return logZero;
 	}
-	double lnSourceBase = Math.log(sourceBase);
-	double lnResultBase = Math.log(resultBase);
+	float lnSourceBase = (float) Math.log(sourceBase);
+	float lnResultBase = (float) Math.log(resultBase);
 
 	return (logSource * lnSourceBase / lnResultBase);
     }
@@ -465,7 +465,7 @@ public final class LogMath implements Serializable {
      *
      * @param logSource the number in base Math.E to convert
      */
-    public final double lnToLog(double logSource) {
+    public final float lnToLog(float logSource) {
 	if (logSource == logZero) {
 	    return logZero;
 	}
@@ -478,11 +478,11 @@ public final class LogMath implements Serializable {
      *
      * @param logSource the number in base Math.E to convert
      */
-    public final double log10ToLog(double logSource) {
+    public final float log10ToLog(float logSource) {
 	if (logSource == logZero) {
 	    return logZero;
 	}
-	return logToLog(logSource, 10.0, logBase);
+	return logToLog(logSource, 10.0f, logBase);
     }
 
     /**
@@ -491,7 +491,7 @@ public final class LogMath implements Serializable {
      *
      * @param logSource the number to convert to base Math.E
      */
-    public final double logToLn(double logSource) {
+    public final float logToLn(float logSource) {
 	if (logSource == logZero) {
 	    return logZero;
 	}
@@ -500,17 +500,20 @@ public final class LogMath implements Serializable {
 
 
     /**
-     * Converts the value from linear domain to log domain
+     * Converts the value from linear scale to log scale. The log
+     * scale numbers are limited by the range of the type float. The
+     * linear scale numbers can be any double value.
      *
-     * @param linearValue the value to be converted to log domain
+     * @param linearValue the value to be converted to log scale
      *
-     * @return the value in log domain
+     * @return the value in log scale
      *
      * @throws IllegalArgumentException
      *
      */
-    public final double linearToLog(double linearValue) 
+    public final float linearToLog(double linearValue) 
 	throws IllegalArgumentException {
+	double returnValue;
 	if (linearValue < 0.0) {
 	    throw new IllegalArgumentException(
 		    "linearToLog: param must be >= 0: " + linearValue);
@@ -519,18 +522,27 @@ public final class LogMath implements Serializable {
 	    // linearValue < "epsilon"? Is it ever going to be 0.0?
 	    return getLogZero();
 	} else {
-	    return Math.log(linearValue) *  inverseNaturalLogBase;
+	    returnValue = Math.log(linearValue) * inverseNaturalLogBase;
+	    if (returnValue > Float.MAX_VALUE) {
+		return Float.MAX_VALUE;
+	    } else {
+		if (returnValue < -Float.MAX_VALUE) {
+		    return -Float.MAX_VALUE;
+		} else {
+		    return (float) returnValue;
+		}
+	    }
 	}
     }
 
     /**
-     * Converts the value from log domain to linear domain
+     * Converts the value from log scale to linear scale.
      *
-     * @param logValue the value to be converted to the linear  domain
+     * @param logValue the value to be converted to the linear  scale
      *
-     * @return the value in the linear domain
+     * @return the value in the linear scale
      */
-    public final double logToLinear(double logValue) {
+    public final double logToLinear(float logValue) {
 	// return Math.pow(logBase, logValue);
 	double returnValue;
 	if (logValue < minLogValue) {
@@ -548,7 +560,7 @@ public final class LogMath implements Serializable {
      *
      * @return zero value in the log domain
      */
-    public final static double getLogZero() {
+    public final static float getLogZero() {
 	return logZero;
     }
 
@@ -557,14 +569,14 @@ public final class LogMath implements Serializable {
      *
      * @return one value in the log domain
      */
-    public final static double getLogOne() {
+    public final static float getLogOne() {
 	return logOne;
     }
 
     /**
      * Returns the actual log base.
      */
-    public final double getLogBase() {
+    public final float getLogBase() {
 	return logBase;
     }
 
@@ -577,8 +589,8 @@ public final class LogMath implements Serializable {
       */
     // [ EBG: Shouldn't we be using something like logToLog(value, base, 10)
     // for this? ]
-     public static double log10(double value) {
-	  return (0.4342944819 * java.lang.Math.log(value));
+     public static float log10(float value) {
+	  return (float) (0.4342944819 * java.lang.Math.log(value));
 	  // If you want to get rid of the constant:
 	  // return ((1.0f / Math.log(10.0f)) * Math.log(value));
      }

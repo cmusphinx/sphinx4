@@ -18,13 +18,13 @@ import java.io.Serializable;
  * Represents a single transition out of a grammar node. The grammar
  * represented is a stochastic grammar, each transition has a
  * probability associated with it. The probabilities are relative and
- * are not necessarily contrained to total 1.0;
+ * are not necessarily constrained to total 1.0.
  *
  * Note that all probabilities are maintained in the LogMath log base
  */
 public class GrammarArc implements Serializable {
     private GrammarNode grammarNode;
-    private double logProbability;
+    private float logProbability;
 
     /**
      * Create a grammar arc
@@ -32,7 +32,7 @@ public class GrammarArc implements Serializable {
      * @param grammarNode the node that this arc points to
      * @param logProbability the log probability of following this arc
      */
-    public GrammarArc(GrammarNode grammarNode, double logProbability) {
+    public GrammarArc(GrammarNode grammarNode, float logProbability) {
 	this.grammarNode = grammarNode;
 	this.logProbability = logProbability;
     }
@@ -52,7 +52,7 @@ public class GrammarArc implements Serializable {
      *
      * @return the log probability for this transition
      */
-    public double getProbability() {
+    public float getProbability() {
 	return logProbability;
     }
 }

@@ -93,8 +93,7 @@ public class SimpleActiveList implements ActiveList  {
 
 	LogMath logMath = LogMath.getLogMath(props.getContext());
 
-	this.relativeBeamWidth = 
-	    (float) logMath.linearToLog(linearRelativeBeamWidth);
+	this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
 
 	tokens = StatisticsVariable.getStatisticsVariable(props.getContext(),
 		    "tokensCreated");

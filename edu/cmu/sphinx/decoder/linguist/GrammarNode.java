@@ -169,7 +169,7 @@ public class GrammarNode implements Serializable {
      * @param node the node that this new arc goes to
      * @param logProbability the log probability of the transition occuring
      */
-    public void add(GrammarNode node, double logProbability) {
+    public void add(GrammarNode node, float logProbability) {
         arcList.add(new GrammarArc(node, logProbability));
     }
 
@@ -191,7 +191,7 @@ public class GrammarNode implements Serializable {
      * @param logProb the probability of the transition (in logMath
      * log domain)
      */
-    private String traverse(int level, Set visitedNodes, double logProb) {
+    private String traverse(int level, Set visitedNodes, float logProb) {
         String dump = "";
         
         for (int i = 0; i < level; i++) {

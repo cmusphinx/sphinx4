@@ -85,14 +85,15 @@ public class FastActiveList implements ActiveList  {
      */
     public void setProperties(SphinxProperties props) {
 	this.props = props;
-	this.absoluteBeamWidth = props.getInt(PROP_ABSOLUTE_BEAM_WIDTH, 2000);
+	this.absoluteBeamWidth = props.getInt(PROP_ABSOLUTE_BEAM_WIDTH, 
+				      PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT);
 	double linearRelativeBeamWidth  
-	    = props.getDouble(PROP_RELATIVE_BEAM_WIDTH, 0);
+	    = props.getDouble(PROP_RELATIVE_BEAM_WIDTH, 
+			      PROP_RELATIVE_BEAM_WIDTH_DEFAULT);
 
 	LogMath logMath = LogMath.getLogMath(props.getContext());
 
-	this.relativeBeamWidth = 
-	    (float) logMath.linearToLog(linearRelativeBeamWidth);
+	this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
 
     }
 

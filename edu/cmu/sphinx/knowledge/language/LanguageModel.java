@@ -97,7 +97,7 @@ public interface LanguageModel {
       * @return the probability of the word sequence in LogMath log
       * base
       */
-     // public double getProbability(List wordList);
+     // public float getProbability(List wordList);
 
      /**
       * Gets the ngram probability of the word sequence represented by
@@ -108,7 +108,7 @@ public interface LanguageModel {
       * @return the probability of the word sequence in LogMath log
       * base
       */
-     public double getProbability(WordSequence wordSequence);
+     public float getProbability(WordSequence wordSequence);
 
 
      /**

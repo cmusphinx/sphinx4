@@ -122,8 +122,8 @@ public class SimpleNGramModel implements LanguageModel {
      * Probability is in logMath log base
      *
      */
-    public double getProbability(WordSequence wordSequence) {
-        double logProbability = 0.0;
+    public float getProbability(WordSequence wordSequence) {
+        float logProbability = 0.0f;
 
         Probability prob = getProb(wordSequence);
         if (prob == null) {
@@ -156,8 +156,8 @@ public class SimpleNGramModel implements LanguageModel {
      *
      * @return the backoff probability in LogMath log base
      */
-    public double getBackoff(WordSequence wordSequence) {
-        double logBackoff = 0.0;           // log of 1.0
+    public float getBackoff(WordSequence wordSequence) {
+        float logBackoff = 0.0f;           // log of 1.0
         Probability prob = getProb(wordSequence);
         if (prob != null) {
             logBackoff = prob.logBackoff;
@@ -288,8 +288,8 @@ public class SimpleNGramModel implements LanguageModel {
     FileNotFoundException, IOException {
         
         String line;
-        double logUnigramWeight = logMath.linearToLog(unigramWeight);
-        double inverseLogUnigramWeight = logMath.linearToLog(1.0 - unigramWeight);
+        float logUnigramWeight = logMath.linearToLog(unigramWeight);
+        float inverseLogUnigramWeight = logMath.linearToLog(1.0 - unigramWeight);
         
         if (!format.equals("arpa")) {
             throw new IOException("Loading of " + format + 
@@ -324,7 +324,8 @@ public class SimpleNGramModel implements LanguageModel {
         }
 
         int numUnigrams = ((Integer) ngramList.get(0)).intValue() - 1;
-        double logUniformProbability = logMath.linearToLog(1.0 / numUnigrams);
+        // -log(x) = log(1/x)
+        float logUniformProbability = -logMath.linearToLog(numUnigrams);
 
         
         for (int index = 0; index < ngramList.size(); index++) { 
@@ -336,8 +337,8 @@ public class SimpleNGramModel implements LanguageModel {
                 if (tokenCount != ngram + 1 && tokenCount != ngram + 2) {
                     corrupt("Bad format");
                 }
-                double log10Prob = Double.parseDouble(tok.nextToken());
-                double log10Backoff = 0.0;
+                float log10Prob = Float.parseFloat(tok.nextToken());
+                float log10Backoff = 0.0f;
 
                 List wordList = new ArrayList(3);
                 for (int j = 0; j < ngram; j++) {
@@ -347,16 +348,16 @@ public class SimpleNGramModel implements LanguageModel {
                 }
                 WordSequence wordSequence = new WordSequence(wordList);
                 if (tok.hasMoreTokens()) {
-                    log10Backoff = Double.parseDouble(tok.nextToken());
+                    log10Backoff = Float.parseFloat(tok.nextToken());
                 }
 
-                double logProb = logMath.log10ToLog(log10Prob);
-                double logBackoff = logMath.log10ToLog(log10Backoff);
+                float logProb = logMath.log10ToLog(log10Prob);
+                float logBackoff = logMath.log10ToLog(log10Backoff);
 
                 // Apply unigram weights if this is a unigram probability
                 if (ngram == 1) {
-                    double p1 = logProb + logUnigramWeight;
-                    double p2 = logUniformProbability + inverseLogUnigramWeight;
+                    float p1 = logProb + logUnigramWeight;
+                    float p2 = logUniformProbability + inverseLogUnigramWeight;
                     logProb = logMath.addAsLinear(p1, p2);
                 }
                 put(wordSequence, logProb, logBackoff);
@@ -381,7 +382,7 @@ public class SimpleNGramModel implements LanguageModel {
      * @param logBackoff the backoff probability in log math base 
      */
     private void put(WordSequence wordSequence, 
-            double logProb, double logBackoff) {
+            float logProb, float logBackoff) {
 
         if (false) {
             System.out.println("Putting " + wordSequence + " p " +
@@ -517,8 +518,8 @@ public class SimpleNGramModel implements LanguageModel {
  * Represents a probability and a backoff probability
  */
 class Probability {
-    double logProbability;
-    double logBackoff;
+    float logProbability;
+    float logBackoff;
 
     /**
      * Constructs a probability
@@ -526,7 +527,7 @@ class Probability {
      * @param probability the probability
      * @param backoff the backoff probability
      */
-    Probability(double logProbability, double logBackoff) {
+    Probability(float logProbability, float logBackoff) {
         this.logProbability = logProbability;
         this.logBackoff = logBackoff;
     }

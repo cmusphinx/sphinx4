@@ -97,7 +97,7 @@ class GaussianMixture implements Senone, Serializable {
      */
 
     public float calculateScore(Feature feature) {
-	double logTotal = logMath.getLogZero();
+	float logTotal = logMath.getLogZero();
 	for (int i = 0; i < mixtureComponents.length; i++) {
 	    // In linear form, this would be:
 	    //
@@ -107,7 +107,7 @@ class GaussianMixture implements Senone, Serializable {
 		 logMixtureWeights[i]);
 	}
 
-	return (float)logTotal;
+	return logTotal;
     }
 
     /**

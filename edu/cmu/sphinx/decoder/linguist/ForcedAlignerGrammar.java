@@ -56,7 +56,7 @@ public class ForcedAlignerGrammar extends Grammar {
 	throws NoSuchMethodException {
 	GrammarNode initialNode = null;
 	GrammarNode finalNode = null;
-	final float logArcProbability = (float) getLogMath().getLogOne();
+	final float logArcProbability = getLogMath().getLogOne();
 	String nodeName;
 
 	StringTokenizer tok = new StringTokenizer(referenceText);

@@ -221,7 +221,7 @@ public class FSTGrammar extends Grammar {
 		    assert hasWord(nextNode);
 		}
 		
-		thisNode.add(nextNode, (float) convertProbability(lnProb));
+		thisNode.add(nextNode, convertProbability(lnProb));
 		
 	    } else if (token.equals("F")) {
 		int thisID = tok.getInt("this id");
@@ -234,7 +234,7 @@ public class FSTGrammar extends Grammar {
 		    thisNode = getEndNode(thisNode);
 		}
 		
-		thisNode.add(nextNode, (float) convertProbability(lnProb));
+		thisNode.add(nextNode, convertProbability(lnProb));
 	    }
 	}
 	tok.close();
@@ -351,7 +351,7 @@ public class FSTGrammar extends Grammar {
      * 
      * @return the converted probability in logMath log base
      */
-    private double convertProbability(double lnProb) {
+    private float convertProbability(float lnProb) {
         return getLogMath().lnToLog(-lnProb);
     }
 

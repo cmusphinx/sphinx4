@@ -684,14 +684,11 @@ class Sphinx3Loader implements Loader {
      *
      * @param data the data to normalize
      */
-    // note that this conversion to log math stores the result in a
-    // float array and not a double array, since logZero is
-    // represented as -Double.MAX_VALUE, which doesn't fit into a
-    // float, this ultimately gets represented as -Infinity ... which
-    // is OK 
+    // linearToLog returns a float, so zero values in linear scale
+    // should return -Float.MAX_VALUE.
     private void convertToLogMath(float[] data) {
         for (int i = 0; i < data.length; i++) {
-            data[i] = (float) logMath.linearToLog(data[i]);
+            data[i] = logMath.linearToLog(data[i]);
         }
     }
 
@@ -1062,7 +1059,7 @@ class Sphinx3Loader implements Loader {
 			}
 		    }
 
-                    tmat[j][k] = (float) logMath.linearToLog(tmat[j][k]);
+                    tmat[j][k] = logMath.linearToLog(tmat[j][k]);
 
 		    if (logger.isLoggable(Level.FINE)) {
 			logger.fine("tmat j " + j  + " k " 

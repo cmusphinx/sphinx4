@@ -219,13 +219,13 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	    Token token = (Token) iterator.next();
             SentenceHMMState state = (SentenceHMMState) token.getSearchState();
 	    if (isGreenState(state)) {
-		double logNewScore = (float) 
+		float logNewScore = (float) 
 		    (token.getWorkingScore() / bushderbyEta);
 		if (false) {
 		    System.out.println("OS: " + token.getScore() + " NS: "
 			    + logNewScore);
 		}
-		token.setScore((float) logNewScore);
+		token.setScore(logNewScore);
 	    }
 	}
     }
@@ -303,7 +303,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	    boolean firstToken = (getBestToken(nextState) == null);
 	    boolean greenToken = isGreenState(nextState);
 
-	    double logWorkingScore =  firstToken ? getLogMath().getLogZero() :
+	    float logWorkingScore =  firstToken ? getLogMath().getLogZero() :
 		getBestToken(nextState).getWorkingScore();
 
 	    if (firstToken ||  nextState.isFanIn() ||
@@ -365,7 +365,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		if (bestToken != null) {
 		    logWorkingScore =  getLogMath().addAsLinear(
                             logWorkingScore, 
-			    logCurrentScore * bushderbyEta);
+			    (float)(logCurrentScore * bushderbyEta));
 		    bestToken.setWorkingScore(logWorkingScore);
 		}
 		if (false) {
@@ -567,7 +567,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 		    wordList.add(Dictionary.SENTENCE_START_SPELLING);
 		}
 		Collections.reverse(wordList);
-		logProbability = (float)
+		logProbability = 
                     languageModel.getProbability(new WordSequence(wordList));
 	    }
 	}

@@ -238,11 +238,11 @@ public class GDLDumper extends LinguistDumper  {
             String color = getArcColor(nextArc);
             if (dumpArcLabels) {
                 double acoustic = logMath.logToLinear
-                    ((double) nextArc.getAcousticProbability());
+                    (nextArc.getAcousticProbability());
                 double language = logMath.logToLinear
-                    ((double) nextArc.getLanguageProbability());
+                    (nextArc.getLanguageProbability());
                 double insert = logMath.logToLinear
-                    ((double) nextArc.getInsertionProbability());
+                    (nextArc.getInsertionProbability());
 
                 label = " label: " +
                     qs("(" + formatEdgeLabel(acoustic) +

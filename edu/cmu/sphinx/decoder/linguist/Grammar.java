@@ -164,7 +164,7 @@ public abstract class  Grammar {
 
 
     /**
-     * Returns the language mdoel for the grammar
+     * Returns the language model for the grammar
      *
      * @return the language model (null if there is no language model)
      */
