@@ -60,6 +60,13 @@ FeatureExtractor {
     private static final String PROP_CEP_BUFFER_SIZE =
 	FeatureExtractor.PROP_PREFIX + "cepstraBufferSize";
 
+    /**
+     * The name of the SphinxProperty for the number of times to replicate
+     * the first and last feature.
+     */
+    private static final String PROP_NUM_COPIES_FIRST_LAST_FEATURE =
+        FeatureExtractor.PROP_PREFIX + "copiesOfFirstLastFeature";
+
 
     private int featureBlockSize = 25;
     private int featureLength;
@@ -76,6 +83,10 @@ FeatureExtractor {
     private boolean segmentStart;
     private boolean segmentEnd;
     private IDGenerator featureID;
+
+    private boolean lastFeatureReplicated;
+    private Feature lastFeature;
+    private int copiesOfFirstLastFeature;
 
     private CepstrumSource predecessor;
     private List outputQueue;
@@ -148,6 +159,8 @@ FeatureExtractor {
 	    (FrontEnd.PROP_PREFIX + FrontEnd.PROP_CEPSTRUM_SIZE, 13);
         cepstraBufferSize = properties.getInt(PROP_CEP_BUFFER_SIZE, 256);
         cepstraBufferEdge = cepstraBufferSize - 8;
+        copiesOfFirstLastFeature = properties.getInt
+            (PROP_NUM_COPIES_FIRST_LAST_FEATURE, 3);
     }
 
 
@@ -190,6 +203,7 @@ FeatureExtractor {
                         segmentStart = true;
                         outputQueue.add(new Feature(Signal.UTTERANCE_START,
 						    IDGenerator.NON_ID));
+                        lastFeatureReplicated = false;
                     } else if (input.hasSignal(Signal.UTTERANCE_END)) {
 			// when the UTTERANCE_END is right at the boundary
 			segmentEnd = false;
@@ -199,14 +213,47 @@ FeatureExtractor {
                 }
             }
         }
+
         if (outputQueue.size() > 0) {
-	    Feature feature = (Feature) outputQueue.remove(0);
-	    // System.out.println(feature);
-            return feature;
+
+            Feature feature = (Feature) outputQueue.get(0);
+
+            if (feature.hasSignal(Signal.UTTERANCE_END) && 
+                !lastFeatureReplicated) {
+                replicateFeature(lastFeature, copiesOfFirstLastFeature, false);
+                lastFeatureReplicated = true;
+            } else if (lastFeature != null &&
+                       lastFeature.hasSignal(Signal.UTTERANCE_START)) {
+                replicateFeature(feature, copiesOfFirstLastFeature, false);
+            }
+
+            lastFeature = (Feature) outputQueue.remove(0);
+            return lastFeature;
         } else {
             return null;
         }
     }	
+
+
+    /**
+     * Replicates the given feature vector the given number of times,
+     * and adds them to the output queue.
+     *
+     * @param feature the Feature to replicate
+     * @param times how many times to replicate
+     */
+    private void replicateFeature(Feature feature, int times, 
+                                  boolean insertEnd) {
+        for (int i = 1; i < times; i++) {
+            Feature newFeature = (Feature) feature.clone();
+            newFeature.setID(featureID.getNextID());
+            if (insertEnd) {
+                outputQueue.add(newFeature);
+            } else {
+                outputQueue.add(0, newFeature);
+            }
+        }
+    }
 
 
     /**

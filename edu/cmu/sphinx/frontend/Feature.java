@@ -178,6 +178,8 @@ public class Feature extends Data {
             Feature feature = (Feature) super.clone();
             float[] newData = (float[]) featureData.clone();
             feature.featureData = newData;
+            feature.type = type;
+            feature.ID = ID;
             return feature;
         } else {
             Feature feature = (Feature) super.clone();
