@@ -31,7 +31,7 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 PROFILE_FLAGS= -Xprof -server
 LOG_GC_FLAGS=  -Xloggc:gc.txt
 # GC_FLAGS=  -XX:+PrintGCDetails
-GC_FLAGS = -ms256m -mx512m
+GC_FLAGS = -ms1g -mx2g
 # GC_FLAGS=  -XX:+UseConcMarkSweepGC
 #GC_FLAGS=  -XX:+UseParallelGC
 #GC_FLAGS= -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+PrintGCDetails
@@ -98,8 +98,53 @@ RM1_UNIGRAM_CMD = $(JAVA_CMD) \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
-rm1_unigram:
-	$(RM1_UNIGRAM_CMD)
+RM1_UNIGRAM_QUICK_CMD = $(JAVA_CMD) \
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=50\
+	-Dedu.cmu.sphinx.model.language.location=RM.unigram.arpa \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=true \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
+
+RM1_UNIGRAM_QUICK_CMD = $(JAVA_CMD) \
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=50\
+	-Dedu.cmu.sphinx.model.language.location=RM.unigram.arpa \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.Recognizer.dumpSentenceHMM=true \
+	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
+
+RM1_UNIGRAM_QUICK_BIN_CMD = $(JAVA_CMD) \
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=50\
+	-Dedu.cmu.sphinx.model.language.location=RM.unigram.arpa \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
+ 	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.ExternalLinguist \
+	-Dedu.cmu.sphinx.search.ExternalLinguist.path="rm1.hmm.bin" \
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=4000 \
+	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-120 \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.search.Recognizer.dumpSentenceHMM=true \
+	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
+
+rm1_unigram_quick_bin:
+	$(RM1_UNIGRAM_QUICK_BIN_CMD)
 
 q_rm1_unigram:
 	echo "$(RM1_UNIGRAM_CMD)" > rm1.unigram.csh
@@ -118,6 +163,7 @@ RM1_BIGRAM_CMD = $(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.ExternalLinguist.path="rm1.hmm.bin" \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
@@ -146,8 +192,24 @@ RM1_TRIGRAM_CMD = $(JAVA_CMD) \
         -Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
 	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
 
+RM1_TRIGRAM_BIN_CMD = $(JAVA_CMD) \
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=RM.2880.trigram.arpa \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+ 	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.ExternalLinguist \
+	-Dedu.cmu.sphinx.search.ExternalLinguist.path="rm1.hmm.bin" \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
+
 rm1_trigram:
 	$(RM1_TRIGRAM_CMD)
+
+rm1_trigram_bin:
+	$(RM1_TRIGRAM_BIN_CMD)
 
 q_rm1_trigram:
 	echo "$(RM1_TRIGRAM_CMD)" > rm1.trigram.csh
