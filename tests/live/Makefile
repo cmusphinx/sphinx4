@@ -61,6 +61,8 @@ all:: ${CLASSES} ${STUBS}
 
 
 # Runs the default LiveDemo, without endpointing
+# In this mode, you will need to click "Speak" to start recording,
+# and then "Speak" again to stop recording.
 
 live: all
 	$(JAVA_CMD) \
@@ -71,6 +73,9 @@ live: all
 
 
 # Runs the default LiveDemo with endpointing
+# In this mode, you click "Speak" to start recording, and the
+# endpointer will figure out when the utterance has ended, and terminates
+# recognition automatically.
 
 live-ep: all
 	$(JAVA_CMD) \
@@ -88,7 +93,12 @@ live-ep: all
 
 
 # Runs the LiveDemo in hands-free mode, i.e., the endpointer will
-# determine the speech endpoints automatically. No buttons pressed.
+# determine the speech endpoints automatically. 
+# In this mode, you only press "Speak" once only, upon which
+# the demo program will start listening. You will keep speaking,
+# and the endpointer will figure out the start and end of each utterance.
+# You can press "Next" to go to the next utterance, while the demo program
+# keeps listening.
 
 live-free: all
 	$(JAVA_CMD) \
