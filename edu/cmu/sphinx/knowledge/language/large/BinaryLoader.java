@@ -26,6 +26,7 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.io.Reader;
 
 import java.net.URL;
@@ -98,8 +99,7 @@ class BinaryLoader {
     private float[] trigramBackoffTable;
     private float[] trigramProbTable;
 
-    private FileInputStream is;
-    private FileChannel fileChannel;
+    private RandomAccessFile file;
 
     private boolean bigEndian = true;
     private boolean applyLanguageWeightAndWip;
@@ -304,19 +304,18 @@ class BinaryLoader {
      *
      * @return the loaded ByteBuffer
      */
-    public ByteBuffer loadBuffer(long position, int size) 
-	throws IOException {
+    public ByteBuffer loadBuffer(long position, int size) throws IOException {
         // assert ((position + size) <= fileChannel.size());
-        ByteBuffer bb = ByteBuffer.allocate(size);
-        fileChannel.position(position);
-        int bytesRead = fileChannel.read(bb);
+        file.seek(position);
+        byte[] bytes = new byte[size];
+        if (file.read(bytes) != size) {
+            throw new IOException("Incorrect number of bytes read.");
+        }
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
 	if (!bigEndian) {
 	    bb.order(ByteOrder.LITTLE_ENDIAN);
 	} else {
             bb.order(ByteOrder.BIG_ENDIAN);
-        }
-        if (bytesRead != size) {
-            throw new IOException("Insufficient bytes read.");
         }
         return bb;
     }
@@ -384,8 +383,8 @@ class BinaryLoader {
 
         fis.close();
         stream.close();
-        is = new FileInputStream(location);
-        fileChannel = is.getChannel();
+
+        file = new RandomAccessFile(location, "r");
     }
     
 
