@@ -33,7 +33,12 @@ import java.text.DecimalFormat;
  */
 public class Decoder {
 
-    public final static String PROP_PREFIX = "tests.search.Decoder.";
+    /**
+     * Base property name for the decoder properties
+     */
+
+    private  final static String PROP_PREFIX = 
+	"edu.cmu.sphinx.decoder.search.Decoder.";
 
     /**
      * A SphinxProperty name for a boolean property that when set will
