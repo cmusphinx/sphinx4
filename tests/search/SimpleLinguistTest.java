@@ -7,7 +7,7 @@ import edu.cmu.sphinx.model.acoustic.AcousticModel;
 
 import edu.cmu.sphinx.search.Dictionary;
 import edu.cmu.sphinx.search.Linguist;
-import edu.cmu.sphinx.search.SimpleLinguist;
+import edu.cmu.sphinx.search.SimpleDigitLinguist;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
@@ -24,7 +24,7 @@ public class SimpleLinguistTest {
 
 
     private String context = "SimpleLinguistTest";
-    private SimpleLinguist simpleLinguist;
+    private SimpleDigitLinguist simpleLinguist;
 
 
     /**
@@ -39,12 +39,13 @@ public class SimpleLinguistTest {
             (context, new URL
              ("file://" + pwd + File.separatorChar + propertiesFile));
         
-        simpleLinguist = new SimpleLinguist
+        simpleLinguist = new SimpleDigitLinguist
             (context, AcousticModel.getAcousticModel(context));
 	dumpGrammar();
 	dumpSentenceHMM();
 
     }
+
 
 
     /**
@@ -54,13 +55,13 @@ public class SimpleLinguistTest {
 	simpleLinguist.getInitialState().dump();
     }
 
-
+    
     /**
      * Dumps the grammar 
      */
     public void dumpGrammar() {
         System.out.print
-            (((SimpleLinguist) simpleLinguist).getGrammar().toString());
+            (((SimpleDigitLinguist) simpleLinguist).getGrammar().toString());
     }
 
 

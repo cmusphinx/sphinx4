@@ -9,7 +9,7 @@ import edu.cmu.sphinx.model.acoustic.AcousticModel;
 import edu.cmu.sphinx.search.ActiveList;
 import edu.cmu.sphinx.search.Dictionary;
 import edu.cmu.sphinx.search.Linguist;
-import edu.cmu.sphinx.search.SimpleLinguist;
+import edu.cmu.sphinx.search.SimpleDigitLinguist;
 import edu.cmu.sphinx.search.SearchManager;
 import edu.cmu.sphinx.search.BreadthFirstSearchManager;
 import edu.cmu.sphinx.search.AcousticScorer;
@@ -17,7 +17,6 @@ import edu.cmu.sphinx.search.Pruner;
 import edu.cmu.sphinx.search.Token;
 import edu.cmu.sphinx.search.Result;
 
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.File;
@@ -34,14 +33,14 @@ public class SimpleSearchTest {
 
 
     private String context = "SimpleSearchTest";
-    private SimpleLinguist simpleLinguist;
+    private SimpleDigitLinguist simpleLinguist;
     private SearchManager searchManager;
     private AcousticScorer acousticScorer;
     private Pruner pruner;
 
 
     /**
-     * Construct a SimpleLinguistTest with the given SphinxProperties file.
+     * Construct a SimpleDigitLinguistTest with the given SphinxProperties file.
      *
      * @param propertiesFile a SphinxProperties file
      */
@@ -52,7 +51,7 @@ public class SimpleSearchTest {
             (context, new URL
              ("file://" + pwd + File.separatorChar + propertiesFile));
         
-        simpleLinguist = new SimpleLinguist
+        simpleLinguist = new SimpleDigitLinguist
             (context, AcousticModel.getAcousticModel(context));
 
 	acousticScorer = new SimpleAcousticScorer();
@@ -78,7 +77,7 @@ public class SimpleSearchTest {
      */
     public void dumpGrammar() {
         System.out.print
-            (((SimpleLinguist) simpleLinguist).getGrammar().toString());
+            (((SimpleDigitLinguist) simpleLinguist).getGrammar().toString());
     }
 
 
