@@ -28,8 +28,9 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 NO_CONTEXT_FLAGS= -Dedu.cmu.sphinx.model.acoustic.useComposites=false -Dedu.cmu.sphinx.model.acoustic.useCDUnits=false
 
 
-#PROFILE_FLAGS= -Xprof -server
-PROFILE_FLAGS=  -Xprof
+PROFILE_FLAGS= -Xprof -server
+#PROFILE_FLAGS=  -Xprof
+#PROFILE_FLAGS=  -Xrunhprof:file=dump.hprof,format=b
 LOG_GC_FLAGS=  -Xloggc:gc.txt
  GC_FLAGS=  -XX:+PrintGCDetails
 # GC_FLAGS=  -XX:+UseConcMarkSweepGC
@@ -43,7 +44,7 @@ HEAP_DUMP =   -Xrunhprof:heap=dump,cpu=samples
 #GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 #GC_FLAGS= -ms1g -XX:+UseConcMarkSweepGC -XX:-UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 
-GC_FLAGS = -ms128m -mx1g
+GC_FLAGS = -ms128m -mx2g
 
 #PROFILE2_FLAGS= -Xrunhprof:file=log.txt
 PROFILE2_FLAGS= -Xrunhprof:cpu=samples,file=log.txt
@@ -72,10 +73,139 @@ all::
 
 # The full TIDGITS test.  Takes a long long time to run
 
-large:
+large_unigram:
 	$(JAVA_CMD)  \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
 	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch
+
+large_unigram_4:
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=0\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=4\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.0.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=1\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=4\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.1.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=2\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=4\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.2.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=3\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=4\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=16\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.3.out&
+
+large_unigram_8:
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=0\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=8\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.0.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=1\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=8\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.1.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=2\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=8\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.2.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=3\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=8\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.3.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=4\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=8\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.4.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=5\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=8\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.5.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=6\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=8\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.6.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=7\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=8\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.7.out&
+
+large_unigram_full_4:
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=0\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=4\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.0.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=1\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=4\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.1.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=2\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=4\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.2.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=3\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=4\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.3.out&
+
+large_unigram_8_full:
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=0\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.0.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=1\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.1.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=2\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.2.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=3\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.3.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=4\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.4.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=5\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.5.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=6\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.6.out&
+	$(JAVA_CMD) -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=7\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.totalBatches=8\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=0\
+	edu.cmu.sphinx.decoder.BatchDecoder large.props large.batch \
+        > rm1_unigram.7.out&
+
 
 large_bigram:
 	$(JAVA_CMD)  \
