@@ -102,7 +102,8 @@ public class FrameDropper extends DataProcessor implements FeatureSource {
                     if (replaceNthWithPrevious) {
                         feature = new Feature
                             (lastFeature.getFeatureData(), id++,
-                             lastFeature.getCollectTime());
+                             lastFeature.getCollectTime(),
+                             lastFeature.getFirstSampleNumber());
                     } else {
                         feature = predecessor.getFeature();
                         if (feature != null && feature.hasContent()) {

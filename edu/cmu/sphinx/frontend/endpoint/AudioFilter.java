@@ -275,7 +275,9 @@ public class AudioFilter extends DataProcessor implements AudioSource {
                     inSpeech = true;
                     discardMode = false;
                     next = new Audio
-                        (Signal.UTTERANCE_START, audio.getCollectTime());
+                        (Signal.UTTERANCE_START,
+                         audio.getCollectTime(),
+                         audio.getFirstSampleNumber());
                 }
             } else if (audio.hasSignal(Signal.SPEECH_END)) {
                 if (!inSpeech) {
@@ -296,7 +298,9 @@ public class AudioFilter extends DataProcessor implements AudioSource {
                     inSpeech = false;
                     discardMode = true;
                     next = new Audio
-                        (Signal.UTTERANCE_END, audio.getCollectTime());
+                        (Signal.UTTERANCE_END,
+                         audio.getCollectTime(),
+                         audio.getFirstSampleNumber());
                 }
             } else if (discardMode) {
                 while (next != null && 

@@ -44,7 +44,9 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
     private Utterance currentUtterance = null;
 
     private int frameSizeInBytes;
-    private int bitsPerSample;
+    private int bytesPerSample;
+    private long totalSamplesRead;
+
     private boolean bigEndian;
     private boolean signedData;
     private boolean keepAudioReference;
@@ -81,10 +83,10 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
         frameSizeInBytes = getSphinxProperties().getInt
 	    (FrontEnd.PROP_BYTES_PER_AUDIO_FRAME,
              FrontEnd.PROP_BYTES_PER_AUDIO_FRAME_DEFAULT);
-
-        bitsPerSample = getSphinxProperties().getInt
+        
+        bytesPerSample = getSphinxProperties().getInt
             (FrontEnd.PROP_BITS_PER_SAMPLE, 
-             FrontEnd.PROP_BITS_PER_SAMPLE_DEFAULT);
+             FrontEnd.PROP_BITS_PER_SAMPLE_DEFAULT) / 8;
 
         bigEndian = getSphinxProperties().getBoolean
             (FrontEnd.PROP_BIG_ENDIAN_DATA, 
@@ -112,7 +114,8 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
         streamEndReached = false;
         utteranceEndSent = false;
         utteranceStarted = false;
-        
+        totalSamplesRead = 0;
+
         if (keepAudioReference) {
             currentUtterance = new Utterance(streamName, getContext());
         } else {
@@ -139,22 +142,27 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
 
         if (streamEndReached) {
             if (!utteranceEndSent) {
+                // since 'firstSampleNumber' starts at 0, the last
+                // sample number should be 'totalSamplesRead - 1'
                 output = new Audio
-                    (Signal.UTTERANCE_END, System.currentTimeMillis());
+                    (Signal.UTTERANCE_END, System.currentTimeMillis(),
+                     totalSamplesRead - 1);
                 utteranceEndSent = true;
             }
         } else {
             if (!utteranceStarted) {
                 utteranceStarted = true;
                 output = new Audio
-                    (Signal.UTTERANCE_START, System.currentTimeMillis());
+                    (Signal.UTTERANCE_START, System.currentTimeMillis(),
+                     totalSamplesRead);
             } else {
                 if (audioStream != null) {
                     output = readNextFrame();
                     if (output == null) {
                         if (!utteranceEndSent) {
                             output = new Audio(Signal.UTTERANCE_END,
-                                               System.currentTimeMillis());
+                                               System.currentTimeMillis(),
+                                               totalSamplesRead);
                             utteranceEndSent = true;
                         }
                     }
@@ -184,6 +192,7 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
         final int bytesToRead = frameSizeInBytes;
         byte[] samplesBuffer = new byte[frameSizeInBytes];
         long collectTime = System.currentTimeMillis();
+        long firstSample = totalSamplesRead;
 
 	do {
 	    read = audioStream.read
@@ -200,6 +209,8 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
 
         // shrink incomplete frames
 
+        totalSamplesRead += (totalRead / bytesPerSample);
+
         if (totalRead < bytesToRead) {
             totalRead = (totalRead % 2 == 0) ? totalRead + 2 : totalRead + 3;
             byte[] shrinkedBuffer = new byte[totalRead];
@@ -213,19 +224,20 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
         double[] doubleAudio;
         if (bigEndian) {
             doubleAudio = Util.bytesToSamples
-                (samplesBuffer, 0, totalRead, bitsPerSample/8, signedData);
+                (samplesBuffer, 0, totalRead, bytesPerSample, signedData);
         } else {
             doubleAudio = Util.littleEndianBytesToSamples
-                (samplesBuffer, 0, totalRead, bitsPerSample/8, signedData);
+                (samplesBuffer, 0, totalRead, bytesPerSample, signedData);
         }
 
         Audio audio;
 
         if (keepAudioReference) {
             currentUtterance.add(samplesBuffer);
-            audio = new Audio(doubleAudio, currentUtterance, collectTime);
+            audio = new Audio(doubleAudio, currentUtterance, 
+                              collectTime, firstSample);
         } else {
-            audio = new Audio(doubleAudio, collectTime);
+            audio = new Audio(doubleAudio, collectTime, firstSample);
         }
 
         if (getDump()) {

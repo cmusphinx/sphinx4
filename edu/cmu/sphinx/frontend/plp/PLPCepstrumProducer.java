@@ -148,7 +148,9 @@ CepstrumProducer {
             if (input.hasContent()) {
                 output = process(input);
             } else {
-                output = new Cepstrum(input.getSignal(), input.getCollectTime());
+                output = new Cepstrum
+                    (input.getSignal(), input.getCollectTime(),
+                     input.getFirstSampleNumber());
             }
         }
 
@@ -194,7 +196,8 @@ CepstrumProducer {
 	    cepstrumCepstrum[i] = (float)cepstrumdouble[i];
 
 	Cepstrum cepstrum = new Cepstrum
-            (cepstrumCepstrum, input.getUtterance(), input.getCollectTime());
+            (cepstrumCepstrum, input.getUtterance(), input.getCollectTime(),
+             input.getFirstSampleNumber());
 
         if (getDump()) {
             System.out.println("PLP_CEPSTRUM   " + cepstrum.toString());

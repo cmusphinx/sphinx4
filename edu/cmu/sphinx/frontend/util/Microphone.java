@@ -102,7 +102,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      */
     private AudioFormat audioFormat;
     private float sampleRate = 8000f;
-    private int sampleSizeInBits = 16;
+    private int sampleSizeInBytes;
     private int channels = 1;
     private boolean signed = true;
     private boolean bigEndian = true;
@@ -123,6 +123,7 @@ public class Microphone extends DataProcessor implements AudioSource {
     private AudioList audioList;
     private Utterance currentUtterance;
 
+    private long totalSamplesRead;
     private int frameSizeInBytes;
     private int sleepTime;
     private volatile boolean started = false;
@@ -148,7 +149,7 @@ public class Microphone extends DataProcessor implements AudioSource {
 	throws IOException {
         super(name, context);
 	setProperties(props);
-        audioFormat = new AudioFormat(sampleRate, sampleSizeInBits,
+        audioFormat = new AudioFormat(sampleRate, sampleSizeInBytes * 8,
                                       channels, signed, bigEndian);
         audioList = new AudioList();
     }
@@ -175,9 +176,9 @@ public class Microphone extends DataProcessor implements AudioSource {
             frameSizeInBytes++;
         }
 
-        sampleSizeInBits = getSphinxProperties().getInt
+        sampleSizeInBytes = getSphinxProperties().getInt
             (FrontEnd.PROP_BITS_PER_SAMPLE, 
-             FrontEnd.PROP_BITS_PER_SAMPLE_DEFAULT);
+             FrontEnd.PROP_BITS_PER_SAMPLE_DEFAULT) / 8;
 
         keepAudioReference = getSphinxProperties().getBoolean
             (FrontEnd.PROP_KEEP_AUDIO_REFERENCE,
@@ -197,7 +198,7 @@ public class Microphone extends DataProcessor implements AudioSource {
      * @return the sleep time in milliseconds
      */
     private int getSleepTime() {
-        float samplesPerFrame = frameSizeInBytes/(sampleSizeInBits/8);
+        float samplesPerFrame = frameSizeInBytes/sampleSizeInBytes;
         float timePerFrameInSecs = samplesPerFrame/sampleRate;
         return (int) (timePerFrameInSecs * 1000 * 0.8);
     }
@@ -263,6 +264,8 @@ public class Microphone extends DataProcessor implements AudioSource {
 		    printMessage("Whoops: line is running");
 		}
                 audioLine.start();
+                totalSamplesRead = 0;
+
                 printMessage("started recording");
 
                 if (keepAudioReference) {
@@ -271,7 +274,8 @@ public class Microphone extends DataProcessor implements AudioSource {
                 }
 
                 audioList.add(new Audio(Signal.UTTERANCE_START,
-                                        System.currentTimeMillis()));
+                                        System.currentTimeMillis(),
+                                        totalSamplesRead));
                                 
                 while (getRecording() && !getClosed()) {
                     printMessage("reading ...");
@@ -279,7 +283,8 @@ public class Microphone extends DataProcessor implements AudioSource {
                 }
 
                 audioList.add(new Audio(Signal.UTTERANCE_END,
-                                        System.currentTimeMillis()));
+                                        System.currentTimeMillis(),
+                                        totalSamplesRead));
                 
                 audioLine.stop();
 		if (closeAudioBetweenUtterances) {
@@ -312,10 +317,12 @@ public class Microphone extends DataProcessor implements AudioSource {
         // Read the next chunk of data from the TargetDataLine.
         byte[] data = new byte[frameSizeInBytes];
         long collectTime = System.currentTimeMillis();
+        long firstSampleNumber = totalSamplesRead;
 
         try {
             int numBytesRead = audioStream.read(data, 0, data.length);
-            
+            totalSamplesRead += (numBytesRead / sampleSizeInBytes);
+
             if (numBytesRead != frameSizeInBytes) {
                 numBytesRead = (numBytesRead % 2 == 0) ?
                     numBytesRead + 2 : numBytesRead + 3;
@@ -339,9 +346,9 @@ public class Microphone extends DataProcessor implements AudioSource {
         }
 
         double[] samples = Util.bytesToSamples
-            (data, 0, data.length, sampleSizeInBits/8, signed);
+            (data, 0, data.length, sampleSizeInBytes, signed);
         
-        return (new Audio(samples, collectTime));
+        return (new Audio(samples, collectTime, firstSampleNumber));
     }
 
     /**

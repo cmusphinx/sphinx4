@@ -18,6 +18,8 @@ import edu.cmu.sphinx.frontend.CepstrumSource;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Signal;
+import edu.cmu.sphinx.frontend.Windower;
+import edu.cmu.sphinx.frontend.util.Util;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
@@ -55,6 +57,9 @@ CepstrumSource {
     private int numPoints;
     private int curPoint;
     private int cepstrumLength;
+    private int windowShift;
+    private int windowSize;
+    private long firstSampleNumber;
     private boolean bigEndian = true;
 
 
@@ -72,6 +77,7 @@ CepstrumSource {
 	super(name, context);
 	initSphinxProperties();
 	curPoint = -1;
+        firstSampleNumber = 0;
 	bigEndian = true;
     }
 
@@ -102,6 +108,7 @@ CepstrumSource {
 	    est.expectString("frames");
 	}
 	curPoint = -1;
+        firstSampleNumber = 0;
     }
 
 
@@ -113,6 +120,16 @@ CepstrumSource {
 	cepstrumLength = properties.getInt
             (FrontEnd.PROP_CEPSTRUM_SIZE, FrontEnd.PROP_CEPSTRUM_SIZE_DEFAULT);
 	binary = properties.getBoolean(PROP_BINARY, PROP_BINARY_DEFAULT);
+        float windowShiftMs = 
+            properties.getFloat(Windower.PROP_WINDOW_SHIFT_MS,
+                                Windower.PROP_WINDOW_SHIFT_MS_DEFAULT);
+        float windowSizeMs = 
+            properties.getFloat(Windower.PROP_WINDOW_SIZE_MS,
+                                Windower.PROP_WINDOW_SIZE_MS_DEFAULT);
+        int sampleRate = properties.getInt(FrontEnd.PROP_SAMPLE_RATE,
+                                           FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
+        windowShift = Util.getSamplesPerWindow(sampleRate, windowShiftMs);
+        windowSize = Util.getSamplesPerShift(sampleRate, windowSizeMs);
     }
 
 
@@ -130,11 +147,17 @@ CepstrumSource {
 
 	if (curPoint == -1) {
 	    data = new Cepstrum
-                (Signal.UTTERANCE_START, System.currentTimeMillis());
+                (Signal.UTTERANCE_START, System.currentTimeMillis(),
+                 firstSampleNumber);
 	    curPoint++;
 	} else if (curPoint == numPoints) {
+            if (numPoints > 0) {
+                firstSampleNumber =
+                    (firstSampleNumber - windowShift + windowSize - 1);
+            }
             data = new Cepstrum
-                (Signal.UTTERANCE_END, System.currentTimeMillis());
+                (Signal.UTTERANCE_END, System.currentTimeMillis(),
+                 firstSampleNumber);
 	    binaryStream.close();
 	    curPoint++;
 	} else if (curPoint > numPoints) {
@@ -158,7 +181,9 @@ CepstrumSource {
 	    }
 
 	    // System.out.println("Read: " + curPoint);
-	    data  = new Cepstrum(vectorCepstrum, collectTime);
+	    data  = new Cepstrum(vectorCepstrum, collectTime,
+                                 firstSampleNumber);
+            firstSampleNumber += windowShift;
 	    // System.out.println(data);
 	}
 	return data;

@@ -29,9 +29,12 @@ public class Spectrum extends Data {
      * @param spectraData a frame's spectral data
      * @param collectTime the time at which the original audio (from
      *    which this spectrum is obtained) is collected
+     * @param firstSampleNumber the position of the first sample in the
+     *    original data
      */
-    public Spectrum(double[] spectraData, long collectTime) {
-	super(collectTime);
+    public Spectrum(double[] spectraData, long collectTime, 
+                    long firstSampleNumber) {
+	super(collectTime, firstSampleNumber);
         this.spectraData = spectraData;
     }
 
@@ -43,10 +46,12 @@ public class Spectrum extends Data {
      * @param utterance the Utterance associated with this Spectrum
      * @param collectTime the time at which the original audio (from
      *    which this spectrum is obtained) is collected
+     * @param firstSampleNumber the position of the first sample in the
+     *    original data
      */
     public Spectrum(double[] spectraData, Utterance utterance, 
-                    long collectTime) {
-        super(utterance, collectTime);
+                    long collectTime, long firstSampleNumber) {
+        super(utterance, collectTime, firstSampleNumber);
 	this.spectraData = spectraData;
     }
 
@@ -56,9 +61,11 @@ public class Spectrum extends Data {
      *
      * @param signal the Signal this Spectrum carries
      * @param collectTime the time of this Spectrum object
+     * @param firstSampleNumber the position of the first sample in the
+     *    original data
      */
-    public Spectrum(Signal signal, long collectTime) {
-        super(signal, collectTime);
+    public Spectrum(Signal signal, long collectTime, long firstSampleNumber) {
+        super(signal, collectTime, firstSampleNumber);
     }
 
 

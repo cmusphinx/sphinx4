@@ -274,7 +274,7 @@ public class PLPFilterbank extends DataProcessor implements Filterbank {
 
 	Spectrum outputPLPSpectrum = new Spectrum
             (outputPLPSpectralArray, input.getUtterance(), 
-             input.getCollectTime());
+             input.getCollectTime(), input.getFirstSampleNumber());
 
         if (getDump()) {
             System.out.println("PLP_SPECTRUM   " +

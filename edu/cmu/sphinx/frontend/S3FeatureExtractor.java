@@ -202,14 +202,16 @@ public class S3FeatureExtractor extends DataProcessor
 		    segmentStart = true;
 		    outputQueue.add(new Feature(Signal.UTTERANCE_START,
 						IDGenerator.NON_ID,
-                                                input.getCollectTime()));
+                                                input.getCollectTime(),
+                                                input.getFirstSampleNumber()));
 		    
 		} else if (input.hasSignal(Signal.UTTERANCE_END)) {
 		    // when the UTTERANCE_END is right at the boundary
 		    replicateOutputFeature(lastFeature);
 		    outputQueue.add(new Feature(Signal.UTTERANCE_END,
 						IDGenerator.NON_ID,
-                                                input.getCollectTime()));
+                                                input.getCollectTime(),
+                                                input.getFirstSampleNumber()));
 		}
             }
         }
@@ -339,7 +341,8 @@ public class S3FeatureExtractor extends DataProcessor
         }
 
         return (new Feature(feature, featureID.getNextID(), currentUtterance,
-                            currentCepstrum.getCollectTime()));
+                            currentCepstrum.getCollectTime(),
+                            currentCepstrum.getFirstSampleNumber()));
     }
 }
 

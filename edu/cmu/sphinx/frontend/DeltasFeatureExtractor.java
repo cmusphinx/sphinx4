@@ -83,6 +83,7 @@ public class DeltasFeatureExtractor extends DataProcessor
     private int jp1, jp2, jp3, jf1, jf2, jf3;
 
     private long utteranceEndTime;
+    private long utteranceEndSample;
 
     private boolean segmentStart;
     private boolean segmentEnd;
@@ -184,9 +185,9 @@ public class DeltasFeatureExtractor extends DataProcessor
 
             if (segmentEnd) {
                 segmentEnd = false;
-                outputQueue.add(new Feature(Signal.UTTERANCE_END,
-                                            IDGenerator.NON_ID,
-                                            utteranceEndTime));
+                outputQueue.add(new Feature
+                                (Signal.UTTERANCE_END, IDGenerator.NON_ID,
+                                 utteranceEndTime, utteranceEndSample));
             } else {
                 Cepstrum input = predecessor.getCepstrum();
                 
@@ -204,15 +205,20 @@ public class DeltasFeatureExtractor extends DataProcessor
                         }
                     } else if (input.hasSignal(Signal.UTTERANCE_START)) {
                         segmentStart = true;
-                        outputQueue.add(new Feature(Signal.UTTERANCE_START,
-						    IDGenerator.NON_ID,
-                                                    input.getCollectTime()));
+                        outputQueue.add
+                            (new Feature
+                             (Signal.UTTERANCE_START, IDGenerator.NON_ID,
+                              input.getCollectTime(),
+                              input.getFirstSampleNumber()));
+
                     } else if (input.hasSignal(Signal.UTTERANCE_END)) {
 			// when the UTTERANCE_END is right at the boundary
 			segmentEnd = false;
-			outputQueue.add(new Feature(Signal.UTTERANCE_END,
-						    IDGenerator.NON_ID,
-                                                    input.getCollectTime()));
+			outputQueue.add
+                            (new Feature
+                             (Signal.UTTERANCE_END, IDGenerator.NON_ID,
+                              input.getCollectTime(), 
+                              input.getFirstSampleNumber()));
 		    }
                 }
             }
@@ -269,6 +275,7 @@ public class DeltasFeatureExtractor extends DataProcessor
                     // end of segment cepstrum
                     segmentEnd = true;
                     utteranceEndTime = cepstrum.getCollectTime();
+                    utteranceEndSample = cepstrum.getFirstSampleNumber();
                     residualVectors += replicateLastCepstrum();
                     done = true;
                     break;
@@ -430,7 +437,8 @@ public class DeltasFeatureExtractor extends DataProcessor
         }
 
         return (new Feature(feature, featureID.getNextID(), currentUtterance,
-                            currentCepstrum.getCollectTime()));
+                            currentCepstrum.getCollectTime(),
+                            currentCepstrum.getFirstSampleNumber()));
     }
 }
 

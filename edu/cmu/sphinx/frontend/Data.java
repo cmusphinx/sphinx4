@@ -36,6 +36,7 @@ import java.io.Serializable;
  */
 public class Data implements Serializable, Cloneable {
 
+    private long firstSampleNumber;
     private long collectTime;
     private Signal signal = null;
     private Utterance utterance = null;
@@ -44,9 +45,13 @@ public class Data implements Serializable, Cloneable {
     /**
      * Constructs a default Data object. Calling <code>getSignal()</code>
      * on this Data will return <code>Signal.CONTENT</code>.
+     *
+     * @param collectTime the time at which this data is collected
+     * @param firstSampleNumber the position of the first sample in the
+     *    original data
      */
-    protected Data(long collectTime) {
-        this(Signal.CONTENT, collectTime);
+    protected Data(long collectTime, long firstSampleNumber) {
+        this(Signal.CONTENT, collectTime, firstSampleNumber);
     }
     
 
@@ -54,18 +59,27 @@ public class Data implements Serializable, Cloneable {
      * Constructs a Data object with the given Signal.
      *
      * @param signal the Signal of this Data object
+     * @param collectTime the time at which this data is collected
+     * @param firstSampleNumber the position of the first sample in the
+     *    original data
      */
-    protected Data(Signal signal, long collectTime) {
+    protected Data(Signal signal, long collectTime, long firstSampleNumber) {
         this.signal = signal;
         this.collectTime = collectTime;
+        this.firstSampleNumber = firstSampleNumber;
     }
 
 
     /**
      * Constructs a Data object with the given Utterance.
+     *
+     * @param collectTime the time at which this data is collected
+     * @param firstSampleNumber the position of the first sample in the
+     *    original data
      */
-    protected Data(Utterance utterance, long collectTime) {
-        this(collectTime);
+    protected Data(Utterance utterance, long collectTime, 
+                   long firstSampleNumber) {
+        this(collectTime, firstSampleNumber);
         this.utterance = utterance;
     }
 
@@ -77,6 +91,17 @@ public class Data implements Serializable, Cloneable {
      */
     public Signal getSignal() {
         return signal;
+    }
+
+    
+    /**
+     * Returns the position of the first sample in the original data.
+     * The very first sample number is zero.
+     *
+     * @return the position of the first sample in the original data
+     */
+    public long getFirstSampleNumber() {
+        return firstSampleNumber;
     }
 
 

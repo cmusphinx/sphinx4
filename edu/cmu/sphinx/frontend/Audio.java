@@ -30,9 +30,12 @@ public class Audio extends Data implements Cloneable {
      *
      * @param audioSamples the audio samples for this Audio
      * @param collectTime the time at which the audio data is collected
+     * @param firstSampleNumber the position of the first sample in the
+     *    original data
      */
-    public Audio(double[] audioSamples, long collectTime) {
-        super(collectTime);
+    public Audio(double[] audioSamples, long collectTime, 
+                 long firstSampleNumber) {
+        super(collectTime, firstSampleNumber);
 	this.audioSamples = audioSamples;
     }
 
@@ -43,9 +46,12 @@ public class Audio extends Data implements Cloneable {
      * @param audioSamples the audio samples for this Audio
      * @param utterance the Utterance associated with this Audio
      * @param collectTime the time at which the audio data is collected
+     * @param firstSampleNumber the position of the first sample in the
+     *    original data
      */
-    public Audio(double[] audioSamples, Utterance utterance, long collectTime) {
-        super(utterance, collectTime);
+    public Audio(double[] audioSamples, Utterance utterance, 
+                 long collectTime, long firstSampleNumber) {
+        super(utterance, collectTime, firstSampleNumber);
 	this.audioSamples = audioSamples;
     }
 
@@ -55,9 +61,11 @@ public class Audio extends Data implements Cloneable {
      *
      * @param signal the Signal this Audio object carries
      * @param collectTime the time this Audio object is created
+     * @param firstSampleNumber the position of the first sample in the
+     *    original data
      */
-    public Audio(Signal signal, long collectTime) {
-        super(signal, collectTime);
+    public Audio(Signal signal, long collectTime, long firstSampleNumber) {
+        super(signal, collectTime, firstSampleNumber);
         isSpeech = signal.equals(Signal.CONTENT);
     }
 

@@ -618,7 +618,8 @@ public class EnergyEndpointer extends DataProcessor
         assert (index - 1 >= 0);
         Cepstrum next = (Cepstrum) outputQueue.get(index - 1);
         outputQueue.add(index, (new Cepstrum(Signal.SPEECH_START,
-                                             next.getCollectTime())));
+                                             next.getCollectTime(),
+                                             next.getFirstSampleNumber())));
     }
 
     
@@ -627,15 +628,29 @@ public class EnergyEndpointer extends DataProcessor
      */
     private void insertSpeechEnd() {
         int index = outputQueue.indexOf(endOffsetFrame);
-        endOffsetFrame = null;
         if (index < 0) {
             index = 0;
         }
         assert (index + 1 < outputQueue.size());
-        Cepstrum previous = (Cepstrum) outputQueue.get(index + 1);
-        lastSpeechEndFrame = 
-            new Cepstrum(Signal.SPEECH_END, previous.getCollectTime());
+
+        // 'endOffsetFrame' is the frame before SPEECH_END
+        if (endOffsetFrame == null) {
+            endOffsetFrame = (Cepstrum) outputQueue.get(index);
+        }
+
+        // 'lastSampleNumber' should actually be set to
+        // previous.getFirstSampleNumber() + windowSize
+        long lastSampleNumber = endOffsetFrame.getFirstSampleNumber();
+        if (index > 0) {
+            Cepstrum next = (Cepstrum) outputQueue.get(index-1);
+            lastSampleNumber = next.getFirstSampleNumber() - 1;
+        }
+
+        lastSpeechEndFrame = new Cepstrum(Signal.SPEECH_END, 
+                                          endOffsetFrame.getCollectTime(),
+                                          lastSampleNumber);
         outputQueue.add(index, lastSpeechEndFrame);
+        endOffsetFrame = null;
     }
 
 

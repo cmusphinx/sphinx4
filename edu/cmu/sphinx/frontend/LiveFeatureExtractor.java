@@ -83,6 +83,7 @@ public class LiveFeatureExtractor extends DataProcessor
     private IDGenerator featureID;
 
     private long utteranceEndTime;
+    private long utteranceEndSample;
 
     private CepstrumSource predecessor;
     private List outputQueue;
@@ -182,23 +183,28 @@ public class LiveFeatureExtractor extends DataProcessor
                     computeFeatures(1);
                 } else if (input.hasSignal(Signal.UTTERANCE_START)) {
                     utteranceEndTime = -1;
-                    outputQueue.add(new Feature(Signal.UTTERANCE_START,
-                                                IDGenerator.NON_ID,
-                                                input.getCollectTime()));
+                    outputQueue.add
+                        (new Feature
+                         (Signal.UTTERANCE_START, IDGenerator.NON_ID,
+                          input.getCollectTime(),
+                          input.getFirstSampleNumber()));
+
                     featureID.reset();
                     Cepstrum start = predecessor.getCepstrum();
                     int n = processFirstCepstrum(start);
                     computeFeatures(n);
                     if (utteranceEndTime >= 0) {
                         outputQueue.add
-                            (getUtteranceEndFeature(utteranceEndTime));
+                            (getUtteranceEndFeature(utteranceEndTime,
+                                                    utteranceEndSample));
                     }
                 } else if (input.hasSignal(Signal.UTTERANCE_END)) {
                     // when the UTTERANCE_END is right at the boundary
                     int n = replicateLastCepstrum();
                     computeFeatures(n);
                     outputQueue.add
-                        (getUtteranceEndFeature(input.getCollectTime()));
+                        (getUtteranceEndFeature(input.getCollectTime(),
+                                                input.getFirstSampleNumber()));
                 }
             }
         }
@@ -213,9 +219,11 @@ public class LiveFeatureExtractor extends DataProcessor
     /**
      * Returns a new Feature with the UTTERANCE_END Signal.
      */
-    private Feature getUtteranceEndFeature(long collectTime) {
+    private Feature getUtteranceEndFeature(long collectTime,
+                                           long firstSampleNumber) {
         return (new Feature
-                (Signal.UTTERANCE_END, IDGenerator.NON_ID, collectTime));
+                (Signal.UTTERANCE_END, IDGenerator.NON_ID, collectTime,
+                 firstSampleNumber));
     }
 
     /**
@@ -230,7 +238,9 @@ public class LiveFeatureExtractor extends DataProcessor
     private int processFirstCepstrum(Cepstrum cepstrum) throws IOException {
 
         if (cepstrum.hasSignal(Signal.UTTERANCE_END)) {
-            outputQueue.add(getUtteranceEndFeature(cepstrum.getCollectTime()));
+            outputQueue.add(getUtteranceEndFeature
+                            (cepstrum.getCollectTime(),
+                             cepstrum.getFirstSampleNumber()));
             return 0;
         } else if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
             throw new Error("Too many UTTERANCE_START");
@@ -261,6 +271,7 @@ public class LiveFeatureExtractor extends DataProcessor
                     } else if (next.hasSignal(Signal.UTTERANCE_END)) {
                         // end of segment cepstrum
                         utteranceEndTime = next.getCollectTime();
+                        utteranceEndSample = next.getFirstSampleNumber();
                         replicateLastCepstrum();
                         numberFeatures += i;
                         break;
@@ -398,7 +409,8 @@ public class LiveFeatureExtractor extends DataProcessor
         }
 
         return (new Feature(feature, featureID.getNextID(), currentUtterance, 
-                            currentCepstrum.getCollectTime()));
+                            currentCepstrum.getCollectTime(),
+                            currentCepstrum.getFirstSampleNumber()));
     }
 }
 

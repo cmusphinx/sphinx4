@@ -30,9 +30,12 @@ public class Cepstrum extends Data {
      * @param cepstrumData the cepstrum data
      * @param collectTime the time at which the original audio (from
      *    which this cepstrum is obtained) is collected
+     * @param firstSampleNumber the position of the first sample in the
+     *    original data
      */
-    public Cepstrum(float[] cepstrumData, long collectTime) {
-        super(Signal.CONTENT, collectTime);
+    public Cepstrum(float[] cepstrumData, long collectTime,
+                    long firstSampleNumber) {
+        super(Signal.CONTENT, collectTime, firstSampleNumber);
 	this.cepstrumData = cepstrumData;
     }
 
@@ -44,10 +47,12 @@ public class Cepstrum extends Data {
      * @param utterance the Utterance associated with this Cepstrum
      * @param collectTime the time at which the original audio (from
      *    which this cepstrum is obtained) is collected
+     * @param firstSampleNumber the position of the first sample in the
+     *    original data
      */
     public Cepstrum(float[] cepstrumData, Utterance utterance, 
-                    long collectTime) {
-        super(utterance, collectTime);
+                    long collectTime, long firstSampleNumber) {
+        super(utterance, collectTime, firstSampleNumber);
         this.cepstrumData = cepstrumData;
     }
 
@@ -57,9 +62,11 @@ public class Cepstrum extends Data {
      *
      * @param signal the Signal this Cepstrum carries
      * @param collectTime the time of this Cepstrum object
+     * @param firstSampleNumber the position of the first sample in the
+     *    original data
      */
-    public Cepstrum(Signal signal, long collectTime) {
-        super(signal, collectTime);
+    public Cepstrum(Signal signal, long collectTime, long firstSampleNumber) {
+        super(signal, collectTime, firstSampleNumber);
         cepstrumData = null;
     }
 

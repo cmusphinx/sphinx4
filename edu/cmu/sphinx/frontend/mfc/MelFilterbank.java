@@ -326,7 +326,7 @@ public class MelFilterbank extends DataProcessor implements Filterbank {
 
 	Spectrum outputMelSpectrum = new Spectrum
             (outputMelFilterbank, input.getUtterance(), 
-             input.getCollectTime());
+             input.getCollectTime(), input.getFirstSampleNumber());
 
         if (getDump()) {
             System.out.println("MEL_SPECTRUM   " +

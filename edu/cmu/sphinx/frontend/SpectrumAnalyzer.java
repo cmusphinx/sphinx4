@@ -161,7 +161,8 @@ SpectrumSource {
 	 * Return the power spectrum
 	 */
 	Spectrum output = new Spectrum
-            (outputSpectrum, input.getUtterance(), input.getCollectTime());
+            (outputSpectrum, input.getUtterance(), input.getCollectTime(),
+             input.getFirstSampleNumber());
 
         if (getDump()) {
             System.out.println("SPEC_MAGNITUDE " + output.toString());
@@ -278,7 +279,8 @@ SpectrumSource {
                 output = process(input);
             } else {
                 output = new Spectrum
-                    (input.getSignal(), input.getCollectTime());
+                    (input.getSignal(), input.getCollectTime(),
+                     input.getFirstSampleNumber());
             }
         }
         
