@@ -27,8 +27,9 @@ import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
 
 /**
- * Loads a grammar from a file in 'arpa' grammar format.
- * The ARPA FST format is like so: <br>
+ * Loads a grammar from a file representing a finite-state transducer (FST)
+ * in the 'ARPA' grammar format. The ARPA FST format is like so (the
+ * explanation of the format is below): <br>
  <pre>
  I 2
  F 0 2.30259

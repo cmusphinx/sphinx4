@@ -27,8 +27,14 @@ import edu.cmu.sphinx.util.SphinxProperties;
 
 
 /**
- * Classes that implement this interface create grammars
- *
+ * Classes that implement this interface create grammars. A grammar
+ * is represented internally as a graph of {@link GrammarNode GrammarNodes}
+ * linked together by {@link GrammarArc GrammarArcs}. Calling
+ * {@link #getInitialNode() getInitialNode} will return the first node
+ * of the grammar graph. To traverse the grammar graph, one should
+ * call GrammarNode.getSuccessors, which will return an array of GrammarArcs,
+ * from which you can reach the neighboring GrammarNodes.
+ * <p>
  * Note that all grammar probabilities are maintained in LogMath log
  * domain.
  */

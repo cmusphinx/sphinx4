@@ -29,7 +29,10 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 
 
 /**
- * Represents a grammar node in a grammar. 
+ * Represents a grammar node in a grammar. A {@link Grammar grammar} is
+ * represented as a graph of grammar nodes and {@link GrammarArc arcs}.
+ * A grammar node usually represents a word or words, but it can also be
+ * a transition point or simply silence.
  *
  * Note that all probabilties are maintained in the LogMath log base
  */

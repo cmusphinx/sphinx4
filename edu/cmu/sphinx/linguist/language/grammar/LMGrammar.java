@@ -26,13 +26,11 @@ import edu.cmu.sphinx.util.Timer;
 
 
 /**
- * Defines a grammar based upon a lanaguage model
- *
- * This is a simple version that generates one grammar node per word.
+ * Defines a simple grammar based upon a language model.
+ * It generates one {@link GrammarNode grammar node} per word.
  * This grammar can deal with unigram and bigram grammars of up to
- * 1000 or so words. 
- *
- * Note that all probabilities are in the log math domain
+ * 1000 or so words.
+ * Note that all probabilities are in the log math domain.
  */
 public class LMGrammar extends Grammar {
 

@@ -23,12 +23,28 @@ import edu.cmu.sphinx.util.LogMath;
 
 
 /**
- * Defines a grammar based upon a set of words in a file. The path to
- * the file is defined by the PROP_PATH property. If the PROP_LOOP
- * property is true, the grammar created will be a looping grammar.
- *
- *
- * All probabilities are maintained in LogMath log base
+ * Defines a grammar based upon a list of words in a file.
+ * The format of the file is just one word per line. For example,
+ * for an isolated digits grammar the file will simply look like:
+ * <pre>
+ * zero
+ * one
+ * two
+ * three
+ * four
+ * five
+ * six
+ * seven
+ * eight
+ * nine
+ * </pre>
+ * The path to the file is defined by the {@link #PROP_PATH PROP_PATH}
+ * property. If the {@link #PROP_LOOP PROP_LOOP} property is true,
+ * the grammar created will be a looping grammar.
+ * Using the above digits grammar example,
+ * setting PROP_LOOP to true will make it a connected-digits grammar.
+ * <p>
+ * All probabilities are maintained in LogMath log base.
  */
 public class SimpleWordListGrammar extends Grammar {
 
