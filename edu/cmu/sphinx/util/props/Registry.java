@@ -53,7 +53,7 @@ public class Registry {
     /**
      * Lookup a property in the registry
      * 
-     * @param name
+     * @param propertyName
      *            the property name
      * @return the type of the property (or null if the property is not
      *         registered)

@@ -458,7 +458,7 @@ class ValidatingPropertySheet implements PropertySheet {
     /**
      * determines if the string is a valid format for a global variable
      * 
-     * @param string the string to check
+     * @param val the string to check
      * @return true if the string is a valid format for a global variable
      * 
      */

@@ -195,7 +195,6 @@ public class TrivialAcousticModel implements AcousticModel {
       * Creates a trivial HMM
       *
       * @param unitName the name of the unit
-      * @param position the position of the unit
       */
     private void createTrivialHMM(String unitName) {
         Unit unit = Unit.getUnit(unitName);
@@ -234,7 +233,7 @@ class TrivialHMM implements HMM {
      * Creates a trivial hmm
      *
      * @param unit the unit for the hmm
-     * @position the position of the hmm
+     * @param position the position of the hmm
      */
     TrivialHMM(Unit unit, HMMPosition position) {
         this.unit = unit;

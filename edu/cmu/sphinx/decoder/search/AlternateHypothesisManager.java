@@ -35,7 +35,7 @@ public class AlternateHypothesisManager {
     /**
      * Creates an alternate hypotheses manager
      *
-     * @param props the sphinx-4 properties
+     * @param maxEdges the maximum edges allowed
      */
     public AlternateHypothesisManager(int maxEdges) {
         this.maxEdges = maxEdges;

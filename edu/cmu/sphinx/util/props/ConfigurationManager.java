@@ -340,8 +340,6 @@ public class ConfigurationManager {
      * 
      * @param url
      *                the url to load from
-     * @param rawPropertyMap
-     *                raw properties are placed here.
      * @throws IOException
      *                 if an error occurs while loading the symbol table
      */
@@ -358,7 +356,7 @@ public class ConfigurationManager {
      * 
      * @param rawMap
      *                the map of raw property values
-     * @param map global properies
+     * @param global global properies
      * 
      * @throws PropertyException
      *                 if an attempt is made to set a parameter for an unknown

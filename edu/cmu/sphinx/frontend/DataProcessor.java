@@ -35,8 +35,6 @@ public interface DataProcessor extends Configurable {
      * Initializes this DataProcessor. This is typically called after the
      * DataProcessor has been configured.
      * 
-     * @param commonConfig
-     *                configuration data that is used by many data processors
      */
     public void initialize();
 

@@ -776,8 +776,8 @@ public class LexTreeLinguist implements Linguist {
          * 
          * @param endNode
          *                the unit node
-         * @param lastProb
-         *                the probability of the previus node
+         * @param previous
+         *                the previous state
          * 
          * @return the search state
          */

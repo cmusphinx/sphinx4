@@ -292,8 +292,6 @@ public class Timer {
     /**
      * Shows the timing stats title.
      *
-     * @param title shows the title and column headings for the time
-     * 	display
      */
     private static void showTimesShortTitle() {
         String title = "Timers";

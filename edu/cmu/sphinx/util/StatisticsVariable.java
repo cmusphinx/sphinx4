@@ -42,7 +42,6 @@ import java.util.Map;
       * created. If the context does not currently exist, it is
       * created.
       *
-      * @param owner the name of the context
       * @param statName  the name of the StatisticsVariable
       *
       * @return the StatisticsVariable with the given name and context
@@ -73,7 +72,6 @@ import java.util.Map;
      /**
       * Dump all of the StatisticsVariable in the given context
       *
-      * @param contextName the context of interest
       */
      static public void dumpAll() {
          System.out.println(" ========= statistics  " + "=======");
@@ -87,7 +85,6 @@ import java.util.Map;
      /**
       * Resets all of the StatisticsVariables in the given context
       *
-      * @param contextName the context of interest
       */
      static public void resetAll() {
         for (Iterator i = pool.values().iterator(); i.hasNext(); ) {
@@ -101,8 +98,6 @@ import java.util.Map;
      /**
       * Contructs a StatisticsVariable with the given name and context
       *
-      * @param contextName the name of the context for this
-      * 	StatisticsVariable
       * @param statName the name of this StatisticsVariable
       */
      private StatisticsVariable(String statName) {

@@ -124,11 +124,8 @@ import edu.cmu.sphinx.util.props.Registry;
  * Guide to Specifying the Front End</a>.
  * <p>
  * <b>Obtaining a Front End</b>
+ * TODO - fix this to discuss the new configuration manager
  * <p>
- * TODO FIX THIS DOCUMENTATION
- * A front end is obtained through the
- * {@link edu.cmu.sphinx.frontend.FrontEndFactory}. You will call the 
- * {@link edu.cmu.sphinx.frontend.FrontEndFactory#getFrontEnd(edu.cmu.sphinx.util.SphinxProperties,String) getFrontEnd} factory method. Continuing the above example,
  * if the name of the front end as specified in the properties file is
  * "mfcc":
  * <p>
@@ -282,7 +279,7 @@ public class FrontEnd extends BaseDataProcessor  {
     /**
      * Fire all listeners for signals.
      *
-     * @param feature the feature with non-content signal
+     * @param signal the signal that occurred
      */
     protected void fireSignalListeners(Signal signal) {
         Vector copy = (Vector) signalListeners.clone();
