@@ -24,7 +24,6 @@ public class BigramProbability {
     private int probabilityID;
     private int backoffID;
     private int firstTrigramEntry;
-    private int numberTrigramEntries;
 
 
     /**
@@ -95,15 +94,5 @@ public class BigramProbability {
      */
     public int getFirstTrigramEntry() {
         return firstTrigramEntry;
-    }
-
-
-    /**
-     * Returns the number of trigram entries this bigram has.
-     *
-     * @return the number of trigram entries this bigram has
-     */
-    public int getNumberTrigramEntries() {
-        return numberTrigramEntries;
     }
 }
