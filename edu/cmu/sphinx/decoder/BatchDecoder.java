@@ -102,6 +102,18 @@ public class BatchDecoder {
     public final static String PROP_INPUT_TYPE_DEFAULT = "audio";
 
 
+    /**
+     * The SphinxProperty name for the input data type.
+     */
+    public final static String PROP_SHOW_PROPS_AT_START = 
+        PROP_PREFIX + "showPropertiesAtStart";
+
+
+    /**
+     * The default value for the property PROP_SHOW_PROPS_AT_START.
+     */
+    public final static boolean PROP_SHOW_PROPS_AT_START_DEFAULT = false;
+
     private DataSource dataSource;
     private Decoder decoder;
     private String batchFile;
@@ -110,6 +122,8 @@ public class BatchDecoder {
     private int skip;
     private int whichBatch;
     private int totalBatches;
+    private SphinxProperties props;
+    private boolean showPropertiesAtStart;
 
 
     /**
@@ -130,6 +144,7 @@ public class BatchDecoder {
      * @param props the SphinxProperties
      */
     private void initSphinxProperties(SphinxProperties props) {
+        this.props = props;
         context = props.getContext();
 	inputDataType = props.getString(PROP_INPUT_TYPE, 
                                         PROP_INPUT_TYPE_DEFAULT);
@@ -137,6 +152,8 @@ public class BatchDecoder {
 	whichBatch = props.getInt(PROP_WHICH_BATCH, PROP_WHICH_BATCH_DEFAULT);
 	totalBatches = props.getInt(PROP_TOTAL_BATCHES, 
                                     PROP_TOTAL_BATCHES_DEFAULT);
+	showPropertiesAtStart = props.getBoolean(PROP_SHOW_PROPS_AT_START,
+                                    PROP_SHOW_PROPS_AT_START_DEFAULT);
     }
 
 
@@ -177,6 +194,9 @@ public class BatchDecoder {
         String file = null;
         String reference = null;
 
+        if (showPropertiesAtStart) {
+            props.list(System.out);
+        }
         System.out.println("\nBatchDecoder: decoding files in " + batchFile);
         System.out.println("----------");
 
