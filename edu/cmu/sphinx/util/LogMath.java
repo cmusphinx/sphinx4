@@ -181,12 +181,13 @@ public final class LogMath {
 	double highestValue;
 	double difference;
 
+	// difference is always a positive number
 	if (val1 > val2) {
 	    highestValue = val1;
-	    difference = val2 - val1;
+	    difference = val1 - val2;
 	} else {
 	    highestValue = val2;
-	    difference = val1 - val2;
+	    difference = val2 - val1;
 	}
 	return (highestValue + addTable(difference));
 	//	return linearToLog(logToLinear(val1) + logToLinear(val2));
@@ -212,7 +213,10 @@ public final class LogMath {
     private final double addTableActualComputation(double index) {
 	double innerSummation;
 
-	innerSummation = logToLinear(index);
+	// Negate index, since the derivation of this formula implies
+	// the smallest number as a numerator, therefore the log of the
+	// ratio is negative
+	innerSummation = logToLinear(-index);
 	innerSummation += 1.0f;
 	return linearToLog(innerSummation);
     }
@@ -234,7 +238,7 @@ public final class LogMath {
      * @return the value pointed to by index
      */
     private final double addTable(double index) {
-	return theAddTable[(int)(-index)];
+	return theAddTable[(int)(index)];
     }
 
     /**
