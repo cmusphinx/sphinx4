@@ -20,6 +20,7 @@ import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 import edu.cmu.sphinx.knowledge.acoustic.Context;
 import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
+import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
@@ -149,8 +150,11 @@ public class SimpleLinguist implements  Linguist {
      * @param grammar the grammar for this linguist
      * @param models the acoustic model used by this linguist
      */
-    public void initialize(String context, LanguageModel languageModel,
-                        Grammar grammar, AcousticModel[] models) {
+    public void initialize(String context, 
+                           LanguageModel languageModel,
+                           Dictionary dictionary,
+                           Grammar grammar, 
+                           AcousticModel[] models) {
 
         this.props = SphinxProperties.getSphinxProperties(context);
         this.grammar = grammar;
