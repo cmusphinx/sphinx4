@@ -107,25 +107,27 @@ public class HrefTaglet implements Taglet {
     }
 
     public String toString(Tag tag, Doc doc, HtmlStandardWriter writer) {
-        StringBuffer result = new StringBuffer("href=\""+
-            writer.relativepath);
-        ClassDoc classDoc = writer.configuration().root.classNamed(tag.text());
-        if (classDoc == null) {
-            //Handle bad link here.
-        }
-        try {
-            result.append(
-                DirectoryManager.getPathToPackage(
-                    classDoc.containingPackage(),
-                    classDoc.name() + ".html"));
-            result.append("\"");
-            return result.toString();
-        } catch (Exception e) {
-            System.err.println(
-                "@href tag text does not refer to a valid classref: "
-                + tag.text());
-            return "";
-        }
+        return null;
+        
+        //StringBuffer result = new StringBuffer("href=\""+
+        //    writer.relativepath);
+        //ClassDoc classDoc = writer.configuration().root.classNamed(tag.text());
+        //if (classDoc == null) {
+        //    //Handle bad link here.
+        //}
+        //try {
+        //    result.append(
+        //        DirectoryManager.getPathToPackage(
+        //            classDoc.containingPackage(),
+        //            classDoc.name() + ".html"));
+        //    result.append("\"");
+        //    return result.toString();
+        //} catch (Exception e) {
+        //    System.err.println(
+        //        "@href tag text does not refer to a valid classref: "
+        //        + tag.text());
+        //    return "";
+        //}
     }
 
     public static void main(String[] args) {
