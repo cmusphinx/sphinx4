@@ -207,6 +207,8 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
         Cepstrum cepstrum = predecessor.getCepstrum();
 
         if (cepstrum != null && cepstrum.hasContent()) {
+            // Call a different method to handle the Cepstrum
+            // depending on its energy level.
             if (cepstrum.getEnergy() < startLow || 
                 cepstrum.getEnergy() < endLow) {
                 processLowEnergyCepstrum(cepstrum);
@@ -229,6 +231,9 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
      */
     private void processLowEnergyCepstrum(Cepstrum cepstrum) {
         if (inSpeech) {
+            // If we in a speech segment, but encounters a low energy
+            // cepstrum, this can be the end of the speech segment.
+            // This can be confirmed by (endLowFrames > endWindow).
             if (endLowFrames == endOffset) {
                 endOffsetFrame = cepstrum;
             } else if (endLowFrames > endWindow) {
@@ -253,6 +258,10 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     private void processMediumEnergyCepstrum(Cepstrum cepstrum) {
         if (location == BELOW_START_LOW) {
             if (lastFrameBelowStartLow != null) {
+                // If we are below startLow, and lastFrameBelowStartLow
+                // was not null, we just had a dropout (or spike).
+                // If the dropout was longer than maxDropout,
+                // then the lastFrameBelowStartLow should be reset.
                 if (maxDropout < startLowFrames &&
                     inputBuffer.size() > 0) {
                     lastFrameBelowStartLow = (Cepstrum) inputBuffer.get(0);
@@ -349,8 +358,8 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
         // "index" is where we should insert the SPEECH_START
         int index = inputBuffer.indexOf(lastFrameBelowStartLow);
 
-        // iterate through startOffset frames, but check if we have hit
-        // an UTTERANCE_START
+        // Go back startOffset frames, but check if we have hit
+        // an UTTERANCE_START, in which case we should stop going back.
         if (index > -1) {
             int i = 0;
             for (ListIterator iterator = inputBuffer.listIterator(index);
