@@ -17,6 +17,7 @@ import edu.cmu.sphinx.search.Token;
 import edu.cmu.sphinx.search.Result;
 
 import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.File;
 
@@ -57,7 +58,7 @@ public class SimpleSearchTest {
 	pruner = new SimplePruner();
 
 	searchManager = new BreadthFirstSearchManager(
-		simpleLinguist, acousticScorer, pruner);
+		context, simpleLinguist, acousticScorer, pruner);
 	dumpGrammar();
 	dumpSentenceHMM();
     }
@@ -163,7 +164,7 @@ public class SimpleSearchTest {
  */
 class SimplePruner implements Pruner {
 
-    float minScore = 1E-20F;
+    float minScore = -1E20F;
     /**
      * Initializes the scorer
      */
