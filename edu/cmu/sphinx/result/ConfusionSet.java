@@ -83,6 +83,32 @@ public class ConfusionSet extends TreeMap {
     }
 
     /**
+     * Check whether this confusion set contains the given word
+     * @param word the word to look for
+     * @return true if word is in this set
+     */
+    public boolean containsWord(String word) {
+        return getWordResult(word) != null;
+    }
+    
+    /**
+     * Check whether this confusion set contains any fillers.
+     * @return whether fillers are found
+     */
+    public boolean containsFiller() {
+        for (Iterator i = values().iterator(); i.hasNext(); ) {
+            Set wordSet = (Set) i.next();
+            for (Iterator r = wordSet.iterator(); r.hasNext(); ) {
+                WordResult wordResult = (WordResult) r.next();
+                if (wordResult.isFiller()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Returns the WordResult in this ConfusionSet for the given word.
      *
      * @param word the word to look for
@@ -95,8 +121,8 @@ public class ConfusionSet extends TreeMap {
             Set wordSet = (Set) i.next();
             for (Iterator r = wordSet.iterator(); r.hasNext(); ) {
                 WordResult wordResult = (WordResult) r.next();
-                String resultSpelling 
-                    = wordResult.getPronunciation().getWord().getSpelling();
+                String resultSpelling = wordResult.toString(); 
+                    //= wordResult.getPronunciation().getWord().getSpelling();
                 if (resultSpelling.equals(word)) {
                     return wordResult;
                 }
@@ -122,5 +148,23 @@ public class ConfusionSet extends TreeMap {
             }
         }
         System.out.println();
+    }
+    
+    public String toString() {
+        StringBuffer b = new StringBuffer();
+        Iterator i = keySet().iterator();
+        while (i.hasNext()) {
+            Double p = (Double)i.next();
+            Set words = (Set)get(p);
+            b.append(p.toString()).append(":");
+            Iterator j = words.iterator();
+            while (j.hasNext()) {
+                b.append(j.next());
+                if (j.hasNext()) {
+                    b.append(",");
+                }
+            }
+        }
+        return b.toString();
     }
 }
