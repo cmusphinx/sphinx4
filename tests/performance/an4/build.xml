@@ -919,6 +919,9 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
     <!-- ********************************************************** --> 
     <target name="an4_words_bigram_live"
             description="AN4 live words test with a bigram grammar">
+	<exec executable="rm">
+	    <arg line="-f reference.txt hypothesis.txt transcript.txt"/>
+	</exec>
         <java classpath="${classes_dir}"
               classname="edu.cmu.sphinx.decoder.LivePretendDecoder"
               fork="true">
@@ -963,4 +966,22 @@ Run ant with -Dlogger_props=an4.props to turn on the logging.
              <arg value="an4_words.batch"/>
         </java>
     </target>
+
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * --> 
+    <!-- * gap_insertion_detector                                 * -->
+    <!-- *                                                        * --> 
+    <!-- ********************************************************** --> 
+    <target name="gap_insertion_detector"
+            description="detects gap insertion errors">
+        <java classpath="${classes_dir}"
+              classname="edu.cmu.sphinx.util.GapInsertionDetector"
+              fork="true">
+	      <arg value="an4.props"/>
+	      <arg value="reference.txt"/>
+	      <arg value="hypothesis.txt"/>
+        </java>
+    </target>
+
 </project>
