@@ -15,6 +15,18 @@
 
 regressionDir=`pwd`
 
+testType=${1:-full}
+
+# We can run full tests or quick tests. Quick tests
+# are used for testing the regression tests
+#
+
+if [ $testType == "quick" ]; then
+    runTests="runQuickTests";
+else
+    runTests="runAllTests";
+fi
+
 ###################
 # Since the scripts just came out of CVS, they may not
 # be executable yet.  So make them executable
@@ -70,7 +82,7 @@ cd $regressionDir
 
 if [ $status = "OK" ]; then
    startRunTime=`$regressionDir/getTime`
-   $regressionDir/runAllTests
+   $regressionDir/$runTests
    endRunTime=`$regressionDir/getTime`
    # totalRunTime=$((endRunTime - startRunTime)) // a bash-ism
    totalRunTime=`expr $endRunTime - $startRunTime`
