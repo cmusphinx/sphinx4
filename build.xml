@@ -37,6 +37,9 @@
     <property name="wsj_name" value="WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
     <property name="wsj_data_dir" value="models/acoustic/wsj"/>
 
+    <property name="wsj_8kHz_name" value="WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz"/>
+    <property name="wsj_8kHz_data_dir" value="models/acoustic/wsj_8kHz"/>
+
     <property name="tidigits_name"
               value="TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
     <property name="tidigits_data_dir" value="models/acoustic/tidigits"/>
@@ -344,6 +347,9 @@ jsapi.exe from the lib directory.
 	    <param name="my_model_name" value="${wsj_name}"/>
         </antcall>
 	<antcall target="create_my_model_classes">
+	    <param name="my_model_name" value="${wsj_8kHz_name}"/>
+        </antcall>
+	<antcall target="create_my_model_classes">
 	    <param name="my_model_name" value="${tidigits_name}"/>
         </antcall>
     </target>
@@ -418,6 +424,10 @@ jsapi.exe from the lib directory.
         <antcall target="create_my_model">
 	    <param name="my_model_data_dir" value="${wsj_data_dir}"/>
 	    <param name="my_model_name" value="${wsj_name}"/>
+        </antcall>
+        <antcall target="create_my_model">
+	    <param name="my_model_data_dir" value="${wsj_8kHz_data_dir}"/>
+	    <param name="my_model_name" value="${wsj_8kHz_name}"/>
         </antcall>
 	<antcall target="create_my_model">
 	    <param name="my_model_data_dir" value="${tidigits_data_dir}"/>

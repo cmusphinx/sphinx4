@@ -1,0 +1,55 @@
+# Copyright 1999-2004 Carnegie Mellon University.  
+# Portions Copyright 2004 Sun Microsystems, Inc.  
+# Portions Copyright 2004 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# Trained using entire channel 1 training data from WSJ (~32K utterances).  
+# All the training data was downsampled to 8k:
+#
+#   sph2pipe -f raw ldc/$foo.wv1 > raw/$foo.raw
+#   sox -t sw -r 16000 raw/$foo.raw -t sw -r 8000 raw_8k/$foo.raw
+#
+# The feature files were created as follows:
+#
+#   wave2feat \
+#        -i raw_8k/$foo.raw -raw \
+#        -srate 8000    \
+#        -wlen 0.025625  \
+#        -alpha 0.97     \
+#        -nfft 512       \
+#        -nfilt 31       \
+#        -lowerf 200     \
+#        -upperf 3500    \
+#        -ncep 13        \
+#        -o mfc_8k/$foo.mfc
+#
+# Training was done as follows using SphinxTrain:
+#
+#    1) First train full models using 15 iterations per step.
+#    2) Force align the training data against models from step #1.
+#    3) Use aligned transcripts from step #2 to train new models;
+#       set convergence ratio to 0.02.  This resulted in around
+#       5-7 iterations per step.
+#
+description = Wall Street Journal 8kHz acoustic models
+modelClass = edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.Model
+modelLoader = edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.ModelLoader
+
+isBinary = true
+featureType = cepstra_delta_doubledelta
+vectorLength = 39
+sparseForm = false
+
+numberFftPoints = 512
+filters = 31
+gaussians = 8
+maxFreq = 3500
+minFreq. = 200
+sampleRate = 8000
+
+dataLocation = cd_continuous_8gau
+modelDefinition = etc/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.4000.mdef
