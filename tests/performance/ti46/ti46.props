@@ -108,8 +108,8 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 # WordListGrammar properties
 #
 ############################################################
-edu.cmu.sphinx.search.SimpleWordListGrammar.isLooping = true
-edu.cmu.sphinx.search.SimpleWordListGrammar.path = ./digits.wordlist
+edu.cmu.sphinx.search.SimpleWordListGrammar.isLooping = false
+edu.cmu.sphinx.search.SimpleWordListGrammar.path = ./ti46.wordlist
 
 
 ############################################################
@@ -118,8 +118,10 @@ edu.cmu.sphinx.search.SimpleWordListGrammar.path = ./digits.wordlist
 #
 ############################################################
 
+edu.cmu.sphinx.search.Recognizer.dumpFrontEnd = false
 edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.SimpleWordListGrammar
+edu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.SimpleBreadthFirstSearchManager 
 edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=8.0
 

@@ -31,40 +31,22 @@ FILES = $(shell echo *.java)
 # List any sub directories that need to be built
 SUBDIRS =
 
-# LOGGER_PROPERTIES=ti46.props
+# LOGGER_PROPERTIES=tidigits.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
-NO_CONTEXT_FLAGS= -Dedu.cmu.sphinx.model.acoustic.useComposites=false -Dedu.cmu.sphinx.model.acoustic.useCDUnits=false
-
-
-PROFILE_FLAGS= -Xprof -server
-LOG_GC_FLAGS=  -Xloggc:gc.txt
- GC_FLAGS=  -XX:+PrintGCDetails
-# GC_FLAGS=  -XX:+UseConcMarkSweepGC
-#GC_FLAGS=  -XX:+UseParallelGC
-#GC_FLAGS= -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+PrintGCDetails
-HEAP_DUMP =   -Xrunhprof:heap=dump,cpu=samples
-#GC_FLAGS= -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+PrintGCDetails -XX:+TraceGen1Time
-
-# GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
-
-#GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
-#GC_FLAGS= -ms1g -XX:+UseConcMarkSweepGC -XX:-UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
-
+PROFILE_FLAGS= 
+LOG_GC_FLAGS=  
 GC_FLAGS = -ms16m -mx16m
 
-#PROFILE2_FLAGS= -Xrunhprof:file=log.txt
-PROFILE2_FLAGS= -Xrunhprof:cpu=samples,file=log.txt
 DEBUG_FLAGS=
-#EXTRA_JAVA_FLAGS=$(LOG_GC_FLAGS) $(LOG)
+
 EXTRA_JAVA_FLAGS=$(PROFILE_FLAGS) $(LOG_GC_FLAGS) $(LOG) $(GC_FLAGS) $(DEBUG_FLAGS)
 
 ##########################################################################
 
 include ${TOP}/build/Makefile.config
 
-
-# JAVA_FLAGS =  -Xmx1024m -ea -Xint
+SKIP=0
 
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 
@@ -72,36 +54,56 @@ all::
 
 
 #
-# The full TI46 (isolated digits) test.
+# ti46 with the wordlist grammar, the simplest way to specify a flat unigram
 #
+
 ti46_wordlist:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
-ti46_quick_wordlist:
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
-	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
+#
+# a quick form of ti46_wordlist
+#
 
+ti46_wordlist_quick:
+	$(MAKE) SKIP=5 ti46_wordlist
+
+#
+# ti46 with an ARPA format flat unigram
+#
 ti46_flat_unigram:
 	$(JAVA_CMD) \
-        -Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.SimpleBreadthFirstSearchManager \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
         -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.model.language.location=./ti46.flat_unigram.lm\
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
-ti46_quick_flat_unigram:
+#
+# a quick form 
+#
+ti46_flat_unigram_quick:
+	$(MAKE) SKIP=5 ti46_flat_unigram
+
+#
+# ti46 with and FST format flat unigram
+#
+ti46_flat_unigram_fst:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
-        -Dedu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.SimpleBreadthFirstSearchManager \
-	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
-        -Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar\
-	-Dedu.cmu.sphinx.model.language.format=arpa \
-	-Dedu.cmu.sphinx.model.language.location=./ti46.flat_unigram.lm\
-	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
+	-Dedu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.FSTGrammar \
+	-Dedu.cmu.sphinx.search.FSTGrammar.path=./ti46.flat_unigram.fst \
+	edu.cmu.sphinx.decoder.BatchDecoder ./ti46.props ./ti46.batch
+
+
+#
+# a quick form 
+#
+
+ti46_flat_unigram_fst_quick:
+	$(MAKE) SKIP=5 ti46_flat_unigram_fst
 
 ##########################################################################
 #
@@ -117,15 +119,6 @@ ti46:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.SimpleWordListGrammar.isLooping=false \
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
-
-#
-# The full TI46 (isolated digits) test.
-#
-ti46_eight:
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
-        -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-20\
-	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.eight.batch
 
 
 #
