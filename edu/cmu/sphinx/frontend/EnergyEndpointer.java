@@ -13,9 +13,49 @@ import java.util.*;
  * Implements an energy-based endpointer that is based on a simple
  * two event windowing algorithm.
  *
+ * This endpointer looks at the energy levels of the signal,
+ * given by input Cepstrum, to determine the speech start and
+ * speech end. The Signals, Signal.SPEECH_START and Signal.SPEECH_END,
+ * are inserted at the speech endpoints.
  *
+ * This endpointer maintains several configurable parameters:
+ * <pre>
+ * edu.cmu.sphinx.frontend.EnergyEndpointer.startLow
+ * edu.cmu.sphinx.frontend.EnergyEndpointer.startHigh
+ * edu.cmu.sphinx.frontend.EnergyEndpointer.endLow
+ * edu.cmu.sphinx.frontend.EnergyEndpointer.endHigh
+ * </pre>
+ *
+ * The above 
+ * <pre>
+ * edu.cmu.sphinx.frontend.EnergyEndpointer.startWindow
+ * edu.cmu.sphinx.frontend.EnergyEndpointer.startOffset
+ * edu.cmu.sphinx.frontend.EnergyEndpointer.endWindow
+ * edu.cmu.sphinx.frontend.EnergyEndpointer.endOffset
+ *
+ * edu.cmu.sphinx.frontend.EnergyEndpointer.maxDropout
+ * </pre>
+ * When the energy level is above <code>startHigh</code> for
+ * <code>startWindow</code> number of frames, then speech has started.
+ * Speech start will be <code>startOffset</code> number of frames
+ * before speech went above <code>startLow</code>.
+ *
+ * When the energy level is below <code>endLow</code> for
+ * <code>endWindow</code> number of frames, then speech has ended.
+ * Speech end will be <code>endOffset</code> number of frames after
+ * speech went below <code>endLow</code>.
+ *
+ * The <code>maxDropout</code> parameter deals with spikes before
+ * speech starts. If the energy previously when above startLow, but
+ * returns to below <code>startLow</code> without entering speech,
+ * then it is a spike. If the spike is less than <code>maxDropout</code>
+ * number of frames from speech, the spike is part of speech.
+ * Otherwise, it is not part of speech.
+ *
+ * At the end of speech side, spikes are always consider part of
+ * speech unless it is contiguously more than <code>endWindow</code>
+ * frames from speech.
  */
-
 public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
 
     private static final String PROP_PREFIX = 
