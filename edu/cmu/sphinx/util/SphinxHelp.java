@@ -19,6 +19,11 @@ package edu.cmu.sphinx.util;
 public class SphinxHelp {
     private final static String VERSION = "0.80";
 
+    /**
+     * The main entry point
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         System.out.println();
         System.out.println("Welcome to Sphinx-4!");
