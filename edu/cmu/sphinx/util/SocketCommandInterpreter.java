@@ -148,11 +148,17 @@ public class SocketCommandInterpreter extends Thread {
 	    public String execute(CommandInterpreter ci, String[] args) {
 		return "this is a test";
 	    }
+            public String getHelp() {
+                return "a test command";
+            }
 	});
 	sci.add("time", new CommandInterface() {
 	    public String execute(CommandInterpreter ci, String[] args) {
 		return "Time is " + new Date();
 	    }
+            public String getHelp() {
+                return "shows the current time";
+            }
 	});
 
 	System.out.println("Welcome to SocketCommand interpreter test program");
