@@ -313,9 +313,12 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      * @param token the best token
      *
      * @param state the state
+     *
+     * @return the previous best token for the given state, or null if
+     *    no previous best token
      */
-    protected void setBestToken(Token token, SearchState state) {
-        bestTokenMap.put(state, token);
+    protected Token setBestToken(Token token, SearchState state) {
+        return (Token) bestTokenMap.put(state, token);
     }
 
 
@@ -527,7 +530,17 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     public void setResultList(List resultList) {
 	this.resultList = resultList;
     }
- 
+
+
+    /**
+     * Returns the current frame number.
+     *
+     * @return the current frame number
+     */
+    public int getCurrentFrameNumber() {
+	return currentFrameNumber;
+    }
+    
 
     /**
      * Returns the Timer for growing.
