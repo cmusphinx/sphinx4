@@ -42,6 +42,11 @@ public class HMMPool {
     private HMM hmmTable[][];
     private int numCIUnits;
 
+    /**
+     * Constructs a HMMPool object.
+     *
+     * @param model  the model to use for the pool
+     */
     public HMMPool(AcousticModel model) {
         int maxCIUnits = 0;
         this.model = model;

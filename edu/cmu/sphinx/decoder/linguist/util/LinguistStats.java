@@ -42,7 +42,6 @@ public class LinguistStats implements LinguistProcessor  {
      * @param props the set of SphinxProperties
      * @param linguist the linguist
      *
-     * @return <code>true</code>  if the file was successfully dumped
      */
     public void process(SphinxProperties props, Linguist linguist) {
 	List queue = new LinkedList();
