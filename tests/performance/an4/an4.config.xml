@@ -65,6 +65,22 @@
             <item>recognizerMonitor </item>
         </propertylist>
     </component>
+
+    <!-- ******************************************************** -->
+    <!-- rejection recognizer configuration                       -->
+    <!-- ******************************************************** --> 
+
+    <component name="rejectionRecognizer" 
+                          type="edu.cmu.sphinx.recognizer.Recognizer">
+        <property name="decoder" value="decoder"/>
+        <propertylist name="monitors">
+            <item>accuracyTracker </item>
+            <item>rejectionTracker </item>
+            <item>speedTracker </item>
+            <item>memoryTracker </item>
+            <item>recognizerMonitor </item>
+        </propertylist>
+    </component>
     
     <!-- ******************************************************** -->
     <!-- The Decoder   configuration                              -->
@@ -118,6 +134,16 @@
                 value="${silenceInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
         <property name="unitManager" value="unitManager"/>
+	<property name="addOutOfGrammarBranch" value="false"/>
+	<property name="outOfGrammarLinguist" value="phoneLoopLinguist"/>
+	<property name="outOfGrammarProbability" value="1E-20"/>
+    </component>
+
+    <component name="phoneLoopLinguist"
+               type="edu.cmu.sphinx.linguist.flat.CIPhoneLoopLinguist">
+	<property name="acousticModel" value="wsj"/>
+	<property name="logMath" value="logMath"/>
+	<property name="phoneInsertionProbability" value="1E-10"/>
     </component>
     
     <component name="lexTreeLinguist" 
@@ -328,6 +354,13 @@
         <property name="recognizer" value="${recognizer}"/>
         <property name="showAlignedResults" value="false"/>
         <property name="showRawResults" value="false"/>
+    </component>
+
+    <component name="rejectionTracker" 
+                type="edu.cmu.sphinx.instrumentation.RejectionTracker">
+        <property name="recognizer" value="${recognizer}"/>
+        <property name="showSummary" value="true"/>
+        <property name="showDetails" value="true"/>
     </component>
     
     <component name="memoryTracker" 
