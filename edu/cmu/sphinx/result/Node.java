@@ -33,20 +33,20 @@ import java.io.PrintWriter;
  * Nodes are part of Lattices.  The represent theories that words were spoken over a given time.
  */
 public class Node {
-    protected static int nodeCount = 0; // used to generate unique IDs for new Nodes.
+    private static int nodeCount = 0; // used to generate unique IDs for new Nodes.
 
-    protected String id;
-    protected Word word;
-    protected int beginTime = -1;
-    protected int endTime = -1;
-    protected Vector enteringEdges;
-    protected Vector leavingEdges;
-    protected double forwardScore;
-    protected double backwardScore;
-    protected double posterior;
-    protected Node bestPredecessor;
-    protected double viterbiScore;
-    protected Set descendants;
+    private String id;
+    private Word word;
+    private int beginTime = -1;
+    private int endTime = -1;
+    private Vector enteringEdges;
+    private Vector leavingEdges;
+    private double forwardScore;
+    private double backwardScore;
+    private double posterior;
+    private Node bestPredecessor;
+    private double viterbiScore;
+    private Set descendants;
     
     {
         enteringEdges = new Vector();
@@ -79,6 +79,12 @@ public class Node {
         this.word = word;
         this.beginTime = beginTime;
         this.endTime = endTime;
+        if (endTime != -1) {
+            if (beginTime > endTime) {
+                throw new Error("Begin time (" + beginTime +
+                                ") later than end time (" + endTime +")");
+            }
+        }
         this.forwardScore = LogMath.getLogZero();
         this.backwardScore = LogMath.getLogZero();
         this.posterior = LogMath.getLogZero();
@@ -284,12 +290,40 @@ public class Node {
     }
 
     /**
+     * Sets the frame number when the word began.
+     *
+     * @param beginTime the frame number when the word began
+     */
+    public void setBeginTime(int beginTime) {
+        if (beginTime > getEndTime()) {
+            throw new Error("Attempting to set a begin time (" + beginTime +
+                            ") that is later than the end time (" +
+                            getEndTime() + ").");
+        }
+        this.beginTime = beginTime;
+    }
+
+    /**
      * Get the frame number when the word ends
      *
      * @return the end time, or -1 if the frame number if is unknown
      */
     public int getEndTime() {
         return endTime;
+    }
+
+    /**
+     * Sets the frame number when the words ended.
+     *
+     * @param endTime the frame number when the word ended
+     */
+    public void setEndTime(int endTime) {
+        if (getBeginTime() > endTime) {
+            throw new Error("Attempting to set an end time (" + endTime +
+                            ") that is earlier than the start time (" +
+                            getBeginTime() + ").");
+        }
+        this.endTime = endTime;
     }
 
     /**
