@@ -37,6 +37,7 @@ import edu.cmu.sphinx.util.LogMath;
 
 
 
+
 /**
  *  A linguist processor that dumps out the sentence hmm in GDL
  *  format.
@@ -112,7 +113,7 @@ public class GDLDumper extends LinguistDumper  {
 		shape = "circle";
 	    }
 	    out.println("    node: {" +
-		    "title: " + qs(state.getSignature()) + 
+		    "title: " + qs(state.getTitle()) + 
 		    " label: " + qs(state.getPrettyName()) + 
 		    " color: " + color +
 		    " shape: " + shape + 
@@ -204,8 +205,8 @@ public class GDLDumper extends LinguistDumper  {
                    "," + formatEdgeLabel(insert) +
                    ")");
         }
-        out.println("   edge: { sourcename: " + qs(from.getSignature()) + 
-                    " targetname: " + qs(nextState.getSignature()) + 
+        out.println("   edge: { sourcename: " + qs(from.getTitle()) + 
+                    " targetname: " + qs(nextState.getTitle()) + 
                     label +
                     " color: " + color + "}");
     }
