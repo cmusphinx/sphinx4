@@ -18,7 +18,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -28,9 +27,9 @@ import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.tools.audio.AudioData;
+import edu.cmu.sphinx.tools.audio.AudioDataInputStream;
 
 /**
  * Converts a set of log magnitude Spectrum data into a graphical
@@ -53,10 +52,16 @@ public class SpectrogramPanel extends JPanel {
      */
     private AudioData audio;
     
+    
     /**
-     * The SphinxProperties.
+     * The frontEnd (the source of features
      */
-    private SphinxProperties props;
+    private FrontEnd frontEnd;
+    
+    /**
+     * The source of audio (the first stage of the frontend)
+     */
+    private StreamDataSource dataSource;
     
     /**
      * Creates a new SpectrogramPanel for the given AudioData.
@@ -64,16 +69,16 @@ public class SpectrogramPanel extends JPanel {
      * @param sphinxProps the SphinxProperties for setting up the front end
      * @param audioData the AudioData
      */
-    public SpectrogramPanel(SphinxProperties sphinxProps,
-                            AudioData audioData) {
+    public SpectrogramPanel(FrontEnd frontEnd, 
+            StreamDataSource dataSource,  AudioData audioData) {
         audio = audioData;
-        props = sphinxProps;
+        this.frontEnd = frontEnd;
+        this.dataSource = dataSource;
 	audio.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent event) {
                     computeSpectrogram();
                 }
 	    });
-        computeSpectrogram();
     }
 
     /**
@@ -82,16 +87,7 @@ public class SpectrogramPanel extends JPanel {
     private void computeSpectrogram() {
         try {
             AudioDataInputStream is = new AudioDataInputStream(audio);
-            StreamDataSource audioSource = new StreamDataSource();
-	    audioSource.initialize("StreamDataSource", null, props, null);
-	    audioSource.setInputStream(is, "live audio");
-
-	    Collection names = FrontEndFactory.getNames(props);
-	    assert (names.size() == 1);
-	    String feName = (String) names.iterator().next();
-
-            FrontEnd frontEnd = FrontEndFactory.getFrontEnd(props, feName);
-            frontEnd.setDataSource(audioSource);
+	    dataSource.setInputStream(is, "live audio");
 
             /* Run through all the spectra one at a time and convert
              * them to an log intensity value.

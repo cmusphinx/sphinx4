@@ -34,8 +34,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
+import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.frontend.window.RaisedCosineWindower;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.tools.audio.AudioData;
+import edu.cmu.sphinx.tools.audio.AudioPanel;
+import edu.cmu.sphinx.tools.audio.AudioPlayer;
+import edu.cmu.sphinx.tools.audio.RawRecorder;
+import edu.cmu.sphinx.tools.audio.SpectrogramPanel;
+import edu.cmu.sphinx.tools.audio.Utils;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.PropertySheet;
 
 
 /**
@@ -46,12 +55,23 @@ public class AudioTool {
     static final String PREFS_CONTEXT = "/edu/cmu/sphinx/tools/audio/"
                                         + CONTEXT;
     static final String FILENAME_PREFERENCE = "filename";
+    
+    // -------------------------------
+    // Component names
+    // -----------------------------------
+    // These names should match the correspondong names in the
+    // spectrogram.config.xml
+    
+    static final String FRONT_END = "frontEnd";
+    static final String DATA_SOURCE = "streamDataSource";
+    static final String WINDOWER = "windower";
+    
     static AudioData audio;
     static JFrame jframe;
     static AudioPanel audioPanel;
     static SpectrogramPanel spectrogramPanel;
     static JFileChooser fileChooser;
-    static String filename;
+    static String filename; 
     static File file = null;
     static AudioPlayer player;
     static RawRecorder recorder;
@@ -282,6 +302,8 @@ public class AudioTool {
      *             argv[1] : SphinxProperties file
      */
     static public void main(String[] args) {
+        FrontEnd frontEnd;
+        StreamDataSource dataSource;
         prefs = Preferences.userRoot().node(PREFS_CONTEXT);
         filename = prefs.get(FILENAME_PREFERENCE, "untitled.raw");
         file = new File(filename);
@@ -294,18 +316,17 @@ public class AudioTool {
             if (args.length == 2) {
                 url = new File(args[1]).toURI().toURL();
             } else {
-                url = AudioTool.class.getResource("spectrogram.props");
+                url = AudioTool.class.getResource("spectrogram.config.xml");
             }
-            SphinxProperties.initContext(CONTEXT, url);
-            SphinxProperties props =
-                SphinxProperties.getSphinxProperties(CONTEXT);
-            float windowSizeInMs = props.getFloat
-		(RaisedCosineWindower.PROP_WINDOW_SIZE_MS,
-		 RaisedCosineWindower.PROP_WINDOW_SIZE_MS_DEFAULT);
-            float windowShiftInMs = props.getFloat
-		(RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
-                 RaisedCosineWindower.PROP_WINDOW_SHIFT_MS_DEFAULT);
+            ConfigurationManager cm = new ConfigurationManager(url);
 
+            
+            frontEnd = (FrontEnd) cm.lookup(FRONT_END);
+            dataSource = (StreamDataSource) cm.lookup(DATA_SOURCE);
+            PropertySheet ps = cm.getPropertySheet(WINDOWER);
+            float windowShiftInMs = ps.getFloat
+                (RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
+             RaisedCosineWindower.PROP_WINDOW_SHIFT_MS_DEFAULT);
             audio = new AudioData();
 
 	    final JFrame jframe = new JFrame("AudioTool");
@@ -315,12 +336,13 @@ public class AudioTool {
             /* Scale the width according to the size of the
              * spectrogram.
              */
+            
             float windowShiftInSamples = windowShiftInMs
                 * audio.getAudioFormat().getSampleRate() / 1000.0f;
             audioPanel = new AudioPanel(audio,
                                         1.0f / windowShiftInSamples,
                                         0.004f);
-            spectrogramPanel = new SpectrogramPanel(props, audio);
+            spectrogramPanel = new SpectrogramPanel(frontEnd, dataSource, audio);
             
             JPanel panel = new JPanel();
             panel.setLayout(new BorderLayout());

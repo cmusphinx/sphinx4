@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+   Sphinx-4 Configuration file
+-->
+
+<!-- ******************************************************** -->
+<!--  spectrogram config file                                 -->
+<!-- ******************************************************** -->
+
+<config>	
+  
+    <!-- ******************************************************** -->
+    <!-- The frontend configuration                               -->
+    <!-- ******************************************************** -->
+    <!-- note - don't change the names of these components, unless -->
+    <!-- you also change the corresponding names in the AudioTool  -->
+    
+    <component name="frontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
+        <propertylist name="pipeline">
+            <item>streamDataSource </item>
+            <item>premphasizer</item>
+            <item>windower</item>
+            <item>fft</item>
+        </propertylist>
+    </component>
+    
+    <component name="premphasizer" 
+		type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
+    
+    <component name="windower" 
+		type="edu.cmu.sphinx.frontend.window.RaisedCosineWindower">
+    </component>
+    
+    <component name="fft" 
+            type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"/>
+     
+    <component name="streamDataSource" 
+		type="edu.cmu.sphinx.frontend.util.StreamDataSource">
+        <property name="sampleRate" value="16000"/>
+    </component>
+</config>
