@@ -18,8 +18,9 @@ import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
 import edu.cmu.sphinx.decoder.linguist.GrammarArc;
 import edu.cmu.sphinx.decoder.linguist.GrammarNode;
-import edu.cmu.sphinx.decoder.linguist.GrammarWord;
+
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -396,7 +397,7 @@ public class FSTGrammar extends Grammar {
     private String getWord(GrammarNode node) {
 	String word = null;
 	if (node.getNumAlternatives() > 0) {
-	    GrammarWord[][] alternatives = node.getAlternatives();
+	    Word[][] alternatives = node.getAlternatives();
 	    word = alternatives[0][0].getSpelling();
 	}
 	return word;

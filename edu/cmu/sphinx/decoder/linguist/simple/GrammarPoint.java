@@ -13,9 +13,10 @@
 package edu.cmu.sphinx.decoder.linguist.simple;
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.decoder.linguist.GrammarNode;
-import edu.cmu.sphinx.decoder.linguist.GrammarWord;
 import edu.cmu.sphinx.decoder.linguist.GrammarArc;
+
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 
 import java.util.List;
 import java.util.Map;
@@ -115,12 +116,12 @@ public class GrammarPoint {
       */
      private Unit getUnit() {
 	 Unit unit = null;
-	 GrammarWord[][] alternatives = node.getAlternatives();
+	 Word[][] alternatives = node.getAlternatives();
 	 if (alternativeIndex != -1 && alternativeIndex < alternatives.length) {
-	     GrammarWord[] words = alternatives[alternativeIndex];
+	     Word[] words = alternatives[alternativeIndex];
 	     if (wordIndex < words.length) {
 		 Pronunciation[] pronunciations =
-		     words[wordIndex].getPronunciations();
+		     words[wordIndex].getPronunciations(null);
 		 if (pronunciationIndex < pronunciations.length) {
 		     Unit[] units =
 			 pronunciations[pronunciationIndex].getUnits();
@@ -271,7 +272,7 @@ public class GrammarPoint {
 	     }
 	     Pronunciation[] pronunciations = node.
 		 getAlternatives()[alternativeIndex][wordIndex].
-		 getPronunciations();
+		 getPronunciations(null);
 
 	     unitsLength = pronunciations[pronunciationIndex].getUnits().length;
 
@@ -279,11 +280,12 @@ public class GrammarPoint {
 		 nextPoints.add(next);
 	     } else {
 		 next.unitIndex = 0;
-		 GrammarWord[] alternative =
+		 Word[] alternative =
 			 next.node.getAlternatives()[alternativeIndex];
 		 if (++next.wordIndex < alternative.length) {
-		     GrammarWord word = alternative[next.wordIndex];
-		     for (int i = 0; i < word.getPronunciations().length; i++) {
+		     Word word = alternative[next.wordIndex];
+		     for (int i = 0; i < word.getPronunciations(null).length; 
+                          i++) {
 			 GrammarPoint newGP = new GrammarPoint(next.node,
 				 next.alternativeIndex, next.wordIndex, i, 0);
 			 nextPoints.add(newGP);

@@ -27,7 +27,9 @@ import java.io.Serializable;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 import edu.cmu.sphinx.decoder.linguist.Color;
-import edu.cmu.sphinx.decoder.linguist.GrammarWord;
+
+import edu.cmu.sphinx.knowledge.dictionary.Word;
+
 
 /**
  * Represents a single state in an SentenceHMM
@@ -138,8 +140,8 @@ public class  SentenceHMMState implements Serializable, SearchState  {
      * @return the word associated with this state, or null if there
      * is no word associated with this state.
      */
-    public GrammarWord getAssociatedWord() {
-	GrammarWord word = null;
+    public Word getAssociatedWord() {
+	Word word = null;
 	SentenceHMMState state = this;
 
 	while ( state != null && !(state instanceof WordState)) {

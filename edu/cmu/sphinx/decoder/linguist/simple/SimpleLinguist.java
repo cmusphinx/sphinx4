@@ -28,9 +28,9 @@ import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 import edu.cmu.sphinx.decoder.linguist.GrammarNode;
 import edu.cmu.sphinx.decoder.linguist.GrammarArc;
-import edu.cmu.sphinx.decoder.linguist.GrammarWord;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
@@ -528,8 +528,8 @@ public class SimpleLinguist implements  Linguist {
                     }
                 } else {
                     int maxSize = getRightContextSize();
-                    GrammarWord word = node.getWord();
-                    Pronunciation[] prons = word.getPronunciations();
+                    Word word = node.getWord();
+                    Pronunciation[] prons = word.getPronunciations(null);
                     for (int i = 0; i < prons.length; i++) {
                         UnitContext startingContext =
                             getStartingContext(prons[i]);
@@ -571,8 +571,8 @@ public class SimpleLinguist implements  Linguist {
             Collection endingContexts = new HashSet();
             if (!node.isEmpty()) {
                 int maxSize = getLeftContextSize();
-                GrammarWord word = node.getWord();
-                Pronunciation[] prons = word.getPronunciations();
+                Word word = node.getWord();
+                Pronunciation[] prons = word.getPronunciations(null);
                 for (int i = 0; i < prons.length; i++) {
                     Unit[] units = prons[i].getUnits();
                     int actualSize = Math.min(units.length, maxSize);
@@ -888,10 +888,10 @@ public class SimpleLinguist implements  Linguist {
          * @param leftContext the left context
          */
         private void expandWord(UnitContext leftContext) {
-            GrammarWord word = node.getWord();
+            Word word = node.getWord();
             T("  Expanding word " + word + " for lc " +
                     leftContext);
-            Pronunciation[] pronunciations = word.getPronunciations();
+            Pronunciation[] pronunciations = word.getPronunciations(null);
             for (int i = 0; i < pronunciations.length; i++) {
                 expandPronunciation(leftContext, pronunciations[i], i);
             }
@@ -1354,7 +1354,8 @@ public class SimpleLinguist implements  Linguist {
                 GState gstate = getGState(arcs[i].getGrammarNode());
 
                 if (!gstate.getNode().isEmpty() &&
-                    gstate.getNode().getWord().isSentenceStart()) {
+                    gstate.getNode().getWord().getSpelling().equals
+                    (Dictionary.SENTENCE_START_SPELLING)) {
                     continue;
                 }
 
@@ -1368,7 +1369,8 @@ public class SimpleLinguist implements  Linguist {
                 if (spreadWordProbabilitiesAcrossPronunciations &&
                         !gstate.getNode().isEmpty()) {
                     int numPronunciations =
-                        gstate.getNode().getWord().getPronunciations().length;
+                        gstate.getNode().getWord()
+                        .getPronunciations(null).length;
                     probability -= logMath.linearToLog(numPronunciations);
                 }
 

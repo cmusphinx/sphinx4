@@ -15,6 +15,8 @@ package edu.cmu.sphinx.decoder.linguist;
 
 import edu.cmu.sphinx.decoder.linguist.GrammarArc;
 
+import edu.cmu.sphinx.knowledge.dictionary.Word;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,22 +34,22 @@ public class GrammarNode implements Serializable {
     private int identity;			// the node id
     private boolean isFinal;			// is this the final node?
 
-    private GrammarWord[][] alternatives;  	// ordered words at this node
+    private Word[][] alternatives;              // ordered words at this node
     private List arcList = new ArrayList();  	// arcs to successors
 
 
     /**
-     * Creates a GrammarNode with the given ID, words and GrammarWords.
+     * Creates a GrammarNode with the given ID, Words.
      * A GrammarNode with words is, by default, neither a silence 
      * nor a final node. 
      *
      * @param id the identity of this GrammarNode
-     * @param alternatives the set of GrammarWords in this GrammarNode. This
+     * @param alternatives the set of Words in this GrammarNode. This
      * is a two dimensional array, the first index corresponds to the
      * set of alternative choices, the second index corresponds to a
      * particular word for the alternative
      */
-    public GrammarNode(int id, GrammarWord[][] alternatives) {
+    public GrammarNode(int id, Word[][] alternatives) {
         this(id, false);
         this.alternatives = alternatives;
     }
@@ -64,7 +66,7 @@ public class GrammarNode implements Serializable {
     protected GrammarNode(int id, boolean isFinal) {
         this.identity = id;
         this.isFinal = isFinal;
-        this.alternatives = new GrammarWord[0][0];
+        this.alternatives = new Word[0][0];
     }
 
 
@@ -83,7 +85,7 @@ public class GrammarNode implements Serializable {
      *
      * @return the words associated with this grammar node
      */
-    public GrammarWord[][] getAlternatives() {
+    public Word[][] getAlternatives() {
         return alternatives;
     }
 
@@ -94,7 +96,7 @@ public class GrammarNode implements Serializable {
      *
      * @return the words associated with this grammar node
      */
-    public GrammarWord[] getWords(int alternative) {
+    public Word[] getWords(int alternative) {
         return alternatives[alternative];
     }
 
@@ -103,7 +105,7 @@ public class GrammarNode implements Serializable {
      *
      * @return the word associated with this grammar node
      */
-    public GrammarWord getWord() {
+    public Word getWord() {
         return alternatives[0][0];
     }
 
@@ -204,7 +206,7 @@ public class GrammarNode implements Serializable {
             dump += (" !");
         }
         
-        GrammarWord[][] alternatives = getAlternatives();
+        Word[][] alternatives = getAlternatives();
         for (int i = 0; i < alternatives.length; i++) {
 	    for (int j = 0; j < alternatives[i].length; j++) {
 		dump += (" " + alternatives[i][j].getSpelling());

@@ -13,7 +13,7 @@
 
 package edu.cmu.sphinx.decoder.linguist.simple;
 
-import edu.cmu.sphinx.decoder.linguist.GrammarWord;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 
 
 import java.io.Serializable;
@@ -38,7 +38,7 @@ public class AlternativeState extends SentenceHMMState
      *
      * @return the word
      */
-    public GrammarWord[] getAlternative() {
+    public Word[] getAlternative() {
 	return ((GrammarState) getParent())
 	    .getGrammarNode().getWords(getWhich());
     }

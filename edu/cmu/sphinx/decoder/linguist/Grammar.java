@@ -38,8 +38,7 @@ public abstract class  Grammar {
     private LogMath logMath;
     protected SphinxProperties props;
     private boolean dumpGrammar = false; 	// should be a property
-    private final static GrammarWord[][] EMPTY_ALTERNATIVE =
-	new GrammarWord[0][0];
+    private final static Word[][] EMPTY_ALTERNATIVE = new Word[0][0];
 
 
     /**
@@ -233,22 +232,21 @@ public abstract class  Grammar {
      */
     protected GrammarNode createGrammarNode(int identity, String[][] alts) {
 	GrammarNode node;
-        GrammarWord[][] alternatives = new GrammarWord[alts.length][];
+        Word[][] alternatives = new Word[alts.length][];
 
 	for (int i = 0; i < alternatives.length; i++) {
-	    alternatives[i] = new GrammarWord[alts[i].length];
+	    alternatives[i] = new Word[alts[i].length];
 	    for (int j = 0; j < alts[i].length; j++) {
 
                 Word word = getDictionary().getWord(alts[i][j]);
-		Pronunciation[] pronunciation = word.getPronunciations(null);
+		// Pronunciation[] pronunciation = word.getPronunciations(null);
 
-		if (pronunciation == null) {
+		if (word == null) {
 		    alternatives = EMPTY_ALTERNATIVE;
 		    break;
 		} else {
-		    alternatives[i][j] = new GrammarWord 
-                        (alts[i][j], pronunciation);
-		}
+		    alternatives[i][j] = word;
+                }
 	    }
 	}
             
@@ -266,14 +264,14 @@ public abstract class  Grammar {
      */
     protected GrammarNode createGrammarNode(int identity, String word) {
 	GrammarNode node = null;
-        GrammarWord[][] alternatives = EMPTY_ALTERNATIVE;
-	Pronunciation[] pronunciation =
-	    getDictionary().getWord(word).getPronunciations(null);
+        Word[][] alternatives = EMPTY_ALTERNATIVE;
+        Word wordObject = getDictionary().getWord(word);
+	// Pronunciation[] pronunciation = wordObject.getPronunciations(null);
 
-	if (pronunciation != null) {
-	    alternatives = new GrammarWord[1][];
-	    alternatives[0] = new GrammarWord[1];
-	    alternatives[0][0] = new GrammarWord (word, pronunciation);
+	if (wordObject != null) {
+	    alternatives = new Word[1][];
+	    alternatives[0] = new Word[1];
+	    alternatives[0][0] = wordObject;
             node = new GrammarNode(identity, alternatives);
             add(node);
 	} else {

@@ -82,9 +82,11 @@ public class LMGrammar extends Grammar {
             String word = (String) i.next();
             GrammarNode node = createGrammarNode(identity++, word);
             if (node != null && !node.isEmpty()) {
-                if (node.getWord().isSentenceStart()) {
+                if (node.getWord().equals
+                    (getDictionary().getSentenceStartWord())) {
                     firstNode = node;
-                } else if (node.getWord().isSentenceEnd()) {
+                } else if (node.getWord().equals
+                           (getDictionary().getSentenceEndWord())) {
                     node.setFinalNode(true);
                 }
                 nodes.add(node);
