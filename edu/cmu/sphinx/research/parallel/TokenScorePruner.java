@@ -36,8 +36,6 @@ import java.util.List;
 
 /**
  * Prunes an ActiveList of ParallelTokens based on their scores.
- * Pruning by this Pruner simply means performing a
- * <code>Token.setPruned(true)</code>.
  */
 public abstract class TokenScorePruner implements Pruner {
 

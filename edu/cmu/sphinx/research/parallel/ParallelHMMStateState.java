@@ -29,11 +29,7 @@ import java.util.List;
 
 
 /**
- * Represents an HMMStateState in a parallel SentenceHMM.
- * The only difference this class and the HMMStateState class is
- * in the getName() method, which tells you which of the
- * parallel branches this HMMStateState is in. See the getName()
- * method for details.
+ * Represents an HMMStateState in a feature stream.
  */
 public class ParallelHMMStateState extends HMMStateState 
 implements ParallelState {
@@ -74,10 +70,9 @@ implements ParallelState {
         
 
     /**
-     * Returns the FeatureStream of the acoustic model behind this 
-     * ParallelHMMStateState.
+     * Returns the FeatureStream of this ParallelHMMStateState.
      *
-     * @return the FeatureStream of the acoustic model
+     * @return the FeatureStream of this ParallelHMMStateState
      */
     public FeatureStream getFeatureStream() {
 	return stream;

@@ -31,11 +31,8 @@ import java.util.List;
 
 
 /**
- * Represents an HMMStateState in a parallel SentenceHMM.
- * The only difference this class and the HMMStateState class is
- * in the getName() method, which tells you which of the
- * parallel branches this HMMStateState is in. See the getName()
- * method for details.
+ * Represents an UnitState in one particular feature stream, 
+ * in a search graph with states for multiple feature streams.
  */
 public class ParallelUnitState extends UnitState implements ParallelState {
 

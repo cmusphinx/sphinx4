@@ -18,7 +18,7 @@ import edu.cmu.sphinx.linguist.flat.SentenceHMMState;
 
 
 /**
- * Represents a state where different states merge into.
+ * Represents a state where states from different feature streams merge.
  */
 public class CombineState extends SentenceHMMState {
 

@@ -28,8 +28,6 @@ import java.util.Comparator;
 
 /**
  * Prunes an ActiveList of ParallelTokens based on their CombinedScore.
- * Pruning by this Pruner simply means performing a
- * <code>Token.setPruned(true)</code>.
  */
 public class CombinedScorePruner extends TokenScorePruner {
 

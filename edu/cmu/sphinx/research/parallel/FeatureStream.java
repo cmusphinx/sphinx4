@@ -30,9 +30,20 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Implements a FeatureStream used in parallel decoding.
- * Each kind of FeatureStream is a singleton (i.e., there is only 
- * one instance).
+ * Implements a feature stream used in parallel decoding.
+ * A feature stream describes the type of features that are generated,
+ * so it is represented by the {@link #PROP_FRONT_END front end}
+ * that generates the features, and the {@link #PROP_ACOUSTIC_MODEL 
+ * acoustic model} that should be used to decode those features.
+ * <p>
+ * Since the parallel decoder uses information from multiple feature
+ * streams for decoding, the {@link #PROP_ETA eta value} of the 
+ * feature stream represents the relative weight that is applied 
+ * for the scores from each feature stream.
+ * <p>
+ * To allow stream-specific pruning, each feature stream maintains
+ * its own {@link edu.cmu.sphinx.decoder.search.ActiveList active list},
+ * which is where tokens of that particular stream should be stored.
  */
 public class FeatureStream implements Configurable {
 

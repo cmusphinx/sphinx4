@@ -60,20 +60,16 @@ import java.util.Set;
 import java.util.HashSet;
 
 /**
- * A simple form of the linguist.  It makes the following simplifying
- * assumptions:
- *
- *      1) Only one word per grammar node
- *      2) No fan-in allowed ever
- *      3) No composites (yet)
- *      4) Only Unit, HMMState, and pronunciation states (and the
- *        initial grammar state are in the graph (no word, alternative
- *        or grammar states attached).
- *      5) Only valid tranisitions (matching contexts) are allowed
- *      6) No tree organization of units
- *      7) Branching grammar states are allowed
- *
- * Note that all probabilties are maintained in the log math domain
+ * A extended form of the {@link edu.cmu.sphinx.linguist.flat.FlatLinguist
+ * FlatLinguist} that creates a search graph with states for multiple
+ * feature streams.
+ * <p>
+ * The only difference in the topology of the search graph created by
+ * this linguist and the FlatLinguist is that at a certain level
+ * (either the unit or the state level), the graph splits into two
+ * parallel branches of states, one for each feature stream.
+ * Moreover, at the end of that same level, the multiple streams are again
+ * merged.
  */
 public class ParallelSimpleLinguist extends FlatLinguist {
 

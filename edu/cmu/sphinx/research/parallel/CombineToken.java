@@ -24,19 +24,15 @@ import java.util.Map;
 
 
 /**
- * A Token for the outside parallel stream sentence HMM states.
+ * A token for the sentence HMM states that are not feature stream-specific.
  * The <code>getScore()</code> method returns the combined score.
+ * A combined token carries a parallel token for each feature stream,
+ * so that scores pertaining to each stream can be propagated.
  */
 public class CombineToken extends Token {
 
-    private Map tokens;     // the list of predecessor tokens
+    private Map tokens;     // the list of parallel tokens
     private boolean pruned;
-    private int identity;
-
-    private static int ID;
-    static {
-        ID = 0;
-    }
 
 
     /**
@@ -53,7 +49,6 @@ public class CombineToken extends Token {
 	super(predecessor, state, 0.0f, 0.0f, 0.0f, frameNumber);
 	this.tokens = new HashMap();
 	this.pruned = false;
-        this.identity = ID++;
     }
 
 
@@ -138,17 +133,6 @@ public class CombineToken extends Token {
      */
     public ParallelToken getParallelToken(FeatureStream stream) {
         return (ParallelToken) tokens.get(stream);
-    }
-
-
-    /**
-     * Returns the ID of this CombineToken. They should all be unique
-     * except when the wrap around of the integer primitive type happens.
-     *
-     * @return the ID of this CombineToken
-     */
-    public int getID() {
-        return identity;
     }
 
 

@@ -24,8 +24,16 @@ import java.util.Iterator;
 
 /**
  * Combines the various unit feature stream scores in a CombineToken.
- *
- * All scores are maintained internally in the LogMath logbase
+ * Each feature stream is represented as a 
+ * {@link ParallelToken ParallelToken} in a CombineToken. Suppose
+ * that the CombineToken has two ParallelTokens, P1 and P2, then the
+ * combined score is given by:
+ * <pre>
+ * P1.getFeatureScore() * P1.getEta() + P2.getFeatureScore() * P2.getEta()
+ * </pre>
+ * where the feature scores are in LogMath logbase, and the method
+ * <code>getEta()</code> returns the eta value of that particular
+ * feature stream.
  */
 public class FeatureScoreCombiner implements ScoreCombiner {
 

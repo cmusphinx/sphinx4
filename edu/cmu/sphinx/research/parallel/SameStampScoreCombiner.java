@@ -25,15 +25,14 @@ import java.util.Map;
 
 /**
  * Combines the various unit feature stream scores in a CombineToken.
- * This SameTimeScoreCombiner assumes that there can be more than one token
+ * This SameStampScoreCombiner assumes that there can be more than one token
  * from each feature stream. It will take the highest scoring token
- * from each stream <b>at each last combine time</b>, combine their
+ * from each stream <b>with the same identifying stamp</b>, combine their
  * scores, and choose the one with the highest combined score.
  *
- * For example, if tokens T1 and T2 from feature F1 had time stamps
- * (i.e., the last combine time) t1 and t2, and tokens Ta and Tb from
- * feature F2 had time stamps t1 and t2, we must compare
- * combinedScore(T1,Ta)  and combineScore(T2,Tb), and retain 
+ * For example, if tokens T1 and T2 from feature F1 had stamps
+ * s1 and s2, and tokens Ta and Tb from feature F2 had stamps s1 and s2,
+ * we must compare combinedScore(s1,Ta)  and combineScore(s2,Tb), and retain 
  * the one for which the combined score is higher.
  * 
  * All scores are maintained internally in the LogMath logbase

@@ -40,8 +40,9 @@ import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
 /**
- * Decodes a batch file containing a list of files to decode. The files can be
- * either audio files or cepstral files, but defaults to audio files.
+ * Uses multiple feature streams to decode a list of raw audio files.
+ * The {@link #PROP_DATA_SOURCES data sources} are a list of DataProcessor
+ * objects, one for each feature stream.
  */
 public class ParallelRecognizer implements Configurable {
 
@@ -100,7 +101,7 @@ public class ParallelRecognizer implements Configurable {
     /**
      * The sphinx property that specifies the input source
      */
-    public final static String PROP_INPUT_SOURCE = "inputSource";
+    public final static String PROP_DATA_SOURCES = "dataSources";
 
 
     // -------------------------------
@@ -130,7 +131,7 @@ public class ParallelRecognizer implements Configurable {
         registry.register(PROP_TOTAL_BATCHES, PropertyType.INT);
         registry.register(PROP_USE_POOLED_BATCH_MANAGER, PropertyType.BOOLEAN);
         registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
-        registry.register(PROP_INPUT_SOURCE, PropertyType.COMPONENT_LIST);
+        registry.register(PROP_DATA_SOURCES, PropertyType.COMPONENT_LIST);
     }
 
     /*
@@ -147,7 +148,7 @@ public class ParallelRecognizer implements Configurable {
 					      PROP_USE_POOLED_BATCH_MANAGER_DEFAULT);
         recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER,
 						  Recognizer.class);
-        dataSources = ps.getComponentList(PROP_INPUT_SOURCE,
+        dataSources = ps.getComponentList(PROP_DATA_SOURCES,
                                           DataProcessor.class);
     }
 
