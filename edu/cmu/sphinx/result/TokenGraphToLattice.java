@@ -126,7 +126,7 @@ public class TokenGraphToLattice {
      *                      parent of token
      */
     private void collapseWordPath(Node parentWordNode, Token token,
-                                  double acousticScore, double languageScore) {
+                                  float acousticScore, float languageScore) {
         if (token.isWord()) {
             /*
              * If this is a word, create a Node for it, and then create an
@@ -134,7 +134,7 @@ public class TokenGraphToLattice {
              */
             Node fromNode = getNode(token);
             edges.add(new Edge(fromNode, parentWordNode,
-                               acousticScore, languageScore));
+                               (double)acousticScore, (double)languageScore));
 
             if (token.getPredecessor() != null) {
                 /* Collapse the token sequence ending in this token. */
