@@ -32,6 +32,7 @@ import java.io.Serializable;
  */
 public class CompositeSenone implements Senone, Serializable {
     private final static int MAX_SENONES = 20000;
+    private final static boolean wantMaxScore = true;
     private Senone[] senones;
     private float weight;
 
@@ -87,9 +88,6 @@ public class CompositeSenone implements Senone, Serializable {
      *
      * @return the score for the feature in logmath log base
      */
-
-    private final static boolean wantMaxScore = true;
-
     public float getScore(Data feature) {
 	float logScore = -Float.MAX_VALUE;
 
