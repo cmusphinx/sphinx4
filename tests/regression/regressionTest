@@ -1,10 +1,12 @@
 testDir=./regressionTestDirectory
 
+originalDir=$PWD
+
 mkdir -p $testDir
 cd $testDir
 scvs checkout sphinx4
-cd $testDir/sphinx4/tests/regression
+cd sphinx4/tests/regression
 chmod +x executeRegressionTest 
 ./executeRegressionTest
-cd
+cd $originalDir
 rm -rf $testDir
