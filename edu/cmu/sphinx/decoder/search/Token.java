@@ -14,15 +14,10 @@
 package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.frontend.Feature;
-import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.acoustic.HMMState;
-import edu.cmu.sphinx.knowledge.acoustic.Context;
-import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.decoder.linguist.WordSearchState;
-import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
 import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
 import edu.cmu.sphinx.decoder.scorer.Scoreable;
 
