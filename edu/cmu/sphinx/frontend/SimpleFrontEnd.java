@@ -523,6 +523,7 @@ public class SimpleFrontEnd extends DataProcessor implements FrontEnd {
      * @return a description of this SimpleFrontEnd
      */
     public String toString() {
+	getSphinxProperties().list(System.out);
 	String description = ("FrontEnd: " + getName() + "\n");
 	description += ("------------------\n");
 	description += ("Context          = " + getContext() + "\n");
