@@ -16,6 +16,7 @@ package edu.cmu.sphinx.frontend;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
+import java.io.InputStream;
 import java.io.IOException;
 
 import java.util.HashMap;
@@ -49,8 +50,8 @@ import java.util.Map;
  * @see FeatureFrame
  * @see FeatureSource
  * @see LiveCMN
- * @see MelCepstrumProducer
- * @see MelFilterbank
+ * @see CepstrumProducer
+ * @see Filterbank
  * @see SpectrumAnalyzer
  * @see Windower
  */
@@ -80,7 +81,7 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
      * FrontEnd should use the properties from the AcousticModel.
      */
     public static final String PROP_USE_ACOUSTIC_MODEL_PROPS =
-    PROP_PREFIX + "useAcousticModelProperties";
+	PROP_PREFIX + "useAcousticModelProperties";
 
     
     /**
@@ -116,7 +117,7 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
      * The SphinxProperty name for the size of a cepstrum, which is
      * 13 by default.
      */
-    public static final String PROP_CEPSTRUM_SIZE =
+    public static final String PROP_CEPSTRUM_SIZE = 
 	PROP_PREFIX + "cepstrumSize";
 
 
@@ -162,7 +163,7 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
 
 
     private Map processors;
-    private AudioSource audioSource;
+    private DataSource dataSource;
     private FeatureSource featureSource;
     
 
@@ -171,13 +172,37 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
      *
      * @param name the name of this FrontEnd
      * @param context the context of this FrontEnd
+     * @param dataSource the place to pull data from
      */
-    public FrontEnd(String name, String context, AudioSource audioSource)
+    public FrontEnd(String name, String context, DataSource dataSource)
         throws IOException {
 
         super(name, context);
         processors = new HashMap();
         frontends.put(context, this);
+	setDataSource(dataSource);
+
+	// add other data types here if necessary
+
+	if (dataSource instanceof AudioSource) {
+	    initialize(context, (AudioSource) dataSource);
+	} else if (dataSource instanceof CepstrumSource) {
+	    initialize(context, (CepstrumSource) dataSource);
+	} else {
+	    throw new Error("Unsupported Data type: " + 
+			    dataSource.getClass().getName());
+	}
+    }
+
+
+    /**
+     * Initializes this FrontEnd with the given AudioSource.
+     *
+     * @param context the context
+     * @param audioSource the source of Audio objects
+     */
+    private void initialize(String context, AudioSource audioSource) throws
+	IOException {
 
         // initialize all the frontend processors
 
@@ -194,32 +219,41 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
 
         CepstrumSource cepstrumProducer = getCepstrumProducer(filterbank);
 
+        addProcessor(preemphasizer);
+        addProcessor(windower);
+        addProcessor(spectrumAnalyzer);
+        addProcessor((DataProcessor) filterbank);
+        addProcessor((DataProcessor) cepstrumProducer);
+
+	initialize(context, cepstrumProducer);
+    }
+
+
+    /**
+     * Initializes this FrontEnd with the given CepstrumSource.
+     *
+     * @param context the context
+     * @param cepstrumProducer the place where Cepstra comes from
+     */
+    private void initialize(String context, CepstrumSource cepstrumProducer) 
+	throws IOException {
+
 	CepstrumSource lastCepstrumSource = cepstrumProducer;
 	
 	CepstrumSource endpointer = getEndpointer(lastCepstrumSource);
-
 	if (endpointer != null) { // if we're using an endpointer
 	    addProcessor((DataProcessor) endpointer);
 	    lastCepstrumSource = endpointer;
 	}
 
         CepstrumSource cmn = getCMN(lastCepstrumSource);
-
 	if (cmn != null) { // if we're using a CMN
 	    addProcessor((DataProcessor) cmn);
 	    lastCepstrumSource = cmn;
 	}
 
         FeatureExtractor extractor = getFeatureExtractor(lastCepstrumSource);
-	
-        setAudioSource(audioSource);
         setFeatureSource(extractor);
-
-	addProcessor(preemphasizer);
-	addProcessor(windower);
-	addProcessor(spectrumAnalyzer);
-	addProcessor((DataProcessor) filterbank);
-	addProcessor((DataProcessor) cepstrumProducer);
 	addProcessor((DataProcessor) extractor);
     }
 
@@ -393,24 +427,24 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
 
 
     /**
-     * Returns the AudioSource of this FrontEnd. The AudioSource of
-     * the front end is where it gets its audio data.
+     * Returns the DataSource of this FrontEnd. The DataSource of
+     * the front end is where it gets its data data.
      *
-     * @return the AudioSource
+     * @return the DataSource
      */
-    private AudioSource getAudioSource() {
-        return audioSource;
+    private DataSource getDataSource() {
+        return dataSource;
     }
 
 
     /**
-     * Sets the AudioSource of this FrontEnd.  The AudioSource of
+     * Sets the DataSource of this FrontEnd.  The DataSource of
      * the front end is where it gets its audio data
      *
-     * @param audioSource the AudioSource
+     * @param audioSource the DataSource
      */
-    public void setAudioSource(AudioSource audioSource) {
-        this.audioSource = audioSource;
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
 
