@@ -148,7 +148,8 @@ public class SimpleAcousticScorer implements AcousticScorer {
 			 "  Data: " + data.getID());
 		}
                 */
-                if (scoreable.calculateScore(data, false) > 
+                //TODO: programmable gain
+                if (scoreable.calculateScore(data, false, 1.0f) > 
                     best.getScore()) {
                     best = scoreable;
                 }

@@ -227,15 +227,17 @@ public class Token implements Scoreable {
      * @param feature the feature to be scored
      * @param keepData whether this Scoreable should keep a reference
      *    to the given feature
+     * @param gain gain to apply to the score;
      *
      * @return the score for the feature
      */
-    public float calculateScore(Data feature, boolean keepData) {
-        assert searchState.isEmitting() 
-            : "Attempting to score non-scoreable token: " + searchState;
+    public float calculateScore(Data feature, boolean keepData, float gain) {
+
+        //assert searchState.isEmitting() 
+        //   : "Attempting to score non-scoreable token: " + searchState;
         HMMSearchState hmmSearchState = (HMMSearchState) searchState;
         HMMState hmmState = hmmSearchState.getHMMState();
-        logAcousticScore = hmmState.getScore(feature);
+        logAcousticScore = hmmState.getScore(feature) * gain;
         logTotalScore += logAcousticScore;
 
         if (keepData) {

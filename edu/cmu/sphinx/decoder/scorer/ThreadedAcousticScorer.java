@@ -99,6 +99,16 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * The default value for PROP_SCOREABLES_KEEP_FEATURE.
      */
     public final static boolean PROP_SCOREABLES_KEEP_FEATURE_DEFAULT = false;
+
+    /**
+     * A sphinx property that controls the amount of acoustic gain.
+     */
+    public final static String PROP_ACOUSTIC_GAIN = "acousticGain";
+
+    /**
+     * The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property.
+     */
+    public final static float PROP_ACOUSTIC_GAIN_DEFAULT = 1F;
     
     // ----------------------------
     // Configuration data
@@ -109,6 +119,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     private int minScoreablesPerThread; // min scoreables sent to a thread
     private boolean keepData;       // scoreables keep feature or not
     private Logger logger;
+    private float acousticGain;             // acoustic gain
 
     private Mailbox mailbox;        // sync between caller and threads
     private Semaphore semaphore;    // join after call
@@ -160,6 +171,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
         registry.register(PROP_NUM_THREADS, PropertyType.INT);
         registry.register(PROP_MIN_SCOREABLES_PER_THREAD, PropertyType.INT);
         registry.register(PROP_SCOREABLES_KEEP_FEATURE, PropertyType.BOOLEAN);
+        registry.register(PROP_ACOUSTIC_GAIN, PropertyType.FLOAT);
     }
 
     /*
@@ -178,6 +190,9 @@ public class ThreadedAcousticScorer implements AcousticScorer {
                 PROP_MIN_SCOREABLES_PER_THREAD_DEFAULT);
         keepData = ps.getBoolean(PROP_SCOREABLES_KEEP_FEATURE,
                 PROP_SCOREABLES_KEEP_FEATURE_DEFAULT);
+
+        acousticGain = ps.getFloat(PROP_ACOUSTIC_GAIN,
+                PROP_ACOUSTIC_GAIN_DEFAULT);
 
         if (cpuRelative) {
             numThreads += Runtime.getRuntime().availableProcessors();
@@ -314,7 +329,8 @@ public class ThreadedAcousticScorer implements AcousticScorer {
              * scoreable.getFrameNumber() + " Data: " + currentData.getID()); }
              */
 
-            if (scoreable.calculateScore(currentData, keepData) > best
+            if (scoreable.calculateScore(currentData, keepData,
+                        acousticGain) > best
                     .getScore()) {
                 best = scoreable;
             }

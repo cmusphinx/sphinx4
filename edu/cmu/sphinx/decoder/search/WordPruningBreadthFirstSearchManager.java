@@ -149,6 +149,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     public final static float PROP_ACOUSTIC_LOOKAHEAD_FRAMES_DEFAULT = 0F;
 
+
     /**
      * A sphinx property that controls whether or not we keep all tokens. If
      * this is set to false, only word tokens are retained, otherwise all
@@ -275,7 +276,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                 PROP_MAX_LATTICE_EDGES_DEFAULT);
         acousticLookaheadFrames = ps.getFloat(PROP_ACOUSTIC_LOOKAHEAD_FRAMES,
                 PROP_ACOUSTIC_LOOKAHEAD_FRAMES_DEFAULT);
-
         keepAllTokens = ps.getBoolean(PROP_KEEP_ALL_TOKENS,
                 PROP_KEEP_ALL_TOKENS_DEFAULT);
 
@@ -515,19 +515,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             float bestScore = -Float.MAX_VALUE;
             for (Iterator i = activeList.iterator(); i.hasNext();) {
                 Token t = (Token) i.next();
-        // TODO: this is disabled currently. The call to
-        // getLastEmittingToken was
-        // a hotspot representing 10 % of recognition time
-        // this extrapolation doesn't seem to help accuracy
-        // or speed so it is disabled
-                // Token p = getLastEmittingToken(t);
-                Token p = null;
-                float delta = 0;
-                if (p != null) {
-                    delta = t.getAcousticScore() - p.getAcousticScore();
-                }
-                float score = t.getScore() + (t.getAcousticScore() + delta)
-                        * acousticLookaheadFrames;
+                float score = t.getScore() + t.getAcousticScore() 
+                            * acousticLookaheadFrames;
                 if (score > bestScore) {
                     bestScore = score;
                 }
@@ -546,6 +535,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             growBranches();
         }
     }
+
 
     /**
      * Given a token find the most recent predecessor emitting token

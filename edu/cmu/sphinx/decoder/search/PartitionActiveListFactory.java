@@ -225,6 +225,17 @@ public class PartitionActiveListFactory implements ActiveListFactory {
             if (bestToken != null) {
                 bestScore = bestToken.getScore();
             }
+
+            // a sanity check
+            if (false) {
+                for (Iterator i = iterator(); i.hasNext(); ) {
+                    Token t = (Token) i.next();
+                    if (t.getScore() > bestScore) {
+                        System.out.println("GBS: found better score "
+                                + t + " vs. " + bestScore);
+                    }
+                }
+            }
             return bestScore;
         }
 

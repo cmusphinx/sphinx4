@@ -26,10 +26,11 @@ public interface  Scoreable {
      * @param data the data to be scored
      * @param keepData whether this Scoreable should keep a reference
      *    to the given data
+     * @param gain the gain to apply to the acoustic score
      *
      * @return the score for the data
      */
-    public float calculateScore(Data data, boolean keepData);
+    public float calculateScore(Data data, boolean keepData, float gain);
 
     
     /**
