@@ -26,6 +26,9 @@ Run ant with -Dbatch=test.batch to test the batch file test.batch.
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="${build_dir}/lib"/>
 
+    <property name="classpath"
+              value="${classes_dir}:/lab/speech/sphinx4/data/AURORA2_MFC_8gau_13dCep_8k_32mel_130Hz_3600Hz.jar:/lab/speech/sphinx4/data/AURORA2_PLP_8gau_13dCep_8k_32mel_130Hz_3600Hz.jar"/>
+
     <property name="skip"               value="0"/>
     <property name="logger_props"       value=""/>
 
@@ -46,7 +49,7 @@ Run ant with -Dbatch=test.batch to test the batch file test.batch.
     <!-- ********************************************************** -->
     <target name="parallel"
 	    description="AURORA 2 tests using MFC and PLP.">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
@@ -67,7 +70,7 @@ Run ant with -Dbatch=test.batch to test the batch file test.batch.
     <!-- ********************************************************** -->
     <target name="mfc"
 	    description="AURORA 2 tests using MFC.">
-        <java classpath="${classes_dir}"
+        <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
