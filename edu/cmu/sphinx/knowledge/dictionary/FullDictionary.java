@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -148,7 +149,7 @@ public class FullDictionary implements Dictionary {
             word = removeParensFromWord(word);
 	    word = word.toLowerCase();
 
-            List units = new ArrayList(3);
+            List units = new ArrayList(20);
             String unitText;
 
             while ((unitText = est.getString()) != null) {
@@ -215,22 +216,13 @@ public class FullDictionary implements Dictionary {
      *     open parentheses removed
      */
     private String removeParensFromWord(String word) {
-        String newWord = word;
-        int lastIndex = word.length() - 1;
-        if (lastIndex > 0) {
-            // if it ended with ')'
-            if (word.charAt(lastIndex) == ')') {
-                while (--lastIndex > 0 &&
-                       word.charAt(lastIndex) != '(') {
-                    // keep backtracking
-                }
-                if (word.charAt(lastIndex) == '(') {
-                    // this ends with (X..X)
-                    newWord = word.substring(0, lastIndex);
-                }
+        if (word.charAt(word.length() - 1) == ')') {
+            int index = word.lastIndexOf('(');
+            if (index > 0) {
+                word = word.substring(0, index);
             }
         }
-        return newWord;
+        return word;
     }
 
 
@@ -328,7 +320,6 @@ public class FullDictionary implements Dictionary {
     public WordClassification[] getPossibleWordClassifications() {
         return null;
     }
-
 
     /**
      * Returns a string representation of this FullDictionary
