@@ -21,6 +21,7 @@ import edu.cmu.sphinx.frontend.Feature;
 public class TrainerScore {
     private Feature feature;
     private float logOutputProbability;
+    private float logScalingFactor;
     private int senoneID;
     private HMMState hmmState;
     private Senone senone;
@@ -32,7 +33,7 @@ public class TrainerScore {
     static private float logLikelihood;
 
     /**
-     * Creates a new buffer
+     * Creates a new TrainerScore
      *
      * @param feature the current feature
      * @param probability the score for the current frame
@@ -42,6 +43,7 @@ public class TrainerScore {
 	this.feature = feature;
 	this.logOutputProbability = probability;
 	this.senoneID = senone;
+	logScalingFactor = 0.0f;
 	logAlpha = 0.0f;
 	logBeta = 0.0f;
 	logGamma = 0.0f;
@@ -71,6 +73,7 @@ public class TrainerScore {
 
 	this.feature = feature;
 	this.hmmState = state;
+	logScalingFactor = 0.0f;
 
 	// For dummy state, the state is a null pointer
 	if ((state != null) && (state.isEmitting())) {
@@ -93,13 +96,18 @@ public class TrainerScore {
 	// gamma = alpha * beta;
 	this.logGamma = logAlpha + logBeta;
 	// Compute the gammas for each component in the mixture
-	this.logComponentProb = logComponentProb;
+	// this.logComponentProb = logComponentProb;
 	if (logComponentProb != null) {
+	    this.logComponentProb = new float[logComponentProb.length];
 	    this.logComponentGamma = new float[logComponentProb.length];
 	    for (int i = 0; i < logComponentProb.length; i++) {
+		this.logComponentProb[i] = logComponentProb[i];
 		this.logComponentGamma[i] = 
 		    logComponentProb[i] + this.logGamma;
 	    }
+	} else {
+	    this.logComponentProb = null;
+	    this.logComponentGamma = null;
 	}
     }
 
@@ -214,6 +222,15 @@ public class TrainerScore {
     }
 
     /**
+     * Retrieves the scaling factor.
+     *
+     * @return the scaling factor
+     */
+    public float getScalingFactor() {
+	return logScalingFactor;
+    }
+
+    /**
      * Sets the overall likelihood.
      *
      * @param likelihood the log likelihood of the whole utterance
@@ -247,13 +264,25 @@ public class TrainerScore {
      * object, and the current alpha and beta are used.
      */
     public void setGamma() {
-	logGamma = logAlpha + this.logBeta;
+	logGamma = logAlpha + logBeta + logScalingFactor;
 	// Compute the gammas for each component in the mixture
 	if (logComponentGamma != null) {
 	    for (int i = 0; i < logComponentGamma.length; i++) {
-		logComponentGamma[i] += logComponentProb[i] + logGamma;
+		logComponentGamma[i] = logComponentProb[i] + logGamma;
+		if (logComponentGamma[i] < -Float.MAX_VALUE) {
+		    logComponentGamma[i] = -Float.MAX_VALUE;
+		}
 	    }
 	}
+    }
+
+    /**
+     * Sets the scaling factor for this frame..
+     *
+     * @param logScalingFactor the log scaling factor
+     */
+    public void setScalingFactor(float logScalingFactor) {
+	this.logScalingFactor = logScalingFactor;
     }
 
     /**
