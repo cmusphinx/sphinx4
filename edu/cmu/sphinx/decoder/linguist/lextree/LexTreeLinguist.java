@@ -988,6 +988,8 @@ public class LexTreeLinguist implements  Linguist {
                             nextCentral.getProbability() -
                             getCentral().getProbability();
 
+                        assert languageProbability == 0.0f;
+
                         for (int i = 0; i < nodes.length; i++) {
                             LexTree.LexNode nextRight = nodes[i];
 
@@ -1366,7 +1368,7 @@ public class LexTreeLinguist implements  Linguist {
                  languageModel.getMaxDepth());
             logProbability = languageModel.getProbability(wordSequence);
             // remove the probability encountered so far
-             logProbability -= curState.getProbability();
+            //  logProbability -= curState.getProbability();
 
             if (false) {
                 System.out.println(wordSequence + " " + logProbability);
