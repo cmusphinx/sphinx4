@@ -76,6 +76,12 @@ public interface FrontEnd {
     public static final String PROP_KEEP_AUDIO_REFERENCE = PROP_PREFIX +
 	"keepAudioReference";
 
+
+    /**
+     * The default value of PROP_KEEP_AUDIO_REFERENCE.
+     */
+    public static final boolean PROP_KEEP_AUDIO_REFERENCE_DEFAULT = true;
+
     
     /**
      * The SphinxProperty name that specifies the Filterbank class.

@@ -72,7 +72,8 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
      */
     private void initSphinxProperties() {
         keepAudioReference = getSphinxProperties().getBoolean
-            (FrontEnd.PROP_KEEP_AUDIO_REFERENCE, true);
+            (FrontEnd.PROP_KEEP_AUDIO_REFERENCE,
+             FrontEnd.PROP_KEEP_AUDIO_REFERENCE_DEFAULT);
 
         frameSizeInBytes = getSphinxProperties().getInt
 	    (AudioSource.PROP_BYTES_PER_AUDIO_FRAME,

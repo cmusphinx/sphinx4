@@ -129,10 +129,11 @@ public class Microphone extends DataProcessor implements AudioSource {
      */
     public void setProperties(SphinxProperties props) {
 
-        sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
+        sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE,
+                                  FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
 	closeAudioBetweenUtterances =
 	    props.getBoolean(PROP_CLOSE_AUDIO_BETWEEN_UTTERANCES,
-		    PROP_CLOSE_AUDIO_BETWEEN_UTTERANCES_DEFAULT);
+                             PROP_CLOSE_AUDIO_BETWEEN_UTTERANCES_DEFAULT);
 
         SphinxProperties properties = getSphinxProperties();
         frameSizeInBytes = properties.getInt
@@ -144,7 +145,8 @@ public class Microphone extends DataProcessor implements AudioSource {
         }
 
         keepAudioReference = properties.getBoolean
-            (FrontEnd.PROP_KEEP_AUDIO_REFERENCE, true);
+            (FrontEnd.PROP_KEEP_AUDIO_REFERENCE,
+             FrontEnd.PROP_KEEP_AUDIO_REFERENCE_DEFAULT);
     }
 
 
