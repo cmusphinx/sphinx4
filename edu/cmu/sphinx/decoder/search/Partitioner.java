@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Random;
 
 import edu.cmu.sphinx.decoder.scorer.Scoreable;
 
@@ -27,7 +26,6 @@ import edu.cmu.sphinx.decoder.scorer.Scoreable;
  */
 public class Partitioner {
 
-    private Random random = new Random(System.currentTimeMillis());
     private float bestTokenScore;
     private Token bestToken;
 
@@ -67,8 +65,8 @@ public class Partitioner {
 
 
     /**
-     * Partitions sub-array of tokens around the x-th token by randomly
-     * selecting the pivot.
+     * Partitions sub-array of tokens around the x-th token by
+     * selecting the midpoint of the token array as the pivot.
      *
      * @param token the token array to partition
      * @param p the starting index of the subarray
@@ -76,8 +74,8 @@ public class Partitioner {
      *
      * @return the index of the element around which the array is partitioned
      */
-    private int randomPartition(Token[] tokens, int p, int r) {
-        int i = random.nextInt(r - p) + p;
+    private int midPointPartition(Token[] tokens, int p, int r) {
+        int i = (p + r)/2;
         Token temp = tokens[r];
         tokens[r] = tokens[i];
         tokens[i] = temp;
@@ -99,7 +97,7 @@ public class Partitioner {
         bestToken = null;
         int r = tokens.length - 1;
         if (tokens.length > n) {
-            r = randomSelect(tokens, 0, tokens.length - 1, n);
+            r = midPointSelect(tokens, 0, tokens.length - 1, n);
         }
         if (bestToken == null) {
             float lowestScore = Float.MAX_VALUE;
@@ -154,18 +152,18 @@ public class Partitioner {
      * 
      * @return the index of the token with the ith largest score
      */
-    private int randomSelect(Token[] tokens, int p, int r, int i) {
+    private int midPointSelect(Token[] tokens, int p, int r, int i) {
         if (p == r) {
             return p;
         }
-        int q = randomPartition(tokens, p, r);
+        int q = midPointPartition(tokens, p, r);
         int k = q - p + 1;
         if (i == k) {
             return q;
         } else if (i < k) {
-            return randomSelect(tokens, p, q - 1, i);
+            return midPointSelect(tokens, p, q - 1, i);
         } else {
-            return randomSelect(tokens, q + 1, r, i - k);
+            return midPointSelect(tokens, q + 1, r, i - k);
         }
     }
 }

@@ -237,11 +237,11 @@ public class Token implements Scoreable {
         assert searchState.isEmitting() : "Attempting to score non-scoreable token: " + searchState;
         HMMSearchState hmmSearchState = (HMMSearchState) searchState;
         HMMState hmmState = hmmSearchState.getHMMState();
-        float logScore = hmmState.getScore(feature);
-        this.logTotalScore += logScore;
-        this.logAcousticScore = logScore;
-        // this.feature = feature;
-        return logScore;
+        float score = hmmState.getScore(feature);
+        this.logTotalScore += score;
+        this.logAcousticScore = score;
+        this.feature = feature;
+        return score;
     }
 
     /**
