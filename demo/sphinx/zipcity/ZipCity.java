@@ -420,7 +420,8 @@ public class ZipCity extends JFrame {
          * @param size the size of the point
          */
         void plot(int x, int y, int size) {
-             g.fillOval(x, y, size, size);
+             // g.fillOval(x, y, size, size);
+             g.fillRect(x, y, size, size);
         }
 
         /**
