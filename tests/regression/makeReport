@@ -31,6 +31,16 @@
 #  16) correctSentences 
 #  17) heapSize 
 #  18) loadAverage 
+#  19) actualUtterances
+#  20) foundUtterances
+#  21) gapInsertions
+#  22) averageResponseTime
+#  23) maxResponseTime
+#  24) minResponseTime
+#  25) correctOutOfGrammar
+#  26) falseOutOfGrammar
+#  27) correctInGrammar
+#  28) falseInGrammar
 
 gawk '
 
