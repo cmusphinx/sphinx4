@@ -52,6 +52,8 @@ public class HelloNGram {
             /* allocate the resource necessary for the recognizer */
             recognizer.allocate();
 
+            printInstructions();
+
             /* the microphone will keep recording until the program exits */
 	    if (microphone.startRecording()) {
 
@@ -88,5 +90,20 @@ public class HelloNGram {
             System.err.println("Problem creating HelloNGram: " + e);
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Prints out what to say for this demo.
+     */
+    private static void printInstructions() {
+        System.out.println
+            ("Sample sentences:\n" +
+             "\n" +
+             "the green one right in the middle\n" +
+             "the purple one on the lower right side\n" +
+             "the closest purple one on the far left side\n" +
+             "the only one left on the left\n" +
+             "\n" +
+             "Refer to the file hellongram.test for a complete list.\n");
     }
 }
