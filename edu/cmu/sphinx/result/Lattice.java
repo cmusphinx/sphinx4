@@ -904,7 +904,7 @@ public class Lattice {
                 if (edge.getToNode().getBestPredecessor() == null ||
                     vs > edge.getToNode().getViterbiScore()) {
                     edge.getToNode().setBestPredecessor(currentNode);
-                    edge.getToNode().setViterbiScore(forwardProb);
+                    edge.getToNode().setViterbiScore(vs);
                 }
             }
         }
