@@ -13,6 +13,8 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.frontend.util.Util;
+
 /**
  * Represents the power spectrum.
  */

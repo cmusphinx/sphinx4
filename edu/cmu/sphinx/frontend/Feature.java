@@ -13,6 +13,8 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.frontend.util.Util;
+
 /**
  * Represents a single Feature. A Feature is simply an array of numbers,
  * usually of length 39 and of type float.

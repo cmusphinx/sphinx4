@@ -12,6 +12,8 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.frontend.util.Util;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.IOException;
