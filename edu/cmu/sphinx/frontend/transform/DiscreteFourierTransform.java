@@ -29,11 +29,35 @@ import java.io.IOException;
  * Computes the Fourier Transform (FT) of an input sequence, using 
  * Fast Fourier Transform (FFT). Fourier Transform is the process
  * for analyzing an audio signal into its frequency components.
- * Therefore, the input is audio data, which is usually already multiplied
- * by a Hamming window function. The output is the power spectrum
- * of the original audio data.
- *
- * @see RaisedCosineWindower
+ * Therefore, the input is one <b>window</b> of audio data, 
+ * which is usually already multiplied by a Hamming window function.
+ * The output is the power spectrum of that window of data.
+ * Each value in the returned spectrum represents the strength
+ * of that particular frequency for that window of data.
+ * <p>
+ * The default length of the returned power spectrum is 256. The
+ * default number of FFT points is 512, which means that we compute
+ * 512 values around a circle in the complex plane. Complex conjugate
+ * pairs will yield the same power, therefore the power produced by
+ * indices 256 through 511 are symmetrical with the ones between 1 and 254.
+ * Therefore, we only return values between 0 and 255, which is why
+ * the spectrum has a length of 256.
+ * <p>
+ * Note that each call to {@link #getData() getData} only returns
+ * the spectrum of one window of data. To display the spectrogram
+ * of the entire original audio, one has to collect all the spectra
+ * from all the windows generated from the original data.
+ * For example, Figure 1 below shows the spectrogram of the
+ * utterance, "three", produced by putting together all the spectra 
+ * returned by this FFT. The vertical axis represents frequency,
+ * and the horizontal axis represents time. The darkness of the shade
+ * represents the strength of that frequency at that point in time:
+ * <p>
+ * <img src="doc-files/spectrogram.gif">
+ * <b>Figure 1: A spectrogram of the word "three".</b>
+ * <p>
+ * <img src="doc-files/three.gif">
+ * <b>Figure 2: The amplitude plot of the original signal "three".</b>
  */
 public class DiscreteFourierTransform extends BaseDataProcessor {
 
