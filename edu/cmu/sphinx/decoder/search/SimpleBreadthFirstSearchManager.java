@@ -338,7 +338,6 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
 	if (token.isFinal()) {
 	    resultList.add(token);
-            return; 
 	}
 
 	SearchState state = token.getSearchState();
