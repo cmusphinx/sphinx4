@@ -18,8 +18,58 @@ import java.util.*;
  * A sequence of Cepstra for an Utterance should look like:
  *
  * <pre>
- * <UTTERANCE_START> (non-speech Cepstra) <SPEECH_START> (speech Cepstra)
- * <SPEECH_END> (non-speech Cepstra) <UTTERANCE_END>
+ * UTTERANCE_START (non-speech Cepstra)
+ * SPEECH_START (speech Cepstra) SPEECH_END (non-speech Cepstra)
+ * UTTERANCE_END
+ * </pre>
+ * or
+ * <pre>
+ * UTTERANCE_START (non-speech Cepstra)
+ * SPEECH_START (speech Cepstra) SPEECH_END (non-speech Cepstra)
+ * SPEECH_START (speech Cepstra) SPEECH_END (non-speech Cepstra)
+ * ...
+ * UTTERANCE_END
+ * </pre>
+ * In the first case, where there is only one speech region, the
+ * first non-speech region will be removed, and the SPEECH_START
+ * Signal will be removed. The ending SPEECH_END and non-speech
+ * region will be removed as well.
+ *
+ * <p>The second case is a little more complicated. If the SphinxProperty
+ * <pre>
+ * edu.cmu.sphinx.frontend.NonSpeechFilter.mergeSpeechSegments </pre>
+ * is set to true (the default),
+ * all the Cepstra from the first SPEECH_START to the last SPEECH_END
+ * will be considered as one Utterance, and enclosed by a pair of
+ * UTTERANCE_START and UTTERANCE_END. The first and last non-speech
+ * regions, as well as all SPEECH_START and SPEECH_END,
+ * will obviously be removed. This gives:
+ * <pre>
+ * UTTERANCE_START
+ * (speech Cepstra) (non-speech Cepstra)
+ * (speech Cepstra) (non-speech Cepstra)
+ * ...
+ * UTTERANCE_END
+ * </pre>
+ *
+ * <p>On the other hand, if <code>mergeSpeechSegments</code> is set to
+ * false, then each:
+ * <pre>
+ * SPEECH_START (speech Cepstra) SPEECH_END (non-speech Cepstra)
+ * </pre>
+ * will become:
+ * <pre>
+ * UTTERANCE_START (speech Cepstra) UTTERANCE_END
+ * </pre>
+ * that is, the SPEECH_START replaced by UTTERANCE_START, 
+ * the SPEECH_END replaced by UTTERANCE_END, and the non-speech
+ * region removed. Also, the first UTTERANCE_START and last
+ * UTTERANCE_END in the original stream will be removed as well.
+ * This will give:
+ * <pre>
+ * UTTERANCE_START (speech Cepstra) UTTERANCE_END
+ * UTTERANCE_START (speech Cepstra) UTTERANCE_END
+ * ...
  * </pre>
  */
 public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
@@ -52,6 +102,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
     public NonSpeechFilter(String name, String context,
                            CepstrumSource predecessor) throws IOException {
         super(name, context);
+        initSphinxProperties();
         this.predecessor = predecessor;
         this.inputBuffer = new LinkedList();
     }
@@ -91,6 +142,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
         getTimer().start();
 
         if (cepstrum != null) {
+
             if (cepstrum.getSignal().equals(Signal.UTTERANCE_START)) {
                 Cepstrum utteranceStart = cepstrum;
 
@@ -101,25 +153,48 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
                 
             } else if (cepstrum.getSignal().equals(Signal.SPEECH_END)) {
 
-                // read (and discard) all the Cepstrum from SPEECH_END
-                // until we hit a UTTERANCE_END
-                List cepstrumList = readUntil(Signal.SPEECH_START,
-                                              Signal.UTTERANCE_END);
+                if (mergeSpeechSegments) {
+                    // read (and discard) all the Cepstrum from SPEECH_END
+                    // until we hit a UTTERANCE_END
+                    List cepstrumList = readUntil(Signal.SPEECH_START,
+                                                  Signal.UTTERANCE_END);
+                    
+                    Cepstrum lastCepstrum = (Cepstrum) cepstrumList.get
+                        (cepstrumList.size() - 1);
+                    
+                    if (lastCepstrum != null) {
+                        if (lastCepstrum.getSignal().equals
+                            (Signal.SPEECH_START)) {
+                            // first remove the SPEECH_START, then add
+                            // all the Cepstra to the inputBuffer
+                            cepstrumList.remove(lastCepstrum);
+                            inputBuffer.addAll(cepstrumList);
+                            cepstrum = readCepstrum();
+                            
+                        } else if (lastCepstrum.getSignal().equals
+                                   (Signal.UTTERANCE_END)) {
+                            cepstrum = lastCepstrum;
+                        }
+                    }
+                } else {
+                    // instead of a SPEECH_END, return an UTTERANCE_END
+                    cepstrum = new Cepstrum(Signal.UTTERANCE_END);
+                    
+                    // then read and discard everything up until
+                    // a SPEECH_START or UTTERANCE_END
+                    List cepstrumList = readUntil(Signal.SPEECH_START,
+                                                  Signal.UTTERANCE_END);
+                    Cepstrum lastCepstrum = (Cepstrum) cepstrumList.get
+                        (cepstrumList.size() - 1);
 
-                Cepstrum lastCepstrum = (Cepstrum) cepstrumList.get
-                    (cepstrumList.size() - 1);
-
-                if (lastCepstrum != null) {
-                    if (lastCepstrum.getSignal().equals(Signal.SPEECH_START)) {
-                        // first remove the SPEECH_START, then add
-                        // all the Cepstra to the inputBuffer
-                        cepstrumList.remove(lastCepstrum);
-                        inputBuffer.addAll(cepstrumList);
-                        cepstrum = readCepstrum();
-
-                    } else if (lastCepstrum.getSignal().equals
-                               (Signal.UTTERANCE_END)) {
-                        cepstrum = lastCepstrum;
+                    if (lastCepstrum != null) {
+                        // if it hit a SPEECH_START, put it back to the
+                        // inputBuffer, so that it will be handled by the
+                        // next call to getCepstrum()
+                        if (lastCepstrum.getSignal().equals
+                            (Signal.SPEECH_START)) {
+                            inputBuffer.add(lastCepstrum);
+                        }
                     }
                 }
             }
@@ -131,6 +206,12 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
     }
 
 
+    /**
+     * Returns the next Cepstrum, either from the inputBuffer or the
+     * predecessor.
+     *
+     * @return the next available Cepstrum
+     */
     private Cepstrum readCepstrum() throws IOException {
         if (inputBuffer.size() > 0) {
             return (Cepstrum) inputBuffer.remove(0);
@@ -157,6 +238,16 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
         return cepstrum;
     }
 
+
+    /**
+     * Read until we hit a Cepstrum of the two given Signal types.
+     *
+     * @param signal1 the first Signal type
+     * @param signal2 the second Signal type
+     *
+     * @return all the Cepstrum read, including the last Cepstrum with
+     *    the Signal
+     */
     private List readUntil(Signal signal1, Signal signal2) throws
     IOException {
         List cepstrumList = new LinkedList();
