@@ -293,6 +293,7 @@ function getRunStatus(testName, count) {
 
 
 function getGapInsertionRateStatus(testName, testCount) {
+    gapInsertion = "N/A";
     updateData(testName, testCount);
     gapInsertion = data[F_GAP_INSERTIONS];
     totalWords = data[F_WORDS];
@@ -306,20 +307,19 @@ function getGapInsertionRateStatus(testName, testCount) {
 
 
 function getUtteranceRatioStatus(testName, testCount) {
+    ratio = "N/A";
     updateData(testName, testCount);
     actualUtterances = data[F_ACTUAL_UTTERANCES];
     foundUtterances = data[F_FOUND_UTTERANCES];
     if (actualUtterances > 0) {
         ratio = foundUtterances / actualUtterances;
     }
-    if (ratio == "") {
-	ratio = "N/A";
-    }
     return "<td>" ratio "</td>";
 }
 
 
 function getAvgResponseTimeStatus(testName, testCount) {
+    avgResponseTime = "N/A";
     updateData(testName, testCount);
     avgResponseTime = data[F_AVG_RESPONSE_TIME];
     if (avgResponseTime == "") {
