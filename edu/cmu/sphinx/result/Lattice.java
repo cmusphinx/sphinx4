@@ -1,14 +1,14 @@
 /*
-* Copyright 1999-2002 Carnegie Mellon University.
-* Portions Copyright 2002 Sun Microsystems, Inc.
-* Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
-* All Rights Reserved.  Use is subject to license terms.
-*
-* See the file "license.terms" for information on usage and
-* redistribution of this file, and for a DISCLAIMER OF ALL
-* WARRANTIES.
-*
-*/
+ * Copyright 1999-2002 Carnegie Mellon University.
+ * Portions Copyright 2002 Sun Microsystems, Inc.
+ * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ *
+ */
 package edu.cmu.sphinx.result;
 
 import java.io.FileReader;
@@ -49,8 +49,8 @@ import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 public class Lattice {
 
     protected Node initialNode;
-    protected double logBase;
     protected Node terminalNode;
+    protected double logBase;
     protected Set edges;
     protected Map nodes;
     AlternateHypothesisManager loserManager;
@@ -74,11 +74,12 @@ public class Lattice {
      * The Lattice is then optimized to all collapse equivalent paths.
      *
      * @param result the result to convert into a lattice
-     * @param logBase the logbase for the probabilities
      */
-    public Lattice(Result result, double logBase) {
-        initialNode = addNode("0",Dictionary.SENTENCE_START_SPELLING, 0, 0);
-        terminalNode = addNode("-1",Dictionary.SENTENCE_END_SPELLING, 0, 0);
+    public Lattice(Result result) {
+        this.logBase = result.getLogMath().getLogBase();
+
+        initialNode = addNode("0",Dictionary.SENTENCE_START_SPELLING, -1, 0);
+        terminalNode = addNode("-1",Dictionary.SENTENCE_END_SPELLING, -1, -1);
 
         loserManager = result.getAlternateHypothesisManager();
 
@@ -88,6 +89,17 @@ public class Lattice {
 
         for (Iterator it = result.getResultTokens().iterator(); it.hasNext();) {
             Token token = (Token) (it.next());
+
+            // skip the last </s> word
+            /*
+            while (!token.isWord()) {
+                token = token.getPredecessor();
+            }
+            System.out.println
+                ("First word is " + token.getWord().getSpelling());
+            
+            token = token.getPredecessor();
+            */
             processToken(terminalNode, token);
         }
 
@@ -97,13 +109,16 @@ public class Lattice {
         if (result.getAlternateHypothesisManager() == null) {
             throw new Error("ahm is null");
         }
-
-        this.logBase = logBase;
     }
 
+    /**
+     * Process the given path token, which contains the acoustic and
+     * language scores between the token refered to by 'thisNode' and the
+     * predecessor of the given path token.
+     *
+     */
     protected void processToken(Node thisNode, Token token) {
 
-        assert hasNode(thisNode.getId());
         //assert token.isWord();
         assert thisNode != null;
         assert token != null;
@@ -111,12 +126,17 @@ public class Lattice {
         double thisAcousticScore = token.getAcousticScore();
         double thisLMScore = token.getLanguageScore();
 
+        token = token.getPredecessor();
+        assert hasNode(thisNode.getId());
+        assert token.isWord();
+
         // test to see if token is processed via a previous node path
         if (hasNode(token)) {
-            assert getNode(token).getId().equals( Integer.toString(token.hashCode()) );
+            assert getNode(token).getId().equals
+                (Integer.toString(token.hashCode()));
             addEdge(getNode(token), thisNode, thisAcousticScore, thisLMScore);
         } else {
-            Node newNode = addNode(token);
+            Node newNode = addNode(token, -1, token.getFrameNumber());
             addEdge(newNode, thisNode, thisAcousticScore, thisLMScore);
 
             if (loserManager != null) {
@@ -131,9 +151,8 @@ public class Lattice {
             Token predecessor = token.getPredecessor();
             if (predecessor != null) {
                 processToken(newNode, predecessor);
-            }
-            else {
-                addEdge( initialNode,newNode,thisAcousticScore, thisLMScore );
+            } else {
+                addEdge(initialNode, newNode, thisAcousticScore, thisLMScore);
             }
         }
     }
@@ -235,7 +254,7 @@ public class Lattice {
      * @param token
      * @return the new Node
      */
-    protected Node addNode(Token token) {
+    protected Node addNode(Token token, int beginTime, int endTime) {
         String word;
         if (token.getSearchState() instanceof WordSearchState) {
             word = ((WordSearchState) (token.getSearchState()))
@@ -243,7 +262,8 @@ public class Lattice {
         } else {
             word = token.getSearchState().toString();
         }
-        return addNode(Integer.toString(token.hashCode()), word, 0, 0);
+        return addNode(Integer.toString(token.hashCode()),
+                       word, beginTime, endTime);
     }
 
     /**
