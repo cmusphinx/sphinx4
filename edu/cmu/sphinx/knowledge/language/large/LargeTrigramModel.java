@@ -81,6 +81,8 @@ public class LargeTrigramModel implements LanguageModel {
 
     private Map unigramIDMap;
     private Map loadedBigramBuffer;
+    private Map loadedTrigramBuffer;
+    private Map trigramCache;
 
     private UnigramProbability[] unigrams;
     private String[] words;
@@ -141,6 +143,8 @@ public class LargeTrigramModel implements LanguageModel {
         
         unigramIDMap = new HashMap();
         loadedBigramBuffer = new HashMap();
+	loadedTrigramBuffer = new HashMap();
+	trigramCache = new HashMap();
         logMath = LogMath.getLogMath(context);
         loadBinary(location);
     }
@@ -174,11 +178,9 @@ public class LargeTrigramModel implements LanguageModel {
             return getUnigramProbability(wordSequence);
         } else if (wordSequence.size() == 2) {
             return getBigramProbability(wordSequence);
-            /*
-              } else if (wordSequence.size() == 3) {
-              return getTrigramProbability(wordSequence);
-              */
-        } else {
+	} else if (wordSequence.size() == 3) {
+	    return getTrigramProbability(wordSequence);
+	} else {
             throw new Error("Unsupported N-gram: " + wordSequence.size());
         }
     }
@@ -311,63 +313,92 @@ public class LargeTrigramModel implements LanguageModel {
 
         int firstWordID = getWordID(wordSequence.getWord(0));
         int secondWordID = getWordID(wordSequence.getWord(1));
-        int thirdWordID = getWordID(wordSequence.getWord(2));
-
-        TrigramProbability probability = null;
-        if ((probability = queryTrigramCache(wordSequence)) != null) {
-            return trigramProbTable[probability.getProbabilityID()];
+        
+        TrigramProbability trigram = 
+	    (TrigramProbability) trigramCache.get(wordSequence);
+        if (trigram != null) {
+            return trigramProbTable[trigram.getProbabilityID()];
         }
+	
+       	float score = 0.0f;
+	trigram = loadTrigram(wordSequence);
 
-        probability = loadTrigram(firstWordID, secondWordID, thirdWordID);
+	if (trigram != null) {
+	    trigramCache.put(wordSequence, trigram);
+	    score = trigramProbTable[trigram.getProbabilityID()];
+	} else {
+	    BigramProbability bigram = findBigram(firstWordID, secondWordID);
+	    if (bigram != null) {
+		score = trigramBackoffTable[bigram.getBackoffID()] +
+		    getBigramProbability(wordSequence.getNewest());
+	    } else {
+		score = getBigramProbability(wordSequence.getNewest());
+	    }
+	}
 
-        return 0.0f;
+	return score;
+    }
+
+
+    private TrigramProbability loadTrigram(WordSequence wordSequence) {
+	WordSequence oldest = wordSequence.getOldest();
+	TrigramBuffer trigramBuffer = 
+	    (TrigramBuffer)loadedTrigramBuffer.get(oldest);
+
+	int thirdWordID = getWordID(wordSequence.getWord(2));
+
+	if (trigramBuffer == null) {
+	    int firstWordID = getWordID(wordSequence.getWord(0));
+	    int secondWordID = getWordID(wordSequence.getWord(1));
+	    trigramBuffer = loadTrigramBuffer(firstWordID, secondWordID);
+	    loadedTrigramBuffer.put(oldest, trigramBuffer);
+	}
+	return trigramBuffer.findTrigram(thirdWordID);
     }
 
 
     /**
-     * Loads the given trigram.
+     * Loads into a buffer all the trigram followers of the given bigram.
      *
      * @param firstWordID the ID of the first word
      * @param secondWordID the ID of the second word
-     * @param thirdWordID the ID of the third word
+     *
+     * @return a TrigramBuffer of all the trigram followers of the
+     *    given two words
      */
-    private TrigramProbability loadTrigram(int firstWordID, int secondWordID, 
-					   int thirdWordID) {
-	TrigramProbability trigram = null;
-        BigramProbability bigram = findBigram(firstWordID, secondWordID);
+    private TrigramBuffer loadTrigramBuffer(int firstWordID, 
+					    int secondWordID) {
+	TrigramBuffer trigramBuffer = null;
 
-        if (bigram != null) {
-            int b = unigrams[firstWordID].getFirstBigramEntry();
+	BigramProbability bigram = findBigram(firstWordID, secondWordID);
 
-	    // calculate b as the absolute index of bigram w1,w2 on disk
-	    b += bigram.getWhichFollower();
+	int b = unigrams[firstWordID].getFirstBigramEntry();
 	    
-	    int firstTrigramEntry = 
-		trigramSegmentTable[b >> logBigramSegmentSize] + 
-		bigram.getFirstTrigramEntry();
-
-            long position = (long) (trigramOffset + 
-                                    (firstTrigramEntry * BYTES_PER_TRIGRAM));
-            int size = bigram.getNumberTrigramEntries() * BYTES_PER_TRIGRAM;
-
-	    TrigramBuffer trigramBuffer = null;
-            
-            try {
-                assert ((position + size) <= fileChannel.size());
-                ByteBuffer buffer = loadBuffer(position, size);
-                if (!bigEndian) {
-                    buffer.order(ByteOrder.LITTLE_ENDIAN);
-                }
-		trigramBuffer = new TrigramBuffer
-		    (buffer, bigram.getNumberTrigramEntries());
-		trigram = trigramBuffer.findTrigram(thirdWordID);
-	    } catch (IOException ioe) {
-                ioe.printStackTrace();
-                throw new Error("Error loading trigram followers");
-            }
-            // loadedBigramBuffer.put(new Integer(firstWordID), followers);
-        }
-	return trigram;
+	// calculate b as the absolute index of bigram w1,w2 on disk
+	b += bigram.getWhichFollower();
+	
+	int firstTrigramEntry = 
+	    trigramSegmentTable[b >> logBigramSegmentSize] + 
+	    bigram.getFirstTrigramEntry();
+	
+	long position = (long) (trigramOffset + 
+				(firstTrigramEntry * BYTES_PER_TRIGRAM));
+	int size = bigram.getNumberTrigramEntries() * BYTES_PER_TRIGRAM;
+	    
+	try {
+	    // System.out.println("Loading TrigramBuffer from disk");
+	    assert ((position + size) <= fileChannel.size());
+	    ByteBuffer buffer = loadBuffer(position, size);
+	    if (!bigEndian) {
+		buffer.order(ByteOrder.LITTLE_ENDIAN);
+	    }
+	    trigramBuffer = new TrigramBuffer
+		(buffer, bigram.getNumberTrigramEntries());
+	} catch (IOException ioe) {
+	    ioe.printStackTrace();
+	    throw new Error("Error loading trigram followers");
+	}
+	return trigramBuffer;
     }
 
 
@@ -439,12 +470,10 @@ public class LargeTrigramModel implements LanguageModel {
      * @return the bigram followers of the given word
      */
     private BigramBuffer loadBigramBuffer(int firstWordID, 
-                                                int numberFollowers) {
+					  int numberFollowers) {
         BigramBuffer followers = null;
 
         if ((followers = queryBigramCache(firstWordID)) == null) {
-
-            System.out.println("Loading BigramBuffer from disk");
 
             int firstBigramEntry = unigrams[firstWordID].getFirstBigramEntry();
             
@@ -453,6 +482,7 @@ public class LargeTrigramModel implements LanguageModel {
             int size = (numberFollowers + 1) * BYTES_PER_BIGRAM;
             
             try {
+		// System.out.println("Loading BigramBuffer from disk");
                 assert ((position + size) <= fileChannel.size());
                 ByteBuffer buffer = loadBuffer(position, size);
                 if (!bigEndian) {
@@ -507,12 +537,6 @@ public class LargeTrigramModel implements LanguageModel {
     }
 
 
-    // placeholder, not implemented yet
-    private TrigramProbability queryTrigramCache(WordSequence wordSequence) {
-	return null;
-    }
-
-    
     /**
      * Loads the language model from the given location. 
      *
