@@ -166,8 +166,6 @@ public class BatchCMN extends DataProcessor implements CepstrumSource {
      */
     private void normalizeList() {
 
-        int numberCepstrum = cepstraList.size();
-
         // calculate the mean first
         for (int i = 0; i < sums.length; i++) {
             sums[i] /= numberDataCepstra;
