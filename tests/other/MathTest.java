@@ -80,11 +80,11 @@ public class MathTest {
 	}
 
 
-	floatTimer = Timer.getTimer("MathTest", "mixed float");
-	intTimer = Timer.getTimer("MathTest", "mixed double, float, int");
-	doubleTimer = Timer.getTimer("MathTest", "pure double");
-	pureIntTimer = Timer.getTimer("MathTest", "pure int");
-	pureFloatTimer = Timer.getTimer("MathTest", "pure float");
+	floatTimer = Timer.getTimer("mixed float");
+	intTimer = Timer.getTimer( "mixed double, float, int");
+	doubleTimer = Timer.getTimer( "pure double");
+	pureIntTimer = Timer.getTimer( "pure int");
+	pureFloatTimer = Timer.getTimer("pure float");
     }
 
     /**

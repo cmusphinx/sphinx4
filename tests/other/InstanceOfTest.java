@@ -32,10 +32,10 @@ public class InstanceOfTest {
 
     public InstanceOfTest(int iterations) {
 	maxIterations = iterations;
-	instanceOfTimer = Timer.getTimer("InstanceOfTest", "instanceOfTimer");
-	booleanTimer = Timer.getTimer("InstanceOfTest", "booleanTimer");
-	castTimer = Timer.getTimer("InstanceOfTest", "castTimer");
-	noCastTimer = Timer.getTimer("InstanceOfTest", "noCastTimer");
+	instanceOfTimer = Timer.getTimer("instanceOfTimer");
+	booleanTimer = Timer.getTimer("booleanTimer");
+	castTimer = Timer.getTimer("castTimer");
+	noCastTimer = Timer.getTimer("noCastTimer");
     }
 
     /**
