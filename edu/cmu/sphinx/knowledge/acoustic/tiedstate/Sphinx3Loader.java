@@ -72,6 +72,9 @@ public class Sphinx3Loader implements Loader {
 
     protected final static int BYTE_ORDER_MAGIC = 0x11223344;
 
+    /**
+     * Supports this version of the acoustic model
+     */
     public final static String MODEL_VERSION = "0.3";
 
     protected final static int CONTEXT_SIZE = 1;
