@@ -204,7 +204,7 @@ public class Node {
      *
      * @param e
      */
-    protected void addFromEdge(Edge e) {
+    protected void addEnteringEdge(Edge e) {
         enteringEdges.add(e);
     }
 
@@ -213,7 +213,7 @@ public class Node {
      *
      * @param e
      */
-    protected void addToEdge(Edge e) {
+    protected void addLeavingEdge(Edge e) {
         leavingEdges.add(e);
     }
 

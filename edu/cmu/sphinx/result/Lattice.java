@@ -291,8 +291,8 @@ public class Lattice {
     public Edge addEdge(Node fromNode, Node toNode,
                         double acousticScore, double lmScore) {
         Edge e = new Edge(fromNode, toNode, acousticScore, lmScore);
-        fromNode.addToEdge(e);
-        toNode.addFromEdge(e);
+        fromNode.addLeavingEdge(e);
+        toNode.addEnteringEdge(e);
         edges.add(e);
         return e;
     }
