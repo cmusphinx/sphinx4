@@ -311,6 +311,21 @@ public class Result {
 
 
     /**
+     * Returns the string of the best result, removing any silences.
+     *
+     * @return the string of the best result, removing any silences
+     */
+    public String getBestResultNoSilences() {
+        Token token = getBestToken();
+        if (token == null) {
+            return "";
+        } else {
+            return token.getWordPathNoSilences();
+        }
+    }
+
+
+    /**
      * Returns a string representation of this object
      */
     public String toString() {
