@@ -106,6 +106,7 @@ WARRANTIES.
 	</li>
 	<li><a href="#acoustic_models">Acoustic Model Package</a></li>
 	<li><a href="#language_models">Creating Language Models</a></li>
+	<li><a href="#bnf_grammars">BNF Style Grammars</a></li>
         <li><a href="#architecture_and_api1">Architecture and API</a></li>
       </ul>
 
@@ -649,7 +650,7 @@ d:\work\sphinx4&gt;ant clean
   to list a help text with the possible targets.
 
   <p>
-  <b>Isolated Digits</b>
+  <br><b>Isolated Digits</b>
 
   <p>
   Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary TIDIGITS models</a>.
@@ -676,7 +677,7 @@ d:\work\sphinx4&gt;ant clean
   </pre>
 
   <p>
-  <b>Connected Digits</b>
+  <br><b>Connected Digits</b>
 
   <p>
   Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary TIDIGITS models</a>.
@@ -703,7 +704,7 @@ d:\work\sphinx4&gt;ant clean
 </pre>
 
   <p>
-  <b>Small Vocabulary</b>
+  <br><b>Small Vocabulary</b>
 
   <p>
   The Wall Street Journal (WSJ) models are already included as part of
@@ -726,7 +727,7 @@ d:\work\sphinx4&gt;ant clean
 </pre>
   
   <p>
-  <b>Medium Vocabulary</b>
+  <br><b>Medium Vocabulary</b>
 
   <p>
   Make sure that you have downloaded the <a href="http://cmusphinx.sourceforge.net/downloads/acoustic-models.html">binary RM1 models</a>.
@@ -755,7 +756,7 @@ d:\work\sphinx4&gt;ant clean
 </pre>
 
   <p>
-  <b>Large Vocabulary</b>
+  <br><b>Large Vocabulary</b>
 
   <p>
   The HUB-4 models are currently unavailable, and therefore you currently
@@ -771,7 +772,7 @@ d:\work\sphinx4&gt;ant clean
 </pre>
 
   <p>
-  <b>Customizing the regression test to your environment</b>
+  <br><b>Customizing the regression test to your environment</b>
   <p>
   All the batch regression tests are driven by properties files (they end
   with ".props") and batch files, which list all the files to test (they end
@@ -791,7 +792,8 @@ d:\work\sphinx4&gt;ant clean
   </li>
 
 
-<p><a name="batch_files"><b>Batch Files</b></a>
+<p>
+<br><a name="batch_files"><b>Batch Files</b></a>
 
 <p>Batch files are used in batch mode regressions tests. It is a text
 file that contains the list of files to be processed, with the
@@ -969,6 +971,28 @@ cat $task.transcript | $bindir/text2idngram -n 3 -vocab $task.vocab | \
    $bindir/idngram2lm $mode -context $task.ccs -n 3 -vocab $task.vocab \
    -idngram - -arpa $task.trigram.arpa
 </pre>
+
+</li>
+
+
+<br>&nbsp;
+
+<li><a name="bnf_grammars"><b>BNF-Style Grammars</b></a>
+
+<p>
+Sphinx-4 uses the Java Speech API Grammar Format (JSGF) to perform 
+speech recognition using a BNF-style grammar. To use JSGF grammars,
+you need to set the following in the configuration file:
+
+<pre>
+edu.cmu.sphinx.decoder.Recognizer.grammar = edu.cmu.sphinx.jsapi.JSGFGrammar
+</pre>
+
+<p>
+For information on how to write JSGF grammars, and how to
+specify the location of your JSGF grammar file(s), refer to the 
+<a href="javadoc/edu/cmu/sphinx/jsapi/JSGFGrammar.html">Javadocs for
+JSGFGrammar</a>.
 
 </li>
 
