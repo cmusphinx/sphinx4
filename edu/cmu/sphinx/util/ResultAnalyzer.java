@@ -95,6 +95,58 @@ public class ResultAnalyzer {
     }
 
     /**
+     * Returns the accuracy
+     *
+     * @return the accuracy between 0.0 and 1.0
+     */
+    public float getWordAccuracy() {
+        if (numMatchingWords == 0 || numRefWords == 0) {
+            return 0;
+        } else {
+            return ((float) numMatchingWords) / ((float) numRefWords);
+        }
+    }
+
+    /**
+     * Returns the sentence accuracy
+     *
+     * @return the accuracy between 0.0 and 1.0
+     */
+    public float getSentenceAccuracy() {
+        if (numMatchingSentences == 0 || numSentences == 0) {
+            return 0;
+        } else {
+            return ((float) numMatchingSentences) / ((float) numSentences);
+        }
+    }
+
+    /**
+     * Returns the list of hypothesized words only (that is, without
+     * words like <SIL>) to a space separated string.
+     */
+    public String getHypothesis() {
+        if (hypOutput == null) {
+            return null;
+        } else {
+            return hypOutput.toString().trim();
+        }
+    }
+
+    /**
+     * Resets all the accuracy and error statistics.
+     */
+    public void reset() {
+        numSentences = 0;
+        numRefWords = 0;
+        numHypWords = 0;
+        numMatchingWords = 0;
+        numMatchingSentences = 0;
+        recognitionErrors = 0;
+        insertionErrors = 0;
+        deletionErrors = 0;        
+    }
+    
+    /**
      * convert the list of words back to a space separated string
      *
      * @param list the list of words
@@ -111,18 +163,6 @@ public class ResultAnalyzer {
 	}
 	return sb.toString();
     }
-
-    /**
-     * Returns the list of hypothesized words only (that is, without
-     * words like <SIL>) to a space separated string.
-     */
-    public String getHypothesis() {
-        if (hypOutput == null) {
-            return null;
-        } else {
-            return hypOutput.toString().trim();
-        }
-    }    
 
     /**
      * Add an insertion error corresponding to the first item
@@ -267,25 +307,6 @@ public class ResultAnalyzer {
 	}
 	return result.toString();
     }
-
-    /**
-     * Returns the accuracy
-     *
-     * @return the accuracy between 0.0 and 1.0
-     */
-    public float getWordAccuracy() {
-	return ((float) numMatchingWords) / ((float) numRefWords);
-    }
-
-    /**
-     * Returns the sentence accuracy
-     *
-     * @return the accuracy between 0.0 and 1.0
-     */
-    public float getSentenceAccuracy() {
-	return ((float) numMatchingSentences) / ((float) numSentences);
-    }
-
 
     /**
      * Converts the given string to a list
