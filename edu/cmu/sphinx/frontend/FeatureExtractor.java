@@ -173,7 +173,10 @@ public class FeatureExtractor extends PullingProcessor {
             }
         }
     }
-    
+
+
+    private Timer fcTimer = Timer.getTimer("", "featComp");
+
 
     /**
      * Converts the given input CepstrumFrame into a Features. The
@@ -253,16 +256,21 @@ public class FeatureExtractor extends PullingProcessor {
         int totalFeatures = cepstra.length + residualVectors;
         float[][] features = new float[totalFeatures][featureLength];
 
+        fcTimer.start();
+
 	for (int i = 0; i < totalFeatures; i++) {
             float[] feature = features[i];
-	    
+
             computeNextFeature(feature);
+
             outputQueue.add(feature);
             
             if (getDump()) {
                 Util.dumpFloatArray(feature, "FEATURE");
             }
 	}
+
+        fcTimer.stop();
 
         getTimer().stop();
     }

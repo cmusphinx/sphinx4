@@ -286,4 +286,36 @@ public class Util {
 	    dumpFloatArray(features[i].getData(), "FEATURE");
 	}
     }
+
+
+    /**
+     * Returns the number of samples per window given the sample rate
+     * (in Hertz) and window size (in milliseconds).
+     *
+     * @param sampleRate the sample rate in Hertz (i.e., frequency per
+     *     seconds)
+     * @param windowSizeInMs the window size in milliseconds
+     *
+     * @return the number of samples per window
+     */
+    public static int getSamplesPerWindow(float sampleRate, 
+                                          float windowSizeInMs) {
+        return (int) (sampleRate * windowSizeInMs / 1000);
+    }
+
+
+    /**
+     * Returns the number of samples in a window shift given the sample
+     * rate (in Hertz) and the window shift (in milliseconds).
+     *
+     * @param sampleRate the sample rate in Hertz (i.e., frequency per
+     *     seconds)
+     * @param windowShiftInMs the window shift in milliseconds
+     *
+     * @return the number of samples in a window shift
+     */
+    public static int getSamplesPerShift(float sampleRate,
+                                         float windowShiftInMs) {
+        return (int) (sampleRate * windowShiftInMs / 1000);
+    }
 }

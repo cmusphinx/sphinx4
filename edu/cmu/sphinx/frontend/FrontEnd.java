@@ -44,17 +44,25 @@ import javax.sound.sampled.AudioSystem;
  */
 public class FrontEnd implements DataSource, Runnable {
 
-    /**
-     * The name of the SphinxProperty for window size (in samples).
-     */
-    public static final String PROP_WINDOW_SIZE =
-	"edu.cmu.sphinx.frontend.windowSize";
 
     /**
-     * The name of the SphinxProperty for window shift.
+     * The name of the SphinxProperty for sample rate in Hertz (i.e.,
+     * number of times per second.
      */
-    public static final String PROP_WINDOW_SHIFT =
-	"edu.cmu.sphinx.frontend.windowShift";
+    public static final String PROP_SAMPLE_RATE =
+	"edu.cmu.sphinx.frontend.sampleRate";
+
+    /**
+     * The name of the SphinxProperty for window size in milliseconds.
+     */
+    public static final String PROP_WINDOW_SIZE_MS =
+	"edu.cmu.sphinx.frontend.windowSizeInMs";
+
+    /**
+     * The name of the SphinxProperty for window shift in milliseconds.
+     */
+    public static final String PROP_WINDOW_SHIFT_MS =
+	"edu.cmu.sphinx.frontend.windowShiftInMs";
 
     /**
      * The name of the SphinxProperty for the number of bytes per frame.
