@@ -127,10 +127,31 @@ public interface Dictionary {
      * The default value of PROP_ALLOW_MISSING_WORDS.
      */
     public static final boolean PROP_ALLOW_MISSING_WORDS_DEFAULT = false;
+
+
+    /**
+     * The SphinxProperty that specifies whether the Dictionary.getWord()
+     * method should return a Word object even if the word does not exist
+     * in the dictionary. If this property is true, and property
+     * allowMissingWords is also true, the method will return a Word, 
+     * but the Word will have null Pronunciations. Otherwise, the method
+     * will return null. This property is usually only used for
+     * testing purposes.
+     */
+    public static final String PROP_CREATE_MISSING_WORDS =
+        PROP_PREFIX + "createMissingWords";
+
+
+    /**
+     * The default value of PROP_CREATE_MISSING_WORD.
+     */
+    public static final boolean PROP_CREATE_MISSING_WORDS_DEFAULT = false;
     
 
     /**
      * Returns a Word object based on the spelling and its classification.
+     * The behavior of this method is also affected by the properties
+     * wordReplacement, allowMissingWords, and createMissingWords.
      *
      * @param text the spelling of the word of interest.
      *
