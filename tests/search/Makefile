@@ -52,6 +52,15 @@ ArpaGrammarTestSmall: all
 heapActiveListTest: all
 	$(JAVA_CMD) tests.search.HeapActiveListTest
 
+LMGramTest:
+	$(JAVA_CMD) -Xprof tests.search.LMGramTest LMGramTest.props
+
+LMGramTest_an4:
+	$(JAVA_CMD) -Xprof \
+	-Dedu.cmu.sphinx.model.language.location=an4_full.trigram.lm \
+	tests.search.LMGramTest  \
+	 LMGramTest.props
+
 
 #################################################################
 # loads a large model. 

@@ -49,6 +49,7 @@ public class FullDictionaryTest {
         SphinxProperties.initContext
             (context, new URL
              ("file://" + pwd + File.separatorChar + propertiesFile));
+
 	Timer fullTimer = Timer.getTimer("FullDictionaryTest", "fullTimer");
 	Timer fastTimer = Timer.getTimer("FullDictionaryTest", "fastTimer");
         
