@@ -120,7 +120,7 @@ public class ZipCity extends JFrame {
                 }
             });
 
-            setMessage("Ready ...");
+            setMessage("ZipCity Version 1.0");
             speakButton.setEnabled(true);
         } catch (IOException ioe) {
             setMessage("Error: " + ioe.getMessage());
