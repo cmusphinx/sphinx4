@@ -272,9 +272,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         Iterator iterator = activeList.iterator();
         while (iterator.hasNext()) {
             Token token = (Token) iterator.next();
-            if (activeList.isWorthGrowing(token)) {
-                collectSuccessorTokens(token);
-            }
+            collectSuccessorTokens(token);
         }
         growTimer.stop();
     }
@@ -306,15 +304,19 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      *
      */
     protected boolean scoreTokens() {
-        boolean moreTokens;
-        scoreTimer.start();
-        moreTokens = scorer.calculateScores(activeList.getTokens());
-        scoreTimer.stop();
+	boolean moreTokens;
+        Token bestToken = null;
+	scoreTimer.start();
+        bestToken = (Token) scorer.calculateScores(activeList.getTokens());
+	scoreTimer.stop();
 
-        curTokensScored.value += activeList.size();
-        totalTokensScored.value += activeList.size();
+        moreTokens =  (bestToken != null);
+        activeList.setBestToken(bestToken);
 
-        return moreTokens;
+	curTokensScored.value += activeList.size();
+	totalTokensScored.value += activeList.size();
+
+	return moreTokens;
 
     }
 

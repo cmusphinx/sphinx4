@@ -18,6 +18,7 @@ package edu.cmu.sphinx.decoder.search;
 import edu.cmu.sphinx.knowledge.acoustic.LeftRightContext;
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -42,6 +43,7 @@ import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.Collection;
 
 
 
@@ -130,6 +132,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     private Timer growTimer;
 
     private StatisticsVariable totalTokensScored;
+    private StatisticsVariable tokensPerSecond;
     private StatisticsVariable curTokensScored;
     private StatisticsVariable tokensCreated;
     private StatisticsVariable viterbiPruned;
@@ -139,12 +142,16 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     private boolean showTokenCount;
     private Map bestTokenMap;
     private List wordList;
+    private Map wordMap;
 
     private int absoluteWordBeamWidth;
     private float logRelativeWordBeamWidth;
 
     private int totalHmms;
+    private double startTime = 0;
 
+    private float threshold;
+    private float wordThreshold;
 
     /**
      * Initializes this BreadthFirstSearchManager with the given
@@ -170,6 +177,8 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
 	totalTokensScored = StatisticsVariable.getStatisticsVariable(
 		props.getContext(), "totalTokensScored");
+	tokensPerSecond = StatisticsVariable.getStatisticsVariable(
+		props.getContext(), "tokensScoredPerSecond");
 	curTokensScored = StatisticsVariable.getStatisticsVariable(
 		props.getContext(), "curTokensScored");
 	tokensCreated =
@@ -206,6 +215,10 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	pruner.start();
 	scorer.start();
 	localStart();
+
+        if (startTime == 0.0) {
+            startTime = System.currentTimeMillis();
+        }
     }
 
     /**
@@ -310,30 +323,22 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
         resultList = new LinkedList();
 
         activeList = activeList.createNew();
-        wordList = new ArrayList(oldActiveList.size() / 10);
+        threshold = oldActiveList.getBeamThreshold();
+        wordThreshold = oldActiveList.getBestScore() + logRelativeWordBeamWidth;
+
         while (oldListIterator.hasNext()) {
             Token token = (Token) oldListIterator.next();
-
-            if (oldActiveList.isWorthGrowing(token)) {
-                collectSuccessorTokens(token);
-            }
+            collectSuccessorTokens(token);
         }
 
-        pruneWords();
-        int words = wordList.size();
-        growWords();
         growTimer.stop();
-        int hmms  = activeList.size();
-
-        totalHmms += hmms;
 
         if (false) {
+            int hmms  = activeList.size();
+            totalHmms += hmms;
             System.out.println("Frame: " + currentFrameNumber 
-                     + " Hmms: " + hmms + " Words: " + words + " total " 
-                     + totalHmms );
+                     + " Hmms: " + hmms + "  total " + totalHmms );
         }
-        // dump out the active list
-
     }
 
 
@@ -347,16 +352,39 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      */
     protected boolean  scoreTokens() {
 	boolean moreTokens;
+        Token bestToken = null;
 	scoreTimer.start();
-        moreTokens = scorer.calculateScores(activeList.getTokens());
+        bestToken = (Token) scorer.calculateScores(activeList.getTokens());
 	scoreTimer.stop();
+
+        moreTokens =  (bestToken != null);
+        activeList.setBestToken(bestToken);
 
 	curTokensScored.value += activeList.size();
 	totalTokensScored.value += activeList.size();
+        tokensPerSecond.value = totalTokensScored.value / getTotalTime();
 
+        if (false) {
+        System.out.println(currentFrameNumber + " " 
+                + activeList.size() + " " 
+                + curTokensScored.value + " " + (int) tokensPerSecond.value );
+        }
 	return moreTokens;
 
     }
+
+
+
+
+    /**
+     * Returns the total time since we start4ed
+     *
+     * @return the total time (in seconds)
+     */
+    private double getTotalTime() {
+	return (System.currentTimeMillis() - startTime) / 1000.0;
+    }
+
 
     /**
      * Removes unpromising branches from the active list
@@ -365,9 +393,6 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
     protected void pruneBranches() {
          int startSize = activeList.size();
          pruneTimer.start();
-         if (false) {
-             System.out.print("Frame: " + currentFrameNumber + " ");
-         }
          activeList =  pruner.prune(activeList);
          beamPruned.value += startSize - activeList.size();
 	 pruneTimer.stop();
@@ -381,7 +406,11 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
      * @return the best token
      */
     protected Token getBestToken(SearchState state) {
-        return (Token) bestTokenMap.get(state);
+        Token best = (Token) bestTokenMap.get(state);
+        if (false && best != null) {
+            System.out.println("BT " + best + " for state " + state);
+        }
+        return best;
     }
 
     /**
@@ -414,6 +443,10 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	    resultList.add(token);
 	}
 
+        if (token.getScore() < threshold) {
+            return;
+        }
+
 	SearchState state = token.getSearchState();
 	SearchStateArc[] arcs = state.getSuccessors();
 
@@ -434,6 +467,15 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 	    // these come in log(), multiply gets converted to add
 	    float logEntryScore = token.getScore() +  arc.getProbability();
 
+            if (logEntryScore < threshold) {
+                continue;
+            }
+
+            if (nextState instanceof WordSearchState 
+                    && logEntryScore < wordThreshold) {
+                continue;
+            }
+
             Token bestToken = getBestToken(nextState);
 	    boolean firstToken = bestToken == null ;
 
@@ -450,9 +492,7 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
 
                 setBestToken(newToken, nextState);
 
-                if (newToken.isWord() && wordList != null) {
-                    wordList.add(newToken);
-                } else if (!newToken.isEmitting()) {
+                if (!newToken.isEmitting()) {
                     collectSuccessorTokens(newToken);
                 } else {
                     if (firstToken) {
@@ -468,47 +508,6 @@ public class SimpleBreadthFirstSearchManager implements  SearchManager {
         }
     }
 
-    /**
-     * Prune the words collected in the wordlist based upon the
-     * maxWordsPerFrame size
-     */
-    public void pruneWords() {
-	if (absoluteWordBeamWidth > 0 && wordList.size() > 0) {
-
-            Collections.sort(wordList, Token.COMPARATOR);
-
-	    Token bestToken = (Token) wordList.get(0);
-	    float highestScore = bestToken.getScore();
-	    float pruneScore = highestScore + logRelativeWordBeamWidth;
-            int count = 0;
-
-	    for (Iterator i = wordList.iterator();
-		    i.hasNext() && count < absoluteWordBeamWidth; count++) {
-		Token token = (Token) i.next();
-		if (token.getScore() <= pruneScore) {
-		    break;
-		}
-	    }
-            if (false) {
-                System.out.println("Words: "+ wordList.size() + " to " + count);
-            }
-            wordsPruned.value += (wordList.size() - count);
-	    wordList = wordList.subList(0, count);
-	}
-    }
-
-
-    /**
-     * Grow the remaining word tokens onto the active list
-     */
-    private void growWords() {
-        List oldWordList = wordList;
-        wordList = null;
-
-        for (Iterator i = oldWordList.iterator(); i.hasNext(); ) {
-            collectSuccessorTokens((Token) i.next());
-        }
-    }
 
 
 

@@ -44,6 +44,7 @@ public class PartitionActiveList implements ActiveList  {
     private int size = 0;
     private int absoluteBeamWidth;
     private float relativeBeamWidth;
+    private Token bestToken;
 
     // when the list is changed these things should be
     // changed/updated as well
@@ -104,7 +105,6 @@ public class PartitionActiveList implements ActiveList  {
 			      PROP_RELATIVE_BEAM_WIDTH_DEFAULT);
 	
 	this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
-
     }
 
     /**
@@ -141,18 +141,6 @@ public class PartitionActiveList implements ActiveList  {
 	return newList;
     }
 
-    /**
-     * Determines if a token with the given score
-     * is insertable into the list
-     *
-     * @param logScore the score (in the LogMath log dmain)  
-     * of score of the token to insert
-     * 
-     * @return <code>true</code>  if its insertable
-     */
-    public boolean isInsertable(float logScore) {
-	return true;
-    }
 
     /**
      * Adds the given token to the list
@@ -211,16 +199,7 @@ public class PartitionActiveList implements ActiveList  {
 	}
     }
 
-    /**
-     * Returns true if the token is scored high enough to grow.
-     *
-     * @param token the token to check
-     *
-     * @return <code>true</code> if the token is worth growing
-     */
-    public boolean isWorthGrowing(Token token) {
-	return true;
-    }
+
 
 
     /**
@@ -236,80 +215,58 @@ public class PartitionActiveList implements ActiveList  {
         // so we will only be relative beam pruning, which means
         // that we don't have to sort the list
 
-        if (absoluteBeamWidth <= 0) {
-            if (size > 0) {
-                float pruneScore = getBestScore() + relativeBeamWidth;
-                Token[] newList = new Token[size];
-                relativeBeamPruning(pruneScore, size, newList);
-            }
-        } else {
-
+        if (absoluteBeamWidth > 0) {
             // if we have an absolute beam, then we will 
             // need to sort the tokens to apply the beam
             
-            if (size > 0) {
-                if (size > absoluteBeamWidth) {
-                                 
-                    // "r" is the index of the last element in the partition
-                    int r = partitioner.partition
-                        (tokenList, size, absoluteBeamWidth);
-                    
-                    float highestScore = partitioner.getBestToken().getScore();
-                    float pruneScore = highestScore + relativeBeamWidth;
-
-                    Token[] newList = new Token[absoluteBeamWidth];
-
-                    relativeBeamPruning(pruneScore, r, newList);
-                } else {
-                    float pruneScore = getBestScore() + relativeBeamWidth;
-                    Token[] newList = new Token[absoluteBeamWidth];
-
-                    relativeBeamPruning(pruneScore, size, newList);
-                }
+            if (size > absoluteBeamWidth) {
+                size = partitioner.partition
+                    (tokenList, size, absoluteBeamWidth) + 1;
             }
         }
-
 	return this;
     }
 
 
     /**
-     * Perform relative pruning on the current token array.
+     * gets the beam threshold best upon the best scoring token
      *
-     * @param pruneScore the relative pruning score
-     * @param n the first N tokens to perform relative pruning on
-     * @param newList the new token array to put the surviving tokens
+     * @return the beam threshold
      */
-    private void relativeBeamPruning(float pruneScore, int n, 
-                                     Token[] newList) {
-        int survivingTokens = 0;
-        for (int i = 0; i < n; i++) {
-            Token token = tokenList[i];
-            if (token.getScore() > pruneScore) {
-                newList[survivingTokens++] = token;
-            }
-        }
-        size = survivingTokens;
-        tokenList = newList;
+    public float getBeamThreshold() {
+        return getBestScore() + relativeBeamWidth;
     }
 
-
     /**
-     * Returns the best score in the token list
+     * gets the best score in the list
      *
      * @return the best score
      */
-    private float getBestScore() {
+    public float getBestScore() {
         float bestScore = -Float.MAX_VALUE;
-        for (int i = 0; i < size; i++) {
-            Token token = tokenList[i];
-            if (token.getScore() > bestScore) {
-                bestScore = token.getScore();
-            }
+        if (bestToken != null) {
+            bestScore = bestToken.getScore();
         }
         return bestScore;
     }
 
+    /**
+     * Sets the best scoring token for this active list
+     *
+     * @param token the best scoring token
+     */
+    public void setBestToken(Token token) {
+        bestToken = token;
+    }
+
+    /**
+     * Gets the best scoring token for this active list
+     *
+     * @return the best scoring token
+     */
+    public Token getBestToken() {
+        return bestToken;
+    }
 
     /**
      * Retrieves the iterator for this tree. 
@@ -317,7 +274,7 @@ public class PartitionActiveList implements ActiveList  {
      * @return the iterator for this token list
      */
     public Iterator iterator() {
-	return (new TokenArrayIterator(tokenList));
+	return (new TokenArrayIterator(tokenList, size));
     }
 
     /**
@@ -343,11 +300,13 @@ public class PartitionActiveList implements ActiveList  {
 class TokenArrayIterator implements Iterator {
 
     private Token[] tokenArray;
+    private int size;
     private int pos;
 
-    TokenArrayIterator(Token[] tokenArray) {
+    TokenArrayIterator(Token[] tokenArray, int size) {
         this.tokenArray = tokenArray;
         this.pos = 0;
+        this.size = size;
     }
 
 
@@ -355,7 +314,7 @@ class TokenArrayIterator implements Iterator {
      * Returns true if the iteration has more tokens.
      */
     public boolean hasNext() {
-        return (pos < tokenArray.length && tokenArray[pos] != null);
+        return pos < size;
     }
 
     /**

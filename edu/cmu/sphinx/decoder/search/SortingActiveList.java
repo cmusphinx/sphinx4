@@ -41,6 +41,7 @@ public class SortingActiveList implements ActiveList  {
     private int absoluteBeamWidth;
     private float relativeBeamWidth;
     private boolean showSameScoreEdgeTokens = false;
+    private Token bestToken;
 
     // when the list is changed these things should be
     // changed/updated as well
@@ -130,18 +131,6 @@ public class SortingActiveList implements ActiveList  {
 	return newList;
     }
 
-    /**
-     * Determines if a token with the given score
-     * is insertable into the list
-     *
-     * @param logScore the score (in the LogMath log dmain)  
-     * of score of the token to insert
-     * 
-     * @return <code>true</code>  if its insertable
-     */
-    public boolean isInsertable(float logScore) {
-	return true;
-    }
 
     /**
      * Adds the given token to the list
@@ -182,141 +171,68 @@ public class SortingActiveList implements ActiveList  {
 	}
     }
 
-    /**
-     * Returns true if the token is scored high enough to grow.
-     *
-     * @param token the token to check
-     *
-     * @return <code>true</code> if the token is worth growing
-     */
-    public boolean isWorthGrowing(Token token) {
-	return true;
-    }
-
 
     /**
-     * Purges excess members. Remove all nodes that fall below the
-     * relativeBeamWidth
+     * Purges excess members. Reduce the size of the token list to the
+     * absoluteBeamWidth
      *
      * @return a (possible new) active list
      */
     public ActiveList purge() {
-
-        float highestScore = 0.0f;
-        float pruneScore = 0.0f;
-        int pruned = 0;
-
         // if the absolute beam is zero, this means there
         // should be no constraint on the abs beam size at all
         // so we will only be relative beam pruning, which means
         // that we don't have to sort the list
 
-        if (absoluteBeamWidth <= 0) {
-            if (tokenList.size() > 0) {
-                highestScore = getBestScore();
-                pruneScore = highestScore + relativeBeamWidth;
-                List newList = new ArrayList(tokenList.size());
-
-                for (Iterator i = tokenList.iterator(); i.hasNext();) {
-                    Token token = (Token) i.next();
-                    if (token.getScore() > pruneScore) {
-                        newList.add(token);
-                    } else {
-                        pruned++;
-                    }
-                }
-                tokenList = newList;
-            }
-        } else {
-
-            // if we have an absolute beam, then we will 
-            // need to sort the tokens to apply the beam
-            int count = 0;
+        if (absoluteBeamWidth > 0 && tokenList.size() > absoluteBeamWidth ) {
             Collections.sort(tokenList, Token.COMPARATOR);
-
-            if (tokenList.size() > 0) {
-                Token bestToken = (Token) tokenList.get(0);
-                highestScore = bestToken.getScore();
-                pruneScore = highestScore + relativeBeamWidth;
-                float lastScore = 0.0f;
-
-                Iterator i = tokenList.iterator();
-                for (; i.hasNext() && count < absoluteBeamWidth; count++) {
-                    Token token = (Token) i.next();
-                    lastScore = token.getScore();
-                    if (lastScore <= pruneScore) {
-                        break;
-                    }
-                }
-
-                if (showSameScoreEdgeTokens) {
-                    int sameScoreTokens = 0;
-                    // checks how many tokens have the 
-                    // same score as the last token
-                    if (count >= absoluteBeamWidth) {
-                        int lastCount = count;
-                        while (true) {
-                            Token token = (Token) i.next();
-                            if (lastScore == token.getScore()) {
-                                count++;
-                            } else {
-                                break;
-                            }
-                        }
-                        if (count > lastCount) {
-                            sameScoreTokens = (count - lastCount);
-                        }
-                    }
-                    System.out.println
-                        ("Frame " + bestToken.getFrameNumber() 
-                         + ": Same score token: " + sameScoreTokens);
-                }
-
-                pruned = tokenList.size() - count;
-                tokenList = tokenList.subList(0, count);
-            }
-        }
-
-        if (false) {
-            System.out.println("BestScore " + highestScore 
-                    + " PruneScore " + pruneScore  
-                    + " Count " + tokenList.size()
-                    + " Pruned " + pruned);
-        }
-
-        if (false) {
-            Collections.sort(tokenList, Token.COMPARATOR);
-            for (Iterator i = tokenList.iterator(); i.hasNext(); ) {
-                Token t = (Token) i.next();
-                System.out.println(t);
-            }
+            tokenList = tokenList.subList(0, absoluteBeamWidth);
         }
 	return this;
     }
 
 
+
+
     /**
-     * Returns the best score in the token list
+     * gets the beam threshold best upon the best scoring token
+     *
+     * @return the beam threshold
+     */
+    public float getBeamThreshold() {
+        return getBestScore() + relativeBeamWidth;
+    }
+
+    /**
+     * gets the best score in the list
      *
      * @return the best score
      */
-    // TODO: it would be nice if the active list could maintain the high
-    // score in the list
-
-
-    private float getBestScore() {
+    public float getBestScore() {
         float bestScore = -Float.MAX_VALUE;
-        int count = 0;
-        for (Iterator i = tokenList.iterator(); i.hasNext(); ) {
-            Token token = (Token) i.next();
-            if (token.getScore() > bestScore) {
-                bestScore = token.getScore();
-            }
-            count++;
+        if (bestToken != null) {
+            bestScore = bestToken.getScore();
         }
         return bestScore;
     }
 
+    /**
+     * Sets the best scoring token for this active list
+     *
+     * @param token the best scoring token
+     */
+    public void setBestToken(Token token) {
+        bestToken = token;
+    }
+
+    /**
+     * Gets the best scoring token for this active list
+     *
+     * @return the best scoring token
+     */
+    public Token getBestToken() {
+        return bestToken;
+    }
 
     /**
      * Retrieves the iterator for this tree. 

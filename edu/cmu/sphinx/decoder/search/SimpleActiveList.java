@@ -35,9 +35,10 @@ import java.util.List;
  */
 public class SimpleActiveList implements ActiveList  {
     private SphinxProperties props = null;
-    public int absoluteBeamWidth = 2000;
-    public float relativeBeamWidth;
+    private int absoluteBeamWidth = 2000;
+    private float relativeBeamWidth;
     private StatisticsVariable tokens;
+    private Token bestToken;
 
     // when the list is changed these things should be
     // changed/updated as well
@@ -129,18 +130,6 @@ public class SimpleActiveList implements ActiveList  {
 	return newList;
     }
 
-    /**
-     * Determines if a token with the given score
-     * is insertable into the list
-     *
-     * @param logScore the entry score of the token to insert. The
-     * score is in the log math domain
-     * 
-     * @return <code>true</code>  if its insertable
-     */
-    public boolean isInsertable(float logScore) {
-	return true;
-    }
 
     /**
      * Adds the given token to the list
@@ -176,17 +165,6 @@ public class SimpleActiveList implements ActiveList  {
                 }
             }
 	}
-    }
-
-    /**
-     * Returns true if the token is scored high enough to grow.
-     *
-     * @param token the token to check
-     *
-     * @return <code>true</code> if the token is worth growing
-     */
-    public boolean isWorthGrowing(Token token) {
-	return true;
     }
 
 
@@ -248,5 +226,47 @@ public class SimpleActiveList implements ActiveList  {
     public final int size() {
 	return tokenList.size();
     }
+
+    /**
+     * gets the beam threshold best upon the best scoring token
+     *
+     * @return the beam threshold
+     */
+    public float getBeamThreshold() {
+        return getBestScore() + relativeBeamWidth;
+    }
+
+    /**
+     * gets the best score in the list
+     *
+     * @return the best score
+     */
+    public float getBestScore() {
+        float bestScore = -Float.MAX_VALUE;
+        if (bestToken != null) {
+            bestScore = bestToken.getScore();
+        }
+        return bestScore;
+    }
+
+    /**
+     * Sets the best scoring token for this active list
+     *
+     * @param token the best scoring token
+     */
+    public void setBestToken(Token token) {
+        bestToken = token;
+    }
+
+    /**
+     * Gets the best scoring token for this active list
+     *
+     * @return the best scoring token
+     */
+    public Token getBestToken() {
+        return bestToken;
+    }
 }
+
+
 
