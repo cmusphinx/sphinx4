@@ -28,19 +28,19 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
 PROFILE_FLAGS= -Xprof -server
 LOG_GC_FLAGS=  -Xloggc:gc.txt
- GC_FLAGS=  -XX:+PrintGCDetails
+# GC_FLAGS=  -XX:+PrintGCDetails
+GC_FLAGS = -ms256m -mx256m
 # GC_FLAGS=  -XX:+UseConcMarkSweepGC
 #GC_FLAGS=  -XX:+UseParallelGC
 #GC_FLAGS= -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+PrintGCDetails
 HEAP_DUMP =   -Xrunhprof:heap=dump,cpu=samples
 #GC_FLAGS= -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+PrintGCDetails -XX:+TraceGen1Time
 
-# GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
+#GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParNewGC -XX:ParallelGCThreads=8 -XX:NewSize=50m -XX:MaxNewSize=50m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 
 #GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 #GC_FLAGS= -ms1g -XX:+UseConcMarkSweepGC -XX:-UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 
-GC_FLAGS = -ms1g -mx1g
 
 #PROFILE2_FLAGS= -Xrunhprof:file=log.txt
 PROFILE2_FLAGS= -Xrunhprof:cpu=samples,file=log.txt
@@ -57,7 +57,9 @@ include ${TOP}/build/Makefile.config
 
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 
-all:: 
+all:: rm1_unigram rm1_bigram rm1_trigram rm1_fst rm1_wordpair
+
+ngram: rm1_unigram rm1_bigram rm1_trigram
 
 
 
@@ -67,20 +69,84 @@ all::
 #
 ##########################################################################
 
+# Define QSUB as qsub (PBS job submission. Alternative would be QSUB
+# defined as a script that directly executes the script given as
+# argument.
 
+# QSUB = ./pseudoqsub.csh
+QSUB = qsub
 
 #
 # The default RM1 test using a looping grammar for all words in RM1.
 #
 
-rm1:
-	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000 \
-	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-100 \
-	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=8.0 \
-	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d-b.txt \
+rm1_unigram:
+	echo "$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-30\
-	-Dedu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.StaticLinguist \
-	-Dedu.cmu.sphinx.search.WordListGrammar.path=./rm1.wordlist \
-	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=RM.unigram.arpa \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch" > rm1.unigram.csh
+	chmod a+x rm1.unigram.csh
+	$(QSUB) -j oe -o rm1.unigram.log rm1.unigram.csh
+	rm rm1.unigram.csh
+
+rm1_bigram:
+	echo "$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=RM.2880.bigram.arpa \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch" > rm1.bigram.csh
+	chmod a+x rm1.bigram.csh
+	$(QSUB) -j oe -o rm1.bigram.log rm1.bigram.csh
+	rm rm1.bigram.csh
+
+rm1_trigram:
+	echo "$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=RM.2880.trigram.arpa \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch" > rm1.trigram.csh
+	chmod a+x rm1.trigram.csh
+	$(QSUB) -j oe -o rm1.trigram.log rm1.trigram.csh
+	rm rm1.trigram.csh
+
+rm1_fst:
+	echo "$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=RM.2880.bigram.arpa \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch" > rm1.trigram.fst.csh
+	chmod a+x rm1.trigram.fst.csh
+	$(QSUB) -j oe -o rm1.trigram.fst.log rm1.trigram.fst.csh
+	rm rm1.trigram.fst.csh
+
+rm1_wordpair:
+	echo "$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Dictionary.dictionaryPath=dict/cmudict.0.6d+rm1.txt \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.search.Linguist.expandInterNodeContexts=false \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=RM.2880.bigram.arpa \
+	edu.cmu.sphinx.decoder.BatchDecoder ./rm1.props ./rm1.batch" > rm1.wordpair.csh
+	chmod a+x rm1.wordpair.csh
+	$(QSUB) -j oe -o rm1.wordpair.log rm1.wordpair.csh
+	rm rm1.wordpair.csh
+
