@@ -56,8 +56,9 @@ We can also be reached at cmusphinx-contacts@lists.sourceforge.net.
 
 Sincerely,
 
-The Sphinx-4 Team:  Evandro Gouvea, CMU (developer and speech advisor)
-(in alph. order)    Philip Kwok, Sun Labs (developer)
+The Sphinx-4 Team:  Peter Gorniak, MIT (developer)
+(in alph. order)    Evandro Gouvea, CMU (developer and speech advisor)
+                    Philip Kwok, Sun Labs (developer)
                     Paul Lamere, Sun Labs (design/technical lead)
                     Beth Logan, HP (speech advisor)
                     Pedro Moreno, Google (speech advisor)
