@@ -19,22 +19,16 @@ import edu.cmu.sphinx.knowledge.language.WordSequence;
 
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Reader;
 
 import java.net.URL;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.MappedByteBuffer;
-
-import java.nio.channels.FileChannel;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,10 +40,6 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Collections;
 import java.util.StringTokenizer;
-
-// for testing
-import java.io.*;
-import edu.cmu.sphinx.util.Timer;
 
 
 /**
@@ -116,13 +106,16 @@ public class LargeTrigramModel implements LanguageModel {
      * @param context the context to associate this linguist with
      */
     public void initialize(String context) throws IOException {
+
+        Timer.start("LM Load");
+
         this.props = SphinxProperties.getSphinxProperties(context);
         
         String format = props.getString
             (LanguageModel.PROP_FORMAT, LanguageModel.PROP_FORMAT_DEFAULT);
         String location = props.getString
             (LanguageModel.PROP_LOCATION, LanguageModel.PROP_LOCATION_DEFAULT);
-        
+
         unigramIDMap = new HashMap();
         loadedBigramBuffer = new HashMap();
 	loadedTrigramBuffer = new HashMap();
@@ -137,6 +130,8 @@ public class LargeTrigramModel implements LanguageModel {
         trigramBackoffTable = loader.getTrigramBackoffWeights();
         trigramSegmentTable = loader.getTrigramSegments();
         buildUnigramIDMap();
+
+        Timer.stop("LM Load");
     }
 
 

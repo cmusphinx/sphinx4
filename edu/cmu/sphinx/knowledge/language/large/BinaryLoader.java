@@ -13,9 +13,7 @@
 package edu.cmu.sphinx.knowledge.language.large;
 
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
-import edu.cmu.sphinx.knowledge.language.WordSequence;
 
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -24,6 +22,7 @@ import edu.cmu.sphinx.util.Utilities;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
@@ -36,20 +35,6 @@ import java.nio.MappedByteBuffer;
 
 import java.nio.channels.FileChannel;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Collections;
-import java.util.StringTokenizer;
-
-// for testing
-import java.io.*;
-import edu.cmu.sphinx.util.Timer;
 
 
 /**
