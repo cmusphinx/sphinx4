@@ -161,7 +161,8 @@ public class SpectrumAnalyzer extends DataProcessor {
 	/**
 	 * Wk will have N/2 complex elements.
 	 */
-	Complex[] Wk = new Complex[N>>1];
+	// Complex[]
+        Wk = new Complex[N>>1];
 	/**
 	 * For the inverse FFT,
 	 * w = 2 * PI / N;

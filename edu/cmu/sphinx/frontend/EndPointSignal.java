@@ -48,10 +48,10 @@ public class EndPointSignal implements Signal {
     /**
      * Returns true if the given EndPointSignal is the same as this
      * EndPointSignal, false otherwise. Two EndPointSignals are the
-     * same if their <code>toString()</code> method returns the
+     * same if their <code>toString()</code> method returns
      * strings that return true on <code>String.equal()</code>.
      *
-     * @returns true or false
+     * @return true or false
      */
     public boolean equals(EndPointSignal endPointSignal) {
         return toString().equals(endPointSignal.toString());
@@ -60,6 +60,8 @@ public class EndPointSignal implements Signal {
 
     /**
      * Returns the name of this EndPointSignal.
+     *
+     * @return the name of this EndPointSignal
      */
     public String toString() {
         return signalName;
