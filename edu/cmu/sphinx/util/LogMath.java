@@ -28,6 +28,13 @@ public final class LogMath {
 
     static Map contextMap = new HashMap();
 
+    // controls whether we use the old, slow (but correct )method of
+    // performing the log.add
+    // This is a rollback to the old slow way until
+    // the fast way is fixed.
+
+    private final static boolean OLD_AND_SLOW_ADD = true;
+
     /**
      * Sphinx3 property to get the Log base
      */
@@ -115,14 +122,27 @@ public final class LogMath {
 	 // where ln could be any log base. If we use logBase as the
 	 // log base, the denominator becomes 1.
 
-	 entriesInTheAddTable = linearToLog(Math.power(logbase, 0.5) - 1);
+	 // TODO: PBL changed this to get it to compile, also
+	 // added -Math.rint(...) to round to nearest integer. Added
+	 // the negation to match the preceeding documentation
+
+	 entriesInTheAddTable = 
+	     (int) -Math.rint(linearToLog(Math.pow(logBase, 0.5) - 1));
 
 	 // We reach this max if the log base is 1.00007. The closer
 	 // you get to 1, the higher the number of entries in the
 	 // table.
 
-	 if (entriesInTheTable > veryLargeNumberOfEntries) {
+	 if (entriesInTheAddTable > veryLargeNumberOfEntries) {
 	     entriesInTheAddTable = veryLargeNumberOfEntries;
+	 }
+
+	 // PBL added this just to see how many entries really are in
+	 // the table
+
+	 if (true)  {
+	     System.out.println("LogAdd table has " + entriesInTheAddTable
+		 + " entries.");
 	 }
 
 	 theAddTable = new double[entriesInTheAddTable];
@@ -268,7 +288,12 @@ public final class LogMath {
      * @return the value pointed to by index
      */
     private final double addTable(double index) {
-	return theAddTable[(int)(index)];
+
+	if (OLD_AND_SLOW_ADD) {
+	    return addTableActualComputation(index);
+	} else {
+	    return theAddTable[(int)(index)];
+	}
     }
 
     /**
