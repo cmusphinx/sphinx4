@@ -151,6 +151,32 @@ public class Microphone extends BaseDataProcessor {
      */
     public final static boolean PROP_KEEP_LAST_AUDIO_DEFAULT = false;
 
+    /**
+     * The Sphinx property that specifies how to convert stereo audio to mono.
+     * Currently, the possible values are "average", which averages the
+     * samples from at each channel, or "selectChannel", which chooses
+     * audio only from that channel. If you choose "selectChannel",
+     * you should also specify which channel to use with the "selectChannel"
+     * property.
+     */
+    public final static String PROP_STEREO_TO_MONO = "stereoToMono";
+
+    /**
+     * The default value of PROP_STEREO_TO_MONO.
+     */
+    public final static String PROP_STEREO_TO_MONO_DEFAULT = "average";
+
+    /**
+     * The Sphinx property that specifies the channel to use if the audio
+     * is stereo
+     */
+    public final static String PROP_SELECT_CHANNEL = "selectChannel";
+
+    /**
+     * The default value of PROP_SELECT_CHANNEL.
+     */
+    public final static int PROP_SELECT_CHANNEL_DEFAULT = 0;
+
 
     private AudioFormat finalFormat;
     private AudioInputStream audioStream = null;
@@ -171,6 +197,8 @@ public class Microphone extends BaseDataProcessor {
     private boolean signed;
     private int frameSizeInBytes;
     private int msecPerRead;
+    private int selectedChannel;
+    private String stereoToMono;
 
     
     /*
@@ -190,6 +218,8 @@ public class Microphone extends BaseDataProcessor {
         registry.register(PROP_BIG_ENDIAN, PropertyType.BOOLEAN);
         registry.register(PROP_SIGNED, PropertyType.BOOLEAN);
         registry.register(PROP_KEEP_LAST_AUDIO, PropertyType.BOOLEAN);
+        registry.register(PROP_STEREO_TO_MONO, PropertyType.STRING);
+        registry.register(PROP_SELECT_CHANNEL, PropertyType.INT);
     }
 
     /*
@@ -225,6 +255,12 @@ public class Microphone extends BaseDataProcessor {
 
         keepDataReference = ps.getBoolean
             (PROP_KEEP_LAST_AUDIO, PROP_KEEP_LAST_AUDIO_DEFAULT);
+
+        stereoToMono = ps.getString
+            (PROP_STEREO_TO_MONO, PROP_STEREO_TO_MONO_DEFAULT);
+
+        selectedChannel = ps.getInt
+            (PROP_SELECT_CHANNEL, PROP_SELECT_CHANNEL_DEFAULT);
     }
 
     /**
@@ -491,10 +527,13 @@ public class Microphone extends BaseDataProcessor {
          * @return an Data object containing the audio data
          */
         private Data readData(Utterance utterance) throws IOException {
+
             // Read the next chunk of data from the TargetDataLine.
             byte[] data = new byte[frameSizeInBytes];
+
+            int channels = audioStream.getFormat().getChannels();
             long collectTime = System.currentTimeMillis();
-            long firstSampleNumber = totalSamplesRead;
+            long firstSampleNumber = totalSamplesRead / channels;
             
             int numBytesRead = audioStream.read(data, 0, data.length);
 
@@ -508,7 +547,7 @@ public class Microphone extends BaseDataProcessor {
 
             if (logger.isLoggable(Level.FINE)) {
                 logger.info("Read " + numBytesRead 
-                        + " bytes from audio stream.");
+                            + " bytes from audio stream.");
             }
             if (numBytesRead <= 0) {
                 endOfStream = true;
@@ -535,12 +574,45 @@ public class Microphone extends BaseDataProcessor {
             
             double[] samples = DataUtil.bytesToValues
                 (data, 0, data.length, sampleSizeInBytes, signed);
-            
+
+            if (channels > 1) {
+                samples = convertStereoToMono(samples, channels);
+            }
+
             return (new DoubleData
                     (samples, (int) audioStream.getFormat().getSampleRate(),
                      collectTime, firstSampleNumber));
         }
     }
+
+    /**
+     * Converts stereo audio to mono.
+     *
+     * @param samples the audio samples, each double in the array is one sample
+     * @param channels the number of channels in the stereo audio
+     */
+    private double[] convertStereoToMono(double[] samples, int channels) {
+        assert (samples.length % channels == 0);
+        double[] finalSamples = new double[samples.length/channels];
+        if (stereoToMono.equals("average")) {
+            for (int i = 0, j = 0; i < samples.length; j++) {
+                double sum = samples[i++];
+                for (int c = 1; c < channels; c++) {
+                    sum += samples[i++];
+                }
+                finalSamples[j] = sum / channels;
+            }
+        } else if (stereoToMono.equals("selectChannel")) {
+            for (int i = selectedChannel, j = 0; i < samples.length;
+                 i += channels, j++) {
+                finalSamples[j] = samples[i];
+            }
+        } else {
+            throw new Error("Unsupported stereo to mono conversion: " +
+                            stereoToMono);
+        }
+        return finalSamples;
+    }        
 
     /**
      * Returns a native audio format that has the same encoding, number
@@ -569,7 +641,6 @@ public class Microphone extends BaseDataProcessor {
                 
                 AudioFormat thisFormat = formats[j];
                 if (thisFormat.getEncoding() == format.getEncoding()
-                    && thisFormat.getChannels() == format.getChannels()
                     && thisFormat.isBigEndian() == format.isBigEndian()
                     && thisFormat.getSampleSizeInBits() == 
                     format.getSampleSizeInBits()
