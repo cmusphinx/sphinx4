@@ -95,7 +95,7 @@ function getWER(testName, testCount,     _errors, _words) {
     _errors = data[F_INSERTIONS] + data[F_DELETIONS] + data[F_SUBSTITUTIONS];
     _words = data[F_WORDS];
 
-    if (_words == 0) {
+    if (words == "") {
         return "N/A";
     } else {
 	return _errors / _words * 100;
