@@ -576,6 +576,15 @@ public class CommandInterpreter extends Thread {
 	onExit();
     }
 
+
+
+   // some history patterns used by getInputLine()
+
+   private static Pattern historyPush = Pattern.compile("(.+):p"); 
+   private static Pattern editPattern =
+       Pattern.compile("\\^(.+?)\\^(.*?)\\^?"); 
+   private static Pattern bbPattern= Pattern.compile("(!!)");
+
    /**
     * Gets the input line. Deals with history. Currently we support
     * simple csh-like history. !! - execute last command, !-3 execute
@@ -586,12 +595,6 @@ public class CommandInterpreter extends Thread {
     *
     * @return the next history line or null if done
     */
-
-   private static Pattern historyPush = Pattern.compile("(.+):p"); 
-   private static Pattern editPattern =
-       Pattern.compile("\\^(.+?)\\^(.*?)\\^"); 
-   private static Pattern bbPattern= Pattern.compile("(!!)");
-
    private String getInputLine() throws IOException {
        String message = in.readLine();
        boolean justPush = false;
@@ -771,7 +774,7 @@ public class CommandInterpreter extends Thread {
         /**
          * Gets the most recent element in the history
          *
-         * @param offset the offset from the most recent command
+         * @param which the offset from the most recent command
          * @return the last command executed
          */
         public String get(int which) {
