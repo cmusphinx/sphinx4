@@ -50,7 +50,7 @@ public final class LogMath implements Serializable {
 
     /**
      * Sphinx property that controls whether we use the old, slow (but
-     * correct) method of performing the log.add by doing the actual
+     * correct) method of performing the LogMath.add by doing the actual
      * computation.
      */
 
@@ -239,7 +239,8 @@ public final class LogMath implements Serializable {
 
 
     /**
-     * Exponentiate base to the power in log.
+     * Returns the base raised to the power, when the result and the
+     * base are in log.
      *
      * <p>Will check for underflow and report.</p>
      *
@@ -250,23 +251,23 @@ public final class LogMath implements Serializable {
      * values to be no higher than Double.MAX_VALUE.</p>
      *
      *
-     * @param base base to be raised in log domain
+     * @param logOfbase base, in log, to be raised
      * @param exponent power of the exponentiation
      *
-     * @return base raised to exponent
+     * @return base raised to exponent, in log
      *
      */
-    public final double power(double base, double exponent) {
-	double returnValue = base * exponent;
+    public final double powerAsLinear(double logOfBase, double exponent) {
+	double returnValue = logOfBase * exponent;
 	boolean overflowOccurred = false;
 
 	// if abs(exponent) is > 1, the product may result larger than max
 	if (Math.abs(exponent) > 1) {
-	    if (Math.abs(base) > (Double.MAX_VALUE / Math.abs(exponent))) {
+	    if (Math.abs(logOfBase) > (Double.MAX_VALUE / Math.abs(exponent))) {
 		overflowOccurred = true;
-		// base/exponent will have the same sign as their
+		// logOfBase/exponent will have the same sign as their
 		// product, but will not overflow.
-		if ((base / exponent > 0)) {
+		if ((logOfBase / exponent > 0)) {
 		    returnValue = Double.MAX_VALUE;
 		} else {
 		    returnValue = -Double.MAX_VALUE;
@@ -274,23 +275,26 @@ public final class LogMath implements Serializable {
 	    }
 	} else if (Math.abs(exponent) < 1) {
 	    // Underflow may occur if exponent is less than one (the
-	    // power will be less than the base in absolute terms.
-	    if (Math.abs(base) < ( Double.MIN_VALUE / Math.abs(exponent))) {
+	    // power will be less than the logOfBase in absolute terms.
+	    if (Math.abs(logOfBase) < ( Double.MIN_VALUE / Math.abs(exponent))) {
 		overflowOccurred = true;
 		returnValue = 0.0;
 	    }
 	}
 	if (overflowOccurred) {
 	    logger.info("********Overflow or underflow occurred "
-			+ "while trying to log.power "
-			+  base + " raised to " + exponent);
+			+ "while trying to LogMath.powerAsLinear "
+			+  logOfBase + " raised to " + exponent);
 	}
 	return returnValue;
     }
 
 
     /**
-     * Multiplies the two log values. 
+     * Returns the product of two values, when the result and the two
+     * values are in log.
+     *
+     * <p>In other words, it returns log(a * b) given log(a) and log(b).</p>
      *
      * <p>Will check for overflow on the lowest bound and constrain
      * values to be no lower than -Double.MAX_VALUE.</p>
@@ -299,62 +303,70 @@ public final class LogMath implements Serializable {
      * values to be no higher than Double.MAX_VALUE.</p>
      *
      *
-     * @param val1 value in log domain to multiply
-     * @param val2 value in log domain to multiply
+     * @param logVal1 value in log domain (i.e. log(val1)) to multiply
+     * @param logVal2 value in log domain (i.e. log(val2)) to multiply
      *
      * @return product of val1 and val2 in the log domain
      *
      */
-    public final double multiply(double val1, double val2) {
-	double returnValue = val1 + val2;
+    public final double multiplyAsLinear(double logVal1, double logVal2) {
+	double returnValue = logVal1 + logVal2;
 	boolean overflowOccurred = false;
 
-	// [ EBG: alternative... test the sign of each of val1 and
-	// val2 and, if needed, the result. If val1 and val2 have
+	// [ EBG: alternative... test the sign of each of logVal1 and
+	// logVal2 and, if needed, the result. If logVal1 and logVal2 have
 	// different signs, then overflow isn't an issue. If they have
 	// the same sign and the result also has the same sign, then
 	// operation was successful. if not, then an overflow occured,
 	// in which case we can signal or just return MAX_VALUE ]
 
-	if (val1 > 0) {
-	    if (val2 > (Double.MAX_VALUE - val1)) {
+	if (logVal1 > 0) {
+	    if (logVal2 > (Double.MAX_VALUE - logVal1)) {
 		overflowOccurred = true;
 		returnValue = Double.MAX_VALUE;
 	    }
-	} else if (val1 < 0) {
-	    if (val2 < ( -Double.MAX_VALUE - val1)) {
+	} else if (logVal1 < 0) {
+	    if (logVal2 < ( -Double.MAX_VALUE - logVal1)) {
 		overflowOccurred = true;
 		returnValue = -Double.MAX_VALUE;
 	    }
 	}
 	if (overflowOccurred) {
 	    logger.info("********Overflow or underflow occurred "
-			+ "while trying to log.multiply "
-			+ val1 + " and " + val2);
+			+ "while trying to LogMath.multiplyAsLinear "
+			+ logVal1 + " and " + logVal2);
 	}
 	return returnValue;
     }
 
     /**
-     * Divides the two log values. 
+     * Returns the ratio of two numbers when the arguments and the
+     * result are in log.
      *
-     * @param val1 value in log domain to multiply
-     * @param val2 value in log domain to multiply
+     * <p>That is, it returns log(a / b) given log(a) and log(b).</p>
+     *
+     * @param logVal1 dividend in log domain (i.e. log(val1))
+     * @param logVal2 divisor in log domain (i.e. log(val2))
      *
      * @return division of val1 and val2 in the log domain
      *
      * TODO: Add check for underflow
      */
-    public final double divide(double val1, double val2) {
-	double returnValue = val1 - val2;
+    public final double divideAsLinear(double logVal1, double logVal2) {
+	// Since this is log, -logVal2 is log(1/Val2), therefore the
+	// multiply, which already contains overflow check.
+	double returnValue = multiplyAsLinear(logVal1, -logVal2);
 	return returnValue;
     }
 
 
     /**
-     * Adds the two log values.
+     * Returns the summation of two numbers when the arguments and the
+     * result are in log.
      *
-     * <p>This function makes use of the equality:</p>
+     * <p>That is, it returns log(a + b) given log(a) and log(b)</p>
+     *
+     * <p>This method makes use of the equality:</p>
      *
      * <p><b>log(a + b) = log(a) + log (1 + exp(log(b) - log(a)))</b></p>
      *
@@ -366,9 +378,9 @@ public final class LogMath implements Serializable {
      *
      * <p><b>b / a = exp (log(b) - log(a))</b></p>
      *
-     * <p>Important to notice that <code>subtract(a, b)</code> is *not* the
-     * same as <code>add(a, -b)</code>, since we're in the log domain,
-     * and -b is in fact the inverse.</p>
+     * <p>Important to notice that <code>subtractAsLinear(a, b)</code>
+     * is *not* the same as <code>addAsLinear(a, -b)</code>, since
+     * we're in the log domain, and -b is in fact the inverse.</p>
      *
      * <p>Will check for underflow and constrain values to be no lower
      * than Double.MIN_VALUE.</p>
@@ -377,10 +389,10 @@ public final class LogMath implements Serializable {
      * than Double.MAX_VALUE.</p>
      *
      * <p>Both underflow and overflow checks are actually performed by
-     * the multiply method.</p>
+     * the multiplyAsLinear method.</p>
      *
-     * @param val1 value in log domain to add
-     * @param val2 value in log domain to add
+     * @param logVal1 value in log domain (i.e. log(val1)) to add
+     * @param logVal2 value in log domain (i.e. log(val2)) to add
      *
      * @return sum of val1 and val2 in the log domain
      *
@@ -390,24 +402,24 @@ public final class LogMath implements Serializable {
      * say, return the summation of all terms in a given vector, if 
      * efficiency becomes an issue.
      */
-    public final double add(double val1, double val2) {
+    public final double addAsLinear(double logVal1, double logVal2) {
 	double highestValue;
 	double difference;
 	double returnValue;
 
 	// difference is always a positive number
-	if (val1 > val2) {
-	    highestValue = val1;
-	    difference = val1 - val2;
+	if (logVal1 > logVal2) {
+	    highestValue = logVal1;
+	    difference = logVal1 - logVal2;
 	} else {
-	    highestValue = val2;
-	    difference = val2 - val1;
+	    highestValue = logVal2;
+	    difference = logVal2 - logVal1;
 	}
-	return multiply(highestValue, addTable(difference));
+	return multiplyAsLinear(highestValue, addTable(difference));
     }
 
     /**
-     * Function used by add() internally. It returns the difference
+     * Method used by add() internally. It returns the difference
      * between the highest number and the total summation of two numbers.
      *
      * Considering the expression (in which we assume natural log)
@@ -424,18 +436,18 @@ public final class LogMath implements Serializable {
      * @return the value pointed to by index
      */
     private final double addTableActualComputation(double index) {
-	double innerSummation;
+	double logInnerSummation;
 
 	// Negate index, since the derivation of this formula implies
 	// the smallest number as a numerator, therefore the log of the
 	// ratio is negative
-	innerSummation = logToLinear(-index);
-	innerSummation += 1.0f;
-	return linearToLog(innerSummation);
+	logInnerSummation = logToLinear(-index);
+	logInnerSummation += 1.0;
+	return linearToLog(logInnerSummation);
     }
 
     /**
-     * Function used by add() internally. It returns the difference
+     * Method used by add() internally. It returns the difference
      * between the highest number and the total summation of two numbers.
      *
      * Considering the expression (in which we assume natural log)
@@ -475,7 +487,10 @@ public final class LogMath implements Serializable {
     }
 
     /**
-     * Returns the difference between two log domain values.
+     * Returns the difference between two numbers when the arguments and the
+     * result are in log.
+     *
+     * <p>That is, it returns log(a - b) given log(a) and log(b)</p>
      *
      * <p>Implementation is less efficient than add(), since we're less
      * likely to use this function, provided for completeness. Notice
@@ -489,9 +504,10 @@ public final class LogMath implements Serializable {
      *
      * <p>No need to check for underflow/overflow.</p>
      *
-     * @param minuend value in log domain to be  subtracted from
-     * @param subtrahend value in log domain that is being
-     * subtracted
+     * @param logMinuend value in log domain (i.e. log(minuend)) to be
+     * subtracted from
+     * @param logSubtrahend value in log domain (i.e. log(subtrahend))
+     * that is being subtracted
      *
      * @return difference between minuend and the subtrahend 
      * in the log domain
@@ -501,18 +517,18 @@ public final class LogMath implements Serializable {
      * <p>This is a very slow way to do this, but this method should
      * rarely be used.</p>
      */
-    public final double subtract(double minuend, double
-	    subtrahend) throws IllegalArgumentException {
-	double innerSummation;
-	if (minuend < subtrahend) {
-	    throw new IllegalArgumentException("Subtract results in log "
+    public final double subtractAsLinear(double logMinuend, double
+	    logSubtrahend) throws IllegalArgumentException {
+	double logInnerSummation;
+	if (logMinuend < logSubtrahend) {
+	    throw new IllegalArgumentException("Subtraction results in log "
 					       + "of a negative number: "
-					       + minuend + " - " 
-					       + subtrahend);
+					       + logMinuend + " - " 
+					       + logSubtrahend);
 	}
-	innerSummation = 1.0f;
-	innerSummation -= logToLinear(subtrahend - minuend);
-	return minuend + linearToLog(innerSummation);
+	logInnerSummation = 1.0;
+	logInnerSummation -= logToLinear(logSubtrahend - logMinuend);
+	return logMinuend + linearToLog(logInnerSummation);
     }
 
    /**
@@ -534,7 +550,7 @@ public final class LogMath implements Serializable {
     * <p>where <b>log_a(b)</b> is logarithm of <b>b</b> base <b>a</b>
     * etc.</p>
     *
-    * @param source log value whose base is sourceBase
+    * @param logSource log value whose base is sourceBase
     * @param sourceBase the base of the log the source
     * @param resultBase the base to convert the source log to
     *
@@ -546,7 +562,7 @@ public final class LogMath implements Serializable {
     // Math.E. So maybe we should consider two functions logToLn and
     // lnToLog instead of a generic function like this??
     //
-    public static double logToLog(double source, 
+    public static double logToLog(double logSource, 
 	    double sourceBase, double resultBase) 
 	throws IllegalArgumentException {
 	if ((sourceBase <= 0) || (resultBase <= 0)) {
@@ -558,7 +574,7 @@ public final class LogMath implements Serializable {
 	double lnSourceBase = Math.log(sourceBase);
 	double lnResultBase = Math.log(resultBase);
 
-	return (source * lnSourceBase / lnResultBase);
+	return (logSource * lnSourceBase / lnResultBase);
     }
 
 
@@ -566,20 +582,20 @@ public final class LogMath implements Serializable {
      * Converts the source, which is a number in base Math.E, to a log value
      * which base is the LogBase of this LogMath.
      *
-     * @param source the number in base Math.E to convert
+     * @param logSource the number in base Math.E to convert
      */
-    public final double lnToLog(double source) {
-	return (source * inverseNaturalLogBase);
+    public final double lnToLog(double logSource) {
+	return (logSource * inverseNaturalLogBase);
     }
 
     /**
      * Converts the source, which is a number in base 10, to a log value
      * which base is the LogBase of this LogMath.
      *
-     * @param source the number in base Math.E to convert
+     * @param logSource the number in base Math.E to convert
      */
-    public final double log10ToLog(double source) {
-	return logToLog(source, 10.0, logBase);
+    public final double log10ToLog(double logSource) {
+	return logToLog(logSource, 10.0, logBase);
     }
 
     /**
