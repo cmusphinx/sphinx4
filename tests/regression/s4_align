@@ -1,3 +1,17 @@
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This is a front-end to the NIST align program. It extracts the
+# recognition results data from the S4 output and runs it through
+# align. Align results are sent to stdout
+#
+
 awk '$1 == "REF:" { $1=""; print $0 }' <$1 >> /tmp/ref.$PPID.tmp
 awk '$1 == "HYP:" { $1=""; print $0 }' <$1 >> /tmp/hyp.$PPID.tmp
 align -ref /tmp/ref.$PPID.tmp -hyp /tmp/hyp.$PPID.tmp 2> /dev/null

@@ -14,12 +14,18 @@
 # where the test should be run from,  The third field is the make
 # target for the test.
 
-#./runTest ../performance/an4 an4_words_unigram_quick
 
 ./runTest ../performance/an4 an4_full_unigram
 ./runTest ../performance/an4 an4_full_trigram
 ./runTest ../performance/an4 an4_full_fst
 
+
+
+# These tests were used for testing the regression test. That is why
+# they are commented out.
+#
+
+#./runTest ../performance/an4 an4_words_unigram_quick
 #runTest dummyTests an4_words_unigram
 #runTest dummyTests an4_words_trigram
 #runTest dummyTests an4_words_fail

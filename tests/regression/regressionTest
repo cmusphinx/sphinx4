@@ -1,12 +1,49 @@
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+#
+# This is the main regressionTest script. This script can be run from
+# a crontab entry.  The regression test performs the following
+# functions:
+#
+# 	Retreives the S4 source from sourceforge
+#	Build S4
+#	Executes the tests
+#	Generates a summary report and emails it to parties of interest
+#	puts the log result back into the sourceforge repository
+
+
+# S4 code will be checked out here. WARNING: This directory will be 
+# completely removed when done 
+
 testDir=./regressionTestDirectory
 
 originalDir=$PWD
 
 mkdir -p $testDir
 cd $testDir
+
+# checkout the source
 scvs checkout sphinx4
 cd sphinx4/tests/regression
+
+# make sure that the main test script is executable
+
 chmod +x executeRegressionTest 
+
+# run the tests
+
 ./executeRegressionTest
+
+# clean up 
+
 cd $originalDir
+
+# remove the workspace when done
 rm -rf $testDir

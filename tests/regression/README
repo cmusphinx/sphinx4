@@ -15,8 +15,16 @@ Requirements:
   export CVS_RSH='/usr/dist/exe/ssh' 
   cvs -z3 -d:ext:lamere@cvs.cmusphinx.sourceforge.net:/cvsroot/cmusphinx $*
 
+    Since the regression tests access the repository, you will need to setup 
+    your public keys properly so that no password is required to checkin or
+    checkout.
+
  - To add or remove a test from the regression tests, edit the
    'runAllTests' script
 
  - To add or remove people from the email notification list edit the
    'mailReport' script.
+
+
+ - To setup a nightly regression test, run the script 'regressionTest' 
+   from a crontab job.
