@@ -108,9 +108,14 @@ public class SimpleActiveList implements ActiveList  {
      *
      * @param relativeBeamWidth the linear relative beam width
      */
-    public void setRelativeBeamWidth(double relativeBeamWidth) {
+    public void setRelativeBeamWidth(double linearRelativeBeamWidth) {
         LogMath logMath = LogMath.getLogMath(props.getContext());
-        this.relativeBeamWidth = logMath.linearToLog(relativeBeamWidth);
+        if (linearRelativeBeamWidth <= 0.0) {
+            this.relativeBeamWidth = -Float.MAX_VALUE;
+        } else {
+            this.relativeBeamWidth =
+                logMath.linearToLog(linearRelativeBeamWidth);
+        }
     }
 
 

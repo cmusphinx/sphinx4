@@ -103,8 +103,7 @@ public class PartitionActiveList implements ActiveList  {
 	double linearRelativeBeamWidth  
 	    = props.getDouble(PROP_RELATIVE_BEAM_WIDTH, 
 			      PROP_RELATIVE_BEAM_WIDTH_DEFAULT);
-	
-	this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
+        setRelativeBeamWidth(linearRelativeBeamWidth);	
     }
 
     /**
@@ -118,12 +117,17 @@ public class PartitionActiveList implements ActiveList  {
 
 
     /**
-     * Sets the absolute beam width of this list.
+     * Sets the relative beam width of this list.
      *
      * @param linearRelativeBeamWidth the absolute beam width
      */
     public void setRelativeBeamWidth(double linearRelativeBeamWidth) {
-        this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
+        if (linearRelativeBeamWidth <= 0.0) {
+            this.relativeBeamWidth = -Float.MAX_VALUE;
+        } else {
+            this.relativeBeamWidth = 
+                logMath.linearToLog(linearRelativeBeamWidth);
+        }
     }
 
 
