@@ -125,10 +125,13 @@ public class RejectionTracker implements Configurable,
         if (recognizer == null) {
             recognizer = newRecognizer;
             recognizer.addResultListener(this);
+            recognizer.addStateListener(this);
         } else if (recognizer != newRecognizer) {
             recognizer.removeResultListener(this);
+            recognizer.removeStateListener(this);
             recognizer = newRecognizer;
             recognizer.addResultListener(this);
+            recognizer.addStateListener(this);
         }
         
         showSummary = ps.getBoolean(PROP_SHOW_SUMMARY,
