@@ -13,7 +13,7 @@ TOP = .
 # List any sub directories that need to be built.  Start with generic
 # packages going toward specialized.  That is, if one package depends
 # on another, put the dependent package later in the list.
-SUBDIRS = edu tests  com
+SUBDIRS = edu tests  
 
 GTAR=/pkg/gnu/bin/tar
 
