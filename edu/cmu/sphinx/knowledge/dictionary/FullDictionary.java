@@ -48,6 +48,7 @@ public class FullDictionary implements Dictionary {
     private Map dictionary = new HashMap();
     private boolean addSilEndingPronunciation;
     private boolean allowMissingWords;
+    private boolean createMissingWords;
     private String wordReplacement;
 
     /**
@@ -105,6 +106,9 @@ public class FullDictionary implements Dictionary {
         allowMissingWords = properties.getBoolean
             (Dictionary.PROP_ALLOW_MISSING_WORDS,
 	     Dictionary.PROP_ALLOW_MISSING_WORDS_DEFAULT);
+
+        createMissingWords = properties.getBoolean
+            (PROP_CREATE_MISSING_WORDS, PROP_CREATE_MISSING_WORDS_DEFAULT);
 
         if (wordDictionaryFile == null) {
             throw new IllegalArgumentException
@@ -262,6 +266,8 @@ public class FullDictionary implements Dictionary {
 
     /**
      * Returns a Word object based on the spelling and its classification.
+     * The behavior of this method is affected by the properties
+     * wordReplacement, allowMissingWords, and createMissingWords.
      *
      * @param text the spelling of the word of interest.
      *
@@ -284,7 +290,12 @@ public class FullDictionary implements Dictionary {
                                        wordReplacement + " not found!");
                 }
             } else if (allowMissingWords) {
-                System.out.println("FullDictionary: Missing word: " + text);
+                if (createMissingWords) {
+                    word = new Word(text, null);
+                    dictionary.put(text, word);
+                } else {
+                    System.out.println("FullDictionary: Missing word: " +text);
+                }
                 return null;
             }
         }

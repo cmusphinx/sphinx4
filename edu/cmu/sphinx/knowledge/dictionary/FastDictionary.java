@@ -61,6 +61,7 @@ public class FastDictionary implements Dictionary {
     private Map dictionary = new HashMap();
     private boolean addSilEndingPronunciation;
     private boolean allowMissingWords;
+    private boolean createMissingWords;
     private String wordReplacement;
     private final static String FILLER_TAG=  "-F-";
 
@@ -119,6 +120,9 @@ public class FastDictionary implements Dictionary {
             (Dictionary.PROP_ALLOW_MISSING_WORDS,
 	     Dictionary.PROP_ALLOW_MISSING_WORDS_DEFAULT);
 
+        createMissingWords = properties.getBoolean
+            (PROP_CREATE_MISSING_WORDS, PROP_CREATE_MISSING_WORDS_DEFAULT);
+
         if (wordDictionaryFile == null) {
             throw new IllegalArgumentException
                 ("Context \"" + context + "\" does not contain " +
@@ -174,25 +178,31 @@ public class FastDictionary implements Dictionary {
 	String line;
 
 	while ((line = br.readLine()) != null) {
-	    int spaceIndex = line.indexOf(' ');
-	    int spaceIndexTab = line.indexOf('\t');
-	    if (spaceIndex == -1) {
-		// Case where there's no blank character
-		spaceIndex = spaceIndexTab;
-	    } else if ((spaceIndexTab >= 0) && (spaceIndexTab < spaceIndex)) {
-		// Case where there's a blank and a tab, but the tab
-		// precedes the blank
-		spaceIndex = spaceIndexTab;
-	    }
-	    // TODO: throw an exception if spaceIndex == -1 ?
-	    String word = line.substring(0, spaceIndex);
-	    word = word.toLowerCase();
-	    if (isFillerDict) {
-		dictionary.put(word, (FILLER_TAG + line));
-	    } else {
-		dictionary.put(word, line);
-	    }
-	}
+            if (line.length() > 0) {
+                int spaceIndex = line.indexOf(' ');
+                int spaceIndexTab = line.indexOf('\t');
+                if (spaceIndex == -1) {
+                    // Case where there's no blank character
+                    spaceIndex = spaceIndexTab;
+                } else if ((spaceIndexTab >= 0) && 
+                           (spaceIndexTab < spaceIndex)) {
+                    // Case where there's a blank and a tab, but the tab
+                    // precedes the blank
+                    spaceIndex = spaceIndexTab;
+                }
+                // TODO: throw an exception if spaceIndex == -1 ?
+                if (spaceIndex == -1) {
+                    throw new Error("Error loading word: " + line);
+                }
+                String word = line.substring(0, spaceIndex);
+                word = word.toLowerCase();
+                if (isFillerDict) {
+                    dictionary.put(word, (FILLER_TAG + line));
+                } else {
+                    dictionary.put(word, line);
+                }
+            }
+        }
 
 	br.close();
 	isr.close();
@@ -242,6 +252,8 @@ public class FastDictionary implements Dictionary {
 
     /**
      * Returns a Word object based on the spelling and its classification.
+     * The behavior of this method is also affected by the properties
+     * wordReplacement, allowMissingWords, and createMissingWords.
      *
      * @param text the spelling of the word of interest.
      *
@@ -257,10 +269,13 @@ public class FastDictionary implements Dictionary {
 
 	if (object == null) {  // deal with 'not found' case
 	    if (wordReplacement != null) {
-		return getWord(wordReplacement);
+		word = getWord(wordReplacement);
 	    } else if (allowMissingWords) {
-		System.out.println("FastDictionary: Missing word: " + text);
-		return null;
+                if (createMissingWords) {
+                    word = createWord(text, null);
+                } else {
+                    System.out.println("FastDictionary: Missing word: "+ text);
+                }
 	    }
 	} else if (object instanceof String) { // first lookup for this string
 	    word = processEntry(text);
@@ -268,6 +283,17 @@ public class FastDictionary implements Dictionary {
 	    word = (Word) object;
 	}
 	return word;
+    }
+
+
+    /**
+     * Create a Word object with the given spelling and pronunciations,
+     * and insert it into the dictionary.
+     */
+    private Word createWord(String text, Pronunciation[] pronunciation) {
+        Word word = new Word(text, pronunciation);
+        dictionary.put(text, word);
+        return word;
     }
 
 
@@ -317,14 +343,12 @@ public class FastDictionary implements Dictionary {
 
         Pronunciation[] pronunciations = new Pronunciation[pList.size()];
         pList.toArray(pronunciations);
-        
-        Word wordObject = new Word(word, pronunciations);
-        
+        Word wordObject = createWord(word, pronunciations);
+
         for (int i = 0; i < pronunciations.length; i++) {
             pronunciations[i].setWord(wordObject);
         }
 
-	dictionary.put(word, wordObject);
 	return wordObject;
     }
 
