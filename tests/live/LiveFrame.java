@@ -276,6 +276,30 @@ public class LiveFrame extends JFrame {
 
 
     /**
+     * Enables or disables the "Speak" button.
+     */
+    public void setButtonsEnabled(final boolean enabled) {
+        SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    speakButton.setEnabled(enabled);
+                    nextButton.setEnabled(enabled);
+                    playButton.setEnabled(enabled);
+                }
+            });
+    }
+
+    /**
+     * Enables or disables the Decoder ComboBox.
+     */
+    public void setDecoderComboBoxEnabled(final boolean enabled) {
+        SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    decoderComboBox.setEnabled(enabled);
+                }
+            });
+    }
+
+    /**
      * Returns the (endpointer) CesptraPanel.
      *
      * @return the CepstraPanel
@@ -303,19 +327,6 @@ public class LiveFrame extends JFrame {
         } else {
             setMessage("Error opening the audio device");
         }
-    }
-
-
-    /**
-     * Exits speaking (i.e., recording) mode, sets the various GUI objects
-     * to the correct state.
-     */
-    public void exitSpeakingMode() {
-        setMessage("Stop speaking");
-        
-        // update GUI states
-        setGUISpeakingState(false);
-        live.stopRecording();
     }
 
 
@@ -552,6 +563,7 @@ public class LiveFrame extends JFrame {
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 live.resetStatistics();
+                setRecognitionLabel("");
             }
         });
 
@@ -636,7 +648,8 @@ public class LiveFrame extends JFrame {
                 if (speakButton.isSelected()) {
                     enterSpeakingMode();
                 } else {
-                    exitSpeakingMode();
+                    setMessage("Stop speaking");
+                    live.stopRecording();
                 }
             }
         });
