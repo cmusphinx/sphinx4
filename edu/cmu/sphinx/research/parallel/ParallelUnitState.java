@@ -16,7 +16,6 @@ package edu.cmu.sphinx.research.parallel;
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
 
 import edu.cmu.sphinx.decoder.search.ActiveList;
-import edu.cmu.sphinx.decoder.search.HeapActiveList;
 import edu.cmu.sphinx.decoder.search.TokenStack;
 import edu.cmu.sphinx.decoder.search.ArrayTokenStack;
 
