@@ -576,7 +576,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * @see edu.cmu.sphinx.linguist.SearchGraph#getNumStateOrder()
          */
         public int getNumStateOrder() {
-            return 6;
+            return 7;
         }
     }
     /**

@@ -59,7 +59,7 @@ public class AlternativeState extends SentenceHMMState
      * @return the state order
      */
     public int getOrder() {
-        return 0;
+        return 1;
     }
 }
 

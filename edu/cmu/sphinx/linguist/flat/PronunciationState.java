@@ -82,7 +82,7 @@ public class PronunciationState extends SentenceHMMState implements
      * @return the state order
      */
     public int getOrder() {
-        return 3;
+        return 4;
     }
 
     /**

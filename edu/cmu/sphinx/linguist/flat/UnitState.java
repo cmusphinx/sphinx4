@@ -168,7 +168,7 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
      * @return the state order
      */
     public int getOrder() {
-        return 4;
+        return 5;
     }
 }
 

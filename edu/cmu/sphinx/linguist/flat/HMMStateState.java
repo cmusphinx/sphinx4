@@ -92,7 +92,7 @@ public class HMMStateState extends SentenceHMMState
      * @return the state order
      */
     public int getOrder() {
-        return 5;
+        return isEmitting ? 6 : 0;
     }
 }
 

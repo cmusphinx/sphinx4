@@ -35,6 +35,6 @@ public class BranchState extends SentenceHMMState {
      * @return the state order
      */
     public int getOrder() {
-        return 1;
+        return 2;
     }
 }

@@ -61,7 +61,7 @@ public class GrammarState extends SentenceHMMState implements
      * @return the state order
      */
     public int getOrder() {
-        return 2;
+        return 3;
     }
 }
 
