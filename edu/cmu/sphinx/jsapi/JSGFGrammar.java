@@ -219,7 +219,7 @@ public class JSGFGrammar extends Grammar {
     // Configurable data
     // ---------------------
     private RuleGrammar ruleGrammar;
-    private Map ruleNameStack = new HashMap();
+    private Map ruleNameStack;
     private Recognizer recognizer;
     private String grammarName;
     private URL baseURL = null;
@@ -278,6 +278,7 @@ public class JSGFGrammar extends Grammar {
      */
     protected GrammarNode createGrammar() throws IOException {
 
+        ruleNameStack = new HashMap();
         recognizer = new BaseRecognizer();
 
         try {
