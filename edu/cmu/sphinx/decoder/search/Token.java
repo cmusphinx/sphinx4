@@ -177,7 +177,6 @@ public class Token implements Scoreable {
         this(null, state, 0.0f, 0.0f, 0.0f, frameNumber);
     }
 
-
     /**
      * Returns the predecessor for this token, or null if this token
      * has no predecessors
@@ -187,7 +186,6 @@ public class Token implements Scoreable {
     public Token getPredecessor() {
         return predecessor;
     }
-
 
     /**
      * Returns the frame number for this token. Note that for tokens that
@@ -203,10 +201,15 @@ public class Token implements Scoreable {
 
     /**
      * Returns the feature for this Token.
-     * The current implementation simply returns null.
+     *
+     * @return the feature for this Token
      */
     public Feature getFeature() {
-        return null;
+        if (appObject != null && appObject instanceof Feature) {
+            return (Feature) appObject;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -224,16 +227,23 @@ public class Token implements Scoreable {
      * retreived with get score
      *
      * @param feature the feature to be scored
+     * @param keepFeature whether this Scoreable should keep a reference
+     *    to the given feature
      *
      * @return the score for the feature
      */
-    public float calculateScore(Feature feature) {
+    public float calculateScore(Feature feature, boolean keepFeature) {
         assert searchState.isEmitting() 
             : "Attempting to score non-scoreable token: " + searchState;
         HMMSearchState hmmSearchState = (HMMSearchState) searchState;
         HMMState hmmState = hmmSearchState.getHMMState();
         logAcousticScore = hmmState.getScore(feature);
         logTotalScore += logAcousticScore;
+
+        if (keepFeature) {
+            setAppObject(feature);
+        }
+
         return logTotalScore;
     }
 
@@ -400,7 +410,7 @@ public class Token implements Scoreable {
     }
 
     /**
-     * returns the string of words leading up to this token
+     * Returns the string of words leading up to this token.
      *
      * @param wantFiller if true, filler words are added
      *
@@ -413,7 +423,7 @@ public class Token implements Scoreable {
         while (token != null) {
             if (token.isWord()) {
                 WordSearchState wordState =
-                        (WordSearchState) token.getSearchState();
+                    (WordSearchState) token.getSearchState();
                 Word word = wordState.getPronunciation().getWord();
                 if (wantFiller || !word.isFiller()) {
                     sb.insert(0, word.getSpelling());
@@ -445,6 +455,20 @@ public class Token implements Scoreable {
         return getWordPath(true);
     }
 
+    /**
+     * Returns the word of this Token, the search state is a WordSearchState.
+     * If the search state is not a WordSearchState, return null.
+     *
+     * @return the word of this Token, or null if this is not a word token
+     */
+    public Word getWord() {
+        if (isWord()) {
+            WordSearchState wordState = (WordSearchState) searchState;
+            return wordState.getPronunciation().getWord();
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Shows the token count
