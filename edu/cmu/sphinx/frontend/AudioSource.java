@@ -23,19 +23,6 @@ public interface AudioSource extends DataSource {
 
 
     /**
-     * The SphinxProperty for the number of bytes per Audio object.
-     */
-    public final static String PROP_BYTES_PER_AUDIO_FRAME
-        = "edu.cmu.sphinx.frontend.AudioSource.bytesPerAudioFrame";
-
-
-    /**
-     * The default value for PROP_BYTES_PER_AUDIO_FRAME.
-     */
-    public final static int PROP_BYTES_PER_AUDIO_FRAME_DEFAULT = 4000;
-
-
-    /**
      * Returns the next Audio object produced by this AudioSource.
      * The Audio objects of a single Utterance should be preceded by
      * an Audio object that contains Signal.UTTERANCE_START and
