@@ -15,13 +15,12 @@ package edu.cmu.sphinx.tools.audio;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageFilter;
-import java.awt.image.ReplicateScaleFilter;
 import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageObserver;
+import java.awt.image.ReplicateScaleFilter;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -33,8 +32,6 @@ import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
-import edu.cmu.sphinx.tools.audio.AudioData;
-import edu.cmu.sphinx.tools.audio.AudioDataInputStream;
 
 /**
  * Converts a set of log magnitude Spectrum data into a graphical
