@@ -31,7 +31,7 @@ PROFILE_FLAGS= -Xprof -server
 LOG_GC_FLAGS=  -Xloggc:gc.txt
 GC_FLAGS = -ms256m -mx1g
 
-# LOGGER_PROPERTIES=tidigits.props
+# LOGGER_PROPERTIES=trainer.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
 DEBUG_FLAGS=
