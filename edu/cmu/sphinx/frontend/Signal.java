@@ -29,6 +29,16 @@ public class Signal implements Serializable {
      */
     public static final Signal UTTERANCE_START = new Signal("UTTERANCE_START");
 
+    /**
+     * Signal to indicate the start of speech.
+     */
+    public static final Signal SPEECH_START = new Signal("SPEECH_START");
+
+    /**
+     * Signal to indicate the end of speech.
+     */
+    public static final Signal SPEECH_END = new Signal("SPEECH_END");
+
 
     /**
      * Constructs a Signal with the given name.

@@ -53,7 +53,7 @@ AudioSource {
         super(name, context);
         reader = new BufferedReader(new FileReader(batchFile));
         streamAudioSource = new StreamAudioSource
-            ("StreamAudioSource", context, null);
+            ("StreamAudioSource", context, null, null);
 
         String firstFile = reader.readLine();
         if (firstFile != null) {
@@ -72,7 +72,7 @@ AudioSource {
      */
     private void fileSetStream(String audioFile) throws IOException {
         streamAudioSource.setInputStream
-            (new FileInputStream(audioFile + ".raw"));
+            (new FileInputStream(audioFile + ".raw"), audioFile);
     }
 
     

@@ -41,12 +41,13 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
      * @param name the name of this StreamAudioSource
      * @param context the context of this StreamAudioSource
      * @param audioStream the InputStream where audio data comes from
+     * @param streamName the name of the InputStream
      */
     public StreamAudioSource(String name, String context,
-                             InputStream audioStream) {
+                             InputStream audioStream, String streamName) {
         super(name, context);
 	initSphinxProperties();
-        setInputStream(audioStream);
+        setInputStream(audioStream, streamName);
     }
 
 
@@ -70,8 +71,9 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
      * Sets the InputStream from which this StreamAudioSource reads.
      *
      * @param inputStream the InputStream from which audio data comes
+     * @param streamName the name of the InputStream
      */
-    public void setInputStream(InputStream inputStream) {
+    public void setInputStream(InputStream inputStream, String streamName) {
 	
         this.audioStream = inputStream;
         
@@ -80,7 +82,7 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
         utteranceStarted = false;
         
         if (keepAudioReference) {
-            currentUtterance = new Utterance(getContext());
+            currentUtterance = new Utterance(streamName, getContext());
         } else {
             currentUtterance = null;
         }

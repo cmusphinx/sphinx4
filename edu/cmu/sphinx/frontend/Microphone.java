@@ -171,7 +171,7 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
      */
     private void record() {
         
-        Utterance currentUtterance = new Utterance(getContext());
+        Utterance currentUtterance = new Utterance("Microphone", getContext());
         utteranceList.add(currentUtterance);
         
         printMessage("started recording");

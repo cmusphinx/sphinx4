@@ -16,6 +16,7 @@ import java.util.Vector;
  */
 public class Utterance {
 
+    private String name;
     private List audioBuffer;
     private boolean flattened = false;
     private byte[] flattenedAudio = null;
@@ -31,9 +32,12 @@ public class Utterance {
     /**
      * Constructs a default Utterance object.
      *
+     * @param name the name of this Utterance, e.g., it can be the
+     *    name of the audio file where the audio came from
      * @param context the context this Utterance is in
      */
-    public Utterance(String context) {
+    public Utterance(String name, String context) {
+        this.name = name;
         audioBuffer = new Vector();
 
         // get the Sphinx properties
@@ -52,6 +56,16 @@ public class Utterance {
             (sampleRate, windowSizeInMs) * 2;
         windowShiftInBytes = Util.getSamplesPerShift
             (sampleRate, windowShiftInMs) * 2;
+    }
+
+
+    /**
+     * Returns the name of this Utterance.
+     *
+     * @return the name of this Utterance
+     */
+    public String getName() {
+        return name;
     }
 
 
