@@ -97,6 +97,7 @@ public class CepstraViewer extends JFrame {
         
         controlPanel.add(previousButton);
         controlPanel.add(nextButton);
+        controlPanel.add(exitButton);
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(canvas, BorderLayout.CENTER);
