@@ -223,7 +223,8 @@ public class Recognizer {
      */
     public Recognizer(String context, DataSource dataSource) 
         throws IOException {
-        this(context);
+
+        createModels(context);
 
         frontend = getFrontEnd(context, dataSource);
         dumpMemoryInfo("front end");
@@ -235,10 +236,15 @@ public class Recognizer {
         dumpMemoryInfo("search");
     }
 
+    /**
+     * Internal constructor used by derived classes
+     */
+    protected Recognizer() {
+    }
+
 
     /**
-     * Constructs a Recognizer when the dataSource is not yet known.
-     * Only the following components are initialized:
+     * Initialize the following components:
      *
      * acoustic model
      * language model
@@ -253,8 +259,8 @@ public class Recognizer {
      *
      * @param context the context of this Recognizer
      */
-    protected Recognizer(String context) throws IOException {
-        
+    protected void createModels(String context) throws IOException {
+
         props = SphinxProperties.getSphinxProperties(context);
         dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
                                           PROP_DUMP_MEMORY_INFO_DEFAULT);
