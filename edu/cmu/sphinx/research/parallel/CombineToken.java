@@ -32,7 +32,6 @@ import java.util.Map;
 public class CombineToken extends Token {
 
     private Map tokens;     // the list of parallel tokens
-    private boolean pruned;
 
 
     /**
@@ -48,7 +47,6 @@ public class CombineToken extends Token {
 			int frameNumber) {
 	super(predecessor, state, 0.0f, 0.0f, 0.0f, frameNumber);
 	this.tokens = new HashMap();
-	this.pruned = false;
     }
 
 
@@ -133,26 +131,6 @@ public class CombineToken extends Token {
      */
     public ParallelToken getParallelToken(FeatureStream stream) {
         return (ParallelToken) tokens.get(stream);
-    }
-
-
-    /**
-     * Returns true if this CombineToken is pruned.
-     *
-     * @return true if this CombineToken is pruned
-     */
-    public boolean isPruned() {
-	return pruned;
-    }
-
-
-    /**
-     * Sets whether this CombineToken is pruned.
-     *
-     * @param pruned whether this CombineToken is pruned
-     */
-    public void setPruned(boolean pruned) {
-	this.pruned = pruned;
     }
 
 
