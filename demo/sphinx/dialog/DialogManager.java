@@ -297,6 +297,7 @@ public class DialogManager implements Configurable {
         void enter() throws IOException {
             trace("Entering " + name);
             behavior.onEntry();
+            behavior.onReady();
         }
 
         /**
@@ -369,6 +370,13 @@ class DialogNodeBehavior {
      */
     public void onEntry() throws IOException {
         trace("Entering " + getName());
+    }
+
+    /**
+     * Called when this node is ready to perform recognition
+     */
+    public void onReady() {
+        trace("Ready " + getName());
     }
 
     /*

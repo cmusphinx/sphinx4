@@ -63,7 +63,8 @@ public class Dialog {
                 cm.lookup("dialogManager");
 
 
-            System.out.println("Welcome to the Sphinx-4 Dialog Demo - Version 1.0\n");
+            System.out.println("\nWelcome to the Sphinx-4 Dialog Demo "
+                    + " - Version 1.0\n");
 
             dialogManager.addNode("menu",  new MyBehavior());
             dialogManager.addNode("email",  new MyBehavior());
@@ -72,6 +73,7 @@ public class Dialog {
             dialogManager.addNode("music",  new MyMusicBehavior());
             dialogManager.addNode("movies",  new MyBehavior());
             dialogManager.addNode("phone",  new MyBehavior());
+            dialogManager.addNode("books",  new MyBehavior());
 
             dialogManager.setInitialNode("menu");
 
@@ -94,11 +96,123 @@ public class Dialog {
         } catch (InstantiationException e) {
             System.err.println("Problem creating Dialog: " + e);
         }
-
         System.exit(0);
     }
 }
 
+
+/**
+ *  Defines the standard behavior for a node. The standard behavior
+ *  is:
+ *  <ul>
+ *  <li> On entry the set of sentences that can be spoken is
+ *  displayed.
+ *  <li> On recognition if a tag returned contains the prefix 'dialog_' it
+ *  indicates that control should transfer to another dialog node.
+ *  </ul>
+ */
+class MyBehavior extends NewGrammarDialogNodeBehavior {
+    private Collection sampleUtterances;
+
+    /**
+     *  Executed when we enter this node. Displays the active grammar
+     */
+    public void onEntry() throws IOException {
+        super.onEntry();
+    }
+
+    /**
+     *  Executed when we are ready to recognize
+     */
+    public void onReady() {
+        super.onReady();
+        help();
+    }
+
+    /**
+     * Displays the help message for this node. Currently we display
+     * the name of the node and the list of sentences that can be
+     * spoken.
+     */
+    protected void help() {
+        System.out.println(" ======== " + getGrammarName() + " =======");
+        dumpSampleUtterances();
+        System.out.println(" =================================");
+    }
+
+    /**
+     * Executed when the recognizer generates a result. Returns the
+     * name of the next dialog node to become active, or null if we
+     * should stay in this node
+     *
+     * @param result the recongition result
+     * @return the name of the next dialog node or null if control
+     * should remain in the current node.
+     */
+    public String onRecognize(Result result) throws GrammarException {
+        String tag = super.onRecognize(result);
+
+        if (tag != null) {
+            System.out.println("\n " 
+                    + result.getBestFinalResultNoFiller() + "\n");
+            if (tag.equals("help")) {
+                help();
+            } else if (tag.startsWith("goto_")) {
+                return tag.replaceFirst("goto_", "");
+            } else {
+            }
+        } else {
+            System.out.println("\n Oops! didn't hear you.\n");
+        }
+        return null;
+    }
+
+    /**
+     *  Collects the set of possible utterances. 
+     *  
+     *  TODO: Note the current
+     *  implementation just generates a large set of random utterances
+     *  and tosses away any duplicates. There's no guarantee that this
+     *  will generate all of the possible utterances.
+     *
+     *  @return the set of sample utterances
+     */
+    private Collection collectSampleUtterances() {
+        Set set = new HashSet();
+        for (int i = 0; i < 100; i++) {
+            String s = getGrammar().getRandomSentence();
+            if (!set.contains(s)) {
+                set.add(s);
+            }
+        }
+
+        List sampleList = new ArrayList(set);
+        Collections.sort(sampleList);
+        return sampleList;
+    }
+    
+
+    /**
+     * Dumps out the set of sample utterances for this node
+     */
+    private void dumpSampleUtterances() {
+      if (sampleUtterances == null) {
+            sampleUtterances = collectSampleUtterances();
+      }
+
+      for (Iterator i = sampleUtterances.iterator(); i.hasNext(); ) {
+        System.out.println("  " + i.next());
+      }
+   }
+
+    /**
+     * Indicated that the grammar has changed and the collection
+     * of sample utterances should be regenerated.
+     */
+    protected void grammarChanged() {
+        sampleUtterances = null;
+    }
+}
 
 /**
  * An extension of the standard node behavior for music. This node will
@@ -150,140 +264,34 @@ class MyMusicBehavior extends MyBehavior {
             for (Iterator i = songList.iterator(); i.hasNext(); ) {
                 String song = (String) i.next();
                 String newRuleName = ruleName + count;
-                    Rule newRule = ruleGrammar.ruleForJSGF("listen to " + song 
-                            + " { " + newRuleName + " }" );
-                    ruleGrammar.setRule(newRuleName, newRule, true);
-                    ruleGrammar.setEnabled(newRuleName, true);
-                    count++;
-                }
-            } catch (GrammarException ge) {
-                System.out.println("Trouble with the grammar " + ge);
-                throw new IOException("Can't add rules for playlist " + ge);
+                Rule newRule = ruleGrammar.ruleForJSGF("listen to " + song 
+                        + " { " + newRuleName + " }" );
+                ruleGrammar.setRule(newRuleName, newRule, true);
+                ruleGrammar.setEnabled(newRuleName, true);
+                count++;
             }
-
-            // now lets commit the changes
-            getGrammar().commitChanges();
-            help();
+        } catch (GrammarException ge) {
+            System.out.println("Trouble with the grammar " + ge);
+            throw new IOException("Can't add rules for playlist " + ge);
         }
-
-        /**
-         * Dumps out the rules of the given rule grammar
-         *
-         * @param rg the rule grammar to dump
-         */
-        private void dumpGrammar(RuleGrammar rg) {
-            String[] ruleNames = rg.listRuleNames();
-
-            for (int i = 0; i < ruleNames.length; i++) {
-                String enabled = rg.isEnabled(ruleNames[i]) ? "ON" : "OFF";
-                System.out.println("Rule: " + ruleNames[i] + " " +
-                        rg.getRule(ruleNames[i]) + " " + enabled);
-            }
-        }
-
+        // now lets commit the changes
+        getGrammar().commitChanges();
+        grammarChanged();
     }
 
     /**
-     *  Defines the standard behavior for a node. The standard behavior
-     *  is:
-     *  <ul>
-     *  <li> On entry the set of sentences that can be spoken is
-     *  displayed.
-     *  <li> On recognition if a tag returned contains the prefix 'dialog_' it
-     *  indicates that control should transfer to another dialog node.
-     *  </ul>
+     * Dumps out the rules of the given rule grammar, used for
+     * debugging.
+     *
+     * @param rg the rule grammar to dump
      */
-    class MyBehavior extends NewGrammarDialogNodeBehavior {
+    private void dumpGrammar(RuleGrammar rg) {
+        String[] ruleNames = rg.listRuleNames();
 
-        private Collection sampleUtterances;
-
-        /**
-         *  Creates a MyBehavior with the given grammar
-         *  
-         *  @param name the name of the grammar to be active with this
-         *  node is the active node
-         */
-        public MyBehavior() {
-        }
-
-        /**
-         *  Executed when we enter this node. Displays the active grammar
-         */
-        public void onEntry() throws IOException {
-            super.onEntry();
-            help();
-        }
-
-        protected void help() {
-            System.out.println(" ======== " + getGrammarName() + " =======");
-            dumpSampleUtterances();
-            System.out.println(" =================================");
-        }
-
-        /**
-         * Executed when the recognizer generates a result. Returns the
-         * name of the next dialog node to become active, or null if we
-         * should stay in this node
-         *
-         * @param result the recongition result
-         * @return the name of the next dialog node or null if control
-         * should remain in the current node.
-         */
-        public String onRecognize(Result result) throws GrammarException {
-            String tag = super.onRecognize(result);
-
-            if (tag != null) {
-                System.out.println("\n " + result.getBestFinalResultNoFiller() + "\n");
-                if (tag.equals("help")) {
-                    help();
-                } else if (tag.startsWith("goto_")) {
-                    return tag.replaceFirst("goto_", "");
-                } else {
-                }
-            } else {
-                System.out.println("\n Oops! didn't hear you.\n");
-            }
-            return null;
-        }
-
-        /**
-         *  Collects the set of possible utterances. 
-         *  
-         *  TODO: Note the current
-         *  implementation just generates a large set of random utterances
-         *  and tosses away any duplicates. There's no guarantee that this
-         *  will generate all of the possible utterances.
-         *
-         *  @return the set of sample utterances
-         */
-        private Collection collectSampleUtterances() {
-            Set set = new HashSet();
-            for (int i = 0; i < 100; i++) {
-                String s = getGrammar().getRandomSentence();
-                if (!set.contains(s)) {
-                    set.add(s);
-                }
-            }
-
-            List sampleList = new ArrayList(set);
-            Collections.sort(sampleList);
-            return sampleList;
-        }
-        
-
-        /**
-         * Dumps out the set of sample utterances for this node
-         */
-        private void dumpSampleUtterances() {
-    //        if (sampleUtterances == null) {
-                sampleUtterances = collectSampleUtterances();
-     //       }
-
-        for (Iterator i = sampleUtterances.iterator(); i.hasNext(); ) {
-            System.out.println("  " + i.next());
+        for (int i = 0; i < ruleNames.length; i++) {
+            String enabled = rg.isEnabled(ruleNames[i]) ? "ON" : "OFF";
+            System.out.println("Rule: " + ruleNames[i] + " " +
+                    rg.getRule(ruleNames[i]) + " " + enabled);
         }
     }
 }
-
-
-

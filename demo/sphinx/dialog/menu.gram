@@ -9,6 +9,7 @@ grammar menu;
 public <command> =      read email      { goto_email } |
                         play games      { goto_games } |
                         read news       { goto_news } |
+                        read a book     { goto_books } |
                         listen to music { goto_music } |
                         watch movies    { goto_movies } |
                         make a phone call { goto_phone } |
