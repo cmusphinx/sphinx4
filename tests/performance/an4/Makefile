@@ -123,8 +123,26 @@ an4_words_trigram:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-4 \
-	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=15.0 \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=0.8 \
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=16.0 \
+	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
+	-Dedu.cmu.sphinx.model.language.format=arpa \
+	-Dedu.cmu.sphinx.model.language.location=./an4_words.trigram.lm\
+	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
+
+# A short test that is used to generate to generate GDL files and such
+
+an4_short:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=200\
+	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_short_words.list \
+	-Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=800 \
+	-Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150 \
+	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+	-Dedu.cmu.sphinx.search.Recognizer.linguistProcessors=edu.cmu.sphinx.util.GDLDumper \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-24 \
+	-Dedu.cmu.sphinx.search.Linguist.showSentenceHMM=true\
+	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
 	-Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
 	-Dedu.cmu.sphinx.model.language.format=arpa \
 	-Dedu.cmu.sphinx.model.language.location=./an4_words.trigram.lm\
@@ -133,7 +151,7 @@ an4_words_trigram:
 
 an4_words_trigram_quick:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=20\
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=50\
 	-Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist \
 	-Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false \
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\

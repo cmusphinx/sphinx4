@@ -86,7 +86,6 @@ edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.WordListGrammar
 edu.cmu.sphinx.search.Recognizer.dumpMemoryInfo=false
 edu.cmu.sphinx.search.Recognizer.dumpSentenceHMM=false
 
-
 ############################################################
 # 
 # Dictionary properties
@@ -115,7 +114,7 @@ edu.cmu.sphinx.search.Dictionary.allowMissingWords=true
 # Use the number of available CPUS for scoring:
 #
 edu.cmu.sphinx.search.ThreadedAcousticScorer.isCpuRelative=true
-edu.cmu.sphinx.search.ThreadedAcousticScorer.numThreads=0
+edu.cmu.sphinx.search.ThreadedAcousticScorer.numThreads=-1
 edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 
 
@@ -139,7 +138,7 @@ edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=800
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150
 edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
 edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
-edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true
+edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false
 edu.cmu.sphinx.search.Linguist.expandInterNodeContexts=true
 edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
 edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-26
