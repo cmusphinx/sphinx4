@@ -70,6 +70,39 @@ all::
 
 ##########################################################################
 #
+# Standard Aurora tests
+#
+##########################################################################
+
+
+aurora.testa.mfc.baseline:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-16\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora_mfc.props ./batchfiles/aurora.testa.N1_SNR20.batch
+
+
+aurora.testa.plp.baseline:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-16\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora_plp.props ./batchfiles/aurora.testa.N1_SNR20.batch
+
+
+aurora.testa.both:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-16\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR20.batch
+
+
+aurora.testa.both.prune:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doCombinePruning=true\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-16\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR20.batch
+
+
+
+##########################################################################
+#
 # The TIDIGITS tests that uses TreeLinguist.
 #
 ##########################################################################
@@ -230,20 +263,20 @@ aurora.testa.N1_SNR5.unit:
 
 aurora.testa.N1_SNR0.baseline:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=2\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora_mfc.props ./batchfiles/aurora.testa.N1_SNR0.batch
 
 
 aurora.testa.N1_SNR0:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=2\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR0.batch
 
 
 aurora.testa.N1_SNR0.prune:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doCombinePruning=true\
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=2\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=3\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR0.batch
 
 
