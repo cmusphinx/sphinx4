@@ -101,8 +101,8 @@ public class StreamFactory {
     /**
      * According to the given data format, returns an appropriate
      * InputStream of the given file in the given URL location.
-     * The location can be a plain directory or a ZIP file
-     * (these are the only two supported at this point).
+     * The location can be a plain directory or a JAR or ZIP file
+     * (these are the only ones supported at this point).
      *
      * Suppose you want the InputStream to the file "dict/dictionary.txt"
      * in the ZIP file "file:/lab/speech/sphinx4/data/wsj.zip".
@@ -125,8 +125,8 @@ public class StreamFactory {
      * <br>StreamFactory.DIRECTORY
      *
      * @param location the URL location of the input data, it can now
-     *    be a directory or a ZIP file, or null if no location is given,
-     *    which means that the <code>argument</code> also 
+     *    be a directory or a JAR or ZIP file, or null if no location
+     *    is given, which means that the <code>argument</code> also 
      *    specifies the exact location
      *
      * @param file the file in the given location to obtain the InputStream
@@ -170,7 +170,7 @@ public class StreamFactory {
      * </code>
      */
     public static String resolve(String sourceName) {
-        if (sourceName.endsWith(".zip")) {
+        if ((sourceName.endsWith(".jar")) || (sourceName.endsWith(".zip"))) {
             return StreamFactory.ZIP_FILE;
         } else {
             return StreamFactory.DIRECTORY;
