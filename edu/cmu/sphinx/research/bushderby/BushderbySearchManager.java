@@ -14,10 +14,7 @@
 package edu.cmu.sphinx.research.bushderby;
 
 import edu.cmu.sphinx.decoder.linguist.*;
-import edu.cmu.sphinx.decoder.linguist.simple.HMMStateState;
-import edu.cmu.sphinx.decoder.linguist.simple.SentenceHMMStateArc;
-import edu.cmu.sphinx.decoder.linguist.simple.UnitState;
-import edu.cmu.sphinx.decoder.linguist.simple.WordState;
+import edu.cmu.sphinx.decoder.linguist.simple.*;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.Pruner;
@@ -224,12 +221,20 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 	return green;
     }
     */
+
+    private boolean isGreenState(SearchState state) {
+        if( ((SentenceHMMState)state).getColor() == Color.GREEN ) return true;
+        if( state instanceof HMMStateState ) {
+            ((SentenceHMMState)state).setColor(Color.GREEN);
+            return true;
+        }
+        return false;
+    }
+    /*
     private boolean isGreenState(SearchState state) {
         return state instanceof HMMStateState;
     }
-
-
-
+    */
 
     /**
      * Collects the next set of emitting tokens from a token
