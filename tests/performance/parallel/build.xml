@@ -35,7 +35,8 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
     <property name="batch_main"               
 	      value="edu.cmu.sphinx.research.parallel.ParallelRecognizer"/>
     <property name="config" value="parallel.config.xml"/>
-    <property name="batch" value="batchfiles/aurora.testa.N1_SNR15.batch"/>
+    <property name="batch" value="batchfiles/aurora.testa.N1_SNR10.batch"/>
+
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -48,7 +49,7 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
 	      classname="${batch_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
-            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-${jit}"/>
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <arg value="${config}"/> 
@@ -56,15 +57,16 @@ Run ant with -Dlogger_props=tidigits.props to turn on the logging.
         </java>
     </target>
 
+
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
-    <!-- * parallel                                               * -->
+    <!-- * MFC decoding using the FlatLinguist                    * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="mfc"
 	    description="AURORA 2 tests using MFC.">
         <java classpath="${classes_dir}"
-	      classname="${batch_main}"
+	      classname="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"
 	      fork="true">
             <jvmarg value="-ea"/>
             <jvmarg value="-${jit}"/>   

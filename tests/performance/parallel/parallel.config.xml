@@ -30,7 +30,7 @@
     <component name="parallel" 
                type="edu.cmu.sphinx.research.parallel.ParallelRecognizer">
         <property name="recognizer" value="parallelRecognizer"/>
-        <propertylist name="inputSource">
+        <propertylist name="dataSources">
 	    <item>mfcStreamDataSource</item>
 	    <item>plpStreamDataSource</item>
 	</propertylist>
