@@ -102,7 +102,7 @@ public class ExtendedStreamTokenizer {
      */
     public ExtendedStreamTokenizer(Reader reader, boolean eolIsSignificant) {
 	this.reader = new BufferedReader(reader);
-	this.path = path;
+
 	st = new StreamTokenizer(reader);
 	st.resetSyntax();
 	st.whitespaceChars(0, 32);
