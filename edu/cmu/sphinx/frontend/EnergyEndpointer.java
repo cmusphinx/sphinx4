@@ -217,6 +217,8 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
                 speechEnd();
             }
             endLowFrames++;
+        } else {
+            startLowFrames++;
         }
 
         if (cepstrum.getEnergy() < startLow) {
@@ -232,11 +234,16 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
      */
     private void processMediumEnergyCepstrum(Cepstrum cepstrum) {
         if (location == BELOW_START_LOW) {
-            if (inputBuffer.size() > 0) {
+            if (lastFrameBelowStartLow != null) {
+                if (maxDropout < startLowFrames &&
+                    inputBuffer.size() > 0) {
+                    lastFrameBelowStartLow = (Cepstrum) inputBuffer.get(0);
+                }
+            } else if (inputBuffer.size() > 0) {
                 lastFrameBelowStartLow = (Cepstrum) inputBuffer.get(0);
             }
-            startLowFrames = 0;
         }
+        startLowFrames = 0;
         location = BETWEEN_START_LOW_HIGH;
     }
    
@@ -313,18 +320,16 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
 
         // iterate through startOffset frames, but check if we have hit
         // an UTTERANCE_START
-        for (int i = 0; i < startOffset; i++) {
-            index++;
-            Object object = inputBuffer.get(index);
-            if (object == null && index > 0) {
-                index = inputBuffer.size();
-                break;
-            } else {
-                Cepstrum cepstrum = (Cepstrum) object;
+        if (index > -1) {
+            int i = 0;
+            for (ListIterator iterator = inputBuffer.listIterator(index);
+                 i < startOffset && iterator.hasNext(); i++) {
+                Cepstrum cepstrum = (Cepstrum) iterator.next();
                 if (cepstrum.getSignal().equals(Signal.UTTERANCE_START)) {
                     break;
                 }
             }
+            index += i;
         }
 
         if (index >= inputBuffer.size()) {
