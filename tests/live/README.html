@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+
+<!--
+
+/**
+ * Copyright 1999-2004 Carnegie Mellon University.
+ * Portions Copyright 2004 Sun Microsystems, Inc.
+ * Portions Copyright 2004 Mitsubishi Electronic Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ *
+ */
+
+-->
+
+<html>
+  <head><title>Sphinx-4 Live Demo</title></head>
+  <body>
+      <center>
+	<font face="Times New Roman">
+      <table bgcolor="#FFCC99" width="100%">
+	<tr>
+	  <td align=center width="100%">
+	    <h1><i>Sphinx-4</i> Live Demo</h1>
+	  </td>
+	</tr>
+      </table>
+    </font>
+    </center>
+      
+      <p>
+	<b>NOTE:</b> To build and run some parts of this demo, you must <a href="../../doc/jsapi_setup.html">setup JSAPI</a>.
+
+      <p>
+	This is a very simple program that shows the basic speech recognition
+	capabilities of Sphinx-4. When you run the program, the following
+	GUI shows up:
+      <p>
+	<center><img src="live.jpg"></center>
+      <p>
+	As you can see, the program prompts you to say a certain sentence,
+	and you tell the program when you start to speak. You can select
+	the different tasks in the "Decoder:" selection box. The text you
+	should say is in the "Say:" box. The recognition results are in
+	the "Recognized:" box.
+      <p>
+	You can run this program in three different modes:
+      <ul>
+	<li><b>Click to start, click to stop.</b> <br>In this mode, you click
+	  the "Speak" button to start speaking, and click the "Stop"
+	  button to stop speaking.
+	<li><b>Click to talk (endpointed).</b> <br>In this mode, you click the
+	  "Speak" button to start speaking. The endpointer will automatically
+	  detect the end of speech and stop the recognition.
+	<li><b>Hands free mode</b> <br>In this mode, you click the "Speak"
+	  button only once. You then start speaking, wait for it to perform
+	  recognition, then click the "Next" button to go to the next
+	  sentence, start speaking, etc.. The endpointer will detect
+	  the utterance boundaries.  Finally, when you are done
+	  with all the utterances, click "Stop".
+      </ul>
+      <p>
+	<b>Building</b>
+      <p>
+	To build this demo, type the following:
+
+      <p>
+	<b>Running</b>
+      <p>
+	To run this demo, type the following:
+  </body>
+</html>
