@@ -266,7 +266,9 @@ public class CIPhoneLoopLinguist implements Linguist, Configurable {
      * Allocates the linguist
      * @throws IOException if an IO error occurs
      */
-    public void allocate() throws IOException {}
+    public void allocate() throws IOException {
+	model.allocate();
+    }
 
 
     /**
