@@ -40,12 +40,16 @@
     <!-- ********************************************************** -->
     <target name="check_jsapi_jar.isPresent">
         <available file="lib/jsapi.jar" property="jsapi_jar.isPresent"/>
-        <fail unless="jsapi_jar.isPresent">
+    </target>
+
+    <target name="issue_jsapi_warning"
+            unless="jsapi_jar.isPresent">
+        <echo>
 
 Cannot find lib/jsapi.jar.  Will not build JSAPI demos.  
 See docs/jsapi_setup.html for information on setting up 
 your environment to use JSAPI.
-        </fail>
+        </echo>
     </target>
 
 
@@ -71,7 +75,8 @@ your environment to use JSAPI.
 	    depends="compile_sphinx_helloworld,
 	             compile_sphinx_hellodigits,
 	             compile_sphinx_hellongram,
-	             check_jsapi_jar.isPresent"
+	             check_jsapi_jar.isPresent,
+                     issue_jsapi_warning"
 	    description="Compiles Sphinx-4 demos that do not use JSAPI"/>
 
     <target name="compile_sphinx_helloworld">
