@@ -39,26 +39,9 @@ import java.util.List;
  */
 public class ParallelUnitState extends UnitState implements ParallelState {
 
-    private static List allStates;
-    static {
-	allStates = new LinkedList();
-    }
-
     private FeatureStream stream;
     private TokenStack tokenStack;
 
-
-    /**
-     * Clear out all the ParallelUnitStates in the JVM.
-     */
-    public static void clearAllStates() {
-	for (Iterator i = allStates.iterator(); i.hasNext(); ) {
-	    ParallelUnitState state = (ParallelUnitState)i.next();
-	    state.clear();
-	}
-    }
-
-    
     /**
      * Creates a ParallelUnitState
      *
@@ -80,7 +63,6 @@ public class ParallelUnitState extends UnitState implements ParallelState {
         } else {
             this.tokenStack = null;
         }
-	allStates.add(this);
     }
 
 

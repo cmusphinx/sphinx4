@@ -38,26 +38,9 @@ import java.util.List;
 public class ParallelHMMStateState extends HMMStateState 
 implements ParallelState {
 
-    private static List allStates;
-    static {
-	allStates = new LinkedList();
-    }
-
     private FeatureStream stream;
     private TokenStack tokenStack;
 
-
-    /**
-     * Clear out all the ParallelHMMStateStates in the JVM.
-     */
-    public static void clearAllStates() {
-	for (Iterator i = allStates.iterator(); i.hasNext(); ) {
-	    ParallelHMMStateState state = (ParallelHMMStateState)i.next();
-	    state.clear();
-	}
-    }
-
-    
     /**
      * Creates a ParallelHMMStateState
      *
@@ -77,7 +60,6 @@ implements ParallelState {
         } else {
             this.tokenStack = null;
         }
-	allStates.add(this);
     }
 
 
