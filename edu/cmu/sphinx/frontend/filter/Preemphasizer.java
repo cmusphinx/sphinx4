@@ -26,14 +26,21 @@ import java.io.IOException;
 
 
 /**
- * Filters out the attenuation of audio data. Speech signals have an
- * attenuation of 20 dB/dec. Preemphasis flatten the signal to make it
- * less susceptible to finite precision effects later in the signal
- * processing. The Preemphasizer takes a Data object as input
- * and outputs the same Data, but with preemphasis applied.
- * <p>
- * For each value X[i] in the input Data object X, the following formula is
- * applied to obtain the output Data object Y:
+ * Implements a high-pass filter that filters out the attenuation 
+ * of audio data. Speech signals have an attenuation (a decrease in
+ * intensity of a signal) of 20 dB/dec. It increases the magnitude
+ * of the higher frequencies with respect to the lower frequencies.
+ * One of the goals of preemphasis is to reduce background noise,
+ * and increase the signal-to-noise ratio. It is
+ * a high-pass filter because it emphasizes the high frequency components,
+ * and de-emphasizes the low frequency components. High-pass filters
+ * are so called because the allow the high frequency components to "pass 
+ * through", while weakening or filtering out the low frequency components.
+ *
+ * The Preemphasizer takes a Data object that usually represents
+ * audio data as input, and outputs the same Data object, but with
+ * preemphasis applied. For each value X[i] in the input Data object X,
+ * the following formula is applied to obtain the output Data object Y:
  * <p>
  * <code>
  * Y[i] = X[i] - (X[i-1] * preemphasisFactor)
@@ -41,7 +48,7 @@ import java.io.IOException;
  * <p>
  * (note that 'i' is time)
  * <p>
- * The preemphasis factor normally has a value of 0.97.
+ * The preemphasis factor normally has a value of 0.97. 
  * <p>
  * The figure below shows an signal plotted in time:
  * <p>
