@@ -97,7 +97,6 @@ public class LMGrammar extends Grammar {
             throw new Error("No sentence start found in language model");
         }
 
-        System.out.println("In LMGrammar");
 
         for (Iterator i = nodes.iterator(); i.hasNext(); ) {
             GrammarNode prevNode = (GrammarNode) i.next();
@@ -122,7 +121,6 @@ public class LMGrammar extends Grammar {
 
             }
         }
-        System.out.println("Out of LMGrammar");
 
         Timer.stop("LMGrammar.create");
 	return firstNode;
