@@ -215,6 +215,7 @@ public class Utilities {
 	DataInputStream stream = 
 	    new DataInputStream(new FileInputStream(filename));
 	int numberBytes = stream.readInt() * 4 + 4;
+        stream.close();
 	return (fileSize == numberBytes);
     }
 
