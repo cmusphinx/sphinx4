@@ -561,8 +561,13 @@ jsapi.exe from the lib directory.
 	<copy todir="${deploy_dir}/sphinx4-${version}"
 	      includeEmptyDirs="false">
 	     <fileset dir="."
-   	         includes="demo.xml,index.html,license.terms,README,lib/**,bin/*.jar,demo/**,doc-files/**,javadoc/**,doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html"
-		 excludes="lib/jsapi.jar"/>
+   	         includes="demo.xml,index.html,license.terms,README"/>
+	     <fileset dir="." includes="lib/**" excludes="lib/jsapi.jar"/>
+	     <fileset dir="." includes="bin/*.jar"/>
+	     <fileset dir="." includes="demo/**"/>
+	     <fileset dir="." includes="doc-files/**"/>
+	     <fileset dir="." includes="javadoc/**"/>
+	     <fileset dir="." includes="doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html"/>
 	</copy>
 	<delete dir="${deploy_dir}/sphinx4-${version}/lib/jsapi"/>
 	<jar destfile="${deploy_dir}/sphinx4-bin-${version}.zip"
@@ -586,8 +591,15 @@ jsapi.exe from the lib directory.
 	      includeEmptyDirs="false">
 	    <fileset dir="."/>
 	</copy>
+
 	<delete dir="${deploy_dir}/sphinx4-${version}/bin"/>
 	<delete dir="${deploy_dir}/sphinx4-${version}/deploy"/>
+	<delete dir="${deploy_dir}/sphinx4-${version}/tests/frontend"/>
+	<delete dir="${deploy_dir}/sphinx4-${version}/tests/linguist"/>
+	<delete dir="${deploy_dir}/sphinx4-${version}/tests/other"/>
+	<delete dir="${deploy_dir}/sphinx4-${version}/tests/search"/>
+	<delete dir="${deploy_dir}/sphinx4-${version}/tests/trainer"/>
+
 	<jar destfile="${deploy_dir}/sphinx4-src-${version}.zip"
 	     basedir="${deploy_dir}"
 	     includes="sphinx4-${version}/**"
