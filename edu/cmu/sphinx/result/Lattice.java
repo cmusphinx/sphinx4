@@ -162,6 +162,16 @@ public class Lattice {
             }
             assert token.getWord().isSentenceEndWord();
             processToken(terminalNode, token.getPredecessor(), token);
+
+            if (loserManager != null) {
+                List list = loserManager.getAlternatePredecessors(token);
+                if (list != null) {
+                    for (Iterator iter = list.iterator(); iter.hasNext();) {
+                        Token predecessor = (Token) iter.next();
+                        processToken(terminalNode, predecessor, token);
+                    }
+                }
+            }            
         }
 
         if (result == null) {
