@@ -707,7 +707,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="an4_words_rejection"
-	    description="AN4 words test set with a word list language model">
+	    description="AN4 words test set with a word list language model (that is, non-digit words are out-of-grammar, and a rejection CI phone loop.">
         <java classpath="${classpath}"
 	      classname="${batch_main}"
 	      fork="true">
