@@ -22,11 +22,12 @@ SUBDIRS =
 include ${TOP}/build/Makefile.config
 
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
+EXTRA_JAVA_FLAGS=-mx128m
 
 all:: ${CLASSES} ${STUBS}
 
 dict: all
-	$(JAVA_CMD) tests.search.FullDictionaryTest simple_search.props
+	$(JAVA_CMD) tests.search.FullDictionaryTest dictest.props
 
 grammar: all
 	$(JAVA_CMD) tests.search.SimpleLinguistTest simple_search.props
