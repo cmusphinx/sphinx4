@@ -234,7 +234,7 @@ public class StaticLinguist implements  Linguist {
      * @return the set of initial search state
      */
     public SearchState getInitialSearchState() {
-        return null;
+        return initialSentenceHMMState;
     }
 
 
