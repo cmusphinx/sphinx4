@@ -84,6 +84,16 @@ public class Utterance {
 
 
     /**
+     * Returns the number of bits per sample.
+     *
+     * @return the number of bits per sample
+     */
+    public int getBitsPerSample() {
+        return bitsPerSample;
+    }
+
+
+    /**
      * Returns the next audio frame.
      *
      * @return the next audio frame
