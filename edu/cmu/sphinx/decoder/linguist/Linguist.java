@@ -227,6 +227,21 @@ public interface Linguist {
 
 
     /**
+     * Property to control whether or not the linguist may omit
+     * unit states.   When this property is true the linguist may
+     * omit UnitSearchState states.  For some search algorithms 
+     * this will allow for a faster search with more compact results.
+     */
+    public final static String PROP_OMIT_UNIT_STATES
+        = PROP_PREFIX + "generateUnitStates";
+
+    /**
+     * The default value for PROP_OMIT_UNIT_STATES
+     */
+    public final static boolean PROP_OMIT_UNIT_STATES_DEFAULT = true;
+
+
+    /**
      * Initializes this linguist
      *
      * @param context the context to associate this linguist with
