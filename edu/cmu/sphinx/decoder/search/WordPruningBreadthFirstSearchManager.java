@@ -368,7 +368,8 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             for (int j = 0; j <= i; j++) {
                 if (stateOrder[j] == toClass) {
                     throw new Error("IllegalState order: from " + 
-                                    fromState + " to " + toState);
+                                    fromState.toPrettyString() + " to " + 
+                                    toState.toPrettyString());
                 }
             }
         }
