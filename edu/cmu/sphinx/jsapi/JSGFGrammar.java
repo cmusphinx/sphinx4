@@ -251,7 +251,7 @@ public class JSGFGrammar extends Grammar {
     /**
      * Sets the URL context of the JSGF grammars.
      *
-     * @param the URL context of the grammars
+     * @param url the URL context of the grammars
      */
     public void setBaseURL(URL url) {
         baseURL = url;
