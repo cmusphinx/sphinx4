@@ -180,11 +180,11 @@ public class LinguistDumper implements LinguistProcessor  {
 	    int level = stateLevel.getLevel();
 	    SearchState state = stateLevel.getState();
 
-            equalCheck(state);
+            // equalCheck(state);
 
 
-	    if (!visitedStates.contains(state)) {
-		visitedStates.add(state);
+	    if (!visitedStates.contains(state.getSignature())) {
+		visitedStates.add(state.getSignature());
 
 		startDumpNode(out, state, level);
 		SearchStateArc[] arcs = state.getSuccessors();
