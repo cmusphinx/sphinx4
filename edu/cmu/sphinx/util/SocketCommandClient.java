@@ -254,6 +254,10 @@ public class SocketCommandClient {
 				sci.sendCommand(cmd);
 			return "";
 			}
+
+                        public String getHelp() {
+                            return "send a command";
+                        }
 		});
 
 		ci.add("r", new CommandInterface() {
@@ -263,6 +267,10 @@ public class SocketCommandClient {
 			}
 				return "";
 			}
+
+                        public String getHelp() {
+                            return "receive a response";
+                        }
 		});
 
 		ci.add("sr", new CommandInterface() {
@@ -278,6 +286,9 @@ public class SocketCommandClient {
 			}
 			return "";
 			}
+                        public String getHelp() {
+                            return "send a command, receive a response";
+                        }
 		});
 
 		ci.setPrompt("scc-test> ");
