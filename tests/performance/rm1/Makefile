@@ -81,17 +81,17 @@ q_rm1_flatunigram:
 	$(QSUB) -j oe -o rm1.flatunigram.log rm1.flatunigram.csh
 	rm rm1.flatunigram.csh
 
-rm1onrm1_flatunigram:
-	$(RM1_FLATUNIGRAM_CMD) ./rm1onrm1.props ./rm1.batch
+rm1onwsj_flatunigram:
+	$(RM1_FLATUNIGRAM_CMD) ./rm1onwsj.props ./rm1.batch
 
-rm1onrm1_flatunigram_quick:
-	$(RM1_FLATUNIGRAM_QUICK_CMD) ./rm1onrm1.props ./rm1.batch
+rm1onwsj_flatunigram_quick:
+	$(RM1_FLATUNIGRAM_QUICK_CMD) ./rm1onwsj.props ./rm1.batch
 
-q_rm1onrm1_flatunigram:
-	echo "$(RM1_FLATUNIGRAM_CMD) ./rm1onrm1.props ./rm1.batch" > rm1onrm1.flatunigram.csh
-	chmod a+x rm1onrm1.flatunigram.csh
-	$(QSUB) -j oe -o rm1onrm1.flatunigram.log rm1onrm1.flatunigram.csh
-	rm rm1onrm1.flatunigram.csh
+q_rm1onwsj_flatunigram:
+	echo "$(RM1_FLATUNIGRAM_CMD) ./rm1onwsj.props ./rm1.batch" > rm1onwsj.flatunigram.csh
+	chmod a+x rm1onwsj.flatunigram.csh
+	$(QSUB) -j oe -o rm1onwsj.flatunigram.log rm1onwsj.flatunigram.csh
+	rm rm1onwsj.flatunigram.csh
 
 #
 # RM1 unigram test
@@ -124,17 +124,17 @@ q_rm1_unigram:
 	$(QSUB) -j oe -o rm1.unigram.log rm1.unigram.csh
 	rm rm1.unigram.csh
 
-rm1onrm1_unigram:
-	$(RM1_UNIGRAM_CMD) ./rm1onrm1.props ./rm1.batch
+rm1onwsj_unigram:
+	$(RM1_UNIGRAM_CMD) ./rm1onwsj.props ./rm1.batch
 
-rm1onrm1_unigram_quick:
-	$(RM1_UNIGRAM_QUICK_CMD) ./rm1onrm1.props ./rm1.batch
+rm1onwsj_unigram_quick:
+	$(RM1_UNIGRAM_QUICK_CMD) ./rm1onwsj.props ./rm1.batch
 
-q_rm1onrm1_unigram:
-	echo "$(RM1_UNIGRAM_CMD) ./rm1onrm1.props ./rm1.batch" > rm1onrm1.unigram.csh
-	chmod a+x rm1onrm1.unigram.csh
-	$(QSUB) -j oe -o rm1onrm1.unigram.log rm1onrm1.unigram.csh
-	rm rm1onrm1.unigram.csh
+q_rm1onwsj_unigram:
+	echo "$(RM1_UNIGRAM_CMD) ./rm1onwsj.props ./rm1.batch" > rm1onwsj.unigram.csh
+	chmod a+x rm1onwsj.unigram.csh
+	$(QSUB) -j oe -o rm1onwsj.unigram.log rm1onwsj.unigram.csh
+	rm rm1onwsj.unigram.csh
 
 #
 # RM1 bigram test
@@ -155,14 +155,14 @@ q_rm1_bigram:
 	$(QSUB) -j oe -o rm1.bigram.log rm1.bigram.csh
 	rm rm1.bigram.csh
 
-rm1onrm1_bigram:
-	$(RM1_BIGRAM_CMD) ./rm1onrm1.props ./rm1.batch
+rm1onwsj_bigram:
+	$(RM1_BIGRAM_CMD) ./rm1onwsj.props ./rm1.batch
 
-q_rm1onrm1_bigram:
-	echo "$(RM1_BIGRAM_CMD) ./rm1onrm1.props ./rm1.batch" > rm1onrm1.bigram.csh
-	chmod a+x rm1onrm1.bigram.csh
-	$(QSUB) -j oe -o rm1onrm1.bigram.log rm1onrm1.bigram.csh
-	rm rm1onrm1.bigram.csh
+q_rm1onwsj_bigram:
+	echo "$(RM1_BIGRAM_CMD) ./rm1onwsj.props ./rm1.batch" > rm1onwsj.bigram.csh
+	chmod a+x rm1onwsj.bigram.csh
+	$(QSUB) -j oe -o rm1onwsj.bigram.log rm1onwsj.bigram.csh
+	rm rm1onwsj.bigram.csh
 
 #
 # RM1 trigram test
@@ -182,15 +182,15 @@ q_rm1_trigram:
 	$(QSUB) -j oe -o rm1.trigram.log rm1.trigram.csh
 	rm rm1.trigram.csh
 
-rm1onrm1_trigram:
-	$(RM1_TRIGRAM_CMD) ./rm1onrm1.props ./rm1.batch
+rm1onwsj_trigram:
+	$(RM1_TRIGRAM_CMD) ./rm1onwsj.props ./rm1.batch
 
 
-q_rm1onrm1_trigram:
-	echo "$(RM1_TRIGRAM_CMD) ./rm1onrm1.props ./rm1.batch" > rm1onrm1.trigram.csh
-	chmod a+x rm1onrm1.trigram.csh
-	$(QSUB) -j oe -o rm1onrm1.trigram.log rm1onrm1.trigram.csh
-	rm rm1onrm1.trigram.csh
+q_rm1onwsj_trigram:
+	echo "$(RM1_TRIGRAM_CMD) ./rm1onwsj.props ./rm1.batch" > rm1onwsj.trigram.csh
+	chmod a+x rm1onwsj.trigram.csh
+	$(QSUB) -j oe -o rm1onwsj.trigram.log rm1onwsj.trigram.csh
+	rm rm1onwsj.trigram.csh
 
 #
 # RM1 finite state transducer test
@@ -210,14 +210,14 @@ q_rm1_fst:
 	$(QSUB) -j oe -o rm1.trigram.fst.log rm1.trigram.fst.csh
 	rm rm1.trigram.fst.csh
 
-rm1onrm1_fst:
-	$(RM1_FST_CMD) ./rm1onrm1.props ./rm1.batch
+rm1onwsj_fst:
+	$(RM1_FST_CMD) ./rm1onwsj.props ./rm1.batch
 
-q_rm1onrm1_fst:
-	echo "$(RM1_FST_CMD) ./rm1onrm1.props ./rm1.batch" > rm1onrm1.trigram.fst.csh
-	chmod a+x rm1onrm1.trigram.fst.csh
-	$(QSUB) -j oe -o rm1onrm1.trigram.fst.log rm1onrm1.trigram.fst.csh
-	rm rm1onrm1.trigram.fst.csh
+q_rm1onwsj_fst:
+	echo "$(RM1_FST_CMD) ./rm1onwsj.props ./rm1.batch" > rm1onwsj.trigram.fst.csh
+	chmod a+x rm1onwsj.trigram.fst.csh
+	$(QSUB) -j oe -o rm1onwsj.trigram.fst.log rm1onwsj.trigram.fst.csh
+	rm rm1onwsj.trigram.fst.csh
 
 #
 # RM1 word pair test
@@ -236,12 +236,12 @@ q_rm1_wordpair:
 	$(QSUB) -j oe -o rm1.wordpair.log rm1.wordpair.csh
 	rm rm1.wordpair.csh
 
-rm1onrm1_wordpair:
-	$(RM1_WORDPAIR_CMD) ./rm1onrm1.props ./rm1.batch
+rm1onwsj_wordpair:
+	$(RM1_WORDPAIR_CMD) ./rm1onwsj.props ./rm1.batch
 
-q_rm1onrm1_wordpair:
-	echo "$(RM1_WORDPAIR_CMD) ./rm1onrm1.props ./rm1.batch" > rm1onrm1.wordpair.csh
-	chmod a+x rm1onrm1.wordpair.csh
-	$(QSUB) -j oe -o rm1onrm1.wordpair.log rm1onrm1.wordpair.csh
-	rm rm1onrm1.wordpair.csh
+q_rm1onwsj_wordpair:
+	echo "$(RM1_WORDPAIR_CMD) ./rm1onwsj.props ./rm1.batch" > rm1onwsj.wordpair.csh
+	chmod a+x rm1onwsj.wordpair.csh
+	$(QSUB) -j oe -o rm1onwsj.wordpair.log rm1onwsj.wordpair.csh
+	rm rm1onwsj.wordpair.csh
 
