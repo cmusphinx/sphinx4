@@ -855,8 +855,7 @@ public class Lattice {
             for (Iterator i = currentEdges.iterator();i.hasNext();) {
                 Edge edge = (Edge)i.next();
                 double forwardProb = edge.getFromNode().getForwardScore();
-                forwardProb += edge.getAcousticScore()/languageModelWeight +
-                    edge.getLMScore();
+                forwardProb += computeEdgeScore(edge, languageModelWeight);
                 edge.getToNode().setForwardScore
                     (logMath.addAsLinear
                      ((float)forwardProb,
@@ -874,8 +873,7 @@ public class Lattice {
             for (Iterator i = currentEdges.iterator();i.hasNext();) {
                 Edge edge = (Edge)i.next();
                 double backwardProb = edge.getToNode().getBackwardScore();
-                backwardProb += edge.getAcousticScore()/languageModelWeight +
-                    edge.getLMScore();
+                backwardProb += computeEdgeScore(edge, languageModelWeight);
                 edge.getFromNode().setBackwardScore
                     (logMath.addAsLinear((float)backwardProb,
                         (float)edge.getFromNode().getBackwardScore()));
@@ -886,8 +884,22 @@ public class Lattice {
         double normalizationFactor = terminalNode.getForwardScore();
         for(Iterator i=nodes.values().iterator();i.hasNext();) {
             Node node = (Node)i.next();
-            node.setPosterior((node.getForwardScore() + node.getBackwardScore()) - normalizationFactor);
+            node.setPosterior((node.getForwardScore() + 
+                               node.getBackwardScore()) - normalizationFactor);
         }
+    }
+
+
+    /**
+     * Computes the score of an edge.
+     *
+     * @param the edge which score we want to compute
+     *
+     * @return the score of an edge
+     */
+    private double computeEdgeScore(Edge edge, float languageModelWeight) {
+        return (edge.getAcousticScore()/languageModelWeight +
+                edge.getLMScore());
     }
 
 
