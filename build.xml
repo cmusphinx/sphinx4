@@ -182,7 +182,7 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="all"
-	    depends="compile_src,jars"
+	    depends="compile_src,jars,demos"
 	    description="Build everything">
 	<echo message="Build complete."/>
     </target>
@@ -205,6 +205,18 @@ jsapi.exe from the lib directory.
             <patternset refid="${patternset_to_compile}"/>
 	    <classpath refid="libs"/>
 	</javac>
+    </target>
+
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Builds just the demos.                                 * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="demos"
+	    depends="compile_src"
+	    description="Compiles and jars the demos">
+        <ant antfile="demo.xml"/>
     </target>
 
 
