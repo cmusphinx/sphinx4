@@ -54,7 +54,7 @@ time=`date +%T`
 cd $regressionDir
 echo $date > .startDate
 echo $time > .startTime
-./collectMetrics | updateLog
+./collectMetrics | $regressionDir/updateLog
 
 ##########################
 # then we build the world
@@ -97,7 +97,7 @@ fi
 # Log the build information
 #############################
 cd $regressionDir
-echo "build|$date|$time|$machine|$who|make|$status|$totalBuildTime|$totalRunTime|$testType|" | updateLog
+echo "build|$date|$time|$machine|$who|make|$status|$totalBuildTime|$totalRunTime|$testType|" | $regressionDir/updateLog
 
 
 #################################
