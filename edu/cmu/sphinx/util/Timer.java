@@ -206,6 +206,46 @@ public class Timer {
 	showTimesShort();
     }
 
+
+    /**
+     * Gets the count of starts for this timer
+     *
+     * @return the count 
+     */
+    public long getCount() {
+	return count;
+    }
+
+    /**
+     * Gets the average time for this timer in milliseconds
+     *
+     * @return the average time
+     */
+    public double getAverageTime() {
+	if (count == 0) {
+	    return 0.0;
+	}
+	return sum/count;
+    }
+
+    /**
+     * Gets the min time for this timer in milliseconds
+     *
+     * @return the min time
+     */
+    public long getMinTime() {
+	return minTime;
+    }
+
+    /**
+     * Gets the max time for this timer in milliseconds
+     *
+     * @return the max time in milliseconds
+     */
+    public long getMaxTime() {
+	return maxTime;
+    }
+
     /**
      * Formats times into a standard format.
      *
