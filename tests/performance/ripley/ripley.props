@@ -69,9 +69,9 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 ############################################################
 
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist
 edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.NullGrammar
-edu.cmu.sphinx.decoder.Recognizer.acousticScorer=edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer
+edu.cmu.sphinx.decoder.Recognizer.acousticScorer=edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer
 
 
 ############################################################
@@ -81,8 +81,8 @@ edu.cmu.sphinx.decoder.Recognizer.acousticScorer=edu.cmu.sphinx.decoder.scorer.S
 ############################################################
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.PartitionActiveList
-edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1350
-edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-90
+edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=800
+edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80
 
 
 ############################################################
