@@ -39,7 +39,7 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
      * The name of the Sphinx Property for the number of filters in the
      * filterbank.
      */
-    public static final String PROP_NUMBER_FILTERS = "numFilters";
+    public static final String PROP_NUMBER_FILTERS = "numberFilters";
     /**
      * The default value for PROP_NUMBER_FILTERS.
      */
