@@ -110,14 +110,15 @@ edu.cmu.sphinx.search.ThreadedAcousticScorer.numThreads=1
 edu.cmu.sphinx.search.ThreadedAcousticScorer.minTokensPerThread=10
 
 
-edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = .1
-edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1E-25
+edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1
+edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1E-10
 edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250
 edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
-edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=4
+edu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0
 
 edu.cmu.sphinx.search.Recognizer.grammar=edu.cmu.sphinx.search.LMGrammar
+edu.cmu.sphinx.search.Recognizer.searchManager=edu.cmu.sphinx.search.BreadthFirstSearchManager
 edu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel
 edu.cmu.sphinx.search.Recognizer.linguist=edu.cmu.sphinx.search.SimpleLinguist
 edu.cmu.sphinx.model.language.format=arpa
