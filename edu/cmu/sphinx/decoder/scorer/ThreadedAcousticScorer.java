@@ -16,10 +16,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.io.IOException;
+
+import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.FeatureFrame;
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.Signal;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 
 
@@ -106,14 +110,14 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     public final static boolean PROP_SCOREABLES_KEEP_FEATURE_DEFAULT = false;
 
 
-    private FrontEnd frontEnd;		// where features come from
+    private FrontEnd frontEnd;	// where features come from
     private SphinxProperties props;	// the sphinx properties
     private Mailbox mailbox;		// sync between caller and threads
     private Semaphore semaphore;	// join after call
-    private Feature curFeature;		// current feature being processed
+    private Data currentData;		// current feature being processed
     private int numThreads;		// number of threads in use
     private int minScoreablesPerThread;	// min scoreables sent to a thread
-    private boolean keepFeature;        // scoreables keep feature or not
+    private boolean keepData;        // scoreables keep feature or not
 
 
     /**
@@ -140,8 +144,8 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 	minScoreablesPerThread =  
             props.getInt(PROP_MIN_SCOREABLES_PER_THREAD,
                          PROP_MIN_SCOREABLES_PER_THREAD_DEFAULT);
-        keepFeature = props.getBoolean(PROP_SCOREABLES_KEEP_FEATURE,
-                                       PROP_SCOREABLES_KEEP_FEATURE_DEFAULT);
+        keepData = props.getBoolean(PROP_SCOREABLES_KEEP_FEATURE,
+                                    PROP_SCOREABLES_KEEP_FEATURE_DEFAULT);
 
 	if (cpuRelative) {
 	    numThreads += Runtime.getRuntime().availableProcessors();
@@ -172,27 +176,6 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     }
 
     /**
-     * Checks to see if a FeatureFrame is null or if there are Features in it.
-     *
-     * @param ff the FeatureFrame to check
-     *
-     * @return false if the given FeatureFrame is null or if there
-     * are no Features in the FeatureFrame; true otherwise.
-     */
-    private boolean hasFeatures(FeatureFrame ff) {
-        if (ff == null) {
-            System.out.println("ThreadedAcousticScorer: FeatureFrame is null");
-            return false;
-        }
-        if (ff.getFeatures() == null) {
-            System.out.println
-                ("ThreadedAcousticScorer: no features in FeatureFrame");
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Scores the given set of states
      *
      * @param scoreableList a list containing scoreable objects to
@@ -204,32 +187,29 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     public Scoreable calculateScores(List scoreableList) {
         Scoreable best = null;
 
-	FeatureFrame ff;
-
 	try {
-	    ff = frontEnd.getFeatureFrame(1, null);
+	    Data data = frontEnd.getData();
 
-            if (!hasFeatures(ff)) {
+            if (data == null) {
                 return best;
             }
 
-	    curFeature = ff.getFeatures()[0];
-
-	    if (curFeature.getSignal() == Signal.UTTERANCE_START) {
-                ff = frontEnd.getFeatureFrame(1, null);
-                if (!hasFeatures(ff)) {
+	    if (data instanceof DataStartSignal) {
+                data = frontEnd.getData();
+                if (data == null) {
                     return best;
                 }
-                curFeature = ff.getFeatures()[0];
             }
 
-	    if (curFeature.getSignal() == Signal.UTTERANCE_END) {
+	    if (data instanceof DataEndSignal) {
 		return best;
 	    }
 
-            if (!curFeature.hasContent()) {
+            if (data instanceof Signal) {
                 throw new Error("Can't score non-content feature");
             }
+
+            currentData = data;
 
 	    if (numThreads > 1) {
                 
@@ -263,9 +243,8 @@ public class ThreadedAcousticScorer implements AcousticScorer {
                         scoreableList.size());
 		best = scoreScoreables(job);
 	    }
-	} catch (IOException ioe) {
-	    System.out.println("IO Exception " + ioe);
-	    ioe.printStackTrace();
+	} catch (DataProcessingException dpe) {
+            dpe.printStackTrace();
 	    return best;
 	}
 	return best;
@@ -300,14 +279,17 @@ public class ThreadedAcousticScorer implements AcousticScorer {
             // since we are potentially doing somethigns such as frame
             // skipping and grow skipping, this check can become
             // troublesome. Thus it is currently disabled.
-
-	    if (false && scoreable.getFrameNumber() != curFeature.getID()) {
+            
+            /*
+	    if (false && scoreable.getFrameNumber() != currentData.getID()) {
 		throw new Error
 		    ("Frame number mismatch: Token: " + 
 		     scoreable.getFrameNumber() +
-		     "  Feature: " + curFeature.getID());
+		     "  Data: " + currentData.getID());
 	    } 
-	    if (scoreable.calculateScore(curFeature, keepFeature) > 
+            */
+
+	    if (scoreable.calculateScore(currentData, keepData) > 
                 best.getScore()) {
                 best = scoreable;
             }

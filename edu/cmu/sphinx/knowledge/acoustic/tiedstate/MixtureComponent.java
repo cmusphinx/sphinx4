@@ -13,7 +13,9 @@
 
 package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
 
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.FloatData;
+
 import edu.cmu.sphinx.util.LogMath;
 import java.io.Serializable;
 
@@ -131,9 +133,9 @@ public class MixtureComponent implements Serializable {
      *
      * @return the score, in log, for the given feature
      */
-    public float getScore(Feature feature) {
+    public float getScore(Data feature) {
 
-	 float[] data = feature.getFeatureData();
+        float[] data = ((FloatData) feature).getValues();
 	 // float logVal = 0.0f;
 	 float logDval = 0.0f;
 

@@ -11,8 +11,11 @@
  */
 
 package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
-import edu.cmu.sphinx.frontend.Feature;
+
+import edu.cmu.sphinx.frontend.Data;
+
 import java.util.Collection;
+
 import java.io.Serializable;
 
 
@@ -30,7 +33,7 @@ public class CompositeSenone implements Senone, Serializable {
     private final static int MAX_SENONES = 20000;
     private Senone[] senones;
 
-    transient volatile private Feature logLastFeatureScored;
+    transient volatile private Data logLastDataScored;
     transient volatile private float logLastScore;
 
    /**
@@ -79,10 +82,10 @@ public class CompositeSenone implements Senone, Serializable {
      *
      * @return the score for the feature in logmath log base
      */
-    public float getScore(Feature feature) {
+    public float getScore(Data feature) {
 	float logScore = -Float.MAX_VALUE;
 
-	if (feature == logLastFeatureScored) {
+	if (feature == logLastDataScored) {
 	    logScore = logLastScore;
 	} else {
 	    /*
@@ -100,7 +103,7 @@ public class CompositeSenone implements Senone, Serializable {
 	    }
 	    logScore = logCumulativeScore / senones.length;
 	    logLastScore = logScore;
-	    logLastFeatureScored = feature;
+	    logLastDataScored = feature;
 	}
 	return logScore;
     }
@@ -114,7 +117,7 @@ public class CompositeSenone implements Senone, Serializable {
      *
      * @return the score for the feature in LogMath
      */
-    public float[] calculateComponentScore(Feature feature) {
+    public float[] calculateComponentScore(Data feature) {
 	assert false: "Not implemented!";
 	return null;
     }

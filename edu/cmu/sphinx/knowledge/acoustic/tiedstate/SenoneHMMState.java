@@ -16,7 +16,7 @@ import edu.cmu.sphinx.knowledge.acoustic.HMMState;
 import edu.cmu.sphinx.knowledge.acoustic.HMM;
 import edu.cmu.sphinx.knowledge.acoustic.HMMStateArc;
 
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.LogMath;
 
@@ -80,7 +80,7 @@ public class SenoneHMMState implements HMMState {
      *
      * @return the acoustic score for this state.
      */
-    public float getScore(Feature feature) {
+    public float getScore(Data feature) {
         return senone.getScore(feature);
     }
 
@@ -92,7 +92,7 @@ public class SenoneHMMState implements HMMState {
      *
      * @return the acoustic scores for the components of this state.
      */
-    public float[] calculateComponentScore(Feature feature) {
+    public float[] calculateComponentScore(Data feature) {
 	SenoneSequence ss = hmm.getSenoneSequence();
 	return senone.calculateComponentScore(feature);
     }

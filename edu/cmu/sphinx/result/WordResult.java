@@ -14,9 +14,9 @@
 
 package edu.cmu.sphinx.result;
 
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
-import edu.cmu.sphinx.frontend.Audio;
+
 
 /**
  * Represents a word in a recognition result
@@ -66,16 +66,8 @@ public abstract class WordResult {
      * @return the set of feature frames associated with this word, or null if
      * the frames are not available.
      */
-    public abstract Feature[] getFeatureFrames();
+    public abstract Data[] getDataFrames();
 
-
-    /**
-     * Gets the audio associated with this word
-     *
-     * @return the audio associated with this word, or null if the
-     * audio is not available.
-     */
-    public abstract Audio getAudio();
 
     /**
      * Returns a string representation of this object

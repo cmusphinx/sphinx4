@@ -12,9 +12,8 @@
 
 package edu.cmu.sphinx.decoder;
 
-import edu.cmu.sphinx.frontend.util.StreamAudioSource;
-import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
-import edu.cmu.sphinx.frontend.DataSource;
+import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.util.StreamDataSource;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
@@ -131,7 +130,7 @@ public class BatchDecoder {
      */
     public final static boolean PROP_SHOW_PROPS_AT_START_DEFAULT = false;
 
-    private DataSource dataSource;
+    private StreamDataSource dataSource;
     private Decoder decoder;
     private String context;
     private String inputDataType;
@@ -156,63 +155,33 @@ public class BatchDecoder {
      * preparing the batch file
      */
     public BatchDecoder(String context, String batchFile) throws IOException {
-        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        init(props, batchFile);
-    }
-
-
-    /**
-     * Initialize the SphinxProperties.
-     *
-     * @param props the SphinxProperties
-     */
-    private void initSphinxProperties(SphinxProperties props) {
-        this.props = props;
+        props = SphinxProperties.getSphinxProperties(context);
         context = props.getContext();
+        
 	inputDataType = props.getString(PROP_INPUT_TYPE, 
                                         PROP_INPUT_TYPE_DEFAULT);
         skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
         whichBatch = props.getInt(PROP_WHICH_BATCH, PROP_WHICH_BATCH_DEFAULT);
         totalBatches = props.getInt(PROP_TOTAL_BATCHES, 
-                PROP_TOTAL_BATCHES_DEFAULT);
-        usePooledBatchManager = props.getBoolean(PROP_USE_POOLED_BATCH_MANAGER, 
-                PROP_USE_POOLED_BATCH_MANAGER_DEFAULT);
-
+                                    PROP_TOTAL_BATCHES_DEFAULT);
+        usePooledBatchManager = props.getBoolean
+            (PROP_USE_POOLED_BATCH_MANAGER, 
+             PROP_USE_POOLED_BATCH_MANAGER_DEFAULT);
 	showPropertiesAtStart = props.getBoolean(PROP_SHOW_PROPS_AT_START,
                                     PROP_SHOW_PROPS_AT_START_DEFAULT);
-    }
-
-
-    /**
-     * Common intialization code
-     *
-     * @param props the sphinx properties
-     * 
-     * @param batchFile the batch file
-     */
-    private void init(SphinxProperties props, String batchFile) 
-        throws IOException {
-
-        initSphinxProperties(props);
         if (usePooledBatchManager) {
             batchManager = new PooledBatchManager(batchFile, skip);
         } else {
             batchManager = new SimpleBatchManager(batchFile, skip,
-                    whichBatch, totalBatches);
+                                                  whichBatch, totalBatches);
         }
 
-	if (inputDataType.equals("audio")) {
-	    dataSource = new StreamAudioSource
-		("batchAudioSource", context, null, null);
-	} else if (inputDataType.equals("cepstrum")) {
-	    dataSource = new StreamCepstrumSource
-		("batchCepstrumSource", context);
-	} else {
-	    throw new Error("Unsupported data type: " + inputDataType + "\n" +
-			    "Only audio and cepstrum are supported\n");
-	}
+        dataSource = new StreamDataSource();
+        dataSource.initialize("StreamDataSource", null, props, null);
 
-	decoder = new Decoder(context, dataSource);
+	decoder = new Decoder(context);
+        decoder.initialize();
+        decoder.getRecognizer().getFrontEnd().setDataSource(dataSource);
     }
 
 
@@ -223,9 +192,6 @@ public class BatchDecoder {
      * batch file
      */
     public void decode() throws IOException {
-
-        String file = null;
-        String reference = null;
         BatchItem batchItem;
 
         batchManager.start();
@@ -235,42 +201,19 @@ public class BatchDecoder {
         }
 
         System.out.println("\nBatchDecoder: decoding files in " +
-                batchManager.getFilename());
+                           batchManager.getFilename());
         System.out.println("----------");
 
         while ((batchItem = batchManager.getNextItem()) != null) {
-            decodeFile(batchItem.getFilename(), batchItem.getTranscript());
+            InputStream is = new FileInputStream(batchItem.getFilename());
+            dataSource.setInputStream(is, batchItem.getFilename());
+            decoder.decode(batchItem.getTranscript());
         }
         System.out.println("\nBatchDecoder: All files decoded\n");
         Timer.dumpAll(context);
 	decoder.showSummary();
+
         batchManager.stop();
-    }
-
-
-    /**
-     * Decodes the given file.
-     *
-     * @param file the file to decode
-     * @param ref the reference string (or null if not available)
-     *
-     * @throws IOException if there is an I/O error processing the
-     * file
-     */
-    public void decodeFile(String file, String ref) throws IOException {
-
-        System.out.println("\nDecoding: " + file);
-
-	InputStream is = new FileInputStream(file);
-
-	if (inputDataType.equals("audio")) {
-	    ((StreamAudioSource) dataSource).setInputStream(is, file);
-	} else if (inputDataType.equals("cepstrum")) {
-	    boolean bigEndian = Utilities.isCepstraFileBigEndian(file);
-	    ((StreamCepstrumSource) dataSource).setInputStream(is, bigEndian);
-	}
-
-        decoder.decode(ref);
     }
 
 
@@ -290,9 +233,6 @@ public class BatchDecoder {
                                 align.getTotalDeletions(),
                                 align.getTotalSentencesWithErrors());
     }
-
-
-
 
 
     /**

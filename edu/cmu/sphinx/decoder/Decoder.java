@@ -12,22 +12,27 @@
 
 package edu.cmu.sphinx.decoder;
 
-import edu.cmu.sphinx.frontend.DataSource;
-import edu.cmu.sphinx.frontend.Feature;
-import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.Signal;
-import edu.cmu.sphinx.frontend.util.Util;
-import edu.cmu.sphinx.frontend.Utterance;
+import edu.cmu.sphinx.frontend.SignalListener;
+
+import edu.cmu.sphinx.frontend.util.DataUtil;
+import edu.cmu.sphinx.frontend.util.Utterance;
+
 import edu.cmu.sphinx.decoder.search.Token;
+
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.BeamFinder;
+
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Iterator;
 import java.text.DecimalFormat;
@@ -44,6 +49,18 @@ public class Decoder {
      */
     private  final static String PROP_PREFIX =
 	"edu.cmu.sphinx.decoder.Decoder.";
+
+    /**
+     * The SphinxProperty name for the input data type.
+     */
+    public final static String PROP_SHOW_PROPS_AT_START = 
+        PROP_PREFIX + "showPropertiesAtStart";
+
+
+    /**
+     * The default value for the property PROP_SHOW_PROPS_AT_START.
+     */
+    public final static boolean PROP_SHOW_PROPS_AT_START_DEFAULT = false;
 
 
     /**
@@ -149,8 +166,6 @@ public class Decoder {
         false;
 
 
-
-
     private static DecimalFormat memFormat = new DecimalFormat("0.00 Mb");
     private static DecimalFormat timeFormat = new DecimalFormat("0.00");
 
@@ -171,6 +186,7 @@ public class Decoder {
 
     private int numMemoryStats = 0; // # of times memory stats are collected
 
+    private boolean showPropertiesAtStart = false;
     private boolean showPartialResults = false;
     private boolean showBestToken = false;
     private boolean showErrorToken = false;
@@ -187,18 +203,6 @@ public class Decoder {
 
 
     /**
-     * Constructs a live mode Decoder.
-     *
-     * @param context the context of this Decoder
-     * @param dataSource the source of audio of this Decoder
-     */
-    public Decoder(String context, DataSource dataSource) throws
-    IOException {
-        this(context, dataSource, true);
-    }
-
-
-    /**
      * Constructs a live mode Decoder without fully initializing
      * all the components. The components can be initialized
      * later by the <code>initialize()</code> method.
@@ -208,12 +212,12 @@ public class Decoder {
      * @param context the context of this Decoder
      */
     public Decoder(String context) throws IOException {
-        this(context, null, false);
+        this(context, false);
     }
 
 
     /**
-     * Constructs a Decoder with the given context and DataSource,
+     * Constructs a Decoder with the given context,
      * specifying whether to initialize all the components
      * at construction time.
      * This is to avoid having several Decoders fully loaded but
@@ -222,16 +226,17 @@ public class Decoder {
      * the FrontEnd, AcousticModel, SentenceHMM, etc..
      *
      * @param context the context of this Decoder
-     * @param dataSource the source of audio of this Decoder
      * @param initialize indicate whether to fully load this Decoder
      */
     private Decoder(String context,
-                    DataSource dataSource,
                     boolean initialize) throws IOException {
 
         this.context = context;
 	props = SphinxProperties.getSphinxProperties(context);
 
+	showPropertiesAtStart =
+            props.getBoolean(PROP_SHOW_PROPS_AT_START,
+                             PROP_SHOW_PROPS_AT_START_DEFAULT);
 	showPartialResults =
 	    props.getBoolean(PROP_SHOW_PARTIAL_RESULTS, 
                              PROP_SHOW_PARTIAL_RESULTS_DEFAULT);
@@ -250,7 +255,6 @@ public class Decoder {
 	showDetailedStatistics =
 	    props.getBoolean(PROP_SHOW_DETAILED_STATISTICS,
                              PROP_SHOW_DETAILED_STATISTICS_DEFAULT);
-
 	showHypothesisScore =
 	    props.getBoolean(PROP_SHOW_HYPOTHESIS_SCORE,
                              PROP_SHOW_HYPOTHESIS_SCORE_DEFAULT);
@@ -259,7 +263,7 @@ public class Decoder {
         aligner = null;
 
         if (initialize) {
-            initialize(dataSource);
+            initialize();
         }
     }
 
@@ -270,13 +274,11 @@ public class Decoder {
      * all the components (e.g., Frontend, AcousticModel, SentenceHMM, etc.)
      * of this Decoder. This method does nothing if this Decoder has
      * already been initialized.
-     *
-     * @param dataSource the DataSource this Decoder should use
      */
-    public void initialize(DataSource dataSource) throws IOException {
+    public void initialize() throws IOException {
         if (recognizer == null) {
             beamFinder = new BeamFinder(context);
-            recognizer = new Recognizer(context, dataSource);
+            recognizer = new Recognizer(context);
 
             recognizer.addResultListener(new ResultListener() {
                     public void newResult(Result result) {
@@ -296,10 +298,10 @@ public class Decoder {
                     }
                 });
 
-            recognizer.addSignalFeatureListener(new FeatureListener() {
-                    public void featureOccurred(Feature feature) {
-                        if (feature.getSignal() == Signal.UTTERANCE_START) {
-                            getDecoderTimer().start(feature.getCollectTime());
+            recognizer.getFrontEnd().addSignalListener(new SignalListener() {
+                    public void signalOccurred(Signal signal) {
+                        if (signal instanceof DataStartSignal) {
+                            getDecoderTimer().start(signal.getTime());
                         }
                     }
                 });
@@ -328,7 +330,9 @@ public class Decoder {
     /**
      * Decodes an utterance.
      *
-     * @return the decoded Result object
+     * @param ref the reference input
+     *
+     * @return the decoded Result
      */
     public Result decode() {
 	Result result = recognizer.recognize();
@@ -345,11 +349,27 @@ public class Decoder {
      */
     public Result decode(String ref) {
         currentReferenceText = ref;
-	Result result = recognizer.recognize();
+        Result result = recognizer.recognize();
         if (result != null) {
             showFinalResult(result);
         }
         return result;
+    }
+
+
+    /**
+     * Returns the set of batch results
+     *
+     * @return a batch result representing the set of runs for this
+     * batch decoder.
+     */
+    public BatchResults getBatchResults() {
+        return new BatchResults(aligner.getTotalWords(),
+                                aligner.getTotalSentences(),
+                                aligner.getTotalSubstitutions(),
+                                aligner.getTotalInsertions(),
+                                aligner.getTotalDeletions(),
+                                aligner.getTotalSentencesWithErrors());
     }
 
 
@@ -486,7 +506,7 @@ public class Decoder {
 	if (currentReferenceText != null) {
             System.out.println();
             match = aligner.align(currentReferenceText,
-                    result.getBestResultNoFiller());
+                                  result.getBestResultNoFiller());
             aligner.printSentenceSummary();
             System.out.println("RAW:       " + result.toString());
             System.out.println();
@@ -644,14 +664,9 @@ public class Decoder {
      * @param result the result
      */
     public float getAudioTime(Result result) {
-        Utterance utterance = result.getUtterance();
-        if (utterance != null) {
-            return utterance.getAudioTime();
-        } else {
-            return Util.getAudioTime
-                (result.getFrameNumber(),
-                 SphinxProperties.getSphinxProperties(context));
-        }
+        return DataUtil.getAudioTime
+            (result.getFrameNumber(),
+             SphinxProperties.getSphinxProperties(context));
     }
 
     /**

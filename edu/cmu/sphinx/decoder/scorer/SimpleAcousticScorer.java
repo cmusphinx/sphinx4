@@ -14,11 +14,16 @@ package edu.cmu.sphinx.decoder.scorer;
 
 import java.util.Iterator;
 import java.util.List;
+
 import java.io.IOException;
+
+import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.FeatureFrame;
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.Signal;
+
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 
 
@@ -48,35 +53,11 @@ public class SimpleAcousticScorer implements AcousticScorer {
 	this.frontEnd = frontend;
     }
 
-
     /**
      * Starts the scorer
      */
     public void start() {
     }
-
-
-    /**
-     * Checks to see if a FeatureFrame is null or if there are Features in it.
-     *
-     * @param ff the FeatureFrame to check
-     *
-     * @return false if the given FeatureFrame is null or if there
-     * are no Features in the FeatureFrame; true otherwise.
-     */
-    private boolean hasFeatures(FeatureFrame ff) {
-        if (ff == null) {
-            System.out.println("SimpleAcousticScorer: FeatureFrame is null");
-            return false;
-        }
-        if (ff.getFeatures() == null) {
-            System.out.println
-                ("SimpleAcousticScorer: no features in FeatureFrame");
-            return false;
-        }
-        return true;
-    }
-
 
     /**
      * Scores the given set of states
@@ -84,8 +65,8 @@ public class SimpleAcousticScorer implements AcousticScorer {
      * @param scoreableList a list containing scoreable objects to
      * be scored
      *
-     * @return true if there was a Feature available to score
-     *         false if there was no more Feature available to score
+     * @return true if there was a Data available to score
+     *         false if there was no more Data available to score
      */
     public Scoreable calculateScores(List scoreableList) {
 
@@ -94,45 +75,43 @@ public class SimpleAcousticScorer implements AcousticScorer {
         }
 
         Scoreable best = null;
-	FeatureFrame ff;
-
+	
 	try {
-	    ff = frontEnd.getFeatureFrame(1, null);
-	    Feature feature;
-
-	    if (!hasFeatures(ff)) {
+	    Data data = frontEnd.getData();
+            if (data == null) {
+                System.out.println("SimpleAcousticScorer: Data is null");
                 return best;
             }
 
-	    feature = ff.getFeatures()[0];
-
-	    if (feature.getSignal() == Signal.UTTERANCE_START) {
-                ff = frontEnd.getFeatureFrame(1, null);
-                if (!hasFeatures(ff)) {
+	    if (data instanceof DataStartSignal) {
+                data = frontEnd.getData();
+                if (data == null) {
+                    System.out.println("SimpleAcousticScorer: Data is null");
                     return best;
                 }
-                feature = ff.getFeatures()[0];
 	    }
 
-	    if (feature.getSignal() == Signal.UTTERANCE_END) {
+	    if (data instanceof DataEndSignal) {
 		return best;
 	    }
 
-            if (!feature.hasContent()) {
-                throw new Error("trying to score non-content feature");
+            if (data instanceof Signal) {
+                throw new Error("trying to score non-content data");
             }
 
             best = (Scoreable) scoreableList.get(0);
 
 	    for (Iterator i = scoreableList.iterator(); i.hasNext(); ) {
                 Scoreable scoreable = (Scoreable) i.next();
-		if (scoreable.getFrameNumber() != feature.getID()) {
+                /*
+		if (scoreable.getFrameNumber() != data.getID()) {
 		    throw new Error
 			("Frame number mismatch: Token: " + 
 			 scoreable.getFrameNumber() +
-			 "  Feature: " + feature.getID());
+			 "  Data: " + data.getID());
 		}
-                if (scoreable.calculateScore(feature, false) > 
+                */
+                if (scoreable.calculateScore(data, false) > 
                     best.getScore()) {
                     best = scoreable;
                 }
@@ -144,8 +123,8 @@ public class SimpleAcousticScorer implements AcousticScorer {
                     scoreable.normalizeScore(best.getScore());
                 }
 	    }
-	} catch (IOException ioe) {
-	    System.out.println("IO Exception " + ioe);
+	} catch (DataProcessingException dpe) {
+            dpe.printStackTrace();
 	    return best;
 	}
         

@@ -12,24 +12,24 @@
 
 package edu.cmu.sphinx.decoder.scorer;
 
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
 
 /**
- * Represents an entity that can be scored against a feature
+ * Represents an entity that can be scored against a data
  */
 public interface  Scoreable {
 
     /**
-     * Calculates a score against the given feature. The score can be
+     * Calculates a score against the given data. The score can be
      * retreived with get score
      *
-     * @param feature the feature to be scored
-     * @param keepFeature whether this Scoreable should keep a reference
-     *    to the given feature
+     * @param data the data to be scored
+     * @param keepData whether this Scoreable should keep a reference
+     *    to the given data
      *
-     * @return the score for the feature
+     * @return the score for the data
      */
-    public float calculateScore(Feature feature, boolean keepFeature);
+    public float calculateScore(Data data, boolean keepData);
 
     
     /**

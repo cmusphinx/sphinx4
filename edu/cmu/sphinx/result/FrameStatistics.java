@@ -14,7 +14,7 @@
 
 package edu.cmu.sphinx.result;
 
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.knowledge.acoustic.Unit;
 
 /**
@@ -37,7 +37,7 @@ public abstract class FrameStatistics {
      * @return the feature associated with the frame or null if the
      * feature is not available
      */
-    public abstract Feature getFeature();
+    public abstract Data getData();
 
 
     /**

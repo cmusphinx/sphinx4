@@ -13,7 +13,7 @@
 
 package edu.cmu.sphinx.knowledge.acoustic;
 
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
 
 /**
  * Represents a single state in an HMM
@@ -38,11 +38,11 @@ public interface HMMState {
     /**
      * Gets the score for this HMM state
      *
-     * @param feature the feature to be scored
+     * @param data the data to be scored
      *
      * @return the acoustic score for this state.
      */
-    public float getScore(Feature feature);
+    public float getScore(Data data);
 
     /**
      * Determines if this HMMState is an emittting state

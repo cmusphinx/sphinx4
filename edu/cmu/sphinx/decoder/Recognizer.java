@@ -1,4 +1,3 @@
-
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -13,21 +12,28 @@
 
 package edu.cmu.sphinx.decoder;
 
-import edu.cmu.sphinx.frontend.DataSource;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.FeatureFrame;
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.frontend.Signal;
+
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModelFactory;
+
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.dictionary.FastDictionary;
+
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.knowledge.language.LanguageModelFactory;
+
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
+
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
+
 import edu.cmu.sphinx.decoder.search.Pruner;
 import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
@@ -54,19 +60,6 @@ public class Recognizer {
      */
     private final static String PROP_PREFIX =
         "edu.cmu.sphinx.decoder.Recognizer.";
-
-
-    /**
-     * The sphinx property for the front end class.
-     */
-    public final static String PROP_FRONT_END = PROP_PREFIX + "frontend";
-
-
-    /**
-     * The default value of PROP_FRONT_END.
-     */
-    public final static String PROP_FRONT_END_DEFAULT
-        = "edu.cmu.sphinx.frontend.SimpleFrontEnd";
 
 
     /**
@@ -198,7 +191,7 @@ public class Recognizer {
     protected SphinxProperties props;       // sphinx properties
 
     protected AcousticScorer scorer;        // used to score the active list
-    protected FrontEnd frontend;            // frontend audio preprocessor
+    protected FrontEnd frontEnd;       // frontend audio preprocessor
     protected Linguist linguist;            // provides grammar/language info
     protected Pruner pruner;                // used to prune the active list
     protected SearchManager searchManager;  // drives the search
@@ -209,7 +202,6 @@ public class Recognizer {
     protected int featureBlockSize = 50;    // the feature blocksize
 
     protected Vector resultsListeners = new Vector();
-    protected Vector signalFeatureListeners = new Vector();
 
     protected boolean dumpMemoryInfo;
     protected boolean dumpSentenceHMM;
@@ -228,15 +220,14 @@ public class Recognizer {
      * @param context the context of this Recognizer
      * @param dataSource the source of data of this Recognizer
      */
-    public Recognizer(String context, DataSource dataSource) 
-        throws IOException {
+    public Recognizer(String context) throws IOException {
 
         createModels(context);
 
-        frontend = getFrontEnd(context, dataSource);
+        initializeFrontEnds(SphinxProperties.getSphinxProperties(context));
         dumpMemoryInfo("front end");
 
-        scorer = getAcousticScorer(frontend);
+        scorer = getAcousticScorer(frontEnd);
         dumpMemoryInfo("scorer");
 
         searchManager = getSearchManager(linguist, scorer, pruner);
@@ -321,7 +312,7 @@ public class Recognizer {
         throws IOException {
         props = SphinxProperties.getSphinxProperties(context);
 
-        if (frontend == null) {
+        if (frontEnd == null) {
             throw new IOException("Recognizer has not been initialized");
         }
         grammar = getGrammar(dictionary, referenceText);
@@ -351,17 +342,6 @@ public class Recognizer {
         return result;
     }
 
-
-    /**
-     * Returns the FrontEnd of this Recognizer.
-     *
-     * @return the FrontEnd
-     */
-    public FrontEnd getFrontEnd() {
-        return frontend;
-    }
-
-
     /**
      * Returns the Grammar of this Recognizer.
      *
@@ -369,6 +349,15 @@ public class Recognizer {
      */
     public Grammar getGrammar() {
         return grammar;
+    }
+
+    /**
+     * Returns the front end of this Recognizer.
+     *
+     * @return the front end
+     */
+    public FrontEnd getFrontEnd() {
+        return frontEnd;
     }
 
     /**
@@ -401,29 +390,19 @@ public class Recognizer {
      * @param context the context of interest
      * @param dataSource the source of data to decode
      */
-    protected FrontEnd getFrontEnd(String context, DataSource dataSource) {
-        String path = null;
-        try {
-            path = props.getString(PROP_FRONT_END, PROP_FRONT_END_DEFAULT);
-            FrontEnd fei = (FrontEnd)Class.forName(path).newInstance();
-            FrontEndWrapper fe = new FrontEndWrapper(fei);
-            fe.initialize("FrontEnd", context, dataSource);
-            if (dumpFrontEnd) {
-                System.out.println(fe.toString());
+    protected void initializeFrontEnds(SphinxProperties props) {
+        Collection frontEndNames = FrontEndFactory.getNames(props);
+        // right now we only support one front end
+        assert frontEndNames.size() == 1;
+        for (Iterator i = frontEndNames.iterator(); i.hasNext(); ) {
+            String frontEndName = (String) i.next();
+            frontEnd = FrontEndFactory.getFrontEnd(frontEndName, props);
+            if (frontEnd == null) {
+                throw new Error
+                    ("Cannot initialize front end: " + frontEndName);
             }
-            return fe;
-        } catch (ClassNotFoundException fe) {
-            throw new Error("CNFE:Can't create front end " + path, fe);
-        } catch (InstantiationException ie) {
-            throw new Error("IE: Can't create front end " + path, ie);
-        } catch (IllegalAccessException iea) {
-            throw new Error("IEA: Can't create front end " + path, iea);
-        } catch (IOException ioe) {
-            throw new Error("IOE: Can't create front end " + path + " "
-                    + ioe, ioe);
         }
     }
-
 
     /**
      * Initialize and return the AcousticModel(s) used by this Recognizer.
@@ -675,40 +654,6 @@ public class Recognizer {
     }
 
     /**
-     * Add a listener to be called when a feature with non-content
-     * signal is detected.
-     *
-     * @param listener the listener to be added
-     */
-    public void addSignalFeatureListener(FeatureListener listener) {
-        signalFeatureListeners.add(listener);
-    }
-
-    /**
-     * Removes a listener for features with non-content signals.
-     *
-     * @param listener the listener to be removed
-     */
-    public void removeSignalFeatureListener(FeatureListener listener) {
-        signalFeatureListeners.remove(listener);
-    }
-
-    /**
-     * Fire all listeners for features with non-content signals.
-     *
-     * @param feature the feature with non-content signal
-     */
-    protected void fireSignalFeatureListeners(Feature feature) {
-        Vector copy = (Vector) signalFeatureListeners.clone();
-
-        for (Iterator i = copy.iterator(); i.hasNext(); ) {
-            FeatureListener listener = (FeatureListener) i.next();
-            listener.featureOccurred(feature);
-        }
-    }
-
-
-    /**
      * Conditional dumps out memory information
      *
      * @param what an additional info string
@@ -718,76 +663,5 @@ public class Recognizer {
             Utilities.dumpMemoryInfo(what);
         }
     }
-
-
-    /**
-     * A wrapper class for the front end that looks for specific
-     * feature signals and throws events based upon those
-     */
-    class FrontEndWrapper implements FrontEnd {
-
-        FrontEnd fe;
-
-        /**
-         * Creates a front end wrapped around the given front end
-         *
-         * @param fe the front end to wrap
-         */
-        FrontEndWrapper(FrontEnd fe) {
-            this.fe = fe;
-        }
-
-        // wrapper for FrontEnd.drain
-
-        public void drain() {
-            fe.drain();
-        }
-
-        // wrapper for getFeatureFrame
-        public FeatureFrame getFeatureFrame(int numberFeatures, String
-                acousticModelName) throws IOException {
-            FeatureFrame ff = 
-                  fe.getFeatureFrame(numberFeatures, acousticModelName);
-            if (ff != null) {
-                monitorSignals(ff);
-            }
-            return ff;
-        }
-
-
-        // wrapper for initialize
-        public void initialize(String name, String context, 
-                DataSource dataSource) throws IOException {
-            fe.initialize(name, context, dataSource);
-        }
-
-        // wrapper for setDataSource
-        public void setDataSource(DataSource dataSource) {
-            fe.setDataSource(dataSource);
-        }
-
-
-        // wrapper for toString
-        public String toString() {
-            return fe.toString();
-        }
-
-        /**
-         * Looks for non-content frames and invokes the appropriate
-         * listeners
-         *
-         * @param ff the feature frame to monitor
-         */
-        private void monitorSignals(FeatureFrame ff) {
-            Feature[] features = ff.getFeatures();
-
-            for (int i = 0; i < features.length; i++) {
-                if (features[i].getSignal() != Signal.CONTENT) {
-                    fireSignalFeatureListeners(features[i]);
-                }
-            }
-        }
-    }
-
 }
 

@@ -12,7 +12,7 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.knowledge.acoustic.HMMState;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
 import edu.cmu.sphinx.knowledge.dictionary.Word;
@@ -204,9 +204,9 @@ public class Token implements Scoreable {
      *
      * @return the feature for this Token
      */
-    public Feature getFeature() {
-        if (appObject != null && appObject instanceof Feature) {
-            return (Feature) appObject;
+    public Data getData() {
+        if (appObject != null && appObject instanceof Data) {
+            return (Data) appObject;
         } else {
             return null;
         }
@@ -227,12 +227,12 @@ public class Token implements Scoreable {
      * retreived with get score
      *
      * @param feature the feature to be scored
-     * @param keepFeature whether this Scoreable should keep a reference
+     * @param keepData whether this Scoreable should keep a reference
      *    to the given feature
      *
      * @return the score for the feature
      */
-    public float calculateScore(Feature feature, boolean keepFeature) {
+    public float calculateScore(Data feature, boolean keepData) {
         assert searchState.isEmitting() 
             : "Attempting to score non-scoreable token: " + searchState;
         HMMSearchState hmmSearchState = (HMMSearchState) searchState;
@@ -240,7 +240,7 @@ public class Token implements Scoreable {
         logAcousticScore = hmmState.getScore(feature);
         logTotalScore += logAcousticScore;
 
-        if (keepFeature) {
+        if (keepData) {
             setAppObject(feature);
         }
 

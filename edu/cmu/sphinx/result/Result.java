@@ -12,8 +12,9 @@
 
 package edu.cmu.sphinx.result;
 
-import edu.cmu.sphinx.frontend.Feature;
-import edu.cmu.sphinx.frontend.Utterance;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.FloatData;
+import edu.cmu.sphinx.frontend.util.Utterance;
 import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.Token;
@@ -291,53 +292,23 @@ public class Result {
      *    or null if
      * the frames are not available.
      */
-    public Feature[] getFeatureFrames() {
-        Feature[] features = null;
+    public Data[] getDataFrames() {
+        Data[] features = null;
 
         // find the best token, and then trace back for all the features
         Token token = getBestToken();
         if (token != null) {
             List featureList = new LinkedList();
             do {
-                Feature feature = token.getFeature();
+                Data feature = token.getData();
                 featureList.add(0, feature);
                 token = token.getPredecessor();
             } while (token != null);
 
-            features = new Feature[featureList.size()];
+            features = new Data[featureList.size()];
             featureList.toArray(features);
         }
         return features;
-    }
-
-
-    /**
-     * Returns the Utterance (that is, the audio) associated with this Result.
-     * The Utterance will be available ONLY if the SphinxProperties
-     * <pre>edu.cmu.sphinx.frontend.keepAudioReference</pre> is true.
-     *
-     * @return the Utterance associated with this result, or null if the
-     * Utterance is not available.
-     */
-    public Utterance getUtterance() {
-        Utterance utterance = null;
-        Token token = getBestToken();
-
-        if (token != null) {
-            // first trace back to a token that has a Feature
-            while (token != null && token.getFeature() == null) {
-                token = token.getPredecessor();
-            }
-
-            // from the Feature, obtain a reference to the Utterance
-            if (token != null) {
-                Feature feature = token.getFeature();
-                if (feature != null) {
-                    utterance = feature.getUtterance();
-                }
-            }
-        }
-        return utterance;
     }
 
     /**
@@ -399,20 +370,22 @@ public class Result {
         }
 
         if (token != null) {
-            Feature lastWordFirstFeature = token.getFeature();
-            Feature lastFeature = lastWordFirstFeature;
+            Data lastWordFirstFeature = token.getData();
+            Data lastFeature = lastWordFirstFeature;
             token = token.getPredecessor();
 
             while (token != null) {
                 if (token.isWord()) {
                     Word word = token.getWord();
                     if (wantFiller || !word.isFiller()) {
-                        addWord(sb, word, lastFeature, lastWordFirstFeature,
+                        addWord(sb, word, 
+                                (FloatData) lastFeature,
+                                (FloatData) lastWordFirstFeature,
                                 sampleRate);
                     }
                     lastWordFirstFeature = lastFeature;
                 }
-                Feature feature = token.getFeature();
+                Data feature = token.getData();
                 if (feature != null) {
                     lastFeature = feature;
                 }
@@ -434,21 +407,23 @@ public class Result {
                                              int sampleRate) {
         StringBuffer sb = new StringBuffer();
         Word word = null;
-        Feature lastFeature = null;
-        Feature lastWordFirstFeature = null;
+        Data lastFeature = null;
+        Data lastWordFirstFeature = null;
 
         while (token != null) {
             if (token.isWord()) {
                 if (word != null) {
                     if (wantFiller || !word.isFiller()) {
-                        addWord(sb, word, lastFeature, lastWordFirstFeature,
+                        addWord(sb, word,
+                                (FloatData) lastFeature,
+                                (FloatData) lastWordFirstFeature,
                                 sampleRate);
                     }
                     word = token.getWord();
                     lastWordFirstFeature = lastFeature;
                 }
             }
-            Feature feature = token.getFeature();
+            Data feature = token.getData();
             if (feature != null) {
                 lastFeature = feature;
                 if (lastWordFirstFeature == null) {
@@ -472,7 +447,7 @@ public class Result {
      * @param sampleRate the sample rate of the data
      */
     private void addWord(StringBuffer sb, Word word,
-                         Feature startFeature, Feature endFeature,
+                         FloatData startFeature, FloatData endFeature,
                          int sampleRate) {
         float startTime = 
             ((float) startFeature.getFirstSampleNumber()/sampleRate);

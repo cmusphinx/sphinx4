@@ -12,12 +12,13 @@
 
 package edu.cmu.sphinx.decoder;
 
-import edu.cmu.sphinx.frontend.util.BatchFileAudioSource;
-import edu.cmu.sphinx.frontend.util.ConcatFileAudioSource;
-import edu.cmu.sphinx.frontend.DataSource;
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.FrontEndFactory;
 import edu.cmu.sphinx.frontend.Signal;
+import edu.cmu.sphinx.frontend.SignalListener;
+
+import edu.cmu.sphinx.frontend.util.ConcatFileDataSource;
 
 import edu.cmu.sphinx.result.Result;
 
@@ -59,17 +60,6 @@ public class LivePretendDecoder {
 	"edu.cmu.sphinx.decoder.LivePretendDecoder.";
 
     /**
-     * SphinxProperty specifying the DataSource class.
-     */
-    public final static String PROP_DATA_SOURCE = PROP_PREFIX + "dataSource";
-
-    /**
-     * The default value of PROP_DATA_SOURCE.
-     */
-    public final static String PROP_DATA_SOURCE_DEFAULT =
-        "edu.cmu.sphinx.frontend.util.BatchFileAudioSource";
-
-    /**
      * SphinxProperty specifying the transcript file.
      */
     public final static String PROP_HYPOTHESIS_TRANSCRIPT = 
@@ -80,18 +70,6 @@ public class LivePretendDecoder {
      */
     public final static String PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT =
         "hypothesis.txt";
-
-    /**
-     * SphinxProperty specifying the transcript file.
-     */
-    public final static String PROP_REFERENCE_TRANSCRIPT = 
-        PROP_PREFIX + "referenceTranscript";
-
-    /**
-     * The default value of PROP_TRANSCRIPT.
-     */
-    public final static String PROP_REFERENCE_TRANSCRIPT_DEFAULT =
-        "reference.txt";
 
     /**
      * SphinxProperty specifying the number of files to decode before
@@ -116,13 +94,12 @@ public class LivePretendDecoder {
     private long totalResponseTime;
 
     private String context;
-    private String batchFile;
     private String hypothesisFile;
-    private String referenceFile;
 
     private Decoder decoder;
     private FileWriter hypothesisTranscript;
     private SphinxProperties props;
+    private ConcatFileDataSource dataSource;
     private ReferenceSource referenceSource;
     private GapInsertionDetector gapInsertionDetector;
 
@@ -131,13 +108,11 @@ public class LivePretendDecoder {
      * Constructs a LivePretendDecoder.
      *
      * @param context the context of this LivePretendDecoder
-     * @param batchFile the file that contains a list of files to decode
      */
-    public LivePretendDecoder(String context, String batchFile) 
+    public LivePretendDecoder(String context)
         throws IOException {
         this.context = context;
         this.props = SphinxProperties.getSphinxProperties(context);
-        this.batchFile = batchFile;
         init(props);
     }
 
@@ -148,29 +123,33 @@ public class LivePretendDecoder {
      * 
      */
     private void init(SphinxProperties props) throws IOException {
-        referenceFile = props.getString(PROP_REFERENCE_TRANSCRIPT,
-                                        PROP_REFERENCE_TRANSCRIPT_DEFAULT);
         hypothesisFile 
             = props.getString(PROP_HYPOTHESIS_TRANSCRIPT,
                               PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT);
         hypothesisTranscript = new FileWriter(hypothesisFile);
         
-        sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE,
-                                  FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
+        sampleRate = props.getInt(FrontEndFactory.PROP_SAMPLE_RATE,
+                                  FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
         alignInterval = props.getInt(PROP_ALIGN_INTERVAL, 
                                      PROP_ALIGN_INTERVAL_DEFAULT);
 
-        decoder = new Decoder(context, getDataSource());
+        decoder = new Decoder(context);
+        decoder.initialize();
 
         maxResponseTime = Long.MIN_VALUE;
         minResponseTime = Long.MAX_VALUE;
+
+        dataSource = new ConcatFileDataSource();
+        dataSource.initialize("ConcatFileDataSource", null, props, null);
+        referenceSource = dataSource;
         
-        Recognizer recognizer = decoder.getRecognizer();
-        recognizer.addSignalFeatureListener(new FeatureListener() {
-                public void featureOccurred(Feature feature) {
-                    if (feature.getSignal() == Signal.UTTERANCE_START) {
+        FrontEnd frontend = decoder.getRecognizer().getFrontEnd();
+        frontend.setDataSource(dataSource);
+        frontend.addSignalListener(new SignalListener() {
+                public void signalOccurred(Signal signal) {
+                    if (signal instanceof DataStartSignal) {
                         long responseTime = (System.currentTimeMillis() -
-                                             feature.getCollectTime());
+                                             signal.getTime());
                         totalResponseTime += responseTime;
                         if (responseTime > maxResponseTime) {
                             maxResponseTime = responseTime;
@@ -182,38 +161,6 @@ public class LivePretendDecoder {
                     }
                 }
             });
-    }
-
-    /**
-     * Returns the appropriate DataSource object.
-     *
-     * @return the appropriate DataSource object
-     */
-    private DataSource getDataSource() throws IOException {
-
-        DataSource dataSource = null;
-        String dataSourceClass = props.getString
-            (PROP_DATA_SOURCE, PROP_DATA_SOURCE_DEFAULT);
-
-        // if its the BatchFileAudioSource
-        if (dataSourceClass.equals(PROP_DATA_SOURCE_DEFAULT)) {
-            dataSource = new BatchFileAudioSource
-                ("BatchFileAudioSource", context, batchFile);
-            referenceSource = new FileReferenceSource(referenceFile);
-
-        } else if (dataSourceClass.equals
-                   ("edu.cmu.sphinx.frontend.util.ConcatFileAudioSource")) {
-            ConcatFileAudioSource source = new ConcatFileAudioSource
-                ("ConcatFileAudioSource", context, props, 
-                 batchFile, referenceFile);
-            dataSource = source;
-            referenceSource = source;
-
-        } else {
-            throw new Error("Unsupported DataSource: " + dataSourceClass);
-        }
-
-        return dataSource;
     }
 
     /**
@@ -298,7 +245,7 @@ public class LivePretendDecoder {
         Timer gapTimer = Timer.getTimer(context, "GapInsertionDetector");
         gapTimer.start();
         GapInsertionDetector gid = new GapInsertionDetector
-            (props, referenceFile, hypothesisFile);
+            (props, dataSource.getTranscriptFile(), hypothesisFile);
         int gapInsertions = gid.detect();
         gapTimer.stop();
         return gapInsertions;
@@ -402,21 +349,19 @@ public class LivePretendDecoder {
      */
     public static void main(String[] argv) {
 
-        if (argv.length < 2) {
+        if (argv.length < 1) {
             System.out.println
-                ("Usage: LivePretendDecoder propertiesFile batchFile");
+                ("Usage: LivePretendDecoder propertiesFile");
             System.exit(1);
         }
 
-        String context = "batch";
+        String context = "live";
         String propertiesFile = argv[0];
-        String batchFile = argv[1];
 
         try {
             URL url = new File(propertiesFile).toURI().toURL();
             SphinxProperties.initContext (context, url);
-            LivePretendDecoder decoder = 
-                new LivePretendDecoder(context, batchFile);
+            LivePretendDecoder decoder = new LivePretendDecoder(context);
             decoder.decode();
             decoder.close();
         } catch (IOException ioe) {

@@ -12,7 +12,7 @@
 
 package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
 
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.util.LogMath;
 import java.io.Serializable;
 
@@ -31,7 +31,7 @@ public class GaussianMixture implements Senone, Serializable {
     private MixtureComponent[] mixtureComponents;	
     private long id;
 
-    transient volatile private Feature lastFeatureScored;
+    transient volatile private Data lastDataScored;
     transient volatile private float logLastScore;
 
     private LogMath logMath;
@@ -77,15 +77,15 @@ public class GaussianMixture implements Senone, Serializable {
      *
      * @return the score, in logMath log base, for the feature
      */
-    public float getScore(Feature feature)  {
+    public float getScore(Data feature)  {
 	float logScore;
 	
-	if (feature.equals(lastFeatureScored)) {
+	if (feature.equals(lastDataScored)) {
 	    logScore = logLastScore;
 	} else {
 	    logScore = calculateScore(feature);
 	    logLastScore = logScore;
-	    lastFeatureScored = feature;
+	    lastDataScored = feature;
 	}
 	return logScore;
     }
@@ -144,7 +144,7 @@ public class GaussianMixture implements Senone, Serializable {
      *
      * @return the score, in logMath log base, for the feature
      */
-    public float calculateScore(Feature feature) {
+    public float calculateScore(Data feature) {
 	float logTotal = logMath.getLogZero();
 	for (int i = 0; i < mixtureComponents.length; i++) {
 	    // In linear form, this would be:
@@ -165,7 +165,7 @@ public class GaussianMixture implements Senone, Serializable {
      *
      * @return the LogMath log scores for the feature, one for each component
      */
-    public float[] calculateComponentScore(Feature feature) {
+    public float[] calculateComponentScore(Data feature) {
 	float[] logComponentScore = new float[mixtureComponents.length];
 	for (int i = 0; i < mixtureComponents.length; i++) {
 	    // In linear form, this would be:

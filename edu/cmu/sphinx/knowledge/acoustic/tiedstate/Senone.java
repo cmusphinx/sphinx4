@@ -13,7 +13,7 @@
 package edu.cmu.sphinx.knowledge.acoustic.tiedstate;
 
 
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
 import java.io.Serializable;
 
 /**
@@ -30,7 +30,7 @@ public interface Senone extends Serializable {
      *
      * @return 		the score for this senone in LogMath log base
      */
-    public float getScore(Feature feature);
+    public float getScore(Data feature);
 
 
     /**
@@ -42,7 +42,7 @@ public interface Senone extends Serializable {
      *
      * @return 		the scores for this senone in LogMath log base
      */
-    public float[] calculateComponentScore(Feature feature);
+    public float[] calculateComponentScore(Data feature);
 
 
     /**

@@ -16,7 +16,7 @@
 package edu.cmu.sphinx.decoder.linguist.simple;
 
 import edu.cmu.sphinx.knowledge.acoustic.HMMState;
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
 import java.io.Serializable;
 import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
 
@@ -76,7 +76,7 @@ public class HMMStateState extends SentenceHMMState
      *
      * @return the acoustic score for this state
      */
-    public float getScore(Feature feature) {
+    public float getScore(Data feature) {
 	return hmmState.getScore(feature);
     }
 
