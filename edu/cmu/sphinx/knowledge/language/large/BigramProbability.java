@@ -34,7 +34,6 @@ public class BigramProbability {
      * @param probabilityID the index into the probability array
      * @param backoffID the index into the backoff probability array
      * @param firstTrigramEntry the first trigram entry
-     * @param trigramEntries the number trigram entries for this bigram 
      */
     public BigramProbability(int which, int wordID, 
 			     int probabilityID, int backoffID,

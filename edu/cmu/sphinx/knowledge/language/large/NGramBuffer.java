@@ -83,7 +83,7 @@ public class NGramBuffer {
     /**
      * Sets the position of the buffer.
      *
-     * @param new buffer position
+     * @param position new buffer position
      */
     protected void setPosition(int position) {
 	this.position = position;
