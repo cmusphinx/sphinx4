@@ -58,6 +58,9 @@ class BinaryLoader {
 
     private static final float MIN_PROBABILITY = -99.0f;
 
+    private static final int MAX_PROB_TABLE_SIZE = 65536;
+
+
     private static final String PROP_PREFIX = 
     "edu.cmu.sphinx.knowledge.language.large.BinaryLoader.";
     
@@ -77,7 +80,7 @@ class BinaryLoader {
 
     private SphinxProperties props;
     private LogMath logMath;
-    private int maxNGram = 3;
+    private int maxNGram;
 
     private int bytesRead = 0;
 
@@ -473,20 +476,28 @@ class BinaryLoader {
 	if (numberUnigrams <= 0) {
 	    throw new Error("Bad number of unigrams: " + numberUnigrams +
 			    ", must be > 0.");
-	}
+	} else {
+            maxNGram = 1;
+        }
 
 	if ((numberBigrams = readInt(stream, bigEndian)) < 0) {
 	    throw new Error("Bad number of bigrams: " + numberBigrams);
-	}
+	} else {
+            maxNGram = 2;
+        }
 	
 	if ((numberTrigrams = readInt(stream, bigEndian)) < 0) {
 	    throw new Error("Bad number of trigrams: " + numberTrigrams);
-	}
+	} else {
+            maxNGram = 3;
+        }
     }
 
     
     /**
      * Skips the bigrams and trigrams of the LM.
+     *
+     * @param stream the source of data
      */
     private void skipBigramsTrigrams(DataInputStream stream) throws 
     IOException {
@@ -580,7 +591,7 @@ class BinaryLoader {
                                    boolean bigEndian) throws IOException {
         
 	int numProbs = readInt(stream, bigEndian);
-	if (numProbs <= 0 || numProbs > 65536) {
+	if (numProbs <= 0 || numProbs > MAX_PROB_TABLE_SIZE) {
 	    throw new Error("Bad probabilities table size: " + numProbs);
 	}
 
