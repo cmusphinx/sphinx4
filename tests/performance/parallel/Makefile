@@ -82,5 +82,6 @@ tidigits_quick_parallel:
 	$(JAVA_CMD)  \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.skip=5\
 	-Dedu.cmu.sphinx.search.BreadthFirstSearchManager.showTokenCount=false\
+	-Dedu.cmu.sphinx.search.WordListGrammar.path=./digits.wordlist\
 	-Dedu.cmu.sphinx.util.GDLDumper.skipHMMs=false\
-	edu.cmu.sphinx.decoder.BatchDecoder ./parallel.props ../tidigits/tidigits.batch
+	edu.cmu.sphinx.decoder.BatchDecoder ./wsj_mfc_plp.props ../tidigits/tidigits.batch

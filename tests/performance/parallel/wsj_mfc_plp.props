@@ -1,0 +1,125 @@
+############################################################
+#
+# Global logging properties
+#
+############################################################
+
+handlers= java.util.logging.ConsoleHandler
+
+# This is the overall default logging level
+.level= WARN
+
+# Tracing level for the console
+java.util.logging.ConsoleHandler.level = WARN
+java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
+
+
+############################################################
+#
+# Acoustic model properties
+#
+############################################################
+
+edu.cmu.sphinx.model.acoustic.names = wsj_mfc
+
+edu.cmu.sphinx.model.acoustic.wsj_mfc.format = sphinx3.ascii
+edu.cmu.sphinx.model.acoustic.wsj_mfc.location = /lab/speech/sphinx4/data/wsj
+edu.cmu.sphinx.model.acoustic.wsj_mfc.definition_file = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
+edu.cmu.sphinx.model.acoustic.wsj_mfc.data_location = cd_continuous_8gau
+edu.cmu.sphinx.model.acoustic.wsj_mfc.properties_file = am.props
+edu.cmu.sphinx.model.acoustic.wsj_mfc.FeatureVectorLength = 39
+
+edu.cmu.sphinx.model.acoustic.wsj_plp.format = sphinx3.ascii
+edu.cmu.sphinx.model.acoustic.wsj_plp.FeatureVectorLength = 39
+edu.cmu.sphinx.model.acoustic.wsj_plp.location = /lab/speech/sphinx4/data/wsj_plp
+edu.cmu.sphinx.model.acoustic.wsj_plp.definition_file = etc/WSJ_clean_13dPLP_16k_40filt_130Hz_6800Hz.4000.mdef
+edu.cmu.sphinx.model.acoustic.wsj_plp.data_location = cd_continuous_8gau
+edu.cmu.sphinx.model.acoustic.wsj_plp.properties_file = am.props
+
+edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+
+
+############################################################
+# 
+# FrontEnd properties
+#
+############################################################
+
+edu.cmu.sphinx.frontend.bytesPerAudioFrame = 4000
+edu.cmu.sphinx.frontend.cepstrumSize = 13
+edu.cmu.sphinx.frontend.featureExtractor.cepstraBufferSize = 256
+edu.cmu.sphinx.frontend.featureExtractor.featureLength = 39
+edu.cmu.sphinx.frontend.featureExtractor.windowSize = 3
+edu.cmu.sphinx.frontend.keepAudioReference = true
+edu.cmu.sphinx.frontend.preemphasis.factor = 0.97
+edu.cmu.sphinx.frontend.windowSizeInMs = 25.625
+edu.cmu.sphinx.frontend.windowShiftInMs = 10
+edu.cmu.sphinx.frontend.windower.alpha = 0.46
+
+
+
+############################################################
+# 
+# Search properties
+#
+############################################################
+
+edu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=2000
+edu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-200
+
+edu.cmu.sphinx.search.parallel.FeatureScorePruner.absoluteBeamWidth=2000
+edu.cmu.sphinx.search.parallel.FeatureScorePruner.relativeBeamWidth=1E-200
+
+edu.cmu.sphinx.search.parallel.CombinedScorePruner.absoluteBeamWidth=2000
+edu.cmu.sphinx.search.parallel.CombinedScorePruner.relativeBeamWidth=1E-200
+
+edu.cmu.sphinx.search.Linguist.wordInsertionProbability = 1.0E-36
+edu.cmu.sphinx.search.Linguist.silenceInsertionProbability = 1
+edu.cmu.sphinx.search.Linguist.showSentenceHMM=false
+edu.cmu.sphinx.search.Linguist.validateSentenceHMM=false
+edu.cmu.sphinx.search.Linguist.compositeThreshold=10000
+edu.cmu.sphinx.search.validateResults=false
+
+
+
+############################################################
+# 
+# Dictionary properties
+#
+############################################################
+
+edu.cmu.sphinx.search.Dictionary.useAcousticModelLocation = false
+edu.cmu.sphinx.search.Dictionary.dictionaryPath = /lab/speech/sphinx4/data/wsj/dict/digits.dict
+edu.cmu.sphinx.search.Dictionary.fillerPath = /lab/speech/sphinx4/data/wsj/dict/fillerdict
+edu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=false
+
+
+############################################################
+#
+# WordListGrammar properties
+#
+############################################################
+
+edu.cmu.sphinx.search.WordListGrammar.isLooping = true
+# edu.cmu.sphinx.search.WordListGrammar.path = ./digits.wordlist
+
+
+############################################################
+# 
+# Recognizer properties
+#
+############################################################
+
+edu.cmu.sphinx.search.Recognizer.dumpFrontEnd = true
+
+edu.cmu.sphinx.search.Recognizer.acousticScorer = edu.cmu.sphinx.search.parallel.ParallelAcousticScorer
+# edu.cmu.sphinx.search.Recognizer.acousticScorer = edu.cmu.sphinx.search.ThreadedAcousticScorer
+edu.cmu.sphinx.search.Recognizer.linguist = edu.cmu.sphinx.search.parallel.ParallelLinguist
+edu.cmu.sphinx.search.Recognizer.grammar = edu.cmu.sphinx.search.WordListGrammar
+edu.cmu.sphinx.search.Recognizer.searchManager = edu.cmu.sphinx.search.parallel.ParallelSearchManager
+
+# edu.cmu.sphinx.search.Recognizer.searchManager = edu.cmu.sphinx.search.BreadthFirstSearchManager
+edu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false
+
+edu.cmu.sphinx.search.Recognizer.linguistProcessors = edu.cmu.sphinx.util.GDLDumper
+
