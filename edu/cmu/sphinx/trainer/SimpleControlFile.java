@@ -59,13 +59,6 @@ public class SimpleControlFile implements ControlFile {
         Logger.getLogger("edu.cmu.sphinx.trainer.SimpleControlFile");
 
     /**
-     * Constructor for SimpleControlFile.
-     */
-    public SimpleControlFile() {
-	initialize("nada");
-    }
-
-    /**
      * Initializes the SimpleControlFile with the proper context.
      *
      * @param context the context to use
@@ -83,7 +76,7 @@ public class SimpleControlFile implements ControlFile {
 
 	logger.info("Audio control file: " + this.audioFile);
 	logger.info("Transcript file: " + this.transcriptFile);
-	this.dictionary = new TrainerDictionary();
+	this.dictionary = new TrainerDictionary(context);
 	this.wordSeparator = " \t\n\r\f"; // the white spaces
 	logger.info("Processing part " + this.currentPartition +
 		    " of " + this.numberOfPartitions);

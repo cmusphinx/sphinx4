@@ -160,6 +160,12 @@ public class Trainer {
 		*/
 		try {
 		    if (stage.equals(Stage._00_INITIALIZATION)) {
+			System.out.println("Initializing");
+			((SimpleTrainManager)
+			 trainManager).initializeModels(context);
+			System.out.println("Saving");
+			((SimpleTrainManager)
+			 trainManager).saveModels(context);
 		    } else if (stage.equals(Stage._10_CI_TRAIN)) {
 		    } else if (stage.equals(Stage._20_UNTIED_CD_TRAIN)) {
 		    } else if (stage.equals(Stage._30_STATE_PRUNING)) {
@@ -195,13 +201,13 @@ public class Trainer {
             System.exit(1);
         }
 
-        String context = "batch";
+        String context = "trainer";
         String propertiesFile = argv[0];
         String pwd = System.getProperty("user.dir");
 
         try {
             SphinxProperties.initContext
-                (context, new URL("file://" + pwd +  "/"
+                (context, new URL("file:///" + pwd +  "/"
                                    + propertiesFile));
 
             Trainer trainer = new Trainer(context);

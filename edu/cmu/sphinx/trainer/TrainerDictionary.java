@@ -20,20 +20,43 @@ import java.io.IOException;
  */
 public class TrainerDictionary implements Dictionary {
 
-    static private Dictionary dictionary;
-    static String context = "nada";
+    static private Dictionary dictionary = null;
 
     static final String UTTERANCE_BEGIN_SYMBOL = "<s>";
     static final String UTTERANCE_END_SYMBOL = "</s>";
     static final String SILENCE_SYMBOL = "SIL";
 
+    /**
+     * Constructor for class.
+     *
+     * @param context this class's context
+     */
+    public TrainerDictionary(String context) {
+	dictionary = getDictionary(context);
+    }
+
+    /**
+     * Returns a dictionary for the current class.
+     */
     static public Dictionary getDictionary() {
-	try {
-	    dictionary = new FullDictionary(context);
-	} catch (IllegalArgumentException iae) {
-	    System.out.println("IAE " + iae);
-	} catch (IOException ie) {
-	    System.out.println("IE " + ie);
+	return dictionary;
+    }
+
+    /**
+     * Creates and returns a dictionary for the current class using a
+     * given context.
+     *
+     * @param context the class's context
+     */
+    static public Dictionary getDictionary(String context) {
+	if (dictionary == null) {
+	    try {
+		dictionary = new FullDictionary(context);
+	    } catch (IllegalArgumentException iae) {
+		System.out.println("IAE " + iae);
+	    } catch (IOException ie) {
+		System.out.println("IE " + ie);
+	    }
 	}
 	return dictionary;
     }

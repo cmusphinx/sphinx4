@@ -37,7 +37,7 @@ public class BuildSentenceHMM {
     public BuildSentenceHMM() {
     }
     
-    public void sentenceHMMBuilder (Utterance utterance) {
+    public void sentenceHMMBuilder (String context, Utterance utterance) {
 	Transcript currentTranscript;
 	for (utterance.startTranscriptIterator();
 	     utterance.hasMoreTranscripts(); ) {
@@ -45,7 +45,7 @@ public class BuildSentenceHMM {
 	     */
 	    Transcript transcript = utterance.nextTranscript();
 	    // Well, so that it compiles....
-	    this.dictionary = TrainerDictionary.getDictionary();
+	    this.dictionary = TrainerDictionary.getDictionary(context);
 	    wordGraph = buildWordGraph(transcript);
 	    phonemeGraph = buildPhonemeGraph(wordGraph);
 	    contextDependentPhoneGraph = 
@@ -59,7 +59,7 @@ public class BuildSentenceHMM {
      */
     private Graph buildWordGraph(Transcript transcript){
         Graph wordGraph;
-        Dictionary dictionary = TrainerDictionary.getDictionary();
+	// Dictionary dictionary = TrainerDictionary.getDictionary(context);
 
 	transcript.startWordIterator();
         int numWords = transcript.numberOfWords();

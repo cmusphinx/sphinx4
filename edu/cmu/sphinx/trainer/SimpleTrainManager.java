@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
+import edu.cmu.sphinx.knowledge.acoustic.TrainerAcousticModel;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
 
@@ -31,7 +32,7 @@ public class SimpleTrainManager implements TrainManager {
     private Learner learner;
     private ControlFile controlFile;
     private SphinxProperties props;       // sphinx properties
-    private AcousticModel[] models;
+    private TrainerAcousticModel[] models;
 
     private boolean dumpMemoryInfo;
 
@@ -56,16 +57,12 @@ public class SimpleTrainManager implements TrainManager {
     public SimpleTrainManager(String context) {
 	learner = new BaumWelchLearner();
 	controlFile = new SimpleControlFile();
-	initialize(context, learner);
     }
 
     /**
      * Initializes the TrainManager with the proper context.
-     *
-     * @param context the context to use
-     * @param learner the Learner to use
      */
-    public void initialize(String context, Learner learner) {
+    public void initialize() {
     }
 
     /**
@@ -119,7 +116,7 @@ public class SimpleTrainManager implements TrainManager {
       *
       * @throws IOException if an error occurs while loading the data
       */
-    private void saveModels(String context) throws IOException {
+    protected void saveModels(String context) throws IOException {
 	if (1 == models.length) {
 	    models[0].save(null);
 	} else {
@@ -127,8 +124,9 @@ public class SimpleTrainManager implements TrainManager {
 	    List modelList = AcousticModel.getNames(context);
 	    for (Iterator i = modelList.listIterator(); i.hasNext();) {
 		name = (String) i.next();
-		AcousticModel model = 
-		    AcousticModel.getAcousticModel(name, context);
+		TrainerAcousticModel model = 
+		    TrainerAcousticModel.getTrainerAcousticModel(name, 
+								 context);
 		model.save(name);
 	    }
 	}
@@ -147,32 +145,59 @@ public class SimpleTrainManager implements TrainManager {
         
         dumpMemoryInfo("TrainManager start");
         
-        this.models = getAcousticModels(context);
+	models = getAcousticModels(context);
+	for (int m = 0; m < models.length; m++) {
+		models[m].load();
+	}
+        dumpMemoryInfo("acoustic model");
+
+    }
+
+
+     /** 
+      * Initializes the acoustic models.
+      *
+      * @param context the context of this TrainManager
+      */
+    public void initializeModels(String context) throws IOException {
+
+        props = SphinxProperties.getSphinxProperties(context);
+        dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
+                                          PROP_DUMP_MEMORY_INFO_DEFAULT);
+        
+        dumpMemoryInfo("TrainManager start");
+        
+        models = getAcousticModels(context);
+	for (int m = 0; m < models.length; m++) {
+		models[m].initialize();
+	}
         dumpMemoryInfo("acoustic model");
 
     }
 
 
     /**
-     * Initialize and return the AcousticModel(s) used by this TrainManager.
+     * Gets an array of models.
      *
      * @param context the context of interest
      *
-     * @return the AcousticModel(s) used by this Recognizer
+     * @return the AcousticModel(s) used by this Recognizer, not initialized
      */
-    protected AcousticModel[] getAcousticModels(String context)
+    protected TrainerAcousticModel[] getAcousticModels(String context)
 	throws IOException {
 	List modelNames = AcousticModel.getNames(context);
-	AcousticModel[] models;
+	TrainerAcousticModel[] models;
 	if (modelNames.size() == 0) {
-	    models = new AcousticModel[1];
-	    models[0] = AcousticModel.getAcousticModel(context);
+	    models = new TrainerAcousticModel[1];
+	    models[0] = TrainerAcousticModel.getTrainerAcousticModel(context);
 	} else {
-	    models = new AcousticModel[modelNames.size()];
+	    models = new TrainerAcousticModel[modelNames.size()];
 	    int m = 0;
 	    for (Iterator i = modelNames.iterator(); i.hasNext(); m++) {
 		String modelName = (String) i.next();
-		models[m] = AcousticModel.getAcousticModel(modelName, context);
+		models[m] = 
+		    TrainerAcousticModel.getTrainerAcousticModel(modelName, 
+								 context);
 	    }
 	}
 	return models;

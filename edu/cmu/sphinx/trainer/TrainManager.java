@@ -29,14 +29,6 @@ public interface TrainManager{
 	"edu.cmu.sphinx.trainer.Trainer.";
 
     /**
-     * Initializes the TrainManager with the proper context.
-     *
-     * @param context the context to use
-     * @param learner the Learner to use
-     */
-    public void initialize(String context, Learner learner);
-
-    /**
      * Starts the TrainManager.
      */
     public void start();
@@ -51,4 +43,8 @@ public interface TrainManager{
      */
     public void train();
 
+    /**
+     * Initialize models.
+     */
+    public void initialize();
 }
