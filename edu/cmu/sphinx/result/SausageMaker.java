@@ -23,6 +23,11 @@ import java.util.Vector;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 /**
  * The SausageMaker takes word lattices as input and turns them into sausages 
@@ -33,9 +38,49 @@ import edu.cmu.sphinx.util.LogMath;
  * @author pgorniak
  *
  */
-public class SausageMaker implements ConfidenceScorer {
+public class SausageMaker implements ConfidenceScorer, Configurable {
+    
+    /**
+     * Sphinx property that defines the language model weight.
+     */
+    public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
+
+    /**
+     * The default value for the PROP_LANGUAGE_WEIGHT property
+     */
+    public final static float PROP_LANGUAGE_WEIGHT_DEFAULT  = 1.0f;
+    
+    private String name;
+    private float languageWeight;
+    
     protected Lattice lattice;
     
+    /**
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
+    public void register(String name, Registry registry)
+        throws PropertyException {
+        this.name = name;
+        registry.register(PROP_LANGUAGE_WEIGHT, PropertyType.FLOAT);
+    }
+
+
+    /**
+     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT,
+                                     PROP_LANGUAGE_WEIGHT_DEFAULT);
+    }
+
+    /**
+     * @see edu.cmu.sphinx.util.props.Configurable#getName()
+     */
+    public String getName() {
+        return name;
+    }
+
     /**
      * Construct an empty sausage maker
      *
@@ -82,25 +127,16 @@ public class SausageMaker implements ConfidenceScorer {
                 double sim = interClusterDistance(c1,c2);
                 if (sim > maxSim) {
                     maxSim = sim;
-                    //System.out.println("inter: new maxSim " + maxSim);
-                    //printCluster(c1);
-                    //printCluster(c2);
                     toBeMerged1 = c1;
                     toBeMerged2 = c2;
                 }
             }
         }
         if (toBeMerged1 != null) {
-            //System.out.println("inter: merging");
-            //printCluster(toBeMerged1);
-            //printCluster(toBeMerged2);
             clusters.remove(toBeMerged2);
             toBeMerged1.addAll(toBeMerged2);
-            //System.out.println("inter: done merging");
-            //printClusters(clusters);
             return true;
         }
-        //System.out.println("inter: no clusters to merge");
         return false;
     }
     
@@ -237,8 +273,6 @@ public class SausageMaker implements ConfidenceScorer {
                 }
                 wordsSeen2.add(word2);
                 float sim = (float)computePhoneticSimilarity(node1,node2);
-                //System.out.println("phonetic similarity for " + node1 + " " + node2
-                //        + ": " + sim);
                 sim = lattice.getLogMath().linearToLog(sim);
                 sim += wordSubClusterProbability(cluster1,word1);
                 sim += wordSubClusterProbability(cluster2,word2);
@@ -290,12 +324,9 @@ public class SausageMaker implements ConfidenceScorer {
             while (i2.hasNext()) {
                 Node node2 = (Node)i2.next();
                 if (!node1.getWord().getSpelling().equals(node2.getWord().getSpelling())) {
-                    //System.out.println("words don't match!");
                     return Double.NEGATIVE_INFINITY;
                 }
-                //System.out.println("intra: comparing node " + node1 + " to " + node2);
                 if (node1.hasAncestralRelationship(node2)) {
-                    //System.out.println("nodes are related!");
                     return Double.NEGATIVE_INFINITY;
                 }
                 double overlap = 0.0;
@@ -312,11 +343,9 @@ public class SausageMaker implements ConfidenceScorer {
                         overlap -= node1.getEndTime() - node2.getEndTime(); 
                     }
                 }
-                //System.out.println("intra: node overlap is " + overlap);
                 if (overlap > 0.0) {
                     overlap = lattice.getLogMath().logToLinear((float)overlap);
                     overlap += node1.getPosterior() + node2.getPosterior();
-                    //System.out.println("intra: weighted node overlap is " + overlap);
                     if (overlap > maxSim) {
                         maxSim = overlap;
                     }
@@ -358,8 +387,6 @@ public class SausageMaker implements ConfidenceScorer {
      * @param clusters the current list of clusters
      */
     protected void intraWordCluster(List clusters) {
-        //System.out.println("intra: initializing");
-        //printClusters(clusters);
         while (intraWordClusterStep(clusters));
     }
     
@@ -385,25 +412,16 @@ public class SausageMaker implements ConfidenceScorer {
                 double sim = intraClusterDistance(c1,c2);
                 if (sim > maxSim) {
                     maxSim = sim;
-                    //System.out.println("intra: new maxSim " + maxSim);
-                    //printCluster(c1);
-                    //printCluster(c2);
                     toBeMerged1 = c1;
                     toBeMerged2 = c2;
                 }
             }
         }
         if (toBeMerged1 != null) {
-            //System.out.println("merging");
-            //printCluster(toBeMerged1);
-            //printCluster(toBeMerged2);
             clusters.remove(toBeMerged2);
             toBeMerged1.addAll(toBeMerged2);
-            //System.out.println("done merging");
-            //printClusters(clusters);
             return true;
         }
-        //System.out.println("no clusters to merge");
         return false;
     }
     
@@ -429,8 +447,6 @@ public class SausageMaker implements ConfidenceScorer {
         }
         intraWordCluster(clusters);
         interWordCluster(clusters);
-        //System.out.println("final clusters");
-        //printClusters(clusters);
         Sausage sausage = new Sausage(clusters.size());
         ListIterator c1 = clusters.listIterator();
         while (c1.hasNext()) {
@@ -463,9 +479,7 @@ public class SausageMaker implements ConfidenceScorer {
         lattice = new Lattice(result);
         LatticeOptimizer lop = new LatticeOptimizer(lattice);
         lop.optimize();
-        //TODO: the following currently does not return a valid sausage, because
-        //      we here need the language model weight to compute posteriors.
-        //lattice.computeNodePosteriors(languageWeight);
+        lattice.computeNodePosteriors(languageWeight);
         return makeSausage();
     }
 }
