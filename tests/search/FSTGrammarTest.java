@@ -44,7 +44,7 @@ public class FSTGrammarTest {
             edu.cmu.sphinx.decoder.linguist.Grammar grammar = new edu.cmu.sphinx.decoder.linguist.FSTGrammar();
 
 	    grammar.initialize(context, null, dictionary);
-	    grammar.dump();
+	    grammar.dumpGrammar("fst.grammar");
 	    System.out.println("Num nodes loaded is " +
 		    grammar.getNumNodes());
 
