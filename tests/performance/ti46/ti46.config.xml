@@ -16,6 +16,7 @@
     <!-- ******************************************************** --> 
     
     <property name="absoluteBeamWidth" 		value="100"/>
+    <property name="relativeBeamWidth" 		value="1E-100"/>
     <property name="wordInsertionProbability" 	value="1E-56"/>
     <property name="silenceInsertionProbability"	value="1"/>
     <property name="languageWeight" 	value="7"/>
@@ -70,6 +71,7 @@
 	     type="edu.cmu.sphinx.decoder.search.SortingActiveListFactory">
         <property name="logMath" value="logMath"/>
         <property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
+        <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
     </component>
     
     <component name="trivialPruner" 
