@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+   Copyright 1999-2004 Carnegie Mellon University.  
+   Portions Copyright 2002-2004 Sun Microsystems, Inc.  
+   Portions Copyright 2002-2004 Mitsubishi Electronic Research Laboratories.
+   All Rights Reserved.  Use is subject to license terms.
+   
+   See the file "license.terms" for information on usage and
+   redistribution of this file, and for a DISCLAIMER OF ALL 
+   WARRANTIES.
+
+-->
+</head>
+<body bgcolor="white">
+
+Provides an tool that generates different types of features
+(MFCC, PLP, spectrum) from audio files.
+
+<p>
+
+To create MFCC cepstrum using this program, go to the 
+<code>edu/cmu/sphinx/tools/feature</code> directory, and type:
+
+<pre>ant -Dinput="input file" -Doutput="output file" cepstra_producer</pre>
+
+<p>
+
+To create a binary PLP cepstrum file using this program, type:
+
+<pre>ant -Dinput="input file" -Doutput="output file" plp_producer</pre>
+
+<p>
+
+To create a binary spectra file, type:
+
+<pre>ant -Dinput="input file" -Doutput="output file" spectra_producer</pre>
+
+<p>
+
+As you might notice by comparing the files cepstra_dump.props and 
+spectra_dump.props in the "edu/cmu/sphinx/tools/feature" directory,
+the only difference in setup between dumping different types of features
+is in the sequence of data processors as specified in the properties file.
+If you give it a difference data processor sequence, it will give you 
+different output.
+
+<p>
+
+<b>Binary File Format</b>
+
+<p>
+
+The first 4 bytes of the binary file is an integer indicating the 
+total number of data points in the file. This is used by the program
+that reads this file to check the endianness of the file by comparing
+with the file size. The rest of the file is simply the data points.
+Each data point is a 4-byte floating point number, in big-endian order.
+
+<!--
+<h2>Package Specification</h2>
+
+<ul>
+  <li><a href=""> </a>
+</ul>
+
+<h2>Related Documentation</h2>
+
+For overviews, tutorials, examples, guides, and tool documentation,
+please see:
+<ul>
+  <li><a href=""></a>
+</ul>
+
+-->
+
+</body>
+</html>
+
