@@ -79,6 +79,20 @@ public class SimpleLinguist implements  Linguist {
     public final static boolean PROP_DUMP_GSTATES_DEFAULT = false;
 
 
+    /**
+     * An array of classes that represents the order 
+     * in which the states will be returned.
+     */
+    private final static Class[] searchStateOrder = {
+        HMMStateState.class,
+        NonEmittingHMMState.class,
+        BranchState.class,
+        PronunciationState.class,
+        ExtendedUnitState.class,
+        GrammarState.class
+    };
+
+
     private SphinxProperties props;
 
     private Grammar grammar;            
@@ -113,6 +127,18 @@ public class SimpleLinguist implements  Linguist {
 
     // just for detailed debugging
     private final boolean tracing = false;
+
+
+    /**
+     * Returns an array of classes that represents the order 
+     * in which the states will be returned.
+     *
+     * @return an array of classes that represents the order 
+     *     in which the states will be returned
+     */
+    public Class[] getSearchStateOrder() {
+        return searchStateOrder;
+    }
 
 
     /**
@@ -1266,8 +1292,14 @@ public class SimpleLinguist implements  Linguist {
             HMMStateArc[] arcs = tree.getHMMState().getSuccessors();
 
             for (int i = 0; i < arcs.length; i++) {
-                HMMStateState newState = new HMMStateState(
-                        parent, arcs[i].getHMMState());
+                HMMStateState newState;
+                if (arcs[i].getHMMState().isEmitting()) {
+                    newState = 
+                        new HMMStateState(parent, arcs[i].getHMMState());
+                } else {
+                    newState =
+                        new NonEmittingHMMState(parent, arcs[i].getHMMState());
+                }
 
                 SentenceHMMState existingState = getExistingState(newState);
                 float logProb = arcs[i].getLogProbability();
@@ -1277,7 +1309,7 @@ public class SimpleLinguist implements  Linguist {
                             logOne);
                 } else {
                      attachState(tree, newState, logProb, logOne,
-                             logOne);
+                                 logOne);
                      addStateToCache(newState);
                      retState = expandHMMTree(parent, newState);
                 }
