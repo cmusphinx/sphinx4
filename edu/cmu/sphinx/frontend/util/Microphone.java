@@ -86,13 +86,13 @@ public class Microphone extends DataProcessor implements AudioSource {
      * milliseconds the microphone should sleep in between reading
      * audio.
      */
-    public final static String PROP_SLEEP_TIME = 
-        PROP_PREFIX + "sleepTime";
+    public final static String PROP_SLEEP_BETWEEN_AUDIO =
+        PROP_PREFIX + "sleepBetweenAudio";
 
     /**
      * The default value for PROP_SLEEP_TIME.
      */
-    public final static int PROP_SLEEP_TIME_DEFAULT = 0;
+    public final static boolean PROP_SLEEP_BETWEEN_AUDIO_DEFAULT = false;
 
 
     /**
@@ -129,6 +129,7 @@ public class Microphone extends DataProcessor implements AudioSource {
     private boolean tracing = false;
     private boolean closeAudioBetweenUtterances = true;
     private boolean keepAudioReference = true;
+    private boolean sleepBetweenAudio = false;
 
     private static Logger logger = Logger.getLogger
         ("edu.cmu.sphinx.frontend.Microphone");
@@ -179,11 +180,26 @@ public class Microphone extends DataProcessor implements AudioSource {
         keepAudioReference = getSphinxProperties().getBoolean
             (FrontEnd.PROP_KEEP_AUDIO_REFERENCE,
              FrontEnd.PROP_KEEP_AUDIO_REFERENCE_DEFAULT);
+        
+        sleepBetweenAudio = getSphinxProperties().getBoolean
+            (PROP_SLEEP_BETWEEN_AUDIO, PROP_SLEEP_BETWEEN_AUDIO_DEFAULT);
 
-        sleepTime = getSphinxProperties().getInt
-            (PROP_SLEEP_TIME, PROP_SLEEP_TIME_DEFAULT);
+        if (sleepBetweenAudio) {
+            sleepTime = getSleepTime();
+            System.out.println("Microphone: sleep " + sleepTime);
+        }
     }
 
+    /**
+     * Calculate the sleep time in milliseconds.
+     *
+     * @return the sleep time in milliseconds
+     */
+    private int getSleepTime() {
+        float samplesPerFrame = frameSizeInBytes/(sampleSizeInBits/8);
+        float timePerFrameInSecs = samplesPerFrame/sampleRate;
+        return (int) (timePerFrameInSecs * 1000 * 0.8);
+    }
 
     /**
      * Terminates this Microphone. In this version, it currently
@@ -258,7 +274,7 @@ public class Microphone extends DataProcessor implements AudioSource {
                 while (getRecording() && !getClosed()) {
                     printMessage("reading ...");
                     audioList.add(readAudio(currentUtterance));
-                    if (sleepTime > 0) {
+                    if (sleepBetweenAudio) {
                         try {
                             Thread.sleep(sleepTime);
                         } catch (InterruptedException ie) {
