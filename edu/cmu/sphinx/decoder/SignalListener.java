@@ -15,8 +15,8 @@ package edu.cmu.sphinx.decoder;
 import edu.cmu.sphinx.frontend.Signal;
 
 /**
- *  The listener interface for being informed when the state of the
- *  audio channel changes
+ *  The listener interface for being informed when a non-content
+ *  signal is generated
  */
 public interface SignalListener {
     /**
