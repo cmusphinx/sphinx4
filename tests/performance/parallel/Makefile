@@ -47,7 +47,7 @@ HEAP_DUMP =   -Xrunhprof:heap=dump,cpu=samples
 #GC_FLAGS= -ms1g -XX:-UseConcMarkSweepGC -XX:+UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 #GC_FLAGS= -ms1g -XX:+UseConcMarkSweepGC -XX:-UseParallelGC -XX:ParallelGCThreads=8 -XX:NewSize=100m -XX:MaxNewSize=100m -XX:+TraceGen0Time -XX:+TraceGen1Time -XX:+PrintGCDetails
 
-GC_FLAGS = -ms128m -mx128m
+GC_FLAGS = -ms64m -mx64m
 
 #PROFILE2_FLAGS= -Xrunhprof:file=log.txt
 PROFILE2_FLAGS= -Xrunhprof:cpu=samples,file=log.txt
@@ -150,7 +150,7 @@ aurora.testa.N1_SNR15:
 
 aurora.testa.N1_SNR15.prune:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doPruning=true\
+	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doCombinePruning=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-16\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR15.batch
 
@@ -171,7 +171,7 @@ aurora.testa.N1_SNR10:
 
 aurora.testa.N1_SNR10.prune:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doPruning=true\
+	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doCombinePruning=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR10.batch
 
@@ -192,9 +192,9 @@ aurora.testa.N1_SNR5:
 
 aurora.testa.N1_SNR5.prune:
 	$(JAVA_CMD) \
-	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doPruning=true\
-	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
-	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfile/aurora.testa.N1_SNR10.batch
+	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doCombinePruning=true\
+	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-1\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR5.batch
 
 
 
@@ -211,7 +211,7 @@ aurora.testa.N1_SNR0:
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./batchfiles/aurora.testa.N1_SNR0.batch
 
 
-aurora.testa.N1_SNR0.prunue:
+aurora.testa.N1_SNR0.prune:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.parallel.ParallelSearchManager.doPruning=true\
 	-Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-10\
@@ -242,3 +242,16 @@ little_endian:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.decoder.BatchDecoder.inputDataType=cepstrum\
 	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./little-endian.batch
+
+
+
+##########################################################################
+#
+# Rita's tests
+#
+##########################################################################
+
+mfc:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.decoder.BatchDecoder.inputDataType=cepstrum\
+	edu.cmu.sphinx.decoder.BatchDecoder ./aurora.props ./mfc.batch
