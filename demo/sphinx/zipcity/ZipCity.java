@@ -69,6 +69,7 @@ public class ZipCity extends JFrame {
     private JTextField messageTextField;
     private JButton speakButton;
     private JPanel mapPanel;
+    private JPanel imagePanel;
 
     private ZipInfo currentInfo;
     private ZipRecognizer zipRecognizer;
@@ -84,10 +85,14 @@ public class ZipCity extends JFrame {
         super("ZipCity - a Sphinx-4 WebStart Demo");
         setSize(900, 520);
         setDefaultLookAndFeelDecorated(true);
-        setApplicationIcon();
+        imagePanel = createImagePanel();
         mapPanel = createMapPanel();
+        setApplicationIcon();
+
+        getContentPane().add(imagePanel, BorderLayout.CENTER);
         getContentPane().add(createMainPanel(), BorderLayout.SOUTH);
-        getContentPane().add(mapPanel, BorderLayout.CENTER);
+
+        // exit if the window is closed
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -116,13 +121,17 @@ public class ZipCity extends JFrame {
 
 
     /**
-     * Updates the map
+     *  Replaces the splash s4 logo with the map
      */
-    public void updateMap() {
+    public void displayMap() {
         SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    mapPanel.repaint();
-                }
+            public void run() {
+                getContentPane().remove(imagePanel);
+                getContentPane().add(mapPanel, BorderLayout.CENTER);
+                speakButton.setEnabled(true);
+                validate();
+                repaint();
+            }
         });
                
     }
@@ -135,7 +144,6 @@ public class ZipCity extends JFrame {
         try {
             setMessage("Loading zip codes...");
             zipDB = new ZipDatabase();
-            updateMap();
 
             setMessage("Loading recognizer...(apologies to Alaska and Hawaii)");
             zipRecognizer = new ZipRecognizer();
@@ -145,12 +153,12 @@ public class ZipCity extends JFrame {
 
             zipRecognizer.addZipListener(new ZipListener() {
                 public void notify(String zip) {
-                    updateForm(zip);
+                    updateMap(zip);
                 }
             });
 
+            displayMap();
             setMessage("ZipCity Version 2.0 - Ready");
-            speakButton.setEnabled(true);
         } catch (Throwable e) {
             setMessage("Error: " + e.getMessage());
         }
@@ -162,7 +170,7 @@ public class ZipCity extends JFrame {
      *
      * @param zip the zip code (in the form XXXX)
      */
-    private void updateForm(final String zip) {
+    private void updateMap(final String zip) {
         final ZipInfo zipInfo = zipDB.lookup(zip);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -260,6 +268,18 @@ public class ZipCity extends JFrame {
         return mainPanel;
     }
 
+    /**
+     * Constructs the image Panel 
+     *
+     * @return the image panel
+     */
+    private JPanel createImagePanel() {
+        JPanel panel = getJPanel(new FlowLayout());
+        JLabel imageLabel = new JLabel(createImageIcon("s4.jpg", "s4-logo"));
+        panel.add(imageLabel);
+        return panel;
+    }
+
 
     /**
      * Creates the map panel
@@ -329,7 +349,7 @@ public class ZipCity extends JFrame {
          * Plots a zip info with given size
          *
          * @param zi the zip info to plot
-         * @param size the size of the plotted point
+         * @param highlight if true this info should be highlighted
          *
          */
         void plot(ZipInfo zi, boolean highlight) {
@@ -347,8 +367,6 @@ public class ZipCity extends JFrame {
         /**
          * Draws the zip info on the map
          *
-         * @param x the x position of the point
-         * @param y the y position of the point
          * @param zi the zip info
          */
         void drawZipInfo( ZipInfo zi) {
@@ -444,6 +462,25 @@ public class ZipCity extends JFrame {
         return messagePanel;
     }
 
+    /** 
+     * Returns an ImageIcon, or null if the path was invalid. 
+     *
+     * @param path the path to the image resource.
+     * @param description a description of the resource
+     *
+     * @return the image icon or null if the resource could not be
+     * found.
+     */
+    protected ImageIcon createImageIcon(String path, String description) {
+        URL imgURL = ZipCity.class.getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL, description);
+        } else {
+            return null;
+        }
+    }
+
+
     /**
      * The main program for zip city.  Creates the ZipCity frame,
      * displays it, and  runs it.
@@ -457,4 +494,5 @@ public class ZipCity extends JFrame {
         zipCity.go();
     }
 }
+
 
