@@ -22,6 +22,7 @@ import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.knowledge.dictionary.Pronunciation;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.decoder.linguist.util.HMMPool;
 
 
 import java.util.HashMap;

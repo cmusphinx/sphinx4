@@ -22,6 +22,7 @@ import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.decoder.linguist.UnitSearchState;
 import edu.cmu.sphinx.decoder.linguist.HMMSearchState;
 import edu.cmu.sphinx.decoder.linguist.util.LinguistTimer;
+import edu.cmu.sphinx.decoder.linguist.util.HMMPool;
 
 import edu.cmu.sphinx.knowledge.acoustic.HMM;
 import edu.cmu.sphinx.knowledge.acoustic.HMMState;
