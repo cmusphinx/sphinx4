@@ -87,6 +87,15 @@ ti46:
 	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
+#
+# The full TI46 (isolated digits) test.
+#
+ti46_eight:
+	$(JAVA_CMD) \
+	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
+        -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-20\
+	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.eight.batch
+
 
 #
 # The full TI46 (isolated digits) test using the TreeLinguist.
@@ -94,6 +103,7 @@ ti46:
 ti46_tree:
 	$(JAVA_CMD) \
 	-Dedu.cmu.sphinx.search.WordListGrammar.isLooping=false \
+        -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-20\
 	-Dedu.cmu.sphinx.search.StaticLinguist.isFlatSentenceHMM=false \
 	edu.cmu.sphinx.decoder.BatchDecoder ti46.props ./ti46.batch
 
