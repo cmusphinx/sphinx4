@@ -65,14 +65,16 @@ import edu.cmu.sphinx.util.props.Registry;
  * method on the second last DataProcessor, and so on, until the getData()
  * method on the first DataProcessor is called, which reads Data objects
  * from the input. The input to the front end is actually another
- * DataProcessor. Note that the input DataProcessor is not part of the
- * front end and is not shown in the figure above.
+ * DataProcessor, and is usually (though not necessarily) part of
+ * the front end and is not shown in the figure above.
+ * If you want to maintain some control of the input DataProcessor,
+ * you can create it separately, and use the 
+ * {@link #setDataSource(edu.cmu.sphinx.frontend.DataProcessor) setDataSource}
+ * method to set it as the input DataProcessor. In that case, the input 
+ * DataProcessor will be prepended to the existing chain of DataProcessors.
  * One common input DataProcessor is the 
  * {@link edu.cmu.sphinx.frontend.util.Microphone}, which implements
- * the DataProcessor interface. The input DataProcessor (e.g., Microphone)
- * is given to the front end via the 
- * {@link #setDataSource(edu.cmu.sphinx.frontend.DataProcessor) setDataSource}
- * method:
+ * the DataProcessor interface.
  * <p>
  * <code>
  * DataProcessor microphone = new Microphone();
@@ -89,28 +91,37 @@ import edu.cmu.sphinx.util.props.Registry;
  * <b>Configuring the front end</b>
  * <p>
  * The front end must be configured through the Sphinx properties file.
- * For details about configuring the front end, refer to the 
- * <a href="doc-files/FrontEndProperties.html">
- * Guide to Specifying the Front End</a>.
+ * For details about configuring the front end, refer to the document 
+ * <a href="doc-files/FrontEndProperties.html">Configuring the Front End</a>.
  *
  * Current state-of-the-art front ends generate features that contain
  * Mel-frequency cepstral coefficients (MFCC). To specify such a front end
  * (called a 'pipeline') in Sphinx-4, insert the following lines 
- * in the Sphinx properties file:
+ * in the Sphinx-4 configuration file:
  * <p>
- * <code>
- * edu.cmu.sphinx.frontend.FrontEndFactory.pipelines = mfcc
- * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.nStages = 7
- * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.1.class = {@link edu.cmu.sphinx.frontend.filter.Preemphasizer edu.cmu.sphinx.frontend.filter.Preemphasizer}
- * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.2.class = {@link edu.cmu.sphinx.frontend.window.RaisedCosineWindower edu.cmu.sphinx.frontend.window.RaisedCosineWindower}
- * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.3.class = {@link edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform}
- * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.4.class = {@link edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank}
- * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.5.class = {@link edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform}
- * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.6.class = {@link edu.cmu.sphinx.frontend.feature.BatchCMN edu.cmu.sphinx.frontend.feature.BatchCMN}
- * <br>mfcc;edu.cmu.sphinx.frontend.FrontEndFactory.stage.7.class = {@link edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor}
- * </code>
+ * <pre>
+ * &lt;component name="mfcFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd"&gt;
+ *     &lt;propertylist name="pipeline"&gt;
+ *        &lt;item&gt;preemphasizer&lt;/item&gt;
+ *        &lt;item&gt;windower&lt;/item&gt;
+ *        &lt;item&gt;dft&lt;/item&gt;
+ *        &lt;item&gt;melFilterBank&lt;/item&gt;
+ *        &lt;item&gt;dct&lt;/item&gt;
+ *        &lt;item&gt;batchCMN&lt;/item&gt;
+ *        &lt;item&gt;featureExtractor&lt;/item&gt;
+ *     &lt;/propertylist&gt;
+ * &lt;/component&gt;
+ *
+ * &lt;component name="preemphasizer" type="{@link edu.cmu.sphinx.frontend.filter.Preemphasizer edu.cmu.sphinx.frontend.filter.Preemphasizer}"/&gt;
+ * &lt;component name="windower" type="{@link edu.cmu.sphinx.frontend.window.RaisedCosineWindower edu.cmu.sphinx.frontend.window.RaisedCosineWindower}"/&gt;
+ * &lt;component name="dft" type="{@link edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform}"/&gt;
+ * &lt;component name="melFilterBank" type="{@link edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank}"/&gt;
+ * &lt;component name="dct" type="{@link edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform}"/&gt;
+ * &lt;component name="batchCMN" type="{@link edu.cmu.sphinx.frontend.feature.BatchCMN edu.cmu.sphinx.frontend.feature.BatchCMN}"/&gt;
+ * &lt;component name="featureExtractor" type="{@link edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor}"/&gt;
+ * </pre>
  * <p>
- * Note: In this example, 'mfcc' becomes the name of the front end.
+ * Note: In this example, 'mfcFrontEnd' becomes the name of the front end.
  * <p>
  * Sphinx-4 also allows you to:
  * <ul>
@@ -119,38 +130,31 @@ import edu.cmu.sphinx.util.props.Registry;
  *     pipeline</li>
  * </ul>
  * <p>
- * For details on how to do this, refer to the 
- * <a href="doc-files/FrontEndProperties.html">
- * Guide to Specifying the Front End</a>.
+ * For details on how to do this, refer to the document 
+ * <a href="doc-files/FrontEndProperties.html">Configuring the Front End</a>.
  * <p>
  * <b>Obtaining a Front End</b>
- * TODO - fix this to discuss the new configuration manager
  * <p>
- * if the name of the front end as specified in the properties file is
- * "mfcc":
+ * In order to obtain a front end, it must be specified in the configuration
+ * file. The Sphinx-4 front end is connected to the rest of the system
+ * via the scorer. We will continue with the above example to show how
+ * the scorer will obtain the front end. In the configuration file,
+ * the scorer should be specified as follows:
  * <p>
- * <code>
- * SphinxProperties properties = ... // pass in from outside
- * <br>FrontEnd frontend = FrontEndFactory.getFrontEnd(properties, "mfcc");
- * </code>
+ * <pre>
+ * &lt;component name="scorer" type="edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer"&gt;
+ *     &lt;property name="frontend" value="mfcFrontEnd"/&gt;
+ * &lt;/component&gt;
+ * </pre>
  * <p>
- * <b>Example code:</b>
- * <p>
- * The code below summarizes the above, and show how one would normally
- * initialize the front end, assuming that it is called "mfcc" in the
- * Sphinx properties file, and that the input data comes from the 
- * microphone:
- * <p>
- * <code>
- * // obtaining the front end and setting its data source
- * <br>FrontEnd frontend = FrontEndFactory.getFrontEnd(sphinxProperties, "mfcc");
- * <br>DataProcessor microphone = new Microphone();
- * <br>microphone.initialize(...);
- * <br>frontend.setDataSource(microphone);
- * <br>
- * <br>// start getting data from the front end
- * <br>Data output = frontend.getData();
- * </code>
+ * In the SimpleAcousticScorer, the front end is obtained in the
+ * {@link edu.cmu.sphinx.util.props.Configurable#newProperties newProperties}
+ * method as follows:
+ * <pre>
+ * public void newProperties(PropertySheet ps) throws PropertyException {
+ *     FrontEnd frontend = (FrontEnd) ps.getComponent("frontend", FrontEnd.class);
+ * }
+ * </pre>
  */
 public class FrontEnd extends BaseDataProcessor  {
 
