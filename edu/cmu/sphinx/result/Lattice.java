@@ -16,6 +16,7 @@ import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
 import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.util.LogMath;
 
 import java.util.*;
 import java.io.*;
@@ -39,12 +40,12 @@ public class Lattice {
     protected Node initialNode;
     protected double logBase;
     protected Node terminalNode;
-    protected Map edges;
+    protected Set edges;
     protected Map nodes;
     AlternateHypothesisManager loserManager;
 
     {
-        edges = new HashMap();
+        edges = new HashSet();
         nodes = new HashMap();
         logBase = Math.exp(1);
     }
@@ -70,13 +71,15 @@ public class Lattice {
         loserManager = result.getAlternateHypothesisManager();
 
         if (loserManager != null) {
-            loserManager.purge(1);
+            loserManager.purge();
         }
 
         for (Iterator it = result.getResultTokens().iterator(); it.hasNext();) {
             Token token = (Token) (it.next());
             processToken(terminalNode, token);
         }
+
+        logBase = result.getAlternateHypothesisManager().getProperties().getDouble("edu.cmu.sphinx.util.LogMath.logBase",1.0001);
     }
 
     protected void processToken(Node thisNode, Token token) {
@@ -168,14 +171,10 @@ public class Lattice {
      */
     public Edge addEdge(Node fromNode, Node toNode,
                         double acousticScore, double lmScore) {
-        String edgeId = fromNode.id + toNode.id;
-        Edge e = (Edge) edges.get(edgeId);
-        if (e == null) {
-            e = new Edge(fromNode, toNode, acousticScore, lmScore);
-            fromNode.addToEdge(e);
-            toNode.addFromEdge(e);
-            edges.put(edgeId, e);
-        }
+        Edge e = new Edge(fromNode, toNode, acousticScore, lmScore);
+        fromNode.addToEdge(e);
+        toNode.addFromEdge(e);
+        edges.add(e);
         return e;
     }
 
@@ -229,13 +228,31 @@ public class Lattice {
     }
 
     /**
+     * Test to see if the Lattice contains a Node
+     *
+     * @param node
+     * @return true if yes
+     */
+    boolean hasNode(Node node) {
+        return nodes.containsValue(node);
+    }
+
+    /**
+     * Test to see if the Lattice contains an Edge
+     *
+     * @param edge
+     * @return true if yes
+     */
+    boolean hasEdge(Edge edge) {
+        return edges.contains(edge);
+    }
+    /**
      * Test to see if the Lattice already contains a Node corresponding
      * to a given Token.
      *
      * @param token
      * @return true if yes
      */
-
     protected boolean hasNode(Token token) {
         return hasNode(Integer.toString(token.hashCode()));
     }
@@ -326,7 +343,7 @@ public class Lattice {
      * @return the set of all edges
      */
     public Collection getEdges() {
-        return edges.values();
+        return edges;
     }
 
     /**
@@ -363,7 +380,7 @@ public class Lattice {
             for (Iterator i = nodes.values().iterator(); i.hasNext();) {
                 ((Node) (i.next())).dumpAISee(f);
             }
-            for (Iterator i = edges.values().iterator(); i.hasNext();) {
+            for (Iterator i = edges.iterator(); i.hasNext();) {
                 ((Edge) (i.next())).dumpAISee(f);
             }
             f.write("}\n");
@@ -385,7 +402,7 @@ public class Lattice {
         for (Iterator i = nodes.values().iterator(); i.hasNext();) {
             ((Node) (i.next())).dump(out);
         }
-        for (Iterator i = edges.values().iterator(); i.hasNext();) {
+        for (Iterator i = edges.iterator(); i.hasNext();) {
             ((Edge) (i.next())).dump(out);
         }
         out.println("initialNode: " + initialNode.getId());
@@ -415,6 +432,7 @@ public class Lattice {
      * @param n
      */
     protected void removeNodeAndEdges(Node n) {
+
         //System.err.println("Removing node " + n + " and associated edges");
         for (Iterator i = n.getToEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) (i.next());
@@ -430,6 +448,8 @@ public class Lattice {
         }
         //System.err.println( "\tRemoving " + n );
         nodes.remove(n.getId());
+
+        assert checkConsistancy();
     }
 
     /**
@@ -458,6 +478,8 @@ public class Lattice {
             }
         }
         removeNodeAndEdges(n);
+
+        assert checkConsistancy();
     }
 
     /**
@@ -556,6 +578,41 @@ public class Lattice {
         }
         return l;
     }
+
+    boolean checkConsistancy() {
+        for (Iterator i = nodes.values().iterator(); i.hasNext();) {
+            Node n = (Node) i.next();
+            for (Iterator j = n.fromEdges.iterator(); j.hasNext();) {
+                Edge e = (Edge) j.next();
+                if (!hasEdge(e)) {
+                    throw new Error("Lattice has NODE with missing FROM edge: " + n + "," + e);
+                }
+            }
+            for (Iterator j = n.toEdges.iterator(); j.hasNext();) {
+                Edge e = (Edge) j.next();
+                if (!hasEdge(e)) {
+                    throw new Error("Lattice has NODE with missing TO edge: " + n + "," + e);
+                }
+            }
+        }
+        for (Iterator i = edges.iterator(); i.hasNext();) {
+            Edge e = (Edge) i.next();
+            if (!hasNode(e.getFromNode())) {
+                throw new Error("Lattice has EDGE with missing FROM node: " + e);
+            }
+            if (!hasNode(e.getToNode())) {
+                throw new Error("Lattice has EDGE with missing TO node: " + e);
+            }
+            if(!e.getToNode().hasEdgeFromNode(e.getFromNode())) {
+                throw new Error("Lattice has EDGE with TO node with no corresponding FROM edge: " + e);
+            }
+            if(!e.getFromNode().hasEdgeToNode(e.getToNode())) {
+                throw new Error("Lattice has EDGE with FROM node with no corresponding TO edge: " + e);
+            }
+        }
+        return true;
+    }
+
 
     /**
      * Self test for Lattices.  Test loading, saving, dynamically creating

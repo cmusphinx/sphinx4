@@ -1,4 +1,3 @@
-
 /*
  * Copyright 1999-2002 Carnegie Mellon University.
  * Portions Copyright 2002 Sun Microsystems, Inc.
@@ -27,7 +26,7 @@ import java.io.PrintWriter;
  * Nodes are part of Lattices.  The represent theories that words were spoken over a given time.
  */
 public class Node {
-    protected static int nodeCount=0; // used to generate unique IDs for new Nodes.
+    protected static int nodeCount = 0; // used to generate unique IDs for new Nodes.
 
     protected String id;
     protected String word;
@@ -37,8 +36,8 @@ public class Node {
     protected Vector toEdges;
 
     {
-        fromEdges=new Vector();
-        toEdges=new Vector();
+        fromEdges = new Vector();
+        toEdges = new Vector();
         nodeCount++;
     }
 
@@ -84,13 +83,17 @@ public class Node {
      * @return unique Node ID
      */
     protected boolean hasEdgeToNode(Node n) {
-        for( Iterator j=toEdges.iterator(); j.hasNext(); ) {
-            Edge e=(Edge) j.next();
-            if( e.getToNode() == n ) {
-                return true;
+        return getEdgeToNode(n) != null;
+    }
+
+    public Edge getEdgeToNode(Node n) {
+        for (Iterator j = toEdges.iterator(); j.hasNext();) {
+            Edge e = (Edge) j.next();
+            if (e.getToNode() == n) {
+                return e;
             }
         }
-        return false;
+        return null;
     }
 
     /**
@@ -100,13 +103,17 @@ public class Node {
      * @return true if this node has an Edge from n
      */
     protected boolean hasEdgeFromNode(Node n) {
-        for( Iterator j=fromEdges.iterator(); j.hasNext(); ) {
-            Edge e=(Edge) j.next();
-            if( e.getFromNode() == n ) {
-                return true;
+        return getEdgeFromNode(n) != null;
+    }
+
+    public Edge getEdgeFromNode(Node n) {
+        for (Iterator j = fromEdges.iterator(); j.hasNext();) {
+            Edge e = (Edge) j.next();
+            if (e.getFromNode() == n) {
+                return e;
             }
         }
-        return false;
+        return null;
     }
 
     /**
@@ -116,13 +123,13 @@ public class Node {
      * @return true if this Node has Edges from the same Nodes as n
      */
     protected boolean hasEquivalentFromEdges(Node n) {
-        if( fromEdges.size() != n.getFromEdges().size() ) {
+        if (fromEdges.size() != n.getFromEdges().size()) {
             return false;
         }
-        for(Iterator i=fromEdges.iterator(); i.hasNext();) {
-            Edge e=(Edge) i.next();
+        for (Iterator i = fromEdges.iterator(); i.hasNext();) {
+            Edge e = (Edge) i.next();
             Node fromNode = e.getFromNode();
-            if( !n.hasEdgeFromNode(fromNode) ) {
+            if (!n.hasEdgeFromNode(fromNode)) {
                 return false;
             }
         }
@@ -136,13 +143,13 @@ public class Node {
      * @return true if this Node has all Edges to the sames Nodes as n
      */
     public boolean hasEquivalentToEdges(Node n) {
-        if( toEdges.size() != n.getToEdges().size() ) {
+        if (toEdges.size() != n.getToEdges().size()) {
             return false;
         }
-        for(Iterator i=toEdges.iterator(); i.hasNext();) {
-            Edge e=(Edge) i.next();
+        for (Iterator i = toEdges.iterator(); i.hasNext();) {
+            Edge e = (Edge) i.next();
             Node toNode = e.getToNode();
-            if( !n.hasEdgeToNode(toNode) ) {
+            if (!n.hasEdgeToNode(toNode)) {
                 return false;
             }
         }
@@ -250,8 +257,8 @@ public class Node {
      * @throws IOException
      */
     void dumpAISee(FileWriter f) throws IOException {
-        f.write( "node: { title: \"" + id + "\" label: \""
-                + getWord() +":" + getId() + "[" + getBeginTime() + "," + getEndTime() + "]\" }\n" );
+        f.write("node: { title: \"" + id + "\" label: \""
+                + getWord() + ":" + getId() + "[" + getBeginTime() + "," + getEndTime() + "]\" }\n");
     }
 
     /**
@@ -260,7 +267,7 @@ public class Node {
      * @throws IOException
      */
     void dump(PrintWriter f) throws IOException {
-        f.println( "node: " + id + " " + word );
+        f.println("node: " + id + " " + word);
     }
 
     /**
@@ -268,11 +275,11 @@ public class Node {
      * @param lattice
      * @param tokens
      */
-    static void load( Lattice lattice, StringTokenizer tokens ) {
+    static void load(Lattice lattice, StringTokenizer tokens) {
 
         String id = tokens.nextToken();
         String label = tokens.nextToken();
 
-        lattice.addNode(id,label,0,0);
+        lattice.addNode(id, label, 0, 0);
     }
 }

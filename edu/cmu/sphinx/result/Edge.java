@@ -129,4 +129,12 @@ public class Edge {
         return toNode;
     }
 
+    public void setAcousticScore(double v) {
+        acousticScore = v;
+    }
+
+    public void setLMScore(double v) {
+        lmScore = v;
+    }
+
 }

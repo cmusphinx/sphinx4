@@ -1,4 +1,3 @@
-
 /*
  * Copyright 1999-2002 Carnegie Mellon University.
  * Portions Copyright 2002 Sun Microsystems, Inc.
@@ -28,7 +27,6 @@ import java.util.HashSet;
 
 public class LatticeOptimizer {
     protected Lattice lattice;
-    protected Set removedNodes = new HashSet();
 
     /**
      * Create a new Lattice optimizer
@@ -108,9 +106,16 @@ public class LatticeOptimizer {
         while (moreChanges) {
             moreChanges = false;
             // search for a node that can be optimized
-            for (Iterator i=lattice.getCopyOfNodes().iterator(); i.hasNext();) {
+            // note that we use getCopyOfNodes to avoid concurrent changes to nodes
+            for (Iterator i = lattice.getCopyOfNodes().iterator(); i.hasNext();) {
                 Node n = (Node) i.next();
-                moreChanges |= optimizeNodeForward(n);
+
+                // we are iterating down a list of node before optimization
+                // previous iterations may have removed nodes from the list
+                // therefore we have to check that the node stiff exists
+                if (lattice.hasNode(n)) {
+                    moreChanges |= optimizeNodeForward(n);
+                }
             }
         }
     }
@@ -129,6 +134,8 @@ public class LatticeOptimizer {
      * @return true if Node n required an optimize forward
      */
     protected boolean optimizeNodeForward(Node n) {
+        assert lattice.hasNode(n);
+
         Vector toEdges = new Vector(n.getToEdges());
         for (int j = 0; j < toEdges.size(); j++) {
             Edge e = (Edge) toEdges.elementAt(j);
@@ -162,6 +169,9 @@ public class LatticeOptimizer {
      */
     protected boolean equivalentNodesForward(Node n1, Node n2) {
 
+        assert lattice.hasNode(n1);
+        assert lattice.hasNode(n2);
+
         // do the labels match?
         if (!equivalentNodeLabels(n1, n2)) return false;
 
@@ -185,6 +195,10 @@ public class LatticeOptimizer {
      * @param e2
      */
     protected void mergeNodesAndEdgesForward(Node n, Edge e1, Edge e2) {
+        assert lattice.hasNode(n);
+        assert lattice.hasEdge(e1);
+        assert lattice.hasEdge(e2);
+
         assert e1.getFromNode() == n;
         assert e2.getFromNode() == n;
 
@@ -194,23 +208,23 @@ public class LatticeOptimizer {
         assert n1.hasEquivalentFromEdges(n1);
         assert n1.getWord().equals(n2.getWord());
 
-        // add n2's to edges
+        // add n2's edges to n1
         for (Iterator i = n2.getToEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
-            if (!n1.hasEdgeToNode(e.getToNode())) {
+            e2 = n1.getEdgeToNode( e.getToNode() );
+            if ( e2 == null ) {
                 lattice.addEdge(
-                            n1, e.getToNode(),
-                            e.getAcousticScore(), e.getLMScore() );
+                        n1, e.getToNode(),
+                        e.getAcousticScore(), e.getLMScore());
             } else {
                 // if we got here then n1 and n2 had edges to the same node
-                // what happens if the score is not the same?
-                System.err.println("What happens with duplicate to nodes; " +
-                                    e.getToNode());
+                // choose the edge with best score
+                e2.setAcousticScore( Math.min( e.getAcousticScore(),e2.getAcousticScore() )) ;
+                e2.setLMScore( Math.min( e.getLMScore(),e2.getLMScore() )) ;
             }
         }
 
-        // remove n1 and n2 and all associated edges
-        removedNodes.add(n2);
+        // remove n2 and all associated edges
         lattice.removeNodeAndEdges(n2);
     }
 
@@ -254,9 +268,14 @@ public class LatticeOptimizer {
         while (moreChanges) {
             moreChanges = false;
             // search for a node that can be optimized
-            for (Iterator i=lattice.getCopyOfNodes().iterator(); i.hasNext();) {
+            // note that we use getCopyOfNodes to avoid concurrent changes to nodes
+            for (Iterator i = lattice.getCopyOfNodes().iterator(); i.hasNext();) {
                 Node n = (Node) i.next();
-                if (!removedNodes.contains(n)) {
+
+                // we are iterating down a list of node before optimization
+                // previous iterations may have removed nodes from the list
+                // therefore we have to check that the node stiff exists
+                if (lattice.hasNode(n)) {
                     moreChanges |= optimizeNodeBackward(n);
                 }
             }
@@ -275,7 +294,7 @@ public class LatticeOptimizer {
      * @return true if Node n required opimizing backwards
      */
     protected boolean optimizeNodeBackward(Node n) {
-        Vector fromEdges = new Vector( n.getFromEdges());
+        Vector fromEdges = new Vector(n.getFromEdges());
         for (int j = 0; j < fromEdges.size(); j++) {
             Edge e = (Edge) fromEdges.elementAt(j);
             for (int k = j + 1; k < n.getFromEdges().size(); k++) {
@@ -286,7 +305,7 @@ public class LatticeOptimizer {
                  * equivalent nodes, we have a hit, return true
                  */
                 assert e != e2;
-                if (equivalentNodesBackward(e.getFromNode(),e2.getFromNode())) {
+                if (equivalentNodesBackward(e.getFromNode(), e2.getFromNode())) {
                     mergeNodesAndEdgesBackward(n, e, e2);
                     return true;
                 }
@@ -307,6 +326,10 @@ public class LatticeOptimizer {
      * @return true if n1 and n2 are "equivalent backwards"
      */
     protected boolean equivalentNodesBackward(Node n1, Node n2) {
+
+        assert lattice.hasNode(n1);
+        assert lattice.hasNode(n2);
+
         // do the labels match?
         if (!equivalentNodeLabels(n1, n2)) return false;
 
@@ -340,6 +363,10 @@ public class LatticeOptimizer {
      * @param e2
      */
     protected void mergeNodesAndEdgesBackward(Node n, Edge e1, Edge e2) {
+        assert lattice.hasNode(n);
+        assert lattice.hasEdge(e1);
+        assert lattice.hasEdge(e2);
+
         assert e1.getToNode() == n;
         assert e2.getToNode() == n;
 
@@ -349,22 +376,23 @@ public class LatticeOptimizer {
         assert n1.hasEquivalentToEdges(n2);
         assert n1.getWord().equals(n2.getWord());
 
-        // add n2's from edges
+        // add n2's "from" edges to n1
         for (Iterator i = n2.getFromEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
-            if (!n1.hasEdgeFromNode(e.getFromNode())) {
-                lattice.addEdge( e.getFromNode(), n1,
-                                e.getAcousticScore(), e.getLMScore() );
+            e2 = n1.getEdgeFromNode( e.getFromNode() );
+            if ( e2 == null ) {
+                lattice.addEdge(
+                        e.getFromNode(), n1,
+                        e.getAcousticScore(), e.getLMScore());
             } else {
-                // if we got here then n1 and n2 had edges to the same node
-                // what happens if the score is not the same?
-                System.err.println("What happens with duplicate from nodes; " +
-                                    e.getFromNode());
+                // if we got here then n1 and n2 had edges from the same node
+                // choose the edge with best score
+                e2.setAcousticScore( Math.min( e.getAcousticScore(),e2.getAcousticScore() )) ;
+                e2.setLMScore( Math.min( e.getLMScore(),e2.getLMScore() )) ;
             }
         }
 
-        // remove n1 and n2 and all associated edges
-        removedNodes.add(n2);
+        // remove n2 and all associated edges
         lattice.removeNodeAndEdges(n2);
     }
 
@@ -374,17 +402,18 @@ public class LatticeOptimizer {
     protected void removeHangingNodes() {
         for (Iterator i = lattice.getCopyOfNodes().iterator(); i.hasNext();) {
             Node n = (Node) i.next();
-            if (n == lattice.getInitialNode()) {
+            if (lattice.hasNode(n)) {
+                if (n == lattice.getInitialNode()) {
 
-            } else if (n == lattice.getTerminalNode()) {
+                } else if (n == lattice.getTerminalNode()) {
 
-            } else {
-                if (n.getToEdges().size() == 0
-                        || n.getFromEdges().size() == 0) {
-                    removedNodes.add(n);
-                    lattice.removeNodeAndEdges(n);
-                    removeHangingNodes();
-                    return;
+                } else {
+                    if (n.getToEdges().size() == 0
+                            || n.getFromEdges().size() == 0) {
+                        lattice.removeNodeAndEdges(n);
+                        removeHangingNodes();
+                        return;
+                    }
                 }
             }
         }
