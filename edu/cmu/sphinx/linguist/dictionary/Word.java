@@ -43,7 +43,8 @@ public class Word implements Serializable {
      * @param pronunciations the pronunciations of this word
      * @param isFiller true if the word is a filler word
      */
-    Word(String spelling, Pronunciation[] pronunciations, boolean isFiller) {
+    public Word(String spelling, Pronunciation[] pronunciations,
+		boolean isFiller) {
 	this.spelling = spelling;
         this.pronunciations = pronunciations;
         this.isFiller = isFiller;
