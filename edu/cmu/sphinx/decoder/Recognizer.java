@@ -62,7 +62,7 @@ public class Recognizer {
      * The default value for the sphinx property name for the Linguist class.
      */
     public final static String PROP_LINGUIST_DEFAULT =
-	"edu.cmu.sphinx.decoder.linguist.simple.FlatLinguist";
+	"edu.cmu.sphinx.linguist.flat.FlatLinguist";
 
     
     /**
@@ -75,7 +75,7 @@ public class Recognizer {
      * The default value of the sphinx property name for the Grammar class.
      */
     public final static String PROP_GRAMMAR_DEFAULT =
-	"edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar";
+	"edu.cmu.sphinx.linguist.language.grammar.SimpleWordListGrammar";
 
 
     /**
