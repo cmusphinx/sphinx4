@@ -43,8 +43,7 @@ import javax.swing.*;
 
 public class ZipCity extends JFrame {
     private boolean debug = true;
-    // Dimension of this LiveFrame
-    private Color backgroundColor = new Color(220, 220, 220);
+    private Color backgroundColor = new Color(0xff, 0xff, 0xff);
     private JTextField messageTextField;
     private JTextField zipField;
     private JTextField cityField;
@@ -63,6 +62,7 @@ public class ZipCity extends JFrame {
         super("ZipCity - a Sphinx-4 WebStart Demo");
         setSize(460, 435);
         setDefaultLookAndFeelDecorated(true);
+        setApplicationIcon();
         getContentPane().add(createMainPanel(), BorderLayout.NORTH);
         getContentPane().add(createImagePanel(), BorderLayout.CENTER);
         getContentPane().add(createMessagePanel(), BorderLayout.SOUTH);
@@ -133,6 +133,16 @@ public class ZipCity extends JFrame {
             System.err.println("Couldn't find file: " + path);
             return null;
         }
+    }
+
+    /**
+     * Sets the application icon
+     * @param path the path to the image
+     */
+    private void setApplicationIcon() {
+        URL url = ZipCity.class.getResource("s4.jpg");
+        Image image = Toolkit.getDefaultToolkit().getImage(url);
+        setIconImage(image);
     }
 
 

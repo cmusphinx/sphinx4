@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" 
+    codebase="http://cmusphinx.sourceforge.net/sphinx4/zipcity" 
+      href="zipcity.jnlp">
+    <information>
+        <title>Zip City</title>
+        <vendor>Sun Microsystems, Inc.</vendor>
+        <homepage href="http://cmusphinx.sourceforge.net/sphinx4/zipcity"/>
+        <icon href="s4.jpg"/>
+        <description>A webstart demonstration of Sphinx-4</description>
+        <description kind="short">
+            a webstart demonstration of Sphinx-4
+        </description>
+        <offline-allowed/>
+    </information>
+
+    <resources>
+        <j2se href="http://java.sun.com/products/autodl/j2se" version="1.4+"/>
+        <jar href="ZipCity.jar" main="true"/>
+        <jar href="sphinx4.jar" main="false"/>
+        <jar href="jsapi.jar" main="false"/>
+        <jar href="TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar" 
+            main="false"/>
+    </resources>
+
+    <security> 
+        <all-permissions/> 
+    </security> 
+    <application-desc main-class="demo.sphinx.zipcity.ZipCity"/>
+</jnlp> 

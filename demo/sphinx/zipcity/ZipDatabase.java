@@ -28,7 +28,6 @@ public class ZipDatabase {
      */
     public ZipDatabase() throws IOException {
         int line = 0;
-        int maxLen  = 0;
         InputStream is = this.getClass().getResourceAsStream("zip.txt");
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         String input;
@@ -44,10 +43,6 @@ public class ZipDatabase {
                     String state = st.nextToken();
                     String city = st.nextToken();
                     city = fixupCase(city);
-                    if (city.length() > maxLen) {
-                        maxLen = city.length();
-                        System.out.println(zip + " " + city);
-                    }
                     zipDB.put(zip, new ZipInfo(zip, city, state));
                 } else {
                     throw new IOException("Bad zip format, line " + line);

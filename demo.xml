@@ -75,7 +75,8 @@ your environment to use JSAPI.
     <target name="compile_sphinx_demos"
 	    depends="compile_sphinx_helloworld,
 	             compile_sphinx_hellodigits,
-	             compile_sphinx_hellongram,
+	             compile_zipcity,
+	             check_jsapi_jar.isPresent,
 	             check_jsapi_jar.isPresent,
                      issue_jsapi_warning"
 	    description="Compiles Sphinx-4 demos that do not use JSAPI"/>
@@ -147,4 +148,61 @@ your environment to use JSAPI.
 	<delete dir="${classes_dir}/demo/sphinx/hellongram"/>
     </target>
 
+    <target name="init">
+        <available property="keystore.exists" file="tempKeystore"/>
+        <mkdir dir="${dst}"/>
+        <tstamp/>
+    </target>
+
+    <target name="keystore" unless="keystore.exists">
+        <genkey alias="unknown" storepass="public" keystore="tempKeystore"
+            dname="CN=Anonymous Signature, OU=unknown, o=unknown, c=unknown" />
+    </target>
+
+    <target name="compile_zipcity" depends="init,keystore">
+    	<mkdir dir="${classes_dir}/demo/sphinx/zipcity"/>
+	<javac debug="true"
+	       source="1.4"
+	       deprecation="true"
+	       srcdir="${src_dir}/demo/sphinx/zipcity"
+	       destdir="${classes_dir}">
+	    <classpath refid="libs"/>
+	</javac>
+	<copy file="${src_dir}/demo/sphinx/zipcity/zipcity.gram"
+	      todir="${classes_dir}/demo/sphinx/zipcity"/>
+	<copy file="${src_dir}/demo/sphinx/zipcity/zipcity.config.xml"
+	      todir="${classes_dir}/demo/sphinx/zipcity"/>
+	<copy file="${src_dir}/demo/sphinx/zipcity/zip.txt"
+	      todir="${classes_dir}/demo/sphinx/zipcity"/>
+    <copy file="${src_dir}/demo/sphinx/zipcity/s4.jpg"
+	      todir="${classes_dir}/demo/sphinx/zipcity"/>
+        <jar destfile="${bin_dir}/ZipCity.jar" 
+	     manifest="${src_dir}/demo/sphinx/zipcity/zipcity.Manifest"
+	     basedir="${classes_dir}"
+	     includes="demo/sphinx/zipcity/**"
+	     filesonly="true"
+	     compress="true"/>
+	<delete dir="${classes_dir}/demo/sphinx/zipcity"/>
+    </target>
+
+  <target name="release_zipcity" depends="compile_zipcity">
+      <copy todir="bld/zipcity" file="demo/sphinx/zipcity/zipcity.jnlp"/>
+      <copy todir="bld/zipcity" file="demo/sphinx/zipcity/zipcity_test.jnlp"/>
+      <copy todir="bld/zipcity" file="demo/sphinx/zipcity/s4.jpg"/>
+      <copy todir="bld/zipcity" file="demo/sphinx/zipcity/README.html"/>
+      <copy todir="bld/zipcity" file="bin/ZipCity.jar"/>
+      <copy todir="bld/zipcity" file="lib/sphinx4.jar"/>
+      <copy todir="bld/zipcity" file="lib/jsapi.jar"/>
+      <copy todir="bld/zipcity"
+        file="lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
+
+    <signjar jar="bld/zipcity/ZipCity.jar" alias="unknown" 
+        storepass="public" keystore="tempKeystore" />
+    <signjar jar="bld/zipcity/sphinx4.jar" alias="unknown" 
+        storepass="public" keystore="tempKeystore" />
+    <signjar jar="bld/zipcity/jsapi.jar" alias="unknown" 
+        storepass="public" keystore="tempKeystore" />
+    <signjar jar="bld/zipcity/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar" 
+        alias="unknown" storepass="public" keystore="tempKeystore" />
+  </target>
 </project>
