@@ -65,7 +65,7 @@ all:: ${CLASSES} ${STUBS}
 live: all
 	$(JAVA_CMD) \
 	-DshowPartialResults=true \
-	-Dedu.cmu.sphinx.frontend.cmn.live=true \
+	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
 	tests.live.Live decoders.list
 
 
@@ -75,7 +75,7 @@ live: all
 live-ep: all
 	$(JAVA_CMD) \
 	-DshowPartialResults=true \
-	-Dedu.cmu.sphinx.frontend.cmn.live=true \
+	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=9 \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=12 \
@@ -93,7 +93,7 @@ live-free: all
 	$(JAVA_CMD) \
 	-DhandsFree=true \
 	-Dedu.cmu.sphinx.frontend.NonSpeechFilter.mergeSpeechSegments=false \
-	-Dedu.cmu.sphinx.frontend.cmn.live=true \
+	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=9 \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=12 \
@@ -110,7 +110,7 @@ live-alpha: all
 	$(JAVA_CMD) \
 	-DfirstDecoder="Alpha Spelling" \
 	-DshowPartialResults=true \
-	-Dedu.cmu.sphinx.frontend.cmn.live=true \
+	-Dedu.cmu.sphinx.frontend.cmn=edu.cmu.sphinx.frontend.LiveCMN \
 	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=10 \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=13 \
