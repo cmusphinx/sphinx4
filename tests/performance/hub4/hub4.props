@@ -81,10 +81,11 @@ edu.cmu.sphinx.decoder.Decoder.showPartialActualResults=false
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.SortingActiveList
-edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.maxWordsPerFrame = 200
-edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
+edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.PartitionActiveList
+edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=30000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80
+#edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.relativeWordBeamWidth=1E-80
+edu.cmu.sphinx.util.BeamFinder.enable=true
 
 
 ############################################################
@@ -93,9 +94,12 @@ edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-80
 #
 ############################################################
 
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.clextree.LexTreeLinguist 
 edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=9.5
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = .2
-edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
+edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = .1
+edu.cmu.sphinx.decoder.linguist.Linguist.addFillerWords=true
+edu.cmu.sphinx.decoder.linguist.Linguist.fillerInsertionProbability=.1
 
 ############################################################
 # 
@@ -106,7 +110,7 @@ edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.useAcousticModelLocation = true
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.dictionaryPath = cmudict.06d
 edu.cmu.sphinx.knowledge.dictionary.Dictionary.fillerPath = fillerdict
-edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true
+edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=false
 
 
 ############################################################
@@ -123,7 +127,7 @@ edu.cmu.sphinx.knowledge.dictionary.Dictionary.allowMissingWords=true
 #
 # Use the number of available CPUS for scoring:
 #
-edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=true
-edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=0
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.isCpuRelative=false
+edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.numThreads=1
 edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer.minScoreablesPerThread=10
 

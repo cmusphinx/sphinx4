@@ -28,8 +28,8 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
 PROFILE_FLAGS= -Xprof 
 LOG_GC_FLAGS=  -Xloggc:gc.txt
-GC_FLAGS = -ms128m -mx512m
 GC_FLAGS = -ms128m -mx1g
+GC_FLAGS = -ms512m -mx1500m -XX:NewSize=300m  -XX:MaxNewSize=300m
 #GC_FLAGS = -ms128m -mx3048m
 
 
@@ -81,7 +81,6 @@ all::
 
 # hub4_f0 with wsj models
 
-#-Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./hub4.flat_unigram.lm\
 
 hub4_flat_unigram:
 	$(JAVA_CMD) \
@@ -96,13 +95,6 @@ hub4_trigram:
         $(HUB4_DIR)/f0_hub4.batch
 
 
-test:
-	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
-    -Dedu.cmu.sphinx.knowledge.language.LanguageModel.location=./hub4.flat_unigram.lm\
-	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props \
-        test.batch
-
 run_batch:
 	$(JAVA_CMD) \
         -Dedu.cmu.sphinx.decoder.BatchDecoder.whichBatch=$(WHICH_BATCH)\
@@ -111,9 +103,8 @@ run_batch:
         $(PARSED_EXTRA_OPTIONS) \
         edu.cmu.sphinx.decoder.BatchDecoder $(PROPS) $(BATCH_FILE) 
 
-flat_test:
+test:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.flat.FlatDynamicLinguist \
     -Dedu.cmu.sphinx.decoder.BatchDecoder.skip=$(SKIP)\
 	edu.cmu.sphinx.decoder.BatchDecoder ./hub4.props \
         test.batch

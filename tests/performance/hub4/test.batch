@@ -1,1 +1,8 @@
-/lab/speech/sphinx4/data/hub4/eval99/supervised/bn99en_1.76.f0.raw  and that has not happened yet
+set edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability  .2
+
+/lab/speech/sphinx4/data/hub4/eval99/supervised/bn99en_1.25.f0.raw  seeking to isolate china is clearly unworkable most important choosing isolation over engagement would not make the world safer it would make it more dangerous
+
+set edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight 11
+go
+set edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight 8
+go
