@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.knowledge.language.large;
 
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.knowledge.language.WordSequence;
@@ -123,9 +124,9 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @throws IOException if there is trouble loading the data
      */
-    public LargeTrigramModel(String context) 
+    public LargeTrigramModel(String context, Dictionary dictionary) 
         throws IOException, FileNotFoundException {
-	initialize(context);
+	initialize(context, dictionary);
     }
     
 
@@ -141,7 +142,8 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @param context the context to associate this linguist with
      */
-    public void initialize(String context) throws IOException {
+    public void initialize(String context, Dictionary dictionary) 
+        throws IOException {
 
         Timer.start("LM Load");
 
@@ -174,7 +176,7 @@ public class LargeTrigramModel implements LanguageModel {
         trigramBackoffTable = loader.getTrigramBackoffWeights();
         trigramSegmentTable = loader.getTrigramSegments();
 
-        buildUnigramIDMap();
+        buildUnigramIDMap(dictionary);
 	loadedBigramBuffers = new BigramBuffer[unigrams.length];
 
         maxDepth = props.getInt(LanguageModel.PROP_MAX_DEPTH,
@@ -198,10 +200,16 @@ public class LargeTrigramModel implements LanguageModel {
      * Builds the map from unigram to unigramID.
      * Also finds the startWordID and endWordID.
      */
-    private void buildUnigramIDMap() {
+    private void buildUnigramIDMap(Dictionary dictionary) {
         String[] words = loader.getWords();
         for (int i = 0; i < words.length; i++) {
-            unigramIDMap.put(words[i], unigrams[i]);
+            Word word = dictionary.getWord(words[i]);
+            if (word == null) {
+                System.out.println
+                    ("LargeTrigramModel: word `" + words[i]
+                     + "' is not in the dictionary.");
+            }
+            unigramIDMap.put(word, unigrams[i]);
         }
     }
     
@@ -285,7 +293,7 @@ public class LargeTrigramModel implements LanguageModel {
      * @return the unigram probability
      */
     private float getUnigramProbability(WordSequence wordSequence) {
-        String unigram = wordSequence.getWord(0);
+        Word unigram = wordSequence.getWord(0);
         UnigramProbability unigramProb = getUnigram(unigram);
         if (unigramProb == null) {
             throw new Error("Unigram not in LM: " + unigram);
@@ -303,8 +311,8 @@ public class LargeTrigramModel implements LanguageModel {
      * @return the UnigramProbability, or null if this language model
      *     does not have the unigram
      */
-    private UnigramProbability getUnigram(String unigram) {
-        return (UnigramProbability) unigramIDMap.get(unigram.toLowerCase());
+    private UnigramProbability getUnigram(Word unigram) {
+        return (UnigramProbability) unigramIDMap.get(unigram);
     }
 
 
@@ -315,7 +323,7 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @return true if this LM has this unigram, false otherwise
      */
-    private boolean hasUnigram(String unigram) {
+    private boolean hasUnigram(Word unigram) {
         return (unigramIDMap.get(unigram) != null);
     }
 
@@ -327,7 +335,7 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @return the ID of the word
      */
-    public final int getWordID(String word) {
+    public final int getWordID(Word word) {
 	UnigramProbability probability = getUnigram(word);
         if (probability == null) {
             throw new IllegalArgumentException("No word ID: " + word);
@@ -346,7 +354,7 @@ public class LargeTrigramModel implements LanguageModel {
      */
     private float getBigramProbability(WordSequence wordSequence) {
 
-        String firstWord = wordSequence.getWord(0);
+        Word firstWord = wordSequence.getWord(0);
         if (loader.getNumberBigrams() <= 0 || !hasUnigram(firstWord)) {
             return getUnigramProbability(wordSequence.getNewest());
         }
@@ -356,7 +364,7 @@ public class LargeTrigramModel implements LanguageModel {
 	if (bigramProbability != null) {
 	    return bigramProbTable[bigramProbability.getProbabilityID()];
         } else {
-	    String secondWord = wordSequence.getWord(1);
+	    Word secondWord = wordSequence.getWord(1);
 	    
 	    if (getUnigram(secondWord) == null) {
 		throw new Error("Bad word2: " + secondWord);
@@ -479,7 +487,7 @@ public class LargeTrigramModel implements LanguageModel {
      * @return the trigram probability
      */
     private float getTrigramProbability(WordSequence wordSequence) {
-        String firstWord = wordSequence.getWord(0);
+        Word firstWord = wordSequence.getWord(0);
 
         if (loader.getNumberTrigrams() == 0 || !hasUnigram(firstWord)) {
             return getBigramProbability(wordSequence.getNewest());
