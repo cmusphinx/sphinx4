@@ -683,8 +683,7 @@ public class StaticLinguist implements  Linguist {
             // emitting ones now.
             newState.setColor(Color.GREEN);
             SentenceHMMState attachedState = attachState(tree, newState,
-                    logMath.linearToLog(arcs[i].getProbability()),
-                    logOne, logOne);
+                    (arcs[i].getLogProbability()), logOne, logOne);
             if (attachedState == newState) {
                 retState = expandHMMTree(parent, (HMMStateState) attachedState);
             } else {

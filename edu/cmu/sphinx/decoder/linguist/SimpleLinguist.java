@@ -1238,7 +1238,7 @@ public class SimpleLinguist implements  Linguist {
                         parent, arcs[i].getHMMState());
 
                 SentenceHMMState existingState = getExistingState(newState);
-                double logProb = logMath.linearToLog(arcs[i].getProbability());
+                double logProb = arcs[i].getLogProbability();
 
                 if (existingState != null) {
                     attachState(tree, existingState, logProb, logOne,
