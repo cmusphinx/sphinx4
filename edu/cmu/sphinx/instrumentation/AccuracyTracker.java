@@ -158,6 +158,14 @@ public class AccuracyTracker
     public String getName() {
         return name;
     }
+    
+    /**
+     * Retrieves the aligner used to track the accuracy stats
+     * @return the aligner
+     */
+    public NISTAlign getAligner() {
+        return aligner;
+    }
 
     /*
      * (non-Javadoc)

@@ -210,12 +210,21 @@ public class SpeedTracker
      * 
      * @return the speed of the last decoding
      */
-    private float getSpeed() {
+    public float getSpeed() {
         if (processingTime == 0 || audioTime == 0) {
             return 0;
         } else {
             return (processingTime / audioTime);
         }
+    }
+    
+    /**
+     * Resets the speed statistics
+     */
+    public void reset() {
+        totalProcessingTime = 0;
+        totalAudioTime = 0;
+        numUtteranceStart = 0;
     }
 
     /**
