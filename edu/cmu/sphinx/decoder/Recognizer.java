@@ -1,3 +1,4 @@
+
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -58,7 +59,7 @@ public class Recognizer {
      * The default value for the sphinx property name for the Linguist class.
      */
     public final static String PROP_LINGUIST_DEFAULT =
-	"edu.cmu.sphinx.decoder.linguist.SimpleLinguist";
+	"edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist";
     
     /**
      * The sphinx property name for the Grammar class.
@@ -69,7 +70,7 @@ public class Recognizer {
      * The default value of the sphinx property name for the Grammar class.
      */
     public final static String PROP_GRAMMAR_DEFAULT =
-	"edu.cmu.sphinx.decoder.linguist.WordListGrammar";
+	"edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar";
 
     /**
      * The sphinx property name for the FrontEnd class.
