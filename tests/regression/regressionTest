@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Copyright 1999-2002 Carnegie Mellon University.  
 # Portions Copyright 2002 Sun Microsystems, Inc.  
 # Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
@@ -35,8 +35,26 @@ mkdir -p $testDir
 
 cd $testDir
 
+# start loop to download code
+success=0;
+count=0;
+
+while ((!$success)); do
 # checkout the source
-scvs checkout sphinx4
+if scvs checkout sphinx4
+then
+success=1;
+else
+let count++;
+if (($count>50)); then
+# not successful, and we attempted it too many times. Clean up and leave.
+cd $originalDir
+rmdir $testDir
+exit $count;
+fi
+fi
+done
+
 cd sphinx4/tests/regression
 
 # make sure that the main test script is executable
