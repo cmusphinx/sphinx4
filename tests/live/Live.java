@@ -341,11 +341,17 @@ public class Live {
             String testFile = properties.getProperty(recognizerNames[i]
                     + ".testFile");
 
+
+            // random order
+            String randomOrder = properties.getProperty(recognizerNames[i]
+                    + ".randomOrder");
+            boolean randomReference = randomOrder == null ? false :
+                                randomOrder.equals("true");
             // add the name of the decoder to the recognizerNameList
             recognizerNameList.addElement(recognizerName);
 
             recognizers.put(recognizerName, new LiveRecognizer(recognizerName,
-                    configFile, testFile));
+                    configFile, testFile, randomReference));
             info(".");
         }
 
@@ -468,17 +474,22 @@ public class Live {
         private boolean allocated;
         private List referenceList;
         private Iterator iterator;
+        private boolean randomReferenceOrder;
 
         /**
          * Creates a new live recognizer
          * @param name the name of the recognizer
          * @param configName the config file for the recognizer
          * @param testFile the test utterance file
+         * @param randomReferenceOrder if true reference text is
+         * presented in random order.
          */
-        LiveRecognizer(String name, String configName, String testFile)  {
+        LiveRecognizer(String name, String configName, String testFile,
+                boolean randomReferenceOrder)  {
             this.name = name;
             this.testFile = testFile;
             this.configName = configName;
+            this.randomReferenceOrder = randomReferenceOrder;
             allocated = false;
         }
 
@@ -624,15 +635,20 @@ public class Live {
          *    it will return an empty string
          */
         public String getNextReference() {
-            if (iterator == null || !iterator.hasNext()) {
-                iterator = referenceList.listIterator();
-            }
-            String next = "";
-            if (iterator.hasNext()) {
-                next = (String) iterator.next();
-                if (next == null) {
-                    next = "";
+            String next ="";
+            if (randomReferenceOrder) {
+                int index = (int) (Math.random() * referenceList.size());
+                next = (String) referenceList.get(index);
+            } else {
+                if (iterator == null || !iterator.hasNext()) {
+                    iterator = referenceList.listIterator();
                 }
+                if (iterator.hasNext()) {
+                    next = (String) iterator.next();
+                }
+            }
+            if (next == null) {
+                next = "";
             }
             return next;
         }

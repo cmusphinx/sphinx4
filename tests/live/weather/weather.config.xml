@@ -132,7 +132,7 @@
                 type="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist">
         <property name="logMath" value="logMath"/>
         <property name="acousticModel" value="wsj"/>
-        <property name="languageModel" value="trigramModel"/>
+        <property name="languageModel" value="largeTrigramModel"/>
         <property name="dictionary" value="dictionary"/>
         <property name="addFillerWords" value="false"/>
         <property name="fillerInsertionProbability" value="1E-10"/>
@@ -177,7 +177,19 @@
         <property name="maxDepth" value="3"/>
         <property name="unigramWeight" value=".7"/>
     </component>
-        
+
+    <!-- ************************************************** -->
+    <!-- trigramModel                                       -->
+    <!-- ************************************************** -->
+
+    <component name="largeTrigramModel"
+          type="edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel">
+        <property name="unigramWeight" value=".7"/>
+        <property name="maxDepth" value="3"/>
+        <property name="logMath" value="logMath"/>
+        <property name="dictionary" value="dictionary"/>
+        <property name="location" value="./weather/weather.DMP"/>
+    </component>
     
     <!-- ******************************************************** -->
     <!-- The acoustic model configuration                         -->

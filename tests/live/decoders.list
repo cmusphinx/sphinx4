@@ -1,4 +1,4 @@
-decoders = isolatedDigits connectedDigits bishop weather player jsgf alphaSpelling
+decoders = weather isolatedDigits connectedDigits bishop player jsgf alphaSpelling
 
 # connectedDigits
 connectedDigits.name = Connected Digits
@@ -39,3 +39,4 @@ integers.testFile=./jsgf/integers.test
 weather.name=Weather
 weather.configFile = ./weather/weather.config.xml
 weather.testFile = ./weather/weather.transcript
+weather.randomOrder=true
