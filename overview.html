@@ -5,7 +5,87 @@ Java(TM) programming language.
 <p>
 The diagram below shows the general architecture of Sphinx-4, followed by
 a description of each block:
-<p><img src="doc-files/architecture.gif">
+
+<map name="architecture_map">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.recognizer.Recognizer}
+     coords="150,7, 231,27"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.recognizer.Recognizer}
+     coords="135,41, 180,59"
+     alt="">
+    <area shape="rect"
+     href="edu/cmu/sphinx/frontend/util/package-summary.html"
+     coords="36,41, 78,58"
+     alt="">
+    <area shape="rect"
+     href="edu/cmu/sphinx/instrumentation/package-summary.html"
+     coords="284,39, 374,56"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.result.Result}
+     coords="201,55, 240,70"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.linguist.language.ngram.LanguageModel}
+     coords="283,199, 372,218"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.linguist.dictionary.Dictionary}
+     coords="288,175, 367,190"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.linguist.acoustic.AcousticModel}
+     coords="284,150, 370,165"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.linguist.Linguist}
+     coords="298,125, 353,143"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.decoder.pruner.Pruner}
+     coords="191,217, 231,232"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.decoder.scorer.AcousticScorer}
+     coords="136,217, 175,234"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.decoder.search.ActiveList}
+     coords="153,161, 214,177"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.decoder.search.SearchManager}
+     coords="136,137, 228,156"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.decoder.Decoder}
+     coords="158,117, 210,132"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.recognizer.Recognizer}
+     coords="150,91, 217,109"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.linguist.SearchGraph}
+     coords="225,275, 295,290"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.util.props.ConfigurationManager}
+     coords="116,306, 256,325"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor}
+     coords="84,276, 128,291"
+     alt="">
+    <area shape="rect"
+     {@href edu.cmu.sphinx.frontend.FrontEnd}
+     coords="21,124, 92,226"
+     alt="">
+</map>
+
+<p><img src="doc-files/architecture.gif" usemap="#architecture_map" ismap>
 <br><i>Figure 1: Architecture diagram of Sphinx-4.</i>
 
 <p>

@@ -52,8 +52,6 @@
     <property name="model_loader_name" value="${wsj_loader_name}"/>
     <property name="model_data_dir" value="${wsj_data_dir}"/>
 
-
-
     <!-- Load the environment -->
     <property environment="env"/>
 
@@ -270,7 +268,7 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="jars"
-	    depends="sphinx4_jar,audiotool_jar"
+	    depends="sphinx4_jar,audiotool_jar,hreftaglet_jar"
 	    description="Builds all the jar files"/>
 
 
@@ -284,7 +282,7 @@ jsapi.exe from the lib directory.
         <jar destfile="${sphinx4_jar}" 
 	     manifest="${src_dir}/edu/cmu/sphinx/sphinx4.manifest"
 	     compress="true"
-             excludes="edu/cmu/sphinx/tools/**">
+             excludes="edu/cmu/sphinx/tools/**,com/sun/taglet/**">
             <fileset dir="${classes_dir}"/>
         </jar>
     </target>
@@ -303,6 +301,22 @@ jsapi.exe from the lib directory.
 		     includes="edu/cmu/sphinx/tools/audio/*"/>
             <fileset dir="${src_dir}"
 		     includes="edu/cmu/sphinx/tools/audio/spectrogram.config.xml"/>
+        </jar>
+    </target>
+
+    <!-- HrefTaglet.jar -->
+    <target name="hreftaglet_jar" 
+	    depends="compile_src"
+	    description="Create ${lib_dir}/HrefTaglet.jar">
+        <mkdir dir="${lib_dir}"/>
+        <jar destfile="${lib_dir}/HrefTaglet.jar"
+	     compress="true">
+            <fileset dir="${classes_dir}"
+		     includes="com/sun/taglet/**"/>
+            <manifest>
+	        <attribute name="Main-Class"
+		 value="com.sun.taglet.HrefTaglet"/>
+             </manifest>
         </jar>
     </target>
 
@@ -472,7 +486,7 @@ jsapi.exe from the lib directory.
     <property name="javadoc_desc" value="Sphinx-4"/>
 
     <target name="javadoc" 	    
-	    depends="handle_jsapi"
+	    depends="handle_jsapi,hreftaglet_jar"
 	    description="Generate javadoc, optionally with '-Daccess=private'">
 	<delete dir="${javadoc_dir}"/>
         <mkdir dir="${javadoc_dir}"/>
@@ -491,6 +505,8 @@ jsapi.exe from the lib directory.
                   <patternset refid="${patternset_to_doc}"/>
             </packageset>
 	    <classpath refid="libs"/>
+            <taglet name="com.sun.taglet.HrefTaglet"
+		    path="${lib_dir}/HrefTaglet.jar"/>
         </javadoc>
     </target>
 
