@@ -158,7 +158,7 @@ public class SimpleTrainManager implements TrainManager {
       * @param context the context of this TrainManager
       */
     public void initializeModels(String context) throws IOException {
-	TrainerScore score;
+	TrainerScore score[];
         props = SphinxProperties.getSphinxProperties(context);
         dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
                                           PROP_DUMP_MEMORY_INFO_DEFAULT);
@@ -175,7 +175,8 @@ public class SimpleTrainManager implements TrainManager {
 		Utterance utterance = controlFile.nextUtterance();
 		learner.setUtterance(utterance);
 		while ((score = learner.getScore()) != null) {
-		    models[m].accumulate(score);
+		    assert score.length == 1;
+		    models[m].accumulate(score[0]);
 		}
 	    }
 	    models[m].normalize();
@@ -223,7 +224,7 @@ public class SimpleTrainManager implements TrainManager {
 	throws IOException {
 	UtteranceGraph uttGraph;
 	TranscriptGraph transcriptGraph;
-	TrainerScore score;
+	TrainerScore[] score;
 
 	if (learner == null) {
 	    loadModels(context);
@@ -247,7 +248,9 @@ public class SimpleTrainManager implements TrainManager {
 		learner.setUtterance(utterance);
 		learner.setGraph(uttGraph);
 		while ((score = learner.getScore()) != null) {
-		    models[m].accumulate(score);
+		    for (int i = 0; i < score.length; i++) {
+			models[m].accumulate(score[i]);
+		    }
 		}
 	    }
 	    models[m].normalize();

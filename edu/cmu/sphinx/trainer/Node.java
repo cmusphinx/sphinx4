@@ -23,6 +23,8 @@ import java.util.Iterator;
  */
 public class Node {
 
+    // Do we really need nodeId and object? Maybe we can use object as
+    // the id when we assign a string to it.
     /**
      * The identifier for this Node
      */

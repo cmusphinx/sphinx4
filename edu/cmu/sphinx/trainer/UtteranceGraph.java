@@ -25,4 +25,41 @@ public interface UtteranceGraph {
      */
     public void add(Graph transcriptGraph);
 
+    /**
+     * Returns the size of a graph. This is the number of nodes in a graph.
+     */
+    public int size();
+
+    /**
+     * Get node at the specified position in the list. The order is
+     * the same in which the nodes were entered.
+     *
+     * @param index index of item to retun
+     *
+     * @return the node
+     */
+    public Node getNode(int index);
+
+    /**
+     * Gets the initial node in this graph
+     *
+     * @return the initial node
+     */
+    public Node getInitialNode();
+
+    /**
+     * Gets the final node in this graph
+     *
+     * @return the final node
+     */
+    public Node getFinalNode();
+
+    /**
+     * Gets the index of a particular node in the graph.
+     *
+     * @param the node
+     *
+     * @return the index
+     */
+    public int indexOf(Node node);
 }

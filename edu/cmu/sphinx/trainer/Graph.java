@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Implementation of a graph Graph
+ * Implementation of a graph
  */
 
 public class Graph {
@@ -70,15 +70,25 @@ public class Graph {
     /**
      * Get the initial node
      */
-    public Node getInitialNode(){
+    public Node getInitialNode() {
         return initialNode;
     }
 
     /**
      * Get the final node
      */
-    public Node getFinalNode(){
+    public Node getFinalNode() {
         return finalNode;
+    }
+
+    /**
+     * Get this graph's size. The size of a graph is the number of
+     * nodes in the graph.
+     *
+     * @return the size of the graph
+     */
+    public int size() {
+	return nodes.size();
     }
 
     /**
@@ -91,6 +101,17 @@ public class Graph {
      */
     public Node getNode(int index) {
 	return (Node) nodes.get(index);
+    }
+
+    /**
+     * Gets the index of a particular node in the graph.
+     *
+     * @param node the node
+     *
+     * @return the index in this graph, or -1 if not found
+     */
+    public int indexOf(Node node) {
+	return nodes.indexOf(node);
     }
 
     /**

@@ -261,14 +261,15 @@ public class FlatInitializerLearner implements Learner {
      *
      * @return the TrainerScore
      */
-    public TrainerScore getScore() {
+    public TrainerScore[] getScore() {
 	// If getFeature() is true, curFeature contains a valid
 	// Feature. If not, a problem or EOF was encountered.
 	if (getFeature()) {
 	    // Since it's flat initialization, the probability is
 	    // neutral, and the senone means "all senones".
-	    TrainerScore score = new TrainerScore(curFeature, 0.0f, 
-				  TrainerAcousticModel.ALL_MODELS);
+	    TrainerScore[] score = new TrainerScore[1];
+	    score[0] = new TrainerScore(curFeature, 0.0f,
+					TrainerAcousticModel.ALL_MODELS);
 	    return score;
 	} else {
 	    return null;

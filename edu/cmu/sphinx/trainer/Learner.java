@@ -65,5 +65,5 @@ public interface  Learner {
     /**
      * Gets posterior probabilities for a given state.
      */
-    public TrainerScore getScore();
+    public TrainerScore[] getScore();
 }

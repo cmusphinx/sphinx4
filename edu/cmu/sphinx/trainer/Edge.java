@@ -65,6 +65,24 @@ public class Edge {
     }
 
     /**
+     * Gets the destination node for a given edge.
+     *
+     * @return the destination node
+     */
+    public Node getDestination() {
+	return destinationNode;
+    }
+
+    /**
+     * Gets source node for a given edge.
+     *
+     * @return the source node
+     */
+    public Node getSource() {
+	return sourceNode;
+    }
+
+    /**
      * Validate this edge. Checks if source and destination are
      * non-null.
      *
