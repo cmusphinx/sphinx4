@@ -278,9 +278,7 @@ public class LexTreeLinguist implements  Linguist {
     protected void compileGrammar() {
         Timer.start("compile");
 
-        Timer.start("buildHmmPool");
         hmmPool = new HMMPool(acousticModel);
-        Timer.stop("buildHmmPool");
         silenceID = hmmPool.getID(Unit.SILENCE);
 
         lexTree = new LexTree(hmmPool, dictionary,
@@ -759,6 +757,9 @@ public class LexTreeLinguist implements  Linguist {
 
             HMM hmm = hmmPool.getHMM(unitID, position);
 
+            if (hmm == null) {
+                System.out.println(unitID + " pos " + position);
+            }
             assert hmm != null;
 
             nextStates[0] = new LexTreeHMMState(getLeftID(), getCentral(),
