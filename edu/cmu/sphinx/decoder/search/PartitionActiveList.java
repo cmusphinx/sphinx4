@@ -120,7 +120,7 @@ public class PartitionActiveList implements ActiveList  {
     /**
      * Sets the absolute beam width of this list.
      *
-     * @param absoluteBeamWidth the absolute beam width
+     * @param linearRelativeBeamWidth the absolute beam width
      */
     public void setRelativeBeamWidth(double linearRelativeBeamWidth) {
         this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);

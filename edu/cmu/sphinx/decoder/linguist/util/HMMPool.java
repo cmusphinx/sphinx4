@@ -110,7 +110,7 @@ public class HMMPool {
      *
      * @param unitID the id for the unit
      *
-     * @returns the unit associated with the ID
+     * @return the unit associated with the ID
      */
     public Unit getUnit(int unitID) {
         return unitTable[unitID];
