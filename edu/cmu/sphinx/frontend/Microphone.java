@@ -37,8 +37,7 @@ import javax.sound.sampled.TargetDataLine;
  * is set to true, then the Audio objects returned will contain
  * a reference to the (entire) Utterance object.
  */
-public class Microphone extends DataProcessor
-implements AudioSource, Runnable {
+public class Microphone extends DataProcessor implements AudioSource, Runnable {
 
     /**
      * Parameters for audioFormat
@@ -73,7 +72,8 @@ implements AudioSource, Runnable {
      * @param name the name of this Microphone
      * @param context the context of this Microphone
      */
-    public Microphone(String name, String context) {
+    public Microphone(String name, String context) throws
+    LineUnavailableException {
         super(name, context);
 	initSphinxProperties();
         audioFormat = new AudioFormat(sampleRate, sampleSizeInBits,
@@ -137,9 +137,9 @@ implements AudioSource, Runnable {
      * it to stop recording.
      */
     public void run() {
-        while (!getClosed()) {
+        while (!isClosed()) {
             waitToRecord();
-            if (!getClosed()) {
+            if (!isClosed()) {
                 record();
             }
         }
@@ -152,7 +152,7 @@ implements AudioSource, Runnable {
      */
     private synchronized void waitToRecord() {
         synchronized(this) {
-            while (!getClosed() && !getRecording()) {
+            while (!isClosed() && !isRecording()) {
                 try {
                     printMessage("waiting to record");
                     wait();
@@ -169,45 +169,39 @@ implements AudioSource, Runnable {
      * Records audio, and cache them in the audio buffer.
      */
     private void record() {
-
-        if (audioLine != null && audioLine.isOpen()) {
-
-            Utterance currentUtterance = new Utterance(getContext());
-            utteranceList.add(currentUtterance);
-
-            printMessage("started recording");
-
-            audioLine.flush();
-            audioLine.start();
-
-            while (getRecording() && !getClosed()) {
-                // Read the next chunk of data from the TargetDataLine.
-                byte[] data = new byte[frameSizeInBytes];
-                int numBytesRead = audioLine.read(data, 0, data.length);
+        
+        Utterance currentUtterance = new Utterance(getContext());
+        utteranceList.add(currentUtterance);
+        
+        printMessage("started recording");
+        
+        audioLine.flush();
+        audioLine.start();
+        
+        while (isRecording() && !isClosed()) {
+            // Read the next chunk of data from the TargetDataLine.
+            byte[] data = new byte[frameSizeInBytes];
+            int numBytesRead = audioLine.read(data, 0, data.length);
+            
+            if (numBytesRead == frameSizeInBytes) {
+                currentUtterance.add(data);
+            } else {
+                numBytesRead = (numBytesRead % 2 == 0) ?
+                    numBytesRead + 2 : numBytesRead + 3;
                 
-                if (numBytesRead == frameSizeInBytes) {
-                    currentUtterance.add(data);
-                } else {
-                    numBytesRead = (numBytesRead % 2 == 0) ?
-                        numBytesRead + 2 : numBytesRead + 3;
-
-                    byte[] shrinked = new byte[numBytesRead];
-                    System.arraycopy(data, 0, shrinked, 0, numBytesRead);
-                    currentUtterance.add(shrinked);
-                }
-
-                printMessage("recorded 1 frame (" + numBytesRead + ") bytes");
+                byte[] shrinked = new byte[numBytesRead];
+                System.arraycopy(data, 0, shrinked, 0, numBytesRead);
+                currentUtterance.add(shrinked);
             }
-
-            audioLine.drain();
-            audioLine.stop();
-            // audioLine.close();
-
-            printMessage("stopped recording");
-
-        } else {
-            printMessage("Unable to open line");
+            
+            printMessage("recorded 1 frame (" + numBytesRead + ") bytes");
         }
+        
+        audioLine.drain();
+        audioLine.stop();
+        // audioLine.close();
+        
+        printMessage("stopped recording");
     }
 
 
@@ -215,18 +209,21 @@ implements AudioSource, Runnable {
      * Opens the audio capturing device so that it will be ready
      * for capturing audio.
      *
+     * @throws LineUnavailableException if there is an error opening
+     *    the audio device
+     *
      * @return true if the audio capturing device is opened successfully;
      *     false otherwise
      */
-    private boolean open() {
+    private boolean open() throws LineUnavailableException {
         DataLine.Info info = new DataLine.Info
             (TargetDataLine.class, audioFormat);
         
         if (!AudioSystem.isLineSupported(info)) {
             logger.severe(audioFormat + " not supported");
-            return false;
+            throw new LineUnavailableException();
         }
-
+        
         // Obtain and open the line.
         try {
             audioLine = (TargetDataLine) AudioSystem.getLine(info);
@@ -237,7 +234,7 @@ implements AudioSource, Runnable {
             audioLine = null;
             ex.printStackTrace();
             return false;
-        }        
+        }
     }
 
 
@@ -258,7 +255,7 @@ implements AudioSource, Runnable {
         if (audioLine.isOpen()) {
             setRecording(true);
             notifyAll();
-            while (!getStarted()) {
+            while (!isStarted()) {
                 try {
                     wait();
                 } catch (InterruptedException ie) {
@@ -319,7 +316,7 @@ implements AudioSource, Runnable {
      *
      * @return true if the Microphone has started capturing audio
      */
-    private synchronized boolean getStarted() {
+    private synchronized boolean isStarted() {
         return started;
     }
 
@@ -341,7 +338,7 @@ implements AudioSource, Runnable {
      *
      * @return true if recording, false if not recording
      */ 
-    private synchronized boolean getRecording() {
+    private synchronized boolean isRecording() {
         return recording;
     }
 
@@ -365,7 +362,7 @@ implements AudioSource, Runnable {
      *
      * @return true if this Microphone thread has finished running
      */
-    private synchronized boolean getClosed() {
+    private synchronized boolean isClosed() {
         return closed;
     }
 
@@ -495,7 +492,7 @@ implements AudioSource, Runnable {
             
             do {
                 audioFrame = currentUtterance.getNext();
-            } while (audioFrame == null && getRecording());
+            } while (audioFrame == null && isRecording());
             
             if (audioFrame == null) {
                 return null;
