@@ -143,11 +143,6 @@ public class BatchModeRecognizer implements Configurable {
                 Recognizer.class);
         dataSource = (DataProcessor) ps.getComponent(PROP_INPUT_SOURCE,
                 DataProcessor.class);
-
-        // just be referencing the monitors causes them to be created.
-        // they will monitor the system based upon how they are configured.
-
-        ps.getComponentList(PROP_MONITORS, Configurable.class);
     }
 
     /*
