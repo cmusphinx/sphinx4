@@ -12,7 +12,6 @@
 #
 
 base=`pwd`
-log=$base/regression.log
 
 directory=$1
 target=$2
@@ -30,4 +29,4 @@ fi
 cd $base
 
 $base/s4_align $rawOutput > $alignOutput
-$base/parseLog $rawOutput $alignOutput $status >>  $log
+$base/parseLog $rawOutput $alignOutput $status | updateLog
