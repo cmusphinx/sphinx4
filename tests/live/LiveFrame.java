@@ -77,6 +77,7 @@ public class LiveFrame extends JFrame {
     private JButton nextButton;
     private JButton playButton;
     private JButton clearButton;
+    private JButton newTestFileButton;
 
 
     /**
@@ -249,6 +250,22 @@ public class LiveFrame extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 messageTextField.setText(message);
+            }
+        });
+    }
+
+
+    /**
+     * Enables or disables the "Next" button.
+     *
+     * @param enable boolean to enable or disable
+     */
+    public void setNewTestFileButtonEnabled(final boolean enabled) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (newTestFileButton != null) {
+                    newTestFileButton.setEnabled(enabled);
+                }
             }
         });
     }
@@ -452,7 +469,7 @@ public class LiveFrame extends JFrame {
         c.fill = GridBagConstraints.NONE;
 
         // add "New..." button
-        JButton newTestFileButton = new JButton("New...");
+        newTestFileButton = new JButton("New...");
         c.gridx = 4;
         c.gridy = 1;
         gridBag.setConstraints(newTestFileButton, c);
