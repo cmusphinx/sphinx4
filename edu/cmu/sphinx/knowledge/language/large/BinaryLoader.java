@@ -89,7 +89,8 @@ class BinaryLoader {
     private int numberTrigrams;
     private int logBigramSegmentSize;
     private int startWordID;
-
+    private int endWordID;
+    
     private int[] trigramSegmentTable;
 
     private float languageWeight;
@@ -115,6 +116,8 @@ class BinaryLoader {
      */
     public BinaryLoader(String context) 
         throws IOException, FileNotFoundException {
+	startWordID = -1;
+	endWordID = -1;
 	initialize(context);
     }
 
@@ -366,6 +369,15 @@ class BinaryLoader {
 
         // read the string of all words
         this.words = readWords(stream, wordsStringLength, numberUnigrams);
+
+	if (startWordID > -1) {
+	    UnigramProbability unigram = unigrams[startWordID];
+	    unigram.setLogProbability(-0.99f);
+	}
+	if (endWordID > -1) {
+	    UnigramProbability unigram = unigrams[endWordID];
+	    unigram.setLogProbability(-0.99f);
+	}
         
         applyUnigramWeight();
 
@@ -720,7 +732,9 @@ class BinaryLoader {
                 buffer = new StringBuffer();
                 if (words[s].equals(Dictionary.SENTENCE_START_SPELLING)) {
                     startWordID = s;
-                }
+                } else if (words[s].equals(Dictionary.SENTENCE_END_SPELLING)) {
+		    endWordID = s;
+		}
                 s++;
             } else {
                 buffer.append(c);
