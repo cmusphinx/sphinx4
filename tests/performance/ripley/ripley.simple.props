@@ -69,8 +69,8 @@ edu.cmu.sphinx.frontend.windower.alpha = 0.46
 ############################################################
 
 edu.cmu.sphinx.decoder.Recognizer.searchManager=edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager
-edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist
-edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.NullGrammar
+edu.cmu.sphinx.decoder.Recognizer.linguist=edu.cmu.sphinx.decoder.linguist.simple.SimpleLinguist
+edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar
 
 
 ############################################################
@@ -80,7 +80,7 @@ edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.NullGr
 ############################################################
 
 edu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.activeListType = edu.cmu.sphinx.decoder.search.PartitionActiveList
-edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=1500
+edu.cmu.sphinx.decoder.search.ActiveList.absoluteBeamWidth=2000
 edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-205
 
 
@@ -92,7 +92,8 @@ edu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-205
 
 edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-16
-edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=16
+edu.cmu.sphinx.decoder.linguist.Linguist.languageWeight=8
+edu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path=/lab/speech/sphinx4/data/medialab/wordlist
 
 
 ############################################################

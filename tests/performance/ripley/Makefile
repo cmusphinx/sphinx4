@@ -29,7 +29,7 @@ PROFILE_FLAGS= $(GCSPY_FLAGS)
 PROFILE_FLAGS= -Xprof -server
 
 LOG_GC_FLAGS=  -Xloggc:gc.txt
-GC_FLAGS = -ms256m -mx512m
+GC_FLAGS = -ms384m -mx512m
 
 # LOGGER_PROPERTIES=tidigits.props
 LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
