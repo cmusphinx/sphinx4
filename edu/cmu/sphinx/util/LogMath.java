@@ -57,7 +57,7 @@ public final class LogMath implements Serializable {
     public final static String PROP_USE_ADD_TABLE
 	= "edu.cmu.sphinx.util.LogMath.useAddTable";
 
-    private double logBase = 1.0001;
+    private double logBase;
     private boolean useAddTable;
     private transient double naturalLogBase;
     private transient double inverseNaturalLogBase;
@@ -237,129 +237,6 @@ public final class LogMath implements Serializable {
      }
 
 
-
-    /**
-     * Returns the base raised to the power, when the result and the
-     * base are in log.
-     *
-     * <p>Will check for underflow and report.</p>
-     *
-     * <p>Will check for overflow on the lowest bound and constrain
-     * values to be no lower than -Double.MAX_VALUE.</p>
-     *
-     * <p>Will check for overflow on the highest bound and constrain
-     * values to be no higher than Double.MAX_VALUE.</p>
-     *
-     *
-     * @param logOfbase base, in log, to be raised
-     * @param exponent power of the exponentiation
-     *
-     * @return base raised to exponent, in log
-     *
-     */
-    public final double powerAsLinear(double logOfBase, double exponent) {
-	double returnValue = logOfBase * exponent;
-	boolean overflowOccurred = false;
-
-	// if abs(exponent) is > 1, the product may result larger than max
-	if (Math.abs(exponent) > 1) {
-	    if (Math.abs(logOfBase) > (Double.MAX_VALUE / Math.abs(exponent))) {
-		overflowOccurred = true;
-		// logOfBase/exponent will have the same sign as their
-		// product, but will not overflow.
-		if ((logOfBase / exponent > 0)) {
-		    returnValue = Double.MAX_VALUE;
-		} else {
-		    returnValue = -Double.MAX_VALUE;
-		}
-	    }
-	} else if (Math.abs(exponent) < 1) {
-	    // Underflow may occur if exponent is less than one (the
-	    // power will be less than the logOfBase in absolute terms.
-	    if (Math.abs(logOfBase) < ( Double.MIN_VALUE / Math.abs(exponent))) {
-		overflowOccurred = true;
-		returnValue = 0.0;
-	    }
-	}
-	if (overflowOccurred) {
-	    logger.info("********Overflow or underflow occurred "
-			+ "while trying to LogMath.powerAsLinear "
-			+  logOfBase + " raised to " + exponent);
-	}
-	return returnValue;
-    }
-
-
-    /**
-     * Returns the product of two values, when the result and the two
-     * values are in log.
-     *
-     * <p>In other words, it returns log(a * b) given log(a) and log(b).</p>
-     *
-     * <p>Will check for overflow on the lowest bound and constrain
-     * values to be no lower than -Double.MAX_VALUE.</p>
-     *
-     * <p>Will check for overflow on the highest bound and constrain
-     * values to be no higher than Double.MAX_VALUE.</p>
-     *
-     *
-     * @param logVal1 value in log domain (i.e. log(val1)) to multiply
-     * @param logVal2 value in log domain (i.e. log(val2)) to multiply
-     *
-     * @return product of val1 and val2 in the log domain
-     *
-     */
-    public final double multiplyAsLinear(double logVal1, double logVal2) {
-	double returnValue = logVal1 + logVal2;
-	boolean overflowOccurred = false;
-
-	// [ EBG: alternative... test the sign of each of logVal1 and
-	// logVal2 and, if needed, the result. If logVal1 and logVal2 have
-	// different signs, then overflow isn't an issue. If they have
-	// the same sign and the result also has the same sign, then
-	// operation was successful. if not, then an overflow occured,
-	// in which case we can signal or just return MAX_VALUE ]
-
-	if (logVal1 > 0) {
-	    if (logVal2 > (Double.MAX_VALUE - logVal1)) {
-		overflowOccurred = true;
-		returnValue = Double.MAX_VALUE;
-	    }
-	} else if (logVal1 < 0) {
-	    if (logVal2 < ( -Double.MAX_VALUE - logVal1)) {
-		overflowOccurred = true;
-		returnValue = -Double.MAX_VALUE;
-	    }
-	}
-	if (overflowOccurred) {
-	    logger.info("********Overflow or underflow occurred "
-			+ "while trying to LogMath.multiplyAsLinear "
-			+ logVal1 + " and " + logVal2);
-	}
-	return returnValue;
-    }
-
-    /**
-     * Returns the ratio of two numbers when the arguments and the
-     * result are in log.
-     *
-     * <p>That is, it returns log(a / b) given log(a) and log(b).</p>
-     *
-     * @param logVal1 dividend in log domain (i.e. log(val1))
-     * @param logVal2 divisor in log domain (i.e. log(val2))
-     *
-     * @return division of val1 and val2 in the log domain
-     *
-     * TODO: Add check for underflow
-     */
-    public final double divideAsLinear(double logVal1, double logVal2) {
-	// Since this is log, -logVal2 is log(1/Val2), therefore the
-	// multiply, which already contains overflow check.
-	double returnValue = multiplyAsLinear(logVal1, -logVal2);
-	return returnValue;
-    }
-
-
     /**
      * Returns the summation of two numbers when the arguments and the
      * result are in log.
@@ -382,40 +259,33 @@ public final class LogMath implements Serializable {
      * is *not* the same as <code>addAsLinear(a, -b)</code>, since
      * we're in the log domain, and -b is in fact the inverse.</p>
      *
-     * <p>Will check for underflow and constrain values to be no lower
-     * than Double.MIN_VALUE.</p>
-     *
-     * <p>Will check for overflow and constrain values to be no higher
-     * than Double.MAX_VALUE.</p>
-     *
-     * <p>Both underflow and overflow checks are actually performed by
-     * the multiplyAsLinear method.</p>
+     * <p>No underflow/overflow check is performed.</p>
      *
      * @param logVal1 value in log domain (i.e. log(val1)) to add
      * @param logVal2 value in log domain (i.e. log(val2)) to add
      *
      * @return sum of val1 and val2 in the log domain
-     *
-     * <br>[[[ TODO: This is a very slow way to do this ]]]
-     * [[[ TODO: need to have some overflow underflow checks ]]]
-     * [ EBG: maybe we should also have a function to add many numbers,
-     * say, return the summation of all terms in a given vector, if 
-     * efficiency becomes an issue.
      */
     public final double addAsLinear(double logVal1, double logVal2) {
-	double highestValue;
-	double difference;
+	double logHighestValue;
+	double logDifference;
 	double returnValue;
+
+	/*
+	 * [ EBG: maybe we should also have a function to add many
+	 * numbers, * say, return the summation of all terms in a
+	 * given vector, if * efficiency becomes an issue.
+	 */
 
 	// difference is always a positive number
 	if (logVal1 > logVal2) {
-	    highestValue = logVal1;
-	    difference = logVal1 - logVal2;
+	    logHighestValue = logVal1;
+	    logDifference = logVal1 - logVal2;
 	} else {
-	    highestValue = logVal2;
-	    difference = logVal2 - logVal1;
+	    logHighestValue = logVal2;
+	    logDifference = logVal2 - logVal1;
 	}
-	return multiplyAsLinear(highestValue, addTable(difference));
+	return logHighestValue + addTable(logDifference);
     }
 
     /**
