@@ -56,8 +56,6 @@
                 includes="edu/**,com/**"
                 excludes="edu/cmu/sphinx/research/**,
                 edu/cmu/sphinx/trainer/**,
-                edu/cmu/sphinx/tools/audio/**,
-                edu/cmu/sphinx/tools/feature/**,
                 edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**"
                 />
 
@@ -66,8 +64,6 @@
 	        excludes="com/**,
                 edu/cmu/sphinx/research/**,
                 edu/cmu/sphinx/trainer/**,
-                edu/cmu/sphinx/tools/audio/**,
-                edu/cmu/sphinx/tools/feature/**,
                 edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**,
                 "/>
 
@@ -76,8 +72,6 @@
 	        excludes="com/**,
                 edu/cmu/sphinx/research/**,
                 edu/cmu/sphinx/trainer/**,
-                edu/cmu/sphinx/tools/audio/**,
-                edu/cmu/sphinx/tools/feature/**,
                 edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**,
                           edu/cmu/sphinx/jsapi/**"/>
              
@@ -250,7 +244,7 @@ jsapi.exe from the lib directory.
             <fileset dir="${classes_dir}"
 		     includes="edu/cmu/sphinx/tools/audio/*"/>
             <fileset dir="${src_dir}"
-		     includes="edu/cmu/sphinx/tools/audio/spectrogram.props"/>
+		     includes="edu/cmu/sphinx/tools/audio/spectrogram.config.xml"/>
         </jar>
     </target>
 
