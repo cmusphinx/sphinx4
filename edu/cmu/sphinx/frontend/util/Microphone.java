@@ -64,6 +64,21 @@ import javax.sound.sampled.TargetDataLine;
 public class Microphone extends DataProcessor implements AudioSource {
 
     /**
+     * Sphinx property that specifies whether or not the microphone
+     * will release the audio between utterances.  On certain systems
+     * (linux for one), closing and reopening the audio does not work
+     * too well.
+     */
+    public final static String PROP_CLOSE_AUDIO_BETWEEN_UTTERANCES =
+	"edu.cmu.sphinx.frontend.util.Microphone.closeAudioBetweenUtterances";
+
+    /**
+     * The default value for the PROP_CLOSE_AUDIO_BETWEEN_UTTERANCES
+     * property
+     */
+    public final static boolean
+	PROP_CLOSE_AUDIO_BETWEEN_UTTERANCES_DEFAULT = true;
+    /**
      * Parameters for audioFormat
      */
     private AudioFormat audioFormat;
@@ -86,6 +101,7 @@ public class Microphone extends DataProcessor implements AudioSource {
     private volatile boolean closed = false;
     private boolean keepAudioReference = true;
     private boolean tracing = false;
+    private boolean closeAudioBetweenUtterances = true;
 
     private static Logger logger = Logger.getLogger
     ("edu.cmu.sphinx.frontend.Microphone");
@@ -114,6 +130,9 @@ public class Microphone extends DataProcessor implements AudioSource {
     public void setProperties(SphinxProperties props) {
 
         sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE, 16000);
+	closeAudioBetweenUtterances =
+	    props.getBoolean(PROP_CLOSE_AUDIO_BETWEEN_UTTERANCES,
+		    PROP_CLOSE_AUDIO_BETWEEN_UTTERANCES_DEFAULT);
 
         SphinxProperties properties = getSphinxProperties();
         frameSizeInBytes = properties.getInt
@@ -210,8 +229,10 @@ public class Microphone extends DataProcessor implements AudioSource {
                 }
                 
                 audioLine.stop();
-                //audioLine.close();
-		//audioLine = null;
+		if (closeAudioBetweenUtterances) {
+                    audioLine.close();
+		    audioLine = null;
+		}
                 
 		if (tracing) {
 		    printMessage("stopped recording");
