@@ -150,17 +150,9 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
                 String word = mapToken.getWord().getSpelling();
                 WordResult wr = null;
                 ConfusionSet cs = null;
-                
-                /*
-                 * NOTE: since there is no Word for <noop>,
-                 * we check for <unk> and <sil> instead
-                 */
+
+                /* track through all the slots to find the word */
                 while (slot >= 0 && wr == null) {
-                    /*
-                       (((wr = cs.getWordResult(word)) == null) &&
-                        (((wr = cs.getWordResult("<unk>")) != null) ||
-                         ((wr = cs.getWordResult("<sil>")) != null)))) {
-                    */
                     cs = sausage.getConfusionSet(slot);
                     wr = cs.getWordResult(word);
                     if (wr == null) {
