@@ -10,7 +10,7 @@ a description of each block:
 
 <p>
 
-<b>Recognizer</b> - Contains the main components of Sphinx-4, which are
+<b><a href="edu/cmu/sphinx/recognizer/Recognizer.html">Recognizer</a></b> - Contains the main components of Sphinx-4, which are
 the front end, the linguist, and the decoder. The application interacts
 with the Sphinx-4 system mainly via the Recognizer.
 
@@ -30,7 +30,7 @@ which are used for decoding in the rest of the system.
 
 
 <p>
-<b>Linguist</b> - Embodies the linguistic knowledge of the system, which are
+<b><a href="edu/cmu/sphinx/linguist/Linguist.html">Linguist</a></b> - Embodies the linguistic knowledge of the system, which are
 the acoustic model, the dictionary, and the language model.
 The linguist produces a search graph structure on which the search manager
 performs search using different algorithms.
@@ -51,13 +51,13 @@ the acoustic model, and the language model.
 
 
 <p>
-<b>Decoder</b> - Contains the components necessary for decoding, e.g.,
-the search algorithm (search manager), the feature scorer and the pruner.
+<b><a href="edu/cmu/sphinx/decoder/Decoder.html">Decoder</a></b> - Contains the search manager.
 
 
 <p>
 <b><a href="edu/cmu/sphinx/decoder/search/SearchManager.html">Search Manager</a></b> - Performs search using certain algorithm used, e.g.,
-breadth-first search, best-first search, depth-first search, etc..
+breadth-first search, best-first search, depth-first search, etc.. Also contains the feature scorer and the pruner.
+
 
 
 <p>
