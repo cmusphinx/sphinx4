@@ -276,14 +276,17 @@ public class ZipCity extends JFrame {
      */
     class MapPanel extends JPanel {
 
-        private final static float MIN_LAT = 24;
-        private final static float MAX_LAT = 50;
-        private final static float MAX_LONG = 125;
-        private final static float MIN_LONG = 65;
+        private final static float MIN_LAT = 24.0f;
+        private final static float MAX_LAT = 52f;
+        private final static float MAX_LONG = 126f;
+        private final static float MIN_LONG = 65f;
         private final static float RANGE_LAT = MAX_LAT - MIN_LAT;
         private final static float RANGE_LONG = MAX_LONG - MIN_LONG;
         private final static int NORMAL_SIZE = 2;
         private final static int HIGHLIGHT_SIZE = 10;
+
+        private final static float DEFAULT_LAT = 25;
+        private final static float DEFAULT_LONG = 120;
 
         private final static int WIDTH_OFFSET = 10;
         private final static int HEIGHT_OFFSET = 8;
@@ -332,12 +335,11 @@ public class ZipCity extends JFrame {
         void plot(ZipInfo zi, boolean highlight) {
             //System.out.println("ll " + zi.getLongitude() + " " +
             //       zi.getLatitude());
-            int x = mapx(zi.getLongitude());
-            int y = mapy(zi.getLatitude());
             if (highlight) {
-                drawZipInfo(x, y, zi);
-                plot(x,y, HIGHLIGHT_SIZE);
+                drawZipInfo(zi);
             } else {
+                int x = mapx(zi.getLongitude());
+                int y = mapy(zi.getLatitude());
                 plot(x,y, NORMAL_SIZE);
             }
         }
@@ -349,12 +351,22 @@ public class ZipCity extends JFrame {
          * @param y the y position of the point
          * @param zi the zip info
          */
-
-
-        void drawZipInfo(int x, int y, ZipInfo zi) {
+        void drawZipInfo( ZipInfo zi) {
+            int x, y;
             String label = zi.getCity() + ", " + zi.getState() + " " +
                 zi.getZip();
             Dimension d = getStringDimension(g, label);
+
+            if (zi.getLatitude() < MIN_LAT || zi.getLatitude() > MAX_LAT 
+                    || zi.getLongitude() < MIN_LONG ||
+                    zi.getLongitude() > MAX_LONG) {
+                x = mapx(DEFAULT_LONG);
+                y = mapy(DEFAULT_LAT);
+            } else {
+                x = mapx(zi.getLongitude());
+                y = mapy(zi.getLatitude());
+                plot(x,y, HIGHLIGHT_SIZE);
+            }
             int xpos = x - WIDTH_OFFSET;
             int ypos = y - d.height / 2;
 
@@ -372,8 +384,6 @@ public class ZipCity extends JFrame {
          * @param size the size of the point
          */
         void plot(int x, int y, int size) {
-            // System.out.println("Plot : " + x + " " + y);
-            // g.drawRect(x, y, size, size);
              g.fillOval(x, y, size, size);
         }
 
