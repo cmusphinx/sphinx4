@@ -70,7 +70,6 @@ WARRANTIES.
       </td>
 
       <td valign="top"><br>
-      <font size="+1">(this page is currently under development)</font>
       <h3>General Information</h3>
       <ul>
         <li><a href="#what_is_sphinx4">Introduction</a></li>
@@ -357,30 +356,64 @@ setenv JAVA_HOME /usr/java/j2sdk1.4.2
 
 <br>&nbsp;
 
-      <li><a name="source"><b>Sphinx-4 source distribution</b></a>
-	<br>&nbsp;
-	<ul>
-	  <li><a name="cvs"><b>Instructions for retrieving code from the cvs trees</b></a>
-	    <p>The Sphinx-4 code is located at <a href="http://sourceforge.net/projects/cmusphinx">sourceforge.net</a> as open source. Please follow the instructions below to retrieve it.</p>
-	    <ul>
-	      <li>Make sure that you set the environment variable CVS_RSH to
-		ssh. See the <a href="#faq">troubleshooting</a> section for more
-		details.
-	      </li>
+  <li>
+  <a name="source"><b>Sphinx-4 source distribution</b></a>
+  <br>&nbsp;
+      <ul>
+      <li>
+      <b>Instructions for retrieving code from a release package.</b>
+      <p>
+      Sphinx-4 has two packages available for <a href="">download</a>:
+      <ul>
+      <li>
+      <b>sphinx4-bin-{version}.zip</b>: 
+      provides the jar files, documentation, and demos
+      </li>
+      <li>
+      <b>sphinx4-src-{version}.zip</b>: 
+      provides the sources, documentation, demos, unit tests
+      and regression tests.
+      </li>
+      </ul>
+      </p>
+      <p>
+      After you have downloaded these files, unjar the ZIP files using the
+      <code>jar</code> command which is in the <code>bin</code> directory of
+      your Java installation:
+      <pre>
+jar xvf bin.zip
+jar xvf src.zip</pre>
+      </p>
+      <p>
+      If you downloaded sphinx4-bin-{version}.zip, a directory called
+      "sphinx4-bin-{version}" will be created. If you downloaded
+      sphinx4-src-{version}.zip, a directory called "sphinx4-src-{version}"
+      will be created.
+      </p>
+      </li>
 
-	      <li>Get the code from sourceforge.net. If you are a
-	      developer in the cmusphinx project, then do 
-	      (assuming you use bash shell):
-		<pre>
+      <li><a name="cvs"><b>Instructions for retrieving code from the cvs trees</b></a>
+      <p>If you want to be able to get the latest updates from the CVS source
+         tree, you should retrieve the code from the CVS source tree on
+	 SourceForge. The Sphinx-4 code is located at 
+	 <a href="http://sourceforge.net/projects/cmusphinx">sourceforge.net</a> as open source. Please follow the instructions below to retrieve it.</p>
+          <ul>
+	  <li>Make sure that you set the environment variable CVS_RSH to
+	      ssh. See the <a href="#faq">troubleshooting</a> section for more
+	      details.
+	  </li>
+
+	  <li>Get the code from sourceforge.net. If you are a developer in the
+	      cmusphinx project, then do (assuming you use bash shell):
+<pre>
 % export CVS_RSH=ssh
 % cvs -z3 -d:ext:<i>developername</i>@cvs.sourceforge.net:/cvsroot/cmusphinx co sphinx4
 </pre>
-where <i>developername</i> is your sourceforge developer name.
-	      </li>
+              where <i>developername</i> is your sourceforge developer name.
+	  </li>
 	  <li>If you are not a developer, you have to get the code
 	  anonymously. When prompted for a password, simply hit
 	  &lt;ENTER&gt;:
-
 	    <pre>
 % cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx login
 % cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx co sphinx4
@@ -388,36 +421,44 @@ where <i>developername</i> is your sourceforge developer name.
       </li>
     </ul>
     </li>
-      <li><b>Instructions for retrieving code from a release package.</b>
-	<p>There are no release packages avaibable at this time for Sphinx-4.</p>
-      </li>
+
     </ul>
     </li>
 <br>
 
   <li><a name="how_build"><b>Building Sphinx-4</b></a>
-      <p>The sofware required for building Sphinx-4 are listed in the <a href="#download_and_install">Required software</a> section.
-      <p>To build Sphinx-4, from a command prompt, make sure you have changed to the directory where you installed Sphinx-4 (usually, a simple "cd sphinx4" will do), and merely type the following:</p>
-      <ul>
-         <p><code>ant</code>
-      </ul>
-    <p>This executes the <a href="http://ant.apache.org/">Apache Ant</a>
-       command to build the Sphinx-4 classes, demos, and jar files.
-       The output will be placed under the <code>bld</code> directory.
-
-    <p>To delete all the output from the build to give you a fresh start:
-       <ul>
-          <p><code>ant clean</code>
-       </ul>
-  </li>
+      <p>
+      You must download the sphinx4-src-{version}.zip in order to be able to
+      build from the sources. The software required for building Sphinx-4 are 
+      listed in the <a href="#download_and_install">Required software</a> 
+      section.
+      </p>
+      <p>
+      To build Sphinx-4, from a command prompt, make sure you have changed to 
+      the directory where you installed Sphinx-4 (usually, a simple 
+      "cd sphinx4" will do), and merely type the following:
+      </p>
+      <pre>ant</pre>
+    <p>
+    This executes the <a href="http://ant.apache.org/">Apache Ant</a>
+    command to build the Sphinx-4 classes under the <code>bld</code>
+    directory, the jar files under the <code>lib</code> directory,
+    and the demo jar files under the <code>bin</code> directory.
+    </p>
+    <p>
+    To delete all the output from the build to give you a fresh start:
+    <pre>ant clean</pre>
+   </li>
 
   <br>
 
 <li><a name="create_javadocs"><b>Creating Javadocs</b></a>
 
 <p>
-If you want to build the javadocs, go to the top level directory ("sphinx4"),
-and type:
+The javadocs have already been built if you downloaded the 
+sphinx4-bin-{version}.zip. In order to build the javadocs yourself, you need 
+to download the sphinx4-src-{version}.zip instead. To build the javadocs, 
+go to the top level directory ("sphinx4" or "sphinx4-src-{version}"), and type:
 </p>
 <pre>ant javadoc</pre>
 <p>This will build javadocs from public classes, displaying only the public methods and fields. In general, this is all the information you will need. If you need more details, such as private or protected classes, you can generate the corresponding javadoc by doing, for example:
@@ -563,9 +604,25 @@ d:\work\sphinx4&gt;ant clean
 
   <p>Sphinx-4 contains a number of demo programs:
     <ul>
-      <li><a href="demo/sphinx/helloworld/README.html">Hello World! Demo</a>: a simple command line Sphinx-4 application that recognizes connected digits
-      <li><a href="tests/live/README.html">Live Demo</a>: shows the basic speech recognition capabilites via a graphical user interface
+      <li>
+      <a href="demo/sphinx/helloworld/README.html">Hello World Demo</a>: a command line application that recognizes simple phrases
+      </li>
+      <li>
+      <a href="demo/sphinx/hellodigits/README.html">Hello Digits Demo</a>: a command line application that recognizes connected digits
+      </li>
+      <li>
+      <a href="demo/sphinx/hellongram/README.html">Hello N-Gram Demo</a>: a command line application using an N-gram language model for speech recognition
+      </li>
+      <li>
+      <a href="tests/live/README.html">Live Demo</a>: shows the basic speech recognition capabilites via a graphical user interface
+      </li>
     </ul>
+  </p>
+  <p>
+  There is also a <a href="tests/live/README.html">live-mode test program</a>,
+  which is available if you download the sphinx-src-{version}.zip file 
+  but not available in the sphinx-bin-{version}.zip file.
+  </p>
   </li>
 
 
