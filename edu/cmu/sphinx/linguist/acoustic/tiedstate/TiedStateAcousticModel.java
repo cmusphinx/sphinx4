@@ -11,13 +11,17 @@
  */
 
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
+
 import java.io.IOException;
+
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -118,6 +122,7 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
     private  Logger logger;
     protected Loader loader;
     private boolean useComposites = false;
+    private Properties properties;    
 
     // ----------------------------
     // internal variables
@@ -473,16 +478,6 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
 
 
     /**
-     * Returns the properties of this AcousticModel.
-     *
-     * @return the properties of this AcousticModel, or null if no properties
-     */
-    public SphinxProperties getProperties() {
-        return loader.getModelProperties();
-    }
-
-    
-    /**
      * Given a unit, returns the HMM that exactly matches the given
      * unit.  
      *
@@ -654,6 +649,66 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
             }
         }
         return replacementContext;
+    }
+
+
+    /**
+     * Returns the properties of this acoustic model.
+     *
+     * @return the properties of this acoustic model
+     */
+    public Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+            try {
+                properties.load
+                    (getClass().getResource("model.props").openStream());
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
+        return properties;
+    }
+
+
+    /**
+     * Returns a string that describes this TiedStateAcousticModel.
+     */
+    public String toString() {
+        Properties props = getProperties();
+        String description = (String) props.get("description");
+        String result = description + "\nClass: " + getClass().getName();
+        for (Enumeration e = props.propertyNames(); e.hasMoreElements(); ) {
+            String key = (String) e.nextElement();
+            String value = (String) props.get(key);
+            result += ("\n\t" + getReadableForm(key) + ": " + value);
+        }
+        result += "\n";
+        return result;
+    }
+
+
+    /**
+     * Converts strings like "thisIsAString" into "This Is A String".
+     *
+     * @return a readable form of strings like "thisIsAString"
+     */
+    private String getReadableForm(String original) {
+        if (original.length() > 0) {
+            StringBuffer sb = new StringBuffer(original.length() * 2);
+            int i = 0;
+            sb.append(Character.toUpperCase(original.charAt(i++)));
+            for (; i < original.length(); i++) {
+                char c = original.charAt(i);
+                if (Character.isUpperCase(c)) {
+                    sb.append(" ");
+                }
+                sb.append(c);
+            }
+            return sb.toString();
+        } else {
+            return original;
+        }
     }
 }
 
