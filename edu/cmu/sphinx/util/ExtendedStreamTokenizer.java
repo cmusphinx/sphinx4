@@ -6,6 +6,8 @@ package edu.cmu.sphinx.util;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StreamCorruptedException;
 import java.io.StreamTokenizer;
 import java.io.FileReader;
@@ -46,8 +48,29 @@ public class ExtendedStreamTokenizer {
      */
     public ExtendedStreamTokenizer(String path, boolean eolIsSignificant) 
 			throws FileNotFoundException {
-	FileReader fileReader = new FileReader(path);
-	reader = new BufferedReader(fileReader);
+	this(new FileReader(path), eolIsSignificant);
+    }
+
+
+    /**
+     * Constructs an ExtendedStreamTokenizer from the given InputStream
+     *
+     * @param inputStream the source of the data
+     * @param eolIsSignificant true if eol is significant
+     */
+    public ExtendedStreamTokenizer(InputStream inputStream, boolean eolIsSignificant) {
+        this(new InputStreamReader(inputStream), eolIsSignificant);
+    }
+
+
+    /**
+     * Constructs an ExtendedStreamTokenizer from the given Reader.
+     *
+     * @param reader the source of the data
+     * @param eolIsSignificant true if eol is significant
+     */
+    public ExtendedStreamTokenizer(Reader reader, boolean eolIsSignificant) {
+	this.reader = new BufferedReader(reader);
 	this.path = path;
 	st = new StreamTokenizer(reader);
 	st.resetSyntax();
@@ -56,7 +79,7 @@ public class ExtendedStreamTokenizer {
 	st.eolIsSignificant(eolIsSignificant);
 	st.commentChar('#');
 	putbackList = new ArrayList();
-    }
+    }        
 
 
     /**
