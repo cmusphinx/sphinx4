@@ -22,8 +22,6 @@ import java.util.Comparator;
 
 /**
  * Prunes an ActiveList of ParallelTokens based on their FeatureScore.
- * Pruning by this Pruner simply means performing a
- * <code>Token.setPruned(true)</code>.
  */
 public class FeatureScorePruner extends TokenScorePruner {
 
