@@ -160,7 +160,12 @@ function getWER(testName, testCount, _errors, _words) {
 #
 function getRejectionAccuracy(testName, testCount) {
     updateData(testName, testCount);
-    return (data[F_CORRECT_OOG] + data[F_CORRECT_IG]) * 100 / data[F_SENTENCES];
+    ra = (data[F_CORRECT_OOG] + data[F_CORRECT_IG]);
+    if (ra == "" || ra == 0) {
+	return "N/A";
+    } else {    
+	return (ra * 100 / data[F_SENTENCES]);
+    }
 }
 
 ####
@@ -660,7 +665,7 @@ function printRejectionTestResults(testName) {
     print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Test Time<br> </b></td>";
     
-    for (i = 1; i <= testCount[testName]; i++) {
+    for (i = 1; i <= rejectionTestCount[testName]; i++) {
 	printSingleRejectionTest(testName, i);
     }
     print "</tr>";
@@ -999,8 +1004,8 @@ function printLatestRejectionTestResults(  _testName, _testCount) {
     print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
     print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
 
-    for (i = 0; i < lastLiveTestCount; i++) {
-        split(lastLiveTestData[i], thisData);
+    for (i = 0; i < lastRejectionTestCount; i++) {
+        split(lastRejectionTestData[i], thisData);
 	_testName = thisData[1];
 	_testCount = thisData[2];
 	printLongSingleRejectionTest(_testName, _testCount);
