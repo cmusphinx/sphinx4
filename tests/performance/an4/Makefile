@@ -132,10 +132,10 @@ an4_spelling_unigram:
 
 an4_spelling_trigram:
 	$(JAVA_CMD) \
-    -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
+    -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-26\
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-150 \
     -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.filterSuccessors=false\
-    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=8.0 \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.languageWeight=7.0 \
     -Dedu.cmu.sphinx.model.language.LanguageModelFactory.languageClass=edu.cmu.sphinx.model.language.SimpleNGramModel \
     -Dedu.cmu.sphinx.model.language.format=arpa \
     -Dedu.cmu.sphinx.model.language.location=./an4_spelling.trigram.lm \
