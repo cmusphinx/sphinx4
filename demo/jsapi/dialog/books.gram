@@ -1,0 +1,22 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for dialog manager example
+ */
+
+grammar books;
+import <commands.standard_commands>;
+
+public <books> =     read the lord of the rings  | 
+                     read effective java  |
+                     read spoken language processing | 
+                     read the future of ideas  |
+                     read code and other laws of cyber space |
+                     read the da vinci code |
+                     read angels and demons |
+                     read eats shoots and leaves |
+                     read harry potter and the goblet of fire |
+                     read the curious incident of the dog in the night time |
+                     read the time travelers wife;
+
+public <commands> = <standard_commands> ;

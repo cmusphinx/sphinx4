@@ -1,0 +1,558 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+<head>
+<!--
+
+/**
+ * Copyright 1999-2004 Carnegie Mellon University.
+ * Portions Copyright 2004 Sun Microsystems, Inc.
+ * Portions Copyright 2004 Mitsubishi Electric Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ *
+ */
+
+-->
+  <title>Sphinx-4 Dialog Demo</title>
+  <style type="text/css">
+  pre { font-size: medium; background: #f0f8ff; padding: 2mm; 
+        border-style: ridge ; color: teal }
+  code { font-size: medium; color: teal }
+  </style>
+</head>
+<body>
+<font face="Times New Roman">
+<center>
+<table bgcolor="#99ccff" width="100%">
+  <tbody>
+    <tr>
+      <td align="center" width="100%">
+      <h1><i>Sphinx-4</i> Dialog Demo</h1>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</center>
+</font> <font face="Arial" size="2">
+<p> This is a simple command line program that demonstrates how to swap
+between multiple JSGF and dictation grammars .<br>
+</p>
+</font><font face="Arial" size="2">
+<p> </p>
+<pre>      </pre>
+<h3>Building</h3>
+<p> Check if the <code>bin</code> directory already has the <code>Dialog.jar</code>
+file. If not, type the following in the top level directory: </p>
+<code>ant -find demo.xml</code>
+<h3>Running</h3>
+<p> First make sure that you have <a
+ href="../../../doc/jsapi_setup.html">JSAPI setup</a> correctly. Then,
+to run the demo, type: </p>
+<code>sphinx4&gt; java -mx200m -jar bin/Dialog.jar</code>
+<p> <font color="#ff0000"><b>NOTE:</b></font> </p>
+<ol>
+  <li> Make sure that you give it a large enough heap by putting in
+"-mx200m". </li>
+  <li> Make sure that you are using Java<sup>TM</sup> 2 SDK, Standard
+Edition, v1.4 or higher. </li>
+  <li> If you are running Linux and have problems with the audio,
+please read the <a href="../../../index.html#demos_faq">Demo
+Troubleshooting</a> section. </li>
+  <li> If you have the source distribution, make sure that the JAR file
+    <code>lib/sphinx4.jar</code> is built. If not, go to the top level
+directory and type: <code>ant</code> </li>
+</ol>
+<p></p>
+<p><br>
+When the program runs, you will be presented with a menu of commands
+that can be spoken. Here is a sample run.&nbsp; The spoken commands are
+highlighed in <span style="color: rgb(0, 153, 0);">green.</span>&nbsp;
+Note that this is just a demonstration of the speech technology. This
+demo will not actually perform the command. Thus, when you say "play
+games / play adventure " no game will actually played, similarly, when
+you say "make a phone call / call paul" no phone call will be made.<br>
+<br>
+
+
+<p> 
+<b>Note</b> - when browsing newspapers from the 'news' menu, this demo
+will actually attempt to open the news page in your web browser by
+executing the command 'browse web-page-url'.  If you want to enable
+this feature place a browse script in your command path.  The script I
+use with the firefox browser is this:
+
+<pre>
+#!/bin/sh
+
+export FF_HOME="/usr/share/firefox
+
+url="$1"
+if [ "x$url" = "x" ]; then
+  url="about:blank"
+  fi
+
+  if $FF_HOME/mozilla-xremote-client openURL\("$url"\); then
+    exit 0
+    fi
+    exec $FF_HOME/firefox "$url"
+
+</pre>
+
+Here's a sample run:
+<br>
+
+<pre>
+
+Welcome to the Sphinx-4 Dialog Demo  - Version 1.0
+
+Loading dialogs ...
+Loading weather recognizer ...
+Running  ...
+ ======== menu =======
+  exit the program
+  get help
+  listen to music
+  make a phone call
+  play a game
+  read a book
+  read a newspaper
+  read my email
+  show statistics
+  watch a movie
+  weather forecaster
+ =================================
+
+ <font color="green">get help
+ </font>
+
+ ======== menu =======
+  exit the program
+  get help
+  listen to music
+  make a phone call
+  play a game
+  read a book
+  read a newspaper
+  read my email
+  show statistics
+  watch a movie
+  weather forecaster
+ =================================
+
+ <font color="green">listen to music
+ </font>
+
+ ======== music =======
+  go to main menu
+  go to the main menu
+  listen to alter bridge open your eyes
+  listen to audio slave i am the highway
+  listen to audio slave like a stone
+  listen to audio slave show me how to live
+  listen to damage plan pride
+  listen to drowning pool set up
+  listen to eighteen twelve overture
+  listen to emerson lake and palmer tank
+  listen to green day american idiot
+  listen to jet are you going to be my girl
+  listen to jimmy smith the cat
+  listen to led zeppelin rambling on
+  listen to monkeys i'm a believer
+  listen to monster magnet unbroken
+  listen to nickle back figured you out
+  listen to pink floyd money
+  listen to red hot chili peppers fortune faded
+  listen to rick wakeman journey to the center of the earth
+  listen to shine down forty five
+  listen to shine down simple man
+  listen to tantric after we go
+  listen to the who tommy
+  listen to three one one love song
+  listen to usher burn
+  listen to van halen it's about time
+  listen to velvet revolver fall to pieces
+  listen to velvet revolver slither
+ =================================
+
+ <font color="green">listen to red hot chili peppers fortune faded
+
+
+ listen to rick wakeman journey to the center of the earth
+
+
+ go to the main menu
+
+</font>
+ ======== menu =======
+  exit the program
+  get help
+  listen to music
+  make a phone call
+  play a game
+  read a book
+  read a newspaper
+  read my email
+  show statistics
+  watch a movie
+  weather forecaster
+ =================================
+
+ <font color="green">read a newspaper
+
+</font>
+ ======== news =======
+  get help
+  go to main menu
+  go to the main menu
+  main menu
+  read the boston globe
+  read the chicago tribune
+  read the daily mirror
+  read the daily prophet
+  read the guardian
+  read the los angeles times
+  read the nashua telegraph
+  read the new york times
+  read the san francisco chronicle
+  read the san jose mercury news
+  read the sun
+  read the wall street journal
+  read the washington post
+ =================================
+
+ <font color="green">read the nashua telegraph
+
+
+ go to the main menu
+
+</font>
+ ======== menu =======
+  exit the program
+  get help
+  listen to music
+  make a phone call
+  play a game
+  read a book
+  read a newspaper
+  read my email
+  show statistics
+  watch a movie
+  weather forecaster
+ =================================
+
+ <font color="green">watch a movie
+
+</font>
+ ======== movies =======
+  get help
+  go to main menu
+  go to the main menu
+  main menu
+  watch a beautiful mind
+  watch american beauty
+  watch brave heart
+  watch chicago
+  watch finding nemo
+  watch gladiator
+  watch lord of the rings
+  watch mystic river
+  watch ordinary people
+  watch out of africa
+  watch platoon
+  watch rain man
+  watch star wars
+  watch terms of endearment
+  watch the empire strikes back
+  watch the english patient
+  watch the italian job
+  watch the last emperor
+  watch the magnificent seven
+  watch the matrix
+  watch the silence of the lambs
+  watch titanic
+  watch two thousand one a space odyssey
+  watch unforgiven
+ =================================
+
+ <font color="green">watch lord of the rings
+
+
+ watch two thousand one a space odyssey
+
+
+ go to the main menu
+
+</font>
+ ======== menu =======
+  exit the program
+  get help
+  listen to music
+  make a phone call
+  play a game
+  read a book
+  read a newspaper
+  read my email
+  show statistics
+  watch a movie
+  weather forecaster
+ =================================
+
+ <font color="green">show statistics
+
+</font>
+# ----------------------------- Timers----------------------------------------
+# Name          Count   CurTime   MinTime   MaxTime   AvgTime   TotTime   
+microphone      4580    0.0000s   0.0000s   0.1400s   0.0087s   39.7850s  
+nonSpeechDataFi 2005    0.0000s   0.0000s   6.6120s   0.0114s   22.9080s  
+premphasizer    2005    0.0000s   0.0000s   0.0020s   0.0000s   0.0110s   
+windower        1979    0.0000s   0.0000s   0.0140s   0.0001s   0.1380s   
+fft             1992    0.0000s   0.0000s   0.0150s   0.0004s   0.7810s   
+melFilterBank   1992    0.0000s   0.0000s   0.0040s   0.0000s   0.0590s   
+dct             1992    0.0000s   0.0000s   0.0160s   0.0001s   0.1110s   
+liveCMN         1992    0.0000s   0.0000s   0.0030s   0.0000s   0.0120s   
+featureExtracti 1940    0.0000s   0.0000s   0.0050s   0.0000s   0.0410s   
+AM_Load         1       16.4160s  16.4160s  16.4160s  16.4160s  16.4160s  
+DictionaryLoad  2       1.7030s   1.7030s   3.0790s   2.3910s   4.7820s   
+grammarLoad     1       0.2200s   0.2200s   0.2200s   0.2200s   0.2200s   
+compile         9       0.0450s   0.0450s   8.8240s   1.3280s   11.9520s  
+  createGStates 8       0.0000s   0.0000s   0.0320s   0.0050s   0.0400s   
+  collectContex 8       0.0040s   0.0010s   0.0290s   0.0068s   0.0540s   
+  expandStates  8       0.0400s   0.0400s   2.2290s   0.3589s   2.8710s   
+  connectNodes  8       0.0000s   0.0000s   0.1070s   0.0192s   0.1540s   
+scoring         1979    0.0000s   0.0000s   6.6140s   0.0214s   42.3680s  
+pruning         1966    0.0000s   0.0000s   0.0020s   0.0000s   0.0080s   
+growing         1979    0.0000s   0.0000s   0.0760s   0.0005s   0.9050s   
+buildHmmPool    1       8.4090s   8.4090s   8.4090s   8.4090s   8.4090s   
+Create HMMTree  1       0.3840s   0.3840s   0.3840s   0.3840s   0.3840s   
+
+ <font color="green">weather forecaster
+
+  Give your best imitation of 
+  a british weather forecaster
+
+ Say 'forecast over' when you are done.
+
+Forecast: very windy with strong southerly winds gusting up to fifty or sixty mph
+Forecast: misty in the south and southeast with patchy drizzle and risk of fog
+Forecast: clear with most places dry and sunny
+Forecast: continuing mild with a moderate to fresh southerly breeze
+Forecast: forecast over
+
+</font>
+ ======== menu =======
+  exit the program
+  get help
+  listen to music
+  make a phone call
+  play a game
+  read a book
+  read a newspaper
+  read my email
+  show statistics
+  watch a movie
+  weather forecaster
+ =================================
+
+ <font color="green">read a book
+
+</font>
+ ======== books =======
+  get help
+  go to main menu
+  go to the main menu
+  main menu
+  read angels and demons
+  read code and other laws of cyber space
+  read eats shoots and leaves
+  read effective java
+  read harry potter and the goblet of fire
+  read spoken language processing
+  read the curious incident of the dog in the night time
+  read the da vinci code
+  read the future of ideas
+  read the lord of the rings
+  read the time travelers wife
+ =================================
+<font color="green">
+ read the lord of the rings
+
+
+ read the curious incident of the dog in the night time
+
+
+ go to the main menu
+
+</font>
+ ======== menu =======
+  exit the program
+  get help
+  listen to music
+  make a phone call
+  play a game
+  read a book
+  read a newspaper
+  read my email
+  show statistics
+  watch a movie
+  weather forecaster
+ =================================
+
+ <font color="green">make a phone call
+
+</font>
+ ======== phone =======
+  call arthur
+  call bhiksha
+  call evandro
+  call glen
+  call james
+  call joe
+  call joseph
+  call karl
+  call nicole
+  call paul
+  call pedro
+  call peter
+  call phil
+  call philip
+  call rich
+  call rita
+  call steve
+  call will
+  call willie
+  get help
+  go to main menu
+  go to the main menu
+  main menu
+ =================================
+<font color="green">
+ call bhiksha
+
+
+ call rita
+
+
+ go to the main menu
+
+</font>
+ ======== menu =======
+  exit the program
+  get help
+  listen to music
+  make a phone call
+  play a game
+  read a book
+  read a newspaper
+  read my email
+  show statistics
+  watch a movie
+  weather forecaster
+ =================================
+
+ <font color="green">exit the program
+
+</font>
+Goodbye! Thanks for visiting!
+
+</pre>
+
+<h3> Weather Sentences</h3>
+Here are some sample weather related sentences that you can use when
+you are impersonating a weather forcaster.
+<pre>
+
+Will remain dry apart from perhaps a little drizzle near the northwest
+coast.
+
+Extensive mist and fog patches expected also.
+
+Some fog also.
+
+Frost likely in many places.
+
+Any rain or drizzle will die out tomorrow and sunny spells will develop.
+
+Cloudy tonight in the north and northeast with some light rain or drizzle
+in places.
+
+Fresh or strong gusty southwest to west winds gradually veering
+northwesterly.
+
+Mostly dry calm and clear overnight with little or no wind.
+
+Severe ground frost developing.
+
+Rain or drizzle in the north and northeast will clear tomorrow leaving
+a dry day with sunny spells in most areas.
+
+Scattered blustery showers largely dying out later.
+
+Fair weather in all areas,  rain in the south and west later.
+
+Showers will slowly become more isolated tonight.
+
+A very cold night.
+
+Continuing mild with a moderate to fresh southerly breeze.
+
+Scattered showers with a risk of thunder later.
+
+Becoming windy overnight but very mild.
+
+Widespread haze and mist with scattered outbreaks of rain.
+
+A few sunny breaks will develop by afternoon principally in the western
+half of the country.
+
+A second low pressure centre will move in across northern areas tomorrow.
+
+Cold and windy with occasional showers.
+
+Continuing rather cloudy over most parts of the country.
+
+Tomorrow any fog, low cloud and drizzle will clear with most places dry
+and sunny.
+
+It will be cold overnight in most parts of the country with some clear
+spells.
+
+A weak ridge of high pressure will cross the country tonight.
+
+Rain spreading to all areas from the west followed later by heavy showers.
+
+Weather mainly fair if rather hazy.
+
+The rest of the night will be dry in most areas though a few showers
+are still possibly across northern and northeastern counties.
+
+Windy with rain extending to all parts during the morning.
+
+The rain becoming heavy in many areas.
+
+Very windy with strong southerly winds gusting up to fifty or sixty mph.
+
+Rain in the south and west will spread to remaining north east areas
+overnight, heavy and persistent in places.
+
+Clouds will increase from the west as the day goes on.
+
+Misty in the south and southeast with patchy drizzle and a risk of fog.
+
+The rest of the country will be overcast with outbreaks of rain heaviest
+and most persistent in the south and southwest.
+
+</pre>
+
+<hr>Copyright 1999-2004 Carnegie Mellon University.
+<br>
+Portions Copyright 2002-2004 Sun Microsystems, Inc.
+<br>
+Portions Copyright 2002-2004 Mitsubishi Electric Research Laboratories.
+<br>
+All Rights Reserved. Usage is subject to <a
+ href="../../../license.terms">license terms</a>.
+</body>
+</html>

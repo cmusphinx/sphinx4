@@ -1,0 +1,20 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for dialog manager example
+ */
+
+grammar menu;
+
+public <command> =      
+                        listen to music         { goto_music } |
+                        make a phone call       { goto_phone } |
+                        play a game             { goto_games } |
+                        read a book             { goto_books } |
+                        read my email           { goto_email } |
+                        read a newspaper        { goto_news } |
+                        show statistics         { stats } |
+                        watch a movie           { goto_movies } |
+                        exit the program        { exit } |
+                        weather forecaster      { goto_weather } |
+                        get help                { help } ;

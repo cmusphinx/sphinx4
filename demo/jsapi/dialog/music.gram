@@ -1,0 +1,11 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for dialog manager example
+ */
+
+grammar music;
+
+import <commands.standard_commands>;
+
+public <commands> = <standard_commands> ;

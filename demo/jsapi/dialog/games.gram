@@ -1,0 +1,27 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for dialog manager example
+ */
+
+grammar games;
+
+import <commands.standard_commands>;
+
+public <commands> = <standard_commands> ;
+
+public <command> =      play doom  |
+                        play quake  |
+                        play chess  |
+                        play unreal tournament  |
+                        play monopoly  |
+                        play checkers  |
+                        play hack  |
+                        play rogue  |
+                        play adventure  |
+                        play go fish   |
+                        play never winter nights |
+                        play knights of the old republic |
+                        play star craft |
+                        play war craft |
+                        play pong ;

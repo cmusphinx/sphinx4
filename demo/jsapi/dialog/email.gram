@@ -1,0 +1,21 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for dialog manager demo
+ */
+
+grammar email;
+import <commands.standard_commands>;
+
+public <commands> = <standard_commands> ;
+
+public <command> =      
+                        delete message           |
+                        mark message as junk     |
+                        move message to the <folder> folder |
+                        next message     |
+                        read message             |
+                        previous message;
+
+
+<folder> = trash | to do | work | personal | fun;

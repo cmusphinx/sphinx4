@@ -1,0 +1,30 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for dialog manager example
+ */
+
+grammar news;
+
+import <commands.standard_commands>;
+
+public <commands> = <standard_commands> ;
+
+public <read_news> =    read the boston globe  {browse boston.com} |
+        read  the wall street journal {browse wsj.com}|
+        read the nashua telegraph  {browse nashuatelegraph.com } |
+        read the san jose mercury news  { browse mercuryNews.com } |
+        read the new york times  {browse nytimes.com} |
+        read the chicago tribune { browse chicagotribune.com } |
+        read the los angeles times {browse latimes.com } |
+        read the san francisco chronicle {browse sfgate.com} |
+        read the washington post {browse washingtonpost.com } |
+        read the guardian {browse www.guardian.co.uk} |
+        read the daily mirror {browse dailymirror.lk} |
+        read the daily prophet {browse www.dprophet.com}|
+        read planet sun  {browse planetsun.org}|
+        read duke speaks  {browse blogs.sun.com/plamere}|
+        read slash dot  {browse slashdot.org}|
+        read the sun {browse www.thesun.co.uk} |
+        read java news {browse www.cafeaulait.org} |
+        read satire {browse theonion.org};
