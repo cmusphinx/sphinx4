@@ -20,6 +20,8 @@ import edu.cmu.sphinx.frontend.SpectrumAnalyzer;
 import edu.cmu.sphinx.frontend.Windower;
 import edu.cmu.sphinx.frontend.Preemphasizer;
 
+import edu.cmu.sphinx.util.SphinxProperties;
+
 
 /**
  * Test program for the MelFilterbank.
@@ -41,15 +43,16 @@ public class MelFilterbankTest {
 
             ProcessorTest fet = new ProcessorTest
                 (testName, propertiesFile, audioFile);
+	    SphinxProperties props = fet.getSphinxProperties();
 
             Preemphasizer preemphasizer = new Preemphasizer
-                ("Preemphasizer", testName, fet.getAudioSource());
+                ("Preemphasizer", testName, props, fet.getAudioSource());
             Windower windower = new Windower
-                ("HammingWindow", testName, preemphasizer);
+                ("HammingWindow", testName, props, preemphasizer);
             SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer
-                ("FFT", testName, windower);
+                ("FFT", testName, props, windower);
             MelFilterbank melFilterbank = new MelFilterbank
-                ("MelFilter", testName, spectrumAnalyzer);
+                ("MelFilter", testName, props, spectrumAnalyzer);
             
             melFilterbank.setDump(fet.getDump());
 

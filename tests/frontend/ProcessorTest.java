@@ -96,6 +96,16 @@ public class ProcessorTest {
 
 
     /**
+     * Returns the SphinxProperties used.
+     *
+     * @return the SphinxProperties
+     */
+    public SphinxProperties getSphinxProperties() {
+	return SphinxProperties.getSphinxProperties(context);
+    }
+
+
+    /**
      * Returns true if this test will dump results.
      *
      * @return true if this test will dump results

@@ -26,6 +26,8 @@ import edu.cmu.sphinx.frontend.SpectrumAnalyzer;
 import edu.cmu.sphinx.frontend.Utterance;
 import edu.cmu.sphinx.frontend.Windower;
 
+import edu.cmu.sphinx.util.*;
+
 import java.util.*;
 
 /**
@@ -48,21 +50,22 @@ public class EnergyEndpointerTest {
 
             ProcessorTest fet = new ProcessorTest
                 (testName, propertiesFile, audioFile);
+	    SphinxProperties props = fet.getSphinxProperties();
 
             Preemphasizer preemphasizer = new Preemphasizer
-                ("Preemphasizer", testName, fet.getAudioSource());
+                ("Preemphasizer", testName, props, fet.getAudioSource());
             Windower windower = new Windower
-                ("HammingWindow", testName, preemphasizer);
+                ("HammingWindow", testName, props, preemphasizer);
             SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer
-                ("FFT", testName, windower);
+                ("FFT", testName, props, windower);
             MelFilterbank melFilterbank = new MelFilterbank
-                ("MelFilter", testName, spectrumAnalyzer);
+                ("MelFilter", testName, props, spectrumAnalyzer);
             MelCepstrumProducer melCepstrum = new MelCepstrumProducer
-		("MelCepstrumProducer", testName, melFilterbank);
+		("MelCepstrumProducer", testName, props, melFilterbank);
 	    EnergyEndpointer endpointer = new EnergyEndpointer
-                ("EnergyEndpointer", testName, melCepstrum);
+                ("EnergyEndpointer", testName, props, melCepstrum);
             NonSpeechFilter nonSpeechFilter = new NonSpeechFilter
-                ("NonSpeechFilter", testName, endpointer);
+                ("NonSpeechFilter", testName, props, endpointer);
 
             CepstrumSource finalSource = endpointer;
             if (Boolean.getBoolean("removeNonSpeech")) {

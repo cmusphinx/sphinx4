@@ -18,6 +18,8 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Windower;
 import edu.cmu.sphinx.frontend.Preemphasizer;
 
+import edu.cmu.sphinx.util.SphinxProperties;
+
 
 /**
  * Test program for the HammingWindower.
@@ -39,11 +41,12 @@ public class HammingWindowerTest {
 
             ProcessorTest fet = new ProcessorTest
                 (testName, propertiesFile, audioFile);
+	    SphinxProperties props = fet.getSphinxProperties();
 
             Preemphasizer preemphasizer = new Preemphasizer
-                ("Preemphasizer", testName, fet.getAudioSource());
+                ("Preemphasizer", testName, props, fet.getAudioSource());
             Windower windower = new Windower
-                ("HammingWindow", testName, preemphasizer);
+                ("HammingWindow", testName, props, preemphasizer);
             windower.setDump(fet.getDump());
 
             Audio audio = null;

@@ -34,12 +34,13 @@ public class PreemphasizerTest {
             String testName = argv[0];
             String propertiesFile = argv[1];
             String audioFile = argv[2];
-
+	    
             ProcessorTest fet = new ProcessorTest
                 (testName, propertiesFile, audioFile);
 
             Preemphasizer preemphasizer = new Preemphasizer
-                ("Preemphasizer", testName, fet.getAudioSource());
+                ("Preemphasizer", testName, fet.getSphinxProperties(),
+		 fet.getAudioSource());
             preemphasizer.setDump(fet.getDump());
 
             Audio audio = null;
