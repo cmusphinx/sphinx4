@@ -81,6 +81,7 @@ public class LexTreeLinguist implements  Linguist {
     private float logOne;
     private int silenceID;
     private LexTree.WordLexNode finalNode;
+    private boolean fullWordHistories = true;
     
 
     /**
@@ -99,6 +100,8 @@ public class LexTreeLinguist implements  Linguist {
         this.acousticModel = models[0];
         this.logMath = LogMath.getLogMath(context);
         this.languageModel = languageModel;
+
+        // System.out.println("LM Max depth is " + languageModel.getMaxDepth());
 
 
         try {
@@ -274,6 +277,16 @@ public class LexTreeLinguist implements  Linguist {
                 leftID = silenceID;
             }
 
+            // if the central portion is silence then
+            // we don't care about left and right contexts
+            // TODO: This can be more generalized to deal with
+            // variable sized contexts
+
+            if (central != null && central.getID() == silenceID) {
+                leftID = silenceID;
+                right = null;
+            }
+
             this.leftID = leftID;
             this.central = central;
             this.right = right;
@@ -322,7 +335,7 @@ public class LexTreeLinguist implements  Linguist {
             if (right != null) {
                 r = right.hashCode();
             }
-            int hashCode = wordSequence.hashCode() * 37;
+            int hashCode = fullWordHistories ? wordSequence.hashCode()*37 : 37;
             hashCode +=  (c << 22) | (l << 8) | (r);
             return hashCode;
         }
@@ -338,10 +351,11 @@ public class LexTreeLinguist implements  Linguist {
                 return true;
             } else if (o instanceof LexTreeState) {
                 LexTreeState other = (LexTreeState) o;
+                boolean wordSequenceMatch = fullWordHistories ?
+                     wordSequence.equals(other.wordSequence) : true;
                 return  central == other.central &&
                         leftID == other.leftID &&
-                        right == other.right && 
-                        wordSequence.equals(other.wordSequence);
+                        right == other.right &&  wordSequenceMatch;
             } else {
                 return false;
             }
@@ -468,8 +482,11 @@ public class LexTreeLinguist implements  Linguist {
             String pos = central == null ? "" 
                 : central.getPosition().toString();
             Unit left = hmmPool.getUnit(leftID);
+
+
             return central + "[" + left +
-                   "," + right +"]@" + pos + " " + getProbability();
+                   "," + right +"]@" + pos + " " + getProbability() +
+                   "{" + wordSequence + "}" ;
         }
 
        /**
@@ -496,7 +513,8 @@ public class LexTreeLinguist implements  Linguist {
          */
         LexTreeInitialState(LexTree.NonLeafLexNode node) {
             super(silenceID, null, null, 
-                new WordSequence(Dictionary.SENTENCE_START_SPELLING),
+                (new WordSequence(Dictionary.SENTENCE_START_SPELLING))
+                .trim(languageModel.getMaxDepth() -1),
                 logOne, logOne, logOne);
             this.node = node;
         }
@@ -589,6 +607,7 @@ public class LexTreeLinguist implements  Linguist {
             if (leftID == 0) {
                 leftID = silenceID;
             } 
+
 
             if (right == null) {
                 rightID = silenceID;
@@ -921,7 +940,8 @@ public class LexTreeLinguist implements  Linguist {
                 throw new Error("Corrupt lex tree (initial state)");
             }
         }
-        list.add(createNextWordState(state, finalNode));
+        // list.add(createNextWordState(state, finalNode));
+        list.add(getEndWord());
         return (SearchStateArc[]) 
             list.toArray(new SearchStateArc[list.size()]);
     }
@@ -929,7 +949,8 @@ public class LexTreeLinguist implements  Linguist {
     /**
      * Represents a word state in the search space
      */
-    public class LexTreeWordState extends LexTreeState implements WordSearchState {
+    public class LexTreeWordState extends LexTreeState 
+        implements WordSearchState {
         private LexTree.WordLexNode wordLexNode;
 
         /**
@@ -1056,15 +1077,17 @@ public class LexTreeLinguist implements  Linguist {
                                 nextRight, getWordSequence());
                 }
                 //nextStates[nextStates.length - 1] = 
+                /*
                 nextStates[nextStates.length -1] = 
                     createNextWordState(this, finalNode);
+                */
+                nextStates[nextStates.length -1] = getEndWord();
                 return nextStates;
             }
         }
 
          public String toString() {
-             return super.toString() + " word:" +
-                 wordLexNode.getPronunciation();
+             return " Word:" + wordLexNode.getPronunciation() + " " + super.toString();
          }
 
          /**
@@ -1143,10 +1166,29 @@ public class LexTreeLinguist implements  Linguist {
                 System.out.println(wordSequence + " " + logProbability);
             }
         }
-        return new LexTreeWordState(curState.getLeftID(), 
+        // The left unit of a word state doesn't matter to the world,
+        // so we can reduce the number of word states (especially for
+        // one unit words) by eliminating the lef it (by setting it to
+        // 0).
+        return new LexTreeWordState(0,
             curState.getCentral(), curState.getRight(), 
             wordSequence.trim(languageModel.getMaxDepth() - 1), 
             nextWord, logProbability);
+    }
+
+    /**
+     * returns the sole end word. The probability of transitioning to this 
+     * word is fixed (which may be a bug).
+     *
+     * @return the end word.
+     */
+    LexTreeWordState endWord;
+    private SearchStateArc getEndWord() {
+        if (endWord == null) {
+            float logProbability = 0.0f;
+            endWord = new LexTreeWordState(0, null, null, new WordSequence(), finalNode, logProbability);
+        }
+        return endWord;
     }
 }
 
