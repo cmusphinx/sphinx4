@@ -13,6 +13,8 @@ export DOC_DEST
 
 JAVADOC_OUT=javadoc.out
 
+COPY_LIST=/lab/speech/sphinx4/lib/doclist.txt
+
 LIST=cmusphinx-commits@lists.sourceforge.net
 
 cd /tmp
@@ -21,7 +23,11 @@ cd sphinx4
 ant javadoc
 gtar cf /tmp/sphinx4docs.tar -C ${DOC_DEST} .
 ${HOME}/bin/sscp /tmp/sphinx4docs.tar
-${HOME}/bin/sshh tar xf sphinx4docs.tar -C ${PUSH_DEST}
+${HOME}/bin/sshh tar xf -m sphinx4docs.tar -C ${PUSH_DEST}/javadoc
+for file in `cat $COPY_LIST`; do
+${HOME}/bin/sshh mkdir -p `dirname ${PUSH_DEST}/$file`
+scp $file shell.sourceforge.net:${PUSH_DEST}/$file
+done
 rm /tmp/sphinx4docs.tar
 ant -emacs -Daccess=private clean javadoc > ${JAVADOC_OUT}
 if grep -w -i warning ${JAVADOC_OUT}; then mailx -s "Javadoc result" ${LIST} < ${JAVADOC_OUT};
