@@ -79,6 +79,7 @@ implements AudioSource, Runnable {
         audioFormat = new AudioFormat(sampleRate, sampleSizeInBits,
                                       channels, signed, bigEndian);
         utteranceList = new UtteranceList();
+        open();
     }
 
 
@@ -197,7 +198,7 @@ implements AudioSource, Runnable {
 
             audioLine.drain();
             audioLine.stop();
-            audioLine.close();
+            // audioLine.close();
 
             printMessage("stopped recording");
 
@@ -248,7 +249,7 @@ implements AudioSource, Runnable {
      * @return true if the recording started successfully; false otherwise
      */
     public synchronized boolean startRecording() {
-        if (open()) {
+        if (audioLine.isOpen()) {
             setRecording(true);
             notifyAll();
             while (!getStarted()) {
