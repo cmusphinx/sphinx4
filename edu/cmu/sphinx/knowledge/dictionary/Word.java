@@ -25,20 +25,24 @@ public class Word implements Serializable {
      * The Word representing the unknown word.
      */
     public static final Word UNKNOWN
-        = new Word("<unk>", new Pronunciation[0]);
+        = new Word("<unk>", new Pronunciation[0], false);
 
     private String spelling;               // the spelling of the word
     private Pronunciation[] pronunciations; // pronunciations of this word
+    private boolean isFiller = false;
+
 
     /**
      * Creates a Word
      *
      * @param spelling the spelling of this word
      * @param pronunciations the pronunciations of this word
+     * @param isFiller true if the word is a filler word
      */
-    Word(String spelling, Pronunciation[] pronunciations) {
+    Word(String spelling, Pronunciation[] pronunciations, boolean isFiller) {
 	this.spelling = spelling;
         this.pronunciations = pronunciations;
+        this.isFiller = isFiller;
     }
 
 
@@ -49,6 +53,16 @@ public class Word implements Serializable {
      */
     public String getSpelling() {
 	return spelling;
+    }
+
+    /**
+     * Determines if this is a filler word
+     *
+     * @return <code>true</code> if this word is a filler word,
+     * otherwise it returns <code>false</code> 
+     */
+    public boolean isFiller() {
+        return isFiller;
     }
 
     /**

@@ -64,6 +64,7 @@ public class FastDictionary implements Dictionary {
     private boolean createMissingWords;
     private String wordReplacement;
     private final static String FILLER_TAG=  "-F-";
+    private List fillerWords;
 
 
     /**
@@ -135,6 +136,7 @@ public class FastDictionary implements Dictionary {
         }
 
 	Timer loadTimer = Timer.getTimer(context, "DictionaryLoad");
+        fillerWords = new ArrayList();
 
 	loadTimer.start();
 
@@ -272,7 +274,7 @@ public class FastDictionary implements Dictionary {
 		word = getWord(wordReplacement);
 	    } else if (allowMissingWords) {
                 if (createMissingWords) {
-                    word = createWord(text, null);
+                    word = createWord(text, null, false);
                 } else {
                     System.out.println("FastDictionary: Missing word: "+ text);
                 }
@@ -289,10 +291,20 @@ public class FastDictionary implements Dictionary {
     /**
      * Create a Word object with the given spelling and pronunciations,
      * and insert it into the dictionary.
+     *
+     * @param text the spelling of the word
+     * @param pronunciation the pronunciation of the word
+     * @param isFiller if <code>true</code> this is a filler word
+     *
+     * @return the word
      */
-    private Word createWord(String text, Pronunciation[] pronunciation) {
-        Word word = new Word(text, pronunciation);
+    private Word createWord(String text, Pronunciation[] pronunciation, 
+            boolean isFiller) {
+        Word word = new Word(text, pronunciation, isFiller);
         dictionary.put(text, word);
+        if (isFiller) {
+            fillerWords.add(word);
+        }
         return word;
     }
 
@@ -308,6 +320,7 @@ public class FastDictionary implements Dictionary {
 	List pList = new LinkedList();
 	String line = null;
 	int count = 0;
+        boolean isFiller = false;
 
 	do {
 	    count++;
@@ -320,7 +333,7 @@ public class FastDictionary implements Dictionary {
 		StringTokenizer st = new StringTokenizer(line);
 
 		String tag = st.nextToken();
-		boolean isFiller = tag.startsWith(FILLER_TAG);
+		isFiller = tag.startsWith(FILLER_TAG);
 		int unitCount = st.countTokens();
 		dictionary.remove(lookupWord);
 
@@ -343,7 +356,7 @@ public class FastDictionary implements Dictionary {
 
         Pronunciation[] pronunciations = new Pronunciation[pList.size()];
         pList.toArray(pronunciations);
-        Word wordObject = createWord(word, pronunciations);
+        Word wordObject = createWord(word, pronunciations, isFiller);
 
         for (int i = 0; i < pronunciations.length; i++) {
             pronunciations[i].setWord(wordObject);
@@ -388,6 +401,14 @@ public class FastDictionary implements Dictionary {
         return result;
     }
 
+    /**
+     * Gets the set of all filler words in the dictionary
+     *
+     * @return an array (possibly empty) of all filler words
+     */
+    public Word[] getFillerWords() {
+        return (Word[]) fillerWords.toArray(new Word[fillerWords.size()]);
+    }
 
     /**
      * Dumps this FastDictionary to System.out.

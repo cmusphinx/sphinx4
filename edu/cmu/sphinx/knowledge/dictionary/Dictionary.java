@@ -195,5 +195,12 @@ public interface Dictionary {
      *
      */
     public void dump();
+
+    /**
+     * Gets the set of all filler words in the dictionary
+     *
+     * @return an array (possibly empty) of all filler words
+     */
+    public Word[] getFillerWords();
 }
 

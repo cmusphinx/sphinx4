@@ -45,7 +45,9 @@ import java.util.TreeMap;
  */
 public class FullDictionary implements Dictionary {
 
-    private Map dictionary = new HashMap();
+    private Map wordDictionary;
+    private Map fillerDictionary;
+
     private boolean addSilEndingPronunciation;
     private boolean allowMissingWords;
     private boolean createMissingWords;
@@ -131,13 +133,13 @@ public class FullDictionary implements Dictionary {
 
 	logger.info("Loading dictionary from: ");
         logger.info(location + "/" + wordDictionaryFile);
-        loadDictionary(StreamFactory.getInputStream
+        wordDictionary  = loadDictionary(StreamFactory.getInputStream
                        (location, wordDictionaryFile), false);
 	logger.info("Loading filler dictionary from: ");
         logger.info(location + "/" + fillerDictionaryFile);
-        loadDictionary(StreamFactory.getInputStream
+
+        fillerDictionary = loadDictionary(StreamFactory.getInputStream
                        (location, fillerDictionaryFile), true);
-        createWords();
 	loadTimer.stop();
     }
     
@@ -153,9 +155,10 @@ public class FullDictionary implements Dictionary {
      *
      * @throws java.io.IOException if there is an error reading the dictionary
      */
-    private void loadDictionary(InputStream inputStream,
+    private Map  loadDictionary(InputStream inputStream,
                                 boolean isFillerDict) throws IOException {
 
+        Map dictionary = new HashMap();
         ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
             (inputStream, true);
         String word;
@@ -200,14 +203,20 @@ public class FullDictionary implements Dictionary {
         }
         inputStream.close();
         est.close();
+
+        createWords(dictionary, isFillerDict);
+        return dictionary;
     }
 
 
     /**
      * Converts the spelling/Pronunciations mappings in the dictionary
      * into spelling/Word mappings.
+     *
+     * @param isFillerDict if true this is a filler dictionary
+     *
      */
-    private void createWords() {
+    private void createWords(Map dictionary, boolean isFillerDict) {
         Set spellings = dictionary.keySet();
         for (Iterator s = spellings.iterator(); s.hasNext();) {
             String spelling = (String) s.next();
@@ -216,7 +225,7 @@ public class FullDictionary implements Dictionary {
             for (int i = 0; i < pros.length; i++) {
                 pros[i] = (Pronunciation) pronunciations.get(i);
             }
-            Word word = new Word(spelling, pros);
+            Word word = new Word(spelling, pros, isFillerDict);
             for (int i = 0; i < pros.length; i++) {
                 pros[i].setWord(word);
             }
@@ -278,11 +287,11 @@ public class FullDictionary implements Dictionary {
     public Word getWord(String text) {
         
         text = text.toLowerCase();
-        Word word = (Word) dictionary.get(text);
+        Word word = lookupWord(text);
         
         if (word == null) {
             if (wordReplacement != null) {
-                word = (Word) dictionary.get(wordReplacement);
+                word = lookupWord(wordReplacement);
                 System.out.println("Replacing " + text + " with " +
                                    wordReplacement);
                 if (word == null) {
@@ -291,13 +300,29 @@ public class FullDictionary implements Dictionary {
                 }
             } else if (allowMissingWords) {
                 if (createMissingWords) {
-                    word = new Word(text, null);
-                    dictionary.put(text, word);
+                    word = new Word(text, null, false);
+                    wordDictionary.put(text, word);
                 } else {
                     System.out.println("FullDictionary: Missing word: " +text);
                 }
                 return null;
             }
+        }
+        return word;
+    }
+
+
+    /**
+     * Lookups up a word
+     *
+     * @param spelling the spellling of the word
+     *
+     * @return the word or null
+     */
+    private Word lookupWord(String spelling) {
+        Word word = (Word) wordDictionary.get(spelling);
+        if (word == null) {
+            word = (Word) fillerDictionary.get(spelling);
         }
         return word;
     }
@@ -347,8 +372,10 @@ public class FullDictionary implements Dictionary {
      */
     public String toString() {
 
-        SortedMap sorted = new TreeMap(dictionary);
+        SortedMap sorted = new TreeMap(wordDictionary);
         String result = "";
+
+        sorted.putAll(fillerDictionary);
 
         for (Iterator i = sorted.keySet().iterator(); i.hasNext();) {
             Word word = (Word) i.next();
@@ -360,6 +387,16 @@ public class FullDictionary implements Dictionary {
         }
 
         return result;
+    }
+
+    /**
+     * Gets the set of all filler words in the dictionary
+     *
+     * @return an array (possibly empty) of all filler words
+     */
+    public Word[] getFillerWords() {
+        return (Word[]) fillerDictionary.values().toArray(
+                new Word[fillerDictionary.values().size()]);
     }
 
     /**
