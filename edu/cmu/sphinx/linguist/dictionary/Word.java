@@ -13,12 +13,11 @@
 
 package edu.cmu.sphinx.linguist.dictionary;
 
-import java.io.Serializable;
 
 /**
  * Represents a word, its spelling and its pronunciation.
  */
-public class Word implements Serializable {
+public class Word {
 
     /**
      * The Word representing the unknown word.
