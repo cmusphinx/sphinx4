@@ -57,8 +57,13 @@ public class PropertiesResolver {
     public static SphinxProperties resolve
 	(SphinxProperties sphinxProperties,
 	 SphinxProperties acousticProperties, String newContext) {
+
 	Properties sphinxProps = sphinxProperties.getProperties();
 	Properties acousticProps = acousticProperties.getProperties();
+
+        // now put in all System properties to override the ones in the
+        // sphinxProps object
+        sphinxProps.putAll(System.getProperties());
 
 	// Now merge all acoustic properties with the sphinx file properties
 	// according to the policy defined above.
@@ -80,7 +85,7 @@ public class PropertiesResolver {
 		key = FrontEnd.PROP_PREFIX + suffix;
 	    } else if (!propName.startsWith(FrontEnd.PROP_PREFIX)) {
 		throw new Error("Acoustic property name does not start with " +
-				FrontEnd.PROP_PREFIX);
+				FrontEnd.PROP_PREFIX + ": " + propName);
 	    }
 
 	    // If the property is already in Sphinx property, then it is 
@@ -104,6 +109,9 @@ public class PropertiesResolver {
 		sphinxProps.remove(property);
 	    }
 	}
+
+        System.out.println("After pruning");
+        sphinxProps.list(System.out);
 
 	// create and return the new SphinxProperties
 	SphinxProperties.initContext(newContext, sphinxProps);
