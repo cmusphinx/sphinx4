@@ -64,7 +64,7 @@ public class LMGramTest {
         Utilities.dumpMemoryInfo("before grammar load");
         gramTimer.start();
         grammar = new edu.cmu.sphinx.decoder.linguist.LMGrammar();
-        grammar.initialize(props.getContext(), languageModel, null);
+        grammar.initialize(props.getContext(), languageModel, dictionary);
         gramTimer.stop();
         Utilities.dumpMemoryInfo("after grammar load");
 
