@@ -1,0 +1,451 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+
+<!--
+
+Copyright 1999-2004 Carnegie Mellon University.
+Portions Copyright 2004 Sun Microsystems, Inc.
+Portions Copyright 2004 Mitsubishi Electric Research Laboratories.
+All Rights Reserved.  Use is subject to license terms.
+
+See the file "license.terms" for information on usage and
+redistribution of this file, and for a DISCLAIMER OF ALL
+WARRANTIES.
+
+-->
+
+
+
+<html>
+
+<head>
+  <title>How to Use Models from SphinxTrain in Sphinx-4</title>
+  <style TYPE="text/css">
+     pre { padding: 2mm; border-style: ridge; background: #f0f8ff; color: teal;}     
+     code {font-size: medium; color: teal}
+  </style>
+</head>
+
+<body>
+  <font face="Arial">
+  <table bgcolor="#99CCFF" width="100%">
+    <tr>
+      <td align=center width="100%">
+        <center><font face="Times New Roman">
+	  <h1>How to Use Models from SphinxTrain in Sphinx-4</h1>
+	</font></center>
+      </td>
+    </tr>
+  </table>
+
+<p>
+In order to use models trained from <a href="http://cmusphinx.sourceforge.net/webpage/html/download.php#SphinxTrain">SphinxTrain</a>, you need to package them
+into a JAR file. The advantage of having it in a JAR file is that the JAR file
+can simply be included in the classpath and referenced in the configuration
+file for it to be used in a Sphinx-4 application.
+</p>
+
+<p>
+The Sphinx-4 build.xml script contains ANT targets that let you easily 
+convert SphinxTrain models to a JAR file. We will walk you through the process
+using a model called "TOY" as an example. We will show the process to make them
+the TOY models usable in Sphinx-4.
+Suppose that the following TOY model files are created by SphinxTrain:
+</p>
+
+<pre>
+cd_continuous_8gau/means
+cd_continuous_8gau/mixture_weights
+cd_continuous_8gau/variances
+cd_continuous_8gau/transition_matrices
+dict/cmudict.0.6d
+dict/fillerdict
+etc/TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
+etc/TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.ci.mdef
+</pre>
+
+<p>
+These are the steps to make the TOY models trained usable in Sphinx-4.
+Note that very often errors are created by 
+typos, so take great care when editing the various files.
+</p>
+
+<ol>
+
+<li>
+<b>Create Model Directory</b>
+<p>
+All model files should be placed under the "sphinx4/models/acoustic" directory.
+For the TOY models, we create the directory "toy" under
+"sphinx4/models/acoustic":
+</p>
+
+<pre>
+sphinx4> cd models/acoustic
+sphinx4/models/acoustic> mkdir toy
+</pre>
+
+</li>
+
+<br>
+
+<li>
+<b>Copy Model Files</b>
+<p>
+Copy all the model files to sphinx4/models/acoustic/toy/. 
+After copying all the model files, the resulting sphinx4/models/acoustic/toy/
+directory looks like:
+</p>
+
+<pre>
+cd_continuous_8gau/
+cd_continuous_8gau/means
+cd_continuous_8gau/mixture_weights
+cd_continuous_8gau/variances
+cd_continuous_8gau/transition_matrices
+dict/
+dict/cmudict.0.6d
+dict/fillerdict
+etc/
+etc/TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
+etc/TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.ci.mdef
+</pre>
+
+Note that all the files under "cd_continuous_8gau" are binary files in this
+example.
+</li>
+
+<br>
+
+<li>
+<b>Create model.props</b>
+
+<p>
+Create a text file called <code>model.props</code> under 
+sphinx4/models/acoustic/toy/. This file must have the following properties:
+</p>
+
+<pre>
+description = TOY acoustic models
+modelClass = edu.cmu.sphinx.model.acoustic.TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model
+modelLoader = edu.cmu.sphinx.model.acoustic.TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.ModelLoader
+dataLocation = cd_continuous_8gau
+modelDefinition = etc/TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
+
+isBinary = true
+featureType = 1s_c_d_dd
+vectorLength = 39
+sparseForm = false
+
+numberFftPoints = 512
+numberFilters = 40
+gaussians = 8
+minimumFrequency = 130
+maximumFrequency = 6800
+sampleRate = 16000
+
+</pre>
+
+<p>Explanation of the properties:</p>
+
+<table border="1">
+
+<tr>
+<td valign="top">description</td>
+<td>a description of the acoustic model, which is 
+<code><b>"TOY acoustic models"</b></code> in this example</td>
+</tr>
+
+<tr>
+<td valign="top">modelClass</td>
+<td>should be set to 
+<code><b>"edu.cmu.sphinx.model.acoustic.${MEANINGFUL_NAME}.Model"</b></code>.
+${MEANINGFUL_NAME} usually contains the following information:
+<ol>
+<li>the name of the data set used to train the models (TOY)</li>
+<li>the number of gaussians (8gau)</li>
+<li>the number of cepstra data points (13dCep)</li>
+<li>the sample rate of the training data (16k)</li>
+<li>the number of mel filters (40mel)</li>
+<li>the minimum frequency (130Hz)</li>
+<li>the maximum frequency (6800Hz)</li>
+</ol>
+This ${MEANINGFUL_NAME} will be the name of your JAR file as well. In this example, the created JAR file will be called TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar.
+</td>
+</tr>
+
+<tr>
+<td valign="top">modelLoader</td>
+<td>similar to "modelClass", it should be set to 
+<code><b>"edu.cmu.sphinx.model.acoustic.${MEANINGFUL_NAME}.ModelLoader"</b></code></td>
+</tr>
+
+<tr valign="top">
+<td>dataLocation</td>
+<td>The directory where all the model data files are, which in this example 
+is the directory <code><b>"cd_continuous_8gau"</b></code>. This is the
+location with respect to the modelLoader class inside the final JAR file.</td>
+</tr>
+
+<tr valign="top">
+<td>modelDefinition</td>
+<td>The location of the .mdef file, which in this example is
+<code><b>"etc/TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef"</b></code>
+This is the location with respect to the modelLoader class inside 
+the final JAR file.</td>
+</tr>
+
+<tr valign="top">
+<td>isBinary</td>
+<td>whether the model files (i.e., the means, variances,
+mixture_weights and transition_matrices files) are binary or ascii</td>
+</tr>
+
+<tr valign="top">
+<td>featureType</td>
+<td>The SphinxTrain name for type of feature generated from the training data,
+the name here is <code><b>1s_c_d_dd</b></code>, which means the cepstra,
+the delta cepstra, and the double delta of the cepstra. Currently,
+only models trained from <code><b>1s_c_d_dd</b></code> and 
+<code><b>s3_1x39</b></code> features are supported by Sphinx-4.</td>
+</tr>
+
+<tr valign="top">
+<td>vectorLength</td>
+<td>the length of the feature vector, which is usually 39</td>
+</tr>
+
+<tr valign="top">
+<td>sparseForm</td>
+<td>whether the transition matrices of the acoustic model is in sparse form,
+i.e., omitting the zeros of the non-transitioning states.</td>
+</tr>
+
+<tr valign="top">
+<td>numberFftPoints</td>
+<td>the number of FFT points used when creating features for training</td>
+</tr>
+
+<tr valign="top">
+<td>numberFilters</td>
+<td>the number of filters used when creating features for training</td>
+</tr>
+
+<tr valign="top">
+<td>gaussians</td>
+<td>the number of Gaussians of the generated models</td>
+</tr>
+
+<tr valign="top">
+<td>maximumFrequency</td>
+<td>the maximum frequency of the mel filters used when creating features
+for training</td>
+</tr>
+
+<tr valign="top">
+<td>minimumFrequency</td>
+<td>the minimum frequency of the mel filters used when creating features
+for training</td>
+</tr>
+
+<tr valign="top">
+<td>sampleRate</td>
+<td>the sample rate of the training data</td>
+</tr>
+
+</table>
+
+<p>
+
+These properties will be printed out if you run the actual JAR file 
+that was created in step 8, for example:
+
+<pre>
+sphinx4> java -jar lib/TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
+
+TOY acoustic models
+
+dataLocation: cd_continuous_8gau
+description: TOY acoustic models
+featureType: 1s_c_d_dd
+gaussians: 8
+isBinary: true
+maximumFrequency: 6800
+minimumFrequency: 130
+modelClass: edu.cmu.sphinx.model.acoustic.TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model
+modelDefinition: etc/TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
+modelLoader: edu.cmu.sphinx.model.acoustic.TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.ModelLoader
+numberFftPoints: 512
+numberFilters: 40
+sampleRate: 16000
+sparseForm: false
+vectorLength: 39
+</pre>
+
+<p>
+This will help whoever uses your acoustic model to specify the values
+in their configuration file correctly. Each line displayed here is a line in
+the model.props file.
+</p>
+
+</li>
+
+<br>
+
+<li>
+<b>Add ANT Properties in build.xml</b>
+
+<p>
+Modify build.xml, which is the ANT script that creates the acoustic model
+JAR files. First define properties for the name of your acoustic model and
+the directory in which your acoustic model data is in. The name of your
+acoustic model should be the ${MEANINGFUL_NAME}, which in our example is
+"TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz". Therefore, we will add
+the following in the section of build.xml that says "For generating the 
+WSJ...":
+</p>
+
+<pre>
+&lt;property name="toy_name" value="TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz"/&gt;
+&lt;property name="toy_data_dir" value="models/acoustic/toy"/&gt;
+</pre>
+
+</li>
+
+<br>
+
+<li>
+<b>Create Model Classes in build.xml</b>
+
+<p>
+Search for the ANT target "create_all_model_classes". Add lines
+after the last "antcall" to create your model classes. In our example, we
+will add the following lines:
+</p>
+
+<pre>
+&lt;antcall target="create_my_model_classes"&gt;
+   &lt;param name="my_model_name" value="${toy_name}"/&gt;
+&lt;/antcall&gt;
+</pre>
+
+</li>
+
+<br>
+
+<li>
+<b>Delete Model Classes in build.xml</b>
+
+<p>
+This is the clean up step.
+Search for the ANT target "delete_all_model_classes". Add lines
+after the last "antcall" to delete your model classes. In our example, we
+will add the following lines:
+</p>
+
+<pre>
+&lt;antcall target="delete_my_model_classes"&gt;
+    &lt;param name="my_model_name" value="${toy_name}"/&gt;
+&lt;/antcall&gt;
+</pre>
+</li>
+
+<br>
+
+<li>
+<b>Create Model JAR in build.xml</b>
+
+<p>
+Search for the ANT target "create_all_models". Add lines
+after the last "antcall" to create your models. In our example, we
+will add the following lines:
+</p>
+
+<pre>
+&lt;antcall target="create_my_model"&gt;
+    &lt;param name="my_model_data_dir" value="${toy_data_dir}"/&gt;
+    &lt;param name="my_model_name" value="${toy_name}"/&gt;
+&lt;/antcall&gt;
+</pre>
+
+This is the last step in the editing of the build.xml file.
+
+</li>
+
+<br>
+
+<li>
+<b>Rebuild</b>
+
+<p>
+At the top level directory, type "ant". This should build all the acoustic
+model JAR files, which will be found in the "lib" directory.
+</p>
+
+</li>
+
+<br>
+
+<li>
+<b>Specify Model Class in Config File</b>
+
+<p>In your Sphinx-4 configuration file, you usually need to specify
+the acoustic model in two places: the acoustic model and the dictionary.
+For example, the acoustic model should be specified as:
+
+<pre>
+&lt;component name="toy" 
+           type="edu.cmu.sphinx.model.acoustic.TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model"&gt;
+    &lt;property name="loader" value="sphinx3Loader"/&gt;
+    &lt;property name="unitManager" value="unitManager"/&gt;
+&lt;/component&gt;
+
+&lt;component name="sphinx3Loader"
+           type="edu.cmu.sphinx.model.acoustic.TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.ModelLoader"&gt;
+    &lt;property name="logMath" value="logMath"/&gt;
+    &lt;property name="unitManager" value="unitManager"/&gt;
+&lt;/component&gt;
+</pre>
+
+<p>
+There is an example of <code>unitManager</code> in most config files.
+Note that <code>edu.cmu.sphinx.model.acoustic.TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model</code> is the class of your acoustic model, which is in the final
+JAR file. If you include the JAR file in your CLASSPATH, Java will find it.
+</p>
+<p>
+The dictionary file is usually packaged within the acoustic model JAR file.
+Inside the JAR file, the <code>cmudict.0.6d</code> is located at
+<code>/edu/cmu/sphinx/model/acoustic/TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/</code>. Inside the configuration file, it should be specified as:
+
+<pre>
+&lt;component name="dictionary"
+	   type="edu.cmu.sphinx.linguist.dictionary.FullDictionary"&gt;
+    &lt;property name="dictionaryPath"
+              value="resource:/edu.cmu.sphinx.model.acoustic.TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model!/edu/cmu/sphinx/model/acoustic/TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/&gt;
+    ...
+&lt;/component&gt;
+</pre>
+
+<p>
+What the line <code>value="resource..."</code> means is that the dictionary
+is located at the resource where the <code>edu.cmu.sphinx.model.acoustic.TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model</code> class is, which is the acoustic
+model JAR file. The dictionary is located at <code>/edu/cmu/sphinx/model/acoustic/TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d</code> inside that
+resource (i.e., the acoustic model JAR file). Likewise for the "fillerPath"
+property.
+</p>
+
+</li>
+
+<br>
+
+<li>
+<b>Include JAR File in Classpath</b>
+
+<p>
+Finally, remember to include the model JAR file in your Java CLASSPATH,
+which in our example is TOY_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar.
+</p>
+
+</body>
+
+</html>
+	     
