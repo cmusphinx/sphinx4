@@ -4,8 +4,32 @@
 
 grammar cardMatch;
 
-public <turn_card> = card <cardNumbers> ;
+//public <turn_card> = <startPolite> <command> [ <endPolite> ]  ;
+//public <new_game> = start a new game {new_game} ;
 
+// public <nasty> = ((cow* | dog* | cat* | mouse*)+)+;
+
+public <weightTest> = <size> <color> <place> <action>;
+
+// public <weightTest> = /10/ small | /2/ medium | /1/ large ;
+
+<size> = /10/ small | /2/ medium | /1/ large;
+<color> = /0.5/ red | /0.1/ navy blue | /0.2/ sea green;
+<action> = please (/20/save files |/1/delete all files);
+<place> = /20/ <city> | /5/ <country>;
+<city> = nashua | manchester;
+<country> = canada | england;
+
+// public <sequence> = the quick brown  fox;
+
+//<gate> = <VOID>;
+
+// public <rule> = <command>;
+// <command> = <action> | (<action> and <command>*);
+// <action> = stop | start | pause | resume | finish;
+/*
 <cardNumbers> = one {1} | two {2} | three {3} | four {4} | five {5} | six {6} ;
+<startPolite> = (repeat* | (one or more)+ | could you | oh mighty computer) ;
+<endPolite> = (please | thanks | thank you );
 
-public <new_game> = start a new game {new_game} ;
+*/

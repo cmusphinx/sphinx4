@@ -59,7 +59,7 @@ edu.cmu.sphinx.frontend.util.Microphone.closeAudioBetweenUtterances=true
 #
 ############################################################
 
-demo.jsapi.cardmatch.JSGFGrammar.path=jsgf/jsgf.gram
+edu.cmu.sphinx.decoder.linguist.JSGFGrammar.path=jsgf/jsgf.gram
 
 
 ############################################################
@@ -68,7 +68,7 @@ demo.jsapi.cardmatch.JSGFGrammar.path=jsgf/jsgf.gram
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.Recognizer.grammar=demo.jsapi.cardmatch.JSGFGrammar
+edu.cmu.sphinx.decoder.Recognizer.grammar=edu.cmu.sphinx.decoder.linguist.JSGFGrammar
 
 
 ############################################################
@@ -91,6 +91,7 @@ edu.cmu.sphinx.decoder.linguist.Linguist.silenceInsertionProbability = 1.0
 edu.cmu.sphinx.decoder.linguist.Linguist.validateSentenceHMM=false
 edu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability = 1.0E-26
 edu.cmu.sphinx.decoder.linguist.Linguist.autoLoopSilences=false
+edu.cmu.sphinx.decoder.linguist.Grammar.showGrammar=true
 
 
 ############################################################

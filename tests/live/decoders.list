@@ -29,3 +29,4 @@ bishop.testFile = ./bishop/bishop.test
 jsgf.name=CommandAndControl
 jsgf.propertiesFile=./jsgf/jsgf.props
 jsgf.testFile=./jsgf/jsgf.test
+
