@@ -31,6 +31,7 @@ import edu.cmu.sphinx.decoder.linguist.Linguist;
 import edu.cmu.sphinx.decoder.linguist.SearchState;
 import edu.cmu.sphinx.decoder.linguist.SearchStateArc;
 import edu.cmu.sphinx.decoder.linguist.WordSearchState;
+import edu.cmu.sphinx.decoder.linguist.lextree.LexTreeLinguist;
 
 import java.util.*;
 
@@ -101,6 +102,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     private boolean showTokenCount;
     private Map bestTokenMap;
     private AlternateHypothesisManager loserManager;
+    private Class[] stateOrder;
 
 
     /**
@@ -157,32 +159,28 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     public Result recognize(int nFrames) {
         boolean done = false;
         Result result;
+	resultList = new LinkedList();
 
-        int nFinishedFrames = 0;
-
-        for (activeList = activeBucket.getNextList();
-             activeList != null;
-             activeList = activeBucket.getNextList()) {
-
-            // Todo: Need a better way to determine if list contains emitting tokens.
-            Iterator iterator = activeList.iterator();
-            if (iterator.hasNext()) {         // For all tokens
-                if (((Token) iterator.next()).isEmitting()) {  // If current list is emitting
-                    if (!scoreTokens())  {
-                        done = true;
-                        break; //  Stop if we're out of audio, or otherwise can't score.
-                    }
+        for (int i = 0; i < nFrames && !done; i++) {
+	    // System.out.println("Frame " + currentFrameNumber);
+            // score the emitting list
+            activeList = activeBucket.getEmittingList();
+            if (activeList != null) {
+                done = !scoreTokens();
+                if (!done) {
+                    bestTokenMap = new HashMap(activeList.size() * 5);
+                    // prune and grow the emitting list
+                    pruneBranches();
                     currentFrameNumber++;
-                    bestTokenMap = new HashMap(activeList.size() * 3);
+                    growBranches();
+                    // prune and grow the non-emitting lists
+                    growNonEmittingLists();
                 }
-                pruneBranches(); 	    // eliminate poor branches
-                growBranches(); 	    // extend remaining branches
-                if (++nFinishedFrames == nFrames)
-                    break; // Stop if we've finished the required frames.
             }
         }
 
-        result = new Result(loserManager, activeList, resultList, currentFrameNumber, done);
+        result = new Result(loserManager, activeList, resultList, 
+                            currentFrameNumber, done);
 
         if (showTokenCount) {
             showTokenCount();
@@ -211,20 +209,24 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
         curTokensScored.value = 0;
 
         try {
-            activeBucket = new SimpleActiveListManager
-                (props, linguist.getSearchStateOrder());
+            stateOrder = linguist.getSearchStateOrder();
+            activeBucket = new SimpleActiveListManager(props, stateOrder);
             loserManager = new AlternateHypothesisManager(props);
 
-            //ActiveList newActiveList = (ActiveList)
-            Class.forName( props.getString(PROP_ACTIVE_LIST_TYPE,
-                    PROP_ACTIVE_LIST_TYPE_DEFAULT)).newInstance();
-            ///newActiveList.setProperties(props);
-
             SearchState state = linguist.getInitialSearchState();
-            activeBucket.add(new Token(state, currentFrameNumber));
-            activeList = activeBucket.getNextList();
+            
+            activeList = (ActiveList)
+                Class.forName
+                (props.getString(PROP_ACTIVE_LIST_TYPE,
+                                 PROP_ACTIVE_LIST_TYPE_DEFAULT)).newInstance();
+            activeList.setProperties(props);
+            activeList.add(new Token(state, currentFrameNumber));
+	    resultList = new LinkedList();
+
             bestTokenMap = new HashMap();
             growBranches();
+            growNonEmittingLists();
+
         } catch (ClassNotFoundException fe) {
             throw new Error("Can't create active list", fe);
         } catch (InstantiationException ie) {
@@ -249,10 +251,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      *
      */
     protected void growBranches() {
-
         growTimer.start();
-        resultList = new LinkedList();
-
         Iterator iterator = activeList.iterator();
         while (iterator.hasNext()) {
             Token token = (Token) iterator.next();
@@ -265,6 +264,23 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
 
     /**
+     * Grow the non-emitting ActiveLists, until the tokens reach
+     * an emitting state.
+     */
+    private void growNonEmittingLists() {
+        for (Iterator i = activeBucket.getNonEmittingListIterator();
+             i.hasNext(); ) {
+	    activeList = (ActiveList) i.next();
+	    if (activeList != null) {
+                i.remove();
+		pruneBranches();
+		growBranches();
+	    }
+        }
+    }
+
+
+    /**
      * Calculate the acoustic scores for the active list. The active
      * list should contain only emitting tokens.
      *
@@ -272,7 +288,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
      * otherwise, false
      *
      */
-    protected boolean  scoreTokens() {
+    protected boolean scoreTokens() {
         boolean moreTokens;
         scoreTimer.start();
         moreTokens = scorer.calculateScores(activeList.getTokens());
@@ -328,6 +344,34 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
     }
 
     /**
+     * Checks that the given two states are in legitimate order.
+     */
+    private void checkStateOrder(Class fromState, Class toState) {
+        // first, find where in stateOrder is the fromState
+        int i = 0;
+        for (; i < stateOrder.length; i++) {
+            if (stateOrder[i] == fromState) {
+                break;
+            }
+        }
+
+        // We are assuming that the last state in the state order
+        // is an emitting state. We assume that emitting states can
+        // expand to any state type. So if (i == (stateOrder.length)),
+        // which means that fromState is an emitting state, we don't
+        // do any checks.
+
+        if (i < (stateOrder.length - 1)) {
+            for (int j = 0; j <= i; j++) {
+                if (stateOrder[j] == toState) {
+                    throw new Error("IllegalState order: from " + 
+                                    fromState + " to " + toState);
+                }
+            }
+        }
+    }
+
+    /**
      * Collects the next set of emitting tokens from a token
      * and accumulates them in the active or result lists
      *
@@ -346,7 +390,7 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
 
         SearchState state = token.getSearchState();
         SearchStateArc[] arcs = state.getSuccessors();
-
+        
         // For each successor
         // calculate the entry score for the token based upon the
         // predecessor token score and the transition probabilities
@@ -360,6 +404,8 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             SearchStateArc arc = arcs[i];
             SearchState nextState = arc.getState();
 
+            checkStateOrder(state.getClass(), nextState.getClass());
+
             // We're actually multiplying the variables, but since
             // these come in log(), multiply gets converted to add
             float logEntryScore = token.getScore() +  arc.getProbability();
@@ -368,30 +414,33 @@ public class WordPruningBreadthFirstSearchManager implements  SearchManager {
             boolean firstToken = bestToken == null ;
 
             if (firstToken || bestToken.getScore() < logEntryScore) {
-                Token newBestToken = new Token(getWordPredecessor(token), nextState,
-                        logEntryScore,
-                        arc.getLanguageProbability(),
-                        arc.getInsertionProbability(),
-                        currentFrameNumber);
+                Token newBestToken = new Token(getWordPredecessor(token),
+                                               nextState,
+                                               logEntryScore,
+                                               arc.getLanguageProbability(),
+                                               arc.getInsertionProbability(),
+                                               currentFrameNumber);
                 tokensCreated.value++;
 
                 setBestToken(newBestToken, nextState);
                 if (firstToken) {
-                    activeBucket.add(newBestToken);
+		    activeBucket.add(newBestToken);
                 } else {
-                    activeBucket.replace(bestToken, newBestToken);
-                    if (newBestToken.isWord()) {
+		    activeBucket.replace(bestToken, newBestToken);
+		    if (newBestToken.isWord()) {
                         // Move predecessors of bestToken to precede newBestToken
                         // bestToken is going to be garbage collected.
                         loserManager.changeSuccessor(newBestToken,bestToken);
-                        loserManager.addAlternatePredecessor(newBestToken,bestToken.getPredecessor());
+                        loserManager.addAlternatePredecessor
+                            (newBestToken,bestToken.getPredecessor());
                     }
                 }
             } else {
                 if (nextState instanceof WordSearchState)  {
                     Token wordPredecessor = getWordPredecessor(token);
                     if (wordPredecessor != null) {
-                        loserManager.addAlternatePredecessor(bestToken, wordPredecessor);
+                        loserManager.addAlternatePredecessor
+                            (bestToken, wordPredecessor);
                     }
                 }
             }
