@@ -34,11 +34,21 @@ spectrumAnalyzer: all
 	@chmod +x testFrontEnd.sh
 	sh ./testFrontEnd.sh spectrum SpectrumAnalyzerTest
 
+melspectrum: all
+	@chmod +x testFrontEnd.sh
+	sh ./testFrontEnd.sh melspectrum MelFilterbankTest
+
+melcepstrum: all
+	@chmod +x testFrontEnd.sh
+	sh ./testFrontEnd.sh melcepstrum MelCepstrumTest
+
 alltests: all
 	(cd $(TOP); $(MAKE))
 	@$(MAKE) -s preemphasizer
 	@$(MAKE) -s hammingWindow
 	@$(MAKE) -s spectrumAnalyzer
+	@$(MAKE) -s melspectrum
+	@$(MAKE) -s melcepstrum
 	@$(MAKE) -s cmnFeatExt
 
 clean::

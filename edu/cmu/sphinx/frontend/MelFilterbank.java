@@ -264,7 +264,7 @@ public class MelFilterbank extends DataProcessor {
 	
         if (getDump()) {
             System.out.println(Util.dumpDoubleArray
-                               (outputMelFilterbank, "MEL_SPECTRUM", 9, 5));
+                               (outputMelFilterbank, "MEL_SPECTRUM   ", 9, 5));
         }
 	outputMelSpectrum = new MelSpectrum(outputMelFilterbank);
         return outputMelSpectrum;

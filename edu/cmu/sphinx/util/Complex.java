@@ -40,6 +40,24 @@ public class Complex {
     }
 
     /**
+     * Returns the real part of this Complex number.
+     *
+     * @return the real part
+     */
+    public double getReal() {
+        return real;
+    }
+
+    /**
+     * Returns the imaginary part of this Complex number.
+     *
+     * @return the imaginary part
+     */
+    public double getImaginary() {
+        return imaginary;
+    }
+
+    /**
      * Sets both the real and imaginary parts of this complex number to zero.
      */
     public void reset() {
