@@ -70,15 +70,27 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     private float endLow;     // lower bound for the end window
     private float endHigh;    // upper bound for the end window
 
+    // location values: below startLow, between low and high, above high
     private static final int BELOW_START_LOW = 1;
     private static final int BETWEEN_START_LOW_HIGH = 2;
     private static final int ABOVE_START_HIGH = 3;
 
-    private CepstrumSource predecessor;
-    private List inputBuffer;
+    private CepstrumSource predecessor;  // where to pull Cepstra from
+    private LinkedList inputBuffer;      // where to cache the read Cepstra
 
+    /**
+     * The last frame before speech went above startLow.
+     */
     private Cepstrum lastFrameBelowStartLow;
+
+    /**
+     * The frame when speech stayed below endLow for endOffset frames.
+     */
     private Cepstrum endOffsetFrame;
+
+    /**
+     * The last SPEECH_END Cepstrum inserted into the stream.
+     */
     private Cepstrum lastSpeechEndFrame;
 
     private boolean inSpeech;       // are we in a speech region?
@@ -105,13 +117,15 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
         super(name, context);
         initSphinxProperties();
         this.predecessor = predecessor;
-        this.inputBuffer = Collections.synchronizedList(new LinkedList());
+        this.inputBuffer = new LinkedList();
         reset();
     }
 
 
     /**
      * Reads the parameters needed from the static SphinxProperties object.
+     *
+     * @throws IOException if there is an error reading the parameters
      */
     private void initSphinxProperties() throws IOException {
         SphinxProperties properties = getSphinxProperties();
@@ -134,6 +148,11 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     }
 
 
+    /**
+     * Reset all the variables to their initial values.
+     *
+     * TODO: Currently, not all the variables are reset.
+     */
     private void reset() {
         inSpeech = false;
         lastEnergy = 0;
@@ -167,36 +186,34 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
             
             if (signal != null && signal.equals(Signal.UTTERANCE_START)) {
                 utteranceStart();
-                inputBuffer.add(0, cepstrum);
-                // read ahead startOffset number of Cepstrum
+                inputBuffer.addFirst(cepstrum);
+                // read ahead until we have reach the start of speech
                 while (cepstrum.getEnergy() < startHigh ||
                        startHighFrames < startWindow) {
                     cepstrum = readCepstrum();
                     if (cepstrum != null) {
-                        inputBuffer.add(0, cepstrum);
+                        inputBuffer.addFirst(cepstrum);
                     }
                 }
             } else if (signal != null && signal.equals(Signal.UTTERANCE_END)) {
                 if (inSpeech) {
                     speechEnd();
                 }
-                inputBuffer.add(0, cepstrum);
+                inputBuffer.addFirst(cepstrum);
 
             } else {
                 // add the new cepstrum to inputBuffer
-                inputBuffer.add(0, cepstrum);
+                inputBuffer.addFirst(cepstrum);
             }
         }
 
-        if (inputBuffer.size() > 0) {
-            cepstrum = (Cepstrum) inputBuffer.remove(inputBuffer.size()-1);
-        }
+        cepstrum = (Cepstrum) inputBuffer.removeLast();
         
         getTimer().stop();
 
         return cepstrum;
     }
-    
+
 
     /**
      * Reads a Cepstrum from the predecessor, and use it to do endpointing.
@@ -264,10 +281,10 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
                 // then the lastFrameBelowStartLow should be reset.
                 if (maxDropout < startLowFrames &&
                     inputBuffer.size() > 0) {
-                    lastFrameBelowStartLow = (Cepstrum) inputBuffer.get(0);
+                    lastFrameBelowStartLow = (Cepstrum) inputBuffer.getFirst();
                 }
             } else if (inputBuffer.size() > 0) {
-                lastFrameBelowStartLow = (Cepstrum) inputBuffer.get(0);
+                lastFrameBelowStartLow = (Cepstrum) inputBuffer.getFirst();
             }
         }
         startLowFrames = 0;
@@ -283,7 +300,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
     private void processHighEnergyCepstrum(Cepstrum cepstrum) {
         if (location == BELOW_START_LOW) {
             if (inputBuffer.size() > 0) {
-                lastFrameBelowStartLow = (Cepstrum) inputBuffer.get(0);
+                lastFrameBelowStartLow = (Cepstrum) inputBuffer.getFirst();
             }
         }
         
