@@ -114,11 +114,13 @@ implements AudioSource, Runnable {
 
 
     /**
-     * Terminates this Microphone, effectively terminates this
+     * Release all the system resources used by this Microphone,
+     * terminates this Microphone, and effectively terminates this
      * thread of execution. Calling <code>startRecording()</code>
      * will not work after call this method.
      */
     public synchronized void terminate() {
+        audioLine.close();
         setClosed(true);
         notify();
     }
@@ -239,6 +241,9 @@ implements AudioSource, Runnable {
     }
 
 
+    /**
+     * Clears all the recorded audio data.
+     */
     public void clear() {
         utteranceList.clear();
     }
