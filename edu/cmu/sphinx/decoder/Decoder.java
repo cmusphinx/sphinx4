@@ -338,8 +338,8 @@ public class Decoder {
                     " ===========================");
         System.out.println("  Reference string: ["
                     + currentReferenceText + "]");
-        edu.cmu.sphinx.decoder.search.Token bestToken = result.getBestActiveToken();
-        edu.cmu.sphinx.decoder.search.Token bestMatching =
+        Token bestToken = result.getBestActiveToken();
+        Token bestMatching =
             result.getBestActiveParitalMatchingToken(currentReferenceText);
 
         if (bestToken != null && bestMatching == bestToken) {
@@ -370,7 +370,7 @@ public class Decoder {
      */
     protected void showFinalResult(Result result, Timer timer) {
 	boolean match = true;
-	edu.cmu.sphinx.decoder.search.Token bestToken = result.getBestToken();
+	Token bestToken = result.getBestToken();
 
 	if (currentReferenceText != null) {
 	    match = aligner.align(currentReferenceText, result.toString());
@@ -395,7 +395,7 @@ public class Decoder {
 			+ result.getBestToken().getScore());
 	}
 	if (!match) {
-	    edu.cmu.sphinx.decoder.search.Token  matchingToken = result.findToken(currentReferenceText);
+	    Token matchingToken = result.findToken(currentReferenceText);
 	    if (matchingToken != null) {
 		System.out.print(
 			"  ActScore: " + matchingToken.getScore());

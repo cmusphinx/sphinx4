@@ -195,7 +195,7 @@ public class Recognizer {
 
         // TODO: Pruner should come from configuration like all of the
         //       other pieces
-        pruner = new edu.cmu.sphinx.decoder.search.SimplePruner();
+        pruner = new SimplePruner();
         dumpMemoryInfo("pruner");
         
         scorer = getAcousticScorer(frontend);
