@@ -888,7 +888,8 @@ public class Lattice {
             Collection leavingEdges = n1.getCopyOfLeavingEdges();
             Collection leavingEdges2 = n2.getCopyOfLeavingEdges();
 
-            System.out.println(leavingEdges.size() + " " + leavingEdges2.size());
+            System.out.println("# edges: " + leavingEdges.size() + " " + 
+                               leavingEdges2.size());
 
             for (Iterator i = leavingEdges.iterator(); i.hasNext(); ) {
                 
@@ -898,7 +899,8 @@ public class Lattice {
                 Edge e2 = n2.findEquivalentLeavingEdge(edge);
                 
                 if (e2 == null) {
-                    /* equivalent edge not found, lattices not equivalent */
+                    System.out.println
+                        ("Equivalent edge not found, lattices not equivalent.");
                     return false;
                 } else {
                     if (!leavingEdges2.remove(e2)) {
@@ -906,6 +908,8 @@ public class Lattice {
                          * if it cannot be removed, then the leaving edges
                          * are not the same
                          */
+                        System.out.println
+                            ("Equivalent edge already matched, lattices not equivalent.");
                         return false;
                     } else {
                         /* recursively check the two child nodes */
@@ -918,6 +922,7 @@ public class Lattice {
                 }
             }
             if (leavingEdges2.size() != 0) {
+                System.out.println("One lattice has too many edges.");
                 return false;
             }
         }
