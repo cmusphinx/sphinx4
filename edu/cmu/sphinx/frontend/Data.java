@@ -27,7 +27,9 @@ import java.io.Serializable;
  */
 public class Data implements Serializable {
 
-    private Signal signal;
+    private Signal signal = null;
+    private Utterance utterance = null;
+
 
     /**
      * Constructs a default Data object. Calling <code>getSignal()</code>
@@ -51,12 +53,31 @@ public class Data implements Serializable {
 
 
     /**
+     * Constructs a Data object with the given Utterance.
+     */
+    protected Data(Utterance utterance) {
+        this.utterance = utterance;
+        this.signal = Signal.CONTENT;
+    }
+
+
+    /**
      * Returns the Signal of this Data. Returns null if no Signal present.
      *
      * @return the Signal of this Data, or null if no Signal present
      */
     public Signal getSignal() {
         return signal;
+    }
+
+
+    /**
+     * Returns the Utterance associated with this Data object.
+     *
+     * @return the Utterance associated with this Data object
+     */
+    public Utterance getUtterance() {
+        return utterance;
     }
 
 
@@ -78,15 +99,15 @@ public class Data implements Serializable {
 
 
     /**
-     * Returns true if this Data has a SEGMENT_END Signal in it.
+     * Returns true if this Data has a UTTERANCE_END Signal in it.
      *
-     * @return true if it has a SEGMENT_END Signal, false otherwise
+     * @return true if it has a UTTERANCE_END Signal, false otherwise
      */
-    public boolean hasSegmentEndSignal() {
+    public boolean hasUtteranceEndSignal() {
         if (getSignal() == null) {
             return false;
         } else {
-            return (getSignal().equals(Signal.SEGMENT_END));
+            return (getSignal().equals(Signal.UTTERANCE_END));
         }
     }
 }

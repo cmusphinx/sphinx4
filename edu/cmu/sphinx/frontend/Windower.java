@@ -144,9 +144,9 @@ public class Windower extends DataProcessor implements AudioSource {
                     process(input);
                     output = getWindow();
 
-                } else if (input.hasSegmentEndSignal()) {
-                    // end of segment handling
-                    processSegmentEnd();
+                } else if (input.hasUtteranceEndSignal()) {
+                    // end of utterance handling
+                    processUtteranceEnd();
                     output = getWindow();
                     outputQueue.add(input);
                 } else {
@@ -203,11 +203,11 @@ public class Windower extends DataProcessor implements AudioSource {
 
 
     /**
-     * What happens when an EndPointSignal.SEGMENT_END signal is
+     * What happens when an EndPointSignal.UTTERANCE_END signal is
      * received. Basically pads up to a window of the overflow buffer
      * with zeros, and then apply the Hamming window to it.
      */
-    private void processSegmentEnd() {
+    private void processUtteranceEnd() {
         overflowBuffer.padWindow(windowSize);
         applyHammingWindow(overflowBuffer.getBuffer(), windowSize);
         overflowBuffer.reset();

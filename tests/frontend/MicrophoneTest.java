@@ -9,7 +9,7 @@ import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.FeatureExtractor;
 import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.LiveAudioSource;
+import edu.cmu.sphinx.frontend.Microphone;
 import edu.cmu.sphinx.frontend.MelCepstrumProducer;
 import edu.cmu.sphinx.frontend.MelFilterbank;
 import edu.cmu.sphinx.frontend.SpectrumAnalyzer;
@@ -34,16 +34,16 @@ import javax.swing.JTextArea;
 
 
 /**
- * Test program for the LiveAudioSource. Listens for audio data
+ * Test program for the Microphone. Listens for audio data
  * on the system's audio capturing device, and does frontend
  * processing on it.
  * Running this class shows a little swing application that contains
  * a "Listen" and "Stop" button. 
  */
-public class LiveAudioSourceTest extends JFrame {
+public class MicrophoneTest extends JFrame {
 
-    private static String testName = "LiveAudioSourceTest";
-    private LiveAudioSource live;
+    private static String testName = "MicrophoneTest";
+    private Microphone microphone;
     private FrontEnd frontend;
     private JPanel panel;
     private JTextArea featureTextArea;
@@ -53,15 +53,15 @@ public class LiveAudioSourceTest extends JFrame {
      * Main method to run this test.
      */
     public static void main(String[] argv) {
-        LiveAudioSourceTest liveTest = new LiveAudioSourceTest();
-        liveTest.show();
+        MicrophoneTest microphoneTest = new MicrophoneTest();
+        microphoneTest.show();
     }
 
 
     /**
-     * Constructs a default LiveAudioSourceTest.
+     * Constructs a default MicrophoneTest.
      */
-    public LiveAudioSourceTest() {
+    public MicrophoneTest() {
         super(testName);
         setSize(new Dimension(500, 300));
 
@@ -83,11 +83,11 @@ public class LiveAudioSourceTest extends JFrame {
     private void createModel() {
 
         frontend = new FrontEnd("FrontEnd", testName);        
-        live = new LiveAudioSource("LiveAudio", testName);
+        microphone = new Microphone("Microphone", testName);
 
-        new Thread(live).start();
+        new Thread(microphone).start();
         
-        frontend.setAudioSource(live);
+        frontend.setAudioSource(microphone);
         
         Preemphasizer preemphasizer = new Preemphasizer
             ("Preemphasizer", testName, frontend.getAudioSource());
@@ -133,7 +133,7 @@ public class LiveAudioSourceTest extends JFrame {
         JButton startButton = new JButton("Listen");
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                live.startRecording();
+                microphone.startRecording();
                 (new FeatureConsumer()).start();
             }
         });
@@ -141,7 +141,7 @@ public class LiveAudioSourceTest extends JFrame {
         JButton stopButton = new JButton("Stop");
         stopButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                live.stopRecording();
+                microphone.stopRecording();
             }
         });
         buttonPanel.add(startButton);

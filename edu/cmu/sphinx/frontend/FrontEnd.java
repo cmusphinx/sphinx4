@@ -49,7 +49,7 @@ import java.io.IOException;
  * fe.getFeatureFrame(10);
  * </pre>
  * which will return a <code>FeatureFrame</code> with 10 <code>Feature</code>s
- * in it. If there are only 5 more features before the end of segment,
+ * in it. If there are only 5 more features before the end of utterance,
  *
  * @see AudioSource
  * @see CepstralMeanNormalizer
@@ -98,8 +98,17 @@ public class FrontEnd extends DataProcessor {
      */
     public static final String PROP_CEPSTRUM_SIZE =
     "edu.cmu.sphinx.frontend.cepstrumSize";
-    
 
+
+    /**
+     * The name of the SphinxProperty that indicates whether Features
+     * should retain a reference to the original raw audio bytes. The
+     * default value is true.
+     */
+    public static final String PROP_KEEP_AUDIO_REFERENCE =
+    "edu.cmu.sphinx.frontend.keepAudioReference";
+    
+    
     private AudioSource audioSource;
     private FeatureSource featureSource;
     
@@ -161,7 +170,7 @@ public class FrontEnd extends DataProcessor {
      * Returns the next N number of Features produced by this FrontEnd
      * as a single FeatureFrame.
      * The number of Features return maybe less than N, in which
-     * case the last Feature will contain a Signal.SEGMENT_END signal.
+     * case the last Feature will contain a Signal.UTTERANCE_END signal.
      * Consequently, the size of the FeatureFrame will be less than N.
      *
      * @param numberFeatures the number of Features to return
@@ -181,13 +190,13 @@ public class FrontEnd extends DataProcessor {
             feature = featureSource.getFeature();
             if (feature != null) {
                 features[i++] = feature;
-                if (feature.hasSegmentEndSignal()) {
+                if (feature.hasUtteranceEndSignal()) {
                     break;
                 }
             }
         } while (i < numberFeatures);
 
-        // if we hit the end of segment before getting the
+        // if we hit the end of utterance before getting the
         // desired number of features, shrink the array
         if (i < numberFeatures) {
             Feature[] lessFeatures = new Feature[i];

@@ -16,7 +16,7 @@ import java.util.Vector;
  * Extracts Features from a block of Cepstrum. This FeatureExtractor
  * expects Cepstrum that are MelFrequency cepstral coefficients (MFCC).
  * This FeatureExtractor takes in multiple Cepstrum(a) and outputs a 
- * FeatureFrame. This is a many-to-1 processor.
+ * FeatureFrame. This is a 1-to-1 processor.
  *
  * <p>The Sphinx properties that affect this processor are: <pre>
  * edu.cmu.sphinx.frontend.feature.length
@@ -134,8 +134,8 @@ FeatureSource {
 
             if (segmentEnd) {
                 segmentEnd = false;
-                outputQueue.add(new Feature(Signal.SEGMENT_END,
-                                            featureID.getNextID()));
+                outputQueue.add(new Feature(Signal.UTTERANCE_END, -1));
+
             } else {
                 Cepstrum input = predecessor.getCepstrum();
                 
@@ -150,10 +150,11 @@ FeatureSource {
                         if (numberFeatures > 0) {
                             computeFeatures(numberFeatures);
                         }
-                    } else if (input.getSignal().equals(Signal.SEGMENT_START)) {
+                    } else if (input.getSignal().equals
+                               (Signal.UTTERANCE_START)) {
                         segmentStart = true;
-                        outputQueue.add(new Feature(input.getSignal(),
-                                                    featureID.getNextID()));
+                        outputQueue.add(new Feature
+                                        (Signal.UTTERANCE_START, -1));
                     }
                 }
             }
@@ -167,13 +168,11 @@ FeatureSource {
 
 
     /**
-     * Reads all the Cepstrum objects between the read
-     * EndPointSignal.FRAME_START and the next EndPointSignal.FRAME_END,
+     * Reads the given number of Cepstrum
      * and insert these Cepstrum into the cepstraBuffer.
      *
      * Returns the total number of features that should result from
-     * the read Cepstra. This method is called after an
-     * EndPointSignal.FRAME_START is read.
+     * the read Cepstra.
      *
      * @returns the number of features that should be computed using
      *    the Cepstrum read
@@ -207,7 +206,7 @@ FeatureSource {
                     // just a cepstra
                     addCepstrumData(cepstrum.getCepstrumData());
                     cepstraRead++;
-                } else if (cepstrum.hasSegmentEndSignal()) {
+                } else if (cepstrum.hasUtteranceEndSignal()) {
                     // end of segment cepstrum
                     segmentEnd = true;
                     residualVectors += replicateLastCepstrum();

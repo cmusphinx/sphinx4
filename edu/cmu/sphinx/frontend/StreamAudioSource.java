@@ -27,10 +27,11 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
     private InputStream audioStream;
 
     private int frameSizeInBytes;
+    private boolean keepAudioReference;
     
     private boolean streamEndReached = false;
-    private boolean segmentEndSent = false;
-    private boolean segmentStarted = false;
+    private boolean utteranceEndSent = false;
+    private boolean utteranceStarted = false;
 
 
     /**
@@ -52,6 +53,9 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
      * Reads the parameters needed from the static SphinxProperties object.
      */
     private void initSphinxProperties() {
+        keepAudioReference = getSphinxProperties().getBoolean
+            (FrontEnd.PROP_KEEP_AUDIO_REFERENCE, true);
+
         frameSizeInBytes = getSphinxProperties().getInt
 	    (FrontEnd.PROP_BYTES_PER_AUDIO_FRAME, 4000);
 
@@ -69,8 +73,8 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
     public void setInputStream(InputStream inputStream) {
 	this.audioStream = inputStream;
         streamEndReached = false;
-        segmentEndSent = false;
-        segmentStarted = false;
+        utteranceEndSent = false;
+        utteranceStarted = false;
     }
 
     
@@ -91,14 +95,14 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
         Audio output = null;
 
         if (streamEndReached) {
-            if (!segmentEndSent) {
-                output = new Audio(Signal.SEGMENT_END);
-                segmentEndSent = true;
+            if (!utteranceEndSent) {
+                output = new Audio(Signal.UTTERANCE_END);
+                utteranceEndSent = true;
             }
         } else {
-            if (!segmentStarted) {
-                segmentStarted = true;
-                output = new Audio(Signal.SEGMENT_START);
+            if (!utteranceStarted) {
+                utteranceStarted = true;
+                output = new Audio(Signal.UTTERANCE_START);
                 
             } else {
                 output = readNextFrame();
@@ -141,7 +145,7 @@ public class StreamAudioSource extends DataProcessor implements AudioSource {
             return null;
         }
 
-        // pad and shrink incomplete frames
+        // shrink incomplete frames
         if (totalRead < bytesToRead) {
             totalRead = (totalRead % 2 == 0) ? totalRead + 2 : totalRead + 3;
             streamEndReached = true;

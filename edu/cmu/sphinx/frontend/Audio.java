@@ -23,6 +23,18 @@ public class Audio extends Data {
 
 
     /**
+     * Constructs an Audio object with the given audio data and Utterance.
+     *
+     * @param audioSamples the audio samples for this Audio
+     * @param utterance the Utterance associated with this Audio
+     */
+    public Audio(double[] audioSamples, Utterance utterance) {
+        super(utterance);
+	this.audioSamples = audioSamples;
+    }
+
+
+    /**
      * Constructs an Audio object with the given Signal.
      *
      * @param signal the Signal this Audio object carries

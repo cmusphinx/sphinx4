@@ -59,7 +59,7 @@ alltests: all
 live: all
 	(cd $(TOP); $(MAKE))
 	${JAVA_HOME}/bin/java -cp ../../classes \
-	tests.frontend.LiveAudioSourceTest
+	tests.frontend.MicrophoneTest
 
 clean::
 	rm -f *.out *.diff

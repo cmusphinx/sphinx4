@@ -23,6 +23,18 @@ public class Spectrum extends Data {
 
 
     /**
+     * Constructs a Spectrum with the given spectra data and utterance.
+     *
+     * @param spectraData a frame's spectral data
+     * @param utterance the Utterance associated with this Spectrum
+     */
+    public Spectrum(double[] spectraData, Utterance utterance) {
+        super(utterance);
+	this.spectraData = spectraData;
+    }
+
+
+    /**
      * Constructs a Spectrum with the given Signal.
      *
      * @param signal the Signal this Spectrum carries

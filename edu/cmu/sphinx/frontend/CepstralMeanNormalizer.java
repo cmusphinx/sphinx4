@@ -115,7 +115,7 @@ CepstrumSource {
     /**
      * Returns the next Cepstrum object, which is a normalized Cepstrum
      * produced by this class. However, it can also be a Cepstrum object
-     * carrying a Signal.SEGMENT_END signal.
+     * carrying a Signal.UTTERANCE_END signal.
      *
      * @return the next available Cepstrum object, returns null if no
      *     Cepstrum object is available
@@ -132,7 +132,7 @@ CepstrumSource {
         if (input != null) {
             if (input.hasContent()) {
                 normalize(input);
-            } else if (input.hasSegmentEndSignal()) {
+            } else if (input.hasUtteranceEndSignal()) {
                 updateMeanSumBuffers();
             }
         }

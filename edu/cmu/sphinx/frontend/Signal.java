@@ -7,7 +7,7 @@ package edu.cmu.sphinx.frontend;
 import java.io.Serializable;
 
 /**
- * Indicates events like beginning/end of audio segment, data dropped,
+ * Indicates events like beginning/end of audio utterance, data dropped,
  * quality changed, etc..
  */
 public class Signal implements Serializable {
@@ -20,14 +20,14 @@ public class Signal implements Serializable {
     public static final Signal CONTENT = new Signal("CONTENT");
 
     /**
-     * Signal to indicate the end of a speech segment.
+     * Signal to indicate the end of a speech utterance.
      */
-    public static final Signal SEGMENT_END = new Signal("SEGMENT_END");
+    public static final Signal UTTERANCE_END = new Signal("UTTERANCE_END");
 
     /**
-     * Signal to indicate the start of a speech segment.
+     * Signal to indicate the start of a speech utterance.
      */
-    public static final Signal SEGMENT_START = new Signal("SEGMENT_START");
+    public static final Signal UTTERANCE_START = new Signal("UTTERANCE_START");
 
 
     /**

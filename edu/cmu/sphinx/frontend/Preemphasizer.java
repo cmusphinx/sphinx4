@@ -69,7 +69,7 @@ public class Preemphasizer extends DataProcessor implements AudioSource {
     /**
      * Returns the next Data object, which is usually a Audio,
      * produced by this Preemphasizerm, though it can also be Data objects
-     * like EndPoint.SEGMENT_START.
+     * like EndPoint.UTTERANCE_START.
      *
      * @return the next available Data object, returns null if no
      *     Data object is available
@@ -88,7 +88,7 @@ public class Preemphasizer extends DataProcessor implements AudioSource {
         if (input != null) {
             if (input.hasContent()) {
                 applyPreemphasis(input);
-            } else if (input.hasSegmentEndSignal()) {
+            } else if (input.hasUtteranceEndSignal()) {
                 prior = 0;
             }
         }

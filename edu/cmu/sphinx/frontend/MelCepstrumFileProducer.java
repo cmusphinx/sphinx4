@@ -68,9 +68,9 @@ CepstrumSource {
 	Cepstrum data = null;
 
 	if (curFrame == 0) {
-	    data = new Cepstrum(Signal.SEGMENT_START);
+	    data = new Cepstrum(Signal.UTTERANCE_START);
 	} else if (curFrame == numFrames) {
-            data = new Cepstrum(Signal.SEGMENT_END);
+            data = new Cepstrum(Signal.UTTERANCE_END);
 	} else if (curFrame > numFrames) {
             data = null;
 	} else {
