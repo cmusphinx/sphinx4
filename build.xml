@@ -45,6 +45,7 @@ directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="compile_src"
+	    depends="check_jsapi_jar.isPresent"
 	    description="Build just the srcs">
 	<mkdir dir="${classes_dir}"/>
 	<javac debug="true"
