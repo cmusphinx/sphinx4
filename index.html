@@ -131,22 +131,44 @@ WARRANTIES.
   </li>
   <br>&nbsp;
   <li><a name="capabilities"><b>Capabilities</b></a>
-      <p>[[[WDW: FIXME - these are just notes.  Should include links
-         into the javadoc]]].
+
       <p>Discrete and continous speech.  
-      <p>Generalized front end feature extraction.  Includes pluggable
-         implementations of preemphasis, Hamming window, FFT, Mel
-         frequency filter bank, discrete cosine transform, and
-	 feature extraction of cepstra, delta cepstra, double delta
-	 cepstra features.
-      <p>Generalized pluggable language model architecture.  Includes
-         pluggable language model support for unigram, bigram,
-         trigram, Java Speech API JSGF, and FST grammars.  
-      <p>Generalized acoustic model architecture.  Includes pluggable
-         support for sphinx-3 acoustic models.
-      <p>Generalized search management.  Includes pluggable support
-         for simple breadth first and word pruning searches.
+
+      <p>Generalized pluggable <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/frontend/package-summary.html"><b>front end</b></a> 
+         architecture.
+         Includes pluggable implementations of
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/frontend/filter/Preemphasizer.html">preemphasis</a>,
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/frontend/window/RaisedCosineWindower.html">Hamming window</a>,
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/frontend/transform/DiscreteFourierTransform.html">FFT</a>,
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/frontend/frequencywarp/MelFrequencyFilterBank.html">Mel frequency filter bank</a>,
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/frontend/transform/DiscreteCosineTransform.html">discrete cosine transform</a>,
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/frontend/feature/BatchCMN.html">cepstral mean normalization</a>, and
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/frontend/feature/DeltasFeatureExtractor.html">feature extraction</a> of cepstra,
+	 delta cepstra, double delta cepstra features.
+
+      <p>Generalized pluggable <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/knowledge/language/package-summary.html"><b>language model</b></a> architecture.  Includes
+         pluggable language model support for
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/knowledge/language/SimpleNGramModel.html">ASCII</a> and 
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/knowledge/language/large/LargeTrigramModel.html">binary</a>
+	 versions of unigram, bigram, trigram, 
+	 Java Speech API <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/jsapi/JSGFGrammar.html">JSGF</a>, and 
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/decoder/linguist/FSTGrammar.html">FST grammars</a>.  
+
+      <p>Generalized <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/knowledge/acoustic/package-summary.html"><b>acoustic model</b></a> 
+         architecture. Includes pluggable support for 
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/knowledge/acoustic/tiedstate/Sphinx3Loader.html">Sphinx-3 acoustic models</a>.
+
+      <p>Generalized <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/decoder/search/package-summary.html"><b>search management</b></a>.
+         Includes pluggable support for
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/decoder/search/SimpleBreadthFirstSearchManager.html">breadth first</a> and 
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/decoder/search/WordPruningBreadthFirstSearchManager.html">word pruning</a> searches.
+
+      <p>Speech tools. Includes tools for 
+         <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/tools/audio/package-summary.html">displaying waveforms and spectrograms</a> and
+	 <a href="http://cmusphinx.sourceforge.net/sphinx4/edu/cmu/sphinx/tools/feature/package-summary.html">generating features from audio</a>.
+
   </li>
+
   <br>&nbsp;
   <li><a name="speed_and_accuracy"><b>Performance</b></a>
       <p>Sphinx-4 is a very flexible system capable of performing many
@@ -186,7 +208,7 @@ WARRANTIES.
           </li>
           <li><a href="http://cmusphinx.sourceforge.net/LargeVocabResults.html">
               Large Vocabulary (HUB4)</a>: Extends the vocabulary
-	      to approximately 1000 words.
+	      to approximately 64000 words.
           </li>
       </ul>
   </li>
@@ -402,7 +424,8 @@ int, only an integer can be used as the value for this property.
       <p>The prerequisites for building Sphinx-4 are as follows:
       <br>&nbsp;
       <ul>
-         <li><b>Sphinx-4 Source Distribution</b>.  Download from ...
+         <li><b>Sphinx-4 Source Distribution</b>. We recommend that you
+	     download the cvs source tree from SourceForge. 
          </li>
          <li><b>Java<sup><font size="-1">TM</font></sup> 2 SDK, Standard
              Edition, v1.4</b> available at 
@@ -445,17 +468,18 @@ int, only an integer can be used as the value for this property.
      must be acquired from external sources, mostly from the
      <a href="http://www.ldc.upenn.edu">Language Data Consortium (LDC)</a>:
      <ul>
-     <li>TI46 - isolated speech</li>
+     <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S9">TI46</a> - isolated speech</li>
      <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S10">TIDIGITS</a> - connected digits</li>
      <li><a href="http://www.speech.cs.cmu.edu/databases/an4/">AN4</a> - 
          small vocabulary alphanumeric connect speech</li>
      <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S3B">RM1</a> - medium vocabulary connected speech
+     <li><a href="http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC2000S88">HUB4</a> - large vocabulary connected speech</li>
      </ul>
   
   <p>
   The Sphinx-4 regression tests have different directories for the
   different tasks. The directory sphinx4/tests/performance contains 
-  directories named ti46, tidigits, an4, rm1, and some other tests. 
+  directories named ti46, tidigits, an4, rm1, hub4 and some other tests. 
   Each of these directories contains a build.xml with targets specific 
   to the particular task. The build.xml allows you to run a number of 
   different tests. Type:
@@ -501,6 +525,34 @@ int, only an integer can be used as the value for this property.
   % ant rm1_bigram
   </pre>
   </font>
+
+  <p>
+  <b>Large Vocabulary</b>
+  <font size="+1">
+  <pre>
+  % cd tests/performance/hub4
+  % ant -projecthelp      # to see a list of possible targets
+  % ant hub4_trigram
+  </pre>
+  </font>
+
+  <p>
+  <b>Customizing the regression test to your environment</b>
+  <p>
+  All the batch regression tests are driven by properties files (they end
+  with ".props") and batch files that list all the files to test (they end
+  with ".batch"). You need to change the directory paths within these
+  files to match your environment. Using TIDIGITS (tests/performance/tidigits/)
+  as an example, here are the things to change:
+  <ul>
+    <li>location of the acoustic model (in tidigits.props)</li>
+    <li>location of the dictionary (in tidigits.props)</li>
+    <li>the batch file (tidigits.batch) - We recommend that you create
+    your own batch file based on your test database. Each line in the
+    batch file simply lists the fully qualified path of the test file,
+    and the transcript of the test file.</li>
+  </ul>
+  <p>
 
   </li>
 </ul>
