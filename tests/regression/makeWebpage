@@ -1,0 +1,393 @@
+
+# Copyright 1999-2002 Carnegie Mellon University.  
+# Portions Copyright 2002 Sun Microsystems, Inc.  
+# Portions Copyright 2002 Mitsubishi Electronic Research Laboratories.
+# All Rights Reserved.  Use is subject to license terms.
+# 
+# See the file "license.terms" for information on usage and
+# redistribution of this file, and for a DISCLAIMER OF ALL 
+# WARRANTIES.
+#
+# This script parses the regression log and outputs an HTML summary
+#
+# Field definitions: 
+#   1) "test"
+#   2) date
+#   3) time
+#   4) machine
+#   5) testName 
+#   6) who 
+#   7) status
+#   8) audioTime 
+#   9) procTime 
+#   0) words 
+#  11) insertions 
+#  12) deletions 
+#  13) substitutions 
+#  14) sentences 
+#  15) correctSentences 
+#  16) heapSize 
+#  17) loadAverage 
+
+nawk '
+
+BEGIN {
+    FS = "|"
+    F_TEST = 1;
+    F_DATE = 2;
+    F_TIME = 3;
+    F_MACHINE = 4;
+    F_TEST_NAME = 5;
+    F_WHO = 6;
+    F_STATUS = 7;
+    F_AUDIO_TIME = 8;
+    F_PROC_TIME = 9;
+    F_WORDS = 10;
+    F_INSERTIONS = 11;
+    F_DELETIONS = 12;
+    F_SUBSTITUTIONS = 13;
+    F_SENTENCES = 14;
+    F_CORRECT_SENTENCES = 15;
+    F_HEAP_SIZE = 16;
+    F_LOAD_AVERAGE = 17;
+
+    "hostname" | getline machine
+}
+
+$1 == "build" && $4 == machine {
+    buildCount = buildCount + 1;
+    buildData[buildCount] = $0;
+}
+
+$1 == "test"  && $4 == machine {
+    testCount[$5] = testCount[$5] + 1;
+    testData[$5 testCount[$5]] = $0;
+}
+
+$1 == "system"  && $2 == machine {
+    machineDescription = $0;
+}
+
+
+#####
+# updates the data array with info for the given test
+#
+function updateData(testName, testCount) {
+    split(testData[testName testCount], data);
+}
+
+####
+# returns the word error rate for the given test
+#
+function getWER(testName, testCount,     _errors, _words) {
+    updateData(testName, testCount);
+    _errors = data[F_INSERTIONS] + data[F_DELETIONS] + data[F_SUBSTITUTIONS];
+    _words = data[F_WORDS];
+
+    if (_words == 0) {
+        return "N/A";
+    } else {
+	return _errors / _words * 100;
+    }
+}
+
+####
+# gets the speed for the given test
+#
+function getSpeed(testName, testCount, _audioTime, _procTime) {
+    updateData(testName, testCount);
+    _audioTime = data[F_AUDIO_TIME];
+    _procTime = data[F_PROC_TIME];
+
+    if (_audioTime == "" || _procTime == "") {
+        return "N/A";
+    } else {
+	return _procTime / _audioTime;
+    }
+}
+
+####
+# returns the accuracy status for the given test
+#
+function getAccuracyStatus(testName, count) {
+  thisWER = getWER(testName, count);
+  prevWER = getWER(testName, count - 1);
+
+  if (thisWER == "N/A") {
+      return "<td bgcolor=#ffcccc>" "N/A" "%</td>";
+  }
+
+  if (prevWER == "N/A") {
+      return "<td>" thisWER "%</td>";
+  }
+
+  if (thisWER == prevWER) {
+      return "<td>" thisWER "%</td>";
+  }
+
+  if (thisWER > prevWER) {
+      return "<td bgcolor=#ffcccc>" thisWER "%</td>";
+  }
+
+  if (thisWER < prevWER) {
+      return "<td bgcolor=#99ff99>" thisWER "%</td>";
+  }
+  return "<td>" thisWER "%</td>";
+}
+
+####
+# returns the speed status for the given test
+#
+function getSpeedStatus(testName, count, _slowThreshold, _fastThreshold) {
+  thisSpeed = getSpeed(testName, count);
+  prevSpeed = getSpeed(testName, count - 1);
+
+  if (thisSpeed == "N/A") {
+      return "<td bgcolor=#ffcccc>" "N/A" "%</td>";
+  }
+
+  if (prevSpeed == "N/A") {
+      return "<td>" thisSpeed "%</td>";
+  }
+
+  if (thisSpeed == prevSpeed) {
+      return "<td>" thisSpeed "%</td>";
+  }
+
+  _slowThreshold = prevSpeed + prevSpeed * .0;
+  _fastThreshold = prevSpeed - prevSpeed * .0;
+
+  if (thisSpeed > _slowThreshold) {
+      return "<td bgcolor=#ffcccc>" thisSpeed "X Realtime</td>";
+  }
+
+  if (thisSpeed  < _fastThreshold) {
+      return "<td bgcolor=#99ff99>" thisSpeed "X Realtime</td>";
+  }
+  return "OK";
+}
+
+####
+# return the status of the test
+#
+function getRunStatus(testName, count) {
+    updateData(testName, count);
+    status = data[F_STATUS];
+
+    if (status == "OK") {
+      return "<td>" status "</td>";
+    } else {
+      return "<td bgcolor=#ffcccc>" status "</td>";
+    }
+}
+
+
+function printSingleTest(testName, testCount) {
+    updateData(testName, testCount);
+    date = data[F_DATE];
+    status = getRunStatus(testName, testCount);
+    accuracy = getAccuracyStatus(testName, testCount);
+    speed = getSpeedStatus(testName, testCount);
+    print "<tr>"
+    print "<td>" date "</td>"
+    print status;
+    print accuracy;
+    print speed;
+    print "</tr>"
+}
+
+
+function fmtTime(seconds) {
+    if (seconds == "N/A") {
+	return seconds;
+    }
+    hours = int(seconds / 3600);
+    seconds -= hours * 3600;
+
+    mins = int(seconds / 60);
+    seconds -= mins * 60;
+
+    return sprintf("%02.2d:%02.2d:%02.2d", hours, mins, seconds);
+}
+
+function printTestResults(testName) {
+    print "<table align=center cellpadding=2 cellspacing=2 border=1 width=80%>";
+    print "<tbody>";
+    print "<tr align=center>";
+    print "<td valign=top rowspan=1 colspan=4 bgcolor=#ccccff>";
+    print "<big><b>" testName "</b></big>";
+    print "<br>"
+    print "</td>";
+    print "</tr>";
+    print "<tr>";
+      print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
+      print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
+      print "<td valign=top bgcolor=#ccffff><b>Accuracy (WER)<br> </b></td>";
+      print "<td valign=top bgcolor=#ccffff><b>Speed<br> </b></td>";
+
+      for (i = 1; i <= testCount[testName]; i++) {
+         printSingleTest(testName, i);
+      }
+    print "</tr>";
+    print "<tbody>";
+    print "</table>";
+    print "<br>";
+    print "<br>";
+}
+
+####
+# Prints summary info
+#
+function printSummaryInfo() {
+    split(finalBuildRecord, data);
+    print "Host:             " data[4]
+    print "Date:             " data[2]
+    print "Build Status:     " data[7]
+    print "Build Time:       " data[8] " Secs"
+    print "Run Time:         " data[9] " Secs"
+    print ""
+    print ""
+}
+
+# Field definitions: 
+#   1) "build"
+#   2) date
+#   3) time
+#   4) machine
+#   5) who 
+#   6) 'make' 
+#   7) status
+#   8) buildTime 
+#   9) testTime 
+#
+
+function printBuildHistory() {
+   print "<table cellpadding=2 cellspacing=2 border=1 width=80% align=center>";
+   print "<tbody>";
+   print "<tr align=center>";
+   print "<td valign=top rowspan=1 colspan=4";
+   print "    bgcolor=#ccccff><big><b>Build History<br>";
+   print "</b></big></td> </tr>";
+   print "<tr>";
+   print "<td valign=top bgcolor=#99ffff align=center><b>Date<br>";
+   print "</b></td>";
+   print "<td valign=top bgcolor=#99ffff align=center><b>Build Time<br>";
+   print "</b></td>";
+   print "<td valign=top bgcolor=#99ffff align=center><b>Test";
+   print "Time</b><br>";
+   print "</td>";
+   print "<td valign=top bgcolor=#99ffff align=center><b>Status<br>";
+   print "</b></td>";
+   print "</tr>";
+
+   for (i = 1; i <= buildCount; i++) {
+        split(buildData[i], data);
+
+        print("<tr>");
+        print "<td>" data[2] "</td>";
+	print "<td>" fmtTime(data[8]) "</td>";
+	print "<td>" fmtTime(data[9]) "</td>";
+
+	status = data[7];
+
+	if (status == "OK") {
+	    print "<td>" "OK" "</td>";
+	} else {
+            print "<td bgcolor=#ffcccc>" status "</td>";
+	}
+       print("</tr>");
+   }
+   print "</tbody>";
+   print "</table>";
+}
+
+
+function printMachineDescription() {
+    split(machineDescription, data);
+
+    print("<br><br>");
+    print("<table cellpadding=2 cellspacing=2 border=0 width=50%");
+    print("align=center>");
+    print("<tbody>");
+    print("<tr align=center>");
+    print("<td rowspan=1 colspan=2 bgcolor=#ccccff><big><b>Tests");
+    print("   run on " machine "<br>");
+    print("</b></big></td>");
+    print(" </tr>");
+    print(" <tr>");
+    print(" <td ><b>CPUs </b></td> <td> " data[3] " </td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>Architecture </b></td> <td >" data[7] " </td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>Clock Speed </b></td> <td >" data[5] "MHz</td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>Memory </b></td> <td >" data[6] "MB</td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>Cache </b></td> <td >" data[4] "KB</td>");
+    print(" </tr>");
+    print(" <tr>");
+      print(" <td ><b>OS </b></td> <td >" data[8] "</td>");
+    print(" </tr>");
+        
+    print("</tbody>");
+    print("</table>");
+}
+
+function printHeader() {
+    print "<html>";
+    print "<head>";
+    print "   <title>S4 Regression Test Results</title>";
+    print "   <meta http-equiv=content-type ";
+    print "       content=text/html;charset=ISO-8859-1>";
+    print "</head>";
+    print "<body>";
+}
+
+function printFooter() {
+    print "</body>";
+    print "</html>";
+}
+
+function printTitle() {
+    print "<table cellpadding=0 cellspacing=0 border=0 width=100%";
+    print "    align=center bgcolor=#ccccff>";
+    print "<tbody>";
+    print "<tr>";
+    print "<td valign=top align=center><br>";
+    print "<big><big><b>Sphinx 4 Regression Test";
+    print "Summary</b></big></big><br>";
+    print "<br>";
+    print "</td>";
+    print "</tr>";
+    print "</tbody>";
+    print "</table>";
+
+    print "<br>";
+    print "<div align=center>Sphinx 4 regression tests are run nightly.";
+    print "Results are";
+    print "posted here.<br>";
+    print "</div>";
+    print "<br>";
+    print "<br>";
+    print "<br>";
+}
+
+END {
+    print("<html>");
+    printHeader();
+    printTitle();
+    for (i in testCount) {
+        printTestResults(i);
+    }
+
+    printBuildHistory();
+    printMachineDescription();
+    printFooter();
+}
+
+'  $*
+

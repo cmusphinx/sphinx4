@@ -10,6 +10,13 @@
 #
 # A log used for testing the regression tests. This is not real data.
 #
+system|argus|2|4096|360|512|sparcv9|solaris|
+system|mute|1|2048|296|128|sparcv9|solaris|
+system|mangueira.speech.cs.cmu.edu|2|8192|750|1024|blade1000|solaris|
+system|sunlabs|8|4096|336|4096|E3500|solaris|
+system|pharynx|1|?|450|256|pentium-3|linux|
+system|boteco|1|?|700|256|pentium-3|MS-Win2000|
+system|debris|8|?|750|32768|UltraSPARC-III|solaris-5.9|
 test|11/14/02|07:53:36|sunlabs|an4_words_unigram|plamere|OK|1908.24|1629.43|1846|22|21|110|467|358|291.49|0.05|
 test|11/14/02|07:53:39|sunlabs|an4_words_trigram|plamere|OK|1908.24|2179.05|1846|13|11|34|467|420|309.58|0.05|
 test|11/14/02|07:53:41|sunlabs|an4_words_fail|plamere|FAILED|1908.24|982.09|1846|203|102|310|467|170|558.59|0.05|
@@ -26,7 +33,12 @@ test|11/14/02|08:07:47|sunlabs|an4_words_unigram|plamere|OK|1908.24|1729.43|1846
 test|11/14/02|08:07:50|sunlabs|an4_words_trigram|plamere|OK|1908.24|3079.05|1846|18|11|34|467|420|309.58|0.05|
 test|11/14/02|08:07:53|sunlabs|an4_words_fail|plamere|FAILED|1908.24|982.09|1846|203|102|310|467|170|558.59|0.05|
 test|11/14/02|08:07:55|sunlabs|an4_words_fst|plamere|OK|1908.24|982.09|1846|203|102|300|467|170|558.59|0.06|
+test|11/14/02|08:07:55|othermachine|an4_words_fst|plamere|OK|1908.24|982.09|1846|203|102|300|467|170|558.59|0.06|
 test|11/14/02|08:07:56|sunlabs|an4_words_total_fail|plamere|FAILED|||0|0|0|0|0|0||0.06|
 test|11/14/02|08:07:59|sunlabs|an4_words|plamere|OK|1908.24|382.09|1846|203|102|310|467|170|558.59|0.06|
 build|11/14/02|11:40:00|sunlabs|plamere|make|FAILED|4|0|
 build|11/14/02|11:48:25|sunlabs|plamere|make|FAILED|4|N/A|
+build|11/14/02|11:48:25|sunlabs|plamere|make|FAILED|4|N/A|
+build|11/14/02|11:48:25|sunlabs|plamere|make|OK|4|N/A|
+build|11/18/02|11:48:25|sunlabs|plamere|make|OK|3781.32|9604.2|
+build|11/18/02|11:48:25|sunlabs|plamere|make|OK|3781.32|9604.2|
