@@ -59,7 +59,7 @@ class Sphinx4Loader extends Sphinx3Loader {
     protected final static String TMAT_FILE_VERSION = "4.0";
 
     public final static String MAX_MODEL_SIZE = 
-	TrainerAcousticModel.PROP_PREFIX + "maxStatePerModel";
+	AcousticModel.PROP_PREFIX + "maxStatePerModel";
 
     public final static int MAX_MODEL_SIZE_DEFAULT = 10;
 
