@@ -19,7 +19,7 @@ import edu.cmu.sphinx.frontend.parallel.ParallelFrontEnd;
 import edu.cmu.sphinx.frontend.SimpleFrontEnd;
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 import edu.cmu.sphinx.knowledge.dictionary.Dictionary;
-import edu.cmu.sphinx.knowledge.dictionary.FullDictionary;
+import edu.cmu.sphinx.knowledge.dictionary.FastDictionary;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.knowledge.language.LanguageModelFactory;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -277,7 +277,7 @@ public class Recognizer {
         AcousticModel[] models = getAcousticModels(context);
         dumpMemoryInfo("acoustic model");
 
-        dictionary = new FullDictionary(context);
+        dictionary = new FastDictionary(context);
 
         languageModel = 
             LanguageModelFactory.createLanguageModel(context, dictionary);
