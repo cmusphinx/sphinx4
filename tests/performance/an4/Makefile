@@ -26,7 +26,7 @@ LOG = -Djava.util.logging.config.file=$(LOGGER_PROPERTIES)
 
 
 
-PROFILE_FLAGS= -Xprof -server
+PROFILE_FLAGS= -Xprof 
 LOG_GC_FLAGS=  -Xloggc:gc.txt
  GC_FLAGS=  -XX:+PrintGCDetails
 GC_FLAGS = -ms800m -mx900m
@@ -58,7 +58,7 @@ include ${TOP}/build/Makefile.config
 
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 
-all:: ${CLASSES} ${STUBS}
+all:: 
 
 
 ##########################################################################
@@ -77,6 +77,18 @@ an4_words_unigram:
     -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
     -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
     -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+    -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
+    -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
+	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
+
+bush_test:
+	$(JAVA_CMD) \
+    -Dedu.cmu.sphinx.search.WordListGrammar.path=./an4_words.wordlist\
+    -Dedu.cmu.sphinx.search.ActiveList.relativeBeamWidth=1E-250 \
+    -Dedu.cmu.sphinx.search.ActiveList.absoluteBeamWidth=20000 \
+    -Dedu.cmu.sphinx.search.Dictionary.addSilEndingPronunciation=true \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.enableBushderby=true \
+    -Dedu.cmu.sphinx.search.BreadthFirstSearchManager.bushderbyEta=2 \
     -Dedu.cmu.sphinx.search.WordListGrammar.addSilenceWord=false \
     -Dedu.cmu.sphinx.search.Linguist.wordInsertionProbability=1.0E-25\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
@@ -300,3 +312,5 @@ an4_spelled_out:
 
 batch:
 	qsub  -o batch.out -e batch.err run_an4_tests
+
+

@@ -64,7 +64,7 @@ include ${TOP}/build/Makefile.config
 
 CLASSES = ${FILES:%.java=${CLASS_DEST_DIR}/${PACKAGE_PATH}/%.class}
 
-all:: ${CLASSES} ${STUBS}
+all:: 
 
 
 ##########################################################################
