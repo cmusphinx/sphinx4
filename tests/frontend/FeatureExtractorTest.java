@@ -5,7 +5,7 @@
 package tests.frontend;
 
 
-import edu.cmu.sphinx.frontend.CepstralMeanNormalizer;
+import edu.cmu.sphinx.frontend.LiveCMN;
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.FeatureExtractor;
 import edu.cmu.sphinx.frontend.FrontEnd;
@@ -47,7 +47,7 @@ public class FeatureExtractorTest {
                 ("MelFilter", testName, spectrumAnalyzer);
 	    MelCepstrumProducer melCepstrum = new MelCepstrumProducer
                 ("MelCepstrum", testName, melFilterbank);
-            CepstralMeanNormalizer cmn = new CepstralMeanNormalizer
+            LiveCMN cmn = new LiveCMN
                 ("CMN", testName, melCepstrum);
             FeatureExtractor extractor = new FeatureExtractor
                 ("FeatureExtractor", testName, cmn);

@@ -4,17 +4,10 @@
 
 package tests.frontend;
 
-import edu.cmu.sphinx.frontend.CepstralMeanNormalizer;
 import edu.cmu.sphinx.frontend.Feature;
-import edu.cmu.sphinx.frontend.FeatureExtractor;
 import edu.cmu.sphinx.frontend.FeatureFrame;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.Microphone;
-import edu.cmu.sphinx.frontend.MelCepstrumProducer;
-import edu.cmu.sphinx.frontend.MelFilterbank;
-import edu.cmu.sphinx.frontend.SpectrumAnalyzer;
-import edu.cmu.sphinx.frontend.Windower;
-import edu.cmu.sphinx.frontend.Preemphasizer;
 import edu.cmu.sphinx.frontend.Utterance;
 
 import java.awt.BorderLayout;

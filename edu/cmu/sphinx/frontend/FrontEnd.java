@@ -31,11 +31,12 @@ import java.io.IOException;
  * Preemphasizer, HammingWindower, SpectrumAnalyzer, ..., etc.
  *
  * @see AudioSource
- * @see CepstralMeanNormalizer
+ * @see BatchCMN
  * @see Feature
  * @see FeatureExtractor
  * @see FeatureFrame
  * @see FeatureSource
+ * @see LiveCMN
  * @see MelCepstrumProducer
  * @see MelFilterbank
  * @see SpectrumAnalyzer
@@ -97,10 +98,18 @@ public class FrontEnd extends DataProcessor {
      */
     public static final String PROP_KEEP_AUDIO_REFERENCE =
     PROP_PREFIX + "keepAudioReference";
+
+
+    /**
+     * The name of the SphinxProperty that decides whether we do live
+     * mode CMN or batch mode CMN.
+     */
+    public static final String PROP_LIVE_CMN = PROP_PREFIX + "cmn.live";
     
     
     private AudioSource audioSource;
     private FeatureSource featureSource;
+    private boolean liveCMN = false;
     
 
     /**
@@ -112,6 +121,10 @@ public class FrontEnd extends DataProcessor {
     public FrontEnd(String name, String context, AudioSource audioSource) {
 
         super(name, context);
+
+        liveCMN = getSphinxProperties().getBoolean(PROP_LIVE_CMN, false);
+
+        // initialize all the frontend processors
 
         Preemphasizer preemphasizer = new Preemphasizer
             ("Preemphasizer", context, audioSource);
@@ -128,8 +141,13 @@ public class FrontEnd extends DataProcessor {
         MelCepstrumProducer melCepstrum = new MelCepstrumProducer
             ("MelCepstrum", context, melFilterbank);
 
-        CepstralMeanNormalizer cmn = new CepstralMeanNormalizer
-            ("CMN", context, melCepstrum);
+        CepstrumSource cmn = null;
+
+        if (liveCMN) {
+            cmn = new LiveCMN("LiveCMN", context, melCepstrum);
+        } else {
+            cmn = new BatchCMN("BatchCMN", context, melCepstrum);
+        }
 
         FeatureExtractor extractor = new FeatureExtractor
             ("FeatureExtractor", context, cmn);

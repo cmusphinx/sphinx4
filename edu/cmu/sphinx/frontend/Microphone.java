@@ -372,7 +372,9 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
                 Object first = null;
 
                 synchronized (utterances) {
-                    first = utterances.remove(0);
+                    if (utterances.size() > 0) {
+                        first = utterances.remove(0);
+                    }
                 }
 
                 if (first != null) {

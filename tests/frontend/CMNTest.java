@@ -5,7 +5,7 @@
 package tests.frontend;
 
 import edu.cmu.sphinx.frontend.Cepstrum;
-import edu.cmu.sphinx.frontend.CepstralMeanNormalizer;
+import edu.cmu.sphinx.frontend.LiveCMN;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.MelCepstrumProducer;
 import edu.cmu.sphinx.frontend.MelFilterbank;
@@ -45,8 +45,7 @@ public class CMNTest {
                 ("MelFilter", testName, spectrumAnalyzer);
 	    MelCepstrumProducer melCepstrum = new MelCepstrumProducer
                 ("MelCepstrum", testName, melFilterbank);
-            CepstralMeanNormalizer cmn = new CepstralMeanNormalizer
-                ("CMN", testName, melCepstrum);
+            LiveCMN cmn = new LiveCMN("CMN", testName, melCepstrum);
 
             cmn.setDump(fet.getDump());
 

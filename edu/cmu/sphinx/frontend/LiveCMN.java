@@ -31,8 +31,7 @@ import java.io.IOException;
  *
  * @see Cepstrum
  */
-public class CepstralMeanNormalizer extends DataProcessor implements
-CepstrumSource {
+public class LiveCMN extends DataProcessor implements CepstrumSource {
 
 
     /**
@@ -73,16 +72,15 @@ CepstrumSource {
 
 
     /**
-     * Constructs a default CepstralMeanNormalizer with the given
+     * Constructs a default LiveCMN with the given
      * SphinxProperties context.
      *
-     * @param name the name of this CepstralMeanNormalizer
+     * @param name the name of this LiveCMN
      * @param context the context of the SphinxProperties to use
      * @param predecessor the CepstrumSource from which this normalizer
      *    obtains Cepstrum to normalize
      */
-    public CepstralMeanNormalizer(String name, String context,
-                                  CepstrumSource predecessor) {
+    public LiveCMN(String name, String context, CepstrumSource predecessor) {
         super(name, context);
         initSphinxProperties();
 	initMeansSums();
