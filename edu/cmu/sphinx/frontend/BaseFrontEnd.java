@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  * Pre-processes the audio into Features. The BaseFrontEnd consists
  * of a series of processors. The BaseFrontEnd connects all the processors
@@ -37,6 +38,24 @@ import java.util.logging.Logger;
  * the <code>BatchFileAudioSource</code> can be used.
  * Currently, this BaseFrontEnd can also take Cepstrum objects as
  * input using the StreamCepstrumSource implementation of DataSource.
+ *
+ * <p>For each utterance, this BaseFrontEnd expects either Audio or
+ * Cepstrum frames (or objects) in the following sequence: <code>
+ * Signal.UTTERANCE_START
+ * Audio or Cepstrum
+ * Audio or Cepstrum
+ * ...
+ * Signal.UTTERANCE_END
+ *
+ * <p>Any other sequence will cause this BaseFrontEnd to throw errors.
+ *
+ * <p>If the front end gets a null frame OUTSIDE an utterance, 
+ * it just returns a null frame. If the front end gets a null frame
+ * INSIDE an utterance, it throws an Error. Therefore, there cannot be
+ * a null frame (or object) in between the Signal.UTTERANCE_START and
+ * Signal.UTTERANCE_END. The implementation of DataSource given to
+ * the BaseFrontEnd in the constructor must make sure that these
+ * conditions hold.
  *
  * <p>The output of the BaseFrontEnd are FeatureFrames, which is
  * an array of Features. This BaseFrontEnd enforces the condition that
