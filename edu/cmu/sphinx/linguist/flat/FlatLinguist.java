@@ -895,7 +895,7 @@ public class FlatLinguist implements Linguist, Configurable {
             // Add the pronunciation state to the entry point list
             // (based upon its left and right context)
             String pname = "P(" + pronunciation.getWord() + "[" + leftContext
-                    + "," + startingContext + "])";
+                    + "," + startingContext + "])-G" + getNode().getID();
             PronunciationState ps = new PronunciationState(pname,
                     pronunciation, which);
             T("     Expanding " + ps.getPronunciation() + " for lc "
