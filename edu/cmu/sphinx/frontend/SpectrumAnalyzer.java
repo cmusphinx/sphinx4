@@ -29,9 +29,9 @@ public class SpectrumAnalyzer extends DataProcessor {
     private int log2N;
     private Complex[] Wk;
 
-    Complex[] inputSeq;
-    Complex[] from;
-    Complex[] to;
+    private Complex[] inputSeq;
+    private Complex[] from;
+    private Complex[] to;
 
     /**
      * Constructs a default Spectrum Analyzer with the given 
