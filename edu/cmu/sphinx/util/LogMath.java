@@ -140,7 +140,7 @@ public final class LogMath {
 	 // PBL added this just to see how many entries really are in
 	 // the table
 
-	 if (true)  {
+	 if (false)  {
 	     System.out.println("LogAdd table has " + entriesInTheAddTable
 		 + " entries.");
 	 }
