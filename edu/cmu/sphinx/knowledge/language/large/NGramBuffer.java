@@ -62,7 +62,7 @@ public class NGramBuffer {
      * Returns the word ID of the nth follower, assuming that the ID
      * is the first two bytes of the NGram entry.
      *
-     * @param n starts from 0 to (numberFollowers - 1).
+     * @param nthFollower starts from 0 to (numberFollowers - 1).
      *
      * @return the word ID
      */
