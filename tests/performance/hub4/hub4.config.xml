@@ -10,7 +10,6 @@
   <!-- Global Properties                                  -->
   <!-- ************************************************** -->
 
-        <property name="absoluteBeamWidth" value="30000"/>
         <property name="relativeBeamWidth" value="1E-60"/>
         <property name="absoluteWordBeamWidth" value="22"/>
         <property name="relativeWordBeamWidth" value="1E-30"/>
@@ -369,7 +368,7 @@
 
     <component name="unitExitActiveList"
           type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
-        <property name="absoluteBeamWidth" value="30000"/>
+        <property name="absoluteBeamWidth" value="-1"/>
         <property name="logMath" value="logMath"/>
         <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
     </component>
@@ -379,8 +378,8 @@
     <!-- ************************************************** -->
 
     <component name="wordActiveList"
-          type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
-        <property name="absoluteBeamWidth" value="20"/>
+          type="edu.cmu.sphinx.decoder.search.WordActiveListFactory">
+        <property name="absoluteBeamWidth" value="21"/>
         <property name="logMath" value="logMath"/>
         <property name="relativeBeamWidth" value="1E-25"/>
     </component>
@@ -391,7 +390,7 @@
 
     <component name="activeList"
           type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
-        <property name="absoluteBeamWidth" value="30000"/>
+        <property name="absoluteBeamWidth" value="25000"/>
         <property name="logMath" value="logMath"/>
         <property name="relativeBeamWidth" value="1E-60"/>
     </component>
