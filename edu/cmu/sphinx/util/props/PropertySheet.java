@@ -62,9 +62,9 @@ public interface PropertySheet {
     /**
      * Sets the raw property to the given name
      * 
-     * @param name
+     * @param key
      *            the simple property name
-     * @param value
+     * @param val
      *            the value for the property
      */
     public void setRaw(String key, Object val) throws PropertyException ;

@@ -38,13 +38,10 @@ public class SocketCommandInterpreter extends Thread {
     private boolean acceptConnections = true;
     
    /** 
-    * Creates a command interpreter that reads/writes on the given
-    * streams.
+    * Creates a command interpreter at the given port.
     *
-    * @param in	the input stream.
-    * @param out the output stream.
+    * @param port the port to create the command interpreter
     */
-
     public  SocketCommandInterpreter(int port) {
 	this.port = port;
 	commandList = new HashMap();

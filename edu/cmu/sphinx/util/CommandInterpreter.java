@@ -497,10 +497,9 @@ public class CommandInterpreter extends Thread {
    /**
     * Execute the given command string.
     * 
-    * @param the command string.
+    * @param cmdString the command string.
     *
     */
-
     public String execute(String cmdString) {
 	if (trace) {
 	    System.out.println("Execute: " + cmdString);

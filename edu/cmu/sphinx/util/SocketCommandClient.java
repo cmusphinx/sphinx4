@@ -35,13 +35,11 @@ public class SocketCommandClient {
     private PrintWriter outWriter;
 
    /** 
-    * Creates a command interpreter that reads/writes on the given
-    * streams.
+    * Creates a socket command client at the given host and port.
     *
-    * @param in	the input stream.
-    * @param out the output stream.
+    * @param host the host machine
+    * @param port the port to use
     */
-
     public  SocketCommandClient(String host, int port) 
 		throws IOException{
 	this.host = host;
