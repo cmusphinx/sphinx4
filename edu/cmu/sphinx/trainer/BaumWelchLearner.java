@@ -37,6 +37,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
 /**
  * Provides mechanisms for computing statistics given a set of states
  * and input data.
@@ -71,6 +75,12 @@ public class BaumWelchLearner implements Learner {
     public final static String PROP_FRONT_END_DEFAULT
         = "edu.cmu.sphinx.frontend.SimpleFrontEnd";
 
+
+    /*
+     * The logger for this class
+     */
+    private static Logger logger =
+        Logger.getLogger("edu.cmu.sphinx.trainer.BaumWelch");
 
     private FrontEnd frontEnd;
     private DataSource dataSource;
@@ -276,40 +286,89 @@ public class BaumWelchLearner implements Learner {
     /**
      * Prepares the learner for returning scores, one at a time. To do
      * so, it performs the full forward pass, but returns the scores
-     * for the backwaard pass one feature frame at a time.
+     * for the backward pass one feature frame at a time.
      */
     private Object[] prepareScore() {
+	// scoreList will contain a list of score, which in turn are a
+	// vector of TrainerScore elements.
 	List scoreList = new ArrayList();
-	// Let's make our life easier, and type cast the graph
 	int numStates = graph.size();
 	TrainerScore[] score = new TrainerScore[numStates];
-	float[] alphas = new float[numStates];
-	float[] betas = new float[numStates];
-	float[] outputProbs = new float[numStates];
-	lastFeatureIndex = 0;
+	alphas = new float[numStates];
+	betas = new float[numStates];
+	outputProbs = new float[numStates];
+
 	// First we do the forward pass. We need this before we can
 	// return any probability. When we're doing the backward pass,
 	// we can finally return a score for each call of this method.
 
-	float[] probCurrentFrame = new float[numStates];
+	probCurrentFrame = new float[numStates];
 	// Initialization of probCurrentFrame for the alpha computation
-	int indexInitialNode = graph.indexOf(graph.getInitialNode());
+	Node initialNode = graph.getInitialNode();
+	int indexInitialNode = graph.indexOf(initialNode);
 	for (int i = 0; i < numStates; i++) {
 	    probCurrentFrame[i] = LogMath.getLogZero();
 	}
 	// Overwrite in the right position
 	probCurrentFrame[indexInitialNode] = 0.0f;
+
+	for (initialNode.startOutgoingEdgeIterator();
+	     initialNode.hasMoreOutgoingEdges(); ) {
+	    Edge edge = initialNode.nextOutgoingEdge();
+	    Node node = edge.getDestination();
+	    int index = graph.indexOf(node);
+	    if (!node.isType("STATE")) {
+		// Certainly non-emitting, if it's not in an HMM.
+		probCurrentFrame[index] = 0.0f;
+	    } else {
+		// See if it's the last state in the HMM, i.e., if
+		// it's non-emitting.
+		HMMState state = (HMMState) node.getObject();
+		HMM hmm = state.getHMM();
+		if (!state.isEmitting()) {
+		    probCurrentFrame[index] = 0.0f;
+		}
+	    assert false;
+	    }
+	}
+
 	// If getFeature() is true, curFeature contains a valid
 	// Feature. If not, a problem or EOF was encountered.
+	lastFeatureIndex = 0;
 	while (getFeature()) {
 	    forwardPass(score);
 	    scoreList.add(score);
 	    lastFeatureIndex++;
 	}
+	logger.info("Feature frames read: " + lastFeatureIndex);
 	// Prepare for beta computation
 	for (int i = 0; i < probCurrentFrame.length; i++) {
 	    probCurrentFrame[i] = LogMath.getLogZero();
 	}
+	Node finalNode = graph.getFinalNode();
+	int indexFinalNode = graph.indexOf(finalNode);
+	// Overwrite in the right position
+	probCurrentFrame[indexFinalNode] = 0.0f;
+	for (finalNode.startIncomingEdgeIterator();
+	     finalNode.hasMoreIncomingEdges(); ) {
+	    Edge edge = finalNode.nextIncomingEdge();
+	    Node node = edge.getSource();
+	    int index = graph.indexOf(node);
+	    if (!node.isType("STATE")) {
+		// Certainly non-emitting, if it's not in an HMM.
+		probCurrentFrame[index] = 0.0f;
+	    assert false;
+	    } else {
+		// See if it's the last state in the HMM, i.e., if
+		// it's non-emitting.
+		HMMState state = (HMMState) node.getObject();
+		HMM hmm = state.getHMM();
+		if (!state.isEmitting()) {
+		    probCurrentFrame[index] = 0.0f;
+		}
+	    }
+	}
+
 	return scoreList.toArray();
     }
 
@@ -321,14 +380,10 @@ public class BaumWelchLearner implements Learner {
     public TrainerScore[] getScore() {
 	TrainerScore[] score;
 	if (scoreArray == null) {
-	    currentFeatureIndex = lastFeatureIndex;
-	    // Do the forward pass, and creates the necessary arrays
+	    // Do the forward pass, and create the necessary arrays
 	    scoreArray = prepareScore();
+	    currentFeatureIndex = lastFeatureIndex;
 	}
-	probCurrentFrame = new float[betas.length];
-	int indexFinalNode = graph.indexOf(graph.getFinalNode());
-	// Overwrite in the right position
-	probCurrentFrame[indexFinalNode] = 0.0f;
 	currentFeatureIndex--;
 	if (currentFeatureIndex >= 0) {
 	    float logScore = LogMath.getLogZero();
@@ -339,17 +394,21 @@ public class BaumWelchLearner implements Learner {
 		score[i].setGamma();
 		logScore = logMath.addAsLinear(logScore, score[i].getGamma());
 	    }
-	    if (currentFeatureIndex < lastFeatureIndex - 1) {
+	    if (currentFeatureIndex == lastFeatureIndex - 1) {
 		TrainerScore.setLogLikelihood(logScore);
 		totalLogScore = logScore;
 	    } else {
-		if (Math.abs(totalLogScore - logScore) > 1e-3) {
+		if (Math.abs(totalLogScore - logScore) > 
+		    Math.abs(totalLogScore)) {
 		    System.out.println("WARNING: log probabilities differ: " +
 				       totalLogScore + " and " + logScore);
 		}
 	    }
 	    return score;
 	} else {
+	    // We need to clear this, so we start the next iteration
+	    // on a clean plate.
+	    scoreArray = null;
 	    return null;
 	}
     }
@@ -366,7 +425,7 @@ public class BaumWelchLearner implements Learner {
 	float logScore;
 	// Find the HMM state for this node
 	HMMState state = (HMMState) graph.getNode(index).getObject();
-	if (state.isEmitting()) {
+	if ((state != null) && (state.isEmitting())) {
 	    // Compute the scores for each mixture component in this state
 	    componentScores = state.calculateComponentScore(curFeature);
 	    // Compute the overall score for this state
@@ -395,7 +454,9 @@ public class BaumWelchLearner implements Learner {
 			outputProbs[i],
 			(HMMState) graph.getNode(i).getObject(),
 			componentScores);
+	    score[i].setAlpha(probCurrentFrame[i]);
 	}
+
 	// Now, the forward pass.
 	float[] probPreviousFrame = probCurrentFrame;
 	probCurrentFrame = new float[graph.size()];
@@ -405,32 +466,44 @@ public class BaumWelchLearner implements Learner {
 	// consume frames, use probabilities from the current frame
 	for (int indexNode = 0; indexNode < graph.size(); indexNode++) {
 	    Node node = graph.getNode(indexNode);
+	    // Treat dummy node (and initial and final nodes) the same
+	    // as non-emitting
+	    if (!node.isType("STATE")) {
+		continue;
+	    }
 	    HMMState state = (HMMState) node.getObject();
 	    HMM hmm = state.getHMM();
 	    if (!state.isEmitting()) {
 		continue;
 	    }
-	    // Initialize the current frame probability with this
-	    // state's output probability for the current Feature
-	    probCurrentFrame[indexNode] = outputProbs[indexNode];
+	    // Initialize the current frame probability with 0.0f, log scale
+	    probCurrentFrame[indexNode] = LogMath.getLogZero();
 	    for (node.startIncomingEdgeIterator();
 		 node.hasMoreIncomingEdges(); ) {
 		// Finds out what the previous node and previous state are
 		Node previousNode = node.nextIncomingEdge().getSource();
 		int indexPreviousNode = graph.indexOf(previousNode);
 		HMMState previousState = (HMMState) previousNode.getObject();
-		// Make sure that the transition happened from a state
-		// that either is in the same model, or was a
-		// non-emitting state
-		assert ((!previousState.isEmitting()) || 
-			(previousState.getHMM() == hmm));
 		float logTransitionProbability;
-		if (!previousState.isEmitting()) {
-		    logTransitionProbability = 0.0f;
+		// previous state could be have an associated hmm state...
+		if (previousState != null) {
+		    // Make sure that the transition happened from a state
+		    // that either is in the same model, or was a
+		    // non-emitting state
+		    assert ((!previousState.isEmitting()) || 
+			    (previousState.getHMM() == hmm));
+		    if (!previousState.isEmitting()) {
+			logTransitionProbability = 0.0f;
+		    } else {
+			logTransitionProbability = 
+			    hmm.getTransitionProbability(
+						 previousState.getState(),
+						 state.getState());
+		    }
 		} else {
-		    logTransitionProbability = 
-			hmm.getTransitionProbability(previousState.getState(),
-						     state.getState());
+		    // Previous state is a dummy state or beginning of
+		    // utterance.
+		    logTransitionProbability = 0.0f;
 		}
 		// Adds the alpha and transition from the previous
 		// state into the current alpha
@@ -438,39 +511,62 @@ public class BaumWelchLearner implements Learner {
 		    logMath.addAsLinear(probCurrentFrame[indexNode],
 					probPreviousFrame[indexPreviousNode] +
 					logTransitionProbability);
+		// System.out.println("State= " + indexNode + " curr "
+		// + probCurrentFrame[indexNode] + " prev " +
+		// probPreviousFrame[indexNode] + " trans " +
+		// logTransitionProbability);
 	    }
+	    // Finally, multiply by this state's output probability for the
+	    // current Feature (add in log scale)
+	    probCurrentFrame[indexNode] += outputProbs[indexNode];
+	    // System.out.println("State= " + indexNode + " alpha= " +
+	    // probCurrentFrame[indexNode]);
 	    score[indexNode].setAlpha(probCurrentFrame[indexNode]);
 	}
 
 	// Finally, the non-emitting states
 	for (int indexNode = 0; indexNode < graph.size(); indexNode++) {
 	    Node node = graph.getNode(indexNode);
-	    HMMState state = (HMMState) node.getObject();
-	    HMM hmm = state.getHMM();
-	    if (state.isEmitting()) {
+	    HMMState state = null;
+	    HMM hmm = null;
+	    if (node.isType("STATE")) {
+		state = (HMMState) node.getObject();
+		hmm = state.getHMM();
+		if (state.isEmitting()) {
+		    continue;
+		}
+	    } else if (graph.isInitialNode(node)) {
+		score[indexNode].setAlpha(LogMath.getLogZero());
+		probCurrentFrame[indexNode] = LogMath.getLogZero();
 		continue;
 	    }
-	    // Initialize the current frame probability with log
-	    // probability of 0f
-	    probCurrentFrame[indexNode] = 0.0f;
+	    // Initialize the current frame probability 0.0f, log scale
+	    probCurrentFrame[indexNode] = LogMath.getLogZero();
 	    for (node.startIncomingEdgeIterator();
 		 node.hasMoreIncomingEdges(); ) {
+		float logTransitionProbability;
 		// Finds out what the previous node and previous state are
 		Node previousNode = node.nextIncomingEdge().getSource();
 		int indexPreviousNode = graph.indexOf(previousNode);
-		HMMState previousState = (HMMState) previousNode.getObject();
-		// Make sure that the transition happened from an
-		// emitting state, or is a self loop
-		assert ((previousState.isEmitting()) || 
-			(previousState == state));
-		float logTransitionProbability;
-		if (previousState.isEmitting()) {
-		    logTransitionProbability = 0.0f;
+		if (previousNode.isType("STATE")) {
+		    HMMState previousState = 
+			(HMMState) previousNode.getObject();
+		    // Make sure that the transition happened from a
+		    // state that either is in the same model, or was
+		    // a non-emitting state
+		    assert ((!previousState.isEmitting()) || 
+			    (previousState.getHMM() == hmm));
+		    if (!previousState.isEmitting()) {
+			logTransitionProbability = 0.0f;
+		    } else {
+			// previousState == state
+			logTransitionProbability = 
+			    hmm.getTransitionProbability(
+						 previousState.getState(),
+						 state.getState());
+		    }
 		} else {
-		    // previousState == state
-		    logTransitionProbability = 
-			hmm.getTransitionProbability(previousState.getState(),
-						     state.getState());
+		    logTransitionProbability = 0.0f;
 		}
 		// Adds the alpha and transition from the previous
 		// state into the current alpha
@@ -478,7 +574,18 @@ public class BaumWelchLearner implements Learner {
 		    logMath.addAsLinear(probCurrentFrame[indexNode],
 					probCurrentFrame[indexPreviousNode] +
 					logTransitionProbability);
+		// System.out.println("State= " + indexNode + " curr "
+		// + probCurrentFrame[indexNode] + " prev " +
+		// probPreviousFrame[indexNode] + " trans " +
+		// logTransitionProbability);
 	    }
+	    // System.out.println("State= " + indexNode + " alpha= " +
+	    // probCurrentFrame[indexNode]);
+
+
+	    // Non-emitting states have the equivalent of output
+	    // probability of 1.0. In log scale, this is the same as
+	    // adding 0.0f, or doing nothing.
 	    score[indexNode].setAlpha(probCurrentFrame[indexNode]);
 	}
     }
@@ -492,53 +599,22 @@ public class BaumWelchLearner implements Learner {
 	// Now, the backward pass.
 	for (int i = 0; i < graph.size(); i++) {
 	    outputProbs[i] = score[i].getScore();
+	    score[i].setBeta(probCurrentFrame[i]);
 	}
 	float[] probNextFrame = probCurrentFrame;
 	probCurrentFrame = new float[graph.size()];
-	// First, the non-emitting states. Here we go in the opposite
-	// direction as in the forward case.
+
+	// First, the emitting states
 	for (int indexNode = 0; indexNode < graph.size(); indexNode++) {
 	    Node node = graph.getNode(indexNode);
-	    HMMState state = (HMMState) node.getObject();
-	    HMM hmm = state.getHMM();
-	    if (state.isEmitting()) {
+	    // Treat dummy node (and initial and final nodes) the same
+	    // as non-emitting
+	    if (!node.isType("STATE")) {
 		continue;
 	    }
-	    // Initialize the current frame probability with log(0f)
-	    probCurrentFrame[indexNode] = LogMath.getLogZero();
-	    for (node.startOutgoingEdgeIterator();
-		 node.hasMoreOutgoingEdges(); ) {
-		// Finds out what the next node and next state are
-		Node nextNode = node.nextOutgoingEdge().getSource();
-		int indexNextNode = graph.indexOf(nextNode);
-		HMMState nextState = (HMMState) nextNode.getObject();
-		// Make sure that the transition happened from a state
-		// that either is in the same, or is emitting
-		assert ((nextState.isEmitting()) || (nextState == state));
-		float logTransitionProbability;
-		if (!nextState.isEmitting()) {
-		    logTransitionProbability = 0.0f;
-		} else {
-		    logTransitionProbability = 
-			hmm.getTransitionProbability(state.getState(),
-						     nextState.getState());
-		}
-		// Adds the beta, the transition, and the output prob
-		// from the next state into the current beta
-		probCurrentFrame[indexNode] = 
-		    logMath.addAsLinear(probCurrentFrame[indexNode],
-					probNextFrame[indexNextNode] +
-					logTransitionProbability);
-	    }
-	    score[indexNode].setBeta(probCurrentFrame[indexNode]);
-	}
-
-	// Finally, the emitting states
-	for (int indexNode = 0; indexNode < graph.size(); indexNode++) {
-	    Node node = graph.getNode(indexNode);
 	    HMMState state = (HMMState) node.getObject();
 	    HMM hmm = state.getHMM();
-	    if (state.isEmitting()) {
+	    if (!state.isEmitting()) {
 		continue;
 	    }
 	    // Initialize the current frame probability with log
@@ -546,21 +622,27 @@ public class BaumWelchLearner implements Learner {
 	    probCurrentFrame[indexNode] = LogMath.getLogZero();
 	    for (node.startOutgoingEdgeIterator();
 		 node.hasMoreOutgoingEdges(); ) {
+		float logTransitionProbability;
 		// Finds out what the next node and next state are
-		Node nextNode = node.nextOutgoingEdge().getSource();
+		Node nextNode = node.nextOutgoingEdge().getDestination();
 		int indexNextNode = graph.indexOf(nextNode);
 		HMMState nextState = (HMMState) nextNode.getObject();
-		// Make sure that the transition happened to a
-		// non-emitting state, or to the same model
-		assert ((!nextState.isEmitting()) || 
-			(nextState.getHMM() == hmm));
-		float logTransitionProbability;
-		if (!nextState.isEmitting()) {
-		    logTransitionProbability = 0.0f;
+		if (nextState != null) {
+		    // Make sure that the transition happened to a
+		    // non-emitting state, or to the same model
+		    assert ((!nextState.isEmitting()) || 
+			    (nextState.getHMM() == hmm));
+		    if (nextState.getHMM() != hmm) {
+			logTransitionProbability = 0.0f;
+		    } else {
+			logTransitionProbability = 
+			    hmm.getTransitionProbability(state.getState(),
+							 nextState.getState());
+		    }
 		} else {
-		    logTransitionProbability = 
-			hmm.getTransitionProbability(state.getState(),
-						     nextState.getState());
+		    // Next state is a dummy state or beginning of
+		    // utterance.
+		    logTransitionProbability = 0.0f;
 		}
 		// Adds the beta, the output prob, and the transition
 		// from the next state into the current beta
@@ -570,6 +652,66 @@ public class BaumWelchLearner implements Learner {
 					logTransitionProbability +
 					outputProbs[indexNextNode]);
 	    }
+	    // System.out.println("State= " + indexNode + " beta= " + probCurrentFrame[indexNode]);
+	    score[indexNode].setBeta(probCurrentFrame[indexNode]);
+	}
+
+	// Now, the non-emitting states
+
+	// We have to go backwards because for non-emitting states we
+	// use the current frame probability, and we need to refer to
+	// states that are downstream in the graph
+	for (int indexNode = graph.size() - 1; indexNode >= 0; indexNode--) {
+	    Node node = graph.getNode(indexNode);
+	    HMMState state = null;
+	    HMM hmm = null;
+	    if (node.isType("STATE")) {
+		state = (HMMState) node.getObject();
+		hmm = state.getHMM();
+		if (state.isEmitting()) {
+		    continue;
+		}
+	    } else if (graph.isFinalNode(node)) {
+		score[indexNode].setBeta(LogMath.getLogZero());
+		probCurrentFrame[indexNode] = LogMath.getLogZero();
+		continue;
+	    }
+	    // Initialize the current frame probability with log(0f)
+	    probCurrentFrame[indexNode] = LogMath.getLogZero();
+	    for (node.startOutgoingEdgeIterator();
+		 node.hasMoreOutgoingEdges(); ) {
+		float logTransitionProbability;
+		// Finds out what the next node and next state are
+		Node nextNode = node.nextOutgoingEdge().getDestination();
+		int indexNextNode = graph.indexOf(nextNode);
+		if (nextNode.isType("STATE")) {
+		    HMMState nextState = (HMMState) nextNode.getObject();
+		    // Make sure that the transition happened to a
+		    // state that either is the same, or is emitting
+		    assert ((nextState.isEmitting()) || (nextState == state));
+		    // In any case, the transition (at this point) is
+		    // assumed to be 1.0f, or 0.0f in log scale.
+		    logTransitionProbability = 0.0f;
+		    /*
+		    if (!nextState.isEmitting()) {
+			logTransitionProbability = 0.0f;
+		    } else {
+			logTransitionProbability = 
+			    hmm.getTransitionProbability(state.getState(),
+							 nextState.getState());
+		    }
+		    */
+		} else {
+		    logTransitionProbability = 0.0f;
+		}
+		// Adds the beta, the transition, and the output prob
+		// from the next state into the current beta
+		probCurrentFrame[indexNode] = 
+		    logMath.addAsLinear(probCurrentFrame[indexNode],
+					probCurrentFrame[indexNextNode] +
+					logTransitionProbability);
+	    }
+	    // System.out.println("State= " + indexNode + " beta= " + probCurrentFrame[indexNode]);
 	    score[indexNode].setBeta(probCurrentFrame[indexNode]);
 	}
     }
@@ -617,7 +759,7 @@ public class BaumWelchLearner implements Learner {
             expandStateList(emittingStateList, nextActiveList); 
 
             while (nextActiveList.hasNonEmittingStates()){
-		// exctractNonEmittingStateList will pull out the list
+		// extractNonEmittingStateList will pull out the list
 		// of nonemitting states completely from the
 		// nextActiveList. At this point nextActiveList does
 		// not have a list of nonemitting states and must
