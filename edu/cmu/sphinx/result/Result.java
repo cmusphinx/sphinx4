@@ -14,9 +14,11 @@ package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.Utterance;
+import edu.cmu.sphinx.decoder.linguist.WordSearchState;
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 
 import java.util.List;
 import java.util.Iterator;
@@ -338,10 +340,8 @@ public class Result {
         return utterance;
     }
 
-
     /**
-     * Returns the string of the best result, removing any filler
-     * words.
+     * Returns the string of the best result, removing any filler words.
      *
      * @return the string of the best result, removing any filler
      * words
@@ -353,6 +353,126 @@ public class Result {
         } else {
             return token.getWordPathNoFiller();
         }
+    }
+
+    /**
+     * Returns the string of words (with timestamp) for this token.
+     *
+     * @param wantFiller true if we want filler words included, false otherwise
+     * @param wordTokenFirst true if the word tokens come before other types
+     *     of tokens
+     *
+     * @return the string of words
+     */
+    public String getTimedBestResult(boolean wantFiller,
+                                     boolean wordTokenFirst) {
+        Token token = getBestToken();
+        if (token == null) {
+            return "";
+        } else {
+            if (wordTokenFirst) {
+                return getTimedWordPath(token, wantFiller);
+            } else {
+                return getTimedWordTokenLastPath(token, wantFiller);
+            }
+        }
+    }
+
+    /**
+     * Returns the string of words (with timestamp) for this token.
+     * This method assumes that the word tokens come before other types
+     * of token.
+     *
+     * @param wantFiller true if we want filler words, false otherwise
+     *
+     * @return the string of words
+     */
+    private String getTimedWordPath(Token token, boolean wantFiller) {
+        StringBuffer sb = new StringBuffer();
+
+        // get to the first emitting token
+        while (token != null & !token.isEmitting()) {
+            token = token.getPredecessor();
+        }
+
+        if (token != null) {
+            Feature lastWordFirstFeature = token.getFeature();
+            Feature lastFeature = lastWordFirstFeature;
+            token = token.getPredecessor();
+
+            while (token != null) {
+                if (token.isWord()) {
+                    Word word = token.getWord();
+                    if (wantFiller || !word.isFiller()) {
+                        addWord(sb, word, lastFeature, lastWordFirstFeature);
+                    }
+                    lastWordFirstFeature = lastFeature;
+                }
+                Feature feature = token.getFeature();
+                if (feature != null) {
+                    lastFeature = feature;
+                }
+                token = token.getPredecessor();
+            }
+        }
+        return sb.toString();
+    }
+
+
+    /**
+     * Returns the string of words for this token, each with the starting
+     * sample number as the timestamp. This method assumes that the word
+     * tokens come after the unit and hmm tokens.
+     *
+     * @return the string of words, each with the starting sample number
+     */
+    private String getTimedWordTokenLastPath(Token token, boolean wantFiller) {
+        StringBuffer sb = new StringBuffer();
+        Word word = null;
+        Feature lastFeature = null;
+        Feature lastWordFirstFeature = null;
+
+        while (token != null) {
+            if (token.isWord()) {
+                if (word != null) {
+                    if (wantFiller || !word.isFiller()) {
+                        addWord(sb, word, lastFeature, lastWordFirstFeature);
+                    }
+                    word = token.getWord();
+                    lastWordFirstFeature = lastFeature;
+                }
+            }
+            Feature feature = token.getFeature();
+            if (feature != null) {
+                lastFeature = feature;
+                if (lastWordFirstFeature == null) {
+                    lastWordFirstFeature = lastFeature;
+                }
+            }
+            token = token.getPredecessor();
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Adds the given word into the given string buffer with the start and
+     * end times from the given features.
+     *
+     * @param sb the StringBuffer into which the word is added
+     * @param word the word to add
+     * @param startFeature the starting feature
+     * @param endFeature tne ending feature
+     */
+    private void addWord(StringBuffer sb, Word word,
+                         Feature startFeature, Feature endFeature) {
+        long startTime = startFeature.getFirstSampleNumber();
+        long endTime = endFeature.getFirstSampleNumber();
+        if (sb.length() > 0) {
+            sb.insert(0, " ");
+        }
+        sb.insert(0, (word.getSpelling() + "(" + startTime +
+                      "," + endTime + ")"));
     }
 
 
