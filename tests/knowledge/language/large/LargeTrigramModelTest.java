@@ -129,7 +129,7 @@ class LargeTrigramModelTest {
         for (int i = 1; i < ws.size(); i++) {
             line += (" " + ws.getWord(i));
         }
-        return line;
+        return line.toUpperCase();
     }
 }
 
