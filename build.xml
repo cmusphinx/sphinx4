@@ -538,6 +538,40 @@ jsapi.exe from the lib directory.
 	<delete file="${lib_dir}/sphinx4.jar"/>
 	<delete file="${lib_dir}/${wsj_name}.jar"/>
 	<delete file="${lib_dir}/${tidigits_name}.jar"/>
+	<delete>
+	    <fileset dir="${bin_dir}" includes="*.jar"/>
+        </delete>
+    </target>
+
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * -->
+    <!-- * Deploys the bin.zip file.                              * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** --> 
+    <target name="deploy_bin_zip"
+            description="Creates the bin.zip deploy file."
+	    depends="clean,all,javadoc">
+	<jar destfile="bin.zip"
+	     basedir="."
+	     includes="lib/*.jar,lib/jsapi.jar,lib/jsapi.sh,bin/*.jar,demo/**,index.html,README,doc/ProgrammersGuide.html,doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,javadoc/**"
+	     excludes="lib/jsapi.jar"
+	     compress="true"/>
+    </target>
+
+
+    <!-- ********************************************************** --> 
+    <!-- *                                                        * -->
+    <!-- * Deploys the src.zip file.                              * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** --> 
+    <target name="deploy_src_zip"
+            description="Creates the src.zip deploy file."
+	    depends="clean">
+	<jar destfile="src.zip"
+	     basedir="."
+	     includes="**"
+	     excludes="**/CVS,**/.*,bin"/>
     </target>
 
 </project>
