@@ -79,6 +79,20 @@
       </ul>
 
       <p>
+      <b><font color="FF0000">NOTE:</font></b> You will mostly need to change the location of the acoustic
+      model and dictionary in the properties files (those files ending in 
+      ".props"). The location of the acoustic model is specified by the
+      property:
+      <font size="+1">
+      <pre>edu.cmu.sphinx.knowledge.acoustic.tiedstate.TiedStateAcousticModel.location</pre>
+      </font>
+      while the location of the dictionary is specified by the property:
+      <font size="+1">
+      <pre>edu.cmu.sphinx.knowledge.dictionary.Dictionary.location</pre>
+      </font>
+      Changes these values according to where your acoustic models are.
+
+      <p>
       <h3>Customizing the Demo</h3>
       <p>
       All the tests that the live demo program will run are listed
