@@ -281,6 +281,8 @@ function printBuildHistory() {
    print "<tr>";
    print "<td valign=top bgcolor=#99ffff align=center><b>Date<br>";
    print "</b></td>";
+   print "<td valign=top bgcolor=#99ffff align=center><b>Test Name<br>";
+   print "</b></td>";
    print "<td valign=top bgcolor=#99ffff align=center><b>Build Time<br>";
    print "</b></td>";
    print "<td valign=top bgcolor=#99ffff align=center><b>Test";
@@ -295,6 +297,7 @@ function printBuildHistory() {
 
         print("<tr>");
         print "<td>" dateAnchor(data[2]) "</td>";
+        print "<td>" data[10] "</td>";
 	print "<td>" fmtTime(data[8]) "</td>";
 	print "<td>" fmtTime(data[9]) "</td>";
 
