@@ -823,6 +823,9 @@ class Sphinx3Loader implements Loader {
 	// property is false, the CD phones will not be created, but
         // the values still need to be read in from the file.
 
+        String lastUnitName = "";
+        Unit lastUnit = null;
+
 	for (int i = 0; i < numTri; i++) {
 	    String name = est.getString();
 	    String left = est.getString();
@@ -845,16 +848,26 @@ class Sphinx3Loader implements Loader {
 	    assert tmat < numTiedTransitionMatrices;
 
             if (useCDUnits) {
-                Unit[] leftContext = new Unit[1];
-                leftContext[0] = (Unit) contextIndependentUnits.get(left);
-                
-                Unit[] rightContext = new Unit[1];
-                rightContext[0] = (Unit) contextIndependentUnits.get(right);
-                
-                Context context = LeftRightContext.get(leftContext,
-                                                       rightContext);
+                Unit unit = null;
+                String unitName = (name + " " + left + " " + right);
 
-                Unit unit = Unit.createCDUnit(name, false, context);
+                if (unitName.equals(lastUnitName)) {
+                    unit = lastUnit;
+                } else {
+                    Unit[] leftContext = new Unit[1];
+                    leftContext[0] = (Unit) contextIndependentUnits.get(left);
+                    
+                    Unit[] rightContext = new Unit[1];
+                    rightContext[0] = (Unit) contextIndependentUnits.get(right);
+                
+                    Context context = LeftRightContext.get(leftContext,
+                                                           rightContext);
+                    unit = Unit.createCDUnit(name, false, context);
+                    lastUnit = unit;
+                }
+
+                lastUnitName = unitName;
+
                 if (logger.isLoggable(Level.FINE)) {
                     logger.fine("Loaded " + unit);
                 }
