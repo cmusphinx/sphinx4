@@ -20,6 +20,7 @@ import edu.cmu.sphinx.result.ConfidenceScorer;
 import edu.cmu.sphinx.result.Lattice;
 import edu.cmu.sphinx.result.LatticeOptimizer;
 import edu.cmu.sphinx.result.MAPConfidenceScorer;
+import edu.cmu.sphinx.result.Path;
 import edu.cmu.sphinx.result.Result;
 
 import edu.cmu.sphinx.util.props.ConfigurationManager;
@@ -70,11 +71,13 @@ public class MAPConfidenceTest {
             
             /* print out the results */
             if (result != null) {
-                ConfidenceScorer cs = new MAPConfidenceScorer();
+                ConfidenceScorer cs = (ConfidenceScorer) cm.lookup
+                    ("confidenceScorer");
                 ConfidenceResult cr = cs.score(result);
-                System.out.println(cr.getBestHypothesis().getTranscription() +
-                                   ": " +
-                                   cr.getBestHypothesis().getConfidence());
+                Path best = cr.getBestHypothesis();
+                System.out.println
+                    (best.getTranscription() + ": " +
+                     best.getLogMath().logToLinear((float)best.getConfidence()));
             }
         } catch (IOException e) {
             System.err.println("Problem when loading MAPConfidenceTest: " + e);
