@@ -191,6 +191,21 @@ public class WordSequence {
 
 
     /**
+     * Returns the nth word in this sequence
+     *
+     * @param n which word to return
+     *
+     * @return the nth word in this sequence
+     */
+    public String getWord(int n) {
+        if (n >= words.length) {
+            throw new ArrayIndexOutOfBoundsException(n);
+        }
+        return words[n];
+    }
+
+
+    /**
      * Returns the number of words in this sequence
      *
      * @return the number of words
@@ -198,7 +213,6 @@ public class WordSequence {
     public int size() {
         return words.length;
     }
-
 
 
     /**
