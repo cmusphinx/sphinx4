@@ -175,6 +175,7 @@ implements AudioSource, Runnable {
 
             printMessage("started recording");
 
+            audioLine.flush();
             audioLine.start();
 
             while (getRecording() && !getClosed()) {
