@@ -341,13 +341,10 @@ public class BatchDecoder {
         String context = "batch";
         String propertiesFile = argv[0];
         String batchFile = argv[1];
-        String pwd = System.getProperty("user.dir");
 
         try {
-            SphinxProperties.initContext
-                (context, new URL("file://" + pwd +  "/"
-                                   + propertiesFile));
-
+            URL url = new File(propertiesFile).toURI().toURL();
+            SphinxProperties.initContext (context, url);
             BatchDecoder decoder = new BatchDecoder(context, batchFile);
             decoder.decode();
 
