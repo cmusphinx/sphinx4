@@ -282,9 +282,8 @@ jsapi.exe from the lib directory.
         <jar destfile="${sphinx4_jar}" 
 	     manifest="${src_dir}/edu/cmu/sphinx/sphinx4.manifest"
 	     compress="true"
-             excludes="edu/cmu/sphinx/tools/**,com/sun/taglet/**">
-            <fileset dir="${classes_dir}"/>
-        </jar>
+             excludes="edu/cmu/sphinx/tools/**,com/sun/taglet/**,demo/**"
+	     basedir="${classes_dir}"/>
     </target>
 
     <!-- AudioTool.jar -->
