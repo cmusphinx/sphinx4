@@ -187,7 +187,7 @@ public class BatchDecoder {
     List getLines(String file) throws IOException {
 	List list = new ArrayList();
 	BufferedReader reader 
-	    = new BufferedReader(new FileReader(batchFile));
+	    = new BufferedReader(new FileReader(file));
 
 	String line = null;
 
