@@ -91,6 +91,8 @@ class Sphinx4Saver extends Sphinx3Saver {
     protected void saveTransitionMatricesAscii(Pool pool, String path, 
 					     boolean append)
         throws FileNotFoundException, IOException {
+
+	String location = super.getLocation();
         OutputStream outputStream = StreamFactory.getOutputStream(location, 
 							      path, append);
 	if (outputStream == null) {
@@ -99,6 +101,8 @@ class Sphinx4Saver extends Sphinx3Saver {
 	}
 	PrintWriter pw = new PrintWriter(outputStream, true);
 
+	SphinxProperties acousticProperties = super.getAcousticProperties();
+	LogMath logMath = super.getLogMath();
         boolean sparseForm = acousticProperties.getBoolean
 	    (AcousticModel.PROP_SPARSE_FORM, 
 	     AcousticModel.PROP_SPARSE_FORM_DEFAULT);
@@ -174,6 +178,9 @@ class Sphinx4Saver extends Sphinx3Saver {
 					      boolean append)
         throws FileNotFoundException, IOException {
 
+	SphinxProperties acousticProperties = super.getAcousticProperties();
+	LogMath logMath = super.getLogMath();
+
         boolean sparseForm = acousticProperties.getBoolean
 	    (AcousticModel.PROP_SPARSE_FORM, 
 	     AcousticModel.PROP_SPARSE_FORM_DEFAULT);
@@ -184,11 +191,15 @@ class Sphinx4Saver extends Sphinx3Saver {
 
 	int checkSum = 0;
 
+	String strCheckSum = super.getCheckSum();
+	boolean doCheckSum = super.getDoCheckSum();
 	props.setProperty("version", TMAT_FILE_VERSION);
 	if (doCheckSum) {
-	    props.setProperty("chksum0", checksum);
+	    props.setProperty("chksum0", strCheckSum);
 	}
 
+
+	String location = super.getLocation();
 
         DataOutputStream dos = writeS3BinaryHeader(location, path, props, 
 						   append);
@@ -222,7 +233,7 @@ class Sphinx4Saver extends Sphinx3Saver {
 
 	    tmat = (float [][])pool.get(i);
 	    numStates = tmat[0].length;
-	    writeInt(dos, numStates - 1);
+	    writeInt(dos, numStates);
 
 	    // Last row should be all zeroes
 	    logTmatRow = tmat[numStates - 1];

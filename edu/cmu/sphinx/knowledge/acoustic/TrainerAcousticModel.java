@@ -53,8 +53,10 @@ public class TrainerAcousticModel extends AcousticModel {
      * The save format for the acoustic model data. Current supported
      * formats are:
      *
-     *  sphinx3_ascii
-     *  sphinx3_binary
+     *  sphinx3.ascii
+     *  sphinx3.binary
+     *  sphinx4.ascii
+     *  sphinx4.binary
      */
     public final static String PROP_FORMAT_SAVE = PROP_PREFIX + "format.save";
 

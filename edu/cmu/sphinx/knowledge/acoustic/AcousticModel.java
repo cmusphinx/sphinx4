@@ -63,8 +63,10 @@ public class AcousticModel {
      * The format for the acoustic model data. Current supported
      * formats are:
      *
-     *  sphinx3_ascii
-     *  sphinx3_binary
+     *  sphinx3.ascii
+     *  sphinx3.binary
+     *  sphinx4.ascii
+     *  sphinx4.binary
      */
     public final static String PROP_FORMAT = PROP_PREFIX + "format";
 
@@ -790,13 +792,16 @@ public class AcousticModel {
         String format = props.getString(formatProp, PROP_FORMAT_DEFAULT);
 
         if (format.equals("sphinx3.ascii")) {
+	    logger.info("Sphinx 3 ASCII format");
             loader = new Sphinx3Loader(name, props, false);
         } else if (format.equals("sphinx3.binary")) {
+	    logger.info("Sphinx 3 binary format");
             loader = new Sphinx3Loader(name, props, true);
         }  else if (format.equals("sphinx4.ascii")) {
 	    logger.info("Sphinx 4 ASCII format");
             loader = new Sphinx4Loader(name, props, false);
         } else if (format.equals("sphinx4.binary")) {
+	    logger.info("Sphinx 4 binary format");
             loader = new Sphinx4Loader(name, props, true);
 	    }  else { // add new loading code here.
             loader = null;

@@ -70,25 +70,25 @@ class Sphinx3Loader implements Loader {
     protected final static int CONTEXT_SIZE = 1;
 
 
-    protected Pool meansPool;
-    protected Pool variancePool;
-    protected Pool matrixPool;
-    protected Pool meanTransformationMatrixPool;
-    protected Pool meanTransformationVectorPool;
-    protected Pool varianceTransformationMatrixPool;
-    protected Pool varianceTransformationVectorPool;
-    protected Pool mixtureWeightsPool;
+    private Pool meansPool;
+    private Pool variancePool;
+    private Pool matrixPool;
+    private Pool meanTransformationMatrixPool;
+    private Pool meanTransformationVectorPool;
+    private Pool varianceTransformationMatrixPool;
+    private Pool varianceTransformationVectorPool;
+    private Pool mixtureWeightsPool;
 
-    protected Pool senonePool;
-    protected int vectorLength;
+    private Pool senonePool;
+    private int vectorLength;
 
-    protected Map contextIndependentUnits;
-    protected HMMManager hmmManager;
-    protected LogMath logMath;
-    protected SphinxProperties acousticProperties;
-    protected boolean binary = false;
-    protected String location;
-    protected boolean swap;
+    private Map contextIndependentUnits;
+    private HMMManager hmmManager;
+    private LogMath logMath;
+    private SphinxProperties acousticProperties;
+    private boolean binary = false;
+    private String location;
+    private boolean swap;
 
     protected final static String DENSITY_FILE_VERSION = "1.0";
     protected final static String MIXW_FILE_VERSION = "1.0";
@@ -135,6 +135,61 @@ class Sphinx3Loader implements Loader {
 
         // do the actual acoustic model loading
         loadModelFiles(modelName, props);
+    }
+
+
+    /**
+     * Return the HmmManager.
+     *
+     * @return the hmmManager
+     */
+    protected HMMManager getHmmManager() {
+	return hmmManager;
+    }
+
+    /**
+     * Return the MatrixPool.
+     *
+     * @return the matrixPool
+     */
+    protected Pool getMatrixPool() {
+	return matrixPool;
+    }
+
+    /**
+     * Return the MixtureWeightsPool.
+     *
+     * @return the mixtureWeightsPool
+     */
+    protected Pool getMixtureWeightsPool() {
+	return mixtureWeightsPool;
+    }
+
+    /**
+     * Return the LogMath.
+     *
+     * @return the logMath
+     */
+    protected LogMath getLogMath() {
+	return logMath;
+    }
+
+    /**
+     * Return the acousticProperties.
+     *
+     * @return the acousticProperties
+     */
+    protected SphinxProperties getAcousticProperties() {
+	return acousticProperties;
+    }
+
+    /**
+     * Return the location.
+     *
+     * @return the location
+     */
+    protected String getLocation() {
+	return location;
     }
 
 

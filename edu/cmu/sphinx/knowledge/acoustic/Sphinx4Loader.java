@@ -56,7 +56,7 @@ class Sphinx4Loader extends Sphinx3Loader {
     private static Logger logger = 
 	    Logger.getLogger(AcousticModel.PROP_PREFIX + "AcousticModel");
 
-    private final static String TMAT_FILE_VERSION = "4.0";
+    protected final static String TMAT_FILE_VERSION = "4.0";
 
 
     /**
@@ -131,9 +131,14 @@ class Sphinx4Loader extends Sphinx3Loader {
 	numTiedTransitionMatrices = est.getInt("numTiedTransitionMatrices");
 	est.expectString("n_tied_tmat");
 
-	numStatePerHMM = numStateMap/(numTri+numBase);
+	//	numStatePerHMM = numStateMap/(numTri+numBase);
 	int maxStatePerHmm = 10;
 	int[] maxStid = new int[maxStatePerHmm];
+
+	HMMManager hmmManager = super.getHmmManager();
+	Pool matrixPool = super.getMatrixPool();
+	Pool mixtureWeightsPool = super.getMixtureWeightsPool();
+	Map contextIndependentUnits = super.getContextIndependentUnits();
 
 	assert numTiedState == mixtureWeightsPool.getFeature(NUM_SENONES, 0);
 	assert numTiedTransitionMatrices == matrixPool.size();
@@ -294,7 +299,12 @@ class Sphinx4Loader extends Sphinx3Loader {
      */
     protected Pool loadTransitionMatricesAscii(String path)
         throws FileNotFoundException, IOException {
+
+	String location = super.getLocation();
         InputStream inputStream = StreamFactory.getInputStream(location, path);
+
+	SphinxProperties acousticProperties = super.getAcousticProperties();
+	LogMath logMath = super.getLogMath();
         boolean sparseForm = acousticProperties.getBoolean
 	    (AcousticModel.PROP_SPARSE_FORM, 
 	     AcousticModel.PROP_SPARSE_FORM_DEFAULT);
@@ -364,6 +374,9 @@ class Sphinx4Loader extends Sphinx3Loader {
      */
     protected Pool loadTransitionMatricesBinary(String path)
         throws FileNotFoundException, IOException {
+
+	SphinxProperties acousticProperties = super.getAcousticProperties();
+	LogMath logMath = super.getLogMath();
         boolean sparseForm = acousticProperties.getBoolean
 	    (AcousticModel.PROP_SPARSE_FORM, 
 	     AcousticModel.PROP_SPARSE_FORM_DEFAULT);
@@ -376,6 +389,7 @@ class Sphinx4Loader extends Sphinx3Loader {
 
 
         Properties props = new Properties();
+	String location = super.getLocation();
         DataInputStream dis = readS3BinaryHeader(location, path, props);
 
         String version = props.getProperty("version");
@@ -397,15 +411,17 @@ class Sphinx4Loader extends Sphinx3Loader {
 
         // assert numValues == numStates * numRows * numMatrices;
 
+	int count = 0;
 	for (int i = 0; i < numMatrices; i++) {
 	    numStates = readInt(dis);
 	    float[][] tmat = new float[numStates][];
             // last row should be zeros
-            tmat[numStates -1] = new float[numStates];
+            tmat[numStates - 1] = new float[numStates];
             convertToLogMath(tmat[numStates-1]);
 
 	    for (int j = 0; j < numStates - 1; j++) {
                 tmat[j] = readFloatArray(dis, numStates);
+		count += numStates;
                 nonZeroFloor(tmat[j], 0f);
                 normalize(tmat[j]);
                 convertToLogMath(tmat[j]);
@@ -413,6 +429,7 @@ class Sphinx4Loader extends Sphinx3Loader {
 	    pool.put(i, tmat);
 	}
 	dis.close();
+	assert numValues == count;
 	return pool;
     }
 

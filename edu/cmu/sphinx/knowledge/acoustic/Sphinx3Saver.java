@@ -66,32 +66,33 @@ class Sphinx3Saver implements Saver {
 
     protected final static int BYTE_ORDER_MAGIC = 0x11223344;
 
-    protected String checksum;
-    boolean doCheckSum;
     public final static String MODEL_VERSION = "0.3";
 
     protected final static int CONTEXT_SIZE = 1;
 
 
-    protected Pool meansPool;
-    protected Pool variancePool;
-    protected Pool matrixPool;
-    protected Pool meanTransformationMatrixPool;
-    protected Pool meanTransformationVectorPool;
-    protected Pool varianceTransformationMatrixPool;
-    protected Pool varianceTransformationVectorPool;
-    protected Pool mixtureWeightsPool;
+    private String checksum;
+    private boolean doCheckSum;
 
-    protected Pool senonePool;
-    protected int vectorLength;
+    private Pool meansPool;
+    private Pool variancePool;
+    private Pool matrixPool;
+    private Pool meanTransformationMatrixPool;
+    private Pool meanTransformationVectorPool;
+    private Pool varianceTransformationMatrixPool;
+    private Pool varianceTransformationVectorPool;
+    private Pool mixtureWeightsPool;
 
-    protected Map contextIndependentUnits;
-    protected HMMManager hmmManager;
-    protected LogMath logMath;
-    protected SphinxProperties acousticProperties;
-    protected boolean binary = false;
-    protected String location;
-    protected boolean swap;
+    private Pool senonePool;
+    private int vectorLength;
+
+    private Map contextIndependentUnits;
+    private HMMManager hmmManager;
+    private LogMath logMath;
+    private SphinxProperties acousticProperties;
+    private boolean binary = false;
+    private String location;
+    private boolean swap;
 
     protected final static String DENSITY_FILE_VERSION = "1.0";
     protected final static String MIXW_FILE_VERSION = "1.0";
@@ -139,6 +140,52 @@ class Sphinx3Saver implements Saver {
 
         // do the actual acoustic model loading
         saveModelFiles(modelName, props);
+    }
+
+    /**
+     * Return the checksum string.
+     *
+     * @return the checksum
+     */
+    protected String getCheckSum() {
+	return checksum;
+    }
+
+    /**
+     * Return whether to do the dochecksum. If true, checksum is
+     * performed.
+     *
+     * @return the dochecksum
+     */
+    protected boolean getDoCheckSum() {
+	return doCheckSum;
+    }
+
+    /**
+     * Return the LogMath.
+     *
+     * @return the logMath
+     */
+    protected LogMath getLogMath() {
+	return logMath;
+    }
+
+    /**
+     * Return the acousticProperties.
+     *
+     * @return the acousticProperties
+     */
+    protected SphinxProperties getAcousticProperties() {
+	return acousticProperties;
+    }
+
+    /**
+     * Return the location.
+     *
+     * @return the location
+     */
+    protected String getLocation() {
+	return location;
     }
 
 
@@ -1098,7 +1145,7 @@ class Sphinx3Saver implements Saver {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException if an error occurs while saving the data
      */
-    private void saveTransitionMatricesBinary(Pool pool, String path, 
+    protected void saveTransitionMatricesBinary(Pool pool, String path, 
 					      boolean append)
         throws FileNotFoundException, IOException {
 
