@@ -41,6 +41,7 @@ import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
+ * <p>
  * A Microphone captures audio data from the system's underlying
  * audio input systems. Converts these audio data into Data
  * objects. When the method <code>startRecording()</code> is called,
@@ -48,6 +49,17 @@ import edu.cmu.sphinx.util.props.Registry;
  * audio, and will stop when <code>stopRecording()</code>
  * is called. Calling <code>getData()</code> returns the captured audio
  * data as Data objects.
+ * </p>
+ * <p>
+ * This Microphone will attempt to obtain an audio device with the format
+ * specified in the configuration. If such a device with that format
+ * cannot be obtained, it will try to obtain a device with an audio format
+ * that has a higher sample rate than the configured sample rate,
+ * while the other parameters of the format (i.e., sample size, endianness,
+ * sign, and channel) remain the same. If, again, no such device can be
+ * obtained, it flags an error, and a call <code>startRecording</code> 
+ * returns false.
+ * </p>
  */
 public class Microphone extends BaseDataProcessor {
 
@@ -69,6 +81,11 @@ public class Microphone extends BaseDataProcessor {
      */
     public final static String PROP_CLOSE_BETWEEN_UTTERANCES =
 	"closeBetweenUtterances";
+
+    /**
+     * Default value for PROP_CLOSE_BETWEEN_UTTERANCES.
+     */
+    public final static boolean PROP_CLOSE_BETWEEN_UTTERANCES_DEFAULT = true;
 
     /**
      * The Sphinx property that specifies the number of milliseconds of
@@ -103,6 +120,26 @@ public class Microphone extends BaseDataProcessor {
     public static final int PROP_CHANNELS_DEFAULT = 1;
 
     /**
+     * Property specify the endianness of the data.
+     */
+    public static final String PROP_BIG_ENDIAN = "bigEndian";
+
+    /**
+     * Default value for PROP_BIG_ENDIAN.
+     */
+    public static final boolean PROP_BIG_ENDIAN_DEFAULT = true;
+
+    /**
+     * Property specify whether the data is signed.
+     */
+    public static final String PROP_SIGNED = "signed";
+
+    /**
+     * Default value for PROP_SIGNED.
+     */
+    public static final boolean PROP_SIGNED_DEFAULT = true;
+
+    /**
      * The Sphinx property that specifies whether to keep the audio
      * data of an utterance around until the next utterance is recorded.
      */
@@ -122,11 +159,11 @@ public class Microphone extends BaseDataProcessor {
     private Logger logger;
     private TargetDataLine audioLine = null;
     private Utterance currentUtterance;
-    private boolean bigEndian = true;
-    private boolean closeBetweenUtterances = true;
+    private boolean bigEndian;
+    private boolean closeBetweenUtterances;
     private boolean doConversion = false;
-    private boolean keepDataReference = true;
-    private boolean signed = true;
+    private boolean keepDataReference;
+    private boolean signed;
     private int audioBufferSize = 160000;
     private int channels;
     private int frameSizeInBytes;
@@ -152,6 +189,8 @@ public class Microphone extends BaseDataProcessor {
         registry.register(PROP_MSEC_PER_READ, PropertyType.INT);
         registry.register(PROP_BITS_PER_SAMPLE, PropertyType.INT);
         registry.register(PROP_CHANNELS, PropertyType.INT);
+        registry.register(PROP_BIG_ENDIAN, PropertyType.BOOLEAN);
+        registry.register(PROP_SIGNED, PropertyType.BOOLEAN);
         registry.register(PROP_KEEP_LAST_AUDIO, PropertyType.BOOLEAN);
     }
 
@@ -167,7 +206,8 @@ public class Microphone extends BaseDataProcessor {
         sampleRate = ps.getInt(PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
         
 	closeBetweenUtterances = ps.getBoolean
-            (PROP_CLOSE_BETWEEN_UTTERANCES, true);
+            (PROP_CLOSE_BETWEEN_UTTERANCES,
+             PROP_CLOSE_BETWEEN_UTTERANCES_DEFAULT);
         
         sampleSizeInBytes = ps.getInt
             (PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT)/8;
@@ -176,6 +216,10 @@ public class Microphone extends BaseDataProcessor {
                                 PROP_MSEC_PER_READ_DEFAULT);
 
         channels = ps.getInt(PROP_CHANNELS, PROP_CHANNELS_DEFAULT);
+
+        bigEndian = ps.getBoolean(PROP_BIG_ENDIAN, PROP_BIG_ENDIAN_DEFAULT);
+
+        signed = ps.getBoolean(PROP_SIGNED, PROP_SIGNED_DEFAULT);
 
         keepDataReference = ps.getBoolean
             (PROP_KEEP_LAST_AUDIO, PROP_KEEP_LAST_AUDIO_DEFAULT);
