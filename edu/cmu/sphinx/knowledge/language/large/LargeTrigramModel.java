@@ -169,11 +169,9 @@ public class LargeTrigramModel implements LanguageModel {
      * Called before a recognition
      */
     public void start() {
-        /*
         loadedBigramBuffer.clear();
         loadedTrigramBuffer.clear();
         trigramCache.clear();
-        */
     }
     
     /**
