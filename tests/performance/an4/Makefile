@@ -79,7 +79,7 @@ an4_words_wordlist:
     -Dedu.cmu.sphinx.decoder.linguist.SimpleWordListGrammar.path=./an4_words.wordlist\
     -Dedu.cmu.sphinx.decoder.search.ActiveList.relativeBeamWidth=1E-250 \
     -Dedu.cmu.sphinx.decoder.search.BreadthFirstSearchManager.languageWeight=10.0 \
-    -Dedu.cmu.sphinx.decoder.Linguist.wordInsertionProbability=1.0E-25\
+    -Dedu.cmu.sphinx.decoder.linguist.Linguist.wordInsertionProbability=1.0E-25\
 	edu.cmu.sphinx.decoder.BatchDecoder ./an4.props ./an4_words.batch
 
 
