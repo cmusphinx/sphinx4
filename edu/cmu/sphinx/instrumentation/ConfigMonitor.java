@@ -71,8 +71,8 @@ public class ConfigMonitor implements Configurable, Runnable {
     private boolean showHTML = true;
     private boolean showGDL = true;
     private ConfigurationManager cm;
-    private String htmlPath = "foo.html";
-    private String gdlPath = "foo.gdl";
+    private String htmlPath = "config.html";
+    private String gdlPath = "config.gdl";
 
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
