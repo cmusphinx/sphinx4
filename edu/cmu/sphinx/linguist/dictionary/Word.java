@@ -23,8 +23,12 @@ public class Word implements Serializable {
     /**
      * The Word representing the unknown word.
      */
-    public static final Word UNKNOWN
-        = new Word("<unk>", new Pronunciation[0], false);
+    public static final Word UNKNOWN;
+
+    static {
+        Pronunciation[] pros = { Pronunciation.UNKNOWN };
+        UNKNOWN = new Word("<unk>", pros, false);
+    }
 
     private String spelling;               // the spelling of the word
     private Pronunciation[] pronunciations; // pronunciations of this word
@@ -42,6 +46,9 @@ public class Word implements Serializable {
 	this.spelling = spelling;
         this.pronunciations = pronunciations;
         this.isFiller = isFiller;
+        for (int i = 0; i < this.pronunciations.length; i++) {
+            pronunciations[i].setWord(this);
+        }
     }
 
 
