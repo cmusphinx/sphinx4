@@ -84,6 +84,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
      * last speech segment.
      */
     private boolean mergeSpeechSegments;
+    private boolean discardMode;
 
     private CepstrumSource predecessor;
     private List inputBuffer;
@@ -103,6 +104,7 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
                            CepstrumSource predecessor) throws IOException {
         super(name, context);
         initSphinxProperties();
+        this.discardMode = false;
         this.predecessor = predecessor;
         this.inputBuffer = new LinkedList();
     }
@@ -145,64 +147,86 @@ public class NonSpeechFilter extends DataProcessor implements CepstrumSource {
         getTimer().start();
 
         if (cepstrum != null) {
-
-            if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
-                Cepstrum utteranceStart = cepstrum;
-
-                // Read (and discard) all the Cepstrum from UTTERANCE_START
-                // until we hit a SPEECH_START. The SPEECH_START is discarded.
-                readUntil(Signal.SPEECH_START);
-                cepstrum = utteranceStart;
-                
-            } else if (cepstrum.getSignal().equals(Signal.SPEECH_END)) {
-
-                if (mergeSpeechSegments) {
-                    // read (and discard) all the Cepstrum from SPEECH_END
-                    // until we hit a UTTERANCE_END
-                    List cepstrumList = readUntil(Signal.SPEECH_START,
-                                                  Signal.UTTERANCE_END);
-                    
-                    Cepstrum last = (Cepstrum) cepstrumList.get
-                        (cepstrumList.size() - 1);
-                    
-                    if (last != null) {
-                        if (last.hasSignal(Signal.SPEECH_START)) {
-                            // first remove the SPEECH_START, then add
-                            // all the Cepstra to the inputBuffer
-                            cepstrumList.remove(last);
-                            inputBuffer.addAll(cepstrumList);
-                            cepstrum = readCepstrum();
-                            
-                        } else if (last.hasSignal(Signal.UTTERANCE_END)) {
-                            cepstrum = last;
-                        }
-                    }
-                } else {
-                    // instead of a SPEECH_END, return an UTTERANCE_END
-                    cepstrum = new Cepstrum(Signal.UTTERANCE_END);
-                    
-                    // then read and discard everything up until
-                    // a SPEECH_START or UTTERANCE_END
-                    List cepstrumList = readUntil(Signal.SPEECH_START,
-                                                  Signal.UTTERANCE_END);
-                    Cepstrum last = (Cepstrum) cepstrumList.get
-                        (cepstrumList.size() - 1);
-
-                    if (last != null) {
-                        // if it hit a SPEECH_START, put it back to the
-                        // inputBuffer, so that it will be handled by the
-                        // next call to getCepstrum()
-                        if (last.hasSignal(Signal.SPEECH_START)) {
-                            inputBuffer.add(last);
-                        }
-                    }
-                }
+            if (!mergeSpeechSegments) {
+                cepstrum = handleNonMergingCepstrum(cepstrum);
+            } else {
+                cepstrum = handleMergingCepstrum(cepstrum);
             }
         }
 
         getTimer().stop();
 
+        if (cepstrum != null) {
+            if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
+                System.out.println("NSF: UTTERANCE_START");
+            } else if (cepstrum.hasSignal(Signal.UTTERANCE_END)) {
+                System.out.println("NSF: UTTERANCE_END");
+            }            
+        }
+
         return cepstrum;
+    }
+
+
+    /**
+     * Handles the given Cepstrum in the case when mergeSpeechSegment
+     * is true.
+     */
+    private Cepstrum handleMergingCepstrum(Cepstrum cepstrum) throws
+    IOException {
+        Cepstrum next = cepstrum;
+
+        if (cepstrum.hasSignal(Signal.UTTERANCE_START)) {
+            // Read (and discard) all the Cepstrum from UTTERANCE_START
+            // until we hit a SPEECH_START. The SPEECH_START is discarded.
+            readUntil(Signal.SPEECH_START);
+        } else if (cepstrum.getSignal().equals(Signal.SPEECH_END)) {
+            // read (and discard) all the Cepstrum from SPEECH_END
+            // until we hit a UTTERANCE_END
+            List cepstrumList = readUntil(Signal.SPEECH_START,
+                                          Signal.UTTERANCE_END);
+            Cepstrum last = (Cepstrum) cepstrumList.get
+                (cepstrumList.size() - 1);
+            if (last != null) {
+                if (last.hasSignal(Signal.SPEECH_START)) {
+                    // first remove the SPEECH_START, then add
+                    // all the Cepstra to the inputBuffer
+                    cepstrumList.remove(last);
+                    inputBuffer.addAll(cepstrumList);
+                    next = readCepstrum();
+                        
+                } else if (last.hasSignal(Signal.UTTERANCE_END)) {
+                    next = last;
+                }
+            }
+        }
+        return next;
+    }
+
+
+    /**
+     * Handles the given Cepstrum in the case when mergeSpeechSegment
+     * is false.
+     */
+    private Cepstrum handleNonMergingCepstrum(Cepstrum cepstrum) throws
+    IOException {
+        Cepstrum next = cepstrum;
+        if (cepstrum != null) {
+            if (cepstrum.hasSignal(Signal.SPEECH_START)) {
+                // if we hit a SPEECH_START, we will stop discarding
+                // Cepstrum, and return an UTTERANCE_START instead
+                discardMode = false;
+                next = new Cepstrum(Signal.UTTERANCE_START);
+            } else if (cepstrum.hasSignal(Signal.SPEECH_END)) {
+                // if we hit a SPEECH_END, we will start
+                // discarding Cepstrum, and return an UTTERANCE_END instead
+                discardMode = true;
+                next = new Cepstrum(Signal.UTTERANCE_END);
+            } else if (discardMode) {
+                next = handleNonMergingCepstrum(readCepstrum());
+            }
+        }
+        return next;
     }
 
 
