@@ -9,6 +9,7 @@
 #
 # This script parses the output of S4 and generates a log entry
 
+echo parseLog PATH IS  $PATH
 nawk '
 
 BEGIN {
