@@ -31,7 +31,16 @@
 #  16) correctSentences 
 #  17) heapSize 
 #  18) loadAverage 
-
+#  19) actualUtterances
+#  20) foundUtterances
+#  21) gapInsertions
+#  22) averageResponseTime
+#  23) maxResponseTime
+#  24) minResponseTime
+#  25) correctOutOfGrammar
+#  26) falseOutOfGrammar
+#  27) correctInGrammar
+#  28) falseInGrammar
 
 gawk '
 
@@ -61,7 +70,10 @@ BEGIN {
     F_AVG_RESPONSE_TIME = 22;
     F_MAX_RESPONSE_TIME = 23;
     F_MIN_RESPONSE_TIME = 24;
-
+    F_CORRECT_OOG = 25;
+    F_FALSE_OOG = 26;
+    F_CORRECT_IG = 27;
+    F_FALSE_IG = 28;
     "./getHostname" | getline machine
 }
 
@@ -98,6 +110,17 @@ $1 == "live_test" && $4 == machine && $5 == "s4" {
 }
 
 
+$1 == "rejection_test" && $4 == machine && $5 == "s4" {
+    rejectionTestCount[$F_TEST_NAME] = rejectionTestCount[$F_TEST_NAME] + 1;
+    testData[$F_TEST_NAME rejectionTestCount[$F_TEST_NAME]] = $0;
+    if (lastRejectionTestDate != $F_DATE) {
+	lastRejectionTestDate = $F_DATE;
+	lastRejectionTestCount = 0;
+    }
+    lastRejectionTestData[lastRejectionTestCount++] = $F_TEST_NAME "|" rejectionTestCount[$F_TEST_NAME];
+}
+
+
 $1 == "system"  && $2 == machine {
     machineDescription = $0;
 }
@@ -130,6 +153,14 @@ function getWER(testName, testCount, _errors, _words) {
     } else {
 	return _errors / _words * 100;
     }
+}
+
+####
+# returns the rejection accuracy for the given test
+#
+function getRejectionAccuracy(testName, testCount) {
+    updateData(testName, testCount);
+    return (data[F_CORRECT_OOG] + data[F_CORRECT_IG) / data{F_SENTENCES];
 }
 
 ####
@@ -172,6 +203,14 @@ function getLastGoodWER(testName, count, wer) {
     return wer;
 }
 
+function getLastGoodRejectionAccuracy(testName, count, ra) {
+    do {
+	ra = getRejectionAccuracy(testName, count);
+	count--;
+    } while (count > 0 && ra == "N/A");
+    return ra;
+}
+
 ####
 # returns the accuracy status for the given test
 #
@@ -180,6 +219,16 @@ function getAccuracyStatus(testName, count) {
   prevWER = getLastGoodWER(testName, count - 1);
   return getLessIsBetterMetricStatus(thisWER, prevWER);
 }
+
+####
+# returns the rejection accuracy status for the given test
+#
+function getRejectionAccuracyStatus(testName, count) {
+    thisRA = getRejectionAccuracy(testName, count);
+    prevRA = getLastGoodRejectionAccuracy(testName, count-1);
+    return getMoreIsBetterMetricStatus(thisRA, prevRA);
+}
+
 
 ## Finds the last reported speed
 
@@ -193,6 +242,7 @@ function getLastGoodSpeed(testName, count,  speed) {
     # printf("out last good speed %d [%s]\n", count, speed);
     return speed;
 }
+
 ####
 # returns the speed status for the given test
 #
@@ -329,6 +379,22 @@ function getResponseTime(testName, testCount, INDEX) {
     return responseTime;
 }
 
+function getMoreIsBetterMetricStatus(thisMetric, prevMetric) {
+    if (thisMetric == "N/A") {
+	return "<td bgcolor=#ffcccc>" "N/A" "</td>";
+    }
+    if (prevMetric == "N/A") {
+	return "<td>" thisMetric"</td>";
+    }
+    if (thisMetric < prevMetric) {
+	return "<td bgcolor=#ffcccc>" thisMetric "</td>";
+    }
+    if (thisMetric > prevMetric) {
+	return "<td bgcolor=#99ff99>" thisMetric "</td>";
+    }
+    return "<td>" thisMetric "</td>";
+}
+
 function getLessIsBetterMetricStatus(thisMetric, prevMetric) {
     if (thisMetric == "N/A") {
 	return "<td bgcolor=#ffcccc>" "N/A" "</td>";
@@ -414,6 +480,25 @@ function printSingleLiveTest(testName, testCount) {
 }
 
 
+function printSingleRejectionTest(testName, testCount) {
+    updateData(testName, testCount);
+    date = data[F_DATE];
+    runTime = data[F_PROC_TIME];
+    status = getRunStatus(testName, testCount);
+    rejection = getRejectionAccuracyStatus(testName, testCount);
+    speed = getSpeedStatus(testName, testCount);
+    heap = getHeapStatus(testName, testCount);
+    print "<tr>"
+    print "<td>" dateAnchor(date)  "</td>"
+    print status;
+    print rejection;
+    print speed;
+    print heap;
+    print "<td>" fmtTime(runTime)"</td>";
+    print "</tr>"
+}
+
+
 function printLongSingleTest(testName, testCount) {
     updateData(testName, testCount);
     date = data[F_DATE];
@@ -454,6 +539,24 @@ function printLongSingleLiveTest(testName, testCount) {
     print gapInsertion;
     print utteranceRatio;
     print avgResponseTime;
+    print "</tr>";
+}
+
+
+function printLongSingleRejectionTest(testName, testCount) {
+    updateData(testName, testCount);
+    date = data[F_DATE];
+    status = getRunStatus(testName, testCount);
+    rejectionAccuracy = getRejectionAccuracyStatus(testName, testCount);
+    speed = getSpeedStatus(testName, testCount);
+    heap = getHeapStatus(testName, testCount);
+    print "<tr>";
+    print "<td>" dateAnchor(date)  "</td>";
+    print "<td><a href=#" testName ">" testName  "</a></td>";
+    print status;
+    print rejectionAccuracy;
+    print speed;
+    print heap;
     print "</tr>";
 }
 
@@ -530,6 +633,35 @@ function printLiveTestResults(testName) {
     
     for (i = 1; i <= liveTestCount[testName]; i++) {
 	printSingleLiveTest(testName, i);
+    }
+    print "</tr>";
+    print "<tbody>";
+    print "</table>";
+    print "<br>";
+}
+
+
+function printRejectionTestResults(testName) {
+    print("<br><br>");
+    print("<a name=" testName "></a>");
+    print "<table align=center cellpadding=2 cellspacing=2 border=1 width=60%>";
+    print "<tbody>";
+    print "<tr align=center>";
+    print "<td valign=top rowspan=1 colspan=6 bgcolor=#ccccff>";
+    print "<big><b>" testName "</b></big>";
+    print "<br>"
+    print "</td>";
+    print "</tr>";
+    print "<tr>";
+    print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Rejection Accuracy<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Test Time<br> </b></td>";
+    
+    for (i = 1; i <= testCount[testName]; i++) {
+	printSingleRejectionTest(testName, i);
     }
     print "</tr>";
     print "<tbody>";
@@ -695,16 +827,16 @@ function printMetrics() {
     print(" <td ><b>Number of files </b></td> <td> " data[3] " </td>");
     print(" </tr>");
     print(" <tr>");
-      print(" <td ><b>Number of source files </b></td> <td >" data[4] " </td>");
+    print(" <td ><b>Number of source files </b></td> <td >" data[4] " </td>");
     print(" </tr>");
     print(" <tr>");
-      print(" <td ><b>Number of classes</b></td> <td >" data[5] "</td>");
+    print(" <td ><b>Number of classes</b></td> <td >" data[5] "</td>");
     print(" </tr>");
     print(" <tr>");
-      print(" <td ><b>Source lines of code</b></td> <td >" data[6] "</td>");
+    print(" <td ><b>Source lines of code</b></td> <td >" data[6] "</td>");
     print(" </tr>");
     print(" <tr>");
-      print(" <td ><b>Packages </b></td> <td >" data[7] "</td>");
+    print(" <td ><b>Packages </b></td> <td >" data[7] "</td>");
     print(" </tr>");
     print("</tbody>");
     print("</table>");
@@ -846,6 +978,40 @@ function printLatestLiveTestResults(  _testName, _testCount) {
 }
 
 
+# prints the latest live tests
+
+function printLatestRejectionTestResults(  _testName, _testCount) {
+    print("<br><br>");
+    print("<a name=latest_rejection_results></a>");
+    print "<table align=center cellpadding=2 cellspacing=2 border=1 width=80%>";
+    print "<tbody>";
+    print "<tr align=center>";
+    print "<td valign=top rowspan=1 colspan=9 bgcolor=#ccccff>";
+    print "<big><b>" "Latest Rejection Test Results" "</b></big>";
+    print "<br>"
+    print "</td>";
+    print "</tr>";
+    print "<tr>";
+    print "<td valign=top bgcolor=#ccffff><b>Date<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Test Name<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Run Status<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Rejection Accuracy<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Time (X Realtime)<br> </b></td>";
+    print "<td valign=top bgcolor=#ccffff><b>Avg Heap (MB)<br> </b></td>";
+
+    for (i = 0; i < lastLiveTestCount; i++) {
+        split(lastLiveTestData[i], thisData);
+	_testName = thisData[1];
+	_testCount = thisData[2];
+	printLongSingleRejectionTest(_testName, _testCount);
+    }
+    print "</tr>";
+    print "<tbody>";
+    print "</table>";
+    print "<br>";
+}
+
+
 # prints the table of contents
 
 function printTOC() {
@@ -900,12 +1066,16 @@ END {
     printHeaderTable()
     printLatestTestResults();
     printLatestLiveTestResults();
+    printLatestRejectionTestResults();
     printDetailedTestTitle();
     for (i in testCount) {
         printTestResults(i);
     }
     for (i in liveTestCount) {
 	printLiveTestResults(i);
+    }
+    for (i in rejectionTestCount) {
+	printRejectionTestResults(i);
     }
     printBuildHistory();
     printGlossary();
