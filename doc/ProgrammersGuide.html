@@ -116,6 +116,17 @@ WARRANTIES.
   is done by the <s4keyword>linguist</s4keyword>.
   </p>
   <p>
+  Usually, the search graph also has information about how likely certain
+  words will occur. This information is supplied by the
+  <s4keyword>language model</s4keyword>. Suppose that, in our example,
+  the probability of someone saying "one" (e.g., 0.8) is much higher than 
+  saying "two" (0.2). Then, in the above graph, the probability of the
+  transition between the entry node and the first node of the HMM for W
+  will be 0.8, while the probability of the transition between the entry
+  node and the first node of the HMM for T will be 0.2. The path to
+  "one" will consequently have a higher score.
+  </p>
+  <p>
   Once this graph is constructed, the parametrized speech signal (i.e., the
   features) is matched against different paths through the graph to find
   the best fit. The best fit is usually the least cost or highest
@@ -130,16 +141,6 @@ WARRANTIES.
   take a very long time. The purpose of the <s4keyword>pruner</s4keyword>
   is to reduce the number of possible paths during the search,
   using heuristics like pruning away the lowest scoring paths.
-  </p>
-  <p>
-  Very often, the search can also be guided by what is called the
-  <s4keyword>language model</s4keyword>. Suppose in our example, that the
-  probability of someone saying "one" (e.g., 0.8) is much higher than 
-  saying "two" (0.2). Then, in the above graph, the probability of the
-  transition between the entry node and the first node of the HMM for W
-  will be 0.8, while the probability of the transition between the entry
-  node and the first node of the HMM for T will be 0.2. The path to
-  "one" will consequently have a higher score.
   </p>
   <p>
   As we described earlier, the input speech signal is transformed into a
