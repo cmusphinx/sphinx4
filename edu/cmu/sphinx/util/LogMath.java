@@ -275,8 +275,8 @@ public final class LogMath implements Serializable {
      */
     public final float addAsLinear(float logVal1, float logVal2) {
 	float logHighestValue;
-	float logDifference;
 	float returnValue;
+	float logDifference = logVal1 - logVal2;
 
 	/*
 	 * [ EBG: maybe we should also have a function to add many
@@ -285,9 +285,8 @@ public final class LogMath implements Serializable {
 	 */
 
 	// difference is always a positive number
-	if (logVal1 > logVal2) {
+	if (logDifference > 0) {
 	    logHighestValue = logVal1;
-	    logDifference = logVal1 - logVal2;
 	} else {
 	    logHighestValue = logVal2;
 	    logDifference = logVal2 - logVal1;
@@ -344,23 +343,24 @@ public final class LogMath implements Serializable {
     private final float addTable(float index) 
 	throws IllegalArgumentException {
 
-	if (!useAddTable) {
-	    return addTableActualComputation(index);
-	} else {
+	if (useAddTable) {
 	    // int intIndex = (int) Math.rint(index);
 	    int intIndex = (int) (index + 0.5);
 	    // When adding two numbers, the highest one should be
 	    // preserved, and therefore the difference should always
 	    // be positive.
-	    if (intIndex < 0) {
+            if (0 <= intIndex) {
+                if (intIndex < theAddTable.length) {
+                    return theAddTable[intIndex];
+                } else {
+                    return 0.0f;
+                }
+            } else {
 		throw new IllegalArgumentException("addTable index has " 
 						   + "to be negative");
 	    }
-	    if (intIndex  >= theAddTable.length) {
-		return 0.0f;
-	    } else {
-		return theAddTable[intIndex];
-	    }
+	} else {
+	    return addTableActualComputation(index);
 	}
     }
 
