@@ -27,6 +27,10 @@ import java.util.StringTokenizer;
  * and figures out how many gap insertion errors are there.
  * The hypothesis transcript file should contain timestamps for when
  * each word was entered and exited.
+ * <p>The gap insertion detection algorithm works as follows. It takes each
+ * hypothesized word individually and see whether it falls into a non-speech
+ * region in the reference transcript. If it does, that hypothesized word
+ * is counted as a gap insertion.
  */
 public class GapInsertionDetector {
 
@@ -50,48 +54,32 @@ public class GapInsertionDetector {
         boolean done = false;
         ReferenceUtterance reference = referenceFile.nextUtterance();
         while (!done) {
-            HypothesisUtterance hypothesis = hypothesisFile.nextUtterance();
-            if (hypothesis != null) {
+            HypothesisWord word = hypothesisFile.nextWord();
+            if (word != null) {
                 
                 // go to the relevant reference utterance
                 while (reference != null &&
-                       reference.getEndTime() < hypothesis.getStartTime()) {
+                       reference.getEndTime() < word.getStartTime()) {
                     reference = referenceFile.nextUtterance();
                 }
                 
                 // 'reference' should be the relevant one now
                 if (reference != null) {
-                    if (reference.getStartTime() <= hypothesis.getStartTime()
-                        && hypothesis.getEndTime() <= reference.getEndTime()) {
-                        continue;
-                    }
-                    
-                    // detect gap insertions at the start of utterance
-                    List words = hypothesis.getWords();
-                    for (ListIterator i = words.listIterator(); i.hasNext();) {
-                        HypothesisWord hypoWord = (HypothesisWord)i.next();
-                        if (hypoWord.getStartTime() <
-                            reference.getStartTime()) {
-                            gaps++;
-                            i.remove();
-                        } else {
-                            // no more gap insertion errors at utterance start
-                            break;
+                    if (reference.isSilenceGap()) {
+                        gaps++;
+                    } else {
+                        while (reference.getEndTime() < word.getEndTime()) {
+                            reference = referenceFile.nextUtterance();
+                            if (reference == null ||
+                                reference.isSilenceGap()) {
+                                gaps++;
+                                break;
+                            }
                         }
                     }
-
-                    // detect gap insertions at the end of utterance
-                    for (ListIterator i = words.listIterator(words.size());
-                         i.hasPrevious();) {
-                        HypothesisWord hypoWord = (HypothesisWord)i.previous();
-                        if (reference.getEndTime() < hypoWord.getEndTime()) {
-                            gaps++;
-                            i.remove();
-                        } else {
-                            // no more gap insertion errors at utterance end
-                            break;
-                        }
-                    }
+                } else {
+                    // if no more reference words, this is a gap insertion
+                    gaps++;
                 }
             } else {
                 done = true;
@@ -202,6 +190,7 @@ class ReferenceUtterance {
 class HypothesisFile {
     
     private BufferedReader reader;
+    private Iterator iterator;
 
     /**
      * Creates a HypothesisFile from the given file.
@@ -212,13 +201,29 @@ class HypothesisFile {
         reader = new BufferedReader(new FileReader(fileName));
     }
 
+    HypothesisWord nextWord() throws IOException {
+        if (iterator == null || !iterator.hasNext()) {
+            HypothesisUtterance utterance = nextUtterance();
+            if (utterance != null) {
+                iterator = utterance.getWords().iterator();
+            } else {
+                iterator = null;
+            }
+        }
+        if (iterator == null) {
+            return null;
+        } else {
+            return (HypothesisWord) iterator.next();
+        }
+    }
+
     /**
      * Returns the next available hypothesis utterance.
      *
      * @return the next available hypothesis utterance, or null if 
      *    the end of file has been reached
      */
-    HypothesisUtterance nextUtterance() throws IOException {
+    private HypothesisUtterance nextUtterance() throws IOException {
         String line = reader.readLine();
         if (line != null) {
             return new HypothesisUtterance(line);
