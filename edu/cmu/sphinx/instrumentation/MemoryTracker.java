@@ -90,13 +90,15 @@ public class MemoryTracker
                 PROP_RECOGNIZER, Recognizer.class);
         if (recognizer == null) {
             recognizer = newRecognizer;
+            recognizer.addResultListener(this);
+            recognizer.addStateListener(this);
         } else if (recognizer != newRecognizer) {
             recognizer.removeResultListener(this);
             recognizer.removeStateListener(this);
             recognizer = newRecognizer;
+            recognizer.addResultListener(this);
+            recognizer.addStateListener(this);
         }
-        recognizer.addResultListener(this);
-        recognizer.addStateListener(this);
         showSummary = ps.getBoolean(PROP_SHOW_SUMMARY,
                 PROP_SHOW_SUMMARY_DEFAULT);
         showDetails = ps.getBoolean(PROP_SHOW_DETAILS,

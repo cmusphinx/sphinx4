@@ -138,22 +138,27 @@ public class SpeedTracker
                 PROP_RECOGNIZER, Recognizer.class);
         if (recognizer == null) {
             recognizer = newRecognizer;
+            recognizer.addResultListener(this);
+            recognizer.addStateListener(this);
         } else if (recognizer != newRecognizer) {
             recognizer.removeResultListener(this);
             recognizer.removeStateListener(this);
             recognizer = newRecognizer;
+            recognizer.addResultListener(this);
+            recognizer.addStateListener(this);
         }
-        recognizer.addResultListener(this);
-        recognizer.addStateListener(this);
+
+
         FrontEnd newFrontEnd = (FrontEnd) ps.getComponent(PROP_FRONTEND,
                 FrontEnd.class);
         if (frontEnd == null) {
             frontEnd = newFrontEnd;
+            frontEnd.addSignalListener(this);
         } else if (frontEnd != newFrontEnd) {
             frontEnd.removeSignalListener(this);
             frontEnd = newFrontEnd;
+            frontEnd.addSignalListener(this);
         }
-        frontEnd.addSignalListener(this);
         showSummary = ps.getBoolean(PROP_SHOW_SUMMARY,
                 PROP_SHOW_SUMMARY_DEFAULT);
         showDetails = ps.getBoolean(PROP_SHOW_DETAILS,

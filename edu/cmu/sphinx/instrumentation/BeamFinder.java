@@ -122,13 +122,15 @@ public class BeamFinder implements Configurable, ResultListener, StateListener {
 
         if (recognizer == null) {
             recognizer = newRecognizer;
+            recognizer.addResultListener(this);
+            recognizer.addStateListener(this);
         } else if (recognizer != newRecognizer) {
             recognizer.removeResultListener(this);
             recognizer.removeStateListener(this);
             recognizer = newRecognizer;
+            recognizer.addResultListener(this);
+            recognizer.addStateListener(this);
         }
-        recognizer.addResultListener(this);
-        recognizer.addStateListener(this);
 
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
 

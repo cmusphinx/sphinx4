@@ -76,11 +76,12 @@ public class RecognizerMonitor implements Configurable, StateListener {
                 PROP_RECOGNIZER, Recognizer.class);
         if (recognizer == null) {
             recognizer = newRecognizer;
+            recognizer.addStateListener(this);
         } else if (recognizer != newRecognizer) {
             recognizer.removeStateListener(this);
             recognizer = newRecognizer;
+            recognizer.addStateListener(this);
         }
-        recognizer.addStateListener(this);
         allocatedMonitors = ps.getComponentList(PROP_ALLOCATED_MONITORS,
                 Runnable.class);
         deallocatedMonitors = ps.getComponentList(PROP_DEALLOCATED_MONITORS,
