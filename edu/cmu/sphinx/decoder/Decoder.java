@@ -134,6 +134,11 @@ public class Decoder {
     private float cumulativeAudioTime = 0.0f;
     private float cumulativeProcessingTime = 0.0f;
 
+    private float maxMemoryUsed = 0.0f;
+    private float avgMemoryUsed = 0.0f;
+
+    private int numMemoryStats = 0; // # of times memory stats are collected
+
     private boolean showPartialResults = false;
     private boolean showBestToken = false;
     private boolean showErrorToken = false;
@@ -535,17 +540,30 @@ public class Decoder {
      * Shows the size of the heap used
      */
     private void showMemoryUsage() {
+
+	numMemoryStats++;
+	
 	float totalMem = Runtime.getRuntime().totalMemory() / (1024.0f
 		* 1024.0f);
 	float freeMem = Runtime.getRuntime().freeMemory() / (1024.0f
 		* 1024.0f);
 
 	float usedMem = totalMem - freeMem;
+	
+	if (usedMem > maxMemoryUsed) {
+	    maxMemoryUsed = usedMem;
+	}
 
-	System.out.println(
-	    "   Mem Total: " + memFormat.format(totalMem) + " " +
-	    "Free: " + memFormat.format(freeMem) + " " +
-	    "Used: " + memFormat.format(usedMem));
+	avgMemoryUsed = 
+	    ((avgMemoryUsed * (numMemoryStats - 1)) + usedMem)/numMemoryStats;
+
+	System.out.println
+	    ("   Mem  Total: " + memFormat.format(totalMem) + "  " +
+	     "Free: " + memFormat.format(freeMem));
+	System.out.println
+	    ("   Used: This: " + memFormat.format(usedMem) + "  " +
+	     "Avg: " + memFormat.format(avgMemoryUsed) + "  " +
+	     "Max: " + memFormat.format(maxMemoryUsed));
     }
 
     /**
