@@ -103,6 +103,15 @@ In order of complexity, the tasks are as follows:
 		   http://www.ldc.upenn.edu/Catalog/LDC97S44.html
 		   http://www.ldc.upenn.edu/Catalog/LDC98S71.html
 
+Furthermore, we identified priorities for how issues will be
+addressed.  The priorities are as follows.  More "*"'s mean
+a higher priority:
+
+	**** Flexibility
+	 *** Accuracy
+	 *** Speed
+	  ** Footprint
+
 
 Performance Metrics:
 -------------------
@@ -124,7 +133,8 @@ Accuracy:  Word error rate (deletion, substitution, insertion)
 	   Sentence error rate
 	   N-besting (does correct answer exist in top X?)
 	   Lattice (is there a path that gives you the right answer?)
-	   
+	   Ability to reject out of vocabulary or out of grammar
+
 All metrics gathered must also include reference to the recognition
 parameters used (e.g., beam width, thresholds, etc.).
 
