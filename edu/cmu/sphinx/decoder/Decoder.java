@@ -39,7 +39,7 @@ public class Decoder {
      */
 
     private  final static String PROP_PREFIX = 
-	"edu.cmu.sphinx.decoder.search.Decoder.";
+	"edu.cmu.sphinx.decoder.Decoder.";
 
     /**
      * A SphinxProperty name for a boolean property that when set will
