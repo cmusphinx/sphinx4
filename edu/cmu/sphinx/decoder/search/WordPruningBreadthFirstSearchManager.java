@@ -474,36 +474,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         // activeListManager.dump();
     }
 
-    /**
-     * Grows the emitting branches. This version applies a simple acoustic
-     * lookahead based upon the current acoustic score.
-     */
-    protected void growEmittingBranchesOld() {
-        if (acousticLookaheadFrames > 0F) {
-            growTimer.start();
-            float bestScore = -Float.MAX_VALUE;
-            for (Iterator i = activeList.iterator(); i.hasNext();) {
-                Token t = (Token) i.next();
-                float score = t.getScore() + t.getAcousticScore()
-                        * acousticLookaheadFrames;
-                if (score > bestScore) {
-                    bestScore = score;
-                }
-                t.setWorkingScore(score);
-            }
-            float relativeBeamThreshold = bestScore + relativeBeamWidth;
-
-            for (Iterator i = activeList.iterator(); i.hasNext();) {
-                Token t = (Token) i.next();
-                if (t.getWorkingScore() >= relativeBeamThreshold) {
-                    collectSuccessorTokens(t);
-                }
-            }
-            growTimer.stop();
-        } else {
-            growBranches();
-        }
-    }
 
     /**
      * Grows the emitting branches. This version applies a simple acoustic
@@ -537,22 +507,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     }
 
 
-    /**
-     * Given a token find the most recent predecessor emitting token
-     * 
-     * @param t
-     *                the token to start searching from
-     * 
-     * @return the most recent emitting token, or null
-     */
-    protected Token getLastEmittingToken(Token t) {
-        while ((t = t.getPredecessor()) != null) {
-            if (t.isEmitting()) {
-                break;
-            }
-        }
-        return t;
-    }
 
     /**
      * Grow the non-emitting ActiveLists, until the tokens reach an emitting
@@ -840,13 +794,13 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
                 setBestToken(newBestToken, nextState);
                 if (firstToken) {
-                    activeListManager.add(newBestToken);
+                    activeListAdd(newBestToken);
                 } else {
                     if (false) {
                         System.out.println("Replacing " + bestToken + " with "
                                 + newBestToken);
                     }
-                    activeListManager.replace(bestToken, newBestToken);
+                    activeListReplace(bestToken, newBestToken);
                     if (buildWordLattice && newBestToken.isWord()) {
 
                         // Move predecessors of bestToken to precede
@@ -865,6 +819,14 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                 }
             }
         }
+    }
+
+    protected void activeListAdd(Token token) {
+        activeListManager.add(token);
+    }
+
+    protected void activeListReplace(Token old, Token newToken) {
+        activeListManager.replace(old, newToken);
     }
 
     // FRAME Skew

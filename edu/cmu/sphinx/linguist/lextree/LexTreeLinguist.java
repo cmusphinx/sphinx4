@@ -231,10 +231,20 @@ public class LexTreeLinguist implements Linguist {
      */
     public final static String PROP_DICTIONARY = "dictionary";
 
+    /**
+     * A sphinx property that defines the size of the arc cache (zero
+     * to disable the cache).
+     */
+    public final static String PROP_CACHE_SIZE = "cacheSize";
+
+    /**
+     * Property that defines the dictionary to use for this grammar
+     */
+    public final static int PROP_CACHE_SIZE_DEFAULT = 0;
+
     // just for detailed debugging
     private final boolean tracing = false;
     private final static SearchStateArc[] EMPTY_ARC = new SearchStateArc[0];
-    private static boolean cacheEnabled = false;
 
     // ----------------------------------
     // Subcomponents that are configured
@@ -257,7 +267,8 @@ public class LexTreeLinguist implements Linguist {
     private boolean wantUnigramSmear = true;
     private float unigramSmearWeight = 1.0f;
     private float unigramSmearOffset = .0f;
-    private int maxArcCacheSize = 20000;
+    private boolean cacheEnabled = false;
+    private int maxArcCacheSize = 0;
 
     private float languageWeight;
     private float logWordInsertionProbability;
@@ -307,6 +318,7 @@ public class LexTreeLinguist implements Linguist {
         registry.register(PROP_ADD_FILLER_WORDS, PropertyType.BOOLEAN);
         registry.register(PROP_GENERATE_UNIT_STATES, PropertyType.BOOLEAN);
         registry.register(PROP_UNIGRAM_SMEAR_WEIGHT, PropertyType.FLOAT);
+        registry.register(PROP_CACHE_SIZE, PropertyType.INT);
     }
 
     /*
@@ -348,8 +360,17 @@ public class LexTreeLinguist implements Linguist {
                 PROP_GENERATE_UNIT_STATES_DEFAULT));
         unigramSmearWeight = ps.getFloat(PROP_UNIGRAM_SMEAR_WEIGHT,
                 PROP_UNIGRAM_SMEAR_WEIGHT_DEFAULT);
+        int newMaxArcCacheSize = ps.getInt(PROP_CACHE_SIZE,
+                PROP_CACHE_SIZE_DEFAULT);
         
-        logOne = LogMath.getLogOne();
+        // if the new size of the arc cache is less than before
+        // just clear out the cache, since we can easily grow it
+        // but not easily shrink it.
+        if (newMaxArcCacheSize < maxArcCacheSize) {
+            arcCache = new ArcCache();
+        }
+        maxArcCacheSize = newMaxArcCacheSize;
+        cacheEnabled = maxArcCacheSize > 0;
     }
 
     /*
@@ -825,6 +846,12 @@ public class LexTreeLinguist implements Linguist {
             return toString();
         }
 
+        /**
+         * Gets the successor arcs for this state from the cache
+         *
+         * @return the next set of arcs for this state, or null if
+         * none can be found or if caching is disabled.
+         */
         SearchStateArc[] getCachedArcs() {
             if (cacheEnabled) {
                 SearchStateArc[] arcs = (SearchStateArc[]) arcCache.get(this);
@@ -833,7 +860,8 @@ public class LexTreeLinguist implements Linguist {
                 }
                 if (++cacheTrys % 1000000 == 0) {
                     System.out.println("Hits: " + cacheHits 
-                            + " of " + cacheTrys);
+                            + " of " + cacheTrys + " " + 
+                            ((float) cacheHits) / cacheTrys * 100f);
                 }
                 return arcs;
             } else {
@@ -841,6 +869,11 @@ public class LexTreeLinguist implements Linguist {
             }
         }
 
+        /**
+         * Puts the set of arcs into the cache
+         *
+         * @param arcs the arcs to cache.
+         */
         void putCachedArcs(SearchStateArc[] arcs) {
             if (cacheEnabled) {
                 arcCache.put(this, arcs);
@@ -1549,5 +1582,4 @@ public class LexTreeLinguist implements Linguist {
         }
     }
 }
-
 
