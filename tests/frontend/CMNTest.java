@@ -16,8 +16,8 @@ package tests.frontend;
 import edu.cmu.sphinx.frontend.Cepstrum;
 import edu.cmu.sphinx.frontend.LiveCMN;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.MelCepstrumProducer;
-import edu.cmu.sphinx.frontend.MelFilterbank;
+import edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer;
+import edu.cmu.sphinx.frontend.mfc.MelFilterbank;
 import edu.cmu.sphinx.frontend.SpectrumAnalyzer;
 import edu.cmu.sphinx.frontend.Windower;
 import edu.cmu.sphinx.frontend.Preemphasizer;
@@ -53,8 +53,9 @@ public class CMNTest {
             MelFilterbank melFilterbank = new MelFilterbank
                 ("MelFilter", testName, spectrumAnalyzer);
 	    MelCepstrumProducer melCepstrum = new MelCepstrumProducer
-                ("MelCepstrum", testName, melFilterbank);
-            LiveCMN cmn = new LiveCMN("CMN", testName, melCepstrum);
+		("MelCepstrum", testName, melFilterbank);
+            
+	    LiveCMN cmn = new LiveCMN("CMN", testName, melCepstrum);
 
             cmn.setDump(fet.getDump());
 

@@ -14,7 +14,7 @@
 package tests.frontend;
 
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.MelFilterbank;
+import edu.cmu.sphinx.frontend.mfc.MelFilterbank;
 import edu.cmu.sphinx.frontend.Spectrum;
 import edu.cmu.sphinx.frontend.SpectrumAnalyzer;
 import edu.cmu.sphinx.frontend.Windower;

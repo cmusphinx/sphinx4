@@ -18,8 +18,8 @@ import edu.cmu.sphinx.frontend.LiveCMN;
 import edu.cmu.sphinx.frontend.Feature;
 import edu.cmu.sphinx.frontend.FeatureExtractor;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.MelCepstrumProducer;
-import edu.cmu.sphinx.frontend.MelFilterbank;
+import edu.cmu.sphinx.frontend.mfc.MelCepstrumProducer;
+import edu.cmu.sphinx.frontend.mfc.MelFilterbank;
 import edu.cmu.sphinx.frontend.SpectrumAnalyzer;
 import edu.cmu.sphinx.frontend.Windower;
 import edu.cmu.sphinx.frontend.Preemphasizer;
@@ -55,8 +55,9 @@ public class FeatureExtractorTest {
             MelFilterbank melFilterbank = new MelFilterbank
                 ("MelFilter", testName, spectrumAnalyzer);
 	    MelCepstrumProducer melCepstrum = new MelCepstrumProducer
-                ("MelCepstrum", testName, melFilterbank);
-            LiveCMN cmn = new LiveCMN
+		("MelCepstrum", testName, melFilterbank);
+            
+	    LiveCMN cmn = new LiveCMN
                 ("CMN", testName, melCepstrum);
             FeatureExtractor extractor = new FeatureExtractor
                 ("FeatureExtractor", testName, cmn);
