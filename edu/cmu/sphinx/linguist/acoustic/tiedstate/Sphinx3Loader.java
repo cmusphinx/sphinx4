@@ -456,7 +456,7 @@ private Pool createSenonePool(float distFloor, float varianceFloor) {
     private SphinxProperties loadAcousticPropertiesFile(URL url)
             throws FileNotFoundException, IOException {
         //TODO what to do for prefix here
-        String context = "acoustic." + getName();
+        String context = "acoustic." + getName() + "." + url.toString();
         SphinxProperties.initContext(context, url);
         return (SphinxProperties.getSphinxProperties(context));
     }
