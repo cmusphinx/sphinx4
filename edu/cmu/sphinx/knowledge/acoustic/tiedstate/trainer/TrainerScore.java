@@ -15,13 +15,13 @@ package edu.cmu.sphinx.knowledge.acoustic.tiedstate.trainer;
 import edu.cmu.sphinx.knowledge.acoustic.tiedstate.*;
 import edu.cmu.sphinx.knowledge.acoustic.*;
 
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
 
 /**
  * Used to transfer data from the trainer to the acoustic model
  */
 public class TrainerScore {
-    private Feature feature;
+    private Data feature;
     private float logOutputProbability;
     private float logScalingFactor;
     private int senoneID;
@@ -41,7 +41,7 @@ public class TrainerScore {
      * @param probability the score for the current frame
      * @param senone the id for the current senone
      */
-    public TrainerScore(Feature feature, float probability, int senone) {
+    public TrainerScore(Data feature, float probability, int senone) {
 	this.feature = feature;
 	this.logOutputProbability = probability;
 	this.senoneID = senone;
@@ -66,7 +66,7 @@ public class TrainerScore {
      * @param logComponentProb the mixture component a posteriori
      * probabilities
      */
-    public TrainerScore(Feature feature, 
+    public TrainerScore(Data feature, 
 			float probability, 
 			HMMState state,
 			float logAlpha,
@@ -123,7 +123,7 @@ public class TrainerScore {
      * @param logComponentProb the mixture component a posteriori
      * probabilities
      */
-    public TrainerScore(Feature feature, 
+    public TrainerScore(Data feature, 
 			float probability, 
 			HMMState state,
 			float logAlpha,
@@ -140,7 +140,7 @@ public class TrainerScore {
      * @param logComponentProb the mixture component a posteriori
      * probabilities
      */
-    public TrainerScore(Feature feature, 
+    public TrainerScore(Data feature, 
 			float probability, 
 			HMMState state,
 			float[] logComponentProb) {
@@ -154,18 +154,18 @@ public class TrainerScore {
      * @param probability the score for the current frame
      * @param state the HMMState for this score object
      */
-    public TrainerScore(Feature feature, 
+    public TrainerScore(Data feature, 
 			float probability, 
 			HMMState state) {
 	this(feature, probability, state, 0.0f, 0.0f, null);
     }
 
     /**
-     * Retrieves the Feature.
+     * Retrieves the Data.
      *
-     * @return the Feature
+     * @return the Data
      */
-    public Feature getFeature() {
+    public Data getData() {
 	return feature;
     }
 

@@ -18,7 +18,7 @@ import edu.cmu.sphinx.knowledge.acoustic.HMMState;
 import edu.cmu.sphinx.knowledge.acoustic.HMMStateArc;
 import edu.cmu.sphinx.knowledge.acoustic.AcousticModel;
 import edu.cmu.sphinx.knowledge.acoustic.HMMPosition;
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 
@@ -327,7 +327,7 @@ class TrivialHMMState implements HMMState {
      *
      * @return the acoustic score for this state.
      */
-    public float getScore(Feature feature) {
+    public float getScore(Data feature) {
         return 0.0f;
     }
 

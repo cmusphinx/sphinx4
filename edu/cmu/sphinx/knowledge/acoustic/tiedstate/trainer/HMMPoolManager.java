@@ -22,7 +22,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import edu.cmu.sphinx.frontend.Feature;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.LogMath;
 
@@ -174,7 +175,7 @@ class HMMPoolManager {
 	int senoneID;
 	TrainerScore thisScore = score[index];
 
-	Feature feature = thisScore.getFeature();
+	Data feature = thisScore.getData();
 	// We should be doing this just once per utterance...
 	// currentLogLikelihood = thisScore.getLogLikelihood();
 
@@ -227,7 +228,7 @@ class HMMPoolManager {
 		assert indexMean >= 0;
 		assert indexMean == senone;
 		Buffer buffer = (Buffer) meansBufferPool.get(indexMean);
-		float[] feature = score.getFeature().getFeatureData();
+		float[] feature = ((FloatData) score.getData()).getValues();
 		double[] data = new double[feature.length];
 		float prob = score.getComponentGamma()[i];
 		prob -= currentLogLikelihood;
@@ -261,7 +262,7 @@ class HMMPoolManager {
 		int indexVariance = indexInMap.intValue();
 		Buffer buffer = 
 		    (Buffer) varianceBufferPool.get(indexVariance);
-		float[] feature = score.getFeature().getFeatureData();
+		float[] feature = ((FloatData) score.getData()).getValues();
 		double[] data = new double[feature.length];
 		float prob = score.getComponentGamma()[i];
 		prob -= currentLogLikelihood;
