@@ -297,8 +297,7 @@ public class LiveFrame extends JFrame {
         setRecognitionLabel("");
         
         // start recording
-        live.getDecoder().getMicrophone().clear();
-        if (live.getDecoder().getMicrophone().startRecording()) {
+        if (live.startRecording()) {
             setMessage("OK, start speaking...");
             live.decode();
         } else {
@@ -316,12 +315,7 @@ public class LiveFrame extends JFrame {
         
         // update GUI states
         setGUISpeakingState(false);
-        // setRecognitionLabel("");
-        
-        // stop recording, now decode
-        String reference = textToSayArea.getText();
-        LiveDecoder decoder = live.getDecoder();
-        decoder.getMicrophone().stopRecording();
+        live.stopRecording();
     }
 
 

@@ -95,7 +95,7 @@ public class Live {
      * @param decodersFile a file listing all the available decoders
      */
     public Live(String decoderListFile) throws IOException, 
-    LineUnavailableException {
+                                               LineUnavailableException {
         String pwd = System.getProperty("user.dir");
         currentDirectory = new File(pwd);
 
@@ -112,6 +112,14 @@ public class Live {
         liveFrame = new LiveFrame("Live Decoder!", this, hasEndpointer);
         liveFrame.show();
 
+        initializeFirstDecoder();
+        audioPlayer = new AudioPlayer();
+    }
+
+    /**
+     * Load the first decoder in the list of decoders.
+     */
+    private void initializeFirstDecoder() {
         // initialize the first decoder
         if (decoderNameList.getSize() > 0) {
             String firstDecoder = System.getProperty("firstDecoder");
@@ -122,8 +130,6 @@ public class Live {
             liveFrame.setDecoderComboBox(firstDecoder);
             info("... done initializing\n");
         }
-
-        audioPlayer = new AudioPlayer();
     }
 
 
@@ -156,6 +162,20 @@ public class Live {
         (new DecodingThread()).start();
     }
 
+    /**
+     * Start recording.
+     */
+    public boolean startRecording() {
+        getDecoder().getMicrophone().clear();
+        return getDecoder().getMicrophone().startRecording();
+    }
+
+    /**
+     * Stop recording.
+     */
+    public void stopRecording() {
+        getDecoder().getMicrophone().stopRecording();
+    }
 
     /**
      * Plays the last recorded utterance.
