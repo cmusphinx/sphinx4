@@ -114,7 +114,7 @@ $F_TEST == "test"  && ($F_MACHINE == machine || machine == "any") \
 	&& ($F_TEST_NAME in tests || testList == "any") && \
 	   ($F_SYSTEM == whichSystem) {
     tag = $F_TEST_NAME;
-    if (mode == "latest") {
+    if (mode == "latest" && $F_STATUS == "OK") {
         testData[tag] = $0;
     } else if (mode == "fastest") {
         speed = getSpeedFromLine($0);
@@ -186,6 +186,26 @@ function getAccuracy(testName) {
      return getAccuracyFromLine(testData[testName]);
 }
 
+####
+# returns the date for the given test/system
+#
+function getDateFromLine(line) {
+     split(line, data);
+    _date = data[F_DATE];
+    _status = data[F_STATUS];
+
+    if (_date == "" || _status != "OK") {
+        return NOT_AVAILABLE;
+    } else {
+	return _date;
+    }
+}
+
+function getDate(testName) {
+     return getDateFromLine(testData[testName]);
+}
+
+
 function get(testName, field) {
 # very inefficient, but fast enough for what we are doing
     split(testData[testName], _data);
@@ -215,18 +235,20 @@ function dumpTest(testName) {
        return;
    }
    printf("<tr> <td> <font color=#018888> %s </font></td>", testName);
-   printf("<td>%s", getSpeed(testName));
+   printf("<td>%s</td>", getSpeed(testName));
    words = get(testName, F_WORDS);
-   printf("<td>%s", words);
-   printf("<td>%s", getPercent(get(testName, F_INSERTIONS), words));
-   printf("<td>%s", getPercent(get(testName, F_DELETIONS), words));
-   printf("<td>%s", getPercent(get(testName, F_SUBSTITUTIONS), words));
-   printf("<td>%s", getAccuracy(testName));
+   printf("<td>%s</td>", words);
+   printf("<td>%s</td>", getPercent(get(testName, F_INSERTIONS), words));
+   printf("<td>%s</td>", getPercent(get(testName, F_DELETIONS), words));
+   printf("<td>%s</td>", getPercent(get(testName, F_SUBSTITUTIONS), words));
+   printf("<td>%s</td>", getAccuracy(testName));
    sentences = get(testName, F_SENTENCES);
-   printf("<td>%s", sentences);
+   printf("<td>%s</td>", sentences);
    correctSentences = get(testName, F_CORRECT_SENTENCES);
    sentencesWithErrors = sentences - correctSentences;
-   printf("<td>%s", getPercent(sentencesWithErrors, sentences));
+   printf("<td>%s</td>", getPercent(sentencesWithErrors, sentences));
+   testDate = getDate(testName);
+   printf("<td> %s </td>", testDate);
    printf("</tr>\n");
 }
 
@@ -255,6 +277,7 @@ function dumpTitle(  i) {
     printf("<th> %s ", "Word Error Rate (%)");
     printf("<th> %s ", "Num Sentences");
     printf("<th> %s ", "Sentence Error Rate");
+    printf("<th> %s ", "Date");
     printf("</tr>\n");
 }
 

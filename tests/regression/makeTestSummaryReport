@@ -113,7 +113,7 @@ BEGIN {
 $F_TEST == "test"  && ($F_MACHINE == machine || machine == "any") \
 	&& ($F_TEST_NAME in tests || testList == "any") {
     tag = $F_TEST_NAME "-" $F_SYSTEM;
-    if (mode == "latest") {
+    if (mode == "latest" && $F_STATUS == "OK") {
         testData[tag] = $0;
     } else if (mode == "fastest") {
         speed = getSpeedFromLine($0);
@@ -186,7 +186,7 @@ function getAccuracy(testName, systemName) {
 }
 
 ####
-# returns the accuracy for the given test/system
+# returns the date for the given test/system
 #
 function getDateFromLine(line) {
      split(line, data);
