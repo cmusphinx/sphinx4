@@ -19,6 +19,7 @@ import edu.cmu.sphinx.frontend.Utterance;
 import edu.cmu.sphinx.search.Recognizer;
 import edu.cmu.sphinx.search.ResultListener;
 import edu.cmu.sphinx.search.Result;
+import edu.cmu.sphinx.search.Token;
 import edu.cmu.sphinx.util.ResultAnalyzer;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StatisticsVariable;
@@ -81,6 +82,8 @@ public class Decoder {
     private boolean showPartialResults = false;
     private boolean showBestToken = false;	
     private boolean showErrorToken = false;
+
+    private boolean findResult = true;
 
 
     /**
@@ -291,7 +294,21 @@ public class Decoder {
 	    if (result.getBestToken() != null) {
 		result.getBestToken().dumpTokenPath();
 	    }
+    }
+
+	System.out.print("   HypScore: " 
+		    + result.getBestToken().getScore());
+	if (!match) {
+	    Token  matchingToken = result.findToken(ref);
+	    if (matchingToken != null) {
+		System.out.print(
+			"  ActScore: " + matchingToken.getScore());
+	    } else {
+		System.out.print("  ActScore: NONE");
+	    }
 	}
+
+	System.out.println();
 
         processingTime = timer.getCurTime() / 1000.f;
         audioTime = getAudioTime(result);
