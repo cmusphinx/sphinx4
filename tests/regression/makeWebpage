@@ -15,19 +15,20 @@
 #   2) date
 #   3) time
 #   4) machine
-#   5) testName 
-#   6) who 
-#   7) status
-#   8) audioTime 
-#   9) procTime 
-#   0) words 
-#  11) insertions 
-#  12) deletions 
-#  13) substitutions 
-#  14) sentences 
-#  15) correctSentences 
-#  16) heapSize 
-#  17) loadAverage 
+#   5) System
+#   6) testName 
+#   7) who 
+#   8) status
+#   9) audioTime 
+#  10) procTime 
+#  11) words 
+#  12) insertions 
+#  13) deletions 
+#  14) substitutions 
+#  15) sentences 
+#  16) correctSentences 
+#  17) heapSize 
+#  18) loadAverage 
 
 nawk '
 
@@ -60,7 +61,7 @@ $1 == "build" && $4 == machine {
     buildData[buildCount] = $0;
 }
 
-$1 == "test"  && $4 == machine {
+$1 == "test"  && $4 == machine && $5 == "s4" {
     testCount[$F_TEST_NAME] = testCount[$F_TEST_NAME] + 1;
     testData[$F_TEST_NAME testCount[$F_TEST_NAME]] = $0;
 }

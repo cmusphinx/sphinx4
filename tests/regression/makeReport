@@ -9,17 +9,18 @@
 #
 # This script parses the regression log and presents a quick report
 # Field definitions: 
+# Field definitions: 
 #   1) "test"
 #   2) date
 #   3) time
 #   4) machine
-#   5) machine
-#   6) System
+#   5) System
+#   6) testName 
 #   7) who 
 #   8) status
 #   9) audioTime 
-#   10) procTime 
-#   11) words 
+#  10) procTime 
+#  11) words 
 #  12) insertions 
 #  13) deletions 
 #  14) substitutions 

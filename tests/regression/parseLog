@@ -76,6 +76,10 @@ END {
     # "date +%D" | getline date;
     #"date +%Y-%m-%d" | getline date;
     # "date +%T" | getline time;
+
+    # use date/time that the test was started so we can
+    # more easily track down CVS history
+
     getline date < ".startDate";
     getline time < ".startTime";
 
