@@ -91,7 +91,11 @@ public class SimpleWordResult implements WordResult {
      * @see edu.cmu.sphinx.result.WordResult#getConfidence()
      */
     public double getConfidence() {
-        return confidence;
+        if (confidence > LogMath.getLogOne()) {
+            return LogMath.getLogOne();
+        } else {
+            return confidence;
+        }
     }
 
     /**
