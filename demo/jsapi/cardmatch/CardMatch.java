@@ -173,7 +173,7 @@ public class CardMatch implements Recorder, Configurable {
      */
     public void go() {
         try {
-            System.out.println("Loading recognizer ...");
+            System.out.println("Loading recognizer, please wait ...");
             recognizer.allocate();
             System.out.println("Here we go ...");
             Game game = new Game(numberOfCards, imageFiles);
@@ -226,12 +226,14 @@ public class CardMatch implements Recorder, Configurable {
      */
     public boolean startRecording() {
         // drain();
+        System.out.println("Wait, turning on mic... ");
         microphone.clear();
         boolean started = microphone.startRecording();
         if (started) {
             (new DecodingThread()).start();
+            System.out.println("You can speak now.");
         } else {
-            System.out.println("Not started!");
+            System.out.println("Error turning on mic.");
         }
         return started;
     }
@@ -243,6 +245,7 @@ public class CardMatch implements Recorder, Configurable {
      */
     public boolean stopRecording() {
         microphone.stopRecording();
+        System.out.println("Microphone stopped.");
         return true;
     }
 
@@ -278,7 +281,7 @@ public class CardMatch implements Recorder, Configurable {
             Result result = recognizer.recognize();
 
             if (doEndpointing) {
-                microphone.stopRecording();
+                stopRecording();
             }
 
             if (result != null) {

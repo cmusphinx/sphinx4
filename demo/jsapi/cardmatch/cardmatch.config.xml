@@ -53,8 +53,6 @@
         <property name="decoder" value="decoder"/>
         <propertylist name="monitors">
             <item>accuracyTracker </item>
-            <item>speedTracker </item>
-            <item>memoryTracker </item>
             <item>recognizerMonitor </item>
         </propertylist>
     </component>
@@ -267,17 +265,6 @@
         <property name="recognizer" value="${recognizer}"/>
         <property name="showAlignedResults" value="false"/>
         <property name="showRawResults" value="false"/>
-    </component>
-    
-    <component name="memoryTracker" 
-                type="edu.cmu.sphinx.instrumentation.MemoryTracker">
-        <property name="recognizer" value="${recognizer}"/>
-    </component>
-    
-    <component name="speedTracker" 
-                type="edu.cmu.sphinx.instrumentation.SpeedTracker">
-        <property name="recognizer" value="${recognizer}"/>
-        <property name="frontend" value="${frontend}"/>
     </component>
     
     <component name="recognizerMonitor" 
