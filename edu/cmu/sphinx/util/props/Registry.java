@@ -11,6 +11,7 @@
  *
  */
 package edu.cmu.sphinx.util.props;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -68,5 +69,14 @@ public class Registry {
      */
     Configurable getOwner() {
         return configurable;
+    }
+    
+    
+    /**
+     * Returns the list of registered properties
+     * @return the list of property names
+     */
+    Collection  getRegisteredProperties() {
+        return map.keySet();
     }
 }

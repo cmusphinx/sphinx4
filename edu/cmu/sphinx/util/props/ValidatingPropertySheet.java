@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 /**
@@ -119,12 +120,17 @@ class ValidatingPropertySheet implements PropertySheet {
         if (type == null) {
             throw new PropertyException(registry.getOwner(), key,
                     "Attempt to set unregistered property");
-        } else if (!type.isValid(val)) {
-            String sval = "value";
-            if (val instanceof String) {
-                sval = "value (" + val + ")";
+        } else if (val instanceof String) {
+            String sval = (String) val;
+            
+            if (!isGlobalVariable(sval) && !type.isValid(val)) {
+                throw new PropertyException(registry.getOwner(), key, 
+                        "value (" + sval + ")" + " is not a valid " + type);
+            } else {
+                properties.put(key, val);
             }
-            throw new PropertyException(registry.getOwner(), key, sval
+        }  else if (!type.isValid(val)) {
+            throw new PropertyException(registry.getOwner(), key, val
                     + " is not a valid " + type);
         } else {
             properties.put(key, val);
@@ -137,8 +143,36 @@ class ValidatingPropertySheet implements PropertySheet {
      *            the name of the property
      * @return the return value
      */
-    public Object getRaw(String name) {
-        return properties.get(name);
+    public Object getRaw(String name) throws PropertyException {
+        Object value = properties.get(name);
+        
+        if (value == null) {
+            return null;
+        } else if (value instanceof String) {
+            String sval = (String) value;
+            if (sval.startsWith("${")) {
+                value = cm.globalLookup(sval);
+                if (value == null) {
+                    throw new PropertyException(registry.getOwner(), name,
+                            "Can't find global property " + sval);
+                }
+            }
+        } else if (value instanceof List) {
+            List lval = (List) value;
+            for (ListIterator i = lval.listIterator(); i.hasNext(); ) {
+                String sval = (String) i.next();
+                if (sval.startsWith("${")) {
+                    String itemVal = cm.globalLookup(sval);
+                    if (itemVal == null) {
+                        throw new PropertyException(registry.getOwner(), name,
+                                "Can't find global property " + sval);
+                    } else {
+                        i.set(itemVal);
+                    }
+                }
+            }
+        }
+        return value;
     }
     /**
      * Gets the value associated with this name. Note that is considered legal
@@ -219,10 +253,40 @@ class ValidatingPropertySheet implements PropertySheet {
      *            the default value
      * @return the value
      */
+    public double getDouble(String name, double defaultValue)
+            throws PropertyException {
+        checkType(name, PropertyType.DOUBLE);
+        try {
+            String val = (String) getRaw(name);
+            if (val == null) {
+                return defaultValue;
+            } else {
+                return Double.parseDouble(val);
+            }
+        } catch (NumberFormatException e) {
+            throw new PropertyException(registry.getOwner(), name,
+                    "bad double format");
+        }
+    }
+    
+    /**
+     * Gets the value associated with this name
+     * 
+     * @param name
+     *            the name
+     * @param defaultValue
+     *            the default value
+     * @return the value
+     */
     public boolean getBoolean(String name, boolean defaultValue)
             throws PropertyException {
         checkType(name, PropertyType.BOOLEAN);
-        return Boolean.valueOf((String) getRaw(name)).booleanValue();
+        String val = (String) getRaw(name);
+        if (val == null) {
+            return defaultValue;
+        } else {
+            return Boolean.valueOf((String) getRaw(name)).booleanValue();
+        }
     }
     
     /* (non-Javadoc)
@@ -231,6 +295,11 @@ class ValidatingPropertySheet implements PropertySheet {
     public Configurable getComponent(String name, Class type) throws PropertyException {
         checkType(name, PropertyType.COMPONENT);
         String val = (String) getRaw(name);
+        
+        if (val == null) {
+            throw new PropertyException(registry.getOwner(), name, 
+              "Required component property '" + name + "' not set");
+        }
         Configurable c = null;
         try {
             c = cm.lookup(val);
@@ -245,7 +314,7 @@ class ValidatingPropertySheet implements PropertySheet {
             }
         } catch (InstantiationException e) {
             throw new PropertyException(registry.getOwner(), name,
-                    "Can't instantiate: " + val);
+                    "Can't instantiate: " + val + " " + e.getMessage());
         } 
         return c;
     }
@@ -357,7 +426,12 @@ class ValidatingPropertySheet implements PropertySheet {
         StringBuffer sb = new StringBuffer();
         String[] names = getNames();
         for (int j = 0; j < names.length; j++) {
-            Object obj = getRaw(names[j]);
+            Object obj;
+            try {
+                obj = getRaw(names[j]);
+            } catch (PropertyException e) {
+                obj = "ERROR(not set)";
+            }
             if (obj instanceof String) {
                 String value = (String) obj;
                 sb.append("<property name=\"");
@@ -380,6 +454,18 @@ class ValidatingPropertySheet implements PropertySheet {
         }
         return sb.toString();
     }
+    
+    /**
+     * determines if the string is a valid format for a global variable
+     * 
+     * @param string the string to check
+     * @return true if the string is a valid format for a global variable
+     * 
+     */
+    private boolean isGlobalVariable(String val) {
+        return val.startsWith("${");
+    }
+
 
 
 }

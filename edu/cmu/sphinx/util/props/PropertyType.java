@@ -57,7 +57,8 @@ public abstract class PropertyType {
         boolean isValid(Object obj) {
             if (obj instanceof String) {
                 String value = (String) obj;
-                return Boolean.valueOf(value).booleanValue();
+                return value.equalsIgnoreCase("true") ||
+                       value.equalsIgnoreCase("false");
             }
             return false;
         }
@@ -78,6 +79,31 @@ public abstract class PropertyType {
                 String value = (String) obj;
                 try {
                     Float.parseFloat(value);
+                    return true;
+                } catch (NumberFormatException nfe) {
+                    return false;
+                }
+            }
+            return false;
+        }
+    };
+    
+    /**
+     * A floating point type
+     */
+    public static PropertyType DOUBLE = new PropertyType("double") {
+        /**
+         * Determines if this is a valid double
+         * 
+         * @param obj
+         *            the object to check
+         * @return true if the object is a valid double
+         */
+        boolean isValid(Object obj) {
+            if (obj instanceof String) {
+                String value = (String) obj;
+                try {
+                    Double.parseDouble(value);
                     return true;
                 } catch (NumberFormatException nfe) {
                     return false;

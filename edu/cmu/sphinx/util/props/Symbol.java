@@ -12,7 +12,6 @@
  */
 package edu.cmu.sphinx.util.props;
 
-
 /**
  * Represents an entry in the symbol table
  */
@@ -20,6 +19,7 @@ class Symbol {
     private String name;
     private Configurable object;
     private PropertySheet propertySheet;
+    private Registry registry;
     /**
      * Creates a symbol table entry
      * 
@@ -27,9 +27,10 @@ class Symbol {
      *            the name of the symbol
      *  
      */
-    Symbol(String name, PropertySheet propertySheet, Configurable obj) {
+    Symbol(String name, PropertySheet propertySheet, Registry registry, Configurable obj) {
         this.name = name;
         this.propertySheet = propertySheet;
+        this.registry = registry;
         this.object = obj;
     }
     /**
@@ -49,5 +50,11 @@ class Symbol {
      */
     PropertySheet getPropertySheet() {
         return propertySheet;
+    }
+    /**
+     * @return Returns the registry.
+     */
+    Registry getRegistry() {
+        return registry;
     }
 }

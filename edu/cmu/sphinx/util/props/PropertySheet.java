@@ -11,9 +11,7 @@
  *
  */
 package edu.cmu.sphinx.util.props;
-
 import java.util.List;
-
 /**
  * A property sheet defines a collection of properties for a single component
  * in the system.
@@ -93,28 +91,44 @@ public interface PropertySheet {
      * @throws PropertyException
      *             if the named property is not of this type
      */
-    boolean getBoolean(String name, boolean defaultValue) throws PropertyException;
-    
+    double getDouble(String name, double defaultValue) throws PropertyException;
+    /**
+     * Gets the value associated with this name
+     * 
+     * @param name
+     *            the name
+     * @param defaultValue
+     *            the default value
+     * @return the value
+     * @throws PropertyException
+     *             if the named property is not of this type
+     */
+    boolean getBoolean(String name, boolean defaultValue)
+            throws PropertyException;
     /**
      * Gets a comopnent associated with the given paramenter name
-     * @param name the parameter name
-     * @param type the desired component type
-     * @return the component associated with the name
-     * @throws PropertyException if the component does not exist or is of the
-     * wrong type.
      * 
+     * @param name
+     *            the parameter name
+     * @param type
+     *            the desired component type
+     * @return the component associated with the name
+     * @throws PropertyException
+     *             if the component does not exist or is of the wrong type.
+     *  
      */
     Configurable getComponent(String name, Class type) throws PropertyException;
-    
-    
     /**
      * Gets a list of components associated with the given paramenter name
-     * @param name the parameter name
-     * @param type the desired component type
-     * @return the component associated with the name
-     * @throws PropertyException if the component does not exist or is of the
-     * wrong type.
      * 
+     * @param name
+     *            the parameter name
+     * @param type
+     *            the desired component type
+     * @return the component associated with the name
+     * @throws PropertyException
+     *             if the component does not exist or is of the wrong type.
+     *  
      */
     List getComponentList(String name, Class type) throws PropertyException;
     /**
@@ -143,7 +157,7 @@ public interface PropertySheet {
      * @return the value as an object (it could be a String or a String[]
      *         depending upon the property type)
      */
-    Object getRaw(String name);
+    Object getRaw(String name) throws PropertyException;
     /**
      * Gets the owning property manager
      * 

@@ -112,11 +112,11 @@ public interface Configurable {
      * the component should return false.  If the data is good, the
      * component should record the the data internally and return true.
      * 
-     * @param propertySheet a property sheet holding the new data
+     * @param ps a property sheet holding the new data
      * 
      * @throws PropertyException if there is a problem with the properties.
      */
-    public void newProperties(PropertySheet propertySheet) throws PropertyException;
+    public void newProperties(PropertySheet ps) throws PropertyException;
     
     /**
      * Retrieves the name for this configurable component

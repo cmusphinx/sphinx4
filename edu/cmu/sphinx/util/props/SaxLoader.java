@@ -32,15 +32,19 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 class SaxLoader {
     private URL url;
-    private Map map;
+    private Map rpdMap;
+    private Map globalProperties;
     /**
      * Creates a loader that will load from the given location
      * 
      * @param url
      *            the location to load
+     * @param globalProperties
+     *             the map of global properties
      */
-    SaxLoader(URL url) {
+    SaxLoader(URL url, Map globalProperties) {
         this.url = url;
+        this.globalProperties = globalProperties;
     }
     /**
      * Loads a set of configuration data from the location
@@ -50,7 +54,7 @@ class SaxLoader {
      *             if an I/O or parse error occurs
      */
     Map load() throws IOException {
-        map = new HashMap();
+        rpdMap = new HashMap();
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             XMLReader xr = factory.newSAXParser().getXMLReader();
@@ -69,8 +73,9 @@ class SaxLoader {
         } catch (ParserConfigurationException e) {
             throw new IOException(e.getMessage());
         }
-        return map;
+        return rpdMap;
     }
+    
     /**
      * A SAX XML Handler implementation that builds up the map of raw property
      * data objects
@@ -94,6 +99,10 @@ class SaxLoader {
             } else if (qName.equals("component")) {
                 String curComponent = attributes.getValue("name");
                 String curType = attributes.getValue("type");
+                if (rpdMap.get(curComponent) != null) {
+                    throw new SAXParseException(
+                        "duplicate definition for " + curComponent, locator);
+                }
                 rpd = new RawPropertyData(curComponent, curType);
             } else if (qName.equals("property")) {
                 String name = attributes.getValue("name");
@@ -104,7 +113,12 @@ class SaxLoader {
                             "property element must only have "
                                     + "'name' and 'value' attributes", locator);
                 }
-                if (rpd.contains(name)) {
+                if (rpd == null) {
+                    // we are not in a component so add this to the global
+                    // set of symbols
+                    String symbolName = "${" + name + "}";
+                    globalProperties.put(symbolName, value);
+                } else if (rpd.contains(name)) {
                     throw new SAXParseException("Duplicate property: " + name,
                             locator);
                 } else {
@@ -144,7 +158,7 @@ class SaxLoader {
         public void endElement(String uri, String localName, String qName)
                 throws SAXParseException {
             if (qName.equals("component")) {
-                map.put(rpd.getName(), rpd);
+                rpdMap.put(rpd.getName(), rpd);
                 rpd = null;
             } else if (qName.equals("property")) {
                 // nothing to do
@@ -157,7 +171,7 @@ class SaxLoader {
                     itemList = null;
                 }
             } else if (qName.equals("item")) {
-                itemList.add(curItem.toString());
+                itemList.add(curItem.toString().trim());
                 curItem = null;
             }
         }

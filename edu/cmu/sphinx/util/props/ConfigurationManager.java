@@ -11,82 +11,83 @@
  *
  */
 package edu.cmu.sphinx.util.props;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Enumeration;
-
-
 
 /**
- * Manages the configuration for the system. The configuration manager
- * provides the following services:
+ * Manages the configuration for the system. The configuration manager provides
+ * the following services:
  * 
  * <ul>
- * <li> Loads configuration data from an XML-based configuration file.
- * <li> Manages the component life-cycle for Configurable objects
- * <li> Allows discovery of components via name or type.
+ * <li>Loads configuration data from an XML-based configuration file.
+ * <li>Manages the component life-cycle for Configurable objects
+ * <li>Allows discovery of components via name or type.
  * </ul>
  * 
- * Configuration data is managed externally in an XML file format. A sample 
+ * Configuration data is managed externally in an XML file format. A sample
  * format is here:
  * 
  * <code> <pre>
- * &lt;config>
- *     &lt;component name="sample"  type="edu.cmu.sphinx.util.props.SampleComponent">
- *         &lt;property name="width" value="100"/>
- *         &lt;property name="height" value="10"/>
- *         &lt;propertylist name="subsample">
- *             &lt;item>subsample2&lt;/item>
- *             &lt;item>subsample3&lt;/item>
- *         &lt;/propertylist>
- *         &lt;propertylist name="myList">
- *             &lt;item>ba1r&lt;/item>
- *             &lt;item>bar2&lt;/item>
- *             &lt;item>bar3&lt;/item>
- *             &lt;item>bar4&lt;/item>
- *        &lt;/propertylist>
- *         &lt;property name="single" value="simple"/>
- *     &lt;/component>
- *     &lt;component name="subsample3"  type="edu.cmu.sphinx.util.props.SampleComponent">
- *         &lt;property name="width" value="33"/>
- *         &lt;property name="height" value="34"/>
- *         &lt;property name="depth" value="4.42"/>
- *         &lt;propertylist name="myList">
- *            &lt;item>3&lt;/item>
- *             &lt;item>three&lt;/item>
- *             &lt;item>III&lt;/item>
- *         &lt;/propertylist>
- *         &lt;property name="single" value="simple"/>
- *     &lt;/component>
- *     &lt;component name="subsample2"  type="edu.cmu.sphinx.util.props.SampleComponent">
- *         &lt;property name="width" value="22"/>
- *         &lt;property name="height" value="23"/>
- *         &lt;property name="depth" value="1"/>
- *         &lt;propertylist name="myList">
- *             &lt;item>two&lt;/item>
- *             &lt;item>2&lt;/item>
- *         &lt;/propertylist>
- *         &lt;property name="single" value="simple"/>
- *     &lt;/component>
- *     &lt;component name="simple"  type="edu.cmu.sphinx.util.props.SimpleComponent">
- *     &lt;/component>
- * &lt;/config>
+ *  &lt;config&gt;
+ *  &lt;component name=&quot;sample&quot; type=&quot;edu.cmu.sphinx.util.props.SampleComponent&quot;&gt;
+ *  &lt;property name=&quot;width&quot; value=&quot;100&quot;/&gt;
+ *  &lt;property name=&quot;height&quot; value=&quot;10&quot;/&gt;
+ *  &lt;propertylist name=&quot;subsample&quot;&gt;
+ *  &lt;item&gt;subsample2&lt;/item&gt;
+ *  &lt;item&gt;subsample3&lt;/item&gt;
+ *  &lt;/propertylist&gt;
+ *  &lt;propertylist name=&quot;myList&quot;&gt;
+ *  &lt;item&gt;ba1r&lt;/item&gt;
+ *  &lt;item&gt;bar2&lt;/item&gt;
+ *  &lt;item&gt;bar3&lt;/item&gt;
+ *  &lt;item&gt;bar4&lt;/item&gt;
+ *  &lt;/propertylist&gt;
+ *  &lt;property name=&quot;single&quot; value=&quot;simple&quot;/&gt;
+ *  &lt;/component&gt;
+ *  &lt;component name=&quot;subsample3&quot; type=&quot;edu.cmu.sphinx.util.props.SampleComponent&quot;&gt;
+ *  &lt;property name=&quot;width&quot; value=&quot;33&quot;/&gt;
+ *  &lt;property name=&quot;height&quot; value=&quot;34&quot;/&gt;
+ *  &lt;property name=&quot;depth&quot; value=&quot;4.42&quot;/&gt;
+ *  &lt;propertylist name=&quot;myList&quot;&gt;
+ *  &lt;item&gt;3&lt;/item&gt;
+ *  &lt;item&gt;three&lt;/item&gt;
+ *  &lt;item&gt;III&lt;/item&gt;
+ *  &lt;/propertylist&gt;
+ *  &lt;property name=&quot;single&quot; value=&quot;simple&quot;/&gt;
+ *  &lt;/component&gt;
+ *  &lt;component name=&quot;subsample2&quot; type=&quot;edu.cmu.sphinx.util.props.SampleComponent&quot;&gt;
+ *  &lt;property name=&quot;width&quot; value=&quot;22&quot;/&gt;
+ *  &lt;property name=&quot;height&quot; value=&quot;23&quot;/&gt;
+ *  &lt;property name=&quot;depth&quot; value=&quot;1&quot;/&gt;
+ *  &lt;propertylist name=&quot;myList&quot;&gt;
+ *  &lt;item&gt;two&lt;/item&gt;
+ *  &lt;item&gt;2&lt;/item&gt;
+ *  &lt;/propertylist&gt;
+ *  &lt;property name=&quot;single&quot; value=&quot;simple&quot;/&gt;
+ *  &lt;/component&gt;
+ *  &lt;component name=&quot;simple&quot; type=&quot;edu.cmu.sphinx.util.props.SimpleComponent&quot;&gt;
+ *  &lt;/component&gt;
+ *  &lt;/config&gt;
  * </pre> </code>
  * <p>
- * Configuration can also be performed from system properties. These are 
- * typically given at the command line. These look like this: <p>
+ * Configuration can also be performed from system properties. These are
+ * typically given at the command line. These look like this:
+ * <p>
  * 
  * <code><pre>
- *     java -Dsubsample2[width]=1 -Dsubsample3[height]=36 Batch
+ *  java -Dsubsample2[width]=1 -Dsubsample3[height]=36 Batch
  * </pre> </code>
  * 
  * Properties defined in this way will silently override any properties set in
@@ -94,29 +95,49 @@ import java.util.Enumeration;
  *  
  */
 public class ConfigurationManager {
+    
+    /**
+     * Sphinx Property that defines whether or not the configuration manager
+     * will trace object creations
+     */
+    
+    public final static String PROP_SHOW_CREATIONS = "showCreations";
+    /**
+     * The default value for PROP_SHOW_CREATIONS
+     */
+    public final static boolean PROP_SHOW_CREATIONS_DEFAULT = false;
+    
     private Map symbolTable = new HashMap();
     private Map rawPropertyMap;
+    private Map globalProperties = new HashMap();
+    private boolean showCreations;
+
     /**
-     * Creates a new configuratin manager. Initial properties are loaded from the
-     * given URL. No need to keep the notion of 'context' around anymore we
+     * Creates a new configuration manager. Initial properties are loaded from
+     * the given URL. No need to keep the notion of 'context' around anymore we
      * will just pass around this property manager.
      * 
      * @param url
-     *            place to load initial properties from
+     *                place to load initial properties from
      * @throws IOException
-     *             if an error occurs while loading properties from the URL
+     *                 if an error occurs while loading properties from the URL
      *  
      */
     public ConfigurationManager(URL url) throws IOException, PropertyException {
         rawPropertyMap = loader(url);
-        applySystemProperties(rawPropertyMap);
+        applySystemProperties(rawPropertyMap, globalProperties);
+        
+        // we can't config the configuration manager with itself so we
+        // do some of these config items manually.
+        
+        showCreations = "true".equals(getMyProperty(PROP_SHOW_CREATIONS));
     }
 
     /**
      * Returns the property sheet for the given object instance
      * 
      * @param instanceName
-     *            the instance name of the object
+     *                the instance name of the object
      * @return the property sheet for the object.
      */
     public PropertySheet getPropertySheet(String instanceName) {
@@ -127,12 +148,28 @@ public class ConfigurationManager {
         }
         return propertySheet;
     }
+
+    /**
+     * Returns the registry for the given object instance
+     * 
+     * @param instanceName
+     *                the instance name of the object
+     * @return the property sheet for the object.
+     */
+    public Registry getRegistry(String instanceName) {
+        Registry registry = null;
+        Symbol symbol = (Symbol) symbolTable.get(instanceName);
+        if (symbol != null) {
+            registry = symbol.getRegistry();
+        }
+        return registry;
+    }
     /**
      * Gets all instances that are of the given type or are assignable to that
      * type. Object.class matches all.
      * 
      * @param type
-     *            the desired type of instance
+     *                the desired type of instance
      * @return the set of all instances
      */
     public String[] getInstanceNames(Class type) {
@@ -145,24 +182,28 @@ public class ConfigurationManager {
         }
         return (String[]) list.toArray(new String[list.size()]);
     }
+
     /**
      * Looks up a configurable component by name. Creates it if necessary
      * 
      * @param name
-     *            the name of the component
+     *                the name of the component
      * @return the compnent, or null if a component was not found.
      * 
      * @throws InstantiationException
-     *             if the requested object could not be properly created, or is
-     *             not a configurable object.
+     *                 if the requested object could not be properly created,
+     *                 or is not a configurable object.
      * 
      * @throws PropertyException
-     *             if an error occurs while setting a property
+     *                 if an error occurs while setting a property
      */
     public Configurable lookup(String name) throws InstantiationException,
             PropertyException {
         Symbol symbol = (Symbol) symbolTable.get(name);
         if (symbol == null) {
+            if (showCreations) {
+                System.out.println("Creating: " + name);
+            }
             // it is not in the symbol table, so construct
             // it based upon our raw property data
             RawPropertyData rpd = (RawPropertyData) rawPropertyMap.get(name);
@@ -177,8 +218,9 @@ public class ConfigurationManager {
                     ValidatingPropertySheet propertySheet = new ValidatingPropertySheet(
                             this, registry, rpd);
                     configurable.newProperties(propertySheet);
-                    symbol = new Symbol(name, propertySheet, configurable);
+                    symbol = new Symbol(name, propertySheet, registry, configurable);
                     symbolTable.put(name, symbol);
+
                     return symbol.getObject();
                 } catch (ClassNotFoundException e) {
                     throw new InstantiationException("Can't find class "
@@ -196,15 +238,16 @@ public class ConfigurationManager {
         }
         return null;
     }
+
     /**
      * Saves the current configuration to the given file
      * 
      * @param file
-     *            place to save the configuration
+     *                place to save the configuration
      * @throws IOException
-     *             if an error occurs while writing to the file
+     *                 if an error occurs while writing to the file
      */
-    public void save(File file) throws IOException {
+    public void save(File file) throws IOException, PropertyException {
         FileOutputStream fos = new FileOutputStream(file);
         PrintWriter writer = new PrintWriter(fos);
         writer.println("<config>");
@@ -224,7 +267,8 @@ public class ConfigurationManager {
                             + "\" value=\"" + value + "\"/>");
                 } else if (obj instanceof List) {
                     List list = (List) obj;
-                    writer.println("        <propertylist name=\"" + names[j] + "\">");
+                    writer.println("        <propertylist name=\"" + names[j]
+                            + "\">");
                     for (int k = 0; k < list.size(); k++) {
                         writer.println("            <item>" + list.get(k)
                                 + "</item>");
@@ -239,6 +283,55 @@ public class ConfigurationManager {
         writer.println("</config>");
         writer.close();
     }
+    
+
+    /**
+     * Shows the current configuration
+     * 
+     */
+    public void showConfig()  {
+        System.out.println(" ============ config ============= ");
+        String[] allNames = getInstanceNames(Object.class);
+        for (int i = 0; i < allNames.length; i++) {
+            Symbol symbol = (Symbol) symbolTable.get(allNames[i]);
+            
+            System.out.println(symbol.getName() + ":");
+            
+            Registry registry = symbol.getRegistry();
+            Collection propertyNames = registry.getRegisteredProperties();
+            PropertySheet properties = symbol.getPropertySheet();
+            
+            for (Iterator j = propertyNames.iterator(); j.hasNext(); ) {
+                String propName = (String) j.next();
+                System.out.print("    " + propName + " = ");
+                Object obj;
+                try {
+                    obj = properties.getRaw(propName);
+                } catch (PropertyException e) {
+                    // this exception can occcur if a global name
+                    // can't be resolved ...
+                    obj = "[Unresolved!]";
+                }
+                if (obj instanceof String) {
+                    System.out.println(obj);
+                } else if (obj instanceof List) {
+                    List l = (List) obj;
+                    for (Iterator k = l.iterator(); k.hasNext(); ) {
+                        System.out.print(k.next());
+                        if (k.hasNext()) {
+                            System.out.print(", ");
+                        }
+                    }
+                    System.out.println();
+                } else {
+                    System.out.println("[DEFAULT]");
+                }
+            }
+            System.out.println();
+        }
+
+    }
+
     /**
      * Loads the configuration data from the given url and adds the info to the
      * symbol table. Throws an IOexception if there is a problem loading the
@@ -246,36 +339,42 @@ public class ConfigurationManager {
      * table entry
      * 
      * @param url
-     *            the url to load from
+     *                the url to load from
      * @param rawPropertyMap
-     *            raw properties are placed here.
+     *                raw properties are placed here.
      * @throws IOException
-     *             if an error occurs while loading the symbol table
+     *                 if an error occurs while loading the symbol table
      */
     private Map loader(URL url) throws IOException {
-        SaxLoader saxLoader = new SaxLoader(url);
+        SaxLoader saxLoader = new SaxLoader(url, globalProperties);
         return saxLoader.load();
     }
-    
+
     /**
      * Applies the system properties to the raw property map. System properties
-     * should be of the form  compName[paramName]=paramValue
+     * should be of the form compName[paramName]=paramValue
      * 
      * List types cannot currently be set from system properties.
      * 
-     * @param rawMap the map of raw property values
+     * @param rawMap
+     *                the map of raw property values
+     * @param map global properies
      * 
-     * @throws PropertyException if an attempt is made to set a parameter
-     * for an unknown component.
+     * @throws PropertyException
+     *                 if an attempt is made to set a parameter for an unknown
+     *                 component.
      */
-    private void applySystemProperties(Map rawMap) throws PropertyException {
+    private void applySystemProperties(Map rawMap, Map global) throws PropertyException {
         Properties props = System.getProperties();
-        for (Enumeration e = props.keys(); e.hasMoreElements(); ) {
+        for (Enumeration e = props.keys(); e.hasMoreElements();) {
             String param = (String) e.nextElement();
             String value = props.getProperty(param);
+            
+            // search for params of the form component[param]=value
+            // thise go in the property sheet for the component
             int lb = param.indexOf('[');
             int rb = param.indexOf(']');
-            
+
             if (lb > 0 && rb > lb) {
                 String compName = param.substring(0, lb);
                 String paramName = param.substring(lb + 1, rb);
@@ -283,12 +382,41 @@ public class ConfigurationManager {
                 if (rpd != null) {
                     rpd.add(paramName, value);
                 } else {
-                    throw new PropertyException(null, param, 
-                            "System property attempting to set parameter " +
-                            " for unknown component " + 
-                            compName + " (" + param + ")");
+                    throw new PropertyException(null, param,
+                            "System property attempting to set parameter "
+                                    + " for unknown component " + compName
+                                    + " (" + param + ")");
                 }
+            }
+            
+            // look for params of the form foo=fum
+            // these go in the global map
+            
+            else if (param.indexOf('.') == -1) {
+                String symbolName = "${" + param + "}";
+                global.put(symbolName, value);
             }
         }
     }
+    
+    
+    /**
+     * lookup the global symbol with the given name
+     * 
+     * @param key the symbol name to lookup
+     * @return the symbol value
+     */
+    String globalLookup(String key) {
+        return (String) globalProperties.get(key);
+    }
+    
+    /**
+     * Gets the config properties for the configuration manager itself
+     * @param key the name of the property
+     * @return the property value or null if it doesn't exist.
+     */
+    private String getMyProperty(String key) {
+        return globalLookup("${" + key + "}");
+    }
+    
 }
