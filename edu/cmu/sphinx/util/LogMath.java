@@ -272,6 +272,17 @@ public final class LogMath {
 
 
     /**
+     * Converts the source, which is a number in base Math.E, to a log value
+     * which base is the LogBase of this LogMath.
+     *
+     * @param source the number in base Math.E to convert
+     */
+    public final double logEToLog(double source) {
+	return (source * inverseNaturalLogBase);
+    }
+
+
+    /**
      * Converts the value from linear domain to log domain
      *
      * @param linearValue the value to be converted to log domain
