@@ -97,7 +97,8 @@
             
     <component name="jsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar">
         <property name="dictionary" value="dictionary"/>
-        <property name="grammarLocation" value="/demo/sphinx/helloworld"/>
+        <property name="grammarLocation" 
+             value="resource:/demo.sphinx.helloworld.HelloWorld!/demo/sphinx/helloworld/"/>
         <property name="grammarName" value="digits"/>
 	<property name="logMath" value="logMath"/>
     </component>
