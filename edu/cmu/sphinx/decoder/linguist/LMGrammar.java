@@ -15,6 +15,7 @@ package edu.cmu.sphinx.decoder.linguist;
 
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.knowledge.dictionary.Word;
 import edu.cmu.sphinx.knowledge.language.LanguageModel;
 import edu.cmu.sphinx.knowledge.language.WordSequence;
 import edu.cmu.sphinx.decoder.linguist.Grammar;
@@ -108,12 +109,12 @@ public class LMGrammar extends Grammar {
                 GrammarNode nextNode = (GrammarNode) j.next();
                 String prevWord = prevNode.getWord().getSpelling();
                 String nextWord = nextNode.getWord().getSpelling();
-                int[] wordIDs = 
-                    {getDictionary().getWordID(prevWord),
-                     getDictionary().getWordID(nextWord)};
+                Word[] wordArray = 
+                    {getDictionary().getWord(prevWord),
+                     getDictionary().getWord(nextWord)};
 
                 float logProbability = languageModel.getProbability
-                    (WordSequence.getWordSequence(wordIDs));
+                    (WordSequence.getWordSequence(wordArray));
 
                 prevNode.add(nextNode,  logProbability);
 
