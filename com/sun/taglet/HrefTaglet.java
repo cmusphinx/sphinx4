@@ -13,7 +13,7 @@ import com.sun.javadoc.RootDoc;
 import com.sun.javadoc.Tag;
 
 import com.sun.tools.doclets.Taglet;
-import com.sun.tools.doclets.DirectoryManager;
+//import com.sun.tools.doclets.DirectoryManager;
 
 //import com.sun.tools.doclets.standard.*;
 //import com.sun.tools.doclets.standard.tags.*;
@@ -104,11 +104,12 @@ public class HrefTaglet implements Taglet {
             ClassDoc classDoc = doc.classNamed(tag.text());
             if (classDoc != null) {
                 try {
-                    return "href=\"" +
-                        DirectoryManager.getPathToPackage(
-                            classDoc.containingPackage(),
-                            classDoc.name())
-                        + ".html\"";
+return "";
+//                    return "href=\"" +
+//                        DirectoryManager.getPathToPackage(
+//                            classDoc.containingPackage(),
+//                            classDoc.name())
+//                        + ".html\"";
                 } catch (Exception e) {
                     System.err.println(
                         NAME + " tag text does not refer to a valid classref: "
