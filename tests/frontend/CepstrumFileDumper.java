@@ -14,6 +14,7 @@
 package tests.frontend;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
@@ -62,8 +63,10 @@ public class CepstrumFileDumper {
 	throws FileNotFoundException, IOException {
         try {
 	    String context = "cepstralDumping";
+	    String pwd = System.getProperty("user.dir");
 	    SphinxProperties.initContext
-		(context, new URL("file://" + propsFile));
+		(context, new URL("file://" + pwd + File.separatorChar +
+				  propsFile));
 	    SphinxProperties props = SphinxProperties.getSphinxProperties
 		(context);
 	    featureLength = props.getInt
@@ -89,8 +92,8 @@ public class CepstrumFileDumper {
      */
     private void getAllFeatures() throws IOException {
 	Feature feature = null;
-	FeatureFrame frame = frontend.getFeatureFrame(1);
-	if (frame != null) {
+	FeatureFrame frame = null;
+	while ((frame = frontend.getFeatureFrame(1)) != null) {
 	    feature = frame.getFeatures()[0];
 	    if (feature.hasContent()) {
 		allFeatures.add(feature);

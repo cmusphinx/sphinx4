@@ -127,8 +127,8 @@ clean::
 ##########################################################################
 
 dump_binary_cepstra: all
-	$(JAVA_CMD)
+	$(JAVA_CMD) \
 	tests.frontend.CepstrumFileDumper \
 	cepstra_dump.props \
-	$(INPUT_FILE) \
-	$(OUTPUT_FILE)
+	/lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.111a.wav.raw\
+	./cepstra.out
