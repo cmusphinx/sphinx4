@@ -53,7 +53,7 @@ public class LinguistDumper implements LinguistProcessor  {
 	try {
 	    FileOutputStream fos = new FileOutputStream(fileName);
 	    PrintStream out = new PrintStream(fos);
-	    dumpSentenceHMM(out, linguist.getInitialState());
+	    dumpSentenceHMM(out, linguist.getInitialState(), props);
 	    out.close();
 	} catch (FileNotFoundException fnfe) {
 	    System.out.println("Can't dump to file " 
@@ -106,7 +106,8 @@ public class LinguistDumper implements LinguistProcessor  {
      * @param level the level of the state
      */
     protected void startDumpNode(PrintStream out, 
-	    SentenceHMMState state, int level) {
+                                 SentenceHMMState state, int level,
+                                 SphinxProperties props) {
     }
 
     /**
@@ -129,7 +130,8 @@ public class LinguistDumper implements LinguistProcessor  {
      * @param level the level of the state
      */
     protected void dumpArc(PrintStream out, SentenceHMMState from, 
-	    	SentenceHMMStateArc arc, int level) {
+                           SentenceHMMStateArc arc, int level,
+                           SphinxProperties props) {
     }
 
 
@@ -138,9 +140,11 @@ public class LinguistDumper implements LinguistProcessor  {
      *
      * @param name out place to dump the output
      * @param state the initial state of the SentenceHMM
+     * @param props the SphinxProperties to use
      */
     private void dumpSentenceHMM(PrintStream out, 
-	    	SentenceHMMState startingState) {
+                                 SentenceHMMState startingState,
+                                 SphinxProperties props) {
 	List queue = new LinkedList();
 	Set visitedStates = new HashSet();
 
@@ -156,13 +160,13 @@ public class LinguistDumper implements LinguistProcessor  {
 	    if (!visitedStates.contains(state)) {
 		visitedStates.add(state);
 
-		startDumpNode(out, state, level);
+		startDumpNode(out, state, level, props);
 		SentenceHMMStateArc[] arcs = state.getSuccessorArray(); 
 
 
 		for (int i = arcs.length - 1; i >= 0; i--) {
 		    SentenceHMMState nextState = arcs[i].getNextState();
-		    dumpArc(out, state, arcs[i], level);
+		    dumpArc(out, state, arcs[i], level, props);
 		    if (depthFirst) {
 			// if depth first, its a stack
 			queue.add(0, new StateLevel(nextState, level + 1));

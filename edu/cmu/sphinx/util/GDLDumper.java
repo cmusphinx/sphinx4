@@ -37,7 +37,9 @@ import edu.cmu.sphinx.search.PronunciationState;
  */
 public class GDLDumper extends LinguistDumper  {
 
-    private boolean skipHMMs = true;
+
+    private static final String PROP_SKIP_HMMS = 
+        "edu.cmu.sphinx.util.GDLDumper.skipHMMs"; 
 
 
     /**
@@ -45,9 +47,6 @@ public class GDLDumper extends LinguistDumper  {
      */
     public GDLDumper() {
 	setDepthFirst(false); // breadth first traversal
-	skipHMMs = Boolean.valueOf
-	    (System.getProperty("edu.cmu.sphinx.util.GDLDumper.skipHMMs",
-				"true")).booleanValue();
     }
 
     /**
@@ -89,7 +88,10 @@ public class GDLDumper extends LinguistDumper  {
      * @param level the level of the state
      */
     protected void startDumpNode(PrintStream out, 
-	    SentenceHMMState state, int level) {
+                                 SentenceHMMState state, int level,
+                                 SphinxProperties props) {
+        
+        boolean skipHMMs = props.getBoolean(PROP_SKIP_HMMS, true);
 
 	if (skipHMMs && (state instanceof HMMStateState)) {
 	} else {
@@ -158,7 +160,10 @@ public class GDLDumper extends LinguistDumper  {
      * @param level the level of the state
      */
     protected void dumpArc(PrintStream out, SentenceHMMState from, 
-	    	SentenceHMMStateArc arc, int level) {
+                           SentenceHMMStateArc arc, int level,
+                           SphinxProperties props) {
+
+        boolean skipHMMs = props.getBoolean(PROP_SKIP_HMMS, true);
 
         String color = getArcColor(arc);
 	SentenceHMMState nextState = arc.getNextState();
