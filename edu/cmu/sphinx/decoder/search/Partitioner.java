@@ -37,13 +37,13 @@ public class Partitioner {
             Token current = tokens[j];
             if (current.getScore() >= pivot.getScore()) {
                 i++;
-                tokens[j] = tokens[i];
-                tokens[i] = current;
+                setToken(tokens, j, tokens[i]);
+                setToken(tokens, i, current);
             }
         }
         i++;
-        tokens[r] = tokens[i];
-        tokens[i] = pivot;
+        setToken(tokens, r, tokens[i]);
+        setToken(tokens, i, pivot);
         return i;
     }
 
@@ -61,8 +61,8 @@ public class Partitioner {
     private int midPointPartition(Token[] tokens, int p, int r) {
         int i = (p + r)/2;
         Token temp = tokens[r];
-        tokens[r] = tokens[i];
-        tokens[i] = temp;
+        setToken(tokens, r, tokens[i]);
+        setToken(tokens, i, temp);
         return partitions(tokens, p, r);
     }
 
@@ -97,13 +97,19 @@ public class Partitioner {
             int last = size - 1;
             if (last >= 0) {
                 Token lastToken = tokens[last];
-                tokens[last] = tokens[r];
-                tokens[r] = lastToken;
+                setToken(tokens, last, tokens[r]);
+                setToken(tokens, r, lastToken);
             }
 
             // return the last index
             return last;
         }
+    }
+
+
+    private void setToken(Token[] list, int index, Token token) {
+        list[index] = token;
+        token.setLocation(index);
     }
 
 
