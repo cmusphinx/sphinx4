@@ -47,7 +47,9 @@ BEGIN {
 # Words: 126   Matches: 126    WER: 0.000%
 # Sentences: 44   Matches: 44   SentenceAcc: 100.000%
 # Total Time Audio: 149.03s  Proc: 30.86s  Speed: 0.21 X real time
-# Mem Total: 126.75 Mb Free: 106.42 Mb Used: 20.33 Mb
+# Mem Total: 126.75 Mb Free: 106.42 Mb 
+# Used: This: 37.60 Mb  Avg: 57.59 Mb  Max: 94.92 Mb
+
 
     while (getline x < ARGV[1] > 0) {
 	gsub(/\(/, "", x);
@@ -63,8 +65,8 @@ BEGIN {
 	        procTime = arry[6];
 		gsub(/s/, "", audioTime);
 		gsub(/s/, "", procTime);
-	    } else if (arry[1] == "Mem") {
-	        heapSize = arry[9];
+	    } else if (arry[1] == "Used:" && arry[2] == "This:") {
+	        heapSize = arry[5];
 	    } else if (arry[1] == "Words:") {
 	        words = arry[2];
 	    } else if (arry[1] == "Accuracy:") {
