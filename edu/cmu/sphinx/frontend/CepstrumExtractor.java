@@ -13,6 +13,9 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer;
+import edu.cmu.sphinx.frontend.endpoint.NonSpeechFilter;
+
 import edu.cmu.sphinx.frontend.util.StubAudioSource;
 import edu.cmu.sphinx.frontend.util.StubCepstrumSource;
 
@@ -274,7 +277,7 @@ implements CepstrumSource {
         
         if (endPointerClass != null) {
             if (endPointerClass.equals
-                ("edu.cmu.sphinx.frontend.EnergyEndpointer")) {
+                ("edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer")) {
                 endpointer = new EnergyEndpointer
                     ("EnergyEndpointer", getContext(), 
                      getSphinxProperties(), predecessor);

@@ -11,10 +11,17 @@
  */
 
 
-package edu.cmu.sphinx.frontend;
+package edu.cmu.sphinx.frontend.endpoint;
+
+import edu.cmu.sphinx.frontend.Cepstrum;
+import edu.cmu.sphinx.frontend.CepstrumSource;
+import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.Signal;
 
 import edu.cmu.sphinx.util.SphinxProperties;
+
 import java.io.IOException;
+
 import java.util.*;
 
 
@@ -68,7 +75,7 @@ public class EnergyEndpointer extends DataProcessor implements CepstrumSource {
 
 
     private static final String PROP_PREFIX = 
-    "edu.cmu.sphinx.frontend.EnergyEndpointer.";
+    "edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer.";
 
 
     /**
