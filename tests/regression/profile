@@ -1,6 +1,6 @@
 # Example profile for sh
 #
-# Copy this file to "$(HOME)/.profile
+# Copy this file to "$HOME/.profile
 #
 # You may want to set the variable SF_ROOT to the root of your
 # SourceForge downloads (so that sphinx4 will be located in
@@ -9,13 +9,11 @@
 # You may also want to set the correct version of the j2sdk that you are
 # using (e.g. j2sdk1.4.0 instead of j2sdk1.1.1_01)
 #
-PATH=$PATH:"$(HOME)/bin:/bin:/usr/bin:/usr/local/bin:/lab/speech/java/j2sdk1.4.1_01/bin:/usr/local/PBS/bin:/lab/speech/bin:/usr/ucb/:."
+PATH=$PATH:"$HOME/bin:/bin:/usr/bin:/usr/local/bin:/lab/speech/java/j2sdk1.4.1_01/bin:/usr/local/PBS/bin:/lab/speech/bin:/usr/ucb/:."
 export PATH
 CVS_RSH=ssh
 export CVS_RSH
 JAVA_HOME=/lab/speech/java/j2sdk1.4.1_01
 export JAVA_HOME
-ifeq ($(SF_ROOT),)
 SF_ROOT=/lab/speech/sphinx4/regressionTests
-endif 
 export SF_ROOT
