@@ -1,47 +1,53 @@
-To create the binary and source distribution:
-- Download fresh copy of Sphinx-4 from sourceforge
-- cd lib
-- chmod a+x ./jsapi.sh
-- ./jsapi.sh or ./jsapi.exe
-- cd ..
-- make sure that JAVA_HOME points to a 1.4.X compiler
-- ant deploy
+1) Prepare the distribution
+    - update the version number in SphinxHelp.java
+    - update the README with release information
+    - check all web docs by building javadocs and running linklint
+     (linklint.org)
+    - check in all changes
 
-Binary Distribution:
+2) Create the binary and source distribution:
+    - Download fresh copy of Sphinx-4 from sourceforge
+    - cd lib
+    - chmod a+x ./jsapi.sh
+    - ./jsapi.sh or ./jsapi.exe
+    - cd ..
+    - make sure that JAVA_HOME points to a 1.4.X compiler
+    - ant deploy
 
-- jar xvf sphinx4-bin-0.1alpha.zip
-- cd lib
-- chmod a+x jsapi.sh, ./jsapi.sh or ./jsapi.exe
-- cd ..
-- java -mx256m -jar bin/HelloWorld.jar
-- java -jar bin/HelloDigits.jar
-- java -mx312m -jar bin/HelloNGram.jar
-- java -jar bin/ZipCity.jar
-- java -jar bin/AudioTool.jar
-- Go through index.html, click through the links to make sure they are
-  not broken.
 
-Source Distribution:
+3) Test the Binary Distribution:
+    - jar xvf sphinx4-bin-0.1alpha.zip
+    - cd lib
+    - chmod a+x jsapi.sh, ./jsapi.sh or ./jsapi.exe
+    - cd ..
+    - java -mx256m -jar bin/HelloWorld.jar
+    - java -jar bin/HelloDigits.jar
+    - java -mx312m -jar bin/HelloNGram.jar
+    - java -jar bin/ZipCity.jar
+    - java -jar bin/AudioTool.jar
+    - Go through index.html, click through the links to make sure they are
+      not broken.
 
-- jar xvf sphinx4-src-0.1alpha.zip
-- cd lib
-- chmod a+x jsapi.sh, ./jsapi.sh or ./jsapi.exe
-- cd ..
-- ant
-- ant javadoc
-- java -mx256m -jar bin/HelloWorld.jar
-- java -jar bin/HelloDigits.jar
-- java -mx312m -jar bin/HelloNGram.jar
-- java -jar bin/ZipCity.jar
-- java -jar bin/AudioTool.jar
-- cd tests/live
-   be sure to test the playback for live and live-ep
-- ant live
-- ant live-ep
-- ant live-free
-- cd ../../demo/jsapi/cardmatch
-- ant run
-- ant run-ep
-- Go through index.html, click through the links to make sure they are
-  not broken.
+4) Test the Source Distribution:
+    - jar xvf sphinx4-src-0.1alpha.zip
+    - cd lib
+    - chmod a+x jsapi.sh, ./jsapi.sh or ./jsapi.exe
+    - cd ..
+    - ant
+    - ant javadoc
+    - java -mx256m -jar bin/HelloWorld.jar
+    - java -jar bin/HelloDigits.jar
+    - java -mx312m -jar bin/HelloNGram.jar
+    - java -jar bin/ZipCity.jar
+    - java -jar bin/AudioTool.jar
+    - cd tests/live
+       be sure to test the playback for live and live-ep
+    - ant live
+    - ant live-ep
+    - ant live-free
+    - cd ../../demo/jsapi/cardmatch
+    - ant run
+    - ant run-ep
+    - Go through index.html, click through the links to make sure they are
+      not broken.
 
