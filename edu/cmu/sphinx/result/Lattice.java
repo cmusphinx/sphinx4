@@ -132,6 +132,14 @@ public class Lattice {
     }
 
     /**
+     * Create an empty Lattice.
+     */
+    public Lattice(LogMath logMath) {
+	this();
+	this.logMath = logMath;
+    }
+
+    /**
      * Create a Lattice from a Result.
      *
      * The Lattice is created from the Token tree referenced by the Result.
@@ -140,7 +148,7 @@ public class Lattice {
      * @param result the result to convert into a lattice
      */
     public Lattice(Result result) {
-        this();
+	this();
 	this.logMath = result.getLogMath();
 	visitedWordTokens = new HashSet();
         loserManager = result.getAlternateHypothesisManager();
