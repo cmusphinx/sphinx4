@@ -199,7 +199,9 @@ public class Live {
         try {
             decoder = getDecoder(decoderName);
             if (!decoder.isInitialized()) {
-                decoder.initialize(new Microphone("mic", decoderName));
+                decoder.initialize
+		    (new Microphone("mic", decoderName,
+				    decoder.getSphinxProperties()));
             }
         } catch (LineUnavailableException lue) {
             // if the audio line is unavailable for some reason
