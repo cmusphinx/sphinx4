@@ -1,0 +1,79 @@
+#
+# Generates the language model for a 'weather' vocabulary
+#
+# uses:
+#       weather.txt - transcript of weather forecasts
+#       weather.vocab - hand prepared vocabulary list
+#
+# generates:
+#       weather.lm - arpa format of the language model
+#       weather.DMP - CMU binary format of the language model
+#       weather.transcript - transcript
+#
+#       
+# requires:
+#       CMU language model toolkit:
+#               http://www.speech.cs.cmu.edu/SLM_info.html
+#       lm3g2dmp - utility to generate DMP format models:
+#           http://cmusphinx.sourceforge.net/webpage/html/download.php#utilities#
+# unix commands:
+#       gawk uniq mv rmdir rm
+#
+# All commands should be in your path
+#
+
+bn=weather.txt
+
+# We want a closed vocabulary language model so we use
+# extractVocab to extract just the sentences that entirely
+# match our vocabulary
+
+gawk -f extractVocab.awk weather.vocab  weather.txt  > $bn.tmp.closed
+
+
+#
+# We generate the 'test' file that can be used by the live decoder
+# as the prompt for the user. We eliminate adjacent duplicate entries
+
+gawk -f genTranscript.awk < $bn.tmp.closed | uniq  > weather.transcript
+
+#
+# Generate the word frequencies
+#
+
+text2wfreq < $bn.tmp.closed > $bn.tmp.wfreq
+
+#
+# Generate the vocabulary (this should be a subset weather.vocab)
+#
+
+wfreq2vocab  < $bn.tmp.wfreq > $bn.tmp.vocab
+
+#
+# Generate the idngram
+
+text2idngram -vocab $bn.tmp.vocab < $bn.tmp.closed  > $bn.tmp.idngram
+
+
+#
+# generates the language model
+
+idngram2lm -vocab_type 0 -idngram $bn.tmp.idngram -vocab $bn.tmp.vocab -arpa $bn.arpa
+
+
+#
+# generate the DMP version of the language model
+#
+
+mkdir dmp
+lm3g2dmp $bn.arpa dmp
+mv dmp/$bn.arpa.DMP weather.DMP
+mv $bn.arpa weather.lm
+
+#
+# cleanup
+#
+
+rmdir dmp
+rm *.tmp.*
+
