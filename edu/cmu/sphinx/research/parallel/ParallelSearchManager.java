@@ -325,7 +325,7 @@ public class ParallelSearchManager implements SearchManager {
         debugPrint("Frame: " + currentFrameNumber);
 	boolean moreTokens = score();
         if (moreTokens) {
-	    prune();
+	    // prune();
 	    grow();
 	    currentFrameNumber++;
 	}
@@ -405,7 +405,6 @@ public class ParallelSearchManager implements SearchManager {
 	growTimer.start();
 
 	debugPrint("Growing");
-        printActiveLists();
 
         resultList = new LinkedList();
         combinedActiveList = activeListFactory.newInstance();
@@ -431,8 +430,6 @@ public class ParallelSearchManager implements SearchManager {
 	debugPrint(" done Growing");
 
 	growTimer.stop();
-
-        printActiveLists();
     }
 
     /**
@@ -488,9 +485,12 @@ public class ParallelSearchManager implements SearchManager {
 	
 	while (iterator.hasNext()) {
 	    ParallelToken token = (ParallelToken) iterator.next();
-            if (!token.isPruned()) {
-                growParallelToken(token);
-            }
+            growParallelToken(token);
+            /*
+              if (!token.isPruned()) {
+              growParallelToken(token);
+              }
+            */
 	}
     }
 
@@ -503,7 +503,10 @@ public class ParallelSearchManager implements SearchManager {
      */
     private void growParallelToken(ParallelToken token) {
 
-        debugPrint("Entering growParallelToken");
+        /*
+        debugPrint("Entering growParallelToken: " + 
+                   token.getSearchState().toString());
+        */
 
 	// If this is a final state, add it to the result list.
 	assert !token.isFinal();
@@ -523,7 +526,9 @@ public class ParallelSearchManager implements SearchManager {
 
 	    SearchStateArc arc = arcs[i];
 	    SentenceHMMState nextState = (SentenceHMMState) arc.getState();
-	    
+
+	    // debugPrint("  Entering " + nextState.toString());
+
 	    float logEntryScore = token.getScore() + arc.getProbability();
             Token oldNextToken = getBestToken(nextState);
 
@@ -537,6 +542,8 @@ public class ParallelSearchManager implements SearchManager {
             
             if (nextState.getColor() == Color.RED) {
 
+                // debugPrint(". RED state");
+
                 CombineToken nextToken;
 
                 if (firstToken) {
@@ -546,7 +553,6 @@ public class ParallelSearchManager implements SearchManager {
                     nextToken = new CombineToken
                         (token, nextState, nextFrameNumber);
                     setBestToken(nextState, nextToken);
-                    debugPrint("Adding to delayedExpansionList");
                     delayedExpansionList.add(nextToken);
                 } else {
                     // get the combine token at the next state
@@ -578,10 +584,14 @@ public class ParallelSearchManager implements SearchManager {
 					       newToken);
                 }
             } else if (nextState.getColor() == Color.GREEN) {
+
+                // debugPrint("  . GREEN state");
                 
                 if (firstToken || 
                     getBestToken(nextState).getScore() <= logEntryScore) {
-                    
+
+                    // debugPrint("  . adding parallel token");
+
                     ParallelToken newToken = new ParallelToken
                         (token,
                          nextState,
@@ -637,11 +647,11 @@ public class ParallelSearchManager implements SearchManager {
      * @param token the CombineToken to grow
      */
     private void growCombineToken(CombineToken token) {
-        debugPrint("Entering growCombineToken");
+        // debugPrint("Entering growCombineToken");
 	// If this is a final state, add it to the result list.
 	if (token.isFinal()) {
 	    resultList.add(token);
-	    System.out.println("FINAL RESULT found!");
+	    // debugPrint("FINAL RESULT found!");
 	}
 
         int nextFrameNumber = token.getFrameNumber();
@@ -657,6 +667,8 @@ public class ParallelSearchManager implements SearchManager {
 
 	    SentenceHMMStateArc arc = (SentenceHMMStateArc) arcs[a];
 	    SentenceHMMState nextState = (SentenceHMMState) arc.getState();
+
+	    // debugPrint("Entering " + nextState.toString());
 
             Token oldNextToken = getBestToken(nextState);
 
