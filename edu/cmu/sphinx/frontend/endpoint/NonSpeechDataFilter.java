@@ -127,7 +127,8 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
      * Constructs an NonSpeechDataFilter with the given name, context,
      * and DataSource predecessor.
      *
-     * @param name        the name of this NonSpeechDataFilter
+     * @param name        the name of this NonSpeechDataFilter, if this is
+     *                    null, the name "NonSpeechDataFilter" will be given
      * @param frontEnd    the front end this NonSpeechDataFilter is in
      * @param props       the SphinxProperties to read properties from
      * @param predecessor the DataProcessor where this NonSpeechDataFilter
@@ -135,10 +136,11 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
      */
     public void initialize(String name, String frontEnd,
                            SphinxProperties props, DataProcessor predecessor) {
-        super.initialize(name, frontEnd, props, predecessor);
+        super.initialize((name == null ? "NonSpeechDataFilter" : name),
+                         frontEnd, props, predecessor);
 	
-        this.mergeSpeechSegments = getSphinxProperties().getBoolean
-	    (getFullPropertyName(PROP_MERGE_SPEECH_SEGMENTS),
+        this.mergeSpeechSegments = props.getBoolean
+	    (getName(), PROP_MERGE_SPEECH_SEGMENTS,
              PROP_MERGE_SPEECH_SEGMENTS_DEFAULT);
         
         this.discardMode = true;

@@ -69,24 +69,28 @@ public class FrameDropper extends BaseDataProcessor {
     /**
      * Initializes this FrameDropper.
      *
-     * @param name        the name of this FrameDropper
+     * @param name        the name of this FrameDropper, if it is null,
+     *                    the name "FrameDropper" will be given by default
      * @param frontEnd    the front end this FrameDropper belongs
      * @param props       the SphinxProperties to use
      * @param predecessor the DataProcessor from which to read features
      */
     public void initialize(String name, String frontEnd, 
                            SphinxProperties props, DataProcessor predecessor) {
-        super.initialize(name, frontEnd, props, predecessor);
+        super.initialize((name == null ? "FrameDropper" : name),
+                         frontEnd, props, predecessor);
         this.id = -1;
 
         dropEveryNthFrame = props.getInt
-            (getFullPropertyName(PROP_DROP_EVERY_NTH_FRAME),
+            (getName(),
+             PROP_DROP_EVERY_NTH_FRAME,
              PROP_DROP_EVERY_NTH_FRAME_DEFAULT);
 
         assert (dropEveryNthFrame > 1);
         
         replaceNthWithPrevious = props.getBoolean
-            (getFullPropertyName(PROP_REPLACE_NTH_WITH_PREVIOUS), 
+            (getName(),
+             PROP_REPLACE_NTH_WITH_PREVIOUS, 
              PROP_REPLACE_NTH_WITH_PREVIOUS_DEFAULT);
     }
 

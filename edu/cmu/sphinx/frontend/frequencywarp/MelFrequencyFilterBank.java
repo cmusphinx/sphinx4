@@ -146,7 +146,9 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
     /**
      * Initializes this MelFrequencyFilterBank.
      *
-     * @param name          the name of this MelFrequencyFilterBank
+     * @param name          the name of this MelFrequencyFilterBank, if it
+     *                      is null, the name "MelFrequencyFilterBank" will
+     *                      be given by default
      * @param frontEnd      the front end this MelFrequencyFilterBank belongs
      * @param props         the SphinxProperties used
      * @param predecessor   the predecessor of this MelFrequencyFilterBank
@@ -154,26 +156,25 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
     public void initialize(String name, String frontEnd,
 			   SphinxProperties props, DataProcessor predecessor) {
 
-        super.initialize((name == null ? "MFC" : name), frontEnd,
-                         props, predecessor);
+        super.initialize((name == null ? "MelFrequencyFilterBank" : name),
+                         frontEnd, props, predecessor);
 
         sampleRate = props.getInt
-            (getFullPropertyName(FrontEndFactory.PROP_SAMPLE_RATE),
+            (getName(), FrontEndFactory.PROP_SAMPLE_RATE,
              FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
 
         minFreq = props.getDouble
-            (getFullPropertyName(PROP_MIN_FREQ), PROP_MIN_FREQ_DEFAULT);
+            (getName(), PROP_MIN_FREQ, PROP_MIN_FREQ_DEFAULT);
 
         maxFreq = props.getDouble
-            (getFullPropertyName(PROP_MAX_FREQ), PROP_MAX_FREQ_DEFAULT);
+            (getName(), PROP_MAX_FREQ, PROP_MAX_FREQ_DEFAULT);
 
         numberFilters = props.getInt
-            (getFullPropertyName(PROP_NUMBER_FILTERS),
-             PROP_NUMBER_FILTERS_DEFAULT);
+            (getName(), PROP_NUMBER_FILTERS, PROP_NUMBER_FILTERS_DEFAULT);
 
         numberFftPoints = props.getInt
-	    (getFullPropertyName
-             (DiscreteFourierTransform.PROP_NUMBER_FFT_POINTS),
+	    (getName(),
+             DiscreteFourierTransform.PROP_NUMBER_FFT_POINTS,
              DiscreteFourierTransform.PROP_NUMBER_FFT_POINTS_DEFAULT);
 
 	buildFilterbank(numberFftPoints, numberFilters, minFreq, maxFreq);

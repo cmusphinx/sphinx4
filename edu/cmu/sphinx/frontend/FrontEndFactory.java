@@ -153,6 +153,7 @@ public class FrontEndFactory {
                 String prefix = 
                     frontEndName + ";" + PROP_PREFIX + "stage." + i + ".";
                 String className = props.getString(prefix + "class", null);
+		String processorName = props.getString(prefix + "name", null);
                 
                 if (className == null) {
                     throw new Error
@@ -162,8 +163,8 @@ public class FrontEndFactory {
                         DataProcessor processor = (DataProcessor)
                             Class.forName(className).newInstance();
                         processor.initialize
-                            (getClassName(className), frontEndName,
-                             props, lastProcessor);
+                            (getProcessorName(processorName, className),
+			     frontEndName, props, lastProcessor);
                         if (firstProcessor == null) {
                             firstProcessor = processor;
                         }
@@ -187,21 +188,29 @@ public class FrontEndFactory {
     }
     
     /**
-     * Returns the class name from a fully-qualified class name.
+     * Returns the processor name (the first argument) if it is
+     * not null. If it is null,
+     * returns the class name from a fully-qualified class name.
      * For example, given "edu.cmu.sphinx.frontend.FrontEndFactory",
      * will return "FrontEndFactory".
      *
-     * @param the fully-qualified class name
+     * @param processorName the given name of the processor, if any
+     * @param fullClassName the fully-qualified class name
      *
-     * @return just the class name
+     * @return a name for the front end processor
      */
-    private static String getClassName(String fullName) {
-        int periodIndex = fullName.lastIndexOf(".");
-        if (periodIndex > -1) {
-            return fullName.substring(periodIndex + 1);
-        } else {
-            return fullName;
-        }
+    private static String getProcessorName(String processorName, 
+					   String fullClassName) {
+	if (processorName == null) {
+	    int periodIndex = fullClassName.lastIndexOf(".");
+	    if (periodIndex > -1) {
+		return fullClassName.substring(periodIndex + 1);
+	    } else {
+		return fullClassName;
+	    }
+	} else {
+	    return processorName;
+	}
     }
 
     /**

@@ -94,7 +94,7 @@ public class Preemphasizer extends BaseDataProcessor {
         super.initialize((name == null ? "Preemphasizer" : name),
                          frontEnd, props, predecessor);
         this.preemphasisFactor = getSphinxProperties().getDouble
-	    (getFullPropertyName(PROP_PREEMPHASIS_FACTOR),
+	    (getName(), PROP_PREEMPHASIS_FACTOR,
              PROP_PREEMPHASIS_FACTOR_DEFAULT);
     }
 

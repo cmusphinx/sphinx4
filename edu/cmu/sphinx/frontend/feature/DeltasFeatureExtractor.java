@@ -98,15 +98,18 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
     /**
      * Initializes this DeltasFeatureExtractor.
      *
-     * @param name the name of this DeltasFeatureExtractor
-     * @param frontend the front end this DeltasFeatureExtractor belongs to
-     * @param props the SphinxProperties to use
+     * @param name        the name of this DeltasFeatureExtractor, if it is
+     *                    null, the name "DeltasFeatureExtractor" is given
+     *                    by default
+     * @param frontend    the front end this DeltasFeatureExtractor belongs to
+     * @param props       the SphinxProperties to use
      * @param predecessor the DataProcessor to get Cepstrum from
      */
     public void initialize(String name, String frontend,
                            SphinxProperties props,
 			   DataProcessor predecessor) {
-        super.initialize(name, frontend, props, predecessor);
+        super.initialize((name == null ? "DeltasFeatureExtractor" : name),
+                         frontend, props, predecessor);
 	cepstraBufferSize = 256;
         cepstraBuffer = new DoubleData[cepstraBufferSize];
 	setProperties(props);
@@ -132,8 +135,8 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
      * @param props the SphinxProperties to read properties from
      */
     private void setProperties(SphinxProperties props) {
-        window = props.getInt(getFullPropertyName(PROP_FEATURE_WINDOW),
-                              PROP_FEATURE_WINDOW_DEFAULT);
+        window = props.getInt
+            (getName(), PROP_FEATURE_WINDOW, PROP_FEATURE_WINDOW_DEFAULT);
         cepstraBufferEdge = cepstraBufferSize - (window * 2 + 2);
     }
 

@@ -121,14 +121,16 @@ public class SpeechMarker extends BaseDataProcessor {
      * Initializes this SpeechMarker with the given name, front end,
      * properties, and AudioSource predecessor.
      *
-     * @param name        the name of this SpeechMarker
+     * @param name        the name of this SpeechMarker, if it is null,
+     *                    the name "SpeechMarker" will be given
      * @param frontEnd    the front end this SpeechMarker belongs to
      * @param props       the SphinxProperties to read properties from
      * @param predecessor the DataProcessor this SpeechMarker gets Data from
      */
     public void initialize(String name, String frontEnd, 
                            SphinxProperties props, DataProcessor predecessor) {
-        super.initialize(name, frontEnd, props, predecessor);
+        super.initialize((name == null ? "SpeechMarker" : name),
+                         frontEnd, props, predecessor);
         this.outputQueue = new ArrayList();
         setProperties(props);
         reset();
@@ -139,21 +141,21 @@ public class SpeechMarker extends BaseDataProcessor {
      */
     private void setProperties(SphinxProperties props) {
 
-        startSpeechTime = 
-            props.getInt(getFullPropertyName(PROP_START_SPEECH),
-                         PROP_START_SPEECH_DEFAULT);
-        endSilenceTime = 
-            props.getInt(getFullPropertyName(PROP_END_SILENCE),
-                         PROP_END_SILENCE_DEFAULT);
-        speechLeader =
-            props.getInt(getFullPropertyName(PROP_SPEECH_LEADER),
-                         PROP_SPEECH_LEADER_DEFAULT);
-        speechTrailer =
-            props.getInt(getFullPropertyName(PROP_SPEECH_TRAILER),
-                         PROP_SPEECH_TRAILER_DEFAULT);
-        sampleRate =
-            props.getInt(getFullPropertyName(FrontEndFactory.PROP_SAMPLE_RATE),
-                         FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
+        startSpeechTime = props.getInt
+            (getName(), PROP_START_SPEECH, PROP_START_SPEECH_DEFAULT);
+        
+        endSilenceTime = props.getInt
+            (getName(), PROP_END_SILENCE, PROP_END_SILENCE_DEFAULT);
+        
+        speechLeader = props.getInt
+            (getName(), PROP_SPEECH_LEADER, PROP_SPEECH_LEADER_DEFAULT);
+
+        speechTrailer = props.getInt
+            (getName(), PROP_SPEECH_TRAILER, PROP_SPEECH_TRAILER_DEFAULT);
+
+        sampleRate = props.getInt
+            (getName(), FrontEndFactory.PROP_SAMPLE_RATE,
+             FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
     }
 
     /**

@@ -90,7 +90,9 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
     /**
      * Initializes this DiscreteFourierTransform.
      *
-     * @param name      the name of this DiscreteFourierTransform
+     * @param name      the name of this DiscreteFourierTransform, if it is
+     *                  null, the name "DiscreteFourierTransform" will be
+     *                  given by default
      * @param frontEnd  the context of the SphinxProperties to use
      * @param props     the SphinxProperties object to read properties from
      * @param predecessor the DataProcessor from which to get Data objects
@@ -98,8 +100,8 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
     public void initialize(String name, String frontEnd,
 			   SphinxProperties props, DataProcessor predecessor) {
 
-        super.initialize((name == null ? "DFT" : name), frontEnd,
-			 props, predecessor);
+        super.initialize((name == null ? "DiscreteFourierTransform" : name),
+                         frontEnd, props, predecessor);
 
 	/**
 	 * Number of points in the FFT. By default, the value is 512,
@@ -109,7 +111,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
 	 * 511 are symmetrical with the ones between 1 and 254. Therefore,
 	 * we need only return values between 0 and 255.
 	 */
-	numberFftPoints = props.getInt(PROP_NUMBER_FFT_POINTS,
+	numberFftPoints = props.getInt(getName(), PROP_NUMBER_FFT_POINTS,
                                        PROP_NUMBER_FFT_POINTS_DEFAULT);
 	computeLogBase2(this.numberFftPoints);
 	createWeightFft(numberFftPoints, false);

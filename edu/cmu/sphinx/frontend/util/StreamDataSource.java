@@ -111,7 +111,8 @@ public class StreamDataSource extends BaseDataProcessor {
      */
     public void initialize(String name, String frontEnd,
                            SphinxProperties props, DataProcessor predecessor) {
-        super.initialize(name, frontEnd, props, predecessor);
+        super.initialize((name == null ? "StreamDataSource" : name),
+                         frontEnd, props, predecessor);
 	initSphinxProperties(props);
     }
 
@@ -123,17 +124,17 @@ public class StreamDataSource extends BaseDataProcessor {
      */
     private void initSphinxProperties(SphinxProperties props) {
 
-        bytesPerRead = props.getInt(getFullPropertyName(PROP_BYTES_PER_READ),
-                                    PROP_BYTES_PER_READ_DEFAULT);
+        bytesPerRead = props.getInt
+            (getName(), PROP_BYTES_PER_READ, PROP_BYTES_PER_READ_DEFAULT);
         
-        bytesPerValue = props.getInt(getFullPropertyName(PROP_BITS_PER_SAMPLE),
-                                     PROP_BITS_PER_SAMPLE_DEFAULT) / 8;
+        bytesPerValue = props.getInt
+            (getName(), PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT)/8;
 
-        bigEndian = props.getBoolean(getFullPropertyName(PROP_BIG_ENDIAN_DATA),
-                                     PROP_BIG_ENDIAN_DATA_DEFAULT);
+        bigEndian = props.getBoolean
+            (getName(), PROP_BIG_ENDIAN_DATA, PROP_BIG_ENDIAN_DATA_DEFAULT);
 
-        signedData = props.getBoolean(getFullPropertyName(PROP_SIGNED_DATA),
-                                      PROP_SIGNED_DATA_DEFAULT);
+        signedData = props.getBoolean
+            (getName(), PROP_SIGNED_DATA, PROP_SIGNED_DATA_DEFAULT);
 
         if (bytesPerRead % 2 == 1) {
             bytesPerRead++;

@@ -66,7 +66,8 @@ public class DataDumper extends BaseDataProcessor {
      */
     public void initialize(String name, String frontEnd,
                            SphinxProperties props, DataProcessor predecessor) {
-        super.initialize(name, frontEnd, props, predecessor);
+        super.initialize((name == null ? "DataDumper" : name),
+                         frontEnd, props, predecessor);
         System.out.println("My name is " + name);
 	setProperties(props);
     }
@@ -79,8 +80,7 @@ public class DataDumper extends BaseDataProcessor {
      */
     private void setProperties(SphinxProperties props) {
 	enable = props.getBoolean
-            (getFullPropertyName(PROP_ENABLE),
-             PROP_ENABLE_DEFAULT);
+            (getName(), PROP_ENABLE, PROP_ENABLE_DEFAULT);
     }
 
 

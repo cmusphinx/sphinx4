@@ -78,16 +78,19 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
      * Constructs a PLPCepstrumProducer with the given
      * SphinxProperties context.
      *
-     * @param name the name of this PLCepstrumProducer
-     * @param frontEnd the front end this PLPCepstrumProducer belongs to
-     * @param props the SphinxProperties to read properties from
+     * @param name        the name of this PLPCepstrumProducer, if it is null,
+     *                    the name "PLPCepstrumProducer" will be given by
+     *                    default
+     * @param frontEnd    the front end this PLPCepstrumProducer belongs to
+     * @param props       the SphinxProperties to read properties from
      * @param predecessor the DataProcessor to get Spectrum objects from
      *
      * @throws IOException if an I/O error occurs
      */
     public void initialize(String name, String frontEnd,
                            SphinxProperties props, DataProcessor predecessor) {
-        super.initialize(name, frontEnd, props, predecessor);
+        super.initialize((name == null ? "PLPCepstrumProducer" : name),
+                         frontEnd, props, predecessor);
 	setProperties(props);
         this.predecessor = predecessor;
         computeCosine();
@@ -100,15 +103,14 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
     private void setProperties(SphinxProperties props) {
 
         numberPLPFilters = props.getInt
-            (getFullPropertyName(PLPFrequencyFilterBank.PROP_NUMBER_FILTERS),
+            (getName(), PLPFrequencyFilterBank.PROP_NUMBER_FILTERS,
              PLPFrequencyFilterBank.PROP_NUMBER_FILTERS_DEFAULT);
 
         cepstrumSize = props.getInt
-            (getFullPropertyName(PROP_CEPSTRUM_LENGTH),
-             PROP_CEPSTRUM_LENGTH_DEFAULT);
+            (getName(), PROP_CEPSTRUM_LENGTH, PROP_CEPSTRUM_LENGTH_DEFAULT);
 
 	LPCOrder = props.getInt
-            (getFullPropertyName(PROP_LPC_ORDER), PROP_LPC_ORDER_DEFAULT);
+            (getName(), PROP_LPC_ORDER, PROP_LPC_ORDER_DEFAULT);
     }
 
 

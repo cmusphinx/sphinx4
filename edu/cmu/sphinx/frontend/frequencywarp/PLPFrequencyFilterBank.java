@@ -95,7 +95,9 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
      * Constructs both the Bark frequency critical band filters
      * and the array of equal loudness scaling factor.
      *
-     * @param name         the name of this PLPFrequencyFilterBank
+     * @param name         the name of this PLPFrequencyFilterBank, if it is
+     *                     null, the name "PLPFrequencyFilterBank" will be
+     *                     given by default
      * @param frontEnd     the front end this PLPFrequencyFilterBank belongs to
      * @param props        the SphinxProperties to read properties from
      * @param predecessor  the DataProcessor to obtain Spectrum(a) from,
@@ -103,8 +105,8 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
      */
     public void initialize(String name, String frontEnd,
                            SphinxProperties props, DataProcessor predecessor) {
-        super.initialize((name == null ? "PLP" : name), frontEnd,
-                         props, predecessor);
+        super.initialize((name == null ? "PLPFrequencyFilterBank" : name),
+                         frontEnd, props, predecessor);
 	setProperties(props);
 	buildCriticalBandFilterbank();
 	buildEqualLoudnessScalingFactors();
@@ -119,22 +121,22 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
     private void setProperties(SphinxProperties props) {
 
 	sampleRate = props.getInt
-            (getFullPropertyName(FrontEndFactory.PROP_SAMPLE_RATE),
+            (getName(),
+             FrontEndFactory.PROP_SAMPLE_RATE,
              FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
 
         minFreq = props.getDouble
-            (getFullPropertyName(PROP_MIN_FREQ), PROP_MIN_FREQ_DEFAULT);
+            (getName(), PROP_MIN_FREQ, PROP_MIN_FREQ_DEFAULT);
 
         maxFreq = props.getDouble
-            (getFullPropertyName(PROP_MAX_FREQ), PROP_MAX_FREQ_DEFAULT);
+            (getName(), PROP_MAX_FREQ, PROP_MAX_FREQ_DEFAULT);
 
         numberFilters = props.getInt
-            (getFullPropertyName(PROP_NUMBER_FILTERS),
-             PROP_NUMBER_FILTERS_DEFAULT);
+            (getName(), PROP_NUMBER_FILTERS, PROP_NUMBER_FILTERS_DEFAULT);
 
         numberFftPoints = props.getInt
-	    (getFullPropertyName
-             (DiscreteFourierTransform.PROP_NUMBER_FFT_POINTS),
+	    (getName(),
+             DiscreteFourierTransform.PROP_NUMBER_FFT_POINTS,
              DiscreteFourierTransform.PROP_NUMBER_FFT_POINTS_DEFAULT);
     }
 

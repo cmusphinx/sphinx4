@@ -58,7 +58,9 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
     /**
      * Initializes this DiscreteCosineTransform.
      *
-     * @param name      the name of this DiscreteCosineTransform
+     * @param name      the name of this DiscreteCosineTransform, if it is
+     *                  null, the name "DiscreteCosineTransform" will be
+     *                  given by default
      * @param frontEnd  the front end this DiscreteCosineTransform belongs to
      * @param props     the SphinxProperties to read properties from
      * @param predecessor the DataProcessor to get Spectrum objects from
@@ -67,13 +69,14 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
      */
     public void initialize(String name, String frontEnd,
                            SphinxProperties props, DataProcessor predecessor) {
-	super.initialize((name == null ? "DCT" : name),
+	super.initialize((name == null ? "DiscreteCosineTransform" : name),
                          frontEnd, props, predecessor);
         numberMelFilters = props.getInt
-            (MelFrequencyFilterBank.PROP_NUMBER_FILTERS,
+            (getName(),
+             MelFrequencyFilterBank.PROP_NUMBER_FILTERS,
              MelFrequencyFilterBank.PROP_NUMBER_FILTERS_DEFAULT);
         cepstrumSize = props.getInt
-            (PROP_CEPSTRUM_LENGTH, PROP_CEPSTRUM_LENGTH_DEFAULT);
+            (getName(), PROP_CEPSTRUM_LENGTH, PROP_CEPSTRUM_LENGTH_DEFAULT);
         computeMelCosine();
     }
 

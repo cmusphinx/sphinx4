@@ -172,7 +172,8 @@ public class Microphone extends BaseDataProcessor {
      */
     public void initialize(String name, String frontEnd,
                            SphinxProperties props, DataProcessor predecessor) {
-        super.initialize(name, frontEnd, props, predecessor);
+        super.initialize((name == null ? "Microphone" : name),
+                         frontEnd, props, predecessor);
 	setProperties(props);
         audioFormat = new AudioFormat(sampleRate, sampleSizeInBytes * 8,
                                       channels, signed, bigEndian);
@@ -188,31 +189,28 @@ public class Microphone extends BaseDataProcessor {
     private void setProperties(SphinxProperties props) {
 
         sampleRate = props.getInt
-            (getFullPropertyName(FrontEndFactory.PROP_SAMPLE_RATE),
+            (getName(), FrontEndFactory.PROP_SAMPLE_RATE,
              FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
 
 	closeBetweenUtterances = props.getBoolean
-            (getFullPropertyName(PROP_CLOSE_BETWEEN_UTTERANCES),
+            (getName(), PROP_CLOSE_BETWEEN_UTTERANCES,
              PROP_CLOSE_BETWEEN_UTTERANCES_DEFAULT);
 
         frameSizeInBytes = props.getInt
-            (getFullPropertyName(PROP_BYTES_PER_READ),
-             PROP_BYTES_PER_READ_DEFAULT);
+            (getName(), PROP_BYTES_PER_READ, PROP_BYTES_PER_READ_DEFAULT);
 
         if (frameSizeInBytes % 2 == 1) {
             frameSizeInBytes++;
         }
 
         sampleSizeInBytes = props.getInt
-            (getFullPropertyName(PROP_BITS_PER_SAMPLE),
-             PROP_BITS_PER_SAMPLE_DEFAULT) / 8;
+            (getName(), PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT)/8;
 
         keepDataReference = props.getBoolean
-            (getFullPropertyName(PROP_KEEP_LAST_AUDIO),
-             PROP_KEEP_LAST_AUDIO_DEFAULT);
+            (getName(), PROP_KEEP_LAST_AUDIO, PROP_KEEP_LAST_AUDIO_DEFAULT);
         
         debug = props.getBoolean
-            (getFullPropertyName(PROP_DEBUG), PROP_DEBUG_DEFAULT);
+            (getName(), PROP_DEBUG, PROP_DEBUG_DEFAULT);
     }
 
     /**

@@ -156,20 +156,18 @@ public class RaisedCosineWindower extends BaseDataProcessor {
      */
     private void setProperties(SphinxProperties props) {
 
-        alpha = props.getDouble(getFullPropertyName(PROP_ALPHA),
-                                PROP_ALPHA_DEFAULT);
+        alpha = props.getDouble
+            (getName(), PROP_ALPHA, PROP_ALPHA_DEFAULT);
 
         int sampleRate = props.getInt
-            (getFullPropertyName(FrontEndFactory.PROP_SAMPLE_RATE),
+            (getName(), FrontEndFactory.PROP_SAMPLE_RATE,
              FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
 
         float windowSizeInMs = props.getFloat
-            (getFullPropertyName(PROP_WINDOW_SIZE_MS),
-             PROP_WINDOW_SIZE_MS_DEFAULT);
+            (getName(), PROP_WINDOW_SIZE_MS, PROP_WINDOW_SIZE_MS_DEFAULT);
         
         float windowShiftInMs = props.getFloat
-            (getFullPropertyName(PROP_WINDOW_SHIFT_MS),
-             PROP_WINDOW_SHIFT_MS_DEFAULT);
+            (getName(), PROP_WINDOW_SHIFT_MS, PROP_WINDOW_SHIFT_MS_DEFAULT);
         
         windowSize = DataUtil.getSamplesPerWindow(sampleRate, windowSizeInMs);
         windowShift = DataUtil.getSamplesPerShift(sampleRate, windowShiftInMs);

@@ -213,8 +213,6 @@ public class ConcatFileDataSource extends BaseDataProcessor
 
     private static final String GAP_LABEL = "inter_segment_gap";
 
-
-
     private boolean addRandomSilence;
     private boolean createTranscript;
     private int skip;
@@ -235,7 +233,9 @@ public class ConcatFileDataSource extends BaseDataProcessor
     /**
      * Initializes a ConcatFileDataSource.
      *
-     * @param name         the name of this ConcatFileDataSource
+     * @param name         the name of this ConcatFileDataSource, if it is
+     *                     null, the name "ConcatFileDataSource" will be given
+     *                     by default
      * @param frontEnd     the front end this ConcatFileDataSource belongs
      * @param props        the SphinxProperties to use
      * @param predecessor  the DataProcessor to read Data from, usually
@@ -243,47 +243,46 @@ public class ConcatFileDataSource extends BaseDataProcessor
      */
     public void initialize(String name, String frontEnd,
                            SphinxProperties props, DataProcessor predecessor) {
-        super.initialize(name, frontEnd, props, predecessor);
+        super.initialize((name == null ? "ConcatFileDataSource" : name),
+                         frontEnd, props, predecessor);
 
         int sampleRate = props.getInt
-            (getFullPropertyName(FrontEndFactory.PROP_SAMPLE_RATE),
+            (getName(),
+             FrontEndFactory.PROP_SAMPLE_RATE,
              FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
 
         int bitsPerSample = props.getInt
-            (getFullPropertyName(PROP_BITS_PER_SAMPLE),
-             PROP_BITS_PER_SAMPLE_DEFAULT);
+            (getName(), PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT);
         
         bytesPerSecond = sampleRate * (bitsPerSample / 8);
 
         addRandomSilence = props.getBoolean
-            (getFullPropertyName(PROP_ADD_RANDOM_SILENCE),
+            (getName(), PROP_ADD_RANDOM_SILENCE,
              PROP_ADD_RANDOM_SILENCE_DEFAULT);
         
         maxSilence = props.getInt
-            (getFullPropertyName(PROP_MAX_SILENCE), PROP_MAX_SILENCE_DEFAULT);
+            (getName(), PROP_MAX_SILENCE, PROP_MAX_SILENCE_DEFAULT);
         
         skip = props.getInt
-            (getFullPropertyName(PROP_SKIP), PROP_SKIP_DEFAULT);
+            (getName(), PROP_SKIP, PROP_SKIP_DEFAULT);
         
         silenceFileName = props.getString
-            (getFullPropertyName(PROP_SILENCE_FILE),
-             PROP_SILENCE_FILE_DEFAULT);
+            (getName(), PROP_SILENCE_FILE, PROP_SILENCE_FILE_DEFAULT);
         
         File silenceFile = new File(silenceFileName);
         silenceFileLength = silenceFile.length();
 
-        int startFile = props.getInt(getFullPropertyName(PROP_START_FILE), 
-                                     PROP_START_FILE_DEFAULT);
+        int startFile = props.getInt
+            (getName(), PROP_START_FILE, PROP_START_FILE_DEFAULT);
 
-        int totalFiles = props.getInt(getFullPropertyName(PROP_TOTAL_FILES), 
-                                      PROP_TOTAL_FILES_DEFAULT);
+        int totalFiles = props.getInt
+            (getName(), PROP_TOTAL_FILES, PROP_TOTAL_FILES_DEFAULT);
 
         transcriptFile = props.getString
-            (getFullPropertyName(PROP_TRANSCRIPT_FILE),
-             PROP_TRANSCRIPT_FILE_DEFAULT);
+            (getName(), PROP_TRANSCRIPT_FILE, PROP_TRANSCRIPT_FILE_DEFAULT);
 
         String batchFile = props.getString
-            (getFullPropertyName(PROP_BATCH_FILE), PROP_BATCH_FILE_DEFAULT);
+            (getName(), PROP_BATCH_FILE, PROP_BATCH_FILE_DEFAULT);
         
         try {
             if (transcriptFile != null) {

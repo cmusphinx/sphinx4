@@ -104,7 +104,9 @@ public class StreamCepstrumSource extends BaseDataProcessor {
      * Constructs a StreamCepstrumSource that reads
      * MelCepstrum data from the given path.
      *
-     * @param name         the name of this StreamCepstrumSource
+     * @param name         the name of this StreamCepstrumSource, if it is
+     *                     null, the name "StreamCepstrumSource" will be given
+     *                     by default
      * @param frontEnd     the front end this StreamCepstrumSource belongs to
      * @param props        the SphinxProperties used to read properties
      * @param predecessor  the DataProcessor to read Data from, usually
@@ -112,7 +114,8 @@ public class StreamCepstrumSource extends BaseDataProcessor {
      */
     public void initialize(String name, String frontEnd,
                            SphinxProperties props, DataProcessor predecessor) {
-	super.initialize(name, frontEnd, props, predecessor);
+	super.initialize((name == null ? "StreamCepstrumSource" : name),
+                         frontEnd, props, predecessor);
 	initSphinxProperties(props);
 	curPoint = -1;
         firstSampleNumber = 0;
@@ -160,22 +163,20 @@ public class StreamCepstrumSource extends BaseDataProcessor {
     private void initSphinxProperties(SphinxProperties props) {
 	
         cepstrumLength = props.getInt
-            (getFullPropertyName(PROP_CEPSTRUM_LENGTH),
-             PROP_CEPSTRUM_LENGTH_DEFAULT);
+            (getName(), PROP_CEPSTRUM_LENGTH, PROP_CEPSTRUM_LENGTH_DEFAULT);
 	
         binary = props.getBoolean
-            (getFullPropertyName(PROP_BINARY), PROP_BINARY_DEFAULT);
+            (getName(), PROP_BINARY, PROP_BINARY_DEFAULT);
         
         float frameShiftMs = props.getFloat
-            (getFullPropertyName(PROP_FRAME_SHIFT_MS),
-             PROP_FRAME_SHIFT_MS_DEFAULT);
+            (getName(), PROP_FRAME_SHIFT_MS, PROP_FRAME_SHIFT_MS_DEFAULT);
         
         float frameSizeMs = props.getFloat
-            (getFullPropertyName(PROP_FRAME_SIZE_MS),
-             PROP_FRAME_SIZE_MS_DEFAULT);
+            (getName(), PROP_FRAME_SIZE_MS, PROP_FRAME_SIZE_MS_DEFAULT);
         
         int sampleRate = props.getInt
-            (getFullPropertyName(FrontEndFactory.PROP_SAMPLE_RATE),
+            (getName(),
+             FrontEndFactory.PROP_SAMPLE_RATE,
              FrontEndFactory.PROP_SAMPLE_RATE_DEFAULT);
 
         frameShift = DataUtil.getSamplesPerWindow(sampleRate, frameShiftMs);

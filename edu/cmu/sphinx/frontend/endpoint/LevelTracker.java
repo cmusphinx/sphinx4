@@ -133,7 +133,8 @@ public class LevelTracker extends BaseDataProcessor {
      * Initializes this LevelTracker endpointer with the given name, context,
      * and DataProcessor predecessor.
      *
-     * @param name        the name of this LevelTracker
+     * @param name        the name of this LevelTracker, if this is null,
+     *                    the name "LevelTracker" will be given by default
      * @param frontEnd    the context of the SphinxProperties this
      *                    LevelTracker use
      * @param props       the SphinxProperties to read properties from
@@ -165,20 +166,19 @@ public class LevelTracker extends BaseDataProcessor {
     private void setProperties(SphinxProperties props) {
 
         frameLength = props.getInt
-            (getFullPropertyName(PROP_FRAME_LENGTH),
-             PROP_FRAME_LENGTH_DEFAULT);
+            (getName(), PROP_FRAME_LENGTH, PROP_FRAME_LENGTH_DEFAULT);
 
         adjustment = props.getDouble
-            (getFullPropertyName(PROP_ADJUSTMENT), PROP_ADJUSTMENT_DEFAULT);
+            (getName(), PROP_ADJUSTMENT, PROP_ADJUSTMENT_DEFAULT);
 
         threshold = props.getDouble
-            (getFullPropertyName(PROP_THRESHOLD), PROP_THRESHOLD_DEFAULT);
+            (getName(), PROP_THRESHOLD, PROP_THRESHOLD_DEFAULT);
 
         minSignal = props.getDouble
-            (getFullPropertyName(PROP_MIN_SIGNAL), PROP_MIN_SIGNAL_DEFAULT);
+            (getName(), PROP_MIN_SIGNAL, PROP_MIN_SIGNAL_DEFAULT);
 
         debug = props.getBoolean
-            (getFullPropertyName(PROP_DEBUG), PROP_DEBUG_DEFAULT);
+            (getName(), PROP_DEBUG, PROP_DEBUG_DEFAULT);
     }
 
     /**
@@ -223,7 +223,8 @@ public class LevelTracker extends BaseDataProcessor {
         /**
          * Initializes this DataProcessor.
          *
-         * @param name the name of this DataProcessor
+         * @param name         the name of this DataProcessor, if this is null,
+         *                     the name "SpeechClassifier" is given by default
          * @param pipelineName the name of the front-end pipeline this
          *                     DataProcessor is in
          * @param props        the SphinxProperties to use
@@ -232,7 +233,8 @@ public class LevelTracker extends BaseDataProcessor {
         public void initialize(String name, String frontEndName,
                                SphinxProperties props,
                                DataProcessor predecessor) {
-            super.initialize(name, frontEndName, props, predecessor);
+            super.initialize((name == null ? "SpeechClassifier" : name),
+                             frontEndName, props, predecessor);
         }
 
         /**

@@ -113,22 +113,6 @@ public abstract class BaseDataProcessor implements DataProcessor {
     }
 
     /**
-     * Returns the full property name string. If the front end name
-     * is not null, then the returned string is
-     * <i>getFrontEndName();propertyName</i>.
-     * If the front end name is null, then the returned string is propertyName.
-     *
-     * @param propertyName the original property name
-     *
-     * @return the original property name or 
-     * <i>getFrontEndName();propertyName</i>
-     */
-    public String getFullPropertyName(String propertyName) {
-        return (getFrontEndName() == null ? propertyName :
-                (getFrontEndName() + ";" + propertyName));
-    }
-
-    /**
      * Sets the predecessor DataProcessor. This method allows dynamic
      * reconfiguration of the front end.
      *

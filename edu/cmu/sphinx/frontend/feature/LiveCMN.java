@@ -108,7 +108,8 @@ public class LiveCMN extends BaseDataProcessor {
     /**
      * Initializes this LiveCMN.
      *
-     * @param name         the name of this LiveCMN
+     * @param name         the name of this LiveCMN, if it is null, the
+     *                     name "LiveCMN" will be given by default
      * @param frontEnd     the front end this LiveCMN belongs to
      * @param props        the SphinxProperties to read properties from
      * @param predecessor  the DataProcessor from which this normalizer
@@ -142,14 +143,11 @@ public class LiveCMN extends BaseDataProcessor {
      */
     private void setProperties(SphinxProperties props) {
 	initialMean = props.getDouble
-            (getFullPropertyName(PROP_INITIAL_MEAN),
-             PROP_INITIAL_MEAN_DEFAULT);
+            (getName(), PROP_INITIAL_MEAN, PROP_INITIAL_MEAN_DEFAULT);
 	cmnWindow = props.getInt
-            (getFullPropertyName(PROP_CMN_WINDOW),
-             PROP_CMN_WINDOW_DEFAULT);
+            (getName(), PROP_CMN_WINDOW, PROP_CMN_WINDOW_DEFAULT);
 	cmnShiftWindow = props.getInt
-            (getFullPropertyName(PROP_CMN_SHIFT_WINDOW),
-             PROP_CMN_SHIFT_WINDOW_DEFAULT);
+            (getName(), PROP_CMN_SHIFT_WINDOW, PROP_CMN_SHIFT_WINDOW_DEFAULT);
     }
 	
 
