@@ -1451,7 +1451,6 @@ public class FlatLinguist implements Linguist, Configurable {
          *                log domain
          * 
          * 
-         * @return the state that was attached
          */
         protected void attachState(SentenceHMMState prevState,
                 SentenceHMMState nextState, float logAcousticProbability,

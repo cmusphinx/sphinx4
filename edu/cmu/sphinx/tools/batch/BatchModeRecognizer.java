@@ -268,7 +268,7 @@ public class BatchModeRecognizer implements Configurable {
     /**
      * Sets the input stream to the given filename
      * @param filename the filename to set the input stream to
-     * @return the InputStream representing the filename
+     *
      * @throws IOException if an error occurs
      */
     private void setInputStream(String filename) throws IOException {
