@@ -100,31 +100,13 @@ public class MicrophoneTest extends JFrame {
      */
     private void createModel() {
 
-        frontend = new FrontEnd("FrontEnd", testName);        
         microphone = new Microphone("Microphone", testName);
 
         // the microphone runs in a separate thread: it keeps
         // listening to and caching audio whenever it is "on"
         new Thread(microphone).start();
         
-        frontend.setAudioSource(microphone);
-        
-        Preemphasizer preemphasizer = new Preemphasizer
-            ("Preemphasizer", testName, frontend.getAudioSource());
-        Windower windower = new Windower
-            ("HammingWindow", testName, preemphasizer);
-        SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer
-            ("FFT", testName, windower);
-        MelFilterbank melFilterbank = new MelFilterbank
-            ("MelFilter", testName, spectrumAnalyzer);
-        MelCepstrumProducer melCepstrum = new MelCepstrumProducer
-            ("MelCepstrum", testName, melFilterbank);
-        CepstralMeanNormalizer cmn = new CepstralMeanNormalizer
-            ("CMN", testName, melCepstrum);
-        FeatureExtractor extractor = new FeatureExtractor
-            ("FeatureExtractor", testName, cmn);
-        
-        frontend.setFeatureSource(extractor);
+        frontend = new FrontEnd("FrontEnd", testName, microphone);
     }
 
 

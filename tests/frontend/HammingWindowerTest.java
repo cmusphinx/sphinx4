@@ -28,7 +28,7 @@ public class HammingWindowerTest {
             String propertiesFile = argv[1];
             String audioFile = argv[2];
 
-            FrontEndTest fet = new FrontEndTest
+            ProcessorTest fet = new ProcessorTest
                 (testName, propertiesFile, audioFile);
 
             Preemphasizer preemphasizer = new Preemphasizer

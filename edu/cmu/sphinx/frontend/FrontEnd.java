@@ -14,42 +14,21 @@ import java.io.IOException;
  * of a series of processors. The FrontEnd connects all the processors
  * by the input and output points.
  * 
- * <p>The input to the FrontEnd is an AudioSource. For an audio stream,
+ * <p>The input to the FrontEnd is an audio data. For an audio stream,
  * the <code>StreamAudioSource</code> should be used. The 
  * input can also be a file containing a list of audio files, in which case
  * the <code>BatchFileAudioSource</code> can be used.
  *
- * <p>The output of the FrontEnd are Features, so a <code>FeatureSource</code>
- * is needed.
- * A typical sequence of calls to initialize the FrontEnd is:
- * <pre>
- * FrontEnd fe = new FrontEnd("frontend", context);
- * fe.setAudioSource(new StreamAudioSource(...));
- * 
- * // create the processors
- * Preemphasizer preemphasizer = new Preemphasizer
- *     ("Preemphasizer", context, fe.getAudioSource());
- * Windower windower = new Windower
- *     ("HammingWindow", context, preemphasizer);
- * SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer
- *     ("FFT", context, windower);
- * MelFilterbank melFilterbank = new MelFilterbank
- *     ("MelFilter", context, spectrumAnalyzer);
- * MelCepstrumProducer melCepstrum = new MelCepstrumProducer
- *     ("MelCepstrum", context, melFilterbank);
- * CepstralMeanNormalizer cmn = new CepstralMeanNormalizer
- *     ("CMN", context, melCepstrum);
- *
- * // FeatureExtractor implements FeatureSource
- * fe.setFeatureSource(new FeatureExtractor(name, context, cmn));
- * </pre>
- *
- * <p>To obtain <code>Feature</code>(s) from the FrontEnd, you would use:
+ * <p>The output of the FrontEnd are Features.
+ * To obtain <code>Feature</code>(s) from the FrontEnd, you would use:
  * <pre>
  * fe.getFeatureFrame(10);
  * </pre>
  * which will return a <code>FeatureFrame</code> with 10 <code>Feature</code>s
  * in it. If there are only 5 more features before the end of utterance,
+ *
+ * This FrontEnd contains all the "standard" frontend processors like
+ * Preemphasizer, HammingWindower, SpectrumAnalyzer, ..., etc.
  *
  * @see AudioSource
  * @see CepstralMeanNormalizer
@@ -119,8 +98,33 @@ public class FrontEnd extends DataProcessor {
      * @param name the name of this FrontEnd
      * @param context the context of this FrontEnd
      */
-    public FrontEnd(String name, String context) {
+    public FrontEnd(String name, String context, AudioSource audioSource) {
+
         super(name, context);
+
+        Preemphasizer preemphasizer = new Preemphasizer
+            ("Preemphasizer", context, audioSource);
+
+        Windower windower = new Windower
+            ("HammingWindow", context, preemphasizer);
+
+        SpectrumAnalyzer spectrumAnalyzer = new SpectrumAnalyzer
+            ("FFT", context, windower);
+
+        MelFilterbank melFilterbank = new MelFilterbank
+            ("MelFilter", context, spectrumAnalyzer);
+
+        MelCepstrumProducer melCepstrum = new MelCepstrumProducer
+            ("MelCepstrum", context, melFilterbank);
+
+        CepstralMeanNormalizer cmn = new CepstralMeanNormalizer
+            ("CMN", context, melCepstrum);
+
+        FeatureExtractor extractor = new FeatureExtractor
+            ("FeatureExtractor", context, cmn);
+
+        setAudioSource(audioSource);
+        setFeatureSource(extractor);
     }
 
 
@@ -175,13 +179,17 @@ public class FrontEnd extends DataProcessor {
      *
      * @param numberFeatures the number of Features to return
      *
-     * @return the next N number of Features in a FeatureFrame
+     * @return the next N number of Features in a FeatureFrame, or null
+     *    if no more FeatureFrames available
      *
      * @see FeatureFrame
      */
     public FeatureFrame getFeatureFrame(int numberFeatures) throws
     IOException {
 
+        getTimer().start();
+
+        FeatureFrame featureFrame = null;
         Feature[] features = new Feature[numberFeatures];
         Feature feature = null;
 
@@ -193,20 +201,28 @@ public class FrontEnd extends DataProcessor {
                 if (feature.hasUtteranceEndSignal()) {
                     break;
                 }
+            } else {
+                break;
             }
         } while (i < numberFeatures);
 
-        // if we hit the end of utterance before getting the
-        // desired number of features, shrink the array
-        if (i < numberFeatures) {
-            Feature[] lessFeatures = new Feature[i];
-            for (i = 0; i < lessFeatures.length; i++) {
-                lessFeatures[i] = features[i];
-            }
-            features = lessFeatures;
-        }
+        // if there are some features
+        if (i > 0) {
 
-        FeatureFrame featureFrame = new FeatureFrame(features);
+            // if we hit the end of utterance before getting the
+            // desired number of features, shrink the array
+            if (i < numberFeatures) {
+                Feature[] lessFeatures = new Feature[i];
+                for (i = 0; i < lessFeatures.length; i++) {
+                    lessFeatures[i] = features[i];
+                }
+                features = lessFeatures;
+            }
+            
+            featureFrame = new FeatureFrame(features);
+        }
+        
+        getTimer().stop();
 
         return featureFrame;
     }
