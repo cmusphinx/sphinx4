@@ -30,12 +30,6 @@ import java.io.IOException;
  * of audio data. Speech signals have an attenuation (a decrease in
  * intensity of a signal) of 20 dB/dec. It increases the magnitude
  * of the higher frequencies with respect to the lower frequencies.
- * One of the goals of preemphasis is to reduce background noise,
- * and increase the signal-to-noise ratio. It is
- * a high-pass filter because it emphasizes the high frequency components,
- * and de-emphasizes the low frequency components. High-pass filters
- * are so called because the allow the high frequency components to "pass 
- * through", while weakening or filtering out the low frequency components.
  *
  * The Preemphasizer takes a Data object that usually represents
  * audio data as input, and outputs the same Data object, but with
@@ -61,6 +55,13 @@ import java.io.IOException;
  * </pre>
  *
  * Other Data objects are passed along unchanged through this Preemphasizer.
+ *
+ * Preemphasize emphasizes the high frequency components, because
+ * they usually contain much less energy than lower frequency components,
+ * even though they are still important for speech recognition.
+ * It is a high-pass filter because it allows the high frequency components
+ * to "pass through", while weakening or filtering out the low frequency
+ * components.
  */
 public class Preemphasizer extends BaseDataProcessor {
 
