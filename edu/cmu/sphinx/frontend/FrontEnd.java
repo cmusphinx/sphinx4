@@ -162,7 +162,7 @@ public class FrontEnd extends DataProcessor {
      * as a single FeatureFrame.
      * The number of Features return maybe less than N, in which
      * case the last Feature will contain a Signal.SEGMENT_END signal.
-     * However, the size of the FeatureFrame will still be N.
+     * Consequently, the size of the FeatureFrame will be less than N.
      *
      * @param numberFeatures the number of Features to return
      *
@@ -174,7 +174,6 @@ public class FrontEnd extends DataProcessor {
     IOException {
 
         Feature[] features = new Feature[numberFeatures];
-        FeatureFrame featureFrame = new FeatureFrame(features);
         Feature feature = null;
 
         int i = 0;
@@ -185,7 +184,19 @@ public class FrontEnd extends DataProcessor {
                 break;
             }
         } while (i < numberFeatures);
-        
+
+        // if we hit the end of segment before getting the
+        // desired number of features, shrink the array
+        if (i < numberFeatures) {
+            Feature[] lessFeatures = new Feature[i];
+            for (i = 0; i < lessFeatures.length; i++) {
+                lessFeatures[i] = features[i];
+            }
+            features = lessFeatures;
+        }
+
+        FeatureFrame featureFrame = new FeatureFrame(features);
+
         return featureFrame;
     }
 }
