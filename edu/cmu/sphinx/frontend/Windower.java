@@ -47,15 +47,13 @@ public class Windower extends DataProcessor implements AudioSource {
 	"edu.cmu.sphinx.frontend.windower.alpha";
 
 
-    private AudioSource predecessor;      // the previous processor
-    private double[] hammingWindow;       // Hamming window
-    private int windowSize;               // size of each window
-    private int windowShift;              // the window size
-    private int audioFrameSize;           // size of each Audio frame
-    private double ALPHA;                 // Hamming Window parameter
-    private Vector outputQueue;           // cache for output windows
-    private DoubleBuffer overflowBuffer;  // cache for overlapped audio regions
-    private Utterance currentUtterance;   // the current Utterance
+    private AudioSource predecessor;     // the previous processor
+    private double[] hammingWindow;      // Hamming window
+    private int windowSize;              // size of each window
+    private int windowShift;             // the window size
+    private Vector outputQueue;          // cache for output windows
+    private DoubleBuffer overflowBuffer; // cache for overlapped audio regions
+    private Utterance currentUtterance;  // the current Utterance
 
 
     /**
@@ -69,7 +67,14 @@ public class Windower extends DataProcessor implements AudioSource {
         this.predecessor = predecessor;
 	createWindow();
         outputQueue = new Vector();
-        overflowBuffer = new DoubleBuffer(windowSize + audioFrameSize);
+
+        int audioFrameSizeInBytes = getSphinxProperties().getInt
+	    (FrontEnd.PROP_BYTES_PER_AUDIO_FRAME, 4000);
+        if (audioFrameSizeInBytes % 2 == 1) {
+            audioFrameSizeInBytes++;
+        }
+        overflowBuffer = new DoubleBuffer(windowSize + 
+                                          audioFrameSizeInBytes/2);
     }
 
 
@@ -89,17 +94,6 @@ public class Windower extends DataProcessor implements AudioSource {
 
         windowSize = Util.getSamplesPerWindow(sampleRate, windowSizeInMs);
         windowShift = Util.getSamplesPerShift(sampleRate, windowShiftInMs);
-
-        ALPHA = properties.getDouble(PROP_ALPHA, 0.46);
-
-        int audioFrameSizeInBytes = properties.getInt
-	    (FrontEnd.PROP_BYTES_PER_AUDIO_FRAME, 4000);
-
-        if (audioFrameSizeInBytes % 2 == 1) {
-            audioFrameSizeInBytes++;
-        }
-        
-        audioFrameSize = audioFrameSizeInBytes / 2;
     }
 
 
@@ -107,11 +101,12 @@ public class Windower extends DataProcessor implements AudioSource {
      * Creates the Window.
      */
     private void createWindow() {
+        double alpha = getSphinxProperties().getDouble(PROP_ALPHA, 0.46);
 	this.hammingWindow = new double[windowSize];
 	if (windowSize > 1){
-	    double oneMinusAlpha = (1 - ALPHA);
+	    double oneMinusAlpha = (1 - alpha);
 	    for (int i = 0; i < windowSize; i++) {
-		hammingWindow[i] = oneMinusAlpha - ALPHA *
+		hammingWindow[i] = oneMinusAlpha - alpha *
 		    Math.cos(2 * Math.PI * i / ((double) windowSize - 1.0));
 	    }
 	}
