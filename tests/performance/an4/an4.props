@@ -13,6 +13,8 @@ handlers= java.util.logging.ConsoleHandler
 java.util.logging.ConsoleHandler.level = WARN
 java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormatter
 
+edu.cmu.sphinx.util.LogMath.logBase = 1.0001
+
 
 ############################################################
 #
@@ -21,7 +23,6 @@ java.util.logging.ConsoleHandler.formatter = edu.cmu.sphinx.util.SphinxLogFormat
 ############################################################
 
 edu.cmu.sphinx.knowledge.acoustic.FeatureVectorLength = 39
-edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
 edu.cmu.sphinx.knowledge.acoustic.format=sphinx3.binary 
 edu.cmu.sphinx.knowledge.acoustic.location = file:/lab/speech/sphinx4/data/wsj_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip
