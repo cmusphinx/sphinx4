@@ -90,9 +90,11 @@ public class Utterance {
      * @param audio the audio frame to add
      */
     public void add(byte[] audio) {
-        totalBytes += audio.length;
-        audioBuffer.add(audio);
-        setFlattened(false);
+        synchronized (audioBuffer) {
+            totalBytes += audio.length;
+            audioBuffer.add(audio);
+            setFlattened(false);
+        }
     }
 
 
