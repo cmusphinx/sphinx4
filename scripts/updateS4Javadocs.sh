@@ -8,7 +8,7 @@ export JAVA_HOME
 PUSH_DEST=/home/groups/c/cm/cmusphinx/htdocs/sphinx4
 export PUSH_DEST
 
-DOC_DEST=bld/javadoc
+DOC_DEST=javadoc
 export DOC_DEST
 
 JAVADOC_OUT=javadoc.out
