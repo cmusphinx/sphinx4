@@ -13,18 +13,20 @@
 # usage: makeTwikiReports testName
 
 log=regression.log
-./makeTwikiSummaryReport $log $1.list this latest $1 > AutoGenlatest$1.txt
-./makeTwikiSummaryReport $log $1.list this fastest $1 > AutoGenfastest$1.txt 
-./makeTwikiSummaryReport $log $1.list this best $1 > AutoGenbest$1.txt
+machine=`hostname`
 
-./makeTwikiDetailReport $log $1.list this latest $1 s4 > AutoGenlatest$1SphinxFour.txt
-./makeTwikiDetailReport $log $1.list this fastest $1 s4 > AutoGenfastest$1SphinxFour.txt 
-./makeTwikiDetailReport $log $1.list this best $1 s4 > AutoGenbest$1SphinxFour.txt
+./makeTwikiSummaryReport $log $1.list this latest $1 > AutoGenlatest$1_$machine.txt
+./makeTwikiSummaryReport $log $1.list this fastest $1 > AutoGenfastest$1_$machine.txt 
+./makeTwikiSummaryReport $log $1.list this best $1 > AutoGenbest$1_$machine.txt
 
-./makeTwikiDetailReport $log $1.list this latest $1 s3 > AutoGenlatest$1SphinxThree.txt
-./makeTwikiDetailReport $log $1.list this fastest $1 s3 > AutoGenfastest$1SphinxThree.txt 
-./makeTwikiDetailReport $log $1.list this best $1 s3 > AutoGenbest$1SphinxThree.txt
+./makeTwikiDetailReport $log $1.list this latest $1 s4 > AutoGenlatest$1SphinxFour_$machine.txt
+./makeTwikiDetailReport $log $1.list this fastest $1 s4 > AutoGenfastest$1SphinxFour_$machine.txt 
+./makeTwikiDetailReport $log $1.list this best $1 s4 > AutoGenbest$1SphinxFour_$machine.txt
 
-./makeTwikiDetailReport $log $1.list this latest $1 s3.3 > AutoGenlatest$1SphinxThreeThree.txt
-./makeTwikiDetailReport $log $1.list this fastest $1 s3.3 > AutoGenfastest$1SphinxThreeThree.txt 
-./makeTwikiDetailReport $log $1.list this best $1 s3.3 > AutoGenbest$1SphinxThreeThree.txt
+./makeTwikiDetailReport $log $1.list this latest $1 s3 > AutoGenlatest$1SphinxThree_$machine.txt
+./makeTwikiDetailReport $log $1.list this fastest $1 s3 > AutoGenfastest$1SphinxThree_$machine.txt 
+./makeTwikiDetailReport $log $1.list this best $1 s3 > AutoGenbest$1SphinxThree_$machine.txt
+
+./makeTwikiDetailReport $log $1.list this latest $1 s3.3 > AutoGenlatest$1SphinxThreeThree_$machine.txt
+./makeTwikiDetailReport $log $1.list this fastest $1 s3.3 > AutoGenfastest$1SphinxThreeThree_$machine.txt 
+./makeTwikiDetailReport $log $1.list this best $1 s3.3 > AutoGenbest$1SphinxThreeThree_$machine.txt

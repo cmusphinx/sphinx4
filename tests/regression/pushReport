@@ -15,8 +15,9 @@
 # address to the list of recipients
 #
 
+hostName=`hostname`
+reportName=regression_report_$hostName.html
 
-./makeWebpage < regression.log > regression_report.html
-sscp regression_report.html
-sshh mv regression_report.html /home/groups/c/cm/cmusphinx/htdocs
-
+./makeWebpage < regression.log > $reportName
+sscp $reportName
+sshh mv $reportName /home/groups/c/cm/cmusphinx/htdocs

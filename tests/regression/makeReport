@@ -250,7 +250,7 @@ END {
     print ""
     print "Complete test details at: ";
     print ""
-    print "    http://cmusphinx.sourceforge.net/regression_report.html"
+    print "    http://cmusphinx.sourceforge.net/regression_report_" machine ".html"
     print ""
 }
 
