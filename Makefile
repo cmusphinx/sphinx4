@@ -16,7 +16,7 @@ TOP = .
 SUBDIRS = edu tests 
 
 JSAPI_DIRS = com demo/jsapi
-GTAR=/pkg/gnu/bin/tar
+GTAR=/usr/bin/tar
 
 ##########################################################################
 
