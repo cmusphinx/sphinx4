@@ -96,14 +96,12 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
 
     /**
      * The property that defines the component used to load the acoustic model
-     */
-    
+     */    
     public final static String PROP_LOADER = "loader";
 
     /**
      * The property that defines the unit manager 
-     */
-    
+     */    
     public final static String PROP_UNIT_MANAGER  = "unitManager";
     
     /**
@@ -684,52 +682,4 @@ public class TiedStateAcousticModel implements AcousticModel, Configurable {
         }
         return properties;
     }
-
-
-    /**
-     * Returns a string that describes this TiedStateAcousticModel.
-     */
-    public String toString() {
-        Properties props = getProperties();
-        String description = (String) props.get("description");
-        String result = description + "\nClass: " + getClass().getName();
-        for (Enumeration e = props.propertyNames(); e.hasMoreElements(); ) {
-            String key = (String) e.nextElement();
-            String value = (String) props.get(key);
-            result += ("\n\t" + getReadableForm(key) + ": " + value);
-        }
-        result += "\n";
-        return result;
-    }
-
-
-    /**
-     * Converts strings like "thisIsAString" into "This Is A String".
-     *
-     * @return a readable form of strings like "thisIsAString"
-     */
-    private String getReadableForm(String original) {
-        if (original.length() > 0) {
-            StringBuffer sb = new StringBuffer(original.length() * 2);
-            int i = 0;
-            sb.append(Character.toUpperCase(original.charAt(i++)));
-            for (; i < original.length(); i++) {
-                char c = original.charAt(i);
-                if (Character.isUpperCase(c)) {
-                    sb.append(" ");
-                }
-                sb.append(c);
-            }
-            return sb.toString();
-        } else {
-            return original;
-        }
-    }
-
-
-    public static void main(String[] argv) {
-        System.out.println();
-        System.out.println((new TiedStateAcousticModel()).toString());
-    }
 }
-
