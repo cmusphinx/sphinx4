@@ -196,6 +196,7 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
     public FrontEnd(String name, String context, String amName,
 		    DataSource dataSource) throws IOException {
 	super(name, context);
+	this.amName = amName;
         processors = new HashMap();
         frontends.put(context, this);
         setDataSource(dataSource);
@@ -562,6 +563,9 @@ public class FrontEnd extends DataProcessor implements FeatureFrameSource {
         do {
             feature = featureSource.getFeature();
             if (feature != null) {
+		if (amName != null) {
+		    feature.setType(amName);
+		}
                 features[i++] = feature;
                 if (feature.hasSignal(Signal.UTTERANCE_END)) {
                     break;
