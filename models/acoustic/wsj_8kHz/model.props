@@ -40,7 +40,7 @@ modelClass = edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500
 modelLoader = edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.ModelLoader
 
 isBinary = true
-featureType = cepstra_delta_doubledelta
+featureType = 1s_c_d_dd
 vectorLength = 39
 sparseForm = false
 
