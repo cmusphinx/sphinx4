@@ -98,7 +98,7 @@ public class Game {
         for (Iterator i = cards.iterator(); i.hasNext(); ) {
             Card card = (Card) i.next();
             if (card.getID().equals(id)) {
-                System.out.println("getCard(): " + card.getID());
+                // System.out.println("getCard(): " + card.getID());
                 return card;
             }
         }
@@ -133,8 +133,8 @@ public class Game {
      */
     public boolean checkForMatches() {
         if (card1 != null && card2 != null) {
-            System.out.println("Card1 = " + card1.getID());
-            System.out.println("Card2 = " + card2.getID());
+            // System.out.println("Card1 = " + card1.getID());
+            // System.out.println("Card2 = " + card2.getID());
             boolean match =
                 (card1.getImageFile().equals(card2.getImageFile()));
             if (match) {
