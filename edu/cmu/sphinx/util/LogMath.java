@@ -14,10 +14,13 @@ package edu.cmu.sphinx.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import java.io.Serializable;
 import java.io.ObjectInputStream;
 import java.io.IOException;
+
 
 /**
  * Provides a set of methods for performing simple math in
@@ -32,12 +35,17 @@ public final class LogMath implements Serializable {
 
     static Map contextMap = new HashMap();
 
-    // controls whether we use the old, slow (but correct )method of
-    // performing the log.add
-    // This is a rollback to the old slow way until
-    // the fast way is fixed.
+    /**
+     * The logger for this class
+     */
+    private static Logger logger = 
+	    Logger.getLogger("edu.cmu.sphinx.util.LogMath");
 
-    private final static boolean OLD_AND_SLOW_ADD = false;
+    // controls whether we use the old, slow (but correct) method of
+    // performing the log.add by doing the actual computation.  This
+    // is a rollback to the old slow way until the fast way is fixed.
+
+    private final static boolean ACTUAL_COMPUTATION_IN_ADD = false;
 
     /**
      * Sphinx3 property to get the Log base
@@ -52,6 +60,8 @@ public final class LogMath implements Serializable {
     private transient double logZero;
     private transient double logOne;
     private transient double theAddTable[];
+    private transient double maxLogValue;
+    private transient double minLogValue;
 
      /**
       * Creates a log math with the given base
@@ -109,6 +119,13 @@ public final class LogMath implements Serializable {
       * Initializes this log math
       */
      private void init() {
+
+	 logger.info("Log base is " + logBase);
+	 if (ACTUAL_COMPUTATION_IN_ADD) {
+	     logger.info("Performing actual computation when adding logs");
+	 } else {
+	     logger.info("Using AddTable when adding logs");
+	 }
 	 naturalLogBase = Math.log(logBase);
 	 inverseNaturalLogBase = 1.0/naturalLogBase;
 
@@ -122,6 +139,18 @@ public final class LogMath implements Serializable {
 
 	 // System.out.println("Logz is " + logZero);
 
+	 // When converting a number from/to linear, we need to make
+	 // sure it's within certain limits to prevent it from
+	 // underflowing/overflowing.
+
+	 // We compute the max value by computing the log of the max
+	 // value that a double can contain.
+	 maxLogValue = linearToLog(Double.MAX_VALUE);
+
+	 // We compute the min value by computing the log of the min
+	 // (absolute) value that a double can hold.
+	 minLogValue = linearToLog(Double.MIN_VALUE);
+
 	 // Now create the addTable table.
 
 	 // summation needed in the loop
@@ -134,26 +163,27 @@ public final class LogMath implements Serializable {
 	 // To decide size of table, take into account that a base of
 	 // 1.0001 or 1.0003 converts probabilities, which are numbers
 	 // less than 1, into integers.  Therefore, a good
-	 // approximation for the smallest number in the table is an
-	 // index that maps into 0.5: indices higher than that would
-	 // map to less than 0.5, therefore they would be mapped to 0
-	 // as integers. Since the table implements the expression
+	 // approximation for the smallest number in the table,
+	 // therefore the value with the highest index, is an index
+	 // that maps into 0.5: indices higher than that, if they were
+	 // present, would map to less values less than 0.5, therefore
+	 // they would be mapped to 0 as integers. Since the table
+	 // implements the expression:
 	 //
-	 // log( 1.0 + power(base, index))
+	 // log(1.0 + base^(-index)))
 	 //
 	 // then the highest index would be:
 	 //
-	 // topIndex = - ln(power(logBase, 0.5) - 1) / ln(logBase)
+	 // topIndex = - log(logBase^(0.5) - 1)
 	 //
-	 // where ln could be any log base. If we use logBase as the
-	 // log base, the denominator becomes 1.
+	 // where log is the log in the appropriate base.
 
 	 // TODO: PBL changed this to get it to compile, also
 	 // added -Math.rint(...) to round to nearest integer. Added
 	 // the negation to match the preceeding documentation
 
 	 entriesInTheAddTable = 
-	     (int) -Math.rint(linearToLog(Math.pow(logBase, 0.5) - 1));
+	     (int) -Math.rint(linearToLog(logToLinear(0.5) - 1));
 
 	 // We reach this max if the log base is 1.00007. The closer
 	 // you get to 1, the higher the number of entries in the
@@ -190,11 +220,11 @@ public final class LogMath implements Serializable {
     /**
      * Multiplies the two log values. 
      *
-     * Will check for underflow and
-     * constrain values to be no lower than LOG_MIN_VALUE. 
+     * <p>Will check for underflow and constrain values to be no lower
+     * than Double.MIN_VALUE.</p>
      *
-     * Will check for overflow and
-     * constrain values to be no higher than LOG_MAX_VALUE. 
+     * <p>Will check for overflow and constrain values to be no higher
+     * than Double.MAX_VALUE.</p>
      *
      *
      * @param val1 value in log domain to multiply
@@ -202,18 +232,34 @@ public final class LogMath implements Serializable {
      *
      * @return product of val1 and val2 in the log domain
      *
-     * Questions: Any constraints
-     * [[[ TODO: need to have some overflow underflow checks ]]]
-     *
-     * [ EBG: how about... test the sign of each of val1 and val2
-     * and, if needed, the result. If val1 and val2 have the same
-     * sign, then overflow isn't an issue. If they have the same
-     * sign and the result also has the same sign, then operation
-     * was successful. if not, then an overflow occured, in which case
-     * we can signal or just return MAX_VALUE ]
      */
     public final double multiply(double val1, double val2) {
-	return val1 + val2;
+	double returnValue = val1 + val2;
+	boolean overflowOccurred = false;
+
+	// [ EBG: alternative... test the sign of each of val1 and
+	// val2 and, if needed, the result. If val1 and val2 have
+	// different signs, then overflow isn't an issue. If they have
+	// the same sign and the result also has the same sign, then
+	// operation was successful. if not, then an overflow occured,
+	// in which case we can signal or just return MAX_VALUE ]
+
+	if (val1 > 0) {
+	    if (val2 > (Double.MAX_VALUE - val1)) {
+		overflowOccurred = true;
+		returnValue = Double.MAX_VALUE;
+	    }
+	} else if (val1 < 0) {
+	    if (val2 < ( -Double.MAX_VALUE - val1)) {
+		overflowOccurred = true;
+		returnValue = -Double.MIN_VALUE;
+	    }
+	}
+	if (overflowOccurred) {
+	    logger.info("********Overflow occurred while trying to log.multiply " +
+			   val1 + " and " + val2);
+	}
+	return returnValue;
     }
 
 
@@ -236,11 +282,14 @@ public final class LogMath implements Serializable {
      * same as <code>add(a, -b)</code>, since we're in the log domain,
      * and -b is in fact the inverse.</p>
      *
-     * Will check for underflow and
-     * constrain values to be no lower than LOG_MIN_VALUE. 
+     * <p>Will check for underflow and constrain values to be no lower
+     * than Double.MIN_VALUE.</p>
      *
-     * Will check for overflow and
-     * constrain values to be no higher than LOG_MAX_VALUE. 
+     * <p>Will check for overflow and constrain values to be no higher
+     * than Double.MAX_VALUE.</p>
+     *
+     * <p>Both underflow and overflow checks are actually performed by
+     * the multiply method.</p>
      *
      * @param val1 value in log domain to add
      * @param val2 value in log domain to add
@@ -256,6 +305,7 @@ public final class LogMath implements Serializable {
     public final double add(double val1, double val2) {
 	double highestValue;
 	double difference;
+	double returnValue;
 
 	// difference is always a positive number
 	if (val1 > val2) {
@@ -265,8 +315,7 @@ public final class LogMath implements Serializable {
 	    highestValue = val2;
 	    difference = val2 - val1;
 	}
-	return (highestValue + addTable(difference));
-	//	return linearToLog(logToLinear(val1) + logToLinear(val2));
+	return multiply(highestValue, addTable(difference));
     }
 
     /**
@@ -312,14 +361,24 @@ public final class LogMath implements Serializable {
      * @param index the index into the addTable
      *
      * @return the value pointed to by index
+     *
+     * @throws IllegalArgumentException
      */
-    private final double addTable(double index) {
+    private final double addTable(double index) 
+	throws IllegalArgumentException {
 
-	if (OLD_AND_SLOW_ADD) {
+	if (ACTUAL_COMPUTATION_IN_ADD) {
 	    return addTableActualComputation(index);
 	} else {
 	    int intIndex = (int) Math.rint(index);
-	    if (intIndex  < 0 || intIndex  >= theAddTable.length) {
+	    // When adding two numbers, the highest one should be
+	    // preserved, and therefore the difference should always
+	    // be positive.
+	    if (intIndex < 0) {
+		throw new IllegalArgumentException("addTable index has " 
+						   + "to be negative");
+	    }
+	    if (intIndex  >= theAddTable.length) {
 		return 0.0;
 	    } else {
 		return theAddTable[intIndex];
@@ -336,11 +395,11 @@ public final class LogMath implements Serializable {
      * higher than the subtrahend. Otherwise, we should return the log
      * of a negative number.</p>
      *
-     * Will check for underflow and
-     * constrain values to be no lower than LOG_MIN_VALUE. 
+     * <p>It implements the subtraction as:</p>
      *
-     * Will check for overflow and
-     * constrain values to be no higher than LOG_MAX_VALUE. 
+     * <p><b>log(a - b) = log(a) + log(1 - exp(log(b) - log(a)))</b></p>
+     *
+     * <p>No need to check for underflow/overflow.</p>
      *
      * @param minuend value in log domain to be  subtracted from
      * @param subtrahend value in log domain that is being
@@ -351,19 +410,21 @@ public final class LogMath implements Serializable {
      *
      * @throws IllegalArgumentException
      *
-     * <br>[[[ TODO: This is a very slow way to do this ]]]
-     * [[[ TODO: need to have some overflow underflow checks ]]]
+     * <p>This is a very slow way to do this, but this method should
+     * rarely be used.</p>
      */
     public final double subtract(double minuend, double
 	    subtrahend) throws IllegalArgumentException {
-
+	double innerSummation;
 	if (minuend < subtrahend) {
 	    throw new IllegalArgumentException("Subtract results in log "
 					       + "of a negative number: "
 					       + minuend + " - " 
 					       + subtrahend);
 	}
-	return linearToLog(logToLinear(minuend) - logToLinear(subtrahend));
+	innerSummation = 1.0f;
+	innerSummation -= logToLinear(subtrahend - minuend);
+	return minuend + linearToLog(innerSummation);
     }
 
    /**
@@ -449,11 +510,15 @@ public final class LogMath implements Serializable {
      * @param linearValue the value to be converted to log domain
      *
      * @return the value in log domain
+     *
+     * @throws IllegalArgumentException
+     *
      */
-    public final double linearToLog(double linearValue) {
+    public final double linearToLog(double linearValue) 
+	throws IllegalArgumentException {
 	if (linearValue < 0.0) {
 	    throw new IllegalArgumentException(
-		    "linearToLog: param must be >= 0");
+		    "linearToLog: param must be >= 0: " + linearValue);
 	} else if (linearValue == 0.0) {
 	    // [EBG] Shouldn't the comparison above be something like
 	    // linearValue < "epsilon"? Is it ever going to be 0.0?
@@ -472,7 +537,15 @@ public final class LogMath implements Serializable {
      */
     public final double logToLinear(double logValue) {
 	// return Math.pow(logBase, logValue);
-	return Math.exp(logToLn(logValue));
+	double returnValue;
+	if (logValue < minLogValue) {
+	    returnValue = getLogZero();
+	} else if (logValue > maxLogValue) {
+	    returnValue = Double.MAX_VALUE;
+	} else {
+	    returnValue = Math.exp(logToLn(logValue));
+	}
+	return returnValue;
     }
 
     /**
