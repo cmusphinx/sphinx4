@@ -140,7 +140,7 @@ public class SimpleControlFile implements ControlFile {
 	// Removes the filename from the transcript line.
 	// The transcript line is of the form:
 	//    She washed her dark suit (st002)
-	String transcript = transcriptLine.replaceFirst(" \\(.*\\)$", "");
+	String transcript = transcriptLine.replaceFirst("[ \t]\\(.*\\)$", "");
 	utterance.add(transcript, dictionary, false, wordSeparator);
 	return utterance;
     }
