@@ -14,6 +14,7 @@ package edu.cmu.sphinx.decoder;
 
 import edu.cmu.sphinx.frontend.util.ConcatFileAudioSource;
 import edu.cmu.sphinx.frontend.DataSource;
+import edu.cmu.sphinx.frontend.FrontEnd;
 
 import edu.cmu.sphinx.result.Result;
 
@@ -45,12 +46,30 @@ import java.util.StringTokenizer;
  */
 public class LivePretendDecoder {
 
-    private final static String PROP_PREFIX = 
+    /**
+     * Prefix for the properties of this class.
+     */
+    public final static String PROP_PREFIX = 
 	"edu.cmu.sphinx.decoder.LivePretendDecoder.";
 
+    /**
+     * SphinxProperty specifying the transcript file. If a transcript file
+     * is specified, it will be created. Otherwise, it is not created.
+     */
+    public final static String PROP_HYPOTHESIS_TRANSCRIPT = 
+        PROP_PREFIX + "hypothesisTranscript";
+
+    /**
+     * The default value of PROP_TRANSCRIPT.
+     */
+    public final static String PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT = null;
+
+
+    private int sampleRate;
     private String context;
     private String batchFile;
     private Decoder decoder;
+    private FileWriter hypothesisTranscript;
     private SphinxProperties props;
     private ConcatFileAudioSource dataSource;
 
@@ -81,6 +100,14 @@ public class LivePretendDecoder {
         dataSource = new ConcatFileAudioSource
             ("ConcatFileAudioSource", context, props, batchFile);
         decoder = new Decoder(context, dataSource);
+        String transcriptFile 
+            = props.getString(PROP_HYPOTHESIS_TRANSCRIPT,
+                              PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT);
+        if (transcriptFile != null) {
+            sampleRate = props.getInt(FrontEnd.PROP_SAMPLE_RATE,
+                                      FrontEnd.PROP_SAMPLE_RATE_DEFAULT);
+            hypothesisTranscript = new FileWriter(transcriptFile);
+        }
     }
 
     /**
@@ -101,6 +128,12 @@ public class LivePretendDecoder {
             decoder.showAudioUsage();
             decoder.showMemoryUsage();
             resultList.add(resultText);
+            
+            if (hypothesisTranscript != null) {
+                hypothesisTranscript.write
+                    (result.getTimedBestResult(false, true) + "\n");
+                hypothesisTranscript.flush();
+            }
         }
 
         alignResults(resultList, dataSource.getReferences());
@@ -167,6 +200,27 @@ public class LivePretendDecoder {
     }
 
     /**
+     * Returns the time in seconds given the sample number and sample rate.
+     *
+     * @param sampleNumber the sample number
+     * @param sampleRate the sample rate
+     *
+     * @return the time in seconds
+     */
+    private static float getSeconds(long sampleNumber, int sampleRate) {
+        return ((float) (sampleNumber / sampleRate));
+    }
+
+    /**
+     * Do clean up
+     */
+    public void close() throws IOException {
+        if (hypothesisTranscript != null) {
+            hypothesisTranscript.close();
+        }
+    }
+
+    /**
      * Main method of this LivePretendDecoder.
      *
      * @param argv argv[0] : SphinxProperties file
@@ -190,7 +244,7 @@ public class LivePretendDecoder {
             LivePretendDecoder decoder = 
                 new LivePretendDecoder(context, batchFile);
             decoder.decode();
-
+            decoder.close();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
