@@ -1152,12 +1152,19 @@ This concludes the walkthrough of the simple HelloNGram example.
 As you can see from the above examples, the Recognizer returns a Result object
 which provides the recognition results. 
 The Result object essentially contains all the paths during the recognition
-search that have reached the final state. In other words, it contains
-all the legitimate hypotheses during the search. They are ranked by the
+search that have reached the final state (or end of sentence, usually denoted
+by "</s>"). They are ranked by the
 ending score of the path, and the one with the highest score is the best
-hypothesis. Usually, one would call the 
-<code>Result.getBestResultNoFiller</code> method to obtain a string of the
-best result that has no filler words like "++SMACK++".
+hypothesis. Moreover, the Result also contains all the active paths (that
+have not reached the final state) at the end of the recognition. Usually, 
+one would call the <a href="../javadoc/edu/cmu/sphinx/result/Result.html#getBestResultNoFiller()"><code>Result.getBestResultNoFiller</code></a> method to 
+obtain a string of the best result that has no filler words like "++SMACK++".
+This method first attempts to return the best path that has reached the
+final state. If no paths have reached the final state, it returns the best
+path out of the paths that have not reached the final state.
+If you only want to return those paths that have reached the final state,
+you should call the method <a href="../javadoc/edu/cmu/sphinx/result/Result.html#getBestFinalResultNoFiller()"><code>Result.getBestFinalResultNoFiller</code></a>. For example, the HelloWorld demo uses this method to avoid treating
+any partial sentence in the grammar as the result.
 </p>
 
 <p>
