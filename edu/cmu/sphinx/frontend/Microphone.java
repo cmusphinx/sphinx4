@@ -73,7 +73,7 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
      * @param context the context of this Microphone
      */
     public Microphone(String name, String context) throws
-    LineUnavailableException {
+    LineUnavailableException, IOException {
         super(name, context);
 	initSphinxProperties();
         audioFormat = new AudioFormat(sampleRate, sampleSizeInBits,
@@ -86,11 +86,12 @@ public class Microphone extends DataProcessor implements AudioSource, Runnable {
     /**
      * Reads the parameters needed from the static SphinxProperties object.
      */
-    private void initSphinxProperties() {
+    private void initSphinxProperties() throws IOException {
+        sampleRate = (float) getIntAcousticProperty
+            (FrontEnd.PROP_SAMPLE_RATE, 8000);
+
 	SphinxProperties properties = getSphinxProperties();
 
-        sampleRate = (float) properties.getInt
-            (FrontEnd.PROP_SAMPLE_RATE, 8000);
         frameSizeInBytes = properties.getInt
 	    (FrontEnd.PROP_BYTES_PER_AUDIO_FRAME, 4096);
 
