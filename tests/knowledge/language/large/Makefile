@@ -54,8 +54,8 @@ s3tests:
 	$(MAKE) all
 	$(JAVA_CMD) tests.knowledge.language.large.LargeTrigramModelTest file:./binary.props /lab/speech/sphinx4/data/hub4_model/random_ngrams.txt ngrams.out
 	$(JAVA_CMD) tests.knowledge.language.large.LargeTrigramModelTest file:./binary.props /lab/speech/sphinx4/data/hub4_model/random_trigrams.txt backoff.out
-	$(JAVA_CMD) tests.knowledge.language.large.OutputDiffTest 20 s3.3.hub4.ngram.scores.out ngrams.out > ngrams.diff
-	$(JAVA_CMD) tests.knowledge.language.large.OutputDiffTest 30 s3.3.hub4.ngram.backoff.out backoff.out > backoff.diff
+	$(JAVA_CMD) tests.knowledge.language.large.OutputDiff 20 s3.3.hub4.ngram.scores.out ngrams.out > ngrams.diff
+	$(JAVA_CMD) tests.knowledge.language.large.OutputDiff 30 s3.3.hub4.ngram.backoff.out backoff.out > backoff.diff
 	chmod a+x ./outputDiff.sh
 	./outputDiff.sh ngrams.diff
 	./outputDiff.sh backoff.diff
@@ -77,5 +77,12 @@ backoff-test:
 # the ngrams queried during a run of the hub4_trigram test.
 
 lm-utt-test:
+	rm -f s4.lm-utt-test.out
+	rm -f lm-utt-test.diff
 	$(MAKE) all
-	$(JAVA_CMD) tests.knowledge.language.large.UtteranceTest file:./binary.props /lab/speech/sphinx4/data/hub4_model/ngram.queried
+	$(JAVA_CMD) \
+	-DprintScores=true\
+	tests.knowledge.language.large.UtteranceTest file:./binary.props /lab/speech/sphinx4/data/hub4_model/ngram.queried s4.lm-utt-test.out
+	$(JAVA_HOME)/bin/java -cp '$(TOP)/classes' tests.knowledge.language.large.OutputDiff 40 s3.3.lm-utt-test.out s4.lm-utt-test.out > lm-utt-test.diff
+	chmod a+x ./outputDiff.sh
+	./outputDiff.sh lm-utt-test.diff
