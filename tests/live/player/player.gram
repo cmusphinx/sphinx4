@@ -1,6 +1,6 @@
 #JSGF V1.0;
 
-grammar player;
+grammar player.player;
 
 <polite> = [pretty] please | [oh] mighty computer;
 

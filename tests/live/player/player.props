@@ -55,11 +55,12 @@ edu.cmu.sphinx.frontend.util.Microphone.closeAudioBetweenUtterances=true
 
 ############################################################
 #
-# CardMatch properties
+# player properties
 #
 ############################################################
 
-edu.cmu.sphinx.decoder.linguist.JSGFGrammar.path=player/player.gram
+edu.cmu.sphinx.decoder.linguist.JSGFGrammar.baseGrammarURL=file:./
+edu.cmu.sphinx.decoder.linguist.JSGFGrammar.grammarName=player.player
 
 
 ############################################################
