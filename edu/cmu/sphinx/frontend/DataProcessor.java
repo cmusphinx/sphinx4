@@ -216,7 +216,8 @@ public abstract class DataProcessor {
 	    }
 	} else {
 	    if (data == null) {
-		throw new Error(getName() + ": null data");
+		throw new Error
+                    (getName() + ": unexpected return of null Data");
 	    } else if (data.hasSignal(Signal.UTTERANCE_END)) {
                 inUtterance = false;
             } else if (data.hasSignal(Signal.UTTERANCE_START)) {
