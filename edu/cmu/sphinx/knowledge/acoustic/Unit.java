@@ -22,7 +22,7 @@ import java.util.HashMap;
  */
 public class  Unit implements Serializable {
     /**
-     * The silence unit
+     * The name for the silence unit
      */
     public static String SILENCE_NAME = "SIL";
     public static Unit SILENCE;

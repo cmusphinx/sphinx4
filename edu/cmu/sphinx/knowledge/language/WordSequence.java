@@ -27,6 +27,10 @@ public class WordSequence {
 
     private Word[] words;
     private transient int hashCode = -1;
+
+    /**
+     * an empty word sequence, that is, it has no words.
+     */
     public final static WordSequence EMPTY = new WordSequence();
 
     /**
@@ -61,7 +65,8 @@ public class WordSequence {
     /**
      * Returns a WordSequence with the given word IDs.
      *
-     * @return a WordSequence with the given word IDs
+     * @param words the array of words for the sequence
+     * @return a WordSequence with the given words
      */
     public static WordSequence getWordSequence(Word[] words) {
         return (new WordSequence(words));
@@ -71,6 +76,7 @@ public class WordSequence {
      * Constructs a word sequence from the list of words
      *
      * @param list the list of words
+     * @return a WordSequence for the given words
      */
     public static WordSequence getWordSequence(List list) {
         WordSequence sequence = new WordSequence(list.size());
@@ -95,6 +101,9 @@ public class WordSequence {
      *
      * @param word the word to add to the sequence
      * @param maxSize the maximum size of the generated sequence
+     *
+     * @return a new word sequence with the word added (but trimmed to
+     * maxSize).
      */
     public WordSequence addWord(Word word, int maxSize) {
         if (maxSize <= 0) {
@@ -155,6 +164,8 @@ public class WordSequence {
      * that is filled in with the newest words from this sequence
      *
      * @param maxSize the maximum size of the sequence
+     *
+     * @return a new word sequence, trimmed to maxSize.
      *
      */
     public WordSequence trim(int maxSize) {
