@@ -80,11 +80,11 @@ all::
 
 aurora_5st:
 	$(JAVA_CMD)  \
-        -Dedu.cmu.sphinx.search.WordListGrammar.path=./wordlist \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./aurora.gram \
 	edu.cmu.sphinx.decoder.BatchDecoder aurora_5st.props aurora.batch
 
 aurora_3st:
 	$(JAVA_CMD)  \
-        -Dedu.cmu.sphinx.search.WordListGrammar.path=./wordlist \
+        -Dedu.cmu.sphinx.search.WordListGrammar.path=./aurora.gram \
 	edu.cmu.sphinx.decoder.BatchDecoder aurora_3st.props aurora.batch
 

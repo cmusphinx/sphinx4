@@ -24,7 +24,7 @@ edu.cmu.sphinx.model.acoustic.format = sphinx3.ascii
 edu.cmu.sphinx.model.acoustic.FeatureVectorLength = 39
 edu.cmu.sphinx.util.LogMath.logBase = 1.0001
 
-edu.cmu.sphinx.model.acoustic.location = file:/home/plamere/work/SourceForge/cmusphinx/sphinx4/tests/performance/aurora/models5st.zip
+edu.cmu.sphinx.model.acoustic.location = file:/lab/speech/sphinx4/data/aurora/models5st.zip
 edu.cmu.sphinx.model.acoustic.definition_file = etc/mfcclean_forbushderby_5st.500.mdef
 edu.cmu.sphinx.model.acoustic.data_location = mfcclean_forbushderby_5st_cd_continuous_8gau
 edu.cmu.sphinx.model.acoustic.properties_file = am.props
