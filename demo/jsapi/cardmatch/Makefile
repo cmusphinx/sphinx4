@@ -43,7 +43,7 @@ run:
 run-ep:
 	$(JAVA_CMD) \
 	-Ddemo.jsapi.cardmatch.doEndpointing=true \
-	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.EnergyEndpointer \
+	-Dedu.cmu.sphinx.frontend.endpointer=edu.cmu.sphinx.frontend.endpoint.EnergyEndpointer \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startLow=9 \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.startHigh=12 \
 	-Dedu.cmu.sphinx.frontend.EnergyEndpointer.endLow=9 \

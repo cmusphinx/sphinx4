@@ -216,7 +216,7 @@ public class CardMatch implements Recorder {
                 microphone.stopRecording();
             }
 
-            String resultText = result.getBestResultNoSilences();
+            String resultText = result.getBestResultNoFiller();
             String tag = getResultTag(resultText);
             cardMatchFrame.processResults(resultText, tag);
             drain();
