@@ -343,7 +343,8 @@ public class ResultAnalyzer {
             (mismatchedUtterances.size() + " sentence errors");
         for (Iterator i = mismatchedUtterances.iterator(); i.hasNext();) {
             Misrecognition misrecognition = (Misrecognition) i.next();
-            System.out.println(misrecognition.toString());
+            System.out.println(misrecognition.getReference());
+	    System.out.println(misrecognition.getHypothesis());
         }
     }
 
@@ -417,12 +418,20 @@ class Misrecognition {
     }
 
     /**
-     * Returns a string representation of the reference and hypothesis.
+     * Returns the reference.
      *
-     * returns a string representation of the reference and hypothesis
+     * @return the reference string
      */
-    public String toString() {
-        return "REF: " + reference + 
-            "   HYP: " + hypothesis;
+    public String getReference() {
+        return "REF: " + reference;
+    }
+
+    /**
+     * Returns the hypothesis string.
+     *
+     * @return the hypothesis string
+     */
+    public String getHypothesis() {
+	return "HYP: " + hypothesis;
     }
 }
