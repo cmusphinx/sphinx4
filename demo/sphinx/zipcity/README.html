@@ -45,8 +45,7 @@
 recognition. ZipCity will listen for spoken zip codes and will display
 the associated city and state.<br>
 </p>
-<p><img src="screenshot.gif" title="" alt="ZipCity screen shot"
- style="width: 450px; height: 408px;"><br>
+<p><img src="screenshot.gif" title="" alt="ZipCity screen shot"/><br>
 </p>
 <p>Once ZipCity is running, click on the <span
  style="font-weight: bold;">Speak</span> button and then speak your zip
@@ -92,9 +91,16 @@ make sure that you have <a
       <a href="../../../doc/jsapi_setup.html">JSAPI setup</a> correctly.
       Then, to run the demo, type: </p>
 </font></p>
-<code>sphinx4&gt; java -jar bin/ZipCity.jar<br>
+<code>sphinx4&gt; java -jar bin/ZipCity.jar [-continuous]<br>
 <br>
-</code><font face="Arial" size="2">
+</code>
+<p>
+The <code>-continuous</code> option eliminates the SPEAK button. With
+this option, once ZipCity is running, it will continually listen for
+and recognize zipcodes, allowing for totally handsfree operation.
+</p>
+
+<font face="Arial" size="2">
 <p> <font color="#ff0000"><b>NOTE:</b></font> </p>
 <ol>
   <li> On some systems you make be able to improve performance by increasing the heap 
@@ -116,13 +122,14 @@ network.</li>
 </ol>
 </font>
 <h3 style="font-weight: bold;"><font face="Arial" size="2">
-<p><big>Acknowledgments</big><br>
-</p>
+<big>Acknowledgments</big> 
 </font></h3>
-<font face="Arial" size="2" style="font-weight: bold;"> </font><small>
+<small>
 Thanks to the <a href="http://sourceforge.net/projects/zipcodedb/">The
 <span style="background-color: pink;">Zipcode</span> Database Project</a>&nbsp;
-for the use of their Zipcode database.</small><br>
+for the use of their Zipcode database.<br>
+The zipcode map style  of ZipCity was inspired by Ben Fry's <a
+href="http://acg.media.mit.edu/people/fry/zipdecode/">zipdecode</a> program.<br>
 <hr>Copyright 1999-2004 Carnegie Mellon University.
 <br>
 Portions Copyright 2002-2004 Sun Microsystems, Inc.
@@ -131,5 +138,6 @@ Portions Copyright 2002-2004 Mitsubishi Electric Research Laboratories.
 <br>
 All Rights Reserved. Usage is subject to <a
  href="../../../license.terms">license terms</a>.
+</small>
 </body>
 </html>
