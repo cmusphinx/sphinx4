@@ -54,7 +54,7 @@ import edu.cmu.sphinx.util.CommandInterface;
  * file, refer to the document 
  * <a href="../../util/props/doc-files/ConfigurationManagement.html">
  * Sphinx-4 Configuration Management</a>. For information about the
- * batch file, refer to the <a href="../../../../../index.html#batch_files">
+ * batch file, refer to the <a href="../../../../../../index.html#batch_files">
  * batch file description</a>.
  * 
  * This class will send recognition results to the logger if the log level is
