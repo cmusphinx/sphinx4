@@ -8,36 +8,30 @@
 # This is useful when tests have been divided into separate
 # batches and summary info is desired.
 
-BEGIN {
-    printf("%6.6s %6.6s %s\n", "Words", "Errors", "File");
-    printf("==================================\n");
+
+$1 == "Words:" && $3 == "Matches:" {
+   words[FILENAME] = $2;
 }
 
-$3 == "Summary" && $4 == "statistics" {
-    inSummary = 1;
-}
-
-
-inSummary == 1 && $1 == "Words:" {
-   totalWords = $2;
-}
-
-inSummary == 1 && $3 == "Errors:" {
-   totalErrors = $4;
+$1== "Accuracy:" && $3 == "Errors:" {
+   errors[FILENAME] = $4;
 }
 
 
-inSummary == 1 && $2 == "statistics" && $3 == "for" {
-    inSummary = 0;
-    sumTotal += totalWords;
-    sumErrors += totalErrors;
-    printf("%6d %6d %s\n", totalWords, totalErrors, FILENAME);
-}
 
 END {
-    if (sumTotal > 0) {
-	printf("==================================\n");
-	wer = (sumErrors/sumTotal) * 100.0;
-	printf("%6d  %6d   WER: %.2f%%\n",  sumTotal, sumErrors, wer);
+    printf("%6.6s %6.6s %7.7s %s\n", "Words", "Errors", "WER%", "File");
+    printf("==================================\n");
+    for (i in words) {
+        sumWords += words[i];
+        sumErrors += errors[i];
+        if (words[i] > 0) {
+            wer = (errors[i]/words[i]) * 100.0;
+            printf("%6d %6d %6.2f%% %s\n",  words[i], errors[i], wer, i);
+        }
     }
+    printf("==================================\n");
+    wer = (sumErrors/sumWords) * 100.0;
+    printf("%6d %6d %6.2f%% %s\n",  sumWords, sumErrors, wer, "total");
 }
+
