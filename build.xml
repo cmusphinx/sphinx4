@@ -273,7 +273,7 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="jars"
-	    depends="sphinx4_jar,tags_jar,audiotool_jar"
+	    depends="sphinx4_jar,tags_jar,audiotool_jar,corpustool_jar"
 	    description="Builds all the jar files"/>
 
 
@@ -322,6 +322,24 @@ jsapi.exe from the lib directory.
 		     includes="edu/cmu/sphinx/tools/audio/*"/>
             <fileset dir="${src_dir}"
 		     includes="edu/cmu/sphinx/tools/audio/spectrogram.config.xml"/>
+        </jar>
+    </target>
+
+
+    <!-- CorpusTool.jar -->
+    <property name="corpustool_jar" value="${bin_dir}/CorpusTool.jar"/>
+
+    <target name="corpustool_jar" 
+	    depends="compile_src"
+	    description="Create ${bin_dir}/CorpusTool.jar">
+        <mkdir dir="${bin_dir}"/>
+        <jar destfile="${corpustool_jar}" 
+	     manifest="${src_dir}/edu/cmu/sphinx/tools/corpus/Manifest"
+	     compress="true">
+            <fileset dir="${classes_dir}"
+		     includes="edu/cmu/sphinx/tools/corpus/*"/>
+            <fileset dir="${src_dir}"
+		     includes="edu/cmu/sphinx/tools/corpus/arctic.data"/>
         </jar>
     </target>
 

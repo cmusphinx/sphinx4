@@ -103,13 +103,17 @@ public class RuleParser {
      */
     private Vector parse(RuleGrammar G, Rule r, String input[], int iPos) {
 
-        //System.out.println("PARSE " + r.getClass().getName() + " " + iPos + " " + r);
+        //System.out.println("PARSE " + r.getClass().getName() + " " 
+	//+ iPos + " " + r);
 
         /*
          * RULE REFERENCES
          */
         if (r instanceof RuleName) {
             RuleName rn = (RuleName)r;
+	    if(rn.getFullGrammarName() == null){
+		rn.setRuleName(G.getName() + "." + rn.getSimpleRuleName());
+	    }
             String simpleName = rn.getSimpleRuleName();
 	    if (simpleName.equals("VOID")) return null;
 	    if (simpleName.equals("NULL")) {
@@ -120,6 +124,9 @@ public class RuleParser {
 	      return p;
 	    }
             Rule ruleref = G.getRule(simpleName);
+	    if (rn.getFullGrammarName() != G.getName()){
+		ruleref = null;
+	    }
             if (ruleref == null) {
                 String gname = rn.getFullGrammarName();
                 //System.out.println("gname=" + gname);

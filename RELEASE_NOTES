@@ -7,6 +7,10 @@ Release Date:  xxx xxxx
 Detailed Changes:
 ----------------
 
+WDW - 05/20/05
+    Incorporated contribution from Roger Toenz that fixes issues with
+    fully qualified grammar names in JSGF.
+
 PBL - 12/13/04
     Incorporated contribution from Gregg Liming that adds support for 
     dictionary addenda in the FastDictionary.

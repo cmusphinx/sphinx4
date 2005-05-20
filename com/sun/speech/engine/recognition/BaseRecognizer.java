@@ -1101,36 +1101,105 @@ public class BaseRecognizer extends BaseEngine
      * Load grammars imported by the specified RuleGrammar
      * if they are not already loaded.
      */
-    static private void loadImports(Recognizer R, RuleGrammar G,URL context,
-				    boolean recurse,boolean relo,Vector grams)
-        throws GrammarException, IOException
-    {
-        RuleGrammar G2=null;
-        RuleName imports[] = G.listImports();
-        if (imports != null) {
-            for (int i=0; i<imports.length; i++) {
-                //RecognizerUtilities.debugMessageOut("Checking import " + 
-                //                                   imports[i].getRuleName());
-                String gname = imports[i].getFullGrammarName();
-                RuleGrammar GI = R.getRuleGrammar(gname);
-                if (GI == null) {
-		    URL grammarURL = gnameToURL(context,imports[i].getFullGrammarName());
+    static private void loadImports(javax.speech.recognition.Recognizer R,
+				    RuleGrammar G, 
+				    URL context,
+				    boolean recurse, 
+				    boolean relo, 
+				    Vector grams)
+	throws GrammarException, IOException {
+	RuleGrammar G2 = null;
+	RuleName imports[] = G.listImports();
 
-	        //  RecognizerUtilities.debugMessageOut("loading " + grammarURL);
-		  
+	if (imports != null) {
+	    for (int i = 0; i < imports.length; i++) {
+		//RecognizerUtilities.debugMessageOut("Checking import " +
+		//                                   imports[i].getRuleName());
+		String gname = imports[i].getFullGrammarName();
+		RuleGrammar GI = R.getRuleGrammar(gname);
+
+		if (GI == null) {
+		    URL grammarURL = gnameToURL(
+		        context, imports[i].getFullGrammarName());
 		    G2 = JSGFParser.newGrammarFromJSGF(grammarURL, R);
-		  
-		    if (G2 == null) {
-                        RecognizerUtilities.debugMessageOut(
-                            "ERROR LOADING GRAMMAR " + grammarURL);
-                    } else {
-		      if (grams!=null) grams.addElement(G2);
-		      if (recurse) loadImports(R,G2,context,recurse,relo,grams);
+		    if (G2 != null) {
+			if (grams != null) {
+			    grams.addElement(G2);
+			}
+			if (recurse) {
+			    loadImports(R, G2, context, recurse, relo, grams);
+			}
 		    }
-                }
-            }
-        }
+		}
+	    }
+	    loadFullQualifiedRules(R, G, context, recurse, relo, grams);
+	}
     }
+
+    /**
+     * Load grammars imported by a fullqualified Rule Token if they are not
+     * already loaded.
+     * @param r
+     * @param g
+     * @param context
+     * @param recurse
+     * @param relo
+     * @param grams
+     * @throws IOException
+     * @throws GrammarException
+     */
+    private static void loadFullQualifiedRules(
+            javax.speech.recognition.Recognizer r,
+	    RuleGrammar g, 
+	    URL context, 
+	    boolean recurse,
+	    boolean relo, 
+	    Vector grams) throws GrammarException, IOException {
+
+	String[] ruleNames = g.listRuleNames();
+	//go through every rule
+	for (int i = 0; i < ruleNames.length; i++) {
+	    String rule = g.getRuleInternal(ruleNames[i]).toString();
+	    //check for rule-Tokens
+	    int index = 0;
+	    while (index < rule.length()) {
+		index = rule.indexOf("<", index);
+		if (index < 0) {
+		    index = rule.length();
+		} else {
+		    //extract rulename
+		    RuleName rn = new RuleName(rule.substring(
+		        index + 1, rule.indexOf(">", index + 1)).trim());
+		    index = rule.indexOf(">", index) + 1;
+		    //check for fullqualified rulename
+		    if (rn.getFullGrammarName() != null) {
+			String gname = rn.getFullGrammarName();
+			RuleGrammar GI = r.getRuleGrammar(gname);
+			if (GI == null) {
+			    URL grammarURL = gnameToURL(context, gname);
+			    RuleGrammar G2 = JSGFParser.newGrammarFromJSGF(
+			        grammarURL, r);
+	    
+			    if (G2 != null) {
+				if (grams != null) {
+				    grams.addElement(G2);
+				}
+				if (recurse) {
+				    loadImports(r, 
+						G2, 
+						context, 
+						recurse, 
+						relo, 
+						grams);
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+
 
     /**
      * Resolve and linkup all rule references contained
