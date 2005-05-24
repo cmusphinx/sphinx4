@@ -273,7 +273,7 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="jars"
-	    depends="sphinx4_jar,tags_jar,audiotool_jar,corpustool_jar"
+	    depends="sphinx4_jar,tags_jar,audiotool_jar"
 	    description="Builds all the jar files"/>
 
 
