@@ -53,7 +53,19 @@ public class Sausage implements ConfidenceResult {
      * @return an iterator that steps through confusion sets
      */
     public Iterator confusionSetIterator() {
-        return confusionSets.iterator();
+        return confusionSets.listIterator();
+    }
+    
+    /**
+     * Get an iterator for the sausage. The iterator will return
+     * SortedMaps, which are confusion sets mapping Double posteriors
+     * to Sets of word Strings.
+     * 
+     * @param i the index to start the iterator off at
+     * @return an iterator that steps through confusion sets
+     */
+    public Iterator confusionSetIterator(int i) {
+        return confusionSets.listIterator(i);
     }
     
     /**
