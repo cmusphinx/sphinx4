@@ -84,8 +84,13 @@ public class PivotSausageMaker extends AbstractSausageMaker {
         int maxOverlap = Integer.MIN_VALUE;
         int bestCluster = -1;
         ListIterator i = clusters.listIterator();
+        i.next(); //never cluster anything with the <s> node
         while (i.hasNext()) {
             int index = i.nextIndex();
+            if (!i.hasNext()) {
+                //never cluster anything with the </s> node
+                return bestCluster;
+            }
             Cluster c = (Cluster)i.next();
             int overlap = getOverlap(n,c.startTime,c.endTime);
             if (overlap > maxOverlap) {
