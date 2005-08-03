@@ -1,0 +1,612 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+
+<!--
+
+Copyright 1999-2005 Carnegie Mellon University.  
+Portions Copyright 2002-2005 Sun Microsystems, Inc.  
+Portions Copyright 2002-2005 Mitsubishi Electric Research Laboratories.
+All Rights Reserved.  Use is subject to license terms.
+
+See the file "license.terms" for information on usage and
+redistribution of this file, and for a DISCLAIMER OF ALL 
+WARRANTIES.
+
+This file was contributed by Naveen Parihar.
+
+-->
+
+<html>
+  <head>
+    <title>Sphinx-4 Setup on Eclipse</title>
+    <STYLE TYPE="text/css">
+      pre { font-size: medium; background: #f0f8ff; padding: 2mm; border-style: ridge ; color: teal}
+      code {font-size: medium; font-weight: bold; color: teal}
+      s4keyword { color: red; font-weight: bold }
+    </STYLE></head>
+
+  <body>
+    <center>
+      <table bgcolor="#99CBFF" border="0" width="100%">
+
+        <tbody>
+          <tr>
+            <td align="center" width="100%">
+              <center><h1><i>Sphinx-4</i> Setup on <i>Eclipse</i><br><font size="+1">
+              </h1></center>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </center>
+    <font face="Arial" size="2">
+
+      <h2>Installation</h2>
+
+      <ul>
+
+        <li><a name="download_and_install"><b>Required Software</b></a>
+
+	  <p>Sphinx-4 has been built and tested on the Solaris<sup>
+        <font size="-1">TM</font></sup> Operating Environment, Mac OS
+      X, Linux and Win32 operating systems. Running, building,
+      testing, and debugging Sphinx-4 using Eclipse requires
+      additional software. Before you start, you will need the
+      following software available on your machine.
+    </p>
+
+      <ul>
+        <li><b>Java 2 SDK, Standard Edition, v1.4.2</b> or better.  Go
+	  to <a href="http://java.sun.com">java.sun.com</a>, and select
+	  "J2SE". At the time of writing, the latest release version is
+	  1.5 (a.k.a. 5.0), which is the one we recommend.
+        </li>
+
+      <br>
+
+      <li> <b>Eclipse 3.0</b> or better, available at <a
+	  href="http://www.eclipse.org">www.eclipse.org</a>. The current
+        documentation was written based on <b>Eclipse 3.1</b>. If you
+        are using other version, some of the options may not be
+        exactly as described here, but semantically similar. The site
+        has documentation that includes various user guides.  You will
+        need to install the <b>Java 2 SDK, Standard Edition</b> before
+        installing <b>Eclipse</b> distribution. Or else, you will need
+        to specify the <b>Java 2 SDK, Standard Edition</b> within
+        <b>Eclipse</b>.
+      </li>
+
+    </ul>
+    </li>
+
+      <br>&nbsp;
+
+      <li><a name="how_build"><b>Building Sphinx-4 using Eclipse</b></a>
+
+        <p>The software required for building Sphinx-4 using Eclipse
+	  are listed in the <a href="#download_and_install">Required
+	    Software</a> section. The following sections document one way
+	  and perhaps, the simplest way, of setting up Sphinx-4 in
+	  Eclipse. However, there are other possible ways to set up
+	  Sphinx-4 in Eclipse as well that are not covered in the
+	  following sections. For instance, the following instructions
+	  assume that the code will be downloaded from the CVS
+	  repository. If the code was downloaded from the release
+	  distributions, the steps change a little, but they should be
+	  easy to figure out given these instructions.
+        </p>
+        
+        <p><b>Start Eclipse</b></p>
+
+        <p>Start Eclipse by either double-clicking on the Eclipse icon
+	  or through a command line. Select a suitable path to the
+	  workspace when prompted by Eclipse. We will later install
+	  Sphinx-4 source code in this workspace, both physically and
+	  logically, as a project.
+        </p>
+        
+        <p><b>Create Sphinx-4 as an Eclipse Project from CVS source
+            tree</b></p>
+        
+        <ul>
+          <li>Select <code>New->Project</code> from the
+	    <code>File</code> menu. This will pop a <code>New
+	      Project - Select a Wizard</code> window.
+          </li>
+
+          <li>Select <code>CVS->Checkout Projects from
+	      CVS</code> as a <code>wizard</code> in the
+	    <code>New Project - Select a Wizard</code> window and
+	    then, click on <code>Next</code> button. This will
+	    pop a <code>Checkout from CVS - Enter Repository Location
+	      Information</code> window.
+          </li>
+
+          <li>Enter <code>cvs.sf.net</code> in the
+	    <code>Host</code> field.
+          </li>
+
+          <li>Enter <code>/cvsroot/cmusphinx</code> in the
+	    <code>Repository Path</code> field.
+          </li>
+
+          <li>Enter <code>anonymous</code> in the
+	    <code>User</code> field if you are not a developer in
+	    the cmusphinx project, or your SourceForge username, if you
+	    are a developer.
+          </li>
+
+          <li>Leave the <code>Password</code> field blank.
+          </li>
+
+          <li>Select <code>pserver</code> in the
+	    <code>Connection Type</code> drop-down menu if you
+	    are not a <code>developer</code> or extssh if you are
+	    a developer.
+          </li>
+
+          <li>Select <code>Use Default Port</code>.
+          </li>
+
+          <li>Do NOT <code>Save Password</code>. Apparently, if
+	    you save the password, Eclipse is not able to verify the
+	    password while checking out the copy of the repository from
+	    CVS source tree.
+          </li>
+
+          <li>Click on <code>Next</code> button. This will pop
+	    a <code>Checkout from CVS - Select Module</code>
+	    window.
+          </li>
+
+          <li>Select <code>Use an exiting module (this will allow
+	      you to browse the modules in the repository)</code>.
+          </li>
+
+          <li>When the list of modules is populated, select
+	    <code>sphinx4</code> and click on
+	    <code>Next</code> button. This will pop a
+	    <code>Check Out As - Check Out As</code> window.
+          </li>
+
+          <li>Select <code>Check out as a project configured using
+	      New Project Wizard</code> and click on
+	    <code>Next</code> button. This will pop a
+	    <code>Check Out As - Select Tag</code> window.
+          </li>
+
+          <li>Select <code>HEAD</code> from the
+	    <code>Matching Tags</code> to install the latest
+	    version of the code in the CVS source tree. Click on
+	    <code>Finish</code> button. This will pop a new
+	    <code>New Project - Select a Wizard</code> window.
+          </li>
+
+          <li>This time, select <code>Java Project</code> in
+	    the <code>New Project - Select a Wizard</code> window
+	    and click on <code>Next</code> button. This will pop
+	    a <code>New Project - Create a Java project</code>
+	    window.
+          </li>
+
+          <li>Enter an appropriate name (recommended name is
+	    <code>sphinx4</code>) in the <code>Project
+	      name</code> field.
+          </li>
+          
+          <li>Choose <code> Create new project in
+	      workspace</code> as <code>Contents</code>.
+          </li>
+          
+          <li>Choose <code>Use default compiler compliance
+	      (Currently 1.4)</code> as <code>JDK
+	      Compliance</code>.
+          </li>
+
+          <li>Choose <code>Use project folder as root for sources
+	      and class files</code> as <code>Project
+	      layout</code>.
+          </li>
+          
+          <li>Click on <code>Finish</code> button. This will
+	    pop a <code>Checking out 'sphinx4' from CVS</code>
+	    window. Next, a new window, <code>Check Out
+	      As</code>, will pop and the check out process will
+	    begin.
+          </li>
+        </ul>
+
+        <p><b>Setup JSAPI 1.0</b></p>
+
+        <p>Before you build Sphinx-4, it is important to <a
+	    href="http://cmusphinx.sourceforge.net/sphinx4/doc/jsapi_setup.html">setup
+	    your environment to support the Java Speech API (JSAPI)</a>,
+	  because a number of tests and demos rely on having JSAPI
+	  installed.
+        </p>
+
+        <p><b>Add JSAPI 1.0 as a jar to the Eclipse Project</b></p>
+        
+        <p>While the previous step sets up a
+	  <code>jsapi.jar</code> file in the
+	  <code>lib</code> directory, this steps makes
+	  <code>jsapi.jar</code> visible within the Eclipse
+	  Project. Note that in the instructions that follow, we assume
+	  that the project name is <code>sphinx4</code>. We named
+	  it while creating a project under Eclipse earlier.
+        </p>
+
+        <ul>
+          <li>Select <code>Refresh</code> from the <code>File</code>
+	    menu or just press the <code>F5</code> function key on
+	    your keyboard. This will refresh the project and the
+	    <code>Package Manager</code> within Eclipse will show the
+	    jsapi.jar created in the last step.
+          </li>
+
+          <li>Select <code>Properties</code> from the
+	    <code>Project</code> menu. This will pop a
+	    <code>Properties for sphinx4 - Info</code> window.
+          </li>
+
+          <li>Select <code>Java Build Path</code> option in the
+	    left column. This will show up the <code>Java Build
+	      Path</code> on the right hand side of the window.
+          </li>
+
+          <li>Click on the <code>Libraries</code> tab and then,
+	    click on <code>Add JARs...</code>
+	    button. This will pop a browsing window.
+          </li>
+
+          <li>Select <code>jsapi.jar</code> by navigating to
+	    <code>lib</code> directory, and then click
+	    <code>Open</code> button on the browsing window.
+          </li>
+
+          <li>Next, click on <code>OK</code> button on the
+	    <code>Properties for sphinx4 - Java Build Path</code>
+	    window.  This will add <code>jsapi.jar</code> as a jar to
+	    the Eclipse Project.
+          </li>
+        </ul>
+
+        <p><b>Setup the JDK compliance level of the Java Compiler to
+	    1.4</b></p>
+        
+        <p>This step is required because Sphinx-4 supports JDK
+	  compliance 1.4 level.
+        </p>
+
+        <ul>
+          <li>Select <code>Properties</code> from the
+	    <code>Project</code> menu. This will pop a
+	    <code>Properties for sphinx4 - Info</code> window.
+          </li>
+
+          <li>Select <code>Java Compiler</code> option in the
+	    left column. This will show up the <code>Java
+	      Compiler</code> on the right hand side of the window.
+          </li>
+
+          <li>Check the <code>Enable project specific
+	      settings</code> box.
+          </li>
+
+          <li>Make sure that <code>Compiler compliance
+	      level</code> under <code>JDK Compliance</code> is
+	    set to <code>1.4</code>.
+          </li>
+
+          <li>Uncheck the <code>Use default compliance
+	      settings</code> box. Sometimes you will have to check,
+	    and then uncheck again so that all the fields under
+	    <code>Compiler compliance level</code> are not
+	    grayed.
+          </li>
+
+          <li>Set <code>Generated .class files
+	      compatibility</code> under <code>JDK
+	      Compliance</code> to <code>1.4</code>.
+          </li>
+
+          <li>Set <code>Source compability</code> under
+	    <code>JDK Compliance</code> to
+	    <code>1.4</code>.
+          </li>
+
+          <li>Make sure that <code>Disallow identifiers called
+	      'assert'</code> under <code>JDK Compliance</code>
+	    is set to <code>Warning</code>.
+          </li>
+
+          <li>Make sure that <code>Disallow identifiers called
+	      'enum'</code> under <code>JDK Compliance</code>
+	    is set to <code>Warning</code>.
+          </li>
+
+          <li>Click on <code>OK</code> button. This will pop a
+	    <code>Compiler Setting Changed</code> window.
+          </li>
+
+          <li>Click on <code>Yes</code> button. This will pop a
+	    <code>Rebuilding - Build project 'sphinx4'</code>
+	    window and the rebuild of the project with new Java Compiler
+	    Compliance setting will commence.
+          </li>
+        </ul>
+
+        <p><b>Build Sphinx-4 using Ant within Eclipse</b>
+        </p>
+        
+        <p>This steps creates a number of directories and
+	  files. However, for debugging purposes within Eclipse, we
+	  are concerned only with <code>edu.cmu.sphinx.model</code>
+	  directory, and
+	  <code>TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</b>,
+	    <code>WSJ_8gau_13dCep_8k_31mel_200Hz_3500Hz.jar</code> and
+	    <code>WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code>
+	    jars</code>. Later, in the next step, we will
+	  <code>refresh</code> the <code>sphinx4</code> project within Eclipse to
+	  include <code>edu.cmu.sphinx.model</code> directory as
+	  project resource. We will also include the
+	  <code>TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</b>,
+	    <code>WSJ_8gau_13dCep_8k_31mel_200Hz_3500Hz.jar</code> and
+	    <code>WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code>
+	    jars</code> as jars for the <code>sphinx4</code> project.
+
+        </p>
+
+        <ul>
+          <li>Select <code>External Tools->External
+	      Tools...</code> from the <code>Run</code>
+	    menu. This will pop a <code>External Tools - Create,
+	      manage, and run configurations</code> window.
+          </li>
+
+          <li>Select <code>Ant Build</code> option in
+	    <code>Configurations</code>. Next, click on
+	    <code>New</code> button at the bottom left. This will
+	    display a new configuration in the <code>External Tools -
+	      Create, manage, and run configurations</code> window.
+          </li>
+
+          <li>Enter an appropriate name (we recommend
+	    <code>sphinx4</code>) of the Ant build in the
+	    <code>Name</code> field.
+          </li>
+
+          <li>Under the <code>Main</code> tab, click on
+	    <code>Browse Workspace...</code>. This will pop a
+	    <code>Choose Location</code> window.
+          </li>
+
+          <li>Select <code>build.xml</code> in the right side
+	    space, and then, click on <code>OK</code> button.
+          </li>
+
+          <li>Click on <code>Run</code> button to build Sphinx-4
+	    using Ant.
+          </li>
+
+          <li>When compiling subsequently, the procedure is
+	    simplified. Select <code>External Tools->External
+	      Tools...</code> from the <code>Run</code> menu. Then simply
+	    select <code>sphinx4</code>.
+          </li>
+        </ul>
+
+        <p><b>Refresh the <code>sphinx4</code> project and select required source
+	    folders</b>
+        </p>
+
+        <p>While the previous step creates
+	  <code>edu.cmu.sphinx.model</code> directory, this step
+	  refreshes the project that allows the inclusion of
+	  <code>edu.cmu.sphinx.model</code> directory as a <code>sphinx4</code>
+	  project source. Selection of required source folders is
+	  accomplished in this step to eliminate redundant folders in
+	  the Java Build Path within Eclipse.
+        </p>
+
+        <ul>
+          <li>Select <code>Refresh</code> from the <code>File</code>
+	    menu or just press the <code>F5</code> function key on
+	    your keyboard. This will refresh the project and the
+	    <code>Package Manager</code> within Eclipse will show all
+	    the directories, created by Ant in the previous step, as
+	    packages.
+          </li>
+
+          <li>Next, select <code>Properties</code> from the
+	    <code>Project</code> menu. This will pop a
+	    <code>Properties for sphinx4</code> window.
+          </li>
+
+          <li>Select <code>Java Build Path</code> option in the left
+	    column. This will show up the <code>Java Build Path</code>
+	    on the right hand side of the window.
+          </li>
+
+          <li>Click on the <code>Source</code> tab and then, click on
+	    <code>sphinx4</code> folder in the window pane. This will
+	    expand the <code>sphinx4</code> folder into
+	    <code>Included: (All)</code> and <code>Excluded:
+	      (None)</code>.
+          </li>
+
+          <li>Next, double-click on <code>Included: (All)</code>. This
+	    will pop a <code>Inclusion and Exclusion Patterns - Included
+	      and excluded resources for 'sphinx4'</code> window.
+          </li>
+	  
+	  <li>Click on <code>Add Multiple...</code> button in the
+	    <code>Inclusion patterns</code> section. This will pop a
+	    browsing window, <code>Inclusion Pattern
+	      Selection</code>. Select <code>com</code> folder and click
+	    on <code>OK</code> button. Next, click on <code>OK</code>
+	    button on the <code>Add Inclusion Pattern</code>
+	    window. This will add the folders <code>com</code>,
+	    <code>demo</code>, and <code>edu</code> within the
+	    <code>Inclusion patterns</code> section, in the
+	    <code>Inclusion and Exclusion Patterns - Included and
+	      excluded resources for 'sphinx4'</code> window. Select
+	    multiple folders as you would normally do on your
+	    machine. For example, in Windows, you can select multiple folders
+	    by clicking on the folder name at the same time that you
+	    hold the CTRL key.
+	  </li>
+	  
+	  <li>Next, click on <code>OK</code> button in the
+	    <code>Inclusion and Exclusion Patterns - Included and
+	      excluded resources for 'sphinx4'</code> window.
+	  </li>	  
+
+	  <li>Next, click on <code>OK</code> button in the
+	    <code>Properties for sphinx4 - Java Build path</code>
+	    window.  
+	  </li>
+        </ul>
+
+        <p><b>Add Sphinx-4 specific jars as jars to the Eclipse
+	    Project</b>
+        </p>
+
+        <p>This step makes the
+	  <code>TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code>,
+	  <code>WSJ_8gau_13dCep_8k_31mel_200Hz_3500Hz.jar</code>, and
+	  <code>WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code> in
+	  the <code>lib</code> directories visible within the Eclipse
+	  Project.
+        </p>
+
+        <ul>
+          <li>Select <code>Properties</code> from the
+	    <code>Project</code> menu. This will pop a
+	    <code>Properties for sphinx4 - Info</code> window.
+          </li>
+
+          <li>Select <code>Java Build Path</code> option in the
+	    left column. This will show up the <code>Java Build
+	      Path</code> on the right hand side of the window.
+          </li>
+
+          <li>Click on the <code>Libraries</code> tab and then, click
+	    on <code>Add JARs...</code> button. This will pop a
+	    browsing window.
+          </li>
+
+          <li>Select
+	    <code>TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code>
+	    by navigating to <code>lib</code> directory, and then
+	    click <code>Open</code> button on the browsing
+	    window.
+          </li>
+
+          <li>Select
+	    <code>WSJ_8gau_13dCep_8k_31mel_200Hz_3500Hz.jar</code>
+	    by navigating to <code>lib</code> directory, and then
+	    click <code>Open</code> button on the browsing
+	    window.
+          </li>
+
+          <li>Select
+	    <code>WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code>
+	    by navigating to <code>lib</code> directory, and then
+	    click <code>Open</code> button on the browsing
+	    window.
+          </li>
+
+          <li>Next, click on <code>OK</code> button on the
+	    <code>Properties for sphinx4 - Java Build Path</code>
+	    window.  This will add these jar files as jars to the
+	    Eclipse Project.
+          </li>
+
+	  <li>At this point, you should be able to run and debug
+	    applications such as demo.sphinx.hellodigits using Eclipse.
+	  </li>
+	  
+        </ul>
+
+        <br>
+      </li>
+
+      <li><b>Run or Debug Sphinx-4</b> 
+
+	<p>In this step, we provide instructions to run Sphinx-4 using
+	  Eclipse.
+	</p>
+
+	<ul>
+	  <li>Select <code>Run...</code> or <code>Debug...</code> from
+	    the <code>Run</code> menu.
+	  </li>
+	  <li>Click on <code>Java Application</code> and hit the
+	    <code>New</code> button.
+	  </li>
+	  <li>Choose a name for the configuration (<em>e.g.</em>
+	    <code>HelloWorld</code>) on the <code>Name:</code> field.
+	  </li>
+	  <li>Click the <code>Search...</code> in the <code>Main
+	      Class</code> pane.
+	  <li>Select of the <code>main</code> methods found (<em>e.g.</em> <code>HelloWorld</code>).
+	  </li>
+	  <li>Click on <code>OK</code> and then on <code>Apply</code> to confirm the configuration.
+	  </li>
+	  <li>Start the Debug or Run session by hitting the
+	    <code>Debug</code> or <code>Run</code> button.
+	  </li>
+	</ul>
+      </li>
+
+      <br>
+
+      <li><a name="trouble"><b>Troubleshooting</b></a>
+
+	<ol>
+	  <li>When I try to compile Sphinx-4 with Eclipse, I get a
+	    message suggesting JAVA_HOME is not defined. What's missing?
+	    <ul>
+	      <li>Sphinx-4 uses <code>ant</code> to build, and
+		<code>ant</code> requires the environment variable
+		<code>JAVA_HOME</code> to be
+		defined. <code>JAVA_HOME</code> contains the path to the
+		Java JDK. You can define the variable as follows.
+	      </li>
+	      <li> Unix (t)csh
+		<ul>
+		  <li><code>setenv JAVA_HOME /lab/speech/java/j2sdk1.4.0<code>
+		  </li>
+		</ul>
+	      </li>
+	      <li>Unix (ba)sh
+		<ul>
+		  <li><code>export JAVA_HOME='/lab/speech/java/jdk1.5.0_04'<code></li>
+		</ul>
+	      </li>
+	      <li>Windows 2k/XP
+		<ul>
+		  <li>Right click on the "My Computer" icon
+		  </li>
+		  <li>On the menu, click on "Properties"
+		  </li>
+		  <li>Click the "Advanced" tab
+		  </li>
+		  <li>Select "Environment Variables"
+		  </li>
+		  <li>Click "New" on the "User variables for ...." box
+		  </li>
+		  <li>On "Variable Name", type "JAVA_HOME"
+		  </li>
+		  <li>On "Variable Value", type "c:\Program Files\Java\jdk1.5.0_04"
+		  </li>
+		</ul>
+	      </li>
+	    </ul>
+	  </li>
+	</ol>
+
+      </ul>
+
+  </body>
+</html>
