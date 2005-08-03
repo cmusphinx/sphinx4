@@ -13,6 +13,8 @@ demo/sphinx/zipcity/README.html
 demo/sphinx/zipcity/screenshot.gif
 doc-files/architecture.gif
 doc/1-2-searchgraph.jpg
+doc/Eclipse.html
+doc/NetBeans.html
 doc/ProgrammersGuide.html
 doc/Sphinx4-faq.html
 doc/UsingSphinxTrainModels.html
