@@ -386,13 +386,13 @@ here's a configuration of the FrontEnd pipeline that uses a global
 property to set which cepstral mean normalizer to use:<br>
 <br>
 <pre>&lt;config&gt;<br>    &lt;property name="cmn" value="liveCMN"/&gt;<br><br>    &lt;component name="mfcFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd"&gt;<br>        &lt;propertylist name="pipeline"&gt;<br>            &lt;item&gt;streamDataSource&lt;/item&gt;<br>            &lt;item&gt;premphasizer&lt;/item&gt;<br>            &lt;item&gt;windower&lt;/item&gt;<br>            &lt;item&gt;fft&lt;/item&gt;<br>            &lt;item&gt;melFilterBank&lt;/item&gt;<br>            &lt;item&gt;dct&lt;/item&gt;<br>            &lt;item&gt;${cmn}/item&gt;<br>            &lt;item&gt;featureExtraction&lt;/item&gt;<br>        &lt;/propertylist&gt;<br>    &lt;/component&gt;<br>&lt;/config&gt;<br><br></pre>
-Note that you can <span style="font-weight: bold;">not </span>substitute
+Note that you can <span style="font-weight: bold;">not</span> substitute
 global variables for component names or types.&nbsp; Thus, this is <span
  style="font-weight: bold;">illegal:<br>
 <br>
 </span>
 <pre>&lt;config&gt;<br>    &lt;property name="cmn" value="liveCMN"/&gt;<br><span
- style="color: rgb(255, 0, 0);">    &lt;!-- illegal! --&gt;</span><br>    &lt;component name="${liveCMN}" type="edu.cmu.sphinx.frontend.CepstralMeanNormalizer"&gt;<br>    &lt;/component&gt;<br>&lt;/config&gt;</pre>
+ style="color: rgb(255, 0, 0);">    &lt;!-- illegal! --&gt;</span><br>    &lt;component name="${cmn}" type="edu.cmu.sphinx.frontend.CepstralMeanNormalizer"&gt;<br>    &lt;/component&gt;<br>&lt;/config&gt;</pre>
 <h3><a name="mozTocId510229" class="mozTocH3"></a>Setting properties
 from the Java command line</h3>
 Sometimes it is desirable to set component properties from the java
