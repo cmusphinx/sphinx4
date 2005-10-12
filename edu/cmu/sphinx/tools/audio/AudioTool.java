@@ -188,8 +188,13 @@ public class AudioTool {
             }
 	    zoomReset();
             audio.setAudioData(newAudio.getAudioData());
-            player.play(audioPanel.getSelectionStart(),
-                        audioPanel.getSelectionEnd());
+	    /* 
+	     * Play only if user requests. Auto play is annoying if
+	     * the audio is too long
+	     *
+	     * player.play(audioPanel.getSelectionStart(),
+	     * audioPanel.getSelectionEnd());
+	    */
         } catch (IOException e) {
             /* just ignore bad files. */
         }
@@ -613,13 +618,15 @@ public class AudioTool {
                                         0.004f);
             spectrogramPanel = new SpectrogramPanel(frontEnd, dataSource, audio);
 
-            JPanel panel = new JPanel();
-            panel.setLayout(new BorderLayout());
-	    panel.add(createButtonPanel(), BorderLayout.NORTH);
+            JPanel panel = new JPanel(new BorderLayout());
             panel.add(audioPanel, BorderLayout.CENTER);
 	    panel.add(spectrogramPanel, BorderLayout.SOUTH);
             
 	    JScrollPane scroller = new JScrollPane(panel);
+
+	    JPanel outerPanel = new JPanel(new BorderLayout());
+	    outerPanel.add(createButtonPanel(), BorderLayout.NORTH);
+	    outerPanel.add(scroller);
 
             player = new AudioPlayer(audio);
             player.start();
@@ -627,7 +634,7 @@ public class AudioTool {
             getAudioFromFile(filename);
             
             jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    jframe.setContentPane(scroller);
+	    jframe.setContentPane(outerPanel);
             jframe.pack();
             jframe.setSize(640,540);
             jframe.setVisible(true);
