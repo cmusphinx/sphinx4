@@ -154,7 +154,7 @@ class ValidatingPropertySheet implements PropertySheet {
      * @return the return value
      */
     public Object getRaw(String name) throws PropertyException {
-        Object value = getRawNoReplacment(name);
+        Object value = getRawNoReplacement(name);
         
         if (value == null) {
             return null;
@@ -193,7 +193,7 @@ class ValidatingPropertySheet implements PropertySheet {
      *            the name of the property
      * @return the return value
      */
-    public Object getRawNoReplacment(String name) {
+    public Object getRawNoReplacement(String name) {
         return properties.get(name);
     }
 

@@ -194,7 +194,8 @@ public interface PropertySheet {
      * @return the value as an object (it could be a String or a String[]
      *         depending upon the property type)
      */
-    public Object getRawNoReplacment(String name);
+    public Object getRawNoReplacement(String name);
+
     /**
      * Gets the owning property manager
      * 

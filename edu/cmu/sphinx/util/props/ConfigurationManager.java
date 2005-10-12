@@ -234,7 +234,7 @@ public class ConfigurationManager {
 
     /**
      * Sets the property of the given component to the given value.
-     * Component must be an exisiting, instantiatied component
+     * Component must be an existing, instantiated component
      *
      * @param component an existing component
      * @param prop the property name
@@ -246,7 +246,7 @@ public class ConfigurationManager {
         if (symbol != null) {
             PropertySheet ps = symbol.getPropertySheet();
             Configurable c = symbol.getObject();
-            Object old = ps.getRawNoReplacment(prop);
+            Object old = ps.getRawNoReplacement(prop);
             ps.setRaw(prop, value);
             try {
                 c.newProperties(ps);
@@ -262,6 +262,32 @@ public class ConfigurationManager {
             throw new PropertyException(null, prop,
                 "Can't find component " + component);
         }
+    }
+
+    /**
+     * Gets the given property for the given component.  Returns
+     * either the string representation of the value or a list of
+     * strings
+     *
+     * @param component the component containing the property to
+     * lookup
+     * @param propertyName the name of the property to lookup
+     *
+     * @return the string representation of the property or a list of
+     * such strings
+     **/
+    public Object getProperty(String component, String propertyName) 
+	throws PropertyException {
+	Object obj = null;
+        Symbol symbol = (Symbol) symbolTable.get(component);
+        if (symbol != null) {
+            PropertySheet ps = symbol.getPropertySheet();
+            obj = ps.getRawNoReplacement(propertyName);
+        } else {
+            throw new PropertyException(null, propertyName,
+                "Can't find component " + component);
+        }
+	return obj;
     }
 
     /**
@@ -309,7 +335,7 @@ public class ConfigurationManager {
                 "\n          type=\"" + symbol.getObject().getClass().getName()
                 + "\">");
             for (int j = 0; j < names.length; j++) {
-                Object obj = ps.getRawNoReplacment(names[j]);
+                Object obj = ps.getRawNoReplacement(names[j]);
                 if (obj instanceof String) {
                     String value = (String) obj;
                     value = encodeValue(value);
