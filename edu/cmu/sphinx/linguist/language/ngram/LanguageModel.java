@@ -13,6 +13,7 @@ package edu.cmu.sphinx.linguist.language.ngram;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.util.props.Configurable;
@@ -124,4 +125,11 @@ public interface LanguageModel extends Configurable {
      * @return the maximum depth of the language mdoel
      */
     public int getMaxDepth();
+
+    /**
+     * Used for reporting errors and warnings during loading
+     * @return the logger used by the LanguageModel
+     */
+    public Logger getLogger();
+
 }

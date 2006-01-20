@@ -627,4 +627,16 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     public String getName() {
         return name;
     }
+
+    public Linguist getLinguist() {
+        return linguist;
+    }
+
+    public Pruner getPruner() {
+        return pruner;
+    }
+
+    public AcousticScorer getScorer() {
+        return scorer;
+    }
 }

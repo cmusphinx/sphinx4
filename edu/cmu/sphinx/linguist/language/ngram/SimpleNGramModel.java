@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
+
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
@@ -58,6 +60,7 @@ public class SimpleNGramModel implements LanguageModel {
     private float unigramWeight;
     private Dictionary dictionary;
     private int desiredMaxDepth;
+    private Logger logger;
     private int maxNGram = 0;
     private Map map;
     private Set vocabulary;
@@ -83,6 +86,10 @@ public class SimpleNGramModel implements LanguageModel {
         registry.register(PROP_DICTIONARY, PropertyType.COMPONENT);
     }
 
+    public Logger getLogger() {
+        return logger;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -95,6 +102,7 @@ public class SimpleNGramModel implements LanguageModel {
             throw new PropertyException(this, null, 
                     "Can't change properties after allocation");
         }
+        logger = ps.getLogger();
         format = ps.getString(PROP_FORMAT, PROP_FORMAT_DEFAULT);
         urlLocation = ps.getResource(PROP_LOCATION);
         unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT,

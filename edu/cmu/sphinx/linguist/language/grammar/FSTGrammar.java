@@ -155,9 +155,6 @@ public class FSTGrammar extends Grammar {
      * 
      * @param bogusText
      *                dummy variable
-     * 
-     * @throws NoSuchMethogException
-     *                 if called with reference sentence
      */
     protected GrammarNode createGrammar(String bogusText)
             throws NoSuchMethodException {

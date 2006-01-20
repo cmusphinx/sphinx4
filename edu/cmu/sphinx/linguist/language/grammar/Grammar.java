@@ -46,7 +46,7 @@ import edu.cmu.sphinx.util.Timer;
  * Note that all grammar probabilities are maintained in LogMath log
  * domain.
  */
-public abstract class Grammar implements Configurable {
+public abstract class Grammar implements Configurable, GrammarInterface {
     /**
      * Property to control the the dumping of the grammar
      */
@@ -96,7 +96,7 @@ public abstract class Grammar implements Configurable {
     private boolean addSilenceWords = false;
     private boolean addFillerWords = false;
     private Dictionary dictionary;
-    private GrammarNode initialNode;
+    protected GrammarNode initialNode;
     private Set grammarNodes;
     private final static Word[][] EMPTY_ALTERNATIVE = new Word[0][0];
     private Random randomizer = new Random();
@@ -358,8 +358,6 @@ public abstract class Grammar implements Configurable {
      * 
      * @throws java.io.IOException
      *                 if the grammar could not be loaded
-     * @throws java.lang.NoSuchMethodException
-     *                 if called with inappropriate subclass.
      */
     protected abstract GrammarNode createGrammar() throws IOException;
 
@@ -369,7 +367,7 @@ public abstract class Grammar implements Configurable {
      * @param bogusText
      *                dummy variable
      * 
-     * @throws NoSuchMethogException
+     * @throws NoSuchMethodException
      *                 if called with reference sentence
      */
     protected GrammarNode createGrammar(String bogusText)

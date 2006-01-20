@@ -154,4 +154,8 @@ public class Decoder implements Configurable {
             }
         }
     }
+
+    public SearchManager getSearchManager() {
+        return searchManager;
+    }
 }

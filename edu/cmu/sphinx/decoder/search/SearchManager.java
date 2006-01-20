@@ -17,6 +17,9 @@ import java.io.IOException;
 
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.linguist.Linguist;
+import edu.cmu.sphinx.decoder.pruner.Pruner;
+import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 
 /**
  *
@@ -73,6 +76,22 @@ public interface SearchManager extends Configurable {
      * after recognize returns a final result.
      */
     public void stopRecognition();
+
+    /**
+     * @return the Linguist used by this decoder
+     */
+    public Linguist getLinguist();
+
+    /**
+     * @return the Pruner used by this decoder
+     */
+    public Pruner getPruner();
+
+    /**
+     * @return the Scorer used by this decoder
+     */
+    public AcousticScorer getScorer();
+
 }
 
 

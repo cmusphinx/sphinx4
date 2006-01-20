@@ -544,6 +544,23 @@ public class FlatLinguist implements Linguist, Configurable {
     private GState getGState(GrammarNode node) {
         return (GState) nodeStateMap.get(node);
     }
+
+    /**
+     *
+     * @return the Grammar
+     */
+    public Grammar getGrammar() {
+        return grammar;
+    }
+
+    /**
+     *
+     * @return the AcousticModel
+     */
+    public AcousticModel getAcousticModel() {
+        return acousticModel;
+    }
+
     /**
      * The search graph that is produced by the flat linguist.
      */
@@ -1451,6 +1468,7 @@ public class FlatLinguist implements Linguist, Configurable {
          *                log domain
          * 
          * 
+         * @return the state that was attached
          */
         protected void attachState(SentenceHMMState prevState,
                 SentenceHMMState nextState, float logAcousticProbability,

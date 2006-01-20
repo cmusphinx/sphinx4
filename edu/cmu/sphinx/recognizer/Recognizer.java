@@ -270,6 +270,13 @@ public class Recognizer implements Configurable {
         return name;
     }
     
+    /**
+     * @return the decoder containing all the components of this recognizer
+     */
+    public Decoder getDecoder() {
+        return decoder;
+    }
+    
     
     /* (non-Javadoc)
      * @see java.lang.Object#toString()

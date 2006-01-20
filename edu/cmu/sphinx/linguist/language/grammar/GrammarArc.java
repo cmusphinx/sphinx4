@@ -32,6 +32,7 @@ public class GrammarArc {
      * @param logProbability the log probability of following this arc
      */
     public GrammarArc(GrammarNode grammarNode, float logProbability) {
+        assert grammarNode != null;
 	this.grammarNode = grammarNode;
 	this.logProbability = logProbability;
     }

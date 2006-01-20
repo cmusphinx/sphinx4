@@ -845,5 +845,35 @@ public class ParallelSearchManager implements SearchManager {
 	}
         linguist.deallocate();
     }    
+
+    /**
+      * @return the Linguist
+     */
+    public Linguist getLinguist() {
+        return linguist;
+    }
+
+    /**
+     *
+     * @return the feature or combined Pruner
+     */
+    public Pruner getPruner() {
+        // TODO is this right?
+        if (doFeaturePruning) {
+	        return featureScorePruner;
+	    }
+	    if (doCombinePruning) {
+	        return combinedScorePruner;
+	    }
+        return null;
+    }
+
+    /**
+     *
+     * @return the Scorer
+     */
+    public AcousticScorer getScorer() {
+        return scorer;
+    }
 }
 

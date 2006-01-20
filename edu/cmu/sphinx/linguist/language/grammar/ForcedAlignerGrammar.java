@@ -1,5 +1,3 @@
-
-
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -23,111 +21,70 @@ import edu.cmu.sphinx.util.LogMath;
 /**
  * Creates a grammar from a reference sentence. It is a constrained
  * grammar that represents the sentence only.
- *
+ * <p/>
  * Note that all grammar probabilities are maintained in the LogMath
  * log base
  */
 public class ForcedAlignerGrammar extends Grammar {
 
-    private Map nodes = new HashMap();
+    protected GrammarNode finalNode;
 
     /**
      * Create class from reference text (not implemented).
-     *
      */
-    protected GrammarNode createGrammar()
-	{
-	GrammarNode initialNode = null;
-	initialNode = createGrammarNode(0, true);
-	return initialNode;
+    protected GrammarNode createGrammar() {
+        throw new Error( "Not implemented" );
     }
+
     /**
      * Creates the grammar
-     *
      */
     protected GrammarNode createGrammar(String referenceText)
 	throws NoSuchMethodException {
-	GrammarNode initialNode = null;
-	GrammarNode finalNode = null;
-	final float logArcProbability = LogMath.getLogOne();
-	String nodeName;
 
-	StringTokenizer tok = new StringTokenizer(referenceText);
-	int nodeId = 0;
+        initialNode = createGrammarNode(false);
+        finalNode = createGrammarNode(true);
+        createForcedAlignerGrammar( initialNode, finalNode, referenceText );
 
-	// first pass just creates the grammar nodes
+        return initialNode;
+    }
 
-	// Create initial node
+    /**
+     * Create a branch of the grammar that corresponds to a transcript.  For each
+     * word create a node, and link the nodes with arcs.  The branch is connected to
+     * the initial node iNode, and the final node fNode.
+     *
+     * @param iNode
+     * @param fNode
+     * @param transcript
+     * @return the first node of this branch
+     * @throws NoSuchMethodException
+     */
+    protected GrammarNode createForcedAlignerGrammar(GrammarNode iNode, GrammarNode fNode, String transcript) throws NoSuchMethodException {
+        final float logArcProbability = LogMath.getLogOne();
 
-	int initialID = nodeId++;
-        nodeName = "G" + initialID;
-	initialNode = createGrammarNode(initialID, false);
-	assert initialNode != null;
-	nodes.put(nodeName, initialNode);
+        StringTokenizer tok = new StringTokenizer(transcript);
 
-	// Create a node for each word in the sentence
+        GrammarNode firstNode = null;
+        GrammarNode lastNode = null;
+
 	while (tok.hasMoreTokens()) {
 
 	    String token;
 	    token = tok.nextToken();
 
-	    nodeName = "G" + nodeId;
-	    GrammarNode node = (GrammarNode) nodes.get(nodeName);
-	    if (node == null) {
-		if (false) {
-		    System.out.println("Creating "
-				       + nodeName + " word is " 
-				       + token);
-		}
-		node = createGrammarNode(nodeId, token);
-		nodes.put(nodeName, node);
-	    } 
-	    nodeId++;
+            GrammarNode prevNode = lastNode;
+            lastNode = createGrammarNode(token);
+            if( firstNode==null ) firstNode = lastNode;
+
+            if( prevNode != null ) {
+                prevNode.add(lastNode, logArcProbability);
 	}
-
-	// create the final node
-	finalNode = createGrammarNode(nodeId, true);
-
-	// Now that we have all the grammar nodes, reprocess the nodes
-
-	// Reprocessing is simply adding arcs to nodes, in sequence, with
-	// probability of one (linear scale).
-
-	// Second pass, add all of the arcs
-
-	for (int i = 0; i < nodeId; i++) {
-
-	    int thisID = i;
-	    int nextID = i + 1;
-
-	    GrammarNode thisNode = get(thisID);
-	    GrammarNode nextNode = get(nextID);
-
-	    thisNode.add(nextNode, logArcProbability);
-	}
-
-
-	return initialNode;
     }
 
+        iNode.add(firstNode,logArcProbability);
+        lastNode.add(fNode,logArcProbability);
 
-
-    /**
-     * Given an id returns the associated grammar node
-     *
-     * @param id the id of interest
-     *
-     * @return the grammar node or null if none could be found with
-     * the proper id
-     */
-    private GrammarNode get(int id) {
-	String name = "G" + id;
-	GrammarNode grammarNode =  (GrammarNode) nodes.get(name);
-	if (grammarNode == null) {
-	    grammarNode = createGrammarNode(id, false);
-	    nodes.put(name, grammarNode);
-	}
-
-	return grammarNode;
+        return firstNode;
     }
 }

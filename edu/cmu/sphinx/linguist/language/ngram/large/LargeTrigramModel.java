@@ -158,6 +158,10 @@ public class LargeTrigramModel implements LanguageModel {
 
     private final static int SMEAR_MAGIC = 0xC0CAC01A; // things go better 
 
+    public Logger getLogger() {
+        return logger;
+    }
+
     // ------------------------------
     // Configuration data
     // ------------------------------
