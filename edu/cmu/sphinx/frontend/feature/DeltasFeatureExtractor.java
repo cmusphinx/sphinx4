@@ -266,6 +266,8 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
      * 
      * @param totalFeatures
      *                the number of Features that will be produced
+     * 
+     * @return a FeatureFrame
      */
     private void computeFeatures(int totalFeatures) {
         getTimer().start();
