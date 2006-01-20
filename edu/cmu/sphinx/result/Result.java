@@ -204,12 +204,14 @@ public class Result {
      */
     public Token getBestActiveToken() {
         Token bestToken = null;
+		if( activeList != null ) {
         for (Iterator i = activeList.iterator(); i.hasNext();) {
             Token token = (Token) i.next();
             if (bestToken == null || token.getScore() > bestToken.getScore()) {
                 bestToken = token;
             }
         }
+		}
         return bestToken;
     }
 
