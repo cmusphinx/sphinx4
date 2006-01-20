@@ -273,7 +273,7 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="jars"
-	    depends="sphinx4_jar,tags_jar,audiotool_jar"
+            depends="sphinx4_jar,batch_jar,tags_jar,audiotool_jar"
 	    description="Builds all the jar files"/>
 
 
@@ -288,9 +288,20 @@ jsapi.exe from the lib directory.
 	     manifest="${src_dir}/edu/cmu/sphinx/sphinx4.manifest"
 	     compress="true"
 	     includes="edu/**,com/**"
-             excludes="edu/cmu/sphinx/tools/**,
-	               edu/cmu/sphinx/model/**,
-	               com/sun/taglet/**"
+             excludes="edu/cmu/sphinx/tools/**,com/sun/taglet/**"
+             basedir="${classes_dir}"/>
+    </target>
+
+    <property name="batch_jar" value="${lib_dir}/batch.jar"/>
+
+    <target name="batch_jar"
+            depends="compile_src"
+            description="Create ${lib_dir}/batch.jar">
+        <mkdir dir="${lib_dir}"/>
+        <jar destfile="${batch_jar}"
+             compress="true"
+             includes="edu/cmu/sphinx/tools/**"
+             excludes="com/sun/taglet/**"
 	     basedir="${classes_dir}"/>
     </target>
 

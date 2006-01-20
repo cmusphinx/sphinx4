@@ -11,38 +11,25 @@
  */
 package edu.cmu.sphinx.tools.batch;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.util.BatchItem;
-import edu.cmu.sphinx.util.BatchManager;
-import edu.cmu.sphinx.util.PooledBatchManager;
-import edu.cmu.sphinx.util.SimpleBatchManager;
-import edu.cmu.sphinx.util.Utilities;
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
-import edu.cmu.sphinx.util.CommandInterpreter;
-import edu.cmu.sphinx.util.CommandInterface;
+import edu.cmu.sphinx.util.*;
+import edu.cmu.sphinx.util.props.*;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Decodes a batch file containing a list of files to decode. The files can be
@@ -58,7 +45,7 @@ import edu.cmu.sphinx.util.CommandInterface;
  * Note that in the ideal situation, the audio format of the data should
  * be passed into the StreamDataSource, so that no extra configuration is
  * needed. This will be fixed in future releases.
- * <p>
+ * <p/>
  * To run this BatchModeRecognizer:
  * <pre>
  * java BatchModeRecognizer &lt;xmlConfigFile&gt; &lt;batchFile&gt;
@@ -71,10 +58,9 @@ import edu.cmu.sphinx.util.CommandInterface;
  * Sphinx-4 Configuration Management</a>. For information about the
  * batch file, refer to the <a href="../../../../../../index.html#batch_files">
  * batch file description</a>.
- * 
+ * <p/>
  * This class will send recognition results to the logger if the log level is
  * set to INFO.
- *
  */
 public class BatchModeRecognizer implements Configurable {
 
@@ -99,7 +85,6 @@ public class BatchModeRecognizer implements Configurable {
 
     /**
      * The SphinxProperty that specified which batch job is to be run.
-     *  
      */
     public final static String PROP_WHICH_BATCH = "whichBatch";
 
@@ -111,10 +96,9 @@ public class BatchModeRecognizer implements Configurable {
     /**
      * The SphinxProperty for the total number of batch jobs the decoding run
      * is being divided into.
-     * 
+     * <p/>
      * The BatchDecoder supports running a subset of a batch. This allows a
      * test to be distributed among several machines.
-     *  
      */
     public final static String PROP_TOTAL_BATCHES = "totalBatches";
 
@@ -148,19 +132,19 @@ public class BatchModeRecognizer implements Configurable {
     // -------------------------------
     // Configuration data
     // --------------------------------
-    private String name;
-    private List inputDataProcessors;
-    private int skip;
-    private int totalCount;
-    private int whichBatch;
-    private int totalBatches;
-    private boolean usePooledBatchManager;
-    private BatchManager batchManager;
-    private Recognizer recognizer;
-    private Logger logger;
+    protected String name;
+    protected List inputDataProcessors;
+    protected int skip;
+    protected int totalCount;
+    protected int whichBatch;
+    protected int totalBatches;
+    protected boolean usePooledBatchManager;
+    protected BatchManager batchManager;
+    protected Recognizer recognizer;
+    protected Logger logger;
 
-    private BatchItem curBatchItem;
-    private ConfigurationManager cm;
+    protected BatchItem curBatchItem;
+    protected ConfigurationManager cm;
 
     /*
      * (non-Javadoc)
@@ -217,10 +201,8 @@ public class BatchModeRecognizer implements Configurable {
     /**
      * Sets the batch file to use for this recogition
      * 
-     * @param batchFile
-     *                the name of the batch file
-     * @throws IOException
-     *                 if the file could not be opened or read.
+     * @param batchFile the name of the batch file
+     * @throws IOException if the file could not be opened or read.
      */
     public void setBatchFile(String batchFile) throws IOException {
         if (usePooledBatchManager) {
@@ -234,8 +216,7 @@ public class BatchModeRecognizer implements Configurable {
     /**
      * Decodes the batch of audio files
      * 
-     * @throws IOException
-     *                 if there is an I/O error processing the batch file
+     * @throws IOException if there is an I/O error processing the batch file
      */
     public void decode(String batchFile) {
         BatchItem batchItem;
@@ -267,11 +248,12 @@ public class BatchModeRecognizer implements Configurable {
     
     /**
      * Sets the input stream to the given filename
-     * @param filename the filename to set the input stream to
      *
+     * @param filename the filename to set the input stream to
+     * @return the InputStream representing the filename
      * @throws IOException if an error occurs
      */
-    private void setInputStream(String filename) throws IOException {
+    void setInputStream(String filename) throws IOException {
         for (Iterator i = inputDataProcessors.iterator(); i.hasNext(); ) {
             DataProcessor dataSource = (DataProcessor) i.next();
             InputStream is = null;
@@ -301,10 +283,9 @@ public class BatchModeRecognizer implements Configurable {
     /**
      * Add commands to the given interpreter to support shell mode
      *
-     *
      * @param ci the interpreter
      */
-    private void addCommands(CommandInterpreter ci) {
+    void addCommands(CommandInterpreter ci) {
 	ci.add("ls", new CommandInterface() {
 	     public String execute(CommandInterpreter ci, String[] args) {
                  if (args.length != 1) {
@@ -317,6 +298,7 @@ public class BatchModeRecognizer implements Configurable {
                 }
                 return "";
            }
+
             public String getHelp() {
                 return "list active components";
             }
@@ -333,6 +315,7 @@ public class BatchModeRecognizer implements Configurable {
                 }
                 return "";
            }
+
             public String getHelp() {
                 return "show component configuration";
             }
@@ -346,6 +329,7 @@ public class BatchModeRecognizer implements Configurable {
                 }
                 return "";
            }
+
             public String getHelp() {
                 return "edit a  component's configuration";
             }
@@ -363,6 +347,7 @@ public class BatchModeRecognizer implements Configurable {
                 }
                 return "";
            }
+
             public String getHelp() {
                 return "save configuration to a file";
             }
@@ -380,6 +365,7 @@ public class BatchModeRecognizer implements Configurable {
                 }
                 return "";
            }
+
             public String getHelp() {
                 return "set component property to a given value";
             }
@@ -404,6 +390,7 @@ public class BatchModeRecognizer implements Configurable {
                 }
                 return "";
            }
+
             public String getHelp() {
                 return "perform recognition on the given audio";
             }
@@ -419,6 +406,7 @@ public class BatchModeRecognizer implements Configurable {
                 }
                 return "";
            }
+
             public String getHelp() {
                 return "resets gathered statistics";
             }
@@ -445,6 +433,7 @@ public class BatchModeRecognizer implements Configurable {
                 }
                 return "";
            }
+
             public String getHelp() {
                 return "perform recognition on the current batch item";
             }
@@ -489,6 +478,7 @@ public class BatchModeRecognizer implements Configurable {
                 }
                 return "";
            }
+
             public String getHelp() {
                 return "advance the batch and perform recognition";
             }
@@ -524,6 +514,7 @@ public class BatchModeRecognizer implements Configurable {
                 }
                 return "";
            }
+
             public String getHelp() {
                 return "recognize all of the remaining batch items";
             }
@@ -542,6 +533,7 @@ public class BatchModeRecognizer implements Configurable {
                 }
                 return "";
            }
+
            public String getHelp() {
                return "reset the batch to the beginning";
            }
@@ -559,6 +551,7 @@ public class BatchModeRecognizer implements Configurable {
                 }
                 return "";
            }
+
            public String getHelp() {
                return "reset the batch to the beginning";
            }
@@ -585,8 +578,7 @@ public class BatchModeRecognizer implements Configurable {
     /**
      * Main method of this BatchDecoder.
      * 
-     * @param argv
-     *                argv[0] : config.xml argv[1] : a file listing
+     * @param argv argv[0] : config.xml argv[1] : a file listing
      *                all the audio files to decode
      */
     public static void main(String[] argv) {
@@ -627,5 +619,36 @@ public class BatchModeRecognizer implements Configurable {
         } else {
             bmr.decode(batchFile);
         }
+    }
+
+    int count;
+
+    public void start(String batchFile) throws IOException {
+        recognizer.allocate();
+        setBatchFile(batchFile);
+        batchManager.start();
+        logger.info("BatchDecoder: decoding files in "
+                + batchManager.getFilename());
+        count = 0;
+    }
+
+    public void stop() throws IOException {
+        batchManager.stop();
+        recognizer.deallocate();
+    }
+
+    public Result recognize() throws IOException {
+        Result result = null;
+        BatchItem batchItem;
+        if (count < totalCount &&
+                (batchItem = batchManager.getNextItem()) != null) {
+            setInputStream(batchItem.getFilename());
+            result = recognizer.recognize(batchItem.getTranscript());
+            logger.info("File  : " + batchItem.getFilename());
+            logger.info("Result: " + result);
+            count++;
+        }
+        logger.info("BatchDecoder: " + count + " files decoded");
+        return result;
     }
 }
