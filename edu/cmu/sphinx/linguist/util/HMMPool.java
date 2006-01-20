@@ -223,6 +223,12 @@ public class HMMPool {
         return unit.getBaseID();
     }
 
+    public boolean isValidID( int unitID ) {
+        if( unitID < 0 ) return false;
+        if( unitID >= unitTable.length ) return false;
+        return unitTable[unitID] != null;
+    }
+
     /**
      * Builds an id from the given unit and its left and right unit
      * ids
@@ -238,13 +244,22 @@ public class HMMPool {
         // silence than we have no context ... so use the CI
         // form
 
+        if (unitTable[unitID]==null) {
+            return -1;
+        }
+
+        int id;
         if (unitTable[unitID].isSilence()) {
-            return unitID;
+            id = unitID;
         } else {
-            return unitID * (numCIUnits * numCIUnits)
+            id = unitID * (numCIUnits * numCIUnits)
                   + (leftID * numCIUnits) 
                   + rightID ;
         }
+
+        assert id < unitTable.length;
+
+        return id;
     }
 
     /**

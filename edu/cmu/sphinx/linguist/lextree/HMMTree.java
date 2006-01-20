@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
@@ -287,7 +288,12 @@ class HMMTree {
                 baseUnit = units[i];
                 rc = units[i + 1];
                 HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.INTERNAL);
+                if( hmm==null ) {
+                    lm.getLogger().severe("Missing HMM for unit " + baseUnit.getName() + " with lc=" + lc.getName() + " rc=" + rc.getName());
+                }
+                else {
                 curNode = curNode.addSuccessor(hmm, probability);
+                }
                 lc = baseUnit;          // next lc is this baseUnit
             }
 
@@ -320,19 +326,33 @@ class HMMTree {
      * @return the HMM. (This should never return null)
      */
     private HMM getHMM(Unit base, Unit lc, Unit rc, HMMPosition pos) {
-        int id = hmmPool.buildID(hmmPool.getID(base), hmmPool.getID(lc), 
-                                 hmmPool.getID(rc));
+        int id = -1;
+        int bid = hmmPool.getID(base);
+        int lid = hmmPool.getID(lc);
+        int rid = hmmPool.getID(rc);
+
+        if( !hmmPool.isValidID(bid) ) {
+            lm.getLogger().severe("Bad HMM Unit: " + base.getName() );
+            return null;
+        }
+        if( !hmmPool.isValidID(lid) ) {
+            lm.getLogger().severe("Bad HMM Unit: " + lc.getName() );
+            return null;
+        }
+        if( !hmmPool.isValidID(rid) ) {
+            lm.getLogger().severe("Bad HMM Unit: " + rc.getName() );
+            return null;
+        }
+        id = hmmPool.buildID(bid,lid,rid);
+        if( id < 0 ) {
+            lm.getLogger().severe("Unable to build HMM Unit ID for " + base.getName() + " lc=" + lc.getName() + " rc=" + rc.getName());
+            return null;
+        }
         HMM hmm = hmmPool.getHMM(id, pos);
         if (hmm == null) {
-            System.out.println(
-                    "base ID " + hmmPool.getID(base)  +
-                    "left ID " + hmmPool.getID(lc)  +
-                    "right ID " + hmmPool.getID(rc));
-            System.out.println("Unit " + base + " lc " + lc + " rc " +
-                    rc + " pos " + pos);
-            System.out.println("ID " + id + " hmm " + hmm);
+            lm.getLogger().severe("Missing HMM Unit for " + base.getName() + " lc=" + lc.getName() + " rc=" + rc.getName());
         }
-        assert hmm != null;
+
         return hmm;
     }
 
