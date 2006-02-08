@@ -264,10 +264,7 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
     /**
      * Converts the Cepstrum data in the cepstraBuffer into a FeatureFrame.
      * 
-     * @param totalFeatures
-     *                the number of Features that will be produced
-     * 
-     * @return a FeatureFrame
+     * @param totalFeatures the number of Features that will be produced
      */
     private void computeFeatures(int totalFeatures) {
         getTimer().start();

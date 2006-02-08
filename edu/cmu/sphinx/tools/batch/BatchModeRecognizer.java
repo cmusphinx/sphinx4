@@ -215,8 +215,6 @@ public class BatchModeRecognizer implements Configurable {
 
     /**
      * Decodes the batch of audio files
-     * 
-     * @throws IOException if there is an I/O error processing the batch file
      */
     public void decode(String batchFile) {
         BatchItem batchItem;
@@ -250,7 +248,6 @@ public class BatchModeRecognizer implements Configurable {
      * Sets the input stream to the given filename
      *
      * @param filename the filename to set the input stream to
-     * @return the InputStream representing the filename
      * @throws IOException if an error occurs
      */
     void setInputStream(String filename) throws IOException {

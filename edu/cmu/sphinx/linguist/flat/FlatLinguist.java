@@ -1466,9 +1466,6 @@ public class FlatLinguist implements Linguist, Configurable {
          * @param logInsertionProbablity
          *                insertion probability of transition in the LogMath
          *                log domain
-         * 
-         * 
-         * @return the state that was attached
          */
         protected void attachState(SentenceHMMState prevState,
                 SentenceHMMState nextState, float logAcousticProbability,
