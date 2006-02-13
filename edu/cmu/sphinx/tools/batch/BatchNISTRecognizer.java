@@ -162,12 +162,18 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         }
     }
 
-    protected class CTLUtterance {
+    public class CTLUtterance {
         int startOffset;
         int endOffset;
         String name;
         byte[] data;
         String ref;
+
+        public String getFile() {
+            return file;
+        }
+
+        String file;
 
         CTLUtterance(String ctl, String ref) throws CTLException {
             /*
@@ -182,7 +188,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
             name = fields[3];
             data = new byte[(endOffset - startOffset) * bytesPerFrame];
             int i = fields[0].indexOf('.');
-            String file = fields[0];
+            file = fields[0];
             if( i >= 0 ) {
                 file = file.substring(0,i);
             }
@@ -210,6 +216,14 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         public String getRef() {
             return ref;
         }
+
+        public int getStartOffset() {
+            return startOffset;
+        }
+
+        public int getEndOffset() {
+            return endOffset;
+        }
     }
 
     protected class CTLIterator implements Iterator {
@@ -218,7 +232,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         LineNumberReader ctlReader;
         LineNumberReader refReader;
 
-        CTLIterator() throws IOException {
+        public CTLIterator() throws IOException {
             ctlReader = new LineNumberReader(new FileReader(ctlFile));
             refReader = new LineNumberReader(new FileReader(refFile));
             utterance = nextUtterance();
@@ -271,7 +285,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     public void decode() {
 
         try {
-            totalCount = 0;
+            utteranceId = 0;
             DataOutputStream ctm = new DataOutputStream(new FileOutputStream(ctmFile));
             recognizer.allocate();
 
@@ -279,20 +293,20 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
                 CTLUtterance utt = (CTLUtterance) i.next();
                 setInputStream(utt);
                 Result result = recognizer.recognize();
-                System.out.println("Utterance " + totalCount + ": " + utt.getName());
+                System.out.println("Utterance " + utteranceId + ": " + utt.getName());
                 System.out.println("Reference: " + utt.getRef());
                 System.out.println("Result   : " + result);
-                logger.info("Utterance " + totalCount + ": " + utt.getName());
+                logger.info("Utterance " + utteranceId + ": " + utt.getName());
                 logger.info("Result   : " + result);
                 handleResult(ctm, utt, result);
-                totalCount++;
+                utteranceId++;
             }
 
             recognizer.deallocate();
         } catch (IOException io) {
             logger.severe("I/O error during decoding: " + io.getMessage());
         }
-        logger.info("BatchCTLDecoder: " + totalCount + " utterances decoded");
+        logger.info("BatchCTLDecoder: " + utteranceId + " utterances decoded");
     }
 
     protected void handleResult(DataOutputStream out, CTLUtterance utt, Result result) throws IOException {
@@ -316,7 +330,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
                 String [] names = utt.name.split("_");
                 String id = names[0] + "_" + names[1] + "_" + names[2];
                 out.write((id + " 1 " + (utt.startOffset + startFrame) / 100.0 + " " + (endFrame - startFrame) / 100.0 + " ").getBytes());
-                out.write(toHex2Binary(spelling));
+                out.write(hex2Binary(spelling));
                 out.write(" 0.700000\n".getBytes());
             }
             return endFrame;
@@ -324,7 +338,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         return startFrame;
     }
 
-    private byte[] toHex2Binary(String spelling) {
+    static public byte[] hex2Binary(String spelling) {
         byte [] bin = new byte[ spelling.length() / 2];
         for (int i = 0; i < spelling.length(); i += 2) {
             int i0 = hexToByte(spelling.charAt(i));
@@ -334,7 +348,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         return bin;
     }
 
-    private int hexToByte(char c) {
+    static private int hexToByte(char c) {
         switch (c) {
             case '0':
                 return 0;

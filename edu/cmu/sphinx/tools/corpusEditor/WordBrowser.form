@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="edu.cmu.sphinx.tools.corpusEditor.WordBrowser">
+  <grid id="ae89e" binding="mainPane" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="19" y="71" width="513" height="289"/>
+      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="d95db" class="javax.swing.JCheckBox" binding="excluded">
+        <constraints>
+          <xy x="0" y="265" width="69" height="22"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0"/>
+        </constraints>
+        <properties>
+          <text value="Excluded"/>
+        </properties>
+      </component>
+      <component id="c9677" class="javax.swing.JButton" binding="play">
+        <constraints>
+          <xy x="444" y="263" width="69" height="25"/>
+          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1"/>
+        </constraints>
+        <properties>
+          <text value="Play"/>
+        </properties>
+      </component>
+      <component id="1be1f" class="javax.swing.JSlider" binding="zoom">
+        <constraints>
+          <xy x="79" y="265" width="355" height="21"/>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1"/>
+        </constraints>
+        <properties>
+          <value value="0"/>
+        </properties>
+      </component>
+      <component id="73c88" class="edu.cmu.sphinx.tools.corpusEditor.WordSpectrogramPanel" binding="spectrogram">
+        <constraints>
+          <xy x="0" y="1" width="512" height="256"/>
+          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0">
+            <minimum-size width="512" height="256"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+    </children>
+  </grid>
+</form>

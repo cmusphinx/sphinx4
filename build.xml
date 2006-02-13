@@ -10,7 +10,7 @@
     <property name="version"            value="1.0beta"/>
 
     <path id="libs">
-        <fileset dir="lib" includes="**/jsapi.jar,**/js.jar"/>
+        <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/forms_rt.jar,**/javolution.jar"/>
     </path>
     <property name="src_dir"		value="."/>
     <property name="build_dir"		value="bld"/>
@@ -242,10 +242,10 @@ jsapi.exe from the lib directory.
     <!-- ********************************************************** -->
     <target name="compile_src"
 	    depends="handle_jsapi"
-	    description="Build just the srcs">
+	    description="Build just the 1.4 srcs">
 	<mkdir dir="${classes_dir}"/>
 	<javac debug="true"
-	       source="1.4"
+	       source="1.5"
  	       srcdir="${src_dir}"
 	       deprecation="true"
 	       destdir="${classes_dir}">
@@ -273,7 +273,7 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="jars"
-            depends="sphinx4_jar,batch_jar,tags_jar,audiotool_jar"
+            depends="sphinx4_jar,batch_jar,tags_jar,audiotool_jar,corpusBrowser_jar"
 	    description="Builds all the jar files"/>
 
 
@@ -301,9 +301,23 @@ jsapi.exe from the lib directory.
         <jar destfile="${batch_jar}"
              compress="true"
              includes="edu/cmu/sphinx/tools/**"
+             excludes="com/sun/taglet/**,edu/cmu/sphinx/tools/corpusBrowser/**"
+	     basedir="${classes_dir}"/>
+    </target>
+
+    <property name="corpusBrowser_jar" value="${lib_dir}/corpusBrowser.jar"/>
+
+    <target name="corpusBrowser_jar"
+            depends="compile_src"
+            description="Create ${lib_dir}/corpusBrowser.jar">
+        <mkdir dir="${lib_dir}"/>
+        <jar destfile="${corpusBrowser_jar}"
+             compress="true"
+             includes="edu/cmu/sphinx/tools/corpusBrowser/**"
              excludes="com/sun/taglet/**"
 	     basedir="${classes_dir}"/>
     </target>
+
 
     <!-- tags.jar -->
     <property name="tags_jar" value="${lib_dir}/tags.jar"/>

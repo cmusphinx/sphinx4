@@ -1,47 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project basedir="." default="none" name="wsj5k narrow band (8kHz) tests">
-<description>
-This file is used to run the wsj5k narrow band (8kHz) performance tests.
+    <description>
+        This file is used to run the wsj5k narrow band (8kHz) performance tests.
 
-NOTE:  Before running the tests, you must have already built 
-       the sphinx-4 sources by typing "ant" in the top level 
-       sphinx4 directory.
+        NOTE: Before running the tests, you must have already built
+        the sphinx-4 sources by typing "ant" in the top level
+        sphinx4 directory.
 
-Run ant with -Dskip=5 to do the standard 'quick' version of a test.
-</description>
+        Run ant with -Dskip=5 to do the standard 'quick' version of a test.
+    </description>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Properties common to all tests                         * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <property name="top_dir"		value="../.."/>
+    <property name="top_dir" value="../.."/>
     <path id="libs">
         <fileset dir="lib" includes="${top_dir}/lib/jsapi.jar"/>
     </path>
-    <property name="build_dir"		value="${top_dir}/bld"/>
-    <property name="classpath"          value="${top_dir}/lib/sphinx4.jar:${top_dir}/lib/batch.jar:${top_dir}/bin/confidence.jar"/>
+    <property name="build_dir" value="${top_dir}/bld"/>
+    <property name="classpath"
+              value="${top_dir}/lib/sphinx4.jar:${top_dir}/lib/batch.jar:${top_dir}/lib/corpusBrowser.jar:${top_dir}/lib/javolution.jar:${top_dir}/lib/forms_rt.jar:${top_dir}/bin/confidence.jar"/>
 
-    <property name="skip"               value="0"/>
-    <property name="logger_props"       value=""/>  
+    <property name="skip" value="0"/>
+    <property name="logger_props" value=""/>
 
-    <property name="initial_heap_size"  value="128m"/>
-    <property name="maximum_heap_size"  value="1024m"/>
-    <property name="jit"                value="server"/>
-    <property name="gc_log_file"        value="gc.txt"/>
+    <property name="initial_heap_size" value="128m"/>
+    <property name="maximum_heap_size" value="1024m"/>
+    <property name="jit" value="server"/>
+    <property name="gc_log_file" value="gc.txt"/>
 
     <property name="batch_main"
-	      value="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"/>
+              value="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"/>
 
     <property name="batch_conf_main"
-	      value="demo.sphinx.confidence.BatchConfidence"/>
+              value="demo.sphinx.confidence.BatchConfidence"/>
 
     <property name="batch_ctl_main"
-	      value="edu.cmu.sphinx.tools.batch.BatchNISTRecognizer"/>
+              value="edu.cmu.sphinx.tools.batch.BatchNISTRecognizer"/>
 
     <property name="batch_force_main"
-	      value="edu.cmu.sphinx.tools.batch.BatchForcedAlignerRecognizer"/>
+              value="edu.cmu.sphinx.tools.batch.BatchForcedAlignerRecognizer"/>
+
+    <property name="build_corpus_main"
+              value="edu.cmu.sphinx.tools.corpusEditor.CorpusBuilder"/>
+
+    <property name="browse_corpus_main"
+              value="edu.cmu.sphinx.tools.corpusEditor.CorpusBrowser"/>
 
     <target name="force"
             description="test of forcedAlignerGrammar on cctv">
@@ -60,27 +67,121 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-Djava.compiler=NONE"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/-->
 
-            <sysproperty key="batchNIST[ctlFile]"     value="../../../mandarin/data/rt04f.ctl" />
-            <sysproperty key="batchNIST[dataDirectory]"  value="../../../mandarin/data" />
-            <sysproperty key="batchNIST[refFile]"     value="../../../mandarin/data/rt04f.hex.ref" />
-            <sysproperty key="batchNIST[ctmFile]"     value="force.ctm.processed" />
+            <sysproperty key="batchNIST[ctlFile]" value="../../../mandarin/data/rt04f.ctl"/>
+            <sysproperty key="batchNIST[dataDirectory]" value="../../../mandarin/data"/>
+            <sysproperty key="batchNIST[refFile]" value="../../../mandarin/data/rt04f.hex.ref"/>
+            <sysproperty key="batchNIST[ctmFile]" value="force.ctm.processed"/>
 
-            <sysproperty key="forcedAlignerGrammar[refFile]"     value="../../../mandarin/data/rt04f.hex.ref" />
+            <sysproperty key="forcedAlignerGrammar[refFile]" value="../../../mandarin/data/rt04f.hex.ref"/>
 
-            <sysproperty key="acousticModelLoader[propertiesFile]"  value="../../../mandarin/models/gale_models_9/model32gau.props" />
-            <sysproperty key="acousticModelLoader[dataLocation]"    value="../../../mandarin/models/gale_models_9/gale.cd_continuous_32gau" />
-            <sysproperty key="acousticModelLoader[modelDefinition]" value="../../../mandarin/models/gale_models_9/gale.2000.mdef" />
+            <sysproperty key="acousticModelLoader[propertiesFile]"
+                         value="../../../mandarin/models/gale_models_9/model32gau.props"/>
+            <sysproperty key="acousticModelLoader[dataLocation]"
+                         value="../../../mandarin/models/gale_models_9/gale.cd_continuous_32gau"/>
+            <sysproperty key="acousticModelLoader[modelDefinition]"
+                         value="../../../mandarin/models/gale_models_9/gale.2000.mdef"/>
 
-            <sysproperty key="trigramModel[location]" value="../../../mandarin/models/gale_models_9/xin.arpa.55000.DMP" />
+            <sysproperty key="trigramModel[location]"
+                         value="../../../mandarin/models/gale_models_9/xin.arpa.55000.DMP"/>
 
-            <sysproperty key="dictionary[dictionaryPath]" value="../../../mandarin/models/gale_models_9/mandarin_dict+7827entries.s4" />
-            <sysproperty key="dictionary[fillerPath]"     value="../../../mandarin/models/gale_models_9/mandarin_filler" />
+            <sysproperty key="dictionary[dictionaryPath]"
+                         value="../../../mandarin/models/gale_models_9/mandarin_dict+7827entries.s4"/>
+            <sysproperty key="dictionary[fillerPath]" value="../../../mandarin/models/gale_models_9/mandarin_filler"/>
 
             <sysproperty key="lexTreeLinguist[languageModel]" value="forcedAlignerGrammar"/>
 
             <arg value="force.config.xml"/>
         </java>
 
+    </target>
+
+    <target name="build_corpus"
+            description="make a corpus XML database from rt04f data">
+        <java classpath="${classpath}"
+              classname="${build_corpus_main}"
+              fork="true">
+            <!-- jvmarg value="-ea" / -->
+            <jvmarg value="-${jit}"/>
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/>
+
+            <!-- jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xnoagent"/>
+            <jvmarg value="-Djava.compiler=NONE"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/ -->
+
+            <sysproperty key="batchNIST[ctlFile]" value="../../../mandarin/data/rt04f.ctl"/>
+            <sysproperty key="batchNIST[dataDirectory]" value="../../../mandarin/data"/>
+            <sysproperty key="batchNIST[refFile]" value="../../../mandarin/data/rt04f.hex.ref"/>
+            <sysproperty key="batchNIST[ctmFile]" value="ctmFile should no be used"/>
+            <sysproperty key="batchNIST[excludeUtterances]" value="72,245,248,253,260,266,269,272"/>
+
+            <sysproperty key="forcedAlignerGrammar[refFile]" value="../../../mandarin/data/rt04f.hex.ref"/>
+
+            <sysproperty key="acousticModelLoader[propertiesFile]"
+                         value="../../../mandarin/models/gale_models_9/model32gau.props"/>
+            <sysproperty key="acousticModelLoader[dataLocation]"
+                         value="../../../mandarin/models/gale_models_9/gale.cd_continuous_32gau"/>
+            <sysproperty key="acousticModelLoader[modelDefinition]"
+                         value="../../../mandarin/models/gale_models_9/gale.2000.mdef"/>
+
+            <sysproperty key="trigramModel[location]"
+                         value="../../../mandarin/models/gale_models_9/xin.arpa.55000.DMP"/>
+
+            <sysproperty key="dictionary[dictionaryPath]"
+                         value="../../../mandarin/models/gale_models_9/mandarin_dict+7827entries.s4"/>
+            <sysproperty key="dictionary[fillerPath]" value="../../../mandarin/models/gale_models_9/mandarin_filler"/>
+
+            <sysproperty key="lexTreeLinguist[languageModel]" value="forcedAlignerGrammar"/>
+
+            <arg value="corpus.config.xml"/>
+
+        </java>
+    </target>
+
+    <target name="browse_corpus"
+            description="make a corpus XML database from rt04f data">
+        <java classpath="${classpath}"
+              classname="${browse_corpus_main}"
+              fork="true">
+            <!-- jvmarg value="-ea" / -->
+            <jvmarg value="-${jit}"/>
+            <jvmarg value="-ms${initial_heap_size}"/>
+            <jvmarg value="-mx${maximum_heap_size}"/>
+
+            <!-- jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xnoagent"/>
+            <jvmarg value="-Djava.compiler=NONE"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/ -->
+
+            <sysproperty key="batchNIST[ctlFile]" value="../../../mandarin/data/rt04f_force.ctl"/>
+            <sysproperty key="batchNIST[dataDirectory]" value="../../../mandarin/data"/>
+            <sysproperty key="batchNIST[refFile]" value="../../../mandarin/data/rt04f_force.hex.ref"/>
+            <sysproperty key="batchNIST[ctmFile]" value="ctmFile should no be used"/>
+
+            <sysproperty key="forcedAlignerGrammar[refFile]" value="../../../mandarin/data/rt04f_force.hex.ref"/>
+
+            <sysproperty key="acousticModelLoader[propertiesFile]"
+                         value="../../../mandarin/models/gale_models_9/model32gau.props"/>
+            <sysproperty key="acousticModelLoader[dataLocation]"
+                         value="../../../mandarin/models/gale_models_9/gale.cd_continuous_32gau"/>
+            <sysproperty key="acousticModelLoader[modelDefinition]"
+                         value="../../../mandarin/models/gale_models_9/gale.2000.mdef"/>
+
+            <sysproperty key="trigramModel[location]"
+                         value="../../../mandarin/models/gale_models_9/xin.arpa.55000.DMP"/>
+
+            <sysproperty key="dictionary[dictionaryPath]"
+                         value="../../../mandarin/models/gale_models_9/mandarin_dict+7827entries.s4"/>
+            <sysproperty key="dictionary[fillerPath]" value="../../../mandarin/models/gale_models_9/mandarin_filler"/>
+
+            <sysproperty key="lexTreeLinguist[languageModel]" value="forcedAlignerGrammar"/>
+
+            <arg value="corpus.config.xml"/>
+            <arg value="corpus.xml" />
+            <arg value="mssong.ttf" />
+            
+        </java>
     </target>
 
     <target name="gale_9"
@@ -98,22 +199,27 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <jvmarg value="-Djava.compiler=NONE"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/ -->
 
-            <sysproperty key="batchNIST[ctlFile]"     value="../../../mandarin/data/rt04f.ctl" />
-            <sysproperty key="batchNIST[dataDirectory]"  value="../../../mandarin/data" />
-            <sysproperty key="batchNIST[refFile]"     value="../../../mandarin/data/rt04f.hex.ref" />
-            <sysproperty key="batchNIST[ctmFile]"     value="gale_9_rt04f.ctm.processed" />
+            <sysproperty key="batchNIST[ctlFile]" value="../../../mandarin/data/rt04f.ctl"/>
+            <sysproperty key="batchNIST[dataDirectory]" value="../../../mandarin/data"/>
+            <sysproperty key="batchNIST[refFile]" value="../../../mandarin/data/rt04f.hex.ref"/>
+            <sysproperty key="batchNIST[ctmFile]" value="gale_9_rt04f.ctm.processed"/>
 
-            <sysproperty key="acousticModelLoader[propertiesFile]"  value="../../../mandarin/models/gale_models_9/model32gau.props" />
-            <sysproperty key="acousticModelLoader[dataLocation]"    value="../../../mandarin/models/gale_models_9/gale.cd_continuous_32gau" />
-            <sysproperty key="acousticModelLoader[modelDefinition]" value="../../../mandarin/models/gale_models_9/gale.2000.mdef" />
-           
-            <sysproperty key="trigramModel[location]" value="../../../mandarin/models/gale_models_9/xin.arpa.55000.DMP" />
-           
-            <sysproperty key="dictionary[dictionaryPath]" value="../../../mandarin/models/gale_models_9/mandarin_dict+7827entries.s4" />
-            <sysproperty key="dictionary[fillerPath]"     value="../../../mandarin/models/gale_models_9/mandarin_filler" />
-           
+            <sysproperty key="acousticModelLoader[propertiesFile]"
+                         value="../../../mandarin/models/gale_models_9/model32gau.props"/>
+            <sysproperty key="acousticModelLoader[dataLocation]"
+                         value="../../../mandarin/models/gale_models_9/gale.cd_continuous_32gau"/>
+            <sysproperty key="acousticModelLoader[modelDefinition]"
+                         value="../../../mandarin/models/gale_models_9/gale.2000.mdef"/>
+
+            <sysproperty key="trigramModel[location]"
+                         value="../../../mandarin/models/gale_models_9/xin.arpa.55000.DMP"/>
+
+            <sysproperty key="dictionary[dictionaryPath]"
+                         value="../../../mandarin/models/gale_models_9/mandarin_dict+7827entries.s4"/>
+            <sysproperty key="dictionary[fillerPath]" value="../../../mandarin/models/gale_models_9/mandarin_filler"/>
+
             <sysproperty key="lexTreeLinguist[languageModel]" value="trigramModel"/>
-            
+
             <arg value="gale.config.xml"/>
         </java>
     </target>

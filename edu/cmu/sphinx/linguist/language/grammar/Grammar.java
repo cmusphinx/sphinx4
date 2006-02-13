@@ -11,27 +11,17 @@
  */
 package edu.cmu.sphinx.linguist.language.grammar;
 
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.dictionary.Word;
+import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.props.*;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-import edu.cmu.sphinx.linguist.dictionary.Word;
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
-import edu.cmu.sphinx.util.Timer;
 
 /**
 
@@ -95,7 +85,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     private boolean optimizeGrammar = true;
     private boolean addSilenceWords = false;
     private boolean addFillerWords = false;
-    private Dictionary dictionary;
+    protected Dictionary dictionary;
     protected GrammarNode initialNode;
     private Set grammarNodes;
     private final static Word[][] EMPTY_ALTERNATIVE = new Word[0][0];
@@ -381,7 +371,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      * 
      * @return the dictionary
      */
-    protected Dictionary getDictionary() {
+    public Dictionary getDictionary() {
         return dictionary;
     }
 

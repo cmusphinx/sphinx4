@@ -135,7 +135,7 @@ public class BatchModeRecognizer implements Configurable {
     protected String name;
     protected List inputDataProcessors;
     protected int skip;
-    protected int totalCount;
+    protected int utteranceId;
     protected int whichBatch;
     protected int totalBatches;
     protected boolean usePooledBatchManager;
@@ -174,9 +174,9 @@ public class BatchModeRecognizer implements Configurable {
         logger = ps.getLogger();
         cm = ps.getPropertyManager();
         skip = ps.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
-        totalCount = ps.getInt(PROP_COUNT, PROP_COUNT_DEFAULT);
-        if (totalCount <= 0) {
-            totalCount = Integer.MAX_VALUE;
+        utteranceId = ps.getInt(PROP_COUNT, PROP_COUNT_DEFAULT);
+        if (utteranceId <= 0) {
+            utteranceId = Integer.MAX_VALUE;
         }
         whichBatch = ps.getInt(PROP_WHICH_BATCH, PROP_WHICH_BATCH_DEFAULT);
         totalBatches = ps
@@ -227,7 +227,7 @@ public class BatchModeRecognizer implements Configurable {
             logger.info("BatchDecoder: decoding files in "
                     + batchManager.getFilename());
         
-            while (count < totalCount && 
+            while (count < utteranceId &&
                         (batchItem = batchManager.getNextItem()) != null) {
                 setInputStream(batchItem.getFilename());
                 Result result = recognizer.recognize(batchItem.getTranscript());
@@ -637,7 +637,7 @@ public class BatchModeRecognizer implements Configurable {
     public Result recognize() throws IOException {
         Result result = null;
         BatchItem batchItem;
-        if (count < totalCount &&
+        if (count < utteranceId &&
                 (batchItem = batchManager.getNextItem()) != null) {
             setInputStream(batchItem.getFilename());
             result = recognizer.recognize(batchItem.getTranscript());
