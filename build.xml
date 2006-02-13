@@ -242,7 +242,7 @@ jsapi.exe from the lib directory.
     <!-- ********************************************************** -->
     <target name="compile_src"
 	    depends="handle_jsapi"
-	    description="Build just the 1.4 srcs">
+	    description="Build just the 1.5 srcs">
 	<mkdir dir="${classes_dir}"/>
 	<javac debug="true"
 	       source="1.5"
@@ -545,7 +545,7 @@ jsapi.exe from the lib directory.
 	<delete dir="${javadoc_dir}"/>
         <mkdir dir="${javadoc_dir}"/>
         <javadoc sourcepath="${src_dir}"
-	         source="1.4"
+	         source="1.5"
 		 additionalparam="-breakiterator"
 		 destdir="${javadoc_dir}" 
 		 overview="${src_dir}/overview.html"
@@ -573,7 +573,7 @@ jsapi.exe from the lib directory.
 	    description="checks the javadocs">
         <mkdir dir="${javadoc_check_dir}"/>
         <javadoc sourcepath="${src_dir}"
-		 additionalparam="-source 1.4"
+		 additionalparam="-source 1.5"
 		 packagenames="edu.*"
                  excludepackagenames="edu.cmu.sphinx.trainer"
 		 destdir="${javadoc_check_dir}" 
