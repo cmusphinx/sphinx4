@@ -12,22 +12,13 @@
 package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.linguist.dictionary.Word;
-
-import edu.cmu.sphinx.result.Lattice;
-import edu.cmu.sphinx.result.Edge;
 import edu.cmu.sphinx.util.LogMath;
+import javolution.util.FastSet;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Iterator;
-import java.util.Vector;
-import java.util.Collection;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * <p>
@@ -57,7 +48,7 @@ import java.io.PrintWriter;
 public class Node {
 
     // used to generate unique IDs for new Nodes.
-    private static int nodeCount = 0; 
+    private static int nodeCount = 0;
 
     private String id;
     private Word word;
@@ -71,7 +62,7 @@ public class Node {
     private Node bestPredecessor;
     private double viterbiScore;
     private Set descendants;
-    
+
     {
         enteringEdges = new Vector();
         leavingEdges = new Vector();
@@ -361,8 +352,8 @@ public class Node {
      * @return a description of this Node
      */
     public String toString() {
-        return ("Node(" + word.getSpelling() + "," + getBeginTime() + "|" + 
-		getEndTime() + ")");
+        return ("Node(" + word.getSpelling() + "," + getBeginTime() + "|" +
+        getEndTime() + ")");
     }
 
     /**
@@ -377,7 +368,7 @@ public class Node {
             posterior = "log zero";
         }
         f.write("node: { title: \"" + id + "\" label: \""
-                + getWord() + "[" + getBeginTime() + "," + getEndTime() + 
+                + getWord() + "[" + getBeginTime() + "," + getEndTime() +
                 " p:" + posterior + "]\" }\n");
     }
 
@@ -387,7 +378,7 @@ public class Node {
      * @throws IOException
      */
     void dump(PrintWriter f) throws IOException {
-        f.println("node: " + id + " " + word.getSpelling() + 
+        f.println("node: " + id + " " + word.getSpelling() +
                 //" a:" + getForwardProb() + " b:" + getBackwardProb()
                 " p:" + getPosterior());
     }
@@ -464,15 +455,15 @@ public class Node {
     public void setPosterior(double posterior) {
         this.posterior = posterior;
     }
-    
+
     /**
      * @see java.lang.Object#hashCode()
      */
     public int hashCode() {
         return id.hashCode();
     }
-    
-    
+
+
     /**
      * Assumes ids are unique node identifiers
      * 
@@ -497,7 +488,7 @@ public class Node {
             }
         }
     }
-        
+
     /**
      * Get the nodes at the other ends of outgoing edges of this node.
      * 
@@ -512,13 +503,13 @@ public class Node {
         }
         return childNodes;
     }
-    
+
     protected void cacheDescendants() {
-        descendants = new HashSet();
-        Set seenNodes = new HashSet();
+        descendants = new FastSet();
+        Set seenNodes = new FastSet();
         cacheDescendantsHelper(this);
     }
-    
+
     protected void cacheDescendantsHelper(Node n) {
         Iterator i = n.getChildNodes().iterator();
         while (i.hasNext()) {
@@ -528,9 +519,9 @@ public class Node {
             }
             descendants.add(child);
             cacheDescendantsHelper(child);
-        }        
+        }
     }
-    
+
     protected boolean isAncestorHelper(List children, Node node, Set seenNodes) {
         Iterator i = children.iterator();
         while(i.hasNext()) {
@@ -548,7 +539,7 @@ public class Node {
         }
         return false;
     }
-        
+
     /**
      * Check whether this node is an ancestor of another node.
      * 
@@ -562,11 +553,11 @@ public class Node {
         if (this.equals(node)) {
             return true; // node is its own ancestor
         }
-        Set seenNodes = new HashSet();
+        Set seenNodes = new FastSet();
         seenNodes.add(this);
         return isAncestorHelper(this.getChildNodes(),node, seenNodes);
     }
-    
+
     /**
      * Check whether this node has an ancestral relationship with another node
      * (i.e. either this node is an ancestor of the other node, or vice versa)
@@ -614,7 +605,7 @@ public class Node {
         }
         return null;
     }
-    
+
     /**
      * Returns the best predecessor for this node.
      *

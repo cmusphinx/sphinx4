@@ -11,14 +11,6 @@
  */
 package edu.cmu.sphinx.linguist.language.grammar;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
@@ -27,6 +19,14 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+import javolution.util.FastMap;
+import javolution.util.FastSet;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Loads a grammar from a file representing a finite-state transducer (FST) in
@@ -124,32 +124,32 @@ public class FSTGrammar extends Grammar {
      * The default value for PROP_PATH.
      */
     public final static String PROP_PATH_DEFAULT = "default.arpa_gram";
-    
-    
+
+
     /**
      * Sphinx property that defines the logMath component. 
      */
-    
+
     public final static String PROP_LOG_MATH = "logMath";
-    
+
     // TODO: If this property turns out to be worthwhile, turn this
     // into a full fledged sphinx property
     private boolean addInitialSilenceNode = false;
-    
+
     // TODO: If this property turns out to be worthwhile, turn this
     // into a full fledged sphinx property
-    
+
     // ------------------------------
     // Configuration data
     // -------------------------------
-    
+
     private boolean addOptionalSilence = false;
     private boolean ignoreUnknownTransitions = true;
     private String path;
     private LogMath logMath;
 
-    private Map nodes = new HashMap();
-    private Set expandedNodes = new HashSet();
+    private Map nodes = new FastMap();
+    private Set expandedNodes = new FastSet();
     /**
      * Create class from reference text (not implemented).
      * 
@@ -192,42 +192,42 @@ public class FSTGrammar extends Grammar {
      * @return the initial node for the grammar.
      */
     protected GrammarNode createGrammar()
-	throws IOException {
+    throws IOException {
 
-	GrammarNode initialNode = null;
-	GrammarNode finalNode = null;
+    GrammarNode initialNode = null;
+    GrammarNode finalNode = null;
 
 
-	// first pass create the FST nodes
-	int maxNodeId = createNodes(path);
+    // first pass create the FST nodes
+    int maxNodeId = createNodes(path);
 
-	// create the final node:
-	finalNode = createGrammarNode(++maxNodeId, Dictionary.SILENCE_SPELLING);
+    // create the final node:
+    finalNode = createGrammarNode(++maxNodeId, Dictionary.SILENCE_SPELLING);
         finalNode.setFinalNode(true);
 
-	// replace each word node with a pair of nodes, which
-	// consists of the word node and a new dummy end node, which is
+    // replace each word node with a pair of nodes, which
+    // consists of the word node and a new dummy end node, which is
         // for adding null or backoff transitions
-	maxNodeId = expandWordNodes(maxNodeId);
+    maxNodeId = expandWordNodes(maxNodeId);
 
-	ExtendedStreamTokenizer tok = new ExtendedStreamTokenizer(path, true);
+    ExtendedStreamTokenizer tok = new ExtendedStreamTokenizer(path, true);
 
-	// Second pass, add all of the arcs
+    // Second pass, add all of the arcs
 
-	while (!tok.isEOF()) {
-	    String token;
-	    tok.skipwhite();
-	    token = tok.getString();
+    while (!tok.isEOF()) {
+        String token;
+        tok.skipwhite();
+        token = tok.getString();
 
-	    // System.out.println(token);
+        // System.out.println(token);
 
-	    if (token == null) {
-		break;
+        if (token == null) {
+        break;
 
-	    } else if (token.equals("I")) {
-		assert initialNode == null;
-		int initialID = tok.getInt("initial ID");
-		String nodeName = "G" + initialID;
+        } else if (token.equals("I")) {
+        assert initialNode == null;
+        int initialID = tok.getInt("initial ID");
+        String nodeName = "G" + initialID;
 
             // TODO: FlatLinguist requires the initial grammar node
             // to contain a single silence. We'll do that for now,
@@ -236,87 +236,87 @@ public class FSTGrammar extends Grammar {
             // initial grammar node
             //          initialNode = createGrammarNode(initialID, false);
 
-		initialNode = createGrammarNode(initialID,
+        initialNode = createGrammarNode(initialID,
                         Dictionary.SILENCE_SPELLING);
-		nodes.put(nodeName, initialNode);
+        nodes.put(nodeName, initialNode);
 
-		// optionally add a silence node
-		if (addInitialSilenceNode) {
-		    GrammarNode silenceNode =
-			createGrammarNode(++maxNodeId, 
+        // optionally add a silence node
+        if (addInitialSilenceNode) {
+            GrammarNode silenceNode =
+            createGrammarNode(++maxNodeId,
                                 Dictionary.SILENCE_SPELLING);
-		    initialNode.add(silenceNode, LogMath.getLogOne());
-		    silenceNode.add(initialNode, LogMath.getLogOne());
-		}
+            initialNode.add(silenceNode, LogMath.getLogOne());
+            silenceNode.add(initialNode, LogMath.getLogOne());
+        }
 
-	    } else if (token.equals("T")) {
-		int thisID = tok.getInt("this id");
-		int nextID = tok.getInt("next id");
+        } else if (token.equals("T")) {
+        int thisID = tok.getInt("this id");
+        int nextID = tok.getInt("next id");
 
-		GrammarNode thisNode = get(thisID);
-		GrammarNode nextNode = get(nextID);
-		
-		// if the source node is an FSTGrammarNode, we want
-		// to join the endNode to the destination node
-		
+        GrammarNode thisNode = get(thisID);
+        GrammarNode nextNode = get(nextID);
+
+        // if the source node is an FSTGrammarNode, we want
+        // to join the endNode to the destination node
+
                 if (hasEndNode(thisNode)) {
                     thisNode = getEndNode(thisNode);
                 }
-		
-		float lnProb = 0f;        // negative natural log
-		String output = tok.getString();
-		
-		if (output == null || output.equals(",")) {
-		    
-		    // these are epsilon (meaning backoff) transitions
-		    
-		    if (output != null && output.equals(",")) {
-			tok.getString(); // skip the word
-			lnProb = tok.getFloat("probability");
-		    }
 
-		    // if the destination node has been expanded
-		    // we actually want to add the backoff transition
-		    // to the endNode
+        float lnProb = 0f;        // negative natural log
+        String output = tok.getString();
 
-		    if (hasEndNode(nextNode)) {
-			nextNode = getEndNode(nextNode);
-		    }
-		    
-		} else {
-		    String word = tok.getString();     // skip words
-		    lnProb = tok.getFloat("probability");
-		    
-		    if (ignoreUnknownTransitions && word.equals("<unknown>")) {
-			continue;
-		    }
-		    /*
-                     * System.out.println(nextNode.toString() + ": " + output);
-                     */
-		    assert hasWord(nextNode);
-		}
-		
-		thisNode.add(nextNode, convertProbability(lnProb));
-		
-	    } else if (token.equals("F")) {
-		int thisID = tok.getInt("this id");
-		float lnProb = tok.getFloat("probability");
-		
-		GrammarNode thisNode = get(thisID);
-		GrammarNode nextNode = finalNode;
+        if (output == null || output.equals(",")) {
 
-		if (hasEndNode(thisNode)) {
-		    thisNode = getEndNode(thisNode);
-		}
-		
-		thisNode.add(nextNode, convertProbability(lnProb));
-	    }
-	}
-	tok.close();
+            // these are epsilon (meaning backoff) transitions
 
-	assert initialNode != null;
+            if (output != null && output.equals(",")) {
+            tok.getString(); // skip the word
+            lnProb = tok.getFloat("probability");
+            }
 
-	return initialNode;
+            // if the destination node has been expanded
+            // we actually want to add the backoff transition
+            // to the endNode
+
+            if (hasEndNode(nextNode)) {
+            nextNode = getEndNode(nextNode);
+            }
+
+        } else {
+            String word = tok.getString();     // skip words
+            lnProb = tok.getFloat("probability");
+
+            if (ignoreUnknownTransitions && word.equals("<unknown>")) {
+            continue;
+            }
+            /*
+            * System.out.println(nextNode.toString() + ": " + output);
+            */
+            assert hasWord(nextNode);
+        }
+
+        thisNode.add(nextNode, convertProbability(lnProb));
+
+        } else if (token.equals("F")) {
+        int thisID = tok.getInt("this id");
+        float lnProb = tok.getFloat("probability");
+
+        GrammarNode thisNode = get(thisID);
+        GrammarNode nextNode = finalNode;
+
+        if (hasEndNode(thisNode)) {
+            thisNode = getEndNode(thisNode);
+        }
+
+        thisNode.add(nextNode, convertProbability(lnProb));
+        }
+    }
+    tok.close();
+
+    assert initialNode != null;
+
+    return initialNode;
     }
     /**
      * Reads the FST file in the given path, and creates the nodes in the FST
@@ -487,8 +487,8 @@ public class FSTGrammar extends Grammar {
      * @return the ending node or null if no end node is available
      */
     private GrammarNode getEndNode(GrammarNode node) {
-	GrammarArc[] arcs = node.getSuccessors();
-	assert arcs != null && arcs.length > 0;
-	return arcs[0].getGrammarNode();
+    GrammarArc[] arcs = node.getSuccessors();
+    assert arcs != null && arcs.length > 0;
+    return arcs[0].getGrammarNode();
     }
 }

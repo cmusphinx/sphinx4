@@ -11,7 +11,8 @@
  */
 package edu.cmu.sphinx.result;
 
-import java.util.HashSet;
+import javolution.util.FastSet;
+
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
@@ -34,7 +35,7 @@ public class ConfusionSet extends TreeMap {
     public void addWordHypothesis(WordResult word) {
         Set wordSet = getWordSet(word.getConfidence());
         if (wordSet == null) {
-            wordSet = new HashSet();
+            wordSet = new FastSet();
             put(new Double(word.getConfidence()),wordSet);
         }
         wordSet.add(word);

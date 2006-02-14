@@ -12,23 +12,16 @@
  */
 package edu.cmu.sphinx.decoder.search;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ListIterator;
-
+import edu.cmu.sphinx.linguist.WordSearchState;
+import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
-import edu.cmu.sphinx.linguist.WordSearchState;
-import edu.cmu.sphinx.linguist.dictionary.Word;
+import javolution.util.FastMap;
+
+import java.util.*;
 
 /**
  * A factory for WordActiveList. The word active list is active list
@@ -180,12 +173,12 @@ public class WordActiveListFactory implements ActiveListFactory {
 
         public ActiveList purge() {
             int fillerCount = 0;
-            Map countMap = new HashMap();
+            Map countMap = new FastMap();
             Collections.sort(tokenList, Token.COMPARATOR);
             // remove word duplicates
             for (ListIterator i = tokenList.listIterator(); i.hasNext(); ) {
                 Token token = (Token) i.next();
-                WordSearchState wordState = 
+                WordSearchState wordState =
                     (WordSearchState) token.getSearchState();
 
                 Word word = wordState.getPronunciation().getWord();

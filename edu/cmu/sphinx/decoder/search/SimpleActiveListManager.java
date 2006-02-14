@@ -12,18 +12,15 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.logging.Logger;
-
-import edu.cmu.sphinx.linguist.WordSearchState;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 
 /**
  * A list of ActiveLists. Different token types are placed in different lists.

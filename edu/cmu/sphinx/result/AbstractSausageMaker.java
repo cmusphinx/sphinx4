@@ -13,21 +13,12 @@
  */
 package edu.cmu.sphinx.result;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Vector;
-
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
+import javolution.util.FastSet;
+
+import java.util.*;
 
 /**
  * Parent to all sausage makers.
@@ -54,12 +45,12 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
             endTime = n.getEndTime();
             elements.add(n);
         }
-        
+
         public Cluster(int start,int end) {
             startTime = start;
             endTime = end;
         }
-        
+
         public void add(Node n) {
             if (n.getBeginTime() < startTime) {
                 startTime = n.getBeginTime();
@@ -69,7 +60,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
             }
             elements.add(n);
         }
-        
+
         public void add(Cluster c) {
             if (c.startTime < startTime) {
                 startTime = c.startTime;
@@ -79,11 +70,11 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
             }
             elements.addAll(c.getElements());
         }
-        
+
         public Iterator iterator() {
             return elements.iterator();
         }
-        
+
         public String toString() {
             StringBuffer sb = new StringBuffer();
             sb.append("s: " + startTime + " e: " + endTime + "[");
@@ -112,7 +103,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
     }
 
     class ClusterComparator implements Comparator {
-        
+
         /**
          * Compares to clusters according to their topological relationship. Relies
          * on strong assumptions about the possible constituents of clusters which
@@ -150,12 +141,12 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      * The default value for the PROP_LANGUAGE_WEIGHT property
      */
     public final static float PROP_LANGUAGE_WEIGHT_DEFAULT  = 1.0f;
-    
+
     private String name;
     protected float languageWeight;
-    
+
     protected Lattice lattice;
-    
+
     /**
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
      *      edu.cmu.sphinx.util.props.Registry)
@@ -184,14 +175,14 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
 
     protected static int getOverlap(Node n, int startTime, int endTime) {
         return Math.min(n.getEndTime(),endTime) -
-               Math.max(n.getBeginTime(),startTime);        
+               Math.max(n.getBeginTime(),startTime);
     }
-    
+
     protected static int getOverlap(Node n1, Node n2) {
         return Math.min(n1.getEndTime(),n2.getEndTime()) -
                Math.max(n1.getBeginTime(),n2.getBeginTime());
     }
-    
+
     /**
      * Returns true if the two given clusters has time overlaps.
      *
@@ -224,7 +215,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      * @param cluster the cluster to subcluster from
      * @param word the word to subcluster by
      * @return the log probability mass of the subcluster formed by the word
-     */    
+     */
     protected double wordSubClusterProbability(Cluster cluster, String word) {
         return clusterProbability(makeWordSubCluster(cluster,word));
     }
@@ -253,7 +244,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
     protected double clusterProbability(Cluster cluster) {
         return clusterProbability(cluster.elements);
     }
-    
+
     /**
      * Form a subcluster by extracting all nodes corresponding to a given word.
      * 
@@ -272,7 +263,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
         }
         return sub;
     }
-    
+
     /**
      * Form a subcluster by extracting all nodes corresponding to a given word.
      * 
@@ -286,7 +277,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
         c.elements = l;
         return c;
     }
-    
+
     /**
      * print out a list of clusters for debugging
      * 
@@ -300,7 +291,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
         }
         System.out.println("----");
     }
-    
+
     /**
      * Turn a list of lattice node clusters into a Sausage object.
      * @param clusters the list of node clusters in topologically correct order
@@ -310,7 +301,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
         Sausage sausage = new Sausage(clusters.size());
         ListIterator c1 = clusters.listIterator();
         while (c1.hasNext()) {
-            HashSet seenWords = new HashSet();
+            FastSet seenWords = new FastSet();
             int index = c1.nextIndex();
             Cluster cluster = ((Cluster)c1.next());
             Iterator c2 = cluster.iterator();
