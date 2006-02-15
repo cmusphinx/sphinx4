@@ -10,7 +10,7 @@
  *
  */
 package edu.cmu.sphinx.linguist.dflat;
-import java.util.ArrayList;
+
 import java.util.Iterator;
 import java.util.List;
 import edu.cmu.sphinx.linguist.SearchState;
@@ -28,7 +28,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
-
+import javolution.util.FastList;
 
 
 /**
@@ -53,9 +53,9 @@ public class OutOfGrammarGraph {
      * this graph
      * @param logPhoneInsertionProbability probability of inserting a phone
      */
-    public OutOfGrammarGraph(AcousticModel model, 
-            float logOutOfGrammarBranchProbability,
-            float logPhoneInsertionProbability) {
+    public OutOfGrammarGraph(AcousticModel model,
+                             float logOutOfGrammarBranchProbability,
+                             float logPhoneInsertionProbability) {
         this.acousticModel = model;
         this.logOutOfGrammarBranchProbability = logOutOfGrammarBranchProbability;
         this.logPhoneInsertionProbability = logPhoneInsertionProbability;
@@ -163,9 +163,9 @@ public class OutOfGrammarGraph {
          * Creates the first branch state
          */
         FirstBranchState() {
-            List successorList = new ArrayList();
-            for (Iterator i = acousticModel.getContextIndependentUnitIterator(); 
-                    i.hasNext();) {
+            List successorList = new FastList();
+            for (Iterator i = acousticModel.getContextIndependentUnitIterator();
+                 i.hasNext();) {
                 Unit unit = (Unit) i.next();
                 OogHMM hmm = new OogHMM(unit);
                 successorList.add(hmm);
@@ -489,7 +489,7 @@ public class OutOfGrammarGraph {
          *
          * @return the order
          */
-        public abstract int getOrder(); 
+        public abstract int getOrder();
 
 
         /**

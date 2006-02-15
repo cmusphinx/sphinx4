@@ -13,7 +13,6 @@
 
 package edu.cmu.sphinx.frontend.endpoint;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -29,6 +28,7 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+import javolution.util.FastList;
 
 
 /**
@@ -60,7 +60,7 @@ public class SpeechMarker extends BaseDataProcessor {
      * The SphinxP roperty for the minimum amount of time in speech
      * (in milliseconds) to be considered as utterance start.
      */
-    public static final String PROP_START_SPEECH = 
+    public static final String PROP_START_SPEECH =
         "startSpeech";
 
     /**
@@ -83,7 +83,7 @@ public class SpeechMarker extends BaseDataProcessor {
      * The SphinxProperty for the amount of time (in milliseconds)
      * before speech start to be included as speech data.
      */
-    public static final String PROP_SPEECH_LEADER = 
+    public static final String PROP_SPEECH_LEADER =
         "speechLeader";
 
     /**
@@ -95,7 +95,7 @@ public class SpeechMarker extends BaseDataProcessor {
      * The SphinxProperty for the amount of time (in milliseconds)
      * after speech ends to be included as speech data.
      */
-    public static final String PROP_SPEECH_TRAILER = 
+    public static final String PROP_SPEECH_TRAILER =
         "speechTrailer";
 
     /**
@@ -144,7 +144,7 @@ public class SpeechMarker extends BaseDataProcessor {
      */
     public void initialize() {
         super.initialize();
-        this.outputQueue = new ArrayList();
+        this.outputQueue = new FastList();
         reset();
     }
 
@@ -229,10 +229,10 @@ public class SpeechMarker extends BaseDataProcessor {
      * @return the amount of audio data in milliseconds
      */
     public int getAudioTime(SpeechClassifiedData audio) {
-        return (int) 
+        return (int)
             (audio.getValues().length * 1000.0f / audio.getSampleRate());
     }
-        
+
     /**
      * Read the starting frames until the utterance has started.
      *
@@ -292,11 +292,11 @@ public class SpeechMarker extends BaseDataProcessor {
     private boolean handleFirstSpeech(SpeechClassifiedData audio)
         throws DataProcessingException {
         int speechTime = getAudioTime(audio);
-        
+
         // System.out.println("Entering handleFirstSpeech()");
         // try to read more that 'startSpeechTime' amount of
         // audio that is labeled as speech (the condition for speech start)
-        
+
         while (speechTime < startSpeechTime) {
             Data next = readData();
             sendToQueue(next);
@@ -362,7 +362,7 @@ public class SpeechMarker extends BaseDataProcessor {
      * @return true if speech has really ended, false if speech
      *    has not ended
      */
-    private boolean readEndFrames(SpeechClassifiedData audio) throws 
+    private boolean readEndFrames(SpeechClassifiedData audio) throws
         DataProcessingException {
 
         boolean speechEndAdded = false;
@@ -446,7 +446,7 @@ public class SpeechMarker extends BaseDataProcessor {
                         data.getValues().length - 1;
                 }
             }
-            
+
             if (speechTrailer > 0) {
                 assert nextCollectTime != 0 && lastSampleNumber != 0;
             }

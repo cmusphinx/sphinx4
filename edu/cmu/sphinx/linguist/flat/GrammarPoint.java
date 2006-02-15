@@ -11,7 +11,7 @@
  */
 
 package edu.cmu.sphinx.linguist.flat;
-import java.util.ArrayList;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,6 +21,7 @@ import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarArc;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
+import javolution.util.FastList;
 
 /**
  * Manages a particular point in a grammar. The GrammarPoint is used
@@ -36,7 +37,7 @@ public class GrammarPoint {
      private int wordIndex;		// which word in the alternative
      private int pronunciationIndex;	// which pronunciation in the word
      private int unitIndex;		// which unit in the pronunciation
-     private static boolean bounded = false;	
+     private static boolean bounded = false;
 
 
      /**
@@ -46,21 +47,21 @@ public class GrammarPoint {
       * @param state the pronunciation of interest
       */
      public GrammarPoint(SentenceHMMState state) {
-	 while (state != null) {
-	     if (state instanceof UnitState) {
-		 unitIndex = state.getWhich();
-	     } else if (state instanceof PronunciationState) {
-		 pronunciationIndex = state.getWhich();
-	     } else if (state instanceof WordState) {
-		 wordIndex = state.getWhich();
-	     } else if (state instanceof AlternativeState) {
-		 alternativeIndex = state.getWhich();
-	     } else if (state instanceof GrammarState) {
-		 node = ((GrammarState)state).getGrammarNode();
-	     }
-	     state = state.getParent();
-	 } 
-	 assert node != null;
+     while (state != null) {
+         if (state instanceof UnitState) {
+         unitIndex = state.getWhich();
+         } else if (state instanceof PronunciationState) {
+         pronunciationIndex = state.getWhich();
+         } else if (state instanceof WordState) {
+         wordIndex = state.getWhich();
+         } else if (state instanceof AlternativeState) {
+         alternativeIndex = state.getWhich();
+         } else if (state instanceof GrammarState) {
+         node = ((GrammarState)state).getGrammarNode();
+         }
+         state = state.getParent();
+     }
+     assert node != null;
      }
 
      /**
@@ -71,7 +72,7 @@ public class GrammarPoint {
       * @param node the grammar node of interest
       */
      public GrammarPoint(GrammarNode node) {
-	 this(node, -1, 0, 0, 0);
+     this(node, -1, 0, 0, 0);
      }
 
      /**
@@ -82,8 +83,8 @@ public class GrammarPoint {
       * @param which the index of the unit
       */
      public GrammarPoint(PronunciationState state, int which ) {
-	 this(state);
-	 unitIndex = which;
+     this(state);
+     unitIndex = which;
      }
 
 
@@ -97,13 +98,13 @@ public class GrammarPoint {
       * @param unitIndex the index of the unit in the pronunciation
       */
      public GrammarPoint(GrammarNode node, int alternativeIndex,
-	     int wordIndex, int pronunciationIndex, int unitIndex) {
-	 assert node != null;
-	 this.node = node;
-	 this.alternativeIndex = alternativeIndex;
-	 this.wordIndex = wordIndex;
-	 this.pronunciationIndex = pronunciationIndex;
-	 this.unitIndex = unitIndex;
+                         int wordIndex, int pronunciationIndex, int unitIndex) {
+     assert node != null;
+     this.node = node;
+     this.alternativeIndex = alternativeIndex;
+     this.wordIndex = wordIndex;
+     this.pronunciationIndex = pronunciationIndex;
+     this.unitIndex = unitIndex;
      }
 
 
@@ -114,23 +115,23 @@ public class GrammarPoint {
       * this point in the grammar
       */
      private Unit getUnit() {
-	 Unit unit = null;
-	 Word[][] alternatives = node.getAlternatives();
-	 if (alternativeIndex != -1 && alternativeIndex < alternatives.length) {
-	     Word[] words = alternatives[alternativeIndex];
-	     if (wordIndex < words.length) {
-		 Pronunciation[] pronunciations =
-		     words[wordIndex].getPronunciations(null);
-		 if (pronunciationIndex < pronunciations.length) {
-		     Unit[] units =
-			 pronunciations[pronunciationIndex].getUnits();
-		     if (unitIndex < units.length) {
-			 unit = units[unitIndex];
-		     }
-		 }
-	     }
-	}
-	 return unit;
+     Unit unit = null;
+     Word[][] alternatives = node.getAlternatives();
+     if (alternativeIndex != -1 && alternativeIndex < alternatives.length) {
+         Word[] words = alternatives[alternativeIndex];
+         if (wordIndex < words.length) {
+         Pronunciation[] pronunciations =
+             words[wordIndex].getPronunciations(null);
+         if (pronunciationIndex < pronunciations.length) {
+             Unit[] units =
+             pronunciations[pronunciationIndex].getUnits();
+             if (unitIndex < units.length) {
+             unit = units[unitIndex];
+             }
+         }
+         }
+    }
+     return unit;
      }
 
     /**
@@ -164,39 +165,39 @@ public class GrammarPoint {
       * @return a list of containing Unit[] contexts.
       */
      public List getRightContexts(int size, boolean startWithCurrent,
-	     int maxContexts) {
-	 List contexts = new ArrayList();
-	 List  nextPoints = getNextGrammarPoints(startWithCurrent);
+                                  int maxContexts) {
+     List contexts = new FastList();
+     List  nextPoints = getNextGrammarPoints(startWithCurrent);
 
-	 if (nextPoints.size() == 0) {
-	     Unit[] units = Unit.getEmptyContext(size);
-	     addContext(contexts, units);
-	 } else {
-	     for (Iterator i = nextPoints.iterator(); i.hasNext();) {
-		 GrammarPoint gp = (GrammarPoint) i.next();
-		 if (size == 1) {
-		     Unit[] units = new Unit[size];
-		     units[0] = gp.getUnitOrFill();
-		     addContext(contexts, units);
-		 } else {
-		     List rc = gp.getRightContexts(size - 1, false,
-			     maxContexts - contexts.size());
-		     for (Iterator j = rc.iterator(); j.hasNext(); ) {
-			 Unit[] rcUnits = (Unit[]) j.next();
-			 Unit[] units =Unit.getEmptyContext(rcUnits.length + 1);
-			 units[0] = gp.getUnitOrFill();
-			 for (int k = 0; k < rcUnits.length; k++) {
-			     units[k + 1] = rcUnits[k];
-			 }
-			 addContext(contexts, units);
-		     }
-		 }
-		 if (contexts.size() >= maxContexts) {
-		     break;
-		 }
-	     }
-	 }
-	 return contexts;
+     if (nextPoints.size() == 0) {
+         Unit[] units = Unit.getEmptyContext(size);
+         addContext(contexts, units);
+     } else {
+         for (Iterator i = nextPoints.iterator(); i.hasNext();) {
+         GrammarPoint gp = (GrammarPoint) i.next();
+         if (size == 1) {
+             Unit[] units = new Unit[size];
+             units[0] = gp.getUnitOrFill();
+             addContext(contexts, units);
+         } else {
+             List rc = gp.getRightContexts(size - 1, false,
+                 maxContexts - contexts.size());
+             for (Iterator j = rc.iterator(); j.hasNext(); ) {
+             Unit[] rcUnits = (Unit[]) j.next();
+             Unit[] units =Unit.getEmptyContext(rcUnits.length + 1);
+             units[0] = gp.getUnitOrFill();
+             for (int k = 0; k < rcUnits.length; k++) {
+                 units[k + 1] = rcUnits[k];
+             }
+             addContext(contexts, units);
+             }
+         }
+         if (contexts.size() >= maxContexts) {
+             break;
+         }
+         }
+     }
+     return contexts;
      }
 
 
@@ -213,14 +214,14 @@ public class GrammarPoint {
       * 
       */
      private void addContext(List contexts, Unit[] units) {
-	 for (Iterator i = contexts.iterator(); i.hasNext(); ) {
-	     Unit[] onList = (Unit[]) i.next();
+     for (Iterator i = contexts.iterator(); i.hasNext(); ) {
+         Unit[] onList = (Unit[]) i.next();
 
-	     if (Unit.isContextMatch(onList, units)) {
-		 return; // found on list so bailout
-	     }
-	 }
-	 contexts.add(units);
+         if (Unit.isContextMatch(onList, units)) {
+         return; // found on list so bailout
+         }
+     }
+     contexts.add(units);
      }
 
 
@@ -236,65 +237,65 @@ public class GrammarPoint {
       * @return the (possibly empty) list of next GrammarPoint objects
       */
      private List getNextGrammarPoints(boolean startWithCurrent) {
-	 List nextPoints = new ArrayList();
-	 int unitsLength = 0;
+     List nextPoints = new FastList();
+     int unitsLength = 0;
 
 
-	 // if this GrammarPoint is associated with a grammar node
-	 // and the grannar node has alternatives, add points for each
-	 // alternative 
-	 if (alternativeIndex == -1 && node.getAlternatives().length > 0) {
-	     for (int i = 0; i < node.getAlternatives().length; i++) {
-		 GrammarPoint gp = new GrammarPoint(node, i, 0, 0, 0);
-		 nextPoints.add(gp);
-	     }
-	}
+     // if this GrammarPoint is associated with a grammar node
+     // and the grannar node has alternatives, add points for each
+     // alternative
+     if (alternativeIndex == -1 && node.getAlternatives().length > 0) {
+         for (int i = 0; i < node.getAlternatives().length; i++) {
+         GrammarPoint gp = new GrammarPoint(node, i, 0, 0, 0);
+         nextPoints.add(gp);
+         }
+    }
 
-	 // If we don't have any alternatives, (i.e. this grammar node
-	 // has no words at all associated with it, then just go and
-	 // find the set of next grammar nodes with words, collect
-	 // them up, expand them and return that set.
-	 
-	 else if (node.getAlternatives().length == 0) {
-	     addNextGrammarPointsWithWords(node, nextPoints);
-	 } else {
+     // If we don't have any alternatives, (i.e. this grammar node
+     // has no words at all associated with it, then just go and
+     // find the set of next grammar nodes with words, collect
+     // them up, expand them and return that set.
 
-	// At this point we are at a node with a set of alternatives
+     else if (node.getAlternatives().length == 0) {
+         addNextGrammarPointsWithWords(node, nextPoints);
+     } else {
 
-	     GrammarPoint next;
-	     
-	     if (startWithCurrent) {
-		 next = this;
-	     } else {
-		 next = new GrammarPoint(node, alternativeIndex, wordIndex,
-			 pronunciationIndex, unitIndex + 1);
-	     }
-	     Pronunciation[] pronunciations = node.
-		 getAlternatives()[alternativeIndex][wordIndex].
-		 getPronunciations(null);
+    // At this point we are at a node with a set of alternatives
 
-	     unitsLength = pronunciations[pronunciationIndex].getUnits().length;
+         GrammarPoint next;
 
-	     if (next.unitIndex  < unitsLength) {
-		 nextPoints.add(next);
-	     } else {
-		 next.unitIndex = 0;
-		 Word[] alternative =
-			 next.node.getAlternatives()[alternativeIndex];
-		 if (++next.wordIndex < alternative.length) {
-		     Word word = alternative[next.wordIndex];
-		     for (int i = 0; i < word.getPronunciations(null).length; 
-                          i++) {
-			 GrammarPoint newGP = new GrammarPoint(next.node,
-				 next.alternativeIndex, next.wordIndex, i, 0);
-			 nextPoints.add(newGP);
-		     }
-		 } else if (!bounded) {
-		     addNextGrammarPointsWithWords(next.node, nextPoints);
-		 }
-	     }
-	 }
-	 return nextPoints;
+         if (startWithCurrent) {
+         next = this;
+         } else {
+         next = new GrammarPoint(node, alternativeIndex, wordIndex,
+             pronunciationIndex, unitIndex + 1);
+         }
+         Pronunciation[] pronunciations = node.
+         getAlternatives()[alternativeIndex][wordIndex].
+         getPronunciations(null);
+
+         unitsLength = pronunciations[pronunciationIndex].getUnits().length;
+
+         if (next.unitIndex  < unitsLength) {
+         nextPoints.add(next);
+         } else {
+         next.unitIndex = 0;
+         Word[] alternative =
+             next.node.getAlternatives()[alternativeIndex];
+         if (++next.wordIndex < alternative.length) {
+             Word word = alternative[next.wordIndex];
+             for (int i = 0; i < word.getPronunciations(null).length;
+                  i++) {
+             GrammarPoint newGP = new GrammarPoint(next.node,
+                 next.alternativeIndex, next.wordIndex, i, 0);
+             nextPoints.add(newGP);
+             }
+         } else if (!bounded) {
+             addNextGrammarPointsWithWords(next.node, nextPoints);
+         }
+         }
+     }
+     return nextPoints;
      }
 
 
@@ -307,23 +308,23 @@ public class GrammarPoint {
       * @return list the list of grammar nodes
       */
      private static List getNextGrammarNodesWithWords(GrammarNode node) {
-	 List list = new ArrayList();
+     List list = new FastList();
 
-	 GrammarArc[] arcs = node.getSuccessors();
+     GrammarArc[] arcs = node.getSuccessors();
 
-	 for (int i = 0; i < arcs.length; i++) {
-	     GrammarNode gnode = arcs[i].getGrammarNode();
-	     if (gnode.getAlternatives().length == 0) {
-		 if (gnode.isFinalNode()) {
-		     list.add(gnode);
-		 } else {
-		     list.addAll(getNextGrammarNodesWithWords(gnode));
-		 }
-	     } else {
-		 list.add(gnode);
-	     }
-	 }
-	 return list;
+     for (int i = 0; i < arcs.length; i++) {
+         GrammarNode gnode = arcs[i].getGrammarNode();
+         if (gnode.getAlternatives().length == 0) {
+         if (gnode.isFinalNode()) {
+             list.add(gnode);
+         } else {
+             list.addAll(getNextGrammarNodesWithWords(gnode));
+         }
+         } else {
+         list.add(gnode);
+         }
+     }
+     return list;
      }
 
      /**
@@ -334,15 +335,15 @@ public class GrammarPoint {
       * @param nextPoints where the grammar points should be added
       */
      private static void addNextGrammarPointsWithWords(GrammarNode
-	     node, List nextPoints) {
-	 for (Iterator i = getNextGrammarNodesWithWords(node).iterator();
-		 i.hasNext(); ) {
-	     GrammarNode nextNode = (GrammarNode) i.next();
-	     for (int j = 0; j < nextNode.getAlternatives().length; j++) {
-		 GrammarPoint gp = new GrammarPoint(nextNode, j, 0, 0, 0);
-		 nextPoints.add(gp);
-	     }
-	 }
+         node, List nextPoints) {
+     for (Iterator i = getNextGrammarNodesWithWords(node).iterator();
+          i.hasNext(); ) {
+         GrammarNode nextNode = (GrammarNode) i.next();
+         for (int j = 0; j < nextNode.getAlternatives().length; j++) {
+         GrammarPoint gp = new GrammarPoint(nextNode, j, 0, 0, 0);
+         nextPoints.add(gp);
+         }
+     }
      }
 
      /**
@@ -352,6 +353,6 @@ public class GrammarPoint {
       * grammar nodes.
       */
      static void setBounded(boolean state) {
-	 bounded = state;
+     bounded = state;
      }
 }

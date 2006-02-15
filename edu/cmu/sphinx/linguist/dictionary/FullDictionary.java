@@ -16,8 +16,6 @@ import java.io.InputStream;
 
 import java.net.URL;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +35,8 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+import javolution.util.FastMap;
+import javolution.util.FastList;
 
 /**
  * Creates a dictionary by reading in an ASCII-based Sphinx-3
@@ -83,8 +83,8 @@ public class FullDictionary implements Dictionary {
     private URL fillerDictionaryFile;
     private boolean allocated = false;
     private UnitManager unitManager;
-    
-    
+
+
     private Map wordDictionary;
     private Map fillerDictionary;
     private Timer loadTimer;
@@ -100,7 +100,7 @@ public class FullDictionary implements Dictionary {
         this.name = name;
         registry.register(PROP_DICTIONARY, PropertyType.RESOURCE);
         registry.register(PROP_FILLER_DICTIONARY, PropertyType.RESOURCE);
-        registry.register(PROP_ADD_SIL_ENDING_PRONUNCIATION, 
+        registry.register(PROP_ADD_SIL_ENDING_PRONUNCIATION,
                           PropertyType.BOOLEAN);
         registry.register(PROP_WORD_REPLACEMENT, PropertyType.STRING);
         registry.register(PROP_ALLOW_MISSING_WORDS, PropertyType.BOOLEAN);
@@ -143,7 +143,7 @@ public class FullDictionary implements Dictionary {
      * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#allocate()
      */
     public void allocate() throws IOException {
-        
+
         if (!allocated) {
             loadTimer = Timer.getTimer("DictionaryLoad");
             loadTimer.start();
@@ -151,11 +151,11 @@ public class FullDictionary implements Dictionary {
             // "wordDictionaryFile" and "fillerDictionaryFile" should
             // contain the full path to the Dictionaries.
             logger.info("Loading dictionary from: " + wordDictionaryFile);
-            wordDictionary = 
+            wordDictionary =
                 loadDictionary(wordDictionaryFile.openStream(), false);
-            logger.info("Loading filler dictionary from: " + 
+            logger.info("Loading filler dictionary from: " +
                         fillerDictionaryFile);
-            fillerDictionary = 
+            fillerDictionary =
                 loadDictionary(fillerDictionaryFile.openStream(), true);
             loadTimer.stop();
             allocated = true;
@@ -173,9 +173,9 @@ public class FullDictionary implements Dictionary {
             allocated = false;
         }
     }
-        
 
-    
+
+
     /**
      * Loads the given sphinx3 style simple dictionary from the given
      * InputStream. The InputStream is assumed to contain ASCII data.
@@ -190,14 +190,14 @@ public class FullDictionary implements Dictionary {
      */
     private Map loadDictionary(InputStream inputStream, boolean isFillerDict)
             throws IOException {
-        Map dictionary = new HashMap();
+        Map dictionary = new FastMap();
         ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
                 true);
         String word;
         while ((word = est.getString()) != null) {
             word = removeParensFromWord(word);
             word = word.toLowerCase();
-            List units = new ArrayList(20);
+            List units = new FastList(20);
             String unitText;
             while ((unitText = est.getString()) != null) {
                 units.add(getCIUnit(unitText, isFillerDict));
@@ -312,7 +312,7 @@ public class FullDictionary implements Dictionary {
             logger.warning("Missing word: " + text);
             if (wordReplacement != null) {
                 word = lookupWord(wordReplacement);
-                logger.warning("Replacing " + text + " with " + 
+                logger.warning("Replacing " + text + " with " +
                                wordReplacement);
                 if (word == null) {
                     logger.severe("Replacement word " + wordReplacement

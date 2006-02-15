@@ -12,7 +12,7 @@
  */
 package edu.cmu.sphinx.recognizer;
 import java.io.IOException;
-import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +26,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 import edu.cmu.sphinx.util.props.Resetable;
+import javolution.util.FastList;
 
 /**
  * The Sphinx-4 recognizer. This is the main entry point for Sphinx-4. Typical
@@ -58,29 +59,30 @@ import edu.cmu.sphinx.util.props.Resetable;
  * recognizer is not in the proper state
  */
 public class Recognizer implements Configurable {
-    
+
     /**
      * Property name for the decoder to be used by this recognizer. 
      */
     public final static String PROP_DECODER = "decoder";
-    
+
     /**
      * Property name for the set of monitors for this recognizer
      */
     public final static String PROP_MONITORS = "monitors";
-    
-    
+
+
     private String name;
     private Decoder decoder;
     private RecognizerState currentState  = RecognizerState.DEALLOCATED;
 
-    private List stateListeners = Collections.synchronizedList(new ArrayList());
+ //   private List stateListeners = Collections.synchronizedList(new ArrayList());
+    private List stateListeners = new FastList(); // TODO PW-- I believe this is safe because Javolution classes are threadsafe
     private List monitors;
-    
-    
+
+
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
-     */
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry) throws PropertyException {
         this.name = name;
         registry.register(PROP_DECODER, PropertyType.COMPONENT);
@@ -119,7 +121,7 @@ public class Recognizer implements Configurable {
         }
         return result;
     }
-    
+
     /**
      * Performs recognition for the given number of input frames, or until a
      * 'final' result is generated. This method should only be called when the
@@ -163,10 +165,10 @@ public class Recognizer implements Configurable {
             }
         }
     }
-    
-    
 
-    
+
+
+
     /**
      * Allocate the resources needed for the recognizer. Note this method make
      * take some time to complete. This method should only be called when the
@@ -269,20 +271,20 @@ public class Recognizer implements Configurable {
     public String getName() {
         return name;
     }
-    
+
     /**
      * @return the decoder containing all the components of this recognizer
      */
     public Decoder getDecoder() {
         return decoder;
     }
-    
-    
+
+
     /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+    * @see java.lang.Object#toString()
+    */
     public String toString() {
         return "Recognizer: " + getName() + " State: " + currentState;
     }
-    
+
 }

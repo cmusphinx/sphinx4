@@ -13,8 +13,8 @@
 
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
+import javolution.util.FastList;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class Pool {
      */
     public Pool(String name) {
 	this.name = name;
-	pool = new ArrayList();
+	pool = new FastList();
     }
 
     /**

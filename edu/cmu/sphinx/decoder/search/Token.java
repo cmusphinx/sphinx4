@@ -13,7 +13,6 @@
 package edu.cmu.sphinx.decoder.search;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +26,7 @@ import edu.cmu.sphinx.linguist.UnitSearchState;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.dictionary.Word;
+import javolution.util.FastList;
 
 /**
  * Represents a single state in the recognition trellis. Subclasses of
@@ -43,19 +43,19 @@ public class Token implements Scoreable {
      *
      */
     public final static Comparator COMPARATOR = new Comparator() {
-	    public int compare(Object o1, Object o2) {
-		Token t1 = (Token) o1;
-		Token t2 = (Token) o2;
+        public int compare(Object o1, Object o2) {
+        Token t1 = (Token) o1;
+        Token t2 = (Token) o2;
 
-		if (t1.getScore() > t2.getScore()) {
-		    return -1;
-		} else if (t1.getScore() ==  t2.getScore()) {
-		    return 0;
-		} else {
-		    return 1;
-		}
-	    }
-	};
+        if (t1.getScore() > t2.getScore()) {
+            return -1;
+        } else if (t1.getScore() ==  t2.getScore()) {
+            return 0;
+        } else {
+            return 1;
+        }
+        }
+    };
 
     private final static boolean COMBINE_BRANCHES = true;
 
@@ -118,15 +118,15 @@ public class Token implements Scoreable {
                        float logLanguageScore,
                        float logInsertionProbability,
                        int frameNumber) {
-       if ((predecessorClasses == null) || 
-	   predecessorClasses.contains(state.getClass())) {
-            return new Token(this, state, 
-			     logTotalScore, logLanguageScore, 
-			     logInsertionProbability, frameNumber);
+       if ((predecessorClasses == null) ||
+       predecessorClasses.contains(state.getClass())) {
+            return new Token(this, state,
+                 logTotalScore, logLanguageScore,
+                 logInsertionProbability, frameNumber);
         } else {
-            return new Token(predecessor, state, 
-			     logTotalScore, logLanguageScore, 
-			     logInsertionProbability, frameNumber);
+            return new Token(predecessor, state,
+                 logTotalScore, logLanguageScore,
+                 logInsertionProbability, frameNumber);
         }
     }
 
@@ -150,11 +150,11 @@ public class Token implements Scoreable {
      *
      */
     protected Token(Token predecessor,
-                  SearchState state,
-                  float logTotalScore,
-                  float logLanguageScore,
-                  float logInsertionProbability,
-                  int frameNumber) {
+                    SearchState state,
+                    float logTotalScore,
+                    float logLanguageScore,
+                    float logInsertionProbability,
+                    int frameNumber) {
         this.predecessor = predecessor;
         this.searchState = state;
         this.logTotalScore = logTotalScore;
@@ -287,7 +287,7 @@ public class Token implements Scoreable {
      * @return the working score (in logMath log base)
      */
     public float getWorkingScore() {
-	    return logWorkingScore;
+        return logWorkingScore;
     }
 
 
@@ -297,7 +297,7 @@ public class Token implements Scoreable {
      * @param logScore the working score (in logMath log base)
      */
     public void setWorkingScore(float logScore) {
-	    logWorkingScore = logScore;
+        logWorkingScore = logScore;
     }
 
 
@@ -372,7 +372,7 @@ public class Token implements Scoreable {
      * @return <code>true</code> if this token marks the end of a word
      */
     public boolean isWord() {
-	return searchState instanceof WordSearchState;
+    return searchState instanceof WordSearchState;
     }
 
     /**
@@ -410,7 +410,7 @@ public class Token implements Scoreable {
      */
     public void dumpTokenPath(boolean includeHMMStates) {
         Token token = this;
-        List list = new ArrayList();
+        List list = new FastList();
 
         while (token != null) {
             list.add(token);

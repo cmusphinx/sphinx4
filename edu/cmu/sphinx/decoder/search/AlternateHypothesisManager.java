@@ -12,8 +12,8 @@
 
 package edu.cmu.sphinx.decoder.search;
 
+import javolution.util.FastList;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,7 +57,7 @@ public class AlternateHypothesisManager {
         assert predecessor != token.getPredecessor();
         List list = (List) viterbiLoserMap.get(token);
         if (list == null) {
-            list = new ArrayList();
+            list = new FastList();
             viterbiLoserMap.put(token, list);
         }
         list.add(predecessor);

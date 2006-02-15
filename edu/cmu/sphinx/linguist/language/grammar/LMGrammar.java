@@ -12,7 +12,6 @@
 package edu.cmu.sphinx.linguist.language.grammar;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +23,7 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+import javolution.util.FastList;
 
 /**
  * Defines a simple grammar based upon a language model. It generates one
@@ -78,7 +78,7 @@ public class LMGrammar extends Grammar {
         if (languageModel.getMaxDepth() > 2) {
             System.out.println("Warning: LMGrammar  limited to bigrams");
         }
-        List nodes = new ArrayList();
+        List nodes = new FastList();
         Set words = languageModel.getVocabulary();
         // create all of the word nodes
         for (Iterator i = words.iterator(); i.hasNext();) {
