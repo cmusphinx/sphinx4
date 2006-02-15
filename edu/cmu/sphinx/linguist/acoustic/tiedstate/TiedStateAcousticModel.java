@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.linguist.acoustic.*;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.props.*;
 import javolution.util.FastMap;
