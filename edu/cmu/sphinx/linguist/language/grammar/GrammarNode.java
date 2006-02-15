@@ -16,12 +16,13 @@ package edu.cmu.sphinx.linguist.language.grammar;
 
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import javolution.util.FastSet;
+import javolution.util.FastList;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -41,7 +42,7 @@ public class GrammarNode {
     private boolean isFinal;			// is this the final node?
 
     private Word[][] alternatives;              // ordered words at this node
-    private List arcList = new ArrayList();  	// arcs to successors
+    private List arcList = new FastList();  	// arcs to successors
 
 
     /**
@@ -419,7 +420,7 @@ public class GrammarNode {
     GrammarNode splitNode(int id) {
         GrammarNode branchNode = new GrammarNode(id, false);
         branchNode.arcList = arcList;
-        this.arcList = new ArrayList();
+        this.arcList = new FastList();
         add(branchNode, 0.0f);
         return branchNode;
     }
