@@ -13,11 +13,18 @@
  */
 package edu.cmu.sphinx.result;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Vector;
+
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.util.LogMath;
-import javolution.util.FastSet;
-
-import java.util.*;
 
 /**
  * <p>
@@ -43,7 +50,7 @@ public class SausageMaker extends AbstractSausageMaker {
      */
     public SausageMaker() {
     }
-
+    
     /**
      * Construct a sausage maker
      *
@@ -61,7 +68,7 @@ public class SausageMaker extends AbstractSausageMaker {
     protected void interWordCluster(List clusters) {
         while(interWordClusterStep(clusters));
     }
-
+    
     /**
      * Returns the latest begin time of all nodes in the given cluster.
      *
@@ -139,7 +146,7 @@ public class SausageMaker extends AbstractSausageMaker {
         }
         return false;
     }
-
+    
     /**
      * Find the string edit distance between to lists of objects.
      * Objects are compared using .equals()
@@ -174,7 +181,7 @@ public class SausageMaker extends AbstractSausageMaker {
         }
         return distances[p1.size()][p2.size()];
     }
-
+    
     /**
      * Compute the phonetic similarity of two lattice nodes, based on the string
      * edit distance between their most likely pronunciations.
@@ -192,7 +199,7 @@ public class SausageMaker extends AbstractSausageMaker {
         sim /= (double)(p1.getUnits().length + p2.getUnits().length);
         return 1-sim;
     }
-
+    
     /**
      * Calculate the distance between two clusters
      * 
@@ -207,8 +214,8 @@ public class SausageMaker extends AbstractSausageMaker {
         }
         float totalSim = LogMath.getLogZero();
         float wordPairCount = (float)0.0;
-        FastSet wordsSeen1 = new FastSet();
-
+        HashSet wordsSeen1 = new HashSet();
+        
         Iterator i1 = c1.iterator();
         while (i1.hasNext()) {
             Node node1 = (Node)i1.next();
@@ -217,7 +224,7 @@ public class SausageMaker extends AbstractSausageMaker {
                 continue;
             }
             wordsSeen1.add(word1);
-            FastSet wordsSeen2 = new FastSet();
+            HashSet wordsSeen2 = new HashSet();
             Iterator i2 = c2.iterator();
             while (i2.hasNext()) {
                 Node node2 = (Node)i2.next();
@@ -233,10 +240,10 @@ public class SausageMaker extends AbstractSausageMaker {
                 totalSim = lattice.getLogMath().addAsLinear(totalSim,sim);
                 wordPairCount++;
             }
-        }
+        }                        
         return totalSim - lattice.getLogMath().logToLinear(wordPairCount);
     }
-
+    
     /**
      * Check whether these to clusters stand in a relation to each other.
      * Two clusters are related if a member of one is an ancestor of a member
@@ -259,7 +266,7 @@ public class SausageMaker extends AbstractSausageMaker {
         }
         return false;
     }
-
+    
     /**
      * Calculate the distance between two clusters, forcing them to have the same
      * words in them, and to not be related to each other.
@@ -292,10 +299,10 @@ public class SausageMaker extends AbstractSausageMaker {
                     }
                 }
             }
-        }
+        }        
         return maxSim;
     }
-
+    
     /**
      * Perform the intra word clustering stage of the algorithm
      * 
@@ -304,7 +311,7 @@ public class SausageMaker extends AbstractSausageMaker {
     protected void intraWordCluster(List clusters) {
         while (intraWordClusterStep(clusters));
     }
-
+    
     /**
      * Perform a step of the intra word clustering stage
      * 
@@ -339,7 +346,7 @@ public class SausageMaker extends AbstractSausageMaker {
         }
         return false;
     }
-
+    
     /**
      * Turn the lattice contained in this sausage maker into a sausage object.
      * 
@@ -360,7 +367,7 @@ public class SausageMaker extends AbstractSausageMaker {
         clusters = topologicalSort(clusters);
         return sausageFromClusters(clusters);
     }
-
+    
     /**
      * @see edu.cmu.sphinx.result.ConfidenceScorer#score(edu.cmu.sphinx.result.Result)
      */

@@ -10,7 +10,7 @@
  *
  */
 package edu.cmu.sphinx.linguist.util;
-
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -19,8 +19,6 @@ import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.SearchStateArc;
 import edu.cmu.sphinx.util.Timer;
-import javolution.util.FastList;
-
 /**
  * Gets successors from a linguist and times them
  */
@@ -72,12 +70,12 @@ public class LinguistTimer {
         totalTimer.start();
         for (int runs = 0; runs < numRuns; runs++) {
             int level = 0;
-            List activeList = new FastList();
+            List activeList = new ArrayList();
             activeList.add(linguist.getSearchGraph().getInitialState());
             linguist.startRecognition();
             for (int i = 0; i < numFrames; i++) {
                 List oldList = activeList;
-                activeList = new FastList(maxBeam * 10);
+                activeList = new ArrayList(maxBeam * 10);
                 frameTimer.start();
                 for (int j = 0; j < oldList.size(); j++) {
                     SearchState nextStates = (SearchState) oldList.get(j);

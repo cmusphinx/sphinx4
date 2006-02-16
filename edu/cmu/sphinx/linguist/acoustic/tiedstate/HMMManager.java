@@ -12,7 +12,7 @@
  */
 
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
-
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
-import javolution.util.FastList;
+
 
 
 /**
@@ -33,7 +33,7 @@ import javolution.util.FastList;
  */
 public class HMMManager {
 
-    private List allHMMs = new FastList();
+    private List allHMMs = new ArrayList();
     private Map[] hmmsPerPosition = new Map[HMMPosition.MAX_POSITIONS];
 
     /**
@@ -42,9 +42,9 @@ public class HMMManager {
      * @param hmm the hmm to manage
      */
     public void put(HMM hmm) {
-    Map hmmMap = getHMMMap(hmm.getPosition());
-    hmmMap.put(hmm.getUnit(), hmm);
-    allHMMs.add(hmm);
+	Map hmmMap = getHMMMap(hmm.getPosition());
+	hmmMap.put(hmm.getUnit(), hmm);
+	allHMMs.add(hmm);
     }
 
 
@@ -58,8 +58,8 @@ public class HMMManager {
      * 	no HMM at the position could be found
      */
     public HMM get(HMMPosition position, Unit unit) {
-    Map hmmMap = getHMMMap(position);
-    return (HMM) hmmMap.get(unit);
+	Map hmmMap = getHMMMap(position);
+	return (HMM) hmmMap.get(unit);
     }
 
 
@@ -69,7 +69,7 @@ public class HMMManager {
      * @return an iterator that iterates through all HMMs
      */
     public Iterator getIterator() {
-    return allHMMs.iterator();
+	return allHMMs.iterator();
     }
 
     /**
@@ -81,12 +81,12 @@ public class HMMManager {
      * @return the map of HMMs for the given position.
      */
     private Map getHMMMap(HMMPosition pos) {
-    Map hmmMap = (Map) hmmsPerPosition[pos.getIndex()];
-    if (hmmMap == null) {
-        hmmMap = new LinkedHashMap();
-        hmmsPerPosition[pos.getIndex()] = hmmMap;
-    }
-    return hmmMap;
+	Map hmmMap = (Map) hmmsPerPosition[pos.getIndex()];
+	if (hmmMap == null) {
+	    hmmMap = new LinkedHashMap();
+	    hmmsPerPosition[pos.getIndex()] = hmmMap;
+	}
+	return hmmMap;
     }
 
     /**
@@ -95,15 +95,15 @@ public class HMMManager {
      * @return the number of HMMs
      */
     private int getNumHMMs() {
-    int count = 0;
+	int count = 0;
 
         for (int i = 0; i < hmmsPerPosition.length; i++) {
-        Map map = hmmsPerPosition[i];
-        if (map != null) {
-        count += map.size();
-        }
-    }
-    return count;
+	    Map map = hmmsPerPosition[i];
+	    if (map != null) {
+		count += map.size();
+	    }
+	}
+	return count;
     }
 
     /**
@@ -112,6 +112,6 @@ public class HMMManager {
      * @param logger logger to use for this logInfo
      */
     public void logInfo(Logger logger) {
-    logger.info("HMM Manager: " + getNumHMMs() + " hmms");
+	logger.info("HMM Manager: " + getNumHMMs() + " hmms");
     }
 }

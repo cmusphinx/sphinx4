@@ -12,25 +12,52 @@
 
 package edu.cmu.sphinx.research.parallel;
 
-import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
-import edu.cmu.sphinx.linguist.flat.Color;
-import edu.cmu.sphinx.linguist.flat.FlatLinguist;
-import edu.cmu.sphinx.linguist.flat.SentenceHMMState;
-import edu.cmu.sphinx.linguist.flat.UnitState;
+import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
+import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.Context;
+import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
+
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+
+import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
+import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
+
+import edu.cmu.sphinx.decoder.search.*;
+import edu.cmu.sphinx.decoder.pruner.Pruner;
+
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.StatisticsVariable;
+import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.Utilities;
+
+import edu.cmu.sphinx.linguist.*;
+import edu.cmu.sphinx.linguist.flat.*;
+import edu.cmu.sphinx.linguist.SearchState;
+import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
+
+import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
 import java.io.IOException;
+
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * A extended form of the {@link edu.cmu.sphinx.linguist.flat.FlatLinguist

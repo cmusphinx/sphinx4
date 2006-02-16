@@ -11,6 +11,17 @@
  */
 package edu.cmu.sphinx.decoder.search;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.linguist.Linguist;
@@ -25,13 +36,6 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
-import javolution.util.FastMap;
-import javolution.util.FastSet;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Provides the breadth first search. To perform recognition an application
@@ -119,7 +123,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private List resultList; // the current set of results
     private LogMath logMath;
     private Logger logger;
-
+    
     // ------------------------------------
     // monitoring data
     // ------------------------------------
@@ -297,7 +301,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
             mapSize = 1;
         }
         growTimer.start();
-        bestTokenMap = new FastMap(mapSize);
+        bestTokenMap = new HashMap(mapSize);
         ActiveList oldActiveList = activeList;
         Iterator oldListIterator = activeList.iterator();
         resultList = new LinkedList();
@@ -310,7 +314,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
             collectSuccessorTokens(token);
         }
         growTimer.stop();
-        if (logger.isLoggable(Level.FINE)) {
+        if (logger.isLoggable(Level.FINE)) {  
             int hmms = activeList.size();
             totalHmms += hmms;
             logger.fine("Frame: " + currentFrameNumber + " Hmms: "
@@ -502,7 +506,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      */
     private void showTokenCount() {
         if (logger.isLoggable(Level.INFO)) {
-            Set tokenSet = new FastSet();
+            Set tokenSet = new HashSet();
             for (Iterator i = activeList.iterator(); i.hasNext();) {
                 Token token = (Token) i.next();
                 while (token != null) {
@@ -511,7 +515,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
                 }
             }
             logger.info("Token Lattice size: " + tokenSet.size());
-            tokenSet = new FastSet();
+            tokenSet = new HashSet();
             for (Iterator i = resultList.iterator(); i.hasNext();) {
                 Token token = (Token) i.next();
                 while (token != null) {
@@ -599,7 +603,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         pruner.allocate();
         scorer.allocate();
 
-        scoreTimer = Timer.getTimer("scoring");
+        scoreTimer = Timer.getTimer("scoring"); 
         pruneTimer = Timer.getTimer("pruning");
         growTimer = Timer.getTimer("growing");
     }

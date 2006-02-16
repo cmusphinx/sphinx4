@@ -12,6 +12,7 @@
 
 package edu.cmu.sphinx.result;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +24,6 @@ import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
-import javolution.util.FastList;
 
 /**
  * Provides recognition results. Results can be partial or final. A
@@ -204,14 +204,14 @@ public class Result {
      */
     public Token getBestActiveToken() {
         Token bestToken = null;
-        if( activeList != null ) {
+		if( activeList != null ) {
         for (Iterator i = activeList.iterator(); i.hasNext();) {
             Token token = (Token) i.next();
             if (bestToken == null || token.getScore() > bestToken.getScore()) {
                 bestToken = token;
             }
         }
-        }
+		}
         return bestToken;
     }
 
@@ -241,7 +241,7 @@ public class Result {
      * @return the list token at the head of the branch
      */
     public List findPartialMatchingTokens(String text) {
-        List list = new FastList();
+        List list = new ArrayList();
         text = text.trim();
         for (Iterator i = activeList.iterator(); i.hasNext();) {
             Token token = (Token) i.next();
@@ -414,7 +414,7 @@ public class Result {
                 if (token.isWord()) {
                     Word word = token.getWord();
                     if (wantFiller || !word.isFiller()) {
-                        addWord(sb, word,
+                        addWord(sb, word, 
                                 (FloatData) lastFeature,
                                 (FloatData) lastWordFirstFeature);
                     }
@@ -481,13 +481,13 @@ public class Result {
     private void addWord(StringBuffer sb, Word word,
                          FloatData startFeature, FloatData endFeature) {
         float startTime = ((float) startFeature.getFirstSampleNumber()/
-               startFeature.getSampleRate());
+			   startFeature.getSampleRate());
         float endTime = ((float) endFeature.getFirstSampleNumber()/
-             endFeature.getSampleRate());
+			 endFeature.getSampleRate());
         if (sb.length() > 0) {
             sb.insert(0, " ");
         }
-        sb.insert(0, (word.getSpelling() + "(" + startTime + "," +
+        sb.insert(0, (word.getSpelling() + "(" + startTime + "," + 
                       endTime + ")"));
     }
 
@@ -533,7 +533,7 @@ public class Result {
         }
         return valid;
     }
-
+    
     /**
      * Sets the reference text
      * @param ref the reference text
@@ -541,8 +541,8 @@ public class Result {
     public void setReferenceText(String ref) {
         reference = ref;
     }
-
-
+    
+    
     /**
      * Retrieves the reference text. The reference text is a transcript of
      * the text that was spoken.

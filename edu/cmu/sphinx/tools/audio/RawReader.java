@@ -12,13 +12,12 @@
 
 package edu.cmu.sphinx.tools.audio;
 
-import javolution.util.FastList;
-
 import javax.sound.sampled.AudioFormat;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.util.ArrayList;
 
 /**
  * Reads a raw audio file (i.e., a file that is just plain raw
@@ -61,7 +60,7 @@ public class RawReader {
          * data.
          */
         byte[] buffer = new byte[bytesPerSample];
-        FastList samples = new FastList();
+        ArrayList samples = new ArrayList();
 	int read = 0;
 	int totalRead = 0;
         boolean done = false;

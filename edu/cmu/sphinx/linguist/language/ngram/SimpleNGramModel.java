@@ -11,6 +11,23 @@
  */
 package edu.cmu.sphinx.linguist.language.ngram;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.logging.Logger;
+
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
@@ -19,16 +36,6 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
-import javolution.util.FastMap;
-import javolution.util.FastSet;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * An ascii ARPA language model loader. This loader makes no attempt to
@@ -92,7 +99,7 @@ public class SimpleNGramModel implements LanguageModel {
 
 
         if (allocated) {
-            throw new PropertyException(this, null,
+            throw new PropertyException(this, null, 
                     "Can't change properties after allocation");
         }
         logger = ps.getLogger();
@@ -104,8 +111,8 @@ public class SimpleNGramModel implements LanguageModel {
         desiredMaxDepth = ps.getInt(PROP_MAX_DEPTH, PROP_MAX_DEPTH_DEFAULT);
         dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY,
                 Dictionary.class);
-        map = new FastMap();
-        vocabulary = new FastSet();
+        map = new HashMap();
+        vocabulary = new HashSet();
     }
 
     /*
@@ -309,7 +316,7 @@ public class SimpleNGramModel implements LanguageModel {
      *                 if an error occurs while loading
      */
     private void load(String format, URL location, float unigramWeight,
-                      Dictionary dictionary) throws FileNotFoundException, IOException {
+            Dictionary dictionary) throws FileNotFoundException, IOException {
         String line;
         float logUnigramWeight = logMath.linearToLog(unigramWeight);
         float inverseLogUnigramWeight = logMath
@@ -448,7 +455,7 @@ public class SimpleNGramModel implements LanguageModel {
         lineNumber = 0;
         fileName = location.toString();
         reader = new BufferedReader
-        (new InputStreamReader(location.openStream()));
+	    (new InputStreamReader(location.openStream()));
     }
 
     /**
@@ -484,7 +491,8 @@ public class SimpleNGramModel implements LanguageModel {
     /**
      * Generates a 'corrupt' IO exception
      * 
-     * @throws IOException with the given string
+     * @throws an
+     *                 IOException with the given string
      */
     private void corrupt(String why) throws IOException {
         throw new IOException("Corrupt Language Model " + fileName

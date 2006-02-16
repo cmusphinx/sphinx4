@@ -12,16 +12,23 @@
  */
 package edu.cmu.sphinx.decoder.search;
 
-import edu.cmu.sphinx.linguist.WordSearchState;
-import edu.cmu.sphinx.linguist.dictionary.Word;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ListIterator;
+
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
-import javolution.util.FastMap;
-
-import java.util.*;
+import edu.cmu.sphinx.linguist.WordSearchState;
+import edu.cmu.sphinx.linguist.dictionary.Word;
 
 /**
  * A factory for WordActiveList. The word active list is active list
@@ -71,7 +78,7 @@ public class WordActiveListFactory implements ActiveListFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
      *      edu.cmu.sphinx.util.props.Registry)
      */
@@ -87,7 +94,7 @@ public class WordActiveListFactory implements ActiveListFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
@@ -105,7 +112,7 @@ public class WordActiveListFactory implements ActiveListFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see edu.cmu.sphinx.util.props.Configurable#getName()
      */
     public String getName() {
@@ -114,7 +121,7 @@ public class WordActiveListFactory implements ActiveListFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see edu.cmu.sphinx.decoder.search.ActiveListFactory#newInstance()
      */
     public ActiveList newInstance() {
@@ -124,8 +131,8 @@ public class WordActiveListFactory implements ActiveListFactory {
     /**
      * An active list that manages words. Guarantees only one version
      * of a word.
-     * 
-     * 
+     *
+     *
      * Note that all scores are maintained in the LogMath log domain
      */
     class WordActiveList implements ActiveList {
@@ -135,7 +142,7 @@ public class WordActiveListFactory implements ActiveListFactory {
 
         /**
          * Adds the given token to the list
-         * 
+         *
          * @param token
          *                the token to add
          */
@@ -148,14 +155,14 @@ public class WordActiveListFactory implements ActiveListFactory {
 
         /**
          * Replaces an old token with a new token
-         * 
+         *
          * @param oldToken
          *                the token to replace (or null in which case, replace
          *                works like add).
-         * 
+         *
          * @param newToken
          *                the new token to be placed in the list.
-         *  
+         *
          */
         public void replace(Token oldToken, Token newToken) {
             add(newToken);
@@ -167,13 +174,13 @@ public class WordActiveListFactory implements ActiveListFactory {
         /**
          * Purges excess members. Remove all nodes that fall below the
          * relativeBeamWidth
-         * 
+         *
          * @return a (possible new) active list
          */
 
         public ActiveList purge() {
             int fillerCount = 0;
-            Map countMap = new FastMap();
+            Map countMap = new HashMap();
             Collections.sort(tokenList, Token.COMPARATOR);
             // remove word duplicates
             for (ListIterator i = tokenList.listIterator(); i.hasNext(); ) {

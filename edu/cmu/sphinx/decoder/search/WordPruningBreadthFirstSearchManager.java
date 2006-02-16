@@ -14,11 +14,31 @@ package edu.cmu.sphinx.decoder.search;
 
 // a test search manager.
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+import java.util.Map;
+import java.util.Set;
+
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
-import edu.cmu.sphinx.linguist.*;
+import edu.cmu.sphinx.linguist.HMMSearchState;
+import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
+import edu.cmu.sphinx.linguist.SearchGraph;
+import edu.cmu.sphinx.linguist.SearchState;
+import edu.cmu.sphinx.linguist.UnitSearchState;
+import edu.cmu.sphinx.linguist.SearchStateArc;
+import edu.cmu.sphinx.linguist.WordSearchState;
+import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
@@ -28,14 +48,6 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
-import javolution.util.FastMap;
-import javolution.util.FastSet;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 /**
  * Provides the breadth first search. To perform recognition an application
@@ -307,7 +319,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                 .getStatisticsVariable("curTokensScored");
         tokensCreated = StatisticsVariable
                 .getStatisticsVariable("tokensCreated");
-
+        
         linguist.allocate();
         pruner.allocate();
         scorer.allocate();
@@ -348,7 +360,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         Result result;
 
         try {
-
+        
         for (int i = 0; i < nFrames && !done; i++) {
             // System.out.println("Frame " + currentFrameNumber);
             // score the emitting list
@@ -360,7 +372,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                         currentFrameNumber++;
                         done = !scoreTokens();
                 } while (!done
-                        && (growSkipInterval > 1 &&
+                        && (growSkipInterval > 1 && 
                             ((currentFrameNumber % growSkipInterval) == 0)));
                 if (!done) {
                     bestTokenMap = createBestTokenMap();
@@ -385,7 +397,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
             result = new Result(loserManager, activeList, resultList,
                                 currentFrameNumber, done, logMath);
-
+        
         // tokenTypeTracker.show();
         if (showTokenCount) {
             showTokenCount();
@@ -404,7 +416,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         if (mapSize == 0) {
             mapSize = 1;
         }
-        return new FastMap(mapSize);
+        return new HashMap(mapSize, 0.3F);
     }
 
     /**
@@ -426,7 +438,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         currentFrameNumber = 0;
         curTokensScored.value = 0;
 
-        skewMap = new FastMap();
+        skewMap = new HashMap();
         numStateOrder = searchGraph.getNumStateOrder();
         activeListManager.setNumStateOrder(numStateOrder);
         if (buildWordLattice) {
@@ -439,7 +451,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         activeList.add(new Token(state, currentFrameNumber));
         resultList = new LinkedList();
 
-        bestTokenMap = new FastMap();
+        bestTokenMap = new HashMap();
         growBranches();
         growNonEmittingLists();
         // tokenTracker.setEnabled(false);
@@ -464,7 +476,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         Iterator iterator = activeList.iterator();
         float relativeBeamThreshold = activeList.getBeamThreshold();
         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Frame: " + currentFrameNumber
+            logger.fine("Frame: " + currentFrameNumber 
                     + " thresh : " + relativeBeamThreshold + " bs "
                     + activeList.getBestScore() + " tok "
                     + activeList.getBestToken());
@@ -491,7 +503,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             float bestScore = -Float.MAX_VALUE;
             for (Iterator i = activeList.iterator(); i.hasNext();) {
                 Token t = (Token) i.next();
-                float score = t.getScore() + t.getAcousticScore()
+                float score = t.getScore() + t.getAcousticScore() 
                             * acousticLookaheadFrames;
                 if (score > bestScore) {
                     bestScore = score;
@@ -726,8 +738,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         if (fromState.getOrder() > toState.getOrder()) {
             throw new Error("IllegalState order: from "
                     + fromState.getClass().getName() + " "
-                    + fromState.toPrettyString()
-                    + " order: " + fromState.getOrder()
+                    + fromState.toPrettyString() 
+                    + " order: " + fromState.getOrder() 
                     + " to "
                     + toState.getClass().getName() + " "
                     + toState.toPrettyString()
@@ -963,7 +975,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * expensive operation.
      */
     private void showTokenCount() {
-        Set tokenSet = new FastSet();
+        Set tokenSet = new HashSet();
 
         for (Iterator i = activeList.iterator(); i.hasNext();) {
             Token token = (Token) i.next();
@@ -975,7 +987,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
         System.out.println("Token Lattice size: " + tokenSet.size());
 
-        tokenSet = new FastSet();
+        tokenSet = new HashSet();
 
         for (Iterator i = resultList.iterator(); i.hasNext();) {
             Token token = (Token) i.next();
@@ -1275,7 +1287,7 @@ class WordTracker {
      *                the frame number
      */
     WordTracker(int frameNumber) {
-        statMap = new FastMap();
+        statMap = new HashMap();
         this.frameNumber = frameNumber;
     }
 
@@ -1532,7 +1544,7 @@ class TokenTracker {
      */
     void startFrame() {
         if (enabled) {
-            stateMap = new FastMap();
+            stateMap = new HashMap();
         }
     }
 

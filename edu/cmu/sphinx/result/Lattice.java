@@ -11,17 +11,30 @@
  */
 package edu.cmu.sphinx.result;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
 import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.linguist.WordSearchState;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
-import javolution.util.FastMap;
-import javolution.util.FastSet;
-
-import java.io.*;
-import java.util.*;
 
 /**
  * <p>
@@ -129,16 +142,16 @@ public class Lattice {
      * Create an empty Lattice.
      */
     protected Lattice() {
-        edges = new FastSet();
-        nodes = new FastMap();
+        edges = new HashSet();
+        nodes = new HashMap();
     }
 
     /**
      * Create an empty Lattice.
      */
     public Lattice(LogMath logMath) {
-    this();
-    this.logMath = logMath;
+	this();
+	this.logMath = logMath;
     }
 
     /**
@@ -150,8 +163,8 @@ public class Lattice {
      * @param result the result to convert into a lattice
      */
     public Lattice(Result result) {
-    this(result.getLogMath());
-    visitedWordTokens = new FastSet();
+	this(result.getLogMath());
+	visitedWordTokens = new HashSet();
         loserManager = result.getAlternateHypothesisManager();
         if (loserManager != null) {
             loserManager.purge();
@@ -160,14 +173,14 @@ public class Lattice {
         for (Iterator i = result.getResultTokens().iterator(); i.hasNext();) {
             Token token = (Token) i.next();
             while (token != null && !token.isWord()) {
-        token = token.getPredecessor();
+		token = token.getPredecessor();
             }
             assert token.getWord().isSentenceEndWord();
-        if (terminalNode == null) {
-        terminalNode = new Node(getNodeID(result.getBestToken()),
-                    token.getWord(), -1, -1);
-        addNode(terminalNode);
-        }
+	    if (terminalNode == null) {
+		terminalNode = new Node(getNodeID(result.getBestToken()),
+					token.getWord(), -1, -1);
+		addNode(terminalNode);
+	    }
             collapseWordToken(token);
         }
     }
@@ -186,10 +199,10 @@ public class Lattice {
         }
         Node node = (Node) nodes.get(getNodeID(token));
         if (node == null) {
-        WordSearchState wordState =
-        (WordSearchState) token.getSearchState();
-
-        int startFrame = -1;
+	    WordSearchState wordState = 
+		(WordSearchState) token.getSearchState();
+            
+	    int startFrame = -1;
             int endFrame = -1;
 
             if (wordState.isWordStart()) {
@@ -199,13 +212,13 @@ public class Lattice {
             }
 
             node = new Node(getNodeID(token), token.getWord(),
-                startFrame, endFrame);
+			    startFrame, endFrame);
             addNode(node);
         }
         return node;
     }
 
-
+    
     /**
      * Collapse the given word-ending token. This means collapsing all
      * the unit and HMM tokens that correspond to the word represented
@@ -271,7 +284,7 @@ public class Lattice {
             languageScore += token.getLanguageScore();
             collapseWordPath(parentWordNode, token.getPredecessor(),
                              acousticScore, languageScore);
-
+            
             /* Traverse the path(s) for the loser token(s). */
             if (loserManager != null) {
                 List list = loserManager.getAlternatePredecessors(token);
@@ -382,7 +395,7 @@ public class Lattice {
      */
     public Node addNode(String word, int beginTime, int endTime) {
         Word w = new Word(word, new Pronunciation[0], false);
-    return addNode(w, beginTime, endTime);
+	return addNode(w, beginTime, endTime);
     }
 
     /**
@@ -413,7 +426,7 @@ public class Lattice {
      */
     protected Node addNode(String id, String word, int beginTime, int endTime) {
         Word w = new Word(word, new Pronunciation[0], false);
-    return addNode(id, w, beginTime, endTime);
+	return addNode(id, w, beginTime, endTime);
     }
 
     /**
@@ -424,9 +437,9 @@ public class Lattice {
      * @return the new Node
      */
     protected Node addNode(Token token, int beginTime, int endTime) {
-    assert (token.getSearchState() instanceof WordSearchState);
-    Word word = ((WordSearchState) (token.getSearchState()))
-        .getPronunciation().getWord();
+	assert (token.getSearchState() instanceof WordSearchState);
+	Word word = ((WordSearchState) (token.getSearchState()))
+	    .getPronunciation().getWord();
         return addNode(Integer.toString(token.hashCode()),
                        word, beginTime, endTime);
     }
@@ -729,7 +742,7 @@ public class Lattice {
     public void setLogMath(LogMath logMath) {
         this.logMath = logMath;
     }
-
+    
     /**
      * Dump all paths through this Lattice.  Used for debugging.
      */
@@ -768,7 +781,7 @@ public class Lattice {
         }
         return l;
     }
-
+    
     boolean checkConsistency() {
         for (Iterator i = nodes.values().iterator(); i.hasNext();) {
             Node n = (Node) i.next();
@@ -820,7 +833,7 @@ public class Lattice {
         }
         sorted.add(n);
     }
-
+    
     /**
      * Topologically sort the nodes in this lattice.
      * 
@@ -828,12 +841,12 @@ public class Lattice {
      */
     public List sortNodes() {
         Vector sorted = new Vector(nodes.size());
-        sortHelper(initialNode,sorted,new FastSet());
+        sortHelper(initialNode,sorted,new HashSet());
         Collections.reverse(sorted);
         return sorted;
     }
-
-
+    
+    
     /**
      * Compute the utterance-level posterior for every node in the lattice, 
      * i.e. the probability that this node occurs on any path through the 
@@ -866,14 +879,14 @@ public class Lattice {
      *               the posteriors, ignore the language weight and scores
      */
     public void computeNodePosteriors(float languageModelWeight,
-                                      boolean useAcousticScoresOnly) {
+                                      boolean useAcousticScoresOnly) {      
         //forward
         initialNode.setForwardScore(LogMath.getLogOne());
         initialNode.setViterbiScore(LogMath.getLogOne());
         List sortedNodes = sortNodes();
         assert sortedNodes.get(0) == initialNode;
         ListIterator n = sortedNodes.listIterator();
-        while (n.hasNext()) {
+        while (n.hasNext()) {            
             Node currentNode = (Node)n.next();
             Collection currentEdges = currentNode.getLeavingEdges();
             for (Iterator i = currentEdges.iterator();i.hasNext();) {
@@ -895,7 +908,7 @@ public class Lattice {
                 }
             }
         }
-
+        
         //backward
         terminalNode.setBackwardScore(LogMath.getLogOne());
         assert sortedNodes.get(sortedNodes.size()-1) == terminalNode;
@@ -913,19 +926,19 @@ public class Lattice {
                         (float)edge.getFromNode().getBackwardScore()));
             }
         }
-
+        
         //inner
         double normalizationFactor = terminalNode.getForwardScore();
         for(Iterator i=nodes.values().iterator();i.hasNext();) {
             Node node = (Node)i.next();
-            node.setPosterior((node.getForwardScore() +
+            node.setPosterior((node.getForwardScore() + 
                                node.getBackwardScore()) - normalizationFactor);
         }
     }
 
     /**
      * Retrieves the MAP path from this lattice. Only works once 
-     * computeNodePosteriors has been called.
+	 * computeNodePosteriors has been called.
      * 
      * @return a list of nodes representing the MAP path.
      */
@@ -939,7 +952,7 @@ public class Lattice {
         path.addFirst(initialNode);
         return path;
     }
-
+    
     /**
      * Computes the score of an edge.
      *
@@ -971,7 +984,7 @@ public class Lattice {
         return checkNodesEquivalent(initialNode, other.getInitialNode());
     }
 
-
+    
     /**
      * Returns true if the two lattices starting at the given two nodes
      * are equivalent. It recursively checks all the child nodes until
@@ -990,16 +1003,16 @@ public class Lattice {
             Collection leavingEdges = n1.getCopyOfLeavingEdges();
             Collection leavingEdges2 = n2.getCopyOfLeavingEdges();
 
-            System.out.println("# edges: " + leavingEdges.size() + " " +
+            System.out.println("# edges: " + leavingEdges.size() + " " + 
                                leavingEdges2.size());
 
             for (Iterator i = leavingEdges.iterator(); i.hasNext(); ) {
-
+                
                 Edge edge = (Edge) i.next();
-
+                
                 /* find an equivalent edge from n2 for this edge */
                 Edge e2 = n2.findEquivalentLeavingEdge(edge);
-
+                
                 if (e2 == null) {
                     System.out.println
                         ("Equivalent edge not found, lattices not equivalent.");
@@ -1031,7 +1044,7 @@ public class Lattice {
         return equivalent;
     }
 
-
+     
     /**
      * Self test for Lattices.  Test loading, saving, dynamically creating
      * and optimizing Lattices

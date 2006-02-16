@@ -1,5 +1,8 @@
 package edu.cmu.sphinx.tools.corpusEditor;
 
+import javolution.util.FastMap;
+import javolution.util.FastList;
+
 import javax.swing.*;
 
 /**

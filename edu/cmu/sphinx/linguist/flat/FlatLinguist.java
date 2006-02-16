@@ -10,26 +10,43 @@
  *
  */
 package edu.cmu.sphinx.linguist.flat;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.linguist.SearchGraph;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.SearchStateArc;
-import edu.cmu.sphinx.linguist.acoustic.*;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.HMM;
+import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
+import edu.cmu.sphinx.linguist.acoustic.HMMState;
+import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
+import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
+import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarArc;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
+
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.props.*;
-import javolution.util.FastMap;
-import javolution.util.FastSet;
 
-import java.io.IOException;
-import java.util.*;
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyType;
+import edu.cmu.sphinx.util.props.Registry;
 
 /**
  * A simple form of the linguist. 
@@ -101,7 +118,7 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     public final static boolean PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT = false;
 
-
+    
     /**
      * Sphinx property for the probability of entering the out-of-grammar
      * branch.
@@ -132,10 +149,10 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     public final static double PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT
         = 1.0;
-
+    
     private final static float logOne = LogMath.getLogOne();
-
-
+    
+    
     // ----------------------------------
     // Subcomponents that are configured
     // by the property sheet
@@ -231,7 +248,7 @@ public class FlatLinguist implements Linguist, Configurable {
         grammar = (Grammar) ps.getComponent(PROP_GRAMMAR, Grammar.class);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
                 UnitManager.class);
-
+        
         // get the rest of the configuration data
         logWordInsertionProbability = logMath.linearToLog(ps.getDouble(
                 PROP_WORD_INSERTION_PROBABILITY,
@@ -376,8 +393,8 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     protected Collection compileGrammar() {
         initialGrammarState = grammar.getInitialNode();
-        nodeStateMap = new FastMap();
-        arcPool = new FastMap();
+        nodeStateMap = new HashMap();
+        arcPool = new HashMap();
         List gstateList = new ArrayList();
         Timer.start("compile");
         // get the nodes from the grammar and create states
@@ -472,7 +489,7 @@ public class FlatLinguist implements Linguist, Configurable {
      * @return true if the grammar has changed
      */
     private boolean grammarHasChanged() {
-        return initialGrammarState == null ||
+        return initialGrammarState == null || 
                initialGrammarState != grammar.getInitialNode();
     }
 
@@ -500,8 +517,8 @@ public class FlatLinguist implements Linguist, Configurable {
      *  
      */
     private SentenceHMMStateArc getArc(SentenceHMMState nextState,
-                                       float logAcousticProbability, float logLanguageProbability,
-                                       float logInsertionProbability) {
+            float logAcousticProbability, float logLanguageProbability,
+            float logInsertionProbability) {
         SentenceHMMStateArc arc = new SentenceHMMStateArc(nextState,
                 logAcousticProbability,
                 logLanguageProbability * languageWeight,
@@ -587,12 +604,12 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     protected class GState {
         private GrammarNode node;
-        private Set rightContexts = new FastSet();
-        private Set leftContexts = new FastSet();
+        private Set rightContexts = new HashSet();
+        private Set leftContexts = new HashSet();
         private Set startingContexts;
-        private Map entryPoints = new FastMap();
-        private Map exitPoints = new FastMap();
-        private Map existingStates = new FastMap();
+        private Map entryPoints = new HashMap();
+        private Map exitPoints = new HashMap();
+        private Map existingStates = new HashMap();
         private int exitConnections = 0;
         private GrammarArc[] successors = null;
         /**
@@ -614,7 +631,7 @@ public class FlatLinguist implements Linguist, Configurable {
          */
         private Set getStartingContexts() {
             if (startingContexts == null) {
-                startingContexts = new FastSet();
+                startingContexts = new HashSet();
                 // if this is an empty node, the starting context is
                 // the set of starting contexts for all successor
                 // nodes, otherwise, it is built up from each
@@ -664,7 +681,7 @@ public class FlatLinguist implements Linguist, Configurable {
          *  
          */
         Collection getEndingContexts() {
-            Collection endingContexts = new FastSet();
+            Collection endingContexts = new HashSet();
             if (!node.isEmpty()) {
                 int maxSize = getLeftContextSize();
                 Word word = node.getWord();
@@ -714,7 +731,7 @@ public class FlatLinguist implements Linguist, Configurable {
          */
         void pushLeftContexts() {
             Collection endingContext = getEndingContexts();
-            Set visitedSet = new FastSet();
+            Set visitedSet = new HashSet();
             pushLeftContexts(visitedSet, endingContext);
         }
         /**
@@ -913,7 +930,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * entry points.
          */
         private void addEmptyEntryPoints() {
-            Map emptyEntryPoints = new FastMap();
+            Map emptyEntryPoints = new HashMap();
             for (Iterator i = entryPoints.keySet().iterator(); i.hasNext();) {
                 ContextPair cp = (ContextPair) i.next();
                 if (needsEmptyVersion(cp)) {
@@ -1019,7 +1036,7 @@ public class FlatLinguist implements Linguist, Configurable {
         //      8) Collect the leaf states of the tree and add them to
         //      the exitStates list.
         private void expandPronunciation(UnitContext leftContext,
-                                         Pronunciation pronunciation, int which) {
+                Pronunciation pronunciation, int which) {
             UnitContext startingContext = getStartingContext(pronunciation);
             // Add the pronunciation state to the entry point list
             // (based upon its left and right context)
@@ -1078,8 +1095,8 @@ public class FlatLinguist implements Linguist, Configurable {
          *         onto an already expanded path.
          */
         private SentenceHMMState attachUnit(PronunciationState parent,
-                                            SentenceHMMState tail, Unit[] units, int which,
-                                            UnitContext leftContext, UnitContext rightContext) {
+                SentenceHMMState tail, Unit[] units, int which,
+                UnitContext leftContext, UnitContext rightContext) {
             Unit[] lc = getLC(leftContext, units, which);
             Unit[] rc = getRC(units, which, rightContext);
             UnitContext actualRightContext = UnitContext.get(rc);
@@ -1273,7 +1290,7 @@ public class FlatLinguist implements Linguist, Configurable {
          *                the current unit
          */
         UnitContext generateNextLeftContext(UnitContext prevLeftContext,
-                                            Unit unit) {
+                Unit unit) {
             Unit[] prevUnits = prevLeftContext.getUnits();
             int maxSize = getLeftContextSize();
             int curSize = prevUnits.length;
@@ -1451,8 +1468,8 @@ public class FlatLinguist implements Linguist, Configurable {
          *                log domain
          */
         protected void attachState(SentenceHMMState prevState,
-                                   SentenceHMMState nextState, float logAcousticProbability,
-                                   float logLanguageProbablity, float logInsertionProbablity) {
+                SentenceHMMState nextState, float logAcousticProbability,
+                float logLanguageProbablity, float logInsertionProbablity) {
             prevState.connect(getArc(nextState, logAcousticProbability,
                     logLanguageProbablity, logInsertionProbablity));
             if (showCompilationProgress && totalStateCounter++ % 1000 == 0) {
@@ -1618,7 +1635,7 @@ public class FlatLinguist implements Linguist, Configurable {
  * A class that represents a set of units used as a context
  */
 class UnitContext {
-    private static Map unitContextMap = new FastMap();
+    private static Map unitContextMap = new HashMap();
     private Unit[] context;
     private int hashCode = 12;
     private static int foldedCount = 0;
@@ -1729,7 +1746,7 @@ class UnitContext {
  * the set of starting points for a particular gstate
  */
 class ContextPair {
-    static Map contextPairMap = new FastMap();
+    static Map contextPairMap = new HashMap();
     private UnitContext left;
     private UnitContext right;
     private int hashCode;

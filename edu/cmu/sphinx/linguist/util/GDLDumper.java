@@ -11,7 +11,7 @@
  */
 package edu.cmu.sphinx.linguist.util;
 import java.io.PrintStream;
-
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -28,8 +28,6 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
-import javolution.util.FastList;
-
 /**
  * A linguist processor that dumps out the sentence hmm in GDL format.
  */
@@ -58,7 +56,7 @@ public class GDLDumper extends LinguistDumper {
      * The default value for PROP_DUMP_ARC_LABELS.
      */
     public static final boolean PROP_DUMP_ARC_LABELS_DEFAULT = true;
-
+    
     /**
      * The SphinxProperty to specify the log math
      */
@@ -71,13 +69,13 @@ public class GDLDumper extends LinguistDumper {
     private boolean verticalLayout;
     private boolean dumpArcLabels;
     private LogMath logMath;
-
+    
     /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+     *      edu.cmu.sphinx.util.props.Registry)
+     */
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
@@ -93,8 +91,8 @@ public class GDLDumper extends LinguistDumper {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
-    super.newProperties(ps);
-    verticalLayout = ps.getBoolean(
+	super.newProperties(ps);
+	verticalLayout = ps.getBoolean(
                 PROP_VERTICAL_LAYOUT, PROP_VERTICAL_LAYOUT_DEFAULT);
         skipHMMs = ps.getBoolean(PROP_SKIP_HMMS,
                 PROP_SKIP_HMMS_DEFAULT);
@@ -209,8 +207,8 @@ public class GDLDumper extends LinguistDumper {
      *            the level of the state
      */
     protected void dumpArc(PrintStream out, SearchState from,
-                           SearchStateArc arc, int level) {
-        List arcList = new FastList();
+            SearchStateArc arc, int level) {
+        List arcList = new ArrayList();
 
         if (skipHMMs) {
             if (from instanceof HMMSearchState) {
@@ -255,7 +253,7 @@ public class GDLDumper extends LinguistDumper {
      */
     private void findNextNonHMMArc(SearchStateArc arc, List results) {
         Set visited = new HashSet();
-        List queue = new FastList();
+        List queue = new ArrayList();
         queue.add(arc);
         while (queue.size() > 0) {
             SearchStateArc nextArc = (SearchStateArc) queue.remove(0);
