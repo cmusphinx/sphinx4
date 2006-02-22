@@ -27,7 +27,7 @@ public class Utterance {
     }
 
     Corpus corpus;
-    String pcmFile;
+    String dataFileBase;
     Integer beginTime;
     Integer endTime;
     List<Word> words;
@@ -35,19 +35,27 @@ public class Utterance {
     public Utterance() {
     }
 
-    public Utterance(String pcmFile, int beginTime, int endTime, List<Word> words) {
-        this.pcmFile = pcmFile;
+    public Utterance(String dataFileBase, int beginTime, int endTime, List<Word> words) {
+        this.dataFileBase = dataFileBase;
         this.beginTime = beginTime;
         this.endTime = endTime;
         this.words = words;
     }
 
-    public Utterance(String pcmFile, int beginTime, int endTime) {
-        this(pcmFile, beginTime, endTime, new ArrayList<Word>());
+    public Utterance(String dataFileBase, int beginTime, int endTime) {
+        this(dataFileBase, beginTime, endTime, new ArrayList<Word>());
     }
 
     public String getPcmFile() {
-        return pcmFile;
+        return dataFileBase +".raw";
+    }
+
+    public String getPitchFile() {
+        return dataFileBase +".pitch";
+    }
+
+    public String getEnergyFile() {
+        return dataFileBase +".energy";
     }
 
     public Integer getBeginTime() {
@@ -76,6 +84,6 @@ public class Utterance {
     }
 
     public String toString() {
-        return pcmFile + " " + beginTime + " " + endTime + " " + getTranscript();
+        return dataFileBase + " " + beginTime + " " + endTime + " " + getTranscript();
     }
 }

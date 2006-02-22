@@ -129,7 +129,7 @@ public class CorpusBuilder extends BatchForcedAlignerRecognizer {
     public static final XmlFormat<Utterance> UtteranceXMLFormat = new XmlFormat<Utterance>(Utterance.class) {
 
         public void format(Utterance u, XmlElement xml) {
-            xml.setAttribute("pcmFile", u.pcmFile);
+            xml.setAttribute("dataFileBase", u.dataFileBase);
             xml.setAttribute("beginTime", u.beginTime);
             xml.setAttribute("endTime", u.endTime);
             xml.add(u.words, "words");
@@ -137,7 +137,7 @@ public class CorpusBuilder extends BatchForcedAlignerRecognizer {
 
         public Utterance parse(XmlElement xml) {
             Utterance u = xml.object();
-            u.pcmFile = xml.getAttribute("pcmFile", "");
+            u.dataFileBase = xml.getAttribute("dataFileBase", "");
             u.beginTime = xml.getAttribute("beginTime", -1);
             u.endTime = xml.getAttribute("endTime", -1);
             u.words = xml.get("words");
@@ -212,8 +212,12 @@ public class CorpusBuilder extends BatchForcedAlignerRecognizer {
         logger.info("BatchCTLDecoder: " + utteranceId + " utterances decoded");
     }
 
+    private String stripExtension( String fileName  ) {
+        return fileName.substring(0,fileName.lastIndexOf('.'));
+    }
+
     protected void handleResult(DataOutputStream out, CTLUtterance utt, Result result) throws IOException {
-        Utterance utterance = corpus.newUtterance(utt.getFile(), utt.getStartOffset(), utt.getEndOffset());
+        Utterance utterance = corpus.newUtterance(stripExtension(utt.getFile()), utt.getStartOffset(), utt.getEndOffset());
         addWords(utterance, result.getBestToken(), utterance.getEndTime());
         corpus.addUtterance(utterance);
         System.out.println(utt + " --> " + result);

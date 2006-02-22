@@ -66,10 +66,10 @@ public class Word implements Comparable {
     }
 
     static String hex2Unicode(String hex) {
-        if( hex.startsWith("<") ) return hex;
+        if (hex.startsWith("<")) return hex;
         byte[] bytes = BatchNISTRecognizer.hex2Binary(hex);
         try {
-            return new String( bytes, "GB2312" );
+            return new String(bytes, "GB2312");
         } catch (UnsupportedEncodingException e) {
             throw new Error(e);
         }
@@ -89,27 +89,11 @@ public class Word implements Comparable {
         this.utterance = utterance;
     }
 
-    AudioData getData() {
+    public AudioData getAudio() {
         try {
-            InputStream in = new FileInputStream( utterance.getPcmFile() );
+            short[] pcm = readPcmData();
 
-            int bo = utterance.corpus.time2Offet(beginTime);
-            int eo = utterance.corpus.time2Offet(endTime);
-            int l = eo-bo;
-
-            byte[] buf = new byte[l];
-            in.skip(bo);
-            in.read(buf,0,l);
-
-            DataInputStream din = new DataInputStream( new ByteArrayInputStream( buf ));
-
-            short [] sbuf = new short[l/2];
-
-            for( int i=0; i<l/2; i++ ) {
-                sbuf[i] = din.readShort();
-            }
-
-            return new AudioData(sbuf,utterance.corpus.waveform.samplesPerSecond);
+            return new AudioData(pcm, utterance.corpus.waveform.samplesPerSecond);
 
         } catch (FileNotFoundException e) {
             throw new Error(e);
@@ -118,24 +102,83 @@ public class Word implements Comparable {
         }
     }
 
+    private short[] readPcmData() throws IOException {
+        InputStream in = new FileInputStream(utterance.getPcmFile());
+
+        int bo = utterance.corpus.time2PcmOffet(beginTime);
+        int eo = utterance.corpus.time2PcmOffet(endTime);
+        int l = eo - bo;
+
+        byte[] buf = new byte[l];
+        in.skip(bo);
+        in.read(buf, 0, l);
+
+        DataInputStream din = new DataInputStream(new ByteArrayInputStream(buf));
+
+        short [] sbuf = new short[l / 2];
+
+        for (int i = 0; i < l / 2; i++) {
+            sbuf[i] = din.readShort();
+        }
+        return sbuf;
+    }
+
+    public double [] getPitch() {
+        try {
+            return readAsciiDoubleData(utterance.getPitchFile());
+        } catch (FileNotFoundException e) {
+            throw new Error(e);
+        } catch (IOException e) {
+            throw new Error(e);
+        }
+    }
+
+    public double [] getEnergy() {
+        try {
+            return readAsciiDoubleData(utterance.getEnergyFile());
+        } catch (FileNotFoundException e) {
+            throw new Error(e);
+        } catch (IOException e) {
+            throw new Error(e);
+        }
+    }
+
+    private double[] readAsciiDoubleData(String file) throws IOException {
+        LineNumberReader in = new LineNumberReader(new FileReader(file));
+
+        int bo = utterance.corpus.time2AsciiDoubleLine(beginTime);
+        int eo = utterance.corpus.time2AsciiDoubleLine(endTime);
+
+        double[] buf = new double[eo - bo];
+
+        for (int i = 0; i<bo; i++) {
+            in.readLine();
+        }
+
+        for (int i = 0; i < (eo - bo); i++) {
+            String line = in.readLine();
+            buf[i] = Double.parseDouble(line);
+        }
+        return buf;
+    }
+
     public List<String> getCharacters() {
         String s = spelling;
         List<String> r = new ArrayList();
 
-        if( s.startsWith("<") ) {
+        if (s.startsWith("<")) {
             r.add(s);
-        }
-        else {
-        while( s.length() > 0 ) {
-            String head = s.substring(0,4);
-            s = s.substring(4);
-            r.add(head);
-        }
+        } else {
+            while (s.length() > 0) {
+                String head = s.substring(0, 4);
+                s = s.substring(4);
+                r.add(head);
+            }
         }
         return r;
     }
 
     public int compareTo(Object o) {
-        return spelling.compareTo( ((Word)o).spelling );
+        return spelling.compareTo(((Word) o).spelling);
     }
 }

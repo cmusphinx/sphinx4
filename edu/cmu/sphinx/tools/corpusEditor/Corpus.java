@@ -58,8 +58,8 @@ public class Corpus {
         }
     }
 
-    public Utterance newUtterance(String pcmFile, int beginTime, int endTime) {
-        return new Utterance(pcmFile, beginTime, endTime);
+    public Utterance newUtterance(String dataFileBase, int beginTime, int endTime) {
+        return new Utterance(dataFileBase, beginTime, endTime);
     }
 
 
@@ -138,7 +138,7 @@ public class Corpus {
             l.add(w);
     }
 
-    public int time2Offet(int time) {
+    public int time2PcmOffet(int time) {
         return time * bytesPerMillisecond;
     }
 
@@ -160,5 +160,9 @@ public class Corpus {
 
     public List<Word> phonemeSequence2Words(String phoneme) {
         return phonemeSequence2Words.get(phoneme);
+    }
+
+    int time2AsciiDoubleLine(int time) {
+        return time;
     }
 }
