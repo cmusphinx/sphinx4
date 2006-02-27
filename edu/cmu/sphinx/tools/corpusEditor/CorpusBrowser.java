@@ -210,9 +210,8 @@ public class CorpusBrowser implements TreeSelectionListener {
             System.out.println(word);
 
 
-            final WordBrowser w = new WordBrowser();
+            final WordBrowser w = new WordBrowser(cm,word);
             JFrame f = new JFrame("WordBrowser");
-            w.spectrogram.setWord(cm, word);
 
             f.setContentPane(w.mainPane);
             f.setTitle(word.toString());

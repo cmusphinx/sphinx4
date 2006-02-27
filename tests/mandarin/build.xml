@@ -149,10 +149,10 @@
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/>
 
-            <!-- jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xnoagent"/>
             <jvmarg value="-Djava.compiler=NONE"/>
-            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/ -->
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"/>
 
             <sysproperty key="batchNIST[ctlFile]" value="../../../mandarin/data/rt04f_force.ctl"/>
             <sysproperty key="batchNIST[dataDirectory]" value="../../../mandarin/data"/>
@@ -178,7 +178,7 @@
             <sysproperty key="lexTreeLinguist[languageModel]" value="forcedAlignerGrammar"/>
 
             <arg value="corpus.config.xml"/>
-            <arg value="corpus.xml" />
+            <arg value="../../../mandarin/data/corpus.xml" />
             <arg value="mssong.ttf" />
             
         </java>

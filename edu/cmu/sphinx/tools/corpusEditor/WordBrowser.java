@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -34,19 +36,37 @@ public class WordBrowser {
     private JButton play;
     JPanel mainPane;
     JSlider zoom;
+    Player player;
+    Word word;
 
-            WordBrowser() {
-                    zoom.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent event) {
-                    JSlider slider = (JSlider) event.getSource();
-                    int max = slider.getMaximum();
-                    int min = slider.getMinimum();
-                    int val = slider.getValue();
-                    //double z = Math.pow(100.0,((double)val)/(max-min));
-                    //w.spectrogram.setZoom(z);
-                    spectrogram.setOffset( ((double)val)/(max-min) );
+    WordBrowser( ConfigurationManager cm, Word w ) {
+        this.word = w;
+        player = new Player(word.getAudio());
+
+        zoom.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent event) {
+                JSlider slider = (JSlider) event.getSource();
+                int max = slider.getMaximum();
+                int min = slider.getMinimum();
+                int val = slider.getValue();
+                //double z = Math.pow(100.0,((double)val)/(max-min));
+                //w.spectrogram.setZoom(z);
+                spectrogram.setOffset(((double) val) / (max - min));
+            }
+        });
+
+        play.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                if( player.isPlaying() ) {
+                    player.stop();
                 }
-            });
+                else {
+                    player.start();
+                }
+            }
+        });
+
+        spectrogram.setWord(cm, word);
     }
 
 
@@ -72,16 +92,14 @@ public class WordBrowser {
 
             Word word = words.get(0);
 
-            final WordBrowser w = new WordBrowser();
+            final WordBrowser w = new WordBrowser(cm,word);
             JFrame f = new JFrame("WordBrowser");
-            w.spectrogram.setWord(cm,word);
 
             f.setContentPane(w.mainPane);
             f.pack();
             f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
             f.setVisible(true);
-
 
 
         } catch (MalformedURLException e) {
@@ -91,13 +109,6 @@ public class WordBrowser {
         } catch (IOException e) {
             throw new Error(e);
         }
-    }
-
-    void play( AudioData data ) {
-        /*
-        AudioFileWriter out = new AudioFileWriter()
-        AudioClip ac = Applet.getAudioClip();
-        */
     }
 
 

@@ -55,13 +55,13 @@ public class SpectrogramPanel extends JPanel {
      * The audio data.
      */
     protected AudioData audio;
-    
-    
+
+
     /**
      * The frontEnd (the source of features
      */
     protected FrontEnd frontEnd;
-    
+
     /**
      * The source of audio (the first stage of the frontend)
      */
@@ -77,20 +77,20 @@ public class SpectrogramPanel extends JPanel {
     /**
      * Creates a new SpectrogramPanel for the given AudioData.
      *
-     * @param frontEnd  the front end to use
+     * @param frontEnd   the front end to use
      * @param dataSource the source of audio
-     * @param audioData the AudioData
+     * @param audioData  the AudioData
      */
-    public SpectrogramPanel(FrontEnd frontEnd, 
-            StreamDataSource dataSource,  AudioData audioData) {
+    public SpectrogramPanel(FrontEnd frontEnd,
+                            StreamDataSource dataSource, AudioData audioData) {
         audio = audioData;
         this.frontEnd = frontEnd;
         this.dataSource = dataSource;
-	audio.addChangeListener(new ChangeListener() {
-		public void stateChanged(ChangeEvent event) {
-                    computeSpectrogram();
-                }
-	    });
+        audio.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent event) {
+                computeSpectrogram();
+            }
+        });
     }
 
     /**
@@ -99,7 +99,7 @@ public class SpectrogramPanel extends JPanel {
     protected void computeSpectrogram() {
         try {
             AudioDataInputStream is = new AudioDataInputStream(audio);
-	    dataSource.setInputStream(is, "live audio");
+            dataSource.setInputStream(is, "live audio");
 
             /* Run through all the spectra one at a time and convert
              * them to an log intensity value.
@@ -107,10 +107,10 @@ public class SpectrogramPanel extends JPanel {
             ArrayList intensitiesList = new ArrayList();
             double maxIntensity = Double.MIN_VALUE;
             Data spectrum = frontEnd.getData();
-            
-	    while (!(spectrum instanceof DataEndSignal)) {
+
+            while (!(spectrum instanceof DataEndSignal)) {
                 if (spectrum instanceof DoubleData) {
-                    double[] spectrumData = ((DoubleData)spectrum).getValues();
+                    double[] spectrumData = ((DoubleData) spectrum).getValues();
                     double[] intensities = new double[spectrumData.length];
                     for (int i = 0; i < intensities.length; i++) {
                         /*
@@ -118,14 +118,14 @@ public class SpectrogramPanel extends JPanel {
                          * and purposes, the same as 0.
                          */
                         intensities[i] = Math.max(Math.log(spectrumData[i]),
-                                                  0.0);
+                                0.0);
                         if (intensities[i] > maxIntensity) {
                             maxIntensity = intensities[i];
                         }
                     }
                     intensitiesList.add(intensities);
-		}
-		spectrum = frontEnd.getData();
+                }
+                spectrum = frontEnd.getData();
             }
             is.close();
 
@@ -133,50 +133,50 @@ public class SpectrogramPanel extends JPanel {
             int height = ((double[]) intensitiesList.get(0)).length;
             int maxYIndex = height - 1;
             Dimension d = new Dimension(width, height);
-        
+
             setMinimumSize(d);
-            setMaximumSize(d);        
+            setMaximumSize(d);
             setPreferredSize(d);
 
             /* Create the image for displaying the data.
              */
             spectrogram = new BufferedImage(width,
-                                            height,
-                                            BufferedImage.TYPE_INT_RGB);
-            
+                    height,
+                    BufferedImage.TYPE_INT_RGB);
+
             /* Set scaleFactor so that the maximum value, after removing
-             * the offset, will be 0xff.
-             */
+            * the offset, will be 0xff.
+            */
             double scaleFactor = ((0xff + offsetFactor) / maxIntensity);
-            
-            for (int i = 0; i < width; i++) {                
+
+            for (int i = 0; i < width; i++) {
                 double[] intensities = (double[]) intensitiesList.get(i);
                 for (int j = maxYIndex; j >= 0; j--) {
-                    
+
                     /* Adjust the grey value to make a value of 0 to mean
-                     * white and a value of 0xff to mean black.
-                     */
+                    * white and a value of 0xff to mean black.
+                    */
                     int grey = (int) (intensities[j] * scaleFactor
-                                      - offsetFactor);
+                            - offsetFactor);
                     grey = Math.max(grey, 0);
-                    grey = 0xff - grey; 
-                    
+                    grey = 0xff - grey;
+
                     /* Turn the grey into a pixel value.
-                     */
+                    */
                     int pixel = ((grey << 16) & 0xff0000)
-                        | ((grey << 8) & 0xff00)
-                        | (grey & 0xff);
-                    
+                            | ((grey << 8) & 0xff00)
+                            | (grey & 0xff);
+
                     spectrogram.setRGB(i, maxYIndex - j, pixel);
                 }
             }
-	    ImageFilter scaleFilter = 
-		new ReplicateScaleFilter((int) (zoom * width), height);
-	    scaledSpectrogram = 
-		createImage(new FilteredImageSource(spectrogram.getSource(),
-						    scaleFilter));
-	    Dimension sz = getSize();
-	    repaint(0, 0, 0, sz.width - 1, sz.height - 1);
+            ImageFilter scaleFilter =
+                    new ReplicateScaleFilter((int) (zoom * width), height);
+            scaledSpectrogram =
+                    createImage(new FilteredImageSource(spectrogram.getSource(),
+                            scaleFilter));
+            Dimension sz = getSize();
+            repaint(0, 0, 0, sz.width - 1, sz.height - 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -188,8 +188,8 @@ public class SpectrogramPanel extends JPanel {
      * populates all the greyscale values in the image.
      *
      * @param offsetFactor the offset factor used to calculate the
-     * greyscale values from the intensities; this is used to adjust
-     * the level of background noise that shows up in the image
+     *                     greyscale values from the intensities; this is used to adjust
+     *                     the level of background noise that shows up in the image
      */
     public void setOffsetFactor(double offsetFactor) {
         this.offsetFactor = offsetFactor;
@@ -200,35 +200,35 @@ public class SpectrogramPanel extends JPanel {
      * Zoom the image, preparing for new display.
      */
     protected void zoomSet(float zoom) {
-	this.zoom = zoom;
-	if (spectrogram != null) {
-	    int width = spectrogram.getWidth();
-	    int height = spectrogram.getHeight();
+        this.zoom = zoom;
+        if (spectrogram != null) {
+            int width = spectrogram.getWidth();
+            int height = spectrogram.getHeight();
 
-	    ImageFilter scaleFilter = 
-		new ReplicateScaleFilter((int) (zoom * width), height);
-	    scaledSpectrogram = 
-		createImage(new FilteredImageSource(spectrogram.getSource(),
-						    scaleFilter));
-	    repaint();
-	}
+            ImageFilter scaleFilter =
+                    new ReplicateScaleFilter((int) (zoom * width), height);
+            scaledSpectrogram =
+                    createImage(new FilteredImageSource(spectrogram.getSource(),
+                            scaleFilter));
+            repaint();
+        }
     }
 
-    /** 
+    /**
      * Paint the component.  This will be called by AWT/Swing.
-     * 
+     *
      * @param g The <code>Graphics</code> to draw on.
      */
     public void paint(Graphics g) {
-	/**
-	 * Fill in the whole image with white.
-	 */
-	Dimension sz = getSize();
+        /**
+         * Fill in the whole image with white.
+         */
+        Dimension sz = getSize();
 
-	g.setColor(Color.WHITE);
-	g.fillRect(0, 0, sz.width - 1, sz.height - 1);
-        
-	if(spectrogram != null) {
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, sz.width - 1, sz.height - 1);
+
+        if (spectrogram != null) {
 
             g.drawImage(scaledSpectrogram, 0, 0, (ImageObserver) null);
         }

@@ -90,7 +90,7 @@ public class Utils {
     /**
      * Converts a short into a byte array.
      */
-    static void toBytes(short sVal, byte[] bytes, boolean bigEndian) {
+    public static void toBytes(short sVal, byte[] bytes, boolean bigEndian) {
 	if (bigEndian) {
 	    bytes[0] = (byte) (sVal >> 8);
 	    bytes[1] = (byte) (sVal & 0xff);
