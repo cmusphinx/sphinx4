@@ -126,12 +126,12 @@ public class CorpusBrowser1 implements TreeSelectionListener {
     public void valueChanged(TreeSelectionEvent e) {
         DefaultMutableTreeNode n =  (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
         if( n.getUserObject() instanceof Word ) {
-        Word word = (Word) n.getUserObject();
+            Word word = (Word) n.getUserObject();
 
-        System.out.println(word);
+            System.out.println(word);
 
 
-            final WordBrowser w = new WordBrowser();
+            final WordBrowser w = new WordBrowser(cm,word);
             JFrame f = new JFrame("WordBrowser");
             w.spectrogram.setWord(cm,word);
 
