@@ -7,6 +7,7 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.tools.audio.AudioDataInputStream;
 import edu.cmu.sphinx.tools.audio.SpectrogramPanel;
+import edu.cmu.sphinx.tools.corpus.Word;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 
@@ -49,9 +50,9 @@ public class WordSpectrogramPanel extends SpectrogramPanel {
             frontEnd = (FrontEnd) cm.lookup("spectrogramFrontEnd");
             dataSource = (StreamDataSource) cm.lookup("streamDataSource");
 
-            this.audio = word.getAudio();
-            this.pitch = word.getPitch();
-            this.energy = word.getEnergy();
+            this.audio = word.getRegionOfAudioData().getAudioData();
+            this.pitch = word.getRegionOfAudioData().getPitchData();
+            this.energy = word.getRegionOfAudioData().getEnergyData();
 
             audio.addChangeListener(new ChangeListener() {
                 public void stateChanged(ChangeEvent event) {

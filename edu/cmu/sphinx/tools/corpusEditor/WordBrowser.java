@@ -1,6 +1,7 @@
 package edu.cmu.sphinx.tools.corpusEditor;
 
-import edu.cmu.sphinx.tools.audio.AudioData;
+import edu.cmu.sphinx.tools.corpus.Corpus;
+import edu.cmu.sphinx.tools.corpus.Word;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 
@@ -12,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.FileInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -41,7 +43,7 @@ public class WordBrowser {
 
     WordBrowser( ConfigurationManager cm, Word w ) {
         this.word = w;
-        player = new Player(word.getAudio());
+        player = new Player(word.getRegionOfAudioData().getAudioData());
 
         zoom.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent event) {
@@ -86,7 +88,7 @@ public class WordBrowser {
             URL url = new File(propertiesFile).toURI().toURL();
             ConfigurationManager cm = new ConfigurationManager(url);
 
-            Corpus corpus = CorpusBuilder.readCorpus(corpusFile);
+            Corpus corpus = Corpus.readFromXML( new FileInputStream(corpusFile));
 
             List<Word> words = corpus.getWords(spelling);
 

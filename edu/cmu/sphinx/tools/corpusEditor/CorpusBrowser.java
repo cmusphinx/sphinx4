@@ -2,6 +2,10 @@ package edu.cmu.sphinx.tools.corpusEditor;
 
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.tools.corpus.Corpus;
+import edu.cmu.sphinx.tools.corpus.Utterance;
+import edu.cmu.sphinx.tools.corpus.Word;
+import edu.cmu.sphinx.tools.batch.BatchNISTRecognizer;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -9,10 +13,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.TreeSet;
@@ -80,7 +81,7 @@ public class CorpusBrowser implements TreeSelectionListener {
             URL url = new File(propertiesFile).toURI().toURL();
             ConfigurationManager cm = new ConfigurationManager(url);
 
-            Corpus corpus = CorpusBuilder.readCorpus(corpusFile);
+            Corpus corpus = Corpus.readFromXML( new FileInputStream(corpusFile) );
 
             final CorpusBrowser cb = new CorpusBrowser(fontFile);
             JFrame f = new JFrame("CorpusBrowser");
@@ -141,7 +142,7 @@ public class CorpusBrowser implements TreeSelectionListener {
         DefaultMutableTreeNode wwn = new DefaultMutableTreeNode("Characters");
 
         for (String s : new TreeSet<String>( corpus.getCharacters()) ) {
-            DefaultMutableTreeNode sn = new DefaultMutableTreeNode(Word.hex2Unicode(s));
+            DefaultMutableTreeNode sn = new DefaultMutableTreeNode(hex2Unicode(s));
             for (Word w : new TreeSet<Word>( corpus.character2Words(s) )) {
                 DefaultMutableTreeNode wn = new DefaultMutableTreeNode( w );
                 sn.add(wn);
@@ -161,7 +162,7 @@ public class CorpusBrowser implements TreeSelectionListener {
         DefaultMutableTreeNode wwn = new DefaultMutableTreeNode("Words");
 
         for (String s : new TreeSet<String>(corpus.getSpellings())) {
-            DefaultMutableTreeNode sn = new DefaultMutableTreeNode(Word.hex2Unicode(s));
+            DefaultMutableTreeNode sn = new DefaultMutableTreeNode(hex2Unicode(s));
             for (Word w : corpus.getWords(s)) {
                 DefaultMutableTreeNode wn = new DefaultMutableTreeNode( w );
                 sn.add(wn);
@@ -180,8 +181,8 @@ public class CorpusBrowser implements TreeSelectionListener {
     private void buildUtteranceTree(Corpus corpus) {
         DefaultMutableTreeNode cn = new DefaultMutableTreeNode("Corpus and stuff");
 
-        for (Utterance u : corpus.utterances) {
-            DefaultMutableTreeNode un = new DefaultMutableTreeNode(u.getPcmFile() + " " + u.getBeginTime() + " " + u.getEndTime() + " " + u.getTranscript());
+        for (Utterance u : corpus.getUtterances()) {
+            DefaultMutableTreeNode un = new DefaultMutableTreeNode(u.getRegionOfAudioData().getAudioDatabase().getPcmFileName() + " " + u.getBeginTime() + " " + u.getEndTime() + " " + u.getTranscript());
             for (Word w : u.getWords()) {
                 DefaultMutableTreeNode wn = new DefaultMutableTreeNode( w );
                 un.add(wn);
@@ -282,5 +283,15 @@ public class CorpusBrowser implements TreeSelectionListener {
         offset.setOrientation(1);
         offset.setPaintLabels(false);
         panel4.add(offset, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+    }
+
+    public static String hex2Unicode(String hex) {
+        if (hex.startsWith("<")) return hex;
+        byte[] bytes = BatchNISTRecognizer.hex2Binary(hex);
+        try {
+            return new String(bytes, "GB2312");
+        } catch (UnsupportedEncodingException e) {
+            throw new Error(e);
+        }
     }
 }

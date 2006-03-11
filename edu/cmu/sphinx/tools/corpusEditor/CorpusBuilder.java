@@ -1,16 +1,14 @@
 package edu.cmu.sphinx.tools.corpusEditor;
 
 import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
 import edu.cmu.sphinx.linguist.flat.FlatLinguist;
+import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
+import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.tools.batch.BatchForcedAlignerRecognizer;
+import edu.cmu.sphinx.tools.corpus.*;
 import edu.cmu.sphinx.util.props.*;
 import javolution.util.FastSet;
-import javolution.xml.ObjectReader;
-import javolution.xml.ObjectWriter;
-import javolution.xml.XmlElement;
-import javolution.xml.XmlFormat;
 
 import java.io.*;
 import java.net.URL;
@@ -61,124 +59,24 @@ public class CorpusBuilder extends BatchForcedAlignerRecognizer {
         for (String uid : eu.split(",")) {
             excludedUtterances.add(new Integer(uid));
         }
+        FlatLinguist fl = (FlatLinguist) (recognizer.getDecoder().getSearchManager().getLinguist());
+        String dictionaryFile;
 
-        corpus = new Corpus(
-                ((FastDictionary) ((FlatLinguist) (recognizer.getDecoder().getSearchManager().getLinguist())).getGrammar().getDictionary()).getWordDictionaryFile().getPath(),
-                bitsPerSample, samplesPerSecond, channelCount,
-                "foo.fft",
-                "foo.pitch",
-                "foo.nrg");
+        if( fl.getGrammar().getDictionary() instanceof FullDictionary ) {
+            dictionaryFile = ((FullDictionary)(fl.getGrammar().getDictionary())).getWordDictionaryFile().getPath();
+        }
+        else {
+            dictionaryFile = ((FastDictionary)(fl.getGrammar().getDictionary())).getWordDictionaryFile().getPath();
+        }
+
+        Dictionary dictionary = new Dictionary();
+        dictionary.setDictionaryFile(dictionaryFile);
+
+        corpus = new Corpus();
+        corpus.setDictionary(dictionary);
     }
 
-    public static final XmlFormat<Corpus> CorpusXMLFormat = new XmlFormat<Corpus>(Corpus.class) {
 
-        public void format(Corpus c, XmlElement xml) {
-            xml.add(c.dictionary, "dictionary");
-            xml.add(c.waveform, "waveform");
-            xml.add(c.spectrogram, "spectrogram");
-            xml.add(c.pitch, "pitch");
-            xml.add(c.energy, "energy");
-            xml.add(c.utterances, "utterances");
-        }
-
-        public Corpus parse(XmlElement xml) {
-            Corpus c = xml.object();
-            c.dictionary = xml.get("dictionary");
-            c.waveform = xml.get("waveform");
-            c.spectrogram = xml.get("spectrogram");
-            c.pitch = xml.get("pitch");
-            c.energy = xml.get("energy");
-            c.utterances = xml.get("utterances");
-            return c;
-        }
-
-    };
-
-    public static final XmlFormat<Dictionary> DictionaryXMLFormat = new XmlFormat<Dictionary>(Dictionary.class) {
-
-        public void format(Dictionary d, XmlElement xml) {
-            xml.setAttribute("dictionaryFile", d.dictionaryFile);
-        }
-
-        public Dictionary parse(XmlElement xml) {
-            Dictionary d = xml.object();
-            d.dictionaryFile = xml.getAttribute("dictionaryFile", "");
-            return d;
-        }
-
-    };
-
-    public static final XmlFormat<Waveform> WaveformXMLFormat = new XmlFormat<Waveform>(Waveform.class) {
-
-        public void format(Waveform w, XmlElement xml) {
-            xml.setAttribute("bitsPerSample", w.bitsPerSample);
-            xml.setAttribute("samplesPerSecond", w.samplesPerSecond);
-            xml.setAttribute("channelCount", w.channelCount);
-        }
-
-        public Waveform parse(XmlElement xml) {
-            Waveform w = xml.object();
-            w.bitsPerSample = xml.getAttribute("bitsPerSample", -1);
-            w.samplesPerSecond = xml.getAttribute("samplesPerSecond", -1);
-            w.channelCount = xml.getAttribute("channelCount", -1);
-            return w;
-        }
-
-    };
-
-    public static final XmlFormat<Utterance> UtteranceXMLFormat = new XmlFormat<Utterance>(Utterance.class) {
-
-        public void format(Utterance u, XmlElement xml) {
-            xml.setAttribute("dataFileBase", u.dataFileBase);
-            xml.setAttribute("beginTime", u.beginTime);
-            xml.setAttribute("endTime", u.endTime);
-            xml.add(u.words, "words");
-        }
-
-        public Utterance parse(XmlElement xml) {
-            Utterance u = xml.object();
-            u.dataFileBase = xml.getAttribute("dataFileBase", "");
-            u.beginTime = xml.getAttribute("beginTime", -1);
-            u.endTime = xml.getAttribute("endTime", -1);
-            u.words = xml.get("words");
-            return u;
-        }
-
-    };
-
-    public static final XmlFormat<Word> WordXMLFormat = new XmlFormat<Word>(Word.class) {
-
-        public void format(Word w, XmlElement xml) {
-            xml.setAttribute("isExcluded", w.isExcluded);
-            xml.setAttribute("spelling", w.spelling);
-            xml.setAttribute("beginTime", w.beginTime);
-            xml.setAttribute("endTime", w.endTime);
-        }
-
-        public Word parse(XmlElement xml) {
-            Word w = xml.object();
-            w.isExcluded = xml.getAttribute("isExcluded", false);
-            w.spelling = xml.getAttribute("spelling", "");
-            w.beginTime = xml.getAttribute("beginTime", -1);
-            w.endTime = xml.getAttribute("endTime", -1);
-            return w;
-        }
-
-    };
-
-
-    public static Corpus readCorpus(String corpusFile) throws FileNotFoundException {
-        Corpus c = new ObjectReader<Corpus>().read(new FileInputStream(corpusFile));
-        c.init();
-        return c;
-    }
-
-    static public void writeCorpus(Corpus corpus, String corpusFile) throws IOException {
-
-        ObjectWriter<Corpus> ow = new ObjectWriter<Corpus>();
-        ow.write(corpus, new FileOutputStream(corpusFile));
-
-    }
 
     public void decode() {
 
@@ -217,24 +115,40 @@ public class CorpusBuilder extends BatchForcedAlignerRecognizer {
     }
 
     protected void handleResult(DataOutputStream out, CTLUtterance utt, Result result) throws IOException {
-        Utterance utterance = corpus.newUtterance(stripExtension(utt.getFile()), utt.getStartOffset(), utt.getEndOffset());
-        addWords(utterance, result.getBestToken(), utterance.getEndTime());
+        Utterance utterance = new Utterance();
+        AudioDatabase adb = new PCMFileAudioDatabase();
+        adb.setPcmFileName( utt.getFile() );
+        adb.setBitsPerSample( 16 );
+        adb.setChannelCount( 1 );
+        adb.setSamplesPerSecond( 16000 );
+        RegionOfAudioData rad = new RegionOfAudioData();
+        rad.setBeginTime(utt.getStartOffset());
+        rad.setEndTime(utt.getEndOffset());
+        addWords(utterance, result.getBestToken(), utterance.getEndTime(), adb);
         corpus.addUtterance(utterance);
         System.out.println(utt + " --> " + result);
     }
 
     // add all the lastWord and all the words from this token and before
-    private void addWords(Utterance utterance, Token token, int nextBegin) {
+    private void addWords(Utterance utterance, Token token, int nextBegin, AudioDatabase adb) {
         if (token != null) {
 
             edu.cmu.sphinx.linguist.dictionary.Word word = token.getWord();
             int begin = token.getFrameNumber() + utterance.getBeginTime();
 
-            addWords(utterance, token.getPredecessor(), begin);
+            addWords(utterance, token.getPredecessor(), begin, adb);
 
             if (word != null) {
                 String spelling = word.getSpelling();
-                utterance.addWord(spelling, begin, nextBegin);
+                Word w = new Word();
+                w.setSpelling(spelling);
+                RegionOfAudioData rad = new RegionOfAudioData();
+                rad.setAudioDatabase(adb);
+                rad.setBeginTime( begin );
+                rad.setEndTime( nextBegin );
+                rad.setExcluded( false);
+                w.setRegionOfAudioData(rad);
+                utterance.addWord(w);
                 System.out.println(token.getWord() + " " + begin);
             }
         }
@@ -264,9 +178,9 @@ public class CorpusBuilder extends BatchForcedAlignerRecognizer {
 
             me.decode();
 
-            writeCorpus(me.corpus, "dump.xml");
+            me.corpus.writeToXML( new FileOutputStream("dump.xml") );
 
-            //Corpus c2 = readCorpus( "dump.xml" );
+            Corpus c2 = Corpus.readFromXML( new FileInputStream("dump.xml") );
 
 
         } catch (IOException ioe) {
