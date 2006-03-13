@@ -2,8 +2,6 @@ package edu.cmu.sphinx.tools.corpusEditor;
 
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.linguist.flat.FlatLinguist;
-import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
-import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.tools.batch.BatchForcedAlignerRecognizer;
 import edu.cmu.sphinx.tools.corpus.*;
@@ -62,12 +60,7 @@ public class CorpusBuilder extends BatchForcedAlignerRecognizer {
         FlatLinguist fl = (FlatLinguist) (recognizer.getDecoder().getSearchManager().getLinguist());
         String dictionaryFile;
 
-        if( fl.getGrammar().getDictionary() instanceof FullDictionary ) {
-            dictionaryFile = ((FullDictionary)(fl.getGrammar().getDictionary())).getWordDictionaryFile().getPath();
-        }
-        else {
-            dictionaryFile = ((FastDictionary)(fl.getGrammar().getDictionary())).getWordDictionaryFile().getPath();
-        }
+	dictionaryFile = fl.getGrammar().getDictionary().getWordDictionaryFile().getPath();
 
         Dictionary dictionary = new Dictionary();
         dictionary.setDictionaryFile(dictionaryFile);

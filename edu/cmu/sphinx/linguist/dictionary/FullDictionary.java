@@ -383,6 +383,22 @@ public class FullDictionary implements Dictionary {
     }
 
     /**
+     * Get the word dictionary file
+     * @return the URL of the word dictionary file
+     */
+    public URL getWordDictionaryFile() {
+        return wordDictionaryFile;
+    }
+
+    /**
+     * Get the filler dictionary file
+     * @return the URL of the filler dictionary file
+     */
+    public URL getFillerDictionaryFile() {
+        return fillerDictionaryFile;
+    }
+
+    /**
      * Returns a string representation of this FullDictionary in alphabetical
      * order.
      * 

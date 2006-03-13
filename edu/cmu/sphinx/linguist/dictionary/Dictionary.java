@@ -13,6 +13,7 @@ package edu.cmu.sphinx.linguist.dictionary;
 
 import java.io.IOException;
 import edu.cmu.sphinx.util.props.Configurable;
+import java.net.URL;
 
 /**
  * Provides a generic interface to a dictionary. The dictionary is responsibile
@@ -162,6 +163,20 @@ public interface Dictionary extends Configurable {
      * @return an array (possibly empty) of all filler words
      */
     public Word[] getFillerWords();
+
+    /**
+     * Get the word dictionary file.
+     *
+     * @return the URL of the word dictionary file
+     */
+    public URL getWordDictionaryFile();
+
+    /**
+     * Get the filler dictionary file.
+     *
+     * @return the URL of the filler dictionary file
+     */
+    public URL getFillerDictionaryFile();
 
     /**
      * Allocates the dictionary

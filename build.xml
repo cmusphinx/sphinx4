@@ -95,7 +95,6 @@
                 excludes="edu/cmu/sphinx/research/distributed/**,
 		edu/cmu/sphinx/research/bushderby/**,
                 edu/cmu/sphinx/trainer/**,
-                edu/cmu/sphinx/tools/corpusEditor/**,
                 edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**"
                 />
 
@@ -105,7 +104,6 @@
                 edu/cmu/sphinx/research/distributed/**,
                 edu/cmu/sphinx/research/bushderby/**,
                 edu/cmu/sphinx/trainer/**,
-                edu/cmu/sphinx/tools/corpusEditor/**,
                 edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**,
                 "/>
 
@@ -114,7 +112,6 @@
 	        excludes="com/**,
                 edu/cmu/sphinx/research/**,
                 edu/cmu/sphinx/trainer/**,
-                edu/cmu/sphinx/tools/corpusEditor/**,
                 edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**,
                 edu/cmu/sphinx/tools/tags/**,
                 edu/cmu/sphinx/jsapi/**"/>
