@@ -41,7 +41,7 @@ count=0;
 
 while ((!$success)); do
 # checkout the source
-if scvs checkout sphinx4
+if ssvn sphinx4
 then
 success=1;
 else

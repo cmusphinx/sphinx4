@@ -12,9 +12,9 @@
 # back into source control
 
 
-logBase=regression.log
+logBase=sphinx4/tests/regression/regression.log
 interimLog=interim.log
 
-scvs update $logBase
+scvs checkout $logBase
 cat $interimLog >> $logBase
 scvs commit -m "regression_test" $logBase

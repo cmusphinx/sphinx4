@@ -6,17 +6,21 @@ Here are some simple instructions.
 Requirements:
 
   - Usual set of gnu/unix tools (gawk/perl/cvs/mailx) must be in your path
-  - a script called 'scvs' in your path that points to the sourcecode
+  - scripts called scvs and ssvn in your path that points to the sourcecode
     repository.  A typical implementation of scvs would look like
     this:
 
   export CVS_RSH='/usr/dist/exe/ssh' 
   cvs -z3 -d:ext:lamere@cvs.cmusphinx.sourceforge.net:/cvsroot/cmusphinx $*
 
+    Look at other examples of ssvn and scvs under sphinx4/scripts
+
     Since the regression tests access the repository, you will need to setup 
     your public keys properly so that no password is required to checkin or
     checkout. For more details, check
     http://sourceforge.net/docman/display_doc.php?docid=761&group_id=1
+
+    For retrieving the code, svn does not require a public key.
 
  - To add or remove a test from the regression tests, edit the
    'runAllTests' script
