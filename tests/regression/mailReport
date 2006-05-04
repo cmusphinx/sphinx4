@@ -18,5 +18,5 @@
 
 recipients="cmusphinx-results@lists.sourceforge.net"
 #recipients="Paul.Lamere@sun.com"
-./makeReport < regression.log | mailx -s "S4 regression test report" $recipients
+./makeReport < sphinx4/tests/regression/regression.log | mailx -s "S4 regression test report" $recipients
 

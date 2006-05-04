@@ -61,7 +61,7 @@ cvs_history - collects the cvs history
 debris_weekly_test_schedule.crontab - weekly schedule for debris.
 dummyTests - a set of dummy tets
 executeRegressionTest - the main test program
-finalizeLog - updates the regression.log file and upload it to the cvs tree.
+finalizeLog - updates the sphinx4/tests/regression/regression.log file and upload it to the cvs tree.
 getHostname - gets the current hostname, up to the first dot
 getTime  - gets the time in seconds since the epoch
 mailReport - mails a summary report to the mailing list
@@ -71,13 +71,13 @@ makeTestReports - creates all detailed and summary reports
 makeTestSummaryReport - creates the summary test tables 
 makeWebpage - creates the regression_report summary web page
 mangueira_weekly_test_schedule.crontab - crontab entries for mangueira
-parseS4Output - generates a regression.log entry from s4 output
+parseS4Output - generates a sphinx4/tests/regression/regression.log entry from s4 output
 profile - example ".profile" to be placed in the user's home directory.
 pushAllTestReports - publishes all test reports to the web
 pushChanges - publishes the 'what has changed' pages to the web
 pushReport - publishes the regression report summary web page
 pushTestReports - pushes a set of test reports to the web
-regression.log - the test log database
+sphinx4/tests/regression/regression.log - the test log database
 regressionTest - the toplevel test, performs minimal work then calls
 executeRegressionTest
 runTest - runs a single test
@@ -93,7 +93,7 @@ runTests_tuesday - runs a set of tests
 runTests_wednesday - runs a set of tests
 s4_align - prepares log files to run NIST's align
 s4_align_sum - runs and extracts the relevant info from NIST's align program.
-updateLog - updates the regression.log in CVS
+updateLog - updates the sphinx4/tests/regression/regression.log in CVS
 updateTestReport - updates the test pages without running experiments
 waitForFile - waits for the current file to appear
 whatsNew - generates the 'what has changed' web pages

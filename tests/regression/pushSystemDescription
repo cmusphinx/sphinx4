@@ -23,7 +23,7 @@ hostName=`./getHostname`
 
 systemName=system_description_$hostName.html
 
-./makeSystempage < regression.log > $systemName
+./makeSystempage < sphinx4/tests/regression/regression.log > $systemName
 sscp $systemName
 sshh mv $systemName /home/groups/c/cm/cmusphinx/htdocs
 

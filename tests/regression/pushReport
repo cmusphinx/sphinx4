@@ -23,6 +23,6 @@ hostName=`./getHostname`
 
 reportName=regression_report_$hostName.html
 
-./makeWebpage < regression.log > $reportName
+./makeWebpage < sphinx4/tests/regression/regression.log > $reportName
 sscp $reportName
 sshh mv $reportName /home/groups/c/cm/cmusphinx/htdocs

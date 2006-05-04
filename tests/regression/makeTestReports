@@ -13,7 +13,7 @@
 #
 # usage: makeTestReports testName
 
-log=regression.log
+log=sphinx4/tests/regression/regression.log
 
 # the 'dots' in the hostname can mess things up for the twik so
 # lets just use the left most name
