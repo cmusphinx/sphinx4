@@ -52,7 +52,7 @@ WARRANTIES.
 	  <li><a href="http://sourceforge.net/projects/cmusphinx">Project Page</a>
           <li><a href="https://sourceforge.net/forum/?group_id=1904">Forums</a>
           <li><a href="http://sourceforge.net/project/showfiles.php?group_id=1904&package_id=117949">Download</a>
-          <li><a href="http://sourceforge.net/cvs/?group_id=1904">CVS Repository</a>
+          <li><a href="http://sourceforge.net/svn/?group_id=1904">SVN Repository</a>
 	  <p>
 	  <a href="http://cmusphinx.org">CMU Sphinx</a>
 	  </p>
@@ -127,7 +127,7 @@ WARRANTIES.
 	       <li><a href="#an4_walkthrough">Example: Setting up AN4 tests</a>
 	    </ul>
 	</li>
-	<li><a href="#acoustic_models">Acoustic Model Package</a></li>
+	<li><a href="#acoustic_models">Creating and using Acoustic Model Package</a></li>
 	<li><a href="#language_models">Creating Language Models</a></li>
 	<li><a href="#bnf_grammars">BNF Style Grammars</a></li>
         <li><a href="#architecture_and_api1">Architecture and API</a></li>
@@ -396,14 +396,14 @@ This data was collected on a dual CPU UltraSPARC(R)-III running at 1015 MHz with
   distribution.</li>
 
   <br>
-  <li> <b>CVS</b> and <b>SSH</b>, but only if you want to interact directly
-  with the cvs tree (which we recommend). The canonical places to get them 
-  are <a href="http://www.cvshome.org">www.cvshome.org</a> and
-  <a href="http://openssh.org">openssh.org</a>. If you are using Windows,
-  your best choice is to install <a
+  <li> <b>Subversion (svn)</b>, but only if you want to interact directly
+  with the svn tree (which we recommend). The canonical places to get
+  it is <a
+  href="http://subversion.tigris.org/">subversion.tigris.org</a>. If
+  you are using Windows, your best choice is to install <a
   href="http://cygwin.com">cygwin</a>, which will give you a
   linux-like environment in a command prompt window. Make sure to
-  choose "ssh" and "cvs" when you install cygwin.
+  choose "svn" when you install cygwin.
   </li>
 </ul>
 
@@ -457,35 +457,21 @@ jar xvf sphinx4-{version}-src.zip</pre>
 
       </li>
 
-      <li><a name="cvs"><b>Instructions for retrieving code from the cvs trees</b></a>
-      <p>If you want to be able to get the latest updates from the CVS source
-         tree, you should retrieve the code from the CVS source tree on
-	 SourceForge. The Sphinx-4 code is located at 
-	 <a href="http://sourceforge.net/projects/cmusphinx">sourceforge.net
-	 </a> as open source. Please follow the instructions below to retrieve
-	 it.</p>
-          <ul>
-	  <li>Make sure that you set the environment variable CVS_RSH to
-	      ssh. See the <a href="#troubleshooting">troubleshooting</a>
-	      section for more details.
-	  </li>
+      <li><a name="cvs"><b>Instructions for retrieving code from the svn repository</b></a>
 
-	  <li>Get the code from sourceforge.net. If you are a developer in the
-	      cmusphinx project, then do (assuming you use bash shell):
+      <p>If you want to be able to get the latest updates from the svn
+      repository, you should retrieve the code from the repository on
+      SourceForge. The Sphinx-4 code is located at <a
+      href="http://sourceforge.net/projects/cmusphinx">sourceforge.net
+      </a> as open source. Please follow the instructions below to
+      retrieve it.</p>
+
+          <ul>
+	  <li>Get the code from sourceforge.net:
 <pre>
-% export CVS_RSH=ssh
-% cvs -z3 -d:ext:<i>developername</i>@cvs.sourceforge.net:/cvsroot/cmusphinx co sphinx4
+% svn co https://cmusphinx.svn.sourceforge.net/svnroot/cmusphinx/trunk/sphinx4
 </pre>
-              where <i>developername</i> is your sourceforge developer name.
 	  </li>
-	  <li>If you are not a developer, you have to get the code
-	  anonymously. When prompted for a password, simply hit
-	  &lt;ENTER&gt;:
-	    <pre>
-% cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx login
-% cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/cmusphinx co sphinx4
-</pre>
-      </li>
     </ul>
     </li>
 
@@ -497,7 +483,7 @@ jar xvf sphinx4-{version}-src.zip</pre>
       <p>
       Since the sphinx4-{version}-bin.zip distribution does not contain
       the source code, you must download the sphinx4-{version}-src.zip, or
-      retrieved the code from SourceForge using CVS, in order to be able to
+      retrieved the code from SourceForge using svn, in order to be able to
       build from the sources. The software required for building Sphinx-4 are 
       listed in the <a href="#download_and_install">Required Software</a> 
       section.
@@ -574,37 +560,19 @@ javadocs, go to the top level directory ("sphinx4-{version}"), and type:
 
   <br>  
 
-  <li>How can I update the code in the current working copy that I have?
+  <li>How can I update the code in my current working copy?
     <ul>
 
-      <li>If you are using CVS, you can do a "cvs update -d". The
-      switch "-d" will also get new directories or files that have
-      been added to the cvs module since the last time you
-      downloaded.</li>
+      <li>If you are using svn, you can do a "svn up".</li>
     </ul>
   </li>
 
   <br>
 
-  <li>I always get a "timeout" message when I try to download/update
-  the cvs tree.
+  <li>I get a "timeout" message when I try to download/update
+  the svn repository.
     <ul>
-      <li>Make sure you defined the CVS_RSH environment variable as
-      'ssh'. If ssh is not on your path, make sure you specify the
-      full path. For the different versions of OS, do:
-        <ul>
-          <li>
-            Unix (t)csh: <code>setenv CVS_RSH ssh</code>
-
-          </li>
-          <li>
-            Unix (ba)sh: <code>export CVS_RSH='/usr/local/bin/ssh'</code>
-          </li>
-          <li>
-            Windows/cygwin: <code>export CVS_RSH='ssh'</code>
-          </li>
-        </ul>
-
+      <li>Sometimes the servers at SourceForge.net are very busy. There's no way around it: just try again. svn will take up where it left off in the previous attempt.
       </li>
     </ul>
   </li>
@@ -614,13 +582,13 @@ javadocs, go to the top level directory ("sphinx4-{version}"), and type:
   <li><a name="cygwin">What are the limitations/hacks if I am using
   cygwin?</a></li>
   <ul>
-    <li>Make sure that you install "ssh" and "cvs" when you install
+    <li>Make sure that you install "svn" when you install
     cygwin. If you do not want to go through the list of packages
     trying to decide what you need, installing everything is a good
     solution.
     </li>
     <li>Cygwin does not define a home directory, which is used by
-    cvs. You have to explicitly define it. You are better off creating
+    svn. You have to explicitly define it. You are better off creating
     an environment variable HOME, which will be used by every cygwin
     window that you open. Follow the instructions below to create this
     variable on Windows 2000.
@@ -685,7 +653,7 @@ d:\work\sphinx4&gt;ant clean
   Sphinx-4 contains a number of demo programs. If you downloaded the
   binary distribution (sphinx4-{version}-bin.zip), the JAR files of the demos
   are already built, so you can just run them directly. However, if you
-  downloaded the source distribution (sphinx4-{version}-src.zip or via CVS),
+  downloaded the source distribution (sphinx4-{version}-src.zip or via svn),
   you need to build the demos. Click on the links below for instructions on
   how to build and run the demos.
     <ul>
@@ -800,7 +768,7 @@ d:\work\sphinx4&gt;ant clean
   <p>
   Sphinx-4 contains a number of regression tests using common speech databases.
   Again, you have to download the source distribution or downloaded the
-  source tree using CVS in order to get the regression tests directory.
+  source tree using svn in order to get the regression tests directory.
   The regression tests we have are:
   </p>
   <ul>
@@ -1206,6 +1174,16 @@ CODE
 
 
 <li><a name="acoustic_models"><b>Acoustic Models</b></a>
+
+<p>
+Currently, Sphinx-4 uses models created with SphinxTrain, also
+available at <a
+href="http://cmusphinx.org">cmusphinx.org</a>. SphinxTrain generates
+acoustic models in the format used by Sphinx-3. To create a package as
+used by Sphinx-4, please check the page about <a
+href="http://cmusphinx.sourceforge.net/sphinx4/doc/UsingSphinxTrainModels.html">using
+SphinxTrain models</a>.
+</p>
 
 <p>
 The two main acoustic models that are used by Sphinx-4, TIDIGITS and

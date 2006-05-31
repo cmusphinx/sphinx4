@@ -11,6 +11,8 @@ See the file "license.terms" for information on usage and
 redistribution of this file, and for a DISCLAIMER OF ALL 
 WARRANTIES.
 
+This file was contributed by Angelo Romano.
+
 -->
 
 <html>
@@ -20,33 +22,326 @@ WARRANTIES.
       pre { font-size: medium; background: #f0f8ff; padding: 2mm; border-style: ridge ; color: teal}
       code {font-size: medium; font-weight: bold; color: teal}
       s4keyword { color: red; font-weight: bold }
-    </STYLE></head>
+    </STYLE>
+  </head>
 
   <body>
     <center>
       <table bgcolor="#99CBFF" border="0" width="100%">
-
         <tbody>
           <tr>
             <td align="center" width="100%">
-              <center><h1><i>Sphinx-4</i> Setup on <i>NetBeans</i><br><font size="+1">
-              </h1></center>
+              <center><h1><i>Sphinx-4</i> Setup on <i>NetBeans</i><br><font size="+1"></h1></center>
             </td>
           </tr>
         </tbody>
       </table>
     </center>
+
     <font face="Arial" size="2">
 
-<center>
-<p>This is a placeholder for instructions on how to use Sphinx-4 with
-NetBeans.
-</p>
+      <h2>Installation</h2>
 
-<p>If you would like to volunteer to write the instructions, or
-already have them and would like to share, please contact the Sphinx-4
-team via the <a href="http://cmusphinx.org">project page</a>.
-</p>
-</center>
+      <ul>
+
+        <li><a name="download_and_install"><b>Required Software</b></a>
+
+          <p>
+            Sphinx-4 has been built and tested on the
+            Solaris<sup><font size="-1">TM</font></sup> Operating
+            Environment, Mac OS X, Linux and Win32 operating
+            systems. Running, building, testing, and debugging
+            Sphinx-4 using NetBeans requires additional
+            software. Before you start, you will need the following
+            software available on your machine.
+          </p>
+
+          <ul>
+            <li><b>Java 2 SDK, Standard Edition, v1.4.2</b> or better.  Go
+              to <a href="http://java.sun.com">java.sun.com</a>, and select
+              "J2SE". At the time of writing, the latest release version is
+              1.5 (a.k.a. 5.0), which is the one we recommend.
+            </li>
+
+            <br>
+              <li><b>NetBeans IDE 4.0</b> or better, available at <a
+              href="http://www.netbeans.org/">www.netbeans.org</a>. The
+              current documentation was written based on <b>NetBeans
+              IDE 4.1</b>. If you are using other version, some of the
+              options may not be exactly as described here, but
+              semantically similar. The site has documentation that
+              includes various user guides. You will need to install
+              the <b>Java 2 SDK, Standard Edition</b> before
+              installing <b>NetBeans</b> IDE. Or else, you will need
+              to specify the path to the <b>Java 2 SDK, Standard
+              Edition</b> within <b>NetBeans</b>. You may want to
+              choose the bundled package already containing the Java 2
+              SDK and NetBeans.
+              </li>
+
+          </ul>
+        </li>
+
+        <br>
+
+          <li><a name="how_build"><b>Building Sphinx-4 using NetBeans</b></a>
+
+            <p>The software required for building Sphinx-4 using
+            NetBeans are listed in the <a
+            href="#download_and_install">Required Software</a>
+            section. The following sections document one way and
+            perhaps, the simplest way, of setting up Sphinx-4 in
+            NetBeans. However, there are other possible ways to set up
+            Sphinx-4 in NetBeans as well that are not covered in the
+            following sections. For instance, the following
+            instructions assume that the code will be downloaded from
+            the CVS repository. If the code was downloaded from the
+            release distributions, the steps change a little, but they
+            should be easy to figure out given these instructions.
+            </p>
+
+            <p><b>Start NetBeans</b></p>
+
+            <p>Start NetBeans by either double-clicking on the
+            NetBeans icon or through a command line. Select
+            <code>Versioning-> CVS-> Check out...</code> from the
+            <code>File</code> menu.<br>This will pop a <code>Enabling
+            Advanced VCS Command Options</code> window. Click
+            <code>Check out...</code> button, pressing CTRL while
+            clicking.
+            </p>
+
+            <p><b>Setting up a CVS Checkout & Import in Versioning</b></p>
+
+            <ul>
+
+              <li>
+                Enter a workspace folder in the <code>Working Directory</code> field.
+              </li>
+
+              <li>
+                Select <code>pserver</code> in the <code>CVS Server Type</code> field.
+              </li>
+
+              <li>
+                Enter <code>cmusphinx.cvs.sourceforge.net</code> in the <code>CVS Server Name</code> field.
+              </li>
+
+              <li>
+                Leave the default port (usually 2401) in the <code>Port</code> field.
+              </li>
+
+              <li>
+                Enter <code>anonymous</code> in the <code>User Name</code> field if you are not a developer in the cmusphinx project, or your SourceForge username, if you are a developer.
+              </li>
+
+              <li>
+                Enter <code>/cvsroot/cmusphinx</code> in the <code>Repository Path</code> field.
+              </li>
+
+              <li>
+                Select <code>Use Built-In CVS Client</code> option, if you are not a <code>developer</code> or select <code>Use Built-In CVS Client</code> and enter <code>extssh</code> in the <code>Remote Shell</code> field, if you are a developer.
+              </li>
+
+              <li>
+                Leave the <code>Password</code> field blank.
+              </li>
+
+              <li>
+                Select <code>Module(s)</code> and enter <code>sphinx4</code> in the <code>Module(s)</code> field.
+              </li>
+
+              <li>
+                Leave the <code>Revision or Tag</code> field blank.
+              </li>
+
+              <li>
+                Leave the <code>Date</code> field blank.
+              </li>
+
+              <li>
+                Click on <code>Force a Head Revision Match if Tag/Date not found</code>.
+              </li>
+
+              <li>
+                Click on <code>OK</code> button. This will pop a <code>VCS Output</code> window with an active tab <code>Check Out...</code>.
+              </li>
+            </ul>
+
+            <p><b>Creating a project from CVS Resource</b></p>
+
+            <ul>
+              <li>
+                Select <code>New Project...</code> from the <code>File</code> menu. This will pop a <code>New Project</code> window.
+              </li>
+
+              <li>
+                Select <code>General</code> in <code>Categories</code> and after choose a <code>Java Project with Existing Ant Script</code>.
+              </li>
+
+              <li>
+                Click on <code>Next</code> button. This will pop a <code>New Java Project with Existing Ant Script</code> window.
+              </li>
+
+              <li>
+                For <code>Location</code> browse to the <code>workspace folder</code> previously specified. If you browsed to the correct folder, all remained blank form will be filled automatically.
+              </li>
+
+              <li>
+                Click on <code>Set as Main Project</code>. Click on <code>Next</code> button. This will show <code>Build and Run Actions</code> tab.
+              </li>
+
+              <li>
+                If you followed correctly upper instructions, first three forms will be filled according to theirs label names.  Click on <code>Next</code> button. This will show <code>Source Package Folders</code> tab.
+              </li>
+
+              <li>
+                Click on <code>Add Folder...</code> button for <code>Source Package Folders</code> and select <code>lib</code> folder. Add <code>com</code> and <code>edu</code> folder following same operations, then press <code>OK</code>.
+              </li>
+
+              <li>
+                Click on <code>Add Folder...</code> button for <code>Test Package Folders</code> and select <code>tests</code> folder. Add <code>demo</code> folder following same operations, then press <code>OK</code>.
+              </li>
+
+              <li>
+                Select <code>JDK 1.4</code> in the <code>Source level</code> field. Click on <code>Next</code> button. This will show <code>Java Sources Classpath</code> tab.
+              </li>
+
+              <li>
+                Click on <code>Finish</code> button.
+              </li>
+            </ul>
+
+            <p>
+              <b>Setup JSAPI 1.0</b>
+            </p>
+
+            <p>
+              Before you build Sphinx-4, it is important to <a href="http://cmusphinx.sourceforge.net/sphinx4/doc/jsapi_setup.html">setup your environment to support the Java Speech API (JSAPI)</a>, because a number of tests and demos rely on having JSAPI installed.
+            </p>
+
+            <p>
+              <b>Add JSAPI 1.0 as a jar to the NetBeans Project</b>
+            </p>
+
+            <p>
+              While the previous step sets up a <code>jsapi.jar</code> file in the <code>lib</code> directory, this steps makes <code>jsapi.jar</code> visible within the NetBeans Project. Note that in the instructions that follow, we assume that the project name is <code>sphinx4</code>. We named it while creating a project under NetBeans earlier.
+            </p>
+
+            <ul>
+              <li>
+                Select <code>Projects</code> from the <code>Window</code> menu.
+              </li>
+
+              <li>
+                Select <code>Properties</code> by right-clicking on Sphinx-4 project.
+              </li>
+
+              <li>
+                Select <code>Java Sources Classpath</code> option in the left column. This will show up the <code>Java Sources Classpath</code> on the right hand side of the window.
+              </li>
+
+              <li>
+                Click on the <code>Libraries</code> tab and then, click on <code>Add JAR/Folder...</code> button. This will pop a browsing window.
+              </li>
+
+              <li>
+                Select <code>jsapi.jar</code> by navigating to <code>lib</code> directory, and then click <code>Open</code> button on the browsing window.
+              </li>
+
+              <li>
+                Next, click on <code>OK</code> button. This will add <code>jsapi.jar</code> as a jar to the NetBeans Project.
+              </li>
+            </ul>
+
+            <p>
+              <b>Add Sphinx-4 specific jars as jars to the NetBeans Project</b>
+            </p>
+
+            <p>
+              This step makes the <code>TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code>, <code>WSJ_8gau_13dCep_8k_31mel_200Hz_3500Hz.jar</code>, and <code>WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code> in the <code>lib</code> directories visible within the NetBeans Project.
+            </p>
+
+            <ul>
+              <li>
+                Select <code>Properties</code> from the <code>Project</code> menu. This will pop a <code>Project Properties - Sphinx-4</code> window.
+              </li>
+
+              <li>
+                Select <code>Java Sources Classpath</code> option in the left column. This will show up the <code>Java Sources Classpath</code> on the right hand side of the window.
+              </li>
+
+              <li>
+                Click on <code>Add JAR/Folder...</code> button. This will pop a browsing window.
+              </li>
+
+              <li>
+                Select <code>TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code> by navigating to <code>lib</code> directory, and then click <code>Open</code> button on the browsing window.
+              </li>
+
+              <li>
+                Select <code>WSJ_8gau_13dCep_8k_31mel_200Hz_3500Hz.jar</code> by navigating to <code>lib</code> directory, and then click <code>Open</code> button on the browsing window.
+              </li>
+
+              <li>
+                Select <code>WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</code> by navigating to <code>lib</code> directory, and then click <code>Open</code> button on the browsing window.
+              </li>
+
+              <li>
+                Next, click on <code>OK</code> button on the <code>Project Properties - Sphinx-4</code> window. This will add these jar files as jars to the NetBeans Project.
+              </li>
+
+              <li>
+                At this point, you should be able to run and debug applications such as demo.sphinx.hellodigits using NetBeans.
+              </li>
+            </ul>
+            <br>
+          </li>
+
+          <li>
+            <b>Run or Debug Sphinx-4</b>
+
+            <p>
+              In this step, we provide instructions to run Sphinx-4 demos and tests using NetBeans.
+            </p>
+
+            <p><b>Running Sphinx-4 Demos</b></p>
+
+            <ul>
+              <li>
+                Select <code>Projects</code> from the <code>Window</code> menu.
+              </li>
+
+              <li>
+                Double-click on <code>demo</code> folder and double-click on a demo package (<em>e.g.</em> <code>sphinx.helloworld</code>).
+              </li>
+
+              <li>
+                Right-click the <code>build.xml</code> file and select <code>Run target-> run</code>.
+              </li>
+
+              <p>
+                Copy and paste the <code>build.xml</code> file in the others demo packages and modify it, changing appropriately the parameters (<em>e.g.</em> <code>location</code> under <code>pathelement</code>, <code>classname</code> and <code>maxmemory</code> under <code>java</code>).<br>This is not best procedure, but the fastest I know to run other demos.
+              </p>
+            </ul>
+
+            <p><b>Running Sphinx-4 Tests</b></p>
+
+            <ul>
+              <li>
+                Select <code>Projects</code> from the <code>Window</code> menu.
+              </li>
+
+              <li>
+                Double-click on <code>tests</code> folder and double-click on a test package (<em>e.g.</em> <code>live</code>).
+              </li>
+
+              <li>
+                Right-click the <code>build.xml</code> file and select <code>Run target-></code> (<em>e.g.</em> <code>live</code> to run test or <code>live -ep</code> to run it with endpointer).
+              </li>
+            </ul>
+
+          </li>
+
   </body>
 </html>
