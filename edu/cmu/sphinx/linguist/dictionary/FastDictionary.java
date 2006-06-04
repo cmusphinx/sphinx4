@@ -98,25 +98,25 @@ public class FastDictionary implements Dictionary {
     // Configuration data
     // --------------------------------
     private String name;
-    private Logger logger;
+    protected Logger logger;
     private boolean addSilEndingPronunciation;
     private boolean allowMissingWords;
     private boolean createMissingWords;
     private String wordReplacement;
-    private URL wordDictionaryFile;
-    private URL fillerDictionaryFile;
-    private List addendaUrlList;
+    protected URL wordDictionaryFile;
+    protected URL fillerDictionaryFile;
+    protected List addendaUrlList;
 
     private UnitManager unitManager;
 
     // -------------------------------
     // working data
     // -------------------------------
-    private Map dictionary;
+    protected Map dictionary;
 
     private final static String FILLER_TAG = "-F-";
-    private Set fillerWords;
-    private boolean allocated;
+    protected Set fillerWords;
+    protected boolean allocated;
 
     /*
      * (non-Javadoc)
@@ -242,7 +242,7 @@ public void deallocate() {
      * @throws java.io.IOException
      *                 if there is an error reading the dictionary
      */
-    private void loadDictionary(InputStream inputStream, boolean isFillerDict)
+    protected void loadDictionary(InputStream inputStream, boolean isFillerDict)
             throws IOException {
         InputStreamReader isr = new InputStreamReader(inputStream);
         BufferedReader br = new BufferedReader(isr);

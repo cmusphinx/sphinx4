@@ -31,7 +31,7 @@ import edu.cmu.sphinx.util.Utilities;
  * format. Language Probabilties in the language model file are stored in log
  * 10 base. They are converted to the LogMath logbase.
  */
-class BinaryLoader {
+public class BinaryLoader {
     private static final String DARPA_LM_HEADER = "Darpa Trigram LM";
     private static final int LOG2_BIGRAM_SEGMENT_SIZE_DEFAULT = 9;
     private static final float MIN_PROBABILITY = -99.0f;

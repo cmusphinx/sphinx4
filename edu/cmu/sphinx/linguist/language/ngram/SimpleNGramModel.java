@@ -64,9 +64,9 @@ public class SimpleNGramModel implements LanguageModel {
     private int maxNGram = 0;
     private Map map;
     private Set vocabulary;
-    private int lineNumber;
-    private BufferedReader reader;
-    private String fileName;
+    protected int lineNumber;
+    protected BufferedReader reader;
+    protected String fileName;
     private boolean allocated = false;
 
     /*
