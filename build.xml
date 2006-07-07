@@ -252,6 +252,22 @@ jsapi.exe from the lib directory.
             <patternset refid="${patternset_to_compile}"/>
 	    <classpath refid="libs"/>
 	</javac>
+	<javac debug="true"
+	       source="1.5"
+ 	       srcdir="${src_dir}/research"
+	       deprecation="true"
+	       destdir="${classes_dir}">
+            <patternset refid="${patternset_to_compile}"/>
+	    <classpath refid="libs"/>
+	</javac>
+	<javac debug="true"
+	       source="1.5"
+ 	       srcdir="${src_dir}/demo"
+	       deprecation="true"
+	       destdir="${classes_dir}">
+            <patternset refid="${patternset_to_compile}"/>
+	    <classpath refid="libs"/>
+	</javac>
     </target>
 
 
@@ -313,7 +329,7 @@ jsapi.exe from the lib directory.
 	    description="Create ${lib_dir}/tags.jar">
         <mkdir dir="${lib_dir}"/>
         <jar destfile="${tags_jar}" 
-	     manifest="${src_dir}/sphinx4/edu/cmu/sphinx/tools/tags/Manifest"
+	     manifest="${src_dir}/research/edu/cmu/sphinx/tools/tags/Manifest"
 	     compress="true"
 	     includes="edu/cmu/sphinx/tools/tags/**"
 	     basedir="${classes_dir}"/>
