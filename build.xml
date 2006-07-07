@@ -12,7 +12,7 @@
     <path id="libs">
         <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/forms_rt.jar,**/javolution.jar"/>
     </path>
-    <property name="src_dir"		value="."/>
+    <property name="src_dir"		value="src"/>
     <property name="build_dir"		value="bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="lib"/>
@@ -25,9 +25,9 @@
     <property name="build_model_dir"
               value="${build_dir}/models/edu/cmu/sphinx/model/acoustic"/>
     <property name="model_class_dir"
-              value="${src_dir}/edu/cmu/sphinx/model/acoustic"/>
+              value="${src_dir}/sphinx4/edu/cmu/sphinx/model/acoustic"/>
     <property name="tiedstate_dir"
-              value="${src_dir}/edu/cmu/sphinx/linguist/acoustic/tiedstate"/>
+              value="${src_dir}/sphinx4/edu/cmu/sphinx/linguist/acoustic/tiedstate"/>
 
 
     <!-- ********************************************************** -->
@@ -246,7 +246,7 @@ jsapi.exe from the lib directory.
 	<mkdir dir="${classes_dir}"/>
 	<javac debug="true"
 	       source="1.5"
- 	       srcdir="${src_dir}"
+ 	       srcdir="${src_dir}/sphinx4"
 	       deprecation="true"
 	       destdir="${classes_dir}">
             <patternset refid="${patternset_to_compile}"/>
@@ -285,7 +285,7 @@ jsapi.exe from the lib directory.
 	    description="Create ${lib_dir}/sphinx4.jar">
         <mkdir dir="${lib_dir}"/>
         <jar destfile="${sphinx4_jar}" 
-	     manifest="${src_dir}/edu/cmu/sphinx/sphinx4.manifest"
+	     manifest="${src_dir}/sphinx4/edu/cmu/sphinx/sphinx4.manifest"
 	     compress="true"
 	     includes="edu/**,com/**"
              excludes="edu/cmu/sphinx/tools/**,com/sun/taglet/**"
@@ -313,7 +313,7 @@ jsapi.exe from the lib directory.
 	    description="Create ${lib_dir}/tags.jar">
         <mkdir dir="${lib_dir}"/>
         <jar destfile="${tags_jar}" 
-	     manifest="${src_dir}/edu/cmu/sphinx/tools/tags/Manifest"
+	     manifest="${src_dir}/sphinx4/edu/cmu/sphinx/tools/tags/Manifest"
 	     compress="true"
 	     includes="edu/cmu/sphinx/tools/tags/**"
 	     basedir="${classes_dir}"/>
@@ -327,11 +327,11 @@ jsapi.exe from the lib directory.
 	    description="Create ${bin_dir}/AudioTool.jar">
         <mkdir dir="${bin_dir}"/>
         <jar destfile="${audiotool_jar}" 
-	     manifest="${src_dir}/edu/cmu/sphinx/tools/audio/Manifest"
+	     manifest="${src_dir}/sphinx4/edu/cmu/sphinx/tools/audio/Manifest"
 	     compress="true">
             <fileset dir="${classes_dir}"
 		     includes="edu/cmu/sphinx/tools/audio/*"/>
-            <fileset dir="${src_dir}"
+            <fileset dir="${src_dir}/sphinx4"
 		     includes="edu/cmu/sphinx/tools/audio/spectrogram.config.xml"/>
         </jar>
     </target>
@@ -512,18 +512,18 @@ jsapi.exe from the lib directory.
 	    description="Generate javadoc, optionally with '-Daccess=private'">
 	<delete dir="${javadoc_dir}"/>
         <mkdir dir="${javadoc_dir}"/>
-        <javadoc sourcepath="${src_dir}"
+        <javadoc sourcepath="${src_dir}/sphinx4"
 	         source="1.5"
 		 additionalparam="-breakiterator"
 		 destdir="${javadoc_dir}" 
-		 overview="${src_dir}/overview.html"
+		 overview="${src_dir}/sphinx4/overview.html"
 		 windowtitle="${javadoc_desc}"
                  doctitle="${javadoc_desc}"
                  access="${javadoc_level}">
             <link href="http://java.sun.com/products/java-media/speech/forDevelopers/jsapi-doc"
                   offline="true"
                   packagelistLoc="lib/jsapi" />
-            <packageset dir="${src_dir}" defaultexcludes="yes">
+            <packageset dir="${src_dir}/sphinx4" defaultexcludes="yes">
                   <patternset refid="${patternset_to_doc}"/>
             </packageset>
 	    <classpath refid="libs"/>
@@ -540,12 +540,12 @@ jsapi.exe from the lib directory.
 	    depends="handle_jsapi"
 	    description="checks the javadocs">
         <mkdir dir="${javadoc_check_dir}"/>
-        <javadoc sourcepath="${src_dir}"
+        <javadoc sourcepath="${src_dir}/sphinx4"
 		 additionalparam="-source 1.5"
 		 packagenames="edu.*"
                  excludepackagenames="edu.cmu.sphinx.trainer"
 		 destdir="${javadoc_check_dir}" 
-		 overview="${src_dir}/overview.html"
+		 overview="${src_dir}/sphinx4/overview.html"
                  doclet="com.sun.tools.doclets.doccheck.DocCheck"
                  docletpath="/lab/speech/java/doccheck1.2b2/doccheck.jar"
                  access="${javadoc_level}">
