@@ -60,7 +60,7 @@ WARRANTIES.
 	  <a href="http://cmusphinx.sourceforge.net/sphinx4/javadoc/index.html">Sphinx-4 Javadocs</a>
       </p>
           <p>
-          <a href="http://www.speech.cs.cmu.edu/cgi-bin/cmusphinx/twiki/view/Sphinx4/WebHome">Sphinx-4 TWiki</a>
+          <a href="http://cmusphinx.org/twiki/bin/view/Sphinx4/WebHome">Sphinx-4 TWiki</a>
           </p>
       <hr>
       <b>ZipCity</b> -
@@ -415,6 +415,11 @@ This data was collected on a dual CPU UltraSPARC(R)-III running at 1015 MHz with
   <a name="source"><b>Downloading Sphinx-4</b></a>
   <br>&nbsp;
       <ul>
+      <li><a name="nightly"><b>Instructions for retrieving code from
+      the nightly build</b></a> <p>A tarball is built nightly, and it
+      is available at <a
+      href="http://cmusphinx.org/download/nightly/sphinx4.tar.gz">cmusphinx.org</a>. 
+      </li>
       <li>
       <b>Instructions for retrieving code from a release package.</b>
       <p>
@@ -580,42 +585,24 @@ javadocs, go to the top level directory ("sphinx4-{version}"), and type:
   <br>
 
   <li><a name="cygwin">What are the limitations/hacks if I am using
-  cygwin?</a></li>
+  cygwin?</a>
   <ul>
     <li>Make sure that you install "svn" when you install
     cygwin. If you do not want to go through the list of packages
     trying to decide what you need, installing everything is a good
     solution.
     </li>
+    <br>
     <li>Cygwin does not define a home directory, which is used by
     svn. You have to explicitly define it. You are better off creating
     an environment variable HOME, which will be used by every cygwin
-    window that you open. Follow the instructions below to create this
-    variable on Windows 2000.
-    <ul>
-
-	<li>Assume your userid is "johndoe", and you created a
-	directory named "/home/johndoe" in the cygwin environment
-        </li>
-        <li>Right click on the "My Computer" icon
-	</li>
-	<li>On the menu, click on "Properties"
-	</li>
-	<li>Click the "Advanced" tab
-	</li>
-	<li>Select "Environment Variables"
-	</li>
-	<li>Click "New" on the "User variables for johndoe" box
-	</li>
-
-	<li>On "Variable Name", type "HOME"
-	</li>
-	<li>On "Variable Value", type "c:\cygwin\home\johndoe"
-	</li>
-    </ul>
-    When you start a new cygwin window, if you type "echo $HOME", you
-    should get "/home/johndoe".
+    window that you open. Follow the <a
+    href="#winenv">instructions</a> to create this variable on
+    Windows. After creating the environmental variable, when you start
+    a new cygwin window, if you type "echo $HOME", you should get your
+    home directory, e.g. "/home/johndoe".
     </li>
+    <br>
     <li>Handling absolute paths: Cygwin interprets directory paths in
     a unix-like way, relative to its own "root" directory (which
     cygwin sees as "/" but Windows sees as "c:\cygwin"). However, the
@@ -641,7 +628,76 @@ d:\work\sphinx4&gt;ant clean
     path to, say, junit as something like
     /lab/speech/ThirdP~1/junit3.7, since this string is passed from
     the environment to the Java code to the OS. </li>
+</ul>
+</li>
+<br>
+  <li><a name="winenv">How do I create or change an environmental variable in Windows?
+
+    <ul>
+      <li>Creating a variable
+        <ul>
+            <li>Assume you want to create the environmental variable
+            <code>HOME</code>, your userid is "johndoe", and you want
+            to set this variable to "/home/johndoe"
+            </li>
+            <li>Right click on the "My Computer" icon. If you do not
+            have a "My Computer" icon, click on the "Start" menu, then
+            on "Control Panel", "Performance and Maintenaince", and
+            finallty "System"
+            </li>
+            <li>On the menu, click on "Properties"
+            </li>
+            <li>Click the "Advanced" tab
+            </li>
+            <li>Select "Environment Variables"
+            </li>
+            <li>Click "New" on the "User variables for johndoe" box
+            </li>
+
+            <li>On "Variable Name", type <code>HOME</code>
+            </li>
+            <li>On "Variable Value", type <code>c:\cygwin\home\johndoe</code>
+            </li>
+            <li>Click on "Ok" in all windows you just opened to
+            confirm the change
+            </li>
+        </ul>
+      </li>
+      <li>Changing a variable
+        <ul>
+            <li>Assume you want to modify the environmental
+            variable <code>PATH</code>
+            </li>
+            <li>Right click on the "My Computer" icon. If you do not
+            have a "My Computer" icon, click on the "Start" menu, then
+            on "Control Panel", "Performance and Maintenaince", and
+            finallty "System"
+            </li>
+            <li>On the menu, click on "Properties"
+            </li>
+            <li>Click the "Advanced" tab
+            </li>
+            <li>Select "Environment Variables"
+            </li>
+            <li>Look for the variable in either the "User variables
+            for johndoe" box or the "System variables"
+            box. Particularly, <code>PATH</code> will be in the
+            "System variables" box.
+            </li>
+            <li>Click and the property name, and hit "Edit" on the
+            corresponding box
+            </li>
+            <li>On "Variable Value", make the change, e.g. adding
+            <code>;c:\python24\bin</code> to the end of the string
+            </li>
+            <li>Click on "Ok" in all windows you just opened to
+            confirm the change
+            </li>
+        </ul>
+    </li>
+
   </ul>
+</li>
  </ol>
 </ul>
 
