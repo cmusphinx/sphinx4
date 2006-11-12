@@ -240,8 +240,8 @@ public class Result {
      * @param text the string to search for
      * @return the list token at the head of the branch
      */
-    public List findPartialMatchingTokens(String text) {
-        List list = new ArrayList();
+    public List<Token> findPartialMatchingTokens(String text) {
+        List<Token> list = new ArrayList<Token>();
         text = text.trim();
         for (Iterator i = activeList.iterator(); i.hasNext();) {
             Token token = (Token) i.next();
@@ -259,10 +259,10 @@ public class Result {
      * @param text the text to match
      */
     public Token getBestActiveParitalMatchingToken(String text) {
-        List matchingList = findPartialMatchingTokens(text);
+        List<Token> matchingList = findPartialMatchingTokens(text);
         Token bestToken = null;
-        for (Iterator i = matchingList.iterator(); i.hasNext();) {
-            Token token = (Token) i.next();
+        for (Iterator<Token> i = matchingList.iterator(); i.hasNext();) {
+            Token token = i.next();
             if (bestToken == null || token.getScore() > bestToken.getScore()) {
                 bestToken = token;
             }
@@ -315,7 +315,7 @@ public class Result {
         // find the best token, and then trace back for all the features
         Token token = getBestToken();
         if (token != null) {
-            List featureList = new LinkedList();
+            List<Data> featureList = new LinkedList<Data>();
             do {
                 Data feature = token.getData();
                 featureList.add(0, feature);
@@ -362,6 +362,22 @@ public class Result {
             return "";
         } else {
             return token.getWordPathNoFiller();
+        }
+    }
+
+
+    /**
+     * The method is used when the application wants the phonemes
+     * on the best final path.  Note that words may have more than one
+     * pronunciation, so this is not equivalent to the word path
+     * @return the String of the phonemes on the best path
+     */
+    public String getBestPronunciationResult() {
+         Token token = getBestFinalToken();
+        if (token == null) {
+            return "";
+        } else {
+            return token.getWordPath(false,true);
         }
     }
 
@@ -552,5 +568,6 @@ public class Result {
     public String getReferenceText() {
         return reference;
     }
+
 }
 

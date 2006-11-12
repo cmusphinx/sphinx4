@@ -27,6 +27,7 @@ import edu.cmu.sphinx.linguist.UnitSearchState;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.dictionary.Word;
+import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 
 /**
  * Represents a single state in the recognition trellis. Subclasses of
@@ -410,14 +411,14 @@ public class Token implements Scoreable {
      */
     public void dumpTokenPath(boolean includeHMMStates) {
         Token token = this;
-        List list = new ArrayList();
+        List<Token> list = new ArrayList<Token>();
 
         while (token != null) {
             list.add(token);
             token = token.getPredecessor();
         }
         for (int i = list.size() - 1; i >= 0; i--) {
-            token = (Token) list.get(i);
+            token = list.get(i);
             if (includeHMMStates ||
                     (!(token.getSearchState() instanceof HMMSearchState))) {
                 System.out.println("  " + token);
@@ -430,10 +431,11 @@ public class Token implements Scoreable {
      * Returns the string of words leading up to this token.
      *
      * @param wantFiller if true, filler words are added
+     * @param wantPronunciations if true append [ phoneme phoneme ... ] after each word
      *
      * @return the word path
      */
-    public String getWordPath(boolean wantFiller) {
+    public String getWordPath(boolean wantFiller, boolean wantPronunciations) {
         StringBuffer sb = new StringBuffer();
         Token token = this;
 
@@ -441,9 +443,20 @@ public class Token implements Scoreable {
             if (token.isWord()) {
                 WordSearchState wordState =
                     (WordSearchState) token.getSearchState();
+                Pronunciation pron = wordState.getPronunciation();
                 Word word = wordState.getPronunciation().getWord();
+
                 if (wantFiller || !word.isFiller()) {
-                    sb.insert(0, word.getSpelling());
+                    if( wantPronunciations ) {
+                        sb.insert(0,"]");
+                        Unit [] u = pron.getUnits();
+                        for( int i=u.length-1; i>=0; i-- ) {
+                            if( i<u.length-1 ) sb.insert(0,",");
+                            sb.insert(0, u[i].getName());
+                        }
+                        sb.insert(0,"[");
+                    }
+                    sb.insert(0, word.getSpelling());                    
                     sb.insert(0, " ");
                 }
             }
@@ -459,7 +472,7 @@ public class Token implements Scoreable {
      * @return the string of words
      */
     public String getWordPathNoFiller() {
-        return getWordPath(false);
+        return getWordPath(false, false);
     }
 
     /**
@@ -469,7 +482,7 @@ public class Token implements Scoreable {
      * @return the string of words
      */
     public String getWordPath() {
-        return getWordPath(true);
+        return getWordPath(true, false);
     }
 
     /**
@@ -590,4 +603,5 @@ public class Token implements Scoreable {
     public void setAppObject(Object obj) {
         appObject = obj;
     }
+
 }

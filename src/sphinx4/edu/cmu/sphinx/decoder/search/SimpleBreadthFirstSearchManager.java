@@ -120,7 +120,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private AcousticScorer scorer; // used to score the active list
     private int currentFrameNumber; // the current frame number
     private ActiveList activeList; // the list of active tokens
-    private List resultList; // the current set of results
+    private List<Token> resultList; // the current set of results
     private LogMath logMath;
     private Logger logger;
     
@@ -140,7 +140,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
 
     private boolean showTokenCount;
     private boolean wantEntryPruning;
-    private Map bestTokenMap;
+    private Map<SearchState, Token> bestTokenMap;
     private float logRelativeWordBeamWidth;
     private int totalHmms;
     private double startTime = 0;
@@ -301,10 +301,10 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
             mapSize = 1;
         }
         growTimer.start();
-        bestTokenMap = new HashMap(mapSize);
+        bestTokenMap = new HashMap<SearchState, Token>(mapSize);
         ActiveList oldActiveList = activeList;
         Iterator oldListIterator = activeList.iterator();
-        resultList = new LinkedList();
+        resultList = new LinkedList<Token>();
         activeList = activeListFactory.newInstance();
         threshold = oldActiveList.getBeamThreshold();
         wordThreshold = oldActiveList.getBestScore() + logRelativeWordBeamWidth;
@@ -379,7 +379,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      * @return the best token
      */
     protected Token getBestToken(SearchState state) {
-        Token best = (Token) bestTokenMap.get(state);
+        Token best = bestTokenMap.get(state);
         if (logger.isLoggable(Level.FINER) && best != null) {
             logger.finer("BT " + best + " for state " + state);
         }
@@ -399,7 +399,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      *         previous best token
      */
     protected Token setBestToken(Token token, SearchState state) {
-        return (Token) bestTokenMap.put(state, token);
+        return bestTokenMap.put(state, token);
     }
 
     /**
@@ -506,7 +506,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      */
     private void showTokenCount() {
         if (logger.isLoggable(Level.INFO)) {
-            Set tokenSet = new HashSet();
+            Set<Token> tokenSet = new HashSet<Token>();
             for (Iterator i = activeList.iterator(); i.hasNext();) {
                 Token token = (Token) i.next();
                 while (token != null) {
@@ -515,9 +515,9 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
                 }
             }
             logger.info("Token Lattice size: " + tokenSet.size());
-            tokenSet = new HashSet();
-            for (Iterator i = resultList.iterator(); i.hasNext();) {
-                Token token = (Token) i.next();
+            tokenSet = new HashSet<Token>();
+            for (Iterator<Token> i = resultList.iterator(); i.hasNext();) {
+                Token token = i.next();
                 while (token != null) {
                     tokenSet.add(token);
                     token = token.getPredecessor();
@@ -532,7 +532,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      * 
      * @return the best token map
      */
-    protected Map getBestTokenMap() {
+    protected Map<SearchState, Token> getBestTokenMap() {
         return bestTokenMap;
     }
 
@@ -542,7 +542,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      * @param bestTokenMap
      *                the new best token Map
      */
-    protected void setBestTokenMap(Map bestTokenMap) {
+    protected void setBestTokenMap(Map<SearchState, Token> bestTokenMap) {
         this.bestTokenMap = bestTokenMap;
     }
 
@@ -551,7 +551,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      * 
      * @return the result list
      */
-    public List getResultList() {
+    public List<Token> getResultList() {
         return resultList;
     }
 

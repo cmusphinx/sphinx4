@@ -12,51 +12,45 @@
 
 package edu.cmu.sphinx.decoder.scorer;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataEndSignal;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataStartSignal;
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.Signal;
+import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
 
 /**
  * A Simple acoustic scorer.
  * a certain number of frames have been processed
- *
+ * <p/>
  * Note that all scores are maintained in LogMath log base.
  */
 public class SimpleAcousticScorer implements AcousticScorer {
-    
-    
+
+
     /**
      * Property the defines the frontend to retrieve features from for scoring
-     * 
      */
-    
+
     public final static String PROP_FRONTEND = "frontend";
-    
-    
+
+
     /**
      * Propertry that defines whether scores are normalized or not
      */
-    
+
     public final static String PROP_NORMALIZE_SCORES = "normalizeScores";
-    
+
     /**
      * Default value for PROP_NORMALIZE_SCORES
      */
 
     public final static boolean PROP_NORMALIZE_SCORES_DEFAULT = false;
-    
+
     // ------------------------------
     // configuration data
     // -----------------------------
@@ -89,7 +83,7 @@ public class SimpleAcousticScorer implements AcousticScorer {
         return name;
     }
 
-        
+
     /**
      * Starts the scorer
      */
@@ -100,8 +94,7 @@ public class SimpleAcousticScorer implements AcousticScorer {
      * Scores the given set of states
      *
      * @param scoreableList a list containing scoreable objects to
-     * be scored
-     *
+     *                      be scored
      * @return true if there was a Data available to score
      *         false if there was no more Data available to score
      */
@@ -112,25 +105,25 @@ public class SimpleAcousticScorer implements AcousticScorer {
         }
 
         Scoreable best = null;
-	
-	try {
-	    Data data = frontEnd.getData();
+
+        try {
+            Data data = frontEnd.getData();
             if (data == null) {
                 System.out.println("SimpleAcousticScorer: Data is null");
                 return best;
             }
 
-	    if (data instanceof DataStartSignal) {
+            if (data instanceof DataStartSignal) {
                 data = frontEnd.getData();
                 if (data == null) {
                     System.out.println("SimpleAcousticScorer: Data is null");
                     return best;
                 }
-	    }
+            }
 
-	    if (data instanceof DataEndSignal) {
-		return best;
-	    }
+            if (data instanceof DataEndSignal) {
+                return best;
+            }
 
             if (data instanceof Signal) {
                 throw new Error("trying to score non-content data");
@@ -138,7 +131,7 @@ public class SimpleAcousticScorer implements AcousticScorer {
 
             best = (Scoreable) scoreableList.get(0);
 
-	    for (Iterator i = scoreableList.iterator(); i.hasNext(); ) {
+            for (Iterator i = scoreableList.iterator(); i.hasNext();) {
                 Scoreable scoreable = (Scoreable) i.next();
                 /*
 		if (scoreable.getFrameNumber() != data.getID()) {
@@ -149,36 +142,36 @@ public class SimpleAcousticScorer implements AcousticScorer {
 		}
                 */
                 //TODO: programmable gain
-                if (scoreable.calculateScore(data, false, 1.0f) > 
-                    best.getScore()) {
+                if (scoreable.calculateScore(data, false, 1.0f) >
+                        best.getScore()) {
                     best = scoreable;
                 }
-	    }
+            }
 
             if (normalizeScores) {
-                for (Iterator i = scoreableList.iterator(); i.hasNext(); ) {
+                for (Iterator i = scoreableList.iterator(); i.hasNext();) {
                     Scoreable scoreable = (Scoreable) i.next();
                     scoreable.normalizeScore(best.getScore());
                 }
-	    }
-	} catch (DataProcessingException dpe) {
+            }
+        } catch (DataProcessingException dpe) {
             dpe.printStackTrace();
-	    return best;
-	}
-        
-	return best;
+            return best;
+        }
+
+        return best;
     }
 
     /**
-     * Performs post-recognition cleanup. 
+     * Performs post-recognition cleanup.
      */
     public void stopRecognition() {
     }
-    
-    
+
+
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#allocate()
-     */
+    * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#allocate()
+    */
     public void allocate() throws IOException {
     }
 
