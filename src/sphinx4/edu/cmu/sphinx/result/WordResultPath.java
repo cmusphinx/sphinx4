@@ -25,7 +25,9 @@ import edu.cmu.sphinx.util.LogMath;
  * 
  * @author pgorniak
  */
-public class WordResultPath extends Vector implements Path {
+public class WordResultPath implements Path {
+
+    private Vector<WordResult> path = new Vector<WordResult>();
 
     /**
      * Constructs a WordResultPath with the given list of WordResults
@@ -33,8 +35,8 @@ public class WordResultPath extends Vector implements Path {
      *
      * @param wordResults the list of WordResults
      */
-    WordResultPath(List wordResults) {
-        this.addAll(wordResults);
+    WordResultPath(List<WordResult> wordResults) {
+        path.addAll(wordResults);
     }
 
     /**
@@ -47,7 +49,7 @@ public class WordResultPath extends Vector implements Path {
      */
     public double getScore() {
         double score = LogMath.getLogOne();
-        Iterator i = iterator();
+        Iterator i = path.iterator();
         while (i.hasNext()) {
             WordResult wr = (WordResult)i.next();
             score += wr.getScore();
@@ -60,7 +62,7 @@ public class WordResultPath extends Vector implements Path {
      */
     public double getConfidence() {
         double confidence = LogMath.getLogOne();
-        Iterator i = iterator();
+        Iterator i = path.iterator();
         while (i.hasNext()) {
             WordResult wr = (WordResult)i.next();
             confidence += wr.getConfidence();
@@ -74,7 +76,7 @@ public class WordResultPath extends Vector implements Path {
      * @return the LogMath of the scores
      */
     public LogMath getLogMath() {
-        Iterator i = iterator();
+        Iterator i = path.iterator();
         if (i.hasNext()) {
             WordResult wr = (WordResult) i.next();
             return wr.getLogMath();
@@ -87,7 +89,7 @@ public class WordResultPath extends Vector implements Path {
      * @see edu.cmu.sphinx.result.Path#getWords()
      */
     public WordResult[] getWords() {
-        return (WordResult[])this.toArray(new WordResult[0]);
+        return path.toArray(new WordResult[0]);
     }
 
     /**
@@ -95,7 +97,7 @@ public class WordResultPath extends Vector implements Path {
      */
     public String getTranscription() {
         StringBuffer sb = new StringBuffer();
-        Iterator i = iterator();
+        Iterator i = path.iterator();
         while (i.hasNext()) {
             WordResult wr = (WordResult)i.next();
             sb.append(wr.toString());
@@ -106,4 +108,7 @@ public class WordResultPath extends Vector implements Path {
         return sb.toString();
     }
 
+    public void add(WordResult wr) {
+        path.add(wr);
+    }
 }

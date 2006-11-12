@@ -251,8 +251,7 @@ public class SimpleActiveListManager implements ActiveListManager {
      * Outputs debugging info for this list manager
      */
     public void dump() {
-        for (int i = 0; i < currentActiveLists.length; i++) {
-            ActiveList al = currentActiveLists[i];
+        for (ActiveList al : currentActiveLists) {
             dumpList(al);
         }
     }

@@ -105,17 +105,17 @@ public class FastDictionary implements Dictionary {
     private String wordReplacement;
     protected URL wordDictionaryFile;
     protected URL fillerDictionaryFile;
-    protected List addendaUrlList;
+    protected List<URL> addendaUrlList;
 
     private UnitManager unitManager;
 
     // -------------------------------
     // working data
     // -------------------------------
-    protected Map dictionary;
+    protected Map<String,Object> dictionary;
 
     private final static String FILLER_TAG = "-F-";
-    protected Set fillerWords;
+    protected Set<String> fillerWords;
     protected boolean allocated;
 
     /*
@@ -195,9 +195,9 @@ public class FastDictionary implements Dictionary {
      */
     public void allocate() throws IOException {
         if (!allocated) {
-            dictionary = new HashMap();
+            dictionary = new HashMap<String, Object>();
             Timer loadTimer = Timer.getTimer("DictionaryLoad");
-            fillerWords = new HashSet();
+            fillerWords = new HashSet<String>();
 
             loadTimer.start();
 
@@ -353,7 +353,7 @@ public void deallocate() {
         } else if (object instanceof String) { // first lookup for this string
             word = processEntry(text);
         } else if (object instanceof Word) {
-            word = (Word) object;
+            word = (Word)object;
         }
         return word;
     }
@@ -385,7 +385,7 @@ public void deallocate() {
      * pronunciations massaged into an array of pronunciations.
      */
     private Word processEntry(String word) {
-        List pList = new LinkedList();
+        List<Pronunciation> pList = new LinkedList<Pronunciation>();
         String line = null;
         int count = 0;
         boolean isFiller = false;
@@ -450,7 +450,7 @@ public void deallocate() {
      */
     public String toString() {
 
-        SortedMap sorted = new TreeMap(dictionary);
+        SortedMap sorted = new TreeMap<String,Object>(dictionary);
         String result = "";
 
         for (Iterator i = sorted.keySet().iterator(); i.hasNext();) {
@@ -502,9 +502,9 @@ public void deallocate() {
      * @throws PropertyException
      * 			if a URL (from the list) isn't a valid file path
      */
-    private List getResourceList(String propertyListName, PropertySheet ps) 
+    private List<URL> getResourceList(String propertyListName, PropertySheet ps)
                 throws PropertyException {
-    	List resourceList = new ArrayList();
+    	List<URL> resourceList = new ArrayList<URL>();
     	List pathList = ps.getStrings(propertyListName);
     	if (pathList != null) {
             for (Iterator i = pathList.iterator(); i.hasNext();) {
@@ -529,10 +529,10 @@ public void deallocate() {
      * @throws IOException
      * 			if there is an error reading the resource URL
      */
-    private void loadCustomDictionaries(List addenda) throws IOException {
+    private void loadCustomDictionaries(List<URL> addenda) throws IOException {
     	if (addenda != null) {
-    		for (Iterator i = addenda.iterator(); i.hasNext();) {
-    			URL addendumUrl = (URL) i.next();
+    		for (Iterator<URL> i = addenda.iterator(); i.hasNext();) {
+    			URL addendumUrl = i.next();
     			loadDictionary(addendumUrl.openStream(), false);
     		}
     	}

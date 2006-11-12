@@ -431,8 +431,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         // it to the lattice and the SearchState.
         // If the token is an emitting token add it to the list,
         // othewise recursively collect the new tokens successors.
-        for (int i = 0; i < arcs.length; i++) {
-            SearchStateArc arc = arcs[i];
+        for (SearchStateArc arc : arcs) {
             SearchState nextState = arc.getState();
             // We're actually multiplying the variables, but since
             // these come in log(), multiply gets converted to add
@@ -516,8 +515,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
             }
             logger.info("Token Lattice size: " + tokenSet.size());
             tokenSet = new HashSet<Token>();
-            for (Iterator<Token> i = resultList.iterator(); i.hasNext();) {
-                Token token = i.next();
+            for (Token token : resultList) {
                 while (token != null) {
                     tokenSet.add(token);
                     token = token.getPredecessor();

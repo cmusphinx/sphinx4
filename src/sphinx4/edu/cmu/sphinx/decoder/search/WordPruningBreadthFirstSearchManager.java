@@ -224,13 +224,13 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     // -----------------------------------
     private int currentFrameNumber; // the current frame number
     private ActiveList activeList; // the list of active tokens
-    private List resultList; // the current set of results
-    private Map bestTokenMap;
+    private List<Token> resultList; // the current set of results
+    private Map<Object,Object> bestTokenMap;
     private AlternateHypothesisManager loserManager;
     private int numStateOrder;
     // private TokenTracker tokenTracker;
     // private TokenTypeTracker tokenTypeTracker;
-    private Map skewMap;
+    private Map<SearchState, Token> skewMap;
 
     /*
      * (non-Javadoc)
@@ -379,7 +379,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                     // prune and grow the emitting list
                     pruneBranches();
 
-                    resultList = new LinkedList();
+                    resultList = new LinkedList<Token>();
                     growEmittingBranches();
                     // prune and grow the non-emitting lists
                     // activeListManager.dump();
@@ -410,13 +410,13 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * 
      * @return the best token map
      */
-    private Map createBestTokenMap() {
+    private Map<Object,Object> createBestTokenMap() {
         // int mapSize = activeList.size() * 10;
         int mapSize = activeList.size() * 4;
         if (mapSize == 0) {
             mapSize = 1;
         }
-        return new HashMap(mapSize, 0.3F);
+        return new HashMap<Object,Object>(mapSize, 0.3F);
     }
 
     /**
@@ -438,7 +438,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         currentFrameNumber = 0;
         curTokensScored.value = 0;
 
-        skewMap = new HashMap();
+        skewMap = new HashMap<SearchState, Token>();
         numStateOrder = searchGraph.getNumStateOrder();
         activeListManager.setNumStateOrder(numStateOrder);
         if (buildWordLattice) {
@@ -449,9 +449,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
         activeList = activeListManager.getEmittingList();
         activeList.add(new Token(state, currentFrameNumber));
-        resultList = new LinkedList();
+        resultList = new LinkedList<Token>();
 
-        bestTokenMap = new HashMap();
+        bestTokenMap = new HashMap<Object,Object>();
         growBranches();
         growNonEmittingLists();
         // tokenTracker.setEnabled(false);
@@ -795,8 +795,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         // If the token is an emitting token add it to the list,
         // othewise recursively collect the new tokens successors.
 
-        for (int i = 0; i < arcs.length; i++) {
-            SearchStateArc arc = arcs[i];
+        for (SearchStateArc arc : arcs) {
             SearchState nextState = arc.getState();
 
             if (checkStateOrder) {
@@ -813,7 +812,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             if (firstToken || bestToken.getScore() < logEntryScore) {
                 Token newBestToken = new Token(predecessor, nextState,
                         logEntryScore, arc.getLanguageProbability(), arc
-                                .getInsertionProbability(), currentFrameNumber);
+                        .getInsertionProbability(), currentFrameNumber);
                 tokensCreated.value++;
 
                 setBestToken(newBestToken, nextState);
@@ -907,7 +906,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         if (SKEW > 0 && ss instanceof HMMSearchState) {
             if (!t.isEmitting()) {
                 // HMMSearchState hss = (HMMSearchState) ss;
-                Token lastToken = (Token) skewMap.get(ss);
+                Token lastToken = skewMap.get(ss);
                 if (lastToken != null) {
                     int lastFrame = lastToken.getFrameNumber();
                     if (t.getFrameNumber() - lastFrame > SKEW
@@ -945,7 +944,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         boolean keep = true;
         SearchState ss = t.getSearchState();
         if (SKEW > 0 && ss instanceof WordSearchState) {
-            Token lastToken = (Token) skewMap.get(ss);
+            Token lastToken = skewMap.get(ss);
             if (lastToken != null) {
                 int lastFrame = lastToken.getFrameNumber();
                 if (t.getFrameNumber() - lastFrame > SKEW
@@ -975,7 +974,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * expensive operation.
      */
     private void showTokenCount() {
-        Set tokenSet = new HashSet();
+        Set<Token> tokenSet = new HashSet<Token>();
 
         for (Iterator i = activeList.iterator(); i.hasNext();) {
             Token token = (Token) i.next();
@@ -987,10 +986,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
         System.out.println("Token Lattice size: " + tokenSet.size());
 
-        tokenSet = new HashSet();
+        tokenSet = new HashSet<Token>();
 
-        for (Iterator i = resultList.iterator(); i.hasNext();) {
-            Token token = (Token) i.next();
+        for (Token token : resultList) {
             while (token != null) {
                 tokenSet.add(token);
                 token = token.getPredecessor();
@@ -1051,7 +1049,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * @param bestTokenMap
      *                the new best token Map
      */
-    protected void setBestTokenMap(Map bestTokenMap) {
+    protected void setBestTokenMap(Map<Object,Object> bestTokenMap) {
         this.bestTokenMap = bestTokenMap;
     }
 
@@ -1079,7 +1077,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * 
      * @return the result list
      */
-    public List getResultList() {
+    public List<Token> getResultList() {
         return resultList;
     }
 
@@ -1089,7 +1087,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * @param resultList
      *                the new result list
      */
-    public void setResultList(List resultList) {
+    public void setResultList(List<Token> resultList) {
         this.resultList = resultList;
     }
 
@@ -1248,6 +1246,7 @@ private boolean tryReplace(Token t) {
     /**
      * Orders the heap after an insert
      */
+    @SuppressWarnings({"unchecked"})
     private void fixupInsert() {
         Arrays.sort(tokens, 0, curSize - 1, Token.COMPARATOR);
     }
@@ -1275,7 +1274,7 @@ private boolean tryReplace(Token t) {
  */
 
 class WordTracker {
-    Map statMap;
+    Map<WordSequence, WordStats> statMap;
     int frameNumber;
     int stateCount;
     int maxWordHistories;
@@ -1287,7 +1286,7 @@ class WordTracker {
      *                the frame number
      */
     WordTracker(int frameNumber) {
-        statMap = new HashMap();
+        statMap = new HashMap<WordSequence, WordStats>();
         this.frameNumber = frameNumber;
     }
 
@@ -1300,7 +1299,7 @@ class WordTracker {
     void add(Token t) {
         stateCount++;
         WordSequence ws = getWordSequence(t);
-        WordStats stats = (WordStats) statMap.get(ws);
+        WordStats stats = statMap.get(ws);
         if (stats == null) {
             stats = new WordStats(ws);
             statMap.put(ws, stats);
@@ -1311,12 +1310,13 @@ class WordTracker {
     /**
      * Dumps the word histories in the tracker
      */
-    void dump() {
+     @SuppressWarnings({"unchecked"})
+     void dump() {
         dumpSummary();
         Object[] stats = statMap.values().toArray();
         Arrays.sort(stats, WordStats.COMPARATOR);
-        for (int i = 0; i < stats.length; i++) {
-            System.out.println("   " + stats[i]);
+        for (Object stat : stats) {
+            System.out.println("   " + stat);
         }
     }
 
@@ -1337,7 +1337,7 @@ class WordTracker {
      * @return the word sequence for the token
      */
     private WordSequence getWordSequence(Token token) {
-        List wordList = new LinkedList();
+        List<Word> wordList = new LinkedList<Word>();
 
         while (token != null) {
             if (token.isWord()) {
@@ -1499,7 +1499,7 @@ class TokenTypeTracker {
  */
 
 class TokenTracker {
-    private Map stateMap;
+    private Map<Object, TokenStats> stateMap;
     private boolean enabled;
     private int frame = 0;
 
@@ -1544,7 +1544,7 @@ class TokenTracker {
      */
     void startFrame() {
         if (enabled) {
-            stateMap = new HashMap();
+            stateMap = new HashMap<Object, TokenStats>();
         }
     }
 
@@ -1602,8 +1602,7 @@ class TokenTracker {
             int hmmCount = 0;
             int sumStates = 0;
 
-            for (Iterator i = stateMap.values().iterator(); i.hasNext();) {
-                TokenStats stats = (TokenStats) i.next();
+            for (TokenStats stats : stateMap.values()) {
                 if (stats.isHMM) {
                     hmmCount++;
                 }
@@ -1647,7 +1646,7 @@ class TokenTracker {
      * @return the token stats associated with the given token
      */
     private TokenStats getStats(Token t) {
-        TokenStats stats = (TokenStats) stateMap.get(t.getSearchState()
+        TokenStats stats = stateMap.get(t.getSearchState()
                 .getLexState());
         if (stats == null) {
             stats = new TokenStats();

@@ -113,7 +113,7 @@ public interface ActiveList  {
      *
      * @return the set of tokens
      */
-    public List getTokens();
+    public List<Token> getTokens();
 
 
     /**

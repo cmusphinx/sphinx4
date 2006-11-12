@@ -202,19 +202,19 @@ public class BeamFinder implements Configurable, ResultListener,
      * @param result
      *                the result to process
      */
+    @SuppressWarnings({"unchecked"})
     private void process(Result result) {
         if (result.isFinal()) {
             collectStatistics(result);
         } else {
-            List tokenList = result.getActiveTokens().getTokens();
+            List<Token> tokenList = result.getActiveTokens().getTokens();
             if (tokenList.size() > 0) {
                 Collections.sort(tokenList, Token.COMPARATOR);
-                Token bestToken = (Token) tokenList.get(0);
+                Token bestToken = tokenList.get(0);
                 int rank = 0;
-                for (Iterator i = tokenList.iterator(); i.hasNext(); ) {
-                    Token token = (Token) i.next();
+                for (Token token : tokenList) {
                     float scoreDiff = bestToken.getScore() -
-                        token.getScore();
+                            token.getScore();
                     assert scoreDiff >= 0;
                     token.setAppObject(new TokenRank(rank++, scoreDiff));
                     // checkRank(token);
@@ -229,6 +229,7 @@ public class BeamFinder implements Configurable, ResultListener,
      * @param token
      *                the token to check
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     private void checkRank(Token token) {
         while (token != null) {
             if (token.isEmitting()) {

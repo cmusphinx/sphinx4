@@ -87,11 +87,10 @@ public class ArrayTokenStack implements TokenStack {
      *    token, false otherwise
      */
     public boolean isInsertable(float score, int frameNumber) {
-        for (int i = 0; i < stack.length; i++) {
-	    Token token = stack[i];
-            if (token == null || 
-                token.getFrameNumber() != frameNumber ||
-		token.getScore() <= score) {
+        for (Token token : stack) {
+            if (token == null ||
+                    token.getFrameNumber() != frameNumber ||
+                    token.getScore() <= score) {
                 return true;
             }
         }

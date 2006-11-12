@@ -38,7 +38,7 @@ public class  UnitManager implements Configurable  {
         new Unit(SILENCE_NAME, true, SILENCE_ID);
 
     private String name;
-    private Map ciMap = new HashMap();
+    private Map<String,Unit> ciMap = new HashMap<String,Unit>();
     private int nextID = SILENCE_ID + 1;
     private Logger logger;
 

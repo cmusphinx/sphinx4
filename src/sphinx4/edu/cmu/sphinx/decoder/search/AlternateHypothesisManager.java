@@ -29,7 +29,7 @@ import java.util.Map;
  * To change this template use Options | File Templates.
  */
 public class AlternateHypothesisManager {
-    private Map viterbiLoserMap = new HashMap();
+    private Map<Object, List<Token>> viterbiLoserMap = new HashMap<Object, List<Token>>();
     private int maxEdges;
 
     /**
@@ -55,9 +55,9 @@ public class AlternateHypothesisManager {
 
     public void addAlternatePredecessor(Token token, Token predecessor) {
         assert predecessor != token.getPredecessor();
-        List list = (List) viterbiLoserMap.get(token);
+        List<Token> list = viterbiLoserMap.get(token);
         if (list == null) {
-            list = new ArrayList();
+            list = new ArrayList<Token>();
             viterbiLoserMap.put(token, list);
         }
         list.add(predecessor);
@@ -72,24 +72,24 @@ public class AlternateHypothesisManager {
      * @return A list of predecessors that scores lower
      * than token.getPredecessor().
      */
-    public List getAlternatePredecessors(Token token) {
-        return (List) viterbiLoserMap.get(token);
+    public List<Token> getAlternatePredecessors(Token token) {
+        return viterbiLoserMap.get(token);
     }
 
     /**
      * Purge all but max number of alternate preceding token
      * hypotheses.
      */
+    @SuppressWarnings({"unchecked"})
     public void purge() {
 
         int max = maxEdges - 1;
-        Iterator iterator = viterbiLoserMap.keySet().iterator();
+        Iterator<Object> iterator = viterbiLoserMap.keySet().iterator();
 
-        while (iterator.hasNext()) {
-            Object key = iterator.next();
-            List list = (List) viterbiLoserMap.get(key);
+        for (Object key : viterbiLoserMap.keySet()) {
+            List<Token> list = viterbiLoserMap.get(key);
             Collections.sort(list, Token.COMPARATOR);
-            List newList = list.subList(0, list.size() > max ? max : list.size());
+            List<Token> newList = list.subList(0, list.size() > max ? max : list.size());
             viterbiLoserMap.put(key, newList);
         }
     }
@@ -102,7 +102,7 @@ public class AlternateHypothesisManager {
      * @param oldSuccessor the old successor token
      */
     public void changeSuccessor(Token newSuccessor, Token oldSuccessor) {
-        Object list = viterbiLoserMap.get(oldSuccessor);
+        List<Token> list = viterbiLoserMap.get(oldSuccessor);
         viterbiLoserMap.put(newSuccessor, list);
         viterbiLoserMap.remove(oldSuccessor);
     }

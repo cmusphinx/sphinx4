@@ -25,7 +25,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -90,9 +89,9 @@ public class ConfigurationManager {
      */
     public final static String PROP_COMMON_LOG_TERSE = "logTerse";
 
-    private Map symbolTable = new LinkedHashMap();
+    private Map<String,Symbol> symbolTable = new LinkedHashMap<String,Symbol>();
     private Map rawPropertyMap;
-    private Map globalProperties = new LinkedHashMap();
+    private Map<String,String> globalProperties = new LinkedHashMap<String, String>();
     private boolean showCreations;
 
     // this pattern matches strings of the form '${word}'
@@ -162,15 +161,15 @@ public class ConfigurationManager {
      *                the desired type of instance
      * @return the set of all instances
      */
-    public String[] getInstanceNames(Class type) {
-        List list = new ArrayList();
-        for (Iterator i = symbolTable.values().iterator(); i.hasNext();) {
-            Symbol symbol = (Symbol) i.next();
+    public String[] getInstanceNames(Class<? extends Object> type) {
+        List<String> list = new ArrayList<String>();
+        for (Iterator<Symbol> i = symbolTable.values().iterator(); i.hasNext();) {
+            Symbol symbol = i.next();
             if (type.isInstance(symbol.getObject())) {
                 list.add(symbol.getName());
             }
         }
-        return (String[]) list.toArray(new String[list.size()]);
+        return list.toArray(new String[list.size()]);
     }
 
     /**
@@ -200,7 +199,7 @@ public class ConfigurationManager {
             if (rpd != null) {
                 String className = rpd.getClassName();
                 try {
-                    Class cls = Class.forName(className);
+                    Class<?> cls = Class.forName(className);
                     Configurable configurable = (Configurable) cls
                             .newInstance();
                     Registry registry = new Registry(configurable);
@@ -312,8 +311,8 @@ public class ConfigurationManager {
         // save global symbols
 
         outputHeader(2, writer, "Global Properties");
-        for (Iterator i = globalProperties.keySet().iterator(); i.hasNext(); ) {
-            String name = (String) i.next();
+        for (Iterator<String> i = globalProperties.keySet().iterator(); i.hasNext(); ) {
+            String name = i.next();
             String value = (String) globalProperties.get(name);
             value = encodeValue(value);
             writer.println("        <property name=\"" +
@@ -424,7 +423,7 @@ public class ConfigurationManager {
      *                 if an attempt is made to set a parameter for an unknown
      *                 component.
      */
-    private void applySystemProperties(Map rawMap, Map global)
+    private void applySystemProperties(Map rawMap, Map<String,String> global)
             throws PropertyException {
         Properties props = System.getProperties();
         for (Enumeration e = props.keys(); e.hasMoreElements();) {
@@ -839,7 +838,7 @@ public class ConfigurationManager {
     private String getColor(String componentName) {
         try {
             Configurable c = lookup(componentName);
-            Class cls = c.getClass();
+            Class<? extends Object> cls = c.getClass();
             if (cls.getName().indexOf(".recognizer") > 1) {
                 return "cyan";
             } else if (cls.getName().indexOf(".tools") > 1) {

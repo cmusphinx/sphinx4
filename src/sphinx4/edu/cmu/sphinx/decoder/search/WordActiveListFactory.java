@@ -204,13 +204,13 @@ public class WordActiveListFactory implements ActiveListFactory {
 
                 if (maxPathsPerWord > 0) {
                     Integer count = (Integer) countMap.get(word);
-                    int c = count == null ? 0 : count.intValue();
+                    int c = count == null ? 0 : count;
 
                     // Since the tokens are sorted by score we only
                     // keep the n tokens for a particular word
 
                     if (c < maxPathsPerWord - 1) {
-                        countMap.put(word, new Integer(c + 1));
+                        countMap.put(word, c + 1);
                     } else {
                         i.remove();
                     }

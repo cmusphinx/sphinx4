@@ -370,7 +370,8 @@ public class Result {
      * The method is used when the application wants the phonemes
      * on the best final path.  Note that words may have more than one
      * pronunciation, so this is not equivalent to the word path
-     * @return the String of the phonemes on the best path
+     * e.g. one[HH,W,AH,N] to[T,UW] three[TH,R,IY]
+     * @return the String of words and associated phonemes on the best path
      */
     public String getBestPronunciationResult() {
          Token token = getBestFinalToken();

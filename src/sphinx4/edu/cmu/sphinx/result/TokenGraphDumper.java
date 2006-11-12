@@ -37,8 +37,8 @@ public class TokenGraphDumper {
 
     private AlternateHypothesisManager loserManager;
     private Result result;
-    private Map tokenIDMap;
-    private Set dumpedTokens;
+    private Map<Token, Integer> tokenIDMap;
+    private Set<Token> dumpedTokens;
     private int ID = 0;
 
     /**
@@ -49,8 +49,8 @@ public class TokenGraphDumper {
     public TokenGraphDumper(Result result) {
         this.result = result;
         this.loserManager = result.getAlternateHypothesisManager();
-        tokenIDMap = new HashMap();
-        dumpedTokens = new HashSet();
+        tokenIDMap = new HashMap<Token, Integer>();
+        dumpedTokens = new HashSet<Token>();
     }
 
     /**
@@ -138,10 +138,10 @@ public class TokenGraphDumper {
             }
             
             if (loserManager != null) {
-                List list = loserManager.getAlternatePredecessors(token);
+                List<Token> list = loserManager.getAlternatePredecessors(token);
                 if (list != null) {
-                    for (Iterator i = list.iterator(); i.hasNext();) {
-                        Token loser = (Token) i.next();
+                    for (Iterator<Token> i = list.iterator(); i.hasNext();) {
+                        Token loser = i.next();
                         gdl += ("edge: { sourcename: \"" + getTokenID(token)
                                 + "\" targetname: \"" + getTokenID(loser) +
                                 "\" }"); 
@@ -183,7 +183,7 @@ public class TokenGraphDumper {
      * @return the next available token ID
      */
     private Integer getTokenID(Token token) {
-        Integer id = (Integer) tokenIDMap.get(token);
+        Integer id = tokenIDMap.get(token);
         if (id == null) {
             id = new Integer(ID++);
             tokenIDMap.put(token, id);

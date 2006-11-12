@@ -13,15 +13,12 @@ package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.decoder.search.Token;
 
-import edu.cmu.sphinx.linguist.WordSearchState;
-
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedList;
@@ -141,15 +138,15 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
 
         ConfidenceResult sausage = (ConfidenceResult) s;
         WordResultPath mapPath = new WordResultPath();
-        List wordTokens = getWordTokens(result.getBestToken());
+        List<Token> wordTokens = getWordTokens(result.getBestToken());
 
         /* start with the first slot */
         int slot = 0;
 
-        Iterator i = wordTokens.iterator();
+        Iterator<Token> i = wordTokens.iterator();
 
         while (i.hasNext()) {
-            Token token = (Token) i.next();            
+            Token token = i.next();
             String word = token.getWord().getSpelling();
             WordResult wr = null;
             ConfusionSet cs = null;
@@ -183,8 +180,8 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
      *
      * @return a list of word tokens in order of appearance
      */
-    private List getWordTokens(Token lastToken) {
-        List wordTokens = new LinkedList();
+    private List<Token> getWordTokens(Token lastToken) {
+        List<Token> wordTokens = new LinkedList<Token>();
         Token token = lastToken;
         while (token != null) {
             if (token.isWord()) {

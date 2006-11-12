@@ -73,6 +73,7 @@ class ValidatingPropertySheet implements PropertySheet {
      *             if the property is not a registered property or the value is
      *             not of the proper type.
      */
+    @SuppressWarnings({"unchecked"})
     void addProperty(String name, String value) {
         properties.put(name, value);
     }
@@ -125,6 +126,7 @@ class ValidatingPropertySheet implements PropertySheet {
      *             if the property is not a registered property or the value is
      *             not of the proper type.
      */
+    @SuppressWarnings({"unchecked"})
     public void setRaw(String key, Object val) throws PropertyException {
         PropertyType type = registry.lookup(key);
         if (type == null) {
@@ -153,6 +155,7 @@ class ValidatingPropertySheet implements PropertySheet {
      *            the name of the property
      * @return the return value
      */
+    @SuppressWarnings({"unchecked"})
     public Object getRaw(String name) throws PropertyException {
         Object value = getRawNoReplacement(name);
         
@@ -448,7 +451,7 @@ class ValidatingPropertySheet implements PropertySheet {
             return EMPTY;
         } 
         
-        List objectList = new ArrayList();
+        List<Object> objectList = new ArrayList<Object>();
         
         for (Iterator i = list.iterator(); i.hasNext(); ) {
             String compName = (String) i.next();
@@ -479,7 +482,8 @@ class ValidatingPropertySheet implements PropertySheet {
      * 
      * @return the array of names
      */
-    public String[] getNames() {
+     @SuppressWarnings({"unchecked"})
+     public String[] getNames() {
         Set keys = properties.keySet();
         return (String[]) keys.toArray(new String[keys.size()]);
     }

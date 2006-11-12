@@ -803,7 +803,7 @@ public class Lattice {
         return true;
     }
 
-    protected void sortHelper(Node n, List sorted, Set<Node> visited) {
+    protected void sortHelper(Node n, List<Node> sorted, Set<Node> visited) {
         if (visited.contains(n)) {
             return;
         }
@@ -824,7 +824,7 @@ public class Lattice {
      * @return Topologically sorted list of nodes in this lattice.
      */
     public List sortNodes() {
-        Vector sorted = new Vector(nodes.size());
+        Vector<Node> sorted = new Vector<Node>(nodes.size());
         sortHelper(initialNode, sorted, new HashSet<Node>());
         Collections.reverse(sorted);
         return sorted;

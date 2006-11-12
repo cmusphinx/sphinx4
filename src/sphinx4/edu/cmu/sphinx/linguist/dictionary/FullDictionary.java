@@ -31,7 +31,6 @@ import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
-import edu.cmu.sphinx.util.StreamFactory;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -85,8 +84,8 @@ public class FullDictionary implements Dictionary {
     private UnitManager unitManager;
     
     
-    private Map wordDictionary;
-    private Map fillerDictionary;
+    private Map<String,Object> wordDictionary;
+    private Map<String,Object> fillerDictionary;
     private Timer loadTimer;
 
     /*
@@ -188,24 +187,25 @@ public class FullDictionary implements Dictionary {
      * @throws java.io.IOException
      *                 if there is an error reading the dictionary
      */
-    private Map loadDictionary(InputStream inputStream, boolean isFillerDict)
+     @SuppressWarnings({"unchecked"})
+     private Map<String,Object> loadDictionary(InputStream inputStream, boolean isFillerDict)
             throws IOException {
-        Map dictionary = new HashMap();
+        Map<String,Object> dictionary = new HashMap<String,Object>();
         ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
                 true);
         String word;
         while ((word = est.getString()) != null) {
             word = removeParensFromWord(word);
             word = word.toLowerCase();
-            List units = new ArrayList(20);
+            List<Unit> units = new ArrayList<Unit>(20);
             String unitText;
             while ((unitText = est.getString()) != null) {
                 units.add(getCIUnit(unitText, isFillerDict));
             }
             Unit[] unitsArray = (Unit[]) units.toArray(new Unit[units.size()]);
-            List pronunciations = (List) dictionary.get(word);
+            List<Pronunciation> pronunciations = (List<Pronunciation>) dictionary.get(word);
             if (pronunciations == null) {
-                pronunciations = new LinkedList();
+                pronunciations = new LinkedList<Pronunciation>();
             }
             Pronunciation pronunciation = new Pronunciation(unitsArray, null,
                     null, 1.0f);
@@ -235,11 +235,12 @@ public class FullDictionary implements Dictionary {
      *                if true this is a filler dictionary
      *  
      */
-    private void createWords(Map dictionary, boolean isFillerDict) {
-        Set spellings = dictionary.keySet();
-        for (Iterator s = spellings.iterator(); s.hasNext();) {
-            String spelling = (String) s.next();
-            List pronunciations = (List) dictionary.get(spelling);
+     @SuppressWarnings({"unchecked"})
+     private void createWords(Map<String,Object> dictionary, boolean isFillerDict) {
+        Set<String> spellings = dictionary.keySet();
+        for (Iterator<String> s = spellings.iterator(); s.hasNext();) {
+            String spelling = s.next();
+            List<Pronunciation> pronunciations = (List<Pronunciation>) dictionary.get(spelling);
             Pronunciation[] pros = new Pronunciation[pronunciations.size()];
             for (int i = 0; i < pros.length; i++) {
                 pros[i] = (Pronunciation) pronunciations.get(i);
@@ -405,7 +406,7 @@ public class FullDictionary implements Dictionary {
      * @return a string representation of this FullDictionary
      */
     public String toString() {
-        SortedMap sorted = new TreeMap(wordDictionary);
+        SortedMap<String,Object> sorted = new TreeMap<String,Object>(wordDictionary);
         String result = "";
         sorted.putAll(fillerDictionary);
         for (Iterator i = sorted.keySet().iterator(); i.hasNext();) {
