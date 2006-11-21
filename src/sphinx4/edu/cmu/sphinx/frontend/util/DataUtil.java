@@ -105,8 +105,8 @@ public class DataUtil {
 	    int temp;
 	    for (int i = offset, j = 0; j < shortLength ; 
 		 j++, temp = 0x00000000) {
-		temp = (int) (byteArray[i++] << 8);
-		temp |= (int) (0x000000FF & byteArray[i++]);
+		temp = byteArray[i++] << 8;
+		temp |= 0x000000FF & byteArray[i++];
 		shortArray[j] = (short) temp;
 	    }
 	    return shortArray;

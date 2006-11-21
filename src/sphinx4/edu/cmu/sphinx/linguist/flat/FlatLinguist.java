@@ -501,7 +501,7 @@ public class FlatLinguist implements Linguist, Configurable {
     private SentenceHMMState findStartingState() {
         GrammarNode node = grammar.getInitialNode();
         GState gstate = getGState(node);
-        return (SentenceHMMState) gstate.getEntryPoint();
+        return gstate.getEntryPoint();
     }
     /**
      * Gets a SentenceHMMStateArc. The arc is drawn from a pool of arcs.
@@ -639,7 +639,7 @@ public class FlatLinguist implements Linguist, Configurable {
                 if (node.isEmpty()) {
                     GrammarArc[] arcs = getSuccessors();
                     for (int i = 0; i < arcs.length; i++) {
-                        GState gstate = getGState((GrammarNode) arcs[i]
+                        GState gstate = getGState(arcs[i]
                                 .getGrammarNode());
                         startingContexts.addAll(gstate.getStartingContexts());
                     }
@@ -669,9 +669,7 @@ public class FlatLinguist implements Linguist, Configurable {
             Unit[] units = pronunciation.getUnits();
             int actualSize = Math.min(units.length, maxSize);
             Unit[] context = new Unit[actualSize];
-            for (int j = 0; j < context.length; j++) {
-                context[j] = units[j];
-            }
+            System.arraycopy(units, 0, context, 0, context.length);
             return UnitContext.get(context);
         }
         /**
@@ -710,7 +708,7 @@ public class FlatLinguist implements Linguist, Configurable {
         private void pullRightContexts() {
             GrammarArc[] arcs = getSuccessors();
             for (int i = 0; i < arcs.length; i++) {
-                GState gstate = getGState((GrammarNode) arcs[i]
+                GState gstate = getGState(arcs[i]
                         .getGrammarNode());
                 rightContexts.addAll(gstate.getStartingContexts());
             }
@@ -750,7 +748,7 @@ public class FlatLinguist implements Linguist, Configurable {
             }
             GrammarArc[] arcs = getSuccessors();
             for (int i = 0; i < arcs.length; i++) {
-                GState gstate = getGState((GrammarNode) arcs[i]
+                GState gstate = getGState(arcs[i]
                         .getGrammarNode());
                 gstate.addLeftContext(leftContext);
                 // if our successor state is empty, also push our
@@ -1296,9 +1294,7 @@ public class FlatLinguist implements Linguist, Configurable {
             int curSize = prevUnits.length;
             int actSize = Math.min(maxSize, curSize);
             Unit[] leftUnits = new Unit[actSize];
-            for (int i = 0; i < leftUnits.length - 1; i++) {
-                leftUnits[i] = prevUnits[i + 1];
-            }
+            System.arraycopy(prevUnits, 1, leftUnits, 0, leftUnits.length - 1);
             if (leftUnits.length > 0) {
                 leftUnits[leftUnits.length - 1] = unit;
             }

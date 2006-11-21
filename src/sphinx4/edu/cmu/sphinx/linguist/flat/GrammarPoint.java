@@ -185,10 +185,8 @@ public class GrammarPoint {
 			 Unit[] rcUnits = (Unit[]) j.next();
 			 Unit[] units =Unit.getEmptyContext(rcUnits.length + 1);
 			 units[0] = gp.getUnitOrFill();
-			 for (int k = 0; k < rcUnits.length; k++) {
-			     units[k + 1] = rcUnits[k];
-			 }
-			 addContext(contexts, units);
+                 System.arraycopy(rcUnits, 0, units, 1, rcUnits.length);
+                 addContext(contexts, units);
 		     }
 		 }
 		 if (contexts.size() >= maxContexts) {

@@ -76,7 +76,7 @@ public class LiveMAPConfidenceTest {
                          */
                         WordResult[] words = best.getWords();
                         for (int i = 0; i < words.length; i++) {
-                            WordResult wr = (WordResult) words[i];
+                            WordResult wr = words[i];
                             System.out.println
                                 (wr.getPronunciation().getWord().getSpelling());
                             System.out.println

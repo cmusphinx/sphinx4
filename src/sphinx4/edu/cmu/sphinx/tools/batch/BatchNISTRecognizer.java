@@ -132,7 +132,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         //cm = ps.getPropertyManager();
         recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER,
                 Recognizer.class);
-        inputDataProcessors = (List) ps.getComponentList
+        inputDataProcessors = ps.getComponentList
                 (PROP_INPUT_DATA_PROCESSORS, DataProcessor.class);
         dataDir = ps.getString(PROP_DATA_DIR, "<raw data directory not set>");
         ctlFile = ps.getString(PROP_CTL_FILE, "<ctl file not set>");

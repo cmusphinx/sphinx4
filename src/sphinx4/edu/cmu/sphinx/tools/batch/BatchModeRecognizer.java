@@ -185,7 +185,7 @@ public class BatchModeRecognizer implements Configurable {
                 PROP_USE_POOLED_BATCH_MANAGER_DEFAULT);
         recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER,
                 Recognizer.class);
-        inputDataProcessors = (List) ps.getComponentList
+        inputDataProcessors = ps.getComponentList
             (PROP_INPUT_DATA_PROCESSORS, DataProcessor.class);
     }
 

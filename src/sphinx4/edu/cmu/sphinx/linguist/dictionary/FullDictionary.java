@@ -202,7 +202,7 @@ public class FullDictionary implements Dictionary {
             while ((unitText = est.getString()) != null) {
                 units.add(getCIUnit(unitText, isFillerDict));
             }
-            Unit[] unitsArray = (Unit[]) units.toArray(new Unit[units.size()]);
+            Unit[] unitsArray = units.toArray(new Unit[units.size()]);
             List<Pronunciation> pronunciations = (List<Pronunciation>) dictionary.get(word);
             if (pronunciations == null) {
                 pronunciations = new LinkedList<Pronunciation>();
@@ -213,7 +213,7 @@ public class FullDictionary implements Dictionary {
             // if we are adding a SIL ending duplicate
             if (!isFillerDict && addSilEndingPronunciation) {
                 units.add(UnitManager.SILENCE);
-                Unit[] unitsArray2 = (Unit[]) units.toArray(new Unit[units
+                Unit[] unitsArray2 = units.toArray(new Unit[units
                         .size()]);
                 Pronunciation pronunciation2 = new Pronunciation(unitsArray2,
                         null, null, 1.0f);
@@ -243,7 +243,7 @@ public class FullDictionary implements Dictionary {
             List<Pronunciation> pronunciations = (List<Pronunciation>) dictionary.get(spelling);
             Pronunciation[] pros = new Pronunciation[pronunciations.size()];
             for (int i = 0; i < pros.length; i++) {
-                pros[i] = (Pronunciation) pronunciations.get(i);
+                pros[i] = pronunciations.get(i);
             }
             Word word = new Word(spelling, pros, isFillerDict);
             for (int i = 0; i < pros.length; i++) {
@@ -427,7 +427,7 @@ public class FullDictionary implements Dictionary {
      * @return an array (possibly empty) of all filler words
      */
     public Word[] getFillerWords() {
-        return (Word[]) fillerDictionary.values().toArray(
+        return fillerDictionary.values().toArray(
                 new Word[fillerDictionary.values().size()]);
     }
 

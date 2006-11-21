@@ -112,7 +112,7 @@ public class Pool {
      *
      */
     public void setFeature(String name, int value) {
-	features.put(name, new Integer(value));
+	features.put(name, value);
     }
 
     /**

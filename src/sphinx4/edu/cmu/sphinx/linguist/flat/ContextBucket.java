@@ -52,10 +52,8 @@ class ContextBucket  {
 	if (newSize > 0) {
 	    units[0] = unit;
 
-	    for (int i = 1; i < newSize; i++) {
-		units[i] = prevUnits[i - 1];
-	    }
-	}
+        System.arraycopy(prevUnits, 0, units, 1, newSize);
+    }
     }
 
     /**

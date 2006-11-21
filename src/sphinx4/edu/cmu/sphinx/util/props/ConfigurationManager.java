@@ -130,7 +130,7 @@ public class ConfigurationManager {
      */
     public PropertySheet getPropertySheet(String instanceName) {
         PropertySheet propertySheet = null;
-        Symbol symbol = (Symbol) symbolTable.get(instanceName);
+        Symbol symbol = symbolTable.get(instanceName);
         if (symbol != null) {
             propertySheet = symbol.getPropertySheet();
         }
@@ -146,7 +146,7 @@ public class ConfigurationManager {
      */
     public Registry getRegistry(String instanceName) {
         Registry registry = null;
-        Symbol symbol = (Symbol) symbolTable.get(instanceName);
+        Symbol symbol = symbolTable.get(instanceName);
         if (symbol != null) {
             registry = symbol.getRegistry();
         }
@@ -188,7 +188,7 @@ public class ConfigurationManager {
      */
     public Configurable lookup(String name) throws InstantiationException,
             PropertyException {
-        Symbol symbol = (Symbol) symbolTable.get(name);
+        Symbol symbol = symbolTable.get(name);
         if (symbol == null) {
             if (showCreations) {
                 System.out.println("Creating: " + name);
@@ -241,7 +241,7 @@ public class ConfigurationManager {
      */
     public void setProperty(String component, String prop, String value) 
             throws PropertyException {
-        Symbol symbol = (Symbol) symbolTable.get(component);
+        Symbol symbol = symbolTable.get(component);
         if (symbol != null) {
             PropertySheet ps = symbol.getPropertySheet();
             Configurable c = symbol.getObject();
@@ -278,7 +278,7 @@ public class ConfigurationManager {
     public Object getProperty(String component, String propertyName) 
 	throws PropertyException {
 	Object obj = null;
-        Symbol symbol = (Symbol) symbolTable.get(component);
+        Symbol symbol = symbolTable.get(component);
         if (symbol != null) {
             PropertySheet ps = symbol.getPropertySheet();
             obj = ps.getRawNoReplacement(propertyName);
@@ -313,7 +313,7 @@ public class ConfigurationManager {
         outputHeader(2, writer, "Global Properties");
         for (Iterator<String> i = globalProperties.keySet().iterator(); i.hasNext(); ) {
             String name = i.next();
-            String value = (String) globalProperties.get(name);
+            String value = globalProperties.get(name);
             value = encodeValue(value);
             writer.println("        <property name=\"" +
                 stripGlobalSymbol(name) + "\" value=\"" + value + "\"/>");
@@ -324,7 +324,7 @@ public class ConfigurationManager {
 
         String[] allNames = getInstanceNames(Object.class);
         for (int i = 0; i < allNames.length; i++) {
-            Symbol symbol = (Symbol) symbolTable.get(allNames[i]);
+            Symbol symbol = symbolTable.get(allNames[i]);
             PropertySheet ps = symbol.getPropertySheet();
             String[] names = ps.getNames();
 
@@ -467,7 +467,7 @@ public class ConfigurationManager {
      * @return the symbol value
      */
     String globalLookup(String key) {
-        return (String) globalProperties.get(key);
+        return globalProperties.get(key);
     }
 
     /**
@@ -554,7 +554,7 @@ public class ConfigurationManager {
      * @param name the component name
      */
     public void showConfig(String name) {
-        Symbol symbol = (Symbol) symbolTable.get(name);
+        Symbol symbol = symbolTable.get(name);
 
         if (symbol == null)  {
             System.out.println("No component: " + name);
@@ -595,7 +595,7 @@ public class ConfigurationManager {
     }
 
     public void editConfig(String name) {
-        Symbol symbol = (Symbol) symbolTable.get(name);
+        Symbol symbol = symbolTable.get(name);
         boolean done = false;
 
         if (symbol == null)  {
@@ -723,7 +723,7 @@ public class ConfigurationManager {
      *                the name of the component to dump
      */
     private void dumpComponentAsHTML(PrintStream out, String name) {
-        Symbol symbol = (Symbol) symbolTable.get(name);
+        Symbol symbol = symbolTable.get(name);
         out.println("<table border=1>");
         //        out.println("<table border=1 width=\"%80\">");
         out.print("    <tr><th bgcolor=\"#CCCCFF\" colspan=2>");
@@ -798,7 +798,7 @@ public class ConfigurationManager {
         out.println("node: {title: \"" + name + "\" color: " + getColor(name)
                 + "}");
 
-        Symbol symbol = (Symbol) symbolTable.get(name);
+        Symbol symbol = symbolTable.get(name);
         Registry registry = symbol.getRegistry();
         Collection propertyNames = registry.getRegisteredProperties();
         PropertySheet properties = symbol.getPropertySheet();

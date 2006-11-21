@@ -113,8 +113,8 @@ public class GaussianMixture implements Senone {
      */
     public int hashCode() {
         long id = getID();
-        int high = (int) ((id >> 32) & 0xffffffff);
-        int low = (int) (id & 0xffffffff);
+        int high = (int) ((id >> 32));
+        int low = (int) (id);
         return high + low;
     }
 

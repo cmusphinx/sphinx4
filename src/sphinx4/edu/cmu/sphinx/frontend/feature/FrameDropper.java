@@ -155,7 +155,7 @@ public class FrameDropper extends BaseDataProcessor {
                     id = -1;
                 }                
                 if (feature instanceof FloatData) {
-                    lastFeature = (FloatData) feature;
+                    lastFeature = feature;
                 } else {
                     lastFeature = null;
                 }

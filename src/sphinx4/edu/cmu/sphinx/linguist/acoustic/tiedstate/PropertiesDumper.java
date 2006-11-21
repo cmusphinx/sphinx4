@@ -69,7 +69,7 @@ public class PropertiesDumper {
      * @return a string of the properties
      */
     public String toString() {
-        String result = ((String) props.get("description")) + "\n";
+        String result = props.get("description") + "\n";
         List list = Collections.list(props.propertyNames());
         Collections.sort(list);
         for (Iterator i = list.iterator(); i.hasNext(); ) {

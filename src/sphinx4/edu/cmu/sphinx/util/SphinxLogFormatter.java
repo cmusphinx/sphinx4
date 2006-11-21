@@ -75,10 +75,7 @@ public class SphinxLogFormatter extends Formatter {
             sbuf.append("\n");
             if (record.getLevel().equals(Level.WARNING)
                     || record.getLevel().equals(Level.SEVERE)) {
-                sbuf.append("                   in "
-                        + record.getSourceClassName() + ":"
-                        + record.getSourceMethodName() + "-"
-                        + record.getLoggerName() + "\n");
+                sbuf.append("                   in ").append(record.getSourceClassName()).append(":").append(record.getSourceMethodName()).append("-").append(record.getLoggerName()).append("\n");
             }
             return sbuf.toString();
         }

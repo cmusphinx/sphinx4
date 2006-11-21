@@ -262,9 +262,7 @@ public class AudioTool {
                     short[] newShorts =
                         new short[shorts.length
                                   + values.length];
-                    for (int i = 0; i < shorts.length; i++) {
-                        newShorts[i] = shorts[i];
-                    }
+                    System.arraycopy(shorts, 0, newShorts, 0, shorts.length);
                     for (int i = 0; i < values.length; i++) {
                         newShorts[shorts.length + i] =
                             (short) values[i];

@@ -766,7 +766,7 @@ public class Microphone extends BaseDataProcessor {
         Data output = null;
 
         if (!utteranceEndReached) {
-            output = (Data) audioList.remove();
+            output = audioList.remove();
             if (output instanceof DataEndSignal) {
                 utteranceEndReached = true;
             }

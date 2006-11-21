@@ -100,7 +100,7 @@ public class Confidence {
                          */
                         WordResult[] words = best.getWords();
                         for (int i = 0; i < words.length; i++) {
-                            WordResult wr = (WordResult) words[i];
+                            WordResult wr = words[i];
                             printWordConfidence(wr);
                         }
                         System.out.println();

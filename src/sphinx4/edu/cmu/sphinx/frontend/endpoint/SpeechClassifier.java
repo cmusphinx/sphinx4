@@ -189,7 +189,7 @@ public class SpeechClassifier extends BaseDataProcessor {
             sumOfSquares += sample * sample;
         }
         double rootMeanSquare = Math.sqrt
-            ((double)sumOfSquares/samples.length);
+            (sumOfSquares /samples.length);
         rootMeanSquare = Math.max(rootMeanSquare, 1);
         return (LogMath.log10((float)rootMeanSquare) * 20);
     }

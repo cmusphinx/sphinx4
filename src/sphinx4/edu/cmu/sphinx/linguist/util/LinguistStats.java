@@ -75,9 +75,9 @@ public class LinguistStats extends LinguistProcessor {
     private void incrementStateTypeCount(SearchState state) {
         Integer count = (Integer) stateCountByType.get(state.getClass());
         if (count == null) {
-            count = new Integer(0);
+            count = 0;
         }
-        count = new Integer(count.intValue() + 1);
+        count = count.intValue() + 1;
         stateCountByType.put(state.getClass(), count);
     }
     /**

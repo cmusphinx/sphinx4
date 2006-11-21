@@ -90,7 +90,7 @@ public class Sausage implements ConfidenceResult {
                 ConfusionSet newSet = new ConfusionSet();
                 for (Iterator j=set.keySet().iterator();j.hasNext();) {
                     Double oldProb = (Double)j.next();
-                    Double newProb = new Double(oldProb.doubleValue() - sum);
+                    Double newProb = oldProb.doubleValue() - sum;
                     newSet.put(newProb,set.get(oldProb));
                 }
                 confusionSets.set(index,newSet);

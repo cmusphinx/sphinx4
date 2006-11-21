@@ -703,7 +703,7 @@ public class NISTAlign {
 	int i = referenceWords.size();
 	int j = hypothesisWords.size();
 	while ((i >= 0) && (j >= 0)) {
-	    list.add(new Integer(backtraceTable[i][j]));
+	    list.add(backtraceTable[i][j]);
 	    switch (backtraceTable[i][j]) {
 	        case OK           : i--; j--; 	                break;
 		case SUBSTITUTION : i--; j--; substitutions++;  break;

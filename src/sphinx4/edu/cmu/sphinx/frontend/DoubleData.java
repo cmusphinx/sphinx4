@@ -100,7 +100,7 @@ public class DoubleData implements Data, Cloneable {
      *
      * @return a clone of this data object
      */
-    public Object clone() {
+    public Object clone() throws CloneNotSupportedException {
 	try {
 	    Data data = (Data) super.clone();
 	    return data;

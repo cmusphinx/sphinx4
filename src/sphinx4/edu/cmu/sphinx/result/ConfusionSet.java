@@ -31,11 +31,12 @@ public class ConfusionSet extends TreeMap {
      * 
      * @param word the hypothesis to add
      */
+    @SuppressWarnings({"unchecked"})
     public void addWordHypothesis(WordResult word) {
         Set wordSet = getWordSet(word.getConfidence());
         if (wordSet == null) {
             wordSet = new HashSet();
-            put(new Double(word.getConfidence()),wordSet);
+            put(word.getConfidence(),wordSet);
         }
         wordSet.add(word);
     }
@@ -48,7 +49,7 @@ public class ConfusionSet extends TreeMap {
      * 
      */
     public Set getWordSet(double posterior) {
-        return (Set)get(new Double(posterior)); 
+        return (Set)get(new Double(posterior));
     }
     
     /**
@@ -60,7 +61,7 @@ public class ConfusionSet extends TreeMap {
      * 
      */
     public Set getBestHypothesisSet() {
-        return (Set)get(lastKey()); 
+        return (Set)get(lastKey());
     }
     
     /**

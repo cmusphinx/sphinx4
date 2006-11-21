@@ -185,7 +185,7 @@ public class TokenGraphDumper {
     private Integer getTokenID(Token token) {
         Integer id = tokenIDMap.get(token);
         if (id == null) {
-            id = new Integer(ID++);
+            id = ID++;
             tokenIDMap.put(token, id);
         }
         return id;

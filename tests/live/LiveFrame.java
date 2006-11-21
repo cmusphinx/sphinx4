@@ -208,7 +208,7 @@ public class LiveFrame extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 sentenceAccuracyTextArea.setText(sentenceAccuracy);
-            };
+            }
         });
     }
 

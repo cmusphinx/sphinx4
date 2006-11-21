@@ -283,7 +283,7 @@ public class SpeedTracker
             numUtteranceStart++;
         } else if (signal instanceof DataEndSignal) {
             DataEndSignal endSignal = (DataEndSignal) signal;
-            audioTime = (float)(endSignal.getDuration()/1000f);
+            audioTime = endSignal.getDuration()/1000f;
         }
     }
 

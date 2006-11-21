@@ -60,7 +60,7 @@ public class RawReader {
          * data.
          */
         byte[] buffer = new byte[bytesPerSample];
-        ArrayList samples = new ArrayList();
+        ArrayList<Short> samples = new ArrayList<Short>();
 	int read = 0;
 	int totalRead = 0;
         boolean done = false;
@@ -105,7 +105,7 @@ public class RawReader {
                 if (!signedData) {
                     val = val - (1 << ((bytesPerSample * 8) - 1));
                 }
-                samples.add(new Short((short) val));
+                samples.add((short) val);
             }
         }
         
@@ -113,7 +113,7 @@ public class RawReader {
          */
         short[] audioData = new short[samples.size()];
         for (int i = 0; i < audioData.length; i++) {
-            audioData[i] = ((Short) samples.get(i)).shortValue();
+            audioData[i] = (samples.get(i)).shortValue();
         }
         return audioData;
     }

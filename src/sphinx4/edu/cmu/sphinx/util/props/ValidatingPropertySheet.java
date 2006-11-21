@@ -577,7 +577,7 @@ class ValidatingPropertySheet implements PropertySheet {
                 List values = (List) obj;
                 out.print("  " + names[j] + ": " );
                 for (int k = 0; k < values.size(); k++) {
-                    out.println("        " + (String) values.get(k));
+                    out.println("        " + values.get(k));
                 }
                 out.println();
             }

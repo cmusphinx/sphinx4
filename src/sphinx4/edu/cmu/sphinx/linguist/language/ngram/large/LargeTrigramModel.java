@@ -522,7 +522,7 @@ public class LargeTrigramModel implements LanguageModel {
             int length = wordSequence.size();
             if (length > 0) {
                 int wordID = getWordID(wordSequence.getWord(length - 1));
-                smearTerm = (float) unigramSmearTerm[wordID];
+                smearTerm = unigramSmearTerm[wordID];
             }
         }
         if (fullSmear && logger.isLoggable(Level.FINE)) {
@@ -541,14 +541,14 @@ public class LargeTrigramModel implements LanguageModel {
             int length = wordSequence.size();
             if (length == 1) {
                 int wordID = getWordID(wordSequence.getWord(0));
-                smearTerm = (float) unigramSmearTerm[wordID];
+                smearTerm = unigramSmearTerm[wordID];
             } else if (length >= 2) {
                 int size = wordSequence.size();
                 int wordID1 = getWordID(wordSequence.getWord(size - 2));
                 int wordID2 = getWordID(wordSequence.getWord(size - 1));
                 Float st = getSmearTerm(wordID1, wordID2);
                 if (st == null) {
-                    smearTerm = (float) unigramSmearTerm[wordID2];
+                    smearTerm = unigramSmearTerm[wordID2];
                 } else {
                     smearTerm = st.floatValue();
                     smearBigramHit++;
@@ -737,7 +737,7 @@ public class LargeTrigramModel implements LanguageModel {
                     score = getBigramProbability(wordSequence.getNewest());
                 }
             }
-            probability = new Float(score);
+            probability = score;
             trigramCache.put(wordSequence, probability);
         }
 
@@ -1147,7 +1147,7 @@ public class LargeTrigramModel implements LanguageModel {
      */
     private void putSmearTerm(int word1, int word2, float smearTerm) {
         long bigramID = (((long) word1) << 32) | word2;
-        bigramSmearMap.put(new Long(bigramID), new Float(smearTerm));
+        bigramSmearMap.put(bigramID, smearTerm);
     }
 
     /**
@@ -1160,7 +1160,7 @@ public class LargeTrigramModel implements LanguageModel {
      */
     private Float  getSmearTerm(int word1, int word2) {
         long bigramID = (((long) word1) << 32) | word2;
-        return (Float) bigramSmearMap.get(new Long(bigramID));
+        return (Float) bigramSmearMap.get(bigramID);
     }
 
     /**

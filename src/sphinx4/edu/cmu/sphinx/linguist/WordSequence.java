@@ -56,9 +56,7 @@ public class WordSequence {
      */
     private WordSequence(Word[] words) {
         this.words = new Word[words.length];
-        for (int i = 0; i < words.length; i++) {
-            this.words[i] = words[i];
-        }
+        System.arraycopy(words, 0, this.words, 0, words.length);
         check();
     }
     
@@ -134,9 +132,7 @@ public class WordSequence {
 
         if (size() >= 1) {
             next = new WordSequence(words.length -1);
-            for (int i = 0; i < next.words.length; i++) {
-                next.words[i] = this.words[i];
-            }
+            System.arraycopy(this.words, 0, next.words, 0, next.words.length);
         }
 	return next;
     }
@@ -152,9 +148,7 @@ public class WordSequence {
 
         if (size() >= 1) {
             next = new WordSequence(words.length -1);
-            for (int i = 0; i < next.words.length; i++) {
-                next.words[i] = this.words[i + 1];
-            }
+            System.arraycopy(this.words, 1, next.words, 0, next.words.length);
         }
 	return next;
     }

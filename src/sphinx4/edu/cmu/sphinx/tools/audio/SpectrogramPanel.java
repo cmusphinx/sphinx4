@@ -230,7 +230,7 @@ public class SpectrogramPanel extends JPanel {
 
         if (spectrogram != null) {
 
-            g.drawImage(scaledSpectrogram, 0, 0, (ImageObserver) null);
+            g.drawImage(scaledSpectrogram, 0, 0, null);
         }
     }
 }

@@ -81,7 +81,7 @@ public class HMMManager {
      * @return the map of HMMs for the given position.
      */
     private Map getHMMMap(HMMPosition pos) {
-	Map hmmMap = (Map) hmmsPerPosition[pos.getIndex()];
+	Map hmmMap = hmmsPerPosition[pos.getIndex()];
 	if (hmmMap == null) {
 	    hmmMap = new LinkedHashMap();
 	    hmmsPerPosition[pos.getIndex()] = hmmMap;

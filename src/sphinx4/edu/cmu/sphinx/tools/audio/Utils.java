@@ -79,11 +79,11 @@ public class Utils {
      */
     static public int toUnsignedShort(byte[] bytes, boolean bigEndian) {
 	if (bytes.length == 1) {
-	    return (int) (0xff & bytes[0]);
+	    return 0xff & bytes[0];
 	} else if (bigEndian) {
-	    return (int) (((bytes[0] & 0xff) << 8) | (0xff & bytes[1]));
+	    return ((bytes[0] & 0xff) << 8) | (0xff & bytes[1]);
 	} else {
-	    return (int) (((bytes[1] & 0xff) << 8) | (0xff & bytes[0]));
+	    return ((bytes[1] & 0xff) << 8) | (0xff & bytes[0]);
 	}
     }
 	
@@ -127,7 +127,7 @@ public class Utils {
 	} else if (encoding == Encoding.PCM_UNSIGNED) {
 	    int tmp = toUnsignedShort(byteArray, format.isBigEndian());
 	    if (frameSize == 1) {
-		tmp = (int) (tmp << 8);
+		tmp = tmp << 8;
 	    }
 	    result = (short) (tmp - (2 << 14));
 	} else if (encoding == Encoding.ULAW) {

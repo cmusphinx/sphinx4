@@ -74,7 +74,7 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
         for (int i = 0; i < words.length; i++) {
             Word word = words[i].getPronunciation().getWord();
             if (!word.isFiller() && !word.getSpelling().equals("<unk>")) {
-                buf.append(word.getSpelling() + " ");
+                buf.append(word.getSpelling()).append(" ");
             }
         }
         return (buf.toString().trim());
@@ -88,7 +88,7 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
         WordResult[] words = path.getWords();
         for (int i = 0; i < words.length; i++) {
             Word word = words[i].getPronunciation().getWord();
-            buf.append(word.getSpelling() + " ");
+            buf.append(word.getSpelling()).append(" ");
         }
         return (buf.toString().trim());
     }

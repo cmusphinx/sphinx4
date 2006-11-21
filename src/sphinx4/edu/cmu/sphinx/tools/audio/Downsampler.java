@@ -58,9 +58,7 @@ public class Downsampler {
             temp[outSampleIndex++] = (short) (sum / srIn);
         }
         short[] outSamples = new short[outSampleIndex];
-        for (int i = 0; i < outSampleIndex; i++) {
-            outSamples[i] = temp[i];
-        }
+        System.arraycopy(temp, 0, outSamples, 0, outSampleIndex);
         return outSamples;
     }
 }

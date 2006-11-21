@@ -189,8 +189,8 @@ public class ResultAnalyzer {
 	insertionErrors++;
 	String word = (String) hypList.remove(0);
 
-	refOutput.append(" " + pad(word.length()));
-	hypOutput.append(" " + word.toUpperCase());
+        refOutput.append(" ").append(pad(word.length()));
+        hypOutput.append(" ").append(word.toUpperCase());
     }
 
     /**
@@ -204,8 +204,8 @@ public class ResultAnalyzer {
 	deletionErrors++;
 	String word = (String) refList.remove(0);
 
-	refOutput.append(" " + word.toUpperCase());
-	hypOutput.append(" " + pad(word.length()));
+        refOutput.append(" ").append(word.toUpperCase());
+        hypOutput.append(" ").append(pad(word.length()));
     }
 
     /**
@@ -220,8 +220,8 @@ public class ResultAnalyzer {
 	String hyp = (String) hypList.remove(0);
 	int length = Math.max(ref.length(), hyp.length());
 
-	refOutput.append(" " + pad(ref.toUpperCase(), length));
-	hypOutput.append(" " + pad(hyp.toUpperCase(), length));
+        refOutput.append(" ").append(pad(ref.toUpperCase(), length));
+        hypOutput.append(" ").append(pad(hyp.toUpperCase(), length));
     }
 
     /**
@@ -234,8 +234,8 @@ public class ResultAnalyzer {
 	numMatchingWords++;
 	String ref = (String) refList.remove(0);
 	String hyp = (String) hypList.remove(0);
-	refOutput.append(" " + ref);
-	hypOutput.append(" " + hyp);
+        refOutput.append(" ").append(ref);
+        hypOutput.append(" ").append(hyp);
     }
 
     /**

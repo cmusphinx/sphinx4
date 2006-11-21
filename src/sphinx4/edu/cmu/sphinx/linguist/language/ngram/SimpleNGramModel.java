@@ -13,7 +13,6 @@ package edu.cmu.sphinx.linguist.language.ngram;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.URL;
@@ -62,8 +61,8 @@ public class SimpleNGramModel implements LanguageModel {
     private int desiredMaxDepth;
     private Logger logger;
     private int maxNGram = 0;
-    private Map map;
-    private Set vocabulary;
+    private Map<WordSequence, Probability> map;
+    private Set<String> vocabulary;
     protected int lineNumber;
     protected BufferedReader reader;
     protected String fileName;
@@ -111,8 +110,8 @@ public class SimpleNGramModel implements LanguageModel {
         desiredMaxDepth = ps.getInt(PROP_MAX_DEPTH, PROP_MAX_DEPTH_DEFAULT);
         dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY,
                 Dictionary.class);
-        map = new HashMap();
-        vocabulary = new HashSet();
+        map = new HashMap<WordSequence, Probability>();
+        vocabulary = new HashSet<String>();
     }
 
     /*
@@ -250,7 +249,7 @@ public class SimpleNGramModel implements LanguageModel {
      * @return the probability entry for the wordlist or null
      */
     private Probability getProb(WordSequence wordSequence) {
-        return (Probability) map.get(wordSequence);
+        return map.get(wordSequence);
     }
 
     /**
@@ -274,9 +273,9 @@ public class SimpleNGramModel implements LanguageModel {
      * Dumps the language model
      */
     public void dump() {
-        for (Iterator i = map.keySet().iterator(); i.hasNext();) {
-            WordSequence ws = (WordSequence) i.next();
-            Probability prob = (Probability) map.get(ws);
+        for (Iterator<WordSequence> i = map.keySet().iterator(); i.hasNext();) {
+            WordSequence ws = i.next();
+            Probability prob = map.get(ws);
             System.out.println(ws.toString() + " " + prob);
         }
     }
@@ -290,10 +289,10 @@ public class SimpleNGramModel implements LanguageModel {
      * 
      * @return a string representation of the word list
      */
-    private String getRepresentation(List wordList) {
+    private String getRepresentation(List<? extends String> wordList) {
         StringBuffer sb = new StringBuffer();
-        for (Iterator i = wordList.iterator(); i.hasNext();) {
-            String s = (String) i.next();
+        for (Iterator<? extends String> i = wordList.iterator(); i.hasNext();) {
+            String s = i.next();
             sb.append(s);
             if (i.hasNext()) {
                 sb.append("+");
@@ -329,7 +328,7 @@ public class SimpleNGramModel implements LanguageModel {
         // look for beginning of data
         readUntil("\\data\\");
         // look for ngram statements
-        List ngramList = new ArrayList();
+        List<Integer> ngramList = new ArrayList<Integer>();
         while ((line = readLine()) != null) {
             if (line.startsWith("ngram")) {
                 StringTokenizer st = new StringTokenizer(line, " \t\n\r\f=");
@@ -340,7 +339,7 @@ public class SimpleNGramModel implements LanguageModel {
                 st.nextToken();
                 int index = Integer.parseInt(st.nextToken());
                 int count = Integer.parseInt(st.nextToken());
-                ngramList.add(index - 1, new Integer(count));
+                ngramList.add(index - 1, count);
                 if (index > maxNGram) {
                     maxNGram = index;
                 }
@@ -348,12 +347,12 @@ public class SimpleNGramModel implements LanguageModel {
                 break;
             }
         }
-        int numUnigrams = ((Integer) ngramList.get(0)).intValue() - 1;
+        int numUnigrams = (ngramList.get(0)).intValue() - 1;
         // -log(x) = log(1/x)
         float logUniformProbability = -logMath.linearToLog(numUnigrams);
         for (int index = 0; index < ngramList.size(); index++) {
             int ngram = index + 1;
-            int ngramCount = ((Integer) ngramList.get(index)).intValue();
+            int ngramCount = (ngramList.get(index)).intValue();
             for (int i = 0; i < ngramCount; i++) {
                 StringTokenizer tok = new StringTokenizer(readLine());
                 int tokenCount = tok.countTokens();
@@ -363,7 +362,7 @@ public class SimpleNGramModel implements LanguageModel {
                 float log10Prob = Float.parseFloat(tok.nextToken());
                 float log10Backoff = 0.0f;
                 // construct the WordSequence for this N-Gram
-                List wordList = new ArrayList(maxNGram);
+                List<Word> wordList = new ArrayList<Word>(maxNGram);
                 for (int j = 0; j < ngram; j++) {
                     String word = tok.nextToken().toLowerCase();
                     vocabulary.add(word);
@@ -491,8 +490,7 @@ public class SimpleNGramModel implements LanguageModel {
     /**
      * Generates a 'corrupt' IO exception
      * 
-     * @throws an
-     *                 IOException with the given string
+     * @throws IOException with the given string
      */
     private void corrupt(String why) throws IOException {
         throw new IOException("Corrupt Language Model " + fileName
@@ -528,4 +526,4 @@ class Probability {
     public String toString() {
         return "Prob: " + logProbability + " " + logBackoff;
     }
-};
+}

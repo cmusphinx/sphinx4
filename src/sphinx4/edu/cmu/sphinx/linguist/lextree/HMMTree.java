@@ -681,8 +681,7 @@ class HMMTree {
                             initialNode = new InitialWordNode(p, tailNode);
 			} else {
                             float prob = getWordUnigramProbability(p.getWord());
-                            wordNode = (WordNode)
-                                tailNode.addSuccessor(p, prob);
+                            wordNode = tailNode.addSuccessor(p, prob);
                             if (p.getWord() ==
                                     dictionary.getSentenceEndWord()) {
                                 sentenceEndWordNode = wordNode;
@@ -1299,7 +1298,7 @@ class EndNode extends UnitNode {
         super(probablilty);
         this.baseUnit = baseUnit;
         this.leftContext = lc;
-        key = new Integer(baseUnit.getBaseID() * 121 + leftContext.getBaseID());
+        key = baseUnit.getBaseID() * 121 + leftContext.getBaseID();
     }
 
     /**

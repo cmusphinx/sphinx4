@@ -264,7 +264,7 @@ public abstract class  SentenceHMMState implements Serializable, SearchState  {
      * @return the set of successors
      */
      public SearchStateArc[]  getSuccessors() {
-         return (SearchStateArc[]) getSuccessorArray();
+         return getSuccessorArray();
      }
 
 

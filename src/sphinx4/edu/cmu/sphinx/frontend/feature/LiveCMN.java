@@ -221,7 +221,7 @@ public class LiveCMN extends BaseDataProcessor {
         if (numberFrame > 0) {
 
             // update the currentMean buffer with the sum buffer
-            double sf = (double) (1.0/numberFrame);
+            double sf = 1.0/numberFrame;
             
             System.arraycopy(sum, 0, currentMean, 0, sum.length);
             

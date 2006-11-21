@@ -300,7 +300,7 @@ public class LiveModeRecognizer implements Configurable {
         StringBuffer sb = new StringBuffer();
         for (Iterator i = resultList.iterator(); i.hasNext();) {
             String result = (String) i.next();
-            sb.append(result + " ");
+            sb.append(result).append(" ");
         }
         return sb.toString();
     }

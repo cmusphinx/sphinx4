@@ -84,7 +84,7 @@ public class  UnitManager implements Configurable  {
     public Unit getUnit(String name, boolean filler, Context context) {
         Unit unit = null;
         if (Context.EMPTY_CONTEXT == context) {
-            unit = (Unit) ciMap.get(name);
+            unit = ciMap.get(name);
             if (unit == null) {
                 unit = createCIUnit(name, filler);
             }
@@ -128,7 +128,7 @@ public class  UnitManager implements Configurable  {
      * @return the unit
      */
     private Unit createCIUnit(String name, boolean filler) {
-        Unit unit = (Unit) ciMap.get(name);
+        Unit unit = ciMap.get(name);
         if (unit == null) {
             Unit u = new Unit(name, filler,  nextID++);
             unit = u;
@@ -164,6 +164,6 @@ public class  UnitManager implements Configurable  {
      * @return the CI unit
      */
     private Unit lookupCIUnit(String name) {
-        return (Unit) ciMap.get(name);
+        return ciMap.get(name);
     }
 }

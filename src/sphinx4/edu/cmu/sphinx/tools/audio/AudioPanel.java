@@ -290,10 +290,8 @@ public class AudioPanel extends JPanel
             end = shorts.length;
         }
         short[] newShorts = new short[end - start];
-        for (int i = 0; i < (end - start); i++) {
-            newShorts[i] = shorts[i + start];
-        }
-        
+        System.arraycopy(shorts, start, newShorts, 0, (end - start));
+
         audio.setAudioData(newShorts);
 
         setSelectionStart(-1);

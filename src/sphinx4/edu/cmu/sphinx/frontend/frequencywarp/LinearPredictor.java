@@ -110,8 +110,7 @@ public class LinearPredictor {
 	int RCorder = RC.length;
 	reflectionCoeffs = new double[RCorder];
 
-	for (int i = 0; i < RCorder; i++)
-	    reflectionCoeffs[i] = RC[i];
+        System.arraycopy(RC, 0, reflectionCoeffs, 0, RCorder);
 
         for (int i = 1; i <= lpcorder; i++) {
 	    for (int m = 1; m < i; m++) {
@@ -196,11 +195,9 @@ public class LinearPredictor {
 
 	// Make a local copy as this gets destroyed
 	double[] lincep = new double[cepstrumOrder];
-	for (int i = 0; i < cepstrumOrder; i++) {
-	    lincep[i] = cepstra[i];
-	}
+        System.arraycopy(cepstra, 0, lincep, 0, cepstrumOrder);
 
-	bilinearCepstra[0] = lincep[0];
+        bilinearCepstra[0] = lincep[0];
 	lincep[0] = 0;
 	g[0][cepstrumOrder - 1] = lincep[cepstrumOrder - 1];
 	for (int i = 1; i < nbilincepstra; i++) {
