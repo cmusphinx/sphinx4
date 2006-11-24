@@ -136,6 +136,8 @@ public class SpeechClassifier extends BaseDataProcessor {
         registry.register(PROP_THRESHOLD, PropertyType.DOUBLE);
         registry.register(PROP_MIN_SIGNAL, PropertyType.DOUBLE);
         registry.register(PROP_DEBUG, PropertyType.BOOLEAN);
+        
+        initialize();
     }
 
     /*
@@ -159,7 +161,7 @@ public class SpeechClassifier extends BaseDataProcessor {
      * and DataProcessor predecessor.
      *
      */
-    public void inititalize() {
+    public void initialize() {
         super.initialize();
         reset();
     }
@@ -257,8 +259,7 @@ public class SpeechClassifier extends BaseDataProcessor {
             }
         }
         if (outputQueue.size() > 0) {
-            Data audio = (Data) outputQueue.remove(0);
-            return audio;
+            return (Data) outputQueue.remove(0);
         } else {
             return null;
         }
