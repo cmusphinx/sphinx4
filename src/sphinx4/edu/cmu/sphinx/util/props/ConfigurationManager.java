@@ -12,40 +12,19 @@
  */
 package edu.cmu.sphinx.util.props;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.ConsoleHandler;
-import java.util.Date;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
-
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
 import edu.cmu.sphinx.util.SphinxLogFormatter;
+
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+import java.util.logging.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Manages the configuration for the system. The configuration manager provides
  * the following services:
- * 
+ *
  * <ul>
  * <li>Loads configuration data from an XML-based configuration file.
  * <li>Manages the component life-cycle for Configurable objects
@@ -59,55 +38,41 @@ import edu.cmu.sphinx.util.SphinxLogFormatter;
  * <p>
  * For a description of how to create your own configurable components see: <b>
  * {@link edu.cmu.sphinx.util.props.Configurable}</b>
- *  
+ *
  */
 public class ConfigurationManager {
 
-    /**
-     * Sphinx Property that defines whether or not the configuration manager
-     * will trace object creations
-     */
+    /** Sphinx Property that defines whether or not the configuration manager will trace object creations */
 
     public final static String PROP_SHOW_CREATIONS = "showCreations";
-    /**
-     * The default value for PROP_SHOW_CREATIONS
-     */
+    /** The default value for PROP_SHOW_CREATIONS */
     public final static boolean PROP_SHOW_CREATIONS_DEFAULT = false;
 
     /**
-     * A common property (used by all components) that sets the log level for
-     * the component.
-     * 
+     * A common property (used by all components) that sets the log level for the component.
+     *
      * @see java.util.logging.Level
      */
     public final static String PROP_COMMON_LOG_LEVEL = "logLevel";
-    
-    /**
-     * A common property (used by all components) that sets the tersness
-     * of the log output
-     * 
-     */
+
+    /** A common property (used by all components) that sets the tersness of the log output */
     public final static String PROP_COMMON_LOG_TERSE = "logTerse";
 
-    private Map<String,Symbol> symbolTable = new LinkedHashMap<String,Symbol>();
+    private Map<String, Symbol> symbolTable = new LinkedHashMap<String, Symbol>();
     private Map rawPropertyMap;
-    private Map<String,String> globalProperties = new LinkedHashMap<String, String>();
+    private Map<String, String> globalProperties = new LinkedHashMap<String, String>();
     private boolean showCreations;
 
     // this pattern matches strings of the form '${word}'
-    private static Pattern globalSymbolPattern = 
-        Pattern.compile("\\$\\{(\\w+)\\}");
+    private static Pattern globalSymbolPattern = Pattern.compile("\\$\\{(\\w+)\\}");
+
 
     /**
-     * Creates a new configuration manager. Initial properties are loaded from
-     * the given URL. No need to keep the notion of 'context' around anymore we
-     * will just pass around this property manager.
-     * 
-     * @param url
-     *                place to load initial properties from
-     * @throws IOException
-     *                 if an error occurs while loading properties from the URL
-     *  
+     * Creates a new configuration manager. Initial properties are loaded from the given URL. No need to keep the notion
+     * of 'context' around anymore we will just pass around this property manager.
+     *
+     * @param url place to load initial properties from
+     * @throws IOException if an error occurs while loading properties from the URL
      */
     public ConfigurationManager(URL url) throws IOException, PropertyException {
 
@@ -118,14 +83,14 @@ public class ConfigurationManager {
         // we can't config the configuration manager with itself so we
         // do some of these config items manually.
 
-        showCreations = "true".equals(getMyGlobalProperty(PROP_SHOW_CREATIONS));
+        showCreations = "true".equals(getGlobalProperty(PROP_SHOW_CREATIONS));
     }
+
 
     /**
      * Returns the property sheet for the given object instance
-     * 
-     * @param instanceName
-     *                the instance name of the object
+     *
+     * @param instanceName the instance name of the object
      * @return the property sheet for the object.
      */
     public PropertySheet getPropertySheet(String instanceName) {
@@ -137,11 +102,11 @@ public class ConfigurationManager {
         return propertySheet;
     }
 
+
     /**
      * Returns the registry for the given object instance
-     * 
-     * @param instanceName
-     *                the instance name of the object
+     *
+     * @param instanceName the instance name of the object
      * @return the property sheet for the object.
      */
     public Registry getRegistry(String instanceName) {
@@ -153,18 +118,16 @@ public class ConfigurationManager {
         return registry;
     }
 
+
     /**
-     * Gets all instances that are of the given type or are assignable to that
-     * type. Object.class matches all.
-     * 
-     * @param type
-     *                the desired type of instance
+     * Gets all instances that are of the given type or are assignable to that type. Object.class matches all.
+     *
+     * @param type the desired type of instance
      * @return the set of all instances
      */
     public String[] getInstanceNames(Class<? extends Object> type) {
         List<String> list = new ArrayList<String>();
-        for (Iterator<Symbol> i = symbolTable.values().iterator(); i.hasNext();) {
-            Symbol symbol = i.next();
+        for (Symbol symbol : symbolTable.values()) {
             if (type.isInstance(symbol.getObject())) {
                 list.add(symbol.getName());
             }
@@ -172,19 +135,15 @@ public class ConfigurationManager {
         return list.toArray(new String[list.size()]);
     }
 
+
     /**
      * Looks up a configurable component by name. Creates it if necessary
-     * 
-     * @param name
-     *                the name of the component
+     *
+     * @param name the name of the component
      * @return the compnent, or null if a component was not found.
-     * 
-     * @throws InstantiationException
-     *                 if the requested object could not be properly created,
-     *                 or is not a configurable object.
-     * 
-     * @throws PropertyException
-     *                 if an error occurs while setting a property
+     * @throws InstantiationException if the requested object could not be properly created, or is not a configurable
+     *                                object.
+     * @throws PropertyException      if an error occurs while setting a property
      */
     public Configurable lookup(String name) throws InstantiationException,
             PropertyException {
@@ -232,14 +191,14 @@ public class ConfigurationManager {
 
 
     /**
-     * Sets the property of the given component to the given value.
-     * Component must be an existing, instantiated component
+     * Sets the property of the given component to the given value. Component must be an existing, instantiated
+     * component
      *
      * @param component an existing component
-     * @param prop the property name
-     * @param value the new value.
+     * @param prop      the property name
+     * @param value     the new value.
      */
-    public void setProperty(String component, String prop, String value) 
+    public void setProperty(String component, String prop, String value)
             throws PropertyException {
         Symbol symbol = symbolTable.get(component);
         if (symbol != null) {
@@ -259,43 +218,39 @@ public class ConfigurationManager {
             }
         } else {
             throw new PropertyException(null, prop,
-                "Can't find component " + component);
+                    "Can't find component " + component);
         }
     }
 
+
     /**
-     * Gets the given property for the given component.  Returns
-     * either the string representation of the value or a list of
-     * strings
+     * Gets the given property for the given component.  Returns either the string representation of the value or a list
+     * of strings
      *
-     * @param component the component containing the property to
-     * lookup
+     * @param component    the component containing the property to lookup
      * @param propertyName the name of the property to lookup
-     *
-     * @return the string representation of the property or a list of
-     * such strings
-     **/
-    public Object getProperty(String component, String propertyName) 
-	throws PropertyException {
-	Object obj = null;
+     * @return the string representation of the property or a list of such strings
+     */
+    public Object getProperty(String component, String propertyName)
+            throws PropertyException {
+        Object obj;
         Symbol symbol = symbolTable.get(component);
         if (symbol != null) {
             PropertySheet ps = symbol.getPropertySheet();
             obj = ps.getRawNoReplacement(propertyName);
         } else {
             throw new PropertyException(null, propertyName,
-                "Can't find component " + component);
+                    "Can't find component " + component);
         }
-	return obj;
+        return obj;
     }
+
 
     /**
      * Saves the current configuration to the given file
-     * 
-     * @param file
-     *                place to save the configuration
-     * @throws IOException
-     *                 if an error occurs while writing to the file
+     *
+     * @param file place to save the configuration
+     * @throws IOException if an error occurs while writing to the file
      */
     public void save(File file) throws IOException {
         FileOutputStream fos = new FileOutputStream(file);
@@ -311,43 +266,42 @@ public class ConfigurationManager {
         // save global symbols
 
         outputHeader(2, writer, "Global Properties");
-        for (Iterator<String> i = globalProperties.keySet().iterator(); i.hasNext(); ) {
-            String name = i.next();
-            String value = globalProperties.get(name);
+        for (String globalProperty : globalProperties.keySet()) {
+            String value = globalProperties.get(globalProperty);
             value = encodeValue(value);
             writer.println("        <property name=\"" +
-                stripGlobalSymbol(name) + "\" value=\"" + value + "\"/>");
+                    stripGlobalSymbol(globalProperty) + "\" value=\"" + value + "\"/>");
         }
         writer.println();
 
         outputHeader(2, writer, "Components");
 
         String[] allNames = getInstanceNames(Object.class);
-        for (int i = 0; i < allNames.length; i++) {
-            Symbol symbol = symbolTable.get(allNames[i]);
+        for (String componentName : allNames) {
+            Symbol symbol = symbolTable.get(componentName);
             PropertySheet ps = symbol.getPropertySheet();
             String[] names = ps.getNames();
 
             outputHeader(4, writer, symbol.getName());
 
             writer.println("    <component name=\"" + symbol.getName() + "\"" +
-                "\n          type=\"" + symbol.getObject().getClass().getName()
-                + "\">");
-            for (int j = 0; j < names.length; j++) {
-                Object obj = ps.getRawNoReplacement(names[j]);
+                    "\n          type=\"" + symbol.getObject().getClass().getName()
+                    + "\">");
+            for (String propertyName : names) {
+                Object obj = ps.getRawNoReplacement(propertyName);
                 if (obj instanceof String) {
                     String value = (String) obj;
                     value = encodeValue(value);
-                    String pad = (value.length() > 25) ? "\n        " : "" ;
-                    writer.println("        <property name=\"" + names[j]
+                    String pad = (value.length() > 25) ? "\n        " : "";
+                    writer.println("        <property name=\"" + propertyName
                             + "\"" + pad + " value=\"" + value + "\"/>");
                 } else if (obj instanceof List) {
                     List list = (List) obj;
-                    writer.println("        <propertylist name=\"" + names[j]
+                    writer.println("        <propertylist name=\"" + propertyName
                             + "\">");
-                    for (int k = 0; k < list.size(); k++) {
-                        writer.println("            <item>" + 
-                            encodeValue(list.get(k).toString()) + "</item>");
+                    for (Object listElement : list) {
+                        writer.println("            <item>" +
+                                encodeValue(listElement.toString()) + "</item>");
                     }
                     writer.println("        </propertylist>");
                 } else {
@@ -362,22 +316,24 @@ public class ConfigurationManager {
         writer.close();
     }
 
+
     /**
      * Outputs the pretty header for a component
      *
      * @param indent the indentation level
      * @param writer where to write the header
-     * @param name the component name
+     * @param name   the component name
      */
-    private void outputHeader(int indent, PrintWriter writer, String name) 
+    private void outputHeader(int indent, PrintWriter writer, String name)
             throws
-        IOException {
+            IOException {
         writer.println(pad(' ', indent) + "<!-- " + pad('*', 50) + " -->");
         writer.println(pad(' ', indent) + "<!-- " + name + pad(' ', 50 -
-                    name.length()) + " -->");
+                name.length()) + " -->");
         writer.println(pad(' ', indent) + "<!-- " + pad('*', 50) + " -->");
         writer.println();
     }
+
 
     /**
      * Encodes a value so that it is suitable for an xml property
@@ -390,40 +346,33 @@ public class ConfigurationManager {
         value = value.replaceAll(">", "&gt;");
         return value;
     }
-     
+
 
     /**
-     * Loads the configuration data from the given url and adds the info to the
-     * symbol table. Throws an IOexception if there is a problem loading the
-     * table. Note that this only performs a partial populating of the symbol
-     * table entry
-     * 
-     * @param url
-     *                the url to load from
-     * @throws IOException
-     *                 if an error occurs while loading the symbol table
+     * Loads the configuration data from the given url and adds the info to the symbol table. Throws an IOexception if
+     * there is a problem loading the table. Note that this only performs a partial populating of the symbol table
+     * entry
+     *
+     * @param url the url to load from
+     * @throws IOException if an error occurs while loading the symbol table
      */
     private Map loader(URL url) throws IOException {
         SaxLoader saxLoader = new SaxLoader(url, globalProperties);
         return saxLoader.load();
     }
 
+
     /**
-     * Applies the system properties to the raw property map. System properties
-     * should be of the form compName[paramName]=paramValue
-     * 
+     * Applies the system properties to the raw property map. System properties should be of the form
+     * compName[paramName]=paramValue
+     * <p/>
      * List types cannot currently be set from system properties.
-     * 
-     * @param rawMap
-     *                the map of raw property values
-     * @param global
-     *                global properies
-     * 
-     * @throws PropertyException
-     *                 if an attempt is made to set a parameter for an unknown
-     *                 component.
+     *
+     * @param rawMap the map of raw property values
+     * @param global global properies
+     * @throws PropertyException if an attempt is made to set a parameter for an unknown component.
      */
-    private void applySystemProperties(Map rawMap, Map<String,String> global)
+    private void applySystemProperties(Map rawMap, Map<String, String> global)
             throws PropertyException {
         Properties props = System.getProperties();
         for (Enumeration e = props.keys(); e.hasMoreElements();) {
@@ -459,45 +408,42 @@ public class ConfigurationManager {
         }
     }
 
+
     /**
      * lookup the global symbol with the given name
-     * 
-     * @param key
-     *                the symbol name to lookup
+     *
+     * @param key the symbol name to lookup
      * @return the symbol value
      */
     String globalLookup(String key) {
         return globalProperties.get(key);
     }
 
+
     /**
      * Gets the config properties for the configuration manager itself
-     * 
-     * @param key
-     *                the name of the property
+     *
+     * @param key the name of the property
      * @return the property value or null if it doesn't exist.
      */
-    String getMyGlobalProperty(String key) {
+    public String getGlobalProperty(String key) {
         return globalLookup("${" + key + "}");
     }
 
+
     /**
      * Registers the properties commont to all components
-     * 
-     * @param registry
-     *                a component registry
-     * @throws PropertyException
-     *                 if an error occurs while registering the properties.
+     *
+     * @param registry a component registry
+     * @throws PropertyException if an error occurs while registering the properties.
      */
     private void registerCommonProperties(Registry registry)
             throws PropertyException {
         registry.register(PROP_COMMON_LOG_LEVEL, PropertyType.STRING);
     }
 
-    /**
-     * Configure the logger
-     *  
-     */
+
+    /** Configure the logger */
     private void configureLogger() {
         LogManager logManager = LogManager.getLogManager();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -523,27 +469,25 @@ public class ConfigurationManager {
         // and configure it.
         Logger rootLogger = LogManager.getLogManager().getLogger("");
         Handler[] handlers = rootLogger.getHandlers();
-        for (int i = 0; i < handlers.length; i++) {
-            if (handlers[i] instanceof ConsoleHandler) {
-                if (handlers[i].getFormatter() instanceof SphinxLogFormatter) {
-                    SphinxLogFormatter slf = (SphinxLogFormatter) handlers[i]
+        for (Handler handler : handlers) {
+            if (handler instanceof ConsoleHandler) {
+                if (handler.getFormatter() instanceof SphinxLogFormatter) {
+                    SphinxLogFormatter slf = (SphinxLogFormatter) handler
                             .getFormatter();
                     slf.setTerse("true"
-                           .equals(getMyGlobalProperty(PROP_COMMON_LOG_TERSE)));
+                            .equals(getGlobalProperty(PROP_COMMON_LOG_TERSE)));
                 }
             }
         }
     }
 
-    /**
-     * Shows the current configuration
-     *  
-     */
+
+    /** Shows the current configuration */
     public void showConfig() {
         System.out.println(" ============ config ============= ");
         String[] allNames = getInstanceNames(Object.class);
-        for (int i = 0; i < allNames.length; i++) {
-            showConfig(allNames[i]);
+        for (String allName : allNames) {
+            showConfig(allName);
         }
     }
 
@@ -556,22 +500,21 @@ public class ConfigurationManager {
     public void showConfig(String name) {
         Symbol symbol = symbolTable.get(name);
 
-        if (symbol == null)  {
+        if (symbol == null) {
             System.out.println("No component: " + name);
             return;
         }
         System.out.println(symbol.getName() + ":");
 
         Registry registry = symbol.getRegistry();
-        Collection propertyNames = registry.getRegisteredProperties();
+        Collection<String> propertyNames = registry.getRegisteredProperties();
         PropertySheet properties = symbol.getPropertySheet();
 
-        for (Iterator j = propertyNames.iterator(); j.hasNext();) {
-            String propName = (String) j.next();
-            System.out.print("    " + propName + " = ");
+        for (String propertyName : propertyNames) {
+            System.out.print("    " + propertyName + " = ");
             Object obj;
             try {
-                obj = properties.getRaw(propName);
+                obj = properties.getRaw(propertyName);
             } catch (PropertyException e) {
                 // this exception can occcur if a global name
                 // can't be resolved ...
@@ -594,27 +537,27 @@ public class ConfigurationManager {
         }
     }
 
+
     public void editConfig(String name) {
         Symbol symbol = symbolTable.get(name);
-        boolean done = false;
+        boolean done;
 
-        if (symbol == null)  {
+        if (symbol == null) {
             System.out.println("No component: " + name);
             return;
         }
         System.out.println(symbol.getName() + ":");
 
         Registry registry = symbol.getRegistry();
-        Collection propertyNames = registry.getRegisteredProperties();
+        Collection<String> propertyNames = registry.getRegisteredProperties();
         PropertySheet properties = symbol.getPropertySheet();
         BufferedReader br = new BufferedReader(new
                 InputStreamReader(System.in));
 
-        for (Iterator j = propertyNames.iterator(); j.hasNext();) {
+        for (String propertyName : propertyNames) {
             try {
-                String propName = (String) j.next();
-                Object value = properties.getRaw(propName);
-                String svalue = null;
+                Object value = properties.getRaw(propertyName);
+                String svalue;
 
                 if (value instanceof List) {
                     continue;
@@ -626,7 +569,7 @@ public class ConfigurationManager {
                 done = false;
 
                 while (!done) {
-                    System.out.print("  " + propName + " [" + svalue + "]: ");
+                    System.out.print("  " + propertyName + " [" + svalue + "]: ");
                     String in = br.readLine();
                     if (in.length() == 0) {
                         done = true;
@@ -634,9 +577,9 @@ public class ConfigurationManager {
                         return;
                     } else {
                         try {
-                            setProperty(name, propName, in);
+                            setProperty(name, propertyName, in);
                             done = true;
-                        } catch  (PropertyException pe) {
+                        } catch (PropertyException pe) {
                             System.out.println("error setting value " + pe);
                             svalue = in;
                         }
@@ -657,30 +600,29 @@ public class ConfigurationManager {
 
     // TODO this dumping code is not done yet.
 
+
     /**
      * Dumps the config as a set of HTML tables
-     * 
-     * @param path
-     *                where to output the HTML
-     * @throws IOException
-     *                 if an error occurs
+     *
+     * @param path where to output the HTML
+     * @throws IOException if an error occurs
      */
     public void showConfigAsHTML(String path) throws IOException {
         PrintStream out = new PrintStream(new FileOutputStream(path));
         dumpHeader(out);
         String[] allNames = getInstanceNames(Object.class);
-        for (int i = 0; i < allNames.length; i++) {
-            dumpComponentAsHTML(out, allNames[i]);
+        for (String componentName : allNames) {
+            dumpComponentAsHTML(out, componentName);
         }
         dumpFooter(out);
         out.close();
     }
 
+
     /**
      * Dumps the header for HTML output
-     * 
-     * @param out
-     *                the output stream
+     *
+     * @param out the output stream
      */
     private void dumpHeader(PrintStream out) {
         out.println("<html><head>");
@@ -689,24 +631,25 @@ public class ConfigurationManager {
         out.println("<body>");
     }
 
+
     /**
      * Retrieves the global log level
-     * 
+     *
      * @return the global log level
      */
     String getGlobalLogLevel() {
-        String level = getMyGlobalProperty(ConfigurationManager.PROP_COMMON_LOG_LEVEL);
+        String level = getGlobalProperty(ConfigurationManager.PROP_COMMON_LOG_LEVEL);
         if (level == null) {
             level = Level.WARNING.getName();
         }
         return level;
     }
 
+
     /**
      * Dumps the footer for HTML output
-     * 
-     * @param out
-     *                the output stream
+     *
+     * @param out the output stream
      */
     private void dumpFooter(PrintStream out) {
         out.println("</body>");
@@ -716,11 +659,9 @@ public class ConfigurationManager {
 
     /**
      * Dumps the given component as HTML to the given stream
-     * 
-     * @param out
-     *                where to dump the HTML
-     * @param name
-     *                the name of the component to dump
+     *
+     * @param out  where to dump the HTML
+     * @param name the name of the component to dump
      */
     private void dumpComponentAsHTML(PrintStream out, String name) {
         Symbol symbol = symbolTable.get(name);
@@ -735,15 +676,14 @@ public class ConfigurationManager {
         out
                 .println("    <tr><th bgcolor=\"#CCCCFF\">Property</th><th bgcolor=\"#CCCCFF\"> Value</th></tr>");
         Registry registry = symbol.getRegistry();
-        Collection propertyNames = registry.getRegisteredProperties();
+        Collection<String> propertyNames = registry.getRegisteredProperties();
         PropertySheet properties = symbol.getPropertySheet();
 
-        for (Iterator j = propertyNames.iterator(); j.hasNext();) {
-            String propName = (String) j.next();
-            out.print("    <tr><th align=\"leftt\">" + propName + "</th>");
+        for (String propertyName : propertyNames) {
+            out.print("    <tr><th align=\"leftt\">" + propertyName + "</th>");
             Object obj;
             try {
-                obj = properties.getRaw(propName);
+                obj = properties.getRaw(propertyName);
             } catch (PropertyException e) {
                 // this exception can occcur if a global name
                 // can't be resolved ...
@@ -755,8 +695,8 @@ public class ConfigurationManager {
             } else if (obj instanceof List) {
                 List l = (List) obj;
                 out.println("    <td><ul>");
-                for (Iterator k = l.iterator(); k.hasNext();) {
-                    out.println("        <li>" + k.next() + "</li>");
+                for (Object listElement : l) {
+                    out.println("        <li>" + listElement + "</li>");
                 }
                 out.println("    </ul></td>");
             } else {
@@ -766,32 +706,30 @@ public class ConfigurationManager {
         out.println("</table><br>");
     }
 
+
     /**
      * Dumps the config as a GDL plot
-     * 
-     * @param path
-     *                where to output the GDL
-     * @throws IOException
-     *                 if an error occurs
+     *
+     * @param path where to output the GDL
+     * @throws IOException if an error occurs
      */
     public void showConfigAsGDL(String path) throws IOException {
         PrintStream out = new PrintStream(new FileOutputStream(path));
         dumpGDLHeader(out);
         String[] allNames = getInstanceNames(Object.class);
-        for (int i = 0; i < allNames.length; i++) {
-            dumpComponentAsGDL(out, allNames[i]);
+        for (String componentName : allNames) {
+            dumpComponentAsGDL(out, componentName);
         }
         dumpGDLFooter(out);
         out.close();
     }
 
+
     /**
      * Dumps the given component as GDL to the given stream
-     * 
-     * @param out
-     *                where to dump the GDL
-     * @param name
-     *                the name of the component to dump
+     *
+     * @param out  where to dump the GDL
+     * @param name the name of the component to dump
      */
     private void dumpComponentAsGDL(PrintStream out, String name) {
 
@@ -800,24 +738,22 @@ public class ConfigurationManager {
 
         Symbol symbol = symbolTable.get(name);
         Registry registry = symbol.getRegistry();
-        Collection propertyNames = registry.getRegisteredProperties();
+        Collection<String> propertyNames = registry.getRegisteredProperties();
         PropertySheet properties = symbol.getPropertySheet();
 
-        for (Iterator i = propertyNames.iterator(); i.hasNext();) {
-            String propName = (String) i.next();
-            PropertyType type = registry.lookup(propName);
+        for (String propertyName : propertyNames) {
+            PropertyType type = registry.lookup(propertyName);
             try {
-                Object val = properties.getRaw(propName);
+                Object val = properties.getRaw(propertyName);
                 if (val != null) {
                     if (type == PropertyType.COMPONENT) {
                         out.println("edge: {source: \"" + name
                                 + "\" target: \"" + val + "\"}");
                     } else if (type == PropertyType.COMPONENT_LIST) {
                         List list = (List) val;
-                        for (Iterator j = list.iterator(); j.hasNext();) {
-                            Object dest = j.next();
+                        for (Object listElement : list) {
                             out.println("edge: {source: \"" + name
-                                    + "\" target: \"" + dest + "\"}");
+                                    + "\" target: \"" + listElement + "\"}");
                         }
                     }
                 }
@@ -825,14 +761,13 @@ public class ConfigurationManager {
                 // nothing to do , its up to you
             }
         }
-
     }
+
 
     /**
      * Gets the color for the given component
-     * 
-     * @param componentName
-     *                the name of the component
+     *
+     * @param componentName the name of the component
      * @return the color name for the component
      */
     private String getColor(String componentName) {
@@ -862,14 +797,13 @@ public class ConfigurationManager {
             return "black";
         }
         return "darkgrey";
-
     }
+
 
     /**
      * Outputs the GDL header
-     * 
-     * @param out
-     *                the output stream
+     *
+     * @param out the output stream
      */
     private void dumpGDLHeader(PrintStream out) {
         out.println(" graph: {title: \"unix evolution\" ");
@@ -886,22 +820,21 @@ public class ConfigurationManager {
         out.println("splines        : yes");
     }
 
+
     /**
      * Dumps the footer for GDL output
-     * 
-     * @param out
-     *                the output stream
+     *
+     * @param out the output stream
      */
     private void dumpGDLFooter(PrintStream out) {
         out.println("}");
     }
 
+
     /**
-     * Strips the ${ and } off of a global symbol of the form
-     * ${symbol}.
+     * Strips the ${ and } off of a global symbol of the form ${symbol}.
      *
      * @param symbol the symbol to strip
-     *
      * @return the stripped symbol
      */
     private String stripGlobalSymbol(String symbol) {
@@ -913,12 +846,12 @@ public class ConfigurationManager {
         }
     }
 
+
     /**
-     * Generate a string of the given character 
+     * Generate a string of the given character
      *
-     * @param c the character
+     * @param c     the character
      * @param count the length of the string
-     *
      * @return the padded string
      */
     private String pad(char c, int count) {
