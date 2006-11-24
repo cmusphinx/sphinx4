@@ -20,7 +20,7 @@
     <!-- ********************************************************** -->
 
     <property name="version"		value="1_2_0"/>
-    <!--property name="src_dir"		value="."/-->
+    <property name="src_dir"		value="src"/>
     <property name="build_dir"		value="bld"/>
     <property name="classes_dir"	value="${build_dir}/classes"/>
     <property name="lib_dir"            value="lib"/>
