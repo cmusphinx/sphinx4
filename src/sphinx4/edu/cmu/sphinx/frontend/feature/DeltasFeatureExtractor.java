@@ -135,7 +135,7 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
      */
     public Data getData() throws DataProcessingException {
         if (outputQueue.size() == 0) {
-            Data input = getPredecessor().getData();
+            Data input = getNextData();
             if (input != null) {
                 if (input instanceof DoubleData) {
                     addCepstrum((DoubleData) input);
@@ -143,7 +143,7 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
                 } else if (input instanceof DataStartSignal) {
                     dataEndSignal = null;
                     outputQueue.add(input);
-                    Data start = getPredecessor().getData();
+                    Data start = getNextData();
                     int n = processFirstCepstrum(start);
                     computeFeatures(n);
                     if (dataEndSignal != null) {
@@ -164,6 +164,18 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
             return null;
         }
     }
+
+
+    private Data getNextData() throws DataProcessingException {
+        Data d = getPredecessor().getData();
+        while (!(d instanceof DoubleData || d instanceof DataEndSignal || d instanceof DataStartSignal)) {
+            outputQueue.add(d);
+            d = getPredecessor().getData();
+        }
+
+        return d;
+    }
+
 
     /**
      * Replicate the given cepstrum Data object into the first window+1 number
@@ -195,7 +207,7 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
             int numberFeatures = 1;
             dataEndSignal = null;
             for (int i = 0; i < window; i++) {
-                Data next = getPredecessor().getData();
+                Data next = getNextData();
                 if (next != null) {
                     if (next instanceof DoubleData) {
                         // just a cepstra
