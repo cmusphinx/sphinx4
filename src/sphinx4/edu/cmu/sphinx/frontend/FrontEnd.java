@@ -172,7 +172,7 @@ public class FrontEnd extends BaseDataProcessor  {
     
     private DataProcessor first;
     private DataProcessor last;
-    private Vector signalListeners = new Vector();
+    private Vector<SignalListener> signalListeners = new Vector<SignalListener>();
 
     
 

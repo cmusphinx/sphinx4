@@ -30,6 +30,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * would call {@link #setInputStream(InputStream,String) setInputStream}to set
  * the input stream, and call {@link #getData}to obtain the Data object.
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class StreamDataSource extends BaseDataProcessor {
     /**
      * SphinxProperty for the sample rate.

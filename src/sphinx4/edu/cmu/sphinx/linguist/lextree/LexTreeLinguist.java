@@ -878,6 +878,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @param arcs the arcs to cache.
          */
+        @SuppressWarnings({"unchecked"})
         void putCachedArcs(SearchStateArc[] arcs) {
             if (cacheEnabled) {
                 arcCache.put(this, arcs);
@@ -1478,12 +1479,12 @@ public class LexTreeLinguist implements Linguist {
 
                 if (wordNode.getWord() != sentenceEndWord) {
                     int index = 0;
-                    List list = new ArrayList();
+                    List<Node> list = new ArrayList<Node>();
                     Unit[] rc = lastNode.getRC();
                     Unit left = wordNode.getLastUnit();
 
                     for (int i = 0; i < rc.length; i++) {
-                        Collection epList = hmmTree.getEntryPoint(left, rc[i]);
+                        Collection<Node> epList = hmmTree.getEntryPoint(left, rc[i]);
                         list.addAll(epList);
                     }
 

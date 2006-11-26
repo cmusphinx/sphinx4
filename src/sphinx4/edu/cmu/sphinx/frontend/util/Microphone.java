@@ -21,7 +21,6 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.Line;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 import javax.sound.sampled.LineListener;
@@ -802,13 +801,13 @@ public class Microphone extends BaseDataProcessor {
  */
 class DataList {
 
-    private List list;
+    private List<Data> list;
 
     /**
      * Creates a new data list
      */
     public DataList() {
-        list = new LinkedList();
+        list = new LinkedList<Data>();
     }
 
     /**
@@ -844,7 +843,7 @@ class DataList {
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
-        Data data = (Data) list.remove(0);
+        Data data = list.remove(0);
         if (data == null) {
             System.out.println("DataList is returning null.");
         }

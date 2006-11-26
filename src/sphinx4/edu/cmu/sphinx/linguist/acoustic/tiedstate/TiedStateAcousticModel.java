@@ -92,6 +92,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * the index of a mean vector, a variance vector, and a set of mixture weights.
  *
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class TiedStateAcousticModel implements AcousticModel, Configurable {
 
     /**

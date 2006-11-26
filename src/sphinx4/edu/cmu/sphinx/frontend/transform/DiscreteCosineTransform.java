@@ -34,6 +34,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * vector returned is the MFCC (Mel-Frequency Cepstral Coefficient) vector,
  * where the 0-th element is the energy value.
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class DiscreteCosineTransform extends BaseDataProcessor {
     /**
      * The name of the Sphinx Property for the number of filters in the

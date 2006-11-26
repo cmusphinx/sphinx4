@@ -16,6 +16,7 @@ package edu.cmu.sphinx.frontend;
 /**
  * A Data object that holds data of primitive type double.
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class DoubleData implements Data, Cloneable {
 
     private double[] values;

@@ -36,6 +36,7 @@ import java.util.logging.Logger;
  * Note that all grammar probabilities are maintained in LogMath log
  * domain.
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public abstract class Grammar implements Configurable, GrammarInterface {
     /**
      * Property to control the the dumping of the grammar

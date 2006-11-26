@@ -24,6 +24,7 @@ import java.util.logging.Level;
 /**
  * Manages the set of units for a recognizer
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class  UnitManager implements Configurable  {
     /**
      * The name for the silence unit

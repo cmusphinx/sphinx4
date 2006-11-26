@@ -34,7 +34,7 @@ public class ExtendedStreamTokenizer {
     private StreamTokenizer st;
     private Reader reader;
     private boolean atEOF = false;
-    private List putbackList;
+    private List<String> putbackList;
 
     /**
      * Creates and returns a stream tokenizer that has
@@ -108,7 +108,7 @@ public class ExtendedStreamTokenizer {
 	st.whitespaceChars(0, 32);
 	st.wordChars(33, 255);
 	st.eolIsSignificant(eolIsSignificant);
-	putbackList = new ArrayList();
+	putbackList = new ArrayList<String>();
     }        
 
 
@@ -156,7 +156,7 @@ public class ExtendedStreamTokenizer {
      */
     public String getString() throws StreamCorruptedException, IOException  {
 	if (putbackList.size() > 0) {
-	    return (String) putbackList.remove(putbackList.size() - 1);
+	    return putbackList.remove(putbackList.size() - 1);
 	} else {
 	    st.nextToken();
 	    if (st.ttype == StreamTokenizer.TT_EOF) {

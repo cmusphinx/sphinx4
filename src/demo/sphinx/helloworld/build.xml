@@ -46,7 +46,7 @@ NOTE:  Before running the tests, you must have already built
     <target name="all"
             description="Compiles all the tests.">
 	    <javac debug="true"
-	           source="1.4"
+	           source="1.5"
 		   deprecation="true"
 		   destdir="${classes_dir}"
 		   classpath="${classes_dir}:${lib_dir}/jsapi.jar"

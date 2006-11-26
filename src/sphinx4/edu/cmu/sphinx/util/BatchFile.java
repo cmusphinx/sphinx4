@@ -32,7 +32,7 @@ public class BatchFile {
      *
      * @return a List of the lines in a batch file
      */
-    public static List getLines(String batchFile) throws IOException {
+    public static List<String> getLines(String batchFile) throws IOException {
         return getLines(batchFile, 0);
     }
 
@@ -44,9 +44,9 @@ public class BatchFile {
      *
      * @return a List of the lines in a batch file
      */
-    public static List getLines(String batchFile, int skip) throws IOException {
+    public static List<String> getLines(String batchFile, int skip) throws IOException {
         int curCount = skip;
-	List list = new ArrayList();
+	List<String> list = new ArrayList<String>();
 	BufferedReader reader = new BufferedReader(new FileReader(batchFile));
 
 	String line = null;

@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class Registry {
     // map holds the registered properties
-    private Map map = new HashMap();
+    private Map<String, PropertyType> map = new HashMap<String, PropertyType>();
     private Configurable configurable;
 
     /**
@@ -59,7 +59,7 @@ public class Registry {
      *         registered)
      */
     PropertyType lookup(String propertyName) {
-        return (PropertyType) map.get(propertyName);
+        return map.get(propertyName);
     }
     
     /**
@@ -76,7 +76,7 @@ public class Registry {
      * Returns the list of registered properties
      * @return the list of property names
      */
-    Collection  getRegisteredProperties() {
+    Collection<String> getRegisteredProperties() {
         return map.keySet();
     }
 }

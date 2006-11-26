@@ -32,8 +32,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 class SaxLoader {
     private URL url;
-    private Map rpdMap;
-    private Map globalProperties;
+    private Map<String, RawPropertyData> rpdMap;
+    private Map<String, String> globalProperties;
     /**
      * Creates a loader that will load from the given location
      * 
@@ -42,7 +42,7 @@ class SaxLoader {
      * @param globalProperties
      *             the map of global properties
      */
-    SaxLoader(URL url, Map globalProperties) {
+    SaxLoader(URL url, Map<String,String> globalProperties) {
         this.url = url;
         this.globalProperties = globalProperties;
     }
@@ -53,8 +53,8 @@ class SaxLoader {
      * @throws IOException
      *             if an I/O or parse error occurs
      */
-    Map load() throws IOException {
-        rpdMap = new HashMap();
+    Map<String, RawPropertyData> load() throws IOException {
+        rpdMap = new HashMap<String, RawPropertyData>();
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             XMLReader xr = factory.newSAXParser().getXMLReader();
@@ -84,7 +84,7 @@ class SaxLoader {
     class ConfigHandler extends DefaultHandler {
         RawPropertyData rpd = null;
         Locator locator;
-        List itemList = null;
+        List<String> itemList = null;
         String itemListName = null;
         StringBuffer curItem;
         
@@ -130,7 +130,7 @@ class SaxLoader {
                     throw new SAXParseException("list element must only have "
                             + "the 'name'  attribute", locator);
                 }
-                itemList = new ArrayList();
+                itemList = new ArrayList<String>();
             } else if (qName.equals("item")) {
                 if (attributes.getLength() != 0) {
                     throw new SAXParseException("unknown 'item' attribute",

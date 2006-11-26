@@ -166,7 +166,7 @@ public class LiveModeRecognizer implements Configurable {
      * Decodes the batch of audio files
      */
     public void decode() throws IOException {
-        List resultList = new LinkedList();
+        List<String> resultList = new LinkedList<String>();
         Result result = null;
         int startReference = 0;
         hypothesisTranscript = new FileWriter(hypothesisFile);
@@ -185,11 +185,11 @@ public class LiveModeRecognizer implements Configurable {
 
             if (alignInterval > 0 && (numUtterances % alignInterval == 0)) {
                 // perform alignment if the property 'alignInterval' is set
-                List references = referenceSource.getReferences();
-                List section = references.subList(startReference, references
+                List<String> references = referenceSource.getReferences();
+                List<String> section = references.subList(startReference, references
                         .size());
                 alignResults(resultList, section);
-                resultList = new LinkedList();
+                resultList = new LinkedList<String>();
                 startReference = references.size();
             }
         }
@@ -197,8 +197,8 @@ public class LiveModeRecognizer implements Configurable {
         hypothesisTranscript.close();
 
         // perform alignment on remaining results
-        List references = referenceSource.getReferences();
-        List section = references.subList(startReference, references.size());
+        List<String> references = referenceSource.getReferences();
+        List<String> section = references.subList(startReference, references.size());
         if (resultList.size() > 0 || section.size() > 0) {
             alignResults(resultList, section);
         }
@@ -247,7 +247,7 @@ public class LiveModeRecognizer implements Configurable {
      * @param referenceList
      *                the list of references
      */
-    private void alignResults(List hypothesisList, List referenceList) {
+    private void alignResults(List<String> hypothesisList, List<String> referenceList) {
         System.out.println();
         System.out.println("Aligning results...");
         System.out.println("   Utterances: Found: " + hypothesisList.size()
@@ -296,10 +296,10 @@ public class LiveModeRecognizer implements Configurable {
      * @return a string which is a concatenation of the strings in the list,
      *         separated by a space character
      */
-    private String listToString(List resultList) {
+    private String listToString(List<String> resultList) {
         StringBuffer sb = new StringBuffer();
-        for (Iterator i = resultList.iterator(); i.hasNext();) {
-            String result = (String) i.next();
+        for (Iterator<String> i = resultList.iterator(); i.hasNext();) {
+            String result = i.next();
             sb.append(result).append(" ");
         }
         return sb.toString();

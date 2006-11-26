@@ -59,7 +59,7 @@ public class ConfigurationManager {
     public final static String PROP_COMMON_LOG_TERSE = "logTerse";
 
     private Map<String, Symbol> symbolTable = new LinkedHashMap<String, Symbol>();
-    private Map rawPropertyMap;
+    private Map<String, RawPropertyData> rawPropertyMap;
     private Map<String, String> globalProperties = new LinkedHashMap<String, String>();
     private boolean showCreations;
 
@@ -125,7 +125,7 @@ public class ConfigurationManager {
      * @param type the desired type of instance
      * @return the set of all instances
      */
-    public String[] getInstanceNames(Class<? extends Object> type) {
+    public String[] getInstanceNames(Class type) {
         List<String> list = new ArrayList<String>();
         for (Symbol symbol : symbolTable.values()) {
             if (type.isInstance(symbol.getObject())) {
@@ -154,11 +154,11 @@ public class ConfigurationManager {
             }
             // it is not in the symbol table, so construct
             // it based upon our raw property data
-            RawPropertyData rpd = (RawPropertyData) rawPropertyMap.get(name);
+            RawPropertyData rpd = rawPropertyMap.get(name);
             if (rpd != null) {
                 String className = rpd.getClassName();
                 try {
-                    Class<?> cls = Class.forName(className);
+                    Class cls = Class.forName(className);
                     Configurable configurable = (Configurable) cls
                             .newInstance();
                     Registry registry = new Registry(configurable);
@@ -356,7 +356,7 @@ public class ConfigurationManager {
      * @param url the url to load from
      * @throws IOException if an error occurs while loading the symbol table
      */
-    private Map loader(URL url) throws IOException {
+    private Map<String, RawPropertyData> loader(URL url) throws IOException {
         SaxLoader saxLoader = new SaxLoader(url, globalProperties);
         return saxLoader.load();
     }
@@ -372,7 +372,7 @@ public class ConfigurationManager {
      * @param global global properies
      * @throws PropertyException if an attempt is made to set a parameter for an unknown component.
      */
-    private void applySystemProperties(Map rawMap, Map<String, String> global)
+    private void applySystemProperties(Map<String, RawPropertyData> rawMap, Map<String, String> global)
             throws PropertyException {
         Properties props = System.getProperties();
         for (Enumeration e = props.keys(); e.hasMoreElements();) {
@@ -387,7 +387,7 @@ public class ConfigurationManager {
             if (lb > 0 && rb > lb) {
                 String compName = param.substring(0, lb);
                 String paramName = param.substring(lb + 1, rb);
-                RawPropertyData rpd = (RawPropertyData) rawMap.get(compName);
+                RawPropertyData rpd = rawMap.get(compName);
                 if (rpd != null) {
                     rpd.add(paramName, value);
                 } else {
@@ -773,7 +773,7 @@ public class ConfigurationManager {
     private String getColor(String componentName) {
         try {
             Configurable c = lookup(componentName);
-            Class<? extends Object> cls = c.getClass();
+            Class cls = c.getClass();
             if (cls.getName().indexOf(".recognizer") > 1) {
                 return "cyan";
             } else if (cls.getName().indexOf(".tools") > 1) {

@@ -41,6 +41,7 @@ import java.util.ListIterator;
  * after the first non-speech audio. The algorithm returns to 'ou-of-speech' state. If any speech audio is encountered
  * in-between, the accounting starts all over again.
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class SpeechMarker extends BaseDataProcessor {
 
     /**
@@ -71,7 +72,7 @@ public class SpeechMarker extends BaseDataProcessor {
     public static final int PROP_SPEECH_TRAILER_DEFAULT = 100;
 
 
-    private List outputQueue;  // Audio objects are added to the end
+    private List<Data> outputQueue;  // Audio objects are added to the end
     private boolean inSpeech;
     private int startSpeechTime;
     private int endSilenceTime;
@@ -111,7 +112,7 @@ public class SpeechMarker extends BaseDataProcessor {
     /** Initializes this SpeechMarker */
     public void initialize() {
         super.initialize();
-        this.outputQueue = new ArrayList();
+        this.outputQueue = new ArrayList<Data>();
         reset();
     }
 
@@ -167,7 +168,7 @@ public class SpeechMarker extends BaseDataProcessor {
             }
         }
         if (outputQueue.size() > 0) {
-            Data audio = (Data) outputQueue.remove(0);
+            Data audio = outputQueue.remove(0);
             if (audio instanceof SpeechClassifiedData) {
                 SpeechClassifiedData data = (SpeechClassifiedData) audio;
                 audio = data.getDoubleData();
@@ -253,11 +254,11 @@ public class SpeechMarker extends BaseDataProcessor {
     private void addSpeechStart() {
         long lastCollectTime = 0;
         int silenceLength = 0, initalSpeechLength = 0;
-        ListIterator i = outputQueue.listIterator(outputQueue.size());
+        ListIterator<Data> i = outputQueue.listIterator(outputQueue.size());
 
         // backtrack until we have 'speechLeader' amount of non-speech
         while ((silenceLength < speechLeader || initalSpeechLength < startSpeechTime) && i.hasPrevious()) {
-            Data current = (Data) i.previous();
+            Data current = i.previous();
             if (current instanceof SpeechClassifiedData) {
                 SpeechClassifiedData data = (SpeechClassifiedData) current;
                 if (data.isSpeech()) {
@@ -351,7 +352,7 @@ public class SpeechMarker extends BaseDataProcessor {
             // iterate from the end of speech and read till we
             // have 'speechTrailer' amount of non-speech, and
             // then add an SPEECH_END
-            ListIterator i = outputQueue.listIterator(originalLast);
+            ListIterator<Data> i = outputQueue.listIterator(originalLast);
             long nextCollectTime = 0;
 
             // the 'firstSampleNumber' of SPEECH_END actually contains
@@ -360,7 +361,7 @@ public class SpeechMarker extends BaseDataProcessor {
             silenceLength = 0;
 
             while (silenceLength < speechTrailer && i.hasNext()) {
-                Data next = (Data) i.next();
+                Data next = i.next();
                 if (next instanceof DataEndSignal) {
                     i.previous();
                     break;

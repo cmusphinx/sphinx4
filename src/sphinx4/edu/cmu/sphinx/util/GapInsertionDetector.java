@@ -262,7 +262,7 @@ class ReferenceUtterance {
 class HypothesisFile {
     
     private BufferedReader reader;
-    private Iterator iterator;
+    private Iterator<HypothesisWord> iterator;
     private int utteranceCount = 0;
 
     /**
@@ -291,7 +291,7 @@ class HypothesisFile {
         if (iterator == null) {
             return null;
         } else {
-            return (HypothesisWord) iterator.next();
+            return iterator.next();
         }
     }
 
@@ -331,7 +331,7 @@ class HypothesisFile {
  */
 class HypothesisUtterance {
 
-    private List words;
+    private List<HypothesisWord> words;
     private float startTime;
     private float endTime;
 
@@ -340,7 +340,7 @@ class HypothesisUtterance {
      * the hypothesis.
      */
     HypothesisUtterance(String line) {
-        words = new LinkedList();
+        words = new LinkedList<HypothesisWord>();
         StringTokenizer st = new StringTokenizer(line, " \t\n\r\f(),");
         while (st.hasMoreTokens()) {
             String text = st.nextToken();
@@ -356,10 +356,10 @@ class HypothesisUtterance {
             }
         }
         if (words.size() > 0) {
-            HypothesisWord firstWord = (HypothesisWord) words.get(0);
+            HypothesisWord firstWord = words.get(0);
             startTime = firstWord.getStartTime();
-            HypothesisWord lastWord = 
-                (HypothesisWord) words.get(words.size()-1);
+            HypothesisWord lastWord =
+                    words.get(words.size()-1);
             endTime = lastWord.getEndTime();
         }
     }
@@ -378,8 +378,8 @@ class HypothesisUtterance {
      *
      * @return a list of the words in this hypothesis
      */
-    List getWords() {
-        List newList = new LinkedList();
+    List<HypothesisWord> getWords() {
+        List<HypothesisWord> newList = new LinkedList<HypothesisWord>();
         newList.addAll(words);
         return newList;
     }

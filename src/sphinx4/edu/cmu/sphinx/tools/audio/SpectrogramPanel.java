@@ -104,7 +104,7 @@ public class SpectrogramPanel extends JPanel {
             /* Run through all the spectra one at a time and convert
              * them to an log intensity value.
              */
-            ArrayList intensitiesList = new ArrayList();
+            ArrayList<double[]> intensitiesList = new ArrayList<double[]>();
             double maxIntensity = Double.MIN_VALUE;
             Data spectrum = frontEnd.getData();
 
@@ -130,7 +130,7 @@ public class SpectrogramPanel extends JPanel {
             is.close();
 
             int width = intensitiesList.size();
-            int height = ((double[]) intensitiesList.get(0)).length;
+            int height = (intensitiesList.get(0)).length;
             int maxYIndex = height - 1;
             Dimension d = new Dimension(width, height);
 
@@ -150,7 +150,7 @@ public class SpectrogramPanel extends JPanel {
             double scaleFactor = ((0xff + offsetFactor) / maxIntensity);
 
             for (int i = 0; i < width; i++) {
-                double[] intensities = (double[]) intensitiesList.get(i);
+                double[] intensities = intensitiesList.get(i);
                 for (int j = maxYIndex; j >= 0; j--) {
 
                     /* Adjust the grey value to make a value of 0 to mean

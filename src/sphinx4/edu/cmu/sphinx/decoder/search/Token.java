@@ -446,6 +446,8 @@ public class Token implements Scoreable {
                 Pronunciation pron = wordState.getPronunciation();
                 Word word = wordState.getPronunciation().getWord();
 
+                System.out.println(token.getFrameNumber() + " " + word + " " + token.logLanguageScore + " " + token.logAcousticScore);
+
                 if (wantFiller || !word.isFiller()) {
                     if( wantPronunciations ) {
                         sb.insert(0,"]");

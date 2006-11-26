@@ -38,7 +38,7 @@ public class ResultAnalyzer {
     private StringBuffer hypOutput;
     private StringBuffer refOutput;
 
-    private List mismatchedUtterances;
+    private List<Misrecognition> mismatchedUtterances;
 
     /**
      * Creates a result analyzer
@@ -47,7 +47,7 @@ public class ResultAnalyzer {
      */
     public ResultAnalyzer(boolean verbose) {
         this.verbose = verbose;
-        this.mismatchedUtterances = new LinkedList();
+        this.mismatchedUtterances = new LinkedList<Misrecognition>();
     }
 
 
@@ -62,8 +62,8 @@ public class ResultAnalyzer {
      * @return true if the reference and  hypothesis match
      */
     public boolean analyze(String ref, String hyp) {
-	List refList = stringToList(ref);
-	List hypList = stringToList(hyp);
+	List<String> refList = stringToList(ref);
+	List<String> hypList = stringToList(hyp);
 	String filteredRef = toString(refList);
 	String filteredHyp = toString(hypList);
 	boolean match = false;
@@ -166,10 +166,10 @@ public class ResultAnalyzer {
      * @param list the list of words
      * @return a space separated string
      */
-    private String toString(List list) {
+    private String toString(List<String> list) {
 	StringBuffer sb = new StringBuffer();
 
-	for (Iterator i = list.iterator(); i.hasNext(); ) {
+	for (Iterator<String> i = list.iterator(); i.hasNext(); ) {
 	    sb.append(i.next());
 	    if (i.hasNext()) {
 		sb.append(" ");
@@ -185,9 +185,9 @@ public class ResultAnalyzer {
      * @param refList the list of reference words
      * @param hypList the list of hypothesis  words
      */
-    private void addInsert(List refList, List hypList) {
+    private void addInsert(List<String> refList, List<String> hypList) {
 	insertionErrors++;
-	String word = (String) hypList.remove(0);
+	String word = hypList.remove(0);
 
         refOutput.append(" ").append(pad(word.length()));
         hypOutput.append(" ").append(word.toUpperCase());
@@ -200,9 +200,9 @@ public class ResultAnalyzer {
      * @param refList the list of reference words
      * @param hypList the list of hypothesis  words
      */
-    private void addDeletion(List refList, List hypList) {
+    private void addDeletion(List<String> refList, List<String> hypList) {
 	deletionErrors++;
-	String word = (String) refList.remove(0);
+	String word = refList.remove(0);
 
         refOutput.append(" ").append(word.toUpperCase());
         hypOutput.append(" ").append(pad(word.length()));
@@ -214,10 +214,10 @@ public class ResultAnalyzer {
      * @param refList the list of reference words
      * @param hypList the list of hypothesis  words
      */
-    private void addRecognitionError(List refList, List hypList) {
+    private void addRecognitionError(List<String> refList, List<String> hypList) {
 	recognitionErrors++;
-	String ref = (String) refList.remove(0);
-	String hyp = (String) hypList.remove(0);
+	String ref = refList.remove(0);
+	String hyp = hypList.remove(0);
 	int length = Math.max(ref.length(), hyp.length());
 
         refOutput.append(" ").append(pad(ref.toUpperCase(), length));
@@ -230,10 +230,10 @@ public class ResultAnalyzer {
      * @param refList the list of reference words
      * @param hypList the list of hypothesis  words
      */
-    private void addMatch(List refList, List hypList) {
+    private void addMatch(List<String> refList, List<String> hypList) {
 	numMatchingWords++;
-	String ref = (String) refList.remove(0);
-	String hyp = (String) hypList.remove(0);
+	String ref = refList.remove(0);
+	String hyp = hypList.remove(0);
         refOutput.append(" ").append(ref);
         hypOutput.append(" ").append(hyp);
     }
@@ -245,7 +245,7 @@ public class ResultAnalyzer {
      * @param hypList the list of hypothesis  words
      *
      */
-    private void processMismatch(List refList, List hypList) {
+    private void processMismatch(List<String> refList, List<String> hypList) {
 	int deletionMatches = countMatches(
 		refList, 1, hypList, 0);
     	int insertMatches = countMatches(
@@ -274,13 +274,13 @@ public class ResultAnalyzer {
      *
      * @return the number of matching words
      */
-    private int countMatches(List refList, int refIndex,
-	    List hypList, int hypIndex) {
+    private int countMatches(List<String> refList, int refIndex,
+	    List<String> hypList, int hypIndex) {
 	int match = 0;
 
 	while (refIndex < refList.size() && hypIndex < hypList.size()) {
-	    String ref = (String) refList.get(refIndex++);
-	    String hyp = (String) hypList.get(hypIndex++);
+	    String ref = refList.get(refIndex++);
+	    String hyp = hypList.get(hypIndex++);
 	    if (ref.equals(hyp)) {
 		match++;
 	    }
@@ -329,8 +329,8 @@ public class ResultAnalyzer {
      *
      * @return  a list, one word per item with silences removed
      */
-    private List stringToList(String s) {
-	List list = new LinkedList();
+    private List<String> stringToList(String s) {
+	List<String> list = new LinkedList<String>();
 	StringTokenizer st = new StringTokenizer(s);
 
 	while (st.hasMoreTokens()) {
@@ -347,8 +347,8 @@ public class ResultAnalyzer {
     public void showMisrecognitions() {
         System.out.println
             (mismatchedUtterances.size() + " sentence errors");
-        for (Iterator i = mismatchedUtterances.iterator(); i.hasNext();) {
-            Misrecognition misrecognition = (Misrecognition) i.next();
+        for (Iterator<Misrecognition> i = mismatchedUtterances.iterator(); i.hasNext();) {
+            Misrecognition misrecognition = i.next();
             System.out.println(misrecognition.getReference());
 	    System.out.println(misrecognition.getHypothesis());
         }

@@ -102,6 +102,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * 
  * @see MelFilter
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class MelFrequencyFilterBank extends BaseDataProcessor {
     /**
      * The name of the Sphinx Property for the number of filters in the

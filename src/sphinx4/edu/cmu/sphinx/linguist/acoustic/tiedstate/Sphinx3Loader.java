@@ -34,8 +34,6 @@ import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
-
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
@@ -279,7 +277,7 @@ public class Sphinx3Loader implements Loader {
     private Pool varianceTransformationVectorPool;
     private Pool mixtureWeightsPool;
     private Pool senonePool;
-    private Map contextIndependentUnits;
+    private Map<String, Unit> contextIndependentUnits;
     private HMMManager hmmManager;
     private LogMath logMath;
     private UnitManager unitManager;
@@ -462,7 +460,7 @@ public class Sphinx3Loader implements Loader {
     public void load() throws IOException {
         // TODO: what is this all about?
         hmmManager = new HMMManager();
-        contextIndependentUnits = new LinkedHashMap();
+        contextIndependentUnits = new LinkedHashMap<String, Unit>();
         // dummy pools for these elements
         meanTransformationMatrixPool = 
             createDummyMatrixPool("meanTransformationMatrix");
@@ -1193,10 +1191,10 @@ public class Sphinx3Loader implements Loader {
                     unit = lastUnit;
                 } else {
                     Unit[] leftContext = new Unit[1];
-                    leftContext[0] = (Unit) contextIndependentUnits.get(left);
+                    leftContext[0] = contextIndependentUnits.get(left);
                     
                     Unit[] rightContext = new Unit[1];
-                    rightContext[0] = (Unit) contextIndependentUnits.get(right);
+                    rightContext[0] = contextIndependentUnits.get(right);
                 
                     Context context = LeftRightContext.get(leftContext,
                                                            rightContext);

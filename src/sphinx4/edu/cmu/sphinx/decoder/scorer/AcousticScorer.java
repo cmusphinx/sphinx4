@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.decoder.search.Token;
 
 /**
  * Provides a mechanism for scoring a set of HMM states
@@ -51,7 +52,7 @@ public interface AcousticScorer  extends Configurable {
      * @return the best scoring scorable, or null if there are no
      * more frames to score
      */
-    public Scoreable calculateScores(List scorableList);
+    public Scoreable calculateScores(List<Token> scorableList);
 
     /**
      * stops the scorer

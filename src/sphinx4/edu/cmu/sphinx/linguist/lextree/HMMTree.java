@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
@@ -49,13 +48,13 @@ class HMMTree {
     private LanguageModel lm;
     private boolean addFillerWords = false;
     private boolean addSilenceWord = true;
-    private Set entryPoints = new HashSet();
-    private Set exitPoints = new HashSet();
-    private Set allWords = null;
+    private Set<Unit> entryPoints = new HashSet<Unit>();
+    private Set<Unit> exitPoints = new HashSet<Unit>();
+    private Set<Word> allWords = null;
     private EntryPointTable entryPointTable;
     private boolean debug = false;
     private float languageWeight;
-    private Map endNodeMap;
+    private Map<Object, HMMNode[]> endNodeMap;
     private WordNode sentenceEndWordNode;
 
     /**
@@ -72,7 +71,7 @@ class HMMTree {
         this.hmmPool = pool;
         this.dictionary = dictionary;
         this.lm = lm;
-        this.endNodeMap = new HashMap();
+        this.endNodeMap = new HashMap<Object, HMMNode[]>();
         this.addFillerWords = addFillerWords;
         this.languageWeight = languageWeight;
 
@@ -92,7 +91,7 @@ class HMMTree {
      *
      * @return the set of entry points
      */
-    public Collection getEntryPoint(Unit lc, Unit base) {
+    public Collection<Node> getEntryPoint(Unit lc, Unit base) {
         EntryPoint ep = entryPointTable.getEntryPoint(base);
         return ep.getEntryPointsFromLeftContext(lc).getSuccessors();
     }
@@ -105,17 +104,17 @@ class HMMTree {
      * @return an array of associated hmm nodes
      */
     public HMMNode[] getHMMNodes(EndNode endNode) {
-        HMMNode[] results = (HMMNode[]) endNodeMap.get(endNode.getKey());
+        HMMNode[] results = endNodeMap.get(endNode.getKey());
         if (results == null) {
             // System.out.println("Filling cache for " + endNode.getKey()
             //        + " size " + endNodeMap.size());
-            Map resultMap = new HashMap();
+            Map<HMM, HMMNode> resultMap = new HashMap<HMM, HMMNode>();
             Unit baseUnit = endNode.getBaseUnit();
             Unit lc = endNode.getLeftContext();
-            for (Iterator i = entryPoints.iterator(); i.hasNext(); ) {
-                Unit rc = (Unit) i.next();
+            for (Iterator<Unit> i = entryPoints.iterator(); i.hasNext(); ) {
+                Unit rc = i.next();
                 HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.END);
-                HMMNode hmmNode = (HMMNode) resultMap.get(hmm);
+                HMMNode hmmNode = resultMap.get(hmm);
                 if (hmmNode == null) {
                     hmmNode = new HMMNode(hmm, LogMath.getLogOne());
                     resultMap.put(hmm, hmmNode);
@@ -173,7 +172,7 @@ class HMMTree {
      */
     void dumpTree() {
         System.out.println("Dumping Tree ...");
-        Map dupNode = new HashMap();
+        Map<Node, Node> dupNode = new HashMap<Node, Node>();
         dumpTree(0, getInitialNode(), dupNode);
         System.out.println("... done Dumping Tree");
     }
@@ -185,7 +184,7 @@ class HMMTree {
      * @param node the root of the tree to dump
      * @param dupNode map of visited nodes
      */
-    private void dumpTree(int level, Node node, Map dupNode) {
+    private void dumpTree(int level, Node node, Map<Node, Node> dupNode) {
         if (dupNode.get(node) == null) {
             dupNode.put(node, node);
             System.out.println(Utilities.pad(level * 1) + node);
@@ -203,9 +202,9 @@ class HMMTree {
      * Collects all of the entry and exit points for the vocabulary.
      */
     private void collectEntryAndExitUnits() {
-        Collection words = getAllWords();
-        for (Iterator i = words.iterator(); i.hasNext(); ) {
-            Word word = (Word) i.next();
+        Collection<Word> words = getAllWords();
+        for (Iterator<Word> i = words.iterator(); i.hasNext(); ) {
+            Word word = i.next();
             for (int j = 0; j < word.getPronunciations().length; j++) {
                 Pronunciation p = word.getPronunciations()[j];
                 Unit first = p.getUnits()[0];
@@ -240,9 +239,9 @@ class HMMTree {
      *
      */
     private void addWords() {
-        Set words = getAllWords();
-        for (Iterator i = words.iterator(); i.hasNext(); ) {
-            Word word = (Word) i.next();
+        Set<Word> words = getAllWords();
+        for (Iterator<Word> i = words.iterator(); i.hasNext(); ) {
+            Word word = i.next();
             addWord(word);
         }
     }
@@ -380,9 +379,9 @@ class HMMTree {
      *
      * @return the set of all words (as Word objects)
      */
-    private Set getAllWords() {
+    private Set<Word> getAllWords() {
         if (allWords == null) {
-            allWords = new HashSet();
+            allWords = new HashSet<Word>();
             Collection words = lm.getVocabulary();
             for (Iterator i = words.iterator(); i.hasNext(); ) {
                 String spelling = (String) i.next();
@@ -418,7 +417,7 @@ class HMMTree {
      * into the lex tree. 
      */
     class EntryPointTable {
-	private Map entryPoints;
+	private Map<Unit, EntryPoint> entryPoints;
 
 
         /**
@@ -428,10 +427,10 @@ class HMMTree {
          * @param entryPointCollection the set of possible entry
          * points
          */
-	EntryPointTable(Collection entryPointCollection) {
-	    entryPoints = new HashMap();
-	    for (Iterator i = entryPointCollection.iterator(); i.hasNext(); ) {
-		Unit unit = (Unit) i.next();
+	EntryPointTable(Collection<Unit> entryPointCollection) {
+	    entryPoints = new HashMap<Unit, EntryPoint>();
+	    for (Iterator<Unit> i = entryPointCollection.iterator(); i.hasNext(); ) {
+		Unit unit = i.next();
 		entryPoints.put(unit, new EntryPoint(unit));
 	    }
 	}
@@ -446,15 +445,15 @@ class HMMTree {
          * unit
          */
 	EntryPoint getEntryPoint(Unit baseUnit) {
-	    return (EntryPoint) entryPoints.get(baseUnit);
+	    return entryPoints.get(baseUnit);
 	}
 
         /**
          * Creates the entry point maps for all entry points. 
          */
 	void createEntryPointMaps() {
-	    for (Iterator i = entryPoints.values().iterator(); i.hasNext(); ) {
-		EntryPoint ep = (EntryPoint) i.next();
+	    for (Iterator<EntryPoint> i = entryPoints.values().iterator(); i.hasNext(); ) {
+		EntryPoint ep = i.next();
 		ep.createEntryPointMap();
 	    }
 	}
@@ -463,8 +462,8 @@ class HMMTree {
          * Freezes the entry point table
          */
 	void freeze() {
-	    for (Iterator i = entryPoints.values().iterator(); i.hasNext(); ) {
-		EntryPoint ep = (EntryPoint) i.next();
+	    for (Iterator<EntryPoint> i = entryPoints.values().iterator(); i.hasNext(); ) {
+		EntryPoint ep = i.next();
 		ep.freeze();
 	    }
 	}
@@ -473,8 +472,8 @@ class HMMTree {
          * Dumps the entry point table
          */
 	void dump() {
-	    for (Iterator i = entryPoints.values().iterator(); i.hasNext(); ) {
-		EntryPoint ep = (EntryPoint) i.next();
+	    for (Iterator<EntryPoint> i = entryPoints.values().iterator(); i.hasNext(); ) {
+		EntryPoint ep = i.next();
 		ep.dump();
 	    }
 	}
@@ -487,10 +486,10 @@ class HMMTree {
     class EntryPoint {
 	Unit baseUnit;
 	Node baseNode;      // second units and beyond start here
-	Map unitToEntryPointMap;
-	List singleUnitWords;
+	Map<Unit, Node> unitToEntryPointMap;
+	List<Pronunciation> singleUnitWords;
 	int nodeCount = 0;
-	Set rcSet;
+	Set<Unit> rcSet;
         float totalProbability;
 
         /**
@@ -501,8 +500,8 @@ class HMMTree {
 	EntryPoint(Unit baseUnit) {
 	    this.baseUnit = baseUnit;
 	    this.baseNode = new Node(LogMath.getLogZero());
-	    this.unitToEntryPointMap = new HashMap();
-	    this.singleUnitWords = new ArrayList();
+	    this.unitToEntryPointMap = new HashMap<Unit, Node>();
+	    this.singleUnitWords = new ArrayList<Pronunciation>();
             this.totalProbability = LogMath.getLogZero();
 	}
 
@@ -515,7 +514,7 @@ class HMMTree {
          * @return the node representing the entry point
          */
 	Node getEntryPointsFromLeftContext(Unit leftContext) {
-	    return (Node) unitToEntryPointMap.get(leftContext);
+	    return unitToEntryPointMap.get(leftContext);
 	}
 
 
@@ -545,9 +544,9 @@ class HMMTree {
          * eliminate some fields
          */
         void freeze() {
-            for (Iterator i = unitToEntryPointMap.values().iterator();
+            for (Iterator<Node> i = unitToEntryPointMap.values().iterator();
                     i.hasNext(); ) {
-                Node node = (Node) i.next();
+                Node node = i.next();
                 node.freeze();
             }
             singleUnitWords = null;
@@ -580,9 +579,9 @@ class HMMTree {
          *
          * @return the set of possible transition points.
          */
-	private Collection getEntryPointRC() {
+	private Collection<Unit> getEntryPointRC() {
 	    if (rcSet == null) {
-		rcSet = new HashSet();
+		rcSet = new HashSet<Unit>();
                 for (Iterator i = baseNode.getSuccessors().iterator();
                         i.hasNext(); ) {
                     UnitNode node = (UnitNode) i.next();
@@ -601,11 +600,11 @@ class HMMTree {
          * entry point.
          */
 	void createEntryPointMap() {
-	    for (Iterator i = exitPoints.iterator(); i.hasNext(); ) {
-		Unit lc = (Unit) i.next();
+	    for (Iterator<Unit> i = exitPoints.iterator(); i.hasNext(); ) {
+		Unit lc = i.next();
 		Node epNode = new Node(LogMath.getLogZero());
-		for (Iterator j = getEntryPointRC().iterator(); j.hasNext(); ) {
-		    Unit rc = (Unit) j.next();
+		for (Iterator<Unit> j = getEntryPointRC().iterator(); j.hasNext(); ) {
+		    Unit rc = j.next();
 		    HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.BEGIN);
 		    Node addedNode = epNode.addSuccessor(hmm, getProbability());
 		    nodeCount++;
@@ -625,16 +624,16 @@ class HMMTree {
          *
          */
 	void createEntryPointMap_alternateVersion() {
-            HashMap map  = new HashMap();
-	    for (Iterator i = exitPoints.iterator(); i.hasNext(); ) {
-		Unit lc = (Unit) i.next();
+            HashMap<HMM, Node> map  = new HashMap<HMM, Node>();
+	    for (Iterator<Unit> i = exitPoints.iterator(); i.hasNext(); ) {
+		Unit lc = i.next();
 		Node epNode = new Node(LogMath.getLogZero());
-		for (Iterator j = getEntryPointRC().iterator(); j.hasNext(); ) {
-		    Unit rc = (Unit) j.next();
+		for (Iterator<Unit> j = getEntryPointRC().iterator(); j.hasNext(); ) {
+		    Unit rc = j.next();
 		    HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.BEGIN);
                     Node addedNode;
 
-                    if ((addedNode = (Node) map.get(hmm)) == null) {
+                    if ((addedNode = map.get(hmm)) == null) {
 		        addedNode = epNode.addSuccessor(hmm, getProbability());
                         map.put(hmm, addedNode);
                     } else {
@@ -663,8 +662,8 @@ class HMMTree {
          */
 	private void connectSingleUnitWords(Unit lc, Node epNode) {
 	    if (singleUnitWords.size() > 0) {
-		for (Iterator i = entryPoints.iterator(); i.hasNext(); ) {
-		    Unit rc = (Unit) i.next();
+		for (Iterator<Unit> i = entryPoints.iterator(); i.hasNext(); ) {
+		    Unit rc = i.next();
 		    HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.SINGLE);
 		    HMMNode tailNode = (HMMNode)
                         epNode.addSuccessor(hmm, getProbability());
@@ -673,8 +672,7 @@ class HMMTree {
 		    nodeCount++;
 
 		    for (int j = 0; j < singleUnitWords.size(); j++) {
-			Pronunciation p = (Pronunciation) 
-			    singleUnitWords.get(j);
+			Pronunciation p = singleUnitWords.get(j);
 
 
 			if (p.getWord() == dictionary.getSentenceStartWord()) {
@@ -718,10 +716,10 @@ class HMMTree {
 	    System.out.println("EntryPoint " + baseUnit + " RC Followers: " 
 			    + getEntryPointRC().size());
 	    int count = 0;
-	    Collection rcs = getEntryPointRC();
+	    Collection<Unit> rcs = getEntryPointRC();
 	    System.out.print("    ");
-	    for (Iterator i = rcs.iterator(); i.hasNext(); ) {
-		Unit rc = (Unit) i.next();
+	    for (Iterator<Unit> i = rcs.iterator(); i.hasNext(); ) {
+		Unit rc = i.next();
 		System.out.print(Utilities.pad(rc.getName(), 4));
 		if (count++ >= 12 ) {
 		    count = 0;
@@ -755,7 +753,7 @@ class HMMTree {
 class Node {
     private static int nodeCount = 0;
     private static int successorCount = 0;
-    private static Map wordNodeMap = new HashMap();
+    private static Map<Pronunciation, WordNode> wordNodeMap = new HashMap<Pronunciation, WordNode>();
     private Object successors = null;
     private float logUnigramProbability;
 
@@ -801,8 +799,8 @@ class Node {
      * @return the node containing the successors
      */
     private Node getSuccessor(Object key) {
-        Map successors = getSuccessorMap();
-        return (Node) successors.get(key);
+        Map<Object, Node> successors = getSuccessorMap();
+        return successors.get(key);
     }
 
     /**
@@ -812,7 +810,7 @@ class Node {
      * @param child the child to add
      */
     void putSuccessor(Object key, Node child) {
-        Map successors = getSuccessorMap();
+        Map<Object,Node> successors = getSuccessorMap();
         successors.put(key, child);
     }
 
@@ -822,13 +820,14 @@ class Node {
      *
      * @return the successor map
      */
-    private Map getSuccessorMap() {
+    @SuppressWarnings({"unchecked"})
+    private Map<Object,Node> getSuccessorMap() {
         if (successors == null) {
-            successors = new HashMap(4);
+            successors = new HashMap<Object, Node>(4);
         }
 
         assert successors instanceof Map;
-        return (Map) successors;
+        return (Map<Object,Node>)successors;
     }
 
 
@@ -837,11 +836,11 @@ class Node {
      */
     void freeze() {
         if (successors instanceof Map) {
-            Map map = getSuccessorMap();
-            List frozenSuccessors = new ArrayList(map.values().size());
+            Map<Object, Node> map = getSuccessorMap();
+            List<Node> frozenSuccessors = new ArrayList<Node>(map.values().size());
             successors = null; // avoid recursive death spiral
-            for (Iterator i = map.values().iterator(); i.hasNext();) {
-                Node node = (Node) i.next();
+            for (Iterator<Node> i = map.values().iterator(); i.hasNext();) {
+                Node node = i.next();
                 frozenSuccessors.add(node);
                 node.freeze();
             }
@@ -943,7 +942,7 @@ class Node {
      * @return the word node
      */
     private WordNode getWordNode(Pronunciation p, float probability) {
-        WordNode node = (WordNode) wordNodeMap.get(p);
+        WordNode node = wordNodeMap.get(p);
         if (node == null) {
             node = new WordNode(p, probability);
             wordNodeMap.put(p, node);
@@ -979,9 +978,10 @@ class Node {
      *
      * @return the set of successor nodes
      */
-    Collection getSuccessors() {
+    @SuppressWarnings({"unchecked"})
+    Collection<Node> getSuccessors() {
         if (successors instanceof List) {
-            return (List) successors;
+            return (List<Node>) successors;
         } else {
             return getSuccessorMap().values();
         }
@@ -1052,7 +1052,7 @@ class WordNode extends Node {
      *
      * @return the set of successor nodes
      */
-    Collection getSuccessors() {
+    Collection<Node> getSuccessors() {
         throw new Error("Not supported");
     }
 
@@ -1215,7 +1215,7 @@ class HMMNode extends UnitNode {
     }
 
 
-    Object getKey() {
+    HMM getKey() {
         return getHMM();
     }
 
@@ -1244,10 +1244,11 @@ class HMMNode extends UnitNode {
      * Freeze this node. Convert the set into an array to reduce
      * memory overhead
      */
+    @SuppressWarnings({"unchecked"})
     void freeze() {
         super.freeze();
-        if (rcSet instanceof HashSet) {
-            Set set = (Set) rcSet;
+        if (rcSet instanceof Set) {
+            Set<Unit> set = (Set<Unit>) rcSet;
             rcSet = set.toArray(new Unit[set.size()]);
         }
     }
@@ -1258,13 +1259,14 @@ class HMMNode extends UnitNode {
      *
      * @return the set of right contexts
      */
-    private Set getRCSet() {
+    @SuppressWarnings({"unchecked"})
+    private Set<Unit> getRCSet() {
 	if (rcSet == null) {
-	    rcSet = new HashSet();
+	    rcSet = new HashSet<Unit>();
 	}
 
         assert rcSet instanceof HashSet;
-        return (Set) rcSet;
+        return (Set<Unit>) rcSet;
     }
 
     /**
@@ -1284,7 +1286,7 @@ class HMMNode extends UnitNode {
 class EndNode extends UnitNode {
     Unit baseUnit;
     Unit leftContext;
-    Object key;
+    Integer key;
 
     /**
      * Creates the node, wrapping the given hmm
@@ -1319,7 +1321,7 @@ class EndNode extends UnitNode {
         return leftContext;
     }
 
-    Object getKey() {
+    Integer getKey() {
         return key;
     }
 

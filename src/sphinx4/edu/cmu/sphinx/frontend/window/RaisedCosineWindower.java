@@ -78,7 +78,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
     private double alpha; // the window alpha value
     private double[] cosineWindow; // the raised consine window
     private int windowShift; // the window size
-    private List outputQueue; // cache for output windows
+    private List<Data> outputQueue; // cache for output windows
     private DoubleBuffer overflowBuffer; // cache for overlapped audio regions
     private long currentCollectTime;
     private long currentFirstSampleNumber;
@@ -126,7 +126,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
         super.initialize();
 
         // createWindow();
-        outputQueue = new LinkedList();
+        outputQueue = new LinkedList<Data>();
     }
 
 
@@ -196,7 +196,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
         }
 
         if (outputQueue.size() > 0) {
-            Data output = (Data) outputQueue.remove(0);
+            Data output = outputQueue.remove(0);
             if (output instanceof DoubleData) {
                 assert ((DoubleData) output).getValues().length ==
                         cosineWindow.length;

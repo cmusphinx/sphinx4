@@ -95,13 +95,13 @@ public class NISTAlign {
      * Ordered list of words from rawReference after the annotation
      * has been removed.  Updated with each call to 'align'.
      */
-    private LinkedList referenceWords;
+    private LinkedList<String> referenceWords;
 
     /**
      * Aligned list of words from rawReference.  Created in
      * alignWords.  Updated with each call to 'align'.
      */
-    private LinkedList alignedReferenceWords;
+    private LinkedList<String> alignedReferenceWords;
 
     /**
      * The raw hypothesis string.  Updated with each call to
@@ -113,13 +113,13 @@ public class NISTAlign {
      * Ordered list of words from rawHypothesis after the annotation
      * has been removed.  Updated with each call to 'align'.
      */
-    private LinkedList hypothesisWords;
+    private LinkedList<String> hypothesisWords;
 
     /**
      * Aligned list of words from rawHypothesis.  Created in
      * alignWords.  Updated with each call to 'align'.
      */
-    private LinkedList alignedHypothesisWords;
+    private LinkedList<String> alignedHypothesisWords;
 
     /**
      * Helpers to create percentage strings.
@@ -598,8 +598,8 @@ public class NISTAlign {
      *
      * @return the backtrace table
      */
-    int[][] createBacktraceTable(LinkedList referenceWords,
-                               LinkedList hypothesisWords) {
+    int[][] createBacktraceTable(LinkedList<String> referenceWords,
+                               LinkedList<String> hypothesisWords) {
         int[][] penaltyTable;
         int[][] backtraceTable;
         int penalty;
@@ -698,8 +698,8 @@ public class NISTAlign {
      *
      * @return a linked list of Integers representing the backtrace
      */
-    LinkedList backtrace(int[][] backtraceTable) {
-        LinkedList list = new LinkedList();
+    LinkedList<Integer> backtrace(int[][] backtraceTable) {
+        LinkedList<Integer> list = new LinkedList<Integer>();
 	int i = referenceWords.size();
 	int j = hypothesisWords.size();
 	while ((i >= 0) && (j >= 0)) {
@@ -722,24 +722,24 @@ public class NISTAlign {
      *
      * @param backtrace the backtrace list created in backtrace
      */
-    void alignWords(LinkedList backtrace) {
-        ListIterator referenceWordsIterator = referenceWords.listIterator();
-        ListIterator hypothesisWordsIterator = hypothesisWords.listIterator();
+    void alignWords(LinkedList<Integer> backtrace) {
+        ListIterator<String> referenceWordsIterator = referenceWords.listIterator();
+        ListIterator<String> hypothesisWordsIterator = hypothesisWords.listIterator();
         String referenceWord;
         String hypothesisWord;
         
-        alignedReferenceWords = new LinkedList();
-        alignedHypothesisWords = new LinkedList();
+        alignedReferenceWords = new LinkedList<String>();
+        alignedHypothesisWords = new LinkedList<String>();
 
         for (int m = backtrace.size() - 2; m >= 0; m--) {
-            int backtraceEntry = ((Integer) backtrace.get(m)).intValue();
+            int backtraceEntry = (backtrace.get(m)).intValue();
             if (backtraceEntry != INSERTION) {
-                referenceWord = (String) referenceWordsIterator.next();
+                referenceWord = referenceWordsIterator.next();
             } else {
                 referenceWord = null;
             }
             if (backtraceEntry != DELETION) {
-                hypothesisWord = (String) hypothesisWordsIterator.next();
+                hypothesisWord = hypothesisWordsIterator.next();
             } else {
                 hypothesisWord = null;
             }
@@ -884,8 +884,8 @@ public class NISTAlign {
      *
      * @return a list, one word per item
      */
-    LinkedList toList(String s) {
-        LinkedList list = new LinkedList();
+    LinkedList<String> toList(String s) {
+        LinkedList<String> list = new LinkedList<String>();
         StringTokenizer st = new StringTokenizer(s.trim());
         while (st.hasMoreTokens()) {
             String token = st.nextToken().toLowerCase();
@@ -900,10 +900,10 @@ public class NISTAlign {
      * @param list the list of words
      * @return a space separated string
      */
-    private String toString(LinkedList list) {
+    private String toString(LinkedList<String> list) {
         if (list != null) {
             StringBuffer sb = new StringBuffer();
-            ListIterator iterator = list.listIterator();
+            ListIterator<String> iterator = list.listIterator();
             while (iterator.hasNext()) {
                 sb.append(iterator.next());
                 if (iterator.hasNext()) {

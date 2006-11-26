@@ -109,8 +109,8 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
     private boolean discardMode;
     private boolean inSpeech;
 
-    private List inputBuffer;
-    private List outputQueue;
+    private List<Data> inputBuffer;
+    private List<Data> outputQueue;
 
     /**
      * The number of samples in a speech segment, used to calculate
@@ -150,8 +150,8 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
         super.initialize();
         this.discardMode = true;
         this.inSpeech = false;
-        this.inputBuffer = new LinkedList();
-        this.outputQueue = new LinkedList();
+        this.inputBuffer = new LinkedList<Data>();
+        this.outputQueue = new LinkedList<Data>();
     }
 
 
@@ -190,7 +190,7 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
         }
 
         if (outputQueue.size() > 0) {
-            return (Data) outputQueue.remove(0);
+            return outputQueue.remove(0);
         } else {
             return null;
         }
@@ -212,8 +212,8 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
             
             // Read (and discard) all the Data from DataStartSignal until
             // we hit a SpeechStartSignal. The SpeechStartSignal is discarded.
-            List audioList = readUntilSpeechStartOrDataEnd();
-            Data last = (Data) audioList.get(audioList.size() - 1);
+            List<Data> audioList = readUntilSpeechStartOrDataEnd();
+            Data last = audioList.get(audioList.size() - 1);
             if (last != null) {
                 if (last instanceof DataEndSignal) {
                     outputQueue.add(audio);
@@ -223,8 +223,8 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
         } else if (audio instanceof SpeechEndSignal) {
             // read (and discard) all the Data from SpeechEndSignal
             // until we hit a DataEndSignal
-            List audioList = readUntilSpeechStartOrDataEnd();
-            Data last = (Data) audioList.get(audioList.size() - 1);
+            List<Data> audioList = readUntilSpeechStartOrDataEnd();
+            Data last = audioList.get(audioList.size() - 1);
             if (last != null) {
                 if (last instanceof SpeechStartSignal) {
                     // first remove the SpeechStartSignal, then add
@@ -339,7 +339,7 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
     private Data readData() throws DataProcessingException {
         Data audio = null;
         if (inputBuffer.size() > 0) {
-            audio = (Data) inputBuffer.remove(0);
+            audio = inputBuffer.remove(0);
         } else {
             audio = getPredecessor().getData();
         }
@@ -353,9 +353,9 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
      * @return a list of all the Data read,
      *         including the SpeechStartSignal or DataEndSignal
      */
-    private List readUntilSpeechStartOrDataEnd() throws 
+    private List<Data> readUntilSpeechStartOrDataEnd() throws
         DataProcessingException {
-        List audioList = new LinkedList();
+        List<Data> audioList = new LinkedList<Data>();
         Data audio = null;
         do {
             audio = readData();

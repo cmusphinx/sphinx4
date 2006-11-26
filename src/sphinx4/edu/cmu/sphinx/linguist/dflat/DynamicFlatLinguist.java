@@ -12,8 +12,6 @@
 package edu.cmu.sphinx.linguist.dflat;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,17 +33,14 @@ import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
-import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarArc;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -174,14 +169,14 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     // particular grammar node. It is used to select the set of
     // possible right contexts as we leave a node
 
-    private Map nodeToNextUnitArrayMap;
+    private Map<GrammarNode, int[]> nodeToNextUnitArrayMap;
 
 
     // this map is used to manage the set of possible entry units for
     // a grammar node. It is used to filter paths so that we only
     // branch to grammar nodes that match the current right context.
 
-    private Map nodeToUnitSetMap;
+    private Map<GrammarNode, Set<Unit>> nodeToUnitSetMap;
 
     // an empty arc (just waiting for Noah, I guess)
     private final SearchStateArc[] EMPTY_ARCS = new SearchStateArc[0];
@@ -294,8 +289,8 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         allocateAcousticModel();
         grammar.allocate();
         hmmPool = new HMMPool(acousticModel, logger, unitManager);
-        nodeToNextUnitArrayMap = new HashMap();
-        nodeToUnitSetMap = new HashMap();
+        nodeToNextUnitArrayMap = new HashMap<GrammarNode, int[]>();
+        nodeToUnitSetMap = new HashMap<GrammarNode, Set<Unit>>();
         Timer timer = Timer.getTimer("compileGrammar");
         timer.start();
         compileGrammar();
@@ -385,8 +380,8 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         // collect the set of next units for this node
 
         if (nodeToNextUnitArrayMap.get(node) == null) {
-            Set vistedNodes = new HashSet();
-            Set unitSet = new HashSet();
+            Set<GrammarNode> vistedNodes = new HashSet<GrammarNode>();
+            Set<Unit> unitSet = new HashSet<Unit>();
 
             GrammarArc[] arcs = node.getSuccessors();
             for (int i = 0; i < arcs.length; i++) {
@@ -395,8 +390,8 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             }
             int[] nextUnits = new int[unitSet.size()];
             int index = 0;
-            for (Iterator i = unitSet.iterator(); i.hasNext(); ) {
-                Unit unit = (Unit) i.next();
+            for (Iterator<Unit> i = unitSet.iterator(); i.hasNext(); ) {
+                Unit unit = i.next();
                 nextUnits[index++] = unit.getBaseID();
             }
             nodeToNextUnitArrayMap.put(node, nextUnits);
@@ -405,8 +400,8 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         // collect the set of entry units for this node
 
         if (nodeToUnitSetMap.get(node) == null) {
-            Set vistedNodes = new HashSet();
-            Set unitSet = new HashSet();
+            Set<GrammarNode> vistedNodes = new HashSet<GrammarNode>();
+            Set<Unit> unitSet = new HashSet<Unit>();
             collectNextUnits(node, vistedNodes, unitSet);
             nodeToUnitSetMap.put(node, unitSet);
         }
@@ -422,7 +417,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
      * @param unitSet the entry units are collected here.
      */
     private void collectNextUnits(GrammarNode thisNode, 
-                Set vistedNodes, Set unitSet) {
+                Set<GrammarNode> vistedNodes, Set<Unit> unitSet) {
         if (vistedNodes.contains(thisNode)) {
             return;
         }
@@ -446,7 +441,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     }
 
 
-    Map successorCache = new HashMap();
+    Map<SearchState, SearchStateArc[]> successorCache = new HashMap<SearchState, SearchStateArc[]>();
 
     /**
      * The base search state for this dynamic flat linguist.
@@ -597,7 +592,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return the cached arcs or null
          */
         SearchStateArc[] getCachedSuccessors() {
-            return (SearchStateArc[]) successorCache.get(this);
+            return successorCache.get(this);
         }
 
         /**
@@ -797,7 +792,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          */
         GrammarArc[] filter(GrammarArc[] arcs, int nextBase) {
             if (nextBase != ANY) {
-                List list = new ArrayList();
+                List<GrammarArc> list = new ArrayList<GrammarArc>();
                 for (int i = 0; i < arcs.length; i++) {
                     GrammarNode node = arcs[i].getGrammarNode();
                     if (hasEntryContext(node, nextBase)) {
@@ -817,7 +812,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @param unitID the id of the unit
          */
         private boolean hasEntryContext(GrammarNode node, int unitID) {
-            Set unitSet = (Set) nodeToUnitSetMap.get(node);
+            Set<Unit> unitSet = nodeToUnitSetMap.get(node);
             return unitSet.contains(hmmPool.getUnit(unitID));
         }
 
@@ -885,7 +880,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return the set of IDs of all possible next units
          */
         int[] getNextUnits() {
-            return  (int[]) nodeToNextUnitArrayMap.get(node);
+            return nodeToNextUnitArrayMap.get(node);
         }
 
 
@@ -911,7 +906,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     }
 
     class InitialState extends FlatSearchState {
-        private List nextArcs  = new ArrayList();
+        private List<SearchStateArc> nextArcs  = new ArrayList<SearchStateArc>();
 
 
         /**

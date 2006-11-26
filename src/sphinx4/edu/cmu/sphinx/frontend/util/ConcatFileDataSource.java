@@ -12,13 +12,7 @@
  */
 package edu.cmu.sphinx.frontend.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.SequenceInputStream;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -227,7 +221,7 @@ public class ConcatFileDataSource extends StreamDataSource
     private String context;
     private String transcriptFile;
     private StreamDataSource streamDataSource;
-    private List referenceList;
+    private List<String> referenceList;
     private FileWriter transcript;
     private int startFile;
     private int totalFiles;
@@ -302,7 +296,7 @@ public class ConcatFileDataSource extends StreamDataSource
                 (new SequenceInputStream
                  (new InputStreamEnumeration
                   (batchFile, startFile, totalFiles)), batchFile);
-            referenceList = new LinkedList();
+            referenceList = new LinkedList<String>();
         } catch (IOException e) {
             e.printStackTrace(); //TODO fix this
         }
@@ -391,7 +385,7 @@ public class ConcatFileDataSource extends StreamDataSource
          * @return the next element of this enumeration.
          */
         public Object nextElement() {
-            Object stream = null;
+            InputStream stream = null;
             if (nextFile == null) {
                 nextFile = readNext();
             }

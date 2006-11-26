@@ -18,6 +18,7 @@ package edu.cmu.sphinx.frontend;
  *
  * @see Data
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class FloatData implements Data, Cloneable {
 
     private float[] values;

@@ -73,6 +73,7 @@ import java.util.logging.Logger;
  * src="doc-files/139ospectrum.jpg"> <br><b>Figure 2: The spectrogram
  * of the utterance "one three nine oh" in Figure 1.</b>
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class DiscreteFourierTransform extends BaseDataProcessor {
     /**
      * The name of the SphinxProperty for the number of points

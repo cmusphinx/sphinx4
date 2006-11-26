@@ -28,7 +28,7 @@ public class SimpleBatchManager implements BatchManager {
     private int whichBatch;
     private int totalBatches;
     private int curItem;
-    private List items;
+    private List<String> items;
 
     /**
      * Constructs a SimpleBatchManager object.
@@ -69,7 +69,7 @@ public class SimpleBatchManager implements BatchManager {
         if (curItem >= items.size()) {
             return null;
         } else {
-            String line = (String) items.get(curItem++);
+            String line = items.get(curItem++);
             return new BatchItem(BatchFile.getFilename(line),
                             BatchFile.getReference(line));
         }
@@ -95,8 +95,8 @@ public class SimpleBatchManager implements BatchManager {
      *
      * @param file the name of the file 
      */
-    private List getBatchItems(String file) throws IOException {
-	List list = BatchFile.getLines(file, skip);
+    private List<String> getBatchItems(String file) throws IOException {
+	List<String> list = BatchFile.getLines(file, skip);
 
 	if (totalBatches > 1) {
 	    int linesPerBatch = list.size() / totalBatches;

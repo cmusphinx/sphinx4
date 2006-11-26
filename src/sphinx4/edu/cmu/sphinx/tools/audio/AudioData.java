@@ -27,7 +27,7 @@ import javax.swing.event.ChangeListener;
 public class AudioData {
     protected AudioFormat format;
     protected short[] shorts;
-    protected Vector listeners = new Vector();
+    protected Vector<ChangeListener> listeners = new Vector<ChangeListener>();
     protected int selectionStart = -1;
     protected int selectionEnd = -1;
     
@@ -132,7 +132,7 @@ public class AudioData {
         ChangeListener listener;
 	ChangeEvent event = new ChangeEvent(this);
 	for (int i = 0; i < listeners.size(); i++) {
-	    listener = (ChangeListener) listeners.elementAt(i);
+	    listener = listeners.elementAt(i);
 	    listener.stateChanged(event);
 	}
     }

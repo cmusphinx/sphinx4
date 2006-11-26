@@ -27,6 +27,7 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.decoder.search.Token;
 
 /**
  * An acoustic scorer that breaks the scoring up into a configurable number of
@@ -227,7 +228,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * @return the best scorign scoreable, or null if there are no more
      *         features to score
      */
-    public Scoreable calculateScores(List scoreableList) {
+    public Scoreable calculateScores(List<Token> scoreableList) {
         Scoreable best = null;
 
         try {
@@ -314,10 +315,10 @@ public class ThreadedAcousticScorer implements AcousticScorer {
             end = listSize;
         }
 
-        ListIterator iterator = job.getListIterator();
+        ListIterator<Token> iterator = job.getListIterator();
 
         for (int i = job.getStart(); i < end; i++) {
-            Scoreable scoreable = (Scoreable) iterator.next();
+            Scoreable scoreable = iterator.next();
 
             // since we are potentially doing somethigns such as frame
             // skipping and grow skipping, this check can become
@@ -469,7 +470,7 @@ class Semaphore {
 
 class ScoreableJob {
 
-    private List scoreables;
+    private List<Token> scoreables;
     private int start;
     private int size;
 
@@ -483,7 +484,7 @@ class ScoreableJob {
      * @param size
      *                the number of scoreables in this job
      */
-    ScoreableJob(List scoreables, int start, int size) {
+    ScoreableJob(List<Token> scoreables, int start, int size) {
         this.scoreables = scoreables;
         this.start = start;
         this.size = size;
@@ -513,7 +514,7 @@ class ScoreableJob {
      * @return the first scoreable in this job
      */
     Scoreable getFirst() {
-        return (Scoreable) scoreables.get(start);
+        return scoreables.get(start);
     }
 
     /**
@@ -521,7 +522,7 @@ class ScoreableJob {
      * 
      * @return the list of scoreables
      */
-    List getScoreables() {
+    List<Token> getScoreables() {
         return scoreables;
     }
 
@@ -530,7 +531,7 @@ class ScoreableJob {
      * 
      * @return a ListIterator for this job.
      */
-    ListIterator getListIterator() {
+    ListIterator<Token> getListIterator() {
         return scoreables.listIterator(start);
     }
 

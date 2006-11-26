@@ -61,7 +61,7 @@ import edu.cmu.sphinx.util.props.Registry;
 public class BatchCMN extends BaseDataProcessor {
     
     private double[] sums;           // array of current sums
-    private List cepstraList;
+    private List<Data> cepstraList;
     private int numberDataCepstra;
 
 
@@ -88,7 +88,7 @@ public class BatchCMN extends BaseDataProcessor {
     public void initialize() {
         super.initialize();
         sums = null;
-        cepstraList = new LinkedList();
+        cepstraList = new LinkedList<Data>();
     }
 
 
@@ -116,14 +116,14 @@ public class BatchCMN extends BaseDataProcessor {
         Data output = null;
 
         if (cepstraList.size() > 0) {
-            output = (Data) cepstraList.remove(0);
+            output = cepstraList.remove(0);
         } else {
             reset();
             // read the cepstra of the entire utterance, calculate
             // and apply the cepstral mean
             if (readUtterance() > 0) {
                 normalizeList();
-                output = (Data) cepstraList.remove(0);//getData();
+                output = cepstraList.remove(0);//getData();
             }            
         }
 
@@ -187,8 +187,8 @@ public class BatchCMN extends BaseDataProcessor {
             sums[i] /= numberDataCepstra;
         }
 
-        for (Iterator iterator = cepstraList.iterator(); iterator.hasNext();) {
-            Data cepstrumObject = (Data) iterator.next();
+        for (Iterator<Data> iterator = cepstraList.iterator(); iterator.hasNext();) {
+            Data cepstrumObject = iterator.next();
             if (cepstrumObject instanceof DoubleData) {
                 double[] cepstrum = ((DoubleData) cepstrumObject).getValues();
                 for (int j = 0; j < cepstrum.length; j++) {

@@ -47,7 +47,7 @@ public class SphinxProperties {
      * the URL for the context or once the properties has been loaded
      * from the URL, the properties object itself
      */
-    private static Map contextPool = new HashMap();
+    private static Map<String, SphinxProperties> contextPool = new HashMap<String, SphinxProperties>();
 
     // This empty SphinxProperties is used when a request is made for
     // a SphinxProperties from a context that does not exist.
@@ -93,7 +93,7 @@ public class SphinxProperties {
     static public void initContext(String context, URL url) 	
 				throws IOException {
 	if (contextPool.containsKey(context)) {
-	    SphinxProperties cur = (SphinxProperties) contextPool.get(context);
+	    SphinxProperties cur = contextPool.get(context);
 	    if (!url.equals(cur.url)) {
 	        throw new Error("Cannot init SphinxProperties with same context: "+
 			    context);
@@ -133,7 +133,7 @@ public class SphinxProperties {
      *
      */
     static public SphinxProperties getSphinxProperties(String context) {
-	SphinxProperties sp = (SphinxProperties) contextPool.get(context);
+	SphinxProperties sp = contextPool.get(context);
 	if (sp == null) {
 	    sp = EMPTY_SPHINX_PROPERTIES;
 	}

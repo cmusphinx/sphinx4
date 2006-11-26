@@ -23,7 +23,7 @@ import java.util.LinkedList;
  */
 public class FileReferenceSource implements ReferenceSource {
 
-    private List references;
+    private List<String> references;
 
     /**
      * Constructs a ReferenceSource from a reference file.
@@ -31,7 +31,7 @@ public class FileReferenceSource implements ReferenceSource {
      * @param file the reference file
      */
     public FileReferenceSource(String file) throws IOException {
-        references = new LinkedList();
+        references = new LinkedList<String>();
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = null;
         while ((line = reader.readLine()) != null) {
@@ -62,7 +62,7 @@ public class FileReferenceSource implements ReferenceSource {
      *
      * @return a list of reference text
      */
-    public List getReferences() {
+    public List<String> getReferences() {
         return references;
     }
 }

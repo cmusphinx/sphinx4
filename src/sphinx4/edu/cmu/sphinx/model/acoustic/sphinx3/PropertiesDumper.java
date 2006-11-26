@@ -16,7 +16,6 @@ package edu.cmu.sphinx.model.acoustic.sphinx3;
 import java.io.IOException;
 
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -68,6 +67,7 @@ public class PropertiesDumper {
      *
      * @return a string of the properties
      */
+    @SuppressWarnings({"unchecked"})
     public String toString() {
         String result = props.get("description") + "\n";
         List list = Collections.list(props.propertyNames());

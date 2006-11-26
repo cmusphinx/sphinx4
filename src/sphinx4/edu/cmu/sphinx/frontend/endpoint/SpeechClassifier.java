@@ -51,6 +51,7 @@ import edu.cmu.sphinx.util.props.Registry;
  *
  * @see SpeechMarker
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class SpeechClassifier extends BaseDataProcessor {
 
     /**
@@ -110,7 +111,7 @@ public class SpeechClassifier extends BaseDataProcessor {
      */
     public static final boolean PROP_DEBUG_DEFAULT = false;
 
-    
+
 
     private boolean debug;
     private double averageNumber = 1;
@@ -120,11 +121,11 @@ public class SpeechClassifier extends BaseDataProcessor {
     private double minSignal;           // minimum valid signal level
     private double threshold;
     private float frameLengthSec;
-    List outputQueue = new LinkedList();
-    
+    List<Data> outputQueue = new LinkedList<Data>();
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
      *      edu.cmu.sphinx.util.props.Registry)
      */
@@ -136,13 +137,11 @@ public class SpeechClassifier extends BaseDataProcessor {
         registry.register(PROP_THRESHOLD, PropertyType.DOUBLE);
         registry.register(PROP_MIN_SIGNAL, PropertyType.DOUBLE);
         registry.register(PROP_DEBUG, PropertyType.BOOLEAN);
-        
-        initialize();
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
@@ -157,11 +156,11 @@ public class SpeechClassifier extends BaseDataProcessor {
     }
 
     /**
-     * Initializes this LevelTracker endpointer 
+     * Initializes this LevelTracker endpointer
      * and DataProcessor predecessor.
      *
      */
-    public void initialize() {
+    public void inititalize() {
         super.initialize();
         reset();
     }
@@ -195,7 +194,7 @@ public class SpeechClassifier extends BaseDataProcessor {
         rootMeanSquare = Math.max(rootMeanSquare, 1);
         return (LogMath.log10((float)rootMeanSquare) * 20);
     }
-    
+
     /**
      * Classifies the given audio frame as speech or not, and updates
      * the endpointing parameters.
@@ -230,7 +229,7 @@ public class SpeechClassifier extends BaseDataProcessor {
         }
         outputQueue.add(labeledAudio);
     }
-    
+
     /**
      * Returns the next Data object.
      *
@@ -244,11 +243,11 @@ public class SpeechClassifier extends BaseDataProcessor {
             if (audio != null) {
                 if (audio instanceof DoubleData) {
                     DoubleData data = (DoubleData) audio;
-                    if (data.getValues().length > 
+                    if (data.getValues().length >
                         ((int)(frameLengthSec * data.getSampleRate()))) {
                         throw new Error
-                            ("Length of data frame is " + 
-                             data.getValues().length + 
+                            ("Length of data frame is " +
+                             data.getValues().length +
                              " samples, but the expected frame is <= " +
                              (frameLengthSec * data.getSampleRate()));
                     }
@@ -259,7 +258,8 @@ public class SpeechClassifier extends BaseDataProcessor {
             }
         }
         if (outputQueue.size() > 0) {
-            return (Data) outputQueue.remove(0);
+            Data audio = outputQueue.remove(0);
+            return audio;
         } else {
             return null;
         }

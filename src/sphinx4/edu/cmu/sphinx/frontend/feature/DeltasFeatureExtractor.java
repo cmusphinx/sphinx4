@@ -57,6 +57,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * with cepstra, this works out to a formula involving the cepstra that are one
  * and three behind and after the current cepstrum.
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class DeltasFeatureExtractor extends BaseDataProcessor {
     /**
      * The name of the SphinxProperty for the window of the
@@ -75,7 +76,7 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
     private int jp1, jp2, jp3, jf1, jf2, jf3;
     private DoubleData[] cepstraBuffer;
     private DataEndSignal dataEndSignal;
-    private List outputQueue;
+    private List<Data> outputQueue;
 
     /*
      * (non-Javadoc)
@@ -109,7 +110,7 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
         cepstraBufferSize = 256;
         cepstraBuffer = new DoubleData[cepstraBufferSize];
         cepstraBufferEdge = cepstraBufferSize - (window * 2 + 2);
-        outputQueue = new Vector();
+        outputQueue = new Vector<Data>();
         reset();
     }
 
@@ -158,7 +159,7 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
             }
         }
         if (outputQueue.size() > 0) {
-            Data feature = (Data) outputQueue.remove(0);
+            Data feature = outputQueue.remove(0);
             return feature;
         } else {
             return null;

@@ -47,9 +47,9 @@ public class Live {
 
     private static DecimalFormat timeFormat = new DecimalFormat("0.00");
     private DefaultComboBoxModel recognizerNameList;
-    private Map recognizers;
+    private Map<String, LiveRecognizer> recognizers;
 
-    private AudioPlayer audioPlayer = null; // for play the recording
+    //private AudioPlayer audioPlayer = null; // for play the recording
     private LiveRecognizer currentRecognizer = null;
     private LiveFrame liveFrame = null;
     private Result lastResult = null;
@@ -87,8 +87,7 @@ public class Live {
      * available decoders. The first decoder listed in the file will be
      * created.
      * 
-     * @param decodersFile
-     *                a file listing all the available decoders
+     * @param decoderListFile file listing all the available decoders
      */
     public Live(String decoderListFile) throws InstantiationException,
             IOException, LineUnavailableException {
@@ -100,7 +99,7 @@ public class Live {
         epMode = Boolean.getBoolean("epMode");
 
         recognizerNameList = new DefaultComboBoxModel();
-        recognizers = new HashMap();
+        recognizers = new HashMap<String, LiveRecognizer>();
 
         // parse the decoder's list
         parseDecoderListFile(decoderListFile);
@@ -110,7 +109,7 @@ public class Live {
         liveFrame.setVisible(true);
 
         initializeFirstDecoder();
-        audioPlayer = new AudioPlayer();
+        //audioPlayer = new AudioPlayer();
     }
 
     /**
@@ -143,8 +142,8 @@ public class Live {
      * LiveDecoders.
      */
     public void terminate() {
-        for (Iterator i = recognizers.values().iterator(); i.hasNext();) {
-            LiveRecognizer lr = (LiveRecognizer) i.next();
+        for (Iterator<LiveRecognizer> i = recognizers.values().iterator(); i.hasNext();) {
+            LiveRecognizer lr = i.next();
             lr.deallocate();
         }
     }
@@ -185,10 +184,10 @@ public class Live {
         if (microphone.getUtterance() != null) {
             liveFrame.setMessage("Playing back...");
             byte[] audio = microphone.getUtterance().getAudio();
-            if (audio != null) {
-                audioPlayer.play
-                    (audio, microphone.getUtterance().getAudioFormat());
-            }
+//            if (audio != null) {
+//                audioPlayer.play
+//                    (audio, microphone.getUtterance().getAudioFormat());
+//            }
             liveFrame.setMessage("Playing back...finished");
         } else {
             liveFrame.setMessage("Cannot play utterance: it wasn't saved.");
@@ -242,8 +241,8 @@ public class Live {
             currentRecognizer = null;
         }
 
-        LiveRecognizer nextRecognizer = 
-            (LiveRecognizer) recognizers.get(recognizerName);
+        LiveRecognizer nextRecognizer =
+                recognizers.get(recognizerName);
         if (nextRecognizer.allocate()) {
             // if the decoder switch is successful
             currentRecognizer = nextRecognizer;
@@ -479,8 +478,8 @@ public class Live {
         private SpeedTracker speedTracker;
         private NISTAlign aligner;
         private boolean allocated;
-        private List referenceList;
-        private Iterator iterator;
+        private List<String> referenceList;
+        private Iterator<String> iterator;
         private boolean randomReferenceOrder;
 
         /**
@@ -645,13 +644,13 @@ public class Live {
             String next ="";
             if (randomReferenceOrder) {
                 int index = (int) (Math.random() * referenceList.size());
-                next = (String) referenceList.get(index);
+                next = referenceList.get(index);
             } else {
                 if (iterator == null || !iterator.hasNext()) {
                     iterator = referenceList.listIterator();
                 }
                 if (iterator.hasNext()) {
-                    next = (String) iterator.next();
+                    next = iterator.next();
                 }
             }
             if (next == null) {
@@ -667,7 +666,7 @@ public class Live {
         void setTestFile(String testFile)  {
             try {
                 this.testFile = testFile;
-                referenceList = new ArrayList();
+                referenceList = new ArrayList<String>();
                 BufferedReader reader = new BufferedReader(new FileReader(testFile));
                 String line = null;
                 while ((line = reader.readLine()) != null) {

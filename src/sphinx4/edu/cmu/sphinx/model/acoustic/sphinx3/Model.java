@@ -13,9 +13,9 @@
 package edu.cmu.sphinx.model.acoustic.sphinx3;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,7 +36,6 @@ import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
 
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -92,6 +91,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * the index of a mean vector, a variance vector, and a set of mixture weights.
  *
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class Model implements AcousticModel, Configurable {
 
     /**
@@ -137,7 +137,7 @@ public class Model implements AcousticModel, Configurable {
     // internal variables
     // -----------------------------
     transient protected Timer loadTimer;
-    transient private Map compositeSenoneSequenceCache = new HashMap();
+    transient private Map<String, SenoneSequence> compositeSenoneSequenceCache = new HashMap<String, SenoneSequence>();
     private boolean allocated = false;
 
 
@@ -382,8 +382,7 @@ public class Model implements AcousticModel, Configurable {
              HMMPosition position) {
 	 Context context = unit.getContext();
 	 SenoneSequence compositeSenoneSequence = null;
-	 compositeSenoneSequence = (SenoneSequence)
-	     compositeSenoneSequenceCache.get(unit.toString());
+	 compositeSenoneSequence = compositeSenoneSequenceCache.get(unit.toString());
 
 	 if (logger.isLoggable(Level.FINE)) {
 	    logger.fine("getCompositeSenoneSequence: " + unit.toString() 
@@ -397,7 +396,7 @@ public class Model implements AcousticModel, Configurable {
 	 // a) An hmm with a unit that has the proper base
 	 // b) matches the non-null context
 
-	 List senoneSequenceList = new ArrayList();
+	 List<SenoneSequence> senoneSequenceList = new ArrayList<SenoneSequence>();
 
 	// collect all senone sequences that match the pattern
 	 for (Iterator i = getHMMIterator(); i.hasNext(); ) {
@@ -429,7 +428,7 @@ public class Model implements AcousticModel, Configurable {
 
 	 int longestSequence = 0;
 	 for (int i = 0; i < senoneSequenceList.size(); i++) {
-	     SenoneSequence ss = (SenoneSequence) senoneSequenceList.get(i);
+	     SenoneSequence ss = senoneSequenceList.get(i);
 	     if (ss.getSenones().length > longestSequence) {
 		 longestSequence = ss.getSenones().length;
 	     }
@@ -440,13 +439,13 @@ public class Model implements AcousticModel, Configurable {
 	 // QUESTION: is is possible to have different size senone
 	 // sequences. For now lets assume the worst case.
 
-	 List compositeSenones = new ArrayList();
+	 List<Serializable> compositeSenones = new ArrayList<Serializable>();
          float logWeight = 0.0f;
 	 for (int i = 0; i < longestSequence; i++) {
-	     Set compositeSenoneSet = new HashSet();
+	     Set<Senone> compositeSenoneSet = new HashSet<Senone>();
 	     for (int j = 0; j < senoneSequenceList.size(); j++) {
-		 SenoneSequence senoneSequence = 
-		     (SenoneSequence) senoneSequenceList.get(j);
+		 SenoneSequence senoneSequence =
+                 senoneSequenceList.get(j);
 		 if (i < senoneSequence.getSenones().length) {
 		     Senone senone = senoneSequence.getSenones()[i];
 		     compositeSenoneSet.add(senone);

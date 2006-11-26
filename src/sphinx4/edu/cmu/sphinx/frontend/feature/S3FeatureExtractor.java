@@ -42,6 +42,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * <br>followed by delta delta c[0] through delta delta c[12]
  * </p>
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class S3FeatureExtractor extends BaseDataProcessor {
     /**
      * The name of the SphinxProperty for the window of the
@@ -60,7 +61,7 @@ public class S3FeatureExtractor extends BaseDataProcessor {
     private int jp1, jp2, jp3, jf1, jf2, jf3;
     private DoubleData[] cepstraBuffer;
     private DataEndSignal dataEndSignal;
-    private List outputQueue;
+    private List<Data> outputQueue;
 
     /*
      * (non-Javadoc)
@@ -94,7 +95,7 @@ public class S3FeatureExtractor extends BaseDataProcessor {
         cepstraBufferSize = 256;
         cepstraBuffer = new DoubleData[cepstraBufferSize];
         cepstraBufferEdge = cepstraBufferSize - (window * 2 + 2);
-        outputQueue = new Vector();
+        outputQueue = new Vector<Data>();
         reset();
     }
 
@@ -143,7 +144,7 @@ public class S3FeatureExtractor extends BaseDataProcessor {
             }
         }
         if (outputQueue.size() > 0) {
-            Data feature = (Data) outputQueue.remove(0);
+            Data feature = outputQueue.remove(0);
             return feature;
         } else {
             return null;

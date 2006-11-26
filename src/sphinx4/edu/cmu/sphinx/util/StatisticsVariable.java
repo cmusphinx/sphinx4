@@ -24,7 +24,7 @@ import java.util.Map;
  * Statistics can be dumped as a whole or by context.
  */
  public class StatisticsVariable {
-     private static Map pool = new HashMap();
+     private static Map<String, StatisticsVariable> pool = new HashMap<String, StatisticsVariable>();
 
      /**
       * the value of this StatisticsVariable. It can be manipulated
@@ -48,7 +48,7 @@ import java.util.Map;
       */
      static public StatisticsVariable getStatisticsVariable(String statName) {
 
-	 StatisticsVariable stat = (StatisticsVariable) pool.get(statName);
+	 StatisticsVariable stat = pool.get(statName);
 	 if (stat == null) {
 	     stat = new StatisticsVariable(statName);
 	     pool.put(statName, stat);
@@ -75,8 +75,8 @@ import java.util.Map;
       */
      static public void dumpAll() {
          System.out.println(" ========= statistics  " + "=======");
-         for (Iterator i = pool.values().iterator(); i.hasNext(); ) {
-             StatisticsVariable stats = (StatisticsVariable) i.next();
+         for (Iterator<StatisticsVariable> i = pool.values().iterator(); i.hasNext(); ) {
+             StatisticsVariable stats = i.next();
              stats.dump();
          }
      }
@@ -87,8 +87,8 @@ import java.util.Map;
       *
       */
      static public void resetAll() {
-        for (Iterator i = pool.values().iterator(); i.hasNext(); ) {
-    	    StatisticsVariable stats = (StatisticsVariable) i.next();
+        for (Iterator<StatisticsVariable> i = pool.values().iterator(); i.hasNext(); ) {
+    	    StatisticsVariable stats = i.next();
     	    stats.reset();
         }
      }

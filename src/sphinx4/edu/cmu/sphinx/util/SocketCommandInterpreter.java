@@ -33,7 +33,7 @@ import java.util.*;
 public class SocketCommandInterpreter extends Thread {
 
     private int port;
-    private Map commandList;
+    private Map<String, CommandInterface> commandList;
     private boolean trace = false;
     private boolean acceptConnections = true;
     
@@ -44,7 +44,7 @@ public class SocketCommandInterpreter extends Thread {
     */
     public  SocketCommandInterpreter(int port) {
 	this.port = port;
-	commandList = new HashMap();
+	commandList = new HashMap<String, CommandInterface>();
     }
 
 

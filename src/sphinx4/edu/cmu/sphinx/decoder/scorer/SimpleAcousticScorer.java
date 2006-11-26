@@ -17,6 +17,7 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.decoder.search.Token;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -98,7 +99,7 @@ public class SimpleAcousticScorer implements AcousticScorer {
      * @return true if there was a Data available to score
      *         false if there was no more Data available to score
      */
-    public Scoreable calculateScores(List scoreableList) {
+    public Scoreable calculateScores(List<Token> scoreableList) {
 
         if (scoreableList.size() <= 0) {
             return null;
@@ -129,10 +130,10 @@ public class SimpleAcousticScorer implements AcousticScorer {
                 throw new Error("trying to score non-content data");
             }
 
-            best = (Scoreable) scoreableList.get(0);
+            best = scoreableList.get(0);
 
-            for (Iterator i = scoreableList.iterator(); i.hasNext();) {
-                Scoreable scoreable = (Scoreable) i.next();
+            for (Iterator<Token> i = scoreableList.iterator(); i.hasNext();) {
+                Scoreable scoreable = i.next();
                 /*
 		if (scoreable.getFrameNumber() != data.getID()) {
 		    throw new Error
@@ -149,8 +150,8 @@ public class SimpleAcousticScorer implements AcousticScorer {
             }
 
             if (normalizeScores) {
-                for (Iterator i = scoreableList.iterator(); i.hasNext();) {
-                    Scoreable scoreable = (Scoreable) i.next();
+                for (Iterator<Token> i = scoreableList.iterator(); i.hasNext();) {
+                    Scoreable scoreable = i.next();
                     scoreable.normalizeScore(best.getScore());
                 }
             }

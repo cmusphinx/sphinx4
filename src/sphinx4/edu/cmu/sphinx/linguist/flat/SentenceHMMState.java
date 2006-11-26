@@ -34,6 +34,7 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 /**
  * Represents a single state in an SentenceHMM
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public abstract class  SentenceHMMState implements Serializable, SearchState  {
     private final static int MASK_IS_FINAL 		= 0x1;
     private final static int MASK_COLOR_RED 		= 0x2;

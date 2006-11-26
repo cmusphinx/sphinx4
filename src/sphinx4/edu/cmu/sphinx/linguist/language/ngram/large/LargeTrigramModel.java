@@ -52,6 +52,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * format. Language Probabilties in the language model file are stored in log
  * 10 base. They are converted to the LogMath logbase.
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class LargeTrigramModel implements LanguageModel {
     /**
      * Sphinx property for the name of the file that logs all the queried

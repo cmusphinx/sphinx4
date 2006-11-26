@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.regex.PatternSyntaxException;
 import java.io.BufferedReader;
-import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
@@ -30,9 +29,6 @@ import java.io.IOException;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.net.Socket;
-
-import java.io.*;
-import java.util.*;
 
 
 /**
@@ -45,7 +41,7 @@ import java.util.*;
 
 public class CommandInterpreter extends Thread {
 
-    private Map commandList;
+    private Map<String, CommandInterface> commandList;
     private int totalCommands = 0;
     private BufferedReader in;
     private PrintWriter out;
@@ -97,7 +93,7 @@ public class CommandInterpreter extends Thread {
      */
 
     private  void init(BufferedReader in, PrintWriter out) {
-	commandList = new HashMap();
+	commandList = new HashMap<String, CommandInterface>();
 	addStandardCommands();
 	setStreams(in, out);
     }
@@ -325,7 +321,7 @@ public class CommandInterpreter extends Thread {
 	    public String execute(CommandInterpreter ci, String[] args) {
 		if (args.length > 1) {
 		    String[] subargs= new String[args.length - 1];
-		    List commands = new ArrayList(5);
+		    List<String[]> commands = new ArrayList<String[]>(5);
 		    int count = 0;
 		    for (int i = 1; i < args.length; i++) {
 			if (args[i].equals(";")) {
@@ -350,9 +346,9 @@ public class CommandInterpreter extends Thread {
 			count = 0;
 		    }
 
-		    for (Iterator i = commands.iterator(); i.hasNext(); ) {
+		    for (Iterator<String[]> i = commands.iterator(); i.hasNext(); ) {
 			putResponse(CommandInterpreter.this.execute(
-				(String[])i.next()));
+                    i.next()));
 		    }
 		} else {
 		    putResponse("Usage: chain cmd1 ; cmd2 ; cmd3 ");
@@ -395,13 +391,12 @@ public class CommandInterpreter extends Thread {
      */
 
      private void dumpCommands() {
-	Set unsortedKeys = commandList.keySet();
-	Set sortedKeys = new TreeSet(unsortedKeys);
+	Set<String> unsortedKeys = commandList.keySet();
+	Set<String> sortedKeys = new TreeSet<String>(unsortedKeys);
 
-	for (Iterator i = sortedKeys.iterator(); i.hasNext(); ) {
-	    String cmdName = (String) i.next();
-            String help = ((CommandInterface)
-                    commandList.get(cmdName)).getHelp();
+	for (Iterator<String> i = sortedKeys.iterator(); i.hasNext(); ) {
+	    String cmdName = i.next();
+            String help = (commandList.get(cmdName)).getHelp();
 	    putResponse(cmdName + " - " + help);
 	}
      }
@@ -433,7 +428,7 @@ public class CommandInterpreter extends Thread {
      * of commands.
      * @param newCommands 	the new commands to add to this interpreter.
      */
-    public void add(Map newCommands) {
+    public void add(Map<String, CommandInterface> newCommands) {
 	commandList.putAll(newCommands);
     }
 
@@ -480,7 +475,7 @@ public class CommandInterpreter extends Thread {
 
 	if (args.length > 0) {
 	    
-	    ci = (CommandInterface) commandList.get(args[0]);
+	    ci = commandList.get(args[0]);
 	    if (ci != null) {
 		response = ci.execute(this, args);
 	    }
@@ -516,7 +511,7 @@ public class CommandInterpreter extends Thread {
      */
     protected String[] parseMessage(String message) {
 	int tokenType;
-	List words = new ArrayList(20);
+	List<String> words = new ArrayList<String>(20);
 	StreamTokenizer st = new StreamTokenizer(new StringReader(message));
 
 	st.resetSyntax();
@@ -745,7 +740,7 @@ public class CommandInterpreter extends Thread {
 
 
     class CommandHistory {
-        private List history = new ArrayList(100);
+        private List<String> history = new ArrayList<String>(100);
 
         /**
          * Adds a command to the history
@@ -764,7 +759,7 @@ public class CommandInterpreter extends Thread {
          */
         public String getLast(int offset) {
             if (history.size() > offset) {
-                return (String) history.get((history.size() - 1) - offset);
+                return history.get((history.size() - 1) - offset);
             } else {
                 putResponse("command not found");
                 return "";
@@ -779,7 +774,7 @@ public class CommandInterpreter extends Thread {
          */
         public String get(int which) {
             if (history.size() > which) {
-                return (String) history.get(which);
+                return history.get(which);
             } else {
                 putResponse("command not found");
                 return "";

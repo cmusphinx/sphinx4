@@ -21,5 +21,5 @@ public interface ReferenceSource {
     /**
      * Returns a list of reference text.
      */
-    public List getReferences();
+    public List<String> getReferences();
 }

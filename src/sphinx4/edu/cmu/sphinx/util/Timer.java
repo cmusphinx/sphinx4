@@ -31,7 +31,7 @@ public class Timer {
 	= new DecimalFormat("###0.0000");
     private final static DecimalFormat percentFormatter 
 	= new DecimalFormat("###0.00%");
-    private static Map timerPool = new LinkedHashMap();
+    private static Map<String, Timer> timerPool = new LinkedHashMap<String, Timer>();
 
     private String name;
     private double sum;
@@ -52,7 +52,7 @@ public class Timer {
    */
     public static Timer getTimer(String timerName) {
 	Timer timer = null;
-	timer = (Timer) timerPool.get(timerName);
+	timer = timerPool.get(timerName);
 	if (timer == null) {
 	    timer = new Timer(timerName);
 	    timerPool.put(timerName, timer);
@@ -66,8 +66,8 @@ public class Timer {
      */
     public static void dumpAll() {
     	showTimesShortTitle();
-        for (Iterator i = timerPool.values().iterator(); i.hasNext(); ) {
-            Timer timer = (Timer) i.next();
+        for (Iterator<Timer> i = timerPool.values().iterator(); i.hasNext(); ) {
+            Timer timer = i.next();
             timer.dump();
         }
     }
@@ -77,8 +77,8 @@ public class Timer {
      *
      */
     public static void resetAll() {
-        for (Iterator i = timerPool.values().iterator(); i.hasNext(); ) {
-            Timer timer = (Timer) i.next();
+        for (Iterator<Timer> i = timerPool.values().iterator(); i.hasNext(); ) {
+            Timer timer = i.next();
             timer.reset();
 	}
     }

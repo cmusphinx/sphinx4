@@ -115,6 +115,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * 
  * </ol>
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class FSTGrammar extends Grammar {
     /**
      * The SphinxProperty for the location of the FST n-gram file.

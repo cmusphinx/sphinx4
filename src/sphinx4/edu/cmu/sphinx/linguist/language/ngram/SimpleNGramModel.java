@@ -289,9 +289,9 @@ public class SimpleNGramModel implements LanguageModel {
      * 
      * @return a string representation of the word list
      */
-    private String getRepresentation(List<? extends String> wordList) {
+    private String getRepresentation(List<String> wordList) {
         StringBuffer sb = new StringBuffer();
-        for (Iterator<? extends String> i = wordList.iterator(); i.hasNext();) {
+        for (Iterator<String> i = wordList.iterator(); i.hasNext();) {
             String s = i.next();
             sb.append(s);
             if (i.hasNext()) {

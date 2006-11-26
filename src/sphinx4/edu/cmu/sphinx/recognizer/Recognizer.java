@@ -74,7 +74,7 @@ public class Recognizer implements Configurable {
     private Decoder decoder;
     private RecognizerState currentState  = RecognizerState.DEALLOCATED;
 
-    private List stateListeners = Collections.synchronizedList(new ArrayList());
+    private List<StateListener> stateListeners = Collections.synchronizedList(new ArrayList<StateListener>());
     private List monitors;
     
     
@@ -157,8 +157,8 @@ public class Recognizer implements Configurable {
     private void setState(RecognizerState newState) {
         currentState = newState;
         synchronized(stateListeners) {
-            for (Iterator i = stateListeners.iterator(); i.hasNext(); ) {
-                StateListener stateListener = (StateListener) i.next();
+            for (Iterator<StateListener> i = stateListeners.iterator(); i.hasNext(); ) {
+                StateListener stateListener = i.next();
                 stateListener.statusChanged(currentState);
             }
         }

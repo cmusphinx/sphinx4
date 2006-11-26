@@ -46,6 +46,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * @version 1.0
  * @see LinearPredictor
  */
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class PLPCepstrumProducer extends BaseDataProcessor {
 
     /**

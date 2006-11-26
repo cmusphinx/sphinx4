@@ -140,11 +140,11 @@ public class PooledBatchManager implements BatchManager {
     private void createInputDirectory() throws IOException {
         inputDir.mkdir();
         // read in the batch file
-        List list = BatchFile.getLines(batchFile, skip);
+        List<String> list = BatchFile.getLines(batchFile, skip);
 
         for (int i = 0; i < list.size(); i++) {
             String name = Integer.toString(i + 1);
-            String line = (String) list.get(i);
+            String line = list.get(i);
             createInputFile(inputDir, name, line);
         }
     }
@@ -262,11 +262,11 @@ public class PooledBatchManager implements BatchManager {
      *
      */
     private BatchItem getBatchItem(File file) throws IOException {
-        List list = BatchFile.getLines(file.getPath());
+        List<String> list = BatchFile.getLines(file.getPath());
         if (list.size() != 1) {
             throw new IOException("Bad batch file size");
         }
-        String line = (String) list.get(0);
+        String line = list.get(0);
         return new BatchItem(BatchFile.getFilename(line),
                         BatchFile.getReference(line));
     }
