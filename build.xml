@@ -10,7 +10,7 @@
     <property name="version"            value="1.0beta"/>
 
     <path id="libs">
-        <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/forms_rt.jar,**/javolution.jar"/>
+        <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/forms_rt.jar,**/javolution.jar,junit4.1.jar"/>
     </path>
     <property name="src_dir"		value="src"/>
     <property name="build_dir"		value="bld"/>
