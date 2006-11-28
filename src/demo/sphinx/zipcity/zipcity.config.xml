@@ -170,6 +170,7 @@
     <component name="epFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
             <item>microphone </item>
+            <item>dataBlocker </item>
             <item>speechClassifier </item>
             <item>speechMarker </item>
             <item>nonSpeechDataFilter </item>
@@ -188,8 +189,10 @@
         <property name="keepLastAudio" value="false"/>
         <property name="closeBetweenUtterances" value="false"/>
     </component>
+
+    <component name="dataBlocker" type="edu.cmu.sphinx.frontend.DataBlocker"/>
     
-    <component name="speechClassifier" 
+    <component name="speechClassifier"
                 type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier">
         <property name="threshold" value="13"/>
     </component>
