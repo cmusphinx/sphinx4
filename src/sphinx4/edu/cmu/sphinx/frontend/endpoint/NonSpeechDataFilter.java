@@ -277,7 +277,7 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
                     // Data, and return an DataStartSignal instead
                     inSpeech = true;
                     discardMode = false;
-                    next = new DataStartSignal(((Signal) audio).getTime());
+                    next = new DataStartSignal(sampleRate, ((Signal) audio).getTime());
                 }
             } else if (audio instanceof SpeechEndSignal) {
                 if (!inSpeech) {

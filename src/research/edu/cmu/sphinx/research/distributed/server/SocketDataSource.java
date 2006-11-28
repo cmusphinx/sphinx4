@@ -93,7 +93,7 @@ public class SocketDataSource extends BaseDataProcessor {
             if (!inUtterance) {
                 if (firstValue == DATA_START) {
                     inUtterance = true;
-                    return (new DataStartSignal());
+                    return (new DataStartSignal(sampleRate));
                 } else {
                     throw new IllegalStateException
                         ("No DATA_START read from socket: " + firstValue +

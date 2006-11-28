@@ -174,7 +174,7 @@ public class StreamDataSource extends BaseDataProcessor {
         } else {
             if (!utteranceStarted) {
                 utteranceStarted = true;
-                output = new DataStartSignal();
+                output = new DataStartSignal(sampleRate);
             } else {
                 if (dataStream != null) {
                     output = readNextFrame();
@@ -201,7 +201,7 @@ public class StreamDataSource extends BaseDataProcessor {
      */
     private Data readNextFrame() throws DataProcessingException {
         // read one frame's worth of bytes
-        int read = 0;
+        int read;
         int totalRead = 0;
         final int bytesToRead = bytesPerRead;
         byte[] samplesBuffer = new byte[bytesPerRead];
@@ -245,9 +245,7 @@ public class StreamDataSource extends BaseDataProcessor {
             doubleData = DataUtil.littleEndianBytesToValues(samplesBuffer, 0,
                     totalRead, bytesPerValue, signedData);
         }
-        Data audio = new DoubleData(doubleData,  sampleRate,
-                collectTime, firstSample);
-        return audio;
+        return new DoubleData(doubleData,  sampleRate, collectTime, firstSample);
     }
 
     private void closeDataStream() throws IOException {

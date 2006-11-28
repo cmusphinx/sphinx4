@@ -22,21 +22,30 @@ package edu.cmu.sphinx.frontend;
  */
 public class DataStartSignal extends Signal {
 
+    private int sampleRate;
+
+
     /**
      * Constructs a DataStartSignal.
+     *
+     * @param sampleRate The sampling rate of the started data stream.
      */
-    public DataStartSignal() {
-        this(System.currentTimeMillis());
+    public DataStartSignal(int sampleRate) {
+        this(sampleRate, System.currentTimeMillis());
     }
+
 
     /**
      * Constructs a DataStartSignal at the given time.
      *
-     * @param time the time this DataStartSignal is created
+     * @param sampleRate the sampling rate of the started data stream.
+     * @param time       the time this DataStartSignal is created
      */
-    public DataStartSignal(long time) {
+    public DataStartSignal(int sampleRate, long time) {
         super(time);
+        this.sampleRate = sampleRate;
     }
+
 
     /**
      * Returns the string "DataStartSignal".
@@ -45,5 +54,11 @@ public class DataStartSignal extends Signal {
      */
     public String toString() {
         return "DataStartSignal: creation time: " + getTime();
+    }
+
+
+    /** @return the sampling rate of the started data stream. */
+    public int getSampleRate() {
+        return sampleRate;
     }
 }

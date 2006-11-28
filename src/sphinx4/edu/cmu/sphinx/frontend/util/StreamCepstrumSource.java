@@ -185,10 +185,10 @@ public class StreamCepstrumSource extends BaseDataProcessor {
      */
     public Data getData() throws DataProcessingException {
 
-	Data data = null;
+	Data data;
 
 	if (curPoint == -1) {
-	    data = new DataStartSignal();
+	    data = new DataStartSignal(sampleRate);
 	    curPoint++;
 	} else if (curPoint == numPoints) {
             if (numPoints > 0) {

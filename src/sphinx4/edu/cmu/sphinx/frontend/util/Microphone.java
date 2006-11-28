@@ -219,14 +219,15 @@ public class Microphone extends BaseDataProcessor {
     private int selectedChannel;
     private String selectedMixerIndex;
     private String stereoToMono;
+    private int sampleRate;
 
-    
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
         throws PropertyException {
         super.register(name, registry);
@@ -252,7 +253,7 @@ public class Microphone extends BaseDataProcessor {
         super.newProperties(ps);
         logger = ps.getLogger();
 
-        int sampleRate = ps.getInt(PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
+        sampleRate = ps.getInt(PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
 
         int sampleSizeInBits = ps.getInt
             (PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT);
@@ -310,7 +311,6 @@ public class Microphone extends BaseDataProcessor {
                                                 getSelectedMixer());
             if (nativeFormat == null) {
                 logger.severe("couldn't find suitable target audio format");
-                return;
             } else {
                 finalFormat = nativeFormat;
                 
@@ -580,7 +580,7 @@ public class Microphone extends BaseDataProcessor {
                     ("Microphone", audioStream.getFormat());
 	    }
 	    
-	    audioList.add(new DataStartSignal());
+	    audioList.add(new DataStartSignal(sampleRate));
 	    logger.info("DataStartSignal added");
 	    try {
 		audioLine.start();
