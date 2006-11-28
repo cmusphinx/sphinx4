@@ -13,21 +13,21 @@
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.util.LogMath;
 
 /**
- * 
- * Represents a concrete implementation of a simple {@link Senone senone}.
- * A simple senone is a set of probability density functions implemented
- * as a gaussian mixture.
- * <p>
+ * Represents a concrete implementation of a simple {@link Senone senone}. A simple senone is a set of probability
+ * density functions implemented as a gaussian mixture.
+ * <p/>
  * All scores and weights are maintained in LogMath log base.
  */
-public class GaussianMixture implements Senone {
+public class GaussianMixture implements Senone, Cloneable {
+
     // these data element in a senone may be shared with other senones
     // and therefore should not be written to.
-    private float[] logMixtureWeights;			
-    private MixtureComponent[] mixtureComponents;	
+    private float[] logMixtureWeights;
+    private MixtureComponent[] mixtureComponents;
     private long id;
 
     transient volatile private Data lastDataScored;
@@ -35,23 +35,22 @@ public class GaussianMixture implements Senone {
 
     private LogMath logMath;
 
+
     /**
      * Creates a new senone from the given components.
      *
-     * @param logMath the log math 
-     * @param logMixtureWeights the mixture weights for this senone in
-     * LogMath log base
-     * @param mixtureComponents the mixture components for this
-     * senone
+     * @param logMath           the log math
+     * @param logMixtureWeights the mixture weights for this senone in LogMath log base
+     * @param mixtureComponents the mixture components for this senone
      */
-    public GaussianMixture(LogMath logMath, float[] logMixtureWeights, 
+    public GaussianMixture(LogMath logMath, float[] logMixtureWeights,
                            MixtureComponent[] mixtureComponents, long id) {
 
-	assert mixtureComponents.length == logMixtureWeights.length;
+        assert mixtureComponents.length == logMixtureWeights.length;
 
-	this.logMath = logMath;
-	this.mixtureComponents = mixtureComponents;
-	this.logMixtureWeights = logMixtureWeights;
+        this.logMath = logMath;
+        this.mixtureComponents = mixtureComponents;
+        this.logMixtureWeights = logMixtureWeights;
         this.id = id;
     }
 
@@ -62,31 +61,29 @@ public class GaussianMixture implements Senone {
      * @param msg annotation message
      */
     public void dump(String msg) {
-	System.out.println(msg + " GaussianMixture: " + logLastScore);
+        System.out.println(msg + " GaussianMixture: " + logLastScore);
     }
 
-    
+
     /**
-     * Returns a score for the given feature based upon this senone,
-     * and calculates it if not already calculated. Note that this
-     * method is not thread safe and should be externally synchronized
-     * if it could be potentially called from multiple threads.
+     * Returns a score for the given feature based upon this senone, and calculates it if not already calculated. Note
+     * that this method is not thread safe and should be externally synchronized if it could be potentially called from
+     * multiple threads.
      *
      * @param feature the feature to score
-     *
      * @return the score, in logMath log base, for the feature
      */
-    public float getScore(Data feature)  {
-	float logScore;
-	
-	if (feature.equals(lastDataScored)) {
-	    logScore = logLastScore;
-	} else {
-	    logScore = calculateScore(feature);
-	    logLastScore = logScore;
-	    lastDataScored = feature;
-	}
-	return logScore;
+    public float getScore(Data feature) {
+        float logScore;
+
+        if (feature.equals(lastDataScored)) {
+            logScore = logLastScore;
+        } else {
+            logScore = calculateScore(feature);
+            logLastScore = logScore;
+            lastDataScored = feature;
+        }
+        return logScore;
     }
 
 
@@ -94,7 +91,6 @@ public class GaussianMixture implements Senone {
      * Determines if two objects are equal
      *
      * @param o the object to compare to this.
-     *
      * @return true if the objects are equal
      */
     public boolean equals(Object o) {
@@ -118,6 +114,7 @@ public class GaussianMixture implements Senone {
         return high + low;
     }
 
+
     /**
      * Gets the ID for this senone
      *
@@ -126,6 +123,7 @@ public class GaussianMixture implements Senone {
     public long getID() {
         return id;
     }
+
 
     /**
      * Retrieves a string form of this object
@@ -136,46 +134,49 @@ public class GaussianMixture implements Senone {
         return "senone id: " + getID();
     }
 
+
     /**
      * Calculates the score for the senone.
      *
      * @param feature the feature to score
-     *
      * @return the score, in logMath log base, for the feature
      */
     public float calculateScore(Data feature) {
-	float logTotal = LogMath.getLogZero();
-	for (int i = 0; i < mixtureComponents.length; i++) {
-	    // In linear form, this would be:
-	    //
-	    // Total += Mixture[i].score * MixtureWeight[i]
-	    logTotal = logMath.addAsLinear(logTotal,
-		 mixtureComponents[i].getScore(feature)+
-		 logMixtureWeights[i]);
-	}
+        float[] featureVector = FloatData.toFloatData(feature).getValues();
 
-	return logTotal;
+        float logTotal = LogMath.getLogZero();
+        for (int i = 0; i < mixtureComponents.length; i++) {
+            // In linear form, this would be:
+            //
+            // Total += Mixture[i].score * MixtureWeight[i]
+            logTotal = logMath.addAsLinear(logTotal,
+                    mixtureComponents[i].getScore(featureVector) + logMixtureWeights[i]);
+        }
+
+        return logTotal;
     }
+
 
     /**
      * Calculates the scores for each component in the senone.
      *
      * @param feature the feature to score
-     *
      * @return the LogMath log scores for the feature, one for each component
      */
     public float[] calculateComponentScore(Data feature) {
-	float[] logComponentScore = new float[mixtureComponents.length];
-	for (int i = 0; i < mixtureComponents.length; i++) {
-	    // In linear form, this would be:
-	    //
-	    // Total += Mixture[i].score * MixtureWeight[i]
-	    logComponentScore[i] = mixtureComponents[i].getScore(feature)+
-		 logMixtureWeights[i];
-	}
+        float[] featureVector = FloatData.toFloatData(feature).getValues();
 
-	return logComponentScore;
+        float[] logComponentScore = new float[mixtureComponents.length];
+        for (int i = 0; i < mixtureComponents.length; i++) {
+            // In linear form, this would be:
+            //
+            // Total += Mixture[i].score * MixtureWeight[i]
+            logComponentScore[i] = mixtureComponents[i].getScore(featureVector) + logMixtureWeights[i];
+        }
+
+        return logComponentScore;
     }
+
 
     /**
      * Returns the mixture components associated with this Gaussian
@@ -183,6 +184,53 @@ public class GaussianMixture implements Senone {
      * @return the array of mixture components
      */
     public MixtureComponent[] getMixtureComponents() {
-	return mixtureComponents;
+        return mixtureComponents;
+    }
+
+
+    /** @return the dimension of the modelled feature space */
+    public int dimension() {
+        return mixtureComponents[0].getMean().length;
+    }
+
+
+    /** @return the number of component densities of this <code>GaussianMixture</code>. */
+    public int numComponents() {
+        return mixtureComponents.length;
+    }
+
+
+    /** @return the (linearly scaled) mixture weights of the component densities */
+    public float[] getComponentWeights() {
+        float[] mixWeights = new float[getMixtureComponents().length];
+        for (int i = 0; i < mixWeights.length; i++)
+            mixWeights[i] = (float) logMath.logToLinear(logMixtureWeights[i]);
+
+        return mixWeights;
+    }
+
+
+    /** @return the (log-scaled) mixture weight of the component density <code>index</code> */
+    public float getLogComponentWeight(int index) {
+        return logMixtureWeights[index];
+    }
+
+
+    /** {@inheritDoc} */
+    public Object clone() throws CloneNotSupportedException {
+        GaussianMixture gmm = (GaussianMixture) super.clone();
+
+        gmm.logMixtureWeights = this.logMixtureWeights != null ? this.logMixtureWeights.clone() : null;
+        gmm.mixtureComponents = mixtureComponents.clone();
+
+        for (int i = 0; i < mixtureComponents.length; i++) {
+            gmm.mixtureComponents[i] = (MixtureComponent) mixtureComponents[i].clone();
+        }
+
+        gmm.id = id;
+        gmm.lastDataScored = lastDataScored;
+        gmm.logLastScore = logLastScore;
+
+        return gmm;
     }
 }

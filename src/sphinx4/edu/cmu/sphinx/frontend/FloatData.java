@@ -13,6 +13,8 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.util.MatrixUtils;
+
 /**
  * A Data object that holds data of primitive type float.
  *
@@ -28,22 +30,21 @@ public class FloatData implements Data, Cloneable {
 
 
     /**
-     * Constructs a Data object with the given values, sample rate,
-     * collect time, and first sample number.
+     * Constructs a Data object with the given values, sample rate, collect time, and first sample number.
      *
-     * @param values the data values
-     * @param sampleRate the sample rate of the data
-     * @param collectTime the time at which this data is collected
-     * @param firstSampleNumber the position of the first sample in the
-     *                          original data
+     * @param values            the data values
+     * @param sampleRate        the sample rate of the data
+     * @param collectTime       the time at which this data is collected
+     * @param firstSampleNumber the position of the first sample in the original data
      */
     public FloatData(float[] values, int sampleRate,
                      long collectTime, long firstSampleNumber) {
         this.values = values;
-	this.sampleRate = sampleRate;
+        this.sampleRate = sampleRate;
         this.collectTime = collectTime;
         this.firstSampleNumber = firstSampleNumber;
     }
+
 
     /**
      * Returns the values of this DoubleData object.
@@ -61,13 +62,12 @@ public class FloatData implements Data, Cloneable {
      * @return the sample rate of this data
      */
     public int getSampleRate() {
-	return sampleRate;
+        return sampleRate;
     }
 
-    
+
     /**
-     * Returns the position of the first sample in the original data.
-     * The very first sample number is zero.
+     * Returns the position of the first sample in the original data. The very first sample number is zero.
      *
      * @return the position of the first sample in the original data
      */
@@ -79,8 +79,8 @@ public class FloatData implements Data, Cloneable {
     /**
      * Returns the time in milliseconds at which the audio data is collected.
      *
-     * @return the difference, in milliseconds, between the time the
-     *    audio data is collected and midnight, January 1, 1970
+     * @return the difference, in milliseconds, between the time the audio data is collected and midnight, January 1,
+     *         1970
      */
     public long getCollectTime() {
         return collectTime;
@@ -93,11 +93,27 @@ public class FloatData implements Data, Cloneable {
      * @return a clone of this data object
      */
     public Object clone() throws CloneNotSupportedException {
-	try {
-	    Data data = (Data) super.clone();
-	    return data;
-	} catch (CloneNotSupportedException e) {
-	    throw new InternalError(e.toString());
-	}
+        try {
+            Data data = (Data) super.clone();
+            return data;
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError(e.toString());
+        }
+    }
+
+
+    /** Converts a given Data-object into a <code>FloatData</code> if possible. */
+    public static FloatData toFloatData(Data data) {
+        FloatData convertData;
+        if (data instanceof FloatData)
+            convertData = (FloatData) data;
+        else if (data instanceof DoubleData) {
+            DoubleData dd = (DoubleData) data;
+            convertData = new FloatData(MatrixUtils.double2float(dd.getValues()), dd.getSampleRate(),
+                    dd.getCollectTime(), dd.getFirstSampleNumber());
+        } else
+            throw new IllegalArgumentException("data type '" + data.getClass() + "' is not supported");
+
+        return convertData;
     }
 }
