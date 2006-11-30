@@ -497,9 +497,9 @@ public class Result {
      */
     private void addWord(StringBuffer sb, Word word,
                          FloatData startFeature, FloatData endFeature) {
-        float startTime = ((float) startFeature.getFirstSampleNumber()/
+        float startTime = startFeature==null ? -1 :((float) startFeature.getFirstSampleNumber()/
 			   startFeature.getSampleRate());
-        float endTime = ((float) endFeature.getFirstSampleNumber()/
+        float endTime = endFeature==null ? -1 : ((float) endFeature.getFirstSampleNumber()/
 			 endFeature.getSampleRate());
         if (sb.length() > 0) {
             sb.insert(0, " ");
