@@ -29,7 +29,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <property name="logger_props"       value=""/>  
 
     <property name="initial_heap_size"  value="128m"/>
-    <property name="maximum_heap_size"  value="512m"/>
+    <property name="maximum_heap_size"  value="1024m"/>
     <property name="jit"                value="server"/>
     <property name="gc_log_file"        value="gc.txt"/>
     <property name="batch_main"               
@@ -665,7 +665,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
 	      classname="${live_main}"
 	      fork="true">
             <jvmarg value="-ea"/>
-            <jvmarg value="-${jit}"/>   
+            <jvmarg value="-${jit}"/>
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="live[skip]" value="${skip}"/> 
