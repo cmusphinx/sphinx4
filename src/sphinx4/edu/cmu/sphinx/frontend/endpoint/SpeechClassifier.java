@@ -153,6 +153,8 @@ public class SpeechClassifier extends BaseDataProcessor {
         threshold = ps.getDouble(PROP_THRESHOLD, PROP_THRESHOLD_DEFAULT);
         minSignal = ps.getDouble(PROP_MIN_SIGNAL, PROP_MIN_SIGNAL_DEFAULT);
         debug = ps.getBoolean(PROP_DEBUG, PROP_DEBUG_DEFAULT);
+
+        initialize();
     }
 
     /**
@@ -160,7 +162,7 @@ public class SpeechClassifier extends BaseDataProcessor {
      * and DataProcessor predecessor.
      *
      */
-    public void inititalize() {
+    public void initialize() {
         super.initialize();
         reset();
     }
