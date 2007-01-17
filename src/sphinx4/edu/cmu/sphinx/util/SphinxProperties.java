@@ -312,7 +312,7 @@ public class SphinxProperties {
     public boolean contains(String propertyName) {
 	String value = System.getProperty(propertyName);
 	if (value == null) {
-	    return props.contains(propertyName);
+	    return props.containsKey(propertyName);
 	} else {
 	    return true;
 	}
