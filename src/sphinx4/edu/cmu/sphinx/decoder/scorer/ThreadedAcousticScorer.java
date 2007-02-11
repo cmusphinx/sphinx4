@@ -17,12 +17,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Logger;
 
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataEndSignal;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataStartSignal;
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.Signal;
+import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
@@ -32,14 +27,14 @@ import edu.cmu.sphinx.decoder.search.Token;
 /**
  * An acoustic scorer that breaks the scoring up into a configurable number of
  * separate threads.
- * 
+ *
  * All scores are maintained in LogMath log base
  */
 public class ThreadedAcousticScorer implements AcousticScorer {
 
     /**
      * Property the defines the frontend to retrieve features from for scoring
-     *  
+     *
      */
     public final static String PROP_FRONTEND = "frontend";
 
@@ -110,12 +105,12 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property.
      */
     public final static float PROP_ACOUSTIC_GAIN_DEFAULT = 1F;
-    
+
     // ----------------------------
     // Configuration data
     // ----------------------------
     private String name;
-    private FrontEnd frontEnd;      // where features come from
+    private BaseDataProcessor frontEnd;      // where features come from
     private int numThreads;         // number of threads in use
     private int minScoreablesPerThread; // min scoreables sent to a thread
     private boolean keepData;       // scoreables keep feature or not
@@ -128,7 +123,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
    /*
      * (non-Javadoc)
-     * 
+     *
      * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#allocate()
      */
     public void allocate() throws IOException {
@@ -151,7 +146,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#deallocate()
      */
     public void deallocate() {
@@ -160,7 +155,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
      *      edu.cmu.sphinx.util.props.Registry)
      */
@@ -177,13 +172,12 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        this.frontEnd = (FrontEnd) ps.getComponent(PROP_FRONTEND,
-                FrontEnd.class);
+        frontEnd = (BaseDataProcessor) ps.getComponent(PROP_FRONTEND, BaseDataProcessor.class);
         boolean cpuRelative = ps.getBoolean(PROP_IS_CPU_RELATIVE,
                 PROP_IS_CPU_RELATIVE_DEFAULT);
         numThreads = ps.getInt(PROP_NUM_THREADS, PROP_NUM_THREADS_DEFAULT);
@@ -206,7 +200,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see edu.cmu.sphinx.util.props.Configurable#getName()
      */
     public String getName() {
@@ -221,10 +215,10 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
     /**
      * Scores the given set of states
-     * 
+     *
      * @param scoreableList
      *                a list containing scoreable objects to be scored
-     * 
+     *
      * @return the best scorign scoreable, or null if there are no more
      *         features to score
      */
@@ -301,7 +295,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
     /**
      * Scores all of the Scoreables in the ScoreableJob
-     * 
+     *
      * @param job
      *                the scoreable job
      * @return the best scoring scoreable in the job
@@ -392,7 +386,7 @@ class Mailbox {
     /**
      * Waits for a scoreable to arrive in the mailbox and returns it. This will
      * block the caller until a scoreable arrives
-     * 
+     *
      * @return the next scoreable
      */
     synchronized ScoreableJob pend() {
@@ -420,7 +414,7 @@ class Semaphore {
 
     /**
      * Sets the count for this counting semaphore
-     * 
+     *
      * @param count
      *                the count for the semaphore
      */
@@ -431,7 +425,7 @@ class Semaphore {
 
     /**
      * Pends the caller until the count reaches zero
-     * 
+     *
      * @return the best scoreable encounted
      */
     synchronized Scoreable pend() {
@@ -447,7 +441,7 @@ class Semaphore {
     /**
      * Posts to the semaphore, decrementing the counter by one. should the
      * counter arrive at zero, wake up any penders.
-     * 
+     *
      * @param postedBest
      *                the best scoreable encounted for this batch.
      */
@@ -476,7 +470,7 @@ class ScoreableJob {
 
     /**
      * Creates a scoreable job
-     * 
+     *
      * @param scoreables
      *                the list of scoreables
      * @param start
@@ -492,7 +486,7 @@ class ScoreableJob {
 
     /**
      * Gets the starting index for this job
-     * 
+     *
      * @return the starting index
      */
     int getStart() {
@@ -501,7 +495,7 @@ class ScoreableJob {
 
     /**
      * Gets the number of scoreables in this job
-     * 
+     *
      * @return the number of scoreables in this job
      */
     int getSize() {
@@ -510,7 +504,7 @@ class ScoreableJob {
 
     /**
      * Returns the first scoreable in this job.
-     * 
+     *
      * @return the first scoreable in this job
      */
     Scoreable getFirst() {
@@ -519,7 +513,7 @@ class ScoreableJob {
 
     /**
      * Gets the entire list of scoreables
-     * 
+     *
      * @return the list of scoreables
      */
     List<Token> getScoreables() {
@@ -528,7 +522,7 @@ class ScoreableJob {
 
     /**
      * Returns a ListIterator for this job.
-     * 
+     *
      * @return a ListIterator for this job.
      */
     ListIterator<Token> getListIterator() {
@@ -537,7 +531,7 @@ class ScoreableJob {
 
     /**
      * Returns a string representation of this object
-     * 
+     *
      * @return the string representation
      */
     public String toString() {
