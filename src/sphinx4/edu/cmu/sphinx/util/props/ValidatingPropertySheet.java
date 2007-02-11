@@ -35,7 +35,6 @@ class ValidatingPropertySheet implements PropertySheet {
     private ConfigurationManager cm;
     private Map properties = new HashMap();
     private Registry registry;
-    private String className;
     private final static List EMPTY = new ArrayList();
     /**
      * Creates a buildable property sheet
@@ -55,7 +54,6 @@ class ValidatingPropertySheet implements PropertySheet {
         // for each property in the raw property data, check that it
         // is a registered property, and that it is of the proper type.
         Map raw = rpd.getProperties();
-        className = rpd.getClassName();
         for (Iterator i = raw.keySet().iterator(); i.hasNext();) {
             String key = (String) i.next();
             Object val = raw.get(key);
@@ -164,7 +162,7 @@ class ValidatingPropertySheet implements PropertySheet {
         } else if (value instanceof String) {
             String sval = (String) value;
             if (sval.startsWith("${")) {
-                value = cm.globalLookup(sval);
+                value = cm.getGlobalProperty(sval);
                 if (value == null) {
                     throw new PropertyException(registry.getOwner(), name,
                             "Can't find global property " + sval);
@@ -175,7 +173,7 @@ class ValidatingPropertySheet implements PropertySheet {
             for (ListIterator i = lval.listIterator(); i.hasNext(); ) {
                 String sval = (String) i.next();
                 if (sval.startsWith("${")) {
-                    String itemVal = cm.globalLookup(sval);
+                    String itemVal = cm.getGlobalProperty(sval);
                     if (itemVal == null) {
                         throw new PropertyException(registry.getOwner(), name,
                                 "Can't find global property " + sval);
@@ -311,7 +309,7 @@ class ValidatingPropertySheet implements PropertySheet {
         if (val == null) {
             return defaultValue;
         } else {
-            return Boolean.valueOf((String) getRaw(name)).booleanValue();
+            return Boolean.valueOf((String) getRaw(name));
         }
     }
 
@@ -328,7 +326,7 @@ class ValidatingPropertySheet implements PropertySheet {
      * @see edu.cmu.sphinx.util.props.PropertySheet#getResource(java.lang.String)
      */
     public URL getResource(String name) throws PropertyException {
-        URL url = null;
+        URL url;
         checkType(name, PropertyType.RESOURCE);
         String location = (String) getRaw(name);
         if (location == null) {
@@ -401,7 +399,7 @@ class ValidatingPropertySheet implements PropertySheet {
             throw new PropertyException(registry.getOwner(), name, 
               "Required component property '" + name + "' not set");
         }
-        Configurable c = null;
+        Configurable c;
         try {
             c = cm.lookup(val);
             if (c == null){
@@ -455,7 +453,7 @@ class ValidatingPropertySheet implements PropertySheet {
         
         for (Iterator i = list.iterator(); i.hasNext(); ) {
             String compName = (String) i.next();
-            Configurable c = null;
+            Configurable c;
             try {
                 c = cm.lookup(compName);
                 if (c == null){
@@ -527,24 +525,24 @@ class ValidatingPropertySheet implements PropertySheet {
     public String toString() {
         StringBuffer sb = new StringBuffer();
         String[] names = getNames();
-        for (int j = 0; j < names.length; j++) {
+        for (String name : names) {
             Object obj;
             try {
-                obj = getRaw(names[j]);
+                obj = getRaw(name);
             } catch (PropertyException e) {
                 obj = "ERROR(not set)";
             }
             if (obj instanceof String) {
                 String value = (String) obj;
                 sb.append("<property name=\"");
-                sb.append(names[j]);
+                sb.append(name);
                 sb.append("\" value=\"");
                 sb.append(value);
                 sb.append("\"/>\n");
             } else if (obj instanceof List) {
-                List  values = (List) obj;
+                List values = (List) obj;
                 sb.append("<list name=\"");
-                sb.append(names[j]);
+                sb.append(name);
                 sb.append("\">\n");
                 for (int k = 0; k < values.size(); k++) {
                     sb.append("    <item>");
@@ -600,7 +598,7 @@ class ValidatingPropertySheet implements PropertySheet {
      * @return the log level
      */
     private Level getLogLevel()  throws PropertyException {
-        Level level = null;
+        Level level;
         
         String levelName = getString(ConfigurationManager.PROP_COMMON_LOG_LEVEL,
                 cm.getGlobalLogLevel());

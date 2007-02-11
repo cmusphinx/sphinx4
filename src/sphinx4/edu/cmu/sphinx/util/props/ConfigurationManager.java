@@ -22,23 +22,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Manages the configuration for the system. The configuration manager provides
- * the following services:
- *
- * <ul>
- * <li>Loads configuration data from an XML-based configuration file.
- * <li>Manages the component life-cycle for Configurable objects
- * <li>Allows discovery of components via name or type.
- * </ul>
- * <p>
- * For an overview of how to use this configuration management system to create
- * and configure components please see: <b><a
- * href="doc-files/ConfigurationManagement.html"> Sphinx-4 Configuration
- * Management </a> </b>
- * <p>
- * For a description of how to create your own configurable components see: <b>
- * {@link edu.cmu.sphinx.util.props.Configurable}</b>
- *
+ * Manages the configuration for the system. The configuration manager provides the following services:
+ * <p/>
+ * <ul> <li>Loads configuration data from an XML-based configuration file. <li>Manages the component life-cycle for
+ * Configurable objects <li>Allows discovery of components via name or type. </ul>
+ * <p/>
+ * For an overview of how to use this configuration management system to create and configure components please see:
+ * <b><a href="doc-files/ConfigurationManagement.html"> Sphinx-4 Configuration Management </a> </b>
+ * <p/>
+ * For a description of how to create your own configurable components see: <b> {@link
+ * edu.cmu.sphinx.util.props.Configurable}</b>
  */
 public class ConfigurationManager {
 
@@ -267,7 +260,7 @@ public class ConfigurationManager {
 
         outputHeader(2, writer, "Global Properties");
         for (String globalProperty : globalProperties.keySet()) {
-            String value = globalProperties.get(globalProperty);
+            String value = getGlobalProperty(globalProperty);
             value = encodeValue(value);
             writer.println("        <property name=\"" +
                     stripGlobalSymbol(globalProperty) + "\" value=\"" + value + "\"/>");
@@ -421,13 +414,20 @@ public class ConfigurationManager {
 
 
     /**
-     * Gets the config properties for the configuration manager itself
+     * Lookup a global symbol with a given name (and resolves
      *
      * @param key the name of the property
      * @return the property value or null if it doesn't exist.
      */
     public String getGlobalProperty(String key) {
-        return globalLookup("${" + key + "}");
+        if (!key.startsWith("${"))
+            key = "${" + key + "}";
+
+        while (true) {
+            key = globalProperties.get(key);
+            if (key == null || !key.startsWith("${"))
+                return key;
+        }
     }
 
 
