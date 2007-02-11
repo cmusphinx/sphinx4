@@ -169,7 +169,7 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
 
     private Data getNextData() throws DataProcessingException {
         Data d = getPredecessor().getData();
-        while (!(d instanceof DoubleData || d instanceof DataEndSignal || d instanceof DataStartSignal)) {
+        while (d != null && !(d instanceof DoubleData || d instanceof DataEndSignal || d instanceof DataStartSignal)) {
             outputQueue.add(d);
             d = getPredecessor().getData();
         }
@@ -260,7 +260,7 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
      * @return the number of replicated Cepstrum
      */
     private int replicateLastCepstrum() {
-        DoubleData last = null;
+        DoubleData last;
         if (bufferPosition > 0) {
             last = this.cepstraBuffer[bufferPosition - 1];
         } else if (bufferPosition == 0) {
