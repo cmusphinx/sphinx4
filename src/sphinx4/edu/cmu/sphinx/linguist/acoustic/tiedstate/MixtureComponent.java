@@ -12,8 +12,6 @@
 
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.MatrixUtils;
@@ -153,6 +151,20 @@ public class MixtureComponent implements Cloneable {
 
 
     /**
+     * Calculate the score for this mixture against the given feature.
+     * <p/>
+     * Note: The support of <code>DoubleData</code>-features would require an array conversion to float[]. Because
+     * getScore might be invoked with very high frequency, features are restricted to be <code>FloatData</code>s.
+     *
+     * @param feature the feature to score
+     * @return the score, in log, for the given feature
+     */
+    public float getScore(FloatData feature) {
+        return getScore(feature.getValues());
+    }
+
+
+    /**
      * Calculate the score for this mixture against the given feature. We model the output distributions using a mixture
      * of Gaussians, therefore the current implementation is simply the computation of a multi-dimensional Gaussian.
      * <p/>
@@ -166,18 +178,7 @@ public class MixtureComponent implements Cloneable {
      * @param feature the feature to score
      * @return the score, in log, for the given feature
      */
-    public float getScore(Data feature) {
-        if (feature instanceof FloatData)
-            return getScore(((FloatData) feature).getValues());
-        else
-            throw new IllegalArgumentException("data type '" + feature.getClass() + "' is not supported");
-
-        // note: DoubleData is not supported here because this would require an array conversion to float which seems
-        // to be a not too good idea because getScore is invoked quite often
-    }
-
-
-    public float getScore(float[] data) {
+    public float getScore(float[] feature) {
         // float logVal = 0.0f;
         float logDval = 0.0f;
 
@@ -186,8 +187,8 @@ public class MixtureComponent implements Cloneable {
         // appropriate base. If the log base is <code>Math.E</code>,
         // then no operation is necessary.
 
-        for (int i = 0; i < data.length; i++) {
-            float logDiff = data[i] - meanTransformed[i];
+        for (int i = 0; i < feature.length; i++) {
+            float logDiff = feature[i] - meanTransformed[i];
             logDval += logDiff * logDiff * precisionTransformed[i];
         }
         // logDval = -logVal / 2;
