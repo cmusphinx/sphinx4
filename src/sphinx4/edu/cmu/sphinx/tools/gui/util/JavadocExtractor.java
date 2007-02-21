@@ -50,7 +50,7 @@ public class JavadocExtractor {
                 String commandLine = new String("javadoc -docletpath \""+ class_path +
                         "\" -doclet edu.cmu.sphinx.tools.gui.util.DocletHelper \""+
                         source_path.trim()+ source_file.trim()+"\"");        
-                System.out.println("commandLine :" + commandLine);
+//                System.out.println("commandLine :" + commandLine);
                 SysCommandExecutor cmdExecutor = SysCommandExecutor.getInstance(); 		   		
                 int exitStatus = cmdExecutor.runCommand(commandLine);
 
