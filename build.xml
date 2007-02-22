@@ -542,7 +542,10 @@ jsapi.exe from the lib directory.
             <packageset dir="${src_dir}/sphinx4" defaultexcludes="yes">
                   <patternset refid="${patternset_to_doc}"/>
             </packageset>
-	    <classpath refid="libs"/>
+	    <classpath>
+                  <path refid="libs"/>
+                  <pathelement path="${java.class.path}"/>
+            </classpath>
         </javadoc>
     </target>
 
