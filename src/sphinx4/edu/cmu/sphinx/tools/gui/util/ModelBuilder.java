@@ -172,7 +172,7 @@ public class ModelBuilder implements GUIFileActionListener{
     /**
      * This method would return the source code for the specified class name
      *
-     * @param Class name
+     * @param classname Name of class to be searched
      */
     public String getSourceCode(String classname){
         String text = "";

@@ -34,7 +34,7 @@ public class GUIWriterException extends java.lang.Exception {
      * specified detail message and mode as the type of error
      *
      * @param msg the detail message.
-     * @mode Type of error
+     * @param mode Type of error
      */
     public GUIWriterException(String msg, int mode) {
         super(msg);

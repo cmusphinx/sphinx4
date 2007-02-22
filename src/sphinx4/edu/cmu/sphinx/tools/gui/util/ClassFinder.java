@@ -47,7 +47,7 @@ public class ClassFinder {
     /**
      * find a File 
      * 
-     * @param file name
+     * @param filename name of file to be found
      */
     public static BufferedReader findFile(String filename) throws
             ClassNotFoundException, FileNotFoundException
@@ -210,7 +210,7 @@ public class ClassFinder {
     /**
      * find directory 
      *
-     * @param dirname directory/file to be found
+     * @param name directory/file to be found
      * @return File of directory/file if found
      * @throws ClassNotFoundException if the dirname/file name is invalid or not found
      */

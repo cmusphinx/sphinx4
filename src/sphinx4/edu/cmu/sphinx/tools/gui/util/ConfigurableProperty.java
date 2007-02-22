@@ -21,7 +21,7 @@ package edu.cmu.sphinx.tools.gui.util;
  *
  * @author Ariani
  * @see ConfigurableComponent
- * @see RawPropertyData
+ * @see edu.cmu.sphinx.tools.gui.RawPropertyData
  */
 public class ConfigurableProperty {
     

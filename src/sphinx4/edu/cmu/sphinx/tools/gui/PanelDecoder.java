@@ -761,7 +761,7 @@ public class PanelDecoder extends javax.swing.JPanel {
          * and set to default values
          *
          * @param name Name of new configuration set
-         * @param name of class where the set belongs to
+         * @param classname Name of class where the set belongs to
          * @throws PanelMediatorException
          */
         private void createNewConfigurationSet (String name, String classname)

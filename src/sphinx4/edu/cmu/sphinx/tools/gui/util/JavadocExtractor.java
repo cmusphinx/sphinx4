@@ -69,11 +69,11 @@ public class JavadocExtractor {
     /** 
      * do string manipulation to get the property comment
      * @param classname Fully qualified class name that holds the property
-     * @class_path Absolute path to the root of .class files;
+     * @param class_path Absolute path to the root of .class files;
      *              must end in '\' or '/'
-     * @source_path Absolute path to the source code root directory; 
+     * @param source_path Absolute path to the source code root directory; 
      *              must end in '\' or '/'
-     * @prop_name Name of property to be searched
+     * @param prop_name Name of property to be searched
      * @return Javadoc comment for the property that belongs to classname
      */
     public static String getJavadocComment(String classname, String class_path,

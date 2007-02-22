@@ -284,10 +284,10 @@ public class ConfigurableComponent {
     }
 
     /** 
-     * This function is used to create a new configurable set for this type of class
+     * This function is used to create a new configuration set for this type of class
      * The property values are set as their default values
      * 
-     * @param set name
+     * @param setname Name of new configuration set
      */
     public void createNewSet(String setname){
         System.out.println("*****" + this.toString());
