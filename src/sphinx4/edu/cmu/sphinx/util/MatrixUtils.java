@@ -10,20 +10,19 @@ public class MatrixUtils {
 
 
     public static String toString(double[][] m) {
-        String s = "[";
+        StringBuffer s = new StringBuffer("[");
 
         for (int r = 0; r < m.length; r++) {
-            s += "[";
+            s.append("[");
 
             for (int c = 0; c < numCols(m); c++)
-                s += " " + df.format(m[r][c]);
+                s.append(" ").append(df.format(m[r][c]));
 
-            s += " ]\n";
+            s.append(" ]\n");
         }
 
-        return s + " ]";
+        return s.append(" ]").toString();
     }
-
 
 
     public static int numCols(double[][] m) {
@@ -31,24 +30,23 @@ public class MatrixUtils {
     }
 
 
-
     public static String toString(double[] v) {
-        String s = "[";
+        StringBuffer s = new StringBuffer("[");
 
         for (int r = 0; r < v.length; r++)
-            s += " " + df.format(v[r]);
+            s.append(" ").append(df.format(v[r]));
 
-        return s + " ]";
+        return s.append(" ]").toString();
     }
 
 
     public static String toString(int[] v) {
-        String s = "[";
+        StringBuffer s = new StringBuffer("[");
 
         for (int r = 0; r < v.length; r++)
-            s += " " + v[r];
+            s.append(" ").append(v[r]);
 
-        return s + " ]";
+        return s.append(" ]").toString();
     }
 
 
