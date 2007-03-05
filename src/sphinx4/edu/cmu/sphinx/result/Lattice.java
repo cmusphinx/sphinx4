@@ -154,8 +154,14 @@ public class Lattice {
             loserManager.purge();
         }
 
-        for (Iterator i = result.getResultTokens().iterator(); i.hasNext();) {
-            Token token = (Token) i.next();
+	Iterator tokenIter;
+        if (result.getBestFinalToken() != null) {
+        	tokenIter = result.getResultTokens().iterator();
+        } else {
+        	tokenIter = result.getActiveTokens().iterator();
+        }
+        while (tokenIter.hasNext()) {
+            Token token = (Token) tokenIter.next();
             while (token != null && !token.isWord()) {
                 token = token.getPredecessor();
             }
