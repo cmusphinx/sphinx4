@@ -14,6 +14,8 @@
 package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.frontend.DoubleData;
+import edu.cmu.sphinx.frontend.FloatData;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -526,5 +528,20 @@ public class DataUtil {
             }
         }
         return nativeFormat;
+    }
+
+
+    /** Converts DoubleData object to FloatDatas. */
+    public static DoubleData FloatData2DoubleData(FloatData data) {
+        int numSamples = data.getValues().length;
+
+        double[] doubleData = new double[numSamples];
+        float[] values = data.getValues();
+        for (int i = 0; i < values.length; i++) {
+            doubleData[i] = values[i];
+        }
+//        System.arraycopy(data.getValues(), 0, doubleData, 0, numSamples); 
+
+        return new DoubleData(doubleData, data.getSampleRate(), data.getCollectTime(), data.getFirstSampleNumber());
     }
 }
