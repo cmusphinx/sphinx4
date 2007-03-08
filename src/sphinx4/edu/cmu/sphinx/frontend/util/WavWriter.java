@@ -2,6 +2,7 @@ package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
+import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.frontend.util.DataUtil;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -59,6 +60,7 @@ public class WavWriter extends BaseDataProcessor {
     private DataOutputStream dos;
 
     private int sampleRate;
+    private boolean isInSpeech;
 
 
     public Data getData() throws DataProcessingException {
@@ -89,10 +91,16 @@ public class WavWriter extends BaseDataProcessor {
                     e.printStackTrace();
                 }
             }
+
+            isInSpeech = false;
         }
 
-        DoubleData dd = data instanceof DoubleData ? (DoubleData) data : DataUtil.FloatData2DoubleData((FloatData) data);
-        double[] values = dd.getValues();
+        if (data instanceof SpeechStartSignal)
+            isInSpeech = true;
+
+        if (isInSpeech || !captureUtts) {
+            DoubleData dd = data instanceof DoubleData ? (DoubleData) data : DataUtil.FloatData2DoubleData((FloatData) data);
+            double[] values = dd.getValues();
 
 //            if (isBigEndian) {
 //                doubleData = DataUtil.bytesToValues(samplesBuffer, 0, totalRead, bytesPerValue, signedData);
@@ -100,16 +108,17 @@ public class WavWriter extends BaseDataProcessor {
 //                doubleData = DataUtil.littleEndianBytesToValues(samplesBuffer, 0, totalRead, bytesPerValue, signedData);
 //            }
 
-        for (double value : values) {
-            try {
-                dos.writeShort(new Short((short) value));
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (double value : values) {
+                try {
+                    dos.writeShort(new Short((short) value));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        if (data instanceof FloatData) {
-            throw new RuntimeException("FloatData is currently not supported");
+            if (data instanceof FloatData) {
+                throw new RuntimeException("FloatData is currently not supported");
+            }
         }
 
         return data;
