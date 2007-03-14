@@ -14,8 +14,10 @@ package edu.cmu.sphinx.decoder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.result.Result;
@@ -47,6 +49,19 @@ public class Decoder implements Configurable {
     private int featureBlockSize;
     
     private List resultListeners = Collections.synchronizedList(new ArrayList());
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_SEARCH_MANAGER_TYPE"),new String("COMPONENT"));
+        info.put(new String("PROP_SEARCH_MANAGER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.search.SearchManager"));
+        info.put(new String("PROP_FEATURE_BLOCK_SIZE_TYPE"),new String("INTEGER"));           
+        return info;
+    }
     
     /*
      * (non-Javadoc)
