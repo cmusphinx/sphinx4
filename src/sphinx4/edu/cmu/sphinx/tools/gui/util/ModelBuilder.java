@@ -599,11 +599,11 @@ public class ModelBuilder implements GUIFileActionListener{
             String classtype = getInfo(classinfo,fieldname,"_CLASSTYPE");
             cp = new ConfigurableProperty
                  (propname,default_value, proptype, field_comment,fieldname,classtype);
-             System.out.println("with type "+proptype+" and class type : " + classtype);
+            // System.out.println("with type "+proptype+" and class type : " + classtype);
         }else{ // it's a native java type                 
             cp = new ConfigurableProperty
                     (propname,default_value, proptype, field_comment,fieldname);            
-             System.out.println("with type "+proptype);
+            // System.out.println("with type "+proptype);
         }
         return cp;
     }
@@ -706,7 +706,12 @@ public class ModelBuilder implements GUIFileActionListener{
         try{
             Method infomethod = c.getMethod("getConfigurationInfo",(Class[])null);
             try {                
-                Map myinfo = (Map)infomethod.invoke(null, (Object[]) null);                              
+                Map myinfo = (Map)infomethod.invoke(null, (Object[]) null);  
+                // get the info from its super classes as well
+                Class superclass = c.getSuperclass();
+                if(superclass != null && !superclass.getName().equals("java.lang.Object")){
+                    myinfo.putAll(getMapConfigurationInfo(superclass));
+                }
                 return myinfo;
             }catch ( IllegalAccessException e) {
                 System.err.println(e.getMessage());

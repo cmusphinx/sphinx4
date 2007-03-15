@@ -111,7 +111,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
      */
     public static Map getConfigurationInfo(){
         Map info = new HashMap();       
-        info.putAll(BatchModeRecognizer.getConfigurationInfo());
+        
         info.put(new String("PROP_DATA_DIR_TYPE"),new String("STRING"));
         info.put(new String("PROP_CTL_FILE_TYPE"),new String("STRING"));
         info.put(new String("PROP_REF_FILE_TYPE"),new String("STRING"));

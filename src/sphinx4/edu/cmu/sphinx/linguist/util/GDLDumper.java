@@ -78,8 +78,7 @@ public class GDLDumper extends LinguistDumper {
      * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
      */
     public static Map getConfigurationInfo(){
-        Map info = new HashMap();
-        info.putAll(LinguistDumper.getConfigurationInfo());
+        Map info = new HashMap();        
         info.put(new String("PROP_SKIP_HMMS_TYPE"),new String("BOOLEAN"));
         info.put(new String("PROP_VERTICAL_LAYOUT_TYPE"),new String("BOOLEAN"));
         info.put(new String("PROP_DUMP_ARC_LABELS_TYPE"),new String("BOOLEAN"));

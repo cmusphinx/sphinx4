@@ -59,8 +59,7 @@ public class LinguistDumper extends LinguistProcessor {
      * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
      */
     public static Map getConfigurationInfo(){        
-        Map info = new HashMap();
-        info.putAll(LinguistProcessor.getConfigurationInfo());
+        Map info = new HashMap();        
         info.put(new String("PROP_FILENAME_TYPE"),new String("STRING"));
         return info;
     }
