@@ -66,10 +66,12 @@ public class WavWriter extends BaseDataProcessor {
     public Data getData() throws DataProcessingException {
         Data data = getPredecessor().getData();
 
-        if (data instanceof DataStartSignal) {
+        if (data instanceof DataStartSignal)
+            sampleRate = ((DataStartSignal) data).getSampleRate();
+
+        if (data instanceof DataStartSignal || (data instanceof SpeechStartSignal && captureUtts)) {
             baos = new ByteArrayOutputStream();
             dos = new DataOutputStream(baos);
-            sampleRate = ((DataStartSignal) data).getSampleRate();
         }
 
 
@@ -98,7 +100,7 @@ public class WavWriter extends BaseDataProcessor {
         if (data instanceof SpeechStartSignal)
             isInSpeech = true;
 
-        if (isInSpeech || !captureUtts) {
+        if ((data instanceof DoubleData || data instanceof FloatData) && (isInSpeech || !captureUtts)) {
             DoubleData dd = data instanceof DoubleData ? (DoubleData) data : DataUtil.FloatData2DoubleData((FloatData) data);
             double[] values = dd.getValues();
 
@@ -114,10 +116,6 @@ public class WavWriter extends BaseDataProcessor {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-
-            if (data instanceof FloatData) {
-                throw new RuntimeException("FloatData is currently not supported");
             }
         }
 
@@ -173,7 +171,7 @@ public class WavWriter extends BaseDataProcessor {
 
         isBigEndian = ps.getBoolean(PROP_BIG_ENDIAN_DATA, isBigEndian);
         isSigned = ps.getBoolean(PROP_SIGNED_DATA, isSigned);
-        captureUtts = ps.getBoolean(PROP_SIGNED_DATA, captureUtts);
+        captureUtts = ps.getBoolean(PROP_CAPTURE_UTTERANCES, captureUtts);
 
         initialize();
     }
