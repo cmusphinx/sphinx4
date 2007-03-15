@@ -14,6 +14,8 @@ package edu.cmu.sphinx.frontend.util;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -221,7 +223,28 @@ public class Microphone extends BaseDataProcessor {
     private String stereoToMono;
     private int sampleRate;
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+      
+        info.put(new String("PROP_CLOSE_BETWEEN_UTTERANCES_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_BIG_ENDIAN_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SIGNED_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_KEEP_LAST_AUDIO_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SAMPLE_RATE_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_MSEC_PER_READ_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_CHANNELS_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_SELECT_CHANNEL_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_STEREO_TO_MONO_TYPE"),new String("STRING"));
+        info.put(new String("PROP_SELECT_MIXER_TYPE"),new String("STRING"));
+        return info;
+    }
+    
     /*
     * (non-Javadoc)
     *

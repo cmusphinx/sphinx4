@@ -95,7 +95,22 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     private boolean postProcessed = false;
     private boolean idCheck = false;
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_SHOW_GRAMMAR_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_OPTIMIZE_GRAMMAR_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_ADD_SIL_WORDS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_ADD_FILLER_WORDS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_DICTIONARY_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_DICTIONARY_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.dictionary.Dictionary"));
+       
+        return info;
+    }
 
     /*
      * (non-Javadoc)

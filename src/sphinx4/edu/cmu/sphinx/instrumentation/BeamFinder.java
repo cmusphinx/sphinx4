@@ -31,6 +31,9 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Monitors the absolute and relative beam sizes required to achieve the
  * optimum recognition results and reports this data.
@@ -97,6 +100,24 @@ public class BeamFinder implements Configurable, ResultListener,
 
     private final static DecimalFormat logFormatter = new DecimalFormat("0.#E0");
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_SHOW_SUMMARY_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_DETAILS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_ENABLED_TYPE"),new String("BOOLEAN"));
+
+        info.put(new String("PROP_RECOGNIZER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"),new String("edu.cmu.sphinx.recognizer.Recognizer"));
+        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

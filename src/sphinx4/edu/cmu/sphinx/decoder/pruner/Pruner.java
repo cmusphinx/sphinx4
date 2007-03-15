@@ -55,6 +55,8 @@ public interface Pruner extends Configurable {
      * Deallocates resources necessary for this pruner
      */
     public void deallocate();
+    
+
 }
 
 

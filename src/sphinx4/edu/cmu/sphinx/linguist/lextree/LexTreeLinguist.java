@@ -15,6 +15,7 @@ package edu.cmu.sphinx.linguist.lextree;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedHashMap;
@@ -300,6 +301,40 @@ public class LexTreeLinguist implements Linguist {
     private int cacheTrys;
     private int cacheHits;
 
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_WORD_INSERTION_PROBABILITY_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_SILENCE_INSERTION_PROBABILITY_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_FILLER_INSERTION_PROBABILITY_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_UNIT_INSERTION_PROBABILITY_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_LANGUAGE_WEIGHT_TYPE"),new String("FLOAT"));
+        info.put(new String("PROP_UNIGRAM_SMEAR_WEIGHT_TYPE"),new String("FLOAT"));
+        
+        info.put(new String("PROP_FULL_WORD_HISTORIES_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_WANT_UNIGRAM_SMEAR_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_ADD_FILLER_WORDS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_GENERATE_UNIT_STATES_TYPE"),new String("BOOLEAN"));
+    
+        info.put(new String("PROP_ACOUSTIC_MODEL_TYPE"),new String("COMPONENT"));
+        info.put(new String("PROP_ACOUSTIC_MODEL_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.acoustic.AcousticModel"));
+        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
+        info.put(new String("PROP_LANGUAGE_MODEL_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LANGUAGE_MODEL_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.language.ngram.LanguageModel"));
+        info.put(new String("PROP_UNIT_MANAGER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_UNIT_MANAGER_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.acoustic.UnitManager"));        
+        info.put(new String("PROP_DICTIONARY_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_DICTIONARY_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.dictionary.Dictionary"));        
+        
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

@@ -21,6 +21,9 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Filters an input power spectrum through a PLP filterbank. The
  * filters in the filterbank are placed in the frequency axis so as to
@@ -93,6 +96,20 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
     private PLPFilter[] criticalBandFilter;
     private double[] equalLoudnessScaling;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+   
+        info.put(new String("PROP_NUMBER_FILTERS_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_MIN_FREQ_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_MAX_FREQ_TYPE"),new String("DOUBLE"));        
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

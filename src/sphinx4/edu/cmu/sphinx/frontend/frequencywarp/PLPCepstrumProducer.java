@@ -13,11 +13,6 @@
 
 package edu.cmu.sphinx.frontend.frequencywarp;
 
-
-
-
-
-
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
@@ -27,6 +22,8 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Computes the PLP cepstrum from a given PLP Spectrum. The power
@@ -49,6 +46,17 @@ import edu.cmu.sphinx.util.props.Registry;
 @SuppressWarnings({"UnnecessaryLocalVariable"})
 public class PLPCepstrumProducer extends BaseDataProcessor {
 
+    /**
+     * The name of the Sphinx Property for the number of filters in
+     * the filterbank.
+     */
+    public static final String PROP_NUMBER_FILTERS = "numberFilters";
+
+    /**
+     * The default value of PROP_NUMBER_FILTERS.
+     */
+    public static final int PROP_NUMBER_FILTERS_DEFAULT = 32;
+    
     /**
      * The SphinxProperty specifying the length of the cepstrum data.
      */
@@ -79,15 +87,28 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
     /*
      * (non-Javadoc)
      * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        
+        info.put(new String("PROP_NUMBER_FILTERS_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_CEPSTRUM_LENGTH_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_LPC_ORDER_TYPE"),new String("INTEGER"));
+        return info;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
      *      edu.cmu.sphinx.util.props.Registry)
      */
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
-        registry.register(PLPFrequencyFilterBank.PROP_NUMBER_FILTERS, PropertyType.INT);
+        registry.register(PROP_NUMBER_FILTERS, PropertyType.INT);
         registry.register(PROP_CEPSTRUM_LENGTH, PropertyType.INT);
-
 	registry.register(PROP_LPC_ORDER, PropertyType.INT);
     }
 
@@ -98,11 +119,8 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        numberPLPFilters = ps.getInt
-            (PLPFrequencyFilterBank.PROP_NUMBER_FILTERS,
-             PLPFrequencyFilterBank.PROP_NUMBER_FILTERS_DEFAULT);
+        numberPLPFilters = ps.getInt(PROP_NUMBER_FILTERS,PROP_NUMBER_FILTERS_DEFAULT);
         cepstrumSize = ps.getInt(PROP_CEPSTRUM_LENGTH, PROP_CEPSTRUM_LENGTH_DEFAULT);
-
 	LPCOrder = ps.getInt(PROP_LPC_ORDER, PROP_LPC_ORDER_DEFAULT);
     }
 

@@ -15,9 +15,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import edu.cmu.sphinx.frontend.util.ConcatFileDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
@@ -113,6 +115,24 @@ public class LiveModeRecognizer implements Configurable {
     private GapInsertionDetector gapInsertionDetector;
     private NISTAlign aligner = new NISTAlign(true, true);
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_SKIP_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_RECOGNIZER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"),new String("edu.cmu.sphinx.recognizer.Recognizer"));
+        info.put(new String("PROP_INPUT_SOURCE_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_INPUT_SOURCE_CLASSTYPE"),new String("edu.cmu.sphinx.frontend.util.ConcatFileDataSource"));
+        info.put(new String("PROP_SHOW_GAP_INSERTIONS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_ALIGN_INTERVAL_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_HYPOTHESIS_TRANSCRIPT_TYPE"),new String("STRING"));
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

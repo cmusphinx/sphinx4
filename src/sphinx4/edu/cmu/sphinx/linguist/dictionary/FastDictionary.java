@@ -121,6 +121,27 @@ public class FastDictionary implements Dictionary {
     /*
      * (non-Javadoc)
      * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+     
+        info.put(new String("PROP_DICTIONARY_TYPE"),new String("RESOURCE"));
+        info.put(new String("PROP_FILLER_DICTIONARY_TYPE"),new String("RESOURCE"));
+        info.put(new String("PROP_ADDENDA_TYPE"),new String("STRING_LIST"));
+        info.put(new String("PROP_WORD_REPLACEMENT_TYPE"),new String("STRING"));
+        info.put(new String("PROP_ADD_SIL_ENDING_PRONUNCIATION_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_ALLOW_MISSING_WORDS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_CREATE_MISSING_WORDS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_UNIT_MANAGER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_UNIT_MANAGER_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.acoustic.UnitManager"));
+     
+        return info;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
      *      edu.cmu.sphinx.util.props.Registry)
      */

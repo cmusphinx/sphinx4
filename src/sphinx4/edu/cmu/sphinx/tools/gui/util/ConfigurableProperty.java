@@ -28,6 +28,7 @@ public class ConfigurableProperty {
     private String _name;
     private String _default;    
     private PropertyType _type;
+    private String _classtype;
     private String _desc;
     private String _original_name;
         
@@ -47,6 +48,27 @@ public class ConfigurableProperty {
         _type = type;
         _default = defaultval;      
         _original_name = original;
+    }
+    
+    /** 
+     * Creates a new instance of ConfigurableProperty, and this property needs
+     * a certain class type as value
+     *
+     * @param name Name of property
+     * @param defaultval Default value
+     * @param type Property type
+     * @param desc Description about this property  
+     * @param original Original name of property in the source code   
+     * @param class_type The type of class for this property
+     */
+    public ConfigurableProperty(String name, String defaultval, PropertyType type, String desc,
+            String original, String class_type) {
+        _name = name;
+        _desc = desc;
+        _type = type;
+        _default = defaultval;      
+        _original_name = original;
+        _classtype = class_type;
     }
     
     /**
@@ -82,8 +104,18 @@ public class ConfigurableProperty {
     /**
      * @return Type of property
      */
-    public String getType(){
-        return _type.toString();
+    public PropertyType getType(){
+        if (_type == null)
+            return null;
+        else
+            return _type;
+    }
+    
+    /**
+     * @return Type of class that's required for this property
+     */
+    public String getClassType(){
+        return _classtype;      
     }
     
     /**

@@ -22,7 +22,8 @@ import edu.cmu.sphinx.util.props.Registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Converts a stream of SpeechClassifiedData objects, marked as speech and non-speech, and mark out the regions that are
@@ -79,7 +80,22 @@ public class SpeechMarker extends BaseDataProcessor {
     private int speechLeader;
     private int speechTrailer;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+       
+        info.put(new String("PROP_START_SPEECH_TYPE"),new String("INTEGER"));      
+        info.put(new String("PROP_END_SILENCE_TYPE"),new String("INTEGER")); 
+        info.put(new String("PROP_SPEECH_LEADER_TYPE"),new String("INTEGER")); 
+        info.put(new String("PROP_SPEECH_TRAILER_TYPE"),new String("INTEGER")); 
+        return info;
+    }
 
+    
     /*
     * (non-Javadoc)
     *

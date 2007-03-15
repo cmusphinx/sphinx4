@@ -32,9 +32,9 @@ import java.lang.reflect.Modifier;
 
 /**
  * This class is used mainly to facilitate scanning all the folders of sphinx system, 
- * and to return classes that are Configurable 
+ * and to filter classes that are Configurable 
  * (implements 'edu.cmu.sphinx.util.props.Configurable' in one of the ancestors)
- * and the class has to contain at least one 'PROP_' static property
+ * and are not of Interface type.
  * <p>
  * This class is used by ModelBuilder, and contains only static methods
  *
@@ -115,10 +115,10 @@ public class ClassFinder {
             }else if(tempFile.endsWith(".class") ) {
                 // removes the .class extension                    
                 // if it's a file, check if it's a java .class file
+                // System.out.println("=== check class" + tempFile);
                 validateFile (myFilesDirs[i]);
                 try{
-                    String classname = startPackage+'.'+tempFile.substring(0, tempFile.length()-6);
-                    
+                    String classname = startPackage+'.'+tempFile.substring(0, tempFile.length()-6);                    
                     Class addclass = Class.forName(classname);                                            
                     /* change this to URLClassLoader                                       
                        Class addclass =  Thread.currentThread().getContextClassLoader().loadClass(classname);
@@ -131,7 +131,11 @@ public class ClassFinder {
                     } */                    
                     /* change: only check the class type, no checking for its methods */
                     if ( filterClass(addclass) ){
-                        classList.add(addclass); 
+                        // if it's an interface, shouldn't display because interface cannot be instantiated
+                        if (!addclass.isInterface()) {                        
+                            classList.add(addclass);      
+                            // System.out.println("=== add class" + tempFile);
+                        }
                     }
                                             
                 }catch(NoClassDefFoundError e){
@@ -152,7 +156,7 @@ public class ClassFinder {
      */
     private static boolean filterField(Class c){
               
-        String classname = c.getName();
+        String classname = c.getName();        
         Field[] publicFields = c.getFields();
         
         // will check all the public fields
@@ -178,15 +182,16 @@ public class ClassFinder {
      * @return boolean true if the class passes the filter
      */
     private static boolean filterClass(Class c){
-
+        
         String interfaceName;
-        Class superclass;
+        Class superclass;        
         
         //check the implemented interfaces
         Class[] theInterfaces = c.getInterfaces();
+   
         for (int i = 0; i < theInterfaces.length; i++) {
              interfaceName = theInterfaces[i].getName();
-            //System.out.println("***This class has interface "+interfaceName);
+            //System.out.println("***This class "+c.getName()+" has interface "+interfaceName);
             if(interfaceName.equalsIgnoreCase("edu.cmu.sphinx.util.props.Configurable")){
                  return true;
             }                

@@ -15,6 +15,8 @@ import java.io.*;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Copyright 1999-2002 Carnegie Mellon University.
@@ -102,6 +104,26 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     public final static String PROP_SAMPLES_PER_SECOND = "samplesPerSecond";
     public final static String PROP_FRAMES_PER_SECOND = "framesPerSecond";
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();       
+        info.putAll(BatchModeRecognizer.getConfigurationInfo());
+        info.put(new String("PROP_DATA_DIR_TYPE"),new String("STRING"));
+        info.put(new String("PROP_CTL_FILE_TYPE"),new String("STRING"));
+        info.put(new String("PROP_REF_FILE_TYPE"),new String("STRING"));
+        info.put(new String("PROP_CTM_FILE_TYPE"),new String("STRING"));
+        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_CHANNEL_COUNT_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_SAMPLES_PER_SECOND_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_FRAMES_PER_SECOND_TYPE"),new String("INTEGER"));
+        
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      *

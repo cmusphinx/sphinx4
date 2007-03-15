@@ -12,6 +12,9 @@
  */
 package edu.cmu.sphinx.instrumentation;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.recognizer.StateListener;
@@ -98,7 +101,21 @@ public class RejectionTracker implements Configurable,
      */
     private int numFalseInGrammarUtterances;
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_SHOW_SUMMARY_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_DETAILS_TYPE"),new String("BOOLEAN"));      
+        info.put(new String("PROP_RECOGNIZER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"),new String("edu.cmu.sphinx.recognizer.Recognizer"));
+        
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

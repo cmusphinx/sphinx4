@@ -12,7 +12,6 @@
  */
 package edu.cmu.sphinx.instrumentation;
 
-import java.io.IOException;
 
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
@@ -21,15 +20,17 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.io.File;
-
+import java.io.IOException;
 /**
  * Shows the configuration currently in use. This monitor is typically added
  * as a recognition monitor such that the configuration is shown immediately
  * after the recognizer is allocated.
  */
-public class ConfigMonitor implements Configurable, Runnable {
+public class ConfigMonitor implements Configurable, Runnable,Monitor {
     
     /**
      * Sphinx property that is used to indicate whether or not this
@@ -92,6 +93,20 @@ public class ConfigMonitor implements Configurable, Runnable {
     private String gdlPath = "config.gdl";
     private String xmlPath = "config.xml";
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_SHOW_CONFIG_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_CONFIG_AS_HTML_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_CONFIG_AS_GDL_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SAVE_CONFIG_AS_XML_TYPE"),new String("BOOLEAN"));
+        return info;
+    }
+    
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
      */

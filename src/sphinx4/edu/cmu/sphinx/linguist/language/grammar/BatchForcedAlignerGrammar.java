@@ -13,7 +13,9 @@ import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.util.Set;
 import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.StringTokenizer;
+import java.util.Map;
 
 /**
  * Copyright 1999-2006 Carnegie Mellon University.
@@ -41,6 +43,19 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
     protected String currentUttName = "";
     protected Grammar currentGrammar = null;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+ 
+        info.put(new String("PROP_REF_FILE_TYPE"),new String("STRING"));      
+              
+        return info;
+    }
+    
     /*
     * (non-Javadoc)
     *

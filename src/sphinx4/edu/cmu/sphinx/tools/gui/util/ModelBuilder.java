@@ -28,6 +28,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -143,7 +145,7 @@ public class ModelBuilder implements GUIFileActionListener{
     public void update(ConfigProperties cp){
         clearAll();
         loadCurrentValues(cp);
-        printModel();
+        // printModel();
     }
     
     /** 
@@ -176,6 +178,9 @@ public class ModelBuilder implements GUIFileActionListener{
      */
     public String getSourceCode(String classname){
         String text = "";
+        if (_source_path == null){  
+            return new String("== Source code not available ==");
+        }
         try {
             String completename =  classname.trim().replace('.','/');
             if ( !_source_path.trim().endsWith("/")) // add  '/' at the end of path
@@ -201,6 +206,42 @@ public class ModelBuilder implements GUIFileActionListener{
         }
         return text;
     }
+    
+    /**
+     * get list of Configurable classes that is of specified type
+     * 
+     * @param classtype Type of class
+     * @return List of classes
+     */
+    public Map getclasslist(String classtype){
+        try{
+            Class searchclass = Class.forName(classtype);       
+            Map myreturn = new HashMap();
+            if (_classes != null && classtype != null && 
+                    !classtype.trim().equalsIgnoreCase("")) {
+                for(Iterator it = _classes.values().iterator(); it.hasNext();){
+                    ConfigurableComponent cc = (ConfigurableComponent)it.next();
+                    Class c = cc.getComponentClass();
+                    Map configset = cc.getConfigurationPropMap();           
+                    
+                    if(searchclass.isAssignableFrom(c) && configset!= null &&
+                            !configset.isEmpty())
+                    {                    
+                        for(Iterator it2 = configset.keySet().iterator();it2.hasNext();)
+                        {
+                            String configname = (String)it2.next();                        
+                            myreturn.put(c.getName(),configname);
+                        }
+                    }
+
+                }
+            }
+            return myreturn;
+         }catch(ClassNotFoundException e){
+            return null;
+        }        
+    }
+    
     
     /**
      * Load values in ConfigProperties into the model 
@@ -250,11 +291,11 @@ public class ModelBuilder implements GUIFileActionListener{
                 String defaultVal = prop.getDefault();
                 if( defaultVal != null && !defaultVal.trim().equalsIgnoreCase("")){
                     propertyMap.put(propname,defaultVal);
-                    System.out.println("***** add prop "+propname);
+                    //  System.out.println("***** add prop "+propname);
                 }
                 else {
                     propertyMap.put(propname, null);           
-                    System.out.println("***** add null prop "+propname);
+                    //  System.out.println("***** add null prop "+propname);
                 }
             }
         }
@@ -330,10 +371,18 @@ public class ModelBuilder implements GUIFileActionListener{
          
         //init config data
         clear_config();
-        read_config_prop();
+        try {
+            read_config_prop();
+        }catch (ConfigurableUtilException e){
+            // the util.conf configuration read is not successful
+            // probably the file does not exist 
+            // (must be in the same dir as GUIMainDriver.class)
+            // so - no features that requires the source code    
+            System.err.println("Error:Configuration file not loaded successfully\n" + 
+                    "Error:Features that require access to source code will not be available");
+        }
         read_classpath();
-     
-        
+             
         // scan again and refresh the model
         scan(_folder_path,_package_path);
     }
@@ -350,7 +399,7 @@ public class ModelBuilder implements GUIFileActionListener{
      private void read_classpath(){
           Properties props = System.getProperties();
           if(_classes_path == null){ // class path property not set from .conf file
-              _classes_path = props.getProperty("java.class.path");                 
+              _classes_path = props.getProperty("java.class.path");     
           }
      }
     
@@ -358,13 +407,13 @@ public class ModelBuilder implements GUIFileActionListener{
      // where Sphinx system source code files and compiled .class files 
      // should be located
     private void read_config_prop()throws ConfigurableUtilException{
-        try {
+        try {            
             InputStream in = this.getClass().getResourceAsStream(CONFIG_PATH);            
             //FileInputStream in = new FileInputStream(CONFIG_PATH);
-            Properties configuration  = new Properties(); 
-            configuration.load(in);   //load the properties from configuration file
-            in.close();    
-            _source_path = (String)configuration.get(SOURCE_PROP);   
+            Properties configuration  = new Properties();                             
+            configuration.load(in);   //load the properties from configuration file           
+            in.close();               
+            _source_path = (String)configuration.get(SOURCE_PROP);                
             _classes_path = (String)configuration.get(CLASSES_PROP);
             
         }catch(FileNotFoundException fe){
@@ -373,6 +422,9 @@ public class ModelBuilder implements GUIFileActionListener{
         }catch(IOException ie){
             throw new ConfigurableUtilException("Configuration " +
                     "File I/O Error",ConfigurableUtilException.UTIL_INIT);
+        }catch(java.lang.NullPointerException e){
+            throw new ConfigurableUtilException("Configuration " +
+                    "File Load Error",ConfigurableUtilException.UTIL_INIT);
         }
     }
     
@@ -411,13 +463,11 @@ public class ModelBuilder implements GUIFileActionListener{
                 // get the classes for this section and build the model
                 for(Iterator it2=myClasses.iterator();it2.hasNext();){
                     try{
-                        
-                        tempcc = createcomponent((Class)it2.next(), 
+                       tempcc = createcomponent((Class)it2.next(), 
                                  startPackage+'.'+tempName);                                
                         _classes.put(tempcc.getName(),tempcc);
                         thisgroup.add(tempcc);
-                         
-                    }catch(IllegalAccessException e){
+                    } catch(IllegalAccessException e){
                         throw new ConfigurableUtilException
                            ("IllegalAccessException while creating configurable component",
                            ConfigurableUtilException.UTIL_BUILDER);
@@ -450,54 +500,30 @@ public class ModelBuilder implements GUIFileActionListener{
      * @return <code>ConfigurableComponent</code> instance
      */
     private ConfigurableComponent createcomponent(Class c, String group)
-        throws IllegalAccessException
+        throws ConfigurableUtilException, IllegalAccessException
     {
         ConfigurableComponent cc = 
                 new ConfigurableComponent(new String(group),c,c.getName(),new String(""));
-        System.err.println("***** create ConfigurableComponent " + 
-            c.getName() + " for " + group );
-        ConfigurableProperty cp;
-      
-        Field[] publicFields = c.getFields();     
+        System.out.println("***** create ConfigurableComponent " + 
+            c.getName() + " for " + group );    
         
-        // will check all the public fields
+        Map classinfo = getMapConfigurationInfo(c); // get information set for class properties
+        
+        // check all the public fields
         // if any of them is with modifier 'public static final' and starts with 'PROP_'        
+        Field[] publicFields = c.getFields();             
         for (int i = 0; i < publicFields.length ; i++){
             int m = publicFields[i].getModifiers();
             String fieldname = publicFields[i].getName();
             //System.out.println("*** checking field "+fieldname);
             if (Modifier.isPublic(m) && Modifier.isStatic(m)&&  Modifier.isFinal(m)){      
-                if(fieldname.startsWith("PROP_") && !fieldname.trim().endsWith("_DEFAULT") ){ 
-                    //create the configurable property instance
-                    String field_comment = JavadocExtractor.getJavadocComment(c.getName(), 
-                                _classes_path, _source_path, fieldname);
-                    if (field_comment == null)
-                        field_comment = new String("");
-                    try {
-                        Field tempField=c.getField(fieldname.trim()+ "_DEFAULT");                        
-                        if (tempField.get(null) != null){                            
-                            cp = new ConfigurableProperty
-                                (new String((String)publicFields[i].get(null)),
-                                 tempField.get(null).toString().trim(), null, field_comment,fieldname);
-                            //System.out.println("*** with default " + tempField.get(null).toString());
-                        }
-                        else {
-                            cp = new ConfigurableProperty
-                                (new String((String)publicFields[i].get(null)), new String(""), 
-                                null, field_comment,fieldname) ; 
-                            //System.out.println("*** with default 'null'" );
-                        }
-                       
-                            
-                    }catch (NoSuchFieldException e){
-                        cp = new ConfigurableProperty
-                                (new String((String)publicFields[i].get(null)), new String(""), 
-                                 null, field_comment,fieldname) ;                        
-  //                      System.out.println("*** no default");
-                    }
-                    
+                if(fieldname.startsWith("PROP_") && !fieldname.trim().endsWith("_DEFAULT") ){                     
+                    //name of property
+                    String propname = new String((String)publicFields[i].get(null));
+                     //create the configurable property
                     //System.out.println("***** create ConfigurableProperty " + 
                     //       (String)publicFields[i].get(null));
+                    ConfigurableProperty cp = createProperty(c,fieldname,propname,classinfo);                    
                     cc.addProperty(cp);
                 }
             }                
@@ -505,6 +531,175 @@ public class ModelBuilder implements GUIFileActionListener{
         return cc;        
     }//end createcomponent method
 
-  
+    /**
+     * private method to retrieve complete info of a configurable property and 
+     * create a <code>ConfigurableProperty</code>
+     * 
+     * @param c Class that own this property
+     * @param fieldname Name of the attribute field
+     * @param propname Value of the attribute - which is the name of configurable property
+     * @param classinfo Map containing additional information about configurable properties
+     *          of this class
+     * @return ConfigurableProperty
+     */
+    private ConfigurableProperty createProperty(Class c,String fieldname,String propname,
+            Map classinfo) throws ConfigurableUtilException{
+           
+        ConfigurableProperty cp=null;
+        //javadoc comment of the property
+        String field_comment = JavadocExtractor.getJavadocComment(c.getName(), 
+                    _classes_path, _source_path, fieldname);
+        if (field_comment == null) // no comment
+            field_comment = new String("");
+
+        String default_value=null;
+        try{
+            // default value if it exists
+            default_value = getDefaultValue(c,fieldname);
+            //System.out.println("*** with default =" + default_value + "=" );
+        }catch(IllegalAccessException e){
+                        throw new ConfigurableUtilException
+                           ("IllegalAccessException while creating configurable property",
+                           ConfigurableUtilException.UTIL_BUILDER);
+        }
+        if (default_value == null) // no default value
+            default_value = new String("");
+
+        PropertyType proptype = getPropType(classinfo,fieldname);        
+        if ( proptype !=null && 
+                proptype == PropertyType.COMPONENT){ // it's a class component type                    
+            String classtype = getInfo(classinfo,fieldname,"_CLASSTYPE");
+            cp = new ConfigurableProperty
+                 (propname,default_value, proptype, field_comment,fieldname,classtype);
+             System.out.println("with type "+proptype+" and class type : " + classtype);
+        }else{ // it's a native java type                 
+            cp = new ConfigurableProperty
+                    (propname,default_value, proptype, field_comment,fieldname);            
+             System.out.println("with type "+proptype);
+        }
+        return cp;
+    }
+    
+    /**
+     * private method to get more information about this property
+     *
+     * @param myinfo Map that holds additional information of all properties in the class
+     * @param propname Property name that we're interested in
+     * @return PropertyType of this property
+     */
+    private PropertyType getPropType(Map myinfo, String fieldname){
+        PropertyType myType = null;
+        String proptype = getInfo(myinfo,fieldname,new String("_TYPE"));                
+        
+        if ( proptype == null ){
+            return null;
+        }
+        else if (proptype.equals("COMPONENT")){            
+            myType= PropertyType.COMPONENT;
+        }            
+        else if (proptype.equals("INTEGER")){
+           myType= PropertyType.INT;
+        }            
+        else if (proptype.equals("BOOLEAN")){
+            myType= PropertyType.BOOLEAN;
+        }
+        else if (proptype.equals("STRING_LIST")){
+           myType=PropertyType.STRING_LIST;
+        }
+        else if (proptype.equals("DOUBLE")){
+            myType=PropertyType.DOUBLE;
+        }
+        else if (proptype.equals("COMPONENT_LIST")){
+            myType= PropertyType.COMPONENT_LIST;                
+        }
+        else if (proptype.equals("STRING")){
+            myType=PropertyType.STRING;
+        }
+        else if (proptype.equals("RESOURCE")){
+            myType=PropertyType.RESOURCE;
+        }
+        else if (proptype.equals("FLOAT")){
+            myType= PropertyType.FLOAT;
+        }       
+        else
+            return null;
+        return myType;
+    }
+
+    /**
+     * private method to get more information about this property
+     *
+     * @param myinfo Map that holds additional information of all properties in the class
+     * @param propname Property name that we're interested in
+     * @param infotype The information type needed
+     * @return String information of this property
+     */
+    private String getInfo(Map myinfo, String fieldname,String infotype){
+        
+        if (myinfo == null || !myinfo.containsKey(fieldname+infotype))
+            return null; 
+        else{                              
+            return (String)myinfo.get(fieldname+infotype);
+        }
+    }
+    
+    /** 
+     * private method to check if this property has default value
+     * and to retrieve the default value
+     *
+     * @param c Class to be checked
+     * @param fieldname Name of the property
+     * @return <code>null</code> if there is no default value, otherwise
+     *          String of default value
+     */
+    private String getDefaultValue(Class c, String fieldname)throws IllegalAccessException{
+        String default_value;
+        try {
+            Field tempField=c.getField(fieldname.trim()+ "_DEFAULT");     
+            if (tempField.get(null) != null){// with default value   
+                default_value = tempField.get(null).toString().trim();
+            }else{// no default value
+                 return null;
+            }                            
+        }catch (NoSuchFieldException e){
+            return null;// no default value
+        }
+        return default_value;
+    }
+    
+    /**
+     * private method to get Map containing information about all the 
+     * property PROP_ in this Configurable class
+     *
+     * @param c Configurable class
+     * @return Map containing information about the configurable property 
+     */
+    private Map getMapConfigurationInfo(Class c){
+        try{
+            Method infomethod = c.getMethod("getConfigurationInfo",(Class[])null);
+            try {                
+                Map myinfo = (Map)infomethod.invoke(null, (Object[]) null);                              
+                return myinfo;
+            }catch ( IllegalAccessException e) {
+                System.err.println(e.getMessage());
+                return null;
+            }catch (IllegalArgumentException e) {
+                System.err.println(e.getMessage());
+                return null;
+            }catch (InvocationTargetException e) {
+                System.err.println(e.getMessage());
+                return null;
+            }
+        }catch(NoSuchMethodException e){
+            System.err.println("NoSuchMethodException:"+e.getMessage());
+            return null;
+        }catch(NullPointerException e){
+            System.err.println("NullPointerException"+e.getMessage());
+            return null;            
+        }catch(SecurityException e){
+            System.err.println("SecurityException"+e.getMessage());
+            return null;
+        }
+    } // end getMapConfigurationInfo
     
 }//end ModelBuilder class

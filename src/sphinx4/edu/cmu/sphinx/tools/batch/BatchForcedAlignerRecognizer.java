@@ -14,6 +14,8 @@ import edu.cmu.sphinx.decoder.search.Token;
 
 import java.io.*;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 import java.net.URL;
 
 /**

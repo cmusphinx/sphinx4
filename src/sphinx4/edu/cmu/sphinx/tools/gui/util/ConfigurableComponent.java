@@ -185,7 +185,22 @@ public class ConfigurableComponent {
         }
     }
     
+
+    
     /** 
+     * Remove a specific property from one of the configuration
+     * sets
+     *
+     * @param rpdname Name of <code>RawPropertyData</code> that stores the
+     *               property values
+     * @param propname Property name to be modified    
+     */
+    public void deleteOneConfigurationPropFromSet(String rpdname,String propname){
+        RawPropertyData rpd = (RawPropertyData)_confProp.get(rpdname);
+        rpd.remove(propname);
+    }
+    
+    /**   
      * Change the value of a specific property inside one of the configuration
      * sets
      *
@@ -239,7 +254,8 @@ public class ConfigurableComponent {
     
     /**
      * @return <code>Map</code> of <code>RawPropertyData</code> that has all the
-     *          configuration sets of this component
+     *          configuration sets of this component. Each entry consists of 
+     *          String setname, RawPropertyData setproperties
      */
     public Map getConfigurationPropMap(){
         return _confProp;

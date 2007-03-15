@@ -21,6 +21,9 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  * Implements a high-pass filter that compensates for attenuation in the audio
  * data. Speech signals have an attenuation (a decrease in intensity of a
@@ -64,6 +67,19 @@ public class Preemphasizer extends BaseDataProcessor {
     private double preemphasisFactor;
     private double prior;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        
+        info.put(new String("PROP_PREEMPHASIS_FACTOR_TYPE"),new String("DOUBLE"));    
+        return info;
+    }
+
+    
     /*
      * (non-Javadoc)
      * 

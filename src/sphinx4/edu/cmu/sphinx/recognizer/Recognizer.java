@@ -16,8 +16,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import edu.cmu.sphinx.decoder.Decoder;
+import edu.cmu.sphinx.instrumentation.Monitor; 
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.props.Configurable;
@@ -77,6 +80,19 @@ public class Recognizer implements Configurable {
     private List<StateListener> stateListeners = Collections.synchronizedList(new ArrayList<StateListener>());
     private List monitors;
     
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_MONITORS_TYPE"),new String("COMPONENT_LIST"));
+        info.put(new String("PROP_DECODER_CLASSTYPE"),new String("edu.cmu.sphinx.instrumentation.Monitor"));
+        info.put(new String("PROP_DECODER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_DECODER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.Decoder"));
+        return info;
+    }     
     
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
@@ -91,7 +107,7 @@ public class Recognizer implements Configurable {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         decoder = (Decoder) ps.getComponent(PROP_DECODER, Decoder.class);
-        monitors = ps.getComponentList(PROP_MONITORS, Configurable.class);
+        monitors = ps.getComponentList(PROP_MONITORS, Monitor.class);
     }
 
     /**

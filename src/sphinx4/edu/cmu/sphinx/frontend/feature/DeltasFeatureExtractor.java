@@ -13,6 +13,8 @@ package edu.cmu.sphinx.frontend.feature;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Vector;
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
@@ -78,6 +80,18 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
     private DataEndSignal dataEndSignal;
     private List<Data> outputQueue;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        
+        info.put(new String("PROP_FEATURE_WINDOW_TYPE"),new String("INTEGER"));
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

@@ -46,6 +46,16 @@ public class  UnitManager implements Configurable  {
     /*
      * (non-Javadoc)
      * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        
+        return new HashMap();
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
      *      edu.cmu.sphinx.util.props.Registry)
      */

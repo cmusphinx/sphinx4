@@ -17,6 +17,7 @@ package edu.cmu.sphinx.tools.gui;
 import edu.cmu.sphinx.tools.gui.util.ModelBuilder;
 import edu.cmu.sphinx.tools.gui.util.ConfigurableComponent;
 import edu.cmu.sphinx.tools.gui.util.ConfigurableProperty;
+import edu.cmu.sphinx.tools.gui.util.PropertyType;
 
 import java.util.Iterator;
 import java.util.Collection;
@@ -26,15 +27,25 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.awt.Component;
+import java.awt.Color;
 import java.awt.TextComponent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;    
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
-import javax.swing.DefaultListModel;
 import javax.swing.ListSelectionModel;
-import javax.swing.DefaultComboBoxModel;
+
 
 /**
  * This is a Panel that will handle the GUI of one particular section/group
@@ -58,6 +69,27 @@ public class PanelDecoder extends javax.swing.JPanel {
         
     }
     
+    /** there are two property modes for the 3 buttons :
+     * list mode(status=true) : add and remove button 
+     * single mode(status=false) : change button 
+     * This method change "setVisible" properties of the above buttons
+     */
+    private void setVisibleListPropButton(boolean status){
+        jButtonAdd.setVisible(status);
+        jButtonRemove.setVisible(status);
+        jButtonChange.setVisible(!status);
+    }
+    
+    /** there are two property modes for the input :
+     * component-type mode : use combo box for components
+     * other native-type mode : use text area
+     * This method change "setVisible" properties of them
+     */
+    private void setVisibleComponentInput(boolean status){
+        jComboComponent.setVisible(status);
+        jTextNewVal.setVisible(!status);
+    }
+    
     /** 
      * change the data set
      */
@@ -67,13 +99,20 @@ public class PanelDecoder extends javax.swing.JPanel {
     
     /* clear the Panel Detail components */
     private void setEnablePanelDetail(boolean status){        
-        jTextNewVal.setEnabled(status);
+
+        jListInner.setEnabled(status);
+        jTextNewVal.setEnabled(status);  
+        jComboComponent.setEnabled(status);
         jButtonChange.setEnabled(status);
+        jButtonAdd.setEnabled(status);
+        jButtonRemove.setEnabled(status);
+        jButtonRefresh.setEnabled(status);
+
     }
     
     /* additional initialization operation for the GUI components */
     private void initGUIComponents(){
-         
+        
         // initialize and set up both jList components 
         // one for the class list, the other one for property list
         jListOuter.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -81,19 +120,29 @@ public class PanelDecoder extends javax.swing.JPanel {
         jListOuter.setLayoutOrientation(JList.VERTICAL);
         jListInner.setLayoutOrientation(JList.VERTICAL);
         
-        DefaultListModel outerlistModel= new DefaultListModel();
-        for ( Iterator it = _pm.getGroupMap().keySet().iterator(); it.hasNext();){
+        DefaultListModel outerlistModel= new DefaultListModel();        
+        for ( Iterator it = _pm.getGroupMap().keySet().iterator(); it.hasNext();){            
             outerlistModel.addElement(it.next());
-        }        
+        }                
         jListOuter.setModel(outerlistModel);                  
-        jListInner.setModel(new DefaultListModel());
-      
+        jListInner.setModel(new DefaultListModel());         
+        // jListInner.setCellRenderer(new MyCellRenderer()); &&&&
+        jListPropVal.setModel(new DefaultListModel()); 
+        
         // set up combo box; then disable PanelDetail and right panel
         // top right panel will be enabled once there's something
-        // chosen in the outer list        
-        initComboBox();
+        // chosen in the outer list (classname list)    
+
+        initComboBox();  
         jComboName.setEnabled(false);
-        setEnablePanelDetail(false);                    
+        setEnablePanelDetail(false);          
+        jTextInnerList.setText( new String("Property List : ") );
+         
+        // this part will initialize the Panel Detail that displays info about one 
+        // particular property of a class       
+        setVisibleComponentInput(false);        
+        setVisibleListPropButton(true);        
+        
     }
     
     /**
@@ -101,11 +150,11 @@ public class PanelDecoder extends javax.swing.JPanel {
      */
     private void initComboBox(){
         if ( jComboName.getItemCount() == 0 ){
-            // set up the jcombobox items, set item at the info         
-            String[] comboinit = {"<Create new set>","Choose configuration set"};
+            // set up the jcombobox items, set item at the info                     
+            String[] comboinit = {"<Create new set>","Choose configuration set"};            
             jComboName.insertItemAt(comboinit[0],0);
-            jComboName.insertItemAt(comboinit[1],1);
-            jComboName.setSelectedIndex(COMBO_NEUTRAL);
+            jComboName.insertItemAt(comboinit[1],1);           
+            jComboName.setSelectedIndex(COMBO_NEUTRAL);             
         }
     }
     
@@ -114,10 +163,12 @@ public class PanelDecoder extends javax.swing.JPanel {
      */
     private void clearPanelDetail(){
         jTextPropName.setText("");
+        jTextPropType.setText("");
         jTextDefault.setText("");
         jTextDesc.setText("");
-        jTextPropVal.setText("");
-        jTextNewVal.setText("");
+        ((DefaultListModel)jListPropVal.getModel()).clear();    
+        jTextNewVal.setText(null);
+        jComboComponent.removeAllItems();   
     }
     
     /**
@@ -134,7 +185,7 @@ public class PanelDecoder extends javax.swing.JPanel {
      * but the jlist items and the combo box items are still maintained
      */
     private void resetInnerSplitPanel(){
-        jListInner.clearSelection(); // set to select nothing
+        jListInner.clearSelection(); // set to select nothing        
         clearPanelDetail();
         setEnablePanelDetail(false);
     }
@@ -165,7 +216,64 @@ public class PanelDecoder extends javax.swing.JPanel {
         setEnablePanelDetail(false);
     }
 
-    /**
+   
+    /*
+     * This function is used to check the name of the new set
+     * it should only contains alphanumeric '_' or '-'
+     */
+    private boolean checkSetName(String s){
+       
+        final char[] chars = s.toCharArray();
+        for (int x = 0; x < chars.length; x++) {      
+            final char c = chars[x];
+            if ((c >= 'a') && (c <= 'z')) continue; // lowercase
+            if ((c >= 'A') && (c <= 'Z')) continue; // uppercase
+            // numeric allowed for 2nd char onwards
+            if ((x >= 1) && (c >= '0') && (c <= '9')) continue; 
+            if ((x >= 1) && (c == '_')) continue; // underscore after 2nd char 
+            if ((x >= 1) && (c == '-')) continue; // dash for 2nd char onwards
+            return false;
+        }  
+        return true;
+        
+    }
+        
+    /* private method to check if there is a configuration set chosen */
+    private boolean isConfigSetChosen(){
+        return (jComboName.getSelectedIndex()>1);
+    }
+    
+    /* private method to get the text input from user */
+    private String getTextInput(){
+                
+        String newval = null;
+        if (jTextNewVal.isVisible()){
+            newval = jTextNewVal.getText();
+        } 
+        else{ // jComboComponent is used instead
+            newval = (String)jComboComponent.getSelectedItem();
+            newval = newval.substring(0,(newval.indexOf('-')-1));            
+        }
+        return newval;
+    }
+    
+    /* private method to clear the property value list */
+    private void clearPropValue(){
+        ((DefaultListModel)jListPropVal.getModel()).clear();
+    }
+    
+    /* private method to fill up the property value jlist with stored value from the model */
+    private void initPropValue(Iterator newvalue){
+        DefaultListModel model = (DefaultListModel)jListPropVal.getModel();
+        model.clear();
+        if ( newvalue != null){
+            for ( Iterator it = newvalue; it.hasNext();){
+                model.addElement(newvalue.next());
+            }
+        }
+    }
+    
+     /**
      * private helper function to display the error to user
      */
     private void displayError(String message) {
@@ -188,26 +296,6 @@ public class PanelDecoder extends javax.swing.JPanel {
             return false;
    }
 
-    /*
-     * This function is used to check the name of the new set
-     * it should only contains alphanumeric '_' or '-'
-     */
-    private boolean checkSetName(String s){
-       
-        final char[] chars = s.toCharArray();
-        for (int x = 0; x < chars.length; x++) {      
-            final char c = chars[x];
-            if ((c >= 'a') && (c <= 'z')) continue; // lowercase
-            if ((c >= 'A') && (c <= 'Z')) continue; // uppercase
-            // numeric allowed for 2nd char onwards
-            if ((x >= 1) && (c >= '0') && (c <= '9')) continue; 
-            if ((x >= 1) && (c == '_')) continue; // underscore after 2nd char 
-            if ((x >= 1) && (c == '-')) continue; // dash for 2nd char onwards
-            return false;
-        }  
-        return true;
-        
-    }
     
     /** 
      * This method is called from within the constructor to
@@ -224,7 +312,7 @@ public class PanelDecoder extends javax.swing.JPanel {
         jLeftPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jListOuter = new javax.swing.JList();
-        jButtonSouce = new javax.swing.JButton();
+        jButtonSource = new javax.swing.JButton();
         jRightPanel = new javax.swing.JPanel();
         jLabelEmpty4 = new javax.swing.JLabel();
         jLabelClass = new javax.swing.JLabel();
@@ -235,13 +323,20 @@ public class PanelDecoder extends javax.swing.JPanel {
         jButtonDel = new javax.swing.JButton();
         jLabelEmpty2 = new javax.swing.JLabel();
         jSeparator = new javax.swing.JSeparator();
+        jLabelName1 = new javax.swing.JLabel();
         jSplitPaneInner = new javax.swing.JSplitPane();
+        jInnerLeftPanel = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTextInnerList = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         jListInner = new javax.swing.JList();
+        jButtonRemoveProp = new javax.swing.JButton();
         jPanelDetail = new javax.swing.JPanel();
         jLabelEmpty6 = new javax.swing.JLabel();
         jLabelPropName = new javax.swing.JLabel();
         jTextPropName = new javax.swing.JTextField();
+        jLabelPropType = new javax.swing.JLabel();
+        jTextPropType = new javax.swing.JTextField();
         jLabelDefault = new javax.swing.JLabel();
         jTextDefault = new javax.swing.JTextField();
         jLabelEmpty5 = new javax.swing.JLabel();
@@ -249,13 +344,16 @@ public class PanelDecoder extends javax.swing.JPanel {
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextDesc = new javax.swing.JTextArea();
         jLabelPropVal = new javax.swing.JLabel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        jTextPropVal = new javax.swing.JTextArea();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        jListPropVal = new javax.swing.JList();
         jLabelNewVal = new javax.swing.JLabel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        jTextNewVal = new javax.swing.JTextArea();
+        jTextNewVal = new javax.swing.JTextField();
+        jComboComponent = new javax.swing.JComboBox();
         jLabelEmpty3 = new javax.swing.JLabel();
+        jButtonAdd = new javax.swing.JButton();
+        jButtonRemove = new javax.swing.JButton();
         jButtonChange = new javax.swing.JButton();
+        jButtonRefresh = new javax.swing.JButton();
 
         jDialogSource.setTitle("Source Code");
         jDialogSource.setAlwaysOnTop(true);
@@ -281,14 +379,14 @@ public class PanelDecoder extends javax.swing.JPanel {
 
         jLeftPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jButtonSouce.setText("Show Source Code");
-        jButtonSouce.addActionListener(new java.awt.event.ActionListener() {
+        jButtonSource.setText("Show Source Code");
+        jButtonSource.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonSouceActionPerformed(evt);
+                jButtonSourceActionPerformed(evt);
             }
         });
 
-        jLeftPanel.add(jButtonSouce, java.awt.BorderLayout.SOUTH);
+        jLeftPanel.add(jButtonSource, java.awt.BorderLayout.SOUTH);
 
         jSplitPaneOuter.setLeftComponent(jLeftPanel);
 
@@ -308,7 +406,7 @@ public class PanelDecoder extends javax.swing.JPanel {
         jRightPanel.add(jLabelEmpty1);
 
         jLabelName.setFont(new java.awt.Font("Tahoma", 1, 12));
-        jLabelName.setText("          Configuration list  :");
+        jLabelName.setText("          Configuration set  :");
         jRightPanel.add(jLabelName);
 
         jComboName.setOpaque(false);
@@ -337,9 +435,24 @@ public class PanelDecoder extends javax.swing.JPanel {
         jSeparator.setPreferredSize(new java.awt.Dimension(500, 20));
         jRightPanel.add(jSeparator);
 
+        jLabelName1.setFont(new java.awt.Font("Tahoma", 1, 10));
+        jLabelName1.setText("Please choose a configuration set before selecting any configurable property !");
+        jRightPanel.add(jLabelName1);
+
         jSplitPaneInner.setDividerLocation(150);
         jSplitPaneInner.setMaximumSize(new java.awt.Dimension(350, 600));
-        jSplitPaneInner.setPreferredSize(new java.awt.Dimension(450, 450));
+        jSplitPaneInner.setPreferredSize(new java.awt.Dimension(450, 430));
+        jInnerLeftPanel.setLayout(new java.awt.BorderLayout());
+
+        jTextInnerList.setColumns(10);
+        jTextInnerList.setEditable(false);
+        jTextInnerList.setFont(new java.awt.Font("Courier", 1, 13));
+        jTextInnerList.setLineWrap(true);
+        jTextInnerList.setRows(1);
+        jScrollPane4.setViewportView(jTextInnerList);
+
+        jInnerLeftPanel.add(jScrollPane4, java.awt.BorderLayout.NORTH);
+
         jListInner.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 jListInnerValueChanged(evt);
@@ -348,7 +461,19 @@ public class PanelDecoder extends javax.swing.JPanel {
 
         jScrollPane2.setViewportView(jListInner);
 
-        jSplitPaneInner.setLeftComponent(jScrollPane2);
+        jInnerLeftPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        jButtonRemoveProp.setText("Remove from Set");
+        jButtonRemoveProp.setToolTipText("Remove selected property from configuration set");
+        jButtonRemoveProp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonRemovePropActionPerformed(evt);
+            }
+        });
+
+        jInnerLeftPanel.add(jButtonRemoveProp, java.awt.BorderLayout.SOUTH);
+
+        jSplitPaneInner.setLeftComponent(jInnerLeftPanel);
 
         jPanelDetail.setMaximumSize(new java.awt.Dimension(200, 600));
         jLabelEmpty6.setPreferredSize(new java.awt.Dimension(400, 10));
@@ -360,6 +485,14 @@ public class PanelDecoder extends javax.swing.JPanel {
         jTextPropName.setEditable(false);
         jTextPropName.setPreferredSize(new java.awt.Dimension(150, 25));
         jPanelDetail.add(jTextPropName);
+
+        jLabelPropType.setText("Property Type");
+        jPanelDetail.add(jLabelPropType);
+
+        jTextPropType.setEditable(false);
+        jTextPropType.setFont(new java.awt.Font("Tahoma", 1, 11));
+        jTextPropType.setPreferredSize(new java.awt.Dimension(150, 25));
+        jPanelDetail.add(jTextPropType);
 
         jLabelDefault.setText("    Default value");
         jPanelDetail.add(jLabelDefault);
@@ -386,30 +519,49 @@ public class PanelDecoder extends javax.swing.JPanel {
         jLabelPropVal.setText("Current value");
         jPanelDetail.add(jLabelPropVal);
 
-        jTextPropVal.setColumns(30);
-        jTextPropVal.setEditable(false);
-        jTextPropVal.setFont(new java.awt.Font("Courier", 1, 13));
-        jTextPropVal.setLineWrap(true);
-        jTextPropVal.setRows(3);
-        jScrollPane4.setViewportView(jTextPropVal);
+        jListPropVal.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jListPropVal.setMinimumSize(new java.awt.Dimension(200, 0));
+        jListPropVal.setPreferredSize(new java.awt.Dimension(250, 0));
+        jListPropVal.setVisibleRowCount(3);
+        jScrollPane7.setViewportView(jListPropVal);
 
-        jPanelDetail.add(jScrollPane4);
+        jPanelDetail.add(jScrollPane7);
 
         jLabelNewVal.setText("New value");
         jPanelDetail.add(jLabelNewVal);
 
-        jTextNewVal.setColumns(22);
-        jTextNewVal.setLineWrap(true);
-        jTextNewVal.setRows(3);
-        jScrollPane5.setViewportView(jTextNewVal);
+        jTextNewVal.setPreferredSize(new java.awt.Dimension(250, 25));
+        jPanelDetail.add(jTextNewVal);
 
-        jPanelDetail.add(jScrollPane5);
+        jComboComponent.setFont(new java.awt.Font("Tahoma", 1, 10));
+        jComboComponent.setPreferredSize(new java.awt.Dimension(250, 22));
+        jPanelDetail.add(jComboComponent);
 
-        jLabelEmpty3.setPreferredSize(new java.awt.Dimension(150, 25));
+        jLabelEmpty3.setPreferredSize(new java.awt.Dimension(200, 10));
         jPanelDetail.add(jLabelEmpty3);
 
+        jButtonAdd.setText("Add");
+        jButtonAdd.setPreferredSize(new java.awt.Dimension(100, 25));
+        jButtonAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAddActionPerformed(evt);
+            }
+        });
+
+        jPanelDetail.add(jButtonAdd);
+
+        jButtonRemove.setText("Remove");
+        jButtonRemove.setPreferredSize(new java.awt.Dimension(100, 25));
+        jButtonRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonRemoveActionPerformed(evt);
+            }
+        });
+
+        jPanelDetail.add(jButtonRemove);
+
         jButtonChange.setMnemonic(java.awt.event.KeyEvent.VK_C);
-        jButtonChange.setText("Change");
+        jButtonChange.setText("Replace");
         jButtonChange.setPreferredSize(new java.awt.Dimension(150, 25));
         jButtonChange.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -418,6 +570,16 @@ public class PanelDecoder extends javax.swing.JPanel {
         });
 
         jPanelDetail.add(jButtonChange);
+
+        jButtonRefresh.setText("Refresh Property");
+        jButtonRefresh.setPreferredSize(new java.awt.Dimension(150, 23));
+        jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonRefreshActionPerformed(evt);
+            }
+        });
+
+        jPanelDetail.add(jButtonRefresh);
 
         jSplitPaneInner.setRightComponent(jPanelDetail);
 
@@ -429,12 +591,97 @@ public class PanelDecoder extends javax.swing.JPanel {
 
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButtonRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRemoveActionPerformed
+        String  classname = (String)jListOuter.getSelectedValue();
+        String prop = (String)jListInner.getSelectedValue();
+        String setname = (String)jComboName.getSelectedItem();
+        String delval = (String)jListPropVal.getSelectedValue();
+
+        if ( delval != null && (classname != null) &&
+                ( setname != null) && (prop != null) )
+        {
+            List newlist = Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray());
+            if( newlist.remove(delval) ){            
+                try {
+                    if(newlist.isEmpty()){ // list is now empty
+                        removePropFromSet(); // delete this property from the set
+                    }else{ // list is not empty
+                        if(_pm.allowChangePropertyValue(classname,setname,prop,newlist)){
+                            _pm.changePropertyValue(classname,setname,prop,newlist);
+                            ((DefaultListModel)jListPropVal.getModel()).removeElement(delval);
+                        }
+                    }
+                }catch(PanelMediatorException e){
+                    displayError("Internal Error : "+e.getMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_jButtonRemoveActionPerformed
+
+    private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
+        String newval = getTextInput();
+                
+        if( newval != null ){
+            newval = newval.trim();
+            String  classname = (String)jListOuter.getSelectedValue();
+            String prop = (String)jListInner.getSelectedValue();
+            String setname = (String)jComboName.getSelectedItem();
+            
+            List newlist = Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray());
+            newlist.add(newval);
+            
+            if ( !newval.equalsIgnoreCase("") && (classname != null) &&
+                    ( setname != null) && (prop != null) )
+            {
+                try {
+                    if(_pm.allowChangePropertyValue(classname,setname,prop,newlist)){
+                        _pm.changePropertyValue(classname, setname, prop, newlist);
+                        ((DefaultListModel)jListPropVal.getModel()).addElement(newval);
+                    }
+                }catch(PanelMediatorException e){
+                    displayError("Internal Error : "+e.getMessage());
+                }
+            }
+        }                
+    }//GEN-LAST:event_jButtonAddActionPerformed
+
+    private void jButtonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRefreshActionPerformed
+        updateDetails();    
+    }//GEN-LAST:event_jButtonRefreshActionPerformed
+
+    
+    private void jButtonRemovePropActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRemovePropActionPerformed
+        removePropFromSet();
+    }//GEN-LAST:event_jButtonRemovePropActionPerformed
+
+    /** private method that should remove this property from the configuration set */
+    private void removePropFromSet(){
+        if(jListOuter.getSelectedValue() != null && jListInner.getSelectedValue() != null){
+            String propname = (String)jListInner.getSelectedValue();
+            if ( isConfigSetChosen() && confirmAction("Confirm delete this item?")){
+                try{
+                    // there is valid propertyname and config set name
+                    _pm.deletePropertyFromConfigurationSet(
+                        (String)jListOuter.getSelectedValue(),
+                         propname,(String)jComboName.getSelectedItem());
+                    clearPanelDetail();
+                    jListInner.clearSelection();
+                }catch(PanelMediatorException e){
+                    displayError("Error :" + e.getMessage());
+                }
+            }
+            else{
+                displayError("You have to select a configuration set");
+            }
+        }
+    }
+    
     /**
      * private method that's invoked when the 'see source code' button is clicked 
      * It will request the code from PanelMediator
      * and display it in a messagebox
      */
-    private void jButtonSouceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSouceActionPerformed
+    private void jButtonSourceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSourceActionPerformed
         if(jListOuter.getSelectedValue() != null){
             String classname = (String)jListOuter.getSelectedValue();
             String code = _pm.getSource(classname);
@@ -443,11 +690,12 @@ public class PanelDecoder extends javax.swing.JPanel {
             jDialogSource.setLocationRelativeTo(null);
             jDialogSource.setVisible(true);
         }
-    }//GEN-LAST:event_jButtonSouceActionPerformed
+    }//GEN-LAST:event_jButtonSourceActionPerformed
 
     /* private method to handle 'Change' button action */
     private void jButtonChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonChangeActionPerformed
-        String newval = jTextNewVal.getText(); 
+        String newval = getTextInput();
+                    
         if( newval != null ){
             newval = newval.trim();
             String  classname = (String)jListOuter.getSelectedValue();
@@ -457,9 +705,12 @@ public class PanelDecoder extends javax.swing.JPanel {
             if ( !newval.equalsIgnoreCase("") && (classname != null) &&
                     ( setname != null) && (prop != null) ){
                 try {
-                    _pm.changePropertyValue(classname, setname, prop, newval);
+                    if ( _pm.allowChangePropertyValue(classname, setname, prop, newval) )
+                        _pm.changePropertyValue(classname, setname, prop, newval);
                     //succesfully change the model, now update the current value
-                    jTextPropVal.setText(_pm.getPropertyValue(classname,setname,prop));
+                    clearPropValue();                    
+                    ((DefaultListModel)jListPropVal.getModel()).addElement
+                            (_pm.getPropertyValue(classname,setname,prop).next());
                 }catch(PanelMediatorException pme){
                     displayError("Internal Error : "+pme.getMessage());
                 }
@@ -469,29 +720,59 @@ public class PanelDecoder extends javax.swing.JPanel {
 
     /* private method to handle a selection change of Inner list */
     private void jListInnerValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListInnerValueChanged
+        updateDetails();        
+    }//GEN-LAST:event_jListInnerValueChanged
+
+   /* private method that updates the panel detail information based on the 
+    * selection in the outer list(classname) and inner list(property name), 
+    * and configuration set selected in combo box
+    */
+    private void updateDetails(){
         //update the property info
         String prop = (String)jListInner.getSelectedValue();
         if (prop != null){
             String  classname = (String)jListOuter.getSelectedValue();
             ConfigurableProperty cp = _pm.getProperty(classname, prop);
             if(cp != null){
-                jTextPropName.setText(cp.getName());                
+                jTextPropName.setText(cp.getName());               
+                jTextPropType.setText((cp.getType()==null)?null:cp.getType().toString());
                 jTextDefault.setText(cp.getDefault());
                 jTextDesc.setText(cp.getDesc());
-                jTextPropVal.setText(_pm.getPropertyValue(classname,
+                if( isConfigSetChosen() )
+                    initPropValue(_pm.getPropertyValue(classname,
                         (String)jComboName.getSelectedItem(),prop));
-                jTextNewVal.setText("");
+                else
+                    clearPropValue();
+                
+                jTextNewVal.setText(null);
+                jComboComponent.removeAllItems();
+                
+                //check the type of input that is going to be needed
+                // component? list? other type? or not specified?                   
+                setVisibleListPropButton( _pm.isListProperty(classname,prop) );                  
+                if( _pm.isComponentProperty(classname,prop) ){ 
+                    // is a component property
+                    setVisibleComponentInput(true);                    
+                    // addComponent to jComboComponent
+                    List mylist = _pm.getComponentList(classname,prop);
+                    if(mylist != null && !mylist.isEmpty()){
+                        for(Iterator it=mylist.iterator();it.hasNext();){
+                            jComboComponent.addItem((String)it.next());
+                        }
+                    }                    
+                }else
+                    setVisibleComponentInput(false);
+                                
             }
         }
-    }//GEN-LAST:event_jListInnerValueChanged
-
+    }
+    
     /* private method to handle action performed by the Top Right GUI items */
     private void RightPanelTopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RightPanelTopActionPerformed
         Object source = evt.getSource();
         if ( source instanceof javax.swing.JButton ){ // delete button is clicked     
             // the first two items in combo box are not for delete
-            if ( jComboName.getSelectedIndex()>1 && 
-                    confirmAction("Confirm delete this item?")){
+            if ( isConfigSetChosen() && confirmAction("Confirm delete this item?")){
                 try {
                     // delete the set from the model
                     _pm.deleteConfigurationSet((String)jListOuter.getSelectedValue(),
@@ -503,10 +784,9 @@ public class PanelDecoder extends javax.swing.JPanel {
                 }
             }
        } else if (source instanceof javax.swing.JComboBox){  
-            // if the combo box changes  
-            resetInnerSplitPanel();
-            
-            if (jComboName.getSelectedIndex() > 1){                              
+            // if the combo box changes    
+            resetInnerSplitPanel();            
+            if (isConfigSetChosen()){                              
                 setEnablePanelDetail(true);
             }     
 
@@ -545,7 +825,6 @@ public class PanelDecoder extends javax.swing.JPanel {
                     }                    
                 }
             } 
-            
        }
     }//GEN-LAST:event_RightPanelTopActionPerformed
 
@@ -562,30 +841,39 @@ public class PanelDecoder extends javax.swing.JPanel {
         if ( classname != null){
             jComboName.setEnabled(true);
             jTextClass.setText(classname.substring(classname.lastIndexOf('.')+1));
+            // fill up combo with config set names
             Set config = _pm.getConfigurationSet((String)jListOuter.getSelectedValue());
             if ( config != null){
                 for ( Iterator it = config.iterator();it.hasNext();){
                     jComboName.addItem((String)it.next());
                 }
             }
+            // fill up jList with configurable property names
             Set prop = _pm.getPropertySet((String)jListOuter.getSelectedValue());
             if ( prop != null ){
                 DefaultListModel innerlistModel= (DefaultListModel)jListInner.getModel();
                 for ( Iterator it = prop.iterator();it.hasNext();){
-                    innerlistModel.addElement(it.next());
+                    String propItem = (String)it.next();                 
+                    // &&& ListItem li = new ListItem(false, propItem );
+                    innerlistModel.addElement(propItem);
                 }
             }
-        }
-        
+        }        
     }//GEN-LAST:event_jListOuterValueChanged
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAdd;
     private javax.swing.JButton jButtonChange;
     private javax.swing.JButton jButtonDel;
-    private javax.swing.JButton jButtonSouce;
+    private javax.swing.JButton jButtonRefresh;
+    private javax.swing.JButton jButtonRemove;
+    private javax.swing.JButton jButtonRemoveProp;
+    private javax.swing.JButton jButtonSource;
+    private javax.swing.JComboBox jComboComponent;
     private javax.swing.JComboBox jComboName;
     private javax.swing.JDialog jDialogSource;
+    private javax.swing.JPanel jInnerLeftPanel;
     private javax.swing.JLabel jLabelClass;
     private javax.swing.JLabel jLabelDefault;
     private javax.swing.JLabel jLabelDesc;
@@ -596,20 +884,23 @@ public class PanelDecoder extends javax.swing.JPanel {
     private javax.swing.JLabel jLabelEmpty5;
     private javax.swing.JLabel jLabelEmpty6;
     private javax.swing.JLabel jLabelName;
+    private javax.swing.JLabel jLabelName1;
     private javax.swing.JLabel jLabelNewVal;
     private javax.swing.JLabel jLabelPropName;
+    private javax.swing.JLabel jLabelPropType;
     private javax.swing.JLabel jLabelPropVal;
     private javax.swing.JPanel jLeftPanel;
     private javax.swing.JList jListInner;
     private javax.swing.JList jListOuter;
+    private javax.swing.JList jListPropVal;
     private javax.swing.JPanel jPanelDetail;
     private javax.swing.JPanel jRightPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JSeparator jSeparator;
     private javax.swing.JSplitPane jSplitPaneInner;
     private javax.swing.JSplitPane jSplitPaneOuter;
@@ -617,9 +908,10 @@ public class PanelDecoder extends javax.swing.JPanel {
     private javax.swing.JTextField jTextClass;
     private javax.swing.JTextField jTextDefault;
     private javax.swing.JTextArea jTextDesc;
-    private javax.swing.JTextArea jTextNewVal;
+    private javax.swing.JTextArea jTextInnerList;
+    private javax.swing.JTextField jTextNewVal;
     private javax.swing.JTextField jTextPropName;
-    private javax.swing.JTextArea jTextPropVal;
+    private javax.swing.JTextField jTextPropType;
     // End of variables declaration//GEN-END:variables
     
     /**
@@ -644,7 +936,7 @@ public class PanelDecoder extends javax.swing.JPanel {
             _sectionName = name;            
             _ccmap = new HashMap();               
             setGroupMap(grpset);
-      
+            
             _gmediator.registerPanel(this);
         }
                       
@@ -756,6 +1048,32 @@ public class PanelDecoder extends javax.swing.JPanel {
                         "The classname is invalid");
         }
         
+        /** 
+         * delete a property from the configuration set
+         * 
+         * @param classname Class name
+         * @param propname Property to be deleted
+         * @param setname Configuration set from which the property would be deleted
+         */
+        private void deletePropertyFromConfigurationSet
+            (String classname,String propname,String setname)
+            throws PanelMediatorException
+        {
+             if( _ccmap.containsKey(classname) ){
+                ConfigurableComponent cc = (ConfigurableComponent)_ccmap.get(classname);
+                if(cc.containsConfigurationSet(setname)){
+                    cc.deleteOneConfigurationPropFromSet(setname,propname);
+                }
+                else 
+                    throw new PanelMediatorException(
+                            PanelMediatorException.INVALID_SETNAME,
+                            "The configuration set name is invalid");
+            }
+            else
+                throw new PanelMediatorException(PanelMediatorException.INVALID_CLASSNAME,
+                        "The classname is invalid");
+        }
+        
         /**
          * create a new configuration set, with the complete set of properties
          * and set to default values
@@ -820,24 +1138,60 @@ public class PanelDecoder extends javax.swing.JPanel {
         }
         
         /** 
+         * check if this property requires a component with particular type
+         * @param classname
+         * @param property name
+         * @return Boolean true if it needs a component as value
+         */
+        private boolean isComponentProperty (String classname, String propname){
+            ConfigurableProperty cp = getProperty(classname,propname);
+            if(cp != null){
+                PropertyType type = cp.getType();
+                if (type != null && type.toString().startsWith("Component"))
+                    return true;
+            }
+            return false;
+        }
+                
+        /** 
+         * check if this property type is a list type
+         * @param classname
+         * @param property name
+         * @return Boolean true if it is a list
+         */
+        private boolean isListProperty (String classname, String propname){
+            ConfigurableProperty cp = getProperty(classname,propname);
+            if(cp != null){
+                PropertyType type = cp.getType();
+                if (type == null)
+                    return true; // assume it's a list if there is no type
+                if (type.toString().trim().endsWith("List"))
+                    return true;
+            }else{
+                return true;
+                // assume it's a list if there is no such property
+            }            
+            return false;
+        }
+        
+        /** 
          * @return property value from the specified classname, set, and property
          *         a <code>List</code> would be represented as a semi-colon separated 
          *          <code>String</code>
          */
-        private String getPropertyValue(String classname,String setName,String propname){
+        private Iterator getPropertyValue(String classname,String setName,String propname){            
             if( _ccmap.containsKey(classname) ){
                 ConfigurableComponent cc = 
                         (ConfigurableComponent)_ccmap.get(classname);
                 Object propval = cc.getConfigurationPropValue(setName,propname);
                 if (propval != null){
-                    if (propval instanceof String)
-                        return (String)propval;
+                    if (propval instanceof String){
+                        List retlist = new ArrayList();
+                        retlist.add(propval);
+                        return retlist.iterator();
+                    }
                     else { // instance of List
-                        String retval = new String();
-                        for( Iterator it = ((List)propval).iterator(); it.hasNext();) {
-                            retval = retval.concat((String)it.next()+";\n");
-                        }
-                        return retval;                       
+                        return ((List)propval).iterator();                       
                     }  
                 }
                 else
@@ -847,31 +1201,57 @@ public class PanelDecoder extends javax.swing.JPanel {
                 return null;
         }
         
+        
         /** change the value of the property from specified class, and set
          * 
          * @throws PanelMediatorException
          */
         private void changePropertyValue(String classname,String setName,
                 String propname, String propval) throws PanelMediatorException
-        {
-            System.out.println("enters change vlaue method ***** ");
+        {                 
+            ConfigurableComponent cc = 
+                        (ConfigurableComponent)_ccmap.get(classname);
+            cc.changeConfigurationPropValue(setName,propname,propval);           
+        }
             
+        /** change the value of the property from specified class, and set
+         * 
+         * @throws PanelMediatorException
+         */
+        private void changePropertyValue(String classname,String setName,
+                String propname, List propval) throws PanelMediatorException
+        {           
+            ConfigurableComponent cc = 
+                        (ConfigurableComponent)_ccmap.get(classname);
+            cc.changeConfigurationPropValue(setName,propname,propval);           
+        }
+        
+        
+        
+        /** check if this new property is valid
+         * 
+         * @param classname Name of class
+         * @param setName   Configuration set name
+         * @param propname  Property name
+         * @param propval   New property value
+         * @return true if new value is valid
+         */
+        private boolean allowChangePropertyValue(String classname,String setName,
+                String propname, Object propval) throws PanelMediatorException
+        {    
             if( _ccmap.containsKey(classname) ){
                 ConfigurableComponent cc = 
                         (ConfigurableComponent)_ccmap.get(classname);
                                 
-                if(cc.containsConfigurationSet(setName)  && cc.containsProperty(propname)){
-                    if(propval.contains(";")){ // it is a list
-                        List myList = new ArrayList();
-                        String[] temp = propval.split(";");
-                        for ( int i = 0; i<temp.length;i++){
-                            if(temp[i] != null && !temp[i].trim().equalsIgnoreCase(""))
-                                myList.add(temp[i].trim());
-                        }
-                        cc.changeConfigurationPropValue(setName,propname,myList);
+                if(cc.containsConfigurationSet(setName) && cc.containsProperty(propname)){           
+                    ConfigurableProperty cp = cc.getProperty(propname);
+                    if(isValidPropertyValue(classname,propname,propval)){
+                        return true;
                     }
-                    else{
-                        cc.changeConfigurationPropValue(setName,propname,propval);
+                    else{                        
+                        throw new PanelMediatorException(
+                                PanelMediatorException.INVALID_VALUE,
+                                "Invalid property value");
                     }
                 }
                 else if (!cc.containsConfigurationSet(setName)){
@@ -879,18 +1259,46 @@ public class PanelDecoder extends javax.swing.JPanel {
                          PanelMediatorException.INVALID_SETNAME,
                          "Invalid configuration set name");
                 }
-                else {
+                else { // does not contain this property in the component
                     throw new PanelMediatorException(
                         PanelMediatorException.INVALID_PROPNAME, "Invalid property name");
                 }
                     
                               
-            } else {
+            } else { // does not have this class in this section
                 throw new PanelMediatorException(
                         PanelMediatorException.INVALID_CLASSNAME, "Invalid class name");
-            }
-         
+            }                     
         } // changePropertyValue method
+        
+        /** 
+         * check if this value is valid for the specified property
+         * @param classname Name of Class
+         * @param propname Property Name
+         * @param propval Value to be checked
+         * @return true of it is valid
+         */
+        private boolean isValidPropertyValue(String classname,String propname,
+                Object propval)
+        {
+            if( _ccmap.containsKey(classname) ){
+                ConfigurableComponent cc = 
+                        (ConfigurableComponent)_ccmap.get(classname);
+                                
+                if( cc.containsProperty(propname)){           
+                    ConfigurableProperty cp = cc.getProperty(propname);
+                    if(cp.getType() != null){ // property is specified
+                        if(cp.getType().isValid(propval))                            
+                            return true;
+                        else
+                            return false;
+                    }else // there is no property specified, assume it's valid
+                        return true;
+                }                
+            }
+            return false;
+        }
+        
         
         /** 
          * this method is used to get java source code of a particular class
@@ -902,14 +1310,49 @@ public class PanelDecoder extends javax.swing.JPanel {
            return _gmediator.getModelBuilder().getSourceCode(classname);
         }
 
-
+        /** 
+         * this method is used to get a list of classes that meets the property
+         * type restriction
+         */
+        private List getComponentList(String classname,String prop){            
+            ConfigurableProperty cp = getProperty(classname,prop);
+            if(cp != null){
+                String classtype = cp.getClassType();           
+                if(classtype != null && !classtype.equalsIgnoreCase("")){
+                    // class type is an existing class
+                    // get list of clases that are / subclass of this type
+                    // return mymap that contains name of class 
+                    // and configuration stored for that class
+                    Map mymap = _gmediator.getModelBuilder().getclasslist(classtype); 
+                    if(mymap != null && !mymap.isEmpty()){
+                        List myreturn = new ArrayList();
+                        for(Iterator it = mymap.entrySet().iterator();it.hasNext();){
+                            Map.Entry me = (Map.Entry)it.next();
+                            String fullname = (String)me.getKey();//full class name
+                            String setname = (String)me.getValue();//config set
+                            int index = fullname.lastIndexOf('.');
+                            String localname = classname.substring(index+1);
+                            String packagename = classname.substring(0,index-1);
+                            // format the output to be "setname-classname"
+                            String myitem = new String
+                                    (setname+"-"+localname+"("+packagename+")");                            
+                            myreturn.add(myitem);
+                        }
+                        return myreturn;
+                    }
+                }
+            }
+            return null;
+        }
+        
     } // end inner class
 
     private class PanelMediatorException extends java.lang.Exception {
         private final static int INVALID_CLASSNAME = 1;
         private final static int DUPLICATE_SET_NAME = 2;
         private final static int INVALID_SETNAME = 3;
-        private final static int INVALID_PROPNAME = 3;
+        private final static int INVALID_PROPNAME = 4;
+        private final static int INVALID_VALUE = 5;
         
         private int _mode;
         
@@ -922,4 +1365,53 @@ public class PanelDecoder extends javax.swing.JPanel {
         }
     } // end inner exception class 
     
-}// end class
+}// end PanelDecoder class
+
+class ListItem {
+      private final static Color NO_VALUE = Color.WHITE;
+      private final static Color WITH_VALUE = Color.BLUE;
+      private String value;
+      private Color color;
+      
+      public ListItem(boolean isValueSet, String s) {
+          if(isValueSet)
+              color = WITH_VALUE;
+          else
+              color = NO_VALUE;
+          value = s;
+      }
+      public Color getColor() {
+          return color;
+      }
+      public String getValue() {
+          return value;
+      }
+  } // end ListItem class
+
+ class MyCellRenderer extends JLabel implements ListCellRenderer {
+
+    public MyCellRenderer () {
+        // Don't paint behind the component
+        setOpaque(true);
+    }
+
+    // Set the attributes of the class and return a reference
+    public Component getListCellRendererComponent(JList list,
+            Object value, // value to display
+            int index,    // cell index
+            boolean iss,  // is selected
+            boolean chf)  // cell has focus?
+    {
+      // Set the text and color background for rendering
+      setText(((ListItem)value).getValue());
+      setBackground(((ListItem)value).getColor());
+
+      // Set a border if the list item is selected 
+        if (iss) {
+            setBorder(BorderFactory.createLineBorder(Color.blue, 2));
+        } else {
+            setBorder(BorderFactory.createLineBorder(list.getBackground(), 2));
+        }
+        return this;
+    }
+ }//end MyCellRenderer

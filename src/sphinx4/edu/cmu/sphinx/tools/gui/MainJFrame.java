@@ -55,7 +55,7 @@ import java.util.Set;
         
         initComponents();  // initialize and create GUI components  
         addGlobalPanel();
-        addTextPanels(groups); 
+        addTextPanels(groups);         
         
     }
 
@@ -318,7 +318,7 @@ import java.util.Set;
     */
    public void addTextPanels(Iterator groups){
         int tempi=1;
-        for ( Iterator it = groups; it.hasNext();){
+        for ( Iterator it = groups; it.hasNext();){            
             Map.Entry propentry = (Map.Entry)it.next();
             String grpname = (String)propentry.getKey();
             Set grp = (Set)propentry.getValue();              

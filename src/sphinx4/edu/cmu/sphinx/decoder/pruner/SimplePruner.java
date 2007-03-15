@@ -18,6 +18,8 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Performs the default pruning behavior which is to invoke
@@ -26,6 +28,15 @@ import edu.cmu.sphinx.util.props.Registry;
 public class SimplePruner implements Pruner {
     private String name;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        return new HashMap();
+    }
+    
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
      */

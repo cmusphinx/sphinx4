@@ -71,6 +71,25 @@ public class SimpleNGramModel implements LanguageModel {
     /*
      * (non-Javadoc)
      * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_FORMAT_TYPE"),new String("STRING"));
+        info.put(new String("PROP_LOCATION_TYPE"),new String("RESOURCE"));
+        info.put(new String("PROP_UNIGRAM_WEIGHT_TYPE"),new String("FLOAT"));
+        info.put(new String("PROP_MAX_DEPTH_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
+        info.put(new String("PROP_DICTIONARY_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_DICTIONARY_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.dictionary.Dictionary"));
+       
+        return info;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
      *      edu.cmu.sphinx.util.props.Registry)
      */

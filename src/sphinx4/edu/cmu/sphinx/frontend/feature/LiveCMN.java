@@ -23,6 +23,8 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Subtracts the mean of all the input so far from the Data objects.
@@ -102,6 +104,20 @@ public class LiveCMN extends BaseDataProcessor {
     private int cmnShiftWindow;     // # of Cepstrum to recalculate mean
     private int cmnWindow;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+ 
+        info.put(new String("PROP_INITIAL_MEAN_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_CMN_WINDOW_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_CMN_SHIFT_WINDOW_TYPE"),new String("INTEGER"));
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

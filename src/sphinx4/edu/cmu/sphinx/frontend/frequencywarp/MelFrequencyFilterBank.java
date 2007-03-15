@@ -20,6 +20,9 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Filters an input power spectrum through a bank of number of mel-filters. The
  * output is an array of filtered values, typically called mel-spectrum, each
@@ -142,6 +145,20 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
     private double maxFreq;
     private MelFilter[] filter;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+       
+        info.put(new String("PROP_SKIP_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_COUNT_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_COUNT_TYPE"),new String("DOUBLE"));
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

@@ -13,6 +13,8 @@ package edu.cmu.sphinx.frontend.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.HashMap;
 
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
@@ -85,6 +87,23 @@ public class StreamDataSource extends BaseDataProcessor {
     private boolean utteranceEndSent = false;
     private boolean utteranceStarted = false;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+
+        info.put(new String("PROP_BIG_ENDIAN_DATA_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SIGNED_DATA_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SAMPLE_RATE_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_BYTES_PER_READ_TYPE"),new String("INTEGER"));
+       
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

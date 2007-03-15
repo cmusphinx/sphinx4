@@ -16,6 +16,8 @@ import java.io.*;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Random;
 
 import edu.cmu.sphinx.util.BatchFile;
@@ -229,6 +231,25 @@ public class ConcatFileDataSource extends StreamDataSource
     private int bitsPerSample;
     private String batchFile;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+    
+        info.put(new String("PROP_ADD_RANDOM_SILENCE_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_MAX_SILENCE_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_SKIP_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_START_FILE_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_TOTAL_FILES_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_SILENCE_FILE_TYPE"),new String("STRING"));
+        info.put(new String("PROP_TRANSCRIPT_FILE_TYPE"),new String("STRING"));
+        info.put(new String("PROP_BATCH_FILE_TYPE"),new String("STRING"));
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

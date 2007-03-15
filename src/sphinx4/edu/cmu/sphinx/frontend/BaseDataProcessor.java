@@ -18,7 +18,8 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.Registry;
 
-
+import java.util.Map;
+import java.util.HashMap;
 /**
  * An abstract DataProcessor implementing elements common to all
  * concrete DataProcessors, such as name, predecessor, and timer.
@@ -27,6 +28,17 @@ public  abstract class BaseDataProcessor implements DataProcessor {
     private String name;
     private DataProcessor predecessor;
     private Timer timer;
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();        
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

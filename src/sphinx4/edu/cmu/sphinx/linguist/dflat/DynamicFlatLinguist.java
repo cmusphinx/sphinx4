@@ -184,6 +184,35 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     /*
      * (non-Javadoc)
      * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_WORD_INSERTION_PROBABILITY_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_SILENCE_INSERTION_PROBABILITY_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_UNIT_INSERTION_PROBABILITY_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_FILLER_INSERTION_PROBABILITY_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_OUT_OF_GRAMMAR_PROBABILITY_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_PHONE_INSERTION_PROBABILITY_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_LANGUAGE_WEIGHT_TYPE"),new String("FLOAT"));
+        info.put(new String("PROP_ADD_OUT_OF_GRAMMAR_BRANCH_TYPE"),new String("BOOLEAN"));
+        
+        info.put(new String("PROP_GRAMMAR_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_GRAMMAR_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.language.grammar.Grammar"));
+        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
+        info.put(new String("PROP_UNIT_MANAGER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_UNIT_MANAGER_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.acoustic.UnitManager"));        
+        info.put(new String("PROP_PHONE_LOOP_ACOUSTIC_MODEL_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_PHONE_LOOP_ACOUSTIC_MODEL_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.acoustic.AcousticModel"));        
+        info.put(new String("PROP_ACOUSTIC_MODEL_TYPE"),new String("COMPONENT"));
+        info.put(new String("PROP_ACOUSTIC_MODEL_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.acoustic.AcousticModel"));
+        return info;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
      *      edu.cmu.sphinx.util.props.Registry)
      */

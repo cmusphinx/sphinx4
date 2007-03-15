@@ -13,9 +13,11 @@
 package edu.cmu.sphinx.decoder.scorer;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Logger;
+import java.util.Map;
 
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -152,7 +154,25 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     public void deallocate() {
 
     }
+        
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_FRONTEND_TYPE"),new String("COMPONENT"));
+        info.put(new String("PROP_FRONTEND_CLASSTYPE"),new String("edu.cmu.sphinx.frontend.BaseDataProcessor"));
+        info.put(new String("PROP_IS_CPU_RELATIVE_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SCOREABLES_KEEP_FEATURE_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_NUM_THREADS_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_MIN_SCOREABLES_PER_THREAD_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_ACOUSTIC_GAIN_TYPE"),new String("FLOAT"));
 
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      *

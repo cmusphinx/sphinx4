@@ -13,6 +13,8 @@ package edu.cmu.sphinx.util;
 
 import edu.cmu.sphinx.util.props.*;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 /**
@@ -68,7 +70,18 @@ public final class LogMath implements Configurable {
         init();
     }
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_LOG_BASE_TYPE"),new String("FLOAT"));
+        info.put(new String("PROP_USE_ADD_TABLE_TYPE"),new String("BOOLEAN"));       
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

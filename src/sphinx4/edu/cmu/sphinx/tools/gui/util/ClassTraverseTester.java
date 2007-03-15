@@ -56,6 +56,8 @@ public class ClassTraverseTester {
             //          "edu.cmu.sphinx.model.acoustic");
             mb.refresh(); // load the model
             mb.printModel(); // print the model out
+            
+            
         
         }catch(Exception e){
             System.out.println(e.getMessage());

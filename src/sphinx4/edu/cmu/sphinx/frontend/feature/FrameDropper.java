@@ -24,6 +24,8 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Drops certain feature frames, usually to speed up decoding.
@@ -66,6 +68,19 @@ public class FrameDropper extends BaseDataProcessor {
     private int dropEveryNthFrame;
     private int id;   // first frame has ID "0", second "1", etc.
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+       
+        info.put(new String("PROP_DROP_EVERY_NTH_FRAME_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_REPLACE_NTH_WITH_PREVIOUS_TYPE"),new String("BOOLEAN"));
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

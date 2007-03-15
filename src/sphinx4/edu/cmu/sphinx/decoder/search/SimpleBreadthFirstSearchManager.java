@@ -148,7 +148,31 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private float wordThreshold;
     private int growSkipInterval = 0;
     private ActiveListFactory activeListFactory;
-
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_GROW_SKIP_INTERVAL_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_RELATIVE_WORD_BEAM_WIDTH_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
+        info.put(new String("PROP_SHOW_TOKEN_COUNT_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_WANT_ENTRY_PRUNING_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_LINGUIST_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LINGUIST_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.Linguist"));
+        info.put(new String("PROP_PRUNER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_PRUNER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.pruner.Pruner"));
+        info.put(new String("PROP_SCORER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_SCORER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.scorer.AcousticScorer"));
+        info.put(new String("PROP_ACTIVE_LIST_FACTORY_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_ACTIVE_LIST_FACTORY_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.search.ActiveListFactory"));
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

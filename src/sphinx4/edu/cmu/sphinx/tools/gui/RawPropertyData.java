@@ -1,6 +1,8 @@
 /*
- * 
- * Portions Copyright 2007 Mitsubishi Electric Research Laboratories.
+ *  
+ * Copyright 1999-2004 Carnegie Mellon University.  
+ * Portions Copyright 2004 Sun Microsystems, Inc.  
+ * Portions Copyright 2004-2007 Mitsubishi Electric Research Laboratories.
  * Portions Copyright 2007 Harvard Extension Schoool, Harvard University
  * All Rights Reserved.  Use is subject to license terms.
  * 
@@ -68,9 +70,20 @@ public class RawPropertyData {
      *            the new value of the property
      */
     public void change(String propName, String propValue) {
-        properties.remove(propValue);
+        properties.remove(propName);
         properties.put(propName, propValue);
     }
+    
+    /**
+     * Remove property 
+     * 
+     * @param propName
+     *            the name of the property
+     */
+    public void remove(String propName) {
+        properties.remove(propName);       
+    }
+    
     /**
      * Change property value
      * 
@@ -80,7 +93,7 @@ public class RawPropertyData {
      *            the new value of the property
      */
     public void change(String propName, List propValue) {
-        properties.remove(propValue);
+        properties.remove(propName);
         properties.put(propName, propValue);
     }
     /**
@@ -134,7 +147,7 @@ public class RawPropertyData {
      * @return true if the map already contains this property
      */
      
-  public  boolean contains(String propName) {
+  public boolean contains(String propName) {
         return properties.get(propName) != null;
     }
 }

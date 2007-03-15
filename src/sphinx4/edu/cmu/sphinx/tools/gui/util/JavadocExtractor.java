@@ -34,8 +34,9 @@ public class JavadocExtractor {
         
         if ( _last_class == null || ! _last_class.equals(classname)){
             try {                
-                if( ! source_path.trim().endsWith("/"))
+                if( ! source_path.trim().endsWith("/")){ // add '/' at the end of path
                     source_path = source_path.concat("/");
+                }
                 String source_file = classname.replaceAll("\\.","/")+".java";   // replace '.' with '/'
 //                StringTokenizer stoken = new StringTokenizer(class_path.trim(),";");
 //                String new_class_path = new String();
@@ -80,6 +81,10 @@ public class JavadocExtractor {
             String source_path, String prop_name)
     {
         String allcomment;
+        
+        if(source_path == null || source_path.trim().equals("")){// no path to source code
+            return null;
+        }
         
         if ( _last_class == null || ! _last_class.trim().equals(classname.trim())){
             allcomment = extractJavadocComment(classname,class_path,source_path);

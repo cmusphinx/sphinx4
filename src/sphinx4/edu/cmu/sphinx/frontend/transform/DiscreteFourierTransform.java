@@ -22,6 +22,8 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 
@@ -97,6 +99,17 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
 
     private Logger logger;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+ 
+        info.put(new String("PROP_NUMBER_FFT_POINTS_TYPE"),new String("INTEGER"));
+        return info;
+    }
     
     /*
      * (non-Javadoc)

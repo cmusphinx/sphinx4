@@ -22,6 +22,9 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  * Tracks and reports recognition accuracy using the "confidenceScorer"
  * component specified in the ConfigurationManager.  The "confidenceScorer"
@@ -40,6 +43,19 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
      * The confidence scorer
      */
     protected ConfidenceScorer confidenceScorer;    
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+     
+        info.put(new String("PROP_CONFIDENCE_SCORER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_CONFIDENCE_SCORER_CLASSTYPE"),new String("edu.cmu.sphinx.result.ConfidenceScorer"));            
+        return info;
+    }
     
     /*
      * (non-Javadoc)

@@ -19,6 +19,9 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  * Tracks and reports recognition accuracy based upon the highest
  * scoring path in a Result.
@@ -38,6 +41,18 @@ public class BestPathAccuracyTracker extends AccuracyTracker {
 
     private boolean showFullPath;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+    
+        info.put(new String("PROP_SHOW_FULL_PATH_TYPE"),new String("BOOLEAN"));        
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

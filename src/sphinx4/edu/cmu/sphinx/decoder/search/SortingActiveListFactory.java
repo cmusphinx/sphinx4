@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -39,6 +42,21 @@ public class SortingActiveListFactory implements ActiveListFactory {
     private float logRelativeBeamWidth;
     private LogMath logMath;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_ABSOLUTE_BEAM_WIDTH_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_RELATIVE_BEAM_WIDTH_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
+        return info;
+    }
+    
+    
     /*
      * (non-Javadoc)
      * 

@@ -140,7 +140,21 @@ public class Model implements AcousticModel, Configurable {
     transient private Map<String, SenoneSequence> compositeSenoneSequenceCache = new HashMap<String, SenoneSequence>();
     private boolean allocated = false;
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_USE_COMPOSITES_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_LOADER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LOADER_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader"));
+        info.put(new String("PROP_UNIT_MANAGER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_UNIT_MANAGER_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.acoustic.UnitManager"));
+        return info;
+    }
+    
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
      */

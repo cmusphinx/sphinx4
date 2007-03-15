@@ -23,7 +23,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Slices up a Data object into a number of overlapping windows (usually refered to as "frames" in the speech world). In
@@ -85,6 +86,20 @@ public class RaisedCosineWindower extends BaseDataProcessor {
     private float windowSizeInMs;
     private float windowShiftInMs;
     private int sampleRate = 0;
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+       
+        info.put(new String("PROP_ALPHA_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_WINDOW_SIZE_MS_TYPE"),new String("FLOAT"));
+        info.put(new String("PROP_WINDOW_SHIFT_MS_TYPE"),new String("FLOAT"));
+        return info;
+    }
 
 
     /*

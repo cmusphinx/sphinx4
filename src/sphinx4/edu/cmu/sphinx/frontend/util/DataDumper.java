@@ -12,6 +12,8 @@
 package edu.cmu.sphinx.frontend.util;
 
 import java.text.DecimalFormat;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.logging.Logger;
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
@@ -24,6 +26,8 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
+
+
 
 /**
  * Dumps the data
@@ -63,6 +67,20 @@ public class DataDumper extends BaseDataProcessor {
     private DecimalFormat formatter;
     private  Logger logger;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+    
+        info.put(new String("PROP_ENABLE_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_OUTPUT_SIGNALS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_OUTPUT_FORMATS_TYPE"),new String("STRING"));
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

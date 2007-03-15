@@ -14,11 +14,13 @@
 package edu.cmu.sphinx.result;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Vector;
 
 import edu.cmu.sphinx.linguist.dictionary.Word;
@@ -155,6 +157,19 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
     protected float languageWeight;
     
     protected Lattice lattice;
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        
+        info.put(new String("PROP_LANGUAGE_WEIGHT_TYPE"),new String("FLOAT"));
+       
+        return info;
+    }
     
     /**
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,

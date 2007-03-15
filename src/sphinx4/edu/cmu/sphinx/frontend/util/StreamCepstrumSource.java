@@ -17,6 +17,8 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.HashMap;
 
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
@@ -93,6 +95,22 @@ public class StreamCepstrumSource extends BaseDataProcessor {
     private long firstSampleNumber;
     private boolean bigEndian = true;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+
+        info.put(new String("PROP_BINARY_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SAMPLE_RATE_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_CEPSTRUM_LENGTH_TYPE"),new String("INTEGER"));        
+        info.put(new String("PROP_FRAME_SHIFT_MS_TYPE"),new String("FLOAT"));
+        info.put(new String("PROP_FRAME_SIZE_MS_TYPE"),new String("FLOAT"));
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

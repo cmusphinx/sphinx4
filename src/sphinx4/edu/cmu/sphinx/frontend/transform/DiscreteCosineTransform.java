@@ -20,6 +20,8 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Applies a logarithm and then a Discrete Cosine Transform (DCT) to the input
@@ -61,6 +63,19 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
     private int numberMelFilters; // number of mel-filters
     private double[][] melcosine;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+ 
+        info.put(new String("PROP_NUMBER_FILTERS_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_CEPSTRUM_LENGTH_TYPE"),new String("INTEGER"));        
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

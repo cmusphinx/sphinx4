@@ -20,6 +20,37 @@ import java.net.MalformedURLException;
  * an enum-style type that defines the possible property types.
  */
 public abstract class PropertyType {
+    
+    /**
+     * convert from String to a PropertyType
+     * @param type
+     * @return PropertyType of the string
+     */
+    public static PropertyType toPropertyType(String type){
+        if ( type != null){
+            type = type.trim();
+            if(type.equalsIgnoreCase("int"))
+                return PropertyType.INT;
+            else if (type.equalsIgnoreCase("boolean"))
+                return PropertyType.BOOLEAN;
+            else if (type.equalsIgnoreCase("float"))
+                return PropertyType.FLOAT;
+            else if (type.equalsIgnoreCase("double"))
+                return PropertyType.DOUBLE;
+            else if (type.equalsIgnoreCase("Component"))
+                return PropertyType.COMPONENT;
+            else if (type.equalsIgnoreCase("ComponentList"))
+                return PropertyType.COMPONENT_LIST;
+            else if (type.equalsIgnoreCase("String"))
+                return PropertyType.STRING;
+            else if (type.equalsIgnoreCase("Resource"))
+                return PropertyType.RESOURCE;
+            else if (type.equalsIgnoreCase("StringList"))
+                return PropertyType.STRING_LIST;            
+        }
+        return null;
+    }
+    
     /**
      * An integer type
      */
@@ -31,7 +62,7 @@ public abstract class PropertyType {
          *            the object to check
          * @return true if the object is a valid integer
          */
-        boolean isValid(Object obj) {
+        public boolean isValid(Object obj) {
             if (obj instanceof String) {
                 String value = (String) obj;
                 try {
@@ -56,7 +87,7 @@ public abstract class PropertyType {
          *            the object to check
          * @return true if the object is a valid integer
          */
-        boolean isValid(Object obj) {
+        public boolean isValid(Object obj) {
             if (obj instanceof String) {
                 String value = (String) obj;
                 return value.equalsIgnoreCase("true") ||
@@ -76,7 +107,7 @@ public abstract class PropertyType {
          *            the object to check
          * @return true if the object is a valid float
          */
-        boolean isValid(Object obj) {
+        public boolean isValid(Object obj) {
             if (obj instanceof String) {
                 String value = (String) obj;
                 try {
@@ -101,7 +132,7 @@ public abstract class PropertyType {
          *            the object to check
          * @return true if the object is a valid double
          */
-        boolean isValid(Object obj) {
+        public boolean isValid(Object obj) {
             if (obj instanceof String) {
                 String value = (String) obj;
                 try {
@@ -127,7 +158,7 @@ public abstract class PropertyType {
          *            the object to check
          * @return true if the object is a valid component.
          */
-        boolean isValid(Object obj) {
+        public boolean isValid(Object obj) {
             return obj instanceof String;
         }
     };
@@ -143,7 +174,7 @@ public abstract class PropertyType {
          *            the object to check
          * @return true if the object is a valid string array
          */
-        boolean isValid(Object obj) {
+        public boolean isValid(Object obj) {
             return obj instanceof List;
         }
     };
@@ -158,7 +189,7 @@ public abstract class PropertyType {
          *            the object to check
          * @return true if the object is a valid string
          */
-        boolean isValid(Object obj) {
+        public boolean isValid(Object obj) {
             return obj instanceof String;
         }
     };
@@ -180,7 +211,7 @@ public abstract class PropertyType {
          *            the object to check
          * @return true if the object is a valid string
          */
-        boolean isValid(Object obj) {
+        public boolean isValid(Object obj) {
             if (obj instanceof String) {
                 String loc = (String) obj;
 
@@ -219,7 +250,7 @@ public abstract class PropertyType {
          *            the object to check
          * @return true if the object is a valid string array
          */
-        boolean isValid(Object obj) {
+        public boolean isValid(Object obj) {
             return obj instanceof List;
         }
     };
@@ -245,5 +276,5 @@ public abstract class PropertyType {
      *            the object to verify
      * @return true if the object can be converted to an object of this type.
      */
-    abstract boolean isValid(Object obj);
+    public abstract boolean isValid(Object obj);
 }

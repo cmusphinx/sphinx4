@@ -22,7 +22,8 @@ import edu.cmu.sphinx.util.props.Registry;
 import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedList;
-
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Computes confidences for the highest scoring path in a Result.
@@ -72,7 +73,19 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
     private boolean dumpLattice;
     private boolean dumpSausage;
 
-    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_LANGUAGE_WEIGHT_TYPE"),new String("FLOAT"));
+        info.put(new String("PROP_DUMP_LATTICE_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_DUMP_SAUSAGE_TYPE"),new String("BOOLEAN"));
+
+        return info;
+    }
     /*
      * (non-Javadoc)
      *

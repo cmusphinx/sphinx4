@@ -15,6 +15,8 @@ package edu.cmu.sphinx.decoder.search;
 import java.util.List;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -61,7 +63,20 @@ public class SimpleActiveListManager implements ActiveListManager {
     private int absoluteWordBeam;
     private double relativeWordBeam;
     private ActiveList[] currentActiveLists;
-
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_CHECK_PRIOR_LISTS_EMPTY_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_ACTIVE_LIST_FACTORIES_TYPE"),new String("COMPONENT_LIST")); 
+        info.put(new String("PROP_ACTIVE_LIST_FACTORIES_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.search.ActiveListFactory"));
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

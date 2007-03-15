@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Word;
@@ -41,6 +43,19 @@ public class LMGrammar extends Grammar {
     // ------------------------
     private LanguageModel languageModel;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+      
+        info.put(new String("PROP_LANGUAGE_MODEL_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LANGUAGE_MODEL_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.language.ngram.LanguageModel"));       
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

@@ -20,8 +20,10 @@ import edu.cmu.sphinx.util.props.Registry;
 import edu.cmu.sphinx.decoder.search.Token;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -59,7 +61,19 @@ public class SimpleAcousticScorer implements AcousticScorer {
     private FrontEnd frontEnd;
     private boolean normalizeScores;
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_FRONTEND_TYPE"),new String("COMPONENT"));
+        info.put(new String("PROP_FRONTEND_CLASSTYPE"),new String("edu.cmu.sphinx.frontend.FrontEnd"));
+        info.put(new String("PROP_NORMALIZE_SCORES_TYPE"),new String("BOOLEAN"));
+        return info;
+    }
+    
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
      */

@@ -18,6 +18,9 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  * A standard interface for a linguist processor
  *
@@ -37,6 +40,19 @@ public class LinguistProcessor implements Configurable, Runnable {
     private String name;
     private Linguist linguist;
     
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+
+        info.put(new String("PROP_LINGUIST_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LINGUIST_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.Linguist"));
+  
+        return info;
+    }
     
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)

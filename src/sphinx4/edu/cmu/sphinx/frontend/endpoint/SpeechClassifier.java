@@ -15,6 +15,8 @@ package edu.cmu.sphinx.frontend.endpoint;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
@@ -123,6 +125,23 @@ public class SpeechClassifier extends BaseDataProcessor {
     private float frameLengthSec;
     List<Data> outputQueue = new LinkedList<Data>();
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+    
+        info.put(new String("PROP_FRAME_LENGTH_MS_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_ADJUSTMENT_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_THRESHOLD_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_MIN_SIGNAL_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_DEBUG_TYPE"),new String("BOOLEAN"));
+        return info;
+    }
+
+    
     /*
      * (non-Javadoc)
      *

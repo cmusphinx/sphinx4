@@ -25,6 +25,9 @@ import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 import edu.cmu.sphinx.util.props.Resetable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Tracks and reports recognition accuracy
  */
@@ -33,7 +36,8 @@ abstract public class AccuracyTracker
             Configurable,
             ResultListener,
             Resetable,
-            StateListener {
+            StateListener,
+            Monitor{
     /**
      * A Sphinx property that defines which recognizer to monitor
      */
@@ -100,6 +104,23 @@ abstract public class AccuracyTracker
     
     private NISTAlign aligner = new NISTAlign(false, false);
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_SHOW_SUMMARY_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_DETAILS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_RESULTS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_ALIGNED_RESULTS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_RAW_RESULTS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_RECOGNIZER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"),new String("edu.cmu.sphinx.recognizer.Recognizer"));
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

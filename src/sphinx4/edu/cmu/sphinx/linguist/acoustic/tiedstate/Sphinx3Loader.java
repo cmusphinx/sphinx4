@@ -22,6 +22,7 @@ import java.net.URL;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -304,6 +305,30 @@ public class Sphinx3Loader implements Loader {
     private float varianceFloor;
     private boolean useCDUnits;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+
+        info.put(new String("PROP_IS_BINARY_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SPARSE_FORM_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_USE_CD_UNITS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_VECTOR_LENGTH_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_MODEL_TYPE"),new String("STRING"));
+        info.put(new String("PROP_DATA_LOCATION_TYPE"),new String("STRING"));
+        info.put(new String("PROP_PROPERTIES_FILE_TYPE"),new String("STRING"));
+        info.put(new String("PROP_MC_FLOOR_TYPE"),new String("FLOAT"));
+        info.put(new String("PROP_MW_FLOOR_TYPE"),new String("FLOAT"));
+        info.put(new String("PROP_VARIANCE_FLOOR_TYPE"),new String("FLOAT"));
+        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader"));
+        info.put(new String("PROP_UNIT_MANAGER_TYPE"),new String("COMPONENT"));
+        info.put(new String("PROP_UNIT_MANAGER_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.acoustic.UnitManager"));
+        return info;
+    }
 
     /*
      * (non-Javadoc)

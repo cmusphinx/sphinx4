@@ -124,4 +124,22 @@ public interface Configurable {
      */
     public String getName();
     
+    /**
+     * Static method to find out what Configurable classes are needed
+     * The information is formed by HashTable that consists of the name of property
+     * and the type / class restriction for this particular property 
+     * <p>
+     * So, the entries would be 
+     * <ul>
+     * <li>PROPERTY_NAME_TYPE => INTEGER/COMPONENT/FLOAT/DOUBLE/STRING/
+     * STRING_LIST/COMPONENT/COMPONENT_LIST/BOOLEAN
+     * <li>PROPERTY_NAME_CLASSTYPE => .class type that is needed for COMPONENT/COMPONENT_LIST type    
+     * <li>PROPERTY_NAME_MAX => maximum allowed value for this property
+     * <li>PROPERTY_NAME_MIN => minimum allowed value for this property
+     * <li>DESCRIPTION => description of this Configurable class (if needed)
+     * </ul>
+     * @return Map with all the info
+     * The method should be : public static Map getConfigurationInfo()
+     */
+   
 }

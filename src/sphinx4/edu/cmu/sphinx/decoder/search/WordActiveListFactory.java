@@ -78,6 +78,22 @@ public class WordActiveListFactory implements ActiveListFactory {
 
     /*
      * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_ABSOLUTE_BEAM_WIDTH_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_RELATIVE_BEAM_WIDTH_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
+        info.put(new String("PROP_MAX_PATHS_PER_WORD_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_MAX_FILLER_WORDS_TYPE"),new String("INTEGER"));
+        return info;
+    }
+    
+    /*
+     * (non-Javadoc)
      *
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
      *      edu.cmu.sphinx.util.props.Registry)

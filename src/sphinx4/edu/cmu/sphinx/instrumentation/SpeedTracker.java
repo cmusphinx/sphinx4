@@ -13,6 +13,8 @@
 package edu.cmu.sphinx.instrumentation;
 
 import java.text.DecimalFormat;
+import java.util.Map;
+import java.util.HashMap;
 
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataStartSignal;
@@ -41,7 +43,8 @@ public class SpeedTracker
             ResultListener,
             Resetable,
             StateListener,
-            SignalListener {
+            SignalListener,
+            Monitor{
     /**
      * A Sphinx property that defines which recognizer to monitor
      */
@@ -113,6 +116,24 @@ public class SpeedTracker
     private long minResponseTime = Long.MAX_VALUE;
     private long totalResponseTime = 0L;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_SHOW_SUMMARY_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_DETAILS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_TIMERS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_RESPONSE_TIME_TYPE"),new String("BOOLEAN"));      
+        info.put(new String("PROP_RECOGNIZER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"),new String("edu.cmu.sphinx.recognizer.Recognizer"));
+        info.put(new String("PROP_FRONTEND_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_FRONTEND_CLASSTYPE"),new String("edu.cmu.sphinx.frontend.FrontEnd"));        
+        return info;
+    }
+    
     /*
      * (non-Javadoc)
      * 

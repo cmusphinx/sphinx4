@@ -55,14 +55,12 @@ public class GUIMediator {
      * Creates a new instance of GUIMediator 
      */
     public GUIMediator() throws ConfigurableUtilException{
-        _panelList = new ArrayList(); //for the GUI panels 
-                
+        _panelList = new ArrayList(); //for the GUI panels                 
         
         // load reader and writer
         _xmlReader = XMLConfigReader.getInstance();
         _xmlWriter = XMLConfigWriter.getInstance();
-        
-        
+                
         // NOTE: the model should be created before the GUI components,
         // so that GUI TabPenel can be created based on model        
         loadModel();
@@ -78,8 +76,8 @@ public class GUIMediator {
         
         // NOTE: the model should be created before the GUI components,
         // so that GUI TabPenel can be created based on model
-        _mb.refresh(); // *** this should be changed to user input        
-        _mb.printModel(); // *** initial test, remove
+        _mb.refresh();       
+        // _mb.printModel(); // for debugging
     }
     
     /**

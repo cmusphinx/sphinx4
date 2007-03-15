@@ -15,6 +15,8 @@ package edu.cmu.sphinx.frontend.feature;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
@@ -64,13 +66,22 @@ public class BatchCMN extends BaseDataProcessor {
     private List<Data> cepstraList;
     private int numberDataCepstra;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+       
+        return info;
+    }
 
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
      */
     public void register(String name, Registry registry) throws PropertyException {
-        super.register(name, registry);
-        
+        super.register(name, registry);        
     }
 
 

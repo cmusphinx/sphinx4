@@ -12,9 +12,11 @@
 package edu.cmu.sphinx.linguist.util;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import edu.cmu.sphinx.linguist.HMMSearchState;
@@ -69,6 +71,23 @@ public class GDLDumper extends LinguistDumper {
     private boolean verticalLayout;
     private boolean dumpArcLabels;
     private LogMath logMath;
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.putAll(LinguistDumper.getConfigurationInfo());
+        info.put(new String("PROP_SKIP_HMMS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_VERTICAL_LAYOUT_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_DUMP_ARC_LABELS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
+        
+        return info;
+    }
     
     /*
      * (non-Javadoc)

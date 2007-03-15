@@ -14,6 +14,9 @@ package edu.cmu.sphinx.instrumentation;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.recognizer.StateListener;
@@ -28,7 +31,7 @@ import edu.cmu.sphinx.util.props.Registry;
  * lists of components that should be 'run' when a recognizer state change is
  * detected.
  */
-public class RecognizerMonitor implements Configurable, StateListener {
+public class RecognizerMonitor implements Configurable, StateListener, Monitor {
     /**
      * the sphinx property for the recognizer to monitor
      */
@@ -51,6 +54,23 @@ public class RecognizerMonitor implements Configurable, StateListener {
     List deallocatedMonitors;
     String name;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+
+        info.put(new String("PROP_RECOGNIZER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"),new String("edu.cmu.sphinx.recognizer.Recognizer"));
+        info.put(new String("PROP_ALLOCATED_MONITORS_TYPE"),new String("COMPONENT_LIST")); 
+        info.put(new String("PROP_ALLOCATED_MONITORS_CLASSTYPE"),new String("edu.cmu.sphinx.instrumentation.Monitor"));
+        info.put(new String("PROP_DEALLOCATED_MONITORS_TYPE"),new String("COMPONENT_LIST")); 
+        info.put(new String("PROP_DEALLOCATED_MONITORS_CLASSTYPE"),new String("edu.cmu.sphinx.instrumentation.Monitor"));
+        return info;
+    } 
+    
     /*
      * (non-Javadoc)
      * 

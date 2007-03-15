@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -38,6 +40,21 @@ public class SimpleActiveListFactory implements ActiveListFactory {
     private float logRelativeBeamWidth;
     private LogMath logMath;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_ABSOLUTE_BEAM_WIDTH_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
+        info.put(new String("PROP_RELATIVE_BEAM_WIDTH_TYPE"),new String("DOUBLE"));
+        return info;
+    }
+    
+    
     /*
      * (non-Javadoc)
      * 

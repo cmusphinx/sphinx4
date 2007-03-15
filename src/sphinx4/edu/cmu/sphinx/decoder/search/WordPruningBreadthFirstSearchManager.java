@@ -235,6 +235,34 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     /*
      * (non-Javadoc)
      * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+        info.put(new String("PROP_GROW_SKIP_INTERVAL_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_RELATIVE_BEAM_WIDTH_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
+        info.put(new String("PROP_SHOW_TOKEN_COUNT_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_CHECK_STATE_ORDER_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_BUILD_WORD_LATTICE_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_KEEP_ALL_TOKENS_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_MAX_LATTICE_EDGES_TYPE"),new String("INTEGER"));
+        info.put(new String("PROP_ACOUSTIC_LOOKAHEAD_FRAMES_TYPE"),new String("FLOAT"));
+        info.put(new String("PROP_LINGUIST_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_LINGUIST_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.Linguist"));
+        info.put(new String("PROP_PRUNER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_PRUNER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.pruner.Pruner"));
+        info.put(new String("PROP_SCORER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_SCORER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.scorer.AcousticScorer"));
+        info.put(new String("PROP_ACTIVE_LIST_MANAGER_TYPE"),new String("COMPONENT")); 
+        info.put(new String("PROP_ACTIVE_LIST_MANAGER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.search.ActiveListManager"));
+        return info;
+    }
+        
+    /*
+     * (non-Javadoc)
+     * 
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
      *      edu.cmu.sphinx.util.props.Registry)
      */
