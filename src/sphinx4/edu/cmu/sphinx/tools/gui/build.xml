@@ -67,24 +67,7 @@ This file is used to run the GUI.
 	    </java>
     </target>
 
-    
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * Runs the RW tester, test the reader and writer components * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="runrw"
-	    description="Runs the GUI-readwrite demo."
-	    depends="all">
-	    <java classname="edu.cmu.sphinx.tools.gui.GUIRWTester"
-	          fork="true"
-		  maxmemory="128m">
-                  <!-- <sysproperty key="frontend" value="epFrontEnd"/> -->
-		  <classpath refid="run.classpath"/>
-		  <!-- <arg value="gui.config.xml"/> -->
-	    </java>
-    </target>
-    
+       
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Runs the class traverse test, to check if model is built correctly * -->
@@ -100,55 +83,6 @@ This file is used to run the GUI.
 		  <classpath refid="run.classpath"/>
 		  <!-- <arg value="gui.config.xml"/> -->
 	    </java>
-    </target>
-
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * Runs the javadoc test                                  * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="run-javadoc"
-	    description="Runs the Javadoc parser demo."
-	    depends="all">
-	    <java classname="edu.cmu.sphinx.tools.gui.util.RunCommand"
-	          fork="true"
-		  maxmemory="256m">
-                <classpath refid="run.classpath"/>                    
-                  <!-- <sysproperty key="frontend" value="epFrontEnd"/> -->		
-		  <!-- <arg value="gui.config.xml"/> -->
-	    </java>
-    </target>
-    
-    
-    <target name="fileread-compile">
-         <javac debug="true"
-	           source="1.4"
-		   deprecation="true"
-		   destdir="${classes_dir}"
-		   classpath="${classes_dir}"
-		   srcdir="."
-                   includes="util/SourceReaderFrame.java"
-                   />
-    </target>
-    
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * Runs the file reader test                              * -->
-    <!-- * This run is used to test Java can find                 * -->
-    <!-- * a particular source file                               * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="run-fileread"
-	    description="Runs the File reader demo."
-            depends="fileread-compile">
-           
-	    <java classname="edu.cmu.sphinx.tools.gui.util.SourceReaderFrame"
-	          fork="true"
-		  maxmemory="256m">
-                <classpath refid="run.classpath"/>                    
-                  <!-- <sysproperty key="frontend" value="epFrontEnd"/> -->		
-		  <!-- <arg value="gui.config.xml"/> -->
-	    </java>
-    </target>
+    </target>          
     
 </project>
