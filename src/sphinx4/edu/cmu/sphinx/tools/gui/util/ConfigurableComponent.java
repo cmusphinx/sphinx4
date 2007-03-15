@@ -281,7 +281,7 @@ public class ConfigurableComponent {
         for (Iterator it = completePropMap.entrySet().iterator();it.hasNext();){
             Map.Entry propentry = (Map.Entry)it.next();
             String propname = (String)propentry.getKey();
-            System.out.println("***** prop"+propname);           
+            // System.out.println("***** prop"+propname);           
             
             // if it doesn't exist yet
             if( !rpd.contains(propname) ){
@@ -289,7 +289,7 @@ public class ConfigurableComponent {
                 String defaultVal = prop.getDefault();
                 if( defaultVal != null && !defaultVal.trim().equalsIgnoreCase("")){
                     rpd.add(propname,defaultVal);
-                    System.out.println("***** add prop "+propname);
+                    // System.out.println("***** add prop "+propname);
                 }
                 else {
                     rpd.add(propname, (String)null);           
@@ -306,7 +306,7 @@ public class ConfigurableComponent {
      * @param setname Name of new configuration set
      */
     public void createNewSet(String setname){
-        System.out.println("*****" + this.toString());
+        // System.out.println("*****" + this.toString());
         // the set name given should have been checked by GUI
         RawPropertyData newrpd = new RawPropertyData(setname,_componentClassName);        
         addDefaultProps(newrpd); // fill them up with default properties

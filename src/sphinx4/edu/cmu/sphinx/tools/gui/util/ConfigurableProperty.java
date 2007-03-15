@@ -48,6 +48,7 @@ public class ConfigurableProperty {
         _type = type;
         _default = defaultval;      
         _original_name = original;
+        _classtype = null;
     }
     
     /** 

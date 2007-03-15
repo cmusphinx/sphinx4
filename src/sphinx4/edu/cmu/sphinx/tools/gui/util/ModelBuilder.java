@@ -224,12 +224,13 @@ public class ModelBuilder implements GUIFileActionListener{
                     Class c = cc.getComponentClass();
                     Map configset = cc.getConfigurationPropMap();           
                     
-                    if(searchclass.isAssignableFrom(c) && configset!= null &&
-                            !configset.isEmpty())
-                    {                    
+                    if( searchclass.isAssignableFrom(c)&& (configset != null) &&
+                            !configset.isEmpty() )
+                    {                  
+                        System.out.println("&&&" + searchclass.getName() + "is a superclass of" + c.getName());
                         for(Iterator it2 = configset.keySet().iterator();it2.hasNext();)
                         {
-                            String configname = (String)it2.next();                        
+                            String configname = (String)it2.next();                             
                             myreturn.put(c.getName(),configname);
                         }
                     }
@@ -238,10 +239,35 @@ public class ModelBuilder implements GUIFileActionListener{
             }
             return myreturn;
          }catch(ClassNotFoundException e){
+            // System.err.println("$$ class not found exception !");
             return null;
         }        
     }
     
+//    /** 
+//     * private helper method to check if superclass is the superclass or 
+//     * superinterface of subclass
+//     * @param superclass super class
+//     * @param subclass subclass
+//     * @return true if the relationship is true
+//     */
+//    private boolean isSuperClassOf(Class superclass, Class subclass){
+//       System.out.println("$$ checking "+superclass.getName() +" and " + subclass.getName());
+//       if ()
+//           return true;
+//       if(subclass.getSuperclass() != null){
+//           if(isSuperClassOf(superclass,subclass.getSuperclass()))
+//               return true;
+//       }
+//       Class[] myinterfaces = subclass.getInterfaces();
+//       if(myinterfaces != null){
+//           for(int i =0;i<myinterfaces.length;i++){
+//               if(isSuperClassOf(superclass,myinterfaces[i]))
+//                   return true;
+//           }
+//       }
+//       return false;
+//    }
     
     /**
      * Load values in ConfigProperties into the model 
@@ -254,8 +280,7 @@ public class ModelBuilder implements GUIFileActionListener{
          // iterate through the property map and retrieve the values to initialize the model 
         for(Iterator it = rpdMap.entrySet().iterator();it.hasNext();){           
             Map.Entry entry = (Map.Entry) it.next();            
-            String classname = (String)entry.getKey();   
-            //System.out.println("$$ "+classname);
+            String classname = (String)entry.getKey();             
             for(Iterator it2 = ((Map)entry.getValue()).entrySet().iterator();it2.hasNext();){   
                 Map.Entry nextentry = (Map.Entry)it2.next();                
                 RawPropertyData rpd = (RawPropertyData)nextentry.getValue() ;
@@ -567,7 +592,8 @@ public class ModelBuilder implements GUIFileActionListener{
 
         PropertyType proptype = getPropType(classinfo,fieldname);        
         if ( proptype !=null && 
-                proptype == PropertyType.COMPONENT){ // it's a class component type                    
+               ( proptype == PropertyType.COMPONENT || proptype == PropertyType.COMPONENT_LIST )){ 
+            // it's a class component type                    
             String classtype = getInfo(classinfo,fieldname,"_CLASSTYPE");
             cp = new ConfigurableProperty
                  (propname,default_value, proptype, field_comment,fieldname,classtype);

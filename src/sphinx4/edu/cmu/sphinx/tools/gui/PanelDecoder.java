@@ -720,7 +720,7 @@ public class PanelDecoder extends javax.swing.JPanel {
 
     /* private method to handle a selection change of Inner list */
     private void jListInnerValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListInnerValueChanged
-        updateDetails();        
+        updateDetails();            
     }//GEN-LAST:event_jListInnerValueChanged
 
    /* private method that updates the panel detail information based on the 
@@ -754,6 +754,7 @@ public class PanelDecoder extends javax.swing.JPanel {
                     // is a component property
                     setVisibleComponentInput(true);                    
                     // addComponent to jComboComponent
+                    // System.out.println("$$$ is a component");
                     List mylist = _pm.getComponentList(classname,prop);
                     if(mylist != null && !mylist.isEmpty()){
                         for(Iterator it=mylist.iterator();it.hasNext();){
@@ -1331,11 +1332,11 @@ public class PanelDecoder extends javax.swing.JPanel {
                             String fullname = (String)me.getKey();//full class name
                             String setname = (String)me.getValue();//config set
                             int index = fullname.lastIndexOf('.');
-                            String localname = classname.substring(index+1);
-                            String packagename = classname.substring(0,index-1);
+                            String localname = fullname.substring(index+1);
+                            String packagename = fullname.substring(0,index-1);
                             // format the output to be "setname-classname"
                             String myitem = new String
-                                    (setname+"-"+localname+"("+packagename+")");                            
+                                    (setname+"-"+localname+"("+packagename+")");                                
                             myreturn.add(myitem);
                         }
                         return myreturn;
