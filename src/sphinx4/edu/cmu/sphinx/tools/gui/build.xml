@@ -133,7 +133,9 @@ This file is used to run the GUI.
     
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
-    <!-- * Runs the file reader test                                  * -->
+    <!-- * Runs the file reader test                              * -->
+    <!-- * This run is used to test Java can find                 * -->
+    <!-- * a particular source file                               * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="run-fileread"

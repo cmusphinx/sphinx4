@@ -231,7 +231,9 @@ public class ModelBuilder implements GUIFileActionListener{
                         for(Iterator it2 = configset.keySet().iterator();it2.hasNext();)
                         {
                             String configname = (String)it2.next();                             
-                            myreturn.put(c.getName(),configname);
+                            myreturn.put(configname,c.getName());
+                            System.out.println(" $$ " + c.getName() + " " + configname);
+                            
                         }
                     }
 

@@ -252,7 +252,7 @@ public class PanelDecoder extends javax.swing.JPanel {
         } 
         else{ // jComboComponent is used instead
             newval = (String)jComboComponent.getSelectedItem();
-            newval = newval.substring(0,(newval.indexOf('-')-1));            
+            newval = newval.substring(0,(newval.indexOf('-')));            
         }
         return newval;
     }
@@ -600,7 +600,8 @@ public class PanelDecoder extends javax.swing.JPanel {
         if ( delval != null && (classname != null) &&
                 ( setname != null) && (prop != null) )
         {
-            List newlist = Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray());
+            List newlist = new ArrayList(
+                    Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray()));
             if( newlist.remove(delval) ){            
                 try {
                     if(newlist.isEmpty()){ // list is now empty
@@ -627,7 +628,8 @@ public class PanelDecoder extends javax.swing.JPanel {
             String prop = (String)jListInner.getSelectedValue();
             String setname = (String)jComboName.getSelectedItem();
             
-            List newlist = Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray());
+            List newlist = new ArrayList(
+                    Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray()));
             newlist.add(newval);
             
             if ( !newval.equalsIgnoreCase("") && (classname != null) &&
@@ -855,7 +857,7 @@ public class PanelDecoder extends javax.swing.JPanel {
                 DefaultListModel innerlistModel= (DefaultListModel)jListInner.getModel();
                 for ( Iterator it = prop.iterator();it.hasNext();){
                     String propItem = (String)it.next();                 
-                    // &&& ListItem li = new ListItem(false, propItem );
+                    //  ListItem li = new ListItem(false, propItem );
                     innerlistModel.addElement(propItem);
                 }
             }
@@ -1329,14 +1331,15 @@ public class PanelDecoder extends javax.swing.JPanel {
                         List myreturn = new ArrayList();
                         for(Iterator it = mymap.entrySet().iterator();it.hasNext();){
                             Map.Entry me = (Map.Entry)it.next();
-                            String fullname = (String)me.getKey();//full class name
-                            String setname = (String)me.getValue();//config set
+                            String setname = (String)me.getKey();//full class name
+                            String fullname = (String)me.getValue();//config set
                             int index = fullname.lastIndexOf('.');
                             String localname = fullname.substring(index+1);
-                            String packagename = fullname.substring(0,index-1);
+                            String packagename = fullname.substring(0,index);
                             // format the output to be "setname-classname"
                             String myitem = new String
-                                    (setname+"-"+localname+"("+packagename+")");                                
+                                    (setname+"-"+localname+"("+packagename+")");       
+                            System.out.println("item $$ "+myitem);                            
                             myreturn.add(myitem);
                         }
                         return myreturn;
