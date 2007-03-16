@@ -1141,9 +1141,9 @@ public class PanelDecoder extends javax.swing.JPanel {
         }
         
         /** 
-         * check if this property requires a component with particular type
+         * check if this property requires a component with particular class type
          * @param classname
-         * @param property name
+         * @param propname property name
          * @return Boolean true if it needs a component as value
          */
         private boolean isComponentProperty (String classname, String propname){
@@ -1159,7 +1159,7 @@ public class PanelDecoder extends javax.swing.JPanel {
         /** 
          * check if this property type is a list type
          * @param classname
-         * @param property name
+         * @param propname property name
          * @return Boolean true if it is a list
          */
         private boolean isListProperty (String classname, String propname){

@@ -612,7 +612,7 @@ public class ModelBuilder implements GUIFileActionListener{
      * private method to get more information about this property
      *
      * @param myinfo Map that holds additional information of all properties in the class
-     * @param propname Property name that we're interested in
+     * @param fieldname Property name that we're interested in
      * @return PropertyType of this property
      */
     private PropertyType getPropType(Map myinfo, String fieldname){
@@ -658,7 +658,7 @@ public class ModelBuilder implements GUIFileActionListener{
      * private method to get more information about this property
      *
      * @param myinfo Map that holds additional information of all properties in the class
-     * @param propname Property name that we're interested in
+     * @param fieldname Property name that we're interested in
      * @param infotype The information type needed
      * @return String information of this property
      */
