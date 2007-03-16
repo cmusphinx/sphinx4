@@ -131,14 +131,28 @@ public class WavWriter extends BaseDataProcessor {
         return fileIndex;
     }
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();
+    
+        info.put(new String("PROP_BIG_ENDIAN_DATA_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_SIGNED_DATA_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_CAPTURE_UTTERANCES_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"),new String("INTEGER"));        
+        info.put(new String("PROP_OUT_FILE_NAME_PATTERN_TYPE"),new String("STRING"));
+        return info;
+    }
+    
     /*
     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
     */
     public void register(String name, Registry registry) throws PropertyException {
         super.register(name, registry);
         registry.register(PROP_OUT_FILE_NAME_PATTERN, PropertyType.STRING);
-
         registry.register(PROP_BITS_PER_SAMPLE, PropertyType.INT);
         registry.register(PROP_BIG_ENDIAN_DATA, PropertyType.BOOLEAN);
         registry.register(PROP_SIGNED_DATA, PropertyType.BOOLEAN);

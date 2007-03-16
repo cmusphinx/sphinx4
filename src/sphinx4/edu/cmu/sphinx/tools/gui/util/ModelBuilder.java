@@ -227,12 +227,12 @@ public class ModelBuilder implements GUIFileActionListener{
                     if( searchclass.isAssignableFrom(c)&& (configset != null) &&
                             !configset.isEmpty() )
                     {                  
-                        System.out.println("&&&" + searchclass.getName() + "is a superclass of" + c.getName());
+                        // System.out.println("&&&" + searchclass.getName() + "is a superclass of" + c.getName());
                         for(Iterator it2 = configset.keySet().iterator();it2.hasNext();)
                         {
                             String configname = (String)it2.next();                             
                             myreturn.put(configname,c.getName());
-                            System.out.println(" $$ " + c.getName() + " " + configname);
+                            // System.out.println(" $$ " + c.getName() + " " + configname);
                             
                         }
                     }

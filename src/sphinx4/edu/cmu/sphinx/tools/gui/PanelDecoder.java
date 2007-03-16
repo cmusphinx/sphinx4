@@ -117,8 +117,11 @@ public class PanelDecoder extends javax.swing.JPanel {
         // one for the class list, the other one for property list
         jListOuter.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jListInner.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jListPropVal.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jListOuter.setLayoutOrientation(JList.VERTICAL);
         jListInner.setLayoutOrientation(JList.VERTICAL);
+        jListPropVal.setLayoutOrientation(JList.VERTICAL);
+        
         
         DefaultListModel outerlistModel= new DefaultListModel();        
         for ( Iterator it = _pm.getGroupMap().keySet().iterator(); it.hasNext();){            
@@ -519,9 +522,8 @@ public class PanelDecoder extends javax.swing.JPanel {
         jLabelPropVal.setText("Current value");
         jPanelDetail.add(jLabelPropVal);
 
-        jListPropVal.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jListPropVal.setMinimumSize(new java.awt.Dimension(200, 0));
-        jListPropVal.setPreferredSize(new java.awt.Dimension(250, 0));
+        jScrollPane7.setMinimumSize(new java.awt.Dimension(250, 23));
+        jScrollPane7.setPreferredSize(new java.awt.Dimension(250, 75));
         jListPropVal.setVisibleRowCount(3);
         jScrollPane7.setViewportView(jListPropVal);
 
@@ -1339,7 +1341,7 @@ public class PanelDecoder extends javax.swing.JPanel {
                             // format the output to be "setname-classname"
                             String myitem = new String
                                     (setname+"-"+localname+"("+packagename+")");       
-                            System.out.println("item $$ "+myitem);                            
+                            // System.out.println("item $$ "+myitem);                            
                             myreturn.add(myitem);
                         }
                         return myreturn;

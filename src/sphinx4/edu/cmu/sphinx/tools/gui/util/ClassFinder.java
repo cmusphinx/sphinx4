@@ -132,7 +132,7 @@ public class ClassFinder {
                     /* change: only check the class type, no checking for its methods */
                     if ( filterClass(addclass) ){
                         // if it's an interface, shouldn't display because interface cannot be instantiated
-                        if (!addclass.isInterface()) {                        
+                        if (!addclass.isInterface() && !Modifier.isAbstract(addclass.getModifiers()) ) {    
                             classList.add(addclass);      
                             // System.out.println("=== add class" + tempFile);
                         }

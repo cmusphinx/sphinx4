@@ -28,6 +28,8 @@ import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * An AudioFileDataSource generates a stream of audio data from a given audion file. All required information concerning
@@ -61,7 +63,17 @@ public class AudioFileDataSource extends BaseDataProcessor {
 
     protected List<NewFileListener> fileListeners = new ArrayList<NewFileListener>();
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+     */
+    public static Map getConfigurationInfo(){
+        Map info = new HashMap();   
+        info.put(new String("PROP_BYTES_PER_READ_TYPE"),new String("INTEGER"));
+        return info;
+    }
+    
     public AudioFileDataSource() {
         this(PROP_BYTES_PER_READ_DEFAULT);
     }
@@ -75,6 +87,8 @@ public class AudioFileDataSource extends BaseDataProcessor {
     }
 
 
+    
+    
     /*
     * (non-Javadoc)
     *
