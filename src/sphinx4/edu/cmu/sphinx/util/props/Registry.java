@@ -14,6 +14,8 @@ package edu.cmu.sphinx.util.props;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collections;
+
 /**
  * Used to register properties
  */
@@ -78,5 +80,12 @@ public class Registry {
      */
     Collection<String> getRegisteredProperties() {
         return map.keySet();
+    }
+
+    /**
+     * @return a unmodifiable copy of the all properties and their types.
+     */
+    Map<String, PropertyType> getAllPropertiesMap() {
+        return Collections.unmodifiableMap(map);
     }
 }
