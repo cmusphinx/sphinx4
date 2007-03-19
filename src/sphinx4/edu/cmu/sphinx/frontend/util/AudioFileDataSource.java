@@ -21,15 +21,15 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.File;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * An AudioFileDataSource generates a stream of audio data from a given audion file. All required information concerning
@@ -61,19 +61,22 @@ public class AudioFileDataSource extends BaseDataProcessor {
     private boolean utteranceEndSent = false;
     private boolean utteranceStarted = false;
 
-    protected List<NewFileListener> fileListeners = new ArrayList<NewFileListener>();
+    protected List<AudioFileProcessListener> fileListeners = new ArrayList<AudioFileProcessListener>();
+    private File curAudioFile;
+
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
-        Map info = new HashMap();   
-        info.put(new String("PROP_BYTES_PER_READ_TYPE"),new String("INTEGER"));
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
+        Map info = new HashMap();
+        info.put(new String("PROP_BYTES_PER_READ_TYPE"), new String("INTEGER"));
         return info;
     }
-    
+
+
     public AudioFileDataSource() {
         this(PROP_BYTES_PER_READ_DEFAULT);
     }
@@ -87,8 +90,6 @@ public class AudioFileDataSource extends BaseDataProcessor {
     }
 
 
-    
-    
     /*
     * (non-Javadoc)
     *
@@ -177,8 +178,9 @@ public class AudioFileDataSource extends BaseDataProcessor {
             e.printStackTrace();
         }
 
-        for (NewFileListener fileListener : fileListeners)
-            fileListener.newFileProcessingStarted(new File(audioFileURL.getFile()));
+        curAudioFile = new File(audioFileURL.getFile());
+        for (AudioFileProcessListener fileListener : fileListeners)
+            fileListener.audioFileProcStarted(curAudioFile);
 
         setInputStream(audioStream, streamName);
     }
@@ -233,7 +235,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
             if (!utteranceEndSent) {
                 // since 'firstSampleNumber' starts at 0, the last
                 // sample number should be 'totalValuesRead - 1'
-                output = new DataEndSignal(getDuration());
+                output = createDataEndSignal();
                 utteranceEndSent = true;
             }
         } else {
@@ -245,7 +247,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
                     output = readNextFrame();
                     if (output == null) {
                         if (!utteranceEndSent) {
-                            output = new DataEndSignal(getDuration());
+                            output = createDataEndSignal();
                             utteranceEndSent = true;
                         }
                     }
@@ -254,6 +256,15 @@ public class AudioFileDataSource extends BaseDataProcessor {
         }
         getTimer().stop();
         return output;
+    }
+
+
+    private DataEndSignal createDataEndSignal() {
+        if (!(this instanceof ConcatAudioFileDataSource))
+            for (AudioFileProcessListener fileListener : fileListeners)
+                fileListener.audioFileProcFinished(curAudioFile);
+
+        return new DataEndSignal(getDuration());
     }
 
 
@@ -341,7 +352,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
 
 
     /** Adds a new listener for new file events. */
-    public void addNewFileListener(NewFileListener l) {
+    public void addNewFileListener(AudioFileProcessListener l) {
         if (l == null)
             return;
 
@@ -350,7 +361,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
 
 
     /** Removes a listener for new file events. */
-    public void removeNewFileListener(NewFileListener l) {
+    public void removeNewFileListener(AudioFileProcessListener l) {
         if (l == null)
             return;
 

@@ -1,6 +1,5 @@
 package edu.cmu.sphinx.frontend.util;
 
-import edu.cmu.sphinx.frontend.util.NewFileListener;
 import edu.cmu.sphinx.util.BatchFile;
 import edu.cmu.sphinx.util.ReferenceSource;
 
@@ -9,11 +8,10 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
-import java.net.URL;
 
 
 /**
@@ -126,7 +124,11 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
             Object stream = null;
             if (nextFile == null) {
                 nextFile = readNext();
+            } else {
+                for (int i = 0; i < fileListeners.size(); i++)
+                    fileListeners.get(i).audioFileProcFinished(new File(nextFile));
             }
+
             if (nextFile != null) {
                 try {
                     AudioInputStream ais = AudioSystem.getAudioInputStream(new File(nextFile).toURI().toURL());
@@ -150,7 +152,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
                     // System.out.println(nextFile);
 
                     for (int i = 0; i < fileListeners.size(); i++)
-                        fileListeners.get(i).newFileProcessingStarted(new File(nextFile));
+                        fileListeners.get(i).audioFileProcStarted(new File(nextFile));
 
                     nextFile = null;
                 } catch (IOException ioe) {

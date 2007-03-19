@@ -1,16 +1,14 @@
 package edu.cmu.sphinx.frontend.util.test;
 
-import org.junit.Test;
-import org.junit.Before;
-import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
-import edu.cmu.sphinx.frontend.util.ConcatAudioFileDataSource;
-import edu.cmu.sphinx.frontend.util.NewFileListener;
 import edu.cmu.sphinx.frontend.*;
-
-import java.net.URL;
-import java.io.File;
-
+import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
+import edu.cmu.sphinx.frontend.util.AudioFileProcessListener;
+import edu.cmu.sphinx.frontend.util.ConcatAudioFileDataSource;
 import junit.framework.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.File;
 
 /**
  * Some small unit tests to check whether the AudioFileDataSource and the ConcatAudioFileDataSource are working
@@ -20,12 +18,14 @@ public class AudioDataSourcesTest {
 
     public static final String baseDir = "../tests/other/";
 
-    private int numFiles; // used to test the NewFileListener implementation
+    private int numFileStarts; // used to test the AudioFileProcessListener implementation
+    private int numFileEnds;
 
 
     @Before
     public void setUp() {
-        numFiles = 0;
+        numFileStarts = 0;
+        numFileEnds = 0;
     }
 
 
@@ -62,11 +62,16 @@ public class AudioDataSourcesTest {
     public void testConcatDataSource() throws DataProcessingException {
         ConcatAudioFileDataSource dataSource = new ConcatAudioFileDataSource();
 
-        dataSource.addNewFileListener(new NewFileListener() {
+        dataSource.addNewFileListener(new AudioFileProcessListener() {
 
 
-            public void newFileProcessingStarted(File audioFile) {
-                numFiles++;
+            public void audioFileProcStarted(File audioFile) {
+                numFileStarts++;
+            }
+
+
+            public void audioFileProcFinished(File audioFile) {
+                numFileEnds++;
             }
         });
 
@@ -80,7 +85,8 @@ public class AudioDataSourcesTest {
         while ((d = dataSource.getData()) instanceof DoubleData) ;
         Assert.assertTrue(d instanceof DataEndSignal);
 
-        Assert.assertTrue(numFiles == 3);
+        Assert.assertTrue(numFileStarts == 3);
+        Assert.assertTrue(numFileEnds == 3);
     }
 
 
