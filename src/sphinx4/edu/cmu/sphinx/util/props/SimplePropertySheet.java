@@ -1,7 +1,5 @@
 package edu.cmu.sphinx.util.props;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -150,41 +148,41 @@ public class SimplePropertySheet implements PropertySheet {
 
 
     public void setRaw(String key, Object val) throws PropertyException {
-        throw new NotImplementedException();
+        throw new RuntimeException("not implemented");
     }
 
 
     public URL getResource(String name) throws PropertyException {
-        throw new NotImplementedException();
+        throw new RuntimeException("not implemented");
     }
 
 
     public List getComponentList(String name, Class type) throws PropertyException {
-        throw new NotImplementedException();
+        throw new RuntimeException("not implemented");
     }
 
 
     public String[] getNames() {
-        throw new NotImplementedException();
+        throw new RuntimeException("not implemented");
     }
 
 
     public Object getRaw(String name) throws PropertyException {
-        throw new NotImplementedException();
+        throw new RuntimeException("not implemented");
     }
 
 
     public Object getRawNoReplacement(String name) {
-        throw new NotImplementedException();
+        throw new RuntimeException("not implemented");
     }
 
 
     public ConfigurationManager getPropertyManager() throws PropertyException {
-        throw new NotImplementedException();
+        throw new RuntimeException("not implemented");
     }
 
 
     public void dump(PrintStream out) {
-        throw new NotImplementedException();
+        throw new RuntimeException("not implemented");
     }
 }

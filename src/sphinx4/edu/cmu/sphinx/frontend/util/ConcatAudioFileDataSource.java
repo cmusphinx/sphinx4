@@ -124,7 +124,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
             Object stream = null;
             if (nextFile == null) {
                 nextFile = readNext();
-            } else {
+            } else if (isInitialized) {
                 for (int i = 0; i < fileListeners.size(); i++)
                     fileListeners.get(i).audioFileProcFinished(new File(nextFile));
             }
