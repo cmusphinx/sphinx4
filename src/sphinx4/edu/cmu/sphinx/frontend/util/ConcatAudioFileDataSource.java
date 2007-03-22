@@ -50,10 +50,6 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
             return;
 
         try {
-            if (batchFile == null) {
-                throw new Error("BatchFile cannot be null!");
-            }
-
             referenceList = new ArrayList<String>();
             dataStream = new SequenceInputStream(new InputStreamEnumeration(batchFile));
         } catch (IOException e) {
@@ -93,6 +89,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
     class InputStreamEnumeration implements Enumeration {
 
         private BufferedReader reader;
+        private String lastFile;
 
 
         InputStreamEnumeration(String batchFile) throws IOException {
@@ -124,9 +121,6 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
             Object stream = null;
             if (nextFile == null) {
                 nextFile = readNext();
-            } else if (isInitialized) {
-                for (int i = 0; i < fileListeners.size(); i++)
-                    fileListeners.get(i).audioFileProcFinished(new File(nextFile));
             }
 
             if (nextFile != null) {
@@ -154,6 +148,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
                     for (int i = 0; i < fileListeners.size(); i++)
                         fileListeners.get(i).audioFileProcStarted(new File(nextFile));
 
+                    lastFile = nextFile;
                     nextFile = null;
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
@@ -173,16 +168,14 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
          * @return the name of the appropriate audio file
          */
         public String readNext() {
-            return readNextDataFile();
-        }
+            if (lastFile != null) {
+                for (int i = 0; i < fileListeners.size(); i++)
+                    fileListeners.get(i).audioFileProcFinished(new File(lastFile));
 
+                lastFile = null;
+            }
 
-        /**
-         * Returns the next audio file.
-         *
-         * @return the name of the next audio file
-         */
-        private String readNextDataFile() {
+            String result;
             try {
                 String next = reader.readLine();
                 if (next != null) {
@@ -191,13 +184,14 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
                 }
 
                 if (next != null && next.trim().length() > 0)
-                    return next;
+                    result = next;
                 else
-                    return null;
+                    result = null;
             } catch (IOException ioe) {
                 ioe.printStackTrace();
                 throw new Error("Problem reading from batch file");
             }
+            return result;
         }
     }
 }
