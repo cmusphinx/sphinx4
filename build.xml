@@ -7,20 +7,20 @@
     <!-- * Where to find things...                                * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <property name="version"            value="1.0beta"/>
+    <property name="version" value="1.0beta"/>
 
     <path id="libs">
         <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/forms_rt.jar,**/javolution.jar,junit4.1.jar"/>
     </path>
-    <property name="src_dir"		value="src"/>
-    <property name="build_dir"		value="bld"/>
-    <property name="classes_dir"	value="${build_dir}/classes"/>
-    <property name="lib_dir"            value="lib"/>
-    <property name="bin_dir"            value="bin"/>
-    <property name="deploy_dir"         value="deploy"/>
-    <property name="javadoc_dir"	value="javadoc"/>
-    <property name="javadoc_check_dir"  value="${build_dir}/javadoc_check"/>
-    <property name="javadoc_zip"	value="javadoc.zip"/>
+    <property name="src_dir" value="src"/>
+    <property name="build_dir" value="bld"/>
+    <property name="classes_dir" value="${build_dir}/classes"/>
+    <property name="lib_dir" value="lib"/>
+    <property name="bin_dir" value="bin"/>
+    <property name="deploy_dir" value="deploy"/>
+    <property name="javadoc_dir" value="javadoc"/>
+    <property name="javadoc_check_dir" value="${build_dir}/javadoc_check"/>
+    <property name="javadoc_zip" value="javadoc.zip"/>
 
     <property name="build_model_dir"
               value="${build_dir}/models/edu/cmu/sphinx/model/acoustic"/>
@@ -60,15 +60,15 @@
     <!-- Load the environment -->
     <property environment="env"/>
 
-    <condition property="javadoc_level" 
-                value="${access}">
-         <isset property="access"/>
+    <condition property="javadoc_level"
+               value="${access}">
+        <isset property="access"/>
     </condition>
-    <condition property="javadoc_level" 
-                value="public">
-       <not>
-         <isset property="access"/>
-       </not>
+    <condition property="javadoc_level"
+               value="public">
+        <not>
+            <isset property="access"/>
+        </not>
     </condition>
 
     <!-- ********************************************************** -->
@@ -90,32 +90,32 @@
       -->
 
 
-    <patternset id="all_files" 
+    <patternset id="all_files"
                 includes="edu/**,com/**"
                 excludes="edu/cmu/sphinx/research/distributed/**,
 		edu/cmu/sphinx/research/bushderby/**,
                 edu/cmu/sphinx/trainer/**,
                 edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**"
-                />
+            />
 
-    <patternset id="edu" 
+    <patternset id="edu"
                 includes="edu/**"
-	        excludes="com/**,
+                excludes="com/**,
                 edu/cmu/sphinx/research/distributed/**,
                 edu/cmu/sphinx/research/bushderby/**,
                 edu/cmu/sphinx/trainer/**,
                 edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**,
                 "/>
 
-    <patternset id="no_jsapi" 
+    <patternset id="no_jsapi"
                 includes="edu/**"
-	        excludes="com/**,
+                excludes="com/**,
                 edu/cmu/sphinx/research/**,
                 edu/cmu/sphinx/trainer/**,
                 edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**,
                 edu/cmu/sphinx/tools/tags/**,
                 edu/cmu/sphinx/jsapi/**"/>
-             
+
     <target name="set_patternset_to_compile">
         <condition property="patternset_to_compile"
                    value="all_files">
@@ -158,7 +158,7 @@
     <!-- *                                                        * -->
     <!-- * Handle JSAPI:                                          * -->
     <!-- *                                                        * -->
-    <!-- *    1) If a jsapi.jar file can be found, use it and     * --> 
+    <!-- *    1) If a jsapi.jar file can be found, use it and     * -->
     <!-- *       compile all the sources.                         * -->
     <!-- *                                                        * -->
     <!-- *    2) If a jsapi.jar file cannot be found, issue a     * -->
@@ -170,20 +170,20 @@
         <!-- Complicated way of doing a "if... else"                 -->
         <!-- Check if the environment variable is set. If it is, set -->
         <!-- the local variable to the same value.                   -->
-        <condition property="EXTERNAL_JSAPI_LOCATION" 
+        <condition property="EXTERNAL_JSAPI_LOCATION"
                    value="${env.EXTERNAL_JSAPI_LOCATION}">
             <isset property="env.EXTERNAL_JSAPI_LOCATION"/>
         </condition>
 
         <!-- If environment variable is not set, set the local       -->
         <!-- variable to a default value.                            -->
-        <condition property="EXTERNAL_JSAPI_LOCATION" 
+        <condition property="EXTERNAL_JSAPI_LOCATION"
                    value="/lab/speech/sphinx4/lib/jsapi.jar">
             <not>
-                 <isset property="env.EXTERNAL_JSAPI_LOCATION"/>
+                <isset property="env.EXTERNAL_JSAPI_LOCATION"/>
             </not>
         </condition>
-        <available file="${EXTERNAL_JSAPI_LOCATION}" 
+        <available file="${EXTERNAL_JSAPI_LOCATION}"
                    property="jsapi_default.isPresent"/>
     </target>
 
@@ -200,11 +200,11 @@
             unless="jsapi_jar.isPresent">
         <echo>
 
-Cannot find lib/jsapi.jar needed to build Java Speech API
-(JSAPI) support for Sphinx-4.  Will not build any sources
-that require jsapi.jar.  If you'd like to enable JSAPI
-support, please extract jsapi.jar by running jsapi.sh or 
-jsapi.exe from the lib directory.
+            Cannot find lib/jsapi.jar needed to build Java Speech API
+            (JSAPI) support for Sphinx-4. Will not build any sources
+            that require jsapi.jar. If you'd like to enable JSAPI
+            support, please extract jsapi.jar by running jsapi.sh or
+            jsapi.exe from the lib directory.
         </echo>
     </target>
 
@@ -221,17 +221,17 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="all"
-	    description="Build everything">
-	<antcall target="create_all_model_classes"/>
-	<antcall target="compile_src"/>
-	<mkdir dir="${build_model_dir}"/>
-	<copy todir="${build_model_dir}">
-	      <fileset dir="${classes_dir}/edu/cmu/sphinx/model/acoustic"/>
-	</copy>
-	<antcall target="create_all_models"/>
-	<antcall target="jars"/>
-	<antcall target="demos"/>
-	<echo message="Build complete."/>
+            description="Build everything">
+        <antcall target="create_all_model_classes"/>
+        <antcall target="compile_src"/>
+        <mkdir dir="${build_model_dir}"/>
+        <copy todir="${build_model_dir}">
+            <fileset dir="${classes_dir}/edu/cmu/sphinx/model/acoustic"/>
+        </copy>
+        <antcall target="create_all_models"/>
+        <antcall target="jars"/>
+        <antcall target="demos"/>
+        <echo message="Build complete."/>
     </target>
 
 
@@ -241,33 +241,33 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="compile_src"
-	    depends="handle_jsapi"
-	    description="Build just the 1.5 srcs">
-	<mkdir dir="${classes_dir}"/>
-	<javac debug="true"
-	       source="1.5"
- 	       srcdir="${src_dir}/sphinx4"
-	       deprecation="true"
-	       destdir="${classes_dir}">
+            depends="handle_jsapi"
+            description="Build just the 1.5 srcs">
+        <mkdir dir="${classes_dir}"/>
+        <javac debug="true"
+               source="1.5"
+               srcdir="${src_dir}/sphinx4"
+               deprecation="true"
+               destdir="${classes_dir}">
             <patternset refid="${patternset_to_compile}"/>
-	    <classpath refid="libs"/>
-	</javac>
-	<javac debug="true"
-	       source="1.5"
- 	       srcdir="${src_dir}/research"
-	       deprecation="true"
-	       destdir="${classes_dir}">
+            <classpath refid="libs"/>
+        </javac>
+        <javac debug="true"
+               source="1.5"
+               srcdir="${src_dir}/research"
+               deprecation="true"
+               destdir="${classes_dir}">
             <patternset refid="${patternset_to_compile}"/>
-	    <classpath refid="libs"/>
-	</javac>
-	<javac debug="true"
-	       source="1.5"
- 	       srcdir="${src_dir}/demo"
-	       deprecation="true"
-	       destdir="${classes_dir}">
+            <classpath refid="libs"/>
+        </javac>
+        <javac debug="true"
+               source="1.5"
+               srcdir="${src_dir}/demo"
+               deprecation="true"
+               destdir="${classes_dir}">
             <patternset refid="${patternset_to_compile}"/>
-	    <classpath refid="libs"/>
-	</javac>
+            <classpath refid="libs"/>
+        </javac>
     </target>
 
 
@@ -277,8 +277,8 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="demos"
-	    depends="compile_src"
-	    description="Compiles and jars the demos">
+            depends="compile_src"
+            description="Compiles and jars the demos">
         <ant antfile="demo.xml"/>
     </target>
 
@@ -290,21 +290,21 @@ jsapi.exe from the lib directory.
     <!-- ********************************************************** -->
     <target name="jars"
             depends="sphinx4_jar,batch_jar,tags_jar,audiotool_jar"
-	    description="Builds all the jar files"/>
+            description="Builds all the jar files"/>
 
 
     <!-- sphinx4.jar -->
     <property name="sphinx4_jar" value="${lib_dir}/sphinx4.jar"/>
 
-    <target name="sphinx4_jar" 
-	    depends="compile_src"
-	    description="Create ${lib_dir}/sphinx4.jar">
+    <target name="sphinx4_jar"
+            depends="compile_src"
+            description="Create ${lib_dir}/sphinx4.jar">
         <mkdir dir="${lib_dir}"/>
-        <jar destfile="${sphinx4_jar}" 
-	     manifest="${src_dir}/sphinx4/edu/cmu/sphinx/sphinx4.manifest"
-	     compress="true"
-	     includes="edu/**,com/**"
-             excludes="edu/cmu/sphinx/tools/**,com/sun/taglet/**"
+        <jar destfile="${sphinx4_jar}"
+             manifest="${src_dir}/sphinx4/edu/cmu/sphinx/sphinx4.manifest"
+             compress="true"
+             includes="edu/**,com/**"
+             excludes="edu.cmu.sphinx.tools.gui.util.DocletHelper,com/sun/taglet/**"
              basedir="${classes_dir}"/>
     </target>
 
@@ -318,37 +318,37 @@ jsapi.exe from the lib directory.
              compress="true"
              includes="edu/cmu/sphinx/tools/**"
              excludes="com/sun/taglet/**"
-	     basedir="${classes_dir}"/>
+             basedir="${classes_dir}"/>
     </target>
 
     <!-- tags.jar -->
     <property name="tags_jar" value="${lib_dir}/tags.jar"/>
 
-    <target name="tags_jar" 
-	    depends="compile_src"
-	    description="Create ${lib_dir}/tags.jar">
+    <target name="tags_jar"
+            depends="compile_src"
+            description="Create ${lib_dir}/tags.jar">
         <mkdir dir="${lib_dir}"/>
-        <jar destfile="${tags_jar}" 
-	     manifest="${src_dir}/research/edu/cmu/sphinx/tools/tags/Manifest"
-	     compress="true"
-	     includes="edu/cmu/sphinx/tools/tags/**"
-	     basedir="${classes_dir}"/>
+        <jar destfile="${tags_jar}"
+             manifest="${src_dir}/research/edu/cmu/sphinx/tools/tags/Manifest"
+             compress="true"
+             includes="edu/cmu/sphinx/tools/tags/**"
+             basedir="${classes_dir}"/>
     </target>
 
     <!-- AudioTool.jar -->
     <property name="audiotool_jar" value="${bin_dir}/AudioTool.jar"/>
 
-    <target name="audiotool_jar" 
-	    depends="compile_src"
-	    description="Create ${bin_dir}/AudioTool.jar">
+    <target name="audiotool_jar"
+            depends="compile_src"
+            description="Create ${bin_dir}/AudioTool.jar">
         <mkdir dir="${bin_dir}"/>
-        <jar destfile="${audiotool_jar}" 
-	     manifest="${src_dir}/sphinx4/edu/cmu/sphinx/tools/audio/Manifest"
-	     compress="true">
+        <jar destfile="${audiotool_jar}"
+             manifest="${src_dir}/sphinx4/edu/cmu/sphinx/tools/audio/Manifest"
+             compress="true">
             <fileset dir="${classes_dir}"
-		     includes="edu/cmu/sphinx/tools/audio/*"/>
+                     includes="edu/cmu/sphinx/tools/audio/*"/>
             <fileset dir="${src_dir}/sphinx4"
-		     includes="edu/cmu/sphinx/tools/audio/spectrogram.config.xml"/>
+                     includes="edu/cmu/sphinx/tools/audio/spectrogram.config.xml"/>
         </jar>
     </target>
 
@@ -363,19 +363,19 @@ jsapi.exe from the lib directory.
     <target name="s3_model_to_s4"
             description="Generates an acoustic model JAR from a Sphinx-3 model directory.">
         <antcall target="create_my_model_classes">
-	    <param name="my_model_name" value="${model_name}"/>
+            <param name="my_model_name" value="${model_name}"/>
         </antcall>
-	<antcall target="compile_src"/>
-	<mkdir dir="${build_model_dir}/${model_name}"/>
-	<move todir="${build_model_dir}/${model_name}">
-	      <fileset dir="${classes_dir}/edu/cmu/sphinx/model/acoustic/${model_name}"/>
-	</move>
-	<antcall target="create_my_model">
-	    <param name="my_model_data_dir" value="${model_data_dir}"/>
-	    <param name="my_model_name" value="${model_name}"/>
+        <antcall target="compile_src"/>
+        <mkdir dir="${build_model_dir}/${model_name}"/>
+        <move todir="${build_model_dir}/${model_name}">
+            <fileset dir="${classes_dir}/edu/cmu/sphinx/model/acoustic/${model_name}"/>
+        </move>
+        <antcall target="create_my_model">
+            <param name="my_model_data_dir" value="${model_data_dir}"/>
+            <param name="my_model_name" value="${model_name}"/>
         </antcall>
-	<antcall target="delete_my_model_classes">
-	    <param name="my_model_name" value="${model_name}"/>
+        <antcall target="delete_my_model_classes">
+            <param name="my_model_name" value="${model_name}"/>
         </antcall>
     </target>
 
@@ -387,34 +387,34 @@ jsapi.exe from the lib directory.
     <!-- ********************************************************** -->
 
     <target name="create_all_model_classes"
-	    description="Creates all the model class files.">
-	<antcall target="create_my_model_classes">
-	    <param name="my_model_name" value="${wsj_name}"/>
+            description="Creates all the model class files.">
+        <antcall target="create_my_model_classes">
+            <param name="my_model_name" value="${wsj_name}"/>
         </antcall>
-	<antcall target="create_my_model_classes">
-	    <param name="my_model_name" value="${wsj_8kHz_name}"/>
+        <antcall target="create_my_model_classes">
+            <param name="my_model_name" value="${wsj_8kHz_name}"/>
         </antcall>
-	<antcall target="create_my_model_classes">
-	    <param name="my_model_name" value="${tidigits_name}"/>
+        <antcall target="create_my_model_classes">
+            <param name="my_model_name" value="${tidigits_name}"/>
         </antcall>
     </target>
 
     <target name="delete_all_model_classes"
             description="Deletes the WSJ and TIDIGITS model classes.">
-	<antcall target="delete_my_model_classes">
-	    <param name="my_model_name" value="${wsj_name}"/>
+        <antcall target="delete_my_model_classes">
+            <param name="my_model_name" value="${wsj_name}"/>
         </antcall>
-	<antcall target="delete_my_model_classes">
-	    <param name="my_model_name" value="${wsj_8kHz_name}"/>
+        <antcall target="delete_my_model_classes">
+            <param name="my_model_name" value="${wsj_8kHz_name}"/>
         </antcall>
-	<antcall target="delete_my_model_classes">
-	    <param name="my_model_name" value="${tidigits_name}"/>
+        <antcall target="delete_my_model_classes">
+            <param name="my_model_name" value="${tidigits_name}"/>
         </antcall>
     </target>
 
     <target name="delete_my_model_classes"
             description="Deletes the class files of a model.">
-	<delete dir="${model_class_dir}/${my_model_name}/"/>
+        <delete dir="${model_class_dir}/${my_model_name}/"/>
     </target>
 
 
@@ -427,38 +427,38 @@ jsapi.exe from the lib directory.
     <!-- ********************************************************** -->
     <target name="create_my_model_classes"
             description="Creates the model class files.">
-	<mkdir dir="${model_class_dir}/${my_model_name}/"/>
-	
-	<copy file="${tiedstate_dir}/PropertiesDumper.java"
-	  tofile="${model_class_dir}/${my_model_name}/PropertiesDumper.java"/>
-	<replace
-             file="${model_class_dir}/${my_model_name}/PropertiesDumper.java"
-	     value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
-	    <replacetoken>package edu.cmu.sphinx.linguist.acoustic.tiedstate</replacetoken>
-	</replace>
+        <mkdir dir="${model_class_dir}/${my_model_name}/"/>
+
+        <copy file="${tiedstate_dir}/PropertiesDumper.java"
+              tofile="${model_class_dir}/${my_model_name}/PropertiesDumper.java"/>
+        <replace
+                file="${model_class_dir}/${my_model_name}/PropertiesDumper.java"
+                value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
+            <replacetoken>package edu.cmu.sphinx.linguist.acoustic.tiedstate</replacetoken>
+        </replace>
 
         <copy file="${tiedstate_dir}/TiedStateAcousticModel.java"
-	      tofile="${model_class_dir}/${my_model_name}/Model.java"/>
-	<replace file="${model_class_dir}/${my_model_name}/Model.java"
-	     value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
-	    <replacetoken>package edu.cmu.sphinx.linguist.acoustic.tiedstate</replacetoken>
-	</replace>
-	<replace file="${model_class_dir}/${my_model_name}/Model.java"
-	         value="Model">
-	    <replacetoken>TiedStateAcousticModel</replacetoken>
-	</replace>
+              tofile="${model_class_dir}/${my_model_name}/Model.java"/>
+        <replace file="${model_class_dir}/${my_model_name}/Model.java"
+                 value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
+            <replacetoken>package edu.cmu.sphinx.linguist.acoustic.tiedstate</replacetoken>
+        </replace>
+        <replace file="${model_class_dir}/${my_model_name}/Model.java"
+                 value="Model">
+            <replacetoken>TiedStateAcousticModel</replacetoken>
+        </replace>
 
-	<mkdir dir="${model_class_dir}/${my_model_name}/"/>
+        <mkdir dir="${model_class_dir}/${my_model_name}/"/>
         <copy file="${tiedstate_dir}/Sphinx3Loader.java"
-	      tofile="${model_class_dir}/${my_model_name}/ModelLoader.java"/>
-	<replace file="${model_class_dir}/${my_model_name}/ModelLoader.java"
-	     value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
-	    <replacetoken>package edu.cmu.sphinx.linguist.acoustic.tiedstate</replacetoken>
-	</replace>
-	<replace file="${model_class_dir}/${my_model_name}/ModelLoader.java"
-	         value="ModelLoader">
-	    <replacetoken>Sphinx3Loader</replacetoken>
-	</replace>
+              tofile="${model_class_dir}/${my_model_name}/ModelLoader.java"/>
+        <replace file="${model_class_dir}/${my_model_name}/ModelLoader.java"
+                 value="package edu.cmu.sphinx.model.acoustic.${my_model_name}">
+            <replacetoken>package edu.cmu.sphinx.linguist.acoustic.tiedstate</replacetoken>
+        </replace>
+        <replace file="${model_class_dir}/${my_model_name}/ModelLoader.java"
+                 value="ModelLoader">
+            <replacetoken>Sphinx3Loader</replacetoken>
+        </replace>
     </target>
 
 
@@ -468,18 +468,18 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="create_all_models"
-	    description="Creates the WSJ and TIDIGITS acoustic model JARS.">
+            description="Creates the WSJ and TIDIGITS acoustic model JARS.">
         <antcall target="create_my_model">
-	    <param name="my_model_data_dir" value="${wsj_data_dir}"/>
-	    <param name="my_model_name" value="${wsj_name}"/>
+            <param name="my_model_data_dir" value="${wsj_data_dir}"/>
+            <param name="my_model_name" value="${wsj_name}"/>
         </antcall>
         <antcall target="create_my_model">
-	    <param name="my_model_data_dir" value="${wsj_8kHz_data_dir}"/>
-	    <param name="my_model_name" value="${wsj_8kHz_name}"/>
+            <param name="my_model_data_dir" value="${wsj_8kHz_data_dir}"/>
+            <param name="my_model_name" value="${wsj_8kHz_name}"/>
         </antcall>
-	<antcall target="create_my_model">
-	    <param name="my_model_data_dir" value="${tidigits_data_dir}"/>
-	    <param name="my_model_name" value="${tidigits_name}"/>
+        <antcall target="create_my_model">
+            <param name="my_model_data_dir" value="${tidigits_data_dir}"/>
+            <param name="my_model_name" value="${tidigits_name}"/>
         </antcall>
     </target>
 
@@ -495,23 +495,23 @@ jsapi.exe from the lib directory.
     <!-- ********************************************************** -->
     <target name="create_my_model"
             depends="compile_src"
-	    description="Creates an acoustic model JAR.">	    
+            description="Creates an acoustic model JAR.">
 
         <copy todir="${build_model_dir}/${my_model_name}">
-	      <fileset dir="${my_model_data_dir}"/>
+            <fileset dir="${my_model_data_dir}"/>
         </copy>
 
-	<jar destfile="${lib_dir}/${my_model_name}.jar">
-	     <fileset dir="${build_dir}/models"
-	      includes="edu/cmu/sphinx/model/acoustic/${my_model_name}/*.class"/>
-             <fileset dir="${build_dir}/models"
-	          includes="edu/cmu/sphinx/model/acoustic/${my_model_name}/**"
-		  excludes="edu/cmu/sphinx/model/acoustic/${my_model_name}/*.class"/>
-             <manifest>
-	        <attribute name="Main-Class"
-		 value="edu.cmu.sphinx.model.acoustic.${my_model_name}.PropertiesDumper"/>
-		<attribute name="Class-Path" value="sphinx4.jar"/>
-             </manifest>
+        <jar destfile="${lib_dir}/${my_model_name}.jar">
+            <fileset dir="${build_dir}/models"
+                     includes="edu/cmu/sphinx/model/acoustic/${my_model_name}/*.class"/>
+            <fileset dir="${build_dir}/models"
+                     includes="edu/cmu/sphinx/model/acoustic/${my_model_name}/**"
+                     excludes="edu/cmu/sphinx/model/acoustic/${my_model_name}/*.class"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="edu.cmu.sphinx.model.acoustic.${my_model_name}.PropertiesDumper"/>
+                <attribute name="Class-Path" value="sphinx4.jar"/>
+            </manifest>
         </jar>
     </target>
 
@@ -523,28 +523,28 @@ jsapi.exe from the lib directory.
     <!-- ********************************************************** -->
     <property name="javadoc_desc" value="Sphinx-4"/>
 
-    <target name="javadoc" 	    
-	    depends="handle_jsapi"
-	    description="Generate javadoc, optionally with '-Daccess=private'">
-	<delete dir="${javadoc_dir}"/>
+    <target name="javadoc"
+            depends="handle_jsapi"
+            description="Generate javadoc, optionally with '-Daccess=private'">
+        <delete dir="${javadoc_dir}"/>
         <mkdir dir="${javadoc_dir}"/>
         <javadoc sourcepath="${src_dir}/sphinx4"
-	         source="1.5"
-		 additionalparam="-breakiterator"
-		 destdir="${javadoc_dir}" 
-		 overview="${src_dir}/sphinx4/overview.html"
-		 windowtitle="${javadoc_desc}"
+                 source="1.5"
+                 additionalparam="-breakiterator"
+                 destdir="${javadoc_dir}"
+                 overview="${src_dir}/sphinx4/overview.html"
+                 windowtitle="${javadoc_desc}"
                  doctitle="${javadoc_desc}"
                  access="${javadoc_level}">
             <link href="http://java.sun.com/products/java-media/speech/forDevelopers/jsapi-doc"
                   offline="true"
-                  packagelistLoc="lib/jsapi" />
+                  packagelistLoc="lib/jsapi"/>
             <packageset dir="${src_dir}/sphinx4" defaultexcludes="yes">
-                  <patternset refid="${patternset_to_doc}"/>
+                <patternset refid="${patternset_to_doc}"/>
             </packageset>
-	    <classpath>
-                  <path refid="libs"/>
-                  <pathelement path="${java.class.path}"/>
+            <classpath>
+                <path refid="libs"/>
+                <pathelement path="${java.class.path}"/>
             </classpath>
         </javadoc>
     </target>
@@ -555,140 +555,141 @@ jsapi.exe from the lib directory.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
 
-    <target name="javadoc_check" 	    
-	    depends="handle_jsapi"
-	    description="checks the javadocs">
+    <target name="javadoc_check"
+            depends="handle_jsapi"
+            description="checks the javadocs">
         <mkdir dir="${javadoc_check_dir}"/>
         <javadoc sourcepath="${src_dir}/sphinx4"
-		 additionalparam="-source 1.5"
-		 packagenames="edu.*"
+                 additionalparam="-source 1.5"
+                 packagenames="edu.*"
                  excludepackagenames="edu.cmu.sphinx.trainer"
-		 destdir="${javadoc_check_dir}" 
-		 overview="${src_dir}/sphinx4/overview.html"
+                 destdir="${javadoc_check_dir}"
+                 overview="${src_dir}/sphinx4/overview.html"
                  doclet="com.sun.tools.doclets.doccheck.DocCheck"
                  docletpath="/lab/speech/java/doccheck1.2b2/doccheck.jar"
                  access="${javadoc_level}">
-	    <classpath refid="libs"/>
+            <classpath refid="libs"/>
         </javadoc>
     </target>
 
 
-    <!-- ********************************************************** --> 
+    <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Deletes all build output and *~ file droppings         * -->
     <!-- *                                                        * -->
-    <!-- ********************************************************** --> 
+    <!-- ********************************************************** -->
     <target name="clean" description="Delete all build output">
         <antcall target="clean_not_deploy"/>
-	<delete dir="${deploy_dir}"/>
+        <delete dir="${deploy_dir}"/>
     </target>
 
     <target name="clean_not_deploy"
             description="Delete all build output except for the deploy dir">
-	<delete>
-	    <fileset defaultexcludes="no" dir="." includes="**/*~"/>
-	</delete>
-	<delete dir="${build_dir}"/>
-	<delete dir="${javadoc_dir}"/>
-	<delete dir="${bin_dir}"/>
-	<delete file="${lib_dir}/sphinx4.jar"/>
-	<delete file="${lib_dir}/tags.jar"/>
-	<delete file="${lib_dir}/${wsj_name}.jar"/>
-	<delete file="${lib_dir}/${wsj_8kHz_name}.jar"/>
-	<delete file="${lib_dir}/${tidigits_name}.jar"/>
-	<delete file="tempKeystore"/>
-	<antcall target="delete_all_model_classes"/>
+        <delete>
+            <fileset defaultexcludes="no" dir="." includes="**/*~"/>
+        </delete>
+        <delete dir="${build_dir}"/>
+        <delete dir="${javadoc_dir}"/>
+        <delete dir="${bin_dir}"/>
+        <delete file="${lib_dir}/sphinx4.jar"/>
+        <delete file="${lib_dir}/tags.jar"/>
+        <delete file="${lib_dir}/${wsj_name}.jar"/>
+        <delete file="${lib_dir}/${wsj_8kHz_name}.jar"/>
+        <delete file="${lib_dir}/${tidigits_name}.jar"/>
+        <delete file="tempKeystore"/>
+        <antcall target="delete_all_model_classes"/>
     </target>
 
-    <!-- ********************************************************** --> 
+    <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Deploys the bin.zip and src.zip files.                 * -->
     <!-- *                                                        * -->
-    <!-- ********************************************************** --> 
+    <!-- ********************************************************** -->
     <target name="deploy"
             depends="check_jsapi_jar.isPresent,issue_jsapi_error"
             description="Deploys the bin.zip and src.zip files."
-	    if="jsapi_jar.isPresent">
-	<delete dir="${deploy_dir}"/>
-	<antcall target="deploy_bin_zip"/>
-	<antcall target="deploy_src_zip"/>
+            if="jsapi_jar.isPresent">
+        <delete dir="${deploy_dir}"/>
+        <antcall target="deploy_bin_zip"/>
+        <antcall target="deploy_src_zip"/>
     </target>
 
     <target name="issue_jsapi_error"
             unless="jsapi_jar.isPresent">
         <echo>
-Cannot find lib/jsapi.jar needed to deploy Sphinx-4.
-Please go to the "lib" directory and run jsapi.sh or jsapi.exe
-to setup JSAPI.
+            Cannot find lib/jsapi.jar needed to deploy Sphinx-4.
+            Please go to the "lib" directory and run jsapi.sh or jsapi.exe
+            to setup JSAPI.
         </echo>
     </target>
 
 
-    <!-- ********************************************************** --> 
+    <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Deploys the sphinx4-{version}-bin.zip file.            * -->
     <!-- *                                                        * -->
-    <!-- ********************************************************** --> 
+    <!-- ********************************************************** -->
     <target name="deploy_bin_zip"
             description="Creates the bin.zip deploy file."
-	    depends="clean,all,javadoc">
-	<mkdir dir="${deploy_dir}/sphinx4-${version}"/>
-	<copy todir="${deploy_dir}/sphinx4-${version}"
-	      includeEmptyDirs="false">
-	     <fileset dir="."
-             includes="demo.xml,
+            depends="clean,all,javadoc">
+        <mkdir dir="${deploy_dir}/sphinx4-${version}"/>
+        <copy todir="${deploy_dir}/sphinx4-${version}"
+              includeEmptyDirs="false">
+            <fileset dir="."
+                     includes="demo.xml,
 		      index.html,
 		      license.terms,
 		      README,
 		      RELEASE_NOTES,
 		      ANNOUNCE.txt"/>
-	     <fileset dir="." includes="lib/**" excludes="lib/jsapi.jar"/>
-	     <fileset dir="." includes="bin/*.jar"/>
-	     <fileset dir="." includes="demo/**"/>
-	     <fileset dir="." includes="doc-files/**"/>
-	     <fileset dir="." includes="javadoc/**"/>
-	     <fileset dir="." includes="doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html,doc/Sphinx4-faq.html,doc/UsingSphinxTrainModels.html,doc/Sphinx4Whitepaper.pdf"/>
-	</copy>
-	<delete dir="${deploy_dir}/sphinx4-${version}/lib/jsapi"/>
-	<jar destfile="${deploy_dir}/sphinx4-${version}-bin.zip"
-	     basedir="${deploy_dir}"
-	     includes="sphinx4-${version}/**"
-	     compress="true"/>
-	<delete dir="${deploy_dir}/sphinx4-${version}"/>
+            <fileset dir="." includes="lib/**" excludes="lib/jsapi.jar"/>
+            <fileset dir="." includes="bin/*.jar"/>
+            <fileset dir="." includes="demo/**"/>
+            <fileset dir="." includes="doc-files/**"/>
+            <fileset dir="." includes="javadoc/**"/>
+            <fileset dir="."
+                     includes="doc/jsapi_setup.html,doc/1-2-searchgraph.jpg,doc/ProgrammersGuide.html,doc/Sphinx4-faq.html,doc/UsingSphinxTrainModels.html,doc/Sphinx4Whitepaper.pdf"/>
+        </copy>
+        <delete dir="${deploy_dir}/sphinx4-${version}/lib/jsapi"/>
+        <jar destfile="${deploy_dir}/sphinx4-${version}-bin.zip"
+             basedir="${deploy_dir}"
+             includes="sphinx4-${version}/**"
+             compress="true"/>
+        <delete dir="${deploy_dir}/sphinx4-${version}"/>
     </target>
 
 
-    <!-- ********************************************************** --> 
+    <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Deploys the sphinx4-{version}-src.zip file.            * -->
     <!-- *                                                        * -->
-    <!-- ********************************************************** --> 
+    <!-- ********************************************************** -->
     <target name="deploy_src_zip"
             description="Creates the src.zip deploy file."
-	    depends="clean_not_deploy">
-	<mkdir dir="${deploy_dir}/sphinx4-${version}"/>
-	<copy todir="${deploy_dir}/sphinx4-${version}"
-	      includeEmptyDirs="false">
-	    <fileset dir="."/>
-	</copy>
+            depends="clean_not_deploy">
+        <mkdir dir="${deploy_dir}/sphinx4-${version}"/>
+        <copy todir="${deploy_dir}/sphinx4-${version}"
+              includeEmptyDirs="false">
+            <fileset dir="."/>
+        </copy>
 
-	<delete dir="${deploy_dir}/sphinx4-${version}/bin"/>
-	<delete dir="${deploy_dir}/sphinx4-${version}/deploy"/>
-	<delete dir="${deploy_dir}/sphinx4-${version}/tests/frontend"/>
-	<delete dir="${deploy_dir}/sphinx4-${version}/tests/linguist"/>
-	<delete dir="${deploy_dir}/sphinx4-${version}/tests/other"/>
-	<delete dir="${deploy_dir}/sphinx4-${version}/tests/performance/parallel"/>
-	<delete dir="${deploy_dir}/sphinx4-${version}/tests/performance/wsj20k"/>
-	<delete dir="${deploy_dir}/sphinx4-${version}/tests/performance/wsj5k"/>
-	<delete dir="${deploy_dir}/sphinx4-${version}/tests/search"/>
-	<delete dir="${deploy_dir}/sphinx4-${version}/tests/trainer"/>
-	<delete file="${deploy_dir}/sphinx4-${version}/lib/jsapi.jar"/>
+        <delete dir="${deploy_dir}/sphinx4-${version}/bin"/>
+        <delete dir="${deploy_dir}/sphinx4-${version}/deploy"/>
+        <delete dir="${deploy_dir}/sphinx4-${version}/tests/frontend"/>
+        <delete dir="${deploy_dir}/sphinx4-${version}/tests/linguist"/>
+        <delete dir="${deploy_dir}/sphinx4-${version}/tests/other"/>
+        <delete dir="${deploy_dir}/sphinx4-${version}/tests/performance/parallel"/>
+        <delete dir="${deploy_dir}/sphinx4-${version}/tests/performance/wsj20k"/>
+        <delete dir="${deploy_dir}/sphinx4-${version}/tests/performance/wsj5k"/>
+        <delete dir="${deploy_dir}/sphinx4-${version}/tests/search"/>
+        <delete dir="${deploy_dir}/sphinx4-${version}/tests/trainer"/>
+        <delete file="${deploy_dir}/sphinx4-${version}/lib/jsapi.jar"/>
 
-	<jar destfile="${deploy_dir}/sphinx4-${version}-src.zip"
-	     basedir="${deploy_dir}"
-	     includes="sphinx4-${version}/**"
-	     compress="true"/>
-	<delete dir="${deploy_dir}/sphinx4-${version}"/>
+        <jar destfile="${deploy_dir}/sphinx4-${version}-src.zip"
+             basedir="${deploy_dir}"
+             includes="sphinx4-${version}/**"
+             compress="true"/>
+        <delete dir="${deploy_dir}/sphinx4-${version}"/>
     </target>
 
 </project>
