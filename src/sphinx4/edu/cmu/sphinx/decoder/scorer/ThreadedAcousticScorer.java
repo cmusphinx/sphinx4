@@ -20,9 +20,6 @@ import java.util.logging.Logger;
 import java.util.Map;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.frontend.util.DataUtil;
-import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
-import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
@@ -30,85 +27,60 @@ import edu.cmu.sphinx.util.props.Registry;
 import edu.cmu.sphinx.decoder.search.Token;
 
 /**
- * An acoustic scorer that breaks the scoring up into a configurable number of
- * separate threads.
- *
+ * An acoustic scorer that breaks the scoring up into a configurable number of separate threads.
+ * <p/>
  * All scores are maintained in LogMath log base
  */
 public class ThreadedAcousticScorer implements AcousticScorer {
 
-    /**
-     * Property the defines the frontend to retrieve features from for scoring
-     *
-     */
+    /** Property the defines the frontend to retrieve features from for scoring */
     public final static String PROP_FRONTEND = "frontend";
 
     /**
-     * A SphinxProperty name that controls the number of threads that are used
-     * to score hmm states. If the isCpuRelative property is false, then is is
-     * the exact number of threads that are used to score hmm states. if the
-     * isCpuRelative property is true, then this value is combined with the
-     * number of available proessors on the system. If you want to have one
-     * thread per CPU available to score states, set the NUM_THREADS property
-     * to 0 and the isCpuRelative to true. If you want exactly one thread to
-     * process scores set NUM_THREADS to 1 and isCpuRelative to false. The
+     * A SphinxProperty name that controls the number of threads that are used to score hmm states. If the isCpuRelative
+     * property is false, then is is the exact number of threads that are used to score hmm states. if the isCpuRelative
+     * property is true, then this value is combined with the number of available proessors on the system. If you want
+     * to have one thread per CPU available to score states, set the NUM_THREADS property to 0 and the isCpuRelative to
+     * true. If you want exactly one thread to process scores set NUM_THREADS to 1 and isCpuRelative to false. The
      * default value is 1
      */
     public final static String PROP_NUM_THREADS = "numThreads";
 
-    /**
-     * The default value for PROP_NUM_THREADS.
-     */
+    /** The default value for PROP_NUM_THREADS. */
     public final static int PROP_NUM_THREADS_DEFAULT = 1;
 
     /**
-     * A sphinx property name that controls whether the number of available
-     * CPUs on the system is used when determining the number of threads to use
-     * for scoring. If true, the NUM_THREADS property is combined with the
-     * available number of CPUS to deterimine the number of threads. Note that
-     * the number of threads is contrained to be never lower than zero. Also,
-     * if the number of threads is one, the states are scored on the calling
-     * thread, no separate threads are started. The default value is false.
+     * A sphinx property name that controls whether the number of available CPUs on the system is used when determining
+     * the number of threads to use for scoring. If true, the NUM_THREADS property is combined with the available number
+     * of CPUS to deterimine the number of threads. Note that the number of threads is contrained to be never lower than
+     * zero. Also, if the number of threads is one, the states are scored on the calling thread, no separate threads are
+     * started. The default value is false.
      */
     public final static String PROP_IS_CPU_RELATIVE = "isCpuRelative";
 
-    /**
-     * The default value for PROP_IS_CPU_RELATIVE.
-     */
+    /** The default value for PROP_IS_CPU_RELATIVE. */
     public final static boolean PROP_IS_CPU_RELATIVE_DEFAULT = false;
 
     /**
-     * A Sphinx Property name that controls the minimum number of scoreables
-     * sent to a thread. This is used to prevent over threading of the scoring
-     * that could happen if the number of threads is high compared to the size
-     * of the activelist. The default is 50
+     * A Sphinx Property name that controls the minimum number of scoreables sent to a thread. This is used to prevent
+     * over threading of the scoring that could happen if the number of threads is high compared to the size of the
+     * activelist. The default is 50
      */
     public final static String PROP_MIN_SCOREABLES_PER_THREAD = "minScoreablesPerThread";
 
-    /**
-     * The default value for PROP_MIN_SCOREABLES_PER_THREAD.
-     */
+    /** The default value for PROP_MIN_SCOREABLES_PER_THREAD. */
     public final static int PROP_MIN_SCOREABLES_PER_THREAD_DEFAULT = 50;
 
-    /**
-     * A SphinxProperty specifying whether the scoreables should keep a
-     * reference to the scored features.
-     */
+    /** A SphinxProperty specifying whether the scoreables should keep a reference to the scored features. */
     public final static String PROP_SCOREABLES_KEEP_FEATURE = "scoreablesKeepFeature";
 
-    /**
-     * The default value for PROP_SCOREABLES_KEEP_FEATURE.
-     */
+    /** The default value for PROP_SCOREABLES_KEEP_FEATURE. */
     public final static boolean PROP_SCOREABLES_KEEP_FEATURE_DEFAULT = false;
 
-    /**
-     * A sphinx property that controls the amount of acoustic gain.
-     */
+    /** A sphinx property that controls the amount of acoustic gain. */
     public final static String PROP_ACOUSTIC_GAIN = "acousticGain";
 
-    /**
-     * The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property.
-     */
+    /** The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property. */
     public final static float PROP_ACOUSTIC_GAIN_DEFAULT = 1F;
 
     // ----------------------------
@@ -126,11 +98,12 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     private Semaphore semaphore;    // join after call
     private Data currentData;       // current feature being processed
 
-   /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#allocate()
-     */
+
+    /*
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#allocate()
+    */
     public void allocate() throws IOException {
         logger.info("# of scoring threads: " + numThreads);
 
@@ -149,39 +122,42 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
     }
 
+
     /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#deallocate()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#deallocate()
+    */
     public void deallocate() {
 
     }
-        
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_FRONTEND_TYPE"),new String("COMPONENT"));
-        info.put(new String("PROP_FRONTEND_CLASSTYPE"),new String("edu.cmu.sphinx.frontend.BaseDataProcessor"));
-        info.put(new String("PROP_IS_CPU_RELATIVE_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_SCOREABLES_KEEP_FEATURE_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_NUM_THREADS_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_MIN_SCOREABLES_PER_THREAD_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_ACOUSTIC_GAIN_TYPE"),new String("FLOAT"));
+        info.put(new String("PROP_FRONTEND_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_FRONTEND_CLASSTYPE"), new String("edu.cmu.sphinx.frontend.BaseDataProcessor"));
+        info.put(new String("PROP_IS_CPU_RELATIVE_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_SCOREABLES_KEEP_FEATURE_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_NUM_THREADS_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_MIN_SCOREABLES_PER_THREAD_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_ACOUSTIC_GAIN_TYPE"), new String("FLOAT"));
 
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
@@ -193,11 +169,12 @@ public class ThreadedAcousticScorer implements AcousticScorer {
         registry.register(PROP_ACOUSTIC_GAIN, PropertyType.FLOAT);
     }
 
+
     /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         frontEnd = (BaseDataProcessor) ps.getComponent(PROP_FRONTEND, BaseDataProcessor.class);
@@ -221,29 +198,27 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
     }
 
+
     /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
 
-    /**
-     * Initializes the scorer
-     */
+
+    /** Initializes the scorer */
     public void startRecognition() {
     }
+
 
     /**
      * Scores the given set of states
      *
-     * @param scoreableList
-     *                a list containing scoreable objects to be scored
-     *
-     * @return the best scorign scoreable, or null if there are no more
-     *         features to score
+     * @param scoreableList a list containing scoreable objects to be scored
+     * @return the best scorign scoreable, or null if there are no more features to score
      */
     public Scoreable calculateScores(List<Token> scoreableList) {
         Scoreable best = null;
@@ -266,18 +241,9 @@ public class ThreadedAcousticScorer implements AcousticScorer {
                 return best;
             }
 
-            if(data instanceof SpeechEndSignal)
-                return null;
-
-            if(data instanceof SpeechStartSignal)
-                data = frontEnd.getData();
-
-            if(data instanceof DoubleData)
-                data = DataUtil.DoubleData2FloatData((DoubleData) data);
-
-//            if (data instanceof Signal) {
-//                throw new Error("trying to score non-content data");
-//            }
+            if (data instanceof Signal) {
+                throw new Error("Can't score non-content feature");
+            }
 
             currentData = data;
 
@@ -319,17 +285,16 @@ public class ThreadedAcousticScorer implements AcousticScorer {
         return best;
     }
 
-    /**
-     * Performs post-recognition cleanup.
-     */
+
+    /** Performs post-recognition cleanup. */
     public void stopRecognition() {
     }
+
 
     /**
      * Scores all of the Scoreables in the ScoreableJob
      *
-     * @param job
-     *                the scoreable job
+     * @param job the scoreable job
      * @return the best scoring scoreable in the job
      */
     private Scoreable scoreScoreables(ScoreableJob job) {
@@ -357,7 +322,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
              */
 
             if (scoreable.calculateScore(currentData, keepData,
-                        acousticGain) > best
+                    acousticGain) > best
                     .getScore()) {
                 best = scoreable;
             }
@@ -365,22 +330,20 @@ public class ThreadedAcousticScorer implements AcousticScorer {
         return best;
     }
 
+
     /**
-     * A scoring thread waits for a new scoreable to arrive at the mailbox,
-     * scores it, and notifies when its done by posting to the semaphore
+     * A scoring thread waits for a new scoreable to arrive at the mailbox, scores it, and notifies when its done by
+     * posting to the semaphore
      */
     class ScoringThread extends Thread {
-        /**
-         * Creates a new ScoringThread.
-         */
+
+        /** Creates a new ScoringThread. */
         ScoringThread() {
             setDaemon(true);
         }
 
-        /**
-         * Waits for a scoreable job and scores the scoreable in the job,
-         * signally back when done
-         */
+
+        /** Waits for a scoreable job and scores the scoreable in the job, signally back when done */
         public void run() {
             while (true) {
                 ScoreableJob scoreableJob = mailbox.pend();
@@ -392,17 +355,16 @@ public class ThreadedAcousticScorer implements AcousticScorer {
 
 }
 
-/**
- * Mailbox class allows a set of threads to communicate a single scoreable job
- */
+/** Mailbox class allows a set of threads to communicate a single scoreable job */
 
 class Mailbox {
 
     private ScoreableJob curScoreableJob;
 
+
     /**
-     * Posts a scoreable to the mail box. The caller will block until the
-     * mailbox is empty and will then notify any waiters
+     * Posts a scoreable to the mail box. The caller will block until the mailbox is empty and will then notify any
+     * waiters
      */
     synchronized void post(ScoreableJob scoreableJob) {
         while (curScoreableJob != null) {
@@ -415,9 +377,10 @@ class Mailbox {
         notifyAll();
     }
 
+
     /**
-     * Waits for a scoreable to arrive in the mailbox and returns it. This will
-     * block the caller until a scoreable arrives
+     * Waits for a scoreable to arrive in the mailbox and returns it. This will block the caller until a scoreable
+     * arrives
      *
      * @return the next scoreable
      */
@@ -436,24 +399,24 @@ class Mailbox {
     }
 }
 
-/**
- * A counting semaphore
- */
+/** A counting semaphore */
 
 class Semaphore {
+
     int count;
     Scoreable bestScoreable;
+
 
     /**
      * Sets the count for this counting semaphore
      *
-     * @param count
-     *                the count for the semaphore
+     * @param count the count for the semaphore
      */
     synchronized void reset(int count) {
         this.count = count;
         bestScoreable = null;
     }
+
 
     /**
      * Pends the caller until the count reaches zero
@@ -470,12 +433,11 @@ class Semaphore {
         return bestScoreable;
     }
 
+
     /**
-     * Posts to the semaphore, decrementing the counter by one. should the
-     * counter arrive at zero, wake up any penders.
+     * Posts to the semaphore, decrementing the counter by one. should the counter arrive at zero, wake up any penders.
      *
-     * @param postedBest
-     *                the best scoreable encounted for this batch.
+     * @param postedBest the best scoreable encounted for this batch.
      */
     synchronized void post(Scoreable postedBest) {
         if (bestScoreable == null
@@ -490,9 +452,7 @@ class Semaphore {
 
 }
 
-/**
- * Represent a set of scoreables to be scored
- */
+/** Represent a set of scoreables to be scored */
 
 class ScoreableJob {
 
@@ -500,21 +460,20 @@ class ScoreableJob {
     private int start;
     private int size;
 
+
     /**
      * Creates a scoreable job
      *
-     * @param scoreables
-     *                the list of scoreables
-     * @param start
-     *                the starting point for this job
-     * @param size
-     *                the number of scoreables in this job
+     * @param scoreables the list of scoreables
+     * @param start      the starting point for this job
+     * @param size       the number of scoreables in this job
      */
     ScoreableJob(List<Token> scoreables, int start, int size) {
         this.scoreables = scoreables;
         this.start = start;
         this.size = size;
     }
+
 
     /**
      * Gets the starting index for this job
@@ -525,6 +484,7 @@ class ScoreableJob {
         return start;
     }
 
+
     /**
      * Gets the number of scoreables in this job
      *
@@ -533,6 +493,7 @@ class ScoreableJob {
     int getSize() {
         return size;
     }
+
 
     /**
      * Returns the first scoreable in this job.
@@ -543,6 +504,7 @@ class ScoreableJob {
         return scoreables.get(start);
     }
 
+
     /**
      * Gets the entire list of scoreables
      *
@@ -552,6 +514,7 @@ class ScoreableJob {
         return scoreables;
     }
 
+
     /**
      * Returns a ListIterator for this job.
      *
@@ -560,6 +523,7 @@ class ScoreableJob {
     ListIterator<Token> getListIterator() {
         return scoreables.listIterator(start);
     }
+
 
     /**
      * Returns a string representation of this object
