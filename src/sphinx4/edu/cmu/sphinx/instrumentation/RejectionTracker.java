@@ -12,54 +12,36 @@
  */
 package edu.cmu.sphinx.instrumentation;
 
-import java.util.Map;
-import java.util.HashMap;
-
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.Resetable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
-/**
- * Tracks and reports rejection accuracy.
- */
+import java.util.HashMap;
+import java.util.Map;
+
+/** Tracks and reports rejection accuracy. */
 public class RejectionTracker implements Configurable,
-                                         ResultListener,
-                                         Resetable,
-					 StateListener {
+        ResultListener,
+        Resetable,
+        Monitor,
+        StateListener {
 
-    /**
-     * A Sphinx property that defines which recognizer to monitor
-     */
+    /** A Sphinx property that defines which recognizer to monitor */
     public final static String PROP_RECOGNIZER = "recognizer";
 
-    /**
-     * A sphinx property that define whether summary accuracy information is
-     * displayed
-     */
+    /** A sphinx property that define whether summary accuracy information is displayed */
     public final static String PROP_SHOW_SUMMARY = "showSummary";
 
-    /**
-     * The default setting of PROP_SHOW_SUMMARY
-     */
+    /** The default setting of PROP_SHOW_SUMMARY */
     public final static boolean PROP_SHOW_SUMMARY_DEFAULT = true;
 
-    /**
-     * A sphinx property that define whether detailed accuracy information is
-     * displayed
-     */
+    /** A sphinx property that define whether detailed accuracy information is displayed */
     public final static String PROP_SHOW_DETAILS = "showDetails";
 
-    /**
-     * The default setting of PROP_SHOW_DETAILS
-     */
+    /** The default setting of PROP_SHOW_DETAILS */
     public final static boolean PROP_SHOW_DETAILS_DEFAULT = true;
 
 
@@ -71,57 +53,47 @@ public class RejectionTracker implements Configurable,
     private boolean showSummary;
     private boolean showDetails;
 
-    /**
-     * total number of utterances
-     */
+    /** total number of utterances */
     private int numUtterances;
 
-    /**
-     * actual number of out-of-grammar utterance
-     */
+    /** actual number of out-of-grammar utterance */
     private int numOutOfGrammarUtterances;
 
-    /**
-     * number of correctly classified in-grammar utterances
-     */
+    /** number of correctly classified in-grammar utterances */
     private int numCorrectOutOfGrammarUtterances;
 
-    /**
-     * number of in-grammar utterances misrecognized as out-of-grammar
-     */
+    /** number of in-grammar utterances misrecognized as out-of-grammar */
     private int numFalseOutOfGrammarUtterances;
 
-    /**
-     * number of correctly classified out-of-grammar utterances
-     */
+    /** number of correctly classified out-of-grammar utterances */
     private int numCorrectInGrammarUtterances;
 
-    /**
-     * number of out-of-grammar utterances misrecognized as in-grammar
-     */
+    /** number of out-of-grammar utterances misrecognized as in-grammar */
     private int numFalseInGrammarUtterances;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_SHOW_SUMMARY_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_SHOW_DETAILS_TYPE"),new String("BOOLEAN"));      
-        info.put(new String("PROP_RECOGNIZER_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"),new String("edu.cmu.sphinx.recognizer.Recognizer"));
-        
+        info.put(new String("PROP_SHOW_SUMMARY_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_DETAILS_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_RECOGNIZER_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"), new String("edu.cmu.sphinx.recognizer.Recognizer"));
+
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
@@ -130,15 +102,16 @@ public class RejectionTracker implements Configurable,
         registry.register(PROP_SHOW_DETAILS, PropertyType.BOOLEAN);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         Recognizer newRecognizer = (Recognizer)
-            ps.getComponent(PROP_RECOGNIZER, Recognizer.class);
-        
+                ps.getComponent(PROP_RECOGNIZER, Recognizer.class);
+
         if (recognizer == null) {
             recognizer = newRecognizer;
             recognizer.addResultListener(this);
@@ -150,11 +123,11 @@ public class RejectionTracker implements Configurable,
             recognizer.addResultListener(this);
             recognizer.addStateListener(this);
         }
-        
+
         showSummary = ps.getBoolean(PROP_SHOW_SUMMARY,
-                                    PROP_SHOW_SUMMARY_DEFAULT);
+                PROP_SHOW_SUMMARY_DEFAULT);
         showDetails = ps.getBoolean(PROP_SHOW_DETAILS,
-                                    PROP_SHOW_DETAILS_DEFAULT);
+                PROP_SHOW_DETAILS_DEFAULT);
     }
 
 
@@ -172,20 +145,22 @@ public class RejectionTracker implements Configurable,
         numFalseInGrammarUtterances = 0;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.result.ResultListener#newResult(edu.cmu.sphinx.result.Result)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.result.ResultListener#newResult(edu.cmu.sphinx.result.Result)
+    */
     public void newResult(Result result) {
         String ref = result.getReferenceText();
         if (result.isFinal() && ref != null) {
@@ -205,36 +180,38 @@ public class RejectionTracker implements Configurable,
                     numCorrectInGrammarUtterances++;
                 }
             }
-	    printStats();
+            printStats();
         }
     }
 
+
     private void printStats() {
-	if (showSummary) {
-	    float correctPercent = ((float)
-				    (numCorrectOutOfGrammarUtterances +
-				     numCorrectInGrammarUtterances)) /
-		((float) numUtterances) * 100f;
-	    System.out.println
-		("   Rejection Accuracy: " + correctPercent + "%");
-	}
-	if (showDetails) {
-	    System.out.println
-		("   Correct OOG: " + numCorrectOutOfGrammarUtterances +
-		 "   False OOG: " + numFalseOutOfGrammarUtterances +
-		 "   Correct IG: " + numCorrectInGrammarUtterances +
-		 "   False IG: " + numFalseInGrammarUtterances);
-	}
+        if (showSummary) {
+            float correctPercent = ((float)
+                    (numCorrectOutOfGrammarUtterances +
+                            numCorrectInGrammarUtterances)) /
+                    ((float) numUtterances) * 100f;
+            System.out.println
+                    ("   Rejection Accuracy: " + correctPercent + "%");
+        }
+        if (showDetails) {
+            System.out.println
+                    ("   Correct OOG: " + numCorrectOutOfGrammarUtterances +
+                            "   False OOG: " + numFalseOutOfGrammarUtterances +
+                            "   Correct IG: " + numCorrectInGrammarUtterances +
+                            "   False IG: " + numFalseInGrammarUtterances);
+        }
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.recognizer.StateListener#statusChanged(edu.cmu.sphinx.recognizer.RecognizerState)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.recognizer.StateListener#statusChanged(edu.cmu.sphinx.recognizer.RecognizerState)
+    */
     public void statusChanged(RecognizerState status) {
         if (status.equals(RecognizerState.DEALLOCATED)) {
-	    printStats();
-	}
+            printStats();
+        }
     }
 }

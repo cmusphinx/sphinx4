@@ -66,7 +66,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
 
     /** The default value for PROP_WINDOW_SHIFT_MS. */
     public static final float PROP_WINDOW_SHIFT_MS_DEFAULT = 10;
-    
+
     /**
      * The name of the SphinxProperty for the alpha value of the Window, which has a default value of 0.46 (double),
      * which is the value for the RaisedCosineWindow.
@@ -87,17 +87,18 @@ public class RaisedCosineWindower extends BaseDataProcessor {
     private float windowShiftInMs;
     private int sampleRate = 0;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-       
-        info.put(new String("PROP_ALPHA_TYPE"),new String("DOUBLE"));
-        info.put(new String("PROP_WINDOW_SIZE_MS_TYPE"),new String("FLOAT"));
-        info.put(new String("PROP_WINDOW_SHIFT_MS_TYPE"),new String("FLOAT"));
+
+        info.put(new String("PROP_ALPHA_TYPE"), new String("DOUBLE"));
+        info.put(new String("PROP_WINDOW_SIZE_MS_TYPE"), new String("FLOAT"));
+        info.put(new String("PROP_WINDOW_SHIFT_MS_TYPE"), new String("FLOAT"));
         return info;
     }
 
@@ -379,6 +380,18 @@ public class RaisedCosineWindower extends BaseDataProcessor {
             }
             return windowCount;
         }
+    }
+
+
+    /**
+     * Returns the shift size used to window the incoming speech signal. This value might be used by other components to
+     * determine the time resolution of feature vectors.
+     */
+    public float getWindowShiftInMs() {
+        if (windowShiftInMs == 0)
+            throw new RuntimeException(this.getName() + " was not initialized yet!");
+
+        return windowShiftInMs;
     }
 }
 

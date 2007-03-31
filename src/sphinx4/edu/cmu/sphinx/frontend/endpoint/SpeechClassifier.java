@@ -18,10 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
-import edu.cmu.sphinx.frontend.BaseDataProcessor;
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DoubleData;
+import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -261,6 +258,10 @@ public class SpeechClassifier extends BaseDataProcessor {
     public Data getData() throws DataProcessingException {
         if (outputQueue.size() == 0) {
             Data audio = getPredecessor().getData();
+
+            if(audio instanceof DataStartSignal)
+                reset();
+            
             if (audio != null) {
                 if (audio instanceof DoubleData) {
                     DoubleData data = (DoubleData) audio;

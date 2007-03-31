@@ -20,6 +20,9 @@ import java.util.logging.Logger;
 import java.util.Map;
 
 import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.frontend.util.DataUtil;
+import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
+import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
@@ -263,9 +266,18 @@ public class ThreadedAcousticScorer implements AcousticScorer {
                 return best;
             }
 
-            if (data instanceof Signal) {
-                throw new Error("Can't score non-content feature");
-            }
+            if(data instanceof SpeechEndSignal)
+                return null;
+
+            if(data instanceof SpeechStartSignal)
+                data = frontEnd.getData();
+
+            if(data instanceof DoubleData)
+                data = DataUtil.DoubleData2FloatData((DoubleData) data);
+
+//            if (data instanceof Signal) {
+//                throw new Error("trying to score non-content data");
+//            }
 
             currentData = data;
 
