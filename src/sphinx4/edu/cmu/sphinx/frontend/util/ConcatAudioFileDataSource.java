@@ -222,19 +222,8 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
          */
         public URL readNext() {
             if (lastFile != null) {
-                for (int i = 0; i < fileListeners.size(); i++) {
-                    if (fileListeners == null)
-                        throw new RuntimeException("listeners");
-
-                    AudioFileProcessListener curListener = fileListeners.get(i);
-                    if (curListener == null)
-                        throw new RuntimeException("null listener");
-
-                    File audioFile = new File(lastFile.getFile());
-                    System.out.println("last file is " + lastFile + " and its parent222 is " + audioFile);
-
-                    curListener.audioFileProcFinished(audioFile);
-                }
+                for (int i = 0; i < fileListeners.size(); i++)
+                    fileListeners.get(i).audioFileProcFinished(new File(lastFile.getFile()));
 
                 lastFile = null;
             }
