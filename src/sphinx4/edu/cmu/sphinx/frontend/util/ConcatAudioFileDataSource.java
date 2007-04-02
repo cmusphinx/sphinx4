@@ -1,6 +1,5 @@
 package edu.cmu.sphinx.frontend.util;
 
-import edu.cmu.sphinx.util.BatchFile;
 import edu.cmu.sphinx.util.ReferenceSource;
 
 import javax.sound.sampled.AudioFormat;
@@ -9,8 +8,10 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -25,10 +26,11 @@ import java.util.List;
  */
 public class ConcatAudioFileDataSource extends AudioFileDataSource implements ReferenceSource {
 
-    private String nextFile = null;
+    private URL nextFile = null;
     private List<String> referenceList;
-    private String batchFile;
     private boolean isInitialized;
+
+    List<URL> batchFiles;
 
 
     public ConcatAudioFileDataSource() {
@@ -46,12 +48,12 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
     public void initialize() {
         super.initialize();
 
-        if (batchFile == null)
+        if (batchFiles == null)
             return;
 
         try {
             referenceList = new ArrayList<String>();
-            dataStream = new SequenceInputStream(new InputStreamEnumeration(batchFile));
+            dataStream = new SequenceInputStream(new InputStreamEnumeration(batchFiles));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,9 +62,60 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
 
     public void setBatchFile(File batchFile) {
         assert batchFile.isFile();
-        this.batchFile = batchFile.getPath();
 
+        setBatchUrls(readDriver(batchFile.getAbsolutePath()));
+    }
+
+
+    public void setBatchFiles(List<File> files) {
+        assert files != null;
+        List<URL> urls = new ArrayList<URL>();
+
+        try {
+            for (File file : files)
+                urls.add(file.toURI().toURL());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        setBatchUrls(urls);
+    }
+
+
+    public void setBatchUrls(List<URL> urls) {
+        batchFiles = new ArrayList<URL>(urls);
         initialize();
+    }
+
+
+    /** Reads and verifies a driver file. */
+    private static List<URL> readDriver(String fileName) {
+        File inputFile = new File(fileName);
+        List<URL> driverFiles = null;
+
+        try {
+            if (!inputFile.isFile() || !inputFile.canRead())
+                throw new IllegalArgumentException("file to read is not valid");
+
+            BufferedReader bf = new BufferedReader(new FileReader(inputFile));
+
+            driverFiles = new ArrayList<URL>();
+
+            String line;
+            while ((line = bf.readLine()) != null && line.trim().length() != 0) {
+                File file = new File(line);
+
+                assert file.isFile() : "file " + file + " does not exist!";
+                driverFiles.add(file.toURI().toURL());
+            }
+
+            bf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assert driverFiles != null;
+        return driverFiles;
     }
 
 
@@ -88,12 +141,12 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
      */
     class InputStreamEnumeration implements Enumeration {
 
-        private BufferedReader reader;
-        private String lastFile;
+        private URL lastFile;
+        Iterator<URL> fileIt;
 
 
-        InputStreamEnumeration(String batchFile) throws IOException {
-            reader = new BufferedReader(new FileReader(batchFile));
+        InputStreamEnumeration(List<URL> files) throws IOException {
+            fileIt = new ArrayList<URL>(files).iterator();
         }
 
 
@@ -119,13 +172,13 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
          */
         public Object nextElement() {
             Object stream = null;
-            if (nextFile == null) {
+            if (lastFile == null) {
                 nextFile = readNext();
             }
 
             if (nextFile != null) {
                 try {
-                    AudioInputStream ais = AudioSystem.getAudioInputStream(new File(nextFile).toURI().toURL());
+                    AudioInputStream ais = AudioSystem.getAudioInputStream(nextFile);
 
                     // test wether all files in the stream have the same format
                     AudioFormat format = ais.getFormat();
@@ -146,7 +199,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
                     // System.out.println(nextFile);
 
                     for (int i = 0; i < fileListeners.size(); i++)
-                        fileListeners.get(i).audioFileProcStarted(new File(nextFile));
+                        fileListeners.get(i).audioFileProcStarted(new File(nextFile.getFile()));
 
                     lastFile = nextFile;
                     nextFile = null;
@@ -167,31 +220,29 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
          *
          * @return the name of the appropriate audio file
          */
-        public String readNext() {
+        public URL readNext() {
             if (lastFile != null) {
-                for (int i = 0; i < fileListeners.size(); i++)
-                    fileListeners.get(i).audioFileProcFinished(new File(lastFile));
+                for (int i = 0; i < fileListeners.size(); i++) {
+                    if (fileListeners == null)
+                        throw new RuntimeException("listeners");
+
+                    AudioFileProcessListener curListener = fileListeners.get(i);
+                    if (curListener == null)
+                        throw new RuntimeException("null listener");
+
+                    File audioFile = new File(lastFile.getFile());
+                    System.out.println("last file is " + lastFile + " and its parent222 is " + audioFile);
+
+                    curListener.audioFileProcFinished(audioFile);
+                }
 
                 lastFile = null;
             }
 
-            String result;
-            try {
-                String next = reader.readLine();
-                if (next != null) {
-                    String reference = BatchFile.getReference(next);
-                    referenceList.add(reference);
-                }
+            if (fileIt.hasNext())
+                lastFile = fileIt.next();
 
-                if (next != null && next.trim().length() > 0)
-                    result = next;
-                else
-                    result = null;
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-                throw new Error("Problem reading from batch file");
-            }
-            return result;
+            return lastFile;
         }
     }
 }

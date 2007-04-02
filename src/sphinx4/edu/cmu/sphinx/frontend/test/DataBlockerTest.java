@@ -9,9 +9,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Some small tests which ensure that the <code>DataBlocker</code> works properly.
- */
+/** Some small tests which ensure that the <code>DataBlocker</code> works properly. */
 public class DataBlockerTest extends BaseDataProcessor {
 
     private List<Data> input;
@@ -82,7 +80,7 @@ public class DataBlockerTest extends BaseDataProcessor {
     }
 
 
-    private List<Data> collectOutput(double blocSizeMs) throws DataProcessingException {
+    public List<Data> collectOutput(double blocSizeMs) throws DataProcessingException {
         DataBlocker dataBlocker = new DataBlocker(blocSizeMs);
         dataBlocker.setPredecessor(this);
 
@@ -98,7 +96,7 @@ public class DataBlockerTest extends BaseDataProcessor {
     }
 
 
-    private static List<DoubleData> createDataInput(int numSamples, int blockSize, int sampleRate, int offSet) {
+    public static List<DoubleData> createDataInput(int numSamples, int blockSize, int sampleRate, int offSet) {
         List<DoubleData> datas = new ArrayList<DoubleData>();
 
         double counter = 1;
@@ -118,7 +116,7 @@ public class DataBlockerTest extends BaseDataProcessor {
      * Tests wether the samples of all <code>Data</code>s in the list are ordered in increasing order with +1
      * increments.
      */
-    private static boolean hasIncreasingOrder(List<Data> output, int lastValue) {
+    public static boolean hasIncreasingOrder(List<Data> output, int lastValue) {
         double dataCounter = 0;
 
         for (Data data : output) {
