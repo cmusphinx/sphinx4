@@ -672,7 +672,7 @@ public class BinaryLoader {
 
         int s = 0;
         for (int i = 0; i < length; i++) {
-            char c = (char) bytes[i];
+            char c = (char) (bytes[i] & 0xFF); 
             bytesRead++;
             if (c == '\0') {
                 // if its the end of a string, add it to the 'words' array
