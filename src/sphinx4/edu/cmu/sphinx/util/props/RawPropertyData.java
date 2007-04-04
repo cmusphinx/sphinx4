@@ -73,7 +73,7 @@ class RawPropertyData {
 
 
     /** @return Returns the properties. */
-    Map getProperties() {
+    Map<String, Object> getProperties() {
         return properties;
     }
 
