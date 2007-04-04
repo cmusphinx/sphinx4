@@ -18,7 +18,7 @@ import java.util.Map;
 
 
 /** Holds the raw property data just as it has come in from the properties file. */
-class RawPropertyData {
+public class RawPropertyData {
 
     private String name;
     private String className;
@@ -31,7 +31,7 @@ class RawPropertyData {
      * @param name      the name of the item
      * @param className the class name of the item
      */
-    RawPropertyData(String name, String className) {
+    public RawPropertyData(String name, String className) {
         this.name = name;
         this.className = className;
         properties = new HashMap<String, Object>();
@@ -44,7 +44,7 @@ class RawPropertyData {
      * @param propName  the name of the property
      * @param propValue the value of the property
      */
-    void add(String propName, String propValue) {
+    public void add(String propName, String propValue) {
         properties.put(propName, propValue);
     }
 
@@ -61,7 +61,7 @@ class RawPropertyData {
 
 
     /** @return Returns the className. */
-    String getClassName() {
+    public String getClassName() {
         return className;
     }
 
@@ -73,7 +73,7 @@ class RawPropertyData {
 
 
     /** @return Returns the properties. */
-    Map<String, Object> getProperties() {
+    public Map<String, Object> getProperties() {
         return properties;
     }
 
