@@ -159,7 +159,7 @@ public class PropSheetImpl implements PropSheet {
     }
 
 
-    public SimpleConfigurable getComponent(String name, Class type) throws PropertyException {
+    public SimpleConfigurable getComponent(String name) throws PropertyException {
         S4PropWrapper s4PropWrapper = getProperty(name, S4Component.class);
 
         S4Component s4Component = ((S4Component) s4PropWrapper.getAnnotation());

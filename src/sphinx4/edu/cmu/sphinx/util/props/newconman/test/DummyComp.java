@@ -70,7 +70,7 @@ public class DummyComp implements SimpleConfigurable {
 
 
     public void newProperties(PropSheet ps) throws PropertyException {
-        frontEnd = (DummyFrontEnd) ps.getComponent(PROP_FRONTEND, DummyFrontEnd.class);
+        frontEnd = (DummyFrontEnd) ps.getComponent(PROP_FRONTEND);
         beamWidth = ps.getInt(PROP_BEAM_WIDTH);
         bestAsr = ps.getString(PROP_BEST_ASR);
         alpha = ps.getDouble(PROP_ALPHA);

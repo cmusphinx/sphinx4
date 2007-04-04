@@ -127,12 +127,11 @@ public interface PropSheet {
      * Gets a component associated with the given parameter name
      *
      * @param name the parameter name
-     * @param type the desired component type
      * @return the component associated with the name
      * @throws edu.cmu.sphinx.util.props.PropertyException
      *          if the component does not exist or is of the wrong type.
      */
-    SimpleConfigurable getComponent(String name, Class type) throws PropertyException;
+    SimpleConfigurable getComponent(String name) throws PropertyException;
 
 
     /**
