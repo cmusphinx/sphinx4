@@ -96,7 +96,7 @@ class RawPropertyData {
 
         for (String propName : properties.keySet()) {
             Object propVal = properties.get(propName);
-            if (propVal instanceof String && ((String) propVal).startsWith("${"))
+            if (propVal instanceof String)
                 copyRPD.properties.put(propName, getGlobalProperty((String) propVal, globalProperties));
             else
                 copyRPD.properties.put(propName, properties.get(propName));
@@ -114,8 +114,8 @@ class RawPropertyData {
      * @return the property value or null if it doesn't exist.
      */
     public String getGlobalProperty(String key, Map<String, String> globalProperties) {
-        if (!key.startsWith("${"))
-            key = "${" + key + "}";
+        if (!key.startsWith("${")) // is symbol already flat
+            return key;
 
         while (true) {
             key = globalProperties.get(key);
