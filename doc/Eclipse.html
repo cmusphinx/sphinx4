@@ -57,31 +57,30 @@ This file was contributed by Naveen Parihar.
           </p>
 
           <ul>
-            <li><b>Java 2 SDK, Standard Edition, v1.4.2</b> or better.  Go
-              to <a href="http://java.sun.com">java.sun.com</a>, and select
-              "J2SE". At the time of writing, the latest release version is
-              1.5 (a.k.a. 5.0), which is the one we recommend.
+            <li><b>Java SE JDK 5</b> or better.  Go to <a
+            href="http://java.sun.com">java.sun.com</a>, and select
+            "Java SE". At the time of writing, the latest release
+            version is 6, which is the one we recommend.
             </li>
 
             <br>
 
-              <li> <b>Eclipse 3.0</b> or better, available at <a
-              href="http://www.eclipse.org">www.eclipse.org</a>. The
-              current documentation was written based on <b>Eclipse
-              3.1</b>. If you are using other version, some of the
-              options may not be exactly as described here, but
-              semantically similar. The site has documentation that
-              includes various user guides.  You will need to install
-              the <b>Java 2 SDK, Standard Edition</b> before
-              installing <b>Eclipse</b> distribution. Or else, you
-              will need to specify the path to the <b>Java 2 SDK, Standard
-              Edition</b> within <b>Eclipse</b>.
-              </li>
+            <li> <b>Eclipse 3.0</b> or better, available at <a
+            href="http://www.eclipse.org">www.eclipse.org</a>. The
+            current documentation was written based on <b>Eclipse
+            3.1</b>. If you are using other version, some of the
+            options may not be exactly as described here, but
+            semantically similar. The site has documentation that
+            includes various user guides.  You will need to install
+            the <b>Java SE JDK</b> before installing <b>Eclipse</b>
+            distribution. Or else, you will need to specify the path
+            to the <b>Java SE JDK</b> within <b>Eclipse</b>.
+            </li>
 
           </ul>
         </li>
 
-        <br>&nbsp;
+        <br>
 
           <li><a name="how_build"><b>Building Sphinx-4 using Eclipse</b></a>
 
@@ -92,26 +91,54 @@ This file was contributed by Naveen Parihar.
             perhaps, the simplest way, of setting up Sphinx-4 in
             Eclipse. However, there are other possible ways to set up
             Sphinx-4 in Eclipse as well that are not covered in the
-            following sections. For instance, the following
-            instructions assume that the code will be downloaded from
-            the CVS repository. If the code was downloaded from the
-            release distributions, the steps change a little, but they
-            should be easy to figure out given these instructions.
+            following sections.
             </p>
 
             <p><b>Start Eclipse</b></p>
 
-            <p>Start Eclipse by either double-clicking on the Eclipse icon
-              or through a command line. Select a suitable path to the
-              workspace when prompted by Eclipse. We will later install
-              Sphinx-4 source code in this workspace, both physically and
-              logically, as a project.
+            <p>Start Eclipse by either double-clicking on the Eclipse
+            icon or through a command line. Select a suitable path to
+            the workspace when prompted by Eclipse. We will install
+            Sphinx-4 source code from an existing location, but
+            Eclipse requires a workspace to logically handle projects.
             </p>
             
-            <p><b>Create Sphinx-4 as an Eclipse Project from CVS source
-                tree</b></p>
+	    <p><b>Getting Sphinx-4</b></p>
+
+	    <p>You can get Sphinx-4 as a release package, a nightly
+	    build, or directly from the Subversion (SVN)
+	    repository. The CVS repository, even though still active,
+	    is kept mainly for regression test purposes. We recommend
+	    getting Sphinx-4 directly from the Subversion (SVN)
+	    repository.
+	    </p>
+
+	    <p>Eclipse does not have built-in support for SVN as it
+	    does for CVS. Subversion provides an add-on for Eclipse,
+	    but since there are other stand alone clients for SVN, we
+	    will not get into details. For more information about SVN,
+	    please visit the <a
+	    href="http://subversion.tigris.org">Subversion web
+	    site</a>. For details specific to <a
+	    href="http://sourceforge.net">SourceForge.net</a>, please
+	    check their <a
+	    href="http://sourceforge.net/docman/display_doc.php?docid=31070&group_id=1">SourceForge.net:
+	    Subversion</a> page. For instructions specifically about
+	    how to download Sphinx-4, check the <a
+	    href="http://cmusphinx.sourceforge.net/sphinx4/#source">Sphinx-4
+	    user guide</a>.
+	    </p>
+
+	    <p>This set of instructions assumes that you already
+	    downloaded the Sphinx-4 code to a location of your
+	    choice. For future reference, we will refer to this
+	    location as $SPHINX4_ROOT.
+	    </p>
+
+            <p><b>Create Sphinx-4 as an Eclipse Project</b></p>
             
             <ul>
+<!--
               <li>Select <code>New->Project</code> from the
                 <code>File</code> menu. This will pop a <code>New
                   Project - Select a Wizard</code> window.
@@ -184,8 +211,8 @@ This file was contributed by Naveen Parihar.
                 <code>Finish</code> button. This will pop a new
                 <code>New Project - Select a Wizard</code> window.
               </li>
-
-              <li>This time, select <code>Java Project</code> in
+-->
+              <li>Select <code>Java Project</code> in
                 the <code>New Project - Select a Wizard</code> window
                 and click on <code>Next</code> button. This will pop
                 a <code>New Project - Create a Java project</code>
@@ -197,25 +224,24 @@ This file was contributed by Naveen Parihar.
                   name</code> field.
               </li>
               
-              <li>Choose <code> Create new project in
-                  workspace</code> as <code>Contents</code>.
+              <li>Choose <code>Create project from existing source
+              </code> as <code>Contents</code>.
               </li>
-              
+
+	      <li>Click on <code>Browse</code> and browse to the
+	      location where you downloaded Sphinx-4, $SPHINX4_ROOT.
+	      </li>
+              <!--
               <li>Choose <code>Use default compiler compliance
-                  (Currently 1.4)</code> as <code>JDK
-                  Compliance</code>.
+              (Currently 1.4)</code> as <code>JDK Compliance</code>.
               </li>
 
               <li>Choose <code>Use project folder as root for sources
                   and class files</code> as <code>Project
                   layout</code>.
               </li>
-              
-              <li>Click on <code>Finish</code> button. This will
-                pop a <code>Checking out 'sphinx4' from CVS</code>
-                window. Next, a new window, <code>Check Out
-                  As</code>, will pop and the check out process will
-                begin.
+              -->
+              <li>Click on <code>Finish</code> button. 
               </li>
             </ul>
 
@@ -273,7 +299,7 @@ This file was contributed by Naveen Parihar.
                 the Eclipse Project.
               </li>
             </ul>
-
+<!--
             <p><b>Setup the JDK compliance level of the Java Compiler to
                 1.4</b></p>
             
@@ -338,7 +364,7 @@ This file was contributed by Naveen Parihar.
                 Compliance setting will commence.
               </li>
             </ul>
-
+-->
             <p><b>Build Sphinx-4 using Ant within Eclipse</b>
             </p>
             
@@ -579,7 +605,7 @@ This file was contributed by Naveen Parihar.
                     </li>
                     <li> Unix (t)csh
                       <ul>
-                        <li><code>setenv JAVA_HOME /lab/speech/java/j2sdk1.4.0<code>
+                        <li><code>setenv JAVA_HOME /lab/speech/java/jdk1.5.0_04<code>
                         </li>
                       </ul>
                     </li>

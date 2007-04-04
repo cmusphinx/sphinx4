@@ -57,10 +57,10 @@ This file was contributed by Angelo Romano.
           </p>
 
           <ul>
-            <li><b>Java 2 SDK, Standard Edition, v1.4.2</b> or better.  Go
-              to <a href="http://java.sun.com">java.sun.com</a>, and select
-              "J2SE". At the time of writing, the latest release version is
-              1.5 (a.k.a. 5.0), which is the one we recommend.
+            <li><b>Java SE JDK 5</b> or better.  Go to <a
+            href="http://java.sun.com">java.sun.com</a>, and select
+            "Java SE". At the time of writing, the latest release
+            version is 6, which is the one we recommend.
             </li>
 
             <br>
@@ -71,12 +71,11 @@ This file was contributed by Angelo Romano.
               options may not be exactly as described here, but
               semantically similar. The site has documentation that
               includes various user guides. You will need to install
-              the <b>Java 2 SDK, Standard Edition</b> before
-              installing <b>NetBeans</b> IDE. Or else, you will need
-              to specify the path to the <b>Java 2 SDK, Standard
-              Edition</b> within <b>NetBeans</b>. You may want to
-              choose the bundled package already containing the Java 2
-              SDK and NetBeans.
+              the <b>Java SE JDK</b> before installing <b>NetBeans</b>
+              IDE. Or else, you will need to specify the path to the
+              <b>Java SE JDK</b> within <b>NetBeans</b>. You may want
+              to choose the bundled package already containing the
+              Java SE SDK and NetBeans.
               </li>
 
           </ul>
@@ -93,25 +92,52 @@ This file was contributed by Angelo Romano.
             perhaps, the simplest way, of setting up Sphinx-4 in
             NetBeans. However, there are other possible ways to set up
             Sphinx-4 in NetBeans as well that are not covered in the
-            following sections. For instance, the following
-            instructions assume that the code will be downloaded from
-            the CVS repository. If the code was downloaded from the
-            release distributions, the steps change a little, but they
-            should be easy to figure out given these instructions.
+            following sections.
             </p>
 
             <p><b>Start NetBeans</b></p>
 
             <p>Start NetBeans by either double-clicking on the
-            NetBeans icon or through a command line. Select
-            <code>Versioning-> CVS-> Check out...</code> from the
-            <code>File</code> menu.<br>This will pop a <code>Enabling
-            Advanced VCS Command Options</code> window. Click
-            <code>Check out...</code> button, pressing CTRL while
-            clicking.
+            NetBeans icon or through a command line.
             </p>
 
-            <p><b>Setting up a CVS Checkout & Import in Versioning</b></p>
+	    <p><b>Getting Sphinx-4</b></p>
+
+	    <p>You can get Sphinx-4 as a release package, a nightly
+	    build, or directly from the Subversion (SVN)
+	    repository. The CVS repository, even though still active,
+	    is kept mainly for regression test purposes. We recommend
+	    getting Sphinx-4 directly from the Subversion (SVN)
+	    repository.
+	    </p>
+
+	    <p>NetBeans has built-in support for SVN. But since it
+	    still requires an SVN client installed, we will not get
+	    into details on how to use SVN from inside NetBeans. For
+	    more information about SVN support in NetBeans, please
+	    visit the <a
+	    href="http://subversion.netbeans.org/">NetBeans Subversion
+	    integration</a> page. For more details about SVN, please
+	    visit the <a
+	    href="http://subversion.tigris.org/">Subversion web
+	    site</a>. For details specific to <a
+	    href="http://sourceforge.net">SourceForge.net</a>, please
+	    check their <a
+	    href="http://sourceforge.net/docman/display_doc.php?docid=31070&group_id=1">SourceForge.net:
+	    Subversion</a> page. For instructions specifically about
+	    how to download Sphinx-4, check the <a
+	    href="http://cmusphinx.sourceforge.net/sphinx4/#source">Sphinx-4
+	    user guide</a>.
+	    </p>
+
+	    <p>This set of instructions assumes that you already
+	    downloaded the Sphinx-4 code to a location of your
+	    choice. For future reference, we will refer to this
+	    location as $SPHINX4_ROOT.
+	    </p>
+
+<!--
+            <p><b>Setting up a SVN Checkout & Import in Versioning</b></p>
 
             <ul>
 
@@ -120,11 +146,11 @@ This file was contributed by Angelo Romano.
               </li>
 
               <li>
-                Select <code>pserver</code> in the <code>CVS Server Type</code> field.
+                Select <code>pserver</code> in the <code>SVN Server Type</code> field.
               </li>
 
               <li>
-                Enter <code>cmusphinx.cvs.sourceforge.net</code> in the <code>CVS Server Name</code> field.
+                Enter <code>cmusphinx.svn.sourceforge.net</code> in the <code>SVN Server Name</code> field.
               </li>
 
               <li>
@@ -136,11 +162,11 @@ This file was contributed by Angelo Romano.
               </li>
 
               <li>
-                Enter <code>/cvsroot/cmusphinx</code> in the <code>Repository Path</code> field.
+                Enter <code>/svnroot/cmusphinx/trunk</code> in the <code>Repository Path</code> field.
               </li>
 
               <li>
-                Select <code>Use Built-In CVS Client</code> option, if you are not a <code>developer</code> or select <code>Use Built-In CVS Client</code> and enter <code>extssh</code> in the <code>Remote Shell</code> field, if you are a developer.
+                Select <code>Use Built-In SVN Client</code> option, if you are not a <code>developer</code> or select <code>Use Built-In SVN Client</code> and enter <code>extssh</code> in the <code>Remote Shell</code> field, if you are a developer.
               </li>
 
               <li>
@@ -167,8 +193,9 @@ This file was contributed by Angelo Romano.
                 Click on <code>OK</code> button. This will pop a <code>VCS Output</code> window with an active tab <code>Check Out...</code>.
               </li>
             </ul>
-
-            <p><b>Creating a project from CVS Resource</b></p>
+-->
+            
+            <p><b>Creating Sphinx-4 as a project</b></p>
 
             <ul>
               <li>
@@ -204,7 +231,7 @@ This file was contributed by Angelo Romano.
               </li>
 
               <li>
-                Select <code>JDK 1.4</code> in the <code>Source level</code> field. Click on <code>Next</code> button. This will show <code>Java Sources Classpath</code> tab.
+                Select <code>JDK 5</code> in the <code>Source level</code> field. Click on <code>Next</code> button. This will show <code>Java Sources Classpath</code> tab.
               </li>
 
               <li>
