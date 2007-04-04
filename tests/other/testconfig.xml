@@ -1,0 +1,22 @@
+<config>
+    <property name="myalpha" value="9.99"/>
+    <property name="anotherDataProc" value="processor"/>
+
+
+    <component name="duco" type="edu.cmu.sphinx.util.props.newconman.test.DummyComp">
+        <property name="beamWidth" value="123"/>
+        <property name="frontend" value="aDummyFrontEnd"/>
+        <property name="alpha" value="${myalpha}"/>
+        <!--<property name="bestAsrSystem" value="htk"/>-->
+    </component>
+
+    <component name="aDummyFrontEnd" type="edu.cmu.sphinx.util.props.newconman.test.DummyFrontEnd">
+        <propertylist name="dataProcs">
+            <item>processor</item>
+            <item>${anotherDataProc}</item>
+        </propertylist>
+    </component>
+
+    <component name="dummyProc" type="edu.cmu.sphinx.util.props.newconman.test.DummyProcessor"/>
+
+</config>
