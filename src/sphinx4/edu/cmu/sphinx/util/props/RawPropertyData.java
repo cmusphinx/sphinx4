@@ -88,4 +88,39 @@ class RawPropertyData {
     boolean contains(String propName) {
         return properties.get(propName) != null;
     }
+
+
+    /** Returns a copy of this property data instance with all ${}-fields resolved. */
+    public RawPropertyData flatten(Map<String, String> globalProperties) {
+        RawPropertyData copyRPD = new RawPropertyData(name, className);
+
+        for (String propName : properties.keySet()) {
+            Object propVal = properties.get(propName);
+            if (propVal instanceof String && ((String) propVal).startsWith("${"))
+                copyRPD.properties.put(propName, getGlobalProperty((String) propVal, globalProperties));
+            else
+                copyRPD.properties.put(propName, properties.get(propName));
+        }
+
+        return copyRPD;
+    }
+
+
+    /**
+     * Lookup a global symbol with a given name (and resolves
+     *
+     * @param key              the name of the property
+     * @param globalProperties
+     * @return the property value or null if it doesn't exist.
+     */
+    public String getGlobalProperty(String key, Map<String, String> globalProperties) {
+        if (!key.startsWith("${"))
+            key = "${" + key + "}";
+
+        while (true) {
+            key = globalProperties.get(key);
+            if (key == null || !(key.startsWith("${") && key.endsWith("}")))
+                return key;
+        }
+    }
 }
