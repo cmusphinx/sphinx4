@@ -15,7 +15,7 @@ public class ConMan {
     public final static String PROP_COMMON_LOG_LEVEL = "logLevel";
 
 
-    private Map<String, SimpleSymbol> symbolTable = new LinkedHashMap<String, SimpleSymbol>();
+    private Map<String, PropSheet> symbolTable = new LinkedHashMap<String, PropSheet>();
     private Map<String, RawPropertyData> rawPropertyMap;
     private Map<String, String> globalProperties = new LinkedHashMap<String, String>();
 
@@ -53,12 +53,7 @@ public class ConMan {
      * @return the property sheet for the object.
      */
     public PropSheet getPropertySheet(String instanceName) {
-        PropSheet propertySheet = null;
-        SimpleSymbol symbol = symbolTable.get(instanceName);
-        if (symbol != null) {
-            propertySheet = symbol.getPropertySheet();
-        }
-        return propertySheet;
+        return symbolTable.get(instanceName);
     }
 
 
@@ -69,13 +64,7 @@ public class ConMan {
      * @return the set of all instances
      */
     public String[] getInstanceNames(Class<? extends Object> type) {
-        List<String> list = new ArrayList<String>();
-        for (SimpleSymbol symbol : symbolTable.values()) {
-            if (type.isInstance(symbol.getObject())) {
-                list.add(symbol.getName());
-            }
-        }
-        return list.toArray(new String[list.size()]);
+        return symbolTable.keySet().toArray(new String[]{});
     }
 
 
@@ -89,10 +78,9 @@ public class ConMan {
      * @throws edu.cmu.sphinx.util.props.PropertyException
      *                                if an error occurs while setting a property
      */
-    public SimpleConfigurable lookup(String name) throws InstantiationException,
-            PropertyException {
-        SimpleSymbol symbol = symbolTable.get(name);
-        if (symbol == null) {
+    public SimpleConfigurable lookup(String name) throws InstantiationException, PropertyException {
+        PropSheet propSheet = symbolTable.get(name);
+        if (propSheet == null) {
             if (showCreations) {
                 System.out.println("Creating: " + name);
             }
@@ -111,14 +99,13 @@ public class ConMan {
                     // now load the property-sheet by using the class annotation
                     PropSheet propertySheet = new PropSheetImpl(configurable, this, rpd.flatten(globalProperties));
 
-                    symbol = new SimpleSymbol(name, propertySheet, configurable);
-                    symbolTable.put(name, symbol);
+                    symbolTable.put(name, propertySheet);
 
                     // apply all new propeties to the model
                     configurable.newProperties(propertySheet);
 
                     //todo registerCommonProperties -> register logLevel
-                    return symbol.getObject();
+                    return propertySheet.getOwner();
                 } catch (ClassNotFoundException e) {
                     throw new InstantiationException("Can't find class "
                             + className + " object:" + name);
@@ -131,9 +118,29 @@ public class ConMan {
                 }
             }
         } else {
-            return symbol.getObject();
+            return propSheet.getOwner();
         }
         return null;
+    }
+
+
+    /**
+     * Adds a new configurable to this configuration manager.
+     *
+     * @param confClass The class of the configurable to be instantiated and to be added to this configuration manager
+     *                  instance.
+     * @param name      The desired  lookup-name of the configurable
+     * @throws IllegalArgumentException if the there's already a component with the same <code>name</code> registered to
+     *                                  this configuration manager instance.
+     */
+    public void addConfigurable(Class<? extends SimpleConfigurable> confClass, String name) {
+        if (name == null)
+            name = confClass.getName();
+        if (symbolTable.containsKey(name))
+            throw new IllegalArgumentException("tried to override existing component name");
+
+        PropSheet ps = getPropSheetInstanceFromClass(confClass, new HashMap<String, Object>());
+        symbolTable.put(name, ps);
     }
 
 
@@ -146,16 +153,14 @@ public class ConMan {
      * @param value     the new value.
      */
     public void setProperty(String component, String prop, String value) throws PropertyException {
-        SimpleSymbol symbol = symbolTable.get(component);
-        if (symbol != null) {
-            PropSheet ps = symbol.getPropertySheet();
-            SimpleConfigurable c = symbol.getObject();
-//            Object old = ps.getRawNoReplacement(prop);
+        PropSheet ps = symbolTable.get(component);
+        if (ps != null) {
+            SimpleConfigurable c = ps.getOwner();
+
             ps.setRaw(prop, value);
             c.newProperties(ps);
         } else {
-            throw new PropertyException(null, prop,
-                    "Can't find component " + component);
+            throw new PropertyException(null, prop, "Can't find component " + component);
         }
     }
 
@@ -171,13 +176,12 @@ public class ConMan {
     public Object getProperty(String component, String propertyName) throws PropertyException {
         Object obj;
 
-        SimpleSymbol symbol = symbolTable.get(component);
-        if (symbol != null) {
-            PropSheet ps = symbol.getPropertySheet();
+        PropSheet ps = symbolTable.get(component);
+
+        if (ps != null) {
             obj = ps.getRawNoReplacement(propertyName);
         } else {
-            throw new PropertyException(null, propertyName,
-                    "Can't find component " + component);
+            throw new PropertyException(null, propertyName, "Can't find component " + component);
         }
         return obj;
     }
@@ -238,8 +242,7 @@ public class ConMan {
      * @throws edu.cmu.sphinx.util.props.PropertyException
      *          if an error occurs while registering the properties.
      */
-    private void registerCommonProperties(Registry registry)
-            throws PropertyException {
+    private void registerCommonProperties(Registry registry) throws PropertyException {
         registry.register(PROP_COMMON_LOG_LEVEL, PropertyType.STRING);
     }
 
@@ -269,6 +272,15 @@ public class ConMan {
 
 
     public static SimpleConfigurable getDefaultInstance(Class<? extends SimpleConfigurable> targetClass, Map<String, Object> defaultProps) {
+        return getPropSheetInstanceFromClass(targetClass, defaultProps).getOwner();
+    }
+
+
+    /**
+     * Instantiates the given <code>targetClass</code> and instruments it using default properties or the properties
+     * given by the <code>defaultProps</code>.
+     */
+    private static PropSheet getPropSheetInstanceFromClass(Class<? extends SimpleConfigurable> targetClass, Map<String, Object> defaultProps) {
         try {
             ConMan conMan = new ConMan();
             RawPropertyData rpd = new RawPropertyData(null, targetClass.getName());
@@ -276,9 +288,10 @@ public class ConMan {
             for (String confName : defaultProps.keySet()) {
                 Object property = defaultProps.get(confName);
 
-                if (property instanceof SimpleConfigurable)
-                    conMan.symbolTable.put(confName, new SimpleSymbol(confName, null, (SimpleConfigurable) property));
-                else
+                if (property instanceof SimpleConfigurable) {
+                    RawPropertyData dummyRPD = new RawPropertyData(confName, property.getClass().getName());
+                    conMan.symbolTable.put(confName, new PropSheetImpl((SimpleConfigurable) property, conMan, dummyRPD));
+                } else
                     rpd.getProperties().put(confName, property);
             }
 
@@ -289,7 +302,7 @@ public class ConMan {
 
             configurable.newProperties(ps);
 
-            return configurable;
+            return ps;
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -299,12 +312,12 @@ public class ConMan {
         }
 
         return null;
-
     }
 
 
     // todo remove me
-    public Map<String, SimpleSymbol> getSymbols() {
+    /** Returns the map of symbols used within this configuration manager instance. */
+    public Map<String, PropSheet> getSymbols() {
         return Collections.unmodifiableMap(symbolTable);
     }
 

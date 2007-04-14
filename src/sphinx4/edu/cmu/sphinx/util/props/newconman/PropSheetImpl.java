@@ -166,7 +166,7 @@ public class PropSheetImpl implements PropSheet {
         Class expectedType = s4Component.type();
 
         if (propValues.get(name) == null) {
-            SimpleConfigurable configurable = null;
+            SimpleConfigurable configurable;
 
             try {
                 configurable = cm.lookup(name);
@@ -182,6 +182,11 @@ public class PropSheetImpl implements PropSheet {
         }
 
         return (SimpleConfigurable) propValues.get(name);
+    }
+
+
+    public SimpleConfigurable getOwner() {
+        return owner;
     }
 
 
@@ -263,7 +268,7 @@ public class PropSheetImpl implements PropSheet {
     }
 
 
-    static void processAnnotations(PropSheet propertySheet, Class<? extends SimpleConfigurable> configurable) {
+    public static void processAnnotations(PropSheet propertySheet, Class<? extends SimpleConfigurable> configurable) {
         Field[] classFields = configurable.getFields();
 
         for (Field field : classFields) {

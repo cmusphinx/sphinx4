@@ -211,4 +211,11 @@ public interface PropSheet {
 
 
     public Collection<String> getRegisteredProperties();
+
+
+    /**
+     * Returns the owner of this property sheet. In most cases this will be the configurable instance which was
+     * instrumented by this property sheet.
+     */
+    public SimpleConfigurable getOwner();
 }

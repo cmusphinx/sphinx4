@@ -93,14 +93,13 @@ public class ConfigurationManagerUtils {
 
         String[] allNames = conMan.getInstanceNames(Object.class);
         for (String componentName : allNames) {
-            SimpleSymbol symbol = conMan.getSymbols().get(componentName);
-            PropSheet ps = symbol.getPropertySheet();
+            PropSheet ps = conMan.getPropertySheet(componentName);
             String[] names = ps.getNames();
 
-            outputHeader(4, writer, symbol.getName());
+            outputHeader(4, writer, componentName);
 
-            writer.println("    <component name=\"" + symbol.getName() + "\"" +
-                    "\n          type=\"" + symbol.getObject().getClass().getName()
+            writer.println("    <component name=\"" + componentName + "\"" +
+                    "\n          type=\"" + ps.getOwner().getClass().getName()
                     + "\">");
             for (String propertyName : names) {
                 Object obj = ps.getRawNoReplacement(propertyName);
@@ -193,8 +192,7 @@ public class ConfigurationManagerUtils {
      * @param out  where to dump the HTML
      * @param name the name of the component to dump
      */
-    public static void dumpComponentAsHTML(PrintStream out, String name, Map<String, SimpleSymbol> symbolTable) {
-        SimpleSymbol symbol = symbolTable.get(name);
+    public static void dumpComponentAsHTML(PrintStream out, String name, Map<String, PropSheet> symbolTable) {
         out.println("<table border=1>");
         //        out.println("<table border=1 width=\"%80\">");
         out.print("    <tr><th bgcolor=\"#CCCCFF\" colspan=2>");
@@ -204,8 +202,8 @@ public class ConfigurationManagerUtils {
         out.println("</td></tr>");
 
         out.println("    <tr><th bgcolor=\"#CCCCFF\">Property</th><th bgcolor=\"#CCCCFF\"> Value</th></tr>");
-        Collection<String> propertyNames = symbol.getPropertySheet().getRegisteredProperties();
-        PropSheet properties = symbol.getPropertySheet();
+        PropSheet properties = symbolTable.get(name);
+        Collection<String> propertyNames = properties.getRegisteredProperties();
 
         for (String propertyName : propertyNames) {
             out.print("    <tr><th align=\"leftt\">" + propertyName + "</th>");
@@ -239,9 +237,8 @@ public class ConfigurationManagerUtils {
         out.println("node: {title: \"" + name + "\" color: " + getColor(conMan, name)
                 + "}");
 
-        SimpleSymbol symbol = conMan.getSymbols().get(name);
-        Collection<String> propertyNames = symbol.getPropertySheet().getRegisteredProperties();
-        PropSheet properties = symbol.getPropertySheet();
+        PropSheet properties = conMan.getPropertySheet(name);
+        Collection<String> propertyNames = properties.getRegisteredProperties();
 
         for (String propertyName : propertyNames) {
             PropertyType type = null; //todo fixme
@@ -380,22 +377,20 @@ public class ConfigurationManagerUtils {
      * @param name the component name
      */
     public void showConfig(ConMan conMan, String name) {
-        SimpleSymbol symbol = conMan.getSymbols().get(name);
-
-        if (symbol == null) {
+        PropSheet ps = conMan.getPropertySheet(name);
+        if (ps == null) {
             System.out.println("No component: " + name);
             return;
         }
-        System.out.println(symbol.getName() + ":");
+        System.out.println(name + ":");
 
 
-        Collection<String> propertyNames = symbol.getPropertySheet().getRegisteredProperties();
-        PropSheet properties = symbol.getPropertySheet();
+        Collection<String> propertyNames = ps.getRegisteredProperties();
 
         for (String propertyName : propertyNames) {
             System.out.print("    " + propertyName + " = ");
             Object obj;
-            obj = properties.getRaw(propertyName);
+            obj = ps.getRaw(propertyName);
             if (obj instanceof String) {
                 System.out.println(obj);
             } else if (obj instanceof List) {
@@ -415,23 +410,21 @@ public class ConfigurationManagerUtils {
 
 
     public void editConfig(ConMan conMan, String name) {
-        SimpleSymbol symbol = conMan.getSymbols().get(name);
+        PropSheet ps = conMan.getPropertySheet(name);
         boolean done;
 
-        if (symbol == null) {
+        if (ps == null) {
             System.out.println("No component: " + name);
             return;
         }
-        System.out.println(symbol.getName() + ":");
+        System.out.println(name + ":");
 
-        Collection<String> propertyNames = symbol.getPropertySheet().getRegisteredProperties();
-        PropSheet properties = symbol.getPropertySheet();
-        BufferedReader br = new BufferedReader(new
-                InputStreamReader(System.in));
+        Collection<String> propertyNames = ps.getRegisteredProperties();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         for (String propertyName : propertyNames) {
             try {
-                Object value = properties.getRaw(propertyName);
+                Object value = ps.getRaw(propertyName);
                 String svalue;
 
                 if (value instanceof List) {

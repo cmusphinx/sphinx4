@@ -17,6 +17,6 @@
         </propertylist>
     </component>
 
-    <component name="dummyProc" type="edu.cmu.sphinx.util.props.newconman.test.DummyProcessor"/>
+    <component name="processor" type="edu.cmu.sphinx.util.props.newconman.test.DummyProcessor"/>
 
 </config>
