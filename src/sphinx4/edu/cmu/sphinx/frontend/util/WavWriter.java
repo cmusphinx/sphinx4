@@ -1,9 +1,9 @@
 package edu.cmu.sphinx.frontend.util;
 
+import com.sun.media.sound.WaveFileWriter;
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
-import edu.cmu.sphinx.frontend.util.DataUtil;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
@@ -14,8 +14,8 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.io.*;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -133,22 +133,24 @@ public class WavWriter extends BaseDataProcessor {
         return fileIndex;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-    
-        info.put(new String("PROP_BIG_ENDIAN_DATA_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_SIGNED_DATA_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_CAPTURE_UTTERANCES_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"),new String("INTEGER"));        
-        info.put(new String("PROP_OUT_FILE_NAME_PATTERN_TYPE"),new String("STRING"));
+
+        info.put(new String("PROP_BIG_ENDIAN_DATA_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_SIGNED_DATA_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_CAPTURE_UTTERANCES_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_OUT_FILE_NAME_PATTERN_TYPE"), new String("STRING"));
         return info;
     }
-    
+
+
     /*
     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
     */
@@ -264,4 +266,16 @@ public class WavWriter extends BaseDataProcessor {
         return new AudioInputStream(bais, wavFormat, abAudioData.length / wavFormat.getFrameSize());
     }
 
+
+    /** Writes a given double array  into a wav file (given the sample rate of the signal). */
+    public static void writeWavFile(double[] signal, int sampleRate, File targetFile) {
+        AudioInputStream ais = WavWriter.convertDoublesToAudioStream(signal, sampleRate);
+        AudioFileFormat.Type outputType = getTargetType("wav");
+
+        try {
+            AudioSystem.write(ais, outputType, targetFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
