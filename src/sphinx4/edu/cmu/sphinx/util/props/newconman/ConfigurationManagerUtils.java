@@ -6,10 +6,7 @@ import edu.cmu.sphinx.util.props.PropertyType;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import java.util.logging.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -98,9 +95,14 @@ public class ConfigurationManagerUtils {
 
             outputHeader(4, writer, componentName);
 
-            writer.println("    <component name=\"" + componentName + "\"" +
-                    "\n          type=\"" + ps.getOwner().getClass().getName()
-                    + "\">");
+            try {
+                writer.println("    <component name=\"" + componentName + "\"" +
+                        "\n          type=\"" + ps.getOwner().getClass().getName()
+                        + "\">");
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            }
+
             for (String propertyName : names) {
                 Object obj = ps.getRawNoReplacement(propertyName);
                 if (obj instanceof String) {
@@ -155,7 +157,7 @@ public class ConfigurationManagerUtils {
         dumpHeader(out);
         String[] allNames = conMan.getInstanceNames(Object.class);
         for (String componentName : allNames) {
-            dumpComponentAsHTML(out, componentName, conMan.getSymbols());
+            dumpComponentAsHTML(out, componentName, conMan.getPropertySheet(componentName));
         }
         dumpFooter(out);
         out.close();
@@ -192,7 +194,7 @@ public class ConfigurationManagerUtils {
      * @param out  where to dump the HTML
      * @param name the name of the component to dump
      */
-    public static void dumpComponentAsHTML(PrintStream out, String name, Map<String, PropSheet> symbolTable) {
+    public static void dumpComponentAsHTML(PrintStream out, String name, PropSheet properties) {
         out.println("<table border=1>");
         //        out.println("<table border=1 width=\"%80\">");
         out.print("    <tr><th bgcolor=\"#CCCCFF\" colspan=2>");
@@ -202,7 +204,6 @@ public class ConfigurationManagerUtils {
         out.println("</td></tr>");
 
         out.println("    <tr><th bgcolor=\"#CCCCFF\">Property</th><th bgcolor=\"#CCCCFF\"> Value</th></tr>");
-        PropSheet properties = symbolTable.get(name);
         Collection<String> propertyNames = properties.getRegisteredProperties();
 
         for (String propertyName : propertyNames) {
@@ -490,10 +491,14 @@ public class ConfigurationManagerUtils {
         for (Handler handler : handlers) {
             if (handler instanceof ConsoleHandler) {
                 if (handler.getFormatter() instanceof SphinxLogFormatter) {
-                    SphinxLogFormatter slf = (SphinxLogFormatter) handler
-                            .getFormatter();
-                    slf.setTerse("true"
-                            .equals(conMan.getGlobalLogLevel()));
+                    SphinxLogFormatter slf = (SphinxLogFormatter) handler.getFormatter();
+
+                    String level = conMan.getGlobalProperties().get("logLevel");
+                    if (level == null) {
+                        level = Level.WARNING.getName();
+                    }
+
+                    slf.setTerse("true".equals(level));
                 }
             }
         }

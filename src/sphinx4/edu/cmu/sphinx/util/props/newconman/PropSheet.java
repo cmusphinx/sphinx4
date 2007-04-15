@@ -16,6 +16,13 @@ import java.util.logging.Logger;
  */
 public interface PropSheet {
 
+
+    public enum PropertyType {
+
+        INT, DOUBLE, BOOL, COMP, STRING, COMPLIST
+    }
+
+
     /**
      * Registers a new property which type and default value are defined by the given sphinx property.
      *
@@ -182,6 +189,10 @@ public interface PropSheet {
     public Object getRawNoReplacement(String name);
 
 
+    /** Returns the type of the given property. */
+    public PropertyType getType(String propName);
+
+
     /**
      * Gets the owning property manager
      *
@@ -217,5 +228,10 @@ public interface PropSheet {
      * Returns the owner of this property sheet. In most cases this will be the configurable instance which was
      * instrumented by this property sheet.
      */
-    public SimpleConfigurable getOwner();
+    public SimpleConfigurable getOwner() throws InstantiationException;
+
+
+    /** Returns the class of owner configurable of this property sheet. */
+    public Class getConfigurableClass();
+
 }

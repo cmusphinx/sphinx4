@@ -23,13 +23,21 @@ public class PropSheetImpl implements PropSheet {
     SimpleConfigurable owner; //todo  this one will be used as owner for all PropertyExceptions as soon as the exception is refactored
 
     private ConMan cm;
+    private final Class<? extends SimpleConfigurable> ownerClass;
 
 
-    public PropSheetImpl(SimpleConfigurable owner, ConMan conMan, RawPropertyData rpd) throws PropertyException, InstantiationException {
-        this.owner = owner;
+    public PropSheetImpl(SimpleConfigurable configurable, ConMan conMan, RawPropertyData rpd) throws PropertyException, InstantiationException {
+        this(configurable.getClass(), conMan, rpd);
+        owner = configurable;
+    }
+
+
+    public PropSheetImpl(Class<? extends SimpleConfigurable> confClass, ConMan conMan, RawPropertyData rpd)
+            throws PropertyException, InstantiationException {
+        ownerClass = confClass;
         this.cm = conMan;
 
-        processAnnotations(this, owner.getClass());
+        processAnnotations(this, confClass);
 
         // now apply all xml properties
         Map<String, Object> rawProps = rpd.getProperties();
@@ -185,8 +193,22 @@ public class PropSheetImpl implements PropSheet {
     }
 
 
-    public SimpleConfigurable getOwner() {
+    public synchronized SimpleConfigurable getOwner() throws InstantiationException {
+        if (owner == null)
+            try {
+                owner = ownerClass.newInstance();
+            } catch (IllegalAccessException e) {
+                throw new InstantiationException("Can't access class " + ownerClass);
+            } catch (InstantiationException e) {
+                throw new InstantiationException("Not configurable class " + ownerClass);
+            }
+
         return owner;
+    }
+
+
+    public Class getConfigurableClass() {
+        return ownerClass;
     }
 
 
@@ -245,13 +267,37 @@ public class PropSheetImpl implements PropSheet {
     }
 
 
+    public PropertyType getType(String propName) {
+        Proxy annotation = registeredProperties.get(propName).getAnnotation();
+        if (annotation instanceof S4Component)
+            return PropertyType.COMP;
+        else if (annotation instanceof S4ComponentList)
+            return PropertyType.COMPLIST;
+        else if (annotation instanceof S4Integer)
+            return PropertyType.INT;
+        else if (annotation instanceof S4Double)
+            return PropertyType.DOUBLE;
+        else if (annotation instanceof S4Boolean)
+            return PropertyType.BOOL;
+        else if (annotation instanceof S4String)
+            return PropertyType.STRING;
+        else
+            throw new RuntimeException("Unknown property type");
+    }
+
+
     public ConfigurationManager getPropertyManager() {
         return null;
     }
 
 
     public Logger getLogger() {
-        Logger logger = Logger.getLogger(owner.getName());
+        Logger logger = null;
+        try {
+            logger = Logger.getLogger(getOwner().getName());
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
 //        Level level = getLogLevel();
         logger.setLevel(Level.FINE);
         return logger;

@@ -5,7 +5,6 @@ import edu.cmu.sphinx.util.props.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.logging.Level;
 
 
 /** A configuration manager which enables xml-based system configuration.  ...to be continued! */
@@ -14,15 +13,16 @@ public class ConMan {
     /** A common property (used by all components) that sets the log level for the component. */
     public final static String PROP_COMMON_LOG_LEVEL = "logLevel";
 
+    private List<ConfigurationChangeListener> changeListenerss = new ArrayList<ConfigurationChangeListener>();
 
     private Map<String, PropSheet> symbolTable = new LinkedHashMap<String, PropSheet>();
-    private Map<String, RawPropertyData> rawPropertyMap;
+    private Map<String, RawPropertyData> rawPropertyMap = new HashMap<String, RawPropertyData>();
     private Map<String, String> globalProperties = new LinkedHashMap<String, String>();
 
     private boolean showCreations;
 
 
-    private ConMan() {
+    public ConMan() {
     }
 
 
@@ -71,56 +71,72 @@ public class ConMan {
     /**
      * Looks up a configurable component by name. Creates it if necessary
      *
-     * @param name the name of the component
+     * @param instanceName the name of the component
      * @return the compnent, or null if a component was not found.
      * @throws InstantiationException if the requested object could not be properly created, or is not a configurable
      *                                object.
      * @throws edu.cmu.sphinx.util.props.PropertyException
      *                                if an error occurs while setting a property
      */
-    public SimpleConfigurable lookup(String name) throws InstantiationException, PropertyException {
-        PropSheet propSheet = symbolTable.get(name);
+    public SimpleConfigurable lookup(String instanceName) throws InstantiationException, PropertyException {
+        PropSheet propSheet = symbolTable.get(instanceName);
         if (propSheet == null) {
             if (showCreations) {
-                System.out.println("Creating: " + name);
+                System.out.println("Creating: " + instanceName);
             }
             // it is not in the symbol table, so construct
             // it based upon our raw property data
-            RawPropertyData rpd = rawPropertyMap.get(name);
+            RawPropertyData rpd = rawPropertyMap.get(instanceName);
             if (rpd != null) {
                 String className = rpd.getClassName();
                 try {
                     Class cls = Class.forName(className);
-                    SimpleConfigurable configurable = (SimpleConfigurable) cls.newInstance();
-//                    Registry registry = new Registry(configurable);
-//                    registerCommonProperties(registry);
-//                    configurable.register(name, registry);  // no register anymore :-)
 
                     // now load the property-sheet by using the class annotation
-                    PropSheet propertySheet = new PropSheetImpl(configurable, this, rpd.flatten(globalProperties));
+                    PropSheet propertySheet = new PropSheetImpl(cls, this, rpd.flatten(globalProperties));
 
-                    symbolTable.put(name, propertySheet);
+                    symbolTable.put(instanceName, propertySheet);
 
                     // apply all new propeties to the model
-                    configurable.newProperties(propertySheet);
+                    SimpleConfigurable instance = propertySheet.getOwner();
+                    instance.newProperties(propertySheet);
 
                     //todo registerCommonProperties -> register logLevel
-                    return propertySheet.getOwner();
+                    return instance;
                 } catch (ClassNotFoundException e) {
-                    throw new InstantiationException("Can't find class "
-                            + className + " object:" + name);
-                } catch (IllegalAccessException e) {
-                    throw new InstantiationException("Can't access class "
-                            + className + " object:" + name);
+
                 } catch (ClassCastException e) {
-                    throw new InstantiationException("Not configurable class "
-                            + className + " object:" + name);
                 }
             }
         } else {
             return propSheet.getOwner();
         }
+
         return null;
+    }
+
+
+    /**
+     * Adds a new configurable to this configuration manager.
+     *
+     * @param confClass The class of the configurable to be instantiated and to be added to this configuration manager
+     *                  instance.
+     * @param name      The desired  lookup-name of the configurable
+     * @param props     The properties to be used for component configuration
+     * @throws IllegalArgumentException if the there's already a component with the same <code>name</code> registered to
+     *                                  this configuration manager instance.
+     */
+    public void addConfigurable(Class<? extends SimpleConfigurable> confClass, String name, Map<String, Object> props) {
+        if (name == null)
+            name = confClass.getName();
+        if (symbolTable.containsKey(name))
+            throw new IllegalArgumentException("tried to override existing component name");
+
+        PropSheet ps = getPropSheetInstanceFromClass(confClass, props);
+        symbolTable.put(name, ps);
+        rawPropertyMap.put(name, new RawPropertyData(name, confClass.getName()));
+
+        informListeners(name);
     }
 
 
@@ -134,13 +150,7 @@ public class ConMan {
      *                                  this configuration manager instance.
      */
     public void addConfigurable(Class<? extends SimpleConfigurable> confClass, String name) {
-        if (name == null)
-            name = confClass.getName();
-        if (symbolTable.containsKey(name))
-            throw new IllegalArgumentException("tried to override existing component name");
-
-        PropSheet ps = getPropSheetInstanceFromClass(confClass, new HashMap<String, Object>());
-        symbolTable.put(name, ps);
+        addConfigurable(confClass, name, new HashMap<String, Object>());
     }
 
 
@@ -148,19 +158,26 @@ public class ConMan {
      * Sets the property of the given component to the given value. Component must be an existing, instantiated
      * component
      *
-     * @param component an existing component
-     * @param prop      the property name
-     * @param value     the new value.
+     * @param instanceName an existing component
+     * @param prop         the property name
+     * @param value        the new value.
      */
-    public void setProperty(String component, String prop, String value) throws PropertyException {
-        PropSheet ps = symbolTable.get(component);
+    public void setProperty(String instanceName, String prop, String value) throws PropertyException {
+        PropSheet ps = symbolTable.get(instanceName);
         if (ps != null) {
-            SimpleConfigurable c = ps.getOwner();
+            SimpleConfigurable c = null;
+            try {
+                c = ps.getOwner();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            }
 
             ps.setRaw(prop, value);
             c.newProperties(ps);
+
+            informListeners(instanceName);
         } else {
-            throw new PropertyException(null, prop, "Can't find component " + component);
+            throw new PropertyException(null, prop, "Can't find component " + instanceName);
         }
     }
 
@@ -169,19 +186,19 @@ public class ConMan {
      * Gets the given property for the given component.  Returns either the string representation of the value or a list
      * of strings
      *
-     * @param component    the component containing the property to lookup
+     * @param instanceName the component containing the property to lookup
      * @param propertyName the name of the property to lookup
      * @return the string representation of the property or a list of such strings
      */
-    public Object getProperty(String component, String propertyName) throws PropertyException {
+    public Object getProperty(String instanceName, String propertyName) throws PropertyException {
         Object obj;
 
-        PropSheet ps = symbolTable.get(component);
+        PropSheet ps = symbolTable.get(instanceName);
 
         if (ps != null) {
             obj = ps.getRawNoReplacement(propertyName);
         } else {
-            throw new PropertyException(null, propertyName, "Can't find component " + component);
+            throw new PropertyException(null, propertyName, "Can't find component " + instanceName);
         }
         return obj;
     }
@@ -247,32 +264,55 @@ public class ConMan {
     }
 
 
-    /**
-     * Retrieves the global log level
-     *
-     * @return the global log level
-     */
-    String getGlobalLogLevel() {
-        String level = globalProperties.get("logLevel");
-        if (level == null) {
-            level = Level.WARNING.getName();
-        }
+    /** Returns a copy of the map of global properties set for this configuration manager. */
+    public Map<String, String> getGlobalProperties() {
+        return Collections.unmodifiableMap(globalProperties);
+    }
 
-        return level;
+
+    /** Adds a new listener for configuration change events. */
+    public void addConfigurationChangeListener(ConfigurationChangeListener l) {
+        if (l == null)
+            return;
+
+        changeListenerss.add(l);
+    }
+
+
+    /** Removes a listener for configuration change events. */
+    public void removeConfigurationChangeListener(ConfigurationChangeListener l) {
+        if (l == null)
+            return;
+
+        changeListenerss.remove(l);
+    }
+
+
+    private void informListeners(String instanceName) {
+        for (ConfigurationChangeListener changeListeners : changeListenerss)
+            changeListeners.configurationChanged(instanceName);
     }
 
 
     /**
-     * Creates an instance of the given @class Configurable. Uses default parameters as defined by the property names
-     * annotations to parameterize the component.
+     * Creates an instance of the given <code>SimpleConfigurable</code> by using the default parameters as defined by
+     * the class annotations to parameterize the component.
      */
-    public static SimpleConfigurable getDefaultInstance(Class<? extends SimpleConfigurable> targetClass) {
+    public static SimpleConfigurable getDefaultInstance(Class<? extends SimpleConfigurable> targetClass) throws InstantiationException, PropertyException {
         return getDefaultInstance(targetClass, new HashMap<String, Object>());
     }
 
 
-    public static SimpleConfigurable getDefaultInstance(Class<? extends SimpleConfigurable> targetClass, Map<String, Object> defaultProps) {
-        return getPropSheetInstanceFromClass(targetClass, defaultProps).getOwner();
+    /**
+     * Creates an instance of the given <code>SimpleConfigurable</code> by using the default parameters as defined by
+     * the class annotations to parameterize the component. Default prarmeters will be overrided if a their names are
+     * containd in the given <code>props</code>-map
+     */
+    public static SimpleConfigurable getDefaultInstance(Class<? extends SimpleConfigurable> targetClass, Map<String, Object> props) throws InstantiationException, PropertyException {
+        PropSheet ps = getPropSheetInstanceFromClass(targetClass, props);
+        SimpleConfigurable configurable = ps.getOwner();
+        configurable.newProperties(ps);
+        return configurable;
     }
 
 
@@ -300,7 +340,6 @@ public class ConMan {
             PropSheetImpl ps = new PropSheetImpl(configurable, conMan, rpd);
             PropSheetImpl.processAnnotations(ps, targetClass);
 
-            configurable.newProperties(ps);
 
             return ps;
         } catch (InstantiationException e) {
@@ -312,18 +351,6 @@ public class ConMan {
         }
 
         return null;
-    }
-
-
-    // todo remove me
-    /** Returns the map of symbols used within this configuration manager instance. */
-    public Map<String, PropSheet> getSymbols() {
-        return Collections.unmodifiableMap(symbolTable);
-    }
-
-
-    public Map<String, String> getGlobalProperties() {
-        return Collections.unmodifiableMap(globalProperties);
     }
 }
 
