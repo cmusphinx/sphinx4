@@ -5,7 +5,10 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertyType;
 
 import java.io.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.logging.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,129 +24,6 @@ public class ConfigurationManagerUtils {
     private static Pattern globalSymbolPattern = Pattern.compile("\\$\\{(\\w+)\\}");
     /** A common property (used by all components) that sets the tersness of the log output */
     public final static String PROP_COMMON_LOG_TERSE = "logTerse";
-
-
-    /**
-     * Outputs the pretty header for a component
-     *
-     * @param indent the indentation level
-     * @param writer where to write the header
-     * @param name   the component name
-     */
-    private void outputHeader(int indent, PrintWriter writer, String name)
-            throws
-            IOException {
-        writer.println(pad(' ', indent) + "<!-- " + pad('*', 50) + " -->");
-        writer.println(pad(' ', indent) + "<!-- " + name + pad(' ', 50 -
-                name.length()) + " -->");
-        writer.println(pad(' ', indent) + "<!-- " + pad('*', 50) + " -->");
-        writer.println();
-    }
-
-
-    /**
-     * Generate a string of the given character
-     *
-     * @param c     the character
-     * @param count the length of the string
-     * @return the padded string
-     */
-    private String pad(char c, int count) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < count; i++) {
-            sb.append(c);
-        }
-        return sb.toString();
-    }
-
-
-    /**
-     * Saves the current configuration to the given file
-     *
-     * @param file place to save the configuration
-     * @throws java.io.IOException if an error occurs while writing to the file
-     */
-    public void save(ConMan conMan, File file) throws IOException {
-        FileOutputStream fos = new FileOutputStream(file);
-        PrintWriter writer = new PrintWriter(fos);
-
-        writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        writer.println();
-        outputHeader(0, writer, "Sphinx-4 Configuration File");
-        writer.println();
-
-        writer.println("<config>");
-
-        // save global symbols
-        Map<String, String> globalProperties = conMan.getGlobalProperties();
-
-        outputHeader(2, writer, "Global Properties");
-        for (String globalProperty : globalProperties.keySet()) {
-            String value = globalProperties.get(globalProperty);
-            value = encodeValue(value);
-            writer.println("        <property name=\"" +
-                    stripGlobalSymbol(globalProperty) + "\" value=\"" + value + "\"/>");
-        }
-        writer.println();
-
-        outputHeader(2, writer, "Components");
-
-        String[] allNames = conMan.getInstanceNames(Object.class);
-        for (String componentName : allNames) {
-            PropSheet ps = conMan.getPropertySheet(componentName);
-            Collection<String> names = ps.getRegisteredProperties();
-
-            outputHeader(4, writer, componentName);
-
-            try {
-                writer.println("    <component name=\"" + componentName + "\"" +
-                        "\n          type=\"" + ps.getOwner().getClass().getName()
-                        + "\">");
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            }
-
-            for (String propertyName : names) {
-                Object obj = ps.getRawNoReplacement(propertyName);
-                if (obj instanceof String) {
-                    String value = (String) obj;
-                    value = encodeValue(value);
-                    String pad = (value.length() > 25) ? "\n        " : "";
-                    writer.println("        <property name=\"" + propertyName
-                            + "\"" + pad + " value=\"" + value + "\"/>");
-                } else if (obj instanceof List) {
-                    List list = (List) obj;
-                    writer.println("        <propertylist name=\"" + propertyName
-                            + "\">");
-                    for (Object listElement : list) {
-                        writer.println("            <item>" +
-                                encodeValue(listElement.toString()) + "</item>");
-                    }
-                    writer.println("        </propertylist>");
-                } else {
-                    throw new IOException("Ill-formed xml");
-                }
-            }
-            writer.println("    </component>");
-            writer.println();
-        }
-        writer.println("</config>");
-        writer.println("<!-- Generated on " + new Date() + "-->");
-        writer.close();
-    }
-
-
-    /**
-     * Encodes a value so that it is suitable for an xml property
-     *
-     * @param value the value to be encoded
-     * @return the encoded value
-     */
-    private String encodeValue(String value) {
-        value = value.replaceAll("<", "&lt;");
-        value = value.replaceAll(">", "&gt;");
-        return value;
-    }
 
 
     /**
@@ -359,54 +239,6 @@ public class ConfigurationManagerUtils {
      */
     private void dumpGDLFooter(PrintStream out) {
         out.println("}");
-    }
-
-
-    /** Shows the current configuration */
-    public void showConfig(ConMan conMan) {
-        System.out.println(" ============ config ============= ");
-        String[] allNames = conMan.getInstanceNames(Object.class);
-        for (String allName : allNames) {
-            showConfig(conMan, allName);
-        }
-    }
-
-
-    /**
-     * Show the configuration for the compnent with the given name
-     *
-     * @param name the component name
-     */
-    public void showConfig(ConMan conMan, String name) {
-        PropSheet ps = conMan.getPropertySheet(name);
-        if (ps == null) {
-            System.out.println("No component: " + name);
-            return;
-        }
-        System.out.println(name + ":");
-
-
-        Collection<String> propertyNames = ps.getRegisteredProperties();
-
-        for (String propertyName : propertyNames) {
-            System.out.print("    " + propertyName + " = ");
-            Object obj;
-            obj = ps.getRaw(propertyName);
-            if (obj instanceof String) {
-                System.out.println(obj);
-            } else if (obj instanceof List) {
-                List l = (List) obj;
-                for (Iterator k = l.iterator(); k.hasNext();) {
-                    System.out.print(k.next());
-                    if (k.hasNext()) {
-                        System.out.print(", ");
-                    }
-                }
-                System.out.println();
-            } else {
-                System.out.println("[DEFAULT]");
-            }
-        }
     }
 
 
