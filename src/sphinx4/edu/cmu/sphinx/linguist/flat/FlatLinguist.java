@@ -90,8 +90,9 @@ public class FlatLinguist implements Linguist, Configurable {
     public final static double PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT
             = 1.0;
 
-    private final static float logOne = LogMath.getLogOne();
+    protected final static float logOne = LogMath.getLogOne();
 
+    // note: some fields are protected to allow to override FlatLinguist.compileGrammar()
 
     // ----------------------------------
     // Subcomponents that are configured
@@ -99,9 +100,16 @@ public class FlatLinguist implements Linguist, Configurable {
     // -----------------------------------
     private Grammar grammar;
     private AcousticModel acousticModel;
-    private AcousticModel phoneLoopAcousticModel;
-    private LogMath logMath;
     private UnitManager unitManager;
+    protected LogMath logMath;
+
+    // ------------------------------------
+    // Fields that define the OOV-behavior
+    // ------------------------------------
+    protected AcousticModel phoneLoopAcousticModel;
+    protected boolean addOutOfGrammarBranch;
+    protected float logOutOfGrammarBranchProbability;
+    protected float logPhoneInsertionProbability;
 
     // ------------------------------------
     // Data that is configured by the
@@ -110,32 +118,32 @@ public class FlatLinguist implements Linguist, Configurable {
     private float logWordInsertionProbability;
     private float logSilenceInsertionProbability;
     private float logUnitInsertionProbability;
-    private float logOutOfGrammarBranchProbability;
-    private float logPhoneInsertionProbability;
     private boolean showSentenceHMM;
     private boolean showCompilationProgress = true;
     private boolean spreadWordProbabilitiesAcrossPronunciations;
     private boolean dumpGStates;
-    private boolean addOutOfGrammarBranch;
     private float languageWeight;
+
     // -----------------------------------
     // Data for monitoring performance
     // ------------------------------------
     private StatisticsVariable totalStates;
     private StatisticsVariable totalArcs;
     private StatisticsVariable actualArcs;
-    private SearchGraph searchGraph;
     private transient int totalStateCounter = 0;
     private final static boolean tracing = false;
+
     // ------------------------------------
     // Data used for building and maintaining
     // the search graph
     // -------------------------------------
-    private Map nodeStateMap;
-    private Map arcPool;
     private transient Collection stateSet = null;
     private String name;
-    private GrammarNode initialGrammarState = null;
+    protected Map<GrammarNode, GState> nodeStateMap;
+    protected Map<SearchStateArc, SearchStateArc> arcPool;
+    protected GrammarNode initialGrammarState = null;
+
+    protected SearchGraph searchGraph;
 
 
     /**
@@ -379,8 +387,9 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     protected Collection compileGrammar() {
         initialGrammarState = grammar.getInitialNode();
-        nodeStateMap = new HashMap();
-        arcPool = new HashMap();
+
+        nodeStateMap = new HashMap<GrammarNode, GState>();
+        arcPool = new HashMap<SearchStateArc, SearchStateArc>();
 
         List<GState> gstateList = new ArrayList<GState>();
         Timer.start("compile");
@@ -459,7 +468,7 @@ public class FlatLinguist implements Linguist, Configurable {
     /** Ensures that there is a starting path by adding an empty left context to the strating gstate */
     // TODO: Currently the FlatLinguist requires that the initial
     // grammar node returned by the Grammar contains a "sil" word
-    private void addStartingPath() {
+    protected void addStartingPath() {
         // guarantees a starting path into the initial node by
         // adding an empty left context to the starting gstate
         GrammarNode node = grammar.getInitialNode();
@@ -484,7 +493,7 @@ public class FlatLinguist implements Linguist, Configurable {
      *
      * @return the starting state
      */
-    private SentenceHMMState findStartingState() {
+    protected SentenceHMMState findStartingState() {
         GrammarNode node = grammar.getInitialNode();
         GState gstate = getGState(node);
         return gstate.getEntryPoint();
@@ -499,9 +508,9 @@ public class FlatLinguist implements Linguist, Configurable {
      * @param logLanguageProbability  the log language probability
      * @param logInsertionProbability the log insertion probability
      */
-    private SentenceHMMStateArc getArc(SentenceHMMState nextState,
-                                       float logAcousticProbability, float logLanguageProbability,
-                                       float logInsertionProbability) {
+    protected SentenceHMMStateArc getArc(SentenceHMMState nextState,
+                                         float logAcousticProbability, float logLanguageProbability,
+                                         float logInsertionProbability) {
         SentenceHMMStateArc arc = new SentenceHMMStateArc(nextState,
                 logAcousticProbability,
                 logLanguageProbability * languageWeight,
@@ -524,7 +533,7 @@ public class FlatLinguist implements Linguist, Configurable {
      * @return the grammar state associated with the node
      */
     private GState getGState(GrammarNode node) {
-        return (GState) nodeStateMap.get(node);
+        return nodeStateMap.get(node);
     }
 
 
@@ -584,8 +593,8 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     protected class GState {
 
-        private Map<ContextPair, List> entryPoints = new HashMap<ContextPair, List>();
-        private Map<ContextPair, List> exitPoints = new HashMap<ContextPair, List>();
+        private Map<ContextPair, List<SearchState>> entryPoints = new HashMap<ContextPair, List<SearchState>>();
+        private Map<ContextPair, List<SearchState>> exitPoints = new HashMap<ContextPair, List<SearchState>>();
         private Map<String, SentenceHMMState> existingStates = new HashMap<String, SentenceHMMState>();
 
         private GrammarNode node;
@@ -617,7 +626,7 @@ public class FlatLinguist implements Linguist, Configurable {
          */
         private Set<UnitContext> getStartingContexts() {
             if (startingContexts == null) {
-                startingContexts = new HashSet();
+                startingContexts = new HashSet<UnitContext>();
                 // if this is an empty node, the starting context is
                 // the set of starting contexts for all successor
                 // nodes, otherwise, it is built up from each
@@ -662,8 +671,8 @@ public class FlatLinguist implements Linguist, Configurable {
          * Retrieves the set of trailing contexts for this node. the trailing contexts are the set of Unit[] with a size
          * equal to the maximum left context size that align with the end of the node
          */
-        Collection getEndingContexts() {
-            Collection endingContexts = new HashSet();
+        Collection<UnitContext> getEndingContexts() {
+            Collection<UnitContext> endingContexts = new ArrayList<UnitContext>();
             if (!node.isEmpty()) {
                 int maxSize = getLeftContextSize();
                 Word word = node.getWord();
@@ -710,8 +719,8 @@ public class FlatLinguist implements Linguist, Configurable {
 
         /** Visit all of the successor states, and push our ending context into the successors left context */
         void pushLeftContexts() {
-            Collection endingContext = getEndingContexts();
-            Set visitedSet = new HashSet();
+            Collection<UnitContext> endingContext = getEndingContexts();
+            Set<GrammarNode> visitedSet = new HashSet<GrammarNode>();
             pushLeftContexts(visitedSet, endingContext);
         }
 
@@ -722,7 +731,7 @@ public class FlatLinguist implements Linguist, Configurable {
          *
          * @param leftContext the context to push
          */
-        void pushLeftContexts(Set visitedSet, Collection leftContext) {
+        void pushLeftContexts(Set<GrammarNode> visitedSet, Collection<UnitContext> leftContext) {
             if (visitedSet.contains(getNode())) {
                 return;
             } else {
@@ -746,7 +755,7 @@ public class FlatLinguist implements Linguist, Configurable {
          *
          * @param context the set of contexts to add
          */
-        private void addLeftContext(Collection context) {
+        private void addLeftContext(Collection<UnitContext> context) {
             leftContexts.addAll(context);
         }
 
@@ -853,14 +862,14 @@ public class FlatLinguist implements Linguist, Configurable {
             for (UnitContext leftContext : leftContexts) {
                 for (UnitContext startingContext : getStartingContexts()) {
                     ContextPair contextPair = ContextPair.get(leftContext, startingContext);
-                    entryPoints.put(contextPair, new ArrayList());
+                    entryPoints.put(contextPair, new ArrayList<SearchState>());
                 }
             }
             // if this is a final node don't expand it, just create a
             // state and add it to all entry points
             if (node.isFinalNode()) {
                 GrammarState gs = new GrammarState(node);
-                for (List epList : entryPoints.values()) {
+                for (List<SearchState> epList : entryPoints.values()) {
                     epList.add(gs);
                 }
             } else if (!node.isEmpty()) {
@@ -880,7 +889,7 @@ public class FlatLinguist implements Linguist, Configurable {
                 // the 'entryPoint' table already consists of such
                 // pairs so we can use that
                 for (ContextPair cp : entryPoints.keySet()) {
-                    List epList = entryPoints.get(cp);
+                    List<SearchState> epList = entryPoints.get(cp);
                     SentenceHMMState bs = new BranchState(cp.getLeftContext().toString(),
                             cp.getRightContext().toString(), node.getID());
                     epList.add(bs);
@@ -902,14 +911,14 @@ public class FlatLinguist implements Linguist, Configurable {
          * synthesized and added to the the list of entry points.
          */
         private void addEmptyEntryPoints() {
-            Map emptyEntryPoints = new HashMap();
+            Map<ContextPair, List<SearchState>> emptyEntryPoints = new HashMap<ContextPair, List<SearchState>>();
             for (ContextPair cp : entryPoints.keySet()) {
                 if (needsEmptyVersion(cp)) {
                     ContextPair emptyContextPair = ContextPair.get(cp
                             .getLeftContext(), UnitContext.EMPTY);
-                    List epList = (List) emptyEntryPoints.get(emptyContextPair);
+                    List<SearchState> epList = emptyEntryPoints.get(emptyContextPair);
                     if (epList == null) {
-                        epList = new ArrayList();
+                        epList = new ArrayList<SearchState>();
                         emptyEntryPoints.put(emptyContextPair, epList);
                     }
                     epList.addAll(entryPoints.get(cp));
@@ -1019,7 +1028,7 @@ public class FlatLinguist implements Linguist, Configurable {
             T("     Expanding " + ps.getPronunciation() + " for lc "
                     + leftContext);
             ContextPair cp = ContextPair.get(leftContext, startingContext);
-            List epList = entryPoints.get(cp);
+            List<SearchState> epList = entryPoints.get(cp);
             if (epList == null) {
                 throw new Error("No EP list for context pair " + cp);
             } else {
@@ -1136,9 +1145,9 @@ public class FlatLinguist implements Linguist, Configurable {
          * @param state the state associated with the tag
          */
         private void addExitPoint(ContextPair cp, SentenceHMMState state) {
-            List list = exitPoints.get(cp);
+            List<SearchState> list = exitPoints.get(cp);
             if (list == null) {
-                list = new ArrayList();
+                list = new ArrayList<SearchState>();
                 exitPoints.put(cp, list);
             }
             list.add(state);
@@ -1432,9 +1441,9 @@ public class FlatLinguist implements Linguist, Configurable {
             // since pstates are not placed in the cache we have to
             // gather those states. All other states are found in the
             // existingStates cache.
-            List allStates = new ArrayList();
+            List<SearchState> allStates = new ArrayList<SearchState>();
             allStates.addAll(existingStates.values());
-            for (List list : entryPoints.values()) {
+            for (List<SearchState> list : entryPoints.values()) {
                 allStates.addAll(list);
             }
             return allStates;
@@ -1586,7 +1595,7 @@ public class FlatLinguist implements Linguist, Configurable {
 /** A class that represents a set of units used as a context */
 class UnitContext {
 
-    private static Map unitContextMap = new HashMap();
+    private static Map<UnitContext, UnitContext> unitContextMap = new HashMap<UnitContext, UnitContext>();
     private Unit[] context;
     private int hashCode = 12;
     private static int foldedCount = 0;
@@ -1626,7 +1635,7 @@ class UnitContext {
      */
     static UnitContext get(Unit[] units) {
         UnitContext newUC = new UnitContext(units);
-        UnitContext oldUC = (UnitContext) unitContextMap.get(newUC);
+        UnitContext oldUC = unitContextMap.get(newUC);
         if (oldUC == null) {
             unitContextMap.put(newUC, newUC);
         } else {
