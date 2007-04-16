@@ -1,6 +1,5 @@
 package edu.cmu.sphinx.frontend.util;
 
-import com.sun.media.sound.WaveFileWriter;
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
