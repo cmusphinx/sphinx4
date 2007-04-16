@@ -91,7 +91,7 @@ public class ConfigurationManagerUtils {
         String[] allNames = conMan.getInstanceNames(Object.class);
         for (String componentName : allNames) {
             PropSheet ps = conMan.getPropertySheet(componentName);
-            String[] names = ps.getNames();
+            Collection<String> names = ps.getRegisteredProperties();
 
             outputHeader(4, writer, componentName);
 
@@ -544,20 +544,20 @@ public class ConfigurationManagerUtils {
 
         for (String propName : ps.getRegisteredProperties()) {
             String predec = "\n\t<property name=\"" + propName + "\" ";
-            if (ps.getRaw(propName) == null)
+            if (ps.getRawNoReplacement(propName) == null)
                 continue;
 
             switch (ps.getType(propName)) {
 
                 case COMPLIST:
                     sb.append("\n\t<propertylist name=\"" + propName + "\">");
-                    List<String> compNames = (List<String>) ps.getRaw(propName);
+                    List<String> compNames = (List<String>) ps.getRawNoReplacement(propName);
                     for (String compName : compNames)
                         sb.append("\n\t\t<item>" + compName + "</item>");
                     sb.append("\n\t</propertylist>");
                     break;
                 default:
-                    sb.append(predec + "value=\"" + ps.getRaw(propName) + "\"/>");
+                    sb.append(predec + "value=\"" + ps.getRawNoReplacement(propName) + "\"/>");
             }
         }
 

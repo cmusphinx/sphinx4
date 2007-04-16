@@ -3,11 +3,11 @@ package edu.cmu.sphinx.util.props.newconman;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.RawPropertyData;
 
-import java.io.PrintStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
@@ -35,9 +35,8 @@ public class PropSheet {
      */
     private Map<String, Object> rawProps = new HashMap<String, Object>();
 
-    private SimpleConfigurable owner; //todo  use this one as owner for all PropertyExceptions as soon as the exception is refactored
-
     private ConMan cm;
+    private SimpleConfigurable owner; //todo  use this one as owner for all PropertyExceptions as soon as the exception is refactored
     private final Class<? extends SimpleConfigurable> ownerClass;
 
 
@@ -57,15 +56,8 @@ public class PropSheet {
         Map<String, Object> flatProps = rpd.flatten(conMan.getGlobalProperties()).getProperties();
         rawProps = new HashMap<String, Object>(rpd.getProperties());
 
-        for (String propName : rawProps.keySet()) {
+        for (String propName : rawProps.keySet())
             propValues.put(propName, flatProps.get(propName));
-
-//            if (propVal instanceof SimpleConfigurable)
-//                propValues.put(propName, new CompWrapper(propName, (SimpleConfigurable) propVal));
-//            else if (propVal instanceof List)
-//                propValues.put(propName, new CompListWrapper(new ArrayList<String>(), (List<SimpleConfigurable>) propVal));
-//            else
-        }
     }
 
 
@@ -250,19 +242,6 @@ public class PropSheet {
     }
 
 
-    private class CompWrapper {
-
-        public final String lookupName;
-        public final SimpleConfigurable configurable;
-
-
-        public CompWrapper(String lookupName, SimpleConfigurable configurable) {
-            this.lookupName = lookupName;
-            this.configurable = configurable;
-        }
-    }
-
-
     /**
      * Gets a list of components associated with the given parameter name
      *
@@ -294,30 +273,6 @@ public class PropSheet {
         }
 
         return (List<SimpleConfigurable>) propValues.get(name);
-    }
-
-
-    private class CompListWrapper {
-
-        public final List<String> compNames;
-        public final List<SimpleConfigurable> compList;
-
-
-        public CompListWrapper(List<String> compNames, List<SimpleConfigurable> compList) {
-            this.compNames = compNames;
-            this.compList = compList;
-        }
-    }
-
-
-    /**
-     * Sets the raw property to the given name
-     *
-     * @param key the simple property name
-     * @param val the value for the property
-     */
-    public void setRaw(String key, Object val) {
-
     }
 
 
@@ -354,6 +309,14 @@ public class PropSheet {
      *          if the resource cannot be found
      */
     public URL getResource(String name) {
+        try {
+            return new URL(getString(name));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (PropertyException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 
@@ -367,17 +330,7 @@ public class PropSheet {
      *          if the named property is not of this type
      */
     public List getStrings(String name) {
-        return null;
-    }
-
-
-    /**
-     * Retrieves the names of all the properties currently defined for this property sheet
-     *
-     * @return the array of names
-     */
-    public String[] getNames() {
-        return new String[0];
+        throw new RuntimeException("not implemented yet");
     }
 
 
@@ -429,7 +382,7 @@ public class PropSheet {
      * @return the value as an object (it could be a String or a String[] depending upon the property type)
      */
     public Object getRawNoReplacement(String name) {
-        return null;
+        return rawProps.get(name);
     }
 
 
@@ -482,16 +435,6 @@ public class PropSheet {
 //        Level level = getLogLevel();
         logger.setLevel(Level.FINE);
         return logger;
-    }
-
-
-    /**
-     * Dumps this sheet to the given stream
-     *
-     * @param out the print stream to dump the sheet on
-     */
-    public void dump(PrintStream out) {
-
     }
 
 
