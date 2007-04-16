@@ -12,109 +12,70 @@
 
 package edu.cmu.sphinx.research.parallel;
 
+import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
-import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
-import edu.cmu.sphinx.linguist.acoustic.Unit;
-import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
-import edu.cmu.sphinx.linguist.acoustic.Context;
-import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
-
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-
-import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
-import edu.cmu.sphinx.linguist.language.grammar.Grammar;
+import edu.cmu.sphinx.linguist.flat.Color;
+import edu.cmu.sphinx.linguist.flat.FlatLinguist;
+import edu.cmu.sphinx.linguist.flat.SentenceHMMState;
+import edu.cmu.sphinx.linguist.flat.UnitState;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
-
-import edu.cmu.sphinx.decoder.search.*;
-import edu.cmu.sphinx.decoder.pruner.Pruner;
-
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.Utilities;
-
-import edu.cmu.sphinx.linguist.*;
-import edu.cmu.sphinx.linguist.flat.*;
-import edu.cmu.sphinx.linguist.SearchState;
-import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
-
-import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
 import java.io.IOException;
-
 import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
 
 /**
- * A extended form of the {@link edu.cmu.sphinx.linguist.flat.FlatLinguist
- * FlatLinguist} that creates a search graph with states for multiple
- * feature streams.
- * <p>
- * The only difference in the topology of the search graph created by
- * this linguist and the FlatLinguist is that at a certain level
- * (either the unit or the state level), the graph splits into two
- * parallel branches of states, one for each feature stream.
- * Moreover, at the end of that same level, the multiple streams are again
- * merged.
+ * A extended form of the {@link edu.cmu.sphinx.linguist.flat.FlatLinguist FlatLinguist} that creates a search graph
+ * with states for multiple feature streams.
+ * <p/>
+ * The only difference in the topology of the search graph created by this linguist and the FlatLinguist is that at a
+ * certain level (either the unit or the state level), the graph splits into two parallel branches of states, one for
+ * each feature stream. Moreover, at the end of that same level, the multiple streams are again merged.
  */
 public class ParallelSimpleLinguist extends FlatLinguist {
 
-    /**
-     * The sphinx property that specifies the height of the token stacks.
-     */
+    /** The sphinx property that specifies the height of the token stacks. */
     public static final String PROP_STACK_CAPACITY = "tokenStackCapacity";
 
-    /**
-     * The default value for the property PROP_STACK_CAPACITY, which is 0.
-     */
+    /** The default value for the property PROP_STACK_CAPACITY, which is 0. */
     public static final int PROP_STACK_CAPACITY_DEFAULT = 0;
 
-    /**
-     * The sphinx property that specifies the level at which the parallel
-     * states tie. Values can be "unit" or "state".
-     */
+    /** The sphinx property that specifies the level at which the parallel states tie. Values can be "unit" or "state". */
     public static final String PROP_TIE_LEVEL = "tieLevel";
 
-    /**
-     * The default value for the property PROP_TIE_LEVEL, which is "unit".
-     */
+    /** The default value for the property PROP_TIE_LEVEL, which is "unit". */
     public static final String PROP_TIE_LEVEL_DEFAULT = "unit";
 
-    /**
-     * Property that specifies the feature streams.
-     */
+    /** Property that specifies the feature streams. */
     public static final String PROP_FEATURE_STREAMS = "featureStreams";
 
-    
+
     private List featureStreams;
 
     private int tokenStackCapacity;
 
     private String tieLevel;
 
+    private final static float logOne = LogMath.getLogOne();
+
 
     /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
-        throws PropertyException {
+            throws PropertyException {
         super.register(name, registry);
         registry.register(PROP_STACK_CAPACITY, PropertyType.INT);
         registry.register(PROP_TIE_LEVEL, PropertyType.STRING);
@@ -130,37 +91,36 @@ public class ParallelSimpleLinguist extends FlatLinguist {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         tokenStackCapacity = ps.getInt(PROP_STACK_CAPACITY,
-                                       PROP_STACK_CAPACITY_DEFAULT);
+                PROP_STACK_CAPACITY_DEFAULT);
         tieLevel = ps.getString(PROP_TIE_LEVEL, PROP_TIE_LEVEL_DEFAULT);
     }
+
 
     /**
      * Sets up the acoustic model.
      *
      * @param ps the PropertySheet from which to obtain the acoustic model
      */
-    protected void setupAcousticModel(PropertySheet ps) 
-        throws PropertyException {
+    protected void setupAcousticModel(PropertySheet ps)
+            throws PropertyException {
         featureStreams = ps.getComponentList
-            (PROP_FEATURE_STREAMS, FeatureStream.class);
+                (PROP_FEATURE_STREAMS, FeatureStream.class);
     }
 
-    /**
-     * Allocates the acoustic model(s).
-     */
+
+    /** Allocates the acoustic model(s). */
     protected void allocateAcousticModel() throws IOException {
-        for (Iterator i = featureStreams.iterator(); i.hasNext(); ) {
-            FeatureStream stream = (FeatureStream) i.next();
+        for (Object featureStream : featureStreams) {
+            FeatureStream stream = (FeatureStream) featureStream;
             stream.getAcousticModel().allocate();
         }
     }
-    
-    /**
-     * Frees the acoustic model(s) used.
-     */
+
+
+    /** Frees the acoustic model(s) used. */
     protected void freeAcousticModels() {
-        for (Iterator i = featureStreams.iterator(); i.hasNext(); ) {
-            ((FeatureStream) i.next()).freeAcousticModel();
+        for (Object featureStream : featureStreams) {
+            ((FeatureStream) featureStream).freeAcousticModel();
         }
     }
 
@@ -186,11 +146,9 @@ public class ParallelSimpleLinguist extends FlatLinguist {
 
 
     /**
-     * This is a nested class that is used to manage the construction
-     * of the states in a grammar node.  There is one GState created
-     * for each grammar node. The GState is used to collect the entry
-     * and exit points for the grammar node and for connecting up the
-     * grammar nodes to each other.
+     * This is a nested class that is used to manage the construction of the states in a grammar node.  There is one
+     * GState created for each grammar node. The GState is used to collect the entry and exit points for the grammar
+     * node and for connecting up the grammar nodes to each other.
      */
     class ParallelGState extends GState {
 
@@ -203,6 +161,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
             super(node);
         }
 
+
         /**
          * Returns the size of the left context.
          *
@@ -212,7 +171,8 @@ public class ParallelSimpleLinguist extends FlatLinguist {
             FeatureStream stream = (FeatureStream) featureStreams.get(0);
             return stream.getAcousticModel().getLeftContextSize();
         }
-        
+
+
         /**
          * Returns the size of the right context.
          *
@@ -222,13 +182,13 @@ public class ParallelSimpleLinguist extends FlatLinguist {
             FeatureStream stream = (FeatureStream) featureStreams.get(0);
             return stream.getAcousticModel().getRightContextSize();
         }
-        
+
+
         /**
-         * Expands the unit into a set of HMMStates. If the unit is a
-         * silence unit add an optional loopback to the tail.
+         * Expands the unit into a set of HMMStates. If the unit is a silence unit add an optional loopback to the
+         * tail.
          *
          * @param unit the unit to expand
-         *
          * @return the head of the hmm tree
          */
         protected SentenceHMMState expandUnit(UnitState unit) {
@@ -244,175 +204,166 @@ public class ParallelSimpleLinguist extends FlatLinguist {
             // tail silence unit
             if (unit.getUnit().isSilence()) {
                 // add the loopback, but don't expand it // anymore
-                attachState(tail, unit, 
-                            getLogMath().getLogOne(), 
-                            getLogMath().getLogOne(),
-                            getLogSilenceInsertionProbability());
+                attachState(tail, unit,
+                        LogMath.getLogOne(),
+                        LogMath.getLogOne(),
+                        getLogSilenceInsertionProbability());
             }
             return tail;
         }
 
+
         /**
-         * Expands the given UnitState into the set of associated
-         * parallel HMMs.
+         * Expands the given UnitState into the set of associated parallel HMMs.
          *
          * @param unitState the UnitState to expand
-         *
          * @return the last SentenceHMMState from the expansion
          */
         private SentenceHMMState getTiedHMMs(UnitState unitState) {
 
             SentenceHMMState combineState = new CombineState
-                (unitState.getParent(), unitState.getWhich());
-            
-            // create an HMM branch for each acoustic model            
-            for (Iterator i = featureStreams.iterator(); i.hasNext(); ) {
+                    (unitState.getParent(), unitState.getWhich());
 
-                FeatureStream stream = (FeatureStream) i.next();
+            // create an HMM branch for each acoustic model            
+            for (Object featureStream : featureStreams) {
+
+                FeatureStream stream = (FeatureStream) featureStream;
                 AcousticModel model = stream.getAcousticModel();
 
                 HMM hmm = model.lookupNearestHMM
-                    (unitState.getUnit(), unitState.getPosition(), false);
+                        (unitState.getUnit(), unitState.getPosition(), false);
 
-                ParallelHMMStateState firstHMMState = 
-                    new ParallelHMMStateState(unitState, stream,
-                                              hmm.getInitialState(),
-                                              tokenStackCapacity);
-                
+                ParallelHMMStateState firstHMMState =
+                        new ParallelHMMStateState(unitState, stream,
+                                hmm.getInitialState(),
+                                tokenStackCapacity);
+
                 // Color.GREEN indicates an in-feature-stream state
                 firstHMMState.setColor(Color.GREEN);
-                
+
                 // attach first HMMStateState to the splitState
                 attachState(unitState, firstHMMState,
-                            getLogMath().getLogOne(),
-                            getLogMath().getLogOne(),
-                            getLogMath().getLogOne());
-                
+                        logOne,
+                        logOne,
+                        logOne);
+
                 // expand the HMM and connect the lastState w/ the combineState
                 Map hmmStates = new HashMap();
                 hmmStates.put(firstHMMState.getHMMState(), firstHMMState);
-                
+
                 SentenceHMMState lastState =
-                    expandParallelHMMTree(firstHMMState, stream, hmmStates);
+                        expandParallelHMMTree(firstHMMState, stream, hmmStates);
 
                 attachState(lastState, combineState,
-                            getLogMath().getLogOne(),
-                            getLogMath().getLogOne(),
-                            getLogMath().getLogOne());
+                        logOne,
+                        logOne,
+                        logOne);
             }
-            
+
             return combineState;
         }
-        
-        
+
+
         /**
          * Expands the given HMM tree into the full set of HMMStateStates.
          *
-         * @param hmmStateState the first state of the HMM tree
-         * @param stream the FeatureStream of the relevant acoustic model
+         * @param hmmStateState  the first state of the HMM tree
+         * @param stream         the FeatureStream of the relevant acoustic model
          * @param expandedStates the map of HMMStateStates
-         *
          * @return the last state of the expanded tree
          */
         private SentenceHMMState expandParallelHMMTree
-        (ParallelHMMStateState hmmStateState, FeatureStream stream,
-         Map expandedStates) {
-            
+                (ParallelHMMStateState hmmStateState, FeatureStream stream,
+                 Map expandedStates) {
+
             SentenceHMMState lastState = hmmStateState;
-            
+
             HMMState hmmState = hmmStateState.getHMMState();
             HMMStateArc[] arcs = hmmState.getSuccessors();
-            
-            for (int i = 0; i < arcs.length; i++) {
-                
-                HMMState nextHmmState = arcs[i].getHMMState();
-                
+
+            for (HMMStateArc arc : arcs) {
+
+                HMMState nextHmmState = arc.getHMMState();
+
                 if (nextHmmState == hmmState) {
-                    
+
                     // this is a self-transition
-                    attachState(hmmStateState, hmmStateState,
-                                arcs[i].getLogProbability(),
-                                getLogMath().getLogOne(),
-                                getLogMath().getLogOne());
-                    
+                    attachState(hmmStateState, hmmStateState, arc.getLogProbability(), logOne, logOne);
+
                     lastState = hmmStateState;
                 } else {
-                    
+
                     // transition to the next state
-                    ParallelHMMStateState nextState = null;
-                    
+                    ParallelHMMStateState nextState;
+
                     if (expandedStates.containsKey(nextHmmState)) {
-                        nextState = (ParallelHMMStateState) 
-                            expandedStates.get(nextHmmState);
+                        nextState = (ParallelHMMStateState)
+                                expandedStates.get(nextHmmState);
                     } else {
                         nextState = new ParallelHMMStateState
-                            (hmmStateState.getParent(), stream,
-                             nextHmmState, tokenStackCapacity);
+                                (hmmStateState.getParent(), stream,
+                                        nextHmmState, tokenStackCapacity);
                         expandedStates.put(nextHmmState, nextState);
                     }
-                    
+
                     // Color.GREEN indicates an in-feature-stream state
                     nextState.setColor(Color.GREEN);
-                    
-                    attachState(hmmStateState, nextState, 
-                                arcs[i].getLogProbability(),
-                                getLogMath().getLogOne(),
-                                getLogMath().getLogOne());
-                    
+
+                    attachState(hmmStateState, nextState,
+                            arc.getLogProbability(),
+                            logOne,
+                            logOne);
+
                     lastState = expandParallelHMMTree
-                        (nextState, stream, expandedStates);
+                            (nextState, stream, expandedStates);
                 }
             }
-            
+
             return lastState;
         }
 
+
         /**
-         * Expands the given UnitState into the set of associated
-         * HMMStateStates that tie at the state level.
+         * Expands the given UnitState into the set of associated HMMStateStates that tie at the state level.
          *
          * @param unitState the UnitState to expand
-         *
          * @return the last SentenceHMMState from the expansion
          */
         private SentenceHMMState getTiedHMMStates(UnitState unitState) {
-            SentenceHMMState combineState = new CombineState
-                (unitState.getParent(), unitState.getWhich());
-            
+            SentenceHMMState combineState = new CombineState(unitState.getParent(), unitState.getWhich());
+
             HMM[] hmms = new HMM[featureStreams.size()];
-            
-            SentenceHMMState lastState = unitState;
-            
+
+            SentenceHMMState lastState;
+
             int s = 0;
             // create an HMM branch for each feature stream
             for (Iterator i = featureStreams.iterator(); i.hasNext(); s++) {
                 FeatureStream stream = (FeatureStream) i.next();
                 hmms[s] = stream.getAcousticModel().lookupNearestHMM
-                    (unitState.getUnit(), unitState.getPosition(), false);
+                        (unitState.getUnit(), unitState.getPosition(), false);
             }
-            
+
             lastState = getHMMTiedStates(hmms, unitState);
-            
+
             return lastState;
         }
-        
-        
+
+
         /**
-         * Converts the given HMMs into a network of SentenceHMMStates
-         * tied at the state level.
+         * Converts the given HMMs into a network of SentenceHMMStates tied at the state level.
          *
-         * @param hmms the HMMs to convert
+         * @param hmms      the HMMs to convert
          * @param unitState the UnitState that corresponds to these HMMs
-         *
          * @return the last SentenceHMMState from the expansion
          */
-        private SentenceHMMState getHMMTiedStates(HMM[] hmms, 
+        private SentenceHMMState getHMMTiedStates(HMM[] hmms,
                                                   UnitState unitState) {
-            
+
             SentenceHMMState lastState = new CombineState(unitState, 0);
-            
+
             HMMStateArc[] arcs = new HMMStateArc[featureStreams.size()];
-            
+
             //
             // In this for loop, we connect the unitState to the 
             // ParallelHMMState created from the first HMMState of each of 
@@ -427,33 +378,33 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                 FeatureStream stream = (FeatureStream) featureStreams.get(i);
 
                 ParallelHMMStateState firstHMMState = new ParallelHMMStateState
-                    (unitState, stream, hmmState, tokenStackCapacity);
-                
+                        (unitState, stream, hmmState, tokenStackCapacity);
+
                 // Color.GREEN indicates an in-feature-stream state
                 firstHMMState.setColor(Color.GREEN);
-                
+
                 // connect previous last state to this HMMState
                 attachState(unitState, firstHMMState,
-                            getLogMath().getLogOne(),
-                            getLogMath().getLogOne(),
-                            getLogMath().getLogOne());
-                
+                        logOne,
+                        logOne,
+                        logOne);
+
                 // connect this HMMState to the next combining state
                 attachState(firstHMMState, lastState,
-                            getLogMath().getLogOne(),
-                            getLogMath().getLogOne(),
-                            getLogMath().getLogOne());
-                
+                        logOne,
+                        logOne,
+                        logOne);
+
                 HMMStateArc selfTransition = getSelfTransition(hmmState);
-                
+
                 if (selfTransition != null) {
                     // connect the next combining state to this HMMState
-                    attachState(lastState, firstHMMState, 
-                                selfTransition.getLogProbability(),        
-                                getLogMath().getLogOne(),
-                                getLogMath().getLogOne());
+                    attachState(lastState, firstHMMState,
+                            selfTransition.getLogProbability(),
+                            logOne,
+                            logOne);
                 }
-                
+
                 arcs[i] = getTransitionToNextState(hmmState);
             }
 
@@ -466,75 +417,73 @@ public class ParallelSimpleLinguist extends FlatLinguist {
             // self transition probability
             // 
             for (int i = 1; i <= hmms[0].getOrder(); i++) {
-                
+
                 SentenceHMMState combineState = new CombineState(unitState, i);
-                
+
                 for (int a = 0; a < arcs.length; a++) {
                     HMMStateArc arc = arcs[a];
                     HMMState hmmState = arc.getHMMState();
-                    FeatureStream stream = (FeatureStream)featureStreams.get(a);
+                    FeatureStream stream = (FeatureStream) featureStreams.get(a);
 
-                    ParallelHMMStateState hmmStateState = 
-                    new ParallelHMMStateState
-                        (unitState, stream, hmmState, tokenStackCapacity);
-                    
+                    ParallelHMMStateState hmmStateState =
+                            new ParallelHMMStateState
+                                    (unitState, stream, hmmState, tokenStackCapacity);
+
                     // Color.GREEN indicates an in-feature-stream state
                     hmmStateState.setColor(Color.GREEN);
-                    
+
                     // connect lastState and this HMMStateState
                     attachState(lastState, hmmStateState,
-                                arc.getLogProbability(),
-                                getLogMath().getLogOne(),
-                                getLogMath().getLogOne());
-                    
+                            arc.getLogProbability(),
+                            logOne,
+                            logOne);
+
                     // connect this HMMStateState and the combineState
-                    attachState(hmmStateState, combineState, 
-                                getLogMath().getLogOne(),
-                                getLogMath().getLogOne(),
-                                getLogMath().getLogOne());
-                    
+                    attachState(hmmStateState, combineState,
+                            logOne,
+                            logOne,
+                            logOne);
+
                     // connect the self-transition
                     HMMStateArc selfTransition = getSelfTransition(hmmState);
-                    
+
                     if (selfTransition != null) {
                         // connect the next combining state to this HMMState
                         attachState(combineState, hmmStateState,
-                                    selfTransition.getLogProbability(),       
-                                    getLogMath().getLogOne(),
-                                    getLogMath().getLogOne());
+                                selfTransition.getLogProbability(),
+                                logOne,
+                                logOne);
                     }
                     arcs[a] = getTransitionToNextState(hmmState);
                 }
-                
+
                 lastState = combineState;
             }
 
             return lastState;
         }
-        
-        /**
-         * Returns the self-transitioning HMMStateArc of the given HMMState.
-         */ 
+
+
+        /** Returns the self-transitioning HMMStateArc of the given HMMState. */
         private HMMStateArc getSelfTransition(HMMState hmmState) {
             HMMStateArc[] arcs = hmmState.getSuccessors();
-            for (int i = 0; i < arcs.length; i++) {
-                HMMState nextHmmState = arcs[i].getHMMState();
+            for (HMMStateArc arc : arcs) {
+                HMMState nextHmmState = arc.getHMMState();
                 if (nextHmmState == hmmState) {
-                    return arcs[i];
+                    return arc;
                 }
             }
             return null;
         }
-        
-        /**
-         * Returns the HMMStateArc that transitioin to the next HMMState.
-         */
+
+
+        /** Returns the HMMStateArc that transitioin to the next HMMState. */
         private HMMStateArc getTransitionToNextState(HMMState hmmState) {
             HMMStateArc[] arcs = hmmState.getSuccessors();
-            for (int i = 0; i < arcs.length; i++) {
-                HMMState nextHmmState = arcs[i].getHMMState();
+            for (HMMStateArc arc : arcs) {
+                HMMState nextHmmState = arc.getHMMState();
                 if (nextHmmState != hmmState) {
-                    return arcs[i];
+                    return arc;
                 }
             }
             return null;

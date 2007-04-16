@@ -24,58 +24,37 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
-
- * Classes that implement this interface create grammars. A grammar
- * is represented internally as a graph of {@link GrammarNode GrammarNodes}
- * linked together by {@link GrammarArc GrammarArcs}. Calling
- * {@link #getInitialNode() getInitialNode} will return the first node
- * of the grammar graph. To traverse the grammar graph, one should
- * call GrammarNode.getSuccessors, which will return an array of GrammarArcs,
- * from which you can reach the neighboring GrammarNodes.
- * <p>
- * Note that all grammar probabilities are maintained in LogMath log
- * domain.
+ * Classes that implement this interface create grammars. A grammar is represented internally as a graph of {@link
+ * GrammarNode GrammarNodes} linked together by {@link GrammarArc GrammarArcs}. Calling {@link #getInitialNode()
+ * getInitialNode} will return the first node of the grammar graph. To traverse the grammar graph, one should call
+ * GrammarNode.getSuccessors, which will return an array of GrammarArcs, from which you can reach the neighboring
+ * GrammarNodes.
+ * <p/>
+ * Note that all grammar probabilities are maintained in LogMath log domain.
  */
 @SuppressWarnings({"UnnecessaryLocalVariable"})
 public abstract class Grammar implements Configurable, GrammarInterface {
-    /**
-     * Property to control the the dumping of the grammar
-     */
+
+    /** Property to control the the dumping of the grammar */
     public final static String PROP_SHOW_GRAMMAR = "showGrammar";
-    /**
-     * The default value for PROP_SHOW_GRAMMAR.
-     */
+    /** The default value for PROP_SHOW_GRAMMAR. */
     public final static boolean PROP_SHOW_GRAMMAR_DEFAULT = false;
-    /**
-     * Property to control whether grammars are optimized or not
-     */
+    /** Property to control whether grammars are optimized or not */
     public final static String PROP_OPTIMIZE_GRAMMAR = "optimizeGrammar";
-    /**
-     * The default value for PROP_OPTIMIZE_GRAMMAR
-     */
+    /** The default value for PROP_OPTIMIZE_GRAMMAR */
     public final static boolean PROP_OPTIMIZE_GRAMMAR_DEFAULT = true;
 
-    /**
-     * Property to control whether silence words are inserted into the graph
-     */
+    /** Property to control whether silence words are inserted into the graph */
     public final static String PROP_ADD_SIL_WORDS = "addSilenceWords";
-    /**
-     * The default value for PROP_ADD_SIL_WORDS
-     */
-    public final static boolean PROP_ADD_SIL_WORDS_DEFAULT  = false;
+    /** The default value for PROP_ADD_SIL_WORDS */
+    public final static boolean PROP_ADD_SIL_WORDS_DEFAULT = false;
 
-    /**
-     * Property to control whether filler words are inserted into the graph
-     */
+    /** Property to control whether filler words are inserted into the graph */
     public final static String PROP_ADD_FILLER_WORDS = "addFillerWords";
-    /**
-     * The default value for PROP_ADD_FILLER_WORDS
-     */
-    public final static boolean PROP_ADD_FILLER_WORDS_DEFAULT  = false;
+    /** The default value for PROP_ADD_FILLER_WORDS */
+    public final static boolean PROP_ADD_FILLER_WORDS_DEFAULT = false;
 
-    /**
-     * Property that defines the dictionary to use for this grammar
-     */
+    /** Property that defines the dictionary to use for this grammar */
     public final static String PROP_DICTIONARY = "dictionary";
     // ----------------------------
     // Configuration data
@@ -88,36 +67,39 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     private boolean addFillerWords = false;
     protected Dictionary dictionary;
     protected GrammarNode initialNode;
-    private Set grammarNodes;
+    private Set<GrammarNode> grammarNodes;
+
     private final static Word[][] EMPTY_ALTERNATIVE = new Word[0][0];
     private Random randomizer = new Random();
     private int maxIdentity = 0;
     private boolean postProcessed = false;
     private boolean idCheck = false;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_SHOW_GRAMMAR_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_OPTIMIZE_GRAMMAR_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_ADD_SIL_WORDS_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_ADD_FILLER_WORDS_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_DICTIONARY_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_DICTIONARY_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.dictionary.Dictionary"));
-       
+        info.put(new String("PROP_SHOW_GRAMMAR_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_OPTIMIZE_GRAMMAR_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_ADD_SIL_WORDS_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_ADD_FILLER_WORDS_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_DICTIONARY_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_DICTIONARY_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.dictionary.Dictionary"));
+
         return info;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
@@ -128,11 +110,12 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         registry.register(PROP_ADD_FILLER_WORDS, PropertyType.BOOLEAN);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         showGrammar = ps.getBoolean(PROP_SHOW_GRAMMAR,
@@ -149,18 +132,18 @@ public abstract class Grammar implements Configurable, GrammarInterface {
                 Dictionary.class);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
 
-    /**
-     * Create the grammar
-     */
+
+    /** Create the grammar */
     public void allocate() throws IOException {
         dictionary.allocate();
         newGrammar();
@@ -171,27 +154,28 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         timer.stop();
     }
 
-    /**
-     * Deallocate resources allocated to this grammar
-     */
+
+    /** Deallocate resources allocated to this grammar */
     public void deallocate() {
         initialNode = null;
         grammarNodes = null;
         dictionary.deallocate();
     }
 
+
     /**
      * Returns the initial node for the grammar
-     * 
+     *
      * @return the initial grammar node
      */
     public GrammarNode getInitialNode() {
         return initialNode;
     }
 
+
     /**
-     * Perform the standard set of grammar post processing. This can
-     * include inserting silence nodes and optimizing out empty nodes
+     * Perform the standard set of grammar post processing. This can include inserting silence nodes and optimizing out
+     * empty nodes
      */
     protected void postProcessGrammar() {
         if (!postProcessed) {
@@ -214,33 +198,28 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         }
     }
 
-    /**
-     * Dumps statistics for this grammar
-     *  
-     */
+
+    /** Dumps statistics for this grammar */
     public void dumpStatistics() {
         if (logger.isLoggable(Level.INFO)) {
             int successorCount = 0;
             logger.info("Num nodes : " + getNumNodes());
-            for (Iterator i = grammarNodes.iterator(); i.hasNext();) {
-                GrammarNode node = (GrammarNode) i.next();
-                successorCount += node.getSuccessors().length;
-            }
+            for (GrammarNode grammarNode : grammarNodes)
+                successorCount += grammarNode.getSuccessors().length;
+
             logger.info("Num arcs  : " + successorCount);
             logger.info("Avg arcs  : "
                     + ((float) successorCount / getNumNodes()));
         }
     }
 
+
     /**
      * Dump a set of random sentences that fit this grammar
-     * 
-     * @param path
-     *                the name of the file to dump the sentences to
-     * @param count
-     *                dumps no more than this. May dump less than this
-     *                depending upon the number of uniqe sentences in the
-     *                grammar.
+     *
+     * @param path  the name of the file to dump the sentences to
+     * @param count dumps no more than this. May dump less than this depending upon the number of uniqe sentences in the
+     *              grammar.
      */
     public void dumpRandomSentences(String path, int count) {
         try {
@@ -263,31 +242,30 @@ public abstract class Grammar implements Configurable, GrammarInterface {
 
     /**
      * Dump a set of random sentences that fit this grammar
-     * 
-     * @param count
-     *                dumps no more than this. May dump less than this
-     *                depending upon the number of uniqe sentences in the
-     *                grammar.
+     *
+     * @param count dumps no more than this. May dump less than this depending upon the number of uniqe sentences in the
+     *              grammar.
      */
     public void dumpRandomSentences(int count) {
-        Set set = new HashSet();
+        Set<String> set = new HashSet();
         for (int i = 0; i < count; i++) {
             String s = getRandomSentence();
             if (!set.contains(s)) {
                 set.add(s);
             }
         }
-        List sampleList = new ArrayList(set);
+        List<String> sampleList = new ArrayList(set);
         Collections.sort(sampleList);
 
-        for (Iterator i = sampleList.iterator(); i.hasNext(); ) {
-            System.out.println(i.next());
+        for (String sentence : sampleList) {
+            System.out.println(sentence);
         }
     }
 
+
     /**
      * Returns a random sentence that fits this grammar
-     * 
+     *
      * @return a random sentence that fits this grammar
      */
     public String getRandomSentence() {
@@ -308,12 +286,11 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         return sb.toString();
     }
 
+
     /**
-     * Given a node, select a random successor from the set of possible
-     * successor nodes
-     * 
-     * @param node
-     *                the node
+     * Given a node, select a random successor from the set of possible successor nodes
+     *
+     * @param node the node
      * @return a random successor node.
      */
     private GrammarNode selectRandomSuccessor(GrammarNode node) {
@@ -322,59 +299,57 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         return arcs[index].getGrammarNode();
     }
 
-    /**
-     * Dumps the grammar
-     */
+
+    /** Dumps the grammar */
     public void dumpGrammar(String name) {
         getInitialNode().dumpGDL(name);
     }
 
+
     /**
      * returns the number of nodes in this grammar
-     * 
+     *
      * @return the number of nodes
      */
     public int getNumNodes() {
         return grammarNodes.size();
     }
 
+
     /**
      * returns the set of of nodes in this grammar
-     * 
+     *
      * @return the set of nodes
      */
-    public Set getGrammarNodes() {
+    public Set<GrammarNode> getGrammarNodes() {
         return grammarNodes;
     }
 
-    /**
-     * Prepare to create a new grammar
-     */
+
+    /** Prepare to create a new grammar */
     protected void newGrammar() {
         maxIdentity = 0;
-        grammarNodes = new HashSet();
+        grammarNodes = new HashSet<GrammarNode>();
+
         initialNode = null;
         postProcessed = false;
     }
 
+
     /**
      * Creates a grammar. Subclasses of grammar should implement this method.
-     * 
+     *
      * @return the initial node for the grammar
-     * 
-     * @throws java.io.IOException
-     *                 if the grammar could not be loaded
+     * @throws java.io.IOException if the grammar could not be loaded
      */
     protected abstract GrammarNode createGrammar() throws IOException;
 
+
     /**
      * Create class from reference text (not implemented).
-     * 
-     * @param bogusText
-     *                dummy variable
-     * 
-     * @throws NoSuchMethodException
-     *                 if called with reference sentence
+     *
+     * @param bogusText dummy variable
+     * @throws NoSuchMethodException if called with reference sentence
      */
     protected GrammarNode createGrammar(String bogusText)
             throws NoSuchMethodException {
@@ -382,22 +357,22 @@ public abstract class Grammar implements Configurable, GrammarInterface {
                 + "grammar with reference text");
     }
 
+
     /**
      * Gets the dictionary for this grammar
-     * 
+     *
      * @return the dictionary
      */
     public Dictionary getDictionary() {
         return dictionary;
     }
 
+
     /**
      * Returns a new GrammarNode with the given set of alternatives.
-     * 
-     * @param identity
-     *                the id for this node
-     * @param alts
-     *                the set of alternative word lists for this GrammarNode
+     *
+     * @param identity the id for this node
+     * @param alts     the set of alternative word lists for this GrammarNode
      */
     protected GrammarNode createGrammarNode(int identity, String[][] alts) {
         GrammarNode node;
@@ -422,44 +397,40 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         return node;
     }
 
+
     /**
-     * Returns a new GrammarNode with the given single word. If the word is not
-     * in the dictionary, an empty node is created. The grammar id is automatically
-     * assigned
-     * 
-     * @param word
-     *                the word for this grammar node
+     * Returns a new GrammarNode with the given single word. If the word is not in the dictionary, an empty node is
+     * created. The grammar id is automatically assigned
+     *
+     * @param word the word for this grammar node
      */
 
     protected GrammarNode createGrammarNode(String word) {
-        GrammarNode node =  createGrammarNode(maxIdentity + 1, word);
+        GrammarNode node = createGrammarNode(maxIdentity + 1, word);
         return node;
     }
 
+
     /**
-     * Creates an empty  grammar node in this grammar. The gramar ID is 
-     * automatically assigned.
-     * 
-     * @param isFinal
-     *                if true, this is a final node
-     * 
+     * Creates an empty  grammar node in this grammar. The gramar ID is automatically assigned.
+     *
+     * @param isFinal if true, this is a final node
      * @return the grammar node
      */
     protected GrammarNode createGrammarNode(boolean isFinal) {
         return createGrammarNode(maxIdentity + 1, isFinal);
     }
 
+
     /**
-     * Returns a new GrammarNode with the given single word. If the word is not
-     * in the dictionary, an empty node is created
-     * 
-     * @param identity
-     *                the id for this node
-     * @param word
-     *                the word for this grammar node
+     * Returns a new GrammarNode with the given single word. If the word is not in the dictionary, an empty node is
+     * created
+     *
+     * @param identity the id for this node
+     * @param word     the word for this grammar node
      */
     protected GrammarNode createGrammarNode(int identity, String word) {
-        GrammarNode node = null;
+        GrammarNode node;
         Word[][] alternatives = EMPTY_ALTERNATIVE;
         Word wordObject = getDictionary().getWord(word);
         // Pronunciation[] pronunciation = wordObject.getPronunciations(null);
@@ -476,14 +447,12 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         return node;
     }
 
+
     /**
      * Creates a grammar node in this grammar with the given identity
-     * 
-     * @param identity
-     *                the identity of the node
-     * @param isFinal
-     *                if true, this is a final node
-     * 
+     *
+     * @param identity the identity of the node
+     * @param isFinal  if true, this is a final node
      * @return the grammar node
      */
     protected GrammarNode createGrammarNode(int identity, boolean isFinal) {
@@ -493,24 +462,23 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         return node;
     }
 
+
     /**
      * Adds the given grammar node to the set of nodes for this grammar
-     * 
-     * @param node
-     *                the grammar node
+     *
+     * @param node the grammar node
      */
-    private void add(GrammarNode node) {
+    private void add(GrammarNode node) throws Error {
         if (node.getID() > maxIdentity) {
             maxIdentity = node.getID();
         }
 
         // check to see if there is already a node with the given ID.
         if (idCheck) {
-            for (Iterator i = grammarNodes.iterator(); i.hasNext();) {
-                GrammarNode gn = (GrammarNode) i.next();
-                if (gn.getID() == node.getID()) {
+            for (GrammarNode grammarNode : grammarNodes) {
+                if (grammarNode.getID() == node.getID()) {
 
-                    throw new Error("DUP ID " + gn + " and " + node);
+                    throw new Error("DUP ID " + grammarNode + " and " + node);
                 }
             }
         }
@@ -519,29 +487,22 @@ public abstract class Grammar implements Configurable, GrammarInterface {
 
     }
 
+
     /**
-     * Eliminate unnecessary nodes from the grammar. This method goes through
-     * the grammar and looks for branches to nodes that have no words and have
-     * only a single exit and bypasses these nodes.
-     *  
+     * Eliminate unnecessary nodes from the grammar. This method goes through the grammar and looks for branches to
+     * nodes that have no words and have only a single exit and bypasses these nodes.
      */
     private void optimizeGrammar() {
-        Set nodes = getGrammarNodes();
-        for (Iterator i = nodes.iterator(); i.hasNext();) {
-            GrammarNode g = (GrammarNode) i.next();
-            g.optimize();
-        }
+        Set<GrammarNode> nodes = getGrammarNodes();
+        for (GrammarNode node : nodes)
+            node.optimize();
     }
 
 
-    /**
-     * Adds an optional silence word after every non-filler word in the
-     * grammar
-     */
+    /** Adds an optional silence word after every non-filler word in the grammar */
     private void addSilenceWords() {
-        Set nodes =  new HashSet(getGrammarNodes());
-        for (Iterator i = nodes.iterator(); i.hasNext();) {
-            GrammarNode g = (GrammarNode) i.next();
+        HashSet<GrammarNode> nodes = new HashSet<GrammarNode>(getGrammarNodes());
+        for (GrammarNode g : nodes) {
             if (!g.isEmpty() && !g.getWord().isFiller()) {
                 GrammarNode silNode = createGrammarNode(maxIdentity + 1,
                         dictionary.getSilenceWord().getSpelling());
@@ -556,22 +517,18 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         }
     }
 
-    /**
-     * Adds an optional filler word loop after every 
-     *  non-filler word in the
-     *  grammar
-     */
+
+    /** Adds an optional filler word loop after every non-filler word in the grammar */
     private void addFillerWords() {
-        Set nodes =  new HashSet(getGrammarNodes());
+        Set<GrammarNode> nodes = new HashSet<GrammarNode>(getGrammarNodes());
 
         Word[] fillers = getInterWordFillers();
 
         if (fillers.length == 0) {
-            return;     
+            return;
         }
 
-        for (Iterator i = nodes.iterator(); i.hasNext();) {
-            GrammarNode wordNode = (GrammarNode) i.next();
+        for (GrammarNode wordNode : nodes) {
             if (!wordNode.isEmpty() && !wordNode.getWord().isFiller()) {
                 GrammarNode wordExitNode = wordNode.splitNode(maxIdentity + 1);
                 add(wordExitNode);
@@ -579,11 +536,10 @@ public abstract class Grammar implements Configurable, GrammarInterface {
                 GrammarNode fillerEnd = createGrammarNode(false);
                 fillerEnd.add(fillerStart, 0.0f);
                 fillerEnd.add(wordExitNode, 0.0f);
-                wordNode.add(fillerStart, 0.0f); 
+                wordNode.add(fillerStart, 0.0f);
 
-                for (int j = 0; j < fillers.length; j++) {
-                    GrammarNode fnode = createGrammarNode(maxIdentity + 1,
-                            fillers[j].getSpelling());
+                for (Word filler : fillers) {
+                    GrammarNode fnode = createGrammarNode(maxIdentity + 1, filler.getSpelling());
                     fillerStart.add(fnode, 0.0f);
                     fnode.add(fillerEnd, 0.0f);
                 }
@@ -591,9 +547,9 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         }
     }
 
+
     /**
-     * Gets the set of fillers after filtering out fillers that don't go
-     * between words.
+     * Gets the set of fillers after filtering out fillers that don't go between words.
      *
      * @return the set of inter-word fillers
      */
@@ -601,13 +557,13 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         List fillerList = new ArrayList();
         Word[] fillers = dictionary.getFillerWords();
 
-        for (int i = 0; i < fillers.length; i++) {
-            if (fillers[i] == dictionary.getSentenceStartWord()) {
+        for (Word fillerWord : fillers) {
+            if (fillerWord == dictionary.getSentenceStartWord()) {
                 continue;
-            } else if (fillers[i] == dictionary.getSentenceEndWord()) {
+            } else if (fillerWord == dictionary.getSentenceEndWord()) {
                 continue;
             } else {
-                fillerList.add(fillers[i]);
+                fillerList.add(fillerWord);
             }
         }
         return (Word[]) fillerList.toArray(new Word[fillerList.size()]);
