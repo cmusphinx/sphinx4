@@ -339,7 +339,7 @@ public class PropSheet {
      *
      * @param name the simple property name
      */
-    public void setString(String name) {
+    public void setString(String name, String value) {
 
     }
 
@@ -361,6 +361,17 @@ public class PropSheet {
      * @param name the simple property name
      */
     public void setFloat(String name) {
+    }
+
+
+    /**
+     * Sets the raw property to the given name
+     *
+     * @param key the simple property name
+     * @param val the value for the property
+     */
+    public void setRaw(String key, Object val) {
+        rawProps.put(key, val);
     }
 
 

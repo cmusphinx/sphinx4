@@ -187,6 +187,8 @@ public class ConMan {
             }
 
             ps.setRaw(prop, value);
+
+            assert c != null;
             c.newProperties(ps);
 
             informListeners(instanceName);
