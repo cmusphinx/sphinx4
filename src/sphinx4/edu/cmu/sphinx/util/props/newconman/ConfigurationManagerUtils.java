@@ -503,4 +503,79 @@ public class ConfigurationManagerUtils {
             }
         }
     }
+
+
+    /**
+     * converts a configuration manager instance into a xml-string .
+     * <p/>
+     * Note: This methods will not instantiate configurables.
+     */
+    public static String toXML(ConMan cm) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+        sb.append("\n<!--    Sphinx-4 Configuration file--> \n\n");
+
+        sb.append("<config>");
+
+        Pattern pattern = Pattern.compile("\\$\\{(\\w+)\\}");
+
+        Map<String, String> globalProps = cm.getGlobalProperties();
+        for (String propName : globalProps.keySet()) {
+            String propVal = globalProps.get(propName);
+
+            Matcher matcher = pattern.matcher(propName);
+            propName = matcher.matches() ? matcher.group(1) : propName;
+
+            sb.append("\n\t<property name=\"" + propName + "\" value=\"" + propVal + "\"/>");
+        }
+
+        List<String> allInstances = cm.getComponentNames();
+        for (String instanceName : allInstances)
+            sb.append("\n\n").append(propSheet2XML(instanceName, cm.getPropertySheet(instanceName)));
+
+        sb.append("</config>");
+        return sb.toString();
+    }
+
+
+    private static String propSheet2XML(String instanceName, PropSheet ps) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<component name=\"" + instanceName + "\" type=\"" + ps.getConfigurableClass().getName() + "\">");
+
+        for (String propName : ps.getRegisteredProperties()) {
+            String predec = "\n\t<property name=\"" + propName + "\" ";
+            if (ps.getRaw(propName) == null)
+                continue;
+
+            switch (ps.getType(propName)) {
+
+                case COMPLIST:
+                    sb.append("\n\t<propertylist name=\"" + propName + "\">");
+                    List<String> compNames = (List<String>) ps.getRaw(propName);
+                    for (String compName : compNames)
+                        sb.append("\n\t\t<item>" + compName + "</item>");
+                    sb.append("\n\t</propertylist>");
+                    break;
+                default:
+                    sb.append(predec + "value=\"" + ps.getRaw(propName) + "\"/>");
+            }
+        }
+
+        sb.append("\n</component>\n\n");
+        return sb.toString();
+    }
+
+
+    public static void toConfigFile(ConMan cm, File cmLocation) {
+        assert cm != null;
+        try {
+            PrintWriter pw = new PrintWriter(new FileOutputStream(cmLocation));
+            String configXML = ConfigurationManagerUtils.toXML(cm);
+            pw.print(configXML);
+            pw.flush();
+            pw.close();
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        }
+    }
 }

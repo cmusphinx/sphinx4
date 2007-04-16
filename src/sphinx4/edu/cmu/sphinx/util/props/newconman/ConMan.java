@@ -13,7 +13,7 @@ public class ConMan {
     /** A common property (used by all components) that sets the log level for the component. */
     public final static String PROP_COMMON_LOG_LEVEL = "logLevel";
 
-    private List<ConfigurationChangeListener> changeListenerss = new ArrayList<ConfigurationChangeListener>();
+    private List<ConfigurationChangeListener> changeListeners = new ArrayList<ConfigurationChangeListener>();
 
     private Map<String, PropSheet> symbolTable = new LinkedHashMap<String, PropSheet>();
     private Map<String, RawPropertyData> rawPropertyMap = new HashMap<String, RawPropertyData>();
@@ -53,6 +53,29 @@ public class ConMan {
      * @return the property sheet for the object.
      */
     public PropSheet getPropertySheet(String instanceName) {
+        if (!symbolTable.containsKey(instanceName)) {
+            // if it is not in the symbol table, so construct
+            // it based upon our raw property data
+            RawPropertyData rpd = rawPropertyMap.get(instanceName);
+            if (rpd != null) {
+                String className = rpd.getClassName();
+                try {
+                    Class cls = Class.forName(className);
+
+                    // now load the property-sheet by using the class annotation
+//                    PropSheet propertySheet = new PropSheet(cls, this, rpd.flatten(globalProperties));
+                    PropSheet propertySheet = new PropSheet(cls, this, rpd);
+
+                    symbolTable.put(instanceName, propertySheet);
+
+                } catch (ClassNotFoundException e) {
+                    System.err.println("class not found !" + e.toString());
+                } catch (ClassCastException e) {
+                    System.err.println("can not cast class !" + e.toString());
+                }
+            }
+        }
+
         return symbolTable.get(instanceName);
     }
 
@@ -69,6 +92,17 @@ public class ConMan {
 
 
     /**
+     * Returns all names of configurables registered to this instance. The resulting set includes instantiated and
+     * noninstantiated components.
+     *
+     * @return all component named registered to this instance of <code>ConfigurationManager</code>
+     */
+    public List<String> getComponentNames() {
+        return Arrays.asList(rawPropertyMap.keySet().toArray(new String[]{}));
+    }
+
+
+    /**
      * Looks up a configurable component by name. Creates it if necessary
      *
      * @param instanceName the name of the component
@@ -79,40 +113,20 @@ public class ConMan {
      *                                if an error occurs while setting a property
      */
     public SimpleConfigurable lookup(String instanceName) throws InstantiationException, PropertyException {
-        PropSheet propSheet = symbolTable.get(instanceName);
-        if (propSheet == null) {
-            if (showCreations) {
-                System.out.println("Creating: " + instanceName);
-            }
-            // it is not in the symbol table, so construct
-            // it based upon our raw property data
-            RawPropertyData rpd = rawPropertyMap.get(instanceName);
-            if (rpd != null) {
-                String className = rpd.getClassName();
-                try {
-                    Class cls = Class.forName(className);
+        // apply all new propeties to the model
+        PropSheet ps = getPropertySheet(instanceName);
+        if (ps == null)
+            return null;
 
-                    // now load the property-sheet by using the class annotation
-                    PropSheet propertySheet = new PropSheetImpl(cls, this, rpd.flatten(globalProperties));
+        if (showCreations)
+            System.out.println("Creating: " + instanceName);
 
-                    symbolTable.put(instanceName, propertySheet);
+        SimpleConfigurable instance = ps.getOwner();
+        instance.newProperties(ps);
 
-                    // apply all new propeties to the model
-                    SimpleConfigurable instance = propertySheet.getOwner();
-                    instance.newProperties(propertySheet);
+        //todo registerCommonProperties -> register logLevel
+        return instance;
 
-                    //todo registerCommonProperties -> register logLevel
-                    return instance;
-                } catch (ClassNotFoundException e) {
-
-                } catch (ClassCastException e) {
-                }
-            }
-        } else {
-            return propSheet.getOwner();
-        }
-
-        return null;
     }
 
 
@@ -275,7 +289,7 @@ public class ConMan {
         if (l == null)
             return;
 
-        changeListenerss.add(l);
+        changeListeners.add(l);
     }
 
 
@@ -284,13 +298,42 @@ public class ConMan {
         if (l == null)
             return;
 
-        changeListenerss.remove(l);
+        changeListeners.remove(l);
     }
 
 
     private void informListeners(String instanceName) {
-        for (ConfigurationChangeListener changeListeners : changeListenerss)
+        for (ConfigurationChangeListener changeListeners : this.changeListeners)
             changeListeners.configurationChanged(instanceName);
+    }
+
+
+    /**
+     * Test wether the given <code>obj</code> equals this instance in terms of same configuration. This equals
+     * implemenation does not care about instantiation of components.
+     */
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ConMan))
+            return false;
+
+        ConMan cm = (ConMan) obj;
+
+        if (!getComponentNames().equals(cm.getComponentNames()))
+            return false;
+
+        // make sure that all components are the same
+        for (String instanceName : getComponentNames()) {
+            PropSheet myPropSheet = getPropertySheet(instanceName);
+            PropSheet otherPropSheet = cm.getPropertySheet(instanceName);
+
+            if (!otherPropSheet.equals(myPropSheet))
+                return false;
+        }
+
+        // make sure that both configuration managers have the same set of global properties
+        // ....
+
+        return true;
     }
 
 
@@ -328,25 +371,19 @@ public class ConMan {
             for (String confName : defaultProps.keySet()) {
                 Object property = defaultProps.get(confName);
 
-                if (property instanceof SimpleConfigurable) {
-                    RawPropertyData dummyRPD = new RawPropertyData(confName, property.getClass().getName());
-                    conMan.symbolTable.put(confName, new PropSheetImpl((SimpleConfigurable) property, conMan, dummyRPD));
-                } else
-                    rpd.getProperties().put(confName, property);
+//                if (property instanceof SimpleConfigurable) {
+//                    RawPropertyData dummyRPD = new RawPropertyData(confName, property.getClass().getName());
+//                    conMan.symbolTable.put(confName, new PropSheet((SimpleConfigurable) property, conMan, dummyRPD));
+//                } else
+                rpd.getProperties().put(confName, property);
             }
 
 
             SimpleConfigurable configurable = targetClass.newInstance();
-            PropSheetImpl ps = new PropSheetImpl(configurable, conMan, rpd);
-            PropSheetImpl.processAnnotations(ps, targetClass);
-
-
-            return ps;
+            return new PropSheet(configurable, conMan, rpd);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (PropertyException e) {
             e.printStackTrace();
         }
 

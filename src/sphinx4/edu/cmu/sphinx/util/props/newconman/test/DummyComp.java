@@ -121,6 +121,8 @@ public class DummyComp implements SimpleConfigurable {
         Assert.assertTrue(dc.getBestASR().equals("sphinx4"));
         Assert.assertTrue(dc.getLogger() != null);
     }
+
+
 }
 
 
