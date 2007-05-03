@@ -1,4 +1,6 @@
-package edu.cmu.sphinx.util.props.newconman;
+package edu.cmu.sphinx.util.props;
+
+import edu.cmu.sphinx.util.props.SimpleConfigurable;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -8,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
  * A component property.
  *
  * @author Holger Brandl
- * @see edu.cmu.sphinx.util.props.newconman.ConMan
+ * @see ConMan
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

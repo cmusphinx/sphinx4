@@ -1,14 +1,14 @@
-package edu.cmu.sphinx.util.props.newconman;
+package edu.cmu.sphinx.util.props;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Documented;
 
 /**
  * * A double property.
  *
  * @author Holger Brandl
- * @see edu.cmu.sphinx.util.props.newconman.ConMan
+ * @see ConMan
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

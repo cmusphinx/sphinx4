@@ -1,10 +1,10 @@
-package edu.cmu.sphinx.util.props.newconman;
+package edu.cmu.sphinx.util.props;
 
 /**
  * Describes all methods necessary to process change events of a <code>ConfigurationManager</code>.
  *
  * @author Holger Brandl
- * @see edu.cmu.sphinx.util.props.newconman.ConMan
+ * @see edu.cmu.sphinx.util.props.ConMan
  */
 
 public interface ConfigurationChangeListener {

@@ -1,7 +1,7 @@
-package edu.cmu.sphinx.util.props.newconman;
+package edu.cmu.sphinx.util.props;
 
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.RawPropertyData;
+import edu.cmu.sphinx.util.props.ConMan;
+import edu.cmu.sphinx.util.props.SimpleConfigurable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

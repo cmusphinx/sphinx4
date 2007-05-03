@@ -1,4 +1,4 @@
-package edu.cmu.sphinx.util.props.newconman;
+package edu.cmu.sphinx.util.props;
 
 import java.lang.reflect.Proxy;
 

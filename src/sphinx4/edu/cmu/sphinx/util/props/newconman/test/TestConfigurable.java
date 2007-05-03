@@ -1,10 +1,7 @@
 package edu.cmu.sphinx.util.props.newconman.test;
 
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.newconman.ConMan;
-import edu.cmu.sphinx.util.props.newconman.PropSheet;
-import edu.cmu.sphinx.util.props.newconman.S4Component;
-import edu.cmu.sphinx.util.props.newconman.SimpleConfigurable;
+import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.SimpleConfigurable;
 import junit.framework.Assert;
 import org.junit.Test;
 
