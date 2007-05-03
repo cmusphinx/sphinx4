@@ -377,7 +377,7 @@ public class ConfigurationManagerUtils {
         for (String propName : ps.getRegisteredProperties()) {
             String predec = "\n\t<property name=\"" + propName + "\" ";
             if (ps.getRawNoReplacement(propName) == null)
-                continue;
+                continue;  // if the property was net defined within the xml-file
 
             switch (ps.getType(propName)) {
 

@@ -18,7 +18,10 @@ public class DummyFrontEnd implements SimpleConfigurable {
     @S4Boolean(defaultValue = true)
     public static final String PROP_USE_MFFCS = "useMfccs";
 
-    @S4ComponentList
+    @S4ComponentList(
+            type = SimpleConfigurable.class,
+            defaultList = {DummyProcessor.class, AnotherDummyProcessor.class, DummyProcessor.class}
+    )
     public static final String DATA_PROCS = "dataProcs";
 
     List<SimpleConfigurable> dataProcs;

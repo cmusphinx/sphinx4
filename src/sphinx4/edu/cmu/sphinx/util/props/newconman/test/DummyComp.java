@@ -20,7 +20,7 @@ public class DummyComp implements SimpleConfigurable {
     public static final String PROP_BEAM_WIDTH = "beamWidth";
 
     /** doc of frontend. */
-    @S4Component(type = DummyFrontEnd.class)
+    @S4Component(type = DummyFrontEnd.class, defaultClass = AnotherDummyFrontEnd.class)
     public static final String PROP_FRONTEND = "frontend";
 
     @S4Double(defaultValue = 1.3, range = {-1, 15})
@@ -84,9 +84,29 @@ public class DummyComp implements SimpleConfigurable {
     }
 
 
-    /** Use the all defaults defined by the annotations to instantiate a Configurable. */
     @Test
     public void testGetDefaultInstance() throws PropertyException, InstantiationException {
+        DummyComp dc = (DummyComp) ConMan.getDefaultInstance(DummyComp.class);
+
+        Assert.assertEquals(4, dc.getBeamWidth());
+        Assert.assertEquals(1.3, dc.getAlpha(), 1E-10);
+
+        DummyFrontEnd fe = dc.getFrontEnd();
+        Assert.assertTrue(fe != null);
+        Assert.assertTrue(fe instanceof AnotherDummyFrontEnd);
+        Assert.assertTrue(fe.getDataProcs().size() == 3);
+        Assert.assertTrue(fe.getDataProcs().get(0) instanceof DummyProcessor);
+        Assert.assertTrue(fe.getDataProcs().get(1) instanceof AnotherDummyProcessor);
+        Assert.assertTrue(fe.getDataProcs().get(2) instanceof DummyProcessor);
+
+        Assert.assertTrue(dc.getBestASR().equals("sphinx4"));
+        Assert.assertTrue(dc.getLogger() != null);
+    }
+
+
+    /** Use the all defaults defined by the annotations to instantiate a Configurable. */
+    @Test
+    public void testCustomizedDefaultInstance() throws PropertyException, InstantiationException {
         Map<String, Object> defaultProps = new HashMap<String, Object>();
         defaultProps.put(DummyComp.PROP_FRONTEND, new DummyFrontEnd());
 
@@ -121,8 +141,6 @@ public class DummyComp implements SimpleConfigurable {
         Assert.assertTrue(dc.getBestASR().equals("sphinx4"));
         Assert.assertTrue(dc.getLogger() != null);
     }
-
-
 }
 
 

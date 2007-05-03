@@ -219,7 +219,7 @@ public class PropSheet {
     public SimpleConfigurable getComponent(String name) throws PropertyException {
         S4PropWrapper s4PropWrapper = getProperty(name, S4Component.class);
 
-        S4Component s4Component = ((S4Component) s4PropWrapper.getAnnotation());
+        S4Component s4Component = (S4Component) s4PropWrapper.getAnnotation();
         Class expectedType = s4Component.type();
 
         if (propValues.get(name) == null || propValues.get(name) instanceof String) {
@@ -228,13 +228,24 @@ public class PropSheet {
             try {
                 configurable = cm.lookup((String) propValues.get(name));
 
-                if (!expectedType.isInstance(configurable) && !s4Component.mandatory())
+                if (configurable != null && !expectedType.isInstance(configurable))
                     throw new PropertyException(null, name, "mismatch between annoation and component type");
+
+//            assert configurable != null;
+                // instead of assserting null we'll try instead to instantiate the default class if available
+                if (configurable == null) {
+                    Class<? extends SimpleConfigurable> defClass = s4Component.defaultClass();
+
+                    // because we're forced to use the default type, assert that it is set
+                    assert !defClass.equals(Object.class);
+
+                    configurable = ConMan.getDefaultInstance(defClass);
+                }
+
             } catch (InstantiationException e) {
                 throw new PropertyException(null, name, "can not instantiate class");
             }
 
-            assert configurable != null;
             propValues.put(name, configurable);
         }
 
@@ -253,22 +264,40 @@ public class PropSheet {
     public List<SimpleConfigurable> getComponentList(String name) throws PropertyException {
         getProperty(name, S4ComponentList.class);
 
-        List<String> components = (List) propValues.get(name);
-        if (!components.isEmpty() && components.get(0) instanceof String) {
-            Proxy annoation = registeredProperties.get(name).getAnnotation();
+        List components = (List) propValues.get(name);
 
-            if (annoation instanceof S4ComponentList) {
-                List<SimpleConfigurable> list = new ArrayList<SimpleConfigurable>();
+        assert registeredProperties.get(name).getAnnotation() instanceof S4ComponentList;
+        S4ComponentList annoation = (S4ComponentList) registeredProperties.get(name).getAnnotation();
 
-                for (String componentName : components)
-                    try {
-                        list.add(cm.lookup(componentName));
-                    } catch (InstantiationException e) {
-                        throw new PropertyException(null, name, "instantiation of list element failed.");
-                    }
+        // no componets names are available and no comp-list was yet loaded
+        // therefore load the default list of components from the annoation
+        if (components == null) {
+            List<Class<? extends SimpleConfigurable>> defClasses = Arrays.asList(annoation.defaultList());
+            components = new ArrayList();
 
-                propValues.put(name, list);
+            for (Class<? extends SimpleConfigurable> defClass : defClasses) {
+                try {
+                    components.add(ConMan.getDefaultInstance(defClass));
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                }
             }
+
+            propValues.put(name, components);
+        }
+
+        if (!components.isEmpty() && !(components.get(0) instanceof SimpleConfigurable)) {
+
+            List<SimpleConfigurable> list = new ArrayList<SimpleConfigurable>();
+
+            for (Object componentName : components)
+                try {
+                    list.add(cm.lookup((String) componentName));
+                } catch (InstantiationException e) {
+                    throw new PropertyException(null, name, "instantiation of list element failed.");
+                }
+
+            propValues.put(name, list);
 //                propValues.put(name, new ArrayList<SimpleConfigurable>());
         }
 
@@ -322,25 +351,19 @@ public class PropSheet {
 
 
     /**
-     * Gets the list of strings associated with this name
-     *
-     * @param name the name
-     * @return an array (possibly empty) of configurable strings
-     * @throws edu.cmu.sphinx.util.props.PropertyException
-     *          if the named property is not of this type
-     */
-    public List getStrings(String name) {
-        throw new RuntimeException("not implemented yet");
-    }
-
-
-    /**
      * Sets the given property to the given name
      *
      * @param name the simple property name
      */
     public void setString(String name, String value) {
+        // ensure that there is such a property
+        assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
 
+        Proxy annotation = registeredProperties.get(name).getAnnotation();
+        assert annotation instanceof S4String;
+
+        rawProps.put(name, value);
+        propValues.put(name, value);
     }
 
 
@@ -351,16 +374,73 @@ public class PropSheet {
      * @param value the value for the property
      */
     public void setInt(String name, int value) {
+        // ensure that there is such a property
+        assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
 
+        Proxy annotation = registeredProperties.get(name).getAnnotation();
+        assert annotation instanceof S4Integer;
+
+        rawProps.put(name, value);
+        propValues.put(name, value);
     }
 
 
     /**
      * Sets the given property to the given name
      *
-     * @param name the simple property name
+     * @param name  the simple property name
+     * @param value the value for the property
      */
-    public void setFloat(String name) {
+    public void setDouble(String name, double value) {
+        // ensure that there is such a property
+        assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
+
+        Proxy annotation = registeredProperties.get(name).getAnnotation();
+        assert annotation instanceof S4Double;
+
+        rawProps.put(name, value);
+        propValues.put(name, value);
+    }
+
+
+    /**
+     * Sets the given property to the given name
+     *
+     * @param name   the simple property name
+     * @param cmName the name of the configurable within the configuration manager (required for serialization only)
+     * @param value  the value for the property
+     */
+    public void setComponent(String name, String cmName, SimpleConfigurable value) {
+        // ensure that there is such a property
+        assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
+
+        Proxy annotation = registeredProperties.get(name).getAnnotation();
+        assert annotation instanceof S4Component;
+
+        rawProps.put(name, cmName);
+        propValues.put(name, value);
+    }
+
+
+    /**
+     * Sets the given property to the given name
+     *
+     * @param name       the simple property name
+     * @param valueNames the list of names of the configurables within the configuration manager (required for
+     *                   serialization only)
+     * @param value      the value for the property
+     */
+    public void setComponentList(String name, List<String> valueNames, List<SimpleConfigurable> value) {
+        // ensure that there is such a property
+        assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
+
+        Proxy annotation = registeredProperties.get(name).getAnnotation();
+        assert annotation instanceof S4ComponentList;
+
+        assert valueNames.size() == value.size();
+
+        rawProps.put(name, valueNames);
+        propValues.put(name, value);
     }
 
 

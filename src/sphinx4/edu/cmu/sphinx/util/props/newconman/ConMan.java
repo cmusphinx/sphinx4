@@ -311,8 +311,8 @@ public class ConMan {
 
 
     /**
-     * Test wether the given <code>obj</code> equals this instance in terms of same configuration. This equals
-     * implemenation does not care about instantiation of components.
+     * Test wether the given configuration manager instance equals this instance in terms of same configuration. This
+     * This equals implemenation does not care about instantiation of components.
      */
     public boolean equals(Object obj) {
         if (!(obj instanceof ConMan))
@@ -320,7 +320,9 @@ public class ConMan {
 
         ConMan cm = (ConMan) obj;
 
-        if (!getComponentNames().equals(cm.getComponentNames()))
+        Collection<String> setA = new HashSet<String>(getComponentNames());
+        Collection<String> setB = new HashSet<String>(cm.getComponentNames());
+        if (!setA.equals(setB))
             return false;
 
         // make sure that all components are the same
@@ -333,7 +335,8 @@ public class ConMan {
         }
 
         // make sure that both configuration managers have the same set of global properties
-        // ....
+        if (!cm.getGlobalProperties().equals(getGlobalProperties()))
+            return false;
 
         return true;
     }
