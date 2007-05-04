@@ -11,85 +11,85 @@
  */
 
 package edu.cmu.sphinx.linguist.acoustic;
-import java.util.HashMap;
-import java.util.Map;
+
+import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
-import edu.cmu.sphinx.util.props.Configurable;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 
-/**
- * Manages the set of units for a recognizer
- */
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/** Manages the set of units for a recognizer */
 @SuppressWarnings({"UnnecessaryLocalVariable"})
-public class  UnitManager implements Configurable  {
-    /**
-     * The name for the silence unit
-     */
+public class UnitManager implements Configurable {
+
+    /** The name for the silence unit */
     public final static String SILENCE_NAME = "SIL";
     private final static int SILENCE_ID = 1;
 
-    /**
-     * The silence unit
-     */
-    public final static Unit SILENCE =  
-        new Unit(SILENCE_NAME, true, SILENCE_ID);
+    /** The silence unit */
+    public final static Unit SILENCE =
+            new Unit(SILENCE_NAME, true, SILENCE_ID);
 
     private String name;
-    private Map<String,Unit> ciMap = new HashMap<String,Unit>();
+    private Map<String, Unit> ciMap = new HashMap<String, Unit>();
     private int nextID = SILENCE_ID + 1;
     private Logger logger;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
-        
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
+
         return new HashMap();
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
         ciMap.put(SILENCE_NAME, SILENCE);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
 
+
     /**
      * Gets or creates a unit from the unit pool
      *
-     * @param name the name of the unit
-     * @param filler <code>true</code> if the unit is a filler unit
+     * @param name    the name of the unit
+     * @param filler  <code>true</code> if the unit is a filler unit
      * @param context the context for this unit
-     *
      * @return the unit
      */
     public Unit getUnit(String name, boolean filler, Context context) {
@@ -100,17 +100,17 @@ public class  UnitManager implements Configurable  {
                 unit = createCIUnit(name, filler);
             }
         } else {
-            unit =  createCDUnit(name, filler, context);
+            unit = createCDUnit(name, filler, context);
         }
         return unit;
     }
 
+
     /**
      * Gets or creates a unit from the unit pool
      *
-     * @param name the name of the unit
+     * @param name   the name of the unit
      * @param filler <code>true</code> if the unit is a filler unit
-     *
      * @return the unit
      */
     public Unit getUnit(String name, boolean filler) {
@@ -122,7 +122,6 @@ public class  UnitManager implements Configurable  {
      * Gets or creates a unit from the unit pool
      *
      * @param name the name of the unit
-     *
      * @return the unit
      */
     public Unit getUnit(String name) {
@@ -131,17 +130,16 @@ public class  UnitManager implements Configurable  {
 
 
     /**
-     * creates a unit ci unit 
+     * creates a unit ci unit
      *
-     * @param name the name of the unit
+     * @param name   the name of the unit
      * @param filler <code>true</code> if the unit is a filler unit
-     *
      * @return the unit
      */
     private Unit createCIUnit(String name, boolean filler) {
         Unit unit = ciMap.get(name);
         if (unit == null) {
-            Unit u = new Unit(name, filler,  nextID++);
+            Unit u = new Unit(name, filler, nextID++);
             unit = u;
             ciMap.put(name, unit);
             if (logger.isLoggable(Level.INFO)) {
@@ -151,17 +149,17 @@ public class  UnitManager implements Configurable  {
         return unit;
     }
 
+
     /**
-     * creates a cd unit 
+     * creates a cd unit
      *
-     * @param name the name of the unit
-     * @param filler <code>true</code> if the unit is a filler unit
+     * @param name    the name of the unit
+     * @param filler  <code>true</code> if the unit is a filler unit
      * @param context the context for this unit
-     *
      * @return the unit
      */
-    private Unit createCDUnit(String name, 
-            boolean filler, Context context) {
+    private Unit createCDUnit(String name,
+                              boolean filler, Context context) {
         Unit baseUnit = lookupCIUnit(name);
         return new Unit(baseUnit, filler, context);
     }
@@ -171,7 +169,6 @@ public class  UnitManager implements Configurable  {
      * Looks up the CI unit with the given name
      *
      * @param name the name of the CI unit
-     *
      * @return the CI unit
      */
     private Unit lookupCIUnit(String name) {

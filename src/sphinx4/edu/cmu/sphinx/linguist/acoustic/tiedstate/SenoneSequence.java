@@ -15,24 +15,23 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Contains an ordered list of senones. 
- */
+/** Contains an ordered list of senones. */
 public class SenoneSequence implements Serializable {
+
     private Senone[] senones;
 
-   /**
-    * a factory method that creates a SeononeSequence from a list of
-    * senones.
-    *
-    * @param senoneList the list of senones
-    *
-    * @return a composite senone
-    */
-    public static  SenoneSequence create(List senoneList) {
-	 return new SenoneSequence(
-	     (Senone[]) senoneList.toArray(new Senone[senoneList.size()]));
-     }
+
+    /**
+     * a factory method that creates a SeononeSequence from a list of senones.
+     *
+     * @param senoneList the list of senones
+     * @return a composite senone
+     */
+    public static SenoneSequence create(List senoneList) {
+        return new SenoneSequence(
+                (Senone[]) senoneList.toArray(new Senone[senoneList.size()]));
+    }
+
 
     /**
      * Constructs a senone sequence
@@ -40,30 +39,33 @@ public class SenoneSequence implements Serializable {
      * @param sequence the ordered set of senones for this sequence
      */
     public SenoneSequence(Senone[] sequence) {
-	this.senones = sequence;
+        this.senones = sequence;
     }
+
 
     /**
      * Returns the ordered set of senones for this sequence
      *
-     * @return	 the ordered set of senones for this sequence
+     * @return the ordered set of senones for this sequence
      */
     public Senone[] getSenones() {
-	return senones;
+        return senones;
     }
+
 
     /**
      * Returns the hashCode for this object
      *
-     * @return  the object hashcode
+     * @return the object hashcode
      */
     public int hashCode() {
         int hashCode = 31;
         for (int i = 0; i < senones.length; i++) {
-            hashCode =  hashCode * 91 + senones[i].hashCode();
+            hashCode = hashCode * 91 + senones[i].hashCode();
         }
         return hashCode;
     }
+
 
     /**
      * Returns true if the objects are equal
@@ -98,9 +100,9 @@ public class SenoneSequence implements Serializable {
      * @param msg a string annotation
      */
     public void dump(String msg) {
-	System.out.println(" SenoneSequence " + msg + ":");
-	for (int i = 0; i < senones.length; i++) {
-	    senones[i].dump("  seq:");
-	}
+        System.out.println(" SenoneSequence " + msg + ":");
+        for (int i = 0; i < senones.length; i++) {
+            senones[i].dump("  seq:");
+        }
     }
 }

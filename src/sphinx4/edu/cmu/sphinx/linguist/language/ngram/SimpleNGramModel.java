@@ -11,43 +11,31 @@
  */
 package edu.cmu.sphinx.linguist.language.ngram;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.logging.Logger;
-
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
- * An ascii ARPA language model loader. This loader makes no attempt to
- * optimize storage, so it can only load very small language models
- * <p>
- * Note that all probabilites in the grammar are stored in LogMath log base
- * format. Language Probabilties in the language model file are stored in log
- * 10 base.
+ * An ascii ARPA language model loader. This loader makes no attempt to optimize storage, so it can only load very small
+ * language models
+ * <p/>
+ * Note that all probabilites in the grammar are stored in LogMath log base format. Language Probabilties in the
+ * language model file are stored in log 10 base.
  */
 public class SimpleNGramModel implements LanguageModel {
-    /**
-     * Sphinx property that defines the logMath component.
-     */
+
+    /** Sphinx property that defines the logMath component. */
+    @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
     // ----------------------------
     // Configuration data
@@ -68,31 +56,33 @@ public class SimpleNGramModel implements LanguageModel {
     protected String fileName;
     private boolean allocated = false;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_FORMAT_TYPE"),new String("STRING"));
-        info.put(new String("PROP_LOCATION_TYPE"),new String("RESOURCE"));
-        info.put(new String("PROP_UNIGRAM_WEIGHT_TYPE"),new String("FLOAT"));
-        info.put(new String("PROP_MAX_DEPTH_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
-        info.put(new String("PROP_DICTIONARY_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_DICTIONARY_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.dictionary.Dictionary"));
-       
+        info.put(new String("PROP_FORMAT_TYPE"), new String("STRING"));
+        info.put(new String("PROP_LOCATION_TYPE"), new String("RESOURCE"));
+        info.put(new String("PROP_UNIGRAM_WEIGHT_TYPE"), new String("FLOAT"));
+        info.put(new String("PROP_MAX_DEPTH_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_LOG_MATH_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"), new String("edu.cmu.sphinx.util.LogMath"));
+        info.put(new String("PROP_DICTIONARY_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_DICTIONARY_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.dictionary.Dictionary"));
+
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
@@ -104,20 +94,22 @@ public class SimpleNGramModel implements LanguageModel {
         registry.register(PROP_DICTIONARY, PropertyType.COMPONENT);
     }
 
+
     public Logger getLogger() {
         return logger;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
 
 
         if (allocated) {
-            throw new PropertyException(this, null, 
+            throw new PropertyException(this, null,
                     "Can't change properties after allocation");
         }
         logger = ps.getLogger();
@@ -133,11 +125,12 @@ public class SimpleNGramModel implements LanguageModel {
         vocabulary = new HashSet<String>();
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#allocate()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#allocate()
+    */
     public void allocate() throws IOException {
         allocated = true;
         load(format, urlLocation, unigramWeight, dictionary);
@@ -148,46 +141,42 @@ public class SimpleNGramModel implements LanguageModel {
         }
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
+    */
     public void deallocate() {
         allocated = false;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
 
-    /**
-     * Called before a recognition
-     */
+
+    /** Called before a recognition */
     public void start() {
     }
 
-    /**
-     * Called after a recognition
-     */
+
+    /** Called after a recognition */
     public void stop() {
     }
 
+
     /**
-     * Gets the ngram probability of the word sequence represented by the word
-     * list
-     * 
-     * @param wordSequence
-     *                the word sequence
-     * 
-     * @return the probability of the word sequence. Probability is in logMath
-     *         log base
-     *  
+     * Gets the ngram probability of the word sequence represented by the word list
+     *
+     * @param wordSequence the word sequence
+     * @return the probability of the word sequence. Probability is in logMath log base
      */
     public float getProbability(WordSequence wordSequence) {
         float logProbability = 0.0f;
@@ -211,23 +200,22 @@ public class SimpleNGramModel implements LanguageModel {
         return logProbability;
     }
 
+
     /**
      * Gets the smear term for the given wordSequence
-     * 
-     * @param wordSequence
-     *                the word sequence
+     *
+     * @param wordSequence the word sequence
      * @return the smear term associated with this word sequence
      */
     public float getSmear(WordSequence wordSequence) {
         return 0.0f; // TODO not implememted
     }
 
+
     /**
      * Returns the backoff probability for the give sequence of words
-     * 
-     * @param wordSequence
-     *                the sequence of words
-     * 
+     *
+     * @param wordSequence the sequence of words
      * @return the backoff probability in LogMath log base
      */
     public float getBackoff(WordSequence wordSequence) {
@@ -239,44 +227,42 @@ public class SimpleNGramModel implements LanguageModel {
         return logBackoff;
     }
 
+
     /**
      * Returns the maximum depth of the language model
-     * 
+     *
      * @return the maximum depth of the language mdoel
      */
     public int getMaxDepth() {
         return maxNGram;
     }
 
+
     /**
-     * Returns the set of words in the lanaguage model. The set is
-     * unmodifiable.
-     * 
+     * Returns the set of words in the lanaguage model. The set is unmodifiable.
+     *
      * @return the unmodifiable set of words
      */
     public Set getVocabulary() {
         return Collections.unmodifiableSet(vocabulary);
     }
 
+
     /**
-     * Gets the probability entry for the given word sequence or null if there
-     * is no entry
-     * 
-     * @param wordSequence
-     *                a word sequence
-     * 
+     * Gets the probability entry for the given word sequence or null if there is no entry
+     *
+     * @param wordSequence a word sequence
      * @return the probability entry for the wordlist or null
      */
     private Probability getProb(WordSequence wordSequence) {
         return map.get(wordSequence);
     }
 
+
     /**
      * Converts a wordList to a string
-     * 
-     * @param wordList
-     *                the wordList
-     * 
+     *
+     * @param wordList the wordList
      * @return the string
      */
     private String listToString(List wordList) {
@@ -288,9 +274,8 @@ public class SimpleNGramModel implements LanguageModel {
         return sb.toString();
     }
 
-    /**
-     * Dumps the language model
-     */
+
+    /** Dumps the language model */
     public void dump() {
         for (Iterator<WordSequence> i = map.keySet().iterator(); i.hasNext();) {
             WordSequence ws = i.next();
@@ -299,13 +284,11 @@ public class SimpleNGramModel implements LanguageModel {
         }
     }
 
+
     /**
-     * Retrieves a string representation of the wordlist, suitable for map
-     * access
-     * 
-     * @param wordList
-     *                the list of words
-     * 
+     * Retrieves a string representation of the wordlist, suitable for map access
+     *
+     * @param wordList the list of words
      * @return a string representation of the word list
      */
     private String getRepresentation(List<String> wordList) {
@@ -320,21 +303,17 @@ public class SimpleNGramModel implements LanguageModel {
         return sb.toString();
     }
 
+
     /**
      * Loads the language model from the given location.
-     * 
-     * @param format
-     *                the format of the model
-     * @param location
-     *                the URL location of the model
-     * @param unigramWeight
-     *                the unigram weight
-     * 
-     * @throws IOException
-     *                 if an error occurs while loading
+     *
+     * @param format        the format of the model
+     * @param location      the URL location of the model
+     * @param unigramWeight the unigram weight
+     * @throws IOException if an error occurs while loading
      */
     private void load(String format, URL location, float unigramWeight,
-            Dictionary dictionary) throws FileNotFoundException, IOException {
+                      Dictionary dictionary) throws FileNotFoundException, IOException {
         String line;
         float logUnigramWeight = logMath.linearToLog(unigramWeight);
         float inverseLogUnigramWeight = logMath
@@ -423,15 +402,13 @@ public class SimpleNGramModel implements LanguageModel {
         close();
     }
 
+
     /**
      * Puts the probability into the map
-     * 
-     * @param wordSequence
-     *                the tag for the prob.
-     * @param logProb
-     *                the probability in log math base
-     * @param logBackoff
-     *                the backoff probability in log math base
+     *
+     * @param wordSequence the tag for the prob.
+     * @param logProb      the probability in log math base
+     * @param logBackoff   the backoff probability in log math base
      */
     private void put(WordSequence wordSequence, float logProb, float logBackoff) {
         if (false) {
@@ -441,13 +418,11 @@ public class SimpleNGramModel implements LanguageModel {
         map.put(wordSequence, new Probability(logProb, logBackoff));
     }
 
+
     /**
      * Reads the next line from the LM file. Keeps track of line number.
-     * 
-     * @throws IOException
-     *                 if an error occurs while reading the input or an EOF is
-     *                 encountered.
-     *  
+     *
+     * @throws IOException if an error occurs while reading the input or an EOF is encountered.
      */
     private String readLine() throws IOException {
         String line;
@@ -459,32 +434,27 @@ public class SimpleNGramModel implements LanguageModel {
         return line;
     }
 
+
     /**
      * Opens the language model at the given location
-     * 
-     * @param location
-     *                the path to the language model
-     * 
-     * @throws IOException
-     *                 if an error occurs while opening the file
+     *
+     * @param location the path to the language model
+     * @throws IOException if an error occurs while opening the file
      */
     private void open(URL location) throws FileNotFoundException,
             IOException {
         lineNumber = 0;
         fileName = location.toString();
         reader = new BufferedReader
-	    (new InputStreamReader(location.openStream()));
+                (new InputStreamReader(location.openStream()));
     }
+
 
     /**
      * Reads from the input stream until the input matches the given string
-     * 
-     * @param match
-     *                the string to match on
-     * 
-     * @throws IOException
-     *                 if an error occurs while reading the input or an EOF is
-     *                 encountered before finding the match
+     *
+     * @param match the string to match on
+     * @throws IOException if an error occurs while reading the input or an EOF is encountered before finding the match
      */
     private void readUntil(String match) throws IOException {
         try {
@@ -495,20 +465,21 @@ public class SimpleNGramModel implements LanguageModel {
         }
     }
 
+
     /**
      * Closes the language model file
-     * 
-     * @throws IOException
-     *                 if an error occurs
+     *
+     * @throws IOException if an error occurs
      */
     private void close() throws IOException {
         reader.close();
         reader = null;
     }
 
+
     /**
      * Generates a 'corrupt' IO exception
-     * 
+     *
      * @throws IOException with the given string
      */
     private void corrupt(String why) throws IOException {
@@ -516,30 +487,30 @@ public class SimpleNGramModel implements LanguageModel {
                 + " at line " + lineNumber + ":" + why);
     }
 }
-/**
- * Represents a probability and a backoff probability
- */
+
+/** Represents a probability and a backoff probability */
 
 class Probability {
+
     float logProbability;
     float logBackoff;
 
+
     /**
      * Constructs a probability
-     * 
-     * @param logProbability
-     *                the probability
-     * @param logBackoff
-     *                the backoff probability
+     *
+     * @param logProbability the probability
+     * @param logBackoff     the backoff probability
      */
     Probability(float logProbability, float logBackoff) {
         this.logProbability = logProbability;
         this.logBackoff = logBackoff;
     }
 
+
     /**
      * Returns a string representation of this object
-     * 
+     *
      * @return the string form of this object
      */
     public String toString() {

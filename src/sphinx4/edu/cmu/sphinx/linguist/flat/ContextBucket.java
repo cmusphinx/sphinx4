@@ -15,13 +15,12 @@ package edu.cmu.sphinx.linguist.flat;
 import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 
-/**
- * A ContextBucket manages left context history when an
- * SentenceHMM is being built
- */
-class ContextBucket  {
+/** A ContextBucket manages left context history when an SentenceHMM is being built */
+class ContextBucket {
+
     private int maxSize;
     private Unit[] units;
+
 
     /**
      * Creates a context bucket with the given maximum size
@@ -29,32 +28,32 @@ class ContextBucket  {
      * @param maxSize the maximum size of the context bucket
      */
     ContextBucket(int maxSize) {
-	units = new Unit[0];
-	this.maxSize = maxSize;
+        units = new Unit[0];
+        this.maxSize = maxSize;
     }
 
 
     /**
-     * Creates a new context bucket by appending the unit to the
-     * context in the previous context bucket
+     * Creates a new context bucket by appending the unit to the context in the previous context bucket
      *
      * @param prev the previous context bucket
      * @param unit the unit to add to this context
      */
     ContextBucket(ContextBucket prev, Unit unit) {
-	int newSize;
-	Unit[] prevUnits = prev.getUnits();
+        int newSize;
+        Unit[] prevUnits = prev.getUnits();
 
-	this.maxSize = prev.maxSize;
-	newSize = Math.min(prevUnits.length + 1, maxSize);
-	this.units = new Unit[newSize];
+        this.maxSize = prev.maxSize;
+        newSize = Math.min(prevUnits.length + 1, maxSize);
+        this.units = new Unit[newSize];
 
-	if (newSize > 0) {
-	    units[0] = unit;
+        if (newSize > 0) {
+            units[0] = unit;
 
-        System.arraycopy(prevUnits, 0, units, 1, newSize);
+            System.arraycopy(prevUnits, 0, units, 1, newSize);
+        }
     }
-    }
+
 
     /**
      * Returns the set of units for this context bucket
@@ -62,8 +61,9 @@ class ContextBucket  {
      * @return the set of units
      */
     Unit[] getUnits() {
-	return units;
+        return units;
     }
+
 
     /**
      * Returns the string representation for this StatePath
@@ -71,6 +71,6 @@ class ContextBucket  {
      * @return the string representation
      */
     public String toString() {
-	return LeftRightContext.getContextName(units);
+        return LeftRightContext.getContextName(units);
     }
 }

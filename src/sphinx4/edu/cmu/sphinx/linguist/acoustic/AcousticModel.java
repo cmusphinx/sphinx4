@@ -12,45 +12,32 @@
 
 package edu.cmu.sphinx.linguist.acoustic;
 
+import edu.cmu.sphinx.util.props.Configurable;
+
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
 
-import java.io.IOException;
+/** Represents the generic interface to the Acoustic Model for sphinx4 */
+public interface AcousticModel extends Configurable {
 
-/**
- * Represents the generic interface to the Acoustic 
- * Model for sphinx4
- */
-public interface AcousticModel {
-
-    /**
-     * The directory where the acoustic model data can be found.
-     */
+    /** The directory where the acoustic model data can be found. */
     public final static String PROP_LOCATION = "location";
 
-    /**
-     * The default value of PROP_LOCATION.
-     */
+    /** The default value of PROP_LOCATION. */
     public final static String PROP_LOCATION_DEFAULT = ".";
 
 
     /**
-     * Gets this acoustic model ready to use, allocating all necessary
-     * resources.
-     *
+     * Gets this acoustic model ready to use, allocating all necessary resources.
      *
      * @throws IOException if the model could not be loaded
-     *
      */
-    public void allocate( ) throws IOException;
-    
-    
-    /**
-     * Deallocates previously allcoated resources
-     *
-     */
-    public void deallocate();
+    public void allocate() throws IOException;
 
+
+    /** Deallocates previously allcoated resources */
+    public void deallocate();
 
 
     /**
@@ -58,66 +45,55 @@ public interface AcousticModel {
      *
      * @return the name of this AcousticModel, or null if it has no name
      */
-    public String getName(); 
-    
-
-     /**
-      * Given a unit, returns the HMM that best matches the given unit.
-      * If exactMatch is false and an exact match is not found, 
-      * then different word positions
-      * are used. If any of the contexts are non-silence filler units.
-      * a silence filler unit is tried instead.
-      *
-      * @param unit 		the unit of interest
-      * @param position 	the position of the unit of interest
-      * @param exactMatch 	if true, only an exact match is
-      * 			acceptable.
-      *
-      * @return 	the HMM that best matches, or null if no match
-      * 		could be found.
-      */
-     public HMM lookupNearestHMM(Unit unit, HMMPosition position,
-	     boolean exactMatch); 
+    public String getName();
 
 
-
-     /**
-      * Returns an iterator that can be used to iterate through all
-      * the HMMs of the acoustic model
-      *
-      * @return an iterator that can be used to iterate through all
-      * HMMs in the model. The iterator returns objects of type
-      * <code>HMM</code>.
-      */
-     public Iterator getHMMIterator();
-
-
-     /**
-      * Returns an iterator that can be used to iterate through all
-      * the CI units in the acoustic model
-      *
-      * @return an iterator that can be used to iterate through all
-      * CI units. The iterator returns objects of type
-      * <code>Unit</code>
-      */
-     public Iterator getContextIndependentUnitIterator();
+    /**
+     * Given a unit, returns the HMM that best matches the given unit. If exactMatch is false and an exact match is not
+     * found, then different word positions are used. If any of the contexts are non-silence filler units. a silence
+     * filler unit is tried instead.
+     *
+     * @param unit       the unit of interest
+     * @param position   the position of the unit of interest
+     * @param exactMatch if true, only an exact match is acceptable.
+     * @return the HMM that best matches, or null if no match could be found.
+     */
+    public HMM lookupNearestHMM(Unit unit, HMMPosition position,
+                                boolean exactMatch);
 
 
-     /**
-      * Returns the size of the left context for context dependent
-      * units
-      *
-      * @return the left context size
-      */
-     public int getLeftContextSize();
+    /**
+     * Returns an iterator that can be used to iterate through all the HMMs of the acoustic model
+     *
+     * @return an iterator that can be used to iterate through all HMMs in the model. The iterator returns objects of
+     *         type <code>HMM</code>.
+     */
+    public Iterator getHMMIterator();
 
-     /**
-      * Returns the size of the right context for context dependent
-      * units
-      *
-      * @return the left context size
-      */
-     public int getRightContextSize();
+
+    /**
+     * Returns an iterator that can be used to iterate through all the CI units in the acoustic model
+     *
+     * @return an iterator that can be used to iterate through all CI units. The iterator returns objects of type
+     *         <code>Unit</code>
+     */
+    public Iterator getContextIndependentUnitIterator();
+
+
+    /**
+     * Returns the size of the left context for context dependent units
+     *
+     * @return the left context size
+     */
+    public int getLeftContextSize();
+
+
+    /**
+     * Returns the size of the right context for context dependent units
+     *
+     * @return the left context size
+     */
+    public int getRightContextSize();
 
 
     /**

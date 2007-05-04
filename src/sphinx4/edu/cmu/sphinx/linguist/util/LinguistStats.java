@@ -10,32 +10,19 @@
  *
  */
 package edu.cmu.sphinx.linguist.util;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import edu.cmu.sphinx.linguist.HMMSearchState;
-import edu.cmu.sphinx.linguist.Linguist;
-import edu.cmu.sphinx.linguist.LinguistProcessor;
-import edu.cmu.sphinx.linguist.SearchState;
-import edu.cmu.sphinx.linguist.SearchStateArc;
-import edu.cmu.sphinx.linguist.WordSearchState;
-/**
- * A linguist processor that dumps out stats about the search space
- */
+import edu.cmu.sphinx.linguist.*;
+
+import java.util.*;
+
+/** A linguist processor that dumps out stats about the search space */
 public class LinguistStats extends LinguistProcessor {
+
     private Map stateCountByType = new HashMap();
     private String name;
-    
-    
-    /**
-     * Dumps the stats of the linguist
-     * 
-     */
+
+
+    /** Dumps the stats of the linguist */
     public void run() {
         Linguist linguist = getLinguist();
         List queue = new LinkedList();
@@ -66,11 +53,12 @@ public class LinguistStats extends LinguistProcessor {
         System.out.println("# Total states: " + stateCount);
         dumpStateTypeCounts();
     }
+
+
     /**
      * Keeps track of state counts by class
-     * 
-     * @param state
-     *            the state to track
+     *
+     * @param state the state to track
      */
     private void incrementStateTypeCount(SearchState state) {
         Integer count = (Integer) stateCountByType.get(state.getClass());
@@ -80,9 +68,9 @@ public class LinguistStats extends LinguistProcessor {
         count = count.intValue() + 1;
         stateCountByType.put(state.getClass(), count);
     }
-    /**
-     * Dumps all of the class counts
-     */
+
+
+    /** Dumps all of the class counts */
     private void dumpStateTypeCounts() {
         for (Iterator i = stateCountByType.keySet().iterator(); i.hasNext();) {
             Class clazz = (Class) i.next();

@@ -16,10 +16,9 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 import java.util.Map;
 
 
-/**
- * Generic interface for a saver of acoustic models
- */
+/** Generic interface for a saver of acoustic models */
 public interface Saver {
+
     /**
      * Gets the pool of means for this loader
      *
@@ -51,6 +50,7 @@ public interface Saver {
      */
     public Pool getVariancePool();
 
+
     /**
      * Gets the variance transformation matrix pool
      *
@@ -74,38 +74,34 @@ public interface Saver {
      */
     public HMMManager getHMMManager();
 
+
     /**
-     * Returns the map of context indepent units. The map can be
-     * accessed by unit name.
+     * Returns the map of context indepent units. The map can be accessed by unit name.
      *
      * @return the map of context independent units.
      */
     public Map getContextIndependentUnits();
 
 
+    /** logs information about this loader */
+    public void logInfo();
+
 
     /**
-     * logs information about this loader
+     * Returns the size of the left context for context dependent units
+     *
+     * @return the left context size
      */
-    public void logInfo(); 
-
-
-   /**
-    * Returns the size of the left context for context dependent
-    * units
-    *
-    * @return the left context size
-    */
     public int getLeftContextSize();
-    
+
+
     /**
-     * Returns the size of the right context for context dependent
-     * units
+     * Returns the size of the right context for context dependent units
      *
      * @return the left context size
      */
     public int getRightContextSize();
-    
+
 }
 
 

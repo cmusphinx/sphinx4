@@ -36,25 +36,31 @@ import java.util.logging.Logger;
 public abstract class Grammar implements Configurable, GrammarInterface {
 
     /** Property to control the the dumping of the grammar */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_GRAMMAR = "showGrammar";
     /** The default value for PROP_SHOW_GRAMMAR. */
     public final static boolean PROP_SHOW_GRAMMAR_DEFAULT = false;
     /** Property to control whether grammars are optimized or not */
+    @S4Boolean(defaultValue = true)
     public final static String PROP_OPTIMIZE_GRAMMAR = "optimizeGrammar";
     /** The default value for PROP_OPTIMIZE_GRAMMAR */
     public final static boolean PROP_OPTIMIZE_GRAMMAR_DEFAULT = true;
 
     /** Property to control whether silence words are inserted into the graph */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_ADD_SIL_WORDS = "addSilenceWords";
     /** The default value for PROP_ADD_SIL_WORDS */
     public final static boolean PROP_ADD_SIL_WORDS_DEFAULT = false;
 
     /** Property to control whether filler words are inserted into the graph */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_ADD_FILLER_WORDS = "addFillerWords";
     /** The default value for PROP_ADD_FILLER_WORDS */
     public final static boolean PROP_ADD_FILLER_WORDS_DEFAULT = false;
 
     /** Property that defines the dictionary to use for this grammar */
+    @S4Component(type = Dictionary.class)
+
     public final static String PROP_DICTIONARY = "dictionary";
     // ----------------------------
     // Configuration data

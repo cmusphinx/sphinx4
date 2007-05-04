@@ -12,52 +12,39 @@
 
 package edu.cmu.sphinx.linguist.acoustic;
 
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.Iterator;
 import java.io.ObjectStreamException;
-
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * Defines possible positions of HMMs. Note that even though the
- * positions are defined to be within words, some recognizers may
- * classify positions in terms of other elements besides words.
+ * Defines possible positions of HMMs. Note that even though the positions are defined to be within words, some
+ * recognizers may classify positions in terms of other elements besides words.
  */
 public class HMMPosition implements Serializable {
+
     private static Map map = new LinkedHashMap();
     private String name;
     private int index;
 
 
-    /**
-     * HMM is at the beginning position of the word
-     */
+    /** HMM is at the beginning position of the word */
     public final static HMMPosition BEGIN = new HMMPosition("b", 0);
 
-    /**
-     * HMM is at the end position of the word
-     */
+    /** HMM is at the end position of the word */
     public final static HMMPosition END = new HMMPosition("e", 1);
 
-    /**
-     * HMM is at the beginning and the end of the word
-     */
+    /** HMM is at the beginning and the end of the word */
     public final static HMMPosition SINGLE = new HMMPosition("s", 2);
 
-    /**
-     * HMM is completely internal to the word
-     */
-    public final static HMMPosition INTERNAL  = new HMMPosition("i", 3);
+    /** HMM is completely internal to the word */
+    public final static HMMPosition INTERNAL = new HMMPosition("i", 3);
 
-    /**
-     * HMM is at an undefined position n the word
-     */
-    public final static HMMPosition UNDEFINED  = new HMMPosition("-", 4);
+    /** HMM is at an undefined position n the word */
+    public final static HMMPosition UNDEFINED = new HMMPosition("-", 4);
 
-    /**
-     * The maximum number of HMM positions
-     */
+    /** The maximum number of HMM positions */
     public final static int MAX_POSITIONS = 5;
 
 
@@ -67,28 +54,26 @@ public class HMMPosition implements Serializable {
      * @param rep the representation for this position
      */
     private HMMPosition(String rep, int index) {
-	this.name = rep;
+        this.name = rep;
         this.index = index;
-	map.put(rep, this);
+        map.put(rep, this);
     }
+
 
     /**
      * Looks up an HMMPosition baed upon its representation
      *
      * @param rep the string representation
-     *
-     * @return the HMMPosition represented by rep or null if not
-     *   found
+     * @return the HMMPosition represented by rep or null if not found
      */
     public static HMMPosition lookup(String rep) {
-	return (HMMPosition) map.get(rep);
+        return (HMMPosition) map.get(rep);
     }
 
 
     /**
-     * Returns the index for this position.  Each HMMPosition
-     * maintains a unique index. This allows arrays of hmm positions
-     * to be easily maintained
+     * Returns the index for this position.  Each HMMPosition maintains a unique index. This allows arrays of hmm
+     * positions to be easily maintained
      *
      * @return the index
      */
@@ -106,6 +91,7 @@ public class HMMPosition implements Serializable {
         return this == SINGLE || this == END;
     }
 
+
     /**
      * Determines if this position is word beginning position
      *
@@ -115,11 +101,10 @@ public class HMMPosition implements Serializable {
         return this == SINGLE || this == BEGIN;
     }
 
-    /**
-     * Returns the canonical object for the HMMPosition
-     */
+
+    /** Returns the canonical object for the HMMPosition */
     private Object readResolve() throws ObjectStreamException {
-	return  map.get(name);
+        return map.get(name);
     }
 
 
@@ -129,8 +114,9 @@ public class HMMPosition implements Serializable {
      * @return an iterator that iterates through all positions
      */
     public static Iterator iterator() {
-	return map.values().iterator();
+        return map.values().iterator();
     }
+
 
     /**
      * Returns a string representation of this object
@@ -138,6 +124,6 @@ public class HMMPosition implements Serializable {
      * @return the string representation
      */
     public String toString() {
-	return name;
+        return name;
     }
 }

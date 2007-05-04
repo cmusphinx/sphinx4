@@ -11,79 +11,74 @@
  */
 package edu.cmu.sphinx.linguist.language.grammar;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
- * Defines a simple grammar based upon a language model. It generates one
- * {@link GrammarNode grammar node}per word. This grammar can deal with
- * unigram and bigram grammars of up to 1000 or so words. Note that all
- * probabilities are in the log math domain.
+ * Defines a simple grammar based upon a language model. It generates one {@link GrammarNode grammar node}per word. This
+ * grammar can deal with unigram and bigram grammars of up to 1000 or so words. Note that all probabilities are in the
+ * log math domain.
  */
 public class LMGrammar extends Grammar {
-    /**
-     * A sphinx property for the language model to be used by this grammar
-     */
+
+    /** A sphinx property for the language model to be used by this grammar */
+    @S4Component(type = LanguageModel.class)
     public final static String PROP_LANGUAGE_MODEL = "languageModel";
     // ------------------------
     // Configuration data
     // ------------------------
     private LanguageModel languageModel;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-      
-        info.put(new String("PROP_LANGUAGE_MODEL_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_LANGUAGE_MODEL_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.language.ngram.LanguageModel"));       
+
+        info.put(new String("PROP_LANGUAGE_MODEL_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_LANGUAGE_MODEL_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.language.ngram.LanguageModel"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
         registry.register(PROP_LANGUAGE_MODEL, PropertyType.COMPONENT);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         languageModel = (LanguageModel) ps.getComponent(PROP_LANGUAGE_MODEL,
                 LanguageModel.class);
     }
 
+
     /**
-     * Creates the grammar from the language model. This Grammar contains one
-     * word per grammar node. Each word (and grammar node) is connected to all
-     * other words with the given probability
-     * 
+     * Creates the grammar from the language model. This Grammar contains one word per grammar node. Each word (and
+     * grammar node) is connected to all other words with the given probability
+     *
      * @return the initial grammar node
      */
     protected GrammarNode createGrammar() throws IOException {

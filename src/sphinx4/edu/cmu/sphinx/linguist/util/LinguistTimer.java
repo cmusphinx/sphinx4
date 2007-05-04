@@ -10,19 +10,20 @@
  *
  */
 package edu.cmu.sphinx.linguist.util;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
 
 import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.SearchStateArc;
 import edu.cmu.sphinx.util.Timer;
-/**
- * Gets successors from a linguist and times them
- */
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+/** Gets successors from a linguist and times them */
 public class LinguistTimer {
+
     private Linguist linguist;
     private boolean details;
     int totalStates;
@@ -30,13 +31,13 @@ public class LinguistTimer {
     int totalNonEmittingStates;
     int totalFinalStates;
     int maxSuccessors;
+
+
     /**
      * Creats a LinguistTimer
-     * 
-     * @param linguist
-     *            the linguist to time
-     * @param details
-     *            if true print out details
+     *
+     * @param linguist the linguist to time
+     * @param details  if true print out details
      */
     public LinguistTimer(Linguist linguist, boolean details) {
         this.linguist = linguist;
@@ -47,13 +48,10 @@ public class LinguistTimer {
      */
     /**
      * Times the lingust
-     * 
-     * @param numRuns
-     *            the number of simulated runs
-     * @param numFrames
-     *            the number of simulated frames
-     * @param maxBeam
-     *            the size of the beam
+     *
+     * @param numRuns   the number of simulated runs
+     * @param numFrames the number of simulated frames
+     * @param maxBeam   the size of the beam
      */
     public void timeLinguist(int numRuns, int numFrames, int maxBeam) {
         // this test invokes the linguist using access patterns that
@@ -98,15 +96,14 @@ public class LinguistTimer {
         System.out.println("  Final States : " + totalFinalStates);
         Timer.dumpAll();
     }
+
+
     /**
      * expand the give search state
-     * 
-     * @param level
-     *            the nesting level
-     * @param activeList
-     *            where next states are placed
-     * @param state
-     *            the search state to expand
+     *
+     * @param level      the nesting level
+     * @param activeList where next states are placed
+     * @param state      the search state to expand
      */
     private void expandState(int level, List activeList, SearchState state) {
         SearchStateArc[] newStates = state.getSuccessors();

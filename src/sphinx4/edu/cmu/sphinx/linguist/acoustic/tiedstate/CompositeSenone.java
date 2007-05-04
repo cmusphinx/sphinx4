@@ -14,23 +14,21 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.frontend.Data;
 
-import java.util.Collection;
-
 import java.io.Serializable;
+import java.util.Collection;
 
 
 /**
- * Represents a composite senone. A composite senone consists of a set
- * of all possible {@link Senone senones} for a given state.
- * CompositeSenones are
- * used when the exact context of a senone is not known. The
- * CompositeSenone represents all the possible senones.
- * <p>
+ * Represents a composite senone. A composite senone consists of a set of all possible {@link Senone senones} for a
+ * given state. CompositeSenones are used when the exact context of a senone is not known. The CompositeSenone
+ * represents all the possible senones.
+ * <p/>
  * This class currently only needs to be public for testing purposes.
- * <p>
+ * <p/>
  * Note that all scores are maintained in LogMath log base
  */
 public class CompositeSenone implements Senone, Serializable {
+
     private final static int MAX_SENONES = 20000;
     private final static boolean wantMaxScore = true;
     private Senone[] senones;
@@ -39,30 +37,28 @@ public class CompositeSenone implements Senone, Serializable {
     transient volatile private Data logLastDataScored;
     transient volatile private float logLastScore;
 
-   /**
-    * a factory method that creates a CompositeSenone from a list of
-    * senones.
-    *
-    * @param senoneCollection the Collection of senones
-    *
-    * @return a composite senone
-    */
-    public static  CompositeSenone create(Collection senoneCollection,
-            float weight) {
-	 return new CompositeSenone(
-	    (Senone[]) senoneCollection.toArray(
-		new Senone[senoneCollection.size()]), weight);
-     }
 
     /**
-     * Constructs a CompositeSenone given the set of constiuent
-     * senones
+     * a factory method that creates a CompositeSenone from a list of senones.
+     *
+     * @param senoneCollection the Collection of senones
+     * @return a composite senone
+     */
+    public static CompositeSenone create(Collection senoneCollection,
+                                         float weight) {
+        return new CompositeSenone(
+                (Senone[]) senoneCollection.toArray(
+                        new Senone[senoneCollection.size()]), weight);
+    }
+
+
+    /**
+     * Constructs a CompositeSenone given the set of constiuent senones
      *
      * @param senones the set of constiuent senones
-     *
      */
     public CompositeSenone(Senone[] senones, float weight) {
-	this.senones = senones;
+        this.senones = senones;
         this.weight = weight;
         System.out.print(" " + senones.length);
     }
@@ -74,26 +70,25 @@ public class CompositeSenone implements Senone, Serializable {
      * @param msg annotatin for the dump
      */
     public void dump(String msg) {
-	System.out.println("   CompositeSenone " + msg + ": ");
-	for (int i = 0; i < senones.length; i++) {
-	    senones[i].dump("   ");
-	}
+        System.out.println("   CompositeSenone " + msg + ": ");
+        for (int i = 0; i < senones.length; i++) {
+            senones[i].dump("   ");
+        }
     }
 
+
     /**
-     * Calculates the composite senone score. Typically this is the
-     * best score for all of the constituent senones
+     * Calculates the composite senone score. Typically this is the best score for all of the constituent senones
      *
      * @param feature the feature to score
-     *
      * @return the score for the feature in logmath log base
      */
     public float getScore(Data feature) {
-	float logScore = -Float.MAX_VALUE;
+        float logScore = -Float.MAX_VALUE;
 
-	if (feature == logLastDataScored) {
-	    logScore = logLastScore;
-	} else {
+        if (feature == logLastDataScored) {
+            logScore = logLastScore;
+        } else {
             if (wantMaxScore) {
                 for (int i = 0; i < senones.length; i++) {
                     float newScore = senones[i].getScore(feature);
@@ -110,41 +105,39 @@ public class CompositeSenone implements Senone, Serializable {
             }
 
 
-	    logLastScore = logScore;
-	    logLastDataScored = feature;
-	}
-	return logScore + weight;
+            logLastScore = logScore;
+            logLastDataScored = feature;
+        }
+        return logScore + weight;
     }
 
 
     /**
-     * Calculate scores for each component in the senone's
-     * distribution. Not yet implemented.
+     * Calculate scores for each component in the senone's distribution. Not yet implemented.
      *
      * @param feature the current feature
-     *
      * @return the score for the feature in LogMath
      */
     public float[] calculateComponentScore(Data feature) {
-	assert false: "Not implemented!";
-	return null;
+        assert false : "Not implemented!";
+        return null;
     }
 
+
     /**
-     * Returns the set of senones that compose this composite senone.
-     * This method is only needed for unit testing.
+     * Returns the set of senones that compose this composite senone. This method is only needed for unit testing.
      *
      * @return the array of senones.
      */
     public Senone[] getSenones() {
-	return senones;
+        return senones;
     }
+
 
     /**
      * Determines if two objects are equal
      *
      * @param o the object to compare to this.
-     *
      * @return true if the objects are equal
      */
     public boolean equals(Object o) {
@@ -168,6 +161,7 @@ public class CompositeSenone implements Senone, Serializable {
         return high + low;
     }
 
+
     /**
      * Gets the ID for this senone
      *
@@ -182,6 +176,7 @@ public class CompositeSenone implements Senone, Serializable {
         }
         return id;
     }
+
 
     /**
      * Retrieves a string form of this object

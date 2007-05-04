@@ -1,23 +1,20 @@
-
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
- * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
- * All Rights Reserved.  Use is subject to license terms.
- * 
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
- * WARRANTIES.
- *
- */
+* Copyright 1999-2002 Carnegie Mellon University.
+* Portions Copyright 2002 Sun Microsystems, Inc.
+* Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
+* All Rights Reserved.  Use is subject to license terms.
+*
+* See the file "license.terms" for information on usage and
+* redistribution of this file, and for a DISCLAIMER OF ALL
+* WARRANTIES.
+*
+*/
 
 package edu.cmu.sphinx.linguist.acoustic;
 
 import edu.cmu.sphinx.frontend.Data;
 
-/**
- * Represents a single state in an HMM
- */
+/** Represents a single state in an HMM */
 public interface HMMState {
 
     /**
@@ -27,8 +24,9 @@ public interface HMMState {
      */
     public HMM getHMM();
 
+
     /**
-     * Gets the state 
+     * Gets the state
      *
      * @return the state
      */
@@ -39,10 +37,10 @@ public interface HMMState {
      * Gets the score for this HMM state
      *
      * @param data the data to be scored
-     *
      * @return the acoustic score for this state.
      */
     public float getScore(Data data);
+
 
     /**
      * Determines if this HMMState is an emittting state

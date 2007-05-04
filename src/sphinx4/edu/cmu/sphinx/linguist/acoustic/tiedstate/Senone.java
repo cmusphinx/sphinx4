@@ -14,33 +14,26 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 
 import edu.cmu.sphinx.frontend.Data;
+
 import java.io.Serializable;
 
-/**
- * Represents a set of acoustic data that can be scored against a
- * feature
- */
+/** Represents a set of acoustic data that can be scored against a feature */
 public interface Senone extends Serializable {
+
     /**
-     * Calculates the score for this senone based upon the given
-     * feature.
+     * Calculates the score for this senone based upon the given feature.
      *
-     * @param feature	the feature vector to score this senone
-     * 			against
-     *
-     * @return 		the score for this senone in LogMath log base
+     * @param feature the feature vector to score this senone against
+     * @return the score for this senone in LogMath log base
      */
     public float getScore(Data feature);
 
 
     /**
-     * Calculates the component scores for the mixture components in
-     * this senone based upon the given feature.
+     * Calculates the component scores for the mixture components in this senone based upon the given feature.
      *
-     * @param feature	the feature vector to score this senone
-     * 			against
-     *
-     * @return 		the scores for this senone in LogMath log base
+     * @param feature the feature vector to score this senone against
+     * @return the scores for this senone in LogMath log base
      */
     public float[] calculateComponentScore(Data feature);
 

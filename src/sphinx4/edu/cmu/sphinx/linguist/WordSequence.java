@@ -17,28 +17,24 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import java.util.List;
 
 
-/***
- * This class can be used to keep track of a word sequence.  This class
- * is an immutable class. It can never be modified once it is created
- * (except, perhaps for transient, cached things such as a
- * precalculated hashcode).
+/**
+ * This class can be used to keep track of a word sequence.  This class is an immutable class. It can never be modified
+ * once it is created (except, perhaps for transient, cached things such as a precalculated hashcode).
  */
 public class WordSequence {
 
     private Word[] words;
     private transient int hashCode = -1;
 
-    /**
-     * an empty word sequence, that is, it has no words.
-     */
+    /** an empty word sequence, that is, it has no words. */
     public final static WordSequence EMPTY = new WordSequence();
 
-    /**
-     * Constructs a word sequence with the zero depth.
-     */
+
+    /** Constructs a word sequence with the zero depth. */
     private WordSequence() {
         this(0);
     }
+
 
     /**
      * Constructs a word sequence with the given depth.
@@ -48,6 +44,7 @@ public class WordSequence {
     private WordSequence(int size) {
         words = new Word[size];
     }
+
 
     /**
      * Constructs a word sequence with the given word IDs
@@ -59,7 +56,8 @@ public class WordSequence {
         System.arraycopy(words, 0, this.words, 0, words.length);
         check();
     }
-    
+
+
     /**
      * Returns a WordSequence with the given word IDs.
      *
@@ -70,6 +68,7 @@ public class WordSequence {
         return (new WordSequence(words));
     }
 
+
     /**
      * Constructs a word sequence from the list of words
      *
@@ -79,11 +78,12 @@ public class WordSequence {
     public static WordSequence getWordSequence(List list) {
         WordSequence sequence = new WordSequence(list.size());
         for (int i = 0; i < list.size(); i++) {
-            sequence.words[i] = (Word)list.get(i);
+            sequence.words[i] = (Word) list.get(i);
         }
         sequence.check();
         return sequence;
     }
+
 
     private void check() {
         for (int i = 0; i < words.length; i++) {
@@ -93,15 +93,13 @@ public class WordSequence {
         }
     }
 
+
     /**
-     * Returns a new word sequence with the given word added to the
-     * sequence
+     * Returns a new word sequence with the given word added to the sequence
      *
-     * @param word the word to add to the sequence
+     * @param word    the word to add to the sequence
      * @param maxSize the maximum size of the generated sequence
-     *
-     * @return a new word sequence with the word added (but trimmed to
-     * maxSize).
+     * @return a new word sequence with the word added (but trimmed to maxSize).
      */
     public WordSequence addWord(Word word, int maxSize) {
         if (maxSize <= 0) {
@@ -118,12 +116,12 @@ public class WordSequence {
         }
         next.check();
 
-	return next;
+        return next;
     }
 
+
     /**
-     * Returns the oldest words in the sequence (the newest word is
-     * omitted)
+     * Returns the oldest words in the sequence (the newest word is omitted)
      *
      * @return the oldest words in the sequence, with the newest word omitted
      */
@@ -131,15 +129,15 @@ public class WordSequence {
         WordSequence next = EMPTY;
 
         if (size() >= 1) {
-            next = new WordSequence(words.length -1);
+            next = new WordSequence(words.length - 1);
             System.arraycopy(this.words, 0, next.words, 0, next.words.length);
         }
-	return next;
+        return next;
     }
 
+
     /**
-     * Returns the newest words in the sequence (the old word is
-     * omitted)
+     * Returns the newest words in the sequence (the old word is omitted)
      *
      * @return the newest words in the sequence with the oldest word omitted
      */
@@ -147,25 +145,24 @@ public class WordSequence {
         WordSequence next = EMPTY;
 
         if (size() >= 1) {
-            next = new WordSequence(words.length -1);
+            next = new WordSequence(words.length - 1);
             System.arraycopy(this.words, 1, next.words, 0, next.words.length);
         }
-	return next;
+        return next;
     }
 
+
     /**
-     * Returns a word sequence that is no longer than the given size,
-     * that is filled in with the newest words from this sequence
+     * Returns a word sequence that is no longer than the given size, that is filled in with the newest words from this
+     * sequence
      *
      * @param maxSize the maximum size of the sequence
-     *
      * @return a new word sequence, trimmed to maxSize.
-     *
      */
     public WordSequence trim(int maxSize) {
         if (maxSize <= 0 || size() == 0) {
             return EMPTY;
-        } else  if (maxSize == size()) {
+        } else if (maxSize == size()) {
             return this;
         } else {
             if (maxSize > size()) {
@@ -182,11 +179,11 @@ public class WordSequence {
         }
     }
 
+
     /**
      * Returns the nth word in this sequence
      *
      * @param n which word to return
-     *
      * @return the nth word in this sequence
      */
     public Word getWord(int n) {
@@ -195,6 +192,7 @@ public class WordSequence {
         }
         return words[n];
     }
+
 
     /**
      * Returns the number of words in this sequence
@@ -205,38 +203,39 @@ public class WordSequence {
         return words.length;
     }
 
+
     /**
-     * Returns a string represntation of this word sequence. The format is:
-     * [ID_0][ID_1][ID_2].
+     * Returns a string represntation of this word sequence. The format is: [ID_0][ID_1][ID_2].
      *
      * @return the string
      */
     public String toString() {
-	StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
         for (int i = 0; i < words.length; i++) {
             sb.append("[");
             sb.append(words[i].toString());
             sb.append("]");
-	}
-	return sb.toString();
+        }
+        return sb.toString();
     }
-    
+
+
     /**
-     * Returns an English text form of this word sequence,
-     * e.g., "this is a".
+     * Returns an English text form of this word sequence, e.g., "this is a".
      *
      * @return the English text form
      */
     public String toText() {
-	StringBuffer sb = new StringBuffer(20);
-	for (int i = 0; i < words.length; i++) {
-	    if (i != 0) {
-		sb.append(" ");
-	    }
-	    sb.append(words[i].toString());
-	}
-	return sb.toString();
+        StringBuffer sb = new StringBuffer(20);
+        for (int i = 0; i < words.length; i++) {
+            if (i != 0) {
+                sb.append(" ");
+            }
+            sb.append(words[i].toString());
+        }
+        return sb.toString();
     }
+
 
     /**
      * Calculates the hashcode for this object
@@ -244,29 +243,28 @@ public class WordSequence {
      * @return a hascode for this object
      */
     public int hashCode() {
-	if (hashCode == -1) {
-	    int code = 123;
-	    for (int i = 0; i < words.length; i++) {
+        if (hashCode == -1) {
+            int code = 123;
+            for (int i = 0; i < words.length; i++) {
                 code += words[i].hashCode() * (i + 1);
-	    }
-	    hashCode = code;
-	}
-	return hashCode;
+            }
+            hashCode = code;
+        }
+        return hashCode;
     }
 
+
     /**
-     * compares the given object to see if it is identical to
-     * this WordSequence
+     * compares the given object to see if it is identical to this WordSequence
      *
      * @param o the object to compare this to
-     *
      * @return true if the given object is equal to this object
      */
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         } else if (o instanceof WordSequence) {
-	    WordSequence other = (WordSequence) o;
+            WordSequence other = (WordSequence) o;
             if (words.length == other.words.length) {
                 for (int i = 0; i < words.length; i++) {
                     if (!words[i].equals(other.words[i])) {
@@ -274,8 +272,8 @@ public class WordSequence {
                     }
                 }
                 return true;
-            } 
-	} 
+            }
+        }
         return false;
     }
 }

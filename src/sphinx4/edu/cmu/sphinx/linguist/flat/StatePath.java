@@ -13,27 +13,27 @@
 package edu.cmu.sphinx.linguist.flat;
 
 
-
-
 /**
- * Represents a path in a SentenceHMM. The path includes the
- * particular state, and the states left context.  This is used while
- * building/compiling a SentenceHMM
+ * Represents a path in a SentenceHMM. The path includes the particular state, and the states left context.  This is
+ * used while building/compiling a SentenceHMM
  */
 public class StatePath {
+
     SentenceHMMState state;
     ContextBucket context;
+
 
     /**
      * Creates a StatePath
      *
-     * @param state the state for the StatePath
+     * @param state   the state for the StatePath
      * @param context the context bucket
      */
     StatePath(SentenceHMMState state, ContextBucket context) {
-	this.state = state;
-	this.context = context;
+        this.state = state;
+        this.context = context;
     }
+
 
     /**
      * Retrieves the state for the state path
@@ -41,8 +41,9 @@ public class StatePath {
      * @return the state
      */
     SentenceHMMState getState() {
-	return state;
+        return state;
     }
+
 
     /**
      * Retrieves the context for the state path
@@ -50,8 +51,9 @@ public class StatePath {
      * @return the context
      */
     ContextBucket getContext() {
-	return context;
+        return context;
     }
+
 
     /**
      * Returns the string representation for this StatePath
@@ -59,7 +61,7 @@ public class StatePath {
      * @return the string representation
      */
     public String toString() {
-	return state.toString() + " " + context.toString();
+        return state.toString() + " " + context.toString();
     }
 }
 

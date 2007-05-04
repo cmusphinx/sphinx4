@@ -49,46 +49,50 @@ import java.util.*;
 public class FlatLinguist implements Linguist, Configurable {
 
     /** A sphinx property used to define the grammar to use when building the search graph */
+    @S4Component(type = Grammar.class)
     public final static String PROP_GRAMMAR = "grammar";
 
     /** A sphinx property used to define the unit manager to use when building the search graph */
+    @S4Component(type = UnitManager.class)
     public final static String PROP_UNIT_MANAGER = "unitManager";
 
     /** A sphinx property used to define the acoustic model to use when building the search graph */
+    @S4Component(type = AcousticModel.class)
     public final static String PROP_ACOUSTIC_MODEL = "acousticModel";
     /** Sphinx property that defines the name of the logmath to be used by this search manager. */
+    @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
     /** Sphinx property used to determine whether or not the gstates are dumped. */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_DUMP_GSTATES = "dumpGstates";
     /** The default value for the PROP_DUMP_GSTATES property */
     public final static boolean PROP_DUMP_GSTATES_DEFAULT = false;
 
     /** Sphinx property that specifies whether to add a branch for detecting out-of-grammar utterances. */
-    public final static String PROP_ADD_OUT_OF_GRAMMAR_BRANCH
-            = "addOutOfGrammarBranch";
+    @S4Boolean(defaultValue = false)
+    public final static String PROP_ADD_OUT_OF_GRAMMAR_BRANCH = "addOutOfGrammarBranch";
 
     /** Default value of PROP_ADD_OUT_OF_GRAMMAR_BRANCH. */
     public final static boolean PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT = false;
 
 
     /** Sphinx property for the probability of entering the out-of-grammar branch. */
-    public final static String PROP_OUT_OF_GRAMMAR_PROBABILITY
-            = "outOfGrammarProbability";
+    @S4Double(defaultValue = 1.0)
+    public final static String PROP_OUT_OF_GRAMMAR_PROBABILITY = "outOfGrammarProbability";
 
     /** Sphinx property for the acoustic model used for the CI phone loop. */
-    public static final String PROP_PHONE_LOOP_ACOUSTIC_MODEL
-            = "phoneLoopAcousticModel";
+    @S4Component(type = AcousticModel.class)
+    public static final String PROP_PHONE_LOOP_ACOUSTIC_MODEL = "phoneLoopAcousticModel";
 
     /** Sphinx property for the probability of inserting a CI phone in the out-of-grammar ci phone loop */
-    public static final String PROP_PHONE_INSERTION_PROBABILITY
-            = "phoneInsertionProbability";
+    @S4Double(defaultValue = 1.0)
+    public static final String PROP_PHONE_INSERTION_PROBABILITY = "phoneInsertionProbability";
 
     /** Default value for PROP_PHONE_INSERTION_PROBABILITY */
     public static final double PROP_PHONE_INSERTION_PROBABILITY_DEFAULT = 1.0;
 
     /** The default value for PROP_OUT_OF_GRAMMAR_PROBABILITY. */
-    public final static double PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT
-            = 1.0;
+    public final static double PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT = 1.0;
 
     protected final static float logOne = LogMath.getLogOne();
 

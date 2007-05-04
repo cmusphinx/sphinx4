@@ -14,24 +14,18 @@
 package edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz;
 
 import java.io.IOException;
-
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * Dumps out information about an acoustic model.
- */
+/** Dumps out information about an acoustic model. */
 public class PropertiesDumper {
 
     private Properties props;
 
-    /**
-     * Dumps the properties file 'model.props' that is in the same
-     * directory as this class.
-     */
+
+    /** Dumps the properties file 'model.props' that is in the same directory as this class. */
     public static void main(String[] argv) {
         try {
             PropertiesDumper dumper = new PropertiesDumper("model.props");
@@ -42,9 +36,9 @@ public class PropertiesDumper {
         }
     }
 
+
     /**
-     * Constructs a PropertiesDumper of the given acoustic model
-     * properties file.
+     * Constructs a PropertiesDumper of the given acoustic model properties file.
      *
      * @param propsFile the properties file to dump
      */
@@ -53,15 +47,16 @@ public class PropertiesDumper {
         props.load(getClass().getResource(propsFile).openStream());
     }
 
+
     /**
-     * Constructs a PropertiesDumper of the given acoustic model
-     * properties.
+     * Constructs a PropertiesDumper of the given acoustic model properties.
      *
      * @param properties the Properties object to dump
      */
     public PropertiesDumper(Properties properties) throws IOException {
         props = properties;
     }
+
 
     /**
      * Returns a string of the properties.
@@ -72,7 +67,7 @@ public class PropertiesDumper {
         String result = props.get("description") + "\n";
         List list = Collections.list(props.propertyNames());
         Collections.sort(list);
-        for (Iterator i = list.iterator(); i.hasNext(); ) {
+        for (Iterator i = list.iterator(); i.hasNext();) {
             String key = (String) i.next();
             String value = (String) props.get(key);
             result += ("\n\t" + key + ": " + value);
@@ -81,11 +76,11 @@ public class PropertiesDumper {
         return result;
     }
 
+
     /**
      * Converts strings like "thisIsAString" into "This Is A String".
      *
      * @param original the original string
-     *
      * @return a readable form of strings like "thisIsAString"
      */
     private String getReadableForm(String original) {

@@ -13,10 +13,7 @@
 package edu.cmu.sphinx.linguist.language.ngram.large;
 
 
-/**
- * Represents a probability, a backoff probability, and the location
- * of the first bigram entry.
- */
+/** Represents a probability, a backoff probability, and the location of the first bigram entry. */
 class UnigramProbability {
 
     private int wordID;
@@ -24,21 +21,23 @@ class UnigramProbability {
     private float logBackoff;
     private int firstBigramEntry;
 
+
     /**
      * Constructs a UnigramProbability
      *
-     * @param wordID the id of the word
-     * @param logProbability the probability
-     * @param logBackoff the backoff probability
+     * @param wordID           the id of the word
+     * @param logProbability   the probability
+     * @param logBackoff       the backoff probability
      * @param firstBigramEntry the first bigram entry
      */
-    public UnigramProbability(int wordID, float logProbability, 
-			      float logBackoff, int firstBigramEntry) {
-	this.wordID = wordID;
+    public UnigramProbability(int wordID, float logProbability,
+                              float logBackoff, int firstBigramEntry) {
+        this.wordID = wordID;
         this.logProbability = logProbability;
         this.logBackoff = logBackoff;
         this.firstBigramEntry = firstBigramEntry;
     }
+
 
     /**
      * Returns a string representation of this object
@@ -56,7 +55,7 @@ class UnigramProbability {
      * @return the word ID of this unigram
      */
     public int getWordID() {
-	return wordID;
+        return wordID;
     }
 
 
@@ -93,7 +92,7 @@ class UnigramProbability {
     /**
      * Sets the log probability of this unigram
      *
-     * @param logProbability  the new log probability of this unigram
+     * @param logProbability the new log probability of this unigram
      */
     public void setLogProbability(float logProbability) {
         this.logProbability = logProbability;

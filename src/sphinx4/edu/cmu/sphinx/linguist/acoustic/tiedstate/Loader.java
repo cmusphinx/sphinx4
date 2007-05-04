@@ -13,23 +13,22 @@
 
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
+import edu.cmu.sphinx.util.props.Configurable;
+
 import java.io.IOException;
 import java.util.Map;
 
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.SphinxProperties;
-
-/**
- * Generic interface for a loader of acoustic models
- */
+/** Generic interface for a loader of acoustic models */
 public interface Loader extends Configurable {
-    
+
     /**
      * Loads the acoustic model
+     *
      * @throws IOException if an error occurs while loading the model
      */
     public void load() throws IOException;
-    
+
+
     /**
      * Gets the pool of means for this loader
      *
@@ -61,6 +60,7 @@ public interface Loader extends Configurable {
      */
     public Pool getVariancePool();
 
+
     /**
      * Gets the variance transformation matrix pool
      *
@@ -75,6 +75,7 @@ public interface Loader extends Configurable {
      * @return the pool
      */
     public Pool getMixtureWeightPool();
+
 
     /**
      * Gets the transition matrix pool
@@ -99,33 +100,29 @@ public interface Loader extends Configurable {
      */
     public HMMManager getHMMManager();
 
+
     /**
-     * Returns the map of context indepent units. The map can be
-     * accessed by unit name.
+     * Returns the map of context indepent units. The map can be accessed by unit name.
      *
      * @return the map of context independent units.
      */
     public Map getContextIndependentUnits();
 
 
+    /** logs information about this loader */
+    public void logInfo();
+
 
     /**
-     * logs information about this loader
+     * Returns the size of the left context for context dependent units
+     *
+     * @return the left context size
      */
-    public void logInfo(); 
-
-
-   /**
-    * Returns the size of the left context for context dependent
-    * units
-    *
-    * @return the left context size
-    */
     public int getLeftContextSize();
-    
+
+
     /**
-     * Returns the size of the right context for context dependent
-     * units
+     * Returns the size of the right context for context dependent units
      *
      * @return the left context size
      */

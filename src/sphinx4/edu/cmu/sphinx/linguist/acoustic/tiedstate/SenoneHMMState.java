@@ -1,19 +1,16 @@
-
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
- * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
- * All Rights Reserved.  Use is subject to license terms.
- * 
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
- * WARRANTIES.
- *
- */
+* Copyright 1999-2002 Carnegie Mellon University.
+* Portions Copyright 2002 Sun Microsystems, Inc.
+* Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
+* All Rights Reserved.  Use is subject to license terms.
+*
+* See the file "license.terms" for information on usage and
+* redistribution of this file, and for a DISCLAIMER OF ALL
+* WARRANTIES.
+*
+*/
 
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
-import java.util.ArrayList;
-import java.util.List;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
@@ -22,10 +19,12 @@ import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Utilities;
 
-/**
- * Represents a single state in an HMM
- */
+import java.util.ArrayList;
+import java.util.List;
+
+/** Represents a single state in an HMM */
 public class SenoneHMMState implements HMMState {
+
     private SenoneHMM hmm;
     private int state;
     HMMStateArc[] arcs;
@@ -38,13 +37,13 @@ public class SenoneHMMState implements HMMState {
     /**
      * Constructs a SenoneHMMState
      *
-     * @param hmm the hmm for this state
+     * @param hmm   the hmm for this state
      * @param which the index for this particular state
      */
     SenoneHMMState(SenoneHMM hmm, int which) {
-	this.hmm = hmm;
-	this.state = which;
-	this.isEmitting = ((hmm.getTransitionMatrix().length - 1) != state);
+        this.hmm = hmm;
+        this.state = which;
+        this.isEmitting = ((hmm.getTransitionMatrix().length - 1) != state);
         if (isEmitting) {
             SenoneSequence ss = hmm.getSenoneSequence();
             senone = ss.getSenones()[state];
@@ -52,22 +51,24 @@ public class SenoneHMMState implements HMMState {
         Utilities.objectTracker("HMMState", objectCount++);
     }
 
+
     /**
      * Gets the HMM associated with this state
      *
      * @return the HMM
      */
     public HMM getHMM() {
-	return hmm;
+        return hmm;
     }
 
+
     /**
-     * Gets the state 
+     * Gets the state
      *
      * @return the state
      */
     public int getState() {
-	return state;
+        return state;
     }
 
 
@@ -75,7 +76,6 @@ public class SenoneHMMState implements HMMState {
      * Gets the score for this HMM state
      *
      * @param feature the feature to be scored
-     *
      * @return the acoustic score for this state.
      */
     public float getScore(Data feature) {
@@ -87,12 +87,11 @@ public class SenoneHMMState implements HMMState {
      * Gets the scores for each mixture component in this HMM state
      *
      * @param feature the feature to be scored
-     *
      * @return the acoustic scores for the components of this state.
      */
     public float[] calculateComponentScore(Data feature) {
-	SenoneSequence ss = hmm.getSenoneSequence();
-	return senone.calculateComponentScore(feature);
+        SenoneSequence ss = hmm.getSenoneSequence();
+        return senone.calculateComponentScore(feature);
     }
 
 
@@ -110,20 +109,20 @@ public class SenoneHMMState implements HMMState {
      * Determines if two HMMStates are equal
      *
      * @param other the state to compare this one to
-     *
      * @return true if the states are equal
      */
     public boolean equals(Object other) {
-	if (this == other) {
-	    return true;
-	} else if (!(other instanceof SenoneHMMState)) {
-	    return false;
-	} else {
-	    SenoneHMMState otherState = (SenoneHMMState) other;
-	    return this.hmm == otherState.hmm && 
-		this.state == otherState.state;
-	}
+        if (this == other) {
+            return true;
+        } else if (!(other instanceof SenoneHMMState)) {
+            return false;
+        } else {
+            SenoneHMMState otherState = (SenoneHMMState) other;
+            return this.hmm == otherState.hmm &&
+                    this.state == otherState.state;
+        }
     }
+
 
     /**
      * Returns the hashcode for this state
@@ -131,7 +130,7 @@ public class SenoneHMMState implements HMMState {
      * @return the hashcode
      */
     public int hashCode() {
-	return hmm.hashCode() + state;
+        return hmm.hashCode() + state;
     }
 
 
@@ -142,7 +141,7 @@ public class SenoneHMMState implements HMMState {
      */
     // TODO: We may have non-emitting entry states as well.
     public final boolean isEmitting() {
-	return isEmitting;
+        return isEmitting;
     }
 
 
@@ -152,28 +151,28 @@ public class SenoneHMMState implements HMMState {
      * @return the set of successor state arcs
      */
     public HMMStateArc[] getSuccessors() {
-	if (arcs == null) {
-	    List list = new ArrayList();
-	    float[][] transitionMatrix = hmm.getTransitionMatrix();
+        if (arcs == null) {
+            List list = new ArrayList();
+            float[][] transitionMatrix = hmm.getTransitionMatrix();
 
             // dumpMatrix("arc", transitionMatrix);
-	    for (int i = 0; i < transitionMatrix.length; i++) {
-		 if (transitionMatrix[state][i] > LogMath.getLogZero()) {
-		    HMMStateArc arc = new HMMStateArc(hmm.getState(i),
-				    transitionMatrix[state][i]);
-		    list.add(arc);
-		}
-	    }
-	    arcs = (HMMStateArc[]) list.toArray(new HMMStateArc[list.size()]);  
-	}
-	return arcs;
+            for (int i = 0; i < transitionMatrix.length; i++) {
+                if (transitionMatrix[state][i] > LogMath.getLogZero()) {
+                    HMMStateArc arc = new HMMStateArc(hmm.getState(i),
+                            transitionMatrix[state][i]);
+                    list.add(arc);
+                }
+            }
+            arcs = (HMMStateArc[]) list.toArray(new HMMStateArc[list.size()]);
+        }
+        return arcs;
     }
 
 
     /**
      * Dumps out a matrix
      *
-     * @param title the title for the dump
+     * @param title  the title for the dump
      * @param matrix the matrix to dump
      */
     private void dumpMatrix(String title, float[][] matrix) {
@@ -186,23 +185,25 @@ public class SenoneHMMState implements HMMState {
         }
     }
 
+
     /**
      * Determines if this state is an exit state of the HMM
      *
      * @return true if the state is an exit state
      */
     public boolean isExitState() {
-	// return (hmm.getTransitionMatrix().length - 1) == state;
-	return !isEmitting;
+        // return (hmm.getTransitionMatrix().length - 1) == state;
+        return !isEmitting;
     }
+
 
     /**
      * returns a string represntation of this object
-     * 
+     *
      * @return a string representation
      */
     public String toString() {
-	return "HMMS " + hmm + " state " + state;
+        return "HMMS " + hmm + " state " + state;
     }
 }
 

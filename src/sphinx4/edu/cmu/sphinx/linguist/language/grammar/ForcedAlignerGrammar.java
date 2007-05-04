@@ -12,47 +12,41 @@
 
 package edu.cmu.sphinx.linguist.language.grammar;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
-
 import edu.cmu.sphinx.util.LogMath;
 
+import java.util.StringTokenizer;
+
 /**
- * Creates a grammar from a reference sentence. It is a constrained
- * grammar that represents the sentence only.
+ * Creates a grammar from a reference sentence. It is a constrained grammar that represents the sentence only.
  * <p/>
- * Note that all grammar probabilities are maintained in the LogMath
- * log base
+ * Note that all grammar probabilities are maintained in the LogMath log base
  */
 public class ForcedAlignerGrammar extends Grammar {
 
     protected GrammarNode finalNode;
 
-    /**
-     * Create class from reference text (not implemented).
-     */
+
+    /** Create class from reference text (not implemented). */
     protected GrammarNode createGrammar() {
-        throw new Error( "Not implemented" );
+        throw new Error("Not implemented");
     }
 
-    /**
-     * Creates the grammar
-     */
+
+    /** Creates the grammar */
     protected GrammarNode createGrammar(String referenceText)
-	throws NoSuchMethodException {
+            throws NoSuchMethodException {
 
         initialNode = createGrammarNode(false);
         finalNode = createGrammarNode(true);
-        createForcedAlignerGrammar( initialNode, finalNode, referenceText );
+        createForcedAlignerGrammar(initialNode, finalNode, referenceText);
 
         return initialNode;
     }
 
+
     /**
-     * Create a branch of the grammar that corresponds to a transcript.  For each
-     * word create a node, and link the nodes with arcs.  The branch is connected to
-     * the initial node iNode, and the final node fNode.
+     * Create a branch of the grammar that corresponds to a transcript.  For each word create a node, and link the nodes
+     * with arcs.  The branch is connected to the initial node iNode, and the final node fNode.
      *
      * @param iNode
      * @param fNode
@@ -68,22 +62,22 @@ public class ForcedAlignerGrammar extends Grammar {
         GrammarNode firstNode = null;
         GrammarNode lastNode = null;
 
-	while (tok.hasMoreTokens()) {
+        while (tok.hasMoreTokens()) {
 
-	    String token;
-	    token = tok.nextToken();
+            String token;
+            token = tok.nextToken();
 
             GrammarNode prevNode = lastNode;
             lastNode = createGrammarNode(token);
-            if( firstNode==null ) firstNode = lastNode;
+            if (firstNode == null) firstNode = lastNode;
 
-            if( prevNode != null ) {
+            if (prevNode != null) {
                 prevNode.add(lastNode, logArcProbability);
-	}
-    }
+            }
+        }
 
-        iNode.add(firstNode,logArcProbability);
-        lastNode.add(fNode,logArcProbability);
+        iNode.add(firstNode, logArcProbability);
+        lastNode.add(fNode, logArcProbability);
 
         return firstNode;
     }

@@ -13,20 +13,17 @@
 package edu.cmu.sphinx.linguist.language.ngram.large;
 
 
-
-/**
- * Implements a buffer for bigrams read from disk.
- */
+/** Implements a buffer for bigrams read from disk. */
 class BigramBuffer extends NGramBuffer {
-    
+
     /**
      * Constructs a BigramBuffer object with the given byte[].
      *
      * @param bigramsOnDisk the byte[] with bigrams
-     * @param numberNGrams the number of bigram follows in the byte[]
+     * @param numberNGrams  the number of bigram follows in the byte[]
      */
     public BigramBuffer(byte[] bigramsOnDisk,
-			int numberNGrams, boolean bigEndian) {
+                        int numberNGrams, boolean bigEndian) {
         super(bigramsOnDisk, numberNGrams, bigEndian);
     }
 
@@ -35,25 +32,24 @@ class BigramBuffer extends NGramBuffer {
      * Finds the bigram probabilities for the given second word in a bigram.
      *
      * @param secondWordID the ID of the second word
-     *
      * @return the BigramProbability of the given second word
      */
     public BigramProbability findBigram(int secondWordID) {
 
-        int mid, start = 0, end = getNumberNGrams()-1;
+        int mid, start = 0, end = getNumberNGrams() - 1;
         BigramProbability bigram = null;
 
         while ((end - start) > 0) {
-            mid = (start + end)/2;
+            mid = (start + end) / 2;
             int midWordID = getWordID(mid);
-	    if (midWordID < secondWordID) {
+            if (midWordID < secondWordID) {
                 start = mid + 1;
             } else if (midWordID > secondWordID) {
                 end = mid;
             } else {
-		bigram = getBigramProbability(mid);
+                bigram = getBigramProbability(mid);
                 break;
-	    }
+            }
         }
         return bigram;
     }
@@ -63,12 +59,11 @@ class BigramBuffer extends NGramBuffer {
      * Returns the BigramProbability of the nth follower.
      *
      * @param nthFollower which follower
-     *
      * @return the BigramProbability of the nth follower
      */
     public final BigramProbability getBigramProbability(int nthFollower) {
         int nthPosition = nthFollower * LargeTrigramModel.BYTES_PER_BIGRAM;
-	setPosition(nthPosition);
+        setPosition(nthPosition);
 
         int wordID = readTwoBytesAsInt();
         int probID = readTwoBytesAsInt();

@@ -12,81 +12,78 @@
 
 package edu.cmu.sphinx.linguist;
 
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
-/**
- * A standard interface for a linguist processor
- *
- */
+/** A standard interface for a linguist processor */
 public class LinguistProcessor implements Configurable, Runnable {
 
-    /**
-     * The sphinx property that defines the name of the linguist to process
-     */
-    
+    /** The sphinx property that defines the name of the linguist to process */
+    @S4Component(type = Linguist.class)
     public final static String PROP_LINGUIST = "linguist";
 
-    
+
     // ----------------------------
     // Configuration data
     // ----------------------------
     private String name;
     private Linguist linguist;
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
 
-        info.put(new String("PROP_LINGUIST_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_LINGUIST_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.Linguist"));
-  
+        info.put(new String("PROP_LINGUIST_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_LINGUIST_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.Linguist"));
+
         return info;
     }
-    
+
+
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
-     */
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry) throws PropertyException {
         registry.register(PROP_LINGUIST, PropertyType.COMPONENT);
         this.name = name;
     }
 
-    /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
-    public void newProperties(PropertySheet ps) throws PropertyException {
-        linguist = (Linguist) ps.getComponent(PROP_LINGUIST, Linguist.class);
-        
-    }
 
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        linguist = (Linguist) ps.getComponent(PROP_LINGUIST, Linguist.class);
+
+    }
+
+
+    /* (non-Javadoc)
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
 
+
     /* (non-Javadoc)
-     * @see java.lang.Runnable#run()
-     */
+    * @see java.lang.Runnable#run()
+    */
     public void run() {
-        
+
     }
 
-    
+
     /**
      * Returns the configured lingust
+     *
      * @return the linguist
      */
     protected Linguist getLinguist() {

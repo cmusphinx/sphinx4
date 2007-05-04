@@ -14,8 +14,8 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
 
 
 /**
- * Represents a word ID (second word of a bigram), a bigram probability ID,
- * a backoff probability ID, and the location of the first trigram entry.
+ * Represents a word ID (second word of a bigram), a bigram probability ID, a backoff probability ID, and the location
+ * of the first trigram entry.
  */
 class BigramProbability {
 
@@ -29,30 +29,30 @@ class BigramProbability {
     /**
      * Constructs a BigramProbability
      *
-     * @param which which follower of the first word is this bigram
-     * @param wordID the ID of the second word in a bigram
-     * @param probabilityID the index into the probability array
-     * @param backoffID the index into the backoff probability array
+     * @param which             which follower of the first word is this bigram
+     * @param wordID            the ID of the second word in a bigram
+     * @param probabilityID     the index into the probability array
+     * @param backoffID         the index into the backoff probability array
      * @param firstTrigramEntry the first trigram entry
      */
-    public BigramProbability(int which, int wordID, 
-			     int probabilityID, int backoffID,
+    public BigramProbability(int which, int wordID,
+                             int probabilityID, int backoffID,
                              int firstTrigramEntry) {
         this.which = which;
-	this.wordID = wordID;
+        this.wordID = wordID;
         this.probabilityID = probabilityID;
         this.backoffID = backoffID;
         this.firstTrigramEntry = firstTrigramEntry;
     }
 
-    
+
     /**
      * Returns which follower of the first word is this bigram
      *
      * @return which follower of the first word is this bigram
      */
     public int getWhichFollower() {
-	return which;
+        return which;
     }
 
 
@@ -60,7 +60,7 @@ class BigramProbability {
      * Returns the second word ID of this bigram
      *
      * @return the second word ID
-     */ 
+     */
     public int getWordID() {
         return wordID;
     }

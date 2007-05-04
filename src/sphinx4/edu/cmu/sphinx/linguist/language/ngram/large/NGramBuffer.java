@@ -14,11 +14,11 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
 
 
 /**
- * Implements a buffer that contains NGrams. It assumes that the
- * first two bytes of each n-gram entry is the ID of the n-gram. 
+ * Implements a buffer that contains NGrams. It assumes that the first two bytes of each n-gram entry is the ID of the
+ * n-gram.
  */
 class NGramBuffer {
-    
+
     private byte[] buffer;
     private int numberNGrams;
     private int position;
@@ -29,14 +29,14 @@ class NGramBuffer {
     /**
      * Constructs a NGramBuffer object with the given byte[].
      *
-     * @param buffer the byte[] with trigrams
+     * @param buffer       the byte[] with trigrams
      * @param numberNGrams the number of N-gram
      */
     public NGramBuffer(byte[] buffer, int numberNGrams, boolean bigEndian) {
         this.buffer = buffer;
         this.numberNGrams = numberNGrams;
-	this.bigEndian = bigEndian;
-	this.position = 0;
+        this.bigEndian = bigEndian;
+        this.position = 0;
     }
 
 
@@ -46,7 +46,7 @@ class NGramBuffer {
      * @return the byte[] of n-grams
      */
     public byte[] getBuffer() {
-	return buffer;
+        return buffer;
     }
 
 
@@ -66,7 +66,7 @@ class NGramBuffer {
      * @return the number of n-grams in this buffer
      */
     public int getNumberNGrams() {
-	return numberNGrams;
+        return numberNGrams;
     }
 
 
@@ -76,7 +76,7 @@ class NGramBuffer {
      * @return the position of the buffer
      */
     protected int getPosition() {
-	return position;
+        return position;
     }
 
 
@@ -86,20 +86,18 @@ class NGramBuffer {
      * @param position new buffer position
      */
     protected void setPosition(int position) {
-	this.position = position;
+        this.position = position;
     }
 
 
     /**
-     * Returns the word ID of the nth follower, assuming that the ID
-     * is the first two bytes of the NGram entry.
+     * Returns the word ID of the nth follower, assuming that the ID is the first two bytes of the NGram entry.
      *
      * @param nthFollower starts from 0 to (numberFollowers - 1).
-     *
      * @return the word ID
      */
     public final int getWordID(int nthFollower) {
-        int nthPosition = nthFollower * (buffer.length/numberNGrams);
+        int nthPosition = nthFollower * (buffer.length / numberNGrams);
         setPosition(nthPosition);
         return readTwoBytesAsInt();
     }
@@ -116,23 +114,22 @@ class NGramBuffer {
 
 
     /**
-     * Reads the next two bytes from the buffer's current position as an
-     * integer.
+     * Reads the next two bytes from the buffer's current position as an integer.
      *
      * @return the next two bytes as an integer
      */
     public final int readTwoBytesAsInt() {
         if (bigEndian) {
-	    int value = (0x000000ff & buffer[position++]);
-	    value <<= 8;
+            int value = (0x000000ff & buffer[position++]);
+            value <<= 8;
             value |= (0x000000ff & buffer[position++]);
-	    return value;
+            return value;
         } else {
-            int value = (0x000000ff & buffer[position+1]);
-	    value <<= 8;
+            int value = (0x000000ff & buffer[position + 1]);
+            value <<= 8;
             value |= (0x000000ff & buffer[position]);
-	    position += 2;
-	    return value;
+            position += 2;
+            return value;
         }
     }
 
@@ -150,8 +147,7 @@ class NGramBuffer {
     /**
      * Sets whether this buffer was used in the last utterance
      *
-     * @param used true if this buffer was used in the last utterance,
-     *             false otherwise
+     * @param used true if this buffer was used in the last utterance, false otherwise
      */
     public void setUsed(boolean used) {
         this.used = used;

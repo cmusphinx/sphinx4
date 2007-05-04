@@ -14,23 +14,23 @@ package edu.cmu.sphinx.linguist;
 
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 
-/**
- * Represents a single word state in a language search space
- */
-public interface  WordSearchState extends SearchState {
+/** Represents a single word state in a language search space */
+public interface WordSearchState extends SearchState {
+
     /**
      * Gets the word (as a pronunciation)
      *
      * @return the word
      */
-     Pronunciation getPronunciation();
+    Pronunciation getPronunciation();
+
 
     /**
-     * Returns true if this WordSearchState indicates the start of a word.
-     * Returns false if this WordSearchState indicates the end of a word.
+     * Returns true if this WordSearchState indicates the start of a word. Returns false if this WordSearchState
+     * indicates the end of a word.
      *
-     * @return true if this WordSearchState indicates the start of a word,
-     *         false if this WordSearchState indicates the end of a word
+     * @return true if this WordSearchState indicates the start of a word, false if this WordSearchState indicates the
+     *         end of a word
      */
     public boolean isWordStart();
 }

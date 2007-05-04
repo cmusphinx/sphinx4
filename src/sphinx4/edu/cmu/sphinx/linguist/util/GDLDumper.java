@@ -10,58 +10,36 @@
  *
  */
 package edu.cmu.sphinx.linguist.util;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import edu.cmu.sphinx.linguist.HMMSearchState;
-import edu.cmu.sphinx.linguist.SearchState;
-import edu.cmu.sphinx.linguist.SearchStateArc;
-import edu.cmu.sphinx.linguist.UnitSearchState;
-import edu.cmu.sphinx.linguist.WordSearchState;
+import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Utilities;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
-/**
- * A linguist processor that dumps out the sentence hmm in GDL format.
- */
+import edu.cmu.sphinx.util.props.*;
+
+import java.io.PrintStream;
+import java.util.*;
+
+/** A linguist processor that dumps out the sentence hmm in GDL format. */
 public class GDLDumper extends LinguistDumper {
-    /**
-     * The SphinxProperty specifying whether to skip HMMs during dumping.
-     */
+
+    /** The SphinxProperty specifying whether to skip HMMs during dumping. */
+    @S4Boolean(defaultValue = true)
     public static final String PROP_SKIP_HMMS = "skipHMMs";
-    /**
-     * The default value for PROP_SKIP_HMMS.
-     */
+    /** The default value for PROP_SKIP_HMMS. */
     public static final boolean PROP_SKIP_HMMS_DEFAULT = true;
-    /**
-     * The SphinxProperty to specify whether to use vertical graph layout.
-     */
+    /** The SphinxProperty to specify whether to use vertical graph layout. */
+    @S4Boolean(defaultValue = false)
     public static final String PROP_VERTICAL_LAYOUT = "verticalLayout";
-    /**
-     * The default value for PROP_VERTICAL_LAYOUT.
-     */
+    /** The default value for PROP_VERTICAL_LAYOUT. */
     public static final boolean PROP_VERTICAL_LAYOUT_DEFAULT = false;
-    /**
-     * The SphinxProperty to specify whether to dump arc labels.
-     */
+    /** The SphinxProperty to specify whether to dump arc labels. */
+    @S4Boolean(defaultValue = true)
     public static final String PROP_DUMP_ARC_LABELS = "dumpArcLabels";
-    /**
-     * The default value for PROP_DUMP_ARC_LABELS.
-     */
+    /** The default value for PROP_DUMP_ARC_LABELS. */
     public static final boolean PROP_DUMP_ARC_LABELS_DEFAULT = true;
-    
-    /**
-     * The SphinxProperty to specify the log math
-     */
+
+    /** The SphinxProperty to specify the log math */
+    @S4Component(type = LogMath.class)
     public static final String PROP_LOG_MATH = "logMath";
 
     // -------------------------------
@@ -71,29 +49,31 @@ public class GDLDumper extends LinguistDumper {
     private boolean verticalLayout;
     private boolean dumpArcLabels;
     private LogMath logMath;
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
-        Map info = new HashMap();        
-        info.put(new String("PROP_SKIP_HMMS_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_VERTICAL_LAYOUT_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_DUMP_ARC_LABELS_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
-        
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
+        Map info = new HashMap();
+        info.put(new String("PROP_SKIP_HMMS_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_VERTICAL_LAYOUT_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_DUMP_ARC_LABELS_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_LOG_MATH_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"), new String("edu.cmu.sphinx.util.LogMath"));
+
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
@@ -103,14 +83,15 @@ public class GDLDumper extends LinguistDumper {
         registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
-	super.newProperties(ps);
-	verticalLayout = ps.getBoolean(
+        super.newProperties(ps);
+        verticalLayout = ps.getBoolean(
                 PROP_VERTICAL_LAYOUT, PROP_VERTICAL_LAYOUT_DEFAULT);
         skipHMMs = ps.getBoolean(PROP_SKIP_HMMS,
                 PROP_SKIP_HMMS_DEFAULT);
@@ -119,20 +100,22 @@ public class GDLDumper extends LinguistDumper {
         setDepthFirst(false); // breadth first traversal
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
     }
+
+
     /**
-     * Retreives the default name for the destination dump. This method is
-     * typically overridden by derived classes
-     * 
+     * Retreives the default name for the destination dump. This method is typically overridden by derived classes
+     *
      * @return the default name for the file.
      */
     protected String getDefaultName() {
         return "linguistDump.gdl";
     }
+
+
     /**
      * Called at the start of the dump
-     * 
-     * @param out
-     *            the output stream.
+     *
+     * @param out the output stream.
      */
     protected void startDump(PrintStream out) {
         out.println("graph: {");
@@ -147,24 +130,24 @@ public class GDLDumper extends LinguistDumper {
             out.println("    splines: no");
         }
     }
+
+
     /**
      * Called at the end of the dump
-     * 
-     * @param out
-     *            the output stream.
+     *
+     * @param out the output stream.
      */
     protected void endDump(PrintStream out) {
         out.println("}");
     }
+
+
     /**
      * Called to dump out a node in the search space
-     * 
-     * @param out
-     *            the output stream.
-     * @param state
-     *            the state to dump
-     * @param level
-     *            the level of the state
+     *
+     * @param out   the output stream.
+     * @param state the state to dump
+     * @param level the level of the state
      */
     protected void startDumpNode(PrintStream out, SearchState state, int level) {
 
@@ -179,12 +162,12 @@ public class GDLDumper extends LinguistDumper {
                     + "}");
         }
     }
+
+
     /**
      * Gets the color for a particular state
-     * 
-     * @param state
-     *            the state
-     * 
+     *
+     * @param state the state
      * @return its color
      */
     private String getColor(SearchState state) {
@@ -200,32 +183,29 @@ public class GDLDumper extends LinguistDumper {
         }
         return color;
     }
+
+
     /**
      * Called to dump out a node in the search space
-     * 
-     * @param out
-     *            the output stream.
-     * @param state
-     *            the state to dump
-     * @param level
-     *            the level of the state
+     *
+     * @param out   the output stream.
+     * @param state the state to dump
+     * @param level the level of the state
      */
     protected void endDumpNode(PrintStream out, SearchState state, int level) {
     }
+
+
     /**
      * Dumps an arc
-     * 
-     * @param out
-     *            the output stream.
-     * @param from
-     *            arc leaves this state
-     * @param arc
-     *            the arc to dump
-     * @param level
-     *            the level of the state
+     *
+     * @param out   the output stream.
+     * @param from  arc leaves this state
+     * @param arc   the arc to dump
+     * @param level the level of the state
      */
     protected void dumpArc(PrintStream out, SearchState from,
-            SearchStateArc arc, int level) {
+                           SearchStateArc arc, int level) {
         List arcList = new ArrayList();
 
         if (skipHMMs) {
@@ -252,22 +232,21 @@ public class GDLDumper extends LinguistDumper {
                         .getInsertionProbability());
                 label = " label: "
                         + qs("(" + formatEdgeLabel(acoustic) + ","
-                                + formatEdgeLabel(language) + ","
-                                + formatEdgeLabel(insert) + ")");
+                        + formatEdgeLabel(language) + ","
+                        + formatEdgeLabel(insert) + ")");
             }
             out.println("   edge: { sourcename: " + qs(getUniqueName(from))
                     + " targetname: " + qs(getUniqueName(nextArc.getState()))
                     + label + " color: " + color + "}");
         }
     }
+
+
     /**
-     * Given an arc to an HMMSearchState, find a downstream arc to the first
-     * non-HMM state
-     * 
-     * @param arc
-     *            the arc to start the search at
-     * @param results
-     *            the resulting arcs are placed on this list
+     * Given an arc to an HMMSearchState, find a downstream arc to the first non-HMM state
+     *
+     * @param arc     the arc to start the search at
+     * @param results the resulting arcs are placed on this list
      */
     private void findNextNonHMMArc(SearchStateArc arc, List results) {
         Set visited = new HashSet();
@@ -291,11 +270,12 @@ public class GDLDumper extends LinguistDumper {
             }
         }
     }
+
+
     /**
      * Formats the given floating point number for edge labels.
-     * 
-     * @param value
-     *            the floating point value to format
+     *
+     * @param value the floating point value to format
      */
     private String formatEdgeLabel(double value) {
         if (value == 1.0) {
@@ -311,15 +291,14 @@ public class GDLDumper extends LinguistDumper {
             return stringValue;
         }
     }
+
+
     /**
      * Returns a color based upon the type of arc
-     * 
-     * @param arc
-     *            the arc
-     * 
-     * @return the color of the arc based on weather it is a language arc
-     *         (green), acoustic arc (red), insertion arc(blue), flat arc
-     *         (black) or a combo (purple).
+     *
+     * @param arc the arc
+     * @return the color of the arc based on weather it is a language arc (green), acoustic arc (red), insertion
+     *         arc(blue), flat arc (black) or a combo (purple).
      */
     private String getArcColor(SearchStateArc arc) {
         String color = null;
@@ -345,25 +324,24 @@ public class GDLDumper extends LinguistDumper {
         }
         return color;
     }
+
+
     /**
-     * Returns a quoted string version of its argument. This method mainly is
-     * used to hide the ugliness caused by trying to esape a quote character in
-     * certain syntax higlighting editors such as vim.
-     * 
-     * @param s
-     *            the string to quote.
-     * 
+     * Returns a quoted string version of its argument. This method mainly is used to hide the ugliness caused by trying
+     * to esape a quote character in certain syntax higlighting editors such as vim.
+     *
+     * @param s the string to quote.
      * @return the quoted string
      */
     private String qs(String s) {
         return "\"" + s + "\"";
     }
+
+
     /**
      * returns a guaranteed unique name for the state
-     * 
-     * @param state
-     *            the state of interest
-     * 
+     *
+     * @param state the state of interest
      * @return the name
      */
     private String getUniqueName(SearchState state) {

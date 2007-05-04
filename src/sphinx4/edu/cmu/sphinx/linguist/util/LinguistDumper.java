@@ -11,41 +11,24 @@
  */
 package edu.cmu.sphinx.linguist.util;
 
+import edu.cmu.sphinx.linguist.*;
+import edu.cmu.sphinx.util.props.*;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import edu.cmu.sphinx.linguist.HMMSearchState;
-import edu.cmu.sphinx.linguist.LinguistProcessor;
-import edu.cmu.sphinx.linguist.SearchState;
-import edu.cmu.sphinx.linguist.SearchStateArc;
-import edu.cmu.sphinx.linguist.UnitSearchState;
-import edu.cmu.sphinx.linguist.WordSearchState;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import java.util.*;
 
 /**
- * A linguist processor that dumps out the search space in a simple format.
- * This processor is designed so that it can be easily extended by replacing
- * the dumpNode and the dumpEdge methods.
+ * A linguist processor that dumps out the search space in a simple format. This processor is designed so that it can be
+ * easily extended by replacing the dumpNode and the dumpEdge methods.
  */
 public class LinguistDumper extends LinguistProcessor {
-    
-    /**
-     * A sphinx property name for the destination of the LinguistDumper
-     */
+
+    /** A sphinx property name for the destination of the LinguistDumper */
+    @S4String(defaultValue = "linguistDump.txt")
     public final static String PROP_FILENAME = "filename";
-    /**
-     * The default value for PROP_FILENAME.
-     */
+    /** The default value for PROP_FILENAME. */
     public final static String PROP_FILENAME_DEFAULT = "linguistDump.txt";
     // ------------------------------
     // Configuration data
@@ -53,51 +36,50 @@ public class LinguistDumper extends LinguistProcessor {
     private boolean depthFirst = true;
     private String filename;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){        
-        Map info = new HashMap();        
-        info.put(new String("PROP_FILENAME_TYPE"),new String("STRING"));
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
+        Map info = new HashMap();
+        info.put(new String("PROP_FILENAME_TYPE"), new String("STRING"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
         registry.register(PROP_FILENAME, PropertyType.STRING);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
-	super.newProperties(ps);
+        super.newProperties(ps);
         filename = ps.getString(PROP_FILENAME, getDefaultName());
     }
 
 
-    /**
-     * Dumps the search space hmm in GDL format
-     * 
-     *  
-     */
+    /** Dumps the search space hmm in GDL format */
     public void run() {
         try {
             FileOutputStream fos = new FileOutputStream(filename);
             PrintStream out = new PrintStream(fos);
-	    SearchState firstState = 
-		getLinguist().getSearchGraph().getInitialState();
+            SearchState firstState =
+                    getLinguist().getSearchGraph().getInitialState();
             dumpSearchGraph(out, firstState);
             out.close();
         } catch (FileNotFoundException fnfe) {
@@ -105,94 +87,85 @@ public class LinguistDumper extends LinguistProcessor {
         }
     }
 
+
     /**
      * Sets whether the traversal is depth first or breadth first
-     * 
-     * @param depthFirst
-     *                if true traversal is depth first, otherwise the traversal
-     *                is breadth first
+     *
+     * @param depthFirst if true traversal is depth first, otherwise the traversal is breadth first
      */
     protected void setDepthFirst(boolean depthFirst) {
         this.depthFirst = depthFirst;
     }
 
+
     /**
-     * Retreives the default name for the destination dump. This method is
-     * typically overridden by derived classes
-     * 
+     * Retreives the default name for the destination dump. This method is typically overridden by derived classes
+     *
      * @return the default name for the file.
      */
     protected String getDefaultName() {
         return PROP_FILENAME_DEFAULT;
     }
 
+
     /**
      * Called at the start of the dump
-     * 
-     * @param out
-     *                the output stream.
+     *
+     * @param out the output stream.
      */
     protected void startDump(PrintStream out) {
     }
 
+
     /**
      * Called at the end of the dump
-     * 
-     * @param out
-     *                the output stream.
+     *
+     * @param out the output stream.
      */
     protected void endDump(PrintStream out) {
     }
 
+
     /**
      * Called to dump out a node in the search space
-     * 
-     * @param out
-     *                the output stream.
-     * @param state
-     *                the state to dump
-     * @param level
-     *                the level of the state
+     *
+     * @param out   the output stream.
+     * @param state the state to dump
+     * @param level the level of the state
      */
     protected void startDumpNode(PrintStream out, SearchState state, int level) {
     }
 
+
     /**
      * Called to dump out a node in the search space
-     * 
-     * @param out
-     *                the output stream.
-     * @param state
-     *                the state to dump
-     * @param level
-     *                the level of the state
+     *
+     * @param out   the output stream.
+     * @param state the state to dump
+     * @param level the level of the state
      */
     protected void endDumpNode(PrintStream out, SearchState state, int level) {
     }
 
+
     /**
      * Dumps an arc
-     * 
-     * @param out
-     *                the output stream.
-     * @param from
-     *                arc leaves this state
-     * @param arc
-     *                the arc to dump
-     * @param level
-     *                the level of the state
+     *
+     * @param out   the output stream.
+     * @param from  arc leaves this state
+     * @param arc   the arc to dump
+     * @param level the level of the state
      */
     protected void dumpArc(PrintStream out, SearchState from,
-            SearchStateArc arc, int level) {
+                           SearchStateArc arc, int level) {
     }
+
 
     /**
      * Dumps the search graph
-     * 
-     * @param out
-     *                place to dump the output
-     * @param startingState
-     *                the initial state of the search space
+     *
+     * @param out           place to dump the output
+     * @param startingState the initial state of the search space
      */
     private void dumpSearchGraph(PrintStream out, SearchState startingState) {
         List queue = new LinkedList();
@@ -223,17 +196,17 @@ public class LinguistDumper extends LinguistProcessor {
         }
         endDump(out);
     }
+
+
     Map eqStates = new HashMap();
     Map eqSigs = new HashMap();
 
+
     /**
-     * This is a bit of test/debugging code that ensures that the states that
-     * have equal signatures are also considered to be object.equals and vice
-     * versa.. This method will dump out any states where this contract is not
-     * true
-     * 
-     * @param state
-     *                the state to check
+     * This is a bit of test/debugging code that ensures that the states that have equal signatures are also considered
+     * to be object.equals and vice versa.. This method will dump out any states where this contract is not true
+     *
+     * @param state the state to check
      */
     private void equalCheck(SearchState state) {
         SearchState eqState = (SearchState) eqStates.get(state);
@@ -275,48 +248,50 @@ public class LinguistDumper extends LinguistProcessor {
         }
     }
 }
-/**
- * A class for bundling together a SearchState and its level.
- */
+
+/** A class for bundling together a SearchState and its level. */
 
 class StateLevel {
+
     private int level;
     private SearchState state;
 
+
     /**
      * Constructs a StateLevel from its primitive components.
-     * 
-     * @param state
-     *                the state to be bundled in the StateLevel
-     * @param level
-     *                the level of the state
+     *
+     * @param state the state to be bundled in the StateLevel
+     * @param level the level of the state
      */
     StateLevel(SearchState state, int level) {
         this.state = state;
         this.level = level;
     }
 
+
     /**
      * Returns the state
-     * 
+     *
      * @return the state
      */
     SearchState getState() {
         return state;
     }
 
+
     /**
      * Returns the level
-     * 
+     *
      * @return the level.
      */
     int getLevel() {
         return level;
     }
 
+
     /**
      * Returns a string representation of the object
-     * 
+     *
      * @return a string representation
      */
     public String toString() {
@@ -324,14 +299,12 @@ class StateLevel {
                 + getTypeLabel(state);
     }
 
+
     /**
      * Retrieves a type label for a state
-     * 
-     * @param state
-     *                the state of interest
-     * 
+     *
+     * @param state the state of interest
      * @return a label for the type of state (one of Unit, Word, HMM or other
-     *  
      */
     public String getTypeLabel(SearchState state) {
         if (state instanceof UnitSearchState) {

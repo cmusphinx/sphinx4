@@ -13,28 +13,22 @@
 package edu.cmu.sphinx.linguist.util;
 
 
+import edu.cmu.sphinx.linguist.acoustic.*;
+import edu.cmu.sphinx.util.Timer;
+
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
-import edu.cmu.sphinx.linguist.acoustic.HMM;
-import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
-import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
-import edu.cmu.sphinx.linguist.acoustic.Unit;
-import edu.cmu.sphinx.linguist.acoustic.UnitManager;
-import edu.cmu.sphinx.util.Timer;
-
 
 /**
- * The HMMPool provides the ability to manage units via small integer
- * IDs.  Context Independent units and context dependent units can
- * be converted to an ID. IDs can be used to quickly retrieve a unit
- * or an hmm associated with the unit.  This class operates under the
- * constraint that context sizes are exactly one, which is generally
- * only valid for large vocabulary tasks.
+ * The HMMPool provides the ability to manage units via small integer IDs.  Context Independent units and context
+ * dependent units can be converted to an ID. IDs can be used to quickly retrieve a unit or an hmm associated with the
+ * unit.  This class operates under the constraint that context sizes are exactly one, which is generally only valid for
+ * large vocabulary tasks.
  */
 public class HMMPool {
+
     private AcousticModel model;
     private Unit[] unitTable;
     private HMM hmmTable[][];
@@ -42,10 +36,11 @@ public class HMMPool {
     private Logger logger;
     private UnitManager unitManager;
 
+
     /**
      * Constructs a HMMPool object.
      *
-     * @param model  the model to use for the pool
+     * @param model the model to use for the pool
      */
     public HMMPool(AcousticModel model, Logger logger, UnitManager unitManager) {
         this.logger = logger;
@@ -65,7 +60,7 @@ public class HMMPool {
         // count CI units:
 
         for (Iterator i = model.getContextIndependentUnitIterator();
-                i.hasNext();) {
+             i.hasNext();) {
             Unit unit = (Unit) i.next();
             logger.fine("CI unit " + unit);
             if (unit.getBaseID() > maxCIUnits) {
@@ -77,7 +72,7 @@ public class HMMPool {
 
         unitTable = new Unit[numCIUnits * numCIUnits * numCIUnits];
 
-        for (Iterator i = model.getHMMIterator(); i.hasNext(); ) {
+        for (Iterator i = model.getHMMIterator(); i.hasNext();) {
             HMM hmm = (HMM) i.next();
             Unit unit = hmm.getUnit();
             int id = getID(unit);
@@ -87,22 +82,21 @@ public class HMMPool {
             }
         }
 
-
         // build up the hmm table to allow quick access to the hmms
         hmmTable = new
-            HMM[HMMPosition.MAX_POSITIONS][unitTable.length];
+                HMM[HMMPosition.MAX_POSITIONS][unitTable.length];
 
-        for (Iterator i = HMMPosition.iterator(); i.hasNext(); ) {
+        for (Iterator i = HMMPosition.iterator(); i.hasNext();) {
             HMMPosition position = (HMMPosition) i.next();
             int index = position.getIndex();
-            for (int j = 1 ; j < unitTable.length; j++) {
+            for (int j = 1; j < unitTable.length; j++) {
                 Unit unit = unitTable[j];
                 if (unit == null) {
                     unit = synthesizeUnit(j);
                 }
                 if (unit != null) {
-                    hmmTable[index][j] = 
-                        model.lookupNearestHMM(unit, position, false);
+                    hmmTable[index][j] =
+                            model.lookupNearestHMM(unit, position, false);
                     assert hmmTable[index][j] != null;
                 }
             }
@@ -115,12 +109,11 @@ public class HMMPool {
         return model;
     }
 
+
     /**
-     * Given a unit ID, generate a full context dependent unit that
-     * will allow us to look for a suitable hmm
+     * Given a unit ID, generate a full context dependent unit that will allow us to look for a suitable hmm
      *
      * @param id the unit id
-     *
      * @return a context dependent unit for the ID
      */
     private Unit synthesizeUnit(int id) {
@@ -151,26 +144,27 @@ public class HMMPool {
                 context);
 
         if (logger.isLoggable(Level.FINER)) {
-            logger.finer("Missing " + getUnitNameFromID(id) 
+            logger.finer("Missing " + getUnitNameFromID(id)
                     + " returning " + unit);
         }
         return unit;
     }
 
+
     /**
      * Returns the number of CI units
-     * 
+     *
      * @return the number of CI Units
      */
     public int getNumCIUnits() {
         return numCIUnits;
     }
 
+
     /**
      * Gets the unit for the given id
      *
      * @param unitID the id for the unit
-     *
      * @return the unit associated with the ID
      */
     public Unit getUnit(int unitID) {
@@ -179,23 +173,21 @@ public class HMMPool {
 
 
     /**
-     * Given a unit id and a position, return the HMM
-     * associated with the unit/position
+     * Given a unit id and a position, return the HMM associated with the unit/position
      *
-     * @param unitID the id of the unit
+     * @param unitID   the id of the unit
      * @param position the position within the word
-     *
      * @return the hmm associated with the unit/position
      */
     public final HMM getHMM(int unitID, HMMPosition position) {
-       return hmmTable[position.getIndex()][unitID];
+        return hmmTable[position.getIndex()][unitID];
     }
+
 
     /**
      * given a unit return its ID
      *
      * @param unit the unit
-     *
      * @return an ID
      */
     public int getID(Unit unit) {
@@ -204,39 +196,39 @@ public class HMMPool {
             assert context.getLeftContext().length == 1;
             assert context.getRightContext().length == 1;
             return buildID(
-                getSimpleUnitID(unit),
-                getSimpleUnitID(context.getLeftContext()[0]),
-                getSimpleUnitID(context.getRightContext()[0]));
+                    getSimpleUnitID(unit),
+                    getSimpleUnitID(context.getLeftContext()[0]),
+                    getSimpleUnitID(context.getRightContext()[0]));
         } else {
             return getSimpleUnitID(unit);
         }
     }
 
+
     /**
      * Returns a context independent ID
      *
      * @param unit the unit of interest
-     *
      * @return the ID of the central unit (ignoring any context)
      */
     private int getSimpleUnitID(Unit unit) {
         return unit.getBaseID();
     }
 
-    public boolean isValidID( int unitID ) {
-        if( unitID < 0 ) return false;
-        if( unitID >= unitTable.length ) return false;
+
+    public boolean isValidID(int unitID) {
+        if (unitID < 0) return false;
+        if (unitID >= unitTable.length) return false;
         return unitTable[unitID] != null;
     }
 
+
     /**
-     * Builds an id from the given unit and its left and right unit
-     * ids
+     * Builds an id from the given unit and its left and right unit ids
      *
-     * @param unitID the id of the central unit
-     * @param leftID the id of the left context unit
+     * @param unitID  the id of the central unit
+     * @param leftID  the id of the left context unit
      * @param rightID the id of the right context unit
-     *
      * @return the id for the context dependent unit
      */
     public int buildID(int unitID, int leftID, int rightID) {
@@ -244,7 +236,7 @@ public class HMMPool {
         // silence than we have no context ... so use the CI
         // form
 
-        if (unitTable[unitID]==null) {
+        if (unitTable[unitID] == null) {
             return -1;
         }
 
@@ -253,8 +245,8 @@ public class HMMPool {
             id = unitID;
         } else {
             id = unitID * (numCIUnits * numCIUnits)
-                  + (leftID * numCIUnits) 
-                  + rightID ;
+                    + (leftID * numCIUnits)
+                    + rightID;
         }
 
         assert id < unitTable.length;
@@ -262,40 +254,39 @@ public class HMMPool {
         return id;
     }
 
+
     /**
      * Given a unit id extract the left context unit id
      *
      * @param id the unit id
-     *
-     * @return the unit id of the left context (0 means no left
-     * context)
+     * @return the unit id of the left context (0 means no left context)
      */
     private int getLeftUnitID(int id) {
         return (id / numCIUnits) % numCIUnits;
     }
 
+
     /**
      * Given a unit id extract the right context unit id
      *
      * @param id the unit id
-     *
-     * @return the unit id of the right context (0 means no right
-     * context)
+     * @return the unit id of the right context (0 means no right context)
      */
     private int getRightUnitID(int id) {
         return id % numCIUnits;
     }
 
+
     /**
      * Given a unit id extract the centeral unit id
      *
      * @param id the unit id
-     *
-     * @return the central unit id 
+     * @return the central unit id
      */
     private int getCentralUnitID(int id) {
         return id / (numCIUnits * numCIUnits);
     }
+
 
     /**
      * Given an ID, build up a name for display
@@ -307,19 +298,18 @@ public class HMMPool {
         int leftID = getLeftUnitID(id);
         int rightID = getRightUnitID(id);
 
-        String cs = unitTable[centralID] == null ? "(" + centralID+")" :
-            unitTable[centralID].toString();
+        String cs = unitTable[centralID] == null ? "(" + centralID + ")" :
+                unitTable[centralID].toString();
         String ls = unitTable[leftID] == null ? ("(" + leftID + ")") :
-            unitTable[leftID].toString();
-        String rs = unitTable[rightID] == null ? "(" + rightID +  ")" :
-            unitTable[rightID].toString();
+                unitTable[leftID].toString();
+        String rs = unitTable[rightID] == null ? "(" + rightID + ")" :
+                unitTable[rightID].toString();
 
-        return cs + "[" + ls + "," + rs +"]";
+        return cs + "[" + ls + "," + rs + "]";
     }
 
-    /**
-     * Dumps out info about this pool
-     */
+
+    /** Dumps out info about this pool */
     public void dumpInfo() {
         logger.info("Max CI Units " + numCIUnits);
         logger.info("Unit table size " + unitTable.length);
@@ -333,17 +323,16 @@ public class HMMPool {
 
 
     /**
-     * A quick and dirty benchmark to get an idea how long
-     * the HMM lookups will take.  This experiment shows
-     * that on a 1GHZ sparc system, the lookup takes a little
-     * less than 1uSec.  This is probably fast enough.
+     * A quick and dirty benchmark to get an idea how long the HMM lookups will take.  This experiment shows that on a
+     * 1GHZ sparc system, the lookup takes a little less than 1uSec.  This is probably fast enough.
      */
 
     static HMMPosition pos[] = {
-        HMMPosition.BEGIN, HMMPosition.END, HMMPosition.SINGLE,
-        HMMPosition.INTERNAL};
+            HMMPosition.BEGIN, HMMPosition.END, HMMPosition.SINGLE,
+            HMMPosition.INTERNAL};
 
-   static int ids[] = { 9206, 9320, 9620, 9865, 14831, 15836 };
+    static int ids[] = {9206, 9320, 9620, 9865, 14831, 15836};
+
 
     void benchmark() {
         int nullCount = 0;

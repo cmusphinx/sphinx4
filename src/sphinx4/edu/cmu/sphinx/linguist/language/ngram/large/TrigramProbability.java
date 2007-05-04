@@ -13,10 +13,7 @@
 package edu.cmu.sphinx.linguist.language.ngram.large;
 
 
-/**
- * Represents a word ID (third word of a trigram), and a trigram 
- * probability ID.
- */
+/** Represents a word ID (third word of a trigram), and a trigram probability ID. */
 class TrigramProbability {
 
     private int wordID;
@@ -26,20 +23,20 @@ class TrigramProbability {
     /**
      * Constructs a TrigramProbability
      *
-     * @param wordID the ID of the third word in a trigram
+     * @param wordID        the ID of the third word in a trigram
      * @param probabilityID the index into the probability array
      */
     public TrigramProbability(int wordID, int probabilityID) {
-	this.wordID = wordID;
+        this.wordID = wordID;
         this.probabilityID = probabilityID;
     }
 
-    
+
     /**
      * Returns the third word ID of this trigram
      *
      * @return the third word ID
-     */ 
+     */
     public int getWordID() {
         return wordID;
     }

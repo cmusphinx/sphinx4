@@ -15,12 +15,11 @@ package edu.cmu.sphinx.linguist.flat;
 
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 
-/**
- * Represents a non-emitting sentence hmm state
- * 
- */
+/** Represents a non-emitting sentence hmm state */
 public class GrammarState extends SentenceHMMState {
+
     private GrammarNode grammarNode;
+
 
     /**
      * Creates a GrammarState
@@ -28,10 +27,11 @@ public class GrammarState extends SentenceHMMState {
      * @param node the GrammarNode associated with this state
      */
     public GrammarState(GrammarNode node) {
-	super("G", null,  node.getID());
-	this.grammarNode = node;
-	setFinalState(grammarNode.isFinalNode());
+        super("G", null, node.getID());
+        this.grammarNode = node;
+        setFinalState(grammarNode.isFinalNode());
     }
+
 
     /**
      * Gets the grammar node associated with this state
@@ -39,19 +39,20 @@ public class GrammarState extends SentenceHMMState {
      * @return the grammar node
      */
     public GrammarNode getGrammarNode() {
-	return grammarNode;
+        return grammarNode;
     }
 
+
     /**
-     * Retrieves a short label describing the type of this state.
-     * Typically, subclasses of SentenceHMMState will implement this
-     * method and return a short (5 chars or less) label
+     * Retrieves a short label describing the type of this state. Typically, subclasses of SentenceHMMState will
+     * implement this method and return a short (5 chars or less) label
      *
      * @return the short label.
      */
     public String getTypeLabel() {
-	return "Gram";
+        return "Gram";
     }
+
 
     /**
      * Returns the state order for this state type

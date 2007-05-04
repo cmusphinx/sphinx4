@@ -13,20 +13,17 @@
 package edu.cmu.sphinx.linguist.language.ngram.large;
 
 
-
-/**
- * Implements a buffer for trigrams read from disk.
- */
+/** Implements a buffer for trigrams read from disk. */
 class TrigramBuffer extends NGramBuffer {
-    
+
     /**
      * Constructs a TrigramBuffer object with the given byte[].
      *
      * @param trigramsOnDisk the byte[] with trigrams
-     * @param numberNGrams the number of trigram follows in the byte[]
+     * @param numberNGrams   the number of trigram follows in the byte[]
      */
     public TrigramBuffer(byte[] trigramsOnDisk,
-			 int numberNGrams, boolean bigEndian) {
+                         int numberNGrams, boolean bigEndian) {
         super(trigramsOnDisk, numberNGrams, bigEndian);
     }
 
@@ -35,7 +32,6 @@ class TrigramBuffer extends NGramBuffer {
      * Finds the trigram probability ID for the given third word in a trigram.
      *
      * @param thirdWordID the ID of the third word
-     *
      * @return the Trigram Probability ID of the given third word
      */
     public int findProbabilityID(int thirdWordID) {
@@ -47,16 +43,16 @@ class TrigramBuffer extends NGramBuffer {
         int trigram = -1;
 
         while ((end - start) > 0) {
-            mid = (start + end)/2;
+            mid = (start + end) / 2;
             int midWordID = getWordID(mid);
-	    if (midWordID < thirdWordID) {
+            if (midWordID < thirdWordID) {
                 start = mid + 1;
             } else if (midWordID > thirdWordID) {
                 end = mid;
             } else {
-		trigram = getProbabilityID(mid);
+                trigram = getProbabilityID(mid);
                 break;
-	    }
+            }
         }
         return trigram;
     }
@@ -66,7 +62,6 @@ class TrigramBuffer extends NGramBuffer {
      * Returns the TrigramProbability of the nth follower.
      *
      * @param nthFollower which follower
-     *
      * @return the TrigramProbability of the nth follower
      */
     public final int getProbabilityID(int nthFollower) {

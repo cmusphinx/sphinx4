@@ -14,15 +14,14 @@ package edu.cmu.sphinx.linguist;
 
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 
-/**
- * Represents a single hmm state in a language search space
- */
-public interface  HMMSearchState extends SearchState {
+/** Represents a single hmm state in a language search space */
+public interface HMMSearchState extends SearchState {
+
     /**
-     * Gets the hmm state 
+     * Gets the hmm state
      *
      * @return the hmm state
      */
-     HMMState getHMMState();
+    HMMState getHMMState();
 
 }

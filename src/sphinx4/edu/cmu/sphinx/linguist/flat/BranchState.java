@@ -1,10 +1,7 @@
 package edu.cmu.sphinx.linguist.flat;
 
 
-/**
- * Represents a branching node in a grammar
- *
- */
+/** Represents a branching node in a grammar */
 public class BranchState extends SentenceHMMState {
 
     /**
@@ -13,21 +10,21 @@ public class BranchState extends SentenceHMMState {
      * @param nodeID the grammar node id
      */
     public BranchState(String leftContext, String rightContext, int nodeID) {
-	super("B" + "[" + leftContext +"," +
+        super("B" + "[" + leftContext + "," +
                 rightContext + "]", null, nodeID);
     }
 
 
     /**
-     * Retrieves a short label describing the type of this state.
-     * Typically, subclasses of SentenceHMMState will implement this
-     * method and return a short (5 chars or less) label
+     * Retrieves a short label describing the type of this state. Typically, subclasses of SentenceHMMState will
+     * implement this method and return a short (5 chars or less) label
      *
      * @return the short label.
      */
     public String getTypeLabel() {
-	return "Brnch";
+        return "Brnch";
     }
+
 
     /**
      * Returns the state order for this state type

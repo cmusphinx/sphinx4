@@ -16,10 +16,7 @@ import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,18 +28,15 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * Creates a dictionary by quickly reading in an ASCII-based Sphinx-3 format
- * dictionary. It is called the FastDictionary because the loading is fast.
- * When loaded the dictionary just loads each line of the dictionary into the
- * hash table, assuming that most words are not going to be used. Only when a
- * word is actually used is its pronunciations massaged into an array of
- * pronunciations.
- * <p>
- * The format of the ASCII dictionary that it explains is the same as the
- * {@link FullDictionary FullDictionary}, i.e., the word, followed by spaces
- * or tab, followed by the pronunciation(s). For example, a digits dictionary
- * will look like:
- * 
+ * Creates a dictionary by quickly reading in an ASCII-based Sphinx-3 format dictionary. It is called the FastDictionary
+ * because the loading is fast. When loaded the dictionary just loads each line of the dictionary into the hash table,
+ * assuming that most words are not going to be used. Only when a word is actually used is its pronunciations massaged
+ * into an array of pronunciations.
+ * <p/>
+ * The format of the ASCII dictionary that it explains is the same as the {@link FullDictionary FullDictionary}, i.e.,
+ * the word, followed by spaces or tab, followed by the pronunciation(s). For example, a digits dictionary will look
+ * like:
+ * <p/>
  * <pre>
  *  ONE HH W AH N
  *  ONE(2) W AH N
@@ -58,28 +52,21 @@ import java.util.logging.Logger;
  *  ZERO(2) Z IY R OW
  *  OH OW
  * </pre>
- * 
- * <p>
- * In the above example, the words "one" and "zero" have two pronunciations
- * each.
+ * <p/>
+ * <p/>
+ * In the above example, the words "one" and "zero" have two pronunciations each.
  */
 public class FastDictionary implements Dictionary {
 
 
     /**
-     * The name of the SphinxProperty for the custom dictionary file
-     * paths. This addenda property points to a possibly empty list of
-     * urls to dictionary addenda.  Each addendum should contain word
-     * pronunciations in the same Sphinx-3 dictionary format as the
-     * main dictionary.  Words in the addendum are added after the
-     * words in the main dictionary   and will
-     * override previously specified pronunciations.  If you wish to
-     * extend the set of pronunications for a particular word, add a
-     * new pronunciation by number.  For example, in the following
-     * addendum, given that the aforementioned main dictionary is
-     * specified, the pronunciation for 'EIGHT' will be overridden by
-     * the addenda, while the pronunciation for 'SIX' and 'ZERO' will
-     * be augmented and a new pronunciation for 'ELEVEN' will be
+     * The name of the SphinxProperty for the custom dictionary file paths. This addenda property points to a possibly
+     * empty list of urls to dictionary addenda.  Each addendum should contain word pronunciations in the same Sphinx-3
+     * dictionary format as the main dictionary.  Words in the addendum are added after the words in the main dictionary
+     *   and will override previously specified pronunciations.  If you wish to extend the set of pronunications for a
+     * particular word, add a new pronunciation by number.  For example, in the following addendum, given that the
+     * aforementioned main dictionary is specified, the pronunciation for 'EIGHT' will be overridden by the addenda,
+     * while the pronunciation for 'SIX' and 'ZERO' will be augmented and a new pronunciation for 'ELEVEN' will be
      * added.
      * <pre>
      *          EIGHT   OW T
@@ -88,10 +75,9 @@ public class FastDictionary implements Dictionary {
      *          ELEVEN   EH L EH V AH N
      * </pre>
      */
+    @S4String
     public static final String PROP_ADDENDA = "addenda";
-    /**
-     * The default value of PROP_ADDENDA.
-     */
+    /** The default value of PROP_ADDENDA. */
     public static final String PROP_ADDENDA_DEFAULT = null;
 
     // -------------------------------
@@ -112,46 +98,48 @@ public class FastDictionary implements Dictionary {
     // -------------------------------
     // working data
     // -------------------------------
-    protected Map<String,Object> dictionary;
+    protected Map<String, Object> dictionary;
 
     private final static String FILLER_TAG = "-F-";
     protected Set<String> fillerWords;
     protected boolean allocated;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-     
-        info.put(new String("PROP_DICTIONARY_TYPE"),new String("RESOURCE"));
-        info.put(new String("PROP_FILLER_DICTIONARY_TYPE"),new String("RESOURCE"));
-        info.put(new String("PROP_ADDENDA_TYPE"),new String("STRING_LIST"));
-        info.put(new String("PROP_WORD_REPLACEMENT_TYPE"),new String("STRING"));
-        info.put(new String("PROP_ADD_SIL_ENDING_PRONUNCIATION_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_ALLOW_MISSING_WORDS_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_CREATE_MISSING_WORDS_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_UNIT_MANAGER_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_UNIT_MANAGER_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.acoustic.UnitManager"));
-     
+
+        info.put(new String("PROP_DICTIONARY_TYPE"), new String("RESOURCE"));
+        info.put(new String("PROP_FILLER_DICTIONARY_TYPE"), new String("RESOURCE"));
+        info.put(new String("PROP_ADDENDA_TYPE"), new String("STRING_LIST"));
+        info.put(new String("PROP_WORD_REPLACEMENT_TYPE"), new String("STRING"));
+        info.put(new String("PROP_ADD_SIL_ENDING_PRONUNCIATION_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_ALLOW_MISSING_WORDS_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_CREATE_MISSING_WORDS_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_UNIT_MANAGER_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_UNIT_MANAGER_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.acoustic.UnitManager"));
+
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
-        throws PropertyException {
+            throws PropertyException {
         this.name = name;
         registry.register(PROP_DICTIONARY, PropertyType.RESOURCE);
         registry.register(PROP_FILLER_DICTIONARY, PropertyType.RESOURCE);
         registry.register(PROP_ADD_SIL_ENDING_PRONUNCIATION,
-                          PropertyType.BOOLEAN);
+                PropertyType.BOOLEAN);
         registry.register(PROP_WORD_REPLACEMENT, PropertyType.STRING);
         registry.register(PROP_ALLOW_MISSING_WORDS, PropertyType.BOOLEAN);
         registry.register(PROP_CREATE_MISSING_WORDS, PropertyType.BOOLEAN);
@@ -159,14 +147,15 @@ public class FastDictionary implements Dictionary {
         registry.register(PROP_ADDENDA, PropertyType.STRING_LIST);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        
+
         wordDictionaryFile = ps.getResource(PROP_DICTIONARY);
         fillerDictionaryFile = ps.getResource(PROP_FILLER_DICTIONARY);
         addendaUrlList = this.getResourceList(PROP_ADDENDA, ps);
@@ -184,21 +173,26 @@ public class FastDictionary implements Dictionary {
                 UnitManager.class);
     }
 
+
     /**
      * Get the word dictionary file
+     *
      * @return the URL of the word dictionary file
      */
     public URL getWordDictionaryFile() {
         return wordDictionaryFile;
     }
 
+
     /**
      * Get the filler dictionary file
+     *
      * @return the URL of the filler dictionary file
      */
     public URL getFillerDictionaryFile() {
         return fillerDictionaryFile;
     }
+
 
     /*
     * (non-Javadoc)
@@ -209,11 +203,12 @@ public class FastDictionary implements Dictionary {
         return name;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#allocate()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#allocate()
+    */
     public void allocate() throws IOException {
         if (!allocated) {
             dictionary = new HashMap<String, Object>();
@@ -227,9 +222,9 @@ public class FastDictionary implements Dictionary {
             loadDictionary(wordDictionaryFile.openStream(), false);
 
             loadCustomDictionaries(addendaUrlList);
-            
+
             logger.info("Loading filler dictionary from: " +
-                        fillerDictionaryFile);
+                    fillerDictionaryFile);
 
             loadDictionary(fillerDictionaryFile.openStream(), true);
 
@@ -238,12 +233,13 @@ public class FastDictionary implements Dictionary {
 
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#deallocate()
-     */
-public void deallocate() {
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#deallocate()
+    */
+    public void deallocate() {
         if (allocated) {
             dictionary = null;
             allocated = false;
@@ -252,16 +248,12 @@ public void deallocate() {
 
 
     /**
-     * Loads the given sphinx3 style simple dictionary from the given
-     * InputStream. The InputStream is assumed to contain ASCII data.
-     * 
-     * @param inputStream
-     *                the InputStream of the dictionary
-     * @param isFillerDict
-     *                true if this is a filler dictionary, false otherwise
-     * 
-     * @throws java.io.IOException
-     *                 if there is an error reading the dictionary
+     * Loads the given sphinx3 style simple dictionary from the given InputStream. The InputStream is assumed to contain
+     * ASCII data.
+     *
+     * @param inputStream  the InputStream of the dictionary
+     * @param isFillerDict true if this is a filler dictionary, false otherwise
+     * @throws java.io.IOException if there is an error reading the dictionary
      */
     protected void loadDictionary(InputStream inputStream, boolean isFillerDict)
             throws IOException {
@@ -301,59 +293,55 @@ public void deallocate() {
         inputStream.close();
     }
 
+
     /**
-     * Gets a context independent unit. There should only be one instance of
-     * any CI unit
-     * 
-     * @param name
-     *                the name of the unit
-     * @param isFiller
-     *                if true, the unit is a filler unit
-     * 
+     * Gets a context independent unit. There should only be one instance of any CI unit
+     *
+     * @param name     the name of the unit
+     * @param isFiller if true, the unit is a filler unit
      * @return the unit
-     *  
      */
     private Unit getCIUnit(String name, boolean isFiller) {
         return unitManager.getUnit(name, isFiller, Context.EMPTY_CONTEXT);
     }
 
+
     /**
      * Returns the sentence start word.
-     * 
+     *
      * @return the sentence start word
      */
     public Word getSentenceStartWord() {
         return getWord(SENTENCE_START_SPELLING);
     }
 
+
     /**
      * Returns the sentence end word.
-     * 
+     *
      * @return the sentence end word
      */
     public Word getSentenceEndWord() {
         return getWord(SENTENCE_END_SPELLING);
     }
 
+
     /**
      * Returns the silence word.
-     * 
+     *
      * @return the silence word
      */
     public Word getSilenceWord() {
         return getWord(SILENCE_SPELLING);
     }
 
+
     /**
-     * Returns a Word object based on the spelling and its classification. The
-     * behavior of this method is also affected by the properties
-     * wordReplacement, allowMissingWords, and createMissingWords.
-     * 
-     * @param text
-     *                the spelling of the word of interest.
-     * 
+     * Returns a Word object based on the spelling and its classification. The behavior of this method is also affected
+     * by the properties wordReplacement, allowMissingWords, and createMissingWords.
+     *
+     * @param text the spelling of the word of interest.
      * @return a Word object
-     * 
      * @see edu.cmu.sphinx.linguist.dictionary.Word
      */
     public Word getWord(String text) {
@@ -370,40 +358,36 @@ public void deallocate() {
                 if (createMissingWords) {
                     word = createWord(text, null, false);
                 }
-            }                
+            }
         } else if (object instanceof String) { // first lookup for this string
             word = processEntry(text);
         } else if (object instanceof Word) {
-            word = (Word)object;
+            word = (Word) object;
         }
         return word;
     }
 
+
     /**
-     * Create a Word object with the given spelling and pronunciations, and
-     * insert it into the dictionary.
-     * 
-     * @param text
-     *                the spelling of the word
-     * @param pronunciation
-     *                the pronunciation of the word
-     * @param isFiller
-     *                if <code>true</code> this is a filler word
-     * 
+     * Create a Word object with the given spelling and pronunciations, and insert it into the dictionary.
+     *
+     * @param text          the spelling of the word
+     * @param pronunciation the pronunciation of the word
+     * @param isFiller      if <code>true</code> this is a filler word
      * @return the word
      */
     private Word createWord(String text, Pronunciation[] pronunciation,
-            boolean isFiller) {
+                            boolean isFiller) {
         Word word = new Word(text, pronunciation, isFiller);
         dictionary.put(text, word);
         return word;
     }
 
+
     /**
-     * Processes a dictionary entry. When loaded the dictionary just loads each
-     * line of the dictionary into the hash table, assuming that most words are
-     * not going to be used. Only when a word is actually used is its
-     * pronunciations massaged into an array of pronunciations.
+     * Processes a dictionary entry. When loaded the dictionary just loads each line of the dictionary into the hash
+     * table, assuming that most words are not going to be used. Only when a word is actually used is its pronunciations
+     * massaged into an array of pronunciations.
      */
     private Word processEntry(String word) {
         List<Pronunciation> pList = new LinkedList<Pronunciation>();
@@ -453,25 +437,25 @@ public void deallocate() {
         return wordObject;
     }
 
+
     /**
-     * Returns the set of all possible word classifications for this
-     * dictionary.
-     * 
+     * Returns the set of all possible word classifications for this dictionary.
+     *
      * @return the set of all possible word classifications
      */
     public WordClassification[] getPossibleWordClassifications() {
         return null;
     }
 
+
     /**
-     * Returns a string representation of this FastDictionary in alphabetical
-     * order.
-     * 
+     * Returns a string representation of this FastDictionary in alphabetical order.
+     *
      * @return a string representation of this FastDictionary
      */
     public String toString() {
 
-        SortedMap sorted = new TreeMap<String,Object>(dictionary);
+        SortedMap sorted = new TreeMap<String, Object>(dictionary);
         String result = "";
 
         for (Iterator i = sorted.keySet().iterator(); i.hasNext();) {
@@ -487,9 +471,10 @@ public void deallocate() {
         return result;
     }
 
+
     /**
      * Gets the set of all filler words in the dictionary
-     * 
+     *
      * @return an array (possibly empty) of all filler words
      */
     public Word[] getFillerWords() {
@@ -502,61 +487,55 @@ public void deallocate() {
         return fillerWordArray;
     }
 
-    /**
-     * Dumps this FastDictionary to System.out.
-     */
+
+    /** Dumps this FastDictionary to System.out. */
     public void dump() {
         System.out.print(toString());
     }
-    
+
+
     /**
-     * Creates a list of resource URLs given the name of the property.
-     * This method should eventually be replaced by a corresponding version 
-     * in PropertySheet
-     * @param propertyListName
-     * 			the name of the propertyList
-     * @param ps
-     * 			the FastDictionary property sheet
-     * @return
-     * 			the list of resource URLs - empty if no propertyList 
-     *                  exists
-     * @throws PropertyException
-     * 			if a URL (from the list) isn't a valid file path
+     * Creates a list of resource URLs given the name of the property. This method should eventually be replaced by a
+     * corresponding version in PropertySheet
+     *
+     * @param propertyListName the name of the propertyList
+     * @param ps               the FastDictionary property sheet
+     * @return the list of resource URLs - empty if no propertyList exists
+     * @throws PropertyException if a URL (from the list) isn't a valid file path
      */
     private List<URL> getResourceList(String propertyListName, PropertySheet ps)
-                throws PropertyException {
-    	List<URL> resourceList = new ArrayList<URL>();
-    	List pathList = ps.getStrings(propertyListName);
-    	if (pathList != null) {
+            throws PropertyException {
+        List<URL> resourceList = new ArrayList<URL>();
+        List pathList = ps.getStrings(propertyListName);
+        if (pathList != null) {
             for (Iterator i = pathList.iterator(); i.hasNext();) {
                 String addendumPath = (String) i.next();
                 try {
                     URL addendaUrl = new URL(addendumPath);
                     resourceList.add(addendaUrl);
                 } catch (MalformedURLException mue) {
-                    throw new PropertyException(this, PROP_ADDENDA, 
-                    "Addendum path: " + addendumPath + " is not a valid URL.");
+                    throw new PropertyException(this, PROP_ADDENDA,
+                            "Addendum path: " + addendumPath + " is not a valid URL.");
                 }
             }
-    	}
-    	return resourceList;
+        }
+        return resourceList;
     }
 
+
     /**
-     * 
      * Loads the dictionary with a list of URLs to custom dictionary resources
-     * @param addenda
-     * 			the list of custom dictionary URLs to be loaded
-     * @throws IOException
-     * 			if there is an error reading the resource URL
+     *
+     * @param addenda the list of custom dictionary URLs to be loaded
+     * @throws IOException if there is an error reading the resource URL
      */
     private void loadCustomDictionaries(List<URL> addenda) throws IOException {
-    	if (addenda != null) {
-    		for (Iterator<URL> i = addenda.iterator(); i.hasNext();) {
-    			URL addendumUrl = i.next();
-    			loadDictionary(addendumUrl.openStream(), false);
-    		}
-    	}
+        if (addenda != null) {
+            for (Iterator<URL> i = addenda.iterator(); i.hasNext();) {
+                URL addendumUrl = i.next();
+                loadDictionary(addendumUrl.openStream(), false);
+            }
+        }
     }
 
 }

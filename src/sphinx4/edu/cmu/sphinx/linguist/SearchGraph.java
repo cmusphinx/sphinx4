@@ -12,23 +12,22 @@
  */
 package edu.cmu.sphinx.linguist;
 
-/**
- * Represents a search graph
- */
+/** Represents a search graph */
 public interface SearchGraph {
+
     /**
      * Retrieves initial search state
-     * 
+     *
      * @return the set of initial search state
      */
     SearchState getInitialState();
 
+
     /**
-     * Returns the number of different state types maintained
-     * in the search graph
+     * Returns the number of different state types maintained in the search graph
      *
      * @return the number of different state types
      */
     int getNumStateOrder();
-    
+
 }

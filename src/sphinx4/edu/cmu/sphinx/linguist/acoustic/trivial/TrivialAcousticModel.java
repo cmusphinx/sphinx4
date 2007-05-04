@@ -12,51 +12,36 @@
 
 package edu.cmu.sphinx.linguist.acoustic.trivial;
 
-import java.io.IOException;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.linguist.acoustic.*;
+import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.Registry;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
-import edu.cmu.sphinx.linguist.acoustic.HMM;
-import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
-import edu.cmu.sphinx.linguist.acoustic.HMMState;
-import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
-import edu.cmu.sphinx.linguist.acoustic.Unit;
-import edu.cmu.sphinx.linguist.acoustic.UnitManager;
-import edu.cmu.sphinx.util.SphinxProperties;
-
-/**
- * Represents the generic interface to the Acoustic 
- * Model for sphinx4
- */
+/** Represents the generic interface to the Acoustic Model for sphinx4 */
 public class TrivialAcousticModel implements AcousticModel {
 
-    private final static String PREFIX = 
-        "edu.cmu.sphinx.linguist.acoustic.trivial.TrivialAcousticModel";
+    private final static String PREFIX =
+            "edu.cmu.sphinx.linguist.acoustic.trivial.TrivialAcousticModel";
 
-    /**
-     * Sphinx property that defines the left context size
-     */
+    /** Sphinx property that defines the left context size */
     public final static String PROP_LEFT_CONTEXT_SIZE = PREFIX + ".leftContextSize";
-    
-    /**
-     * The default value for PROP_LEFT_CONTEXT_SIZE
-     */
+
+    /** The default value for PROP_LEFT_CONTEXT_SIZE */
     public final static int PROP_LEFT_CONTEXT_SIZE_DEFAULT = 1;
 
 
-    /**
-     * Sphinx property that defines the right context size
-     */
+    /** Sphinx property that defines the right context size */
     public final static String PROP_RIGHT_CONTEXT_SIZE = PREFIX + ".rightContextSize";
-    
-    /**
-     * The default value for PROP_RIGHT_CONTEXT_SIZE
-     */
+
+    /** The default value for PROP_RIGHT_CONTEXT_SIZE */
     public final static int PROP_RIGHT_CONTEXT_SIZE_DEFAULT = 1;
 
 
@@ -65,18 +50,17 @@ public class TrivialAcousticModel implements AcousticModel {
     private int leftContextSize;
     private int rightContextSize;
 
+
     /**
      * Initializes this acoustic model
      *
-     * @param name the name of this acoustic model
+     * @param name    the name of this acoustic model
      * @param context the context for this acoustic model
-     *
      * @throws IOException if the model could not be loaded
-     *
      */
-    public void initialize (String name, String context) throws IOException {
+    public void initialize(String name, String context) throws IOException {
         this.name = name;
-        
+
         // get acoustic model configuration data from the sphinx
         // properties
 
@@ -88,16 +72,15 @@ public class TrivialAcousticModel implements AcousticModel {
                 PROP_RIGHT_CONTEXT_SIZE,
                 PROP_RIGHT_CONTEXT_SIZE_DEFAULT);
 
-
         // create HMMs for all of the units
 
         String[] unitNames = {
-            "AX_one", "AY_five", "AY_nine", "EH_seven", "EY_eight", "E_seven",
-            "F_five", "F_four", "II_three", "II_zero", "I_six", "K_six",
-            "N_nine", "N_nine_2", "N_one", "N_seven", "OO_two", "OW_four",
-            "OW_oh", "OW_zero", "R_four", "R_three", "R_zero", "S_seven",
-            "S_six", "S_six_2", "TH_three", "T_eight", "T_two", "V_five",
-            "V_seven", "W_one", "Z_zero", "AX_one", "SIL"
+                "AX_one", "AY_five", "AY_nine", "EH_seven", "EY_eight", "E_seven",
+                "F_five", "F_four", "II_three", "II_zero", "I_six", "K_six",
+                "N_nine", "N_nine_2", "N_one", "N_seven", "OO_two", "OW_four",
+                "OW_oh", "OW_zero", "R_four", "R_three", "R_zero", "S_seven",
+                "S_six", "S_six_2", "TH_three", "T_eight", "T_two", "V_five",
+                "V_seven", "W_one", "Z_zero", "AX_one", "SIL"
         };
 
         for (int i = 0; i < unitNames.length; i++) {
@@ -105,14 +88,24 @@ public class TrivialAcousticModel implements AcousticModel {
         }
     }
 
+
+    public void register(String name, Registry registry) throws PropertyException {
+    }
+
+
+    public void newProperties(PropertySheet ps) throws PropertyException {
+    }
+
+
     /**
      * Returns the name of this AcousticModel, or null if it has no name.
      *
      * @return the name of this AcousticModel, or null if it has no name
      */
-    public String getName()  {
+    public String getName() {
         return name;
     }
+
 
     /**
      * Returns the properties of this acoustic model.
@@ -122,80 +115,76 @@ public class TrivialAcousticModel implements AcousticModel {
     public Properties getProperties() {
         return new Properties();
     }
-    
+
+
     /**
-     * Given a unit, returns the HMM that best matches the given unit.
-     * If exactMatch is false and an exact match is not found, 
-     * then different word positions
-     * are used. If any of the contexts are non-silence filler units.
-     * a silence filler unit is tried instead.
+     * Given a unit, returns the HMM that best matches the given unit. If exactMatch is false and an exact match is not
+     * found, then different word positions are used. If any of the contexts are non-silence filler units. a silence
+     * filler unit is tried instead.
      *
-     * @param unit 		the unit of interest
-     * @param position 	the position of the unit of interest
-     * @param exactMatch 	if true, only an exact match is
-     * 			acceptable.
-     *
-     * @return 	the HMM that best matches, or null if no match
-     * 		could be found.
+     * @param unit       the unit of interest
+     * @param position   the position of the unit of interest
+     * @param exactMatch if true, only an exact match is acceptable.
+     * @return the HMM that best matches, or null if no match could be found.
      */
-     public HMM lookupNearestHMM(Unit unit, HMMPosition position,
-	     boolean exactMatch)  {
-         HMM hmm = null;
-         if (!exactMatch || position == HMMPosition.UNDEFINED) {
-             unit = unit.getBaseUnit();
-             hmm = (HMM) hmmMap.get(unit);
-         }
-         return hmm;
-     }
+    public HMM lookupNearestHMM(Unit unit, HMMPosition position,
+                                boolean exactMatch) {
+        HMM hmm = null;
+        if (!exactMatch || position == HMMPosition.UNDEFINED) {
+            unit = unit.getBaseUnit();
+            hmm = (HMM) hmmMap.get(unit);
+        }
+        return hmm;
+    }
 
-     /**
-      * Returns an iterator that can be used to iterate through all
-      * the HMMs of the acoustic model
-      *
-      * @return an iterator that can be used to iterate through all
-      * HMMs in the model. The iterator returns objects of type
-      * <code>HMM</code>.
-      */
-     public Iterator getHMMIterator() {
-         return hmmMap.values().iterator();
-     }
-     /**
-      * Returns an iterator that can be used to iterate through all
-      * the CI units in the acoustic model
-      *
-      * @return an iterator that can be used to iterate through all
-      * CI units. The iterator returns objects of type
-      * <code>Unit</code>
-      */
-     public Iterator getContextIndependentUnitIterator() {
-         return hmmMap.keySet().iterator();
-     }
 
-     /**
-      * Returns the size of the left context for context dependent
-      * units
-      *
-      * @return the left context size
-      */
-     public int getLeftContextSize() {
-         return leftContextSize;
-     }
+    /**
+     * Returns an iterator that can be used to iterate through all the HMMs of the acoustic model
+     *
+     * @return an iterator that can be used to iterate through all HMMs in the model. The iterator returns objects of
+     *         type <code>HMM</code>.
+     */
+    public Iterator getHMMIterator() {
+        return hmmMap.values().iterator();
+    }
 
-     /**
-      * Returns the size of the right context for context dependent
-      * units
-      *
-      * @return the left context size
-      */
-     public int getRightContextSize() {
-         return rightContextSize;
-     }
 
-     /**
-      * Creates a trivial HMM
-      *
-      * @param unitName the name of the unit
-      */
+    /**
+     * Returns an iterator that can be used to iterate through all the CI units in the acoustic model
+     *
+     * @return an iterator that can be used to iterate through all CI units. The iterator returns objects of type
+     *         <code>Unit</code>
+     */
+    public Iterator getContextIndependentUnitIterator() {
+        return hmmMap.keySet().iterator();
+    }
+
+
+    /**
+     * Returns the size of the left context for context dependent units
+     *
+     * @return the left context size
+     */
+    public int getLeftContextSize() {
+        return leftContextSize;
+    }
+
+
+    /**
+     * Returns the size of the right context for context dependent units
+     *
+     * @return the left context size
+     */
+    public int getRightContextSize() {
+        return rightContextSize;
+    }
+
+
+    /**
+     * Creates a trivial HMM
+     *
+     * @param unitName the name of the unit
+     */
     private void createTrivialHMM(String unitName) {
         // FIXME
         //Unit unit = Unit.getUnit(unitName);
@@ -203,36 +192,38 @@ public class TrivialAcousticModel implements AcousticModel {
         //hmmMap.put(unit, hmm);
     }
 
-    /* (non-Javadoc)
-     * @see edu.cmu.sphinx.linguist.acoustic.AcousticModel#allocate()
-     */
-    public void allocate() throws IOException {
-        
-    }
 
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.linguist.acoustic.AcousticModel#deallocate()
-     */
+    * @see edu.cmu.sphinx.linguist.acoustic.AcousticModel#allocate()
+    */
+    public void allocate() throws IOException {
+
+    }
+
+
+    /* (non-Javadoc)
+    * @see edu.cmu.sphinx.linguist.acoustic.AcousticModel#deallocate()
+    */
     public void deallocate() {
-        
+
     }
 }
 
 
-/**
- * Trivial HMM
- */
+/** Trivial HMM */
 class TrivialHMM implements HMM {
+
     private final static int NUM_STATES = 4;
     Unit unit;
     HMMPosition position;
     HMMState[] hmmStates;
     private Unit baseUnit;
 
+
     /**
      * Creates a trivial hmm
      *
-     * @param unit the unit for the hmm
+     * @param unit     the unit for the hmm
      * @param position the position of the hmm
      */
     TrivialHMM(Unit unit, HMMPosition position) {
@@ -248,6 +239,7 @@ class TrivialHMM implements HMM {
         }
     }
 
+
     /**
      * Gets the  unit associated with this HMM
      *
@@ -257,18 +249,19 @@ class TrivialHMM implements HMM {
         return unit;
     }
 
+
     /**
      * Gets the  base unit associated with this HMM
      *
      * @return the unit associated with this HMM
      */
     public Unit getBaseUnit() {
-	return baseUnit;
+        return baseUnit;
     }
 
 
     /**
-     * Retrieves the hmm state 
+     * Retrieves the hmm state
      *
      * @param which the state of interest
      */
@@ -288,7 +281,7 @@ class TrivialHMM implements HMM {
 
 
     /**
-     * Retrieves the position of this HMM. 
+     * Retrieves the position of this HMM.
      *
      * @return the position for this HMM
      */
@@ -296,11 +289,11 @@ class TrivialHMM implements HMM {
         return position;
     }
 
+
     /**
      * Gets the initial states (with probabilities) for this HMM
      *
-     * @return the set of arcs that transition to the initial states
-     * for this HMM
+     * @return the set of arcs that transition to the initial states for this HMM
      */
     public HMMState getInitialState() {
         return hmmStates[0];
@@ -308,20 +301,21 @@ class TrivialHMM implements HMM {
 }
 
 
-/**
- * A trivial implementation of an HMMState
- */
+/** A trivial implementation of an HMMState */
 class TrivialHMMState implements HMMState {
+
     private static HMMStateArc[] EMPTY_ARC = new HMMStateArc[0];
     private HMM hmm;
     private int which;
     private boolean isFinal;
+
 
     TrivialHMMState(HMM hmm, int which, boolean isFinal) {
         this.hmm = hmm;
         this.which = which;
         this.isFinal = isFinal;
     }
+
 
     /**
      * Gets the HMM associated with this state
@@ -332,8 +326,9 @@ class TrivialHMMState implements HMMState {
         return hmm;
     }
 
+
     /**
-     * Gets the state 
+     * Gets the state
      *
      * @return the state
      */
@@ -346,12 +341,12 @@ class TrivialHMMState implements HMMState {
      * Gets the score for this HMM state
      *
      * @param feature the feature to be scored
-     *
      * @return the acoustic score for this state.
      */
     public float getScore(Data feature) {
         return 0.0f;
     }
+
 
     /**
      * Determines if this HMMState is an emittting state
